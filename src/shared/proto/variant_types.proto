@@ -1,0 +1,43 @@
+// -*- Protocol-Buffers -*-
+//==============================================================================
+/// @file variant_types.proto
+/// @brief Common Core ProtoBuf message types for variant values
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+syntax = "proto3";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+package CC.Variant;
+
+message Value {
+    // Data tag when used in TagValueList, or Key for KeyValueMap.
+    // Not populated inside KeyValueMap or ValueList.
+    string tag = 1;
+
+    oneof value {
+        // Scalar tpes
+        bool value_bool  = 4;
+        uint64 value_uint = 5;
+        sint64 value_sint = 6;
+        double value_real = 7;
+        string value_string = 8;
+        bytes value_bytes = 9;
+        google.protobuf.Timestamp value_timestamp = 10; // Relative to UNIX epoch
+        google.protobuf.Duration value_duration = 11;
+
+        // Nested tag/value container
+        ValueList value_list = 15;
+    }
+}
+
+message ValueList {
+    repeated Value items = 1;
+
+    oneof tagging
+    {
+        bool untagged = 4;      // No tags are present (values can be stored in vector)
+        bool mappable = 5;      // Tags are present and unique (values are mappable)
+    }
+}

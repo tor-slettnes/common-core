@@ -1,0 +1,69 @@
+// -*- Protocol-Buffers -*-
+//==============================================================================
+/// @file event_types.proto
+/// @brief Status details pertaining to an exception or event.
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+syntax = "proto3";
+import "variant_types.proto";
+import "google/protobuf/timestamp.proto";
+
+package CC.Status;
+
+// Details pertaining to an status/event.
+// This message structure is
+//  - embedded inside the `cc::grpc::Status()` structure, which is derived from
+//    and may be included in `::grpc::Status()` responses.
+//  - used for asynchronous events, repported via EventService.
+
+message Details
+{
+    // One of the error domains listed below.
+    Domain domain = 1;
+
+    // Domain specific origin, e.g. "Linux", "SwitchboardService" or "MCB".
+    string origin = 2;
+
+    // Priority/Severity level
+    Level level = 3;
+
+    // Origin specific numeric id
+    sint64 code = 4;
+
+    // Source specfic symbolic name
+    // This is normally unique within each domain, regardless of origin.
+    string symbol = 5;
+
+    // Time of occurence
+    google.protobuf.Timestamp timestamp = 6;
+
+    // Tag/value pairs indicating error attributes
+    repeated CC.Variant.Value attributes = 7;
+
+    // Description of error, possibly expanded with attribute values.
+    string text = 15;
+}
+
+enum Domain
+{
+    DOMAIN_NONE        = 0; // No error
+    DOMAIN_SERVICE     = 1; // Error from application, name indicated in "origin"
+    DOMAIN_SYSTEM      = 2; // OS errors, origin indicates code space (e.g. errno)
+    DOMAIN_SIGNAL      = 3; // Process signals (see "kill -l")
+    DOMAIN_PERIPHERAL  = 4; // Error code from a device, name indicated in "origin"
+    DOMAIN_MAPPED      = 5; // Well-known events, mapped via EventService.
+}
+
+enum Level
+{
+    LEVEL_NONE     = 0;       // No event
+    LEVEL_TRACE    = 1;       // Trace event for detailed troubleshooting
+    LEVEL_DEBUG    = 2;       // Debug event for normal troubleshooting
+    LEVEL_INFO     = 3;       // Informational event only, no error
+    LEVEL_NOTICE   = 4;       // Important event
+    LEVEL_WARNING  = 5;       // Abnormal event, operation continues
+    LEVEL_FAILED   = 6;       // Operation failed, entity is still functional
+    LEVEL_CRITICAL = 7;       // Operation failed, entity is disabled
+    LEVEL_FATAL    = 8;       // Reporting entity is disabled and cannot recover
+}

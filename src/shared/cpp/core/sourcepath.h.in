@@ -1,0 +1,10 @@
+// -*- c -*-
+//==============================================================================
+/// @file sourcepath.h.in
+/// @brief Version include template; translated to include file by CMake.
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+/// clang-format off
+
+#pragma once
+#define SOURCE_DIR "@CMAKE_SOURCE_DIR@"

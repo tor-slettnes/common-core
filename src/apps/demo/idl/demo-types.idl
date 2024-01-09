@@ -1,0 +1,91 @@
+// -*- idl -*-
+//==============================================================================
+/// @file demo-types.idl
+/// @brief data types used in Demo application
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#ifndef _demo_types_idl_
+#define _demo_types_idl_
+
+// Bring in common types and symbols from Shared Components.
+#include "common-types.idl"
+#include "variant-types.idl"
+
+module CC
+{
+    module Demo
+    {
+        //======================================================================
+        // Prefix for topics/service names used in this namespace
+        const string NAMESPACE = CC::NAMESPACE + "Demo/";
+
+        //======================================================================
+        // Topics on which demo updates are published
+        const string GREETING_TOPIC = NAMESPACE + "Greeting";
+        const string TIMEDATA_TOPIC = NAMESPACE + "TimeData";
+
+        //======================================================================
+        // Data structures for publication topics as well as
+        // RPC request/response payloads
+
+        struct Greeting
+        {
+            // The message presented by the greeter
+            string text;
+
+            // The identity of the greeter (normally the name of the executable)
+            @key
+            string identity;
+
+            // The greeter's implementation type ("CoreProvider", "DDSClient", "DDSPublisher"...)
+            string implementation;
+
+            // When was the greeter created
+            CC::Shared::Timestamp birth;
+
+            // Arbitrary key/value pairs associated with the greeting
+            CC::Shared::TaggedValueList data;
+        };
+
+
+        enum Weekday
+        {
+            SUNDAY,             // Sun's day
+            MONDAY,             // Moon's day
+            TUESDAY,            // Týr's day
+            WEDNESDAY,          // Odin's day
+            THURSDAY,           // Thor's day
+            FRIDAY,             // Frey's day
+            SATURDAY            // Saturn's day
+        };
+
+        struct TimeStruct
+        {
+            uint16 year;        // Year. Must be >= 1900.
+            uint8 month;        // Month within year, 1-12
+            uint8 day;          // Day within month, 1-31
+            uint8 hour;         // Hour within day, 0-23
+            uint8 minute;       // Minute within hour, 0-59
+            uint8 second;       // Second within minute, 0-61 (normally 0-59)
+            Weekday weekday;    // Enumerated day
+            uint16 year_day;    // Day within year, 1-366
+
+            @optional
+            boolean is_dst;     // Whether daylight savings time is in effect
+        };
+
+        struct TimeData
+        {
+            // Common timestamp
+            CC::Shared::Timestamp timestamp;
+
+            // Local calendar time
+            TimeStruct local_time;
+
+            // Greenwich mean time
+            TimeStruct utc_time;
+        };
+    };
+};
+#endif

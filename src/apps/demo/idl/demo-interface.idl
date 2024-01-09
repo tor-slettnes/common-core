@@ -1,0 +1,38 @@
+// -*- idl -*-
+//==============================================================================
+/// @file demo-interface.idl
+/// @brief data types used in Demo application
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#ifndef _demo_interface_idl_
+#define _demo_interface_idl_
+
+#include "demo-types.idl"
+
+module CC
+{
+    module Demo
+    {
+        // Request/response ID
+        const string SERVICE_ID = NAMESPACE + "Service";
+
+        @DDSService
+        interface DemoService
+        {
+            // Send a greeting to other clients
+            void say_hello(Greeting greeting);
+
+            // Listen to greetings from other clients
+            TimeData get_current_time();
+
+            // Start publishing time updates at regular intervals
+            void start_ticking();
+
+            // Stop publishing time updates
+            void stop_ticking();
+        };
+    };
+};
+
+#endif

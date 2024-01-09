@@ -1,0 +1,37 @@
+Language: Cpp
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 0
+AccessModifierOffset: -4
+NamespaceIndentation: All
+IndentCaseLabels: false
+BinPackParameters: false
+BinPackArguments: false
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortLambdasOnASingleLine: None
+AlignConsecutiveMacros: true
+# AlignConsecutiveAssignments: Consecutive
+ReflowComments: false
+SortIncludes: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterControlStatement: true
+  AfterExternBlock: true
+  AfterNamespace: true
+  AfterClass: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterFunction: true
+  AfterCaseLabel: true
+  AfterEnum: true
+  BeforeElse: true
+  BeforeCatch: true
+  BeforeLambdaBody: false
+  BeforeWhile: true
+  SplitEmptyNamespace: true
+  SplitEmptyRecord: false
+  SplitEmptyFunction: false

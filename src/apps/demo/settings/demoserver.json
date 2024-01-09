@@ -1,0 +1,20 @@
+/// -*- javascript -*-
+//==============================================================================
+/// @file demoserver.json
+/// @brief Settings for `demoserver`
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+{
+    // Include source context in text logs
+    "log source" : false,
+
+    // Enable gRPC service
+    "enable grpc" : true,
+
+    // Enable DDS service
+    "enable dds" : true,
+
+    // DDS domain ID
+    "dds domain id" : 0
+}

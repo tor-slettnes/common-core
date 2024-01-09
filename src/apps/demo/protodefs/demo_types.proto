@@ -1,0 +1,89 @@
+// -*- protocol-buffers -*-
+//==============================================================================
+/// @file demo_types.proto
+/// @brief data types used in Demo application
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "variant_types.proto";
+import "signal_types.proto";
+
+package CC.Demo;
+
+//==============================================================================
+// Greeting
+
+message Greeting
+{
+    // The mesage presented by the greeter
+    string text = 1;
+
+    // The client's unique identity. We store the last greeting from each client.
+    string identity = 2;
+
+    // The greeter's implementation type (CoreProvider, StreamingExampleClient...)
+    string implementation = 3;
+
+    // When was the greeter created?
+    google.protobuf.Timestamp birth = 4;
+
+    // Arbitrary key/value pairs associated with the greeting
+    CC.Variant.ValueList data = 5;
+}
+
+//==============================================================================
+// TimeData
+
+enum Weekday
+{
+    SUNDAY    = 0;              // Sun's day
+    MONDAY    = 1;              // Moon's day
+    TUESDAY   = 2;              // Týr's day
+    WEDNESDAY = 3;              // Odin's day
+    THURSDAY  = 4;              // Thor's day
+    FRIDAY    = 5;              // Frey's day
+    SATURDAY  = 6;              // Saturn's day
+}
+
+message TimeStruct
+{
+    uint32 year = 1;            // Year. Must be >= 1900.
+    uint32 month = 2;           // Month within year, 1-12
+    uint32 day = 3;             // Day within month, 1-31
+    uint32 hour = 4;            // Hour within day, 0-23
+    uint32 minute = 5;          // Minute within hour, 0-59
+    uint32 second = 6;          // Second within minute, 0-61 (normally 0-59)
+    Weekday weekday = 7;        // Enumerated day
+    uint32 year_day = 8;        // Day within year, 1-366
+
+    oneof explicit_dst {        // Ensure the DST flag is explicit, even if false
+        bool is_dst = 9;        // Whether daylight savings time is in use
+    };
+}
+
+
+message TimeData
+{
+    google.protobuf.Timestamp timestamp = 1; // Common timestamp
+    TimeStruct local_time = 2;  // Local calendar time
+    TimeStruct utc_time = 3;    // Greenwich calendar time
+}
+
+message Signal
+{
+    // Mapping type, one of: MAP_NONE, MAP_ADDITION, MAP_REMOVAL, MAP_UPDATE.
+    // In the case of a MappedSignal (like `Greeting` below), indicates
+    // whether this instance is added, updated, or removed.
+    CC.Signal.MappingChange change = 1;
+
+    // Mapping key for the item that was added/removed/updated.
+    string key = 2;
+
+    oneof signal {
+        Greeting greeting = 8; // Emitted whenever a client says hello
+        TimeData time = 9;     // Emitted once per second
+    }
+}

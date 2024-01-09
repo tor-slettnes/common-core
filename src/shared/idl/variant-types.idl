@@ -1,0 +1,88 @@
+// -*- idl -*-
+//==============================================================================
+/// @file variant-types.idl
+/// @brief Variant value types
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#ifndef _variant_types_idl_
+#define _variant_types_idl_
+#include "common-types.idl"
+
+module CC
+{
+    module Shared
+    {
+        //======================================================================
+        // Enumerated data types
+
+        typedef string Tag;
+
+        enum VariantValueType
+        {
+            VT_NONE,
+            VT_BOOL,
+            VT_CHAR,
+            VT_UINT,
+            VT_SINT,
+            VT_REAL,
+            VT_COMPLEX,
+            VT_STRING,
+            VT_BYTEARRAY,
+            VT_TIMEPOINT,
+            VT_DURATION
+            // VT_SEQUENCE,
+            // VT_KEYVALUEMAP,
+            // VT_TAGGEDSEQUENCE
+        };
+
+        const uint32 MAX_VALUES = 256;
+
+        union VariantValue switch(VariantValueType)
+        {
+        case VT_BOOL:
+            boolean value_bool;
+        case VT_CHAR:
+            char value_char;
+        case VT_UINT:
+            uint64 value_uint;
+        case VT_SINT:
+            int64 value_sint;
+        case VT_REAL:
+            double value_real;
+        case VT_COMPLEX:
+            ComplexValue value_complex;
+        case VT_STRING:
+            string value_string;
+        case VT_BYTEARRAY:
+            sequence<octet> value_bytearray;
+        case VT_TIMEPOINT:
+            Timestamp value_timestamp;
+        case VT_DURATION:
+            Duration value_duration;
+        // case VT_SEQUENCE:
+        //     sequence<Value,MAX_VALUES> value_sequence;
+        // case VT_KEYVALUEMAP:
+        //     sequence<TaggedValue,MAX_VALUES> value_keyvaluemap;
+        // case VT_TAGGEDSEQUENCE:
+        //     sequence<TaggedValue,MAX_VALUES> value_taggedsequence;
+        };
+
+        struct VariantValueList
+        {
+            sequence<VariantValue,MAX_VALUES> list;
+        };
+
+        struct TaggedValue
+        {
+            Tag tag;
+            VariantValue value;
+        };
+
+        struct TaggedValueList
+        {
+            sequence<TaggedValue,MAX_VALUES> list;
+        };
+    };
+};
+#endif

@@ -1,0 +1,11 @@
+/// -*- javascript -*-
+//==============================================================================
+/// @file demo-tool.json
+/// @brief Settings for `demo-tool` utility
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+{
+    "log-default" : "info",
+    "log-source" : true
+}

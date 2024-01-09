@@ -1,0 +1,81 @@
+// -*- idl -*-
+//==============================================================================
+/// @file common-types.idl
+/// @brief common value types
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#ifndef _common_types_idl_
+#define _common_types_idl_
+
+module CC
+{
+    const string NAMESPACE = "CC/";
+
+    module Shared
+    {
+        const string NAMESPACE = CC::NAMESPACE + "Shared/";
+
+        struct Empty
+        {
+        };
+
+        struct BoolValue
+        {
+            boolean value;
+        };
+
+        struct UnsignedValue
+        {
+            uint64 value;
+        };
+
+        struct SignedValue
+        {
+            int64 value;
+        };
+
+        struct RealValue
+        {
+            double value;
+        };
+
+        struct ComplexValue
+        {
+            double real;
+            double imag;
+        };
+
+        // Relative/elapsed time
+        struct Duration
+        {
+            uint64 seconds;
+            uint32 nanoseconds;
+        };
+
+        // Absolute time (though in practice relative to UNIX epoch)
+        typedef Duration Timestamp;
+
+        const uint16 STRING_VALUE_MAX_SIZE = 4096;
+        struct StringValue
+        {
+            string<STRING_VALUE_MAX_SIZE> value;
+        };
+
+        // Chunk of binary data
+        const uint16 BINARY_CHUNK_SIZE = 1024;
+        struct BinaryChunk
+        {
+            /// Sequence number, used to reassemble data in correct order
+            uint32 sequence_number;
+
+            /// Chunk data
+            sequence<uint8, BINARY_CHUNK_SIZE> payload;
+
+            /// Whether more deta follows
+            boolean partial;
+        };
+    };
+};
+
+#endif

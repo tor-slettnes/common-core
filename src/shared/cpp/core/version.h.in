@@ -1,0 +1,24 @@
+// -*- c -*-
+//==============================================================================
+/// @file version.h.in
+/// @brief Version include template; translated to include file by CMake.
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+/// clang-format off
+
+#pragma once
+
+#define PACKAGE_VERSION_MAJOR @PACKAGE_VERSION_MAJOR@
+#define PACKAGE_VERSION_MINOR @PACKAGE_VERSION_MINOR@
+#define PACKAGE_VERSION_PATCH @PACKAGE_VERSION_PATCH@
+#define PACKAGE_VERSION_TWEAK @PACKAGE_VERSION_TWEAK@
+#define PACKAGE_VERSION       "@PACKAGE_VERSION@"
+
+#define PROJECT_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define PROJECT_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define PROJECT_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#define PROJECT_VERSION_TWEAK @PROJECT_VERSION_TWEAK@
+#define PROJECT_VERSION       "@PROJECT_VERSION@"
+#define PROJECT_DESCRIPTION   "@PROJECT_DESCRIPTION@"
+#define PROJECT_BUILD_DATE    "@PROJECT_BUILD_DATE@"
+#define PROJECT_BUILD_TIME    "@PROJECT_BUILD_TIME@"

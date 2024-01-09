@@ -1,0 +1,119 @@
+//==============================================================================
+/// @file event-types.idl
+/// @brief Diagnostic event types for logging and error reporting
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#ifndef _event_types_idl_
+#define _event_types_idl_
+#include "common-types.idl"
+#include "variant-types.idl"
+
+module CC
+{
+    module Status
+    {
+        const string NAMESPACE = CC::NAMESPACE + "Status/";
+        const string LOG_TOPIC = NAMESPACE + "EventLog";
+
+        //======================================================================
+        // Enumerated constants
+
+        enum Domain
+        {
+            NONE,        // No domain information is available
+            APPLICATION, // Event from application, name indicated in "origin"
+            SYSTEM,      // OS errors, origin indicates code space
+            PROCESS,     // Process signals (see "kill -l")
+            PERIPHERAL,  // Event from a device, name indicated in "origin"
+            TELEMETRY    // Parseable data, identified by contract ID or tag.
+        };
+
+        enum Level
+        {
+            NONE,      // No event
+            TRACE,     // Trace event for detailed troubleshooting
+            DEBUG,     // Debug event for normal troubleshooting
+            INFO,      // Informational event only, no error
+            NOTICE,    // Important event
+            WARNING,   // Abnormal event, operation continues
+            FAILED,    // Operation failed, entity is still functional
+            DISABLED,  // Operation failed, entity is disabled
+            FATAL      // Reporting entity is disabled and cannot recover
+        };
+
+        typedef string OriginName;
+        typedef string<4096> Description;
+
+        //======================================================================
+        // Details pertaining to an generic event
+
+        struct Event
+        {
+            // Event description
+            Description text;
+
+            // One of the error domains listed below.
+            Domain domain;
+
+            // Domain specific origin, e.g. OS type, application name, device, ...
+            OriginName origin;
+
+            // Log level
+            Level level;
+
+            // Time of occurence
+            Shared::Timestamp timestamp;
+
+            // Tag/value pairs indicating custom attributes
+            Shared::TaggedValueList attributes;
+        };
+
+        //======================================================================
+        // Details pertaining to telemetry
+
+        struct Telemetry : Event
+        {
+            // Contract ID if available, otherwise 0
+            int64 id;
+
+            // Tag to identify telemetry type
+            string type;
+        };
+
+        //======================================================================
+        // Details pertaining to a log message
+
+        struct LogMessage : Event
+        {
+            // Log scope, e.g. 'global', 'shared', 'switch', ...
+            string log_scope;
+
+            // Source file
+            string filename;
+
+            // Source line
+            uint32 lineno;
+
+            // Source function
+            string function;
+
+            // Thread ID
+            uint64 thread_id;
+        };
+
+        //======================================================================
+        // Details pertaining to an error event
+
+        struct ErrorEvent : Event
+        {
+            // Origin specific code (e.g. UNIX errno, device specific, etc)
+            int64 code;
+
+            // Source specific symbol name.
+            // This is normally unique within each domain, regardless of origin.
+            string symbol;
+        };
+    };
+};
+#endif
