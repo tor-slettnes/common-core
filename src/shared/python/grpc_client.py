@@ -1,5 +1,4 @@
 #!/usr/bin/echo Do not invoke directly.
-##
 ##===============================================================================n
 ## @file grpc_client.py
 ## @brief Interactive wrapper for access to Instrument Services via gRPC

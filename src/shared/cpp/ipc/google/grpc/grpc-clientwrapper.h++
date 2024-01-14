@@ -5,7 +5,7 @@
 /// @author Tor Slettnes <tor@slett.net>
 ///
 /// Class templates for Common Core gRPC services (client and server), including:
-///  * Settings store in YourServiceName.json, using JsonCpp as backend
+///  * Settings store in YourServiceName.json, using a JSON backend
 ///  * Status/error code wrappers
 //==============================================================================
 

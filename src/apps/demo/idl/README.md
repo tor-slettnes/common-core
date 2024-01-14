@@ -26,7 +26,7 @@ DDS is at its core a Pub/Sub based system, so the above data types essentially b
 * `struct CC::Demo::Greeting`, and
 * `struct CC::Demo::TimeData`.
 
-It also contains nested data structures and enumerations used by these.  Additional nested types come from the file [common_types.idl](../../../../shared/source/idl/common_types.idl), which is included here via the `#include` precprocessor directive.
+It also contains nested data structures and enumerations used by these.  Additional nested types come from the file [common_types.idl](../../../shared/idl/common-types.idl), which is included here via the `#include` precprocessor directive.
 
 The [demo-types.idl](demo-types.idl) file also contains constants that define associated publication topics; in our demo these are
 * `CC::Demo::GREETING_TOPIC` and

@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from protobuf_types import ProtoBuf
+from protobuf_standard_types import ProtoBuf
 import typing
 
 class CC (object):
