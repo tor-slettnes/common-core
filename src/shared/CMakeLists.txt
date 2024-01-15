@@ -6,19 +6,19 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-if(USE_CPP)
+if(BUILD_CPP)
   add_subdirectory(cpp)
 endif()
 
-if(USE_PYTHON)
+if(BUILD_PYTHON)
   add_subdirectory(python)
 endif()
 
-if(USE_RTI_DDS)
+if(BUILD_IDL)
   add_subdirectory(idl)
 endif()
 
-if(USE_GRPC)
+if(BUILD_PROTOBUF)
   add_subdirectory(proto)
 endif()
 
@@ -29,9 +29,20 @@ set(LIB_DEPS
   cc_shared_core
   cc_shared_platform
   cc_shared_ipc_api
-  cc_shared_idl
-  cc_shared_protodefs
+)
+
+if(BUILD_RTI_DDS)
+  list(APPEND LIB_DEPS
+    cc_shared_idl
   )
+endif()
+
+if(BUILD_PROTOBUF)
+  list(APPEND LIB_DEPS
+    cc_shared_protodefs
+  )
+endif()
+
 
 include(BuildLibrary)
 

@@ -15,7 +15,7 @@ set(LIB_TYPE STATIC)
 set(LIB_DEPS
   cc_demo_api
   cc_demo_idl
-  cc_shared_ipc_rti_idl
+  cc_shared_ipc_idl
 )
 
 set(SOURCES

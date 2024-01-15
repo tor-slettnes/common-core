@@ -7,7 +7,7 @@
 #===============================================================================
 
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
-set(TARGET cc_shared_ipc_rti_dds)
+set(TARGET cc_shared_ipc_dds_rti)
 
 ### Library type.  We use static linking for convenience.
 set(LIB_TYPE STATIC)
@@ -15,7 +15,8 @@ set(LIB_TYPE STATIC)
 ### Library dependencies.
 set(LIB_DEPS
   cc_shared_ipc_api
-  cc_shared_ipc_rti_idl)
+  cc_shared_ipc_idl
+)
 
 set(SOURCES
   dds-channel.c++
@@ -27,7 +28,7 @@ set(SOURCES
 )
 
 ### Logging via DDS
-if(USE_RTI_LOGGER)
+if(BUILD_RTI_LOGGER)
   list(APPEND SOURCES
     rti-dl-logsink.c++
   )
@@ -41,7 +42,7 @@ include(BuildLibrary)
 include(rti-connext-dds)
 target_link_libraries(${TARGET} PUBLIC RTIConnextDDS::cpp2_api)
 
-if(USE_RTI_LOGGER)
+if(BUILD_RTI_LOGGER)
   string(TOLOWER "$<CONFIG>" buildconfig)
   if("${buildconfig}" STREQUAL "debug")
     target_link_libraries(${TARGET} PUBLIC "rtidlcppzd" "rtidlczd")
@@ -49,9 +50,9 @@ if(USE_RTI_LOGGER)
     target_link_libraries(${TARGET} PUBLIC "rtidlcppz" "rtidlcz")
   endif()
   target_link_libraries(${TARGET} PUBLIC RTIConnextDDS::cpp_api)
-  target_compile_definitions(${TARGET} PUBLIC USE_RTI_LOGGER)
+  target_compile_definitions(${TARGET} PUBLIC BUILD_RTI_LOGGER)
 endif()
 
 ### C++17 required for variant data type, parameter packs, std::filesystem
 target_compile_features(${TARGET} PUBLIC cxx_std_17)
-target_compile_definitions(${TARGET} PUBLIC USE_DDS=1)
+target_compile_definitions(${TARGET} PUBLIC USE_DDS=1 USE_RTI_DDS=1)

@@ -1,4 +1,3 @@
-##
 ## -*- cmake -*-
 #===============================================================================
 ## @file BuildExecutable.cmake
@@ -7,23 +6,29 @@
 ##
 ## To use this file, copy, uncomment, and modify the following in your
 ## "CMakeLists.txt":
+##
 ## @code
 ##     ### Name of this executable. This also becomes the name of the target.
 ##     set(TARGET yourexecutable)
+##
 ##     ### Destination directory, if other than `bin`.
 ##     #set(DEST_DIR sbin)
+##
 ##     ### Libraries we depend on, either from this build or provided by the system.
 ##     ### Only direct dependencies are needed.
 ##     set(LIB_DEPS YOURAPP_library)
+##
 ##     ### Any object library dependencies that are not included in the library
 ##     ### dependency above.
 ##     set(OBJ_DEPS YOURAPP_objectlib)
+##
 ##     ### Source files
 ##     set(SOURCES
 ##       yourfile1.c++
 ##       yourfile2.c++
 ##       ...
 ##       )
+##
 ##     ## Invoke common CMake rules to build executable
 ##     include(BuildExecutable)
 ## @endcode

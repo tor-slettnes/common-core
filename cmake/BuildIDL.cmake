@@ -1,23 +1,26 @@
-##
 ## -*- cmake -*-
 #===============================================================================
 ## @file BuildIDL.cmake
 ## @brief CMake include file for building DDS intterfaces from IDL files
 ## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+##
 ## To use this file, copy, uncomment, and modify the following in your "CMakeLists.txt":
+##
 ## @code
 ##     ### Name of this library. This can be used as a downstream dependency
 ##     set(TARGET someservice_idl)
+##
 ##     ### Static/shared library dependencies, either from this build or provided by
 ##     ### the system. Only direct dependencies are needed.
 ##     set(LIB_DEPS shared_idl ...)
+##
 ##     ### Sources containing IDL data types. These should NOT contain any
 ##     ### `interface` declarations; for that, use the SOURCES variable, below.
 ##     set(RECIPES
 ##       myapp-types.idl
 ##       ...
 ##       )
+##
 ##     ### Sources containing DDS service interface.
 ##     ### (an `interface` block with a `@DDSService` or `@service` decarator).
 ##     ### This will add an exertnal dependency on the appropriate RTI messaging
@@ -26,6 +29,7 @@
 ##       myapp-service.idl)
 ##       ...
 ##       )
+##
 ##     ## Invoke common CMake rules
 ##     include(BuildInterfaces)
 ## @endcode
@@ -65,7 +69,7 @@ macro(generate_sources sources example_modules)
 
     #===========================================================================
     ### C++ sources
-    if (USE_CPP)
+    if (BUILD_CPP)
       set(cpp_sources ${basename}.cxx ${basename}Plugin.cxx)
 
       set(cpp_flags)
@@ -110,7 +114,7 @@ macro(generate_sources sources example_modules)
 
     #===========================================================================
     ### C# sources
-    if(USE_CSHARP)
+    if(BUILD_CSHARP)
       set(cs_sources ${basename}.cs ${basename}Plugin.cs)
       set(cs_flags)
       if(GENERATE_EXAMPLE)
@@ -135,7 +139,7 @@ macro(generate_sources sources example_modules)
 
     #===========================================================================
     ### Generate XML output, required for Python
-    if(USE_PYTHON)
+    if(BUILD_PYTHON)
       set(xml_file ${basename}.xml)
       list(APPEND GENERATED_SOURCES ${xml_file})
       add_custom_command(
@@ -191,7 +195,7 @@ target_link_libraries(${TARGET}
 target_compile_features(${TARGET} PUBLIC cxx_std_11)
 
 ### Generate python outputs
-if(USE_PYTHON)
+if(BUILD_PYTHON)
   install(FILES ${XML_OUTPUTS} DESTINATION share/xml)
 endif()
 

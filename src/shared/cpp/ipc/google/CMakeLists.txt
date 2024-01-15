@@ -1,4 +1,3 @@
-##
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
@@ -6,6 +5,10 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(protobuf)
-add_subdirectory(grpc)
+if(BUILD_PROTOBUF)
+  add_subdirectory(protobuf)
+endif()
 
+if(BUILD_GRPC)
+  add_subdirectory(grpc)
+endif()

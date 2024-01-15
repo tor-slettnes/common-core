@@ -5,19 +5,19 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-if (USE_CPP)
+if (BUILD_CPP)
   add_subdirectory(cpp)
 endif()
 
-if (USE_PYTHON)
+if (BUILD_PYTHON)
   add_subdirectory(python)
 endif()
 
-if (USE_GRPC)
-  add_subdirectory(protodefs)
+if (BUILD_PROTOBUF)
+  add_subdirectory(proto)
 endif()
 
-if (USE_RTI_DDS)
+if (BUILD_RTI_DDS)
   add_subdirectory(idl)
 endif()
 

@@ -19,7 +19,8 @@ set(LIB_DEPS
   cc_demo_api
   cc_demo_dds_types
   cc_demo_dds_subscriber
-  cc_shared_ipc_rti_dds)
+  cc_shared_ipc_dds_rti
+)
 
 ### Source files
 set(SOURCES

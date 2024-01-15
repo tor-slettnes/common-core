@@ -1,4 +1,3 @@
-##
 ## -*- cmake -*-
 #===============================================================================
 ## @file BuildProtodefs.cmake
@@ -6,25 +5,31 @@
 ## @author Tor Slettnes <tor@slett.net>
 ##
 ## To use this file, copy, uncomment, and modify the following in your "CMakeLists.txt":
+##
 ## @code
 ##     ### Target name. This can be used as a downstream dependency.
 ##     set(TARGET cc_YOURAPP_protodefs)
+##
 ##     ### What kind of library we are building (STATIC|SHARED|OBJECT|...)
 ##     ### See: https://cmake.org/cmake/help/latest/command/add_library.html.
 ##     ### The default is OBJECT
 ##     set(LIB_TYPE OBJECT)
+##
 ##     ### ProtoBuf dependencies from other applications on which we depend (if applicable).
 ##     set(PROTO_DEPS cc_shared_protodefs)
+##
 ##     ### Static/shared library dependencies, either from this build or provided by
 ##     ### the system. Only direct dependencies are needed; if you include
 ##     ### "cc_shared_protodefs" in PROTO_DEPS you do not need "grpc++" or "protobuf"
 ##     ### here.
 ##     set(LIB_DEPS grpc++ protobuf)
+##
 ##     ### Source files
 ##     set(SOURCES
 ##       YOURFILE1.proto
 ##       ...
 ##       )
+##
 ##     ### Invoke common Protobuf rules
 ##     include(BuildProtodefs)
 ## @endcode
@@ -51,7 +56,7 @@ protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${SOURCES})
 grpc_generate_cpp(GRPC_SRC GRPC_HDR ${CMAKE_CURRENT_BINARY_DIR} ${SOURCES})
 
 ### Python support
-if (USE_PYTHON)
+if (BUILD_PYTHON)
   protobuf_generate_python(PROTO_PY ${SOURCES})
   grpc_generate_python(GRPC_PY ${CMAKE_CURRENT_BINARY_DIR} ${SOURCES})
   install(FILES ${PROTO_PY} ${GRPC_PY} DESTINATION ${PYTHON_INSTALL_DIR})

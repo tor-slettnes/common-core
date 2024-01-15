@@ -1,4 +1,3 @@
-##
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
@@ -6,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET cc_shared_ipc_rti_idl)
+set(TARGET cc_shared_ipc_idl)
 
 ### Library type.  We use static linking for convenience.
 set(LIB_TYPE STATIC)

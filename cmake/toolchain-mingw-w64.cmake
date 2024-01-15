@@ -1,4 +1,3 @@
-##
 ## -*- cmake -*-
 #===============================================================================
 ## @brief CMake toolchain spec for cross-compiling for Windows with MinGW

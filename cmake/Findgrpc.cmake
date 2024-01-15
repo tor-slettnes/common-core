@@ -1,4 +1,3 @@
-##
 ## -*- cmake -*-
 #===============================================================================
 ## @file Findgrpc.cmake
@@ -10,6 +9,7 @@
 ##
 ## Distributed under the OSI-approved BSD License:
 ## 1. Redistributions of source code must retain
+##
 ## This software is distributed WITHOUT ANY WARRANTY; without even the
 ## implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #===============================================================================

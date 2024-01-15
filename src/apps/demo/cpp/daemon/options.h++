@@ -7,8 +7,16 @@
 
 #pragma once
 #include "implementations.h++"
-#include "argparse/server.h++"
+
+#if USE_DDS
 #include "dds-options-server.h++"
+using OptionsBase = cc::argparse::DDSServiceOptions;
+
+#else
+#include "argparse/server.h++"
+using OptionsBase = cc::argparse::ServerOptions;
+
+#endif
 
 namespace cc::demo
 {
@@ -19,9 +27,9 @@ namespace cc::demo
     //    get DDS logging capabilities. To build without DDS logging, we could
     //    inherit directly from `cc::argparse::ServerOptions`.
 
-    class Options : public cc::argparse::DDSServiceOptions
+    class Options : public OptionsBase
     {
-        using Super = cc::argparse::DDSServiceOptions;
+        using Super = OptionsBase;
 
     public:
         Options();

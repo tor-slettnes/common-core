@@ -1,4 +1,3 @@
-##
 ## -*- cmake -*-
 #===============================================================================
 ## @file BuildLibrary.cmake
@@ -6,26 +5,32 @@
 ## @author Tor Slettnes <tor@slett.net>
 ##
 ## To use this file, copy, uncomment, and modify the following in your "CMakeLists.txt":
+##
 ## @code
 ##     ### Name of this library. This can be used as a downstream dependency
 ##     set(TARGET YOURAPP_LIBRARY)
+##
 ##     ### What kind of library we are building (STATIC|SHARED|OBJECT|...);
 ##     ### see: https://cmake.org/cmake/help/latest/command/add_library.html.
 ##     ### The default is STATIC
 ##     set(LIB_TYPE STATIC)
+##
 ##     ### Static/shared library dependencies, either from this build or provided by
 ##     ### the system. Only direct dependencies are needed.
 ##     set(LIB_DEPS cc_shared ...)
+##
 ##     ### Any OBJECT library dependencies that are not included in the library
 ##     ### dependency above. In particular, we include any direct *_protodefs
 ##     ### dependency here (since we built that as an OBJECT library).
 ##     set(OBJ_DEPS YOURAPP_objectlib)
+##
 ##     ### Source files
 ##     set(SOURCES
 ##       yourfile1.c++
 ##       yourfile2.c++
 ##       ...
 ##       )
+##
 ##     ## Invoke common CMake rules
 ##     include(BuildLibrary)
 ## @endcode

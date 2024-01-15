@@ -2,13 +2,18 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @brief CMake recipe to install binary scripts
+## @brief Build IDL encoder/decoder methods for share data types
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-cmake_minimum_required(VERSION 3.14)
-
-if (BUILD_PYTHON)
-  set(SOURCES shell)
-  install(PROGRAMS ${SOURCES} TYPE BIN)
+if(BUILD_IDL)
+  ### Comon IDL data type encoding/decoding
+  add_subdirectory(idl)
 endif()
+
+### RTI Data Distribution Service wrappers
+if(BUILD_RTI_DDS)
+  add_subdirectory(rti)
+endif()
+
+

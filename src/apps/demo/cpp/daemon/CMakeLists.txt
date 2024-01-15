@@ -17,11 +17,11 @@ set(DEST_DIR sbin)
 set(LIB_DEPS
   cc_demo_native)
 
-if(USE_RTI_DDS)
+if(BUILD_RTI_DDS)
   list(APPEND LIB_DEPS cc_demo_dds_service)
 endif()
 
-if(USE_GRPC)
+if(BUILD_GRPC)
   list(APPEND LIB_DEPS cc_demo_grpc_service)
 endif()
 
