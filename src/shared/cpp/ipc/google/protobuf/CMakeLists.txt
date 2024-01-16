@@ -17,9 +17,9 @@ set(LIB_DEPS
 )
 
 set(SOURCES
-  translate-protobuf-google.c++
-  translate-protobuf-variant.c++
-  translate-protobuf-event.c++
+  protobuf-standard-types.c++
+  protobuf-variant-types.c++
+  protobuf-event-types.c++
   protobuf-message.c++
 )
 

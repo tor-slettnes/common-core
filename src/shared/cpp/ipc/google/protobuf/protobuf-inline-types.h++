@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file translate-protobuf-inline.h++
+/// @file protobuf-inline-types.h++
 /// @brief Convenience templates for ProtoBuf encoding/decoding
 /// @author Tor Slettnes <tor@slett.net>
 ///

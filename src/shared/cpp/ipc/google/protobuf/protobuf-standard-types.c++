@@ -1,12 +1,12 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file translate-protobuf-google.c++
+/// @file protobuf-standard-types.c++
 /// @brief Encode/decode routines for ProtoBuf types provided by Google
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "translate-protobuf-google.h++"
-#include "translate-protobuf-inline.h++"
+#include "protobuf-standard-types.h++"
+#include "protobuf-inline-types.h++"
 
 #include <utility>
 

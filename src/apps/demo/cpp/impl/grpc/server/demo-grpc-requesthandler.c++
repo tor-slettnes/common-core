@@ -6,8 +6,8 @@
 //==============================================================================
 
 #include "demo-grpc-requesthandler.h++"
-#include "translate-protobuf-demo.h++"
-#include "translate-protobuf-inline.h++"
+#include "protobuf-demo-types.h++"
+#include "protobuf-inline-types.h++"
 #include "protobuf-message.h++"
 
 namespace cc::demo::grpc

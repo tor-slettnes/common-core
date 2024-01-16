@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file translate-protobuf-event.h++
+/// @file protobuf-event-types.h++
 /// @brief Encode/decode routines for common ProtoBuf types
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

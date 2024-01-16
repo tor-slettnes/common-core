@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file translate-protobuf-variant.h++
+/// @file protobuf-variant-types.h++
 /// @brief Encode/decode routines for common ProtoBuf types
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

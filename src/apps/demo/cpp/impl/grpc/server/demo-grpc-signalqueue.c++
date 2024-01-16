@@ -8,7 +8,7 @@
 #include "demo-grpc-signalqueue.h++"
 #include "demo-signals.h++"
 
-#include "translate-protobuf-demo.h++"
+#include "protobuf-demo-types.h++"
 
 namespace cc::demo::grpc
 {

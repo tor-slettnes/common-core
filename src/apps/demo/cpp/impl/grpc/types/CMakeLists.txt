@@ -23,7 +23,7 @@ set(PKG_DEPS
 )
 
 set(SOURCES
-  translate-protobuf-demo.c++
+  protobuf-demo-types.c++
 )
 
 ### Recepies to build the library

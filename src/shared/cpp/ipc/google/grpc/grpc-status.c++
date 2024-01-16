@@ -6,10 +6,10 @@
 //==============================================================================
 
 #include "grpc-status.h++"
-#include "translate-protobuf-event.h++"
-#include "translate-protobuf-variant.h++"
-#include "translate-protobuf-google.h++"
-#include "translate-protobuf-inline.h++"
+#include "protobuf-event-types.h++"
+#include "protobuf-variant-types.h++"
+#include "protobuf-standard-types.h++"
+#include "protobuf-inline-types.h++"
 #include "platform/symbols.h++"
 #include "status/error.h++"
 #include "status/exceptions.h++"

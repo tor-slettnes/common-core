@@ -8,8 +8,8 @@
 #include "demo-grpc-client.h++"
 #include "demo-api.h++"
 #include "demo-signals.h++"
-#include "translate-protobuf-demo.h++"
-#include "translate-protobuf-inline.h++"
+#include "protobuf-demo-types.h++"
+#include "protobuf-inline-types.h++"
 
 namespace cc::demo::grpc
 {

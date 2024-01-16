@@ -1,13 +1,13 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file translate-protobuf-demo.c++
+/// @file protobuf-demo-types.c++
 /// @brief conversions to/from Protocol Buffer messages for Demo application
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "translate-protobuf-demo.h++"
-#include "translate-protobuf-google.h++"
-#include "translate-protobuf-variant.h++"
+#include "protobuf-demo-types.h++"
+#include "protobuf-standard-types.h++"
+#include "protobuf-variant-types.h++"
 
 namespace cc::protobuf
 {
