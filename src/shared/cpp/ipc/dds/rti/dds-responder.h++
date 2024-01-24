@@ -10,12 +10,14 @@
 #include "chrono/date-time.h++"
 #include "status/exceptions.h++"
 
+#include "common-types.hpp"  // Generated from `common-types.idl'
+
 #include <rti/request/SimpleReplier.hpp>
 
 namespace cc::dds
 {
-    template <class RequestType = CC::Shared::Empty,
-              class ResponseType = CC::Shared::Empty>
+    template <class RequestType = CC::Common::Empty,
+              class ResponseType = CC::Common::Empty>
     class Responder : public Channel,
                       public rti::request::SimpleReplier<RequestType, ResponseType>
     {

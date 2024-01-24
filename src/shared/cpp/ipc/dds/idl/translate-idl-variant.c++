@@ -14,12 +14,12 @@ namespace cc::idl
     // Encode/decode Value
 
     void encode(const cc::types::Value &value,
-                CC::Shared::VariantValue *idl) noexcept
+                CC::Variant::Value *idl) noexcept
     {
         switch (value.type())
         {
         case cc::types::ValueType::NONE:
-            idl->_d() = CC::Shared::VariantValueType::VT_NONE;
+            idl->_d() = CC::Variant::ValueType::VT_NONE;
             break;
 
         case cc::types::ValueType::BOOL:
@@ -64,74 +64,74 @@ namespace cc::idl
 
         case cc::types::ValueType::VALUELIST:
             // idl->value_sequence(
-            //     encoded_shared<CC::Shared::ValueList>(value.as_valuelist()).list());
+            //     encoded_shared<CC::Variant::ValueList>(value.as_valuelist()).list());
             break;
 
         case cc::types::ValueType::KVMAP:
             // idl->value_keyvaluemap(
-            //     encoded_shared<CC::Shared::TaggedValueList>(value.as_kvmap()).list());
+            //     encoded_shared<CC::Variant::TaggedValueList>(value.as_kvmap()).list());
             break;
 
         case cc::types::ValueType::TVLIST:
             // idl->value_taggedsequence(
-            //     encoded_shared<CC::Shared::TaggedValueList>(value.as_tvlist()).list());
+            //     encoded_shared<CC::Variant::TaggedValueList>(value.as_tvlist()).list());
             break;
         }
     }
 
-    void decode(const CC::Shared::VariantValue &idl,
+    void decode(const CC::Variant::Value &idl,
                 cc::types::Value *value) noexcept
     {
         switch (idl._d())
         {
-        case CC::Shared::VariantValueType::VT_NONE:
+        case CC::Variant::ValueType::VT_NONE:
             value->emplace<std::monostate>();
             break;
 
-        case CC::Shared::VariantValueType::VT_BOOL:
+        case CC::Variant::ValueType::VT_BOOL:
             value->emplace<bool>(idl.value_bool());
             break;
 
-        case CC::Shared::VariantValueType::VT_CHAR:
+        case CC::Variant::ValueType::VT_CHAR:
             value->emplace<char>(idl.value_char());
             break;
 
-        case CC::Shared::VariantValueType::VT_UINT:
+        case CC::Variant::ValueType::VT_UINT:
             value->emplace<cc::types::largest_uint>(idl.value_uint());
             break;
 
-        case CC::Shared::VariantValueType::VT_SINT:
+        case CC::Variant::ValueType::VT_SINT:
             value->emplace<cc::types::largest_sint>(idl.value_sint());
             break;
 
-        case CC::Shared::VariantValueType::VT_REAL:
+        case CC::Variant::ValueType::VT_REAL:
             value->emplace<double>(idl.value_real());
             break;
 
-        case CC::Shared::VariantValueType::VT_COMPLEX:
+        case CC::Variant::ValueType::VT_COMPLEX:
             value->emplace<cc::types::complex>(idl.value_complex().real(), idl.value_complex().imag());
             break;
 
-        case CC::Shared::VariantValueType::VT_STRING:
+        case CC::Variant::ValueType::VT_STRING:
             value->emplace<std::string>(idl.value_string());
             break;
 
-        case CC::Shared::VariantValueType::VT_BYTEARRAY:
+        case CC::Variant::ValueType::VT_BYTEARRAY:
         {
             const auto &sequence = idl.value_bytearray();
             value->emplace<ByteArray>(sequence.cbegin(), sequence.cend());
             break;
         }
 
-        case CC::Shared::VariantValueType::VT_TIMEPOINT:
+        case CC::Variant::ValueType::VT_TIMEPOINT:
             value->emplace<cc::dt::TimePoint>(decoded<cc::dt::TimePoint>(idl.value_timestamp()));
             break;
 
-        case CC::Shared::VariantValueType::VT_DURATION:
+        case CC::Variant::ValueType::VT_DURATION:
             value->emplace<cc::dt::Duration>(decoded<cc::dt::Duration>(idl.value_duration()));
             break;
 
-            // case CC::Shared::VariantValueType::VT_SEQUENCE:
+            // case CC::Variant::ValueType::VT_SEQUENCE:
             // {
             //     const auto &sequence = idl.value_sequence();
             //     *value = decoded_shared<cc::types::ValueList>(
@@ -140,7 +140,7 @@ namespace cc::idl
             //     break;
             // }
 
-            // case CC::Shared::VariantValueType::VT_KEYVALUEMAP:
+            // case CC::Variant::ValueType::VT_KEYVALUEMAP:
             // {
             //     const auto &sequence = idl.value_keyvaluemap();
             //     *value = decoded_shared<cc::types::KeyValueMap>(
@@ -149,7 +149,7 @@ namespace cc::idl
             //     break;
             // }
 
-            // case CC::Shared::VariantValueType::VT_TAGGEDSEQUENCE:
+            // case CC::Variant::ValueType::VT_TAGGEDSEQUENCE:
             // {
             //     const auto &sequence = idl.value_taggedsequence();
             //     *value = decoded_shared<cc::types::TaggedValueList>(
@@ -164,12 +164,12 @@ namespace cc::idl
     // Encode/decode TaggedValue
 
     void encode(const cc::types::TaggedValue &native,
-                CC::Shared::TaggedValue *idl) noexcept
+                CC::Variant::TaggedValue *idl) noexcept
     {
         encode(native.first, native.second, idl);
     }
 
-    void decode(const CC::Shared::TaggedValue &idl,
+    void decode(const CC::Variant::TaggedValue &idl,
                 cc::types::TaggedValue *native) noexcept
     {
         *native = {idl.tag(), decoded<cc::types::Value>(idl.value())};
@@ -177,13 +177,13 @@ namespace cc::idl
 
     void encode(const cc::types::Tag &tag,
                 const cc::types::Value &value,
-                CC::Shared::TaggedValue *idl) noexcept
+                CC::Variant::TaggedValue *idl) noexcept
     {
         idl->tag(tag.value_or(""));
-        idl->value(encoded<CC::Shared::VariantValue>(value));
+        idl->value(encoded<CC::Variant::Value>(value));
     }
 
-    void decode(const CC::Shared::TaggedValue &idl,
+    void decode(const CC::Variant::TaggedValue &idl,
                 std::string *tag,
                 cc::types::Value *value) noexcept
     {
@@ -195,7 +195,7 @@ namespace cc::idl
     // Encode/decode ValueList
 
     void encode(const cc::types::ValueList &native,
-                CC::Shared::VariantValueList *idl) noexcept
+                CC::Variant::ValueList *idl) noexcept
     {
         idl->list().resize(native.size());
         auto it = idl->list().begin();
@@ -205,7 +205,7 @@ namespace cc::idl
         }
     }
 
-    void decode(const CC::Shared::VariantValueList &idl,
+    void decode(const CC::Variant::ValueList &idl,
                 cc::types::ValueList *native) noexcept
     {
         native->clear();
@@ -216,8 +216,8 @@ namespace cc::idl
         }
     }
 
-    void decode(std::vector<CC::Shared::VariantValue>::const_iterator begin,
-                std::vector<CC::Shared::VariantValue>::const_iterator end,
+    void decode(std::vector<CC::Variant::Value>::const_iterator begin,
+                std::vector<CC::Variant::Value>::const_iterator end,
                 cc::types::ValueList *native) noexcept
     {
         native->clear();
@@ -232,7 +232,7 @@ namespace cc::idl
     // Encode/decode TaggedValueList
 
     void encode(const cc::types::TaggedValueList &native,
-                CC::Shared::TaggedValueList *idl) noexcept
+                CC::Variant::TaggedValueList *idl) noexcept
     {
         idl->list().resize(native.size());
         auto it = idl->list().begin();
@@ -242,19 +242,19 @@ namespace cc::idl
         }
     }
 
-    void decode(const CC::Shared::TaggedValueList &idl,
+    void decode(const CC::Variant::TaggedValueList &idl,
                 cc::types::TaggedValueList *native) noexcept
     {
         native->clear();
         native->reserve(idl.list().size());
-        for (const CC::Shared::TaggedValue &tv : idl.list())
+        for (const CC::Variant::TaggedValue &tv : idl.list())
         {
             decode(tv, &native->emplace_back());
         }
     }
 
-    void decode(std::vector<CC::Shared::TaggedValue>::const_iterator begin,
-                std::vector<CC::Shared::TaggedValue>::const_iterator end,
+    void decode(std::vector<CC::Variant::TaggedValue>::const_iterator begin,
+                std::vector<CC::Variant::TaggedValue>::const_iterator end,
                 cc::types::TaggedValueList *native) noexcept
     {
         native->clear();
@@ -269,7 +269,7 @@ namespace cc::idl
     // Encode/decode KeyValueMap
 
     void encode(const cc::types::KeyValueMap &native,
-                CC::Shared::TaggedValueList *idl) noexcept
+                CC::Variant::TaggedValueList *idl) noexcept
     {
         idl->list().resize(native.size());
         auto it = idl->list().begin();
@@ -279,7 +279,7 @@ namespace cc::idl
         }
     }
 
-    void decode(const CC::Shared::TaggedValueList &idl,
+    void decode(const CC::Variant::TaggedValueList &idl,
                 cc::types::KeyValueMap *native) noexcept
     {
         native->clear();

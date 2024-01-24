@@ -81,10 +81,10 @@ module CC
             Flow flow;
 
             // Time of occurence
-            Shared::Timestamp timestamp;
+            Common::Timestamp timestamp;
 
             // Tag/value pairs indicating custom attributes
-            Shared::TaggedValueList attributes;
+            Variant::TaggedValueList attributes;
         };
 
         //======================================================================

@@ -12,9 +12,9 @@ module CC
 {
     const string NAMESPACE = "CC/";
 
-    module Shared
+    module Common
     {
-        const string NAMESPACE = CC::NAMESPACE + "Shared/";
+        const string NAMESPACE = CC::NAMESPACE + "Common/";
 
         struct Empty
         {

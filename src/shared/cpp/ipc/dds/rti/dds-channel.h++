@@ -7,7 +7,6 @@
 
 #pragma once
 #include "ipc-channel.h++"
-#include "common-types.hpp"  // Generated from `common-types.idl'
 #include <dds/core/policy/CorePolicy.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 

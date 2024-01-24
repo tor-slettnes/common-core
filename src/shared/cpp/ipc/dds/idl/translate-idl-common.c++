@@ -13,12 +13,12 @@ namespace cc::idl
     // Encode/decode Boolean value
 
     void encode(bool native,
-                CC::Shared::BoolValue *idl) noexcept
+                CC::Common::BoolValue *idl) noexcept
     {
         idl->value(native);
     }
 
-    void decode(const CC::Shared::BoolValue &idl,
+    void decode(const CC::Common::BoolValue &idl,
                 bool *native) noexcept
     {
         *native = idl.value();
@@ -28,12 +28,12 @@ namespace cc::idl
     // Encode/decode Unsigned Integer value
 
     void encode(cc::types::largest_uint native,
-                CC::Shared::UnsignedValue *idl) noexcept
+                CC::Common::UnsignedValue *idl) noexcept
     {
         idl->value(native);
     }
 
-    void decode(const CC::Shared::UnsignedValue &idl,
+    void decode(const CC::Common::UnsignedValue &idl,
                 cc::types::largest_uint *native) noexcept
     {
         *native = idl.value();
@@ -43,12 +43,12 @@ namespace cc::idl
     // Encode/decode Signed Integer value
 
     void encode(cc::types::largest_sint native,
-                CC::Shared::SignedValue *idl) noexcept
+                CC::Common::SignedValue *idl) noexcept
     {
         idl->value(native);
     }
 
-    void decode(const CC::Shared::SignedValue &idl,
+    void decode(const CC::Common::SignedValue &idl,
                 cc::types::largest_sint *native) noexcept
     {
         *native = idl.value();
@@ -58,12 +58,12 @@ namespace cc::idl
     // Encode/decode real value
 
     void encode(double native,
-                CC::Shared::RealValue *idl) noexcept
+                CC::Common::RealValue *idl) noexcept
     {
         idl->value(native);
     }
 
-    void decode(const CC::Shared::RealValue &idl,
+    void decode(const CC::Common::RealValue &idl,
                 double *native) noexcept
     {
         *native = idl.value();
@@ -73,13 +73,13 @@ namespace cc::idl
     // Encode/decode Complex value
 
     void encode(const cc::types::complex &native,
-                CC::Shared::ComplexValue *idl) noexcept
+                CC::Common::ComplexValue *idl) noexcept
     {
         idl->real(native.real());
         idl->imag(native.imag());
     }
 
-    void decode(const CC::Shared::ComplexValue &idl,
+    void decode(const CC::Common::ComplexValue &idl,
                 cc::types::complex *native) noexcept
     {
         native->real(idl.real());
@@ -90,14 +90,14 @@ namespace cc::idl
     // Encode/decode Timestamp
 
     void encode(const cc::dt::TimePoint &native,
-                CC::Shared::Timestamp *idl) noexcept
+                CC::Common::Timestamp *idl) noexcept
     {
         timespec tspec = cc::dt::to_timespec(native);
         idl->seconds(tspec.tv_sec);
         idl->nanoseconds(tspec.tv_nsec);
     }
 
-    void decode(const CC::Shared::Timestamp &idl,
+    void decode(const CC::Common::Timestamp &idl,
                 cc::dt::TimePoint *native) noexcept
     {
         *native = cc::dt::to_timepoint(idl.seconds(), idl.nanoseconds());
@@ -107,7 +107,7 @@ namespace cc::idl
     // Encode/decode Duration
 
     void encode(const cc::dt::Duration &native,
-                CC::Shared::Duration *idl) noexcept
+                CC::Common::Duration *idl) noexcept
     {
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(native);
         if (secs > native)
@@ -117,7 +117,7 @@ namespace cc::idl
         idl->nanoseconds(static_cast<std::uint32_t>(nanos.count()));
     }
 
-    void decode(const CC::Shared::Duration &idl,
+    void decode(const CC::Common::Duration &idl,
                 cc::dt::Duration *native) noexcept
     {
         *native = std::chrono::duration_cast<cc::dt::Duration>(
@@ -129,12 +129,12 @@ namespace cc::idl
     // Encode/decode String value
 
     void encode(std::string native,
-                CC::Shared::StringValue *idl) noexcept
+                CC::Common::StringValue *idl) noexcept
     {
         idl->value(native);
     }
 
-    void decode(const CC::Shared::StringValue &idl,
+    void decode(const CC::Common::StringValue &idl,
                 std::string *native) noexcept
     {
         *native = idl.value();

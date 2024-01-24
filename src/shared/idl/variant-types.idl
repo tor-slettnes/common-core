@@ -11,14 +11,14 @@
 
 module CC
 {
-    module Shared
+    module Variant
     {
         //======================================================================
         // Enumerated data types
 
         typedef string Tag;
 
-        enum VariantValueType
+        enum ValueType
         {
             VT_NONE,
             VT_BOOL,
@@ -38,7 +38,7 @@ module CC
 
         const uint32 MAX_VALUES = 256;
 
-        union VariantValue switch(VariantValueType)
+        union Value switch(ValueType)
         {
         case VT_BOOL:
             boolean value_bool;
@@ -51,15 +51,15 @@ module CC
         case VT_REAL:
             double value_real;
         case VT_COMPLEX:
-            ComplexValue value_complex;
+            Common::ComplexValue value_complex;
         case VT_STRING:
             string value_string;
         case VT_BYTEARRAY:
             sequence<octet> value_bytearray;
         case VT_TIMEPOINT:
-            Timestamp value_timestamp;
+            Common::Timestamp value_timestamp;
         case VT_DURATION:
-            Duration value_duration;
+            Common::Duration value_duration;
         // case VT_SEQUENCE:
         //     sequence<Value,MAX_VALUES> value_sequence;
         // case VT_KEYVALUEMAP:
@@ -68,15 +68,15 @@ module CC
         //     sequence<TaggedValue,MAX_VALUES> value_taggedsequence;
         };
 
-        struct VariantValueList
+        struct ValueList
         {
-            sequence<VariantValue,MAX_VALUES> list;
+            sequence<Value,MAX_VALUES> list;
         };
 
         struct TaggedValue
         {
             Tag tag;
-            VariantValue value;
+            Value value;
         };
 
         struct TaggedValueList

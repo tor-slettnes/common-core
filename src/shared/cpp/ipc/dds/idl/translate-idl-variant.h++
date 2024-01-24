@@ -15,25 +15,25 @@ namespace cc::idl
     // Encode/decode VariantValue
 
     void encode(const cc::types::Value &native,
-                CC::Shared::VariantValue *idl) noexcept;
+                CC::Variant::Value *idl) noexcept;
 
-    void decode(const CC::Shared::VariantValue &idl,
+    void decode(const CC::Variant::Value &idl,
                 cc::types::Value *native) noexcept;
 
     //==========================================================================
     // Encode/decode TaggedValue
 
     void encode(const cc::types::TaggedValue &native,
-                CC::Shared::TaggedValue *idl) noexcept;
+                CC::Variant::TaggedValue *idl) noexcept;
 
-    void decode(const CC::Shared::TaggedValue &idl,
+    void decode(const CC::Variant::TaggedValue &idl,
                 cc::types::TaggedValue *native) noexcept;
 
     void encode(const cc::types::Tag &tag,
                 const cc::types::Value &value,
-                CC::Shared::TaggedValue *idl) noexcept;
+                CC::Variant::TaggedValue *idl) noexcept;
 
-    void decode(const CC::Shared::TaggedValue &idl,
+    void decode(const CC::Variant::TaggedValue &idl,
                 std::string *tag,
                 cc::types::Value *value) noexcept;
 
@@ -41,35 +41,35 @@ namespace cc::idl
     // Encode/decode ValueList
 
     void encode(const cc::types::ValueList &native,
-                CC::Shared::VariantValueList *idl) noexcept;
+                CC::Variant::ValueList *idl) noexcept;
 
-    void decode(const CC::Shared::VariantValueList &idl,
+    void decode(const CC::Variant::ValueList &idl,
                 cc::types::ValueList *native) noexcept;
 
-    void decode(std::vector<CC::Shared::VariantValue>::const_iterator begin,
-                std::vector<CC::Shared::VariantValue>::const_iterator end,
+    void decode(std::vector<CC::Variant::Value>::const_iterator begin,
+                std::vector<CC::Variant::Value>::const_iterator end,
                 cc::types::ValueList *native) noexcept;
 
     //==========================================================================
     // Encode/decode TaggedValueList
 
     void encode(const cc::types::TaggedValueList &native,
-                CC::Shared::TaggedValueList *idl) noexcept;
+                CC::Variant::TaggedValueList *idl) noexcept;
 
-    void decode(const CC::Shared::TaggedValueList &idl,
+    void decode(const CC::Variant::TaggedValueList &idl,
                 cc::types::TaggedValueList *native) noexcept;
 
-    void decode(std::vector<CC::Shared::TaggedValue>::const_iterator begin,
-                std::vector<CC::Shared::TaggedValue>::const_iterator end,
+    void decode(std::vector<CC::Variant::TaggedValue>::const_iterator begin,
+                std::vector<CC::Variant::TaggedValue>::const_iterator end,
                 cc::types::TaggedValueList *native) noexcept;
 
     //==========================================================================
     // Encode/decode KeyValueMap
 
     void encode(const cc::types::KeyValueMap &native,
-                CC::Shared::TaggedValueList *idl) noexcept;
+                CC::Variant::TaggedValueList *idl) noexcept;
 
-    void decode(const CC::Shared::TaggedValueList &idl,
+    void decode(const CC::Variant::TaggedValueList &idl,
                 cc::types::KeyValueMap *native) noexcept;
 
 }  // namespace cc::idl

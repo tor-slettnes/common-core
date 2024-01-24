@@ -8,7 +8,7 @@
 #ifndef _demo_types_idl_
 #define _demo_types_idl_
 
-// Bring in common types and symbols from Shared Components.
+// Bring in common types and symbols
 #include "common-types.idl"
 #include "variant-types.idl"
 
@@ -42,10 +42,10 @@ module CC
             string implementation;
 
             // When was the greeter created
-            CC::Shared::Timestamp birth;
+            CC::Common::Timestamp birth;
 
             // Arbitrary key/value pairs associated with the greeting
-            CC::Shared::TaggedValueList data;
+            CC::Variant::TaggedValueList data;
         };
 
 
@@ -78,7 +78,7 @@ module CC
         struct TimeData
         {
             // Common timestamp
-            CC::Shared::Timestamp timestamp;
+            CC::Common::Timestamp timestamp;
 
             // Local calendar time
             TimeStruct local_time;
