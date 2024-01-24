@@ -22,7 +22,7 @@ message Details
     // One of the error domains listed below.
     Domain domain = 1;
 
-    // Domain specific origin, e.g. "Linux", "SwitchboardService" or "MCB".
+    // Domain specific origin, e.g. "Linux", "MyApplication", "HTTP"
     string origin = 2;
 
     // Priority/Severity level
@@ -35,11 +35,14 @@ message Details
     // This is normally unique within each domain, regardless of origin.
     string symbol = 5;
 
+    // Resulting execution flow
+    Flow flow = 6;
+
     // Time of occurence
-    google.protobuf.Timestamp timestamp = 6;
+    google.protobuf.Timestamp timestamp = 7;
 
     // Tag/value pairs indicating error attributes
-    repeated CC.Variant.Value attributes = 7;
+    repeated CC.Variant.Value attributes = 8;
 
     // Description of error, possibly expanded with attribute values.
     string text = 15;
@@ -48,11 +51,19 @@ message Details
 enum Domain
 {
     DOMAIN_NONE        = 0; // No error
-    DOMAIN_SERVICE     = 1; // Error from application, name indicated in "origin"
+    DOMAIN_APPLICATION = 1; // Error from application, name indicated in "origin"
     DOMAIN_SYSTEM      = 2; // OS errors, origin indicates code space (e.g. errno)
-    DOMAIN_SIGNAL      = 3; // Process signals (see "kill -l")
-    DOMAIN_PERIPHERAL  = 4; // Error code from a device, name indicated in "origin"
-    DOMAIN_MAPPED      = 5; // Well-known events, mapped via EventService.
+    DOMAIN_PROCESS     = 3; // Process exit; see `kill -l`  to interpret `code`/`symbol`
+    DOMAIN_PERIPHERAL  = 4; // Error code from a subsystem, name indicated in "origin"
+    DOMAIN_SERVICE     = 5; // Error code from a (network) service (e.g. HTTP, SMTP, ...)
+}
+
+enum Flow
+{
+    FLOW_NONE      = 0;         // No interruption
+    FLOW_PAUSED    = 1;         // Execution suspended; may resume.
+    FLOW_CANCELLED = 2;         // Cancelled; state unchanged
+    FLOW_ABORTED   = 3;         // Aborted underway; state may have changed
 }
 
 enum Level

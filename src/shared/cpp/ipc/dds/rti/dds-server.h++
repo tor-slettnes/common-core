@@ -6,29 +6,28 @@
 //==============================================================================
 
 #pragma once
-#include "ipc-channel.h++"
-
 #include <dds/rpc/ServerParams.hpp>
 #include <dds/rpc/Server.hpp>
 
 namespace cc::dds
 {
     //==========================================================================
-    // DDS service Implementation template
+    // DDS server
 
-    class DDS_Server : public ::dds::rpc::Server,
-                       public cc::ipc::Channel
+    class Server : public ::dds::rpc::Server
     {
         // Convencience alias
-        using This = DDS_Server;
+        using This = Server;
         using Super = ::dds::rpc::Server;
 
     public:
-        DDS_Server(const std::string &identity, uint thread_pool_size = 4);
+        Server(uint thread_pool_size = 2);
+
+        ~Server();
 
     public:
-        void initialize();
-        void deinitialize();
+        virtual void initialize();
+        virtual void deinitialize();
 
     private:
         ::dds::rpc::ServerParams server_params(uint thread_pool_size) const;

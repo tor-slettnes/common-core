@@ -8,12 +8,12 @@
 #pragma once
 #include "argparse/server.h++"
 
-namespace cc::argparse
+namespace cc::dds
 {
-    class DDSServiceOptions : public ServerOptions
+    class ServerOptions : public argparse::ServerOptions
     {
-        using This = DDSServiceOptions;
-        using Super = ServerOptions;
+        using This = ServerOptions;
+        using Super = argparse::ServerOptions;
 
     public:
         using Super::Super;

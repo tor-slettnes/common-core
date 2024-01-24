@@ -16,18 +16,18 @@
 namespace cc::dds
 {
     template <class RequestType, class ResponseType>
-    class DDS_Requester : public DDS_Channel,
-                          public rti::request::Requester<RequestType, ResponseType>
+    class Requester : public Channel,
+                      public rti::request::Requester<RequestType, ResponseType>
     {
-        using This = DDS_Requester;
-        using Requester = rti::request::Requester<RequestType, ResponseType>;
+        using This = Requester;
+        using BaseRequester = rti::request::Requester<RequestType, ResponseType>;
 
     public:
-        DDS_Requester(const std::string &request_id,
-                      int domain_id,
-                      const cc::dt::Duration &default_timeout = std::chrono::seconds(10))
-            : DDS_Channel(TYPE_NAME_FULL(This), request_id, domain_id),
-              Requester(this->requester_params()),
+        Requester(const std::string &request_id,
+                  int domain_id,
+                  const cc::dt::Duration &default_timeout = std::chrono::seconds(10))
+            : Channel(TYPE_NAME_FULL(This), request_id, domain_id),
+              BaseRequester(this->requester_params()),
               default_timeout_(default_timeout)
         {
         }

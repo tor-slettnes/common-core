@@ -14,21 +14,20 @@
 
 namespace cc::dds
 {
-    using Empty = CC::Shared::Empty;
-
-    template <class RequestType = Empty, class ResponseType = Empty>
-    class DDS_Responder : public DDS_Channel,
-                          public rti::request::SimpleReplier<RequestType, ResponseType>
+    template <class RequestType = CC::Shared::Empty,
+              class ResponseType = CC::Shared::Empty>
+    class Responder : public Channel,
+                      public rti::request::SimpleReplier<RequestType, ResponseType>
     {
-        using This = DDS_Responder;
-        using Replier = rti::request::SimpleReplier<RequestType, ResponseType>;
+        using This = Responder;
+        using BaseResponder = rti::request::SimpleReplier<RequestType, ResponseType>;
 
     public:
-        DDS_Responder(const std::string &request_id,
-                      int domain_id,
-                      std::function<ResponseType(RequestType)> &&handler)
-            : DDS_Channel(TYPE_NAME_FULL(This), request_id, domain_id),
-              Replier(this->replier_params(), std::move(handler))
+        Responder(const std::string &request_id,
+                  int domain_id,
+                  std::function<ResponseType(RequestType)> &&handler)
+            : Channel(TYPE_NAME_FULL(This), request_id, domain_id),
+              BaseResponder(this->replier_params(), std::move(handler))
         {
         }
 

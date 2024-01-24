@@ -6,6 +6,7 @@
 #===============================================================================
 
 ### Abstract service interface, agnostic to communications bus
-add_subdirectory(api)
+add_subdirectory(base)
 add_subdirectory(dds)
 add_subdirectory(google)
+add_subdirectory(zeromq)

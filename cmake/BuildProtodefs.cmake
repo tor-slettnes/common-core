@@ -49,16 +49,26 @@ endforeach()
 
 ### Load ProtoBuf and gRPC support modules
 find_package(Protobuf REQUIRED)
-find_package(grpc REQUIRED)
+if(BUILD_GRPC)
+  find_package(grpc REQUIRED)
+endif()
+
 
 ### Rules to generate .cc and .h files
-protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${SOURCES})
-grpc_generate_cpp(GRPC_SRC GRPC_HDR ${CMAKE_CURRENT_BINARY_DIR} ${SOURCES})
+if (BUILD_CPP)
+  protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${SOURCES})
+  if(BUILD_GRPC)
+    grpc_generate_cpp(GRPC_SRC GRPC_HDR ${CMAKE_CURRENT_BINARY_DIR} ${SOURCES})
+  endif()
+endif()
+
 
 ### Python support
 if (BUILD_PYTHON)
   protobuf_generate_python(PROTO_PY ${SOURCES})
-  grpc_generate_python(GRPC_PY ${CMAKE_CURRENT_BINARY_DIR} ${SOURCES})
+  if (BUILD_GRPC)
+    grpc_generate_python(GRPC_PY ${CMAKE_CURRENT_BINARY_DIR} ${SOURCES})
+  endif()
   install(FILES ${PROTO_PY} ${GRPC_PY} DESTINATION ${PYTHON_INSTALL_DIR})
 endif()
 

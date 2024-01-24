@@ -9,7 +9,8 @@
 #include "demo-api.h++"
 #include "demo-signals.h++"
 #include "protobuf-demo-types.h++"
-#include "protobuf-inline-types.h++"
+#include "protobuf-message.h++"
+#include "protobuf-inline.h++"
 
 namespace cc::demo::grpc
 {
@@ -22,7 +23,7 @@ namespace cc::demo::grpc
         // These will re-emit the decoded payload as signals within this client
         // process.
 
-        this->addHandler(
+        this->add_handler(
             CC::Demo::Signal::kGreeting,
             [&](const CC::Demo::Signal &signal) {
                 signal_greeting.emit(
@@ -31,7 +32,7 @@ namespace cc::demo::grpc
                     protobuf::decoded<Greeting>(signal.greeting()));
             });
 
-        this->addHandler(
+        this->add_handler(
             CC::Demo::Signal::kTime,
             [](const CC::Demo::Signal &signal) {
                 signal_time.emit(
@@ -41,9 +42,20 @@ namespace cc::demo::grpc
 
     void ClientImpl::say_hello(const Greeting &greeting)
     {
-        this->call_check(
-            &Stub::say_hello,
-            protobuf::encoded<CC::Demo::Greeting>(greeting));
+        ::grpc::ClientContext cxt;
+        CC::Demo::Greeting request;
+        google::protobuf::Empty reply;
+
+        protobuf::encode(greeting, &request);
+        log_info("Sending encoded encoded greeting: ", request);
+
+        ::grpc::Status status = this->stub->say_hello(&cxt, request, &reply);
+
+        log_info("Received gRPC status: ", status.error_code());
+
+        // this->call_check(
+        //     &Stub::say_hello,
+        //     protobuf::encoded<CC::Demo::Greeting>(greeting));
     }
 
     TimeData ClientImpl::get_current_time()

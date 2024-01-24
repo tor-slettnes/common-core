@@ -35,8 +35,5 @@ endif()
 set(TARGET cc_shared_platform)
 set(LIB_TYPE STATIC)
 
-set(SOURCES
-  application/init.c++)
-
 include(BuildLibrary)
 

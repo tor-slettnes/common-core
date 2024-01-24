@@ -20,32 +20,28 @@ namespace cc::dds
     // DDS service Implementation template
 
     template <class ServiceType>
-    class DDS_Service : public DDS_Channel,
-                        public ServiceType
+    class Service : public Channel,
+                    public ServiceType
     {
     protected:
         template <class RequestHandler>
-        DDS_Service(
+        Service(
             const ::dds::rpc::Server &server,
-            int domain_id,
             const std::string &service_name,
+            int domain_id,
             const std::shared_ptr<RequestHandler> &request_handler)
-            : DDS_Channel(TYPE_NAME_FULL(ServiceType), service_name, domain_id),
+            : Channel(TYPE_NAME_FULL(ServiceType), service_name, domain_id),
               ServiceType(request_handler, server, this->service_params())
         {
-            logf_debug("DDS_Service constructor");
+            logf_debug("dds::Service<%s> constructor", TYPE_NAME_BASE(ServiceType));
         }
 
         virtual inline ::dds::rpc::ServiceParams service_params() const
         {
             ::dds::rpc::ServiceParams params(this->get_participant());
-            params.service_name(this->instance_name());
+            params.service_name(this->channel_name());
             return params;
         }
-
-    public:
-        virtual void initialize() {}
-        virtual void deinitialize() {}
     };
 
 }  // namespace cc::dds

@@ -15,18 +15,14 @@ namespace cc::demo::dds
     // @class Service
     // @brief Handle requests from DemoService clients
 
-    class Service
-        : public cc::dds::DDS_Service<CC::Demo::DemoServiceService>
+    class Service : public cc::dds::Service<CC::Demo::DemoServiceService>
     {
-        using Super = cc::dds::DDS_Service<CC::Demo::DemoServiceService>;
+        using Super = cc::dds::Service<CC::Demo::DemoServiceService>;
 
     public:
         Service(const ::dds::rpc::Server &server,
                 int domain_id,
                 const std::shared_ptr<API> &api);
-
-        void initialize() override;
-        void deinitialize() override;
     };
 
 }  // namespace cc::demo::dds

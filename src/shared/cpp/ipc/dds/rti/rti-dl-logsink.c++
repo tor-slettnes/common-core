@@ -14,9 +14,9 @@ namespace cc::logging
         : Super(),
           dist_logger_(nullptr)
     {
-        this->options_.setApplicationKind(identity.c_str());
-        this->options_.setDomainId(domain_id);
-        this->options_.setEchoToStdout(false);
+        this->dl_options_.setApplicationKind(identity.c_str());
+        this->dl_options_.setDomainId(domain_id);
+        this->dl_options_.setEchoToStdout(false);
         this->set_threshold(this->threshold());
     }
 
@@ -25,14 +25,14 @@ namespace cc::logging
         Super::set_threshold(threshold);
         if (DDS_Long filterlevel = This::levelmap.get(threshold, 0))
         {
-            this->options_.setFilterLevel(filterlevel);
+            this->dl_options_.setFilterLevel(filterlevel);
         }
     }
 
     void RTILogger::open()
     {
         Super::open();
-        if (!RTI_DLDistLogger::setOptions(this->options_))
+        if (!RTI_DLDistLogger::setOptions(this->dl_options_))
         {
             throw std::runtime_error("Failed to set options for DDS logging");
         }

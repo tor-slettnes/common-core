@@ -16,9 +16,9 @@
 #define LOG_TO_DDS_SINK "log to dds"
 #define LOG_TO_DL_SINK  "log to distributed logger"
 
-namespace cc::argparse
+namespace cc::dds
 {
-    void DDSServiceOptions::add_log_options()
+    void ServerOptions::add_log_options()
     {
         Super::add_log_options();
 
@@ -37,12 +37,12 @@ namespace cc::argparse
 #endif
     }
 
-    void DDSServiceOptions::register_loggers()
+    void ServerOptions::register_loggers()
     {
         Super::register_loggers();
         if (this->log_to_dds)
         {
-            if (auto sink = logging::DDSLogger::create_shared(
+            if (auto sink = DDSLogger::create_shared(
                     platform::path->exec_name(true),  // identity
                     this->domain_id))
             {
@@ -57,7 +57,7 @@ namespace cc::argparse
 #ifdef USE_RTI_RTI_LOGGER
         if (this->log_to_dl)
         {
-            if (auto sink = logging::DDSLogger::create_shared(
+            if (auto sink = RTILogger::create_shared(
                     platform::path->exec_name(true),  // identity
                     this->domain_id))
             {

@@ -68,7 +68,8 @@
 
 #pragma once
 #include "message/builder.h++"
-#include "dispatcher.h++"
+#include "dispatchers/sync-dispatcher.h++"
+#include "dispatchers/async-dispatcher.h++"
 
 //==============================================================================
 /// Wrapper macros for generating & logging a message in one step.  Macros are
@@ -80,31 +81,33 @@
 /// "<<" output stream operator. Frequently, this means the appropriate header
 /// file needs to be included.
 
-#define custom_log_message(level, timepoint, path, lineno, function) \
-    cc::logging::MessageBuilder::create_shared(                      \
-        &cc::logging::message_dispatcher,                            \
-        log_scope,                                                   \
-        level,                                                       \
-        timepoint,                                                   \
-        path,                                                        \
-        lineno,                                                      \
+#define custom_log_msg(level, flow, timepoint, path, lineno, function) \
+    cc::logging::MessageBuilder::create_shared(                        \
+        &cc::logging::message_dispatcher,                              \
+        log_scope,                                                     \
+        level,                                                         \
+        flow,                                                          \
+        timepoint,                                                     \
+        path,                                                          \
+        lineno,                                                        \
         function)
 
-#define default_log_message(level) \
-    custom_log_message(            \
-        level,                     \
-        cc::dt::Clock::now(),      \
-        __builtin_FILE(),          \
-        __builtin_LINE(),          \
+#define default_log_msg(level)  \
+    custom_log_msg(             \
+        level,                  \
+        cc::status::Flow::NONE, \
+        cc::dt::Clock::now(),   \
+        __builtin_FILE(),       \
+        __builtin_LINE(),       \
         __builtin_FUNCTION())
 
-#define log_message(level, ...) default_log_message(level)->add(__VA_ARGS__).dispatch()
+#define log_message(level, ...) default_log_msg(level)->add(__VA_ARGS__).dispatch()
 #define log_trace(...)          log_message(cc::status::Level::TRACE, __VA_ARGS__)
 #define log_debug(...)          log_message(cc::status::Level::DEBUG, __VA_ARGS__)
 #define log_info(...)           log_message(cc::status::Level::INFO, __VA_ARGS__)
 #define log_notice(...)         log_message(cc::status::Level::NOTICE, __VA_ARGS__)
 #define log_warning(...)        log_message(cc::status::Level::WARNING, __VA_ARGS__)
-#define log_error(...)          log_message(cc::status::Level::FAILED, __VA_ARGS__)
+#define log_error(...)          log_message(cc::status::Level::ERROR, __VA_ARGS__)
 #define log_critical(...)       log_message(cc::status::Level::CRITICAL, __VA_ARGS__)
 #define log_fatal(...)          log_message(cc::status::Level::FATAL, __VA_ARGS__)
 
@@ -112,7 +115,7 @@
 /// Arguments must be supported by the "<<" output stream operator.  See
 /// [string/format.h++](../string/format.h++) for details.
 
-#define logf_message(level, ...) default_log_message(level)->format(__VA_ARGS__).dispatch()
+#define logf_message(level, ...) default_log_msg(level)->format(__VA_ARGS__).dispatch()
 #define logf_trace(...)          logf_message(cc::status::Level::TRACE, __VA_ARGS__)
 #define logf_debug(...)          logf_message(cc::status::Level::DEBUG, __VA_ARGS__)
 #define logf_info(...)           logf_message(cc::status::Level::INFO, __VA_ARGS__)
@@ -136,5 +139,6 @@
 
 namespace cc::logging
 {
-    extern Dispatcher message_dispatcher;
-}
+    extern SyncDispatcher message_dispatcher;
+    extern AsyncDispatcher structured_dispatcher;
+}  // namespace cc::logging

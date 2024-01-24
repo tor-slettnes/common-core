@@ -5,6 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(types)
-add_subdirectory(server)
-add_subdirectory(client)
+if(BUILD_PROTOBUF)
+  add_subdirectory(types)
+endif()
+
+if(BUILD_GRPC)
+  add_subdirectory(server)
+  add_subdirectory(client)
+endif()
+

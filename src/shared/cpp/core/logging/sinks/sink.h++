@@ -12,6 +12,7 @@
 
 namespace cc::logging
 {
+
     //==========================================================================
     /// \class Sink
     /// \brief Abstract data receiver

@@ -83,6 +83,7 @@ namespace cc::grpc
 
         void log_status(const Status &status,
                         const std::string &operation,
+                        status::Flow flow = status::Flow::NONE,
                         const fs::path &path = __builtin_FILE(),
                         const int &line = __builtin_LINE(),
                         const std::string &function = __builtin_FUNCTION());
@@ -97,12 +98,14 @@ namespace cc::grpc
 
         Status failure(const std::exception &exception,
                        const std::string &operation,
+                       status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
                        const int &line = __builtin_LINE(),
                        const std::string &function = __builtin_FUNCTION());
 
         Status failure(std::exception_ptr eptr,
                        const std::string &operation,
+                       status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
                        const int &line = __builtin_LINE(),
                        const std::string &function = __builtin_FUNCTION());
@@ -110,6 +113,7 @@ namespace cc::grpc
         Status failure(const std::exception &exception,
                        const google::protobuf::Message &request,
                        const std::string &peer = {},
+                       status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
                        const int &line = __builtin_LINE(),
                        const std::string &function = __builtin_FUNCTION());
@@ -117,6 +121,7 @@ namespace cc::grpc
         Status failure(std::exception_ptr eptr,
                        const google::protobuf::Message &request,
                        const std::string &peer = {},
+                       status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
                        const int &line = __builtin_LINE(),
                        const std::string &function = __builtin_FUNCTION());

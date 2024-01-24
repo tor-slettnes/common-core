@@ -406,13 +406,13 @@ namespace cc::str
         }
     }
 
-    void Formatter::appendvalue(const std::vector<std::uint8_t> &value,
-                                const Modifiers &modifiers)
-    {
-        return this->appendvalue(
-            std::string_view(reinterpret_cast<const char *>(value.data()), value.size()),
-            modifiers);
-    }
+    // void Formatter::appendvalue(const std::vector<std::uint8_t> &value,
+    //                             const Modifiers &modifiers)
+    // {
+    //     return this->appendvalue(
+    //         std::string_view(reinterpret_cast<const char *>(value.data()), value.size()),
+    //         modifiers);
+    // }
 
     void Formatter::appendvalue(int *nargs,
                                 const Formatter::Modifiers &modifiers)

@@ -9,5 +9,6 @@
 
 namespace cc::logging
 {
-    Dispatcher message_dispatcher;
+    SyncDispatcher message_dispatcher;
+    AsyncDispatcher structured_dispatcher;
 }

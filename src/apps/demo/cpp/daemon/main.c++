@@ -10,11 +10,15 @@
 #include "application/init.h++"  // Common init routines
 
 #ifdef USE_DDS
-#include "demo-dds-server.h++"  // DDS server implementation
+#include "demo-dds-run.h++"  // DDS server implementation
 #endif
 
 #ifdef USE_GRPC
-#include "demo-grpc-server.h++"  // gRPC server implementation
+#include "demo-grpc-run.h++"  // gRPC server implementation
+#endif
+
+#ifdef USE_ZMQ
+#include "demo-zmq-run.h++"     // ZeroMQ+ProtoBuf server implementation
 #endif
 
 #include <memory>
@@ -56,6 +60,18 @@ int main(int argc, char** argv)
             api_provider,
             cc::demo::options->identity,
             cc::demo::options->domain_id);
+    }
+#endif
+
+#ifdef USE_ZMQ
+    if (cc::demo::options->enable_zmq)
+    {
+        log_debug("Spawning ZMQ server");
+        server_threads.emplace_back(
+            cc::demo::zmq::run_zmq_service,
+            api_provider,
+            cc::demo::zmq::CHANNEL_NAME,
+            "");
     }
 #endif
 

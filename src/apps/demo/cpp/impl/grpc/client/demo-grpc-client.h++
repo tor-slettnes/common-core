@@ -29,7 +29,7 @@ namespace cc::demo::grpc
         ClientImpl(const std::string &identity,
                    const std::string &host = "",
                    Args &&...args)
-            : demo::API(identity, TYPE_NAME_BASE(This)),
+            : demo::API(identity, "gRPC Client"),
               ClientImplBase(host, std::forward<Args>(args)...)
         {
         }

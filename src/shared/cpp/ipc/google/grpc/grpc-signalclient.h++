@@ -14,9 +14,8 @@
 #include "thread/binaryevent.h++"
 #include "signal_types.pb.h"
 #include "protobuf-message.h++"
+#include "protobuf-signal.h++"
 
-#include <unordered_set>
-#include <set>
 #include <functional>
 
 namespace cc::grpc
@@ -55,14 +54,13 @@ namespace cc::grpc
     ///
 
     template <class ServiceT, class SignalT>
-    class SignalWatchClient : public ClientWrapper<ServiceT>
+    class SignalWatchClient : public ClientWrapper<ServiceT>,
+                              public protobuf::SignalReceiver<SignalT>
     {
         using This = SignalWatchClient;
         using Super = ClientWrapper<ServiceT>;
 
     protected:
-        using Callback = std::function<void(const SignalT &signal)>;
-        using SignalMap = std::unordered_map<typename SignalT::SignalCase, Callback>;
         using SignalReader = std::unique_ptr<::grpc::ClientReader<SignalT>>;
 
     protected:
@@ -80,20 +78,6 @@ namespace cc::grpc
         }
 
     protected:
-        /// @brief
-        ///     Override in derived classes to set up signal handlers.
-        inline virtual void initialize()
-        {
-            this->addHandler(static_cast<typename SignalT::SignalCase>(0),
-                             std::bind(&This::on_init_complete, this));
-        }
-
-        inline virtual void deinitialize()
-        {
-            this->slots.clear();
-        }
-
-    protected:
         /// @brief Start watching for signals from server.
         ///
         /// @note
@@ -102,7 +86,7 @@ namespace cc::grpc
         ///     to ensure the corresponding Signal() messages are mapped to
         ///     corresponding signals on the client side before invoking this
         ///     method, so that any initial values are captured.  In other
-        ///     words, make the appropriate `addHandler()` invocations prior
+        ///     words, make the appropriate `add_handler()` invocations prior
         ///     to `start_watching()`.
         ///
         /// @note
@@ -128,7 +112,7 @@ namespace cc::grpc
         inline void stop_watching()
         {
             this->watching = false;
-            this->completionEvent.cancel();
+            this->completion_event.cancel();
 
             if (auto cxt = this->watcher_context)
             {
@@ -139,25 +123,6 @@ namespace cc::grpc
             {
                 this->watch_thread.join();
             }
-        }
-
-        /// @brief Add a callback handler for a specific Signal type
-        /// @param[in] signalCase
-        ///     Enumerated index of a specific signal within the protobuf
-        ///     `Signal` message, i.e. its number within the `oneof` clause.
-        /// @param[in] callback
-        ///     Method that will be invoked to handle corresponding Signal
-        ///     messages from the gRPC stream as they are received from the
-        ///     server. Normally this method will decode the corresponding field
-        ///     from within the message and emit the result as a local Signal or
-        ///     MappedSignal within the client process, thereby mirroring the
-        ///     original signal that was emitted within the server.
-        virtual inline void addHandler(
-            typename SignalT::SignalCase signalCase,
-            const Callback &callback)
-        {
-            std::lock_guard lck(this->slots_mtx);
-            this->slots.emplace(signalCase, callback);
         }
 
         /// @brief
@@ -177,7 +142,7 @@ namespace cc::grpc
         ///    `true` if and only if the signal cache was received from the server
         inline bool wait_complete(const steady::TimePoint &deadline)
         {
-            return this->completionEvent.wait_until(deadline);
+            return this->completion_event.wait_until(deadline);
         }
 
         /// @brief
@@ -195,28 +160,6 @@ namespace cc::grpc
         }
 
     protected:
-        virtual inline CC::Signal::Filter signal_filter()
-        {
-            std::lock_guard lck(this->slots_mtx);
-            CC::Signal::Filter filter;
-            filter.set_polarity(true);
-            for (const auto &[index, callback] : this->slots)
-            {
-                filter.add_indices(index);
-            }
-            return filter;
-        }
-
-        virtual inline void handleSignal(const SignalT &msg)
-        {
-            std::lock_guard lck(this->slots_mtx);
-            typename SignalT::SignalCase signalCase = msg.signal_case();
-            auto it = this->slots.find(signalCase);
-            if (it != this->slots.end())
-            {
-                (it->second)(msg);
-            }
-        }
 
         inline void keep_watching()
         {
@@ -248,7 +191,7 @@ namespace cc::grpc
                 SignalReader reader = this->stub->watch(cxt.get(), filter);
                 while (reader->Read(&msg))
                 {
-                    this->handleSignal(msg);
+                    this->process_signal(msg);
                 }
 
                 reader->Finish();
@@ -268,10 +211,10 @@ namespace cc::grpc
             this->watch(this->signal_filter());
         }
 
-        inline void on_init_complete()
+        inline void on_init_complete() override
         {
-            logf_trace("Got completion, setting completionEvent();");
-            this->completionEvent.set();
+            logf_trace("Got completion, setting completion_event();");
+            this->completion_event.set();
         }
 
     private:
@@ -279,11 +222,9 @@ namespace cc::grpc
 
     protected:
         steady::TimePoint watch_start;
-        SignalMap slots;
-        std::mutex slots_mtx;
         std::thread watch_thread;
         std::shared_ptr<::grpc::ClientContext> watcher_context;
-        types::BinaryEvent completionEvent;
+        types::BinaryEvent completion_event;
     };
 
 }  // namespace cc::grpc

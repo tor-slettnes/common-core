@@ -113,10 +113,6 @@ namespace cc
         ///     Method to invoke
         /// \param[in] interval
         ///     Interval between invocations
-        /// \param[in] count
-        ///     Number of invocations; 0 is infinite.
-        /// \param[in] retries
-        ///     Maximum number of invocation failures to allow before unscheduling task.
         /// \param[in] align
         ///     TimePoint alignment, i.e., when the first invocation takes place. Use
         ///       - \p ALIGN_START to invoke the task as soon as it added to the scheduler,
@@ -125,22 +121,26 @@ namespace cc
         ///         (technically, from midnight January 1, 1970, UTC, a.k.a. epoch).
         ///       - \p ALIGN_LOCAL to align invocations to midnight, local time (technically,
         ///         epoch minus the current local timezone offset).
+        /// \param[in] loglevel
+        ///     Verbosity at which task invocations are logged
+        /// \param[in] count
+        ///     Number of invocations; 0 is infinite.
+        /// \param[in] retries
+        ///     Maximum number of invocation failures to allow before unscheduling task.
         /// \param[in] catchup
         ///     Whether to immediately reschedule tasks that could not be executed in their
         ///     specified timeslot (because a prior invocation task took too long, or or due to
         ///     system load). Using this could lead to starvation.
-        /// \param[in] loglevel
-        ///     Verbosity at which task invocations are logged
         /// \return
         ///     Reference to the scheduled task
         Task &add(const std::string &id,
                   const Invocation &invocation,
                   const dt::Duration &interval,
                   const Alignment align = ALIGN_NEXT,
+                  status::Level loglevel = status::Level::DEBUG,
                   uint count = 0,
                   uint retries = 0,
-                  bool catchup = false,
-                  status::Level loglevel = status::Level::DEBUG);
+                  bool catchup = false);
 
         /// \fn add_if_missing
         /// \brief Add a scheduled task if the specified ID does not already exist. \sa add
@@ -148,10 +148,10 @@ namespace cc
                              const Invocation &invocation,
                              const dt::Duration &interval,
                              const Alignment align = ALIGN_NEXT,
+                             status::Level loglevel = status::Level::DEBUG,
                              uint count = 0,
                              uint retries = 0,
-                             bool catchup = false,
-                             status::Level loglevel = status::Level::DEBUG);
+                             bool catchup = false);
 
         /// \brief Schedule a task/method to be invoked at specified time interval
         bool remove(const std::string &id);

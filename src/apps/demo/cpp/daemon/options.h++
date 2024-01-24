@@ -6,11 +6,10 @@
 //==============================================================================
 
 #pragma once
-#include "implementations.h++"
 
 #if USE_DDS
 #include "dds-options-server.h++"
-using OptionsBase = cc::argparse::DDSServiceOptions;
+using OptionsBase = cc::dds::ServerOptions;
 
 #else
 #include "argparse/server.h++"
@@ -39,6 +38,7 @@ namespace cc::demo
     public:
         bool enable_grpc;
         bool enable_dds;
+        bool enable_zmq;
     };
 
     extern std::unique_ptr<Options> options;

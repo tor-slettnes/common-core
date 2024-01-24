@@ -39,7 +39,7 @@ namespace cc::logging
         static const types::ValueMap<status::Level, DDS_Long> levelmap;
 
     private:
-        RTI_DLOptions options_;
+        RTI_DLOptions dl_options_;
         RTI_DLDistLogger *dist_logger_;
     };
 

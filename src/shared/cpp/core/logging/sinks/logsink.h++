@@ -8,7 +8,6 @@
 #pragma once
 #include "sink.h++"
 #include "status/event.h++"
-#include "status/level.h++"
 
 #include <string>
 

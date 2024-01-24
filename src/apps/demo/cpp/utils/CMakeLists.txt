@@ -15,3 +15,7 @@ if(BUILD_GRPC)
   add_subdirectory(grpc-tool)
 endif()
 
+if(BUILD_ZMQ)
+  add_subdirectory(zmq-tool)
+endif()
+

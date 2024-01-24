@@ -14,8 +14,8 @@
 
 namespace cc::demo::dds
 {
-    Publisher::Publisher(const std::string &name, int domain_id)
-        : Super(name, TYPE_NAME_FULL(Publisher), domain_id),
+    Publisher::Publisher(const std::string &channel_name, int domain_id)
+        : Super(TYPE_NAME_FULL(Publisher), channel_name, domain_id),
           time_writer(this->create_writer<CC::Demo::TimeData>(
               CC::Demo::TIMEDATA_TOPIC,
               false,    // reliable
@@ -40,7 +40,7 @@ namespace cc::demo::dds
         // This signal is based on the `cc::signal::Signal<>` template,
         // so the callback function will receive one argument: the payload.
         signal_time.connect(
-            this->to_string(),
+            TYPE_NAME_FULL(This),
             std::bind(&Publisher::on_time_update, this, _1));
 
         // Invoke `on_greeting_update` whenever someone sends a greeting.
@@ -50,7 +50,7 @@ namespace cc::demo::dds
         //   - The key (in this case we use the greeter's identity)
         //   - The payload.
         signal_greeting.connect(
-            this->to_string(),
+            TYPE_NAME_FULL(This),
             std::bind(&Publisher::on_greeting_update, this, _1, _2, _3));
     }
 
@@ -58,8 +58,8 @@ namespace cc::demo::dds
     {
         // We are about to be destroyed, so the callback pointers
         // will no longer remain valid. Disconnect from active signals.
-        signal_greeting.disconnect(this->to_string());
-        signal_time.disconnect(this->to_string());
+        signal_greeting.disconnect(TYPE_NAME_FULL(This));
+        signal_time.disconnect(TYPE_NAME_FULL(This));
     }
 
     void Publisher::on_time_update(const TimeData &time_data)

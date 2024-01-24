@@ -8,7 +8,7 @@
 target_sources(${TARGET} PUBLIC
   level.c++
   domain.c++
+  flow.c++
   event.c++
-  error.c++
   exceptions.c++
 )

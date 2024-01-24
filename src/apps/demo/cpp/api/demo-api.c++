@@ -26,10 +26,10 @@ namespace cc::demo
     {
     }
 
-    void API::say_hello(const std::string &text,
+    void API::say_hello(const std::string &message,
                         const cc::types::KeyValueMap &data)
     {
-        this->say_hello(Greeting(text,
+        this->say_hello(Greeting(message,
                                  this->identity(),
                                  this->implementation(),
                                  this->birth(),

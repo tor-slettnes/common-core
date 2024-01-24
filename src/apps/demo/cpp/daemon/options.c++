@@ -6,14 +6,14 @@
 //==============================================================================
 
 #include "options.h++"
-#include "implementations.h++"
 
 namespace cc::demo
 {
     Options::Options()
         : Super(),
           enable_grpc(false),
-          enable_dds(false)
+          enable_dds(false),
+          enable_zmq(false)
     {
         this->describe("Example server.");
     }
@@ -36,6 +36,14 @@ namespace cc::demo
             "Enable DDS service",
             &this->enable_dds,
             cc::settings->get("enable dds", true).as_bool());
+#endif
+
+#if USE_ZMQ
+        this->add_flag(
+            {"--zmq", "--enable-zmq"},
+            "Enable ZeroMQ service",
+            &this->enable_zmq,
+            cc::settings->get("enable zmq", true).as_bool());
 #endif
     }
 

@@ -20,17 +20,17 @@ namespace cc::dds
     //==========================================================================
     // DDS service Implementation template
 
-    template <class Client>
-    class DDS_Client : public DDS_Channel,
-                       public Client
+    template <class BaseClient>
+    class Client : public Channel,
+                   public BaseClient
     {
     public:
-        DDS_Client(
+        Client(
             const std::string &class_name,
             const std::string &service_name,
             int domain_id)
-            : DDS_Channel(class_name, service_name, domain_id),
-              Client(this->client_params())
+            : Channel(class_name, service_name, domain_id),
+              BaseClient(this->client_params())
         {
         }
 
@@ -38,21 +38,21 @@ namespace cc::dds
         void initialize() override
         {
             application::signal_shutdown.connect(
-                this->instance_name(),
-                std::bind(&Client::close, this));
+                this->channel_name(),
+                std::bind(&BaseClient::close, this));
         }
 
         void deinitialize() override
         {
             application::signal_shutdown.disconnect(
-                this->instance_name());
+                this->channel_name());
         }
 
     protected:
         virtual ::dds::rpc::ClientParams client_params() const
         {
             ::dds::rpc::ClientParams params(this->get_participant());
-            params.service_name(this->instance_name());
+            params.service_name(this->channel_name());
             return params;
         }
     };
@@ -61,10 +61,10 @@ namespace cc::dds
     // DDS service Implementation template
 
     template <class ClientT>
-    class DDS_Client_Wrapper
+    class Client_Wrapper
     {
     protected:
-        DDS_Client_Wrapper(
+        Client_Wrapper(
             const std::string &class_name,
             const std::string &service_name,
             int domain_id)
@@ -73,17 +73,17 @@ namespace cc::dds
         }
 
     public:
-        inline DDS_Client<ClientT> client(
+        inline Client<ClientT> client(
             const steady::Duration &max_wait = std::chrono::seconds(10))
         {
-            logf_trace("Client %r waiting for service", this->client_.instance_name());
+            logf_trace("%s client waiting for service", this->client_.channel_name());
             this->client_.wait_for_service(max_wait);
-            logf_trace("Client %r service is available", this->client_.instance_name());
+            logf_trace("%s service is available", this->client_.channel_name());
             return this->client_;
         }
 
     protected:
-        DDS_Client<ClientT> client_;
+        Client<ClientT> client_;
     };
 
 }  // namespace cc::dds

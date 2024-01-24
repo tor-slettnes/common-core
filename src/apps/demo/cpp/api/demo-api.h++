@@ -31,6 +31,14 @@ namespace cc::demo
         virtual void deinitialize() {}
 
         /// @brief Issue a greeting to anyone who may be listening
+        /// @param[in] message
+        ///     What we're telling our listeners
+        /// @param[in] data
+        ///     Arbitrary key/value items to include in greeting
+        void say_hello(const std::string &message,
+                       const types::KeyValueMap &data={});
+
+        /// @brief Issue a greeting to anyone who may be listening
         /// @param[in] greeting
         ///     What we're telling our listeners
         /// @note​
@@ -59,10 +67,6 @@ namespace cc::demo
         virtual void stop_watching() {}
 
     public:
-        // Public interface
-        void say_hello(const std::string &greeting,
-                       const cc::types::KeyValueMap &data = {});
-
         // Accessor methods
         std::string identity() const;
         std::string implementation() const;

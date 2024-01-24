@@ -7,7 +7,7 @@
 
 #pragma once
 #include "event-types.hpp"  // Generated from `event-types.idl`
-#include "status/error.h++"
+#include "status/event.h++"
 #include "logging/message/message.h++"
 #include "translate-idl-common.h++"
 #include "translate-idl-variant.h++"
@@ -25,6 +25,11 @@ namespace cc::idl
     void decode(const CC::Status::Level &idl, cc::status::Level *native) noexcept;
 
     //==========================================================================
+    // Flow
+    void encode(const cc::status::Flow &native, CC::Status::Flow *idl) noexcept;
+    void decode(const CC::Status::Flow &idl, cc::status::Flow *native) noexcept;
+
+    //==========================================================================
     // Event
     void encode(const cc::status::Event &native, CC::Status::Event *idl) noexcept;
     void decode(const CC::Status::Event &idl, cc::status::Event *native) noexcept;
@@ -35,9 +40,4 @@ namespace cc::idl
     void encode(const cc::logging::Message &native, CC::Status::LogMessage *idl) noexcept;
     cc::logging::Message decoded_logmessage(CC::Status::LogMessage idl) noexcept;
 
-    //==========================================================================
-    // ErrorEvent
-    void encode(const cc::status::Error &native, CC::Status::ErrorEvent *idl) noexcept;
-    void decode(const CC::Status::ErrorEvent &idl, cc::status::Error *native) noexcept;
-    cc::status::Error decoded_error(const CC::Status::ErrorEvent &idl) noexcept;
 }  // namespace cc::idl

@@ -233,7 +233,7 @@ namespace cc::argparse
 
         this->add_flag(
             {"--log-to-file"},
-            "Log to a plaintext `.log` file"
+            "Log messages to a plaintext `.log` file"
             "Path, threshold, rotation interval etc, can be configured "
             "via the \"log file\" application setting.",
             &this->log_to_file,

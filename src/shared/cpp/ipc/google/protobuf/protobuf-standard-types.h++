@@ -28,6 +28,8 @@
 
 namespace cc::protobuf
 {
+    using google::protobuf::Empty;
+
     //==========================================================================
     // Simple protobuf types
 

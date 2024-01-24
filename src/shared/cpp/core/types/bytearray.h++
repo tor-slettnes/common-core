@@ -90,7 +90,8 @@ namespace cc::types
         /// Encode data in this ByteArray instance as a hexacecimal string.
         /// \param[in] use uppercase digits 'A'..'F'.
         /// \return Byte array represented as a hexadecimal string
-        std::string to_hex(bool uppercase = false) const;
+        std::string to_hex(bool uppercase = false,
+                           std::size_t groupsize = 0) const;
 
         /// Create a new ByteArray instance from a hexadecimal string.
         /// \param[in] string A string comprised of pairs of hexadecimal digits

@@ -22,7 +22,7 @@ set(PKG_DEPS
 ### Static/shared library dependencies, either from this build or provided by the system.
 set(LIB_DEPS
   cc_demo_api
-  cc_demo_protobuf
+  cc_demo_protobuf_types
   cc_shared_ipc_grpc)
 
 ### Source files

@@ -81,7 +81,8 @@ namespace cc::platform
         template <class ProviderType, class... Args>
         inline std::shared_ptr<ProviderType> registerProvider(Args &&...args)
         {
-            auto candidate = types::create_shared<ProviderType>(std::forward<Args>(args)...);
+            auto candidate =
+                types::create_shared<ProviderType>(std::forward<Args>(args)...);
 
             bool accepted =
                 (!this->provider || (candidate->priority > this->provider->priority)) &&

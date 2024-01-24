@@ -133,9 +133,9 @@ namespace cc::str
         void appendvalue(char value,
                          const Modifiers &modifiers);
 
-        // Ouptut formatting for byte arrays (to support quoting)
-        void appendvalue(const std::vector<std::uint8_t> &value,
-                         const Modifiers &modifiers);
+        // // Ouptut formatting for byte arrays (to support quoting)
+        // void appendvalue(const std::vector<std::uint8_t> &value,
+        //                  const Modifiers &modifiers);
 
         // Output formatting for integer pointers, to support `%n` format
         void appendvalue(int *nargs,

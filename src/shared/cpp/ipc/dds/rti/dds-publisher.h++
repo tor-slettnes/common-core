@@ -15,13 +15,13 @@
 namespace cc::dds
 {
     //==========================================================================
-    // @class DDS_PubSubChannnel
+    // @class PubSubChannnel
 
-    class DDS_Publisher : public DDS_Channel,
-                          public ::dds::pub::Publisher
+    class Publisher : public Channel,
+                      public ::dds::pub::Publisher
     {
-        using Super = DDS_Channel;
-        using This = DDS_Publisher;
+        using Super = Channel;
+        using This = Publisher;
 
     protected:
         using DataWriterQos = ::dds::pub::qos::DataWriterQos;
@@ -31,9 +31,9 @@ namespace cc::dds
         using DataWriterRef = std::shared_ptr<::dds::pub::DataWriter<T>>;
 
     public:
-        DDS_Publisher(const std::string &type,
-                      const std::string &name,
-                      int domain_id);
+        Publisher(const std::string &class_name,
+                  const std::string &channel_name,
+                  int domain_id);
 
     public:
         //======================================================================

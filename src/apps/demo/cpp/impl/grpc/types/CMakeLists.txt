@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET cc_demo_protobuf)
+set(TARGET cc_demo_protobuf_types)
 
 ### Library type.  We use static linking for convenience.
 set(LIB_TYPE STATIC)
@@ -15,11 +15,6 @@ set(LIB_DEPS
   cc_demo_api
   cc_demo_protodefs
   cc_shared_ipc_protobuf
-)
-
-### External package dependencies, configured via `pkg-config`.
-set(PKG_DEPS
-  protobuf
 )
 
 set(SOURCES

@@ -25,11 +25,11 @@ int main(int argc, char** argv)
     logf_debug("Initializing gRPC demo provider");
     cc::demo::provider->initialize();
 
+    logf_debug("Handling command in gRPC demo provider");
     bool success = cc::demo::options->handle_command();
 
     logf_debug("Deinitializing gRPC demo provider");
     cc::demo::provider->deinitialize();
-    cc::demo::provider.reset();
 
     cc::application::deinitialize();
     return success ? 0 : -1;

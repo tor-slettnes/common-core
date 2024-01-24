@@ -26,7 +26,7 @@ set(LIB_DEPS
 set(SOURCES
   demo-dds-requesthandler.c++
   demo-dds-service.c++
-  demo-dds-server.c++
+  demo-dds-run.c++
 )
 
 

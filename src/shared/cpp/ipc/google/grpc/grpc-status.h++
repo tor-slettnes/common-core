@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "status/error.h++"
+#include "status/event.h++"
 #include "chrono/date-time.h++"
 //#include "types/variant-value++"
 #include "string/misc.h++"
@@ -25,7 +25,7 @@ namespace cc::grpc
     /// @brief Specialization of ::grpc::Status with embedded Details
     ///     and in turn abstract base for source-specific exception types below.
 
-    class Status : public status::Error,
+    class Status : public status::Event,
                    public ::grpc::Status
     {
     public:
@@ -51,9 +51,9 @@ namespace cc::grpc
 
         /// @brief
         ///     Constructor from an Error instance
-        /// @param[in] error
-        ///     Error instance
-        Status(const Error &error);
+        /// @param[in] event
+        ///     Event instance
+        Status(const Event &event);
 
         /// @brief
         ///     Constructor with an existing Details input
@@ -77,9 +77,9 @@ namespace cc::grpc
         ///     Constructor from an Error instance with explicit status code
         /// @param[in] status_code
         ///     gRPC Status
-        /// @param[in] error
-        ///     Error instance
-        Status(::grpc::StatusCode status_code, const Error &error);
+        /// @param[in] event
+        ///     Event instance
+        Status(::grpc::StatusCode status_code, const Event &event);
 
         /// @brief
         ///     Constructor from individual attributes
@@ -91,8 +91,14 @@ namespace cc::grpc
         ///     Source domain: SERVICE, SYSTEM, SIGNAL, PERIPHERAL
         /// @param[in] origin
         ///     Specific source, e.g OS name, service name, device name
+        /// @param[in] code
+        ///     Numeric error code within specified domain if available
+        /// @param[in] symbol
+        ///     Symbolic error ID within specified domain if available
         /// @param[in] level
         ///     Severity level
+        /// @param[in] flow
+        ///     Execution flow
         /// @param[in] timepoint
         ///     Time of occurence.
         /// @param[in] attributes
@@ -101,7 +107,10 @@ namespace cc::grpc
                const std::string &text,
                status::Domain domain = status::Domain::APPLICATION,
                const std::string &origin = "",
+               Code code = 0,
+               const Symbol &symbol = "",
                status::Level level = status::Level::NONE,
+               status::Flow flow = status::Flow::NONE,
                const dt::TimePoint &timepoint = dt::Clock::now(),
                const types::KeyValueMap &attributes = {});
 
@@ -131,22 +140,19 @@ namespace cc::grpc
 
         /// @brief
         ///     Throw an appropriate error if status is not OK
-        void throw_if_error() const;
+        void throw_if_error() const override;
 
         /// @brief
         ///     Throw as an appropriate error based on domain, code, and id
-        std::exception_ptr as_exception_ptr() const;
+        std::exception_ptr as_exception_ptr() const override;
 
     protected:
         std::string class_name() const noexcept override;
         void to_stream(std::ostream &stream) const override;
-
-        std::exception_ptr as_device_error() const;
-        std::exception_ptr as_system_error() const;
-        std::exception_ptr as_application_error() const;
+        std::exception_ptr as_application_error() const override;
 
     private:
-        static ::grpc::StatusCode code_from_error(const status::Error &error) noexcept;
+        static ::grpc::StatusCode code_from_event(const status::Event &event) noexcept;
         static ::grpc::StatusCode code_from_errno(int code) noexcept;
     };
 }  // namespace cc::grpc

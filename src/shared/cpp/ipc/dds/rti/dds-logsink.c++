@@ -10,11 +10,11 @@
 #include "translate-idl-inline.h++"
 #include "platform/symbols.h++"
 
-namespace cc::logging
+namespace cc::dds
 {
-    DDSLogger::DDSLogger(const std::string &identity, int domain_id)
+    DDSLogger::DDSLogger(const std::string &channel_name, int domain_id)
         : Super(),
-          DDS_Publisher(TYPE_NAME_FULL(this), identity, domain_id)
+          Publisher(TYPE_NAME_FULL(this), channel_name, domain_id)
     {
     }
 

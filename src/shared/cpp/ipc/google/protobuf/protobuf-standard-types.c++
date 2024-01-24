@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "protobuf-standard-types.h++"
-#include "protobuf-inline-types.h++"
+#include "protobuf-inline.h++"
 
 #include <utility>
 

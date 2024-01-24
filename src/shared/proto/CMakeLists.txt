@@ -19,6 +19,7 @@ set(SOURCES
   variant_types.proto
   event_types.proto
   signal_types.proto
+  request_reply.proto
 )
 
 ### Invoke common CMake rules

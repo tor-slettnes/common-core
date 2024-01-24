@@ -16,8 +16,8 @@
 namespace cc::demo::dds
 {
     ClientImpl::ClientImpl(const std::string &identity, int domain_id)
-        : API(identity, TYPE_NAME_FULL(This)),
-          DDS_Client_Wrapper(TYPE_NAME_FULL(This), CC::Demo::SERVICE_ID, domain_id)
+        : API(identity, "DDS Client"),
+          Client_Wrapper(TYPE_NAME_FULL(This), CC::Demo::SERVICE_ID, domain_id)
     {
     }
 

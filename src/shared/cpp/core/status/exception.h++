@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "error.h++"
+#include "event.h++"
 #include "string/format.h++"
 #include "types/value.h++"
 #include <iostream>
@@ -38,14 +38,14 @@ namespace cc::exception
 {
     //==========================================================================
     /// @class Exception<E>
-    /// @brief status::Error wrapper for local errors derived on std::exception
+    /// @brief Event wrapper for local errors derived on std::exception
 
     template <class E>
-    class Exception : public status::Error,
+    class Exception : public status::Event,
                       public E
     {
         /// Override the otherwise ambiguous "<<" operator, which is defined for
-        /// both the Error and std::exception base classes
+        /// both the Event and std::exception base classes
         friend inline std::ostream &operator<<(std::ostream &stream,
                                                const Exception<E> &e)
         {
@@ -53,19 +53,25 @@ namespace cc::exception
             return stream;
         }
 
-        using Super = status::Error;
+        using Super = status::Event;
 
     public:
-        inline Exception(const status::Error &error)
-            : status::Error(error),
-              E(error.text())
+        inline Exception(const status::Event &event)
+            : status::Event(event),
+              E(event.text())
         {
         }
 
-        inline Exception(const status::Error &error, const E &exc)
-            : status::Error(error),
+        inline Exception(const status::Event &event, const E &exc)
+            : status::Event(event),
               E(exc)
         {
+        }
+
+    protected:
+        inline std::string class_name() const noexcept override
+        {
+            return "Exception";
         }
     };
 

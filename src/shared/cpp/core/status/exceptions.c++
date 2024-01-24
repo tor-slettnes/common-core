@@ -1,7 +1,7 @@
 /// -*- c++ -*-
 //==============================================================================
 /// @file exceptions.c++
-/// @brief Generic exception types, derived from `Error`
+/// @brief Generic exception types, derived from `Event`
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -20,7 +20,9 @@ namespace cc::exception
                          const std::string &operation)
         : Super(TYPE_NAME_BASE(This),
                 msg,
-                {{"operation", operation}})
+                status::Flow::CANCELLED,
+                {{"operation", operation}},
+                status::Level::WARNING)
     {
     }
 
@@ -30,6 +32,7 @@ namespace cc::exception
     Timeout::Timeout(std::string msg, dt::Duration timeout)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::ABORTED,
                 {{"timeout", timeout}})
     {
     }
@@ -47,6 +50,7 @@ namespace cc::exception
                                      const types::Value &argument)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::CANCELLED,
                 {{"argument", argument}})
     {
     }
@@ -59,6 +63,7 @@ namespace cc::exception
                                  uint expected)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::CANCELLED,
                 {{"provided", provided},
                  {"expected", expected}})
     {
@@ -72,6 +77,7 @@ namespace cc::exception
                                      uint expected)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::CANCELLED,
                 {{"provided", provided},
                  {"expected", expected}})
     {
@@ -85,6 +91,7 @@ namespace cc::exception
                                            uint expected)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::CANCELLED,
                 {{"provided", provided},
                  {"expected", expected}})
     {
@@ -97,6 +104,7 @@ namespace cc::exception
                            const types::Value &item)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::CANCELLED,
                 {{"item", item}})
     {
     }
@@ -108,6 +116,7 @@ namespace cc::exception
                                            const types::KeyValueMap &attributes)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::CANCELLED,
                 attributes)
     {
     }
@@ -119,6 +128,7 @@ namespace cc::exception
                                              const types::KeyValueMap &attributes)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::ABORTED,
                 attributes)
     {
     }
@@ -130,6 +140,7 @@ namespace cc::exception
                        const types::Value &item)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::CANCELLED,
                 {{"item", item}})
     {
     }
@@ -141,6 +152,7 @@ namespace cc::exception
                          const types::Value &item)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::CANCELLED,
                 {{"item", item}})
     {
     }
@@ -152,6 +164,7 @@ namespace cc::exception
                                        const std::string &operation)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::CANCELLED,
                 {{"operation", operation}})
     {
     }
@@ -163,6 +176,7 @@ namespace cc::exception
                                          const std::string &resource)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::ABORTED,
                 {{"resource", resource}})
     {
     }
@@ -174,6 +188,7 @@ namespace cc::exception
                              const std::string &resource)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::CANCELLED,
                 {{"resource", resource}})
     {
     }
@@ -185,6 +200,7 @@ namespace cc::exception
                                const types::KeyValueMap &attributes)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::ABORTED,
                 attributes)
     {
     }
@@ -196,6 +212,7 @@ namespace cc::exception
                                const types::KeyValueMap &attributes)
         : Super(TYPE_NAME_BASE(This),
                 msg,
+                status::Flow::ABORTED,
                 attributes)
     {
     }
@@ -203,11 +220,11 @@ namespace cc::exception
     //==========================================================================
     // SystemError
 
-    SystemError::SystemError(const status::Error &error)
-        : Super(error,
+    SystemError::SystemError(const status::Event &event)
+        : Super(event,
                 std::system_error(
-                    std::error_code(error.code(), std::generic_category()),
-                    error.text()))
+                    std::error_code(event.code(), std::generic_category()),
+                    event.text()))
     {
     }
 
@@ -218,6 +235,7 @@ namespace cc::exception
                  e.code().value(),            // code
                  {},                          // id
                  status::Level::FAILED,       // level
+                 status::Flow::ABORTED,       // flow
                  {},                          // timepoint
                  {}},                         // attributes
                 std::system_error(e))
@@ -261,13 +279,13 @@ namespace cc::exception
     /// @class FilesystemError
     /// @brief Error created from a `std::filesystem_error` instance
 
-    FilesystemError::FilesystemError(const Error &error)
-        : Super(error,
+    FilesystemError::FilesystemError(const Event &event)
+        : Super(event,
                 fs::filesystem_error(
-                    error.text(),
-                    error.attribute("path1").as_string(),
-                    error.attribute("path2").as_string(),
-                    std::error_code(static_cast<int>(error.code()),
+                    event.text(),
+                    event.attribute("path1").as_string(),
+                    event.attribute("path2").as_string(),
+                    std::error_code(static_cast<int>(event.code()),
                                     std::system_category())))
     {
     }
@@ -279,6 +297,7 @@ namespace cc::exception
                  e.code().value(),            // code
                  TYPE_NAME_BASE(This),        // id
                  status::Level::FAILED,       // level
+                 status::Flow::ABORTED,       // flow
                  {},                          // timepoint
                  {                            // attributes
                   {"path1", types::Value(e.path1().string())},
@@ -327,6 +346,7 @@ namespace cc::exception
                              Code code,
                              const std::string &id,
                              status::Level level,
+                             status::Flow flow,
                              const dt::TimePoint &dt,
                              const types::KeyValueMap &attributes)
         : Super({text,                        // text
@@ -335,6 +355,7 @@ namespace cc::exception
                  code,                        // code
                  id,                          // id
                  level,                       // level
+                 flow,                        // flow
                  dt,                          // timepoint
                  attributes},                 // attributes
                 std::runtime_error(text))
@@ -344,11 +365,11 @@ namespace cc::exception
     //==========================================================================
     // Error mapping methods
 
-    status::ErrorRef map_to_error(const std::exception &e) noexcept
+    status::Event::Ref map_to_event(const std::exception &e) noexcept
     {
-        if (auto *ep = dynamic_cast<const status::Error *>(&e))
+        if (auto *ep = dynamic_cast<const status::Event *>(&e))
         {
-            return std::make_shared<status::Error>(*ep);
+            return std::make_shared<status::Event>(*ep);
         }
         else if (auto *ep = dynamic_cast<const fs::filesystem_error *>(&e))
         {
@@ -384,7 +405,7 @@ namespace cc::exception
         }
     }
 
-    status::ErrorRef map_to_error(std::exception_ptr eptr) noexcept
+    status::Event::Ref map_to_event(std::exception_ptr eptr) noexcept
     {
         if (eptr)
         {
@@ -394,19 +415,18 @@ namespace cc::exception
             }
             catch (const std::exception &e)
             {
-                return map_to_error(e);
+                return map_to_event(e);
             }
             catch (...)
             {
-                return status::ErrorRef(new status::Error(
+                return std::make_shared<status::Event>(
                     "Non-standard error",         // text
                     status::Domain::APPLICATION,  // domain
                     platform::path->exec_name(),  // origin
-                    -1,                           // code
-                    "NON_STANDARD_ERROR",         // id
+                    0,                            // code
+                    "UNKNOWN",                    // symbol
                     status::Level::FAILED,        // level
-                    {},                           // timepoint
-                    {}));                         // attributes
+                    status::Flow::ABORTED);       // flow
             }
         }
         else
@@ -421,13 +441,13 @@ namespace std
     /// Define output stream operator "<<" on std::exception and derivatives.
     std::ostream &operator<<(std::ostream &stream, const exception &e)
     {
-        cc::exception::map_to_error(e)->to_stream(stream);
+        cc::exception::map_to_event(e)->to_stream(stream);
         return stream;
     }
 
     std::ostream &operator<<(std::ostream &stream, exception_ptr eptr)
     {
-        if (auto ep = cc::exception::map_to_error(eptr))
+        if (auto ep = cc::exception::map_to_event(eptr))
         {
             ep->to_stream(stream);
         }

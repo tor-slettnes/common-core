@@ -1,13 +1,13 @@
 /// -*- c++ -*-
 //==============================================================================
 /// @file exceptions.h++
-/// @brief Generic exception types, derived from `Error`
+/// @brief Generic exception types, derived from `Event`
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
 #include "exception.h++"
-#include "error.h++"
+#include "event.h++"
 #include "platform/symbols.h++"
 #include "platform/path.h++"
 
@@ -17,7 +17,7 @@ namespace cc::exception
 {
     //==========================================================================
     /// @class CustomException
-    /// @brief status::Error wrapper for local errors derived on std::exception
+    /// @brief `Event` wrapper for local errors derived on std::exception
 
     template <class E>
     class CustomException : public Exception<E>
@@ -27,27 +27,9 @@ namespace cc::exception
     public:
         using Super::Super;
 
-        // inline CustomException(status::Domain domain,
-        //                        const std::string &origin,
-        //                        status::Code code,
-        //                        const status::Error::Symbol &symbol,
-        //                        const std::string &text,
-        //                        const types::KeyValueMap &attributes = {},
-        //                        status::Level level = status::Level::FAILED)
-        //     : Super({text,         // text
-        //                 domain,       // domain
-        //                 origin,       // origin
-        //                 code,         // code
-        //                 symbol,       // symbol
-        //                 level,        // level
-        //                 {},           // timepoint
-        //                 attributes},  // attributes
-        //         E(text))
-        // {
-        // }
-
-        inline CustomException(const status::Error::Symbol &symbol,
+        inline CustomException(const status::Event::Symbol &symbol,
                                const std::string &text,
+                               status::Flow flow,
                                const types::KeyValueMap &attributes = {},
                                status::Level level = status::Level::FAILED)
             : Super({text,                         // text
@@ -56,6 +38,7 @@ namespace cc::exception
                      0,                            // code
                      symbol,                       // symbol
                      level,                        // level
+                     flow,                         // flow
                      {},                           // timepoint
                      attributes})                  // attributes
         {
@@ -323,7 +306,7 @@ namespace cc::exception
         using Super = Exception<std::system_error>;
 
     public:
-        SystemError(const status::Error &error);
+        SystemError(const status::Event &event);
         SystemError(const std::system_error &e);
 
         explicit SystemError(int errcode, const std::string &what);
@@ -348,7 +331,7 @@ namespace cc::exception
         using Super = Exception<fs::filesystem_error>;
 
     public:
-        FilesystemError(const status::Error &error);
+        FilesystemError(const status::Event &event);
 
         FilesystemError(const fs::filesystem_error &e);
 
@@ -383,15 +366,16 @@ namespace cc::exception
                     Code code,
                     const std::string &id,
                     status::Level level,
+                    status::Flow flow = status::Flow::ABORTED,
                     const dt::TimePoint &timepoint = {},
                     const types::KeyValueMap &attributes = {});
     };
 
     //==========================================================================
-    // Map various exceptions to appropriate events
+    // Map various exceptions to appropriate Event objects
 
-    status::ErrorRef map_to_error(const std::exception &e) noexcept;
-    status::ErrorRef map_to_error(std::exception_ptr eptr) noexcept;
+    status::Event::Ref map_to_event(const std::exception &e) noexcept;
+    status::Event::Ref map_to_event(std::exception_ptr eptr) noexcept;
 
 };  // namespace cc::exception
 

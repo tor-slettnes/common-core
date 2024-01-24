@@ -96,7 +96,8 @@ If you are reading this text directly on your system, you have already completed
   ```bash
   $ sudo apt install build-essential cmake \
                      uuid-dev rapidjson-dev \
-                     protobuf-compiler-grpc libgrpc++-dev
+                     protobuf-compiler-grpc libgrpc++-dev \
+                     libzmq3-dev
   ```
 
   (Additional indirect dependencies are installed as well)

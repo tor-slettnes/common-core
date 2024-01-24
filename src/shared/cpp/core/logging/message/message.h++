@@ -38,11 +38,15 @@ namespace cc::logging
     public:
         /// @brief
         ///     Constructor.
+        /// @param[in] text
+        ///     Human readable text.
         /// @param[in] scope
         ///     Logging scope.
         /// @param[in] level
         ///     Severity level. Message will only be logged if its level is
         ///     equal to or higher than the threshold of the specified scope.
+        /// @param[in] flow
+        ///      Result on execution flow: NONE, CANCELLED, ABORTED
         /// @param[in] tp
         ///     Time point for the published message, if not now.
         /// @param[in] path
@@ -55,21 +59,26 @@ namespace cc::logging
         ///     Thread ID where where the message was generated
         /// @param[in] origin
         ///     Originator entity, e.g. executable name
+        /// @param[in] code
+        ///     Numeric event code, unique within origin
+        /// @param[in] symbol
+        ///     Symbolic event code, unique within origin
         /// @param[in] attributes
         ///     Key/value pairs associated with message
-        /// @param[in] text
-        ///     Human readable text.
 
-        Message(Scope::Ref scope,
+        Message(const std::string &text,
+                Scope::Ref scope,
                 status::Level level,
+                status::Flow flow,
                 const dt::TimePoint &tp,
                 const fs::path &path,
                 uint lineno,
                 const std::string &function,
                 pid_t thread_id,
                 const std::string &origin,
-                const types::KeyValueMap &attributes,
-                const std::string &text);
+                Code code,
+                const Symbol &symbol,
+                const types::KeyValueMap &attributes);
 
         // Copy constructor to ensure we obtain values from derived classes
         Message(const Message &other);

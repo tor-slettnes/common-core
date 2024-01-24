@@ -7,7 +7,7 @@
 
 #include "demo-grpc-requesthandler.h++"
 #include "protobuf-demo-types.h++"
-#include "protobuf-inline-types.h++"
+#include "protobuf-inline.h++"
 #include "protobuf-message.h++"
 #include "demo-signals.h++"
 

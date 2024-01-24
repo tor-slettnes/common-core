@@ -24,8 +24,9 @@ namespace cc::status
         NONE,         // No event
         APPLICATION,  // Event from application, name indicated in "origin"
         SYSTEM,       // OS events, origin indicates code space
-        PROCESS,      // Process signals (see "kill -l")
-        PERIPHERAL    // Event code from a device, name indicated in "origin"
+        PROCESS,      // Process exit; see `kill -l` to interpret `code`/`symbol`
+        PERIPHERAL,   // Event code from a device, name indicated in "origin"
+        SERVICE       // Status code from a (network) service (HTTP, SMTP, ...)
     };
 
     extern const types::SymbolMap<Domain> DomainNames;

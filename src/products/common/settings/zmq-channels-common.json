@@ -1,0 +1,81 @@
+// -*- javascript -*-
+//==============================================================================
+/// @file common-zmq-channels.json
+/// @brief Connectivity endpoints for ZeroMQ sockets
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+{
+    // Default service settings for common applications. In addtiion to these,
+    // settings for product-specific applications can be found in
+    // `zmq-channesl-PRODUCT_NAME.json`, where PRODUCT_NAME is provided at build
+    // time.
+    //
+    // The following attributes are used to construct ZeroMQ socket addresses
+    // per ZeroMQ service (command or message):
+    //  - `"protocol"`      : the part before `://`  (e.g., `tcp`)
+    //  - `"command"`       : RPC (request/reply) channel settings
+    //     - `"port"`       : Port number for TCP/UDP, should be 0 if not used
+    //     - `"client"`     ; subgroup for client settinsg
+    //     - `"server"`     ; subgroup for server settings
+    //  - `"message"`       : Notification (pub/sub) channel settings
+    //     - `"port"`       : Port number for TCP/UDP, should be 0 if not used
+    //     - `"subscriber"` : subgroup for subscriber settings
+    //     - `"publisher"`  : subgroup for publisher settings
+    //
+    // Either of the following settings, but not both, may appear in each of the
+    // four subgroups (client, server, publish, subscribe):
+    //  - `"listen"`  : Listen for incoming connections at this interface address
+    //                  (defaults to `*` for server and publisher)
+    //  - `"connect"` : Connect to peer at the specified address
+    //                  (defaults to `[::1]` for client and subscriber)
+    //
+    // The syntax for the service address provided to both the C++ and Python
+    // gRPC wrappers is as follows:
+    //   [PROTOCOL://][HOST][:PORT][@PERSONALITY]
+    //
+    // * If PROTOCOL, HOST and/or PORT is explicitly provided it takes precendence.
+    // * If either is missing, PERSONALITY is used to lookup the corresponding
+    //   value from a matching profile in the "personalities" section, below.
+    // * If still missing, default values per service name are provided in
+    //   the "defaults" section.
+    // * If all else fails, the compile-time defaults are:
+    //       - "tcp://[::1]:9672" (ZMQC) for requesters (command clients)
+    //       - "tcp://*:9672"     (ZMQC) for responders (command servers)
+    //       - "tcp://[::1]:9676" (ZMQM) for message subscribers
+    //       - "tcp://*:9676"     (ZMQM) for message publishers
+
+    "personalities" :
+    {
+    },
+
+    "defaults" :
+    {
+        "Demo":                 // Channel groups
+        {
+            // "protocol" : "tcp", // Communicate over TCP by default
+
+            "command" :         // Request/reply channel settings
+            {
+                // "client" : {
+                //     "connect" : "[::1]" // Connect to localhost by default
+                // },
+                // "server" : {
+                //     "listen" : "*" // listens on all interfaces by default
+                // },
+                "port" : 33662 // "D-E-M-O-C" on phone keypad ("DEMO Commands")
+            },
+
+            "message" :         // Pub/Sub channel settings
+            {
+                // "subscriber" : {
+                //     "connect" : "[::1]" // Connect to localhost by default
+                // },
+                // "publisher" : {
+                //     "listen" : "*" // listens on all interfaces by default
+                // },
+                "port" : 33666 // D-E-M-O-N on phone keypad ("DEMO Notifications")
+            }
+        }
+    }
+}

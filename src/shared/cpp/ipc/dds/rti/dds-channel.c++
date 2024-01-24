@@ -12,28 +12,28 @@
 
 namespace cc::dds
 {
-    DDS_Channel::DDS_Channel(const std::string &class_name,
-                             const std::string &instance_name,
-                             int domain_id)
-        : Super(class_name, instance_name),
+    Channel::Channel(const std::string &class_name,
+                     const std::string &channel_name,
+                     int domain_id)
+        : Super(class_name, channel_name),
           domain_id_(domain_id)
     {
-        logf_trace("DDS_Channel constructor, domain %d: %s",
+        logf_trace("Channel constructor, domain %d: %s",
                    domain_id,
                    this->to_string());
     }
 
-    int DDS_Channel::domain_id() const
+    int Channel::domain_id() const
     {
         return this->domain_id_;
     }
 
-    ::dds::domain::DomainParticipant DDS_Channel::get_participant() const
+    ::dds::domain::DomainParticipant Channel::get_participant() const
     {
         return This::get_participant(this->domain_id());
     }
 
-    ::dds::domain::DomainParticipant DDS_Channel::get_participant(int domain_id)
+    ::dds::domain::DomainParticipant Channel::get_participant(int domain_id)
     {
         if (::dds::domain::DomainParticipant participant = ::dds::domain::find(domain_id);
             participant != ::dds::core::null)

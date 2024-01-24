@@ -42,6 +42,14 @@ module CC
             FATAL      // Reporting entity is disabled and cannot recover
         };
 
+        enum Flow
+        {
+            NONE,       // No interruption
+            PAUSED,     // Execution suspended; may resume.
+            CANCELLED,  // Cancelled; state unchanged
+            ABORTED     // Aborted underway; state may have changed
+        };
+
         typedef string OriginName;
         typedef string<4096> Description;
 
@@ -59,8 +67,18 @@ module CC
             // Domain specific origin, e.g. OS type, application name, device, ...
             OriginName origin;
 
+            // Origin specific code (e.g. UNIX errno, device specific, etc)
+            int64 code;
+
+            // Source specific symbol name.
+            // This is normally unique within each domain, regardless of origin.
+            string symbol;
+
             // Log level
             Level level;
+
+            // Execution flow impact
+            Flow flow;
 
             // Time of occurence
             Shared::Timestamp timestamp;
@@ -100,19 +118,6 @@ module CC
 
             // Thread ID
             uint64 thread_id;
-        };
-
-        //======================================================================
-        // Details pertaining to an error event
-
-        struct ErrorEvent : Event
-        {
-            // Origin specific code (e.g. UNIX errno, device specific, etc)
-            int64 code;
-
-            // Source specific symbol name.
-            // This is normally unique within each domain, regardless of origin.
-            string symbol;
         };
     };
 };

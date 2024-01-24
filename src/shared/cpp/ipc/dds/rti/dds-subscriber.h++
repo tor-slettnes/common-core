@@ -20,13 +20,13 @@
 namespace cc::dds
 {
     //==========================================================================
-    // @class DDS_PubSubChannnel
+    // @class PubSubChannnel
 
-    class DDS_Subscriber : public DDS_Channel,
-                           public ::dds::sub::Subscriber
+    class Subscriber : public Channel,
+                       public ::dds::sub::Subscriber
     {
-        using Super = DDS_Channel;
-        using This = DDS_Subscriber;
+        using This = Subscriber;
+        using Super = Channel;
 
     protected:
         using DataReaderQos = ::dds::sub::qos::DataReaderQos;
@@ -38,11 +38,11 @@ namespace cc::dds
         using DataReaderRef = std::shared_ptr<::dds::sub::DataReader<T>>;
 
     public:
-        DDS_Subscriber(const std::string &type,
-                       const std::string &name,
-                       int domain_id);
+        Subscriber(const std::string &class_name,
+                   const std::string &channel_name,
+                   int domain_id);
 
-        ~DDS_Subscriber();
+        ~Subscriber();
 
         void initialize() override;
         void deinitialize() override;

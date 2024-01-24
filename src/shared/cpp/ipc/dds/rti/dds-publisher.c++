@@ -10,11 +10,11 @@
 
 namespace cc::dds
 {
-    DDS_Publisher::DDS_Publisher(
-        const std::string &type,
-        const std::string &name,
+    Publisher::Publisher(
+        const std::string &class_name,
+        const std::string &channel_name,
         int domain_id)
-        : Super(type, name, domain_id),
+        : Super(class_name, channel_name, domain_id),
           ::dds::pub::Publisher(this->get_participant())
     {
     }

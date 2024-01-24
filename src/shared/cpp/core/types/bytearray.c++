@@ -156,7 +156,8 @@ namespace cc::types
         return decoded;
     }
 
-    std::string ByteArray::to_hex(bool uppercase) const
+    std::string ByteArray::to_hex(bool uppercase,
+                                  std::size_t groupsize) const
     {
         static const std::vector<std::string> hex_digits = {
             "0123456789abcdef",
@@ -164,12 +165,19 @@ namespace cc::types
         };
 
         std::string encoded;
-        encoded.reserve(this->size() * 2);
-        std::string xdigits = hex_digits.at(uppercase);
+        encoded.reserve((this->size() * 2) +
+                        (groupsize ? (this->size() / groupsize)
+                                   : 0));
+        const std::string &xdigits = hex_digits.at(uppercase);
+        std::size_t counter = 0;
         for (std::uint8_t byte : *this)
         {
             encoded.push_back(xdigits.at((byte >> 4) & 0xF));
             encoded.push_back(xdigits.at(byte & 0xF));
+            if (groupsize && (++counter % groupsize == 0) && (counter < this->size()))
+            {
+                encoded.push_back(' ');
+            }
         }
         return encoded;
     }

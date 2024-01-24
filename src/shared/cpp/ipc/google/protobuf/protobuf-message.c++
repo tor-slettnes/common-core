@@ -30,8 +30,8 @@ namespace cc::protobuf
                   types::ByteArray *bytes)
     {
         std::size_t size = msg.ByteSizeLong();
-        bytes->resize(size);  // TODO: Do this without initialization
-        msg.SerializeToArray(bytes->data(), size);
+        bytes->resize(size);
+        msg.SerializeWithCachedSizesToArray(bytes->data());
     }
 
     /// Convert a protobuf message to a serialized byte array

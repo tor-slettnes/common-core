@@ -7,7 +7,7 @@
 
 #include "demo-grpc-requesthandler.h++"
 #include "protobuf-demo-types.h++"
-#include "protobuf-inline-types.h++"
+#include "protobuf-inline.h++"
 #include "protobuf-message.h++"
 
 namespace cc::demo::grpc
@@ -23,11 +23,23 @@ namespace cc::demo::grpc
         const ::CC::Demo::Greeting* request,
         ::google::protobuf::Empty* response)
     {
-        // We received a greeting from a client.  Emit a signal to registered
-        // callbacks (slots). (This includes `Publisher::on_signal_greeting()`,
-        // which then forwards the signals to clients as a published message.)
-        this->provider->say_hello(protobuf::decoded<Greeting>(*request));
-        return ::grpc::Status::OK;
+
+        // We received a greeting from a client.  We decode and pass this on to
+        // our `api_provider`. Normally this is the native C++ implementation,
+        // which will then emit a signal to registered callbacks (slots). (These
+        // include gRPC client proxies that are streaming back greetings via the
+        // `watch()` method, as well as available interfaces for other messaging
+        // platforms.)
+
+        try
+        {
+            this->provider->say_hello(protobuf::decoded<Greeting>(*request));
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
     }
 
     ::grpc::Status RequestHandler::get_current_time(
@@ -35,8 +47,15 @@ namespace cc::demo::grpc
         const ::google::protobuf::Empty* request,
         ::CC::Demo::TimeData* response)
     {
-        protobuf::encode(this->provider->get_current_time(), response);
-        return ::grpc::Status::OK;
+        try
+        {
+            protobuf::encode(this->provider->get_current_time(), response);
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
     }
 
     ::grpc::Status RequestHandler::start_ticking(
@@ -44,8 +63,15 @@ namespace cc::demo::grpc
         const ::google::protobuf::Empty* request,
         ::google::protobuf::Empty* response)
     {
-        this->provider->start_ticking();
-        return ::grpc::Status::OK;
+        try
+        {
+            this->provider->start_ticking();
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
     }
 
     ::grpc::Status RequestHandler::stop_ticking(
@@ -53,8 +79,15 @@ namespace cc::demo::grpc
         const ::google::protobuf::Empty* request,
         ::google::protobuf::Empty* response)
     {
-        this->provider->stop_ticking();
-        return ::grpc::Status::OK;
+        try
+        {
+            this->provider->stop_ticking();
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
     }
 
 }  // namespace cc::demo::grpc

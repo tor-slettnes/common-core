@@ -13,7 +13,8 @@ set(LIB_TYPE STATIC)
 ### Library dependencies.
 set(LIB_DEPS
   cc_shared_idl
-  cc_shared_platform)
+  cc_shared_core
+)
 
 set(SOURCES
   translate-idl-variant.c++

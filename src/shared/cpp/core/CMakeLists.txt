@@ -37,6 +37,7 @@ configure_file(sourcepath.h.in sourcepath.h)
 target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 # Pull in sources from subdirectories
+add_subdirectory(application)
 add_subdirectory(argparse)
 add_subdirectory(chrono)
 add_subdirectory(config)

@@ -64,12 +64,14 @@ namespace cc::grpc
 
     void ServerWrapperBase::log_status(const Status &status,
                                        const std::string &operation,
+                                       status::Flow flow,
                                        const fs::path &path,
                                        const int &lineno,
                                        const std::string &function)
     {
-        auto msg = custom_log_message(
+        auto msg = custom_log_msg(
             status::Level::NOTICE,
+            flow,
             dt::Clock::now(),
             path,
             lineno,
@@ -88,17 +90,19 @@ namespace cc::grpc
 
     Status ServerWrapperBase::failure(const std::exception &e,
                                       const std::string &operation,
+                                      status::Flow flow,
                                       const std::filesystem::path &path,
                                       const int &lineno,
                                       const std::string &function)
     {
-        Status status(*cc::exception::map_to_error(e));
-        this->log_status(status, operation, path, lineno, function);
+        Status status(*cc::exception::map_to_event(e));
+        this->log_status(status, operation, flow, path, lineno, function);
         return status;
     }
 
     Status ServerWrapperBase::failure(std::exception_ptr eptr,
                                       const std::string &operation,
+                                      status::Flow flow,
                                       const fs::path &path,
                                       const int &lineno,
                                       const std::string &function)
@@ -109,7 +113,7 @@ namespace cc::grpc
         }
         catch (const std::exception &e)
         {
-            return this->failure(e, operation, path, lineno, function);
+            return this->failure(e, operation, flow, path, lineno, function);
         }
         catch (...)
         {
@@ -118,7 +122,7 @@ namespace cc::grpc
                           status::Domain::APPLICATION,
                           this->servicename());
 
-            this->log_status(status, operation, path, lineno, function);
+            this->log_status(status, operation, flow, path, lineno, function);
             return status;
         }
     }
@@ -126,12 +130,14 @@ namespace cc::grpc
     Status ServerWrapperBase::failure(const std::exception &exception,
                                       const google::protobuf::Message &request,
                                       const std::string &peer,
+                                      status::Flow flow,
                                       const fs::path &path,
                                       const int &lineno,
                                       const std::string &function)
     {
         return this->failure(exception,
                              this->request_description(request, peer, function),
+                             flow,
                              path,
                              lineno,
                              function);
@@ -140,12 +146,14 @@ namespace cc::grpc
     Status ServerWrapperBase::failure(std::exception_ptr eptr,
                                       const google::protobuf::Message &request,
                                       const std::string &peer,
+                                      status::Flow flow,
                                       const fs::path &path,
                                       const int &lineno,
                                       const std::string &function)
     {
         return this->failure(eptr,
                              this->request_description(request, peer, function),
+                             flow,
                              path,
                              lineno,
                              function);

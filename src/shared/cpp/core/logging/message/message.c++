@@ -13,17 +13,28 @@ namespace cc::logging
     //==========================================================================
     // Message
 
-    Message::Message(Scope::Ref scope,
+    Message::Message(const std::string &text,
+                     Scope::Ref scope,
                      status::Level level,
+                     status::Flow flow,
                      const dt::TimePoint &tp,
                      const fs::path &path,
                      uint lineno,
                      const std::string &function,
                      pid_t thread_id,
                      const std::string &origin,
-                     const types::KeyValueMap &attributes,
-                     const std::string &text)
-        : Event(text, status::Domain::APPLICATION, origin, level, tp, attributes),
+                     Code code,
+                     const Symbol &symbol,
+                     const types::KeyValueMap &attributes)
+        : Event(text,
+                status::Domain::APPLICATION,
+                origin,
+                code,
+                symbol,
+                level,
+                flow,
+                tp,
+                attributes),
           scope_(scope),
           path_(path),
           lineno_(lineno),

@@ -15,6 +15,7 @@
 #include "config/settingsstore.h++"
 #include "platform/path.h++"
 #include "logging/logging.h++"
+#include "version.h"            // PROJECT_NAME
 
 #include <grpc++/grpc++.h>
 
@@ -23,8 +24,8 @@ namespace cc::grpc
     define_log_scope("service");
 
     // Keys to look up settings in ServiceName.json
-    constexpr auto SETTINGS_FILE_COMMON = "common-services";
-    constexpr auto SETTINGS_FILE_PRODUCT = "product-services";
+    constexpr auto SETTINGS_FILE_COMMON = "grpc-services-common";
+    constexpr auto SETTINGS_FILE_PRODUCT = "grpc-services-" PROJECT_NAME;
     constexpr auto PERSONALITY_SECTION = "personalities";
     constexpr auto DEFAULT_SECTION = "defaults";
     constexpr auto PORT_OPTION = "port";
@@ -85,7 +86,7 @@ namespace cc::grpc
                                 const std::string &hostOption,
                                 const std::string &portOption,
                                 std::string defaultHost = "localhost",
-                                unsigned int defaultPort = 8080) const;
+                                uint defaultPort = 8080) const;
 
         /// Check that a string value (presumably from a ProtoBuf message) is non-empty.
         /// @param[in] fieldname The name of the input field, used in the error message.

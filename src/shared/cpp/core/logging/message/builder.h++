@@ -7,7 +7,7 @@
 
 #pragma once
 #include "message.h++"
-#include "logging/dispatcher.h++"
+#include "logging/dispatchers/dispatcher.h++"
 #include "string/misc.h++"
 #include "types/create-shared.h++"
 #include "platform/process.h++"
@@ -64,21 +64,27 @@ namespace cc::logging
         MessageBuilder(Dispatcher *dispatcher,
                        Scope::Ref scope,
                        status::Level level,
+                       status::Flow flow,
                        const dt::TimePoint &tp,
                        const fs::path &path,
                        const uint &lineno,
                        const std::string &function,
-                       pid_t thread_id = platform::process ? platform::process->thread_id() : 0)
-            : Message(scope,                                             // scope
+                       pid_t thread_id = platform::process
+                                             ? platform::process->thread_id()
+                                             : 0)
+            : Message({},                                                // text
+                      scope,                                             // scope
                       level,                                             // level
+                      flow,                                              // flow
                       tp,                                                // tp
                       fs::relative(path, SOURCE_DIR, this->path_error),  // path
                       lineno,                                            // lineno
                       function,                                          // function
                       thread_id,                                         // thread_id
                       {},                                                // origin
-                      {},                                                // attributes
-                      {}),                                               // text
+                      0,                                                 // code
+                      {},                                                // symbol
+                      {}),                                               // attributes
               dispatcher_(dispatcher),
               is_applicable_(Message::is_applicable() && dispatcher->is_applicable(*this))
         {
