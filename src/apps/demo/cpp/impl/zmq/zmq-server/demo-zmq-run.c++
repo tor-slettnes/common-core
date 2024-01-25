@@ -18,14 +18,14 @@ namespace cc::demo::zmq
     {
         // Instantiate Publisher to relay asynchronous events over ZeroMQ
         auto zmq_publisher = cc::demo::zmq::Publisher::create_shared(
-            channel_name,
-            bind_address);
+            bind_address,
+            channel_name);
 
         // Instantiate Server to handle incoming requests from client
         auto zmq_server = cc::demo::zmq::Server::create_shared(
             api_provider,
-            channel_name,
-            bind_address);
+            bind_address,
+            channel_name);
 
         //======================================================================
         // Initialize

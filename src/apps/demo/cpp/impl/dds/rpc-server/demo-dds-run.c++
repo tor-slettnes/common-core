@@ -41,7 +41,7 @@ namespace cc::demo::dds
         //======================================================================
         // Run
 
-        logf_info("Demo DDS service is ready");
+        logf_info("Demo DDS service is ready in domain %d", domain_id);
         server.run();
         logf_info("Demo DDS service is shutting down");
 

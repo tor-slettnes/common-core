@@ -7,13 +7,16 @@
 
 {
     // Include source context in text logs
-    "log source" : false,
+    "log context" : false,
 
     // Enable gRPC service
     "enable grpc" : true,
 
     // Enable DDS service
     "enable dds" : true,
+
+    // Enable DDS service
+    "enable zmq" : true,
 
     // DDS domain ID
     "dds domain id" : 0

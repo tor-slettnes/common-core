@@ -49,6 +49,7 @@ namespace cc::zmq
              const std::string &channel_name,
              ::zmq::socket_type socket_type);
 
+
     public:
         static std::shared_ptr<::zmq::context_t> context();
         std::shared_ptr<::zmq::socket_t> socket();
@@ -60,6 +61,11 @@ namespace cc::zmq
         types::Value setting(const std::string &key,
                              const std::string &personality,
                              const types::Value &defaultValue = {}) const;
+
+    protected:
+        void to_stream(std::ostream &stream) const override;
+        void initialize() override;
+        void deinitialize() override;
 
     public:
         void send(
@@ -119,6 +125,7 @@ namespace cc::zmq
 
 
         virtual std::vector<std::string> settings_path() const = 0;
+        std::string kind() const;
 
     private:
 

@@ -20,6 +20,13 @@ namespace cc::argparse
     void ClientOptions::add_options()
     {
         Super::add_options();
+        this->add_opt(
+            {"-h", "--host"},
+            "ADDRESS",
+            "Server address in the form [PERSONALITY@][HOST][:PORT], "
+            "where HOST and PORT, if specified, take precedence. ",
+            &this->host);
+
         this->add_opt<uint>(
             {"--timeout"},
             "SECONDS",

@@ -158,10 +158,11 @@ namespace cc::argparse
 #endif
 
         this->add_flag(
-            {"--log-source", "--source"},
-            "Include source file, line number, and function name in log output",
-            &this->log_source,
-            cc::settings->get("log source", false).as_bool());
+            {"--log-context", "--context"},
+            "Include context in log message: "
+            "log scope, thread ID, source file, line number, and method name.",
+            &this->log_context,
+            cc::settings->get("log context", false).as_bool());
 
         this->add_opt<status::Level>(
             {"--log-default"},
@@ -276,7 +277,7 @@ namespace cc::argparse
             if (auto sink = platform::logsink.get_shared())
             {
                 logging::message_dispatcher.add_sink(sink);
-                sink->set_include_source(this->log_source);
+                sink->set_include_context(this->log_context);
 
                 types::KeyValueMap config = this->logsink_setting(LOG_TO_SYSLOG_SINK);
                 this->set_threshold_from_config(sink, config);
@@ -288,7 +289,7 @@ namespace cc::argparse
             if (auto sink = logging::StreamSink::create_shared(std::cout))
             {
                 logging::message_dispatcher.add_sink(sink);
-                sink->set_include_source(this->log_source);
+                sink->set_include_context(this->log_context);
 
                 types::KeyValueMap config = this->logsink_setting(LOG_TO_STDOUT_SINK);
                 this->set_threshold_from_config(sink, config);
@@ -299,7 +300,7 @@ namespace cc::argparse
             if (auto sink = logging::StreamSink::create_shared(std::cerr))
             {
                 logging::message_dispatcher.add_sink(sink);
-                sink->set_include_source(this->log_source);
+                sink->set_include_context(this->log_context);
 
                 types::KeyValueMap config = this->logsink_setting(LOG_TO_STDERR_SINK);
                 this->set_threshold_from_config(sink, config);
@@ -316,7 +317,7 @@ namespace cc::argparse
             if (auto sink = logging::LogFileSink::create_shared(name_template, interval))
             {
                 logging::message_dispatcher.add_sink(sink);
-                sink->set_include_source(this->log_source);
+                sink->set_include_context(this->log_context);
                 this->set_threshold_from_config(sink, config);
             }
         }

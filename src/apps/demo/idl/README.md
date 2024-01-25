@@ -21,7 +21,7 @@ In our case, these data types are defined in [demo-types.idl](demo-types.idl).
 Pub/Sub
 -------
 
-DDS is at its core a Pub/Sub based system, so the above data types essentially boil down to describing the payload of the published messages.  In our demo, these are:
+DDS is fundamentally a Pub/Sub based system, so the above data types essentially boil down to describing the payload of the published messages.  In our demo, these are:
 
 * `struct CC::Demo::Greeting`, and
 * `struct CC::Demo::TimeData`.

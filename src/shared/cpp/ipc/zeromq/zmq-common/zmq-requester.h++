@@ -20,9 +20,9 @@ namespace cc::zmq
         using Super = Satellite;
 
     protected:
-        Requester(const std::string &class_name,
-                  const std::string &service_name,
-                  const std::string &host_address);
+        Requester(const std::string &host_address,
+                  const std::string &class_name,
+                  const std::string &channel_name);
 
         std::vector<std::string> settings_path() const override;
 

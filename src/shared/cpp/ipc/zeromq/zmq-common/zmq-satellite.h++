@@ -15,10 +15,10 @@ namespace cc::zmq
         using Super = Base;
 
     protected:
-        Satellite(const std::string &class_name,
+        Satellite(const std::string &host_address,
+                  const std::string &class_name,
                   const std::string &channel_name,
-                  ::zmq::socket_type socket_type,
-                  const std::string &host_address);
+                  ::zmq::socket_type socket_type);
 
     public:
         void initialize() override;

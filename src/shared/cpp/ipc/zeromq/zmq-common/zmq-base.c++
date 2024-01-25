@@ -85,19 +85,61 @@ namespace cc::zmq
         return defaultValue;
     }
 
+    void Base::to_stream(std::ostream &stream) const
+    {
+        str::format(stream,
+                    "ZMQ %s %s(%r)",
+                    this->kind(),
+                    this->class_name(),
+                    this->channel_name());
+    }
+
+    void Base::initialize()
+    {
+        Super::initialize();
+    }
+
+    void Base::deinitialize()
+    {
+        try
+        {
+            logf_debug("%s closing socket", *this);
+            this->socket()->close();
+        }
+        catch (const std::exception &e)
+        {
+            logf_info("Could not close ZMQ host %s socket: %s",
+                      *this,
+                      e.what());
+        }
+        Super::deinitialize();
+    }
+
+
     void Base::send(const types::ByteArray &bytes, ::zmq::send_flags flags)
     {
+        logf_trace("%s sending %d bytes", *this, bytes.size());
         this->socket()->send(::zmq::const_buffer(bytes.data(), bytes.size()), flags);
     }
 
     void Base::send(::zmq::message_t &&msg, ::zmq::send_flags flags)
     {
+        logf_trace("%s sending %d bytes", *this, msg.size());
         this->socket()->send(msg, flags);
     }
 
     bool Base::receive(::zmq::message_t *msg, ::zmq::recv_flags flags)
     {
-        return this->socket()->recv(*msg, flags).has_value();
+        if (this->socket()->recv(*msg, flags).has_value())
+        {
+            logf_trace("%s received %d bytes", *this, msg->size());
+            return true;
+        }
+        else
+        {
+            logf_trace("%s received empty message", *this);
+            return false;
+        }
     }
 
     bool Base::receive(types::ByteArray *bytes, ::zmq::recv_flags flags)
@@ -170,7 +212,6 @@ namespace cc::zmq
         return this->joinaddress(protocol, host, port);
     }
 
-
     void Base::splitaddress(const std::string &address,
                             std::string *protocol,
                             std::string *host,
@@ -211,6 +252,11 @@ namespace cc::zmq
             uri += ":" + std::to_string(port);
         }
         return uri;
+    }
+
+    std::string Base::kind() const
+    {
+        return str::join(this->settings_path());
     }
 
     std::mutex Base::context_mtx_;

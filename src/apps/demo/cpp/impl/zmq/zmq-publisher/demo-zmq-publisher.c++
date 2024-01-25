@@ -15,14 +15,16 @@
 
 namespace cc::demo::zmq
 {
-    Publisher::Publisher(const std::string &channel_name,
-                         const std::string &bind_address)
-        : Super(TYPE_NAME_FULL(This), channel_name, bind_address)
+    Publisher::Publisher(const std::string &bind_address,
+                         const std::string &channel_name)
+        : Super(TYPE_NAME_FULL(This), bind_address, channel_name)
     {
     }
 
     void Publisher::initialize()
     {
+        Super::initialize();
+
         using namespace std::placeholders;
 
         // Connect signals from `demo/signals.hpp` to our callback
@@ -52,6 +54,8 @@ namespace cc::demo::zmq
         // will no longer remain valid. Disconnect from active signals.
         signal_greeting.disconnect(this->class_name());
         signal_time.disconnect(this->class_name());
+
+        Super::deinitialize();
     }
 
     void Publisher::on_time_update(const TimeData &time_data)

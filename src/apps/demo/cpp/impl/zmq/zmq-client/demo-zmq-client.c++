@@ -15,17 +15,24 @@
 namespace cc::demo::zmq
 {
     ClientImpl::ClientImpl(const std::string &identity,
-                           const std::string &channel_name,
                            const std::string &host_address,
+                           const std::string &channel_name,
                            const std::string &interface_name)
         : API(identity, "ZMQ ProtoBuf client"),
-          ProtoBufClient(TYPE_NAME_FULL(This), channel_name, host_address, interface_name)
+          ProtoBufClient(host_address, TYPE_NAME_FULL(This), channel_name, interface_name)
     {
     }
 
     void ClientImpl::initialize()
     {
-        Super::initialize();
+        API::initialize();
+        cc::zmq::ProtoBufClient::initialize();
+    }
+
+    void ClientImpl::deinitialize()
+    {
+        cc::zmq::ProtoBufClient::deinitialize();
+        API::deinitialize();
     }
 
     void ClientImpl::say_hello(const Greeting &greeting)
@@ -52,25 +59,10 @@ namespace cc::demo::zmq
 
     void ClientImpl::start_watching()
     {
-        if (!this->subscriber)
-        {
-            logf_debug("Creating ZeroMQ demo subscriber");
-            this->subscriber = Subscriber::create_shared(
-                this->host_address(),
-                this->channel_name());
-
-            this->subscriber->initialize();
-        }
     }
 
     void ClientImpl::stop_watching()
     {
-        if (this->subscriber)
-        {
-            logf_debug("Deinitializing ZeroMQ demo subscriber");
-            this->subscriber->deinitialize();
-            this->subscriber.reset();
-        }
     }
 
 }  // namespace cc::demo::zmq

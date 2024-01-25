@@ -1,7 +1,7 @@
 /// -*- javascript -*-
 //==============================================================================
-/// @file demo-tool.json
-/// @brief Settings for `demo-tool` utility
+/// @file demo-grpc-tool.json
+/// @brief Settings for `demo-grpc-tool` utility
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 

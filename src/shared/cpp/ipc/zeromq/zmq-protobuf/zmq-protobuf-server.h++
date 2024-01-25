@@ -25,11 +25,16 @@ namespace cc::zmq
         using RequestHandlerMap = types::ValueMap<std::string, RequestHandlerPtr>;
 
     protected:
-        ProtoBufServer(const std::string &class_name,
+        ProtoBufServer(const std::string &bind_address,
+                       const std::string &class_name,
                        const std::string &channel_name,
-                       const std::string &bind_address,
                        RequestHandlerMap &&handler_map = {});
 
+    public:
+        void initialize() override;
+        void deinitialize() override;
+
+    protected:
         void process_binary_request(const types::ByteArray &packed_request,
                                     types::ByteArray *packed_reply) override;
 

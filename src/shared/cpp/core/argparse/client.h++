@@ -23,6 +23,7 @@ namespace cc::argparse
         void add_options() override;
 
     public:
+        std::string host;
         uint timeout;
     };
 }  // namespace cc::argparse

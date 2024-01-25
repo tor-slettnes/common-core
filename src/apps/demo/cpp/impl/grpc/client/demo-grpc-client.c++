@@ -42,20 +42,9 @@ namespace cc::demo::grpc
 
     void ClientImpl::say_hello(const Greeting &greeting)
     {
-        ::grpc::ClientContext cxt;
-        CC::Demo::Greeting request;
-        google::protobuf::Empty reply;
-
-        protobuf::encode(greeting, &request);
-        log_info("Sending encoded encoded greeting: ", request);
-
-        ::grpc::Status status = this->stub->say_hello(&cxt, request, &reply);
-
-        log_info("Received gRPC status: ", status.error_code());
-
-        // this->call_check(
-        //     &Stub::say_hello,
-        //     protobuf::encoded<CC::Demo::Greeting>(greeting));
+        this->call_check(
+            &Stub::say_hello,
+            protobuf::encoded<CC::Demo::Greeting>(greeting));
     }
 
     TimeData ClientImpl::get_current_time()

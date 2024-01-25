@@ -10,10 +10,10 @@
 
 namespace cc::zmq
 {
-    Publisher::Publisher(const std::string &class_name,
-                         const std::string &channel_name,
-                         const std::string &bind_address)
-        : Super(class_name, channel_name, ::zmq::socket_type::pub, bind_address)
+    Publisher::Publisher(const std::string &bind_address,
+                         const std::string &class_name,
+                         const std::string &channel_name)
+        : Super(bind_address, class_name, channel_name, ::zmq::socket_type::pub)
     {
     }
 

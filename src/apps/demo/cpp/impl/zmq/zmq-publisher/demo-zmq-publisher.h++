@@ -27,8 +27,8 @@ namespace cc::demo::zmq
         using Super = cc::zmq::ProtoBufPublisher;
 
     protected:
-        Publisher(const std::string &channel_name = CHANNEL_NAME,
-                  const std::string &bind_address = "");
+        Publisher(const std::string &bind_address = "",
+                  const std::string &channel_name = CHANNEL_NAME);
 
     public:
         void initialize() override;

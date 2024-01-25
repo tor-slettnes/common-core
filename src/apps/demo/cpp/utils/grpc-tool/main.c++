@@ -20,7 +20,8 @@ int main(int argc, char** argv)
 
     logf_debug("Creating gRPC demo provider");
     cc::demo::provider = cc::demo::grpc::ClientImpl::create_shared(
-        cc::demo::options->identity);
+        cc::demo::options->identity,
+        cc::demo::options->host);
 
     logf_debug("Initializing gRPC demo provider");
     cc::demo::provider->initialize();

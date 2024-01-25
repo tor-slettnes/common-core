@@ -20,15 +20,11 @@ namespace cc::demo::zmq
 
     void RequestHandler::initialize()
     {
+        Super::initialize();
         this->add_handler(METHOD_SAY_HELLO, &RequestHandler::say_hello);
         this->add_handler(METHOD_GET_CURRENT_TIME, &RequestHandler::get_current_time);
         this->add_handler(METHOD_START_TICKING, &RequestHandler::start_ticking);
         this->add_handler(METHOD_STOP_TICKING, &RequestHandler::stop_ticking);
-    }
-
-    void RequestHandler::deinitialize()
-    {
-        this->clear_handlers();
     }
 
     protobuf::Empty RequestHandler::say_hello(const CC::Demo::Greeting &request)

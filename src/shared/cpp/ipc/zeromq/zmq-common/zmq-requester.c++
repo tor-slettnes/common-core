@@ -9,10 +9,10 @@
 
 namespace cc::zmq
 {
-    Requester::Requester(const std::string &class_name,
-                         const std::string &service_name,
-                         const std::string &host_address)
-        : Super(class_name, service_name, ::zmq::socket_type::req, host_address)
+    Requester::Requester(const std::string &host_address,
+                         const std::string &class_name,
+                         const std::string &channel_name)
+        : Super(host_address, class_name, channel_name, ::zmq::socket_type::req)
     {
     }
 

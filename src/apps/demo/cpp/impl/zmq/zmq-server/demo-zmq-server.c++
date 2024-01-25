@@ -10,11 +10,11 @@
 namespace cc::demo::zmq
 {
     Server::Server(const std::shared_ptr<API> &api,
-                   const std::string &channel_name,
-                   const std::string &bind_address)
-        : Super(TYPE_NAME_FULL(This),
+                   const std::string &bind_address,
+                   const std::string &channel_name)
+        : Super(bind_address,
+                TYPE_NAME_FULL(This),
                 channel_name,
-                bind_address,
                 {
                     {INTERFACE_NAME, RequestHandler::create_shared(api, INTERFACE_NAME)},
                 })

@@ -65,9 +65,20 @@ namespace cc::zmq
         else
         {
             logf_info(
-                "Request for non-existing ZMQ method %s.%s()",
+                "ZMQ ProtoBuf interface %r received request for non-existing method: %s()",
                 request.interface_name(),
                 request.method_name());
+
+            std::vector<std::string> method_names;
+            method_names.reserve(this->handler_map.size());
+            for (const auto &[name, method]: this->handler_map)
+            {
+                method_names.push_back(name);
+            }
+
+            logf_info(
+                "Available methods are: %s",
+                method_names);
 
             error = std::make_shared<ProtoBufError>(
                 CC::RR::STATUS_CANCELLED,

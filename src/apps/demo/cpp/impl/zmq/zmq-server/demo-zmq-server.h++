@@ -19,8 +19,8 @@ namespace cc::demo::zmq
 
     protected:
         Server(const std::shared_ptr<API> &api,
-               const std::string &channel_name = CHANNEL_NAME,
-               const std::string &bind_address = "");
+               const std::string &bind_address = "",
+               const std::string &channel_name = CHANNEL_NAME);
 
     private:
         std::shared_ptr<API> api;

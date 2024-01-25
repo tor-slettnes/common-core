@@ -12,13 +12,31 @@
 
 namespace cc::zmq
 {
-    ProtoBufServer::ProtoBufServer(const std::string &class_name,
+    ProtoBufServer::ProtoBufServer(const std::string &bind_address,
+                                   const std::string &class_name,
                                    const std::string &channel_name,
-                                   const std::string &bind_address,
                                    RequestHandlerMap &&handler_map)
-        : Super(class_name, channel_name, bind_address),
+        : Super(bind_address, class_name, channel_name),
           handler_map(std::move(handler_map))
     {
+    }
+
+    void ProtoBufServer::initialize()
+    {
+        Super::initialize();
+        for (const auto &[interface_name, handler]: this->handler_map)
+        {
+            handler->initialize();
+        }
+    }
+
+    void ProtoBufServer::deinitialize()
+    {
+        for (const auto &[interface_name, handler]: this->handler_map)
+        {
+            handler->deinitialize();
+        }
+        Super::deinitialize();
     }
 
     void ProtoBufServer::process_binary_request(const types::ByteArray &packed_request,

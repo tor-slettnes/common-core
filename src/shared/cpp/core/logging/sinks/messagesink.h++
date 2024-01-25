@@ -27,8 +27,8 @@ namespace cc::logging
         using Ref = std::shared_ptr<MessageSink>;
 
     public:
-        void set_include_source(bool include_source);
-        bool include_source() const;
+        void set_include_context(bool include_context);
+        bool include_context() const;
 
     protected:
         bool is_applicable(const types::Loggable &item) const override;
@@ -44,6 +44,6 @@ namespace cc::logging
 
     protected:
     private:
-        bool include_source_;
+        bool include_context_;
     };
 }  // namespace cc::logging

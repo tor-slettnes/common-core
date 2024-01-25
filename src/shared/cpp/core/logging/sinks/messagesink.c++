@@ -11,14 +11,14 @@
 
 namespace cc::logging
 {
-    void MessageSink::set_include_source(bool include_source)
+    void MessageSink::set_include_context(bool include_context)
     {
-        this->include_source_ = include_source;
+        this->include_context_ = include_context;
     }
 
-    bool MessageSink::include_source() const
+    bool MessageSink::include_context() const
     {
-        return this->include_source_;
+        return this->include_context_;
     }
 
     bool MessageSink::is_applicable(const types::Loggable &item) const
@@ -45,7 +45,7 @@ namespace cc::logging
                                     const Message::Ref &msg,
                                     const std::string &suffix) const
     {
-        if (this->include_source())
+        if (this->include_context())
         {
             stream << msg->scopename_or("(no scope)")
                    << "|"

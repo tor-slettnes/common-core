@@ -12,10 +12,10 @@
 
 namespace cc::zmq
 {
-    Responder::Responder(const std::string &class_name,
-                         const std::string &channel_name,
-                         const std::string &bind_address)
-        : Super(class_name, channel_name, ::zmq::socket_type::rep, bind_address),
+    Responder::Responder(const std::string &bind_address,
+                         const std::string &class_name,
+                         const std::string &channel_name)
+        : Super(bind_address, class_name, channel_name, ::zmq::socket_type::rep),
           keep_listening(false)
     {
     }

@@ -26,7 +26,6 @@ namespace cc::demo::zmq
                        const std::string interface_name);
 
         void initialize() override;
-        void deinitialize() override;
 
         protobuf::Empty say_hello(const CC::Demo::Greeting &request);
         CC::Demo::TimeData get_current_time(const protobuf::Empty &request);

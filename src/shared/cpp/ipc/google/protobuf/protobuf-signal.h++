@@ -30,14 +30,26 @@ namespace cc::protobuf
         ///     Override in derived classes to set up signal handlers.
         virtual void initialize()
         {
+            this->register_handlers();
             this->add_handler(static_cast<typename SignalT::SignalCase>(0),
                               std::bind(&This::on_init_complete, this));
         }
 
         virtual void deinitialize()
         {
+            this->unregister_handlers();
+        }
+
+
+        virtual void register_handlers()
+        {
+        }
+
+        virtual void unregister_handlers()
+        {
             this->slots.clear();
         }
+
 
     protected:
         /// @brief Add a callback handler for a specific Signal type

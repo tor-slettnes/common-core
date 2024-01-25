@@ -10,10 +10,10 @@
 
 namespace cc::zmq
 {
-    Host::Host(const std::string &class_name,
+    Host::Host(const std::string &bind_address,
+               const std::string &class_name,
                const std::string &channel_name,
-               ::zmq::socket_type socket_type,
-               const std::string &bind_address)
+               ::zmq::socket_type socket_type)
         : Super(class_name, channel_name, socket_type),
           bind_address_(bind_address)
     {
@@ -22,26 +22,8 @@ namespace cc::zmq
     void Host::initialize()
     {
         Super::initialize();
-        logf_debug("Binding ZMQ %r listener %r to %s",
-                   this->channel_name(),
-                   this->class_name(),
-                   this->bind_address());
+        logf_debug("%s binding to %s", *this, this->bind_address());
         this->socket()->bind(this->bind_address());
-    }
-
-    void Host::deinitialize()
-    {
-        try
-        {
-            this->socket()->close();
-        }
-        catch (const std::exception &e)
-        {
-            logf_notice("Could not close ZMQ service %s socket: %s",
-                        this->channel_name(),
-                        e.what());
-        }
-        Super::deinitialize();
     }
 
     std::string Host::bind_address() const

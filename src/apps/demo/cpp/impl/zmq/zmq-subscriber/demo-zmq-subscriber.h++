@@ -28,8 +28,8 @@ namespace cc::demo::zmq
         using Super = cc::zmq::ProtoBufSignalSubscriber<CC::Demo::Signal>;
 
     protected:
-        Subscriber(const std::string &channel_name = CHANNEL_NAME,
-                   const std::string &host_address = {});
+        Subscriber(const std::string &host_address = "",
+                   const std::string &channel_name = CHANNEL_NAME);
 
     public:
         void initialize() override;

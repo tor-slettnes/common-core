@@ -19,9 +19,9 @@
 
 namespace cc::demo::zmq
 {
-    Subscriber::Subscriber(const std::string &channel_name,
-                           const std::string &host_address)
-        : Super(TYPE_NAME_FULL(This), channel_name, host_address)
+    Subscriber::Subscriber(const std::string &host_address,
+                           const std::string &channel_name)
+        : Super(host_address, TYPE_NAME_FULL(This), channel_name)
     {
     }
 

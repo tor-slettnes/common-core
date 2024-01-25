@@ -7,7 +7,6 @@
 
 #pragma once
 #include "demo-api.h++"
-#include "demo-zmq-subscriber.h++"
 #include "demo-zmq-common.h++"
 #include "zmq-protobuf-client.h++"
 
@@ -33,12 +32,13 @@ namespace cc::demo::zmq
 
     protected:
         ClientImpl(const std::string &identity,
+                   const std::string &host_address = "",
                    const std::string &channel_name = CHANNEL_NAME,
-                   const std::string &host_address = {},
                    const std::string &interface_name = INTERFACE_NAME);
 
     public:
         void initialize() override;
+        void deinitialize() override;
 
         void say_hello(const Greeting &greeting) override;
         TimeData get_current_time() override;
@@ -47,8 +47,6 @@ namespace cc::demo::zmq
 
         void start_watching() override;
         void stop_watching() override;
-
-    private:
-        std::shared_ptr<Subscriber> subscriber;
     };
+
 }  // namespace cc::demo::zmq

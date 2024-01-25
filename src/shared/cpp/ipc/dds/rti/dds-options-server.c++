@@ -47,7 +47,7 @@ namespace cc::dds
                     this->domain_id))
             {
                 logging::message_dispatcher.add_sink(sink);
-                sink->set_include_source(this->log_source);
+                sink->set_include_context(this->log_context);
 
                 types::KeyValueMap config = this->logsink_setting(LOG_TO_DDS_SINK);
                 this->set_threshold_from_config(sink, config);

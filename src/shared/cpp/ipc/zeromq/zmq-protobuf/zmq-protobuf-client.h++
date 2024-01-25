@@ -20,9 +20,9 @@ namespace cc::zmq
         using Super = Requester;
 
     protected:
-        ProtoBufClient(const std::string &class_name,
+        ProtoBufClient(const std::string &host_address,
+                       const std::string &class_name,
                        const std::string &channel_name,
-                       const std::string &host_address,
                        const std::string &interface_name);
 
     public:

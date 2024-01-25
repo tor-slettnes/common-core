@@ -11,12 +11,13 @@
 
 namespace cc::zmq
 {
-    Subscriber::Subscriber(const std::string &class_name,
-                           const std::string &channel_name,
-                           const std::string &host_address)
-        : Super(class_name, channel_name, ::zmq::socket_type::sub, host_address),
+    Subscriber::Subscriber(const std::string &host_address,
+                           const std::string &class_name,
+                           const std::string &channel_name)
+        : Super(host_address, class_name, channel_name, ::zmq::socket_type::sub),
           keep_receiving(false)
     {
+        logf_debug("%s constructor from host address %r", *this, host_address);
     }
 
     std::vector<std::string> Subscriber::settings_path() const
@@ -32,6 +33,7 @@ namespace cc::zmq
     void Subscriber::subscribe(const Filter &filter,
                                const Callback &callback)
     {
+        logf_debug("%s subscribing with filter %s", *this, filter.to_hex());
         this->socket()->set(::zmq::sockopt::subscribe, filter.stringview());
         this->subscriptions_[filter] = callback;
         this->start_receiving();
@@ -87,6 +89,9 @@ namespace cc::zmq
     {
         try
         {
+            logf_debug("%s listening for publications from %s",
+                       *this,
+                       this->host_address());
             while (this->keep_receiving)
             {
                 ::zmq::message_t msg;
@@ -98,9 +103,7 @@ namespace cc::zmq
         }
         catch (...)
         {
-            logf_info("Shutting down ZMQ %s subscriber: %s",
-                      this->channel_name(),
-                      std::current_exception());
+            logf_info("%s shutting down: %s", *this, std::current_exception());
             this->keep_receiving = false;
         }
     }
