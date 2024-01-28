@@ -21,7 +21,6 @@ namespace cc::zmq
 
     protected:
         ProtoBufClient(const std::string &host_address,
-                       const std::string &class_name,
                        const std::string &channel_name,
                        const std::string &interface_name);
 

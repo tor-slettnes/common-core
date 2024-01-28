@@ -8,9 +8,9 @@
 import threading, time
 
 from typing         import Optional, Callable, Union
-from grpc_client    import BaseClient, ArgParser, ProtoBuf, CC
 from scalar_types   import enums
 from safe_invoke    import safe_invoke
+from .client        import Client, ArgParser, ProtoBuf, CC
 
 
 #===============================================================================
@@ -22,10 +22,10 @@ MappingChange = enums(CC.Signal.MappingChange)
 #===============================================================================
 # Client
 
-class SignalClient (BaseClient):
+class SignalClient (Client):
     '''gRPC Signal Client.
 
-    Derived from `BaseClient`, but with additional methods to handle Signal
+    Derived from `Client`, but with additional methods to handle Signal
     messages streamed from various services with a corresponding `watch()`
     method.
 
@@ -114,7 +114,7 @@ class SignalClient (BaseClient):
             once watching.  Any queries may block until this deadline has expired.
 
         '''
-        BaseClient.__init__(self, host, **kwargs)
+        super().__init__(host, **kwargs)
 
         if SignalType:
             self.SignalType = SignalType

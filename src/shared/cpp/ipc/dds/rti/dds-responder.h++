@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "dds-channel.h++"
+#include "dds-endpoint.h++"
 #include "chrono/date-time.h++"
 #include "status/exceptions.h++"
 
@@ -18,7 +18,7 @@ namespace cc::dds
 {
     template <class RequestType = CC::Common::Empty,
               class ResponseType = CC::Common::Empty>
-    class Responder : public Channel,
+    class Responder : public Endpoint,
                       public rti::request::SimpleReplier<RequestType, ResponseType>
     {
         using This = Responder;
@@ -28,7 +28,7 @@ namespace cc::dds
         Responder(const std::string &request_id,
                   int domain_id,
                   std::function<ResponseType(RequestType)> &&handler)
-            : Channel(TYPE_NAME_FULL(This), request_id, domain_id),
+            : Endpoint(TYPE_NAME_BASE(This), request_id, domain_id),
               BaseResponder(this->replier_params(), std::move(handler))
         {
         }

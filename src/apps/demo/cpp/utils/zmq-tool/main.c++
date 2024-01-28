@@ -35,6 +35,9 @@ int main(int argc, char** argv)
 
     bool success = cc::demo::options->handle_command();
 
+    // Invoke shutdown triggers
+    cc::application::signal_shutdown.emit(0);
+
     logf_debug("Deinitializing ZeroMQ demo provider");
     cc::demo::provider->deinitialize();
     cc::demo::provider.reset();
@@ -43,6 +46,7 @@ int main(int argc, char** argv)
     subscriber->deinitialize();
     subscriber.reset();
 
+    logf_debug("Deinitializing application");
     cc::application::deinitialize();
     return success ? 0 : -1;
 }

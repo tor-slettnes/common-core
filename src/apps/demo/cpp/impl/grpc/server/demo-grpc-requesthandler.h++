@@ -8,7 +8,7 @@
 #pragma once
 #include "demo-grpc-signalqueue.h++"
 #include "demo-api.h++"
-#include "grpc-signalserver.h++"
+#include "grpc-signalservice.h++"
 
 #include "demo_service.grpc.pb.h"  // generated from `demo_service.proto`
 
@@ -20,9 +20,9 @@ namespace cc::demo::grpc
     // @class RequestHandler
     // @brief Process requests from Demo clients
 
-    using RequestHandlerBase = cc::grpc::SignalWatchServer<CC::Demo::Demo,
-                                                           CC::Demo::Signal,
-                                                           SignalQueue>;
+    using RequestHandlerBase = cc::grpc::SignalWatchService<CC::Demo::Demo,
+                                                            CC::Demo::Signal,
+                                                            SignalQueue>;
 
     class RequestHandler : public RequestHandlerBase,
                            public types::enable_create_shared<RequestHandler>

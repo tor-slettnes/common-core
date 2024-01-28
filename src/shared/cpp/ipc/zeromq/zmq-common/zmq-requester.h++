@@ -21,10 +21,7 @@ namespace cc::zmq
 
     protected:
         Requester(const std::string &host_address,
-                  const std::string &class_name,
                   const std::string &channel_name);
-
-        std::vector<std::string> settings_path() const override;
 
     public:
         std::optional<types::ByteArray> send_receive(

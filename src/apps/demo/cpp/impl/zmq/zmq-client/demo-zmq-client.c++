@@ -19,7 +19,7 @@ namespace cc::demo::zmq
                            const std::string &channel_name,
                            const std::string &interface_name)
         : API(identity, "ZMQ ProtoBuf client"),
-          ProtoBufClient(host_address, TYPE_NAME_FULL(This), channel_name, interface_name)
+          ProtoBufClient(host_address, channel_name, interface_name)
     {
     }
 

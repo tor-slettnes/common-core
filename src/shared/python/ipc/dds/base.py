@@ -102,3 +102,4 @@ class Base (object):
             return topic
 
 
+{

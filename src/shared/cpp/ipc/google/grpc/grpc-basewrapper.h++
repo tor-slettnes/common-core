@@ -11,29 +11,19 @@
 
 #pragma once
 #include "grpc-status.h++"
+
 #include "status/exceptions.h++"
 #include "config/settingsstore.h++"
 #include "platform/path.h++"
 #include "logging/logging.h++"
-#include "version.h"            // PROJECT_NAME
 
 #include <grpc++/grpc++.h>
 
 namespace cc::grpc
 {
-    define_log_scope("service");
+    define_log_scope("grpc");
 
-    // Keys to look up settings in ServiceName.json
-    constexpr auto SETTINGS_FILE_COMMON = "grpc-services-common";
-    constexpr auto SETTINGS_FILE_PRODUCT = "grpc-services-" PROJECT_NAME;
-    constexpr auto PERSONALITY_SECTION = "personalities";
-    constexpr auto DEFAULT_SECTION = "defaults";
-    constexpr auto PORT_OPTION = "port";
-    constexpr auto HOST_OPTION = "host";
-    constexpr auto BIND_OPTION = "interface";
     constexpr auto MAX_MESSAGE_SIZE = "max message size";
-
-    extern std::shared_ptr<SettingsStore> service_settings;
 
     //==========================================================================
     /// @class WrapperBase
@@ -44,11 +34,21 @@ namespace cc::grpc
     class WrapperBase
     {
     protected:
+        // Keys to look up settings in grpc-endpoints-*.json
+        static constexpr auto PORT_OPTION = "port";
+        static constexpr auto HOST_OPTION = "host";
+        static constexpr auto BIND_OPTION = "interface";
+
+    protected:
         /// Constructor. Loads service-specific settings from corresponding SERVICENAME.json file,
         /// and initializes a default path to save data files.
         WrapperBase(const std::string &fullServiceName);
 
     public:
+        /// @fn service_settings
+        /// @brief return global service settings
+        static std::shared_ptr<SettingsStore> settings();
+
         /// @fn servicename
         /// @brief
         ///     Return the name of this service
@@ -113,13 +113,11 @@ namespace cc::grpc
     private:
         // Get a specific setting.
         types::Value setting(const std::string &key,
-                             const std::string &personality = {},
                              const types::Value &defaultValue = {}) const;
 
         // Split an address of the form [PERSONALITY@][HOST][:PORT] into
         // separate values
         void splitaddress(const std::string &address,
-                          std::string *personality,
                           std::string *host,
                           uint *port) const;
 
@@ -127,6 +125,8 @@ namespace cc::grpc
         std::string joinaddress(const std::string &host, uint port) const;
 
     private:
+        static std::shared_ptr<SettingsStore> settings_;
+
         const std::string fullServiceName_;
     };
 

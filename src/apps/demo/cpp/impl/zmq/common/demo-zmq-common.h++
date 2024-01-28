@@ -11,10 +11,11 @@
 namespace cc::demo::zmq
 {
     // Name for looking up settings for "command" and "message" channels
-    constexpr auto CHANNEL_NAME    = "Demo";
+    constexpr auto MESSAGE_CHANNEL = "Demo Publisher";
 
     // Interface name to use for RPC calls
-    constexpr auto INTERFACE_NAME  = "DemoService";
+    constexpr auto SERVICE_CHANNEL = "Demo Service";
+    constexpr auto DEMO_INTERFACE  = "Demo";
 
     // Method names within this interface
     constexpr auto METHOD_SAY_HELLO = "say_hello";

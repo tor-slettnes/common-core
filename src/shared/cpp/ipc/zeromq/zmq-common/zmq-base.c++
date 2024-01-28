@@ -9,13 +9,21 @@
 #include "logging/logging.h++"
 #include "platform/symbols.h++"
 #include "application/init.h++"
+#include "status/exceptions.h++"
+#include "buildinfo.h"  // PROJECT_NAME
 
 namespace cc::zmq
 {
-    Base::Base(const std::string &class_name,
+    // Keys to look up settings in zmq-services-*.json
+    constexpr auto SETTINGS_FILE_COMMON = "zmq-endpoints-common";
+    constexpr auto SETTINGS_FILE_PRODUCT = "zmq-endpoints-" PROJECT_NAME;
+    constexpr int  IO_THREADS = 2;
+
+    Base::Base(const std::string &endpoint_type,
                const std::string &channel_name,
                ::zmq::socket_type socket_type)
-        : Super(class_name, channel_name),
+        : Super(endpoint_type, channel_name),
+          // socket_type_(socket_type)
           socket_(std::make_shared<::zmq::socket_t>(*Base::context(), socket_type))
     {
     }
@@ -35,6 +43,12 @@ namespace cc::zmq
 
     std::shared_ptr<::zmq::socket_t> Base::socket()
     {
+        // if (!this->socket_)
+        // {
+        //     this->socket_ = std::make_shared<::zmq::socket_t>(
+        //         *Base::context(),
+        //         this->socket_type_);
+        // }
         return this->socket_;
     }
 
@@ -50,48 +64,32 @@ namespace cc::zmq
     }
 
     types::Value Base::setting(const std::string &key,
-                               const std::string &personality,
                                const types::Value &defaultValue) const
     {
-        types::ValueList candidate_branches;
-
-        if (!personality.empty())
-        {
-            candidate_branches.push_back(
-                this->settings()->get(PERSONALITY_SECTION).get(personality, {}));
-        }
-
-        candidate_branches.push_back(
-            this->settings()->get(DEFAULT_SECTION).get(this->channel_name()));
-
-        for (types::Value &branch : candidate_branches)
-        {
-            types::Value value = branch.get(key);
-
-            for (const std::string &sub_key : this->settings_path())
-            {
-                if (branch)
-                {
-                    value = branch.get(key, value);
-                    branch = branch.get(sub_key);
-                }
-            }
-
-            if (value)
-            {
-                return value;
-            }
-        }
-        return defaultValue;
+        return this->settings()
+            ->get(this->channel_name())
+            .get(key, defaultValue);
     }
 
     void Base::to_stream(std::ostream &stream) const
     {
         str::format(stream,
-                    "ZMQ %s %s(%r)",
-                    this->kind(),
-                    this->class_name(),
+                    "ZMQ %s (%r)",
+                    this->endpoint_type(),
                     this->channel_name());
+    }
+
+    void Base::log_zmq_error(const std::string &action, const ::zmq::error_t &e)
+    {
+        switch (e.num())
+        {
+        case ETERM:
+            break;
+
+        default:
+            logf_warning("%s could not %s: [%s] %s", this, action, e.num(), e.what());
+            break;
+        }
     }
 
     void Base::initialize()
@@ -104,17 +102,14 @@ namespace cc::zmq
         try
         {
             logf_debug("%s closing socket", *this);
-            this->socket()->close();
+            this->socket_->close();
         }
-        catch (const std::exception &e)
+        catch (const ::zmq::error_t &e)
         {
-            logf_info("Could not close ZMQ host %s socket: %s",
-                      *this,
-                      e.what());
+            this->log_zmq_error("close socket", e);
         }
         Super::deinitialize();
     }
-
 
     void Base::send(const types::ByteArray &bytes, ::zmq::send_flags flags)
     {
@@ -181,14 +176,12 @@ namespace cc::zmq
         std::string protocol;
         std::string host;
         uint port = 0;
-        std::string personality;
 
-        this->splitaddress(address, &protocol, &host, &port, &personality);
+        this->splitaddress(address, &protocol, &host, &port);
 
         if (protocol.empty())
         {
             protocol = this->setting(protocolOption,
-                                     personality,
                                      defaultProtocol)
                            .as_string();
         }
@@ -196,7 +189,6 @@ namespace cc::zmq
         if (host.empty())
         {
             host = this->setting(hostOption,
-                                 personality,
                                  defaultHost)
                        .as_string();
         }
@@ -204,7 +196,6 @@ namespace cc::zmq
         if (port == 0)
         {
             port = this->setting(portOption,
-                                 personality,
                                  defaultPort)
                        .as_uint();
         }
@@ -215,14 +206,12 @@ namespace cc::zmq
     void Base::splitaddress(const std::string &address,
                             std::string *protocol,
                             std::string *host,
-                            uint *port,
-                            std::string *personality) const
+                            uint *port) const
     {
         static const std::regex rx(
             "(?:(\\w*)://)?"                       // protocol
             "(\\*|\\[[\\w\\.:]*\\]|[\\w\\-\\.]*)"  // host, either '[x[:x...]]' or 'n[.n]...'
             "(?::(\\d+))?"                         // port
-            "(?:(\\w*)@)?"                         // personality
         );
 
         std::smatch match;
@@ -231,14 +220,12 @@ namespace cc::zmq
             *protocol = match.str(1);
             *host = match.str(2);
             *port = match.length(3) ? std::stoi(match.str(3)) : 0;
-            *personality = match.str(4);
         }
         else
         {
             protocol->clear();
             host->clear();
             *port = 0;
-            personality->clear();
         }
     }
 
@@ -252,11 +239,6 @@ namespace cc::zmq
             uri += ":" + std::to_string(port);
         }
         return uri;
-    }
-
-    std::string Base::kind() const
-    {
-        return str::join(this->settings_path());
     }
 
     std::mutex Base::context_mtx_;

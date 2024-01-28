@@ -1,16 +1,12 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file grpc-signalserver.h++
+/// @file grpc-signalservice.h++
 /// @brief Common Core service provider with signal emitting capability
 /// @author Tor Slettnes <tor@slett.net>
-///
-/// Class templates for Common Core gRPC services (client and server), including:
-///  * Settings store in YourServiceName.json, using JsonCpp as backend
-///  * Status/error code wrappers
 //==============================================================================
 
 #pragma once
-#include "grpc-serverwrapper.h++"
+#include "grpc-servicewrapper.h++"
 #include "grpc-signalqueue.h++"
 #include "protobuf-message.h++"
 
@@ -19,17 +15,17 @@
 namespace cc::grpc
 {
     //==========================================================================
-    /// @class SignalServerWrapper<ServerT>
-    /// @brief Server wrapper with signalling interface
+    /// @class SignalServiceWrapper<ServiceT>
+    /// @brief Service wrapper with signalling interface
     /// @tparam ServiceT
     ///     gRPC service type
     /// @tparam SignalT
     ///     Signal class, derfined in .proto file
 
     template <class ServiceT>
-    class SignalServerWrapper : public ServerWrapper<ServiceT>
+    class SignalServiceWrapper : public ServiceWrapper<ServiceT>
     {
-        using Super = ServerWrapper<ServiceT>;
+        using Super = ServiceWrapper<ServiceT>;
 
     protected:
         using Super::Super;
@@ -75,9 +71,9 @@ namespace cc::grpc
               class SignalT,
               class SignalQueueT,
               class SignalFilterT = CC::Signal::Filter>
-    class SignalWatchServer : public SignalServerWrapper<ServiceT>
+    class SignalWatchService : public SignalServiceWrapper<ServiceT>
     {
-        using Super = SignalServerWrapper<ServiceT>;
+        using Super = SignalServiceWrapper<ServiceT>;
 
     protected:
         using Super::Super;

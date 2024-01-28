@@ -17,6 +17,7 @@ import public "demo_types.proto";
 import public "signal_types.proto";
 import "google/protobuf/empty.proto";
 
+// Simple service to showcase command/response and event propagation
 service Demo {
     // Send a greeting to other listeners
     rpc say_hello (Greeting) returns (google.protobuf.Empty);

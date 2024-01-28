@@ -11,10 +11,10 @@
 namespace cc::zmq
 {
     Host::Host(const std::string &bind_address,
-               const std::string &class_name,
+               const std::string &endpoint_type,
                const std::string &channel_name,
                ::zmq::socket_type socket_type)
-        : Super(class_name, channel_name, socket_type),
+        : Super(endpoint_type, channel_name, socket_type),
           bind_address_(bind_address)
     {
     }
@@ -23,8 +23,17 @@ namespace cc::zmq
     {
         Super::initialize();
         logf_debug("%s binding to %s", *this, this->bind_address());
-        this->socket()->bind(this->bind_address());
+        try
+        {
+            this->socket()->bind(this->bind_address());
+        }
+        catch (const ::zmq::error_t &e)
+        {
+            this->log_zmq_error("bind to socket", e);
+            throw;
+        }
     }
+
 
     std::string Host::bind_address() const
     {

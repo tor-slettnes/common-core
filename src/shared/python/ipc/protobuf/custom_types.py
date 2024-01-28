@@ -5,8 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from protobuf_standard_types import ProtoBuf
-import typing
+from .standard_types import ProtoBuf
 
 class CC (object):
     import event_types_pb2 as Status

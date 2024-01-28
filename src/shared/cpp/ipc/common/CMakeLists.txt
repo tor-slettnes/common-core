@@ -17,7 +17,7 @@ set(LIB_DEPS
 
 ### Source files, roughly in dependency order
 set(SOURCES
-  ipc-channel.c++
+  ipc-endpoint.c++
 )
 
 ## Invoke common CMake rules

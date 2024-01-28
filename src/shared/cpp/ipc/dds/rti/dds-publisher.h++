@@ -5,7 +5,7 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "dds-channel.h++"
+#include "dds-endpoint.h++"
 #include "thread/signaltemplate.h++"
 #include "logging/logging.h++"
 
@@ -17,10 +17,10 @@ namespace cc::dds
     //==========================================================================
     // @class PubSubChannnel
 
-    class Publisher : public Channel,
+    class Publisher : public Endpoint,
                       public ::dds::pub::Publisher
     {
-        using Super = Channel;
+        using Super = Endpoint;
         using This = Publisher;
 
     protected:
@@ -31,9 +31,7 @@ namespace cc::dds
         using DataWriterRef = std::shared_ptr<::dds::pub::DataWriter<T>>;
 
     public:
-        Publisher(const std::string &class_name,
-                  const std::string &channel_name,
-                  int domain_id);
+        Publisher(const std::string &channel_name, int domain_id);
 
     public:
         //======================================================================

@@ -11,7 +11,6 @@
 #include "string/misc.h++"
 #include "types/create-shared.h++"
 #include "platform/process.h++"
-#include "sourcepath.h"
 
 namespace cc::logging
 {
@@ -71,26 +70,13 @@ namespace cc::logging
                        const std::string &function,
                        pid_t thread_id = platform::process
                                              ? platform::process->thread_id()
-                                             : 0)
-            : Message({},                                                // text
-                      scope,                                             // scope
-                      level,                                             // level
-                      flow,                                              // flow
-                      tp,                                                // tp
-                      fs::relative(path, SOURCE_DIR, this->path_error),  // path
-                      lineno,                                            // lineno
-                      function,                                          // function
-                      thread_id,                                         // thread_id
-                      {},                                                // origin
-                      0,                                                 // code
-                      {},                                                // symbol
-                      {}),                                               // attributes
-              dispatcher_(dispatcher),
-              is_applicable_(Message::is_applicable() && dispatcher->is_applicable(*this))
-        {
-        }
+                                             : 0);
 
     public:
+        std::string text() const noexcept override;
+        bool is_applicable() const noexcept override;
+        void dispatch();
+
         template <class T>
         inline MessageBuilder &operator<<(const T &value)
         {
@@ -117,24 +103,6 @@ namespace cc::logging
                 str::format(*static_cast<std::ostringstream *>(this), fmt, args...);
             }
             return *this;
-        }
-
-        inline std::string text() const noexcept override
-        {
-            return this->str();
-        }
-
-        inline bool is_applicable() const noexcept override
-        {
-            return this->is_applicable_;
-        }
-
-        inline void dispatch()
-        {
-            if (this->is_applicable())
-            {
-                this->dispatcher_->submit(this->shared_from_this());
-            }
         }
 
     private:

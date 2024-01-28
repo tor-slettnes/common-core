@@ -20,10 +20,7 @@ namespace cc::zmq
 
     protected:
         Publisher(const std::string &bind_address,
-                  const std::string &class_name,
                   const std::string &channel_name);
-
-        std::vector<std::string> settings_path() const override;
 
     public:
         void publish(::zmq::message_t &&msg);

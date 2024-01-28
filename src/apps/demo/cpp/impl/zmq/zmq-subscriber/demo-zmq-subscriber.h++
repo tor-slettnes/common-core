@@ -29,7 +29,7 @@ namespace cc::demo::zmq
 
     protected:
         Subscriber(const std::string &host_address = "",
-                   const std::string &channel_name = CHANNEL_NAME);
+                   const std::string &channel_name = MESSAGE_CHANNEL);
 
     public:
         void initialize() override;

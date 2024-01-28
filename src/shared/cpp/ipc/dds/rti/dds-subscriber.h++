@@ -7,7 +7,7 @@
 
 #pragma once
 // #include "dds-topic.h++"
-#include "dds-channel.h++"
+#include "dds-endpoint.h++"
 #include "thread/signaltemplate.h++"
 #include "logging/logging.h++"
 #include "platform/symbols.h++"
@@ -22,11 +22,11 @@ namespace cc::dds
     //==========================================================================
     // @class PubSubChannnel
 
-    class Subscriber : public Channel,
+    class Subscriber : public Endpoint,
                        public ::dds::sub::Subscriber
     {
         using This = Subscriber;
-        using Super = Channel;
+        using Super = Endpoint;
 
     protected:
         using DataReaderQos = ::dds::sub::qos::DataReaderQos;
@@ -38,10 +38,7 @@ namespace cc::dds
         using DataReaderRef = std::shared_ptr<::dds::sub::DataReader<T>>;
 
     public:
-        Subscriber(const std::string &class_name,
-                   const std::string &channel_name,
-                   int domain_id);
-
+        Subscriber(const std::string &channel_name, int domain_id);
         ~Subscriber();
 
         void initialize() override;

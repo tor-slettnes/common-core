@@ -7,14 +7,12 @@
 
 #include "dds-subscriber.h++"
 #include "logging/logging.h++"
+#include "platform/symbols.h++"
 
 namespace cc::dds
 {
-    Subscriber::Subscriber(
-        const std::string &class_name,
-        const std::string &channel_name,
-        int domain_id)
-        : Super(class_name, channel_name, domain_id),
+    Subscriber::Subscriber(const std::string &channel_name, int domain_id)
+        : Super(TYPE_NAME_BASE(This), channel_name, domain_id),
           ::dds::sub::Subscriber(this->get_participant()),
           keep_listening(false)
     {

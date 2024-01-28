@@ -10,6 +10,7 @@
 #include "status/exceptions.h++"
 #include "config/settingsstore.h++"
 #include "string/misc.h++"
+#include "buildinfo.h"  // PROJECT_NAME
 
 /// C stdlib
 #include <netdb.h>
@@ -18,17 +19,8 @@
 
 namespace cc::grpc
 {
-    std::shared_ptr<SettingsStore> service_settings;
-
-    void init_service_settings()
-    {
-        if (!service_settings)
-        {
-            service_settings = SettingsStore::create_shared(
-                types::PathList({SETTINGS_FILE_PRODUCT,
-                                 SETTINGS_FILE_COMMON}));
-        }
-    }
+    constexpr auto SETTINGS_FILE_COMMON = "grpc-endpoints-common";
+    constexpr auto SETTINGS_FILE_PRODUCT = "grpc-endpoints-" PROJECT_NAME;
 
     //==========================================================================
     // WrapperBase
@@ -36,10 +28,23 @@ namespace cc::grpc
     WrapperBase::WrapperBase(const std::string &fullServiceName)
         : fullServiceName_(fullServiceName)
     {
-        init_service_settings();
-        logf_trace("Instantiated %r service wrapper with settings: %s",
+        logf_trace("Instantiated %r wrapper with settings: %s",
                    this->servicename(),
-                   *service_settings);
+                   *WrapperBase::settings());
+    }
+
+    std::shared_ptr<SettingsStore> WrapperBase::settings()
+    {
+        if (WrapperBase::settings_)
+        {
+            return WrapperBase::settings_;
+        }
+        else
+        {
+            return WrapperBase::settings_ = SettingsStore::create_shared(
+                       types::PathList({SETTINGS_FILE_PRODUCT,
+                                        SETTINGS_FILE_COMMON}));
+        }
     }
 
     std::string WrapperBase::realaddress(const std::string &address,
@@ -48,14 +53,13 @@ namespace cc::grpc
                                          std::string defaultHost,
                                          uint defaultPort) const
     {
-        std::string personality;
         std::string host;
         uint port;
-        this->splitaddress(address, &personality, &host, &port);
+        this->splitaddress(address, &host, &port);
 
         if (host.empty())
         {
-            host = this->setting(hostOption, personality).as_string();
+            host = this->setting(hostOption).as_string();
         }
         if (host.empty())
         {
@@ -64,7 +68,7 @@ namespace cc::grpc
 
         if (port == 0)
         {
-            port = this->setting(portOption, personality).as_uint();
+            port = this->setting(portOption).as_uint();
         }
 
         if (port == 0)
@@ -96,43 +100,31 @@ namespace cc::grpc
 
     int WrapperBase::max_message_size() const
     {
-        return this->setting(MAX_MESSAGE_SIZE, {}, 0).as_uint();
+        return this->setting(MAX_MESSAGE_SIZE, 0).as_uint();
     }
 
     std::string WrapperBase::servicename(bool full) const
     {
-        return full ? this->fullServiceName_ : str::stem(this->fullServiceName_, ":");
+        return full ? this->fullServiceName_ : str::stem(this->fullServiceName_, ".");
     }
 
     types::Value WrapperBase::setting(const std::string &key,
-                                      const std::string &personality,
                                       const types::Value &defaultValue) const
     {
-        types::Value value;
-        if (!personality.empty())
-        {
-            value = service_settings->get(PERSONALITY_SECTION, {})
-                        .get(personality, {})
-                        .get(key, {});
-        }
-
-        if (value.empty())
-        {
-            value = service_settings->get(DEFAULT_SECTION, {})
-                        .get(this->servicename(), {})
-                        .get(key, defaultValue);
-        }
-
-        return value;
+        logf_trace("Getting setting from %s: %r -> %r",
+                   WrapperBase::settings()->filename(),
+                   this->servicename(),
+                   key);
+        return WrapperBase::settings()
+            ->get(this->servicename())
+            .get(key, defaultValue);
     }
 
     void WrapperBase::splitaddress(const std::string &address,
-                                   std::string *personality,
                                    std::string *host,
                                    uint *port) const
     {
         static const std::regex rx(
-            "(?:(\\w*)@)?"                  // personality
             "(\\[[\\w\\.:]*\\]|[\\w\\.]*)"  // host, either '[x[:x...]]' or 'n[.n]...'
             "(?::(\\d+))?$"                 // port
         );
@@ -140,13 +132,11 @@ namespace cc::grpc
         std::smatch match;
         if (std::regex_match(address, match, rx))
         {
-            *personality = match.str(1);
-            *host = match.str(2);
-            *port = match.length(3) ? std::stoi(match.str(3)) : 0;
+            *host = match.str(1);
+            *port = match.length(2) ? std::stoi(match.str(2)) : 0;
         }
         else
         {
-            personality->clear();
             host->clear();
             *port = 0;
         }
@@ -156,4 +146,7 @@ namespace cc::grpc
     {
         return host + ":" + std::to_string(port);
     }
+
+    std::shared_ptr<SettingsStore> WrapperBase::settings_;
+
 }  // namespace cc::grpc

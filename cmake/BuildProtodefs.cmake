@@ -54,7 +54,7 @@ if(BUILD_GRPC)
 endif()
 
 
-### Rules to generate .cc and .h files
+### Rules to generate C++ files
 if (BUILD_CPP)
   protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${SOURCES})
   if(BUILD_GRPC)

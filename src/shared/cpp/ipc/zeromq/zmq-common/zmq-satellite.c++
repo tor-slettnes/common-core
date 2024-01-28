@@ -7,14 +7,15 @@
 
 #include "zmq-satellite.h++"
 #include "logging/logging.h++"
+#include "status/exceptions.h++"
 
 namespace cc::zmq
 {
     Satellite::Satellite(const std::string &host_address,
-                         const std::string &class_name,
+                         const std::string &endpoint_type,
                          const std::string &channel_name,
                          ::zmq::socket_type socket_type)
-        : Super(class_name, channel_name, socket_type),
+        : Super(endpoint_type, channel_name, socket_type),
           host_address_(host_address)
     {
     }
@@ -22,15 +23,32 @@ namespace cc::zmq
     void Satellite::initialize()
     {
         Super::initialize();
-        logf_debug("%s connecting to %s", *this, this->host_address());
-        this->socket()->connect(this->host_address());
+        this->connect();
     }
 
     void Satellite::deinitialize()
     {
-        logf_debug("%s disconnecting from %s", *this, this->host_address());
-        this->socket()->disconnect(this->host_address());
+        this->disconnect();
         Super::deinitialize();
+    }
+
+    void Satellite::connect()
+    {
+        logf_debug("%s connecting to %s", *this, this->host_address());
+        this->socket()->connect(this->host_address());
+    }
+
+    void Satellite::disconnect()
+    {
+        try
+        {
+            logf_debug("%s disconnecting from %s", *this, this->host_address());
+            this->socket()->disconnect(this->host_address());
+        }
+        catch (const ::zmq::error_t &e)
+        {
+            this->log_zmq_error("disconnect from " + this->host_address(), e);
+        }
     }
 
     std::string Satellite::host_address() const

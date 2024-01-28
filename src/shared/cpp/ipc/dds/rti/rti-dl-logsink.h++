@@ -6,7 +6,6 @@
 //==============================================================================
 
 #pragma once
-#include "dds-channel.h++"
 #include "logging/sinks/messagesink.h++"
 #include "types/valuemap.h++"
 #include "types/create-shared.h++"

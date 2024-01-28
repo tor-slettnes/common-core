@@ -26,7 +26,7 @@ set(SOURCES
   grpc-status.c++
   grpc-basewrapper.c++
   grpc-clientwrapper.c++
-  grpc-serverwrapper.c++
+  grpc-servicewrapper.c++
 )
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/echo Do not invoke directly.
 ##===============================================================================n
-## @file grpc_client.py
+## @file client.py
 ## @brief Interactive wrapper for access to Instrument Services via gRPC
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
@@ -12,12 +12,11 @@ import grpc
 import inspect
 import argparse
 
-from grpc_base      import ServiceBase, ProtoBuf, CC
-from grpc_status    import DetailedError
+from .base     import Base, ProtoBuf, CC
+from .status   import DetailedError
 
 #===============================================================================
 ## Enumerated values
-
 
 class ArgParser (argparse.ArgumentParser):
     def __init__ (self, host=None, *args, **kwargs):
@@ -29,11 +28,11 @@ class ArgParser (argparse.ArgumentParser):
             help='Server address, in the form [PERSONALITY@][HOST][:PORT].')
 
 
-class BaseClient (ServiceBase):
+class Client (Base):
     stub = None
 
-    def __init__ (self, host, servicename=None, wait_for_ready=False):
-        super().__init__(servicename)
+    def __init__ (self, host, wait_for_ready=False):
+        super().__init__()
 
         assert type(self).stub, \
             "Subclass should set 'stub' to appropriate gRPC service class"

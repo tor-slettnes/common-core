@@ -5,13 +5,13 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "grpc-serverwrapper.h++"
+#include "grpc-servicewrapper.h++"
 #include "protobuf-message.h++"
 //#include "errnos.h"
 
 namespace cc::grpc
 {
-    ServerWrapperBase::ServerWrapperBase(
+    ServiceWrapperBase::ServiceWrapperBase(
         const std::string &fullServiceName,
         const std::string &serviceAddress,
         const std::shared_ptr<::grpc::ServerCredentials> &creds)
@@ -24,8 +24,8 @@ namespace cc::grpc
     {
     }
 
-    void ServerWrapperBase::addToBuilder(::grpc::ServerBuilder *builder,
-                                         bool addlistener)
+    void ServiceWrapperBase::addToBuilder(::grpc::ServerBuilder *builder,
+                                          bool addlistener)
     {
         if (addlistener)
         {
@@ -37,14 +37,14 @@ namespace cc::grpc
         }
     }
 
-    std::unique_ptr<::grpc::Server> ServerWrapperBase::BuildAndStart()
+    std::unique_ptr<::grpc::Server> ServiceWrapperBase::BuildAndStart()
     {
         ::grpc::ServerBuilder builder;
         this->addToBuilder(&builder);
         return builder.BuildAndStart();
     }
 
-    std::string ServerWrapperBase::request_description(
+    std::string ServiceWrapperBase::request_description(
         const google::protobuf::Message &request,
         const std::string &peer,
         const std::string &function)
@@ -62,12 +62,12 @@ namespace cc::grpc
         }
     }
 
-    void ServerWrapperBase::log_status(const Status &status,
-                                       const std::string &operation,
-                                       status::Flow flow,
-                                       const fs::path &path,
-                                       const int &lineno,
-                                       const std::string &function)
+    void ServiceWrapperBase::log_status(const Status &status,
+                                        const std::string &operation,
+                                        status::Flow flow,
+                                        const fs::path &path,
+                                        const int &lineno,
+                                        const std::string &function)
     {
         auto msg = custom_log_msg(
             status::Level::NOTICE,
@@ -88,24 +88,24 @@ namespace cc::grpc
         msg->dispatch();
     }
 
-    Status ServerWrapperBase::failure(const std::exception &e,
-                                      const std::string &operation,
-                                      status::Flow flow,
-                                      const std::filesystem::path &path,
-                                      const int &lineno,
-                                      const std::string &function)
+    Status ServiceWrapperBase::failure(const std::exception &e,
+                                       const std::string &operation,
+                                       status::Flow flow,
+                                       const std::filesystem::path &path,
+                                       const int &lineno,
+                                       const std::string &function)
     {
         Status status(*cc::exception::map_to_event(e));
         this->log_status(status, operation, flow, path, lineno, function);
         return status;
     }
 
-    Status ServerWrapperBase::failure(std::exception_ptr eptr,
-                                      const std::string &operation,
-                                      status::Flow flow,
-                                      const fs::path &path,
-                                      const int &lineno,
-                                      const std::string &function)
+    Status ServiceWrapperBase::failure(std::exception_ptr eptr,
+                                       const std::string &operation,
+                                       status::Flow flow,
+                                       const fs::path &path,
+                                       const int &lineno,
+                                       const std::string &function)
     {
         try
         {
@@ -127,13 +127,13 @@ namespace cc::grpc
         }
     }
 
-    Status ServerWrapperBase::failure(const std::exception &exception,
-                                      const google::protobuf::Message &request,
-                                      const std::string &peer,
-                                      status::Flow flow,
-                                      const fs::path &path,
-                                      const int &lineno,
-                                      const std::string &function)
+    Status ServiceWrapperBase::failure(const std::exception &exception,
+                                       const google::protobuf::Message &request,
+                                       const std::string &peer,
+                                       status::Flow flow,
+                                       const fs::path &path,
+                                       const int &lineno,
+                                       const std::string &function)
     {
         return this->failure(exception,
                              this->request_description(request, peer, function),
@@ -143,13 +143,13 @@ namespace cc::grpc
                              function);
     }
 
-    Status ServerWrapperBase::failure(std::exception_ptr eptr,
-                                      const google::protobuf::Message &request,
-                                      const std::string &peer,
-                                      status::Flow flow,
-                                      const fs::path &path,
-                                      const int &lineno,
-                                      const std::string &function)
+    Status ServiceWrapperBase::failure(std::exception_ptr eptr,
+                                       const google::protobuf::Message &request,
+                                       const std::string &peer,
+                                       status::Flow flow,
+                                       const fs::path &path,
+                                       const int &lineno,
+                                       const std::string &function)
     {
         return this->failure(eptr,
                              this->request_description(request, peer, function),

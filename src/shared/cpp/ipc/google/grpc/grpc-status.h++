@@ -102,7 +102,7 @@ namespace cc::grpc
         /// @param[in] timepoint
         ///     Time of occurence.
         /// @param[in] attributes
-        ///     Additional information specific to the error, e.g., filename, channel, etc.
+        ///     Additional information specific to the error
         Status(::grpc::StatusCode status_code,
                const std::string &text,
                status::Domain domain = status::Domain::APPLICATION,

@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "dds-channel.h++"
+#include "dds-endpoint.h++"
 #include "platform/symbols.h++"
 #include "chrono/date-time.h++"
 #include "types/create-shared.h++"
@@ -18,18 +18,17 @@
 namespace cc::dds
 {
     //==========================================================================
-    // DDS service Implementation template
+    // DDS client Implementation template
 
     template <class BaseClient>
-    class Client : public Channel,
+    class Client : public Endpoint,
                    public BaseClient
     {
+        using This = Client<BaseClient>;
+
     public:
-        Client(
-            const std::string &class_name,
-            const std::string &service_name,
-            int domain_id)
-            : Channel(class_name, service_name, domain_id),
+        Client(const std::string &service_name, int domain_id)
+            : Endpoint(TYPE_NAME_BASE(This), service_name, domain_id),
               BaseClient(this->client_params())
         {
         }
@@ -38,14 +37,14 @@ namespace cc::dds
         void initialize() override
         {
             application::signal_shutdown.connect(
-                this->channel_name(),
+                this->to_string(),
                 std::bind(&BaseClient::close, this));
         }
 
         void deinitialize() override
         {
             application::signal_shutdown.disconnect(
-                this->channel_name());
+                this->to_string());
         }
 
     protected:
@@ -64,11 +63,8 @@ namespace cc::dds
     class Client_Wrapper
     {
     protected:
-        Client_Wrapper(
-            const std::string &class_name,
-            const std::string &service_name,
-            int domain_id)
-            : client_(class_name, service_name, domain_id)
+        Client_Wrapper(const std::string &service_name, int domain_id)
+            : client_(service_name, domain_id)
         {
         }
 
@@ -76,9 +72,7 @@ namespace cc::dds
         inline Client<ClientT> client(
             const steady::Duration &max_wait = std::chrono::seconds(10))
         {
-            logf_trace("%s client waiting for service", this->client_.channel_name());
             this->client_.wait_for_service(max_wait);
-            logf_trace("%s service is available", this->client_.channel_name());
             return this->client_;
         }
 

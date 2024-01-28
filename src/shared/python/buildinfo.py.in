@@ -1,0 +1,12 @@
+#===============================================================================
+## @file build_info.py.in
+## @brief Build information template, populated by CMake
+## @author Tor Slettnes <tor@slett.net>
+#===============================================================================
+
+PACKAGE_VERSION      = "@PACKAGE_VERSION@"
+PROJECT_VERSION      = "@PROJECT_VERSION@"
+PROJECT_NAME         = "@PROJECT_NAME@"
+PROJECT_DESCRIPTION  = "@PROJECT_DESCRIPTION@"
+PROJECT_BUILD_DATE   = "@PROJECT_BUILD_DATE@"
+PROJECT_BUILD_TIME   = "@PROJECT_BUILD_TIME@"

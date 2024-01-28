@@ -28,17 +28,11 @@ include(BuildLibrary)
 
 ### C++17 required for variant data type, parameter packs, std::filesystem
 target_compile_features(${TARGET} PUBLIC cxx_std_17)
-target_compile_definitions(${TARGET} PUBLIC RAPIDJSON_HAS_STDSTRING)
-
-# Set build version, date and time
-configure_file(version.h.in version.h)
-configure_file(sourcepath.h.in sourcepath.h)
-
-target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 # Pull in sources from subdirectories
 add_subdirectory(application)
 add_subdirectory(argparse)
+add_subdirectory(buildinfo)
 add_subdirectory(chrono)
 add_subdirectory(config)
 add_subdirectory(json)

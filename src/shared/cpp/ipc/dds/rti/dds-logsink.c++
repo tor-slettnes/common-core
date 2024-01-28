@@ -14,7 +14,7 @@ namespace cc::dds
 {
     DDSLogger::DDSLogger(const std::string &channel_name, int domain_id)
         : Super(),
-          Publisher(TYPE_NAME_FULL(this), channel_name, domain_id)
+          Publisher(channel_name, domain_id)
     {
     }
 

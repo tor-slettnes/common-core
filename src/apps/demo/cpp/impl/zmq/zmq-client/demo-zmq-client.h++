@@ -33,8 +33,8 @@ namespace cc::demo::zmq
     protected:
         ClientImpl(const std::string &identity,
                    const std::string &host_address = "",
-                   const std::string &channel_name = CHANNEL_NAME,
-                   const std::string &interface_name = INTERFACE_NAME);
+                   const std::string &channel_name = SERVICE_CHANNEL,
+                   const std::string &interface_name = DEMO_INTERFACE);
 
     public:
         void initialize() override;

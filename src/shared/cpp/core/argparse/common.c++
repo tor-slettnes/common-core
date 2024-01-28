@@ -15,7 +15,7 @@
 #include "platform/logsink.h++"
 #include "platform/path.h++"
 #include "platform/runtime.h++"
-#include "version.h"
+#include "buildinfo.h"
 
 #include <functional>
 

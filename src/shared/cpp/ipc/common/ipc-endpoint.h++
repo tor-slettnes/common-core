@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file ipc-channel.h++
+/// @file ipc-endpoint.h++
 /// @brief Abstact base for a single service
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
@@ -14,36 +14,42 @@
 
 namespace cc::ipc
 {
-    define_log_scope("service");
+    define_log_scope("ipc");
 
     //==========================================================================
-    // @class Channel
+    // @class Endpoint
 
-    class Channel : public types::Streamable
+    class Endpoint : public types::Streamable
     {
     protected:
-        /// @brief A generic communications channel, agnostic to platform
-        /// @param[in] class_name
-        ///     Final implementation class, used for handles, debugging, etc.
+        // Keys to look up settings in grpc-endpoints-*.json
+        static constexpr auto PORT_OPTION = "port";
+        static constexpr auto HOST_OPTION = "host";
+        static constexpr auto BIND_OPTION = "interface";
+
+    protected:
+        /// @brief A generic communications endpoint, agnostic to platform
+        /// @param[in] endpoint_type
+        ///     Type description for this endpoint, used for debugging, etc.
         /// @param[in] channel_name
-        ///     Name used to identify communications channel,
+        ///     Name used to identify communications endpoint,
         ///     e.g. look up communication parameters between peers.
-        Channel(const std::string &class_name,
-                const std::string &channel_name);
-        ~Channel();
+        Endpoint(const std::string &endpoint_type,
+                 const std::string &channel_name);
+        ~Endpoint();
 
     public:
-        const std::string &class_name() const;
-        const std::string &channel_name() const;
-
         virtual void initialize() {}
         virtual void deinitialize() {}
+
+        const std::string &endpoint_type() const;
+        const std::string &channel_name() const;
 
     protected:
         void to_stream(std::ostream &stream) const override;
 
     private:
+        std::string endpoint_type_;
         std::string channel_name_;
-        std::string class_name_;
     };
 }  // namespace cc::ipc

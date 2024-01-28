@@ -152,7 +152,7 @@ namespace cc::grpc
         template <class... Args>
         ClientWrapper(const std::string &host,
                       Args &&...args)
-            : ClientWrapperBase(TYPE_NAME_FULL(T), host, std::forward<Args>(args)...),
+            : ClientWrapperBase(T::service_full_name(), host, std::forward<Args>(args)...),
               stub(T::NewStub(this->channel))
         {
         }

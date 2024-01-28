@@ -6,12 +6,11 @@
 #===============================================================================
 
 import time
-import grpc_signalclient
+from scalar_types          import enums
+from typing                import Callable
+from ipc.grpc.signalclient import SignalClient, CC as _CC
 
-from scalar_types  import enums
-from typing        import Callable
-
-class CC (grpc_signalclient.CC):
+class CC (_CC):
     import demo_types_pb2 as Demo
 
 #===============================================================================
@@ -22,20 +21,18 @@ Weekday = enums(CC.Demo.Weekday)
 #===============================================================================
 # SignalClient class
 
-class DemoClient (grpc_signalclient.SignalClient):
+class DemoClient (SignalClient):
     '''Client for Demo service.'''
 
     from demo_service_pb2_grpc import DemoStub as stub
-    servicename="Demo"
+    service_name = "Demo"
 
     def __init__(self,
                  host = "",
                  identity = "Interactive",
-                 servicename = servicename,
                  wait_for_ready = False):
 
         super().__init__(host = host,
-                         servicename = servicename,
                          SignalType = CC.Demo.Signal,
                          watch_all = True)
 

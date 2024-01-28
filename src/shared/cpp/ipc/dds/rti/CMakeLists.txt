@@ -18,7 +18,7 @@ set(LIB_DEPS
 )
 
 set(SOURCES
-  dds-channel.c++
+  dds-endpoint.c++
   dds-publisher.c++
   dds-subscriber.c++
   dds-logsink.c++

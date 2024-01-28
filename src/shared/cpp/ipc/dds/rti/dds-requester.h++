@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "dds-channel.h++"
+#include "dds-endpoint.h++"
 #include "chrono/date-time.h++"
 #include "status/exceptions.h++"
 
@@ -16,7 +16,7 @@
 namespace cc::dds
 {
     template <class RequestType, class ResponseType>
-    class Requester : public Channel,
+    class Requester : public Endpoint,
                       public rti::request::Requester<RequestType, ResponseType>
     {
         using This = Requester;
@@ -26,7 +26,7 @@ namespace cc::dds
         Requester(const std::string &request_id,
                   int domain_id,
                   const cc::dt::Duration &default_timeout = std::chrono::seconds(10))
-            : Channel(TYPE_NAME_FULL(This), request_id, domain_id),
+            : Endpoint(TYPE_NAME_BASE(This), request_id, domain_id),
               BaseRequester(this->requester_params()),
               default_timeout_(default_timeout)
         {

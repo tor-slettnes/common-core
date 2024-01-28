@@ -16,6 +16,5 @@ namespace cc::demo::zmq
 {
     void run_zmq_service(
         std::shared_ptr<cc::demo::API> api_provider,
-        const std::string &bind_address = {},
-        const std::string &channel_name = CHANNEL_NAME);
+        const std::string &bind_address = {});
 }

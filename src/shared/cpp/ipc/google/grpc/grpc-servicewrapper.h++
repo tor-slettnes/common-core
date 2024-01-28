@@ -1,12 +1,8 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file grpc-serverwrapper.h++
-/// @brief Server-side wrapper functionality for Common Core gRPC services
+/// @file grpc-servicewrapper.h++
+/// @brief Service-side wrapper functionality for Common Core gRPC services
 /// @author Tor Slettnes <tor@slett.net>
-///
-/// Class templates for Common Core gRPC services (client and server), including:
-///  * Settings store in YourServiceName.json, using JsonCpp as backend
-///  * Status/error code wrappers
 //==============================================================================
 
 #pragma once
@@ -17,17 +13,17 @@
 namespace cc::grpc
 {
     //==========================================================================
-    /// @class ServerWrapperBase
+    /// @class ServiceWrapperBase
     /// @brief
     ///     Wapper for client-side gRPC invocations
 
-    class ServerWrapperBase : public WrapperBase
+    class ServiceWrapperBase : public WrapperBase
     {
     protected:
-        ServerWrapperBase(const std::string &fullServiceName,
-                          const std::string &serviceAddress,
-                          const std::shared_ptr<::grpc::ServerCredentials> &creds =
-                              ::grpc::InsecureServerCredentials());
+        ServiceWrapperBase(const std::string &fullServiceName,
+                           const std::string &serviceAddress,
+                           const std::shared_ptr<::grpc::ServerCredentials> &creds =
+                               ::grpc::InsecureServerCredentials());
 
     public:
         /// @brief
@@ -132,30 +128,31 @@ namespace cc::grpc
     };
 
     //==========================================================================
-    /// @class ServerWrapper<T>
-    /// @brief Class template for gRPC servers
+    /// @class ServiceWrapper<T>
+    /// @brief Class template for gRPC services
     ///
     /// @b Examples
-    ///  * Include a "ServerWrapper" as a base for your service class:
+    ///  * Include a "ServiceWrapper" as a base for your service class:
     ///    \code
     ///      #include "servicewrapper.h"
-    ///      class YourService : public ServerWrapper<CC::yourapp::YourService>
+    ///      class YourService : public ServiceWrapper<CC::yourapp::YourService>
     ///      {
     ///      public:
     ///          YourService (const std::string &interface)
-    ///             : ServerWrapper<CC::yourapp::YourService>(interface) {}
+    ///             : ServiceWrapper<CC::yourapp::YourService>(interface) {}
     ///          ...
     ///      };
     ///    \endcode
     ///
-    ///  * Create server instance & launch
+    ///  * Create service instance & launch
     ///    \code
     ///      #include <grpc++/grpc.h>
     ///      int main (int argc, char **argv)
     ///      {
     ///        ...
     ///        ::grpc::ServerBuilder builder;
-    ///        your::Server svc(address);
+    ///        your::Service svc(address);
+    ///        builder.RegisterService(&svc);
     ///        svc.addToBuilder(&builder);
     ///        ...
     ///        auto server = builder.BuildAndStart();
@@ -181,15 +178,15 @@ namespace cc::grpc
     ///    \endcode;
 
     template <class T>
-    class ServerWrapper : public ServerWrapperBase, public T::Service
+    class ServiceWrapper : public ServiceWrapperBase, public T::Service
     {
     public:
         using ServiceClass = T;
 
         template <class... Args>
-        ServerWrapper(const std::string &serviceAddress = "",
-                      const Args &...args)
-            : ServerWrapperBase(TYPE_NAME_FULL(T), serviceAddress, std::forward<Args>(args)...)
+        ServiceWrapper(const std::string &serviceAddress = "",
+                       const Args &...args)
+            : ServiceWrapperBase(T::service_full_name(), serviceAddress, std::forward<Args>(args)...)
         {
         }
 
@@ -226,7 +223,7 @@ namespace cc::grpc
         {
             if (addlistener)
             {
-                ServerWrapperBase::addToBuilder(builder, addlistener);
+                ServiceWrapperBase::addToBuilder(builder, addlistener);
             }
             builder->RegisterService(this);
         }
@@ -234,7 +231,7 @@ namespace cc::grpc
     public:
         // static inline Status map_to_status(const std::exception &e)
         // {
-        //     return ServerWrapperBase::map_to_status(TYPE_NAME_BASE(T), e);
+        //     return ServiceWrapperBase::map_to_status(TYPE_NAME_BASE(T), e);
         // }
 
         /// Generate a Status instance suitable for reporting gRPC service status.

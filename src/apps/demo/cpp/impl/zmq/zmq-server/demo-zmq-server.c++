@@ -13,10 +13,9 @@ namespace cc::demo::zmq
                    const std::string &bind_address,
                    const std::string &channel_name)
         : Super(bind_address,
-                TYPE_NAME_FULL(This),
                 channel_name,
                 {
-                    {INTERFACE_NAME, RequestHandler::create_shared(api, INTERFACE_NAME)},
+                    {DEMO_INTERFACE, RequestHandler::create_shared(api, DEMO_INTERFACE)},
                 })
     {
         // std::cerr <<  "Demo Server "

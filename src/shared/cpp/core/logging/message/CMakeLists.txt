@@ -8,4 +8,5 @@
 target_sources(${TARGET} PUBLIC
   scope.c++
   message.c++
+  builder.c++
 )

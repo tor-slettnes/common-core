@@ -70,7 +70,6 @@ int main(int argc, char** argv)
         server_threads.emplace_back(
             cc::demo::zmq::run_zmq_service,
             api_provider,
-            cc::demo::zmq::CHANNEL_NAME,
             "");
     }
 #endif

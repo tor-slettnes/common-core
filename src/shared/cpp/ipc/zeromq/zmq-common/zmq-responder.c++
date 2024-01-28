@@ -13,16 +13,13 @@
 namespace cc::zmq
 {
     Responder::Responder(const std::string &bind_address,
-                         const std::string &class_name,
                          const std::string &channel_name)
-        : Super(bind_address, class_name, channel_name, ::zmq::socket_type::rep),
+        : Super(bind_address,
+                "server",
+                channel_name,
+                ::zmq::socket_type::rep),
           keep_listening(false)
     {
-    }
-
-    std::vector<std::string> Responder::settings_path() const
-    {
-        return {COMMAND_GROUP, "server"};
     }
 
     void Responder::start()
@@ -40,7 +37,7 @@ namespace cc::zmq
         this->keep_listening = false;
         if (std::thread t{std::move(this->listen_thread)}; t.joinable())
         {
-            log_info("Stopping ZMQ listener thread");
+            log_debug("Waiting for ZMQ listener thread");
             t.join();
         }
     }
@@ -61,11 +58,9 @@ namespace cc::zmq
                 }
             }
         }
-        catch (...)
+        catch (const ::zmq::error_t &e)
         {
-            logf_info("Shutting down ZMQ %s responder: %s",
-                      this->channel_name(),
-                      std::current_exception());
+            this->log_zmq_error("continue receiving requests", e);
         }
     }
 

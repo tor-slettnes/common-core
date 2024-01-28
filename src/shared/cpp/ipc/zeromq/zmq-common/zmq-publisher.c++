@@ -11,15 +11,12 @@
 namespace cc::zmq
 {
     Publisher::Publisher(const std::string &bind_address,
-                         const std::string &class_name,
                          const std::string &channel_name)
-        : Super(bind_address, class_name, channel_name, ::zmq::socket_type::pub)
+        : Super(bind_address,
+                "publisher",
+                channel_name,
+                ::zmq::socket_type::pub)
     {
-    }
-
-    std::vector<std::string> Publisher::settings_path() const
-    {
-        return {MESSAGE_GROUP, "publisher"};
     }
 
     void Publisher::publish(::zmq::message_t &&msg)

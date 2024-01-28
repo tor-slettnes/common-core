@@ -21,7 +21,7 @@ namespace cc::demo::zmq
 {
     Subscriber::Subscriber(const std::string &host_address,
                            const std::string &channel_name)
-        : Super(host_address, TYPE_NAME_FULL(This), channel_name)
+        : Super(host_address, channel_name)
     {
     }
 

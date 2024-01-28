@@ -123,5 +123,5 @@
     },
 
     // Include extra detail: log scope, thread ID, filename, function, line number
-    "log context"  : true
+    "log context"  : false
 }

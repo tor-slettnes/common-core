@@ -17,7 +17,7 @@ namespace cc::demo::zmq
 {
     Publisher::Publisher(const std::string &bind_address,
                          const std::string &channel_name)
-        : Super(TYPE_NAME_FULL(This), bind_address, channel_name)
+        : Super(bind_address, channel_name)
     {
     }
 
@@ -34,7 +34,7 @@ namespace cc::demo::zmq
         // This signal is based on the `cc::signal::Signal<>` template,
         // so the callback function will receive one argument: the payload.
         signal_time.connect(
-            this->class_name(),
+            this->to_string(),
             std::bind(&Publisher::on_time_update, this, _1));
 
         // Invoke `on_greeting_update` whenever someone sends a greeting.
@@ -44,7 +44,7 @@ namespace cc::demo::zmq
         //   - The key (in this case we use the greeter's identity)
         //   - The payload.
         signal_greeting.connect(
-            this->class_name(),
+            this->to_string(),
             std::bind(&Publisher::on_greeting_update, this, _1, _2, _3));
     }
 
@@ -52,8 +52,8 @@ namespace cc::demo::zmq
     {
         // We are about to be destroyed, so the callback pointers
         // will no longer remain valid. Disconnect from active signals.
-        signal_greeting.disconnect(this->class_name());
-        signal_time.disconnect(this->class_name());
+        signal_greeting.disconnect(this->to_string());
+        signal_time.disconnect(this->to_string());
 
         Super::deinitialize();
     }

@@ -12,8 +12,6 @@ namespace cc::application
     void initialize(int argc, char **argv);
     void deinitialize();
 
-    void shutdown_handler(int signal);
-
     extern cc::signal::Signal<int> signal_shutdown;
 
 }  // namespace cc::application

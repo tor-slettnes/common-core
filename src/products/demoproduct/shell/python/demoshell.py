@@ -8,10 +8,9 @@
 ### Make the contents of Python client modules available in namespaces roughly
 ### corresponding to the package names of the corresponding `.proto` files
 
-import grpc_client
+from ipc.protobuf     import ProtoBuf
+from ipc.grpc.client  import ArgParser as _ArgParser
 import demo_client
-
-from protobuf_standard_types import ProtoBuf
 
 ### Container class for ProtoBuf message types from mutiple services
 ### (e.g. "CC.Demo.Signal").
@@ -20,7 +19,7 @@ class CC (demo_client.CC):
     pass
 
 ### Add a few arguments to the base argparser
-class ArgParser (grpc_client.ArgParser):
+class ArgParser (_ArgParser):
     def __init__ (self, host=None, identity="DemoShell", *args, **kwargs):
         super().__init__(host, *args, **kwargs);
 

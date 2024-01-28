@@ -26,7 +26,6 @@ namespace cc::zmq
 
     protected:
         ProtoBufServer(const std::string &bind_address,
-                       const std::string &class_name,
                        const std::string &channel_name,
                        RequestHandlerMap &&handler_map = {});
 

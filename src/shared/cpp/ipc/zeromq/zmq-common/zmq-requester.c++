@@ -10,15 +10,12 @@
 namespace cc::zmq
 {
     Requester::Requester(const std::string &host_address,
-                         const std::string &class_name,
                          const std::string &channel_name)
-        : Super(host_address, class_name, channel_name, ::zmq::socket_type::req)
+        : Super(host_address,
+                "client",
+                channel_name,
+                ::zmq::socket_type::req)
     {
-    }
-
-    std::vector<std::string> Requester::settings_path() const
-    {
-        return {COMMAND_GROUP, "client"};
     }
 
     std::optional<types::ByteArray> Requester::send_receive(

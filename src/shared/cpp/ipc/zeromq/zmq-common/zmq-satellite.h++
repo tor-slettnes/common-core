@@ -16,7 +16,7 @@ namespace cc::zmq
 
     protected:
         Satellite(const std::string &host_address,
-                  const std::string &class_name,
+                  const std::string &endpoint_type,
                   const std::string &channel_name,
                   ::zmq::socket_type socket_type);
 
@@ -24,6 +24,8 @@ namespace cc::zmq
         void initialize() override;
         void deinitialize() override;
 
+        virtual void connect();
+        virtual void disconnect();
         std::string host_address() const;
 
     private:

@@ -10,12 +10,11 @@
 #include "translate-idl-demo.h++"
 #include "translate-idl-inline.h++"
 #include "logging/logging.h++"
-#include "platform/symbols.h++"
 
 namespace cc::demo::dds
 {
     Publisher::Publisher(const std::string &channel_name, int domain_id)
-        : Super(TYPE_NAME_FULL(Publisher), channel_name, domain_id),
+        : Super(channel_name, domain_id),
           time_writer(this->create_writer<CC::Demo::TimeData>(
               CC::Demo::TIMEDATA_TOPIC,
               false,    // reliable

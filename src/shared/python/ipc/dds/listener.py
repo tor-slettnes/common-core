@@ -5,9 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from typing    import Optional, Union, Callable, NewType, IO
-from dds_base  import dds, Base, Path
-from process   import safeInvoke
+from typing   import Optional, Union, Callable, NewType, IO
+from process  import safeInvoke
+from .base    import dds, Base, Path
 
 import threading
 import logging

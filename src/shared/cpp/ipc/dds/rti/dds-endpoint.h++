@@ -1,12 +1,12 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file dds-channel.h++
+/// @file dds-endpoint.h++
 /// @brief Mix-in base for DDS entities, to add QoS
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
-#include "ipc-channel.h++"
+#include "ipc-endpoint.h++"
 #include <dds/core/policy/CorePolicy.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
@@ -17,16 +17,16 @@ namespace cc::dds
     //==========================================================================
     /// @brief Mix-in base for publishers & subscribers
 
-    class Channel : public ipc::Channel
+    class Endpoint : public ipc::Endpoint
     {
-        using This = Channel;
-        using Super = ipc::Channel;
+        using This = Endpoint;
+        using Super = ipc::Endpoint;
 
     protected:
         // Inherit constructor
-        Channel(const std::string &class_name,
-                const std::string &channel_name,
-                int domain_id);
+        Endpoint(const std::string &endpoint_type,
+                 const std::string &channel_name,
+                 int domain_id);
 
         template <class QoS>
         static QoS pubsub_policy(bool reliable = true,

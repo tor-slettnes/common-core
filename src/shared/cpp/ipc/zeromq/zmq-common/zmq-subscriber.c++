@@ -12,17 +12,18 @@
 namespace cc::zmq
 {
     Subscriber::Subscriber(const std::string &host_address,
-                           const std::string &class_name,
                            const std::string &channel_name)
-        : Super(host_address, class_name, channel_name, ::zmq::socket_type::sub),
+        : Super(host_address,
+                "subscriber",
+                channel_name,
+                ::zmq::socket_type::sub),
           keep_receiving(false)
     {
-        logf_debug("%s constructor from host address %r", *this, host_address);
     }
 
-    std::vector<std::string> Subscriber::settings_path() const
+    Subscriber::~Subscriber()
     {
-        return {MESSAGE_GROUP, "subscriber"};
+        this->stop_receiving();
     }
 
     void Subscriber::subscribe(const Callback &callback)
@@ -33,7 +34,7 @@ namespace cc::zmq
     void Subscriber::subscribe(const Filter &filter,
                                const Callback &callback)
     {
-        logf_debug("%s subscribing with filter %s", *this, filter.to_hex());
+        logf_trace("%s subscribing with filter %r", *this, filter.to_hex());
         this->socket()->set(::zmq::sockopt::subscribe, filter.stringview());
         this->subscriptions_[filter] = callback;
         this->start_receiving();
@@ -55,8 +56,15 @@ namespace cc::zmq
 
     void Subscriber::unsubscribe(const Filter &filter)
     {
-        this->socket()->set(::zmq::sockopt::unsubscribe, filter.stringview());
         this->subscriptions_.erase(filter);
+        try
+        {
+            this->socket()->set(::zmq::sockopt::unsubscribe, filter.stringview());
+        }
+        catch (const ::zmq::error_t &e)
+        {
+            this->log_zmq_error("unsubscribe", e);
+        }
     }
 
     void Subscriber::unsubscribe_topic(const std::string &topic)
@@ -81,6 +89,7 @@ namespace cc::zmq
         this->keep_receiving = false;
         if (std::thread t = std::move(this->receive_thread); t.joinable())
         {
+            log_debug("Waiting for ZMQ subscriber thread");
             t.join();
         }
     }
@@ -101,9 +110,9 @@ namespace cc::zmq
                 }
             }
         }
-        catch (...)
+        catch (const ::zmq::error_t &e)
         {
-            logf_info("%s shutting down: %s", *this, std::current_exception());
+            this->log_zmq_error("continue receiving publications", e);
             this->keep_receiving = false;
         }
     }
@@ -124,7 +133,7 @@ namespace cc::zmq
                                      const ::zmq::message_t &msg,
                                      const Filter &filter)
     {
-        log_debug("Invoking ZMQ callback for filter: ", filter);
+        log_trace("Invoking ZMQ callback for filter: ", filter);
         auto *data = reinterpret_cast<const types::Byte *>(msg.data());
 
         switch (static_cast<CallbackSignature>(callback.index()))

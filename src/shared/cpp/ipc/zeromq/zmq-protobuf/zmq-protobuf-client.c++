@@ -15,10 +15,9 @@
 namespace cc::zmq
 {
     ProtoBufClient::ProtoBufClient(const std::string &host_address,
-                                   const std::string &class_name,
                                    const std::string &channel_name,
                                    const std::string &interface_name)
-        : Super(host_address, class_name, channel_name),
+        : Super(host_address, channel_name),
           interface_name_(interface_name),
           client_id(++ProtoBufClient::last_client_id),
           last_request_id(0)
@@ -33,19 +32,34 @@ namespace cc::zmq
     void ProtoBufClient::send_request(const CC::RR::Request &request,
                                       ::zmq::send_flags flags)
     {
-        this->send(protobuf::to_bytes(request), flags);
+        try
+        {
+            this->send(protobuf::to_bytes(request), flags);
+        }
+        catch (const ::zmq::error_t &e)
+        {
+            this->log_zmq_error("send request", e);
+        }
     }
 
     bool ProtoBufClient::receive_reply(CC::RR::Reply *reply,
                                        ::zmq::recv_flags flags)
     {
-        ::zmq::message_t msg;
-        if (this->receive(&msg, flags))
+        try
         {
-            return reply->ParseFromArray(msg.data(), msg.size());
+            ::zmq::message_t msg;
+            if (this->receive(&msg, flags))
+            {
+                return reply->ParseFromArray(msg.data(), msg.size());
+            }
+            else
+            {
+                return false;
+            }
         }
-        else
+        catch (const ::zmq::error_t &e)
         {
+            this->log_zmq_error("receive reply from server", e);
             return false;
         }
     }
