@@ -12,11 +12,10 @@
 namespace cc::dds
 {
     Subscriber::Subscriber(const std::string &channel_name, int domain_id)
-        : Super(TYPE_NAME_BASE(This), channel_name, domain_id),
+        : Super("subscriber", channel_name, domain_id),
           ::dds::sub::Subscriber(this->get_participant()),
           keep_listening(false)
     {
-        log_trace("Subscriber() constructor");
     }
 
     Subscriber::~Subscriber()

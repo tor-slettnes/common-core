@@ -47,7 +47,8 @@ int main(int argc, char** argv)
         logf_debug("Spawning gRPC server");
         server_threads.emplace_back(
             cc::demo::grpc::run_grpc_service,
-            api_provider);
+            api_provider,
+            "");
     }
 #endif
 

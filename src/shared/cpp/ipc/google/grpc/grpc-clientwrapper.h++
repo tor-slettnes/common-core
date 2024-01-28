@@ -10,7 +10,7 @@
 //==============================================================================
 
 #pragma once
-#include "grpc-basewrapper.h++"
+#include "grpc-base.h++"
 #include "logging/logging.h++"
 #include "chrono/date-time.h++"
 
@@ -26,14 +26,18 @@ namespace cc::grpc
     /// @brief
     ///     Wapper for client-side gRPC invocations
 
-    class ClientWrapperBase : public WrapperBase
+    class ClientWrapperBase : public Base
     {
     protected:
-        ClientWrapperBase(const std::string &fullServiceName,
+        ClientWrapperBase(const std::string &full_service_name,
                           const std::string &host,
                           bool wait_for_ready = false,
                           const std::shared_ptr<::grpc::ChannelCredentials> &creds =
                               ::grpc::InsecureChannelCredentials());
+
+    private:
+        std::shared_ptr<::grpc::ChannelInterface> create_channel(
+            const std::shared_ptr<::grpc::ChannelCredentials> &creds) const;
 
     public:
         std::string host() const;
@@ -78,13 +82,12 @@ namespace cc::grpc
         void check(const ::grpc::Status &status) const;
         void check(const Status &status) const;
 
-    public:
-        std::string host_;
 
     protected:
-        std::shared_ptr<::grpc::ChannelInterface> channel;
+        std::string host_;
         bool wait_for_ready;
         std::optional<dt::Duration> request_timeout;
+        std::shared_ptr<::grpc::ChannelInterface> channel;
     };
 
     //==========================================================================
@@ -152,7 +155,9 @@ namespace cc::grpc
         template <class... Args>
         ClientWrapper(const std::string &host,
                       Args &&...args)
-            : ClientWrapperBase(T::service_full_name(), host, std::forward<Args>(args)...),
+            : ClientWrapperBase(T::service_full_name(),
+                                host,
+                                std::forward<Args>(args)...),
               stub(T::NewStub(this->channel))
         {
         }

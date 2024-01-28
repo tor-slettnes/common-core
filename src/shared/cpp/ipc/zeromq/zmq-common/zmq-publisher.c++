@@ -13,7 +13,7 @@ namespace cc::zmq
     Publisher::Publisher(const std::string &bind_address,
                          const std::string &channel_name)
         : Super(bind_address,
-                "publisher",
+                "ZMQ publisher",
                 channel_name,
                 ::zmq::socket_type::pub)
     {

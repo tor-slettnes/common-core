@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file grpc-basewrapper.h++
+/// @file grpc-base.h++
 /// @brief Common functionality wrappers for gRPC client and server modules
 /// @author Tor Slettnes <tor@slett.net>
 ///
@@ -10,45 +10,40 @@
 //==============================================================================
 
 #pragma once
+#include "grpc-base.h++"
 #include "grpc-status.h++"
-
-#include "status/exceptions.h++"
+#include "ipc-endpoint.h++"
 #include "config/settingsstore.h++"
-#include "platform/path.h++"
-#include "logging/logging.h++"
-
 #include <grpc++/grpc++.h>
 
 namespace cc::grpc
 {
     define_log_scope("grpc");
 
-    constexpr auto MAX_MESSAGE_SIZE = "max message size";
-
     //==========================================================================
-    /// @class WrapperBase
+    /// @class Base
     /// @brief
-    ///     General purpose mix-in base class for ClientWrapperBase and
-    ///     ServerWrapperBase.
+    ///     General purpose mix-in base class for ClientBase and
+    ///     ServerBase.
 
-    class WrapperBase
+    class Base : public ipc::Endpoint
     {
+        using This = Base;
+        using Super = ipc::Endpoint;
+
     protected:
         // Keys to look up settings in grpc-endpoints-*.json
+        static constexpr auto MAX_REQUEST_SIZE = "max request size";
+        static constexpr auto MAX_REPLY_SIZE = "max reply size";
         static constexpr auto PORT_OPTION = "port";
         static constexpr auto HOST_OPTION = "host";
         static constexpr auto BIND_OPTION = "interface";
 
     protected:
-        /// Constructor. Loads service-specific settings from corresponding SERVICENAME.json file,
-        /// and initializes a default path to save data files.
-        WrapperBase(const std::string &fullServiceName);
+        Base(const std::string &endpoint_type,
+             const std::string &channel_name);
 
     public:
-        /// @fn service_settings
-        /// @brief return global service settings
-        static std::shared_ptr<SettingsStore> settings();
-
         /// @fn servicename
         /// @brief
         ///     Return the name of this service
@@ -58,6 +53,7 @@ namespace cc::grpc
         ///     Service name
         std::string servicename(bool full = false) const;
 
+        fs::path settings_file(const std::string &product) const override;
     protected:
         /// Sanitize a target address of the form [HOST][:PORT] (where either or both
         /// may be absent) by ensuring it contains both.
@@ -69,52 +65,34 @@ namespace cc::grpc
         /// if all else fails, the missing attribute is populated from defaultHost or
         /// defaultPort, respectively.
         ///
-        /// @param[in] target
+        /// @param[in] address
         ///     Address to sanitize, normally provided as a command-line option.
+        /// @param[in] channel_name
+        ///     Key to locate endpoint settings within the settings file
         /// @param[in] hostOption
-        ///     Key to locate the host name in the settings file
+        ///     Key to locate the host name in the channel settings
         /// @param[in] portOption
-        ///     Key to locate the port number in the settings file
+        ///     Key to locate the port number in the channel settings
         /// @param[in] defaultHost
-        ///     Fallback if host name is not provided nor found in settings file
+        ///     Fallback if host name is not provided nor found
         /// @param[in] defaultPort
-        ///     Fallback if port number is not provided nor found in settings file
+        ///     Fallback if port number is not provided nor found
         /// @return
         ///     Sanitized address of the form HOST:PORT (where HOST may still be empty)
 
         std::string realaddress(const std::string &address,
                                 const std::string &hostOption,
                                 const std::string &portOption,
-                                std::string defaultHost = "localhost",
-                                uint defaultPort = 8080) const;
+                                std::string defaultHost,
+                                uint defaultPort) const;
 
-        /// Check that a string value (presumably from a ProtoBuf message) is non-empty.
-        /// @param[in] fieldname The name of the input field, used in the error message.
-        /// @param[in] value String value to check
-        /// @exception exception::InvalidArgument The provided value is empty.
-        void require(const std::string &fieldname, const std::string &value) const;
-
-        /// Check that a scalar value (presumably from a ProtoBuf message) is non-zero.
-        /// @param[in] fieldname The name of the input field, used in the error message.
-        /// @param[in] value Scalar value to check.
-        /// @exception exception::InvalidArgument The provided value is zero.
-        template <class T>
-        void require(const std::string &fieldname, T value) const
-        {
-            if (!value)
-            {
-                throwf(exception::InvalidArgument, "%r is required", fieldname);
-            }
-        }
-
+    public:
         /// Obtain max. message size configuration
-        int max_message_size() const;
+        uint max_request_size() const;
+
+        uint max_reply_size() const;
 
     private:
-        // Get a specific setting.
-        types::Value setting(const std::string &key,
-                             const types::Value &defaultValue = {}) const;
-
         // Split an address of the form [PERSONALITY@][HOST][:PORT] into
         // separate values
         void splitaddress(const std::string &address,
@@ -126,8 +104,6 @@ namespace cc::grpc
 
     private:
         static std::shared_ptr<SettingsStore> settings_;
-
-        const std::string fullServiceName_;
     };
 
 }  // namespace cc::grpc

@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "grpc-servicewrapper.h++"
+#include "grpc-servicehandler.h++"
 #include "grpc-signalqueue.h++"
 #include "protobuf-message.h++"
 
@@ -23,9 +23,9 @@ namespace cc::grpc
     ///     Signal class, derfined in .proto file
 
     template <class ServiceT>
-    class SignalServiceWrapper : public ServiceWrapper<ServiceT>
+    class SignalServiceWrapper : public ServiceHandler<ServiceT>
     {
-        using Super = ServiceWrapper<ServiceT>;
+        using Super = ServiceHandler<ServiceT>;
 
     protected:
         using Super::Super;
@@ -66,6 +66,18 @@ namespace cc::grpc
             }
         }
     };
+
+    //==========================================================================
+    /// @class SignalWatchService
+    /// @brief Service wrapper with signalling interface
+    /// @tparam ServiceT
+    ///     gRPC service type
+    /// @tparam SignalT
+    ///     Signal class, derfined in .proto file
+    /// @tparam SignalQueueT
+    ///     Signal queue class, holding signals to be sent to client
+    /// @tparam SignalFilterT
+    ///     Signal queue class
 
     template <class ServiceT,
               class SignalT,

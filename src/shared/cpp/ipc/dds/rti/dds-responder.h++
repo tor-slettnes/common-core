@@ -28,7 +28,7 @@ namespace cc::dds
         Responder(const std::string &request_id,
                   int domain_id,
                   std::function<ResponseType(RequestType)> &&handler)
-            : Endpoint(TYPE_NAME_BASE(This), request_id, domain_id),
+            : Endpoint("responder", request_id, domain_id),
               BaseResponder(this->replier_params(), std::move(handler))
         {
         }

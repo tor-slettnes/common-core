@@ -1,6 +1,6 @@
 // -*- javascript -*-
 //==============================================================================
-/// @file grpc-endpoints-common.json
+/// @file grpc-services-common.json
 /// @brief gRPC service settings for core applications
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
@@ -30,7 +30,7 @@
     //   "[::1]:8080" for clients, and "[::]:8080" for servers.
 
     // Service names extracted from .proto files
-    "Demo":
+    "CC.Demo.Demo":
     {
         // "interface" : "",       // Listen on all interfaces by default
         "port"      : 3366      // D-E-M-O on T9 keypad

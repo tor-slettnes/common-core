@@ -5,90 +5,30 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "grpc-servicewrapper.h++"
+#include "grpc-servicehandler.h++"
 #include "protobuf-message.h++"
+#include "status/exceptions.h++"
+#include "logging/logging.h++"
 //#include "errnos.h"
 
 namespace cc::grpc
 {
-    ServiceWrapperBase::ServiceWrapperBase(
-        const std::string &fullServiceName,
-        const std::string &serviceAddress,
-        const std::shared_ptr<::grpc::ServerCredentials> &creds)
-        : WrapperBase(fullServiceName),
-          serviceAddress(this->realaddress(serviceAddress,
-                                           BIND_OPTION,
-                                           PORT_OPTION,
-                                           "[::]")),
-          credentials(creds)
+    ServiceHandlerBase::ServiceHandlerBase(const std::string &full_service_name)
+        : Base("gRPC Service", full_service_name)
     {
     }
 
-    void ServiceWrapperBase::addToBuilder(::grpc::ServerBuilder *builder,
-                                          bool addlistener)
+    std::string ServiceHandlerBase::address_setting() const
     {
-        if (addlistener)
-        {
-            builder->AddListeningPort(this->serviceAddress, this->credentials);
-            logf_debug(
-                "Registered listener on %s for %s",
-                this->serviceAddress,
-                this->servicename());
-        }
+        return this->realaddress(
+            {},           // no provided address
+            BIND_OPTION,  // host option
+            PORT_OPTION,  // port option
+            "[::]",       // default host
+            8080);
     }
 
-    std::unique_ptr<::grpc::Server> ServiceWrapperBase::BuildAndStart()
-    {
-        ::grpc::ServerBuilder builder;
-        this->addToBuilder(&builder);
-        return builder.BuildAndStart();
-    }
-
-    std::string ServiceWrapperBase::request_description(
-        const google::protobuf::Message &request,
-        const std::string &peer,
-        const std::string &function)
-    {
-        if (peer.size())
-        {
-            return str::format("request from %s: %s(%s)",
-                               peer,
-                               function,
-                               cc::protobuf::to_string(request));
-        }
-        else
-        {
-            return str::format("%s(%s)", function, request);
-        }
-    }
-
-    void ServiceWrapperBase::log_status(const Status &status,
-                                        const std::string &operation,
-                                        status::Flow flow,
-                                        const fs::path &path,
-                                        const int &lineno,
-                                        const std::string &function)
-    {
-        auto msg = custom_log_msg(
-            status::Level::NOTICE,
-            flow,
-            dt::Clock::now(),
-            path,
-            lineno,
-            function);
-
-        if (status.error_code() == ::grpc::StatusCode::CANCELLED)
-        {
-            msg->format("Canceled %s", operation);
-        }
-        else
-        {
-            msg->format("Failed %s: %s", operation, status);
-        }
-        msg->dispatch();
-    }
-
-    Status ServiceWrapperBase::failure(const std::exception &e,
+    Status ServiceHandlerBase::failure(const std::exception &e,
                                        const std::string &operation,
                                        status::Flow flow,
                                        const std::filesystem::path &path,
@@ -100,7 +40,7 @@ namespace cc::grpc
         return status;
     }
 
-    Status ServiceWrapperBase::failure(std::exception_ptr eptr,
+    Status ServiceHandlerBase::failure(std::exception_ptr eptr,
                                        const std::string &operation,
                                        status::Flow flow,
                                        const fs::path &path,
@@ -127,7 +67,7 @@ namespace cc::grpc
         }
     }
 
-    Status ServiceWrapperBase::failure(const std::exception &exception,
+    Status ServiceHandlerBase::failure(const std::exception &exception,
                                        const google::protobuf::Message &request,
                                        const std::string &peer,
                                        status::Flow flow,
@@ -143,7 +83,7 @@ namespace cc::grpc
                              function);
     }
 
-    Status ServiceWrapperBase::failure(std::exception_ptr eptr,
+    Status ServiceHandlerBase::failure(std::exception_ptr eptr,
                                        const google::protobuf::Message &request,
                                        const std::string &peer,
                                        status::Flow flow,
@@ -157,6 +97,46 @@ namespace cc::grpc
                              path,
                              lineno,
                              function);
+    }
+
+    void ServiceHandlerBase::log_status(const Status &status,
+                                        const std::string &operation,
+                                        status::Flow flow,
+                                        const fs::path &path,
+                                        const int &lineno,
+                                        const std::string &function)
+    {
+        auto msg = custom_log_msg(
+            status::Level::NOTICE,
+            flow,
+            dt::Clock::now(),
+            path,
+            lineno,
+            function);
+
+        if (status.error_code() == ::grpc::StatusCode::CANCELLED)
+        {
+            msg->format("Canceled %s", operation);
+        }
+        else
+        {
+            msg->format("Failed %s: %s", operation, status);
+        }
+        msg->dispatch();
+    }
+
+    std::string ServiceHandlerBase::request_description(
+        const google::protobuf::Message &request,
+        const std::string &peer,
+        const std::string &function)
+    {
+        std::stringstream ss;
+        if (peer.size())
+        {
+            ss << "request from " << peer << ": ";
+        }
+        ss << function << "(" << cc::protobuf::to_string(request) << ")";
+        return ss.str();
     }
 
 }  // namespace cc::grpc

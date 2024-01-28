@@ -43,15 +43,7 @@ namespace cc::zmq
         static std::shared_ptr<::zmq::context_t> context();
         std::shared_ptr<::zmq::socket_t> socket();
 
-        // Get service settings
-        static std::shared_ptr<SettingsStore> settings();
-
-        // Get a specific setting.
-        types::Value setting(const std::string &key,
-                             const types::Value &defaultValue = {}) const;
-
     protected:
-        void to_stream(std::ostream &stream) const override;
         void log_zmq_error(const std::string &action, const ::zmq::error_t &e);
         void initialize() override;
         void deinitialize() override;

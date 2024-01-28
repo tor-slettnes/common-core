@@ -7,7 +7,6 @@
 
 #pragma once
 #include "dds-endpoint.h++"
-#include "platform/symbols.h++"
 #include "chrono/date-time.h++"
 #include "types/create-shared.h++"
 #include "logging/logging.h++"
@@ -28,7 +27,7 @@ namespace cc::dds
 
     public:
         Client(const std::string &service_name, int domain_id)
-            : Endpoint(TYPE_NAME_BASE(This), service_name, domain_id),
+            : Endpoint("client", service_name, domain_id),
               BaseClient(this->client_params())
         {
         }

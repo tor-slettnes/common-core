@@ -12,7 +12,7 @@ namespace cc::zmq
     Requester::Requester(const std::string &host_address,
                          const std::string &channel_name)
         : Super(host_address,
-                "client",
+                "ZMQ requester",
                 channel_name,
                 ::zmq::socket_type::req)
     {

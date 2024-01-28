@@ -15,14 +15,12 @@
 namespace cc::zmq
 {
     // Keys to look up settings in zmq-services-*.json
-    constexpr auto SETTINGS_FILE_COMMON = "zmq-endpoints-common";
-    constexpr auto SETTINGS_FILE_PRODUCT = "zmq-endpoints-" PROJECT_NAME;
-    constexpr int  IO_THREADS = 2;
+    constexpr int IO_THREADS = 2;
 
     Base::Base(const std::string &endpoint_type,
                const std::string &channel_name,
                ::zmq::socket_type socket_type)
-        : Super(endpoint_type, channel_name),
+        : Super("ZMQ", endpoint_type, channel_name),
           // socket_type_(socket_type)
           socket_(std::make_shared<::zmq::socket_t>(*Base::context(), socket_type))
     {
@@ -50,33 +48,6 @@ namespace cc::zmq
         //         this->socket_type_);
         // }
         return this->socket_;
-    }
-
-    std::shared_ptr<SettingsStore> Base::settings()
-    {
-        if (!This::settings_)
-        {
-            This::settings_ = SettingsStore::create_shared(
-                types::PathList({SETTINGS_FILE_PRODUCT,
-                                 SETTINGS_FILE_COMMON}));
-        }
-        return This::settings_;
-    }
-
-    types::Value Base::setting(const std::string &key,
-                               const types::Value &defaultValue) const
-    {
-        return this->settings()
-            ->get(this->channel_name())
-            .get(key, defaultValue);
-    }
-
-    void Base::to_stream(std::ostream &stream) const
-    {
-        str::format(stream,
-                    "ZMQ %s (%r)",
-                    this->endpoint_type(),
-                    this->channel_name());
     }
 
     void Base::log_zmq_error(const std::string &action, const ::zmq::error_t &e)

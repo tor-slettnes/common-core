@@ -42,28 +42,6 @@ namespace cc::grpc
     protected:
         using Super::Super;
 
-    private:
-        template <class MessageType>
-        void stream_from_queue(types::BlockingQueue<MessageType> *queue,
-                               ::grpc::ServerContext *cxt,
-                               ::grpc::ServerWriter<MessageType> *writer)
-        {
-            while (true)
-            {
-                std::optional<MessageType> msg = queue->get();
-                if (cxt->IsCancelled())
-                {
-                    break;
-                }
-
-                if (msg)
-                {
-                    logf_trace("Sending to %s: %s", cxt->peer(), *msg);
-                    writer->Write(*msg);
-                }
-            }
-        }
-
     protected:
         template <class DataType, class MessageType>
         ::grpc::Status connect_stream(
@@ -146,6 +124,28 @@ namespace cc::grpc
                 mappedsignal->disconnect(slot_id);
                 return this->failure(std::current_exception(),
                                      str::format("streaming to %s", cxt->peer()));
+            }
+        }
+
+    private:
+        template <class MessageType>
+        void stream_from_queue(types::BlockingQueue<MessageType> *queue,
+                               ::grpc::ServerContext *cxt,
+                               ::grpc::ServerWriter<MessageType> *writer)
+        {
+            while (true)
+            {
+                std::optional<MessageType> msg = queue->get();
+                if (cxt->IsCancelled())
+                {
+                    break;
+                }
+
+                if (msg)
+                {
+                    logf_trace("Sending to %s: %s", cxt->peer(), *msg);
+                    writer->Write(*msg);
+                }
             }
         }
     };

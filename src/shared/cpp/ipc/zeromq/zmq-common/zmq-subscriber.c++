@@ -14,7 +14,7 @@ namespace cc::zmq
     Subscriber::Subscriber(const std::string &host_address,
                            const std::string &channel_name)
         : Super(host_address,
-                "subscriber",
+                "ZMQ subscriber",
                 channel_name,
                 ::zmq::socket_type::sub),
           keep_receiving(false)

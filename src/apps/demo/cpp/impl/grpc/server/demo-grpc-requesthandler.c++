@@ -13,7 +13,8 @@
 namespace cc::demo::grpc
 {
     RequestHandler::RequestHandler(const std::shared_ptr<API>& api_provider)
-        : provider(api_provider)
+        : Super(),
+          provider(api_provider)
     {
         logf_debug("Demo gRPC RequestHandler Constructor");
     }

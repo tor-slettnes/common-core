@@ -47,10 +47,9 @@ namespace cc::argparse
         // this->add_opt(
         //     {"-b", "--bind"},
         //     "ADDRESS",
-        //     "Listener address in the form [PERSONALITY@][INTERFACE][:PORT],"
-        //     "where HOST and PORT, if specified, take precedence. "
-        //     "Defaults by PERSONALITY and service name are provided in "
-        //     "\"services.json\".  To bind only to the loopback (localhost) "
+        //     "Listener address in the form [INTERFACE][:PORT]. "
+        //     "Default values are found in the endpoint settings file. "
+        //     "To bind only to the loopback (localhost) "
         //     "interface use \"localhost\".",
         //     &this->interface);
     }

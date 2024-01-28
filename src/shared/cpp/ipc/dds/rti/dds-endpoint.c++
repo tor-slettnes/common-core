@@ -15,7 +15,7 @@ namespace cc::dds
     Endpoint::Endpoint(const std::string &endpoint_type,
                        const std::string &channel_name,
                        int domain_id)
-        : Super(endpoint_type, channel_name),
+        : Super("DDS", endpoint_type, channel_name),
           domain_id_(domain_id)
     {
     }
@@ -42,4 +42,5 @@ namespace cc::dds
             return ::dds::domain::DomainParticipant(domain_id);
         }
     }
+
 }  // namespace cc::dds

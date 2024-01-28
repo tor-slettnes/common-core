@@ -12,6 +12,7 @@
 #pragma once
 #include "grpc-clientwrapper.h++"
 #include "thread/binaryevent.h++"
+#include "status/exceptions.h++"
 #include "signal_types.pb.h"
 #include "protobuf-message.h++"
 #include "protobuf-signal.h++"
@@ -75,6 +76,19 @@ namespace cc::grpc
         {
             this->deinitialize();
             this->stop_watching();
+        }
+
+    public:
+        void initialize() override
+        {
+            protobuf::SignalReceiver<SignalT>::initialize();
+            ClientWrapper<ServiceT>::initialize();
+        }
+
+        void deinitialize() override
+        {
+            ClientWrapper<ServiceT>::deinitialize();
+            protobuf::SignalReceiver<SignalT>::deinitialize();
         }
 
     protected:

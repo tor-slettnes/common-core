@@ -10,32 +10,54 @@
 namespace cc::grpc
 {
     ClientWrapperBase::ClientWrapperBase(
-        const std::string &fullServiceName,
+        const std::string &full_service_name,
         const std::string &host,
         bool wait_for_ready,
         const std::shared_ptr<::grpc::ChannelCredentials> &creds)
-        : WrapperBase(fullServiceName),
-          host_(this->realaddress(host, HOST_OPTION, PORT_OPTION, "localhost")),
-          wait_for_ready(wait_for_ready)
+        : Base("gRPC Client", full_service_name),
+          host_(this->realaddress(host,
+                                  HOST_OPTION,
+                                  PORT_OPTION,
+                                  "localhost",
+                                  8080)),
+          wait_for_ready(wait_for_ready),
+          channel(this->create_channel(creds))
     {
-        if (int max_size = this->max_message_size())
+    }
+
+    std::shared_ptr<::grpc::ChannelInterface> ClientWrapperBase::create_channel(
+        const std::shared_ptr<::grpc::ChannelCredentials> &creds) const
+    {
+        uint max_send_size = this->max_request_size();
+        uint max_recv_size = this->max_reply_size();
+        ::grpc::ChannelArguments args;
+
+        if (max_send_size)
         {
-            ::grpc::ChannelArguments args;
-            args.SetMaxReceiveMessageSize(max_size);
-            this->channel = ::grpc::CreateCustomChannel(this->host(), creds, args);
+            args.SetMaxSendMessageSize(max_send_size);
+        }
+        if (max_recv_size)
+        {
+            args.SetMaxReceiveMessageSize(max_recv_size);
+        }
+
+        if (max_send_size || max_recv_size)
+        {
             logf_debug(
-                "Created custom channel to %s for %s, max receive size %d bytes",
+                "%s creating custom channel to %s, max_send_size=%d, max_receive_size=%d",
+                *this,
                 this->host(),
-                this->servicename(),
-                max_size);
+                max_send_size,
+                max_recv_size);
+            return ::grpc::CreateCustomChannel(this->host(), creds, args);
         }
         else
         {
-            this->channel = ::grpc::CreateChannel(this->host(), creds);
             logf_debug(
-                "Created standard channel to %s for %s",
-                this->host(),
-                this->servicename());
+                "%s creating standard channel to %s",
+                *this,
+                this->host());
+            return ::grpc::CreateChannel(this->host(), creds);
         }
     }
 

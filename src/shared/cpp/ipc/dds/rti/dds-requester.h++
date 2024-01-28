@@ -26,7 +26,7 @@ namespace cc::dds
         Requester(const std::string &request_id,
                   int domain_id,
                   const cc::dt::Duration &default_timeout = std::chrono::seconds(10))
-            : Endpoint(TYPE_NAME_BASE(This), request_id, domain_id),
+            : Endpoint("requester", request_id, domain_id),
               BaseRequester(this->requester_params()),
               default_timeout_(default_timeout)
         {

@@ -7,8 +7,10 @@
 
 #pragma once
 #include "types/streamable.h++"
+#include "types/filesystem.h++"
 #include "logging/message/scope.h++"
 #include "platform/symbols.h++"
+#include "config/settingsstore.h++"
 
 #include <string>
 
@@ -34,7 +36,8 @@ namespace cc::ipc
         /// @param[in] channel_name
         ///     Name used to identify communications endpoint,
         ///     e.g. look up communication parameters between peers.
-        Endpoint(const std::string &endpoint_type,
+        Endpoint(const std::string &ipc_flavor,
+                 const std::string &endpoint_type,
                  const std::string &channel_name);
         ~Endpoint();
 
@@ -42,13 +45,24 @@ namespace cc::ipc
         virtual void initialize() {}
         virtual void deinitialize() {}
 
+        const std::string &ipc_flavor() const;
         const std::string &endpoint_type() const;
         const std::string &channel_name() const;
+
+        std::shared_ptr<SettingsStore> settings() const;
+        types::Value setting(const std::string &key,
+                             const types::Value &fallback = {}) const;
+
+        virtual fs::path settings_file(const std::string &product) const;
 
     protected:
         void to_stream(std::ostream &stream) const override;
 
     private:
+
+    private:
+        static std::map<std::string, std::shared_ptr<SettingsStore>> settings_map_;
+        std::string ipc_flavor_;
         std::string endpoint_type_;
         std::string channel_name_;
     };

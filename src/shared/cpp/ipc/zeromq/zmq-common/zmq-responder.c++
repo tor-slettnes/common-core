@@ -15,7 +15,7 @@ namespace cc::zmq
     Responder::Responder(const std::string &bind_address,
                          const std::string &channel_name)
         : Super(bind_address,
-                "server",
+                "ZMQ responder",
                 channel_name,
                 ::zmq::socket_type::rep),
           keep_listening(false)

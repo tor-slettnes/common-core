@@ -31,7 +31,7 @@ namespace cc::dds
                 const std::string &channel_name,
                 int domain_id,
                 const std::shared_ptr<RequestHandler> &request_handler)
-            : Endpoint(TYPE_NAME_BASE(This), channel_name, domain_id),
+            : Endpoint("service", channel_name, domain_id),
               ServiceType(request_handler, server, this->service_params())
         {
             logf_debug("dds::Service<%s> constructor", TYPE_NAME_BASE(ServiceType));
