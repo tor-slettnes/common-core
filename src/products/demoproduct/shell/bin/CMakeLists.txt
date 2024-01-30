@@ -8,6 +8,6 @@
 cmake_minimum_required(VERSION 3.14)
 
 if (BUILD_PYTHON)
-  set(SOURCES shell)
+  set(SOURCES demoshell)
   install(PROGRAMS ${SOURCES} TYPE BIN)
 endif()

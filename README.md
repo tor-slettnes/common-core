@@ -91,29 +91,41 @@ If you are reading this text directly on your system, you have already completed
 
 ### Install required dependencies (Debian/Ubuntu):
 
+#### C++ build requirements
+
 * C++ build-time dependencies:
 
   ```bash
   $ sudo apt install build-essential cmake \
-                     uuid-dev rapidjson-dev \
-                     protobuf-compiler-grpc libgrpc++-dev \
-                     libzmq3-dev
+                     uuid-dev rapidjson-dev
   ```
-
   (Additional indirect dependencies are installed as well)
 
+* C++ build-time dependencies for ZeroMQ communication, including
+  ZeroMQ with Protocol Buffer payloads:
 
-* (Optional) Dependencies used to generate developer/reference documentation:
+  ```bash
+  $ sudo apt install libzmq3-dev protobuf-compiler
+  ```
+
+* C++ build-time dependencies for gRPC communication:
+
+  ```bash
+  $ sudo apt install protobuf-compiler-grpc libgrpc++-dev
+  ```
+
+  (This also installs `protobuf-compiler` if you didn't do so above)
+
+* Dependencies used to generate developer/reference documentation:
 
    ```bash
    $ sudo apt install doxygen
    ```
 
-
-* Python 3 runtime dependencies:
+#### Python runtime requirements
 
   ```bash
-  $ sudo apt install python3-protobuf python3-grpcio
+  $ sudo apt install python3-protobuf python3-grpcio python3-zmq
   ```
 
 

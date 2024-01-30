@@ -36,7 +36,7 @@ namespace cc::grpc
 
     fs::path Base::settings_file(const std::string &product) const
     {
-        return str::format("grpc-services-%s.json", product);
+        return str::format("grpc-services-%,s.json", product);
     }
 
     std::string Base::realaddress(const std::string &address,

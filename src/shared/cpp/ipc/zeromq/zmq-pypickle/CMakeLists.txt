@@ -13,7 +13,7 @@ set(LIB_TYPE STATIC)
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_shared_ipc_zmq_common
+  cc_shared_ipc_zmq_base
 )
 
 ### Source files in this folder

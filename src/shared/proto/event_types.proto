@@ -42,7 +42,7 @@ message Details
     google.protobuf.Timestamp timestamp = 7;
 
     // Tag/value pairs indicating error attributes
-    repeated CC.Variant.Value attributes = 8;
+    CC.Variant.ValueList attributes = 8;
 
     // Description of error, possibly expanded with attribute values.
     string text = 15;

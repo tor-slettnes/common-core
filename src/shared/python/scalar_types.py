@@ -34,11 +34,11 @@ class EnumValue (int):
     def __repr__ (self):
         return self.name
 
-def enums (enumeration, valuemap=None):
-    keymap = {}
-    if valuemap is None:
-        valuemap = {}
+def enums (enumeration, symbol_lookup_map=None):
+    value_lookup_map = {}
+    if symbol_lookup_map is None:
+        symbol_lookup_map = {}
     for (name, value) in enumeration.items():
-        valuemap[name] = keymap[value] = EnumValue(value, name)
+        symbol_lookup_map[name] = value_lookup_map[value] = EnumValue(value, name)
 
-    return keymap
+    return value_lookup_map

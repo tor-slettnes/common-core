@@ -10,8 +10,8 @@ if(BUILD_ZMQ)
   set(TARGET   cc_shared_ipc_zmq)
   set(LIB_TYPE INTERFACE)
 
-  add_subdirectory(zmq-common)
-  set(LIB_DEPS cc_shared_ipc_zmq_common)
+  add_subdirectory(zmq-base)
+  set(LIB_DEPS cc_shared_ipc_zmq_base)
 
   if(BUILD_PROTOBUF)
     add_subdirectory(zmq-protobuf)

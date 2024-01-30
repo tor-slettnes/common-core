@@ -71,7 +71,7 @@ namespace cc::ipc
 
     fs::path Endpoint::settings_file(const std::string &product) const
     {
-        return str::format("%,s-endpoints-%s.json",
+        return str::format("%,s-endpoints-%,s.json",
                            this->ipc_flavor(),
                            product);
     }

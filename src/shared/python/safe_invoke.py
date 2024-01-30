@@ -11,10 +11,10 @@ import sys
 import traceback
 
 def safe_invoke(function    : Callable,
-               args        : Sequence,
-               kwargs      : Mapping,
-               description : Optional[str] = None,
-               log         : Callable[[str], None] = sys.stderr.write) -> None:
+                args        : Sequence = (),
+                kwargs      : Mapping = {},
+                description : Optional[str] = None,
+                log         : Callable[[str], None] = sys.stderr.write) -> None:
     '''
     Invoke a callable (function) and catch exception
     '''
