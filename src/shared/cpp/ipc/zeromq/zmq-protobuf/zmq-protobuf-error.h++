@@ -23,7 +23,7 @@ namespace cc::zmq
                       const cc::status::Event &event);
 
         CC::RR::StatusCode status_code() const;
-
+        status::Domain domain() const noexcept override;
         std::exception_ptr as_application_error() const override;
 
         std::string class_name() const noexcept override;

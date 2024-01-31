@@ -5,19 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-import time
-from scalar_types                 import enums
-from typing                       import Callable
-from ipc.google.grpc.signalclient import SignalClient, CC as _CC, \
+from ..common    import CC, ProtoBuf, Weekdays
+from typing      import Callable
+from ipc.google.grpc.signalclient import SignalClient, \
     SimpleSignalHandler, MappingSignalHandler
 
-class CC (_CC):
-    import demo_types_pb2 as Demo
+import time, sys, os.path
 
-#===============================================================================
-# Enumerated values
-
-Weekday = enums(CC.Demo.Weekday)
 
 #===============================================================================
 # SignalClient class
@@ -30,11 +24,11 @@ class DemoClient (SignalClient):
     signal_type  = CC.Demo.Signal
 
     def __init__(self,
-                 host = "",
-                 identity = "Interactive",
-                 wait_for_ready = False):
+                 host           : str = "",
+                 identity       : str = os.path.basename(sys.argv[0]),
+                 wait_for_ready : bool = False):
 
-        super().__init__(host = host, watch_all = True)
+        SignalClient.__init__(self, host = host, watch_all = True)
 
         self.identity = identity
         self.birth    = time.time()

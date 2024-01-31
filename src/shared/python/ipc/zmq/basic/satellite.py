@@ -16,19 +16,28 @@ class Satellite (Endpoint):
 
         Endpoint.__init__(self, channel_name, socket_type)
 
+        self.connected = False
         self.address = self._realaddress(
             address,
             'scheme', 'host', 'port',
             'tcp', 'localhost', 5555)
 
     def initialize(self):
+        Endpoint.initialize(self)
         self.connect()
 
     def deinitialize(self):
-        pass
+        Endpoint.deinitialize(self)
 
     def connect(self):
-        self.socket.connect(self.address)
+        if not self.connected:
+            self.socket.connect(self.address)
+            self.connected = True
+
+    def disconnect(self):
+        if self.connected:
+            self.socket.disconnect(self.address)
+            self.connected = False
 
 class ArgParser(BaseParser):
     def __init__ (self, *args, **kwargs):

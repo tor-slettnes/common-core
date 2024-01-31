@@ -22,10 +22,11 @@ class Host (Endpoint):
             'tcp', '*', 5555)
 
     def initialize(self):
+        Endpoint.initialize(self)
         self.bind()
 
     def deinitialize(self):
-        pass
+        Endpoint.deinitialize(self)
 
     def bind(self):
         if not self.bound:

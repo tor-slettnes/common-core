@@ -95,16 +95,7 @@ namespace cc::zmq
         {
             status->CopyFrom(reply.status());
             param->CopyFrom(reply.param());
-
-            switch (status->code())
-            {
-            case CC::RR::STATUS_OK:
-            case CC::RR::STATUS_ACCEPTED:
-                return true;
-
-            default:
-                return false;
-            }
+            return true;
         }
         else
         {
@@ -118,14 +109,23 @@ namespace cc::zmq
         CC::RR::Status status;
         if (this->read_result(param, &status, flags))
         {
+            switch (status.code())
+            {
+            case CC::RR::STATUS_OK:
+            case CC::RR::STATUS_ACCEPTED:
+                break;
+
+            default:
+                ProtoBufError(
+                    status.code(),
+                    protobuf::decoded<status::Event>(status.details())
+                    ).throw_if_error();
+                break;
+            }
             return true;
         }
         else
         {
-            ProtoBufError error(
-                status.code(),
-                protobuf::decoded<status::Event>(status.details()));
-            error.throw_if_error();
             return false;
         }
     }
@@ -166,12 +166,18 @@ namespace cc::zmq
                                               ::zmq::recv_flags recv_flags)
     {
         CC::RR::Parameter response_param;
-        if (this->read_result(&response_param, recv_flags) &&
-            response_param.has_serialized_proto())
+        if (this->read_result(&response_param, recv_flags))
         {
-            const std::string &serialized = response_param.serialized_proto();
-            bytes->assign(serialized.begin(), serialized.end());
-            return true;
+            if (response_param.has_serialized_proto())
+            {
+                const std::string &serialized = response_param.serialized_proto();
+                bytes->assign(serialized.begin(), serialized.end());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {

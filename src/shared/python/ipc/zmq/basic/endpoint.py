@@ -21,12 +21,6 @@ class Endpoint (CommonEndpoint):
         CommonEndpoint.__init__(self, channel_name)
         self.socket = self.context.socket(socket_type)
 
-    def initialize(self):
-        pass
-
-    def deinitialize(self):
-        pass
-
     def send_bytes (self,
                     data:  bytes,
                     flags: zmq.Flag = 0):

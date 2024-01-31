@@ -123,23 +123,22 @@ class CC (object):
 
     @classmethod
     def encodeValueList(cls, value):
-        valuelist = CC.Variant.ValueList()
-        cls.encodeToValueList(value, valuelist)
-        return valuelist
+        if value is None:
+            return CC.Variant.ValueList()
 
-    @classmethod
-    def encodeToValueList(cls, value, valuelist):
-        if isinstance(value, dict):
-            valuelist.items.extend(cls.encodeTaggedValue(tv) for tv in value.items())
-            valuelist.mappable = True
+        elif isinstance(value, dict):
+            return CC.Variant.ValueList(
+                items = [cls.encodeTaggedValue(tv) for tv in value.items()],
+                mappable = True)
 
         elif isinstance(value, list):
-            valuelist.items.extend([cls.encodeValue(v) for v in value])
+            return CC.Variant.ValueList(
+                items = [cls.encodeValue(v) for v in value])
 
         elif isinstance(value, CC.Variant.ValueList):
-            valuelist.CopyFrom(value)
+            return value
 
-        elif value is not None:
+        else:
             raise ValueError("encodeToValueList() expects a dictionary or list")
 
 
@@ -158,3 +157,6 @@ class CC (object):
     def decodeValueMap(cls, valuelist, autotype=True):
         return dict(cls.decodeTaggedValueList(valuelist, autotype))
 
+    @classmethod
+    def valueList(cls, **kwargs):
+        return cls.encodeValueList(kwargs)

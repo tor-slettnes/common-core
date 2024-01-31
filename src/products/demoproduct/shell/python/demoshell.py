@@ -11,14 +11,14 @@
 from ipc.google.protobuf     import ProtoBuf
 from ipc.google.grpc.client  import ArgParser as _ArgParser
 
-import demo_grpc_client
-import demo_zmq_client
+import demo.grpc.client
+import demo.zmq.client
 import logging
 
 ### Container class for ProtoBuf message types from mutiple services
 ### (e.g. "CC.Demo.Signal").
 
-class CC (demo_grpc_client.CC):
+class CC (demo.grpc.client.CC):
     pass
 
 ### Add a few arguments to the base argparser
@@ -55,6 +55,9 @@ if __name__ == "__main__":
     logger = logging.getLogger()
     logger.setLevel((logging.INFO, logging.DEBUG)[args.debug])
 
-    demo_grpc = demo_grpc_client.DemoClient(args.host)
-    demo_zmq  = demo_zmq_client.DemoClient(args.host)
+    demo_grpc = demo.grpc.client.DemoClient(args.host)
+    demo_zmq  = demo.zmq.client.DemoClient(args.host)
+
+    demo_grpc.initialize()
+    demo_zmq.initialize()
     legend()

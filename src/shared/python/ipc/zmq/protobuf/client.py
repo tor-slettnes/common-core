@@ -17,6 +17,7 @@ class Client (Requester):
     '''ZMQ RPC client using ProtoBuf messages'''
 
     last_client_id = 0
+    interface_name = None
 
     def __init__(self,
                  host_address  : str,
@@ -85,7 +86,7 @@ class Client (Requester):
         if reply.status.code == STATUS_OK:
             return reply.param
         else:
-            raise Error(reply.status.code, reply.status.details)
+            raise Error(reply.status.code, reply.status.details) from None
 
     def receive_reply(self):
         data = self.receive_bytes()

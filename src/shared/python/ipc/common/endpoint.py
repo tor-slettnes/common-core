@@ -43,11 +43,17 @@ class Endpoint (object):
             self.settings_file("common")
         ]
         self.settings = SettingsStore(settings_files)
-        print("Loaded settings from %s: %s"%(settings_files, self.settings))
+        logging.debug("Loaded settings from %s: %s"%(settings_files, self.settings))
 
 
     def __repr__ (self):
         return "%s %r %s"%(self.ipc_flavor, self.channel_name, self.endpoint_type)
+
+    def initialize(self):
+        pass
+
+    def deinitialize(self):
+        pass
 
     def settings_file(self, product_name):
         return "%s-endpoints-%s.json"%(self.ipc_flavor.lower(), product_name.lower())

@@ -6,6 +6,7 @@
 #===============================================================================
 
 from ...google.protobuf import CC, ProtoBuf
+from .error             import Error
 
 from typing  import Callable
 from inspect import getfullargspec
@@ -40,8 +41,7 @@ class RequestHandler (object):
 
     Subclasses should define handler methods with the following criteria:
 
-    * The method name must start with "`handle_`"; the remainder of its name
-      maps directly to the expected `method_name` field of the `Request`.
+    * The method name maps directly to the `method_name` field of the `Request`.
 
     * It should take one single ProtoBuf message as input argument, and
       include a Python annotation to indicate the specific message type.
@@ -53,11 +53,13 @@ class RequestHandler (object):
     ### Example:
 
     ```
-    class MyRequstHandler (ipc.zmq.protobuf.requesthandler.RequestHandler):
+    from ipc.zmq.protobuf.requesthandler import RequestHandler
+
+    class MyRequstHandler (RequestHandler):
 
         interface_name = 'My RPC Service'
 
-        def handle_my_request(self, arg: MyProtoBufRequestType) -> MyProtoBufReplyType:
+        def my_request(self, arg: MyProtoBufRequestType) -> MyProtoBufReplyType:
             # Do something here
             return MyProtoBufReplyType(myfield='my value', ...)
     ```
@@ -67,24 +69,24 @@ class RequestHandler (object):
     def __init__ (self, interface_name : str):
         self.interface_name = interface_name
 
-    def process_method_request(self,
-                               request : CC.RR.Request,
-                               reply   : CC.RR.Reply):
+    def __call__(self,
+                 request : CC.RR.Request,
+                 reply   : CC.RR.Reply):
 
         try:
-            handler = getattr(self, 'handle_' + request.method_name)
+            handler = getattr(self, request.method_name)
         except AttributeError:
-            self.insert_error(
-                reply,
-                CC.RR.STATUS_INVALID,
-                'Requested method not found',
-                symbol = 'NotFound',
-                flow = CC.Status.FLOW_CANCELLED,
-                attributes = dict(
-                    interface_name = request.interface_name,
-                    method_name = request.method_name
-                )
-            )
+            Error(CC.RR.STATUS_INVALID,
+                  CC.Status.Details(
+                      text = 'Requested method not found',
+                      symbol = 'NotFound',
+                      flow = CC.Status.FLOW_CANCELLED,
+                      attributes = CC.ValueList(
+                          interface_name = request.interface_name,
+                          method_name = request.method_name
+                      )
+                  )
+            ).add_to_reply(reply)
         else:
             self._process_handler_invocation(handler, request, reply)
 
@@ -101,60 +103,47 @@ class RequestHandler (object):
             annotated_type = argspec.annotations[argname]
             arg = annotated_type.FromString(request.param.serialized_proto)
 
+        except IndexError: # Handler takes no arguments
+            self._invoke_handler(handler, (), reply)
+
         except (KeyError, IndexError, AttributeError):
-            self.insert_error(
-                reply,
-                CC.RR.STATUS_FAILED,
-                "Handler method does not have an input argument "
-                "with a ProtoBuf message annottation",
-                symbol = 'InvalidHandlerMethod',
-                flow = CC.Status.FLOW_CANCELLED,
-                attributes = dict(
-                    interface_name = self.interface_name,
-                    method_name = handler.__name__
-                )
-            )
+            Error(CC.RR.STATUS_FAILED,
+                  CC.Status.Details(
+                      text = "Handler method does not have an input argument "
+                      "with a ProtoBuf message annottation",
+                      symbol = 'InvalidHandlerMethod',
+                      flow = CC.Status.FLOW_CANCELLED,
+                      attributes = CC.valueList(
+                          interface_name = self.interface_name,
+                          method_name = handler.__name__
+                      )
+                  )
+            ).add_to_reply(reply)
 
         else:
-            self._invoke_handler(handler, arg, reply)
+            self._invoke_handler(handler, (arg,), reply)
 
 
 
     def _invoke_handler(self,
                         handler: Callable[[ProtoBuf.Message], ProtoBuf.Message],
-                        arg    : ProtoBuf.Message,
+                        args   : tuple,
                         reply  : CC.RR.Reply):
 
         try:
-            result = handler(arg)
+            result = handler(*args)
         except Exception as e:
-            self.insert_error(
-                reply,
-                CC.RR.STATUS_FAILED,
-                str(e),
-                symbol = type(e).__name__,
-                flow = CC.Status.FLOW_ABORTED,
-                attributes = dict(
-                    exception_args = e.args
-                )
-            )
+            Error(CC.RR.STATUS_FAILED,
+                  CC.Status.Details(
+                      text = str(e),
+                      symbol = type(e).__name__,
+                      flow = CC.Status.FLOW_ABORTED,
+                      attributes = cc.valueList(
+                          exception_args = e.args
+                      )
+                  )
+            ).add_to_reply(reply)
         else:
-            reply.serialized_proto = result.SerializeToString()
-
-
-    @classmethod
-    def insert_error(self,
-                     reply      : CC.RR.Reply,
-                     code       : CC.RR.StatusCode,
-                     text       : str,
-                     symbol     : str = '',
-                     flow       : CC.Status.Flow = CC.Status.FLOW_NONE,
-                     attributes : dict = {}):
-
-        reply.status.code = code
-        reply.status.details.text = text
-        reply.status.details.domain = CC.Status.DOMAIN_APPLICATION
-        reply.status.details.symbol = symbol
-        reply.status.details.level = CC.Status.LEVEL_FAILED
-        reply.status.details.flow = flow
-        CC.encodeToValueList(attributes, reply.status.details.attributes)
+            if result is None:
+                result = ProtoBuf.Empty()
+            reply.param.serialized_proto = result.SerializeToString()

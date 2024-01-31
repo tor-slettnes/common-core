@@ -5,21 +5,14 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from ipc.zmq.protobuf.client           import Client
+from ..common import CC, ProtoBuf, Weekdays, \
+    DEMO_PUBLISHER_CHANNEL, DEMO_SERVICE_CHANNEL, DEMO_RPC_INTERFACE
+
+from ipc.zmq.protobuf.client import Client
 from ipc.zmq.protobuf.signalsubscriber import SignalSubscriber
-from ipc.google.protobuf               import CC as _CC, ProtoBuf
-from scalar_types                      import enums
-from typing                            import Callable
+from typing import Callable
 
-import time
-
-class CC (_CC):
-    import demo_types_pb2 as Demo
-
-#===============================================================================
-# Enumerated values
-
-Weekdays = enums(CC.Demo.Weekday)
+import time, sys, os.path
 
 #===============================================================================
 # SignalClient class
@@ -27,31 +20,31 @@ Weekdays = enums(CC.Demo.Weekday)
 class DemoClient (Client):
     '''Client for Demo service.'''
 
-    publisher_channel = "Demo Publisher"
-    service_channel   = "Demo Service"
-    interface_name    = "Demo"
-
     def __init__(self,
                  service_host: str = "",
                  publisher_host: str = "",
-                 identity = "Interactive"):
+                 identity = os.path.basename(sys.argv[0])):
 
         Client.__init__(self,
                         host_address = service_host,
-                        channel_name = self.service_channel)
+                        channel_name = DEMO_SERVICE_CHANNEL,
+                        interface_name = DEMO_RPC_INTERFACE)
 
         self.subscriber = SignalSubscriber(
             host_address = publisher_host,
-            channel_name = self.publisher_channel,
+            channel_name = DEMO_PUBLISHER_CHANNEL,
             signal_type  = CC.Demo.Signal)
 
         self.identity = identity
         self.birth    = time.time()
 
-
     def connect(self):
-        Client.connect(self)
         self.subscriber.connect()
+        Client.connect(self)
+
+    def disconnect(self):
+        Client.disconnect(self)
+        self.subscriber.disconnect()
 
     def say_hello(self, text: str, **kwargs):
         '''

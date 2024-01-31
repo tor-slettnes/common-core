@@ -5,9 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from ...google.protobuf.standard_types import ProtoBuf
-from event_types_pb2                   import Details
-from request_reply_pb2                 import Status, StatusCode, \
+from ...google.protobuf import CC, ProtoBuf
+from event_types_pb2    import Details
+from request_reply_pb2  import Status, StatusCode, \
     STATUS_OK, STATUS_ACCEPTED, STATUS_INVALID, STATUS_CANCELLED, STATUS_FAILED
 
 class Error (RuntimeError):
@@ -26,3 +26,7 @@ class Error (RuntimeError):
             type(self).__name__,
             self.code,
             ProtoBuf.decodeToDict(self.details, use_integers_for_enums=False))
+
+    def add_to_reply (self, reply: CC.RR.Reply):
+        reply.status.code = self.code
+        reply.status.details.CopyFrom(self.details)
