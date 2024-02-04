@@ -30,10 +30,12 @@ else()
   message(SEND_ERROR "Unsupported platform ${CMAKE_SYSTEM_NAME}")
 endif()
 
-
 ### Create common platform library
 set(TARGET cc_shared_platform)
 set(LIB_TYPE STATIC)
-
 include(BuildLibrary)
 
+### Application `init()` routine. We put it here instead of `core` beause the
+### functions `register_providers()` and `unregister_providers()` on which it
+### depends are defined within this library.
+add_subdirectory(application)

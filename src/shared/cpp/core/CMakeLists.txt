@@ -30,7 +30,6 @@ include(BuildLibrary)
 target_compile_features(${TARGET} PUBLIC cxx_std_17)
 
 # Pull in sources from subdirectories
-add_subdirectory(application)
 add_subdirectory(argparse)
 add_subdirectory(buildinfo)
 add_subdirectory(chrono)

@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-target_sources(${TARGET} PUBLIC
+target_sources(${TARGET} PRIVATE
   format.c++
   misc.c++
   convert.c++

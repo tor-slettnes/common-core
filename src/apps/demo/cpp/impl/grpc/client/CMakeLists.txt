@@ -14,10 +14,10 @@ set(TARGET cc_demo_grpc_client)
 ### https://cmake.org/cmake/help/latest/command/add_library.html.
 set(LIB_TYPE STATIC)
 
-### External package dependencies, configured via `pkg-config`.
-set(PKG_DEPS
-  grpc++
-)
+# ### External package dependencies, configured via `pkg-config`.
+# set(PKG_DEPS
+#   grpc++
+# )
 
 ### Static/shared library dependencies, either from this build or provided by the system.
 set(LIB_DEPS

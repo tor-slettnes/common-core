@@ -15,6 +15,7 @@ set(LIB_TYPE STATIC)
 set(LIB_DEPS
   cc_shared_ipc_api
   cc_shared_ipc_protobuf
+  cc_shared_platform
 )
 
 ### External package dependencies, configured via `pkg-config`.
