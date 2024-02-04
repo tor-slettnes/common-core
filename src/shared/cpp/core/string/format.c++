@@ -92,6 +92,7 @@ namespace cc::str
     {
         Formatter::Modifiers mods;
 
+        this->stream.imbue(std::locale("C"));
         this->apply_flags(part.flags, &mods);
 
         if (part.width)
