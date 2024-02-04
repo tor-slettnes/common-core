@@ -5,12 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Modules relative to install folder
 from .host   import Host
-from .filter import Filter
+from .filter import Filter, Topic
 
+### Third-party modules
 import zmq
-
-TopicType = str
 
 class Publisher (Host):
     endpoint_type = 'publisher'
@@ -25,7 +25,7 @@ class Publisher (Host):
         self.send_bytes(data, zmq.DONTWAIT)
 
     def publish_with_topic(self,
-                           topic: TopicType,
+                           topic: Topic,
                            data : bytes):
         f = Filter.create_from_topic(topic)
         self.publish_with_filter(f, data)

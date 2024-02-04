@@ -5,11 +5,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from .error             import Error
-from ..basic.requester  import Requester
-from ...google.protobuf import CC, ProtoBuf
-from request_reply_pb2  import Request, Reply, Parameter, StatusCode, Status, \
-    STATUS_OK
+from .error                      import Error
+from ..basic.requester           import Requester
+from ...google.protobuf          import CC, ProtoBuf
+from generated.request_reply_pb2 import Request, Reply, Parameter, \
+    StatusCode, Status, STATUS_OK
 
 from typing import Optional
 

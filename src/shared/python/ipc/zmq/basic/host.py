@@ -5,8 +5,14 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-import re, argparse, zmq
-from .endpoint import Endpoint, ArgParser as BaseParser
+### Modules relative to install folder
+from .endpoint import Endpoint
+
+### Third-party modules
+import zmq
+
+### Standard Python modules
+import logging
 
 class Host (Endpoint):
     def __init__(self,
@@ -26,21 +32,17 @@ class Host (Endpoint):
         self.bind()
 
     def deinitialize(self):
+        self.unbind()
         Endpoint.deinitialize(self)
 
     def bind(self):
         if not self.bound:
+            logging.info("Binding %s to %s"%(self, self.address))
             self.socket.bind(self.address)
             self.bound = True
 
     def unbind(self):
         if self.bound:
+            logging.info("Unbinding %s from %s"%(self, self.address))
             self.socket.unbind(self.address)
             self.bound = False
-
-class ArgParser(BaseParser):
-    def __init__ (self, *args, **kwargs):
-        BaseParser.__init__(self, *args, **kwags)
-        self.add_argument('--bind', type=str,
-                          help='Host address, in the form [SCHEME://][HOST][:PORT]')
-

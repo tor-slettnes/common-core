@@ -1,0 +1,15 @@
+// -*- c -*-
+//==============================================================================
+/// @file buildinfo.c.in
+/// @brief Build information, populated at build time by CMake
+//==============================================================================
+
+#include "buildinfo.h"
+
+const char *PACKAGE_VERSION     = "@PACKAGE_VERSION@";
+const char *PROJECT_VERSION     = "@PROJECT_VERSION@";
+const char *PROJECT_NAME        = "@PROJECT_NAME@";
+const char *PROJECT_DESCRIPTION = "@PROJECT_DESCRIPTION@";
+const char *PROJECT_BUILD_DATE  = "@PROJECT_BUILD_DATE@";
+const char *PROJECT_BUILD_TIME  = "@PROJECT_BUILD_TIME@";
+const char *SOURCE_DIR          = "@CMAKE_SOURCE_DIR@";

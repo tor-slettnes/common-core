@@ -5,16 +5,17 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from .satellite   import Satellite
-from .filter      import Filter
-from safe_invoke  import safe_invoke
-from threading    import Thread
-from typing       import Callable
+### Modules relative to install folder
+from .satellite      import Satellite
+from .filter         import Filter, Topic
+from core.invocation import safe_invoke
 
-import logging
+### Third-party modules
 import zmq
 
-TopicType = str
+### Standard Python modules
+from typing import Callable
+import logging, threading
 
 class Subscriber (Satellite):
     endpoint_type = 'subscriber'
@@ -34,7 +35,7 @@ class Subscriber (Satellite):
             lambda _filter, _data: callback(_data))
 
     def subscribe_with_topic(self,
-                             topic    : TopicType,
+                             topic    : Topic,
                              callback : Callable[[str, bytes], None]):
 
         f = Filter.create_from_topic(topic)
@@ -65,7 +66,7 @@ class Subscriber (Satellite):
         self.keep_receiving = True
         t = self.receive_thread
         if not t or not t.is_alive():
-            t = self.receive_thread = Thread(
+            t = self.receive_thread = threading.Thread(
                 None, self._receive_loop, 'Subscriber loop', daemon=True)
             t.start()
 

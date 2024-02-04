@@ -28,8 +28,8 @@ option(BUILD_PROTOBUF   "Build support for Google Protocol Buffers" ON)
 option(BUILD_ZMQ        "Build support for ZeroMQ" ON)
 option(BUILD_GRPC       "Build support for gRPC Remote Procedure Calls" ON)
 option(BUILD_RTI_DDS    "Build support for RTI ConnextDDS" ON)
-option(BUILD_RTI_LOGGER "Build support for RTI Distributed Logger" ${BUILD_RTI_DDS})
-option(BUILD_IDL        "Build Interface Definition Language types (IDL)" OFF)
+option(BUILD_RTI_LOGGER "Build support for RTI Distributed Logger" OFF)
+option(BUILD_IDL        "Build Interface Definition Language types (IDL)" ${BUILD_RTI_DDS})
 
 ### C# components
 if(BUILD_CSHARP)

@@ -1,0 +1,12 @@
+#!/bin/echo Do not invoke directly.
+#===============================================================================
+## @file zmq_common.py
+## @brief Common types and definitions for Python 'Demo' service
+## @author Tor Slettnes <tor@slett.net>
+#===============================================================================
+
+### Identifiers for ZMQ commands & messages
+DEMO_PUBLISHER_CHANNEL = 'Demo Publisher'
+DEMO_SERVICE_CHANNEL   = 'Demo Service'
+DEMO_RPC_INTERFACE     = 'Demo'
+

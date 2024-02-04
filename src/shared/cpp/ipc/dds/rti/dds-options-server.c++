@@ -54,10 +54,10 @@ namespace cc::dds
             }
         }
 
-#ifdef USE_RTI_RTI_LOGGER
+#ifdef USE_RTI_LOGGER
         if (this->log_to_dl)
         {
-            if (auto sink = RTILogger::create_shared(
+            if (auto sink = RTIDistributedLogger::create_shared(
                     platform::path->exec_name(true),  // identity
                     this->domain_id))
             {
@@ -71,4 +71,4 @@ namespace cc::dds
 #endif
     }
 
-}  // namespace cc::argparse
+}  // namespace cc::dds

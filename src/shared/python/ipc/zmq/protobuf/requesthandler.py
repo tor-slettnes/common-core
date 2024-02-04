@@ -138,7 +138,7 @@ class RequestHandler (object):
                       text = str(e),
                       symbol = type(e).__name__,
                       flow = CC.Status.FLOW_ABORTED,
-                      attributes = cc.valueList(
+                      attributes = CC.valueList(
                           exception_args = e.args
                       )
                   )

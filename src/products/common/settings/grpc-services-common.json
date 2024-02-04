@@ -6,31 +6,36 @@
 //==============================================================================
 
 {
-    // Default endpoints for common applications. In addtiion to these,
-    // settings for product-specific applications can be found in
-    // `grpc-endpoints-PRODUCT_NAME.json`, where PRODUCT_NAME is provided at
+    // Default endpoints for common applications. In addtiion to these, settings
+    // for product-specific applications can be found in
+    // `grpc-services-PRODUCT_NAME.json`, where PRODUCT_NAME is provided at
     // build time.
     //
     // The following attributes are used to construct host/interface addresses
     // per gRPC endpoint.
-    //  - `"host"`     : Host address to which clients connect
-    //  - `"interface"`: Interface address to which servers bind
-    //  - `"port"`     : Destination port number
+    //  - `"host"`             : Host address to which clients connect
+    //  - `"interface"`        : Interface address to which servers bind
+    //  - `"port"`             : Destination port number
+    //  - `"max request size"` : Custom max send/receive size for client/server
+    //  - `"max reply size"`   : Custom max receive/send size for client/server
     //
-    // The syntax for the service address provided to both the C++ and Python
-    // gRPC wrappers is as follows:
+    // The syntax for the user-provided service address for both the C++ and
+    // Python gRPC wrappers is as follows:
     //   [HOST][:PORT]
     //
     // * If HOST and/or PORT is explicitly provided it takes precendence.
-    // * If either is missing, default values are provided below
-    //   per gRPC endpoint. NOTE: For single-service endpoints, the endpoint
-    //   name is normally the same as the service name, extracted from the
-    //   `.proto` file.
+    //
+    // * If either is missing, default values are provided below per gRPC
+    //   service, identified by the service name provided in the corresponding
+    //   `.proto` file.  Note that a single server process (daemon) may host
+    //   multiple gRPC services, in which case the service endpoints defined
+    //   below may overlap.
+    //
     // * If still missing, the compile-time default is the IPv6 loopback address
     //   "[::1]:8080" for clients, and "[::]:8080" for servers.
 
     // Service names extracted from .proto files
-    "CC.Demo.Demo":
+    "Demo":
     {
         // "interface" : "",       // Listen on all interfaces by default
         "port"      : 3366      // D-E-M-O on T9 keypad

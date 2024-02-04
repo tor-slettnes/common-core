@@ -5,31 +5,41 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Make the contents of Python client modules available in namespaces roughly
-### corresponding to the package names of the corresponding `.proto` files
-
-from ipc.google.protobuf     import ProtoBuf
-from ipc.google.grpc.client  import ArgParser as _ArgParser
-
+### Modules relative to install folder
+import demo.core.types
 import demo.grpc.client
 import demo.zmq.client
+
+### Standard Python modules
 import logging
+import argparse
+import sys
+import os.path
+
+### Make the contents of Python client modules available in namespaces roughly
+### corresponding to the package names of the corresponding `.proto` files
+from ipc.google.protobuf     import ProtoBuf
 
 ### Container class for ProtoBuf message types from mutiple services
 ### (e.g. "CC.Demo.Signal").
 
-class CC (demo.grpc.client.CC):
+class CC (demo.core.types.CC):
     pass
 
 ### Add a few arguments to the base argparser
-class ArgParser (_ArgParser):
-    def __init__ (self, host=None, identity="DemoShell", *args, **kwargs):
-        super().__init__(host, *args, **kwargs);
+class ArgParser (argparse.ArgumentParser):
+    def __init__ (self, prog=os.path.basename(sys.argv[0]), identity="DemoShell", *args, **kwargs):
+        super().__init__(prog=prog, *args, **kwargs);
 
         self.add_argument('--identity',
                           type=str,
                           default=identity,
                           help="Identity of this client")
+
+        self.add_argument('--host',
+                          type=str,
+                          default="localhost",
+                          help="Host for remote services")
 
         self.add_argument('--debug',
                           default=False,
@@ -43,7 +53,7 @@ def legend ():
     Interactive Service Control.  Subsystems loaded:
 
         demo_grpc  - Simple gRPC communications example
-        demo_zmq   - Simple ZeroMQ communications example
+        demo_zmq   - Simple 0MQ communications example
 
     Use 'help(subsystem)' to list available methods
     '''
@@ -55,8 +65,8 @@ if __name__ == "__main__":
     logger = logging.getLogger()
     logger.setLevel((logging.INFO, logging.DEBUG)[args.debug])
 
-    demo_grpc = demo.grpc.client.DemoClient(args.host)
-    demo_zmq  = demo.zmq.client.DemoClient(args.host)
+    demo_grpc = demo.grpc.client.DemoClient(args.host, identity = args.identity)
+    demo_zmq  = demo.zmq.client.DemoClient(args.host, identity = args.identity)
 
     demo_grpc.initialize()
     demo_zmq.initialize()

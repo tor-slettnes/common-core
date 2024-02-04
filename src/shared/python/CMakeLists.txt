@@ -14,16 +14,11 @@ set(PROGRAMS
 
 ### Modules to be installed as supporting files, without execute permissions
 set(FILES
-  jsonreader.py
-  paths.py
-  safe_invoke.py
-  scalar_types.py
-  settingsstore.py
-  stringexpander.py
 )
 
 ### Subdirectories
 set(DIRECTORIES
+  core
   ipc
 )
 

@@ -5,13 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from typing   import Optional, Union, Callable, NewType, IO
-from process  import safeInvoke
-from .base    import dds, Base, Path
+from .base           import dds, Base, Path
+from core.invocation import safe_invoke
+from typing          import Optional, Union, Callable, NewType, IO
 
 import threading
 import logging
-
 
 class Listener (Base):
     '''

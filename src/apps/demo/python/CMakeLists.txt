@@ -5,11 +5,10 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Where do these files get installed?
-set(PYTHON_PACKAGE demo)
-
 ### Modules to be installed as programs, with execute permissionss
 set(PROGRAMS
+  demo-grpc-server.py
+  demo-zmq-server.py
 )
 
 ### Modules to be installed as supporting files, without execute permissions
@@ -18,11 +17,8 @@ set(FILES
 
 ### Subdirectories
 set(DIRECTORIES
-  common
-  grpc
-  zmq
+  demo
 )
 
 ### Common recipe
 include(BuildPython)
-

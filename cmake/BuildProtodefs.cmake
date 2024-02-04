@@ -69,7 +69,7 @@ if (BUILD_PYTHON)
   if (BUILD_GRPC)
     grpc_generate_python(GRPC_PY ${CMAKE_CURRENT_BINARY_DIR} ${SOURCES})
   endif()
-  install(FILES ${PROTO_PY} ${GRPC_PY} DESTINATION ${PYTHON_INSTALL_DIR})
+  install(FILES ${PROTO_PY} ${GRPC_PY} DESTINATION ${PYTHON_INSTALL_DIR}/generated)
 endif()
 
 ### Global ProtoBuf include folder

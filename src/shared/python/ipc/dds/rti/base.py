@@ -11,7 +11,7 @@ import io
 import os
 
 import rti.connextdds as dds
-import paths
+import core.paths
 
 Path = NewType('Path', str)
 

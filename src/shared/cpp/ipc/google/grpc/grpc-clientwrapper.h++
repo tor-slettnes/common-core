@@ -20,7 +20,6 @@
 
 namespace cc::grpc
 {
-    using namespace std::literals;
     //==========================================================================
     /// @class ClientBase
     /// @brief

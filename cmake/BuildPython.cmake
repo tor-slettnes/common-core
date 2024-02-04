@@ -26,9 +26,9 @@ if (BUILD_PYTHON)
     set(PYTHON_INSTALL_DIR "share/python")
   endif()
 
-  if(PYTHON_PACKAGE)
-    string(REPLACE "." "/" PYTHON_SUBDIR "${PYTHON_PACKAGE}")
-    set(PYTHON_INSTALL_DIR "${PYTHON_INSTALL_DIR}/${PYTHON_SUBDIR}")
+  if(MODULE)
+    string(REPLACE "." "/" MODULE_DIR "${MODULE}")
+    set(PYTHON_INSTALL_DIR "${PYTHON_INSTALL_DIR}/${MODULE_DIR}")
   endif()
 
   if(PROGRAMS)

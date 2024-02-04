@@ -1,16 +1,25 @@
-#!/usr/bin/echo Do not invoke directly.
+#!/bin/echo Do not invoke directly.
 #===============================================================================
 ## @file base.py
 ## @brief Wrapper for ZeroMQ-based applications
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from ...common.endpoint import Endpoint as CommonEndpoint
+### Modules that are relative to install folder
+from ...base.endpoint import Endpoint as BaseEndpoint
 
-import re, argparse, sys
-import zmq
+### Standard Python modules
+import re, sys, logging
 
-class Endpoint (CommonEndpoint):
+### Third-party modules
+try:
+    import zmq
+except ImportError as e:
+    logging.critical('Could not import module `zmq` - try installing `python3-zmq`.')
+    raise e from None
+
+
+class Endpoint (BaseEndpoint):
     ipc_flavor  = 'ZMQ'
     context = zmq.Context()
 
@@ -18,7 +27,7 @@ class Endpoint (CommonEndpoint):
                  channel_name: str,
                  socket_type : zmq.SocketType):
 
-        CommonEndpoint.__init__(self, channel_name)
+        BaseEndpoint.__init__(self, channel_name)
         self.socket = self.context.socket(socket_type)
 
     def send_bytes (self,
@@ -128,8 +137,3 @@ class Endpoint (CommonEndpoint):
         if port:
             address += f":{port}"
         return address
-
-
-class ArgParser(argparse.ArgumentParser):
-    def __init__ (self, *args, **kwargs):
-        argparse.ArgumentParser.__init__(self, prog=sys.argv[0], *args, **kwargs)

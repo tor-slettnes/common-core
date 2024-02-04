@@ -5,8 +5,14 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-import re, argparse, zmq
-from .endpoint import Endpoint, ArgParser as BaseParser
+### Modules relative to install folder
+from .endpoint import Endpoint
+
+### Third-party modules
+import zmq
+
+### Sstandard python modules
+import logging
 
 class Satellite (Endpoint):
     def __init__(self,
@@ -31,17 +37,12 @@ class Satellite (Endpoint):
 
     def connect(self):
         if not self.connected:
+            logging.info("Connecting %s to %s"%(self, self.address))
             self.socket.connect(self.address)
             self.connected = True
 
     def disconnect(self):
         if self.connected:
+            logging.info("Disconnecting %s from %s"%(self, self.address))
             self.socket.disconnect(self.address)
             self.connected = False
-
-class ArgParser(BaseParser):
-    def __init__ (self, *args, **kwargs):
-        BaseParser.__init__(self, *args, **kwags)
-        self.add_argument('--host', type=str,
-                          help='Host address, in the form [SCHEME://][HOST][:PORT]')
-

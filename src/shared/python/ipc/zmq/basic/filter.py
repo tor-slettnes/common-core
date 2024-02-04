@@ -6,6 +6,8 @@
 
 from typing import Tuple
 
+Topic = str
+
 class Filter (bytes):
     STRING_ENCODING = 'utf8'
 

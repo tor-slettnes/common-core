@@ -5,12 +5,15 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from .host       import Host
-from safe_invoke import safe_invoke
-from threading   import Thread
+### Modules relative to install folder
+from .host           import Host
+from core.invocation import safe_invoke
 
-import logging
+### Third-party modules
 import zmq
+
+### Standard Python modules
+import logging, threading
 
 class Responder (Host):
     endpoint_type = 'responder'
@@ -23,12 +26,20 @@ class Responder (Host):
         self.listen_thread = None
         self.keep_listening = False
 
+    def initialize(self):
+        Host.initialize(self)
+        self.start()
+
+    def deinitialize(self):
+        self.stop()
+        Host.deinitialize(self)
+
     def start(self):
         self.keep_listening = True
         self.bind()
         t = self.listen_thread
         if not t or not t.is_alive():
-            t = self.listen_thread = Thread(
+            t = self.listen_thread = threading.Thread(
                 None, self.run, 'Responder loop', daemon=True)
             t.start()
 

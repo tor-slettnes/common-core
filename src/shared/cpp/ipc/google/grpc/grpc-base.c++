@@ -24,14 +24,15 @@ namespace cc::grpc
 
     Base::Base(const std::string &endpoint_type,
                const std::string &full_service_name)
-        : Super("gRPC", endpoint_type, full_service_name)
+        : Super("gRPC", endpoint_type, str::stem(full_service_name, ".")),
+          full_service_name_(full_service_name)
     {
     }
 
     std::string Base::servicename(bool full) const
     {
-        return full ? this->channel_name()
-                    : str::stem(this->channel_name(), ".");
+        return full ? this->full_service_name_
+                    : str::stem(this->full_service_name_, ".");
     }
 
     fs::path Base::settings_file(const std::string &product) const

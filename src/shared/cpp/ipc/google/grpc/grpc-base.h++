@@ -41,7 +41,7 @@ namespace cc::grpc
 
     protected:
         Base(const std::string &endpoint_type,
-             const std::string &channel_name);
+             const std::string &full_service_name);
 
     public:
         /// @fn servicename
@@ -104,6 +104,7 @@ namespace cc::grpc
 
     private:
         static std::shared_ptr<SettingsStore> settings_;
+        const std::string full_service_name_;
     };
 
 }  // namespace cc::grpc
