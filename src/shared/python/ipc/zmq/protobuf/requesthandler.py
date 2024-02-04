@@ -5,10 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from ...google.protobuf import CC, ProtoBuf
-from .error             import Error
+### Modules relative to install folder
+from ...protobuf import CC, ProtoBuf
+from .error import Error
 
-from typing  import Callable
+### Standard Python modules
+from typing import Callable
 from inspect import getfullargspec
 
 class RequestHandler (object):

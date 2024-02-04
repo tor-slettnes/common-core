@@ -16,26 +16,124 @@
 
 namespace cc::types
 {
+    //==========================================================================
+    /// @enum OverlowDisposition
+    /// @brief How to handle `.put()` invocatinos into a full queue
+    enum class OverflowDisposition
+    {
+        BLOCK,
+        DISCARD_ITEM,
+        DISCARD_OLDEST,
+    };
+
+    //==========================================================================
+    /// @class BlockingQueueBase
+    /// @brief Untyped base for BlockingQueue
+
+    class BlockingQueueBase
+    {
+    protected:
+        BlockingQueueBase(
+            unsigned int maxsize,
+            OverflowDisposition overflow_disposition);
+
+
+    public:
+        /// @brief
+        ///     Cancel any pending `get()` calls.
+        ///
+        /// Any pending `get()` calls will return immediately with an empty
+        /// value.  Future calls are also cancelled, until either a new item is
+        /// placed in the queue with `put()`, or the queue is explicitly resumed
+        /// with `uncancel()`.
+        void cancel();
+
+        /// @brief
+        ///     Resume the queue after `cancel()`
+        ///
+        /// Future `get()` calls will again block.
+        void uncancel();
+
+        /// @brief
+        ///     Obtain the size of the queue
+        ///
+        /// @return
+        ///     Number of elements in the queue
+        virtual std::size_t size() = 0;
+
+        /// @brief
+        ///     Indicate whether the queue is empty (and a call to `.get()` would block)
+        ///
+        /// @return
+        ///     Boolean indication of whether the queue is empty.
+        virtual bool empty() = 0;
+
+
+        /// @brief
+        ///     Remove the oldest item from the queue
+        virtual void discard_oldest() = 0;
+
+
+    protected:
+        /// @brief
+        ///     Indicate whether an item can be pushed into the queue.
+        ///
+        /// @return
+        ///     Boolean indication of whether an item can be pushed into the queue.
+        ///
+        /// @note
+        ///     May block if `overflow_disposition == BLOCK`.
+        bool pushable(std::unique_lock<std::mutex> *lock);
+
+    protected:
+        const unsigned int maxsize_;
+        const OverflowDisposition overflow_disposition_;
+
+    protected:
+        bool cancelled;
+        std::condition_variable cv;
+        std::mutex mtx;
+    };
+
+    //==========================================================================
     /// @class BlockingQueue
     /// @brief Implements a Condition() wrapper around std::queue
     /// @tparam T
     ///    Data type
 
     template <class T>
-    class BlockingQueue
+    class BlockingQueue : public BlockingQueueBase
     {
     public:
         /// @brief Constructor
         /// @param[in] maxsize
         ///    Maximum queue size, after which the oldest element is removed
         ///    from the queue. Zero (the default) means unlimited size.
+        /// @param[in] full_
 
-        BlockingQueue(unsigned int maxsize = 0)
-            : maxsize(maxsize),
-              cancelled(false)
+        BlockingQueue(
+            unsigned int maxsize = 0,
+            OverflowDisposition overflow_disposition = OverflowDisposition::DISCARD_OLDEST)
+            : BlockingQueueBase(maxsize, overflow_disposition)
         {
         }
 
+        inline std::size_t size() override
+        {
+            return this->queue.size();
+        }
+
+        inline bool empty() override
+        {
+            return this->queue.empty();
+        }
+
+        inline void discard_oldest() override
+        {
+            this->queue.pop();
+        }
+
+    public:
         /// @brief
         ///     Add an item to the end of the queue
         /// @param[in] value
@@ -51,10 +149,11 @@ namespace cc::types
         inline void put(const T &value)
         {
             {
-                std::lock_guard lock(this->mtx);
-                if ((this->maxsize > 0) && (this->size() >= maxsize))
-                    this->queue.pop();
-                this->queue.push(value);
+                std::unique_lock<std::mutex> lock(this->mtx);
+                if (this->pushable(&lock))
+                {
+                    this->queue.push(value);
+                }
                 this->cancelled = false;
             }
             this->cv.notify_one();
@@ -75,41 +174,14 @@ namespace cc::types
         inline void put(T &&value)
         {
             {
-                std::lock_guard lock(this->mtx);
-                if ((this->maxsize > 0) && (this->size() >= maxsize))
-                    this->queue.pop();
-                this->queue.push(std::move(value));
+                std::unique_lock<std::mutex> lock(this->mtx);
+                if (this->pushable(&lock))
+                {
+                    this->queue.push(std::move(value));
+                }
                 this->cancelled = false;
             }
             this->cv.notify_all();
-        }
-
-        /// @brief
-        ///     Cancel any pending `get()` calls.
-        ///
-        /// Any pending `get()` calls will return immediately with an empty
-        /// value.  Future calls are also cancelled, until either a new item is
-        /// placed in the queue with `put()`, or the queue is explicitly resumed
-        /// with `uncancel()`.
-
-        inline void cancel()
-        {
-            {
-                std::lock_guard lock(this->mtx);
-                this->cancelled = true;
-            }
-            this->cv.notify_all();
-        }
-
-        /// @brief
-        ///     Resume the queue after `cancel()`
-        ///
-        /// Future `get()` calls will again block.
-
-        inline void uncancel()
-        {
-            std::lock_guard lock(this->mtx);
-            this->cancelled = false;
         }
 
         /// @brief
@@ -133,7 +205,7 @@ namespace cc::types
             if (this->queue.size())
             {
                 T value = std::move(this->queue.front());
-                this->queue.pop();
+                this->discard_oldest();
                 return value;
             }
             else
@@ -167,7 +239,7 @@ namespace cc::types
             if (received)
             {
                 T value = std::move(this->queue.front());
-                this->queue.pop();
+                this->discard_oldest();
                 return value;
             }
             else
@@ -198,33 +270,9 @@ namespace cc::types
                 std::chrono::duration_cast<std::chrono::steady_clock::duration>(timeout));
         }
 
-        /// @brief
-        ///     Obtain the size of the queue
-        ///
-        /// @return
-        ///     Number of elements in the queue
 
-        inline std::size_t size()
-        {
-            return this->queue.size();
-        }
-
-        /// @brief
-        ///     Indicate whether the queue is empty (and a call to `.get()` would block)
-        ///
-        /// @return
-        ///     Boolean indication of whether the queue is empty.
-
-        inline bool empty()
-        {
-            return this->queue.empty();
-        }
 
     private:
-        unsigned int maxsize;
-        bool cancelled;
-        std::condition_variable cv;
-        std::mutex mtx;
         std::queue<T> queue;
     };
 

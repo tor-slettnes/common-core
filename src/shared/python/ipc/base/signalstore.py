@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from ..google.protobuf import CC, ProtoBuf
+from ..protobuf import CC, ProtoBuf
 from core.scalar_types import enums
 from core.invocation   import safe_invoke
 

@@ -5,12 +5,14 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from .error             import Error
-from .requesthandler    import RequestHandler
-from ..basic.responder  import Responder
-from ...google.protobuf import CC, ProtoBuf
-from typing             import Sequence
+### Modules relative to install folder
+from .error import Error
+from .requesthandler import RequestHandler
+from ..basic.responder import Responder
+from ...protobuf import CC, ProtoBuf
 
+### Standard Python modules
+from typing import Sequence
 import logging
 
 

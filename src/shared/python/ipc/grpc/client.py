@@ -6,9 +6,9 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from  core.invocation import invocation
-from .base            import Base, ProtoBuf, CC
-from .status          import DetailedError
+from core.invocation import invocation
+from .base import Base, ProtoBuf, CC
+from .status import DetailedError
 
 ### Third-party modules
 import grpc

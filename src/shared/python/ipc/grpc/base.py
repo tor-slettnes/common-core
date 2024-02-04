@@ -6,10 +6,10 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from typing             import Optional
+from typing import Optional
 from core.settingsstore import SettingsStore
-from ..protobuf         import ProtoBuf, CC
-from ...base.endpoint import Endpoint
+from ..protobuf import ProtoBuf, CC
+from ..base import Endpoint
 
 ### Stanard Python modules
 import re, logging

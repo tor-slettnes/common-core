@@ -7,8 +7,8 @@
 
 ### Modules relative to install dir
 from demo.grpc.service import DemoService
-from demo.native       import NativeDemo
-from ipc.google.grpc.server import create_server
+from demo.native import NativeDemo
+from ipc.grpc.server import create_server
 
 ### Standard Python modules
 import logging

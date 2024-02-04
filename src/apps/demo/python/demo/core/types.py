@@ -6,8 +6,8 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from ipc.google.protobuf import CC as _CC, ProtoBuf
-from core.scalar_types   import enums
+from ipc.protobuf import CC as _CC, ProtoBuf
+from core.scalar_types import enums
 
 ### Standard Python modules
 import time

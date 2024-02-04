@@ -5,9 +5,10 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Modules relative to install folder
 from .subscriber import Subscriber
 from ...base.signalstore import SignalStore
-from ...google.protobuf import CC, ProtoBuf
+from ...protobuf import CC, ProtoBuf
 
 class SignalSubscriber (Subscriber):
     '''ZMQ ProtoBuf subscriber local signal emission'''

@@ -5,13 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from base import Base
-from status import DetailedError
+from .base import Base
+from .status import DetailedError
 
-from client import Client
-from signalclient import SignalClient
+from .client import Client
+from .signalclient import SignalClient
 
-from service import Service
-from signalservice import SignalService
+from .service import Service
+from .signalservice import SignalService
 
-from server import Server
+from .server import create_server

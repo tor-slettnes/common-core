@@ -5,9 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Modules relative to install folder
 from ..basic.subscriber import Subscriber as BaseSubscriber
-from ...google.protobuf import ProtoBuf
-from typing             import Callable
+from ...protobuf import ProtoBuf
+
+### Standard Python modules
+from typing import Callable
 
 class Subscriber (BaseSubscriber):
     '''ZMQ subscriber with support for ProtoBuf messages'''

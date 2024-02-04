@@ -7,7 +7,7 @@
 
 from .client  import Client
 from ..protobuf import CC, ProtoBuf
-from ...base.signalstore import SignalStore
+from ..base import SignalStore
 
 import threading, time
 

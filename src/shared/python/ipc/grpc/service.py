@@ -35,10 +35,10 @@ class Service (Base):
     Then, your service handler might look something like this:
 
     ```
-    from ipc.google.grpc.service      import Service
-    from example_service_pb2_grpc     import ExampleServicer
-    from grpc                         import ServicerContext
+    from ipc.grpc.service import Service
+    from example_service_pb2_grpc import ExampleServicer
     from google.protobuf.wrappers_pb2 import StringValue
+    from grpc import ServicerContext
 
     class ExampleService (Service, ExampleServicer):
 

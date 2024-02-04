@@ -6,7 +6,7 @@
 #===============================================================================
 
 from ..basic.publisher  import Publisher as BasePublisher
-from ...google.protobuf import ProtoBuf
+from ...protobuf import ProtoBuf
 
 class Publisher (BasePublisher):
     '''ZMQ publisher with support for ProtoBuf messages'''

@@ -8,4 +8,5 @@
 target_sources(${TARGET} PRIVATE
   signaltemplate.c++
   binaryevent.c++
+  blockingqueue.c++
 )

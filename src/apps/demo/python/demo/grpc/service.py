@@ -6,9 +6,9 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from ipc.google.grpc.signalservice   import SignalService
+from ipc.grpc.signalservice import SignalService
 from generated.demo_service_pb2_grpc import DemoServicer
-from ..core                          import API, CC, ProtoBuf, demo_signals
+from ..core import API, CC, ProtoBuf, demo_signals
 
 ### Third-party modules
 import grpc

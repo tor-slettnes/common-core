@@ -8,8 +8,8 @@
 ### Make the contents of Python client modules available in namespaces roughly
 ### corresponding to the package names of the corresponding `.proto` files
 
-from ipc.google.protobuf     import CC, ProtoBuf
-from ipc.google.grpc.client  import ArgParser as _ArgParser
+from ipc.protobuf     import CC, ProtoBuf
+from ipc.grpc.client  import ArgParser as _ArgParser
 
 import logging
 

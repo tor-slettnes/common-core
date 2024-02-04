@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from ...google.protobuf          import CC, ProtoBuf
+from ...protobuf import CC, ProtoBuf
 from generated.event_types_pb2   import Details
 from generated.request_reply_pb2 import Status, StatusCode, \
     STATUS_OK, STATUS_ACCEPTED, STATUS_INVALID, STATUS_CANCELLED, STATUS_FAILED

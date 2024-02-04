@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from ipc.common.signalstore import SignalStore
+from ipc.base.signalstore import SignalStore
 from .types import CC
 
 #===============================================================================
