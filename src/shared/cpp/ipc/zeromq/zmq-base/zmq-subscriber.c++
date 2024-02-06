@@ -144,14 +144,14 @@ namespace cc::zmq
 
         case CB_BYTES:
             std::get<CB_BYTES>(callback)(
-                types::ByteArray(data + filter.size(),
+                types::ByteVector(data + filter.size(),
                                  data + msg.size()));
             break;
 
         case CB_TOPIC_BYTES:
             std::get<CB_TOPIC_BYTES>(callback)(
                 filter.topic(),
-                types::ByteArray(data + filter.size(),
+                types::ByteVector(data + filter.size(),
                                  data + msg.size()));
             break;
 

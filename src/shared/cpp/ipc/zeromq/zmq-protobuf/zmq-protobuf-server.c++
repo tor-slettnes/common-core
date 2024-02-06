@@ -38,8 +38,8 @@ namespace cc::zmq
         Super::deinitialize();
     }
 
-    void ProtoBufServer::process_binary_request(const types::ByteArray &packed_request,
-                                                types::ByteArray *packed_reply)
+    void ProtoBufServer::process_binary_request(const types::ByteVector &packed_request,
+                                                types::ByteVector *packed_reply)
     {
         CC::RR::Request request;
         CC::RR::Reply reply;

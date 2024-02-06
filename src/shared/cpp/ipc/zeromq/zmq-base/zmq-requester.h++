@@ -7,7 +7,7 @@
 
 #pragma once
 #include "zmq-satellite.h++"
-#include "types/bytearray.h++"
+#include "types/bytevector.h++"
 
 #include <optional>
 #include <string>
@@ -24,8 +24,8 @@ namespace cc::zmq
                   const std::string &channel_name);
 
     public:
-        std::optional<types::ByteArray> send_receive(
-            const types::ByteArray &request,
+        std::optional<types::ByteVector> send_receive(
+            const types::ByteVector &request,
             ::zmq::send_flags send_flags = ::zmq::send_flags::none,
             ::zmq::recv_flags recv_flags = ::zmq::recv_flags::none);
     };

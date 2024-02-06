@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "types/bytearray.h++"
+#include "types/bytevector.h++"
 #include "types/symbolmap.h++"
 #include "chrono/date-time.h++"
 
@@ -54,7 +54,7 @@ namespace cc::types
         double,
         complex,
         string,
-        ByteArray,
+        ByteVector,
         dt::TimePoint,
         dt::Duration,
         ValueListRef,
@@ -72,7 +72,7 @@ namespace cc::types
         REAL,
         COMPLEX,
         STRING,
-        BYTEARRAY,
+        BYTEVECTOR,
         TIMEPOINT,
         DURATION,
         VALUELIST,

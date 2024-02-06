@@ -61,7 +61,7 @@ namespace cc::types
     }
 
     Value::Value(const std::vector<Byte> &bytes)
-        : Value(ByteArray(bytes.begin(), bytes.end()))
+        : Value(ByteVector(bytes.begin(), bytes.end()))
     {
     }
 
@@ -201,9 +201,9 @@ namespace cc::types
         return this->holdsAnyOf<std::string>();
     }
 
-    bool Value::is_bytearray() const noexcept
+    bool Value::is_bytevector() const noexcept
     {
-        return this->holdsAnyOf<ByteArray>();
+        return this->holdsAnyOf<ByteVector>();
     }
 
     bool Value::is_timepoint() const noexcept
@@ -275,8 +275,8 @@ namespace cc::types
         case ValueType::STRING:
             return str::convert_to<bool>(this->get<std::string>(), fallback);
 
-        case ValueType::BYTEARRAY:
-            for (auto &b : this->get<ByteArray>())
+        case ValueType::BYTEVECTOR:
+            for (auto &b : this->get<ByteVector>())
             {
                 if (b > 0)
                 {
@@ -324,9 +324,9 @@ namespace cc::types
             return s.size() ? s.front() : fallback;
         }
 
-        case ValueType::BYTEARRAY:
+        case ValueType::BYTEVECTOR:
         {
-            const ByteArray &b = this->get<ByteArray>();
+            const ByteVector &b = this->get<ByteVector>();
             if (b.size() == sizeof(char))
                 return *(const char *)(b.data());
             else
@@ -491,7 +491,7 @@ namespace cc::types
         return out.str();
     }
 
-    ByteArray Value::as_bytearray(const ByteArray &fallback) const noexcept
+    ByteVector Value::as_bytevector(const ByteVector &fallback) const noexcept
     {
         switch (this->type())
         {
@@ -499,37 +499,37 @@ namespace cc::types
             return fallback;
 
         case ValueType::BOOL:
-            return ByteArray::pack(this->get<bool>());
+            return ByteVector::pack(this->get<bool>());
 
         case ValueType::CHAR:
-            return ByteArray::pack(this->get<char>());
+            return ByteVector::pack(this->get<char>());
 
         case ValueType::UINT:
-            return ByteArray::pack(this->get<largest_uint>());
+            return ByteVector::pack(this->get<largest_uint>());
 
         case ValueType::SINT:
-            return ByteArray::pack(this->get<largest_sint>());
+            return ByteVector::pack(this->get<largest_sint>());
 
         case ValueType::REAL:
-            return ByteArray::pack(this->get<double>());
+            return ByteVector::pack(this->get<double>());
 
         case ValueType::COMPLEX:
-            return ByteArray::pack(this->get<complex>());
+            return ByteVector::pack(this->get<complex>());
 
         case ValueType::TIMEPOINT:
-            return ByteArray::pack(this->get<dt::TimePoint>());
+            return ByteVector::pack(this->get<dt::TimePoint>());
 
         case ValueType::DURATION:
-            return ByteArray::pack(this->get<dt::Duration>());
+            return ByteVector::pack(this->get<dt::Duration>());
 
         case ValueType::STRING:
-            return ByteArray::from_string(this->get<std::string>());
+            return ByteVector::from_string(this->get<std::string>());
 
-        case ValueType::BYTEARRAY:
-            return this->get<ByteArray>();
+        case ValueType::BYTEVECTOR:
+            return this->get<ByteVector>();
 
             //    case ValueType::POINTER:
-            //        return ByteArray::pack(this->get<void*>());
+            //        return ByteVector::pack(this->get<void*>());
 
         default:
             return fallback;
@@ -555,10 +555,10 @@ namespace cc::types
                                     dt::DEFAULT_FORMAT,
                                     fallback);
 
-        case ValueType::BYTEARRAY:
+        case ValueType::BYTEVECTOR:
             try
             {
-                return this->get<ByteArray>().unpack<dt::TimePoint>();
+                return this->get<ByteVector>().unpack<dt::TimePoint>();
             }
             catch (const std::out_of_range &)
             {
@@ -588,10 +588,10 @@ namespace cc::types
         case ValueType::STRING:
             return dt::to_duration(this->get<std::string>());
 
-        case ValueType::BYTEARRAY:
+        case ValueType::BYTEVECTOR:
             try
             {
-                return this->get<ByteArray>().unpack<dt::Duration>();
+                return this->get<ByteVector>().unpack<dt::Duration>();
             }
             catch (const std::out_of_range &)
             {
@@ -802,8 +802,8 @@ namespace cc::types
             stream << this->get<std::string>();
             break;
 
-        case ValueType::BYTEARRAY:
-            stream << this->get<ByteArray>();
+        case ValueType::BYTEVECTOR:
+            stream << this->get<ByteVector>();
             break;
 
         case ValueType::TIMEPOINT:
@@ -840,8 +840,8 @@ namespace cc::types
             stream << "null";
             break;
 
-        case ValueType::BYTEARRAY:
-            stream << "%" << this->get<ByteArray>().to_base64();
+        case ValueType::BYTEVECTOR:
+            stream << "%" << this->get<ByteVector>().to_base64();
             break;
 
         case ValueType::STRING:
@@ -882,8 +882,8 @@ namespace cc::types
         case ValueType::STRING:
             return str::unquoted(literal);
 
-        case ValueType::BYTEARRAY:
-            return ByteArray::from_base64(literal.substr(1));
+        case ValueType::BYTEVECTOR:
+            return ByteVector::from_base64(literal.substr(1));
 
         case ValueType::TIMEPOINT:
             return dt::to_timepoint(literal);
@@ -906,7 +906,7 @@ namespace cc::types
             {ValueType::UINT, std::regex("^([[:digit:]]+|0x[[:xdigit:]]+)$", std::regex::icase)},
             {ValueType::REAL,
              std::regex("^[+-]?[[:digit:]]+(\\.[[:digit:]]*)?([eE][+-]?[[:digit:]]+)?$")},
-            {ValueType::BYTEARRAY, std::regex("^%[[:alnum:]\\+/]+={0,2}$")},
+            {ValueType::BYTEVECTOR, std::regex("^%[[:alnum:]\\+/]+={0,2}$")},
             {ValueType::STRING, std::regex("\"([^\"\\\\]|(\\\\\\\\)*\\\\\")*\"")},
             {ValueType::TIMEPOINT,
              std::regex("^(\\d{4}-\\d{2}-\\d{2})([@T\\s])"

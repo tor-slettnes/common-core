@@ -50,8 +50,8 @@ namespace cc::json
             case types::ValueType::COMPLEX:
                 return this->encodeObject(value.as_kvmap(), writer);
 
-            case types::ValueType::BYTEARRAY:
-                return writer->String(value.get<types::ByteArray>().to_base64());
+            case types::ValueType::BYTEVECTOR:
+                return writer->String(value.get<types::ByteVector>().to_base64());
 
             case types::ValueType::VALUELIST:
                 return this->encodeArray(*value.get_valuelist(), writer);

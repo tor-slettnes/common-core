@@ -24,20 +24,20 @@ namespace cc::zmq
         this->send(std::move(msg), ::zmq::send_flags::dontwait);
     }
 
-    void Publisher::publish(const types::ByteArray &bytes)
+    void Publisher::publish(const types::ByteVector &bytes)
     {
         this->send(bytes, ::zmq::send_flags::dontwait);
     }
 
-    void Publisher::publish_with_filter(const types::ByteArray &filter,
-                                        const types::ByteArray &bytes)
+    void Publisher::publish_with_filter(const types::ByteVector &filter,
+                                        const types::ByteVector &bytes)
     {
         this->send(filter, ::zmq::send_flags::dontwait | ::zmq::send_flags::sndmore);
         this->send(bytes);
     }
 
     void Publisher::publish_with_topic(const std::string &topic,
-                                       const types::ByteArray &bytes)
+                                       const types::ByteVector &bytes)
     {
         if (auto filter = Filter::create_from_topic(topic))
         {

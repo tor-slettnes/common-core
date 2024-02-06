@@ -7,7 +7,7 @@
 
 #pragma once
 #include "zmq-host.h++"
-#include "types/bytearray.h++"
+#include "types/bytevector.h++"
 
 #include <thread>
 
@@ -25,13 +25,13 @@ namespace cc::zmq
     public:
         void publish(::zmq::message_t &&msg);
 
-        void publish(const types::ByteArray &bytes);
+        void publish(const types::ByteVector &bytes);
 
-        void publish_with_filter(const types::ByteArray &filter,
-                                 const types::ByteArray &bytes);
+        void publish_with_filter(const types::ByteVector &filter,
+                                 const types::ByteVector &bytes);
 
         void publish_with_topic(const std::string &topic,
-                                const types::ByteArray &bytes);
+                                const types::ByteVector &bytes);
     };
 
 }  // namespace cc::zmq

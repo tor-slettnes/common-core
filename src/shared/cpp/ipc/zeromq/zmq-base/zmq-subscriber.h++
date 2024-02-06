@@ -8,7 +8,7 @@
 #pragma once
 #include "zmq-satellite.h++"
 #include "zmq-filter.h++"
-#include "types/bytearray.h++"
+#include "types/bytevector.h++"
 #include "types/valuemap.h++"
 #include "platform/symbols.h++"
 #include "logging/logging.h++"
@@ -26,8 +26,8 @@ namespace cc::zmq
 
         using Callback = std::variant<
             std::function<void(const ::zmq::message_t &)>,
-            std::function<void(const types::ByteArray &)>,
-            std::function<void(const std::string &topic, const types::ByteArray &)>>;
+            std::function<void(const types::ByteVector &)>,
+            std::function<void(const std::string &topic, const types::ByteVector &)>>;
 
         enum CallbackSignature
         {

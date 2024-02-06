@@ -27,7 +27,7 @@ namespace cc::protobuf
 
     /// Convert a protobuf message to a serialized byte array
     void to_bytes(const google::protobuf::Message &msg,
-                  types::ByteArray *bytes)
+                  types::ByteVector *bytes)
     {
         std::size_t size = msg.ByteSizeLong();
         bytes->resize(size);
@@ -35,9 +35,9 @@ namespace cc::protobuf
     }
 
     /// Convert a protobuf message to a serialized byte array
-    types::ByteArray to_bytes(const google::protobuf::Message &msg)
+    types::ByteVector to_bytes(const google::protobuf::Message &msg)
     {
-        ByteArray bytes;
+        ByteVector bytes;
         to_bytes(msg, &bytes);
         return bytes;
     }

@@ -82,7 +82,7 @@ namespace cc::zmq
         Super::deinitialize();
     }
 
-    void Endpoint::send(const types::ByteArray &bytes, ::zmq::send_flags flags)
+    void Endpoint::send(const types::ByteVector &bytes, ::zmq::send_flags flags)
     {
         logf_trace("%s sending %d bytes", *this, bytes.size());
         this->socket()->send(::zmq::const_buffer(bytes.data(), bytes.size()), flags);
@@ -108,7 +108,7 @@ namespace cc::zmq
         }
     }
 
-    bool Endpoint::receive(types::ByteArray *bytes, ::zmq::recv_flags flags)
+    bool Endpoint::receive(types::ByteVector *bytes, ::zmq::recv_flags flags)
     {
         bool received = false;
         ::zmq::message_t msg;
@@ -125,9 +125,9 @@ namespace cc::zmq
         return received;
     }
 
-    std::optional<types::ByteArray> Endpoint::receive(::zmq::recv_flags flags)
+    std::optional<types::ByteVector> Endpoint::receive(::zmq::recv_flags flags)
     {
-        types::ByteArray bytes;
+        types::ByteVector bytes;
         if (this->receive(&bytes, flags))
         {
             return bytes;

@@ -162,7 +162,7 @@ namespace cc::zmq
         this->send_invocation(method_name, request_param, send_flags);
     }
 
-    bool ProtoBufClient::read_protobuf_result(types::ByteArray *bytes,
+    bool ProtoBufClient::read_protobuf_result(types::ByteVector *bytes,
                                               ::zmq::recv_flags recv_flags)
     {
         CC::RR::Parameter response_param;

@@ -108,14 +108,14 @@ namespace cc::protobuf
         *b = msg.value();
     }
 
-    void encode(const cc::types::ByteArrayBase &b,
+    void encode(const cc::types::Bytes &b,
                 google::protobuf::BytesValue *msg) noexcept
     {
         msg->set_value(b.data(), b.size());
     }
 
     void decode(const google::protobuf::BytesValue &msg,
-                cc::types::ByteArrayBase *b) noexcept
+                cc::types::Bytes *b) noexcept
     {
         b->assign(msg.value().begin(), msg.value().end());
     }
@@ -179,8 +179,8 @@ namespace cc::protobuf
             msg->set_string_value(value.as_string());
             break;
 
-        case cc::types::ValueType::BYTEARRAY:
-            msg->set_string_value(value.as_bytearray().to_string());
+        case cc::types::ValueType::BYTEVECTOR:
+            msg->set_string_value(value.as_bytevector().to_string());
             break;
 
         case cc::types::ValueType::VALUELIST:

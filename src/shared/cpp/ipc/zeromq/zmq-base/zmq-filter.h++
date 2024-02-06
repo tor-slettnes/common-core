@@ -6,17 +6,17 @@
 //==============================================================================
 
 #pragma once
-#include "types/bytearray.h++"
+#include "types/bytevector.h++"
 
 #include <memory>
 #include <vector>
 
 namespace cc::zmq
 {
-    class Filter : public types::ByteArray
+    class Filter : public types::ByteVector
     {
         using This = Filter;
-        using Super = types::ByteArray;
+        using Super = types::ByteVector;
 
     public:
         using Super::Super;

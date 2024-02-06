@@ -13,7 +13,7 @@ set(LIB_TYPE STATIC)
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_shared_ipc_api
+  cc_shared_ipc_common
   cc_shared_ipc_idl
   cc_shared_platform
 )

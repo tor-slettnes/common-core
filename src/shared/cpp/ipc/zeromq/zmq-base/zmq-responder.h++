@@ -7,7 +7,7 @@
 
 #pragma once
 #include "zmq-host.h++"
-#include "types/bytearray.h++"
+#include "types/bytevector.h++"
 #include <thread>
 
 namespace cc::zmq
@@ -30,10 +30,10 @@ namespace cc::zmq
         // Subclasses should ovreride either of the following methods to
         // handle service requests.
         virtual void process_zmq_request(const ::zmq::message_t &request_msg,
-                                         types::ByteArray *packed_reply);
+                                         types::ByteVector *packed_reply);
 
-        virtual void process_binary_request(const types::ByteArray &packed_request,
-                                            types::ByteArray *packed_reply);
+        virtual void process_binary_request(const types::ByteVector &packed_request,
+                                            types::ByteVector *packed_reply);
 
     private:
         std::thread listen_thread;

@@ -31,7 +31,7 @@ namespace cc::types
         {ValueType::REAL, "real"},
         {ValueType::COMPLEX, "complex"},
         {ValueType::STRING, "string"},
-        {ValueType::BYTEARRAY, "ByteArray"},
+        {ValueType::BYTEVECTOR, "ByteVector"},
         {ValueType::TIMEPOINT, "TimePoint"},
         {ValueType::DURATION, "Duration"},
         {ValueType::VALUELIST, "ValueList"},

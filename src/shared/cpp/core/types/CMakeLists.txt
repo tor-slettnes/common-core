@@ -7,7 +7,7 @@
 
 target_sources(${TARGET} PRIVATE
   streamable.c++
-  bytearray.c++
+  bytevector.c++
   partslist.c++
   variant-types.c++
   variant-value.c++

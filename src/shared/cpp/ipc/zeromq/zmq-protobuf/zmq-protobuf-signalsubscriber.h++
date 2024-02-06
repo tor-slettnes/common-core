@@ -27,7 +27,7 @@ namespace cc::zmq
         {
             Subscriber::initialize();
             protobuf::SignalReceiver<SignalT>::initialize();
-            this->subscribe([=](const types::ByteArray &bytes) {
+            this->subscribe([=](const types::ByteVector &bytes) {
                 this->process_signal(protobuf::to_message<SignalT>(bytes));
             });
         }

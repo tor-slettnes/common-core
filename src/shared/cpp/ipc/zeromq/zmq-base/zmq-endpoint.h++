@@ -50,7 +50,7 @@ namespace cc::zmq
 
     public:
         void send(
-            const types::ByteArray &bytes,
+            const types::ByteVector &bytes,
             ::zmq::send_flags flags = ::zmq::send_flags::none);
 
         void send(
@@ -62,10 +62,10 @@ namespace cc::zmq
             ::zmq::recv_flags flags = ::zmq::recv_flags::none);
 
         bool receive(
-            types::ByteArray *bytes,
+            types::ByteVector *bytes,
             ::zmq::recv_flags flags = ::zmq::recv_flags::none);
 
-        std::optional<types::ByteArray> receive(
+        std::optional<types::ByteVector> receive(
             ::zmq::recv_flags flags = ::zmq::recv_flags::none);
 
     protected:

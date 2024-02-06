@@ -71,7 +71,7 @@ namespace cc::types
         bool is_real() const noexcept;
         bool is_complex() const noexcept;
         bool is_string() const noexcept;
-        bool is_bytearray() const noexcept;
+        bool is_bytevector() const noexcept;
         bool is_timepoint() const noexcept;
         bool is_duration() const noexcept;
         bool is_valuelist() const noexcept;
@@ -101,7 +101,7 @@ namespace cc::types
         double as_double(double fallback = 0.0) const noexcept;
         complex as_complex(const complex &fallback = {0.0, 0.0}) const noexcept;
         std::string as_string() const noexcept;
-        ByteArray as_bytearray(const ByteArray &fallback = {}) const noexcept;
+        ByteVector as_bytevector(const ByteVector &fallback = {}) const noexcept;
         dt::TimePoint as_timepoint(const dt::TimePoint &fallback = {}) const noexcept;
         dt::Duration as_duration(const dt::Duration &fallback = {}) const noexcept;
 
@@ -182,8 +182,8 @@ namespace cc::types
             case ValueType::STRING:
                 return str::convert_to<T>(this->get<std::string>(), {});
 
-            case ValueType::BYTEARRAY:
-                return this->get<ByteArray>().unpack<T>();
+            case ValueType::BYTEVECTOR:
+                return this->get<ByteVector>().unpack<T>();
 
             case ValueType::TIMEPOINT:
                 return (T)dt::to_double(this->get<dt::TimePoint>().time_since_epoch());
@@ -205,7 +205,7 @@ namespace cc::types
         ///  - [1234] or [0x1234] becomes an unsigned integer
         ///  - [+1234] or [-1234] becomes a signed interger
         ///  - [3.14159] or [3.]  becomes a floating point number
-        ///  - [%base64string]    becomes a ByteArray instance
+        ///  - [%base64string]    becomes a ByteVector instance
         ///  - [2020-01-01T00:00:00.000] becomes a dt::TimePoint instance
         ///  - [00:00:00.000]    becomes a dt::Duration instance
         static Value from_literal(const std::string &literal);

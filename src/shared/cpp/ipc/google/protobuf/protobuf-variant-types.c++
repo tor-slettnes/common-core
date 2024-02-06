@@ -43,8 +43,8 @@ namespace cc::protobuf
             msg->set_value_string(value.as_string());
             break;
 
-        case types::ValueType::BYTEARRAY:
-            msg->set_value_bytes(value.as_bytearray().to_string());
+        case types::ValueType::BYTEVECTOR:
+            msg->set_value_bytes(value.as_bytevector().to_string());
             break;
 
         case types::ValueType::TIMEPOINT:
@@ -95,7 +95,7 @@ namespace cc::protobuf
             break;
 
         case CC::Variant::Value::kValueBytes:
-            *value = ByteArray(msg.value_bytes().begin(), msg.value_bytes().end());
+            *value = ByteVector(msg.value_bytes().begin(), msg.value_bytes().end());
             break;
 
         case CC::Variant::Value::kValueTimestamp:

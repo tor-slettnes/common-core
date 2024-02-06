@@ -80,11 +80,11 @@ namespace cc::protobuf
     void decode(const google::protobuf::BoolValue &msg,
                 bool *b) noexcept;
 
-    void encode(const cc::types::ByteArrayBase &b,
+    void encode(const cc::types::Bytes &b,
                 google::protobuf::BytesValue *msg) noexcept;
 
     void decode(const google::protobuf::BytesValue &msg,
-                cc::types::ByteArrayBase *b) noexcept;
+                cc::types::Bytes *b) noexcept;
 
     //==========================================================================
     // Timestamp encoding/decoding

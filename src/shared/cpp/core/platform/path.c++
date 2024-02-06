@@ -157,10 +157,10 @@ namespace cc::platform
         }
     }
 
-    types::ByteArray PathProvider::readdata(const fs::path &path,
+    types::ByteVector PathProvider::readdata(const fs::path &path,
                                             ssize_t maxsize) const noexcept
     {
-        types::ByteArray buffer;
+        types::ByteVector buffer;
         fs::file_status status = fs::status(path);
         if (fs::is_regular_file(status))
         {

@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
-set(TARGET cc_shared_ipc_api)
+set(TARGET cc_shared_ipc_common)
 
 ### Library type.  We use static linking for convenience.
 set(LIB_TYPE STATIC)

@@ -8,7 +8,7 @@
 #pragma once
 #include "provider.h++"
 #include "string/misc.h++"
-#include "types/bytearray.h++"
+#include "types/bytevector.h++"
 #include "types/filesystem.h++"
 #include "types/platform.h++"
 
@@ -133,7 +133,7 @@ namespace cc::platform
         virtual fs::path readlink(const fs::path &path) const noexcept = 0;
 
         /// @brief  Return the binary content of the specified file, up to the specified maximum.
-        virtual types::ByteArray readdata(const fs::path &path,
+        virtual types::ByteVector readdata(const fs::path &path,
                                           ssize_t maxsize = 0) const noexcept;
 
         /// @brief Return the contents off the specified file, up to the specified maximum

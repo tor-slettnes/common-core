@@ -7,7 +7,7 @@
 #pragma once
 #include "provider.h++"
 #include "types/symbolmap.h++"
-#include "types/bytearray.h++"
+#include "types/bytevector.h++"
 #include "types/filesystem.h++"
 #include "chrono/date-time.h++"
 #include "thread/signaltemplate.h++"
@@ -64,18 +64,18 @@ namespace cc::platform
     class HIDDevice
     {
     public:
-        virtual void write(const types::ByteArray &buffer) = 0;
-        virtual types::ByteArray read() = 0;
-        virtual std::optional<types::ByteArray> read(const dt::Duration &timeout) = 0;
-        virtual void send_feature_report(const types::ByteArray &data) = 0;
-        virtual types::ByteArray get_feature_report(std::uint8_t report_id = 0) = 0;
-        virtual types::ByteArray get_input_report(std::uint8_t report_id = 0) = 0;
+        virtual void write(const types::ByteVector &buffer) = 0;
+        virtual types::ByteVector read() = 0;
+        virtual std::optional<types::ByteVector> read(const dt::Duration &timeout) = 0;
+        virtual void send_feature_report(const types::ByteVector &data) = 0;
+        virtual types::ByteVector get_feature_report(std::uint8_t report_id = 0) = 0;
+        virtual types::ByteVector get_input_report(std::uint8_t report_id = 0) = 0;
         virtual std::string get_manufacturer() = 0;
         virtual std::string get_product() = 0;
         virtual std::string get_serial_number() = 0;
         virtual HIDDeviceInfo get_info() = 0;
         virtual std::string get_indexed_string(int index) = 0;
-        // virtual types::ByteArray get_report_descriptor() = 0;
+        // virtual types::ByteVector get_report_descriptor() = 0;
         virtual std::string hid_api_version() = 0;
     };
 

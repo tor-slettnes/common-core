@@ -72,7 +72,7 @@ namespace cc::zmq
                                       const google::protobuf::Message &request,
                                       ::zmq::send_flags send_flags);
 
-        bool read_protobuf_result(types::ByteArray *bytes,
+        bool read_protobuf_result(types::ByteVector *bytes,
                                   ::zmq::recv_flags recv_flags);
 
     public:
@@ -85,7 +85,7 @@ namespace cc::zmq
         {
             this->send_protobuf_invocation(method_name, request, send_flags);
 
-            types::ByteArray bytes;
+            types::ByteVector bytes;
             if (this->read_protobuf_result(&bytes, recv_flags))
             {
                 return protobuf::to_message<ResponseType>(bytes);

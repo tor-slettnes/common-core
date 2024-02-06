@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "types/bytearray.h++"
+#include "types/bytevector.h++"
 
 #include <google/protobuf/message.h>
 
@@ -22,10 +22,10 @@ namespace cc::protobuf
                           bool single_line = true);
 
     /// Convert a protobuf message to a serialized byte array
-    void to_bytes(const google::protobuf::Message &msg, types::ByteArray *bytes);
+    void to_bytes(const google::protobuf::Message &msg, types::ByteVector *bytes);
 
     /// Convert a protobuf message to a serialized byte array
-    types::ByteArray to_bytes(const google::protobuf::Message &msg);
+    types::ByteVector to_bytes(const google::protobuf::Message &msg);
 
     //==========================================================================
     // Message serialization
@@ -33,7 +33,7 @@ namespace cc::protobuf
     /// Convert a serialized byte array to a ProtoBuf message of type ProtoBufType.
     template <class ProtoBufType>
     inline void to_message(
-        const ByteArray &bytes,
+        const ByteVector &bytes,
         ProtoBufType *msg)
     {
         msg->ParseFromArray(bytes.data(), bytes.size());
@@ -42,7 +42,7 @@ namespace cc::protobuf
     /// Convert a serialized byte array to a ProtoBuf message of type ProtoBufType.
     template <class ProtoBufType>
     inline ProtoBufType to_message(
-        const ByteArray &bytes)
+        const ByteVector &bytes)
     {
         ProtoBufType msg;
         msg.ParseFromArray(bytes.data(), bytes.size());

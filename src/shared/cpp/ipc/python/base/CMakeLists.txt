@@ -1,41 +1,31 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build shared ZeroMQ wrappers
+## @description CMake rules to build static/shared library
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
 ### Name of this library.
-set(TARGET cc_shared_ipc_zmq_base)
+set(TARGET cc_shared_ipc_pypickle)
 
-### Library dependencies.
+### Library type
 set(LIB_TYPE STATIC)
 
 ### Library dependencies.
 set(LIB_DEPS
   cc_shared_ipc_common
-  cc_shared_platform
 )
 
-### Package dependencies
+### Third-party package dependencies
 set(PKG_DEPS
-  libzmq
+  python3-embed
 )
 
 ### Source files in this folder
 set(SOURCES
-  zmq-endpoint.c++
-  zmq-host.c++
-  zmq-satellite.c++
-  zmq-filter.c++
-  zmq-publisher.c++
-  zmq-subscriber.c++
-  zmq-requester.c++
-  zmq-responder.c++
+  python-object.c++
 )
 
 ### Recepies to build the library
 include(BuildLibrary)
 
-### Define preprocessor symbol
-target_compile_definitions(${TARGET} PUBLIC USE_ZMQ=1)

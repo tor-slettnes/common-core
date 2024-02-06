@@ -18,8 +18,8 @@ namespace cc::zmq
     {
     }
 
-    std::optional<types::ByteArray> Requester::send_receive(
-        const types::ByteArray &request,
+    std::optional<types::ByteVector> Requester::send_receive(
+        const types::ByteVector &request,
         ::zmq::send_flags send_flags,
         ::zmq::recv_flags recv_flags)
     {

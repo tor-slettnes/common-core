@@ -1,11 +1,11 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file bytearray.c++
+/// @file bytevector.c++
 /// @brief Packed binary data
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "bytearray.h++"
+#include "bytevector.h++"
 #include "status/exception.h++"
 
 #include <stdexcept>
@@ -15,30 +15,30 @@ namespace cc::types
 {
     static const char pad_char = '=';
 
-    void ByteArray::to_stream(std::ostream &stream) const
+    void ByteVector::to_stream(std::ostream &stream) const
     {
         stream << this->to_hex();
         // stream.write(reinterpret_cast<char *>(this->data()), this->size());
     }
 
-    std::string_view ByteArray::stringview() const noexcept
+    std::string_view ByteVector::stringview() const noexcept
     {
         return std::string_view(reinterpret_cast<const char *>(this->data()),
                                 this->size());
     }
 
-    std::string ByteArray::to_string() const noexcept
+    std::string ByteVector::to_string() const noexcept
     {
         return std::string(reinterpret_cast<const char *>(this->data()),
                            this->size());
     }
 
-    ByteArray ByteArray::from_string(const std::string &s) noexcept
+    ByteVector ByteVector::from_string(const std::string &s) noexcept
     {
-        return ByteArray(s.begin(), s.end());
+        return ByteVector(s.begin(), s.end());
     }
 
-    std::string ByteArray::to_base64() const
+    std::string ByteVector::to_base64() const
     {
         static const char code_table[] =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -84,7 +84,7 @@ namespace cc::types
         return encoded;
     }
 
-    ByteArray ByteArray::from_base64(const std::string &input)
+    ByteVector ByteVector::from_base64(const std::string &input)
     {
         if (input.length() % 4 > 0)
         {
@@ -102,7 +102,7 @@ namespace cc::types
             }
         }
 
-        ByteArray decoded;
+        ByteVector decoded;
         decoded.reserve(((input.length() / 4) * 3) - padding);
 
         for (auto it = input.begin(); it < input.end();)
@@ -156,7 +156,7 @@ namespace cc::types
         return decoded;
     }
 
-    std::string ByteArray::to_hex(bool uppercase,
+    std::string ByteVector::to_hex(bool uppercase,
                                   std::size_t groupsize) const
     {
         static const std::vector<std::string> hex_digits = {
@@ -182,7 +182,7 @@ namespace cc::types
         return encoded;
     }
 
-    ByteArray ByteArray::from_hex(const std::string &input)
+    ByteVector ByteVector::from_hex(const std::string &input)
     {
         static std::vector<std::uint8_t> digit_values;
 
@@ -211,7 +211,7 @@ namespace cc::types
             }
         }
 
-        ByteArray decoded;
+        ByteVector decoded;
         decoded.reserve(input.size() / 2);
         for (auto it = input.begin(); it != input.end(); it += 2)
         {

@@ -25,7 +25,7 @@ namespace cc::zmq
         template <class ProtoType>
         inline void subscribe(const Callback<ProtoType> &callback)
         {
-            Super::subscribe([](const types::ByteArray &bytes) {
+            Super::subscribe([](const types::ByteVector &bytes) {
                 callback(protobuf::to_message<ProtoType>(bytes));
             });
         }

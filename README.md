@@ -105,7 +105,7 @@ If you are reading this text directly on your system, you have already completed
   ZeroMQ with Protocol Buffer payloads:
 
   ```bash
-  $ sudo apt install libzmq3-dev protobuf-compiler
+  $ sudo apt install cppzmq-dev protobuf-compiler
   ```
 
 * C++ build-time dependencies for gRPC communication:
@@ -115,6 +115,12 @@ If you are reading this text directly on your system, you have already completed
   ```
 
   (This also installs `protobuf-compiler` if you didn't do so above)
+
+* C++ build-time libraries for Python IPC (incl. pickling/unpickling):
+
+  ```bash
+  $ sudo apt install python3-dev
+  ```
 
 * Dependencies used to generate developer/reference documentation:
 
