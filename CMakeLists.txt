@@ -21,7 +21,7 @@ option(BUILD_CSHARP     "Build/Install C# code" OFF)
 option(BUILD_PYTHON     "Install Python clients/scripts" ON)
 
 ### Object serialization
-option(BUILD_PYPICKLE   "Build support for Python serialized data in C++" ON)
+option(BUILD_PYTHON_EMB "Build Python embedded environment for C++" ON)
 option(BUILD_PROTOBUF   "Build support for Google Protocol Buffers" ON)
 
 ### Messaging frameworks

@@ -14,6 +14,7 @@ set(LIB_TYPE STATIC)
 ### Library dependencies.
 set(LIB_DEPS
   cc_shared_ipc_zmq_base
+  cc_shared_ipc_python
 )
 
 ### Source files in this folder

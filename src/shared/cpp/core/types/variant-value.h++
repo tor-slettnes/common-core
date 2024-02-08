@@ -23,6 +23,7 @@ namespace cc::types
     public:
         using Super::Super;
 
+        Value();
         Value(std::uint8_t value);
         Value(std::uint16_t value);
         Value(std::uint32_t value);

@@ -33,11 +33,4 @@
     //
     // * If still missing, the compile-time default is the IPv6 loopback address
     //   "[::1]:8080" for clients, and "[::]:8080" for servers.
-
-    // Service names extracted from .proto files
-    "Demo":
-    {
-        // "interface" : "",       // Listen on all interfaces by default
-        "port"      : 3366      // D-E-M-O on T9 keypad
-    }
 }

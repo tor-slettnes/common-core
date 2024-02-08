@@ -5,5 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(base)
+if(BUILD_PYTHON_EMB)
+  add_subdirectory(base)
+endif()
+
 

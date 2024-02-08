@@ -1,7 +1,7 @@
 /// -*- c++ -*-
 //==============================================================================
 /// @file python-object.c++
-/// @brief Serialization/deserializaiton of Python objects
+/// @brief Generic data access for Python objects
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -14,21 +14,82 @@ namespace cc::python
     {
         if (borrowed)
         {
-            Py_INCREF(this->cobj);
+            Py_XINCREF(this->cobj);
         }
+    }
+
+    Object::Object(const Object &other)
+        : cobj(other.cobj)
+    {
+        Py_XINCREF(this->cobj);
     }
 
     Object::~Object()
     {
-        if (this->cobj)
-        {
-            Py_DECREF(this->cobj);
-        }
+        Py_XDECREF(this->cobj);
     }
 
-    Object Object::create_from_value(const types::Value &value)
+    PyObject *Object::pystring_from_string(const std::string &string)
     {
-        return Object::pyobj_from_value(value);
+        return PyUnicode_DecodeUTF8(string.data(), string.size(), nullptr);
+    }
+
+    PyObject *Object::pybytes_from_bytes(const types::ByteVector &bytes)
+    {
+        return PyBytes_FromStringAndSize(
+            reinterpret_cast<const char *>(bytes.data()),
+            bytes.size());
+    }
+
+    PyObject *Object::pytuple_from_values(const types::ValueList &values)
+    {
+        PyObject *tuple = PyTuple_New(values.size());
+        for (uint c = 0; c < values.size(); c++)
+        {
+            PyTuple_SET_ITEM(tuple, c, Object::pyobj_from_value(values.at(c)));
+        }
+        return tuple;
+    }
+
+    PyObject *Object::pylist_from_values(const types::ValueList &values)
+    {
+        PyObject *list = PyList_New(values.size());
+        for (uint c = 0; c < values.size(); c++)
+        {
+            PyList_SET_ITEM(list, c, Object::pyobj_from_value(values.at(c)));
+        }
+        return list;
+    }
+
+    PyObject *Object::pylist_from_tagged_values(const types::TaggedValueList &tvlist)
+    {
+        PyObject *list = PyList_New(tvlist.size());
+        for (uint c = 0; c < tvlist.size(); c++)
+        {
+            const auto &[tag, value] = tvlist.at(c);
+            PyObject *tag_obj =
+                tag ? PyUnicode_DecodeUTF8(tag->data(), tag->size(), nullptr)
+                    : Py_NewRef(Py_None);
+            PyObject *value_obj = Object::pyobj_from_value(value);
+            PyList_SET_ITEM(list, c, PyTuple_Pack(2, tag_obj, value_obj));
+            Py_DECREF(tag_obj);
+            Py_DECREF(value_obj);
+        }
+        return list;
+    }
+
+    PyObject *Object::pydict_from_kvmap(const types::KeyValueMap &kvmap)
+    {
+        PyObject *dict = PyDict_New();
+        for (const auto &[key, value] : kvmap)
+        {
+            PyObject *key_obj = PyUnicode_DecodeUTF8(key.data(), key.size(), nullptr);
+            PyObject *value_obj = Object::pyobj_from_value(value);
+            PyDict_SetItem(dict, key_obj, value_obj);
+            Py_DECREF(key_obj);
+            Py_DECREF(value_obj);
+        }
+        return dict;
     }
 
     PyObject *Object::pyobj_from_value(const types::Value &value)
@@ -56,89 +117,69 @@ namespace cc::python
             return PyComplex_FromDoubles(value.as_real(), value.as_imag());
 
         case types::ValueType::STRING:
-            if (auto *s = value.get_if<std::string>())
-            {
-                return PyUnicode_DecodeUTF8(s->data(), s->size(), nullptr);
-            }
+            return Object::pystring_from_string(value.get<std::string>());
 
         case types::ValueType::BYTEVECTOR:
-            if (const auto *bytes = value.get_if<types::ByteVector>())
-            {
-                return PyBytes_FromStringAndSize(
-                    reinterpret_cast<const char *>(bytes->data()),
-                    bytes->size());
-            }
-            break;
+            return Object::pybytes_from_bytes(value.get<types::ByteVector>());
 
         case types::ValueType::VALUELIST:
-            if (auto values = value.get_valuelist())
-            {
-                PyObject *list = PyList_New(values->size());
-                for (uint c = 0; c < values->size(); c++)
-                {
-                    PyList_SET_ITEM(list, c, Object::pyobj_from_value(values->at(c)));
-                }
-                return list;
-            }
-            break;
+            return Object::pylist_from_values(*value.get_valuelist());
 
         case types::ValueType::KVMAP:
-            if (auto kvmap = value.get_kvmap())
-            {
-                PyObject *dict = PyDict_New();
-                for (const auto &[key, value] : *kvmap)
-                {
-                    PyObject *key_obj = PyUnicode_DecodeUTF8(key.data(), key.size(), nullptr);
-                    PyObject *value_obj = Object::pyobj_from_value(value);
-                    PyDict_SetItem(dict, key_obj, value_obj);
-                    Py_DECREF(key_obj);
-                    Py_DECREF(value_obj);
-                }
-                return dict;
-            }
-            break;
+            return Object::pydict_from_kvmap(*value.get_kvmap());
 
         case types::ValueType::TVLIST:
-            if (auto tvlist = value.get_tvlist())
-            {
-                PyObject *list = PyList_New(tvlist->size());
-                for (uint c = 0; c < tvlist->size(); c++)
-                {
-                    const auto &[tag, value] = tvlist->at(c);
-                    PyObject *tag_obj =
-                        tag ? PyUnicode_DecodeUTF8(tag->data(), tag->size(), nullptr)
-                            : Py_NewRef(Py_None);
-                    PyObject *value_obj = Object::pyobj_from_value(value);
-                    PyList_SET_ITEM(list, c, PyTuple_Pack(2, tag_obj, value_obj));
-                    Py_DECREF(tag_obj);
-                    Py_DECREF(value_obj);
-                }
-                return list;
-            }
-            break;
+            return Object::pylist_from_tagged_values(*value.get_tvlist());
 
         default:
-            break;
+            return Py_NewRef(Py_None);
         }
-
-        return Py_NewRef(Py_None);
     }
 
-    Object Object::create_from_pickle(const types::ByteVector &bytes)
+    Object::operator bool() const noexcept
     {
-        return Py_NewRef(Py_None);
+        return this->cobj != nullptr;
+    }
+
+    PyObject *Object::acquire() const
+    {
+        if (this->cobj)
+        {
+            Py_INCREF(this->cobj);
+        }
+        return this->cobj;
+    }
+
+    PyObject *Object::borrow() const
+    {
+        return this->cobj;
+    }
+
+    std::string Object::name() const
+    {
+        if (this->cobj)
+        {
+            return Object(PyType_GetName(Py_TYPE(this->cobj))).as_string().value();
+        }
+        else
+        {
+            return "";
+        }
     }
 
     types::ValueType Object::value_type() const
     {
-        try
+        if (this->cobj)
         {
-            return Object::type_map.at(Py_TYPE(this->cobj));
+            try
+            {
+                return Object::type_map.at(Py_TYPE(this->cobj));
+            }
+            catch (const std::out_of_range &)
+            {
+            }
         }
-        catch (const std::out_of_range &)
-        {
-            return types::ValueType::NONE;
-        }
+        return types::ValueType::NONE;
     }
 
     types::Value Object::as_value() const
@@ -149,13 +190,13 @@ namespace cc::python
             return this->as_bool();
 
         case types::ValueType::SINT:
-            try
+            if (auto uint = this->as_uint())
+            {
+                return uint;
+            }
+            else
             {
                 return this->as_sint();
-            }
-            catch (const std::overflow_error &e)
-            {
-                return this->as_uint();
             }
 
         case types::ValueType::UINT:
@@ -174,11 +215,11 @@ namespace cc::python
             return this->as_bytevector();
 
         case types::ValueType::VALUELIST:
-            try
+            if (auto tvlist = this->as_tvlist())
             {
-                return this->as_tvlist();
+                return tvlist.value();
             }
-            catch (const std::invalid_argument &e)
+            else
             {
                 return this->as_valuelist();
             }
@@ -191,88 +232,73 @@ namespace cc::python
         }
     }
 
-    bool Object::as_bool() const
+    std::optional<bool> Object::as_bool() const
     {
-        if (PyBool_Check(this->cobj))
+        if (this->cobj && PyBool_Check(this->cobj))
         {
             return Py_IsTrue(this->cobj);
         }
         else
         {
-            return false;
+            return {};
         }
     }
 
-    types::largest_uint Object::as_uint() const
+    std::optional<types::largest_uint> Object::as_uint() const
     {
-        if (PyLong_Check(this->cobj))
+        if (this->cobj && PyLong_Check(this->cobj))
         {
             types::largest_uint value = PyLong_AsUnsignedLongLong(this->cobj);
-            if (PyErr_Occurred())
+            if (!PyErr_Occurred())
             {
-                throw std::runtime_error("Python long to unsigned conversion error");
+                return value;
             }
-            return value;
         }
-        else
-        {
-            return 0;
-        }
+        return {};
     }
 
-    types::largest_sint Object::as_sint() const
+    std::optional<types::largest_sint> Object::as_sint() const
     {
-        if (PyLong_Check(this->cobj))
+        if (this->cobj && PyLong_Check(this->cobj))
         {
             int overflow = 0;
             types::largest_sint value = PyLong_AsLongLongAndOverflow(this->cobj, &overflow);
-            if (PyErr_Occurred())
+            if (!PyErr_Occurred())
             {
-                if (overflow)
-                {
-                    throw std::overflow_error("Python long to signed conversion overflow");
-                }
-                else
-                {
-                    throw std::runtime_error("Python long to signed conversion error");
-                }
+                return value;
             }
-            return value;
         }
-        else
-        {
-            return 0;
-        }
+        return {};
     }
 
-    double Object::as_real() const
+    std::optional<double> Object::as_real() const
     {
-        if (PyFloat_Check(this->cobj))
+        if (this->cobj && PyFloat_Check(this->cobj))
         {
             return PyFloat_AsDouble(this->cobj);
         }
         else
         {
-            return 0.0;
+            return {};
         }
     }
 
-    types::complex Object::as_complex() const
+    std::optional<types::complex> Object::as_complex() const
     {
-        if (PyComplex_Check(this->cobj))
+        if (this->cobj && PyComplex_Check(this->cobj))
         {
-            return {PyComplex_RealAsDouble(this->cobj),
-                    PyComplex_ImagAsDouble(this->cobj)};
+            return types::complex(PyComplex_RealAsDouble(this->cobj),
+                                  PyComplex_ImagAsDouble(this->cobj));
         }
         else
         {
-            return {0.0, 0.0};
+            return {};
         }
     }
 
-    std::string Object::as_string() const
+    std::optional<std::string> Object::as_string() const
     {
-        if (PyUnicode_Check(this->cobj))
+        if (this->cobj && PyUnicode_Check(this->cobj))
         {
             if (Py_ssize_t size = 0;
                 const char *data = PyUnicode_AsUTF8AndSize(this->cobj, &size))
@@ -283,29 +309,60 @@ namespace cc::python
         return {};
     }
 
-    types::ValueList Object::as_valuelist() const
+    std::optional<types::ByteVector> Object::as_bytevector() const
     {
-        types::ValueList values;
-        if (PyList_Check(this->cobj))
+        char *bytes = nullptr;
+        Py_ssize_t size = 0;
+
+        if (this->cobj && PyBytes_Check(this->cobj))
         {
+            bytes = PyBytes_AsString(this->cobj);
+            size = PyBytes_Size(this->cobj);
+        }
+        else if (this->cobj && PyByteArray_Check(this->cobj))
+        {
+            bytes = PyByteArray_AsString(this->cobj);
+            size = PyByteArray_Size(this->cobj);
+        }
+
+        if (bytes)
+        {
+            return types::ByteVector(bytes, bytes + size);
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::optional<types::ValueList> Object::as_valuelist() const
+    {
+        if (this->cobj && PyList_Check(this->cobj))
+        {
+            types::ValueList values;
             Py_ssize_t size = PyList_Size(this->cobj);
             values.reserve(size);
+
             for (int c = 0; c < size; c++)
             {
                 values.push_back(Object(PyList_GetItem(this->cobj, c), true).as_value());
             }
+            return values;
         }
-        return values;
+        else
+        {
+            return {};
+        }
     }
 
-    types::TaggedValueList Object::as_tvlist() const
+    std::optional<types::TaggedValueList> Object::as_tvlist() const
     {
-        types::TaggedValueList tvlist;
-
-        if (PyList_Check(this->cobj))
+        if (this->cobj && PyList_Check(this->cobj))
         {
+            types::TaggedValueList tvlist;
             Py_ssize_t size = PyList_Size(this->cobj);
             tvlist.reserve(size);
+
             for (int c = 0; c < size; c++)
             {
                 PyObject *item = PyList_GetItem(this->cobj, c);
@@ -319,43 +376,48 @@ namespace cc::python
                     }
                     else if (!Py_IsNone(tag_obj))
                     {
-                        throw std::invalid_argument("Not a tag/value list");
+                        return {};
                     }
 
                     PyObject *value_obj = PyTuple_GetItem(item, 1);
-                    types::Value value = Object(value_obj).as_value();
+                    types::Value value = Object(value_obj, true).as_value();
 
                     tvlist.emplace_back(tag, value);
                 }
                 else
                 {
-                    throw std::invalid_argument("Not a tag/value list");
+                    return {};
                 }
             }
+            return tvlist;
         }
-        return tvlist;
+        else
+        {
+            return {};
+        }
     }
 
-    types::KeyValueMap Object::as_kvmap() const
+    std::optional<types::KeyValueMap> Object::as_kvmap() const
     {
-        types::KeyValueMap kvmap;
-        if (PyDict_Check(this->cobj))
+        if (this->cobj && PyDict_Check(this->cobj))
         {
+            types::KeyValueMap kvmap;
             PyObject *key_obj, *value_obj;
             Py_ssize_t pos = 0;
             while (PyDict_Next(this->cobj, &pos, &key_obj, &value_obj))
             {
-                std::string key = Object(key_obj, true).as_string();
-                types::Value value = Object(value_obj, true).as_value();
-                kvmap.insert_or_assign(key, value);
+                if (auto key = Object(key_obj, true).as_string())
+                {
+                    types::Value value = Object(value_obj, true).as_value();
+                    kvmap.insert_or_assign(*key, value);
+                }
             }
+            return kvmap;
         }
-        return kvmap;
-    }
-
-    types::ByteVector Object::as_pickle() const
-    {
-        return {};
+        else
+        {
+            return {};
+        }
     }
 
     std::unordered_map<PyTypeObject *, types::ValueType> Object::type_map = {

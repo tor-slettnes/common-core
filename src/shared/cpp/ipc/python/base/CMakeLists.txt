@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Name of this library.
-set(TARGET cc_shared_ipc_pypickle)
+set(TARGET cc_shared_ipc_python)
 
 ### Library type
 set(LIB_TYPE STATIC)
@@ -14,6 +14,7 @@ set(LIB_TYPE STATIC)
 ### Library dependencies.
 set(LIB_DEPS
   cc_shared_ipc_common
+  cc_shared_platform
 )
 
 ### Third-party package dependencies
@@ -24,6 +25,10 @@ set(PKG_DEPS
 ### Source files in this folder
 set(SOURCES
   python-object.c++
+  python-containerobject.c++
+  python-exception.c++
+  python-runtime.c++
+  python-pickle.c++
 )
 
 ### Recepies to build the library

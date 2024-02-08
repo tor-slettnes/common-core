@@ -7,10 +7,7 @@
 
 #pragma once
 #include "chrono/date-time.h++"
-#include "types/variant-value.h++"
-#include "types/variant-list.h++"
-#include "types/variant-kvmap.h++"
-#include "types/variant-tvlist.h++"
+#include "types/value.h++"
 
 #include <google/protobuf/message.h>
 #include <google/protobuf/text_format.h>

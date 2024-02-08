@@ -15,6 +15,11 @@
 namespace cc::types
 {
 
+    Value::Value()
+        : ValueBase(nullvalue)
+    {
+    }
+
     Value::Value(std::uint8_t value)
         : ValueBase(static_cast<largest_uint>(value))
     {

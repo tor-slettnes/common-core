@@ -8,7 +8,7 @@
 #pragma once
 #include "ipc-endpoint.h++"
 #include "logging/message/scope.h++"
-#include "types/variant-value.h++"
+#include "types/value.h++"
 #include "config/settingsstore.h++"
 
 #include <zmq.hpp>
