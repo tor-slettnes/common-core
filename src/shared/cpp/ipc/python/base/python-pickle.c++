@@ -17,15 +17,15 @@ namespace cc::python
     ContainerObject Pickler::unpickle(const types::ByteVector &bytes)
     {
         return this->call("loads",
-                          {Object::pybytes_from_bytes(bytes)},
+                          {SimpleObject::pybytes_from_bytes(bytes)},
                           {});
     }
 
-    types::ByteVector Pickler::pickle(const Object &object)
+    types::ByteVector Pickler::pickle(const SimpleObject &object)
     {
-        Object result = this->call("dumps",
-                                   Object::Vector({object}),
-                                   Object::Map({}));
+        ContainerObject result = this->call("dumps",
+                                            SimpleObject::Vector({object}),
+                                            SimpleObject::Map({}));
         if (const auto &bytes = result.as_bytevector())
         {
             return bytes.value();

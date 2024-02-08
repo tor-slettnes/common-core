@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file python-object.h++
+/// @file python-simpleobject.h++
 /// @brief Generic data access for Python objects
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
@@ -13,35 +13,31 @@
 
 namespace cc::python
 {
-    class Object
+    //==========================================================================
+    /// @brief
+    ///    RAII wrapper for C PyObject*, with encoding/decoding methods.
+
+    class SimpleObject
     {
     public:
-        using Vector = std::vector<Object>;
-        using Map = std::map<std::string, Object>;
+        using Vector = std::vector<SimpleObject>;
+        using Map = std::map<std::string, SimpleObject>;
 
     public:
         /// @brief
         ///     RAII constructor for C PyObject* instances.
         /// @param[in] borrowed
         ///     The object reference is borrowed, increment reference count
-        Object(PyObject *cobj, bool borrowed = false);
+        SimpleObject(PyObject *cobj, bool borrowed = false);
 
         /// @brief
         ///     Copy constructor. Reference count is incremented.
-        Object(const Object &other);
+        SimpleObject(const SimpleObject &other);
 
         /// @brief
         ///     Destructor. Reference count is decemented, which potentially
         ///     destroys the underlying object.
-        virtual ~Object();
-
-        static PyObject *pystring_from_string(const std::string &string);
-        static PyObject *pybytes_from_bytes(const types::ByteVector &bytes);
-        static PyObject *pytuple_from_values(const types::ValueList &values);
-        static PyObject *pylist_from_values(const types::ValueList &values);
-        static PyObject *pylist_from_tagged_values(const types::TaggedValueList &tvlist);
-        static PyObject *pydict_from_kvmap(const types::KeyValueMap &kvmap);
-        static PyObject *pyobj_from_value(const types::Value &value);
+        virtual ~SimpleObject();
 
         operator bool() const noexcept;
 
@@ -137,6 +133,15 @@ namespace cc::python
         /// @note
         ///    List items that cannot be represented as variant values are empty.
         std::optional<types::KeyValueMap> as_kvmap() const;
+
+
+        static PyObject *pystring_from_string(const std::string &string);
+        static PyObject *pybytes_from_bytes(const types::ByteVector &bytes);
+        static PyObject *pytuple_from_values(const types::ValueList &values);
+        static PyObject *pylist_from_values(const types::ValueList &values);
+        static PyObject *pylist_from_tagged_values(const types::TaggedValueList &tvlist);
+        static PyObject *pydict_from_kvmap(const types::KeyValueMap &kvmap);
+        static PyObject *pyobj_from_value(const types::Value &value);
 
     private:
         static std::unordered_map<PyTypeObject *, types::ValueType> type_map;

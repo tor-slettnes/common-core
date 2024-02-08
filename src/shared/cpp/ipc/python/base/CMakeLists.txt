@@ -24,7 +24,7 @@ set(PKG_DEPS
 
 ### Source files in this folder
 set(SOURCES
-  python-object.c++
+  python-simpleobject.c++
   python-containerobject.c++
   python-exception.c++
   python-runtime.c++

@@ -17,7 +17,7 @@ namespace cc::python
                   status::Domain::APPLICATION,  // domain
                   module_name,                  // origin
                   0,                            // code
-                  Object(exc).name(),           // symbol
+                  SimpleObject(exc).name(),     // symbol
                   status::Level::FAILED,        // level
                   status::Flow::CANCELLED,      // flow
                   {},                           // timepoint

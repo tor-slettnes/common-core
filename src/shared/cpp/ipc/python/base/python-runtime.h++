@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "python-object.h++"
+#include "python-containerobject.h++"
 
 #include "types/filesystem.h++"
 #include "types/value.h++"
@@ -51,9 +51,9 @@ namespace cc::python
         ///    Named arguments
         /// @return
         ///    Returned value from the called method
-        Object call(const std::string &method,
-                    const Object::Vector &args = {},
-                    const Object::Map &kwargs = {});
+        ContainerObject call(const std::string &method,
+                             const SimpleObject::Vector &args = {},
+                             const SimpleObject::Map &kwargs = {});
 
         /// @brief
         ///    Call a Python method with encoded Python inputs and return value
@@ -65,12 +65,12 @@ namespace cc::python
         ///    A Python dictionary with keyword (named) input arguments
         /// @return
         ///    Return value from the called method as a Python object
-        Object call(const Object &method_name,
-                    const Object &args_tuple,
-                    const Object &kwargs_dict);
+        ContainerObject call(const SimpleObject &method_name,
+                             const SimpleObject &args_tuple,
+                             const SimpleObject &kwargs_dict);
 
     private:
         static bool initialized;
-        std::shared_ptr<Object> module;
+        std::shared_ptr<SimpleObject> module;
     };
 }  // namespace cc::python

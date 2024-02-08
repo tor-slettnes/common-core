@@ -6,6 +6,7 @@
 //==============================================================================
 
 #pragma once
+#include "python-containerobject.h++"
 #include "python-runtime.h++"
 
 namespace cc::python
@@ -16,7 +17,7 @@ namespace cc::python
         Pickler();
 
         ContainerObject unpickle(const types::ByteVector &bytes);
-        types::ByteVector pickle(const Object &object);
+        types::ByteVector pickle(const SimpleObject &object);
     };
 
     extern Pickler pickler;
