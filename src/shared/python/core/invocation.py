@@ -9,26 +9,35 @@ from typing  import Callable, Sequence, Mapping, Optional
 
 import sys
 import traceback
+import logging
 
 def safe_invoke(function    : Callable,
                 args        : Sequence = (),
                 kwargs      : Mapping = {},
                 description : Optional[str] = None,
-                log         : Callable[[str], None] = sys.stderr.write) -> None:
+                log_call    : Optional[Callable[[str], None]] = logging.debug,
+                log_failure : Optional[Callable[[str], None]] = logging.error) -> None:
     '''
     Invoke a callable (function) and catch exception
     '''
     try:
+        if log_call:
+            log_call('Invoking %s'%(
+                description or invocation(function, args, kwargs),
+            ))
         return function(*args, **kwargs)
 
     except Exception as e:
         e_type, e_name, e_tb = sys.exc_info()
-        log("Exception occured in %s:\n%s\n[%s] %s"%
-            ((description or 'invocation '+invocation(function, args, kwargs)),
-             stack_trace(tb=e_tb),
-             type(e).__name__,
-             e))
-        del e_tb  ## Prevent circular reference, per https://docs.python.org/2/library/sys.html.
+        if log_failure:
+            log_failure("Exception occured in %s:\n%s\n[%s] %s"%(
+                description or invocation(function, args, kwargs),
+                stack_trace(tb=e_tb),
+                type(e).__name__,
+                e))
+
+        ## Prevent circular reference, per https://docs.python.org/2/library/sys.html.
+        del e_tb
         return e
 
 def stack_trace(tb=None):

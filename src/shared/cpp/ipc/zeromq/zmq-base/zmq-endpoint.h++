@@ -43,29 +43,27 @@ namespace cc::zmq
         static std::shared_ptr<::zmq::context_t> context();
         std::shared_ptr<::zmq::socket_t> socket();
 
-    protected:
-        void log_zmq_error(const std::string &action, const ::zmq::error_t &e);
         void initialize() override;
         void deinitialize() override;
+
+    protected:
+        void log_zmq_error(const std::string &action, const ::zmq::error_t &e);
 
     public:
         void send(
             const types::ByteVector &bytes,
             ::zmq::send_flags flags = ::zmq::send_flags::none);
 
-        void send(
-            ::zmq::message_t &&msg,
-            ::zmq::send_flags flags = ::zmq::send_flags::none);
-
-        bool receive(
-            ::zmq::message_t *msg,
-            ::zmq::recv_flags flags = ::zmq::recv_flags::none);
-
         bool receive(
             types::ByteVector *bytes,
             ::zmq::recv_flags flags = ::zmq::recv_flags::none);
 
         std::optional<types::ByteVector> receive(
+            ::zmq::recv_flags flags = ::zmq::recv_flags::none);
+
+    private:
+        bool receive_chunk(
+            ::zmq::message_t *msg,
             ::zmq::recv_flags flags = ::zmq::recv_flags::none);
 
     protected:

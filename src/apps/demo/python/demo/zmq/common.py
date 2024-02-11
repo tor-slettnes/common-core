@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Identifiers for ZMQ commands & messages
-DEMO_PUBLISHER_CHANNEL = 'Demo Publisher'
+DEMO_PUBLISHER_CHANNEL = 'Demo Message'
 DEMO_SERVICE_CHANNEL   = 'Demo Service'
 DEMO_RPC_INTERFACE     = 'Demo'
 

@@ -27,13 +27,8 @@ namespace cc::zmq
         void run();
 
     protected:
-        // Subclasses should ovreride either of the following methods to
-        // handle service requests.
-        virtual void process_zmq_request(const ::zmq::message_t &request_msg,
-                                         types::ByteVector *packed_reply);
-
         virtual void process_binary_request(const types::ByteVector &packed_request,
-                                            types::ByteVector *packed_reply);
+                                            types::ByteVector *packed_reply) = 0;
 
     private:
         std::thread listen_thread;

@@ -29,7 +29,7 @@ SignalSlot  = Callable[[ProtoBuf.Message], None]
 #===============================================================================
 # SignalStore class
 
-class SignalStore (object):
+class SignalStore (ProtoBuf):
     ## `signal_type` should be set in the final subclass, and is used to decode
     ##  ProtoBuf messages streamed back from the server's `watch()` method.
     signal_type = None
@@ -37,7 +37,7 @@ class SignalStore (object):
     def __init__(self,
                  use_cache          : bool = False,
                  completion_timeout : float = 3.0,
-                 signal_type        : ProtoBuf.Message = None):
+                 signal_type        : ProtoBuf.MessageType = None):
 
         if signal_type:
             self.signal_type = signal_type
@@ -58,7 +58,7 @@ class SignalStore (object):
             'Signal type must be derived from google.protobuf.Message, ' \
             'not %s'%(self.signal_type,)
 
-        self._slots               = {}
+        self.slots                = {}
         self._completion_event    = threading.Event()
         self._completion_mutex    = threading.Lock()
         self._completion_timeout  = completion_timeout
@@ -158,18 +158,44 @@ class SignalStore (object):
         else:
             return self._cache[signalname]
 
+    def connect_all(self,
+                    slot: SignalSlot):
+        '''
+        Connect a handler to _all_ signals in this store.
+        '''
+
+        self.slots.setdefault(None, []).append(slot)
+        for name in self.signal_names():
+            self.emit_cached_to(name, slot)
+
+
+    def disconnect_all(self,
+                       slot: SignalSlot):
+        '''
+        Disconnect handlers that are connected to _all_ signals.
+        '''
+
+        self.disconnect_signal(None, slot)
 
     def connect_signal(self,
-                        name: str,
-                        slot: SignalSlot):
-        '''Connect a callback handler (slot) to a specific simple signal.
+                       name: str,
+                       slot: SignalSlot):
+
+        '''Connect a callback handler (slot) to receive emitted Signal messages.
 
         @param[in] name
             Signal name, corresponding to a field of the Signal message.
 
         @param[in] slot
-            A callable handler (e.g. a function) that accepts the signal
-            as its first and only required argument.
+            A callable handler (e.g. a function) that accepts the Signal
+            instance as its first and only required argument.
+
+        This variant is mainly suitable for mapping signals, since the entire
+        Signal message including the mapping `change` and `key` fields are
+        passed on to the receiver.  For simple signals where these fields are
+        unused, consider instead `connect_signal_data()` which passes on just
+        the extracted payload from the named signal.
+
         '''
 
         assert callable(slot), \
@@ -178,7 +204,7 @@ class SignalStore (object):
         assert name in self.signal_names(), \
             "Message type %s does not have a %r field"%(self.signal_type.__name__, name)
 
-        self._slots.setdefault(name, []).append(slot)
+        self.slots.setdefault(name, []).append(slot)
         self.emit_cached_to(name, slot)
 
 
@@ -199,24 +225,29 @@ class SignalStore (object):
 
         if slot:
             try:
-                slots = self._slots[name]
+                slots = self.slots[name]
                 slots.remove(slot)
             except KeyError:
                 return False
             except ValueError:
                 if not slots:
-                    self._slots.pop(name, None)
+                    self.slots.pop(name, None)
                 return True
         else:
-            return bool(self._slots.pop(name, None))
+            return bool(self.slots.pop(name, None))
 
 
     def connect_signal_data(self,
                             name: str,
                             slot: SignalSlot):
-        '''Connect a callback handler (slot) to a specific simple Signal.  This
-        variant extracts and passes on just the payload from the emitted Signal
-        message.
+
+        '''.
+
+        Connect a callback handler (slot) to a receive just the extracted
+        payload from emitted signals.  This is mainly suitable for simple
+        (event) signals rather than mapping signals (where the receiver also
+        needs the mapping `change` and `key` fields from the original `Signal`
+        container).
 
         @param[in] name
             Signal name, corresponding to a field of the Signal message.
@@ -229,6 +260,7 @@ class SignalStore (object):
 
         self.connect_signal(name,
                             lambda signal: slot(getattr(signal, name)))
+
 
 
     def disconnect_signal_data(self,
@@ -292,8 +324,14 @@ class SignalStore (object):
             if isinstance(self._cache, dict):
                 self._update_cache(name, change, msg.key, msg)
 
-            for callback in self._slots.get(name, []):
+            ## Invoke each slot that was connected to this signal by name
+            for callback in self.slots.get(name, []):
                 self._emit_to(name, callback, msg)
+
+            ## Invoke each slot that was connected to `all` signals
+            for callback in self.slots.get(None, []):
+                self._emit_to(name, callback, msg)
+
 
         if change == CC.Signal.MAP_NONE:
             self._completion_event.set()

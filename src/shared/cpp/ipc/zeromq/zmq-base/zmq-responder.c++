@@ -49,7 +49,7 @@ namespace cc::zmq
         {
             while (this->keep_listening)
             {
-                if (const std::optional<types::ByteVector> &request = this->receive())
+                if (auto request = this->receive())
                 {
                     types::ByteVector reply;
                     this->process_binary_request(*request, &reply);
@@ -61,23 +61,6 @@ namespace cc::zmq
         {
             this->log_zmq_error("could not continue receiving requests", e);
         }
-    }
-
-    void Responder::process_zmq_request(const ::zmq::message_t &request_msg,
-                                        types::ByteVector *packed_reply)
-    {
-        // We get here only if the derived responder class does not override
-        // this method. We assume that in this case, it _does_ override
-        // the 2nd overload, which accepts a `ByteVector` input.
-
-        const std::string_view &sv = request_msg.to_string_view();
-        this->process_binary_request(types::ByteVector(sv.begin(), sv.end()),
-                                     packed_reply);
-    }
-
-    void Responder::process_binary_request(const types::ByteVector &packed_request,
-                                           types::ByteVector *packed_reply)
-    {
     }
 
 }  // namespace cc::zmq

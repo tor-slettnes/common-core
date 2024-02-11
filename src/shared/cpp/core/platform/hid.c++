@@ -110,7 +110,7 @@ namespace cc::platform
     //==========================================================================
     // Signals
 
-    signal::MappedSignal<HIDDeviceInfo> signal_hid_device("hid_device", true);
+    signal::MappingSignal<HIDDeviceInfo> signal_hid_device("hid_device", true);
 
     //==========================================================================
     // Global instance

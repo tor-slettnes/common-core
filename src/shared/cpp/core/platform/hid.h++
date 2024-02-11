@@ -117,7 +117,7 @@ namespace cc::platform
     //==========================================================================
     // Signals
 
-    extern signal::MappedSignal<HIDDeviceInfo> signal_hid_device;
+    extern signal::MappingSignal<HIDDeviceInfo> signal_hid_device;
 
     //==========================================================================
     // Global instance

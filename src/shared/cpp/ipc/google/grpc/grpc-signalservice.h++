@@ -40,7 +40,10 @@ namespace cc::grpc
         {
             try
             {
-                SignalQueueT queue(*req, platform::symbols->uuid());
+                logf_debug("Opening %s stream to client %s",
+                           SignalT().GetTypeName(),
+                           cxt->peer());
+                SignalQueueT queue(platform::symbols->uuid(), *req);
                 queue.initialize();
 
                 while (true)
@@ -58,6 +61,9 @@ namespace cc::grpc
                 }
 
                 queue.deinitialize();
+                logf_debug("Closed %s stream to client %s",
+                           SignalT().GetTypeName(),
+                           cxt->peer());
                 return ::grpc::Status::OK;
             }
             catch (...)

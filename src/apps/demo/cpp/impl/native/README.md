@@ -20,7 +20,7 @@ Good question, I wish I had thought of that myself.  There's some general inform
 
 * It standardizes callback semantics. Or, put differently, it loosens the coupling between the event source and the receiver. There is a uniform way to register to receive signal events (`.connect()`) and to unregister (`.disconnect()`), and the signature of the callback method ("slot") is well-defined.
 
-* Specific to our codebase, `Signal<>` template described above as well as the related `MappedSignal<>` template both support optional caching of the last emitted event (or in the case of `MappedSignal<>`, the current map). If enabled this cache is then replayed to any new callback function once connected, thereby avoiding the race condition that would otherwise be associated with bringing the receiver in sync via a separate query.
+* Specific to our codebase, `Signal<>` template described above as well as the related `MappingSignal<>` template both support optional caching of the last emitted event (or in the case of `MappingSignal<>`, the current map). If enabled this cache is then replayed to any new callback function once connected, thereby avoiding the race condition that would otherwise be associated with bringing the receiver in sync via a separate query.
 
 
 Components exposed

@@ -22,6 +22,7 @@ set(LIB_DEPS
 ### Source files
 set(SOURCES
   demo-zmq-subscriber.c++
+  demo-zmq-signalhandler.c++
 )
 
 ### Invoke common CMake rules

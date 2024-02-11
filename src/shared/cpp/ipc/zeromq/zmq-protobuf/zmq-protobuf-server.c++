@@ -23,7 +23,7 @@ namespace cc::zmq
     void ProtoBufServer::initialize()
     {
         Super::initialize();
-        for (const auto &[interface_name, handler]: this->handler_map)
+        for (const auto &[interface_name, handler] : this->handler_map)
         {
             handler->initialize();
         }
@@ -31,7 +31,7 @@ namespace cc::zmq
 
     void ProtoBufServer::deinitialize()
     {
-        for (const auto &[interface_name, handler]: this->handler_map)
+        for (const auto &[interface_name, handler] : this->handler_map)
         {
             handler->deinitialize();
         }
@@ -65,15 +65,18 @@ namespace cc::zmq
     }
 
     void ProtoBufServer::process_protobuf_request(const CC::RR::Request &request,
-                                                   CC::RR::Reply *reply)
+                                                  CC::RR::Reply *reply)
     {
+        reply->set_client_id(request.client_id());
+        reply->set_request_id(request.request_id());
+
         if (RequestHandlerPtr handler = this->handler_map.get(request.interface_name()))
         {
             return handler->process_method_request(request, reply);
         }
         else
         {
-            return this->insert_error_response(
+            this->insert_error_response(
                 reply,
                 CC::RR::STATUS_INVALID,
                 "No such interface",

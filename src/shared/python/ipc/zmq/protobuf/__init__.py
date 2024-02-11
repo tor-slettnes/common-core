@@ -5,15 +5,15 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from .publisher import Publisher
-from .signalpublisher import SignalPublisher
+from .messagewriter import MessageWriter
+from .messagehandler import MessageHandler
 
-from .subscriber import Subscriber
-from .signalsubscriber import SignalSubscriber
-
-from .client import Client
+from .signalwriter import SignalWriter
+from .signalhandler import SignalHandler
 
 from .server import Server
 from .requesthandler import RequestHandler
+
+from .client import Client
 
 from .error import Error

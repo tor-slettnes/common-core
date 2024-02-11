@@ -7,9 +7,9 @@
 
 ### Modules relative to install dir
 from .common import DEMO_PUBLISHER_CHANNEL, DEMO_SERVICE_CHANNEL, DEMO_RPC_INTERFACE
-from ..core  import API, CC, ProtoBuf, demo_signals
-from ipc.zmq.protobuf.client import Client
-from ipc.zmq.protobuf.signalsubscriber import SignalSubscriber
+from ..core  import API, CC, ProtoBuf, SignalSlot, demo_signals
+from ipc.zmq.basic import Subscriber
+from ipc.zmq.protobuf import Client, SignalHandler
 
 ### Standard Python modules
 from typing import Callable
@@ -17,7 +17,7 @@ import time, sys, os.path
 
 
 #===============================================================================
-# SignalClient class
+# DemoClient class
 
 class DemoClient (API, Client):
     '''Client for Demo service.'''
@@ -33,48 +33,32 @@ class DemoClient (API, Client):
                         channel_name = DEMO_SERVICE_CHANNEL,
                         interface_name = DEMO_RPC_INTERFACE)
 
-        self.subscriber = SignalSubscriber(
+        self.subscriber = Subscriber(
             host_address = publisher_host,
-            signal_store = demo_signals,
             channel_name = DEMO_PUBLISHER_CHANNEL)
+
+        self.signalhandler = SignalHandler(demo_signals)
+
 
     def connect(self):
         self.subscriber.connect()
-        self.subscriber.start_watching()
+        self.subscriber.add(self.signalhandler)
         Client.connect(self)
 
     def disconnect(self):
         Client.disconnect(self)
-        self.subscriber.stop_watching()
+        self.subscriber.remove(self.signalhandler)
         self.subscriber.disconnect()
 
     def say_hello(self, greeting: CC.Demo.Greeting):
-        '''
-        @brief  Issue a greeting to anyone who may be listening
-        @param[in] greeting
-            A greeting for our listeners.
-        '''
+        self.check_type(greeting, CC.Demo.Greeting)
         self.call('say_hello', greeting)
 
     def get_current_time(self) -> CC.Demo.TimeData:
-        '''
-        Get current time data.
-        @return
-            Current time data provided by the specific implementation.
-        '''
-
         return self.call('get_current_time', None, CC.Demo.TimeData)
 
     def start_ticking(self) -> None:
-        '''
-        Tell the server to start issuing periodic time updates
-        '''
         return self.call('start_ticking')
 
-
     def stop_ticking(self) -> None:
-        '''
-        Tell the server to stop issuing periodic time updates
-        '''
         return self.call('stop_ticking')
-

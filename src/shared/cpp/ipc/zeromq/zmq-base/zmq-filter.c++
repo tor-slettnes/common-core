@@ -11,30 +11,25 @@
 
 namespace cc::zmq
 {
-    std::shared_ptr<Filter> Filter::create_from_data(void *data, std::size_t size)
+    Filter Filter::create_from_data(void *data, std::size_t size)
     {
+        Filter filter;
         if (std::size_t filter_size = Filter::extract_filter_size(data, size))
         {
-            if (auto filter = std::make_shared<Filter>(filter_size))
-            {
-                memcpy(filter->data(), data, filter_size);
-                return filter;
-            }
+            memcpy(filter.data(), data, filter_size);
         }
-        return {};
+        return filter;
     }
 
-    std::shared_ptr<Filter> Filter::create_from_topic(const std::string &topic)
+    Filter Filter::create_from_topic(const std::string &topic)
     {
+        Filter filter;
+
         std::vector<types::Byte> preamble = Filter::encoded_size(topic.size());
-        if (auto filter = std::make_shared<Filter>())
-        {
-            filter->reserve(preamble.size() + topic.size());
-            filter->assign(preamble.begin(), preamble.end());
-            filter->insert(filter->end(), topic.begin(), topic.end());
-            return filter;
-        }
-        return {};
+        filter.reserve(preamble.size() + topic.size());
+        filter.assign(preamble.begin(), preamble.end());
+        filter.insert(filter.end(), topic.begin(), topic.end());
+        return filter;
     }
 
     std::vector<types::Byte> Filter::encoded_size(std::size_t size)

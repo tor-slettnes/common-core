@@ -6,9 +6,10 @@
 //==============================================================================
 
 #pragma once
-#include "demo-types.h++"
+#include "demo-zmq-signalwriter.h++"
 #include "demo-zmq-common.h++"
-#include "zmq-protobuf-publisher.h++"
+#include "demo-types.h++"
+#include "zmq-publisher.h++"
 
 #include "types/create-shared.h++"
 #include "thread/signaltemplate.h++"
@@ -19,12 +20,12 @@ namespace cc::demo::zmq
     // @class Publisher
     // @brief Publish locally-emitted demo signals over ZeroMQ
 
-    class Publisher : public cc::zmq::ProtoBufPublisher,
-                      public cc::types::enable_create_shared<Publisher>
+    class Publisher : public cc::zmq::Publisher,
+                      public cc::types::enable_create_shared_from_this<Publisher>
     {
         // Convencience alias
         using This = Publisher;
-        using Super = cc::zmq::ProtoBufPublisher;
+        using Super = cc::zmq::Publisher;
 
     protected:
         Publisher(const std::string &bind_address = "",
@@ -35,10 +36,6 @@ namespace cc::demo::zmq
         void deinitialize() override;
 
     private:
-        void on_time_update(const TimeData &time_data);
-
-        void on_greeting_update(cc::signal::MappingChange change,
-                                const std::string &identity,
-                                const Greeting &greeting);
+        std::shared_ptr<SignalWriter> signal_writer;
     };
 }  // namespace cc::demo::zmq

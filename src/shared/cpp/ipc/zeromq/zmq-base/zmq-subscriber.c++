@@ -26,53 +26,34 @@ namespace cc::zmq
         this->stop_receiving();
     }
 
-    void Subscriber::subscribe(const Callback &callback)
+    void Subscriber::deinitialize()
     {
-        this->subscribe({}, callback);
+        this->clear();
     }
 
-    void Subscriber::subscribe(const Filter &filter,
-                               const Callback &callback)
+    void Subscriber::add(std::shared_ptr<MessageHandler> handler)
     {
-        logf_trace("%s subscribing with filter %r", *this, filter.to_hex());
-        this->socket()->set(::zmq::sockopt::subscribe, filter.stringview());
-        this->subscriptions_[filter] = callback;
+        std::lock_guard lock(this->mtx_);
+        this->init_handler(handler);
+        this->handlers_.insert(handler);
         this->start_receiving();
     }
 
-    void Subscriber::subscribe_topic(const std::string &topic,
-                                     const Callback &callback)
+    void Subscriber::remove(std::shared_ptr<MessageHandler> handler)
     {
-        if (auto filter = Filter::create_from_topic(topic))
-        {
-            this->subscribe(*filter, callback);
-        }
+        std::lock_guard lock(this->mtx_);
+        this->handlers_.erase(handler);
+        this->deinit_handler(handler);
     }
 
-    void Subscriber::unsubscribe()
+    void Subscriber::clear()
     {
-        this->unsubscribe({});
-    }
-
-    void Subscriber::unsubscribe(const Filter &filter)
-    {
-        this->subscriptions_.erase(filter);
-        try
+        std::lock_guard lock(this->mtx_);
+        for (std::shared_ptr<MessageHandler> handler : this->handlers_)
         {
-            this->socket()->set(::zmq::sockopt::unsubscribe, filter.stringview());
+            this->deinit_handler(handler);
         }
-        catch (const ::zmq::error_t &e)
-        {
-            this->log_zmq_error("could not unsubscribe", e);
-        }
-    }
-
-    void Subscriber::unsubscribe_topic(const std::string &topic)
-    {
-        if (auto filter = Filter::create_from_topic(topic))
-        {
-            this->unsubscribe(*filter);
-        }
+        this->handlers_.clear();
     }
 
     void Subscriber::start_receiving()
@@ -103,10 +84,9 @@ namespace cc::zmq
                        this->host_address());
             while (this->keep_receiving)
             {
-                ::zmq::message_t msg;
-                if (this->receive(&msg))
+                if (auto bytes = this->receive())
                 {
-                    this->process_zmq_message(msg);
+                    this->process_message(*bytes);
                 }
             }
         }
@@ -117,46 +97,67 @@ namespace cc::zmq
         }
     }
 
-    void Subscriber::process_zmq_message(const ::zmq::message_t &msg)
+    void Subscriber::init_handler(const std::shared_ptr<MessageHandler> &handler)
     {
-        for (const auto &[filter, callback] : this->subscriptions_)
+        const Filter &filter = handler->filter();
+        handler->initialize();
+        logf_debug("%s adding subscription for %r with filter %r",
+                   *this,
+                   handler->id(),
+                   filter.to_hex());
+        this->socket()->set(::zmq::sockopt::subscribe, filter.stringview());
+    }
+
+    void Subscriber::deinit_handler(const std::shared_ptr<MessageHandler> &handler)
+    {
+        try
         {
-            if ((msg.size() >= filter.size()) &&
-                (memcmp(msg.data(), filter.data(), filter.size()) == 0))
+            this->socket()->set(::zmq::sockopt::unsubscribe, handler->filter().stringview());
+        }
+        catch (const ::zmq::error_t &e)
+        {
+            this->log_zmq_error("could not unsubscribe", e);
+        }
+        handler->deinitialize();
+    }
+
+    void Subscriber::invoke_handler(const std::shared_ptr<MessageHandler> &handler,
+                                    const types::ByteVector &payload,
+                                    const Filter &filter)
+    {
+        logf_trace("%s invoking handler %r, filter=%r, payload=%r",
+                   *this,
+                   handler->id(),
+                   filter,
+                   payload);
+        try
+        {
+            handler->handle(payload);
+        }
+        catch (...)
+        {
+            logf_warning("%s handler %r failed to handle ZMQ message {payload=%s}: %s",
+                         *this,
+                         handler->id(),
+                         payload,
+                         std::current_exception());
+        }
+    }
+
+    void Subscriber::process_message(const types::ByteVector &bytes)
+    {
+        std::lock_guard lock(this->mtx_);
+        for (const std::shared_ptr<MessageHandler> &handler : this->handlers_)
+        {
+            const Filter &filter = handler->filter();
+            if ((bytes.size() >= filter.size()) &&
+                (memcmp(bytes.data(), filter.data(), filter.size()) == 0))
             {
-                this->invoke_callback(callback, msg, filter);
+                types::ByteVector payload(bytes.data() + filter.size(),
+                                          bytes.data() + bytes.size());
+                this->invoke_handler(handler, payload, filter);
             }
         }
     }
 
-    void Subscriber::invoke_callback(const Callback &callback,
-                                     const ::zmq::message_t &msg,
-                                     const Filter &filter)
-    {
-        log_trace("Invoking ZMQ callback for filter: ", filter);
-        auto *data = reinterpret_cast<const types::Byte *>(msg.data());
-
-        switch (static_cast<CallbackSignature>(callback.index()))
-        {
-        case CB_ZMQ_MSG:
-            std::get<CB_ZMQ_MSG>(callback)(msg);
-            break;
-
-        case CB_BYTES:
-            std::get<CB_BYTES>(callback)(
-                types::ByteVector(data + filter.size(),
-                                 data + msg.size()));
-            break;
-
-        case CB_TOPIC_BYTES:
-            std::get<CB_TOPIC_BYTES>(callback)(
-                filter.topic(),
-                types::ByteVector(data + filter.size(),
-                                 data + msg.size()));
-            break;
-
-        default:
-            break;
-        }
-    }
 }  // namespace cc::zmq

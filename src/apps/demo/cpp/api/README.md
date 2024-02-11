@@ -26,10 +26,10 @@ Event notifications are issued via the following two signals:
 
 ```
 shared::signal::Signal<TimeData> signal_time("cc::demo::signal_time");
-shared::signal::MappedSignal<Greeting> signal_greeting("cc::demo::signal_greeting", true);
+shared::signal::MappingSignal<Greeting> signal_greeting("cc::demo::signal_greeting", true);
 ```
 
-The difference between `Signal<T>` and `MappedSignal<T>` lies in whether the
+The difference between `Signal<T>` and `MappingSignal<T>` lies in whether the
 payload is emitted as a singular transient event or as an
 addition/update/removal of an item in a keyed data set (map).
 
@@ -48,17 +48,17 @@ Correspondingly, the callback function signature required to connect to this sig
 std::function<void(cc::demo::TimeData)>
 ```
 
-### `MappedSignal<T>`: Addition/Update/Removal of data in a map
+### `MappingSignal<T>`: Addition/Update/Removal of data in a map
 
 This type of signal is intended for use cases where a collection of data items
 identified by a key can change over time. For instance, a NetworkManager proxy
-might use a `MappedSignal<AccessPoint>` instance to issue a notification
+might use a `MappingSignal<AccessPoint>` instance to issue a notification
 whenever an AP is newly discovered, has updated data, or is no longer available.
 
 This template's `emit()` method nominally takes three arguments:
 
 ```
-shared::signal::MappedSignal<T, K>::emit(MappingChange change, K key, T value)
+shared::signal::MappingSignal<T, K>::emit(MappingChange change, K key, T value)
 ```
 
 In our case, a new client might issue a greeting like this:

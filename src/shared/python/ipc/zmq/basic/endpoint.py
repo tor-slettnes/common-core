@@ -38,10 +38,18 @@ class Endpoint (BaseEndpoint):
     def receive_bytes (self, flags: zmq.Flag = 0) -> bytes:
         data = b''
         more = True
+
         while more:
             msg   = self.socket.recv(flags, copy=False)
             data += msg.buffer
             more  = msg.more
+
+            logging.debug('Received size=%d bytes, total=%d bytes, more=%s: %r'%(
+                len(msg.buffer),
+                len(data),
+                msg.more,
+                msg.buffer))
+
         return data
 
 

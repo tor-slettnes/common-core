@@ -47,10 +47,9 @@ namespace cc::zmq
     {
         try
         {
-            ::zmq::message_t msg;
-            if (this->receive(&msg, flags))
+            if (auto bytes = this->receive(flags))
             {
-                return reply->ParseFromArray(msg.data(), msg.size());
+                return reply->ParseFromArray(bytes->data(), bytes->size());
             }
             else
             {

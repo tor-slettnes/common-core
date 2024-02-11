@@ -37,9 +37,6 @@ namespace cc::zmq
     void ProtoBufRequestHandler::process_method_request(const CC::RR::Request &request,
                                                         CC::RR::Reply *reply)
     {
-        reply->set_client_id(request.client_id());
-        reply->set_request_id(request.request_id());
-
         std::shared_ptr<ProtoBufError> error;
 
         if (auto handler = this->handler_map.get(request.method_name()))

@@ -13,7 +13,7 @@ from generated.request_reply_pb2 import Request, Reply, Parameter, \
 
 from typing import Optional
 
-class Client (Requester):
+class Client (Requester, ProtoBuf):
     '''ZMQ RPC client using ProtoBuf messages'''
 
     last_client_id = 0

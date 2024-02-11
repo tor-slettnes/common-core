@@ -11,5 +11,5 @@
 namespace cc::demo
 {
     cc::signal::Signal<TimeData> signal_time("cc::demo::signal_time");
-    cc::signal::MappedSignal<Greeting> signal_greeting("cc::demo::signal_greeting", true);
+    cc::signal::MappingSignal<Greeting> signal_greeting("cc::demo::signal_greeting", true);
 }  // namespace cc::demo

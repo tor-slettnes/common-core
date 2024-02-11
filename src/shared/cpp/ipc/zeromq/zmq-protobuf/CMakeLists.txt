@@ -20,7 +20,6 @@ set(LIB_DEPS
 ### Source files in this folder
 set(SOURCES
   zmq-protobuf-error.c++
-  zmq-protobuf-publisher.c++
   zmq-protobuf-client.c++
   zmq-protobuf-requesthandler.c++
   zmq-protobuf-server.c++

@@ -21,18 +21,10 @@ class Publisher (Host):
 
         Host.__init__(self, bind_address, channel_name, zmq.PUB)
 
-    def publish_raw(self, data : bytes):
-        self.send_bytes(data, zmq.DONTWAIT)
+    def publish(self,
+                message_filter : Filter,
+                data : bytes):
 
-    def publish_with_topic(self,
-                           topic: Topic,
-                           data : bytes):
-        f = Filter.create_from_topic(topic)
-        self.publish_with_filter(f, data)
-
-    def publish_with_filter(self,
-                            filter: bytes,
-                            data  : bytes):
-        if len(filter):
-            self.send_bytes(filter, zmq.DONTWAIT | zmq.SNDMORE)
+        if len(message_filter):
+            self.send_bytes(message_filter, zmq.DONTWAIT | zmq.SNDMORE)
         self.send_bytes(data, zmq.DONTWAIT)

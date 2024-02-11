@@ -23,7 +23,7 @@ namespace cc::signal
     ///     Signal structure, derfined in .idl file
     ///
     /// Implementations should overwrite the `initialize()` method to connect
-    /// specific underlying Signal<T> or MappedSignal<T> instances to a
+    /// specific underlying Signal<T> or MappingSignal<T> instances to a
     /// corresponding handler method, which should then
     ///  * encode its payload of emitted signals to a corresponding protobuf
     ///    Signal() message and
@@ -42,7 +42,7 @@ namespace cc::signal
     ///  * `sysconfig::SignalQueue()` or `upgrade::SignalQueue()`
     ///    for forwarding of basic Signal<T> events,
     ///  * `vfs::SignalQueue()` or `switchboard::SignalQueue()`
-    ///    for forwarding of MappedSignal<T> events.
+    ///    for forwarding of MappingSignal<T> events.
 
     template <class MessageType>
     class SignalQueue : public BlockingQueue<MessageType>
@@ -58,7 +58,7 @@ namespace cc::signal
         using Encoder = std::function<void(T, MessageType *)>;
 
         template <class T, class K = std::string>
-        using MappedEncoder = std::function<void(MappingChange, K, T, MessageType *)>;
+        using MappingEncoder = std::function<void(MappingChange, K, T, MessageType *)>;
 
     public:
         SignalQueue(const SignalFilter &filter,
@@ -72,7 +72,7 @@ namespace cc::signal
         }
 
         /// Implementations should override this in order to connect specific
-        /// Signal<T> or MappedSignal<T> instances to corresponding handlers,
+        /// Signal<T> or MappingSignal<T> instances to corresponding handlers,
         /// which in turn will encode the payload and add the result to this
         /// queue.
         virtual void initialize() {}
@@ -102,7 +102,7 @@ namespace cc::signal
                 });
         }
 
-        /// @brief Connect a signal of type MappedSignal<T> for encoding/enqueung
+        /// @brief Connect a signal of type MappingSignal<T> for encoding/enqueung
         /// @tparam T
         ///    Signal data type
         /// @param[in] signal
@@ -111,7 +111,7 @@ namespace cc::signal
         ///    Routine to encode signal data to ProtoBuf Signal message
 
         template <class T>
-        void connect(MappedSignal<T> &signal, const MappedEncoder<T> &encoder)
+        void connect(MappingSignal<T> &signal, const MappingEncoder<T> &encoder)
         {
             signal.connect(
                 this->id,

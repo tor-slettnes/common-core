@@ -15,7 +15,7 @@
 #include "status/exceptions.h++"
 #include "signal_types.pb.h"
 #include "protobuf-message.h++"
-#include "protobuf-signal.h++"
+#include "protobuf-signalreceiver.h++"
 
 #include <functional>
 

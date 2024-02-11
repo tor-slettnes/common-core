@@ -8,13 +8,14 @@
 ### Modules relative to install folder
 from .satellite      import Satellite
 from .filter         import Filter, Topic
+from .messagehandler import MessageHandler
 from core.invocation import safe_invoke
 
 ### Third-party modules
 import zmq
 
 ### Standard Python modules
-from typing import Callable
+from typing import Callable, Optional, Union
 import logging, threading
 
 class Subscriber (Satellite):
@@ -25,44 +26,74 @@ class Subscriber (Satellite):
                  channel_name: str = None):
 
         Satellite.__init__(self, host_address, channel_name, zmq.SUB)
-        self.subscriptions = {}
+        self.subscriptions = set()
         self.receive_thread = None
         self.keep_receiving = False
+        self._mtx           = threading.Lock()
 
-    def subscribe(self, callback : Callable[[bytes], None]):
-        self.subscribe_with_filter(
-            Filter(),
-            lambda _filter, _data: callback(_data))
+    def __del__(self):
+        self.clear()
 
-    def subscribe_with_topic(self,
-                             topic    : Topic,
-                             callback : Callable[[str, bytes], None]):
+    def add(self,
+            handler: MessageHandler):
+        '''Add a message handler with subscribing message filter.'''
 
-        f = Filter.create_from_topic(topic)
-        self.subscribe_with_filter(
-            f,
-            lambda _filter, _data: callback(_filter.topic(), _data))
+        with self._mtx:
+            logging.info("Subscriber(%r) adding handler %r with filter %r"%
+                         (self.channel_name, handler.id, handler.message_filter))
+            self._init_handler(handler)
+            self.subscriptions.add(handler)
 
+        self.start_receiving()
 
-    def subscribe_with_filter(self,
-                               filter   : Filter,
-                               callback : Callable[[Filter, bytes], None]):
-        self.subscriptions[filter] = callback
-        self.socket.setsockopt(zmq.SUBSCRIBE, filter)
-        self._start_receiving()
+    def remove(self,
+               handler: MessageHandler):
+        '''Remove an existing message handler.'''
 
-    def unsubscribe(self):
-        self.unsubscribe_with_filter(Filter())
+        with self._mtx:
+            logging.info("Subscriber(%r) removing handler %r"%
+                         (self.channel_name, handler.id, handler.message_filter))
+            self.subscriptions.discard(handler)
+            self._deinit_handler(handler)
 
-    def unsubscribe_with_topic(self, topic: str):
-        f = Filter.create_from_topic(topic)
-        self.unsubscribe_with_filter(f)
+    def clear(self):
+        '''Remove all existing message handlers'''
 
-    def unsubscribe_with_filter(self, filter: Filter):
-        self.subscriptions.pop(filter, None)
-        self.socket.setsockopt(zmq.UNSUBCRIBE, filter)
+        with self._mtx:
+            for handler in self.subscriptions:
+                self._deinit_handler(handler)
+            self.subscriptions.clear()
 
-    def _start_receiving (self):
+    def _init_handler(self, handler: MessageHandler):
+        handler.initialize()
+        self.socket.setsockopt(zmq.SUBSCRIBE, handler.message_filter)
+
+    def _deinit_handler(self, handler: MessageHandler):
+        self.socket.setsockopt(zmq.UNSUBCRIBE, handler.message_filter)
+        handler.deinitialize()
+
+    def _invoke_handler(self,
+                        handler: MessageHandler,
+                        data: bytes):
+
+        payload = data[len(handler.message_filter):]
+
+        safe_invoke(handler.handle,
+                    (payload,),
+                    {},
+                    "Subscriber(%r) handler %r"%(self.channel_name, handler.id))
+
+    def _process_message (self, data):
+        with self._mtx:
+            for handler in self.subscriptions:
+                if data.startswith(handler.message_filter):
+                    self._invoke_handler(handler, data)
+                    break
+            else:
+                logging.notice("Subscriber %r received message with no matching filter: %s"%
+                               (self.channel_name, message))
+
+    def start_receiving (self):
         self.keep_receiving = True
         t = self.receive_thread
         if not t or not t.is_alive():
@@ -70,8 +101,7 @@ class Subscriber (Satellite):
                 None, self._receive_loop, 'Subscriber loop', daemon=True)
             t.start()
 
-
-    def _stop_receiving (self):
+    def stop_receiving (self):
         self.keep_receiving = False
         t = self.receive_thread
         if t and t.is_alive():
@@ -84,14 +114,4 @@ class Subscriber (Satellite):
             if len(data):
                 self._process_message(data)
 
-    def _process_message (self, message):
-        self.last_publication = message
-        for filter, callback in self.subscriptions.items():
-            if message.startswith(filter):
-                self._invoke_callback(callback, filter,  message[len(filter):])
-                break
-        else:
-            print("Received data for no subscriber: %r", message)
 
-    def _invoke_callback(self, callback, filter, message):
-        safe_invoke(callback, (filter, message), {}, log=logging.warning)

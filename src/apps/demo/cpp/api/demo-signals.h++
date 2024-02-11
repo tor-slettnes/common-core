@@ -37,7 +37,7 @@ namespace cc::demo
     /// ```
     extern cc::signal::Signal<TimeData> signal_time;
 
-    /// @brief MappedSignal emitted whenever someone issues a greeting.
+    /// @brief MappingSignal emitted whenever someone issues a greeting.
     /// @sa `cc::demo::say_hello()`.
     ///
     /// The mapping key in this case is the identity of the greeter.
@@ -69,5 +69,5 @@ namespace cc::demo
     /// `cc::signal::MAP_ADDITION`. Subsequent invocations will take place
     /// as this signal is emitted, with `change` being either `MAP_ADDITION`,
     /// `MAP_UPDATE`, or `MAP_REMOVAL`.
-    extern cc::signal::MappedSignal<Greeting> signal_greeting;
+    extern cc::signal::MappingSignal<Greeting> signal_greeting;
 }  // namespace cc::demo

@@ -13,7 +13,7 @@ from .error import Error
 from typing import Callable
 from inspect import getfullargspec
 
-class RequestHandler (object):
+class RequestHandler (ProtoBuf):
     '''Handle RPC requests received as ProtoBuf `CC.RR.Request` messages.
 
     The `Request` message is processed as follows:

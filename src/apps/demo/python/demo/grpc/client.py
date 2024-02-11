@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from ..core import API, CC, ProtoBuf, demo_signals
+from ..core import API, CC, ProtoBuf, SignalSlot, demo_signals
 from ipc.grpc.signalclient import SignalClient
 
 
@@ -25,45 +25,44 @@ class DemoClient (API, SignalClient):
     ## such as target host/port.
     service_name = None
 
+    ## `signal_type` is required only if we don't provide a an existing
+    ## SignalStore() instance to the `SignalClient.__init__()` base, below.
+    ## In our case we do, since we share the signal store with other message
+    ## clients which also receive and re-emit signals from remote endpoints.
+    ## However, let's set this variable anyway for illustration.
+    signal_type = CC.Demo.Signal
+
+
     def __init__(self,
-                 host           : str = "",
-                 identity       : str = None,
-                 wait_for_ready : bool = False):
+                 host           : str = "",      # gRPC server
+                 identity       : str = None,    # Greeter identity
+                 wait_for_ready : bool = False): # Keep trying to connect
 
         API.__init__(self, 'Python gRPC client', identity)
         SignalClient.__init__(self,
                               host = host,
                               signal_store = demo_signals,
-                              watch_all = True,
+                              watch_all = False,
                               wait_for_ready = wait_for_ready)
 
 
     def say_hello(self, greeting: CC.Demo.Greeting):
-        '''
-        @brief  Issue a greeting to anyone who may be listening
-        @param[in] greeting
-            A greeting for our listeners.
-        '''
+        self.check_type(greeting, CC.Demo.Greeting)
         self._wrap(self.stub.say_hello, greeting)
 
     def get_current_time(self) -> CC.Demo.TimeData:
-        '''
-        Get current time data.
-        @return
-            Current time data provided by the specific implementation.
-        '''
         return self._wrap(self.stub.get_current_time)
 
     def start_ticking(self) -> None:
-        '''
-        Tell the server to start issuing periodic time updates
-        '''
-
         self._wrap(self.stub.start_ticking)
 
     def stop_ticking(self) -> None:
-        '''
-        Tell the server to stop issuing periodic time updates
-        '''
-
         self._wrap(self.stub.stop_ticking)
+
+    def start_notify_greetings(self, callback: SignalSlot):
+        API.start_notify_greetings(self, callback)
+        self.start_watching()
+
+    def start_notify_time(self, callback: SignalSlot):
+        API.start_notify_time(self, callback)
+        self.start_watching()

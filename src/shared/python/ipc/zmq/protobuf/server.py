@@ -16,7 +16,7 @@ from typing import Sequence
 import logging
 
 
-class Server (Responder):
+class Server (Responder, ProtoBuf):
     '''ZMQ RPC server using ProtoBuf messages'''
 
     def __init__(self,

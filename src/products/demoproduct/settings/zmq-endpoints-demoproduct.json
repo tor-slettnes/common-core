@@ -18,12 +18,11 @@
         "port"   : 33662        // "D-E-M-O-C" on phone keypad
     },
 
-    "Demo Publisher":       // Endpoint name
+    "Demo Message":       // Endpoint name
     {
         // "scheme" : "tcp",       // Communicate over TCP by default
         // "connect": "localhost", // subscriber connects to localhost
         // "listen" : "*",         // publisher listens on all interfaces
-        "port"   : 33667,        // D-E-M-O-P on phone keypad
-        "format" : "protobuf",   // Payload format
-        "filter" : ""            // ZMQ subscription filter     }
+        "port"   : 33667        // D-E-M-O-P on phone keypad
+    }
 }

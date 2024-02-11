@@ -7,15 +7,12 @@
 
 #pragma once
 #include "zmq-satellite.h++"
+#include "zmq-messagehandler.h++"
 #include "zmq-filter.h++"
-#include "types/bytevector.h++"
-#include "types/valuemap.h++"
-#include "platform/symbols.h++"
-#include "logging/logging.h++"
 
 #include <thread>
-#include <functional>
-#include <variant>
+#include <unordered_set>
+#include <mutex>
 
 namespace cc::zmq
 {
@@ -24,18 +21,6 @@ namespace cc::zmq
         using This = Subscriber;
         using Super = Satellite;
 
-        using Callback = std::variant<
-            std::function<void(const ::zmq::message_t &)>,
-            std::function<void(const types::ByteVector &)>,
-            std::function<void(const std::string &topic, const types::ByteVector &)>>;
-
-        enum CallbackSignature
-        {
-            CB_ZMQ_MSG,
-            CB_BYTES,
-            CB_TOPIC_BYTES,
-        };
-
     protected:
         Subscriber(const std::string &host_address,
                    const std::string &channel_name);
@@ -43,33 +28,29 @@ namespace cc::zmq
         ~Subscriber();
 
     public:
-        void subscribe(const Callback &callback);
+        void deinitialize() override;
 
-        void subscribe(const Filter &filter,
-                       const Callback &callback);
-
-        void subscribe_topic(const std::string &topic,
-                             const Callback &callback);
-
-        void unsubscribe();
-
-        void unsubscribe(const Filter &filter);
-
-        void unsubscribe_topic(const std::string &topic);
+    public:
+        void add(std::shared_ptr<MessageHandler> handler);
+        void remove(std::shared_ptr<MessageHandler> handler);
+        void clear();
 
     private:
         void start_receiving();
         void stop_receiving();
         void receive_loop();
 
-    protected:
-        virtual void process_zmq_message(const ::zmq::message_t &msg);
-        virtual void invoke_callback(const Callback &callback,
-                                     const ::zmq::message_t &msg,
-                                     const Filter &filter);
+        void init_handler(const std::shared_ptr<MessageHandler> &handler);
+        void deinit_handler(const std::shared_ptr<MessageHandler> &handler);
+        void invoke_handler(const std::shared_ptr<MessageHandler> &handler,
+                            const types::ByteVector &payload,
+                            const Filter &filter);
+
+        void process_message(const types::ByteVector &bytes);
 
     private:
-        std::map<Filter, Callback> subscriptions_;
+        std::recursive_mutex mtx_;
+        std::unordered_set<std::shared_ptr<MessageHandler>> handlers_;
         std::thread receive_thread;
         bool keep_receiving;
     };

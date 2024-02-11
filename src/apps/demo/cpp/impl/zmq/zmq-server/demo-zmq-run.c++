@@ -19,6 +19,7 @@ namespace cc::demo::zmq
         auto zmq_publisher = cc::demo::zmq::Publisher::create_shared(
             bind_address);
 
+
         // Instantiate Server to handle incoming requests from client
         auto zmq_server = cc::demo::zmq::Server::create_shared(
             api_provider,
@@ -29,20 +30,18 @@ namespace cc::demo::zmq
 
         try
         {
-            log_debug("Initializing Demo ZeroMQ publisher");
             zmq_publisher->initialize();
             log_info("Demo ZeroMQ publisher is ready on ", zmq_publisher->bind_address());
 
-            log_debug("Initializing Demo ZeroMQ command server");
             zmq_server->initialize();
             log_info("Demo ZeroMQ command server is ready on ", zmq_server->bind_address());
-            zmq_server->run();
-            log_info("Demo ZeroMQ command server is shutting down");
 
-            log_debug("Deinitializing Demo ZeroMQ server");
+            zmq_server->run();
+
+            log_info("Demo ZeroMQ command server is shutting down");
             zmq_server->deinitialize();
 
-            log_debug("Deinitializing Demo ZeroMQ publisher");
+            log_info("Demo ZeroMQ publisher is shutting down");
             zmq_publisher->deinitialize();
         }
         catch (const std::exception &e)

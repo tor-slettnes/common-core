@@ -7,9 +7,11 @@
 
 #pragma once
 #include "zmq-host.h++"
+#include "zmq-filter.h++"
 #include "types/bytevector.h++"
 
 #include <thread>
+#include <memory>
 
 namespace cc::zmq
 {
@@ -23,15 +25,8 @@ namespace cc::zmq
                   const std::string &channel_name);
 
     public:
-        void publish(::zmq::message_t &&msg);
-
-        void publish(const types::ByteVector &bytes);
-
-        void publish_with_filter(const types::ByteVector &filter,
-                                 const types::ByteVector &bytes);
-
-        void publish_with_topic(const std::string &topic,
-                                const types::ByteVector &bytes);
+        void publish(const Filter &filter,
+                     const types::ByteVector &bytes);
     };
 
 }  // namespace cc::zmq

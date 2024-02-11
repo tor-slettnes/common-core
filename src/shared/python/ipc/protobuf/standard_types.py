@@ -141,3 +141,13 @@ class ProtoBuf (object):
             ignore_unknown_fields = ignore_unknown_fields)
         return msg
 
+    @classmethod
+    def check_type(cls,
+                   value : Message,
+                   expected: MessageType = Message):
+
+        assert isinstance(expected, ProtoBuf.MessageType)
+
+        if not isinstance(value, expected):
+            raise TypeError('Expected %s, not %s'%
+                            (expected.DESCRIPTOR.full_name, type(value).__name__)) from None

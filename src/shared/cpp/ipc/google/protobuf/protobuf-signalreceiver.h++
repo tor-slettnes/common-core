@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file protobuf-signal.h++
+/// @file protobuf-signalreceiver.h++
 /// @brief Handle ProtoBuf Signal messages
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
@@ -60,7 +60,7 @@ namespace cc::protobuf
         ///     Method that will be invoked to handle corresponding Signal
         ///     messages as they are received from the server. Normally this
         ///     method will decode the corresponding field from within the
-        ///     message and emit the result as a local Signal or MappedSignal
+        ///     message and emit the result as a local Signal or MappingSignal
         ///     within the client process, thereby mirroring the original signal
         ///     that was emitted within the server.
 

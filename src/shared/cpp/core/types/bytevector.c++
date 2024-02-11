@@ -157,18 +157,19 @@ namespace cc::types
     }
 
     std::string ByteVector::to_hex(bool uppercase,
-                                  std::size_t groupsize) const
+                                   std::size_t groupsize) const
     {
         static const std::vector<std::string> hex_digits = {
             "0123456789abcdef",
             "0123456789ABCDEF",
         };
+        const std::string &xdigits = hex_digits.at(uppercase);
 
         std::string encoded;
-        encoded.reserve((this->size() * 2) +
-                        (groupsize ? (this->size() / groupsize)
-                                   : 0));
-        const std::string &xdigits = hex_digits.at(uppercase);
+        uint ndigits = this->size() * 2;
+        uint nspaces = groupsize ? (this->size() / groupsize) : 0;
+        encoded.reserve(ndigits + nspaces);
+
         std::size_t counter = 0;
         for (std::uint8_t byte : *this)
         {

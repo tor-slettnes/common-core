@@ -9,8 +9,8 @@
 from .requesthandler import DemoRequestHandler
 from .common import DEMO_SERVICE_CHANNEL, DEMO_PUBLISHER_CHANNEL
 from ..core import API, demo_signals
-from ipc.zmq.protobuf.server import Server as ProtoServer
-from ipc.zmq.protobuf.signalpublisher import SignalPublisher
+from ipc.zmq.basic import Publisher
+from ipc.zmq.protobuf import Server as ProtoServer, SignalWriter
 
 class Server (ProtoServer):
     def __init__(self,
@@ -24,15 +24,18 @@ class Server (ProtoServer):
                              request_handlers = [
                                  DemoRequestHandler(api_provider),
                              ])
-        self.publisher = SignalPublisher(
-            bind_address = bind_publisher_address,
-            signal_store = demo_signals,
-            channel_name = DEMO_PUBLISHER_CHANNEL)
+
+        self.publisher = Publisher(bind_address = bind_publisher_address,
+                                   channel_name = DEMO_PUBLISHER_CHANNEL)
+
+        self.signalwriter = SignalWriter(self.publisher, demo_signals)
 
     def initialize(self):
         ProtoServer.initialize(self)
         self.publisher.initialize()
+        self.signalwriter.start()
 
     def deinitialize(self):
+        self.signalwriter.stop()
         self.publisher.deinitialize()
         ProtoServer.deinitialize(self)

@@ -32,8 +32,8 @@ class API (object):
     def hello(self,
               text: str,
               **kwargs):
-        '''
-        @brief Say hello to anyone who might be listening.
+        '''Say hello to anyone who might be listening.
+
         @param[in] text
             What we're telling our listeners
         @param[in] kwargs
@@ -42,6 +42,8 @@ class API (object):
             This is a convencience wrapper to build a `CC.Demo.Greeting` object
             and pass it to `say_hello()`.
         '''
+
+        self.check_type(text, str)
 
         greeting = CC.Demo.Greeting(text=text,
                                     identity=self.identity,
@@ -53,8 +55,9 @@ class API (object):
 
 
     def say_hello(self, greeting: CC.Demo.Greeting):
-        '''
-        @brief  Issue a greeting to anyone who may be listening
+        '''Issue a greeting to anyone who may be listening.
+        For interactive use, the `hello()` wrapper method may be more convenient.
+
         @param[in] greeting
             A greeting for our listeners.
         '''
@@ -63,14 +66,13 @@ class API (object):
 
 
     def get_current_time(self) -> CC.Demo.TimeData:
-        '''
-        Get current time data.
+        '''Get current time data.
+
         @return
             Current time data provided by the specific implementation.
         '''
 
         raise NotImplementedError("Method not implemented by %s"%(self,))
-
 
 
     def start_ticking(self) -> None:
@@ -88,8 +90,7 @@ class API (object):
 
 
     def start_notify_greetings(self, callback: SignalSlot):
-        '''
-        Register a callback to be invoked whenever a greeting is received
+        '''Register a callback to be invoked whenever a greeting is received
 
         @param[in] callback
             Callback method, which will receive three arguments:

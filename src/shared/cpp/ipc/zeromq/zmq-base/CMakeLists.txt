@@ -30,6 +30,8 @@ set(SOURCES
   zmq-filter.c++
   zmq-publisher.c++
   zmq-subscriber.c++
+  zmq-messagehandler.c++
+  zmq-messagewriter.c++
   zmq-requester.c++
   zmq-responder.c++
 )

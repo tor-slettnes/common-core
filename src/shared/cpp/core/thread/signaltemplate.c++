@@ -15,7 +15,7 @@ namespace cc::signal
 
     //==========================================================================
     /// \class BaseSignal
-    /// \brief Abstract base for Signal<T> and MappedSignal<T>
+    /// \brief Abstract base for Signal<T> and MappingSignal<T>
 
     BaseSignal::BaseSignal(const std::string &name, bool caching)
         : name_(name),

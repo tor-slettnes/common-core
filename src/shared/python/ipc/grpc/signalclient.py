@@ -52,33 +52,64 @@ class SignalClient (Client):
     }
     ```
 
-    To receive signals from the server you would create one or more callback
-    handlers of the form:
+    In your `SignalClient` subclass you would do one of the following:
+
+     * Pass an existing `SignalStore()` instance to `__init__()`:
+
+       ```python
+       my_signal_store = ipc.base.SignalStore(signal_type = CC.mypackage.MySignal)
+
+       class MyServiceClient (ipc.grpc.SignalClient):
+           from my_service_pb2_grpc import MyServiceStub as Stub
+
+           def __init__ (self, ...):
+               ipc.grpc.SignalClient.__init__(self, signal_store = my_signal_store)
+       ```
+
+
+     * Alternatively, override the class variable `signal_type` to allow a new
+       `SignalStore()` instance to be created for the corresponding ProtoBuf
+       message type:
+
+       ```python
+       class MyServiceClient (ipc.grpc.SignalClient):
+           from my_service_pb2_grpc import MyServiceStub as Stub
+
+           signal_type = CC.mypackage.MySignal
+       ```
+
+
+    Next, you'll need callback handlers to handle the received and re-emitted signals:
+
+    ```python
+        def my_data1_simple_handler(data1: CC.mypackage.DataType1):
+            """Handle DataType1 signals from server"""
+            print("Received data1: ", data1)
+
+        def my_data2_mapping_handler(signal: CC.mypackage.Signal):
+            """Handle DataType2 mapping signals from server"""
+             print("Received DataType2:",
+                   "mapping change:", signal.change,   # only used for mapping signals
+                   "mapping key:", signal.key,         # only used for mapping signals
+                   "data2:", signal.data2)
 
     ```
-        def my_signal_handler(change: CC.Signal.MappingChange,
-                              key   : str,
-                              data  : DataType1):
-           """Handle DataType1 signals from server"""
-    ```
 
+    Now it's time to instantiate your subclass and connect the above callback
+    handlers to the appropriate slots in its signal store:
 
-    Finally, you would instantiate a subclass of this `SignalClient`:
+    ```python
+        my_client = MyServiceClient()
 
-    ```
-        from ipc.base import SignalStore
-        from generated.my_service_pb2_grpc import MySignal
-
-        signal_store = SignalStore(signal_type=MySignal)
-        signal_store.connect_signal('data1', my_signal_handler)
-
-        client = MySignalClient(host, signal_store)
-    ```
-
-    Finally, once you have connected handlers for all desired slots,
-    start monitoring signals from the server:
+        my_client.signal_store.connect_signal_data('data1', my_data1_simple_handler)
+        my_client.signal_store.connect_signal('data2', my_data2_mapping_handler)
 
     ```
+
+    Finally, once you have connected handlers for all desired slots, start
+    monitoring signals from the server:
+
+    ```python
         client.start_watching()
     ```
 
@@ -88,19 +119,30 @@ class SignalClient (Client):
 
     '''
 
+    ### Subclasses should override this to the appropriate signal type.
+    signal_type = None
+
 
     #===========================================================================
     # Instance methods
 
     def __init__(self,
                  host: str,
-                 signal_store : SignalStore,
+                 signal_store : SignalStore = None,
                  watch_all: bool = False,
+                 use_cache: bool = True,
                  **kwargs):
         '''Start a new signal client instance.
 
         @param[in] host
             IP address or resolvable host name of platform server
+
+        @param[in] signal_store
+            Use an existing `SignalStore()` instance instead of creating a new
+            one.  This can be useful if signals are (received and) emitted from
+            both this client and other parts of your code, for instance other
+            messaging endpoints.  If not provided, the `signal_type` class
+            attribute must be overridden to a suitable ProtoBuf `Signal` type.
 
         @param[in] watch_all
             Watch all signals (specify an empty filter to server), even if
@@ -111,11 +153,22 @@ class SignalClient (Client):
         @param[in] use_cache
             Retain the most recent data value of each signal received from the
             server.  If the signal includes a `key` field (i.e., if it is a
-            `MappedSignal` instance), keep the most recent data value per key.
+            `MappingSignal` instance), keep the most recent data value per key.
             These values can later be queried using `get_cached()`.
+
         '''
         Client.__init__(self, host, **kwargs)
-        self._signal_store  = signal_store
+
+        if not signal_store:
+            assert signal_type is not None, \
+                   ('SignalClient() subclass %s() must either pass in a '
+                    '`SignalStore()` instance or set the `signal_type`'
+                    'class variable to an appropriate ProtoBuf Signal() type'%
+                    (type(self).__name__))
+
+            signal_store = SignalStore(signal_type=signal_type, use_cache=use_cache)
+
+        self.signal_store  = signal_store
         self._watcherThread = None
         if watch_all:
             self.start_watching(True)
@@ -125,16 +178,24 @@ class SignalClient (Client):
         if watch_all:
             return CC.Signal.Filter()
         else:
-            indexmap   = self.signal_fields()
-            indices    = [indexmap.get(slot, 0) for slot in self._slots]
+            indexmap   = self.signal_store.signal_fields()
+            indices    = [indexmap.get(slot) for slot in self.signal_store.slots]
             return CC.Signal.Filter(polarity=True, index=filter(None, indices))
 
     def start_watching(self, watch_all: bool = True):
-        '''
-        Start watching for signals. This spawns a new thread to stream signal
-        messages from the service. Specifically, it invokes the `watch()` RPC
-        method with a `CC.Signal.Filter` input based on which signal slots were
-        previosly connected to one or more handlers.
+        '''Start watching for signals.
+
+        @param[in] watch_all
+            Watch all signals, not just those that were previously connected to
+            slots.  This is mainly useful if not all intended signals are
+            connected yet.
+
+        This spawns a new thread to stream signal messages from the service.
+        Specifically, it invokes the `watch()` RPC method to stream back Signal
+        messages, which are then passed on to the `ipc.base.SignalStore()`
+        instance that was provided to this client.  From there they are emitted
+        locally.
+
         '''
 
         if not self._watcherThread:
@@ -158,7 +219,7 @@ class SignalClient (Client):
             sf = self.signal_filter(watch_all)
             for msg in self._wrap(
                     self.stub.watch, sf, wait_for_ready = True):
-                self._signal_store.emit(msg)
+                self.signal_store.emit(msg)
                 if not self._watcherThread:
                     break
         finally:

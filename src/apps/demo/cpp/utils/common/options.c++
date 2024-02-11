@@ -88,7 +88,7 @@ namespace cc::demo
         if (show_greetings)
         {
             // Invoke `on_greeting_update` whenever someone sends a greeting.
-            // This signal is based on `cc::signal::MappedSignal<>`, so
+            // This signal is based on `cc::signal::MappingSignal<>`, so
             // the callback function will receive three arguments:
             //   - The change type (MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL)
             //   - The key (in this case we use the greeter's identity)

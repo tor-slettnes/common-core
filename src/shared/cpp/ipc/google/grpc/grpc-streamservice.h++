@@ -36,7 +36,7 @@ namespace cc::grpc
         using Encoder = std::function<void(DataType, MessageType *)>;
 
         template <class DataType, class MessageType, class KeyType = std::string>
-        using MappedEncoder = std::function<
+        using MappingEncoder = std::function<
             void(signal::MappingChange, KeyType, DataType, MessageType *)>;
 
     protected:
@@ -86,8 +86,8 @@ namespace cc::grpc
 
         template <class DataType, class MessageType, class KeyType = std::string>
         ::grpc::Status connect_stream(
-            signal::MappedSignal<DataType> *mappedsignal,
-            const MappedEncoder<DataType, MessageType, KeyType> &encoder,
+            signal::MappingSignal<DataType> *mappingsignal,
+            const MappingEncoder<DataType, MessageType, KeyType> &encoder,
             ::grpc::ServerContext *cxt,
             ::grpc::ServerWriter<MessageType> *writer)
         {
@@ -95,12 +95,12 @@ namespace cc::grpc
 
             try
             {
-                // Create a new blocking queue and connect `mappedsignal` to its
+                // Create a new blocking queue and connect `mappingsignal` to its
                 // `put()` method.  As signals are emitted, they are thus
                 // encoded and added to the queue.
                 types::BlockingQueue<MessageType> queue;
 
-                mappedsignal->connect(
+                mappingsignal->connect(
                     slot_id,  // id
                     [&](signal::MappingChange change,
                         const KeyType &key,
@@ -116,12 +116,12 @@ namespace cc::grpc
                 this->stream_from_queue(&queue, cxt, writer);
 
                 // Disconnect from the signal.
-                mappedsignal->disconnect(slot_id);
+                mappingsignal->disconnect(slot_id);
                 return grpc::Status::OK;
             }
             catch (...)
             {
-                mappedsignal->disconnect(slot_id);
+                mappingsignal->disconnect(slot_id);
                 return this->failure(std::current_exception(),
                                      str::format("streaming to %s", cxt->peer()));
             }

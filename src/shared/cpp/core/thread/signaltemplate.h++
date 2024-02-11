@@ -22,7 +22,7 @@ namespace cc::signal
 {
     //==========================================================================
     /// @class BaseSignal
-    /// @brief Abstract/untyped base for Signal<T> and MappedSignal<T>
+    /// @brief Abstract/untyped base for Signal<T> and MappingSignal<T>
 
     class BaseSignal
     {
@@ -248,35 +248,35 @@ namespace cc::signal
     }
 
     //==========================================================================
-    /// @class MappedSignal
+    /// @class MappingSignal
     /// @brief Abstract base for signals that emit mappable data alongside
     ///   with their mapping key and a change type (added, removed, updated).
     ///
     ///
     /// Example:
     /// @code
-    ///      void on_my_signal(MappedSignal::MappingChange change,
+    ///      void on_my_signal(MappingSignal::MappingChange change,
     ///                       const std::string &key,
     ///                       const MyDataType &data) {...}
     ///      ...
-    ///      MappedSignal<MyDataType> my_mapped_signal;
-    ///      signal.connect(on_my_mapped_signal);
+    ///      MappingSignal<MyDataType> my_mapping_signal;
+    ///      signal.connect(on_my_mapping_signal);
     ///      ...
     ///      MyDataType mydata = {...};
-    ///      my_mapped_signal.emit(MAP_ADDITION, "key", mydata);
-    ///      my_mapped_signal.emit(MAP_UPDATE, "key", mydata);
-    ///      my_mapped_signal.clear("key");
+    ///      my_mapping_signal.emit(MAP_ADDITION, "key", mydata);
+    ///      my_mapping_signal.emit(MAP_UPDATE, "key", mydata);
+    ///      my_mapping_signal.clear("key");
     /// @endcode
 
     template <class DataType, class KeyType = std::string>
-    class MappedSignal : public BaseSignal
+    class MappingSignal : public BaseSignal
     {
         using Super = BaseSignal;
 
     public:
         using Slot = std::function<void(MappingChange, const KeyType &, const DataType &)>;
 
-        MappedSignal(const std::string &id, bool caching = false)
+        MappingSignal(const std::string &id, bool caching = false)
             : Super(id, caching)
         {
         }

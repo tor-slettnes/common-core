@@ -6,11 +6,10 @@
 //==============================================================================
 
 #pragma once
-#include "zmq-protobuf-signalsubscriber.h++"
 #include "demo-zmq-common.h++"
+#include "zmq-protobuf-signalhandler.h++"
+#include "zmq-subscriber.h++"
 #include "types/create-shared.h++"
-
-#include "demo_types.pb.h"
 
 namespace cc::demo::zmq
 {
@@ -21,11 +20,11 @@ namespace cc::demo::zmq
     /// Received messages are re-emitted locally via
     /// @sa cc::demo::signal_time and @sa cc::demo::signal_greeting.
 
-    class Subscriber : public cc::zmq::ProtoBufSignalSubscriber<CC::Demo::Signal>,
+    class Subscriber : public cc::zmq::Subscriber,
                        public cc::types::enable_create_shared<Subscriber>
     {
         using This = Subscriber;
-        using Super = cc::zmq::ProtoBufSignalSubscriber<CC::Demo::Signal>;
+        using Super = cc::zmq::Subscriber;
 
     protected:
         Subscriber(const std::string &host_address = "",
@@ -33,6 +32,7 @@ namespace cc::demo::zmq
 
     public:
         void initialize() override;
+        void deinitialize() override;
     };
 
 }  // namespace cc::demo::zmq

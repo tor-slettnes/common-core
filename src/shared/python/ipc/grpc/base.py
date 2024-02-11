@@ -24,7 +24,7 @@ except ImportError as e:
 #===============================================================================
 # Base class
 
-class Base (Endpoint):
+class Base (Endpoint, ProtoBuf):
     ipc_flavor = 'gRPC'
 
     # `service_name` should be overwritten by final subclass to look up settings
