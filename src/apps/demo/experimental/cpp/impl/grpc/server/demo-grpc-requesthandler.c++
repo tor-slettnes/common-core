@@ -11,7 +11,7 @@
 #include "protobuf-message.h++"
 #include "demo-signals.h++"
 
-namespace cc::demo::grpc
+namespace demo::grpc
 {
 
     RequestHandler::RequestHandler(const std::shared_ptr<API>& api_provider)
@@ -90,4 +90,4 @@ namespace cc::demo::grpc
             context,
             writer);
     }
-}  // namespace cc::demo::grpc
+}  // namespace demo::grpc

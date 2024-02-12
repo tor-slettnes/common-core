@@ -7,7 +7,7 @@
 
 #include "streamable.h++"
 
-namespace cc::types
+namespace shared::types
 {
     std::ostream &operator<<(std::ostream &stream, const Streamable &obj)
     {
@@ -34,4 +34,4 @@ namespace cc::types
         return out.str();
     }
 
-}  // namespace cc::types
+}  // namespace shared::types

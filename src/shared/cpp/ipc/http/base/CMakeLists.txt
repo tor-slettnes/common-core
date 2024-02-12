@@ -18,7 +18,7 @@ set(LIB_DEPS
 
 ### Third-party package dependencies
 set(PKG_DEPS
-  python3-embed
+  curlpp
 )
 
 ### Source files in this folder

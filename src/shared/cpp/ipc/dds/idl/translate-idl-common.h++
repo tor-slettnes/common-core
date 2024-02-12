@@ -10,7 +10,7 @@
 #include "chrono/date-time.h++"
 #include "types/value.h++"
 
-namespace cc::idl
+namespace idl
 {
     //==========================================================================
     // Encode/decode Boolean value
@@ -24,20 +24,20 @@ namespace cc::idl
     //==========================================================================
     // Encode/decode Unsigned Integer value
 
-    void encode(cc::types::largest_uint native,
+    void encode(shared::types::largest_uint native,
                 CC::Common::UnsignedValue *idl) noexcept;
 
     void decode(const CC::Common::UnsignedValue &idl,
-                cc::types::largest_uint *native) noexcept;
+                shared::types::largest_uint *native) noexcept;
 
     //==========================================================================
     // Encode/decode Signed Integer value
 
-    void encode(cc::types::largest_sint native,
+    void encode(shared::types::largest_sint native,
                 CC::Common::SignedValue *idl) noexcept;
 
     void decode(const CC::Common::SignedValue &idl,
-                cc::types::largest_sint *native) noexcept;
+                shared::types::largest_sint *native) noexcept;
 
     //==========================================================================
     // Encode/decode real value
@@ -51,29 +51,29 @@ namespace cc::idl
     //==========================================================================
     // Encode/decode Complex value
 
-    void encode(const cc::types::complex &native,
+    void encode(const shared::types::complex &native,
                 CC::Common::ComplexValue *idl) noexcept;
 
     void decode(const CC::Common::ComplexValue &idl,
-                cc::types::complex *native) noexcept;
+                shared::types::complex *native) noexcept;
 
     //==========================================================================
     // Encode/decode Timestamp
 
-    void encode(const cc::dt::TimePoint &native,
+    void encode(const shared::dt::TimePoint &native,
                 CC::Common::Timestamp *idl) noexcept;
 
     void decode(const CC::Common::Timestamp &idl,
-                cc::dt::TimePoint *native) noexcept;
+                shared::dt::TimePoint *native) noexcept;
 
     //==========================================================================
     // Encode/decode Duration
 
-    void encode(const cc::dt::Duration &native,
+    void encode(const shared::dt::Duration &native,
                 CC::Common::Duration *idl) noexcept;
 
     void decode(const CC::Common::Duration &idl,
-                cc::dt::Duration *native) noexcept;
+                shared::dt::Duration *native) noexcept;
 
     //==========================================================================
     // Encode/decode String value
@@ -84,4 +84,4 @@ namespace cc::idl
     void decode(const CC::Common::StringValue &idl,
                 std::string *native) noexcept;
 
-}  // namespace cc::idl
+}  // namespace idl

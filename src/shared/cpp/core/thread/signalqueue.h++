@@ -12,7 +12,7 @@
 #include <functional>
 #include <unordered_set>
 
-namespace cc::signal
+namespace shared::signal
 {
 
     //==========================================================================
@@ -138,4 +138,4 @@ namespace cc::signal
         std::string id;
         bool filter_polarity;
     };
-}  // namespace cc::signal
+}  // namespace shared::signal

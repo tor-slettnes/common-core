@@ -10,11 +10,11 @@
 #include "demo-api.h++"
 #include "thread/signaltemplate.h++"
 
-namespace cc::demo
+namespace demo
 {
-    class Options : public cc::argparse::CommandOptions
+    class Options : public shared::argparse::CommandOptions
     {
-        using Super = cc::argparse::CommandOptions;
+        using Super = shared::argparse::CommandOptions;
 
     public:
         Options(const std::string &implementation);
@@ -26,11 +26,11 @@ namespace cc::demo
         void on_monitor_start() override;
         void on_monitor_end() override;
 
-        void on_time(const cc::demo::TimeData &time);
+        void on_time(const demo::TimeData &time);
 
-        void on_greeting(cc::signal::MappingChange change,
+        void on_greeting(shared::signal::MappingChange change,
                          const std::string &identity,
-                         const cc::demo::Greeting &greeting);
+                         const demo::Greeting &greeting);
 
         void say_hello();
         void get_current_time();
@@ -44,4 +44,4 @@ namespace cc::demo
 
     extern std::unique_ptr<Options> options;
 
-}  // namespace cc::demo
+}  // namespace demo

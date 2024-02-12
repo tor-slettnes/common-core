@@ -10,7 +10,7 @@
 // #using <system.dll>
 // #using <mscorlib.dll>
 
-namespace cc::platform
+namespace shared::platform
 {
     WindowsLogSinkProvider::WindowsLogSinkProvider(const std::string &identity)
         : Super("WindowsLogSinkProvider", identity)
@@ -56,4 +56,4 @@ namespace cc::platform
         {status::Level::FATAL, EVENTLOG_ERROR_TYPE},
     };
 
-}  // namespace cc::platform
+}  // namespace shared::platform

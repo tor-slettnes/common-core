@@ -9,7 +9,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-namespace cc::signal
+namespace shared::signal
 {
     define_log_scope("signal");
 
@@ -56,4 +56,4 @@ namespace cc::signal
         }
     }
 
-}  // namespace cc::signal
+}  // namespace shared::signal

@@ -7,7 +7,7 @@
 
 #include "jsondecoder.h++"
 
-namespace cc::json
+namespace shared::json
 {
     types::Value JsonDecoder::decodeValue(const rapidjson::Value &jv)
     {
@@ -80,4 +80,4 @@ namespace cc::json
         }
         return kvmap;
     }
-}  // namespace cc::json
+}  // namespace shared::json

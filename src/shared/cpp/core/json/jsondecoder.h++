@@ -16,7 +16,7 @@ namespace rapidjson
 
 #include <rapidjson/document.h>
 
-namespace cc::json
+namespace shared::json
 {
     class JsonDecoder
     {
@@ -27,4 +27,4 @@ namespace cc::json
         static types::ValueList decodeArray(const rapidjson::Value &jarray);
         static types::KeyValueMap decodeObject(const rapidjson::Value &jobject);
     };
-}  // namespace cc::json
+}  // namespace shared::json

@@ -11,31 +11,31 @@
 #include "dds-subscriber.h++"
 #include "types/create-shared.h++"
 
-namespace cc::demo::dds
+namespace demo::dds
 {
     //==========================================================================
     /// @class Subscriber
     /// @brief Subscribe to and process updates from demo server
     ///
     /// Received messages are re-emitted locally via
-    /// @sa cc::demo::signal_time and @sa cc::demo::signal_greeting.
+    /// @sa demo::signal_time and @sa demo::signal_greeting.
 
-    class Subscriber : public cc::dds::Subscriber,
-                       public cc::types::enable_create_shared<Subscriber>
+    class Subscriber : public shared::dds::Subscriber,
+                       public shared::types::enable_create_shared<Subscriber>
     {
         using This = Subscriber;
-        using Super = cc::dds::Subscriber;
+        using Super = shared::dds::Subscriber;
 
     protected:
         Subscriber(const std::string &channel_name, int domain_id);
 
     private:
         static void on_time_update(
-            cc::signal::MappingChange change,
+            shared::signal::MappingChange change,
             const CC::Demo::TimeData &time_data);
 
         static void on_greeting_update(
-            cc::signal::MappingChange change,
+            shared::signal::MappingChange change,
             const CC::Demo::Greeting &greeting);
 
     private:
@@ -43,4 +43,4 @@ namespace cc::demo::dds
         DataReaderRef<CC::Demo::Greeting> greeting_reader;
     };
 
-}  // namespace cc::demo::dds
+}  // namespace demo::dds

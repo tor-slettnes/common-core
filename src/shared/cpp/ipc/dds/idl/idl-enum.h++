@@ -13,12 +13,12 @@
 #include <optional>
 #include <type_traits>
 
-namespace cc::idl
+namespace idl
 {
     template <class T, std::enable_if_t<std::is_enum_v<T>, bool> = true>
-    cc::types::SymbolMap<T> enum_symbols()
+    shared::types::SymbolMap<T> enum_symbols()
     {
-        cc::types::SymbolMap<T> map;
+        shared::types::SymbolMap<T> map;
         auto tc = rti::topic::dynamic_type<T>::get();
 
         for (const auto &member : tc.members())
@@ -70,4 +70,4 @@ namespace cc::idl
         }
     }
 
-}  // namespace cc::idl
+}  // namespace idl

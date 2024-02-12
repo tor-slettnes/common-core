@@ -21,7 +21,7 @@
 
 using namespace std::literals::string_literals;  // ""s
 
-namespace cc::str
+namespace shared::str
 {
     // std::string type_description(const std::type_info &ti);
     void checkstream(const std::istream &ss, const std::string &s, const std::type_info &ti);
@@ -144,7 +144,7 @@ namespace cc::str
     {
         return StringConvert<T>::to_string(value);
     }
-}  // namespace cc::str
+}  // namespace shared::str
 
 namespace std
 {
@@ -152,7 +152,7 @@ namespace std
     inline std::ostream &operator<<(std::ostream &stream,
                                     const std::pair<T1, T2> &pair)
     {
-        cc::str::format(stream, "{%r, %r}", pair.first, pair.second);
+        shared::str::format(stream, "{%r, %r}", pair.first, pair.second);
         return stream;
     }
 
@@ -164,7 +164,7 @@ namespace std
         std::string sep = "";
         for (const auto &element : vector)
         {
-            cc::str::format(stream, "%s%r", sep, element);
+            shared::str::format(stream, "%s%r", sep, element);
             sep = ", ";
         }
         stream << "}";
@@ -179,7 +179,7 @@ namespace std
         std::string sep = "";
         for (const auto &kv : map)
         {
-            cc::str::format(stream, "%s%r: %r", sep, kv.first, kv.second);
+            shared::str::format(stream, "%s%r: %r", sep, kv.first, kv.second);
             sep = ", ";
         }
         stream << "}";
@@ -194,7 +194,7 @@ namespace std
         std::string sep = "";
         for (const auto &kv : map)
         {
-            cc::str::format(stream, "%s%r: %r", sep, kv.first, kv.second);
+            shared::str::format(stream, "%s%r: %r", sep, kv.first, kv.second);
             sep = ", ";
         }
         stream << "}";
@@ -209,7 +209,7 @@ namespace std
         std::string sep = "";
         for (const auto &v : set)
         {
-            cc::str::format(stream, "%s%r", sep, v);
+            shared::str::format(stream, "%s%r", sep, v);
             sep = ", ";
         }
         stream << "}";
@@ -224,7 +224,7 @@ namespace std
         std::string sep = "";
         for (const auto &v : set)
         {
-            cc::str::format(stream, "%s%r", sep, v);
+            shared::str::format(stream, "%s%r", sep, v);
             sep = ", ";
         }
         stream << "}";
@@ -239,7 +239,7 @@ namespace std
         std::string sep = "";
         for (const auto &v : set)
         {
-            cc::str::format(stream, "%s%r", sep, v);
+            shared::str::format(stream, "%s%r", sep, v);
             sep = ", ";
         }
         stream << "}";
@@ -252,7 +252,7 @@ namespace std
     {
         if (opt.has_value())
         {
-            cc::str::format(stream, "%r", opt.value());
+            shared::str::format(stream, "%r", opt.value());
         }
         else
         {
@@ -267,7 +267,7 @@ namespace std
     {
         if (ptr)
         {
-            cc::str::format(stream, "{%r}", *ptr);
+            shared::str::format(stream, "{%r}", *ptr);
         }
         else
         {
@@ -282,7 +282,7 @@ namespace std
     {
         if (ptr)
         {
-            cc::str::format(stream, "{%r}", *ptr);
+            shared::str::format(stream, "{%r}", *ptr);
         }
         else
         {
@@ -297,7 +297,7 @@ namespace std
     {
         if (auto sptr = weakptr.lock())
         {
-            cc::str::format(stream, "{%r}", *sptr);
+            shared::str::format(stream, "{%r}", *sptr);
         }
         else
         {

@@ -10,23 +10,23 @@
 #include "translate-idl-common.h++"
 #include "translate-idl-variant.h++"
 
-namespace cc::idl
+namespace idl
 {
     //==========================================================================
     // Greeting
-    void encode(const cc::demo::Greeting &native,
+    void encode(const demo::Greeting &native,
                 CC::Demo::Greeting *idl);
 
     void decode(const CC::Demo::Greeting &idl,
-                cc::demo::Greeting *native);
+                demo::Greeting *native);
 
     //==========================================================================
     // TimeData
-    void encode(const cc::demo::TimeData &native,
+    void encode(const demo::TimeData &native,
                 CC::Demo::TimeData *idl);
 
     void decode(const CC::Demo::TimeData &idl,
-                cc::demo::TimeData *native);
+                demo::TimeData *native);
 
     //==========================================================================
     // TimeStruct
@@ -36,4 +36,4 @@ namespace cc::idl
     void decode(const CC::Demo::TimeStruct &idl,
                 std::tm *native);
 
-}  // namespace cc::idl
+}  // namespace idl

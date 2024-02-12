@@ -9,7 +9,7 @@
 #include <iostream>
 #include "types/symbolmap.h++"
 
-namespace cc::status
+namespace shared::status
 {
     //==========================================================================
     // @enum Domain
@@ -34,4 +34,4 @@ namespace cc::status
     std::ostream &operator<<(std::ostream &stream, Domain domain);
     std::istream &operator>>(std::istream &stream, Domain &domain);
 
-}  // namespace cc::status
+}  // namespace shared::status

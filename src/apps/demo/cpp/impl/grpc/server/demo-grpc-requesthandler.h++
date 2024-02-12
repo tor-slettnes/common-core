@@ -14,18 +14,18 @@
 
 #include "types/create-shared.h++"
 
-namespace cc::demo::grpc
+namespace demo::grpc
 {
     //==========================================================================
     // @class RequestHandler
     // @brief Process requests from Demo clients
 
-    using RequestHandlerBase = cc::grpc::SignalWatchService<CC::Demo::Demo,
+    using RequestHandlerBase = shared::grpc::SignalWatchService<CC::Demo::Demo,
                                                             CC::Demo::Signal,
                                                             SignalQueue>;
 
     class RequestHandler : public RequestHandlerBase,
-                           public types::enable_create_shared<RequestHandler>
+                           public shared::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;
@@ -58,4 +58,4 @@ namespace cc::demo::grpc
     private:
         std::shared_ptr<API> provider;
     };
-}  // namespace cc::demo::grpc
+}  // namespace demo::grpc

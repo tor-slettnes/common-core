@@ -7,7 +7,7 @@
 
 #include "python-simpleobject.h++"
 
-namespace cc::python
+namespace shared::python
 {
     SimpleObject::SimpleObject(PyObject *cobj, bool borrowed)
         : cobj(cobj)
@@ -433,4 +433,4 @@ namespace cc::python
         {&PyTuple_Type, types::ValueType::VALUELIST},
         {&PyDict_Type, types::ValueType::KVMAP},
     };
-}  // namespace cc::python
+}  // namespace shared::python

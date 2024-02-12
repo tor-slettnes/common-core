@@ -10,7 +10,7 @@
 #include "protobuf-inline.h++"
 #include "protobuf-message.h++"
 
-namespace cc::demo::grpc
+namespace demo::grpc
 {
     RequestHandler::RequestHandler(const std::shared_ptr<API>& api_provider)
         : Super(),
@@ -91,4 +91,4 @@ namespace cc::demo::grpc
         }
     }
 
-}  // namespace cc::demo::grpc
+}  // namespace demo::grpc

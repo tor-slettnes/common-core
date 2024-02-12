@@ -15,7 +15,7 @@
 #include <fcntl.h>   // O_RDONLY, O_WRONLY
 #include <fstream>
 
-namespace cc::argparse
+namespace shared::argparse
 {
     //==========================================================================
     // ServerOptions methods
@@ -113,4 +113,4 @@ namespace cc::argparse
         return pidstream;
     }
 
-}  // namespace cc::argparse
+}  // namespace shared::argparse

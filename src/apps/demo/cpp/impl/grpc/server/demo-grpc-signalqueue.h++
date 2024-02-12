@@ -12,7 +12,7 @@
 
 #include "grpc-signalqueue.h++"
 
-namespace cc::demo::grpc
+namespace demo::grpc
 {
     //==========================================================================
     /// @class SignalQueue
@@ -27,13 +27,13 @@ namespace cc::demo::grpc
     ///
     /// See `service::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public cc::grpc::SignalQueue<CC::Demo::Signal>
+    class SignalQueue : public shared::grpc::SignalQueue<CC::Demo::Signal>
     {
-        using Super = cc::grpc::SignalQueue<CC::Demo::Signal>;
+        using Super = shared::grpc::SignalQueue<CC::Demo::Signal>;
 
     public:
         using Super::Super;
         void initialize() override;
         void deinitialize() override;
     };
-}  // namespace cc::demo::grpc
+}  // namespace demo::grpc

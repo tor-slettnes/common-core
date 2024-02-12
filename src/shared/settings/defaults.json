@@ -9,15 +9,15 @@
     // DDS domain to join
     "dds domain id" : 0,
 
-    // Default logging threshold; may be overridden for specific scopes.
-    "log default" : "info",
-
     // Override the default log level setting above for specific scopes.
     "log thresholds":
     {
         // "global"      : "debug",
-        "shared"      : "info"
+        "shared"      : "notice"
     },
+
+    // Default logging threshold; may be overridden for specific scopes.
+    "log default" : "info",
 
     // ANSI coloring for specific log levels sent to console
     "log styles" :

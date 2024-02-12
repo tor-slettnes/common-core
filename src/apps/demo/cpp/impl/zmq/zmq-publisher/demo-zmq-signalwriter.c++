@@ -11,7 +11,7 @@
 #include "protobuf-demo-types.h++"
 #include "platform/symbols.h++"
 
-namespace cc::demo::zmq
+namespace demo::zmq
 {
     void SignalWriter::initialize()
     {
@@ -22,10 +22,10 @@ namespace cc::demo::zmq
         // them as 'CC::Demo::Signal()` messages and then pass on to the
         // publisher using `this->write()`.
 
-        // `signal_time` is of type `cc::signal::Signal<TimeData>`, so
+        // `signal_time` is of type `shared::signal::Signal<TimeData>`, so
         // we receive the `TimeData()` instance as the sole argument.
 
-        cc::demo::signal_time.connect(
+        demo::signal_time.connect(
             TYPE_NAME_FULL(This),
             [=](const TimeData &timedata) {
                 auto msg = this->create_signal_message();
@@ -33,15 +33,18 @@ namespace cc::demo::zmq
                 this->write(msg);
             });
 
-        // `signal_greeting` is of type `cc::signal::MappingSignal<Greeting>`, so
+        // `signal_greeting` is of type `shared::signal::MappingSignal<Greeting>`, so
         // we receive three arguments:
         //   - The change type (MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL)
         //   - The key (in this case we use the greeter's identity)
         //   - The payload.
 
-        cc::demo::signal_greeting.connect(
+        demo::signal_greeting.connect(
             TYPE_NAME_FULL(This),
-            [=](signal::MappingChange change, const std::string &key, const Greeting &greeting) {
+            [=](shared::signal::MappingChange change,  // change
+                const std::string &key,                // key
+                const Greeting &greeting)              // payload
+            {
                 auto msg = this->create_signal_message(change, key);
                 protobuf::encode(greeting, msg.mutable_greeting());
                 this->write(msg);
@@ -58,4 +61,4 @@ namespace cc::demo::zmq
         Super::deinitialize();
     }
 
-}  // namespace cc::demo::zmq
+}  // namespace demo::zmq

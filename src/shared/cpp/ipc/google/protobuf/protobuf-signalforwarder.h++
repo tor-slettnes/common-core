@@ -16,7 +16,7 @@
 #include <functional>
 #include <unordered_set>
 
-namespace cc::protobuf
+namespace protobuf
 {
     //==========================================================================
     /// @brief
@@ -48,8 +48,9 @@ namespace cc::protobuf
     protected:
         /// @brief
         ///    Create a new Signal message with optional mapping controls.
-        static ProtoT create_signal_message(signal::MappingChange change = signal::MAP_NONE,
-                                            const std::string &key = {})
+        static ProtoT create_signal_message(
+            shared::signal::MappingChange change = shared::signal::MAP_NONE,
+            const std::string &key = {})
         {
             ProtoT msg;
             msg.set_change(static_cast<CC::Signal::MappingChange>(change));
@@ -57,4 +58,4 @@ namespace cc::protobuf
             return msg;
         }
     };
-}  // namespace cc::protobuf
+}  // namespace protobuf

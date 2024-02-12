@@ -17,7 +17,7 @@
 
 #include <thread>
 
-namespace cc::dds
+namespace shared::dds
 {
     //==========================================================================
     // @class PubSubChannnel
@@ -32,7 +32,7 @@ namespace cc::dds
         using DataReaderQos = ::dds::sub::qos::DataReaderQos;
 
         template <class T>
-        using Handler = std::function<void(cc::signal::MappingChange, const T &)>;
+        using Handler = std::function<void(shared::signal::MappingChange, const T &)>;
 
         template <class T>
         using DataReaderRef = std::shared_ptr<::dds::sub::DataReader<T>>;
@@ -124,14 +124,14 @@ namespace cc::dds
 
         template <class T>
         inline DataReaderRef<T>
-        create_signal_reader(cc::signal::Signal<T> *signal,
+        create_signal_reader(shared::signal::Signal<T> *signal,
                              const std::string &topic_name = TYPE_NAME_BASE(T),
                              bool reliable = true,
                              bool sync_latest = false)
         {
             return this->create_reader<T>(
                 topic_name,
-                std::bind(&cc::signal::Signal<T>::emit, signal, std::placeholders::_2),
+                std::bind(&shared::signal::Signal<T>::emit, signal, std::placeholders::_2),
                 reliable,
                 sync_latest);
         }
@@ -148,14 +148,14 @@ namespace cc::dds
             {
                 if (sample.info().valid())
                 {
-                    handler(cc::signal::MAP_UPDATE, sample.data());
+                    handler(shared::signal::MAP_UPDATE, sample.data());
                 }
                 else if (sample.info().state().instance_state() ==
                          ::dds::sub::status::InstanceState::not_alive_disposed())
                 {
                     T key_holder;
                     reader->key_value(key_holder, sample.info().instance_handle());
-                    handler(cc::signal::MAP_REMOVAL, std::move(key_holder));
+                    handler(shared::signal::MAP_REMOVAL, std::move(key_holder));
                 }
                 else
                 {
@@ -170,4 +170,4 @@ namespace cc::dds
         std::thread listen_thread;
         bool keep_listening;
     };
-}  // namespace cc::dds
+}  // namespace shared::dds

@@ -11,8 +11,11 @@
 #include "logging/sinks/logsink.h++"
 #include "config/settings.h++"
 
-namespace cc::argparse
+namespace shared::argparse
 {
+    // Use `shared` scope for logging within this namespace
+    use_shared_scope();
+
     //==========================================================================
     /// CommonOptions specialization with options for applications
     class CommonOptions : public Parser
@@ -66,7 +69,7 @@ namespace cc::argparse
 
         std::optional<status::Level> level_setting(
             const std::string &option,
-            const types::KeyValueMap &root = *cc::settings);
+            const types::KeyValueMap &root = *shared::settings);
 
         status::Level level_setting(
             const std::string &option,
@@ -100,4 +103,4 @@ namespace cc::argparse
     using RegisterLoggerFunction = std::function<void(Parser *)>;
     extern std::unordered_map<LongOpt, RegisterLoggerFunction> add_logger_methods;
 
-}  // namespace cc::argparse
+}  // namespace shared::argparse

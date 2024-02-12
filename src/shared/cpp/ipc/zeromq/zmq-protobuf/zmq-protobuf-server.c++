@@ -10,7 +10,7 @@
 #include "platform/path.h++"
 #include "logging/logging.h++"
 
-namespace cc::zmq
+namespace shared::zmq
 {
     ProtoBufServer::ProtoBufServer(const std::string &bind_address,
                                    const std::string &channel_name,
@@ -56,7 +56,7 @@ namespace cc::zmq
                 &reply,
                 CC::RR::STATUS_INVALID,
                 "Failed to deserialize ProtoBuf request",
-                cc::status::Flow::CANCELLED,
+                shared::status::Flow::CANCELLED,
                 {{"channel", this->channel_name()},
                  {"payload", packed_request.to_hex(true, 4)}});
         }
@@ -80,7 +80,7 @@ namespace cc::zmq
                 reply,
                 CC::RR::STATUS_INVALID,
                 "No such interface",
-                cc::status::Flow::CANCELLED,
+                shared::status::Flow::CANCELLED,
                 {{"channel", this->channel_name()},
                  {"interface", request.interface_name()}});
         }
@@ -89,18 +89,18 @@ namespace cc::zmq
     void ProtoBufServer::insert_error_response(CC::RR::Reply *reply,
                                                CC::RR::StatusCode status_code,
                                                const std::string &text,
-                                               cc::status::Flow flow,
+                                               shared::status::Flow flow,
                                                const types::KeyValueMap &attributes)
     {
         CC::RR::Status *status = reply->mutable_status();
         status->set_code(status_code);
 
         status::Event event(text,
-                            cc::status::Domain::APPLICATION,
+                            shared::status::Domain::APPLICATION,
                             platform::path->exec_name(),
                             static_cast<status::Event::Code>(status_code),
                             CC::RR::StatusCode_Name(status_code),
-                            cc::status::Level::FAILED,
+                            shared::status::Level::FAILED,
                             flow,
                             {},
                             attributes);
@@ -108,4 +108,4 @@ namespace cc::zmq
         protobuf::encode(event, status->mutable_details());
     }
 
-}  // namespace cc::zmq
+}  // namespace shared::zmq

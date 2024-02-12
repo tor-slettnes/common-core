@@ -12,35 +12,36 @@
 #include "chrono/date-time.h++"
 #include "string/misc.h++"
 
-namespace cc::demo::grpc
+namespace demo::grpc
 {
     void run_grpc_service(
-        std::shared_ptr<cc::demo::API> api_provider,
+        std::shared_ptr<demo::API> api_provider,
         const std::string &listen_address)
     {
         constexpr auto SIGNAL_HANDLE = "gRPC Server";
 
-        log_debug("Creating gRPC server builder");
-        cc::grpc::ServerBuilder builder(listen_address);
+        log_info("Creating gRPC server builder");
+        shared::grpc::ServerBuilder builder(listen_address);
 
-        log_debug("Creating Demo gRPC request handler");
+        log_info("Creating Demo gRPC request handler");
         auto request_handler = RequestHandler::create_shared(api_provider);
         builder.add_service(request_handler, listen_address.empty());
 
-        log_debug("Starting Demo gRPC server");
+        log_info("Starting Demo gRPC server");
         std::unique_ptr<::grpc::Server> server = builder.BuildAndStart();
 
-        cc::application::signal_shutdown.connect(
+        shared::application::signal_shutdown.connect(
             SIGNAL_HANDLE,
             [&](int signal) {
-                server->Shutdown(dt::Clock::now() +
+                log_info("Requesting gRPC server shutdown with a 5s timeout");
+                server->Shutdown(shared::dt::Clock::now() +
                                  std::chrono::seconds(5));
             });
 
-        log_info("Demo gRPC server is ready on ", str::join(builder.listener_ports()));
+        log_notice("Demo gRPC server is ready on ", shared::str::join(builder.listener_ports()));
         server->Wait();
-        log_info("Demo gRPC server is shutting down");
+        log_notice("Demo gRPC server is shutting down");
 
-        cc::application::signal_shutdown.disconnect(SIGNAL_HANDLE);
+        shared::application::signal_shutdown.disconnect(SIGNAL_HANDLE);
     }
-}  // namespace cc::demo::grpc
+}  // namespace demo::grpc

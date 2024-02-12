@@ -15,7 +15,7 @@
 
 #include <fstream>
 
-namespace cc::json
+namespace shared::json
 {
     JsonReader::JsonReader(const fs::path &path)
         : path_(path)
@@ -89,4 +89,4 @@ namespace cc::json
         }
         return JsonDecoder::decodeValue(doc);
     }
-}  // namespace cc::json
+}  // namespace shared::json

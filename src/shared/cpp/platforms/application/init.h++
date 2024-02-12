@@ -7,11 +7,11 @@
 #pragma once
 #include "thread/signaltemplate.h++"
 
-namespace cc::application
+namespace shared::application
 {
     void initialize(int argc, char **argv);
     void deinitialize();
 
-    extern cc::signal::Signal<int> signal_shutdown;
+    extern shared::signal::Signal<int> signal_shutdown;
 
-}  // namespace cc::application
+}  // namespace shared::application

@@ -18,7 +18,7 @@
 #include <map>
 #include <mutex>
 
-namespace cc::signal
+namespace shared::signal
 {
     //==========================================================================
     /// @class BaseSignal
@@ -546,4 +546,4 @@ namespace cc::signal
         std::unordered_map<KeyType, DataType> cached_;
         std::unordered_map<std::string, Slot> slots_;
     };
-}  // namespace cc::signal
+}  // namespace shared::signal

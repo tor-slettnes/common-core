@@ -12,7 +12,7 @@
 #include <optional>
 #include <string>
 
-namespace cc::zmq
+namespace shared::zmq
 {
     class Requester : public Satellite
     {
@@ -30,4 +30,4 @@ namespace cc::zmq
             ::zmq::recv_flags recv_flags = ::zmq::recv_flags::none);
     };
 
-}  // namespace cc::zmq
+}  // namespace shared::zmq

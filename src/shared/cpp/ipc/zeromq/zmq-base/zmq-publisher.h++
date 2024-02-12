@@ -13,7 +13,7 @@
 #include <thread>
 #include <memory>
 
-namespace cc::zmq
+namespace shared::zmq
 {
     class Publisher : public Host
     {
@@ -29,4 +29,4 @@ namespace cc::zmq
                      const types::ByteVector &bytes);
     };
 
-}  // namespace cc::zmq
+}  // namespace shared::zmq

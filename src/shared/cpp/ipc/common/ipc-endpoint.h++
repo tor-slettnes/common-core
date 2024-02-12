@@ -14,7 +14,7 @@
 
 #include <string>
 
-namespace cc::ipc
+namespace shared::ipc
 {
     define_log_scope("ipc");
 
@@ -66,4 +66,4 @@ namespace cc::ipc
         std::string endpoint_type_;
         std::string channel_name_;
     };
-}  // namespace cc::ipc
+}  // namespace shared::ipc

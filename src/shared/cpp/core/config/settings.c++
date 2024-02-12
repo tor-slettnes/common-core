@@ -10,9 +10,9 @@
 
 #include <iostream>
 
-namespace cc
+namespace shared
 {
-    std::shared_ptr<cc::SettingsStore> settings;
+    std::shared_ptr<shared::SettingsStore> settings;
 
     void init_settings(const types::PathList &files)
     {
@@ -29,4 +29,4 @@ namespace cc
             }
         }
     }
-}  // namespace cc
+}  // namespace shared

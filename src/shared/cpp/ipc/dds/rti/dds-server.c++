@@ -9,7 +9,7 @@
 #include "application/init.h++"
 #include "platform/symbols.h++"
 
-namespace cc::dds
+namespace shared::dds
 {
     Server::Server(uint thread_pool_size)
         : ::dds::rpc::Server(this->server_params(thread_pool_size))
@@ -23,14 +23,14 @@ namespace cc::dds
 
     void Server::initialize()
     {
-        cc::application::signal_shutdown.connect(
+        shared::application::signal_shutdown.connect(
             TYPE_NAME_FULL(This),
             std::bind(&Server::close, this));
     }
 
     void Server::deinitialize()
     {
-        cc::application::signal_shutdown.disconnect(TYPE_NAME_FULL(This));
+        shared::application::signal_shutdown.disconnect(TYPE_NAME_FULL(This));
     }
 
     ::dds::rpc::ServerParams Server::server_params(uint thread_pool_size) const
@@ -39,4 +39,4 @@ namespace cc::dds
         params.extensions().thread_pool_size(thread_pool_size);
         return params;
     }
-}  // namespace cc::dds
+}  // namespace shared::dds

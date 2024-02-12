@@ -12,7 +12,7 @@
 #include "protobuf-message.h++"
 #include "protobuf-inline.h++"
 
-namespace cc::demo::grpc
+namespace demo::grpc
 {
     void ClientImpl::initialize()
     {
@@ -27,7 +27,7 @@ namespace cc::demo::grpc
             CC::Demo::Signal::kGreeting,
             [&](const CC::Demo::Signal &signal) {
                 signal_greeting.emit(
-                    static_cast<signal::MappingChange>(signal.change()),
+                    static_cast<shared::signal::MappingChange>(signal.change()),
                     signal.key(),
                     protobuf::decoded<Greeting>(signal.greeting()));
             });
@@ -75,4 +75,4 @@ namespace cc::demo::grpc
         ClientImplBase::stop_watching();
     }
 
-}  // namespace cc::demo::grpc
+}  // namespace demo::grpc

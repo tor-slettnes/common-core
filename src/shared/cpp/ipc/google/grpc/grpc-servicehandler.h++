@@ -8,7 +8,7 @@
 #pragma once
 #include "grpc-base.h++"
 
-namespace cc::grpc
+namespace shared::grpc
 {
     //==========================================================================
     /// @class ServiceHandlerBase
@@ -128,4 +128,4 @@ namespace cc::grpc
         }
     };
 
-}  // namespace cc::grpc
+}  // namespace shared::grpc

@@ -23,7 +23,7 @@
 
 using uint = unsigned int;
 
-namespace cc
+namespace shared
 {
     /// Date/Time utilities
     namespace dt
@@ -370,11 +370,11 @@ namespace cc
         // Convert from System Clock to Steady Clock
         TimePoint to_timepoint(dt::TimePoint tp);
     }  // namespace steady
-}  // namespace cc
+}  // namespace shared
 
 namespace std::chrono
 {
-    std::ostream &operator<<(std::ostream &stream, const cc::dt::TimePoint &tp);
-    std::ostream &operator<<(std::ostream &stream, const cc::dt::Duration &dur);
-    std::ostream &operator<<(std::ostream &stream, const cc::steady::TimePoint &stp);
+    std::ostream &operator<<(std::ostream &stream, const shared::dt::TimePoint &tp);
+    std::ostream &operator<<(std::ostream &stream, const shared::dt::Duration &dur);
+    std::ostream &operator<<(std::ostream &stream, const shared::steady::TimePoint &stp);
 }  // namespace std::chrono

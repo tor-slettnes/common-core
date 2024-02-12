@@ -12,12 +12,12 @@
 #include "status/exception.h++"
 #include "types/value.h++"
 
-namespace cc::python
+namespace shared::python
 {
-    class Exception : cc::exception::Exception<std::runtime_error>
+    class Exception : shared::exception::Exception<std::runtime_error>
     {
         using This = Exception;
-        using Super = cc::exception::Exception<std::runtime_error>;
+        using Super = shared::exception::Exception<std::runtime_error>;
 
     public:
         Exception(PyObject *exc, const std::string &module_name);
@@ -25,4 +25,4 @@ namespace cc::python
         std::string text() const noexcept override;
         types::ValueList args() const noexcept;
     };
-}  // namespace cc::python
+}  // namespace shared::python

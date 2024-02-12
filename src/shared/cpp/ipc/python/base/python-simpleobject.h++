@@ -11,7 +11,7 @@
 
 #include "types/value.h++"
 
-namespace cc::python
+namespace shared::python
 {
     //==========================================================================
     /// @brief
@@ -149,4 +149,4 @@ namespace cc::python
     protected:
         PyObject *cobj;
     };
-}  // namespace cc::python
+}  // namespace shared::python

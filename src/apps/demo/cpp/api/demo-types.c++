@@ -12,7 +12,7 @@
 #include "types/value.h++"
 #include "types/partslist.h++"
 
-namespace cc::demo
+namespace demo
 {
     //==========================================================================
     /// @class Greeting
@@ -20,8 +20,8 @@ namespace cc::demo
     Greeting::Greeting(const std::string &text,
                        const std::string &identity,
                        const std::string &implementation,
-                       const cc::dt::TimePoint &birth,
-                       const cc::types::KeyValueMap &data)
+                       const shared::dt::TimePoint &birth,
+                       const shared::types::KeyValueMap &data)
         : text(text),
           identity(identity),
           implementation(implementation),
@@ -32,12 +32,12 @@ namespace cc::demo
 
     void Greeting::to_stream(std::ostream &stream) const
     {
-        cc::types::PartsList parts;
+        shared::types::PartsList parts;
         parts.add("text", this->text);
         parts.add("identity", this->identity);
         parts.add("implementation", this->implementation, !this->implementation.empty());
-        parts.add("birth", this->birth, this->birth != cc::dt::TimePoint());
-        parts.add("uptime", cc::dt::Clock::now() - this->birth);
+        parts.add("birth", this->birth, this->birth != shared::dt::TimePoint());
+        parts.add("uptime", shared::dt::Clock::now() - this->birth);
         parts.add("data", this->data, !this->data.empty());
         stream << parts;
     }
@@ -46,14 +46,14 @@ namespace cc::demo
     /// @class TimeData
     /// @brief Time representation from the server.
 
-    TimeData::TimeData(const cc::dt::TimePoint &tp)
+    TimeData::TimeData(const shared::dt::TimePoint &tp)
         : timepoint(tp),
-          localtime(cc::dt::localtime(tp)),
-          utctime(cc::dt::gmtime(tp))
+          localtime(shared::dt::localtime(tp)),
+          utctime(shared::dt::gmtime(tp))
     {
     }
 
-    TimeData::TimeData(const cc::dt::TimePoint &tp,
+    TimeData::TimeData(const shared::dt::TimePoint &tp,
                        const std::tm &localtime,
                        const std::tm &utctime)
         : timepoint(tp),
@@ -64,11 +64,11 @@ namespace cc::demo
 
     void TimeData::to_stream(std::ostream &stream) const
     {
-        cc::str::format(stream,
+        shared::str::format(stream,
                         "TimeData(epoch=%s, local=%s, utc=%s)",
-                        cc::dt::to_time_t(this->timepoint),
-                        cc::dt::to_string(this->localtime),
-                        cc::dt::to_string(this->utctime));
+                        shared::dt::to_time_t(this->timepoint),
+                        shared::dt::to_string(this->localtime),
+                        shared::dt::to_string(this->utctime));
     }
 
-}  // namespace cc::demo
+}  // namespace demo

@@ -12,7 +12,7 @@
 #include "platform/symbols.h++"
 #include "application/init.h++"
 
-namespace cc::python
+namespace shared::python
 {
     Runtime::Runtime()
     {
@@ -134,4 +134,4 @@ namespace cc::python
 
     bool Runtime::initialized = false;
 
-}  // namespace cc::python
+}  // namespace shared::python

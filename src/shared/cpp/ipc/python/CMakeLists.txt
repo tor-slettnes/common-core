@@ -5,8 +5,16 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-if(BUILD_PYTHON_EMB)
+if(BUILD_PYTHON_CPP)
   add_subdirectory(base)
-endif()
+  add_subdirectory(embedded)
 
+  set(TARGET cc_shared_ipc_python)
+  set(LIB_TYPE INTERFACE)
+  set(LIB_DEPS
+    cc_shared_ipc_python_base
+    cc_shared_ipc_python_embedded)
+  include(BuildLibrary)
+
+endif()
 

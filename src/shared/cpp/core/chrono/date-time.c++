@@ -16,7 +16,7 @@
 #include <string>
 #include <algorithm>
 
-namespace cc
+namespace shared
 {
     namespace dt
     {
@@ -503,25 +503,25 @@ namespace cc
                               decimals);
         }
     }  // namespace steady
-}  // namespace cc
+}  // namespace shared
 
 namespace std::chrono
 {
-    std::ostream &operator<<(std::ostream &stream, const cc::dt::TimePoint &tp)
+    std::ostream &operator<<(std::ostream &stream, const shared::dt::TimePoint &tp)
     {
-        cc::dt::tp_to_stream(stream, tp);
+        shared::dt::tp_to_stream(stream, tp);
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, const cc::dt::Duration &dur)
+    std::ostream &operator<<(std::ostream &stream, const shared::dt::Duration &dur)
     {
-        cc::dt::dur_to_stream(stream, dur);
+        shared::dt::dur_to_stream(stream, dur);
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, const cc::steady::TimePoint &stp)
+    std::ostream &operator<<(std::ostream &stream, const shared::steady::TimePoint &stp)
     {
-        cc::steady::tp_to_stream(stream, stp);
+        shared::steady::tp_to_stream(stream, stp);
         return stream;
     }
 

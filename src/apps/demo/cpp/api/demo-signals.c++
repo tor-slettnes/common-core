@@ -8,8 +8,8 @@
 // Application specific modules
 #include "demo-signals.h++"
 
-namespace cc::demo
+namespace demo
 {
-    cc::signal::Signal<TimeData> signal_time("cc::demo::signal_time");
-    cc::signal::MappingSignal<Greeting> signal_greeting("cc::demo::signal_greeting", true);
-}  // namespace cc::demo
+    shared::signal::Signal<TimeData> signal_time("demo::signal_time");
+    shared::signal::MappingSignal<Greeting> signal_greeting("demo::signal_greeting", true);
+}  // namespace demo

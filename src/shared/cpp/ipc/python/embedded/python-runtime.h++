@@ -11,7 +11,7 @@
 #include "types/filesystem.h++"
 #include "types/value.h++"
 
-namespace cc::python
+namespace shared::python
 {
     /// @brief Abstract provider for process invocation
     class Runtime
@@ -73,4 +73,4 @@ namespace cc::python
         static bool initialized;
         std::shared_ptr<SimpleObject> module;
     };
-}  // namespace cc::python
+}  // namespace shared::python

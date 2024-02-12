@@ -11,7 +11,7 @@
 
 #include <memory>
 
-namespace cc::demo
+namespace demo
 {
     extern std::shared_ptr<API> provider;
 }

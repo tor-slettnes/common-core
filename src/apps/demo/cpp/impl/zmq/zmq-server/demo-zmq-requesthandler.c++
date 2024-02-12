@@ -9,7 +9,7 @@
 #include "protobuf-demo-types.h++"
 #include "protobuf-inline.h++"
 
-namespace cc::demo::zmq
+namespace demo::zmq
 {
     RequestHandler::RequestHandler(const std::shared_ptr<API> &api,
                                    const std::string interface_name)

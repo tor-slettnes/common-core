@@ -8,7 +8,7 @@
 #include "options.h++"
 #include "demo-provider.h++"
 
-namespace cc::demo
+namespace demo
 {
     Options::Options(const std::string &implementation)
         : Super(),
@@ -78,9 +78,9 @@ namespace cc::demo
         if (show_time)
         {
             // Invoke `on_time_update` whenever there is a time update.
-            // This signal is based on the `cc::signal::Signal<>` template,
+            // This signal is based on the `shared::signal::Signal<>` template,
             // so the callback function will receive one argument: the payload.
-            cc::demo::signal_time.connect(
+            demo::signal_time.connect(
                 this->identity,
                 std::bind(&Options::on_time, this, _1));
         }
@@ -88,26 +88,26 @@ namespace cc::demo
         if (show_greetings)
         {
             // Invoke `on_greeting_update` whenever someone sends a greeting.
-            // This signal is based on `cc::signal::MappingSignal<>`, so
+            // This signal is based on `shared::signal::MappingSignal<>`, so
             // the callback function will receive three arguments:
             //   - The change type (MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL)
             //   - The key (in this case we use the greeter's identity)
             //   - The payload.
 
-            cc::demo::signal_greeting.connect(
+            demo::signal_greeting.connect(
                 this->identity,
                 std::bind(&Options::on_greeting, this, _1, _2, _3));
         }
 
-        cc::demo::provider->start_watching();
+        demo::provider->start_watching();
     }
 
     void Options::on_monitor_end()
     {
-        cc::demo::provider->stop_watching();
-        cc::demo::signal_time.disconnect(this->identity);
-        cc::demo::signal_greeting.disconnect(this->identity);
+        demo::provider->stop_watching();
+        demo::signal_time.disconnect(this->identity);
+        demo::signal_greeting.disconnect(this->identity);
     }
 
     std::unique_ptr<Options> options;
-}  // namespace cc::demo
+}  // namespace demo

@@ -9,7 +9,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-namespace cc::zmq
+namespace shared::zmq
 {
     Subscriber::Subscriber(const std::string &host_address,
                            const std::string &channel_name)
@@ -160,4 +160,4 @@ namespace cc::zmq
         }
     }
 
-}  // namespace cc::zmq
+}  // namespace shared::zmq

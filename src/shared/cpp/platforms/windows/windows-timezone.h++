@@ -10,7 +10,7 @@
 
 #include <windows.h>
 
-namespace cc::platform
+namespace shared::platform
 {
     class WindowsTimeZoneProvider : public TimeZoneProvider
     {
@@ -35,4 +35,4 @@ namespace cc::platform
         std::tm systemtime_decode(const SYSTEMTIME &st) const;
         SYSTEMTIME systemtime_encode(const std::tm &dt) const;
     };
-}  // namespace cc::platform
+}  // namespace shared::platform

@@ -10,7 +10,7 @@
 #include "string/format.h++"
 #include "status/exceptions.h++"
 
-namespace cc
+namespace shared
 {
 
     //==========================================================================
@@ -441,4 +441,4 @@ namespace cc
     // Global instance
 
     Scheduler scheduler;
-}  // namespace cc
+}  // namespace shared

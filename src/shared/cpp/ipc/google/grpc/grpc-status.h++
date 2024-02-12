@@ -16,7 +16,7 @@
 // System headers
 #include <grpc++/grpc++.h>
 
-namespace cc::grpc
+namespace shared::grpc
 {
     using ::grpc::StatusCode;
 
@@ -155,4 +155,4 @@ namespace cc::grpc
         static ::grpc::StatusCode code_from_event(const status::Event &event) noexcept;
         static ::grpc::StatusCode code_from_errno(int code) noexcept;
     };
-}  // namespace cc::grpc
+}  // namespace shared::grpc

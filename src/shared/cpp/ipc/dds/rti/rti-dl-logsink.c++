@@ -7,7 +7,7 @@
 
 #include "rti-dl-logsink.h++"
 
-namespace cc::logging
+namespace shared::dds
 {
     RTIDistributedLogger::RTIDistributedLogger(const std::string &identity,
                                                int domain_id)
@@ -20,7 +20,7 @@ namespace cc::logging
         this->set_threshold(this->threshold());
     }
 
-    void RTIDistributedLogger::set_threshold(status::Level threshold)
+    void RTIDistributedLogger::set_threshold(shared::status::Level threshold)
     {
         Super::set_threshold(threshold);
         if (DDS_Long filterlevel = This::levelmap.get(threshold, 0))
@@ -47,13 +47,13 @@ namespace cc::logging
         Super::close();
     }
 
-    void RTIDistributedLogger::capture_message(const Message::Ref &msg)
+    void RTIDistributedLogger::capture_message(const shared::logging::Message::Ref &msg)
     {
         if (this->dist_logger_)
         {
             if (const int *level = RTIDistributedLogger::levelmap.get_ptr(msg->level()))
             {
-                timespec ts = cc::dt::to_timespec(msg->timepoint());
+                timespec ts = shared::dt::to_timespec(msg->timepoint());
                 this->dist_logger_->logMessageWithParams({
                     *level,                             // log_level
                     msg->text().c_str(),                // message
@@ -66,14 +66,14 @@ namespace cc::logging
     }
 
     const types::ValueMap<status::Level, DDS_Long> RTIDistributedLogger::levelmap = {
-        {status::Level::TRACE, 800},
-        {status::Level::DEBUG, 700},
-        {status::Level::INFO, 600},
-        {status::Level::NOTICE, 500},
-        {status::Level::WARNING, 400},
-        {status::Level::FAILED, 300},
-        {status::Level::CRITICAL, 200},
-        {status::Level::FATAL, 100},
+        {shared::status::Level::TRACE, 800},
+        {shared::status::Level::DEBUG, 700},
+        {shared::status::Level::INFO, 600},
+        {shared::status::Level::NOTICE, 500},
+        {shared::status::Level::WARNING, 400},
+        {shared::status::Level::FAILED, 300},
+        {shared::status::Level::CRITICAL, 200},
+        {shared::status::Level::FATAL, 100},
     };
 
-}  // namespace cc::logging
+}  // namespace shared::logging

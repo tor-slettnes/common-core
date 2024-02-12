@@ -9,7 +9,7 @@
 #include "python-containerobject.h++"
 #include "python-runtime.h++"
 
-namespace cc::python
+namespace shared::python
 {
     class Pickler : public Runtime
     {
@@ -21,4 +21,4 @@ namespace cc::python
     };
 
     extern Pickler pickler;
-};  // namespace cc::python
+};  // namespace shared::python

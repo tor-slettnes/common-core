@@ -13,7 +13,7 @@
 
 #define TZENV "TZ"
 
-namespace cc::platform
+namespace shared::platform
 {
     PosixTimeZoneProvider::PosixTimeZoneProvider()
         : Super("PosixTimeZoneProvider")
@@ -94,4 +94,4 @@ namespace cc::platform
         tzset();
     }
 
-}  // namespace cc::platform
+}  // namespace shared::platform

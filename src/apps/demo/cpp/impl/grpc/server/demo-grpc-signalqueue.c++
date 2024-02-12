@@ -10,7 +10,7 @@
 
 #include "protobuf-demo-types.h++"
 
-namespace cc::demo::grpc
+namespace demo::grpc
 {
     void SignalQueue::initialize()
     {
@@ -36,4 +36,4 @@ namespace cc::demo::grpc
         this->disconnect(signal_time);
         this->disconnect(signal_greeting);
     }
-}  // namespace cc::demo::grpc
+}  // namespace demo::grpc

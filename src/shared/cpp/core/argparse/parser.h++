@@ -15,12 +15,12 @@
 #include <string>
 
 /// Argument parser utility, loosely modeled after Python's "argparse" module.
-namespace cc::argparse
+namespace shared::argparse
 {
     //==========================================================================
     /// \brief Argument parser, loosely modeled after Python's argparse module.
     ///
-    /// See source/helloworld/cpp/server/options.cc
+    /// See source/helloworld/cpp/server/options.shared
     ///
     class Parser
     {
@@ -332,4 +332,4 @@ namespace cc::argparse
         OptionList options;
         std::string description;
     };
-}  // namespace cc::argparse
+}  // namespace shared::argparse

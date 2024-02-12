@@ -18,7 +18,7 @@
 // 3rd party modules
 #include <dds/domain/DomainParticipant.hpp>
 
-namespace cc::demo::dds
+namespace demo::dds
 {
     //==========================================================================
     // @class ClientImpl
@@ -26,8 +26,8 @@ namespace cc::demo::dds
 
     class ClientImpl
         : public API,
-          public cc::dds::Client_Wrapper<CC::Demo::DemoServiceClient>,
-          public cc::types::enable_create_shared<ClientImpl>
+          public shared::dds::Client_Wrapper<CC::Demo::DemoServiceClient>,
+          public shared::types::enable_create_shared<ClientImpl>
     {
         // Convencience alias
         using This = ClientImpl;
@@ -50,4 +50,4 @@ namespace cc::demo::dds
     private:
         std::shared_ptr<Subscriber> subscriber;
     };
-}  // namespace cc::demo::dds
+}  // namespace demo::dds

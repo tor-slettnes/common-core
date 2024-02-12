@@ -18,7 +18,7 @@
 // C++ STL modules
 #include <functional>
 
-namespace cc::demo::zmq
+namespace demo::zmq
 {
     Subscriber::Subscriber(const std::string &host_address,
                            const std::string &channel_name)
@@ -37,4 +37,4 @@ namespace cc::demo::zmq
         Super::deinitialize();
         this->remove(SignalHandler::create_shared());
     }
-}  // namespace cc::demo::zmq
+}  // namespace demo::zmq

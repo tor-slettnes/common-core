@@ -12,7 +12,7 @@
 
 #include <sstream>
 
-namespace cc::types
+namespace shared::types
 {
 
     Value::Value()
@@ -937,4 +937,4 @@ namespace cc::types
                    : static_cast<ValueType>(base.index());
     }
 
-}  // namespace cc::types
+}  // namespace shared::types

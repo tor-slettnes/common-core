@@ -10,7 +10,7 @@
 
 #include <map>
 
-namespace cc::platform
+namespace shared::platform
 {
     //==========================================================================
     // Bus Type
@@ -83,18 +83,18 @@ namespace cc::platform
 
     void HIDProvider::start_monitoring(const dt::Duration &poll_interval)
     {
-        cc::scheduler.add_if_missing(
+        shared::scheduler.add_if_missing(
             this->name,
             [&]() {  // invocation
                 this->monitor_worker();
             },
             poll_interval,  // interval
-            cc::Scheduler::ALIGN_START);
+            shared::Scheduler::ALIGN_START);
     }
 
     void HIDProvider::stop_monitoring()
     {
-        cc::scheduler.remove(this->name);
+        shared::scheduler.remove(this->name);
     }
 
     void HIDProvider::monitor_worker()
@@ -117,4 +117,4 @@ namespace cc::platform
 
     ProviderProxy<HIDProvider> hid("HID");
 
-}  // namespace cc::platform
+}  // namespace shared::platform

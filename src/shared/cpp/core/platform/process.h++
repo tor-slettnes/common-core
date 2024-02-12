@@ -14,7 +14,7 @@
 #include <vector>
 #include <stdexcept>
 
-namespace cc::platform
+namespace shared::platform
 {
     using PID = pid_t;
     using ExitStatus = int;
@@ -198,4 +198,4 @@ namespace cc::platform
     /// Global instance, populated with the "best" provider for this system.
     extern ProviderProxy<ProcessProvider> process;
 
-}  // namespace cc::platform
+}  // namespace shared::platform

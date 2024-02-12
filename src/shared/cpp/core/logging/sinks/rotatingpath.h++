@@ -9,7 +9,7 @@
 #include "chrono/date-time.h++"
 #include "types/filesystem.h++"
 
-namespace cc::logging
+namespace shared::logging
 {
     class RotatingPath
     {
@@ -40,4 +40,4 @@ namespace cc::logging
         fs::path log_folder_;
         std::string exec_name_;
     };
-}  // namespace cc::logging
+}  // namespace shared::logging

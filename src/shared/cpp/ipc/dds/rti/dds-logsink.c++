@@ -10,7 +10,7 @@
 #include "translate-idl-inline.h++"
 #include "platform/symbols.h++"
 
-namespace cc::dds
+namespace shared::dds
 {
     DDSLogger::DDSLogger(const std::string &channel_name, int domain_id)
         : Super(),
@@ -37,8 +37,8 @@ namespace cc::dds
     {
         if (this->log_writer)
         {
-            this->log_writer->write(cc::idl::encoded<CC::Status::LogMessage>(*msg));
+            this->log_writer->write(idl::encoded<CC::Status::LogMessage>(*msg));
         }
     }
 
-}  // namespace cc::logging
+}  // namespace shared::logging

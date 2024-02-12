@@ -9,11 +9,11 @@
 #include "translate-idl-inline.h++"
 #include "chrono/date-time.h++"
 
-namespace cc::idl
+namespace idl
 {
     //==========================================================================
     // Greeting
-    void encode(const cc::demo::Greeting &native,
+    void encode(const demo::Greeting &native,
                 CC::Demo::Greeting *idl)
     {
         idl->text(native.text);
@@ -24,7 +24,7 @@ namespace cc::idl
     }
 
     void decode(const CC::Demo::Greeting &idl,
-                cc::demo::Greeting *native)
+                demo::Greeting *native)
     {
         native->text = idl.text();
         native->identity = idl.identity();
@@ -36,7 +36,7 @@ namespace cc::idl
     //==========================================================================
     // TimeData
 
-    void encode(const cc::demo::TimeData &native,
+    void encode(const demo::TimeData &native,
                 CC::Demo::TimeData *idl)
     {
         encode(native.timepoint, &idl->timestamp());
@@ -45,7 +45,7 @@ namespace cc::idl
     }
 
     void decode(const CC::Demo::TimeData &idl,
-                cc::demo::TimeData *native)
+                demo::TimeData *native)
     {
         decode(idl.timestamp(), &native->timepoint);
         decode(idl.local_time(), &native->localtime);
@@ -58,14 +58,14 @@ namespace cc::idl
     void encode(const std::tm &native,
                 CC::Demo::TimeStruct *idl)
     {
-        idl->year(native.tm_year + cc::dt::TM_YEAR_OFFSET);
-        idl->month(native.tm_mon + cc::dt::TM_MONTH_OFFSET);
-        idl->day(native.tm_mday + cc::dt::TM_DAY_OFFSET);
+        idl->year(native.tm_year + shared::dt::TM_YEAR_OFFSET);
+        idl->month(native.tm_mon + shared::dt::TM_MONTH_OFFSET);
+        idl->day(native.tm_mday + shared::dt::TM_DAY_OFFSET);
         idl->hour(native.tm_hour);
         idl->minute(native.tm_min);
         idl->second(native.tm_sec);
-        idl->weekday(static_cast<CC::Demo::Weekday>(native.tm_wday + cc::dt::TM_WEEKDAY_OFFSET));
-        idl->year_day(native.tm_yday + cc::dt::TM_YEARDAY_OFFSET);
+        idl->weekday(static_cast<CC::Demo::Weekday>(native.tm_wday + shared::dt::TM_WEEKDAY_OFFSET));
+        idl->year_day(native.tm_yday + shared::dt::TM_YEARDAY_OFFSET);
 
         if (native.tm_isdst >= 0)
         {
@@ -79,12 +79,12 @@ namespace cc::idl
         native->tm_sec = static_cast<int>(idl.second());
         native->tm_min = static_cast<int>(idl.minute());
         native->tm_hour = static_cast<int>(idl.hour());
-        native->tm_mday = static_cast<int>(idl.day()) - cc::dt::TM_DAY_OFFSET;
-        native->tm_mon = static_cast<int>(idl.month()) - cc::dt::TM_MONTH_OFFSET;
-        native->tm_year = static_cast<int>(idl.year()) - cc::dt::TM_YEAR_OFFSET;
-        native->tm_mday = static_cast<int>(idl.weekday()) - cc::dt::TM_WEEKDAY_OFFSET;
-        native->tm_yday = static_cast<int>(idl.year_day()) - cc::dt::TM_YEARDAY_OFFSET;
+        native->tm_mday = static_cast<int>(idl.day()) - shared::dt::TM_DAY_OFFSET;
+        native->tm_mon = static_cast<int>(idl.month()) - shared::dt::TM_MONTH_OFFSET;
+        native->tm_year = static_cast<int>(idl.year()) - shared::dt::TM_YEAR_OFFSET;
+        native->tm_mday = static_cast<int>(idl.weekday()) - shared::dt::TM_WEEKDAY_OFFSET;
+        native->tm_yday = static_cast<int>(idl.year_day()) - shared::dt::TM_YEARDAY_OFFSET;
         native->tm_isdst = static_cast<int>(idl.is_dst().has_value() ? idl.is_dst().value() : -1);
     }
 
-}  // namespace cc::idl
+}  // namespace idl

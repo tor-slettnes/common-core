@@ -10,10 +10,10 @@
 
 #include <memory>
 
-namespace cc::demo::dds
+namespace demo::dds
 {
     void run_dds_service(
-        std::shared_ptr<cc::demo::API> api_provider,
+        std::shared_ptr<demo::API> api_provider,
         const std::string &identity,
         int domain_id);
 }

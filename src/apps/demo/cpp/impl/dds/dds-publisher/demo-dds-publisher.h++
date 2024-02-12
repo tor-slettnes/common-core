@@ -13,18 +13,18 @@
 #include "types/create-shared.h++"
 #include <dds/pub/ddspub.hpp>
 
-namespace cc::demo::dds
+namespace demo::dds
 {
     //==========================================================================
     // @class Publisher
     // @brief Publish locally-emitted demo signals over DDS
 
-    class Publisher : public cc::dds::Publisher,
-                      public cc::types::enable_create_shared<Publisher>
+    class Publisher : public shared::dds::Publisher,
+                      public shared::types::enable_create_shared<Publisher>
     {
         // Convencience alias
         using This = Publisher;
-        using Super = cc::dds::Publisher;
+        using Super = shared::dds::Publisher;
 
     protected:
         Publisher(const std::string &channel_name, int domain_id);
@@ -36,7 +36,7 @@ namespace cc::demo::dds
     private:
         void on_time_update(const TimeData &time_data);
 
-        void on_greeting_update(cc::signal::MappingChange change,
+        void on_greeting_update(shared::signal::MappingChange change,
                                 const std::string &identity,
                                 const Greeting &greeting);
 
@@ -44,4 +44,4 @@ namespace cc::demo::dds
         DataWriterRef<CC::Demo::TimeData> time_writer;
         DataWriterRef<CC::Demo::Greeting> greeting_writer;
     };
-}  // namespace cc::demo::dds
+}  // namespace demo::dds

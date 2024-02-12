@@ -7,7 +7,7 @@
 
 #include "linux-path.h++"
 
-namespace cc::platform
+namespace shared::platform
 {
     LinuxPathProvider::LinuxPathProvider(const std::string &exec_name)
         : Super("LinuxPathProvider", exec_name)
@@ -19,4 +19,4 @@ namespace cc::platform
         fs::path path = this->readlink("/proc/self/exe");
         return path.empty() ? Super::exec_path() : path;
     }
-}  // namespace cc::platform
+}  // namespace shared::platform

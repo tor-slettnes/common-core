@@ -12,7 +12,7 @@
 #include "protobuf-inline.h++"          // `encoded<>` and `decoded<>` templates
 #include "platform/symbols.h++"
 
-namespace cc::demo::zmq
+namespace demo::zmq
 {
     ClientImpl::ClientImpl(const std::string &identity,
                            const std::string &host_address,
@@ -26,12 +26,12 @@ namespace cc::demo::zmq
     void ClientImpl::initialize()
     {
         API::initialize();
-        cc::zmq::ProtoBufClient::initialize();
+        shared::zmq::ProtoBufClient::initialize();
     }
 
     void ClientImpl::deinitialize()
     {
-        cc::zmq::ProtoBufClient::deinitialize();
+        shared::zmq::ProtoBufClient::deinitialize();
         API::deinitialize();
     }
 
@@ -65,4 +65,4 @@ namespace cc::demo::zmq
     {
     }
 
-}  // namespace cc::demo::zmq
+}  // namespace demo::zmq

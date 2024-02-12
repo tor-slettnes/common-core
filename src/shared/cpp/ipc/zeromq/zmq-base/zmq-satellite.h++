@@ -8,7 +8,7 @@
 #pragma once
 #include "zmq-endpoint.h++"
 
-namespace cc::zmq
+namespace shared::zmq
 {
     class Satellite : public Endpoint
     {
@@ -32,4 +32,4 @@ namespace cc::zmq
         const std::string host_address_;
     };
 
-}  // namespace cc::zmq
+}  // namespace shared::zmq

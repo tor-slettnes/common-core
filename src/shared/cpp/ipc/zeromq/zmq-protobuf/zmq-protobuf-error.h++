@@ -10,7 +10,7 @@
 
 #include "request_reply.pb.h"
 
-namespace cc::zmq
+namespace shared::zmq
 {
     constexpr auto STATUS_FIELD_CODE = "status";
 
@@ -20,7 +20,7 @@ namespace cc::zmq
         using status::Event::Event;
 
         ProtoBufError(const CC::RR::StatusCode &code,
-                      const cc::status::Event &event);
+                      const shared::status::Event &event);
 
         CC::RR::StatusCode status_code() const;
         status::Domain domain() const noexcept override;
@@ -32,4 +32,4 @@ namespace cc::zmq
     private:
         CC::RR::StatusCode status_code_;
     };
-}  // namespace cc::zmq
+}  // namespace shared::zmq

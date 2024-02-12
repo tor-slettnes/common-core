@@ -17,7 +17,7 @@
 #include <ctime>
 #include <functional>
 
-namespace cc::demo
+namespace demo
 {
     // Classes defined below.
     class Greeting;
@@ -33,14 +33,14 @@ namespace cc::demo
     //==========================================================================
     /// @class Greeting
     /// @brief Data used to introduce ourselves to our peers
-    class Greeting : public cc::types::Streamable
+    class Greeting : public shared::types::Streamable
     {
     public:
         Greeting(const std::string &text = {},
                  const std::string &identity = {},
                  const std::string &implementation = {},
-                 const cc::dt::TimePoint &birth = {},
-                 const cc::types::KeyValueMap &data = {});
+                 const shared::dt::TimePoint &birth = {},
+                 const shared::types::KeyValueMap &data = {});
 
     protected:
         void to_stream(std::ostream &stream) const override;
@@ -56,21 +56,21 @@ namespace cc::demo
         std::string implementation;
 
         // Timepoint when this process was launched
-        cc::dt::TimePoint birth;
+        shared::dt::TimePoint birth;
 
         // Arbitrary key/value pairs associated with the greeting
-        cc::types::KeyValueMap data;
+        shared::types::KeyValueMap data;
     };
 
     //==========================================================================
     /// @class TimeData
     /// @brief Time representation from the server.
 
-    class TimeData : public cc::types::Streamable
+    class TimeData : public shared::types::Streamable
     {
     public:
-        TimeData(const cc::dt::TimePoint &tp = {});
-        TimeData(const cc::dt::TimePoint &tp,
+        TimeData(const shared::dt::TimePoint &tp = {});
+        TimeData(const shared::dt::TimePoint &tp,
                  const std::tm &localtime,
                  const std::tm &utctime);
 
@@ -78,9 +78,9 @@ namespace cc::demo
         void to_stream(std::ostream &stream) const override;
 
     public:
-        cc::dt::TimePoint timepoint;
+        shared::dt::TimePoint timepoint;
         std::tm localtime;
         std::tm utctime;
     };
 
-}  // namespace cc::demo
+}  // namespace demo

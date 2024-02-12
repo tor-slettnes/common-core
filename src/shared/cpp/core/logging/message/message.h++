@@ -11,7 +11,7 @@
 #include "types/platform.h++"  // pid_t, ssize_t
 #include "types/filesystem.h++"
 
-namespace cc::logging
+namespace shared::logging
 {
     constexpr auto MESSAGE_FIELD_LOG_SCOPE = "log_scope";
     constexpr auto MESSAGE_FIELD_SOURCE_PATH = "source_path";
@@ -149,4 +149,4 @@ namespace cc::logging
         pid_t thread_id_;
     };
 
-}  // namespace cc::logging
+}  // namespace shared::logging

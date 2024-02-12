@@ -7,7 +7,7 @@
 
 #include "grpc-clientwrapper.h++"
 
-namespace cc::grpc
+namespace shared::grpc
 {
     ClientWrapperBase::ClientWrapperBase(
         const std::string &full_service_name,
@@ -106,4 +106,4 @@ namespace cc::grpc
         }
         return (state == GRPC_CHANNEL_READY);
     }
-}  // namespace cc::grpc
+}  // namespace shared::grpc

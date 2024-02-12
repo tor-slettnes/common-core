@@ -7,7 +7,7 @@
 
 #include "python-pickle.h++"
 
-namespace cc::python
+namespace shared::python
 {
     Pickler::Pickler()
         : Runtime("pickle")
@@ -37,4 +37,4 @@ namespace cc::python
     }
 
     Pickler pickler;
-};  // namespace cc::python
+};  // namespace shared::python

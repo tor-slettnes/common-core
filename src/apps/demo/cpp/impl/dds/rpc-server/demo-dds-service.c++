@@ -9,7 +9,7 @@
 #include "platform/symbols.h++"
 #include "logging/logging.h++"
 
-namespace cc::demo::dds
+namespace demo::dds
 {
     Service::Service(const ::dds::rpc::Server &server,
                      int domain_id,
@@ -20,4 +20,4 @@ namespace cc::demo::dds
                 RequestHandler::create_shared(api_provider))
     {
     }
-}  // namespace cc::demo::dds
+}  // namespace demo::dds

@@ -7,7 +7,7 @@
 
 #include "client.h++"
 
-namespace cc::argparse
+namespace shared::argparse
 {
     //==========================================================================
     // ClientOptions methods
@@ -35,4 +35,4 @@ namespace cc::argparse
             30);
     }
 
-}  // namespace cc::argparse
+}  // namespace shared::argparse

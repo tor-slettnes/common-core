@@ -13,7 +13,7 @@
 #include <filesystem>
 #include <vector>
 
-namespace cc
+namespace shared
 {
     /// Generic settings store to read/write configuration values from/to .json files.
     ///
@@ -162,4 +162,4 @@ namespace cc
     };
 
     using SettingsStoreRef = std::shared_ptr<SettingsStore>;
-}  // namespace cc
+}  // namespace shared

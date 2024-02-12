@@ -13,14 +13,14 @@
 
 #include "types/create-shared.h++"
 
-namespace cc::demo::grpc
+namespace demo::grpc
 {
-    using ClientImplBase = cc::grpc::SignalWatchClient<CC::Demo::Demo,
+    using ClientImplBase = shared::grpc::SignalWatchClient<CC::Demo::Demo,
                                                        CC::Demo::Signal>;
 
     class ClientImpl : public demo::API,
                        public ClientImplBase,
-                       public types::enable_create_shared<ClientImpl>
+                       public shared::types::enable_create_shared<ClientImpl>
     {
         using This = ClientImpl;
 
@@ -48,4 +48,4 @@ namespace cc::demo::grpc
         void start_watching() override;
         void stop_watching() override;
     };
-}  // namespace cc::demo::grpc
+}  // namespace demo::grpc

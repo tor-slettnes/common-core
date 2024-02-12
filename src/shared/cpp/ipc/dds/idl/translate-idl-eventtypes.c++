@@ -9,47 +9,47 @@
 #include "translate-idl-inline.h++"
 #include "chrono/date-time.h++"
 
-namespace cc::idl
+namespace idl
 {
     //==========================================================================
     // Domain
-    void encode(const cc::status::Domain &native, CC::Status::Domain *idl) noexcept
+    void encode(const shared::status::Domain &native, CC::Status::Domain *idl) noexcept
     {
         *idl = static_cast<CC::Status::Domain>(native);
     }
 
-    void decode(const CC::Status::Domain &idl, cc::status::Domain *native) noexcept
+    void decode(const CC::Status::Domain &idl, shared::status::Domain *native) noexcept
     {
-        *native = static_cast<cc::status::Domain>(idl);
+        *native = static_cast<shared::status::Domain>(idl);
     }
 
     //==========================================================================
     // Severity Level
-    void encode(const cc::status::Level &native, CC::Status::Level *idl) noexcept
+    void encode(const shared::status::Level &native, CC::Status::Level *idl) noexcept
     {
         *idl = static_cast<CC::Status::Level>(native);
     }
 
-    void decode(const CC::Status::Level &idl, cc::status::Level *native) noexcept
+    void decode(const CC::Status::Level &idl, shared::status::Level *native) noexcept
     {
-        *native = static_cast<cc::status::Level>(idl);
+        *native = static_cast<shared::status::Level>(idl);
     }
 
     //==========================================================================
     // Execution flow
-    void encode(const cc::status::Flow &native, CC::Status::Flow *idl) noexcept
+    void encode(const shared::status::Flow &native, CC::Status::Flow *idl) noexcept
     {
         *idl = static_cast<CC::Status::Flow>(native);
     }
 
-    void decode(const CC::Status::Flow &idl, cc::status::Flow *native) noexcept
+    void decode(const CC::Status::Flow &idl, shared::status::Flow *native) noexcept
     {
-        *native = static_cast<cc::status::Flow>(idl);
+        *native = static_cast<shared::status::Flow>(idl);
     }
 
     //==========================================================================
     // Event
-    void encode(const cc::status::Event &native, CC::Status::Event *idl) noexcept
+    void encode(const shared::status::Event &native, CC::Status::Event *idl) noexcept
     {
         idl->text(native.text());
         encode(native.domain(), &idl->domain());
@@ -62,30 +62,30 @@ namespace cc::idl
         encode(native.attributes(), &idl->attributes());
     }
 
-    void decode(const CC::Status::Event &idl, cc::status::Event *native) noexcept
+    void decode(const CC::Status::Event &idl, shared::status::Event *native) noexcept
     {
         *native = decoded_event(idl);
     }
 
-    cc::status::Event decoded_event(const CC::Status::Event &idl) noexcept
+    shared::status::Event decoded_event(const CC::Status::Event &idl) noexcept
     {
         return {
             idl.text(),                                        // text
-            decoded<cc::status::Domain>(idl.domain()),         // domain
+            decoded<shared::status::Domain>(idl.domain()),         // domain
             idl.origin(),                                      // origin
             static_cast<int>(idl.code()),                      // code
             idl.symbol(),                                      // symbol
-            decoded<cc::status::Level>(idl.level()),           // level
-            decoded<cc::status::Flow>(idl.flow()),             // flow
-            decoded<cc::dt::TimePoint>(idl.timestamp()),       // timepoint
-            decoded<cc::types::KeyValueMap>(idl.attributes())  // attributes
+            decoded<shared::status::Level>(idl.level()),           // level
+            decoded<shared::status::Flow>(idl.flow()),             // flow
+            decoded<shared::dt::TimePoint>(idl.timestamp()),       // timepoint
+            decoded<shared::types::KeyValueMap>(idl.attributes())  // attributes
         };
     }
 
     //==========================================================================
     // LogMessage
 
-    void encode(const cc::logging::Message &native,
+    void encode(const shared::logging::Message &native,
                 CC::Status::LogMessage *idl) noexcept
     {
         idl->text(native.text());
@@ -104,14 +104,14 @@ namespace cc::idl
         idl->thread_id(native.thread_id());
     }
 
-    cc::logging::Message decoded_logmessage(CC::Status::LogMessage idl) noexcept
+    shared::logging::Message decoded_logmessage(CC::Status::LogMessage idl) noexcept
     {
         return {
             idl.text(),
-            cc::logging::scopes.get(idl.log_scope()),
-            decoded<cc::status::Level>(idl.level()),
-            decoded<cc::status::Flow>(idl.flow()),
-            decoded<cc::dt::TimePoint>(idl.timestamp()),
+            shared::logging::scopes.get(idl.log_scope()),
+            decoded<shared::status::Level>(idl.level()),
+            decoded<shared::status::Flow>(idl.flow()),
+            decoded<shared::dt::TimePoint>(idl.timestamp()),
             idl.filename(),
             idl.lineno(),
             idl.function(),
@@ -119,8 +119,8 @@ namespace cc::idl
             idl.origin(),
             idl.code(),
             idl.symbol(),
-            decoded<cc::types::KeyValueMap>(idl.attributes()),
+            decoded<shared::types::KeyValueMap>(idl.attributes()),
         };
     }
 
-}  // namespace cc::idl
+}  // namespace idl

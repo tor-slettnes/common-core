@@ -12,7 +12,7 @@
 // Shared modules
 #include "chrono/date-time.h++"
 
-namespace cc::demo
+namespace demo
 {
     //==========================================================================
     /// @class API
@@ -24,7 +24,7 @@ namespace cc::demo
         /// @brief Constructor. This will be invoked only from derived classes.
         API(const std::string &identity,
             const std::string &implementation,
-            const cc::dt::TimePoint &birth = cc::dt::Clock::now());
+            const shared::dt::TimePoint &birth = shared::dt::Clock::now());
 
     public:
         virtual void initialize() {}
@@ -36,7 +36,7 @@ namespace cc::demo
         /// @param[in] data
         ///     Arbitrary key/value items to include in greeting
         void say_hello(const std::string &message,
-                       const types::KeyValueMap &data={});
+                       const shared::types::KeyValueMap &data={});
 
         /// @brief Issue a greeting to anyone who may be listening
         /// @param[in] greeting
@@ -54,7 +54,7 @@ namespace cc::demo
         /// @brief Start periodic time notification task
         /// @note
         ///     To receive time updates, connect a callback function ("slot")
-        ///     to `cc::demo::signal_time`; see `demo-signals.hpp` for details.
+        ///     to `demo::signal_time`; see `demo-signals.hpp` for details.
         virtual void start_ticking() = 0;
 
         /// @brief Stop any existing time notification task
@@ -70,11 +70,11 @@ namespace cc::demo
         // Accessor methods
         std::string identity() const;
         std::string implementation() const;
-        cc::dt::TimePoint birth() const;
+        shared::dt::TimePoint birth() const;
 
     protected:
         std::string identity_;
         std::string implementation_;
-        cc::dt::TimePoint birth_;
+        shared::dt::TimePoint birth_;
     };
-}  // namespace cc::demo
+}  // namespace demo

@@ -13,25 +13,25 @@
 
 int main(int argc, char** argv)
 {
-    cc::application::initialize(argc, argv);
+    shared::application::initialize(argc, argv);
 
-    cc::demo::options = std::make_unique<cc::demo::Options>("RTI DDS");
-    cc::demo::options->apply(argc, argv);
+    demo::options = std::make_unique<demo::Options>("RTI DDS");
+    demo::options->apply(argc, argv);
 
     logf_debug("Creating DDS demo provider");
-    cc::demo::provider = cc::demo::dds::ClientImpl::create_shared(
-        cc::demo::options->identity,
-        cc::demo::options->domain_id);
+    demo::provider = demo::dds::ClientImpl::create_shared(
+        demo::options->identity,
+        demo::options->domain_id);
 
     logf_debug("Initializing DDS demo provider");
-    cc::demo::provider->initialize();
+    demo::provider->initialize();
 
-    bool success = cc::demo::options->handle_command();
+    bool success = demo::options->handle_command();
 
     logf_debug("Deinitializing DDS demo provider");
-    cc::demo::provider->deinitialize();
-    cc::demo::provider.reset();
+    demo::provider->deinitialize();
+    demo::provider.reset();
 
-    cc::application::deinitialize();
+    shared::application::deinitialize();
     return success ? 0 : -1;
 }

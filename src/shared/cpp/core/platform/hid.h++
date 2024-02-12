@@ -14,7 +14,7 @@
 
 #include <tuple>
 
-namespace cc::platform
+namespace shared::platform
 {
     //==========================================================================
     // HID Bus Type
@@ -124,4 +124,4 @@ namespace cc::platform
 
     extern ProviderProxy<HIDProvider> hid;
 
-}  // namespace cc::platform
+}  // namespace shared::platform

@@ -12,14 +12,14 @@
 
 #include "types/create-shared.h++"
 
-namespace cc::demo::dds
+namespace demo::dds
 {
     //==========================================================================
     // @class RequestHandler
     // @brief Process requests from DemoService clients
 
     class RequestHandler : public CC::Demo::DemoService,
-                           public cc::types::enable_create_shared<RequestHandler>
+                           public shared::types::enable_create_shared<RequestHandler>
     {
         // Convencience alias
         using This = RequestHandler;
@@ -37,4 +37,4 @@ namespace cc::demo::dds
     private:
         std::shared_ptr<API> provider;
     };
-}  // namespace cc::demo::dds
+}  // namespace demo::dds

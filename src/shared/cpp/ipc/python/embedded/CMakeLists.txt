@@ -6,26 +6,21 @@
 #===============================================================================
 
 ### Name of this library.
-set(TARGET cc_shared_ipc_python_base)
+set(TARGET cc_shared_ipc_python_embedded)
 
 ### Library type
 set(LIB_TYPE STATIC)
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_shared_ipc_common
-  cc_shared_platform
-)
-
-### Third-party package dependencies
-set(PKG_DEPS
-  python3-embed
+  cc_shared_ipc_python_base
 )
 
 ### Source files in this folder
 set(SOURCES
-  python-simpleobject.c++
-  python-containerobject.c++
+  python-exception.c++
+  python-runtime.c++
+  python-pickle.c++
 )
 
 ### Recepies to build the library

@@ -10,7 +10,7 @@
 #include "grpc-servicehandler.h++"
 #include <grpc++/server_builder.h>
 
-namespace cc::grpc
+namespace shared::grpc
 {
     class ServerBuilder : public ::grpc::ServerBuilder
     {
@@ -44,4 +44,4 @@ namespace cc::grpc
         std::vector<std::string> listeners_;
     };
 
-}  // namespace cc::grpc
+}  // namespace shared::grpc

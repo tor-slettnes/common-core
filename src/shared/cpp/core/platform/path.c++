@@ -8,7 +8,7 @@
 #include "path.h++"
 #include <fstream>
 
-#define LOCAL_FOLDER          "/cc"
+#define LOCAL_FOLDER          "/shared"
 #define DEFAULT_CONFIG_FOLDER LOCAL_FOLDER "/config"
 #define DEFAULT_DATA_FOLDER   LOCAL_FOLDER "/data"
 #define DEFAULT_LOG_FOLDER    LOCAL_FOLDER "/logs"
@@ -18,7 +18,7 @@
 #define SETTINGS_DEF_BASE     "share/settings"
 
 /// Default filesystem paths.
-namespace cc::platform
+namespace shared::platform
 {
     PathProvider::PathProvider(const std::string &provider_name,
                                const std::string &exec_name)
@@ -217,4 +217,4 @@ namespace cc::platform
     /// Global instance, populated with the "best" provider for this system.
     ProviderProxy<PathProvider> path("path");
 
-};  // namespace cc::platform
+};  // namespace shared::platform

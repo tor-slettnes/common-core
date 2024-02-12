@@ -8,7 +8,7 @@
 #pragma once
 #include "types/value.h++"
 
-namespace cc::json
+namespace shared::json
 {
     /// @brief Encode `types::Value()` & friends to rapidJson writer instances
     /// @tparam[in] WriterType
@@ -129,4 +129,4 @@ namespace cc::json
             return writer->EndObject();
         }
     };
-}  // namespace cc::json
+}  // namespace shared::json

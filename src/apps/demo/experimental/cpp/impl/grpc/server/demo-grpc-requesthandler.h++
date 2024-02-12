@@ -12,18 +12,18 @@
 #include "grpc-signalstream-server.h++"
 #include "types/create-shared.h++"
 
-namespace cc::demo::grpc
+namespace demo::grpc
 {
     //==========================================================================
     // @class RequestHandler
     // @brief Process requests from Demo clients
 
-    class RequestHandler : public cc::grpc::SignalServer<CC::Demo::Demo>,
-                           public types::enable_create_shared<RequestHandler>
+    class RequestHandler : public shared::grpc::SignalServer<CC::Demo::Demo>,
+                           public shared::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;
-        using Super = cc::grpc::SignalServer<CC::Demo::Demo>;
+        using Super = shared::grpc::SignalServer<CC::Demo::Demo>;
 
     protected:
         RequestHandler(const std::shared_ptr<API>& api_provider);
@@ -62,4 +62,4 @@ namespace cc::demo::grpc
     private:
         std::shared_ptr<API> provider;
     };
-}  // namespace cc::demo::grpc
+}  // namespace demo::grpc

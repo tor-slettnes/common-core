@@ -7,13 +7,12 @@
 
 #pragma once
 #include "protobuf-message.h++"
-#include "thread/binaryevent.h++"
 #include "signal_types.pb.h"
 
 #include <unordered_map>
 #include <functional>
 
-namespace cc::protobuf
+namespace protobuf
 {
 
     template <class SignalT>
@@ -127,4 +126,4 @@ namespace cc::protobuf
         std::mutex slots_mtx;
     };
 
-}  // namespace cc::protobuf
+}  // namespace shared::protobuf

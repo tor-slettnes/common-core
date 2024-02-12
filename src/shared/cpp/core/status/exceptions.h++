@@ -13,7 +13,7 @@
 
 #include <stdexcept>
 
-namespace cc::exception
+namespace shared::exception
 {
     //==========================================================================
     /// @class CustomException
@@ -377,7 +377,7 @@ namespace cc::exception
     status::Event::Ref map_to_event(const std::exception &e) noexcept;
     status::Event::Ref map_to_event(std::exception_ptr eptr) noexcept;
 
-};  // namespace cc::exception
+};  // namespace shared::exception
 
 namespace std
 {

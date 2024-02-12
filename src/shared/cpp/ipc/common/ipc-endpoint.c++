@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace cc::ipc
+namespace shared::ipc
 {
     //==========================================================================
     // @class Endpoint
@@ -87,4 +87,4 @@ namespace cc::ipc
 
     std::map<std::string, std::shared_ptr<SettingsStore>> Endpoint::settings_map_;
 
-}  // namespace cc::ipc
+}  // namespace shared::ipc

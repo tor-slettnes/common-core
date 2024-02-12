@@ -11,7 +11,7 @@
 // Shared modules
 #include "string/format.h++"
 
-namespace cc::demo
+namespace demo
 {
     //==========================================================================
     /// @class API
@@ -19,7 +19,7 @@ namespace cc::demo
     API::API(
         const std::string &identity,
         const std::string &implementation,
-        const cc::dt::TimePoint &birth)
+        const shared::dt::TimePoint &birth)
         : identity_(identity),
           implementation_(implementation),
           birth_(birth)
@@ -27,7 +27,7 @@ namespace cc::demo
     }
 
     void API::say_hello(const std::string &message,
-                        const cc::types::KeyValueMap &data)
+                        const shared::types::KeyValueMap &data)
     {
         this->say_hello(Greeting(message,
                                  this->identity(),
@@ -46,8 +46,8 @@ namespace cc::demo
         return this->implementation_;
     }
 
-    cc::dt::TimePoint API::birth() const
+    shared::dt::TimePoint API::birth() const
     {
         return this->birth_;
     }
-}  // namespace cc::demo
+}  // namespace demo

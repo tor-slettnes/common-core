@@ -13,7 +13,7 @@
 #include <string>
 #include <map>
 
-namespace cc::types
+namespace shared::types
 {
     template <class KeyType,
               class MapType = std::map<KeyType, std::string>>
@@ -160,4 +160,4 @@ namespace cc::types
             return prefix + str::join(this->symbols(), separator) + suffix;
         }
     };
-}  // namespace cc::types
+}  // namespace shared::types

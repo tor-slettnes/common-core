@@ -13,7 +13,7 @@
 #include "logging/logging.h++"
 #include "platform/symbols.h++"
 
-namespace cc::demo::zmq
+namespace demo::zmq
 {
     Publisher::Publisher(const std::string &bind_address,
                          const std::string &channel_name)
@@ -36,4 +36,4 @@ namespace cc::demo::zmq
         this->signal_writer.reset();
         Super::deinitialize();
     }
-}  // namespace cc::demo::zmq
+}  // namespace demo::zmq

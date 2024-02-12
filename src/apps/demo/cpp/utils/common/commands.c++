@@ -10,53 +10,53 @@
 #include "string/convert.h++"
 #include "chrono/date-time.h++"
 
-namespace cc::demo
+namespace demo
 {
     void Options::say_hello()
     {
         std::string text = this->pop_arg("text");
-        cc::types::KeyValueMap data = this->pop_attributes(false);
+        shared::types::KeyValueMap data = this->pop_attributes(false);
 
-        cc::demo::Greeting greeting(
+        demo::Greeting greeting(
             text,                                         // text
             this->identity,                               // identity
-            cc::str::convert_from(this->implementation),  // implementation
-            cc::dt::Clock::now(),                         // birth
+            shared::str::convert_from(this->implementation),  // implementation
+            shared::dt::Clock::now(),                         // birth
             data);                                        // data
 
-        cc::demo::provider->say_hello(greeting);
+        demo::provider->say_hello(greeting);
     }
 
     void Options::get_current_time()
     {
-        std::cout << cc::demo::provider->get_current_time() << std::endl;
+        std::cout << demo::provider->get_current_time() << std::endl;
     }
 
     void Options::start_ticking()
     {
-        cc::demo::provider->start_ticking();
+        demo::provider->start_ticking();
     }
 
     void Options::stop_ticking()
     {
-        cc::demo::provider->stop_ticking();
+        demo::provider->stop_ticking();
     }
 
-    void Options::on_time(const cc::demo::TimeData &timedata)
+    void Options::on_time(const demo::TimeData &timedata)
     {
-        cc::str::format(std::cout,
+        shared::str::format(std::cout,
                         "signal_time(%s)\n",
                         timedata);
     }
 
-    void Options::on_greeting(cc::signal::MappingChange change,
+    void Options::on_greeting(shared::signal::MappingChange change,
                               const std::string &identity,
-                              const cc::demo::Greeting &greeting)
+                              const demo::Greeting &greeting)
     {
-        cc::str::format(std::cout,
+        shared::str::format(std::cout,
                         "signal_greeting(%s, %r, %s)\n",
                         change,
                         identity,
                         greeting);
     }
-}  // namespace cc::demo
+}  // namespace demo

@@ -10,21 +10,21 @@
 #include "demo-dds-publisher.h++"  // DDS publisher
 #include "demo-dds-service.h++"    // RPC service
 
-namespace cc::demo::dds
+namespace demo::dds
 {
     void run_dds_service(
-        std::shared_ptr<cc::demo::API> api_provider,
+        std::shared_ptr<demo::API> api_provider,
         const std::string &identity,
         int domain_id)
     {
         // A server provides the execution environment for one or more RPC services
-        auto server = cc::dds::Server();
+        auto server = shared::dds::Server();
 
         // Instantiate Publisher to relay asynchronous events over DDS
-        auto dds_publisher = cc::demo::dds::Publisher::create_shared(identity, domain_id);
+        auto dds_publisher = demo::dds::Publisher::create_shared(identity, domain_id);
 
         // Instantiate DDS RPC Service
-        auto rpc_service = cc::demo::dds::Service(server, domain_id, api_provider);
+        auto rpc_service = demo::dds::Service(server, domain_id, api_provider);
 
         //======================================================================
         // Initialize
@@ -59,4 +59,4 @@ namespace cc::demo::dds
 
         logf_debug("Demo DDS service ended");
     }
-}  // namespace cc::demo::dds
+}  // namespace demo::dds

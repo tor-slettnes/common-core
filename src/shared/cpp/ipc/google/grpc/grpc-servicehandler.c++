@@ -11,7 +11,7 @@
 #include "logging/logging.h++"
 //#include "errnos.h"
 
-namespace cc::grpc
+namespace shared::grpc
 {
     ServiceHandlerBase::ServiceHandlerBase(const std::string &full_service_name)
         : Base("gRPC Service", full_service_name)
@@ -35,7 +35,7 @@ namespace cc::grpc
                                        const int &lineno,
                                        const std::string &function)
     {
-        Status status(*cc::exception::map_to_event(e));
+        Status status(*shared::exception::map_to_event(e));
         this->log_status(status, operation, flow, path, lineno, function);
         return status;
     }
@@ -135,8 +135,8 @@ namespace cc::grpc
         {
             ss << "request from " << peer << ": ";
         }
-        ss << function << "(" << cc::protobuf::to_string(request) << ")";
+        ss << function << "(" << ::protobuf::to_string(request) << ")";
         return ss.str();
     }
 
-}  // namespace cc::grpc
+}  // namespace shared::grpc

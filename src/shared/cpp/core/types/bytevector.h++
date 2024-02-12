@@ -15,7 +15,7 @@
 
 using uint = unsigned int;
 
-namespace cc::types
+namespace shared::types
 {
     using Byte = std::uint8_t;
 
@@ -99,15 +99,15 @@ namespace cc::types
         /// \exception exception::InvalidArgument Invalid hexadecimal digits encountered
         static ByteVector from_hex(const std::string &string);
     };
-}  // namespace cc::types
+}  // namespace shared::types
 
 // Make ByteVector hashable (for unordered_map, unordered_set, etc)
 namespace std
 {
     template <>
-    struct hash<cc::types::ByteVector>
+    struct hash<shared::types::ByteVector>
     {
-        inline std::size_t operator()(const cc::types::ByteVector &b) const
+        inline std::size_t operator()(const shared::types::ByteVector &b) const
         {
             return std::hash<std::string_view>()(b.stringview());
         }
@@ -115,5 +115,5 @@ namespace std
 }  // namespace std
 
 // Aliases for backwards compatiblity
-using Byte = cc::types::Byte;
-using ByteVector = cc::types::ByteVector;
+using Byte = shared::types::Byte;
+using ByteVector = shared::types::ByteVector;

@@ -8,7 +8,7 @@
 #pragma once
 #include "python-simpleobject.h++"
 
-namespace cc::python
+namespace shared::python
 {
     //==========================================================================
     /// @brief
@@ -30,4 +30,4 @@ namespace cc::python
         Map attributes_as_objects() const;
         types::KeyValueMap attributes_as_values() const;
     };
-}  // namespace cc::python
+}  // namespace shared::python

@@ -11,9 +11,9 @@
 
 #include <memory>
 
-namespace cc
+namespace shared
 {
-    extern std::shared_ptr<cc::SettingsStore> settings;
+    extern std::shared_ptr<shared::SettingsStore> settings;
 
     void init_settings(const types::PathList &files = {platform::path->exec_name(true), "defaults"});
-}  // namespace cc
+}  // namespace shared

@@ -9,13 +9,13 @@
 #include "demo-zmq-requesthandler.h++"
 #include "zmq-protobuf-server.h++"
 
-namespace cc::demo::zmq
+namespace demo::zmq
 {
-    class Server : public cc::zmq::ProtoBufServer,
-                   public types::enable_create_shared<Server>
+    class Server : public shared::zmq::ProtoBufServer,
+                   public shared::types::enable_create_shared<Server>
     {
         using This = Server;
-        using Super = cc::zmq::ProtoBufServer;
+        using Super = shared::zmq::ProtoBufServer;
 
     protected:
         Server(const std::shared_ptr<API> &api,
@@ -26,4 +26,4 @@ namespace cc::demo::zmq
         std::shared_ptr<API> api;
     };
 
-}  // namespace cc::demo::zmq
+}  // namespace demo::zmq

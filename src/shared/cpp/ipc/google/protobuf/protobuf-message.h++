@@ -12,7 +12,7 @@
 
 #include <ostream>
 
-namespace cc::protobuf
+namespace protobuf
 {
     //==========================================================================
     // Message deserialization
@@ -22,10 +22,11 @@ namespace cc::protobuf
                           bool single_line = true);
 
     /// Convert a protobuf message to a serialized byte array
-    void to_bytes(const google::protobuf::Message &msg, types::ByteVector *bytes);
+    void to_bytes(const google::protobuf::Message &msg,
+                  shared::types::ByteVector *bytes);
 
     /// Convert a protobuf message to a serialized byte array
-    types::ByteVector to_bytes(const google::protobuf::Message &msg);
+    shared::types::ByteVector to_bytes(const google::protobuf::Message &msg);
 
     //==========================================================================
     // Message serialization
@@ -67,7 +68,7 @@ namespace cc::protobuf
         msg.ParseFromString(packed_string);
         return msg;
     }
-}  // namespace cc::protobuf
+}  // namespace shared::protobuf
 
 /// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
 namespace google

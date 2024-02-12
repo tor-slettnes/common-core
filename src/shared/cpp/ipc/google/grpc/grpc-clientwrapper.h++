@@ -18,7 +18,7 @@
 #include <grpcpp/impl/codegen/sync_stream.h>
 #include <grpcpp/impl/codegen/client_context.h>
 
-namespace cc::grpc
+namespace shared::grpc
 {
     //==========================================================================
     /// @class ClientBase
@@ -75,7 +75,7 @@ namespace cc::grpc
         /// @param[in] status
         ///     gRPC status code to check
         ///
-        /// @throw cc::grpc::ServiceError
+        /// @throw shared::grpc::ServiceError
         ///     An error response was received from the server.
         ///
         void check(const ::grpc::Status &status) const;
@@ -243,7 +243,7 @@ namespace cc::grpc
         ///     Wait for gRPC service to become ready instead of failing.
         /// @return
         ///     Protobuf response message
-        /// @throw cc::grpc::ServiceError
+        /// @throw shared::grpc::ServiceError
         ///     Non-OK gRPC status code
 
         template <class ResponseT, class RequestT = google::protobuf::Empty>
@@ -272,4 +272,4 @@ namespace cc::grpc
         std::unique_ptr<Stub> stub;
     };
 
-}  // namespace cc::grpc
+}  // namespace shared::grpc

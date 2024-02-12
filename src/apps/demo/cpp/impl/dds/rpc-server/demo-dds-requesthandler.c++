@@ -12,7 +12,7 @@
 
 #include "logging/logging.h++"
 
-namespace cc::demo::dds
+namespace demo::dds
 {
     RequestHandler::RequestHandler(const std::shared_ptr<API> &api_provider)
         : provider(api_provider)
@@ -25,7 +25,7 @@ namespace cc::demo::dds
         // We received a greeting from a client.  Emit a signal to registered
         // callbacks (slots). (This includes `Publisher::on_signal_greeting()`,
         // which then forwards the signals to clients as a published message.)
-        this->provider->say_hello(cc::idl::decoded<Greeting>(greeting));
+        this->provider->say_hello(idl::decoded<Greeting>(greeting));
     }
 
     CC::Demo::TimeData RequestHandler::get_current_time()
@@ -40,7 +40,7 @@ namespace cc::demo::dds
 
         // Encode the native TimeData structure to a CC::Demo TimeData structure
         // in the reply.
-        return cc::idl::encoded<CC::Demo::TimeData>(time_data);
+        return idl::encoded<CC::Demo::TimeData>(time_data);
     }
 
     void RequestHandler::start_ticking()
@@ -55,4 +55,4 @@ namespace cc::demo::dds
         this->provider->stop_ticking();
     }
 
-}  // namespace cc::demo::dds
+}  // namespace demo::dds

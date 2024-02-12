@@ -27,14 +27,14 @@
 int main(int argc, char** argv)
 {
     // Initialize paths, load settings, set up shutdown signal handlers
-    cc::application::initialize(argc, argv);
+    shared::application::initialize(argc, argv);
 
-    cc::demo::options = std::make_unique<cc::demo::Options>();
-    cc::demo::options->apply(argc, argv);
+    demo::options = std::make_unique<demo::Options>();
+    demo::options->apply(argc, argv);
 
     // API provider. In this process we use the native/direct implementation.
-    auto api_provider = cc::demo::NativeImpl::create_shared(
-        cc::demo::options->identity);
+    auto api_provider = demo::NativeImpl::create_shared(
+        demo::options->identity);
 
     logf_debug("Initializing Demo API provider: %s", api_provider->implementation());
     api_provider->initialize();
@@ -42,34 +42,34 @@ int main(int argc, char** argv)
     std::list<std::thread> server_threads;
 
 #ifdef USE_GRPC
-    if (cc::demo::options->enable_grpc)
+    if (demo::options->enable_grpc)
     {
         logf_debug("Spawning gRPC server");
         server_threads.emplace_back(
-            cc::demo::grpc::run_grpc_service,
+            demo::grpc::run_grpc_service,
             api_provider,
             "");
     }
 #endif
 
 #ifdef USE_DDS
-    if (cc::demo::options->enable_dds)
+    if (demo::options->enable_dds)
     {
         logf_debug("Spawning DDS server");
         server_threads.emplace_back(
-            cc::demo::dds::run_dds_service,
+            demo::dds::run_dds_service,
             api_provider,
-            cc::demo::options->identity,
-            cc::demo::options->domain_id);
+            demo::options->identity,
+            demo::options->domain_id);
     }
 #endif
 
 #ifdef USE_ZMQ
-    if (cc::demo::options->enable_zmq)
+    if (demo::options->enable_zmq)
     {
         log_debug("Spawning ZMQ server");
         server_threads.emplace_back(
-            cc::demo::zmq::run_zmq_service,
+            demo::zmq::run_zmq_service,
             api_provider,
             "");
     }
@@ -84,6 +84,6 @@ int main(int argc, char** argv)
     api_provider->deinitialize();
 
     logf_debug("Deinitializing Example application");
-    cc::application::deinitialize();
+    shared::application::deinitialize();
     return 0;
 }

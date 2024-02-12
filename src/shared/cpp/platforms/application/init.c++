@@ -12,7 +12,7 @@
 #include <locale>
 #include <csignal>
 
-namespace cc::application
+namespace shared::application
 {
     void shutdown_handler(int signal)
     {
@@ -29,15 +29,15 @@ namespace cc::application
         // Apply locale for `wstring` conversions
         std::locale::global(std::locale(""));
 
-        cc::platform::register_providers(argc ? argv[0] : "");
-        cc::init_settings();
+        shared::platform::register_providers(argc ? argv[0] : "");
+        shared::init_settings();
     }
 
     void deinitialize()
     {
         logging::message_dispatcher.deinitialize();
-        cc::platform::unregister_providers();
+        shared::platform::unregister_providers();
     }
 
-    cc::signal::Signal<int> signal_shutdown("signal_shutdown");
-}  // namespace cc::application
+    shared::signal::Signal<int> signal_shutdown("signal_shutdown");
+}  // namespace shared::application

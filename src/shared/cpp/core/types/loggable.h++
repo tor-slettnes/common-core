@@ -8,7 +8,7 @@
 #pragma once
 #include <memory>
 
-namespace cc::types
+namespace shared::types
 {
     //==========================================================================
     /// \class Loggable
@@ -28,4 +28,4 @@ namespace cc::types
         virtual ~Loggable() {}  // Hack to ensure class is polymorphic
     };
 
-}  // namespace cc::types
+}  // namespace shared::types

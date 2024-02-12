@@ -15,7 +15,7 @@
 #include "types/create-shared.h++"
 
 
-namespace cc::demo::zmq
+namespace demo::zmq
 {
     //==========================================================================
     // @class ClientImpl
@@ -23,8 +23,8 @@ namespace cc::demo::zmq
 
     class ClientImpl
         : public API,
-          public cc::zmq::ProtoBufClient,
-          public cc::types::enable_create_shared<ClientImpl>
+          public shared::zmq::ProtoBufClient,
+          public shared::types::enable_create_shared<ClientImpl>
     {
         // Convencience alias
         using This = ClientImpl;
@@ -49,4 +49,4 @@ namespace cc::demo::zmq
         void stop_watching() override;
     };
 
-}  // namespace cc::demo::zmq
+}  // namespace demo::zmq

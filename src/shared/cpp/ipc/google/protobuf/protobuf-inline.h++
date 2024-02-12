@@ -7,20 +7,20 @@
 /// The purpose of this file is to allow wrapper semantics like the following
 /// around the respecitve methods protobuf::encode(nativeobject, protobufmessage)
 ///  and protobuf::decode(protobufmessage, nativeobject):
-///   -  auto protomessage = cc::protobuf::encoded<ProtoBufType>(nativeobject);
-///   -  auto nativeobject = cc::protobuf::decoded<NativeType>(protomessage);
+///   -  auto protomessage = shared::protobuf::encoded<ProtoBufType>(nativeobject);
+///   -  auto nativeobject = shared::protobuf::decoded<NativeType>(protomessage);
 /// Due to an apparent bug in the GNU C++ compiler, these function templates
 /// must be declared AFTER the corresponding basic functions, as they do not
 /// seem to be privy to overload resolution for methods declared in subsequently
 /// included files. Consequently, you should only include this file directly in
-/// your `.cc` source file, and only after any other `protobuf-*.h` imports.
+/// your `.shared` source file, and only after any other `protobuf-*.h` imports.
 //==============================================================================
 
 #pragma once
 #include <google/protobuf/message.h>
 #include <vector>
 
-namespace cc::protobuf
+namespace protobuf
 {
     //==========================================================================
     // Decode repeated fields
@@ -99,4 +99,4 @@ namespace cc::protobuf
         return ref;
     }
 
-}  // namespace cc::protobuf
+}  // namespace shared::protobuf
