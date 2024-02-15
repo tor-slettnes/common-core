@@ -9,8 +9,8 @@
 from .requesthandler import DemoRequestHandler
 from .common import DEMO_SERVICE_CHANNEL, DEMO_PUBLISHER_CHANNEL
 from ..core import API, demo_signals
-from ipc.zmq.basic import Publisher
-from ipc.zmq.protobuf import Server as ProtoServer, SignalWriter
+from messaging.zmq.basic import Publisher
+from messaging.zmq.protobuf import Server as ProtoServer, SignalWriter
 
 class Server (ProtoServer):
     def __init__(self,

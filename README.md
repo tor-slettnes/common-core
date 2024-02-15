@@ -93,7 +93,7 @@ If you are reading this text directly on your system, you have already completed
 
 #### C++ build requirements
 
-* C++ build-time dependencies:
+* C++ core build-time dependencies:
 
   ```bash
   $ sudo apt install build-essential cmake \
@@ -120,6 +120,12 @@ If you are reading this text directly on your system, you have already completed
 
   ```bash
   $ sudo apt install python3-dev
+  ```
+
+* C++ build-time libraries for REST API:
+
+  ```bash
+  $ sudo apt install libcurl4-gnutls-dev
   ```
 
 * Dependencies used to generate developer/reference documentation:

@@ -120,7 +120,7 @@ specifically as it is defined in [demo-api.h++](cpp/api/demo-api.h++):
    Indeed, for this purpose we'll reuse the ProtoBuf message types from
    [demo_types.proto](proto/demo_types.proto), only this time we will make use
    of the customized [ZMQ ProtoBuf
-   wrappers](../../shared/cpp/ipc/zeromq/zmq-protobuf/README.md) from the
+   wrappers](../../shared/cpp/messaging/zeromq/zmq-protobuf/README.md) from the
    [shared components](../../shared) section to implement the RPC portion.
 
 

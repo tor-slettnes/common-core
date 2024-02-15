@@ -13,11 +13,11 @@ Directory stsructure
   - [scalar_types.py](core/scalar_types.py) - Misc. utilities for enums & integers
   - [stringexpander.py](core/stringexpander.py) - parse string using shell-style `${}`/`$()`/`$[]` expansions
 
-* [ipc](ipc) - Modules for inter-process communication (messaging):
- - [base](ipc/base) - Base modules/classes for all messaging platforms
- - [protobuf](ipc/protobuf) - Containers and methods for various [ProtoBuf](https://protobuf.dev/) types
- - [grpc](ipc/grpc) - Communication modules for [gRPC](https://grpc.io/)
- - [zmq](ipc/zmq) - Communication modules for [ZeroMQ](https://zeromq.org/)
-    [basic](ipc/zmq/basic) - General purpose endpoints: publisher/subscriber, requester/responder, ...
-    [protobuf](ipc/zmq/protobuf) - Communicate with ProtoBuf messages over ZMQ, including a custom  client/server RPC scheme
- - [dds](ipc/dds) - Communications modules for [OMG Distributed Data Service](https://www.omg.org/omg-dds-portal/) (incomplete)
+* [messaging](messaging) - Modules for inter-process communication (messaging):
+ - [base](messaging/base) - Base modules/classes for all messaging platforms
+ - [protobuf](messaging/protobuf) - Containers and methods for various [ProtoBuf](https://protobuf.dev/) types
+ - [grpc](messaging/grpc) - Communication modules for [gRPC](https://grpc.io/)
+ - [zmq](messaging/zmq) - Communication modules for [ZeroMQ](https://zeromq.org/)
+    [basic](messaging/zmq/basic) - General purpose endpoints: publisher/subscriber, requester/responder, ...
+    [protobuf](messaging/zmq/protobuf) - Communicate with ProtoBuf messages over ZMQ, including a custom  client/server RPC scheme
+ - [dds](messaging/dds) - Communications modules for [OMG Distributed Data Service](https://www.omg.org/omg-dds-portal/) (incomplete)

@@ -10,7 +10,7 @@ set(TARGET pickletest)
 
 ### Libraries we depend on, either from this build or provided by the system.
 set(LIB_DEPS
-  cc_shared_ipc_python_embedded
+  cc_shared_messaging_python_embedded
   cc_shared_platform
 )
 

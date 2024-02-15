@@ -12,7 +12,7 @@ set(TARGET rest-tool)
 ### system.
 set(LIB_DEPS
   cc_shared_platform
-  cc_shared_ipc_http
+  cc_shared_messaging_http
 )
 
 ### Source files

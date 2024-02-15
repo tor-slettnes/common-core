@@ -18,8 +18,8 @@ set(LIB_TYPE INTERFACE)
 set(LIB_DEPS
   cc_demo_api
   cc_demo_protobuf_types
-  cc_shared_ipc_zmq
-  cc_shared_ipc_protobuf
+  cc_shared_messaging_zmq
+  cc_shared_messaging_protobuf
 )
 
 set(SOURCES)

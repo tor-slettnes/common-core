@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from ipc.protobuf import CC as _CC, ProtoBuf
+from messaging.protobuf import CC as _CC, ProtoBuf
 from core.scalar_types import enums
 
 ### Standard Python modules

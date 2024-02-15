@@ -19,7 +19,7 @@ set(FILES
 ### Subdirectories
 set(DIRECTORIES
   core
-  ipc
+  messaging
 )
 
 configure_file(buildinfo.py.in buildinfo.py)

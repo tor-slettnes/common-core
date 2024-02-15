@@ -19,7 +19,7 @@ set(LIB_DEPS
   cc_demo_api
   cc_demo_dds_types
   cc_demo_dds_publisher
-  cc_shared_ipc_dds_rti
+  cc_shared_messaging_dds_rti
 )
 
 ### Source files

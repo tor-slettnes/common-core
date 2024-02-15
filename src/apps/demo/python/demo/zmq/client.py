@@ -8,8 +8,8 @@
 ### Modules relative to install dir
 from .common import DEMO_PUBLISHER_CHANNEL, DEMO_SERVICE_CHANNEL, DEMO_RPC_INTERFACE
 from ..core  import API, CC, ProtoBuf, SignalSlot, demo_signals
-from ipc.zmq.basic import Subscriber
-from ipc.zmq.protobuf import Client, SignalHandler
+from messaging.zmq.basic import Subscriber
+from messaging.zmq.protobuf import Client, SignalHandler
 
 ### Standard Python modules
 from typing import Callable

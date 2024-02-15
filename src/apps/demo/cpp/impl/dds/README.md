@@ -16,6 +16,6 @@ Since the above modules communcate over the DDS bus, their data exchange is defi
 
 Thus, our implementation includes a number of `encode()` and `decode()` method signatures to translate between the native and IDL data types that make up our DDS Pub/Sub and Client/Server interfaces.  These methods are located in the [types](types) folder.
 
-(In turn, these make use of similar `encode()`/`decode()` routines from the [idl](../../../../../shared/cpp/ipc/rti/idl) folder from our shared repository).
+(In turn, these make use of similar `encode()`/`decode()` routines from the [idl](../../../../../shared/cpp/messaging/rti/idl) folder from our shared repository).
 
 As an application developer you may certainly choose to omit this level of data abstraction, and instead use the IDL-generated types natively.  Note however that doing so would increase your coupling to to DDS, and complicate any future efforts to choose a different communication infrastructure.

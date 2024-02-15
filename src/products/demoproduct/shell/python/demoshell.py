@@ -18,7 +18,7 @@ import os.path
 
 ### Make the contents of Python client modules available in namespaces roughly
 ### corresponding to the package names of the corresponding `.proto` files
-from ipc.protobuf import ProtoBuf
+from messaging.protobuf import ProtoBuf
 
 ### Container class for ProtoBuf message types from mutiple services
 ### (e.g. "CC.Demo.Signal").

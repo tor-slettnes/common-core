@@ -7,7 +7,7 @@
 
 ### Modules relative to install dir
 from ..core import API, CC, ProtoBuf, SignalSlot, demo_signals
-from ipc.grpc.signalclient import SignalClient
+from messaging.grpc.signalclient import SignalClient
 
 
 #===============================================================================
@@ -17,7 +17,7 @@ class DemoClient (API, SignalClient):
     '''Client for Demo service.'''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
-    ## `ipc.grpc.Client` base to instantiate `self.stub`.
+    ## `messaging.grpc.Client` base to instantiate `self.stub`.
     from demo_service_pb2_grpc import DemoStub as Stub
 
     ## `service_name` is optional. If not provided here it is determined

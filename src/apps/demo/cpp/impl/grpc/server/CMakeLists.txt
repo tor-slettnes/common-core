@@ -23,7 +23,7 @@ set(LIB_TYPE STATIC)
 set(LIB_DEPS
   cc_demo_api
   cc_demo_protobuf_types
-  cc_shared_ipc_grpc)
+  cc_shared_messaging_grpc)
 
 ### Source files
 set(SOURCES

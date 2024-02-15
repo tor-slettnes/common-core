@@ -64,6 +64,6 @@ Since the above modules communcate over gRPC, their data exchange is defined in 
 
 Thus, our implementation includes a number of `encode()` and `decode()` method signatures to translate between the native and IDL data types that make up our DDS Pub/Sub and Client/Server interfaces.  These methods are located in the [types](types) folder.
 
-(In turn, these make use of similar `encode()`/`decode()` routines from the [idl](../../../../../shared/cpp/ipc/google/protobuf) folder from our shared repository).
+(In turn, these make use of similar `encode()`/`decode()` routines from the [idl](../../../../../shared/cpp/messaging/google/protobuf) folder from our shared repository).
 
 As an application developer you may certainly choose to omit this level of data abstraction, and instead use the generated ProtoBuf messages natively.  Note however that doing so would increase your coupling to to gRPC, and complicate any future efforts to choose a different communication infrastructure.

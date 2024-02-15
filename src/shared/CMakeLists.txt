@@ -27,7 +27,7 @@ set(LIB_TYPE INTERFACE)
 set(LIB_DEPS
   cc_shared_core
   cc_shared_platform
-  cc_shared_ipc_common
+  cc_shared_messaging_common
 )
 
 if(BUILD_RTI_DDS)

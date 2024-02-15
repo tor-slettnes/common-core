@@ -14,7 +14,7 @@ set(LIB_TYPE STATIC)
 set(LIB_DEPS
   cc_demo_api
   cc_demo_protodefs
-  cc_shared_ipc_protobuf
+  cc_shared_messaging_protobuf
 )
 
 set(SOURCES
