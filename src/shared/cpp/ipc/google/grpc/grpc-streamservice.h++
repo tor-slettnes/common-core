@@ -45,7 +45,7 @@ namespace shared::grpc
     protected:
         template <class DataType, class MessageType>
         ::grpc::Status connect_stream(
-            signal::Signal<DataType> *signal,
+            signal::DataSignal<DataType> *signal,
             const Encoder<DataType, MessageType> &encoder,
             ::grpc::ServerContext *cxt,
             ::grpc::ServerWriter<MessageType> *writer)

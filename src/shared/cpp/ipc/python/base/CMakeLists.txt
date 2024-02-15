@@ -14,18 +14,19 @@ set(LIB_TYPE STATIC)
 ### Library dependencies.
 set(LIB_DEPS
   cc_shared_ipc_common
-  cc_shared_platform
+  cc_shared_core
 )
 
 ### Third-party package dependencies
 set(PKG_DEPS
-  python3-embed
+  python3
 )
 
 ### Source files in this folder
 set(SOURCES
   python-simpleobject.c++
   python-containerobject.c++
+  python-builtin.c++
 )
 
 ### Recepies to build the library

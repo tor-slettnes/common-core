@@ -29,34 +29,34 @@ namespace demo::dds
         //======================================================================
         // Initialize
 
-        logf_debug("Initializing Demo DDS publisher %s", *dds_publisher);
+        logf_info("Initializing Demo DDS publisher %s", *dds_publisher);
         dds_publisher->initialize();
 
-        logf_debug("Initializing Demo DDS RPC service: %s", rpc_service);
+        logf_info("Initializing Demo DDS RPC service: %s", rpc_service);
         rpc_service.initialize();
 
-        logf_debug("Initializing Demo DDS RPC server");
+        logf_info("Initializing Demo DDS RPC server");
         server.initialize();
 
         //======================================================================
         // Run
 
-        logf_info("Demo DDS service is ready in domain %d", domain_id);
+        logf_notice("Demo DDS service is ready in domain %d", domain_id);
         server.run();
-        logf_info("Demo DDS service is shutting down");
+        logf_notice("Demo DDS service is shutting down");
 
         //======================================================================
         // Shut down
 
-        logf_debug("Deinitializing Demo DDS RPC server");
+        logf_info("Deinitializing Demo DDS RPC server");
         server.deinitialize();
 
-        logf_debug("Deinitializing Demo DDS RPC service: %s", rpc_service);
+        logf_info("Deinitializing Demo DDS RPC service: %s", rpc_service);
         rpc_service.deinitialize();
 
-        logf_debug("Deinitializing Demo DDS publisher %s", *dds_publisher);
+        logf_info("Deinitializing Demo DDS publisher %s", *dds_publisher);
         dds_publisher->deinitialize();
 
-        logf_debug("Demo DDS service ended");
+        logf_info("Demo DDS service ended");
     }
 }  // namespace demo::dds

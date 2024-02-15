@@ -7,18 +7,9 @@
 
 #pragma once
 #include "python-containerobject.h++"
-#include "python-runtime.h++"
 
 namespace shared::python
 {
-    class Pickler : public Runtime
-    {
-    public:
-        Pickler();
-
-        ContainerObject unpickle(const types::ByteVector &bytes);
-        types::ByteVector pickle(const SimpleObject &object);
-    };
-
-    extern Pickler pickler;
+    ContainerObject unpickle(const types::ByteVector &bytes);
+    types::ByteVector pickle(const SimpleObject &object);
 };  // namespace shared::python

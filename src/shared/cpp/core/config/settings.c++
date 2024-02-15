@@ -7,6 +7,8 @@
 
 #include "settings.h++"
 #include "status/exceptions.h++"
+#include "platform/path.h++"
+#include "platform/init.h++"
 
 #include <iostream>
 
@@ -14,8 +16,10 @@ namespace shared
 {
     std::shared_ptr<shared::SettingsStore> settings;
 
-    void init_settings(const types::PathList &files)
+    void init_settings()
     {
+        types::PathList files = {platform::path->exec_name(true), "defaults"};
+
         if (!settings)
         {
             settings = SettingsStore::create_shared();
@@ -29,4 +33,7 @@ namespace shared
             }
         }
     }
+
+    static platform::InitTask init_app_settings("init_settings", init_settings);
+
 }  // namespace shared

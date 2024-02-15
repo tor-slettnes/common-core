@@ -58,7 +58,7 @@ namespace shared::zmq
                 "Failed to deserialize ProtoBuf request",
                 shared::status::Flow::CANCELLED,
                 {{"channel", this->channel_name()},
-                 {"payload", packed_request.to_hex(true, 4)}});
+                 {"payload", packed_request}});
         }
 
         protobuf::to_bytes(reply, packed_reply);

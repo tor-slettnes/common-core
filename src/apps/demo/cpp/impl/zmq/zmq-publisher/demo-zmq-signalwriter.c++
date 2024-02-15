@@ -22,7 +22,7 @@ namespace demo::zmq
         // them as 'CC::Demo::Signal()` messages and then pass on to the
         // publisher using `this->write()`.
 
-        // `signal_time` is of type `shared::signal::Signal<TimeData>`, so
+        // `signal_time` is of type `shared::signal::DataSignal<TimeData>`, so
         // we receive the `TimeData()` instance as the sole argument.
 
         demo::signal_time.connect(

@@ -16,16 +16,7 @@ namespace shared::types
     ///     SharedClass
 
     template <class SharedClass, class... Args>
-    [[nodiscard]] std::shared_ptr<SharedClass> create_shared(Args &&...args)
-    {
-        class PublicClass final : public SharedClass
-        {
-        public:
-            PublicClass(Args &&...args)
-                : SharedClass(std::forward<Args>(args)...) {}
-        };
-        return std::make_shared<PublicClass>(std::forward<Args>(args)...);
-    }
+    [[nodiscard]] std::shared_ptr<SharedClass> create_shared(Args &&...args);
 
     /// @class enable_create_shared
     /// @tparam SharedClass
@@ -58,10 +49,7 @@ namespace shared::types
     {
     public:
         template <class... Args>
-        [[nodiscard]] static std::shared_ptr<SharedBase> create_shared(Args &&...args)
-        {
-            return types::create_shared<SharedClass>(std::forward<Args>(args)...);
-        }
+        [[nodiscard]] static std::shared_ptr<SharedBase> create_shared(Args &&...args);
     };
 
     template <class SharedClass, class SharedBase = SharedClass>
@@ -71,11 +59,8 @@ namespace shared::types
     };
 
     template <class T>
-    bool equivalent(const std::shared_ptr<T> &lhs, const std::shared_ptr<T> &rhs)
-    {
-        return (!lhs && !rhs)   ? true
-               : (!lhs || !rhs) ? false
-               : *lhs == *rhs   ? true
-                                : false;
-    }
+    bool equivalent(const std::shared_ptr<T> &lhs, const std::shared_ptr<T> &rhs);
 }  // namespace shared::types
+
+#include "create-shared.i++"
+

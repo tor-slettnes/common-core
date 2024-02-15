@@ -20,14 +20,19 @@ namespace shared::python
         // Inherit constructors
         using SimpleObject::SimpleObject;
 
+        virtual std::string name() const;
+
         /// @brief
         ///    Obtain attribute names within this container instance.
         /// @return
         ///    Attribute names contained in this instance
-        std::vector<std::string> dir() const;
-        ContainerObject getattr(const std::string& name) const;
+        virtual std::vector<std::string> dir() const;
+        virtual ContainerObject getattr(const std::string& name) const;
 
-        Map attributes_as_objects() const;
-        types::KeyValueMap attributes_as_values() const;
+        virtual Map attributes_as_objects() const;
+        virtual types::KeyValueMap attributes_as_kvmap() const;
+
+        ContainerObject find_qualified_symbol(const std::string &qualified_name) const;
+
     };
 }  // namespace shared::python

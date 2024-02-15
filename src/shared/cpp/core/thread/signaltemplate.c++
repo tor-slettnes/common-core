@@ -56,4 +56,46 @@ namespace shared::signal
         }
     }
 
+    //==========================================================================
+    /// \class VoidSignal
+    /// \brief Signal without data
+
+    VoidSignal::VoidSignal(const std::string &id)
+        : Super(id, false)
+    {
+    }
+
+    const VoidSignal::Slot &VoidSignal::connect(const std::string &id, const Slot &slot)
+    {
+        std::scoped_lock lck(this->mtx_);
+        this->slots_[id] = slot;
+        return slot;
+    }
+
+    void VoidSignal::disconnect(const std::string &id)
+    {
+        std::scoped_lock lck(this->mtx_);
+        this->slots_.erase(id);
+    }
+
+    size_t VoidSignal::emit()
+    {
+        std::scoped_lock lck(this->mtx_);
+        for (const auto &cb : this->slots_)
+        {
+            this->callback(cb.first, cb.second);
+        }
+        return this->slots_.size();
+    }
+
+    size_t VoidSignal::connection_count()
+    {
+        return this->slots_.size();
+    }
+
+    void VoidSignal::callback(const std::string &receiver, const Slot &method)
+    {
+        this->safe_invoke(str::format("%s()", receiver), method);
+    }
+
 }  // namespace shared::signal

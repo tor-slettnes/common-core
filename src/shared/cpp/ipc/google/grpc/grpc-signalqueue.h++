@@ -87,7 +87,7 @@ namespace shared::grpc
 
         template <class SignalT>
         void connect(uint signal_index,
-                     signal::Signal<SignalT> &signal,
+                     signal::DataSignal<SignalT> &signal,
                      const Encoder<SignalT> &encoder)
         {
             if (this->is_included(signal_index))

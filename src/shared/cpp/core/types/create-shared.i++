@@ -1,0 +1,50 @@
+/// -*- c++ -*-
+//==============================================================================
+/// @file create-shared.i++
+/// @brief Add static `create_shared()` method to create shared_ptr<> instance
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#pragma once
+#include <memory>
+
+namespace shared::types
+{
+    //==========================================================================
+    // @fn create_shared
+
+    template <class SharedClass, class... Args>
+    [[nodiscard]] std::shared_ptr<SharedClass> create_shared(Args &&...args)
+    {
+        class PublicClass final : public SharedClass
+        {
+        public:
+            PublicClass(Args &&...args)
+                : SharedClass(std::forward<Args>(args)...) {}
+        };
+        return std::make_shared<PublicClass>(std::forward<Args>(args)...);
+    }
+
+    //==========================================================================
+    // @class enable_create_shared<>
+
+    template <class Class, class Base>
+    template <class... Args>
+    std::shared_ptr<Base> enable_create_shared<Class, Base>::create_shared(Args &&...args)
+    {
+        return types::create_shared<Class>(std::forward<Args>(args)...);
+    }
+
+    //==========================================================================
+    // @fn equivalent
+
+    template <class T>
+    bool equivalent(const std::shared_ptr<T> &lhs, const std::shared_ptr<T> &rhs)
+    {
+        return (!lhs && !rhs)             ? true   // both are empty
+               : (!lhs || !rhs)           ? false  // one is empty
+               : (lhs.get() == rhs.get()) ? true   // object pointers are equal
+               : *lhs == *rhs             ? true   // object contents are equal
+                                          : false;             // none of the above
+    }
+}  // namespace shared::types

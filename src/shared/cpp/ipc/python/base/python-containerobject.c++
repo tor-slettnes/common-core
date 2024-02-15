@@ -6,9 +6,23 @@
 //==============================================================================
 
 #include "python-containerobject.h++"
+#include "status/exceptions.h++"
+#include "string/misc.h++"
 
 namespace shared::python
 {
+    std::string ContainerObject::name() const
+    {
+        if (ContainerObject name_obj = this->getattr("__name__"))
+        {
+            return name_obj.as_string().value_or("");
+        }
+        else
+        {
+            return "(unnamed)";
+        }
+    }
+
     std::vector<std::string> ContainerObject::dir() const
     {
         std::vector<std::string> symbols;
@@ -44,25 +58,50 @@ namespace shared::python
         Map map;
         for (const std::string &name : this->dir())
         {
-            ContainerObject obj(this->getattr(name));
-            map.insert_or_assign(name, obj);
+            if (ContainerObject obj = this->getattr(name))
+            {
+                map.insert_or_assign(name, obj);
+            }
         }
         return map;
     }
 
-    types::KeyValueMap ContainerObject::attributes_as_values() const
+    types::KeyValueMap ContainerObject::attributes_as_kvmap() const
     {
         types::KeyValueMap kvmap;
-        for (const std::string &name : this->dir())
+        for (const auto &[key, obj] : this->attributes_as_objects())
         {
-            SimpleObject obj(this->getattr(name));
             types::Value value(obj.as_value());
             if (value || Py_IsNone(obj.borrow()))
             {
-                kvmap.insert_or_assign(name, value);
+                kvmap.insert_or_assign(key, value);
             }
         }
         return kvmap;
+    }
+
+    ContainerObject ContainerObject::find_qualified_symbol(const std::string &qualified_name) const
+    {
+        // We do this recursively, because `typeof(this)` may in fact be a
+        // subclass with an overridden `getattr()` method.
+
+        std::vector<std::string> parts = str::split(qualified_name, ".", 1);
+        if (parts.size() > 0)
+        {
+            if (ContainerObject obj = this->getattr(parts.front()))
+            {
+                if (parts.size() > 1)
+                {
+                    return obj.find_qualified_symbol(parts.back());
+                }
+                else
+                {
+                    return obj;
+                }
+            }
+        }
+
+        return nullptr;
     }
 
 }  // namespace shared::python

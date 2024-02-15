@@ -15,7 +15,7 @@ set(LIB_TYPE STATIC)
 set(LIB_DEPS
   cc_shared_ipc_common
   cc_shared_ipc_idl
-  cc_shared_platform
+  cc_shared_core
 )
 
 set(SOURCES

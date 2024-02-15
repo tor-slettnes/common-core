@@ -150,11 +150,11 @@ namespace shared::types
         {
             {
                 std::unique_lock<std::mutex> lock(this->mtx);
+                this->cancelled = false;
                 if (this->pushable(&lock))
                 {
                     this->queue.push(value);
                 }
-                this->cancelled = false;
             }
             this->cv.notify_one();
         }
@@ -175,11 +175,11 @@ namespace shared::types
         {
             {
                 std::unique_lock<std::mutex> lock(this->mtx);
+                this->cancelled = false;
                 if (this->pushable(&lock))
                 {
                     this->queue.push(std::move(value));
                 }
-                this->cancelled = false;
             }
             this->cv.notify_all();
         }

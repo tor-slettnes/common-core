@@ -16,7 +16,7 @@ namespace shared::zmq
         : publisher_(publisher),
           filter_(filter)
     {
-        log_trace("Created ZMQ writer with filter: ", filter.to_hex(true, 2));
+        log_trace("Created ZMQ writer with filter: ", filter);
     }
 
     const Filter &MessageWriter::filter() const noexcept

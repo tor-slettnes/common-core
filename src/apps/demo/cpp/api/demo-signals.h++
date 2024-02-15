@@ -35,7 +35,7 @@ namespace demo
     /// ```
     /// demo::signal_time.disconnect("My Callback Handle");
     /// ```
-    extern shared::signal::Signal<TimeData> signal_time;
+    extern shared::signal::DataSignal<TimeData> signal_time;
 
     /// @brief MappingSignal emitted whenever someone issues a greeting.
     /// @sa `demo::say_hello()`.

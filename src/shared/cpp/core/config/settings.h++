@@ -7,7 +7,7 @@
 
 #pragma once
 #include "settingsstore.h++"
-#include "platform/path.h++"
+#include "platform/init.h++"
 
 #include <memory>
 
@@ -15,5 +15,5 @@ namespace shared
 {
     extern std::shared_ptr<shared::SettingsStore> settings;
 
-    void init_settings(const types::PathList &files = {platform::path->exec_name(true), "defaults"});
+    void init_settings();
 }  // namespace shared

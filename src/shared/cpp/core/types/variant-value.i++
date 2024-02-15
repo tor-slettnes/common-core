@@ -1,0 +1,82 @@
+/// -*- c++ -*-
+//==============================================================================
+/// @file variant-value.t++
+/// @brief Generic `Value` type - inline definitions
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+namespace shared::types
+{
+    // Convencience wrapper around std::get<T>(*this)
+    template <class T>
+    const T &Value::get() const
+    {
+        return std::get<T>(*this);
+    }
+
+    // Convencience wrapper around std::get<T>(*this)
+    template <class T>
+    const T *Value::get_if() const
+    {
+        return std::get_if<T>(this);
+    }
+
+    template <class T>
+    T &Value::emplace_from(const Value &other)
+    {
+        return this->emplace<T>(std::get<T>(other));
+    }
+
+    /// Returns true if the value type is contained in any of the provdied
+    /// template arguments.
+    template <class... Ts>
+    bool Value::holdsAnyOf() const noexcept
+    {
+        return (std::holds_alternative<Ts>(*this) || ...);
+    }
+
+    /// Cast value to a desired type
+    template <class T>
+    T Value::numeric_cast(T fallback) const
+    {
+        switch (this->type())
+        {
+        case ValueType::NONE:
+            return fallback;
+
+        case ValueType::BOOL:
+            return static_cast<T>(this->get<bool>());
+
+        case ValueType::CHAR:
+            return static_cast<T>(this->get<char>());
+
+        case ValueType::UINT:
+            return static_cast<T>(this->get<largest_uint>());
+
+        case ValueType::SINT:
+            return static_cast<T>(this->get<largest_sint>());
+
+        case ValueType::REAL:
+            return static_cast<T>(this->get<double>());
+
+        case ValueType::COMPLEX:
+            return static_cast<T>(this->get<complex>().real());
+
+        case ValueType::STRING:
+            return str::convert_to<T>(this->get<std::string>(), {});
+
+        case ValueType::BYTEVECTOR:
+            return this->get<ByteVector>().unpack<T>();
+
+        case ValueType::TIMEPOINT:
+            return (T)dt::to_double(this->get<dt::TimePoint>().time_since_epoch());
+
+        case ValueType::DURATION:
+            return (T)dt::to_double(this->get<dt::Duration>());
+
+        default:
+            return fallback;
+        }
+    }
+
+}  // namespace shared::types

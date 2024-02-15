@@ -6,8 +6,8 @@
 //==============================================================================
 
 #pragma once
-#include "python-containerobject.h++"
-
+#include "python-builtin.h++"
+#include "python-exception.h++"
 #include "types/filesystem.h++"
 #include "types/value.h++"
 
@@ -19,17 +19,16 @@ namespace shared::python
         using This = Runtime;
 
     public:
-        Runtime();
-        Runtime(const std::string &module_name);
+        static void global_init();
+        static void global_cleanup();
 
-        static void initialize();
-        static void finalize(int signal = 0);
-
-        void import(const std::string &module_name);
+        ContainerObject &import(const std::string &module_name);
 
         /// @brief
-        ///    Call a named Python method with variant inputs and return value
-        /// @param[in] method
+        ///    Call an imported Python method with variant inputs and return value
+        /// @param[in] module_name
+        ///    Module name in which to find method.  If empty, use the global scope.
+        /// @param[in] method_name
         ///    Method name to be called
         /// @param[in] args
         ///    Positional arguments
@@ -37,40 +36,55 @@ namespace shared::python
         ///    Named arguments
         /// @return
         ///    Returned value from the called method, decoded as a variant Value
-        types::Value call(const std::string &method,
+        types::Value call(const std::optional<std::string> &module_name,
+                          const std::string &method_name,
                           const types::ValueList &args = {},
                           const types::KeyValueMap &kwargs = {});
 
         /// @brief
-        ///    Call a named Python method with Python objects as inputs and returned value.
-        /// @param[in] method
+        ///    Call an imported Python method with encoded Python inputs and return value
+        /// @param[in] module_name
+        ///    Module name in which to find method.  If empty, use the global scope.
+        /// @param[in] method_name
         ///    Method name to be called
         /// @param[in] args
-        ///    Positional arguments
+        ///    A managed object containing a tuple with positional input arguments
         /// @param[in] args
-        ///    Named arguments
+        ///    A managed object containing a dictionary with keyword (named) input arguments
         /// @return
         ///    Returned value from the called method
-        ContainerObject call(const std::string &method,
-                             const SimpleObject::Vector &args = {},
+        ContainerObject call(const std::optional<std::string> &module_name,
+                             const std::string &method_name,
+                             const SimpleObject::Vector &args,
                              const SimpleObject::Map &kwargs = {});
 
         /// @brief
-        ///    Call a Python method with encoded Python inputs and return value
+        ///    Call an imported Python method with encoded Python inputs and return value
+        /// @param[in] module_name
+        ///    Module name in which to find method.  If empty, use the global scope.
         /// @param[in] method_name
-        ///    A Python object representing the method name to be called
+        ///    Method name to be called
         /// @param[in] args_tuple
-        ///    A Python tuple with positional input arguments
+        ///    A managed object containing a tuple with positional input arguments
         /// @param[in] kwargs_map
-        ///    A Python dictionary with keyword (named) input arguments
+        ///    A managed object containing a dictionary with keyword (named) input arguments
         /// @return
         ///    Return value from the called method as a Python object
-        ContainerObject call(const SimpleObject &method_name,
+        ContainerObject call(const std::optional<std::string> &module_name,
+                             const std::string &method_name,
                              const SimpleObject &args_tuple,
                              const SimpleObject &kwargs_dict);
 
     private:
-        static bool initialized;
-        std::shared_ptr<SimpleObject> module;
+        ContainerObject &get_container(
+            const std::optional<std::string> &module_name);
+
+        Exception get_exception() const;
+
+    private:
+        Builtin builtin;
+        std::unordered_map<std::string, ContainerObject> modules;
     };
+
+    extern std::unique_ptr<Runtime> runtime;
 }  // namespace shared::python

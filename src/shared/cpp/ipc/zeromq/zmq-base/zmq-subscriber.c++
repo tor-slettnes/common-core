@@ -104,7 +104,7 @@ namespace shared::zmq
         logf_debug("%s adding subscription for %r with filter %r",
                    *this,
                    handler->id(),
-                   filter.to_hex());
+                   filter);
         this->socket()->set(::zmq::sockopt::subscribe, filter.stringview());
     }
 

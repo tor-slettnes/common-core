@@ -36,7 +36,7 @@ namespace demo::dds
         // functions.
 
         // Invoke `on_time_update` whenever there is a time update.
-        // This signal is based on the `shared::signal::Signal<>` template,
+        // This signal is based on the `shared::signal::DataSignal<>` template,
         // so the callback function will receive one argument: the payload.
         signal_time.connect(
             TYPE_NAME_FULL(This),

@@ -107,7 +107,7 @@
 #define log_info(...)           log_message(shared::status::Level::INFO, __VA_ARGS__)
 #define log_notice(...)         log_message(shared::status::Level::NOTICE, __VA_ARGS__)
 #define log_warning(...)        log_message(shared::status::Level::WARNING, __VA_ARGS__)
-#define log_error(...)          log_message(shared::status::Level::ERROR, __VA_ARGS__)
+#define log_error(...)          log_message(shared::status::Level::FAILED, __VA_ARGS__)
 #define log_critical(...)       log_message(shared::status::Level::CRITICAL, __VA_ARGS__)
 #define log_fatal(...)          log_message(shared::status::Level::FATAL, __VA_ARGS__)
 

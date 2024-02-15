@@ -8,7 +8,7 @@
 #include "zmq-responder.h++"
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
-#include "application/init.h++"
+#include "platform/init.h++"
 
 namespace shared::zmq
 {

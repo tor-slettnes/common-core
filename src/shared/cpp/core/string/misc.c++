@@ -188,19 +188,19 @@ namespace shared::str
                   std::string *first,
                   bool *more)
     {
-        std::vector<std::string> lines = str::split(string, delimiter, 1);
+        std::vector<std::string> parts = str::split(string, delimiter, 1);
 
         if (more)
         {
-            *more = (lines.size() > 1);
+            *more = (parts.size() > 1);
         }
 
-        if (lines.size() > 0)
+        if (parts.size() > 0)
         {
-            *first = lines.front();
+            *first = parts.front();
         }
 
-        return (lines.size() > 0);
+        return (parts.size() > 0);
     }
 
     std::vector<std::string> split(const std::string &string,

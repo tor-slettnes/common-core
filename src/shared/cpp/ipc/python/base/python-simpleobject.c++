@@ -29,6 +29,23 @@ namespace shared::python
         Py_XDECREF(this->cobj);
     }
 
+    void SimpleObject::to_stream(std::ostream &stream) const
+    {
+        SimpleObject::write_to_stream(stream, this->cobj, false);
+    }
+
+    void SimpleObject::to_literal_stream(std::ostream &stream) const
+    {
+        SimpleObject::write_to_stream(stream, this->cobj, true);
+    }
+
+    SimpleObject &SimpleObject::operator=(const SimpleObject &other) noexcept
+    {
+        this->cobj = other.cobj;
+        Py_INCREF(this->cobj);
+        return *this;
+    }
+
     SimpleObject::operator bool() const noexcept
     {
         return this->cobj != nullptr;
@@ -48,11 +65,12 @@ namespace shared::python
         return this->cobj;
     }
 
-    std::string SimpleObject::name() const
+    std::string SimpleObject::type_name() const
     {
         if (this->cobj)
         {
-            return SimpleObject(PyType_GetName(Py_TYPE(this->cobj))).as_string().value();
+            PyObject *type_name = PyType_GetName(Py_TYPE(this->cobj));
+            return SimpleObject(type_name).as_string().value();
         }
         else
         {
@@ -60,67 +78,79 @@ namespace shared::python
         }
     }
 
-    types::ValueType SimpleObject::value_type() const
-    {
-        if (this->cobj)
-        {
-            try
-            {
-                return SimpleObject::type_map.at(Py_TYPE(this->cobj));
-            }
-            catch (const std::out_of_range &)
-            {
-            }
-        }
-        return types::ValueType::NONE;
-    }
+    // types::ValueType SimpleObject::value_type() const
+    // {
+    //     if (this->cobj)
+    //     {
+    //         try
+    //         {
+    //             return SimpleObject::type_map.at(Py_TYPE(this->cobj));
+    //         }
+    //         catch (const std::out_of_range &)
+    //         {
+    //         }
+    //     }
+    //     return types::ValueType::NONE;
+    // }
 
     types::Value SimpleObject::as_value() const
     {
-        switch (this->value_type())
+        if (!this->cobj)
         {
-        case types::ValueType::BOOL:
+            return {};
+        }
+        else if (PyBool_Check(this->cobj))
+        {
             return this->as_bool();
-
-        case types::ValueType::SINT:
-            if (auto uint = this->as_uint())
+        }
+        else if (PyLong_Check(this->cobj))
+        {
+            if (auto value = this->as_uint())
             {
-                return uint;
+                return value;
             }
             else
             {
                 return this->as_sint();
             }
-
-        case types::ValueType::UINT:
-            return this->as_uint();
-
-        case types::ValueType::REAL:
+        }
+        else if (PyFloat_Check(this->cobj))
+        {
             return this->as_real();
-
-        case types::ValueType::COMPLEX:
+        }
+        else if (PyComplex_Check(this->cobj))
+        {
             return this->as_complex();
-
-        case types::ValueType::STRING:
+        }
+        else if (PyUnicode_Check(this->cobj))
+        {
             return this->as_string();
-
-        case types::ValueType::BYTEVECTOR:
+        }
+        else if (PyBytes_Check(this->cobj) || PyByteArray_Check(this->cobj))
+        {
             return this->as_bytevector();
-
-        case types::ValueType::VALUELIST:
+        }
+        else if (PyTuple_Check(this->cobj))
+        {
+            return this->as_valuelist();
+        }
+        else if (PyList_Check(this->cobj))
+        {
             if (auto tvlist = this->as_tvlist())
             {
-                return tvlist.value();
+                return tvlist;
             }
             else
             {
                 return this->as_valuelist();
             }
-
-        case types::ValueType::KVMAP:
+        }
+        else if (PyDict_Check(this->cobj))
+        {
             return this->as_kvmap();
-
-        default:
+        }
+        else
+        {
             return {};
         }
     }
@@ -420,6 +450,25 @@ namespace shared::python
         }
     }
 
+    std::ostream &SimpleObject::write_to_stream(
+        std::ostream &stream,
+        PyObject *obj,
+        bool literal)
+    {
+        if (obj)
+        {
+            PyObject *pystr = literal ? PyObject_Repr(obj) : PyObject_Str(obj);
+            Py_ssize_t size = 0;
+            const char *data = PyUnicode_AsUTF8AndSize(pystr, &size);
+            stream.write(data, size);
+            Py_DECREF(pystr);
+        }
+        else
+        {
+            stream << "(Empty)";
+        }
+        return stream;
+    }
 
     std::unordered_map<PyTypeObject *, types::ValueType> SimpleObject::type_map = {
         {&PyBool_Type, types::ValueType::BOOL},
@@ -433,4 +482,10 @@ namespace shared::python
         {&PyTuple_Type, types::ValueType::VALUELIST},
         {&PyDict_Type, types::ValueType::KVMAP},
     };
+
 }  // namespace shared::python
+
+std::ostream &operator<<(std::ostream &stream, PyObject *obj)
+{
+    return shared::python::SimpleObject::write_to_stream(stream, obj, false);
+}

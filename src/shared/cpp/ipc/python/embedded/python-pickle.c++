@@ -6,26 +6,25 @@
 //==============================================================================
 
 #include "python-pickle.h++"
+#include "python-runtime.h++"
 
 namespace shared::python
 {
-    Pickler::Pickler()
-        : Runtime("pickle")
+    ContainerObject unpickle(const types::ByteVector &bytes)
     {
+        return runtime->call(
+            "pickle",
+            "loads",
+            {SimpleObject::pybytes_from_bytes(bytes)});
     }
 
-    ContainerObject Pickler::unpickle(const types::ByteVector &bytes)
+    types::ByteVector pickle(const SimpleObject &object)
     {
-        return this->call("loads",
-                          {SimpleObject::pybytes_from_bytes(bytes)},
-                          {});
-    }
+        ContainerObject result = runtime->call(
+            "pickle",
+            "dumps",
+            SimpleObject::Vector({object}));
 
-    types::ByteVector Pickler::pickle(const SimpleObject &object)
-    {
-        ContainerObject result = this->call("dumps",
-                                            SimpleObject::Vector({object}),
-                                            SimpleObject::Map({}));
         if (const auto &bytes = result.as_bytevector())
         {
             return bytes.value();
@@ -36,5 +35,5 @@ namespace shared::python
         }
     }
 
-    Pickler pickler;
+    // Pickler pickler;
 };  // namespace shared::python

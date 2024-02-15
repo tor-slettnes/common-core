@@ -17,8 +17,23 @@ namespace shared::types
 
     void ByteVector::to_stream(std::ostream &stream) const
     {
-        stream << this->to_hex();
-        // stream.write(reinterpret_cast<char *>(this->data()), this->size());
+        static const std::string hex_digits = "0123456789abcdef";
+
+        for (Byte byte: *this)
+        {
+            if (byte == '\\')
+            {
+                stream << "\\\\";
+            }
+            else if ((byte >= 0x20) && (byte < 0x7F))
+            {
+                stream << byte;
+            }
+            else
+            {
+                stream << "\\x" << hex_digits.at(byte >> 4) << hex_digits.at(byte & 0xF);
+            }
+        }
     }
 
     std::string_view ByteVector::stringview() const noexcept
@@ -27,7 +42,7 @@ namespace shared::types
                                 this->size());
     }
 
-    std::string ByteVector::to_string() const noexcept
+    std::string ByteVector::as_string() const noexcept
     {
         return std::string(reinterpret_cast<const char *>(this->data()),
                            this->size());

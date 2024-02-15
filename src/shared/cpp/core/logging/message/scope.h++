@@ -115,7 +115,7 @@ namespace shared::logging
 
     /// Default threshold.  This may be overridden by specific scopes (including Global);
     /// \sa scope.hpp.
-    inline status::Level default_threshold = status::Level::INFO;
+    inline status::Level default_threshold = status::Level::NOTICE;
     inline types::ValueMap<std::string, Scope::Ref> scopes;
 
     void set_default_threshold(status::Level threshold);
@@ -128,8 +128,8 @@ namespace shared::logging
 
 namespace shared
 {
-    define_log_scope("shared", status::Level::INFO);
+    define_log_scope("shared", status::Level::NOTICE);
 }
 
-/// Global log scope.
-define_log_scope("global", shared::status::Level::INFO);
+/// Global log scope.  Inherit default threshold.
+define_log_scope("global", shared::status::Level::NONE);

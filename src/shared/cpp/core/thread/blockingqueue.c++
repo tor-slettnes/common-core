@@ -35,7 +35,7 @@ namespace shared::types
 
     bool BlockingQueueBase::pushable(std::unique_lock<std::mutex> *lock)
     {
-        if ((this->maxsize_ == 0) || (this->size() < maxsize_))
+        if ((this->maxsize_ == 0) || (this->size() < this->maxsize_))
         {
             return true;
         }

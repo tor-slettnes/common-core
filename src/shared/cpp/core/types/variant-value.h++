@@ -127,75 +127,23 @@ namespace shared::types
 
         // Convencience wrapper around std::get<T>(*this)
         template <class T>
-        inline const T &get() const
-        {
-            return std::get<T>(*this);
-        }
+        inline const T &get() const;
 
         // Convencience wrapper around std::get<T>(*this)
         template <class T>
-        inline const T *get_if() const
-        {
-            return std::get_if<T>(this);
-        }
+        inline const T *get_if() const;
 
         template <class T>
-        inline T &emplace_from(const Value &other)
-        {
-            return this->emplace<T>(std::get<T>(other));
-        }
+        inline T &emplace_from(const Value &other);
 
         /// Returns true if the value type is contained in any of the provdied
         /// template arguments.
         template <class... Ts>
-        inline bool holdsAnyOf() const noexcept
-        {
-            return (std::holds_alternative<Ts>(*this) || ...);
-        }
+        inline bool holdsAnyOf() const noexcept;
 
         /// Cast value to a desired type
         template <class T>
-        T numeric_cast(T fallback = 0) const
-        {
-            switch (this->type())
-            {
-            case ValueType::NONE:
-                return fallback;
-
-            case ValueType::BOOL:
-                return static_cast<T>(this->get<bool>());
-
-            case ValueType::CHAR:
-                return static_cast<T>(this->get<char>());
-
-            case ValueType::UINT:
-                return static_cast<T>(this->get<largest_uint>());
-
-            case ValueType::SINT:
-                return static_cast<T>(this->get<largest_sint>());
-
-            case ValueType::REAL:
-                return static_cast<T>(this->get<double>());
-
-            case ValueType::COMPLEX:
-                return static_cast<T>(this->get<complex>().real());
-
-            case ValueType::STRING:
-                return str::convert_to<T>(this->get<std::string>(), {});
-
-            case ValueType::BYTEVECTOR:
-                return this->get<ByteVector>().unpack<T>();
-
-            case ValueType::TIMEPOINT:
-                return (T)dt::to_double(this->get<dt::TimePoint>().time_since_epoch());
-
-            case ValueType::DURATION:
-                return (T)dt::to_double(this->get<dt::Duration>());
-
-            default:
-                return fallback;
-            }
-        }
+        T numeric_cast(T fallback = 0) const;
 
         /// Parse and return a new Value instance from a literal string.
         /// Some examples (where the literal is shown inside the [brackets]):
@@ -224,5 +172,7 @@ namespace shared::types
         // protected:
         //     std::optional<ValueType> type_;
     };
-
 }  // namespace shared::types
+
+
+#include "variant-value.i++"

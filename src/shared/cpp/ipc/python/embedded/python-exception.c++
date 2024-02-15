@@ -7,34 +7,41 @@
 
 #include "python-exception.h++"
 #include "python-containerobject.h++"
+#include "platform/path.h++"
 
 namespace shared::python
 {
-    Exception::Exception(PyObject *exc, const std::string &module_name)
-        : Super(
-              status::Event(
-                  "",                           // text
-                  status::Domain::APPLICATION,  // domain
-                  module_name,                  // origin
-                  0,                            // code
-                  SimpleObject(exc).name(),     // symbol
-                  status::Level::FAILED,        // level
-                  status::Flow::CANCELLED,      // flow
-                  {},                           // timepoint
-                  ContainerObject(exc).attributes_as_values()))
-    {
-    }
+    // Exception::Exception(PyObject *exc, bool borrowed)
+    //     : ContainerObject(exc, borrowed),
+    //       Super(
+    //           status::Event(
+    //               ContainerObject::to_string(),  // text
+    //               status::Domain::APPLICATION,   // domain
+    //               platform::path->exec_name(),   // origin
+    //               0,                             // code
+    //               this->type_name(),             // symbol
+    //               status::Level::FAILED,         // level
+    //               status::Flow::CANCELLED,       // flow
+    //               {}                             // timepoint
+    //               // ContainerObject(exc, true).attributes_as_kvmap()))
+    //               ))
+    // {
+    // }
 
-    Exception::Exception(const std::string &text, const std::string &module_name)
+    Exception::Exception(const std::string &text,
+                         const std::string &symbol,
+                         const types::KeyValueMap &attributes)
         : Super(
               status::Event(
                   text,                         // text
                   status::Domain::APPLICATION,  // domain
-                  module_name,                  // origin
+                  platform::path->exec_name(),  // origin
                   0,                            // code
-                  "",                           // symbol
+                  symbol,                       // symbol
                   status::Level::FAILED,        // level
-                  status::Flow::CANCELLED))
+                  status::Flow::CANCELLED,      // flow
+                  {},                           // timepoint
+                  attributes))                  // attributes
     {
     }
 

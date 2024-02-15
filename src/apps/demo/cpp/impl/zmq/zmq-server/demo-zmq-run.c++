@@ -31,17 +31,17 @@ namespace demo::zmq
         try
         {
             zmq_publisher->initialize();
-            log_info("Demo ZeroMQ publisher is ready on ", zmq_publisher->bind_address());
+            log_notice("Demo ZeroMQ publisher is ready on ", zmq_publisher->bind_address());
 
             zmq_server->initialize();
-            log_info("Demo ZeroMQ command server is ready on ", zmq_server->bind_address());
+            log_notice("Demo ZeroMQ command server is ready on ", zmq_server->bind_address());
 
             zmq_server->run();
 
-            log_info("Demo ZeroMQ command server is shutting down");
+            log_notice("Demo ZeroMQ command server is shutting down");
             zmq_server->deinitialize();
 
-            log_info("Demo ZeroMQ publisher is shutting down");
+            log_notice("Demo ZeroMQ publisher is shutting down");
             zmq_publisher->deinitialize();
         }
         catch (const std::exception &e)

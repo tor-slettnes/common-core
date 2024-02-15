@@ -18,7 +18,7 @@ namespace shared::application
     {
         ::signal(SIGINT, SIG_IGN);
         ::signal(SIGTERM, SIG_IGN);
-        signal_shutdown.emit(signal);
+        shared::platform::signal_shutdown.emit();
     }
 
     void initialize(int argc, char **argv)
@@ -26,18 +26,17 @@ namespace shared::application
         ::signal(SIGINT, shutdown_handler);
         ::signal(SIGTERM, shutdown_handler);
 
-        // Apply locale for `wstring` conversions
+        // Apply system locale for `wstring` conversions
         std::locale::global(std::locale(""));
 
         shared::platform::register_providers(argc ? argv[0] : "");
-        shared::init_settings();
+        shared::platform::init_tasks.execute();
     }
 
     void deinitialize()
     {
+        shared::platform::exit_tasks.execute();
         logging::message_dispatcher.deinitialize();
         shared::platform::unregister_providers();
     }
-
-    shared::signal::Signal<int> signal_shutdown("signal_shutdown");
 }  // namespace shared::application

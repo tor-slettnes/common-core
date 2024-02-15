@@ -9,6 +9,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
+#include "types/streamable.h++"
 #include "types/value.h++"
 
 namespace shared::python
@@ -17,7 +18,7 @@ namespace shared::python
     /// @brief
     ///    RAII wrapper for C PyObject*, with encoding/decoding methods.
 
-    class SimpleObject
+    class SimpleObject : public types::Streamable
     {
     public:
         using Vector = std::vector<SimpleObject>;
@@ -39,6 +40,10 @@ namespace shared::python
         ///     destroys the underlying object.
         virtual ~SimpleObject();
 
+        void to_stream(std::ostream &stream) const override;
+        void to_literal_stream(std::ostream &stream) const override;
+
+        SimpleObject &operator=(const SimpleObject &other) noexcept;
         operator bool() const noexcept;
 
         /// @brief
@@ -49,14 +54,14 @@ namespace shared::python
         ///     Borrow the reference to the underlying C object
         PyObject *borrow() const;
 
-        std::string name() const;
+        std::string type_name() const;
 
         /// @brief
         ///    Determine the variant value type corresponding to this Python object.
         /// @return
         ///    A `types::ValueType` enum if this Python object can be represented
         ///    as a `types::Value` instance, `types::ValueType::NONE` otherwise.
-        types::ValueType value_type() const;
+        // types::ValueType value_type() const;
 
         /// @brief
         ///    Convert this Python object to a `types::Value` instance.
@@ -134,7 +139,6 @@ namespace shared::python
         ///    List items that cannot be represented as variant values are empty.
         std::optional<types::KeyValueMap> as_kvmap() const;
 
-
         static PyObject *pystring_from_string(const std::string &string);
         static PyObject *pybytes_from_bytes(const types::ByteVector &bytes);
         static PyObject *pytuple_from_values(const types::ValueList &values);
@@ -143,6 +147,10 @@ namespace shared::python
         static PyObject *pydict_from_kvmap(const types::KeyValueMap &kvmap);
         static PyObject *pyobj_from_value(const types::Value &value);
 
+        static std::ostream &write_to_stream(std::ostream &stream,
+                                             PyObject *obj,
+                                             bool literal);
+
     private:
         static std::unordered_map<PyTypeObject *, types::ValueType> type_map;
 
@@ -150,3 +158,5 @@ namespace shared::python
         PyObject *cobj;
     };
 }  // namespace shared::python
+
+std::ostream &operator<<(std::ostream &stream, PyObject *obj);

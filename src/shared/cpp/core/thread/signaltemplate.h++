@@ -46,13 +46,37 @@ namespace shared::signal
                          const std::function<void()> &f);
 
     protected:
+        std::recursive_mutex mtx_;
         std::string name_;
         bool caching_;
-        bool asynchronous_;
     };
 
     //==========================================================================
-    /// @class Signal
+    /// @class VoidSignal
+    /// @class Event notification without data
+
+    class VoidSignal : public BaseSignal
+    {
+        using Super = BaseSignal;
+
+    public:
+        using Slot = std::function<void()>;
+
+        VoidSignal(const std::string &id);
+        const Slot &connect(const std::string &id, const Slot &slot);
+        void disconnect(const std::string &id);
+        size_t emit();
+        size_t connection_count();
+
+    protected:
+        void callback(const std::string &receiver, const Slot &method);
+
+    private:
+        std::unordered_map<std::string, Slot> slots_;
+    };
+
+    //==========================================================================
+    /// @class DataSignal
     /// @brief Template for emitting arbitrary data types as signals,
     ///    and to register receivers that will be notified on change.
     ///
@@ -60,7 +84,7 @@ namespace shared::signal
     /// @code
     ///      void on_my_signal(const MyDataType &signal_data) {...}
     ///      ...
-    ///      Signal<MyDataType> my_signal;
+    ///      DataSignal<MyDataType> my_signal;
     ///      signal.connect(on_my_signal);
     ///      ...
     ///      MyDataType mydata = {...};
@@ -68,14 +92,14 @@ namespace shared::signal
     /// @endcode
 
     template <class DataType>
-    class Signal : public BaseSignal
+    class DataSignal : public BaseSignal
     {
         using Super = BaseSignal;
 
     public:
         using Slot = std::function<void(const DataType &)>;
 
-        Signal(const std::string &id, bool caching = false)
+        DataSignal(const std::string &id, bool caching = false)
             : Super(id, caching)
         {
         }
@@ -215,7 +239,6 @@ namespace shared::signal
     private:
         std::optional<DataType> cached_;
         std::unordered_map<std::string, Slot> slots_;
-        std::recursive_mutex mtx_;
     };
 
     enum MappingChange
@@ -542,8 +565,8 @@ namespace shared::signal
         }
 
     private:
-        std::recursive_mutex mtx_;
         std::unordered_map<KeyType, DataType> cached_;
         std::unordered_map<std::string, Slot> slots_;
     };
+
 }  // namespace shared::signal

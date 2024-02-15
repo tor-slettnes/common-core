@@ -6,22 +6,22 @@
 //==============================================================================
 
 #pragma once
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
-
+#include "python-containerobject.h++"
 #include "status/exception.h++"
 #include "types/value.h++"
 
 namespace shared::python
 {
-    class Exception : shared::exception::Exception<std::runtime_error>
+    class Exception : public shared::exception::Exception<std::runtime_error>
     {
         using This = Exception;
         using Super = shared::exception::Exception<std::runtime_error>;
 
     public:
-        Exception(PyObject *exc, const std::string &module_name);
-        Exception(const std::string &text, const std::string &module_name);
+        // Exception(PyObject *exc, bool borrowed = false);
+        Exception(const std::string &text,
+                  const std::string &symbol = {},
+                  const types::KeyValueMap &attributes = {});
         std::string text() const noexcept override;
         types::ValueList args() const noexcept;
     };

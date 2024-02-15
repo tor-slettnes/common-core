@@ -8,7 +8,7 @@
 #include "demo-grpc-run.h++"
 #include "demo-grpc-requesthandler.h++"
 #include "grpc-serverbuilder.h++"
-#include "application/init.h++"
+#include "platform/init.h++"
 #include "chrono/date-time.h++"
 #include "string/misc.h++"
 
@@ -30,9 +30,9 @@ namespace demo::grpc
         log_info("Starting Demo gRPC server");
         std::unique_ptr<::grpc::Server> server = builder.BuildAndStart();
 
-        shared::application::signal_shutdown.connect(
+        shared::platform::signal_shutdown.connect(
             SIGNAL_HANDLE,
-            [&](int signal) {
+            [&]() {
                 log_info("Requesting gRPC server shutdown with a 5s timeout");
                 server->Shutdown(shared::dt::Clock::now() +
                                  std::chrono::seconds(5));
@@ -42,6 +42,7 @@ namespace demo::grpc
         server->Wait();
         log_notice("Demo gRPC server is shutting down");
 
-        shared::application::signal_shutdown.disconnect(SIGNAL_HANDLE);
+        shared::platform::signal_shutdown.disconnect(SIGNAL_HANDLE);
+        server.reset();
     }
 }  // namespace demo::grpc

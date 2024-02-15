@@ -16,6 +16,11 @@ set(LIB_DEPS
   cc_shared_ipc_python_base
 )
 
+### Third-party package dependencies
+set(PKG_DEPS
+  python3-embed
+)
+
 ### Source files in this folder
 set(SOURCES
   python-exception.c++

@@ -18,11 +18,13 @@ set(LIB_DEPS
 
 ### Third-party package dependencies
 set(PKG_DEPS
-  curlpp
+  # curlpp
+  libcurl
 )
 
 ### Source files in this folder
 set(SOURCES
+  http-client.c++
 )
 
 ### Recepies to build the library

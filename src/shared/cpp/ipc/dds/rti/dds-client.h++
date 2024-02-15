@@ -10,7 +10,7 @@
 #include "chrono/date-time.h++"
 #include "types/create-shared.h++"
 #include "logging/logging.h++"
-#include "application/init.h++"
+#include "platform/init.h++"
 
 #include <dds/rpc/ClientParams.hpp>
 
@@ -35,14 +35,14 @@ namespace shared::dds
     public:
         void initialize() override
         {
-            application::signal_shutdown.connect(
+            platform::signal_shutdown.connect(
                 this->to_string(),
                 std::bind(&BaseClient::close, this));
         }
 
         void deinitialize() override
         {
-            application::signal_shutdown.disconnect(
+            platform::signal_shutdown.disconnect(
                 this->to_string());
         }
 

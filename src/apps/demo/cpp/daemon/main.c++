@@ -5,9 +5,10 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
+#include "application/init.h++"  // Common init routines
 #include "options.h++"           // Command-line options
 #include "demo-native.h++"       // Native Example API implementation
-#include "application/init.h++"  // Common init routines
+#include "status/exceptions.h++"
 
 #ifdef USE_DDS
 #include "demo-dds-run.h++"  // DDS server implementation
@@ -18,7 +19,7 @@
 #endif
 
 #ifdef USE_ZMQ
-#include "demo-zmq-run.h++"     // ZeroMQ+ProtoBuf server implementation
+#include "demo-zmq-run.h++"  // ZeroMQ+ProtoBuf server implementation
 #endif
 
 #include <memory>

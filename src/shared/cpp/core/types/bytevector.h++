@@ -48,7 +48,7 @@ namespace shared::types
 
         /// Return a string representation of the data in this array
         /// \return A byte string
-        std::string to_string() const noexcept;
+        std::string as_string() const noexcept;
 
         /// Create a new ByteVector instance from a string
         /// \param[in] s

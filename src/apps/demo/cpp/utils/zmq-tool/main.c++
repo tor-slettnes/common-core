@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     bool success = demo::options->handle_command();
 
     // Invoke shutdown triggers
-    shared::application::signal_shutdown.emit(0);
+    shared::platform::signal_shutdown.emit();
 
     logf_debug("Deinitializing ZeroMQ demo provider");
     demo::provider->deinitialize();

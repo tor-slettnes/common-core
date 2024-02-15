@@ -6,8 +6,8 @@
 //==============================================================================
 
 #include "dds-server.h++"
-#include "application/init.h++"
 #include "platform/symbols.h++"
+#include "platform/init.h++"
 
 namespace shared::dds
 {
@@ -23,14 +23,14 @@ namespace shared::dds
 
     void Server::initialize()
     {
-        shared::application::signal_shutdown.connect(
+        shared::platform::signal_shutdown.connect(
             TYPE_NAME_FULL(This),
             std::bind(&Server::close, this));
     }
 
     void Server::deinitialize()
     {
-        shared::application::signal_shutdown.disconnect(TYPE_NAME_FULL(This));
+        shared::platform::signal_shutdown.disconnect(TYPE_NAME_FULL(This));
     }
 
     ::dds::rpc::ServerParams Server::server_params(uint thread_pool_size) const

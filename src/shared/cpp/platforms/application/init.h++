@@ -6,12 +6,10 @@
 
 #pragma once
 #include "thread/signaltemplate.h++"
+#include "platform/init.h++"
 
 namespace shared::application
 {
     void initialize(int argc, char **argv);
     void deinitialize();
-
-    extern shared::signal::Signal<int> signal_shutdown;
-
 }  // namespace shared::application

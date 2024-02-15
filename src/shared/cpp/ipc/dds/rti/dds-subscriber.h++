@@ -124,14 +124,14 @@ namespace shared::dds
 
         template <class T>
         inline DataReaderRef<T>
-        create_signal_reader(shared::signal::Signal<T> *signal,
+        create_signal_reader(shared::signal::DataSignal<T> *signal,
                              const std::string &topic_name = TYPE_NAME_BASE(T),
                              bool reliable = true,
                              bool sync_latest = false)
         {
             return this->create_reader<T>(
                 topic_name,
-                std::bind(&shared::signal::Signal<T>::emit, signal, std::placeholders::_2),
+                std::bind(&shared::signal::DataSignal<T>::emit, signal, std::placeholders::_2),
                 reliable,
                 sync_latest);
         }

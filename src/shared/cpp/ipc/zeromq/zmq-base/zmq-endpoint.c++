@@ -8,7 +8,7 @@
 #include "zmq-endpoint.h++"
 #include "logging/logging.h++"
 #include "platform/symbols.h++"
-#include "application/init.h++"
+#include "platform/init.h++"
 #include "status/exceptions.h++"
 #include "buildinfo.h"  // PROJECT_NAME
 
@@ -32,7 +32,7 @@ namespace shared::zmq
         if (!This::context_)
         {
             This::context_ = std::make_shared<::zmq::context_t>(IO_THREADS);
-            shared::application::signal_shutdown.connect(
+            shared::platform::signal_shutdown.connect(
                 TYPE_NAME_FULL(::zmq::context_t),
                 std::bind(&::zmq::context_t::shutdown, This::context_));
         }

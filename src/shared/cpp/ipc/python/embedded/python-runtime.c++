@@ -7,72 +7,63 @@
 
 #include "python-runtime.h++"
 #include "python-exception.h++"
-#include "status/exceptions.h++"
 #include "logging/logging.h++"
+#include "status/exceptions.h++"
 #include "platform/symbols.h++"
-#include "application/init.h++"
+#include "platform/init.h++"
 
 namespace shared::python
 {
-    Runtime::Runtime()
+    void Runtime::global_init()
     {
-        this->initialize();
+        Py_Initialize();
+        runtime = std::make_unique<Runtime>();
     }
 
-    Runtime::Runtime(const std::string &module)
+    void Runtime::global_cleanup()
     {
-        this->initialize();
-        this->import(module);
-    }
-
-    void Runtime::initialize()
-    {
-        if (!Runtime::initialized)
-        {
-            Py_Initialize();
-            application::signal_shutdown.connect(TYPE_NAME_BASE(Runtime), Runtime::finalize);
-            Runtime::initialized = true;
-        }
-    }
-
-    void Runtime::finalize(int signal)
-    {
-        application::signal_shutdown.disconnect(TYPE_NAME_BASE(Runtime));
+        runtime.reset();
         Py_FinalizeEx();
     }
 
-    void Runtime::import(const std::string &module_name)
+    ContainerObject &Runtime::import(const std::string &module_name)
     {
-        if (SimpleObject py_module_name = PyUnicode_DecodeFSDefaultAndSize(
-                module_name.data(),
-                module_name.size()))
+        try
         {
-            if (SimpleObject py_module = PyImport_Import(py_module_name.borrow()))
-            {
-                this->module = std::make_shared<SimpleObject>(py_module);
-                return;
-            }
+            return this->modules.at(module_name);
         }
-        throw Exception(PyErr_Occurred(), module_name);
+        catch (const std::out_of_range &)
+        {
+            if (SimpleObject py_module_name = PyUnicode_DecodeFSDefaultAndSize(
+                    module_name.data(),
+                    module_name.size()))
+            {
+                if (PyObject *py_module = PyImport_Import(py_module_name.borrow()))
+                {
+                    auto [it, inserted] = this->modules.try_emplace(module_name, py_module);
+                    return it->second;
+                }
+            }
+
+            throw this->get_exception();
+        }
     }
 
-    types::Value Runtime::call(const std::string &method,
+    types::Value Runtime::call(const std::optional<std::string> &module_name,
+                               const std::string &method_name,
                                const types::ValueList &args,
                                const types::KeyValueMap &kwargs)
     {
-        SimpleObject py_method(SimpleObject::pystring_from_string(method));
         SimpleObject py_args(SimpleObject::pytuple_from_values(args));
         SimpleObject py_kwargs(SimpleObject::pydict_from_kvmap(kwargs));
-        return this->call(py_method, py_args, py_kwargs).as_value();
+        return this->call(module_name, method_name, py_args, py_kwargs).as_value();
     }
 
-    ContainerObject Runtime::call(const std::string &method,
+    ContainerObject Runtime::call(const std::optional<std::string> &module_name,
+                                  const std::string &method_name,
                                   const SimpleObject::Vector &args,
                                   const SimpleObject::Map &kwargs)
     {
-        // Construct a Python object for the method name
-        SimpleObject py_method(SimpleObject::pystring_from_string(method));
-
         // Construct a Python object for the positional arguments
         SimpleObject py_args(PyTuple_New(args.size()));
         for (uint c = 0; c < args.size(); c++)
@@ -87,51 +78,76 @@ namespace shared::python
             SimpleObject key_obj(PyUnicode_DecodeUTF8(key.data(), key.size(), nullptr));
             PyDict_SetItem(py_kwargs.borrow(), key_obj.borrow(), obj.borrow());
         }
-        return this->call(py_method, py_args, py_kwargs);
+
+        return this->call(module_name, method_name, py_args, py_kwargs);
     }
 
-    ContainerObject Runtime::call(const SimpleObject &method_name,
+    ContainerObject Runtime::call(const std::optional<std::string> &module_name,
+                                  const std::string &method_name,
                                   const SimpleObject &args,
                                   const SimpleObject &kwargs)
     {
-        if (this->module)
+        ContainerObject &container = this->get_container(module_name);
+        if (auto method = container.find_qualified_symbol(method_name))
         {
-            if (SimpleObject py_func = PyObject_GetAttr(this->module->borrow(), method_name.borrow()))
+            if (PyCallable_Check(method.borrow()))
             {
-                if (PyCallable_Check(py_func.borrow()))
+                if (PyObject *result = PyObject_Call(method.borrow(),
+                                                     args.borrow(),
+                                                     kwargs.borrow()))
                 {
-                    if (PyObject *result = PyObject_Call(py_func.borrow(),
-                                                         args.borrow(),
-                                                         kwargs.borrow()))
-                    {
-                        return result;
-                    }
-                    else
-                    {
-                        throw Exception(PyErr_Occurred(), this->module->name());
-                    }
+                    return result;
                 }
                 else
                 {
-                    throwf_args(Exception,
-                                ("Python symbol is not callable: %r", method_name),
-                                this->module->name());
+                    throw this->get_exception();
                 }
             }
             else
             {
-                throwf_args(Exception,
-                            ("Method name not found: %r", method_name.as_string().value()),
-                            this->module->name());
+                throw exception::FailedPrecondition(
+                    "Python object is not callable",
+                    {
+                        {"symbol", method.name()},
+                        {"type", method.type_name()},
+                    });
             }
         }
         else
         {
-            throw exception::FailedPrecondition("No Python module has been imported");
+            throwf_args(exception::NotFound,
+                        ("Symbol not found: %s", method_name),
+                        method_name);
         }
-        return nullptr;
     }
 
-    bool Runtime::initialized = false;
+    ContainerObject &Runtime::get_container(
+        const std::optional<std::string> &module_name)
+    {
+        return module_name ? this->import(module_name.value()) : this->builtin;
+    }
+
+    Exception Runtime::get_exception() const
+    {
+#if PY_VERSION_HEX >= 0x030C0000  // Python >= 3.12  has a new exception API
+        ContainerObject exc(PyError_GetRaisedException());
+        return Exception(exc.to_string(), exc.type_name(), exc.attributes_as_kvmap());
+#else
+        PyObject *py_type, *py_value, *py_tb;
+        PyErr_Fetch(&py_type, &py_value, &py_tb);
+
+        ContainerObject type(py_type);
+        ContainerObject text(py_value);
+
+        Py_XDECREF(py_tb);
+        return Exception(text.to_string(), type.name(), {});
+#endif
+    }
+
+    std::unique_ptr<Runtime> runtime;
+
+    static shared::platform::InitTask py_init("Python init", Runtime::global_init);
+    static shared::platform::ExitTask py_cleanup("Python cleanup", Runtime::global_cleanup);
+
 
 }  // namespace shared::python

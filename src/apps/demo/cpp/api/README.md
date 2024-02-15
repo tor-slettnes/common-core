@@ -25,7 +25,7 @@ Signals
 Event notifications are issued via the following two signals:
 
 ```
-shared::signal::Signal<TimeData> signal_time("cc::demo::signal_time");
+shared::signal::DataSignal<TimeData> signal_time("cc::demo::signal_time");
 shared::signal::MappingSignal<Greeting> signal_greeting("cc::demo::signal_greeting", true);
 ```
 

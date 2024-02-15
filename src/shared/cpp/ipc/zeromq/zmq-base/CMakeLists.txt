@@ -14,7 +14,7 @@ set(LIB_TYPE STATIC)
 ### Library dependencies.
 set(LIB_DEPS
   cc_shared_ipc_common
-  cc_shared_platform
+  cc_shared_core
 )
 
 ### Package dependencies
