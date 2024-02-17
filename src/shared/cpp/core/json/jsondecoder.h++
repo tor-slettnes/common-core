@@ -23,6 +23,11 @@ namespace shared::json
         using This = JsonDecoder;
 
     public:
+        static types::Value parse_text_with_comments(const std::string &text);
+        static types::Value parse_text(std::string &&text);
+
+    protected:
+        static std::string uncomment(const std::string &text);
         static types::Value decodeValue(const rapidjson::Value &value);
         static types::ValueList decodeArray(const rapidjson::Value &jarray);
         static types::KeyValueMap decodeObject(const rapidjson::Value &jobject);

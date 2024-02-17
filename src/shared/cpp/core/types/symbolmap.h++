@@ -83,7 +83,7 @@ namespace shared::types
         {
             std::string symbol;
             stream >> symbol;
-            str::tolower(symbol);
+            str::tolower(&symbol);
             if (const std::optional<KeyType> &opt_key = this->from_string(symbol))
             {
                 *key = *opt_key;

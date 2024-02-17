@@ -73,4 +73,9 @@ namespace shared::str
         throw std::invalid_argument("not a boolean value: \"" + s + "\"");
     }
 
+    std::string from_bool(bool b)
+    {
+        return b ? "true" : "false";
+    }
+
 }  // namespace shared::str

@@ -13,11 +13,12 @@ set(LIB_TYPE STATIC)
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_shared_messaging_common
+  cc_shared_messaging_http
 )
 
 ### Source files in this folder
 set(SOURCES
+  rest-client.c++
 )
 
 ### Recepies to build the library

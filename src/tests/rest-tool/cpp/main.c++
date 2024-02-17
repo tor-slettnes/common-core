@@ -7,8 +7,10 @@
 
 #include "argparse/common.h++"
 #include "application/init.h++"
-#include "http-client.h++"
+#include "types/value.h++"
 #include "logging/logging.h++"
+#include "status/exceptions.h++"
+#include "rest-client.h++"
 
 int main(int argc, char** argv)
 {
@@ -17,22 +19,28 @@ int main(int argc, char** argv)
     auto options = std::make_unique<shared::argparse::CommonOptions>(false);
     options->apply(argc, argv);
 
-    auto client = shared::http::HTTPClient();
+    auto client = shared::http::RESTClient();
+
+    shared::http::ResponseCode response_code;
+    std::string content_type;
     std::stringstream header, content;
+    int status = 0;
 
-    shared::http::ResponseCode response_code = client.get(
-        "https://api.ipify.org?format=json",  // location
-        &header,                                 // header_stream
-        &content,                                // content_stream,
-        true);                                   // fail_on_error
+    try
+    {
+        shared::types::Value response = client.get_json(
+            "https://api.ipify.org?format=json");
 
-    std::cout << "### Received response " << response_code << std::endl;
-    std::cout << "--- Header:" << std::endl;
-    std::cout << header.rdbuf() << std::endl;
-    std::cout << "--- Content:" << std::endl;
-    std::cout << content.rdbuf() << std::endl;
-    std::cout << "---" << std::endl;
+        std::cout << "### Received response: " << std::endl
+                  << response << std::endl
+                  << "###" << std::endl;
+    }
+    catch (...)
+    {
+        std::cerr << std::current_exception() << std::endl;
+        status = -1;
+    }
 
     shared::application::deinitialize();
-    return 0;
+    return status;
 }

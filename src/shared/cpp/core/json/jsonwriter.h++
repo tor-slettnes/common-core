@@ -34,20 +34,25 @@ namespace shared::json
     {
     public:
         JsonWriterTemplate(const fs::path &path)
-            : stream_(path)
+            : stream_(std::make_shared<std::ofstream>(path))
+        {
+        }
+
+        JsonWriterTemplate(std::ostream &&stream)
+            : stream_(std::make_shared<std::ostream>(std::move(stream)))
         {
         }
 
         void write(const types::Value &value)
         {
-            rapidjson::OStreamWrapper osw(this->stream_);
+            rapidjson::OStreamWrapper osw(*this->stream_);
             WriterType writer(osw);
             this->encodeValue(value, &writer);
-            this->stream_ << std::endl;
+            (*this->stream_) << std::endl;
         }
 
     protected:
-        std::ofstream stream_;
+        std::shared_ptr<std::ostream> stream_;
     };
 
     //==========================================================================
