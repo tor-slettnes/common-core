@@ -32,8 +32,12 @@ namespace shared::http
         static void global_init();
         static void global_cleanup();
 
+        static std::string join_urls(const std::string &base,
+                                     const std::string &rel);
+
     public:
         std::string base_url() const;
+        std::string url(const std::string &rel) const;
 
         std::stringstream get(const std::string &location) const;
 

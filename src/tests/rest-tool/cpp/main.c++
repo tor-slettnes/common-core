@@ -19,7 +19,7 @@ int main(int argc, char** argv)
     auto options = std::make_unique<shared::argparse::CommonOptions>(false);
     options->apply(argc, argv);
 
-    auto client = shared::http::RESTClient();
+    auto client = shared::http::RESTClient("https://api.ipify.org");
 
     shared::http::ResponseCode response_code;
     std::string content_type;

@@ -14,6 +14,8 @@
 
 #include <curl/curl.h>
 
+#include <regex>
+
 namespace shared::http
 {
     HTTPClient::HTTPClient(const std::string &base_url)
@@ -37,9 +39,34 @@ namespace shared::http
         curl_global_cleanup();
     }
 
+    std::string HTTPClient::join_urls(const std::string &base,
+                                      const std::string &rel)
+    {
+        static const std::regex rx("\\w+://.*");
+        if (std::regex_match(rel, rx))
+        {
+            return rel;
+        }
+        else
+        {
+            std::stringstream ss;
+            bool base_slash = str::endswith(base, "/");
+            bool rel_slash = str::startswith(rel, "/");
+
+            ss.write(base.data(), base.size() - ((base_slash && rel_slash) ? 1 : 0));
+            ss.write(rel.data(), rel.size());
+            return ss.str();
+        }
+    }
+
     std::string HTTPClient::base_url() const
     {
         return this->base_url_;
+    }
+
+    std::string HTTPClient::url(const std::string &rel) const
+    {
+        return HTTPClient::join_urls(this->base_url(), rel);
     }
 
     std::stringstream HTTPClient::get(const std::string &location) const
@@ -61,7 +88,7 @@ namespace shared::http
             throw exception::FailedPostcondition(
                 "Content type mismatch",
                 {
-                    {"location", location},
+                    {"url", this->url(location)},
                     {"expected-content-type", expected_content_type},
                     {"received-content-type", content_type},
                 });
@@ -78,7 +105,8 @@ namespace shared::http
                          bool fail_on_error) const
     {
         ResponseCode response = 0;
-        CURLcode code = curl_easy_setopt(this->handle_, CURLOPT_URL, location.c_str());
+        std::string url = this->url(location);
+        CURLcode code = curl_easy_setopt(this->handle_, CURLOPT_URL, url.c_str());
 
         if (code == CURLE_OK)
         {
@@ -126,7 +154,7 @@ namespace shared::http
             throw exception::FailedPostcondition(
                 curl_easy_strerror(code),
                 {
-                    {"location", location},
+                    {"url", url},
                     {"curl_code", code},
                     {"response_code", response},
                 });
