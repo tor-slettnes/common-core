@@ -40,7 +40,7 @@ target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 ### Generate "grpc-status-names.gen"
 set(GRPCSTATUSFILE   ${CMAKE_CURRENT_BINARY_DIR}/grpc-status-names.gen)
-set(GRPCSTATUSSCRIPT ${CMAKE_SOURCE_DIR}/scripts/generate_grpcstatus.py)
+set(GRPCSTATUSSCRIPT ${BUILD_SCRIPTS_DIR}/generate_grpcstatus.py)
 add_custom_command(
     OUTPUT ${GRPCSTATUSFILE}
     COMMAND python3 ${GRPCSTATUSSCRIPT} --output ${GRPCSTATUSFILE} --sysroot "${BUILD_ROOT}/"

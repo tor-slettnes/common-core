@@ -26,7 +26,7 @@ namespace shared::logging
     {
         if (this->workerthread_.joinable())
         {
-            this->queue_.cancel();
+            this->queue_.close();
             this->workerthread_.join();
             for (const Sink::Ref &sink : this->sinks())
             {

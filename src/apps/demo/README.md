@@ -47,10 +47,10 @@ important methods are:
 Our demo defines two signals in [demo-signals.h++](cpp/api/demo-signals.h++) to
 support the functionality described above:
 
-- `cc::demo::signal_time` is emitted at periodic intervals once
+- `demo::signal_time` is emitted at periodic intervals once
   `start_ticking()` has been invoked, and
 
-- `cc::demo::signal_greeting` is emitted whenever someone (a thread or an
+- `demo::signal_greeting` is emitted whenever someone (a thread or an
   external client) invokes `say_hello()`.
 
 

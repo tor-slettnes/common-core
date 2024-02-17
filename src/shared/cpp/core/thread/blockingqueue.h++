@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file blockingqueue.h++
 /// @brief std::queue wrapper with blocking receiver
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes <tslettnes@picarro.com>
 //==============================================================================
 
 #pragma once
@@ -40,19 +40,19 @@ namespace shared::types
 
     public:
         /// @brief
-        ///     Cancel any pending `get()` calls.
+        ///     Close the queue.
         ///
         /// Any pending `get()` calls will return immediately with an empty
-        /// value.  Future calls are also cancelled, until either a new item is
+        /// value.  Future calls are also closed, until either a new item is
         /// placed in the queue with `put()`, or the queue is explicitly resumed
-        /// with `uncancel()`.
-        void cancel();
+        /// with `reopen()`.
+        void close();
 
         /// @brief
-        ///     Resume the queue after `cancel()`
+        ///     Resume the queue after `end()`
         ///
         /// Future `get()` calls will again block.
-        void uncancel();
+        void reopen();
 
         /// @brief
         ///     Obtain the size of the queue
@@ -90,7 +90,7 @@ namespace shared::types
         const OverflowDisposition overflow_disposition_;
 
     protected:
-        bool cancelled;
+        bool closed;
         std::condition_variable cv;
         std::mutex mtx;
     };
@@ -150,7 +150,7 @@ namespace shared::types
         {
             {
                 std::unique_lock<std::mutex> lock(this->mtx);
-                this->cancelled = false;
+                this->closed = false;
                 if (this->pushable(&lock))
                 {
                     this->queue.push(value);
@@ -175,7 +175,7 @@ namespace shared::types
         {
             {
                 std::unique_lock<std::mutex> lock(this->mtx);
-                this->cancelled = false;
+                this->closed = false;
                 if (this->pushable(&lock))
                 {
                     this->queue.push(std::move(value));
@@ -192,14 +192,14 @@ namespace shared::types
         ///     if available, otherwise empty.
         ///
         /// @note
-        ///     The call blocks until an item is available or until cancelled.
-        ///     \sa cancel().
+        ///     The call blocks until an item is available or until closed.
+        ///     \sa end().
 
         inline std::optional<T> get()
         {
             std::unique_lock<std::mutex> lock(this->mtx);
             this->cv.wait(lock, [&] {
-                return this->queue.size() || this->cancelled;
+                return this->queue.size() || this->closed;
             });
 
             if (this->queue.size())
@@ -225,7 +225,7 @@ namespace shared::types
         ///     if available within the specified deadline, otherwise empty.
         ///
         /// @note
-        ///     The call blocks until an item is available, until cancelled, or
+        ///     The call blocks until an item is available, until closed, or
         ///     until the specified deadline has arrived.
 
         template <class Clock, class Duration>
@@ -233,7 +233,7 @@ namespace shared::types
         {
             std::unique_lock<std::mutex> lock(this->mtx);
             bool received = this->cv.wait_until(lock, deadline, [&] {
-                return this->queue.size() || this->cancelled;
+                return this->queue.size() || this->closed;
             });
 
             if (received)
@@ -259,7 +259,7 @@ namespace shared::types
         ///     if available, otherwise empty.
         ///
         /// @note
-        ///     The call blocks until an item is available, until cancelled, or
+        ///     The call blocks until an item is available, until closed, or
         ///     until the specified deadline has arrived.
 
         template <class Rep, class Period>

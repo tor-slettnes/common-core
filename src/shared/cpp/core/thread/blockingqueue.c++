@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file blockingqueue.c++
 /// @brief std::queue wrapper with blocking receiver
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes <tslettnes@picarro.com>
 //==============================================================================
 
 #include "blockingqueue.h++"
@@ -14,23 +14,23 @@ namespace shared::types
         OverflowDisposition overflow_disposition)
         : maxsize_(maxsize),
           overflow_disposition_(overflow_disposition),
-          cancelled(false)
+          closed(false)
     {
     }
 
-    void BlockingQueueBase::cancel()
+    void BlockingQueueBase::close()
     {
         {
             std::lock_guard lock(this->mtx);
-            this->cancelled = true;
+            this->closed = true;
         }
         this->cv.notify_all();
     }
 
-    void BlockingQueueBase::uncancel()
+    void BlockingQueueBase::reopen()
     {
         std::lock_guard lock(this->mtx);
-        this->cancelled = false;
+        this->closed = false;
     }
 
     bool BlockingQueueBase::pushable(std::unique_lock<std::mutex> *lock)
@@ -45,9 +45,9 @@ namespace shared::types
             {
             case OverflowDisposition::BLOCK:
                 this->cv.wait(*lock, [&] {
-                    return (this->size() < this->maxsize_) || this->cancelled;
+                    return (this->size() < this->maxsize_) || this->closed;
                 });
-                return !this->cancelled;
+                return !this->closed;
 
             case OverflowDisposition::DISCARD_ITEM:
                 return false;

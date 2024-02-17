@@ -14,6 +14,8 @@ if(NOT PROJECT_INCLUDED)
   ### Source additional files from this folder
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
+  set(BUILD_SCRIPTS_DIR "${CMAKE_CURRENT_LIST_DIR}/../scripts")
+
   # set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/out/install/${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
 
   ### Include rules to build doxygen

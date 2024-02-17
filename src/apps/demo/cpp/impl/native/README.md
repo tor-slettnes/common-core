@@ -1,16 +1,16 @@
 Common Core Demo App -- Native C++ Library
 ==========================================
 
-This self-contained library represents the first and most basic implementation of our [demo API](../../api/README.md). In this approach, the underlying functionality is provided directly within the class [cc::demo::NativeImplementation()](demo-native.h++). As such, this library can be linked into a standalone C++ executable.
+This self-contained library represents the first and most basic implementation of our [demo API](../../api/README.md). In this approach, the underlying functionality is provided directly within the class [demo::NativeImplementation()](demo-native.h++). As such, this library can be linked into a standalone C++ executable.
 
 Conversely, since this implementation does not involve any client/server communication, there is no corresponding DDS bus, RPC service, or bindings for other languages. There is also no way to send or receive greetings to or from other processes, only to ourselves.
 
 Notifications
 -------------
 
-As for time notifiations, the `cc::demo::NativeImplementation::start_ticking()` method uses our shared [task scheduler](../../../../../shared/cpp/core/chrono/scheduler.h++) to invoke a specified callback function at the specified frequency. Conversely, `cc::demo::CoreProvider::stop_ticking()` cancels this task.
+As for time notifiations, the `demo::NativeImplementation::start_ticking()` method uses our shared [task scheduler](../../../../../shared/cpp/core/chrono/scheduler.h++) to invoke a specified callback function at the specified frequency. Conversely, `demo::CoreProvider::stop_ticking()` cancels this task.
 
-Similarly, greeting notices are issued via `cc::demo::signal_greeting`.
+Similarly, greeting notices are issued via `demo::signal_greeting`.
 
 ### *Why the indirection*, you ask.
 

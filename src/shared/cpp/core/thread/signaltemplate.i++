@@ -1,0 +1,344 @@
+/// -*- c++ -*-
+//==============================================================================
+/// @file signaltemplate.h++
+/// @brief Adaptation of Signal/Slot pattern - inline functions
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+namespace shared::signal
+{
+    //==========================================================================
+    // @class DataSignal
+
+    template <class T>
+    inline DataSignal<T>::DataSignal(const std::string &id, bool caching)
+        : Super(id, caching)
+    {
+    }
+
+    template <class T>
+    inline void DataSignal<T>::connect(const std::string &id, const Slot &slot)
+    {
+        std::scoped_lock lck(this->mtx_);
+        this->slots_[id] = slot;
+        this->emit_cached_to(id, slot);
+    }
+
+    template <class T>
+    inline void DataSignal<T>::disconnect(const std::string &id)
+    {
+        std::scoped_lock lck(this->mtx_);
+        this->slots_.erase(id);
+    }
+
+    template <class T>
+    inline size_t DataSignal<T>::emit(const T &value)
+    {
+        std::scoped_lock lck(this->mtx_);
+        if (this->caching_)
+        {
+            this->update_cache(value);
+        }
+        return this->sendall(value);
+    }
+
+    template <class T>
+    inline size_t DataSignal<T>::emit_if_changed(const T &value)
+    {
+        std::scoped_lock lck(this->mtx_);
+        if (!this->caching_ ||
+            !this->cached_ ||
+            (value != *this->cached_))
+        {
+            if (this->caching_)
+            {
+                this->update_cache(value);
+            }
+            return this->sendall(value);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    template <class T>
+    inline std::optional<T> DataSignal<T>::get_cached()
+    {
+        std::scoped_lock lck(this->mtx_);
+        return this->cached_;
+    }
+
+    template <class T>
+    inline size_t DataSignal<T>::connection_count()
+    {
+        return this->slots_.size();
+    }
+
+    template <class T>
+    inline void DataSignal<T>::emit_cached_to(const std::string &id,
+                                              const Slot &slot)
+    {
+        if (this->cached_.has_value())
+        {
+            this->callback(id, slot, this->cached_.value());
+        }
+    }
+
+    template <class T>
+    inline size_t DataSignal<T>::sendall(const T &value)
+    {
+        for (const auto &cb : this->slots_)
+        {
+            this->callback(cb.first, cb.second, value);
+        }
+        return this->slots_.size();
+    }
+
+    template <class T>
+    inline void DataSignal<T>::update_cache(const T &value)
+    {
+        this->cached_ = value;
+    }
+
+    template <class T>
+    inline void DataSignal<T>::callback(const std::string &receiver,
+                                        const Slot &method,
+                                        const T &value)
+    {
+        this->safe_invoke(str::format("%s({...})", receiver),
+                          std::bind(method, value));
+    }
+
+    //==========================================================================
+    // @class MappingSignal
+
+    template <class T, class K>
+    inline MappingSignal<T, K>::MappingSignal(const std::string &id, bool caching)
+        : Super(id, caching)
+    {
+    }
+
+    template <class T, class K>
+    inline void MappingSignal<T, K>::connect(const std::string &id, const Slot &slot)
+    {
+        std::scoped_lock lck(this->mtx_);
+        this->slots_[id] = slot;
+        this->emit_cached_to(id, slot);
+    }
+
+    template <class T, class K>
+    inline void MappingSignal<T, K>::disconnect(const std::string &id)
+    {
+        std::scoped_lock lck(this->mtx_);
+        this->slots_.erase(id);
+    }
+
+    template <class T, class K>
+    inline size_t MappingSignal<T, K>::emit(MappingChange change, const K &key, const T &value)
+    {
+        std::scoped_lock lck(this->mtx_);
+        if (this->caching_)
+        {
+            switch (change)
+            {
+            case MAP_UPDATE:
+            case MAP_ADDITION:
+                this->update_cache(key, value);
+                break;
+
+            case MAP_REMOVAL:
+                this->cached_.erase(key);
+                break;
+
+            default:
+                break;
+            }
+        }
+        return this->sendall(change, key, value);
+    }
+
+    template <class T, class K>
+    inline size_t MappingSignal<T, K>::emit(const K &key, const T &value)
+    {
+        MappingChange change(!this->caching_        ? MAP_NONE
+                             : this->is_cached(key) ? MAP_UPDATE
+                                                    : MAP_ADDITION);
+        return this->emit(change, key, value);
+    }
+
+    template <class T, class K>
+    inline size_t MappingSignal<T, K>::emit_if_changed(const K &key, const T &value)
+    {
+        std::scoped_lock lck(this->mtx_);
+        MappingChange change =
+            !this->caching_                    ? MAP_NONE
+            : (this->cached_.count(key) == 0)  ? MAP_ADDITION
+            : (this->cached_.at(key) != value) ? MAP_UPDATE
+                                               : MAP_NONE;
+
+        if (change != MAP_NONE)
+        {
+            this->update_cache(key, value);
+            return this->sendall(change, key, value);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    template <class T, class K>
+    inline size_t MappingSignal<T, K>::clear(const K &key, const T &value)
+    {
+        return this->emit(MAP_REMOVAL, key, value);
+    }
+
+    template <class T, class K>
+    inline size_t MappingSignal<T, K>::clear_if_cached(const K &key)
+    {
+        std::scoped_lock lck(this->mtx_);
+        if (auto nh = this->cached_.extract(key))
+        {
+            return this->sendall(MAP_REMOVAL, key, nh.mapped());
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    template <class T, class K>
+    inline std::unordered_map<K, T> MappingSignal<T, K>::get_cached()
+    {
+        std::scoped_lock lck(this->mtx_);
+        return this->cached_;
+    }
+
+    template <class T, class K>
+    inline std::optional<T> MappingSignal<T, K>::get_cached(const std::string &key)
+    {
+        std::scoped_lock lck(this->mtx_);
+        try
+        {
+            return this->cached_.at(key);
+        }
+        catch (const std::out_of_range &e)
+        {
+            return {};
+        }
+    }
+
+    template <class T, class K>
+    inline T MappingSignal<T, K>::get_cached(const std::string &key, const T &fallback)
+    {
+        return this->get_cached(key).value_or(fallback);
+    }
+
+    template <class T, class K>
+    inline bool MappingSignal<T, K>::is_cached(const std::string &key) noexcept
+    {
+        std::scoped_lock lck(this->mtx_);
+        return this->cached_.count(key);
+    }
+
+    template <class T, class K>
+    inline size_t MappingSignal<T, K>::connection_count()
+    {
+        return this->slots_.size();
+    }
+
+    template <class T, class K>
+    template <class MapType>
+    inline size_t MappingSignal<T, K>::synchronize(const MapType &update)
+    {
+        std::unordered_map<K, T> previous = this->get_cached();
+        size_t count = 0;
+        for (const auto &[key, value] : update)
+        {
+            if (auto nh = previous.extract(key))
+            {
+                if (nh.mapped() != value)
+                {
+                    this->emit(MAP_UPDATE, key, value);
+                    count++;
+                }
+            }
+            else
+            {
+                this->emit(MAP_ADDITION, key, value);
+                count++;
+            }
+        }
+        for (const auto &[key, value] : previous)
+        {
+            this->emit(MAP_REMOVAL, key, value);
+            count++;
+        }
+        return count;
+    }
+
+    template <class T, class K>
+    inline void MappingSignal<T, K>::update_cache(const K &key, const T &value)
+    {
+        this->cached_.insert_or_assign(key, value);
+    }
+
+    template <class T, class K>
+    inline void MappingSignal<T, K>::emit_cached_to(const std::string &id,
+                                                    const Slot &callback)
+    {
+        for (const auto &pair : this->cached_)
+        {
+            this->callback(id, callback, MAP_ADDITION, pair.first, pair.second);
+        }
+    }
+
+    template <class T, class K>
+    inline size_t MappingSignal<T, K>::sendall(MappingChange change,
+                                               const K &key,
+                                               const T &value)
+    {
+        for (const auto &cb : this->slots_)
+        {
+            this->callback(cb.first, cb.second, change, key, value);
+        }
+        return this->slots_.size();
+    }
+
+    template <class T, class K>
+    inline void MappingSignal<T, K>::callback(const std::string &receiver,
+                                              const Slot &method,
+                                              MappingChange change,
+                                              const K &key,
+                                              const T &value)
+    {
+        this->safe_invoke(str::format("%r (%r, %r, {...})", receiver, change, key),
+                          std::bind(method, change, key, value));
+    }
+
+    //==========================================================================
+    // I/O stream support
+
+    inline std::ostream &operator<<(std::ostream &stream, MappingChange change)
+    {
+        static const std::unordered_map<MappingChange, std::string> names = {
+            {MAP_NONE, "MAP_NONE"},
+            {MAP_ADDITION, "MAP_ADDITION"},
+            {MAP_REMOVAL, "MAP_REMOVAL"},
+            {MAP_UPDATE, "MAP_UPDATE"},
+        };
+
+        try
+        {
+            stream << names.at(change);
+        }
+        catch (const std::out_of_range &)
+        {
+            stream << str::format("(Invalid MappingChange %d)", static_cast<uint>(change));
+        }
+
+        return stream;
+    }
+
+}  // namespace shared::signal

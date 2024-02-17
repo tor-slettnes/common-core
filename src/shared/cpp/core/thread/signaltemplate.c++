@@ -65,11 +65,10 @@ namespace shared::signal
     {
     }
 
-    const VoidSignal::Slot &VoidSignal::connect(const std::string &id, const Slot &slot)
+    void VoidSignal::connect(const std::string &id, const Slot &slot)
     {
         std::scoped_lock lck(this->mtx_);
         this->slots_[id] = slot;
-        return slot;
     }
 
     void VoidSignal::disconnect(const std::string &id)

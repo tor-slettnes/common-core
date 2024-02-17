@@ -2,13 +2,13 @@
 #===============================================================================
 ## @file BuildProtodefs.cmake
 ## @brief CMake rules to generate/build ProtoBuf/gRPC bindings from ".proto" sources
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes <tslettnes@picarro.com>
 ##
 ## To use this file, copy, uncomment, and modify the following in your "CMakeLists.txt":
 ##
 ## @code
 ##     ### Target name. This can be used as a downstream dependency.
-##     set(TARGET cc_YOURAPP_protodefs)
+##     set(TARGET picarro_YOURAPP_protodefs)
 ##
 ##     ### What kind of library we are building (STATIC|SHARED|OBJECT|...)
 ##     ### See: https://cmake.org/cmake/help/latest/command/add_library.html.
@@ -16,11 +16,11 @@
 ##     set(LIB_TYPE OBJECT)
 ##
 ##     ### ProtoBuf dependencies from other applications on which we depend (if applicable).
-##     set(PROTO_DEPS cc_shared_protodefs)
+##     set(PROTO_DEPS picarro_shared_protodefs)
 ##
 ##     ### Static/shared library dependencies, either from this build or provided by
 ##     ### the system. Only direct dependencies are needed; if you include
-##     ### "cc_shared_protodefs" in PROTO_DEPS you do not need "grpc++" or "protobuf"
+##     ### "picarro_shared_protodefs" in PROTO_DEPS you do not need "grpc++" or "protobuf"
 ##     ### here.
 ##     set(LIB_DEPS grpc++ protobuf)
 ##
@@ -69,6 +69,11 @@ if (BUILD_PYTHON)
   if (BUILD_GRPC)
     grpc_generate_python(GRPC_PY ${CMAKE_CURRENT_BINARY_DIR} ${SOURCES})
   endif()
+
+  if(NOT PYTHON_INSTALL_DIR)
+    set(PYTHON_INSTALL_DIR "share/python")
+  endif()
+
   install(FILES ${PROTO_PY} ${GRPC_PY} DESTINATION ${PYTHON_INSTALL_DIR}/generated)
 endif()
 

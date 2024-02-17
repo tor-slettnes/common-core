@@ -9,8 +9,6 @@
 #include "string/format.h++"
 
 #include <string>
-#include <typeinfo>
-#include <typeindex>
 #include <functional>
 #include <optional>
 #include <ostream>
@@ -63,7 +61,7 @@ namespace shared::signal
         using Slot = std::function<void()>;
 
         VoidSignal(const std::string &id);
-        const Slot &connect(const std::string &id, const Slot &slot);
+        void connect(const std::string &id, const Slot &slot);
         void disconnect(const std::string &id);
         size_t emit();
         size_t connection_count();
@@ -99,10 +97,7 @@ namespace shared::signal
     public:
         using Slot = std::function<void(const DataType &)>;
 
-        DataSignal(const std::string &id, bool caching = false)
-            : Super(id, caching)
-        {
-        }
+        DataSignal(const std::string &id, bool caching = false);
 
         /// @fn connect()
         /// @brief Register a signal handler for signals of the provided template type.
@@ -114,13 +109,7 @@ namespace shared::signal
         /// @return
         ///     A reference to the std::function that was passed in.
 
-        inline const Slot &connect(const std::string &id, const Slot &slot)
-        {
-            std::scoped_lock lck(this->mtx_);
-            this->slots_[id] = slot;
-            this->emit_cached_to(id, slot);
-            return slot;
-        }
+        void connect(const std::string &id, const Slot &slot);
 
         /// @fn disconnect()
         /// @brief
@@ -128,11 +117,7 @@ namespace shared::signal
         /// @param[in] id
         ///     Identity of the handler to be removed.
 
-        inline void disconnect(const std::string &id)
-        {
-            std::scoped_lock lck(this->mtx_);
-            this->slots_.erase(id);
-        }
+        void disconnect(const std::string &id);
 
         /// @fn emit()
         /// @brief
@@ -142,15 +127,7 @@ namespace shared::signal
         /// @return
         ///     The number of connected slots to which the signal was emitted
 
-        inline size_t emit(const DataType &value)
-        {
-            std::scoped_lock lck(this->mtx_);
-            if (this->caching_)
-            {
-                this->update_cache(value);
-            }
-            return this->sendall(value);
-        }
+        size_t emit(const DataType &value);
 
         /// @fn emit_if_changed()
         /// @brief
@@ -162,24 +139,7 @@ namespace shared::signal
         /// @return
         ///     The number of connected slots to which the signal was emitted
 
-        inline size_t emit_if_changed(const DataType &value)
-        {
-            std::scoped_lock lck(this->mtx_);
-            if (!this->caching_ ||
-                !this->cached_ ||
-                (value != *this->cached_))
-            {
-                if (this->caching_)
-                {
-                    this->update_cache(value);
-                }
-                return this->sendall(value);
-            }
-            else
-            {
-                return 0;
-            }
-        }
+        size_t emit_if_changed(const DataType &value);
 
         /// @fn get_cached()
         /// @brief
@@ -187,11 +147,7 @@ namespace shared::signal
         /// @return
         ///    std::optional<DataType> object
 
-        inline std::optional<DataType> get_cached()
-        {
-            std::scoped_lock lck(this->mtx_);
-            return this->cached_;
-        }
+        std::optional<DataType> get_cached();
 
         /// @fn connection_count()
         /// @brief
@@ -199,76 +155,25 @@ namespace shared::signal
         /// @return
         ///    Number of connected slots
 
-        inline size_t connection_count()
-        {
-            return this->slots_.size();
-        }
+        size_t connection_count();
 
     protected:
-        inline virtual void emit_cached_to(const std::string &id,
-                                           const Slot &slot)
-        {
-            if (this->cached_.has_value())
-            {
-                this->callback(id, slot, this->cached_.value());
-            }
-        }
+        virtual void emit_cached_to(const std::string &id,
+                                    const Slot &slot);
 
-        inline size_t sendall(const DataType &value)
-        {
-            for (const auto &cb : this->slots_)
-            {
-                this->callback(cb.first, cb.second, value);
-            }
-            return this->slots_.size();
-        }
+        size_t sendall(const DataType &value);
 
-        inline void update_cache(const DataType &value)
-        {
-            this->cached_ = value;
-        }
+        void update_cache(const DataType &value);
 
-        inline void callback(const std::string &receiver,
+        void callback(const std::string &receiver,
                              const Slot &method,
-                             const DataType &value)
-        {
-            this->safe_invoke(str::format("%s({...})", receiver),
-                              std::bind(method, value));
-        }
+                             const DataType &value);
 
     private:
         std::optional<DataType> cached_;
         std::unordered_map<std::string, Slot> slots_;
     };
 
-    enum MappingChange
-    {
-        MAP_NONE,
-        MAP_ADDITION,
-        MAP_REMOVAL,
-        MAP_UPDATE,
-    };
-
-    inline std::ostream &operator<<(std::ostream &stream, MappingChange change)
-    {
-        static const std::unordered_map<MappingChange, std::string> names = {
-            {MAP_NONE, "MAP_NONE"},
-            {MAP_ADDITION, "MAP_ADDITION"},
-            {MAP_REMOVAL, "MAP_REMOVAL"},
-            {MAP_UPDATE, "MAP_UPDATE"},
-        };
-
-        try
-        {
-            stream << names.at(change);
-        }
-        catch (const std::out_of_range &)
-        {
-            stream << str::format("(Invalid MappingChange %d)", static_cast<uint>(change));
-        }
-
-        return stream;
-    }
 
     //==========================================================================
     /// @class MappingSignal
@@ -291,6 +196,14 @@ namespace shared::signal
     ///      my_mapping_signal.clear("key");
     /// @endcode
 
+    enum MappingChange
+    {
+        MAP_NONE,
+        MAP_ADDITION,
+        MAP_REMOVAL,
+        MAP_UPDATE,
+    };
+
     template <class DataType, class KeyType = std::string>
     class MappingSignal : public BaseSignal
     {
@@ -299,10 +212,7 @@ namespace shared::signal
     public:
         using Slot = std::function<void(MappingChange, const KeyType &, const DataType &)>;
 
-        MappingSignal(const std::string &id, bool caching = false)
-            : Super(id, caching)
-        {
-        }
+        MappingSignal(const std::string &id, bool caching = false);
 
         /// @fn connect()
         /// @brief Register a pair of signal handlers for this signal.
@@ -311,13 +221,7 @@ namespace shared::signal
         ///     subsequent cancellation.
         /// @param[in] slot
         ///     A function invoked whenever signal data is emitted
-        inline const Slot &connect(const std::string &id, const Slot &slot)
-        {
-            std::scoped_lock lck(this->mtx_);
-            this->slots_[id] = slot;
-            this->emit_cached_to(id, slot);
-            return slot;
-        }
+        void connect(const std::string &id, const Slot &slot);
 
         /// @fn disconnect()
         /// @brief
@@ -325,11 +229,7 @@ namespace shared::signal
         /// @param[in] id
         ///     Identity identity of the callback handler to be removed.
 
-        inline void disconnect(const std::string &id)
-        {
-            std::scoped_lock lck(this->mtx_);
-            this->slots_.erase(id);
-        }
+        void disconnect(const std::string &id);
 
         /// @brief
         ///     Emit a signal to registered receivers of the provided data type.
@@ -341,28 +241,7 @@ namespace shared::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        inline size_t emit(MappingChange change, const KeyType &key, const DataType &value)
-        {
-            std::scoped_lock lck(this->mtx_);
-            if (this->caching_)
-            {
-                switch (change)
-                {
-                case MAP_UPDATE:
-                case MAP_ADDITION:
-                    this->update_cache(key, value);
-                    break;
-
-                case MAP_REMOVAL:
-                    this->cached_.erase(key);
-                    break;
-
-                default:
-                    break;
-                }
-            }
-            return this->sendall(change, key, value);
-        }
+        size_t emit(MappingChange change, const KeyType &key, const DataType &value);
 
         /// @brief
         ///     Emit a signal to registered receivers of the provided data type.
@@ -373,13 +252,7 @@ namespace shared::signal
         /// @return
         ///     The number of connected slots to which the signal was emitted
 
-        inline size_t emit(const KeyType &key, const DataType &value)
-        {
-            MappingChange change(!this->caching_        ? MAP_NONE
-                                 : this->is_cached(key) ? MAP_UPDATE
-                                                        : MAP_ADDITION);
-            return this->emit(change, key, value);
-        }
+        size_t emit(const KeyType &key, const DataType &value);
 
         /// @fn emit_if_changed()
         /// @brief
@@ -393,25 +266,7 @@ namespace shared::signal
         /// @return
         ///     The number of connected slots to which the signal was emitted
 
-        inline size_t emit_if_changed(const KeyType &key, const DataType &value)
-        {
-            std::scoped_lock lck(this->mtx_);
-            MappingChange change =
-                !this->caching_                    ? MAP_NONE
-                : (this->cached_.count(key) == 0)  ? MAP_ADDITION
-                : (this->cached_.at(key) != value) ? MAP_UPDATE
-                                                   : MAP_NONE;
-
-            if (change != MAP_NONE)
-            {
-                this->update_cache(key, value);
-                return this->sendall(change, key, value);
-            }
-            else
-            {
-                return 0;
-            }
-        }
+        size_t emit_if_changed(const KeyType &key, const DataType &value);
 
         /// @fn clear()
         /// @brief
@@ -423,73 +278,34 @@ namespace shared::signal
         /// @return
         ///     The number of connected slots to which the signal was emitted
 
-        inline size_t clear(const KeyType &key, const DataType &value = {})
-        {
-            return this->emit(MAP_REMOVAL, key, value);
-        }
+        size_t clear(const KeyType &key, const DataType &value = {});
 
         /// @fn clear_if_cached()
         /// @brief
         ///     Emit a REMOVED signal if \p key is still in in the signal cache
         /// @param[in] key
         ///     Mapping key.
-        inline size_t clear_if_cached(const KeyType &key)
-        {
-            std::scoped_lock lck(this->mtx_);
-            if (auto nh = this->cached_.extract(key))
-            {
-                return this->sendall(MAP_REMOVAL, key, nh.mapped());
-            }
-            else
-            {
-                return 0;
-            }
-        }
+        size_t clear_if_cached(const KeyType &key);
 
         /// @fn get_cached()
         /// @brief
         ///    Get the current cached value, if any.
         /// @return
         ///    std::optional<DataType> object
-        inline std::unordered_map<KeyType, DataType> get_cached()
-        {
-            std::scoped_lock lck(this->mtx_);
-            return this->cached_;
-        }
+        std::unordered_map<KeyType, DataType> get_cached();
 
-        inline std::optional<DataType> get_cached(const std::string &key)
-        {
-            std::scoped_lock lck(this->mtx_);
-            try
-            {
-                return this->cached_.at(key);
-            }
-            catch (const std::out_of_range &e)
-            {
-                return {};
-            }
-        }
+        std::optional<DataType> get_cached(const std::string &key);
 
-        inline DataType get_cached(const std::string &key, const DataType &fallback)
-        {
-            return this->get_cached(key).value_or(fallback);
-        }
+        DataType get_cached(const std::string &key, const DataType &fallback);
 
-        inline bool is_cached(const std::string &key) noexcept
-        {
-            std::scoped_lock lck(this->mtx_);
-            return this->cached_.count(key);
-        }
+        bool is_cached(const std::string &key) noexcept;
 
         /// @fn connection_count()
         /// @brief
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
-        inline size_t connection_count()
-        {
-            return this->slots_.size();
-        }
+        size_t connection_count();
 
         /// @fn synchronize()
         /// @brief
@@ -500,73 +316,34 @@ namespace shared::signal
         ///     The number of signals emitted
 
         template <class MapType>
-        inline size_t synchronize(const MapType &update)
-        {
-            std::unordered_map<KeyType, DataType> previous = this->get_cached();
-            size_t count = 0;
-            for (const auto &[key, value] : update)
-            {
-                if (auto nh = previous.extract(key))
-                {
-                    if (nh.mapped() != value)
-                    {
-                        this->emit(MAP_UPDATE, key, value);
-                        count++;
-                    }
-                }
-                else
-                {
-                    this->emit(MAP_ADDITION, key, value);
-                    count++;
-                }
-            }
-            for (const auto &[key, value] : previous)
-            {
-                this->emit(MAP_REMOVAL, key, value);
-                count++;
-            }
-            return count;
-        }
+        size_t synchronize(const MapType &update);
 
     protected:
-        inline void update_cache(const KeyType &key, const DataType &value)
-        {
-            this->cached_.insert_or_assign(key, value);
-        }
+        void update_cache(const KeyType &key, const DataType &value);
 
-        inline void emit_cached_to(const std::string &id,
-                                   const Slot &callback)
-        {
-            for (const auto &pair : this->cached_)
-            {
-                this->callback(id, callback, MAP_ADDITION, pair.first, pair.second);
-            }
-        }
+        void emit_cached_to(const std::string &id,
+                                   const Slot &callback);
 
-        inline size_t sendall(MappingChange change,
+        size_t sendall(MappingChange change,
                               const KeyType &key,
-                              const DataType &value = {})
-        {
-            for (const auto &cb : this->slots_)
-            {
-                this->callback(cb.first, cb.second, change, key, value);
-            }
-            return this->slots_.size();
-        }
+                              const DataType &value = {});
 
-        inline void callback(const std::string &receiver,
+        void callback(const std::string &receiver,
                              const Slot &method,
                              MappingChange change,
                              const KeyType &key,
-                             const DataType &value)
-        {
-            this->safe_invoke(str::format("%r (%r, %r, {...})", receiver, change, key),
-                              std::bind(method, change, key, value));
-        }
+                             const DataType &value);
 
     private:
         std::unordered_map<KeyType, DataType> cached_;
         std::unordered_map<std::string, Slot> slots_;
     };
 
+
+    //==========================================================================
+    // I/O stream support
+
+    std::ostream &operator<<(std::ostream &stream, MappingChange change);
 }  // namespace shared::signal
+
+#include "signaltemplate.i++"

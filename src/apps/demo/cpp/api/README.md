@@ -25,8 +25,8 @@ Signals
 Event notifications are issued via the following two signals:
 
 ```
-shared::signal::DataSignal<TimeData> signal_time("cc::demo::signal_time");
-shared::signal::MappingSignal<Greeting> signal_greeting("cc::demo::signal_greeting", true);
+shared::signal::DataSignal<TimeData> signal_time("demo::signal_time");
+shared::signal::MappingSignal<Greeting> signal_greeting("demo::signal_greeting", true);
 ```
 
 The difference between `Signal<T>` and `MappingSignal<T>` lies in whether the
@@ -38,14 +38,14 @@ addition/update/removal of an item in a keyed data set (map).
 In the former case, a signal is emitted on as follows:
 
 ```
-cc::demo::TimeData time_data(...);
+demo::TimeData time_data(...);
 shared::signal::signal_time.emit(time_data);
 ```
 
 Correspondingly, the callback function signature required to connect to this signal is
 
 ```
-std::function<void(cc::demo::TimeData)>
+std::function<void(demo::TimeData)>
 ```
 
 ### `MappingSignal<T>`: Addition/Update/Removal of data in a map
@@ -64,14 +64,14 @@ shared::signal::MappingSignal<T, K>::emit(MappingChange change, K key, T value)
 In our case, a new client might issue a greeting like this:
 
 ```
-cc::demo::signal_greeting.emit(shared::signal::MAP_ADDITION,
-                              ::options->identity,
-                              cc::demo::Greeting(...));
+demo::signal_greeting.emit(shared::signal::MAP_ADDITION,
+                           ::options->identity,
+                           demo::Greeting(...));
 ```
 
 These three arguments are then passed onto any connected slots, which in this
 case would need the function signature
 
 ```
-std::function<void(shared::signal::MappingChange, std::string, cc::demo::Greeting)>;
+std::function<void(shared::signal::MappingChange, std::string, demo::Greeting)>;
 ```
