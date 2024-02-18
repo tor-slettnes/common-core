@@ -9,6 +9,7 @@
 #include "platform/symbols.h++"
 #include "platform/init.h++"
 #include "status/exceptions.h++"
+#include "string/misc.h++"
 #include "logging/logging.h++"
 #include "thread/signaltemplate.h++"
 
@@ -83,7 +84,8 @@ namespace shared::http
         std::stringstream stream;
         this->get(location, nullptr, &content_type, nullptr, &stream, true);
         str::tolower(&content_type);
-        if (content_type != str::tolower(expected_content_type))
+        if (!str::startswith(content_type + ";",
+                             str::tolower(expected_content_type) + ";"))
         {
             throw exception::FailedPostcondition(
                 "Content type mismatch",
