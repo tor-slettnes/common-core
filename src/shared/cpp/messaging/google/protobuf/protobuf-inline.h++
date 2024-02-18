@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-inline.h++
 /// @brief Convenience templates for ProtoBuf encoding/decoding
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes <tslettnes@picarro.com>
 ///
 /// The purpose of this file is to allow wrapper semantics like the following
 /// around the respecitve methods protobuf::encode(nativeobject, protobufmessage)
@@ -38,13 +38,25 @@ namespace protobuf
         }
     }
 
-    template <class NativeType, class ProtoType>
-    void decode_vector(const google::protobuf::RepeatedPtrField<ProtoType> &items,
-                       std::vector<NativeType> *vector)
+    template <class Type>
+    void assign_from_vector(const std::vector<Type> &vector,
+                            google::protobuf::RepeatedPtrField<Type> *items)
+    {
+        items->Clear();
+        items->Reserve(vector.size());
+        for (const Type &item : vector)
+        {
+            *items->Add() = item;
+        }
+    }
+
+    template <class Type>
+    void assign_to_vector(const google::protobuf::RepeatedPtrField<Type> &items,
+                          std::vector<Type> *vector)
     {
         vector->clear();
         vector->reserve(items.size());
-        for (const ProtoType &item : items)
+        for (const Type &item : items)
         {
             vector->push_back(item);
         }
@@ -99,4 +111,4 @@ namespace protobuf
         return ref;
     }
 
-}  // namespace shared::protobuf
+}  // namespace protobuf

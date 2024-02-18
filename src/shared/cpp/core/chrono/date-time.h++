@@ -244,6 +244,9 @@ namespace shared
         /// Convert from seconds as a real number to Duration
         Duration to_duration(double seconds);
 
+        /// Convert from milliseconds (Java style timestamp) to Duration
+        Duration ms_to_duration(std::int64_t milliseconds);
+
         /// Convert from seconds and nanoseconds as integers to Duration
         Duration to_duration(time_t seconds, long nanoseconds = 0);
 
@@ -263,6 +266,9 @@ namespace shared
         /// Convert from seconds as a real number to timepoint
         TimePoint to_timepoint(double seconds,
                                const TimePoint &fallback = epoch);
+
+        /// Convert from milliseconds (Java style timestamp) to TimePoint
+        TimePoint ms_to_timepoint(std::int64_t milliseconds);
 
         /// Convert from seconds and nanoseconds to TimePoint, or fallback if the time is zero.
         TimePoint to_timepoint(time_t seconds,

@@ -1,7 +1,7 @@
 /// -*- c++ -*-
 //==============================================================================
 /// @file signaltemplate.h++
-/// @brief Simple non-buffered adaptation of Signal/Slot pattern
+/// @brief Adaptation of Signal/Slot pattern - inline functions
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -18,6 +18,19 @@
 
 namespace shared::signal
 {
+    //==========================================================================
+    // Types
+
+    using Handle = std::string;
+
+    enum MappingChange
+    {
+        MAP_NONE,
+        MAP_ADDITION,
+        MAP_REMOVAL,
+        MAP_UPDATE,
+    };
+
     //==========================================================================
     /// @class BaseSignal
     /// @brief Abstract/untyped base for Signal<T> and MappingSignal<T>
@@ -37,9 +50,10 @@ namespace shared::signal
                    bool caching = false);
 
         void set_caching(bool caching);
-        std::string name();
+        std::string name() const;
 
     protected:
+        Handle unique_handle() const;
         void safe_invoke(const std::string &receiver,
                          const std::function<void()> &f);
 
@@ -61,9 +75,43 @@ namespace shared::signal
         using Slot = std::function<void()>;
 
         VoidSignal(const std::string &id);
-        void connect(const std::string &id, const Slot &slot);
-        void disconnect(const std::string &id);
+
+        /// @fn connect()
+        /// @brief Register a signal handler for signals of the provided template type.
+        /// @param[in] slot
+        ///     A callback function, invoked whenever the signal is emitted
+        /// @return
+        ///     A unique handle, which can later be used to disconnect
+        Handle connect(const Slot &slot);
+
+        /// @fn connect()
+        /// @brief Register a signal handler for signals of the provided template type.
+        /// @param[in] handle
+        ///     Unique identity of the callback handler, to be used for
+        ///     subsequent cancellation.
+        /// @param[in] slot
+        ///     A callback function, invoked whenever the signal is emitted
+        void connect(const Handle &handle, const Slot &slot);
+
+        /// @fn disconnect()
+        /// @brief
+        ///     Unregister a handler for signals of the provided template type.
+        /// @param[in] handle
+        ///     Identity of the handler to be removed.
+        void disconnect(const Handle &handle);
+
+        /// @fn emit()
+        /// @brief
+        ///     Emit a signal to registered receivers
+        /// @return
+        ///     The number of connected slots to which the signal was emitted
         size_t emit();
+
+        /// @fn connection_count()
+        /// @brief
+        ///    Obtain number of current connections.
+        /// @return
+        ///    Number of connected slots
         size_t connection_count();
 
     protected:
@@ -101,23 +149,27 @@ namespace shared::signal
 
         /// @fn connect()
         /// @brief Register a signal handler for signals of the provided template type.
-        /// @param[in] id
+        /// @param[in] slot
+        ///     A callback function, invoked whenever the signal is emitted
+        /// @return
+        ///     A unique handle, which can later be used to disconnect
+        Handle connect(const Slot &slot);
+
+        /// @fn connect()
+        /// @brief Register a signal handler for signals of the provided template type.
+        /// @param[in] handle
         ///     Unique identity of the callback handler, to be used for
         ///     subsequent cancellation.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
-        /// @return
-        ///     A reference to the std::function that was passed in.
-
-        void connect(const std::string &id, const Slot &slot);
+        void connect(const Handle &handle, const Slot &slot);
 
         /// @fn disconnect()
         /// @brief
         ///     Unregister a handler for signals of the provided template type.
-        /// @param[in] id
+        /// @param[in] handle
         ///     Identity of the handler to be removed.
-
-        void disconnect(const std::string &id);
+        void disconnect(const Handle &handle);
 
         /// @fn emit()
         /// @brief
@@ -126,7 +178,6 @@ namespace shared::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-
         size_t emit(const DataType &value);
 
         /// @fn emit_if_changed()
@@ -138,7 +189,6 @@ namespace shared::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-
         size_t emit_if_changed(const DataType &value);
 
         /// @fn get_cached()
@@ -146,7 +196,6 @@ namespace shared::signal
         ///    Get the current cached value, if any.
         /// @return
         ///    std::optional<DataType> object
-
         std::optional<DataType> get_cached();
 
         /// @fn connection_count()
@@ -154,11 +203,10 @@ namespace shared::signal
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
-
         size_t connection_count();
 
     protected:
-        virtual void emit_cached_to(const std::string &id,
+        virtual void emit_cached_to(const std::string &handle,
                                     const Slot &slot);
 
         size_t sendall(const DataType &value);
@@ -196,13 +244,6 @@ namespace shared::signal
     ///      my_mapping_signal.clear("key");
     /// @endcode
 
-    enum MappingChange
-    {
-        MAP_NONE,
-        MAP_ADDITION,
-        MAP_REMOVAL,
-        MAP_UPDATE,
-    };
 
     template <class DataType, class KeyType = std::string>
     class MappingSignal : public BaseSignal
@@ -215,13 +256,20 @@ namespace shared::signal
         MappingSignal(const std::string &id, bool caching = false);
 
         /// @fn connect()
-        /// @brief Register a pair of signal handlers for this signal.
-        /// @param[in] id
-        ///     Unique identity of the callback handler, to be used for
-        ///     subsequent cancellation.
+        /// @brief Register a signal handler for this signal.
         /// @param[in] slot
         ///     A function invoked whenever signal data is emitted
-        void connect(const std::string &id, const Slot &slot);
+        /// @return
+        ///     Unique handle which can later be used to disconnect
+        Handle connect(const Slot &slot);
+
+        /// @fn connect()
+        /// @brief Register a signal handler for this signal.
+        /// @param[in] handle
+        ///     Unique handle which can later be used to disconnect
+        /// @param[in] slot
+        ///     A function invoked whenever signal data is emitted
+        void connect(const Handle &handle, const Slot &slot);
 
         /// @fn disconnect()
         /// @brief
@@ -229,7 +277,7 @@ namespace shared::signal
         /// @param[in] id
         ///     Identity identity of the callback handler to be removed.
 
-        void disconnect(const std::string &id);
+        void disconnect(const Handle &handle);
 
         /// @brief
         ///     Emit a signal to registered receivers of the provided data type.
@@ -251,7 +299,6 @@ namespace shared::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-
         size_t emit(const KeyType &key, const DataType &value);
 
         /// @fn emit_if_changed()
@@ -265,7 +312,6 @@ namespace shared::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-
         size_t emit_if_changed(const KeyType &key, const DataType &value);
 
         /// @fn clear()
@@ -277,7 +323,6 @@ namespace shared::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-
         size_t clear(const KeyType &key, const DataType &value = {});
 
         /// @fn clear_if_cached()
@@ -294,10 +339,34 @@ namespace shared::signal
         ///    std::optional<DataType> object
         std::unordered_map<KeyType, DataType> get_cached();
 
+        /// @fn get_cached()
+        /// @brief
+        ///    Get the most recent data value emitted for a given key
+        /// @param[in] key
+        ///    Mapping key
+        /// @return
+        ///    Most recent data value emitted for the specified key, if any
         std::optional<DataType> get_cached(const std::string &key);
 
+        /// @fn get_cached()
+        /// @brief
+        ///    Get the most recent data value emitted for a given key
+        /// @param[in] key
+        ///    Mapping key
+        /// @param[in] fallback
+        ///    Data value to return if the specified key doesn't exist in the cache
+        /// @return
+        ///    Most recent data value emitted for the specified key, otherwise
+        ///    the provided fallback value.
         DataType get_cached(const std::string &key, const DataType &fallback);
 
+        /// @fn get_cached()
+        /// @brief
+        ///    Indicate whether the specified mapping currently exists in the cache
+        /// @param[in] key
+        ///    Mapping key
+        /// @return
+        ///    Boolean indicator of whether the specified key exists
         bool is_cached(const std::string &key) noexcept;
 
         /// @fn connection_count()
@@ -314,14 +383,13 @@ namespace shared::signal
         ///     Updated map
         /// @return
         ///     The number of signals emitted
-
         template <class MapType>
         size_t synchronize(const MapType &update);
 
     protected:
         void update_cache(const KeyType &key, const DataType &value);
 
-        void emit_cached_to(const std::string &id,
+        void emit_cached_to(const std::string &handle,
                                    const Slot &callback);
 
         size_t sendall(MappingChange change,

@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file signaltemplate.h++
+/// @file signaltemplate.i++
 /// @brief Adaptation of Signal/Slot pattern - inline functions
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
@@ -17,18 +17,26 @@ namespace shared::signal
     }
 
     template <class T>
-    inline void DataSignal<T>::connect(const std::string &id, const Slot &slot)
+    inline Handle DataSignal<T>::connect(const Slot &slot)
     {
-        std::scoped_lock lck(this->mtx_);
-        this->slots_[id] = slot;
-        this->emit_cached_to(id, slot);
+        Handle handle(this->unique_handle());
+        this->connect(handle, slot);
+        return handle;
     }
 
     template <class T>
-    inline void DataSignal<T>::disconnect(const std::string &id)
+    inline void DataSignal<T>::connect(const Handle &handle, const Slot &slot)
     {
         std::scoped_lock lck(this->mtx_);
-        this->slots_.erase(id);
+        this->slots_[handle] = slot;
+        this->emit_cached_to(handle, slot);
+    }
+
+    template <class T>
+    inline void DataSignal<T>::disconnect(const Handle &handle)
+    {
+        std::scoped_lock lck(this->mtx_);
+        this->slots_.erase(handle);
     }
 
     template <class T>
@@ -76,12 +84,12 @@ namespace shared::signal
     }
 
     template <class T>
-    inline void DataSignal<T>::emit_cached_to(const std::string &id,
+    inline void DataSignal<T>::emit_cached_to(const Handle &handle,
                                               const Slot &slot)
     {
         if (this->cached_.has_value())
         {
-            this->callback(id, slot, this->cached_.value());
+            this->callback(handle, slot, this->cached_.value());
         }
     }
 
@@ -120,18 +128,26 @@ namespace shared::signal
     }
 
     template <class T, class K>
-    inline void MappingSignal<T, K>::connect(const std::string &id, const Slot &slot)
+    inline Handle MappingSignal<T, K>::connect(const Slot &slot)
     {
-        std::scoped_lock lck(this->mtx_);
-        this->slots_[id] = slot;
-        this->emit_cached_to(id, slot);
+        Handle handle(this->unique_handle());
+        this->connect(handle, slot);
+        return handle;
     }
 
     template <class T, class K>
-    inline void MappingSignal<T, K>::disconnect(const std::string &id)
+    inline void MappingSignal<T, K>::connect(const Handle &handle, const Slot &slot)
     {
         std::scoped_lock lck(this->mtx_);
-        this->slots_.erase(id);
+        this->slots_[handle] = slot;
+        this->emit_cached_to(handle, slot);
+    }
+
+    template <class T, class K>
+    inline void MappingSignal<T, K>::disconnect(const Handle &handle)
+    {
+        std::scoped_lock lck(this->mtx_);
+        this->slots_.erase(handle);
     }
 
     template <class T, class K>
@@ -285,12 +301,12 @@ namespace shared::signal
     }
 
     template <class T, class K>
-    inline void MappingSignal<T, K>::emit_cached_to(const std::string &id,
+    inline void MappingSignal<T, K>::emit_cached_to(const Handle &handle,
                                                     const Slot &callback)
     {
         for (const auto &pair : this->cached_)
         {
-            this->callback(id, callback, MAP_ADDITION, pair.first, pair.second);
+            this->callback(handle, callback, MAP_ADDITION, pair.first, pair.second);
         }
     }
 

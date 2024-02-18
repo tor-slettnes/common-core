@@ -86,13 +86,14 @@ namespace shared
 
         /// Map of scheduled tasks by next scheduled invocation
         using TaskMap = std::multimap<dt::TimePoint, Task>;
+        using Handle = std::string;
 
     public:  // Methods
-        /// \fn Scheduler
-        /// \brief Constructor
-        /// \param[in] max_nap
+        /// @fn Scheduler
+        /// @brief Constructor
+        /// @param[in] max_nap
         ///     Maximum allowed time nap time between checks for task updates.
-        /// \param[in] max_jitter
+        /// @param[in] max_jitter
         ///     Maximum allowed time interval between expected and actual system
         ///     clock observed each time the scheduler wakes up to invoke a task.
         ///     If exceeded, task invocation times will adjusted according to the
@@ -101,19 +102,17 @@ namespace shared
         Scheduler(dt::Duration max_nap = std::chrono::seconds(1),
                   dt::Duration max_jitter = std::chrono::seconds(5));
 
-        /// \fn ~Scheduler
-        /// \brief Destructor. Cancel any pending tasks.
+        /// @fn ~Scheduler
+        /// @brief Destructor. Cancel any pending tasks.
         ~Scheduler();
 
-        /// \fn add
-        /// \brief Schedule a task/method to be invoked at specified time interval
-        /// \param[in] id
-        ///     Unique identifier for this task.
-        /// \param[in] invocation
+        /// @fn add
+        /// @brief Schedule a task/method to be invoked at specified time interval
+        /// @param[in] invocation
         ///     Method to invoke
-        /// \param[in] interval
+        /// @param[in] interval
         ///     Interval between invocations
-        /// \param[in] align
+        /// @param[in] align
         ///     TimePoint alignment, i.e., when the first invocation takes place. Use
         ///       - \p ALIGN_START to invoke the task as soon as it added to the scheduler,
         ///       - \p ALIGN_NEXT to delay one cycle, until the specified interval has elapsed,
@@ -121,19 +120,55 @@ namespace shared
         ///         (technically, from midnight January 1, 1970, UTC, a.k.a. epoch).
         ///       - \p ALIGN_LOCAL to align invocations to midnight, local time (technically,
         ///         epoch minus the current local timezone offset).
-        /// \param[in] loglevel
+        /// @param[in] loglevel
         ///     Verbosity at which task invocations are logged
-        /// \param[in] count
+        /// @param[in] count
         ///     Number of invocations; 0 is infinite.
-        /// \param[in] retries
+        /// @param[in] retries
         ///     Maximum number of invocation failures to allow before unscheduling task.
-        /// \param[in] catchup
+        /// @param[in] catchup
         ///     Whether to immediately reschedule tasks that could not be executed in their
         ///     specified timeslot (because a prior invocation task took too long, or or due to
         ///     system load). Using this could lead to starvation.
-        /// \return
+        /// @return
+        ///     Unique handle which can subsequently be used to remove task.
+        Handle add(const Invocation &invocation,
+                   const dt::Duration &interval,
+                   const Alignment align = ALIGN_NEXT,
+                   status::Level loglevel = status::Level::DEBUG,
+                   uint count = 0,
+                   uint retries = 0,
+                   bool catchup = false);
+
+        /// @fn add
+        /// @brief Schedule a task/method to be invoked at specified time interval
+        /// @param[in] id
+        ///     Unique identifier for this task.
+        /// @param[in] invocation
+        ///     Method to invoke
+        /// @param[in] interval
+        ///     Interval between invocations
+        /// @param[in] align
+        ///     TimePoint alignment, i.e., when the first invocation takes place. Use
+        ///       - \p ALIGN_START to invoke the task as soon as it added to the scheduler,
+        ///       - \p ALIGN_NEXT to delay one cycle, until the specified interval has elapsed,
+        ///       - \p ALIGN_UTC to align invocations to `interval` multiples from midnight, UTC
+        ///         (technically, from midnight January 1, 1970, UTC, a.k.a. epoch).
+        ///       - \p ALIGN_LOCAL to align invocations to midnight, local time (technically,
+        ///         epoch minus the current local timezone offset).
+        /// @param[in] loglevel
+        ///     Verbosity at which task invocations are logged
+        /// @param[in] count
+        ///     Number of invocations; 0 is infinite.
+        /// @param[in] retries
+        ///     Maximum number of invocation failures to allow before unscheduling task.
+        /// @param[in] catchup
+        ///     Whether to immediately reschedule tasks that could not be executed in their
+        ///     specified timeslot (because a prior invocation task took too long, or or due to
+        ///     system load). Using this could lead to starvation.
+        /// @return
         ///     Reference to the scheduled task
-        Task &add(const std::string &id,
+        Task &add(const Handle &handle,
                   const Invocation &invocation,
                   const dt::Duration &interval,
                   const Alignment align = ALIGN_NEXT,
@@ -142,9 +177,9 @@ namespace shared
                   uint retries = 0,
                   bool catchup = false);
 
-        /// \fn add_if_missing
-        /// \brief Add a scheduled task if the specified ID does not already exist. \sa add
-        Task &add_if_missing(const std::string &id,
+        /// @fn add_if_missing
+        /// @brief Add a scheduled task if the specified ID does not already exist. \sa add
+        Task &add_if_missing(const Handle &handle,
                              const Invocation &invocation,
                              const dt::Duration &interval,
                              const Alignment align = ALIGN_NEXT,
@@ -153,41 +188,41 @@ namespace shared
                              uint retries = 0,
                              bool catchup = false);
 
-        /// \brief Schedule a task/method to be invoked at specified time interval
-        bool remove(const std::string &id);
+        /// @brief Schedule a task/method to be invoked at specified time interval
+        bool remove(const Handle &handle);
         bool remove(const Task &task);
 
-        /// \fn exists
-        /// \brief indicate whether the specifed task ID exists
-        bool exists(const std::string &id);
+        /// @fn exists
+        /// @brief indicate whether the specifed task ID exists
+        bool exists(const Handle &handle);
 
-        /// \fn find
-        /// \brief Find any scheduled task by the specified name
-        /// \param[in] id
+        /// @fn find
+        /// @brief Find any scheduled task by the specified name
+        /// @param[in] id
         ///     Task ID
-        /// \return
+        /// @return
         ///     Iterator to the task if found, or `this->end()` if not found.
-        TaskMap::iterator find(const std::string &id) noexcept;
+        TaskMap::iterator find(const Handle &handle) noexcept;
         TaskMap::iterator begin() noexcept;
         TaskMap::iterator end() noexcept;
 
-        /// \fn has_task
-        /// \brief Check whether a specific task exists
-        /// \param[in] id
+        /// @fn has_task
+        /// @brief Check whether a specific task exists
+        /// @param[in] id
         ///     Task ID
-        /// \return
+        /// @return
         ///     `true` if the task exists, `false` otherwise.
-        bool has_task(const std::string &id) const noexcept;
+        bool has_task(const Handle &handle) const noexcept;
 
-        /// \fn stop
-        /// \brief stop the scheduler
+        /// @fn stop
+        /// @brief stop the scheduler
         void stop();
 
     private:  // Methods
         dt::Duration local_offset(const dt::TimePoint &tp);
         void adjust_times(const dt::TimePoint &expected, const dt::TimePoint &now);
         Task &add_task(const dt::TimePoint &tp, Task &&task);
-        bool remove_task(const std::string &id, const Task *ptask = nullptr);
+        bool remove_task(const Handle &handle, const Task *ptask = nullptr);
         void start_watcher();
         void stop_watcher();
         void watcher();
@@ -203,14 +238,14 @@ namespace shared
         std::condition_variable stop_request;
 
     private:  // Classes
-        /// \class Task
-        /// \brief A scheduled task
+        /// @class Task
+        /// @brief A scheduled task
         class Task
         {
             friend class Scheduler;
 
         private:
-            Task(const std::string &id,
+            Task(const Handle &handle,
                  const Invocation &invocation,
                  const dt::Duration &interval,
                  Alignment align,
@@ -231,7 +266,7 @@ namespace shared
                                        const dt::TimePoint &now) const;
 
         public:
-            std::string id;
+            Handle handle;
             Invocation invocation;
             dt::Duration interval;
             Alignment align;

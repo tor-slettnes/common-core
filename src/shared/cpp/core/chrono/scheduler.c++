@@ -9,6 +9,7 @@
 #include "date-time.h++"
 #include "string/format.h++"
 #include "status/exceptions.h++"
+#include "platform/symbols.h++"
 
 namespace shared
 {
@@ -28,7 +29,20 @@ namespace shared
         this->stop();
     }
 
-    Scheduler::Task &Scheduler::add(const std::string &id,
+    Scheduler::Handle Scheduler::add(const Invocation &invocation,
+                                     const dt::Duration &interval,
+                                     const Alignment align,
+                                     status::Level loglevel,
+                                     uint count,
+                                     uint retries,
+                                     bool catchup)
+    {
+        Handle handle = platform::symbols->uuid();
+        this->add(handle, invocation, interval, align, loglevel, count, retries, catchup);
+        return handle;
+    }
+
+    Scheduler::Task &Scheduler::add(const Handle &handle,
                                     const Invocation &invocation,
                                     const dt::Duration &interval,
                                     const Alignment align,
@@ -44,13 +58,12 @@ namespace shared
 
         auto lck = std::lock_guard(this->mtx);
         dt::TimePoint now = dt::Clock::now();
-        //Task task(id, invocation, interval, align, count, retries, catchup);
-        Task task(id, invocation, interval, align, count, retries, catchup, loglevel);
+        Task task(handle, invocation, interval, align, count, retries, catchup, loglevel);
         dt::TimePoint tp = task.aligned_time(now);
         return this->add_task(tp, std::move(task));
     }
 
-    Scheduler::Task &Scheduler::add_if_missing(const std::string &id,
+    Scheduler::Task &Scheduler::add_if_missing(const Handle &handle,
                                                const Invocation &invocation,
                                                const dt::Duration &interval,
                                                const Alignment align,
@@ -59,10 +72,10 @@ namespace shared
                                                uint retries,
                                                bool catchup)
     {
-        auto it = this->find(id);
+        auto it = this->find(handle);
         if (it == this->end())
         {
-            return this->add(id, invocation, interval, align, loglevel, count, retries, catchup);
+            return this->add(handle, invocation, interval, align, loglevel, count, retries, catchup);
         }
         else
         {
@@ -76,23 +89,23 @@ namespace shared
         return this->remove_task({}, &task);
     }
 
-    bool Scheduler::remove(const std::string &id)
+    bool Scheduler::remove(const Handle &handle)
     {
         auto lck = std::lock_guard(this->mtx);
-        return this->remove_task(id);
+        return this->remove_task(handle);
     }
 
-    bool Scheduler::exists(const std::string &id)
+    bool Scheduler::exists(const Handle &handle)
     {
-        return this->find(id) != this->end();
+        return this->find(handle) != this->end();
     }
 
-    Scheduler::TaskMap::iterator Scheduler::find(const std::string &id) noexcept
+    Scheduler::TaskMap::iterator Scheduler::find(const Handle &handle) noexcept
     {
         auto lck = std::lock_guard(this->mtx);
         for (auto it = this->begin(); it != this->end(); it++)
         {
-            if (it->second.id == id)
+            if (it->second.handle == handle)
             {
                 return it;
             }
@@ -110,11 +123,11 @@ namespace shared
         return this->tasks.end();
     }
 
-    bool Scheduler::has_task(const std::string &id) const noexcept
+    bool Scheduler::has_task(const Handle &handle) const noexcept
     {
         for (const auto &[tp, task] : this->tasks)
         {
-            if (task.id == id)
+            if (task.handle == handle)
             {
                 return true;
             }
@@ -131,12 +144,12 @@ namespace shared
     Scheduler::Task &Scheduler::add_task(const dt::TimePoint &tp, Scheduler::Task &&task)
     {
         // Remove any existing task with the same ID
-        this->remove_task(task.id);
+        this->remove_task(task.handle);
 
         // Add the new task to the schedule.
         auto it = this->tasks.emplace(tp, task);
         bool isfirst = (it == this->tasks.begin());
-        logf_trace("Added task: id=%r, next=%r, first=%r", task.id, tp, isfirst);
+        logf_debug("Added task: handle=%r, next=%r, first=%r", task.handle, tp, isfirst);
 
         // Was this task inserted at the beginning?
         if (isfirst)
@@ -146,7 +159,7 @@ namespace shared
             this->stop_watcher();
 
             // Start a new watcher thread.
-            logf_trace("Creating watcher thread with initial task %r", it->second.id);
+            logf_trace("Creating watcher thread with initial task %r", it->second.handle);
             this->start_watcher();
         }
 
@@ -172,16 +185,19 @@ namespace shared
         }
     }
 
-    bool Scheduler::remove_task(const std::string &id, const Task *ptask)
+    bool Scheduler::remove_task(const Handle &handle, const Task *ptask)
     {
         bool found = false;
         for (auto it = this->tasks.begin(); it != this->tasks.end();)
         {
             Task &task = it->second;
-            if ((ptask == nullptr) ? (task.id == id) : (&task == ptask))
+            if ((ptask == nullptr) ? (task.handle == handle) : (&task == ptask))
             {
                 bool isfirst = (&task == this->current);
-                logf_trace("Removing task: id=%r, next=%s, first=%s", id, it->first, isfirst);
+                logf_debug("Removing task: handle=%r, next=%s, first=%s",
+                           handle,
+                           it->first,
+                           isfirst);
                 if (isfirst)
                 {
                     this->current = nullptr;
@@ -194,7 +210,7 @@ namespace shared
                 it++;
             }
         }
-        logf_trace("remove_task: id=%r, found=%r", id, found);
+        logf_trace("remove_task: handle=%r, found=%r", handle, found);
         return found;
     }
 
@@ -208,7 +224,7 @@ namespace shared
             auto it = this->tasks.begin();
             auto &[tp, task] = *it;
 
-            std::string id = task.id;
+            std::string handle = task.handle;
             this->current = &task;
             steady::TimePoint deadline = steady::Clock::now() + std::min(this->max_nap, (tp - now));
 
@@ -221,7 +237,7 @@ namespace shared
             {
                 logf_debug(
                     "Watcher thread was cancelled while waiting for task %r; exiting.",
-                    id);
+                    handle);
                 break;
             }
 
@@ -245,17 +261,17 @@ namespace shared
                     if (keep && this->current)
                     {
                         nh.key() = nh.mapped().next_time(tp, now);
-                        //logf_trace("Scheduled task %r next invocation at %r", id, nh.key());
+                        //logf_trace("Scheduled task %r next invocation at %r", handle, nh.key());
                         this->tasks.insert(std::move(nh));
                     }
                     else
                     {
-                        logf_debug("Scheduled task %r ended", id);
+                        logf_debug("Scheduled task %r ended", handle);
                     }
                 }
                 else
                 {
-                    logf_trace("Scheduled task %r was removed, moving on", id);
+                    logf_trace("Scheduled task %r was removed, moving on", handle);
                 }
             }
         }
@@ -286,7 +302,7 @@ namespace shared
     //==========================================================================
     // Task methods
 
-    Scheduler::Task::Task(const std::string &id,
+    Scheduler::Task::Task(const Handle &handle,
                           const Invocation &invocation,
                           const dt::Duration &interval,
                           Alignment align,
@@ -294,7 +310,7 @@ namespace shared
                           uint retries,
                           bool catchup,
                           status::Level loglevel)
-        : id(id),
+        : handle(handle),
           invocation(invocation),
           interval(interval),
           align(align),
@@ -315,9 +331,9 @@ namespace shared
         {
             const Invocation &f = this->invocation;
             logf_message(this->loglevel,
-                  "Scheduled task %r invocation (variant %d)",
-                  this->id,
-                  f.index());
+                         "Scheduled task %r invocation (variant %d)",
+                         this->handle,
+                         f.index());
             switch (f.index())
             {
             case 0:
@@ -346,16 +362,16 @@ namespace shared
             {
                 this->failures++;
                 logf_notice("Scheduled task %r invocation failed, %d tries remaining: %s",
-                            this->id,
+                            this->handle,
                             this->retries - this->failures + 1,
                             std::current_exception());
             }
             else
             {
-                logf_notice("Scheduled task %r invocation failed %d times, stopping: %s",
-                            this->id,
-                            this->failures,
-                            std::current_exception());
+                logf_error("Scheduled task %r invocation failed %d times, stopping: %s",
+                           this->handle,
+                           this->failures,
+                           std::current_exception());
             }
         }
 

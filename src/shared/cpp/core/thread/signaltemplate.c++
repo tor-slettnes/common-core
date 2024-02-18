@@ -1,13 +1,14 @@
 /// -*- c++ -*-
 //==============================================================================
 /// @file signaltemplate.c++
-/// @brief Simple non-buffered adaptation of Signal/Slot pattern
+/// @brief Adaptation of Signal/Slot pattern - inline functions
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #include "signaltemplate.h++"
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
+#include "platform/symbols.h++"
 
 namespace shared::signal
 {
@@ -29,9 +30,14 @@ namespace shared::signal
         this->caching_ = caching;
     }
 
-    std::string BaseSignal::name()
+    std::string BaseSignal::name() const
     {
         return this->name_;
+    }
+
+    Handle BaseSignal::unique_handle() const
+    {
+        return platform::symbols->uuid();
     }
 
     void BaseSignal::safe_invoke(const std::string &receiver,
@@ -65,16 +71,23 @@ namespace shared::signal
     {
     }
 
-    void VoidSignal::connect(const std::string &id, const Slot &slot)
+    Handle VoidSignal::connect(const Slot &slot)
     {
-        std::scoped_lock lck(this->mtx_);
-        this->slots_[id] = slot;
+        Handle handle(this->unique_handle());
+        this->connect(handle, slot);
+        return handle;
     }
 
-    void VoidSignal::disconnect(const std::string &id)
+    void VoidSignal::connect(const Handle &handle, const Slot &slot)
     {
         std::scoped_lock lck(this->mtx_);
-        this->slots_.erase(id);
+        this->slots_[handle] = slot;
+    }
+
+    void VoidSignal::disconnect(const Handle &handle)
+    {
+        std::scoped_lock lck(this->mtx_);
+        this->slots_.erase(handle);
     }
 
     size_t VoidSignal::emit()

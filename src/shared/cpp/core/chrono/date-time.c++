@@ -262,6 +262,13 @@ namespace shared
                                static_cast<long>((seconds - (int)seconds) * 1e9));
         }
 
+        /// Convert from milliseconds (Java style timestamp) to Duration
+        Duration ms_to_duration(std::int64_t milliseconds)
+        {
+            return std::chrono::duration_cast<Duration>(
+                std::chrono::milliseconds(milliseconds));
+        }
+
         Duration to_duration(time_t seconds, long nanoseconds)
         {
             return std::chrono::duration_cast<Duration>(
@@ -301,6 +308,12 @@ namespace shared
             {
                 return fallback;
             }
+        }
+
+        /// Convert from milliseconds (Java style timestamp) to TimePoint
+        TimePoint ms_to_timepoint(std::int64_t milliseconds)
+        {
+            return TimePoint(ms_to_duration(milliseconds));
         }
 
         TimePoint to_timepoint(time_t seconds, long nanoseconds, const TimePoint &fallback)
