@@ -7,13 +7,16 @@
 
 #pragma once
 #include "http-client.h++"
+#include "rest-base.h++"
 
 namespace shared::http
 {
-    class RESTClient : public HTTPClient
+    class RESTClient : public RESTBase,
+                       public HTTPClient
     {
     public:
-        RESTClient(const std::string &base_url = "",
+        RESTClient(const std::string &base_url,
+                   const std::string &service_name,
                    const std::string &content_type = "application/json");
 
         types::Value get_json(const std::string &location) const;
@@ -21,4 +24,4 @@ namespace shared::http
     private:
         std::string content_type;
     };
-}  // namespace shared::rest
+}  // namespace shared::http

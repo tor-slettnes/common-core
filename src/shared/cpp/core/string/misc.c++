@@ -68,7 +68,7 @@ namespace shared::str
 
     std::string from_wstring(const wchar_t *from, std::size_t size)
     {
-        auto &f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(std::locale());
+        auto &f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(std::locale(""));
         std::mbstate_t mb;
         std::string to(size + f.max_length(), '\0');
         const wchar_t *from_next;
@@ -99,7 +99,7 @@ namespace shared::str
 
     std::wstring to_wstring(const char *from, std::size_t size)
     {
-        auto &f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(std::locale());
+        auto &f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(std::locale(""));
         std::mbstate_t mb;
         std::wstring to(size, '\0');
 

@@ -117,6 +117,14 @@ namespace shared::str
         void appendvalue(bool value,
                          const Modifiers &modifiers);
 
+        // Ouptut formatting for char (to support quoting, lower/upper)
+        void appendvalue(char value,
+                         const Modifiers &modifiers);
+
+        // Ouptut formatting for character arrays (copied if needed)
+        void appendvalue(const char *value,
+                         const Modifiers &modifiers);
+
         // Ouptut formatting for std::string_view (to support quoting)
         void appendvalue(const std::string_view &value,
                          const Modifiers &modifiers);
@@ -127,10 +135,6 @@ namespace shared::str
 
         // Ouptut formatting for rvalue strings (destrutive lower/upper case conversion)
         void appendvalue(std::string &&rvalue,
-                         const Modifiers &modifiers);
-
-        // Ouptut formatting for char (to support quoting, lower/upper)
-        void appendvalue(char value,
                          const Modifiers &modifiers);
 
         // // Ouptut formatting for byte arrays (to support quoting)

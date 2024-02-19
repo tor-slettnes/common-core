@@ -31,6 +31,8 @@ namespace shared::messaging
 
     protected:
         /// @brief A generic communications endpoint, agnostic to platform
+        /// @param[in] messaging_flavor
+        ///     Short descriptive name for messaging plavor, e.g. "gRPC", "ZMQ", "REST", ...
         /// @param[in] endpoint_type
         ///     Type description for this endpoint, used for debugging, etc.
         /// @param[in] channel_name

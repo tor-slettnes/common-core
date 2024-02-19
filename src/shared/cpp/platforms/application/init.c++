@@ -27,7 +27,7 @@ namespace shared::application
         ::signal(SIGTERM, shutdown_handler);
 
         // Apply system locale for `wstring` conversions
-        std::locale::global(std::locale(""));
+        //std::locale::global(std::locale("C"));
 
         shared::platform::register_providers(argc ? argv[0] : "");
         shared::platform::init_tasks.execute();

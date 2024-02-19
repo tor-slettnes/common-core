@@ -18,6 +18,7 @@ set(LIB_DEPS
 
 ### Source files in this folder
 set(SOURCES
+  rest-base.c++
   rest-client.c++
 )
 

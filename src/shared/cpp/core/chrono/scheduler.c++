@@ -361,17 +361,17 @@ namespace shared
             if (keep)
             {
                 this->failures++;
-                logf_notice("Scheduled task %r invocation failed, %d tries remaining: %s",
-                            this->handle,
-                            this->retries - this->failures + 1,
-                            std::current_exception());
+                logf_info("Scheduled task %r invocation failed, %d tries remaining: %s",
+                          this->handle,
+                          this->retries - this->failures + 1,
+                          std::current_exception());
             }
             else
             {
-                logf_error("Scheduled task %r invocation failed %d times, stopping: %s",
-                           this->handle,
-                           this->failures,
-                           std::current_exception());
+                logf_notice("Scheduled task %r invocation failed %d times, stopping: %s",
+                            this->handle,
+                            this->failures,
+                            std::current_exception());
             }
         }
 

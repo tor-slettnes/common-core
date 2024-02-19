@@ -25,7 +25,7 @@ namespace shared::http
         using This = HTTPClient;
 
     public:
-        HTTPClient(const URL &base_url = "http://localhost");
+        HTTPClient(const URL &base_url);
         ~HTTPClient();
 
     public:
@@ -36,8 +36,8 @@ namespace shared::http
                                      const std::string &rel);
 
     public:
-        std::string base_url() const;
-        std::string url(const std::string &rel) const;
+        virtual std::string base_url() const;
+        virtual std::string url(const std::string &rel) const;
 
         std::stringstream get(const std::string &location) const;
 

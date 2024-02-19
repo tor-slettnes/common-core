@@ -346,6 +346,12 @@ namespace shared::str
             this->stream << value;
     }
 
+    void Formatter::appendvalue(const char *value,
+                                const Formatter::Modifiers &modifiers)
+    {
+        this->appendvalue(std::string(value), modifiers);
+    }
+
     void Formatter::appendvalue(const std::string_view &value,
                                 const Formatter::Modifiers &modifiers)
     {

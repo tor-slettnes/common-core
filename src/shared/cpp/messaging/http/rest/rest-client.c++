@@ -11,8 +11,10 @@
 namespace shared::http
 {
     RESTClient::RESTClient(const std::string &base_url,
+                           const std::string &service_name,
                            const std::string &content_type)
-        : HTTPClient(base_url),
+        : RESTBase("client", service_name),
+          HTTPClient(this->real_url(base_url)),
           content_type(content_type)
     {
     }
@@ -22,4 +24,6 @@ namespace shared::http
         std::stringstream content = this->get(location, this->content_type);
         return json::JsonDecoder::parse_text(content.str());
     }
-}  // namespace shared::rest
+
+
+}  // namespace shared::http

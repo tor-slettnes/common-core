@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file http-client.h++
 /// @brief HTTP requests using `cURLpp`
-/// @author Tor Slettnes <tslettnes@picarro.com>
+/// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #include "http-client.h++"
