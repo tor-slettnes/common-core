@@ -9,6 +9,7 @@
 #include "protobuf-message.h++"
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
+#include "http-utils.h++"
 //#include "errnos.h"
 
 
@@ -134,7 +135,7 @@ namespace shared::grpc
         std::stringstream ss;
         if (peer.size())
         {
-            ss << "request from " << peer << ": ";
+            ss << "request from " << shared::http::url_decode(peer) << ": ";
         }
         ss << function << "(" << ::protobuf::to_string(request) << ")";
         return ss.str();

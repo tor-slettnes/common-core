@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file grpc-clientstreamer.h++
+/// @file grpc-clientreceiver.h++
 /// @brief Client-side streamer
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
@@ -17,16 +17,16 @@
 namespace shared::grpc
 {
     //==========================================================================
-    /// @class ClientStreamer
+    /// @class ClientReceiver
     /// @brief Stream messages from server in background
     ///
     /// Subclasses should override `void process(const T &message)`
     /// to handle messages as they are received.
 
     template <class ServiceT, class MessageT, class RequestT = ::google::protobuf::Empty>
-    class ClientStreamer
+    class ClientReceiver
     {
-        using This = ClientStreamer<ServiceT, MessageT, RequestT>;
+        using This = ClientReceiver<ServiceT, MessageT, RequestT>;
 
     protected:
         using Handler = std::function<void(const MessageT &)>;
@@ -36,7 +36,7 @@ namespace shared::grpc
             UniqueReader (ServiceT::Stub::*)(::grpc::ClientContext *, const RequestT &req);
 
     public:
-        ClientStreamer(const Handler &handler)
+        ClientReceiver(const Handler &handler)
             : handler(handler),
               keepalive(true)
         {
@@ -55,7 +55,7 @@ namespace shared::grpc
             if (!this->receive_thread.joinable())
             {
                 this->receive_thread = std::thread(
-                    &ClientStreamer::keep_streaming, this, method, stub, request);
+                    &ClientReceiver::keep_streaming, this, method, stub, request);
             }
         }
 
@@ -125,17 +125,17 @@ namespace shared::grpc
     };
 
     //==========================================================================
-    /// @class ClientSignalStreamer
+    /// @class ClientSignalReceiver
     /// @brief Stream messages from server and emit them locally as signals
 
     template <class ServiceT, class SignalT, class RequestT = ::google::protobuf::Empty>
-    class ClientSignalStreamer : public ClientStreamer<ServiceT, SignalT, RequestT>
+    class ClientSignalReceiver : public ClientReceiver<ServiceT, SignalT, RequestT>
     {
-        using Super = ClientStreamer<ServiceT, SignalT, RequestT>;
+        using Super = ClientReceiver<ServiceT, SignalT, RequestT>;
         using Signal = shared::signal::DataSignal<SignalT>;
 
     public:
-        ClientSignalStreamer(Signal *signal)
+        ClientSignalReceiver(Signal *signal)
             : Super(std::bind(&Signal::emit, signal, std::placeholders::_1))
         {
         }

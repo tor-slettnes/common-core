@@ -18,8 +18,6 @@
 
 namespace shared::grpc
 {
-    using ::grpc::StatusCode;
-
     //==========================================================================
     /// @class Status
     /// @brief Specialization of ::grpc::Status with embedded Details

@@ -9,6 +9,7 @@
 #include "protobuf-demo-types.h++"
 #include "protobuf-inline.h++"
 #include "protobuf-message.h++"
+#include "status/exceptions.h++"
 
 namespace demo::grpc
 {
@@ -24,7 +25,6 @@ namespace demo::grpc
         const ::CC::Demo::Greeting* request,
         ::google::protobuf::Empty* response)
     {
-
         // We received a greeting from a client.  We decode and pass this on to
         // our `api_provider`. Normally this is the native C++ implementation,
         // which will then emit a signal to registered callbacks (slots). (These

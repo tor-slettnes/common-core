@@ -27,20 +27,21 @@ namespace shared::exception
     public:
         using Super::Super;
 
-        inline CustomException(const status::Event::Symbol &symbol,
+        inline CustomException(std::errc code,
+                               const status::Event::Symbol &symbol,
                                const std::string &text,
                                status::Flow flow,
                                const types::KeyValueMap &attributes = {},
                                status::Level level = status::Level::FAILED)
-            : Super({text,                         // text
-                     status::Domain::APPLICATION,  // domain
-                     platform::path->exec_name(),  // origin
-                     0,                            // code
-                     symbol,                       // symbol
-                     level,                        // level
-                     flow,                         // flow
-                     {},                           // timepoint
-                     attributes})                  // attributes
+            : Super({text,                                    // text
+                     status::Domain::APPLICATION,             // domain
+                     platform::path->exec_name(),             // origin
+                     static_cast<status::Event::Code>(code),  // code
+                     symbol,                                  // symbol
+                     level,                                   // level
+                     flow,                                    // flow
+                     {},                                      // timepoint
+                     attributes})                             // attributes
         {
         }
     };
@@ -91,23 +92,6 @@ namespace shared::exception
 
         InvalidArgument(const std::string &msg = "Invalid Argument",
                         const types::Value &argument = {});
-    };
-
-    //==========================================================================
-    /// @class InvalidLength
-    /// @brief Indicates an invalid length specifier
-
-    class InvalidLength : public CustomException<std::length_error>
-    {
-        using This = InvalidLength;
-        using Super = CustomException<std::length_error>;
-
-    public:
-        using Super::Super;
-
-        InvalidLength(const std::string &msg = "Invalid Length",
-                      uint provided = 0,
-                      uint expected = 0);
     };
 
     /// Indicates not enough arguments were provided

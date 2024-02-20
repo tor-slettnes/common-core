@@ -192,16 +192,14 @@ namespace shared::grpc
                        : ::grpc::StatusCode::UNKNOWN;
 
         case status::Domain::APPLICATION:
-            return static_cast<::grpc::StatusCode>(event.code());
-
         case status::Domain::SYSTEM:
             return Status::code_from_errno(event.code());
 
         case status::Domain::PERIPHERAL:
-            return grpc::StatusCode::ABORTED;
+            return ::grpc::StatusCode::ABORTED;
 
         default:
-            return grpc::StatusCode::UNKNOWN;
+            return ::grpc::StatusCode::UNKNOWN;
         }
     }
 
@@ -212,9 +210,16 @@ namespace shared::grpc
         case std::errc::operation_canceled:
             return ::grpc::StatusCode::CANCELLED;
 
+        case std::errc::timed_out:
+            return ::grpc::StatusCode::DEADLINE_EXCEEDED;
+
         case std::errc::address_in_use:
         case std::errc::file_exists:
+        case std::errc::already_connected:
             return ::grpc::StatusCode::ALREADY_EXISTS;
+
+        case std::errc::operation_not_supported:
+            return ::grpc::StatusCode::FAILED_PRECONDITION;
 
         case std::errc::no_such_file_or_directory:
         case std::errc::no_such_device_or_address:
@@ -226,7 +231,6 @@ namespace shared::grpc
         case std::errc::operation_not_permitted:
             return ::grpc::StatusCode::PERMISSION_DENIED;
 
-        case std::errc::argument_out_of_domain:
         case std::errc::result_out_of_range:
             return ::grpc::StatusCode::OUT_OF_RANGE;
 
@@ -234,17 +238,24 @@ namespace shared::grpc
         case std::errc::no_space_on_device:
             return ::grpc::StatusCode::RESOURCE_EXHAUSTED;
 
+        case std::errc::invalid_argument:
         case std::errc::filename_too_long:
+        case std::errc::argument_out_of_domain:
+        case std::errc::argument_list_too_long:
             return ::grpc::StatusCode::INVALID_ARGUMENT;
 
         case std::errc::device_or_resource_busy:
-        case std::errc::resource_unavailable_try_again:
         case std::errc::operation_in_progress:
         case std::errc::text_file_busy:
+        case std::errc::interrupted:
             return ::grpc::StatusCode::ABORTED;
 
+        case std::errc::io_error:
+        case std::errc::resource_unavailable_try_again:
+            return ::grpc::StatusCode::UNAVAILABLE;
+
         default:
-            return ::grpc::StatusCode::FAILED_PRECONDITION;
+            return ::grpc::StatusCode::UNKNOWN;
         }
     }
 

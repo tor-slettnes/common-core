@@ -18,7 +18,8 @@ namespace shared::exception
 
     Cancelled::Cancelled(const std::string &msg,
                          const std::string &operation)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::operation_canceled,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
                 {{"operation", operation}},
@@ -30,7 +31,8 @@ namespace shared::exception
     // Timeout
 
     Timeout::Timeout(std::string msg, dt::Duration timeout)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::timed_out,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::ABORTED,
                 {{"timeout", timeout}})
@@ -48,24 +50,11 @@ namespace shared::exception
 
     InvalidArgument::InvalidArgument(const std::string &msg,
                                      const types::Value &argument)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::invalid_argument,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
                 {{"argument", argument}})
-    {
-    }
-
-    //==========================================================================
-    // InvalidLength
-
-    InvalidLength::InvalidLength(const std::string &msg,
-                                 uint provided,
-                                 uint expected)
-        : Super(TYPE_NAME_BASE(This),
-                msg,
-                status::Flow::CANCELLED,
-                {{"provided", provided},
-                 {"expected", expected}})
     {
     }
 
@@ -75,7 +64,8 @@ namespace shared::exception
     MissingArgument::MissingArgument(const std::string &msg,
                                      uint provided,
                                      uint expected)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::invalid_argument,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
                 {{"provided", provided},
@@ -89,7 +79,8 @@ namespace shared::exception
     ExtraneousArgument::ExtraneousArgument(const std::string &msg,
                                            uint provided,
                                            uint expected)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::argument_list_too_long,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
                 {{"provided", provided},
@@ -102,7 +93,8 @@ namespace shared::exception
 
     OutOfRange::OutOfRange(const std::string &msg,
                            const types::Value &item)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::result_out_of_range,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
                 {{"item", item}})
@@ -114,7 +106,8 @@ namespace shared::exception
 
     FailedPrecondition::FailedPrecondition(const std::string &msg,
                                            const types::KeyValueMap &attributes)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::operation_not_supported,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
                 attributes)
@@ -126,7 +119,8 @@ namespace shared::exception
 
     FailedPostcondition::FailedPostcondition(const std::string &msg,
                                              const types::KeyValueMap &attributes)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::interrupted,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::ABORTED,
                 attributes)
@@ -138,7 +132,8 @@ namespace shared::exception
 
     NotFound::NotFound(const std::string &msg,
                        const types::Value &item)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::no_such_file_or_directory,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
                 {{"item", item}})
@@ -150,7 +145,8 @@ namespace shared::exception
 
     Duplicate::Duplicate(const std::string &msg,
                          const types::Value &item)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::file_exists,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
                 {{"item", item}})
@@ -162,7 +158,8 @@ namespace shared::exception
 
     PermissionDenied::PermissionDenied(const std::string &msg,
                                        const std::string &operation)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::permission_denied,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
                 {{"operation", operation}})
@@ -174,7 +171,8 @@ namespace shared::exception
 
     ResourceExhausted::ResourceExhausted(const std::string &msg,
                                          const std::string &resource)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::resource_unavailable_try_again,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::ABORTED,
                 {{"resource", resource}})
@@ -186,7 +184,8 @@ namespace shared::exception
 
     Unavailable::Unavailable(const std::string &msg,
                              const std::string &resource)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::resource_unavailable_try_again,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
                 {{"resource", resource}})
@@ -198,7 +197,8 @@ namespace shared::exception
 
     RuntimeError::RuntimeError(const std::string &msg,
                                const types::KeyValueMap &attributes)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::interrupted,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::ABORTED,
                 attributes)
@@ -210,7 +210,8 @@ namespace shared::exception
 
     UnknownError::UnknownError(const std::string &msg,
                                const types::KeyValueMap &attributes)
-        : Super(TYPE_NAME_BASE(This),
+        : Super(std::errc::interrupted,
+                TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::ABORTED,
                 attributes)
@@ -382,10 +383,6 @@ namespace shared::exception
         else if (auto *ep = dynamic_cast<const std::invalid_argument *>(&e))
         {
             return std::make_shared<InvalidArgument>(ep->what());
-        }
-        else if (auto *ep = dynamic_cast<const std::length_error *>(&e))
-        {
-            return std::make_shared<InvalidLength>(ep->what());
         }
         else if (auto *ep = dynamic_cast<const std::logic_error *>(&e))
         {

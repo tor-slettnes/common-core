@@ -11,7 +11,7 @@
 
 #pragma once
 #include "grpc-clientwrapper.h++"
-#include "grpc-clientstreamer.h++"
+#include "grpc-clientreceiver.h++"
 #include "signal_types.pb.h"
 #include "protobuf-message.h++"
 #include "protobuf-signalreceiver.h++"
@@ -70,7 +70,7 @@ namespace shared::grpc
         template <class... Args>
         SignalWatchClient(Args &&...args)
             : Super(std::forward<Args>(args)...),
-              streamer(std::bind(&SignalReceiver::process_signal,
+              receiver(std::bind(&SignalReceiver::process_signal,
                                  this,
                                  std::placeholders::_1)),
               watching(false)
@@ -123,7 +123,7 @@ namespace shared::grpc
             {
                 this->watching = true;
                 this->watch_start = steady::Clock::now();
-                this->streamer.start(
+                this->receiver.start(
                     &ServiceT::Stub::watch,
                     this->stub.get(),
                     this->signal_filter());
@@ -135,7 +135,7 @@ namespace shared::grpc
         {
             this->watching = false;
             this->completion_event.cancel();
-            this->streamer.stop();
+            this->receiver.stop();
         }
 
         /// @brief
@@ -186,7 +186,7 @@ namespace shared::grpc
         steady::TimePoint watch_start;
         std::thread watch_thread;
         std::shared_ptr<::grpc::ClientContext> watcher_context;
-        ClientStreamer<ServiceT, SignalT, CC::Signal::Filter> streamer;
+        ClientReceiver<ServiceT, SignalT, CC::Signal::Filter> receiver;
         types::BinaryEvent completion_event;
     };
 
