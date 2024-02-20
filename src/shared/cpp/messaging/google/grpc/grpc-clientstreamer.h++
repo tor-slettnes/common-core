@@ -135,7 +135,7 @@ namespace shared::grpc
 
     public:
         ClientSignalStreamer(Signal *signal)
-            : Super(std::bind(Signal::emit, signal, std::placeholders::_1))
+            : Super(std::bind(&Signal::emit, signal, std::placeholders::_1))
         {
         }
     };

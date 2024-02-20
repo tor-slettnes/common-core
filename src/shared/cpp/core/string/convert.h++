@@ -6,18 +6,8 @@
 //==============================================================================
 
 #pragma once
-#include "string/format.h++"
-
-#include <iomanip>
-#include <iostream>
-#include <regex>
-#include <sstream>
-#include <string>
-#include <map>
-#include <unordered_map>
-#include <set>
-#include <unordered_set>
-#include <optional>
+#include "format.h++"
+#include "stream.h++"
 
 using namespace std::literals::string_literals;  // ""s
 
@@ -91,51 +81,5 @@ namespace shared::str
     template <class T>
     std::string convert_from(const T &value) noexcept;
 }  // namespace shared::str
-
-namespace std
-{
-    template <class T1, class T2>
-    std::ostream &operator<<(std::ostream &stream, const std::pair<T1, T2> &pair);
-
-    template <class T>
-    std::ostream &operator<<(std::ostream &stream, const std::vector<T> &vector);
-
-    template <class K, class V>
-    std::ostream &operator<<(std::ostream &stream, const std::map<K, V> &map);
-
-    template <class K, class V>
-    std::ostream &operator<<(std::ostream &stream, const std::unordered_map<K, V> &map);
-
-    template <class V>
-    std::ostream &operator<<(std::ostream &stream, const std::set<V> &set);
-
-    template <class V>
-    std::ostream &operator<<(std::ostream &stream, const std::unordered_set<V> &set);
-
-    template <class K, class V>
-    std::ostream &operator<<(std::ostream &stream, const std::multimap<K, V> &map);
-
-    template <class K, class V>
-    std::ostream &operator<<(std::ostream &stream, const std::unordered_multimap<K, V> &map);
-
-    template <class V>
-    std::ostream &operator<<(std::ostream &stream, const std::multiset<V> &set);
-
-    template <class V>
-    std::ostream &operator<<(std::ostream &stream, const std::unordered_multiset<V> &set);
-
-    template <class V>
-    std::ostream &operator<<(std::ostream &stream, const std::optional<V> &opt);
-
-    template <class V>
-    std::ostream &operator<<(std::ostream &stream, const std::shared_ptr<V> &ptr);
-
-    template <class V>
-    std::ostream &operator<<(std::ostream &stream, const std::unique_ptr<V> &ptr);
-
-    template <class V>
-    std::ostream &operator<<(std::ostream &stream, const std::weak_ptr<V> &weakptr);
-
-}  // namespace std
 
 #include "convert.i++"
