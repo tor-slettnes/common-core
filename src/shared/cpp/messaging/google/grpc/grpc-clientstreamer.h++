@@ -9,6 +9,7 @@
 #include "http-utils.h++"
 #include "types/create-shared.h++"
 #include "thread/signaltemplate.h++"
+#include "status/exceptions.h++"
 
 #include <grpcpp/impl/codegen/sync_stream.h>
 #include <grpcpp/impl/codegen/client_context.h>
