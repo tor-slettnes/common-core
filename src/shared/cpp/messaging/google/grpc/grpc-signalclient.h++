@@ -11,11 +11,12 @@
 
 #pragma once
 #include "grpc-clientwrapper.h++"
-#include "thread/binaryevent.h++"
-#include "status/exceptions.h++"
+#include "grpc-clientstreamer.h++"
 #include "signal_types.pb.h"
 #include "protobuf-message.h++"
 #include "protobuf-signalreceiver.h++"
+#include "thread/binaryevent.h++"
+#include "status/exceptions.h++"
 
 #include <functional>
 
@@ -58,8 +59,9 @@ namespace shared::grpc
     class SignalWatchClient : public ClientWrapper<ServiceT>,
                               public protobuf::SignalReceiver<SignalT>
     {
-        using This = SignalWatchClient;
+        using This = SignalWatchClient<ServiceT, SignalT>;
         using Super = ClientWrapper<ServiceT>;
+        using SignalReceiver = protobuf::SignalReceiver<SignalT>;
 
     protected:
         using SignalReader = std::unique_ptr<::grpc::ClientReader<SignalT>>;
@@ -68,6 +70,9 @@ namespace shared::grpc
         template <class... Args>
         SignalWatchClient(Args &&...args)
             : Super(std::forward<Args>(args)...),
+              streamer(std::bind(&SignalReceiver::process_signal,
+                                 this,
+                                 std::placeholders::_1)),
               watching(false)
         {
         }
@@ -81,14 +86,14 @@ namespace shared::grpc
     public:
         void initialize() override
         {
-            protobuf::SignalReceiver<SignalT>::initialize();
+            SignalReceiver::initialize();
             ClientWrapper<ServiceT>::initialize();
         }
 
         void deinitialize() override
         {
             ClientWrapper<ServiceT>::deinitialize();
-            protobuf::SignalReceiver<SignalT>::deinitialize();
+            SignalReceiver::deinitialize();
         }
 
     protected:
@@ -118,7 +123,10 @@ namespace shared::grpc
             {
                 this->watching = true;
                 this->watch_start = steady::Clock::now();
-                this->watch_thread = std::thread(&This::keep_watching, this);
+                this->streamer.start(
+                    &ServiceT::Stub::watch,
+                    this->stub.get(),
+                    this->signal_filter());
             }
         }
 
@@ -127,16 +135,7 @@ namespace shared::grpc
         {
             this->watching = false;
             this->completion_event.cancel();
-
-            if (auto cxt = this->watcher_context)
-            {
-                cxt->TryCancel();
-            }
-
-            if (this->watch_thread.joinable())
-            {
-                this->watch_thread.join();
-            }
+            this->streamer.stop();
         }
 
         /// @brief
@@ -174,57 +173,6 @@ namespace shared::grpc
         }
 
     protected:
-
-        inline void keep_watching()
-        {
-            while (this->watching)
-            {
-                this->watch();
-                if (this->watching)
-                {
-                    logf_notice("Reconnecting to %s at %s",
-                                this->servicename(),
-                                this->host());
-                }
-            }
-        }
-
-        inline void watch(const CC::Signal::Filter &filter)
-        {
-            SignalT msg;
-
-            auto cxt = this->watcher_context = std::make_shared<::grpc::ClientContext>();
-            cxt->set_wait_for_ready(true);
-
-            logf_debug("invoking %s::watch(filter=%s)",
-                       this->servicename(),
-                       filter);
-
-            try
-            {
-                SignalReader reader = this->stub->watch(cxt.get(), filter);
-                while (reader->Read(&msg))
-                {
-                    this->process_signal(msg);
-                }
-
-                reader->Finish();
-            }
-            catch (...)
-            {
-                logf_notice("%s signal watcher failed: %s",
-                            this->servicename(),
-                            std::current_exception());
-            }
-
-            cxt.reset();
-        }
-
-        inline void watch()
-        {
-            this->watch(this->signal_filter());
-        }
-
         inline void on_init_complete() override
         {
             logf_trace("Got completion, setting completion_event();");
@@ -238,6 +186,7 @@ namespace shared::grpc
         steady::TimePoint watch_start;
         std::thread watch_thread;
         std::shared_ptr<::grpc::ClientContext> watcher_context;
+        ClientStreamer<ServiceT, SignalT, CC::Signal::Filter> streamer;
         types::BinaryEvent completion_event;
     };
 

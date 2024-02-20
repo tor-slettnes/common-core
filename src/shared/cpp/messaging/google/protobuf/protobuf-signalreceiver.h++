@@ -100,6 +100,7 @@ namespace protobuf
             return filter;
         }
 
+    public:
         void process_signal(const SignalT &msg)
         {
             std::lock_guard lck(this->slots_mtx);
@@ -111,6 +112,7 @@ namespace protobuf
             this->process_signal_case(SignalT::SIGNAL_NOT_SET, msg);
         }
 
+    protected:
         void process_signal_case(typename SignalT::SignalCase signal_case,
                                  const SignalT &msg)
         {

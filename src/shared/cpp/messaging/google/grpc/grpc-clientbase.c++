@@ -5,11 +5,12 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "grpc-clientwrapper.h++"
+#include "grpc-clientbase.h++"
+#include "logging/logging.h++"
 
 namespace shared::grpc
 {
-    ClientWrapperBase::ClientWrapperBase(
+    ClientBase::ClientBase(
         const std::string &full_service_name,
         const std::string &host,
         bool wait_for_ready,
@@ -25,7 +26,7 @@ namespace shared::grpc
     {
     }
 
-    std::shared_ptr<::grpc::ChannelInterface> ClientWrapperBase::create_channel(
+    std::shared_ptr<::grpc::ChannelInterface> ClientBase::create_channel(
         const std::shared_ptr<::grpc::ChannelCredentials> &creds) const
     {
         uint max_send_size = this->max_request_size();
@@ -61,12 +62,12 @@ namespace shared::grpc
         }
     }
 
-    std::string ClientWrapperBase::host() const
+    std::string ClientBase::host() const
     {
         return this->host_;
     }
 
-    void ClientWrapperBase::check(const ::grpc::Status &status) const
+    void ClientBase::check(const ::grpc::Status &status) const
     {
         if (!status.ok())
         {
@@ -74,27 +75,27 @@ namespace shared::grpc
         }
     }
 
-    void ClientWrapperBase::check(const Status &status) const
+    void ClientBase::check(const Status &status) const
     {
         status.throw_if_error();
     }
 
-    bool ClientWrapperBase::get_wait_for_ready()
+    bool ClientBase::get_wait_for_ready()
     {
         return this->wait_for_ready;
     }
 
-    void ClientWrapperBase::set_wait_for_ready(bool wait_for_ready)
+    void ClientBase::set_wait_for_ready(bool wait_for_ready)
     {
         this->wait_for_ready = wait_for_ready;
     }
 
-    void ClientWrapperBase::set_request_timeout(std::optional<dt::Duration> timeout)
+    void ClientBase::set_request_timeout(std::optional<dt::Duration> timeout)
     {
         this->request_timeout = timeout;
     }
 
-    bool ClientWrapperBase::available(const dt::Duration &timeout) const
+    bool ClientBase::available(const dt::Duration &timeout) const
     {
         dt::TimePoint deadline = dt::Clock::now() + timeout;
         grpc_connectivity_state state = this->channel->GetState(true);

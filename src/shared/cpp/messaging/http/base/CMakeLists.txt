@@ -24,6 +24,7 @@ set(PKG_DEPS
 
 ### Source files in this folder
 set(SOURCES
+  http-utils.c++
   http-client.c++
 )
 

@@ -6,12 +6,11 @@
 //==============================================================================
 
 #pragma once
-#include "platform/init.h++"
+#include "http-utils.h++"
 #include "types/valuemap.h++"
 
 #include <curl/curl.h>
 
-#include <string>
 #include <sstream>
 
 namespace shared::http
@@ -27,13 +26,6 @@ namespace shared::http
     public:
         HTTPClient(const URL &base_url);
         ~HTTPClient();
-
-    public:
-        static void global_init();
-        static void global_cleanup();
-
-        static std::string join_urls(const std::string &base,
-                                     const std::string &rel);
 
     public:
         virtual std::string base_url() const;
@@ -56,9 +48,6 @@ namespace shared::http
 
     private:
         static size_t receive(char *ptr, size_t item_size, size_t num_items, void *userdata);
-        static bool decompose_header(const std::string &text, Header *header);
-
-        static bool successful_response(ResponseCode code);
 
     private:
         static bool initialized_;

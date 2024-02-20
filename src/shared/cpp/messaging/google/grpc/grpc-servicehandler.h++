@@ -8,6 +8,8 @@
 #pragma once
 #include "grpc-base.h++"
 
+#include <google/protobuf/empty.pb.h>
+
 namespace shared::grpc
 {
     //==========================================================================
@@ -125,6 +127,34 @@ namespace shared::grpc
         ServiceHandler()
             : ServiceHandlerBase(T::service_full_name())
         {
+        }
+
+        template <class ResponseType = google::protobuf::Empty,
+                  class RequestType = google::protobuf::Empty>
+        ::grpc::Status wrap(::grpc::ServerContext *context,
+                            const RequestType *request,
+                            ResponseType *response,
+                            const std::function<ResponseType(const RequestType &)> &function,
+                            status::Flow flow = status::Flow::ABORTED,
+                            const fs::path &src_path = __builtin_FILE(),
+                            const int &src_line = __builtin_LINE(),
+                            const std::string &src_function = __builtin_FUNCTION())
+        {
+            try
+            {
+                *response = function(*request);
+                return ::grpc::Status::OK;
+            }
+            catch (...)
+            {
+                return this->failure(std::current_exception(),
+                                     *request,
+                                     context->peer(),
+                                     flow,
+                                     src_path,
+                                     src_line,
+                                     src_function);
+            }
         }
     };
 

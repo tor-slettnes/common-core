@@ -11,6 +11,7 @@
 #include "logging/logging.h++"
 //#include "errnos.h"
 
+
 namespace shared::grpc
 {
     ServiceHandlerBase::ServiceHandlerBase(const std::string &full_service_name)
