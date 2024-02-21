@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules that are relative to install folder
-from ...base.endpoint import Endpoint as BaseEndpoint
+from ...common.endpoint import Endpoint as EndpointBase
 
 ### Standard Python modules
 import re, sys, logging
@@ -19,7 +19,7 @@ except ImportError as e:
     raise e from None
 
 
-class Endpoint (BaseEndpoint):
+class Endpoint (EndpointBase):
     messaging_flavor  = 'ZMQ'
     context = zmq.Context()
 
@@ -27,15 +27,16 @@ class Endpoint (BaseEndpoint):
                  channel_name: str,
                  socket_type : zmq.SocketType):
 
-        BaseEndpoint.__init__(self, channel_name)
+        EndpointBase.__init__(self, channel_name)
         self.socket = self.context.socket(socket_type)
 
-    def send_bytes (self,
-                    data:  bytes,
-                    flags: zmq.Flag = 0):
+    def send_bytes(self,
+                   data:  bytes,
+                   flags: zmq.Flag = 0):
         self.socket.send(data, flags=flags)
 
-    def receive_bytes (self, flags: zmq.Flag = 0) -> bytes:
+    def receive_bytes(self,
+                      flags: zmq.Flag = 0) -> bytes:
         data = b''
         more = True
 
@@ -61,7 +62,24 @@ class Endpoint (BaseEndpoint):
                      defaultScheme : str = "tcp",
                      defaultHost   : str = "",
                      defaultPort   : int = 5555):
-        '''
+        '''Sanitize a service address of the form `[SCHEME://][HOST][:PORT]`
+        (where any or all components may be present) to the full form
+        `SCHEME://HOST:PORT`.
+
+        If either SCHEME, HOST or PORT is missing, defaults are determined as
+        follows:
+
+        * If the product-specific settings file
+          `zmq-endpoints-PRODUCT_NAME.json` contains a map entry for this ZMQ
+          channel name, the value is extracted from this map using the provided
+          `schemeOption`, `hostOption` or `portOption` as key.
+
+        * If still missing, the same lookup is performed in the file
+          `zmq-endpoints-common.json`.
+
+        * Any attribute(s) that are still missing are populated from
+          `defaultScheme`, `defaultHost` or `defaultPort`, respectively.
+
         @param[in] address
           Address to sanitize, normally provided as a command-line option.
         @param[in] schemeOption
@@ -80,24 +98,6 @@ class Endpoint (BaseEndpoint):
           Sanitized address of the form SCHEME://HOST:PORT (where HOST
           may still be empty)
 
-        Sanitize a service address of the form `[SCHEME://][HOST][:PORT]`
-        (where any or all components may be present) to the full form
-        `SCHEME://HOST:PORT`.
-
-        If either SCHEME, HOST or PORT is missing, defaults are determined as
-        follows:
-
-        * If the product-specific settings file
-          `zmq-endpoints-PRODUCT_NAME.json` contains a map entry for this ZMQ
-          channel name, the value is extracted from this map using the
-          corresponding argument `schemeOption`, `hostOption` or
-          `portOption` as key.
-
-        * If still missing, the same lookup is performed in the file
-          `zmq-endpoints-common.json`.
-
-        * Any attribute(s) that are still missing are populated from
-          `defaultScheme`, `defaultHost` or `defaultPort`, respectively.
         '''
 
         (scheme, host, port) = self._splitAddress(provided or "")
@@ -123,8 +123,7 @@ class Endpoint (BaseEndpoint):
     def _splitAddress(self,
                       target : str):
 
-        match = self._rx_address.match(target)
-        if match:
+        if match := self._rx_address.match(target):
             scheme = match.group(1) or ""
             host = match.group(2) or ""
             try:
@@ -138,10 +137,11 @@ class Endpoint (BaseEndpoint):
 
     def _joinAddress(self,
                      scheme : str,
-                     name     : str,
-                     port     : int):
+                     name   : str,
+                     port   : int):
 
-        address = f"{scheme}://{name}"
-        if port:
-            address += f":{port}"
-        return address
+        return "".join([
+            f"{scheme}://" if scheme else "",
+            name,
+            f":{port}" if port else ""
+        ])

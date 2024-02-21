@@ -1,7 +1,7 @@
 #!/usr/bin/echo Do not invoke directly.
 #===============================================================================
-## @file zmq_base.py
-## @brief Wrapper for ZeroMQ-based applications
+## @file endpoint.py
+## @brief Generic communications endpoint
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

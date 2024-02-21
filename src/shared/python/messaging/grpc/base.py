@@ -9,7 +9,7 @@
 from typing import Optional
 from core.settingsstore import SettingsStore
 from ..protobuf import ProtoBuf, CC
-from ..base import Endpoint
+from ..common import Endpoint
 
 ### Stanard Python modules
 import re, logging
@@ -59,7 +59,24 @@ class Base (Endpoint, ProtoBuf):
                      portOption      : int,
                      defaultHost     : str,
                      defaultPort     : int = 8080):
-        '''@param[in] address
+        '''Sanitize a service address of the form `[HOST][:PORT]` (where any or
+        all components may be present) to the full form `HOST:PORT`.
+
+        If either HOST or PORT is missing, defaults are determined as follows:
+
+        * If the product-specific settings file
+          `grpc-services-PRODUCT_NAME.json` contains a map entry for this gRPC
+          service, the value is extracted from this map using the provided
+          `hostOption` or `portOption` as key.
+
+        * If still missing, the same lookup is performed in the file
+          `grpc-services-common.json`.
+
+        * Any attribute(s) that are still missing are populated from
+          `defaultHost` or `defaultPort`, respectively.
+
+
+        @param[in] provided
           Address to sanitize, normally provided as a command-line option.
         @param[in] hostOption
           Key to locate the host name in the settings file
@@ -72,23 +89,6 @@ class Base (Endpoint, ProtoBuf):
         @return
           Sanitized address of the form HOST:PORT (where HOST
           may still be empty)
-
-        Sanitize a service address of the form `[HOST][:PORT]`
-        (where any or all components may be present) to the full form
-        `HOST:PORT`.
-
-        If either HOST or PORT is missing, defaults are determined as follows:
-
-        * If the product-specific settings file
-          `grpc-services-PRODUCT_NAME.json` contains a map entry for this ZMQ
-          channel name, the value is extracted from this map using the
-          corresponding argument `hostOption` or `portOption` as key.
-
-        * If still missing, the same lookup is performed in the file
-          `grpc-services-common.json`.
-
-        * Any attribute(s) that are still missing are populated from
-          `defaultHost` or `defaultPort`, respectively.
 
         '''
 
@@ -109,9 +109,7 @@ class Base (Endpoint, ProtoBuf):
     )
 
     def _splitAddress(self, target : str):
-
-        match = self._rx_address.match(target)
-        if match:
+        if match := self._rx_address.match(target):
             host = match.group(1) or ""
             try:
                 port = int(match.group(2))

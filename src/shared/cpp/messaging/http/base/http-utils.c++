@@ -57,11 +57,14 @@ namespace shared::http
         static const std::regex rx("\\w+://.*");
         if (std::regex_match(rel, rx))
         {
+            // `rel` is already a full URL starting with schema.
             return rel;
         }
         else
         {
             std::stringstream ss;
+
+            // Eliminate double `/` when joining `base/` and `/rel`.
             bool base_slash = str::endswith(base, "/");
             bool rel_slash = str::startswith(rel, "/");
 

@@ -7,7 +7,7 @@
 
 ### Modules relative to install folder
 from .messagehandler import MessageHandler
-from ...base import SignalStore
+from ...common import SignalStore
 from ...protobuf import CC, ProtoBuf
 
 class SignalHandler (MessageHandler):

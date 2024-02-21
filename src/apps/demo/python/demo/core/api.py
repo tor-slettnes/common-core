@@ -18,7 +18,7 @@ SignalSlot = Callable[[CC.Demo.Signal], None]
 #===============================================================================
 # Native Demo implementation
 
-class API (object):
+class API (ProtoBuf):
     '''Demo API'''
 
     def __init__(self,
@@ -42,8 +42,6 @@ class API (object):
             This is a convencience wrapper to build a `CC.Demo.Greeting` object
             and pass it to `say_hello()`.
         '''
-
-        self.check_type(text, str)
 
         greeting = CC.Demo.Greeting(text=text,
                                     identity=self.identity,

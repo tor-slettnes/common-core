@@ -65,7 +65,7 @@ namespace shared::http
             "(?:(\\w+)://)?"                      // scheme
             "(\\[[0-9A-Fa-f:]+\\]|[\\w\\-\\.]+)"  // `[ip6::address]` or `f.q.d.n`
             "(?::(\\d+))?"                        // port number
-            "(?:/|(/.+))?$"                       // location
+            "(/.*)?$"                             // location
         );
         std::smatch match;
         if (std::regex_match(url, match, rx))

@@ -6,8 +6,8 @@
 #===============================================================================
 
 from .messagewriter import MessageWriter
-from ..basic import Publisher
-from ...base import SignalStore
+from ..basic        import Publisher
+from ...common      import SignalStore
 
 class SignalWriter (MessageWriter):
     '''Capture local signals and forward to remote peers as ZMQ publications'''
