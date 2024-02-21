@@ -10,6 +10,7 @@
 //==============================================================================
 
 #pragma once
+#include "grpc-serverstreamer.h++"
 #include "protobuf-signalforwarder.h++"
 #include "thread/blockingqueue.h++"
 

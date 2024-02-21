@@ -1,13 +1,12 @@
 /// -*- c++ -*-
 //==============================================================================
 /// @file grpc-clientreceiver.h++
-/// @brief Client-side streamer
+/// @brief Client-side stream reader
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
 #include "http-utils.h++"
-#include "types/create-shared.h++"
 #include "thread/signaltemplate.h++"
 #include "status/exceptions.h++"
 

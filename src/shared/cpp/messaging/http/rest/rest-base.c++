@@ -72,7 +72,7 @@ namespace shared::http
         {
             *scheme = match.str(1);
             *host = match.str(2);
-            *port = str::convert_to<uint>(match.str(3));
+            *port = str::convert_to<uint>(match.str(3), 0);
             *location = match.str(4);
             return true;
         }

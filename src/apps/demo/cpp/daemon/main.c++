@@ -7,7 +7,7 @@
 
 #include "application/init.h++"  // Common init routines
 #include "options.h++"           // Command-line options
-#include "demo-native.h++"       // Native Example API implementation
+#include "demo-native.h++"       // Native Demo API implementation
 #include "status/exceptions.h++"
 
 #ifdef USE_DDS
@@ -81,10 +81,10 @@ int main(int argc, char** argv)
         t.join();
     }
 
-    logf_debug("Deinitializing Example API provider: %s", api_provider->implementation());
+    logf_debug("Deinitializing DEMO API provider: %s", api_provider->implementation());
     api_provider->deinitialize();
 
-    logf_debug("Deinitializing Example application");
+    logf_debug("Deinitializing DEMO server");
     shared::application::deinitialize();
     return 0;
 }

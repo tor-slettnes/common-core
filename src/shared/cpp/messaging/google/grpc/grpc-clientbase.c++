@@ -44,7 +44,7 @@ namespace shared::grpc
 
         if (max_send_size || max_recv_size)
         {
-            logf_debug(
+            logf_info(
                 "%s creating custom channel to %s, max_send_size=%d, max_receive_size=%d",
                 *this,
                 this->host(),
@@ -54,7 +54,7 @@ namespace shared::grpc
         }
         else
         {
-            logf_debug(
+            logf_info(
                 "%s creating standard channel to %s",
                 *this,
                 this->host());
