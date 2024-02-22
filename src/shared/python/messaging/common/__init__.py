@@ -6,4 +6,3 @@
 #===============================================================================
 
 from .endpoint import Endpoint
-from .signalstore import SignalStore

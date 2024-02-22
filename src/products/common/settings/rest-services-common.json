@@ -13,27 +13,27 @@
     //
     // The syntax for the user-provided service address (URL) for both the C++
     // and Python gRPC wrappers is as follows:
-    //   [SCHEME://]HOST[:PORT][/LOCATION]
+    //   [SCHEME://]HOST[:PORT][/PATH]
     //
     // The following per-service defaults are used to populate any missing portion
     // of that correpsonding URL:
     //  - `"scheme"`        : Scheme part of the server URL (`http` or `https`)
     //  - `"host"`          : Host portion of the URL
     //  - `"port"`          : Port portion of the URL
-    //  - `"location"`      : Local resource within the server
+    //  - `"path"`      : Local resource within the server
     //  - `"poll interval"` : Seconds between poll requests when monitoring
     //
     // Note in particular that the URL `http://localhost:8000/` already includes
-    // the location `/`, which would override any settings from this file. In
+    // the path `/`, which would override any settings from this file. In
     // contrast `http://localhost:8000` does not have a trailing slash, so the
-    // location is then obtained from here.
+    // path is then obtained from here.
 
     "Example Service":
     {
         "scheme"        : "http",
         "host"          : "localhost",
         "port"          : 8000,
-        "location"      : "/example/api",
+        "path"          : "/example/api",
         "poll interval" : 2.0
     }
 }

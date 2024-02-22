@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from messaging.base.signalstore import SignalStore
+from messaging.protobuf.signalstore import SignalStore
 from .types import CC
 
 #===============================================================================

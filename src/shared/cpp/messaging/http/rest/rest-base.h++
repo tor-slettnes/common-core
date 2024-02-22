@@ -24,11 +24,11 @@ namespace shared::http
             const std::string &scheme_option = "scheme",
             const std::string &host_option = "host",
             const std::string &port_option = "port",
-            const std::string &location_option = "location",
+            const std::string &path_option = "path",
             const std::string &default_scheme = "http",
             const std::string &default_host = "localhost",
             uint default_port = 8000,
-            const std::string &default_location = "") const;
+            const std::string &default_path = "") const;
 
     private:
         bool spliturl(
@@ -36,12 +36,12 @@ namespace shared::http
             std::string *scheme,
             std::string *host,
             uint *port,
-            std::string *location) const;
+            std::string *path) const;
 
         std::string joinurl(
             const std::string &scheme,
             const std::string &host,
             uint port,
-            const std::string &location) const;
+            const std::string &path) const;
     };
 }  // namespace shared::http

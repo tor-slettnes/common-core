@@ -7,3 +7,4 @@
 
 from .standard_types import ProtoBuf
 from .custom_types   import CC
+from .signalstore    import SignalStore, MappingChange, SignalSlot

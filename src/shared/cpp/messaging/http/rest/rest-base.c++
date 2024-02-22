@@ -27,15 +27,15 @@ namespace shared::http
                                    const std::string &scheme_option,
                                    const std::string &host_option,
                                    const std::string &port_option,
-                                   const std::string &location_option,
+                                   const std::string &path_option,
                                    const std::string &default_scheme,
                                    const std::string &default_host,
                                    uint default_port,
-                                   const std::string &default_location) const
+                                   const std::string &default_path) const
     {
-        std::string scheme, host, location;
+        std::string scheme, host, path;
         uint port = 0;
-        this->spliturl(partial_url, &scheme, &host, &port, &location);
+        this->spliturl(partial_url, &scheme, &host, &port, &path);
         if (scheme.empty())
         {
             scheme = this->setting(scheme_option, default_scheme).as_string();
@@ -48,24 +48,24 @@ namespace shared::http
         {
             port = this->setting(port_option, default_port).as_uint();
         }
-        if (location.empty())
+        if (path.empty())
         {
-            location = this->setting(location_option, default_location).as_string();
+            path = this->setting(path_option, default_path).as_string();
         }
-        return this->joinurl(scheme, host, port, location);
+        return this->joinurl(scheme, host, port, path);
     }
 
     bool RESTBase::spliturl(const std::string &url,
                             std::string *scheme,
                             std::string *host,
                             uint *port,
-                            std::string *location) const
+                            std::string *path) const
     {
         static const std::regex rx(
             "(?:(\\w+)://)?"                      // scheme
             "(\\[[0-9A-Fa-f:]+\\]|[\\w\\-\\.]+)"  // `[ip6::address]` or `f.q.d.n`
             "(?::(\\d+))?"                        // port number
-            "(/.*)?$"                             // location
+            "(/.*)?$"                             // path
         );
         std::smatch match;
         if (std::regex_match(url, match, rx))
@@ -73,7 +73,7 @@ namespace shared::http
             *scheme = match.str(1);
             *host = match.str(2);
             *port = str::convert_to<uint>(match.str(3), 0);
-            *location = match.str(4);
+            *path = match.str(4);
             return true;
         }
         else
@@ -85,7 +85,7 @@ namespace shared::http
     std::string RESTBase::joinurl(const std::string &scheme,
                                   const std::string &host,
                                   uint port,
-                                  const std::string &location) const
+                                  const std::string &path) const
     {
         std::stringstream ss;
         ss << ((scheme.size() > 0) ? scheme
@@ -99,7 +99,7 @@ namespace shared::http
             ss << ":" << port;
         }
 
-        ss << location;
+        ss << path;
         return ss.str();
     }
 

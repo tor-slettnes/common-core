@@ -5,11 +5,19 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from typing  import Callable, Sequence, Mapping, Optional
+from typing  import Callable, Sequence, Mapping, Optional, Any
 
 import sys
 import traceback
 import logging
+
+def check_type (argument: object,
+                expected_type: type):
+
+    if not isinstance(argument, expected_type):
+        raise TypeError('Expected %s, not %s (%s)'%(
+            expected_type.__name__, type(argument).__name__, argument))
+
 
 def safe_invoke(function    : Callable,
                 args        : Sequence = (),

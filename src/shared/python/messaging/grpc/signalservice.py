@@ -7,8 +7,7 @@
 
 ### Modules relative to install dir
 from .service  import Service
-from ..protobuf import CC, ProtoBuf
-from ..common import SignalStore
+from ..protobuf import CC, ProtoBuf, SignalStore
 
 ### Third-party modules
 import grpc
