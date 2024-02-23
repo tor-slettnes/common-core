@@ -8,8 +8,8 @@
 ### Modules relative to install folder
 from typing import Optional
 from core.settingsstore import SettingsStore
-from ..protobuf import ProtoBuf, CC
 from ..common import Endpoint
+from ..protobuf import ProtoBuf, CC
 
 ### Stanard Python modules
 import re, logging
@@ -24,7 +24,7 @@ except ImportError as e:
 #===============================================================================
 # Base class
 
-class Base (Endpoint, ProtoBuf):
+class Base (Endpoint):
     messaging_flavor = 'gRPC'
 
     # `service_name` should be overwritten by final subclass to look up settings

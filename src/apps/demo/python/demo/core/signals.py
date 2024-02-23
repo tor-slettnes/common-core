@@ -1,7 +1,7 @@
 #!/bin/echo Do not invoke directly.
 #===============================================================================
-## @file demo.py
-## @brief Demo - native Python implementation
+## @file signals.py
+## @brief Local signal store for DEMO application
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

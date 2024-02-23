@@ -17,10 +17,8 @@ namespace shared
     //==========================================================================
     // Scheduler methods
 
-    Scheduler::Scheduler(dt::Duration max_nap,
-                         dt::Duration max_jitter)
-        : max_nap(max_nap),
-          max_jitter(max_jitter)
+    Scheduler::Scheduler(dt::Duration max_jitter)
+        : max_jitter(max_jitter)
     {
     }
 
@@ -226,7 +224,8 @@ namespace shared
 
             std::string handle = task.handle;
             this->current = &task;
-            steady::TimePoint deadline = steady::Clock::now() + std::min(this->max_nap, (tp - now));
+            dt::Duration nap = tp - now;
+            steady::TimePoint deadline = steady::Clock::now() + nap;
 
             this->stop_request.wait_until(
                 lck, deadline, [&] {

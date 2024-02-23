@@ -91,16 +91,13 @@ namespace shared
     public:  // Methods
         /// @fn Scheduler
         /// @brief Constructor
-        /// @param[in] max_nap
-        ///     Maximum allowed time nap time between checks for task updates.
         /// @param[in] max_jitter
         ///     Maximum allowed time interval between expected and actual system
         ///     clock observed each time the scheduler wakes up to invoke a task.
         ///     If exceeded, task invocation times will adjusted according to the
         ///     difference.
 
-        Scheduler(dt::Duration max_nap = std::chrono::seconds(1),
-                  dt::Duration max_jitter = std::chrono::seconds(5));
+        Scheduler(dt::Duration max_jitter = std::chrono::seconds(5));
 
         /// @fn ~Scheduler
         /// @brief Destructor. Cancel any pending tasks.
@@ -228,7 +225,6 @@ namespace shared
         void watcher();
 
     private:  // Data
-        dt::Duration max_nap;
         dt::Duration max_jitter;
         //dt::TimePoint timebase;
         TaskMap tasks;

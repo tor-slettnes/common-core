@@ -14,7 +14,7 @@ import grpc
 
 ### Standard Python modules
 import queue, logging
-from typing import Optional
+from typing import Optional, Generator
 from queue  import Queue
 
 #===============================================================================
@@ -49,7 +49,8 @@ class SignalService (Service):
 
     def watch(self,
               request: CC.Signal.Filter,
-              context: grpc.ServicerContext):
+              context: grpc.ServicerContext
+              ) -> Generator[None, ProtoBuf.Message, None]:
         '''
         Invoked by gRPC client to stream signal events back to client.
 
@@ -60,11 +61,15 @@ class SignalService (Service):
 
         queue = Queue(self.max_queue_size)
 
-        for signal_name in self.signal_list(request):
-            self.signal_store.connect_signal(signal_name, queue.put_nowait)
+        try:
+            for signal_name in self.signal_list(request):
+                self.signal_store.connect_signal(signal_name, queue.put_nowait)
 
-        while msg := queue.get():
-            yield msg
+            while msg := queue.get():
+                yield msg
+
+        finally:
+            self.signal_store.disconnect_signal(signal_name)
 
 
     def signal_list(self, signal_filter: CC.Signal.Filter):

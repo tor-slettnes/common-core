@@ -5,11 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-import time, os, sys, traceback
-
+### Standard Python modules
 from threading import Thread, Lock, Condition, Event, current_thread, ThreadError
 from logging   import debug, info, warning, error
 from typing    import Callable, Optional
+
+import time, os, sys, traceback, uuid
 
 try:
     # Python 3 has math.inf, but does not allow sorting between numeric types and strings
@@ -102,23 +103,23 @@ class Scheduler (object):
         return [name for name, lock, thread in self._tasks.values()]
 
     def getTask(self, handle):
-        name, lock, thread = self._tasks[handle.lower()]
+        name, lock, thread = self._tasks[handle]
         return thread._Thread__args
 
     def isStarted(self, handle):
-        name, lock, thread = self._tasks[handle.lower()]
+        name, lock, thread = self._tasks[handle]
         return thread._Thread__started
 
 
     def reschedule(self, handle, delay=0):
         with self._mutex:
-            name, lock, thread = self._tasks.pop(handle.lower())
+            name, lock, thread = self._tasks.pop(handle)
             self._clearalarm(lock)
             self._setalarm(delay, lock)
 
 
     def schedule(self,
-                 handle     : str,
+                 handle     : Optional[str],
                  interval   : float,
                  method     : callable,
                  args       : tuple = (),
@@ -130,6 +131,9 @@ class Scheduler (object):
                  synchronous: bool = False,
                  waitstart  : bool = False):
 
+        if not handle:
+            handle = uuid.uuid1()
+
         args = (handle, interval, method, args, kwargs, count, retries, align, delay)
 
         ### Acquire task scheduling mutex; this will be released within
@@ -140,7 +144,7 @@ class Scheduler (object):
             self._runTask(*args)
         else:
             if waitstart:
-                pending = self._pendingStart[handle.lower()] = Event()
+                pending = self._pendingStart[handle] = Event()
 
             thread = Thread(None, self._runTask, handle, args, daemon=True)
             thread.start()
@@ -153,12 +157,14 @@ class Scheduler (object):
                     exc, tb = exception
                     raise exc.with_traceback(tb) from None
 
+        return handle
+
 
 
     def unschedule(self, handle, wait=True):
         with self._mutex:
             try:
-                name, lock, thread = self._tasks.pop(handle.lower())
+                name, lock, thread = self._tasks.pop(handle)
             except KeyError:
                 found = False
             else:
@@ -188,11 +194,11 @@ class Scheduler (object):
             lock.acquire()
 
             try:
-                otherName, otherLock, otherThread = self._tasks[handle.lower()]
+                otherName, otherLock, otherThread = self._tasks[handle]
             except KeyError:
                 otherLock = None
 
-            self._tasks[handle.lower()] = thisHandle = handle, lock, current_thread()
+            self._tasks[handle] = thisHandle = handle, lock, current_thread()
 
             if otherLock:
                 otherLock.release()
@@ -215,7 +221,7 @@ class Scheduler (object):
             self._mutex.release()
 
 
-        pending = self._pendingStart.pop(handle.lower(), None)
+        pending = self._pendingStart.pop(handle, None)
 
         self.start()
 
@@ -224,7 +230,7 @@ class Scheduler (object):
             lock.acquire()
 
             ### If we are no longer in the task list, we got unscheduled
-            if self._tasks.get(handle.lower()) is not thisHandle:
+            if self._tasks.get(handle) is not thisHandle:
                 break
 
             else:
@@ -270,8 +276,8 @@ class Scheduler (object):
             pending.release()
 
         with self._mutex:
-            if self._tasks.get(handle.lower()) is thisHandle:
-                del self._tasks[handle.lower()]
+            if self._tasks.get(handle) is thisHandle:
+                del self._tasks[handle]
 
 
     def _stack_trace(self, tb):

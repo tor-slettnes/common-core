@@ -42,9 +42,6 @@ class HTTPBase (Endpoint):
         Endpoint.__init__(self, self.service_name)
 
 
-    def settings_file(self, product_name: str) -> str:
-        return "rest-services-%s.json"%(product_name.lower(),)
-
     def get_target(self,
                    provided      : Optional[str],
                    schemeOption  : str = "scheme",

@@ -46,9 +46,13 @@ class HTTPClient (HTTPBase):
                 headers={}):
 
         path = self.full_path(rel_path, kwargs)
-        request = self.connection.request("GET", path, headers)
-        return self.connection.getresponse()
-
+        try:
+            request = self.connection.request("GET", path, headers)
+            return self.connection.getresponse()
+        except ConnectionError as e:
+            scheme, host, port, _ = self.target
+            url = self.join_url(scheme, host, port, path)
+            raise type(e)("%s (URL=%s)"%(e, url), url) from None
 
     def get(self,
             rel_url,
@@ -100,4 +104,4 @@ class HTTPClient (HTTPBase):
             for (key, arg) in kwargs.items()
             ])
 
-        return "?".join((path, query))
+        return "?".join([part for part in (path, query) if part])

@@ -20,8 +20,7 @@
 #include <time.h>
 
 // using suseconds_t = std::int32_t;
-
-using uint = unsigned int;
+using namespace std::literals::chrono_literals;
 
 namespace shared
 {

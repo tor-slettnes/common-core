@@ -45,11 +45,11 @@ namespace shared::signal
     {
         try
         {
-            logf_trace("%s: Invoked receiver %s",
+            logf_trace("%s: Invoking receiver %s",
                        this->name_,
                        receiver);
             f();
-            logf_trace("%s: Receiver %s returned",
+            logf_trace("%s: Receiver %s completed",
                        this->name_,
                        receiver);
         }

@@ -94,6 +94,7 @@ namespace shared::grpc
 
                 if (this->keepalive)
                 {
+                    std::this_thread::sleep_for(2s);
                     logf_notice("Reconnecting to grpc service %r at %s",
                                 ServiceT::service_full_name(),
                                 shared::http::url_decode(cxt->peer()));

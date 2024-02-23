@@ -7,8 +7,9 @@
 
 ### Modules relative to install folder
 from core.invocation import invocation
-from .base import Base, ProtoBuf, CC
+from .base import Base
 from .status import DetailedError
+from ..protobuf import ProtoBuf, CC
 
 ### Third-party modules
 import grpc
@@ -25,9 +26,14 @@ class Client (Base):
     ## Subclasses should set `Stub` to the client stub class imported from
     ## the generated `_pb2_grpc.py` module, e.g.:
     ## ```
-    ##     from my_service_pb2_grpc import MyServiceStub as stub
+    ##     from my_service_pb2_grpc import MyServiceStub as Stub
     ## ```
     Stub = None
+
+    ## `service_name` is optional. If not provided by the subclass it is
+    ## determined from the above stub.  It is used to look up service specific
+    ## settings, such as target host/port.
+    service_name = None
 
     def __init__ (self, host, wait_for_ready=False):
         Base.__init__(self, self.service_name or self._service_name())
