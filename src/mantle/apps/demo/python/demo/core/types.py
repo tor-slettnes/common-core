@@ -6,13 +6,13 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from cc.io.protobuf import CC as _CC, ProtoBuf
+from cc.io.protobuf import CC as CC_Base, ProtoBuf
 from cc.core.scalar_types import enums
 
 ### Standard Python modules
 import time
 
-class CC (_CC):
+class CC (CC_Base):
     import generated.demo_types_pb2 as Demo
 
     @classmethod

@@ -18,7 +18,7 @@ class DemoClient (API, SignalClient):
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
-    from demo_service_pb2_grpc import DemoStub as Stub
+    from generated.demo_service_pb2_grpc import DemoStub as Stub
 
     ## `service_name` is optional. If not provided here it is determined
     ## from the above stub.  It is used to look up service specific settings,
@@ -29,9 +29,7 @@ class DemoClient (API, SignalClient):
     ## SignalStore() instance to the `SignalClient.__init__()` base, below.
     ## In our case we do, since we share the signal store with other message
     ## clients which also receive and re-emit signals from remote endpoints.
-    ## However, let's set this variable anyway for illustration.
-    signal_type = CC.Demo.Signal
-
+    #signal_type = CC.Demo.Signal
 
     def __init__(self,
                  host           : str = "",      # gRPC server
