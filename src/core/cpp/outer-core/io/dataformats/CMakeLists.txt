@@ -5,6 +5,19 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(core)    # Shared components (modules, libraries)
-add_subdirectory(mantle)  # Common applications/microservices
-add_subdirectory(crust)   # Deployments: project settings, scripts, ...
+if(BUILD_DDS)
+  add_subdirectory(omg)
+endif()
+
+if(BUILD_PROTOBUF)
+  add_subdirectory(protobuf)
+endif()
+
+if(BUILD_PYTHON_IO)
+  message(STATUS "ADDING SUBDIRECTORY 'python'")
+  add_subdirectory(python)
+else()
+  message(STATUS "NOT ADDING SUBDIRECTORY 'python'")
+endif()
+
+

@@ -5,6 +5,21 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(core)    # Shared components (modules, libraries)
-add_subdirectory(mantle)  # Common applications/microservices
-add_subdirectory(crust)   # Deployments: project settings, scripts, ...
+### Abstract service interface, agnostic to communications bus
+add_subdirectory(common)
+
+if(BUILD_DDS)
+  add_subdirectory(dds)
+endif()
+
+if(BUILD_GRPC)
+  add_subdirectory(grpc)
+endif()
+
+if(BUILD_ZMQ)
+  add_subdirectory(zeromq)
+endif()
+
+if(BUILD_HTTP)
+  add_subdirectory(http)
+endif()

@@ -33,9 +33,9 @@ Getting Started
 
 First, you need a Linux host computer to develop, build, and test your code.
 
-* If you are new to Linux, the latest [Ubuntu](https://ubuntu.com/download/desktop) will be a good choice, with one of the simplest-to-use installers arund and a comprehensive out-of-box experience.  (*Note* that to build natively on Ubuntu, _the minimum requires version is 20.10!_ Some of the tools and libraries included in older versions are too far out of date for our needs already at the time of its release, for instance `cmake` and `python3-grpcio`).
+* If you are new to Linux or if you like the idea of corporate backing, the latest [Ubuntu](https://ubuntu.com/download/desktop) will be a good choice. It has one of the simplest-to-use installers arund and a comprehensive out-of-box experience.  (*Note* that to build natively on Ubuntu, _the minimum requires version is 20.10!_ Some of the tools and libraries included in older versions are too far out of date for our needs already at the time of its release, for instance `cmake` and `python3-grpcio`).
 
-* More advanced users may wish to go straight to [Debian](https://www.debian.org/), the community-created, upstream base for Ubuntu (and ohers such as Mint). The installer asks a few more questions, but you will end up with in some ways a more flexible but simpler system with fewer dependency layers (for instance, system updates are provided directly via APT tools, `snapd` is an optional add-on and not a core requirement).
+* If you don't need training wheels you wish to go straight to [Debian](https://www.debian.org/), the community-created, upstream base for Ubuntu (and ohers such as Mint). The installer asks a few more questions, but you will end up with in some ways a more flexible but simpler system with fewer dependency layers (for instance, system updates are provided directly via APT tools, `snapd` is an optional add-on and not a core requirement).
 
 In either case, you may install this
 * natively on your computer, perhaps creating a separate disk partition so you can still keep your existing OS (you can then choose OS at boot time, or run one in a VM inside the other),
