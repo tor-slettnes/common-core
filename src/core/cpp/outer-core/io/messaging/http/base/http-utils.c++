@@ -7,6 +7,7 @@
 
 #include "http-utils.h++"
 #include "string/misc.h++"
+#include "status/exceptions.h++"
 
 #include <curl/curl.h>
 
@@ -50,6 +51,155 @@ namespace shared::http
             return false;
         }
     }
+
+    void _curl_url_get(CURLUcode *code,
+                       CURLU *handle,
+                       CURLUPart part,
+                       std::string *value,
+                       uint flags)
+    {
+        if ((*code == CURLUE_OK) && (value != nullptr))
+        {
+            char *cvalue = nullptr;
+            *code = ::curl_url_get(handle, part, &cvalue, flags);
+            if (cvalue)
+            {
+                value->assign(cvalue);
+                curl_free(cvalue);
+            }
+        }
+    }
+
+    void split_url(const std::string &url,
+                   std::string *scheme,
+                   std::string *username,
+                   std::string *password,
+                   std::string *host,
+                   uint *port,
+                   std::string *path,
+                   Query *query,
+                   std::string *fragment)
+    {
+        uint flags = CURLU_URLDECODE;
+        CURLU *handle = curl_url();
+        CURLUcode rc = curl_url_set(handle, CURLUPART_URL, url.data(), flags);
+
+        _curl_url_get(&rc, handle, CURLUPART_SCHEME, scheme, flags);
+        _curl_url_get(&rc, handle, CURLUPART_USER, username, flags);
+        _curl_url_get(&rc, handle, CURLUPART_PASSWORD, password, flags);
+        _curl_url_get(&rc, handle, CURLUPART_HOST, host, flags);
+
+        if (port != nullptr)
+        {
+            std::string portstring;
+            _curl_url_get(&rc, handle, CURLUPART_PORT, &portstring, flags);
+            *port = str::convert_to<uint>(portstring, 0);
+        }
+
+        _curl_url_get(&rc, handle, CURLUPART_PATH, path, flags);
+
+        if (query != nullptr)
+        {
+            std::string stringquery;
+            query->clear();
+            _curl_url_get(&rc, handle, CURLUPART_QUERY, &stringquery, 0);
+            for (const std::string &part : str::split(stringquery, "&"))
+            {
+                std::vector<std::string> kv = str::split(part, "=", 1);
+                if (kv.size() == 2)
+                {
+                    query->emplace(url_decode(kv.front()),
+                                   url_decode(kv.back()));
+                }
+            }
+        }
+
+        _curl_url_get(&rc, handle, CURLUPART_FRAGMENT, fragment, flags);
+        curl_url_cleanup(handle);
+
+        if (rc != CURLUE_OK)
+        {
+            throw exception::FailedPrecondition(
+                curl_url_strerror(rc),
+                {{"url", url},
+                 {"curl_code", rc}});
+        }
+    }
+
+    std::string join_url(const std::optional<std::string> &scheme,
+                         const std::optional<std::string> &username,
+                         const std::optional<std::string> &password,
+                         const std::optional<std::string> &host,
+                         const std::optional<uint> port,
+                         const std::optional<std::string> &path,
+                         const std::optional<Query> &query,
+                         const std::optional<std::string> &fragment)
+
+    {
+        uint flags = CURLU_URLENCODE;
+        CURLU *handle = curl_url();
+        CURLUcode rc = CURLUE_OK;
+
+        if (rc == CURLUE_OK)
+        {
+            rc = curl_url_set(handle, CURLUPART_SCHEME, scheme.value_or("http").data(), flags);
+        }
+
+        if ((rc == CURLUE_OK) && username)
+        {
+            rc = curl_url_set(handle, CURLUPART_USER, username->data(), flags);
+        }
+
+        if ((rc == CURLUE_OK) && password)
+        {
+            rc = curl_url_set(handle, CURLUPART_PASSWORD, password->data(), flags);
+        }
+
+        if (rc == CURLUE_OK)
+        {
+            rc = curl_url_set(handle, CURLUPART_HOST, host.value_or("localhost").data(), flags);
+        }
+
+        if ((rc == CURLUE_OK) && port)
+        {
+            rc = curl_url_set(handle, CURLUPART_PORT, str::to_string(*port).data(), flags);
+        }
+
+        if ((rc == CURLUE_OK) && path)
+        {
+            rc = curl_url_set(handle, CURLUPART_PATH, path->data(), flags);
+        }
+
+        if ((rc == CURLUE_OK) && query)
+        {
+            std::vector<std::string> parts;
+            parts.reserve(query->size());
+            for (const auto &[key, value] : *query)
+            {
+                parts.push_back(url_encode(key) + "=" + url_encode(value));
+            }
+            std::string querystring = str::join(parts, "&");
+            rc = curl_url_set(handle, CURLUPART_QUERY, querystring.data(), flags);
+        }
+
+        if ((rc == CURLUE_OK) && fragment)
+        {
+            rc = curl_url_set(handle, CURLUPART_FRAGMENT, fragment->data(), flags);
+        }
+
+        std::string url;
+        _curl_url_get(&rc, handle, CURLUPART_URL, &url, 0);
+        curl_url_cleanup(handle);
+
+        if (rc != CURLUE_OK)
+        {
+            throw exception::FailedPrecondition(
+                curl_url_strerror(rc),
+                {{"curl_code", rc}});
+        }
+        return url;
+    }
+
 
     std::string join_urls(const std::string &base,
                           const std::string &rel)
@@ -99,7 +249,6 @@ namespace shared::http
         curl_free(decoded_value);
         return result;
     }
-
 
     static platform::InitTask global_init(
         "curl_global_init",
