@@ -8,18 +8,17 @@
 ### Name of this library.
 set(TARGET cc_core_messaging_http)
 
+### We need cURL for this
+find_package(CURL
+  REQUIRED COMPONENTS HTTP HTTPS)
+
 ### Library type
 set(LIB_TYPE STATIC)
 
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_common
-)
-
-### Third-party package dependencies
-set(PKG_DEPS
-  # curlpp
-  libcurl
+  CURL::libcurl
 )
 
 ### Source files in this folder

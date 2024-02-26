@@ -16,10 +16,6 @@ set(LIB_DEPS
   cc_core_io_python_base
 )
 
-### Third-party package dependencies
-set(PKG_DEPS
-  python3-embed
-)
 
 ### Source files in this folder
 set(SOURCES

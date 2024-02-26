@@ -7,6 +7,8 @@
 
 set(TARGET cc_core_io_protobuf)
 
+find_package(Protobuf REQUIRED)
+
 ### Library type.  We use static linking for convenience.
 set(LIB_TYPE STATIC)
 
@@ -14,11 +16,7 @@ set(LIB_TYPE STATIC)
 set(LIB_DEPS
   cc_core_common
   cc_core_proto
-)
-
-### External package dependencies, configured via `pkg-config`.
-set(PKG_DEPS
-  protobuf
+  protobuf::libprotobuf
 )
 
 ## Dumb hack to prevent linking error if we're building several intermediate
@@ -31,6 +29,8 @@ if(BUILD_GRPC)
     grpc++
   )
 endif()
+
+
 
 set(SOURCES
   protobuf-standard-types.c++

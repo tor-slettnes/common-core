@@ -8,6 +8,9 @@
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
 set(TARGET cc_core_messaging_grpc)
 
+### Third party package dependency
+find_package(grpc REQUIRED)
+
 ### Library type.  We use static linking for convenience.
 set(LIB_TYPE STATIC)
 
@@ -17,11 +20,7 @@ set(LIB_DEPS
   cc_core_io_protobuf
   cc_core_messaging_http
   cc_core_common
-)
-
-### External package dependencies, configured via `pkg-config`.
-set(PKG_DEPS
-  grpc++
+  gRPC::grpc++
 )
 
 set(SOURCES
