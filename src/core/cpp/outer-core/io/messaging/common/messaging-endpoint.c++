@@ -30,17 +30,17 @@ namespace core::messaging
         this->deinitialize();
     }
 
-    const std::string &Endpoint::messaging_flavor() const
+    std::string Endpoint::messaging_flavor() const
     {
         return this->messaging_flavor_;
     }
 
-    const std::string &Endpoint::endpoint_type() const
+    std::string Endpoint::endpoint_type() const
     {
         return this->endpoint_type_;
     }
 
-    const std::string &Endpoint::channel_name() const
+    std::string Endpoint::channel_name() const
     {
         return this->channel_name_;
     }
