@@ -20,7 +20,7 @@
 ///           scope);                                    // Arguments for str::format()
 /// ```
 
-#define throwf(_EXC, ...) throw _EXC(shared::str::format(__VA_ARGS__))
+#define throwf(_EXC, ...) throw _EXC(core::str::format(__VA_ARGS__))
 
 /// Throw exception with formatted message and arguments
 ///
@@ -32,9 +32,9 @@
 ///        scope);                                  // Additional exception arguments
 /// ```
 
-#define throwf_args(_EXC, ...) throw _EXC(shared::str::format __VA_ARGS__)
+#define throwf_args(_EXC, ...) throw _EXC(core::str::format __VA_ARGS__)
 
-namespace shared::exception
+namespace core::exception
 {
     //==========================================================================
     /// @class Exception<E>
@@ -75,4 +75,4 @@ namespace shared::exception
         }
     };
 
-}  // namespace shared::exception
+}  // namespace core::exception

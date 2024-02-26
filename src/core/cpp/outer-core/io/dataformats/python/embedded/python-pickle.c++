@@ -8,7 +8,7 @@
 #include "python-pickle.h++"
 #include "python-runtime.h++"
 
-namespace shared::python
+namespace core::python
 {
     ContainerObject unpickle(const types::ByteVector &bytes)
     {
@@ -36,4 +36,4 @@ namespace shared::python
     }
 
     // Pickler pickler;
-};  // namespace shared::python
+};  // namespace core::python

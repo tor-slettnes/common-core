@@ -16,7 +16,7 @@
 #include <map>
 #include <mutex>
 
-namespace shared::signal
+namespace core::signal
 {
     //==========================================================================
     // Types
@@ -412,6 +412,6 @@ namespace shared::signal
     // I/O stream support
 
     std::ostream &operator<<(std::ostream &stream, MappingChange change);
-}  // namespace shared::signal
+}  // namespace core::signal
 
 #include "signaltemplate.i++"

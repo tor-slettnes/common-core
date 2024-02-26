@@ -8,7 +8,7 @@
 #pragma once
 #include "platform/path.h++"
 
-namespace shared::platform
+namespace core::platform
 {
     class PosixPathProvider : public PathProvider
     {
@@ -29,4 +29,4 @@ namespace shared::platform
                         const std::string &suffix = {}) override;
     };
 
-}  // namespace shared::platform
+}  // namespace core::platform

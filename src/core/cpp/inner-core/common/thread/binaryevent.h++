@@ -11,7 +11,7 @@
 #include <mutex>
 #include <functional>
 
-namespace shared::types
+namespace core::types
 {
     /// \class Event
     /// \brief Wait for / manage binary event
@@ -89,4 +89,4 @@ namespace shared::types
         bool ready_;
     };
 
-}  // namespace shared::types
+}  // namespace core::types

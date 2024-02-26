@@ -15,7 +15,7 @@
 #include <string>
 
 /// Argument parser utility, loosely modeled after Python's "argparse" module.
-namespace shared::argparse
+namespace core::argparse
 {
     //==========================================================================
     /// \brief Argument parser, loosely modeled after Python's argparse module.
@@ -332,4 +332,4 @@ namespace shared::argparse
         OptionList options;
         std::string description;
     };
-}  // namespace shared::argparse
+}  // namespace core::argparse

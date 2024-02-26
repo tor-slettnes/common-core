@@ -7,7 +7,7 @@
 
 #include "async-dispatcher.h++"
 
-namespace shared::logging
+namespace core::logging
 {
     void AsyncDispatcher::initialize()
     {
@@ -55,4 +55,4 @@ namespace shared::logging
             }
         }
     }
-}  // namespace shared::logging
+}  // namespace core::logging

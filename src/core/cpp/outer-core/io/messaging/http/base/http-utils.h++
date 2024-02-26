@@ -10,7 +10,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace shared::http
+namespace core::http
 {
     using URL = std::string;
     using ResponseCode = long;
@@ -44,4 +44,4 @@ namespace shared::http
     std::string url_decode(const std::string &encoded);
 
 
-}  // namespace shared::http
+}  // namespace core::http

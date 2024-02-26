@@ -20,12 +20,12 @@ namespace demo::grpc
     // @class RequestHandler
     // @brief Process requests from Demo clients
 
-    using RequestHandlerBase = shared::grpc::SignalWatchService<CC::Demo::Demo,
+    using RequestHandlerBase = core::grpc::SignalWatchService<CC::Demo::Demo,
                                                             CC::Demo::Signal,
                                                             SignalQueue>;
 
     class RequestHandler : public RequestHandlerBase,
-                           public shared::types::enable_create_shared<RequestHandler>
+                           public core::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;

@@ -27,14 +27,14 @@ namespace idl
     //==========================================================================
     // Encode/decode Unsigned Integer value
 
-    void encode(shared::types::largest_uint native,
+    void encode(core::types::largest_uint native,
                 CC::Common::UnsignedValue *idl) noexcept
     {
         idl->value(native);
     }
 
     void decode(const CC::Common::UnsignedValue &idl,
-                shared::types::largest_uint *native) noexcept
+                core::types::largest_uint *native) noexcept
     {
         *native = idl.value();
     }
@@ -42,14 +42,14 @@ namespace idl
     //==========================================================================
     // Encode/decode Signed Integer value
 
-    void encode(shared::types::largest_sint native,
+    void encode(core::types::largest_sint native,
                 CC::Common::SignedValue *idl) noexcept
     {
         idl->value(native);
     }
 
     void decode(const CC::Common::SignedValue &idl,
-                shared::types::largest_sint *native) noexcept
+                core::types::largest_sint *native) noexcept
     {
         *native = idl.value();
     }
@@ -72,7 +72,7 @@ namespace idl
     //==========================================================================
     // Encode/decode Complex value
 
-    void encode(const shared::types::complex &native,
+    void encode(const core::types::complex &native,
                 CC::Common::ComplexValue *idl) noexcept
     {
         idl->real(native.real());
@@ -80,7 +80,7 @@ namespace idl
     }
 
     void decode(const CC::Common::ComplexValue &idl,
-                shared::types::complex *native) noexcept
+                core::types::complex *native) noexcept
     {
         native->real(idl.real());
         native->imag(idl.imag());
@@ -89,24 +89,24 @@ namespace idl
     //==========================================================================
     // Encode/decode Timestamp
 
-    void encode(const shared::dt::TimePoint &native,
+    void encode(const core::dt::TimePoint &native,
                 CC::Common::Timestamp *idl) noexcept
     {
-        timespec tspec = shared::dt::to_timespec(native);
+        timespec tspec = core::dt::to_timespec(native);
         idl->seconds(tspec.tv_sec);
         idl->nanoseconds(tspec.tv_nsec);
     }
 
     void decode(const CC::Common::Timestamp &idl,
-                shared::dt::TimePoint *native) noexcept
+                core::dt::TimePoint *native) noexcept
     {
-        *native = shared::dt::to_timepoint(idl.seconds(), idl.nanoseconds());
+        *native = core::dt::to_timepoint(idl.seconds(), idl.nanoseconds());
     }
 
     //==========================================================================
     // Encode/decode Duration
 
-    void encode(const shared::dt::Duration &native,
+    void encode(const core::dt::Duration &native,
                 CC::Common::Duration *idl) noexcept
     {
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(native);
@@ -118,9 +118,9 @@ namespace idl
     }
 
     void decode(const CC::Common::Duration &idl,
-                shared::dt::Duration *native) noexcept
+                core::dt::Duration *native) noexcept
     {
-        *native = std::chrono::duration_cast<shared::dt::Duration>(
+        *native = std::chrono::duration_cast<core::dt::Duration>(
             std::chrono::seconds(idl.seconds()) +
             std::chrono::nanoseconds(idl.nanoseconds()));
     }

@@ -8,7 +8,7 @@
 #pragma once
 #include "python-simpleobject.h++"
 
-namespace shared::python
+namespace core::python
 {
     //==========================================================================
     /// @brief
@@ -35,4 +35,4 @@ namespace shared::python
         ContainerObject find_qualified_symbol(const std::string &qualified_name) const;
 
     };
-}  // namespace shared::python
+}  // namespace core::python

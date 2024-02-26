@@ -12,7 +12,7 @@
 
 #include <windows.h>
 
-namespace shared::platform
+namespace core::platform
 {
     class WindowsLogSinkProvider : public LogSinkProvider
     {
@@ -32,4 +32,4 @@ namespace shared::platform
         HANDLE event_log;
     };
 
-}  // namespace shared::platform
+}  // namespace core::platform

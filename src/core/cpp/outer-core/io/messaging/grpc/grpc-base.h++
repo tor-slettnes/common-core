@@ -18,7 +18,7 @@
 
 #include <google/protobuf/empty.pb.h>
 
-namespace shared::grpc
+namespace core::grpc
 {
     define_log_scope("grpc");
 
@@ -109,4 +109,4 @@ namespace shared::grpc
         const std::string full_service_name_;
     };
 
-}  // namespace shared::grpc
+}  // namespace core::grpc

@@ -22,7 +22,7 @@ namespace demo::zmq
         // them as 'CC::Demo::Signal()` messages and then pass on to the
         // publisher using `this->write()`.
 
-        // `signal_time` is of type `shared::signal::DataSignal<TimeData>`, so
+        // `signal_time` is of type `core::signal::DataSignal<TimeData>`, so
         // we receive the `TimeData()` instance as the sole argument.
 
         demo::signal_time.connect(
@@ -33,7 +33,7 @@ namespace demo::zmq
                 this->write(msg);
             });
 
-        // `signal_greeting` is of type `shared::signal::MappingSignal<Greeting>`, so
+        // `signal_greeting` is of type `core::signal::MappingSignal<Greeting>`, so
         // we receive three arguments:
         //   - The change type (MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL)
         //   - The key (in this case we use the greeter's identity)
@@ -41,7 +41,7 @@ namespace demo::zmq
 
         demo::signal_greeting.connect(
             TYPE_NAME_FULL(This),
-            [=](shared::signal::MappingChange change,  // change
+            [=](core::signal::MappingChange change,  // change
                 const std::string &key,                // key
                 const Greeting &greeting)              // payload
             {

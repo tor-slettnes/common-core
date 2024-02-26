@@ -23,8 +23,8 @@ namespace demo::zmq
 
     class ClientImpl
         : public API,
-          public shared::zmq::ProtoBufClient,
-          public shared::types::enable_create_shared<ClientImpl>
+          public core::zmq::ProtoBufClient,
+          public core::types::enable_create_shared<ClientImpl>
     {
         // Convencience alias
         using This = ClientImpl;

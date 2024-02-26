@@ -11,7 +11,7 @@
 
 using namespace std::literals::string_literals;  // ""s
 
-namespace shared::str
+namespace core::str
 {
     // std::string type_description(const std::type_info &ti);
     void checkstream(const std::istream &ss, const std::string &s, const std::type_info &ti);
@@ -80,6 +80,6 @@ namespace shared::str
     ///     String representation of value.
     template <class T>
     std::string convert_from(const T &value) noexcept;
-}  // namespace shared::str
+}  // namespace core::str
 
 #include "convert.i++"

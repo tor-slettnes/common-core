@@ -13,7 +13,7 @@
 #include <iomanip>  // output stream format manipulations
 #include <ios>      // left, right, internal
 
-namespace shared::str
+namespace core::str
 {
     constexpr auto VARARG_CONVERSION = '*';
 
@@ -464,4 +464,4 @@ namespace shared::str
         }
     }
 
-}  // namespace shared::str
+}  // namespace core::str

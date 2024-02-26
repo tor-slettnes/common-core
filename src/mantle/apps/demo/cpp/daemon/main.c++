@@ -28,7 +28,7 @@
 int main(int argc, char** argv)
 {
     // Initialize paths, load settings, set up shutdown signal handlers
-    shared::application::initialize(argc, argv);
+    core::application::initialize(argc, argv);
 
     demo::options = std::make_unique<demo::Options>();
     demo::options->apply(argc, argv);
@@ -85,6 +85,6 @@ int main(int argc, char** argv)
     api_provider->deinitialize();
 
     logf_debug("Deinitializing DEMO server");
-    shared::application::deinitialize();
+    core::application::deinitialize();
     return 0;
 }

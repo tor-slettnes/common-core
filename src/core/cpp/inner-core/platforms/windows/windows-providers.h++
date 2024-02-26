@@ -7,8 +7,8 @@
 
 #pragma once
 
-namespace shared::platform
+namespace core::platform
 {
     void register_windows_providers(const std::string &exec_name);
     void unregister_windows_providers();
-}  // namespace shared::platform
+}  // namespace core::platform

@@ -8,7 +8,7 @@
 #include "symbols.h++"
 
 /// Default filesystem paths.
-namespace shared::platform
+namespace core::platform
 {
     ProviderProxy<SymbolsProvider> symbols("symbols");
-}  // namespace shared::platform
+}  // namespace core::platform

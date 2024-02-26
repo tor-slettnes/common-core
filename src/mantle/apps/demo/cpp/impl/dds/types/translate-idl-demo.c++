@@ -58,14 +58,14 @@ namespace idl
     void encode(const std::tm &native,
                 CC::Demo::TimeStruct *idl)
     {
-        idl->year(native.tm_year + shared::dt::TM_YEAR_OFFSET);
-        idl->month(native.tm_mon + shared::dt::TM_MONTH_OFFSET);
-        idl->day(native.tm_mday + shared::dt::TM_DAY_OFFSET);
+        idl->year(native.tm_year + core::dt::TM_YEAR_OFFSET);
+        idl->month(native.tm_mon + core::dt::TM_MONTH_OFFSET);
+        idl->day(native.tm_mday + core::dt::TM_DAY_OFFSET);
         idl->hour(native.tm_hour);
         idl->minute(native.tm_min);
         idl->second(native.tm_sec);
-        idl->weekday(static_cast<CC::Demo::Weekday>(native.tm_wday + shared::dt::TM_WEEKDAY_OFFSET));
-        idl->year_day(native.tm_yday + shared::dt::TM_YEARDAY_OFFSET);
+        idl->weekday(static_cast<CC::Demo::Weekday>(native.tm_wday + core::dt::TM_WEEKDAY_OFFSET));
+        idl->year_day(native.tm_yday + core::dt::TM_YEARDAY_OFFSET);
 
         if (native.tm_isdst >= 0)
         {
@@ -79,11 +79,11 @@ namespace idl
         native->tm_sec = static_cast<int>(idl.second());
         native->tm_min = static_cast<int>(idl.minute());
         native->tm_hour = static_cast<int>(idl.hour());
-        native->tm_mday = static_cast<int>(idl.day()) - shared::dt::TM_DAY_OFFSET;
-        native->tm_mon = static_cast<int>(idl.month()) - shared::dt::TM_MONTH_OFFSET;
-        native->tm_year = static_cast<int>(idl.year()) - shared::dt::TM_YEAR_OFFSET;
-        native->tm_mday = static_cast<int>(idl.weekday()) - shared::dt::TM_WEEKDAY_OFFSET;
-        native->tm_yday = static_cast<int>(idl.year_day()) - shared::dt::TM_YEARDAY_OFFSET;
+        native->tm_mday = static_cast<int>(idl.day()) - core::dt::TM_DAY_OFFSET;
+        native->tm_mon = static_cast<int>(idl.month()) - core::dt::TM_MONTH_OFFSET;
+        native->tm_year = static_cast<int>(idl.year()) - core::dt::TM_YEAR_OFFSET;
+        native->tm_mday = static_cast<int>(idl.weekday()) - core::dt::TM_WEEKDAY_OFFSET;
+        native->tm_yday = static_cast<int>(idl.year_day()) - core::dt::TM_YEARDAY_OFFSET;
         native->tm_isdst = static_cast<int>(idl.is_dst().has_value() ? idl.is_dst().value() : -1);
     }
 

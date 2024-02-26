@@ -29,26 +29,26 @@ namespace demo
 
     TimeData NativeImpl::get_current_time()
     {
-        return {shared::dt::Clock::now()};
+        return {core::dt::Clock::now()};
     }
 
     void NativeImpl::start_ticking()
     {
         // Schedule a task to emit a new TimeData update every second
         log_notice("Starting periodic time updates");
-        shared::scheduler.add_if_missing(
+        core::scheduler.add_if_missing(
             TIMER_TASK_HANDLE,
-            [](const shared::dt::TimePoint &tp) {
+            [](const core::dt::TimePoint &tp) {
                 demo::signal_time.emit(TimeData(tp));
             },
             std::chrono::seconds(1),
-            shared::Scheduler::ALIGN_UTC);
+            core::Scheduler::ALIGN_UTC);
     }
 
     void NativeImpl::stop_ticking()
     {
         // Cancel any existing TimeData update task
         log_notice("Stopping periodic time updates");
-        shared::scheduler.remove(TIMER_TASK_HANDLE);
+        core::scheduler.remove(TIMER_TASK_HANDLE);
     }
 }  // namespace demo

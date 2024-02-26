@@ -10,7 +10,7 @@
 #include "variant-kvmap.h++"
 #include "status/exceptions.h++"
 
-namespace shared::types
+namespace core::types
 {
     TaggedValueList::const_iterator TaggedValueList::find(
         const Tag &tag,
@@ -372,4 +372,4 @@ namespace shared::types
         stream << postfix;
     }
 
-}  // namespace shared::types
+}  // namespace core::types

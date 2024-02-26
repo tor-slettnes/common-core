@@ -16,7 +16,7 @@
 #define LOG_TO_DDS_SINK "log to dds"
 #define LOG_TO_DL_SINK  "log to distributed logger"
 
-namespace shared::dds
+namespace core::dds
 {
     void ServerOptions::add_log_options()
     {
@@ -43,13 +43,13 @@ namespace shared::dds
         if (this->log_to_dds)
         {
             if (auto sink = DDSLogger::create_shared(
-                    shared::platform::path->exec_name(true),  // identity
+                    core::platform::path->exec_name(true),  // identity
                     this->domain_id))
             {
-                shared::logging::message_dispatcher.add_sink(sink);
+                core::logging::message_dispatcher.add_sink(sink);
                 sink->set_include_context(this->log_context);
 
-                shared::types::KeyValueMap config = this->logsink_setting(LOG_TO_DDS_SINK);
+                core::types::KeyValueMap config = this->logsink_setting(LOG_TO_DDS_SINK);
                 this->set_threshold_from_config(sink, config);
             }
         }
@@ -58,17 +58,17 @@ namespace shared::dds
         if (this->log_to_dl)
         {
             if (auto sink = RTIDistributedLogger::create_shared(
-                    shared::platform::path->exec_name(true),  // identity
+                    core::platform::path->exec_name(true),  // identity
                     this->domain_id))
             {
-                shared::logging::message_dispatcher.add_sink(sink);
+                core::logging::message_dispatcher.add_sink(sink);
                 sink->set_include_source(this->log_source);
 
-                shared::types::KeyValueMap config = this->logsink_setting(LOG_TO_DL_SINK);
+                core::types::KeyValueMap config = this->logsink_setting(LOG_TO_DL_SINK);
                 this->set_threshold_from_config(sink, config);
             }
         }
 #endif
     }
 
-}  // namespace shared::dds
+}  // namespace core::dds

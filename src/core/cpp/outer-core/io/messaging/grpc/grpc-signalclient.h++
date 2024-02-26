@@ -20,7 +20,7 @@
 
 #include <functional>
 
-namespace shared::grpc
+namespace core::grpc
 {
     //==========================================================================
     /// @class SignalClient<ServiceT, SignalT>
@@ -190,4 +190,4 @@ namespace shared::grpc
         types::BinaryEvent completion_event;
     };
 
-}  // namespace shared::grpc
+}  // namespace core::grpc

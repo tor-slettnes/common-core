@@ -7,7 +7,7 @@
 
 #include "partslist.h++"
 
-namespace shared::types
+namespace core::types
 {
     void PartsList::add(const std::string &tag,
                         const std::string &value,
@@ -31,4 +31,4 @@ namespace shared::types
         stream << "}";
     }
 
-}  // namespace shared::types
+}  // namespace core::types

@@ -12,7 +12,7 @@
 namespace demo
 {
     class NativeImpl : public API,
-                       public shared::types::enable_create_shared<NativeImpl>
+                       public core::types::enable_create_shared<NativeImpl>
     {
         using This = NativeImpl;
         using Super = API;

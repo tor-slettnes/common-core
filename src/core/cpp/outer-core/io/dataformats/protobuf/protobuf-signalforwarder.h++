@@ -49,7 +49,7 @@ namespace protobuf
         /// @brief
         ///    Create a new Signal message with optional mapping controls.
         static ProtoT create_signal_message(
-            shared::signal::MappingChange change = shared::signal::MAP_NONE,
+            core::signal::MappingChange change = core::signal::MAP_NONE,
             const std::string &key = {})
         {
             ProtoT msg;

@@ -9,7 +9,7 @@
 #include "provider.h++"
 #include "types/filesystem.h++"
 
-namespace shared::platform
+namespace core::platform
 {
     /// @brief Abstract provider for runtime related functions
     class SystemServiceProvider : public Provider
@@ -36,4 +36,4 @@ namespace shared::platform
     };
 
     extern ProviderProxy<SystemServiceProvider> system_service;
-}  // namespace shared::platform
+}  // namespace core::platform

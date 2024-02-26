@@ -13,7 +13,7 @@
 
 #include <stdexcept>
 
-namespace shared::exception
+namespace core::exception
 {
     //==========================================================================
     /// @class CustomException
@@ -361,7 +361,7 @@ namespace shared::exception
     status::Event::Ref map_to_event(const std::exception &e) noexcept;
     status::Event::Ref map_to_event(std::exception_ptr eptr) noexcept;
 
-};  // namespace shared::exception
+};  // namespace core::exception
 
 namespace std
 {

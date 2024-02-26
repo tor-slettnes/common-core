@@ -25,8 +25,8 @@ Signals
 Event notifications are issued via the following two signals:
 
 ```
-shared::signal::DataSignal<TimeData> signal_time("demo::signal_time");
-shared::signal::MappingSignal<Greeting> signal_greeting("demo::signal_greeting", true);
+core::signal::DataSignal<TimeData> signal_time("demo::signal_time");
+core::signal::MappingSignal<Greeting> signal_greeting("demo::signal_greeting", true);
 ```
 
 The difference between `Signal<T>` and `MappingSignal<T>` lies in whether the
@@ -39,7 +39,7 @@ In the former case, a signal is emitted on as follows:
 
 ```
 demo::TimeData time_data(...);
-shared::signal::signal_time.emit(time_data);
+core::signal::signal_time.emit(time_data);
 ```
 
 Correspondingly, the callback function signature required to connect to this signal is
@@ -58,13 +58,13 @@ whenever an AP is newly discovered, has updated data, or is no longer available.
 This template's `emit()` method nominally takes three arguments:
 
 ```
-shared::signal::MappingSignal<T, K>::emit(MappingChange change, K key, T value)
+core::signal::MappingSignal<T, K>::emit(MappingChange change, K key, T value)
 ```
 
 In our case, a new client might issue a greeting like this:
 
 ```
-demo::signal_greeting.emit(shared::signal::MAP_ADDITION,
+demo::signal_greeting.emit(core::signal::MAP_ADDITION,
                            ::options->identity,
                            demo::Greeting(...));
 ```
@@ -73,5 +73,5 @@ These three arguments are then passed onto any connected slots, which in this
 case would need the function signature
 
 ```
-std::function<void(shared::signal::MappingChange, std::string, demo::Greeting)>;
+std::function<void(core::signal::MappingChange, std::string, demo::Greeting)>;
 ```

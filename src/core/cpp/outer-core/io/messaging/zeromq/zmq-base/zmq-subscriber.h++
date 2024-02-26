@@ -14,7 +14,7 @@
 #include <unordered_set>
 #include <mutex>
 
-namespace shared::zmq
+namespace core::zmq
 {
     class Subscriber : public Satellite
     {
@@ -55,4 +55,4 @@ namespace shared::zmq
         bool keep_receiving;
     };
 
-}  // namespace shared::zmq
+}  // namespace core::zmq

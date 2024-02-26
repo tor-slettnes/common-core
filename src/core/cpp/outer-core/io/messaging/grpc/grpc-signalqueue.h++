@@ -14,7 +14,7 @@
 #include "protobuf-signalforwarder.h++"
 #include "thread/blockingqueue.h++"
 
-namespace shared::grpc
+namespace core::grpc
 {
     //==========================================================================
     /// @class SignalQueue<SignalT>
@@ -172,6 +172,6 @@ namespace shared::grpc
         bool filter_polarity;
         std::unordered_set<uint> filter_indices;
     };
-}  // namespace shared::grpc
+}  // namespace core::grpc
 
-using shared::grpc::SignalQueue;
+using core::grpc::SignalQueue;

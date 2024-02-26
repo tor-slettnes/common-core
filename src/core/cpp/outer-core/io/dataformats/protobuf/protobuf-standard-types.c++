@@ -108,33 +108,33 @@ namespace protobuf
         *b = msg.value();
     }
 
-    void encode(const shared::types::Bytes &b,
+    void encode(const core::types::Bytes &b,
                 google::protobuf::BytesValue *msg) noexcept
     {
         msg->set_value(b.data(), b.size());
     }
 
     void decode(const google::protobuf::BytesValue &msg,
-                shared::types::Bytes *b) noexcept
+                core::types::Bytes *b) noexcept
     {
         b->assign(msg.value().begin(), msg.value().end());
     }
 
-    void encode(const shared::dt::TimePoint &tp,
+    void encode(const core::dt::TimePoint &tp,
                 google::protobuf::Timestamp *ts) noexcept
     {
-        timespec tspec = shared::dt::to_timespec(tp);
+        timespec tspec = core::dt::to_timespec(tp);
         ts->set_seconds(tspec.tv_sec);
         ts->set_nanos((int)tspec.tv_nsec);
     }
 
     void decode(const google::protobuf::Timestamp &ts,
-                shared::dt::TimePoint *tp) noexcept
+                core::dt::TimePoint *tp) noexcept
     {
-        *tp = shared::dt::to_timepoint(ts.seconds(), ts.nanos());
+        *tp = core::dt::to_timepoint(ts.seconds(), ts.nanos());
     }
 
-    void encode(const shared::dt::Duration &duration,
+    void encode(const core::dt::Duration &duration,
                 google::protobuf::Duration *msg) noexcept
     {
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(duration);
@@ -146,52 +146,52 @@ namespace protobuf
     }
 
     void decode(const google::protobuf::Duration &msg,
-                shared::dt::Duration *duration) noexcept
+                core::dt::Duration *duration) noexcept
     {
         *duration = (std::chrono::seconds(msg.seconds()) +
                      std::chrono::nanoseconds(msg.nanos()));
     }
 
-    void encode(const shared::types::Value &value,
+    void encode(const core::types::Value &value,
                 google::protobuf::Value *msg) noexcept
     {
         switch (value.type())
         {
-        case shared::types::ValueType::NONE:
+        case core::types::ValueType::NONE:
             msg->set_null_value({});
             break;
 
-        case shared::types::ValueType::BOOL:
+        case core::types::ValueType::BOOL:
             msg->set_bool_value(value.as_bool());
             break;
 
-        case shared::types::ValueType::UINT:
-        case shared::types::ValueType::SINT:
-        case shared::types::ValueType::REAL:
-        case shared::types::ValueType::TIMEPOINT:
-        case shared::types::ValueType::DURATION:
-        case shared::types::ValueType::COMPLEX:
+        case core::types::ValueType::UINT:
+        case core::types::ValueType::SINT:
+        case core::types::ValueType::REAL:
+        case core::types::ValueType::TIMEPOINT:
+        case core::types::ValueType::DURATION:
+        case core::types::ValueType::COMPLEX:
             msg->set_number_value(value.as_real());
             break;
 
-        case shared::types::ValueType::CHAR:
-        case shared::types::ValueType::STRING:
+        case core::types::ValueType::CHAR:
+        case core::types::ValueType::STRING:
             msg->set_string_value(value.as_string());
             break;
 
-        case shared::types::ValueType::BYTEVECTOR:
+        case core::types::ValueType::BYTEVECTOR:
             msg->set_string_value(value.as_bytevector().to_string());
             break;
 
-        case shared::types::ValueType::VALUELIST:
+        case core::types::ValueType::VALUELIST:
             encode(*value.get_valuelist(), msg->mutable_list_value());
             break;
 
-        case shared::types::ValueType::KVMAP:
+        case core::types::ValueType::KVMAP:
             encode(*value.get_kvmap(), msg->mutable_struct_value());
             break;
 
-        case shared::types::ValueType::TVLIST:
+        case core::types::ValueType::TVLIST:
             encode(*value.get_tvlist(), msg->mutable_struct_value());
             break;
 
@@ -201,7 +201,7 @@ namespace protobuf
     }
 
     void decode(const google::protobuf::Value &msg,
-                shared::types::Value *value) noexcept
+                core::types::Value *value) noexcept
     {
         switch (msg.kind_case())
         {
@@ -222,11 +222,11 @@ namespace protobuf
             break;
 
         case google::protobuf::Value::kStructValue:
-            *value = protobuf::decoded<shared::types::KeyValueMap>(msg.struct_value());
+            *value = protobuf::decoded<core::types::KeyValueMap>(msg.struct_value());
             break;
 
         case google::protobuf::Value::kListValue:
-            *value = protobuf::decoded<shared::types::ValueList>(msg.list_value());
+            *value = protobuf::decoded<core::types::ValueList>(msg.list_value());
             break;
 
         default:
@@ -234,7 +234,7 @@ namespace protobuf
         }
     }
 
-    void encode(const shared::types::KeyValueMap &kvmap,
+    void encode(const core::types::KeyValueMap &kvmap,
                 google::protobuf::Struct *msg) noexcept
     {
         auto fields = msg->mutable_fields();
@@ -245,7 +245,7 @@ namespace protobuf
     }
 
     void decode(const google::protobuf::Struct &msg,
-                shared::types::KeyValueMap *kvmap) noexcept
+                core::types::KeyValueMap *kvmap) noexcept
     {
         for (const auto &[key, value] : msg.fields())
         {
@@ -253,7 +253,7 @@ namespace protobuf
         }
     }
 
-    void encode(const shared::types::TaggedValueList &tvlist,
+    void encode(const core::types::TaggedValueList &tvlist,
                 google::protobuf::Struct *msg) noexcept
     {
         auto fields = msg->mutable_fields();
@@ -267,29 +267,29 @@ namespace protobuf
     }
 
     void decode(const google::protobuf::Struct &msg,
-                shared::types::TaggedValueList *tvlist) noexcept
+                core::types::TaggedValueList *tvlist) noexcept
     {
         const auto &fields = msg.fields();
         tvlist->reserve(fields.size());
         for (const auto &[key, value] : fields)
         {
-            shared::types::TaggedValue tv = {key, {}};
+            core::types::TaggedValue tv = {key, {}};
             decode(value, &tv.second);
             tvlist->push_back(std::move(tv));
         }
     }
 
-    void encode(const shared::types::ValueList &list,
+    void encode(const core::types::ValueList &list,
                 google::protobuf::ListValue *msg) noexcept
     {
-        for (const shared::types::Value &value : list)
+        for (const core::types::Value &value : list)
         {
             encode(value, msg->add_values());
         }
     }
 
     void decode(const google::protobuf::ListValue &msg,
-                shared::types::ValueList *list) noexcept
+                core::types::ValueList *list) noexcept
     {
         list->reserve(msg.values_size());
         for (const google::protobuf::Value &value : msg.values())
@@ -297,4 +297,4 @@ namespace protobuf
             decode(value, &list->emplace_back());
         }
     }
-}  // namespace shared::protobuf
+}  // namespace core::protobuf

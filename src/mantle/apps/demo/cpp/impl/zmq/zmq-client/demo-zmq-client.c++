@@ -26,12 +26,12 @@ namespace demo::zmq
     void ClientImpl::initialize()
     {
         API::initialize();
-        shared::zmq::ProtoBufClient::initialize();
+        core::zmq::ProtoBufClient::initialize();
     }
 
     void ClientImpl::deinitialize()
     {
-        shared::zmq::ProtoBufClient::deinitialize();
+        core::zmq::ProtoBufClient::deinitialize();
         API::deinitialize();
     }
 

@@ -7,8 +7,8 @@
 /// The purpose of this file is to allow wrapper semantics like the following
 /// around the respecitve methods protobuf::encode(nativeobject, protobufmessage)
 ///  and protobuf::decode(protobufmessage, nativeobject):
-///   -  auto protomessage = shared::protobuf::encoded<ProtoBufType>(nativeobject);
-///   -  auto nativeobject = shared::protobuf::decoded<NativeType>(protomessage);
+///   -  auto protomessage = core::protobuf::encoded<ProtoBufType>(nativeobject);
+///   -  auto nativeobject = core::protobuf::decoded<NativeType>(protomessage);
 /// Due to an apparent bug in the GNU C++ compiler, these function templates
 /// must be declared AFTER the corresponding basic functions, as they do not
 /// seem to be privy to overload resolution for methods declared in subsequently

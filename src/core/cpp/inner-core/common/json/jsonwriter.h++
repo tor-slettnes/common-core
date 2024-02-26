@@ -21,7 +21,7 @@ namespace rapidjson
 
 #include <fstream>
 
-namespace shared::json
+namespace core::json
 {
     using DefaultWriter = rapidjson::Writer<rapidjson::OStreamWrapper>;
     using PrettyWriter = rapidjson::PrettyWriter<rapidjson::OStreamWrapper>;
@@ -60,4 +60,4 @@ namespace shared::json
 
     using JsonWriter = JsonWriterTemplate<DefaultWriter>;
     using JsonPrettyWriter = JsonWriterTemplate<PrettyWriter>;
-}  // namespace shared::json
+}  // namespace core::json

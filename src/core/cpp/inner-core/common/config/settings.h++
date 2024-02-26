@@ -11,9 +11,9 @@
 
 #include <memory>
 
-namespace shared
+namespace core
 {
-    extern std::shared_ptr<shared::SettingsStore> settings;
+    extern std::shared_ptr<core::SettingsStore> settings;
 
     void init_settings();
-}  // namespace shared
+}  // namespace core

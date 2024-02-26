@@ -9,7 +9,7 @@
 #include <dds/rpc/ServerParams.hpp>
 #include <dds/rpc/Server.hpp>
 
-namespace shared::dds
+namespace core::dds
 {
     //==========================================================================
     // DDS server
@@ -33,4 +33,4 @@ namespace shared::dds
         ::dds::rpc::ServerParams server_params(uint thread_pool_size) const;
     };
 
-}  // namespace shared::dds
+}  // namespace core::dds

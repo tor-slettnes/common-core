@@ -9,7 +9,7 @@
 #include <iostream>
 #include "types/symbolmap.h++"
 
-namespace shared::status
+namespace core::status
 {
     //==========================================================================
     // @enum Level
@@ -36,4 +36,4 @@ namespace shared::status
 
     std::ostream &operator<<(std::ostream &stream, Level lvl);
     std::istream &operator>>(std::istream &stream, Level &lvl);
-}  // namespace shared::status
+}  // namespace core::status

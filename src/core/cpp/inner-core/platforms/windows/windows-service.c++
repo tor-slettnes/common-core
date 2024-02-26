@@ -14,7 +14,7 @@
 
 #pragma comment(lib, "advapi32.lib")
 
-namespace shared::platform
+namespace core::platform
 {
     WindowsServiceProvider::WindowsServiceProvider()
         : Super(TYPE_NAME_FULL(This), path->exec_name())
@@ -135,7 +135,7 @@ namespace shared::platform
         {
         case SERVICE_CONTROL_STOP:
             This::ReportServiceStatus(SERVICE_STOP_PENDING, NO_ERROR, 0, 0, 4);
-            shared::application::signal_shutdown.emit(SIGTERM);
+            core::application::signal_shutdown.emit(SIGTERM);
             This::ReportServiceStatus(
                 This::service_status.dwCurrentState, NO_ERROR, 0, 0, 5);
             break;
@@ -169,4 +169,4 @@ namespace shared::platform
     SERVICE_STATUS WindowsServiceProvider::service_status = {SERVICE_WIN32_OWN_PROCESS};
     SERVICE_STATUS_HANDLE WindowsServiceProvider::service_status_handle = nullptr;
 
-}  // namespace shared::platform
+}  // namespace core::platform

@@ -15,12 +15,12 @@
 
 namespace demo::grpc
 {
-    using ClientImplBase = shared::grpc::SignalWatchClient<CC::Demo::Demo,
+    using ClientImplBase = core::grpc::SignalWatchClient<CC::Demo::Demo,
                                                        CC::Demo::Signal>;
 
     class ClientImpl : public demo::API,
                        public ClientImplBase,
-                       public shared::types::enable_create_shared<ClientImpl>
+                       public core::types::enable_create_shared<ClientImpl>
     {
         using This = ClientImpl;
 

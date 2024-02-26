@@ -17,7 +17,7 @@
 
 #include <memory>
 
-namespace shared::grpc
+namespace core::grpc
 {
     //==========================================================================
     // Base
@@ -110,4 +110,4 @@ namespace shared::grpc
 
     std::shared_ptr<SettingsStore> Base::settings_;
 
-}  // namespace shared::grpc
+}  // namespace core::grpc

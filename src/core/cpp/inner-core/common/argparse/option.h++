@@ -14,7 +14,7 @@
 #include <variant>
 
 /// Argument parser utility, loosely modeled after Python's "argparse" module.
-namespace shared::argparse
+namespace core::argparse
 {
     /// A (min,max) pair indicating number of times the option must/can be repeated.
     /// Zero means no lower/upper limit.
@@ -223,4 +223,4 @@ namespace shared::argparse
         // std::function<T(const std::string &s, std::exception_ptr *eptr)> typeconvert;
     };
 
-}  // namespace shared::argparse
+}  // namespace core::argparse

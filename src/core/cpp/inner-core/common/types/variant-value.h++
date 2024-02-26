@@ -10,7 +10,7 @@
 #include "types/streamable.h++"
 #include "string/convert.h++"
 
-namespace shared::types
+namespace core::types
 {
     //==========================================================================
     /// \class Value
@@ -172,7 +172,7 @@ namespace shared::types
         // protected:
         //     std::optional<ValueType> type_;
     };
-}  // namespace shared::types
+}  // namespace core::types
 
 
 #include "variant-value.i++"

@@ -10,7 +10,7 @@
 
 #include <memory>
 
-namespace shared::logging
+namespace core::logging
 {
 
     //==========================================================================
@@ -32,4 +32,4 @@ namespace shared::logging
         virtual inline bool is_applicable(const types::Loggable &) const { return true; }
         virtual bool capture(const types::Loggable::Ref &loggable) = 0;
     };
-}  // namespace shared::logging
+}  // namespace core::logging

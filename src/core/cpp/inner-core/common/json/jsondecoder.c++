@@ -9,7 +9,7 @@
 #include "status/exceptions.h++"
 #include <rapidjson/error/en.h>
 
-namespace shared::json
+namespace core::json
 {
     types::Value JsonDecoder::parse_text_with_comments(const std::string &text)
     {
@@ -129,4 +129,4 @@ namespace shared::json
         }
         return kvmap;
     }
-}  // namespace shared::json
+}  // namespace core::json

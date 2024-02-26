@@ -11,7 +11,7 @@
 
 #include <string.h>
 
-namespace shared::exception
+namespace core::exception
 {
     //==========================================================================
     // Cancelled
@@ -431,20 +431,20 @@ namespace shared::exception
             return {};
         }
     }
-}  // namespace shared::exception
+}  // namespace core::exception
 
 namespace std
 {
     /// Define output stream operator "<<" on std::exception and derivatives.
     std::ostream &operator<<(std::ostream &stream, const exception &e)
     {
-        shared::exception::map_to_event(e)->to_stream(stream);
+        core::exception::map_to_event(e)->to_stream(stream);
         return stream;
     }
 
     std::ostream &operator<<(std::ostream &stream, exception_ptr eptr)
     {
-        if (auto ep = shared::exception::map_to_event(eptr))
+        if (auto ep = core::exception::map_to_event(eptr))
         {
             ep->to_stream(stream);
         }

@@ -10,7 +10,7 @@
 
 #include <google/protobuf/empty.pb.h>
 
-namespace shared::grpc
+namespace core::grpc
 {
     //==========================================================================
     /// @class ServiceHandlerBase
@@ -158,4 +158,4 @@ namespace shared::grpc
         }
     };
 
-}  // namespace shared::grpc
+}  // namespace core::grpc

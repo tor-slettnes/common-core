@@ -8,7 +8,7 @@
 #pragma once
 #include <memory>
 
-namespace shared::types
+namespace core::types
 {
     //==========================================================================
     /// \class Loggable
@@ -28,4 +28,4 @@ namespace shared::types
         virtual ~Loggable() {}  // Hack to ensure class is polymorphic
     };
 
-}  // namespace shared::types
+}  // namespace core::types

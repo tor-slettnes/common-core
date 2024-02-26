@@ -12,7 +12,7 @@
 
 #include "platform/symbols.h++"
 
-namespace shared::grpc
+namespace core::grpc
 {
     //==========================================================================
     /// @class SignalServiceWrapper<ServiceT>
@@ -106,4 +106,4 @@ namespace shared::grpc
         }
     };
 
-}  // namespace shared::grpc
+}  // namespace core::grpc

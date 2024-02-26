@@ -7,7 +7,7 @@
 
 #include "variant-list.h++"
 
-namespace shared::types
+namespace core::types
 {
     void ValueList::to_stream(std::ostream &stream) const
     {
@@ -61,4 +61,4 @@ namespace shared::types
         return tvlist;
     }
 
-}  // namespace shared::types
+}  // namespace core::types

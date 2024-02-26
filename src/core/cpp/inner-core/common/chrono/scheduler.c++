@@ -11,7 +11,7 @@
 #include "status/exceptions.h++"
 #include "platform/symbols.h++"
 
-namespace shared
+namespace core
 {
 
     //==========================================================================
@@ -456,4 +456,4 @@ namespace shared
     // Global instance
 
     Scheduler scheduler;
-}  // namespace shared
+}  // namespace core

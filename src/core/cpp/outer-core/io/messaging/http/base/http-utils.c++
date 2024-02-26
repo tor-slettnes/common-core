@@ -13,7 +13,7 @@
 
 #include <regex>
 
-namespace shared::http
+namespace core::http
 {
     bool decompose_header(const std::string &text, Header *header)
     {
@@ -258,4 +258,4 @@ namespace shared::http
         "curl_global_cleanup",
         ::curl_global_cleanup);
 
-}  // namespace shared::http
+}  // namespace core::http

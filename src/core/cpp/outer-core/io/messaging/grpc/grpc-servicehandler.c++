@@ -13,7 +13,7 @@
 //#include "errnos.h"
 
 
-namespace shared::grpc
+namespace core::grpc
 {
     ServiceHandlerBase::ServiceHandlerBase(const std::string &full_service_name)
         : Base("gRPC Service", full_service_name)
@@ -37,7 +37,7 @@ namespace shared::grpc
                                        const int &lineno,
                                        const std::string &function)
     {
-        Status status(*shared::exception::map_to_event(e));
+        Status status(*core::exception::map_to_event(e));
         this->log_status(status, operation, flow, path, lineno, function);
         return status;
     }
@@ -135,10 +135,10 @@ namespace shared::grpc
         std::stringstream ss;
         if (peer.size())
         {
-            ss << "request from " << shared::http::url_decode(peer) << ": ";
+            ss << "request from " << core::http::url_decode(peer) << ": ";
         }
         ss << function << "(" << ::protobuf::to_string(request) << ")";
         return ss.str();
     }
 
-}  // namespace shared::grpc
+}  // namespace core::grpc

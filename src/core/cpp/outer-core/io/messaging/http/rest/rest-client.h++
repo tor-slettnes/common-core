@@ -9,7 +9,7 @@
 #include "http-client.h++"
 #include "rest-base.h++"
 
-namespace shared::http
+namespace core::http
 {
     class RESTClient : public RESTBase,
                        public HTTPClient
@@ -24,4 +24,4 @@ namespace shared::http
     private:
         std::string content_type;
     };
-}  // namespace shared::http
+}  // namespace core::http

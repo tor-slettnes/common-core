@@ -19,7 +19,7 @@ namespace demo::dds
     // @brief Process requests from DemoService clients
 
     class RequestHandler : public CC::Demo::DemoService,
-                           public shared::types::enable_create_shared<RequestHandler>
+                           public core::types::enable_create_shared<RequestHandler>
     {
         // Convencience alias
         using This = RequestHandler;

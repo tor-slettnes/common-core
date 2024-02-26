@@ -16,10 +16,10 @@
 
 namespace demo::zmq
 {
-    class RequestHandler : public shared::zmq::ProtoBufRequestHandler,
-                           public shared::types::enable_create_shared<RequestHandler>
+    class RequestHandler : public core::zmq::ProtoBufRequestHandler,
+                           public core::types::enable_create_shared<RequestHandler>
     {
-        using Super = shared::zmq::ProtoBufRequestHandler;
+        using Super = core::zmq::ProtoBufRequestHandler;
 
     protected:
         RequestHandler(const std::shared_ptr<API> &api,

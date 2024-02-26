@@ -7,7 +7,7 @@
 
 #include "process.h++"
 
-namespace shared::platform
+namespace core::platform
 {
     PID ProcessProvider::thread_id() const
     {
@@ -72,4 +72,4 @@ namespace shared::platform
     /// Global instance, populated with the "best" provider for this system.
     ProviderProxy<ProcessProvider> process("process");
 
-}  // namespace shared::platform
+}  // namespace core::platform

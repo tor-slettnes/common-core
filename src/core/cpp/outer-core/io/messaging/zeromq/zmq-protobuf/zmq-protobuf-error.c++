@@ -14,10 +14,10 @@
 #include "chrono/date-time.h++"
 #include "status/exceptions.h++"
 
-namespace shared::zmq
+namespace core::zmq
 {
     ProtoBufError::ProtoBufError(const CC::RR::StatusCode &code,
-                                 const shared::status::Event &event)
+                                 const core::status::Event &event)
         : Event(event),
           status_code_(code)
     {
@@ -66,4 +66,4 @@ namespace shared::zmq
         }
     }
 
-}  // namespace shared::zmq
+}  // namespace core::zmq

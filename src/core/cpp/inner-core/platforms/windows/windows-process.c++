@@ -9,7 +9,7 @@
 #include <windows.h>
 #include <process.h>  // _getpid()
 
-namespace shared::platform
+namespace core::platform
 {
     WindowsProcessProvider::WindowsProcessProvider()
         : Super("WindowsProcessProvider")
@@ -26,4 +26,4 @@ namespace shared::platform
         return _getpid();
     }
 
-}  // namespace shared::platform
+}  // namespace core::platform

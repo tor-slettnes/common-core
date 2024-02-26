@@ -20,8 +20,8 @@ namespace demo
     Greeting::Greeting(const std::string &text,
                        const std::string &identity,
                        const std::string &implementation,
-                       const shared::dt::TimePoint &birth,
-                       const shared::types::KeyValueMap &data)
+                       const core::dt::TimePoint &birth,
+                       const core::types::KeyValueMap &data)
         : text(text),
           identity(identity),
           implementation(implementation),
@@ -32,12 +32,12 @@ namespace demo
 
     void Greeting::to_stream(std::ostream &stream) const
     {
-        shared::types::PartsList parts;
+        core::types::PartsList parts;
         parts.add("text", this->text);
         parts.add("identity", this->identity);
         parts.add("implementation", this->implementation, !this->implementation.empty());
-        parts.add("birth", this->birth, this->birth != shared::dt::TimePoint());
-        parts.add("uptime", shared::dt::Clock::now() - this->birth);
+        parts.add("birth", this->birth, this->birth != core::dt::TimePoint());
+        parts.add("uptime", core::dt::Clock::now() - this->birth);
         parts.add("data", this->data, !this->data.empty());
         stream << parts;
     }
@@ -46,14 +46,14 @@ namespace demo
     /// @class TimeData
     /// @brief Time representation from the server.
 
-    TimeData::TimeData(const shared::dt::TimePoint &tp)
+    TimeData::TimeData(const core::dt::TimePoint &tp)
         : timepoint(tp),
-          localtime(shared::dt::localtime(tp)),
-          utctime(shared::dt::gmtime(tp))
+          localtime(core::dt::localtime(tp)),
+          utctime(core::dt::gmtime(tp))
     {
     }
 
-    TimeData::TimeData(const shared::dt::TimePoint &tp,
+    TimeData::TimeData(const core::dt::TimePoint &tp,
                        const std::tm &localtime,
                        const std::tm &utctime)
         : timepoint(tp),
@@ -64,11 +64,11 @@ namespace demo
 
     void TimeData::to_stream(std::ostream &stream) const
     {
-        shared::str::format(stream,
+        core::str::format(stream,
                         "TimeData(epoch=%s, local=%s, utc=%s)",
-                        shared::dt::to_time_t(this->timepoint),
-                        shared::dt::to_string(this->localtime),
-                        shared::dt::to_string(this->utctime));
+                        core::dt::to_time_t(this->timepoint),
+                        core::dt::to_string(this->localtime),
+                        core::dt::to_string(this->utctime));
     }
 
 }  // namespace demo

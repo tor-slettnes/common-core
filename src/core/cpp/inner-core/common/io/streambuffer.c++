@@ -9,7 +9,7 @@
 
 #include <string.h>
 
-namespace shared::io
+namespace core::io
 {
     // buffer management
     int StreamBuffer::sync()
@@ -108,4 +108,4 @@ namespace shared::io
         }
     }
 
-}  // namespace shared::io
+}  // namespace core::io

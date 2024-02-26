@@ -18,7 +18,7 @@ namespace demo::dds
         int domain_id)
     {
         // A server provides the execution environment for one or more RPC services
-        auto server = shared::dds::Server();
+        auto server = core::dds::Server();
 
         // Instantiate Publisher to relay asynchronous events over DDS
         auto dds_publisher = demo::dds::Publisher::create_shared(identity, domain_id);

@@ -12,7 +12,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-namespace shared::zmq
+namespace core::zmq
 {
     ProtoBufRequestHandler::ProtoBufRequestHandler(const std::string &interface_name)
         : interface_name_(interface_name)
@@ -56,7 +56,7 @@ namespace shared::zmq
 
                 error = std::make_shared<ProtoBufError>(
                     CC::RR::STATUS_FAILED,
-                    *shared::exception::map_to_event(std::current_exception()));
+                    *core::exception::map_to_event(std::current_exception()));
             }
         }
         else
@@ -96,4 +96,4 @@ namespace shared::zmq
     {
         this->handler_map.clear();
     }
-}  // namespace shared::zmq
+}  // namespace core::zmq

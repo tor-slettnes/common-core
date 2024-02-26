@@ -10,7 +10,7 @@
 #include "types/value.h++"
 #include "types/filesystem.h++"
 
-namespace shared::json
+namespace core::json
 {
     class JsonReader
     {
@@ -29,4 +29,4 @@ namespace shared::json
     private:
         fs::path path_;
     };
-}  // namespace shared::json
+}  // namespace core::json

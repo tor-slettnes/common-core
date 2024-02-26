@@ -9,7 +9,7 @@
 #include "exceptions.h++"
 #include <algorithm>
 
-namespace shared::status
+namespace core::status
 {
     //==========================================================================
     /// @class Event
@@ -317,4 +317,4 @@ namespace shared::status
                                 : false;
     }
 
-}  // namespace shared::status
+}  // namespace core::status

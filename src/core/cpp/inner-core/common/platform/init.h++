@@ -11,7 +11,7 @@
 
 #include <unordered_set>
 
-namespace shared::platform
+namespace core::platform
 {
     //==========================================================================
     // InitTask
@@ -67,6 +67,6 @@ namespace shared::platform
     inline TaskSet init_tasks;
     inline TaskSet exit_tasks;
 
-    extern shared::signal::VoidSignal signal_startup;
-    extern shared::signal::VoidSignal signal_shutdown;
-}  // namespace shared::platform
+    extern core::signal::VoidSignal signal_startup;
+    extern core::signal::VoidSignal signal_shutdown;
+}  // namespace core::platform

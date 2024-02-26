@@ -13,7 +13,7 @@
 #include <codecvt>
 #include <utility>  // std::move()
 
-namespace shared::str
+namespace core::str
 {
     void toupper(std::string *s, const std::locale &loc)
     {
@@ -449,4 +449,4 @@ namespace shared::str
         return out;
     }
 
-}  // namespace shared::str
+}  // namespace core::str

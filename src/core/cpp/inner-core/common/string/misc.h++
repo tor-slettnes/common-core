@@ -26,7 +26,7 @@
     }
 
 /// Miscellaneous string manipulations
-namespace shared::str
+namespace core::str
 {
     //    constexpr auto WHITESPACE = { ' ', '\t', '\r', '\n', 'f', '\0' };
 
@@ -313,4 +313,4 @@ namespace shared::str
 
     //std::string mangle_name (const std::string &name, const std::regex &tokens="(\\W)");
 
-}  // namespace shared::str
+}  // namespace core::str

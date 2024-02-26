@@ -27,7 +27,7 @@ namespace demo
             {"--grpc", "--enable-grpc"},
             "Enable gRPC service",
             &this->enable_grpc,
-            shared::settings->get("enable grpc", true).as_bool());
+            core::settings->get("enable grpc", true).as_bool());
 #endif
 
 #if USE_DDS
@@ -35,7 +35,7 @@ namespace demo
             {"--dds", "--enable-dds"},
             "Enable DDS service",
             &this->enable_dds,
-            shared::settings->get("enable dds", true).as_bool());
+            core::settings->get("enable dds", true).as_bool());
 #endif
 
 #if USE_ZMQ
@@ -43,7 +43,7 @@ namespace demo
             {"--zmq", "--enable-zmq"},
             "Enable ZeroMQ service",
             &this->enable_zmq,
-            shared::settings->get("enable zmq", true).as_bool());
+            core::settings->get("enable zmq", true).as_bool());
 #endif
     }
 

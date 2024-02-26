@@ -8,7 +8,7 @@
 #include "command.h++"
 #include "status/exceptions.h++"
 
-namespace shared::argparse
+namespace core::argparse
 {
     //==========================================================================
     // CommandOptions methods
@@ -251,4 +251,4 @@ namespace shared::argparse
         this->on_monitor_end();
     }
 
-}  // namespace shared::argparse
+}  // namespace core::argparse

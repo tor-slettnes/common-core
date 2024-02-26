@@ -16,7 +16,7 @@ namespace rapidjson
 
 #include <rapidjson/document.h>
 
-namespace shared::json
+namespace core::json
 {
     class JsonDecoder
     {
@@ -32,4 +32,4 @@ namespace shared::json
         static types::ValueList decodeArray(const rapidjson::Value &jarray);
         static types::KeyValueMap decodeObject(const rapidjson::Value &jobject);
     };
-}  // namespace shared::json
+}  // namespace core::json

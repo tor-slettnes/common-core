@@ -8,7 +8,7 @@
 #include "jsonfilesink.h++"
 #include "platform/path.h++"
 
-namespace shared::logging
+namespace core::logging
 {
     JsonFileSink::JsonFileSink(const std::string &path_template,
                                const dt::Duration &rotation_interval)
@@ -51,4 +51,4 @@ namespace shared::logging
             this->writer_->write(event->as_tvlist());
         }
     }
-}  // namespace shared::logging
+}  // namespace core::logging

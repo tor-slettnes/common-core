@@ -10,7 +10,7 @@
 #include "posix-logsink.h++"
 #include "posix-process.h++"
 
-namespace shared::platform
+namespace core::platform
 {
     void register_posix_providers(const std::string &exec_name)
     {
@@ -27,4 +27,4 @@ namespace shared::platform
         timezone.unregisterProvider<PosixTimeZoneProvider>();
         runtime.unregisterProvider<PosixRunTimeProvider>();
     }
-}  // namespace shared::platform
+}  // namespace core::platform

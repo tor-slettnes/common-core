@@ -15,9 +15,9 @@ namespace demo::dds
     // @class Service
     // @brief Handle requests from DemoService clients
 
-    class Service : public shared::dds::Service<CC::Demo::DemoServiceService>
+    class Service : public core::dds::Service<CC::Demo::DemoServiceService>
     {
-        using Super = shared::dds::Service<CC::Demo::DemoServiceService>;
+        using Super = core::dds::Service<CC::Demo::DemoServiceService>;
 
     public:
         Service(const ::dds::rpc::Server &server,

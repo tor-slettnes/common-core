@@ -13,7 +13,7 @@
 
 #include <fstream>
 
-namespace shared::json
+namespace core::json
 {
     JsonReader::JsonReader(const fs::path &path)
         : path_(path)
@@ -45,4 +45,4 @@ namespace shared::json
             return {};
         }
     }
-}  // namespace shared::json
+}  // namespace core::json

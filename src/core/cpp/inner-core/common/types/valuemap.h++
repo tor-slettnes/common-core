@@ -10,7 +10,7 @@
 #include <optional>
 #include <stdexcept>
 
-namespace shared::types
+namespace core::types
 {
     template <class K, class V>
     class ValueMap : public std::map<K, V>
@@ -54,4 +54,4 @@ namespace shared::types
             }
         }
     };
-}  // namespace shared::types
+}  // namespace core::types

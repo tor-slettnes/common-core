@@ -13,7 +13,7 @@
 
 #include <fstream>
 
-namespace shared::logging
+namespace core::logging
 {
     class LogFileSink : public MessageSink,
                         public RotatingPath,
@@ -40,4 +40,4 @@ namespace shared::logging
     private:
         std::shared_ptr<std::ofstream> stream_;
     };
-}  // namespace shared::logging
+}  // namespace core::logging

@@ -20,12 +20,12 @@ namespace demo::zmq
     // @class Publisher
     // @brief Publish locally-emitted demo signals over ZeroMQ
 
-    class Publisher : public shared::zmq::Publisher,
-                      public shared::types::enable_create_shared_from_this<Publisher>
+    class Publisher : public core::zmq::Publisher,
+                      public core::types::enable_create_shared_from_this<Publisher>
     {
         // Convencience alias
         using This = Publisher;
-        using Super = shared::zmq::Publisher;
+        using Super = core::zmq::Publisher;
 
     protected:
         Publisher(const std::string &bind_address = "",

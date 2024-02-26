@@ -7,7 +7,7 @@
 
 #include "binaryevent.h++"
 
-namespace shared::types
+namespace core::types
 {
     //==========================================================================
     // BinaryEvent
@@ -55,4 +55,4 @@ namespace shared::types
         });
     }
 
-}  // namespace shared::types
+}  // namespace core::types

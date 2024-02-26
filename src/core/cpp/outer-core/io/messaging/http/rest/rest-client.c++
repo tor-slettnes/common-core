@@ -8,7 +8,7 @@
 #include "rest-client.h++"
 #include "json/jsondecoder.h++"
 
-namespace shared::http
+namespace core::http
 {
     RESTClient::RESTClient(const std::string &base_url,
                            const std::string &service_name,
@@ -26,4 +26,4 @@ namespace shared::http
     }
 
 
-}  // namespace shared::http
+}  // namespace core::http

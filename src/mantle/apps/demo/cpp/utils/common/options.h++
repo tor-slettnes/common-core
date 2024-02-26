@@ -12,9 +12,9 @@
 
 namespace demo
 {
-    class Options : public shared::argparse::CommandOptions
+    class Options : public core::argparse::CommandOptions
     {
-        using Super = shared::argparse::CommandOptions;
+        using Super = core::argparse::CommandOptions;
 
     public:
         Options(const std::string &implementation);
@@ -28,7 +28,7 @@ namespace demo
 
         void on_time(const demo::TimeData &time);
 
-        void on_greeting(shared::signal::MappingChange change,
+        void on_greeting(core::signal::MappingChange change,
                          const std::string &identity,
                          const demo::Greeting &greeting);
 

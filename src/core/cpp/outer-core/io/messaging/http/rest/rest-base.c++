@@ -8,7 +8,7 @@
 #include "rest-base.h++"
 #include "string/convert.h++"
 
-namespace shared::http
+namespace core::http
 {
     RESTBase::RESTBase(const std::string &endpoint_type,
                        const std::string &service_name)
@@ -103,4 +103,4 @@ namespace shared::http
         return ss.str();
     }
 
-}  // namespace shared::http
+}  // namespace core::http

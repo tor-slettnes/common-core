@@ -9,7 +9,7 @@
 
 #include <string.h>  // memcpy
 
-namespace shared::zmq
+namespace core::zmq
 {
     Filter Filter::create_from_data(void *data, std::size_t size)
     {
@@ -106,4 +106,4 @@ namespace shared::zmq
         }
     }
 
-}  // namespace shared::zmq
+}  // namespace core::zmq

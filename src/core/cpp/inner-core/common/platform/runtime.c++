@@ -7,7 +7,7 @@
 
 #include "runtime.h++"
 
-namespace shared::platform
+namespace core::platform
 {
     ProviderProxy<RunTimeProvider> runtime("runtime environment");
-}  // namespace shared::platform
+}  // namespace core::platform

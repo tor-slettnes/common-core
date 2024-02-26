@@ -10,7 +10,7 @@
 #include <string>
 #include <utility>
 
-namespace shared::io
+namespace core::io
 {
     // Output buffer size allocated by `overflow()`
     constexpr std::streamsize BUFSIZE = 4096;
@@ -54,4 +54,4 @@ namespace shared::io
         std::string __input;
         bool __input_completed = false;
     };
-}  // namespace shared::io
+}  // namespace core::io

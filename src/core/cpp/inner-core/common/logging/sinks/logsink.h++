@@ -11,7 +11,7 @@
 
 #include <string>
 
-namespace shared::logging
+namespace core::logging
 {
     //==========================================================================
     /// \class LogSink
@@ -40,4 +40,4 @@ namespace shared::logging
     private:
         status::Level threshold_;
     };
-}  // namespace shared::logging
+}  // namespace core::logging

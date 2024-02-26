@@ -8,7 +8,7 @@
 #pragma once
 #include "platform/process.h++"
 
-namespace shared::platform
+namespace core::platform
 {
     /// @brief Process invocation on Linux
     class PosixProcessProvider : public ProcessProvider
@@ -71,4 +71,4 @@ namespace shared::platform
         void execute(ArgVector argv, const fs::path &cwd) const;
     };
 
-}  // namespace shared::platform
+}  // namespace core::platform

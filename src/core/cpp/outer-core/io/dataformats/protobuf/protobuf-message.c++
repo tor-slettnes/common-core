@@ -27,7 +27,7 @@ namespace protobuf
 
     /// Convert a protobuf message to a serialized byte array
     void to_bytes(const google::protobuf::Message &msg,
-                  shared::types::ByteVector *bytes)
+                  core::types::ByteVector *bytes)
     {
         std::size_t size = msg.ByteSizeLong();
         bytes->resize(size);
@@ -35,14 +35,14 @@ namespace protobuf
     }
 
     /// Convert a protobuf message to a serialized byte array
-    shared::types::ByteVector to_bytes(const google::protobuf::Message &msg)
+    core::types::ByteVector to_bytes(const google::protobuf::Message &msg)
     {
         ByteVector bytes;
         to_bytes(msg, &bytes);
         return bytes;
     }
 
-}  // namespace shared::protobuf
+}  // namespace core::protobuf
 
 /// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
 namespace google

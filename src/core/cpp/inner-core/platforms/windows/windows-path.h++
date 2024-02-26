@@ -8,7 +8,7 @@
 #pragma once
 #include "platform/path.h++"
 
-namespace shared::platform
+namespace core::platform
 {
     class WindowsPathProvider : public PathProvider
     {
@@ -36,4 +36,4 @@ namespace shared::platform
         fs::path fs_root() const;
     };
 
-}  // namespace shared::platform
+}  // namespace core::platform

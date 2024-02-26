@@ -13,7 +13,7 @@
 
 int main(int argc, char** argv)
 {
-    shared::application::initialize(argc, argv);
+    core::application::initialize(argc, argv);
 
     demo::options = std::make_unique<demo::Options>("gRPC");
     demo::options->apply(argc, argv);
@@ -32,6 +32,6 @@ int main(int argc, char** argv)
     logf_debug("Deinitializing gRPC demo provider");
     demo::provider->deinitialize();
 
-    shared::application::deinitialize();
+    core::application::deinitialize();
     return success ? 0 : -1;
 }

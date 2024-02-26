@@ -10,7 +10,7 @@
 #include <io.h>      // _isatty()
 #include <stdlib.h>  // _putenv()
 
-namespace shared::platform
+namespace core::platform
 {
     WindowsRunTimeProvider::WindowsRunTimeProvider()
         : Super("WindowsRunTimeProvider")
@@ -26,4 +26,4 @@ namespace shared::platform
     {
         _putenv(const_cast<char *>(envstring.data()));
     }
-}  // namespace shared::platform
+}  // namespace core::platform

@@ -8,7 +8,7 @@
 #pragma once
 #include "types/value.h++"
 
-namespace shared::json
+namespace core::json
 {
     /// @brief Encode `types::Value()` & friends to rapidJson writer instances
     /// @tparam[in] WriterType
@@ -24,6 +24,6 @@ namespace shared::json
         bool encodeObject(const types::TaggedValueList &tvlist, WriterType *writer);
     };
 
-}  // namespace shared::json
+}  // namespace core::json
 
 #include "jsonencoder.i++"

@@ -15,7 +15,7 @@
 #include <memory>
 #include <string>
 
-namespace shared::platform
+namespace core::platform
 {
     class Provider;
     using ProviderRef = std::shared_ptr<Provider>;
@@ -153,4 +153,4 @@ namespace shared::platform
         std::string typeName;
         std::shared_ptr<Domain> provider;
     };
-}  // namespace shared::platform
+}  // namespace core::platform

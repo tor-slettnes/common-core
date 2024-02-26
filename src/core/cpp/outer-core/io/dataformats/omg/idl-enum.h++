@@ -16,9 +16,9 @@
 namespace idl
 {
     template <class T, std::enable_if_t<std::is_enum_v<T>, bool> = true>
-    shared::types::SymbolMap<T> enum_symbols()
+    core::types::SymbolMap<T> enum_symbols()
     {
-        shared::types::SymbolMap<T> map;
+        core::types::SymbolMap<T> map;
         auto tc = rti::topic::dynamic_type<T>::get();
 
         for (const auto &member : tc.members())

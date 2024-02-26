@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <string>
 
-namespace shared::str
+namespace core::str
 {
     void checkstream(const std::istream &is, const std::string &s, const std::type_info &ti)
     {
@@ -21,7 +21,7 @@ namespace shared::str
         {
             throw std::invalid_argument(
                 "Failed to convert string literal to " +
-                shared::platform::symbols->cpp_demangle(ti.name(), false) +
+                core::platform::symbols->cpp_demangle(ti.name(), false) +
                 ": \"" + s + "\"");
         }
     }
@@ -78,4 +78,4 @@ namespace shared::str
         return b ? "true" : "false";
     }
 
-}  // namespace shared::str
+}  // namespace core::str

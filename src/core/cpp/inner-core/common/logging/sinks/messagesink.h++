@@ -13,7 +13,7 @@
 #include <memory>
 #include <ostream>
 
-namespace shared::logging
+namespace core::logging
 {
     //==========================================================================
     /// \class MessageSink
@@ -46,4 +46,4 @@ namespace shared::logging
     private:
         bool include_context_;
     };
-}  // namespace shared::logging
+}  // namespace core::logging

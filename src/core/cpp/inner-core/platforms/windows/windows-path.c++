@@ -18,7 +18,7 @@ typedef SSIZE_T ssize_t;
 typedef unsigned int pid_t;
 #endif
 
-namespace shared::platform
+namespace core::platform
 {
     WindowsPathProvider::WindowsPathProvider(const std::string &programpath)
         : Super("WindowsPathProvider", programpath)
@@ -100,4 +100,4 @@ namespace shared::platform
         return "C:";
     }
 
-}  // namespace shared::platform
+}  // namespace core::platform

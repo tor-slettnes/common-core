@@ -14,7 +14,7 @@
 #include <thread>
 #include <algorithm>
 
-namespace shared::types
+namespace core::types
 {
     //==========================================================================
     /// @enum OverlowDisposition
@@ -276,4 +276,4 @@ namespace shared::types
         std::queue<T> queue;
     };
 
-}  // namespace shared::types
+}  // namespace core::types

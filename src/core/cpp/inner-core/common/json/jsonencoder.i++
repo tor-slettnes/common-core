@@ -5,7 +5,7 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-namespace shared::json
+namespace core::json
 {
     template <class WriterType>
     bool JsonEncoder<WriterType>::encodeValue(const types::Value &value,
@@ -125,4 +125,4 @@ namespace shared::json
         }
         return writer->EndObject();
     }
-}  // namespace shared::json
+}  // namespace core::json

@@ -19,12 +19,12 @@ namespace demo::zmq
     // @class SignalWriter
     // @brief Connect to local DEMO signals and write via ZMQ
 
-    class SignalWriter : public shared::zmq::ProtoBufSignalWriter<CC::Demo::Signal>,
-                         public shared::types::enable_create_shared<SignalWriter>
+    class SignalWriter : public core::zmq::ProtoBufSignalWriter<CC::Demo::Signal>,
+                         public core::types::enable_create_shared<SignalWriter>
     {
         // Convencience alias
         using This = SignalWriter;
-        using Super = shared::zmq::ProtoBufSignalWriter<CC::Demo::Signal>;
+        using Super = core::zmq::ProtoBufSignalWriter<CC::Demo::Signal>;
 
     protected:
         using Super::Super;

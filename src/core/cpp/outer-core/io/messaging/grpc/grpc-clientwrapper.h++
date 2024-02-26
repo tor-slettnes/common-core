@@ -18,7 +18,7 @@
 // #include <grpcpp/impl/codegen/sync_stream.h>
 // #include <grpcpp/impl/codegen/client_context.h>
 
-namespace shared::grpc
+namespace core::grpc
 {
 
     //==========================================================================
@@ -169,7 +169,7 @@ namespace shared::grpc
         ///     Wait for gRPC service to become ready instead of failing.
         /// @return
         ///     Protobuf response message
-        /// @throw shared::grpc::ServiceError
+        /// @throw core::grpc::ServiceError
         ///     Non-OK gRPC status code
 
         template <class ResponseT, class RequestT = google::protobuf::Empty>
@@ -198,4 +198,4 @@ namespace shared::grpc
         std::unique_ptr<Stub> stub;
     };
 
-}  // namespace shared::grpc
+}  // namespace core::grpc

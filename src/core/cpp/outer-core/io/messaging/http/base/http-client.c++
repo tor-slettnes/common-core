@@ -16,7 +16,7 @@
 
 #include <regex>
 
-namespace shared::http
+namespace core::http
 {
     HTTPClient::HTTPClient(const std::string &base_url)
         : base_url_(base_url),
@@ -154,4 +154,4 @@ namespace shared::http
         return ss->good() ? size : 0;
     }
 
-}  // namespace shared::http
+}  // namespace core::http

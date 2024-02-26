@@ -17,7 +17,7 @@
 #include <optional>
 #include <mutex>
 
-namespace shared::zmq
+namespace core::zmq
 {
     define_log_scope("zmq");
 
@@ -135,4 +135,4 @@ namespace shared::zmq
         ::zmq::socket_type socket_type_;
     };
 
-}  // namespace shared::zmq
+}  // namespace core::zmq

@@ -10,7 +10,7 @@
 #include "variant-tvlist.h++"
 #include "string/misc.h++"
 
-namespace shared::types
+namespace core::types
 {
     const Value &KeyValueMap::get(const std::string &key,
                                   const Value &fallback,
@@ -225,4 +225,4 @@ namespace shared::types
         }
         stream << "}";
     }
-}  // namespace shared::types
+}  // namespace core::types

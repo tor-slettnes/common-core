@@ -12,7 +12,7 @@
 
 #include "request_reply.pb.h"
 
-namespace shared::zmq
+namespace core::zmq
 {
     class ProtoBufClient : public Requester
     {
@@ -102,4 +102,4 @@ namespace shared::zmq
         uint client_id;
         uint last_request_id;
     };
-};  // namespace shared::zmq
+};  // namespace core::zmq

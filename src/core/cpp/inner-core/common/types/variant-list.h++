@@ -11,7 +11,7 @@
 #include "streamable.h++"
 #include "types/create-shared.h++"
 
-namespace shared::types
+namespace core::types
 {
     class ValueList : public std::vector<Value>,
                       public Streamable,
@@ -31,4 +31,4 @@ namespace shared::types
         TaggedValueList as_tvlist() const noexcept;
     };
 
-}  // namespace shared::types
+}  // namespace core::types

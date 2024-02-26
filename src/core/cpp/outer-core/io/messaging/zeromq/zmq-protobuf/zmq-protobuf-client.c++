@@ -12,7 +12,7 @@
 #include "protobuf-inline.h++"
 #include "logging/logging.h++"
 
-namespace shared::zmq
+namespace core::zmq
 {
     ProtoBufClient::ProtoBufClient(const std::string &host_address,
                                    const std::string &channel_name,
@@ -187,4 +187,4 @@ namespace shared::zmq
     }
 
     uint ProtoBufClient::last_client_id = 0;
-}  // namespace shared::zmq
+}  // namespace core::zmq

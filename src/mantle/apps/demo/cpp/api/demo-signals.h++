@@ -35,7 +35,7 @@ namespace demo
     /// ```
     /// demo::signal_time.disconnect("My Callback Handle");
     /// ```
-    extern shared::signal::DataSignal<TimeData> signal_time;
+    extern core::signal::DataSignal<TimeData> signal_time;
 
     /// @brief MappingSignal emitted whenever someone issues a greeting.
     /// @sa `demo::say_hello()`.
@@ -48,7 +48,7 @@ namespace demo
     /// ```
     /// demo::signal_geeting.connect(
     ///     "My Callback Handle",
-    ///     [](shared::signal::MappingChange change,
+    ///     [](core::signal::MappingChange change,
     ///        const std::string &greeter,
     ///        const Greeting &greeting)
     ///     {
@@ -66,8 +66,8 @@ namespace demo
     /// so when first connecting a callback method to this signal it will be
     /// invoked once for each entity that has already issued a greeting
     /// (cfr. "late subscriber" pattern), with the `change` parameter set to
-    /// `shared::signal::MAP_ADDITION`. Subsequent invocations will take place
+    /// `core::signal::MAP_ADDITION`. Subsequent invocations will take place
     /// as this signal is emitted, with `change` being either `MAP_ADDITION`,
     /// `MAP_UPDATE`, or `MAP_REMOVAL`.
-    extern shared::signal::MappingSignal<Greeting> signal_greeting;
+    extern core::signal::MappingSignal<Greeting> signal_greeting;
 }  // namespace demo

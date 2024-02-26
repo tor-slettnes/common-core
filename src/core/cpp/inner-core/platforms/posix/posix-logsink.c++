@@ -9,7 +9,7 @@
 
 #include <syslog.h>
 
-namespace shared::platform
+namespace core::platform
 {
     PosixLogSinkProvider::PosixLogSinkProvider(const std::string &identity)
         : Super("PosixLogSinkProvider", identity)
@@ -52,4 +52,4 @@ namespace shared::platform
 
     };
 
-}  // namespace shared::platform
+}  // namespace core::platform

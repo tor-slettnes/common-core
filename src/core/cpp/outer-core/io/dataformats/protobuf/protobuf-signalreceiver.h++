@@ -128,4 +128,4 @@ namespace protobuf
         std::mutex slots_mtx;
     };
 
-}  // namespace shared::protobuf
+}  // namespace core::protobuf

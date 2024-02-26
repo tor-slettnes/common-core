@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace shared::messaging
+namespace core::messaging
 {
     //==========================================================================
     // @class Endpoint
@@ -87,4 +87,4 @@ namespace shared::messaging
 
     std::map<std::string, std::shared_ptr<SettingsStore>> Endpoint::settings_map_;
 
-}  // namespace shared::messaging
+}  // namespace core::messaging

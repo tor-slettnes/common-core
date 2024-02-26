@@ -7,7 +7,7 @@
 
 #include "systemservice.h++"
 
-namespace shared::platform
+namespace core::platform
 {
     ProviderProxy<SystemServiceProvider> system_service("system service");
 
@@ -24,4 +24,4 @@ namespace shared::platform
         return this->service_name_;
     }
 
-}  // namespace shared::platform
+}  // namespace core::platform

@@ -14,7 +14,7 @@
 
 #include <string>
 
-namespace shared::messaging
+namespace core::messaging
 {
     define_log_scope("messaging");
 
@@ -68,4 +68,4 @@ namespace shared::messaging
         std::string endpoint_type_;
         std::string channel_name_;
     };
-}  // namespace shared::messaging
+}  // namespace core::messaging

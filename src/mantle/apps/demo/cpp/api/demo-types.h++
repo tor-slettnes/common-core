@@ -33,14 +33,14 @@ namespace demo
     //==========================================================================
     /// @class Greeting
     /// @brief Data used to introduce ourselves to our peers
-    class Greeting : public shared::types::Streamable
+    class Greeting : public core::types::Streamable
     {
     public:
         Greeting(const std::string &text = {},
                  const std::string &identity = {},
                  const std::string &implementation = {},
-                 const shared::dt::TimePoint &birth = {},
-                 const shared::types::KeyValueMap &data = {});
+                 const core::dt::TimePoint &birth = {},
+                 const core::types::KeyValueMap &data = {});
 
     protected:
         void to_stream(std::ostream &stream) const override;
@@ -56,21 +56,21 @@ namespace demo
         std::string implementation;
 
         // Timepoint when this process was launched
-        shared::dt::TimePoint birth;
+        core::dt::TimePoint birth;
 
         // Arbitrary key/value pairs associated with the greeting
-        shared::types::KeyValueMap data;
+        core::types::KeyValueMap data;
     };
 
     //==========================================================================
     /// @class TimeData
     /// @brief Time representation from the server.
 
-    class TimeData : public shared::types::Streamable
+    class TimeData : public core::types::Streamable
     {
     public:
-        TimeData(const shared::dt::TimePoint &tp = {});
-        TimeData(const shared::dt::TimePoint &tp,
+        TimeData(const core::dt::TimePoint &tp = {});
+        TimeData(const core::dt::TimePoint &tp,
                  const std::tm &localtime,
                  const std::tm &utctime);
 
@@ -78,7 +78,7 @@ namespace demo
         void to_stream(std::ostream &stream) const override;
 
     public:
-        shared::dt::TimePoint timepoint;
+        core::dt::TimePoint timepoint;
         std::tm localtime;
         std::tm utctime;
     };

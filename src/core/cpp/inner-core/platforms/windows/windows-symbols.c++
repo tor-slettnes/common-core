@@ -18,7 +18,7 @@
 //   [in]  DWORD flags
 // );
 
-namespace shared::platform
+namespace core::platform
 {
     WindowsSymbolsProvider::WindowsSymbolsProvider()
         : Super("WindowsSymbolsProvider")
@@ -38,4 +38,4 @@ namespace shared::platform
         }
     };
 
-}  // namespace shared::platform
+}  // namespace core::platform

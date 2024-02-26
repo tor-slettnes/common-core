@@ -8,7 +8,7 @@
 #pragma once
 #include "platform/runtime.h++"
 
-namespace shared::platform
+namespace core::platform
 {
     /// @brief Abstract provider for runtime related functions
     class PosixRunTimeProvider : public RunTimeProvider
@@ -26,4 +26,4 @@ namespace shared::platform
         /// @brief Return the maximum length of a filesystem path.
         void putenv(const std::string &envstring) override;
     };
-}  // namespace shared::platform
+}  // namespace core::platform

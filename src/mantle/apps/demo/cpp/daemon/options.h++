@@ -9,11 +9,11 @@
 
 #if USE_DDS
 #include "dds-options-server.h++"
-using OptionsBase = shared::dds::ServerOptions;
+using OptionsBase = core::dds::ServerOptions;
 
 #else
 #include "argparse/server.h++"
-using OptionsBase = shared::argparse::ServerOptions;
+using OptionsBase = core::argparse::ServerOptions;
 
 #endif
 
@@ -22,9 +22,9 @@ namespace demo
     // @brief Command-line options for demo service
     ///
     // @note
-    //    We inherit from `shared::argparse::DDSServiceOptions` in order to
+    //    We inherit from `core::argparse::DDSServiceOptions` in order to
     //    get DDS logging capabilities. To build without DDS logging, we could
-    //    inherit directly from `shared::argparse::ServerOptions`.
+    //    inherit directly from `core::argparse::ServerOptions`.
 
     class Options : public OptionsBase
     {

@@ -12,7 +12,7 @@
 #include <regex>
 #include <sstream>  // std::stringstream
 
-namespace shared::argparse
+namespace core::argparse
 {
     //==========================================================================
     // Parser methods
@@ -158,7 +158,7 @@ namespace shared::argparse
         }
         catch (const std::out_of_range &)
         {
-            throwf(shared::exception::InvalidArgument,
+            throwf(core::exception::InvalidArgument,
                    "No such help section",
                    section);
         }
@@ -230,7 +230,7 @@ namespace shared::argparse
                     {
                         // No, and there are not more input arguments. This
                         // is an error.
-                        throwf(shared::exception::InvalidArgument,
+                        throwf(core::exception::InvalidArgument,
                                "Option requires an argument",
                                optkey);
                     }
@@ -479,4 +479,4 @@ namespace shared::argparse
         }
     }
 
-}  // namespace shared::argparse
+}  // namespace core::argparse

@@ -10,7 +10,7 @@
 #include "status/exceptions.h++"
 #include "platform/init.h++"
 
-namespace shared::zmq
+namespace core::zmq
 {
     Responder::Responder(const std::string &bind_address,
                          const std::string &channel_name)
@@ -63,4 +63,4 @@ namespace shared::zmq
         }
     }
 
-}  // namespace shared::zmq
+}  // namespace core::zmq

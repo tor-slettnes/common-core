@@ -13,48 +13,48 @@
 namespace protobuf
 {
     //==========================================================================
-    // shared::status::Domain encoding to/decoding from CC::Status::Domain
+    // core::status::Domain encoding to/decoding from CC::Status::Domain
 
-    void encode(shared::status::Domain domain, CC::Status::Domain *encoded) noexcept
+    void encode(core::status::Domain domain, CC::Status::Domain *encoded) noexcept
     {
         *encoded = static_cast<CC::Status::Domain>(domain);
     }
 
-    void decode(CC::Status::Domain domain, shared::status::Domain *decoded) noexcept
+    void decode(CC::Status::Domain domain, core::status::Domain *decoded) noexcept
     {
-        *decoded = static_cast<shared::status::Domain>(domain);
+        *decoded = static_cast<core::status::Domain>(domain);
     }
 
     //==========================================================================
-    // shared::status::Level encoding to/decoding from CC::Status::Level
+    // core::status::Level encoding to/decoding from CC::Status::Level
 
-    void encode(shared::status::Level level, CC::Status::Level *encoded) noexcept
+    void encode(core::status::Level level, CC::Status::Level *encoded) noexcept
     {
         *encoded = static_cast<CC::Status::Level>(level);
     }
 
-    void decode(CC::Status::Level level, shared::status::Level *decoded) noexcept
+    void decode(CC::Status::Level level, core::status::Level *decoded) noexcept
     {
-        *decoded = static_cast<shared::status::Level>(level);
+        *decoded = static_cast<core::status::Level>(level);
     }
 
     //==========================================================================
-    // shared::status::Flow encoding to/decoding from CC::Status::Flow
+    // core::status::Flow encoding to/decoding from CC::Status::Flow
 
-    void encode(shared::status::Flow flow, CC::Status::Flow *encoded) noexcept
+    void encode(core::status::Flow flow, CC::Status::Flow *encoded) noexcept
     {
         *encoded = static_cast<CC::Status::Flow>(flow);
     }
 
-    void decode(CC::Status::Flow flow, shared::status::Flow *decoded) noexcept
+    void decode(CC::Status::Flow flow, core::status::Flow *decoded) noexcept
     {
-        *decoded = static_cast<shared::status::Flow>(flow);
+        *decoded = static_cast<core::status::Flow>(flow);
     }
 
     //==========================================================================
-    // shared::status::Event encoding to/decoding from shared::status::Details
+    // core::status::Event encoding to/decoding from core::status::Details
 
-    void encode(const shared::status::Event &event, CC::Status::Details *msg) noexcept
+    void encode(const core::status::Event &event, CC::Status::Details *msg) noexcept
     {
         msg->set_domain(encoded<CC::Status::Domain>(event.domain()));
         msg->set_origin(event.origin());
@@ -67,18 +67,18 @@ namespace protobuf
         msg->set_text(event.text());
     }
 
-    void decode(const CC::Status::Details &msg, shared::status::Event *event) noexcept
+    void decode(const CC::Status::Details &msg, core::status::Event *event) noexcept
     {
-        *event = shared::status::Event(
+        *event = core::status::Event(
             msg.text(),
-            decoded<shared::status::Domain>(msg.domain()),
+            decoded<core::status::Domain>(msg.domain()),
             msg.origin(),
             msg.code(),
             msg.symbol(),
-            decoded<shared::status::Level>(msg.level()),
-            decoded<shared::status::Flow>(msg.flow()),
-            decoded<shared::dt::TimePoint>(msg.timestamp()),
-            decoded<shared::types::KeyValueMap>(msg.attributes()));
+            decoded<core::status::Level>(msg.level()),
+            decoded<core::status::Flow>(msg.flow()),
+            decoded<core::dt::TimePoint>(msg.timestamp()),
+            decoded<core::types::KeyValueMap>(msg.attributes()));
     }
 
-}  // namespace shared::protobuf
+}  // namespace core::protobuf

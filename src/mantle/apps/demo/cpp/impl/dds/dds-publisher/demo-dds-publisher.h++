@@ -19,12 +19,12 @@ namespace demo::dds
     // @class Publisher
     // @brief Publish locally-emitted demo signals over DDS
 
-    class Publisher : public shared::dds::Publisher,
-                      public shared::types::enable_create_shared<Publisher>
+    class Publisher : public core::dds::Publisher,
+                      public core::types::enable_create_shared<Publisher>
     {
         // Convencience alias
         using This = Publisher;
-        using Super = shared::dds::Publisher;
+        using Super = core::dds::Publisher;
 
     protected:
         Publisher(const std::string &channel_name, int domain_id);
@@ -36,7 +36,7 @@ namespace demo::dds
     private:
         void on_time_update(const TimeData &time_data);
 
-        void on_greeting_update(shared::signal::MappingChange change,
+        void on_greeting_update(core::signal::MappingChange change,
                                 const std::string &identity,
                                 const Greeting &greeting);
 

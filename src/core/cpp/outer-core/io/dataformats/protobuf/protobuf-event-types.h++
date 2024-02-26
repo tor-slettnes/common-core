@@ -21,25 +21,25 @@ namespace protobuf
     //==========================================================================
     // status::Domain encoding to/decoding from CC::Status::Domain
 
-    void encode(shared::status::Domain domain, CC::Status::Domain *encoded) noexcept;
-    void decode(CC::Status::Domain domain, shared::status::Domain *decoded) noexcept;
+    void encode(core::status::Domain domain, CC::Status::Domain *encoded) noexcept;
+    void decode(CC::Status::Domain domain, core::status::Domain *decoded) noexcept;
 
     //==========================================================================
-    // shared::status::Level encoding to/decoding from CC::Status::Level
+    // core::status::Level encoding to/decoding from CC::Status::Level
 
-    void encode(shared::status::Level level, CC::Status::Level *encoded) noexcept;
-    void decode(CC::Status::Level level, shared::status::Level *decoded) noexcept;
-
-    //==========================================================================
-    // shared::status::Level encoding to/decoding from CC::Status::Level
-
-    void encode(shared::status::Flow flow, CC::Status::Flow *encoded) noexcept;
-    void decode(CC::Status::Flow flow, shared::status::Flow *decoded) noexcept;
+    void encode(core::status::Level level, CC::Status::Level *encoded) noexcept;
+    void decode(CC::Status::Level level, core::status::Level *decoded) noexcept;
 
     //==========================================================================
-    // shared::status::Event encoding to/decoding from CC::Status::::EventData
+    // core::status::Level encoding to/decoding from CC::Status::Level
 
-    void encode(const shared::status::Event &event, CC::Status::Details *msg) noexcept;
-    void decode(const CC::Status::Details &msg, shared::status::Event *event) noexcept;
+    void encode(core::status::Flow flow, CC::Status::Flow *encoded) noexcept;
+    void decode(CC::Status::Flow flow, core::status::Flow *decoded) noexcept;
 
-}  // namespace shared::protobuf
+    //==========================================================================
+    // core::status::Event encoding to/decoding from CC::Status::::EventData
+
+    void encode(const core::status::Event &event, CC::Status::Details *msg) noexcept;
+    void decode(const CC::Status::Details &msg, core::status::Event *event) noexcept;
+
+}  // namespace core::protobuf

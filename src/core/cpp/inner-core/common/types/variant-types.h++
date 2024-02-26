@@ -17,7 +17,7 @@
 #include <variant>
 #include <vector>
 
-namespace shared::types
+namespace core::types
 {
     /// Classes implemented here.
     class Boolean;
@@ -100,4 +100,4 @@ namespace shared::types
     extern std::string typetree(const KeyValueMapRef &kvmap);
     extern std::string typetree(const TaggedValueListRef &tvlist);
 
-}  // namespace shared::types
+}  // namespace core::types

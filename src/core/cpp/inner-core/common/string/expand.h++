@@ -13,7 +13,7 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace shared::str
+namespace core::str
 {
     /// @brief
     ///     Expands brace-enclosed keys wihtin to string to corresponding values from map.
@@ -57,4 +57,4 @@ namespace shared::str
         ss << format.substr(next);
         return ss.str();
     }
-}  // namespace shared::str
+}  // namespace core::str

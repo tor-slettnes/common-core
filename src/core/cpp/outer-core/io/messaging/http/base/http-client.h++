@@ -13,7 +13,7 @@
 
 #include <sstream>
 
-namespace shared::http
+namespace core::http
 {
     using URL = std::string;
     using ResponseCode = long;
@@ -55,4 +55,4 @@ namespace shared::http
         CURL *handle_;
     };
 
-}  // namespace shared::http
+}  // namespace core::http

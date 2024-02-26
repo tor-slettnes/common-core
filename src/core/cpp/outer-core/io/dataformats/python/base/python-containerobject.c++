@@ -9,7 +9,7 @@
 #include "status/exceptions.h++"
 #include "string/misc.h++"
 
-namespace shared::python
+namespace core::python
 {
     std::string ContainerObject::name() const
     {
@@ -104,4 +104,4 @@ namespace shared::python
         return nullptr;
     }
 
-}  // namespace shared::python
+}  // namespace core::python
