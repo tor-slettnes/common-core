@@ -2,13 +2,13 @@
 #===============================================================================
 ## @file BuildProtodefs.cmake
 ## @brief CMake rules to generate/build ProtoBuf/gRPC bindings from ".proto" sources
-## @author Tor Slettnes <tslettnes@picarro.com>
+## @author Tor Slettnes <tor@slett.net>
 ##
 ## To use this file, copy, uncomment, and modify the following in your "CMakeLists.txt":
 ##
 ## @code
 ##     ### Target name. This can be used as a downstream dependency.
-##     set(TARGET picarro_YOURAPP_protodefs)
+##     set(TARGET cc_YOURAPP_protodefs)
 ##
 ##     ### What kind of library we are building (STATIC|SHARED|OBJECT|...)
 ##     ### See: https://cmake.org/cmake/help/latest/command/add_library.html.
@@ -16,13 +16,7 @@
 ##     set(LIB_TYPE OBJECT)
 ##
 ##     ### ProtoBuf dependencies from other applications on which we depend (if applicable).
-##     set(PROTO_DEPS picarro_shared_protodefs)
-##
-##     ### Static/shared library dependencies, either from this build or provided by
-##     ### the system. Only direct dependencies are needed; if you include
-##     ### "picarro_shared_protodefs" in PROTO_DEPS you do not need "grpc++" or "protobuf"
-##     ### here.
-##     set(LIB_DEPS grpc++ protobuf)
+##     set(PROTO_DEPS cc_shared_protodefs)
 ##
 ##     ### Source files
 ##     set(SOURCES
@@ -85,18 +79,35 @@ if (NOT LIB_TYPE)
   set(LIB_TYPE OBJECT)
 endif()
 
-### Build targets
-##
-### Fugly hack: Python ProtoBuf/gRPC output files listed here to force
-### generation, though not actually included in the archive.
-##
-add_library("${TARGET}" "${LIB_TYPE}" ${PROTO_SRC} ${GRPC_SRC} ${PROTO_PY} ${GRPC_PY})
 
-### Libraries required to link downstream consumers of this library
-target_link_libraries(${TARGET} ${LIB_DEPS} ${PROTO_DEPS})
+set(SOURCES
+  ${PROTO_SRC} ${GRPC_SRC}
+
+  ### Fugly hack: Python ProtoBuf/gRPC output files listed here to force
+  ### generation, though not actually included in the archive.
+  ${PROTO_PY} ${GRPC_PY}
+)
+
+if(BUILD_GRPC)
+  ### Use the gRPC++ target from Findgrpc.cmake
+  list(APPEND LIB_DEPS gRPC::grpc++)
+
+  ### However the above fails to capture all required library dependencies in
+  ### recent gRPC releases for Linux. Let's obtain additional dependencies from
+  ### `pkg-config`.
+  find_package(PkgConfig)
+  if(PkgConfig_FOUND)
+    set(PKG_DEPS grpc++)
+  endif()
+endif()
+
+include(BuildLibrary)
 
 ### Downstream consumers of this library need to include our generated sources
-target_include_directories(${TARGET} INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+
+### Libraries required to link downstream consumers of this library
+target_link_libraries(${TARGET} PUBLIC ${PROTO_DEPS})
 
 ### Use target property "source_dirs" to store location of shared .proto files
 ### for downstream consumers of this library.

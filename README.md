@@ -14,9 +14,9 @@ This repository is organized as follows:
 * [cmake](cmake) -- CMake build recipes & include files
 * [scripts](scripts) -- Miscellaneious scripts used for configuration, building & testing.
 * [src](src) -- top-level source directory; see [source](src/README.md) for details.
-  * [shared](src/shared) - Shared modules and libraries providing the application framework
-  * [apps](src/apps) - Common applications/services, deployed across product lines
-  * [products](src/products) - Applications and configuration/glue code for specific products
+  * [core](src/core) - Shared modules and libraries providing the application framework
+  * [mantle](src/mantle) - Common applications/services, deployed across product lines
+  * [crust](src/crust) - Glue code and configuration for specific products
 
 In addition, an `out` directory is created as part of the build process:
 
@@ -175,7 +175,7 @@ so:
    $ sudo mkdir -p /opt/common-core     # Create the folder if missing
    $ sudo chgrp staff /opt/common-core  # Set group ownership to `staff`
    $ sudo chmod g+ws /opt/common-core   # Set group write permission + sticky bits
-   $ sudo adduser $(whoami) staff   # Add yourself to the `staff` group
+   $ sudo adduser $(whoami) staff       # Add yourself to the `staff` group
    ```
    You may need to log out and back in again for this last change to take effect.
 
@@ -190,7 +190,7 @@ so:
 
 ## Writing code
 
-To learn how to contribute, either by making updates to an existing application or by creating a new one, you may want to start with the [demo](src/apps/demo) application and its [documentation](src/apps/demo/README.md).
+To learn how to contribute, either by making updates to an existing application or by creating a new one, you may want to start with the [demo](src/mantle/apps/demo) application and its [documentation](src/mantle/apps/demo/README.md).
 
 
 
@@ -200,5 +200,5 @@ Questions? Comments? Concerns?
 Please get in touch:
 
 > Tor Slettnes  
-> [tor@slett.net](mailto:tor@slett.net)  
-> [+1.925.8888.TOR](tel:+19258888867)
+> tor@slett.net  
+> +1.925.8888.TOR

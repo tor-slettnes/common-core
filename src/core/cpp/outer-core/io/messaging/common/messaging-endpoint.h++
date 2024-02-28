@@ -63,7 +63,7 @@ namespace core::messaging
     private:
 
     private:
-        static std::map<std::string, std::shared_ptr<SettingsStore>> settings_map_;
+        std::shared_ptr<SettingsStore> settings_;
         std::string messaging_flavor_;
         std::string endpoint_type_;
         std::string channel_name_;

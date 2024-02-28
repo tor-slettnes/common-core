@@ -209,7 +209,6 @@ namespace idl
                 core::types::ValueList *native) noexcept
     {
         native->clear();
-        native->reserve(idl.list().size());
         for (const auto &idl_value : idl.list())
         {
             decode(idl_value, &native->emplace_back());
@@ -221,7 +220,6 @@ namespace idl
                 core::types::ValueList *native) noexcept
     {
         native->clear();
-        native->reserve(std::distance(begin, end));
         for (auto it = begin; it != end; it++)
         {
             decode(*it, &native->emplace_back());
@@ -246,7 +244,6 @@ namespace idl
                 core::types::TaggedValueList *native) noexcept
     {
         native->clear();
-        native->reserve(idl.list().size());
         for (const CC::Variant::TaggedValue &tv : idl.list())
         {
             decode(tv, &native->emplace_back());
@@ -258,7 +255,6 @@ namespace idl
                 core::types::TaggedValueList *native) noexcept
     {
         native->clear();
-        native->reserve(std::distance(begin, end));
         for (auto it = begin; it != end; it++)
         {
             decode(*it, &native->emplace_back());

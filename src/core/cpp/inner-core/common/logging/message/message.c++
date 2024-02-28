@@ -67,7 +67,6 @@ namespace core::logging
     void Message::populate_fields(types::TaggedValueList *values) const noexcept
     {
         Event::populate_fields(values);
-        values->reserve(values->size() + 5);
 
         if (this->scope())
         {

@@ -17,6 +17,7 @@ namespace core::http
     public:
         RESTClient(const std::string &base_url,
                    const std::string &service_name,
+                   const std::string &messaging_flavor = "REST",
                    const std::string &content_type = "application/json");
 
         types::Value get_json(const std::string &location) const;

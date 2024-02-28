@@ -188,7 +188,6 @@ namespace protobuf
     void decode(const RepeatedValue &msgs,
                 core::types::TaggedValueList *tvlist) noexcept
     {
-        tvlist->reserve(tvlist->size() + msgs.size());
         for (const auto &msg : msgs)
         {
             decode(msg, &tvlist->emplace_back());
@@ -280,7 +279,6 @@ namespace protobuf
     void decode(const RepeatedValue &msgs,
                 core::types::ValueList *list) noexcept
     {
-        list->reserve(list->size() + msgs.size());
         for (const auto &msg : msgs)
         {
             decode(msg, &list->emplace_back());

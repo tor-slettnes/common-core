@@ -69,16 +69,23 @@ endif()
 
 ### Add required package dependencies
 find_package(PkgConfig)
-foreach (pkg ${PKG_DEPS})
-  pkg_check_modules(PKG ${pkg})
-  if (NOT PKG_FOUND)
-    message(FATAL_ERROR
-      "Unable to find '${pkg}', which is required to build '${TARGET}'. "
-      "Please install the required developer library on your system "
-      "(try to search your package manager for '${pkg}-dev').")
-  endif()
+if(PkgConfig_FOUND)
+  foreach (pkg ${PKG_DEPS})
+    pkg_check_modules(PKG ${pkg})
+    if (NOT PKG_FOUND)
+      message(FATAL_ERROR
+        "Unable to find '${pkg}', which is required to build '${TARGET}'. "
+        "Please install the required developer library on your system "
+        "(try to search your package manager for '${pkg}-dev').")
+    endif()
 
-  link_directories(${PKG_LIBRARY_DIRS})
-  target_include_directories(${TARGET} SYSTEM PUBLIC ${PKG_INCLUDE_DIRS})
-  target_link_libraries(${TARGET} PRIVATE ${PKG_LIBRARIES})
-endforeach()
+    link_directories(${PKG_LIBRARY_DIRS})
+    target_include_directories(${TARGET} SYSTEM PUBLIC ${PKG_INCLUDE_DIRS})
+    target_link_libraries(${TARGET} PRIVATE ${PKG_LIBRARIES})
+  endforeach()
+elseif(PKG_DEPS)
+  message(WARNING
+    "Unable to find 'pkg-config' on your system. This is needed to obtain "
+    "information about the following packages, which are required to "
+    "build '${TARGET}':${PKG_DEPS}.  We'll proceed cautiously.")
+endif()

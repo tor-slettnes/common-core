@@ -115,13 +115,16 @@ namespace core::types
         TaggedValueList as_tvlist() const noexcept;
         TaggedValueList as_tvlist(const TaggedValueList &fallback) const noexcept;
 
-        ValueListRef get_valuelist() const noexcept;
-        KeyValueMapRef get_kvmap() const noexcept;
-        TaggedValueListRef get_tvlist() const noexcept;
+        Value &operator[](const std::string &key);
+        Value &operator[](const uint index);
 
         const Value &get(const std::string &key, const Value &fallback = {}) const noexcept;
         const Value &get(const uint index, const Value &fallback = {}) const noexcept;
         const Value &get(const int index, const Value &fallback = {}) const noexcept;
+
+        ValueListRef get_valuelist() const noexcept;
+        KeyValueMapRef get_kvmap() const noexcept;
+        TaggedValueListRef get_tvlist() const noexcept;
 
         // void replace_from(const Value &other);
 
@@ -172,6 +175,9 @@ namespace core::types
         // protected:
         //     std::optional<ValueType> type_;
     };
+
+    extern const Value emptyvalue;
+
 }  // namespace core::types
 
 

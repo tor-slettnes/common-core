@@ -455,6 +455,7 @@ namespace core::types
         case ValueType::VALUELIST:
         {
             auto list = this->get<ValueListRef>();
+            auto it = list->begin();
             return {
                 list->get(0).as_real(),
                 list->get(1).as_real(),
@@ -465,8 +466,8 @@ namespace core::types
         {
             auto map = this->get<KeyValueMapRef>();
             return {
-                map->get(real_part).as_real(),
-                map->get(imag_part).as_real(),
+                map->get(REAL_PART).as_real(),
+                map->get(IMAG_PART).as_real(),
             };
         }
 
@@ -657,8 +658,8 @@ namespace core::types
 
         case ValueType::COMPLEX:
             return {
-                {real_part, this->as_real()},
-                {imag_part, this->as_imag()},
+                {REAL_PART, this->as_real()},
+                {IMAG_PART, this->as_imag()},
             };
 
         default:
@@ -686,8 +687,8 @@ namespace core::types
 
         case ValueType::COMPLEX:
             return {
-                {real_part, this->as_real()},
-                {imag_part, this->as_imag()},
+                {REAL_PART, this->as_real()},
+                {IMAG_PART, this->as_imag()},
             };
 
         default:
@@ -728,6 +729,36 @@ namespace core::types
         else
         {
             return {};
+        }
+    }
+
+    Value &Value::operator[](const std::string &key)
+    {
+        switch (this->type())
+        {
+        case ValueType::KVMAP:
+            return std::get<KeyValueMapRef>(*this)->operator[](key);
+
+        case ValueType::TVLIST:
+            return std::get<TaggedValueListRef>(*this)->operator[](key);
+
+        default:
+            throw std::invalid_argument("Value instance is not mappable");
+        }
+    }
+
+    Value &Value::operator[](const uint index)
+    {
+        switch (this->type())
+        {
+        case ValueType::VALUELIST:
+            return std::get<ValueListRef>(*this)->at(index);
+
+        case ValueType::TVLIST:
+            return std::get<TaggedValueListRef>(*this)->at(index).second;
+
+        default:
+            throw std::invalid_argument("Value instance is not indexable");
         }
     }
 
@@ -904,7 +935,7 @@ namespace core::types
     ValueType Value::literal_type(const std::string &literal)
     {
         static const std::vector<std::pair<ValueType, std::regex>> rxlist = {
-            {ValueType::NONE, std::regex("^$")},
+            {ValueType::NONE, std::regex("^(null|NULL|nullptr)?$")},
             {ValueType::BOOL, std::regex("^(false|true)$", std::regex::icase)},
             {ValueType::CHAR, std::regex("^'.'$")},
             {ValueType::SINT, std::regex("^[+-][[:digit:]]+$")},
@@ -912,16 +943,18 @@ namespace core::types
             {ValueType::REAL,
              std::regex("^[+-]?[[:digit:]]+(\\.[[:digit:]]*)?([eE][+-]?[[:digit:]]+)?$")},
             {ValueType::BYTEVECTOR, std::regex("^%[[:alnum:]\\+/]+={0,2}$")},
-            {ValueType::STRING, std::regex("\"([^\"\\\\]|(\\\\\\\\)*\\\\\")*\"")},
+            {ValueType::STRING, std::regex("\"((?:\\\\.|[^\"\\\\\\r\\n])*)\"")},
+            // {ValueType::STRING, std::regex("\"((?>\\\\\\\\|\\\\\"|[^\"\\r\\n])*)\"")},
             {ValueType::TIMEPOINT,
              std::regex("^(\\d{4}-\\d{2}-\\d{2})([@T\\s])"
-                        "(\\d{2}:\\d{2}:\\d{2})(?:(\\d+)?)$")},
-            {ValueType::DURATION, std::regex("(\\d{2}:\\d{2}:\\d{2})(?:(\\d+)?)$")},
+                        "(\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d+))?"
+                        "(?:\\s?(\\w+|[+-]\\d{2,4}))?$")},
+            {ValueType::DURATION, std::regex("(\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d+))?$")},
         };
 
         for (const auto &[candidate, rx] : rxlist)
         {
-            if (std::regex_match(literal, rx))
+            if (std::regex_match(literal.begin(), literal.end(), rx))
             {
                 return candidate;
             }
@@ -936,5 +969,7 @@ namespace core::types
                    ? ValueType::NONE
                    : static_cast<ValueType>(base.index());
     }
+
+    const Value emptyvalue;
 
 }  // namespace core::types

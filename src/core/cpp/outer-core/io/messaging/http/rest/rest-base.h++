@@ -13,12 +13,9 @@ namespace core::http
     class RESTBase : public messaging::Endpoint
     {
     protected:
-        RESTBase(const std::string &endpiont_type,
-                 const std::string &service_name);
+        using messaging::Endpoint::Endpoint;
 
     protected:
-        fs::path settings_file(const std::string &product) const override;
-
         std::string real_url(
             const std::string &partial_url,
             const std::string &scheme_option = "scheme",

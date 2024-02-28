@@ -264,7 +264,6 @@ namespace core::python
         {
             types::ValueList values;
             Py_ssize_t size = PyList_Size(this->cobj);
-            values.reserve(size);
 
             for (int c = 0; c < size; c++)
             {
@@ -284,7 +283,6 @@ namespace core::python
         {
             types::TaggedValueList tvlist;
             Py_ssize_t size = PyList_Size(this->cobj);
-            tvlist.reserve(size);
 
             for (int c = 0; c < size; c++)
             {

@@ -270,7 +270,6 @@ namespace protobuf
                 core::types::TaggedValueList *tvlist) noexcept
     {
         const auto &fields = msg.fields();
-        tvlist->reserve(fields.size());
         for (const auto &[key, value] : fields)
         {
             core::types::TaggedValue tv = {key, {}};
@@ -291,7 +290,6 @@ namespace protobuf
     void decode(const google::protobuf::ListValue &msg,
                 core::types::ValueList *list) noexcept
     {
-        list->reserve(msg.values_size());
         for (const google::protobuf::Value &value : msg.values())
         {
             decode(value, &list->emplace_back());

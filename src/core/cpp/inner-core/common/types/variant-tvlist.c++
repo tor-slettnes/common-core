@@ -172,7 +172,6 @@ namespace core::types
     ValueList TaggedValueList::values() const noexcept
     {
         ValueList values;
-        values.reserve(this->size());
         for (const auto &[t, v] : *this)
         {
             values.push_back(v);
@@ -185,7 +184,6 @@ namespace core::types
     {
         TaggedValueList filtered;
 
-        filtered.reserve(this->size());
         for (const auto &tv : *this)
         {
             if (tv.first)
@@ -193,7 +191,6 @@ namespace core::types
                 filtered.push_back(tv);
             }
         }
-        filtered.shrink_to_fit();
         return filtered;
     }
 
@@ -202,7 +199,6 @@ namespace core::types
     {
         TaggedValueList filtered;
 
-        filtered.reserve(this->size());
         for (const auto &tv : *this)
         {
             if (tv.second)
@@ -210,7 +206,6 @@ namespace core::types
                 filtered.push_back(tv);
             }
         }
-        filtered.shrink_to_fit();
         return filtered;
     }
 
@@ -230,7 +225,6 @@ namespace core::types
 
     TaggedValueList &TaggedValueList::extend(const ValueList &vlist) noexcept
     {
-        this->reserve(this->size() + vlist.size());
         for (const Value &value : vlist)
         {
             this->emplace_back(nulltag, value);
@@ -240,7 +234,6 @@ namespace core::types
 
     TaggedValueList &TaggedValueList::extend(ValueList &&vlist) noexcept
     {
-        this->reserve(this->size() + vlist.size());
         for (Value &value : vlist)
         {
             this->emplace_back(nulltag, std::move(value));
@@ -256,7 +249,6 @@ namespace core::types
 
     TaggedValueList &TaggedValueList::extend(TaggedValueList &&other) noexcept
     {
-        this->reserve(this->size() + other.size());
         for (auto it = other.begin(); it != other.end(); it++)
         {
             this->push_back(std::move(*it));
@@ -299,7 +291,6 @@ namespace core::types
     TaggedValueList &TaggedValueList::merge(TaggedValueList &other) noexcept
     {
         // auto lck = std::lock_guard(this->mtx);
-        this->reserve(this->size() + other.size());
         auto it = other.begin();
         while (it != other.end())
         {
@@ -313,7 +304,6 @@ namespace core::types
                 it++;
             }
         }
-        this->shrink_to_fit();
         return *this;
     }
 

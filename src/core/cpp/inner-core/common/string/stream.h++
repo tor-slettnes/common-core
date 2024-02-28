@@ -88,6 +88,12 @@ namespace std
         return core::stream::write_sequence(stream, list);
     }
 
+    template <class T>
+    std::ostream &operator<<(std::ostream &stream, const std::deque<T> &queue)
+    {
+        return core::stream::write_sequence(stream, queue);
+    }
+
     template <class K, class V>
     std::ostream &operator<<(std::ostream &stream, const std::map<K, V> &map)
     {

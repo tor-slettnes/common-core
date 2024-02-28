@@ -85,13 +85,13 @@ namespace core::logging
         {
             for (const auto &[level, levelname] : status::LevelNames)
             {
-                std::string raw =
+                std::string style =
                     styles.is_kvmap() ? styles.as_kvmap().get(str::tolower(levelname)).as_string()
                                       : styles.as_string();
 
-                if (!raw.empty())
+                if (!style.empty())
                 {
-                    this->styles[level][part] = str::unescaped(raw);
+                    this->styles[level][part] = style;
                 }
             }
         }

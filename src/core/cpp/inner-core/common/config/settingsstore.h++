@@ -68,6 +68,8 @@ namespace core
     public:
         using types::enable_create_shared<SettingsStore>::create_shared;
 
+        bool loaded() const;
+
         /// @brief
         ///     Load settings from the specified file.
         /// @param[in] filename
@@ -86,6 +88,7 @@ namespace core
         /// @param[in] abspath
         ///     Settings file to load.
         bool load_from(const fs::path &abspath);
+
 
         /// @brief
         ///     Save current settings to the default .json file for this store,

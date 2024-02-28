@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "messaging-endpoint.h++"
+#include "logging/logging.h++"
 #include "buildinfo.h"
 
 #include <iomanip>
@@ -21,7 +22,8 @@ namespace core::messaging
                        const std::string &channel_name)
         : messaging_flavor_(messaging_flavor),
           endpoint_type_(endpoint_type),
-          channel_name_(channel_name)
+          channel_name_(channel_name),
+          settings_(SettingsStore::create_shared())
     {
     }
 
@@ -47,20 +49,16 @@ namespace core::messaging
 
     std::shared_ptr<SettingsStore> Endpoint::settings() const
     {
-        try
+        if (!this->settings_->loaded())
         {
-            return Endpoint::settings_map_.at(this->messaging_flavor());
+            this->settings_->load({
+                this->settings_file(PROJECT_NAME),
+                this->settings_file("common"),
+            });
+            logf_notice("%s loaded settings from %s",
+                        *this, this->settings_->filenames());
         }
-        catch (std::out_of_range)
-        {
-            auto [it, inserted] = Endpoint::settings_map_.insert_or_assign(
-                this->messaging_flavor(),
-                SettingsStore::create_shared(types::PathList({
-                    this->settings_file(PROJECT_NAME),
-                    this->settings_file("common"),
-                })));
-            return it->second;
-        }
+        return this->settings_;
     }
 
     types::Value Endpoint::setting(const std::string &key,
@@ -84,7 +82,5 @@ namespace core::messaging
                     this->channel_name(),
                     this->endpoint_type());
     }
-
-    std::map<std::string, std::shared_ptr<SettingsStore>> Endpoint::settings_map_;
 
 }  // namespace core::messaging

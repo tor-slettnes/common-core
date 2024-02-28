@@ -6,7 +6,6 @@
 //==============================================================================
 
 #include "jsonreader.h++"
-#include "jsondecoder.h++"
 #include "status/exceptions.h++"
 
 #include <rapidjson/filereadstream.h>
@@ -27,7 +26,7 @@ namespace core::json
 
     types::Value JsonReader::read_from(const fs::path &path)
     {
-        return JsonDecoder::parse_text_with_comments(This::read_text(path));
+        return JsonParser::parse_text(This::read_text(path));
     }
 
     std::string JsonReader::read_text(const fs::path &path)

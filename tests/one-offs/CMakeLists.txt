@@ -7,3 +7,4 @@
 
 add_subdirectory(python-runtime)
 add_subdirectory(rest-tool)
+add_subdirectory(json-parser)

@@ -7,7 +7,7 @@
 ##  - https://github.com/IvanSafonov/grpc-cmake-example/blob/master/cmake/FindGRPC.cmake
 ##  - https://github.com/zhengwx11/FindGRPC/blob/master/FindGRPC.cmake
 ##
-## @copyright 2019 Tor Slettnes <tslettnes@picarro.com>
+## @copyright 2019 Tor Slettnes <tor@slett.net>
 ## @copyright 2017 Wenxun Zheng <zhengwx11@foxmail.com>
 ## @copyright 2009 Kitware, Inc.
 ## @copyright 2009-2011 Philip Lowman <philip@yhbt.com>
@@ -63,6 +63,10 @@
 #  DEST - directory where the source files will be created
 #  ARGN - .proto files
 #
+
+# gRPC always requires Thread support.
+find_package(Threads REQUIRED)
+
 
 function(GRPC_GENERATE_CPP SRCS HDRS DEST)
   if(NOT ARGN)
@@ -197,7 +201,7 @@ mark_as_advanced(GRPC_LIBRARY)
 add_library(gRPC::grpc UNKNOWN IMPORTED)
 set_target_properties(gRPC::grpc PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES ${GRPC_INCLUDE_DIR}
-    INTERFACE_LINK_LIBRARIES "-lpthread;-ldl"
+    INTERFACE_LINK_LIBRARIES Threads::Threads #"-lpthread;-ldl"
     IMPORTED_LOCATION ${GRPC_LIBRARY}
 )
 

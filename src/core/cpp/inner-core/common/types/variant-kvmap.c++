@@ -59,7 +59,6 @@ namespace core::types
     ValueList KeyValueMap::values() const noexcept
     {
         ValueList values;
-        values.reserve(this->size());
         for (const auto &[k, v] : *this)
         {
             values.push_back(v);

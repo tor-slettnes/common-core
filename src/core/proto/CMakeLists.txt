@@ -11,9 +11,6 @@ set(TARGET cc_core_proto)
 ### What type of library are we building?
 set(LIB_TYPE STATIC)
 
-### Static/shared library dependencies.
-set(PKG_DEPS grpc++ protobuf)
-
 ### Source files
 set(SOURCES
   variant_types.proto

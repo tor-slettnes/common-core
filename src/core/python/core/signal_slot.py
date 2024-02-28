@@ -62,6 +62,8 @@ class DataSignal (object):
         if self.use_cache:
             self._emit_cached_to(handle, slot)
 
+        return handle
+
 
     def disconnect(self, handle: str) -> bool:
         '''Disconnect a simple handler from this signal.

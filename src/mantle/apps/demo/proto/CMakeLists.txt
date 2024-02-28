@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### This can be used as a downstream dependency.
-set(TARGET cc_demo_protodefs)
+set(TARGET cc_demo_proto)
 
 ### What type of library are we building?
 set(LIB_TYPE STATIC)

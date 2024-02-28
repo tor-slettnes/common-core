@@ -55,7 +55,6 @@ namespace core::grpc
         ///     Service name
         std::string servicename(bool full = false) const;
 
-        fs::path settings_file(const std::string &product) const override;
     protected:
         /// Sanitize a target address of the form [HOST][:PORT] (where either or both
         /// may be absent) by ensuring it contains both.
@@ -105,7 +104,6 @@ namespace core::grpc
         std::string joinaddress(const std::string &host, uint port) const;
 
     private:
-        static std::shared_ptr<SettingsStore> settings_;
         const std::string full_service_name_;
     };
 

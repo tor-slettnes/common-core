@@ -177,8 +177,6 @@ namespace core::status
 
     void Event::populate_fields(types::TaggedValueList *values) const noexcept
     {
-        values->reserve(values->size() + 8 + this->attributes_.size());
-
         if (const std::string &text = this->text(); !text.empty())
         {
             values->emplace_back(EVENT_FIELD_TEXT, text);

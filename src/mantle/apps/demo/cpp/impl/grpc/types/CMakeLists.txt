@@ -13,7 +13,7 @@ set(LIB_TYPE STATIC)
 ### Library dependencies.
 set(LIB_DEPS
   cc_demo_api
-  cc_demo_protodefs
+  cc_demo_proto
   cc_core_io_protobuf
 )
 

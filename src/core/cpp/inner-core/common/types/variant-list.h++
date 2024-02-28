@@ -13,11 +13,11 @@
 
 namespace core::types
 {
-    class ValueList : public std::vector<Value>,
+    class ValueList : public std::deque<Value>,
                       public Streamable,
                       public enable_create_shared<ValueList>
     {
-        using Super = std::vector<Value>;
+        using Super = std::deque<Value>;
 
     protected:
         using Super::Super;

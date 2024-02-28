@@ -16,8 +16,8 @@ namespace core::types
     const Tag nulltag;
     const NullValueType nullvalue;
 
-    const std::string real_part{"real"};
-    const std::string imag_part{"imag"};
+    const std::string REAL_PART{"real"};
+    const std::string IMAG_PART{"imag"};
 
     //==========================================================================
     // types::Value class methods

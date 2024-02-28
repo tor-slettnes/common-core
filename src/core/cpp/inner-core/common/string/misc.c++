@@ -321,15 +321,15 @@ namespace core::str
                     ord << std::hex;
                     break;
 
-                    // case 'u':
-                    //     digitsRemaining = 4;
-                    //     ord << std::hex;
-                    //     break;
+                case 'u':
+                    digitsRemaining = 4;
+                    ord << std::hex;
+                    break;
 
-                    // case 'U':
-                    //     digitsRemaining = 8;
-                    //     ord << std::hex;
-                    //     break;
+                case 'U':
+                    digitsRemaining = 8;
+                    ord << std::hex;
+                    break;
 
                 default:
                     out << *it;

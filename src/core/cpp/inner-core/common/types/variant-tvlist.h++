@@ -12,11 +12,11 @@
 
 namespace core::types
 {
-    class TaggedValueList : public std::vector<TaggedValue>,
+    class TaggedValueList : public std::deque<TaggedValue>,
                             public Streamable,
                             public enable_create_shared<TaggedValueList>
     {
-        using Super = std::vector<TaggedValue>;
+        using Super = std::deque<TaggedValue>;
 
     protected:
         // Inherit constructors from std::vector<>
@@ -30,15 +30,15 @@ namespace core::types
             const Tag &tag,
             bool ignoreCase = false) noexcept;
 
-        // Inherit .at(position) from std::vector
-        using std::vector<TaggedValue>::at;
+        // Inherit .at(position) from std::deque
+        using Super::at;
 
         // Additional signature to obtain the first encountered value with a specific tag.
         Value &at(const Tag &tag);
         const Value &at(const Tag &tag) const;
 
-        // Inherit [] operator from std::vector
-        using std::vector<TaggedValue>::operator[];
+        // Inherit [] operator from std::deque
+        using Super::operator[];
 
         // Additional signature to obtain reference to the first encountered value with
         // a specific tag, inserting a new element if necessary.

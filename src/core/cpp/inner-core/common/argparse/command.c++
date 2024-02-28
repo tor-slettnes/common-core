@@ -98,7 +98,6 @@ namespace core::argparse
         }
 
         types::TaggedValueList tvlist;
-        tvlist.reserve(this->args.size() / 2);
         while (this->args.size())
         {
             std::string key = this->pop_arg("key");

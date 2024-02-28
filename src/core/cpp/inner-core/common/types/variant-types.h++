@@ -16,6 +16,7 @@
 #include <map>
 #include <variant>
 #include <vector>
+#include <deque>
 
 namespace core::types
 {
@@ -87,8 +88,8 @@ namespace core::types
     extern const NullValueType nullvalue;
 
     /// Keys for storing complex numbers as Key/Value pairs
-    extern const std::string real_part;
-    extern const std::string imag_part;
+    extern const std::string REAL_PART;
+    extern const std::string IMAG_PART;
 
     extern const SymbolMap<ValueType, std::multimap<ValueType, std::string>> TypeNames;
 

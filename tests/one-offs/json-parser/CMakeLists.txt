@@ -5,11 +5,5 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-target_sources(${TARGET} PRIVATE
-  tokenparser.c++
-  jsonparser.c++
-  jsonreader.c++
-
-  jsonbuilder.c++
-  jsonwriter.c++)
+add_subdirectory(cpp)
 

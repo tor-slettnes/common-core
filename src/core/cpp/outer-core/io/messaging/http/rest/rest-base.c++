@@ -10,18 +10,6 @@
 
 namespace core::http
 {
-    RESTBase::RESTBase(const std::string &endpoint_type,
-                       const std::string &service_name)
-        : messaging::Endpoint("REST", endpoint_type, service_name)
-    {
-    }
-
-    fs::path RESTBase::settings_file(const std::string &product) const
-    {
-        return str::format("%,s-services-%,s.json",
-                           this->messaging_flavor(),
-                           product);
-    }
 
     std::string RESTBase::real_url(const std::string &partial_url,
                                    const std::string &scheme_option,

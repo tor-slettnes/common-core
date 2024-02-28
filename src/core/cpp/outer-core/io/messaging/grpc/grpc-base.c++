@@ -35,11 +35,6 @@ namespace core::grpc
                     : str::stem(this->full_service_name_, ".");
     }
 
-    fs::path Base::settings_file(const std::string &product) const
-    {
-        return str::format("grpc-services-%,s.json", product);
-    }
-
     std::string Base::realaddress(const std::string &address,
                                   const std::string &hostOption,
                                   const std::string &portOption,
@@ -107,7 +102,5 @@ namespace core::grpc
             return "";
         }
     }
-
-    std::shared_ptr<SettingsStore> Base::settings_;
 
 }  // namespace core::grpc

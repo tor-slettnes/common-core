@@ -24,15 +24,15 @@
     {
         "intro" : "",
         "text" : {
-            "trace"  : "\\e[38;5;244m", // dim grey
-            "debug"  : "\\e[38;5;74m",  // dim blue
-            "info"   : "\\e[34m",       // blue
-            "notice" : "\\e[1;34m",     // bold, blue
-            "warning": "\\e[1;33m",     // bold, yellow
-            "failed" : "\\e[1;31m",     // bold, red
-            "fatal"  : "\\e[1;37;41m"   // bold, white on red
+            "trace"  : "\e[38;5;244m", // dim grey
+            "debug"  : "\e[38;5;74m",  // dim blue
+            "info"   : "\e[34m",       // blue
+            "notice" : "\e[1;34m",     // bold, blue
+            "warning": "\e[1;33m",     // bold, yellow
+            "failed" : "\e[1;31m",     // bold, red
+            "fatal"  : "\e[1;37;41m"   // bold, white on red
         },
-        "reset" : "\\e[0m"
+        "reset" : "\e[0m"
     },
 
     // Log to JSON files
