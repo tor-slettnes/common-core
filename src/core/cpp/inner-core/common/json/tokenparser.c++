@@ -8,7 +8,6 @@
 #include "tokenparser.h++"
 
 #include "status/exceptions.h++"
-#include "logging/logging.h++"
 
 #include <regex>
 #include <string_view>
@@ -36,7 +35,7 @@ namespace core::json
             {TI_REAL, std::regex("^\\s*([+-]?[0-9]+(?=[\\.eE])(?:\\.[0-9]*)?(?:[eE][+-]?[0-9]+)?)")},
             {TI_SINT, std::regex("^\\s*([+-][0-9]+)")},
             {TI_UINT, std::regex("^\\s*([0-9]+)")},
-            {TI_STRING, std::regex("^\\s*\"((?:\\\\.|[^\"\\\\\\r\\n])*)\"")},
+            {TI_STRING, std::regex("^\\s*(\"((?:\\\\.|[^\"\\\\\\r\\n])*)\")")},
             {TI_COMMENT, std::regex("^\\s*((?://|#)[^\\r\\n]*)")},
             {TI_UNKNOWN, std::regex("^\\s*(\\S+)")},
         };
@@ -47,11 +46,13 @@ namespace core::json
         {
             if (std::regex_search(it, this->text_.end(), match, rx))
             {
-                this->match_start_ = it + match.position(0);
-                this->match_end_ = this->match_start_ + match.length(0);
+                this->match_start_ = it + match.position(1);
+                this->match_end_ = this->match_start_ + match.length(1);
 
-                this->token_ = std::string_view(&*it + match.position(1),
-                                                match.length(1));
+                std::size_t inner_group = match.size()-1;
+                it += match.position(inner_group);
+                this->token_ = std::string_view(&*it, match.length(inner_group));
+
                 return ti;
             }
         }
@@ -86,10 +87,9 @@ namespace core::json
         else
         {
             throwf(exception::InvalidArgument,
-                   "Unexpected JSON token (type %d) at position %d: %s",
-                   index,
+                   "Unexpected JSON token at position %d: %s",
                    std::distance(this->text_.begin(), this->match_start()),
-                   this->token_);
+                   std::string(this->match_start(), this->match_end()));
         }
     }
 

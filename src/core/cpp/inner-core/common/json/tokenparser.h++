@@ -42,9 +42,9 @@ namespace core::json
         TokenIndex next_of(const TokenSet &candidates,
                            const TokenSet &endtokens = {});
 
-        std::string token() const;
         std::string::const_iterator match_start() const;
         std::string::const_iterator match_end() const;
+        std::string token() const;
 
     private:
         const std::string &text_;

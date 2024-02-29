@@ -64,4 +64,4 @@ class Endpoint (object):
         try:
             return self.settings[self.channel_name][key]
         except (TypeError, KeyError):
-            return default
+            return self.settings.get("*", {}).get(key, default)

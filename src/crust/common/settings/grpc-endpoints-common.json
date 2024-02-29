@@ -34,7 +34,14 @@
     // * If still missing, the compile-time default is the IPv6 loopback address
     //   "[::1]:8080" for clients, and "[::]:8080" for servers.
 
-    // Service names extracted from .proto files
+    // Default settings for any service
+    "*":
+    {
+        "host" : "localhost",   // Connect to localhost by default
+        "interface" : "[::]"    // Listen on all interfaces by default
+    },
+
+    // Settings for specific services. Service names are from .proto files.
     "Demo":
     {
         // "interface" : "",       // Listen on all interfaces by default

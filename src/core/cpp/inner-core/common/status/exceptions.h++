@@ -95,10 +95,10 @@ namespace core::exception
     };
 
     /// Indicates not enough arguments were provided
-    class MissingArgument : public CustomException<std::length_error>
+    class MissingArgument : public CustomException<std::invalid_argument>
     {
         using This = MissingArgument;
-        using Super = CustomException<std::length_error>;
+        using Super = CustomException<std::invalid_argument>;
 
     public:
         using Super::Super;

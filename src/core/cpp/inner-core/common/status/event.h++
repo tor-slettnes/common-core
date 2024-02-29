@@ -80,7 +80,7 @@ namespace core::status
         virtual const dt::TimePoint &timepoint() const noexcept;
         virtual std::string text() const noexcept;
         virtual const types::KeyValueMap &attributes() const noexcept;
-        virtual types::KeyValueMap attributes() noexcept;
+        virtual types::KeyValueMap &attributes() noexcept;
         virtual types::Value attribute(const std::string &key,
                                        const types::Value &fallback = {}) const noexcept;
         types::TaggedValueList as_tvlist() const noexcept;

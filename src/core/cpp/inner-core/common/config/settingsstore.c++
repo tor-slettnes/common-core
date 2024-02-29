@@ -9,6 +9,8 @@
 //#include "string/misc.h++"
 #include "json/jsonreader.h++"
 #include "json/jsonwriter.h++"
+#include "status/exceptions.h++"
+#include "logging/logging.h++"
 
 #include <filesystem>
 #include <fstream>
@@ -89,6 +91,11 @@ namespace core
         }
         catch (const fs::filesystem_error &)
         {
+            return false;
+        }
+        catch (const std::exception &e)
+        {
+            logf_warning("Failed to parse settings file %s: %s", abspath, e);
             return false;
         }
 

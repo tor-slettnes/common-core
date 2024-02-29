@@ -152,7 +152,7 @@ namespace core::status
         return this->attributes_;
     }
 
-    types::KeyValueMap Event::attributes() noexcept
+    types::KeyValueMap &Event::attributes() noexcept
     {
         return this->attributes_;
     }

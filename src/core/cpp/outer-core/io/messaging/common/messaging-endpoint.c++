@@ -61,10 +61,23 @@ namespace core::messaging
         return this->settings_;
     }
 
+
     types::Value Endpoint::setting(const std::string &key,
                                    const types::Value &fallback) const
     {
-        return this->settings()->get(this->channel_name()).get(key, fallback);
+        if (auto value = this->settings()->get(this->channel_name()).get(key))
+        {
+            return value;
+        }
+        else if (auto value = this->settings()->get("*").get(key))
+        {
+            return value;
+        }
+        else
+        {
+            return fallback;
+
+        }
     }
 
     fs::path Endpoint::settings_file(const std::string &product) const
