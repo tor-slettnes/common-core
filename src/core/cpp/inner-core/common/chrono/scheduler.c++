@@ -356,10 +356,10 @@ namespace core
         catch (...)
         {
             keep = (this->failures < this->retries);
+            this->failures++;
 
             if (keep)
             {
-                this->failures++;
                 logf_info("Scheduled task %r invocation failed, %d tries remaining: %s",
                           this->handle,
                           this->retries - this->failures + 1,

@@ -16,9 +16,6 @@ class RESTClient (HTTPClient):
     # for this endpoint (e.g., host/port, ...).
     service_name = None
 
-    def settings_file(self, product_name: str) -> str:
-        return "rest-services-%s.json"%(product_name.lower(),)
-
     def get_json(self, rel_url, kwargs={}, headers={}):
         response = self.get(rel_url, kwargs, headers, 'application/json')
         return json.loads(response.read())

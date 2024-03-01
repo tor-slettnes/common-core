@@ -8,6 +8,7 @@
 #include "jsonparser.h++"
 #include "string/misc.h++"
 #include "status/exceptions.h++"
+#include "logging/logging.h++"
 
 namespace core::json
 {
@@ -64,45 +65,56 @@ namespace core::json
         const ParserRef &parser,
         const TokenSet &endtokens)
     {
-        while (TokenIndex token = parser->next_of({TI_OBJECT_OPEN,
-                                                   TI_ARRAY_OPEN,
-                                                   TI_NULL,
-                                                   TI_BOOL,
-                                                   TI_REAL,
-                                                   TI_SINT,
-                                                   TI_UINT,
-                                                   TI_STRING,
-                                                   TI_COMMENT},
-                                                  endtokens))
+        while (TokenIndex ti = parser->next_of({TI_OBJECT_OPEN,
+                                                TI_ARRAY_OPEN,
+                                                TI_NULL,
+                                                TI_BOOL,
+                                                TI_REAL,
+                                                TI_SINT,
+                                                TI_UINT,
+                                                TI_STRING,
+                                                TI_COMMENT},
+                                               endtokens))
         {
-            switch (token)
+            try
             {
-            case TI_OBJECT_OPEN:
-                return This::parse_object(parser);
+                switch (ti)
+                {
+                case TI_OBJECT_OPEN:
+                    return This::parse_object(parser);
 
-            case TI_ARRAY_OPEN:
-                return This::parse_array(parser);
+                case TI_ARRAY_OPEN:
+                    return This::parse_array(parser);
 
-            case TI_NULL:
-                return types::Value();
+                case TI_NULL:
+                    return types::Value();
 
-            case TI_BOOL:
-                return parser->token() == "true";
+                case TI_BOOL:
+                    return parser->token() == "true";
 
-            case TI_REAL:
-                return std::stod(parser->token());
+                case TI_REAL:
+                    return str::convert_to<double>(parser->token());
 
-            case TI_SINT:
-                return std::stoll(parser->token());
+                case TI_SINT:
+                    return str::convert_to<types::largest_sint>(parser->token());
 
-            case TI_UINT:
-                return std::stoull(parser->token());
+                case TI_UINT:
+                    return str::convert_to<types::largest_uint>(parser->token());
 
-            case TI_STRING:
-                return str::unescaped(parser->token());
+                case TI_STRING:
+                    return str::unescaped(parser->token());
 
-            case TI_COMMENT:
-                continue;
+                case TI_COMMENT:
+                    continue;
+                }
+            }
+            catch (const std::exception &e)
+            {
+                logf_error("JSON parser failed to convert token %r to type %d: %s",
+                           parser->token(),
+                           ti,
+                           e);
+                throw;
             }
         }
         return {};

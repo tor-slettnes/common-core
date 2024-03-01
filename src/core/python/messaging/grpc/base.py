@@ -41,11 +41,6 @@ class Base (Endpoint):
 
         Endpoint.__init__(self, self.service_name)
 
-
-    def settings_file(self, product_name: str) -> str:
-        return "grpc-services-%s.json"%(product_name.lower(),)
-
-
     def max_request_size(self) -> Optional[str]:
         return self.setting("max request size", None)
 

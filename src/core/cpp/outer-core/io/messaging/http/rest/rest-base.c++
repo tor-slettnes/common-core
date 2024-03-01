@@ -10,7 +10,6 @@
 
 namespace core::http
 {
-
     std::string RESTBase::real_url(const std::string &partial_url,
                                    const std::string &scheme_option,
                                    const std::string &host_option,
