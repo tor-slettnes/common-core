@@ -26,6 +26,7 @@
 namespace protobuf
 {
     using google::protobuf::Empty;
+    using RepeatedString = google::protobuf::RepeatedPtrField<std::string>;
 
     //==========================================================================
     // Simple protobuf types

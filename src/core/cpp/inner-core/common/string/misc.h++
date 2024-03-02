@@ -12,7 +12,6 @@
 #include <iostream>
 #include <locale>
 #include <regex>
-#include <sstream>
 #include <string>
 #include <typeinfo>
 #include <type_traits>  // std::is_same_v<T, U>
@@ -193,7 +192,32 @@ namespace core::str
         uint maxsplits = 0,
         bool keep_empties = false);
 
-    /// Join a sequence of strings by the specified delimiter
+    /// Join a sequence of strings by the specified delimiter to an output stream
+    /// \param[in] out
+    ///     Output stream
+    /// \param[in] begin
+    ///     Iterator to beginning of sequence
+    /// \param[in] end
+    ///     Iterator to end of sequence
+    /// \param[in] delimiter
+    ///     Inserted between each string in vector
+    /// \param[in] keep_empties
+    ///     Include empty strings from input vector
+    /// \param[in] quoted
+    ///     Inserted before and after each string in vector
+
+    template <class InputIt>
+    void join(
+        std::ostream &out,
+        const InputIt &begin,
+        const InputIt &end,
+        const std::string &delimiter = " ",
+        bool keep_empties = false,
+        bool quoted = false);
+
+    /// Join a sequence of strings by the specified delimiter, returning the result
+    /// \param[in] out
+    ///     Output stream
     /// \param[in] begin
     ///     Iterator to beginning of sequence
     /// \param[in] end
@@ -206,37 +230,14 @@ namespace core::str
     ///     Inserted before and after each string in vector
     /// \return
     ///     New string consisting of each string from \p vector joined by \p delimiter
+
     template <class InputIt>
-    [[nodiscard]] inline std::string join(
+    [[nodiscard]] std::string join(
         const InputIt &begin,
         const InputIt &end,
         const std::string &delimiter = " ",
         bool keep_empties = false,
-        bool quoted = false)
-    {
-        std::stringstream out;
-        bool first = true;
-        for (auto it = begin; it != end; it++)
-        {
-            if (keep_empties || !it->empty())
-            {
-                if (!first)
-                {
-                    out << delimiter;
-                }
-                first = false;
-                if (quoted)
-                {
-                    out << std::quoted(*it);
-                }
-                else
-                {
-                    out << *it;
-                }
-            }
-        }
-        return out.str();
-    }
+        bool quoted = false);
 
     /// Join a vector of strings by the specified delimiter
     /// \param[in] vector
@@ -334,12 +335,7 @@ namespace core::str
 
     template <class... Args>
     [[nodiscard]] std::string to_string(
-        const Args &...args) noexcept
-    {
-        std::stringstream ss;
-        (ss << ... << args);
-        return ss.str();
-    }
+        const Args &...args) noexcept;
 
     /// Convert a number to its hexadecimal representation, zero-padded
     /// according to the specifed width or type size.  For instance,
@@ -349,13 +345,9 @@ namespace core::str
     [[nodiscard]] std::string hex(
         T val,
         size_t width = sizeof(T) * 2,
-        std::string prefix = "0x")
-    {
-        std::stringstream os;
-        os << prefix << std::setfill('0') << std::setw(width) << std::hex << (val | 0);
-        return os.str();
-    }
-
-    //std::string mangle_name (const std::string &name, const std::regex &tokens="(\\W)");
+        std::string prefix = "0x");
 
 }  // namespace core::str
+
+// Inline definitions
+#include "misc.i++"

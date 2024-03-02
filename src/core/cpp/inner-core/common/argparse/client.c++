@@ -23,7 +23,7 @@ namespace core::argparse
         this->add_opt(
             {"-h", "--host"},
             "ADDRESS",
-            "Server address in the form [PERSONALITY@][HOST][:PORT], "
+            "Server address in the form [HOST][:PORT], "
             "where HOST and PORT, if specified, take precedence. ",
             &this->host);
 

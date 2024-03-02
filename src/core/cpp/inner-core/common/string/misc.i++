@@ -1,0 +1,70 @@
+/// -*- c++ -*-
+//==============================================================================
+/// @file misc.i++
+/// @brief Miscellaneous string manipulations - inline methods
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#include <sstream>
+
+/// Miscellaneous string manipulations
+namespace core::str
+{
+    template <class InputIt>
+    inline void join(std::ostream &out,
+                     const InputIt &begin,
+                     const InputIt &end,
+                     const std::string &delimiter,
+                     bool keep_empties,
+                     bool quoted)
+    {
+        bool first = true;
+        for (auto it = begin; it != end; it++)
+        {
+            if (keep_empties || !it->empty())
+            {
+                if (!first)
+                {
+                    out << delimiter;
+                }
+                first = false;
+                if (quoted)
+                {
+                    out << std::quoted(*it);
+                }
+                else
+                {
+                    out << *it;
+                }
+            }
+        }
+    }
+
+    template <class InputIt>
+    [[nodiscard]] inline std::string join(const InputIt &begin,
+                                          const InputIt &end,
+                                          const std::string &delimiter,
+                                          bool keep_empties,
+                                          bool quoted)
+    {
+        std::stringstream out;
+        join(out, begin, end, delimiter, keep_empties, quoted);
+        return out.str();
+    }
+
+    template <class... Args>
+    [[nodiscard]] inline std::string to_string(const Args &...args) noexcept
+    {
+        std::stringstream ss;
+        (ss << ... << args);
+        return ss.str();
+    }
+
+    template <typename T>
+    [[nodiscard]] inline std::string hex(T val, size_t width, std::string prefix)
+    {
+        std::stringstream os;
+        os << prefix << std::setfill('0') << std::setw(width) << std::hex << (val | 0);
+        return os.str();
+    }
+}  // namespace core::str

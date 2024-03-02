@@ -39,18 +39,6 @@ namespace protobuf
     }
 
     template <class Type>
-    void assign_from_vector(const std::vector<Type> &vector,
-                            google::protobuf::RepeatedPtrField<Type> *items)
-    {
-        items->Clear();
-        items->Reserve(vector.size());
-        for (const Type &item : vector)
-        {
-            *items->Add() = item;
-        }
-    }
-
-    template <class Type>
     void assign_to_vector(const google::protobuf::RepeatedPtrField<Type> &items,
                           std::vector<Type> *vector)
     {
