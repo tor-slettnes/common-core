@@ -14,7 +14,7 @@ namespace core::types
         OverflowDisposition overflow_disposition)
         : maxsize_(maxsize),
           overflow_disposition_(overflow_disposition),
-          closed(false)
+          closed_(false)
     {
     }
 
@@ -22,7 +22,7 @@ namespace core::types
     {
         {
             std::lock_guard lock(this->mtx);
-            this->closed = true;
+            this->closed_ = true;
         }
         this->cv.notify_all();
     }
@@ -30,7 +30,12 @@ namespace core::types
     void BlockingQueueBase::reopen()
     {
         std::lock_guard lock(this->mtx);
-        this->closed = false;
+        this->closed_ = false;
+    }
+
+    bool BlockingQueueBase::closed() const
+    {
+        return this->closed_;
     }
 
     bool BlockingQueueBase::pushable(std::unique_lock<std::mutex> *lock)
@@ -45,9 +50,9 @@ namespace core::types
             {
             case OverflowDisposition::BLOCK:
                 this->cv.wait(*lock, [&] {
-                    return (this->size() < this->maxsize_) || this->closed;
+                    return (this->size() < this->maxsize_) || this->closed_;
                 });
-                return !this->closed;
+                return !this->closed_;
 
             case OverflowDisposition::DISCARD_ITEM:
                 return false;

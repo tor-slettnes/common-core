@@ -18,6 +18,7 @@ namespace core::logging
             {
                 sink->open();
             }
+            this->queue_.reopen();
             this->workerthread_ = std::thread(&AsyncDispatcher::worker, this);
         }
     }

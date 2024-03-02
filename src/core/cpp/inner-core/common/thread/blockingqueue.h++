@@ -38,7 +38,6 @@ namespace core::types
             unsigned int maxsize,
             OverflowDisposition overflow_disposition);
 
-
     public:
         /// @brief
         ///     Close the queue.
@@ -56,24 +55,26 @@ namespace core::types
         void reopen();
 
         /// @brief
+        ///     Indicate whether this queue has been closed
+        bool closed() const;
+
+        /// @brief
         ///     Obtain the size of the queue
         ///
         /// @return
         ///     Number of elements in the queue
-        virtual std::size_t size() = 0;
+        virtual std::size_t size() const = 0;
 
         /// @brief
         ///     Indicate whether the queue is empty (and a call to `.get()` would block)
         ///
         /// @return
         ///     Boolean indication of whether the queue is empty.
-        virtual bool empty() = 0;
-
+        virtual bool empty() const = 0;
 
         /// @brief
         ///     Remove the oldest item from the queue
         virtual void discard_oldest() = 0;
-
 
     protected:
         /// @brief
@@ -91,7 +92,7 @@ namespace core::types
         const OverflowDisposition overflow_disposition_;
 
     protected:
-        bool closed;
+        bool closed_;
         std::condition_variable cv;
         std::mutex mtx;
     };
@@ -119,12 +120,18 @@ namespace core::types
         {
         }
 
-        inline std::size_t size() override
+        template <class... Args>
+        static std::shared_ptr<BlockingQueue<T>> create_shared(Args &&...args)
+        {
+            return std::make_shared<BlockingQueue<T>>(args...);
+        }
+
+        inline std::size_t size() const override
         {
             return this->queue.size();
         }
 
-        inline bool empty() override
+        inline bool empty() const override
         {
             return this->queue.empty();
         }
@@ -139,6 +146,10 @@ namespace core::types
         ///     Add an item to the end of the queue
         /// @param[in] value
         ///     Value to copy to the end of the queue. \sa void put(T && value).
+        /// @param[in] reopen
+        ///     Reopen the queue if it had been closed
+        /// @param[in] bool
+        ///     Indiate whether the item was actually pushed
         ///
         /// Add a new item at the end of the queue.  This unblocks exactly one
         /// pending or future `.get()` call.
@@ -147,23 +158,35 @@ namespace core::types
         /// has been reached) then the oldest item is removed from the front of
         /// the queue.
 
-        inline void put(const T &value)
+        inline bool put(const T &value, bool reopen = false)
         {
+            if (reopen || !this->closed_)
             {
-                std::unique_lock<std::mutex> lock(this->mtx);
-                this->closed = false;
-                if (this->pushable(&lock))
                 {
-                    this->queue.push(value);
+                    std::unique_lock<std::mutex> lock(this->mtx);
+                    this->closed_ = false;
+                    if (this->pushable(&lock))
+                    {
+                        this->queue.push(value);
+                    }
                 }
+                this->cv.notify_one();
+                return true;
             }
-            this->cv.notify_one();
+            else
+            {
+                return false;
+            }
         }
 
         /// @brief
         ///     Add an item to the queue
         /// @param[in] value
         ///     Value which is moved to the end of the queue.
+        /// @param[in] reopen
+        ///     Reopen the queue if it had been closed
+        /// @param[in] bool
+        ///     Indiate whether the item was actually pushed
         ///
         /// Add a new item at the end of the queue.  This unblocks exactly one
         /// pending or future `.get()` call.
@@ -172,17 +195,25 @@ namespace core::types
         /// has been reached) then the oldest item is removed from the front of
         /// the queue.
 
-        inline void put(T &&value)
+        inline bool put(T &&value, bool reopen = false)
         {
+            if (reopen || !this->closed_)
             {
-                std::unique_lock<std::mutex> lock(this->mtx);
-                this->closed = false;
-                if (this->pushable(&lock))
                 {
-                    this->queue.push(std::move(value));
+                    std::unique_lock<std::mutex> lock(this->mtx);
+                    this->closed_ = false;
+                    if (this->pushable(&lock))
+                    {
+                        this->queue.push(std::move(value));
+                    }
                 }
+                this->cv.notify_one();
+                return true;
             }
-            this->cv.notify_all();
+            else
+            {
+                return false;
+            }
         }
 
         /// @brief
@@ -200,7 +231,7 @@ namespace core::types
         {
             std::unique_lock<std::mutex> lock(this->mtx);
             this->cv.wait(lock, [&] {
-                return this->queue.size() || this->closed;
+                return this->queue.size() || this->closed_;
             });
 
             if (this->queue.size())
@@ -234,7 +265,7 @@ namespace core::types
         {
             std::unique_lock<std::mutex> lock(this->mtx);
             bool received = this->cv.wait_until(lock, deadline, [&] {
-                return this->queue.size() || this->closed;
+                return this->queue.size() || this->closed_;
             });
 
             if (received)
@@ -270,8 +301,6 @@ namespace core::types
                 std::chrono::steady_clock::now() +
                 std::chrono::duration_cast<std::chrono::steady_clock::duration>(timeout));
         }
-
-
 
     private:
         std::queue<T, std::list<T>> queue;
