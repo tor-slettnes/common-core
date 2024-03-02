@@ -11,6 +11,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <queue>
+#include <list>
 #include <thread>
 #include <algorithm>
 
@@ -273,7 +274,7 @@ namespace core::types
 
 
     private:
-        std::queue<T> queue;
+        std::queue<T, std::list<T>> queue;
     };
 
 }  // namespace core::types
