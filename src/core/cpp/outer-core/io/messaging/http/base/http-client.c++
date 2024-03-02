@@ -1,7 +1,7 @@
 /// -*- c++ -*-
 //==============================================================================
 /// @file http-client.h++
-/// @brief HTTP requests using `cURLpp`
+/// @brief HTTP requests using libcurl
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 

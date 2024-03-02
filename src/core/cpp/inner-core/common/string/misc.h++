@@ -144,7 +144,7 @@ namespace core::str
     ///     Output string.
 
     [[nodiscard]] std::string wrap(
-        const std::vector<std::string> &words,
+        const std::list<std::string> &words,
         size_t start_column = 0,
         size_t left_margin = 24,
         size_t right_margin = 80);
@@ -184,14 +184,59 @@ namespace core::str
     ///     If non-zero, split at most this number of times
     ///     (returning no more than `maxsplit+1` substrings)
     /// \return
-    ///     Vector of one or more non-overlapping substrings of \p string
+    ///     List of one or more non-overlapping substrings of \p string
     ///     separated by \p delimiter
 
-    [[nodiscard]] std::vector<std::string> split(
+    [[nodiscard]] std::list<std::string> split(
         const std::string &string,
         const std::string &delimiter = " ",
         uint maxsplits = 0,
         bool keep_empties = false);
+
+    /// Join a sequence of strings by the specified delimiter
+    /// \param[in] begin
+    ///     Iterator to beginning of sequence
+    /// \param[in] end
+    ///     Iterator to end of sequence
+    /// \param[in] delimiter
+    ///     Inserted between each string in vector
+    /// \param[in] keep_empties
+    ///     Include empty strings from input vector
+    /// \param[in] quoted
+    ///     Inserted before and after each string in vector
+    /// \return
+    ///     New string consisting of each string from \p vector joined by \p delimiter
+    template <class InputIt>
+    [[nodiscard]] inline std::string join(
+        const InputIt &begin,
+        const InputIt &end,
+        const std::string &delimiter = " ",
+        bool keep_empties = false,
+        bool quoted = false)
+    {
+        std::stringstream out;
+        bool first = true;
+        for (auto it = begin; it != end; it++)
+        {
+            if (keep_empties || !it->empty())
+            {
+                if (!first)
+                {
+                    out << delimiter;
+                }
+                first = false;
+                if (quoted)
+                {
+                    out << std::quoted(*it);
+                }
+                else
+                {
+                    out << *it;
+                }
+            }
+        }
+        return out.str();
+    }
 
     /// Join a vector of strings by the specified delimiter
     /// \param[in] vector

@@ -128,7 +128,7 @@ namespace core::str
     //     return buffer;
     // }
 
-    std::string wrap(const std::vector<std::string> &words,
+    std::string wrap(const std::list<std::string> &words,
                      size_t start_column,
                      size_t left_margin,
                      size_t right_margin)
@@ -188,7 +188,7 @@ namespace core::str
                   std::string *first,
                   bool *more)
     {
-        std::vector<std::string> parts = str::split(string, delimiter, 1);
+        std::list<std::string> parts = str::split(string, delimiter, 1);
 
         if (more)
         {
@@ -203,12 +203,12 @@ namespace core::str
         return (parts.size() > 0);
     }
 
-    std::vector<std::string> split(const std::string &string,
-                                   const std::string &delimiter,
-                                   uint maxsplits,
-                                   bool keep_empties)
+    std::list<std::string> split(const std::string &string,
+                                 const std::string &delimiter,
+                                 uint maxsplits,
+                                 bool keep_empties)
     {
-        std::vector<std::string> parts;
+        std::list<std::string> parts;
         size_t pos = 0;
         size_t end = string.find(delimiter);
         uint splits = 0;
@@ -236,20 +236,7 @@ namespace core::str
                      bool keep_empties,
                      bool quoted)
     {
-        std::stringstream out;
-        for (auto it = vector.begin(); it != vector.end(); it++)
-        {
-            if (keep_empties || !it->empty())
-            {
-                if (it != vector.begin())
-                    out << delimiter;
-                if (quoted)
-                    out << std::quoted(*it);
-                else
-                    out << *it;
-            }
-        }
-        return out.str();
+        return join(vector.begin(), vector.end(), delimiter, keep_empties, quoted);
     }
 
     std::string quoted(const std::string &input)

@@ -81,7 +81,7 @@ namespace core::argparse
     void Parser::help_usage(std::ostream &out)
     {
         std::string intro = "Usage:";
-        std::vector<std::string> words;
+        std::list<std::string> words;
         bool has_misc_options = false;
         bool has_command = false;
 
@@ -97,7 +97,7 @@ namespace core::argparse
             else if (!opt->is_named() || (opt->repeats.first > 0 && !opt->has_default()))
             {
                 // This is an unnamed or required option; include this separately.
-                words.emplace_back(opt->get_syntax());
+                words.push_back(opt->get_syntax());
             }
             else if (!has_misc_options)
             {

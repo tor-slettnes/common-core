@@ -140,7 +140,7 @@ namespace core::argparse
 
     void CommandOptions::add_command(
         const std::string &command,
-        const std::vector<std::string> &args,
+        const std::list<std::string> &args,
         const std::string &description,
         const Handler &handler)
     {

@@ -19,7 +19,7 @@ namespace protobuf
 
     /// Convert a ProtoBuf message to a printable string.
     std::string to_string(const google::protobuf::Message &msg,
-                          bool single_line = true);
+                          bool single_line = false);
 
     /// Convert a protobuf message to a serialized byte array
     void to_bytes(const google::protobuf::Message &msg,

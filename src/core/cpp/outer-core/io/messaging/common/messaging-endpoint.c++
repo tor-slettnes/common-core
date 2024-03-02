@@ -55,12 +55,12 @@ namespace core::messaging
                 this->settings_file(PROJECT_NAME),
                 this->settings_file("common"),
             });
-            logf_notice("%s loaded settings from %s",
-                        *this, this->settings_->filenames());
+            logf_info("%s loaded settings from %s",
+                      *this,
+                      this->settings_->filenames());
         }
         return this->settings_;
     }
-
 
     types::Value Endpoint::setting(const std::string &key,
                                    const types::Value &fallback) const
@@ -76,7 +76,6 @@ namespace core::messaging
         else
         {
             return fallback;
-
         }
     }
 

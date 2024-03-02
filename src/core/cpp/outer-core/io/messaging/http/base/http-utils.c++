@@ -105,7 +105,7 @@ namespace core::http
             _curl_url_get(&rc, handle, CURLUPART_QUERY, &stringquery, 0);
             for (const std::string &part : str::split(stringquery, "&"))
             {
-                std::vector<std::string> kv = str::split(part, "=", 1);
+                std::list<std::string> kv = str::split(part, "=", 1);
                 if (kv.size() == 2)
                 {
                     query->emplace(url_decode(kv.front()),

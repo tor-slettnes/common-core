@@ -71,7 +71,7 @@ namespace core::argparse
     template <class T = std::string>
     using Target = std::variant<
         T *,                     // Pointer to storage location
-        std::vector<T> *,        // Pointer to vector
+        std::list<T> *,          // Pointer to list
         std::function<void(T)>,  // Callback with argument
         std::function<void()>>;  // Callback without argument
 
@@ -202,7 +202,7 @@ namespace core::argparse
             {
                 **target = value;
             }
-            else if (auto *target = std::get_if<std::vector<T> *>(&this->target))
+            else if (auto *target = std::get_if<std::list<T> *>(&this->target))
             {
                 (*target)->emplace_back(value);
             }

@@ -16,9 +16,9 @@ namespace core::argparse
     {
         using Super = ClientOptions;
         using CommandDescription = std::tuple<
-            std::string,               // command
-            std::vector<std::string>,  // args
-            std::string>;              // description
+            std::string,             // command
+            std::list<std::string>,  // args
+            std::string>;            // description
 
     public:
         using FlagMap = std::map<std::string, bool>;
@@ -35,7 +35,7 @@ namespace core::argparse
         void get_flags(FlagMap *map, bool allow_leftovers = false);
 
         void add_command(const std::string &command,
-                         const std::vector<std::string> &args,
+                         const std::list<std::string> &args,
                          const std::string &description,
                          const Handler &handler);
 
@@ -72,10 +72,10 @@ namespace core::argparse
 
     public:
         std::string command;
-        std::vector<std::string> args;
+        std::list<std::string> args;
         bool use_exit_status;
         std::unordered_map<std::string, Handler> handlers;
-        std::vector<CommandDescription> command_descriptions;
+        std::list<CommandDescription> command_descriptions;
     };
 
 }  // namespace core::argparse

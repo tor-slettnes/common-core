@@ -14,10 +14,7 @@ if(BUILD_PROTOBUF)
 endif()
 
 if(BUILD_PYTHON_IO)
-  message(STATUS "ADDING SUBDIRECTORY 'python'")
   add_subdirectory(python)
-else()
-  message(STATUS "NOT ADDING SUBDIRECTORY 'python'")
 endif()
 
 
