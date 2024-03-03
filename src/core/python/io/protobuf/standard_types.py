@@ -25,15 +25,38 @@ class ProtoBuf (object):
         BytesValue
     from google.protobuf.struct_pb2 import Value, ListValue, Struct
 
+
     @classmethod
     def decodeTimestamp(cls, prototime):
         return prototime.seconds + prototime.nanos*1e-9
 
     @classmethod
     def encodeTimestamp(cls, timestamp):
-        if timestamp:
-            return cls.Timestamp(seconds=int(timestamp),
-                                nanos=int((timestamp-int(timestamp))*1e9))
+        from datetime import datetime
+
+        ts = ProtoBuf.Timestamp()
+
+        if timestamp is None:
+            ts.GetCurrentTime()
+
+        elif isinstance(timestamp, int):
+            ts.seconds = timestamp
+
+        elif isinstance(timestamp, float):
+            ts.seconds = int(timestamp)
+            ts.nanos = int((timestamp-int(timestamp))*1e9)
+
+        elif isinstance(timestamp, str):
+            ts.FromJsonString(timestamp)
+
+        elif isinstance(timestamp, datetime):
+            ts.FromDateTime(timestamp)
+
+        else:
+            raise TypeError("Cannot encode ProtoBuf timestamp from %s"%(type(timestamp).__name__,))
+
+        return ts
+
 
     @classmethod
     def decodeDuration(cls, duration):

@@ -7,6 +7,7 @@
 
 #include "rest-client.h++"
 #include "json/jsonparser.h++"
+#include "logging/logging.h++"
 
 namespace core::http
 {
@@ -20,10 +21,24 @@ namespace core::http
     {
     }
 
-    types::Value RESTClient::get_json(const std::string &location) const
+    types::Value RESTClient::get_json(const std::string &path,
+                                      const types::TaggedValueList &query) const
     {
-        return json::JsonParser::parse_stream(
-            this->get(location, this->content_type));
+        std::string location(join_url(
+            {},     // scheme
+            {},     // username
+            {},     // password
+            {},     // host
+            {},     // port
+            path,   // path
+            query,  // query
+            {}));   // fragment
+
+        std::stringstream ss{this->get(location, this->content_type)};
+        logf_debug("REST client received %d bytes; parsing JSON...", ss.tellp());
+        types::Value value = json::JsonParser::parse_stream(ss);
+        log_debug("REST client parsed JSON response.");
+        return value;
     }
 
 }  // namespace core::http

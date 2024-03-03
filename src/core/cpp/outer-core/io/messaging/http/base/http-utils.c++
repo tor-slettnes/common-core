@@ -108,8 +108,8 @@ namespace core::http
                 std::list<std::string> kv = str::split(part, "=", 1);
                 if (kv.size() == 2)
                 {
-                    query->emplace(url_decode(kv.front()),
-                                   url_decode(kv.back()));
+                    query->emplace_back(url_decode(kv.front()),
+                                        url_decode(kv.back()));
                 }
             }
         }
@@ -172,13 +172,21 @@ namespace core::http
 
         if ((rc == CURLUE_OK) && query)
         {
-            std::vector<std::string> parts;
-            parts.reserve(query->size());
-            for (const auto &[key, value] : *query)
+            std::stringstream ss;
+            std::string delimiter;
+
+            for (const auto &[tag, value] : *query)
             {
-                parts.push_back(url_encode(key) + "=" + url_encode(value));
+                ss << delimiter;
+                if (tag)
+                {
+                    ss << url_encode(*tag) << "=";
+                }
+                ss << url_encode(value.to_string());
+                delimiter = "&";
             }
-            std::string querystring = str::join(parts, "&");
+
+            std::string querystring = ss.str();
             rc = curl_url_set(handle, CURLUPART_QUERY, querystring.data(), flags);
         }
 
@@ -199,7 +207,6 @@ namespace core::http
         }
         return url;
     }
-
 
     std::string join_urls(const std::string &base,
                           const std::string &rel)

@@ -20,7 +20,8 @@ namespace core::http
                    const std::string &messaging_flavor = "REST",
                    const std::string &content_type = "application/json");
 
-        types::Value get_json(const std::string &location) const;
+        types::Value get_json(const std::string &path,
+                              const types::TaggedValueList &query = {}) const;
 
     private:
         std::string content_type;

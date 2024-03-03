@@ -53,16 +53,16 @@ namespace core::json
 
     TokenIndex TokenParser::next_token()
     {
-        char c, prev = '\0';
+        char c;
         std::string partial;
         partial.reserve(256);
 
         for (this->stream_.get(c);
              this->stream_.good();
-             prev = c, this->stream_.get(c))
+             this->stream_.get(c))
         {
-            TokenIndex ti = this->token_index(c, prev);
-            if ((ti != TI_UNKNOWN) && (ti != TI_LINE_COMMENT) && !partial.empty())
+            TokenIndex ti = this->token_index(c);
+            if ((ti != TI_UNKNOWN) && !partial.empty())
             {
                 this->stream_.unget();
                 return this->parse_any(std::move(partial));
@@ -100,7 +100,7 @@ namespace core::json
         }
     }
 
-    TokenIndex TokenParser::token_index(char c, char prev)
+    TokenIndex TokenParser::token_index(char c)
     {
         switch (c)
         {
@@ -135,13 +135,6 @@ namespace core::json
 
         case '#':
             return TI_LINE_COMMENT;
-
-        case '/':
-            if (prev == c)
-            {
-                return TI_LINE_COMMENT;
-            }
-            break;
         }
 
         return TI_UNKNOWN;
@@ -156,10 +149,10 @@ namespace core::json
         };
 
         static const std::regex rx(
-            "|([+-]?[0-9]+(?=[\\.eE])"             // (1) real
-            "(?:\\.[0-9]*)?(?:[eE][+-]?[0-9]+)?)"  // (1) (cont)
-            "|([+-][0-9]+)"                        // (2) signed int
-            "|([0-9]+)"                            // (3) unsigned int
+            "([0-9]+)"                                                     // (1) unsigned int
+            "|([+-][0-9]+)"                                                // (2) signed int
+            "|([+-]?[0-9]+(?=[\\.eE])(?:\\.[0-9]*)?(?:[eE][+-]?[0-9]+)?)"  // (3) real
+            "|((?://|#).*)"                                                // (4) comment
         );
 
         TokenIndex ti = TI_UNKNOWN;
@@ -171,9 +164,10 @@ namespace core::json
 
         else if (std::smatch match; std::regex_match(token, match, rx))
         {
-            ti = match.length(1)   ? TI_REAL
+            ti = match.length(1)   ? TI_UINT
                  : match.length(2) ? TI_SINT
-                 : match.length(3) ? TI_UINT
+                 : match.length(3) ? TI_REAL
+                 : match.length(4) ? this->parse_line_comment()
                                    : TI_UNKNOWN;
         }
 
@@ -184,7 +178,6 @@ namespace core::json
     TokenIndex TokenParser::parse_line_comment()
     {
         char c = '\0';
-        this->token_.clear();
         for (this->stream_.get(c);
              this->stream_.good();
              this->stream_.get(c))
@@ -201,6 +194,7 @@ namespace core::json
     {
         char c = '\0';
         bool escape = false;
+        this->token_.clear();
         std::size_t size = this->token_.size();
         std::size_t capacity = this->token_.capacity();
 

@@ -57,7 +57,10 @@ namespace core::types
     TaggedValueList ValueList::as_tvlist() const noexcept
     {
         TaggedValueList tvlist;
-        tvlist.extend(*this);
+        for (const auto &value: *this)
+        {
+            tvlist.push_back({nulltag, value});
+        }
         return tvlist;
     }
 

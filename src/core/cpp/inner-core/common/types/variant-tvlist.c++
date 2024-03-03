@@ -223,24 +223,6 @@ namespace core::types
         return kvmap;
     }
 
-    TaggedValueList &TaggedValueList::extend(const ValueList &vlist) noexcept
-    {
-        for (const Value &value : vlist)
-        {
-            this->emplace_back(nulltag, value);
-        }
-        return *this;
-    }
-
-    TaggedValueList &TaggedValueList::extend(ValueList &&vlist) noexcept
-    {
-        for (Value &value : vlist)
-        {
-            this->emplace_back(nulltag, std::move(value));
-        }
-        return *this;
-    }
-
     TaggedValueList &TaggedValueList::extend(const TaggedValueList &other) noexcept
     {
         this->insert(this->end(), other.begin(), other.end());

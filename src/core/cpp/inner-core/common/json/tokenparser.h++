@@ -45,7 +45,7 @@ namespace core::json
         std::string token() const;
 
     private:
-        TokenIndex token_index(char c, char last);
+        TokenIndex token_index(char c);
         TokenIndex parse_any(std::string &&token);
         TokenIndex parse_line_comment();
         TokenIndex parse_string();

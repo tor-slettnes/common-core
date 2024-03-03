@@ -75,15 +75,6 @@ namespace core::types
         TaggedValueList filtered_values() const noexcept;
 
         /// \brief
-        ///    Add tagged values from a ValueList instance
-        /// \param[in] other
-        ///    ValueList instance from which to import
-        /// \return
-        ///     A reference to this updated instance.
-        TaggedValueList &extend(const ValueList &other) noexcept;
-        TaggedValueList &extend(ValueList &&other) noexcept;
-
-        /// \brief
         ///    Add tagged values from an existing TaggedValueList instance
         /// \param[in] other
         ///    TaggedValueList instance from which to import

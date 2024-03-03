@@ -79,6 +79,8 @@ namespace core::http
         std::string url = this->url(location);
         CURLcode code = curl_easy_setopt(this->handle_, CURLOPT_URL, url.c_str());
 
+
+
         if (code == CURLE_OK)
         {
             code = curl_easy_setopt(this->handle_, CURLOPT_WRITEFUNCTION, HTTPClient::receive);
@@ -101,6 +103,7 @@ namespace core::http
 
         if (code == CURLE_OK)
         {
+            logf_debug("HTTP client requesting URL: %s", url);
             code = curl_easy_perform(this->handle_);
         }
 
@@ -113,6 +116,7 @@ namespace core::http
         }
 
         code = curl_easy_getinfo(this->handle_, CURLINFO_RESPONSE_CODE, &response);
+        logf_debug("Received response code: %s", response);
         if (response_code)
         {
             *response_code = response;
@@ -150,6 +154,7 @@ namespace core::http
     {
         auto *ss = reinterpret_cast<std::ostream *>(userdata);
         ssize_t size = item_size * num_items;
+        logf_trace("HTTP client received %d bytes from server", size);
         ss->write(ptr, size);
         return ss->good() ? size : 0;
     }

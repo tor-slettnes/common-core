@@ -100,7 +100,7 @@ class HTTPClient (HTTPBase):
             path = '/'
 
         query = "&".join([
-            "=".join((key, urllib.parse.quote_plus(arg)))
+            "=".join((key, urllib.parse.quote_plus(str(arg))))
             for (key, arg) in kwargs.items()
             ])
 

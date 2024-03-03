@@ -7,6 +7,7 @@
 
 #pragma once
 #include "platform/init.h++"
+#include "types/value.h++"
 #include <string>
 #include <unordered_map>
 
@@ -15,7 +16,7 @@ namespace core::http
     using URL = std::string;
     using ResponseCode = long;
     using Header = std::unordered_multimap<std::string, std::string>;
-    using Query = std::unordered_multimap<std::string, std::string>;
+    using Query = types::TaggedValueList;
 
     bool decompose_header(const std::string &text, Header *header);
     bool successful_response(ResponseCode code);
