@@ -22,9 +22,8 @@ namespace core::http
 
     types::Value RESTClient::get_json(const std::string &location) const
     {
-        std::stringstream content = this->get(location, this->content_type);
-        return json::JsonParser::parse_text(content.str());
+        return json::JsonParser::parse_stream(
+            this->get(location, this->content_type));
     }
-
 
 }  // namespace core::http

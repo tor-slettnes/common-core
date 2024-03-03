@@ -14,7 +14,17 @@ namespace core::json
 {
     types::Value JsonParser::parse_text(const std::string &text)
     {
-        std::shared_ptr<TokenParser> parser = std::make_shared<TokenParser>(text);
+        return This::parse_stream(std::stringstream(text));
+    }
+
+    types::Value JsonParser::parse_stream(std::istream &&stream)
+    {
+        return This::parse_stream(stream);
+    }
+
+    types::Value JsonParser::parse_stream(std::istream &stream)
+    {
+        std::shared_ptr<TokenParser> parser = std::make_shared<TokenParser>(stream);
         types::Value value = This::parse_value(parser);
         parser->next_of({}, {TI_NONE});
         return value;
@@ -73,7 +83,7 @@ namespace core::json
                                                 TI_SINT,
                                                 TI_UINT,
                                                 TI_STRING,
-                                                TI_COMMENT},
+                                                TI_LINE_COMMENT},
                                                endtokens))
         {
             try
@@ -104,7 +114,7 @@ namespace core::json
                 case TI_STRING:
                     return str::unescaped(parser->token());
 
-                case TI_COMMENT:
+                case TI_LINE_COMMENT:
                     continue;
                 }
             }

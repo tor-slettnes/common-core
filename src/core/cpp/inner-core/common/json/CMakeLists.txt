@@ -11,5 +11,6 @@ target_sources(${TARGET} PRIVATE
   jsonreader.c++
 
   jsonbuilder.c++
-  jsonwriter.c++)
+  jsonwriter.c++
+)
 

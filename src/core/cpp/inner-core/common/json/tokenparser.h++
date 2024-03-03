@@ -14,6 +14,7 @@ namespace core::json
     enum TokenIndex
     {
         TI_NONE,
+        TI_SPACE,
         TI_OBJECT_OPEN,
         TI_OBJECT_CLOSE,
         TI_ARRAY_OPEN,
@@ -26,7 +27,7 @@ namespace core::json
         TI_SINT,
         TI_UINT,
         TI_STRING,
-        TI_COMMENT,
+        TI_LINE_COMMENT,
         TI_UNKNOWN,
     };
 
@@ -35,20 +36,25 @@ namespace core::json
     class TokenParser
     {
     public:
-        TokenParser(const std::string &text);
-
-        TokenIndex next_token();
+        TokenParser(std::istream &stream);
 
         TokenIndex next_of(const TokenSet &candidates,
                            const TokenSet &endtokens = {});
 
-        std::string::const_iterator match_start() const;
-        std::string::const_iterator match_end() const;
+        TokenIndex next_token();
         std::string token() const;
 
     private:
-        const std::string &text_;
-        std::string::const_iterator match_start_, match_end_;
-        std::string_view token_;
+        TokenIndex token_index(char c, char last);
+        TokenIndex parse_any(std::string &&token);
+        TokenIndex parse_line_comment();
+        TokenIndex parse_string();
+        char escape(char c);
+        void append_to_token(char c);
+
+    private:
+        std::istream &stream_;
+        std::size_t pos_;
+        std::string token_;
     };
 }  // namespace core::json
