@@ -21,7 +21,11 @@ namespace core::http
     bool decompose_header(const std::string &text, Header *header);
     bool successful_response(ResponseCode code);
 
-    void split_url(const std::string &url,
+    std::string join_path_query(const std::string &path,
+                                const Query &query);
+
+
+   void split_url(const std::string &url,
                    std::string *scheme,
                    std::string *username,
                    std::string *password,
@@ -30,6 +34,7 @@ namespace core::http
                    std::string *path,
                    Query *query,
                    std::string *fragment);
+
 
     std::string join_url(const std::optional<std::string> &scheme,
                          const std::optional<std::string> &username,

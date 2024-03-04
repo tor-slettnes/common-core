@@ -834,6 +834,10 @@ namespace core::types
             stream << this->as_real();
             break;
 
+        case ValueType::COMPLEX:
+            stream << this->as_complex();
+            break;
+
         case ValueType::STRING:
             stream << this->get<std::string>();
             break;

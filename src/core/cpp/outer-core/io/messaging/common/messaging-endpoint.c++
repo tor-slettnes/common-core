@@ -55,9 +55,9 @@ namespace core::messaging
                 this->settings_file(PROJECT_NAME),
                 this->settings_file("common"),
             });
-            logf_info("%s loaded settings from %s",
-                      *this,
-                      this->settings_->filenames());
+            logf_debug("%s loaded settings from %s",
+                       *this,
+                       this->settings_->filenames());
         }
         return this->settings_;
     }

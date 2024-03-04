@@ -26,6 +26,7 @@ namespace core::str
         static std::string to_string(const T &value);
     };
 
+
     /// Partial template specialization for string<>string conversion
     template <>
     struct StringConvert<std::string>

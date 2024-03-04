@@ -70,6 +70,27 @@ namespace core::http
         }
     }
 
+    std::string join_path_query(const std::string &path,
+                                const Query &query)
+    {
+        std::stringstream ss;
+        ss << path;
+        std::string delimiter = (path.find('?') != std::string::npos) ? "&" : "?";
+
+        for (const auto &[tag, value] : query)
+        {
+            ss << delimiter;
+            if (tag)
+            {
+                ss << url_encode(*tag) << "=";
+            }
+            ss << url_encode(value.to_string());
+            delimiter = "&";
+        }
+
+        return ss.str();
+    }
+
     void split_url(const std::string &url,
                    std::string *scheme,
                    std::string *username,

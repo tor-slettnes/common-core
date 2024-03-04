@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from .base import HTTPBase, HTTPClientError, HTTPServerError
+from .base import HTTPBase, HTTPError, HTTPClientError, HTTPServerError
 from cc.core.invocation import check_type
 
 ### Standard Python modules
@@ -41,26 +41,25 @@ class HTTPClient (HTTPBase):
         return connection_type(target.host, target.port)
 
     def get_raw(self,
-                rel_path : str,
-                kwargs  : Mapping[str, Any] = {},
+                path : str,
                 headers={}):
 
-        path = self.full_path(rel_path, kwargs)
         try:
             request = self.connection.request("GET", path, headers)
             return self.connection.getresponse()
         except ConnectionError as e:
             scheme, host, port, _ = self.target
             url = self.join_url(scheme, host, port, path)
-            raise type(e)("%s (URL=%s)"%(e, url), url) from None
+            raise type(e)(e, url) from None
 
     def get(self,
-            rel_url,
-            kwargs={},
-            headers={},
+            path    : str,
+            kwargs  : Mapping[str, Any] = {},
+            headers : Mapping[str, str] = {},
             expected_content_type: str = None):
 
-        response = self.get_raw(rel_url, kwargs, headers)
+        location = self.full_path(path, kwargs)
+        response = self.get_raw(location, headers)
 
         if 400 <= response.status < 500:
             error_type = HTTPClientError
@@ -73,12 +72,11 @@ class HTTPClient (HTTPBase):
             try:
                 status = HTTPClient.StatusMap[response.status]
             except KeyError:
-                raise "Received unknown HTTP error code %d"%(response.status)
+                raise error_type("Received unknown HTTP error code %d, location=%s"%
+                                (response.status, location))
             else:
-                raise error_type("Recieve HTTP error code %d: [%s] %s"%
-                                 (status.value,
-                                  status.name,
-                                  status.description))
+                raise error_type("Recieve HTTP error code %d (%s), location=%s"%
+                                 (status.value, status.name, location))
 
         if expected_content_type:
             received_content_type = response.getheader('content-type')

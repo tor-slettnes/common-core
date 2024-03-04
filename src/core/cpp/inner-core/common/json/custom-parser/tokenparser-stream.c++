@@ -16,8 +16,22 @@ namespace core::json
 {
     TokenParser::TokenParser(std::istream &stream)
         : stream_(stream),
-          pos_(0)
+          pos_(0),
+          string_parse_time_(dt::Duration::zero()),
+          any_parse_time_(dt::Duration::zero())
     {
+        logf_debug("TokenParser created");
+
+        // Enough to contain most miscellaneous content;
+        // expanded by powers of two when parsing longer strings.
+        this->token_.reserve(64);
+    }
+
+    TokenParser::~TokenParser()
+    {
+        logf_debug("TokenParser spent %s parsing strings, %s parsing other types",
+                   this->string_parse_time_,
+                   this->any_parse_time_);
     }
 
     TokenIndex TokenParser::next_of(const TokenSet &candidates,
@@ -54,18 +68,18 @@ namespace core::json
     TokenIndex TokenParser::next_token()
     {
         char c;
-        std::string partial;
-        partial.reserve(256);
+        bool unknowns = false;
+        this->token_.clear();   // Does not change capacity
 
         for (this->stream_.get(c);
              this->stream_.good();
              this->stream_.get(c))
         {
             TokenIndex ti = this->token_index(c);
-            if ((ti != TI_UNKNOWN) && !partial.empty())
+            if (unknowns && (ti != TI_UNKNOWN))
             {
                 this->stream_.unget();
-                return this->parse_any(std::move(partial));
+                return this->parse_any();
             }
 
             switch (ti)
@@ -77,22 +91,24 @@ namespace core::json
                 return this->parse_string();
 
             case TI_LINE_COMMENT:
-                partial.clear();
                 this->parse_line_comment();
+                this->token_.clear();
+                unknowns = false;
                 break;
 
             case TI_UNKNOWN:
-                partial.push_back(c);
+                unknowns = true;
+                this->token_.push_back(c);
                 break;
 
             default:
-                this->token_ = std::move(partial);
                 return ti;
             }
         }
-        if (!partial.empty())
+
+        if (unknowns)
         {
-            return this->parse_any(std::move(partial));
+            return this->parse_any();
         }
         else
         {
@@ -140,8 +156,10 @@ namespace core::json
         return TI_UNKNOWN;
     }
 
-    TokenIndex TokenParser::parse_any(std::string &&token)
+    TokenIndex TokenParser::parse_any()
     {
+        steady::TimePoint start = steady::Clock::now();
+
         static const std::map<std::string, TokenIndex> const_map = {
             {"null", TI_NULL},
             {"true", TI_BOOL},
@@ -157,12 +175,12 @@ namespace core::json
 
         TokenIndex ti = TI_UNKNOWN;
 
-        if (auto it = const_map.find(token); it != const_map.end())
+        if (auto it = const_map.find(this->token_); it != const_map.end())
         {
             ti = it->second;
         }
 
-        else if (std::smatch match; std::regex_match(token, match, rx))
+        else if (std::smatch match; std::regex_match(this->token_, match, rx))
         {
             ti = match.length(1)   ? TI_UINT
                  : match.length(2) ? TI_SINT
@@ -171,7 +189,7 @@ namespace core::json
                                    : TI_UNKNOWN;
         }
 
-        this->token_ = std::move(token);
+        this->any_parse_time_ += (steady::Clock::now() - start);
         return ti;
     }
 
@@ -192,6 +210,7 @@ namespace core::json
 
     TokenIndex TokenParser::parse_string()
     {
+        steady::TimePoint start = steady::Clock::now();
         char c = '\0';
         bool escape = false;
         this->token_.clear();
@@ -214,18 +233,20 @@ namespace core::json
             }
             else if (c == '"')
             {
+                this->string_parse_time_ += (steady::Clock::now() - start);
                 return TI_STRING;
             }
 
             if (size >= capacity)
             {
-                this->token_.reserve(std::max(std::size_t(64), 2 * size));
+                this->token_.reserve(std::max(std::size_t(64), 2 * capacity));
                 capacity = this->token_.capacity();
             }
 
             this->token_.push_back(c);
             size++;
         }
+        this->string_parse_time_ += (steady::Clock::now() - start);
         return TI_NONE;
     }
 

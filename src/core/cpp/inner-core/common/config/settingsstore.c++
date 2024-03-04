@@ -123,7 +123,7 @@ namespace core
         // as `filename` may have been absolute.
 
         fs::create_directories(path.parent_path());
-        json::JsonWriter doc(path);
+        json::JsonPrettyWriter doc(path);
 
         if (delta_only && this->composite_)
         {

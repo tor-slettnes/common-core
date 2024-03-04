@@ -6,11 +6,8 @@
 #===============================================================================
 
 target_sources(${TARGET} PRIVATE
-  tokenparser.c++
-  jsonparser.c++
+  jsondecoder.c++
   jsonreader.c++
-
-  jsonbuilder.c++
-  jsonwriter.c++
 )
 
+target_compile_definitions(${TARGET} PUBLIC RAPIDJSON_HAS_STDSTRING)

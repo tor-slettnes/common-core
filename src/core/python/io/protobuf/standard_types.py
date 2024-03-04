@@ -141,14 +141,15 @@ class ProtoBuf (object):
 
     @classmethod
     def decodeToDict(cls,
-                     message                : Message,
-                     use_integers_for_enums : bool = True):
+                     message : Message,
+                     use_integers_for_enums : bool = True,
+                     including_default_value_fields : bool = False):
 
         return cls.json_format.MessageToDict(
             message,
-            including_default_value_fields=True,
-            preserving_proto_field_name=True,
-            use_integers_for_enums=use_integers_for_enums)
+            including_default_value_fields=including_default_value_fields,
+            use_integers_for_enums=use_integers_for_enums,
+            preserving_proto_field_name=True)
 
 
     @classmethod

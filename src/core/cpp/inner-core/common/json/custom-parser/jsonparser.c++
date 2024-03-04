@@ -10,25 +10,28 @@
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
 
+#include <stdlib.h>
+
 namespace core::json
 {
     types::Value JsonParser::parse_text(const std::string &text)
     {
-        return This::parse_stream(std::stringstream(text));
-    }
-
-    types::Value JsonParser::parse_stream(std::istream &&stream)
-    {
-        return This::parse_stream(stream);
-    }
-
-    types::Value JsonParser::parse_stream(std::istream &stream)
-    {
-        std::shared_ptr<TokenParser> parser = std::make_shared<TokenParser>(stream);
+        std::shared_ptr<TokenParser> parser = std::make_shared<TokenParser>(text);
         types::Value value = This::parse_value(parser);
+
+        // Ensure there's no more content.
         parser->next_of({}, {TI_NONE});
         return value;
     }
+
+    // types::Value JsonParser::parse_stream(std::istream &&stream)
+    // {
+    //     return This::parse_text(stream);
+    // }
+
+    // types::Value JsonParser::parse_stream(std::istream &stream)
+    // {
+    // }
 
     types::Value JsonParser::parse_value(const ParserRef &parser)
     {
@@ -45,7 +48,8 @@ namespace core::json
         {
             std::string key{parser->token()};
             parser->next_of({TI_COLON});
-            map->insert_or_assign(std::move(key), This::parse_value(parser));
+            auto it = map->insert_or_assign(std::move(key), This::parse_value(parser));
+
             if (!parser->next_of({TI_COMMA}, {TI_OBJECT_CLOSE}))
             {
                 break;
@@ -86,45 +90,48 @@ namespace core::json
                                                 TI_LINE_COMMENT},
                                                endtokens))
         {
-            try
+            switch (ti)
             {
-                switch (ti)
-                {
-                case TI_OBJECT_OPEN:
-                    return This::parse_object(parser);
+            case TI_OBJECT_OPEN:
+                return This::parse_object(parser);
 
-                case TI_ARRAY_OPEN:
-                    return This::parse_array(parser);
+            case TI_ARRAY_OPEN:
+                return This::parse_array(parser);
 
-                case TI_NULL:
-                    return types::Value();
+            case TI_NULL:
+                return types::Value();
 
-                case TI_BOOL:
-                    return parser->token() == "true";
+            case TI_BOOL:
+                return parser->token() == "true";
 
-                case TI_REAL:
-                    return str::convert_to<double>(parser->token());
+            case TI_REAL:
+                return ::strtod(parser->token().c_str(), nullptr);
+                // try
+                // {
+                //     return std::stod(parser->token());
+                // }
+                // catch (const std::out_of_range &)
+                // {
+                //     std::stringstream ss(parser->token());
+                //     double value;
+                //     ss >> value;
+                //     return value;
+                // }
+                // return str::convert_to<double>(parser->token());
 
-                case TI_SINT:
-                    return str::convert_to<types::largest_sint>(parser->token());
+            case TI_SINT:
+                return std::stoll(parser->token());
+                // return str::convert_to<types::largest_sint>(parser->token());
 
-                case TI_UINT:
-                    return str::convert_to<types::largest_uint>(parser->token());
+            case TI_UINT:
+                return std::stoull(parser->token());
+                // return str::convert_to<types::largest_uint>(parser->token());
 
-                case TI_STRING:
-                    return str::unescaped(parser->token());
+            case TI_STRING:
+                return parser->token();
 
-                case TI_LINE_COMMENT:
-                    continue;
-                }
-            }
-            catch (const std::exception &e)
-            {
-                logf_error("JSON parser failed to convert token %r to type %d: %s",
-                           parser->token(),
-                           ti,
-                           e);
-                throw;
+            case TI_LINE_COMMENT:
+                continue;
             }
         }
         return {};

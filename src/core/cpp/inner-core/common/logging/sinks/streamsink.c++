@@ -91,7 +91,7 @@ namespace core::logging
 
                 if (!style.empty())
                 {
-                    this->styles[level][part] = style;
+                    this->styles[level][part] = str::unescaped(style);
                 }
             }
         }

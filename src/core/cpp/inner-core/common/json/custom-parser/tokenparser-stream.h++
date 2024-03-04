@@ -37,6 +37,7 @@ namespace core::json
     {
     public:
         TokenParser(std::istream &stream);
+        ~TokenParser();
 
         TokenIndex next_of(const TokenSet &candidates,
                            const TokenSet &endtokens = {});
@@ -46,7 +47,7 @@ namespace core::json
 
     private:
         TokenIndex token_index(char c);
-        TokenIndex parse_any(std::string &&token);
+        TokenIndex parse_any();
         TokenIndex parse_line_comment();
         TokenIndex parse_string();
         char escape(char c);
@@ -56,5 +57,8 @@ namespace core::json
         std::istream &stream_;
         std::size_t pos_;
         std::string token_;
+    public:
+        dt::Duration string_parse_time_;
+        dt::Duration any_parse_time_;
     };
 }  // namespace core::json

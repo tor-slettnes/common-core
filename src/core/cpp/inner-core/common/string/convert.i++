@@ -10,33 +10,33 @@ namespace core::str
     //==========================================================================
     // StringConvert<T>
 
-    template <class T>
-    inline T StringConvert<T>::from_string(const std::string &s)
-    {
-        const static std::regex _rx_hexprefix("0x[[:xdigit:]]+",
-                                              std::regex_constants::icase);
-
-        std::istringstream ss(s);
-        if (std::regex_match(s, _rx_hexprefix))
-        {
-            ss >> std::hex;
-        }
-
-        T value;
-        ss >> value;
-        checkstream(ss, s, typeid(T));
-        return value;
-    }
-
-    // template <class T, std::enable_if_t<!std::is_integral_v<T>, bool> = true>
+    // template <class T>
     // inline T StringConvert<T>::from_string(const std::string &s)
     // {
+    //     const static std::regex _rx_hexprefix("0x[[:xdigit:]]+",
+    //                                           std::regex_constants::icase);
+
     //     std::istringstream ss(s);
+    //     if (std::regex_match(s, _rx_hexprefix))
+    //     {
+    //         ss >> std::hex;
+    //     }
+
     //     T value;
     //     ss >> value;
     //     checkstream(ss, s, typeid(T));
     //     return value;
     // }
+
+    template <class T>
+    inline T StringConvert<T>::from_string(const std::string &s)
+    {
+        std::istringstream ss(s);
+        T value;
+        ss >> value;
+        checkstream(ss, s, typeid(T));
+        return value;
+    }
 
     template <class T>
     inline std::string StringConvert<T>::to_string(const T &value)

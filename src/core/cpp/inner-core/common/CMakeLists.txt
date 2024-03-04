@@ -11,6 +11,9 @@ set(TARGET cc_core_common)
 ### Library type.  We use static linking for convenience.
 set(LIB_TYPE STATIC)
 
+### Upstream package dependencies
+set(PKG_DEPS RapidJSON)
+
 ## Include appropriate system libraries based on platform
 if(PLATFORM_QNX)
   list(APPEND LIB_DEPS c++fs)

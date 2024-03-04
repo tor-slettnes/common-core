@@ -17,6 +17,9 @@ class RESTClient (HTTPClient):
     service_name = None
 
     def get_json(self, rel_url, kwargs={}, headers={}):
-        response = self.get(rel_url, kwargs, headers, 'application/json')
+        string_args = { key : json.dumps(value)
+                        for (key, value) in kwargs.items() }
+
+        response = self.get(rel_url, string_args, headers, 'application/json')
         return json.loads(response.read())
 
