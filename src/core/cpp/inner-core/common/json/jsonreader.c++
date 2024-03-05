@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "jsonreader.h++"
+#include "jsondecoder.h++"
 #include "status/exceptions.h++"
 
 #include <fstream>

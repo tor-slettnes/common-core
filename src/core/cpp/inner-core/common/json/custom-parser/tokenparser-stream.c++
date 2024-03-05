@@ -11,12 +11,12 @@
 
 #include <regex>
 #include <sstream>
+#include <charconv>
 
 namespace core::json
 {
     TokenParser::TokenParser(std::istream &stream)
         : stream_(stream),
-          pos_(0),
           string_parse_time_(dt::Duration::zero()),
           any_parse_time_(dt::Duration::zero())
     {
@@ -32,6 +32,16 @@ namespace core::json
         logf_debug("TokenParser spent %s parsing strings, %s parsing other types",
                    this->string_parse_time_,
                    this->any_parse_time_);
+    }
+
+    const std::string &TokenParser::token() const
+    {
+        return this->token_;
+    }
+
+    const types::Value &TokenParser::value() const
+    {
+        return this->value_;
     }
 
     TokenIndex TokenParser::next_of(const TokenSet &candidates,
@@ -67,130 +77,193 @@ namespace core::json
 
     TokenIndex TokenParser::next_token()
     {
+        bool got_alpha = false;
+        bool got_digit = false;
+        bool got_sign = false;
+        bool got_hex = false;
+        bool got_real = false;
+        bool got_string = false;
+        bool got_comment = false;
         char c;
-        bool unknowns = false;
-        this->token_.clear();   // Does not change capacity
+
+        this->token_.clear();  // Does not change capacity
+        this->value_.clear();
 
         for (this->stream_.get(c);
              this->stream_.good();
              this->stream_.get(c))
         {
-            TokenIndex ti = this->token_index(c);
-            if (unknowns && (ti != TI_UNKNOWN))
+            TokenIndex ti = TI_NONE;
+
+            switch (c)
             {
-                this->stream_.unget();
-                return this->parse_any();
-            }
-
-            switch (ti)
-            {
-            case TI_SPACE:
-                continue;
-
-            case TI_STRING:
-                return this->parse_string();
-
-            case TI_LINE_COMMENT:
-                this->parse_line_comment();
-                this->token_.clear();
-                unknowns = false;
+            case ' ':
+            case '\r':
+            case '\n':
+            case '\t':
+            case '\v':
+            case '\f':
+                ti = TI_SPACE;
                 break;
 
-            case TI_UNKNOWN:
-                unknowns = true;
-                this->token_.push_back(c);
+            case '{':
+                ti = TI_OBJECT_OPEN;
+                break;
+
+            case '}':
+                ti = TI_OBJECT_CLOSE;
+                break;
+
+            case '[':
+                ti = TI_ARRAY_OPEN;
+                break;
+
+            case ']':
+                ti = TI_ARRAY_CLOSE;
+                break;
+
+            case ',':
+                ti = TI_COMMA;
+                break;
+
+            case ':':
+                ti = TI_COLON;
+                break;
+
+            case '#':
+            case '/':
+                got_comment = true;
+                break;
+
+            case '"':
+                got_string = true;
+                break;
+
+            case '-':
+                got_sign = true;
                 break;
 
             default:
-                return ti;
+                if (!got_digit && std::isalpha(c))
+                {
+                    got_alpha = true;
+                }
+                else if (!got_digit && std::isdigit(c))
+                {
+                    got_digit = true;
+                }
+                else if (got_digit && ((c == 'e') || (c == 'E')))
+                {
+                    got_real = true;
+                }
+                else if (!got_alpha && (c == '.'))
+                {
+                    got_real = true;
+                }
+                else if (got_digit && !got_hex && ((c == 'x') || (c == 'x')))
+                {
+                    got_hex = true;
+                }
+                break;
+            }
+
+            if (ti)
+            {
+                if (this->got_token())
+                {
+                    this->stream_.unget();
+                    break;
+                }
+                else if (ti != TI_SPACE)
+                {
+                    this->append_to_token(c);
+                    return ti;
+                }
+            }
+            else
+            {
+                this->append_to_token(c);
+                if (got_string)
+                {
+                    return this->parse_string();
+                }
+                else if (got_comment)
+                {
+                    return this->parse_line_comment();
+                }
             }
         }
 
-        if (unknowns)
+        return got_alpha           ? this->parse_symbol()
+               : got_digit         ? (got_real   ? this->parse_real()
+                                      : got_sign ? this->parse_sint()
+                                      : got_hex  ? this->parse_uint(0)
+                                                 : this->parse_uint())
+               : this->got_token() ? TI_UNKNOWN
+                                   : TI_NONE;
+    }
+
+    template <class T, class... Args>
+    TokenIndex TokenParser::parse_number(TokenIndex ti, const std::string &type, Args &&...args)
+    {
+        char *const start = this->token_.data();
+        char *const end = start + this->token_.size();
+        T value = 0;
+        std::errc ok;
+
+        auto [ptr, ec] = std::from_chars(start, end, value, args...);
+        if ((ec == ok) && (ptr >= end))
         {
-            return this->parse_any();
+            this->value_ = value;
+            return ti;
         }
         else
         {
-            return TI_NONE;
+            logf_info("Failed to convert token %r to %s; decoded %d characters: %s",
+                      this->token_,
+                      type,
+                      ptr - start,
+                      std::make_error_code(ec).message());
+            return TI_UNKNOWN;
         }
     }
 
-    TokenIndex TokenParser::token_index(char c)
+    TokenIndex TokenParser::parse_real()
     {
-        switch (c)
-        {
-        case ' ':
-        case '\r':
-        case '\n':
-        case '\t':
-        case '\v':
-        case '\f':
-            return TI_SPACE;
-
-        case '{':
-            return TI_OBJECT_OPEN;
-
-        case '}':
-            return TI_OBJECT_CLOSE;
-
-        case '[':
-            return TI_ARRAY_OPEN;
-
-        case ']':
-            return TI_ARRAY_CLOSE;
-
-        case ',':
-            return TI_COMMA;
-
-        case ':':
-            return TI_COLON;
-
-        case '"':
-            return TI_STRING;
-
-        case '#':
-            return TI_LINE_COMMENT;
-        }
-
-        return TI_UNKNOWN;
+        return this->parse_number<double>(TI_REAL, "real"s);
     }
 
-    TokenIndex TokenParser::parse_any()
+    TokenIndex TokenParser::parse_sint()
     {
-        steady::TimePoint start = steady::Clock::now();
+        return this->parse_number<std::int64_t>(TI_SINT, "signed integer"s);
+    }
 
-        static const std::map<std::string, TokenIndex> const_map = {
-            {"null", TI_NULL},
-            {"true", TI_BOOL},
-            {"false", TI_BOOL},
-        };
+    TokenIndex TokenParser::parse_uint(int base)
+    {
+        return this->parse_number<std::uint64_t>(TI_UINT, "unsigned integer"s, base);
+    }
 
-        static const std::regex rx(
-            "([0-9]+)"                                                     // (1) unsigned int
-            "|([+-][0-9]+)"                                                // (2) signed int
-            "|([+-]?[0-9]+(?=[\\.eE])(?:\\.[0-9]*)?(?:[eE][+-]?[0-9]+)?)"  // (3) real
-            "|((?://|#).*)"                                                // (4) comment
-        );
+    TokenIndex TokenParser::parse_symbol()
+    {
+        static const std::unordered_map<
+            std::string,
+            std::pair<TokenIndex, types::Value>>
+            symbol_map = {
+                {"null", {TI_NULL, types::Value()}},
+                {"false", {TI_BOOL, types::Value(false)}},
+                {"true", {TI_BOOL, types::Value(true)}},
+            };
 
-        TokenIndex ti = TI_UNKNOWN;
-
-        if (auto it = const_map.find(this->token_); it != const_map.end())
+        try
         {
-            ti = it->second;
+            auto [ti, value] = symbol_map.at(this->token_);
+            this->value_ = value;
+            return ti;
         }
-
-        else if (std::smatch match; std::regex_match(this->token_, match, rx))
+        catch (const std::out_of_range &e)
         {
-            ti = match.length(1)   ? TI_UINT
-                 : match.length(2) ? TI_SINT
-                 : match.length(3) ? TI_REAL
-                 : match.length(4) ? this->parse_line_comment()
-                                   : TI_UNKNOWN;
+            return TI_UNKNOWN;
         }
-
-        this->any_parse_time_ += (steady::Clock::now() - start);
-        return ti;
     }
 
     TokenIndex TokenParser::parse_line_comment()
@@ -204,8 +277,17 @@ namespace core::json
             {
                 break;
             }
+            this->append_to_token(c);
         }
-        return TI_LINE_COMMENT;
+        if (str::startswith(this->token(), "//") ||
+            str::startswith(this->token(), "#"))
+        {
+            return TI_LINE_COMMENT;
+        }
+        else
+        {
+            return TI_UNKNOWN;
+        }
     }
 
     TokenIndex TokenParser::parse_string()
@@ -213,14 +295,14 @@ namespace core::json
         steady::TimePoint start = steady::Clock::now();
         char c = '\0';
         bool escape = false;
-        this->token_.clear();
-        std::size_t size = this->token_.size();
-        std::size_t capacity = this->token_.capacity();
+        std::string value;
 
         for (this->stream_.get(c);
              this->stream_.good();
              this->stream_.get(c))
         {
+            this->append_to_token(c);
+
             if (escape)
             {
                 c = this->escape(c);
@@ -234,18 +316,17 @@ namespace core::json
             else if (c == '"')
             {
                 this->string_parse_time_ += (steady::Clock::now() - start);
+                this->value_ = value;
                 return TI_STRING;
             }
 
-            if (size >= capacity)
+            if (value.size() >= value.capacity())
             {
-                this->token_.reserve(std::max(std::size_t(64), 2 * capacity));
-                capacity = this->token_.capacity();
+                value.reserve(std::max(std::size_t(64), 2 * value.capacity()));
             }
-
-            this->token_.push_back(c);
-            size++;
+            value.push_back(c);
         }
+
         this->string_parse_time_ += (steady::Clock::now() - start);
         return TI_NONE;
     }
@@ -275,9 +356,18 @@ namespace core::json
         }
     }
 
-    std::string TokenParser::token() const
+    void TokenParser::append_to_token(char c)
     {
-        return std::string(this->token_);
+        if (this->token_.size() >= this->token_.capacity())
+        {
+            this->token_.reserve(std::max(std::size_t(16), 2 * this->token_.capacity()));
+        }
+        this->token_.push_back(c);
+    }
+
+    bool TokenParser::got_token() const
+    {
+        return !this->token_.empty();
     }
 
 }  // namespace core::json

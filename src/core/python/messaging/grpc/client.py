@@ -42,7 +42,7 @@ class Client (Base):
             "Subclass should set 'Stub' to appropriate gRPC service class"
 
         self.host           = self.realaddress(host, "host", "port", "localhost", 8080)
-        logging.info("Creating gRPC service %r channel to %s"%(self.service_name, self.host))
+        logging.debug("Creating gRPC service %r channel to %s"%(self.service_name, self.host))
         self.channel        = grpc.insecure_channel(self.host)
         # self.channel.subscribe(self._channelChange)
         self.stub           = type(self).Stub(self.channel)

@@ -16,6 +16,8 @@ namespace core::json
 {
     types::Value JsonParser::parse_text(const std::string &text)
     {
+        // return This::parse_stream(std::stringstream(text));
+
         std::shared_ptr<TokenParser> parser = std::make_shared<TokenParser>(text);
         types::Value value = This::parse_value(parser);
 
@@ -24,13 +26,20 @@ namespace core::json
         return value;
     }
 
+
     // types::Value JsonParser::parse_stream(std::istream &&stream)
     // {
-    //     return This::parse_text(stream);
+    //     return This::parse_stream(stream);
     // }
 
     // types::Value JsonParser::parse_stream(std::istream &stream)
     // {
+    //     std::shared_ptr<TokenParser> parser = std::make_shared<TokenParser>(stream);
+    //     types::Value value = This::parse_value(parser);
+
+    //     // Ensure there's no more content.
+    //     parser->next_of({}, {TI_NONE});
+    //     return value;
     // }
 
     types::Value JsonParser::parse_value(const ParserRef &parser)
@@ -46,7 +55,7 @@ namespace core::json
              token;
              token = parser->next_of({TI_STRING}))
         {
-            std::string key{parser->token()};
+            std::string key{parser->value().as_string()};
             parser->next_of({TI_COLON});
             auto it = map->insert_or_assign(std::move(key), This::parse_value(parser));
 
@@ -98,40 +107,17 @@ namespace core::json
             case TI_ARRAY_OPEN:
                 return This::parse_array(parser);
 
-            case TI_NULL:
-                return types::Value();
-
-            case TI_BOOL:
-                return parser->token() == "true";
-
-            case TI_REAL:
-                return ::strtod(parser->token().c_str(), nullptr);
-                // try
-                // {
-                //     return std::stod(parser->token());
-                // }
-                // catch (const std::out_of_range &)
-                // {
-                //     std::stringstream ss(parser->token());
-                //     double value;
-                //     ss >> value;
-                //     return value;
-                // }
-                // return str::convert_to<double>(parser->token());
-
-            case TI_SINT:
-                return std::stoll(parser->token());
-                // return str::convert_to<types::largest_sint>(parser->token());
-
-            case TI_UINT:
-                return std::stoull(parser->token());
-                // return str::convert_to<types::largest_uint>(parser->token());
-
-            case TI_STRING:
-                return parser->token();
-
             case TI_LINE_COMMENT:
                 continue;
+
+            case TI_NULL:
+            case TI_BOOL:
+            case TI_REAL:
+            case TI_SINT:
+            case TI_UINT:
+            case TI_STRING:
+                return parser->value();
+
             }
         }
         return {};

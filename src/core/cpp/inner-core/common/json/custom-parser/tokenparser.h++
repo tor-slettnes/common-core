@@ -43,54 +43,23 @@ namespace core::json
                            const TokenSet &endtokens = {});
 
         TokenIndex next_token();
-        std::string token() const;
+        const std::string &token() const;
+        const types::Value &value() const;
 
     private:
-        inline TokenIndex token_index(char c)
-        {
-            switch (c)
-            {
-            case ' ':
-            case '\r':
-            case '\n':
-            case '\t':
-            case '\v':
-            case '\f':
-                return TI_SPACE;
+        template <class T, class... Args>
+        TokenIndex parse_number(TokenIndex ti, const std::string &type, Args &&...args);
 
-            case '{':
-                return TI_OBJECT_OPEN;
-
-            case '}':
-                return TI_OBJECT_CLOSE;
-
-            case '[':
-                return TI_ARRAY_OPEN;
-
-            case ']':
-                return TI_ARRAY_CLOSE;
-
-            case ',':
-                return TI_COMMA;
-
-            case ':':
-                return TI_COLON;
-
-            case '"':
-                return TI_STRING;
-
-            case '#':
-                return TI_LINE_COMMENT;
-            }
-
-            return TI_UNKNOWN;
-        }
-
-        TokenIndex parse_any();
+        TokenIndex parse_real();
+        TokenIndex parse_sint();
+        TokenIndex parse_uint(int base = 10);
+        TokenIndex parse_symbol();
         TokenIndex parse_line_comment();
         TokenIndex parse_string();
         char escape(char c);
+
         void append_to_token(char c);
+        bool got_token() const;
 
     private:
         const std::string &string_;
@@ -99,6 +68,7 @@ namespace core::json
         std::string::const_iterator token_start_;
         std::string::const_iterator token_end_;
         std::string token_;
+        types::Value value_;
 
     public:
         dt::Duration string_parse_time_;
