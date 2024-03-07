@@ -76,12 +76,11 @@ namespace google
 {
     namespace protobuf
     {
-        std::ostream &operator<<(std::ostream &stream,
-                                 const google::protobuf::Message &msg);
+        std::ostream &operator<<(std::ostream &stream, const Message &msg);
 
         template <class T>
         std::ostream &operator<<(std::ostream &stream,
-                                 const google::protobuf::RepeatedPtrField<T> &ptr_field)
+                                 const RepeatedPtrField<T> &ptr_field)
         {
             return core::stream::write_sequence(stream, ptr_field);
         }

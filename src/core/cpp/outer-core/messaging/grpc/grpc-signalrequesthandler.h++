@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "grpc-servicehandler.h++"
+#include "grpc-requesthandler.h++"
 #include "grpc-signalqueue.h++"
 #include "protobuf-message.h++"
 
@@ -15,7 +15,7 @@
 namespace core::grpc
 {
     //==========================================================================
-    /// @class SignalServiceWrapper<ServiceT>
+    /// @class SignalRequestHandler<ServiceT>
     /// @brief Service wrapper with signalling interface
     /// @tparam ServiceT
     ///     gRPC service type
@@ -23,9 +23,9 @@ namespace core::grpc
     ///     Signal class, derfined in .proto file
 
     template <class ServiceT>
-    class SignalServiceWrapper : public ServiceHandler<ServiceT>
+    class SignalRequestHandler : public RequestHandler<ServiceT>
     {
-        using Super = ServiceHandler<ServiceT>;
+        using Super = RequestHandler<ServiceT>;
 
     protected:
         using Super::Super;
@@ -70,39 +70,6 @@ namespace core::grpc
             {
                 return this->failure(std::current_exception(), *req, cxt->peer());
             }
-        }
-    };
-
-    //==========================================================================
-    /// @class SignalWatchService
-    /// @brief Service wrapper with signalling interface
-    /// @tparam ServiceT
-    ///     gRPC service type
-    /// @tparam SignalT
-    ///     Signal class, derfined in .proto file
-    /// @tparam SignalQueueT
-    ///     Signal queue class, holding signals to be sent to client
-    /// @tparam SignalFilterT
-    ///     Signal queue class
-
-    template <class ServiceT,
-              class SignalT,
-              class SignalQueueT,
-              class SignalFilterT = CC::Signal::Filter>
-    class SignalWatchService : public SignalServiceWrapper<ServiceT>
-    {
-        using Super = SignalServiceWrapper<ServiceT>;
-
-    protected:
-        using Super::Super;
-
-        // Serve requests to watch for signal changes
-        inline ::grpc::Status watch(::grpc::ServerContext *cxt,
-                                    const SignalFilterT *req,
-                                    ::grpc::ServerWriter<SignalT> *writer) override
-        {
-            return this->template stream_signals<SignalT, SignalQueueT, SignalFilterT>(
-                cxt, req, writer);
         }
     };
 

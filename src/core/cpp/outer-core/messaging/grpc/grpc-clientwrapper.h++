@@ -11,12 +11,9 @@
 
 #pragma once
 #include "grpc-clientbase.h++"
+#include "protobuf-standard-types.h++"
 #include "logging/logging.h++"
 #include "chrono/date-time.h++"
-
-#include <google/protobuf/empty.pb.h>
-// #include <grpcpp/impl/codegen/sync_stream.h>
-// #include <grpcpp/impl/codegen/client_context.h>
 
 namespace core::grpc
 {
@@ -104,7 +101,7 @@ namespace core::grpc
         /// @return
         ///      gRPC status code
 
-        template <class ResponseT, class RequestT = google::protobuf::Empty>
+        template <class ResponseT, class RequestT = protobuf::Empty>
         inline Status call_sync(const gRPCMethod<ResponseT, RequestT> &method,
                                 const RequestT &request,
                                 ResponseT *response,
@@ -125,7 +122,7 @@ namespace core::grpc
             return (this->stub.get()->*method)(&cxt, request, response);
         }
 
-        template <class ResponseT, class RequestT = google::protobuf::Empty>
+        template <class ResponseT, class RequestT = protobuf::Empty>
         inline Status call_sync(const std::string &methodname,
                                 const gRPCMethod<ResponseT, RequestT> &method,
                                 const RequestT &request,
@@ -146,7 +143,7 @@ namespace core::grpc
             return status;
         }
 
-        template <class ResponseT, class RequestT = google::protobuf::Empty>
+        template <class ResponseT, class RequestT = protobuf::Empty>
         inline Status call_sync(const std::string &methodname,
                                 const gRPCMethod<ResponseT, RequestT> &method,
                                 const RequestT &request,
@@ -172,7 +169,7 @@ namespace core::grpc
         /// @throw core::grpc::ServiceError
         ///     Non-OK gRPC status code
 
-        template <class ResponseT, class RequestT = google::protobuf::Empty>
+        template <class ResponseT, class RequestT = protobuf::Empty>
         inline ResponseT call_check(const gRPCMethod<ResponseT, RequestT> &method,
                                     const RequestT &request = {},
                                     std::optional<bool> wait_for_ready = {},
@@ -183,7 +180,7 @@ namespace core::grpc
             return response;
         }
 
-        template <class ResponseT, class RequestT = google::protobuf::Empty>
+        template <class ResponseT, class RequestT = protobuf::Empty>
         inline ResponseT call_check(const std::string &methodname,
                                     const gRPCMethod<ResponseT, RequestT> &method,
                                     const RequestT &request = {},

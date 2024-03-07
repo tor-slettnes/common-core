@@ -16,8 +16,6 @@
 #include "config/settingsstore.h++"
 #include <grpc++/grpc++.h>
 
-#include <google/protobuf/empty.pb.h>
-
 namespace core::grpc
 {
     define_log_scope("grpc");

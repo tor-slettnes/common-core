@@ -15,8 +15,8 @@
 
 namespace demo::grpc
 {
-    using ClientImplBase = core::grpc::SignalWatchClient<CC::Demo::Demo,
-                                                       CC::Demo::Signal>;
+    using ClientImplBase = core::grpc::SignalClient<CC::Demo::Demo,
+                                                    CC::Demo::Signal>;
 
     class ClientImpl : public demo::API,
                        public ClientImplBase,

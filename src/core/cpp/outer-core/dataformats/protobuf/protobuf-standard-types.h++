@@ -25,63 +25,83 @@
 
 namespace protobuf
 {
+    using google::protobuf::Message;
     using google::protobuf::Empty;
+    using google::protobuf::BoolValue;
+    using google::protobuf::FloatValue;
+    using google::protobuf::DoubleValue;
+    using google::protobuf::UInt64Value;
+    using google::protobuf::Int64Value;
+    using google::protobuf::UInt32Value;
+    using google::protobuf::Int32Value;
+    using google::protobuf::StringValue;
+    using google::protobuf::BytesValue;
+    using google::protobuf::Timestamp;
+    using google::protobuf::Duration;
+    using google::protobuf::Value;
+    using google::protobuf::ListValue;
+    using google::protobuf::Struct;
+    using google::protobuf::Map;
+
+    using IntValue = google::protobuf::Int64Value;
+    using UIntValue = google::protobuf::UInt64Value;
+    using RealValue = google::protobuf::DoubleValue;
     using RepeatedString = google::protobuf::RepeatedPtrField<std::string>;
 
     //==========================================================================
     // Simple protobuf types
 
     void encode(const std::string &s,
-                google::protobuf::StringValue *msg) noexcept;
-    void decode(const google::protobuf::StringValue &msg,
+                protobuf::StringValue *msg) noexcept;
+    void decode(const protobuf::StringValue &msg,
                 std::string *s) noexcept;
 
     void encode(double r,
-                google::protobuf::DoubleValue *msg) noexcept;
+                protobuf::DoubleValue *msg) noexcept;
 
-    void decode(const google::protobuf::DoubleValue &msg,
+    void decode(const protobuf::DoubleValue &msg,
                 double *r) noexcept;
 
     void encode(float r,
-                google::protobuf::FloatValue *msg) noexcept;
+                protobuf::FloatValue *msg) noexcept;
 
-    void decode(const google::protobuf::FloatValue &msg,
+    void decode(const protobuf::FloatValue &msg,
                 float *r) noexcept;
 
     void encode(std::uint64_t n,
-                google::protobuf::UInt64Value *msg) noexcept;
+                protobuf::UInt64Value *msg) noexcept;
 
-    void decode(const google::protobuf::UInt64Value &msg,
+    void decode(const protobuf::UInt64Value &msg,
                 std::uint64_t *n) noexcept;
 
     void encode(std::int64_t n,
-                google::protobuf::Int64Value *msg) noexcept;
+                protobuf::Int64Value *msg) noexcept;
 
-    void decode(const google::protobuf::Int64Value &msg,
+    void decode(const protobuf::Int64Value &msg,
                 std::int64_t *n) noexcept;
 
     void encode(std::uint32_t n,
-                google::protobuf::UInt32Value *msg) noexcept;
+                protobuf::UInt32Value *msg) noexcept;
 
-    void decode(const google::protobuf::UInt32Value &msg,
+    void decode(const protobuf::UInt32Value &msg,
                 std::uint32_t *n) noexcept;
 
     void encode(std::int32_t n,
-                google::protobuf::Int32Value *msg) noexcept;
+                protobuf::Int32Value *msg) noexcept;
 
-    void decode(const google::protobuf::Int32Value &msg,
+    void decode(const protobuf::Int32Value &msg,
                 std::int32_t *n) noexcept;
 
     void encode(bool b,
-                google::protobuf::BoolValue *msg) noexcept;
+                protobuf::BoolValue *msg) noexcept;
 
-    void decode(const google::protobuf::BoolValue &msg,
+    void decode(const protobuf::BoolValue &msg,
                 bool *b) noexcept;
 
     void encode(const core::types::Bytes &b,
-                google::protobuf::BytesValue *msg) noexcept;
+                protobuf::BytesValue *msg) noexcept;
 
-    void decode(const google::protobuf::BytesValue &msg,
+    void decode(const protobuf::BytesValue &msg,
                 core::types::Bytes *b) noexcept;
 
     //==========================================================================
@@ -92,51 +112,51 @@ namespace protobuf
     ///     to Google Protobuf Timestamp message.
 
     void encode(const core::dt::TimePoint &tp,
-                google::protobuf::Timestamp *ts) noexcept;
+                protobuf::Timestamp *ts) noexcept;
 
-    void decode(const google::protobuf::Timestamp &ts,
+    void decode(const protobuf::Timestamp &ts,
                 core::dt::TimePoint *tp) noexcept;
 
     //==========================================================================
     // Duration encoding/decoding
 
     void encode(const core::dt::Duration &duration,
-                google::protobuf::Duration *msg) noexcept;
+                protobuf::Duration *msg) noexcept;
 
-    void decode(const google::protobuf::Duration &msg,
+    void decode(const protobuf::Duration &msg,
                 core::dt::Duration *duration) noexcept;
 
     //==========================================================================
     // Google variant value encoding/decoding
 
     void encode(const core::types::Value &value,
-                google::protobuf::Value *msg) noexcept;
+                protobuf::Value *msg) noexcept;
 
-    void decode(const google::protobuf::Value &msg,
+    void decode(const protobuf::Value &msg,
                 core::types::Value *value) noexcept;
 
     //==========================================================================
     // Google variant struct encoding/decoding
 
     void encode(const core::types::KeyValueMap &kvmap,
-                google::protobuf::Struct *msg) noexcept;
+                protobuf::Struct *msg) noexcept;
 
-    void decode(const google::protobuf::Struct &msg,
+    void decode(const protobuf::Struct &msg,
                 core::types::KeyValueMap *kvmap) noexcept;
 
     void encode(const core::types::TaggedValueList &tvlist,
-                google::protobuf::Struct *msg) noexcept;
+                protobuf::Struct *msg) noexcept;
 
-    void decode(const google::protobuf::Struct &msg,
+    void decode(const protobuf::Struct &msg,
                 core::types::TaggedValueList *tvlist) noexcept;
 
     //==========================================================================
     // Google variant list encoding/decoding
 
     void encode(const core::types::ValueList &list,
-                google::protobuf::ListValue *msg) noexcept;
+                protobuf::ListValue *msg) noexcept;
 
-    void decode(const google::protobuf::ListValue &msg,
+    void decode(const protobuf::ListValue &msg,
                 core::types::ValueList *list) noexcept;
 }  // namespace core::protobuf
 

@@ -7,7 +7,7 @@
 
 #pragma once
 #include "grpc-base.h++"
-#include "grpc-servicehandler.h++"
+#include "grpc-requesthandler.h++"
 #include <grpc++/server_builder.h>
 
 namespace core::grpc
@@ -32,7 +32,7 @@ namespace core::grpc
         }
 
     private:
-        void add_handler_settings(std::shared_ptr<ServiceHandlerBase> handler,
+        void add_handler_settings(std::shared_ptr<RequestHandlerBase> handler,
                                   bool add_listener);
         void add_listener(const std::string &address);
         void adjust_max(uint candidate, uint *target);

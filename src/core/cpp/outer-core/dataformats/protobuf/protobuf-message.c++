@@ -49,8 +49,7 @@ namespace google
 {
     namespace protobuf
     {
-        std::ostream &operator<<(std::ostream &stream,
-                                 const google::protobuf::Message &msg)
+        std::ostream &operator<<(std::ostream &stream, const Message &msg)
         {
             stream << ::protobuf::to_string(msg);
             return stream;

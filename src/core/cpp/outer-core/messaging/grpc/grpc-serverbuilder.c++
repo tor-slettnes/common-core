@@ -28,7 +28,7 @@ namespace core::grpc
         return this->listeners_;
     }
 
-    void ServerBuilder::add_handler_settings(std::shared_ptr<ServiceHandlerBase> handler,
+    void ServerBuilder::add_handler_settings(std::shared_ptr<RequestHandlerBase> handler,
                                              bool add_listener)
     {
         if (add_listener)

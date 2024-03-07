@@ -9,8 +9,6 @@
 #include "grpc-base.h++"
 #include "chrono/date-time.h++"
 
-// #include <google/protobuf/empty.pb.h>
-// #include <grpcpp/impl/codegen/sync_stream.h>
 #include <grpcpp/impl/codegen/client_context.h>
 
 namespace core::grpc

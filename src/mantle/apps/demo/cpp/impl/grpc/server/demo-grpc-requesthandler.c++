@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "demo-grpc-requesthandler.h++"
+#include "demo-grpc-signalqueue.h++"
 #include "protobuf-demo-types.h++"
 #include "protobuf-inline.h++"
 #include "protobuf-message.h++"
@@ -89,6 +90,14 @@ namespace demo::grpc
         {
             return this->failure(std::current_exception(), *request, context->peer());
         }
+    }
+
+    ::grpc::Status RequestHandler::watch(
+        ::grpc::ServerContext* context,
+        const CC::Signal::Filter* request,
+        ::grpc::ServerWriter<CC::Demo::Signal>* writer)
+    {
+        return this->stream_signals<CC::Demo::Signal, SignalQueue>(context, request, writer);
     }
 
 }  // namespace demo::grpc

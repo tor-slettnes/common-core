@@ -153,7 +153,7 @@ namespace core::zmq
     }
 
     void ProtoBufClient::send_protobuf_invocation(const std::string method_name,
-                                                  const google::protobuf::Message &request,
+                                                  const ::protobuf::Message &request,
                                                   ::zmq::send_flags send_flags)
     {
         CC::RR::Parameter request_param;

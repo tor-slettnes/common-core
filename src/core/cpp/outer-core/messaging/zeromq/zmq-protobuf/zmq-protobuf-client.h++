@@ -69,17 +69,17 @@ namespace core::zmq
 
     private:
         void send_protobuf_invocation(const std::string method_name,
-                                      const google::protobuf::Message &request,
+                                      const ::protobuf::Message &request,
                                       ::zmq::send_flags send_flags);
 
         bool read_protobuf_result(types::ByteVector *bytes,
                                   ::zmq::recv_flags recv_flags);
 
     public:
-        template <class ResponseType = google::protobuf::Empty>
+        template <class ResponseType = ::protobuf::Empty>
         ResponseType call(
             const std::string method_name,
-            const google::protobuf::Message &request = google::protobuf::Empty(),
+            const ::protobuf::Message &request = ::protobuf::Empty(),
             ::zmq::send_flags send_flags = ::zmq::send_flags::none,
             ::zmq::recv_flags recv_flags = ::zmq::recv_flags::none)
         {

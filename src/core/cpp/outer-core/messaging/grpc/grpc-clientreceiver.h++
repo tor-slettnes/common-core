@@ -22,7 +22,7 @@ namespace core::grpc
     /// Subclasses should override `void process(const T &message)`
     /// to handle messages as they are received.
 
-    template <class ServiceT, class MessageT, class RequestT = ::google::protobuf::Empty>
+    template <class ServiceT, class MessageT, class RequestT = protobuf::Empty>
     class ClientReceiver
     {
         using This = ClientReceiver<ServiceT, MessageT, RequestT>;
@@ -128,7 +128,7 @@ namespace core::grpc
     /// @class ClientSignalReceiver
     /// @brief Stream messages from server and emit them locally as signals
 
-    template <class ServiceT, class SignalT, class RequestT = ::google::protobuf::Empty>
+    template <class ServiceT, class SignalT, class RequestT = protobuf::Empty>
     class ClientSignalReceiver : public ClientReceiver<ServiceT, SignalT, RequestT>
     {
         using Super = ClientReceiver<ServiceT, SignalT, RequestT>;

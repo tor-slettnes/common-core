@@ -11,7 +11,6 @@
 #include <condition_variable>
 #include <mutex>
 #include <queue>
-#include <list>
 #include <thread>
 #include <algorithm>
 
@@ -136,6 +135,7 @@ namespace core::types
             return this->queue.empty();
         }
 
+    protected:
         inline void discard_oldest() override
         {
             this->queue.pop();
@@ -148,6 +148,9 @@ namespace core::types
         ///     Value to copy to the end of the queue. \sa void put(T && value).
         /// @param[in] reopen
         ///     Reopen the queue if it had been closed
+        /// @param[in] notify
+        ///     Notify anyone waiting for items.  Disabling this may
+        ///     allow for multiple pushes without waiting.
         /// @param[in] bool
         ///     Indiate whether the item was actually pushed
         ///
@@ -158,7 +161,9 @@ namespace core::types
         /// has been reached) then the oldest item is removed from the front of
         /// the queue.
 
-        inline bool put(const T &value, bool reopen = false)
+        inline bool put(const T &value,
+                        bool reopen = false,
+                        bool notify = true)
         {
             if (reopen || !this->closed_)
             {
@@ -170,7 +175,10 @@ namespace core::types
                         this->queue.push(value);
                     }
                 }
-                this->cv.notify_one();
+                if (notify)
+                {
+                    this->cv.notify_one();
+                }
                 return true;
             }
             else
@@ -185,6 +193,9 @@ namespace core::types
         ///     Value which is moved to the end of the queue.
         /// @param[in] reopen
         ///     Reopen the queue if it had been closed
+        /// @param[in] notify
+        ///     Notify anyone waiting for items.  Disabling this may
+        ///     allow for multiple pushes without waiting.
         /// @param[in] bool
         ///     Indiate whether the item was actually pushed
         ///
@@ -195,7 +206,9 @@ namespace core::types
         /// has been reached) then the oldest item is removed from the front of
         /// the queue.
 
-        inline bool put(T &&value, bool reopen = false)
+        inline bool put(T &&value,
+                        bool reopen = false,
+                        bool notify = true)
         {
             if (reopen || !this->closed_)
             {
@@ -207,13 +220,24 @@ namespace core::types
                         this->queue.push(std::move(value));
                     }
                 }
-                this->cv.notify_one();
+                if (notify)
+                {
+                    this->cv.notify_one();
+                }
                 return true;
             }
             else
             {
                 return false;
             }
+        }
+
+        /// @brief
+        ///     Notify recipients of available value(s). This may be used after
+        ///     `push()` operations where the `notify` flag was set to `false`.
+        inline void notify()
+        {
+            this->cv.notify_one();
         }
 
         /// @brief
@@ -303,7 +327,7 @@ namespace core::types
         }
 
     private:
-        std::queue<T, std::list<T>> queue;
+        std::queue<T, std::deque<T>> queue;
     };
 
 }  // namespace core::types

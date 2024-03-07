@@ -6,9 +6,8 @@
 //==============================================================================
 
 #pragma once
-#include "demo-grpc-signalqueue.h++"
 #include "demo-api.h++"
-#include "grpc-signalservice.h++"
+#include "grpc-signalrequesthandler.h++"
 
 #include "demo_service.grpc.pb.h"  // generated from `demo_service.proto`
 
@@ -20,16 +19,12 @@ namespace demo::grpc
     // @class RequestHandler
     // @brief Process requests from Demo clients
 
-    using RequestHandlerBase = core::grpc::SignalWatchService<CC::Demo::Demo,
-                                                            CC::Demo::Signal,
-                                                            SignalQueue>;
-
-    class RequestHandler : public RequestHandlerBase,
+    class RequestHandler : public core::grpc::SignalRequestHandler<CC::Demo::Demo>,
                            public core::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;
-        using Super = RequestHandlerBase;
+        using Super = core::grpc::SignalRequestHandler<CC::Demo::Demo>;
 
     protected:
         RequestHandler(const std::shared_ptr<API>& api_provider);
@@ -54,6 +49,11 @@ namespace demo::grpc
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::google::protobuf::Empty* response) override;
+
+        ::grpc::Status watch(
+            ::grpc::ServerContext* context,
+            const CC::Signal::Filter* request,
+            ::grpc::ServerWriter<CC::Demo::Signal> *writer) override;
 
     private:
         std::shared_ptr<API> provider;

@@ -1,26 +1,25 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file grpc-serverwrapper.c++
-/// @brief Server-side wrapper functionality for Comon Core gRPC services
+/// @file grpc-requesthandler.c++
+/// @brief Server-side request handler gRPC services
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "grpc-servicehandler.h++"
+#include "grpc-requesthandler.h++"
 #include "protobuf-message.h++"
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
 #include "http-utils.h++"
 //#include "errnos.h"
 
-
 namespace core::grpc
 {
-    ServiceHandlerBase::ServiceHandlerBase(const std::string &full_service_name)
+    RequestHandlerBase::RequestHandlerBase(const std::string &full_service_name)
         : Base("gRPC Service", full_service_name)
     {
     }
 
-    std::string ServiceHandlerBase::address_setting() const
+    std::string RequestHandlerBase::address_setting() const
     {
         return this->realaddress(
             {},           // no provided address
@@ -30,7 +29,7 @@ namespace core::grpc
             8080);
     }
 
-    Status ServiceHandlerBase::failure(const std::exception &e,
+    Status RequestHandlerBase::failure(const std::exception &e,
                                        const std::string &operation,
                                        status::Flow flow,
                                        const std::filesystem::path &path,
@@ -42,7 +41,7 @@ namespace core::grpc
         return status;
     }
 
-    Status ServiceHandlerBase::failure(std::exception_ptr eptr,
+    Status RequestHandlerBase::failure(std::exception_ptr eptr,
                                        const std::string &operation,
                                        status::Flow flow,
                                        const fs::path &path,
@@ -69,8 +68,8 @@ namespace core::grpc
         }
     }
 
-    Status ServiceHandlerBase::failure(const std::exception &exception,
-                                       const google::protobuf::Message &request,
+    Status RequestHandlerBase::failure(const std::exception &exception,
+                                       const protobuf::Message &request,
                                        const std::string &peer,
                                        status::Flow flow,
                                        const fs::path &path,
@@ -85,8 +84,8 @@ namespace core::grpc
                              function);
     }
 
-    Status ServiceHandlerBase::failure(std::exception_ptr eptr,
-                                       const google::protobuf::Message &request,
+    Status RequestHandlerBase::failure(std::exception_ptr eptr,
+                                       const protobuf::Message &request,
                                        const std::string &peer,
                                        status::Flow flow,
                                        const fs::path &path,
@@ -101,7 +100,7 @@ namespace core::grpc
                              function);
     }
 
-    void ServiceHandlerBase::log_status(const Status &status,
+    void RequestHandlerBase::log_status(const Status &status,
                                         const std::string &operation,
                                         status::Flow flow,
                                         const fs::path &path,
@@ -127,8 +126,8 @@ namespace core::grpc
         msg->dispatch();
     }
 
-    std::string ServiceHandlerBase::request_description(
-        const google::protobuf::Message &request,
+    std::string RequestHandlerBase::request_description(
+        const protobuf::Message &request,
         const std::string &peer,
         const std::string &function)
     {

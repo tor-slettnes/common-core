@@ -1,26 +1,25 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file grpc-servicewrapper.h++
-/// @brief Service-side wrapper functionality for Common Core gRPC services
+/// @file grpc-requesthandler.c++
+/// @brief Server-side request handler gRPC services
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
 #include "grpc-base.h++"
-
-#include <google/protobuf/empty.pb.h>
+#include "protobuf-standard-types.h++"
 
 namespace core::grpc
 {
     //==========================================================================
-    /// @class ServiceHandlerBase
+    /// @class RequestHandlerBase
     /// @brief
     ///     Wapper for client-side gRPC invocations
 
-    class ServiceHandlerBase : public Base
+    class RequestHandlerBase : public Base
     {
     protected:
-        ServiceHandlerBase(const std::string &full_service_name);
+        RequestHandlerBase(const std::string &full_service_name);
 
     public:
         std::string address_setting() const;
@@ -41,7 +40,7 @@ namespace core::grpc
                        const std::string &function = __builtin_FUNCTION());
 
         Status failure(const std::exception &exception,
-                       const google::protobuf::Message &request,
+                       const protobuf::Message &request,
                        const std::string &peer = {},
                        status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
@@ -49,7 +48,7 @@ namespace core::grpc
                        const std::string &function = __builtin_FUNCTION());
 
         Status failure(std::exception_ptr eptr,
-                       const google::protobuf::Message &request,
+                       const protobuf::Message &request,
                        const std::string &peer = {},
                        status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
@@ -63,24 +62,24 @@ namespace core::grpc
                         const int &line = __builtin_LINE(),
                         const std::string &function = __builtin_FUNCTION());
 
-        std::string request_description(const google::protobuf::Message &request,
+        std::string request_description(const protobuf::Message &request,
                                         const std::string &peer,
                                         const std::string &function);
     };
 
     //==========================================================================
-    /// @class ServiceHandler<T>
+    /// @class RequestHandler<T>
     /// @brief Class template for gRPC services
     ///
     /// @b Examples
-    ///  * Include a "ServiceHandler" as a base for your service class:
+    ///  * Include a "RequestHandler" as a base for your service class:
     ///    \code
     ///      #include "servicewrapper.h"
-    ///      class YourService : public ServiceHandler<CC::yourapp::YourService>
+    ///      class YourService : public RequestHandler<CC::yourapp::YourService>
     ///      {
     ///      public:
     ///          YourService (const std::string &interface)
-    ///             : ServiceHandler<CC::yourapp::YourService>(interface) {}
+    ///             : RequestHandler<CC::yourapp::YourService>(interface) {}
     ///          ...
     ///      };
     ///    \endcode
@@ -119,18 +118,18 @@ namespace core::grpc
     ///    \endcode;
 
     template <class T>
-    class ServiceHandler : public ServiceHandlerBase, public T::Service
+    class RequestHandler : public RequestHandlerBase, public T::Service
     {
     public:
         using ServiceClass = T;
 
-        ServiceHandler()
-            : ServiceHandlerBase(T::service_full_name())
+        RequestHandler()
+            : RequestHandlerBase(T::service_full_name())
         {
         }
 
-        template <class ResponseType = google::protobuf::Empty,
-                  class RequestType = google::protobuf::Empty>
+        template <class ResponseType = protobuf::Empty,
+                  class RequestType = protobuf::Empty>
         ::grpc::Status wrap(::grpc::ServerContext *context,
                             const RequestType *request,
                             ResponseType *response,

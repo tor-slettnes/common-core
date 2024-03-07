@@ -21,7 +21,7 @@ This folder contains convenience wrappers for sending and receiving binary/encod
 
 * [cc::zmq::Subscriber()](zmq-subscriber.h++): Connect to a remote publisher and spawn a thread to listen for publications. Methods `subscribe()` and `subscribe_topic()` are provided to register a single callback method; or in the latter case, a single callback method per matching topic.
 
-  A typical callback method might deserialize the binary payload and then emit the resulting value as a local [signal](../../../core/thread/signaltemplate.h++) to interested parties.
+  A typical callback method might deserialize the binary payload and then emit the resulting value as a local [signal](../../../../inner-core/common/thread/signaltemplate.h++) to interested parties.
 
 * [cc::zmq::Filter()](zmq-filter.h++): Create, insert, and extract pub/sub topics as ZMQ message filters. These are prepended before the binary payload, and comprise
  - The topic length, encoded as a ProtoBuf-style [variable length integer](https://protobuf.dev/programming-guides/encoding/#varints) (a single byte if the length is below 128), and

@@ -26,8 +26,8 @@ set(LIB_DEPS
 set(SOURCES
   grpc-base.c++
   grpc-clientbase.c++
+  grpc-requesthandler.c++
   grpc-serverbuilder.c++
-  grpc-servicehandler.c++
   grpc-status.c++
 )
 

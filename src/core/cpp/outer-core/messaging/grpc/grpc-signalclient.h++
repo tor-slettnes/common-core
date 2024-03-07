@@ -56,10 +56,10 @@ namespace core::grpc
     ///
 
     template <class ServiceT, class SignalT>
-    class SignalWatchClient : public ClientWrapper<ServiceT>,
+    class SignalClient : public ClientWrapper<ServiceT>,
                               public protobuf::SignalReceiver<SignalT>
     {
-        using This = SignalWatchClient<ServiceT, SignalT>;
+        using This = SignalClient<ServiceT, SignalT>;
         using Super = ClientWrapper<ServiceT>;
         using SignalReceiver = protobuf::SignalReceiver<SignalT>;
 
@@ -68,7 +68,7 @@ namespace core::grpc
 
     protected:
         template <class... Args>
-        SignalWatchClient(Args &&...args)
+        SignalClient(Args &&...args)
             : Super(std::forward<Args>(args)...),
               receiver(std::bind(&SignalReceiver::process_signal,
                                  this,
@@ -77,7 +77,7 @@ namespace core::grpc
         {
         }
 
-        ~SignalWatchClient()
+        ~SignalClient()
         {
             this->deinitialize();
             this->stop_watching();
