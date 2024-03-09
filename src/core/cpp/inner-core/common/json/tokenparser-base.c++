@@ -18,7 +18,7 @@ namespace core::json
 {
     const int eof = std::char_traits<char>::eof();
 
-    TokenPair TokenParser::next_of(const TokenMask &candidates,
+    TokenPair TokenParser::next_of(const TokenMask &expected,
                                    const TokenMask &endtokens)
     {
         TokenPair tp = this->next_token();
@@ -27,7 +27,7 @@ namespace core::json
             tp = this->next_token();
         }
 
-        if (candidates & tp.first)
+        if (expected & tp.first)
         {
             return tp;
         }
@@ -35,19 +35,24 @@ namespace core::json
         {
             return TokenPair(TI_NONE, {});
         }
-        else if (tp.first == TI_NONE)
+        else if (tp.first == TI_END)
         {
             throwf(exception::MissingArgument,
                    "Missing JSON token at end of input");
         }
+        else if (tp.first == TI_INVALID)
+        {
+            throwf(exception::InvalidArgument,
+                   "Invalid input at position %d: %s",
+                   this->token_position(),
+                   this->token());
+        }
         else
         {
             throwf(exception::InvalidArgument,
-                   "Unexpected JSON token type %#04x at position %d: %s (expected one of: %#04x)",
-                   tp.first,
+                   "Unexpected token at position %d: %s",
                    this->token_position(),
-                   this->token(),
-                   candidates);
+                   this->token());
         }
     }
 
@@ -87,7 +92,7 @@ namespace core::json
             return this->parse_symbol();
 
         default:
-            return {TI_UNKNOWN, c};
+            return {TI_INVALID, {}};
         }
     }
 
@@ -135,7 +140,7 @@ namespace core::json
     }
 
     template <class T, class... Args>
-    TokenPair TokenParser::parse_numeric(TokenIndex ti, const std::string &type, Args &&...args)
+    TokenPair TokenParser::parse_numeric(Args &&...args)
     {
         const char *const start = &*this->token_begin();
         const char *const end = &*this->token_end();
@@ -143,16 +148,14 @@ namespace core::json
         std::errc ok;
 
         auto [ptr, ec] = std::from_chars(start, end, number, args...);
-        if ((ec != ok) || (ptr < end))
+        if ((ec == ok) && (ptr == end))
         {
-            logf_info("Failed to convert token %r to %s; decoded %d characters: %s",
-                      this->token(),
-                      type,
-                      ptr - start,
-                      std::make_error_code(ec).message());
-            ti = TI_UNKNOWN;
+            return {TI_NUMERIC, number};
         }
-        return {ti, number};
+        else
+        {
+            return {TI_INVALID, {}};
+        }
     }
 
     TokenPair TokenParser::parse_number()
@@ -179,23 +182,23 @@ namespace core::json
                 break;
             }
         }
-        this->ungetc();
+        this->ungetc(c);
 
         if (got_real)
         {
-            return this->parse_numeric<double>(TI_REAL, "real"s);
+            return this->parse_numeric<double>();
         }
         else if (got_sign)
         {
-            return this->parse_numeric<std::int64_t>(TI_SINT, "signed integer"s);
+            return this->parse_numeric<std::int64_t>();
         }
         else if (got_hex)
         {
-            return this->parse_numeric<std::uint64_t>(TI_UINT, "hexadecimal integer"s, 0);
+            return this->parse_numeric<std::uint64_t>(0);
         }
         else
         {
-            return this->parse_numeric<std::uint64_t>(TI_UINT, "unsigned integer"s);
+            return this->parse_numeric<std::uint64_t>();
         }
     }
 
@@ -215,7 +218,7 @@ namespace core::json
         {
             this->append_to_token(c);
         }
-        this->ungetc();
+        this->ungetc(c);
 
         try
         {
@@ -223,7 +226,7 @@ namespace core::json
         }
         catch (const std::out_of_range &e)
         {
-            return {TI_UNKNOWN, this->token()};
+            return {TI_INVALID, {}};
         }
     }
 
@@ -245,7 +248,7 @@ namespace core::json
         }
         else
         {
-            return {TI_UNKNOWN, this->token()};
+            return {TI_INVALID, {}};
         }
     }
 
@@ -285,7 +288,7 @@ namespace core::json
             string.push_back(c);
         }
 
-        return {TI_NONE, string};
+        return {TI_END, string};
     }
 
     char TokenParser::escape(char c)

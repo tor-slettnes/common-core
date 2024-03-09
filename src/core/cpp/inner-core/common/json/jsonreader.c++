@@ -25,6 +25,13 @@ namespace core::json
 
     types::Value JsonReader::read_from(const fs::path &path)
     {
-        return JsonParser::parse_stream(std::ifstream{path});
+        if (std::ifstream is{path})
+        {
+            return JsonParser::parse_stream(is);
+        }
+        else
+        {
+            return {};
+        }
     }
 }  // namespace core::json

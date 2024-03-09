@@ -18,17 +18,17 @@ namespace core::json
 {
     types::Value JsonParser::parse_text(const std::string &text)
     {
-        return This::parse_value(std::make_shared<StringParser>(text));
+        return This::parse_input(std::make_shared<StringParser>(text));
     }
 
     types::Value JsonParser::parse_stream(std::istream &&stream)
     {
-        return This::parse_value(std::make_shared<StreamParser>(stream));
+        return This::parse_input(std::make_shared<StreamParser>(stream));
     }
 
     types::Value JsonParser::parse_stream(std::istream &stream)
     {
-        return This::parse_value(std::make_shared<StreamParser>(stream));
+        return This::parse_input(std::make_shared<StreamParser>(stream));
     }
 
     types::Value JsonParser::parse_input(const ParserRef &parser)
@@ -94,9 +94,7 @@ namespace core::json
     {
         static const std::uint64_t value_mask =
             (TI_OBJECT_OPEN | TI_ARRAY_OPEN |
-             TI_NULL | TI_BOOL |
-             TI_REAL | TI_SINT | TI_UINT |
-             TI_STRING);
+             TI_NULL | TI_BOOL | TI_NUMERIC | TI_STRING);
 
         auto tp = parser->next_of(value_mask, endtokens);
         switch (tp.first)

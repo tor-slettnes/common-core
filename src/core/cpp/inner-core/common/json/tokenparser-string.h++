@@ -21,9 +21,8 @@ namespace core::json
         std::string::const_iterator token_end() const override;
 
         int getc() override;
-        void ungetc() override;
+        void ungetc(int c) override;
         void init_token(char c) override;
-        void append_to_token(char c) override;
 
     private:
         const std::string &string_;

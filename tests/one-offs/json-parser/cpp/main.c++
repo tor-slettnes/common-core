@@ -18,11 +18,11 @@ int main(int argc, char** argv)
     if (argc >= 2)
     {
         std::string json_string(argv[1]);
-        std::cout << "parsing input: " << std::quoted(json_string) << std::endl;
+        std::cout << "parsing input: '" << json_string << "'" << std::endl;
         core::types::Value value = core::json::JsonParser::parse_text(json_string);
         std::cout << "parsed: " << value << std::endl;
 
-        std::string reconstructed = core::json::JsonBuilder::to_string(value);
+        std::string reconstructed = core::json::JsonBuilder::to_string(value, true);
         std::cout << "reconstructed:" << reconstructed << std::endl;
     }
     else

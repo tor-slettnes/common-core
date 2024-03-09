@@ -51,18 +51,17 @@ namespace core::json
         }
     }
 
-    void StringParser::ungetc()
+    void StringParser::ungetc(int c)
     {
-        this->it_--;
+        if (c != std::char_traits<char>::eof())
+        {
+            this->it_--;
+        }
     }
 
     void StringParser::init_token(char c)
     {
         this->token_start_ = this->it_ - 1;
-    }
-
-    void StringParser::append_to_token(char c)
-    {
     }
 
 }  // namespace core::json
