@@ -17,8 +17,13 @@ namespace core::json
 
     public:
         JsonReader(const fs::path &path);
+
         types::Value read();
+
         static types::Value read_from(const fs::path &path);
+
+    private:
+        static std::string read_text(const fs::path &path);
 
     private:
         fs::path path_;

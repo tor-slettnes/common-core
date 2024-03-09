@@ -123,15 +123,15 @@ namespace core
         // as `filename` may have been absolute.
 
         fs::create_directories(path.parent_path());
-        json::JsonPrettyWriter doc(path);
+        json::JsonWriter writer(path);
 
         if (delta_only && this->composite_)
         {
-            doc.write(this->recursive_delta(this->default_settings()));
+            writer.write(this->recursive_delta(this->default_settings()));
         }
         else
         {
-            doc.write(*this);
+            writer.write(*this);
         }
     }
 

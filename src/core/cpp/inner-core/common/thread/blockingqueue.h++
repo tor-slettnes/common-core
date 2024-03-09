@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file blockingqueue.h++
 /// @brief std::queue wrapper with blocking receiver
-/// @author Tor Slettnes <tslettnes@picarro.com>
+/// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once

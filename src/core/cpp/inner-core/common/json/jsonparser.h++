@@ -26,6 +26,7 @@ namespace core::json
         static types::Value parse_stream(std::istream &istream);
 
     private:
+        static types::Value parse_input(const ParserRef &parser);
         static types::Value parse_value(const ParserRef &parser);
         static types::KeyValueMapRef parse_object(const ParserRef &parser);
         static types::ValueListRef parse_array(const ParserRef &parser);

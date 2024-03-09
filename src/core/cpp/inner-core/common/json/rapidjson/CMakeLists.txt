@@ -6,12 +6,8 @@
 #===============================================================================
 
 target_sources(${TARGET} PRIVATE
-  tokenparser-base.c++
-  tokenparser-stream.c++
-  tokenparser-string.c++
-  jsonparser.c++
-  jsonbuilder.c++
-  jsonwriter.c++
+  jsondecoder.c++
+  jsonreader.c++
 )
 
-target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_definitions(${TARGET} PUBLIC RAPIDJSON_HAS_STDSTRING)

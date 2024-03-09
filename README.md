@@ -96,8 +96,7 @@ If you are reading this text directly on your system, you have already completed
 * C++ core build-time dependencies:
 
   ```bash
-  $ sudo apt install build-essential cmake \
-                     uuid-dev rapidjson-dev
+  $ sudo apt install build-essential cmake uuid-dev
   ```
   (Additional indirect dependencies are installed as well)
 

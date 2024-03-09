@@ -18,23 +18,22 @@ namespace core::json
 {
     types::Value JsonParser::parse_text(const std::string &text)
     {
-        std::shared_ptr<TokenParser> parser = std::make_shared<StringParser>(text);
-        types::Value value = This::parse_value(parser);
-        // Ensure there's no more content.
-        parser->next_of(TI_END);
-        return value;
+        return This::parse_value(std::make_shared<StringParser>(text));
     }
 
     types::Value JsonParser::parse_stream(std::istream &&stream)
     {
-        return This::parse_stream(stream);
+        return This::parse_value(std::make_shared<StreamParser>(stream));
     }
 
     types::Value JsonParser::parse_stream(std::istream &stream)
     {
-        std::shared_ptr<TokenParser> parser = std::make_shared<StreamParser>(stream);
+        return This::parse_value(std::make_shared<StreamParser>(stream));
+    }
+
+    types::Value JsonParser::parse_input(const ParserRef &parser)
+    {
         types::Value value = This::parse_value(parser);
-        // Ensure there's no more content.
         parser->next_of(TI_END);
         return value;
     }

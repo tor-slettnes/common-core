@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-inline.h++
 /// @brief Convenience templates for ProtoBuf encoding/decoding
-/// @author Tor Slettnes <tslettnes@picarro.com>
+/// @author Tor Slettnes <tor@slett.net>
 ///
 /// The purpose of this file is to allow wrapper semantics like the following
 /// around the respecitve methods protobuf::encode(nativeobject, protobufmessage)

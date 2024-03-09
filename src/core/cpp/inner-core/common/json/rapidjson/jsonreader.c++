@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "jsonreader.h++"
-#include "jsonparser.h++"
+#include "jsondecoder.h++"
 #include "status/exceptions.h++"
 
 #include <fstream>
@@ -25,6 +25,22 @@ namespace core::json
 
     types::Value JsonReader::read_from(const fs::path &path)
     {
-        return JsonParser::parse_stream(std::ifstream{path});
+        return JsonDecoder::parse_text_with_comments(This::read_text(path));
+    }
+
+    std::string JsonReader::read_text(const fs::path &path)
+    {
+        std::uintmax_t size = fs::file_size(path);
+
+        if (std::ifstream is{path})
+        {
+            std::string str(size, '\0');
+            is.read(&str[0], size);
+            return str;
+        }
+        else
+        {
+            return {};
+        }
     }
 }  // namespace core::json
