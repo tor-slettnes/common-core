@@ -50,6 +50,12 @@ namespace core::types
         /// \brief Indicate whether every item in this list contains a unique tag
         bool mappable() const noexcept;
 
+        /// Get the first value
+        const Value &front(const Value &fallback = {}) const noexcept;
+
+        /// Get the last value
+        const Value &back(const Value &fallback = {}) const noexcept;
+
         /// Get the first value with the specified tag, or a default value if not found.
         const Value &get(const Tag &tag,
                          const Value &fallback = {},

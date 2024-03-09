@@ -28,6 +28,30 @@ namespace core::types
         stream << "}";
     }
 
+    const Value &ValueList::front(const Value &fallback) const noexcept
+    {
+        if (!this->empty())
+        {
+            return Super::front();
+        }
+        else
+        {
+            return fallback;
+        }
+    }
+
+    const Value &ValueList::back(const Value &fallback) const noexcept
+    {
+        if (!this->empty())
+        {
+            return Super::back();
+        }
+        else
+        {
+            return fallback;
+        }
+    }
+
     const Value &ValueList::get(uint index, const Value &fallback) const noexcept
     {
         try

@@ -32,7 +32,7 @@ namespace core::json
     protected:
         static std::string uncomment(const std::string &text);
         static types::Value decodeValue(const rapidjson::Value &value);
-        static types::ValueList decodeArray(const rapidjson::Value &jarray);
-        static types::KeyValueMap decodeObject(const rapidjson::Value &jobject);
+        static types::ValueListRef decodeArray(const rapidjson::Value &jarray);
+        static types::KeyValueMapRef decodeObject(const rapidjson::Value &jobject);
     };
 }  // namespace core::json

@@ -118,6 +118,8 @@ namespace core::types
         Value &operator[](const std::string &key);
         Value &operator[](const uint index);
 
+        const Value &front(const Value &fallback = {}) const noexcept;
+        const Value &back(const Value &fallback = {}) const noexcept;
         const Value &get(const std::string &key, const Value &fallback = {}) const noexcept;
         const Value &get(const uint index, const Value &fallback = {}) const noexcept;
         const Value &get(const int index, const Value &fallback = {}) const noexcept;

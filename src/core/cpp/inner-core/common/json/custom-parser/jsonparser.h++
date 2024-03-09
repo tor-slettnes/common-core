@@ -6,8 +6,8 @@
 //==============================================================================
 
 #pragma once
-#include "tokenparser.h++"
 #include "types/value.h++"
+#include "tokenparser-base.h++"
 
 #include <unordered_set>
 #include <memory>
@@ -22,16 +22,16 @@ namespace core::json
 
     public:
         static types::Value parse_text(const std::string &text);
-        // static types::Value parse_stream(std::istream &&istream);
-        // static types::Value parse_stream(std::istream &istream);
+        static types::Value parse_stream(std::istream &&istream);
+        static types::Value parse_stream(std::istream &istream);
 
     private:
         static types::Value parse_value(const ParserRef &parser);
         static types::KeyValueMapRef parse_object(const ParserRef &parser);
         static types::ValueListRef parse_array(const ParserRef &parser);
 
-        static std::optional<types::Value> parse_optional(
-            const ParserRef &parser,
-            const TokenSet &endtokens);
+        static TokenPair next_value(const ParserRef &parser,
+                                    const TokenMask &endtokens = TI_NONE);
+
     };
 }  // namespace core::json

@@ -117,6 +117,31 @@ namespace core::types
         return true;
     }
 
+    const Value &TaggedValueList::front(const Value &fallback) const noexcept
+    {
+        if (!this->empty())
+        {
+            return Super::front().second;
+        }
+        else
+        {
+            return fallback;
+        }
+    }
+
+    const Value &TaggedValueList::back(const Value &fallback) const noexcept
+    {
+        if (!this->empty())
+        {
+            return Super::back().second;
+        }
+        else
+        {
+            return fallback;
+        }
+    }
+
+
     const Value &TaggedValueList::get(const Tag &tag,
                                       const Value &fallback,
                                       bool ignoreCase) const noexcept

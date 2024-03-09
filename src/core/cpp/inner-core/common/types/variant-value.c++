@@ -762,6 +762,36 @@ namespace core::types
         }
     }
 
+    const Value &Value::front(const Value &fallback) const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::VALUELIST:
+            return std::get<ValueListRef>(*this)->front(fallback);
+
+        case ValueType::TVLIST:
+            return std::get<TaggedValueListRef>(*this)->front(fallback);
+
+        default:
+            return fallback;
+        }
+    }
+
+    const Value &Value::back(const Value &fallback) const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::VALUELIST:
+            return std::get<ValueListRef>(*this)->back(fallback);
+
+        case ValueType::TVLIST:
+            return std::get<TaggedValueListRef>(*this)->back(fallback);
+
+        default:
+            return fallback;
+        }
+    }
+
     const Value &Value::get(const std::string &key, const Value &fallback) const noexcept
     {
         switch (this->type())

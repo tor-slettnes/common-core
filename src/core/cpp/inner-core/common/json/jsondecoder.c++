@@ -126,23 +126,23 @@ namespace core::json
         }
     }
 
-    types::ValueList JsonDecoder::decodeArray(const rapidjson::Value &jarray)
+    types::ValueListRef JsonDecoder::decodeArray(const rapidjson::Value &jarray)
     {
-        types::ValueList list;
+        auto list = types::ValueList::create_shared();
         for (auto it = jarray.Begin(); it != jarray.End(); it++)
         {
-            list.push_back(This::decodeValue(*it));
+            list->push_back(This::decodeValue(*it));
         }
         return list;
     }
 
-    types::KeyValueMap JsonDecoder::decodeObject(const rapidjson::Value &jobject)
+    types::KeyValueMapRef JsonDecoder::decodeObject(const rapidjson::Value &jobject)
     {
-        types::KeyValueMap kvmap;
+        auto kvmap = types::KeyValueMap::create_shared();
         for (auto &&item : jobject.GetObject())
         {
-            kvmap.insert_or_assign(item.name.GetString(),
-                                   This::decodeValue(item.value));
+            kvmap->insert_or_assign(item.name.GetString(),
+                                    This::decodeValue(item.value));
         }
         return kvmap;
     }

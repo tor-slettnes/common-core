@@ -1,7 +1,7 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file tokenparser-stream.h++
-/// @brief JSON token iterator for stream inputs
+/// @file tokenparser-string.h++
+/// @brief JSON token iterator for string inputs
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -10,10 +10,10 @@
 
 namespace core::json
 {
-    class StreamParser : public TokenParser
+    class StringParser : public TokenParser
     {
     public:
-        StreamParser(std::istream &stream);
+        StringParser(const std::string &string);
 
         std::size_t token_position() const override;
         std::string token() const override;
@@ -26,10 +26,9 @@ namespace core::json
         void append_to_token(char c) override;
 
     private:
-        std::istream &stream_;
-        std::string token_;
-        std::size_t token_position_;
-        std::size_t token_size_;
-        std::size_t token_capacity_;
+        const std::string &string_;
+        std::string::const_iterator it_;
+        const std::string::const_iterator end_;
+        std::string::const_iterator token_start_;
     };
 }  // namespace core::json

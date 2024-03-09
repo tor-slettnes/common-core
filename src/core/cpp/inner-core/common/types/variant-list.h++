@@ -26,6 +26,8 @@ namespace core::types
         void to_stream(std::ostream &stream) const override;
 
     public:
+        const Value &front(const Value &fallback = {}) const noexcept;
+        const Value &back(const Value &fallback = {}) const noexcept;
         const Value &get(uint index, const Value &fallback = {}) const noexcept;
         const Value &get(int index, const Value &fallback = {}) const noexcept;
         TaggedValueList as_tvlist() const noexcept;
