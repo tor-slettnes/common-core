@@ -493,7 +493,16 @@ namespace core::types
     std::string Value::as_string() const noexcept
     {
         std::ostringstream out;
-        out << *this;
+        switch (this->type())
+        {
+        case ValueType::TIMEPOINT:
+            out << dt::to_js_string(this->get<dt::TimePoint>());
+            break;
+
+        default:
+            out << *this;
+            break;
+        }
         return out.str();
     }
 
@@ -556,10 +565,7 @@ namespace core::types
             return this->get<dt::TimePoint>();
 
         case ValueType::STRING:
-            return dt::to_timepoint(this->get<std::string>(),
-                                    true,
-                                    dt::DEFAULT_FORMAT,
-                                    fallback);
+            return dt::js_to_timepoint(this->get<std::string>(), fallback);
 
         case ValueType::BYTEVECTOR:
             try
@@ -912,6 +918,10 @@ namespace core::types
 
         case ValueType::BYTEVECTOR:
             stream << "%" << this->get<ByteVector>().to_base64();
+            break;
+
+        case ValueType::TIMEPOINT:
+            stream << std::quoted(dt::to_js_string(this->get<dt::TimePoint>()));
             break;
 
         case ValueType::STRING:

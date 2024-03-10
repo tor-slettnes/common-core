@@ -18,16 +18,19 @@ namespace core::json
 {
     types::Value JsonParser::parse_text(const std::string &text)
     {
+        logf_debug("Parsing JSON string (%d bytes)", text.size());
         return This::parse_input(std::make_shared<StringParser>(text));
     }
 
     types::Value JsonParser::parse_stream(std::istream &&stream)
     {
+        log_debug("Parsing JSON stream");
         return This::parse_input(std::make_shared<StreamParser>(stream));
     }
 
     types::Value JsonParser::parse_stream(std::istream &stream)
     {
+        log_debug("Parsing JSON stream");
         return This::parse_input(std::make_shared<StreamParser>(stream));
     }
 

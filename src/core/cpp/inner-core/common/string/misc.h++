@@ -285,22 +285,28 @@ namespace core::str
     ///     String to test
     /// \param[in] substring
     ///     Substring to compare against
+    /// \param[in] ignore_case
+    ///     Perform case insensitive compare
     /// \return
     ///     Indication of whether `input` begins with `substring`.
     [[nodiscard]] bool startswith(
         const std::string &input,
-        const std::string &substring);
+        const std::string &substring,
+        bool ignore_case = false);
 
     /// \brief Determine whether a ends starts with another
     /// \param[in] input
     ///     String to test
     /// \param[in] substring
     ///     Substring to compare against
+    /// \param[in] ignore_case
+    ///     Perform case insensitive compare
     /// \return
     ///     Indication of whether `input` ends with `substring`.
     [[nodiscard]] bool endswith(
         const std::string &input,
-        const std::string &substring);
+        const std::string &substring,
+        bool ignore_case = false);
 
     /// \brief Return the last component of a namespace-qualified string
     /// \param[in] string

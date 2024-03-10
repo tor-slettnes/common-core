@@ -6,8 +6,6 @@
 //==============================================================================
 
 #include "tokenparser-stream.h++"
-#include "logging/logging.h++"
-
 #include <sstream>
 
 namespace core::json
@@ -18,8 +16,6 @@ namespace core::json
           token_size_(0),
           token_capacity_(64)
     {
-        logf_debug("Stream parser created");
-
         // Enough to contain most miscellaneous content;
         // expanded by powers of two when parsing longer strings.
         this->token_.reserve(this->token_capacity_);

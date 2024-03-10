@@ -16,7 +16,6 @@ namespace core::json
           end_(string.cend()),
           token_start_(string.cend())
     {
-        logf_debug("String parser created");
     }
 
     std::size_t StringParser::token_position() const

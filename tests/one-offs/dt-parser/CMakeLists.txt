@@ -5,7 +5,5 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(python-runtime)
-add_subdirectory(rest-tool)
-add_subdirectory(json-parser)
-add_subdirectory(dt-parser)
+add_subdirectory(cpp)
+

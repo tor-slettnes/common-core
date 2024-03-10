@@ -27,9 +27,10 @@ namespace core
     /// Date/Time utilities
     namespace dt
     {
-        constexpr auto ISO_FORMAT = "%F %T";
-        constexpr auto DEFAULT_FORMAT = "%F@%T";
+        // constexpr auto ISO_FORMAT = "%F %T";
+        constexpr auto DEFAULT_FORMAT = "%F %T";
         constexpr auto DEFAULT_TIME_FORMAT = "%T";
+        constexpr auto JS_FORMAT = "%y-%m-%dT%H:%M:%S";
 
         // typedef std::chrono::system_clock Clock;
         // typedef Clock::duration Duration;
@@ -132,6 +133,14 @@ namespace core
                            uint max_divisions = 6,
                            const std::string delimiter = " ");
 
+        /// Return the provided timepoint as a JavaScript time string
+        /// \param[in] tp
+        ///     A timepoint
+        /// \return
+        ///     Timepoint represented as a JavaScript time string
+        std::string to_js_string(const TimePoint &tp);
+
+
         /// Return the provided timepoint as a string representing UTC or local time.
         /// \param[in] tp
         ///     A timepoint
@@ -231,6 +240,9 @@ namespace core
         /// Convert a duration to seconds (truncated, not rounded)
         long long to_seconds(const Duration &d);
 
+        /// Convert a duration to milliseconds (truncated, not rounded)
+        long long to_milliseconds(const Duration &d);
+
         /// Convert from TimePoint (std::chrono::system_clock::time_point) to double
         double to_double(const TimePoint &tp);
 
@@ -253,18 +265,28 @@ namespace core
         Duration to_duration(const std::string &string,
                              const std::string &format = DEFAULT_FORMAT);
 
+        /// Convert from JavaScript time string (`YYYY-MM-DDTHH:MM:SS.sssZ`) to TimePoint
+        TimePoint js_to_timepoint(const std::string &js_string,
+                                  const TimePoint &fallback = {});
+
+        /// Convert from string representation (`YYYY-MM-DD?HH:MM:SS.sss`) to TimePoint
+        TimePoint to_timepoint(const std::string &s,
+                               bool local = true,
+                               const std::string &format = DEFAULT_FORMAT,
+                               const TimePoint &fallback = {});
+
         /// Convert from "struct tm" to TimePoint, or fallback if the time is zero.
         TimePoint to_timepoint(const tm &dt,
                                bool local = true,
-                               const TimePoint &fallback = epoch);
+                               const TimePoint &fallback = {});
 
         /// Convert from "struct timespec" to TimePoint, or fallback if the time is zero.
         TimePoint to_timepoint(const timespec &ts,
-                               const TimePoint &fallback = epoch);
+                               const TimePoint &fallback = {});
 
         /// Convert from seconds as a real number to timepoint
         TimePoint to_timepoint(double seconds,
-                               const TimePoint &fallback = epoch);
+                               const TimePoint &fallback = {});
 
         /// Convert from milliseconds (Java style timestamp) to TimePoint
         TimePoint ms_to_timepoint(std::int64_t milliseconds);
@@ -272,13 +294,35 @@ namespace core
         /// Convert from seconds and nanoseconds to TimePoint, or fallback if the time is zero.
         TimePoint to_timepoint(time_t seconds,
                                long nanoseconds = 0,
-                               const TimePoint &fallback = epoch);
+                               const TimePoint &fallback = {});
 
-        /// Convert from string representation (`YYYY-MM-DD?HH:MM:SS.sss`) to TimePoint
-        TimePoint to_timepoint(const std::string &s,
-                               bool local = true,
-                               const std::string &format = DEFAULT_FORMAT,
-                               const TimePoint &fallback = epoch);
+        /// \brief
+        ///    Convert from year/month/day/hour/minute/second/fraction to timepoint.
+        /// \param[in] year
+        ///    Year
+        /// \param[in] month
+        ///    Month within the year
+        /// \param[in] day
+        ///    Day within the month
+        /// \param[in] hour
+        ///    Hour within the day
+        /// \param[in] minute
+        ///    Minute within the hour
+        /// \param[in] second
+        ///    Seconds within the minue
+        /// \param[in] fraction
+        ///    Additional (presumably sub-second) time.
+        /// \param[in] tz_offset
+        ///    Timezone offset if any.  If not provided use current local timezone offset.
+        ///    Use 0 for UTC.
+        TimePoint to_timepoint(std::int32_t year,
+                               std::uint32_t month,
+                               std::uint32_t day,
+                               std::uint32_t hour,
+                               std::uint32_t minute,
+                               std::uint32_t second,
+                               double fraction,
+                               std::optional<Duration> tz_offset);
 
         /// Convert from Steady Clock to System Clock
         TimePoint to_timepoint(std::chrono::steady_clock::time_point stp);

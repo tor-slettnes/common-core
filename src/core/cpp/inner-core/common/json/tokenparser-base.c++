@@ -96,11 +96,6 @@ namespace core::json
         }
     }
 
-    std::string TokenParser::token() const
-    {
-        return {this->token_begin(), this->token_end()};
-    }
-
     TokenIndex TokenParser::token_index(int c) const
     {
         switch (c)
@@ -142,13 +137,13 @@ namespace core::json
     template <class T, class... Args>
     TokenPair TokenParser::parse_numeric(Args &&...args)
     {
+        static const std::errc ok{};
         const char *const start = &*this->token_begin();
         const char *const end = &*this->token_end();
         T number = 0;
-        std::errc ok;
 
         auto [ptr, ec] = std::from_chars(start, end, number, args...);
-        if ((ec == ok) && (ptr == end))
+        if (ec == ok)
         {
             return {TI_NUMERIC, number};
         }
@@ -184,6 +179,7 @@ namespace core::json
         }
         this->ungetc(c);
 
+        types::Value value;
         if (got_real)
         {
             return this->parse_numeric<double>();
@@ -222,7 +218,7 @@ namespace core::json
 
         try
         {
-            return symbol_map.at(this->token());
+            return symbol_map.at(std::string(this->token_begin(), this->token_end()));
         }
         catch (const std::out_of_range &e)
         {
@@ -244,7 +240,7 @@ namespace core::json
         if (str::startswith(this->token(), "//") ||
             str::startswith(this->token(), "#"))
         {
-            return {TI_LINE_COMMENT, this->token()};
+            return {TI_LINE_COMMENT, {}};
         }
         else
         {

@@ -155,6 +155,11 @@ namespace core
             }
         }
 
+        std::string to_js_string(const TimePoint &tp)
+        {
+            return to_string(tp, false, 3, JS_FORMAT) + "Z";
+        }
+
         std::string to_string(const TimePoint &tp,
                               bool local,
                               uint decimals,
@@ -246,6 +251,12 @@ namespace core
             return seconds.count();
         }
 
+        long long to_milliseconds(const Duration &d)
+        {
+            auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(d);
+            return millis.count();
+        }
+
         double to_double(const TimePoint &tp)
         {
             return dt::to_double(tp.time_since_epoch());
@@ -284,6 +295,49 @@ namespace core
         Duration to_duration(const std::string &string, const std::string &format)
         {
             return to_timepoint(string, false, format).time_since_epoch();
+        }
+
+        TimePoint js_to_timepoint(const std::string &js_string,
+                                  const TimePoint &fallback)
+        {
+            static const std::regex rx(
+                "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(\\.\\d+)?Z?");
+            std::smatch match;
+
+            if (std::regex_match(js_string, match, rx))
+            {
+                return core::dt::to_timepoint(
+                    str::convert_to<std::int32_t>(match.str(1)),   // year
+                    str::convert_to<std::uint32_t>(match.str(2)),  // month
+                    str::convert_to<std::uint32_t>(match.str(3)),  // day
+                    str::convert_to<std::uint32_t>(match.str(4)),  // hour
+                    str::convert_to<std::uint32_t>(match.str(5)),  // minute
+                    str::convert_to<std::uint32_t>(match.str(6)),  // second
+                    match.length(7)
+                        ? str::convert_to<double>(match.str(7))  // fraction
+                        : 0.0,
+                    Duration::zero());  // tz_offset
+            }
+            else
+            {
+                return {};
+            }
+        }
+
+        TimePoint to_timepoint(const std::string &string,
+                               bool local,
+                               const std::string &format,
+                               const TimePoint &fallback)
+        {
+            std::tm dt = {};
+            std::stringstream ss(string);
+            ss >> std::get_time(&dt, format.c_str());
+
+            if (ss.fail())
+            {
+                return fallback;
+            }
+            return to_timepoint(dt, local);
         }
 
         /// Convert from "struct tm" to TimePoint, or fallback if the time is zero.
@@ -329,19 +383,31 @@ namespace core
             }
         }
 
-        TimePoint to_timepoint(const std::string &string,
-                               bool local,
-                               const std::string &format,
-                               const TimePoint &fallback)
+        TimePoint to_timepoint(std::int32_t year,
+                               std::uint32_t month,
+                               std::uint32_t day,
+                               std::uint32_t hour,
+                               std::uint32_t minute,
+                               std::uint32_t second,
+                               double fraction,
+                               std::optional<Duration> tz_offset)
         {
-            std::tm dt = {};
-            std::stringstream ss(string);
-            ss >> std::get_time(&dt, format.c_str());
-            if (ss.fail())
+            std::tm tm_struct = {
+                .tm_sec = static_cast<int>(second),
+                .tm_min = static_cast<int>(minute),
+                .tm_hour = static_cast<int>(hour),
+                .tm_mday = static_cast<int>(day) - TM_DAY_OFFSET,
+                .tm_mon = static_cast<int>(month) - TM_MONTH_OFFSET,
+                .tm_year = static_cast<int>(year) - TM_YEAR_OFFSET,
+            };
+            bool local = !tz_offset.has_value();
+            double seconds = dt::mktime(tm_struct, local) + fraction;
+            TimePoint tp = to_timepoint(seconds);
+            if (!local)
             {
-                return fallback;
+                tp += tz_offset.value();
             }
-            return to_timepoint(dt, local);
+            return tp;
         }
 
         TimePoint to_timepoint(steady::TimePoint stp)
@@ -522,7 +588,8 @@ namespace std::chrono
 {
     std::ostream &operator<<(std::ostream &stream, const core::dt::TimePoint &tp)
     {
-        core::dt::tp_to_stream(stream, tp);
+        core::dt::tp_to_stream(stream, tp, false, 3, core::dt::JS_FORMAT);
+        stream << "Z";
         return stream;
     }
 

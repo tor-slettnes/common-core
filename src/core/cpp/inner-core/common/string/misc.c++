@@ -368,23 +368,38 @@ namespace core::str
     }
 
     bool startswith(const std::string &input,
-                    const std::string &substring)
+                    const std::string &substring,
+                    bool ignore_case)
     {
-        return input.compare(0, substring.length(), substring) == 0;
+        if (ignore_case)
+        {
+            return tolower(input).compare(0, substring.length(), tolower(substring)) == 0;
+        }
+        else
+        {
+            return input.compare(0, substring.length(), substring) == 0;
+        }
     }
 
     bool endswith(const std::string &input,
-                  const std::string &substring)
+                  const std::string &substring,
+                  bool ignore_case)
     {
-        if (input.length() >= substring.length())
+        if (input.length() < substring.length())
+        {
+            return false;
+        }
+        else if (ignore_case)
+        {
+            return tolower(input).compare(input.length() - substring.length(),
+                                          substring.length(),
+                                          tolower(substring)) == 0;
+        }
+        else
         {
             return input.compare(input.length() - substring.length(),
                                  substring.length(),
                                  substring) == 0;
-        }
-        else
-        {
-            return false;
         }
     }
 

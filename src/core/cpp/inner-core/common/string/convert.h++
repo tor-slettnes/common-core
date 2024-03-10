@@ -8,39 +8,113 @@
 #pragma once
 #include "format.h++"
 #include "stream.h++"
+#include <charconv>
 
 using namespace std::literals::string_literals;  // ""s
 
 namespace core::str
 {
     // std::string type_description(const std::type_info &ti);
-    void checkstream(const std::istream &ss, const std::string &s, const std::type_info &ti);
+    void checkstream(const std::istream &ss,
+                     const std::string &s,
+                     const std::type_info &ti);
     bool to_bool(const std::string &s);
     std::string from_bool(bool b);
 
     /// Convert string to other arbitrary type T, using istringstream >> operator.
-    template <class T>
+    template <class T, class Enable = void>
     struct StringConvert
     {
-        static T from_string(const std::string &s);
-        static std::string to_string(const T &value);
+        static T from_string(const std::string &s)
+        {
+            std::istringstream ss(s);
+            T value;
+            ss >> value;
+            checkstream(ss, s, typeid(T));
+            return value;
+        }
+
+        static std::string to_string(const T &value)
+        {
+            std::ostringstream ss;
+            ss << value;
+            return ss.str();
+        }
     };
 
+    template <class T>
+    struct StringConvert<T,
+                         typename std::enable_if_t<std::is_arithmetic_v<T>>>
+    // typename std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>>>
+    {
+        static T from_string(const std::string &s, uint base=10)
+        {
+            static const std::errc ok{};
+            const char *start = &*s.begin();
+            const char *end = &*s.end();
+
+            T value;
+            auto [ptr, ec] = std::from_chars(start, end, value);
+            if (ec != ok)
+            {
+                throw std::invalid_argument(std::make_error_code(ec).message());
+            }
+            else if (ptr != end)
+            {
+                throw std::invalid_argument(
+                    str::format("Not all characters converted: %s", s));
+            }
+            return value;
+        }
+
+        static std::string to_string(const T &value)
+        {
+            std::ostringstream ss;
+            ss << value;
+            return ss.str();
+
+            // static const std::errc ok{};
+            // std::string s(32, '\0');
+            // auto [ptr, ec] = std::to_chars(s.data(), s.data() + s.size(), value);
+            // if (ec == ok)
+            // {
+            //     s.resize(std::distance(s.data(), ptr));
+            //     return s;
+            // }
+            // else
+            // {
+            //     throw std::invalid_argument(std::make_error_code(ec).message());
+            // }
+        }
+    };
 
     /// Partial template specialization for string<>string conversion
     template <>
     struct StringConvert<std::string>
     {
-        static std::string from_string(const std::string &s);
-        static std::string to_string(const std::string &s);
+        static std::string from_string(const std::string &s)
+        {
+            return {s.begin(), s.end()};
+        }
+        static std::string to_string(const std::string &s)
+        {
+            return s;
+        }
     };
 
     /// Partial template specialization for string<>bool conversion
     template <>
     struct StringConvert<bool>
     {
-        static bool from_string(const std::string &s);
-        static std::string to_string(const bool &value);
+        static bool from_string(const std::string &s)
+        {
+            return str::to_bool(s);
+        }
+
+        static std::string to_string(const bool &value)
+        {
+            return value ? "true" : "false";
+        }
     };
 
     /// Convert string to the speciefied template type.
@@ -52,7 +126,10 @@ namespace core::str
     ///     Any exception from underlying conversion routines.
 
     template <class T>
-    T convert_to(const std::string &s);
+    T convert_to(const std::string &s)
+    {
+        return StringConvert<T>::from_string(s);
+    }
 
     /// \brief Convert string to the specified template type.
     /// \param[in] s
@@ -72,7 +149,21 @@ namespace core::str
     template <class T>
     T convert_to(const std::string &s,
                  const T &fallback,
-                 std::exception_ptr *eptr = nullptr) noexcept;
+                 std::exception_ptr *eptr = nullptr) noexcept
+    {
+        try
+        {
+            return convert_to<T>(s);
+        }
+        catch (...)
+        {
+            if (eptr)
+            {
+                *eptr = std::current_exception();
+            }
+            return fallback;
+        }
+    }
 
     /// Convert an arbitrary type to string
     /// \param[in] value
@@ -80,7 +171,8 @@ namespace core::str
     /// \return
     ///     String representation of value.
     template <class T>
-    std::string convert_from(const T &value) noexcept;
+    std::string convert_from(const T &value) noexcept
+    {
+        return StringConvert<T>::to_string(value);
+    }
 }  // namespace core::str
-
-#include "convert.i++"

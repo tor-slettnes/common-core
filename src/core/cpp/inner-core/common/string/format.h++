@@ -16,6 +16,7 @@
 #include <vector>
 #include <list>
 #include <cmath>
+#include <chrono>
 #include <optional>
 #include <sstream>
 
@@ -267,7 +268,8 @@ namespace core::str
     /// The following conversion types are supported; those that are additions
     /// or modifications from `printf()` are marked with [*]:
     ///  `d`, `i`, `u`  sets std::dec to apply decimal integer representation
-    ///  `z` [*]        truncates a floating point value and represents as integer
+    ///  `z` [*]        truncates a floating point value and represents as integer;
+    ///                 represents a timepoint as a JavaScript (UTC) time string.
     ///  `o`            sets std::oct to apply octal integer representation
     ///  `x`, `X`       sets std::hex to apply hexadecimal representation
     ///  `f`            sets std::fixed floating point representation
