@@ -89,10 +89,8 @@ namespace core::types
     protected:
         const unsigned int maxsize_;
         const OverflowDisposition overflow_disposition_;
-
-    protected:
         bool closed_;
-        std::condition_variable cv;
+        std::condition_variable item_available, space_available;
         std::mutex mtx;
     };
 
@@ -177,7 +175,7 @@ namespace core::types
                 }
                 if (notify)
                 {
-                    this->cv.notify_one();
+                    this->item_available.notify_one();
                 }
                 return true;
             }
@@ -222,7 +220,7 @@ namespace core::types
                 }
                 if (notify)
                 {
-                    this->cv.notify_one();
+                    this->item_available.notify_one();
                 }
                 return true;
             }
@@ -237,7 +235,7 @@ namespace core::types
         ///     `push()` operations where the `notify` flag was set to `false`.
         inline void notify()
         {
-            this->cv.notify_one();
+            this->item_available.notify_one();
         }
 
         /// @brief
@@ -253,21 +251,22 @@ namespace core::types
 
         inline std::optional<T> get()
         {
-            std::unique_lock<std::mutex> lock(this->mtx);
-            this->cv.wait(lock, [&] {
-                return this->queue.size() || this->closed_;
-            });
+            std::optional<T> value;
 
-            if (this->queue.size())
             {
-                T value = std::move(this->queue.front());
-                this->discard_oldest();
-                return value;
+                std::unique_lock<std::mutex> lock(this->mtx);
+                this->item_available.wait(lock, [&] {
+                    return this->queue.size() || this->closed_;
+                });
+
+                if (this->queue.size())
+                {
+                    value = std::move(this->queue.front());
+                    this->discard_oldest();
+                }
             }
-            else
-            {
-                return {};
-            }
+            this->space_available.notify_one();
+            return value;
         }
 
         /// @brief
@@ -287,21 +286,23 @@ namespace core::types
         template <class Clock, class Duration>
         inline std::optional<T> get(const std::chrono::time_point<Clock, Duration> &deadline)
         {
-            std::unique_lock<std::mutex> lock(this->mtx);
-            bool received = this->cv.wait_until(lock, deadline, [&] {
-                return this->queue.size() || this->closed_;
-            });
+            std::optional<T> value;
 
-            if (received)
             {
-                T value = std::move(this->queue.front());
-                this->discard_oldest();
-                return value;
+                std::unique_lock<std::mutex> lock(this->mtx);
+                this->item_available.wait_until(lock, deadline, [&] {
+                    return this->queue.size() || this->closed_;
+                });
+
+                if (this->queue.size())
+                {
+                    T value = std::move(this->queue.front());
+                    this->discard_oldest();
+                }
             }
-            else
-            {
-                return {};
-            }
+
+            this->space_available.notify_one();
+            return value;
         }
 
         /// @brief

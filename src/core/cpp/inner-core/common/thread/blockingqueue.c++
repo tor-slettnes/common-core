@@ -24,7 +24,8 @@ namespace core::types
             std::lock_guard lock(this->mtx);
             this->closed_ = true;
         }
-        this->cv.notify_all();
+        this->space_available.notify_all();
+        this->item_available.notify_all();
     }
 
     void BlockingQueueBase::reopen()
@@ -49,7 +50,7 @@ namespace core::types
             switch (this->overflow_disposition_)
             {
             case OverflowDisposition::BLOCK:
-                this->cv.wait(*lock, [&] {
+                this->space_available.wait(*lock, [&] {
                     return (this->size() < this->maxsize_) || this->closed_;
                 });
                 return !this->closed_;
