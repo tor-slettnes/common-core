@@ -55,7 +55,7 @@ class ArgParser (argparse.ArgumentParser):
                           help='Print debug messages')
 
 
-def legend ():
+def legend():
     '''
     Interactive Service Control.  Subsystems loaded:
 
@@ -65,6 +65,20 @@ def legend ():
     Use 'help(subsystem)' to list available methods
     '''
     print(legend.__doc__)
+
+def asyncio_legend():
+    '''
+    NOTE: Using Python AsyncIO semantics. To invoke a unary gRPC method, use:
+
+          main_loop.run_until_complete(demo_grpc.METHOD(...))
+
+    For streaming methods, use:
+
+          demo_grpc.start_notify_time(callback)
+          demo_grpc.start_notify_greetings(callback)
+          main_loop.run_forever()
+    '''
+    print(asyncio_legend.__doc__)
 
 
 if __name__ == "__main__":
@@ -86,6 +100,4 @@ if __name__ == "__main__":
 
     if args.asyncio:
         main_loop = asyncio.get_event_loop()
-        print('''    NOTE: Using AsyncIO semantics. To invoke gRPC method, use:
-        main_loop.run_until_complete(demo_grpc.METHOD(...))
-        ''')
+        asyncio_legend()

@@ -17,8 +17,6 @@ import grpc
 ### Standard Python modules
 import sys
 import logging
-import traceback
-import inspect
 
 class Client (Base):
     '''gRPC client wrapper with miscellaneous convenience features.
@@ -104,7 +102,7 @@ class Client (Base):
 
         return self.invoke(method, request, wait_for_ready=wait_for_ready, **kwargs)
 
-    def stream_from(self, method, request=ProtoBuf.Empty(), wait_for_ready=None, **kwargs):
+    def stream_from(self, method, request=ProtoBuf.Empty(), wait_for_ready=True, **kwargs):
         if wait_for_ready is None:
             wait_for_ready = self.wait_for_ready
 

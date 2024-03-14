@@ -5,10 +5,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Modules relative to install folder
 from .client  import Client
+from .client_reader import ThreadReader, TaskReader
 from cc.io.protobuf import CC, ProtoBuf, SignalStore
 
-import time, threading, asyncio
 
 #===============================================================================
 # Client
@@ -121,66 +122,6 @@ class SignalClient (Client):
     signal_type = None
 
 
-    class ThreadWatcher (object):
-        '''Signal stream reader implementation using threads'''
-
-        thread = None
-
-        def active (self):
-            return (self.thread is not None)
-
-        def start(self, stub_reader, callback):
-            if not self.thread:
-                self.thread = threading.Thread(target = self.watch,
-                                               name = 'Watcher thread',
-                                               args = (stub_reader, callback))
-                self.thread.setDaemon(True)
-                self.thread.start()
-
-        def stop(self):
-            self.thread = None
-
-        def watch(self, stub_reader, callback):
-            try:
-                for msg in stub_reader:
-                    callback(msg)
-                    if not self.thread:
-                        break
-            finally:
-                self.thread = None
-
-    class TaskWatcher (object):
-        '''Signal stream reader implementation using AsyncIO task.'''
-
-        task = None
-
-        def active (self):
-            return (self.task is not None)
-
-        def start(self, stub_reader, callback):
-            import asyncio
-            if not self.task:
-                loop = asyncio.get_event_loop()
-                self.task = loop.create_task(self.watch(stub_reader, callback),
-                                             name='Watcher task')
-
-        def stop(self):
-            if self.task:
-                self.task.cancel()
-                self.task = None
-
-        async def watch(self, stub_reader, callback):
-            try:
-                async for msg in stub_reader:
-                    callback(msg)
-            except asyncio.CancelledError:
-                pass
-            finally:
-                self.task = None
-
-
-
-
     #===========================================================================
     # Instance methods
 
@@ -243,7 +184,7 @@ class SignalClient (Client):
                         **kwargs)
 
         self.signal_store = signal_store
-        self.watcher      = (self.ThreadWatcher, self.TaskWatcher)[self.use_asyncio]()
+        self.watcher = (ThreadReader, TaskReader)[self.use_asyncio]()
         if watch_all:
             self.start_watching(True)
 
