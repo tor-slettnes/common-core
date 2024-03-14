@@ -1,30 +1,19 @@
-#!/usr/bin/python3 -i
+#!/usr/bin/python3
 #===============================================================================
-## @file demoshell.py
-## @brief Interactive service control via collection of clients.
+## @file demo-grpc-async-client.py
+## @brief Invoke a server method using Python AsyncIO semantics
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
 ### Modules relative to install folder
-import demo.core.types
-import demo.grpc.client
-import demo.zmq.client
+from demo.grpc.client import DemoClient
 
 ### Standard Python modules
-import logging
+import asyncio
 import argparse
-import sys
 import os.path
-
-### Make the contents of Python client modules available in namespaces roughly
-### corresponding to the package names of the corresponding `.proto` files
-from cc.io.protobuf import ProtoBuf
-
-### Container class for ProtoBuf message types from mutiple services
-### (e.g. "CC.Demo.Signal").
-
-class CC (demo.core.types.CC):
-    pass
+import sys
+import logging
 
 ### Add a few arguments to the base argparser
 class ArgParser (argparse.ArgumentParser):
@@ -47,16 +36,20 @@ class ArgParser (argparse.ArgumentParser):
                           const=True,
                           help='Print debug messages')
 
-def legend():
-    '''
-    Interactive Service Control.  Subsystems loaded:
+        self.add_argument('command',
+                          type=str,
+                          default=None,
+                          help="Invoke a function with Python AsyncIO semantics")
 
-        demo_grpc  - Simple gRPC communications example
-        demo_zmq   - Simple 0MQ communications example
 
-    Use 'help(subsystem)' to list available methods
-    '''
-    print(legend.__doc__)
+async def main(args):
+    demo = DemoClient(args.host,
+                      identity = args.identity,
+                      use_asyncio = True)
+    demo.initialize()
+    result = await eval(args.command)
+    demo.deinitialize()
+    print(result)
 
 
 if __name__ == "__main__":
@@ -65,9 +58,4 @@ if __name__ == "__main__":
     logger = logging.getLogger()
     logger.setLevel((logging.INFO, logging.DEBUG)[args.debug])
 
-    demo_grpc = demo.grpc.client.DemoClient(args.host, identity = args.identity)
-    demo_zmq  = demo.zmq.client.DemoClient(args.host, identity = args.identity)
-
-    demo_grpc.initialize()
-    demo_zmq.initialize()
-    legend()
+    asyncio.run(main(args))

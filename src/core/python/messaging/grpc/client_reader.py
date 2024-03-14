@@ -42,29 +42,25 @@ class ThreadReader (object):
 class TaskReader (object):
     '''Stream reader implementation using AsyncIO task.'''
 
-    task = None
+    active = False
 
     def active (self):
-        return (self.task is not None)
+        return self.active
 
-    def start(self, stub_reader, callback):
-        import asyncio
-        if not self.task:
-            loop = asyncio.get_event_loop()
-            self.task = loop.create_task(self.watch(stub_reader, callback),
-                                         name='Watcher task')
+    async def start(self, stub_reader, callback):
+        if not self.active:
+            await self.watch(stub_reader, callback)
 
     def stop(self, wait = False):
         if task := self.task:
             self.task.cancel()
-            self.task = None
 
     async def watch(self, stub_reader, callback):
         try:
+            self.active = True
             async for msg in stub_reader:
                 callback(msg)
         except asyncio.CancelledError:
             pass
         finally:
-            self.task = None
-
+            self.active = False

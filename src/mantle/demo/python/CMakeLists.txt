@@ -9,6 +9,7 @@
 set(PROGRAMS
   demo-grpc-server.py
   demo-grpc-async-server.py
+  demo-grpc-async-client.py
   demo-zmq-server.py
 )
 

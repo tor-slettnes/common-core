@@ -1,4 +1,4 @@
-#!/usr/bin/python3 -i
+#!/usr/bin/python3
 #===============================================================================
 ## @file demo-grpc-server.py
 ## @brief Python flavor of 'Demo' gRPC server
@@ -20,5 +20,11 @@ if __name__ == '__main__':
     demoservice = DemoService(NativeDemo())
     demoserver = create_server(demoservice)
     logging.info("Starting Python gRPC Demo Server")
-    demoserver.start()
-    # demoserver.wait_for_termination()
+    try:
+        demoserver.start()
+        demoserver.wait_for_termination()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        logging.info("Shutting down Python gRPC Demo Server")
+        demoserver.stop(5)

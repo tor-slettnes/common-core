@@ -217,7 +217,7 @@ class SignalClient (Client):
         if not self.watcher.active():
             sf = self.signal_filter(watch_all)
             stream = self.stream_from(self.stub.watch, sf)
-            self.watcher.start(stream, self.signal_store.emit)
+            return self.watcher.start(stream, self.signal_store.emit)
 
     def stop_watching(self):
         '''Stop watching change notifications from server'''
