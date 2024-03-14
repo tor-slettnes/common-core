@@ -19,6 +19,9 @@ set(LIB_DEPS
 
 ### Source files in this folder
 set(SOURCES
+  zmq-pickle-messagebase.c++
+  zmq-pickle-messagehandler.c++
+  zmq-pickle-messagewriter.c++
 )
 
 ### Recepies to build the library

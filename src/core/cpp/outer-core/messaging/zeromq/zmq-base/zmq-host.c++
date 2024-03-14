@@ -29,11 +29,12 @@ namespace core::zmq
         }
         catch (const ::zmq::error_t &e)
         {
-            this->log_zmq_error("could not bind to socket", e);
+            this->log_zmq_error(
+                str::format("could not bind to socket %s:", this->bind_address()),
+                e);
             throw;
         }
     }
-
 
     std::string Host::bind_address() const
     {

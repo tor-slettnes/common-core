@@ -11,7 +11,7 @@
 
 namespace core::zmq
 {
-    Filter Filter::create_from_data(void *data, std::size_t size)
+    Filter Filter::create_from_data(const void *data, std::size_t size)
     {
         Filter filter;
         if (std::size_t filter_size = Filter::extract_filter_size(data, size))

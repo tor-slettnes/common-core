@@ -99,20 +99,22 @@ namespace core::zmq
 
     void Subscriber::init_handler(const std::shared_ptr<MessageHandler> &handler)
     {
-        const Filter &filter = handler->filter();
         handler->initialize();
+        const Filter &filter = handler->filter();
         logf_debug("%s adding subscription for %r with filter %r",
                    *this,
                    handler->id(),
                    filter);
-        this->socket()->set(::zmq::sockopt::subscribe, filter.stringview());
+        this->socket()->set(::zmq::sockopt::subscribe,
+                            filter.stringview());
     }
 
     void Subscriber::deinit_handler(const std::shared_ptr<MessageHandler> &handler)
     {
         try
         {
-            this->socket()->set(::zmq::sockopt::unsubscribe, handler->filter().stringview());
+            this->socket()->set(::zmq::sockopt::unsubscribe,
+                                handler->filter().stringview());
         }
         catch (const ::zmq::error_t &e)
         {

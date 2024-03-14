@@ -37,12 +37,12 @@ class Satellite (Endpoint):
 
     def connect(self):
         if not self.connected:
-            logging.info("Connecting %s to %s"%(self, self.address))
+            logging.debug("Connecting %s to %s"%(self, self.address))
             self.socket.connect(self.address)
             self.connected = True
 
     def disconnect(self):
         if self.connected:
-            logging.info("Disconnecting %s from %s"%(self, self.address))
+            logging.debug("Disconnecting %s from %s"%(self, self.address))
             self.socket.disconnect(self.address)
             self.connected = False

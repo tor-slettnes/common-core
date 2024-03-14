@@ -9,9 +9,11 @@ from .base import Base
 from .status import DetailedError
 
 from .client import Client
-from .signalclient import SignalClient
+from .signal_client import SignalClient
+# from .aio_client import AsyncClient
+# from .aio_signal_client import AsyncSignalClient
 
 from .service import Service
-from .signalservice import SignalService
+from .signal_service import SignalService
 
 from .server import create_server

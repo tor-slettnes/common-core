@@ -8,6 +8,7 @@
 ### Modules to be installed as programs, with execute permissionss
 set(PROGRAMS
   demo-grpc-server.py
+  demo-grpc-async-server.py
   demo-zmq-server.py
 )
 

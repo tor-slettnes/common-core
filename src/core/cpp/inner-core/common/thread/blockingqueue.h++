@@ -17,13 +17,13 @@
 namespace core::types
 {
     //==========================================================================
-    /// @enum OverlowDisposition
+    /// @enum OverflowDisposition
     /// @brief How to handle `.put()` invocatinos into a full queue
     enum class OverflowDisposition
     {
-        BLOCK,
-        DISCARD_ITEM,
-        DISCARD_OLDEST,
+        BLOCK,           // Block the calling thread until space is available
+        DISCARD_ITEM,    // Discard the new item instead of placing into queue
+        DISCARD_OLDEST,  // Discard the oldest item in the queue to make space
     };
 
     //==========================================================================
@@ -33,6 +33,12 @@ namespace core::types
     class BlockingQueueBase
     {
     protected:
+        /// @brief
+        ///     Constructor
+        /// @param[in] maxsize
+        ///     Maximum queue size.
+        /// @param[in] overflow_disposition
+        ///     How to handle `put()` requests into a full queue.
         BlockingQueueBase(
             unsigned int maxsize,
             OverflowDisposition overflow_disposition);
@@ -328,7 +334,7 @@ namespace core::types
         }
 
     private:
-        std::queue<T, std::deque<T>> queue;
+        std::queue<T> queue;
     };
 
 }  // namespace core::types

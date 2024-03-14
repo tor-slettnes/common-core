@@ -10,6 +10,6 @@
 
 namespace core::platform
 {
-    void register_providers(const std::string &exec_name);
-    void unregister_providers();
+    extern void register_providers(const std::string &exec_name);
+    extern void unregister_providers();
 }  // namespace core::platform

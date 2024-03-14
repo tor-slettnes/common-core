@@ -1,13 +1,13 @@
 #!/bin/echo Do not invoke directly.
 #===============================================================================
-## @file demo_grpc_client.py
+## @file client.py
 ## @brief Python client for `Demo` gRPC service
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
 ### Modules relative to install dir
 from ..core import API, CC, ProtoBuf, SignalSlot, demo_signals
-from cc.messaging.grpc.signalclient import SignalClient
+from cc.messaging.grpc import SignalClient
 
 
 #===============================================================================
@@ -34,33 +34,35 @@ class DemoClient (API, SignalClient):
     def __init__(self,
                  host           : str = "",      # gRPC server
                  identity       : str = None,    # Greeter identity
-                 wait_for_ready : bool = False): # Keep trying to connect
+                 wait_for_ready : bool = False,  # Keep trying to connect
+                 use_asyncio    : bool = False): # Use Python AsyncIO semantics
 
         API.__init__(self, 'Python gRPC client', identity)
         SignalClient.__init__(self,
                               host = host,
+                              wait_for_ready = wait_for_ready,
+                              use_asyncio = use_asyncio,
                               signal_store = demo_signals,
-                              watch_all = False,
-                              wait_for_ready = wait_for_ready)
+                              watch_all = False)
 
 
     def say_hello(self, greeting: CC.Demo.Greeting):
         self.check_type(greeting, CC.Demo.Greeting)
-        self._wrap(self.stub.say_hello, greeting)
+        return self.call(self.stub.say_hello, greeting)
 
     def get_current_time(self) -> CC.Demo.TimeData:
-        return self._wrap(self.stub.get_current_time)
+        return self.call(self.stub.get_current_time)
 
     def start_ticking(self) -> None:
-        self._wrap(self.stub.start_ticking)
+        return self.call(self.stub.start_ticking)
 
     def stop_ticking(self) -> None:
-        self._wrap(self.stub.stop_ticking)
+        return self.call(self.stub.stop_ticking)
 
     def start_notify_greetings(self, callback: SignalSlot):
         API.start_notify_greetings(self, callback)
-        self.start_watching()
+        return self.start_watching()
 
     def start_notify_time(self, callback: SignalSlot):
         API.start_notify_time(self, callback)
-        self.start_watching()
+        return self.start_watching()

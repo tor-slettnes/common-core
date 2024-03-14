@@ -15,6 +15,7 @@ import logging
 import argparse
 import sys
 import os.path
+import asyncio
 
 ### Make the contents of Python client modules available in namespaces roughly
 ### corresponding to the package names of the corresponding `.proto` files
@@ -41,6 +42,12 @@ class ArgParser (argparse.ArgumentParser):
                           default="localhost",
                           help="Host for remote services")
 
+        self.add_argument('--asyncio',
+                          default=False,
+                          action='store_const',
+                          const=True,
+                          help="Create client with AsyncIO semantics")
+
         self.add_argument('--debug',
                           default=False,
                           action='store_const',
@@ -59,15 +66,26 @@ def legend ():
     '''
     print(legend.__doc__)
 
+
 if __name__ == "__main__":
     args   = ArgParser().parse_args()
 
     logger = logging.getLogger()
     logger.setLevel((logging.INFO, logging.DEBUG)[args.debug])
 
-    demo_grpc = demo.grpc.client.DemoClient(args.host, identity = args.identity)
-    demo_zmq  = demo.zmq.client.DemoClient(args.host, identity = args.identity)
+    demo_grpc = demo.grpc.client.DemoClient(args.host,
+                                            identity = args.identity,
+                                            use_asyncio = args.asyncio)
+
+    demo_zmq  = demo.zmq.client.DemoClient(args.host,
+                                           identity = args.identity)
 
     demo_grpc.initialize()
     demo_zmq.initialize()
     legend()
+
+    if args.asyncio:
+        main_loop = asyncio.get_event_loop()
+        print('''    NOTE: Using AsyncIO semantics. To invoke gRPC method, use:
+        main_loop.run_until_complete(demo_grpc.METHOD(...))
+        ''')

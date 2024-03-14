@@ -5,10 +5,15 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Modules relative to install folder
 from .base import Base
 from cc.io.protobuf import ProtoBuf
 
+### Third-party modules
 import grpc
+
+### Standard Python modules
+from typing import Union
 import importlib
 import logging
 
@@ -60,7 +65,7 @@ class Service (Base):
         self.bind_address = self.realaddress(bind_address, "interface", "port", "[::]", 8080)
 
     def add_to_server(self,
-                      server       : grpc.Server,
+                      server       : Union[grpc.Server, grpc.aio.Server],
                       add_listener : bool = True):
 
         '''Add this service handler to a gRPC server.

@@ -60,8 +60,10 @@ class SignalService (Service):
         '''
 
         queue = Queue(self.max_queue_size)
+        self.last_context = context
 
         try:
+            signals = self.signal_list(request)
             for signal_name in self.signal_list(request):
                 self.signal_store.connect_signal(signal_name, queue.put_nowait)
 

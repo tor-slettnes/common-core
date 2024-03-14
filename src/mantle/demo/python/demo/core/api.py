@@ -49,7 +49,7 @@ class API (ProtoBuf):
                                     birth=ProtoBuf.encodeTimestamp(self.birth),
                                     data=CC.encodeValueList(kwargs))
 
-        self.say_hello(greeting)
+        return self.say_hello(greeting)
 
 
     def say_hello(self, greeting: CC.Demo.Greeting):

@@ -5,5 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(apps)
+if (BUILD_DEMO)
+  add_subdirectory(demo)
+endif()
 

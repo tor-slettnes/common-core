@@ -327,12 +327,11 @@ namespace core::str
             else if (digitsRemaining > 0)
             {
                 ord << *it;
-                if (--digitsRemaining == 0)
+                if (--digitsRemaining % 2 == 0)
                 {
-                    uint64_t value;
+                    std::uint8_t value;
                     ord >> value;
                     out << (char)value;
-                    ord.clear();
                 }
             }
             else if (*it == '\\')

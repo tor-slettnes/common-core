@@ -8,8 +8,7 @@
 from .client  import Client
 from cc.io.protobuf import CC, ProtoBuf, SignalStore
 
-import threading, time
-
+import time, threading, asyncio
 
 #===============================================================================
 # Client
@@ -122,11 +121,73 @@ class SignalClient (Client):
     signal_type = None
 
 
+    class ThreadWatcher (object):
+        '''Signal stream reader implementation using threads'''
+
+        thread = None
+
+        def active (self):
+            return (self.thread is not None)
+
+        def start(self, stub_reader, callback):
+            if not self.thread:
+                self.thread = threading.Thread(target = self.watch,
+                                               name = 'Watcher thread',
+                                               args = (stub_reader, callback))
+                self.thread.setDaemon(True)
+                self.thread.start()
+
+        def stop(self):
+            self.thread = None
+
+        def watch(self, stub_reader, callback):
+            try:
+                for msg in stub_reader:
+                    callback(msg)
+                    if not self.thread:
+                        break
+            finally:
+                self.thread = None
+
+    class TaskWatcher (object):
+        '''Signal stream reader implementation using AsyncIO task.'''
+
+        task = None
+
+        def active (self):
+            return (self.task is not None)
+
+        def start(self, stub_reader, callback):
+            import asyncio
+            if not self.task:
+                loop = asyncio.get_event_loop()
+                self.task = loop.create_task(self.watch(stub_reader, callback),
+                                             name='Watcher task')
+
+        def stop(self):
+            if self.task:
+                self.task.cancel()
+                self.task = None
+
+        async def watch(self, stub_reader, callback):
+            try:
+                async for msg in stub_reader:
+                    callback(msg)
+            except asyncio.CancelledError:
+                pass
+            finally:
+                self.task = None
+
+
+
+
     #===========================================================================
     # Instance methods
 
     def __init__(self,
                  host: str,
+                 wait_for_ready : bool = False,
+                 use_asyncio : bool = False,
                  signal_store : SignalStore = None,
                  watch_all: bool = False,
                  use_cache: bool = True,
@@ -135,6 +196,16 @@ class SignalClient (Client):
 
         @param[in] host
             IP address or resolvable host name of platform server
+
+        @param[in] wait_for_ready
+            If a connection attempt fails, keep retrying until successful.
+            This value may be overriden per call.
+
+        @param[in] asyncio
+            Use Python AsyncIO.  Effectively this performs calls within a
+            `grpc.aio.Channel` instance, rather than the default `grpc.Channel`.
+            Additionally, the `call()` method uses AsyncIO semantics to capture
+            any exceptions.
 
         @param[in] signal_store
             Use an existing `SignalStore()` instance instead of creating a new
@@ -156,7 +227,6 @@ class SignalClient (Client):
             These values can later be queried using `get_cached()`.
 
         '''
-        Client.__init__(self, host, **kwargs)
 
         if not signal_store:
             assert signal_type is not None, \
@@ -167,8 +237,13 @@ class SignalClient (Client):
 
             signal_store = SignalStore(signal_type=signal_type, use_cache=use_cache)
 
-        self.signal_store  = signal_store
-        self._watcherThread = None
+        Client.__init__(self, host,
+                        wait_for_ready = wait_for_ready,
+                        use_asyncio = use_asyncio,
+                        **kwargs)
+
+        self.signal_store = signal_store
+        self.watcher      = (self.ThreadWatcher, self.TaskWatcher)[self.use_asyncio]()
         if watch_all:
             self.start_watching(True)
 
@@ -181,6 +256,7 @@ class SignalClient (Client):
             indices    = [indexmap.get(slot) for slot in self.signal_store.slots]
             return CC.Signal.Filter(polarity=True, index=filter(None, indices))
 
+
     def start_watching(self, watch_all: bool = True):
         '''Start watching for signals.
 
@@ -189,39 +265,20 @@ class SignalClient (Client):
             slots.  This is mainly useful if not all intended signals are
             connected yet.
 
-        This spawns a new thread to stream signal messages from the service.
-        Specifically, it invokes the `watch()` RPC method to stream back Signal
-        messages, which are then passed on to the `messaging.base.SignalStore()`
-        instance that was provided to this client.  From there they are emitted
-        locally.
+        This spawns a new thread (or task if using AsyncIO) to stream signal
+        messages from the service.  Specifically, it invokes the `watch()` RPC
+        method to stream back Signal messages, which are then passed on to the
+        `messaging.base.SignalStore()` instance that was provided to this
+        client.  From there they are emitted locally.
 
         '''
 
-        if not self._watcherThread:
-            t = threading.Thread(None, self._watcher, 'Watcher thread', (watch_all,))
-            t.setDaemon(True)
-            self._watcherThread = t
-
-            t.start()
-
-        return self._watcherThread
-
+        if not self.watcher.active():
+            sf = self.signal_filter(watch_all)
+            stream = self.stream_from(self.stub.watch, sf)
+            self.watcher.start(stream, self.signal_store.emit)
 
     def stop_watching(self):
         '''Stop watching change notifications from server'''
 
-        self._watcherThread = None
-
-
-    def _watcher(self, watch_all):
-        try:
-            sf = self.signal_filter(watch_all)
-            for msg in self._wrap(
-                    self.stub.watch, sf, wait_for_ready = True):
-                self.signal_store.emit(msg)
-                if not self._watcherThread:
-                    break
-        finally:
-            self._watcherThread = None
-
-
+        self.watcher.stop()
