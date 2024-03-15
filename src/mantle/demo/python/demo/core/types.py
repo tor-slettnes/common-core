@@ -13,7 +13,7 @@ from cc.core.scalar_types import enums
 import time
 
 class CC (CC_Base):
-    import generated.demo_types_pb2 as Demo
+    import generated.demo_pb2 as Demo
 
     @classmethod
     def encodeTimeStruct(cls, ts):

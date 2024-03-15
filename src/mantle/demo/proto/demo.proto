@@ -8,10 +8,33 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 import "variant_types.proto";
 import "signal_types.proto";
 
+
 package CC.Demo;
+
+//==============================================================================
+// Service
+
+// Simple service to showcase command/response and event propagation
+service Demo {
+    // Send a greeting to other listeners
+    rpc say_hello (Greeting) returns (google.protobuf.Empty);
+
+    // Get the current time
+    rpc get_current_time (google.protobuf.Empty) returns (TimeData);
+
+    // Start streaing time updates at regular intervals
+    rpc start_ticking (google.protobuf.Empty) returns (google.protobuf.Empty);
+
+    // Stop streaming time updates
+    rpc stop_ticking (google.protobuf.Empty) returns (google.protobuf.Empty);
+
+    // Stream signals from the server
+    rpc watch (CC.Signal.Filter) returns (stream Signal);
+}
 
 //==============================================================================
 // Greeting

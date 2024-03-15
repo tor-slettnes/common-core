@@ -25,6 +25,8 @@ async def main():
         logging.info("Starting Python gRPC Demo Server")
         await server.start()
         await server.wait_for_termination()
+    except KeyboardInterrupt:
+        pass
     finally:
         logging.info("Shutting down Python gRPC Demo Server")
         await server.stop(5)

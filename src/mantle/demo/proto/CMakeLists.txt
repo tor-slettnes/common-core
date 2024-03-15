@@ -16,8 +16,7 @@ set(PROTO_DEPS cc_core_proto)
 
 ### Source files
 set(SOURCES
-  demo_types.proto
-  demo_service.proto
+  demo.proto
 )
 
 ### Invoke common CMake rules

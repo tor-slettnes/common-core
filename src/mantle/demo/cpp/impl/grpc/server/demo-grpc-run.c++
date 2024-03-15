@@ -12,13 +12,16 @@
 #include "chrono/date-time.h++"
 #include "string/misc.h++"
 
+#include <grpc++/impl/codegen/server_context.h>
+#include <grpc++/ext/proto_server_reflection_plugin.h>
+
 namespace demo::grpc
 {
     void run_grpc_service(
         std::shared_ptr<demo::API> api_provider,
         const std::string &listen_address)
     {
-        constexpr auto SIGNAL_HANDLE = "gRPC Server";
+        ::grpc::reflection::InitProtoReflectionServerBuilderPlugin();
 
         log_info("Creating gRPC server builder");
         core::grpc::ServerBuilder builder(listen_address);
@@ -30,8 +33,7 @@ namespace demo::grpc
         log_info("Starting Demo gRPC server");
         std::unique_ptr<::grpc::Server> server = builder.BuildAndStart();
 
-        core::platform::signal_shutdown.connect(
-            SIGNAL_HANDLE,
+        std::string signal_handle = core::platform::signal_shutdown.connect(
             [&]() {
                 log_info("Requesting gRPC server shutdown with a 5s timeout");
                 server->Shutdown(core::dt::Clock::now() +
@@ -42,7 +44,7 @@ namespace demo::grpc
         server->Wait();
         log_notice("Demo gRPC server is shutting down");
 
-        core::platform::signal_shutdown.disconnect(SIGNAL_HANDLE);
+        core::platform::signal_shutdown.disconnect(signal_handle);
         server.reset();
     }
 }  // namespace demo::grpc

@@ -33,11 +33,12 @@ class ProtoBuf (object):
     @classmethod
     def encodeTimestamp(cls, timestamp):
         from datetime import datetime
+        from time import struct_time, mktime
 
         ts = ProtoBuf.Timestamp()
 
-        if timestamp is None:
-            ts.GetCurrentTime()
+        if isinstance(timestamp, ProtoBuf.Timestamp):
+            ts.CopyFrom(timestamp)
 
         elif isinstance(timestamp, int):
             ts.seconds = timestamp
@@ -49,10 +50,13 @@ class ProtoBuf (object):
         elif isinstance(timestamp, str):
             ts.FromJsonString(timestamp)
 
-        elif isinstance(timestamp, datetime):
-            ts.FromDateTime(timestamp)
+        elif isinstance(timestamp, struct_time):
+            ts.seconds = int(mktime(timestamp))
 
-        else:
+        elif isinstance(timestamp, datetime):
+            ts.FromDatetime(timestamp)
+
+        elif timestamp is not None:
             raise TypeError("Cannot encode ProtoBuf timestamp from %s"%(type(timestamp).__name__,))
 
         return ts

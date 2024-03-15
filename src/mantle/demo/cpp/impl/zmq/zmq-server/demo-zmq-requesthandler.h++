@@ -10,7 +10,7 @@
 #include "demo-zmq-common.h++"
 #include "zmq-protobuf-requesthandler.h++"
 
-#include "demo_types.pb.h"
+#include "demo.pb.h"
 
 #include <memory>
 

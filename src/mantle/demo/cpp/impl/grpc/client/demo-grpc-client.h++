@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "demo_service.grpc.pb.h"  // Generated from `demo-interface.idl`
+#include "demo.grpc.pb.h"  // Generated from `demo-interface.idl`
 #include "demo-api.h++"
 
 #include "grpc-signalclient.h++"

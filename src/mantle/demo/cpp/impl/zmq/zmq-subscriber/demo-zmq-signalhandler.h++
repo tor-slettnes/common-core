@@ -9,7 +9,7 @@
 #include "zmq-protobuf-signalhandler.h++"
 #include "types/create-shared.h++"
 
-#include "demo_types.pb.h"
+#include "demo.pb.h"
 
 namespace demo::zmq
 {
