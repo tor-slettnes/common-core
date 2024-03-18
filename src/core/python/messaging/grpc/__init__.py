@@ -9,7 +9,7 @@ from .base import Base
 from .status import DetailedError
 
 from .client import Client
-from .client_reader import ThreadReader, TaskReader
+from .client_reader import ThreadReader, AsyncReader
 from .signal_client import SignalClient
 
 from .service import Service

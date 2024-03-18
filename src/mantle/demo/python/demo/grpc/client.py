@@ -18,7 +18,7 @@ class DemoClient (API, SignalClient):
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
-    from generated.demo_service_pb2_grpc import DemoStub as Stub
+    from generated.demo_pb2_grpc import DemoStub as Stub
 
     ## `service_name` is optional. If not provided here it is determined
     ## from the above stub.  It is used to look up service specific settings,
@@ -48,16 +48,16 @@ class DemoClient (API, SignalClient):
 
     def say_hello(self, greeting: CC.Demo.Greeting):
         self.check_type(greeting, CC.Demo.Greeting)
-        return self.call(self.stub.say_hello, greeting)
+        return self.stub.say_hello(greeting)
 
     def get_current_time(self) -> CC.Demo.TimeData:
-        return self.call(self.stub.get_current_time)
+        return self.stub.get_current_time(ProtoBuf.Empty())
 
     def start_ticking(self) -> None:
-        return self.call(self.stub.start_ticking)
+        return self.stub.start_ticking(ProtoBuf.Empty())
 
     def stop_ticking(self) -> None:
-        return self.call(self.stub.stop_ticking)
+        return self.stub.stop_ticking(ProtoBuf.Empty())
 
     def start_notify_greetings(self, callback: SignalSlot):
         API.start_notify_greetings(self, callback)

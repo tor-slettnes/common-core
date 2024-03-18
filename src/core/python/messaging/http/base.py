@@ -7,12 +7,15 @@
 
 ### Modules relative to install folder
 from ..common import Endpoint
+from cc.core.invocation import check_type
+
+### Standard Python modules
 from typing import Optional
 from collections import namedtuple
 
+import http
+import urllib.parse
 import re
-
-HTTPTarget = namedtuple('HTTPTarget', ['scheme', 'host', 'port', 'path'])
 
 class HTTPError (RuntimeError):
     pass
@@ -41,9 +44,11 @@ class HTTPBase (Endpoint):
 
         Endpoint.__init__(self, self.service_name)
 
+    def get_target_url(self, provided: str = ''):
+        return urllib.parse.urlunsplit(self.get_target(provided))
 
     def get_target(self,
-                   provided      : Optional[str],
+                   provided      : str = '',
                    schemeOption  : str = "scheme",
                    hostOption    : str = "host",
                    portOption    : int = "port",
@@ -59,12 +64,12 @@ class HTTPBase (Endpoint):
         If any component is missing, defaults are determined as follows:
 
         * If the product-specific settings file
-          `grpc-services-PRODUCT_NAME.json` contains a map entry for this
+          `http-endpoints-PRODUCT_NAME.json` contains a map entry for this
           service, the value is extracted from this map using the provided
           `schemeOption`, `hostOption`, `portOption` or `pathOption` as key.
 
         * If still missing, the same lookup is performed in the file
-          `grpc-services-common.json`.
+          `http-endpoints-common.json`.
 
         * Any attribute(s) that are still missing are populated from
           `defaultScheme`, `defaultHost`, `defaultPort`, and `defaultPath`,
@@ -72,7 +77,12 @@ class HTTPBase (Endpoint):
 
         '''
 
-        (scheme, host, port, path) = self.split_url(provided or "")
+        scheme, netloc, path, query, fragment = urllib.parse.urlsplit(provided or "")
+
+        try:
+            host, port = netloc.rsplit(':', 1)
+        except ValueError:
+            host, port = netloc, None
 
         if schemeOption and not scheme:
             scheme = self.setting(schemeOption, defaultScheme)
@@ -86,40 +96,39 @@ class HTTPBase (Endpoint):
         if pathOption and not path:
             path = self.setting(pathOption, defaultPath)
 
-        return HTTPTarget(scheme, host, port, path)
+        netloc = f"{host}:{port}" if port else host
+
+        return urllib.parse.SplitResult(scheme, netloc, path, query, fragment)
 
 
-    _rx_address = re.compile(
-        "(?:(\\w+)://)?"                      # scheme
-        "(\\[[0-9A-Fa-f:]+\\]|[\\w\\-\\.]+)"  # `[ip6::address]` or `f.q.d.n`
-        "(?::(\\d+))?"                        # port number
-        "(/.*)?$"                             # path
-    )
+    def combined_url(self, base_url, rel_path, kwargs={}):
+        return urllib.parse.urlunsplit(self.combined_part(base_url, rel_path, kwargs))
 
-    def split_url(self, target : str):
-        if match := self._rx_address.match(target):
-            scheme = match.group(1) or ""
-            host   = match.group(2) or ""
-            try:
-                port = int(match.group(3))
-            except (TypeError, ValueError):
-                port = None
-            path = match.group(4) or ""
-            return scheme, host, port, path
+
+    def combined_parts(self, base_url, rel_path, kwargs={}):
+        check_type(rel_path, str)
+        check_type(kwargs, dict)
+
+        scheme, netloc, base_path, base_query, fragment = urllib.parse.urlsplit(base_url)
+        _, _,  rel_path, rel_query, _ = urllib.parse.urlsplit(rel_path)
+
+        if base_path.endswith('/') and rel_path.startswith('/'):
+            path = base_path[:-1] + rel_path
+        elif base_path or rel_path:
+            path = base_path + rel_path
         else:
-            return "", "", None, ""
+            path = '/'
 
-    def join_url(self,
-                 scheme: str,
-                 host  : str,
-                 port  : int,
-                 path  : str):
+        items = [q for q in (base_query, rel_query) if q]
+        tuples = []
+        for (key, arg) in kwargs.items():
+            if isinstance(arg, (list, tuple)):
+                tuples.extend([(key, value) for value in arg])
+            else:
+                tuples.append((key, arg))
 
-        return "".join([
-            f"{scheme}://" if scheme else "",
-            host,
-            f":{port}" if port else "",
-            path
-        ])
+        items.extend(["=".join((key, urllib.parse.quote_plus(str(value))))
+                      for (key, value) in tuples])
 
+        return urllib.parse.SplitResult(scheme, netloc, path, '&'.join(items), fragment)
 

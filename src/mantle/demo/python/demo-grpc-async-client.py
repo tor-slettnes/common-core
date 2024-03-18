@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from demo.grpc.client import DemoClient
+from demo.grpc.client import DemoClient, CC
 
 ### Standard Python modules
 import asyncio
@@ -36,8 +36,16 @@ class ArgParser (argparse.ArgumentParser):
                           const=True,
                           help='Print debug messages')
 
+        self.add_argument('--use-signal-queue',
+                          default=False,
+                          action='store_const',
+                          const=True,
+                          help='If monitoring (i.e., no command given), use a signal queue'
+                          'rather than individual stream.')
+
         self.add_argument('command',
                           type=str,
+                          nargs='?',
                           default=None,
                           help="Invoke a function with Python AsyncIO semantics")
 
@@ -47,7 +55,31 @@ async def main(args):
                       identity = args.identity,
                       use_asyncio = True)
     demo.initialize()
-    result = await eval(args.command)
+    # result = await demo.get_current_time()
+
+    if args.command:
+        result = await eval(args.command)
+
+    elif args.use_signal_queue:
+        signalqueue = asyncio.Queue()
+        demo.start_notify_time(signalqueue.put)
+        demo.start_notify_greetings(signalqueue.put)
+        try:
+            while True:
+                msg = await signalqueue.get()
+                print(msg)
+        except KeyboardInterrupt as e:
+            demo.stop_notify_greetings()
+            demo.stop_notify_time()
+
+    else:
+        try:
+            async for msg in demo.watch():
+                print(msg)
+        except KeyboardInterrupt:
+            pass
+
+
     demo.deinitialize()
     print(result)
 

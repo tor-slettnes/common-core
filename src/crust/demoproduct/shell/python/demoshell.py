@@ -41,9 +41,15 @@ class ArgParser (argparse.ArgumentParser):
                           default="localhost",
                           help="Host for remote services")
 
-        self.add_argument('--debug',
-                          default=False,
+        self.add_argument('--wait-for-ready',
                           action='store_const',
+                          default=False,
+                          const=True,
+                          help="Wait until server is ready instead of failing immediately")
+
+        self.add_argument('--debug',
+                          action='store_const',
+                          default=False,
                           const=True,
                           help='Print debug messages')
 
@@ -65,9 +71,11 @@ if __name__ == "__main__":
     logger = logging.getLogger()
     logger.setLevel((logging.INFO, logging.DEBUG)[args.debug])
 
-    demo_grpc = demo.grpc.client.DemoClient(args.host, identity = args.identity)
-    demo_zmq  = demo.zmq.client.DemoClient(args.host, identity = args.identity)
+    demo_grpc = demo.grpc.client.DemoClient(args.host,
+                                            identity = args.identity,
+                                            wait_for_ready = args.wait_for_ready)
+    # demo_zmq  = demo.zmq.client.DemoClient(args.host, identity = args.identity)
 
     demo_grpc.initialize()
-    demo_zmq.initialize()
+    # demo_zmq.initialize()
     legend()

@@ -6,8 +6,11 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from ..http import HTTPClient, HTTPTarget
+from ..http import HTTPClient
 import json
+import asyncio
+from typing import Union, Mapping, List
+
 
 class RESTClient (HTTPClient):
     messaging_flavor = 'REST'
@@ -16,7 +19,39 @@ class RESTClient (HTTPClient):
     # for this endpoint (e.g., host/port, ...).
     service_name = None
 
+    async def get_json_async(self, rel_url, kwargs={}, headers={}) -> object:
+        '''AsyncIO coroutine wrapper for `get_json()`
+
+        @param[in] rel_url
+            REST endpoint URL relative to the `base_url` passed to `__init__()`.
+
+        @param[in] kwargs
+            Request arguments, used to construct the HTTP query
+
+        @param[in] headers
+            HTTP request headers
+
+        @return
+            Decoded JSON object, e.g. a Python dict, list, or primitive.
+        '''
+        return await asyncio.to_thread(self.get_json, rel_url, kwargs, headers)
+
     def get_json(self, rel_url, kwargs={}, headers={}):
+        '''Request a JSON object from a REST-enabled web service.
+
+        @param[in] rel_url
+            REST endpoint URL relative to the `base_url` passed to `__init__()`.
+
+        @param[in] kwargs
+            Request arguments, used to construct the HTTP query
+
+        @param[in] headers
+            HTTP request headers
+
+        @return
+            Decoded JSON object, e.g. a Python dict, list, or primitive.
+        '''
+
         string_args = { key : json.dumps(value)
                         for (key, value) in kwargs.items() }
 

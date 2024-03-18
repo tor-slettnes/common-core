@@ -6,13 +6,14 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from .base import HTTPBase, HTTPError, HTTPClientError, HTTPServerError
-from cc.core.invocation import check_type
+from .base import HTTPBase
 
 ### Standard Python modules
 from typing import Mapping, Any
-import http, http.client, urllib.parse
-import os.path, logging
+import http.client
+import urllib.parse
+import logging
+import os.path
 
 class HTTPClient (HTTPBase):
     endpoint_type = 'client'
@@ -25,20 +26,47 @@ class HTTPClient (HTTPBase):
     StatusMap = dict([(status.value, status) for status in http.HTTPStatus])
 
 
-
     def __init__(self, base_url, service_name=None):
         HTTPBase.__init__(self, service_name)
-        self.target = self.get_target(base_url)
-        self.connection = self.create_connection(self.target)
+        self.base_url = self.get_target_url(base_url)
+        self.connection = self.create_connection(self.base_url)
 
-    def create_connection(self, target):
+
+    def create_connection(self, url):
+        parts = urllib.parse.urlparse(url)
         try:
-            connection_type = HTTPClient.ConnectionMap[target.scheme]
+            connection_type = HTTPClient.ConnectionMap[parts.scheme]
         except KeyError:
-            raise TypeError("Unsupported connection scheeme: %s"%(target.scheme,),
-                            target.scheme)
+            raise TypeError("Unsupported connection scheeme: %s"%(parts.scheme,),
+                            parts.scheme)
 
-        return connection_type(target.host, target.port)
+        return connection_type(parts.netloc)
+
+
+    async def get_async(self,
+            path    : str,
+            kwargs  : Mapping[str, Any] = {},
+            headers : Mapping[str, str] = {},
+            expected_content_type: str = None):
+
+        return await asyncio.to_thread(self.get,
+                                       path,
+                                       kwargs,
+                                       headers,
+                                       expected_content_type)
+
+
+    def get(self,
+            path    : str,
+            kwargs  : Mapping[str, Any] = {},
+            headers : Mapping[str, str] = {},
+            expected_content_type: str = None):
+
+        parts = self.combined_parts(self.base_url, path, kwargs)
+        location = urllib.parse.urlunsplit(('', '', parts.path, parts.query, ''))
+        response = self.get_raw(location, headers)
+        return self.check_response(response, expected_content_type)
+
 
     def get_raw(self,
                 path : str,
@@ -52,14 +80,10 @@ class HTTPClient (HTTPBase):
             url = self.join_url(scheme, host, port, path)
             raise type(e)(e, url) from None
 
-    def get(self,
-            path    : str,
-            kwargs  : Mapping[str, Any] = {},
-            headers : Mapping[str, str] = {},
-            expected_content_type: str = None):
 
-        location = self.full_path(path, kwargs)
-        response = self.get_raw(location, headers)
+    def check_response(self,
+                       response: http.client.HTTPResponse,
+                       expected_content_type: str = None) -> http.client.HTTPResponse:
 
         if 400 <= response.status < 500:
             error_type = HTTPClientError
@@ -70,7 +94,7 @@ class HTTPClient (HTTPBase):
 
         if error_type:
             try:
-                status = HTTPClient.StatusMap[response.status]
+                status = self.StatusMap[response.status]
             except KeyError:
                 raise error_type("Received unknown HTTP error code %d, location=%s"%
                                 (response.status, location))
@@ -86,20 +110,3 @@ class HTTPClient (HTTPBase):
 
         return response
 
-
-    def full_path(self, rel_path, kwargs={}):
-        check_type(rel_path, str)
-
-        if self.target.path.endswith('/') and rel_path.startswith('/'):
-            path = self.target.path[:-1] + rel_path
-        elif self.target.path or rel_path:
-            path = self.target.path + rel_path
-        else:
-            path = '/'
-
-        query = "&".join([
-            "=".join((key, urllib.parse.quote_plus(str(arg))))
-            for (key, arg) in kwargs.items()
-            ])
-
-        return "?".join([part for part in (path, query) if part])

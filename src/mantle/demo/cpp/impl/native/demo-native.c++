@@ -9,6 +9,7 @@
 #include "demo-signals.h++"
 #include "chrono/scheduler.h++"
 #include "platform/symbols.h++"
+#include "status/exceptions.h++"
 
 namespace demo
 {
@@ -24,7 +25,15 @@ namespace demo
     {
         log_notice("Received and redistributing greeting: ", greeting);
         /// Emit `signal_greeting` to registered slots/callbacks.
-        demo::signal_greeting.emit(greeting.identity, greeting);
+        if (core::str::tolower(greeting.identity) == "dave")
+        {
+            throw core::exception::InvalidArgument(
+                "I'm sorry Dave, I cannot let you do that.");
+        }
+        else
+        {
+            demo::signal_greeting.emit(greeting.identity, greeting);
+        }
     }
 
     TimeData NativeImpl::get_current_time()

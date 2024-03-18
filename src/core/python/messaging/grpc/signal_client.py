@@ -7,7 +7,7 @@
 
 ### Modules relative to install folder
 from .client  import Client
-from .client_reader import ThreadReader, TaskReader
+from .client_reader import ThreadReader, AsyncReader
 from cc.io.protobuf import CC, ProtoBuf, SignalStore
 
 
@@ -184,7 +184,7 @@ class SignalClient (Client):
                         **kwargs)
 
         self.signal_store = signal_store
-        self.watcher = (ThreadReader, TaskReader)[self.use_asyncio]()
+        self.reader = (ThreadReader, AsyncReader)[self.use_asyncio]()
         if watch_all:
             self.start_watching(True)
 
@@ -214,12 +214,15 @@ class SignalClient (Client):
 
         '''
 
-        if not self.watcher.active():
-            sf = self.signal_filter(watch_all)
-            stream = self.stream_from(self.stub.watch, sf)
-            return self.watcher.start(stream, self.signal_store.emit)
+        if not self.reader.active():
+            stream = self.watch(self.signal_filter(watch_all))
+            return self.reader.start(stream, self.signal_store.emit)
 
     def stop_watching(self):
         '''Stop watching change notifications from server'''
 
-        self.watcher.stop()
+        self.reader.stop()
+
+
+    def watch(self, signal_filter : CC.Signal.Filter = CC.Signal.Filter()):
+        return self.stub.watch(signal_filter)

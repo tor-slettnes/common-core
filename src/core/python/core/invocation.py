@@ -33,6 +33,7 @@ def safe_invoke(function    : Callable,
             log_call('Invoking %s'%(
                 description or invocation(function, args, kwargs),
             ))
+
         return function(*args, **kwargs)
 
     except Exception as e:

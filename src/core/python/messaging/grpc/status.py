@@ -5,8 +5,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-import grpc
 from generated.event_types_pb2 import Details
+
+import grpc
+import traceback
+import sys
 
 class DetailedError (grpc.RpcError):
     '''Mix-in class for gRPC exceptions'''
@@ -19,6 +22,11 @@ class DetailedError (grpc.RpcError):
         self.trailing_metadata = exception.trailing_metadata
 
     def __repr__ (self):
+        return "[%s] %s\n%s%s%s"%(type(self.exception).__name__,
+                                self.details(),
+                                self.stacktrace(),
+                                self.summary(),
+                                self.custom_details())
         return self.__str__()
 
     def __str__ (self):
@@ -36,8 +44,7 @@ class DetailedError (grpc.RpcError):
     def summary (self):
         info = [ ("name", self.exception.code().name),
                  ("code", self.code().value[0]),
-                 ("text", self.code().value[1]),
-                 ("details", self.details()) ]
+                 ("text", self.code().value[1]) ]
 
         return "".join(["%s: %s\n"%item for item in info])
 

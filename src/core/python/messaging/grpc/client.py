@@ -1,5 +1,5 @@
 #!/usr/bin/echo Do not invoke directly.
-##===============================================================================n
+##==============================================================================
 ## @file client.py
 ## @brief gRPC client base
 ## @author Tor Slettnes <tor@slett.net>
@@ -7,7 +7,7 @@
 
 ### Modules relative to install folder
 from .base import Base
-from .status import DetailedError
+from .client_interceptor import ClientInterceptor, AsyncClientInterceptor
 from cc.io.protobuf import ProtoBuf, CC
 from cc.core.invocation import invocation
 
@@ -83,11 +83,15 @@ class Client (Base):
                       (self.channel_name, self.host))
 
         if self.use_asyncio:
-            self.channel = grpc.aio.insecure_channel(self.host)
-            self.invoke  = self._invoke_async
+            self.channel = grpc.aio.insecure_channel(
+                target = self.host,
+                interceptors = [AsyncClientInterceptor(self.wait_for_ready)])
+            # self.channel = grpc.aio.insecure_channel(self.host)
+
         else:
-            self.channel = grpc.insecure_channel(self.host)
-            self.invoke  = self._invoke_direct
+            self.channel = grpc.intercept_channel(
+                grpc.insecure_channel(self.host),
+                ClientInterceptor(self.wait_for_ready))
 
         self.stub = type(self).Stub(self.channel)
         # self.channel.subscribe(self._channelChange)
@@ -95,43 +99,6 @@ class Client (Base):
     def _default_service_name(self):
         service_name, _ = type(self).Stub.__name__.rsplit('Stub')
         return service_name
-
-    def call(self, method, request=ProtoBuf.Empty(), wait_for_ready=None, **kwargs):
-        if wait_for_ready is None:
-            wait_for_ready = self.wait_for_ready
-
-        return self.invoke(method, request, wait_for_ready=wait_for_ready, **kwargs)
-
-    def stream_from(self, method, request=ProtoBuf.Empty(), wait_for_ready=True, **kwargs):
-        if wait_for_ready is None:
-            wait_for_ready = self.wait_for_ready
-
-        return self._invoke_direct(method, request, wait_for_ready=wait_for_ready, **kwargs)
-
-    def _invoke_direct(self, method, request=ProtoBuf.Empty(), print_failure=True, **kwargs):
-        try:
-            return method(request, **kwargs)
-        except grpc.RpcError as e:
-            self._capture_error(e, sys.exc_info(), print_failure)
-
-    async def _invoke_async(self, method, request=ProtoBuf.Empty(), print_failure=True, **kwargs):
-        try:
-            return await method(request, **kwargs)
-        except grpc.aio.AioRpcError as e:
-            self._capture_error(e, sys.exc_info(), print_failure)
-
-    def _capture_error(self,
-                       error,
-                       exc_info,
-                       print_failure):
-        e_type, e_name, e_tb = exc_info
-        self.lastError = error = DetailedError(e.with_traceback(e_tb))
-        if print_failure:
-            print("=== While invoking gRPC method %s(%s):\n--> %s\n"%(
-                method._method.decode(),
-                ProtoBuf.MessageToString(request, as_one_line=True),
-                str(error).strip().replace("\n", "\n... ")))
-        raise error from None
 
     def _channelChange (self, *args, **kwargs):
         logging.info("%s: Channel change callback: %s"%

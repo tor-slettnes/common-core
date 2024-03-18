@@ -13,6 +13,7 @@ from cc.core.invocation   import safe_invoke
 ### Standard Pyton modules
 from typing import Optional, Callable, Mapping
 import threading
+import asyncio
 
 #===============================================================================
 # Enumerated values
@@ -376,12 +377,14 @@ class SignalStore (ProtoBuf):
             datamap.pop(key, None)
 
     def _emit_to(self, name, slot, signal):
-        safe_invoke(slot,
-                    (signal,),
-                    {},
-                    "Signal %s slot %s(%s, %r, ...)"%(
-                        name,
-                        slot.__name__,
-                        MappingChange.get(signal.change, signal.change),
-                        signal.key))
+        result = safe_invoke(slot,
+                             (signal,),
+                             {},
+                             "Signal %s slot %s(%s, %r, ...)"%(
+                                 name,
+                                 slot.__name__,
+                                 MappingChange.get(signal.change, signal.change),
+                                 signal.key))
+        if asyncio.iscoroutine(result):
+            asyncio.create_task(result)
 
