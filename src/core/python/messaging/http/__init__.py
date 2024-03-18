@@ -7,4 +7,3 @@
 
 from .base import HTTPBase, HTTPError, HTTPClientError, HTTPServerError
 from .client import HTTPClient
-from .aio_client import AsyncHTTPClient

@@ -13,6 +13,7 @@ from typing import Mapping, Any
 import http.client
 import urllib.parse
 import logging
+import threading
 import os.path
 
 class HTTPClient (HTTPBase):
@@ -29,7 +30,16 @@ class HTTPClient (HTTPBase):
     def __init__(self, base_url, service_name=None):
         HTTPBase.__init__(self, service_name)
         self.base_url = self.get_target_url(base_url)
-        self.connection = self.create_connection(self.base_url)
+
+    @property
+    def connection(self):
+        thread_data = threading.local()
+        try:
+            connection = thread_data.connection
+        except AttributeError:
+            connection = thread_data.connection = self.create_connection(self.base_url)
+
+        return connection
 
 
     def create_connection(self, url):
@@ -73,8 +83,9 @@ class HTTPClient (HTTPBase):
                 headers={}):
 
         try:
-            request = self.connection.request("GET", path, headers)
-            return self.connection.getresponse()
+            connection = self.connection
+            request = connection.request("GET", path, headers)
+            return connection.getresponse()
         except ConnectionError as e:
             scheme, host, port, _ = self.target
             url = self.join_url(scheme, host, port, path)
