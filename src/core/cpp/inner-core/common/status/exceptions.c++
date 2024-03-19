@@ -9,6 +9,7 @@
 #include "platform/path.h++"
 #include "types/create-shared.h++"
 
+#include <exception>
 #include <string.h>
 
 namespace core::exception

@@ -29,7 +29,6 @@ namespace core::argparse
         ///     actions (create logger instances, daemonize, etc).
         void apply(int argc, char **argv);
         void apply(const ArgList &args);
-        void apply();
 
         /// @brief
         ///     Parse input arguments provided in constructor and execute

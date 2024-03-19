@@ -27,64 +27,74 @@
 
 int main(int argc, char** argv)
 {
+    int status = 0;
+
     // Initialize paths, load settings, set up shutdown signal handlers
     core::application::initialize(argc, argv);
 
-    demo::options = std::make_unique<demo::Options>();
-    demo::options->apply(argc, argv);
+    try
+    {
+        demo::options = std::make_unique<demo::Options>();
+        demo::options->apply(argc, argv);
 
-    // API provider. In this process we use the native/direct implementation.
-    auto api_provider = demo::NativeImpl::create_shared(
-        demo::options->identity);
+        // API provider. In this process we use the native/direct implementation.
+        auto api_provider = demo::NativeImpl::create_shared(
+            demo::options->identity);
 
-    logf_debug("Initializing Demo API provider: %s", api_provider->implementation());
-    api_provider->initialize();
+        logf_debug("Initializing Demo API provider: %s", api_provider->implementation());
+        api_provider->initialize();
 
-    std::list<std::thread> server_threads;
+        std::list<std::thread> server_threads;
 
 #ifdef USE_GRPC
-    if (demo::options->enable_grpc)
-    {
-        logf_debug("Spawning gRPC server");
-        server_threads.emplace_back(
-            demo::grpc::run_grpc_service,
-            api_provider,
-            "");
-    }
+        if (demo::options->enable_grpc)
+        {
+            logf_debug("Spawning gRPC server");
+            server_threads.emplace_back(
+                demo::grpc::run_grpc_service,
+                api_provider,
+                "");
+        }
 #endif
 
 #ifdef USE_DDS
-    if (demo::options->enable_dds)
-    {
-        logf_debug("Spawning DDS server");
-        server_threads.emplace_back(
-            demo::dds::run_dds_service,
-            api_provider,
-            demo::options->identity,
-            demo::options->domain_id);
-    }
+        if (demo::options->enable_dds)
+        {
+            logf_debug("Spawning DDS server");
+            server_threads.emplace_back(
+                demo::dds::run_dds_service,
+                api_provider,
+                demo::options->identity,
+                demo::options->domain_id);
+        }
 #endif
 
 #ifdef USE_ZMQ
-    if (demo::options->enable_zmq)
-    {
-        log_debug("Spawning ZMQ server");
-        server_threads.emplace_back(
-            demo::zmq::run_zmq_service,
-            api_provider,
-            "");
-    }
+        if (demo::options->enable_zmq)
+        {
+            log_debug("Spawning ZMQ server");
+            server_threads.emplace_back(
+                demo::zmq::run_zmq_service,
+                api_provider,
+                "");
+        }
 #endif
 
-    for (std::thread& t : server_threads)
-    {
-        t.join();
-    }
+        for (std::thread& t : server_threads)
+        {
+            t.join();
+        }
 
-    logf_debug("Deinitializing DEMO API provider: %s", api_provider->implementation());
-    api_provider->deinitialize();
+        logf_debug("Deinitializing DEMO API provider: %s", api_provider->implementation());
+        api_provider->deinitialize();
+    }
+    catch (...)
+    {
+        std::cerr << std::current_exception() << std::endl;
+        status = -1;
+    }
 
     logf_debug("Deinitializing DEMO server");
     core::application::deinitialize();
-    return 0;
+    return status;
 }

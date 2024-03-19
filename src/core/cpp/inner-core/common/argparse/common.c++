@@ -80,7 +80,7 @@ namespace core::argparse
                 << "or '--help=list' to list specific help sections."
                 << std::endl;
         }
-        throw std::terminate;
+        std::exit(EINVAL);
     }
 
     void CommonOptions::show_help_and_exit(const std::string &section,
