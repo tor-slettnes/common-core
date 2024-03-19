@@ -17,6 +17,7 @@ namespace core::grpc
     public:
         ServerBuilder(
             const std::string &listen_address = {},
+            bool enable_reflection = true,
             const std::shared_ptr<::grpc::ServerCredentials> &credentials =
                 ::grpc::InsecureServerCredentials());
 

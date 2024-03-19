@@ -14,20 +14,11 @@ set(TARGET cc_demo_grpc_service)
 ### https://cmake.org/cmake/help/latest/command/add_library.html.
 set(LIB_TYPE STATIC)
 
-
-find_package(grpc REQUIRED)
-
-# ### External package dependencies, configured via `pkg-config`.
-# set(PKG_DEPS
-#   grpc++
-# )
-
 ### Static/shared library dependencies, either from this build or provided by the system.
 set(LIB_DEPS
   cc_demo_api
   cc_demo_protobuf_types
-  cc_core_messaging_grpc
-  gRPC::grpc++_reflection
+  cc_core_messaging_grpc_server
 )
 
 ### Source files

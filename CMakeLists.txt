@@ -23,7 +23,7 @@ option(BUILD_PYTHON     "Install Python clients/scripts" ON)
 option(BUILD_GRPC       "Build support for gRPC Remote Procedure Calls" ON)
 option(BUILD_ZMQ        "Build support for ZeroMQ" ON)
 option(BUILD_HTTP       "Build support for HTTP requests, incl. REST API" ON)
-option(BUILD_RTI_DDS    "Build support for RTI ConnextDDS" ON)
+option(BUILD_RTI_DDS    "Build support for RTI ConnextDDS" OFF)
 option(BUILD_RTI_LOGGER "Build support for RTI Distributed Logger" OFF)
 
 ### Object serialization

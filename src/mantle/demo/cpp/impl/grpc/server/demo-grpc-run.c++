@@ -12,17 +12,12 @@
 #include "chrono/date-time.h++"
 #include "string/misc.h++"
 
-#include <grpc++/impl/codegen/server_context.h>
-#include <grpc++/ext/proto_server_reflection_plugin.h>
-
 namespace demo::grpc
 {
     void run_grpc_service(
         std::shared_ptr<demo::API> api_provider,
         const std::string &listen_address)
     {
-        ::grpc::reflection::InitProtoReflectionServerBuilderPlugin();
-
         log_info("Creating gRPC server builder");
         core::grpc::ServerBuilder builder(listen_address);
 

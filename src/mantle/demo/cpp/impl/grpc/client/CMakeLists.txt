@@ -23,7 +23,7 @@ set(LIB_TYPE STATIC)
 set(LIB_DEPS
   cc_demo_api
   cc_demo_protobuf_types
-  cc_core_messaging_grpc)
+  cc_core_messaging_grpc_client)
 
 ### Source files
 set(SOURCES

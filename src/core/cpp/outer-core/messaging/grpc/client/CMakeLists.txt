@@ -5,21 +5,22 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(common)
-add_subdirectory(server)
-add_subdirectory(client)
-
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
-set(TARGET cc_core_messaging_grpc)
+set(TARGET cc_core_messaging_grpc_client)
 
 ### Library type.  We use static linking for convenience.
-set(LIB_TYPE INTERFACE)
+set(LIB_TYPE STATIC)
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_core_messaging_grpc_client
-  cc_core_messaging_grpc_server
+  cc_core_messaging_grpc_common
+  cc_core_messaging_http
 )
+
+set(SOURCES
+  grpc-clientbase.c++
+)
+
 
 ### Recepies to build the library
 include(BuildLibrary)

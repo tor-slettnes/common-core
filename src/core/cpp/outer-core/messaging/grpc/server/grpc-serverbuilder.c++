@@ -7,16 +7,24 @@
 
 #include "grpc-serverbuilder.h++"
 
+#include <grpc++/ext/proto_server_reflection_plugin.h>
+
 namespace core::grpc
 {
     ServerBuilder::ServerBuilder(
         const std::string &listen_address,
+        bool enable_reflection,
         const std::shared_ptr<::grpc::ServerCredentials> &credentials)
         : ::grpc::ServerBuilder(),
           credentials_(credentials),
           max_request_size_(0),
           max_reply_size_(0)
     {
+        if (enable_reflection)
+        {
+            ::grpc::reflection::InitProtoReflectionServerBuilderPlugin();
+        }
+
         if (!listen_address.empty())
         {
             this->add_listener(listen_address);
