@@ -9,6 +9,7 @@
 #include "options.h++"           // Command-line options
 #include "demo-native.h++"       // Native Demo API implementation
 #include "status/exceptions.h++"
+#include "thread/supervised_thread.h++"
 
 #ifdef USE_DDS
 #include "demo-dds-run.h++"  // DDS server implementation
@@ -27,13 +28,11 @@
 
 int main(int argc, char** argv)
 {
-    int status = 0;
-
-    // Initialize paths, load settings, set up shutdown signal handlers
-    core::application::initialize(argc, argv);
-
     try
     {
+        // Initialize paths, load settings, set up shutdown signal handlers
+        core::application::initialize(argc, argv);
+
         demo::options = std::make_unique<demo::Options>();
         demo::options->apply(argc, argv);
 
@@ -50,10 +49,10 @@ int main(int argc, char** argv)
         if (demo::options->enable_grpc)
         {
             logf_debug("Spawning gRPC server");
-            server_threads.emplace_back(
+            server_threads.push_back(core::thread::supervised_thread(
                 demo::grpc::run_grpc_service,
                 api_provider,
-                "");
+                ""));
         }
 #endif
 
@@ -61,11 +60,11 @@ int main(int argc, char** argv)
         if (demo::options->enable_dds)
         {
             logf_debug("Spawning DDS server");
-            server_threads.emplace_back(
+            server_threads.push_back(core::thread::supervised_thread(
                 demo::dds::run_dds_service,
                 api_provider,
                 demo::options->identity,
-                demo::options->domain_id);
+                demo::options->domain_id));
         }
 #endif
 
@@ -73,10 +72,10 @@ int main(int argc, char** argv)
         if (demo::options->enable_zmq)
         {
             log_debug("Spawning ZMQ server");
-            server_threads.emplace_back(
+            server_threads.push_back(core::thread::supervised_thread(
                 demo::zmq::run_zmq_service,
                 api_provider,
-                "");
+                ""));
         }
 #endif
 
@@ -87,14 +86,11 @@ int main(int argc, char** argv)
 
         logf_debug("Deinitializing DEMO API provider: %s", api_provider->implementation());
         api_provider->deinitialize();
+        return 0;
     }
     catch (...)
     {
         std::cerr << std::current_exception() << std::endl;
-        status = -1;
+        return -1;
     }
-
-    logf_debug("Deinitializing DEMO server");
-    core::application::deinitialize();
-    return status;
 }

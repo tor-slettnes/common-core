@@ -8,6 +8,7 @@
 #include "demo-zmq-run.h++"
 #include "demo-zmq-publisher.h++"
 #include "demo-zmq-server.h++"
+#include "status/exceptions.h++"
 
 namespace demo::zmq
 {
@@ -19,7 +20,6 @@ namespace demo::zmq
         auto zmq_publisher = demo::zmq::Publisher::create_shared(
             bind_address);
 
-
         // Instantiate Server to handle incoming requests from client
         auto zmq_server = demo::zmq::Server::create_shared(
             api_provider,
@@ -28,27 +28,19 @@ namespace demo::zmq
         //======================================================================
         // Initialize
 
-        try
-        {
-            zmq_publisher->initialize();
-            log_notice("Demo ZeroMQ publisher is ready on ", zmq_publisher->bind_address());
+        zmq_publisher->initialize();
+        log_notice("Demo ZeroMQ publisher is ready on ", zmq_publisher->bind_address());
 
-            zmq_server->initialize();
-            log_notice("Demo ZeroMQ command server is ready on ", zmq_server->bind_address());
+        zmq_server->initialize();
+        log_notice("Demo ZeroMQ command server is ready on ", zmq_server->bind_address());
 
-            zmq_server->run();
+        zmq_server->run();
 
-            log_notice("Demo ZeroMQ command server is shutting down");
-            zmq_server->deinitialize();
+        log_notice("Demo ZeroMQ command server is shutting down");
+        zmq_server->deinitialize();
 
-            log_notice("Demo ZeroMQ publisher is shutting down");
-            zmq_publisher->deinitialize();
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << e.what() << std::endl;
-            throw;
-        }
+        log_notice("Demo ZeroMQ publisher is shutting down");
+        zmq_publisher->deinitialize();
     }
 
 }  // namespace demo::zmq

@@ -11,6 +11,7 @@
 
 #include <locale>
 #include <csignal>
+#include <cstdlib>
 
 namespace core::application
 {
@@ -25,6 +26,8 @@ namespace core::application
     {
         ::signal(SIGINT, shutdown_handler);
         ::signal(SIGTERM, shutdown_handler);
+
+        std::atexit(deinitialize);
 
         // Apply system locale for `wstring` conversions
         //std::locale::global(std::locale("C"));

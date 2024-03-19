@@ -439,15 +439,37 @@ namespace std
     /// Define output stream operator "<<" on std::exception and derivatives.
     std::ostream &operator<<(std::ostream &stream, const exception &e)
     {
-        core::exception::map_to_event(e)->to_stream(stream);
+        if (auto *ep = dynamic_cast<const core::status::Event *>(&e))
+        {
+            ep->to_stream(stream);
+        }
+        else
+        {
+            stream << e.what();
+        }
         return stream;
     }
 
     std::ostream &operator<<(std::ostream &stream, exception_ptr eptr)
     {
-        if (auto ep = core::exception::map_to_event(eptr))
+        if (eptr)
         {
-            ep->to_stream(stream);
+            try
+            {
+                std::rethrow_exception(eptr);
+            }
+            catch (const core::status::Event &event)
+            {
+                event.to_stream(stream);
+            }
+            catch (const std::exception &e)
+            {
+                stream << e.what();
+            }
+            catch (...)
+            {
+                stream << "Uknonwn exception";
+            }
         }
         return stream;
     }
