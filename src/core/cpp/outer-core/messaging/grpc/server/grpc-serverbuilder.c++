@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "grpc-serverbuilder.h++"
+#include "grpc-serverinterceptors.h++"
 
 #include <grpc++/ext/proto_server_reflection_plugin.h>
 
@@ -53,6 +54,13 @@ namespace core::grpc
         this->listeners_.push_back(address);
     }
 
+    void ServerBuilder::add_interceptors()
+    {
+        std::vector<std::unique_ptr<ServerInterceptorFactoryInterface>> creators;
+        creators.push_back(EHInterceptorFactory::create_unique());
+        this->experimental().SetInterceptorCreators(std::move(creators));
+    }
+
     void ServerBuilder::adjust_max(uint candidate, uint *target)
     {
         if (candidate > *target)
@@ -63,6 +71,8 @@ namespace core::grpc
 
     std::unique_ptr<::grpc::Server> ServerBuilder::BuildAndStart()
     {
+        // this->add_interceptors();
+
         if (this->max_request_size_)
         {
             this->SetMaxReceiveMessageSize(this->max_request_size_);

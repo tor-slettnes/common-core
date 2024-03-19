@@ -24,6 +24,7 @@ set(LIB_DEPS
 set(SOURCES
   grpc-requesthandler.c++
   grpc-serverbuilder.c++
+  grpc-serverinterceptors.c++
 )
 
 

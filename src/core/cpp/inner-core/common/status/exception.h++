@@ -73,14 +73,6 @@ namespace core::exception
         {
             return "Exception";
         }
-
-        inline void to_stream(std::ostream &stream) const override
-        {
-            stream << (this->symbol().empty() ? this->class_name() : this->symbol())
-                   << "("
-                   << this->text()
-                   << ")";
-        }
     };
 
 }  // namespace core::exception

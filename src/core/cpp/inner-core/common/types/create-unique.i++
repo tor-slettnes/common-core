@@ -1,0 +1,50 @@
+/// -*- c++ -*-
+//==============================================================================
+/// @file create-unique.i++
+/// @brief Add static `create_unique()` method to create unique_ptr<> instance
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#pragma once
+#include <memory>
+
+namespace core::types
+{
+    //==========================================================================
+    // @fn create_unique
+
+    template <class UniqueClass, class... Args>
+    [[nodiscard]] std::unique_ptr<UniqueClass> create_unique(Args &&...args)
+    {
+        class PublicClass final : public UniqueClass
+        {
+        public:
+            PublicClass(Args &&...args)
+                : UniqueClass(std::forward<Args>(args)...) {}
+        };
+        return std::make_unique<PublicClass>(std::forward<Args>(args)...);
+    }
+
+    //==========================================================================
+    // @class enable_create_unique<>
+
+    template <class Class, class Base>
+    template <class... Args>
+    std::unique_ptr<Base> enable_create_unique<Class, Base>::create_unique(Args &&...args)
+    {
+        return types::create_unique<Class>(std::forward<Args>(args)...);
+    }
+
+    //==========================================================================
+    // @fn equivalent
+
+    template <class T>
+    bool equivalent(const std::unique_ptr<T> &lhs, const std::unique_ptr<T> &rhs)
+    {
+        return (!lhs && !rhs)             ? true   // both are empty
+               : (!lhs || !rhs)           ? false  // one is empty
+               : (lhs.get() == rhs.get()) ? true   // object pointers are equal
+               : *lhs == *rhs             ? true   // object contents are equal
+                                          : false;             // none of the above
+    }
+}  // namespace core::types

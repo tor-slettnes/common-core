@@ -36,6 +36,7 @@ namespace core::grpc
         void add_handler_settings(std::shared_ptr<RequestHandlerBase> handler,
                                   bool add_listener);
         void add_listener(const std::string &address);
+        void add_interceptors();
         void adjust_max(uint candidate, uint *target);
 
     private:
