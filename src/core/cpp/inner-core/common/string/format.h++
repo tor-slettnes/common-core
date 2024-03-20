@@ -51,6 +51,7 @@ namespace core::str
             if (this->parts_it != this->parts.end())
             {
                 const Part &part = *this->parts_it++;
+                this->stream.imbue(std::locale::classic());
                 std::ios_base::fmtflags original_flags = this->stream.flags();
                 const Modifiers &modifiers = this->apply_format(part, sizeof(T));
                 this->appendvalue(value, modifiers);
@@ -104,6 +105,7 @@ namespace core::str
             bool hidden = false;
             bool truncate = false;
             bool nonegativezero = false;
+            char timeformat = '\0';
         };
 
         Parts split_parts(const std::string &fmt) const;
@@ -136,6 +138,10 @@ namespace core::str
 
         // Ouptut formatting for rvalue strings (destrutive lower/upper case conversion)
         void appendvalue(std::string &&rvalue,
+                         const Modifiers &modifiers);
+
+        // Ouptut formatting for timepionts
+        void appendvalue(const std::chrono::system_clock::time_point &tp,
                          const Modifiers &modifiers);
 
         // // Ouptut formatting for byte arrays (to support quoting)
@@ -208,6 +214,7 @@ namespace core::str
 
     private:
         std::ostream &stream;
+        std::locale locale;
         const std::string formatstring;
         const Parts parts;
         Parts::const_iterator parts_it;
@@ -267,11 +274,15 @@ namespace core::str
     ///
     /// The following conversion types are supported; those that are additions
     /// or modifications from `printf()` are marked with [*]:
-    ///  `d`, `i`, `u`  sets std::dec to apply decimal integer representation
+    ///  `d`, `i`, `u`  sets std::dec to apply decimal integer representation.
+    ///                 with alternate flag apply locale-specific grouping.
     ///  `z` [*]        truncates a floating point value and represents as integer;
-    ///                 represents a timepoint as a JavaScript (UTC) time string.
-    ///  `o`            sets std::oct to apply octal integer representation
+    ///                 with alternate flag apply locale-specific grouping.
+    ///  `n` [*]        apply locale-specific grouping (e.g. thousands separator) to numbers
+    ///  `o`            sets std::oct to apply octal integer representation.
+    ///                 With alternate flag include leading `0`.
     ///  `x`, `X`       sets std::hex to apply hexadecimal representation
+    ///                 With alternate flag include leading `0x` or `0X`.
     ///  `f`            sets std::fixed floating point representation
     ///  `F` [*]        sets std::fixed while eliminating "negative zero" values
     ///  `e`, `E`       sets std::scientific floating point representation
@@ -282,10 +293,10 @@ namespace core::str
     ///  `h` [*]        hide characters in string by replacing each with `*`
     ///  `r` [*]        applies std::quoted() around string arguments.
     ///  `b` [*]        sets std::boolalpha to show boolean values as "false"/"true"
+    ///  `T` [*]        timepoint as a ISO 8601 string with `T` as date/time separator
+    ///  `Z` [*]        timepoint as a JavaScript time string (UTC/Zulu with `Z` suffix)
     ///  `p`            pointer format: std::hex, std::showbase, std::internal,
     ///                 std::setw(2+sizeof(void*)*2), std::setfill(`0`)
-    ///  `n`            expects a pointer to an int, which will be updated to
-    ///                 reflect the number of arguments converted so far.
     ///
     /// Additionally, the uppercase variants `X`, `E`, `G`, and `A` applies
     /// `std::uppercase`.

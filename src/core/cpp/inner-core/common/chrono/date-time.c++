@@ -588,8 +588,7 @@ namespace std::chrono
 {
     std::ostream &operator<<(std::ostream &stream, const core::dt::TimePoint &tp)
     {
-        core::dt::tp_to_stream(stream, tp, false, 3, core::dt::JS_FORMAT);
-        stream << "Z";
+        core::dt::tp_to_stream(stream, tp);
         return stream;
     }
 

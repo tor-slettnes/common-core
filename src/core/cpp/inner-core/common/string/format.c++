@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "string/format.h++"
+#include "chrono/date-time.h++"
 
 #include <string.h>
 
@@ -19,10 +20,13 @@ namespace core::str
 
     Formatter::Formatter(std::ostream &stream, const std::string &format)
         : stream(stream),
+          locale(stream.getloc()),
           formatstring(format),
           parts(this->split_parts(format)),
           parts_it(parts.begin())
     {
+        // Don't use locale-specific number separators by default
+        this->stream.imbue(std::locale::classic());
         this->stream << (parts_it++)->tail;
     }
 
@@ -91,7 +95,6 @@ namespace core::str
     Formatter::Modifiers Formatter::apply_format(const Part &part, uint bytesize)
     {
         Formatter::Modifiers mods;
-        this->stream.imbue(std::locale("C"));
         this->apply_flags(part.flags, &mods);
 
         if (part.width)
@@ -184,9 +187,15 @@ namespace core::str
         case 'i':
         case 'u':
         case 'z':
+        case 'n':
             // Decimal integer representation
             this->stream << std::dec << std::fixed << std::setprecision(0);
             modifiers->truncate = (conversion == 'z');
+            if (modifiers->alternate || (conversion == 'n'))
+            {
+                // Use locale-specific grouping for numeric output
+                this->stream.imbue(std::locale(""));
+            }
             break;
 
         case 'o':
@@ -219,12 +228,9 @@ namespace core::str
             break;
 
         case 'f':
-            this->stream << std::fixed;
-            break;
-
         case 'F':
-            modifiers->nonegativezero = true;
             this->stream << std::fixed;
+            modifiers->nonegativezero = modifiers->alternate;
             break;
 
         case 'g':
@@ -242,14 +248,14 @@ namespace core::str
             this->stream << std::boolalpha;
             break;
 
+        case 'Z':
+        case 'T':
+            modifiers->timeformat = conversion;
+            break;
+
         case 'p':
             this->stream << std::setw(2 + sizeof(void *) * 2) << std::setfill('0')
                          << std::showbase << std::internal << std::hex;
-            break;
-
-        case 'n':
-            // The argument should be a pointer to an int, which will receive argument count
-            modifiers->saveargs = true;
             break;
 
         case 'h':
@@ -413,6 +419,24 @@ namespace core::str
         }
     }
 
+    // Ouptut formatting for timepionts
+    void Formatter::appendvalue(const std::chrono::system_clock::time_point &tp,
+                                const Modifiers &modifiers)
+    {
+        dt::tp_to_stream(this->stream,                   // stream
+                         tp,                             // tp
+                         (modifiers.timeformat != 'Z'),  // local
+                         this->stream.precision(),       // decimals
+                         modifiers.timeformat            // format
+                             ? dt::JS_FORMAT
+                             : dt::DEFAULT_FORMAT);
+
+        if (modifiers.timeformat == 'Z')
+        {
+            this->stream << 'Z';
+        }
+    }
+
     // void Formatter::appendvalue(const std::vector<std::uint8_t> &value,
     //                             const Modifiers &modifiers)
     // {
@@ -462,6 +486,7 @@ namespace core::str
         {
             this->stream << this->formatstring.substr(this->parts_it->pos);
         }
+        this->stream.imbue(this->locale);
     }
 
 }  // namespace core::str
