@@ -144,6 +144,9 @@ namespace core::str
         void appendvalue(const std::chrono::system_clock::time_point &tp,
                          const Modifiers &modifiers);
 
+        void appendvalue(const std::tm &time,
+                         const Modifiers &modifiers);
+
         // // Ouptut formatting for byte arrays (to support quoting)
         // void appendvalue(const std::vector<std::uint8_t> &value,
         //                  const Modifiers &modifiers);

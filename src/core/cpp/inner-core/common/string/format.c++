@@ -34,13 +34,13 @@ namespace core::str
     {
         static const std::regex rx(
             //"(?:^|[^\\\\])(?:\\\\{2})*"      // 0 or even # of preceeding backslashes
-            "(%"                               // (1) Entire expression starting with %
-            "([#0\\-\\ \\+\\'\\^,]*)"          // (2) 0 or more flags #|0|-| |+|'|^|,
-            "(?:(\\d*)|(\\*))"                 // (3) fixed or (4) variable field width
-            "(?:\\.(\\d*))?"                   // (5) precision
-            "(hh|h|ll|l|q|L|j|z|Z|t)?"         // (6) length modifier (ignored)
-            "(?:([abcdefghinoprsuxzAEFGOX])|"  // (7) argument conversion specifier, or
-            "([m%])))"                         // (8) non-argument specifier
+            "(%"                                 // (1) Entire expression starting with %
+            "([#0\\-\\ \\+\\'\\^,]*)"            // (2) 0 or more flags #|0|-| |+|'|^|,
+            "(?:(\\d*)|(\\*))"                   // (3) fixed or (4) variable field width
+            "(?:\\.(\\d*))?"                     // (5) precision
+            "(hh|h|ll|l|q|L|j|z|Z|t)?"           // (6) length modifier (ignored)
+            "(?:([abcdefghinoprsuxzAEFGOXTZ])|"  // (7) argument conversion specifier, or
+            "([m%])))"                           // (8) non-argument specifier
         );
         uint pos = 0, next = 0;
 
@@ -430,6 +430,20 @@ namespace core::str
                          modifiers.timeformat            // format
                              ? dt::JS_FORMAT
                              : dt::DEFAULT_FORMAT);
+
+        if (modifiers.timeformat == 'Z')
+        {
+            this->stream << 'Z';
+        }
+    }
+
+    void Formatter::appendvalue(const std::tm &tm,
+                                const Modifiers &modifiers)
+    {
+        stream << std::put_time(&tm,
+                                modifiers.timeformat
+                                    ? dt::JS_FORMAT
+                                    : dt::DEFAULT_FORMAT);
 
         if (modifiers.timeformat == 'Z')
         {

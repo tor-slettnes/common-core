@@ -65,10 +65,10 @@ namespace demo
     void TimeData::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
-                        "TimeData(epoch=%d, local=%s, utc=%s)",
+                        "TimeData(epoch=%d, local=%T, utc=%Z)",
                         core::dt::to_time_t(this->timepoint),
-                        core::dt::to_string(this->localtime),
-                        core::dt::to_string(this->utctime));
+                        this->localtime,
+                        this->utctime);
     }
 
 }  // namespace demo
