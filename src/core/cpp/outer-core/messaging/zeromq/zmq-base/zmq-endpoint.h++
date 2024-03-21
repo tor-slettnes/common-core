@@ -9,7 +9,7 @@
 #include "messaging-endpoint.h++"
 #include "logging/message/scope.h++"
 #include "types/value.h++"
-#include "config/settingsstore.h++"
+#include "settings/settingsstore.h++"
 
 #include <zmq.hpp>
 

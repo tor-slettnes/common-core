@@ -13,7 +13,7 @@
 #include "grpc-base.h++"
 #include "grpc-status.h++"
 #include "messaging-endpoint.h++"
-#include "config/settingsstore.h++"
+#include "settings/settingsstore.h++"
 #include <grpc++/grpc++.h>
 
 namespace core::grpc

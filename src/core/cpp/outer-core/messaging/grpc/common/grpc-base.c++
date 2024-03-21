@@ -8,7 +8,7 @@
 #include "grpc-base.h++"
 #include "chrono/date-time.h++"
 #include "status/exceptions.h++"
-#include "config/settingsstore.h++"
+#include "settings/settingsstore.h++"
 #include "string/misc.h++"
 #include "buildinfo.h"  // PROJECT_NAME
 

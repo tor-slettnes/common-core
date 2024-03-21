@@ -7,6 +7,8 @@
 
 target_sources(${TARGET} PRIVATE
   basewriter.c++
+  reader.c++
+  writer.c++
 )
 
 add_subdirectory(custom-parser)

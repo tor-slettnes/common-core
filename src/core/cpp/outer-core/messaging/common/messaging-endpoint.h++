@@ -10,7 +10,7 @@
 #include "types/filesystem.h++"
 #include "logging/message/scope.h++"
 #include "platform/symbols.h++"
-#include "config/settingsstore.h++"
+#include "settings/settingsstore.h++"
 
 #include <string>
 

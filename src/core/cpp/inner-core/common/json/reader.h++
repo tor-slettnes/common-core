@@ -21,4 +21,7 @@ namespace core::json
 #else
     using FastReader = CustomReader;
 #endif
+
+    extern Reader reader;
+    extern FastReader fast_reader;
 }

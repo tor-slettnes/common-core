@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "argparse/common.h++"
-#include "config/settings.h++"
+#include "settings/settings.h++"
 #include "status/level.h++"
 #include "logging/logging.h++"
 #include "logging/sinks/streamsink.h++"

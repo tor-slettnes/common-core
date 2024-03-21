@@ -6,7 +6,7 @@
 
 #include "init.h++"
 #include "providers.h++"
-#include "config/settings.h++"
+#include "settings/settings.h++"
 #include "logging/logging.h++"
 
 #include <locale>

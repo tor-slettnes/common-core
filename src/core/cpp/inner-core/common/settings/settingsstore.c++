@@ -5,7 +5,7 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "config/settingsstore.h++"
+#include "settings/settingsstore.h++"
 //#include "string/misc.h++"
 #include "json/reader.h++"
 #include "json/writer.h++"
@@ -87,7 +87,7 @@ namespace core
 
         try
         {
-            value = json::Reader().read_file(abspath);
+            value = json::reader.read_file(abspath);
         }
         catch (const fs::filesystem_error &)
         {
@@ -123,16 +123,17 @@ namespace core
         // as `filename` may have been absolute.
 
         fs::create_directories(path.parent_path());
-        json::Writer writer(path);
 
         if (delta_only && this->composite_)
         {
-            writer.write(this->recursive_delta(this->default_settings()),  // value
-                         true);                                            // pretty
+            json::writer.write_file(
+                path,                                             // path
+                this->recursive_delta(this->default_settings()),  // value
+                true);                                            // pretty
         }
         else
         {
-            writer.write(*this, true);
+            json::writer.write_file(path, *this, true);
         }
     }
 

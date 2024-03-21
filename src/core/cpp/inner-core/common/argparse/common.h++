@@ -9,7 +9,7 @@
 #include "argparse/parser.h++"
 #include "logging/logging.h++"
 #include "logging/sinks/logsink.h++"
-#include "config/settings.h++"
+#include "settings/settings.h++"
 
 namespace core::argparse
 {

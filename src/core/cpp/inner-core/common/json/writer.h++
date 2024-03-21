@@ -21,4 +21,7 @@ namespace core::json
 #else
     using FastWriter = CustomWriter;
 #endif
+
+    extern Writer writer;
+    extern FastWriter fast_writer;
 }

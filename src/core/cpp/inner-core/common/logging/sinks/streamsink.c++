@@ -9,7 +9,7 @@
 #include "chrono/date-time.h++"
 #include "types/value.h++"
 #include "string/misc.h++"
-#include "config/settings.h++"
+#include "settings/settings.h++"
 
 #include <iomanip>
 #include <ostream>
