@@ -19,6 +19,9 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/BuildProject.cmake)
 option(BUILD_CPP        "Build/Install C++ code" ON)
 option(BUILD_PYTHON     "Install Python clients/scripts" ON)
 
+### Optional core components
+option(BUILD_RAPIDJSON  "Build support for RapidJSON parser" ON)
+
 ### Messaging frameworks
 option(BUILD_GRPC       "Build support for gRPC Remote Procedure Calls" ON)
 option(BUILD_ZMQ        "Build support for ZeroMQ" ON)

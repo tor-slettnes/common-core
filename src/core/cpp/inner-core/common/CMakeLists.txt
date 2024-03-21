@@ -12,7 +12,9 @@ set(TARGET cc_core_common)
 set(LIB_TYPE STATIC)
 
 ### Upstream package dependencies
-set(PKG_DEPS RapidJSON)
+if(BUILD_RAPIDJSON)
+  set(PKG_DEPS RapidJSON)
+endif()
 
 ## Include appropriate system libraries based on platform
 if(PLATFORM_QNX)
@@ -42,3 +44,4 @@ add_subdirectory(status)
 add_subdirectory(string)
 add_subdirectory(thread)
 add_subdirectory(types)
+

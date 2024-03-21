@@ -1,34 +1,34 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file jsonbuilder.c++
-/// @brief Convert a Value instance to JSON
+/// @file jsonwriter.c++
+/// @brief Write values to JSON file
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "jsonbuilder.h++"
+#include "writer.h++"
+#include <fstream>
 
 namespace core::json
 {
-    std::string JsonBuilder::to_string(const types::Value &value,
-                                       bool pretty)
+    void Writer::write_stream(std::ostream &stream,
+                              const types::Value &value,
+                              bool pretty) const
+    {
+        This::to_stream(stream, value, pretty);
+    }
+
+    std::string Writer::encoded(const types::Value &value,
+                                bool pretty) const
     {
         std::stringstream ss;
         This::to_stream(ss, value, pretty);
         return ss.str();
     }
 
-    std::ostream &JsonBuilder::to_stream(std::ostream &&stream,
-                                         const types::Value &value,
-                                         bool pretty,
-                                         const std::string &indent)
-    {
-        return This::to_stream(stream, value, pretty, indent);
-    }
-
-    std::ostream &JsonBuilder::to_stream(std::ostream &stream,
-                                         const types::Value &value,
-                                         bool pretty,
-                                         const std::string &indent)
+    std::ostream &Writer::to_stream(std::ostream &stream,
+                                    const types::Value &value,
+                                    bool pretty,
+                                    const std::string &indent)
     {
         switch (value.type())
         {
@@ -59,10 +59,10 @@ namespace core::json
         return stream;
     }
 
-    std::ostream &JsonBuilder::to_stream(std::ostream &stream,
-                                         const types::KeyValueMap &kvmap,
-                                         bool pretty,
-                                         const std::string &indent)
+    std::ostream &Writer::to_stream(std::ostream &stream,
+                                    const types::KeyValueMap &kvmap,
+                                    bool pretty,
+                                    const std::string &indent)
     {
         std::string sub_indent;
         std::string delimiter;
@@ -92,10 +92,10 @@ namespace core::json
         return stream;
     }
 
-    std::ostream &JsonBuilder::to_stream(std::ostream &stream,
-                                         const types::ValueList &list,
-                                         bool pretty,
-                                         const std::string &indent)
+    std::ostream &Writer::to_stream(std::ostream &stream,
+                                    const types::ValueList &list,
+                                    bool pretty,
+                                    const std::string &indent)
     {
         std::string sub_indent;
         std::string delimiter;
@@ -121,10 +121,10 @@ namespace core::json
         return stream;
     }
 
-    std::ostream &JsonBuilder::to_stream(std::ostream &stream,
-                                         const types::TaggedValueList &tvlist,
-                                         bool pretty,
-                                         const std::string &indent)
+    std::ostream &Writer::to_stream(std::ostream &stream,
+                                    const types::TaggedValueList &tvlist,
+                                    bool pretty,
+                                    const std::string &indent)
 
     {
         if (tvlist.mappable())

@@ -8,6 +8,7 @@
 #pragma once
 #include "http-client.h++"
 #include "rest-base.h++"
+#include "json/reader.h++"
 
 namespace core::http
 {
@@ -24,6 +25,7 @@ namespace core::http
                               const types::TaggedValueList &query = {}) const;
 
     private:
+        core::json::FastReader json_reader;
         std::string content_type;
     };
 }  // namespace core::http

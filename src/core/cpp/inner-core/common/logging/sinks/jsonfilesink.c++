@@ -26,7 +26,7 @@ namespace core::logging
     {
         this->update_current_path(tp);
         fs::create_directories(this->current_path().parent_path());
-        this->writer_ = std::make_shared<json::JsonWriter>(this->current_path());
+        this->writer_ = std::make_shared<json::Writer>(this->current_path());
     }
 
     void JsonFileSink::close()
@@ -48,7 +48,7 @@ namespace core::logging
         if (this->writer_)
         {
             this->check_rotation(event->timepoint());
-            this->writer_->write(event->as_tvlist());
+            this->writer_->write(event->as_tvlist(), false);
         }
     }
 }  // namespace core::logging

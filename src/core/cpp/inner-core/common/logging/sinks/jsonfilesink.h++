@@ -8,7 +8,7 @@
 #pragma once
 #include "logsink.h++"
 #include "rotatingpath.h++"
-#include "json/jsonwriter.h++"
+#include "json/writer.h++"
 #include "types/filesystem.h++"
 #include "types/create-shared.h++"
 
@@ -41,6 +41,6 @@ namespace core::logging
         void capture_event(const status::Event::Ref &event) override;
 
     private:
-        std::shared_ptr<json::JsonWriter> writer_;
+        std::shared_ptr<json::Writer> writer_;
     };
 }  // namespace core::logging

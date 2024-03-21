@@ -6,8 +6,8 @@
 //==============================================================================
 
 #include "rest-client.h++"
-#include "json/jsonparser.h++"
 #include "logging/logging.h++"
+
 
 namespace core::http
 {
@@ -27,7 +27,7 @@ namespace core::http
         std::string location = join_path_query(path, query);
         std::stringstream ss{this->get(location, this->content_type)};
         logf_debug("REST client received %d bytes; parsing JSON...", ss.tellp());
-        types::Value value = json::JsonParser::parse_stream(ss);
+        types::Value value = this->json_reader.read_stream(ss);
         log_debug("REST client parsed JSON response.");
         return value;
     }

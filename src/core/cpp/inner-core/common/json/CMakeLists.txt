@@ -6,13 +6,12 @@
 #===============================================================================
 
 target_sources(${TARGET} PRIVATE
-  tokenparser-base.c++
-  tokenparser-stream.c++
-  tokenparser-string.c++
-  jsonparser.c++
-  jsonreader.c++
-
-  jsonbuilder.c++
-  jsonwriter.c++
+  basewriter.c++
 )
+
+add_subdirectory(custom-parser)
+
+if(BUILD_RAPIDJSON)
+  add_subdirectory(rapidjson)
+endif()
 

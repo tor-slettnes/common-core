@@ -6,11 +6,10 @@
 #===============================================================================
 
 target_sources(${TARGET} PRIVATE
+  tokenparser-base.c++
+  tokenparser-stream.c++
+  tokenparser-string.c++
   reader.c++
   writer.c++
 )
 
-target_compile_definitions(${TARGET} PUBLIC
-  RAPIDJSON_HAS_STDSTRING
-  RAPIDJSON=1
-)

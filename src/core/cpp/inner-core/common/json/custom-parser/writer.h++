@@ -1,34 +1,36 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file jsonbuilder.h++
-/// @brief Convert a Value instance to JSON
+/// @file writer.h++
+/// @brief Write values to JSON file
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "string/misc.h++"
-#include "status/exceptions.h++"
+#pragma once
+#include "json/basewriter.h++"
 
 namespace core::json
 {
-    class JsonBuilder
+    class Writer : public BaseWriter
     {
-        using This = JsonBuilder;
+        using This = Writer;
+        using Super = BaseWriter;
 
     public:
-        static std::string to_string(const types::Value &value,
-                                     bool pretty = false);
+        using Super::Super;
 
-        static std::ostream &to_stream(std::ostream &&stream,
-                                       const types::Value &value,
-                                       bool pretty = false,
-                                       const std::string &indent = "");
+        void write_stream(std::ostream &stream,
+                          const types::Value &value,
+                          bool pretty = false) const override;
 
+        std::string encoded(const types::Value &value,
+                            bool pretty = false) const override;
+
+    private:
         static std::ostream &to_stream(std::ostream &stream,
                                        const types::Value &value,
                                        bool pretty = false,
                                        const std::string &indent = "");
 
-    public:
         static std::ostream &to_stream(std::ostream &stream,
                                        const types::KeyValueMap &kvmap,
                                        bool pretty,
@@ -44,5 +46,4 @@ namespace core::json
                                        bool pretty,
                                        const std::string &indent);
     };
-
 }  // namespace core::json

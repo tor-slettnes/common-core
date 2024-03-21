@@ -1,29 +1,28 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file jsonparser.h++
-/// @brief Decode JSON stream as variant value object
+/// @file jsonreader.h++
+/// @brief Read JSON file, possibly with comments
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
-#include "types/value.h++"
 #include "tokenparser-base.h++"
-
-#include <unordered_set>
-#include <memory>
-#include <optional>
+#include "json/basereader.h++"
 
 namespace core::json
 {
-    class JsonParser
+    class Reader : public BaseReader
     {
-        using This = JsonParser;
+        using This = Reader;
+        using Super = BaseReader;
+
         using ParserRef = std::shared_ptr<TokenParser>;
 
     public:
-        static types::Value parse_text(const std::string &text);
-        static types::Value parse_stream(std::istream &&istream);
-        static types::Value parse_stream(std::istream &istream);
+        types::Value decoded(const std::string &string) const override;
+        types::Value read_file(const fs::path &path) const override;
+        types::Value read_stream(std::istream &stream) const override;
+        types::Value read_stream(std::istream &&stream) const override;
 
     private:
         static types::Value parse_input(const ParserRef &parser);
@@ -33,6 +32,5 @@ namespace core::json
 
         static TokenPair next_value(const ParserRef &parser,
                                     const TokenMask &endtokens = TI_NONE);
-
     };
 }  // namespace core::json

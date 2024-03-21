@@ -131,7 +131,7 @@
     if (!(cond))                                                                     \
     {                                                                                \
         logf_message(core::status::Level::FATAL, "Assertion failed: "s + __VA_ARGS__); \
-        throw std::terminate;                                                        \
+        sys::exit(-1);
     }
 #else
 #define assertf(cond, ...)

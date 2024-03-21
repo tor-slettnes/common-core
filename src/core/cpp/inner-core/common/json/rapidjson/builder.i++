@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file jsonencoder.h++
+/// @file builder.h++
 /// @brief Encode variant values as rapidjson objects
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
@@ -8,54 +8,68 @@
 namespace core::json
 {
     template <class WriterType>
-    bool JsonEncoder<WriterType>::encodeValue(const types::Value &value,
-                                              WriterType *writer)
+    RapidBuilder<WriterType>::RapidBuilder(std::ostream &stream)
+        : Super(stream),
+          streamwrapper(stream),
+          writer(streamwrapper)
+    {
+    }
+
+    template <class WriterType>
+    void RapidBuilder<WriterType>::write_stream(const types::Value &value)
+    {
+        this->encodeValue(value);
+        this->stream << std::endl;
+    }
+
+    template <class WriterType>
+    bool RapidBuilder<WriterType>::encodeValue(const types::Value &value)
     {
         static bool warned_tv = false;
 
         switch (value.type())
         {
         case types::ValueType::NONE:
-            return writer->Null();
+            return this->writer.Null();
 
         case types::ValueType::BOOL:
-            return writer->Bool(value.as_bool());
+            return this->writer.Bool(value.as_bool());
 
         case types::ValueType::CHAR:
-            return writer->String(value.get_if<char>(), 1);
+            return this->writer.String(value.get_if<char>(), 1);
 
         case types::ValueType::STRING:
-            return writer->String(value.get<std::string>());
+            return this->writer.String(value.get<std::string>());
 
         case types::ValueType::UINT:
-            return writer->Uint64(value.as_uint());
+            return this->writer.Uint64(value.as_uint());
 
         case types::ValueType::SINT:
-            return writer->Int64(value.as_sint());
+            return this->writer.Int64(value.as_sint());
 
         case types::ValueType::REAL:
         case types::ValueType::TIMEPOINT:
         case types::ValueType::DURATION:
-            return writer->Double(value.as_real());
+            return this->writer.Double(value.as_real());
 
         case types::ValueType::COMPLEX:
-            return this->encodeObject(value.as_kvmap(), writer);
+            return this->encodeObject(value.as_kvmap());
 
         case types::ValueType::BYTEVECTOR:
-            return writer->String(value.get<types::ByteVector>().to_base64());
+            return this->writer.String(value.get<types::ByteVector>().to_base64());
 
         case types::ValueType::VALUELIST:
-            return this->encodeArray(*value.get_valuelist(), writer);
+            return this->encodeArray(*value.get_valuelist());
 
         case types::ValueType::KVMAP:
-            return this->encodeObject(*value.get_kvmap(), writer);
+            return this->encodeObject(*value.get_kvmap());
 
         case types::ValueType::TVLIST:
             if (types::TaggedValueListRef tvlist = value.get_tvlist())
             {
                 if (tvlist->mappable())
                 {
-                    return this->encodeObject(*tvlist, writer);
+                    return this->encodeObject(*tvlist);
                 }
                 else
                 {
@@ -67,62 +81,59 @@ namespace core::json
                     //         value);
                     //     warned_tv = true;
                     // }
-                    return this->encodeArray(tvlist->values(), writer);
+                    return this->encodeArray(tvlist->values());
                 }
             }
             else
             {
-                return writer->Null();
+                return this->writer.Null();
             }
 
         default:
             // logf_warning("%s cannot be converted to JSON: %s",
             //              value.type_name(),
             //              value);
-            return writer->Null();
+            return this->writer.Null();
         }
     }
 
     template <class WriterType>
-    bool JsonEncoder<WriterType>::encodeArray(const types::ValueList &list,
-                                              WriterType *writer)
+    bool RapidBuilder<WriterType>::encodeArray(const types::ValueList &list)
     {
-        writer->StartArray();
+        this->writer.StartArray();
         for (const types::Value &v : list)
         {
-            this->encodeValue(v, writer);
+            this->encodeValue(v);
         }
-        return writer->EndArray();
+        return this->writer.EndArray();
     }
 
     template <class WriterType>
-    bool JsonEncoder<WriterType>::encodeObject(const types::KeyValueMap &kvmap,
-                                               WriterType *writer)
+    bool RapidBuilder<WriterType>::encodeObject(const types::KeyValueMap &kvmap)
     {
-        writer->StartObject();
+        this->writer.StartObject();
 
         for (const auto &[k, v] : kvmap)
         {
-            writer->String(k);
-            this->encodeValue(v, writer);
+            this->writer.String(k);
+            this->encodeValue(v);
         }
-        return writer->EndObject();
+        return this->writer.EndObject();
     }
 
     template <class WriterType>
-    bool JsonEncoder<WriterType>::encodeObject(const types::TaggedValueList &tvlist,
-                                               WriterType *writer)
+    bool RapidBuilder<WriterType>::encodeObject(const types::TaggedValueList &tvlist)
     {
-        writer->StartObject();
+        this->writer.StartObject();
 
         for (const auto &[t, v] : tvlist)
         {
             if (t)
             {
-                writer->String(*t);
-                this->encodeValue(v, writer);
+                this->writer.String(*t);
+                this->encodeValue(v);
             }
         }
-        return writer->EndObject();
+        return this->writer.EndObject();
     }
-}  // namespace core::json
+}  // namespace core::rapidjson

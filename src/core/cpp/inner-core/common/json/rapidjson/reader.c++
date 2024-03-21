@@ -1,24 +1,27 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file jsondecoder.c++
-/// @brief Decode rapidjson as variant values
+/// @file reader.c++
+/// @brief Read JSON file
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "jsondecoder.h++"
+#include "reader.h++"
 #include "status/exceptions.h++"
+
 #include <rapidjson/error/en.h>
+
+#include <fstream>
 
 namespace core::json
 {
-    types::Value JsonDecoder::parse_text_with_comments(const std::string &text)
+    types::Value RapidReader::decoded_with_comments(const std::string &text) const
     {
-        return JsonDecoder::parse_text(JsonDecoder::uncomment(text));
+        return RapidReader::decoded(RapidReader::uncomment(text));
     }
 
-    types::Value JsonDecoder::parse_text(std::string &&text)
+    types::Value RapidReader::decoded(const std::string &text) const
     {
-        rapidjson::Document doc;
+        ::rapidjson::Document doc;
         doc.Parse(text.data(), text.size());
         if (doc.HasParseError())
         {
@@ -26,30 +29,56 @@ namespace core::json
             std::string msg(GetParseError_En(doc.GetParseError()));
             throw exception::FailedPostcondition(msg, {{"offset", offset}});
         }
-        return JsonDecoder::decodeValue(doc);
+        return RapidReader::decodeValue(doc);
     }
 
-    // types::Value JsonDecoder::parse_stream(std::istream &&stream)
-    // {
-    //     return JsonDecoder::parse_stream(stream);
-    // }
-
-    // types::Value JsonDecoder::parse_stream(std::istream &stream)
-    // {
-    //     rapidjson::Document doc;
-    //     doc.ParseStream(stream);
-    //     if (doc.HasParseError())
-    //     {
-    //         std::size_t offset(doc.GetErrorOffset());
-    //         std::string msg(GetParseError_En(doc.GetParseError()));
-    //         throw exception::FailedPostcondition(msg, {{"offset", offset}});
-    //     }
-    //     return JsonDecoder::decodeValue(doc);
-    // }
-
-    std::string JsonDecoder::uncomment(const std::string &text)
+    types::Value RapidReader::read_file(const fs::path &path) const
     {
-        static std::regex rx(
+        return this->decoded(This::read_text_from_file(path));
+    }
+
+    types::Value RapidReader::read_stream(std::istream &stream) const
+    {
+        if (auto *ss = dynamic_cast<std::stringstream*>(&stream))
+        {
+            return this->decoded(ss->str());
+        }
+        else
+        {
+            stream.seekg(0, std::ios_base::end);
+            std::size_t size = stream.tellg();
+            stream.seekg(0, std::ios_base::beg);
+            std::string string(size, '\0');
+            stream.read(string.data(), string.size());
+            return this->decoded(string);
+        }
+    }
+
+    types::Value RapidReader::read_stream(std::istream &&stream) const
+    {
+        return this->read_stream(stream);
+    }
+
+
+    std::string RapidReader::read_text_from_file(const fs::path &path)
+    {
+        std::size_t size = fs::file_size(path);
+
+        if (std::ifstream is{path})
+        {
+            std::string str(size, '\0');
+            is.read(&str[0], size);
+            return str;
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::string RapidReader::uncomment(const std::string &text)
+    {
+        static const std::regex rx(
             "(#.*?(?:$|\\r|\\n))|"       // (1) Script-style comments, throw away
             "(//.*?(?:$|\\r|\\n))|"      // (2) C++ style comments, throw away
             "(/\\*.*?\\*/)|"             // (3) C-style comments, throw away
@@ -76,29 +105,29 @@ namespace core::json
         return str::join(parts, "");
     }
 
-    types::Value JsonDecoder::decodeValue(const rapidjson::Value &jv)
+    types::Value RapidReader::decodeValue(const ::rapidjson::Value &jv)
     {
         switch (jv.GetType())
         {
-        case rapidjson::Type::kNullType:
+        case ::rapidjson::Type::kNullType:
             return {};
 
-        case rapidjson::Type::kFalseType:
+        case ::rapidjson::Type::kFalseType:
             return false;
 
-        case rapidjson::Type::kTrueType:
+        case ::rapidjson::Type::kTrueType:
             return true;
 
-        case rapidjson::Type::kObjectType:
+        case ::rapidjson::Type::kObjectType:
             return This::decodeObject(jv);
 
-        case rapidjson::Type::kArrayType:
+        case ::rapidjson::Type::kArrayType:
             return This::decodeArray(jv);
 
-        case rapidjson::Type::kStringType:
+        case ::rapidjson::Type::kStringType:
             return std::string(jv.GetString(), jv.GetStringLength());
 
-        case rapidjson::Type::kNumberType:
+        case ::rapidjson::Type::kNumberType:
             if (jv.IsUint64())
             {
                 return jv.GetUint64();
@@ -126,7 +155,7 @@ namespace core::json
         }
     }
 
-    types::ValueListRef JsonDecoder::decodeArray(const rapidjson::Value &jarray)
+    types::ValueListRef RapidReader::decodeArray(const ::rapidjson::Value &jarray)
     {
         auto list = types::ValueList::create_shared();
         for (auto it = jarray.Begin(); it != jarray.End(); it++)
@@ -136,7 +165,7 @@ namespace core::json
         return list;
     }
 
-    types::KeyValueMapRef JsonDecoder::decodeObject(const rapidjson::Value &jobject)
+    types::KeyValueMapRef RapidReader::decodeObject(const ::rapidjson::Value &jobject)
     {
         auto kvmap = types::KeyValueMap::create_shared();
         for (auto &&item : jobject.GetObject())
@@ -146,4 +175,5 @@ namespace core::json
         }
         return kvmap;
     }
+
 }  // namespace core::json

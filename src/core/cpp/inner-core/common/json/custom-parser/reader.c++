@@ -1,11 +1,11 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file jsonparser.c++
-/// @brief Parse JSON stream as variant values
+/// @file reader.c++
+/// @brief Read JSON file, possibly with comments
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "jsonparser.h++"
+#include "reader.h++"
 #include "tokenparser-string.h++"
 #include "tokenparser-stream.h++"
 #include "string/misc.h++"
@@ -14,39 +14,50 @@
 
 #include <stdlib.h>
 
+#include <fstream>
+
 namespace core::json
 {
-    types::Value JsonParser::parse_text(const std::string &text)
+    types::Value Reader::decoded(const std::string &text) const
     {
-        logf_debug("Parsing JSON string (%d bytes)", text.size());
         return This::parse_input(std::make_shared<StringParser>(text));
     }
 
-    types::Value JsonParser::parse_stream(std::istream &&stream)
+    types::Value Reader::read_file(const fs::path &path) const
     {
-        log_debug("Parsing JSON stream");
+        if (std::ifstream is{path})
+        {
+            return this->read_stream(is);
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    types::Value Reader::read_stream(std::istream &stream) const
+    {
         return This::parse_input(std::make_shared<StreamParser>(stream));
     }
 
-    types::Value JsonParser::parse_stream(std::istream &stream)
+    types::Value Reader::read_stream(std::istream &&stream) const
     {
-        log_debug("Parsing JSON stream");
-        return This::parse_input(std::make_shared<StreamParser>(stream));
+        return this->read_stream(stream);
     }
 
-    types::Value JsonParser::parse_input(const ParserRef &parser)
+    types::Value Reader::parse_input(const ParserRef &parser)
     {
         types::Value value = This::parse_value(parser);
         parser->next_of(TI_END);
         return value;
     }
 
-    types::Value JsonParser::parse_value(const ParserRef &parser)
+    types::Value Reader::parse_value(const ParserRef &parser)
     {
         return This::next_value(parser).second;
     }
 
-    types::KeyValueMapRef JsonParser::parse_object(const ParserRef &parser)
+    types::KeyValueMapRef Reader::parse_object(const ParserRef &parser)
     {
         auto map = types::KeyValueMap::create_shared();
 
@@ -57,11 +68,6 @@ namespace core::json
             parser->next_of(TI_COLON);
             map->insert_or_assign(tp.second.as_string(), This::parse_value(parser));
 
-            // types::Value value = This::parse_value(parser);
-            // steady::TimePoint start = steady::Clock::now();
-            // map->insert_or_assign(tp.second.as_string(), std::move(value));
-            // This::map_time_ += steady::Clock::now() - start;
-            // This::object_mappings_++;
             if (!parser->next_of(TI_COMMA, TI_OBJECT_CLOSE).first)
             {
                 break;
@@ -71,7 +77,7 @@ namespace core::json
         return map;
     }
 
-    types::ValueListRef JsonParser::parse_array(const ParserRef &parser)
+    types::ValueListRef Reader::parse_array(const ParserRef &parser)
     {
         auto list = types::ValueList::create_shared();
 
@@ -79,10 +85,7 @@ namespace core::json
              tp.first != TI_NONE;
              tp = This::next_value(parser))
         {
-            // steady::TimePoint start = steady::Clock::now();
             list->push_back(std::move(tp.second));
-            // This::push_time_ += steady::Clock::now() - start;
-            // This::array_insertions_++;
             if (!parser->next_of(TI_COMMA, TI_ARRAY_CLOSE).first)
             {
                 break;
@@ -92,8 +95,8 @@ namespace core::json
         return list;
     }
 
-    TokenPair JsonParser::next_value(const ParserRef &parser,
-                                     const TokenMask &endtokens)
+    TokenPair Reader::next_value(const ParserRef &parser,
+                                 const TokenMask &endtokens)
     {
         static const std::uint64_t value_mask =
             (TI_OBJECT_OPEN | TI_ARRAY_OPEN |
@@ -112,5 +115,6 @@ namespace core::json
             return tp;
         }
     }
+
 
 }  // namespace core::json

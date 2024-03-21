@@ -81,7 +81,8 @@ namespace core::json
             return this->parse_line_comment();
 
         case '"':
-            return this->parse_string();
+        case '\'':
+            return this->parse_string(c);
 
         case '-':
         case '0' ... '9':
@@ -248,7 +249,7 @@ namespace core::json
         }
     }
 
-    TokenPair TokenParser::parse_string()
+    TokenPair TokenParser::parse_string(char quote)
     {
         int c = '\0';
         bool escape = false;
@@ -271,7 +272,7 @@ namespace core::json
                 escape = true;
                 continue;
             }
-            else if (c == '"')
+            else if (c == quote)
             {
                 return {TI_STRING, string};
             }

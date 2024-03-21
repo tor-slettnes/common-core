@@ -59,7 +59,7 @@ namespace core::json
         TokenPair parse_number();
         TokenPair parse_symbol();
         TokenPair parse_line_comment();
-        TokenPair parse_string();
+        TokenPair parse_string(char quote);
         char escape(char c);
     };
 }  // namespace core::json
