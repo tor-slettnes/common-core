@@ -18,12 +18,12 @@
 
 namespace core::json
 {
-    types::Value Reader::decoded(const std::string &text) const
+    types::Value CustomReader::decoded(const std::string &text) const
     {
         return This::parse_input(std::make_shared<StringParser>(text));
     }
 
-    types::Value Reader::read_file(const fs::path &path) const
+    types::Value CustomReader::read_file(const fs::path &path) const
     {
         if (std::ifstream is{path})
         {
@@ -35,29 +35,29 @@ namespace core::json
         }
     }
 
-    types::Value Reader::read_stream(std::istream &stream) const
+    types::Value CustomReader::read_stream(std::istream &stream) const
     {
         return This::parse_input(std::make_shared<StreamParser>(stream));
     }
 
-    types::Value Reader::read_stream(std::istream &&stream) const
+    types::Value CustomReader::read_stream(std::istream &&stream) const
     {
         return this->read_stream(stream);
     }
 
-    types::Value Reader::parse_input(const ParserRef &parser)
+    types::Value CustomReader::parse_input(const ParserRef &parser)
     {
         types::Value value = This::parse_value(parser);
         parser->next_of(TI_END);
         return value;
     }
 
-    types::Value Reader::parse_value(const ParserRef &parser)
+    types::Value CustomReader::parse_value(const ParserRef &parser)
     {
         return This::next_value(parser).second;
     }
 
-    types::KeyValueMapRef Reader::parse_object(const ParserRef &parser)
+    types::KeyValueMapRef CustomReader::parse_object(const ParserRef &parser)
     {
         auto map = types::KeyValueMap::create_shared();
 
@@ -77,7 +77,7 @@ namespace core::json
         return map;
     }
 
-    types::ValueListRef Reader::parse_array(const ParserRef &parser)
+    types::ValueListRef CustomReader::parse_array(const ParserRef &parser)
     {
         auto list = types::ValueList::create_shared();
 
@@ -95,7 +95,7 @@ namespace core::json
         return list;
     }
 
-    TokenPair Reader::next_value(const ParserRef &parser,
+    TokenPair CustomReader::next_value(const ParserRef &parser,
                                  const TokenMask &endtokens)
     {
         static const std::uint64_t value_mask =

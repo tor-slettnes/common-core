@@ -10,9 +10,9 @@
 
 namespace core::json
 {
-    class Writer : public BaseWriter
+    class CustomWriter : public BaseWriter
     {
-        using This = Writer;
+        using This = CustomWriter;
         using Super = BaseWriter;
 
     public:

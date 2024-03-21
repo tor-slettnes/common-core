@@ -14,9 +14,11 @@
 
 namespace core::json
 {
+    using Reader = CustomReader;
+
 #if BUILD_RAPIDJSON
     using FastReader = RapidReader;
 #else
-    using FastReader = Reader;
+    using FastReader = CustomReader;
 #endif
 }

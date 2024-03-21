@@ -11,9 +11,9 @@
 
 namespace core::json
 {
-    class Reader : public BaseReader
+    class CustomReader : public BaseReader
     {
-        using This = Reader;
+        using This = CustomReader;
         using Super = BaseReader;
 
         using ParserRef = std::shared_ptr<TokenParser>;

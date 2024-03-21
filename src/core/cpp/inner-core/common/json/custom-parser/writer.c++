@@ -10,25 +10,25 @@
 
 namespace core::json
 {
-    void Writer::write_stream(std::ostream &stream,
-                              const types::Value &value,
-                              bool pretty) const
+    void CustomWriter::write_stream(std::ostream &stream,
+                                    const types::Value &value,
+                                    bool pretty) const
     {
         This::to_stream(stream, value, pretty);
     }
 
-    std::string Writer::encoded(const types::Value &value,
-                                bool pretty) const
+    std::string CustomWriter::encoded(const types::Value &value,
+                                      bool pretty) const
     {
         std::stringstream ss;
         This::to_stream(ss, value, pretty);
         return ss.str();
     }
 
-    std::ostream &Writer::to_stream(std::ostream &stream,
-                                    const types::Value &value,
-                                    bool pretty,
-                                    const std::string &indent)
+    std::ostream &CustomWriter::to_stream(std::ostream &stream,
+                                          const types::Value &value,
+                                          bool pretty,
+                                          const std::string &indent)
     {
         switch (value.type())
         {
@@ -59,10 +59,10 @@ namespace core::json
         return stream;
     }
 
-    std::ostream &Writer::to_stream(std::ostream &stream,
-                                    const types::KeyValueMap &kvmap,
-                                    bool pretty,
-                                    const std::string &indent)
+    std::ostream &CustomWriter::to_stream(std::ostream &stream,
+                                          const types::KeyValueMap &kvmap,
+                                          bool pretty,
+                                          const std::string &indent)
     {
         std::string sub_indent;
         std::string delimiter;
@@ -92,10 +92,10 @@ namespace core::json
         return stream;
     }
 
-    std::ostream &Writer::to_stream(std::ostream &stream,
-                                    const types::ValueList &list,
-                                    bool pretty,
-                                    const std::string &indent)
+    std::ostream &CustomWriter::to_stream(std::ostream &stream,
+                                          const types::ValueList &list,
+                                          bool pretty,
+                                          const std::string &indent)
     {
         std::string sub_indent;
         std::string delimiter;
@@ -121,10 +121,11 @@ namespace core::json
         return stream;
     }
 
-    std::ostream &Writer::to_stream(std::ostream &stream,
-                                    const types::TaggedValueList &tvlist,
-                                    bool pretty,
-                                    const std::string &indent)
+    std::ostream &CustomWriter::to_stream(
+        std::ostream &stream,
+        const types::TaggedValueList &tvlist,
+        bool pretty,
+        const std::string &indent)
 
     {
         if (tvlist.mappable())
