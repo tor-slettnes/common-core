@@ -12,6 +12,7 @@
 #include <curl/curl.h>
 
 #include <sstream>
+#include <thread>
 
 namespace core::http
 {
@@ -19,9 +20,11 @@ namespace core::http
     using ResponseCode = long;
     using Header = std::unordered_multimap<std::string, std::string>;
 
+
     class HTTPClient
     {
         using This = HTTPClient;
+        using HandleMap = std::unordered_map<std::thread::id, CURL*>;
 
     public:
         HTTPClient(const URL &base_url);
@@ -48,11 +51,12 @@ namespace core::http
 
     private:
         static size_t receive(char *ptr, size_t item_size, size_t num_items, void *userdata);
+        CURL *handle() const;
 
     private:
-        static bool initialized_;
         std::string base_url_;
-        CURL *handle_;
+        std::mutex mtx_;
+        HandleMap handles_;
     };
 
 }  // namespace core::http

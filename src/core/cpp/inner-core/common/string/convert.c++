@@ -16,7 +16,7 @@
 namespace core::str
 {
     void checkstream(const std::istream &is,
-                     const std::string &s,
+                     const std::string_view &s,
                      const std::type_info &ti)
     {
         if (is.fail() || !is.eof())
@@ -28,7 +28,7 @@ namespace core::str
         }
     }
 
-    bool to_bool(const std::string &s)
+    bool to_bool(const std::string_view &s)
     {
         static const std::regex rxfalse("(?:false|no|off)", std::regex_constants::icase);
         static const std::regex rxtrue("(?:true|yes|on)", std::regex_constants::icase);

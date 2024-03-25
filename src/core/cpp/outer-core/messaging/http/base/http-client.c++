@@ -19,14 +19,16 @@
 namespace core::http
 {
     HTTPClient::HTTPClient(const std::string &base_url)
-        : base_url_(base_url),
-          handle_(curl_easy_init())
+        : base_url_(base_url)
     {
     }
 
     HTTPClient::~HTTPClient()
     {
-        curl_easy_cleanup(this->handle_);
+        for (const auto &[thread_id, handle] : this->handles_)
+        {
+            curl_easy_cleanup(handle);
+        }
     }
 
     std::string HTTPClient::base_url() const
@@ -77,34 +79,33 @@ namespace core::http
     {
         ResponseCode response = 0;
         std::string url = this->url(location);
-        CURLcode code = curl_easy_setopt(this->handle_, CURLOPT_URL, url.c_str());
-
-
+        CURL *handle = this->handle();
+        CURLcode code = curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
 
         if (code == CURLE_OK)
         {
-            code = curl_easy_setopt(this->handle_, CURLOPT_WRITEFUNCTION, HTTPClient::receive);
+            code = curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, HTTPClient::receive);
         }
 
         if ((code == CURLE_OK) && (header_stream != nullptr))
         {
-            code = curl_easy_setopt(this->handle_, CURLOPT_HEADERDATA, header_stream);
+            code = curl_easy_setopt(handle, CURLOPT_HEADERDATA, header_stream);
         }
 
         if (code == CURLE_OK)
         {
-            code = curl_easy_setopt(this->handle_, CURLOPT_WRITEDATA, content_stream);
+            code = curl_easy_setopt(handle, CURLOPT_WRITEDATA, content_stream);
         }
 
         // if ((code == CURLE_OK) && fail_on_error)
         // {
-        //     code = curl_easy_setopt(this->handle_, CURLOPT_FAILONERROR, 1L);
+        //     code = curl_easy_setopt(handle, CURLOPT_FAILONERROR, 1L);
         // }
 
         if (code == CURLE_OK)
         {
             logf_debug("HTTP client requesting URL: %s", url);
-            code = curl_easy_perform(this->handle_);
+            code = curl_easy_perform(handle);
         }
 
         if (code != CURLE_OK)
@@ -115,7 +116,7 @@ namespace core::http
                  {"curl_code", code}});
         }
 
-        code = curl_easy_getinfo(this->handle_, CURLINFO_RESPONSE_CODE, &response);
+        code = curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &response);
         logf_debug("Received response code: %s", response);
         if (response_code)
         {
@@ -125,7 +126,7 @@ namespace core::http
         if (content_type)
         {
             char *ctype = nullptr;
-            code = curl_easy_getinfo(this->handle_, CURLINFO_CONTENT_TYPE, &ctype);
+            code = curl_easy_getinfo(handle, CURLINFO_CONTENT_TYPE, &ctype);
             content_type->assign(ctype ? ctype : "");
         }
 
@@ -157,6 +158,24 @@ namespace core::http
         logf_trace("HTTP client received %d bytes from server", size);
         ss->write(ptr, size);
         return ss->good() ? size : 0;
+    }
+
+    CURL *HTTPClient::handle() const
+    {
+        auto mtx = const_cast<std::mutex *>(&this->mtx_);
+
+        std::lock_guard lck(*mtx);
+        std::thread::id thread_id = std::this_thread::get_id();
+        try
+        {
+            return this->handles_.at(thread_id);
+        }
+        catch (const std::out_of_range &)
+        {
+            auto handles = const_cast<HandleMap *>(&this->handles_);
+            auto [it, inserted] = handles->insert_or_assign(thread_id, curl_easy_init());
+            return it->second;
+        }
     }
 
 }  // namespace core::http
