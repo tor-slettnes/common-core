@@ -143,7 +143,7 @@ namespace core::str
     ///     Output string.
 
     [[nodiscard]] std::string wrap(
-        const std::list<std::string> &words,
+        const std::vector<std::string> &words,
         size_t start_column = 0,
         size_t left_margin = 24,
         size_t right_margin = 80);
@@ -186,7 +186,7 @@ namespace core::str
     ///     List of one or more non-overlapping substrings of \p string
     ///     separated by \p delimiter
 
-    [[nodiscard]] std::list<std::string> split(
+    [[nodiscard]] std::vector<std::string> split(
         const std::string &string,
         const std::string &delimiter = " ",
         uint maxsplits = 0,

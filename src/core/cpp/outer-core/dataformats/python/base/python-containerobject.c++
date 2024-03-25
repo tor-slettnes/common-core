@@ -85,7 +85,7 @@ namespace core::python
         // We do this recursively, because `typeof(this)` may in fact be a
         // subclass with an overridden `getattr()` method.
 
-        std::list<std::string> parts = str::split(qualified_name, ".", 1);
+        std::vector<std::string> parts = str::split(qualified_name, ".", 1);
         if (parts.size() > 0)
         {
             if (ContainerObject obj = this->getattr(parts.front()))

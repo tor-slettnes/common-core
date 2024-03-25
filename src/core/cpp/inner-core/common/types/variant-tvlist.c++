@@ -9,6 +9,10 @@
 #include "variant-list.h++"
 #include "variant-kvmap.h++"
 #include "status/exceptions.h++"
+#include "string/format.h++"
+#include "string/stream.h++"
+
+#include <unordered_set>
 
 namespace core::types
 {

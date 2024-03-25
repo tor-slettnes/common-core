@@ -13,6 +13,7 @@
 #include <iostream>    // std::cout
 #include <optional>
 #include <string>
+#include <map>
 
 /// Argument parser utility, loosely modeled after Python's "argparse" module.
 namespace core::argparse

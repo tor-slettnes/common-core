@@ -6,9 +6,11 @@
 //==============================================================================
 
 #pragma once
-#include "format.h++"
-#include "stream.h++"
+#include <typeinfo>
 #include <charconv>
+#include <string>
+#include <string_view>
+#include <sstream>
 
 using namespace std::literals::string_literals;  // ""s
 
@@ -23,8 +25,9 @@ namespace core::str
     /// Convert string to other arbitrary type T, using istringstream >> operator.
 
     template <class T, class Enable = void>
-    struct StringConvert
+    class StringConvert
     {
+    public:
         static T from_string(const std::string_view &s)
         {
             T value;
@@ -47,9 +50,10 @@ namespace core::str
     /// Integral type conversions
 
     // template <class T>
-    // struct StringConvert<T,
+    // class StringConvert<T,
     //                      typename std::enable_if_t<std::is_integral_v<T>>>
     // {
+    // public:
     //     static T from_string(const std::string_view &s)
     //     {
     //         static const std::errc ok{};
@@ -100,9 +104,10 @@ namespace core::str
     /// Floating pointconversions
 
     // template <class T>
-    // struct StringConvert<T,
+    // class StringConvert<T,
     //                      typename std::enable_if_t<std::is_floating_point_v<T>>>
     // {
+    // public:
     //     static T from_string(const std::string_view &s)
     //     {
     //         static const std::errc ok{};
@@ -134,8 +139,9 @@ namespace core::str
     //==========================================================================
     /// Partial template specialization for string<>string passthrough
     template <>
-    struct StringConvert<std::string>
+    class StringConvert<std::string>
     {
+    public:
         static std::string from_string(const std::string_view &s);
         static std::string to_string(const std::string &s);
     };
@@ -143,8 +149,9 @@ namespace core::str
     //==========================================================================
     // Partial template specialization for string<>bool conversion
     template <>
-    struct StringConvert<bool>
+    class StringConvert<bool>
     {
+    public:
         static bool from_string(const std::string_view &s);
         static std::string to_string(const bool &value);
     };

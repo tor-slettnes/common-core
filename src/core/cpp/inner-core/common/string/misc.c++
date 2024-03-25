@@ -128,7 +128,7 @@ namespace core::str
     //     return buffer;
     // }
 
-    std::string wrap(const std::list<std::string> &words,
+    std::string wrap(const std::vector<std::string> &words,
                      size_t start_column,
                      size_t left_margin,
                      size_t right_margin)
@@ -188,7 +188,7 @@ namespace core::str
                   std::string *first,
                   bool *more)
     {
-        std::list<std::string> parts = str::split(string, delimiter, 1);
+        std::vector<std::string> parts = str::split(string, delimiter, 1);
 
         if (more)
         {
@@ -203,12 +203,17 @@ namespace core::str
         return (parts.size() > 0);
     }
 
-    std::list<std::string> split(const std::string &string,
-                                 const std::string &delimiter,
-                                 uint maxsplits,
-                                 bool keep_empties)
+    std::vector<std::string> split(const std::string &string,
+                                   const std::string &delimiter,
+                                   uint maxsplits,
+                                   bool keep_empties)
     {
-        std::list<std::string> parts;
+        std::vector<std::string> parts;
+        if (maxsplits > 0)
+        {
+            parts.reserve(maxsplits + 1);
+        }
+
         size_t pos = 0;
         size_t end = string.find(delimiter);
         uint splits = 0;

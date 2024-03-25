@@ -81,7 +81,7 @@ namespace core::argparse
     void Parser::help_usage(std::ostream &out)
     {
         std::string intro = "Usage:";
-        std::list<std::string> words;
+        std::vector<std::string> words;
         bool has_misc_options = false;
         bool has_command = false;
 

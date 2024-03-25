@@ -89,7 +89,7 @@ namespace core::str
             std::string tail;
         };
 
-        using Parts = std::list<Part>;
+        using Parts = std::vector<Part>;
 
         struct Modifiers
         {

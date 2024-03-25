@@ -7,6 +7,7 @@
 
 #include "messaging-endpoint.h++"
 #include "logging/logging.h++"
+#include "string/stream.h++"
 #include "buildinfo.h"
 
 #include <iomanip>

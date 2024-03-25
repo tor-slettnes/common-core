@@ -17,7 +17,7 @@ namespace core::types
     /// @class PartsList
     /// @brief Tag/Value pairs suitable for representation of strucutres
 
-    class PartsList : public std::list<std::string>,
+    class PartsList : public std::vector<std::string>,
                       public Streamable
     {
     public:
