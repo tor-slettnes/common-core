@@ -10,9 +10,20 @@
 
 namespace core::json
 {
+
+    RapidWriter::RapidWriter()
+        : Super("RapidWriter")
+    {
+    }
+
+    RapidWriter::RapidWriter(const fs::path &path)
+        : Super("RapidWriter", path)
+    {
+    }
+
     void RapidWriter::write_stream(std::ostream &stream,
-                              const types::Value &value,
-                              bool pretty) const
+                                   const types::Value &value,
+                                   bool pretty) const
     {
         RapidBuilderRef builder;
         if (pretty)
@@ -28,7 +39,7 @@ namespace core::json
     }
 
     std::string RapidWriter::encoded(const types::Value &value,
-                                bool pretty) const
+                                     bool pretty) const
     {
         std::stringstream ss;
         this->write_stream(ss, value, pretty);

@@ -12,5 +12,5 @@ target_sources(${TARGET} PRIVATE
 
 target_compile_definitions(${TARGET} PUBLIC
   RAPIDJSON_HAS_STDSTRING
-  RAPIDJSON=1
+  BUILD_RAPIDJSON=1
 )

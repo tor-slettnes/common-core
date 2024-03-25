@@ -27,7 +27,9 @@ namespace core::http
     {
         std::string location = join_path_query(path, query);
         std::stringstream ss{this->get(location, this->content_type)};
-        logf_debug("REST client received %d bytes; parsing JSON...", ss.tellp());
+        logf_debug("REST client received %d bytes; parsing JSON with %s",
+                   ss.tellp(),
+                   json::fast_reader.name);
         types::Value value = json::fast_reader.read_stream(ss);
         log_debug("REST client parsed JSON response.");
         return value;

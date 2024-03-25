@@ -10,6 +10,16 @@
 
 namespace core::json
 {
+    CustomWriter::CustomWriter()
+        : Super("CustomWriter")
+    {
+    }
+
+    CustomWriter::CustomWriter(const fs::path &path)
+        : Super("CustomWriter", path)
+    {
+    }
+
     void CustomWriter::write_stream(std::ostream &stream,
                                     const types::Value &value,
                                     bool pretty) const

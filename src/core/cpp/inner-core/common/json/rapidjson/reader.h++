@@ -24,6 +24,8 @@ namespace core::json
         using Super = BaseReader;
 
     public:
+        RapidReader();
+
         types::Value decoded_with_comments(const std::string &string) const;
         types::Value decoded(const std::string &string) const override;
         types::Value read_file(const fs::path &path) const override;

@@ -18,6 +18,11 @@
 
 namespace core::json
 {
+    CustomReader::CustomReader()
+        : Super("CustomReader")
+    {
+    }
+
     types::Value CustomReader::decoded(const std::string &text) const
     {
         return This::parse_input(std::make_shared<StringParser>(text));

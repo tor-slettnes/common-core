@@ -16,8 +16,10 @@ namespace core::json
     class BaseWriter
     {
     public:
-        BaseWriter();
-        BaseWriter(const fs::path &path);
+        BaseWriter(const std::string &name);
+
+        BaseWriter(const std::string &name,
+                   const fs::path &path);
 
         virtual void write(
             const types::Value &value,
@@ -41,6 +43,9 @@ namespace core::json
         virtual std::string encoded(
             const types::Value &value,
             bool pretty = false) const = 0;
+
+    public:
+        const std::string name;
 
     private:
         std::unique_ptr<std::ofstream> stream_;

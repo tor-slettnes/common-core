@@ -14,6 +14,11 @@
 
 namespace core::json
 {
+    RapidReader::RapidReader()
+        : Super("RapidReader")
+    {
+    }
+
     types::Value RapidReader::decoded_with_comments(const std::string &text) const
     {
         return RapidReader::decoded(RapidReader::uncomment(text));

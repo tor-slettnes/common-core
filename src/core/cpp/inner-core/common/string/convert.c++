@@ -28,7 +28,23 @@ namespace core::str
         }
     }
 
-    bool to_bool(const std::string_view &s)
+    //==========================================================================
+    // String-to-string passthrough
+
+    std::string StringConvert<std::string>::from_string(const std::string_view &s)
+    {
+        return {s.begin(), s.end()};
+    }
+
+    std::string StringConvert<std::string>::to_string(const std::string &s)
+    {
+        return s;
+    }
+
+    //==========================================================================
+    // Boolean integer conversions
+
+    bool StringConvert<bool>::from_string(const std::string_view &s)
     {
         static const std::regex rxfalse("(?:false|no|off)", std::regex_constants::icase);
         static const std::regex rxtrue("(?:true|yes|on)", std::regex_constants::icase);
@@ -64,9 +80,9 @@ namespace core::str
             str::format("not a boolean value: %r", s));
     }
 
-    std::string from_bool(bool b)
+    std::string StringConvert<bool>::to_string(const bool &value)
     {
-        return b ? "true" : "false";
+        return value ? "true" : "false";
     }
 
 }  // namespace core::str

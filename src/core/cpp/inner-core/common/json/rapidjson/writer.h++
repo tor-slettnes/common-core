@@ -17,11 +17,8 @@ namespace core::json
         using Super = BaseWriter;
 
     public:
-        using Super::Super;
-
-        void write_file(const fs::path &path,
-                        const types::Value &value,
-                        bool pretty = false) const override;
+        RapidWriter();
+        RapidWriter(const fs::path &path);
 
         void write_stream(std::ostream &stream,
                           const types::Value &value,

@@ -16,7 +16,8 @@ namespace core::json
         using Super = BaseWriter;
 
     public:
-        using Super::Super;
+        CustomWriter();
+        CustomWriter(const fs::path &path);
 
         void write_stream(std::ostream &stream,
                           const types::Value &value,

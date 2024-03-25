@@ -19,6 +19,8 @@ namespace core::json
         using ParserRef = std::shared_ptr<TokenParser>;
 
     public:
+        CustomReader();
+
         types::Value decoded(const std::string &string) const override;
         types::Value read_file(const fs::path &path) const override;
         types::Value read_stream(std::istream &stream) const override;

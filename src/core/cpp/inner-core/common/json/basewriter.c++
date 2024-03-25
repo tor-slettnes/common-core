@@ -11,12 +11,14 @@
 
 namespace core::json
 {
-    BaseWriter::BaseWriter()
+    BaseWriter::BaseWriter(const std::string &name)
+        : name(name)
     {
     }
 
-    BaseWriter::BaseWriter(const fs::path &path)
-        : stream_(std::make_unique<std::ofstream>(path))
+    BaseWriter::BaseWriter(const std::string &name, const fs::path &path)
+        : name(name),
+          stream_(std::make_unique<std::ofstream>(path))
     {
     }
 
