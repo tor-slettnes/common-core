@@ -6,7 +6,8 @@
 //==============================================================================
 
 #pragma once
-#include "string/format.h++"
+#include "format.h++"
+#include "stream.h++"
 
 #include <iomanip>
 #include <iostream>

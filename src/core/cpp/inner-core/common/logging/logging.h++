@@ -82,8 +82,8 @@
 /// file needs to be included.
 
 #define custom_log_msg(level, flow, timepoint, path, lineno, function) \
-    core::logging::MessageBuilder::create_shared(                        \
-        &core::logging::message_dispatcher,                              \
+    core::logging::MessageBuilder::create_shared(                      \
+        &core::logging::message_dispatcher,                            \
         log_scope,                                                     \
         level,                                                         \
         flow,                                                          \
@@ -92,13 +92,13 @@
         lineno,                                                        \
         function)
 
-#define default_log_msg(level)  \
-    custom_log_msg(             \
-        level,                  \
+#define default_log_msg(level)    \
+    custom_log_msg(               \
+        level,                    \
         core::status::Flow::NONE, \
         core::dt::Clock::now(),   \
-        __builtin_FILE(),       \
-        __builtin_LINE(),       \
+        __builtin_FILE(),         \
+        __builtin_LINE(),         \
         __builtin_FUNCTION())
 
 #define log_message(level, ...) default_log_msg(level)->add(__VA_ARGS__).dispatch()
@@ -127,11 +127,11 @@
 
 #ifndef NDEBUG
 /// Evaluate a condition, exit with a fatal error if it fails.
-#define assertf(cond, ...)                                                           \
-    if (!(cond))                                                                     \
-    {                                                                                \
+#define assertf(cond, ...)                                                             \
+    if (!(cond))                                                                       \
+    {                                                                                  \
         logf_message(core::status::Level::FATAL, "Assertion failed: "s + __VA_ARGS__); \
-        sys::exit(-1);
+        std::exit(-1);                                                                 \
     }
 #else
 #define assertf(cond, ...)

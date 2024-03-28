@@ -87,6 +87,25 @@ namespace core::types
         std::pair<KeyValueMap::iterator, bool>
         insert_if(bool condition, const std::string &key, const Value &value);
 
+
+        /// \brief
+        ///   Obtain key/value pairs where the value is a specific type
+
+        template <class T>
+        std::map<std::string, T> filter_by_type() const
+        {
+            std::map<std::string, T> result;
+            for (const auto &item: *this)
+            {
+                if (const T *ptr = item.second.get_if<T>())
+                {
+                    result.insert_or_assign(item.first, *ptr);
+                }
+            }
+            return result;
+        }
+
+
     public:
         void to_stream(std::ostream &stream) const override;
     };

@@ -344,15 +344,15 @@ namespace core::types
     }
 
     /// Return value as an unsigned integer
-    ushort Value::as_ushort(ushort fallback) const noexcept
+    unsigned short Value::as_ushort(unsigned short fallback) const noexcept
     {
         return this->numeric_cast<ushort>(fallback);
     }
-    uint Value::as_uint(uint fallback) const noexcept
+    unsigned int Value::as_uint(unsigned int fallback) const noexcept
     {
         return this->numeric_cast<uint>(fallback);
     }
-    ulong Value::as_ulong(ulong fallback) const noexcept
+    unsigned long Value::as_ulong(unsigned long fallback) const noexcept
     {
         return this->numeric_cast<ulong>(fallback);
     }

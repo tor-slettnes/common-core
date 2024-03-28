@@ -7,15 +7,15 @@
 
 from .jsonreader import JsonReader
 from .paths      import normalizedSearchPath, settingsPath, FilePath, SearchPath
-from typing     import Sequence, Optional
+from typing     import Sequence, Optional, Union
 import os
 import os.path
 import sys
 import platform
 import re
 
-FilePath   = str
-SearchPath = Sequence[FilePath]
+FilePath  = str
+FilePaths = Sequence[FilePath]
 
 
 class SettingsStore (JsonReader):
@@ -29,8 +29,9 @@ class SettingsStore (JsonReader):
     '''
 
     def __init__(self,
-                 filenames  : [FilePath, SearchPath] = [],
-                 searchpath : SearchPath = settingsPath()):
+                 filenames  : FilePath|FilePaths = [],
+                 searchpath : FilePaths = settingsPath()):
+
         '''Initialize a new SettingsStore instance from the specified JSON file(s).
         Any script-style or C++-style comments (prefixed with either `#` or `//`)
         are strippped off before parsing.
@@ -94,7 +95,7 @@ class SettingsStore (JsonReader):
 
     def load_settings(self,
                       filename   : FilePath,
-                      searchpath : Optional[SearchPath] = None):
+                      searchpath : Optional[FilePaths] = None):
 
         '''Load in settings from the specified file.
 

@@ -40,8 +40,8 @@ namespace core::types
     using TaggedValueListRef = std::shared_ptr<TaggedValueList>;
 
     /// Type aliases
-    using largest_uint = std::uint64_t;
-    using largest_sint = std::int64_t;
+    using largest_uint = std::uintmax_t;
+    using largest_sint = std::intmax_t;
     using ushort = unsigned short;
     using complex = std::complex<double>;
     using string = std::string;

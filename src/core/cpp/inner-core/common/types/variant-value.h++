@@ -80,9 +80,9 @@ namespace core::types
         bool is_tvlist() const noexcept;
         bool as_bool(bool fallback = false) const noexcept;
         char as_char(char fallback = '\0') const noexcept;
-        ushort as_ushort(ushort fallback = 0) const noexcept;
-        uint as_uint(uint fallback = 0) const noexcept;
-        ulong as_ulong(ulong fallback = 0) const noexcept;
+        unsigned short as_ushort(unsigned short fallback = 0) const noexcept;
+        unsigned int as_uint(unsigned int fallback = 0) const noexcept;
+        unsigned long as_ulong(unsigned long fallback = 0) const noexcept;
         std::uint8_t as_uint8(std::uint8_t fallback = 0) const noexcept;
         std::uint16_t as_uint16(std::uint16_t fallback = 0) const noexcept;
         std::uint32_t as_uint32(std::uint32_t fallback = 0) const noexcept;
@@ -151,17 +151,17 @@ namespace core::types
         T numeric_cast(T fallback = 0) const;
 
         /// Parse and return a new Value instance from a literal string.
-        /// Some examples (where the literal is shown inside the [brackets]):
-        ///  - []                 becomes an "empty" value (std::monostate)
-        ///  - [false] or [true]  becomes a boolean
-        ///  - ['c']              becomes a character
-        ///  - ["some string"]    becomes a string
-        ///  - [1234] or [0x1234] becomes an unsigned integer
-        ///  - [+1234] or [-1234] becomes a signed interger
-        ///  - [3.14159] or [3.]  becomes a floating point number
-        ///  - [%base64string]    becomes a ByteVector instance
-        ///  - [2020-01-01T00:00:00.000] becomes a dt::TimePoint instance
-        ///  - [00:00:00.000]    becomes a dt::Duration instance
+        /// Some examples (where the literal is shown `between backticks`):
+        ///  - ``                 becomes an "empty" value (std::monostate)
+        ///  - `false` or `true`  becomes a boolean
+        ///  - `'c'`              becomes a character
+        ///  - `"some string"`    becomes a string
+        ///  - `1234` or `0x1234` becomes an unsigned integer
+        ///  - `+1234` or `-1234` becomes a signed interger
+        ///  - `3.14159` or `3.`  becomes a floating point number
+        ///  - `%base64string`    becomes a ByteVector instance
+        ///  - `2020-01-01T00:00:00.000` becomes a dt::TimePoint instance
+        ///  - `00:00:00.000`    becomes a dt::Duration instance
         static Value from_literal(const std::string &literal);
 
     public:
