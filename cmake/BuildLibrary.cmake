@@ -24,6 +24,9 @@
 ##     ### dependency here (since we built that as an OBJECT library).
 ##     set(OBJ_DEPS YOURAPP_objectlib)
 ##
+##     ### Any custom dependencies that will be built prior to this library
+##     set(PRE_DEPS ...)
+##
 ##     ### Source files
 ##     set(SOURCES
 ##       yourfile1.c++
@@ -66,6 +69,10 @@ else()
   target_link_libraries(${TARGET} PUBLIC ${LIB_DEPS} ${OBJ_DEPS})
 endif()
 
+### Add pre-dependencies
+if(PRE_DEPS)
+  add_dependencies(${TARGET} ${PRE_DEPS})
+endif()
 
 ### Add required package dependencies
 find_package(PkgConfig)

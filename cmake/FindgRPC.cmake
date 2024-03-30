@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file Findgrpc.cmake
+## @file FindgRPC.cmake
 ## @brief CMake method to generate gRPC bindings for C++ and Python
 ##
 ## Modeled after
@@ -243,6 +243,6 @@ set_target_properties(gRPC::grpc_python_plugin PROPERTIES
 
 # Update *_FOUND variables based on results above
 include(${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake)
-find_package_handle_standard_args(grpc
+find_package_handle_standard_args(gRPC
   DEFAULT_MSG GRPC_LIBRARY GRPC_INCLUDE_DIR GRPC_GRPC++_REFLECTION_LIBRARY
   GRPC_CPP_PLUGIN GRPC_PYTHON_PLUGIN)

@@ -22,6 +22,9 @@
 ##     ### dependency above.
 ##     set(OBJ_DEPS YOURAPP_objectlib)
 ##
+##     ### Any custom dependencies that will be built prior to this library
+##     set(PRE_DEPS ...)
+##
 ##     ### Source files
 ##     set(SOURCES
 ##       yourfile1.c++
@@ -51,6 +54,11 @@ add_executable(${TARGET} ${SOURCES})
 ### Add required library dependencies
 target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${TARGET} PUBLIC ${LIB_DEPS} ${OBJ_DEPS})
+
+### Add pre-dependencies
+if(PRE_DEPS)
+  add_dependencies(${TARGET} ${PRE_DEPS})
+endif()
 
 ### Install executable
 if (DEST_DIR)

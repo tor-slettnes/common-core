@@ -48,5 +48,6 @@ if(BUILD_GRPC OR BUILD_ZMQ)
 endif()
 
 ### Pull in CMake files to build the actual sources
+#add_subdirectory(thirdparty)
 add_subdirectory(src)
 add_subdirectory(tests)

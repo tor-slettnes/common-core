@@ -26,7 +26,7 @@ if(BUILD_GRPC)
   ## ProtoBuf (For example, `cc_core_messaging_grpc` plus `cc_demo_zmq_common`, both
   ## of which depend on this `cc_core_io_protobuf`)
 
-  find_package(grpc REQUIRED)
+  find_package(gRPC REQUIRED)
   list(APPEND LIB_DEPS gRPC::grpc++)
 
   # list(APPEND PKG_DEPS

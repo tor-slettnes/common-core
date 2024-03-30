@@ -44,20 +44,11 @@ endforeach()
 ### Load ProtoBuf and gRPC support modules
 find_package(Protobuf REQUIRED)
 if(BUILD_GRPC)
-  find_package(grpc REQUIRED)
+  find_package(gRPC REQUIRED)
 endif()
 
 
-### Rules to generate C++ files
-if (BUILD_CPP)
-  protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${SOURCES})
-  if(BUILD_GRPC)
-    grpc_generate_cpp(GRPC_SRC GRPC_HDR ${CMAKE_CURRENT_BINARY_DIR} ${SOURCES})
-  endif()
-endif()
-
-
-### Python support
+### Rules to generate Python bindings
 if (BUILD_PYTHON)
   protobuf_generate_python(PROTO_PY ${SOURCES})
   if (BUILD_GRPC)
@@ -68,46 +59,56 @@ if (BUILD_PYTHON)
     set(PYTHON_INSTALL_DIR "share/python")
   endif()
 
+  add_custom_target(${TARGET}_python DEPENDS ${PROTO_PY} ${GRPC_PY})
+  set(PRE_DEPS ${TARGET}_python)
   install(FILES ${PROTO_PY} ${GRPC_PY} DESTINATION ${PYTHON_INSTALL_DIR}/generated)
 endif()
 
-### Global ProtoBuf include folder
-include_directories(${PROTOBUF_INCLUDE_DIRS})
 
-### Unless LIB_TYPE is defined, set it to OBJECT
-if (NOT LIB_TYPE)
-  set(LIB_TYPE OBJECT)
-endif()
+### Rules to generate C++ bindings
+if (BUILD_CPP)
+  protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${SOURCES})
+  if(BUILD_GRPC)
+    grpc_generate_cpp(GRPC_SRC GRPC_HDR ${CMAKE_CURRENT_BINARY_DIR} ${SOURCES})
 
+    ### Use the gRPC++ target from `FindgRPC.cmake`
+    list(APPEND LIB_DEPS gRPC::grpc++)
 
-set(SOURCES
-  ${PROTO_SRC} ${GRPC_SRC}
-
-  ### Fugly hack: Python ProtoBuf/gRPC output files listed here to force
-  ### generation, though not actually included in the archive.
-  ${PROTO_PY} ${GRPC_PY}
-)
-
-if(BUILD_GRPC)
-  ### Use the gRPC++ target from Findgrpc.cmake
-  list(APPEND LIB_DEPS gRPC::grpc++)
-
-  ### However the above fails to capture all required library dependencies in
-  ### recent gRPC releases for Linux. Let's obtain additional dependencies from
-  ### `pkg-config`.
-  find_package(PkgConfig)
-  if(PkgConfig_FOUND)
-    set(PKG_DEPS grpc++)
+    ### However the above fails to capture all required library dependencies in
+    ### recent gRPC releases for Linux. Let's obtain additional dependencies
+    ### from `pkg-config`.
+    find_package(PkgConfig)
+    if(PkgConfig_FOUND)
+      set(PKG_DEPS grpc++)
+    endif()
   endif()
+
+  set(SOURCES
+    ${PROTO_SRC} ${GRPC_SRC}
+  )
+
+  ### Global ProtoBuf include folder
+  include_directories(${PROTOBUF_INCLUDE_DIRS})
+
+  ### Unless LIB_TYPE is defined, set it to OBJECT
+  if(NOT LIB_TYPE)
+    set(LIB_TYPE OBJECT)
+  endif()
+
+  include(BuildLibrary)
+
+  ### Downstream consumers of this library need to include our generated sources
+  target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+
+  ### Libraries required to link downstream consumers of this library
+  target_link_libraries(${TARGET} PUBLIC ${PROTO_DEPS})
+
+else() # No C++ build
+  set(LIB_TYPE INTERFACE)
+  include(BuildLibrary)
 endif()
 
-include(BuildLibrary)
 
-### Downstream consumers of this library need to include our generated sources
-target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-
-### Libraries required to link downstream consumers of this library
-target_link_libraries(${TARGET} PUBLIC ${PROTO_DEPS})
 
 ### Use target property "source_dirs" to store location of shared .proto files
 ### for downstream consumers of this library.

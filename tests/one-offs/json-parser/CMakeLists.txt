@@ -5,5 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(cpp)
+if (BUILD_CPP)
+  add_subdirectory(cpp)
+endif()
 

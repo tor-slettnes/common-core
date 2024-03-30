@@ -12,7 +12,7 @@ set(TARGET cc_core_messaging_grpc_server)
 set(LIB_TYPE STATIC)
 
 ### Load `grpc` targets to get reflection lib
-find_package(grpc REQUIRED)
+find_package(gRPC REQUIRED)
 
 ### Library dependencies.
 set(LIB_DEPS

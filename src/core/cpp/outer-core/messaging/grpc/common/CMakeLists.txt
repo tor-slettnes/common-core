@@ -9,7 +9,7 @@
 set(TARGET cc_core_messaging_grpc_common)
 
 ### Third party package dependency
-find_package(grpc REQUIRED)
+find_package(gRPC REQUIRED)
 
 ### Library type.  We use static linking for convenience.
 set(LIB_TYPE STATIC)
@@ -26,12 +26,8 @@ set(SOURCES
   grpc-status.c++
 )
 
-
 ### Recepies to build the library
 include(BuildLibrary)
-
-### Include binary output dir
-target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 ### Generate "grpc-status-names.gen"
 set(GRPCSTATUSFILE   ${CMAKE_CURRENT_BINARY_DIR}/grpc-status-names.gen)
@@ -43,6 +39,9 @@ add_custom_command(
     BYPRODUCTS ${GRPCSTATUSFILE})
 add_custom_target(grpcstatuslist DEPENDS ${GRPCSTATUSFILE})
 add_dependencies(${TARGET} grpcstatuslist)
+
+### Include binary output dir
+target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 ### Define preprocessor symbol
 target_compile_definitions(${TARGET} PUBLIC USE_GRPC=1)
