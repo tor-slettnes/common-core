@@ -32,7 +32,7 @@ endif
 
 ### Check for a target-specific toolchain and use that if available
 
-install: build
+install: build test
 	@echo
 	@echo "#############################################################"
 	@echo "Installing in ${INSTALL_DIR}"
@@ -45,6 +45,14 @@ install/strip: build
 
 uninstall:
 	@rm -rfv "$(INSTALL_DIR)"
+
+test: build
+	@echo
+	@echo "#############################################################"
+	@echo "Testing in ${BUILD_DIR}"
+	@echo "#############################################################"
+	@echo
+	@make -C "$(BUILD_DIR)" test
 
 build: cmake
 	@echo

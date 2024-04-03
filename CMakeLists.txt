@@ -12,9 +12,6 @@ if (NOT PROJECT_NAME)
     VERSION 0.0.2)
 endif()
 
-
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/BuildProject.cmake)
-
 ### Language components
 option(BUILD_CPP        "Build/Install C++ code" ON)
 option(BUILD_PYTHON     "Install Python clients/scripts" ON)
@@ -37,6 +34,9 @@ option(BUILD_PYTHON_IO  "Build Python embedded environment for C++" ON)
 ### Build DEMO application
 option(BUILD_DEMO       "Build DEMO application example" ON)
 
+### Build tests
+option(BUILD_TESTING    "Build testing modules" ON)
+
 ### Python components
 if(BUILD_PYTHON)
   set(PYTHON_INSTALL_DIR "share/python")
@@ -47,7 +47,10 @@ if(BUILD_GRPC OR BUILD_ZMQ)
   set(BUILD_PROTOBUF ON)
 endif()
 
+### Invoke common project settings
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/BuildProject.cmake)
+
 ### Pull in CMake files to build the actual sources
-#add_subdirectory(thirdparty)
+add_subdirectory(thirdparty)
 add_subdirectory(src)
 add_subdirectory(tests)

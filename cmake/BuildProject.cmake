@@ -18,6 +18,9 @@ if(NOT PROJECT_INCLUDED)
 
   # set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/out/install/${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
 
+  ### Enable testing
+  include(CTest)
+
   ### Include rules to build doxygen
   include(Doxygen)
 endif()

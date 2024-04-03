@@ -42,6 +42,11 @@ namespace demo
                  const core::dt::TimePoint &birth = {},
                  const core::types::KeyValueMap &data = {});
 
+    public:
+        // Greeting &operator=(const Greeting &other) = default;
+        bool operator==(const Greeting &other) const;
+        bool operator!=(const Greeting &other) const;
+
     protected:
         void to_stream(std::ostream &stream) const override;
 
@@ -73,6 +78,10 @@ namespace demo
         TimeData(const core::dt::TimePoint &tp,
                  const std::tm &localtime,
                  const std::tm &utctime);
+
+    public:
+        bool operator==(const TimeData &other) const;
+        bool operator!=(const TimeData &other) const;
 
     protected:
         void to_stream(std::ostream &stream) const override;

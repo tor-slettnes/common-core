@@ -1,15 +1,9 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build Common Core Demo application
+## @description CMake rules to fetch and build gRPC
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(api)
-add_subdirectory(impl)
-add_subdirectory(daemon)
-add_subdirectory(utils)
-
-if(BUILD_TESTING)
-  add_subdirectory(tests)
-endif()
+add_subdirectory(gtest)
+#add_subdirectory(grpc)

@@ -41,7 +41,7 @@ namespace core::messaging
         Endpoint(const std::string &messaging_flavor,
                  const std::string &endpoint_type,
                  const std::string &channel_name);
-        ~Endpoint();
+        virtual ~Endpoint();
 
     public:
         virtual void initialize() {}

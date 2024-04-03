@@ -74,7 +74,7 @@ namespace core::platform
         {
         }
 
-        ~ProviderProxy()
+        virtual ~ProviderProxy()
         {
         }
 

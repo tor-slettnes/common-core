@@ -22,8 +22,7 @@ namespace core::dds
 
     public:
         Server(uint thread_pool_size = 2);
-
-        ~Server();
+        virtual ~Server();
 
     public:
         virtual void initialize();

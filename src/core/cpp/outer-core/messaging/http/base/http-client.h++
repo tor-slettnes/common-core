@@ -28,7 +28,7 @@ namespace core::http
 
     public:
         HTTPClient(const URL &base_url);
-        ~HTTPClient();
+        virtual ~HTTPClient();
 
     public:
         virtual std::string base_url() const;

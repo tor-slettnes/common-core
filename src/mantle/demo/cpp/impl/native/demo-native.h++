@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "demo-api.h++"
+#include "demo-provider.h++"
 #include "types/create-shared.h++"
 
 namespace demo

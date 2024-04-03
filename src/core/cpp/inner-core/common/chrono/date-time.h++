@@ -17,8 +17,6 @@
 #include <optional>
 #include <ostream>
 
-#include <time.h>
-
 // using suseconds_t = std::int32_t;
 using namespace std::literals::chrono_literals;
 
@@ -427,3 +425,8 @@ namespace std::chrono
     std::ostream &operator<<(std::ostream &stream, const core::dt::Duration &dur);
     std::ostream &operator<<(std::ostream &stream, const core::steady::TimePoint &stp);
 }  // namespace std::chrono
+
+
+// Compare `std::tm` structs.  This is actually an alias for `struct tm`,
+// so we need to define it in the global namespace.
+bool operator==(const std::tm &lhs, const std::tm &rhs);

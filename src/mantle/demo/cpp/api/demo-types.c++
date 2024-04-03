@@ -30,6 +30,20 @@ namespace demo
     {
     }
 
+    bool Greeting::operator==(const Greeting &other) const
+    {
+        return ((this->text == other.text) &&
+                (this->identity == other.identity) &&
+                (this->implementation == other.implementation) &&
+                (this->birth == other.birth) &&
+                (this->data == other.data));
+    }
+
+    bool Greeting::operator!=(const Greeting &other) const
+    {
+        return !(*this == other);
+    }
+
     void Greeting::to_stream(std::ostream &stream) const
     {
         core::types::PartsList parts;
@@ -62,13 +76,25 @@ namespace demo
     {
     }
 
+    bool TimeData::operator==(const TimeData &other) const
+    {
+        return ((this->timepoint == other.timepoint) &&
+                (this->localtime == other.localtime) &&
+                (this->utctime == other.utctime));
+    }
+
+    bool TimeData::operator!=(const TimeData &other) const
+    {
+        return !(*this == other);
+    }
+
     void TimeData::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
-                        "TimeData(epoch=%d, local=%T, utc=%Z)",
-                        core::dt::to_time_t(this->timepoint),
-                        this->localtime,
-                        this->utctime);
+                          "TimeData(epoch=%d, local=%T, utc=%Z)",
+                          core::dt::to_time_t(this->timepoint),
+                          this->localtime,
+                          this->utctime);
     }
 
 }  // namespace demo

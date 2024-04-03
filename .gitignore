@@ -7,6 +7,9 @@
 ### Build artifacts
 /out/
 
+### CTest state
+/Testing
+
 ### Caches, runtime configs, ...
 __pycache__
 
@@ -19,5 +22,5 @@ __pycache__
 .vscode
 *.sha512
 
-### MacoS cruft
+### MacOS cruft
 .DS_Store

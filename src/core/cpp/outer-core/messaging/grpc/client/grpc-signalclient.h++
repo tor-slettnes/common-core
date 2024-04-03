@@ -77,7 +77,7 @@ namespace core::grpc
         {
         }
 
-        ~SignalClient()
+        virtual ~SignalClient()
         {
             this->deinitialize();
             this->stop_watching();

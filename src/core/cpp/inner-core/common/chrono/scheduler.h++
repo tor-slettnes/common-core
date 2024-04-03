@@ -101,7 +101,7 @@ namespace core
 
         /// @fn ~Scheduler
         /// @brief Destructor. Cancel any pending tasks.
-        ~Scheduler();
+        virtual ~Scheduler();
 
         /// @fn add
         /// @brief Schedule a task/method to be invoked at specified time interval

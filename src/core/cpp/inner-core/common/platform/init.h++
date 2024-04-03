@@ -38,7 +38,7 @@ namespace core::platform
     public:
         InitTask(const std::string &handle,
                  const Function &functor);
-        ~InitTask();
+        virtual ~InitTask();
     };
 
     //==========================================================================
@@ -49,7 +49,7 @@ namespace core::platform
     public:
         ExitTask(const std::string &handle,
                  const Function &functor);
-        ~ExitTask();
+        virtual ~ExitTask();
     };
 
     //==========================================================================

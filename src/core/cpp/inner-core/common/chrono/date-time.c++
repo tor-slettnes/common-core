@@ -9,6 +9,8 @@
 #include "string/format.h++"
 #include "platform/timezone.h++"
 
+#include <string.h>
+
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -605,3 +607,16 @@ namespace std::chrono
     }
 
 }  // namespace std::chrono
+
+bool operator==(const std::tm &lhs, const std::tm &rhs)
+{
+    return ((lhs.tm_sec == rhs.tm_sec) &&
+            (lhs.tm_min == rhs.tm_min) &&
+            (lhs.tm_hour == rhs.tm_hour) &&
+            (lhs.tm_mday == rhs.tm_mday) &&
+            (lhs.tm_mon == rhs.tm_mon) &&
+            (lhs.tm_year == rhs.tm_year) &&
+            (lhs.tm_wday == rhs.tm_wday) &&
+            (lhs.tm_yday == rhs.tm_yday) &&
+            (lhs.tm_isdst == rhs.tm_isdst));
+}
