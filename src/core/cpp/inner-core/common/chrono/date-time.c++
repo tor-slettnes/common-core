@@ -109,8 +109,12 @@ namespace core
                 d -= years * YEAR;
                 divs++;
             }
+            else if (divs > 0)
+            {
+                divs++;
+            }
 
-            if ((d >= MONTH || divs > 0) && monthsformat.has_value() && divs < maxdivs)
+            if (d >= MONTH && monthsformat.has_value() && divs < maxdivs)
             {
                 stream << sep;
                 sep = delimiter;
@@ -119,8 +123,12 @@ namespace core
                 d -= months * MONTH;
                 divs++;
             }
+            else if (divs > 0)
+            {
+                divs++;
+            }
 
-            if ((d >= DAY || divs > 0) && daysformat.has_value() && divs < maxdivs)
+            if (d >= DAY && daysformat.has_value() && divs < maxdivs)
             {
                 stream << sep;
                 sep = delimiter;
@@ -129,8 +137,12 @@ namespace core
                 d -= days * DAY;
                 divs++;
             }
+            else if (divs > 0)
+            {
+                divs++;
+            }
 
-            if ((d >= HOUR || divs > 0) && hoursformat.has_value() && divs < maxdivs)
+            if (d >= HOUR && hoursformat.has_value() && divs < maxdivs)
             {
                 stream << sep;
                 sep = delimiter;
@@ -139,14 +151,22 @@ namespace core
                 d -= hours * HOUR;
                 divs++;
             }
+            else if (divs > 0)
+            {
+                divs++;
+            }
 
-            if ((d >= MINUTE || divs > 0) && minutesformat.has_value() && divs < maxdivs)
+            if (d >= MINUTE && minutesformat.has_value() && divs < maxdivs)
             {
                 stream << sep;
                 sep = delimiter;
                 uint minutes = (uint)std::trunc(d / MINUTE);
                 str::format(stream, minutesformat.value(), minutes);
                 d -= minutes * MINUTE;
+                divs++;
+            }
+            else if (divs > 0)
+            {
                 divs++;
             }
 

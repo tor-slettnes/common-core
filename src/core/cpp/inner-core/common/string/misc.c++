@@ -11,6 +11,7 @@
 #include <locale>
 #include <string>
 #include <codecvt>
+#include <cwchar>
 #include <utility>  // std::move()
 
 namespace core::str
@@ -61,25 +62,38 @@ namespace core::str
     ///      Wide string
     /// \return
     ///      Byte string
-    std::string from_wstring(const std::wstring &from)
+    std::string from_wstring(const std::wstring &from, const std::locale &loc)
     {
-        return from_wstring(from.data(), from.size());
+        return from_wstring(from.data(), from.size(), loc);
     }
 
-    std::string from_wstring(const wchar_t *from, std::size_t size)
+    std::string from_wstring(const wchar_t *from, std::size_t size, const std::locale &loc)
     {
-        auto &f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(std::locale(""));
+        auto &f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(loc);
+
         std::mbstate_t mb;
-        std::string to(size + f.max_length(), '\0');
-        const wchar_t *from_next;
-        char *to_next;
-        f.out(mb,                     // state
-              from,                   // from
-              from + size,            // from_end
-              from_next,              // from_next
-              to.data(),              // to
-              to.data() + to.size(),  // to_end
-              to_next);               // to_next
+        std::string to(size * f.max_length(), '\0');
+        const wchar_t *from_next = from;
+        char *to_next = to.data();
+
+        std::codecvt_base::result result = f.out(
+            mb,                     // state
+            from,                   // from
+            from + size,            // from_end
+            from_next,              // from_next
+            to.data(),              // to
+            to.data() + to.size(),  // to_end
+            to_next);               // to_next
+
+        if (result == std::codecvt_base::result::error)
+        {
+            throw std::invalid_argument(
+                "Invalid " +
+                loc.name() +
+                " wide character in input string at position " +
+                std::to_string(from_next - from));
+        }
+
         to.resize(to_next - to.data());
         return to;
 
@@ -92,41 +106,45 @@ namespace core::str
     ///      ByteWide string
     /// \return
     ///      Wide string
-    std::wstring to_wstring(const std::string &from)
+    std::wstring to_wstring(const std::string &from, const std::locale &loc)
     {
-        return to_wstring(from.data(), from.size());
+        return to_wstring(from.data(), from.size(), loc);
     }
 
-    std::wstring to_wstring(const char *from, std::size_t size)
+    std::wstring to_wstring(const char *from, std::size_t size, const std::locale &loc)
     {
-        auto &f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(std::locale(""));
+        auto &f = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(loc);
+
         std::mbstate_t mb;
         std::wstring to(size, '\0');
+        const char *from_next = from;
+        wchar_t *to_next = to.data();
 
-        const char *from_next;
-        wchar_t *to_next;
-        f.in(mb,                     // state
-             from,                   // from
-             from + size,            // from_end
-             from_next,              // from_next
-             to.data(),              // to
-             to.data() + to.size(),  // to_end
-             to_next);               // to_next
-        to.resize(to_next - to.data());
-        return to;
-        // static std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-        // return conv.from_bytes(str);
+        std::codecvt_base::result result = f.in(
+            mb,                     // state
+            from,                   // from
+            from + size,            // from_end
+            from_next,              // from_next
+            to.data(),              // to
+            to.data() + to.size(),  // to_end
+            to_next);               // to_next
+
+        if (result == std::codecvt_base::result::ok)
+        {
+            to.resize(to_next - to.data());
+            return to;
+        }
+        else
+        {
+            throw std::invalid_argument(
+                "Invalid " +
+                loc.name() +
+                " character in input string" +
+                std::to_string(from_next - from));
+        }
+        // static std::wstring_convert<std::codecvt<wchar_t, char, std::mbstate_t>> conv;
+        // return conv.from_bytes(from, from+size);
     }
-
-    // std::string uuid()
-    // {
-    //     uuid_t uuid;
-    //     uuid_generate(uuid);
-
-    //     char buffer[UUID_STR_LEN];
-    //     uuid_unparse(uuid, buffer);
-    //     return buffer;
-    // }
 
     std::string wrap(const std::vector<std::string> &words,
                      size_t start_column,
@@ -181,26 +199,6 @@ namespace core::str
             start_column = 0;
         }
         return ss.str();
-    }
-
-    bool getfirst(const std::string &string,
-                  const std::string &delimiter,
-                  std::string *first,
-                  bool *more)
-    {
-        std::vector<std::string> parts = str::split(string, delimiter, 1);
-
-        if (more)
-        {
-            *more = (parts.size() > 1);
-        }
-
-        if (parts.size() > 0)
-        {
-            *first = parts.front();
-        }
-
-        return (parts.size() > 0);
     }
 
     std::vector<std::string> split(const std::string &string,
@@ -440,19 +438,4 @@ namespace core::str
 
         return std::string(start, end - start);
     }
-
-    // 2020-06-01 Adam Milner
-    std::string sdbus_mangle(const std::string &input)
-    {
-        std::string out = input;
-
-        // Mangle name:
-        // '_' -> '_5f'
-        // '.' -> '_2e'
-        out = std::regex_replace(out, std::regex("_"), "_5f");
-        out = std::regex_replace(out, std::regex("\\."), "_2e");
-
-        return out;
-    }
-
 }  // namespace core::str

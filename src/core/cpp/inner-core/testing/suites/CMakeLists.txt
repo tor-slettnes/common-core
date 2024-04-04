@@ -1,25 +1,22 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @brief CMake rules to build DEMO application tests
+## @brief CMake rules to build unit tests
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
 ### Name of the test.
-set(TARGET demo-test)
+set(TARGET core-tests)
 
 add_executable(${TARGET}
-  test-demo-fixture.c++
-  test-demo-native.c++
+  test-string-misc.c++
+  test-string-expand.c++
 )
 
 target_link_libraries(${TARGET}
-  cc_demo_native
-  cc_demo_grpc_client
-  cc_demo_grpc_service
-  cc_demo_protobuf_types
   cc_core_test_main
 )
 
 include(GoogleTest)
 gtest_discover_tests(${TARGET})
+

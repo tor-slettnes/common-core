@@ -10,36 +10,36 @@
 
 namespace demo
 {
-    class NativeTest : public DemoTest
+    class DemoNativeTest : public DemoTest
     {
     protected:
-        NativeTest()
+        DemoNativeTest()
             : DemoTest(demo::NativeImpl::create_shared("DemoTest"))
         {
         }
     };
 
-    TEST_F(NativeTest, GotProvider)
+    TEST_F(DemoNativeTest, GotProvider)
     {
         this->test_got_provider();
     }
 
-    TEST_F(NativeTest, GotCurrentTime)
+    TEST_F(DemoNativeTest, GotCurrentTime)
     {
         this->test_got_current_time();
     }
 
-    TEST_F(NativeTest, Hello)
+    TEST_F(DemoNativeTest, Hello)
     {
         this->test_say_hello();
     }
 
-    TEST_F(NativeTest, EncodeDecodeGreeting)
+    TEST_F(DemoNativeTest, EncodeDecodeGreeting)
     {
         this->test_encode_decode_greeting();
     }
 
-    TEST_F(NativeTest, EncodeDecodeTimeData)
+    TEST_F(DemoNativeTest, EncodeDecodeTimeData)
     {
         this->test_encode_decode_timedata();
     }

@@ -41,7 +41,7 @@ namespace core::str
     /// \param[in] loc Locale. Defaults to global locale.
     void toupper(
         std::string *s,
-        const std::locale &loc = std::locale());
+        const std::locale &loc = {});
 
     /// Convert string to lowercase, using the specified locale or current locale.
     /// \param[in] s
@@ -50,7 +50,7 @@ namespace core::str
     ///     Locale. Defaults to global locale.
     void tolower(
         std::string *s,
-        const std::locale &loc = std::locale());
+        const std::locale &loc = {});
 
     /// Convert string to uppercase, using the specified locale or current locale.
     /// \param[in] s
@@ -60,7 +60,7 @@ namespace core::str
     /// \return Copy of string converted to uppercsae.
     [[nodiscard]] std::string toupper(
         const std::string &s,
-        const std::locale &loc = std::locale());
+        const std::locale &loc = {});
 
     /// \brief Convert string to lowercase in place, using the specified locale or current locale.
     /// \param[in,out] s
@@ -70,31 +70,39 @@ namespace core::str
     /// \return Copy of string converted to lowercase.
     [[nodiscard]] std::string tolower(
         const std::string &s,
-        const std::locale &loc = std::locale());
+        const std::locale &loc = {});
 
     /// \brief Convert from (UTF8-encoded) `std::string` to (UTF16 or UCS2-encoded) `std::wstring`)
     /// \param[in] wstr
     ///      Wide string
+    /// \param[in] loc
+    ///      Locale
     /// \return
     ///      Byte string
     [[nodiscard]] std::string from_wstring(
-        const std::wstring &wstr);
+        const std::wstring &wstr,
+        const std::locale &loc = {});
 
     [[nodiscard]] std::string from_wstring(
         const wchar_t *begin,
-        std::size_t size);
+        std::size_t size,
+        const std::locale &loc = {});
 
     /// \brief Convert from `std::wstring` to `std::string`
     /// \param[in] str
     ///      ByteWide string
+    /// \param[in] loc
+    ///      Locale
     /// \return
     ///      Wide string
     [[nodiscard]] std::wstring to_wstring(
-        const std::string &str);
+        const std::string &str,
+        const std::locale &loc = {});
 
     [[nodiscard]] std::wstring to_wstring(
         const char *begin,
-        std::size_t size);
+        std::size_t size,
+        const std::locale &loc = {});
 
     /// \brief Return representation of a string with characters replaced by asterisks
     /// \param[in] string
@@ -148,26 +156,6 @@ namespace core::str
         size_t start_column = 0,
         size_t left_margin = 24,
         size_t right_margin = 80);
-
-    /// \brief
-    ///     Obtain first nonempty portion of an input string, split by a token
-    /// \param[in] string
-    ///     Input string
-    /// \param[in] delimiter
-    ///     Separator by which to split the input string
-    /// \param[out] first
-    ///     The first nonempty part of the input string after splitting if any;
-    ///     otherwise not modified.
-    /// \param[out] more
-    ///     Optional pointer to a boolean that will receive indication of
-    ///     whether the input string contains additional parts
-    /// \return
-    ///     Indicates whether the string contained at least one nonempty part.
-    bool getfirst(
-        const std::string &string,
-        const std::string &delimiter,
-        std::string *first,
-        bool *more = nullptr);
 
     /// \fn split
     /// \brief

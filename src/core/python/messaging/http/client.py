@@ -74,23 +74,22 @@ class HTTPClient (HTTPBase):
 
         parts = self.combined_parts(self.base_url, path, kwargs)
         location = urllib.parse.urlunsplit(('', '', parts.path, parts.query, ''))
-        response = self.get_raw(location, headers)
-        return self.check_response(response, expected_content_type)
+
+        try:
+            response = self.get_raw(location, headers)
+        except ConnectionError as e:
+            raise type(e)(e, urllib.parse.urlunsplit(parts)) from None
+        else:
+            return self.check_response(response, expected_content_type)
 
 
     def get_raw(self,
                 path : str,
                 headers={}):
 
-        try:
-            connection = self.connection
-            request = connection.request("GET", path, headers)
-            return connection.getresponse()
-        except ConnectionError as e:
-            scheme, host, port, _ = self.target
-            url = self.join_url(scheme, host, port, path)
-            raise type(e)(e, url) from None
-
+        connection = self.connection
+        request = connection.request("GET", path, headers)
+        return connection.getresponse()
 
     def check_response(self,
                        response: http.client.HTTPResponse,

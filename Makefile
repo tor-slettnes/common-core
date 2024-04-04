@@ -32,7 +32,9 @@ endif
 
 ### Check for a target-specific toolchain and use that if available
 
-install: build test
+all: test install/strip
+
+install: build
 	@echo
 	@echo "#############################################################"
 	@echo "Installing in ${INSTALL_DIR}"
@@ -41,6 +43,11 @@ install: build test
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR)
 
 install/strip: build
+	@echo
+	@echo "#############################################################"
+	@echo "Installing and stripping in ${INSTALL_DIR}"
+	@echo "#############################################################"
+	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR) --strip
 
 uninstall:
@@ -86,4 +93,4 @@ $(BUILD_DIR):
 	@$(MAKE) -C "$(BUILD_DIR)" $(MAKECMDGOALS)
 
 
-.PHONY: install build cmake clean
+.PHONY: install test build cmake clean
