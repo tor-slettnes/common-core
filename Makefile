@@ -5,9 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-SHARED_DIR  ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-OUT_DIR     ?= out
-BUILD_TYPE  ?= Release
+SHARED_DIR   ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+OUT_DIR      ?= out
+BUILD_TYPE   ?= Release
 
 ifdef TARGET
     export CMAKE_TOOLCHAIN_FILE ?= $(SHARED_DIR)cmake/toolchain-$(TARGET).cmake
@@ -32,7 +32,7 @@ endif
 
 ### Check for a target-specific toolchain and use that if available
 
-all: test install/strip
+all: test install
 
 install: build
 	@echo
@@ -59,7 +59,7 @@ test: build
 	@echo "Testing in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@make -C "$(BUILD_DIR)" test
+	@make -C "$(BUILD_DIR)"/src test
 
 build: cmake
 	@echo
@@ -77,9 +77,15 @@ cmake:
 	@echo
 	@cmake -B "$(BUILD_DIR)"
 
-clean: uninstall cleanbuild
+clean: uninstall cmake/clean
 
-distclean:
+realclean:
+	@rm -rfv "$(BUILD_DIR)" "$(INSTALL_DIR)"
+
+realclean_all:
+	@rm -rfv "$(OUT_DIR)"/build "$(OUT_DIR)"/install
+
+pristine:
 	@rm -rfv "$(OUT_DIR)"
 
 cmake/clean:

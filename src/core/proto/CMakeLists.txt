@@ -20,4 +20,4 @@ set(SOURCES
 )
 
 ### Invoke common CMake rules
-include(BuildProtodefs)
+include(BuildProto)

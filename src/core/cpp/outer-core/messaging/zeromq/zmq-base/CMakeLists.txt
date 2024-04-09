@@ -11,16 +11,15 @@ set(TARGET cc_core_messaging_zmq_base)
 ### Library dependencies.
 set(LIB_TYPE STATIC)
 
+FetchContent_MakeAvailable(libzmq)
+
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_common
   cc_core_common
-)
-
-### Package dependencies
-set(PKG_DEPS
   libzmq
 )
+
 
 ### Source files in this folder
 set(SOURCES

@@ -5,6 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+add_subdirectory(common)
 add_subdirectory(native)
 
 if(BUILD_DDS)

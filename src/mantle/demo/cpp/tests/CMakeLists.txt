@@ -15,8 +15,6 @@ add_executable(${TARGET}
 
 target_link_libraries(${TARGET}
   cc_demo_native
-  cc_demo_grpc_client
-  cc_demo_grpc_service
   cc_demo_protobuf_types
   cc_core_test_main
 )

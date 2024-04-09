@@ -11,14 +11,11 @@ set(TARGET cc_core_messaging_grpc_server)
 ### Library type.  We use static linking for convenience.
 set(LIB_TYPE STATIC)
 
-### Load `grpc` targets to get reflection lib
-find_package(gRPC REQUIRED)
-
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_grpc_common
   cc_core_messaging_http
-  gRPC::grpc++_reflection
+  grpc++_reflection
 )
 
 set(SOURCES

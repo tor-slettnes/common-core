@@ -14,9 +14,22 @@ if(NOT PROJECT_INCLUDED)
   ### Source additional files from this folder
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
-  set(BUILD_SCRIPTS_DIR "${CMAKE_CURRENT_LIST_DIR}/../scripts")
+  ### Folder in which to find custom build scripts
+  file(REAL_PATH "../scripts" BUILD_SCRIPTS_DIR
+    BASE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
 
-  # set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/out/install/${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
+  ### Assign installation folder
+  if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    if (NOT $ENV{CMAKE_INSTALL_PREFIX} STREQUAL "")
+      file(REAL_PATH "$ENV{CMAKE_INSTALL_PREFIX}" _install_prefix
+        BASE_DIRECTORY "${CMAKE_SOURCE_DIR}")
+      set(CMAKE_INSTALL_PREFIX "${_install_prefix}"
+        CACHE PATH "Folder in which to install build artifacts"
+        FORCE)
+    endif()
+  endif()
+
+  message(STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
   ### Enable testing
   include(CTest)

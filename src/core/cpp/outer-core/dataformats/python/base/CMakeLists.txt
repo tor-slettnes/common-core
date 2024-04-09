@@ -22,11 +22,6 @@ set(LIB_DEPS
   Python3::Python
 )
 
-# ### Third-party package dependencies
-# set(PKG_DEPS
-#   python3
-# )
-
 ### Source files in this folder
 set(SOURCES
   python-simpleobject.c++

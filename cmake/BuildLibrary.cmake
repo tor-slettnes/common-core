@@ -61,7 +61,6 @@ add_library("${TARGET}" ${LIB_TYPE} ${SOURCES})
 
 ### Add dependency for consumers.
 if("${LIB_TYPE}" STREQUAL "INTERFACE")
-  message(NOTICE "Creating INTERFACE library ${TARGET} depending on ${LIB_DEPS}")
   target_include_directories(${TARGET} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
   target_link_libraries(${TARGET} INTERFACE ${LIB_DEPS} ${OBJ_DEPS})
 else()

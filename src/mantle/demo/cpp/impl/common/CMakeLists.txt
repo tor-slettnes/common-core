@@ -1,10 +1,8 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Demo application interface - DDS implementation
+## @description CMake rules to build Demo application - implementations
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(server)
-add_subdirectory(client)
-
+add_subdirectory(types)
