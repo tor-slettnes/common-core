@@ -5,8 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 ################################################################################
 
-NAME=picarro-build
-DESC="Picarro build system"
+NAME=common-core
+DESC="Common Core Build System"
 SUITE=bookworm
 COMPONENTS="main"
 MIRROR="https://deb.debian.org/debian"
@@ -39,7 +39,7 @@ then
     echo ""
     echo "### Creating 'schroot' instance: ${NAME}"
     $run_as_root dd of="/etc/schroot/chroot.d/${NAME}" status=none <<EOF
-[picarro-build]
+[${NAME}]
 type=directory
 directory=/srv/chroot/${NAME}
 description=${DESC}
