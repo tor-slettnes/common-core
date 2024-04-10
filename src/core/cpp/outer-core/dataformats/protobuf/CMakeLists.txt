@@ -10,11 +10,14 @@ set(TARGET cc_core_io_protobuf)
 ### Library type.  We use static linking for convenience.
 set(LIB_TYPE STATIC)
 
+### External package dependencies
+find_package(Protobuf REQUIRED)
+
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_common
   cc_core_proto
-  protobuf
+  protobuf::libprotobuf
 )
 
 set(SOURCES
@@ -26,11 +29,3 @@ set(SOURCES
 
 ### Recepies to build the library
 include(BuildLibrary)
-
-
-if(TARGET protobuf::libprotobuf)
-  target_link_directories(${TARGET} PUBLIC
-    "$<TARGET_PROPERTY:protobuf::libprotobuf,BINARY_DIR>"
-  )
-endif()
-

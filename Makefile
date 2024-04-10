@@ -32,7 +32,7 @@ endif
 
 ### Check for a target-specific toolchain and use that if available
 
-all: test install
+all: install/strip
 
 install: build
 	@echo
@@ -99,4 +99,4 @@ $(BUILD_DIR):
 	@$(MAKE) -C "$(BUILD_DIR)" $(MAKECMDGOALS)
 
 
-.PHONY: install test build cmake clean
+.PHONY: install install/test test build cmake clean

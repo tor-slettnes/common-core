@@ -8,6 +8,8 @@
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
 set(TARGET cc_demo_api)
 
+set(PKG_DEPS)
+
 ### Make this an OBJECT library whose files will be included direcly in dowstream dependants
 set(LIB_TYPE STATIC)
 

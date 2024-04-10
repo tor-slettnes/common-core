@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file generate-proto-cpp.cmake
+## @file protogen.cmake
 ## @brief CMake rules to generate/build ProtoBuf/gRPC bindings from ".proto" sources
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================

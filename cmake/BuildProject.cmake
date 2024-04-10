@@ -15,14 +15,19 @@ if(NOT PROJECT_INCLUDED)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
   ### Folder in which to find custom build scripts
-  file(REAL_PATH "../scripts" BUILD_SCRIPTS_DIR
-    BASE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
+  get_filename_component(BUILD_SCRIPTS_DIR "../scripts" REALPATH
+    BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
+
+  # file(REAL_PATH "../scripts" BUILD_SCRIPTS_DIR
+  #   BASE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
 
   ### Assign installation folder
   if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     if (NOT $ENV{CMAKE_INSTALL_PREFIX} STREQUAL "")
-      file(REAL_PATH "$ENV{CMAKE_INSTALL_PREFIX}" _install_prefix
-        BASE_DIRECTORY "${CMAKE_SOURCE_DIR}")
+      get_filename_component(_install_prefix "$ENV{CMAKE_INSTALL_PREFIX}" REALPATH
+        BASE_DIR "${CMAKE_SOURCE_DIR}")
+      # file(REAL_PATH "$ENV{CMAKE_INSTALL_PREFIX}" _install_prefix
+      #   BASE_DIRECTORY "${CMAKE_SOURCE_DIR}")
       set(CMAKE_INSTALL_PREFIX "${_install_prefix}"
         CACHE PATH "Folder in which to install build artifacts"
         FORCE)

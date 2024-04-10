@@ -93,5 +93,6 @@ elseif(PKG_DEPS)
   message(WARNING
     "Unable to find 'pkg-config' on your system. This is needed to obtain "
     "information about the following packages, which are required to "
-    "build '${TARGET}':${PKG_DEPS}.  We'll proceed cautiously.")
+    "build ${TARGET} dependencies: ${PKG_DEPS}. Please install `pkgconf` "
+    "on your system; meanwhile We'll proceed cautiously.")
 endif()

@@ -8,11 +8,14 @@
 ### Name of the test.
 set(TARGET cc_core_test_main)
 
-add_library(${TARGET}
+### External package dependencies
+set(PKG_DEPS gtest)
+
+add_library(${TARGET} STATIC
   main.c++
 )
 
 target_link_libraries(${TARGET}
   cc_core_platform
-  GTest::gtest
+  gtest
 )

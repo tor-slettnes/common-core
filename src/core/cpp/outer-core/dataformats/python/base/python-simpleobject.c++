@@ -67,6 +67,7 @@ namespace core::python
 
     std::string SimpleObject::type_name() const
     {
+#if PY_VERSION_HEX >= 0x030B0000
         if (this->cobj)
         {
             PyObject *type_name = PyType_GetName(Py_TYPE(this->cobj));
@@ -76,6 +77,9 @@ namespace core::python
         {
             return "";
         }
+#else
+        return "";
+#endif
     }
 
     // types::ValueType SimpleObject::value_type() const
@@ -159,7 +163,11 @@ namespace core::python
     {
         if (this->cobj && PyBool_Check(this->cobj))
         {
+#if PY_VERSION_HEX >= 0x030A0000
             return Py_IsTrue(this->cobj);
+#else
+            return (this->cobj == Py_True);
+#endif
         }
         else
         {
@@ -295,7 +303,11 @@ namespace core::python
                     {
                         tag = SimpleObject(tag_obj, true).as_string();
                     }
+#if PY_VERSION_HEX >= 0x030A0000
                     else if (!Py_IsNone(tag_obj))
+#else
+                    else if (tag_obj != Py_None)
+#endif
                     {
                         return {};
                     }
@@ -381,7 +393,7 @@ namespace core::python
             const auto &[tag, value] = tvlist.at(c);
             PyObject *tag_obj =
                 tag ? PyUnicode_DecodeUTF8(tag->data(), tag->size(), nullptr)
-                    : Py_NewRef(Py_None);
+                    : (Py_INCREF(Py_None), Py_None);
             PyObject *value_obj = SimpleObject::pyobj_from_value(value);
             PyList_SET_ITEM(list, c, PyTuple_Pack(2, tag_obj, value_obj));
             Py_DECREF(tag_obj);
@@ -409,7 +421,7 @@ namespace core::python
         switch (value.type())
         {
         case types::ValueType::BOOL:
-            return Py_NewRef(value.as_bool() ? Py_True : Py_False);
+            return PyBool_FromLong(value.as_bool());
 
         case types::ValueType::CHAR:
             return SimpleObject::pystring_from_string(value.as_string());
@@ -444,7 +456,7 @@ namespace core::python
             return SimpleObject::pylist_from_tagged_values(*value.get_tvlist());
 
         default:
-            return Py_NewRef(Py_None);
+            Py_RETURN_NONE;
         }
     }
 

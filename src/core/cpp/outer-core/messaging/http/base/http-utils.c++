@@ -15,6 +15,8 @@
 
 namespace core::http
 {
+
+
     bool decompose_header(const std::string &text, Header *header)
     {
         static std::regex rx(
@@ -141,7 +143,11 @@ namespace core::http
         if (rc != CURLUE_OK)
         {
             throw exception::FailedPrecondition(
+#if LIBCURL_VERSION_NUM >= 0x075000
                 curl_url_strerror(rc),
+#else
+                str::format("CURL URL code %d", rc),
+#endif
                 {{"url", url},
                  {"curl_code", rc}});
         }
@@ -223,7 +229,11 @@ namespace core::http
         if (rc != CURLUE_OK)
         {
             throw exception::FailedPrecondition(
+#if LIBCURL_VERSION_NUM >= 0x075000
                 curl_url_strerror(rc),
+#else
+                str::format("CURL URL code %d", rc),
+#endif
                 {{"curl_code", rc}});
         }
         return url;

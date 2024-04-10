@@ -14,7 +14,6 @@ set(LIB_TYPE INTERFACE)
 set(LIB_DEPS
   cc_core_common
   cc_core_platform
-  cc_core_test_main
 )
 
 include(BuildLibrary)

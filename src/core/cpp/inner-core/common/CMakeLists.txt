@@ -20,6 +20,11 @@ elseif(WIN32)
   list(APPEND LIB_DEPS dbghelp)
 endif()
 
+if(BUILD_RAPIDJSON)
+  set(PKG_DEPS RapidJSON)
+endif()
+
+
 ## Invoke common CMake rules
 include(BuildLibrary)
 

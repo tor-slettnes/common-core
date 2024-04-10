@@ -49,6 +49,15 @@ target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 ### Libraries required to link downstream consumers of this library
 target_link_libraries(${TARGET} PUBLIC ${PROTO_DEPS})
 
+if(BUILD_PROTOBUF)
+  find_package(Protobuf REQUIRED)
+endif()
+
+if(BUILD_GRPC)
+  find_package(gRPC REQUIRED)
+endif()
+
+
 ### Functions to generate language bindings
 include(protogen)
 

@@ -71,10 +71,9 @@ namespace core::python
         types::KeyValueMap kvmap;
         for (const auto &[key, obj] : this->attributes_as_objects())
         {
-            types::Value value(obj.as_value());
-            if (value || Py_IsNone(obj.borrow()))
+            if (obj.borrow())
             {
-                kvmap.insert_or_assign(key, value);
+                kvmap.insert_or_assign(key, obj.as_value());
             }
         }
         return kvmap;
