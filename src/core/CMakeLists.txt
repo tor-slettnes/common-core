@@ -23,29 +23,23 @@ endif()
 
 ### Create interface library to encapsulate the above
 set(TARGET cc_core)
-set(LIB_TYPE INTERFACE)
 set(LIB_DEPS)
 
 if(BUILD_CPP)
-  list(APPEND LIB_DEPS
-    cc_core_inner
-  )
+  list(APPEND LIB_DEPS cc_core_inner)
 endif()
 
 if(BUILD_DDS)
-  list(APPEND LIB_DEPS
-    cc_core_idl
-  )
+  list(APPEND LIB_DEPS cc_core_idl)
 endif()
 
 if(BUILD_PROTOBUF)
-  list(APPEND LIB_DEPS
-    cc_core_proto
-  )
+  list(APPEND LIB_DEPS cc_core_proto)
 endif()
 
-
-include(BuildLibrary)
+build_library("${TARGET}" INTERFACE
+  LIB_DEPS ${LIB_DEPS}
+)
 
 ### Install "settings/" folder as data
 install(DIRECTORY settings TYPE DATA)

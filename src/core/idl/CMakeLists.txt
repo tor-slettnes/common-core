@@ -16,4 +16,7 @@ set(RECIPES
 )
 
 ### Include common recipe for generating code with RTI Connext DDS and then building.
-include(BuildIDL)
+build_idl("${TARGET}"
+  LIB_TYPE STATIC
+  RECIPES ${RECIPES}
+)

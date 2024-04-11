@@ -8,21 +8,17 @@
 ### Name of this library.
 set(TARGET cc_core_messaging_zmq_base)
 
-### Library dependencies.
-set(LIB_TYPE STATIC)
-
 ###FetchContent_MakeAvailable(libzmq)
 ### Package dependencies
 set(PKG_DEPS
-  libzmq)
+  libzmq
+)
 
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_common
   cc_core_common
-  zmq
 )
-
 
 ### Source files in this folder
 set(SOURCES
@@ -39,7 +35,12 @@ set(SOURCES
 )
 
 ### Recepies to build the library
-include(BuildLibrary)
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  PKG_DEPS ${PKG_DEPS}
+  SOURCES ${SOURCES}
+)
 
 ### Define preprocessor symbol
 target_compile_definitions(${TARGET} PUBLIC USE_ZMQ=1)

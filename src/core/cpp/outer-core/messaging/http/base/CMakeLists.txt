@@ -10,10 +10,8 @@ set(TARGET cc_core_messaging_http)
 
 ### We need cURL for this
 find_package(CURL
-  REQUIRED COMPONENTS HTTP HTTPS)
-
-### Library type
-set(LIB_TYPE STATIC)
+  REQUIRED COMPONENTS HTTP HTTPS
+)
 
 ### Library dependencies.
 set(LIB_DEPS
@@ -28,5 +26,9 @@ set(SOURCES
 )
 
 ### Recepies to build the library
-include(BuildLibrary)
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  SOURCES ${SOURCES}
+)
 

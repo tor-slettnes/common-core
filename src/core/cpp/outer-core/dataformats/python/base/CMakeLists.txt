@@ -12,9 +12,6 @@ set(TARGET cc_core_io_python_base)
 find_package(Python3
   REQUIRED COMPONENTS Development)
 
-### Library type
-set(LIB_TYPE STATIC)
-
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_common
@@ -30,5 +27,8 @@ set(SOURCES
 )
 
 ### Recepies to build the library
-include(BuildLibrary)
-
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  SOURCES ${SOURCES}
+)

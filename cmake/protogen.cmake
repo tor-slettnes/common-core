@@ -100,7 +100,7 @@ function(protogen)
   )
 
   if(arg_TARGET)
-    target_sources(${arg_TARGET} PRIVATE ${_outputs})
+    target_sources("${arg_TARGET}" PRIVATE ${_outputs})
   endif()
 
   ### Promote each symbol from `OUT_VARS` to parent scope

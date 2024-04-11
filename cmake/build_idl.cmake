@@ -1,53 +1,12 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file BuildIDL.cmake
+## @file build_idl.cmake
 ## @brief CMake include file for building DDS intterfaces from IDL files
 ## @author Tor Slettnes <tor@slett.net>
-##
-## To use this file, copy, uncomment, and modify the following in your "CMakeLists.txt":
-##
-## @code
-##     ### Name of this library. This can be used as a downstream dependency
-##     set(TARGET someservice_idl)
-##
-##     ### Static/shared library dependencies, either from this build or provided by
-##     ### the system. Only direct dependencies are needed.
-##     set(LIB_DEPS shared_idl ...)
-##
-##     ### Sources containing IDL data types. These should NOT contain any
-##     ### `interface` declarations; for that, use the SOURCES variable, below.
-##     set(RECIPES
-##       myapp-types.idl
-##       ...
-##       )
-##
-##     ### Sources containing DDS service interface.
-##     ### (an `interface` block with a `@DDSService` or `@service` decarator).
-##     ### This will add an exertnal dependency on the appropriate RTI messaging
-##     ### library (depending on whether the build type is Debug or Release)
-##     set(SERVICES
-##       myapp-service.idl)
-##       ...
-##       )
-##
-##     ## Invoke common CMake rules
-##     include(BuildInterfaces)
-## @endcode
 #===============================================================================
-
 
 ### Locate RTI tools
 include(rti-connext-dds)
-
-### Unless LIB_TYPE is defined, set it to STATIC
-if (NOT LIB_TYPE)
-  set(LIB_TYPE STATIC)
-endif()
-
-# set(CPP_SOURCES)
-# set(CS_SOURCES)
-# set(XML_OUTPUTS)
-set(GENERATED_SOURCES)
 
 ### Define function go generate sources
 macro(generate_sources sources example_modules)
@@ -157,45 +116,87 @@ macro(generate_sources sources example_modules)
 endmacro()
 
 #===============================================================================
-### Generate sources from data types listed in RECIPES
-if(RECIPES)
-  generate_sources("${RECIPES}" "publisher;subscriber")
-endif()
+## @fn build_idl
+## @brief create C++ library from .`idl` files
 
+function(build_idl TARGET)
+  set(_singleargs LIB_TYPE SCOPE GENERATE_EXAMPLE)
+  set(_multiargs RECIPES SERVICES IDL_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-### Generate sources from RPC service interfaces listed in SERVICES
-if(SERVICES)
-  generate_sources("${SERVICES}" "client;service")
-
-  string(TOLOWER "$<CONFIG>" buildconfig)
-  if("${buildconfig}" STREQUAL "debug")
-    list(APPEND LIB_DEPS "rticonnextmsgcpp2zd")
+  if(arg_LIB_TYPE)
+    string(TOUPPER "${arg_LIB_TYPE}" _type)
   else()
-    list(APPEND LIB_DEPS "rticonnextmsgcpp2z")
+    set(_type STATIC)
   endif()
-endif()
 
+  if(arg_SCOPE)
+    string(TOUPPER "${arg_SCOPE}" _scope)
+  else()
+    set(_scope PUBLIC)
+  endif()
 
-#===============================================================================
-### Build library from sources above.
-add_library("${TARGET}" ${LIB_TYPE} ${GENERATED_SOURCES})
+  if(arg_GENERATE_EXAMPLE)
+    set(GENERATE_EXAMPLE ${arg_GENERATE_EXAMPLE})
+  else()
+    set(GENERATE_EXAMPLE OFF)
+  endif()
 
-#===============================================================================
-### Add dependency for consumers.
-target_include_directories(${TARGET} PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR})
+  set(_pkg_deps ${arg_PKG_DEPS})
+  set(_sources ${arg_SOURCES})
+  foreach(_dep ${arg_OBJ_DEPS})
+    list(APPEND _sources $<TARGET_OBJECTS:${_dep}>)
+  endforeach()
 
-target_link_libraries(${TARGET}
-  PUBLIC ${LIB_DEPS}
-  RTIConnextDDS::cpp2_api)
+  add_library("${TARGET}" ${_type})
 
-#===============================================================================
-### Require C++11 features
-target_compile_features(${TARGET} PUBLIC cxx_std_11)
+  target_include_directories("${TARGET}" ${_scope}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+  )
 
-### Generate python outputs
-if(BUILD_PYTHON)
-  install(FILES ${XML_OUTPUTS} DESTINATION share/xml)
-endif()
+  target_link_libraries("${TARGET}" ${_scope}
+    ${arg_LIB_DEPS}
+    ${arg_OBJ_DEPS}
+    ${arg_PROTO_DEPS}
+    RTIConnextDDS::cpp2_api
+  )
+
+  # set(CPP_SOURCES)
+  # set(CS_SOURCES)
+  # set(XML_OUTPUTS)
+  set(GENERATED_SOURCES)
+
+  #===============================================================================
+  ### Generate sources from data types listed in RECIPES
+  if (arg_RECIPES)
+    generate_sources("${arg_RECIPES}" "publisher;subscriber")
+  endif()
+
+  ### Generate sources from RPC service interfaces listed in SERVICES
+  if(arg_SERVICES)
+    generate_sources("${arg_SERVICES}" "client;service")
+
+    string(TOLOWER "$<CONFIG>" buildconfig)
+    if("${buildconfig}" STREQUAL "debug")
+      target_link_libraries("${TARGET}" ${_scope} "rticonnextmsgcpp2zd")
+    else()
+      target_link_libraries("${TARGET}" ${_scope} "rticonnextmsgcpp2z")
+    endif()
+  endif()
+
+  if(GENERATED_SOURCES)
+    target_sources("${TARGET}" ${_scope} ${GENERATED_SOURCES})
+  endif()
+
+  #===============================================================================
+  ### Require C++11 features
+  target_compile_features("${TARGET}" PUBLIC cxx_std_11)
+
+  # ### Generate python outputs
+  # if(BUILD_PYTHON)
+  #   install(FILES ${XML_OUTPUTS} DESTINATION share/xml)
+  # endif()
+endfunction()
+
 

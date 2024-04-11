@@ -1,15 +1,12 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build platform-specific code - POSIX version
+## @description CMake rules to build platform-specific code - Windows version
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
 set(TARGET cc_core_platform_windows)
-
-### Library type.  We use static linking for convenience.
-set(LIB_TYPE STATIC)
 
 ### Library dependencies
 set(LIB_DEPS
@@ -28,7 +25,13 @@ set(SOURCES
 )
 
 ### Build library
-include(BuildLibrary)
+include(build_library)
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  SOURCES ${SOURCES}
+)
+
 
 ### Allow dynamic linking
 set_target_properties(${TARGET} PROPERTIES COMMON_LANGUAGE_RUNTIME "")

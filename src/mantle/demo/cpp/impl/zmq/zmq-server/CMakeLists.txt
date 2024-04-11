@@ -9,11 +9,6 @@
 ### libraries/executables.
 set(TARGET cc_demo_zmq_service)
 
-### What kind of library we are building (STATIC|SHARED|OBJECT|...); the default
-### is STATIC.  See:
-### https://cmake.org/cmake/help/latest/command/add_library.html.
-set(LIB_TYPE STATIC)
-
 ### Static/shared library dependencies, either from this build or provided by the system.
 set(LIB_DEPS
   cc_demo_zmq_publisher
@@ -26,5 +21,8 @@ set(SOURCES
   demo-zmq-run.c++
 )
 
-### Invoke common CMake rules
-include(BuildLibrary)
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  SOURCES ${SOURCES}
+)

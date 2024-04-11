@@ -11,11 +11,18 @@ set(TARGET cc_core_test_main)
 ### External package dependencies
 set(PKG_DEPS gtest)
 
-add_library(${TARGET} STATIC
+### Library dependencies
+set(LIB_DEPS cc_core_platform)
+
+### Source files
+set(SOURCES
   main.c++
 )
 
-target_link_libraries(${TARGET}
-  cc_core_platform
-  gtest
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  PKG_DEPS ${PKG_DEPS}
+  SOURCES ${SOURCES}
 )
+

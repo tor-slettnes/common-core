@@ -13,14 +13,13 @@ set(PROGRAMS
   demo-zmq-server.py
 )
 
-### Modules to be installed as supporting files, without execute permissions
-set(FILES
-)
-
 ### Subdirectories
 set(DIRECTORIES
   demo
 )
 
 ### Common recipe
-include(BuildPython)
+build_python(
+  PROGRAMS ${PROGRAMS}
+  DIRECTORIES ${DIRECTORIES}
+)

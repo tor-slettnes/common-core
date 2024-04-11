@@ -12,9 +12,6 @@ add_subdirectory(client)
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
 set(TARGET cc_core_messaging_grpc)
 
-### Library type.  We use static linking for convenience.
-set(LIB_TYPE INTERFACE)
-
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_grpc_client
@@ -22,4 +19,7 @@ set(LIB_DEPS
 )
 
 ### Recepies to build the library
-include(BuildLibrary)
+build_library("${TARGET}"
+  LIB_TYPE INTERFACE
+  LIB_DEPS ${LIB_DEPS}
+)

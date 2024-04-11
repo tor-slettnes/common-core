@@ -10,12 +10,7 @@ set(PROGRAMS
   shell.py
 )
 
-### Modules to be installed as supporting files, without execute permissions
-set(FILES
+build_python(
+  PROGRAMS ${PROGRAMS}
 )
 
-### Subdirectories
-set(DIRECTORIES
-)
-
-include(BuildPython)

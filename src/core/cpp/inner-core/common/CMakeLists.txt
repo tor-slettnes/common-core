@@ -8,25 +8,24 @@
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
 set(TARGET cc_core_common)
 
-### Library type.  We use static linking for convenience.
-set(LIB_TYPE STATIC)
-
-## Include appropriate system libraries based on platform
-if(PLATFORM_QNX)
-  list(APPEND LIB_DEPS c++fs)
-elseif(LINUX)
-  list(APPEND LIB_DEPS stdc++fs)
-elseif(WIN32)
-  list(APPEND LIB_DEPS dbghelp)
-endif()
-
 if(BUILD_RAPIDJSON)
   set(PKG_DEPS RapidJSON)
 endif()
 
+### Library type.  We use static linking for convenience.
+build_library(${TARGET}
+  LIB_TYPE STATIC
+  PKG_DEPS ${PKG_DEPS}
+)
 
-## Invoke common CMake rules
-include(BuildLibrary)
+## Include appropriate system libraries based on platform
+if(PLATFORM_QNX)
+  target_link_libraries(${TARGET} PRIVATE c++fs)
+elseif(LINUX)
+  target_link_libraries(${TARGET} PRIVATE stdc++fs)
+elseif(WIN32)
+  target_link_libraries(${TARGET} PRIVATE dbghelp)
+endif()
 
 ### C++17 required for variant data type, parameter packs, std::filesystem
 target_compile_features(${TARGET} PUBLIC cxx_std_17)

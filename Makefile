@@ -32,7 +32,7 @@ endif
 
 ### Check for a target-specific toolchain and use that if available
 
-all: install/strip
+all: test install/strip
 
 install: build
 	@echo

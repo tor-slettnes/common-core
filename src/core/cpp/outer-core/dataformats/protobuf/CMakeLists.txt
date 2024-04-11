@@ -7,11 +7,10 @@
 
 set(TARGET cc_core_io_protobuf)
 
-### Library type.  We use static linking for convenience.
-set(LIB_TYPE STATIC)
-
-### External package dependencies
-find_package(Protobuf REQUIRED)
+### CMake module dependencies
+set(MOD_DEPS
+  Protobuf
+)
 
 ### Library dependencies.
 set(LIB_DEPS
@@ -28,4 +27,9 @@ set(SOURCES
 )
 
 ### Recepies to build the library
-include(BuildLibrary)
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  MOD_DEPS Protobuf
+  SOURCES ${SOURCES}
+)

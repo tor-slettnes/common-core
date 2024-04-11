@@ -11,29 +11,32 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   set(LINUX ON)
 endif()
 
+set(TARGET cc_core_platform)
+
+### Create common platform library
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS cc_core_common
+)
+
 ## Include appropriate system libraries based on platform
 if(PLATFORM_QNX)
   add_subdirectory(posix)
   add_subdirectory(qnx)
-  set(LIB_DEPS cc_core_platform_qnx)
+  target_link_libraries("${TARGET}" PRIVATE cc_core_platform_qnx)
 
 elseif(LINUX)
   add_subdirectory(posix)
   add_subdirectory(linux)
-  set(LIB_DEPS cc_core_platform_linux)
+  target_link_libraries("${TARGET}" PRIVATE cc_core_platform_linux)
 
 elseif(WIN32)
   add_subdirectory(windows)
-  set(LIB_DEPS cc_core_platform_windows)
+  target_link_libraries("${TARGET}" PRIVATE cc_core_platform_windows)
 
 else()
   message(SEND_ERROR "Unsupported platform ${CMAKE_SYSTEM_NAME}")
 endif()
-
-### Create common platform library
-set(TARGET cc_core_platform)
-set(LIB_TYPE STATIC)
-include(BuildLibrary)
 
 ### Application `init()` routine. We put it here instead of `core` beause the
 ### functions `register_providers()` and `unregister_providers()` on which it

@@ -20,4 +20,8 @@ set(SOURCES
   )
 
 ## Invoke common CMake rules to build executable
-include(BuildLibrary)
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  SOURCES ${SOURCES}
+)

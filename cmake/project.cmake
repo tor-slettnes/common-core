@@ -5,6 +5,8 @@
 #===============================================================================
 
 if(NOT PROJECT_INCLUDED)
+  cmake_minimum_required(VERSION 3.20)
+
   SET(PROJECT_INCLUDED true)
 
   if(WIN32)
@@ -36,9 +38,16 @@ if(NOT PROJECT_INCLUDED)
 
   message(STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
+  ### Load build functions
+  include(build_executable)
+  include(build_library)
+  include(build_python)
+  include(build_proto)
+  include(build_idl)
+
   ### Enable testing
   include(CTest)
 
-  ### Include rules to build doxygen
-  include(Doxygen)
+  # ### Include rules to build doxygen
+  # include(Doxygen)
 endif()

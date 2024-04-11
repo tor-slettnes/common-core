@@ -10,10 +10,12 @@ add_subdirectory(platforms)
 add_subdirectory(testing)
 
 set(TARGET cc_core_inner)
-set(LIB_TYPE INTERFACE)
 set(LIB_DEPS
   cc_core_common
   cc_core_platform
 )
 
-include(BuildLibrary)
+build_library("${TARGET}"
+  LIB_TYPE INTERFACE
+  LIB_DEPS ${LIB_DEPS}
+)

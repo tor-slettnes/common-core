@@ -10,12 +10,15 @@ if(BUILD_PYTHON_IO)
   add_subdirectory(embedded)
 
   set(TARGET cc_core_io_python)
-  set(LIB_TYPE INTERFACE)
+
   set(LIB_DEPS
     cc_core_io_python_base
     cc_core_io_python_embedded
   )
-  include(BuildLibrary)
 
+  build_library("${TARGET}"
+    LIB_TYPE INTERFACE
+    LIB_DEPS ${LIB_DEPS}
+  )
 endif()
 

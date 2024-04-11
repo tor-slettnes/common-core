@@ -8,9 +8,6 @@
 ### Name of this library.
 set(TARGET cc_core_messaging_zmq_protobuf)
 
-### Library type
-set(LIB_TYPE STATIC)
-
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_zmq_base
@@ -25,5 +22,9 @@ set(SOURCES
   zmq-protobuf-server.c++
 )
 
-### Recepies to build the library
-include(BuildLibrary)
+### Recepies to build the librar
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  SOURCES ${SOURCES}
+)

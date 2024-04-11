@@ -8,7 +8,6 @@
 if(BUILD_ZMQ)
   ### Name of this library.
   set(TARGET   cc_core_messaging_zmq)
-  set(LIB_TYPE INTERFACE)
 
   add_subdirectory(zmq-base)
   set(LIB_DEPS cc_core_messaging_zmq_base)
@@ -23,5 +22,8 @@ if(BUILD_ZMQ)
     list(APPEND LIB_DEPS cc_core_messaging_zmq_pypickle)
   endif()
 
-  include(BuildLibrary)
+  build_library("${TARGET}"
+    LIB_TYPE INTERFACE
+    LIB_DEPS ${LIB_DEPS}
+  )
 endif()

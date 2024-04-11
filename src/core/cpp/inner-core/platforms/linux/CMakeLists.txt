@@ -8,9 +8,6 @@
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
 set(TARGET cc_core_platform_linux)
 
-### Library type.  We use static linking for convenience.
-set(LIB_TYPE STATIC)
-
 ### Library dependencies
 set(LIB_DEPS
   cc_core_platform_posix
@@ -18,7 +15,8 @@ set(LIB_DEPS
 
 ### External package dependencies
 set(PKG_DEPS
-  uuid)
+  uuid
+)
 
 ### Sources
 set(SOURCES
@@ -28,4 +26,11 @@ set(SOURCES
 )
 
 ### Build library
-include(BuildLibrary)
+include(build_library)
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  PKG_DEPS ${PKG_DEPS}
+  SOURCES ${SOURCES}
+)
+

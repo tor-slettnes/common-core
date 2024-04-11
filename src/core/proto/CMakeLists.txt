@@ -8,9 +8,6 @@
 ### This can be used as a downstream dependency.
 set(TARGET cc_core_proto)
 
-### What type of library are we building?
-set(LIB_TYPE STATIC)
-
 ### Source files
 set(SOURCES
   variant_types.proto
@@ -19,5 +16,8 @@ set(SOURCES
   request_reply.proto
 )
 
-### Invoke common CMake rules
-include(BuildProto)
+### Generate language bindings
+build_proto("${TARGET}"
+  LIB_TYPE STATIC
+  SOURCES "${SOURCES}"
+)

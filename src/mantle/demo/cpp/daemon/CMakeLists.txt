@@ -8,9 +8,6 @@
 ### Name of this executable. This also becomes the name of the project.
 set(TARGET demoserver)
 
-### Destination directory, if other than `bin`.
-set(DEST_DIR sbin)
-
 ### Libraries we depend on, either from this build or provided by the
 ### system. Only direct dependencies are needed; e.g., do not list "cc_core"
 ### if you also list another library that depends on it.
@@ -36,5 +33,10 @@ set(SOURCES
   options.c++
   )
 
+
 ## Invoke common CMake rules to build executable
-include(BuildExecutable)
+build_executable("${TARGET}"
+  LIB_DEPS ${LIB_DEPS}
+  SOURCES ${SOURCES}
+  DESTINATION sbin
+)

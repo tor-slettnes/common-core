@@ -7,9 +7,6 @@
 
 set(TARGET cc_demo_protobuf_types)
 
-### Library type.  We use static linking for convenience.
-set(LIB_TYPE STATIC)
-
 ### Library dependencies.
 set(LIB_DEPS
   cc_demo_api
@@ -22,4 +19,8 @@ set(SOURCES
 )
 
 ### Recepies to build the library
-include(BuildLibrary)
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  SOURCES ${SOURCES}
+)

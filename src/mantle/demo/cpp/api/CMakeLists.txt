@@ -8,8 +8,6 @@
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
 set(TARGET cc_demo_api)
 
-set(PKG_DEPS)
-
 ### Make this an OBJECT library whose files will be included direcly in dowstream dependants
 set(LIB_TYPE STATIC)
 
@@ -25,6 +23,8 @@ set(SOURCES
   demo-provider.c++
 )
 
-
-## Invoke common CMake rules
-include(BuildLibrary)
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  SOURCES ${SOURCES}
+)

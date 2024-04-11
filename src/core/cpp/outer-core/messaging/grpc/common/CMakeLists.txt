@@ -8,9 +8,6 @@
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
 set(TARGET cc_core_messaging_grpc_common)
 
-### Library type.  We use static linking for convenience.
-set(LIB_TYPE STATIC)
-
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_common
@@ -24,7 +21,11 @@ set(SOURCES
 )
 
 ### Recepies to build the library
-include(BuildLibrary)
+build_library("${TARGET}"
+  LIB_TYPE STATIC
+  LIB_DEPS ${LIB_DEPS}
+  SOURCES ${SOURCES}
+)
 
 ### Generate "grpc-status-names.gen"
 set(GRPCSTATUSFILE   ${CMAKE_CURRENT_BINARY_DIR}/grpc-status-names.gen)
