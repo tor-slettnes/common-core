@@ -48,7 +48,7 @@ if(BUILD_GRPC OR BUILD_ZMQ)
 endif()
 
 ### Invoke common project settings
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/BuildProject.cmake)
 
 ### Pull in CMake files to build the actual sources
 add_subdirectory(thirdparty)

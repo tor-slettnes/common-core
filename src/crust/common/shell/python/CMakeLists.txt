@@ -10,7 +10,7 @@ set(PROGRAMS
   shell.py
 )
 
-build_python(
+BuildPython(
   PROGRAMS ${PROGRAMS}
 )
 

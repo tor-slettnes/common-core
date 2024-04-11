@@ -1,11 +1,11 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file build_python.cmake
+## @file BuildPython.cmake
 ## @brief CMake include file to "build" (install) Python modules
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-function(build_python)
+function(BuildPython)
   set(_options)
   set(_singleargs DESTINATION MODULE)
   set(_multiargs PROGRAMS FILES DIRECTORIES)

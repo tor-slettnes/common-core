@@ -35,7 +35,7 @@ set(SOURCES
 
 
 ## Invoke common CMake rules to build executable
-build_executable("${TARGET}"
+BuildExecutable("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
   DESTINATION sbin

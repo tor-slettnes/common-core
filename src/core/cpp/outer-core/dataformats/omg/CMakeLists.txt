@@ -20,7 +20,7 @@ set(SOURCES
 )
 
 ### Recepies to build the library
-build_library("${TARGET}"
+BuildLibrary("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
 )

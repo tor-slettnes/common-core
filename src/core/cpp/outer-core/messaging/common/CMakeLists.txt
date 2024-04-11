@@ -19,7 +19,7 @@ set(SOURCES
 )
 
 ## Invoke common CMake rules
-build_library("${TARGET}"
+BuildLibrary("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}

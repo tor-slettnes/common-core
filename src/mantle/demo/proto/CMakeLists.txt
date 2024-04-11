@@ -17,7 +17,7 @@ set(SOURCES
 )
 
 ### Generate language bindings
-build_proto("${TARGET}"
+BuildProto("${TARGET}"
   LIB_TYPE STATIC
   PROTO_DEPS ${PROTO_DEPS}
   SOURCES ${SOURCES}

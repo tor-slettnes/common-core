@@ -22,7 +22,7 @@ if(BUILD_ZMQ)
     list(APPEND LIB_DEPS cc_core_messaging_zmq_pypickle)
   endif()
 
-  build_library("${TARGET}"
+  BuildLibrary("${TARGET}"
     LIB_TYPE INTERFACE
     LIB_DEPS ${LIB_DEPS}
   )

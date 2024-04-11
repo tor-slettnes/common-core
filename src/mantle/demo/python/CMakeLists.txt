@@ -19,7 +19,7 @@ set(DIRECTORIES
 )
 
 ### Common recipe
-build_python(
+BuildPython(
   PROGRAMS ${PROGRAMS}
   DIRECTORIES ${DIRECTORIES}
 )

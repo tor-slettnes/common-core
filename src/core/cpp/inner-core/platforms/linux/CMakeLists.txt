@@ -26,8 +26,8 @@ set(SOURCES
 )
 
 ### Build library
-include(build_library)
-build_library("${TARGET}"
+include(BuildLibrary)
+BuildLibrary("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   PKG_DEPS ${PKG_DEPS}

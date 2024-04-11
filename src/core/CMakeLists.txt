@@ -37,7 +37,7 @@ if(BUILD_PROTOBUF)
   list(APPEND LIB_DEPS cc_core_proto)
 endif()
 
-build_library("${TARGET}" INTERFACE
+BuildLibrary("${TARGET}" INTERFACE
   LIB_DEPS ${LIB_DEPS}
 )
 

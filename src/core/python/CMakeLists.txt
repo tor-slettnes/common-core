@@ -30,7 +30,7 @@ set(DIRECTORIES
   io
 )
 
-build_python(
+BuildPython(
   MODULE "${MODULE}"
   PROGRAMS ${PROGRAMS}
   FILES ${FILES}

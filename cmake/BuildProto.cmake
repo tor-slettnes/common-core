@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file build_proto.cmake
+## @file BuildProto.cmake
 ## @brief Wrapper function for building libraries from `.proto` files
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
@@ -8,9 +8,9 @@
 include(protogen)
 
 #===============================================================================
-## @fn build_proto_library
+## @fn BuildProto_library
 
-function(build_proto TARGET)
+function(BuildProto TARGET)
   set(_options)
   set(_singleargs LIB_TYPE SCOPE)
   set(_multiargs SOURCES PROTO_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS)

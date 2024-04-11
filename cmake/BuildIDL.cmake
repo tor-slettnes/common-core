@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file build_idl.cmake
+## @file BuildIDL.cmake
 ## @brief CMake include file for building DDS intterfaces from IDL files
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
@@ -116,10 +116,10 @@ macro(generate_sources sources example_modules)
 endmacro()
 
 #===============================================================================
-## @fn build_idl
+## @fn BuildIDL
 ## @brief create C++ library from .`idl` files
 
-function(build_idl TARGET)
+function(BuildIDL TARGET)
   set(_singleargs LIB_TYPE SCOPE GENERATE_EXAMPLE)
   set(_multiargs RECIPES SERVICES IDL_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})

@@ -14,7 +14,7 @@ endif()
 set(TARGET cc_core_platform)
 
 ### Create common platform library
-build_library("${TARGET}"
+BuildLibrary("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS cc_core_common
 )

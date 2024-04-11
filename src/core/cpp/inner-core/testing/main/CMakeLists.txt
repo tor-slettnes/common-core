@@ -19,7 +19,7 @@ set(SOURCES
   main.c++
 )
 
-build_library("${TARGET}"
+BuildLibrary("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   PKG_DEPS ${PKG_DEPS}

@@ -13,7 +13,7 @@ if(BUILD_RAPIDJSON)
 endif()
 
 ### Library type.  We use static linking for convenience.
-build_library(${TARGET}
+BuildLibrary(${TARGET}
   LIB_TYPE STATIC
   PKG_DEPS ${PKG_DEPS}
 )

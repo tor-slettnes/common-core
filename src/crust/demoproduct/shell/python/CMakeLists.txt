@@ -10,6 +10,6 @@ set(PROGRAMS
   demoshell.py
 )
 
-build_python(
+BuildPython(
   PROGRAMS ${PROGRAMS}
 )
