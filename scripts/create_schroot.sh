@@ -29,8 +29,8 @@ required_packages=(schroot debootstrap)
 if ! dpkg --status "${required_packages[@]}" >/dev/null 2>&1
 then
     echo ""
-    echo "### Installing required packags: ${required_packages[@]}"
-    $run_as_root apt -q update
+    echo "### Installing required packages: ${required_packages[@]}"
+    $run_as_root apt -q update || true
     $run_as_root apt -q -y install "${required_packages[@]}"
 fi
 
@@ -61,7 +61,6 @@ then
     build_reqs+=",python3-protobuf,python3-grpcio,python3-zmq,python3-cffi-backend"
     build_reqs+=",doxygen"
 
-
     echo ""
     echo "### Retrieving and installing target system via 'debootstrap'"
     $run_as_root debootstrap \
@@ -77,13 +76,15 @@ then
     echo ""
     echo "        adduser USERNAME staff"
     echo ""
-    echo "    Then, log out and in again for the changes to take effect"
+    echo "    Then, log out and in again for this change to take effect"
 
 elif ! groups | grep -qw staff
 then
     echo ""
     echo "### Adding user '$(id -un)' to group 'staff'"
     $run_as_root adduser "$(id -un)" staff
+    echo ""
+    echo "    Please log out and in again for this change to take effect"
 
 fi
 
