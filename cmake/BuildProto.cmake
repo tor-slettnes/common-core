@@ -6,6 +6,7 @@
 #===============================================================================
 
 include(protogen)
+include(pkgconf)
 
 #===============================================================================
 ## @fn BuildProto_library
@@ -73,7 +74,6 @@ function(BuildProto TARGET)
     endif()
 
     if(_pkg_deps)
-      include(pkgconf)
       add_package_dependencies("${TARGET}"
         LIB_TYPE ${_type}
         DEPENDS ${_pkg_deps}

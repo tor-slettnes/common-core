@@ -38,22 +38,6 @@ if(NOT PROJECT_INCLUDED)
 
   message(STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
-  ### Load build functions
-  include(BuildExecutable)
-  include(BuildLibrary)
-
-  if(BUILD_PYTHON)
-    include(BuildPython)
-  endif()
-
-  if(BUILD_PROTOBUF OR BUILD_GRPC)
-    include(BuildProto)
-  endif()
-
-  if(BUILD_DDS)
-    include(BuildIDL)
-  endif()
-
   ### Enable testing
   include(CTest)
 

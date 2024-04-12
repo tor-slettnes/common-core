@@ -17,6 +17,7 @@ set(SOURCES
 )
 
 ### Generate language bindings
+include(BuildProto)
 BuildProto("${TARGET}"
   LIB_TYPE STATIC
   SOURCES "${SOURCES}"

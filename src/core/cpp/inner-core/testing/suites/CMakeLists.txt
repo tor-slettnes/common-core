@@ -17,6 +17,7 @@ set(SOURCES
   test-string-expand.c++
 )
 
+include(BuildExecutable)
 BuildExecutable("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}

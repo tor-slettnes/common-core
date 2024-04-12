@@ -30,6 +30,7 @@ set(DIRECTORIES
   io
 )
 
+include(BuildPython)
 BuildPython(
   MODULE "${MODULE}"
   PROGRAMS ${PROGRAMS}
