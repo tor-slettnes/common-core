@@ -8,6 +8,8 @@
 set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/out/fetch)
 
+## Experimental FetchContent() declaratiions; disabled for now.
+
 # if(BUILD_TESTING)
 #   add_subdirectory(gtest)
 # endif()

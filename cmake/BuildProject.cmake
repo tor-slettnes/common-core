@@ -38,6 +38,9 @@ if(NOT PROJECT_INCLUDED)
 
   message(STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
 
+  ### Common utility functions
+  include(pkgconf)
+
   ### Enable testing
   include(CTest)
 

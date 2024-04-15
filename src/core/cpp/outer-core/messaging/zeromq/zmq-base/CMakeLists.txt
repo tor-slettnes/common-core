@@ -8,10 +8,11 @@
 ### Name of this library.
 set(TARGET cc_core_messaging_zmq_base)
 
-###FetchContent_MakeAvailable(libzmq)
 ### Package dependencies
+# FetchContent_MakeAvailable(libzmq)
 set(PKG_DEPS
   libzmq
+  cppzmq
 )
 
 ### Library dependencies.
@@ -44,3 +45,7 @@ BuildLibrary("${TARGET}"
 
 ### Define preprocessor symbol
 target_compile_definitions(${TARGET} PUBLIC USE_ZMQ=1)
+
+## Experimental interface ahead.
+# add_external_dependency(${TARGET} libzmq INCLUDE_DIRS LIBRARIES)
+# add_external_dependency(${TARGET} cppzmq INCLUDE_DIRS)

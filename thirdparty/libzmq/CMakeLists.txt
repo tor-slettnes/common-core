@@ -5,6 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+set(ZMQ_BUILD_TESTS OFF CACHE BOOL "..." FORCE)
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -17,4 +19,14 @@ FetchContent_Declare(
   FIND_PACKAGE_ARGS
 )
 
-FetchContent_MakeAvailable(libzmq)
+FetchContent_Declare(
+  cppzmq
+  GIT_REPOSITORY             https://github.com/zeromq/cppzmq
+  GIT_TAG                    v4.10.0
+  GIT_SHALLOW                ON
+  GIT_REMOTE_UPDATE_STRATEGY REBASE
+  SOURCE_DIR                 ${FETCHCONTENT_SOURCE_DIR}/cppzmq
+  FIND_PACKAGE_ARGS
+)
+
+#FetchContent_MakeAvailable(libzmq)

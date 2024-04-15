@@ -8,14 +8,9 @@
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
 set(TARGET cc_core_common)
 
-if(BUILD_RAPIDJSON)
-  set(PKG_DEPS RapidJSON)
-endif()
-
 ### Library type.  We use static linking for convenience.
 BuildLibrary(${TARGET}
   LIB_TYPE STATIC
-  PKG_DEPS ${PKG_DEPS}
 )
 
 ## Include appropriate system libraries based on platform
