@@ -13,46 +13,48 @@
 
 namespace core::platform
 {
-    PosixSerialPortProvider::PosixSerialPortProvider(
-        const std::string &implementation)
-        : SerialPortProvider(implementation),
-          fd_(-1),
-          speed_(0)
+    PosixSerialPort::PosixSerialPort(
+        const std::string &device,
+        BaudRate speed)
+        : Super(device, speed),
+          fd_(-1)
     {
     }
 
-    void PosixSerialPortProvider::open(const std::string &device, BaudRate speed)
+    void PosixSerialPort::open()
     {
         if (!this->is_open())
         {
-            this->fd_ = ::open(device.data(), O_RDWR);
+            this->fd_ = ::open(this->device().data(), O_RDWR);
             if (this->fd_ < 0)
             {
                 throwf(core::exception::SystemError,
-                       "open(%r)",
-                       device);
+                       "opening serial device %r",
+                       this->device());
             }
-
-            this->device_ = device;
 
             if (tcgetattr(this->fd_, &this->tty_) != 0)
             {
                 this->close();
-                throw core::exception::SystemError("tcgetattr()");
+                throwf(core::exception::SystemError,
+                       "getting attributes from serial device %r",
+                       this->device());
             }
 
             this->apply_flags();
-            this->apply_speed(speed);
+            this->apply_speed();
 
             if (tcsetattr(this->fd_, TCSANOW, &this->tty_) != 0)
             {
                 this->close();
-                throw core::exception::SystemError("tcsetattr()");
+                throwf(core::exception::SystemError,
+                       "setting attributes on serial device %r",
+                       this->device());
             }
         }
     }
 
-    void PosixSerialPortProvider::close()
+    void PosixSerialPort::close()
     {
         if (this->is_open())
         {
@@ -60,31 +62,84 @@ namespace core::platform
             if (result == -1)
             {
                 throwf(core::exception::SystemError,
-                       "close(%r)",
-                       this->device_);
+                       "closing serial device %r",
+                       this->device());
             }
             this->fd_ = -1;
-            this->device_.clear();
-            this->speed_ = 0;
         }
     }
 
-    bool PosixSerialPortProvider::is_open() const
+    bool PosixSerialPort::is_open() const
     {
         return (this->fd_ >= 0);
     }
 
-    std::string PosixSerialPortProvider::device() const
+    void PosixSerialPort::write(const std::string &text)
     {
-        return this->device_;
+        if (int fd = this->fd_; this->fd_ >= 0)
+        {
+            ::write(fd, text.data(), text.size());
+        }
     }
 
-    SerialPortProvider::BaudRate PosixSerialPortProvider::speed() const
+    std::optional<char> PosixSerialPort::readchar()
     {
-        return this->speed_;
+        if (int fd = this->fd_; this->fd_ >= 0)
+        {
+            char c;
+            if (::read(fd, &c, 1))
+            {
+                return c;
+            }
+            else
+            {
+                return {};
+            }
+        }
+        else
+        {
+            throwf(core::exception::FailedPrecondition,
+                   "Serial device %r is not open",
+                   this->device());
+        }
     }
 
-    void PosixSerialPortProvider::apply_flags()
+    std::string PosixSerialPort::readline()
+    {
+        if (int fd = this->fd_; this->fd_ >= 0)
+        {
+            std::string buf;
+            char c;
+            ssize_t nread;
+            while (nread = ::read(fd, &c, 1))
+            {
+                if (buf.size() >= buf.capacity())
+                {
+                    buf.reserve(buf.capacity() + 256);
+                }
+                buf.push_back(c);
+                if (c == '\n')
+                {
+                    break;
+                }
+            }
+            if (nread < 0)
+            {
+                throwf(core::exception::SystemError,
+                       "reading from serial device %r",
+                       this->device());
+            }
+            return buf;
+        }
+        else
+        {
+            throwf(core::exception::FailedPrecondition,
+                   "Serial device %r is not open",
+                   this->device());
+        }
+    }
+
+    void PosixSerialPort::apply_flags()
     {
         // Clear parity bit
         this->tty_.c_cflag &= ~PARENB;
@@ -127,12 +182,28 @@ namespace core::platform
         this->tty_.c_cc[VMIN] = 0;
     }
 
-    void PosixSerialPortProvider::apply_speed(BaudRate speed)
+    void PosixSerialPort::apply_speed()
     {
         if (this->is_open())
         {
-            cfsetspeed(&this->tty_, speed);
+            cfsetspeed(&this->tty_, this->speed());
         }
+    }
+
+    //==========================================================================
+    /// @class PosixSerialPortProvider
+
+    PosixSerialPortProvider::PosixSerialPortProvider(
+        const std::string &implementation)
+        : SerialPortProvider(implementation)
+    {
+    }
+
+    SerialPortProvider::SerialPortPtr PosixSerialPortProvider::serialport(
+        const std::string &device,
+        SerialPort::BaudRate speed)
+    {
+        return std::make_shared<PosixSerialPort>(device, speed);
     }
 
 }  // namespace core::platform
