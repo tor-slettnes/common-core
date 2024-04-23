@@ -5,12 +5,52 @@
 ## @author Tor Slettnes <tor@slett.net>
 ################################################################################
 
-NAME=common-core
+NAME="common-core"
 DESC="Common Core Build System"
-SUITE=bookworm
+SUITE="bookworm"
 COMPONENTS="main"
 MIRROR="https://deb.debian.org/debian"
-ROOT=/srv/chroot/${NAME}
+ROOT="/srv/chroot/${NAME}"
+TESTFILE="${ROOT}/usr/bin/dpkg"
+
+REQS=(
+    # Basic build utilities
+    build-essential cmake pkgconf git
+
+    # `uuid()` generator
+    uuid-dev
+
+    # Fast JSON parser
+    rapidjson-dev
+
+    # GoogleTest
+    libgtest-dev locales-all
+
+    # Google Protocol Buffers
+    libprotobuf-dev protobuf-compiler
+
+    # gRPC Remote Procedure Calls
+    protobuf-compiler-grpc libgrpc++-dev
+
+    # Send/receive messages over ZeroMQ
+    cppzmq-dev
+
+    # LibCURL
+    libcurl4-gnutls-dev
+
+    # Websockets
+    libwebsocketpp-dev
+
+    # Embedded Python environment (e.g. for pickling/unpickling)
+    python3-dev
+
+    # Python source modules for ProtoBuf, gRPC, and ZeroMQ
+    python3-protobuf python3-grpcio python3-zmq python3-cffi-backend
+
+    # Generate reference documents
+    doxygen
+)
+
 
 if [[ ! -e /etc/debian_version ]]
 then
@@ -25,13 +65,13 @@ else
     run_as_root=sudo
 fi
 
-required_packages=(schroot debootstrap)
-if ! dpkg --status "${required_packages[@]}" >/dev/null 2>&1
+host_reqs=(schroot debootstrap)
+if ! dpkg --status "${host_reqs[@]}" >/dev/null 2>&1
 then
     echo ""
-    echo "### Installing required packages: ${required_packages[@]}"
+    echo "### Installing required packages: ${host_reqs[@]}"
     $run_as_root apt -q update || true
-    $run_as_root apt -q -y install "${required_packages[@]}"
+    $run_as_root apt -q -y install "${host_reqs[@]}"
 fi
 
 if [[ ! -e "/etc/schroot/chroot.d/${NAME}" ]]
@@ -48,25 +88,27 @@ aliases=default,build,debian
 EOF
 fi
 
-if [[ ! -x ${ROOT}/usr/bin/g++ ]]
+if [[ ! -e "${TESTFILE}" ]]
 then
-    build_reqs="build-essential,cmake,pkgconf,uuid-dev"
-    build_reqs+=",locales-all,libgtest-dev"
-    build_reqs+=",rapidjson-dev"
-    build_reqs+=",libprotobuf-dev,protobuf-compiler"
-    build_reqs+=",protobuf-compiler-grpc,libgrpc++-dev"
-    build_reqs+=",cppzmq-dev"
-    build_reqs+=",libcurl4-gnutls-dev"
-    build_reqs+=",python3-dev"
-    build_reqs+=",python3-protobuf,python3-grpcio,python3-zmq,python3-cffi-backend"
-    build_reqs+=",doxygen"
+    ### Target does not yet exist it. Create it.
+    printf -v reqs "%s," "${REQS[@]}"
 
     echo ""
     echo "### Retrieving and installing target system via 'debootstrap'"
-    $run_as_root debootstrap \
+    $run_as_root /usr/sbin/debootstrap \
                  --components="${COMPONENTS}" \
-                 --include="${build_reqs}" \
+                 --include="${reqs%,}" \
                  "${SUITE}" "${ROOT}" "${MIRROR}"
+
+elif ! schroot --chroot "${NAME}" -- dpkg --status "${REQS[@]}" >/dev/null 2>&1
+then
+     ### Target exists but is missing some required packages.  Install them.
+     echo ""
+     echo "### Target system exists, but is missing packages. Installing:"
+
+     $run_as_root schroot --chroot "${NAME}" -- apt -q update || true
+     $run_as_root schroot --chroot "${NAME}" -- apt -q -y install "${REQS[@]}"
+
 fi
 
 if [[ $(id -u) == 0 ]]

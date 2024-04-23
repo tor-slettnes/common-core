@@ -22,6 +22,7 @@ set(SOURCES
   posix-runtime.c++
   posix-timezone.c++
   posix-logsink.c++
+  posix-serialport.c++
 )
 
 ### Build library

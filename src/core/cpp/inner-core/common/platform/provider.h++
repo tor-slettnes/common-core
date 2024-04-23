@@ -50,6 +50,8 @@ namespace core::platform
         {
         }
 
+        virtual ~Provider() = default;
+
     public:
         /// Determine if derived provider type is applicable on this host.
         virtual bool is_pertinent() { return true; }

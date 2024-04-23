@@ -1,0 +1,11 @@
+name: common-core
+
+services:
+  common-core:
+    image: common-core:1.0
+    user: developer
+    userns_mode: "host"
+    volumes:
+      - type: bind
+        source: ../..
+        target: /home/developer/common-core

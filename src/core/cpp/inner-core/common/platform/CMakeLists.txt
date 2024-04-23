@@ -13,5 +13,6 @@ target_sources(${TARGET} PRIVATE
   runtime.c++
   systemservice.c++
   logsink.c++
+  serialport.c++
   init.c++
 )

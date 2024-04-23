@@ -20,9 +20,9 @@ namespace core::platform
 
     protected:
         /// @param[in] implementation
-        //      Implementation name, e.g. final class name
+        ///     Implementation name, e.g. final class name
         /// @param[in] identity
-        //      Logging entity name, e.g. application name
+        ///     Logging entity name, e.g. application name
         LogSinkProvider(const std::string &implementation,
                         const std::string &identity);
 
