@@ -1,7 +1,7 @@
-##
 ## -*- cmake -*-
 #===============================================================================
 ## @brief CMake recipes for building a project
+## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
 if(NOT PROJECT_INCLUDED)
@@ -36,13 +36,18 @@ if(NOT PROJECT_INCLUDED)
     endif()
   endif()
 
-  message(STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
-
   ### Common utility functions
   include(pkgconf)
 
   ### Enable testing
   include(CTest)
+
+  ### Enable package creation (for now just Debian packages)
+  include(BuildPackage)
+
+  ### Create packages
+  # include(CPackConfig)
+  # include(CPack)
 
   # ### Include rules to build doxygen
   # include(Doxygen)

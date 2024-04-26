@@ -23,3 +23,6 @@ endif()
 
 ### Install "settings/" folder as data
 install(DIRECTORY settings TYPE DATA)
+
+BuildPackage(cc-demo)
+

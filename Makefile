@@ -5,8 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+CURRENT_DIR  ?= $(shell pwd)
 SHARED_DIR   ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-OUT_DIR      ?= out
+OUT_DIR      ?= $(CURRENT_DIR)/out
 BUILD_TYPE   ?= Release
 
 ifdef TARGET
@@ -22,9 +23,11 @@ endif
 BUILD_FLAVOR ?= $(TARGET)-$(BUILD_TYPE)
 BUILD_DIR    ?= $(OUT_DIR)/build/$(BUILD_FLAVOR)
 INSTALL_DIR  ?= $(OUT_DIR)/install/$(TARGET)
+PACKAGE_DIR  ?= $(OUT_DIR)/packages
 
 export CMAKE_INSTALL_PREFIX ?= ${INSTALL_DIR}
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
+export CPACK_PACKAGE_DIRECTORY ?= $(PACKAGE_DIR)
 
 ifeq ($(shell uname), Linux)
    export CMAKE_BUILD_PARALLEL_LEVEL ?= $(shell nproc)
@@ -32,7 +35,15 @@ endif
 
 ### Check for a target-specific toolchain and use that if available
 
-all: test install/strip
+all: test package
+
+package: build
+	@echo
+	@echo "#############################################################"
+	@echo "Creating packages in ${PACKAGE_DIR}"
+	@echo "#############################################################"
+	@echo
+	@cd "${BUILD_DIR}" && cpack -B "${PACKAGE_DIR}"
 
 install: build
 	@echo
@@ -59,7 +70,7 @@ test: build
 	@echo "Testing in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@make -C "$(BUILD_DIR)"/src test
+	@cd "$(BUILD_DIR)" && ctest
 
 build: cmake
 	@echo
@@ -69,7 +80,7 @@ build: cmake
 	@echo
 	@cmake --build "$(BUILD_DIR)"
 
-cmake:
+cmake: $(BUILD_DIR)
 	@echo
 	@echo "#############################################################"
 	@echo "Generating build files in ${BUILD_DIR}"
@@ -99,4 +110,4 @@ $(BUILD_DIR):
 	@$(MAKE) -C "$(BUILD_DIR)" $(MAKECMDGOALS)
 
 
-.PHONY: install install/test test build cmake clean
+.PHONY: all install install/test test build cmake clean
