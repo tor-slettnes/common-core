@@ -23,4 +23,8 @@ set(SOURCES
   )
 
 ## Invoke common CMake rules to build executable
-include(BuildExecutable)
+BuildExecutable(${TARGET}
+  SOURCES ${SOURCES}
+  LIB_DEPS ${LIB_DEPS}
+  COMPONENT ${PKG_COMPONENT}
+)

@@ -12,7 +12,7 @@
 
 function(BuildExecutable TARGET)
   set(_options INSTALL)
-  set(_singleargs DESTINATION)
+  set(_singleargs DESTINATION COMPONENT)
   set(_multiargs SOURCES LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -37,17 +37,34 @@ function(BuildExecutable TARGET)
     )
   endif()
 
-  if(arg_DESTINATION)
-    install(
-      TARGETS "${TARGET}"
-      RUNTIME
-      DESTINATION "${arg_DESTINATION}"
-    )
+  set(install_args
+    TARGETS "${TARGET}"
+    RUNTIME
+  )
+
+  if(arg_COMPONENT)
+    set(install ON)
+    list(APPEND install_args COMPONENT ${arg_COMPONENT})
+
+  elseif(CPACK_CURRENT_COMPONENT)
+    set(install ON)
+    list(APPEND install_args COMPONENT ${CPACK_CURRENT_COMPONENT})
+
   elseif(arg_INSTALL)
-    install(
-      TARGETS "${TARGET}"
-      RUNTIME
-    )
+    set(install ON)
+    list(APPEND install_args COMPONENT common)
+
+  else()
+    set(install OFF)
+
   endif()
 
+  if(arg_DESTINATION)
+    list(APPEND install_args DESTINATION ${arg_DESTINATION})
+  endif()
+
+  if(install)
+    message(STATUS "install(${install_args})")
+    install(${install_args})
+  endif()
 endfunction()

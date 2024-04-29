@@ -1,10 +1,9 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build static/shared library
+## @description CMake rules to build Common Core
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Include components common to all products
-add_subdirectory(common)
-add_subdirectory(demoproduct)
+BuildSettings(COMPONENT core-common)
+

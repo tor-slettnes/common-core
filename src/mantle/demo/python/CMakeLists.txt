@@ -22,4 +22,12 @@ set(DIRECTORIES
 BuildPython(
   PROGRAMS ${PROGRAMS}
   DIRECTORIES ${DIRECTORIES}
+  COMPONENT demo-python
+)
+
+cpack_add_component(demo-python
+  DEPENDS core-python demo-protobuf
+  GROUP demo
+  DISPLAY_NAME "DEMO Example - Python modules"
+  DESCRIPTION "Python client and server moduules for demo application example"
 )

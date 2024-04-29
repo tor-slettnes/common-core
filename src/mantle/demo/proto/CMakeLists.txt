@@ -22,5 +22,12 @@ BuildProto("${TARGET}"
   LIB_TYPE STATIC
   PROTO_DEPS ${PROTO_DEPS}
   SOURCES ${SOURCES}
+  COMPONENT demo-protobuf
 )
 
+cpack_add_component(demo-protobuf
+  DEPENDS core-protobuf
+  GROUP demo
+  DISPLAY_NAME "DEMO Example - Generated ProtoBuf/gRPC modules"
+  DESCRIPTION "Generated runtime modules for communication with DEMO example over ProtoBuf/gRPC"
+)

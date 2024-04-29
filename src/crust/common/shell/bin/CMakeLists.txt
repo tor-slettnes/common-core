@@ -9,5 +9,8 @@ cmake_minimum_required(VERSION 3.14)
 
 if (BUILD_PYTHON)
   set(SOURCES shell)
-  install(PROGRAMS ${SOURCES} TYPE BIN)
+  install(PROGRAMS ${SOURCES}
+    TYPE BIN
+    COMPONENT ${PKG_COMPONENT}
+  )
 endif()

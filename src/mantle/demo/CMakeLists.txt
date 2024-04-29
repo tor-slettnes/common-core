@@ -5,6 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+set(PKG_GROUP "demo")
+
+cpack_add_component_group(${PKG_GROUP}
+  DISPLAY_NAME "DEMO Example"
+  DESCRIPTION "DEMO application example"
+)
+
 if (BUILD_CPP)
   add_subdirectory(cpp)
 endif()
@@ -21,8 +28,11 @@ if (BUILD_RTI_DDS)
   add_subdirectory(idl)
 endif()
 
-### Install "settings/" folder as data
-install(DIRECTORY settings TYPE DATA)
+add_subdirectory(settings)
 
-BuildPackage(cc-demo)
-
+cpack_add_component(demo-common
+  DEPENDS core-common
+  GROUP ${PKG_GROUP}
+  DISPLAY_NAME "DEMO example - common components"
+  DESCRIPTION "Common components for DEMO clients and servers"
+)

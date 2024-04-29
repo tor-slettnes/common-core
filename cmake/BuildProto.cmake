@@ -13,7 +13,7 @@ include(pkgconf)
 
 function(BuildProto TARGET)
   set(_options)
-  set(_singleargs LIB_TYPE SCOPE)
+  set(_singleargs LIB_TYPE SCOPE COMPONENT)
   set(_multiargs SOURCES PROTO_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -27,6 +27,14 @@ function(BuildProto TARGET)
     string(TOUPPER "${arg_SCOPE}" _scope)
   else()
     set(_scope PUBLIC)
+  endif()
+
+  if(arg_COMPONENT)
+    set(_component ${arg_COMPONENT})
+  elseif(CPACK_CURRENT_COMPONENT)
+    set(_component ${CPACK_CURRENT_COMPONENT})
+  else()
+    set(_component common)
   endif()
 
   set(_pkg_deps ${arg_PKG_DEPS})
@@ -94,7 +102,10 @@ function(BuildProto TARGET)
         PROTOS "${_sources}"
         DEPENDS "${arg_PROTO_DEPS}"
       )
-      install(FILES ${PROTO_PY} DESTINATION "${_install_folder}")
+      install(FILES ${PROTO_PY}
+        DESTINATION "${_install_folder}"
+        COMPONENT "${_component}"
+      )
     endif()
 
     if (BUILD_GRPC)
@@ -103,7 +114,10 @@ function(BuildProto TARGET)
         PROTOS "${_sources}"
         DEPENDS "${arg_PROTO_DEPS}"
       )
-      install(FILES ${GRPC_PY} DESTINATION "${_install_folder}")
+      install(FILES ${GRPC_PY}
+        DESTINATION "${_install_folder}"
+        COMPONENT "${_component}"
+      )
     endif()
 
     add_custom_target(${TARGET}_py DEPENDS ${PROTO_PY} ${GRPC_PY})

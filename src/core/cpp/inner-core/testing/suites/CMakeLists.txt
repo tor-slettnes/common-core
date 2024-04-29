@@ -8,19 +8,13 @@
 ### Name of the test.
 set(TARGET core-tests)
 
-set(LIB_DEPS
-  cc_core_test_main
-)
-
-set(SOURCES
+add_executable(${TARGET}
   test-string-misc.c++
   test-string-expand.c++
 )
 
-include(BuildExecutable)
-BuildExecutable("${TARGET}"
-  LIB_DEPS ${LIB_DEPS}
-  SOURCES ${SOURCES}
+target_link_libraries(${TARGET}
+  cc_core_test_main
 )
 
 include(GoogleTest)

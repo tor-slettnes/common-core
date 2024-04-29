@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 if (NOT PROJECT_NAME)
-  project(common_core
+  project(common-core
     VERSION 0.0.2)
 endif()
 

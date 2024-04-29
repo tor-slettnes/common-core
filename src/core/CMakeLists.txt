@@ -5,6 +5,14 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+set(PKG_GROUP "core")
+
+cpack_add_component_group(${PKG_GROUP}
+  DISPLAY_NAME "Core components"
+  DESCRIPTION "Common core - common components"
+)
+
+
 if(BUILD_CPP)
   add_subdirectory(cpp)
 endif()
@@ -20,6 +28,9 @@ endif()
 if(BUILD_PROTOBUF)
   add_subdirectory(proto)
 endif()
+
+### Install "settings/" folder as data
+add_subdirectory(settings)
 
 ### Create interface library to encapsulate the above
 set(TARGET cc_core)
@@ -41,5 +52,8 @@ BuildLibrary("${TARGET}" INTERFACE
   LIB_DEPS ${LIB_DEPS}
 )
 
-### Install "settings/" folder as data
-install(DIRECTORY settings TYPE DATA)
+cpack_add_component(core-common
+  GROUP ${PKG_GROUP}
+  DISPLAY_NAME "Common Core - common components"
+  DESCRIPTION "Common components for Common Core application framework"
+)

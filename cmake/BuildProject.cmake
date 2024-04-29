@@ -20,6 +20,9 @@ if(NOT PROJECT_INCLUDED)
   get_filename_component(BUILD_SCRIPTS_DIR "../scripts" REALPATH
     BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
+  get_filename_component(COMMON_CORE_DIR ".." REALPATH
+    BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
+
   # file(REAL_PATH "../scripts" BUILD_SCRIPTS_DIR
   #   BASE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
 
@@ -42,13 +45,36 @@ if(NOT PROJECT_INCLUDED)
   ### Enable testing
   include(CTest)
 
+  include(BuildProto)
+  include(BuildLibrary)
+  include(BuildExecutable)
+  include(BuildPython)
+  include(BuildSettings)
+
   ### Enable package creation (for now just Debian packages)
-  include(BuildPackage)
+  #include(BuildPackage)
 
-  ### Create packages
-  # include(CPackConfig)
-  # include(CPack)
+  #=============================================================================
+  ### CPack configuration
 
-  # ### Include rules to build doxygen
-  # include(Doxygen)
+  ### Load CPack configuration, first from this folder
+  foreach(dir
+      "${CMAKE_CURRENT_LIST_DIR}"
+      "${COMMON_CORE_DIR}"
+      "${CMAKE_SOURCE_DIR}")
+
+    include("${dir}/CPackConfig.cmake"
+      OPTIONAL
+      RESULT_VARIABLE CPACKCONFIG_FOUND)
+
+    if(CPACKCONFIG_FOUND)
+      message(STATUS "Found ${dir}/CPackConfig.cmake")
+    else()
+      message(STATUS "Did not find ${dir}/CPackConfig.cmake")
+    endif()
+  endforeach()
+  include(CPack)
+
+  ### Include rules to build doxygen
+  include(Doxygen)
 endif()

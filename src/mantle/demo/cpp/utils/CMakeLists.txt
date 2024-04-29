@@ -5,6 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+set(PKG_COMPONENT "demo-utils")
+
 add_subdirectory(common)
 
 if(BUILD_RTI_DDS)
@@ -19,3 +21,10 @@ if(BUILD_ZMQ)
   add_subdirectory(zmq-tool)
 endif()
 
+
+cpack_add_component(${PKG_COMPONENT}
+  DEPENDS demo-common
+  GROUP ${PKG_GROUP}
+  DISPLAY_NAME "DEMO example - C++ utilities"
+  DESCRIPTION "DEMO application server written in C++"
+)

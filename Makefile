@@ -5,9 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-CURRENT_DIR  ?= $(shell pwd)
 SHARED_DIR   ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-OUT_DIR      ?= $(CURRENT_DIR)/out
+OUT_DIR      ?= $(CURDIR)/out
 BUILD_TYPE   ?= Release
 
 ifdef TARGET
@@ -43,7 +42,7 @@ package: build
 	@echo "Creating packages in ${PACKAGE_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cd "${BUILD_DIR}" && cpack -B "${PACKAGE_DIR}"
+	@cpack --config "${BUILD_DIR}/CPackConfig.cmake" -B "${PACKAGE_DIR}"
 
 install: build
 	@echo
@@ -90,6 +89,9 @@ cmake: $(BUILD_DIR)
 
 clean: uninstall cmake/clean
 
+pkg_clean:
+	@rm -rfv "$(PACKAGE_DIR)"
+
 realclean:
 	@rm -rfv "$(BUILD_DIR)" "$(INSTALL_DIR)"
 
@@ -110,4 +112,4 @@ $(BUILD_DIR):
 	@$(MAKE) -C "$(BUILD_DIR)" $(MAKECMDGOALS)
 
 
-.PHONY: all install install/test test build cmake clean
+.PHONY: all install install/test test build cmake clean realclean realclean_all pristine
