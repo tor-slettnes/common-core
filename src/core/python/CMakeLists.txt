@@ -44,7 +44,7 @@ BuildPython(
 
 cpack_add_component(${PKG_COMPONENT}
   GROUP ${PKG_GROUP}
-  DEPENDS core-protobuf
+  DEPENDS core-proto
   DISPLAY_NAME "Common ProtoBuf/gRPC modules"
   DESCRIPTION "Generated Protocol Buffers/gRPC modules for common components"
 )

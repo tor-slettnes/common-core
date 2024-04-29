@@ -5,28 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-# function(AddPackageComponent COMPONENT)
-#   set(_options STRIP)
-#   set(_singleargs DISPLAY_NAME DESCRIPTION GROUP)
-#   set(_multiargs DEPENDS)
-#   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-#   set(_package_name ${PROJECT_NAME}-${COMPONENT})
-#   set(_package_name ${_package_name}_${PROJECT_VERSION})
-#   set(_package_name ${_package_name}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE})
-#   set(CPACK_DEBIAN_${COMPONENT}_PACKAGE_NAME ${_package_name} PARENT_SCOPE)
-#   set(CPACK_CURRENT_COMPONENT ${COMPONENT} PARENT_SCOPE)
-
-#   foreach(arg ${_singleargs} ${_multiargs})
-#     if(arg_${ARG})
-#       list(APPEND _args ${arg} "${arg_${arg}}")
-#     endif()
-#   endforeach()
-
-#   message(STATUS "cpack_add_component(${COMPONENT} ${_args}); package_name=${_package_name}")
-#   cpack_add_component("${COMPONENT}" ${_args})
-# endfunction()
-
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
 set(CPACK_GENERATOR "DEB")
 set(CPACK_STRIP_FILES ON)

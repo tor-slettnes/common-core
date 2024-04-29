@@ -9,7 +9,7 @@
 set(TARGET cc_core_proto)
 
 ### Package component
-set(PKG_COMPONENT "core-python")
+set(PKG_COMPONENT "core-proto")
 
 ### Source files
 set(SOURCES

@@ -6,7 +6,10 @@
 #===============================================================================
 
 ### This can be used as a downstream dependency.
-set(TARGET cc_demo_proto)
+set(TARGET "cc_demo_proto")
+
+### Package component
+set(PKG_COMPONENT "demo-proto")
 
 ### Static/shared library dependencies.
 set(PROTO_DEPS cc_core_proto)
@@ -22,12 +25,12 @@ BuildProto("${TARGET}"
   LIB_TYPE STATIC
   PROTO_DEPS ${PROTO_DEPS}
   SOURCES ${SOURCES}
-  COMPONENT demo-protobuf
+  COMPONENT ${PKG_COMPONENT}
 )
 
-cpack_add_component(demo-protobuf
-  DEPENDS core-protobuf
-  GROUP demo
+cpack_add_component(${PKG_COMPONENT}
+  DEPENDS core-proto
+  GROUP ${PKG_GROUP}
   DISPLAY_NAME "DEMO Example - Generated ProtoBuf/gRPC modules"
   DESCRIPTION "Generated runtime modules for communication with DEMO example over ProtoBuf/gRPC"
 )
