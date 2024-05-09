@@ -26,5 +26,5 @@ cpack_add_component(${PKG_COMPONENT}
   DEPENDS demo-common
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "DEMO example - C++ utilities"
-  DESCRIPTION "DEMO application server written in C++"
+  DESCRIPTION "DEMO command-line utilitie written in C++"
 )

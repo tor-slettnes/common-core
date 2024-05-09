@@ -28,9 +28,12 @@ class SettingsStore (JsonReader):
     See `__init__()` for a description of which folder(s) are used.
     '''
 
+    ## Set this to override default search path
+    search_path = settingsPath()
+
     def __init__(self,
                  filenames  : FilePath|FilePaths = [],
-                 searchpath : FilePaths = settingsPath()):
+                 searchpath : FilePaths = None):
 
         '''Initialize a new SettingsStore instance from the specified JSON file(s).
         Any script-style or C++-style comments (prefixed with either `#` or `//`)
@@ -80,7 +83,10 @@ class SettingsStore (JsonReader):
         '''
 
         self.filepath   = None
-        self.searchpath = searchpath
+        if searchpath is not None:
+            self.searchpath = searchpath
+        else:
+            self.searchpath = type(self).search_path
 
         if isinstance(filenames, str):
             self.filenames = (filenames,)
@@ -130,6 +136,7 @@ class SettingsStore (JsonReader):
         else:
             if not self.filepath:
                 self.filepath = filepath
+
 
 
     @classmethod

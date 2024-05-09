@@ -35,32 +35,37 @@ message Filter
     /// corresponding to specific signals to be filtered to the client.
     ///
     /// For instance, consider the following definitions
+    ///
     /// ```
-    ///   package CC.Example;
+    /// package CC.Example;
     ///
-    ///   service SignalExample
-    ///   {
-    ///     /// Watch for change signals from server.
-    ///     rpc watch (CC.Signal.Filter) returns (stream Signal);
-    ///   }
+    /// service SignalExample
+    /// {
+    ///   /// Watch for change signals from server.
+    ///   rpc watch (CC.Signal.Filter) returns (stream Signal);
+    /// }
     ///
-    ///   message Signal
+    /// message Signal
+    /// {
+    ///   ...
+    ///   oneof signal
     ///   {
-    ///     ...
-    ///     oneof signal
-    ///     {
-    ///        FooType foo = 9;
-    ///        BarType bar = 10;
-    ///        BazType baz = 11;
-    ///     }
+    ///      FooType foo = 9;
+    ///      BarType bar = 10;
+    ///      BazType baz = 11;
     ///   }
+    /// }
     /// ```
     ///
     /// Then, the following Python invocation will stream back only the signals
     /// `bar` and `baz`, but not `foo`:
     ///
-    ///   >>> client_stub.watch(CC.Signal.Filter(polarity=True,
-    ///                                          indices=[10, 11]))
+    /// ```
+    /// >>> for event in client_stub.watch(CC.Signal.Filter(
+    /// ...         polarity=True,
+    /// ...         indices=[10, 11])):
+    /// ...    my_handler(event)
+    /// ```
     ///
     repeated uint32 indices = 2;
 }

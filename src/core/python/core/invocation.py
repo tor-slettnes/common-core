@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from typing  import Callable, Sequence, Mapping, Optional, Any
+from typing import Callable, Sequence, Mapping, Optional, Any
 
 import sys
 import traceback

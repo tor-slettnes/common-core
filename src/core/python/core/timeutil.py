@@ -17,6 +17,7 @@ ZoneSuffix = enums({
     "NAME"   : 2   # 'CET'/'CEST'/'PST'/'PDT'/etc, or 'UTC'
 }, globals())
 
+
 ### Standardized time string
 def isotime(timestamp        : float = None,
             time_delimiter   : str  = " ",

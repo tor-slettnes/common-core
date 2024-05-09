@@ -30,7 +30,7 @@ BuildPython(
 
 cpack_add_component(${PKG_COMPONENT}
   DEPENDS core-python demo-proto
-  GROUP demo
+  GROUP ${PKG_GROUP}
   DISPLAY_NAME "DEMO Example - Python modules"
   DESCRIPTION "Python client and server moduules for demo application example"
 )

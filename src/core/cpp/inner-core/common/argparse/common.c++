@@ -222,7 +222,7 @@ namespace core::argparse
 
         this->add_flag(
             {"--log-to-stdout", "--stdout"},
-            "Log to standard output. Implicitly disables `--log-stderr`.",
+            "Log to standard output. Implicitly disables `--log-to-stderr`.",
             &this->log_to_stdout,
             this->logsink_setting_enabled(LOG_TO_STDOUT_SINK, false));
 
@@ -234,7 +234,7 @@ namespace core::argparse
 
         this->add_flag(
             {"--log-to-file"},
-            "Log messages to a plaintext `.log` file"
+            "Log messages to a plaintext `.log` file. "
             "Path, threshold, rotation interval etc, can be configured "
             "via the \"log file\" application setting.",
             &this->log_to_file,
@@ -242,7 +242,7 @@ namespace core::argparse
 
         this->add_flag(
             {"--log-to-json"},
-            "Log to a JSON file."
+            "Log to a JSON file. "
             "Path, threshold, rotation interval etc, can be configured "
             "via the \"log json\" application setting.",
             &this->log_to_json,

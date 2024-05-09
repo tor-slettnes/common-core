@@ -5,12 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-project(cc-core-cpp
-  VERSION ${CMAKE_PROJECT_VERSION}
-  DESCRIPTION "Common Core - Common C++ Libraries"
-  LANGUAGES "CXX"
-)
-
 add_subdirectory(common)
 add_subdirectory(platforms)
 add_subdirectory(testing)
