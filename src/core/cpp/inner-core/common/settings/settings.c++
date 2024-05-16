@@ -12,9 +12,9 @@
 
 #include <iostream>
 
-namespace cc
+namespace core
 {
-    std::shared_ptr<cc::SettingsStore> settings;
+    std::shared_ptr<core::SettingsStore> settings;
 
     void init_settings()
     {
@@ -36,4 +36,4 @@ namespace cc
 
     static platform::InitTask init_app_settings("init_settings", init_settings);
 
-}  // namespace cc
+}  // namespace core

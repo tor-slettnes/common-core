@@ -7,7 +7,7 @@
 
 syntax = "proto3";
 
-package cc.protobuf.variant;
+package cc.variant;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";

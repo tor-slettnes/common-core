@@ -14,7 +14,7 @@
 #include "protobuf-signalforwarder.h++"
 #include "thread/blockingqueue.h++"
 
-namespace cc::grpc
+namespace core::grpc
 {
     //==========================================================================
     /// @class SignalQueue<SignalT>
@@ -49,11 +49,11 @@ namespace cc::grpc
     /// For sample SignalForwarder implementations, see `demo::SignalForwarder()`
 
     template <class ProtoT>
-    class SignalQueue : public cc::io::proto::SignalForwarder<ProtoT>,
+    class SignalQueue : public core::io::proto::SignalForwarder<ProtoT>,
                         public types::BlockingQueue<ProtoT>
     {
     protected:
-        using SignalFilter = cc::protobuf::signal::Filter;
+        using SignalFilter = cc::signal::Filter;
 
         template <class T>
         using Encoder = std::function<void(T, ProtoT *)>;
@@ -66,7 +66,7 @@ namespace cc::grpc
         SignalQueue(const std::string &id,
                     const SignalFilter &filter,
                     uint maxsize = 0)
-            : cc::io::proto::SignalForwarder<ProtoT>(),
+            : core::io::proto::SignalForwarder<ProtoT>(),
               types::BlockingQueue<ProtoT>(maxsize),
               id(id),
               filter_polarity(filter.polarity()),
@@ -172,6 +172,6 @@ namespace cc::grpc
         bool filter_polarity;
         std::unordered_set<uint> filter_indices;
     };
-}  // namespace cc::grpc
+}  // namespace core::grpc
 
-using cc::grpc::SignalQueue;
+using core::grpc::SignalQueue;

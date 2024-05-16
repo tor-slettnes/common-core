@@ -8,7 +8,7 @@
 #include "writer.h++"
 #include "builder.h++"
 
-namespace cc::json
+namespace core::json
 {
 
     RapidWriter::RapidWriter()
@@ -46,4 +46,4 @@ namespace cc::json
         return ss.str();
     }
 
-}  // namespace cc::json
+}  // namespace core::json

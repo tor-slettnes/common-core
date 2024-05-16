@@ -32,7 +32,7 @@ namespace demo::dds
     {
     }
 
-    void Subscriber::on_time_update(cc::signal::MappingAction action,
+    void Subscriber::on_time_update(core::signal::MappingAction action,
                                     const CC::Demo::TimeData &time_data)
     {
         // We have received a time update from a remote publisher.
@@ -42,7 +42,7 @@ namespace demo::dds
         signal_time.emit(idl::decoded<TimeData>(time_data));
     }
 
-    void Subscriber::on_greeting_update(cc::signal::MappingAction action,
+    void Subscriber::on_greeting_update(core::signal::MappingAction action,
                                         const CC::Demo::Greeting &greeting)
     {
         // We have received a time update from a remote publisher.

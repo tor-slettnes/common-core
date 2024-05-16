@@ -18,7 +18,7 @@
 #include <string>
 #include <ostream>
 
-namespace cc::status
+namespace core::status
 {
     //==========================================================================
     // Symbols provided here.
@@ -119,4 +119,4 @@ namespace cc::status
 
     bool operator==(const Event::Ref &lhs, const Event::Ref &rhs);
 
-}  // namespace cc::status
+}  // namespace core::status

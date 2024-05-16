@@ -11,11 +11,11 @@
 
 namespace demo::zmq
 {
-    class Server : public cc::zmq::ProtoBufServer,
-                   public cc::types::enable_create_shared<Server>
+    class Server : public core::zmq::ProtoBufServer,
+                   public core::types::enable_create_shared<Server>
     {
         using This = Server;
-        using Super = cc::zmq::ProtoBufServer;
+        using Super = core::zmq::ProtoBufServer;
 
     protected:
         Server(const std::shared_ptr<API> &api,

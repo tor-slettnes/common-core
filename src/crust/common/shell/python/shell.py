@@ -6,26 +6,31 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from cc.messaging.grpc.client import ArgParser as _ArgParser
-import cc.protobuf.wellknown
-import cc.protobuf.variant
-import cc.protobuf.signal
-import cc.protobuf.status
-import cc.protobuf.rr
+from protobuf.import_proto import import_wellknown_protos, import_core_protos
+import protobuf.wellknown
+import protobuf.variant
+import protobuf.signal
+import protobuf.status
+import protobuf.rr
 
 ### Third-party modules
 import google.protobuf.message
 
 ### Standard Python modules
 import logging
+import argparse
 
-### Import well-known ProtoBuf modules from Google.
-### Their symbols will appear within the `google.protobuf` namespace.
-from cc.protobuf.wellknown import import_wellknown_protos
+### Import well-known ProtoBuf modules from Google. Their symbols will appear within
+### the namespace that matches their `package` declarations: `google.protobuf`.
 import_wellknown_protos(globals())
 
+### Import core protobuf modules. Their symbols will appear within namespaces
+### that matches their respective `package` declarations (starting with `cc.`).
+import_core_protos(globals())
+
+
 ### Add a few arguments to the base argparser
-class ArgParser (_ArgParser):
+class ArgParser (argparse.ArgumentParser):
     def __init__ (self, host=None, identity="DemoShell", *args, **kwargs):
         super().__init__(host, *args, **kwargs);
 
@@ -41,8 +46,9 @@ def legend ():
     Interactive Python shell with ProtoBuf data types preloaded
     into namespaces corresponding to their respective package names:
 
-        google.protobuf.*   - well-known types
-        cc.protobuf.*       - custom types
+     - Well-known ProtoBuf types : google.protobuf.*
+     - Custom ProtoBuf types     : cc.*
+     - Wrapper modules           : protobuf.*
 
     '''
     print(legend.__doc__)

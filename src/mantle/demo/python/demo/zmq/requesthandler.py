@@ -8,7 +8,7 @@
 ### Modules relative to install dir
 from .common import DEMO_RPC_INTERFACE
 from ..core import API, CC, ProtoBuf, Weekdays
-from cc.messaging.zmq.protobuf.requesthandler import RequestHandler
+from messaging.zmq.protobuf.requesthandler import RequestHandler
 
 ### Standard Python modules
 import logging
@@ -20,10 +20,10 @@ class DemoRequestHandler (RequestHandler):
         RequestHandler.__init__(self, DEMO_RPC_INTERFACE)
         self.demo_provider = demo_provider
 
-    def say_hello(self, request: cc.protobuf.demo.Greeting):
+    def say_hello(self, request: protobuf.demo.Greeting):
         self.demo_provider.say_hello(request)
 
-    def get_current_time(self) -> cc.protobuf.demo.TimeData:
+    def get_current_time(self) -> protobuf.demo.TimeData:
         return self.demo_provider.get_current_time()
 
     def start_ticking(self):

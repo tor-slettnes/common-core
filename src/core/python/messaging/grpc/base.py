@@ -7,7 +7,7 @@
 
 ### Modules relative to install folder
 from ..common import Endpoint
-from cc.core.settingsstore import SettingsStore
+from core.settingsstore import SettingsStore
 
 ### Stanard Python modules
 import re, logging

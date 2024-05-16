@@ -7,11 +7,11 @@
 
 ### Modules relative to current dir
 from ..core import API, SignalSlot, signal_store
-from ...messaging.grpc import SignalClient
+from messaging.grpc import SignalClient
 
 ### Modules relative to install dir
-import cc.protobuf.demo
-import cc.protobuf.utils
+import protobuf.demo
+import protobuf.utils
 
 ### Third-party modules
 from google.protobuf.empty_pb2 import Empty
@@ -35,7 +35,7 @@ class DemoClient (API, SignalClient):
     ## SignalStore() instance to the `SignalClient.__init__()` base, below.
     ## In our case we do, since we share the signal store with other message
     ## clients which also receive and re-emit signals from remote endpoints.
-    #signal_type = cc.protobuf.demo.Signal
+    #signal_type = protobuf.demo.Signal
 
     def __init__(self,
                  host           : str = "",      # gRPC server
@@ -52,11 +52,11 @@ class DemoClient (API, SignalClient):
                               watch_all = False)
 
 
-    def say_hello(self, greeting: cc.protobuf.demo.Greeting):
-        cc.protobuf.utils.check_type(greeting, cc.protobuf.demo.Greeting)
+    def say_hello(self, greeting: protobuf.demo.Greeting):
+        protobuf.utils.check_type(greeting, protobuf.demo.Greeting)
         self.stub.say_hello(greeting)
 
-    def get_current_time(self) -> cc.protobuf.demo.TimeData:
+    def get_current_time(self) -> protobuf.demo.TimeData:
         return self.stub.get_current_time(Empty())
 
     def start_ticking(self) -> None:

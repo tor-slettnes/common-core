@@ -32,7 +32,7 @@
 // message MySignalMultiplexer
 // {
 //     // Mapping action: one of MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL
-//     cc.protobuf.signal.MappingAction mapping_action = 1;
+//     cc.signal.MappingAction mapping_action = 1;
 //
 //     // Mapping key
 //     string mapping_key = 2;
@@ -55,7 +55,7 @@
 // service MyService
 // {
 //     ...
-//     rpc watch (cc.protobuf.signal.Filter) returns (stream MySignalMultiplexer);
+//     rpc watch (cc.signal.Filter) returns (stream MySignalMultiplexer);
 // }
 // ```
 //
@@ -67,7 +67,7 @@
 
 syntax = "proto3";
 
-package cc.protobuf.signal;
+package cc.signal;
 
 //==============================================================================
 // MappingAction

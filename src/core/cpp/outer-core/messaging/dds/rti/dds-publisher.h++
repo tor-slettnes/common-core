@@ -12,7 +12,7 @@
 #include <dds/pub/ddspub.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
-namespace cc::dds
+namespace core::dds
 {
     //==========================================================================
     // @class PubSubChannnel
@@ -88,20 +88,20 @@ namespace cc::dds
 
         template <class T>
         void publish_change(DataWriterRef<T> &writer,
-                            cc::signal::MappingAction mapping_change,
+                            core::signal::MappingAction mapping_change,
                             const T &update)
         {
             switch (mapping_change)
             {
-            case cc::signal::MAP_NONE:
+            case core::signal::MAP_NONE:
                 break;
 
-            case cc::signal::MAP_ADDITION:
-            case cc::signal::MAP_UPDATE:
+            case core::signal::MAP_ADDITION:
+            case core::signal::MAP_UPDATE:
                 this->publish<T>(writer, update);
                 break;
 
-            case cc::signal::MAP_REMOVAL:
+            case core::signal::MAP_REMOVAL:
                 logf_trace("Disposing: %s", writer->lookup_instance(update));
                 writer->dispose_instance(writer->lookup_instance(update));
                 break;
@@ -109,4 +109,4 @@ namespace cc::dds
         }
     };
 
-}  // namespace cc::dds
+}  // namespace core::dds

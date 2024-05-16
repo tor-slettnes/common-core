@@ -8,7 +8,7 @@
 #include "grpc-clientbase.h++"
 #include "logging/logging.h++"
 
-namespace cc::grpc
+namespace core::grpc
 {
     ClientBase::ClientBase(
         const std::string &full_service_name,
@@ -107,4 +107,4 @@ namespace cc::grpc
         }
         return (state == GRPC_CHANNEL_READY);
     }
-}  // namespace cc::grpc
+}  // namespace core::grpc

@@ -8,7 +8,7 @@
 #pragma once
 #include "tokenparser-base.h++"
 
-namespace cc::json
+namespace core::json
 {
     class StringParser : public TokenParser
     {
@@ -30,4 +30,4 @@ namespace cc::json
         const std::string::const_iterator end_;
         std::string::const_iterator token_start_;
     };
-}  // namespace cc::json
+}  // namespace core::json

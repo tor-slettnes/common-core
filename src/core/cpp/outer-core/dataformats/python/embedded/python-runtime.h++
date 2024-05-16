@@ -11,7 +11,7 @@
 #include "types/filesystem.h++"
 #include "types/value.h++"
 
-namespace cc::python
+namespace core::python
 {
     /// @brief Abstract provider for process invocation
     class Runtime
@@ -87,4 +87,4 @@ namespace cc::python
     };
 
     extern std::unique_ptr<Runtime> runtime;
-}  // namespace cc::python
+}  // namespace core::python

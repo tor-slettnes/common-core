@@ -8,7 +8,7 @@
 #pragma once
 #include "posix-symbols.h++"
 
-namespace cc::platform
+namespace core::platform
 {
     class LinuxSymbolsProvider : public PosixSymbolsProvider
     {
@@ -21,4 +21,4 @@ namespace cc::platform
         std::string uuid() const noexcept override;
     };
 
-}  // namespace cc::platform
+}  // namespace core::platform

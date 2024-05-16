@@ -8,7 +8,7 @@
 #pragma once
 #include "posix-path.h++"
 
-namespace cc::platform
+namespace core::platform
 {
     class QNXPathProvider : public PosixPathProvider
     {
@@ -20,4 +20,4 @@ namespace cc::platform
         fs::path exec_path() const noexcept override;
     };
 
-}  // namespace cc::platform
+}  // namespace core::platform

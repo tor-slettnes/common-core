@@ -8,7 +8,7 @@
 #include <sstream>
 
 /// Miscellaneous string manipulations
-namespace cc::str
+namespace core::str
 {
     template <class InputIt>
     inline void join(std::ostream &out,
@@ -67,4 +67,4 @@ namespace cc::str
         os << prefix << std::setfill('0') << std::setw(width) << std::hex << (val | 0);
         return os.str();
     }
-}  // namespace cc::str
+}  // namespace core::str

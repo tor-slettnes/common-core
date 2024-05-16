@@ -5,7 +5,7 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-namespace cc::signal
+namespace core::signal
 {
     //==========================================================================
     // @class DataSignal
@@ -363,4 +363,4 @@ namespace cc::signal
         return stream;
     }
 
-}  // namespace cc::signal
+}  // namespace core::signal

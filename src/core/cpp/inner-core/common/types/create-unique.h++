@@ -8,7 +8,7 @@
 #pragma once
 #include <memory>
 
-namespace cc::types
+namespace core::types
 {
     /// @class create_unique
     /// @brief Create a `unique_ptr<Class>` to a `Class` with protected constructor
@@ -55,7 +55,7 @@ namespace cc::types
 
     template <class T>
     bool equivalent(const std::unique_ptr<T> &lhs, const std::unique_ptr<T> &rhs);
-}  // namespace cc::types
+}  // namespace core::types
 
 #include "create-unique.i++"
 

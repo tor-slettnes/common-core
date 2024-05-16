@@ -16,16 +16,16 @@
 #include <map>
 #include <mutex>
 
-namespace cc::signal
+namespace core::signal
 {
     //==========================================================================
     // Types
 
     using Handle = std::string;
 
-    // Synchronized to `cc.protobuf.signal.MappingAction` in `signal.proto`.  We
-    // do not use that here, since ProtoBuf support is optional, not part of the
-    // "inner core".
+    // Synchronized to `cc.protobuf.signal.MappingAction` in `signal.proto`.
+    // We do not use that here, since ProtoBuf support is optional, not part of
+    // the "inner core".
 
     enum MappingAction
     {
@@ -416,6 +416,6 @@ namespace cc::signal
     // I/O stream support
 
     std::ostream &operator<<(std::ostream &stream, MappingAction change);
-}  // namespace cc::signal
+}  // namespace core::signal
 
 #include "signaltemplate.i++"

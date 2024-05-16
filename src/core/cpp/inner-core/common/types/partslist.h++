@@ -11,7 +11,7 @@
 #include <string>
 #include <list>
 
-namespace cc::types
+namespace core::types
 {
     //==========================================================================
     /// @class PartsList
@@ -40,4 +40,4 @@ namespace cc::types
     protected:
         void to_stream(std::ostream &stream) const override;
     };
-}  // namespace cc::types
+}  // namespace core::types

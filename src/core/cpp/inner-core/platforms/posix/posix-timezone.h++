@@ -10,7 +10,7 @@
 
 #include <mutex>
 
-namespace cc::platform
+namespace core::platform
 {
     class PosixTimeZoneProvider : public TimeZoneProvider
     {
@@ -36,4 +36,4 @@ namespace cc::platform
     private:
         std::recursive_mutex mtx;
     };
-}  // namespace cc::platform
+}  // namespace core::platform

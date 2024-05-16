@@ -11,7 +11,7 @@
 
 #include <thread>
 
-namespace cc::thread
+namespace core::thread
 {
     template <class... Args>
     std::thread supervised_thread(Args &&...args)
@@ -30,4 +30,4 @@ namespace cc::thread
             }
         });
     }
-}  // namespace cc::thread
+}  // namespace core::thread

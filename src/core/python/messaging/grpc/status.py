@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from generated.status_pb2 import Event
+from protobuf.status import Event
 
 import grpc
 import traceback

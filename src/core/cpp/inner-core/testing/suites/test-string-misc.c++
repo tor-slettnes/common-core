@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-namespace cc::str
+namespace core::str
 {
     const std::locale POSIX("C");
     const std::locale LATIN1("en_US.iso8859-1");
@@ -126,4 +126,4 @@ namespace cc::str
         EXPECT_EQ(hex(w64), "0x0000000000000042");
     }
 
-}  // namespace cc::str
+}  // namespace core::str

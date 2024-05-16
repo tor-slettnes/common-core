@@ -8,7 +8,7 @@
 #include "rest-base.h++"
 #include "string/convert.h++"
 
-namespace cc::http
+namespace core::http
 {
     std::string RESTBase::real_url(const std::string &partial_url,
                                    const std::string &scheme_option,
@@ -90,4 +90,4 @@ namespace cc::http
         return ss.str();
     }
 
-}  // namespace cc::http
+}  // namespace core::http

@@ -17,7 +17,7 @@
 
 #include <memory>
 
-namespace cc::grpc
+namespace core::grpc
 {
     //==========================================================================
     // Base
@@ -103,4 +103,4 @@ namespace cc::grpc
         }
     }
 
-}  // namespace cc::grpc
+}  // namespace core::grpc

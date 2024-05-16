@@ -33,14 +33,14 @@ namespace demo
     //==========================================================================
     /// @class Greeting
     /// @brief Data used to introduce ourselves to our peers
-    class Greeting : public cc::types::Streamable
+    class Greeting : public core::types::Streamable
     {
     public:
         Greeting(const std::string &text = {},
                  const std::string &identity = {},
                  const std::string &implementation = {},
-                 const cc::dt::TimePoint &birth = {},
-                 const cc::types::KeyValueMap &data = {});
+                 const core::dt::TimePoint &birth = {},
+                 const core::types::KeyValueMap &data = {});
 
     public:
         // Greeting &operator=(const Greeting &other) = default;
@@ -61,21 +61,21 @@ namespace demo
         std::string implementation;
 
         // Timepoint when this process was launched
-        cc::dt::TimePoint birth;
+        core::dt::TimePoint birth;
 
         // Arbitrary key/value pairs associated with the greeting
-        cc::types::KeyValueMap data;
+        core::types::KeyValueMap data;
     };
 
     //==========================================================================
     /// @class TimeData
     /// @brief Time representation from the server.
 
-    class TimeData : public cc::types::Streamable
+    class TimeData : public core::types::Streamable
     {
     public:
-        TimeData(const cc::dt::TimePoint &tp = {});
-        TimeData(const cc::dt::TimePoint &tp,
+        TimeData(const core::dt::TimePoint &tp = {});
+        TimeData(const core::dt::TimePoint &tp,
                  const std::tm &localtime,
                  const std::tm &utctime);
 
@@ -87,7 +87,7 @@ namespace demo
         void to_stream(std::ostream &stream) const override;
 
     public:
-        cc::dt::TimePoint timepoint;
+        core::dt::TimePoint timepoint;
         std::tm localtime;
         std::tm utctime;
     };

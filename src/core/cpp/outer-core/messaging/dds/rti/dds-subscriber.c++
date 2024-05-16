@@ -9,7 +9,7 @@
 #include "logging/logging.h++"
 #include "platform/symbols.h++"
 
-namespace cc::dds
+namespace core::dds
 {
     Subscriber::Subscriber(const std::string &channel_name, int domain_id)
         : Super("subscriber", channel_name, domain_id),
@@ -64,4 +64,4 @@ namespace cc::dds
         }
     }
 
-}  // namespace cc::dds
+}  // namespace core::dds

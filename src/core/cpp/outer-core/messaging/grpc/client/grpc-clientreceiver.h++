@@ -13,7 +13,7 @@
 #include <grpcpp/impl/codegen/sync_stream.h>
 #include <grpcpp/impl/codegen/client_context.h>
 
-namespace cc::grpc
+namespace core::grpc
 {
     //==========================================================================
     /// @class ClientReceiver
@@ -97,7 +97,7 @@ namespace cc::grpc
                     std::this_thread::sleep_for(2s);
                     logf_notice("Reconnecting to grpc service %r at %s",
                                 ServiceT::service_full_name(),
-                                cc::http::url_decode(cxt->peer()));
+                                core::http::url_decode(cxt->peer()));
                 }
                 this->cxt.reset();
             }
@@ -132,7 +132,7 @@ namespace cc::grpc
     class ClientSignalReceiver : public ClientReceiver<ServiceT, SignalT, RequestT>
     {
         using Super = ClientReceiver<ServiceT, SignalT, RequestT>;
-        using Signal = cc::signal::DataSignal<SignalT>;
+        using Signal = core::signal::DataSignal<SignalT>;
 
     public:
         ClientSignalReceiver(Signal *signal)
@@ -141,4 +141,4 @@ namespace cc::grpc
         }
     };
 
-}  // namespace cc::grpc
+}  // namespace core::grpc

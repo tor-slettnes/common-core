@@ -17,7 +17,7 @@
 #include <set>
 
 /// Default filesystem paths.
-namespace cc::platform
+namespace core::platform
 {
     /// @brief Abstract provider for path-related functions
     class PathProvider : public Provider
@@ -178,4 +178,4 @@ namespace cc::platform
 
     /// Global instance, populated with the "best" provider for this system.
     extern ProviderProxy<PathProvider> path;
-}  // namespace cc::platform
+}  // namespace core::platform

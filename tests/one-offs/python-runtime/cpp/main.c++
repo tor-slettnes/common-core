@@ -13,29 +13,29 @@
 
 void run_tests()
 {
-    cc::python::SimpleObject real90 =
-        cc::python::SimpleObject::pyobj_from_value(90.0);
+    core::python::SimpleObject real90 =
+        core::python::SimpleObject::pyobj_from_value(90.0);
 
-    cc::python::ContainerObject sin90 =
-        cc::python::runtime->call(
+    core::python::ContainerObject sin90 =
+        core::python::runtime->call(
             "math",
             "sin",
-            cc::python::SimpleObject::Vector({real90}));
+            core::python::SimpleObject::Vector({real90}));
 
-    cc::types::ByteVector pickle = cc::python::pickle(sin90);
+    core::types::ByteVector pickle = core::python::pickle(sin90);
 
     logf_notice("Python value=%r, pickle=%r", sin90, pickle);
 
-    cc::python::ContainerObject unpickle = cc::python::unpickle(pickle);
+    core::python::ContainerObject unpickle = core::python::unpickle(pickle);
     logf_notice("Python pickle=%r, unpickled=%r", pickle, unpickle);
 }
 
 int main(int argc, char** argv)
 {
     // Initialize paths, load settings, set up shutdown signal handlers
-    cc::application::initialize(argc, argv);
+    core::application::initialize(argc, argv);
 
-    auto options = std::make_unique<cc::argparse::CommonOptions>(false);
+    auto options = std::make_unique<core::argparse::CommonOptions>(false);
     options->apply(argc, argv);
 
     try
@@ -48,6 +48,6 @@ int main(int argc, char** argv)
     }
 
     logf_debug("Deinitializing Example application");
-    cc::application::deinitialize();
+    core::application::deinitialize();
     return 0;
 }

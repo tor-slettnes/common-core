@@ -9,7 +9,7 @@
 #include "exceptions.h++"
 #include <algorithm>
 
-namespace cc::status
+namespace core::status
 {
     //==========================================================================
     /// @class Event
@@ -315,4 +315,4 @@ namespace cc::status
                                 : false;
     }
 
-}  // namespace cc::status
+}  // namespace core::status

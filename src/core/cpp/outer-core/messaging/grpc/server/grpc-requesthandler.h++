@@ -9,7 +9,7 @@
 #include "grpc-base.h++"
 #include "protobuf-standard-types.h++"
 
-namespace cc::grpc
+namespace core::grpc
 {
     //==========================================================================
     /// @class RequestHandlerBase
@@ -75,11 +75,11 @@ namespace cc::grpc
     ///  * Include a "RequestHandler" as a base for your service class:
     ///    \code
     ///      #include "servicewrapper.h"
-    ///      class YourService : public RequestHandler<cc::yourapp::YourService>
+    ///      class YourService : public RequestHandler<core::yourapp::YourService>
     ///      {
     ///      public:
     ///          YourService (const std::string &interface)
-    ///             : RequestHandler<cc::yourapp::YourService>(interface) {}
+    ///             : RequestHandler<core::yourapp::YourService>(interface) {}
     ///          ...
     ///      };
     ///    \endcode
@@ -103,8 +103,8 @@ namespace cc::grpc
     ///  * Catch internal exceptions and return appropriate gRPC status
     ///    \code
     ///      ::grpc::Status YourService:yourmethod (::grpc::ServerContext* cxt,
-    ///                                           const cc::yourapp::SomeRequest *request,
-    ///                                           cc::yourapp::SomeResponse *reply)
+    ///                                           const core::yourapp::SomeRequest *request,
+    ///                                           core::yourapp::SomeResponse *reply)
     ///      {
     ///        try
     ///        {
@@ -157,4 +157,4 @@ namespace cc::grpc
         }
     };
 
-}  // namespace cc::grpc
+}  // namespace core::grpc

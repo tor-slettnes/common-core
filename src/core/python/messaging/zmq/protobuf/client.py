@@ -8,8 +8,8 @@
 ### Modules relative to install folder
 from .error import Error
 from ..basic.requester import Requester
-import cc.protobuf.rr
-import cc.protobuf.wellknown
+import protobuf.rr
+import protobuf.wellknown
 
 ### Third-party modules
 from google.protobuf.message import Message
@@ -63,17 +63,17 @@ class Client (Requester):
         '''Invoke a remote method using a ProtoBuf envelope, then return immediately.
         To reeive the response invoke `receive_protobuf_result()`.
         '''
-        params = cc.protobuf.rr.Parameter(serialized_proto = args.SerializeToString())
+        params = protobuf.rr.Parameter(serialized_proto = args.SerializeToString())
         self.send_invocation(method_name, params)
 
 
     def send_invocation(self,
                         method_name: str,
-                        input_param: cc.protobuf.rr.Parameter):
+                        input_param: protobuf.rr.Parameter):
 
         self.request_id += 1
 
-        req = cc.protobuf.rr.Request(request_id = self.request_id,
+        req = protobuf.rr.Request(request_id = self.request_id,
                                      client_id  = self.client_id,
                                      interface_name = self.interface_name,
                                      method_name = method_name,
@@ -81,20 +81,20 @@ class Client (Requester):
 
         self.send_request(req)
 
-    def send_request(self, request: cc.protobuf.rr.Request):
+    def send_request(self, request: protobuf.rr.Request):
         self.send_bytes(request.SerializeToString())
 
     def receive_protobuf_result(self, response_type : MessageType) -> Message:
         response_param = self.receive_response_param()
         return response_type.FromString(response_param.serialized_proto)
 
-    def receive_response_param(self) -> cc.protobuf.rr.Parameter:
+    def receive_response_param(self) -> protobuf.rr.Parameter:
         reply = self.receive_reply()
-        if reply.status.code == cc.protobuf.rr.STATUS_OK:
+        if reply.status.code == protobuf.rr.STATUS_OK:
             return reply.param
         else:
             raise Error(reply.status.code, reply.status.details) from None
 
-    def receive_reply(self) -> cc.protobuf.rr.Reply:
+    def receive_reply(self) -> protobuf.rr.Reply:
         data = self.receive_bytes()
-        return cc.protobuf.rr.Reply.FromString(data)
+        return protobuf.rr.Reply.FromString(data)

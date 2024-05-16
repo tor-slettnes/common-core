@@ -9,7 +9,7 @@
 #include "python-pickle.h++"
 #include "platform/symbols.h++"
 
-namespace cc::zmq
+namespace core::zmq
 {
     PyPickleMessageHandler::PyPickleMessageHandler(
         const std::shared_ptr<Subscriber> &subscriber,
@@ -30,4 +30,4 @@ namespace cc::zmq
         this->handle_message(object.as_value());
     }
 
-}  // namespace cc::zmq
+}  // namespace core::zmq

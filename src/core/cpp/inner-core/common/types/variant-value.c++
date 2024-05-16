@@ -12,7 +12,7 @@
 
 #include <sstream>
 
-namespace cc::types
+namespace core::types
 {
 
     Value::Value()
@@ -1016,4 +1016,4 @@ namespace cc::types
 
     const Value emptyvalue;
 
-}  // namespace cc::types
+}  // namespace core::types

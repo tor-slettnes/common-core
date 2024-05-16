@@ -31,7 +31,7 @@ int main(int argc, char** argv)
     try
     {
         // Initialize paths, load settings, set up shutdown signal handlers
-        cc::application::initialize(argc, argv);
+        core::application::initialize(argc, argv);
 
         demo::options = std::make_unique<demo::Options>();
         demo::options->apply(argc, argv);
@@ -49,7 +49,7 @@ int main(int argc, char** argv)
         if (demo::options->enable_grpc)
         {
             logf_debug("Spawning gRPC server");
-            server_threads.push_back(cc::thread::supervised_thread(
+            server_threads.push_back(core::thread::supervised_thread(
                 demo::grpc::run_grpc_service,
                 api_provider,
                 ""));
@@ -60,7 +60,7 @@ int main(int argc, char** argv)
         if (demo::options->enable_dds)
         {
             logf_debug("Spawning DDS server");
-            server_threads.push_back(cc::thread::supervised_thread(
+            server_threads.push_back(core::thread::supervised_thread(
                 demo::dds::run_dds_service,
                 api_provider,
                 demo::options->identity,
@@ -72,7 +72,7 @@ int main(int argc, char** argv)
         if (demo::options->enable_zmq)
         {
             log_debug("Spawning ZMQ server");
-            server_threads.push_back(cc::thread::supervised_thread(
+            server_threads.push_back(core::thread::supervised_thread(
                 demo::zmq::run_zmq_service,
                 api_provider,
                 ""));

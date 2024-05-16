@@ -7,7 +7,7 @@
 
 #include "variant-list.h++"
 
-namespace cc::types
+namespace core::types
 {
     void ValueList::to_stream(std::ostream &stream) const
     {
@@ -88,4 +88,4 @@ namespace cc::types
         return tvlist;
     }
 
-}  // namespace cc::types
+}  // namespace core::types

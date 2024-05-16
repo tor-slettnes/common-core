@@ -115,7 +115,7 @@ class AsyncClientInterceptor(ClientInterceptorBase,
        flag if not present.
 
      * Catches gRPC exceptions and re-raises them as `DetailedError()` instances
-       to decode custom error details (see `cc.protobuf.status.Event` in `event_types.proto`)
+       to decode custom error details (see `protobuf.status.Event` in `event_types.proto`)
 
     '''
 

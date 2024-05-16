@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <functional>
 
-namespace cc::io::proto
+namespace core::io::proto
 {
 
     template <class SignalT>
@@ -86,10 +86,10 @@ namespace cc::io::proto
         {
         }
 
-        cc::protobuf::signal::Filter signal_filter()
+        cc::signal::Filter signal_filter()
         {
             std::lock_guard lck(this->slots_mtx);
-            cc::protobuf::signal::Filter filter;
+            cc::signal::Filter filter;
             filter.set_polarity(true);
             for (const auto &[index, callback] : this->slots)
             {
@@ -126,4 +126,4 @@ namespace cc::io::proto
         std::mutex slots_mtx;
     };
 
-}  // namespace cc::io::proto
+}  // namespace core::io::proto

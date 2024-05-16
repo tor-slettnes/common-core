@@ -6,8 +6,8 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from ...protobuf.signal import SignalStore
-from ...protobuf.demo import Signal
+from protobuf.signal import SignalStore
+from protobuf.demo import Signal
 
 #===============================================================================
 # Signal store to propagate `greeting` and `time` signals for application.

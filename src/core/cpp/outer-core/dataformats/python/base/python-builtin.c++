@@ -7,7 +7,7 @@
 
 #include "python-builtin.h++"
 
-namespace cc::python
+namespace core::python
 {
     Builtin::Builtin()
         : ContainerObject(nullptr)
@@ -67,4 +67,4 @@ namespace cc::python
 
         return map;
     }
-}  // namespace cc::python
+}  // namespace core::python

@@ -15,12 +15,12 @@
 
 namespace demo::grpc
 {
-    using ClientImplBase = cc::grpc::SignalClient<cc::protobuf::demo::Demo,
-                                                    cc::protobuf::demo::Signal>;
+    using ClientImplBase = core::grpc::SignalClient<cc::demo::Demo,
+                                                    cc::demo::Signal>;
 
     class ClientImpl : public demo::API,
                        public ClientImplBase,
-                       public cc::types::enable_create_shared<ClientImpl>
+                       public core::types::enable_create_shared<ClientImpl>
     {
         using This = ClientImpl;
 

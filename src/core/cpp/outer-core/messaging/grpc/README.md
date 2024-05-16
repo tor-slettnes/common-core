@@ -3,7 +3,7 @@ C++ gRPC service utilities
 
 This contains custom additions to [gRPC](https://grpc.io/).
 
-All of these modules are implemented in the `cc::grpc::` namespace.
+All of these modules are implemented in the `core::grpc::` namespace.
 
 Directories
 -----------

@@ -16,7 +16,7 @@
 #include <functional>
 #include <unordered_set>
 
-namespace cc::io::proto
+namespace core::io::proto
 {
     //==========================================================================
     /// @brief
@@ -49,13 +49,13 @@ namespace cc::io::proto
         /// @brief
         ///    Create a new Signal message with optional mapping controls.
         static ProtoT create_signal_message(
-            cc::signal::MappingAction mapping_action = cc::signal::MAP_NONE,
+            core::signal::MappingAction mapping_action = core::signal::MAP_NONE,
             const std::string &mapping_key = {})
         {
             ProtoT msg;
-            msg.set_mapping_action(static_cast<cc::protobuf::signal::MappingAction>(mapping_action));
+            msg.set_mapping_action(static_cast<cc::signal::MappingAction>(mapping_action));
             msg.set_mapping_key(mapping_key);
             return msg;
         }
     };
-}  // namespace cc::io::proto
+}  // namespace core::io::proto

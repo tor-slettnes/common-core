@@ -18,7 +18,7 @@
 #include <string>
 #include <algorithm>
 
-namespace cc
+namespace core
 {
     namespace dt
     {
@@ -328,7 +328,7 @@ namespace cc
 
             if (std::regex_match(js_string, match, rx))
             {
-                return cc::dt::to_timepoint(
+                return core::dt::to_timepoint(
                     str::convert_to<std::int32_t>(match.str(1)),   // year
                     str::convert_to<std::uint32_t>(match.str(2)),  // month
                     str::convert_to<std::uint32_t>(match.str(3)),  // day
@@ -604,25 +604,25 @@ namespace cc
                               decimals);
         }
     }  // namespace steady
-}  // namespace cc
+}  // namespace core
 
 namespace std::chrono
 {
-    std::ostream &operator<<(std::ostream &stream, const cc::dt::TimePoint &tp)
+    std::ostream &operator<<(std::ostream &stream, const core::dt::TimePoint &tp)
     {
-        cc::dt::tp_to_stream(stream, tp);
+        core::dt::tp_to_stream(stream, tp);
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, const cc::dt::Duration &dur)
+    std::ostream &operator<<(std::ostream &stream, const core::dt::Duration &dur)
     {
-        cc::dt::dur_to_stream(stream, dur);
+        core::dt::dur_to_stream(stream, dur);
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, const cc::steady::TimePoint &stp)
+    std::ostream &operator<<(std::ostream &stream, const core::steady::TimePoint &stp)
     {
-        cc::steady::tp_to_stream(stream, stp);
+        core::steady::tp_to_stream(stream, stp);
         return stream;
     }
 

@@ -10,7 +10,7 @@
 
 #include "request_reply.pb.h"
 
-namespace cc::zmq
+namespace core::zmq
 {
     constexpr auto STATUS_FIELD_CODE = "status";
 
@@ -19,10 +19,10 @@ namespace cc::zmq
     public:
         using status::Event::Event;
 
-        ProtoBufError(const cc::protobuf::rr::StatusCode &code,
-                      const cc::status::Event &event);
+        ProtoBufError(const cc::rr::StatusCode &code,
+                      const core::status::Event &event);
 
-        cc::protobuf::rr::StatusCode status_code() const;
+        cc::rr::StatusCode status_code() const;
         status::Domain domain() const noexcept override;
         std::exception_ptr as_application_error() const override;
 
@@ -30,6 +30,6 @@ namespace cc::zmq
         void populate_fields(types::TaggedValueList *values) const noexcept override;
 
     private:
-        cc::protobuf::rr::StatusCode status_code_;
+        cc::rr::StatusCode status_code_;
     };
-}  // namespace cc::zmq
+}  // namespace core::zmq

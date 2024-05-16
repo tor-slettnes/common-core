@@ -9,7 +9,7 @@
 #include <iostream>
 #include "types/symbolmap.h++"
 
-namespace cc::status
+namespace core::status
 {
     //==========================================================================
     // @enum Flow
@@ -32,4 +32,4 @@ namespace cc::status
     std::ostream &operator<<(std::ostream &stream, Flow flow);
     std::istream &operator>>(std::istream &stream, Flow &flow);
 
-}  // namespace cc::status
+}  // namespace core::status

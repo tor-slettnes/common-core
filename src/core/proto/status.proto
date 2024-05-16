@@ -7,7 +7,7 @@
 
 syntax = "proto3";
 
-package cc.protobuf.status;
+package cc.status;
 
 import "variant.proto";
 import "google/protobuf/timestamp.proto";
@@ -43,7 +43,7 @@ message Event
     google.protobuf.Timestamp timestamp = 7;
 
     // Tag/value pairs indicating error attributes
-    variant.ValueList attributes = 8;
+    cc.variant.ValueList attributes = 8;
 
     // Description of error, possibly expanded with attribute values.
     string text = 15;

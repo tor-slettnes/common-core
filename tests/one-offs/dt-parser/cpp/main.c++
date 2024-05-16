@@ -12,8 +12,8 @@
 
 int main(int argc, char** argv)
 {
-    cc::application::initialize(argc, argv);
-    std::string format = cc::dt::JS_FORMAT;
+    core::application::initialize(argc, argv);
+    std::string format = core::dt::JS_FORMAT;
 
     if (argc >= 3)
     {
@@ -27,7 +27,7 @@ int main(int argc, char** argv)
                   << "' with format '" << format
                   << "':" << std::endl;
 
-        cc::dt::TimePoint tp = cc::dt::to_timepoint(date_string, true, format);
+        core::dt::TimePoint tp = core::dt::to_timepoint(date_string, true, format);
         std::cout << "result: "
                   << tp
                   << std::endl;
@@ -38,6 +38,6 @@ int main(int argc, char** argv)
                   << std::endl;
     }
 
-    cc::application::deinitialize();
+    core::application::deinitialize();
     return 0;
 }

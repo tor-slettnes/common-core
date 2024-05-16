@@ -9,6 +9,52 @@ import importlib, types
 
 default_suffix = '_pb2'
 
+def import_common_protos(target_scope: object,
+                         namespace: str|None = None):
+    '''Import well-known ProtoBuf defintions from Google as well as Common Core
+    shared defintions into `target_scope` (e.g., `globals()`).
+
+    If `namespace` is provided all symbols will appear there, otherwise they
+    will appear in namespaces corresponding to the `package` declaration from
+    the respective `.proto` files.
+
+    '''
+    import_wellknown_protos(target_scope, namespace)
+    import_core_protos(target_scope, namespace)
+
+
+def import_wellknown_protos (target_scope: object,
+                             namespace: str|None = None):
+    '''Import well-known .proto files into `target_scope` (e.g., `globals()`).
+
+    If `namespace` is provided all symbols will appear there, otherwise they
+    will appear in namespaces corresponding to the `package` declaration from
+    the respective `.proto` files; in this case, `google.protobuf`
+
+    '''
+    import_proto('google.protobuf.empty_pb2', target_scope, namespace)
+    import_proto('google.protobuf.wrappers_pb2', target_scope, namespace)
+    import_proto('google.protobuf.duration_pb2', target_scope, namespace)
+    import_proto('google.protobuf.timestamp_pb2', target_scope, namespace)
+    import_proto('google.protobuf.struct_pb2', target_scope, namespace)
+
+
+def import_core_protos(target_scope: object,
+                       namespace: str|None = None):
+    '''Import Common Core shared ProtoBuf definitions into `target_scope`
+    (e.g., `globals()`).
+
+    If `namespace` is provided all symbols will appear there, otherwise they
+    will appear in namespaces corresponding to the `package` declaration from
+    the respective `.proto` files (starting with `cc.`).
+    '''
+
+    import_proto('generated.variant_pb2', target_scope, namespace)
+    import_proto('generated.status_pb2', target_scope, namespace)
+    import_proto('generated.signal_pb2', target_scope, namespace)
+    import_proto('generated.request_reply_pb2', target_scope, namespace)
+
+
 def import_proto(module_name: str,
                  target_scope: object,
                  namespace: str|None = None):

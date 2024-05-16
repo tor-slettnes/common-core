@@ -11,7 +11,7 @@
 
 #include <termios.h>
 
-namespace cc::platform
+namespace core::platform
 {
     //==========================================================================
     /// @class PosixSerialPort
@@ -65,4 +65,4 @@ namespace cc::platform
             SerialPort::BaudRate speed) override;
     };
 
-}  // namespace cc::platform
+}  // namespace core::platform

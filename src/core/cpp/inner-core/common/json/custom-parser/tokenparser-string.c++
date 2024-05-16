@@ -8,7 +8,7 @@
 #include "tokenparser-string.h++"
 #include "logging/logging.h++"
 
-namespace cc::json
+namespace core::json
 {
     StringParser::StringParser(const std::string &string)
         : string_(string),
@@ -63,4 +63,4 @@ namespace cc::json
         this->token_start_ = this->it_ - 1;
     }
 
-}  // namespace cc::json
+}  // namespace core::json

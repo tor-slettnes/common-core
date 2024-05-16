@@ -8,7 +8,7 @@
 #include "zmq-pickle-messagewriter.h++"
 #include "python-pickle.h++"
 
-namespace cc::zmq
+namespace core::zmq
 {
     PyPickleMessageWriter::PyPickleMessageWriter(
         const std::shared_ptr<Publisher> &publisher,
@@ -29,4 +29,4 @@ namespace cc::zmq
         this->write(python::SimpleObject::pyobj_from_value(value));
     }
 
-}  // namespace cc::zmq
+}  // namespace core::zmq

@@ -14,7 +14,7 @@
 #include <cwchar>
 #include <utility>  // std::move()
 
-namespace cc::str
+namespace core::str
 {
     void toupper(std::string *s, const std::locale &loc)
     {
@@ -438,4 +438,4 @@ namespace cc::str
 
         return std::string(start, end - start);
     }
-}  // namespace cc::str
+}  // namespace core::str

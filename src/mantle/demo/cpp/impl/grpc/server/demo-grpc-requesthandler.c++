@@ -23,7 +23,7 @@ namespace demo::grpc
 
     ::grpc::Status RequestHandler::say_hello(
         ::grpc::ServerContext* context,
-        const ::cc::protobuf::demo::Greeting* request,
+        const ::cc::demo::Greeting* request,
         ::google::protobuf::Empty* response)
     {
         // We received a greeting from a client.  We decode and pass this on to
@@ -35,7 +35,7 @@ namespace demo::grpc
 
         try
         {
-            this->provider->say_hello(::cc::io::proto::decoded<Greeting>(*request));
+            this->provider->say_hello(::core::io::proto::decoded<Greeting>(*request));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -47,11 +47,11 @@ namespace demo::grpc
     ::grpc::Status RequestHandler::get_current_time(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::protobuf::demo::TimeData* response)
+        ::cc::demo::TimeData* response)
     {
         try
         {
-            ::cc::io::proto::encode(this->provider->get_current_time(), response);
+            ::core::io::proto::encode(this->provider->get_current_time(), response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -94,10 +94,10 @@ namespace demo::grpc
 
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext* context,
-        const cc::protobuf::signal::Filter* request,
-        ::grpc::ServerWriter<cc::protobuf::demo::Signal>* writer)
+        const cc::signal::Filter* request,
+        ::grpc::ServerWriter<cc::demo::Signal>* writer)
     {
-        return this->stream_signals<cc::protobuf::demo::Signal, SignalQueue>(context, request, writer);
+        return this->stream_signals<cc::demo::Signal, SignalQueue>(context, request, writer);
     }
 
 }  // namespace demo::grpc

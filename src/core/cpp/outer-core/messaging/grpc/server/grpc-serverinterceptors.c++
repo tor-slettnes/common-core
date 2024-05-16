@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-namespace cc::grpc
+namespace core::grpc
 {
     using ::grpc::experimental::InterceptionHookPoints;
     using ::grpc::experimental::Interceptor;
@@ -37,7 +37,7 @@ namespace cc::grpc
         }
         catch (...)
         {
-            Status status(*cc::exception::map_to_event(std::current_exception()));
+            Status status(*core::exception::map_to_event(std::current_exception()));
             log_error("Request failed: ", status);
             methods->ModifySendStatus(status);
         }
@@ -51,4 +51,4 @@ namespace cc::grpc
         return new EHInterceptor();
     }
 
-}  // namespace cc::grpc
+}  // namespace core::grpc

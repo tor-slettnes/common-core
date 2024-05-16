@@ -11,7 +11,7 @@
 
 #include <fstream>
 
-namespace cc::json
+namespace core::json
 {
     class BaseWriter
     {
@@ -50,4 +50,4 @@ namespace cc::json
     private:
         std::unique_ptr<std::ofstream> stream_;
     };
-}  // namespace cc::json
+}  // namespace core::json

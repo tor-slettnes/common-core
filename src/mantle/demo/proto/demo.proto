@@ -7,7 +7,7 @@
 
 syntax = "proto3";
 
-package cc.protobuf.demo;
+package cc.demo;
 
 import "variant.proto";
 import "signal.proto";
@@ -32,7 +32,7 @@ service Demo {
     rpc stop_ticking (google.protobuf.Empty) returns (google.protobuf.Empty);
 
     // Stream signals from the server
-    rpc watch (cc.protobuf.signal.Filter) returns (stream Signal);
+    rpc watch (cc.signal.Filter) returns (stream Signal);
 }
 
 //==============================================================================
@@ -53,7 +53,7 @@ message Greeting
     google.protobuf.Timestamp birth = 4;
 
     // Arbitrary key/value pairs associated with the greeting
-    cc.protobuf.variant.ValueList data = 5;
+    cc.variant.ValueList data = 5;
 }
 
 //==============================================================================
@@ -99,7 +99,7 @@ message Signal
     // Mapping type, one of: MAP_NONE, MAP_ADDITION, MAP_REMOVAL, MAP_UPDATE.
     // In the case of a MappingSignal (like `Greeting` below), indicates
     // whether this instance is added, updated, or removed.
-    cc.protobuf.signal.MappingAction mapping_action = 1;
+    cc.signal.MappingAction mapping_action = 1;
 
     // Mapping key for the item that was added/removed/updated.
     string mapping_key = 2;

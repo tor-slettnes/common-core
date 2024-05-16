@@ -8,7 +8,7 @@
 #pragma once
 #include "json/basewriter.h++"
 
-namespace cc::json
+namespace core::json
 {
     class CustomWriter : public BaseWriter
     {
@@ -47,4 +47,4 @@ namespace cc::json
                                        bool pretty,
                                        const std::string &indent);
     };
-}  // namespace cc::json
+}  // namespace core::json

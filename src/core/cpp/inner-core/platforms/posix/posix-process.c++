@@ -22,7 +22,7 @@
 #define CHUNKSIZE       4096
 #define ELEMENTS(array) (sizeof(array) / sizeof(array[0]))
 
-namespace cc::platform
+namespace core::platform
 {
     PosixProcessProvider::PosixProcessProvider(const std::string &name)
         : Super(name)
@@ -296,4 +296,4 @@ namespace cc::platform
         throw std::system_error(errno, std::system_category());
     }
 
-}  // namespace cc::platform
+}  // namespace core::platform

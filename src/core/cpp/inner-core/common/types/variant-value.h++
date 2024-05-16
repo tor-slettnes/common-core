@@ -10,7 +10,7 @@
 #include "types/streamable.h++"
 #include "string/convert.h++"
 
-namespace cc::types
+namespace core::types
 {
     //==========================================================================
     /// \class Value
@@ -180,7 +180,7 @@ namespace cc::types
 
     extern const Value emptyvalue;
 
-}  // namespace cc::types
+}  // namespace core::types
 
 
 #include "variant-value.i++"

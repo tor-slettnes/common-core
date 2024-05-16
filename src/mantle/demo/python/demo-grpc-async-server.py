@@ -6,9 +6,9 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from cc.demo.grpc.service import DemoService
-from cc.demo.native import NativeDemo
-from cc.messaging.grpc.server import create_async_server
+from demo.grpc.service import DemoService
+from demo.native import NativeDemo
+from messaging.grpc.server import create_async_server
 
 ### Standard Python modules
 import logging

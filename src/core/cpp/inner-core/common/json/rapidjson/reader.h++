@@ -16,7 +16,7 @@ namespace rapidjson
 
 #include <rapidjson/document.h>
 
-namespace cc::json
+namespace core::json
 {
     class RapidReader : public BaseReader
     {
@@ -39,4 +39,4 @@ namespace cc::json
         static types::ValueListRef decodeArray(const ::rapidjson::Value &jarray);
         static types::KeyValueMapRef decodeObject(const ::rapidjson::Value &jobject);
     };
-}  // namespace cc::json
+}  // namespace core::json

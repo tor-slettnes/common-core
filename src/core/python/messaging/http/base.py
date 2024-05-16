@@ -7,7 +7,7 @@
 
 ### Modules relative to install folder
 from ..common import Endpoint
-from cc.core.invocation import check_type
+from core.invocation import check_type
 
 ### Standard Python modules
 from typing import Optional

@@ -22,7 +22,7 @@
 
 using namespace std::literals::string_literals;  // ""s
 
-namespace cc::stream
+namespace core::stream
 {
     template <class Sequence>
     std::ostream &write_sequence(std::ostream &stream, const Sequence &seq)
@@ -31,7 +31,7 @@ namespace cc::stream
         std::string sep = "";
         for (const auto &item : seq)
         {
-            cc::str::format(stream, "%s%r", sep, item);
+            core::str::format(stream, "%s%r", sep, item);
             sep = ", ";
         }
         stream << "}";
@@ -45,7 +45,7 @@ namespace cc::stream
         std::string sep = "";
         for (const auto &[key, value] : map)
         {
-            cc::str::format(stream, "%s%r: %r", sep, key, value);
+            core::str::format(stream, "%s%r: %r", sep, key, value);
             sep = ", ";
         }
         stream << "}";
@@ -57,7 +57,7 @@ namespace cc::stream
     {
         if (value)
         {
-            cc::str::format(stream, "{%r}", *value);
+            core::str::format(stream, "{%r}", *value);
         }
         else
         {
@@ -65,105 +65,105 @@ namespace cc::stream
         }
         return stream;
     }
-}  // namespace cc::stream
+}  // namespace core::stream
 
 namespace std
 {
     template <class T1, class T2>
     std::ostream &operator<<(std::ostream &stream, const std::pair<T1, T2> &pair)
     {
-        cc::str::format(stream, "{%r: %r}", pair.first, pair.second);
+        core::str::format(stream, "{%r: %r}", pair.first, pair.second);
         return stream;
     }
 
     template <class T>
     std::ostream &operator<<(std::ostream &stream, const std::vector<T> &vector)
     {
-        return cc::stream::write_sequence(stream, vector);
+        return core::stream::write_sequence(stream, vector);
     }
 
     template <class T>
     std::ostream &operator<<(std::ostream &stream, const std::list<T> &list)
     {
-        return cc::stream::write_sequence(stream, list);
+        return core::stream::write_sequence(stream, list);
     }
 
     template <class T>
     std::ostream &operator<<(std::ostream &stream, const std::deque<T> &queue)
     {
-        return cc::stream::write_sequence(stream, queue);
+        return core::stream::write_sequence(stream, queue);
     }
 
     template <class K, class V>
     std::ostream &operator<<(std::ostream &stream, const std::map<K, V> &map)
     {
-        return cc::stream::write_map(stream, map);
+        return core::stream::write_map(stream, map);
     }
 
     template <class K, class V>
     std::ostream &operator<<(std::ostream &stream, const std::unordered_map<K, V> &map)
     {
-        return cc::stream::write_map(stream, map);
+        return core::stream::write_map(stream, map);
     }
 
     template <class V>
     std::ostream &operator<<(std::ostream &stream, const std::set<V> &set)
     {
-        return cc::stream::write_sequence(stream, set);
+        return core::stream::write_sequence(stream, set);
     }
 
     template <class V>
     std::ostream &operator<<(std::ostream &stream, const std::unordered_set<V> &set)
     {
-        return cc::stream::write_sequence(stream, set);
+        return core::stream::write_sequence(stream, set);
     }
 
     template <class K, class V>
     std::ostream &operator<<(std::ostream &stream, const std::multimap<K, V> &map)
     {
-        return cc::stream::write_map(stream, map);
+        return core::stream::write_map(stream, map);
     }
 
     template <class K, class V>
     std::ostream &operator<<(std::ostream &stream, const std::unordered_multimap<K, V> &map)
     {
-        return cc::stream::write_map(stream, map);
+        return core::stream::write_map(stream, map);
     }
 
     template <class V>
     std::ostream &operator<<(std::ostream &stream, const std::multiset<V> &set)
     {
-        return cc::stream::write_sequence(stream, set);
+        return core::stream::write_sequence(stream, set);
     }
 
     template <class V>
     std::ostream &operator<<(std::ostream &stream, const std::unordered_multiset<V> &set)
     {
-        return cc::stream::write_sequence(stream, set);
+        return core::stream::write_sequence(stream, set);
     }
 
     template <class V>
     std::ostream &operator<<(std::ostream &stream, const std::optional<V> &opt)
     {
-        return cc::stream::write_dereferenced(stream, opt);
+        return core::stream::write_dereferenced(stream, opt);
     }
 
     template <class V>
     std::ostream &operator<<(std::ostream &stream, const std::shared_ptr<V> &ptr)
     {
-        return cc::stream::write_dereferenced(stream, ptr);
+        return core::stream::write_dereferenced(stream, ptr);
     }
 
     template <class V>
     std::ostream &operator<<(std::ostream &stream, const std::unique_ptr<V> &ptr)
     {
-        return cc::stream::write_dereferenced(stream, ptr);
+        return core::stream::write_dereferenced(stream, ptr);
     }
 
     template <class V>
     std::ostream &operator<<(std::ostream &stream, const std::weak_ptr<V> &weakptr)
     {
-        return cc::stream::write_dereferenced(stream, weakptr.lock());
+        return core::stream::write_dereferenced(stream, weakptr.lock());
     }
 
 }  // namespace std

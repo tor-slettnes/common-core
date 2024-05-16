@@ -14,7 +14,7 @@
 #include <thread>
 #include <algorithm>
 
-namespace cc::types
+namespace core::types
 {
     //==========================================================================
     /// @enum OverflowDisposition
@@ -337,4 +337,4 @@ namespace cc::types
         std::queue<T> queue;
     };
 
-}  // namespace cc::types
+}  // namespace core::types

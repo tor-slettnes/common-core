@@ -11,9 +11,9 @@ from .requesthandler import RequestHandler
 from ..basic.responder import Responder
 
 ### Modules relative to install folder
-import cc.protobuf.rr
-import cc.protobuf.status
-import cc.protobuf.variant
+import protobuf.rr
+import protobuf.status
+import protobuf.variant
 
 ### Third-party modules
 import google.protobuf.message
@@ -37,20 +37,20 @@ class Server (Responder):
                                       for handler in request_handlers])
 
     def process_request(self, binary_request: bytes):
-        reply = cc.protobuf.rr.Reply()
+        reply = protobuf.rr.Reply()
 
         try:
-            request = cc.protobuf.rr.Request.FromString(binary_request)
+            request = protobuf.rr.Request.FromString(binary_request)
         except google.protobuf.message.DecodeError as e:
             logging.warning('ZMQ RPC server failed to decode ProtoBuf request: %s'%
                             (binary_request,))
 
-            Error(cc.protobuf.rr.STATUS_INVALID,
-                  cc.protobuf.status.Event(
+            Error(protobuf.rr.STATUS_INVALID,
+                  protobuf.status.Event(
                       text = str(e),
                       symbol = type(e).__name__,
-                      flow = cc.protobuf.status.FLOW_CANCELLED,
-                      attributes = cc.protobuf.variant.valueList(
+                      flow = protobuf.status.FLOW_CANCELLED,
+                      attributes = protobuf.variant.valueList(
                           data = binary_request
                       )
                   )
@@ -68,8 +68,8 @@ class Server (Responder):
 
 
     def process_protobuf_request(self,
-                                 request : cc.protobuf.rr.Request,
-                                 reply   : cc.protobuf.rr.Reply):
+                                 request : protobuf.rr.Request,
+                                 reply   : protobuf.rr.Reply):
 
         reply.client_id = request.client_id
         reply.request_id = request.request_id
@@ -77,12 +77,12 @@ class Server (Responder):
         try:
             handler = self.request_handlers[request.interface_name]
         except KeyError:
-            Error(cc.protobuf.rr.STATUS_INVALID,
-                  cc.protobuf.status.Event(
+            Error(protobuf.rr.STATUS_INVALID,
+                  protobuf.status.Event(
                       text = "No such RPC interface",
                       symbol = 'KeyError',
-                      flow = cc.protobuf.status.FLOW_CANCELLED,
-                      attributes = cc.protobuf.variant.valueList(
+                      flow = protobuf.status.FLOW_CANCELLED,
+                      attributes = protobuf.variant.valueList(
                           interface_name = request.interface_name,
                           available_interfaces = list(self.request_handlers.keys())
                       )

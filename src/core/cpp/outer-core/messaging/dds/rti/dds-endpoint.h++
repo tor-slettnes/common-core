@@ -12,7 +12,7 @@
 
 #include <thread>
 
-namespace cc::dds
+namespace core::dds
 {
     //==========================================================================
     /// @brief Mix-in base for publishers & subscribers
@@ -56,4 +56,4 @@ namespace cc::dds
     public:
         int domain_id_;
     };
-}  // namespace cc::dds
+}  // namespace core::dds

@@ -7,8 +7,8 @@
 
 import sys, re, socket, logging, argparse
 
-from cc.buildinfo          import PROJECT_NAME
-from cc.core.settingsstore import SettingsStore
+from buildinfo          import PROJECT_NAME
+from core.settingsstore import SettingsStore
 
 #===============================================================================
 # Base class

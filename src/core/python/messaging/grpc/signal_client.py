@@ -10,7 +10,7 @@ from .client  import Client
 from .client_reader import ThreadReader, AsyncReader
 
 ### Modules relative to install folder
-import cc.protobuf.signal
+import protobuf.signal
 
 #===============================================================================
 # Client
@@ -33,13 +33,13 @@ class SignalClient (Client):
     service MyService
     {
         ...
-        rpc watch (cc.protobuf.signal.Filter) returns (stream MySignal);
+        rpc watch (protobuf.signal.Filter) returns (stream MySignal);
     }
 
     message MySignal
     {
         // Mapping action: one of MAP_ADITION, MAP_UPDATE, MAP_REMOVAL
-        cc.protobuf.signal.MappingAction mapping_action = 1;
+        protobuf.signal.MappingAction mapping_action = 1;
 
         // Mapping key
         string mapping_key = 2;
@@ -57,7 +57,7 @@ class SignalClient (Client):
      * Pass an existing `SignalStore()` instance to `__init__()`:
 
        ```python
-       my_signal_store = cc.protobuf.signal.SignalStore(signal_type = cc.protobuf.mypackage.MySignal)
+       my_signal_store = protobuf.signal.SignalStore(signal_type = protobuf.mypackage.MySignal)
 
        class MyServiceClient (messaging.grpc.SignalClient):
            from my_service_pb2_grpc import MyServiceStub as Stub
@@ -75,18 +75,18 @@ class SignalClient (Client):
        class MyServiceClient (messaging.grpc.SignalClient):
            from my_service_pb2_grpc import MyServiceStub as Stub
 
-           signal_type = cc.protobuf.mypackage.MySignal
+           signal_type = protobuf.mypackage.MySignal
        ```
 
 
     Next, you'll need callback handlers to handle the received and re-emitted signals:
 
     ```python
-        def my_data1_simple_handler(data1: cc.protobuf.mypackage.DataType1):
+        def my_data1_simple_handler(data1: protobuf.mypackage.DataType1):
             """Handle DataType1 signals from server"""
             print("Received data1: ", data1)
 
-        def my_data2_mapping_handler(signal: cc.protobuf.mypackage.Signal):
+        def my_data2_mapping_handler(signal: protobuf.mypackage.Signal):
             """Handle DataType2 mapping signals from server"""
              print("Received DataType2:",
                    "mapping action:", signal.mapping_action,
@@ -130,7 +130,7 @@ class SignalClient (Client):
                  host: str,
                  wait_for_ready : bool = False,
                  use_asyncio : bool = False,
-                 signal_store : cc.protobuf.signal.SignalStore = None,
+                 signal_store : protobuf.signal.SignalStore = None,
                  watch_all: bool = False,
                  use_cache: bool = True,
                  **kwargs):
@@ -192,11 +192,11 @@ class SignalClient (Client):
 
     def signal_filter(self, watch_all):
         if watch_all:
-            return cc.protobuf.signal.Filter()
+            return protobuf.signal.Filter()
         else:
             indexmap   = self.signal_store.signal_fields()
             indices    = [indexmap.get(slot) for slot in self.signal_store.slots]
-            return cc.protobuf.signal.Filter(polarity=True, index=filter(None, indices))
+            return protobuf.signal.Filter(polarity=True, index=filter(None, indices))
 
 
     def start_watching(self, watch_all: bool = True):
@@ -224,5 +224,5 @@ class SignalClient (Client):
         self.reader.stop()
 
 
-    def watch(self, signal_filter : cc.protobuf.signal.Filter = cc.protobuf.signal.Filter()):
+    def watch(self, signal_filter : protobuf.signal.Filter = protobuf.signal.Filter()):
         return self.stub.watch(signal_filter)

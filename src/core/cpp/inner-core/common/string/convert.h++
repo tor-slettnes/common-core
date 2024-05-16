@@ -14,7 +14,7 @@
 
 using namespace std::literals::string_literals;  // ""s
 
-namespace cc::str
+namespace core::str
 {
     // std::string type_description(const std::type_info &ti);
     void checkstream(const std::istream &ss,
@@ -215,4 +215,4 @@ namespace cc::str
     {
         return StringConvert<T>::to_string(value);
     }
-}  // namespace cc::str
+}  // namespace core::str

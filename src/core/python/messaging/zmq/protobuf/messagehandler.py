@@ -9,7 +9,7 @@
 from ..basic import Filter, Topic, MessageHandler as BaseHandler
 
 ### Modules relative to install folder
-import cc.protobuf.wellknown
+import protobuf.wellknown
 
 
 class MessageHandler (BaseHandler):
@@ -20,10 +20,10 @@ class MessageHandler (BaseHandler):
     message_type = None
 
     def __init__(self,
-                 message_type : cc.protobuf.wellknown.MessageType|None = None):
+                 message_type : protobuf.wellknown.MessageType|None = None):
 
         self.message_type = message_type or type(self).message_type
-        assert isinstance(self.message_type, cc.protobuf.wellknown.MessageType)
+        assert isinstance(self.message_type, protobuf.wellknown.MessageType)
 
         topic = self.message_type.DESCRIPTOR.full_name
         BaseHandler.__init__(self, topic, Filter.create_from_topic(topic))
@@ -39,7 +39,7 @@ class MessageHandler (BaseHandler):
     ### Subclasses must override _one_ of the following two methods
     ### to process incoming ProtoBuf payloads
 
-    def handle_proto(self, message: cc.protobuf.wellknown.Message):
+    def handle_proto(self, message: protobuf.wellknown.Message):
         '''Process incoming ProtoBuf message.
 
         Unless overridden in subclasses this further decodes the message to a
@@ -48,7 +48,7 @@ class MessageHandler (BaseHandler):
         '''
 
         self.handle_proto_as_dict(
-            cc.protobuf.utils.decodeToDict(message, use_integers_for_enums = True))
+            protobuf.utils.decodeToDict(message, use_integers_for_enums = True))
 
 
     def handle_proto_as_dict(self, message : dict):

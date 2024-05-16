@@ -9,7 +9,7 @@
 from ..basic import Publisher, Filter, MessageWriter as BaseWriter
 
 ### Modules relative to install folder
-import cc.protobuf.wellknown
+import protobuf.wellknown
 
 
 class MessageWriter (BaseWriter):
@@ -21,22 +21,22 @@ class MessageWriter (BaseWriter):
 
     def __init__ (self,
                   publisher: Publisher,
-                  message_type: cc.protobuf.wellknown.MessageType|None = None):
+                  message_type: protobuf.wellknown.MessageType|None = None):
 
         self.message_type = message_type or type(self).message_type
-        assert isinstance(self.message_type, cc.protobuf.wellknown.MessageType)
+        assert isinstance(self.message_type, protobuf.wellknown.MessageType)
 
         topic = self.message_type.DESCRIPTOR.full_name
         BaseWriter.__init__(self, publisher, Filter.create_from_topic(topic))
 
     def write_proto(self,
-                    message : cc.protobuf.wellknown.Message):
+                    message : protobuf.wellknown.Message):
         '''Publish a ProtoBuf message over ZMQ'''
 
         self.write_bytes(message.SerializeToString())
 
     def write_dict_as_proto(self,
-                            prototype: cc.protobuf.wellknown.MessageType,
+                            prototype: protobuf.wellknown.MessageType,
                             data : dict,
                             ignore_unknown_fields: bool = False):
         '''
@@ -45,4 +45,4 @@ class MessageWriter (BaseWriter):
         '''
 
         self.write_proto(
-            cc.protobuf.wellknown.encodeFromDict(data, prototype, ignore_unknown_fields))
+            protobuf.wellknown.encodeFromDict(data, prototype, ignore_unknown_fields))

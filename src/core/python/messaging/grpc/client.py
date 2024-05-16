@@ -8,7 +8,7 @@
 ### Modules relative to install folder
 from .base import Base
 from .client_interceptor import ClientInterceptor, AsyncClientInterceptor
-from cc.core.invocation import invocation
+from core.invocation import invocation
 
 ### Third-party modules
 import grpc

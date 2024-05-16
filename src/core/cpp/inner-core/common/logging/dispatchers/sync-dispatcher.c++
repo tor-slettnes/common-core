@@ -7,7 +7,7 @@
 
 #include "sync-dispatcher.h++"
 
-namespace cc::logging
+namespace core::logging
 {
     void SyncDispatcher::submit(const types::Loggable::Ref &item)
     {
@@ -21,4 +21,4 @@ namespace cc::logging
             }
         }
     }
-}  // namespace cc::logging
+}  // namespace core::logging

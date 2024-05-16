@@ -9,18 +9,18 @@
 from .messagehandler import MessageHandler
 
 ### Modules relative to install folder
-import cc.protobuf.signal
-import cc.protobuf.wellknown
+import protobuf.signal
+import protobuf.wellknown
 
 class SignalHandler (MessageHandler):
     '''Subscribe to `Signal` messages from ZMQ publisher and re-emit locally as signals.'''
 
     def __init__(self,
-                 signal_store: cc.protobuf.signal.SignalStore):
+                 signal_store: protobuf.signal.SignalStore):
 
         MessageHandler.__init__(self, signal_store.signal_type)
         self.signal_store = signal_store
 
-    def handle_proto(self, message: cc.protobuf.wellknown.Message):
+    def handle_proto(self, message: protobuf.wellknown.Message):
         self.signal_store.emit(message)
 

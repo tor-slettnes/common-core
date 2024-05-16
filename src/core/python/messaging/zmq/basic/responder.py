@@ -7,7 +7,7 @@
 
 ### Modules relative to install folder
 from .host           import Host
-from cc.core.invocation import safe_invoke
+from core.invocation import safe_invoke
 
 ### Third-party modules
 import zmq

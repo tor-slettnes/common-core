@@ -14,7 +14,7 @@
 #include <unistd.h>  // readlink()
 #include <limits.h>  // PATH_MAX
 
-namespace cc::platform
+namespace core::platform
 {
     uint PosixPathProvider::path_max_size() const noexcept
     {
@@ -76,4 +76,4 @@ namespace cc::platform
         return name;
     }
 
-}  // namespace cc::platform
+}  // namespace core::platform

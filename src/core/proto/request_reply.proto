@@ -8,7 +8,7 @@
 
 syntax = "proto3";
 
-package cc.protobuf.rr;
+package cc.rr;
 
 import "variant.proto";
 import "status.proto";
@@ -63,7 +63,7 @@ message Parameter
     oneof param
     {
         bytes serialized_proto = 8;      // Serialized ProtoBuf message
-        variant.Value variant_value = 9; // Variant value (possibly nested)
+        cc.variant.Value variant_value = 9; // Variant value (possibly nested)
     }
 }
 
@@ -89,5 +89,5 @@ message Status
     StatusCode code = 1;
 
     /// Additional details for invalid/cancelled/failed requests
-    status.Event details = 2;
+    cc.status.Event details = 2;
 };

@@ -8,7 +8,7 @@
 #pragma once
 #include "python-containerobject.h++"
 
-namespace cc::python
+namespace core::python
 {
     //==========================================================================
     /// @brief
@@ -27,4 +27,4 @@ namespace cc::python
         ContainerObject getattr(const std::string &name) const override;
         Map attributes_as_objects() const override;
     };
-}  // namespace cc::python
+}  // namespace core::python

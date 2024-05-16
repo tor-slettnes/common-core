@@ -9,7 +9,7 @@
 #include "zmq-publisher.h++"
 #include "zmq-filter.h++"
 
-namespace cc::zmq
+namespace core::zmq
 {
     class MessageWriter
     {
@@ -32,4 +32,4 @@ namespace cc::zmq
         Filter filter_;
     };
 
-}  // namespace cc::zmq
+}  // namespace core::zmq

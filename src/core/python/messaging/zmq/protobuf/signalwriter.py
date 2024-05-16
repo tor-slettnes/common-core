@@ -7,7 +7,7 @@
 
 from .messagewriter import MessageWriter
 from ..basic import Publisher
-from cc.protobuf.signal import SignalStore
+from protobuf.signal import SignalStore
 
 class SignalWriter (MessageWriter):
     '''Capture local signals and forward to remote peers as ZMQ publications'''

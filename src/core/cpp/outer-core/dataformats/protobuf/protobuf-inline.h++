@@ -5,10 +5,10 @@
 /// @author Tor Slettnes <tor@slett.net>
 ///
 /// The purpose of this file is to allow wrapper semantics like the following
-/// around the respecitve methods ::cc::io::proto::encode(nativeobject, protobufmessage)
-///  and ::cc::io::proto::decode(protobufmessage, nativeobject):
-///   -  auto protomessage = cc::::cc::io::proto::encoded<ProtoBufType>(nativeobject);
-///   -  auto nativeobject = cc::::cc::io::proto::decoded<NativeType>(protomessage);
+/// around the respecitve methods ::core::io::proto::encode(nativeobject, protobufmessage)
+///  and ::core::io::proto::decode(protobufmessage, nativeobject):
+///   -  auto protomessage = core::::core::io::proto::encoded<ProtoBufType>(nativeobject);
+///   -  auto nativeobject = core::::core::io::proto::decoded<NativeType>(protomessage);
 /// Due to an apparent bug in the GNU C++ compiler, these function templates
 /// must be declared AFTER the corresponding basic functions, as they do not
 /// seem to be privy to overload resolution for methods declared in subsequently
@@ -20,7 +20,7 @@
 #include <google/protobuf/message.h>
 #include <vector>
 
-namespace cc::io::proto
+namespace core::io::proto
 {
     //==========================================================================
     // Decode repeated fields
@@ -99,4 +99,4 @@ namespace cc::io::proto
         return ref;
     }
 
-}  // namespace cc::io::proto
+}  // namespace core::io::proto

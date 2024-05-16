@@ -8,7 +8,7 @@
 #pragma once
 #include "tokenparser-base.h++"
 
-namespace cc::json
+namespace core::json
 {
     class StreamParser : public TokenParser
     {
@@ -32,4 +32,4 @@ namespace cc::json
         std::size_t token_size_;
         std::size_t token_capacity_;
     };
-}  // namespace cc::json
+}  // namespace core::json

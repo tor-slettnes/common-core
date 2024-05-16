@@ -8,7 +8,7 @@
 #include "init.h++"
 #include "logging/logging.h++"
 
-namespace cc::platform
+namespace core::platform
 {
     //==========================================================================
     // Task
@@ -69,6 +69,6 @@ namespace cc::platform
     // TaskSet init_tasks;
     // TaskSet exit_tasks;
 
-    cc::signal::VoidSignal signal_startup("signal_startup");
-    cc::signal::VoidSignal signal_shutdown("signal_shutdown");
-}  // namespace cc::platform
+    core::signal::VoidSignal signal_startup("signal_startup");
+    core::signal::VoidSignal signal_shutdown("signal_shutdown");
+}  // namespace core::platform

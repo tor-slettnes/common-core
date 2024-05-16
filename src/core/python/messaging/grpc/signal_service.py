@@ -9,7 +9,7 @@
 from .service import Service
 
 ### Modules relative to install dir
-import cc.protobuf.signal
+import protobuf.signal
 
 ### Third-party modules
 import google.protobuf.message
@@ -29,12 +29,12 @@ class SignalService (Service):
     '''
 
     def __init__ (self,
-                  signal_store   : cc.protobuf.signal.SignalStore,
+                  signal_store   : protobuf.signal.SignalStore,
                   bind_address   : str = "",
                   max_queue_size : Optional[int] = 256):
         '''
         param[in] signal_store
-           An instance of `cc.protobuf.signal.SignalStore`, from which
+           An instance of `protobuf.signal.SignalStore`, from which
            we receive signals.
 
         param[in] bind_address
@@ -51,7 +51,7 @@ class SignalService (Service):
 
 
     def watch(self,
-              request: cc.protobuf.signal.Filter,
+              request: protobuf.signal.Filter,
               context: grpc.ServicerContext
               ) -> Generator[None, google.protobuf.message.Message, None]:
         '''
@@ -77,7 +77,7 @@ class SignalService (Service):
             self.signal_store.disconnect_signal(signal_name)
 
 
-    def signal_list(self, signal_filter: cc.protobuf.signal.Filter):
+    def signal_list(self, signal_filter: protobuf.signal.Filter):
         polarity = bool(signal_filter.polarity)
         requested = set(signal_filter.indices)
 

@@ -11,7 +11,7 @@
 #include "streamable.h++"
 #include "types/create-shared.h++"
 
-namespace cc::types
+namespace core::types
 {
     class ValueList : public std::deque<Value>,
                       public Streamable,
@@ -48,4 +48,4 @@ namespace cc::types
         }
     };
 
-}  // namespace cc::types
+}  // namespace core::types

@@ -11,7 +11,7 @@
 
 #include <grpcpp/impl/codegen/client_context.h>
 
-namespace cc::grpc
+namespace core::grpc
 {
     //==========================================================================
     /// @class ClientBase
@@ -68,7 +68,7 @@ namespace cc::grpc
         /// @param[in] status
         ///     gRPC status code to check
         ///
-        /// @throw cc::grpc::ServiceError
+        /// @throw core::grpc::ServiceError
         ///     An error response was received from the server.
         ///
         void check(const ::grpc::Status &status) const;
@@ -82,4 +82,4 @@ namespace cc::grpc
         std::shared_ptr<::grpc::ChannelInterface> channel;
     };
 
-}  // namespace cc::grpc
+}  // namespace core::grpc

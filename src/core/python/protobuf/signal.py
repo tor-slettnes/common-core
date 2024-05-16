@@ -12,8 +12,8 @@ from generated.signal_pb2 import Filter, MappingAction, \
 ### Modules relative to install path
 from .variant import Value, ValueList
 from .wellknown import Message, MessageType
-from ..core.enumeration import Enumeration
-from ..core.invocation import safe_invoke
+from core.enumeration import Enumeration
+from core.invocation import safe_invoke
 
 ### Standard Python modules
 from typing import Optional, Callable, Mapping, Union
@@ -51,7 +51,7 @@ class SignalStore:
 
     This message would normally be defined in your `.proto` file, containing the
     events that you want to make available as signals to your consumers.  (See
-    also `cc.messaging.grpc.signal_client.SignalClient()` for details on
+    also `messaging.grpc.signal_client.SignalClient()` for details on
     propagating these signals over gRPC.)
 
     To connect to such a signal to a callback handler ("slot"), use the
@@ -71,7 +71,7 @@ class SignalStore:
     message Signal
     {
         // Mapping action: one of MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL
-        cc.protobuf.signal.MappingAction mapping_action = 1;
+        protobuf.signal.MappingAction mapping_action = 1;
 
         // Mapping key
         string mapping_key = 2;

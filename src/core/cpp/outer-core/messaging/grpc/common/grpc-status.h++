@@ -16,7 +16,7 @@
 // System headers
 #include <grpc++/grpc++.h>
 
-namespace cc::grpc
+namespace core::grpc
 {
     //==========================================================================
     /// @class Status
@@ -56,8 +56,8 @@ namespace cc::grpc
         /// @brief
         ///     Constructor with an existing Details input
         /// @param[in] details
-        ///     Already-constructed cc::protobuf::status::Event ProtoBuf container
-        Status(const cc::protobuf::status::Event &details);
+        ///     Already-constructed cc::status::Event ProtoBuf container
+        Status(const cc::status::Event &details);
 
         /// @brief
         ///     Constructor with an existing Details input
@@ -66,10 +66,10 @@ namespace cc::grpc
         /// @param[in] text
         ///     Human readable text.
         /// @param[in] details
-        ///     Already-constructed cc::protobuf::status::Event ProtoBuf container
+        ///     Already-constructed cc::status::Event ProtoBuf container
         Status(::grpc::StatusCode status_code,
                const std::string &text,
-               const cc::protobuf::status::Event &details);
+               const cc::status::Event &details);
 
         /// @brief
         ///     Constructor from an Error instance with explicit status code
@@ -133,8 +133,8 @@ namespace cc::grpc
         /// @brief
         ///     Get the details payload of this status instance.
         /// @return
-        ///     Details as a cc::protobuf::status::Event instance.
-        cc::protobuf::status::Event details() const noexcept;
+        ///     Details as a cc::status::Event instance.
+        cc::status::Event details() const noexcept;
 
         /// @brief
         ///     Throw an appropriate error if status is not OK
@@ -153,4 +153,4 @@ namespace cc::grpc
         static ::grpc::StatusCode code_from_event(const status::Event &event) noexcept;
         static ::grpc::StatusCode code_from_errno(int code) noexcept;
     };
-}  // namespace cc::grpc
+}  // namespace core::grpc

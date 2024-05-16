@@ -8,7 +8,7 @@
 #pragma once
 #include <memory>
 
-namespace cc::types
+namespace core::types
 {
     //==========================================================================
     // @fn create_unique
@@ -47,4 +47,4 @@ namespace cc::types
                : *lhs == *rhs             ? true   // object contents are equal
                                           : false;             // none of the above
     }
-}  // namespace cc::types
+}  // namespace core::types

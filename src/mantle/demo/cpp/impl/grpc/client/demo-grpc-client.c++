@@ -24,19 +24,19 @@ namespace demo::grpc
         // process.
 
         this->add_handler(
-            cc::protobuf::demo::Signal::kSignalGreeting,
-            [&](const cc::protobuf::demo::Signal &signal) {
+            cc::demo::Signal::kSignalGreeting,
+            [&](const cc::demo::Signal &signal) {
                 signal_greeting.emit(
-                    static_cast<cc::signal::MappingAction>(signal.mapping_action()),
+                    static_cast<core::signal::MappingAction>(signal.mapping_action()),
                     signal.mapping_key(),
-                    ::cc::io::proto::decoded<Greeting>(signal.signal_greeting()));
+                    ::core::io::proto::decoded<Greeting>(signal.signal_greeting()));
             });
 
         this->add_handler(
-            cc::protobuf::demo::Signal::kSignalTime,
-            [](const cc::protobuf::demo::Signal &signal) {
+            cc::demo::Signal::kSignalTime,
+            [](const cc::demo::Signal &signal) {
                 signal_time.emit(
-                    ::cc::io::proto::decoded<TimeData>(signal.signal_time()));
+                    ::core::io::proto::decoded<TimeData>(signal.signal_time()));
             });
     }
 
@@ -44,12 +44,12 @@ namespace demo::grpc
     {
         this->call_check(
             &Stub::say_hello,
-            ::cc::io::proto::encoded<cc::protobuf::demo::Greeting>(greeting));
+            ::core::io::proto::encoded<cc::demo::Greeting>(greeting));
     }
 
     TimeData ClientImpl::get_current_time()
     {
-        return ::cc::io::proto::decoded<TimeData>(
+        return ::core::io::proto::decoded<TimeData>(
             this->call_check(&Stub::get_current_time));
     }
 

@@ -14,16 +14,16 @@
 #include "chrono/date-time.h++"
 #include "status/exceptions.h++"
 
-namespace cc::zmq
+namespace core::zmq
 {
-    ProtoBufError::ProtoBufError(const cc::protobuf::rr::StatusCode &code,
-                                 const cc::status::Event &event)
+    ProtoBufError::ProtoBufError(const cc::rr::StatusCode &code,
+                                 const core::status::Event &event)
         : Event(event),
           status_code_(code)
     {
     }
 
-    cc::protobuf::rr::StatusCode ProtoBufError::status_code() const
+    cc::rr::StatusCode ProtoBufError::status_code() const
     {
         return this->status_code_;
     }
@@ -48,17 +48,17 @@ namespace cc::zmq
     {
         switch (this->status_code())
         {
-        case cc::protobuf::rr::StatusCode::STATUS_OK:
-        case cc::protobuf::rr::StatusCode::STATUS_ACCEPTED:
+        case cc::rr::StatusCode::STATUS_OK:
+        case cc::rr::StatusCode::STATUS_ACCEPTED:
             return {};
 
-        case cc::protobuf::rr::StatusCode::STATUS_INVALID:
+        case cc::rr::StatusCode::STATUS_INVALID:
             return std::make_exception_ptr<exception::InvalidArgument>(*this);
 
-        case cc::protobuf::rr::StatusCode::STATUS_CANCELLED:
+        case cc::rr::StatusCode::STATUS_CANCELLED:
             return std::make_exception_ptr<exception::Cancelled>(*this);
 
-        case cc::protobuf::rr::StatusCode::STATUS_FAILED:
+        case cc::rr::StatusCode::STATUS_FAILED:
             return std::make_exception_ptr<exception::RuntimeError>(*this);
 
         default:
@@ -66,4 +66,4 @@ namespace cc::zmq
         }
     }
 
-}  // namespace cc::zmq
+}  // namespace core::zmq

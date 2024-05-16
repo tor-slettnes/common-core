@@ -15,7 +15,7 @@
 #include "logging/logging.h++"
 #include "chrono/date-time.h++"
 
-namespace cc::grpc
+namespace core::grpc
 {
 
     //==========================================================================
@@ -27,13 +27,13 @@ namespace cc::grpc
     ///  * Include "ClientWrapper" as a base for your stub class:
     ///    ```c++
     ///      #include "servicewrapper.h"
-    ///      class YourClient : [...,] public ClientWrapper<cc::yourapp::YourService>
+    ///      class YourClient : [...,] public ClientWrapper<core::yourapp::YourService>
     ///      {
     ///      public:
     ///          YourClient (const std::string &identity,
     ///                      const std::string &serverAddress)
     ///              : ...,
-    ///                ClientWrapper<cc::yourapp::YourService>(serverAddress),
+    ///                ClientWrapper<core::yourapp::YourService>(serverAddress),
     ///                ...
     ///              {}
     ///      }
@@ -50,8 +50,8 @@ namespace cc::grpc
     ///      void YourClient:yourmethod (...)
     ///      {
     ///          grpc::ClientContext cxt;
-    ///          cc::yourapp::SomeRequest request = ...;
-    ///          cc::yourapp::SomeResponse reply;
+    ///          core::yourapp::SomeRequest request = ...;
+    ///          core::yourapp::SomeResponse reply;
     ///          ...
     ///          grpc::Status status = this->stub->yourcall(&cxt, request, &reply);
     ///          ...
@@ -166,7 +166,7 @@ namespace cc::grpc
         ///     Wait for gRPC service to become ready instead of failing.
         /// @return
         ///     Protobuf response message
-        /// @throw cc::grpc::ServiceError
+        /// @throw core::grpc::ServiceError
         ///     Non-OK gRPC status code
 
         template <class ResponseT, class RequestT = ::google::protobuf::Empty>
@@ -195,4 +195,4 @@ namespace cc::grpc
         std::unique_ptr<Stub> stub;
     };
 
-}  // namespace cc::grpc
+}  // namespace core::grpc

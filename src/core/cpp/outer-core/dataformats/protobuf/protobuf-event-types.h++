@@ -16,30 +16,30 @@
 /// ("decode...()") "common" ProtoBuf messages (including those defined in
 /// "common_types.proto").
 
-namespace cc::io::proto
+namespace core::io::proto
 {
     //==========================================================================
-    // status::Domain encoding to/decoding from cc::protobuf::status::Domain
+    // status::Domain encoding to/decoding from cc::status::Domain
 
-    void encode(cc::status::Domain domain, cc::protobuf::status::Domain *encoded) noexcept;
-    void decode(cc::protobuf::status::Domain domain, cc::status::Domain *decoded) noexcept;
-
-    //==========================================================================
-    // cc::status::Level encoding to/decoding from cc::protobuf::status::Level
-
-    void encode(cc::status::Level level, cc::protobuf::status::Level *encoded) noexcept;
-    void decode(cc::protobuf::status::Level level, cc::status::Level *decoded) noexcept;
+    void encode(core::status::Domain domain, cc::status::Domain *encoded) noexcept;
+    void decode(cc::status::Domain domain, core::status::Domain *decoded) noexcept;
 
     //==========================================================================
-    // cc::status::Level encoding to/decoding from cc::protobuf::status::Level
+    // core::status::Level encoding to/decoding from cc::status::Level
 
-    void encode(cc::status::Flow flow, cc::protobuf::status::Flow *encoded) noexcept;
-    void decode(cc::protobuf::status::Flow flow, cc::status::Flow *decoded) noexcept;
+    void encode(core::status::Level level, cc::status::Level *encoded) noexcept;
+    void decode(cc::status::Level level, core::status::Level *decoded) noexcept;
 
     //==========================================================================
-    // cc::status::Event encoding to/decoding from cc::protobuf::status::::EventData
+    // core::status::Level encoding to/decoding from cc::status::Level
 
-    void encode(const cc::status::Event &event, cc::protobuf::status::Event *msg) noexcept;
-    void decode(const cc::protobuf::status::Event &msg, cc::status::Event *event) noexcept;
+    void encode(core::status::Flow flow, cc::status::Flow *encoded) noexcept;
+    void decode(cc::status::Flow flow, core::status::Flow *decoded) noexcept;
 
-}  // namespace cc::io::proto
+    //==========================================================================
+    // core::status::Event encoding to/decoding from cc::status::::EventData
+
+    void encode(const core::status::Event &event, cc::status::Event *msg) noexcept;
+    void decode(const cc::status::Event &msg, core::status::Event *event) noexcept;
+
+}  // namespace core::io::proto

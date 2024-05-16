@@ -5,9 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
-from .import_proto import import_proto
-
 ### Symbols from `google.protobuf` package
 from google.protobuf.text_format import MessageToString
 from google.protobuf.json_format import MessageToDict
@@ -32,16 +29,6 @@ from google.protobuf.struct_pb2 import Value, ListValue, Struct
 ### Standard Python modules
 from time import struct_time, mktime
 from datetime import datetime
-
-def import_wellknown_protos (target_scope: object):
-    '''Import well-known .proto files. Note that these will appear within the
-    `google.protobuf` namespace within the target scope (e.g., `globals()`).
-    '''
-    import_proto('google.protobuf.empty_pb2', target_scope)
-    import_proto('google.protobuf.wrappers_pb2', target_scope)
-    import_proto('google.protobuf.duration_pb2', target_scope)
-    import_proto('google.protobuf.timestamp_pb2', target_scope)
-    import_proto('google.protobuf.struct_pb2', target_scope)
 
 def decodeTimestamp(prototime: Timestamp) -> float:
     '''Convert a ProtoBuf `Timestamp` value as an Python timestamp (seconds

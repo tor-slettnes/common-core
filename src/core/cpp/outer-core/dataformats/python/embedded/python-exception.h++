@@ -10,12 +10,12 @@
 #include "status/exception.h++"
 #include "types/value.h++"
 
-namespace cc::python
+namespace core::python
 {
-    class Exception : public cc::exception::Exception<std::runtime_error>
+    class Exception : public core::exception::Exception<std::runtime_error>
     {
         using This = Exception;
-        using Super = cc::exception::Exception<std::runtime_error>;
+        using Super = core::exception::Exception<std::runtime_error>;
 
     public:
         // Exception(PyObject *exc, bool borrowed = false);
@@ -25,4 +25,4 @@ namespace cc::python
         std::string text() const noexcept override;
         types::ValueList args() const noexcept;
     };
-}  // namespace cc::python
+}  // namespace core::python

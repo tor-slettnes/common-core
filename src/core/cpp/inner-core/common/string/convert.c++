@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <string>
 
-namespace cc::str
+namespace core::str
 {
     void checkstream(const std::istream &is,
                      const std::string_view &s,
@@ -23,7 +23,7 @@ namespace cc::str
         {
             throw std::invalid_argument(
                 str::format("Failed to convert string literal to %s: %r",
-                            cc::platform::symbols->cpp_demangle(ti.name(), false),
+                            core::platform::symbols->cpp_demangle(ti.name(), false),
                             s));
         }
     }
@@ -85,4 +85,4 @@ namespace cc::str
         return value ? "true" : "false";
     }
 
-}  // namespace cc::str
+}  // namespace core::str

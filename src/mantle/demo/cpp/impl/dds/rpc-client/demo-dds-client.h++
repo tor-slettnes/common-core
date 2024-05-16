@@ -26,8 +26,8 @@ namespace demo::dds
 
     class ClientImpl
         : public API,
-          public cc::dds::Client_Wrapper<CC::Demo::DemoServiceClient>,
-          public cc::types::enable_create_shared<ClientImpl>
+          public core::dds::Client_Wrapper<CC::Demo::DemoServiceClient>,
+          public core::types::enable_create_shared<ClientImpl>
     {
         // Convencience alias
         using This = ClientImpl;

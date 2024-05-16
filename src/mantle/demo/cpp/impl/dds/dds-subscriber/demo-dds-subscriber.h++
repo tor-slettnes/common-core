@@ -20,22 +20,22 @@ namespace demo::dds
     /// Received messages are re-emitted locally via
     /// @sa demo::signal_time and @sa demo::signal_greeting.
 
-    class Subscriber : public cc::dds::Subscriber,
-                       public cc::types::enable_create_shared<Subscriber>
+    class Subscriber : public core::dds::Subscriber,
+                       public core::types::enable_create_shared<Subscriber>
     {
         using This = Subscriber;
-        using Super = cc::dds::Subscriber;
+        using Super = core::dds::Subscriber;
 
     protected:
         Subscriber(const std::string &channel_name, int domain_id);
 
     private:
         static void on_time_update(
-            cc::signal::MappingAction mapping_action,
+            core::signal::MappingAction mapping_action,
             const CC::Demo::TimeData &time_data);
 
         static void on_greeting_update(
-            cc::signal::MappingAction mapping_action,
+            core::signal::MappingAction mapping_action,
             const CC::Demo::Greeting &greeting);
 
     private:

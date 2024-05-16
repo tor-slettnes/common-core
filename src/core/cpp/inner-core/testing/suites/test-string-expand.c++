@@ -10,7 +10,7 @@
 
 #include <gtest/gtest.h>
 
-namespace cc::str
+namespace core::str
 {
     TEST(StringTest, Expand)
     {
@@ -40,4 +40,4 @@ namespace cc::str
 
         EXPECT_EQ(expanded, expected);
     }
-}  // namespace cc::str
+}  // namespace core::str

@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <cstddef>
 
-namespace cc::types
+namespace core::types
 {
     static const char pad_char = '=';
 
@@ -236,4 +236,4 @@ namespace cc::types
         return decoded;
     }
 
-}  // namespace cc::types
+}  // namespace core::types

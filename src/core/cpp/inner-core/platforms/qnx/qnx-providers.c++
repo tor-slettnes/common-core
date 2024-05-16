@@ -9,7 +9,7 @@
 #include "qnx-symbols.h++"
 #include "qnx-path.h++"
 
-namespace cc::platform
+namespace core::platform
 {
     void register_qnx_providers(const std::string &exec_name)
     {
@@ -32,4 +32,4 @@ namespace cc::platform
         unregister_qnx_providers();
         unregister_posix_providers();
     }
-}  // namespace cc::platform
+}  // namespace core::platform

@@ -16,7 +16,7 @@
 #include "settings/settingsstore.h++"
 #include <grpc++/grpc++.h>
 
-namespace cc::grpc
+namespace core::grpc
 {
     define_log_scope("grpc");
 
@@ -105,4 +105,4 @@ namespace cc::grpc
         const std::string full_service_name_;
     };
 
-}  // namespace cc::grpc
+}  // namespace core::grpc

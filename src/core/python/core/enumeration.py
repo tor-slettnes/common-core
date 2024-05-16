@@ -28,7 +28,7 @@ class Enumeration (dict):
 
     Example:
     ```
-    >>> from cc.core.enumeration import Enumeration
+    >>> from core.enumeration import Enumeration
     >>> my_enum = Enumeration({"ONE":1, "TWO":2})
     >>> my_enum
     {1:ONE, 2:TWO}

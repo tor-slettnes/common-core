@@ -20,7 +20,7 @@
 
 #include <functional>
 
-namespace cc::grpc
+namespace core::grpc
 {
     //==========================================================================
     /// @class SignalClient<ServiceT, SignalT>
@@ -57,11 +57,11 @@ namespace cc::grpc
 
     template <class ServiceT, class SignalT>
     class SignalClient : public ClientWrapper<ServiceT>,
-                         public ::cc::io::proto::SignalReceiver<SignalT>
+                         public ::core::io::proto::SignalReceiver<SignalT>
     {
         using This = SignalClient<ServiceT, SignalT>;
         using Super = ClientWrapper<ServiceT>;
-        using SignalReceiver = ::cc::io::proto::SignalReceiver<SignalT>;
+        using SignalReceiver = ::core::io::proto::SignalReceiver<SignalT>;
 
     protected:
         using SignalReader = std::unique_ptr<::grpc::ClientReader<SignalT>>;
@@ -186,8 +186,8 @@ namespace cc::grpc
         steady::TimePoint watch_start;
         std::thread watch_thread;
         std::shared_ptr<::grpc::ClientContext> watcher_context;
-        ClientReceiver<ServiceT, SignalT, cc::protobuf::signal::Filter> receiver;
+        ClientReceiver<ServiceT, SignalT, cc::signal::Filter> receiver;
         types::BinaryEvent completion_event;
     };
 
-}  // namespace cc::grpc
+}  // namespace core::grpc

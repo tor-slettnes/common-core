@@ -8,6 +8,7 @@
 import re
 import typing
 import sys
+import importlib
 
 TOKENS = (BACKSLASH, SUBEXPRESSION, SUB_NESTED, SUB_END) = \
          ('space', 'subexpression', 'sub_nested', 'sub_end')
@@ -403,7 +404,7 @@ class Expander (object):
         localmap = {}
 
         for modulename in imports:
-            m = __import__(modulename)
+            m = importlib.import_module(modulename)
             localmap.update(m.__dict__)
 
         localmap.update(substitutions)

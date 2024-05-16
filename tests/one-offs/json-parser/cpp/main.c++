@@ -13,16 +13,16 @@
 
 int main(int argc, char** argv)
 {
-    cc::application::initialize(argc, argv);
+    core::application::initialize(argc, argv);
 
     if (argc >= 2)
     {
         std::string json_string(argv[1]);
         std::cout << "parsing input: '" << json_string << "'" << std::endl;
-        cc::types::Value value = cc::json::Reader().decoded(json_string);
+        core::types::Value value = core::json::Reader().decoded(json_string);
         std::cout << "parsed: " << value << std::endl;
 
-        std::string reconstructed = cc::json::Writer().encoded(value, true);
+        std::string reconstructed = core::json::Writer().encoded(value, true);
         std::cout << "reconstructed:" << reconstructed << std::endl;
     }
     else

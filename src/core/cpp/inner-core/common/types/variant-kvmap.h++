@@ -10,7 +10,7 @@
 #include "types/streamable.h++"
 #include "types/create-shared.h++"
 
-namespace cc::types
+namespace core::types
 {
     class KeyValueMap : public std::map<Key, Value>,
                         public Streamable,
@@ -110,4 +110,4 @@ namespace cc::types
         void to_stream(std::ostream &stream) const override;
     };
 
-}  // namespace cc::types
+}  // namespace core::types

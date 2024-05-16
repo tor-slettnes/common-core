@@ -13,7 +13,7 @@
 
 #include <string>
 
-namespace cc::platform
+namespace core::platform
 {
     class WindowsServiceProvider : public SystemServiceProvider
     {
@@ -46,4 +46,4 @@ namespace cc::platform
         static SERVICE_STATUS service_status;
         static SERVICE_STATUS_HANDLE service_status_handle;
     };
-}  // namespace cc::platform
+}  // namespace core::platform

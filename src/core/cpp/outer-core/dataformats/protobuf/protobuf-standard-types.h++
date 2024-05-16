@@ -23,7 +23,7 @@
 /// ("decode...()") "common" ProtoBuf messages (including those defined in
 /// "common_types.proto").
 
-namespace cc::io::proto
+namespace core::io::proto
 {
     using google::protobuf::BoolValue;
     using google::protobuf::BytesValue;
@@ -98,65 +98,65 @@ namespace cc::io::proto
     void decode(const google::protobuf::BoolValue &msg,
                 bool *b) noexcept;
 
-    void encode(const cc::types::Bytes &b,
+    void encode(const core::types::Bytes &b,
                 google::protobuf::BytesValue *msg) noexcept;
 
     void decode(const google::protobuf::BytesValue &msg,
-               cc::types::Bytes *b) noexcept;
+               core::types::Bytes *b) noexcept;
 
     //==========================================================================
     // Timestamp encoding/decoding
 
     /// \brief
-    ///     Encodecc::dt::TimePoint (a.k.a. std::chrono::system_clock::time_point)
+    ///     Encodecore::dt::TimePoint (a.k.a. std::chrono::system_clock::time_point)
     ///     to Google Protobuf Timestamp message.
 
-    void encode(const cc::dt::TimePoint &tp,
+    void encode(const core::dt::TimePoint &tp,
                 google::protobuf::Timestamp *ts) noexcept;
 
     void decode(const google::protobuf::Timestamp &ts,
-               cc::dt::TimePoint *tp) noexcept;
+               core::dt::TimePoint *tp) noexcept;
 
     //==========================================================================
     // Duration encoding/decoding
 
-    void encode(const cc::dt::Duration &duration,
+    void encode(const core::dt::Duration &duration,
                 google::protobuf::Duration *msg) noexcept;
 
     void decode(const google::protobuf::Duration &msg,
-               cc::dt::Duration *duration) noexcept;
+               core::dt::Duration *duration) noexcept;
 
     //==========================================================================
     // Google variant value encoding/decoding
 
-    void encode(const cc::types::Value &value,
+    void encode(const core::types::Value &value,
                 google::protobuf::Value *msg) noexcept;
 
     void decode(const google::protobuf::Value &msg,
-               cc::types::Value *value) noexcept;
+               core::types::Value *value) noexcept;
 
     //==========================================================================
     // Google variant struct encoding/decoding
 
-    void encode(const cc::types::KeyValueMap &kvmap,
+    void encode(const core::types::KeyValueMap &kvmap,
                 google::protobuf::Struct *msg) noexcept;
 
     void decode(const google::protobuf::Struct &msg,
-               cc::types::KeyValueMap *kvmap) noexcept;
+               core::types::KeyValueMap *kvmap) noexcept;
 
-    void encode(const cc::types::TaggedValueList &tvlist,
+    void encode(const core::types::TaggedValueList &tvlist,
                 google::protobuf::Struct *msg) noexcept;
 
     void decode(const google::protobuf::Struct &msg,
-               cc::types::TaggedValueList *tvlist) noexcept;
+               core::types::TaggedValueList *tvlist) noexcept;
 
     //==========================================================================
     // Google variant list encoding/decoding
 
-    void encode(const cc::types::ValueList &list,
+    void encode(const core::types::ValueList &list,
                 google::protobuf::ListValue *msg) noexcept;
 
     void decode(const google::protobuf::ListValue &msg,
-                cc::types::ValueList *list) noexcept;
+                core::types::ValueList *list) noexcept;
 
-}  // namespace cc::io::proto
+}  // namespace core::io::proto

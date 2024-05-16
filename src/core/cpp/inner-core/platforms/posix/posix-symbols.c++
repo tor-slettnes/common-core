@@ -10,7 +10,7 @@
 
 #include <cxxabi.h>
 
-namespace cc::platform
+namespace core::platform
 {
     PosixSymbolsProvider::PosixSymbolsProvider(const std::string &name)
         : Super(name)
@@ -33,4 +33,4 @@ namespace cc::platform
         }
     };
 
-}  // namespace cc::platform
+}  // namespace core::platform

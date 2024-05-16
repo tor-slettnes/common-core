@@ -8,9 +8,6 @@
 ### Package component
 set(PKG_COMPONENT "demo-python")
 
-### Python module
-set(MODULE cc)
-
 ### Modules to be installed as programs, with execute permissionss
 set(PROGRAMS
   demo-grpc-server.py
@@ -28,7 +25,6 @@ set(DIRECTORIES
 ### Common recipe
 BuildPython(
   PROGRAMS ${PROGRAMS}
-  MODULE ${MODULE}
   DIRECTORIES ${DIRECTORIES}
   COMPONENT ${PKG_COMPONENT}
 )

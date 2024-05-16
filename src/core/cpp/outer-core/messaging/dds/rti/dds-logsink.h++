@@ -11,11 +11,11 @@
 #include "logging/sinks/messagesink.h++"
 #include "types/create-shared.h++"
 
-namespace cc::dds
+namespace core::dds
 {
     class DDSLogger : public logging::MessageSink,
                       public Publisher,
-                      public cc::types::enable_create_shared<DDSLogger>
+                      public core::types::enable_create_shared<DDSLogger>
     {
         using This = DDSLogger;
         using Super = logging::MessageSink;
@@ -32,4 +32,4 @@ namespace cc::dds
         DataWriterRef<CC::Status::LogMessage> log_writer;
     };
 
-}  // namespace cc::dds
+}  // namespace core::dds

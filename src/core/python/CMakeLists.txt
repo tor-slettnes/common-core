@@ -11,9 +11,6 @@ add_library(cc_core_python INTERFACE)
 ### Package component
 set(PKG_COMPONENT "core-python")
 
-### Python module
-set(MODULE cc)
-
 ### Modules to be installed as programs, with execute permissionss
 set(PROGRAMS
 )
@@ -35,7 +32,6 @@ set(DIRECTORIES
 
 include(BuildPython)
 BuildPython(
-  MODULE "${MODULE}"
   PROGRAMS ${PROGRAMS}
   FILES ${FILES}
   DIRECTORIES ${DIRECTORIES}

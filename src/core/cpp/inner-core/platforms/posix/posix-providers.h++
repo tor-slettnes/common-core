@@ -8,8 +8,8 @@
 #pragma once
 #include <string>
 
-namespace cc::platform
+namespace core::platform
 {
     void register_posix_providers(const std::string &exec_name);
     void unregister_posix_providers();
-}  // namespace cc::platform
+}  // namespace core::platform

@@ -10,15 +10,15 @@
 #include "protobuf-signalreceiver.h++"
 #include "logging/logging.h++"
 
-namespace cc::zmq
+namespace core::zmq
 {
     template <class SignalT>
     class ProtoBufSignalHandler : public ProtoBufMessageHandler<SignalT>,
-                                  public cc::io::proto::SignalReceiver<SignalT>
+                                  public core::io::proto::SignalReceiver<SignalT>
     {
         using This = ProtoBufSignalHandler<SignalT>;
         using Super = ProtoBufMessageHandler<SignalT>;
-        using SignalStore = cc::io::proto::SignalReceiver<SignalT>;
+        using SignalStore = core::io::proto::SignalReceiver<SignalT>;
 
     protected:
         using Super::Super;
@@ -41,4 +41,4 @@ namespace cc::zmq
         }
     };
 
-}  // namespace cc::zmq
+}  // namespace core::zmq

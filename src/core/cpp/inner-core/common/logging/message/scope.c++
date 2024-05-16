@@ -7,7 +7,7 @@
 
 #include "scope.h++"
 
-namespace cc::logging
+namespace core::logging
 {
     //==========================================================================
     // Scope
@@ -60,4 +60,4 @@ namespace cc::logging
         return log_scope->threshold;
     }
 
-}  // namespace cc::logging
+}  // namespace core::logging

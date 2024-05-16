@@ -9,7 +9,7 @@
 #include "types/value.h++"
 #include <unordered_set>
 
-namespace cc::json
+namespace core::json
 {
     enum TokenIndex
     {
@@ -31,7 +31,7 @@ namespace cc::json
     };
 
     using TokenMask = std::uint64_t;
-    using TokenPair = std::pair<TokenIndex, cc::types::Value>;
+    using TokenPair = std::pair<TokenIndex, core::types::Value>;
 
     class TokenParser
     {
@@ -62,4 +62,4 @@ namespace cc::json
         TokenPair parse_string(char quote);
         char escape(char c);
     };
-}  // namespace cc::json
+}  // namespace core::json

@@ -8,7 +8,7 @@
 #pragma once
 #include "platform/symbols.h++"
 
-namespace cc::platform
+namespace core::platform
 {
     class PosixSymbolsProvider : public SymbolsProvider
     {
@@ -23,4 +23,4 @@ namespace cc::platform
             bool stem_only) const noexcept override;
     };
 
-}  // namespace cc::platform
+}  // namespace core::platform

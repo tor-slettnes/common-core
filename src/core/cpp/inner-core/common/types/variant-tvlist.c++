@@ -14,7 +14,7 @@
 
 #include <unordered_set>
 
-namespace cc::types
+namespace core::types
 {
     TaggedValueList::const_iterator TaggedValueList::find(
         const Tag &tag,
@@ -373,4 +373,4 @@ namespace cc::types
         stream << postfix;
     }
 
-}  // namespace cc::types
+}  // namespace core::types

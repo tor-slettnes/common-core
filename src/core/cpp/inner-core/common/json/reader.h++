@@ -12,7 +12,7 @@
 #include "rapidjson/reader.h++"
 #endif
 
-namespace cc::json
+namespace core::json
 {
     using Reader = CustomReader;
 

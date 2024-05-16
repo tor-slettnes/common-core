@@ -11,7 +11,7 @@
 #include <mutex>
 #include <functional>
 
-namespace cc::types
+namespace core::types
 {
     /// \class Event
     /// \brief Wait for / manage binary event
@@ -89,4 +89,4 @@ namespace cc::types
         bool ready_;
     };
 
-}  // namespace cc::types
+}  // namespace core::types

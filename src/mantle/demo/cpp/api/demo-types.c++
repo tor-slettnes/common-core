@@ -20,8 +20,8 @@ namespace demo
     Greeting::Greeting(const std::string &text,
                        const std::string &identity,
                        const std::string &implementation,
-                       const cc::dt::TimePoint &birth,
-                       const cc::types::KeyValueMap &data)
+                       const core::dt::TimePoint &birth,
+                       const core::types::KeyValueMap &data)
         : text(text),
           identity(identity),
           implementation(implementation),
@@ -46,12 +46,12 @@ namespace demo
 
     void Greeting::to_stream(std::ostream &stream) const
     {
-        cc::types::PartsList parts;
+        core::types::PartsList parts;
         parts.add("text", this->text);
         parts.add("identity", this->identity);
         parts.add("implementation", this->implementation, !this->implementation.empty());
-        parts.add("birth", this->birth, this->birth != cc::dt::TimePoint());
-        parts.add("uptime", cc::dt::Clock::now() - this->birth);
+        parts.add("birth", this->birth, this->birth != core::dt::TimePoint());
+        parts.add("uptime", core::dt::Clock::now() - this->birth);
         parts.add("data", this->data, !this->data.empty());
         stream << parts;
     }
@@ -60,14 +60,14 @@ namespace demo
     /// @class TimeData
     /// @brief Time representation from the server.
 
-    TimeData::TimeData(const cc::dt::TimePoint &tp)
+    TimeData::TimeData(const core::dt::TimePoint &tp)
         : timepoint(tp),
-          localtime(cc::dt::localtime(tp)),
-          utctime(cc::dt::gmtime(tp))
+          localtime(core::dt::localtime(tp)),
+          utctime(core::dt::gmtime(tp))
     {
     }
 
-    TimeData::TimeData(const cc::dt::TimePoint &tp,
+    TimeData::TimeData(const core::dt::TimePoint &tp,
                        const std::tm &localtime,
                        const std::tm &utctime)
         : timepoint(tp),
@@ -90,9 +90,9 @@ namespace demo
 
     void TimeData::to_stream(std::ostream &stream) const
     {
-        cc::str::format(stream,
+        core::str::format(stream,
                           "TimeData(epoch=%d, local=%T, utc=%Z)",
-                          cc::dt::to_time_t(this->timepoint),
+                          core::dt::to_time_t(this->timepoint),
                           this->localtime,
                           this->utctime);
     }

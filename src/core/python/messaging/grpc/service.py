@@ -7,7 +7,6 @@
 
 ### Modules relative to install folder
 from .base import Base
-from cc.protobuf import import_proto
 
 ### Third-party modules
 from google.protobuf.empty_pb2 import Empty
@@ -42,7 +41,7 @@ class Service (Base):
     Then, your service handler might look something like this:
 
     ```
-    from cc.messaging.grpc.service import Service
+    from messaging.grpc.service import Service
     from example_service_pb2_grpc import ExampleServicer
     from google.protobuf.wrappers_pb2 import StringValue
     from grpc import ServicerContext

@@ -21,7 +21,7 @@ namespace rapidjson
 
 #include <fstream>
 
-namespace cc::json
+namespace core::json
 {
     //==========================================================================
     // Untyped builder base
@@ -72,6 +72,6 @@ namespace cc::json
     using DefaultBuilder = RapidBuilder<DefaultWriter>;
     using PrettyBuilder = RapidBuilder<PrettyWriter>;
 
-}  // namespace cc::json
+}  // namespace core::json
 
 #include "builder.i++"

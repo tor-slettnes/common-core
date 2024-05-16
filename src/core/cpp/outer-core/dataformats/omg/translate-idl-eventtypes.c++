@@ -13,43 +13,43 @@ namespace idl
 {
     //==========================================================================
     // Domain
-    void encode(const cc::status::Domain &native, CC::Status::Domain *idl) noexcept
+    void encode(const core::status::Domain &native, CC::Status::Domain *idl) noexcept
     {
         *idl = static_cast<CC::Status::Domain>(native);
     }
 
-    void decode(const CC::Status::Domain &idl, cc::status::Domain *native) noexcept
+    void decode(const CC::Status::Domain &idl, core::status::Domain *native) noexcept
     {
-        *native = static_cast<cc::status::Domain>(idl);
+        *native = static_cast<core::status::Domain>(idl);
     }
 
     //==========================================================================
     // Severity Level
-    void encode(const cc::status::Level &native, CC::Status::Level *idl) noexcept
+    void encode(const core::status::Level &native, CC::Status::Level *idl) noexcept
     {
         *idl = static_cast<CC::Status::Level>(native);
     }
 
-    void decode(const CC::Status::Level &idl, cc::status::Level *native) noexcept
+    void decode(const CC::Status::Level &idl, core::status::Level *native) noexcept
     {
-        *native = static_cast<cc::status::Level>(idl);
+        *native = static_cast<core::status::Level>(idl);
     }
 
     //==========================================================================
     // Execution flow
-    void encode(const cc::status::Flow &native, CC::Status::Flow *idl) noexcept
+    void encode(const core::status::Flow &native, CC::Status::Flow *idl) noexcept
     {
         *idl = static_cast<CC::Status::Flow>(native);
     }
 
-    void decode(const CC::Status::Flow &idl, cc::status::Flow *native) noexcept
+    void decode(const CC::Status::Flow &idl, core::status::Flow *native) noexcept
     {
-        *native = static_cast<cc::status::Flow>(idl);
+        *native = static_cast<core::status::Flow>(idl);
     }
 
     //==========================================================================
     // Event
-    void encode(const cc::status::Event &native, CC::Status::Event *idl) noexcept
+    void encode(const core::status::Event &native, CC::Status::Event *idl) noexcept
     {
         idl->text(native.text());
         encode(native.domain(), &idl->domain());
@@ -62,30 +62,30 @@ namespace idl
         encode(native.attributes(), &idl->attributes());
     }
 
-    void decode(const CC::Status::Event &idl, cc::status::Event *native) noexcept
+    void decode(const CC::Status::Event &idl, core::status::Event *native) noexcept
     {
         *native = decoded_event(idl);
     }
 
-    cc::status::Event decoded_event(const CC::Status::Event &idl) noexcept
+    core::status::Event decoded_event(const CC::Status::Event &idl) noexcept
     {
         return {
             idl.text(),                                        // text
-            decoded<cc::status::Domain>(idl.domain()),         // domain
+            decoded<core::status::Domain>(idl.domain()),         // domain
             idl.origin(),                                      // origin
             static_cast<int>(idl.code()),                      // code
             idl.symbol(),                                      // symbol
-            decoded<cc::status::Level>(idl.level()),           // level
-            decoded<cc::status::Flow>(idl.flow()),             // flow
-            decoded<cc::dt::TimePoint>(idl.timestamp()),       // timepoint
-            decoded<cc::types::KeyValueMap>(idl.attributes())  // attributes
+            decoded<core::status::Level>(idl.level()),           // level
+            decoded<core::status::Flow>(idl.flow()),             // flow
+            decoded<core::dt::TimePoint>(idl.timestamp()),       // timepoint
+            decoded<core::types::KeyValueMap>(idl.attributes())  // attributes
         };
     }
 
     //==========================================================================
     // LogMessage
 
-    void encode(const cc::logging::Message &native,
+    void encode(const core::logging::Message &native,
                 CC::Status::LogMessage *idl) noexcept
     {
         idl->text(native.text());
@@ -104,14 +104,14 @@ namespace idl
         idl->thread_id(native.thread_id());
     }
 
-    cc::logging::Message decoded_logmessage(CC::Status::LogMessage idl) noexcept
+    core::logging::Message decoded_logmessage(CC::Status::LogMessage idl) noexcept
     {
         return {
             idl.text(),
-            cc::logging::scopes.get(idl.log_scope()),
-            decoded<cc::status::Level>(idl.level()),
-            decoded<cc::status::Flow>(idl.flow()),
-            decoded<cc::dt::TimePoint>(idl.timestamp()),
+            core::logging::scopes.get(idl.log_scope()),
+            decoded<core::status::Level>(idl.level()),
+            decoded<core::status::Flow>(idl.flow()),
+            decoded<core::dt::TimePoint>(idl.timestamp()),
             idl.filename(),
             idl.lineno(),
             idl.function(),
@@ -119,7 +119,7 @@ namespace idl
             idl.origin(),
             idl.code(),
             idl.symbol(),
-            decoded<cc::types::KeyValueMap>(idl.attributes()),
+            decoded<core::types::KeyValueMap>(idl.attributes()),
         };
     }
 

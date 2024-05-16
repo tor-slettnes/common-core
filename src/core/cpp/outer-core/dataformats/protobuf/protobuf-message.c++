@@ -9,7 +9,7 @@
 
 #include <google/protobuf/text_format.h>
 
-namespace cc::io::proto
+namespace core::io::proto
 {
     //==========================================================================
     // Message (de)serialization
@@ -27,7 +27,7 @@ namespace cc::io::proto
 
     /// Convert a protobuf message to a serialized byte array
     void to_bytes(const google::protobuf::Message &msg,
-                  cc::types::ByteVector *bytes)
+                  core::types::ByteVector *bytes)
     {
         std::size_t size = msg.ByteSizeLong();
         bytes->resize(size);
@@ -35,21 +35,21 @@ namespace cc::io::proto
     }
 
     /// Convert a protobuf message to a serialized byte array
-    cc::types::ByteVector to_bytes(const google::protobuf::Message &msg)
+    core::types::ByteVector to_bytes(const google::protobuf::Message &msg)
     {
         ByteVector bytes;
         to_bytes(msg, &bytes);
         return bytes;
     }
 
-}  // namespace cc::io::proto
+}  // namespace core::io::proto
 
 /// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
 namespace google::protobuf
 {
     std::ostream &operator<<(std::ostream &stream, const Message &msg)
     {
-        stream << ::cc::io::proto::to_string(msg);
+        stream << ::core::io::proto::to_string(msg);
         return stream;
     }
 }  // namespace google::protobuf

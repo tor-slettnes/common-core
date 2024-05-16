@@ -9,7 +9,7 @@
 from generated.demo_pb2 import Greeting, TimeStruct, TimeData, Weekday as _Weekday, Signal
 
 ### Modules relative to install folder
-from cc.core.enumeration import Enumeration
+from core.enumeration import Enumeration
 
 ### Standard Python modules
 import time
@@ -18,7 +18,7 @@ import time
 Weekday = Enumeration(_Weekday)
 
 def encodeTimeStruct(ts: time.struct_time) -> TimeStruct:
-    '''Convert a `time.time_struct` object to a `cc.protobuf.demo.TimeStruct` message.'''
+    '''Convert a `time.time_struct` object to a `protobuf.demo.TimeStruct` message.'''
 
     return TimeStruct(
         year = ts.tm_year,

@@ -13,7 +13,7 @@
 
 #include <ostream>
 
-namespace cc::io::proto
+namespace core::io::proto
 {
     //==========================================================================
     // Message deserialization
@@ -24,10 +24,10 @@ namespace cc::io::proto
 
     /// Convert a protobuf message to a serialized byte array
     void to_bytes(const google::protobuf::Message &msg,
-                  cc::types::ByteVector *bytes);
+                  core::types::ByteVector *bytes);
 
     /// Convert a protobuf message to a serialized byte array
-    cc::types::ByteVector to_bytes(const google::protobuf::Message &msg);
+    core::types::ByteVector to_bytes(const google::protobuf::Message &msg);
 
     //==========================================================================
     // Message serialization
@@ -69,7 +69,7 @@ namespace cc::io::proto
         msg.ParseFromString(packed_string);
         return msg;
     }
-}  // namespace cc::io::proto
+}  // namespace core::io::proto
 
 /// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
 namespace google::protobuf
@@ -80,6 +80,6 @@ namespace google::protobuf
     std::ostream &operator<<(std::ostream &stream,
                              const RepeatedPtrField<T> &ptr_field)
     {
-        return cc::stream::write_sequence(stream, ptr_field);
+        return core::stream::write_sequence(stream, ptr_field);
     }
 }  // namespace google::protobuf

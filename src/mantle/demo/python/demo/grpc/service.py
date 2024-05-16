@@ -9,7 +9,7 @@
 from ..core import API, signal_store
 
 ### Modules relative to install dir
-from cc.messaging.grpc.signal_service import SignalService
+from messaging.grpc.signal_service import SignalService
 
 ### Generated modules
 from generated.demo_pb2 import Greeting, TimeData

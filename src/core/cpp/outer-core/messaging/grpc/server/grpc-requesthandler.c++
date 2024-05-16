@@ -12,7 +12,7 @@
 #include "http-utils.h++"
 //#include "errnos.h"
 
-namespace cc::grpc
+namespace core::grpc
 {
     RequestHandlerBase::RequestHandlerBase(const std::string &full_service_name)
         : Base("gRPC Service", full_service_name)
@@ -36,7 +36,7 @@ namespace cc::grpc
                                        const int &lineno,
                                        const std::string &function)
     {
-        Status status(*cc::exception::map_to_event(e));
+        Status status(*core::exception::map_to_event(e));
         this->log_status(status, operation, flow, path, lineno, function);
         return status;
     }
@@ -134,10 +134,10 @@ namespace cc::grpc
         std::stringstream ss;
         if (peer.size())
         {
-            ss << "request from " << cc::http::url_decode(peer) << ": ";
+            ss << "request from " << core::http::url_decode(peer) << ": ";
         }
-        ss << function << "(" << cc::io::proto::to_string(request) << ")";
+        ss << function << "(" << core::io::proto::to_string(request) << ")";
         return ss.str();
     }
 
-}  // namespace cc::grpc
+}  // namespace core::grpc

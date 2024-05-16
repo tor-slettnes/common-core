@@ -15,7 +15,7 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.duration_pb2 import Duration
 
 def encodeValue(value : object) -> Value:
-    '''Encode a Python value as a `cc.protobuf.variant.Value` instance'''
+    '''Encode a Python value as a `protobuf.variant.Value` instance'''
 
     if isinstance(value, tuple) and len(value) == 2 and isinstance(value[0], str):
         return encodeTaggedValue(value)
@@ -23,7 +23,7 @@ def encodeValue(value : object) -> Value:
         return encodeTaggedValue((None, value))
 
 def encodeTaggedValue(pair : tuple[str, object]) -> Value:
-    '''Encode a (tag, value) tuple as a `cc.variant.Value` instance'''
+    '''Encode a (tag, value) tuple as a `protobuf.variant.Value` instance'''
 
     tag, value = pair
     tv = Value(tag=tag)
@@ -68,7 +68,7 @@ def encodeTaggedValue(pair : tuple[str, object]) -> Value:
 
 def decodeValue(value: Value,
                 autotype: bool = True) -> object:
-    '''Decode a `cc.protobuf.variant.Value` instance to a native Python value.
+    '''Decode a `protobuf.variant.Value` instance to a native Python value.
 
     The `autotype` argument recursively controls the decoded data type in case
     `value` contains a `ValueList` instance with nested values. If `True` and
@@ -105,7 +105,7 @@ def decodeValue(value: Value,
 
 
 def decodeTaggedValue(tv: Value, autotype=True) -> tuple[str|None, object]:
-    '''Decode a `cc.protobuf.variant.Value` instance to a (tag, value) pair.
+    '''Decode a `protobuf.variant.Value` instance to a (tag, value) pair.
 
     The `autotype` argument controls the decoding in case the value is a
     `ValueList` instance; see `decodeValue()` for details.
@@ -120,7 +120,7 @@ def decodeTaggedValue(tv: Value, autotype=True) -> tuple[str|None, object]:
     return (tag, value)
 
 def encodeValueList(value: list|dict) -> ValueList:
-    '''Encode a native Python list or dictionary to a `cc.protobuf.variant.ValueList`.
+    '''Encode a native Python list or dictionary to a `protobuf.variant.ValueList`.
 
     The input should be one of the following:
       - A {key, value} dictionary
@@ -147,7 +147,7 @@ def encodeValueList(value: list|dict) -> ValueList:
 
 def decodeTaggedValueList(valuelist: ValueList,
                           autotype=False) -> list[tuple[str|None, object]]:
-    '''Decode a `cc.protobuf.variant.ValueList` instance to a list of native
+    '''Decode a `protobuf.variant.ValueList` instance to a list of native
     `(tag, value)` pairs.
 
     The `autotype` argument recursively controls the decoding of any nested
@@ -158,10 +158,10 @@ def decodeTaggedValueList(valuelist: ValueList,
     if isinstance(valuelist, ValueList):
         return [decodeTaggedValue(tv, autotype) for tv in valuelist.items]
     else:
-        raise ValueError("Argument must be a cc.variant.ValueList() instance")
+        raise ValueError("Argument must be a protobuf.variant.ValueList() instance")
 
 def decodeValueList(valuelist, autotype=True) -> list[object]:
-    '''Decode a `cc.protobuf.variant.ValueList` instance to a list of native
+    '''Decode a `protobuf.variant.ValueList` instance to a list of native
     values.
 
     The `autotype` argument recursively controls the decoding of any nested
@@ -172,7 +172,7 @@ def decodeValueList(valuelist, autotype=True) -> list[object]:
     return [v for (t,v) in self.decodeTaggedValueList(valuelist, autotype)]
 
 def decodeValueMap(valuelist, autotype=True):
-    '''Decode a `cc.protobuf.variant.Value` instance to a native Python list.
+    '''Decode a `protobuf.variant.Value` instance to a native Python list.
 
     The `autotype` argument recursively controls the decoding of any nested
     `ValueList` instances in the list; see `decodeValue()` for details.
@@ -180,5 +180,5 @@ def decodeValueMap(valuelist, autotype=True):
     return dict(decodeTaggedValueList(valuelist, autotype))
 
 def valueList(**kwargs):
-    '''Build a `cc.protobuf.variant.ValueList` instance from native key/value pairs.'''
+    '''Build a `protobuf.variant.ValueList` instance from native key/value pairs.'''
     return encodeValueList(kwargs)

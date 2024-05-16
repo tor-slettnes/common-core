@@ -10,20 +10,20 @@
 #include "demo.pb.h"
 #include <ctime>
 
-namespace cc::io::proto
+namespace core::io::proto
 {
     //==========================================================================
     // Greeting
-    void encode(const demo::Greeting &greeting, cc::protobuf::demo::Greeting *msg);
-    void decode(const cc::protobuf::demo::Greeting &msg, demo::Greeting *greeting);
+    void encode(const demo::Greeting &greeting, cc::demo::Greeting *msg);
+    void decode(const cc::demo::Greeting &msg, demo::Greeting *greeting);
 
     //==========================================================================
     // TimeData
-    void encode(const demo::TimeData &timedata, cc::protobuf::demo::TimeData *msg);
-    void decode(const cc::protobuf::demo::TimeData &msg, demo::TimeData *timedata);
+    void encode(const demo::TimeData &timedata, cc::demo::TimeData *msg);
+    void decode(const cc::demo::TimeData &msg, demo::TimeData *timedata);
 
     //==========================================================================
     // TimeStruct
-    void encode(const std::tm &tm, cc::protobuf::demo::TimeStruct *msg);
-    void decode(const cc::protobuf::demo::TimeStruct &msg, std::tm *tm);
-}  // namespace cc::protobuf
+    void encode(const std::tm &tm, cc::demo::TimeStruct *msg);
+    void decode(const cc::demo::TimeStruct &msg, std::tm *tm);
+}  // namespace core::protobuf
