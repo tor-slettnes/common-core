@@ -6,12 +6,12 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from .scalar_types import enums
+from .enumeration import Enumeration
 
 ### Standard Python modules
 import time
 
-ZoneSuffix = enums({
+ZoneSuffix = Enumeration({
     "NONE"   : 0,
     "OFFSET" : 1,  # '+0100' for CET, '-0800' for PST, 'Z' for UTC
     "NAME"   : 2   # 'CET'/'CEST'/'PST'/'PDT'/etc, or 'UTC'
