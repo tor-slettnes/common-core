@@ -12,7 +12,7 @@ add_library(cc_core_python INTERFACE)
 set(PKG_COMPONENT "core-python")
 
 ### Python module
-set(MODULE "cc")
+set(MODULE cc)
 
 ### Modules to be installed as programs, with execute permissionss
 set(PROGRAMS
@@ -29,8 +29,8 @@ set(FILES
 ### Subdirectories
 set(DIRECTORIES
   core
+  protobuf
   messaging
-  io
 )
 
 include(BuildPython)

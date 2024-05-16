@@ -116,7 +116,7 @@
         "threshold": "trace"
     },
 
-    // Log via DDS (Topic `CC::Status::LogEvent`)
+    // Log via DDS (Topic `cc::status::LogEvent`)
     "log to dds":
     {
         "enabled": true,

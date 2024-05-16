@@ -5,7 +5,7 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-namespace core::signal
+namespace cc::signal
 {
     //==========================================================================
     // @class DataSignal
@@ -151,52 +151,56 @@ namespace core::signal
     }
 
     template <class T, class K>
-    inline size_t MappingSignal<T, K>::emit(MappingChange change, const K &key, const T &value)
+    inline size_t MappingSignal<T, K>::emit(MappingAction mapping_action,
+                                            const K &mapping_key,
+                                            const T &value)
     {
         std::scoped_lock lck(this->mtx_);
         if (this->caching_)
         {
-            switch (change)
+            switch (mapping_action)
             {
             case MAP_UPDATE:
             case MAP_ADDITION:
-                this->update_cache(key, value);
+                this->update_cache(mapping_key, value);
                 break;
 
             case MAP_REMOVAL:
-                this->cached_.erase(key);
+                this->cached_.erase(mapping_key);
                 break;
 
             default:
                 break;
             }
         }
-        return this->sendall(change, key, value);
+        return this->sendall(mapping_action, mapping_key, value);
     }
 
     template <class T, class K>
-    inline size_t MappingSignal<T, K>::emit(const K &key, const T &value)
+    inline size_t MappingSignal<T, K>::emit(const K &mapping_key, const T &value)
     {
-        MappingChange change(!this->caching_        ? MAP_NONE
-                             : this->is_cached(key) ? MAP_UPDATE
-                                                    : MAP_ADDITION);
-        return this->emit(change, key, value);
+        MappingAction action(
+            !this->caching_                ? MAP_UPDATE
+            : this->is_cached(mapping_key) ? MAP_UPDATE
+                                           : MAP_ADDITION);
+
+        return this->emit(action, mapping_key, value);
     }
 
     template <class T, class K>
     inline size_t MappingSignal<T, K>::emit_if_changed(const K &key, const T &value)
     {
         std::scoped_lock lck(this->mtx_);
-        MappingChange change =
+        MappingAction action(
             !this->caching_                    ? MAP_NONE
             : (this->cached_.count(key) == 0)  ? MAP_ADDITION
             : (this->cached_.at(key) != value) ? MAP_UPDATE
-                                               : MAP_NONE;
+                                               : MAP_NONE);
 
-        if (change != MAP_NONE)
+        if (action != MAP_NONE)
         {
             this->update_cache(key, value);
-            return this->sendall(change, key, value);
+            return this->sendall(action, key, value);
         }
         else
         {
@@ -311,13 +315,13 @@ namespace core::signal
     }
 
     template <class T, class K>
-    inline size_t MappingSignal<T, K>::sendall(MappingChange change,
-                                               const K &key,
+    inline size_t MappingSignal<T, K>::sendall(MappingAction mapping_action,
+                                               const K &mapping_key,
                                                const T &value)
     {
         for (const auto &cb : this->slots_)
         {
-            this->callback(cb.first, cb.second, change, key, value);
+            this->callback(cb.first, cb.second, mapping_action, mapping_key, value);
         }
         return this->slots_.size();
     }
@@ -325,20 +329,21 @@ namespace core::signal
     template <class T, class K>
     inline void MappingSignal<T, K>::callback(const std::string &receiver,
                                               const Slot &method,
-                                              MappingChange change,
-                                              const K &key,
+                                              MappingAction mapping_action,
+                                              const K &mapping_key,
                                               const T &value)
     {
-        this->safe_invoke(str::format("%r (%r, %r, {...})", receiver, change, key),
-                          std::bind(method, change, key, value));
+        this->safe_invoke(
+            str::format("%r (%r, %r, {...})", receiver, mapping_action, mapping_key),
+            std::bind(method, mapping_action, mapping_key, value));
     }
 
     //==========================================================================
     // I/O stream support
 
-    inline std::ostream &operator<<(std::ostream &stream, MappingChange change)
+    inline std::ostream &operator<<(std::ostream &stream, MappingAction mapping_action)
     {
-        static const std::unordered_map<MappingChange, std::string> names = {
+        static const std::unordered_map<MappingAction, std::string> names = {
             {MAP_NONE, "MAP_NONE"},
             {MAP_ADDITION, "MAP_ADDITION"},
             {MAP_REMOVAL, "MAP_REMOVAL"},
@@ -347,14 +352,15 @@ namespace core::signal
 
         try
         {
-            stream << names.at(change);
+            stream << names.at(mapping_action);
         }
         catch (const std::out_of_range &)
         {
-            stream << str::format("(Invalid MappingChange %d)", static_cast<uint>(change));
+            stream << str::format("(Invalid MappingAction %d)",
+                                  static_cast<uint>(mapping_action));
         }
 
         return stream;
     }
 
-}  // namespace core::signal
+}  // namespace cc::signal

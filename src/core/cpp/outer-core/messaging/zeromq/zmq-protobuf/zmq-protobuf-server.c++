@@ -10,7 +10,7 @@
 #include "platform/path.h++"
 #include "logging/logging.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     ProtoBufServer::ProtoBufServer(const std::string &bind_address,
                                    const std::string &channel_name,
@@ -41,8 +41,8 @@ namespace core::zmq
     void ProtoBufServer::process_binary_request(const types::ByteVector &packed_request,
                                                 types::ByteVector *packed_reply)
     {
-        CC::RR::Request request;
-        CC::RR::Reply reply;
+        cc::protobuf::rr::Request request;
+        cc::protobuf::rr::Reply reply;
 
         logf_debug("Received binary request: %s", packed_request);
 
@@ -54,18 +54,18 @@ namespace core::zmq
         {
             this->insert_error_response(
                 &reply,
-                CC::RR::STATUS_INVALID,
+                cc::protobuf::rr::STATUS_INVALID,
                 "Failed to deserialize ProtoBuf request",
-                core::status::Flow::CANCELLED,
+                cc::status::Flow::CANCELLED,
                 {{"channel", this->channel_name()},
                  {"payload", packed_request}});
         }
 
-        protobuf::to_bytes(reply, packed_reply);
+        cc::io::proto::to_bytes(reply, packed_reply);
     }
 
-    void ProtoBufServer::process_protobuf_request(const CC::RR::Request &request,
-                                                  CC::RR::Reply *reply)
+    void ProtoBufServer::process_protobuf_request(const cc::protobuf::rr::Request &request,
+                                                  cc::protobuf::rr::Reply *reply)
     {
         reply->set_client_id(request.client_id());
         reply->set_request_id(request.request_id());
@@ -78,34 +78,34 @@ namespace core::zmq
         {
             this->insert_error_response(
                 reply,
-                CC::RR::STATUS_INVALID,
+                cc::protobuf::rr::STATUS_INVALID,
                 "No such interface",
-                core::status::Flow::CANCELLED,
+                cc::status::Flow::CANCELLED,
                 {{"channel", this->channel_name()},
                  {"interface", request.interface_name()}});
         }
     }
 
-    void ProtoBufServer::insert_error_response(CC::RR::Reply *reply,
-                                               CC::RR::StatusCode status_code,
+    void ProtoBufServer::insert_error_response(cc::protobuf::rr::Reply *reply,
+                                               cc::protobuf::rr::StatusCode status_code,
                                                const std::string &text,
-                                               core::status::Flow flow,
+                                               cc::status::Flow flow,
                                                const types::KeyValueMap &attributes)
     {
-        CC::RR::Status *status = reply->mutable_status();
+        cc::protobuf::rr::Status *status = reply->mutable_status();
         status->set_code(status_code);
 
         status::Event event(text,
-                            core::status::Domain::APPLICATION,
+                            cc::status::Domain::APPLICATION,
                             platform::path->exec_name(),
                             static_cast<status::Event::Code>(status_code),
-                            CC::RR::StatusCode_Name(status_code),
-                            core::status::Level::FAILED,
+                            cc::protobuf::rr::StatusCode_Name(status_code),
+                            cc::status::Level::FAILED,
                             flow,
                             {},
                             attributes);
 
-        protobuf::encode(event, status->mutable_details());
+        ::cc::io::proto::encode(event, status->mutable_details());
     }
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

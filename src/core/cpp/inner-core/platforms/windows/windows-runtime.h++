@@ -8,7 +8,7 @@
 #pragma once
 #include "platform/runtime.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     /// @brief Abstract provider for runtime related functions
     class WindowsRunTimeProvider : public RunTimeProvider
@@ -26,4 +26,4 @@ namespace core::platform
         /// @brief Return the maximum length of a filesystem path.
         void putenv(const std::string &envstring) override;
     };
-}  // namespace core::platform
+}  // namespace cc::platform

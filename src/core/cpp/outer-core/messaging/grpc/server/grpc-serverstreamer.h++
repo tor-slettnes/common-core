@@ -14,7 +14,7 @@
 #include <grpcpp/impl/codegen/sync_stream.h>
 #include <grpcpp/impl/codegen/server_context.h>
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class ServerStreamer
@@ -59,7 +59,7 @@ namespace core::grpc
 
     public:
         ServerSignalStreamer(
-            core::signal::DataSignal<MessageT> *signal,
+            cc::signal::DataSignal<MessageT> *signal,
             uint maxsize = 0,
             types::OverflowDisposition overflow = types::OverflowDisposition::DISCARD_OLDEST)
             : Super(maxsize, overflow),
@@ -93,7 +93,7 @@ namespace core::grpc
         }
 
     private:
-        core::signal::DataSignal<MessageT> *signal;
+        cc::signal::DataSignal<MessageT> *signal;
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

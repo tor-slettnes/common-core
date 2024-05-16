@@ -10,7 +10,7 @@
 #include "zmq-endpoint.h++"     // for `log_scope`
 #include "types/bytevector.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class MessageHandler
     {
@@ -34,4 +34,4 @@ namespace core::zmq
         const Filter filter_;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

@@ -6,10 +6,10 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from cc.io.protobuf.signalstore import SignalStore
-from .types import CC
+from ...protobuf.signal import SignalStore
+from ...protobuf.demo import Signal
 
 #===============================================================================
 # Signal store to propagate `greeting` and `time` signals for application.
 
-demo_signals = SignalStore(use_cache=True, signal_type = CC.Demo.Signal)
+signal_store = SignalStore(use_cache=True, signal_type = Signal)

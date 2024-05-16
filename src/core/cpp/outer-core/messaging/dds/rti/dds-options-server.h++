@@ -8,7 +8,7 @@
 #pragma once
 #include "argparse/server.h++"
 
-namespace core::dds
+namespace cc::dds
 {
     class ServerOptions : public argparse::ServerOptions
     {
@@ -26,4 +26,4 @@ namespace core::dds
         bool log_to_dl;
     };
 
-}  // namespace core::argparse
+}  // namespace cc::argparse

@@ -9,7 +9,7 @@
 #include "linux-path.h++"
 #include "linux-symbols.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     void register_linux_providers(const std::string &exec_name)
     {
@@ -34,4 +34,4 @@ namespace core::platform
         unregister_linux_providers();
         unregister_posix_providers();
     }
-}  // namespace core::platform
+}  // namespace cc::platform

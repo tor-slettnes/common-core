@@ -8,7 +8,7 @@
 #pragma once
 #include "posix-symbols.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     class QNXSymbolsProvider : public PosixSymbolsProvider
     {
@@ -21,4 +21,4 @@ namespace core::platform
         std::string uuid() const noexcept override;
     };
 
-}  // namespace core::platform
+}  // namespace cc::platform

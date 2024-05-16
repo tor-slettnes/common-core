@@ -7,7 +7,7 @@
 
 #include "logging.h++"
 
-namespace core::logging
+namespace cc::logging
 {
     SyncDispatcher message_dispatcher;
     AsyncDispatcher structured_dispatcher;

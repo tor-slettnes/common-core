@@ -9,7 +9,7 @@
 #include "provider.h++"
 #include "chrono/date-time.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     class TimeZoneProvider : public Provider
     {
@@ -31,4 +31,4 @@ namespace core::platform
     };
 
     extern ProviderProxy<TimeZoneProvider> timezone;
-}  // namespace core::platform
+}  // namespace cc::platform

@@ -8,7 +8,7 @@
 #pragma once
 #include "common.h++"
 
-namespace core::argparse
+namespace cc::argparse
 {
     //==========================================================================
     /// Option parser for server applications
@@ -35,4 +35,4 @@ namespace core::argparse
         // std::string interface;
     };
 
-}  // namespace core::argparse
+}  // namespace cc::argparse

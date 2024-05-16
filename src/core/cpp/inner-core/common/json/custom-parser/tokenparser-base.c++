@@ -14,7 +14,7 @@
 #include <charconv>
 #include <string>
 
-namespace core::json
+namespace cc::json
 {
     const int eof = std::char_traits<char>::eof();
 
@@ -328,4 +328,4 @@ namespace core::json
         }
     }
 
-}  // namespace core::json
+}  // namespace cc::json

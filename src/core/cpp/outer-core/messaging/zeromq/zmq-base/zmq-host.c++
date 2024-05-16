@@ -8,7 +8,7 @@
 #include "zmq-host.h++"
 #include "logging/logging.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     Host::Host(const std::string &bind_address,
                const std::string &endpoint_type,
@@ -45,4 +45,4 @@ namespace core::zmq
                                  "tcp",
                                  "*");
     }
-}  // namespace core::zmq
+}  // namespace cc::zmq

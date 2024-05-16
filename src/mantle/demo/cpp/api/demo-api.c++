@@ -19,7 +19,7 @@ namespace demo
     API::API(
         const std::string &identity,
         const std::string &implementation,
-        const core::dt::TimePoint &birth)
+        const cc::dt::TimePoint &birth)
         : identity_(identity),
           implementation_(implementation),
           birth_(birth)
@@ -27,7 +27,7 @@ namespace demo
     }
 
     void API::say_hello(const std::string &message,
-                        const core::types::KeyValueMap &data)
+                        const cc::types::KeyValueMap &data)
     {
         this->say_hello(Greeting(message,
                                  this->identity(),
@@ -46,7 +46,7 @@ namespace demo
         return this->implementation_;
     }
 
-    core::dt::TimePoint API::birth() const
+    cc::dt::TimePoint API::birth() const
     {
         return this->birth_;
     }

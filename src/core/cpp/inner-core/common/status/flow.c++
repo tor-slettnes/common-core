@@ -7,7 +7,7 @@
 
 #include "flow.h++"
 
-namespace core::status
+namespace cc::status
 {
     /// Names for printing.
     const types::SymbolMap<Flow> FlowNames = {
@@ -35,4 +35,4 @@ namespace core::status
         return FlowNames.from_stream(stream, &flow, Flow::NONE, false);
     }
 
-}  // namespace core::status
+}  // namespace cc::status

@@ -5,16 +5,26 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
-from cc.io.protobuf import CC, ProtoBuf
+### Modules relative to current folder
 from .error import Error
+
+### Modules relative to install folder
+import cc.protobuf.wellknown
+import cc.protobuf.status
+import cc.protobuf.variant
+import cc.protobuf.rr
+
+
+### Third-party modules
+from google.protobuf.message import Message
 
 ### Standard Python modules
 from typing import Callable
 from inspect import getfullargspec
 
-class RequestHandler (ProtoBuf):
-    '''Handle RPC requests received as ProtoBuf `CC.RR.Request` messages.
+
+class RequestHandler:
+    '''Handle RPC requests received as ProtoBuf `cc.protobuf.rr.Request` messages.
 
     The `Request` message is processed as follows:
 
@@ -72,18 +82,18 @@ class RequestHandler (ProtoBuf):
         self.interface_name = interface_name
 
     def __call__(self,
-                 request : CC.RR.Request,
-                 reply   : CC.RR.Reply):
+                 request : cc.protobuf.rr.Request,
+                 reply   : cc.protobuf.rr.Reply):
 
         try:
             handler = getattr(self, request.method_name)
         except AttributeError:
-            Error(CC.RR.STATUS_INVALID,
-                  CC.Status.Details(
+            Error(cc.protobuf.rr.STATUS_INVALID,
+                  cc.protobuf.status.Event(
                       text = 'Requested method not found',
                       symbol = 'NotFound',
-                      flow = CC.Status.FLOW_CANCELLED,
-                      attributes = CC.ValueList(
+                      flow = cc.protobuf.status.FLOW_CANCELLED,
+                      attributes = cc.protobuf.variant.ValueList(
                           interface_name = request.interface_name,
                           method_name = request.method_name
                       )
@@ -95,9 +105,9 @@ class RequestHandler (ProtoBuf):
         return reply
 
     def _process_handler_invocation(self,
-                        handler: Callable[[ProtoBuf.Message], ProtoBuf.Message],
-                        request: CC.RR.Request,
-                        reply  : CC.RR.Reply):
+                        handler: Callable[[Message], Message],
+                        request: cc.protobuf.rr.Request,
+                        reply  : cc.protobuf.rr.Reply):
 
         argspec = getfullargspec(handler)
         try:
@@ -109,13 +119,13 @@ class RequestHandler (ProtoBuf):
             self._invoke_handler(handler, (), reply)
 
         except (KeyError, IndexError, AttributeError):
-            Error(CC.RR.STATUS_FAILED,
-                  CC.Status.Details(
+            Error(cc.protobuf.rr.STATUS_FAILED,
+                  cc.protobuf.status.Event(
                       text = "Handler method does not have an input argument "
                       "with a ProtoBuf message annottation",
                       symbol = 'InvalidHandlerMethod',
-                      flow = CC.Status.FLOW_CANCELLED,
-                      attributes = CC.valueList(
+                      flow = cc.protobuf.status.FLOW_CANCELLED,
+                      attributes = cc.protobuf.variant.valueList(
                           interface_name = self.interface_name,
                           method_name = handler.__name__
                       )
@@ -128,24 +138,24 @@ class RequestHandler (ProtoBuf):
 
 
     def _invoke_handler(self,
-                        handler: Callable[[ProtoBuf.Message], ProtoBuf.Message],
+                        handler: Callable[[Message], Message],
                         args   : tuple,
-                        reply  : CC.RR.Reply):
+                        reply  : cc.protobuf.rr.Reply):
 
         try:
             result = handler(*args)
         except Exception as e:
-            Error(CC.RR.STATUS_FAILED,
-                  CC.Status.Details(
+            Error(cc.protobuf.rr.STATUS_FAILED,
+                  cc.protobuf.status.Event(
                       text = str(e),
                       symbol = type(e).__name__,
-                      flow = CC.Status.FLOW_ABORTED,
-                      attributes = CC.valueList(
+                      flow = cc.protobuf.status.FLOW_ABORTED,
+                      attributes = cc.protobuf.variant.valueList(
                           exception_args = e.args
                       )
                   )
             ).add_to_reply(reply)
         else:
             if result is None:
-                result = ProtoBuf.Empty()
+                result = cc.protobuf.wellknown.Empty()
             reply.param.serialized_proto = result.SerializeToString()

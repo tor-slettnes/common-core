@@ -5,17 +5,24 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Modules relative to current folder
+from ..core import API, signal_store
+
 ### Modules relative to install dir
 from cc.messaging.grpc.signal_service import SignalService
+
+### Generated modules
+from generated.demo_pb2 import Greeting, TimeData
 from generated.demo_pb2_grpc import DemoServicer
-from ..core import API, CC, ProtoBuf, demo_signals
 
 ### Third-party modules
+from google.protobuf.empty_pb2 import Empty
 import grpc
 
 ### Standard Python modules
 import time
 
+###
 
 ## We derive our service class from
 ##
@@ -37,25 +44,25 @@ class DemoService (SignalService, DemoServicer):
     def __init__ (self,
                   demo_provider : API,
                   bind_address : str = ""):
-        SignalService.__init__(self, demo_signals, bind_address)
+        SignalService.__init__(self, signal_store, bind_address)
         self.demo_provider = demo_provider
 
     def say_hello(self,
-                  request: CC.Demo.Greeting,
+                  request: Greeting,
                   context: grpc.ServicerContext):
         return self._wrap(self.demo_provider.say_hello, request)
 
     def get_current_time(self,
-                         request: ProtoBuf.Empty,
-                         context: grpc.ServicerContext) -> CC.Demo.TimeData:
+                         request: Empty,
+                         context: grpc.ServicerContext) -> TimeData:
         return self._wrap(self.demo_provider.get_current_time)
 
     def start_ticking(self,
-                      request: ProtoBuf.Empty,
+                      request: Empty,
                       context: grpc.ServicerContext):
         return self._wrap(self.demo_provider.start_ticking)
 
     def stop_ticking(self,
-                     request: ProtoBuf.Empty,
+                     request: Empty,
                      context: grpc.ServicerContext):
         return self._wrap(self.demo_provider.stop_ticking)

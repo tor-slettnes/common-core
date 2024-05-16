@@ -10,7 +10,7 @@
 #include "status/exceptions.h++"
 #include "platform/symbols.h++"
 
-namespace core::signal
+namespace cc::signal
 {
     define_log_scope("signal");
 
@@ -110,4 +110,4 @@ namespace core::signal
         this->safe_invoke(str::format("%s()", receiver), method);
     }
 
-}  // namespace core::signal
+}  // namespace cc::signal

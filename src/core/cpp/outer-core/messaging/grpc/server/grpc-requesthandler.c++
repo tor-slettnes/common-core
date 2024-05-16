@@ -12,7 +12,7 @@
 #include "http-utils.h++"
 //#include "errnos.h"
 
-namespace core::grpc
+namespace cc::grpc
 {
     RequestHandlerBase::RequestHandlerBase(const std::string &full_service_name)
         : Base("gRPC Service", full_service_name)
@@ -36,7 +36,7 @@ namespace core::grpc
                                        const int &lineno,
                                        const std::string &function)
     {
-        Status status(*core::exception::map_to_event(e));
+        Status status(*cc::exception::map_to_event(e));
         this->log_status(status, operation, flow, path, lineno, function);
         return status;
     }
@@ -69,7 +69,7 @@ namespace core::grpc
     }
 
     Status RequestHandlerBase::failure(const std::exception &exception,
-                                       const protobuf::Message &request,
+                                       const ::google::protobuf::Message &request,
                                        const std::string &peer,
                                        status::Flow flow,
                                        const fs::path &path,
@@ -85,7 +85,7 @@ namespace core::grpc
     }
 
     Status RequestHandlerBase::failure(std::exception_ptr eptr,
-                                       const protobuf::Message &request,
+                                       const ::google::protobuf::Message &request,
                                        const std::string &peer,
                                        status::Flow flow,
                                        const fs::path &path,
@@ -127,17 +127,17 @@ namespace core::grpc
     }
 
     std::string RequestHandlerBase::request_description(
-        const protobuf::Message &request,
+        const ::google::protobuf::Message &request,
         const std::string &peer,
         const std::string &function)
     {
         std::stringstream ss;
         if (peer.size())
         {
-            ss << "request from " << core::http::url_decode(peer) << ": ";
+            ss << "request from " << cc::http::url_decode(peer) << ": ";
         }
-        ss << function << "(" << ::protobuf::to_string(request) << ")";
+        ss << function << "(" << cc::io::proto::to_string(request) << ")";
         return ss.str();
     }
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

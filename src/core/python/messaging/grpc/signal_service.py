@@ -5,17 +5,20 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Modules relative to current dir
+from .service import Service
+
 ### Modules relative to install dir
-from .service  import Service
-from cc.io.protobuf import CC, ProtoBuf, SignalStore
+import cc.protobuf.signal
 
 ### Third-party modules
+import google.protobuf.message
 import grpc
 
 ### Standard Python modules
-import queue, logging
 from typing import Optional, Generator
 from queue  import Queue
+import queue, logging
 
 #===============================================================================
 # @class SignalService
@@ -26,12 +29,12 @@ class SignalService (Service):
     '''
 
     def __init__ (self,
-                  signal_store   : SignalStore,
+                  signal_store   : cc.protobuf.signal.SignalStore,
                   bind_address   : str = "",
                   max_queue_size : Optional[int] = 256):
         '''
         param[in] signal_store
-           An instance of `messaging.base.signalstore.SignalStore`, from which
+           An instance of `cc.protobuf.signal.SignalStore`, from which
            we receive signals.
 
         param[in] bind_address
@@ -48,9 +51,9 @@ class SignalService (Service):
 
 
     def watch(self,
-              request: CC.Signal.Filter,
+              request: cc.protobuf.signal.Filter,
               context: grpc.ServicerContext
-              ) -> Generator[None, ProtoBuf.Message, None]:
+              ) -> Generator[None, google.protobuf.message.Message, None]:
         '''
         Invoked by gRPC client to stream signal events back to client.
 
@@ -74,7 +77,7 @@ class SignalService (Service):
             self.signal_store.disconnect_signal(signal_name)
 
 
-    def signal_list(self, signal_filter: CC.Signal.Filter):
+    def signal_list(self, signal_filter: cc.protobuf.signal.Filter):
         polarity = bool(signal_filter.polarity)
         requested = set(signal_filter.indices)
 

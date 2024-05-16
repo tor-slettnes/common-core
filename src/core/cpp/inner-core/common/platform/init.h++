@@ -11,7 +11,7 @@
 
 #include <unordered_set>
 
-namespace core::platform
+namespace cc::platform
 {
     //==========================================================================
     // InitTask
@@ -67,6 +67,6 @@ namespace core::platform
     inline TaskSet init_tasks;
     inline TaskSet exit_tasks;
 
-    extern core::signal::VoidSignal signal_startup;
-    extern core::signal::VoidSignal signal_shutdown;
-}  // namespace core::platform
+    extern cc::signal::VoidSignal signal_startup;
+    extern cc::signal::VoidSignal signal_shutdown;
+}  // namespace cc::platform

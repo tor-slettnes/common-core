@@ -8,7 +8,7 @@
 #include "writer.h++"
 #include <fstream>
 
-namespace core::json
+namespace cc::json
 {
     CustomWriter::CustomWriter()
         : Super("CustomWriter")
@@ -177,4 +177,4 @@ namespace core::json
         }
     }
 
-}  // namespace core::json
+}  // namespace cc::json

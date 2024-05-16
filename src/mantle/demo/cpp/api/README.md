@@ -58,7 +58,9 @@ whenever an AP is newly discovered, has updated data, or is no longer available.
 This template's `emit()` method nominally takes three arguments:
 
 ```
-core::signal::MappingSignal<T, K>::emit(MappingChange change, K key, T value)
+core::signal::MappingSignal<T, K>::emit(MappingAction mapping_action,
+                                        K mapping_key,
+                                        T value);
 ```
 
 In our case, a new client might issue a greeting like this:
@@ -73,5 +75,5 @@ These three arguments are then passed onto any connected slots, which in this
 case would need the function signature
 
 ```
-std::function<void(core::signal::MappingChange, std::string, demo::Greeting)>;
+std::function<void(core::signal::MappingAction, std::string, demo::Greeting)>;
 ```

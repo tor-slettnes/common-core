@@ -7,15 +7,17 @@
 
 ### Modules relative to install folder
 from .base import Base
-from cc.io.protobuf import ProtoBuf
+from cc.protobuf import import_proto
 
 ### Third-party modules
+from google.protobuf.empty_pb2 import Empty
 import grpc
 
 ### Standard Python modules
 from typing import Union
 import importlib
 import logging
+
 
 class Service (Base):
 
@@ -93,7 +95,7 @@ class Service (Base):
         if response := method(*args, **kwargs):
             return response
         else:
-            return ProtoBuf.Empty()
+            return Empty()
 
 
     SERVICER_SUFFIX = 'Servicer'

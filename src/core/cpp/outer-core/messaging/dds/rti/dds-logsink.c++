@@ -10,7 +10,7 @@
 #include "translate-idl-inline.h++"
 #include "platform/symbols.h++"
 
-namespace core::dds
+namespace cc::dds
 {
     DDSLogger::DDSLogger(const std::string &channel_name, int domain_id)
         : Super(),
@@ -41,4 +41,4 @@ namespace core::dds
         }
     }
 
-}  // namespace core::logging
+}  // namespace cc::dds

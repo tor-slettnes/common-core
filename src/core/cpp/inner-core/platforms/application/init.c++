@@ -13,13 +13,13 @@
 #include <csignal>
 #include <cstdlib>
 
-namespace core::application
+namespace cc::application
 {
     void shutdown_handler(int signal)
     {
         ::signal(SIGINT, SIG_IGN);
         ::signal(SIGTERM, SIG_IGN);
-        core::platform::signal_shutdown.emit();
+        cc::platform::signal_shutdown.emit();
     }
 
     void initialize(int argc, char **argv)
@@ -32,14 +32,14 @@ namespace core::application
         // Apply system locale for `wstring` conversions
         //std::locale::global(std::locale("C"));
 
-        core::platform::register_providers(argc ? argv[0] : "");
-        core::platform::init_tasks.execute();
+        cc::platform::register_providers(argc ? argv[0] : "");
+        cc::platform::init_tasks.execute();
     }
 
     void deinitialize()
     {
-        core::platform::exit_tasks.execute();
+        cc::platform::exit_tasks.execute();
         logging::message_dispatcher.deinitialize();
-        core::platform::unregister_providers();
+        cc::platform::unregister_providers();
     }
-}  // namespace core::application
+}  // namespace cc::application

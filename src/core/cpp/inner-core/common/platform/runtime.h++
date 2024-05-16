@@ -8,7 +8,7 @@
 #pragma once
 #include "provider.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     enum StdFileNo
     {
@@ -35,4 +35,4 @@ namespace core::platform
     };
 
     extern ProviderProxy<RunTimeProvider> runtime;
-}  // namespace core::platform
+}  // namespace cc::platform

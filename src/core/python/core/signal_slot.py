@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from cc.core.invocation import safe_invoke, check_type
+from .invocation import safe_invoke, check_type
 
 ### Standard Pyton modules
 from typing import Optional, Callable, Mapping, Any

@@ -26,7 +26,7 @@
     }
 
 /// Miscellaneous string manipulations
-namespace core::str
+namespace cc::str
 {
     //    constexpr auto WHITESPACE = { ' ', '\t', '\r', '\n', 'f', '\0' };
 
@@ -342,7 +342,7 @@ namespace core::str
         size_t width = sizeof(T) * 2,
         std::string prefix = "0x");
 
-}  // namespace core::str
+}  // namespace cc::str
 
 // Inline definitions
 #include "misc.i++"

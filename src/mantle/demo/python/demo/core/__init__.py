@@ -6,5 +6,4 @@
 #===============================================================================
 
 from .api     import API, SignalSlot
-from .signals import demo_signals
-from .types   import CC, ProtoBuf, Weekdays
+from .signals import signal_store

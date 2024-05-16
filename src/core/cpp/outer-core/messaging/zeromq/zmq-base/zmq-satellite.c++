@@ -9,7 +9,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     Satellite::Satellite(const std::string &host_address,
                          const std::string &endpoint_type,
@@ -60,4 +60,4 @@ namespace core::zmq
                                  "tcp",
                                  "localhost");
     }
-}  // namespace core::zmq
+}  // namespace cc::zmq

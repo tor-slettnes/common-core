@@ -15,7 +15,7 @@
 
 int main(int argc, char** argv)
 {
-    core::application::initialize(argc, argv);
+    cc::application::initialize(argc, argv);
 
     demo::options = std::make_unique<demo::Options>("ZeroMQ");
     demo::options->apply(argc, argv);
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     bool success = demo::options->handle_command();
 
     // Invoke shutdown triggers
-    core::platform::signal_shutdown.emit();
+    cc::platform::signal_shutdown.emit();
 
     logf_debug("Deinitializing ZeroMQ demo provider");
     demo::provider->deinitialize();
@@ -47,6 +47,6 @@ int main(int argc, char** argv)
     subscriber.reset();
 
     logf_debug("Deinitializing application");
-    core::application::deinitialize();
+    cc::application::deinitialize();
     return success ? 0 : -1;
 }

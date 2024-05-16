@@ -7,7 +7,7 @@
 
 #include "zmq-messagehandler.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     MessageHandler::MessageHandler(const std::string &id, const Filter &filter)
         : id_(id),
@@ -24,4 +24,4 @@ namespace core::zmq
     {
         return this->filter_;
     }
-}  // namespace core::zmq
+}  // namespace cc::zmq

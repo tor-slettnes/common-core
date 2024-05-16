@@ -14,32 +14,32 @@
 #include <ndds/ndds_cpp.h>
 #include <dds/domain/DomainParticipant.hpp>
 
-namespace core::dds
+namespace cc::dds
 {
-    class RTIDistributedLogger : public core::logging::MessageSink,
-                                 public core::types::enable_create_shared<RTIDistributedLogger>
+    class RTIDistributedLogger : public cc::logging::MessageSink,
+                                 public cc::types::enable_create_shared<RTIDistributedLogger>
     {
         using This = RTIDistributedLogger;
-        using Super = core::logging::MessageSink;
+        using Super = cc::logging::MessageSink;
 
     protected:
         RTIDistributedLogger(const std::string &identity,
                              int domain_id);
 
     public:
-        void set_threshold(core::status::Level threshold) override;
+        void set_threshold(cc::status::Level threshold) override;
 
     protected:
         void open() override;
         void close() override;
-        void capture_message(const core::logging::Message::Ref &msg) override;
+        void capture_message(const cc::logging::Message::Ref &msg) override;
 
     private:
-        static const core::types::ValueMap<core::status::Level, DDS_Long> levelmap;
+        static const cc::types::ValueMap<cc::status::Level, DDS_Long> levelmap;
 
     private:
         RTI_DLOptions dl_options_;
         RTI_DLDistLogger *dist_logger_;
     };
 
-}  // namespace core::logging
+}  // namespace cc::logging

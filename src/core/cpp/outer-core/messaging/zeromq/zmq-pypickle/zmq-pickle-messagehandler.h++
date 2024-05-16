@@ -11,7 +11,7 @@
 #include "zmq-subscriber.h++"
 #include "python-containerobject.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class PyPickleMessageHandler : public PyPickleMessageBase,
                                    public MessageHandler
@@ -34,4 +34,4 @@ namespace core::zmq
         virtual void handle_message(const types::Value &value) {}
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

@@ -16,7 +16,7 @@
 #include <fstream>
 #include <mutex>
 
-namespace core::logging
+namespace cc::logging
 {
     class JsonFileSink : public LogSink,
                          public RotatingPath,
@@ -43,4 +43,4 @@ namespace core::logging
     private:
         std::shared_ptr<json::Writer> writer_;
     };
-}  // namespace core::logging
+}  // namespace cc::logging

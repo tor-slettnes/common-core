@@ -7,13 +7,12 @@
 
 syntax = "proto3";
 
+package cc.protobuf.demo;
+
+import "variant.proto";
+import "signal.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
-import "variant_types.proto";
-import "signal_types.proto";
-
-
-package CC.Demo;
 
 //==============================================================================
 // Service
@@ -33,7 +32,7 @@ service Demo {
     rpc stop_ticking (google.protobuf.Empty) returns (google.protobuf.Empty);
 
     // Stream signals from the server
-    rpc watch (CC.Signal.Filter) returns (stream Signal);
+    rpc watch (cc.protobuf.signal.Filter) returns (stream Signal);
 }
 
 //==============================================================================
@@ -54,7 +53,7 @@ message Greeting
     google.protobuf.Timestamp birth = 4;
 
     // Arbitrary key/value pairs associated with the greeting
-    CC.Variant.ValueList data = 5;
+    cc.protobuf.variant.ValueList data = 5;
 }
 
 //==============================================================================
@@ -100,13 +99,13 @@ message Signal
     // Mapping type, one of: MAP_NONE, MAP_ADDITION, MAP_REMOVAL, MAP_UPDATE.
     // In the case of a MappingSignal (like `Greeting` below), indicates
     // whether this instance is added, updated, or removed.
-    CC.Signal.MappingChange change = 1;
+    cc.protobuf.signal.MappingAction mapping_action = 1;
 
     // Mapping key for the item that was added/removed/updated.
-    string key = 2;
+    string mapping_key = 2;
 
     oneof signal {
-        Greeting greeting = 8; // Emitted whenever a client says hello
-        TimeData time = 9;     // Emitted once per second
+        Greeting signal_greeting = 8; // Emitted whenever a client says hello
+        TimeData signal_time = 9;     // Emitted once per second
     }
 }

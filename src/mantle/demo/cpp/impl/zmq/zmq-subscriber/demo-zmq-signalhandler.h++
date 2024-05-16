@@ -13,15 +13,15 @@
 
 namespace demo::zmq
 {
-    class SignalHandler : public core::zmq::ProtoBufSignalHandler<CC::Demo::Signal>,
-                          public core::types::enable_create_shared<SignalHandler>
+    class SignalHandler : public cc::zmq::ProtoBufSignalHandler<cc::protobuf::demo::Signal>,
+                          public cc::types::enable_create_shared<SignalHandler>
     {
         using This = SignalHandler;
-        using Super = core::zmq::ProtoBufSignalHandler<CC::Demo::Signal>;
+        using Super = cc::zmq::ProtoBufSignalHandler<cc::protobuf::demo::Signal>;
 
     protected:
         void initialize() override;
-        void handle_message(const CC::Demo::Signal &message) override;
+        void handle_message(const cc::protobuf::demo::Signal &message) override;
     };
 
 }  // namespace demo::zmq

@@ -1,0 +1,68 @@
+// -*- Protocol-Buffers -*-
+//==============================================================================
+/// @file variant_types.proto
+/// @brief ProtoBuf message types for Common Core variant values
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+syntax = "proto3";
+
+package cc.protobuf.variant;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+
+// Container for a generic value, and optionally a tag.
+//
+// * The value is either of the following:
+//   - one of the following basic types: boolean, signed/unsigned integer, real number, string, byte sequence
+//   - one of the following well-known types: Timestamp, Duration
+//   - a ValueList instance, declared below, containing nested Value instances.
+//
+// * The tag is optional, and is typically used when the value is part of a
+//   ValueList represeting an ordered tag/value sequence or a key/value map
+//   ("dictionary" in Python).
+//
+// When translating the value to JSON, the following conventions are recommended:
+// * a timestamp should be represented as a string in JavaScript-compliant ISO format:
+//   `yyyy-mm-ddThh:mm:ssZ`. Note that the trailing `Z` implies "zero offset" from UTC.
+// * a duration should be represented as a real number, denoting seconds.
+// * a string should be represented with UTF-8 character encoding, particularly over the wire.
+// * a byte sequence should be represented as a base64-encoded string.
+
+message Value {
+    // Data tag when used in TagValueList, or Key for KeyValueMap.
+    // Not populated inside KeyValueMap or ValueList.
+    string tag = 1;
+
+    oneof value {
+        // Scalar tpes
+        bool value_bool  = 4;
+        uint64 value_uint = 5;
+        sint64 value_sint = 6;
+        double value_real = 7;
+        string value_string = 8;
+        bytes value_bytes = 9;
+        google.protobuf.Timestamp value_timestamp = 10;
+        google.protobuf.Duration value_duration = 11;
+
+        // Nested tag/value container
+        ValueList value_list = 15;
+    }
+}
+
+// A sequence of Value items.  This can be used to represent:
+// - a plain list of (untagged) values, where there should be no tags present
+// - ordered tag/value pairs, where the tags need not exist for every item nor be unique
+// - key/value map ("dictionary" in Python) where every value has a unique key.
+
+message ValueList {
+    repeated Value items = 1;
+
+    oneof hints
+    {
+        bool untagged = 4;      // No tags are present (values can be stored in vector)
+        bool mappable = 5;      // Tags are present and unique (values are mappable)
+    }
+}

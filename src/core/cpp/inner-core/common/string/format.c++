@@ -14,7 +14,7 @@
 #include <iomanip>  // output stream format manipulations
 #include <ios>      // left, right, internal
 
-namespace core::str
+namespace cc::str
 {
     constexpr auto VARARG_CONVERSION = '*';
 
@@ -503,4 +503,4 @@ namespace core::str
         this->stream.imbue(this->locale);
     }
 
-}  // namespace core::str
+}  // namespace cc::str

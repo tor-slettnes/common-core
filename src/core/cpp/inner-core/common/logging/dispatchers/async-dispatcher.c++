@@ -7,7 +7,7 @@
 
 #include "async-dispatcher.h++"
 
-namespace core::logging
+namespace cc::logging
 {
     void AsyncDispatcher::initialize()
     {
@@ -56,4 +56,4 @@ namespace core::logging
             }
         }
     }
-}  // namespace core::logging
+}  // namespace cc::logging

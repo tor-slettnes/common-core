@@ -9,7 +9,7 @@
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
 
-namespace core::json
+namespace cc::json
 {
     BaseWriter::BaseWriter(const std::string &name)
         : name(name)
@@ -44,4 +44,4 @@ namespace core::json
         this->write_stream(fstream, value, pretty);
     }
 
-}  // namespace core::json
+}  // namespace cc::json

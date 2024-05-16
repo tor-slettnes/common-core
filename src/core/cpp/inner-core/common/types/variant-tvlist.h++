@@ -10,7 +10,7 @@
 #include "types/streamable.h++"
 #include "types/create-shared.h++"
 
-namespace core::types
+namespace cc::types
 {
     class TaggedValueList : public std::deque<TaggedValue>,
                             public Streamable,
@@ -129,4 +129,4 @@ namespace core::types
                        const std::string &postfix) const;
     };
 
-}  // namespace core::types
+}  // namespace cc::types

@@ -7,7 +7,6 @@
 
 ### Modules relative to install folder
 from ..common import Endpoint
-from cc.io.protobuf import ProtoBuf, CC
 from cc.core.settingsstore import SettingsStore
 
 ### Stanard Python modules

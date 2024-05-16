@@ -31,7 +31,7 @@
 #define LOGFILE_ROTATION_SETTING  "rotation"
 #define LOGFILE_LOCALTIME_SETTING "local time"
 
-namespace core::argparse
+namespace cc::argparse
 {
     CommonOptions::CommonOptions(bool is_server)
         : Parser(),
@@ -138,7 +138,7 @@ namespace core::argparse
             "DOMAIN_ID",
             "DDS Domain",
             &this->domain_id,
-            core::settings->get("dds domain id", 0).as_uint());
+            cc::settings->get("dds domain id", 0).as_uint());
     }
 
     void CommonOptions::add_log_options()
@@ -154,7 +154,7 @@ namespace core::argparse
             {"--log-colors"},
             "Use ANSI colors to indicate log level when logging to a TTY",
             &this->log_colors,
-            core::settings->get("log colors", true).as_bool());
+            cc::settings->get("log colors", true).as_bool());
 #endif
 
         this->add_flag(
@@ -162,7 +162,7 @@ namespace core::argparse
             "Include context in log message: "
             "log scope, thread ID, source file, line number, and method name.",
             &this->log_context,
-            core::settings->get("log context", false).as_bool());
+            cc::settings->get("log context", false).as_bool());
 
         this->add_opt<status::Level>(
             {"--log-default"},
@@ -251,7 +251,7 @@ namespace core::argparse
 
     void CommonOptions::add_log_scope_options()
     {
-        types::KeyValueMap thresholds = core::settings->get("log thresholds").as_kvmap();
+        types::KeyValueMap thresholds = cc::settings->get("log thresholds").as_kvmap();
         for (auto &[name, scope] : logging::scopes)
         {
             std::string levelname("(default)");
@@ -365,7 +365,7 @@ namespace core::argparse
     types::KeyValueMap CommonOptions::logsink_setting(
         const std::string &sink_name)
     {
-        return core::settings->get(sink_name).as_kvmap();
+        return cc::settings->get(sink_name).as_kvmap();
     }
 
     bool CommonOptions::logsink_setting_enabled(
@@ -385,4 +385,4 @@ namespace core::argparse
         }
     }
 
-}  // namespace core::argparse
+}  // namespace cc::argparse

@@ -9,14 +9,22 @@
 from .error import Error
 from .requesthandler import RequestHandler
 from ..basic.responder import Responder
-from cc.io.protobuf import CC, ProtoBuf
+
+### Modules relative to install folder
+import cc.protobuf.rr
+import cc.protobuf.status
+import cc.protobuf.variant
+
+### Third-party modules
+import google.protobuf.message
+import google.protobuf.text_format
 
 ### Standard Python modules
 from typing import Sequence
 import logging
 
 
-class Server (Responder, ProtoBuf):
+class Server (Responder):
     '''ZMQ RPC server using ProtoBuf messages'''
 
     def __init__(self,
@@ -29,20 +37,20 @@ class Server (Responder, ProtoBuf):
                                       for handler in request_handlers])
 
     def process_request(self, binary_request: bytes):
-        reply = CC.RR.Reply()
+        reply = cc.protobuf.rr.Reply()
 
         try:
-            request = CC.RR.Request.FromString(binary_request)
-        except ProtoBuf.DecodeError as e:
+            request = cc.protobuf.rr.Request.FromString(binary_request)
+        except google.protobuf.message.DecodeError as e:
             logging.warning('ZMQ RPC server failed to decode ProtoBuf request: %s'%
                             (binary_request,))
 
-            Error(CC.RR.STATUS_INVALID,
-                  CC.Status.Details(
+            Error(cc.protobuf.rr.STATUS_INVALID,
+                  cc.protobuf.status.Event(
                       text = str(e),
                       symbol = type(e).__name__,
-                      flow = CC.Status.FLOW_CANCELLED,
-                      attributes = CC.valueList(
+                      flow = cc.protobuf.status.FLOW_CANCELLED,
+                      attributes = cc.protobuf.variant.valueList(
                           data = binary_request
                       )
                   )
@@ -50,18 +58,18 @@ class Server (Responder, ProtoBuf):
 
         else:
             logging.debug('ZMQ RPC server handling request: %s'%(
-                ProtoBuf.MessageToString(request, as_one_line=True),))
+                google.protobuf.text_format.MessageToString(request, as_one_line=True),))
             self.process_protobuf_request(request, reply)
 
         logging.debug('ZMQ RPC server sending reply: %s'%(
-            ProtoBuf.MessageToString(reply, as_one_line=True),))
+            google.protobuf.text_format.MessageToString(reply, as_one_line=True),))
 
         return reply.SerializeToString()
 
 
     def process_protobuf_request(self,
-                                 request : CC.RR.Request,
-                                 reply   : CC.RR.Reply):
+                                 request : cc.protobuf.rr.Request,
+                                 reply   : cc.protobuf.rr.Reply):
 
         reply.client_id = request.client_id
         reply.request_id = request.request_id
@@ -69,12 +77,12 @@ class Server (Responder, ProtoBuf):
         try:
             handler = self.request_handlers[request.interface_name]
         except KeyError:
-            Error(CC.RR.STATUS_INVALID,
-                  CC.Status.Details(
+            Error(cc.protobuf.rr.STATUS_INVALID,
+                  cc.protobuf.status.Event(
                       text = "No such RPC interface",
                       symbol = 'KeyError',
-                      flow = CC.Status.FLOW_CANCELLED,
-                      attributes = CC.valueList(
+                      flow = cc.protobuf.status.FLOW_CANCELLED,
+                      attributes = cc.protobuf.variant.valueList(
                           interface_name = request.interface_name,
                           available_interfaces = list(self.request_handlers.keys())
                       )

@@ -16,7 +16,7 @@
 
 #include <fstream>
 
-namespace core::json
+namespace cc::json
 {
     CustomReader::CustomReader()
         : Super("CustomReader")
@@ -122,4 +122,4 @@ namespace core::json
     }
 
 
-}  // namespace core::json
+}  // namespace cc::json

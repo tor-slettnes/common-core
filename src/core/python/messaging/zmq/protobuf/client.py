@@ -5,15 +5,19 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Modules relative to install folder
 from .error import Error
 from ..basic.requester import Requester
-from cc.io.protobuf import CC, ProtoBuf
-from generated.request_reply_pb2 import Request, Reply, Parameter, \
-    StatusCode, Status, STATUS_OK
+import cc.protobuf.rr
+import cc.protobuf.wellknown
 
-from typing import Optional
+### Third-party modules
+from google.protobuf.message import Message
+from google.protobuf.pyext.cpp_message \
+    import GeneratedProtocolMessageType as MessageType
+from google.protobuf.empty_pb2 import Empty
 
-class Client (Requester, ProtoBuf):
+class Client (Requester):
     '''ZMQ RPC client using ProtoBuf messages'''
 
     last_client_id = 0
@@ -39,55 +43,58 @@ class Client (Requester, ProtoBuf):
 
     def call(self,
              method_name  : str,
-             request_args : Optional[ProtoBuf.Message] = None,
-             response_type: ProtoBuf.MessageType = ProtoBuf.Empty) -> ProtoBuf.Message:
-        '''
-        Invoke a remote method using a ProtoBuf envelope
+             request      : Message|None = None,
+             response_type: MessageType = Empty) -> Message:
+        '''Invoke a remote method using a ProtoBuf envelope, then wait for and
+        return the reply from the server.
+
         '''
 
-        if request_args is None:
-            request_args = ProtoBuf.Empty()
+        if request is None:
+            request = Empty()
 
-        self.send_protobuf_invocation(method_name, request_args)
+        self.send_protobuf_invocation(method_name, request)
         return self.receive_protobuf_result(response_type)
 
 
     def send_protobuf_invocation(self,
                                  method_name  : str,
-                                 args         : ProtoBuf.Message):
-
-        params = Parameter(serialized_proto = args.SerializeToString())
+                                 args         : Message):
+        '''Invoke a remote method using a ProtoBuf envelope, then return immediately.
+        To reeive the response invoke `receive_protobuf_result()`.
+        '''
+        params = cc.protobuf.rr.Parameter(serialized_proto = args.SerializeToString())
         self.send_invocation(method_name, params)
 
 
     def send_invocation(self,
                         method_name: str,
-                        input_param: Parameter):
+                        input_param: cc.protobuf.rr.Parameter):
 
         self.request_id += 1
 
-        req = Request(request_id = self.request_id,
-                      client_id  = self.client_id,
-                      interface_name = self.interface_name,
-                      method_name = method_name,
-                      param = input_param)
+        req = cc.protobuf.rr.Request(request_id = self.request_id,
+                                     client_id  = self.client_id,
+                                     interface_name = self.interface_name,
+                                     method_name = method_name,
+                                     param = input_param)
 
         self.send_request(req)
 
-    def send_request(self, request: Request):
+    def send_request(self, request: cc.protobuf.rr.Request):
         self.send_bytes(request.SerializeToString())
 
-    def receive_protobuf_result(self, response_type : ProtoBuf.MessageType):
+    def receive_protobuf_result(self, response_type : MessageType) -> Message:
         response_param = self.receive_response_param()
         return response_type.FromString(response_param.serialized_proto)
 
-    def receive_response_param(self):
+    def receive_response_param(self) -> cc.protobuf.rr.Parameter:
         reply = self.receive_reply()
-        if reply.status.code == STATUS_OK:
+        if reply.status.code == cc.protobuf.rr.STATUS_OK:
             return reply.param
         else:
             raise Error(reply.status.code, reply.status.details) from None
 
-    def receive_reply(self):
+    def receive_reply(self) -> cc.protobuf.rr.Reply:
         data = self.receive_bytes()
-        return Reply.FromString(data)
+        return cc.protobuf.rr.Reply.FromString(data)

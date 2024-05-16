@@ -8,7 +8,7 @@
 #include "dispatcher.h++"
 #include <iostream>
 
-namespace core::logging
+namespace cc::logging
 {
     Sink::Ref Dispatcher::add_sink(const Sink::Ref &sink)
     {
@@ -57,4 +57,4 @@ namespace core::logging
         }
     }
 
-}  // namespace core::logging
+}  // namespace cc::logging

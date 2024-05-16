@@ -5,12 +5,14 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Modules relative to current folder
 from ..basic import Publisher, Filter, MessageWriter as BaseWriter
-from cc.io.protobuf import ProtoBuf
 
-from typing import Optional
+### Modules relative to install folder
+import cc.protobuf.wellknown
 
-class MessageWriter (BaseWriter, ProtoBuf):
+
+class MessageWriter (BaseWriter):
     '''ZMQ publisher with support for ProtoBuf messages'''
 
     ### Subclasses should override this with a ProtoBuf message type,
@@ -19,22 +21,22 @@ class MessageWriter (BaseWriter, ProtoBuf):
 
     def __init__ (self,
                   publisher: Publisher,
-                  message_type: Optional[ProtoBuf.MessageType] = None):
+                  message_type: cc.protobuf.wellknown.MessageType|None = None):
 
         self.message_type = message_type or type(self).message_type
-        assert isinstance(self.message_type, ProtoBuf.MessageType)
+        assert isinstance(self.message_type, cc.protobuf.wellknown.MessageType)
 
         topic = self.message_type.DESCRIPTOR.full_name
         BaseWriter.__init__(self, publisher, Filter.create_from_topic(topic))
 
     def write_proto(self,
-                    message : ProtoBuf.Message):
+                    message : cc.protobuf.wellknown.Message):
         '''Publish a ProtoBuf message over ZMQ'''
 
         self.write_bytes(message.SerializeToString())
 
     def write_dict_as_proto(self,
-                            prototype: ProtoBuf.MessageType,
+                            prototype: cc.protobuf.wellknown.MessageType,
                             data : dict,
                             ignore_unknown_fields: bool = False):
         '''
@@ -43,4 +45,4 @@ class MessageWriter (BaseWriter, ProtoBuf):
         '''
 
         self.write_proto(
-            ProtoBuf.encodeFromDict(data, prototype, ignore_unknown_fields))
+            cc.protobuf.wellknown.encodeFromDict(data, prototype, ignore_unknown_fields))

@@ -9,7 +9,7 @@
 #include "string/expand.h++"
 #include "platform/path.h++"
 
-namespace core::logging
+namespace cc::logging
 {
     RotatingPath::RotatingPath(const std::string &path_template,
                                const std::string &default_suffix,
@@ -86,4 +86,4 @@ namespace core::logging
         this->current_rotation_ = starttime;
     }
 
-}  // namespace core::logging
+}  // namespace cc::logging

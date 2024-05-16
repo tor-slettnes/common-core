@@ -16,7 +16,7 @@
 #include <mutex>
 #include <thread>
 
-namespace core
+namespace cc
 {
     /// @class Scheduler
     /// @brief Schedule callbacks to be invoked at specified time intervals.
@@ -274,4 +274,4 @@ namespace core
     };
 
     extern Scheduler scheduler;
-}  // namespace core
+}  // namespace cc

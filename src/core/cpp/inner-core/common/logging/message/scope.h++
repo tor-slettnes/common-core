@@ -67,16 +67,16 @@
 /// \endcode
 
 #define define_log_scope(...) \
-    inline static ::core::logging::Scope::Ref log_scope = \
-        ::core::logging::Scope::create(__VA_ARGS__)
+    inline static ::cc::logging::Scope::Ref log_scope = \
+        ::cc::logging::Scope::create(__VA_ARGS__)
 
 #define use_log_scope(other) \
-    inline static ::core::logging::Scope::Ref log_scope = other
+    inline static ::cc::logging::Scope::Ref log_scope = other
 
 #define use_shared_scope() \
-    use_log_scope(::core::log_scope)
+    use_log_scope(::cc::log_scope)
 
-namespace core::logging
+namespace cc::logging
 {
 
     //==========================================================================
@@ -124,12 +124,12 @@ namespace core::logging
     /// Methods
     status::Level current_threshold();
 
-}  // namespace core::logging
+}  // namespace cc::logging
 
-namespace core
+namespace cc
 {
     define_log_scope("shared", status::Level::NOTICE);
 }
 
 /// Global log scope.  Inherit default threshold.
-define_log_scope("global", core::status::Level::NONE);
+define_log_scope("global", cc::status::Level::NONE);

@@ -15,7 +15,7 @@
 #include <ostream>
 #include <string>
 
-namespace core::logging
+namespace cc::logging
 {
     //==========================================================================
     /// \class StreamSink
@@ -54,4 +54,4 @@ namespace core::logging
         std::ostream &stream;
         types::ValueMap<status::Level, StyleMap> styles;
     };
-}  // namespace core::logging
+}  // namespace cc::logging

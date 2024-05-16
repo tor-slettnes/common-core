@@ -9,7 +9,7 @@
 #include "dispatcher.h++"
 #include <mutex>
 
-namespace core::logging
+namespace cc::logging
 {
     class SyncDispatcher : public Dispatcher
     {
@@ -22,4 +22,4 @@ namespace core::logging
         std::mutex mtx_;
     };
 
-}  // namespace core::logging
+}  // namespace cc::logging

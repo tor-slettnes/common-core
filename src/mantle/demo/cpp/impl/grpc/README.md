@@ -41,7 +41,7 @@ message Signal
     // Mapping type, one of: MAP_NONE, MAP_ADDITION, MAP_REMOVAL, MAP_UPDATE.
     // In the case of a MappingSignal (like `Greeting` below), indicates
     // whether this instance is added, updated, or removed.
-    CC.Signal.MappingChange change = 1;
+    CC.Signal.MappingAction mapping_action = 1;
 
     // Mapping key for the item that was added/removed/updated.
     string key = 2;

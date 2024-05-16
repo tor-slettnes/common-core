@@ -16,7 +16,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace core
+namespace cc
 {
     SettingsStore::SettingsStore(const types::PathList &filenames,
                                  const types::PathList &directories)
@@ -230,4 +230,4 @@ namespace core
         return result;
     }
 
-}  // namespace core
+}  // namespace cc

@@ -7,7 +7,7 @@
 
 #include "logsink.h++"
 
-namespace core::logging
+namespace cc::logging
 {
     //==========================================================================
     // LogSink
@@ -50,4 +50,4 @@ namespace core::logging
         return this->threshold_;
     }
 
-}  // namespace core::logging
+}  // namespace cc::logging

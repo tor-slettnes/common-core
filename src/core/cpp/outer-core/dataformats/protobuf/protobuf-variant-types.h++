@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "variant_types.pb.h"  // generated from `common-types.proto`
+#include "variant.pb.h"  // generated from `variant.proto`
 #include "chrono/date-time.h++"
 #include "types/value.h++"
 
@@ -16,93 +16,93 @@
 /// ("decode...()") "common" ProtoBuf messages (including those defined in
 /// "common_types.proto").
 
-namespace protobuf
+namespace cc::io::proto
 {
-    using RepeatedValue = google::protobuf::RepeatedPtrField<CC::Variant::Value>;
+    using RepeatedValue = google::protobuf::RepeatedPtrField<cc::protobuf::variant::Value>;
 
     //==========================================================================
     // Variant Value encoding/decoding
 
-    void encode(const core::types::Value &value,
-                CC::Variant::Value *msg) noexcept;
+    void encode(const cc::types::Value &value,
+                cc::protobuf::variant::Value *msg) noexcept;
 
-    void decode(const CC::Variant::Value &msg,
-                core::types::Value *value) noexcept;
+    void decode(const cc::protobuf::variant::Value &msg,
+               cc::types::Value *value) noexcept;
 
     //==========================================================================
     // TaggedValue encoding/decoding
 
-    void encode(const core::types::TaggedValue &tv,
-                CC::Variant::Value *msg) noexcept;
+    void encode(const cc::types::TaggedValue &tv,
+                cc::protobuf::variant::Value *msg) noexcept;
 
-    void decode(const CC::Variant::Value &msg,
-                core::types::TaggedValue *tv) noexcept;
+    void decode(const cc::protobuf::variant::Value &msg,
+               cc::types::TaggedValue *tv) noexcept;
 
-    void encode(const core::types::Tag &tag,
-                const core::types::Value &value,
-                CC::Variant::Value *msg) noexcept;
+    void encode(const cc::types::Tag &tag,
+                const cc::types::Value &value,
+                cc::protobuf::variant::Value *msg) noexcept;
 
-    void decode(const CC::Variant::Value &msg,
+    void decode(const cc::protobuf::variant::Value &msg,
                 std::string *tag,
-                core::types::Value *value) noexcept;
+               cc::types::Value *value) noexcept;
 
     //==========================================================================
     // TaggedValueList encoding/decoding
 
     /// \brief
-    ///    Encode core::types::TaggedValueList to CC::Variant::ValueList protobuf message
-    void encode(const core::types::TaggedValueList &tvlist,
-                CC::Variant::ValueList *msg) noexcept;
+    ///    Encodecc::types::TaggedValueList to cc::protobuf::variant::ValueList protobuf message
+    void encode(const cc::types::TaggedValueList &tvlist,
+                cc::protobuf::variant::ValueList *msg) noexcept;
 
     /// \brief
-    ///    Decode a CC::Variant::Value vector into core::types::TaggeValueList.
-    void decode(const CC::Variant::ValueList &msg,
-                core::types::TaggedValueList *tvlist) noexcept;
+    ///    Decode a cc::protobuf::variant::Value vector intocc::types::TaggeValueList.
+    void decode(const cc::protobuf::variant::ValueList &msg,
+               cc::types::TaggedValueList *tvlist) noexcept;
 
     /// \brief
-    ///    Encode core::types::TaggedValueList to a repeated CC::Variant::Valuef field.
-    void encode(const core::types::TaggedValueList &tvlist,
+    ///    Encodecc::types::TaggedValueList to a repeated cc::protobuf::variant::Valuef field.
+    void encode(const cc::types::TaggedValueList &tvlist,
                 RepeatedValue *msg) noexcept;
 
     /// \brief
-    ///    Decode a repeated CC::Variant::Valuef field to TaggedValueList
+    ///    Decode a repeated cc::protobuf::variant::Valuef field to TaggedValueList
     void decode(const RepeatedValue &msgs,
-                core::types::TaggedValueList *tvlist) noexcept;
+               cc::types::TaggedValueList *tvlist) noexcept;
 
     //==========================================================================
     // KeyValueMap encoding/decoding
 
-    void encode(const core::types::KeyValueMap &map,
-                CC::Variant::ValueList *msg) noexcept;
+    void encode(const cc::types::KeyValueMap &map,
+                cc::protobuf::variant::ValueList *msg) noexcept;
 
-    void decode(const CC::Variant::ValueList &msg,
-                core::types::KeyValueMap *map) noexcept;
+    void decode(const cc::protobuf::variant::ValueList &msg,
+               cc::types::KeyValueMap *map) noexcept;
 
-    void encode(const core::types::KeyValueMap &map,
+    void encode(const cc::types::KeyValueMap &map,
                 RepeatedValue *msg) noexcept;
 
     void decode(const RepeatedValue &msgs,
-                core::types::KeyValueMap *kvmap) noexcept;
+               cc::types::KeyValueMap *kvmap) noexcept;
 
-    void encode(const core::types::KeyValueMap &map,
-                google::protobuf::Map<std::string, CC::Variant::Value> *msg) noexcept;
+    void encode(const cc::types::KeyValueMap &map,
+                google::protobuf::Map<std::string, cc::protobuf::variant::Value> *msg) noexcept;
 
-    void decode(const google::protobuf::Map<std::string, CC::Variant::Value> &nmsg,
-                core::types::KeyValueMap *map) noexcept;
+    void decode(const google::protobuf::Map<std::string, cc::protobuf::variant::Value> &nmsg,
+               cc::types::KeyValueMap *map) noexcept;
 
     //==========================================================================
     // VariantValueList encoding/decoding
 
-    void encode(const core::types::ValueList &list,
-                CC::Variant::ValueList *msg) noexcept;
+    void encode(const cc::types::ValueList &list,
+                cc::protobuf::variant::ValueList *msg) noexcept;
 
-    void decode(const CC::Variant::ValueList &msg,
-                core::types::ValueList *list) noexcept;
+    void decode(const cc::protobuf::variant::ValueList &msg,
+               cc::types::ValueList *list) noexcept;
 
     void decode(const RepeatedValue &msgs,
-                core::types::ValueList *list) noexcept;
+               cc::types::ValueList *list) noexcept;
 
-    void decode(const CC::Variant::ValueList &msg,
-                core::types::Value *value) noexcept;
+    void decode(const cc::protobuf::variant::ValueList &msg,
+               cc::types::Value *value) noexcept;
 
-}  // namespace core::protobuf
+}  // cc::io::proto

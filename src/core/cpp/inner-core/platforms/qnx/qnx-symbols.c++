@@ -8,7 +8,7 @@
 #pragma once
 #include "qnx-symbols.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     QNXSymbolsProvider::QNXSymbolsProvider(const std::string &name)
         : PosixSymbolsProvdier(name)
@@ -26,4 +26,4 @@ namespace core::platform
     }
 };
 
-}  // namespace core::platform
+}  // namespace cc::platform

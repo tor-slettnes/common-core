@@ -19,7 +19,7 @@ namespace demo::grpc
         const std::string &listen_address)
     {
         log_info("Creating gRPC server builder");
-        core::grpc::ServerBuilder builder(listen_address);
+        cc::grpc::ServerBuilder builder(listen_address);
 
         log_info("Creating Demo gRPC request handler");
         auto request_handler = RequestHandler::create_shared(api_provider);
@@ -28,18 +28,18 @@ namespace demo::grpc
         log_info("Starting Demo gRPC server");
         std::unique_ptr<::grpc::Server> server = builder.BuildAndStart();
 
-        std::string signal_handle = core::platform::signal_shutdown.connect(
+        std::string signal_handle = cc::platform::signal_shutdown.connect(
             [&]() {
                 log_info("Requesting gRPC server shutdown with a 5s timeout");
-                server->Shutdown(core::dt::Clock::now() +
+                server->Shutdown(cc::dt::Clock::now() +
                                  std::chrono::seconds(5));
             });
 
-        log_notice("Demo gRPC server is ready on ", core::str::join(builder.listener_ports()));
+        log_notice("Demo gRPC server is ready on ", cc::str::join(builder.listener_ports()));
         server->Wait();
         log_notice("Demo gRPC server is shutting down");
 
-        core::platform::signal_shutdown.disconnect(signal_handle);
+        cc::platform::signal_shutdown.disconnect(signal_handle);
         server.reset();
     }
 }  // namespace demo::grpc

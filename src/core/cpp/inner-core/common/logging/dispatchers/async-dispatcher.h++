@@ -9,7 +9,7 @@
 #include "dispatcher.h++"
 #include "thread/blockingqueue.h++"
 
-namespace core::logging
+namespace cc::logging
 {
     class AsyncDispatcher : public Dispatcher
     {
@@ -29,4 +29,4 @@ namespace core::logging
         types::BlockingQueue<types::Loggable::Ref> queue_;
     };
 
-}  // namespace core::logging
+}  // namespace cc::logging

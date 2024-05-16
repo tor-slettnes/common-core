@@ -23,7 +23,7 @@ namespace demo
                             {"two", 2},
                             {"three", 3.141592653589793238},
                             {"four", "IV"},
-                            {"five", core::dt::Clock::now()},
+                            {"five", cc::dt::Clock::now()},
                         })
     {
     }
@@ -71,7 +71,7 @@ namespace demo
         demo::Greeting received_greeting;
 
         auto signal_handle = demo::signal_greeting.connect(
-            [&](core::signal::MappingChange change,
+            [&](cc::signal::MappingAction mapping_action,
                 const std::string &identity,
                 const demo::Greeting &greeting) {
                 received_greeting = greeting;
@@ -87,16 +87,16 @@ namespace demo
 
     void DemoTest::test_encode_decode_greeting()
     {
-        auto encoded_greeting = protobuf::encoded<CC::Demo::Greeting>(this->test_greeting);
-        auto decoded_greeting = protobuf::decoded<demo::Greeting>(encoded_greeting);
+        auto encoded_greeting = ::cc::io::proto::encoded<cc::protobuf::demo::Greeting>(this->test_greeting);
+        auto decoded_greeting = ::cc::io::proto::decoded<demo::Greeting>(encoded_greeting);
         EXPECT_EQ(this->test_greeting, decoded_greeting);
     }
 
     void DemoTest::test_encode_decode_timedata()
     {
-        demo::TimeData td(core::dt::Clock::now());
-        auto encoded_td = protobuf::encoded<CC::Demo::TimeData>(td);
-        auto decoded_td = protobuf::decoded<demo::TimeData>(encoded_td);
+        demo::TimeData td(cc::dt::Clock::now());
+        auto encoded_td = ::cc::io::proto::encoded<cc::protobuf::demo::TimeData>(td);
+        auto decoded_td = ::cc::io::proto::decoded<demo::TimeData>(encoded_td);
         EXPECT_EQ(td, decoded_td);
     }
 

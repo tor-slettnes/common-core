@@ -6,9 +6,17 @@
 #===============================================================================
 
 ### Modules relative to install folder
-import demo.core.types
-import demo.grpc.client
-import demo.zmq.client
+import cc.demo.grpc.client
+import cc.demo.zmq.client
+import cc.protobuf.demo
+import cc.protobuf.wellknown
+import cc.protobuf.variant
+import cc.protobuf.signal
+import cc.protobuf.status
+import cc.protobuf.rr
+
+### Third-party modules
+import google.protobuf.message
 
 ### Standard Python modules
 import logging
@@ -16,15 +24,10 @@ import argparse
 import sys
 import os.path
 
-### Make the contents of Python client modules available in namespaces roughly
-### corresponding to the package names of the corresponding `.proto` files
-from cc.io.protobuf import ProtoBuf
-
-### Container class for ProtoBuf message types from mutiple services
-### (e.g. "CC.Demo.Signal").
-
-class CC (demo.core.types.CC):
-    pass
+### Import well-known ProtoBuf modules from Google.
+### Their symbols will appear within the `google.protobuf` namespace.
+from cc.protobuf.wellknown import import_wellknown_protos
+import_wellknown_protos(globals())
 
 ### Add a few arguments to the base argparser
 class ArgParser (argparse.ArgumentParser):
@@ -71,11 +74,15 @@ if __name__ == "__main__":
     logger = logging.getLogger()
     logger.setLevel((logging.INFO, logging.DEBUG)[args.debug])
 
-    demo_grpc = demo.grpc.client.DemoClient(args.host,
-                                            identity = args.identity,
-                                            wait_for_ready = args.wait_for_ready)
-    # demo_zmq  = demo.zmq.client.DemoClient(args.host, identity = args.identity)
+    demo_grpc = cc.demo.grpc.client.DemoClient(
+        args.host,
+        identity = args.identity,
+        wait_for_ready = args.wait_for_ready)
+
+    demo_zmq  = cc.demo.zmq.client.DemoClient(
+        args.host,
+        identity = args.identity)
 
     demo_grpc.initialize()
-    # demo_zmq.initialize()
+    demo_zmq.initialize()
     legend()

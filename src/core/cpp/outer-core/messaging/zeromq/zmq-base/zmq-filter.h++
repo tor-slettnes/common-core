@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-namespace core::zmq
+namespace cc::zmq
 {
     class Filter : public types::ByteVector
     {
@@ -36,4 +36,4 @@ namespace core::zmq
         std::string topic() const;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

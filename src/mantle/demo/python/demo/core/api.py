@@ -6,19 +6,21 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from .types   import CC, ProtoBuf
-from .signals import demo_signals
+from .signals import signal_store
+import cc.protobuf.demo
+import cc.protobuf.variant
+import cc.protobuf.wellknown
 
 ### Standard Python modules
 from typing import Callable
 import sys, os.path, time
 
-SignalSlot = Callable[[CC.Demo.Signal], None]
+SignalSlot = Callable[[cc.protobuf.demo.Signal], None]
 
 #===============================================================================
 # Native Demo implementation
 
-class API (ProtoBuf):
+class API:
     '''Demo API'''
 
     def __init__(self,
@@ -39,20 +41,21 @@ class API (ProtoBuf):
         @param[in] kwargs
             Arbitrary attributes included in greeting
         @note
-            This is a convencience wrapper to build a `CC.Demo.Greeting` object
+            This is a convencience wrapper to build a `cc.protobuf.demo.Greeting` object
             and pass it to `say_hello()`.
         '''
 
-        greeting = CC.Demo.Greeting(text=text,
-                                    identity=self.identity,
-                                    implementation=self.implementation,
-                                    birth=ProtoBuf.encodeTimestamp(self.birth),
-                                    data=CC.encodeValueList(kwargs))
+        greeting = cc.protobuf.demo.Greeting(
+            text = text,
+            identity = self.identity,
+            implementation = self.implementation,
+            birth = cc.protobuf.wellknown.encodeTimestamp(self.birth),
+            data = cc.protobuf.variant.encodeValueList(kwargs))
 
         return self.say_hello(greeting)
 
 
-    def say_hello(self, greeting: CC.Demo.Greeting):
+    def say_hello(self, greeting: cc.protobuf.demo.Greeting):
         '''Issue a greeting to anyone who may be listening.
         For interactive use, the `hello()` wrapper method may be more convenient.
 
@@ -63,7 +66,7 @@ class API (ProtoBuf):
         raise NotImplementedError("Method not implemented by %s"%(self,))
 
 
-    def get_current_time(self) -> CC.Demo.TimeData:
+    def get_current_time(self) -> cc.protobuf.demo.TimeData:
         '''Get current time data.
 
         @return
@@ -91,17 +94,17 @@ class API (ProtoBuf):
         '''Register a callback to be invoked whenever a greeting is received
 
         @param[in] callback
-            Callback method, which will receive the CC.Demo.Signal() message
-            containing the greeting as argument.
+            Callback method, which will receive the `cc.protobuf.demo.Signal()`
+            message containing the greeting as argument.
         '''
-        demo_signals.connect_signal('greeting', callback)
+        signal_store.connect_signal('signal_greeting', callback)
 
 
     def stop_notify_greetings(self):
         '''
         Unregister any existing greeting callback
         '''
-        demo_signals.disconnect_signal('greeting')
+        signal_store.disconnect_signal('signal_greeting')
 
 
     def start_notify_time(self, callback: SignalSlot):
@@ -111,7 +114,7 @@ class API (ProtoBuf):
         @param[in] callback
             Callback method, which will receive the time data as argument.
         '''
-        demo_signals.connect_signal_data('time', callback)
+        signal_store.connect_signal_data('signal_time', callback)
 
 
     def stop_notify_time (self):
@@ -119,4 +122,4 @@ class API (ProtoBuf):
         @brief Unregister any existing time callbacks
         '''
 
-        demo_signals.disconnect_signal('time')
+        signal_store.disconnect_signal('signal_time')

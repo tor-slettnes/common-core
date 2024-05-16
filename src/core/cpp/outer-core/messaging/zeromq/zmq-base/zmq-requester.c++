@@ -7,7 +7,7 @@
 
 #include "zmq-requester.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     Requester::Requester(const std::string &host_address,
                          const std::string &channel_name)
@@ -27,4 +27,4 @@ namespace core::zmq
         return this->receive(recv_flags);
     }
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

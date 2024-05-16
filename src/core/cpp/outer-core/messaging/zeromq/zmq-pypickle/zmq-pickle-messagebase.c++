@@ -7,7 +7,7 @@
 
 #include "zmq-pickle-messagebase.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     PyPickleMessageBase::PyPickleMessageBase(
         const std::shared_ptr<Endpoint> &endpoint)
@@ -36,4 +36,4 @@ namespace core::zmq
             return {};
         }
     }
-}  // namespace core::zmq
+}  // namespace cc::zmq

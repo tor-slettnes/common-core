@@ -12,7 +12,7 @@
 #include "rapidjson/writer.h++"
 #endif
 
-namespace core::json
+namespace cc::json
 {
     using Writer = CustomWriter;
 

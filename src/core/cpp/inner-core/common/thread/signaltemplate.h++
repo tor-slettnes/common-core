@@ -16,14 +16,18 @@
 #include <map>
 #include <mutex>
 
-namespace core::signal
+namespace cc::signal
 {
     //==========================================================================
     // Types
 
     using Handle = std::string;
 
-    enum MappingChange
+    // Synchronized to `cc.protobuf.signal.MappingAction` in `signal.proto`.  We
+    // do not use that here, since ProtoBuf support is optional, not part of the
+    // "inner core".
+
+    enum MappingAction
     {
         MAP_NONE,
         MAP_ADDITION,
@@ -231,7 +235,7 @@ namespace core::signal
     ///
     /// Example:
     /// @code
-    ///      void on_my_signal(MappingSignal::MappingChange change,
+    ///      void on_my_signal(MappingSignal::MappingAction change,
     ///                       const std::string &key,
     ///                       const MyDataType &data) {...}
     ///      ...
@@ -251,7 +255,7 @@ namespace core::signal
         using Super = BaseSignal;
 
     public:
-        using Slot = std::function<void(MappingChange, const KeyType &, const DataType &)>;
+        using Slot = std::function<void(MappingAction, const KeyType &, const DataType &)>;
 
         MappingSignal(const std::string &id, bool caching = false);
 
@@ -289,7 +293,7 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        size_t emit(MappingChange change, const KeyType &key, const DataType &value);
+        size_t emit(MappingAction change, const KeyType &key, const DataType &value);
 
         /// @brief
         ///     Emit a signal to registered receivers of the provided data type.
@@ -392,13 +396,13 @@ namespace core::signal
         void emit_cached_to(const std::string &handle,
                                    const Slot &callback);
 
-        size_t sendall(MappingChange change,
+        size_t sendall(MappingAction change,
                               const KeyType &key,
                               const DataType &value = {});
 
         void callback(const std::string &receiver,
                              const Slot &method,
-                             MappingChange change,
+                             MappingAction change,
                              const KeyType &key,
                              const DataType &value);
 
@@ -411,7 +415,7 @@ namespace core::signal
     //==========================================================================
     // I/O stream support
 
-    std::ostream &operator<<(std::ostream &stream, MappingChange change);
-}  // namespace core::signal
+    std::ostream &operator<<(std::ostream &stream, MappingAction change);
+}  // namespace cc::signal
 
 #include "signaltemplate.i++"

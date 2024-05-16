@@ -9,7 +9,7 @@
 #include <sstream>
 #include <string>
 
-namespace core::types
+namespace cc::types
 {
     class Streamable
     {
@@ -30,4 +30,4 @@ namespace core::types
         virtual std::string to_literal() const;
     };
 
-}  // namespace core::types
+}  // namespace cc::types

@@ -8,7 +8,7 @@
 #pragma once
 #include "zmq-endpoint.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class Host : public Endpoint
     {
@@ -29,4 +29,4 @@ namespace core::zmq
         const std::string bind_address_;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

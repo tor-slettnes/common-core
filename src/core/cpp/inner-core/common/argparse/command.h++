@@ -8,7 +8,7 @@
 #pragma once
 #include "client.h++"
 
-namespace core::argparse
+namespace cc::argparse
 {
     //==========================================================================
     /// Option parser for command-line utilities with subcommands
@@ -52,7 +52,7 @@ namespace core::argparse
 
     protected:
         template <class T>
-        std::optional<T> pop_from_map(const core::types::SymbolMap<T> &map)
+        std::optional<T> pop_from_map(const cc::types::SymbolMap<T> &map)
         {
             std::string arg = this->pop_arg(map.joined_symbols());
             if (const std::optional<T> &value = map.from_string(arg))
@@ -78,4 +78,4 @@ namespace core::argparse
         std::vector<CommandDescription> command_descriptions;
     };
 
-}  // namespace core::argparse
+}  // namespace cc::argparse

@@ -35,7 +35,7 @@ set(RECIPES demo-types.idl)
 set(SERVICES demo-interface.idl)
 
 ## Invoke common CMake rules
-import(BuildIDL)
+include(BuildIDL)
 BuildIDL("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   RECIPES ${RECIPES}

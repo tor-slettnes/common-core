@@ -13,7 +13,7 @@
 #include <rti/request/Requester.hpp>
 //#include <dds/core/Duration.hpp>
 
-namespace core::dds
+namespace cc::dds
 {
     template <class RequestType, class ResponseType>
     class Requester : public Endpoint,
@@ -25,7 +25,7 @@ namespace core::dds
     public:
         Requester(const std::string &request_id,
                   int domain_id,
-                  const core::dt::Duration &default_timeout = std::chrono::seconds(10))
+                  const cc::dt::Duration &default_timeout = std::chrono::seconds(10))
             : Endpoint("requester", request_id, domain_id),
               BaseRequester(this->requester_params()),
               default_timeout_(default_timeout)
@@ -47,14 +47,14 @@ namespace core::dds
         }
 
         inline ResponseType send_receive(const RequestType &req,
-                                         const core::dt::Duration &max_wait)
+                                         const cc::dt::Duration &max_wait)
         {
             rti::core::SampleIdentity request_id = this->send_request(req);
             return this->receive_response(request_id, max_wait);
         }
 
         ResponseType receive_response(const rti::core::SampleIdentity &request_id,
-                                      const core::dt::Duration &max_wait)
+                                      const cc::dt::Duration &max_wait)
         {
             if (this->wait_for_replies(1, max_wait, request_id))
             {
@@ -72,13 +72,13 @@ namespace core::dds
                     }
                 }
             }
-            throwf_args(core::exception::Timeout,
+            throwf_args(cc::exception::Timeout,
                         ("Request %r did not receive any responses", this->instance_name()),
                         max_wait);
         }
 
     private:
-        core::dt::Duration default_timeout_;
+        cc::dt::Duration default_timeout_;
     };
 
-}  // namespace core::dds
+}  // namespace cc::dds

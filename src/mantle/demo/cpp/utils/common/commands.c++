@@ -15,13 +15,13 @@ namespace demo
     void Options::say_hello()
     {
         std::string text = this->pop_arg("text");
-        core::types::KeyValueMap data = this->pop_attributes(false);
+        cc::types::KeyValueMap data = this->pop_attributes(false);
 
         demo::Greeting greeting(
             text,                                         // text
             this->identity,                               // identity
-            core::str::convert_from(this->implementation),  // implementation
-            core::dt::Clock::now(),                         // birth
+            cc::str::convert_from(this->implementation),  // implementation
+            cc::dt::Clock::now(),                         // birth
             data);                                        // data
 
         demo::provider->say_hello(greeting);
@@ -44,19 +44,19 @@ namespace demo
 
     void Options::on_time(const demo::TimeData &timedata)
     {
-        core::str::format(std::cout,
+        cc::str::format(std::cout,
                         "signal_time(%s)\n",
                         timedata);
     }
 
-    void Options::on_greeting(core::signal::MappingChange change,
-                              const std::string &identity,
+    void Options::on_greeting(cc::signal::MappingAction mapping_action,
+                              const std::string &mapping_key,
                               const demo::Greeting &greeting)
     {
-        core::str::format(std::cout,
+        cc::str::format(std::cout,
                         "signal_greeting(%s, %r, %s)\n",
-                        change,
-                        identity,
+                        mapping_action,
+                        mapping_key,
                         greeting);
     }
 }  // namespace demo

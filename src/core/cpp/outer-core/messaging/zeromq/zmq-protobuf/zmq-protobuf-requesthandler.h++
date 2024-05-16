@@ -13,7 +13,7 @@
 
 #include "request_reply.pb.h"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class ProtoBufRequestHandler
     {
@@ -28,8 +28,8 @@ namespace core::zmq
         virtual void deinitialize();
 
     public:
-        void process_method_request(const CC::RR::Request &request,
-                                    CC::RR::Reply *reply);
+        void process_method_request(const cc::protobuf::rr::Request &request,
+                                    cc::protobuf::rr::Reply *reply);
 
     protected:
         template <class ReplyType, class RequestType, class Subclass>
@@ -38,7 +38,7 @@ namespace core::zmq
         {
             this->handler_map.insert_or_assign(
                 method_name,
-                [=](const CC::RR::Parameter &req_param, CC::RR::Parameter *rep_param) {
+                [=](const cc::protobuf::rr::Parameter &req_param, cc::protobuf::rr::Parameter *rep_param) {
                     RequestType req;
                     req.ParseFromString(req_param.serialized_proto());
 
@@ -56,11 +56,11 @@ namespace core::zmq
         std::string interface_name_;
 
         using MethodHandler =
-            std::function<void(const CC::RR::Parameter &request,
-                               CC::RR::Parameter *reply)>;
+            std::function<void(const cc::protobuf::rr::Parameter &request,
+                               cc::protobuf::rr::Parameter *reply)>;
         using MethodHandlerMap =
             types::ValueMap<std::string, MethodHandler>;
 
         MethodHandlerMap handler_map;
     };
-}  // namespace core::zmq
+}  // namespace cc::zmq

@@ -13,9 +13,9 @@ set(PKG_COMPONENT "core-proto")
 
 ### Source files
 set(SOURCES
-  variant_types.proto
-  event_types.proto
-  signal_types.proto
+  variant.proto
+  status.proto
+  signal.proto
   request_reply.proto
 )
 

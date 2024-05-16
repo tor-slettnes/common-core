@@ -14,7 +14,7 @@
 
 #include <rti/request/SimpleReplier.hpp>
 
-namespace core::dds
+namespace cc::dds
 {
     template <class RequestType = CC::Common::Empty,
               class ResponseType = CC::Common::Empty>
@@ -42,4 +42,4 @@ namespace core::dds
         }
     };
 
-}  // namespace core::dds
+}  // namespace cc::dds

@@ -7,7 +7,7 @@
 
 #include "qnx-path.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     QNXPathProvider::QNXPathProvider(const std::string &exec_path)
         : Super("QNXPathProvider", exec_path)
@@ -20,4 +20,4 @@ namespace core::platform
         return path.empty() ? Super::exec_path() : path;
     }
 
-}  // namespace core::platform
+}  // namespace cc::platform

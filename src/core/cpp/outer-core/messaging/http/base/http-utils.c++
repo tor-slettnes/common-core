@@ -13,7 +13,7 @@
 
 #include <regex>
 
-namespace core::http
+namespace cc::http
 {
 
 
@@ -296,4 +296,4 @@ namespace core::http
         "curl_global_cleanup",
         ::curl_global_cleanup);
 
-}  // namespace core::http
+}  // namespace cc::http

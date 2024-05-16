@@ -13,7 +13,7 @@
 
 int main(int argc, char** argv)
 {
-    core::application::initialize(argc, argv);
+    cc::application::initialize(argc, argv);
 
     demo::options = std::make_unique<demo::Options>("RTI DDS");
     demo::options->apply(argc, argv);
@@ -32,6 +32,6 @@ int main(int argc, char** argv)
     demo::provider->deinitialize();
     demo::provider.reset();
 
-    core::application::deinitialize();
+    cc::application::deinitialize();
     return success ? 0 : -1;
 }

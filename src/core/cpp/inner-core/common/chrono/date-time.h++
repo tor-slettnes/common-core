@@ -20,7 +20,7 @@
 // using suseconds_t = std::int32_t;
 using namespace std::literals::chrono_literals;
 
-namespace core
+namespace cc
 {
     /// Date/Time utilities
     namespace dt
@@ -417,13 +417,13 @@ namespace core
         // Convert from System Clock to Steady Clock
         TimePoint to_timepoint(dt::TimePoint tp);
     }  // namespace steady
-}  // namespace core
+}  // namespace cc
 
 namespace std::chrono
 {
-    std::ostream &operator<<(std::ostream &stream, const core::dt::TimePoint &tp);
-    std::ostream &operator<<(std::ostream &stream, const core::dt::Duration &dur);
-    std::ostream &operator<<(std::ostream &stream, const core::steady::TimePoint &stp);
+    std::ostream &operator<<(std::ostream &stream, const cc::dt::TimePoint &tp);
+    std::ostream &operator<<(std::ostream &stream, const cc::dt::Duration &dur);
+    std::ostream &operator<<(std::ostream &stream, const cc::steady::TimePoint &stp);
 }  // namespace std::chrono
 
 

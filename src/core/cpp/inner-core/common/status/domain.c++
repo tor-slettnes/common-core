@@ -7,7 +7,7 @@
 
 #include "domain.h++"
 
-namespace core::status
+namespace cc::status
 {
     /// Names for printing.
     const types::SymbolMap<Domain> DomainNames = {
@@ -37,4 +37,4 @@ namespace core::status
         return DomainNames.from_stream(stream, &domain, Domain::NONE, false);
     }
 
-}  // namespace core::status
+}  // namespace cc::status

@@ -26,25 +26,25 @@ namespace demo::zmq
     void ClientImpl::initialize()
     {
         API::initialize();
-        core::zmq::ProtoBufClient::initialize();
+        cc::zmq::ProtoBufClient::initialize();
     }
 
     void ClientImpl::deinitialize()
     {
-        core::zmq::ProtoBufClient::deinitialize();
+        cc::zmq::ProtoBufClient::deinitialize();
         API::deinitialize();
     }
 
     void ClientImpl::say_hello(const Greeting &greeting)
     {
         this->call(METHOD_SAY_HELLO,
-                   protobuf::encoded<CC::Demo::Greeting>(greeting));
+                   ::cc::io::proto::encoded<cc::protobuf::demo::Greeting>(greeting));
     }
 
     TimeData ClientImpl::get_current_time()
     {
-        return protobuf::decoded<TimeData>(
-            this->call<CC::Demo::TimeData>(METHOD_GET_CURRENT_TIME));
+        return ::cc::io::proto::decoded<TimeData>(
+            this->call<cc::protobuf::demo::TimeData>(METHOD_GET_CURRENT_TIME));
     }
 
     void ClientImpl::start_ticking()

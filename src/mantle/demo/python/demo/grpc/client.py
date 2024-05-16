@@ -5,10 +5,16 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install dir
-from ..core import API, CC, ProtoBuf, SignalSlot, demo_signals
-from cc.messaging.grpc import SignalClient
+### Modules relative to current dir
+from ..core import API, SignalSlot, signal_store
+from ...messaging.grpc import SignalClient
 
+### Modules relative to install dir
+import cc.protobuf.demo
+import cc.protobuf.utils
+
+### Third-party modules
+from google.protobuf.empty_pb2 import Empty
 
 #===============================================================================
 # SignalClient class
@@ -29,7 +35,7 @@ class DemoClient (API, SignalClient):
     ## SignalStore() instance to the `SignalClient.__init__()` base, below.
     ## In our case we do, since we share the signal store with other message
     ## clients which also receive and re-emit signals from remote endpoints.
-    #signal_type = CC.Demo.Signal
+    #signal_type = cc.protobuf.demo.Signal
 
     def __init__(self,
                  host           : str = "",      # gRPC server
@@ -42,22 +48,22 @@ class DemoClient (API, SignalClient):
                               host = host,
                               wait_for_ready = wait_for_ready,
                               use_asyncio = use_asyncio,
-                              signal_store = demo_signals,
+                              signal_store = signal_store,
                               watch_all = False)
 
 
-    def say_hello(self, greeting: CC.Demo.Greeting):
-        self.check_type(greeting, CC.Demo.Greeting)
-        return self.stub.say_hello(greeting)
+    def say_hello(self, greeting: cc.protobuf.demo.Greeting):
+        cc.protobuf.utils.check_type(greeting, cc.protobuf.demo.Greeting)
+        self.stub.say_hello(greeting)
 
-    def get_current_time(self) -> CC.Demo.TimeData:
-        return self.stub.get_current_time(ProtoBuf.Empty())
+    def get_current_time(self) -> cc.protobuf.demo.TimeData:
+        return self.stub.get_current_time(Empty())
 
     def start_ticking(self) -> None:
-        return self.stub.start_ticking(ProtoBuf.Empty())
+        return self.stub.start_ticking(Empty())
 
     def stop_ticking(self) -> None:
-        return self.stub.stop_ticking(ProtoBuf.Empty())
+        return self.stub.stop_ticking(Empty())
 
     def start_notify_greetings(self, callback: SignalSlot):
         API.start_notify_greetings(self, callback)

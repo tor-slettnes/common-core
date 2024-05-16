@@ -12,7 +12,7 @@
 
 #include "platform/symbols.h++"
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class SignalRequestHandler<ServiceT>
@@ -30,10 +30,10 @@ namespace core::grpc
     protected:
         using Super::Super;
 
-        // Serve requests to watch for signal changes
+        // Serve requests to watch for signals
         template <class SignalT,
                   class SignalQueueT,
-                  class SignalFilterT = CC::Signal::Filter>
+                  class SignalFilterT = cc::protobuf::signal::Filter>
         inline ::grpc::Status stream_signals(::grpc::ServerContext *cxt,
                                              const SignalFilterT *req,
                                              ::grpc::ServerWriter<SignalT> *writer)
@@ -73,4 +73,4 @@ namespace core::grpc
         }
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

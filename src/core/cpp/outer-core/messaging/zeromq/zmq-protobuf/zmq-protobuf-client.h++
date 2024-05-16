@@ -12,7 +12,7 @@
 
 #include "request_reply.pb.h"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class ProtoBufClient : public Requester
     {
@@ -31,14 +31,14 @@ namespace core::zmq
         //======================================================================
         // Methods to send/receive populated ProboBuf Request/Reply structures
 
-        void send_request(const CC::RR::Request &request,
+        void send_request(const cc::protobuf::rr::Request &request,
                           ::zmq::send_flags flags = ::zmq::send_flags::none);
 
-        bool receive_reply(CC::RR::Reply *reply,
+        bool receive_reply(cc::protobuf::rr::Reply *reply,
                            ::zmq::recv_flags flags = ::zmq::recv_flags::none);
 
-        bool send_receive(const CC::RR::Request &request,
-                          CC::RR::Reply *reply,
+        bool send_receive(const cc::protobuf::rr::Request &request,
+                          cc::protobuf::rr::Reply *reply,
                           ::zmq::send_flags send_flags = ::zmq::send_flags::none,
                           ::zmq::recv_flags recv_flags = ::zmq::recv_flags::none);
 
@@ -46,14 +46,14 @@ namespace core::zmq
         // Invoke method with populated Input/Output parameter messages
 
         void send_invocation(const std::string &method_name,
-                             const CC::RR::Parameter &param,
+                             const cc::protobuf::rr::Parameter &param,
                              ::zmq::send_flags send_flags = ::zmq::send_flags::none);
 
-        bool read_result(CC::RR::Parameter *param,
-                         CC::RR::Status *status,
+        bool read_result(cc::protobuf::rr::Parameter *param,
+                         cc::protobuf::rr::Status *status,
                          ::zmq::recv_flags flags = ::zmq::recv_flags::none);
 
-        bool read_result(CC::RR::Parameter *param,
+        bool read_result(cc::protobuf::rr::Parameter *param,
                          ::zmq::recv_flags recv_flags = ::zmq::recv_flags::none);
 
         //======================================================================
@@ -69,17 +69,17 @@ namespace core::zmq
 
     private:
         void send_protobuf_invocation(const std::string method_name,
-                                      const ::protobuf::Message &request,
+                                      const ::google::protobuf::Message &request,
                                       ::zmq::send_flags send_flags);
 
         bool read_protobuf_result(types::ByteVector *bytes,
                                   ::zmq::recv_flags recv_flags);
 
     public:
-        template <class ResponseType = ::protobuf::Empty>
+        template <class ResponseType = ::google::protobuf::Empty>
         ResponseType call(
             const std::string method_name,
-            const ::protobuf::Message &request = ::protobuf::Empty(),
+            const ::google::protobuf::Message &request = ::google::protobuf::Empty(),
             ::zmq::send_flags send_flags = ::zmq::send_flags::none,
             ::zmq::recv_flags recv_flags = ::zmq::recv_flags::none)
         {
@@ -88,7 +88,7 @@ namespace core::zmq
             types::ByteVector bytes;
             if (this->read_protobuf_result(&bytes, recv_flags))
             {
-                return protobuf::to_message<ResponseType>(bytes);
+                return cc::io::proto::to_message<ResponseType>(bytes);
             }
             else
             {
@@ -102,4 +102,4 @@ namespace core::zmq
         uint client_id;
         uint last_request_id;
     };
-};  // namespace core::zmq
+};  // namespace cc::zmq

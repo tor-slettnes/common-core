@@ -13,7 +13,7 @@
 
 #include <ostream>
 
-namespace protobuf
+namespace cc::io::proto
 {
     //==========================================================================
     // Message deserialization
@@ -24,10 +24,10 @@ namespace protobuf
 
     /// Convert a protobuf message to a serialized byte array
     void to_bytes(const google::protobuf::Message &msg,
-                  core::types::ByteVector *bytes);
+                  cc::types::ByteVector *bytes);
 
     /// Convert a protobuf message to a serialized byte array
-    core::types::ByteVector to_bytes(const google::protobuf::Message &msg);
+    cc::types::ByteVector to_bytes(const google::protobuf::Message &msg);
 
     //==========================================================================
     // Message serialization
@@ -69,20 +69,17 @@ namespace protobuf
         msg.ParseFromString(packed_string);
         return msg;
     }
-}  // namespace core::protobuf
+}  // namespace cc::io::proto
 
 /// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
-namespace google
+namespace google::protobuf
 {
-    namespace protobuf
-    {
-        std::ostream &operator<<(std::ostream &stream, const Message &msg);
+    std::ostream &operator<<(std::ostream &stream, const Message &msg);
 
-        template <class T>
-        std::ostream &operator<<(std::ostream &stream,
-                                 const RepeatedPtrField<T> &ptr_field)
-        {
-            return core::stream::write_sequence(stream, ptr_field);
-        }
-    }  // namespace protobuf
-}  // namespace google
+    template <class T>
+    std::ostream &operator<<(std::ostream &stream,
+                             const RepeatedPtrField<T> &ptr_field)
+    {
+        return cc::stream::write_sequence(stream, ptr_field);
+    }
+}  // namespace google::protobuf

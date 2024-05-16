@@ -8,8 +8,8 @@
 #pragma once
 #include <string>
 
-namespace core::platform
+namespace cc::platform
 {
     void register_linux_providers(const std::string &exec_name);
     void unregister_linux_providers();
-}  // namespace core::platform
+}  // namespace cc::platform

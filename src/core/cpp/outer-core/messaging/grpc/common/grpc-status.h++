@@ -11,12 +11,12 @@
 #include "types/value.h++"
 #include "string/misc.h++"
 
-#include "event_types.pb.h"
+#include "status.pb.h"
 
 // System headers
 #include <grpc++/grpc++.h>
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class Status
@@ -56,8 +56,8 @@ namespace core::grpc
         /// @brief
         ///     Constructor with an existing Details input
         /// @param[in] details
-        ///     Already-constructed CC::Status::Details ProtoBuf container
-        Status(const CC::Status::Details &details);
+        ///     Already-constructed cc::protobuf::status::Event ProtoBuf container
+        Status(const cc::protobuf::status::Event &details);
 
         /// @brief
         ///     Constructor with an existing Details input
@@ -66,10 +66,10 @@ namespace core::grpc
         /// @param[in] text
         ///     Human readable text.
         /// @param[in] details
-        ///     Already-constructed CC::Status::Details ProtoBuf container
+        ///     Already-constructed cc::protobuf::status::Event ProtoBuf container
         Status(::grpc::StatusCode status_code,
                const std::string &text,
-               const CC::Status::Details &details);
+               const cc::protobuf::status::Event &details);
 
         /// @brief
         ///     Constructor from an Error instance with explicit status code
@@ -133,8 +133,8 @@ namespace core::grpc
         /// @brief
         ///     Get the details payload of this status instance.
         /// @return
-        ///     Details as a CC::Status::Details instance.
-        CC::Status::Details details() const noexcept;
+        ///     Details as a cc::protobuf::status::Event instance.
+        cc::protobuf::status::Event details() const noexcept;
 
         /// @brief
         ///     Throw an appropriate error if status is not OK
@@ -153,4 +153,4 @@ namespace core::grpc
         static ::grpc::StatusCode code_from_event(const status::Event &event) noexcept;
         static ::grpc::StatusCode code_from_errno(int code) noexcept;
     };
-}  // namespace core::grpc
+}  // namespace cc::grpc

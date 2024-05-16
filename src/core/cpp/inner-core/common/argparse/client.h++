@@ -8,7 +8,7 @@
 #pragma once
 #include "common.h++"
 
-namespace core::argparse
+namespace cc::argparse
 {
     //==========================================================================
     /// Option parser for client apps
@@ -26,4 +26,4 @@ namespace core::argparse
         std::string host;
         uint timeout;
     };
-}  // namespace core::argparse
+}  // namespace cc::argparse

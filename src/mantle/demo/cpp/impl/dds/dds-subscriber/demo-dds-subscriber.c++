@@ -32,24 +32,24 @@ namespace demo::dds
     {
     }
 
-    void Subscriber::on_time_update(core::signal::MappingChange change,
+    void Subscriber::on_time_update(cc::signal::MappingAction action,
                                     const CC::Demo::TimeData &time_data)
     {
         // We have received a time update from a remote publisher.
         // Emit this update locally via `demo::signal_time`, declared in
         // `demo-signals.h++'.
-        logf_trace("Received time data %s: %s", change, time_data);
+        logf_trace("Received time data %s: %s", action, time_data);
         signal_time.emit(idl::decoded<TimeData>(time_data));
     }
 
-    void Subscriber::on_greeting_update(core::signal::MappingChange change,
+    void Subscriber::on_greeting_update(cc::signal::MappingAction action,
                                         const CC::Demo::Greeting &greeting)
     {
         // We have received a time update from a remote publisher.
         // Emit this update locally via `demo::signal_time`, declared
         // in `demo-signals.h++'.
-        logf_trace("Received greeting %s: %s", change, greeting);
-        signal_greeting.emit(change,
+        logf_trace("Received greeting %s: %s", action, greeting);
+        signal_greeting.emit(action,
                              greeting.identity(),
                              idl::decoded<Greeting>(greeting));
     }

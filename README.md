@@ -209,6 +209,35 @@ If all went well the applications will now be installed within the the installat
   * Settings files go under `share/settings`.
 
 
+
+### Create installation packages
+
+Rather than "installing" the build outputs in your local `out/install`, you can create release packages that can then be installed onto any compatible Debian or Ubuntu target system.  To do so, invoke
+
+   ```bash
+   $ make package
+   ```
+
+The output will be a number of interdependent `.deb` files.
+
+#### Customize package defaults
+
+If you want to modify the way packages are created or what information goes into them, you can edit the file [CPackConfig.cmake](CPackConfig.make) in this folder.  (There are further defaults in [cmake/CPackConfig.cmake](cmake/CPackConfig.cmake), but you are encouraged to leave this file alone and instead make your customizations in the top-level folder. In fact, if you use this repository as a submodule for another project, you should isntead create a `CPackConfig.cmake` file in the top-level folder for that project).
+
+In particular you might want to tweak these settings:
+* `CPACK_PACKAGE_NAME` - Set this to the desired package name.  If you leave the `CPACK_DEB_COMPONENT_INSTALL` value as `TRUE` then this will be the prefix for all generated packages.
+* `CPACK_PACKAGE_VENDOR` - Set this to the organization
+* `CPACK_DEBIAN_PACKAGE_MAINTAINER` - Set this to the name and email address of the official package maintainer.
+* `CPACK_DEBIAN_PACKAGE_DESCRIPTION` - Set this to a human readable (possibly multi-line) description of your project.  Individual components can also have descriptions, which will override this setting if `CPACK_DEB_COMPONENT_INSTALL` is enabled.
+* `CPACK_DEB_COMPONENT_INSTALL`.  If `TRUE` then separate `.deb` files are created for each component (or component group), as specified with the `COMPONENT` argument for the
+ [install()](https://cmake.org/cmake/help/latest/command/install.html) command (invoked indirectly via [BuildExecutable()](BuildExecutable.cmake), [BuildPython()](BuildPython.cmake), [BuildProto()](BuildProto.cmake), and [BuildSettings()](BuildSettings.cmake)). See also the CMake documentation for the [cpack_add_component()](https://cmake.org/cmake/help/latest/module/CPackComponent.html#command:cpack_add_component) command. To instead create a single package file for the project, set this value to `FALSE`.
+
+For further information on customzing package creations, refer to the [CMake docuementation](https://cmake.org/cmake/help/latest/) on
+* the [cpack](https://cmake.org/cmake/help/latest/manual/cpack.1.html) command-line utility,
+* the [CPack()](https://cmake.org/cmake/help/latest/module/CPack.html) module, and
+* the [CPack DEB Generator](https://cmake.org/cmake/help/latest/cpack_gen/deb.html).
+
+
 ### Installing in custom location:
 
 You can optionally choose to install the applicaions in a different location;

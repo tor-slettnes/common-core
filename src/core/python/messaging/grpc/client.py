@@ -8,7 +8,6 @@
 ### Modules relative to install folder
 from .base import Base
 from .client_interceptor import ClientInterceptor, AsyncClientInterceptor
-from cc.io.protobuf import ProtoBuf, CC
 from cc.core.invocation import invocation
 
 ### Third-party modules

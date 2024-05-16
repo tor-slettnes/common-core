@@ -11,7 +11,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace core::http
+namespace cc::http
 {
     using URL = std::string;
     using ResponseCode = long;
@@ -50,4 +50,4 @@ namespace core::http
     std::string url_decode(const std::string &encoded);
 
 
-}  // namespace core::http
+}  // namespace cc::http

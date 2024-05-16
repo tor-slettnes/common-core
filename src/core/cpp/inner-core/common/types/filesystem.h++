@@ -12,10 +12,10 @@
 
 namespace fs = std::filesystem;
 
-namespace core::types
+namespace cc::types
 {
     using PathList = std::vector<fs::path>;
-}  // namespace core::types
+}  // namespace cc::types
 
 namespace std::filesystem
 {

@@ -9,7 +9,7 @@
 
 #include <sstream>
 
-namespace core::logging
+namespace cc::logging
 {
     void MessageSink::set_include_context(bool include_context)
     {
@@ -68,4 +68,4 @@ namespace core::logging
         this->send_preamble(ss, msg, suffix);
         return ss.str();
     }
-}  // namespace core::logging
+}  // namespace cc::logging

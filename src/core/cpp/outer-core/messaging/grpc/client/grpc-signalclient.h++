@@ -12,7 +12,7 @@
 #pragma once
 #include "grpc-clientwrapper.h++"
 #include "grpc-clientreceiver.h++"
-#include "signal_types.pb.h"
+#include "signal.pb.h"
 #include "protobuf-message.h++"
 #include "protobuf-signalreceiver.h++"
 #include "thread/binaryevent.h++"
@@ -20,7 +20,7 @@
 
 #include <functional>
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class SignalClient<ServiceT, SignalT>
@@ -57,11 +57,11 @@ namespace core::grpc
 
     template <class ServiceT, class SignalT>
     class SignalClient : public ClientWrapper<ServiceT>,
-                              public protobuf::SignalReceiver<SignalT>
+                         public ::cc::io::proto::SignalReceiver<SignalT>
     {
         using This = SignalClient<ServiceT, SignalT>;
         using Super = ClientWrapper<ServiceT>;
-        using SignalReceiver = protobuf::SignalReceiver<SignalT>;
+        using SignalReceiver = ::cc::io::proto::SignalReceiver<SignalT>;
 
     protected:
         using SignalReader = std::unique_ptr<::grpc::ClientReader<SignalT>>;
@@ -186,8 +186,8 @@ namespace core::grpc
         steady::TimePoint watch_start;
         std::thread watch_thread;
         std::shared_ptr<::grpc::ClientContext> watcher_context;
-        ClientReceiver<ServiceT, SignalT, CC::Signal::Filter> receiver;
+        ClientReceiver<ServiceT, SignalT, cc::protobuf::signal::Filter> receiver;
         types::BinaryEvent completion_event;
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

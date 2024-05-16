@@ -5,19 +5,22 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
+### Modules relative to current folder
 from .messagehandler import MessageHandler
-from cc.io.protobuf import CC, ProtoBuf, SignalStore
+
+### Modules relative to install folder
+import cc.protobuf.signal
+import cc.protobuf.wellknown
 
 class SignalHandler (MessageHandler):
     '''Subscribe to `Signal` messages from ZMQ publisher and re-emit locally as signals.'''
 
     def __init__(self,
-                 signal_store: SignalStore):
+                 signal_store: cc.protobuf.signal.SignalStore):
 
         MessageHandler.__init__(self, signal_store.signal_type)
         self.signal_store = signal_store
 
-    def handle_proto(self, message: ProtoBuf.Message):
+    def handle_proto(self, message: cc.protobuf.wellknown.Message):
         self.signal_store.emit(message)
 

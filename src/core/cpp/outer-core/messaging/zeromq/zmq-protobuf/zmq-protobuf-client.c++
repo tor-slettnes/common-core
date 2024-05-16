@@ -12,7 +12,7 @@
 #include "protobuf-inline.h++"
 #include "logging/logging.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     ProtoBufClient::ProtoBufClient(const std::string &host_address,
                                    const std::string &channel_name,
@@ -29,12 +29,12 @@ namespace core::zmq
         return this->interface_name_;
     }
 
-    void ProtoBufClient::send_request(const CC::RR::Request &request,
+    void ProtoBufClient::send_request(const cc::protobuf::rr::Request &request,
                                       ::zmq::send_flags flags)
     {
         try
         {
-            this->send(protobuf::to_bytes(request), flags);
+            this->send(::cc::io::proto::to_bytes(request), flags);
         }
         catch (const ::zmq::error_t &e)
         {
@@ -42,7 +42,7 @@ namespace core::zmq
         }
     }
 
-    bool ProtoBufClient::receive_reply(CC::RR::Reply *reply,
+    bool ProtoBufClient::receive_reply(cc::protobuf::rr::Reply *reply,
                                        ::zmq::recv_flags flags)
     {
         try
@@ -63,8 +63,8 @@ namespace core::zmq
         }
     }
 
-    bool ProtoBufClient::send_receive(const CC::RR::Request &request,
-                                      CC::RR::Reply *reply,
+    bool ProtoBufClient::send_receive(const cc::protobuf::rr::Request &request,
+                                      cc::protobuf::rr::Reply *reply,
                                       ::zmq::send_flags send_flags,
                                       ::zmq::recv_flags recv_flags)
     {
@@ -73,10 +73,10 @@ namespace core::zmq
     }
 
     void ProtoBufClient::send_invocation(const std::string &method_name,
-                                         const CC::RR::Parameter &param,
+                                         const cc::protobuf::rr::Parameter &param,
                                          ::zmq::send_flags flags)
     {
-        CC::RR::Request request;
+        cc::protobuf::rr::Request request;
         request.set_client_id(this->client_id);
         request.set_request_id(++this->last_request_id);
         request.set_interface_name(this->interface_name());
@@ -85,11 +85,11 @@ namespace core::zmq
         this->send_request(request, flags);
     }
 
-    bool ProtoBufClient::read_result(CC::RR::Parameter *param,
-                                     CC::RR::Status *status,
+    bool ProtoBufClient::read_result(cc::protobuf::rr::Parameter *param,
+                                     cc::protobuf::rr::Status *status,
                                      ::zmq::recv_flags flags)
     {
-        CC::RR::Reply reply;
+        cc::protobuf::rr::Reply reply;
         if (this->receive_reply(&reply, flags))
         {
             status->CopyFrom(reply.status());
@@ -102,22 +102,22 @@ namespace core::zmq
         }
     }
 
-    bool ProtoBufClient::read_result(CC::RR::Parameter *param,
+    bool ProtoBufClient::read_result(cc::protobuf::rr::Parameter *param,
                                      ::zmq::recv_flags flags)
     {
-        CC::RR::Status status;
+        cc::protobuf::rr::Status status;
         if (this->read_result(param, &status, flags))
         {
             switch (status.code())
             {
-            case CC::RR::STATUS_OK:
-            case CC::RR::STATUS_ACCEPTED:
+            case cc::protobuf::rr::STATUS_OK:
+            case cc::protobuf::rr::STATUS_ACCEPTED:
                 break;
 
             default:
                 ProtoBufError(
                     status.code(),
-                    protobuf::decoded<status::Event>(status.details())
+                    ::cc::io::proto::decoded<status::Event>(status.details())
                     ).throw_if_error();
                 break;
             }
@@ -137,14 +137,14 @@ namespace core::zmq
                                       ::zmq::send_flags send_flags,
                                       ::zmq::recv_flags recv_flags)
     {
-        CC::RR::Parameter request_params;
-        protobuf::encode(request, request_params.mutable_variant_value());
+        cc::protobuf::rr::Parameter request_params;
+        ::cc::io::proto::encode(request, request_params.mutable_variant_value());
         this->send_invocation(method_name, request_params, send_flags);
 
-        CC::RR::Parameter reply_params;
+        cc::protobuf::rr::Parameter reply_params;
         if (this->read_result(&reply_params, recv_flags))
         {
-            return protobuf::decoded<types::Value>(reply_params.variant_value());
+            return ::cc::io::proto::decoded<types::Value>(reply_params.variant_value());
         }
         else
         {
@@ -153,10 +153,10 @@ namespace core::zmq
     }
 
     void ProtoBufClient::send_protobuf_invocation(const std::string method_name,
-                                                  const ::protobuf::Message &request,
+                                                  const ::google::protobuf::Message &request,
                                                   ::zmq::send_flags send_flags)
     {
-        CC::RR::Parameter request_param;
+        cc::protobuf::rr::Parameter request_param;
         request.SerializeToString(request_param.mutable_serialized_proto());
         this->send_invocation(method_name, request_param, send_flags);
     }
@@ -164,7 +164,7 @@ namespace core::zmq
     bool ProtoBufClient::read_protobuf_result(types::ByteVector *bytes,
                                               ::zmq::recv_flags recv_flags)
     {
-        CC::RR::Parameter response_param;
+        cc::protobuf::rr::Parameter response_param;
         if (this->read_result(&response_param, recv_flags))
         {
             if (response_param.has_serialized_proto())
@@ -187,4 +187,4 @@ namespace core::zmq
     }
 
     uint ProtoBufClient::last_client_id = 0;
-}  // namespace core::zmq
+}  // namespace cc::zmq

@@ -27,24 +27,24 @@ namespace demo::zmq
         this->add_handler(METHOD_STOP_TICKING, &RequestHandler::stop_ticking);
     }
 
-    protobuf::Empty RequestHandler::say_hello(const CC::Demo::Greeting &request)
+    ::google::protobuf::Empty RequestHandler::say_hello(const cc::protobuf::demo::Greeting &request)
     {
-        this->api->say_hello(protobuf::decoded<Greeting>(request));
+        this->api->say_hello(::cc::io::proto::decoded<Greeting>(request));
         return {};
     }
 
-    CC::Demo::TimeData RequestHandler::get_current_time(const protobuf::Empty &request)
+    cc::protobuf::demo::TimeData RequestHandler::get_current_time(const ::google::protobuf::Empty &request)
     {
-        return protobuf::encoded<CC::Demo::TimeData>(this->api->get_current_time());
+        return ::cc::io::proto::encoded<cc::protobuf::demo::TimeData>(this->api->get_current_time());
     }
 
-    protobuf::Empty RequestHandler::start_ticking(const protobuf::Empty &)
+    ::google::protobuf::Empty RequestHandler::start_ticking(const ::google::protobuf::Empty &)
     {
         this->api->start_ticking();
         return {};
     }
 
-    protobuf::Empty RequestHandler::stop_ticking(const protobuf::Empty &)
+    ::google::protobuf::Empty RequestHandler::stop_ticking(const ::google::protobuf::Empty &)
     {
         this->api->stop_ticking();
         return {};

@@ -19,12 +19,12 @@ namespace demo::grpc
     // @class RequestHandler
     // @brief Process requests from Demo clients
 
-    class RequestHandler : public core::grpc::SignalRequestHandler<CC::Demo::Demo>,
-                           public core::types::enable_create_shared<RequestHandler>
+    class RequestHandler : public cc::grpc::SignalRequestHandler<cc::protobuf::demo::Demo>,
+                           public cc::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;
-        using Super = core::grpc::SignalRequestHandler<CC::Demo::Demo>;
+        using Super = cc::grpc::SignalRequestHandler<cc::protobuf::demo::Demo>;
 
     protected:
         RequestHandler(const std::shared_ptr<API>& api_provider);
@@ -32,13 +32,13 @@ namespace demo::grpc
     public:
         ::grpc::Status say_hello(
             ::grpc::ServerContext* context,
-            const ::CC::Demo::Greeting* request,
+            const ::cc::protobuf::demo::Greeting* request,
             ::google::protobuf::Empty* response) override;
 
         ::grpc::Status get_current_time(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::CC::Demo::TimeData* response) override;
+            ::cc::protobuf::demo::TimeData* response) override;
 
         ::grpc::Status start_ticking(
             ::grpc::ServerContext* context,
@@ -52,8 +52,8 @@ namespace demo::grpc
 
         ::grpc::Status watch(
             ::grpc::ServerContext* context,
-            const CC::Signal::Filter* request,
-            ::grpc::ServerWriter<CC::Demo::Signal> *writer) override;
+            const cc::protobuf::signal::Filter* request,
+            ::grpc::ServerWriter<cc::protobuf::demo::Signal> *writer) override;
 
     private:
         std::shared_ptr<API> provider;

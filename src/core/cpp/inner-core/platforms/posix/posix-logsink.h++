@@ -10,7 +10,7 @@
 #include "types/valuemap.h++"
 #include "status/level.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     class PosixLogSinkProvider : public LogSinkProvider
     {
@@ -29,4 +29,4 @@ namespace core::platform
         static const types::ValueMap<status::Level, int> levelmap;
     };
 
-}  // namespace core::platform
+}  // namespace cc::platform

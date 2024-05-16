@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from generated.event_types_pb2 import Details
+from generated.status_pb2 import Event
 
 import grpc
 import traceback
@@ -51,7 +51,7 @@ class DetailedError (grpc.RpcError):
     def custom_details (self):
         for (key, value) in self.trailing_metadata():
             if key == self._GRPC_DETAILS_METADATA_KEY:
-                return Details.FromString(value)
+                return Event.FromString(value)
         else:
             return ""
 

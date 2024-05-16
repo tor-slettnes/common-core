@@ -5,7 +5,7 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-namespace core::json
+namespace cc::json
 {
     template <class WriterType>
     RapidBuilder<WriterType>::RapidBuilder(std::ostream &stream)
@@ -136,4 +136,4 @@ namespace core::json
         }
         return this->writer.EndObject();
     }
-}  // namespace core::rapidjson
+}  // namespace cc::rapidjson

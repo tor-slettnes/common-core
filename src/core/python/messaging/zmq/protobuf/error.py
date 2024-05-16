@@ -5,17 +5,17 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from cc.io.protobuf import CC, ProtoBuf
-from generated.event_types_pb2   import Details
-from generated.request_reply_pb2 import Status, StatusCode, \
-    STATUS_OK, STATUS_ACCEPTED, STATUS_INVALID, STATUS_CANCELLED, STATUS_FAILED
+### Modules relative to install folder
+import cc.protobuf.utils
+import cc.protobuf.rr
+import cc.protobuf.status
 
 class Error (RuntimeError):
     '''ZMQ RPC error'''
 
     def __init__(self,
-                 code    : StatusCode,
-                 details : Details):
+                 code    : cc.protobuf.rr.StatusCode,
+                 details : cc.protobuf.status.Event):
 
         RuntimeError.__init__(self, details.text)
         self.code    = code
@@ -25,8 +25,8 @@ class Error (RuntimeError):
         return "%s(code=%d, details=%s)"%(
             type(self).__name__,
             self.code,
-            ProtoBuf.decodeToDict(self.details, use_integers_for_enums=False))
+            cc.protobuf.utils.messageToDict(self.details, use_integers_for_enums=False))
 
-    def add_to_reply (self, reply: CC.RR.Reply):
+    def add_to_reply (self, reply: cc.protobuf.rr.Reply):
         reply.status.code = self.code
         reply.status.details.CopyFrom(self.details)

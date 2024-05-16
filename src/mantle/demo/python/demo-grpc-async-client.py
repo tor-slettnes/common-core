@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from demo.grpc.client import DemoClient, CC
+from cc.demo.grpc.client import DemoClient
 
 ### Standard Python modules
 import asyncio

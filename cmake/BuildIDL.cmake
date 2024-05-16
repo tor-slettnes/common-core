@@ -148,20 +148,6 @@ function(BuildIDL TARGET)
     list(APPEND _sources $<TARGET_OBJECTS:${_dep}>)
   endforeach()
 
-  add_library("${TARGET}" ${_type})
-
-  target_include_directories("${TARGET}" ${_scope}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-  )
-
-  target_link_libraries("${TARGET}" ${_scope}
-    ${arg_LIB_DEPS}
-    ${arg_OBJ_DEPS}
-    ${arg_PROTO_DEPS}
-    RTIConnextDDS::cpp2_api
-  )
-
   # set(CPP_SOURCES)
   # set(CS_SOURCES)
   # set(XML_OUTPUTS)
@@ -176,7 +162,23 @@ function(BuildIDL TARGET)
   ### Generate sources from RPC service interfaces listed in SERVICES
   if(arg_SERVICES)
     generate_sources("${arg_SERVICES}" "client;service")
+  endif()
 
+  add_library("${TARGET}" ${_type} ${GENERATED_SOURCES})
+
+  target_include_directories("${TARGET}" ${_scope}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
+  target_link_libraries("${TARGET}" ${_scope}
+    ${arg_LIB_DEPS}
+    ${arg_OBJ_DEPS}
+    ${arg_PROTO_DEPS}
+    RTIConnextDDS::cpp2_api
+  )
+
+  if(arg_SERVICES)
     string(TOLOWER "$<CONFIG>" buildconfig)
     if("${buildconfig}" STREQUAL "debug")
       target_link_libraries("${TARGET}" ${_scope} "rticonnextmsgcpp2zd")
@@ -185,9 +187,6 @@ function(BuildIDL TARGET)
     endif()
   endif()
 
-  if(GENERATED_SOURCES)
-    target_sources("${TARGET}" ${_scope} ${GENERATED_SOURCES})
-  endif()
 
   #===============================================================================
   ### Require C++11 features

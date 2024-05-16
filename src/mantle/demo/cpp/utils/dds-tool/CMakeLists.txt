@@ -11,7 +11,6 @@ set(TARGET demo-dds-tool)
 ### Libraries we depend on, either from this build or provided by the
 ### system.
 set(LIB_DEPS
-#  cc_demo_dds_requesters
   cc_demo_dds_client
   cc_demo_native
   cc_demo_tool_common

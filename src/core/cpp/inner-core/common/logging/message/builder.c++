@@ -8,7 +8,7 @@
 #include "builder.h++"
 #include "buildinfo.h"
 
-namespace core::logging
+namespace cc::logging
 {
     MessageBuilder::MessageBuilder(Dispatcher *dispatcher,
                                    Scope::Ref scope,
@@ -54,4 +54,4 @@ namespace core::logging
             this->dispatcher_->submit(this->shared_from_this());
         }
     }
-}  // namespace core::logging
+}  // namespace cc::logging

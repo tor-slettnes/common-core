@@ -8,7 +8,7 @@
 #pragma once
 #include "platform/symbols.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     class WindowsSymbolsProvider : public SymbolsProvider
     {
@@ -23,4 +23,4 @@ namespace core::platform
             bool stem_only) const noexcept override;
     };
 
-}  // namespace core::platform
+}  // namespace cc::platform

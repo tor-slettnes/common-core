@@ -8,11 +8,11 @@
 #pragma once
 #include "provider.h++"
 
-#define TYPE_NAME_FULL(entity) ::core::platform::symbols->cpp_demangle(typeid(entity).name(), false)
-#define TYPE_NAME_BASE(entity) ::core::platform::symbols->cpp_demangle(typeid(entity).name(), true)
+#define TYPE_NAME_FULL(entity) ::cc::platform::symbols->cpp_demangle(typeid(entity).name(), false)
+#define TYPE_NAME_BASE(entity) ::cc::platform::symbols->cpp_demangle(typeid(entity).name(), true)
 
 /// Default filesystem paths.
-namespace core::platform
+namespace cc::platform
 {
     /// @brief Abstract provider for path-related functions
     class SymbolsProvider : public Provider
@@ -35,4 +35,4 @@ namespace core::platform
     /// Global instance, populated with the "best" provider for this system.
     extern ProviderProxy<SymbolsProvider> symbols;
 
-}  // namespace core::platform
+}  // namespace cc::platform

@@ -24,7 +24,7 @@ namespace demo
         /// @brief Constructor. This will be invoked only from derived classes.
         API(const std::string &identity,
             const std::string &implementation,
-            const core::dt::TimePoint &birth = core::dt::Clock::now());
+            const cc::dt::TimePoint &birth = cc::dt::Clock::now());
 
     public:
         virtual void initialize() {}
@@ -36,7 +36,7 @@ namespace demo
         /// @param[in] data
         ///     Arbitrary key/value items to include in greeting
         void say_hello(const std::string &message,
-                       const core::types::KeyValueMap &data={});
+                       const cc::types::KeyValueMap &data={});
 
         /// @brief Issue a greeting to anyone who may be listening
         /// @param[in] greeting
@@ -70,11 +70,11 @@ namespace demo
         // Accessor methods
         std::string identity() const;
         std::string implementation() const;
-        core::dt::TimePoint birth() const;
+        cc::dt::TimePoint birth() const;
 
     protected:
         std::string identity_;
         std::string implementation_;
-        core::dt::TimePoint birth_;
+        cc::dt::TimePoint birth_;
     };
 }  // namespace demo

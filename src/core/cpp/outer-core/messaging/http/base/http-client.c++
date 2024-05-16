@@ -16,7 +16,7 @@
 
 #include <regex>
 
-namespace core::http
+namespace cc::http
 {
     HTTPClient::HTTPClient(const std::string &base_url)
         : base_url_(base_url)
@@ -178,4 +178,4 @@ namespace core::http
         }
     }
 
-}  // namespace core::http
+}  // namespace cc::http

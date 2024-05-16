@@ -43,7 +43,7 @@ class ClientInterceptor(ClientInterceptorBase,
        flag if not present.
 
      * Catches gRPC exceptions and re-raises them as `DetailedError()` instances
-       to decode custom error details (see `CC.Status.Details` in `event_types.proto`)
+       to decode custom error details (see `Event` in `event_types.proto`)
     '''
 
     class FutureResponse (grpc.Future):
@@ -115,7 +115,7 @@ class AsyncClientInterceptor(ClientInterceptorBase,
        flag if not present.
 
      * Catches gRPC exceptions and re-raises them as `DetailedError()` instances
-       to decode custom error details (see `CC.Status.Details` in `event_types.proto`)
+       to decode custom error details (see `cc.protobuf.status.Event` in `event_types.proto`)
 
     '''
 

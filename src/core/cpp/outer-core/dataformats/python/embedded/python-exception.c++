@@ -9,7 +9,7 @@
 #include "python-containerobject.h++"
 #include "platform/path.h++"
 
-namespace core::python
+namespace cc::python
 {
     // Exception::Exception(PyObject *exc, bool borrowed)
     //     : ContainerObject(exc, borrowed),
@@ -60,4 +60,4 @@ namespace core::python
         return this->attribute("args").as_valuelist();
     }
 
-}  // namespace core::python
+}  // namespace cc::python

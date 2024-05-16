@@ -7,7 +7,7 @@
 
 #include "serialport.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     //==========================================================================
     /// @class SerialPort
@@ -32,4 +32,4 @@ namespace core::platform
     /// Global instance, populated with the "best" provider for this system.
 
     ProviderProxy<SerialPortProvider> serialport("serialport");
-}  // namespace core::platform
+}  // namespace cc::platform

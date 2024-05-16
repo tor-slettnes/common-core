@@ -8,7 +8,7 @@
 #include "rest-client.h++"
 #include "logging/logging.h++"
 
-namespace core::http
+namespace cc::http
 {
     RESTClient::RESTClient(
         const std::string &base_url,
@@ -35,4 +35,4 @@ namespace core::http
         return value;
     }
 
-}  // namespace core::http
+}  // namespace cc::http

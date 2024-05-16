@@ -10,7 +10,7 @@
 #include "grpc-requesthandler.h++"
 #include <grpc++/server_builder.h>
 
-namespace core::grpc
+namespace cc::grpc
 {
     class ServerBuilder : public ::grpc::ServerBuilder
     {
@@ -46,4 +46,4 @@ namespace core::grpc
         std::vector<std::string> listeners_;
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

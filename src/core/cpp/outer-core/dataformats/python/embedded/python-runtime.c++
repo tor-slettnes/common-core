@@ -12,7 +12,7 @@
 #include "platform/symbols.h++"
 #include "platform/init.h++"
 
-namespace core::python
+namespace cc::python
 {
     void Runtime::global_init()
     {
@@ -146,8 +146,8 @@ namespace core::python
 
     std::unique_ptr<Runtime> runtime;
 
-    static core::platform::InitTask py_init("Python init", Runtime::global_init);
-    static core::platform::ExitTask py_cleanup("Python cleanup", Runtime::global_cleanup);
+    static cc::platform::InitTask py_init("Python init", Runtime::global_init);
+    static cc::platform::ExitTask py_cleanup("Python cleanup", Runtime::global_cleanup);
 
 
-}  // namespace core::python
+}  // namespace cc::python

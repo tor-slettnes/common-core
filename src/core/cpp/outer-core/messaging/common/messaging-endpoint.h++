@@ -14,7 +14,7 @@
 
 #include <string>
 
-namespace core::messaging
+namespace cc::messaging
 {
     define_log_scope("messaging");
 
@@ -68,4 +68,4 @@ namespace core::messaging
         std::string endpoint_type_;
         std::string channel_name_;
     };
-}  // namespace core::messaging
+}  // namespace cc::messaging

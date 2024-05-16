@@ -13,7 +13,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace core::messaging
+namespace cc::messaging
 {
     //==========================================================================
     // @class Endpoint
@@ -96,4 +96,4 @@ namespace core::messaging
                     this->endpoint_type());
     }
 
-}  // namespace core::messaging
+}  // namespace cc::messaging

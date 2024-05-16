@@ -9,7 +9,7 @@
 #include "zmq-endpoint.h++"
 #include "zmq-filter.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class PyPickleMessageBase
     {
@@ -24,4 +24,4 @@ namespace core::zmq
         Filter default_filter_;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

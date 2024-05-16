@@ -12,7 +12,7 @@
 
 #include <iomanip>
 
-namespace core::logging
+namespace cc::logging
 {
     LogFileSink::LogFileSink(const std::string &path_template,
                              const dt::Duration &rotation_interval)
@@ -73,4 +73,4 @@ namespace core::logging
         }
     }
 
-}  // namespace core::logging
+}  // namespace cc::logging

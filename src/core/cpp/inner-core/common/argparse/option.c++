@@ -11,7 +11,7 @@
 #include <regex>
 #include <sstream>  // std::stringstream
 
-namespace core::argparse
+namespace cc::argparse
 {
     //==========================================================================
     // BaseOption methods
@@ -42,7 +42,7 @@ namespace core::argparse
                 }
                 else
                 {
-                    throwf(core::exception::InvalidArgument,
+                    throwf(cc::exception::InvalidArgument,
                            "Invalid option key",
                            key);
                 }
@@ -121,4 +121,4 @@ namespace core::argparse
         return opts;
     }
 
-}  // namespace core::argparse
+}  // namespace cc::argparse

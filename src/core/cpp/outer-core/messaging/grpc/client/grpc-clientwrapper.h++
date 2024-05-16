@@ -15,7 +15,7 @@
 #include "logging/logging.h++"
 #include "chrono/date-time.h++"
 
-namespace core::grpc
+namespace cc::grpc
 {
 
     //==========================================================================
@@ -27,13 +27,13 @@ namespace core::grpc
     ///  * Include "ClientWrapper" as a base for your stub class:
     ///    ```c++
     ///      #include "servicewrapper.h"
-    ///      class YourClient : [...,] public ClientWrapper<CC::yourapp::YourService>
+    ///      class YourClient : [...,] public ClientWrapper<cc::yourapp::YourService>
     ///      {
     ///      public:
     ///          YourClient (const std::string &identity,
     ///                      const std::string &serverAddress)
     ///              : ...,
-    ///                ClientWrapper<CC::yourapp::YourService>(serverAddress),
+    ///                ClientWrapper<cc::yourapp::YourService>(serverAddress),
     ///                ...
     ///              {}
     ///      }
@@ -50,8 +50,8 @@ namespace core::grpc
     ///      void YourClient:yourmethod (...)
     ///      {
     ///          grpc::ClientContext cxt;
-    ///          CC::yourapp::SomeRequest request = ...;
-    ///          CC::yourapp::SomeResponse reply;
+    ///          cc::yourapp::SomeRequest request = ...;
+    ///          cc::yourapp::SomeResponse reply;
     ///          ...
     ///          grpc::Status status = this->stub->yourcall(&cxt, request, &reply);
     ///          ...
@@ -101,7 +101,7 @@ namespace core::grpc
         /// @return
         ///      gRPC status code
 
-        template <class ResponseT, class RequestT = protobuf::Empty>
+        template <class ResponseT, class RequestT = ::google::protobuf::Empty>
         inline Status call_sync(const gRPCMethod<ResponseT, RequestT> &method,
                                 const RequestT &request,
                                 ResponseT *response,
@@ -122,7 +122,7 @@ namespace core::grpc
             return (this->stub.get()->*method)(&cxt, request, response);
         }
 
-        template <class ResponseT, class RequestT = protobuf::Empty>
+        template <class ResponseT, class RequestT = ::google::protobuf::Empty>
         inline Status call_sync(const std::string &methodname,
                                 const gRPCMethod<ResponseT, RequestT> &method,
                                 const RequestT &request,
@@ -143,7 +143,7 @@ namespace core::grpc
             return status;
         }
 
-        template <class ResponseT, class RequestT = protobuf::Empty>
+        template <class ResponseT, class RequestT = ::google::protobuf::Empty>
         inline Status call_sync(const std::string &methodname,
                                 const gRPCMethod<ResponseT, RequestT> &method,
                                 const RequestT &request,
@@ -166,10 +166,10 @@ namespace core::grpc
         ///     Wait for gRPC service to become ready instead of failing.
         /// @return
         ///     Protobuf response message
-        /// @throw core::grpc::ServiceError
+        /// @throw cc::grpc::ServiceError
         ///     Non-OK gRPC status code
 
-        template <class ResponseT, class RequestT = protobuf::Empty>
+        template <class ResponseT, class RequestT = ::google::protobuf::Empty>
         inline ResponseT call_check(const gRPCMethod<ResponseT, RequestT> &method,
                                     const RequestT &request = {},
                                     std::optional<bool> wait_for_ready = {},
@@ -180,7 +180,7 @@ namespace core::grpc
             return response;
         }
 
-        template <class ResponseT, class RequestT = protobuf::Empty>
+        template <class ResponseT, class RequestT = ::google::protobuf::Empty>
         inline ResponseT call_check(const std::string &methodname,
                                     const gRPCMethod<ResponseT, RequestT> &method,
                                     const RequestT &request = {},
@@ -195,4 +195,4 @@ namespace core::grpc
         std::unique_ptr<Stub> stub;
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

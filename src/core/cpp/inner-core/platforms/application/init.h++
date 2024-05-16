@@ -8,8 +8,8 @@
 #include "thread/signaltemplate.h++"
 #include "platform/init.h++"
 
-namespace core::application
+namespace cc::application
 {
     void initialize(int argc, char **argv);
     void deinitialize();
-}  // namespace core::application
+}  // namespace cc::application

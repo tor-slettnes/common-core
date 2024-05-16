@@ -20,10 +20,10 @@ class DemoRequestHandler (RequestHandler):
         RequestHandler.__init__(self, DEMO_RPC_INTERFACE)
         self.demo_provider = demo_provider
 
-    def say_hello(self, request: CC.Demo.Greeting):
+    def say_hello(self, request: cc.protobuf.demo.Greeting):
         self.demo_provider.say_hello(request)
 
-    def get_current_time(self) -> CC.Demo.TimeData:
+    def get_current_time(self) -> cc.protobuf.demo.TimeData:
         return self.demo_provider.get_current_time()
 
     def start_ticking(self):

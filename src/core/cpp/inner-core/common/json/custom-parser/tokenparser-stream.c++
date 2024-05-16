@@ -8,7 +8,7 @@
 #include "tokenparser-stream.h++"
 #include <sstream>
 
-namespace core::json
+namespace cc::json
 {
     StreamParser::StreamParser(std::istream &stream)
         : stream_(stream),
@@ -69,4 +69,4 @@ namespace core::json
         this->token_.push_back(c);
     }
 
-}  // namespace core::json
+}  // namespace cc::json

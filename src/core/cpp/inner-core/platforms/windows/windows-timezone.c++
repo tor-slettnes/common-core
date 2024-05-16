@@ -8,7 +8,7 @@
 #include "windows-timezone.h++"
 #include <sstream>
 
-namespace core::platform
+namespace cc::platform
 {
     WindowsTimeZoneProvider::WindowsTimeZoneProvider()
         : Super("WindowsTimeZoneProvider")
@@ -137,4 +137,4 @@ namespace core::platform
         return st;
     }
 
-}  // namespace core::platform
+}  // namespace cc::platform

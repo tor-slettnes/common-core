@@ -12,7 +12,7 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     ProtoBufRequestHandler::ProtoBufRequestHandler(const std::string &interface_name)
         : interface_name_(interface_name)
@@ -34,8 +34,8 @@ namespace core::zmq
         this->clear_handlers();
     }
 
-    void ProtoBufRequestHandler::process_method_request(const CC::RR::Request &request,
-                                                        CC::RR::Reply *reply)
+    void ProtoBufRequestHandler::process_method_request(const cc::protobuf::rr::Request &request,
+                                                        cc::protobuf::rr::Reply *reply)
     {
         std::shared_ptr<ProtoBufError> error;
 
@@ -55,8 +55,8 @@ namespace core::zmq
                     std::current_exception());
 
                 error = std::make_shared<ProtoBufError>(
-                    CC::RR::STATUS_FAILED,
-                    *core::exception::map_to_event(std::current_exception()));
+                    cc::protobuf::rr::STATUS_FAILED,
+                    *cc::exception::map_to_event(std::current_exception()));
             }
         }
         else
@@ -78,7 +78,7 @@ namespace core::zmq
                 method_names);
 
             error = std::make_shared<ProtoBufError>(
-                CC::RR::STATUS_CANCELLED,
+                cc::protobuf::rr::STATUS_CANCELLED,
                 exception::NotFound(
                     "Method not found",
                     this->full_method_name(request.method_name())));
@@ -86,9 +86,9 @@ namespace core::zmq
 
         if (error)
         {
-            CC::RR::Status *status = reply->mutable_status();
+            cc::protobuf::rr::Status *status = reply->mutable_status();
             status->set_code(error->status_code());
-            protobuf::encode(*error, status->mutable_details());
+            ::cc::io::proto::encode(*error, status->mutable_details());
         }
     }
 
@@ -96,4 +96,4 @@ namespace core::zmq
     {
         this->handler_map.clear();
     }
-}  // namespace core::zmq
+}  // namespace cc::zmq

@@ -5,11 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
+### Modules relative to current folder
 from .client  import Client
 from .client_reader import ThreadReader, AsyncReader
-from cc.io.protobuf import CC, ProtoBuf, SignalStore
 
+### Modules relative to install folder
+import cc.protobuf.signal
 
 #===============================================================================
 # Client
@@ -27,21 +28,21 @@ class SignalClient (Client):
 
     import "signal_types.proto";
 
-    package CC.mypackage;
+    package mycompany.mypackage;
 
     service MyService
     {
         ...
-        rpc watch (CC.Signal.Filter) returns (stream MySignal);
+        rpc watch (cc.protobuf.signal.Filter) returns (stream MySignal);
     }
 
     message MySignal
     {
-        // Mapping change: one of MAP_ADITION, MAP_UPDATE, MAP_REMOVAL
-        CC.Signal.MappingChange change = 1;
+        // Mapping action: one of MAP_ADITION, MAP_UPDATE, MAP_REMOVAL
+        cc.protobuf.signal.MappingAction mapping_action = 1;
 
         // Mapping key
-        string key = 2;
+        string mapping_key = 2;
 
         oneof signal {
             DataType1 data1 = 8;
@@ -56,7 +57,7 @@ class SignalClient (Client):
      * Pass an existing `SignalStore()` instance to `__init__()`:
 
        ```python
-       my_signal_store = messaging.base.SignalStore(signal_type = CC.mypackage.MySignal)
+       my_signal_store = cc.protobuf.signal.SignalStore(signal_type = cc.protobuf.mypackage.MySignal)
 
        class MyServiceClient (messaging.grpc.SignalClient):
            from my_service_pb2_grpc import MyServiceStub as Stub
@@ -74,22 +75,22 @@ class SignalClient (Client):
        class MyServiceClient (messaging.grpc.SignalClient):
            from my_service_pb2_grpc import MyServiceStub as Stub
 
-           signal_type = CC.mypackage.MySignal
+           signal_type = cc.protobuf.mypackage.MySignal
        ```
 
 
     Next, you'll need callback handlers to handle the received and re-emitted signals:
 
     ```python
-        def my_data1_simple_handler(data1: CC.mypackage.DataType1):
+        def my_data1_simple_handler(data1: cc.protobuf.mypackage.DataType1):
             """Handle DataType1 signals from server"""
             print("Received data1: ", data1)
 
-        def my_data2_mapping_handler(signal: CC.mypackage.Signal):
+        def my_data2_mapping_handler(signal: cc.protobuf.mypackage.Signal):
             """Handle DataType2 mapping signals from server"""
              print("Received DataType2:",
-                   "mapping change:", signal.change,   # only used for mapping signals
-                   "mapping key:", signal.key,         # only used for mapping signals
+                   "mapping action:", signal.mapping_action,
+                   "mapping key:", signal.mapping_key,
                    "data2:", signal.data2)
 
     ```
@@ -129,7 +130,7 @@ class SignalClient (Client):
                  host: str,
                  wait_for_ready : bool = False,
                  use_asyncio : bool = False,
-                 signal_store : SignalStore = None,
+                 signal_store : cc.protobuf.signal.SignalStore = None,
                  watch_all: bool = False,
                  use_cache: bool = True,
                  **kwargs):
@@ -191,20 +192,19 @@ class SignalClient (Client):
 
     def signal_filter(self, watch_all):
         if watch_all:
-            return CC.Signal.Filter()
+            return cc.protobuf.signal.Filter()
         else:
             indexmap   = self.signal_store.signal_fields()
             indices    = [indexmap.get(slot) for slot in self.signal_store.slots]
-            return CC.Signal.Filter(polarity=True, index=filter(None, indices))
+            return cc.protobuf.signal.Filter(polarity=True, index=filter(None, indices))
 
 
     def start_watching(self, watch_all: bool = True):
         '''Start watching for signals.
 
-        @param[in] watch_all
-            Watch all signals, not just those that were previously connected to
-            slots.  This is mainly useful if not all intended signals are
-            connected yet.
+        If `watch_all` is `True`, watch all signals, not just those that were
+        previously connected to slots.  This is mainly useful if not all
+        intended signals are connected yet.
 
         This spawns a new thread (or task if using AsyncIO) to stream signal
         messages from the service.  Specifically, it invokes the `watch()` RPC
@@ -219,10 +219,10 @@ class SignalClient (Client):
             return self.reader.start(stream, self.signal_store.emit)
 
     def stop_watching(self):
-        '''Stop watching change notifications from server'''
+        '''Stop watching signals from server'''
 
         self.reader.stop()
 
 
-    def watch(self, signal_filter : CC.Signal.Filter = CC.Signal.Filter()):
+    def watch(self, signal_filter : cc.protobuf.signal.Filter = cc.protobuf.signal.Filter()):
         return self.stub.watch(signal_filter)

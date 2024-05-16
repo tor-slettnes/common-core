@@ -12,7 +12,7 @@
 #include <unistd.h>  // isatty()
 #include <stdlib.h>  // putenv()
 
-namespace core::platform
+namespace cc::platform
 {
     PosixRunTimeProvider::PosixRunTimeProvider()
         : Super("PosixRunTimeProvider")
@@ -31,4 +31,4 @@ namespace core::platform
             throw std::system_error(err, std::system_category());
         }
     }
-}  // namespace core::platform
+}  // namespace cc::platform

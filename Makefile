@@ -34,7 +34,7 @@ endif
 
 ### Check for a target-specific toolchain and use that if available
 
-all: test package
+all: test install
 
 package: build
 	@echo

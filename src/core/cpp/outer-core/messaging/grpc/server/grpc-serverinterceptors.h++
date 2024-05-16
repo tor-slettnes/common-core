@@ -10,7 +10,7 @@
 
 #include <grpcpp/support/server_interceptor.h>
 
-namespace core::grpc
+namespace cc::grpc
 {
     using ::grpc::experimental::InterceptionHookPoints;
     using ::grpc::experimental::Interceptor;
@@ -39,4 +39,4 @@ namespace core::grpc
         Interceptor* CreateServerInterceptor(ServerRpcInfo* info) override;
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

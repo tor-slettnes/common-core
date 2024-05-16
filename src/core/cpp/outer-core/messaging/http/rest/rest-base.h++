@@ -8,7 +8,7 @@
 #pragma once
 #include "messaging-endpoint.h++"
 
-namespace core::http
+namespace cc::http
 {
     class RESTBase : public messaging::Endpoint
     {
@@ -41,4 +41,4 @@ namespace core::http
             uint port,
             const std::string &path) const;
     };
-}  // namespace core::http
+}  // namespace cc::http

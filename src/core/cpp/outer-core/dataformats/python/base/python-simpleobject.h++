@@ -12,7 +12,7 @@
 #include "types/streamable.h++"
 #include "types/value.h++"
 
-namespace core::python
+namespace cc::python
 {
     //==========================================================================
     /// @brief
@@ -157,6 +157,6 @@ namespace core::python
     protected:
         PyObject *cobj;
     };
-}  // namespace core::python
+}  // namespace cc::python
 
 std::ostream &operator<<(std::ostream &stream, PyObject *obj);

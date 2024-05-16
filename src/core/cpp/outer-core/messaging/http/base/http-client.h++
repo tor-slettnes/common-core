@@ -14,7 +14,7 @@
 #include <sstream>
 #include <thread>
 
-namespace core::http
+namespace cc::http
 {
     using URL = std::string;
     using ResponseCode = long;
@@ -59,4 +59,4 @@ namespace core::http
         HandleMap handles_;
     };
 
-}  // namespace core::http
+}  // namespace cc::http

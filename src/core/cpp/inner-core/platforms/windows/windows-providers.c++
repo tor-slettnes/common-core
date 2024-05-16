@@ -12,7 +12,7 @@
 #include "windows-timezone.h++"
 #include "windows-logsink.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     void register_windows_providers(const std::string &exec_name)
     {
@@ -43,4 +43,4 @@ namespace core::platform
     {
         unregister_windows_providers();
     }
-}  // namespace core::platform
+}  // namespace cc::platform

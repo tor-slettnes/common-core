@@ -14,20 +14,20 @@ namespace demo::grpc
 {
     void SignalQueue::initialize()
     {
-        using CC::Demo::Signal;
+        using cc::protobuf::demo::Signal;
 
         this->connect<Greeting>(
-            CC::Demo::Signal::kGreeting,
+            cc::protobuf::demo::Signal::kSignalGreeting,
             signal_greeting,
             [](const Greeting &greeting, Signal *msg) {
-                protobuf::encode(greeting, msg->mutable_greeting());
+                ::cc::io::proto::encode(greeting, msg->mutable_signal_greeting());
             });
 
         this->connect<TimeData>(
-            CC::Demo::Signal::kTime,
+            cc::protobuf::demo::Signal::kSignalTime,
             signal_time,
             [](const TimeData &timedata, Signal *msg) {
-                protobuf::encode(timedata, msg->mutable_time());
+                ::cc::io::proto::encode(timedata, msg->mutable_signal_time());
             });
     }
 

@@ -7,7 +7,7 @@
 
 #include "level.h++"
 
-namespace core::status
+namespace cc::status
 {
     const types::SymbolMap<Level> LevelNames = {
         {Level::NONE, "NONE"},
@@ -39,4 +39,4 @@ namespace core::status
         return LevelNames.from_stream(stream, &lvl);
     }
 
-}  // namespace core::status
+}  // namespace cc::status

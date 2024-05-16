@@ -8,7 +8,7 @@
 #pragma once
 #include <memory>
 
-namespace core::types
+namespace cc::types
 {
     //==========================================================================
     /// \class Loggable
@@ -28,4 +28,4 @@ namespace core::types
         virtual ~Loggable() {}  // Hack to ensure class is polymorphic
     };
 
-}  // namespace core::types
+}  // namespace cc::types

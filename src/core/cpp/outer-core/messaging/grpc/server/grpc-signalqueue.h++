@@ -14,7 +14,7 @@
 #include "protobuf-signalforwarder.h++"
 #include "thread/blockingqueue.h++"
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class SignalQueue<SignalT>
@@ -49,24 +49,24 @@ namespace core::grpc
     /// For sample SignalForwarder implementations, see `demo::SignalForwarder()`
 
     template <class ProtoT>
-    class SignalQueue : public protobuf::SignalForwarder<ProtoT>,
+    class SignalQueue : public cc::io::proto::SignalForwarder<ProtoT>,
                         public types::BlockingQueue<ProtoT>
     {
     protected:
-        using SignalFilter = CC::Signal::Filter;
+        using SignalFilter = cc::protobuf::signal::Filter;
 
         template <class T>
         using Encoder = std::function<void(T, ProtoT *)>;
 
         template <class T, class K = std::string>
         using MappingEncoder = std::function<
-            void(signal::MappingChange, K, T, ProtoT *)>;
+            void(signal::MappingAction, K, T, ProtoT *)>;
 
     public:
         SignalQueue(const std::string &id,
                     const SignalFilter &filter,
                     uint maxsize = 0)
-            : protobuf::SignalForwarder<ProtoT>(),
+            : cc::io::proto::SignalForwarder<ProtoT>(),
               types::BlockingQueue<ProtoT>(maxsize),
               id(id),
               filter_polarity(filter.polarity()),
@@ -106,7 +106,7 @@ namespace core::grpc
         /// @fn connect
         /// @brief
         ///    Connect a signal of type MappingSignal<T> for encoding/enqueung
-        ///    ProtoBuf messages with `change` and `key` fields.
+        ///    ProtoBuf messages with `mapping_action` and `mapping_key` fields.
         /// @tparam T
         ///    Signal data type
         /// @param[in] signal_index
@@ -125,11 +125,11 @@ namespace core::grpc
             {
                 signal.connect(
                     this->id,                          // handle
-                    [=](signal::MappingChange change,  //
-                        const std::string &key,        // slot
-                        const SignalT &value)          //
+                    [=](signal::MappingAction action,  // |
+                        const std::string &key,        // | slot
+                        const SignalT &value)          // |
                     {
-                        ProtoT msg = this->create_signal_message(change, key);
+                        ProtoT msg = this->create_signal_message(action, key);
                         encoder(value, &msg);
                         this->forward(std::move(msg));
                     });
@@ -172,6 +172,6 @@ namespace core::grpc
         bool filter_polarity;
         std::unordered_set<uint> filter_indices;
     };
-}  // namespace core::grpc
+}  // namespace cc::grpc
 
-using core::grpc::SignalQueue;
+using cc::grpc::SignalQueue;

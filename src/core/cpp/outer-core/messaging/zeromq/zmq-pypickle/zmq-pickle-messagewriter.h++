@@ -10,7 +10,7 @@
 #include "zmq-messagewriter.h++"
 #include "python-simpleobject.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class PyPickleMessageWriter : public PyPickleMessageBase,
                                   public MessageWriter
@@ -23,4 +23,4 @@ namespace core::zmq
         void write(const types::Value &value);
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

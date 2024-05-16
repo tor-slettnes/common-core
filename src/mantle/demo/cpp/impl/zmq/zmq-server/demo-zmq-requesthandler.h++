@@ -16,10 +16,10 @@
 
 namespace demo::zmq
 {
-    class RequestHandler : public core::zmq::ProtoBufRequestHandler,
-                           public core::types::enable_create_shared<RequestHandler>
+    class RequestHandler : public cc::zmq::ProtoBufRequestHandler,
+                           public cc::types::enable_create_shared<RequestHandler>
     {
-        using Super = core::zmq::ProtoBufRequestHandler;
+        using Super = cc::zmq::ProtoBufRequestHandler;
 
     protected:
         RequestHandler(const std::shared_ptr<API> &api,
@@ -27,10 +27,10 @@ namespace demo::zmq
 
         void initialize() override;
 
-        protobuf::Empty say_hello(const CC::Demo::Greeting &request);
-        CC::Demo::TimeData get_current_time(const protobuf::Empty &request);
-        protobuf::Empty start_ticking(const protobuf::Empty &);
-        protobuf::Empty stop_ticking(const protobuf::Empty &);
+        ::google::protobuf::Empty say_hello(const cc::protobuf::demo::Greeting &request);
+        cc::protobuf::demo::TimeData get_current_time(const ::google::protobuf::Empty &request);
+        ::google::protobuf::Empty start_ticking(const ::google::protobuf::Empty &);
+        ::google::protobuf::Empty stop_ticking(const ::google::protobuf::Empty &);
 
     private:
         std::shared_ptr<API> api;

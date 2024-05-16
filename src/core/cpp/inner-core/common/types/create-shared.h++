@@ -8,7 +8,7 @@
 #pragma once
 #include <memory>
 
-namespace core::types
+namespace cc::types
 {
     /// @class create_shared
     /// @brief Create a `shared_ptr<Class>` to a `Class` with protected constructor
@@ -60,7 +60,7 @@ namespace core::types
 
     template <class T>
     bool equivalent(const std::shared_ptr<T> &lhs, const std::shared_ptr<T> &rhs);
-}  // namespace core::types
+}  // namespace cc::types
 
 #include "create-shared.i++"
 

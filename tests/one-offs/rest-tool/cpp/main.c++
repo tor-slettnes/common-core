@@ -14,21 +14,21 @@
 
 int main(int argc, char** argv)
 {
-    core::application::initialize(argc, argv);
+    cc::application::initialize(argc, argv);
 
-    auto options = std::make_unique<core::argparse::CommonOptions>(false);
+    auto options = std::make_unique<cc::argparse::CommonOptions>(false);
     options->apply(argc, argv);
 
-    auto client = core::http::RESTClient("https://api.ipify.org", "");
+    auto client = cc::http::RESTClient("https://api.ipify.org", "");
 
-    core::http::ResponseCode response_code;
+    cc::http::ResponseCode response_code;
     std::string content_type;
     std::stringstream header, content;
     int status = 0;
 
     try
     {
-        core::types::Value response = client.get_json(
+        cc::types::Value response = client.get_json(
             "https://api.ipify.org?format=json");
 
         std::cout << "### Received response: " << std::endl
@@ -41,6 +41,6 @@ int main(int argc, char** argv)
         status = -1;
     }
 
-    core::application::deinitialize();
+    cc::application::deinitialize();
     return status;
 }

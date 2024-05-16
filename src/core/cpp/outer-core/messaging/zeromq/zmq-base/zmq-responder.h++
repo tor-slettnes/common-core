@@ -10,7 +10,7 @@
 #include "types/bytevector.h++"
 #include <thread>
 
-namespace core::zmq
+namespace cc::zmq
 {
     class Responder : public Host
     {
@@ -35,4 +35,4 @@ namespace core::zmq
         bool keep_listening;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

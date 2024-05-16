@@ -11,7 +11,7 @@
 #include "protobuf-message.h++"
 #include "logging/logging.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     template <class ProtoT>
     class ProtoBufMessageHandler : public ProtoBufMessageBase<ProtoT>,
@@ -29,11 +29,11 @@ namespace core::zmq
         void handle(const types::ByteVector &bytes) override
         {
             log_trace("ProtoBufMessageHandler() handling message: ", bytes);
-            this->handle_message(protobuf::to_message<ProtoT>(bytes));
+            this->handle_message(::cc::io::proto::to_message<ProtoT>(bytes));
         }
 
     protected:
         virtual void handle_message(const ProtoT &message) = 0;
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

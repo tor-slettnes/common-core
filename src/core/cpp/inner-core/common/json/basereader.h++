@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-namespace core::json
+namespace cc::json
 {
     class BaseReader
     {
@@ -30,4 +30,4 @@ namespace core::json
     public:
         const std::string name;
     };
-}  // namespace core::json
+}  // namespace cc::json

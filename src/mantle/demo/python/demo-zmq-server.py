@@ -6,8 +6,8 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from demo.zmq.server import Server
-from demo.native     import NativeDemo
+from cc.demo.zmq.server import Server
+from cc.demo.native     import NativeDemo
 
 ### Standard Python modules
 import logging

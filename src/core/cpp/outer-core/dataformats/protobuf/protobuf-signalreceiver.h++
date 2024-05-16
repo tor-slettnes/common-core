@@ -7,12 +7,12 @@
 
 #pragma once
 #include "protobuf-message.h++"
-#include "signal_types.pb.h"
+#include "signal.pb.h"          // Generated from `signal.proto`
 
 #include <unordered_map>
 #include <functional>
 
-namespace protobuf
+namespace cc::io::proto
 {
 
     template <class SignalT>
@@ -39,7 +39,6 @@ namespace protobuf
             this->unregister_handlers();
         }
 
-
         virtual void register_handlers()
         {
         }
@@ -48,7 +47,6 @@ namespace protobuf
         {
             this->slots.clear();
         }
-
 
     protected:
         /// @brief Add a callback handler for a specific Signal type
@@ -88,10 +86,10 @@ namespace protobuf
         {
         }
 
-        CC::Signal::Filter signal_filter()
+        cc::protobuf::signal::Filter signal_filter()
         {
             std::lock_guard lck(this->slots_mtx);
-            CC::Signal::Filter filter;
+            cc::protobuf::signal::Filter filter;
             filter.set_polarity(true);
             for (const auto &[index, callback] : this->slots)
             {
@@ -128,4 +126,4 @@ namespace protobuf
         std::mutex slots_mtx;
     };
 
-}  // namespace core::protobuf
+}  // namespace cc::io::proto

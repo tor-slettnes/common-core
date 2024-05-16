@@ -10,7 +10,7 @@
 #include "rest-base.h++"
 #include "json/reader.h++"
 
-namespace core::http
+namespace cc::http
 {
     class RESTClient : public RESTBase,
                        public HTTPClient
@@ -27,4 +27,4 @@ namespace core::http
     private:
         std::string content_type;
     };
-}  // namespace core::http
+}  // namespace cc::http

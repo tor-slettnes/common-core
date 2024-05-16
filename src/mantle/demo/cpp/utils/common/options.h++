@@ -12,9 +12,9 @@
 
 namespace demo
 {
-    class Options : public core::argparse::CommandOptions
+    class Options : public cc::argparse::CommandOptions
     {
-        using Super = core::argparse::CommandOptions;
+        using Super = cc::argparse::CommandOptions;
 
     public:
         Options(const std::string &implementation);
@@ -28,8 +28,8 @@ namespace demo
 
         void on_time(const demo::TimeData &time);
 
-        void on_greeting(core::signal::MappingChange change,
-                         const std::string &identity,
+        void on_greeting(cc::signal::MappingAction mapping_action,
+                         const std::string &mapping_key,
                          const demo::Greeting &greeting);
 
         void say_hello();

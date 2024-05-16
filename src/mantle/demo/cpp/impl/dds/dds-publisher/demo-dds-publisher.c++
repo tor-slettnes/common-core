@@ -36,17 +36,17 @@ namespace demo::dds
         // functions.
 
         // Invoke `on_time_update` whenever there is a time update.
-        // This signal is based on the `core::signal::DataSignal<>` template,
+        // This signal is based on the `cc::signal::DataSignal<>` template,
         // so the callback function will receive one argument: the payload.
         signal_time.connect(
             TYPE_NAME_FULL(This),
             std::bind(&Publisher::on_time_update, this, _1));
 
         // Invoke `on_greeting_update` whenever someone sends a greeting.
-        // This signal is based on `core::signal::MappingSignal<>`, so
+        // This signal is based on `cc::signal::MappingSignal<>`, so
         // the callback function will receive three arguments:
-        //   - The change type (MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL)
-        //   - The key (in this case we use the greeter's identity)
+        //   - The mapping action (MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL)
+        //   - The mapping key (in this case we use the greeter's identity)
         //   - The payload.
         signal_greeting.connect(
             TYPE_NAME_FULL(This),
@@ -68,16 +68,16 @@ namespace demo::dds
         this->publish(this->time_writer, encoded_time);
     }
 
-    void Publisher::on_greeting_update(core::signal::MappingChange change,
+    void Publisher::on_greeting_update(cc::signal::MappingAction mapping_action,
                                        const std::string &identity,
                                        const Greeting &greeting)
     {
         logf_trace("Received greeting %s from %r; publishing over DDS: %s",
-                   change,
+                   mapping_action,
                    identity,
                    greeting);
         auto encoded_greeting = idl::encoded<CC::Demo::Greeting>(greeting);
-        this->publish_change(this->greeting_writer, change, encoded_greeting);
+        this->publish_change(this->greeting_writer, mapping_action, encoded_greeting);
     }
 
 }  // namespace demo::dds

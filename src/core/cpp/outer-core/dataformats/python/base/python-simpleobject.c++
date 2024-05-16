@@ -7,7 +7,7 @@
 
 #include "python-simpleobject.h++"
 
-namespace core::python
+namespace cc::python
 {
     SimpleObject::SimpleObject(PyObject *cobj, bool borrowed)
         : cobj(cobj)
@@ -493,9 +493,9 @@ namespace core::python
         {&PyDict_Type, types::ValueType::KVMAP},
     };
 
-}  // namespace core::python
+}  // namespace cc::python
 
 std::ostream &operator<<(std::ostream &stream, PyObject *obj)
 {
-    return core::python::SimpleObject::write_to_stream(stream, obj, false);
+    return cc::python::SimpleObject::write_to_stream(stream, obj, false);
 }

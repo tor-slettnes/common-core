@@ -12,10 +12,10 @@
 #include "logging/logging.h++"
 #include "platform/symbols.h++"
 
-namespace core::zmq
+namespace cc::zmq
 {
     template <class ProtoT>
-    class ProtoBufSignalWriter : public protobuf::SignalForwarder<ProtoT>,
+    class ProtoBufSignalWriter : public cc::io::proto::SignalForwarder<ProtoT>,
                                  public ProtoBufMessageWriter<ProtoT>
     {
         using This = ProtoBufSignalWriter<ProtoT>;
@@ -26,14 +26,14 @@ namespace core::zmq
 
         void initialize() override
         {
-            protobuf::SignalForwarder<ProtoT>::initialize();
+            cc::io::proto::SignalForwarder<ProtoT>::initialize();
             ProtoBufMessageWriter<ProtoT>::initialize();
         }
 
         void deinitialize() override
         {
             ProtoBufMessageWriter<ProtoT>::deinitialize();
-            protobuf::SignalForwarder<ProtoT>::deinitialize();
+            cc::io::proto::SignalForwarder<ProtoT>::deinitialize();
         }
 
         void forward(ProtoT &&message) override
@@ -42,4 +42,4 @@ namespace core::zmq
         }
     };
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

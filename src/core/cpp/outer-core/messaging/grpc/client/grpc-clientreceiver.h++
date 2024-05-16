@@ -13,7 +13,7 @@
 #include <grpcpp/impl/codegen/sync_stream.h>
 #include <grpcpp/impl/codegen/client_context.h>
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class ClientReceiver
@@ -22,7 +22,7 @@ namespace core::grpc
     /// Subclasses should override `void process(const T &message)`
     /// to handle messages as they are received.
 
-    template <class ServiceT, class MessageT, class RequestT = protobuf::Empty>
+    template <class ServiceT, class MessageT, class RequestT = ::google::protobuf::Empty>
     class ClientReceiver
     {
         using This = ClientReceiver<ServiceT, MessageT, RequestT>;
@@ -97,7 +97,7 @@ namespace core::grpc
                     std::this_thread::sleep_for(2s);
                     logf_notice("Reconnecting to grpc service %r at %s",
                                 ServiceT::service_full_name(),
-                                core::http::url_decode(cxt->peer()));
+                                cc::http::url_decode(cxt->peer()));
                 }
                 this->cxt.reset();
             }
@@ -128,11 +128,11 @@ namespace core::grpc
     /// @class ClientSignalReceiver
     /// @brief Stream messages from server and emit them locally as signals
 
-    template <class ServiceT, class SignalT, class RequestT = protobuf::Empty>
+    template <class ServiceT, class SignalT, class RequestT = ::google::protobuf::Empty>
     class ClientSignalReceiver : public ClientReceiver<ServiceT, SignalT, RequestT>
     {
         using Super = ClientReceiver<ServiceT, SignalT, RequestT>;
-        using Signal = core::signal::DataSignal<SignalT>;
+        using Signal = cc::signal::DataSignal<SignalT>;
 
     public:
         ClientSignalReceiver(Signal *signal)
@@ -141,4 +141,4 @@ namespace core::grpc
         }
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

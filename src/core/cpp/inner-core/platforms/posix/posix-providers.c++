@@ -11,7 +11,7 @@
 #include "posix-process.h++"
 #include "posix-serialport.h++"
 
-namespace core::platform
+namespace cc::platform
 {
     void register_posix_providers(const std::string &exec_name)
     {
@@ -30,4 +30,4 @@ namespace core::platform
         timezone.unregisterProvider<PosixTimeZoneProvider>();
         runtime.unregisterProvider<PosixRunTimeProvider>();
     }
-}  // namespace core::platform
+}  // namespace cc::platform

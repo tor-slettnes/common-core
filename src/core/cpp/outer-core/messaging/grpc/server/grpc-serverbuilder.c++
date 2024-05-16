@@ -10,7 +10,7 @@
 
 #include <grpc++/ext/proto_server_reflection_plugin.h>
 
-namespace core::grpc
+namespace cc::grpc
 {
     ServerBuilder::ServerBuilder(
         const std::string &listen_address,
@@ -84,4 +84,4 @@ namespace core::grpc
         return ::grpc::ServerBuilder::BuildAndStart();
     }
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

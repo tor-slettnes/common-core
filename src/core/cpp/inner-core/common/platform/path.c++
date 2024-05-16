@@ -18,7 +18,7 @@
 #define SETTINGS_DEF_BASE     "share/settings"
 
 /// Default filesystem paths.
-namespace core::platform
+namespace cc::platform
 {
     PathProvider::PathProvider(const std::string &provider_name,
                                const std::string &exec_name)
@@ -217,4 +217,4 @@ namespace core::platform
     /// Global instance, populated with the "best" provider for this system.
     ProviderProxy<PathProvider> path("path");
 
-};  // namespace core::platform
+};  // namespace cc::platform

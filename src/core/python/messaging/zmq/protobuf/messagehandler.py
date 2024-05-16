@@ -5,14 +5,14 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
+### Modules relative to current folder
 from ..basic import Filter, Topic, MessageHandler as BaseHandler
-from cc.io.protobuf import ProtoBuf
 
-### Standard Python modules
-from typing import Callable, Optional, Union
+### Modules relative to install folder
+import cc.protobuf.wellknown
 
-class MessageHandler (BaseHandler, ProtoBuf):
+
+class MessageHandler (BaseHandler):
     '''ZMQ subscriber with support for ProtoBuf messages'''
 
     ### Subclasses should override this with a ProtoBuf message type,
@@ -20,10 +20,10 @@ class MessageHandler (BaseHandler, ProtoBuf):
     message_type = None
 
     def __init__(self,
-                 message_type : Optional[ProtoBuf.MessageType] = None):
+                 message_type : cc.protobuf.wellknown.MessageType|None = None):
 
         self.message_type = message_type or type(self).message_type
-        assert isinstance(self.message_type, ProtoBuf.MessageType)
+        assert isinstance(self.message_type, cc.protobuf.wellknown.MessageType)
 
         topic = self.message_type.DESCRIPTOR.full_name
         BaseHandler.__init__(self, topic, Filter.create_from_topic(topic))
@@ -39,7 +39,7 @@ class MessageHandler (BaseHandler, ProtoBuf):
     ### Subclasses must override _one_ of the following two methods
     ### to process incoming ProtoBuf payloads
 
-    def handle_proto(self, message: ProtoBuf.Message):
+    def handle_proto(self, message: cc.protobuf.wellknown.Message):
         '''Process incoming ProtoBuf message.
 
         Unless overridden in subclasses this further decodes the message to a
@@ -48,7 +48,7 @@ class MessageHandler (BaseHandler, ProtoBuf):
         '''
 
         self.handle_proto_as_dict(
-            ProtoBuf.decodeToDict(message, use_integers_for_enums = True))
+            cc.protobuf.utils.decodeToDict(message, use_integers_for_enums = True))
 
 
     def handle_proto_as_dict(self, message : dict):

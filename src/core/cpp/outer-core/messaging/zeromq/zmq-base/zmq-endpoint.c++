@@ -12,7 +12,7 @@
 #include "status/exceptions.h++"
 #include "buildinfo.h"  // PROJECT_NAME
 
-namespace core::zmq
+namespace cc::zmq
 {
     // Keys to look up settings in zmq-services-*.json
     constexpr int IO_THREADS = 2;
@@ -32,7 +32,7 @@ namespace core::zmq
         if (!This::context_)
         {
             This::context_ = std::make_shared<::zmq::context_t>(IO_THREADS);
-            core::platform::signal_shutdown.connect(
+            cc::platform::signal_shutdown.connect(
                 TYPE_NAME_FULL(::zmq::context_t),
                 std::bind(&::zmq::context_t::shutdown, This::context_));
         }
@@ -224,4 +224,4 @@ namespace core::zmq
 
     std::shared_ptr<SettingsStore> Endpoint::settings_;
 
-}  // namespace core::zmq
+}  // namespace cc::zmq

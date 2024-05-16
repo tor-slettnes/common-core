@@ -12,7 +12,7 @@
 #include <dds/pub/ddspub.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
-namespace core::dds
+namespace cc::dds
 {
     //==========================================================================
     // @class PubSubChannnel
@@ -80,28 +80,28 @@ namespace core::dds
         /// @brief Helper method to forward encoded messages received as signals
         /// @param[in] writer
         ///     DDS writer.
-        /// @param[in] change
-        ///     Mapping change, informing the receiver whether this is an
+        /// @param[in] mapping_action
+        ///     Mapping action, informing the receiver whether this is an
         ///     addition/update or removal.
         /// @param[in] update
         ///     The payload to publish
 
         template <class T>
         void publish_change(DataWriterRef<T> &writer,
-                            core::signal::MappingChange change,
+                            cc::signal::MappingAction mapping_change,
                             const T &update)
         {
-            switch (change)
+            switch (mapping_change)
             {
-            case core::signal::MAP_NONE:
+            case cc::signal::MAP_NONE:
                 break;
 
-            case core::signal::MAP_ADDITION:
-            case core::signal::MAP_UPDATE:
+            case cc::signal::MAP_ADDITION:
+            case cc::signal::MAP_UPDATE:
                 this->publish<T>(writer, update);
                 break;
 
-            case core::signal::MAP_REMOVAL:
+            case cc::signal::MAP_REMOVAL:
                 logf_trace("Disposing: %s", writer->lookup_instance(update));
                 writer->dispose_instance(writer->lookup_instance(update));
                 break;
@@ -109,4 +109,4 @@ namespace core::dds
         }
     };
 
-}  // namespace core::dds
+}  // namespace cc::dds

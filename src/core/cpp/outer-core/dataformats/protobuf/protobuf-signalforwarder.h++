@@ -11,12 +11,12 @@
 
 #pragma once
 #include "thread/signaltemplate.h++"
-#include "signal_types.pb.h"
+#include "signal.pb.h"  // Generated from `signal.proto`
 
 #include <functional>
 #include <unordered_set>
 
-namespace protobuf
+namespace cc::io::proto
 {
     //==========================================================================
     /// @brief
@@ -49,13 +49,13 @@ namespace protobuf
         /// @brief
         ///    Create a new Signal message with optional mapping controls.
         static ProtoT create_signal_message(
-            core::signal::MappingChange change = core::signal::MAP_NONE,
-            const std::string &key = {})
+            cc::signal::MappingAction mapping_action = cc::signal::MAP_NONE,
+            const std::string &mapping_key = {})
         {
             ProtoT msg;
-            msg.set_change(static_cast<CC::Signal::MappingChange>(change));
-            msg.set_key(key);
+            msg.set_mapping_action(static_cast<cc::protobuf::signal::MappingAction>(mapping_action));
+            msg.set_mapping_key(mapping_key);
             return msg;
         }
     };
-}  // namespace protobuf
+}  // namespace cc::io::proto

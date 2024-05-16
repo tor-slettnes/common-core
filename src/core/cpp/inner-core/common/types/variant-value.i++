@@ -5,7 +5,7 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-namespace core::types
+namespace cc::types
 {
     // Convencience wrapper around std::get<T>(*this)
     template <class T>
@@ -79,4 +79,4 @@ namespace core::types
         }
     }
 
-}  // namespace core::types
+}  // namespace cc::types

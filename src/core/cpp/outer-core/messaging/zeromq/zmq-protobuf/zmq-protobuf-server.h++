@@ -13,7 +13,7 @@
 
 #include "request_reply.pb.h"
 
-namespace core::zmq
+namespace cc::zmq
 {
     class ProtoBufServer : public Responder
     {
@@ -37,17 +37,17 @@ namespace core::zmq
         void process_binary_request(const types::ByteVector &packed_request,
                                     types::ByteVector *packed_reply) override;
 
-        void process_protobuf_request(const CC::RR::Request &request,
-                                      CC::RR::Reply *reply);
+        void process_protobuf_request(const cc::protobuf::rr::Request &request,
+                                      cc::protobuf::rr::Reply *reply);
 
     private:
-        void insert_error_response(CC::RR::Reply *reply,
-                                   CC::RR::StatusCode status_code,
+        void insert_error_response(cc::protobuf::rr::Reply *reply,
+                                   cc::protobuf::rr::StatusCode status_code,
                                    const std::string &text,
-                                   core::status::Flow flow,
+                                   cc::status::Flow flow,
                                    const types::KeyValueMap &attributes);
 
     private:
         RequestHandlerMap handler_map;
     };
-}  // namespace core::zmq
+}  // namespace cc::zmq

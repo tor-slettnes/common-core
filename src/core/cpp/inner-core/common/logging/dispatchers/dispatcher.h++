@@ -12,7 +12,7 @@
 #include <memory>
 #include <set>
 
-namespace core::logging
+namespace cc::logging
 {
     class Dispatcher
     {
@@ -31,4 +31,4 @@ namespace core::logging
         std::set<Sink::Ref> sinks_;
     };
 
-}  // namespace core::logging
+}  // namespace cc::logging

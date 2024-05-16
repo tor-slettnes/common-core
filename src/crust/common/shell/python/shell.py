@@ -5,13 +5,24 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Make the contents of Python client modules available in namespaces roughly
-### corresponding to the package names of the corresponding `.proto` files
+### Modules relative to install folder
+from cc.messaging.grpc.client import ArgParser as _ArgParser
+import cc.protobuf.wellknown
+import cc.protobuf.variant
+import cc.protobuf.signal
+import cc.protobuf.status
+import cc.protobuf.rr
 
-from cc.io.protobuf     import CC, ProtoBuf
-from cc.messaging.grpc.client  import ArgParser as _ArgParser
+### Third-party modules
+import google.protobuf.message
 
+### Standard Python modules
 import logging
+
+### Import well-known ProtoBuf modules from Google.
+### Their symbols will appear within the `google.protobuf` namespace.
+from cc.protobuf.wellknown import import_wellknown_protos
+import_wellknown_protos(globals())
 
 ### Add a few arguments to the base argparser
 class ArgParser (_ArgParser):
@@ -27,15 +38,11 @@ class ArgParser (_ArgParser):
 
 def legend ():
     '''
-    Interactive Python shell with Common Core types preloaded:
+    Interactive Python shell with ProtoBuf data types preloaded
+    into namespaces corresponding to their respective package names:
 
-        ProtoBuf - Google-provided ProtoBuf types, e.g. `ProtoBuf.Empty`
-        CC       - Common Core types, e.g. `CC.Variant.Value'
-
-    To import modules, use their paths relative to `share/python`, e.g.:
-
-        >>> import demo.grpc.client
-        >>> demo_client = demo.grpc.client.Client('localhost')
+        google.protobuf.*   - well-known types
+        cc.protobuf.*       - custom types
 
     '''
     print(legend.__doc__)

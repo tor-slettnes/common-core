@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-namespace core::platform
+namespace cc::platform
 {
     PosixSerialPort::PosixSerialPort(
         const std::string &device,
@@ -28,7 +28,7 @@ namespace core::platform
             this->fd_ = ::open(this->device().data(), O_RDWR);
             if (this->fd_ < 0)
             {
-                throwf(core::exception::SystemError,
+                throwf(cc::exception::SystemError,
                        "opening serial device %r",
                        this->device());
             }
@@ -36,7 +36,7 @@ namespace core::platform
             if (tcgetattr(this->fd_, &this->tty_) != 0)
             {
                 this->close();
-                throwf(core::exception::SystemError,
+                throwf(cc::exception::SystemError,
                        "getting attributes from serial device %r",
                        this->device());
             }
@@ -47,7 +47,7 @@ namespace core::platform
             if (tcsetattr(this->fd_, TCSANOW, &this->tty_) != 0)
             {
                 this->close();
-                throwf(core::exception::SystemError,
+                throwf(cc::exception::SystemError,
                        "setting attributes on serial device %r",
                        this->device());
             }
@@ -61,7 +61,7 @@ namespace core::platform
             int result = ::close(this->fd_);
             if (result == -1)
             {
-                throwf(core::exception::SystemError,
+                throwf(cc::exception::SystemError,
                        "closing serial device %r",
                        this->device());
             }
@@ -98,7 +98,7 @@ namespace core::platform
         }
         else
         {
-            throwf(core::exception::FailedPrecondition,
+            throwf(cc::exception::FailedPrecondition,
                    "Serial device %r is not open",
                    this->device());
         }
@@ -125,7 +125,7 @@ namespace core::platform
             }
             if (nread < 0)
             {
-                throwf(core::exception::SystemError,
+                throwf(cc::exception::SystemError,
                        "reading from serial device %r",
                        this->device());
             }
@@ -133,7 +133,7 @@ namespace core::platform
         }
         else
         {
-            throwf(core::exception::FailedPrecondition,
+            throwf(cc::exception::FailedPrecondition,
                    "Serial device %r is not open",
                    this->device());
         }
@@ -206,4 +206,4 @@ namespace core::platform
         return std::make_shared<PosixSerialPort>(device, speed);
     }
 
-}  // namespace core::platform
+}  // namespace cc::platform

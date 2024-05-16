@@ -12,7 +12,7 @@
 #include "types/create-shared.h++"
 #include "platform/process.h++"
 
-namespace core::logging
+namespace cc::logging
 {
     //==========================================================================
     /// @class MessageBuilder
@@ -111,4 +111,4 @@ namespace core::logging
         bool is_applicable_;
     };
 
-}  // namespace core::logging
+}  // namespace cc::logging

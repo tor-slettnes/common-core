@@ -9,104 +9,104 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-inline.h++"
 
-namespace protobuf
+namespace cc::io::proto
 {
     //==========================================================================
     // Variant Value encoding
 
-    void encode(const core::types::Value &value,
-                CC::Variant::Value *msg) noexcept
+    void encode(const cc::types::Value &value,
+                cc::protobuf::variant::Value *msg) noexcept
     {
         switch (value.type())
         {
-        case core::types::ValueType::NONE:
+        case cc::types::ValueType::NONE:
             break;
 
-        case core::types::ValueType::BOOL:
+        case cc::types::ValueType::BOOL:
             msg->set_value_bool(value.as_bool());
             break;
 
-        case core::types::ValueType::UINT:
+        case cc::types::ValueType::UINT:
             msg->set_value_uint(value.as_largest_uint());
             break;
 
-        case core::types::ValueType::SINT:
+        case cc::types::ValueType::SINT:
             msg->set_value_sint(value.as_largest_sint());
             break;
 
-        case core::types::ValueType::REAL:
+        case cc::types::ValueType::REAL:
             msg->set_value_real(value.as_real());
             break;
 
-        case core::types::ValueType::CHAR:
-        case core::types::ValueType::STRING:
+        case cc::types::ValueType::CHAR:
+        case cc::types::ValueType::STRING:
             msg->set_value_string(value.as_string());
             break;
 
-        case core::types::ValueType::BYTEVECTOR:
+        case cc::types::ValueType::BYTEVECTOR:
             msg->set_value_bytes(value.as_bytevector().to_string());
             break;
 
-        case core::types::ValueType::TIMEPOINT:
+        case cc::types::ValueType::TIMEPOINT:
             encode(value.as_timepoint(), msg->mutable_value_timestamp());
             break;
 
-        case core::types::ValueType::DURATION:
+        case cc::types::ValueType::DURATION:
             encode(value.as_duration(), msg->mutable_value_duration());
             break;
 
-        case core::types::ValueType::VALUELIST:
+        case cc::types::ValueType::VALUELIST:
             encode(value.as_valuelist(), msg->mutable_value_list());
             break;
 
-        case core::types::ValueType::KVMAP:
+        case cc::types::ValueType::KVMAP:
             encode(value.as_kvmap(), msg->mutable_value_list());
             break;
 
-        case core::types::ValueType::TVLIST:
+        case cc::types::ValueType::TVLIST:
             encode(value.as_tvlist(), msg->mutable_value_list());
             break;
         }
     }
 
-    void decode(const CC::Variant::Value &msg,
-                core::types::Value *value) noexcept
+    void decode(const cc::protobuf::variant::Value &msg,
+                cc::types::Value *value) noexcept
     {
         switch (msg.value_case())
         {
-        case CC::Variant::Value::kValueBool:
+        case cc::protobuf::variant::Value::kValueBool:
             *value = msg.value_bool();
             break;
 
-        case CC::Variant::Value::kValueUint:
+        case cc::protobuf::variant::Value::kValueUint:
             *value = msg.value_uint();
             break;
 
-        case CC::Variant::Value::kValueSint:
+        case cc::protobuf::variant::Value::kValueSint:
             *value = msg.value_sint();
             break;
 
-        case CC::Variant::Value::kValueReal:
+        case cc::protobuf::variant::Value::kValueReal:
             *value = msg.value_real();
             break;
 
-        case CC::Variant::Value::kValueString:
+        case cc::protobuf::variant::Value::kValueString:
             *value = msg.value_string();
             break;
 
-        case CC::Variant::Value::kValueBytes:
+        case cc::protobuf::variant::Value::kValueBytes:
             *value = ByteVector(msg.value_bytes().begin(), msg.value_bytes().end());
             break;
 
-        case CC::Variant::Value::kValueTimestamp:
-            *value = protobuf::decoded<core::dt::TimePoint>(msg.value_timestamp());
+        case cc::protobuf::variant::Value::kValueTimestamp:
+            *value = ::cc::io::proto::decoded<cc::dt::TimePoint>(msg.value_timestamp());
             break;
 
-        case CC::Variant::Value::kValueDuration:
-            *value = protobuf::decoded<core::dt::Duration>(msg.value_duration());
+        case cc::protobuf::variant::Value::kValueDuration:
+            *value = ::cc::io::proto::decoded<cc::dt::Duration>(msg.value_duration());
             break;
 
-        case CC::Variant::Value::kValueList:
+        case cc::protobuf::variant::Value::kValueList:
             decode(msg.value_list(), value);
             break;
 
@@ -119,8 +119,8 @@ namespace protobuf
     //==========================================================================
     // TaggedValue encoding/decoding
 
-    void encode(const core::types::TaggedValue &tv,
-                CC::Variant::Value *msg) noexcept
+    void encode(const cc::types::TaggedValue &tv,
+                cc::protobuf::variant::Value *msg) noexcept
     {
         if (tv.first.has_value())
         {
@@ -132,8 +132,8 @@ namespace protobuf
         }
     }
 
-    void decode(const CC::Variant::Value &msg,
-                core::types::TaggedValue *tv) noexcept
+    void decode(const cc::protobuf::variant::Value &msg,
+                cc::types::TaggedValue *tv) noexcept
     {
         if (msg.tag().length() > 0)
         {
@@ -142,17 +142,17 @@ namespace protobuf
         decode(msg, &tv->second);
     }
 
-    void encode(const core::types::Tag &tag,
-                const core::types::Value &value,
-                CC::Variant::Value *msg) noexcept
+    void encode(const cc::types::Tag &tag,
+                const cc::types::Value &value,
+                cc::protobuf::variant::Value *msg) noexcept
     {
         msg->set_tag(tag.value_or(""));
         encode(value, msg);
     }
 
-    void decode(const CC::Variant::Value &msg,
+    void decode(const cc::protobuf::variant::Value &msg,
                 std::string *tag,
-                core::types::Value *value) noexcept
+                cc::types::Value *value) noexcept
     {
         *tag = msg.tag();
         decode(msg, value);
@@ -161,21 +161,21 @@ namespace protobuf
     //==========================================================================
     // TaggedValueList encoding/decoding
 
-    void encode(const core::types::TaggedValueList &tvlist,
-                CC::Variant::ValueList *msg) noexcept
+    void encode(const cc::types::TaggedValueList &tvlist,
+                cc::protobuf::variant::ValueList *msg) noexcept
     {
         encode(tvlist, msg->mutable_items());
         msg->set_untagged(!tvlist.tagged());
         msg->set_mappable(tvlist.mappable());
     }
 
-    void decode(const CC::Variant::ValueList &msg,
-                core::types::TaggedValueList *tvlist) noexcept
+    void decode(const cc::protobuf::variant::ValueList &msg,
+                cc::types::TaggedValueList *tvlist) noexcept
     {
         decode(msg.items(), tvlist);
     }
 
-    void encode(const core::types::TaggedValueList &tvlist,
+    void encode(const cc::types::TaggedValueList &tvlist,
                 RepeatedValue *msg) noexcept
     {
         msg->Reserve(tvlist.size());
@@ -186,7 +186,7 @@ namespace protobuf
     }
 
     void decode(const RepeatedValue &msgs,
-                core::types::TaggedValueList *tvlist) noexcept
+                cc::types::TaggedValueList *tvlist) noexcept
     {
         for (const auto &msg : msgs)
         {
@@ -197,26 +197,26 @@ namespace protobuf
     //==========================================================================
     // KeyValueMap encoding/decoding
 
-    void encode(const core::types::KeyValueMap &map,
-                CC::Variant::ValueList *msg) noexcept
+    void encode(const cc::types::KeyValueMap &map,
+                cc::protobuf::variant::ValueList *msg) noexcept
     {
         msg->mutable_items()->Reserve(msg->items_size() + map.size());
         for (const auto &[key, value] : map)
         {
-            CC::Variant::Value *tv = msg->add_items();
+            cc::protobuf::variant::Value *tv = msg->add_items();
             tv->set_tag(key);
             encode(value, tv);
         }
         msg->set_mappable(true);
     }
 
-    void decode(const CC::Variant::ValueList &msg,
-                core::types::KeyValueMap *map) noexcept
+    void decode(const cc::protobuf::variant::ValueList &msg,
+                cc::types::KeyValueMap *map) noexcept
     {
         decode(msg.items(), map);
     }
 
-    void encode(const core::types::KeyValueMap &map,
+    void encode(const cc::types::KeyValueMap &map,
                 RepeatedValue *msg) noexcept
     {
         msg->Reserve(map.size());
@@ -227,7 +227,7 @@ namespace protobuf
     }
 
     void decode(const RepeatedValue &msgs,
-                core::types::KeyValueMap *kvmap) noexcept
+                cc::types::KeyValueMap *kvmap) noexcept
     {
         for (const auto &msg : msgs)
         {
@@ -238,8 +238,8 @@ namespace protobuf
         }
     }
 
-    void encode(const core::types::KeyValueMap &map,
-                google::protobuf::Map<std::string, CC::Variant::Value> *msg) noexcept
+    void encode(const cc::types::KeyValueMap &map,
+                google::protobuf::Map<std::string, cc::protobuf::variant::Value> *msg) noexcept
     {
         for (const auto &[key, value] : map)
         {
@@ -247,8 +247,8 @@ namespace protobuf
         }
     }
 
-    void decode(const google::protobuf::Map<std::string, CC::Variant::Value> &msg,
-                core::types::KeyValueMap *map) noexcept
+    void decode(const google::protobuf::Map<std::string, cc::protobuf::variant::Value> &msg,
+                cc::types::KeyValueMap *map) noexcept
     {
         for (const auto &[key, value] : msg)
         {
@@ -259,25 +259,25 @@ namespace protobuf
     //==========================================================================
     // ValueList encoding/decoding
 
-    void encode(const core::types::ValueList &list,
-                CC::Variant::ValueList *msg) noexcept
+    void encode(const cc::types::ValueList &list,
+                cc::protobuf::variant::ValueList *msg) noexcept
     {
         msg->mutable_items()->Reserve(msg->items_size() + list.size());
-        for (const core::types::Value &value : list)
+        for (const cc::types::Value &value : list)
         {
             encode(value, msg->add_items());
         }
         msg->set_untagged(true);
     }
 
-    void decode(const CC::Variant::ValueList &msg,
-                core::types::ValueList *list) noexcept
+    void decode(const cc::protobuf::variant::ValueList &msg,
+                cc::types::ValueList *list) noexcept
     {
         decode(msg.items(), list);
     }
 
     void decode(const RepeatedValue &msgs,
-                core::types::ValueList *list) noexcept
+                cc::types::ValueList *list) noexcept
     {
         for (const auto &msg : msgs)
         {
@@ -285,26 +285,26 @@ namespace protobuf
         }
     }
 
-    void decode(const CC::Variant::ValueList &msg,
-                core::types::Value *value) noexcept
+    void decode(const cc::protobuf::variant::ValueList &msg,
+                cc::types::Value *value) noexcept
     {
         if (msg.untagged())
         {
             // The sender has indicated that tags can be ignored, so we'll store
             // this as a plain ValueList instance
-            *value = decoded<core::types::ValueList>(msg);
+            *value = decoded<cc::types::ValueList>(msg);
         }
         else if (msg.mappable())
         {
             // The sender has indicated that tags are unique, so we'll store
             // this as a KeyValueMap instance.
-            *value = decoded<core::types::KeyValueMap>(msg);
+            *value = decoded<cc::types::KeyValueMap>(msg);
         }
         else
         {
             // The sender did not indicate that tags can be ignored, nor that
             // they are unique. We start by assuming we'll need a TaggedValueList.
-            auto tvlist = decoded<core::types::TaggedValueList>(msg);
+            auto tvlist = decoded<cc::types::TaggedValueList>(msg);
 
             // Let's see if we can ignore tags and just store just the values
             if (!tvlist.tagged())
@@ -326,4 +326,4 @@ namespace protobuf
         }
     }
 
-}  // namespace core::protobuf
+}  // namespace cc::io::proto

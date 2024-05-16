@@ -11,7 +11,7 @@
 
 #include <string>
 
-namespace core::platform
+namespace cc::platform
 {
     class LogSinkProvider : public logging::MessageSink,
                             public Provider
@@ -33,4 +33,4 @@ namespace core::platform
     };
 
     extern ProviderProxy<LogSinkProvider> logsink;
-}  // namespace core::platform
+}  // namespace cc::platform

@@ -35,7 +35,7 @@ namespace demo
     /// ```
     /// demo::signal_time.disconnect("My Callback Handle");
     /// ```
-    extern core::signal::DataSignal<TimeData> signal_time;
+    extern cc::signal::DataSignal<TimeData> signal_time;
 
     /// @brief MappingSignal emitted whenever someone issues a greeting.
     /// @sa `demo::say_hello()`.
@@ -48,7 +48,7 @@ namespace demo
     /// ```
     /// demo::signal_geeting.connect(
     ///     "My Callback Handle",
-    ///     [](core::signal::MappingChange change,
+    ///     [](cc::signal::MappingAction mapping_action,
     ///        const std::string &greeter,
     ///        const Greeting &greeting)
     ///     {
@@ -62,12 +62,12 @@ namespace demo
     /// demo::signal_time.disconnect("My Callback Handle");
     /// ```
     ///
-    /// The `caching` flag is enabled on this signal (see demo-signals.cpp),
-    /// so when first connecting a callback method to this signal it will be
+    /// The `caching` flag is enabled on this signal (see demo-signals.cpp), so
+    /// when first connecting a callback method to this signal it will be
     /// invoked once for each entity that has already issued a greeting
-    /// (cfr. "late subscriber" pattern), with the `change` parameter set to
-    /// `core::signal::MAP_ADDITION`. Subsequent invocations will take place
-    /// as this signal is emitted, with `change` being either `MAP_ADDITION`,
-    /// `MAP_UPDATE`, or `MAP_REMOVAL`.
-    extern core::signal::MappingSignal<Greeting> signal_greeting;
+    /// (cfr. "late subscriber" pattern), with the `mapping_action` parameter
+    /// set to `cc::signal::MAP_ADDITION`. Subsequent invocations will take
+    /// place as this signal is emitted, with `mapping_action` being either
+    /// `MAP_ADDITION`, `MAP_UPDATE`, or `MAP_REMOVAL`.
+    extern cc::signal::MappingSignal<Greeting> signal_greeting;
 }  // namespace demo

@@ -24,20 +24,20 @@ namespace idl
     //==========================================================================
     // Encode/decode Unsigned Integer value
 
-    void encode(core::types::largest_uint native,
+    void encode(cc::types::largest_uint native,
                 CC::Common::UnsignedValue *idl) noexcept;
 
     void decode(const CC::Common::UnsignedValue &idl,
-                core::types::largest_uint *native) noexcept;
+                cc::types::largest_uint *native) noexcept;
 
     //==========================================================================
     // Encode/decode Signed Integer value
 
-    void encode(core::types::largest_sint native,
+    void encode(cc::types::largest_sint native,
                 CC::Common::SignedValue *idl) noexcept;
 
     void decode(const CC::Common::SignedValue &idl,
-                core::types::largest_sint *native) noexcept;
+                cc::types::largest_sint *native) noexcept;
 
     //==========================================================================
     // Encode/decode real value
@@ -51,29 +51,29 @@ namespace idl
     //==========================================================================
     // Encode/decode Complex value
 
-    void encode(const core::types::complex &native,
+    void encode(const cc::types::complex &native,
                 CC::Common::ComplexValue *idl) noexcept;
 
     void decode(const CC::Common::ComplexValue &idl,
-                core::types::complex *native) noexcept;
+                cc::types::complex *native) noexcept;
 
     //==========================================================================
     // Encode/decode Timestamp
 
-    void encode(const core::dt::TimePoint &native,
+    void encode(const cc::dt::TimePoint &native,
                 CC::Common::Timestamp *idl) noexcept;
 
     void decode(const CC::Common::Timestamp &idl,
-                core::dt::TimePoint *native) noexcept;
+                cc::dt::TimePoint *native) noexcept;
 
     //==========================================================================
     // Encode/decode Duration
 
-    void encode(const core::dt::Duration &native,
+    void encode(const cc::dt::Duration &native,
                 CC::Common::Duration *idl) noexcept;
 
     void decode(const CC::Common::Duration &idl,
-                core::dt::Duration *native) noexcept;
+                cc::dt::Duration *native) noexcept;
 
     //==========================================================================
     // Encode/decode String value

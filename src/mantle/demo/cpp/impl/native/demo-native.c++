@@ -25,9 +25,9 @@ namespace demo
     {
         log_notice("Received and redistributing greeting: ", greeting);
         /// Emit `signal_greeting` to registered slots/callbacks.
-        if (core::str::tolower(greeting.identity) == "dave")
+        if (cc::str::tolower(greeting.identity) == "dave")
         {
-            throw core::exception::InvalidArgument(
+            throw cc::exception::InvalidArgument(
                 "I'm sorry Dave, I cannot let you do that.");
         }
         else
@@ -38,26 +38,26 @@ namespace demo
 
     TimeData NativeImpl::get_current_time()
     {
-        return {core::dt::Clock::now()};
+        return {cc::dt::Clock::now()};
     }
 
     void NativeImpl::start_ticking()
     {
         // Schedule a task to emit a new TimeData update every second
         log_notice("Starting periodic time updates");
-        core::scheduler.add_if_missing(
+        cc::scheduler.add_if_missing(
             TIMER_TASK_HANDLE,
-            [](const core::dt::TimePoint &tp) {
+            [](const cc::dt::TimePoint &tp) {
                 demo::signal_time.emit(TimeData(tp));
             },
             std::chrono::seconds(1),
-            core::Scheduler::ALIGN_UTC);
+            cc::Scheduler::ALIGN_UTC);
     }
 
     void NativeImpl::stop_ticking()
     {
         // Cancel any existing TimeData update task
         log_notice("Stopping periodic time updates");
-        core::scheduler.remove(TIMER_TASK_HANDLE);
+        cc::scheduler.remove(TIMER_TASK_HANDLE);
     }
 }  // namespace demo

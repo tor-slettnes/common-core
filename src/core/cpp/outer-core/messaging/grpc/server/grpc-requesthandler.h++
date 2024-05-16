@@ -9,7 +9,7 @@
 #include "grpc-base.h++"
 #include "protobuf-standard-types.h++"
 
-namespace core::grpc
+namespace cc::grpc
 {
     //==========================================================================
     /// @class RequestHandlerBase
@@ -40,7 +40,7 @@ namespace core::grpc
                        const std::string &function = __builtin_FUNCTION());
 
         Status failure(const std::exception &exception,
-                       const protobuf::Message &request,
+                       const ::google::protobuf::Message &request,
                        const std::string &peer = {},
                        status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
@@ -48,7 +48,7 @@ namespace core::grpc
                        const std::string &function = __builtin_FUNCTION());
 
         Status failure(std::exception_ptr eptr,
-                       const protobuf::Message &request,
+                       const ::google::protobuf::Message &request,
                        const std::string &peer = {},
                        status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
@@ -62,7 +62,7 @@ namespace core::grpc
                         const int &line = __builtin_LINE(),
                         const std::string &function = __builtin_FUNCTION());
 
-        std::string request_description(const protobuf::Message &request,
+        std::string request_description(const ::google::protobuf::Message &request,
                                         const std::string &peer,
                                         const std::string &function);
     };
@@ -75,11 +75,11 @@ namespace core::grpc
     ///  * Include a "RequestHandler" as a base for your service class:
     ///    \code
     ///      #include "servicewrapper.h"
-    ///      class YourService : public RequestHandler<CC::yourapp::YourService>
+    ///      class YourService : public RequestHandler<cc::yourapp::YourService>
     ///      {
     ///      public:
     ///          YourService (const std::string &interface)
-    ///             : RequestHandler<CC::yourapp::YourService>(interface) {}
+    ///             : RequestHandler<cc::yourapp::YourService>(interface) {}
     ///          ...
     ///      };
     ///    \endcode
@@ -103,8 +103,8 @@ namespace core::grpc
     ///  * Catch internal exceptions and return appropriate gRPC status
     ///    \code
     ///      ::grpc::Status YourService:yourmethod (::grpc::ServerContext* cxt,
-    ///                                           const CC::yourapp::SomeRequest *request,
-    ///                                           CC::yourapp::SomeResponse *reply)
+    ///                                           const cc::yourapp::SomeRequest *request,
+    ///                                           cc::yourapp::SomeResponse *reply)
     ///      {
     ///        try
     ///        {
@@ -128,8 +128,8 @@ namespace core::grpc
         {
         }
 
-        template <class ResponseType = protobuf::Empty,
-                  class RequestType = protobuf::Empty>
+        template <class ResponseType = ::google::protobuf::Empty,
+                  class RequestType = ::google::protobuf::Empty>
         ::grpc::Status wrap(::grpc::ServerContext *context,
                             const RequestType *request,
                             ResponseType *response,
@@ -157,4 +157,4 @@ namespace core::grpc
         }
     };
 
-}  // namespace core::grpc
+}  // namespace cc::grpc

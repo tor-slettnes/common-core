@@ -6,9 +6,13 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from ..core          import API, CC, ProtoBuf, demo_signals
-from cc.core.scheduler  import scheduler, ALIGN_UTC
-from cc.core.invocation import safe_invoke
+from ..core                import API, signal_store
+from cc.core.scheduler     import scheduler, ALIGN_UTC
+from cc.protobuf.demo      import encodeTimeStruct
+from cc.protobuf.wellknown import encodeTimestamp
+
+### Third-party modules
+from google.protobuf.text_format import MessageToString
 
 ### Standard Python modules
 from typing import Callable
@@ -25,23 +29,23 @@ class NativeDemo (API):
         API.__init__(self, 'Python Native')
         self.timer_task_handle = "Demo.ticker"
 
-    def say_hello(self, greeting: CC.Demo.Greeting):
-        print("Emitting greeting: say_hello(%s)"%(
-            ProtoBuf.MessageToString(greeting, as_one_line=True),))
-        demo_signals.emit_mapping('greeting', None, greeting.identity, greeting)
+    def say_hello(self, greeting: cc.protobuf.demo.Greeting):
+        print("Emitting greeting: say_hello(%s)"%
+              (MessageToString(greeting, as_one_line=True),))
+        signal_store.emit_mapping('greeting', None, greeting.identity, greeting)
 
 
-    def get_current_time(self) -> CC.Demo.TimeData:
+    def get_current_time(self) -> cc.protobuf.demo.TimeData:
         '''
         Get current time data.
         @return
             Current time data provided by the specific implementation.
         '''
         t = time.time()
-        return CC.Demo.TimeData(
-            timestamp = ProtoBuf.encodeTimestamp(t),
-            local_time = CC.encodeTimeStruct(time.localtime(t)),
-            utc_time = CC.encodeTimeStruct(time.gmtime(t)),
+        return cc.protobuf.demo.TimeData(
+            timestamp = encodeTimestamp(t),
+            local_time = encodeTimeStruct(time.localtime(t)),
+            utc_time = encodeTimeStruct(time.gmtime(t)),
         )
 
 
@@ -63,10 +67,10 @@ class NativeDemo (API):
 
     def _emit_time(self):
         t = time.time()
-        demo_signals.emit_event(
+        signal_store.emit_event(
             'time',
-            CC.Demo.TimeData(
-                timestamp = ProtoBuf.encodeTimestamp(t),
-                local_time = CC.encodeTimeStruct(time.localtime(t)),
-                utc_time = CC.encodeTimeStruct(time.gmtime(t)),
+            cc.protobuf.demo.TimeData(
+                timestamp = encodeTimestamp(t),
+                local_time = encodeTimeStruct(time.localtime(t)),
+                utc_time = encodeTimeStruct(time.gmtime(t)),
             ))
