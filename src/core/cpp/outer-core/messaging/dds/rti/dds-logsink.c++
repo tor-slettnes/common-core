@@ -37,7 +37,7 @@ namespace core::dds
     {
         if (this->log_writer)
         {
-            this->log_writer->write(idl::encoded<CC::Status::LogMessage>(*msg));
+            this->log_writer->write(core::idl::encoded<CC::Status::LogMessage>(*msg));
         }
     }
 

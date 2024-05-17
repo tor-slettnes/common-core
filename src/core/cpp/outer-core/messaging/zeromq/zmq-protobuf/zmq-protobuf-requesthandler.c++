@@ -88,7 +88,7 @@ namespace core::zmq
         {
             cc::rr::Status *status = reply->mutable_status();
             status->set_code(error->status_code());
-            ::core::io::proto::encode(*error, status->mutable_details());
+            ::core::protobuf::encode(*error, status->mutable_details());
         }
     }
 

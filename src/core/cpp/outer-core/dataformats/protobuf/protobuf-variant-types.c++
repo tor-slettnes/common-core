@@ -9,7 +9,7 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-inline.h++"
 
-namespace core::io::proto
+namespace core::protobuf
 {
     //==========================================================================
     // Variant Value encoding
@@ -99,11 +99,11 @@ namespace core::io::proto
             break;
 
         case cc::variant::Value::kValueTimestamp:
-            *value = ::core::io::proto::decoded<core::dt::TimePoint>(msg.value_timestamp());
+            *value = ::core::protobuf::decoded<core::dt::TimePoint>(msg.value_timestamp());
             break;
 
         case cc::variant::Value::kValueDuration:
-            *value = ::core::io::proto::decoded<core::dt::Duration>(msg.value_duration());
+            *value = ::core::protobuf::decoded<core::dt::Duration>(msg.value_duration());
             break;
 
         case cc::variant::Value::kValueList:
@@ -326,4 +326,4 @@ namespace core::io::proto
         }
     }
 
-}  // namespace core::io::proto
+}  // namespace core::protobuf

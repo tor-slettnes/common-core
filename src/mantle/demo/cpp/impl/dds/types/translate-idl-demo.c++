@@ -9,7 +9,7 @@
 #include "translate-idl-inline.h++"
 #include "chrono/date-time.h++"
 
-namespace idl
+namespace core::idl
 {
     //==========================================================================
     // Greeting
@@ -87,4 +87,4 @@ namespace idl
         native->tm_isdst = static_cast<int>(idl.is_dst().has_value() ? idl.is_dst().value() : -1);
     }
 
-}  // namespace idl
+}  // namespace core::idl

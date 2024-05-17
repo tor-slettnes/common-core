@@ -15,7 +15,7 @@ ZoneSuffix = Enumeration({
     "NONE"   : 0,
     "OFFSET" : 1,  # '+0100' for CET, '-0800' for PST, 'Z' for UTC
     "NAME"   : 2   # 'CET'/'CEST'/'PST'/'PDT'/etc, or 'UTC'
-}, globals())
+})
 
 
 ### Standardized time string
@@ -23,7 +23,7 @@ def isotime(timestamp        : float = None,
             time_delimiter   : str  = " ",
             decimals         : int  = 3,
             local            : bool = True,
-            zone_suffix      : ZoneSuffix = NONE,
+            zone_suffix      : ZoneSuffix = ZoneSuffix.NONE,
             zone_delimiter   : str = ""):
     '''
     ISO 8601 string representation of a timestamp.
@@ -42,11 +42,11 @@ def isotime(timestamp        : float = None,
 
     @param[in] zone_suffix
         Append timezone suffix. One of:
-            NONE   - No suffix
-            OFFSET - ISO zone indicator, e.g. '-0800' for local time
-                     or 'Z' for UTC ("Zulu"/"Zero Offset").
-            NAME   - Abbreviated effective none name, e.g. `PST` or `PDT`.
-                     (Not ISO 8601 compliant, nor globally unique).
+        - ZoneSuffix.NONE   - No suffix
+        - ZoneSuffix.OFFSET - ISO zone indicator, e.g. '-0800' for local time
+                              or 'Z' for UTC ("Zulu"/"Zero Offset").
+        - ZoneSuffix.NAME   - Abbreviated effective none name, e.g. `PST` or `PDT`.
+                              (Not ISO 8601 compliant, nor globally unique).
 
     @param[in] zone_delimiter
         Delimiter between time and zone name.
@@ -63,7 +63,7 @@ def isotime(timestamp        : float = None,
         fraction = timestamp - int(timestamp)
         parts.append(".%0*d"%(decimals, (10**decimals) * fraction))
 
-    if zone_suffix == OFFSET:
+    if zone_suffix == ZoneSuffix.OFFSET:
         parts.append(zone_delimiter)
         if local:
             parts.append(
@@ -72,7 +72,7 @@ def isotime(timestamp        : float = None,
         else:
             parts.append("Z")
 
-    elif zone_suffix == NAME:
+    elif zone_suffix == ZoneSuffix.NAME:
         parts.append(zone_delimiter)
         if local:
             name = time.tzname[timestruct.tm_isdst]
@@ -100,5 +100,5 @@ def jstime(timestamp : float = None):
                    time_delimiter="T",
                    decimals=3,
                    local=False,
-                   zone_suffix=OFFSET,
+                   zone_suffix=ZoneSuffix.OFFSET,
                    zone_delimiter="")

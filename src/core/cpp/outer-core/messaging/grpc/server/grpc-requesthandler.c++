@@ -136,7 +136,7 @@ namespace core::grpc
         {
             ss << "request from " << core::http::url_decode(peer) << ": ";
         }
-        ss << function << "(" << core::io::proto::to_string(request) << ")";
+        ss << function << "(" << core::protobuf::to_string(request) << ")";
         return ss.str();
     }
 

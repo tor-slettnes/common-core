@@ -35,9 +35,9 @@ import_wellknown_protos(globals())
 ### that matches their respective `package` declarations (starting with `cc.`).
 import_core_protos(globals())
 
-### Import DEMO ProtoBuf symbols.  These will appear within a namespace that
-### matches the declared package name from `demo.proto`, i.e. `cc.demo`.
-import_proto('generated.demo_pb2', globals())
+### Import ProtoBuf data types from `demo.proto`.  These will appear in the
+### namespace matching its package declaration: `cc.demo'.
+import_proto('demo', globals())
 
 ### Add a few arguments to the base argparser
 class ArgParser (argparse.ArgumentParser):
@@ -69,18 +69,17 @@ class ArgParser (argparse.ArgumentParser):
 def legend():
     '''Interactive Service Control.  Subsystems loaded:
 
-        demo_grpc  - Simple gRPC communications example
-        demo_zmq   - Simple 0MQ communications example
+        demo_grpc - Simple gRPC communications example
+        demo_zmq - Simple 0MQ communications example
 
-    In addition, ProtoBuf modules are loaded into namespaces matching their
-    respective package names:
+    ProtoBuf types are generally loaded into namespaces matching the package
+    names from their respective `.proto` files:
 
-     - Well-known ProtoBuf types : google.protobuf.*
-     - Custom ProtoBuf types     : cc.*
-     - Wrapper modules           : protobuf.*
+        google.protobuf - Well-known types from Google
+        cc.* - Various custom types
+        protobuf.* - General utilities and wrapper modules
 
-    Use 'help(subsystem)' to list available methods
-
+    Use 'help(subsystem)' to list available subcomponents or methods
     '''
     print(legend.__doc__)
 

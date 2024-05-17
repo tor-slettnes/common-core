@@ -23,7 +23,7 @@
 /// ("decode...()") "common" ProtoBuf messages (including those defined in
 /// "common_types.proto").
 
-namespace core::io::proto
+namespace core::protobuf
 {
     using google::protobuf::BoolValue;
     using google::protobuf::BytesValue;
@@ -159,4 +159,4 @@ namespace core::io::proto
     void decode(const google::protobuf::ListValue &msg,
                 core::types::ValueList *list) noexcept;
 
-}  // namespace core::io::proto
+}  // namespace core::protobuf

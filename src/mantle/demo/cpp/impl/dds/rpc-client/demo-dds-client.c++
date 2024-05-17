@@ -29,14 +29,14 @@ namespace demo::dds
 
     void ClientImpl::say_hello(const Greeting &greeting)
     {
-        auto idl_greeting = idl::encoded<CC::Demo::Greeting>(greeting);
+        auto idl_greeting = core::idl::encoded<CC::Demo::Greeting>(greeting);
         this->client().say_hello(idl_greeting);
     }
 
     TimeData ClientImpl::get_current_time()
     {
         CC::Demo::TimeData idl_time_data = this->client().get_current_time();
-        return idl::decoded<TimeData>(idl_time_data);
+        return core::idl::decoded<TimeData>(idl_time_data);
     }
 
     void ClientImpl::start_ticking()

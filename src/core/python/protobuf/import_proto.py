@@ -32,11 +32,11 @@ def import_wellknown_protos (target_scope: object,
     the respective `.proto` files; in this case, `google.protobuf`
 
     '''
-    import_proto('google.protobuf.empty_pb2', target_scope, namespace)
-    import_proto('google.protobuf.wrappers_pb2', target_scope, namespace)
-    import_proto('google.protobuf.duration_pb2', target_scope, namespace)
-    import_proto('google.protobuf.timestamp_pb2', target_scope, namespace)
-    import_proto('google.protobuf.struct_pb2', target_scope, namespace)
+    import_proto('google.protobuf.empty', target_scope, namespace)
+    import_proto('google.protobuf.wrappers', target_scope, namespace)
+    import_proto('google.protobuf.duration', target_scope, namespace)
+    import_proto('google.protobuf.timestamp', target_scope, namespace)
+    import_proto('google.protobuf.struct', target_scope, namespace)
 
 
 def import_core_protos(target_scope: object,
@@ -49,10 +49,10 @@ def import_core_protos(target_scope: object,
     the respective `.proto` files (starting with `cc.`).
     '''
 
-    import_proto('generated.variant_pb2', target_scope, namespace)
-    import_proto('generated.status_pb2', target_scope, namespace)
-    import_proto('generated.signal_pb2', target_scope, namespace)
-    import_proto('generated.request_reply_pb2', target_scope, namespace)
+    import_proto('variant', target_scope, namespace)
+    import_proto('status', target_scope, namespace)
+    import_proto('signal', target_scope, namespace)
+    import_proto('request_reply', target_scope, namespace)
 
 
 def import_proto(module_name: str,

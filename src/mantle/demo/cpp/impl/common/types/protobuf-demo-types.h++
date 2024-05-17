@@ -10,7 +10,7 @@
 #include "demo.pb.h"
 #include <ctime>
 
-namespace core::io::proto
+namespace core::protobuf
 {
     //==========================================================================
     // Greeting

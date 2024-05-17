@@ -16,7 +16,7 @@
 #include <functional>
 #include <unordered_set>
 
-namespace core::io::proto
+namespace core::protobuf
 {
     //==========================================================================
     /// @brief
@@ -58,4 +58,4 @@ namespace core::io::proto
             return msg;
         }
     };
-}  // namespace core::io::proto
+}  // namespace core::protobuf

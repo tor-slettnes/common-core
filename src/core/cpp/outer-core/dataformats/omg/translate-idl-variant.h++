@@ -9,7 +9,7 @@
 #include "variant-types.hpp"  // generated from `variant-types.idl`
 #include "types/value.h++"
 
-namespace idl
+namespace core::idl
 {
     //==========================================================================
     // Encode/decode VariantValue
@@ -72,4 +72,4 @@ namespace idl
     void decode(const CC::Variant::TaggedValueList &idl,
                 core::types::KeyValueMap *native) noexcept;
 
-}  // namespace idl
+}  // namespace core::idl

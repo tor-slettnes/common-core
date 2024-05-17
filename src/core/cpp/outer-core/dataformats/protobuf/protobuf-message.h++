@@ -13,7 +13,7 @@
 
 #include <ostream>
 
-namespace core::io::proto
+namespace core::protobuf
 {
     //==========================================================================
     // Message deserialization
@@ -69,7 +69,7 @@ namespace core::io::proto
         msg.ParseFromString(packed_string);
         return msg;
     }
-}  // namespace core::io::proto
+}  // namespace core::protobuf
 
 /// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
 namespace google::protobuf

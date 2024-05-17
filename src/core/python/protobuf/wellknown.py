@@ -25,10 +25,13 @@ from google.protobuf.wrappers_pb2 \
     BytesValue
 from google.protobuf.struct_pb2 import Value, ListValue, Struct
 
-
 ### Standard Python modules
 from time import struct_time, mktime
 from datetime import datetime
+
+### Type type hint for timestamps
+TimestampType = Timestamp|float|int|str|struct_time|datetime
+
 
 def decodeTimestamp(prototime: Timestamp) -> float:
     '''Convert a ProtoBuf `Timestamp` value as an Python timestamp (seconds
@@ -36,7 +39,7 @@ def decodeTimestamp(prototime: Timestamp) -> float:
     '''
     return prototime.seconds + prototime.nanos*1e-9
 
-def encodeTimestamp(timestamp: Timestamp|float|int|str|struct_time|datetime) -> Timestamp:
+def encodeTimestamp(timestamp: TimestampType) -> Timestamp:
     '''Convert the specified time to a ProtoBuf `Timestamp` value.
 
     The input may be one of the following:

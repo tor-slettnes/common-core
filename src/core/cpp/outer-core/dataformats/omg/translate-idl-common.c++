@@ -7,7 +7,7 @@
 
 #include "translate-idl-common.h++"  // generated from common_types.idl
 
-namespace idl
+namespace core::idl
 {
     //==========================================================================
     // Encode/decode Boolean value
@@ -140,4 +140,4 @@ namespace idl
         *native = idl.value();
     }
 
-}  // namespace idl
+}  // namespace core::idl

@@ -15,7 +15,7 @@
 namespace core::zmq
 {
     template <class ProtoT>
-    class ProtoBufSignalWriter : public core::io::proto::SignalForwarder<ProtoT>,
+    class ProtoBufSignalWriter : public core::protobuf::SignalForwarder<ProtoT>,
                                  public ProtoBufMessageWriter<ProtoT>
     {
         using This = ProtoBufSignalWriter<ProtoT>;
@@ -26,14 +26,14 @@ namespace core::zmq
 
         void initialize() override
         {
-            core::io::proto::SignalForwarder<ProtoT>::initialize();
+            core::protobuf::SignalForwarder<ProtoT>::initialize();
             ProtoBufMessageWriter<ProtoT>::initialize();
         }
 
         void deinitialize() override
         {
             ProtoBufMessageWriter<ProtoT>::deinitialize();
-            core::io::proto::SignalForwarder<ProtoT>::deinitialize();
+            core::protobuf::SignalForwarder<ProtoT>::deinitialize();
         }
 
         void forward(ProtoT &&message) override

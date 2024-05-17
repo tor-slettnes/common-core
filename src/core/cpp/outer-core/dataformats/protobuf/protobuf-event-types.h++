@@ -16,7 +16,7 @@
 /// ("decode...()") "common" ProtoBuf messages (including those defined in
 /// "common_types.proto").
 
-namespace core::io::proto
+namespace core::protobuf
 {
     //==========================================================================
     // status::Domain encoding to/decoding from cc::status::Domain
@@ -42,4 +42,4 @@ namespace core::io::proto
     void encode(const core::status::Event &event, cc::status::Event *msg) noexcept;
     void decode(const cc::status::Event &msg, core::status::Event *event) noexcept;
 
-}  // namespace core::io::proto
+}  // namespace core::protobuf

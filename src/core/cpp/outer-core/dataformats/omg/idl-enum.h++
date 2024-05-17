@@ -13,7 +13,7 @@
 #include <optional>
 #include <type_traits>
 
-namespace idl
+namespace core::idl
 {
     template <class T, std::enable_if_t<std::is_enum_v<T>, bool> = true>
     core::types::SymbolMap<T> enum_symbols()
@@ -70,4 +70,4 @@ namespace idl
         }
     }
 
-}  // namespace idl
+}  // namespace core::idl

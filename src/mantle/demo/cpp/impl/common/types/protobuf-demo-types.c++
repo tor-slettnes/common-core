@@ -9,7 +9,7 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-variant-types.h++"
 
-namespace core::io::proto
+namespace core::protobuf
 {
     //==========================================================================
     // Greeting

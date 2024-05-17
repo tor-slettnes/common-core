@@ -10,7 +10,7 @@
 #include "translate-idl-common.h++"
 #include "translate-idl-variant.h++"
 
-namespace idl
+namespace core::idl
 {
     //==========================================================================
     // Greeting
@@ -36,4 +36,4 @@ namespace idl
     void decode(const CC::Demo::TimeStruct &idl,
                 std::tm *native);
 
-}  // namespace idl
+}  // namespace core::idl

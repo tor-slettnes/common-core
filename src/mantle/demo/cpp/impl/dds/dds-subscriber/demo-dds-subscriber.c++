@@ -39,7 +39,7 @@ namespace demo::dds
         // Emit this update locally via `demo::signal_time`, declared in
         // `demo-signals.h++'.
         logf_trace("Received time data %s: %s", action, time_data);
-        signal_time.emit(idl::decoded<TimeData>(time_data));
+        signal_time.emit(core::idl::decoded<TimeData>(time_data));
     }
 
     void Subscriber::on_greeting_update(core::signal::MappingAction action,
@@ -51,6 +51,6 @@ namespace demo::dds
         logf_trace("Received greeting %s: %s", action, greeting);
         signal_greeting.emit(action,
                              greeting.identity(),
-                             idl::decoded<Greeting>(greeting));
+                             core::idl::decoded<Greeting>(greeting));
     }
 }  // namespace demo::dds

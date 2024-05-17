@@ -9,7 +9,7 @@
 
 #include <google/protobuf/text_format.h>
 
-namespace core::io::proto
+namespace core::protobuf
 {
     //==========================================================================
     // Message (de)serialization
@@ -42,14 +42,14 @@ namespace core::io::proto
         return bytes;
     }
 
-}  // namespace core::io::proto
+}  // namespace core::protobuf
 
 /// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
 namespace google::protobuf
 {
     std::ostream &operator<<(std::ostream &stream, const Message &msg)
     {
-        stream << ::core::io::proto::to_string(msg);
+        stream << ::core::protobuf::to_string(msg);
         return stream;
     }
 }  // namespace google::protobuf

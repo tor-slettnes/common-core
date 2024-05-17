@@ -88,7 +88,7 @@ namespace core::zmq
             types::ByteVector bytes;
             if (this->read_protobuf_result(&bytes, recv_flags))
             {
-                return core::io::proto::to_message<ResponseType>(bytes);
+                return core::protobuf::to_message<ResponseType>(bytes);
             }
             else
             {

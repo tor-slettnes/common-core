@@ -14,11 +14,11 @@ namespace core::zmq
 {
     template <class SignalT>
     class ProtoBufSignalHandler : public ProtoBufMessageHandler<SignalT>,
-                                  public core::io::proto::SignalReceiver<SignalT>
+                                  public core::protobuf::SignalReceiver<SignalT>
     {
         using This = ProtoBufSignalHandler<SignalT>;
         using Super = ProtoBufMessageHandler<SignalT>;
-        using SignalStore = core::io::proto::SignalReceiver<SignalT>;
+        using SignalStore = core::protobuf::SignalReceiver<SignalT>;
 
     protected:
         using Super::Super;

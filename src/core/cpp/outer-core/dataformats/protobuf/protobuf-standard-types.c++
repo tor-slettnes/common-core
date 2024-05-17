@@ -10,7 +10,7 @@
 
 #include <utility>
 
-namespace core::io::proto
+namespace core::protobuf
 {
     void encode(const std::string &s,
                 google::protobuf::StringValue *msg) noexcept
@@ -222,11 +222,11 @@ namespace core::io::proto
             break;
 
         case google::protobuf::Value::kStructValue:
-            *value = core::io::proto::decoded<core::types::KeyValueMap>(msg.struct_value());
+            *value = core::protobuf::decoded<core::types::KeyValueMap>(msg.struct_value());
             break;
 
         case google::protobuf::Value::kListValue:
-            *value = core::io::proto::decoded<core::types::ValueList>(msg.list_value());
+            *value = core::protobuf::decoded<core::types::ValueList>(msg.list_value());
             break;
 
         default:
@@ -295,4 +295,4 @@ namespace core::io::proto
             decode(value, &list->emplace_back());
         }
     }
-}  // namespace core::io::proto
+}  // namespace core::protobuf

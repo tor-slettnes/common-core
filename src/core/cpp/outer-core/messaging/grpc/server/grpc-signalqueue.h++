@@ -49,7 +49,7 @@ namespace core::grpc
     /// For sample SignalForwarder implementations, see `demo::SignalForwarder()`
 
     template <class ProtoT>
-    class SignalQueue : public core::io::proto::SignalForwarder<ProtoT>,
+    class SignalQueue : public core::protobuf::SignalForwarder<ProtoT>,
                         public types::BlockingQueue<ProtoT>
     {
     protected:
@@ -66,7 +66,7 @@ namespace core::grpc
         SignalQueue(const std::string &id,
                     const SignalFilter &filter,
                     uint maxsize = 0)
-            : core::io::proto::SignalForwarder<ProtoT>(),
+            : core::protobuf::SignalForwarder<ProtoT>(),
               types::BlockingQueue<ProtoT>(maxsize),
               id(id),
               filter_polarity(filter.polarity()),

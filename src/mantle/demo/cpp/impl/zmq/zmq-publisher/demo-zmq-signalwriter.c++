@@ -29,7 +29,7 @@ namespace demo::zmq
             TYPE_NAME_FULL(This),
             [=](const TimeData &timedata) {
                 auto msg = this->create_signal_message();
-                ::core::io::proto::encode(timedata, msg.mutable_signal_time());
+                ::core::protobuf::encode(timedata, msg.mutable_signal_time());
                 this->write(msg);
             });
 
@@ -46,7 +46,7 @@ namespace demo::zmq
                 const Greeting &greeting)          // payload
             {
                 auto msg = this->create_signal_message(action, key);
-                ::core::io::proto::encode(greeting, msg.mutable_signal_greeting());
+                ::core::protobuf::encode(greeting, msg.mutable_signal_greeting());
                 this->write(msg);
             });
     }
