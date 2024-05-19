@@ -6,13 +6,10 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from ..core                import API, signal_store
-from core.scheduler     import scheduler, ALIGN_UTC
-from protobuf.demo      import encodeTimeStruct
-from protobuf.wellknown import encodeTimestamp
-
-### Third-party modules
-from google.protobuf.text_format import MessageToString
+from ..core import API, signal_store
+from core.scheduler import scheduler, ALIGN_UTC
+import protobuf.demo
+import protobuf.wellknown
 
 ### Standard Python modules
 from typing import Callable
@@ -31,8 +28,8 @@ class NativeDemo (API):
 
     def say_hello(self, greeting: protobuf.demo.Greeting):
         print("Emitting greeting: say_hello(%s)"%
-              (MessageToString(greeting, as_one_line=True),))
-        signal_store.emit_mapping('greeting', None, greeting.identity, greeting)
+              (protobuf.wellknown.MessageToString(greeting, as_one_line=True),))
+        signal_store.emit_mapping('signal_greeting', None, greeting.identity, greeting)
 
 
     def get_current_time(self) -> protobuf.demo.TimeData:
@@ -43,9 +40,9 @@ class NativeDemo (API):
         '''
         t = time.time()
         return protobuf.demo.TimeData(
-            timestamp = encodeTimestamp(t),
-            local_time = encodeTimeStruct(time.localtime(t)),
-            utc_time = encodeTimeStruct(time.gmtime(t)),
+            timestamp = protobuf.wellknown.encodeTimestamp(t),
+            local_time = protobuf.demo.encodeTimeStruct(time.localtime(t)),
+            utc_time = protobuf.demo.encodeTimeStruct(time.gmtime(t)),
         )
 
 
@@ -67,10 +64,4 @@ class NativeDemo (API):
 
     def _emit_time(self):
         t = time.time()
-        signal_store.emit_event(
-            'time',
-            protobuf.demo.TimeData(
-                timestamp = encodeTimestamp(t),
-                local_time = encodeTimeStruct(time.localtime(t)),
-                utc_time = encodeTimeStruct(time.gmtime(t)),
-            ))
+        signal_store.emit_event('signal_time', self.get_current_time())

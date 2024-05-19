@@ -25,7 +25,7 @@ async def main():
         logging.info("Starting Python gRPC Demo Server")
         await server.start()
         await server.wait_for_termination()
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, asyncio.exceptions.CancelledError):
         pass
     finally:
         logging.info("Shutting down Python gRPC Demo Server")

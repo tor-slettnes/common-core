@@ -5,10 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install dir
+### Modules relative to current dir
 from .common import DEMO_RPC_INTERFACE
-from ..core import API, CC, ProtoBuf, Weekdays
+from ..core import API
+
+### Modules relative to install dir
 from messaging.zmq.protobuf.requesthandler import RequestHandler
+import protobuf.demo
 
 ### Standard Python modules
 import logging

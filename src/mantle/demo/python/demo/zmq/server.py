@@ -8,7 +8,7 @@
 ### Modules relative to install dir
 from .requesthandler import DemoRequestHandler
 from .common import DEMO_SERVICE_CHANNEL, DEMO_PUBLISHER_CHANNEL
-from ..core import API, demo_signals
+from ..core import API, signal_store
 from messaging.zmq.basic import Publisher
 from messaging.zmq.protobuf import Server as ProtoServer, SignalWriter
 
@@ -28,7 +28,7 @@ class Server (ProtoServer):
         self.publisher = Publisher(bind_address = bind_publisher_address,
                                    channel_name = DEMO_PUBLISHER_CHANNEL)
 
-        self.signalwriter = SignalWriter(self.publisher, demo_signals)
+        self.signalwriter = SignalWriter(self.publisher, signal_store)
 
     def initialize(self):
         ProtoServer.initialize(self)
