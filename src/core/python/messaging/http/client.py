@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from .base import HTTPBase
+from .base import HTTPBase, HTTPClientError, HTTPServerError
 
 ### Standard Python modules
 from typing import Mapping, Any
@@ -47,7 +47,7 @@ class HTTPClient (HTTPBase):
         try:
             connection_type = HTTPClient.ConnectionMap[parts.scheme]
         except KeyError:
-            raise TypeError("Unsupported connection scheeme: %s"%(parts.scheme,),
+            raise TypeError("Unsupported connection scheme: %s"%(parts.scheme,),
                             parts.scheme)
 
         return connection_type(parts.netloc)
@@ -80,7 +80,7 @@ class HTTPClient (HTTPBase):
         except ConnectionError as e:
             raise type(e)(e, urllib.parse.urlunsplit(parts)) from None
         else:
-            return self.check_response(response, expected_content_type)
+            return self.check_response(response, location, expected_content_type)
 
 
     def get_raw(self,
@@ -93,6 +93,7 @@ class HTTPClient (HTTPBase):
 
     def check_response(self,
                        response: http.client.HTTPResponse,
+                       location: str,
                        expected_content_type: str = None) -> http.client.HTTPResponse:
 
         if 400 <= response.status < 500:
@@ -106,11 +107,12 @@ class HTTPClient (HTTPBase):
             try:
                 status = self.StatusMap[response.status]
             except KeyError:
-                raise error_type("Received unknown HTTP error code %d, location=%s"%
-                                (response.status, location))
+                error_symbol = 'Unknown'
             else:
-                raise error_type("Recieve HTTP error code %d (%s), location=%s"%
-                                 (status.value, status.name, location))
+                error_symbol = status.name
+
+            raise error_type("Recieved HTTP error code %d (%s), location=%s"%
+                             (response.status, error_symbol, location))
 
         if expected_content_type:
             received_content_type = response.getheader('content-type')

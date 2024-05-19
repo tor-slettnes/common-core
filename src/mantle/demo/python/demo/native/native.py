@@ -7,7 +7,7 @@
 
 ### Modules relative to install dir
 from ..core import API, signal_store
-from core.scheduler import scheduler, ALIGN_UTC
+from core.scheduler import scheduler, TaskAlignment
 import protobuf.demo
 import protobuf.wellknown
 
@@ -50,17 +50,17 @@ class NativeDemo (API):
         '''
         Tell the server to start issuing periodic time updates
         '''
-        scheduler.schedule(self.timer_task_handle, # handle
-                           1.0,                    # interval
-                           self._emit_time,        # method
-                           align = ALIGN_UTC)          # time alignment
+        scheduler.add(self.timer_task_handle, # handle
+                      1.0,                    # interval
+                      self._emit_time,        # method
+                      align = TaskAlignment.UTC) # time alignment
 
 
     def stop_ticking(self) -> None:
         '''
         Tell the server to stop issuing periodic time updates
         '''
-        scheduler.unschedule(self.timer_task_handle)
+        scheduler.remove(self.timer_task_handle)
 
     def _emit_time(self):
         t = time.time()

@@ -6,11 +6,10 @@
 #===============================================================================
 
 ### Standard Python modules
-from threading import Thread, Lock, Condition, Event, current_thread, ThreadError
-from logging   import debug, info, warning, error
-from typing    import Callable, Optional
-
-import time, os, sys, traceback, uuid
+from threading   import Thread, Lock, Condition, Event, current_thread, ThreadError
+from logging     import debug, info, warning, error
+from typing      import Callable, Optional
+import time, os, sys, traceback, uuid, enum
 
 try:
     # Python 3 has math.inf, but does not allow sorting between numeric types and strings
@@ -19,11 +18,12 @@ except ImportError:
     # Python 2 does not have math.inf, but considers any number < any string.
     INFINITY = "infinity"
 
-TaskAlignment = ('none', 'local', 'utc')
-ALIGN_NONE, ALIGN_LOCAL, ALIGN_UTC = range(len(TaskAlignment))
+class TaskAlignment (enum.IntEnum):
+    NONE = 0
+    LOCAL = 1
+    UTC = 2
 
 class Scheduler (object):
-
     def __init__(self, identity : str):
         ## Public data members
         self.speedFactor = 1.0
@@ -50,7 +50,9 @@ class Scheduler (object):
         self._running = True
         if not self._timerThread:
             info('Starting task scheduler')
-            self._timerThread = Thread(None, self._timerloop, name=self._identity, args=(), daemon=True)
+            self._timerThread = Thread(target = self._timerloop,
+                                       name   = self._identity,
+                                       daemon = True)
             self._timerThread.start()
 
 
@@ -62,13 +64,13 @@ class Scheduler (object):
             self._timerThread = None
 
 
-    def alignmentOffset(self, interval, align=ALIGN_LOCAL, timestamp=None):
+    def alignmentOffset(self, interval, align=TaskAlignment.LOCAL, timestamp=None):
         if timestamp is None:
             timestamp = time.time()
 
-        if align == ALIGN_UTC:
+        if align == TaskAlignment.UTC:
             tz  = 0
-        elif align == ALIGN_LOCAL:
+        elif align == TaskAlignment.LOCAL:
             dst = time.localtime(timestamp)[-1]
             tz  = (time.timezone, time.altzone)[dst]
         else:
@@ -118,18 +120,18 @@ class Scheduler (object):
             self._setalarm(delay, lock)
 
 
-    def schedule(self,
-                 handle     : Optional[str],
-                 interval   : float,
-                 method     : callable,
-                 args       : tuple = (),
-                 kwargs     : dict  = {},
-                 count      : Optional[int] = None,
-                 retries    : int = 0,
-                 align      : int = ALIGN_NONE,
-                 delay      : int = 0,
-                 synchronous: bool = False,
-                 waitstart  : bool = False):
+    def add(self,
+            handle     : Optional[str],
+            interval   : float,
+            method     : callable,
+            args       : tuple = (),
+            kwargs     : dict  = {},
+            count      : Optional[int] = None,
+            retries    : int = 0,
+            align      : int = TaskAlignment.NONE,
+            delay      : int = 0,
+            synchronous: bool = False,
+            waitstart  : bool = False):
 
         if not handle:
             handle = uuid.uuid1()
@@ -160,8 +162,7 @@ class Scheduler (object):
         return handle
 
 
-
-    def unschedule(self, handle, wait=True):
+    def remove(self, handle, wait=True):
         with self._mutex:
             try:
                 name, lock, thread = self._tasks.pop(handle)
