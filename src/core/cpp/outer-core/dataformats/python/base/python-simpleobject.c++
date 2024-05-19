@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file python-object.c++
+/// @file python-simpleobject.c++
 /// @brief Generic data access for Python objects
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

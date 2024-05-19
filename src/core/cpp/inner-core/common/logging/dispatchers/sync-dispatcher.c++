@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file async-dispatcher.c++
+/// @file sync-dispatcher.c++
 /// @brief Distribute a captured item to available sinks - blocking flavor
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

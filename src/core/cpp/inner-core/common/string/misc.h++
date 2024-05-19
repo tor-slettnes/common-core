@@ -37,47 +37,47 @@ namespace core::str
 #endif
 
     /// Convert string to uppercase in place, using the specified locale or current locale.
-    /// \param[in,out] s String to convert.
-    /// \param[in] loc Locale. Defaults to global locale.
+    /// @param[in,out] s String to convert.
+    /// @param[in] loc Locale. Defaults to global locale.
     void toupper(
         std::string *s,
         const std::locale &loc = {});
 
     /// Convert string to lowercase, using the specified locale or current locale.
-    /// \param[in] s
+    /// @param[in] s
     ///     Original string
-    /// \param[in] loc
+    /// @param[in] loc
     ///     Locale. Defaults to global locale.
     void tolower(
         std::string *s,
         const std::locale &loc = {});
 
     /// Convert string to uppercase, using the specified locale or current locale.
-    /// \param[in] s
+    /// @param[in] s
     ///     Original string
-    /// \param[in] loc
+    /// @param[in] loc
     ///     Locale. Defaults to global locale.
-    /// \return Copy of string converted to uppercsae.
+    /// @return Copy of string converted to uppercsae.
     [[nodiscard]] std::string toupper(
         const std::string &s,
         const std::locale &loc = {});
 
-    /// \brief Convert string to lowercase in place, using the specified locale or current locale.
-    /// \param[in,out] s
+    /// @brief Convert string to lowercase in place, using the specified locale or current locale.
+    /// @param[in,out] s
     ///      String to convert.
-    /// \param[in] loc
+    /// @param[in] loc
     ///      Locale. Defaults to global locale.
-    /// \return Copy of string converted to lowercase.
+    /// @return Copy of string converted to lowercase.
     [[nodiscard]] std::string tolower(
         const std::string &s,
         const std::locale &loc = {});
 
-    /// \brief Convert from (UTF8-encoded) `std::string` to (UTF16 or UCS2-encoded) `std::wstring`)
-    /// \param[in] wstr
+    /// @brief Convert from (UTF8-encoded) `std::string` to (UTF16 or UCS2-encoded) `std::wstring`.
+    /// @param[in] wstr
     ///      Wide string
-    /// \param[in] loc
+    /// @param[in] loc
     ///      Locale
-    /// \return
+    /// @return
     ///      Byte string
     [[nodiscard]] std::string from_wstring(
         const std::wstring &wstr,
@@ -88,12 +88,12 @@ namespace core::str
         std::size_t size,
         const std::locale &loc = {});
 
-    /// \brief Convert from `std::wstring` to `std::string`
-    /// \param[in] str
+    /// @brief Convert from `std::wstring` to `std::string`
+    /// @param[in] str
     ///      ByteWide string
-    /// \param[in] loc
+    /// @param[in] loc
     ///      Locale
-    /// \return
+    /// @return
     ///      Wide string
     [[nodiscard]] std::wstring to_wstring(
         const std::string &str,
@@ -104,10 +104,10 @@ namespace core::str
         std::size_t size,
         const std::locale &loc = {});
 
-    /// \brief Return representation of a string with characters replaced by asterisks
-    /// \param[in] string
+    /// @brief Return representation of a string with characters replaced by asterisks
+    /// @param[in] s
     ///     Input string
-    /// \return
+    /// @return
     ///     String with characters replaced by asterisks
     [[nodiscard]] std::string obfuscated(
         const std::string &s);
@@ -116,18 +116,18 @@ namespace core::str
     // std::string uuid();
 
     /// Wrap words in a string to fit between left and right margins.
-    /// \param[in] input
+    /// @param[in] input
     ///     Input string
-    /// \param[in] start_column
+    /// @param[in] start_column
     ///     Current output column, subtraced from the left margin of the first line
-    /// \param[in] left_margin
+    /// @param[in] left_margin
     ///     Number of whitespaces to insert at the beginning of each new line.
-    /// \param[in] right_margin
+    /// @param[in] right_margin
     ///     Wrap column. Output lines MAY exceed this length if a single word cannot
     ///     otherwise fit on one line.
-    /// \param[in] keep_empties
+    /// @param[in] keep_empties
     ///     Include empty strings in case of successive spaces in input string
-    /// \return
+    /// @return
     ///     Output string.
 
     [[nodiscard]] std::string wrap(
@@ -137,18 +137,18 @@ namespace core::str
         size_t right_margin = 80,
         bool keep_empties = false);
 
-    /// \fn wrap
-    /// \brief Wrap words to fit between left and right margins.
-    /// \param[in] words
+    /// @fn wrap
+    /// @brief Wrap words to fit between left and right margins.
+    /// @param[in] words
     ///     Vector of words to wrap
-    /// \param[in] start_column
+    /// @param[in] start_column
     ///     Current output column, subtraced from the left margin of the first line
-    /// \param[in] left_margin
+    /// @param[in] left_margin
     ///     Number of whitespaces to insert at the beginning of each new line.
-    /// \param[in] right_margin
+    /// @param[in] right_margin
     ///     Wrap column. Output lines MAY exceed this length if a single word cannot
     ///     otherwise fit on one line.
-    /// \return
+    /// @return
     ///     Output string.
 
     [[nodiscard]] std::string wrap(
@@ -157,21 +157,21 @@ namespace core::str
         size_t left_margin = 24,
         size_t right_margin = 80);
 
-    /// \fn split
-    /// \brief
+    /// @fn split
+    /// @brief
     ///     Separate a string at each occurence of \p delimiter into one or more
     ///     substrings.
-    /// \param[in] string
+    /// @param[in] string
     ///     Original string
-    /// \param[in] delimiter
+    /// @param[in] delimiter
     ///     Separator by which to split the input string
-    /// \param[in] keep_empties
+    /// @param[in] keep_empties
     ///     Keep empty substrings from input string.
     ///     This guarantess at least one element in the response.
-    /// \param[in] maxsplits
+    /// @param[in] maxsplits
     ///     If non-zero, split at most this number of times
     ///     (returning no more than `maxsplit+1` substrings)
-    /// \return
+    /// @return
     ///     List of one or more non-overlapping substrings of \p string
     ///     separated by \p delimiter
 
@@ -182,17 +182,17 @@ namespace core::str
         bool keep_empties = false);
 
     /// Join a sequence of strings by the specified delimiter to an output stream
-    /// \param[in] out
+    /// @param[in] out
     ///     Output stream
-    /// \param[in] begin
+    /// @param[in] begin
     ///     Iterator to beginning of sequence
-    /// \param[in] end
+    /// @param[in] end
     ///     Iterator to end of sequence
-    /// \param[in] delimiter
+    /// @param[in] delimiter
     ///     Inserted between each string in vector
-    /// \param[in] keep_empties
+    /// @param[in] keep_empties
     ///     Include empty strings from input vector
-    /// \param[in] quoted
+    /// @param[in] quoted
     ///     Inserted before and after each string in vector
 
     template <class InputIt>
@@ -204,20 +204,19 @@ namespace core::str
         bool keep_empties = false,
         bool quoted = false);
 
-    /// Join a sequence of strings by the specified delimiter, returning the result
-    /// \param[in] out
-    ///     Output stream
-    /// \param[in] begin
+    /// @brief
+    ///     Join a sequence of strings by the specified delimiter, returning the result
+    /// @param[in] begin
     ///     Iterator to beginning of sequence
-    /// \param[in] end
+    /// @param[in] end
     ///     Iterator to end of sequence
-    /// \param[in] delimiter
+    /// @param[in] delimiter
     ///     Inserted between each string in vector
-    /// \param[in] keep_empties
+    /// @param[in] keep_empties
     ///     Include empty strings from input vector
-    /// \param[in] quoted
+    /// @param[in] quoted
     ///     Inserted before and after each string in vector
-    /// \return
+    /// @return
     ///     New string consisting of each string from \p vector joined by \p delimiter
 
     template <class InputIt>
@@ -229,15 +228,15 @@ namespace core::str
         bool quoted = false);
 
     /// Join a vector of strings by the specified delimiter
-    /// \param[in] vector
+    /// @param[in] vector
     ///     Vector of strings
-    /// \param[in] delimiter
+    /// @param[in] delimiter
     ///     Inserted between each string in vector
-    /// \param[in] keep_empties
+    /// @param[in] keep_empties
     ///     Include empty strings from input vector
-    /// \param[in] quoted
+    /// @param[in] quoted
     ///     Inserted before and after each string in vector
-    /// \return
+    /// @return
     ///     New string consisting of each string from \p vector joined by \p delimiter
     [[nodiscard]] std::string join(
         const std::vector<std::string> &vector,
@@ -257,75 +256,75 @@ namespace core::str
     [[nodiscard]] std::string unescaped(
         const std::string &input);
 
-    /// \brief Substitute occurences of a substring with a replacement
-    /// \param[in] original
+    /// @brief Substitute occurences of a substring with a replacement
+    /// @param[in] original
     ///     Text which will be replaced
-    /// \param[in] replacement
+    /// @param[in] replacement
     ///     Text to take its place
-    /// \param[in,out] string
+    /// @param[in,out] string
     ///     String in which to perform replacements
     void substitute(
         const std::string &original,
         const std::string &replacement,
         std::string *string);
 
-    /// \brief Determine whether a string starts with another
-    /// \param[in] input
+    /// @brief Determine whether a string starts with another
+    /// @param[in] input
     ///     String to test
-    /// \param[in] substring
+    /// @param[in] substring
     ///     Substring to compare against
-    /// \param[in] ignore_case
+    /// @param[in] ignore_case
     ///     Perform case insensitive compare
-    /// \return
+    /// @return
     ///     Indication of whether `input` begins with `substring`.
     [[nodiscard]] bool startswith(
         const std::string &input,
         const std::string &substring,
         bool ignore_case = false);
 
-    /// \brief Determine whether a ends starts with another
-    /// \param[in] input
+    /// @brief Determine whether a ends starts with another
+    /// @param[in] input
     ///     String to test
-    /// \param[in] substring
+    /// @param[in] substring
     ///     Substring to compare against
-    /// \param[in] ignore_case
+    /// @param[in] ignore_case
     ///     Perform case insensitive compare
-    /// \return
+    /// @return
     ///     Indication of whether `input` ends with `substring`.
     [[nodiscard]] bool endswith(
         const std::string &input,
         const std::string &substring,
         bool ignore_case = false);
 
-    /// \brief Return the last component of a namespace-qualified string
-    /// \param[in] string
+    /// @brief Return the last component of a namespace-qualified string
+    /// @param[in] string
     ///     Original name, including path separator
-    /// \param[in] separator
+    /// @param[in] separator
     ///     Namespace separator
-    /// \return
+    /// @return
     ///     Final component of string
     [[nodiscard]] std::string stem(
         const std::string &string,
         const std::string &separator = ":");
 
-    /// \brief Strip specific characters from the beginning and/or end of a string
-    /// \param[in] string
+    /// @brief Strip specific characters from the beginning and/or end of a string
+    /// @param[in] string
     ///     Original name, including path separator
-    /// \param[in] lstrip
+    /// @param[in] lstrip
     ///     Characters to remove from beginning of string
-    /// \param[in] rstrip
+    /// @param[in] rstrip
     ///     Characters to remove from end of string
-    /// \return
+    /// @return
     ///     Original string with stripped characters removed.
     [[nodiscard]] std::string strip(
         const std::string &string,
         const std::set<char> &lstrip = WHITESPACE,
         const std::set<char> &rstrip = WHITESPACE);
 
-    /// \brief concatenate streamable objects into a string
-    /// \param[in] args
+    /// @brief concatenate streamable objects into a string
+    /// @param[in] args
     ///     Output stream compatible arguments
-    /// \return
+    /// @return
     ///     String representation of concatenated objects
 
     template <class... Args>

@@ -1,6 +1,6 @@
 #!/usr/bin/echo Do not invoke directly.
 #===============================================================================
-## @file grpc_base.py
+## @file base.py
 ## @brief Wrapper for gRPC-based services, common to client & server
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================

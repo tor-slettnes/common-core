@@ -1,5 +1,5 @@
 #!/usr/bin/echo Do not invoke directly.
-##==============================================================================
+#===============================================================================
 ## @file client.py
 ## @brief gRPC client base
 ## @author Tor Slettnes <tor@slett.net>

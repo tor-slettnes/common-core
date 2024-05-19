@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file python-builtin.h++
+/// @file python-builtin.c++
 /// @brief Data access for Python global scope
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

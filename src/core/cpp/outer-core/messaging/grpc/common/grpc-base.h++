@@ -66,8 +66,6 @@ namespace core::grpc
         ///
         /// @param[in] address
         ///     Address to sanitize, normally provided as a command-line option.
-        /// @param[in] channel_name
-        ///     Key to locate endpoint settings within the settings file
         /// @param[in] hostOption
         ///     Key to locate the host name in the channel settings
         /// @param[in] portOption

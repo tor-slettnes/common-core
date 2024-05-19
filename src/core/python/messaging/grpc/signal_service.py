@@ -1,6 +1,6 @@
 #!/usr/bin/echo Do not invoke directly.
 #===============================================================================
-## @file signalservice.py
+## @file signal_service.py
 ## @brief gRPC service handler with `watch` method to feed back signals
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================

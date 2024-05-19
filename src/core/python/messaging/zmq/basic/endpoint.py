@@ -1,6 +1,6 @@
 #!/bin/echo Do not invoke directly.
 #===============================================================================
-## @file base.py
+## @file endpoint.py
 ## @brief Wrapper for ZeroMQ-based applications
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================

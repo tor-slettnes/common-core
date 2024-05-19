@@ -266,7 +266,7 @@ so:
 
 ## Writing code
 
-To learn how to contribute, either by making updates to an existing application or by creating a new one, you may want to start with the [demo](src/mantle/apps/demo) application and its [documentation](src/mantle/apps/demo/README.md).
+To learn how to contribute, either by making updates to an existing application or by creating a new one, you may want to start with the [demo](src/mantle/demo) application and its [documentation](src/mantle/demo/README.md).
 
 
 

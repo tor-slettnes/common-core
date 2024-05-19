@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file tokenparser.c++
+/// @file tokenparser-base.c++
 /// @brief Iterate over interesting tokens in a string
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

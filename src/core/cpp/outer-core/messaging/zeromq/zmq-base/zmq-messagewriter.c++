@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file zmq-protobuf-messagewriter.c++
+/// @file zmq-messagewriter.c++
 /// @brief Publish messages with optional topic filter
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

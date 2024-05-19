@@ -20,12 +20,12 @@ namespace core::types
     using Byte = std::uint8_t;
 
     //==========================================================================
-    /// \class ByteVector
-    /// \brief Container for packed binary data
+    /// @class ByteVector
+    /// @brief Container for packed binary data
 
     using Bytes = std::vector<Byte>;
     class ByteVector : public Bytes,
-                      public Streamable
+                       public Streamable
     {
     public:
         // Inherit available constructors from base
@@ -43,23 +43,31 @@ namespace core::types
 
         void to_stream(std::ostream &stream) const override;
 
-        /// \return string_view of data in this array
+        /// @return
+        ///     string_view of data in this array
         std::string_view stringview() const noexcept;
 
-        /// Return a string representation of the data in this array
-        /// \return A byte string
+        /// @brief
+        ///     Return a string representation of the data in this array
+        /// @return
+        ///     A byte string
         std::string as_string() const noexcept;
 
-        /// Create a new ByteVector instance from a string
-        /// \param[in] s
-        ///    String containing bytes to load
-        /// \return
-        ///    New ByteVector instance
+        /// @brief
+        ///     Create a new ByteVector instance from a string
+        /// @param[in] s
+        ///     String containing bytes to load
+        /// @return
+        ///     New ByteVector instance
         static ByteVector from_string(const std::string &s) noexcept;
 
-        /// Unpack a specific data type stored at the byte array
-        /// \return Value
-        /// \exception std::out_of_range The number of bytes
+        /// @brief
+        ///     Unpack a specific data type stored at the byte array
+        /// @return
+        ///     Unpacked value
+        /// @exception std::out_of_range
+        ///     The number of bytes in the array is smaller than the size of the
+        ///     requested value type
         template <class T>
         inline T unpack() const
         {
@@ -77,26 +85,41 @@ namespace core::types
             return ByteVector(ptr, ptr + sizeof(T));
         }
 
-        /// Encode the data in this ByteVector instance using Base64
-        /// \return Base64-encoded string representation of the data in this array
+        /// @brief
+        ///     Encode the data in this ByteVector instance using Base64
+        /// @return
+        ///     Base64-encoded string representation of the data in this array
         std::string to_base64() const;
 
-        /// Create a new ByteVector instance from a Base64-encoded string.
-        /// \param[in] string A Base64-encoded string
-        /// \return A new ByteVector instance
-        /// \exception exception::InvalidArgument Invalid Base64 data encountered
+        /// @brief
+        ///     Create a new ByteVector instance from a Base64-encoded string.
+        /// @param[in] string
+        ///     A Base64-encoded string
+        /// @return
+        ///     A new ByteVector instance
+        /// @exception exception::InvalidArgument
+        ///     Invalid Base64 data encountered
         static ByteVector from_base64(const std::string &string);
 
-        /// Encode data in this ByteVector instance as a hexacecimal string.
-        /// \param[in] use uppercase digits 'A'..'F'.
-        /// \return Byte array represented as a hexadecimal string
+        /// @brief
+        ///     Encode data in this ByteVector instance as a hexacecimal string.
+        /// @param[in] uppercase
+        ///     use uppercase digits 'A'..'F'.
+        /// @param[in] groupsize
+        ///     Group digits using a locale-specific separator
+        /// @return
+        ///     Byte array represented as a hexadecimal string
         std::string to_hex(bool uppercase = false,
                            std::size_t groupsize = 0) const;
 
-        /// Create a new ByteVector instance from a hexadecimal string.
-        /// \param[in] string A string comprised of pairs of hexadecimal digits
-        /// \return A new ByteVector instance
-        /// \exception exception::InvalidArgument Invalid hexadecimal digits encountered
+        /// @brief
+        ///     Create a new ByteVector instance from a hexadecimal string.
+        /// @param[in] string
+        ///     A string comprised of pairs of hexadecimal digits
+        /// @return
+        ///     A new ByteVector instance
+        /// @exception exception::InvalidArgument
+        ///     Invalid hexadecimal digits encountered
         static ByteVector from_hex(const std::string &string);
     };
 }  // namespace core::types

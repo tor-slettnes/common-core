@@ -47,8 +47,6 @@ namespace core::signal
         ///     Identity of this signal, for logging purposes.
         /// @param[in] caching
         ///     Store last emitted value and replay to new receivers.
-        /// @return
-        ///     A reference to the std::function that was passed in.
 
         BaseSignal(const std::string &name,
                    bool caching = false);
@@ -69,7 +67,7 @@ namespace core::signal
 
     //==========================================================================
     /// @class VoidSignal
-    /// @class Event notification without data
+    /// @brief Event notification without data
 
     class VoidSignal : public BaseSignal
     {
@@ -80,7 +78,6 @@ namespace core::signal
 
         VoidSignal(const std::string &id);
 
-        /// @fn connect()
         /// @brief Register a signal handler for signals of the provided template type.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
@@ -88,7 +85,6 @@ namespace core::signal
         ///     A unique handle, which can later be used to disconnect
         Handle connect(const Slot &slot);
 
-        /// @fn connect()
         /// @brief Register a signal handler for signals of the provided template type.
         /// @param[in] handle
         ///     Unique identity of the callback handler, to be used for
@@ -97,21 +93,18 @@ namespace core::signal
         ///     A callback function, invoked whenever the signal is emitted
         void connect(const Handle &handle, const Slot &slot);
 
-        /// @fn disconnect()
         /// @brief
         ///     Unregister a handler for signals of the provided template type.
         /// @param[in] handle
         ///     Identity of the handler to be removed.
         void disconnect(const Handle &handle);
 
-        /// @fn emit()
         /// @brief
         ///     Emit a signal to registered receivers
         /// @return
         ///     The number of connected slots to which the signal was emitted
         size_t emit();
 
-        /// @fn connection_count()
         /// @brief
         ///    Obtain number of current connections.
         /// @return
@@ -151,7 +144,6 @@ namespace core::signal
 
         DataSignal(const std::string &id, bool caching = false);
 
-        /// @fn connect()
         /// @brief Register a signal handler for signals of the provided template type.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
@@ -159,7 +151,6 @@ namespace core::signal
         ///     A unique handle, which can later be used to disconnect
         Handle connect(const Slot &slot);
 
-        /// @fn connect()
         /// @brief Register a signal handler for signals of the provided template type.
         /// @param[in] handle
         ///     Unique identity of the callback handler, to be used for
@@ -168,14 +159,12 @@ namespace core::signal
         ///     A callback function, invoked whenever the signal is emitted
         void connect(const Handle &handle, const Slot &slot);
 
-        /// @fn disconnect()
         /// @brief
         ///     Unregister a handler for signals of the provided template type.
         /// @param[in] handle
         ///     Identity of the handler to be removed.
         void disconnect(const Handle &handle);
 
-        /// @fn emit()
         /// @brief
         ///     Emit a signal to registered receivers of the provided data type.
         /// @param[in] value
@@ -184,7 +173,6 @@ namespace core::signal
         ///     The number of connected slots to which the signal was emitted
         size_t emit(const DataType &value);
 
-        /// @fn emit_if_changed()
         /// @brief
         ///     Emit signal only if the current value differs from the previous one.
         /// @note
@@ -195,14 +183,12 @@ namespace core::signal
         ///     The number of connected slots to which the signal was emitted
         size_t emit_if_changed(const DataType &value);
 
-        /// @fn get_cached()
         /// @brief
         ///    Get the current cached value, if any.
         /// @return
         ///    std::optional<DataType> object
         std::optional<DataType> get_cached();
 
-        /// @fn connection_count()
         /// @brief
         ///    Obtain number of current connections.
         /// @return
@@ -259,7 +245,6 @@ namespace core::signal
 
         MappingSignal(const std::string &id, bool caching = false);
 
-        /// @fn connect()
         /// @brief Register a signal handler for this signal.
         /// @param[in] slot
         ///     A function invoked whenever signal data is emitted
@@ -267,7 +252,6 @@ namespace core::signal
         ///     Unique handle which can later be used to disconnect
         Handle connect(const Slot &slot);
 
-        /// @fn connect()
         /// @brief Register a signal handler for this signal.
         /// @param[in] handle
         ///     Unique handle which can later be used to disconnect
@@ -275,10 +259,9 @@ namespace core::signal
         ///     A function invoked whenever signal data is emitted
         void connect(const Handle &handle, const Slot &slot);
 
-        /// @fn disconnect()
         /// @brief
         ///     Unregister a callback handler for signals of the provided template type.
-        /// @param[in] id
+        /// @param[in] handle
         ///     Identity identity of the callback handler to be removed.
 
         void disconnect(const Handle &handle);
@@ -305,7 +288,6 @@ namespace core::signal
         ///     The number of connected slots to which the signal was emitted
         size_t emit(const KeyType &key, const DataType &value);
 
-        /// @fn emit_if_changed()
         /// @brief
         ///     Emit signal only if the current value differs from the previous one.
         /// @note
@@ -318,7 +300,6 @@ namespace core::signal
         ///     The number of connected slots to which the signal was emitted
         size_t emit_if_changed(const KeyType &key, const DataType &value);
 
-        /// @fn clear()
         /// @brief
         ///     Emit a REMOVED signal.
         /// @param[in] key
@@ -329,21 +310,18 @@ namespace core::signal
         ///     The number of connected slots to which the signal was emitted
         size_t clear(const KeyType &key, const DataType &value = {});
 
-        /// @fn clear_if_cached()
         /// @brief
         ///     Emit a REMOVED signal if \p key is still in in the signal cache
         /// @param[in] key
         ///     Mapping key.
         size_t clear_if_cached(const KeyType &key);
 
-        /// @fn get_cached()
         /// @brief
         ///    Get the current cached value, if any.
         /// @return
         ///    std::optional<DataType> object
         std::unordered_map<KeyType, DataType> get_cached();
 
-        /// @fn get_cached()
         /// @brief
         ///    Get the most recent data value emitted for a given key
         /// @param[in] key
@@ -352,7 +330,6 @@ namespace core::signal
         ///    Most recent data value emitted for the specified key, if any
         std::optional<DataType> get_cached(const std::string &key);
 
-        /// @fn get_cached()
         /// @brief
         ///    Get the most recent data value emitted for a given key
         /// @param[in] key
@@ -364,7 +341,6 @@ namespace core::signal
         ///    the provided fallback value.
         DataType get_cached(const std::string &key, const DataType &fallback);
 
-        /// @fn get_cached()
         /// @brief
         ///    Indicate whether the specified mapping currently exists in the cache
         /// @param[in] key
@@ -373,14 +349,12 @@ namespace core::signal
         ///    Boolean indicator of whether the specified key exists
         bool is_cached(const std::string &key) noexcept;
 
-        /// @fn connection_count()
         /// @brief
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
         size_t connection_count();
 
-        /// @fn synchronize()
         /// @brief
         ///     Update cache, emit deltas as addition/update/removal signals
         /// @param[in] update

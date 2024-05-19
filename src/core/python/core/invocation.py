@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #===============================================================================
-## @file safe_invoke.py
+## @file invocation.py
 ## @brief Process related utilities
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================

@@ -10,37 +10,44 @@ namespace core::signal
     //==========================================================================
     // @class DataSignal
 
-    template <class T>
-    inline DataSignal<T>::DataSignal(const std::string &id, bool caching)
+    template <class DataType>
+    inline DataSignal<DataType>::DataSignal(
+        const std::string &id,
+        bool caching)
         : Super(id, caching)
     {
     }
 
-    template <class T>
-    inline Handle DataSignal<T>::connect(const Slot &slot)
+    template <class DataType>
+    inline Handle DataSignal<DataType>::connect(
+        const Slot &slot)
     {
         Handle handle(this->unique_handle());
         this->connect(handle, slot);
         return handle;
     }
 
-    template <class T>
-    inline void DataSignal<T>::connect(const Handle &handle, const Slot &slot)
+    template <class DataType>
+    inline void DataSignal<DataType>::connect(
+        const Handle &handle,
+        const Slot &slot)
     {
         std::scoped_lock lck(this->mtx_);
         this->slots_[handle] = slot;
         this->emit_cached_to(handle, slot);
     }
 
-    template <class T>
-    inline void DataSignal<T>::disconnect(const Handle &handle)
+    template <class DataType>
+    inline void DataSignal<DataType>::disconnect(
+        const Handle &handle)
     {
         std::scoped_lock lck(this->mtx_);
         this->slots_.erase(handle);
     }
 
-    template <class T>
-    inline size_t DataSignal<T>::emit(const T &value)
+    template <class DataType>
+    inline size_t DataSignal<DataType>::emit(
+        const DataType &value)
     {
         std::scoped_lock lck(this->mtx_);
         if (this->caching_)
@@ -50,8 +57,9 @@ namespace core::signal
         return this->sendall(value);
     }
 
-    template <class T>
-    inline size_t DataSignal<T>::emit_if_changed(const T &value)
+    template <class DataType>
+    inline size_t DataSignal<DataType>::emit_if_changed(
+        const DataType &value)
     {
         std::scoped_lock lck(this->mtx_);
         if (!this->caching_ ||
@@ -70,22 +78,23 @@ namespace core::signal
         }
     }
 
-    template <class T>
-    inline std::optional<T> DataSignal<T>::get_cached()
+    template <class DataType>
+    inline std::optional<DataType> DataSignal<DataType>::get_cached()
     {
         std::scoped_lock lck(this->mtx_);
         return this->cached_;
     }
 
-    template <class T>
-    inline size_t DataSignal<T>::connection_count()
+    template <class DataType>
+    inline size_t DataSignal<DataType>::connection_count()
     {
         return this->slots_.size();
     }
 
-    template <class T>
-    inline void DataSignal<T>::emit_cached_to(const Handle &handle,
-                                              const Slot &slot)
+    template <class DataType>
+    inline void DataSignal<DataType>::emit_cached_to(
+        const Handle &handle,
+        const Slot &slot)
     {
         if (this->cached_.has_value())
         {
@@ -93,26 +102,30 @@ namespace core::signal
         }
     }
 
-    template <class T>
-    inline size_t DataSignal<T>::sendall(const T &value)
+    template <class DataType>
+    inline size_t DataSignal<DataType>::sendall(
+        const DataType &value)
     {
-        for (const auto &cb : this->slots_)
+        for (
+            const auto &cb : this->slots_)
         {
             this->callback(cb.first, cb.second, value);
         }
         return this->slots_.size();
     }
 
-    template <class T>
-    inline void DataSignal<T>::update_cache(const T &value)
+    template <class DataType>
+    inline void DataSignal<DataType>::update_cache(
+        const DataType &value)
     {
         this->cached_ = value;
     }
 
-    template <class T>
-    inline void DataSignal<T>::callback(const std::string &receiver,
-                                        const Slot &method,
-                                        const T &value)
+    template <class DataType>
+    inline void DataSignal<DataType>::callback(
+        const std::string &receiver,
+        const Slot &method,
+        const DataType &value)
     {
         this->safe_invoke(str::format("%s({...})", receiver),
                           std::bind(method, value));
@@ -121,39 +134,46 @@ namespace core::signal
     //==========================================================================
     // @class MappingSignal
 
-    template <class T, class K>
-    inline MappingSignal<T, K>::MappingSignal(const std::string &id, bool caching)
+    template <class DataType, class KeyType>
+    inline MappingSignal<DataType, KeyType>::MappingSignal(
+        const std::string &id,
+        bool caching)
         : Super(id, caching)
     {
     }
 
-    template <class T, class K>
-    inline Handle MappingSignal<T, K>::connect(const Slot &slot)
+    template <class DataType, class KeyType>
+    inline Handle MappingSignal<DataType, KeyType>::connect(
+        const Slot &slot)
     {
         Handle handle(this->unique_handle());
         this->connect(handle, slot);
         return handle;
     }
 
-    template <class T, class K>
-    inline void MappingSignal<T, K>::connect(const Handle &handle, const Slot &slot)
+    template <class DataType, class KeyType>
+    inline void MappingSignal<DataType, KeyType>::connect(
+        const Handle &handle,
+        const Slot &slot)
     {
         std::scoped_lock lck(this->mtx_);
         this->slots_[handle] = slot;
         this->emit_cached_to(handle, slot);
     }
 
-    template <class T, class K>
-    inline void MappingSignal<T, K>::disconnect(const Handle &handle)
+    template <class DataType, class KeyType>
+    inline void MappingSignal<DataType, KeyType>::disconnect(
+        const Handle &handle)
     {
         std::scoped_lock lck(this->mtx_);
         this->slots_.erase(handle);
     }
 
-    template <class T, class K>
-    inline size_t MappingSignal<T, K>::emit(MappingAction mapping_action,
-                                            const K &mapping_key,
-                                            const T &value)
+    template <class DataType, class KeyType>
+    inline size_t MappingSignal<DataType, KeyType>::emit(
+        MappingAction mapping_action,
+        const KeyType &mapping_key,
+        const DataType &value)
     {
         std::scoped_lock lck(this->mtx_);
         if (this->caching_)
@@ -176,8 +196,10 @@ namespace core::signal
         return this->sendall(mapping_action, mapping_key, value);
     }
 
-    template <class T, class K>
-    inline size_t MappingSignal<T, K>::emit(const K &mapping_key, const T &value)
+    template <class DataType, class KeyType>
+    inline size_t MappingSignal<DataType, KeyType>::emit(
+        const KeyType &mapping_key,
+        const DataType &value)
     {
         MappingAction action(
             !this->caching_                ? MAP_UPDATE
@@ -187,8 +209,10 @@ namespace core::signal
         return this->emit(action, mapping_key, value);
     }
 
-    template <class T, class K>
-    inline size_t MappingSignal<T, K>::emit_if_changed(const K &key, const T &value)
+    template <class DataType, class KeyType>
+    inline size_t MappingSignal<DataType, KeyType>::emit_if_changed(
+        const KeyType &key,
+        const DataType &value)
     {
         std::scoped_lock lck(this->mtx_);
         MappingAction action(
@@ -208,14 +232,17 @@ namespace core::signal
         }
     }
 
-    template <class T, class K>
-    inline size_t MappingSignal<T, K>::clear(const K &key, const T &value)
+    template <class DataType, class KeyType>
+    inline size_t MappingSignal<DataType, KeyType>::clear(
+        const KeyType &key,
+        const DataType &value)
     {
         return this->emit(MAP_REMOVAL, key, value);
     }
 
-    template <class T, class K>
-    inline size_t MappingSignal<T, K>::clear_if_cached(const K &key)
+    template <class DataType, class KeyType>
+    inline size_t MappingSignal<DataType, KeyType>::clear_if_cached(
+        const KeyType &key)
     {
         std::scoped_lock lck(this->mtx_);
         if (auto nh = this->cached_.extract(key))
@@ -228,15 +255,16 @@ namespace core::signal
         }
     }
 
-    template <class T, class K>
-    inline std::unordered_map<K, T> MappingSignal<T, K>::get_cached()
+    template <class DataType, class KeyType>
+    inline std::unordered_map<KeyType, DataType> MappingSignal<DataType, KeyType>::get_cached()
     {
         std::scoped_lock lck(this->mtx_);
         return this->cached_;
     }
 
-    template <class T, class K>
-    inline std::optional<T> MappingSignal<T, K>::get_cached(const std::string &key)
+    template <class DataType, class KeyType>
+    inline std::optional<DataType> MappingSignal<DataType, KeyType>::get_cached(
+        const std::string &key)
     {
         std::scoped_lock lck(this->mtx_);
         try
@@ -249,32 +277,37 @@ namespace core::signal
         }
     }
 
-    template <class T, class K>
-    inline T MappingSignal<T, K>::get_cached(const std::string &key, const T &fallback)
+    template <class DataType, class KeyType>
+    inline DataType MappingSignal<DataType, KeyType>::get_cached(
+        const std::string &key,
+        const DataType &fallback)
     {
         return this->get_cached(key).value_or(fallback);
     }
 
-    template <class T, class K>
-    inline bool MappingSignal<T, K>::is_cached(const std::string &key) noexcept
+    template <class DataType, class KeyType>
+    inline bool MappingSignal<DataType, KeyType>::is_cached(
+        const std::string &key) noexcept
     {
         std::scoped_lock lck(this->mtx_);
         return this->cached_.count(key);
     }
 
-    template <class T, class K>
-    inline size_t MappingSignal<T, K>::connection_count()
+    template <class DataType, class KeyType>
+    inline size_t MappingSignal<DataType, KeyType>::connection_count()
     {
         return this->slots_.size();
     }
 
-    template <class T, class K>
+    template <class DataType, class KeyType>
     template <class MapType>
-    inline size_t MappingSignal<T, K>::synchronize(const MapType &update)
+    inline size_t MappingSignal<DataType, KeyType>::synchronize(
+        const MapType &update)
     {
-        std::unordered_map<K, T> previous = this->get_cached();
+        std::unordered_map<KeyType, DataType> previous = this->get_cached();
         size_t count = 0;
-        for (const auto &[key, value] : update)
+        for (
+            const auto &[key, value] : update)
         {
             if (auto nh = previous.extract(key))
             {
@@ -290,7 +323,8 @@ namespace core::signal
                 count++;
             }
         }
-        for (const auto &[key, value] : previous)
+        for (
+            const auto &[key, value] : previous)
         {
             this->emit(MAP_REMOVAL, key, value);
             count++;
@@ -298,40 +332,47 @@ namespace core::signal
         return count;
     }
 
-    template <class T, class K>
-    inline void MappingSignal<T, K>::update_cache(const K &key, const T &value)
+    template <class DataType, class KeyType>
+    inline void MappingSignal<DataType, KeyType>::update_cache(
+        const KeyType &key,
+        const DataType &value)
     {
         this->cached_.insert_or_assign(key, value);
     }
 
-    template <class T, class K>
-    inline void MappingSignal<T, K>::emit_cached_to(const Handle &handle,
-                                                    const Slot &callback)
+    template <class DataType, class KeyType>
+    inline void MappingSignal<DataType, KeyType>::emit_cached_to(
+        const Handle &handle,
+        const Slot &callback)
     {
-        for (const auto &pair : this->cached_)
+        for (
+            const auto &pair : this->cached_)
         {
             this->callback(handle, callback, MAP_ADDITION, pair.first, pair.second);
         }
     }
 
-    template <class T, class K>
-    inline size_t MappingSignal<T, K>::sendall(MappingAction mapping_action,
-                                               const K &mapping_key,
-                                               const T &value)
+    template <class DataType, class KeyType>
+    inline size_t MappingSignal<DataType, KeyType>::sendall(
+        MappingAction mapping_action,
+        const KeyType &mapping_key,
+        const DataType &value)
     {
-        for (const auto &cb : this->slots_)
+        for (
+            const auto &cb : this->slots_)
         {
             this->callback(cb.first, cb.second, mapping_action, mapping_key, value);
         }
         return this->slots_.size();
     }
 
-    template <class T, class K>
-    inline void MappingSignal<T, K>::callback(const std::string &receiver,
-                                              const Slot &method,
-                                              MappingAction mapping_action,
-                                              const K &mapping_key,
-                                              const T &value)
+    template <class DataType, class KeyType>
+    inline void MappingSignal<DataType, KeyType>::callback(
+        const std::string &receiver,
+        const Slot &method,
+        MappingAction mapping_action,
+        const KeyType &mapping_key,
+        const DataType &value)
     {
         this->safe_invoke(
             str::format("%r (%r, %r, {...})", receiver, mapping_action, mapping_key),

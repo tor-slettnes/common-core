@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file spawn.h++
+/// @file supervised_thread.h++
 /// @brief Spawn a new thread with exception handler
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

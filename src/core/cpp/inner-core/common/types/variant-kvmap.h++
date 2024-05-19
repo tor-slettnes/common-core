@@ -31,64 +31,72 @@ namespace core::types
         TaggedValueList as_tvlist() const;
         KeyValueMap filtered() const noexcept;
 
-        /// \brief
+        /// @brief
         ///    Replace items in this list with those from another map
-        /// \param[in] kvmap
+        /// @param[in] other
         ///    KeyValueMap from which to import.
-        /// \return
+        /// @return
         ///     A reference to this updated instance.
 
         KeyValueMap &update(const KeyValueMap &other) noexcept;
         KeyValueMap &update(KeyValueMap &&other) noexcept;
 
-        /// \brief
+        /// @brief
         ///    Merge values from another key value map, recursing
         ///    into sub-maps that exist in both places.
-        /// \param[in] kvmap
+        /// @param[in] other
         ///    KeyValueMap from which to extract missing values.
         ///    These are removed from \p map.
-        /// \return
+        /// @return
         ///    A reference to this updated instance
 
         KeyValueMap &recursive_merge(KeyValueMap &other) noexcept;
         KeyValueMap &recursive_merge(KeyValueMap &&other) noexcept;
 
-        /// \fn recursive_unmerge
-        /// \brief
+        /// @fn recursive_unmerge
+        /// @brief
         ///    Remove key/value pairs  that are identical to those
         ///    in \p basemap.
-        /// \param[in] basemap
+        /// @param[in] basemap
         ///    KeyValueMap against which to compare.  Keys present in this map
         ///    and with values identical to ours are removed.
-        /// \return
+        /// @return
         ///    A reference to this updated instance
 
         KeyValueMap &recursive_unmerge(const KeyValueMap &basemap) noexcept;
 
-        /// \fn recursive_delta
-        /// \brief
+        /// @fn recursive_delta
+        /// @brief
         ///     Return the delta between the provided basemap and this instance
         //      as a new KeyValueMap reference.
-        /// \param[in] basemap
+        /// @param[in] basemap
         ///     Base map against which we are comparing
-        /// \return
+        /// @return
         ////    A new KeyValueMap instance.
         KeyValueMap recursive_delta(const KeyValueMap &basemap) const noexcept;
 
-        /// \brief
-        ///    Insert a pair into them map if a boolean condition is satisfied
-        /// \param[in] condition
+        /// @brief
+        ///    Insert a pair into the map if a boolean condition is satisfied
+        /// @param[in] condition
         ///    Whether to actually push or not
-        /// \param[in] element
+        /// @param[in] kv
         ///    Key/Value pair to insert
         std::pair<KeyValueMap::iterator, bool>
         insert_if(bool condition, const KeyValuePair &kv);
 
+        /// @brief
+        ///    Insert a key/value item into the map if a boolean condition is satisfied
+        /// @param[in] condition
+        ///    Whether to actually push or not
+        /// @param[in] key
+        ///    Mapping key. Any existing item with the same key is replaed
+        /// @param[in] value
+        ///    Valuie to insert
         std::pair<KeyValueMap::iterator, bool>
         insert_if(bool condition, const std::string &key, const Value &value);
 
 
-        /// \brief
+        /// @brief
         ///   Obtain key/value pairs where the value is a specific type
 
         template <class T>

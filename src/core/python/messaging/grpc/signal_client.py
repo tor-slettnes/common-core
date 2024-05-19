@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -i
 #===============================================================================
-## @file signalclient.py
+## @file signal_client.py
 ## @brief Client base for gRPC services with a 'Signal' message type
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================

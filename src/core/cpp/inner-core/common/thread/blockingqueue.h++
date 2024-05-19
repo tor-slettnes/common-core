@@ -114,7 +114,8 @@ namespace core::types
         /// @param[in] maxsize
         ///    Maximum queue size, after which the oldest element is removed
         ///    from the queue. Zero (the default) means unlimited size.
-        /// @param[in] full_
+        /// @param[in] overflow_disposition
+        ///    How to handle `.put()` invocatinos into a full queue
 
         BlockingQueue(
             unsigned int maxsize = 0,
@@ -155,8 +156,8 @@ namespace core::types
         /// @param[in] notify
         ///     Notify anyone waiting for items.  Disabling this may
         ///     allow for multiple pushes without waiting.
-        /// @param[in] bool
-        ///     Indiate whether the item was actually pushed
+        /// @return
+        ///     Whether the item was actually pushed
         ///
         /// Add a new item at the end of the queue.  This unblocks exactly one
         /// pending or future `.get()` call.
@@ -200,8 +201,8 @@ namespace core::types
         /// @param[in] notify
         ///     Notify anyone waiting for items.  Disabling this may
         ///     allow for multiple pushes without waiting.
-        /// @param[in] bool
-        ///     Indiate whether the item was actually pushed
+        /// @return
+        ///     Whether the item was actually pushed
         ///
         /// Add a new item at the end of the queue.  This unblocks exactly one
         /// pending or future `.get()` call.

@@ -27,6 +27,8 @@ namespace core::python
     public:
         /// @brief
         ///     RAII constructor for C PyObject* instances.
+        /// @param[in] cobj
+        ///     PyObject* instance
         /// @param[in] borrowed
         ///     The object reference is borrowed, increment reference count
         SimpleObject(PyObject *cobj, bool borrowed = false);

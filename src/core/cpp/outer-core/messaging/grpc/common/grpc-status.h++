@@ -20,8 +20,11 @@ namespace core::grpc
 {
     //==========================================================================
     /// @class Status
-    /// @brief Specialization of ::grpc::Status with embedded Details
-    ///     and in turn abstract base for source-specific exception types below.
+    /// @brief
+    ///     Specialization of
+    ///     [grpc::Status](https://grpc.github.io/grpc/cpp/classgrpc_1_1_status.html)
+    ///     with embedded Details and in turn abstract base for source-specific
+    ///     exception types below.
 
     class Status : public status::Event,
                    public ::grpc::Status
@@ -32,7 +35,9 @@ namespace core::grpc
         Status();
 
         /// @brief
-        ///     Constructor from an existing ::grpc::Status instance.
+        ///     Constructor from an existing
+        ///     [grpc::Status](https://grpc.github.io/grpc/cpp/classgrpc_1_1_status.html)
+        ///     instance.
         /// @param[in] status
         ///     Existing instance.
         /// @note
@@ -115,9 +120,9 @@ namespace core::grpc
         /// @brief
         ///     Get the gRPC status code that was provided in the constructor.
         /// @return
-        ///     ::grpc::StatusCode enumeration
+        ///     gRPC status code
         /// @note
-        ///     This is simply a wrapper for ::grpc::Status::error_code().
+        ///     This is simply a wrapper for grpc::Status::error_code().
         ::grpc::StatusCode status_code() const noexcept;
         std::string status_code_name() const noexcept;
         static std::string status_code_name(::grpc::StatusCode status_code) noexcept;
@@ -127,7 +132,7 @@ namespace core::grpc
         /// @return
         ///     Human readable text
         /// @note
-        ///     This is simply a wrapper for ::grpc::Status::error_message().
+        ///     This is simply a wrapper for grpc::Status::error_message().
         std::string text() const noexcept override;
 
         /// @brief

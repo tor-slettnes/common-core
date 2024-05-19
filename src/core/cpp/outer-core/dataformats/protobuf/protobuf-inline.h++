@@ -5,10 +5,10 @@
 /// @author Tor Slettnes <tor@slett.net>
 ///
 /// The purpose of this file is to allow wrapper semantics like the following
-/// around the respecitve methods ::core::protobuf::encode(nativeobject, protobufmessage)
-///  and ::core::protobuf::decode(protobufmessage, nativeobject):
-///   -  auto protomessage = core::::core::protobuf::encoded<ProtoBufType>(nativeobject);
-///   -  auto nativeobject = core::::core::protobuf::decoded<NativeType>(protomessage);
+/// around the respecitve methods core::protobuf::encode(nativeobject, protobufmessage)
+///  and core::protobuf::decode(protobufmessage, nativeobject):
+///   -  auto protomessage = core::protobuf::encoded<ProtoBufType>(nativeobject);
+///   -  auto nativeobject = core::protobuf::decoded<NativeType>(protomessage);
 /// Due to an apparent bug in the GNU C++ compiler, these function templates
 /// must be declared AFTER the corresponding basic functions, as they do not
 /// seem to be privy to overload resolution for methods declared in subsequently

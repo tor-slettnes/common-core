@@ -129,7 +129,7 @@ namespace core::zmq
         }
     }
 
-    //======================================================================
+    //==========================================================================
     // Invoke method  with variant request/reply parameters
 
     types::Value ProtoBufClient::call(const std::string &method_name,

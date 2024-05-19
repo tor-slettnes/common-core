@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file demo-dds-server.c++
+/// @file demo-dds-run.c++
 /// @brief C++ demo - Launch DDS server implementation
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

@@ -1,6 +1,6 @@
 #!/bin/echo Do not invoke directly.
 #===============================================================================
-## @file demo_zmq_client.py
+## @file client.py
 ## @brief Python client for `Demo` ZMQ RPC service
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================

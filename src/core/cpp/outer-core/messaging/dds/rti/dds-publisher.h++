@@ -88,10 +88,10 @@ namespace core::dds
 
         template <class T>
         void publish_change(DataWriterRef<T> &writer,
-                            core::signal::MappingAction mapping_change,
+                            core::signal::MappingAction mapping_action,
                             const T &update)
         {
-            switch (mapping_change)
+            switch (mapping_action)
             {
             case core::signal::MAP_NONE:
                 break;

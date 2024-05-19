@@ -84,10 +84,7 @@ namespace core::grpc
         {
         }
 
-        /// @fn call_sync
         /// @brief Direct invocation of a gRPC method
-        /// @param[in] methodname
-        ///     Method name, for debugging
         /// @param[in] method
         ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::method`
         ///     (or with an suitable `using Stub = ...` statement, just `&Stub::method`).
@@ -95,9 +92,11 @@ namespace core::grpc
         ///     ProtoBuf request message
         /// @param[out] response
         ///     Protobuf response message
-        /// @param]in] wait_for_ready
+        /// @param[in] wait_for_ready
         ///     Wait for gRPC service to become ready instead of failing.  The default
         ///     value can be changed via `ClientBase::set_wait_for_ready()`.
+        /// @param[in] request_timeout
+        ///     Cancel the call if not completed within the specified timeout
         /// @return
         ///      gRPC status code
 
@@ -121,6 +120,24 @@ namespace core::grpc
             }
             return (this->stub.get()->*method)(&cxt, request, response);
         }
+
+        /// @brief Direct invocation of a gRPC method
+        /// @param[in] methodname
+        ///     Method name, for debugging
+        /// @param[in] method
+        ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::method`
+        ///     (or with an suitable `using Stub = ...` statement, just `&Stub::method`).
+        /// @param[in] request
+        ///     ProtoBuf request message
+        /// @param[out] response
+        ///     Protobuf response message
+        /// @param[in] wait_for_ready
+        ///     Wait for gRPC service to become ready instead of failing.  The default
+        ///     value can be changed via `ClientBase::set_wait_for_ready()`.
+        /// @param[in] request_timeout
+        ///     Cancel the call if not completed within the specified timeout
+        /// @return
+        ///      gRPC status code
 
         template <class ResponseT, class RequestT = ::google::protobuf::Empty>
         inline Status call_sync(const std::string &methodname,
@@ -153,17 +170,16 @@ namespace core::grpc
             return this->call_sync(methodname, method, request, &response, wait_for_ready);
         }
 
-        /// @fn call_check
         /// @brief Direct invocation of a gRPC method, check for OK status code
-        /// @param[in] methodname
-        ///     Method name, for debugging
         /// @param[in] method
         ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::method`
         ///     (or with an suitable `using Stub = ...` statement, just `&Stub::method`).
         /// @param[in] request
         ///     ProtoBuf request message
-        /// @param]in] wait_for_ready
+        /// @param[in] wait_for_ready
         ///     Wait for gRPC service to become ready instead of failing.
+        /// @param[in] request_timeout
+        ///     Cancel the call if not completed within the specified timeout
         /// @return
         ///     Protobuf response message
         /// @throw core::grpc::ServiceError
@@ -179,6 +195,21 @@ namespace core::grpc
             this->call_sync(method, request, &response, wait_for_ready, request_timeout).throw_if_error();
             return response;
         }
+
+        /// @brief Direct invocation of a gRPC method, check for OK status code
+        /// @param[in] methodname
+        ///     Method name, for debugging
+        /// @param[in] method
+        ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::method`
+        ///     (or with an suitable `using Stub = ...` statement, just `&Stub::method`).
+        /// @param[in] request
+        ///     ProtoBuf request message
+        /// @param[in] wait_for_ready
+        ///     Wait for gRPC service to become ready instead of failing.
+        /// @return
+        ///     Protobuf response message
+        /// @throw core::grpc::ServiceError
+        ///     Non-OK gRPC status code
 
         template <class ResponseT, class RequestT = ::google::protobuf::Empty>
         inline ResponseT call_check(const std::string &methodname,

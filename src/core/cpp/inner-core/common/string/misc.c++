@@ -57,14 +57,9 @@ namespace core::str
         return ss.str();
     }
 
-    /// \brief Convert from (UTF8-encoded) `std::string` to (UTF16 or UCS2-encoded) `std::wstring`)
-    /// \param[in] wstr
-    ///      Wide string
-    /// \return
-    ///      Byte string
-    std::string from_wstring(const std::wstring &from, const std::locale &loc)
+    std::string from_wstring(const std::wstring &wstr, const std::locale &loc)
     {
-        return from_wstring(from.data(), from.size(), loc);
+        return from_wstring(wstr.data(), wstr.size(), loc);
     }
 
     std::string from_wstring(const wchar_t *from, std::size_t size, const std::locale &loc)
@@ -101,14 +96,9 @@ namespace core::str
         // return conv.to_bytes(wstr);
     }
 
-    /// \brief Convert from `std::wstring` to `std::string`
-    /// \param[in] str
-    ///      ByteWide string
-    /// \return
-    ///      Wide string
-    std::wstring to_wstring(const std::string &from, const std::locale &loc)
+    std::wstring to_wstring(const std::string &str, const std::locale &loc)
     {
-        return to_wstring(from.data(), from.size(), loc);
+        return to_wstring(str.data(), str.size(), loc);
     }
 
     std::wstring to_wstring(const char *from, std::size_t size, const std::locale &loc)

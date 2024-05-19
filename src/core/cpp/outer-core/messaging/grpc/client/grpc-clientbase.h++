@@ -52,7 +52,6 @@ namespace core::grpc
         ///     unless explicitly specified.
         void set_request_timeout(std::optional<dt::Duration> request_timeout);
 
-        /// @fn ready
         /// @brief Determine whether the service is available
         /// @param[in] timeout
         ///      Timeout before giving up if client is currently connecting to
@@ -61,7 +60,6 @@ namespace core::grpc
         ///      `true` if server is available, `false` otherwise.
         bool available(const dt::Duration &timeout = std::chrono::seconds(10)) const;
 
-        /// @fn check
         /// @brief Check the provided gRPC status code, and throw an appropriate
         ///     exception if appropriate.
         ///

@@ -89,7 +89,6 @@ namespace core
         using Handle = std::string;
 
     public:  // Methods
-        /// @fn Scheduler
         /// @brief Constructor
         /// @param[in] max_jitter
         ///     Maximum allowed time interval between expected and actual system
@@ -99,11 +98,9 @@ namespace core
 
         Scheduler(dt::Duration max_jitter = std::chrono::seconds(5));
 
-        /// @fn ~Scheduler
         /// @brief Destructor. Cancel any pending tasks.
         virtual ~Scheduler();
 
-        /// @fn add
         /// @brief Schedule a task/method to be invoked at specified time interval
         /// @param[in] invocation
         ///     Method to invoke
@@ -137,9 +134,8 @@ namespace core
                    uint retries = 0,
                    bool catchup = false);
 
-        /// @fn add
         /// @brief Schedule a task/method to be invoked at specified time interval
-        /// @param[in] id
+        /// @param[in] handle
         ///     Unique identifier for this task.
         /// @param[in] invocation
         ///     Method to invoke
@@ -174,7 +170,6 @@ namespace core
                   uint retries = 0,
                   bool catchup = false);
 
-        /// @fn add_if_missing
         /// @brief Add a scheduled task if the specified ID does not already exist. \sa add
         Task &add_if_missing(const Handle &handle,
                              const Invocation &invocation,
@@ -189,13 +184,11 @@ namespace core
         bool remove(const Handle &handle);
         bool remove(const Task &task);
 
-        /// @fn exists
         /// @brief indicate whether the specifed task ID exists
         bool exists(const Handle &handle);
 
-        /// @fn find
         /// @brief Find any scheduled task by the specified name
-        /// @param[in] id
+        /// @param[in] handle
         ///     Task ID
         /// @return
         ///     Iterator to the task if found, or `this->end()` if not found.
@@ -203,15 +196,13 @@ namespace core
         TaskMap::iterator begin() noexcept;
         TaskMap::iterator end() noexcept;
 
-        /// @fn has_task
         /// @brief Check whether a specific task exists
-        /// @param[in] id
+        /// @param[in] handle
         ///     Task ID
         /// @return
         ///     `true` if the task exists, `false` otherwise.
         bool has_task(const Handle &handle) const noexcept;
 
-        /// @fn stop
         /// @brief stop the scheduler
         void stop();
 

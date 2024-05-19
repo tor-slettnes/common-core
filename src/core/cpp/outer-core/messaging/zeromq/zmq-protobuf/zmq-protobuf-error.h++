@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file zmq-protobuf-status.h++
+/// @file zmq-protobuf-error.h++
 /// @brief Report and process ZMQ invocation status
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

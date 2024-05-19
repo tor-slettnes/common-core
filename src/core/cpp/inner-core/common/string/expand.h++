@@ -23,6 +23,10 @@ namespace core::str
     ///     String containing zero or more brace-enclosed keys of the form "{key}".
     /// @param[in] kvmap
     ///     Key/value map.
+    /// @param[in] fallback
+    ///     Value to insert for keys not found in map.  If unset, the original key is
+    ///     inserted without modification.  Note that the default value is an empty
+    ///     string; use the literal `{}` to indicate an empty value.
     /// @return
     ///     A copy of the format string where "{key}" occurences have been
     ///     replaced by their corresponding values from the map.

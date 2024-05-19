@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file variant-value.t++
+/// @file variant-value.i++
 /// @brief Generic `Value` type - inline definitions
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

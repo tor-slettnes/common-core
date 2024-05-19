@@ -28,7 +28,7 @@ namespace core::platform
         /// @brief Constructor
         /// @param[in] provider_name
         ///    Provider name
-        /// @param[in] programpath
+        /// @param[in] exec_name
         ///    Executable path, normally obtained from argv[0].
         PathProvider(const std::string &provider_name,
                      const std::string &exec_name);
@@ -71,7 +71,7 @@ namespace core::platform
         /// @brief
         ///     Walk up the diretory hierarchy from the specified folder to locate a
         ///     given name.
-        /// @param[in] folder
+        /// @param[in] start
         ///     Path to the starting folder, which may be a file or directory
         /// @param[in] name
         ///     The name we are looking for

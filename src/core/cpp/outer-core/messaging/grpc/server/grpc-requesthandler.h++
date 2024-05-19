@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file grpc-requesthandler.c++
+/// @file grpc-requesthandler.h++
 /// @brief Server-side request handler gRPC services
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
@@ -115,7 +115,7 @@ namespace core::grpc
     ///          return this->failure(e, *request, cxt->peer());
     ///        }
     ///      }
-    ///    \endcode;
+    ///    \endcode
 
     template <class T>
     class RequestHandler : public RequestHandlerBase, public T::Service

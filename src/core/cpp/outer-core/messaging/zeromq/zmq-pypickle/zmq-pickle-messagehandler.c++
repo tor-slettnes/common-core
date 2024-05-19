@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file zmq-pypickle-messagehandler.h++
+/// @file zmq-pickle-messagehandler.c++
 /// @brief Handle received messages with a Python pickle payload
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

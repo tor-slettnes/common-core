@@ -32,7 +32,7 @@ namespace core::python
         ///    Method name to be called
         /// @param[in] args
         ///    Positional arguments
-        /// @param[in] args
+        /// @param[in] kwargs
         ///    Named arguments
         /// @return
         ///    Returned value from the called method, decoded as a variant Value
@@ -49,7 +49,7 @@ namespace core::python
         ///    Method name to be called
         /// @param[in] args
         ///    A managed object containing a tuple with positional input arguments
-        /// @param[in] args
+        /// @param[in] kwargs
         ///    A managed object containing a dictionary with keyword (named) input arguments
         /// @return
         ///    Returned value from the called method
@@ -66,7 +66,7 @@ namespace core::python
         ///    Method name to be called
         /// @param[in] args_tuple
         ///    A managed object containing a tuple with positional input arguments
-        /// @param[in] kwargs_map
+        /// @param[in] kwargs_dict
         ///    A managed object containing a dictionary with keyword (named) input arguments
         /// @return
         ///    Return value from the called method as a Python object

@@ -32,7 +32,7 @@ namespace core::grpc
     Status RequestHandlerBase::failure(const std::exception &e,
                                        const std::string &operation,
                                        status::Flow flow,
-                                       const std::filesystem::path &path,
+                                       const fs::path &path,
                                        const int &lineno,
                                        const std::string &function)
     {

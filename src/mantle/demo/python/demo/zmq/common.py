@@ -1,6 +1,6 @@
 #!/bin/echo Do not invoke directly.
 #===============================================================================
-## @file zmq_common.py
+## @file common.py
 ## @brief Common types and definitions for Python 'Demo' service
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================

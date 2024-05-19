@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file grpc-serverbuilder.h++
+/// @file grpc-serverbuilder.c++
 /// @brief gRPC server builder with endpoint lookup
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

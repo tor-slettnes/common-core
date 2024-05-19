@@ -27,7 +27,7 @@ namespace core::logging
 
     protected:
         /// @brief Constructor
-        /// @param[in] path
+        /// @param[in] path_template
         ///     Path of the files where messaged will be logged to
         /// @param[in] rotation_interval
         ///     How often to switch to a new log file.

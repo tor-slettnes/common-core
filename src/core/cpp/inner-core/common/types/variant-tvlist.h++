@@ -102,8 +102,6 @@ namespace core::types
         ///    Extract items from an existing TaggedValueList and insert here.
         /// \param[in] other
         ///    TaggedValueList instance from which to extract items.
-        /// \param[in] policy
-        ///    How to process values whose tag already exist in this list
         /// \return
         ///    A reference to this instance.
         /// \note

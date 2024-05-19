@@ -75,7 +75,6 @@ namespace core::grpc
         }
 
     protected:
-        /// @fn connect
         /// @brief Connect a signal of type Signal<T> for encoding/enqueung
         /// @tparam SignalT
         ///    Signal data type
@@ -103,7 +102,6 @@ namespace core::grpc
             }
         }
 
-        /// @fn connect
         /// @brief
         ///    Connect a signal of type MappingSignal<T> for encoding/enqueung
         ///    ProtoBuf messages with `mapping_action` and `mapping_key` fields.

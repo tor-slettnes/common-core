@@ -277,11 +277,7 @@ namespace core::exception
     {
     }
 
-    //==========================================================================
-    /// @class FilesystemError
-    /// @brief Error created from a `std::filesystem_error` instance
-
-    FilesystemError::FilesystemError(const Event &event)
+    FilesystemError::FilesystemError(const status::Event &event)
         : Super(event,
                 fs::filesystem_error(
                     event.text(),

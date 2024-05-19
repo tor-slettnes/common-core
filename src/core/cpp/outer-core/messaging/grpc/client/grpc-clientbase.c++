@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file grpc-clientwrapper.c++
+/// @file grpc-clientbase.c++
 /// @brief Client-side wrapper functionality for Common Core gRPC services
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

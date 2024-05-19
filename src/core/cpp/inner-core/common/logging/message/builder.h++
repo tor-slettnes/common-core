@@ -44,11 +44,15 @@ namespace core::logging
     protected:
         /// @brief
         ///     Constructor.
+        /// @param[in] dispatcher
+        ///     Log dispatcher that will receive and distribute the messsage
         /// @param[in] scope
         ///     Logging scope.
         /// @param[in] level
         ///     Severity level. Message will only be logged if its level is
         ///     equal to or higher than the threshold of the specified scope.
+        /// @param[in] flow
+        ///      Result on execution flow: NONE, CANCELLED, ABORTED
         /// @param[in] tp
         ///     Time point for the published message, if not now.
         /// @param[in] path
