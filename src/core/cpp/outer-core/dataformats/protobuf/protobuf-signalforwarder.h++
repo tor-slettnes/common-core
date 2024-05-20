@@ -48,9 +48,16 @@ namespace core::protobuf
     protected:
         /// @brief
         ///    Create a new Signal message with optional mapping controls.
+        static ProtoT create_signal_message()
+        {
+            return ProtoT();
+        }
+
+        /// @brief
+        ///    Create a new Signal message with optional mapping controls.
         static ProtoT create_signal_message(
-            core::signal::MappingAction mapping_action = core::signal::MAP_NONE,
-            const std::string &mapping_key = {})
+            core::signal::MappingAction mapping_action,
+            const std::string &mapping_key)
         {
             ProtoT msg;
             msg.set_mapping_action(static_cast<cc::signal::MappingAction>(mapping_action));

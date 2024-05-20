@@ -255,10 +255,10 @@ namespace core
                     bool keep = task.invoke(tp);
                     this->mtx.lock();
                     now = dt::Clock::now();
-                    auto nh = this->tasks.extract(it);
 
                     if (keep && this->current)
                     {
+                        auto nh = this->tasks.extract(it);
                         nh.key() = nh.mapped().next_time(tp, now);
                         //logf_trace("Scheduled task %r next invocation at %r", handle, nh.key());
                         this->tasks.insert(std::move(nh));

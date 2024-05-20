@@ -6,8 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "demo-grpc-signalqueue.h++"
-#include "demo.pb.h"  // generated from `demo_service.proto`
+#include "demo.pb.h"  // generated from `demo.proto`
 #include "demo-api.h++"
 
 #include "grpc-signalqueue.h++"

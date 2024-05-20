@@ -408,12 +408,12 @@ class SignalStore:
 
 
     def emit(self, msg):
-        action = self.Action.get(msg.mapping_action, msg.mapping_action)
-        name   = self.signal_name(msg)
+        action, key = self._mapping_controls(msg);
+        name = self.signal_name(msg)
 
         if name:
             if isinstance(self._cache, dict):
-                self._update_cache(name, action, msg.mapping_key, msg)
+                self._update_cache(name, action, key, msg)
 
             ## Invoke each slot that was connected to this signal by name
             for callback in self.slots.get(name, []):
@@ -461,14 +461,26 @@ class SignalStore:
             datamap.pop(key, None)
 
     def _emit_to(self, name, slot, signal):
+        action, key = self._mapping_controls(signal)
+
         result = safe_invoke(slot,
                              (signal,),
                              {},
                              "Signal %s slot %s(%s, %r, ...)"%(
                                  name,
                                  slot.__name__,
-                                 self.Action.get(signal.mapping_action, signal.mapping_action),
-                                 signal.mapping_key))
+                                 action,
+                                 key))
         if asyncio.iscoroutine(result):
             asyncio.create_task(result)
+
+    def _mapping_controls(self, signal) -> tuple[Action, str]:
+        try:
+            action = self.Actions.get(signal.mapping_action, signal.mapping_action)
+            key = signal.mapping_key
+        except AttributeError:
+            action = self.Action.MAP_NONE
+            key = None
+
+        return (action, key)
 

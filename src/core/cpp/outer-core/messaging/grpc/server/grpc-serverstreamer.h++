@@ -18,7 +18,7 @@ namespace core::grpc
 {
     //==========================================================================
     /// @class ServerStreamer
-    /// @brief Stream messages from queue to client
+    /// @brief Mix-in class to stream stream from queue to client
 
     template <class MessageT>
     class ServerStreamer : public types::BlockingQueue<MessageT>
@@ -32,17 +32,13 @@ namespace core::grpc
         virtual void stream(::grpc::ServerContext *cxt,
                             ::grpc::ServerWriter<MessageT> *writer)
         {
-            while (true)
+            while (std::optional<MessageT> msg = this->get())
             {
-                std::optional<MessageT> msg = this->get();
                 if (cxt->IsCancelled())
                 {
                     break;
                 }
-                if (msg)
-                {
-                    writer->Write(*msg);
-                }
+                writer->Write(std::move(*msg));
             }
         }
     };

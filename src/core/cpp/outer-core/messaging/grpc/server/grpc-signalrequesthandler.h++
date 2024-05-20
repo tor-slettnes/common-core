@@ -46,18 +46,14 @@ namespace core::grpc
                 SignalQueueT queue(platform::symbols->uuid(), *req);
                 queue.initialize();
 
-                while (true)
+                while (std::optional<SignalT> msg = queue.get())
                 {
-                    std::optional<SignalT> msg = queue.get();
                     if (cxt->IsCancelled())
                     {
                         break;
                     }
-                    if (msg)
-                    {
-                        logf_trace("Feeding signal to client %s: %s", cxt->peer(), *msg);
-                        writer->Write(*msg);
-                    }
+                    logf_trace("Feeding signal to client %s: %s", cxt->peer(), *msg);
+                    writer->Write(*msg);
                 }
 
                 queue.deinitialize();

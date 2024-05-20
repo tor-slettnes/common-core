@@ -53,7 +53,7 @@ namespace demo::grpc
         ::grpc::Status watch(
             ::grpc::ServerContext* context,
             const cc::signal::Filter* request,
-            ::grpc::ServerWriter<cc::demo::Signal> *writer) override;
+            ::grpc::ServerWriter<cc::demo::Signal>* writer) override;
 
     private:
         std::shared_ptr<API> provider;
