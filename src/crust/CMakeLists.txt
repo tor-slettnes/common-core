@@ -7,4 +7,7 @@
 
 ### Include components common to all products
 add_subdirectory(common)
-add_subdirectory(demoproduct)
+
+if(BUILD_DEMO)
+  add_subdirectory(demoproduct)
+endif()

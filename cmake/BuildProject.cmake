@@ -9,10 +9,6 @@ if(NOT PROJECT_INCLUDED)
 
   SET(PROJECT_INCLUDED true)
 
-  if(WIN32)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-  endif()
-
   ### Source additional files from this folder
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
