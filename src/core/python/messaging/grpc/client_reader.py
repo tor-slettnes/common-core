@@ -16,11 +16,11 @@ class ThreadReader (object):
     def active (self):
         return (self.thread is not None)
 
-    def start(self, stub_reader, callback):
+    def start(self, stream, callback):
         if not self.thread:
             self.thread = threading.Thread(target = self.watch,
                                            name = 'Watcher thread',
-                                           args = (stub_reader, callback),
+                                           args = (stream, callback),
                                            daemon = True)
             self.thread.start()
 
@@ -30,14 +30,15 @@ class ThreadReader (object):
             if wait:
                 thread.join()
 
-    def watch(self, stub_reader, callback):
+    def watch(self, stream, callback):
         try:
-            for msg in stub_reader:
+            for msg in stream:
                 callback(msg)
-                if not self.thread:
+                if not self.active():
                     break
         finally:
             self.thread = None
+            stream.cancel()
 
 
 
@@ -49,22 +50,22 @@ class AsyncReader (object):
     def active (self):
         return self.task and not self.task.done()
 
-    def start(self, stub_reader, callback):
+    def start(self, stream, callback):
         if not self.active():
             self.task = asyncio.create_task(
-                self.watch(stub_reader, callback))
+                self.watch(stream, callback))
 
     def stop(self, wait = False):
         if task := self.task:
             task.cancel()
             self.task = None
 
-    async def watch(self, stub_reader, callback):
+    async def watch(self, stream, callback):
         try:
-            self.active = True
-            async for msg in stub_reader:
+            async for msg in stream:
                 callback(msg)
         except asyncio.CancelledError:
             pass
         finally:
-            self.active = False
+            self.task = None
+            await stream.cancel()

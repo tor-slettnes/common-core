@@ -6,10 +6,21 @@
 #===============================================================================
 
 ### Modules relative to current folder
-from .wellknown import MessageToString, MessageToDict, ParseDict, Message, MessageType
+from .wellknown import MessageToString, MessageToDict, ParseDict
+
+### Third-party modules
+from google.protobuf.message \
+    import Message, Error, EncodeError, DecodeError
+
+from google.protobuf.pyext.cpp_message \
+    import GeneratedProtocolMessageType as MessageType
+
+from google.protobuf.internal.enum_type_wrapper \
+    import EnumTypeWrapper
 
 ### Standard Python modules
 from typing import Optional, Callable, Mapping, Union
+import enum
 
 #===============================================================================
 # Methods
@@ -59,6 +70,27 @@ def dictToMessage(value     : dict,
         msg,
         ignore_unknown_fields = ignore_unknown_fields)
     return msg
+
+
+def valueToEnum(value: int|enum.Enum,
+                enumeration: enum.EnumType) -> enum.Enum:
+    '''Convert an integer value to a Python enumerated value'''
+
+    if isinstance(value, enumeration):
+        return value
+    elif isinstance(value, int):
+        return enumeration(value)
+    else:
+        raise TypeError('Value must be an integer or enumeration')
+
+
+def enumToValue(value: int|enum.Enum) -> int:
+    if isinstance(value, enum.Enum):
+        return value.value
+    elif isinstance(value, int):
+        return value
+    else:
+        raise TypeError('Value must be an integer or enumeration')
 
 
 def print_message(message: Message, as_one_line=True):

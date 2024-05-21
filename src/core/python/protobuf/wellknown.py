@@ -16,6 +16,9 @@ from google.protobuf.message \
 from google.protobuf.pyext.cpp_message \
     import GeneratedProtocolMessageType as MessageType
 
+from google.protobuf.internal.enum_type_wrapper \
+    import EnumTypeWrapper
+
 from google.protobuf.empty_pb2 import Empty
 from google.protobuf.duration_pb2 import Duration
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -28,6 +31,7 @@ from google.protobuf.struct_pb2 import Value, ListValue, Struct
 ### Standard Python modules
 from time import struct_time, mktime
 from datetime import datetime
+from enum import Enum
 
 ### Type type hint for timestamps
 TimestampType = Timestamp|float|int|str|struct_time|datetime
@@ -165,4 +169,5 @@ def decodeListValue(listvalue: ListValue) -> list:
     '''Decode a `google.protobuf.ListValue` instance to a native Python list'''
     return [ decodeValue(value)
              for value in listvalue.values ]
+
 

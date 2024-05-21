@@ -5,25 +5,29 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Generated modules
-from generated.signal_pb2 import Filter, MappingAction, \
-    MAP_NONE, MAP_ADDITION, MAP_REMOVAL, MAP_UPDATE
-
 ### Modules relative to install path
 from .variant import Value, ValueList
 from .wellknown import Message, MessageType
-from core.enumeration import Enumeration
+from .utils import enumToValue
+from .import_proto import import_proto
 from core.invocation import safe_invoke
 
 ### Standard Python modules
 from typing import Optional, Callable, Mapping, Union
+import enum
 import threading
 import asyncio
+
+### Import generated types from `signal.proto`. Symbols will appear within a new
+### `cc.signal` namespace.
+import_proto('signal', globals())
+
 
 #===============================================================================
 # Annotation types
 
 Slot = Callable[[MessageType], None]
+MappingAction = enum.Enum('MappingAction', cc.signal.MappingAction.items())
 
 #===============================================================================
 # SignalStore class
@@ -71,7 +75,7 @@ class SignalStore:
     message Signal
     {
         // Mapping action: one of MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL
-        protobuf.signal.MappingAction mapping_action = 1;
+        cc.signal.MappingAction mapping_action = 1;
 
         // Mapping key
         string mapping_key = 2;
@@ -107,8 +111,6 @@ class SignalStore:
     ##  ProtoBuf messages streamed back from the server's `watch()` method.
     signal_type = None
 
-    ## Create an enumerated container for mapping types
-    Action = Enumeration(MappingAction)
 
     def __init__(self,
                  use_cache   : bool = False,
@@ -423,7 +425,7 @@ class SignalStore:
             for callback in self.slots.get(None, []):
                 self._emit_to(name, callback, msg)
 
-        if action == self.Action.MAP_NONE:
+        if action == MappingAction.MAP_NONE:
             self._completion_event.set()
 
     def emit_event(self,
@@ -435,19 +437,19 @@ class SignalStore:
 
     def emit_mapping(self,
                      signal_name : str,
-                     action      : Action,
+                     action      : MappingAction,
                      key         : str,
                      value       : MessageType):
 
-        if key and not action:
+        if key and not enumToValue(action):
             if value.ByteSize() == 0:
-                action = MAP_REMOVAL
+                action = MappingAction.MAP_REMOVAL
             elif key in self.get_cached(signal_name, {}):
-                action = MAP_UPDATE
+                action = MappingAction.MAP_UPDATE
             else:
-                action = MAP_ADDITION
+                action = MappingAction.MAP_ADDITION
 
-        signal = self.signal_type(mapping_action = action,
+        signal = self.signal_type(mapping_action = enumToValue(action),
                                   mapping_key = key,
                                   **{signal_name: value})
         self.emit(signal)
@@ -455,9 +457,9 @@ class SignalStore:
 
     def _update_cache(self, signalname, action, key, data):
         datamap = self._cache.setdefault(signalname, {})
-        if action in (MAP_ADDITION, MAP_UPDATE):
+        if action in (MappingAction.MAP_ADDITION, MappingAction.MAP_UPDATE):
             datamap[key] = data
-        elif action == MAP_REMOVAL:
+        elif action == MappingAction.MAP_REMOVAL:
             datamap.pop(key, None)
 
     def _emit_to(self, name, slot, signal):
@@ -469,17 +471,17 @@ class SignalStore:
                              "Signal %s slot %s(%s, %r, ...)"%(
                                  name,
                                  slot.__name__,
-                                 action,
+                                 action.name,
                                  key))
         if asyncio.iscoroutine(result):
             asyncio.create_task(result)
 
-    def _mapping_controls(self, signal) -> tuple[Action, str]:
+    def _mapping_controls(self, signal) -> tuple[MappingAction, str]:
         try:
-            action = self.Actions.get(signal.mapping_action, signal.mapping_action)
+            action = MappingAction(signal.mapping_action)
             key = signal.mapping_key
-        except AttributeError:
-            action = self.Action.MAP_NONE
+        except (AttributeError, KeyError, ValueError):
+            action = MappingAction.MAP_NONE
             key = None
 
         return (action, key)

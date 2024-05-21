@@ -5,17 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
-from .enumeration import Enumeration
-
 ### Standard Python modules
-import time
+import time, enum
 
-ZoneSuffix = Enumeration({
-    "NONE"   : 0,
-    "OFFSET" : 1,  # '+0100' for CET, '-0800' for PST, 'Z' for UTC
-    "NAME"   : 2   # 'CET'/'CEST'/'PST'/'PDT'/etc, or 'UTC'
-})
+class ZoneSuffix(enum.Enum):
+    NONE   = 0
+    OFFSET = 1   # '+0100' for CET, '-0800' for PST, 'Z' for UTC
+    NAME   = 2   # 'CET'/'CEST'/'PST'/'PDT'/etc, or 'UTC'
 
 
 ### Standardized time string

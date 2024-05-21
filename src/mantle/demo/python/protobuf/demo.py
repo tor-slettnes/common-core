@@ -6,16 +6,10 @@
 #===============================================================================
 
 ### Generated from `demo.proto`
-from generated.demo_pb2 import Greeting, TimeStruct, TimeData, Weekday as _Weekday, Signal
-
-### Modules relative to install folder
-from core.enumeration import Enumeration
+from generated.demo_pb2 import Greeting, TimeStruct, TimeData, Weekday, Signal
 
 ### Standard Python modules
-import time
-
-### More user-friendly enumeration of Weekdays
-Weekday = Enumeration(_Weekday)
+import time, enum
 
 def encodeTimeStruct(ts: time.struct_time) -> TimeStruct:
     '''Convert a `time.time_struct` object to a `protobuf.demo.TimeStruct` message.'''

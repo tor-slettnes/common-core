@@ -10,7 +10,9 @@ from .client  import Client
 from .client_reader import ThreadReader, AsyncReader
 
 ### Modules relative to install folder
-import protobuf.signal
+from protobuf.signal import SignalStore, cc
+# from protobuf.import_proto import import_proto
+# import_proto('signal', globals())
 
 #===============================================================================
 # Client
@@ -33,13 +35,13 @@ class SignalClient (Client):
     service MyService
     {
         ...
-        rpc watch (protobuf.signal.Filter) returns (stream MySignal);
+        rpc watch (cc.signal.Filter) returns (stream MySignal);
     }
 
     message MySignal
     {
         // Mapping action: one of MAP_ADITION, MAP_UPDATE, MAP_REMOVAL
-        protobuf.signal.MappingAction mapping_action = 1;
+        cc.signal.MappingAction mapping_action = 1;
 
         // Mapping key
         string mapping_key = 2;
@@ -57,7 +59,7 @@ class SignalClient (Client):
      * Pass an existing `SignalStore()` instance to `__init__()`:
 
        ```python
-       my_signal_store = protobuf.signal.SignalStore(signal_type = protobuf.mypackage.MySignal)
+       my_signal_store = protobuf.signal.SignalStore(signal_type = mypackage.MySignal)
 
        class MyServiceClient (messaging.grpc.SignalClient):
            from my_service_pb2_grpc import MyServiceStub as Stub
@@ -75,18 +77,18 @@ class SignalClient (Client):
        class MyServiceClient (messaging.grpc.SignalClient):
            from my_service_pb2_grpc import MyServiceStub as Stub
 
-           signal_type = protobuf.mypackage.MySignal
+           signal_type = mypackage.MySignal
        ```
 
 
     Next, you'll need callback handlers to handle the received and re-emitted signals:
 
     ```python
-        def my_data1_simple_handler(data1: protobuf.mypackage.DataType1):
+        def my_data1_simple_handler(data1: mypackage.DataType1):
             """Handle DataType1 signals from server"""
             print("Received data1: ", data1)
 
-        def my_data2_mapping_handler(signal: protobuf.mypackage.Signal):
+        def my_data2_mapping_handler(signal: mypackage.Signal):
             """Handle DataType2 mapping signals from server"""
              print("Received DataType2:",
                    "mapping action:", signal.mapping_action,
@@ -130,7 +132,7 @@ class SignalClient (Client):
                  host: str,
                  wait_for_ready : bool = False,
                  use_asyncio : bool = False,
-                 signal_store : protobuf.signal.SignalStore = None,
+                 signal_store : SignalStore = None,
                  watch_all: bool = False,
                  use_cache: bool = True,
                  **kwargs):
@@ -192,11 +194,11 @@ class SignalClient (Client):
 
     def signal_filter(self, watch_all):
         if watch_all:
-            return protobuf.signal.Filter()
+            return cc.signal.Filter()
         else:
             indexmap   = self.signal_store.signal_fields()
             indices    = [indexmap.get(slot) for slot in self.signal_store.slots]
-            return protobuf.signal.Filter(polarity=True, index=filter(None, indices))
+            return cc.signal.Filter(polarity=True, index=filter(None, indices))
 
 
     def start_watching(self, watch_all: bool = True):
@@ -224,5 +226,5 @@ class SignalClient (Client):
         self.reader.stop()
 
 
-    def watch(self, signal_filter : protobuf.signal.Filter = protobuf.signal.Filter()):
+    def watch(self, signal_filter : cc.signal.Filter = cc.signal.Filter()):
         return self.stub.watch(signal_filter)

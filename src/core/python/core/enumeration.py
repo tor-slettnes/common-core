@@ -40,7 +40,9 @@ class Enumeration (dict):
 
     '''
 
-    def __init__ (self, enumeration: dict[str,int]|list[tuple[str,int]]|list[str]):
+    def __init__ (self,
+                  enumeration: dict[str,int]|list[tuple[str,int]]|list[str],
+                  name = None):
         '''Initializer.
 
         The input is one of the following:
@@ -49,6 +51,8 @@ class Enumeration (dict):
           - A dictionary-like object with an `items()` method, mapping symbolic
             names to correspoding integer values.
         '''
+
+        self.name = name if name is not None else type(self).__name__
 
         if hasattr(enumeration, 'items') and callable(enumeration.items):
             items = enumeration.items()
@@ -81,3 +85,6 @@ class Enumeration (dict):
         for (name, value) in items:
             self[value] = item = EnumValue(value, name)
             setattr(self, name, item)
+
+    def __repr__ (self):
+        return self.name
