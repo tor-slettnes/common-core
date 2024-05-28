@@ -67,9 +67,15 @@ function(InstallServiceUnit UNIT)
     "${_prerm_file}"
   )
 
-  CPackConfig("CPACK_DEBIAN_${_component}_PACKAGE_CONTROL_EXTRA"
-    "${_postinst_file};${_prerm_file}"
-  )
+  if(arg_COMPONENT AND CPACK_DEB_COMPONENT_INSTALL)
+    CPackConfig("CPACK_DEBIAN_${_component}_PACKAGE_CONTROL_EXTRA"
+      "${_postinst_file};${_prerm_file}"
+    )
+  else()
+    CPackConfig("CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA"
+      "${_postinst_file};${_prerm_file}"
+    )
+  endif()
 
 endfunction()
 
