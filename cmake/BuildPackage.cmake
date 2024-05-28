@@ -5,10 +5,6 @@
 #===============================================================================
 
 function(CPackConfig VARIABLE VALUE)
-    message(STATUS "===Adding extra controls to ${CMAKE_BINARY_DIR}/CPackConfig.cmake:")
-    message(STATUS "set(${VARIABLE} ${VALUE})\n")
-    message(STATUS "===")
-
     file(APPEND "${CMAKE_BINARY_DIR}/CPackConfig.cmake"
       "set(${VARIABLE} \"${VALUE}\")\n")
 endfunction()

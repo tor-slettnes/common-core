@@ -7,13 +7,13 @@
 include(BuildPackage)
 set(_service_template_dir ${CMAKE_CURRENT_LIST_DIR}/debian)
 
-function(InstallServiceUnit UNIT)
+function(InstallDebianService UNIT)
   set(_options USER)
   set(_singleargs PROGRAM DESCRIPTION COMPONENT)
   set(_multiargs ARGS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  ### Install service unit: ${UNIT}.service 
+  ### Install service unit: ${UNIT}.service
 
   if(arg_USER)
     set(_dest "lib/systemd/user")
@@ -28,7 +28,7 @@ function(InstallServiceUnit UNIT)
   endif()
 
   if(NOT arg_PROGRAM)
-    message(SEND_ERROR "InstallServiceUnit() missing required argument PROGRAM")
+    message(SEND_ERROR "InstallDebianService() missing required argument PROGRAM")
   endif()
 
   string(REGEX MATCH ".service$" SERVICE_SUFFIX "${UNIT}")

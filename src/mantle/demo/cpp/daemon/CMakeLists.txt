@@ -44,7 +44,7 @@ BuildExecutable("${TARGET}"
   COMPONENT ${PKG_COMPONENT}
 )
 
-InstallServiceUnit("demo"
+InstallDebianService("demo"
   PROGRAM /usr/sbin/${TARGET}
   DESCRIPTION "DEMO service"
   COMPONENT "${PKG_COMPONENT}"

@@ -47,6 +47,8 @@ if(BUILD_GRPC OR BUILD_ZMQ)
   set(BUILD_PROTOBUF ON)
 endif()
 
+option(USE_STATIC_LIBS "Use static libraries for linking" OFF)
+
 ### Invoke common project settings
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/BuildProject.cmake)
 

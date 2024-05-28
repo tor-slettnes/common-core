@@ -51,7 +51,7 @@ if(NOT PROJECT_INCLUDED)
   include(BuildPython)
   include(BuildSettings)
   include(BuildPackage)
-  include(BuildService)
+  include(BuildDebianService)
 
   #=============================================================================
   ### CPack configuration
