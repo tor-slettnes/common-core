@@ -44,10 +44,26 @@ BuildExecutable("${TARGET}"
   COMPONENT ${PKG_COMPONENT}
 )
 
+InstallServiceUnit("demo"
+  PROGRAM /usr/sbin/${TARGET}
+  DESCRIPTION "DEMO service"
+  COMPONENT "${PKG_COMPONENT}"
+)
+
 cpack_add_component(${PKG_COMPONENT}
   DEPENDS demo-common
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "DEMO example - C++ server"
   DESCRIPTION "DEMO application server written in C++"
 )
+
+# BuildPackageComponent(demo-server
+#   DEPENDS demo-common
+#   GROUP ${PKG_GROUP}
+#   DISPLAY_NAME "DEMO example - C++ server"
+#   DESCRIPTION "DEMO application server written in C++"
+#   EXTRA_CONTROL
+#   "${CMAKE_CURRENT_SOURCE_DIR}/systemd/postinst"
+#   "${CMAKE_CURRENT_SOURCE_DIR}/systemd/prerm"
+# )
 

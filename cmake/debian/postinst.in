@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+echo "Running $0 $@"
+
+case "$1" in
+     configure)
+          systemctl enable @SERVICE_UNIT@
+          systemctl restart @SERVICE_UNIT@
+          ;;
+esac
+

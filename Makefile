@@ -34,7 +34,9 @@ endif
 
 ### Check for a target-specific toolchain and use that if available
 
-all: test install
+develop: test install
+
+release: test package
 
 package: build
 	@echo
@@ -103,7 +105,6 @@ pristine:
 
 cmake/clean:
 	@[ -d "$(BUILD_DIR)" ] && $(MAKE) -C "$(BUILD_DIR)" clean || true
-
 
 $(BUILD_DIR):
 	@mkdir -p "$(BUILD_DIR)"

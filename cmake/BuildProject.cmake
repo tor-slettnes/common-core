@@ -12,11 +12,15 @@ if(NOT PROJECT_INCLUDED)
   ### Source additional files from this folder
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
-  ### Folder in which to find custom build scripts
-  get_filename_component(BUILD_SCRIPTS_DIR "../scripts" REALPATH
+  ### Identify the Common Core root folder even if used as a submodule
+  get_filename_component(COMMON_CORE_DIR ".." REALPATH
     BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
-  get_filename_component(COMMON_CORE_DIR ".." REALPATH
+  # file(REAL_PATH ".." COMMON_CORE_DIR
+  #   BASE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
+
+  ### Folder in which to find custom build scripts
+  get_filename_component(BUILD_SCRIPTS_DIR "../scripts" REALPATH
     BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
   # file(REAL_PATH "../scripts" BUILD_SCRIPTS_DIR
@@ -46,9 +50,8 @@ if(NOT PROJECT_INCLUDED)
   include(BuildExecutable)
   include(BuildPython)
   include(BuildSettings)
-
-  ### Enable package creation (for now just Debian packages)
-  #include(BuildPackage)
+  include(BuildPackage)
+  include(BuildService)
 
   #=============================================================================
   ### CPack configuration
@@ -61,9 +64,9 @@ if(NOT PROJECT_INCLUDED)
 
     include("${dir}/CPackConfig.cmake"
       OPTIONAL
-      RESULT_VARIABLE CPACKCONFIG_FOUND)
+      RESULT_VARIABLE CPackConfig_FOUND)
 
-    if(CPACKCONFIG_FOUND)
+    if(CPackConfig_FOUND)
       message(STATUS "Found ${dir}/CPackConfig.cmake")
     else()
       message(STATUS "Did not find ${dir}/CPackConfig.cmake")

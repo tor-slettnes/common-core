@@ -1,0 +1,10 @@
+#!/bin/sh -e
+
+echo "Running $0 $@"
+
+case "$1" in
+     remove)
+          systemctl disable @SERVICE_UNIT@
+          systemctl stop @SERVICE_UNIT@
+          ;;
+esac
