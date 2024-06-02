@@ -7,6 +7,8 @@
 
 #include "rest-client.h++"
 #include "logging/logging.h++"
+#include "json/reader.h++"
+#include "json/writer.h++"
 
 namespace core::http
 {
@@ -23,16 +25,43 @@ namespace core::http
 
     types::Value RESTClient::get_json(
         const std::string &path,
-        const types::TaggedValueList &query) const
+        const types::TaggedValueList &query,
+        bool fail_on_error,
+        ResponseCode *response_code) const
     {
         std::string location = join_path_query(path, query);
-        std::stringstream ss{this->get(location, this->content_type)};
-        logf_debug("REST client received %d bytes; parsing JSON with %s",
-                   ss.tellp(),
-                   json::fast_reader.name);
-        types::Value value = json::fast_reader.read_stream(ss);
-        log_debug("REST client parsed JSON response.");
-        return value;
+        return json::fast_reader.read_stream(
+            this->get(location, this->content_type, fail_on_error, response_code));
     }
 
+    types::Value RESTClient::del_json(
+        const std::string &path,
+        const types::TaggedValueList &query,
+        bool fail_on_error,
+        ResponseCode *response_code) const
+    {
+        std::string location = join_path_query(path, query);
+        return json::fast_reader.read_stream(
+            this->del(location, this->content_type, fail_on_error, response_code));
+    }
+
+    types::Value RESTClient::post_json(
+        const std::string &path,
+        const types::TaggedValueList &query,
+        bool fail_on_error,
+        ResponseCode *response_code) const
+    {
+        std::stringstream request;
+        std::stringstream response;
+        json::fast_writer.write_stream(request, query.as_kvmap());
+
+        return json::fast_reader.read_stream(
+            this->post(
+                path,                // location
+                this->content_type,  // content_type
+                request.str(),       // data
+                this->content_type,  // expected_content_type
+                fail_on_error,       // fail_on_error
+                response_code));     // response_code
+    }
 }  // namespace core::http

@@ -227,4 +227,4 @@ class SignalClient (Client):
 
 
     def watch(self, signal_filter : cc.signal.Filter = cc.signal.Filter()):
-        return self.stub.watch(signal_filter)
+        return self.stub.watch(signal_filter, wait_for_ready=True)

@@ -7,10 +7,12 @@
 
 cmake_minimum_required(VERSION 3.15)
 
-if (NOT PROJECT_NAME)
-  project(common-core
-    VERSION 0.0.2)
-endif()
+project(common-core
+  VERSION 0.0.2
+  DESCRIPTION "Cross-platform development framework for embedded microservice applications"
+  HOMEPAGE_URL https://github.com/tor-slettnes/common-core/
+  LANGUAGES CXX
+)
 
 ### Language components
 option(BUILD_CPP        "Build/Install C++ code" ON)
@@ -36,11 +38,6 @@ option(BUILD_DEMO       "Build DEMO application example" ON)
 
 ### Build tests
 option(BUILD_TESTING    "Build testing modules" ON)
-
-### Python components
-if(BUILD_PYTHON)
-  set(PYTHON_INSTALL_DIR "share/python")
-endif()
 
 ### gRPC requires ProtoBuf
 if(BUILD_GRPC OR BUILD_ZMQ)

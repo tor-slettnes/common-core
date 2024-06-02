@@ -7,7 +7,10 @@
 
 add_subdirectory(common)
 add_subdirectory(platforms)
-add_subdirectory(testing)
+
+if(BUILD_TESTING)
+  add_subdirectory(testing)
+endif()
 
 set(TARGET cc_core_inner)
 set(LIB_DEPS

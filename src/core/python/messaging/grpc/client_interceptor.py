@@ -66,7 +66,8 @@ class ClientInterceptor(ClientInterceptorBase,
             try:
                 return self._response.result()
             except grpc.RpcError as e:
-                raise DetailedError(e) from None
+                e_type, e_name, e_tb = sys.exc_info()
+                raise DetailedError(e).with_traceback(e_tb) from None
 
         def exception(self, timeout=None):
             return self._exception
@@ -79,9 +80,18 @@ class ClientInterceptor(ClientInterceptorBase,
 
 
     def _call_details(self, details):
-        details = grpc.ClientCallDetails()
-        details.wait_for_ready = self.wait_for_ready
-        return details
+        if details.wait_for_ready is None:
+            newdetails = grpc.ClientCallDetails()
+
+            newdetails.method = details.method
+            newdetails.timeout = details.timeout
+            newdetails.metadata = details.metadata
+            newdetails.credentials = details.credentials
+            newdetails.wait_for_ready = self.wait_for_ready
+
+            return newdetails
+        else:
+            return details
 
     def _intercept_response(self,
                             continuation,
@@ -100,7 +110,8 @@ class ClientInterceptor(ClientInterceptorBase,
             for response in continuation(call_details, request_or_iterator):
                 yield response
         except grpc.RpcError as e:
-            raise DetailedError(e)
+            e_type, e_name, e_tb = sys.exc_info()
+            raise DetailedError(e).with_traceback(e_tb) from None
 
 
 class AsyncClientInterceptor(ClientInterceptorBase,
@@ -138,7 +149,8 @@ class AsyncClientInterceptor(ClientInterceptorBase,
         try:
             return await continuation(call_details, request_or_iterator)
         except (grpc.RpcError, grpc.aio.AioRpcError) as e:
-            raise DetailedError(e)
+            e_type, e_name, e_tb = sys.exc_info()
+            raise DetailedError(e).with_traceback(e_tb) from None
 
     async def _intercept_stream(self,
                                 continuation,
@@ -150,5 +162,6 @@ class AsyncClientInterceptor(ClientInterceptorBase,
             async for response in continuation(call_details, request_or_iterator):
                 yield response
         except (grpc.RpcError, grpc.aio.AioRpcError) as e:
-            raise DetailedError(e)
+            e_type, e_name, e_tb = sys.exc_info()
+            raise DetailedError(e).with_traceback(e_tb) from None
 

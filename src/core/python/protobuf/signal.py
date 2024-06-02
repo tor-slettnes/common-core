@@ -262,12 +262,16 @@ class SignalStore:
 
 
     def disconnect_all(self,
-                       slot: Slot):
+                       slot: Optional[Slot] = None):
         '''
         Disconnect handlers that are connected to _all_ signals.
         '''
 
-        self.disconnect_signal(None, slot)
+        if slot:
+            self.disconnect_signal(None, slot)
+        else:
+            self.slots.pop(None, None)
+
 
     def connect_signal(self,
                        name: str,

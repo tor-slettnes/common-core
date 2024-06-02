@@ -8,7 +8,6 @@
 #pragma once
 #include "http-client.h++"
 #include "rest-base.h++"
-#include "json/reader.h++"
 
 namespace core::http
 {
@@ -22,9 +21,21 @@ namespace core::http
                    const std::string &content_type = "application/json");
 
         types::Value get_json(const std::string &path,
-                              const types::TaggedValueList &query = {}) const;
+                              const types::TaggedValueList &query = {},
+                              bool fail_on_error = true,
+                              ResponseCode *response_code = nullptr) const;
+
+        types::Value del_json(const std::string &path,
+                              const types::TaggedValueList &query = {},
+                              bool fail_on_error = true,
+                              ResponseCode *response_code = nullptr) const;
+
+        types::Value post_json(const std::string &path,
+                               const types::TaggedValueList &query,
+                               bool fail_on_error = true,
+                               ResponseCode *response_code = nullptr) const;
 
     private:
-        std::string content_type;
+        const std::string content_type;
     };
 }  // namespace core::http

@@ -8,6 +8,9 @@
 ### Create a library target to facilitate get_target_property()
 add_library(cc_core_python INTERFACE)
 
+configure_file(buildinfo.py.in buildinfo.py)
+configure_file(pyproject.toml.in pyproject.toml)
+
 ### Package component
 set(PKG_COMPONENT "core-python")
 
@@ -16,8 +19,6 @@ set(PROGRAMS
 )
 
 ### Files to be installed as is, without execute permissionss
-configure_file(buildinfo.py.in buildinfo.py)
-
 set(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/buildinfo.py
 )
@@ -30,7 +31,6 @@ set(DIRECTORIES
   messaging
 )
 
-include(BuildPython)
 BuildPython(
   PROGRAMS ${PROGRAMS}
   FILES ${FILES}

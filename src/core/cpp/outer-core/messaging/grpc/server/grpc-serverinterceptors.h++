@@ -19,6 +19,29 @@ namespace core::grpc
     using ::grpc::experimental::ServerRpcInfo;
 
     //==========================================================================
+    // Logging Interceptor
+
+    class LoggingInterceptor : public Interceptor
+    {
+    public:
+        void Intercept(InterceptorBatchMethods* methods) override;
+    };
+
+    //==========================================================================
+    // Logging Interceptor Factory
+
+    class LoggingInterceptorFactory
+        : public ServerInterceptorFactoryInterface,
+          public types::enable_create_unique<LoggingInterceptorFactory,
+                                             ServerInterceptorFactoryInterface>
+    {
+    protected:
+        Interceptor* CreateServerInterceptor(ServerRpcInfo* info) override;
+    };
+
+
+
+    //==========================================================================
     // Exception Handling Interceptor
 
     class EHInterceptor : public Interceptor

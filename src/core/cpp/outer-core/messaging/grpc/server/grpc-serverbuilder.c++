@@ -57,6 +57,7 @@ namespace core::grpc
     void ServerBuilder::add_interceptors()
     {
         std::vector<std::unique_ptr<ServerInterceptorFactoryInterface>> creators;
+        creators.push_back(LoggingInterceptorFactory::create_unique());
         creators.push_back(EHInterceptorFactory::create_unique());
         this->experimental().SetInterceptorCreators(std::move(creators));
     }

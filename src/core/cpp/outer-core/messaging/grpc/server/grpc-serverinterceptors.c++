@@ -23,6 +23,29 @@ namespace core::grpc
     //==========================================================================
     // Exception Handling Interceptor
 
+    void LoggingInterceptor::Intercept(InterceptorBatchMethods* methods)
+    {
+        if (methods->QueryInterceptionHookPoint(
+                InterceptionHookPoints::POST_RECV_INITIAL_METADATA))
+        {
+            log_debug("Received: ", methods->GetSendInitialMetadata());
+        }
+
+        methods->Proceed();
+    }
+
+    //==========================================================================
+    // Exception Handling Interceptor Factory
+
+    Interceptor* LoggingInterceptorFactory::CreateServerInterceptor(ServerRpcInfo* info)
+    {
+        return new LoggingInterceptor();
+    }
+
+
+    //==========================================================================
+    // Exception Handling Interceptor
+
     void EHInterceptor::Intercept(InterceptorBatchMethods* methods)
     {
         if (methods->QueryInterceptionHookPoint(

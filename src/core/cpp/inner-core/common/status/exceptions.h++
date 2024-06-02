@@ -349,11 +349,34 @@ namespace core::exception
                     const std::string &device,
                     Code code,
                     const std::string &id,
-                    status::Level level,
+                    status::Level level = status::Level::FAILED,
                     status::Flow flow = status::Flow::ABORTED,
                     const dt::TimePoint &timepoint = {},
                     const types::KeyValueMap &attributes = {});
     };
+
+    //==========================================================================
+    /// @class ServiceError
+    /// @brief Error received from a cascaded service
+
+    class ServiceError : public Exception<std::runtime_error>
+    {
+        using This = ServiceError;
+        using Super = Exception<std::runtime_error>;
+
+    public:
+        using Super::Super;
+
+        ServiceError(const std::string &text,
+                    const std::string &service,
+                    Code code,
+                    const std::string &id,
+                    status::Level level = status::Level::FAILED,
+                    status::Flow flow = status::Flow::ABORTED,
+                    const dt::TimePoint &timepoint = {},
+                    const types::KeyValueMap &attributes = {});
+    };
+
 
     //==========================================================================
     // Map various exceptions to appropriate Event objects

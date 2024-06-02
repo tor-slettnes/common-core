@@ -361,6 +361,30 @@ namespace core::exception
     }
 
     //==========================================================================
+    // ServiceError
+
+    ServiceError::ServiceError(const std::string &text,
+                               const std::string &service,
+                               Code code,
+                               const std::string &id,
+                               status::Level level,
+                               status::Flow flow,
+                               const dt::TimePoint &dt,
+                               const types::KeyValueMap &attributes)
+        : Super({text,                     // text
+                 status::Domain::SERVICE,  // domain
+                 service,                  // origin
+                 code,                     // code
+                 id,                       // id
+                 level,                    // level
+                 flow,                     // flow
+                 dt,                       // timepoint
+                 attributes},              // attributes
+                std::runtime_error(text))
+    {
+    }
+
+    //==========================================================================
     // Error mapping methods
 
     status::Event::Ref map_to_event(const std::exception &e) noexcept

@@ -17,6 +17,7 @@ set(SOURCES
   status.proto
   signal.proto
   request_reply.proto
+  version.proto
 )
 
 ### Generate language bindings

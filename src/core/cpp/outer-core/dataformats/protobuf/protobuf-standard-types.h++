@@ -17,6 +17,9 @@
 #include <google/protobuf/wrappers.pb.h>
 #include <google/protobuf/struct.pb.h>
 
+#include <google/protobuf/util/time_util.h>  // ProtoBuf Duration operators
+
+
 /// ProtoBuf message conversions.
 ///
 /// These are convenience methods to convert to ("encode...()") or from

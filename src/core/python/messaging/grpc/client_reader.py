@@ -38,8 +38,13 @@ class ThreadReader (object):
                     break
         finally:
             self.thread = None
-            stream.cancel()
+            self.cancel(stream)
 
+    def cancel(self, stream):
+        try:
+            stream.cancel()
+        except (TypeError, AttributeError):
+            pass
 
 
 class AsyncReader (object):
@@ -68,4 +73,10 @@ class AsyncReader (object):
             pass
         finally:
             self.task = None
+            await self.cancel(stream)
+
+    async def cancel(self, stream):
+        try:
             await stream.cancel()
+        except (TypeError, AttributeError):
+            pass
