@@ -7,6 +7,7 @@
 
 #include "grpc-serverinterceptors.h++"
 #include "grpc-status.h++"
+#include "protobuf-message.h++"
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
@@ -26,9 +27,13 @@ namespace core::grpc
     void LoggingInterceptor::Intercept(InterceptorBatchMethods* methods)
     {
         if (methods->QueryInterceptionHookPoint(
-                InterceptionHookPoints::POST_RECV_INITIAL_METADATA))
+                InterceptionHookPoints::POST_RECV_MESSAGE))
         {
-            log_debug("Received: ", methods->GetSendInitialMetadata());
+            if (void* data = methods->GetRecvMessage())
+            {
+                auto *message = static_cast<google::protobuf::Message*>(data);
+                log_debug("Received message: ", core::protobuf::to_string(*message, true));
+            }
         }
 
         methods->Proceed();
@@ -41,7 +46,6 @@ namespace core::grpc
     {
         return new LoggingInterceptor();
     }
-
 
     //==========================================================================
     // Exception Handling Interceptor

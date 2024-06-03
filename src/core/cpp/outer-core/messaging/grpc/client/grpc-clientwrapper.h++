@@ -164,10 +164,11 @@ namespace core::grpc
         inline Status call_sync(const std::string &methodname,
                                 const gRPCMethod<ResponseT, RequestT> &method,
                                 const RequestT &request,
-                                std::optional<bool> wait_for_ready = {}) const noexcept
+                                std::optional<bool> wait_for_ready = {},
+                                std::optional<dt::Duration> request_timeout = {}) const noexcept
         {
             ResponseT response;
-            return this->call_sync(methodname, method, request, &response, wait_for_ready);
+            return this->call_sync(methodname, method, request, &response, wait_for_ready, request_timeout);
         }
 
         /// @brief Direct invocation of a gRPC method, check for OK status code
@@ -206,6 +207,8 @@ namespace core::grpc
         ///     ProtoBuf request message
         /// @param[in] wait_for_ready
         ///     Wait for gRPC service to become ready instead of failing.
+        /// @param[in] request_timeout
+        ///     Cancel the call if not completed within the specified timeout
         /// @return
         ///     Protobuf response message
         /// @throw core::grpc::ServiceError
@@ -215,10 +218,11 @@ namespace core::grpc
         inline ResponseT call_check(const std::string &methodname,
                                     const gRPCMethod<ResponseT, RequestT> &method,
                                     const RequestT &request = {},
-                                    std::optional<bool> wait_for_ready = {}) const
+                                    std::optional<bool> wait_for_ready = {},
+                                    std::optional<dt::Duration> request_timeout = {}) const
         {
             ResponseT response;
-            this->call_sync(methodname, method, request, &response, wait_for_ready).throw_if_error();
+            this->call_sync(methodname, method, request, &response, wait_for_ready, request_timeout).throw_if_error();
             return response;
         }
 

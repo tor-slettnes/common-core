@@ -23,6 +23,7 @@ set(SOURCES
   protobuf-standard-types.c++
   protobuf-variant-types.c++
   protobuf-event-types.c++
+  protobuf-version.c++
   protobuf-message.c++
 )
 

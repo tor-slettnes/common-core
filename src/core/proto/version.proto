@@ -1,0 +1,36 @@
+// -*- Protocol-Buffers -*-
+//==============================================================================
+/// @file version.proto
+/// @brief Obtain information about the service
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+syntax = "proto3";
+
+package cc.version;
+
+message ComponentVersions
+{
+    map<string, Version> components = 1;
+}
+
+message Version
+{
+    oneof explicit_major
+    {
+        uint64 major = 1;
+    }
+
+    oneof explicit_minor
+    {
+        uint64 minor = 2;
+    }
+
+    oneof explicit_tweak
+    {
+        uint64 tweak = 3;
+    }
+
+    string printable_version = 8; // Present if different from "major.minor.tweak"
+
+}

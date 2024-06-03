@@ -1,6 +1,6 @@
 // -*- Protocol-Buffers -*-
 //==============================================================================
-/// @file variant_types.proto
+/// @file variant.proto
 /// @brief ProtoBuf message types for Common Core variant values
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

@@ -61,9 +61,11 @@ namespace demo
         virtual void stop_ticking() = 0;
 
         /// @brief Inform implementation that we want to receive updates
+        /// @note This is not used by every implementation, thus not pure virtual
         virtual void start_watching() {}
 
         /// @brief Inform implementation that we no longer need updates
+        /// @note This is not used by every implementation, thus not pure virtual
         virtual void stop_watching() {}
 
     public:

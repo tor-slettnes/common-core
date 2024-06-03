@@ -28,6 +28,7 @@ namespace core
         // constexpr auto ISO_FORMAT = "%F %T";
         constexpr auto DEFAULT_FORMAT = "%F %T";
         constexpr auto DEFAULT_TIME_FORMAT = "%T";
+        constexpr auto DEFAULT_DURATION_FORMAT = "%S";
         constexpr auto JS_FORMAT = "%y-%m-%dT%H:%M:%S";
 
         // typedef std::chrono::system_clock Clock;
@@ -261,7 +262,7 @@ namespace core
 
         /// Convert from string representation (`HH:MM:SS.sss`) to Duration
         Duration to_duration(const std::string &string,
-                             const std::string &format = DEFAULT_FORMAT);
+                             const std::string &format = DEFAULT_DURATION_FORMAT);
 
         /// Convert from JavaScript time string (`YYYY-MM-DDTHH:MM:SS.sssZ`) to TimePoint
         TimePoint js_to_timepoint(const std::string &js_string,

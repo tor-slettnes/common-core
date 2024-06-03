@@ -321,6 +321,14 @@ namespace core::str
         const std::set<char> &lstrip = WHITESPACE,
         const std::set<char> &rstrip = WHITESPACE);
 
+    /// @brief Find the largest common leading substring of several strings
+    /// @param[in] strings
+    ///     Strings that presumably begin with a common suffix
+    /// @return
+    ///     Largest common leading substring
+    [[nodiscard]] std::string common_prefix(
+        const std::vector<std::string> &strings);
+
     /// @brief concatenate streamable objects into a string
     /// @param[in] args
     ///     Output stream compatible arguments

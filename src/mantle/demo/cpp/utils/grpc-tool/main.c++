@@ -32,6 +32,5 @@ int main(int argc, char** argv)
     logf_debug("Deinitializing gRPC demo provider");
     demo::provider->deinitialize();
 
-    core::application::deinitialize();
     return success ? 0 : -1;
 }

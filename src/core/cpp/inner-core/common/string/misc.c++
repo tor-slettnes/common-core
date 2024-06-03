@@ -428,4 +428,26 @@ namespace core::str
 
         return std::string(start, end - start);
     }
+
+    std::string common_prefix(
+        const std::vector<std::string> &strings)
+    {
+        for (uint pos = 0;; pos++)
+        {
+            char common_char = '\0';
+            for (const std::string &s: strings)
+            {
+                if ((s.length() <= pos) || (common_char && (common_char != s.at(pos))))
+                {
+                    return s.substr(0, pos);
+                }
+                else
+                {
+                    common_char = s.at(pos);
+                }
+            }
+        }
+        return "";
+    }
+
 }  // namespace core::str
