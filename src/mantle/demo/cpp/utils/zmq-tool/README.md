@@ -15,7 +15,7 @@ How to use
 
 The basic syntax for invoking the tool is
 
-```bash
+```shell
 $ demo-dds-tool COMMAND [ARGS ..]
 ```
 
@@ -38,7 +38,7 @@ It's time to try using tool now.
 
  * In a dedicated terminal tab/window, monitor greetings from others via `DemoService` by invoking:
 
-   ```bash
+   ```shell
    $ demo-dds-tool monitor greetings
 
    ### Listening for updates. Press ENTER to end. ###
@@ -47,13 +47,13 @@ It's time to try using tool now.
 
  * Open a new terminal window and send a greeting via the Pub/Sub backend:
 
-   ```bash
+   ```shell
    $ demo-dds-tool say_hello "I am here!"
    ```
 
    In the first terminal you should now see a message similar to this:
 
-   ```bash
+   ```shell
    Greeting(text="I am here!", identity="demo-dds-tool", implementation="dds", birth=birth=2023-05-09@00:41:41.029, uptime=0.000 sec)
    ```
 

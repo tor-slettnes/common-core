@@ -9,7 +9,7 @@
 add_library(cc_core_python INTERFACE)
 
 configure_file(buildinfo.py.in buildinfo.py)
-configure_file(pyproject.toml.in pyproject.toml)
+#configure_file(pyproject.toml.in pyproject.toml)
 
 ### Package component
 set(PKG_COMPONENT "core-python")

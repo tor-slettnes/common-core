@@ -91,12 +91,6 @@ namespace core::http
                                      fail_on_error);
     }
 
-    ResponseCode HTTPClient::put(const std::string &location,
-                                 std::ostream *stream) const
-    {
-        return 0;
-    }
-
     std::stringstream HTTPClient::post(const std::string &location,
                                        const std::string &content_type,
                                        const std::string &data,
@@ -157,7 +151,7 @@ namespace core::http
         {
             if (code == CURLE_OK)
             {
-                logf_debug("HTTP client posting to URL: %s", url);
+                logf_debug("HTTP client posting to URL %s: %s", url, data);
             }
 
             ok = This::perform_request(url,

@@ -8,6 +8,7 @@
 #pragma once
 #include "http-utils.h++"
 #include "types/valuemap.h++"
+#include "logging/logging.h++"
 
 #include <curl/curl.h>
 
@@ -19,6 +20,8 @@ namespace core::http
     using URL = std::string;
     using ResponseCode = long;
     using Header = std::unordered_multimap<std::string, std::string>;
+
+    define_log_scope("http");
 
     class HTTPClient
     {
@@ -46,9 +49,6 @@ namespace core::http
                  std::ostream *header_stream,
                  std::ostream *content_stream,
                  bool fail_on_error = false) const;
-
-        ResponseCode put(const std::string &location,
-                         std::ostream *stream) const;
 
         std::stringstream post(const std::string &location,
                                const std::string &content_type,

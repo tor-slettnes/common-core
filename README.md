@@ -58,7 +58,7 @@ If you are reading this text directly on your system, you have already completed
 * Set up GIT on your computer:
   * Open a Terminal window, and install the `git` command-line tool:
 
-    ```bash
+    ```shell
     $ sudo apt install git
     ```
 
@@ -85,7 +85,7 @@ If you are reading this text directly on your system, you have already completed
 
 * You should now be able to pull all required source code to build product from [`common-core`](https://github.com/torslettnes/common-core/) repository:
 
-    ```bash
+    ```shell
     $ git clone https://github.com/torslettnes/common-core.git
     ```
 
@@ -94,7 +94,7 @@ If you are reading this text directly on your system, you have already completed
 
 If you have an older Linux system and/or you want to use a separate build environment for this framework, you can do so using the provided [create_schroot.sh](scripts/create_schroot.sh) script:
 
-  ```bash
+  ```shell
   $ script/create_schroot.sh
   ```
 
@@ -102,19 +102,19 @@ This basically creates a `chroot` environment with automatic mounting/unmounting
 
 Once this script completes, you can enter the `chroot` shell using
 
-  ```bash
+  ```shell
   $ schroot -c picarro-build
   ```
 
 Or, because the script also creates a `default` alias, you can simply type
 
-  ```bash
+  ```shell
   $ schroot
   ```
 
 Alternatively you can invoke the build directly:
 
-  ```bash
+  ```shell
   $ schroot make
   ```
 
@@ -128,7 +128,7 @@ Alternatively you can invoke the build directly:
 
 * Core components:
 
-  ```bash
+  ```shell
   $ sudo apt install build-essential cmake pkgconf uuid-dev
   ```
 
@@ -136,25 +136,25 @@ Alternatively you can invoke the build directly:
 
   - Fast JSON parser for improved REST API performance (CMake option `BUILD_RAPIDJSON`)
 
-    ```bash
+    ```shell
     $ sudo apt install rapidjson-dev
     ```
 
   - Google Testing framework (CMake option `BUILD_TESTING`):
 
-    ```bash
+    ```shell
     $ sudo apt install libgtest-dev
     ```
 
   - ZeroMQ communication, including ZeroMQ with Protocol Buffer payloads (CMake option `BUILD_ZMQ`)
 
-    ```bash
+    ```shell
     $ sudo apt install cppzmq-dev protobuf-compiler
     ```
 
   - gRPC communication (CMake option `BUILD_GRPC`)
 
-    ```bash
+    ```shell
     $ sudo apt install protobuf-compiler-grpc libgrpc++-dev
     ```
 
@@ -162,13 +162,13 @@ Alternatively you can invoke the build directly:
 
   - HTTP requests, including REST API (CMake option `BUILD_HTTP`)
 
-    ```bash
+    ```shell
     $ sudo apt install libcurl4-gnutls-dev
     ```
 
   - Python IPC (incl. pickling/unpickling) (CMake option `BUILD_PYTHON_IO`)
 
-    ```bash
+    ```shell
     $ sudo apt install python3-dev
     ```
 
@@ -176,13 +176,13 @@ Alternatively you can invoke the build directly:
 #### Python runtime requirements
 
 
-  ```bash
+  ```shell
   $ sudo apt install python3-protobuf python3-grpcio python3-zmq
   ```
 
 #### Dependencies used to generate developer/reference documentation:
 
-   ```bash
+   ```shell
    $ sudo apt install doxygen
    ```
 
@@ -191,7 +191,7 @@ Alternatively you can invoke the build directly:
 
 To start the build, simply invoke
 
-  ```bash
+  ```shell
   $ make
   ```
 
@@ -214,7 +214,7 @@ If all went well the applications will now be installed within the the installat
 
 Rather than "installing" the build outputs in your local `out/install`, you can create release packages that can then be installed onto any compatible Debian or Ubuntu target system.  To do so, invoke
 
-   ```bash
+   ```shell
    $ make package
    ```
 
@@ -247,7 +247,7 @@ so:
 
  * Ensure that you have write access to this folder:
 
-   ```bash
+   ```shell
    $ sudo mkdir -p /opt/common-core     # Create the folder if missing
    $ sudo chgrp staff /opt/common-core  # Set group ownership to `staff`
    $ sudo chmod g+ws /opt/common-core   # Set group write permission + sticky bits
@@ -258,7 +258,7 @@ so:
 
  * Speify the target folder as an argument to `make`:
 
-  ```bash
+  ```shell
   $ make INSTALL_DIR=/opt/common-core
   ```
 
