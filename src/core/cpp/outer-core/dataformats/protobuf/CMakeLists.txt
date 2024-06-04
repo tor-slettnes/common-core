@@ -8,15 +8,20 @@
 set(TARGET cc_core_io_protobuf)
 
 ### CMake module dependencies
-set(MOD_DEPS
-  Protobuf
+# set(MOD_DEPS
+#   Protobuf
+# )
+
+set(PKG_DEPS
+  protobuf
 )
+
 
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_common
   cc_core_proto
-  protobuf::libprotobuf
+  # protobuf::libprotobuf
 )
 
 set(SOURCES
@@ -31,6 +36,6 @@ set(SOURCES
 BuildLibrary("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
-  MOD_DEPS Protobuf
+  PKG_DEPS ${PKG_DEPS}
   SOURCES ${SOURCES}
 )

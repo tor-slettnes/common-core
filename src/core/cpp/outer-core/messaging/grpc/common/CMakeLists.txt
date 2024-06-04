@@ -8,11 +8,16 @@
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
 set(TARGET cc_core_messaging_grpc_common)
 
+### Package dependencies
+set(PKG_DEPS
+  grpc++
+)
+
+
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_common
   cc_core_io_protobuf
-  grpc++
 )
 
 set(SOURCES
@@ -24,6 +29,7 @@ set(SOURCES
 BuildLibrary("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
+  PKG_DEPS ${PKG_DEPS}
   SOURCES ${SOURCES}
 )
 

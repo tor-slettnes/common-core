@@ -9,14 +9,19 @@
 set(TARGET cc_core_io_python_base)
 
 ### We need Python 3.x for this
-find_package(Python3
-  REQUIRED COMPONENTS Development)
+# find_package(Python3
+#   REQUIRED COMPONENTS Development)
+
+set(PKG_DEPS
+  python3-embed
+)
+
 
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_common
   cc_core_common
-  Python3::Python
+  # Python3::Python
 )
 
 ### Source files in this folder
@@ -30,5 +35,6 @@ set(SOURCES
 BuildLibrary("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
+  PKG_DEPS ${PKG_DEPS}
   SOURCES ${SOURCES}
 )
