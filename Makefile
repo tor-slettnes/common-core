@@ -24,9 +24,11 @@ BUILD_DIR    ?= $(OUT_DIR)/build/$(BUILD_FLAVOR)
 INSTALL_DIR  ?= $(OUT_DIR)/install/$(TARGET)
 PACKAGE_DIR  ?= $(OUT_DIR)/packages
 
+export VERSION
 export CMAKE_INSTALL_PREFIX ?= ${INSTALL_DIR}
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
 export CPACK_PACKAGE_DIRECTORY ?= $(PACKAGE_DIR)
+
 
 ifeq ($(shell uname), Linux)
    export CMAKE_BUILD_PARALLEL_LEVEL ?= $(shell nproc)

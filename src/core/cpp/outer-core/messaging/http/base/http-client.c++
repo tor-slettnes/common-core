@@ -69,18 +69,12 @@ namespace core::http
     {
         std::string url = this->url(location);
         CURL *handle = this->handle();
-        CURLcode code = curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
-
-        if (code == CURLE_OK)
-        {
-            code = curl_easy_setopt(handle, CURLOPT_HTTPGET, true);
-        }
+        CURLcode code = curl_easy_setopt(handle, CURLOPT_HTTPGET, true);
 
         if (code == CURLE_OK)
         {
             logf_debug("HTTP client requesting URL: %s", url);
         }
-
         return This::perform_request(url,
                                      handle,
                                      code,
@@ -126,7 +120,7 @@ namespace core::http
         std::string url = this->url(location);
         struct curl_slist *slist = NULL;
         CURL *handle = this->handle();
-        CURLcode code = curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
+        CURLcode code = CURLE_OK;
         std::exception_ptr eptr = nullptr;
         bool ok = false;
 
@@ -147,13 +141,13 @@ namespace core::http
             code = curl_easy_setopt(handle, CURLOPT_POSTFIELDSIZE, data.size());
         }
 
+        if (code == CURLE_OK)
+        {
+            logf_debug("HTTP client posting to URL %s: %s", url, data);
+        }
+
         try
         {
-            if (code == CURLE_OK)
-            {
-                logf_debug("HTTP client posting to URL %s: %s", url, data);
-            }
-
             ok = This::perform_request(url,
                                        handle,
                                        code,
@@ -170,7 +164,7 @@ namespace core::http
 
         if (slist)
         {
-            curl_slist_free_all(slist); /* free the list again */
+            curl_slist_free_all(slist);
         }
 
         if (eptr)
@@ -202,26 +196,21 @@ namespace core::http
     {
         std::string url = this->url(location);
         CURL *handle = this->handle();
-        CURLcode code = curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
-
-        if (code == CURLE_OK)
-        {
-            code = curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "DELETE");
-        }
+        CURLcode code = curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "DELETE");
 
         if (code == CURLE_OK)
         {
             logf_debug("HTTP client deleting resource: %s", url);
         }
 
-        return This::perform_request(url,
-                                     handle,
-                                     code,
-                                     response_code,
-                                     content_type,
-                                     header_stream,
-                                     content_stream,
-                                     fail_on_error);
+        return This::perform_request(url,             // url
+                                     handle,          // handle
+                                     code,            // code
+                                     response_code,   // response_code
+                                     content_type,    // received_content_type
+                                     header_stream,   // received_header_stream
+                                     content_stream,  // received_content_stream
+                                     fail_on_error);  // fail_on_error
     }
 
     bool HTTPClient::perform_request(const std::string &url,
@@ -234,6 +223,11 @@ namespace core::http
                                      bool fail_on_error)
     {
         ResponseCode response = 0;
+
+        if (code == CURLE_OK)
+        {
+            code = curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
+        }
 
         if (code == CURLE_OK)
         {
@@ -327,7 +321,9 @@ namespace core::http
         std::thread::id thread_id = std::this_thread::get_id();
         try
         {
-            return this->handles_.at(thread_id);
+            CURL *handle = this->handles_.at(thread_id);
+            curl_easy_reset(handle);
+            return handle;
         }
         catch (const std::out_of_range &)
         {

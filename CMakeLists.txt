@@ -7,8 +7,26 @@
 
 cmake_minimum_required(VERSION 3.15)
 
+set(VERSION_FILE "${CMAKE_SOURCE_DIR}/.version")
+if(CMAKE_PROJECT_VERSION)
+  set(VERSION "${CMAKE_PROJECT_VERSION}")
+  message(STATUS "Using inherited version: ${VERSION}")
+elseif(NOT "$ENV{VERSION}" STREQUAL "")
+  set(VERSION "$ENV{VERSION}")
+  message(STATUS "Setting new version: ${VERSION}")
+  file(WRITE "${VERSION_FILE}" "${VERSION}\n")
+elseif(EXISTS "${VERSION_FILE}")
+  file(STRINGS "${VERSION_FILE}" VERSION)
+  message(STATUS "Using saved version: ${VERSION}")
+else()
+  set(VERSION 0.0.0)
+  message(WARNING
+    "No VERSION argument was supplied and none found in ${VERSION_FILE}. "
+    "Falling back to ${VERSION}")
+endif()
+
 project(common-core
-  VERSION 0.0.2
+  VERSION "${VERSION}"
   DESCRIPTION "Cross-platform development framework for embedded microservice applications"
   HOMEPAGE_URL https://github.com/tor-slettnes/common-core/
   LANGUAGES CXX
