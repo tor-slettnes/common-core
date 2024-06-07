@@ -32,9 +32,4 @@ namespace demo::zmq
         Super::initialize();
     }
 
-    void Subscriber::deinitialize()
-    {
-        Super::deinitialize();
-        this->remove(SignalHandler::create_shared());
-    }
 }  // namespace demo::zmq

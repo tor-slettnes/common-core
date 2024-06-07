@@ -106,8 +106,7 @@ namespace core::signal
     inline size_t DataSignal<DataType>::sendall(
         const DataType &value)
     {
-        for (
-            const auto &cb : this->slots_)
+        for (const auto &cb : this->slots_)
         {
             this->callback(cb.first, cb.second, value);
         }
@@ -306,8 +305,7 @@ namespace core::signal
     {
         std::unordered_map<KeyType, DataType> previous = this->get_cached();
         size_t count = 0;
-        for (
-            const auto &[key, value] : update)
+        for (const auto &[key, value] : update)
         {
             if (auto nh = previous.extract(key))
             {
@@ -323,8 +321,7 @@ namespace core::signal
                 count++;
             }
         }
-        for (
-            const auto &[key, value] : previous)
+        for (const auto &[key, value] : previous)
         {
             this->emit(MAP_REMOVAL, key, value);
             count++;
@@ -345,8 +342,7 @@ namespace core::signal
         const Handle &handle,
         const Slot &callback)
     {
-        for (
-            const auto &pair : this->cached_)
+        for (const auto &pair : this->cached_)
         {
             this->callback(handle, callback, MAP_ADDITION, pair.first, pair.second);
         }
@@ -358,8 +354,7 @@ namespace core::signal
         const KeyType &mapping_key,
         const DataType &value)
     {
-        for (
-            const auto &cb : this->slots_)
+        for (const auto &cb : this->slots_)
         {
             this->callback(cb.first, cb.second, mapping_action, mapping_key, value);
         }

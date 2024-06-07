@@ -24,10 +24,16 @@ namespace core::zmq
         virtual void initialize() {}
         virtual void deinitialize() {}
 
-        // Subclasses should implement the following method to process
-        // incoming message publications.
+        // Subclasses should implement one of the following method two to
+        // process incoming message publications.
 
-        virtual void handle(const types::ByteVector &data) = 0;
+        // Override `handle_raw()` to receive the raw ZMQ data,
+        // including the subscription filter.
+        virtual void handle_raw(const core::types::ByteVector &rawdata);
+
+        // Override `handle()` to receive only the "payload" part,
+        // following the subscription filter.
+        virtual void handle(const core::types::ByteVector &data) {}
 
     private:
         const std::string id_;

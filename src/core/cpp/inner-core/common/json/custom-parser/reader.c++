@@ -23,7 +23,7 @@ namespace core::json
     {
     }
 
-    types::Value CustomReader::decoded(const std::string &text) const
+    types::Value CustomReader::decoded(const std::string_view &text) const
     {
         return This::parse_input(std::make_shared<StringParser>(text));
     }

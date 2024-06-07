@@ -140,8 +140,8 @@ namespace core::json
     {
 #if __GNUC__  >= 10
         static const std::errc ok{};
-        const char *const start = &*this->token_begin();
-        const char *const end = &*this->token_end();
+        const char *const start = &*this->token().begin();
+        const char *const end = &*this->token().end();
         T number = 0;
 
         auto [ptr, ec] = std::from_chars(start, end, number, args...);
@@ -154,8 +154,8 @@ namespace core::json
             return {TI_INVALID, {}};
         }
 #else
-        const char *const start = &*this->token_begin();
-        std::size_t size = std::distance(this->token_begin(), this->token_end());
+        const char *const start = &*this->token().begin();
+        std::size_t size = std::distance(this->token().begin(), this->token().end());
         std::string_view input{start, size};
         try
         {
@@ -172,8 +172,8 @@ namespace core::json
     TokenPair TokenParser::parse_number()
     {
         int c;
-        bool got_sign = (*this->token_begin() == '-');
-        bool got_real = (*this->token_begin() == '.');
+        bool got_sign = (*this->token().begin() == '-');
+        bool got_real = (*this->token().begin() == '.');
         bool got_hex = false;
 
         while (this->token_index(c = this->getc()) == TI_NONE)
@@ -234,7 +234,7 @@ namespace core::json
 
         try
         {
-            return symbol_map.at(std::string(this->token_begin(), this->token_end()));
+            return symbol_map.at(std::string(this->token().begin(), this->token().end()));
         }
         catch (const std::out_of_range &e)
         {
@@ -253,8 +253,8 @@ namespace core::json
             }
             this->append_to_token(c);
         }
-        if (str::startswith(this->token(), "//") ||
-            str::startswith(this->token(), "#"))
+        if ((this->token().compare(0, 2, "//") == 0) ||
+            (this->token().compare(0, 1, "#") == 0))
         {
             return {TI_LINE_COMMENT, {}};
         }

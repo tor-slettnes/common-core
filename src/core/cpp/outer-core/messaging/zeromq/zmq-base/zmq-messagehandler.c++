@@ -24,4 +24,11 @@ namespace core::zmq
     {
         return this->filter_;
     }
+
+    void MessageHandler::handle_raw(const core::types::ByteVector &rawdata)
+    {
+        this->handle({rawdata.begin() + this->filter().size(),
+                      rawdata.end()});
+    }
+
 }  // namespace core::zmq

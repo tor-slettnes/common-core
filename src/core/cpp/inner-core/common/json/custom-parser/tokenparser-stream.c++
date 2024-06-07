@@ -26,19 +26,9 @@ namespace core::json
         return this->token_position_;
     }
 
-    std::string StreamParser::token() const
+    std::string_view StreamParser::token() const
     {
         return this->token_;
-    }
-
-    std::string::const_iterator StreamParser::token_begin() const
-    {
-        return this->token_.begin();
-    }
-
-    std::string::const_iterator StreamParser::token_end() const
-    {
-        return this->token_.end();
     }
 
     int StreamParser::getc()

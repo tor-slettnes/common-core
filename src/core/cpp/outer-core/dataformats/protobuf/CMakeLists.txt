@@ -31,6 +31,6 @@ set(SOURCES
 BuildLibrary("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
-  MOD_DEPS Protobuf
+  MOD_DEPS ${MOD_DEPS}
   SOURCES ${SOURCES}
 )

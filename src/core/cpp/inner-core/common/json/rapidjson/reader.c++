@@ -19,12 +19,12 @@ namespace core::json
     {
     }
 
-    types::Value RapidReader::decoded_with_comments(const std::string &text) const
-    {
-        return RapidReader::decoded(RapidReader::uncomment(text));
-    }
+    // types::Value RapidReader::decoded_with_comments(const std::string &text) const
+    // {
+    //     return RapidReader::decoded(RapidReader::uncomment(text));
+    // }
 
-    types::Value RapidReader::decoded(const std::string &text) const
+    types::Value RapidReader::decoded(const std::string_view &text) const
     {
         ::rapidjson::Document doc;
         doc.Parse(text.data(), text.size());
@@ -81,34 +81,34 @@ namespace core::json
         }
     }
 
-    std::string RapidReader::uncomment(const std::string &text)
-    {
-        static const std::regex rx(
-            "(#.*?(?:$|\\r|\\n))|"       // (1) Script-style comments, throw away
-            "(//.*?(?:$|\\r|\\n))|"      // (2) C++ style comments, throw away
-            "(/\\*.*?\\*/)|"             // (3) C-style comments, throw away
-            "('(?:\\\\.|[^\\'])*')|"     // (4) Single-quoted strings, retain
-            "(\"(?:\\\\.|[^\\\"])*\")",  // (5) Double-quoted strings, retain
-            std::regex::ECMAScript);
+    // std::string RapidReader::uncomment(const std::string &text)
+    // {
+    //     static const std::regex rx(
+    //         "(#.*?(?:$|\\r|\\n))|"       // (1) Script-style comments, throw away
+    //         "(//.*?(?:$|\\r|\\n))|"      // (2) C++ style comments, throw away
+    //         "(/\\*.*?\\*/)|"             // (3) C-style comments, throw away
+    //         "('(?:\\\\.|[^\\'])*')|"     // (4) Single-quoted strings, retain
+    //         "(\"(?:\\\\.|[^\\\"])*\")",  // (5) Double-quoted strings, retain
+    //         std::regex::ECMAScript);
 
-        auto rx_begin = std::sregex_iterator(text.begin(), text.end(), rx);
-        auto rx_end = std::sregex_iterator();
-        uint pos = 0, next = 0;
-        std::vector<std::string> parts;
+    //     auto rx_begin = std::sregex_iterator(text.begin(), text.end(), rx);
+    //     auto rx_end = std::sregex_iterator();
+    //     uint pos = 0, next = 0;
+    //     std::vector<std::string> parts;
 
-        parts.reserve(3 * std::distance(rx_begin, rx_end) + 1);
+    //     parts.reserve(3 * std::distance(rx_begin, rx_end) + 1);
 
-        for (std::regex_iterator it = rx_begin; it != rx_end; it++)
-        {
-            pos = (uint)it->position(0);
-            parts.push_back(text.substr(next, pos - next));  // Keep text leading up to match
-            parts.push_back(it->str(4));                     // Keep single-quoted strings
-            parts.push_back(it->str(5));                     // Keep double-quoted strings
-            next = pos + (uint)it->length(0);
-        }
-        parts.push_back(text.substr(next));
-        return str::join(parts, "");
-    }
+    //     for (std::regex_iterator it = rx_begin; it != rx_end; it++)
+    //     {
+    //         pos = (uint)it->position(0);
+    //         parts.push_back(text.substr(next, pos - next));  // Keep text leading up to match
+    //         parts.push_back(it->str(4));                     // Keep single-quoted strings
+    //         parts.push_back(it->str(5));                     // Keep double-quoted strings
+    //         next = pos + (uint)it->length(0);
+    //     }
+    //     parts.push_back(text.substr(next));
+    //     return str::join(parts, "");
+    // }
 
     types::Value RapidReader::decodeValue(const ::rapidjson::Value &jv)
     {

@@ -22,7 +22,7 @@ namespace core::json
         }
 
     public:
-        virtual types::Value decoded(const std::string &string) const = 0;
+        virtual types::Value decoded(const std::string_view &string) const = 0;
         virtual types::Value read_file(const fs::path &path) const = 0;
         virtual types::Value read_stream(std::istream &stream) const = 0;
         virtual types::Value read_stream(std::istream &&stream) const = 0;

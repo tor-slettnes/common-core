@@ -41,9 +41,7 @@ namespace core::json
 
         TokenPair next_token();
         virtual std::size_t token_position() const = 0;
-        virtual std::string token() const = 0;
-        virtual std::string::const_iterator token_begin() const = 0;
-        virtual std::string::const_iterator token_end() const = 0;
+        virtual std::string_view token() const = 0;
 
     protected:
         virtual int getc() = 0;

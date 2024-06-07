@@ -28,6 +28,7 @@ namespace core::zmq
         ~Subscriber();
 
     public:
+        void initialize() override;
         void deinitialize() override;
 
     public:
@@ -39,14 +40,12 @@ namespace core::zmq
         void start_receiving();
         void stop_receiving();
         void receive_loop();
+        void process_message(const types::ByteVector &bytes);
 
         void init_handler(const std::shared_ptr<MessageHandler> &handler);
         void deinit_handler(const std::shared_ptr<MessageHandler> &handler);
         void invoke_handler(const std::shared_ptr<MessageHandler> &handler,
-                            const types::ByteVector &payload,
-                            const Filter &filter);
-
-        void process_message(const types::ByteVector &bytes);
+                            const types::ByteVector &data);
 
     private:
         std::recursive_mutex mtx_;

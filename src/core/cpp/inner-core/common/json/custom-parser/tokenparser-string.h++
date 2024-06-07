@@ -13,21 +13,17 @@ namespace core::json
     class StringParser : public TokenParser
     {
     public:
-        StringParser(const std::string &string);
+        StringParser(const std::string_view &string);
 
         std::size_t token_position() const override;
-        std::string token() const override;
-        std::string::const_iterator token_begin() const override;
-        std::string::const_iterator token_end() const override;
+        std::string_view token() const override;
 
         int getc() override;
         void ungetc(int c) override;
         void init_token(char c) override;
 
     private:
-        const std::string &string_;
-        std::string::const_iterator it_;
-        const std::string::const_iterator end_;
-        std::string::const_iterator token_start_;
+        std::string_view string_;
+        std::size_t pos_, token_pos_;
     };
 }  // namespace core::json

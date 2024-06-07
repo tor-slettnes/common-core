@@ -54,11 +54,15 @@ namespace core::zmq
             const types::ByteVector &bytes,
             ::zmq::send_flags flags = ::zmq::send_flags::none);
 
+        std::optional<types::ByteVector> receive(
+            ::zmq::recv_flags flags = ::zmq::recv_flags::none);
+
         bool receive(
             types::ByteVector *bytes,
             ::zmq::recv_flags flags = ::zmq::recv_flags::none);
 
-        std::optional<types::ByteVector> receive(
+        std::size_t receive(
+            std::ostream &stream,
             ::zmq::recv_flags flags = ::zmq::recv_flags::none);
 
     private:

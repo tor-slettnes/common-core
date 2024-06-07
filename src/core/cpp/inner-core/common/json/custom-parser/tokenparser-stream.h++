@@ -16,9 +16,7 @@ namespace core::json
         StreamParser(std::istream &stream);
 
         std::size_t token_position() const override;
-        std::string token() const override;
-        std::string::const_iterator token_begin() const override;
-        std::string::const_iterator token_end() const override;
+        std::string_view token() const override;
 
         int getc() override;
         void ungetc(int c) override;

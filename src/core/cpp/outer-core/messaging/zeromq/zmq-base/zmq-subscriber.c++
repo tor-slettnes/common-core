@@ -26,9 +26,16 @@ namespace core::zmq
         this->stop_receiving();
     }
 
+    void Subscriber::initialize()
+    {
+        Super::initialize();
+        this->start_receiving();
+    }
+
     void Subscriber::deinitialize()
     {
         this->clear();
+        Super::deinitialize();
     }
 
     void Subscriber::add(std::shared_ptr<MessageHandler> handler)
@@ -36,7 +43,6 @@ namespace core::zmq
         std::lock_guard lock(this->mtx_);
         this->init_handler(handler);
         this->handlers_.insert(handler);
-        this->start_receiving();
     }
 
     void Subscriber::remove(std::shared_ptr<MessageHandler> handler)
@@ -97,6 +103,21 @@ namespace core::zmq
         }
     }
 
+    void Subscriber::process_message(const types::ByteVector &bytes)
+    {
+        std::lock_guard lock(this->mtx_);
+
+        for (const std::shared_ptr<MessageHandler> &handler : this->handlers_)
+        {
+            const Filter &filter = handler->filter();
+            if ((bytes.size() >= filter.size()) &&
+                (memcmp(bytes.data(), filter.data(), filter.size()) == 0))
+            {
+                this->invoke_handler(handler, bytes);
+            }
+        }
+    }
+
     void Subscriber::init_handler(const std::shared_ptr<MessageHandler> &handler)
     {
         handler->initialize();
@@ -111,6 +132,10 @@ namespace core::zmq
 
     void Subscriber::deinit_handler(const std::shared_ptr<MessageHandler> &handler)
     {
+        logf_debug("%s Removing subscription for %r with filter %r",
+                   *this,
+                   handler->id(),
+                   handler->filter());
         try
         {
             this->socket()->set(::zmq::sockopt::unsubscribe,
@@ -124,41 +149,23 @@ namespace core::zmq
     }
 
     void Subscriber::invoke_handler(const std::shared_ptr<MessageHandler> &handler,
-                                    const types::ByteVector &payload,
-                                    const Filter &filter)
+                                    const types::ByteVector &data)
     {
-        logf_trace("%s invoking handler %r, filter=%r, payload=%r",
+        logf_trace("%s invoking handler %r, data=%r",
                    *this,
                    handler->id(),
-                   filter,
-                   payload);
+                   data);
         try
         {
-            handler->handle(payload);
+            handler->handle_raw(data);
         }
         catch (...)
         {
-            logf_warning("%s handler %r failed to handle ZMQ message {payload=%s}: %s",
+            logf_warning("%s handler %r failed to handle ZMQ message {data=%s}: %s",
                          *this,
                          handler->id(),
-                         payload,
+                         data,
                          std::current_exception());
-        }
-    }
-
-    void Subscriber::process_message(const types::ByteVector &bytes)
-    {
-        std::lock_guard lock(this->mtx_);
-        for (const std::shared_ptr<MessageHandler> &handler : this->handlers_)
-        {
-            const Filter &filter = handler->filter();
-            if ((bytes.size() >= filter.size()) &&
-                (memcmp(bytes.data(), filter.data(), filter.size()) == 0))
-            {
-                types::ByteVector payload(bytes.data() + filter.size(),
-                                          bytes.data() + bytes.size());
-                this->invoke_handler(handler, payload, filter);
-            }
         }
     }
 

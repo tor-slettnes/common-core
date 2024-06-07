@@ -88,29 +88,6 @@ namespace core::zmq
         this->socket()->send(::zmq::const_buffer(bytes.data(), bytes.size()), flags);
     }
 
-    bool Endpoint::receive(types::ByteVector *bytes, ::zmq::recv_flags flags)
-    {
-        bool received = false;
-        ::zmq::message_t msg;
-        std::vector<std::string> counts;
-        do
-        {
-            if (this->receive_chunk(&msg, flags))
-            {
-                types::Byte *data = static_cast<types::Byte *>(msg.data());
-                bytes->insert(bytes->end(), data, data + msg.size());
-                counts.push_back(std::to_string(msg.size()));
-                received = true;
-            }
-        }
-        while (msg.more());
-        logf_trace("%s received %s = %d bytes",
-                   *this,
-                   str::join(counts, "+"),
-                   bytes->size());
-        return received;
-    }
-
     std::optional<types::ByteVector> Endpoint::receive(::zmq::recv_flags flags)
     {
         types::ByteVector bytes;
@@ -123,6 +100,55 @@ namespace core::zmq
             return {};
         }
     }
+
+    bool Endpoint::receive(types::ByteVector *bytes, ::zmq::recv_flags flags)
+    {
+        ::zmq::message_t msg;
+        std::vector<std::string> counts;
+        bool received = false;
+        do
+        {
+            if (this->receive_chunk(&msg, flags))
+            {
+                types::Byte *data = static_cast<types::Byte *>(msg.data());
+                bytes->insert(bytes->end(), data, data + msg.size());
+                counts.push_back(std::to_string(msg.size()));
+                received = true;
+            }
+        }
+        while (msg.more());
+
+        logf_trace("%s received %s = %d bytes",
+                   *this,
+                   str::join(counts, "+"),
+                   bytes->size());
+        return received;
+    }
+
+    std::size_t Endpoint::receive(std::ostream &stream, ::zmq::recv_flags flags)
+    {
+        ::zmq::message_t msg;
+        std::vector<std::string> counts;
+        std::size_t total;
+
+        do
+        {
+            if (this->receive_chunk(&msg, flags))
+            {
+                stream.write(static_cast<const char *>(msg.data()), msg.size());
+                counts.push_back(std::to_string(msg.size()));
+                total += msg.size();
+            }
+        }
+        while (msg.more());
+
+        logf_trace("%s received %s = %d bytes",
+                   *this,
+                   str::join(counts, "+"),
+                   total);
+        return total;
+    }
+
 
     bool Endpoint::receive_chunk(::zmq::message_t *msg, ::zmq::recv_flags flags)
     {
@@ -140,7 +166,6 @@ namespace core::zmq
             return false;
         }
     }
-
 
     std::string Endpoint::realaddress(const std::string &address,
                                       const std::string &schemeOption,

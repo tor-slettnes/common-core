@@ -10,39 +10,29 @@
 
 namespace core::json
 {
-    StringParser::StringParser(const std::string &string)
+    StringParser::StringParser(const std::string_view &string)
         : string_(string),
-          it_(string.cbegin()),
-          end_(string.cend()),
-          token_start_(string.cend())
+          pos_(0),
+          token_pos_(string.size())
     {
     }
 
     std::size_t StringParser::token_position() const
     {
-        return std::distance(this->string_.begin(), this->token_start_);
+        return this->token_pos_;
     }
 
-    std::string StringParser::token() const
+    std::string_view StringParser::token() const
     {
-        return {this->token_start_, this->it_};
-    }
-
-    std::string::const_iterator StringParser::token_begin() const
-    {
-        return this->token_start_;
-    }
-
-    std::string::const_iterator StringParser::token_end() const
-    {
-        return this->it_;
+        return {this->string_.data() + this->token_pos_,
+                this->pos_ - this->token_pos_};
     }
 
     int StringParser::getc()
     {
-        if (this->it_ != this->end_)
+        if (this->pos_ < this->string_.size())
         {
-            return *this->it_++;
+            return this->string_.at(this->pos_++);
         }
         else
         {
@@ -54,13 +44,13 @@ namespace core::json
     {
         if (c != std::char_traits<char>::eof())
         {
-            this->it_--;
+            this->pos_--;
         }
     }
 
     void StringParser::init_token(char c)
     {
-        this->token_start_ = this->it_ - 1;
+        this->token_pos_ = this->pos_ - 1;
     }
 
 }  // namespace core::json

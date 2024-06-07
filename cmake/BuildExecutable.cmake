@@ -64,7 +64,6 @@ function(BuildExecutable TARGET)
   endif()
 
   if(install)
-    message(STATUS "install(${install_args})")
     install(${install_args})
   endif()
 endfunction()
