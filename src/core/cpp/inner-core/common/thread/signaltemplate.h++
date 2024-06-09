@@ -10,6 +10,7 @@
 
 #include <string>
 #include <functional>
+#include <future>
 #include <optional>
 #include <ostream>
 #include <unordered_map>
@@ -22,6 +23,7 @@ namespace core::signal
     // Types
 
     using Handle = std::string;
+    using Futures = std::vector<std::future<void>>;
 
     // Synchronized to `cc.protobuf.signal.MappingAction` in `signal.proto`.
     // We do not use that here, since ProtoBuf support is optional, not part of
@@ -58,6 +60,8 @@ namespace core::signal
         Handle unique_handle() const;
         void safe_invoke(const std::string &receiver,
                          const std::function<void()> &f);
+
+        size_t collect_futures(Futures &futures);
 
     protected:
         std::recursive_mutex mtx_;
@@ -199,19 +203,18 @@ namespace core::signal
         virtual void emit_cached_to(const std::string &handle,
                                     const Slot &slot);
 
-        size_t sendall(const DataType &value);
+        Futures sendall(const DataType &value);
 
         void update_cache(const DataType &value);
 
         void callback(const std::string &receiver,
-                             const Slot &method,
-                             const DataType &value);
+                      const Slot &method,
+                      const DataType &value);
 
     private:
         std::optional<DataType> cached_;
         std::unordered_map<std::string, Slot> slots_;
     };
-
 
     //==========================================================================
     /// @class MappingSignal
@@ -233,7 +236,6 @@ namespace core::signal
     ///      my_mapping_signal.emit(MAP_UPDATE, "key", mydata);
     ///      my_mapping_signal.clear("key");
     /// @endcode
-
 
     template <class DataType, class KeyType = std::string>
     class MappingSignal : public BaseSignal
@@ -368,23 +370,22 @@ namespace core::signal
         void update_cache(const KeyType &key, const DataType &value);
 
         void emit_cached_to(const std::string &handle,
-                                   const Slot &callback);
+                            const Slot &callback);
 
-        size_t sendall(MappingAction change,
-                              const KeyType &key,
-                              const DataType &value = {});
+        Futures sendall(MappingAction change,
+                        const KeyType &key,
+                        const DataType &value = {});
 
         void callback(const std::string &receiver,
-                             const Slot &method,
-                             MappingAction change,
-                             const KeyType &key,
-                             const DataType &value);
+                      const Slot &method,
+                      MappingAction change,
+                      const KeyType &key,
+                      const DataType &value);
 
     private:
         std::unordered_map<KeyType, DataType> cached_;
         std::unordered_map<std::string, Slot> slots_;
     };
-
 
     //==========================================================================
     // I/O stream support

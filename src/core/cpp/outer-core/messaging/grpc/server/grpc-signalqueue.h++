@@ -13,6 +13,7 @@
 #include "grpc-serverstreamer.h++"
 #include "protobuf-signalforwarder.h++"
 #include "thread/blockingqueue.h++"
+#include "platform/init.h++"
 
 namespace core::grpc
 {
@@ -72,6 +73,15 @@ namespace core::grpc
               filter_polarity(filter.polarity()),
               filter_indices(filter.indices().begin(), filter.indices().end())
         {
+            core::platform::signal_shutdown.connect(
+                this->id,
+                std::bind(&SignalQueue::close, this));
+        }
+
+        virtual ~SignalQueue()
+        {
+            this->close();
+            core::platform::signal_shutdown.disconnect(this->id);
         }
 
     protected:

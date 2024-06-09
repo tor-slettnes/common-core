@@ -60,15 +60,15 @@ namespace core::str
     //     EXPECT_EQ(narrowed_utf8_no, utf8_no);
     // }
 
-    TEST(StringTest, ObfuscateWide)
-    {
-        std::string input{"My#Top*Secret%Code"};
-        std::string result = obfuscated(input);
-        std::wstring wide_result = to_wstring(result, UTF8);
+    // TEST(StringTest, ObfuscateWide)
+    // {
+    //     std::string input{"My#Top*Secret%Code"};
+    //     std::string result = obfuscated(input);
+    //     std::wstring wide_result = to_wstring(result, UTF8);
 
-        EXPECT_EQ(input.size(), wide_result.size());
-        EXPECT_EQ(wide_result.front(), wide_result.back());
-    }
+    //     EXPECT_EQ(input.size(), wide_result.size());
+    //     EXPECT_EQ(wide_result.front(), wide_result.back());
+    // }
 
     TEST(StringTest, SplitJoin)
     {

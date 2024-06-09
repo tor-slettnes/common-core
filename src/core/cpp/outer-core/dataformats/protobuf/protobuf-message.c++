@@ -8,6 +8,9 @@
 #include "protobuf-message.h++"
 
 #include <google/protobuf/text_format.h>
+#include <google/protobuf/util/message_differencer.h>
+
+using google::protobuf::util::MessageDifferencer;
 
 namespace core::protobuf
 {
@@ -47,6 +50,11 @@ namespace core::protobuf
 /// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
 namespace google::protobuf
 {
+    bool operator==(const Message &left, const Message &right)
+    {
+        return MessageDifferencer::Equivalent(left, right);
+    }
+
     std::ostream &operator<<(std::ostream &stream, const Message &msg)
     {
         stream << ::core::protobuf::to_string(msg);

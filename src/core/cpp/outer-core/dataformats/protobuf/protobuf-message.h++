@@ -74,6 +74,8 @@ namespace core::protobuf
 /// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
 namespace google::protobuf
 {
+    bool operator==(const Message &left, const Message &right);
+
     std::ostream &operator<<(std::ostream &stream, const Message &msg);
 
     template <class T>

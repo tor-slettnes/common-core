@@ -33,6 +33,7 @@ namespace demo::grpc
                 log_info("Requesting gRPC server shutdown with a 5s timeout");
                 server->Shutdown(core::dt::Clock::now() +
                                  std::chrono::seconds(5));
+                log_info("Requested gRPC server shutdown with a 5s timeout");
             });
 
         log_notice("Demo gRPC server is ready on ", core::str::join(builder.listener_ports()));

@@ -43,7 +43,7 @@ namespace core::types
     {
         if ((this->maxsize_ == 0) || (this->size() < this->maxsize_))
         {
-            return true;
+            return !this->closed_;
         }
         else
         {

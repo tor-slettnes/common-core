@@ -62,6 +62,16 @@ namespace core::signal
         }
     }
 
+    size_t BaseSignal::collect_futures(Futures &futures)
+    {
+        for (std::future<void> &future: futures)
+        {
+            future.get();
+        }
+        return futures.size();
+    }
+
+
     //==========================================================================
     /// \class VoidSignal
     /// \brief Signal without data
@@ -92,12 +102,16 @@ namespace core::signal
 
     size_t VoidSignal::emit()
     {
-        std::scoped_lock lck(this->mtx_);
+        Futures futures;
+
+        this->mtx_.lock();
+        futures.reserve(this->slots_.size());
         for (const auto &cb : this->slots_)
         {
-            this->callback(cb.first, cb.second);
+            futures.push_back(std::async(&VoidSignal::callback, this, cb.first, cb.second));
         }
-        return this->slots_.size();
+        this->mtx_.unlock();
+        return this->collect_futures(futures);
     }
 
     size_t VoidSignal::connection_count()

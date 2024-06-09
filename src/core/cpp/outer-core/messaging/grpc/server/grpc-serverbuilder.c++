@@ -32,9 +32,9 @@ namespace core::grpc
         }
     }
 
-    const std::vector<std::string> &ServerBuilder::listener_ports() const
+    std::vector<std::string> ServerBuilder::listener_ports() const
     {
-        return this->listeners_;
+        return {this->listeners_.begin(), this->listeners_.end()};
     }
 
     void ServerBuilder::add_handler_settings(std::shared_ptr<RequestHandlerBase> handler,
@@ -50,8 +50,11 @@ namespace core::grpc
 
     void ServerBuilder::add_listener(const std::string &address)
     {
-        this->AddListeningPort(address, this->credentials_);
-        this->listeners_.push_back(address);
+        if (!this->listeners_.count(address))
+        {
+            this->AddListeningPort(address, this->credentials_);
+            this->listeners_.insert(address);
+        }
     }
 
     void ServerBuilder::add_interceptors()

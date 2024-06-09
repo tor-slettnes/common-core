@@ -10,6 +10,7 @@
 #include "thread/signaltemplate.h++"
 #include "thread/blockingqueue.h++"
 #include "status/exceptions.h++"
+#include "platform/init.h++"
 
 #include <grpcpp/impl/codegen/sync_stream.h>
 #include <grpcpp/impl/codegen/server_context.h>
@@ -27,7 +28,18 @@ namespace core::grpc
         using Super = types::BlockingQueue<MessageT>;
 
     public:
-        using Super::Super;
+        template <class... Args>
+        ServerStreamer(Args &&...args)
+            : Super(args...),
+              shutdown_handle(core::platform::signal_shutdown.connect(
+                                  std::bind(&This::close, this)))
+        {
+        }
+
+        virtual ~ServerStreamer()
+        {
+            core::platform::signal_shutdown.disconnect(this->shutdown_handle);
+        }
 
         virtual void stream(::grpc::ServerContext *cxt,
                             ::grpc::ServerWriter<MessageT> *writer)
@@ -41,6 +53,9 @@ namespace core::grpc
                 writer->Write(std::move(*msg));
             }
         }
+
+    private:
+        const std::string shutdown_handle;
     };
 
     //==========================================================================

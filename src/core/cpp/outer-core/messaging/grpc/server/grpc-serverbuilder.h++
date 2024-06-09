@@ -21,7 +21,7 @@ namespace core::grpc
             const std::shared_ptr<::grpc::ServerCredentials> &credentials =
                 ::grpc::InsecureServerCredentials());
 
-        const std::vector<std::string> &listener_ports() const;
+        std::vector<std::string> listener_ports() const;
         std::unique_ptr<::grpc::Server> BuildAndStart() override;
 
         template <class HandlerT>
@@ -43,7 +43,7 @@ namespace core::grpc
         std::shared_ptr<::grpc::ServerCredentials> credentials_;
         uint max_request_size_;
         uint max_reply_size_;
-        std::vector<std::string> listeners_;
+        std::set<std::string> listeners_;
     };
 
 }  // namespace core::grpc

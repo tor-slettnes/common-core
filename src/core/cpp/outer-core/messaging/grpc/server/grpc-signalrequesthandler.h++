@@ -38,6 +38,7 @@ namespace core::grpc
                                              const SignalFilterT *req,
                                              ::grpc::ServerWriter<SignalT> *writer)
         {
+            std::string who = this->servicename(true);
             try
             {
                 logf_debug("Opening %s stream to client %s",
@@ -52,12 +53,12 @@ namespace core::grpc
                     {
                         break;
                     }
-                    logf_trace("Feeding signal to client %s: %s", cxt->peer(), *msg);
                     writer->Write(*msg);
                 }
 
                 queue.deinitialize();
-                logf_debug("Closed %s stream to client %s",
+
+                logf_debug("Closing %s stream to client %s",
                            SignalT().GetTypeName(),
                            cxt->peer());
                 return ::grpc::Status::OK;
