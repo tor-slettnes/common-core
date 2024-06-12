@@ -352,6 +352,12 @@ namespace core::signal
         bool is_cached(const std::string &key) noexcept;
 
         /// @brief
+        ///    Obtain number cache size
+        /// @return
+        ///    Number of key/value pairs in cahe
+        size_t cache_size();
+
+        /// @brief
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots

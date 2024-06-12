@@ -30,6 +30,7 @@ namespace core::grpc
         {
             this->RegisterService(handler.get());
             this->add_handler_settings(handler, add_listener);
+            this->handlers_.push_back(handler); // Keep from being destroyed
         }
 
     private:
@@ -40,6 +41,7 @@ namespace core::grpc
         void adjust_max(uint candidate, uint *target);
 
     private:
+        std::vector<std::shared_ptr<RequestHandlerBase>> handlers_;
         std::shared_ptr<::grpc::ServerCredentials> credentials_;
         uint max_request_size_;
         uint max_reply_size_;

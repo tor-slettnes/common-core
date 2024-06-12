@@ -7,6 +7,7 @@
 
 #pragma once
 #include "protobuf-message.h++"
+#include "thread/signaltemplate.h++"
 #include "signal.pb.h"          // Generated from `signal.proto`
 
 #include <unordered_map>
@@ -22,6 +23,11 @@ namespace core::protobuf
 
     protected:
         using Callback = std::function<void(const SignalT &signal)>;
+
+        using MappingCallback = std::function<void(core::signal::MappingAction action,
+                                                   const std::string& key,
+                                                   const SignalT &signal)>;
+
         using SignalMap = std::unordered_map<typename SignalT::SignalCase, Callback>;
 
     protected:
@@ -68,6 +74,22 @@ namespace core::protobuf
             std::lock_guard lck(this->slots_mtx);
             this->slots.emplace(signal_case, callback);
         }
+
+        void add_mapping_handler(
+            typename SignalT::SignalCase signal_case,
+            const MappingCallback &callback)
+        {
+            std::lock_guard lck(this->slots_mtx);
+            this->slots.emplace(
+                signal_case,
+                [=](const SignalT &signal) {
+                    callback(
+                        static_cast<core::signal::MappingAction>(signal.mapping_action()),
+                        signal.mapping_key(),
+                        signal);
+                });
+        }
+
 
         /// @brief Add a callback handler for all Signal messages
         /// @param[in] callback

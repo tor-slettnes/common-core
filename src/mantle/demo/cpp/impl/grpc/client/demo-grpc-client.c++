@@ -23,12 +23,14 @@ namespace demo::grpc
         // These will re-emit the decoded payload as signals within this client
         // process.
 
-        this->add_handler(
+        this->add_mapping_handler(
             cc::demo::Signal::kSignalGreeting,
-            [&](const cc::demo::Signal &signal) {
+            [&](core::signal::MappingAction action,
+                const std::string &key,
+                const cc::demo::Signal &signal) {
                 signal_greeting.emit(
-                    static_cast<core::signal::MappingAction>(signal.mapping_action()),
-                    signal.mapping_key(),
+                    action,
+                    key,
                     ::core::protobuf::decoded<Greeting>(signal.signal_greeting()));
             });
 

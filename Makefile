@@ -40,7 +40,9 @@ develop: test install
 
 release: test package
 
-package: build
+package: deb
+
+deb: build
 	@echo
 	@echo "#############################################################"
 	@echo "Creating packages in ${PACKAGE_DIR}"

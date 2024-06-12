@@ -32,16 +32,21 @@ function(InstallDebianService UNIT)
   endif()
 
   string(REGEX MATCH ".service$" SERVICE_SUFFIX "${UNIT}")
-  if(SERVICE_SUFFIX)
-    set(SERVICE_UNIT "${UNIT}")
-  else()
-    set(SERVICE_UNIT "${UNIT}.service")
+  if(NOT SERVICE_SUFFIX)
+    set(UNIT "${UNIT}.service")
   endif()
 
   set(SERVICE_PROGRAM "${arg_PROGRAM}")
   set(SERVICE_ARGS "${arg_ARGS}")
   set(SERVICE_DESCRIPTION "${arg_DESCRIPTION}")
-  set(_service_file "${CMAKE_CURRENT_BINARY_DIR}/${SERVICE_UNIT}")
+
+  if(CPACK_PACKAGING_INSTALL_PREFIX)
+    set(SERVICE_UNIT "${CPACK_PACKAGING_INSTALL_PREFIX}/${UNIT}")
+  else()
+    set(SERVICE_UNIT "${UNIT}")
+  endif()
+
+  set(_service_file "${CMAKE_CURRENT_BINARY_DIR}/${UNIT}")
 
   configure_file(
     "${_service_template_dir}/service.in"

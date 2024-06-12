@@ -44,11 +44,13 @@ BuildExecutable("${TARGET}"
   COMPONENT ${PKG_COMPONENT}
 )
 
-InstallDebianService("demo"
-  PROGRAM /usr/sbin/${TARGET}
-  DESCRIPTION "DEMO service"
-  COMPONENT "${PKG_COMPONENT}"
-)
+if(ENABLE_SERVICES)
+  InstallDebianService("demo"
+    PROGRAM /usr/sbin/${TARGET}
+    DESCRIPTION "DEMO service"
+    COMPONENT "${PKG_COMPONENT}"
+  )
+endif()
 
 cpack_add_component(${PKG_COMPONENT}
   DEPENDS demo-common
