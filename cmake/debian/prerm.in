@@ -7,8 +7,8 @@ case "$1" in
          if type systemctl >/dev/null 2>&1
          then
              echo "Removing system service: @SERVICE_UNIT@"
-             systemctl disable @SERVICE_UNIT@
-             systemctl stop @SERVICE_UNIT@
+             systemctl disable @SERVICE_UNIT@ || true
+             systemctl stop @SERVICE_UNIT@ || true
          else
              echo "SystemD is not available; skipping service integration"
          fi
