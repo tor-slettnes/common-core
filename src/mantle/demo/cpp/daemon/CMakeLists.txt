@@ -46,7 +46,7 @@ BuildExecutable("${TARGET}"
 
 if(ENABLE_SERVICES)
   InstallDebianService("demo"
-    PROGRAM /usr/sbin/${TARGET}
+    PROGRAM "sbin/${TARGET}"
     DESCRIPTION "DEMO service"
     COMPONENT "${PKG_COMPONENT}"
   )

@@ -57,13 +57,16 @@ option(BUILD_DEMO       "Build DEMO application example" ON)
 ### Build tests
 option(BUILD_TESTING    "Build testing modules" ON)
 
+### Use static linking
+option(USE_STATIC_LIBS "Use static libraries for linking" OFF)
+
+### Enable SystemD service integration
+option(ENABLE_SERVICES "Enable SystemD service units" ON)
+
 ### gRPC requires ProtoBuf
 if(BUILD_GRPC OR BUILD_ZMQ)
   set(BUILD_PROTOBUF ON)
 endif()
-
-option(USE_STATIC_LIBS "Use static libraries for linking" OFF)
-option(ENABLE_SERVICES "Enable SystemD service units" OFF)
 
 ### Invoke common project settings
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/BuildProject.cmake)

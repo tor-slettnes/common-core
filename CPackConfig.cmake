@@ -6,7 +6,7 @@
 #===============================================================================
 
 #set(CPACK_PACKAGE_NAME "cc")
-#set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/cc")
+set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/cc")
 set(CPACK_PACKAGE_VENDOR "Common Core Authors")
 set(CPACK_DEB_COMPONENT_INSTALL FALSE)
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tor Slettnes <tor@slett.net>")

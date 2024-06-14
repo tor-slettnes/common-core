@@ -29,24 +29,25 @@ function(InstallDebianService UNIT)
 
   if(NOT arg_PROGRAM)
     message(SEND_ERROR "InstallDebianService() missing required argument PROGRAM")
+  elseif(IS_ABSOLUTE "${arg_PROGRAM}")
+    set(_program "${arg_PROGRAM}")
+  else()
+    set(_program "${INSTALL_ROOT}/${arg_PROGRAM}")
   endif()
+
 
   string(REGEX MATCH ".service$" SERVICE_SUFFIX "${UNIT}")
-  if(NOT SERVICE_SUFFIX)
-    set(UNIT "${UNIT}.service")
+  if(SERVICE_SUFFIX)
+    set(SERVICE_UNIT "${UNIT}")
+  else()
+    set(SERVICE_UNIT "${UNIT}.service")
   endif()
 
-  set(SERVICE_PROGRAM "${arg_PROGRAM}")
+  set(SERVICE_PROGRAM "${_program}")
   set(SERVICE_ARGS "${arg_ARGS}")
   set(SERVICE_DESCRIPTION "${arg_DESCRIPTION}")
-
-  if(CPACK_PACKAGING_INSTALL_PREFIX)
-    set(SERVICE_UNIT "${CPACK_PACKAGING_INSTALL_PREFIX}/${UNIT}")
-  else()
-    set(SERVICE_UNIT "${UNIT}")
-  endif()
-
-  set(_service_file "${CMAKE_CURRENT_BINARY_DIR}/${UNIT}")
+  set(SERVICE_UNIT_PATH "${INSTALL_ROOT}/${_dest}/${SERVICE_UNIT}")
+  set(_service_file "${CMAKE_CURRENT_BINARY_DIR}/${SERVICE_UNIT}")
 
   configure_file(
     "${_service_template_dir}/service.in"

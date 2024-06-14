@@ -26,7 +26,7 @@ import_proto('signal', globals())
 #===============================================================================
 # Annotation types
 
-Slot = Callable[[MessageType], None]
+Slot = Callable[[Message], None]
 MappingAction = enum.Enum('MappingAction', cc.signal.MappingAction.items())
 
 #===============================================================================
@@ -218,7 +218,7 @@ class SignalStore:
 
     def get_cached(self,
                    signalname: str,
-                   timeout: float=3) -> Mapping[str, MessageType]:
+                   timeout: float=3) -> Mapping[str, Message]:
         '''Get a specific signal map from the local cache.
 
         @param[in] signalname
@@ -434,7 +434,7 @@ class SignalStore:
 
     def emit_event(self,
                    signal_name : str,
-                   value       : MessageType):
+                   value       : Message):
 
         signal = self.signal_type(**{signal_name:value})
         self.emit(signal)
@@ -443,7 +443,7 @@ class SignalStore:
                      signal_name : str,
                      action      : MappingAction,
                      key         : str,
-                     value       : MessageType):
+                     value       : Message):
 
         if key and not enumToValue(action):
             if value.ByteSize() == 0:

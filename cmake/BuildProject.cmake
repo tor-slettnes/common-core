@@ -45,14 +45,6 @@ if(NOT PROJECT_INCLUDED)
   ### Enable testing
   include(CTest)
 
-  include(BuildProto)
-  include(BuildLibrary)
-  include(BuildExecutable)
-  include(BuildPython)
-  include(BuildSettings)
-  include(BuildPackage)
-  include(BuildDebianService)
-
   #=============================================================================
   ### CPack configuration
 
@@ -74,6 +66,29 @@ if(NOT PROJECT_INCLUDED)
   endforeach()
   include(CPack)
 
+  ### Determine install root
+  if(CPACK_PACKAGING_INSTALL_PREFIX)
+    set(INSTALL_ROOT "${CPACK_PACKAGING_INSTALL_PREFIX}")
+
+  elseif(ENV{DESTDIR})
+    set(INSTALL_ROOT "$ENV{DESTDIR}")
+
+  else()
+    set(INSTALL_ROOT CMAKE_INSTALL_PREFIX)
+  endif()
+
+
   ### Include rules to build doxygen
   include(Doxygen)
+
+  ### Load targeted build functions
+  include(BuildProto)
+  include(BuildLibrary)
+  include(BuildExecutable)
+  include(BuildPython)
+  include(BuildSettings)
+  include(BuildPackage)
+  include(BuildDebianService)
+
+
 endif()

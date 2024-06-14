@@ -3,8 +3,14 @@
 echo "Running $0 $@"
 
 case "$1" in
-     remove)
-          systemctl disable @SERVICE_UNIT@
-          systemctl stop @SERVICE_UNIT@
-          ;;
+    remove)
+         if type systemctl >/dev/null 2>&1
+         then
+             echo "Removing system service: @SERVICE_UNIT@"
+             systemctl disable @SERVICE_UNIT@
+             systemctl stop @SERVICE_UNIT@
+         else
+             echo "SystemD is not available; skipping service integration"
+         fi
+         ;;
 esac
