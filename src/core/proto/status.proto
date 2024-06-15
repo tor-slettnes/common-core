@@ -55,7 +55,7 @@ enum Domain
     DOMAIN_APPLICATION = 1; // Error from application, name indicated in "origin"
     DOMAIN_SYSTEM      = 2; // OS errors, origin indicates code space (e.g. errno)
     DOMAIN_PROCESS     = 3; // Process exit; see `kill -l`  to interpret `code`/`symbol`
-    DOMAIN_PERIPHERAL  = 4; // Error code from a subsystem, name indicated in "origin"
+    DOMAIN_DEVICE      = 4; // Error code from a subsystem, name indicated in "origin"
     DOMAIN_SERVICE     = 5; // Error code from a (network) service (e.g. HTTP, SMTP, ...)
 }
 

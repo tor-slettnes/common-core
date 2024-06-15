@@ -101,11 +101,12 @@ namespace core::grpc
         ///      gRPC status code
 
         template <class ResponseT, class RequestT = ::google::protobuf::Empty>
-        inline Status call_sync(const gRPCMethod<ResponseT, RequestT> &method,
-                                const RequestT &request,
-                                ResponseT *response,
-                                std::optional<bool> wait_for_ready = {},
-                                std::optional<dt::Duration> request_timeout = {}) const noexcept
+        inline Status call_sync(
+            const gRPCMethod<ResponseT, RequestT> &method,
+            const RequestT &request,
+            ResponseT *response,
+            std::optional<bool> wait_for_ready = {},
+            std::optional<dt::Duration> request_timeout = {}) const noexcept
         {
             ::grpc::ClientContext cxt;
             cxt.set_wait_for_ready(wait_for_ready.value_or(this->wait_for_ready));
@@ -140,12 +141,13 @@ namespace core::grpc
         ///      gRPC status code
 
         template <class ResponseT, class RequestT = ::google::protobuf::Empty>
-        inline Status call_sync(const std::string &methodname,
-                                const gRPCMethod<ResponseT, RequestT> &method,
-                                const RequestT &request,
-                                ResponseT *response,
-                                std::optional<bool> wait_for_ready = {},
-                                std::optional<dt::Duration> request_timeout = {}) const noexcept
+        inline Status call_sync(
+            const std::string &methodname,
+            const gRPCMethod<ResponseT, RequestT> &method,
+            const RequestT &request,
+            ResponseT *response,
+            std::optional<bool> wait_for_ready = {},
+            std::optional<dt::Duration> request_timeout = {}) const noexcept
         {
             logf_trace("Invoking gRPC method %s(%s)", methodname, request);
             Status status = this->call_sync(method, request, response, wait_for_ready, request_timeout);
@@ -161,11 +163,12 @@ namespace core::grpc
         }
 
         template <class ResponseT, class RequestT = ::google::protobuf::Empty>
-        inline Status call_sync(const std::string &methodname,
-                                const gRPCMethod<ResponseT, RequestT> &method,
-                                const RequestT &request,
-                                std::optional<bool> wait_for_ready = {},
-                                std::optional<dt::Duration> request_timeout = {}) const noexcept
+        inline Status call_sync(
+            const std::string &methodname,
+            const gRPCMethod<ResponseT, RequestT> &method,
+            const RequestT &request,
+            std::optional<bool> wait_for_ready = {},
+            std::optional<dt::Duration> request_timeout = {}) const noexcept
         {
             ResponseT response;
             return this->call_sync(methodname, method, request, &response, wait_for_ready, request_timeout);
@@ -187,10 +190,11 @@ namespace core::grpc
         ///     Non-OK gRPC status code
 
         template <class ResponseT, class RequestT = ::google::protobuf::Empty>
-        inline ResponseT call_check(const gRPCMethod<ResponseT, RequestT> &method,
-                                    const RequestT &request = {},
-                                    std::optional<bool> wait_for_ready = {},
-                                    std::optional<dt::Duration> request_timeout = {}) const
+        inline ResponseT call_check(
+            const gRPCMethod<ResponseT, RequestT> &method,
+            const RequestT &request = {},
+            std::optional<bool> wait_for_ready = {},
+            std::optional<dt::Duration> request_timeout = {}) const
         {
             ResponseT response;
             this->call_sync(method, request, &response, wait_for_ready, request_timeout).throw_if_error();
@@ -215,11 +219,12 @@ namespace core::grpc
         ///     Non-OK gRPC status code
 
         template <class ResponseT, class RequestT = ::google::protobuf::Empty>
-        inline ResponseT call_check(const std::string &methodname,
-                                    const gRPCMethod<ResponseT, RequestT> &method,
-                                    const RequestT &request = {},
-                                    std::optional<bool> wait_for_ready = {},
-                                    std::optional<dt::Duration> request_timeout = {}) const
+        inline ResponseT call_check(
+            const std::string &methodname,
+            const gRPCMethod<ResponseT, RequestT> &method,
+            const RequestT &request = {},
+            std::optional<bool> wait_for_ready = {},
+            std::optional<dt::Duration> request_timeout = {}) const
         {
             ResponseT response;
             this->call_sync(methodname, method, request, &response, wait_for_ready, request_timeout).throw_if_error();

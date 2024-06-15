@@ -238,7 +238,7 @@ namespace core::status
         std::exception_ptr eptr = {};
         switch (this->domain())
         {
-        case Domain::PERIPHERAL:
+        case Domain::DEVICE:
             return this->as_device_error();
 
         case Domain::SYSTEM:

@@ -25,7 +25,7 @@ module CC
             APPLICATION, // Event from application, name indicated in "origin"
             SYSTEM,      // OS errors, origin indicates code space
             PROCESS,     // Process signals (see "kill -l")
-            PERIPHERAL,  // Event from a device, name indicated in "origin"
+            DEVICE,  // Event from a device, name indicated in "origin"
             TELEMETRY    // Parseable data, identified by contract ID or tag.
         };
 

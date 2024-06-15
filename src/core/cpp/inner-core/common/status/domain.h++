@@ -25,7 +25,7 @@ namespace core::status
         APPLICATION,  // Event from application, name indicated in "origin"
         SYSTEM,       // OS events, origin indicates code space
         PROCESS,      // Process exit; see `kill -l` to interpret `code`/`symbol`
-        PERIPHERAL,   // Event code from a device, name indicated in "origin"
+        DEVICE,       // Event code from a device, name indicated in "origin"
         SERVICE       // Status code from a (network) service (HTTP, SMTP, ...)
     };
 

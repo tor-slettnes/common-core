@@ -15,7 +15,7 @@ namespace core::status
         {Domain::APPLICATION, "APPLICATION"},
         {Domain::SYSTEM, "SYSTEM"},
         {Domain::PROCESS, "PROCESS"},
-        {Domain::PERIPHERAL, "PERIPHERAL"},
+        {Domain::DEVICE, "DEVICE"},
         {Domain::SERVICE, "SERVICE"},
     };
 

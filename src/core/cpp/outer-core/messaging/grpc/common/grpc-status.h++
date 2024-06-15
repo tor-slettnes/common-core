@@ -91,7 +91,7 @@ namespace core::grpc
         /// @param[in] text
         ///     Human readable text.
         /// @param[in] domain
-        ///     Source domain: SERVICE, SYSTEM, SIGNAL, PERIPHERAL
+        ///     Source domain: SERVICE, SYSTEM, SIGNAL, DEVICE
         /// @param[in] origin
         ///     Specific source, e.g OS name, service name, device name
         /// @param[in] code

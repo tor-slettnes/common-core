@@ -152,7 +152,6 @@ namespace core::grpc
         return msg;
     };
 
-
     std::string Status::class_name() const noexcept
     {
         return TYPE_NAME_BASE(Status);
@@ -160,7 +159,7 @@ namespace core::grpc
 
     void Status::populate_fields(types::PartsList *parts) const noexcept
     {
-        parts->add_string({}, this->status_code_name(), "%s");
+        parts->add_string({}, this->status_code_name(), true, "%s");
         Event::populate_fields(parts);
     }
 
@@ -173,12 +172,15 @@ namespace core::grpc
                        ? ::grpc::StatusCode::OK
                        : ::grpc::StatusCode::UNKNOWN;
 
-        case status::Domain::APPLICATION:
         case status::Domain::SYSTEM:
+        case status::Domain::APPLICATION:
             return Status::code_from_errno(event.code());
 
-        case status::Domain::PERIPHERAL:
-            return ::grpc::StatusCode::ABORTED;
+        case status::Domain::SERVICE:
+        case status::Domain::DEVICE:
+            return (event.flow() == status::Flow::CANCELLED)
+                       ? ::grpc::StatusCode::FAILED_PRECONDITION
+                       : ::grpc::StatusCode::ABORTED;
 
         default:
             return ::grpc::StatusCode::UNKNOWN;

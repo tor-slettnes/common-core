@@ -347,15 +347,15 @@ namespace core::exception
                              status::Flow flow,
                              const dt::TimePoint &dt,
                              const types::KeyValueMap &attributes)
-        : Super({text,                        // text
-                 status::Domain::PERIPHERAL,  // domain
-                 device,                      // origin
-                 code,                        // code
-                 id,                          // id
-                 level,                       // level
-                 flow,                        // flow
-                 dt,                          // timepoint
-                 attributes},                 // attributes
+        : Super({text,                    // text
+                 status::Domain::DEVICE,  // domain
+                 device,                  // origin
+                 code,                    // code
+                 id,                      // id
+                 level,                   // level
+                 flow,                    // flow
+                 dt,                      // timepoint
+                 attributes},             // attributes
                 std::runtime_error(text))
     {
     }
