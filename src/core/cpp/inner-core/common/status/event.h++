@@ -12,6 +12,7 @@
 #include "chrono/date-time.h++"
 #include "types/value.h++"
 #include "types/streamable.h++"
+#include "types/partslist.h++"
 #include "types/loggable.h++"
 #include "types/create-shared.h++"
 
@@ -83,6 +84,7 @@ namespace core::status
         virtual types::KeyValueMap &attributes() noexcept;
         virtual types::Value attribute(const std::string &key,
                                        const types::Value &fallback = {}) const noexcept;
+
         types::TaggedValueList as_tvlist() const noexcept;
         types::KeyValueMap as_kvmap() const noexcept;
 
@@ -90,7 +92,7 @@ namespace core::status
 
     protected:
         virtual std::string class_name() const noexcept;
-        virtual void populate_fields(types::TaggedValueList *values) const noexcept;
+        virtual void populate_fields(types::PartsList *parts) const noexcept;
 
     public:
         virtual void throw_if_error() const;

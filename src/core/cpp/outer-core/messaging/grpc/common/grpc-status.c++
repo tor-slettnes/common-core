@@ -152,34 +152,16 @@ namespace core::grpc
         return msg;
     };
 
-    void Status::to_stream(std::ostream &stream) const
-    {
-        types::TaggedValueList fields;
-        this->populate_fields(&fields);
-
-        stream << this->class_name()
-               << "("
-               << this->status_code_name();
-
-        if (!this->text().empty())
-        {
-            stream << ", " << std::quoted(this->text());
-        }
-
-        if (!fields.empty())
-        {
-            fields.to_stream(stream,  // stream
-                             ", ",    // prefix
-                             ", ",    // infix
-                             "");     // postfix
-        }
-
-        stream << ")";
-    }
 
     std::string Status::class_name() const noexcept
     {
         return TYPE_NAME_BASE(Status);
+    }
+
+    void Status::populate_fields(types::PartsList *parts) const noexcept
+    {
+        parts->add_string({}, this->status_code_name(), "%s");
+        Event::populate_fields(parts);
     }
 
     ::grpc::StatusCode Status::code_from_event(const status::Event &event) noexcept

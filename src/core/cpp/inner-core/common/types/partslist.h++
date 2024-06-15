@@ -7,37 +7,52 @@
 
 #pragma once
 #include "streamable.h++"
+#include "value.h++"
+#include "filesystem.h++"
+#include "chrono/date-time.h++"
 #include "string/format.h++"
 #include <string>
 #include <list>
 
 namespace core::types
 {
+    using Format = std::string;
+
     //==========================================================================
     /// @class PartsList
     /// @brief Tag/Value pairs suitable for representation of strucutres
 
-    class PartsList : public std::vector<std::string>,
+    class PartsList : public std::vector<std::tuple<Tag, Value, Format>>,
                       public Streamable
     {
     public:
+        void add_string(const Tag &tag,
+                        const std::string &value,
+                        const std::optional<bool> &condition = {},
+                        const std::string &format = "%r");
+
+        void add_value(const Tag &tag,
+                       const Value &value,
+                       const std::optional<bool> &condition = {},
+                       const std::string &format = "%r");
+
         template <class ValueType>
-        void add(const std::string &tag,
-                 const ValueType &value,
-                 bool condition = true,
-                 const std::string &format = "%r")
+        void add_as_string(const Tag &tag,
+                           const ValueType &value,
+                           bool condition = true,
+                           const std::string &format = "%s")
         {
-            if (condition)
-            {
-                this->push_back(str::format("%s=" + format, tag, value));
-            }
+            this->add_if(condition, tag, str::convert_from<ValueType>(value), format);
         }
 
-        void add(const std::string &tag,
-                 const std::string &value,
-                 const std::string &format = "%r");
+        TaggedValueList as_tvlist() const;
 
     protected:
+        void add_if(bool condition,
+                    const Tag &tag,
+                    const Value &value,
+                    const Format &format);
+
         void to_stream(std::ostream &stream) const override;
     };
 }  // namespace core::types

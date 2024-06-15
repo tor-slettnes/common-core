@@ -151,7 +151,7 @@ namespace core::grpc
 
     protected:
         std::string class_name() const noexcept override;
-        void to_stream(std::ostream &stream) const override;
+        void populate_fields(types::PartsList *parts) const noexcept override;
         std::exception_ptr as_application_error() const override;
 
     private:

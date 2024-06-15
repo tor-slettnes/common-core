@@ -165,9 +165,9 @@ namespace core::status
 
     types::TaggedValueList Event::as_tvlist() const noexcept
     {
-        types::TaggedValueList tvlist;
-        this->populate_fields(&tvlist);
-        return tvlist;
+        types::PartsList parts;
+        this->populate_fields(&parts);
+        return parts.as_tvlist();
     }
 
     types::KeyValueMap Event::as_kvmap() const noexcept
@@ -175,57 +175,49 @@ namespace core::status
         return this->as_tvlist().as_kvmap();
     }
 
-    void Event::populate_fields(types::TaggedValueList *values) const noexcept
+    void Event::populate_fields(types::PartsList *parts) const noexcept
     {
-        if (const std::string &text = this->text(); !text.empty())
-        {
-            values->emplace_back(EVENT_FIELD_TEXT, text);
-        }
+        parts->add_string(EVENT_FIELD_TEXT,
+                          this->text());
 
-        if (Domain domain = this->domain(); domain != Domain::NONE)
-        {
-            values->emplace_back(EVENT_FIELD_DOMAIN, str::convert_from(domain));
-        }
+        parts->add_as_string(EVENT_FIELD_DOMAIN,
+                             this->domain(),
+                             this->domain() != Domain::NONE);
 
-        if (const std::string &origin = this->origin(); !origin.empty())
-        {
-            values->emplace_back(EVENT_FIELD_ORIGIN, str::convert_from(origin));
-        }
+        parts->add_string(EVENT_FIELD_ORIGIN,
+                          this->origin(),
+                          !this->origin().empty());
 
-        if (this->code())
-        {
-            values->emplace_back(EVENT_FIELD_CODE, this->code());
-        }
+        parts->add_value(EVENT_FIELD_CODE,
+                         this->code(),
+                         this->code());
 
-        if (this->symbol().size())
-        {
-            values->emplace_back(EVENT_FIELD_SYMBOL, this->symbol());
-        }
+        parts->add_string(EVENT_FIELD_SYMBOL,
+                          this->symbol());
 
-        if (Level level = this->level(); level != Level::NONE)
-        {
-            values->emplace_back(EVENT_FIELD_LEVEL, str::convert_from(level));
-        }
+        parts->add_as_string(EVENT_FIELD_LEVEL,
+                             this->level(),
+                             this->level() != Level::NONE);
 
-        if (Flow flow = this->flow(); flow != Flow::NONE)
-        {
-            values->emplace_back(EVENT_FIELD_FLOW, str::convert_from(flow));
-        }
+        parts->add_as_string(EVENT_FIELD_FLOW,
+                             this->flow(),
+                             this->flow() != Flow::NONE);
 
-        if (const dt::TimePoint &tp = this->timepoint(); tp.time_since_epoch() != dt::Duration::zero())
-        {
-            values->emplace_back(EVENT_FIELD_TIME, tp);
-        }
+        parts->add_value(EVENT_FIELD_TIME,
+                         this->timepoint(),
+                         this->timepoint() != dt::epoch,
+                         "%.3Z");
 
-        values->extend(this->attributes_.as_tvlist());
+        parts->add_value(EVENT_FIELD_ATTRIBUTES,
+                         this->attributes(),
+                         !this->attributes().empty());
     }
 
     void Event::to_stream(std::ostream &stream) const
     {
-        types::TaggedValueList fields;
-        // fields.push_back({{}, this->text()});
-        this->populate_fields(&fields);
-        fields.filtered_values().to_stream(stream, this->class_name() + "(", ", ", ")");
+        types::PartsList parts;
+        this->populate_fields(&parts);
+        stream << this->class_name() << parts;
     }
 
     std::string Event::class_name() const noexcept

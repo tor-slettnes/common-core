@@ -64,34 +64,14 @@ namespace core::logging
         return *this;
     }
 
-    void Message::populate_fields(types::TaggedValueList *values) const noexcept
+    void Message::populate_fields(types::PartsList *parts) const noexcept
     {
-        Event::populate_fields(values);
-
-        if (this->scope())
-        {
-            values->emplace_back(MESSAGE_FIELD_LOG_SCOPE, this->scopename());
-        }
-
-        if (const fs::path &path = this->path(); !this->path().empty())
-        {
-            values->emplace_back(MESSAGE_FIELD_SOURCE_PATH, path.string());
-        }
-
-        if (uint lineno = this->lineno())
-        {
-            values->emplace_back(MESSAGE_FIELD_SOURCE_LINE, this->lineno());
-        }
-
-        if (const std::string &fn = this->function(); !fn.empty())
-        {
-            values->emplace_back(MESSAGE_FIELD_FUNCTION_NAME, fn);
-        }
-
-        if (pid_t tid = this->thread_id())
-        {
-            values->emplace_back(MESSAGE_FIELD_THREAD_ID, tid);
-        }
+        Event::populate_fields(parts);
+        parts->add_string(MESSAGE_FIELD_LOG_SCOPE, this->scopename(), "%s");
+        parts->add_string(MESSAGE_FIELD_SOURCE_PATH, this->path().string());
+        parts->add_value(MESSAGE_FIELD_SOURCE_LINE, this->lineno(), this->lineno() != 0);
+        parts->add_string(MESSAGE_FIELD_FUNCTION_NAME, this->function());
+        parts->add_value(MESSAGE_FIELD_THREAD_ID, this->thread_id());
     }
 
 }  // namespace core::logging

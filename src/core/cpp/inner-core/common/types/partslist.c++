@@ -9,13 +9,40 @@
 
 namespace core::types
 {
-    void PartsList::add(const std::string &tag,
-                        const std::string &value,
-                        const std::string &format)
+    void PartsList::add_string(const Tag &tag,
+                               const std::string &value,
+                               const std::optional<bool> &condition,
+                               const std::string &format)
     {
-        if (value.size())
+        this->add_if(condition.value_or(!value.empty()), tag, value, format);
+    }
+
+    void PartsList::add_value(const Tag &tag,
+                              const Value &value,
+                              const std::optional<bool> &condition,
+                              const std::string &format)
+    {
+        this->add_if(condition.value_or(!value.empty()), tag, value, format);
+    }
+
+    TaggedValueList PartsList::as_tvlist() const
+    {
+        TaggedValueList tvlist;
+        for (const auto &[tag, value, format] : *this)
         {
-            this->push_back(str::format("%s=" + format, tag, value));
+            tvlist.emplace_back(tag, value);
+        }
+        return tvlist;
+    }
+
+    void PartsList::add_if(bool condition,
+                           const Tag &tag,
+                           const Value &value,
+                           const Format &format)
+    {
+        if (condition)
+        {
+            this->emplace_back(tag, value, format);
         }
     }
 
@@ -23,9 +50,14 @@ namespace core::types
     {
         stream << "{";
         std::string delimiter = "";
-        for (const auto &item : *this)
+        for (const auto &[tag, value, format] : *this)
         {
-            stream << delimiter << item;
+            stream << delimiter;
+            if (tag)
+            {
+                stream << *tag << "=";
+            }
+            stream << str::format(format, value);
             delimiter = ", ";
         }
         stream << "}";

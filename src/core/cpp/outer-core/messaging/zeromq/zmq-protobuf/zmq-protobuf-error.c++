@@ -38,10 +38,10 @@ namespace core::zmq
         return "Error";
     }
 
-    void ProtoBufError::populate_fields(types::TaggedValueList *values) const noexcept
+    void ProtoBufError::populate_fields(types::PartsList *parts) const noexcept
     {
-        values->emplace_back(STATUS_FIELD_CODE, this->status_code());
-        Event::populate_fields(values);
+        parts->add_value(STATUS_FIELD_CODE, this->status_code());
+        Event::populate_fields(parts);
     }
 
     std::exception_ptr ProtoBufError::as_application_error() const

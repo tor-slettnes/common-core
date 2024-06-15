@@ -139,7 +139,7 @@ namespace core::logging
         }
 
     protected:
-        void populate_fields(types::TaggedValueList *values) const noexcept override;
+        void populate_fields(types::PartsList *parts) const noexcept override;
 
     protected:
         Scope::Ref scope_;
