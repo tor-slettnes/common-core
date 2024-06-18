@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-target_name="shell.py"
+target_name="common/shell.py"
 prog_path=$(realpath "$0")
 prog_dir=${prog_path%/*}
 base_dir=${prog_dir%/*}

@@ -6,14 +6,15 @@
 #===============================================================================
 
 ### Create a custom target for the Python Wheel
-set(TARGET "cc_shell_demo")
+set(TARGET "cc_demo_shell")
 
 ### Modules to be installed as programs, with execute permissionss
 set(PROGRAMS
-  demoshell.py
+  shell.py
 )
 
 BuildPython("${TARGET}"
+  MODULE "demo"
   PROGRAMS "${PROGRAMS}"
   COMPONENT "${PKG_COMPONENT}"
 )
