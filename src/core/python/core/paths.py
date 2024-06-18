@@ -31,8 +31,9 @@ def settingsPath() -> SearchPath:
         searchpath = os.getenv('CONFIGPATH').split(os.pathsep)
     except AttributeError:
         searchpath = [
-            ('/etc/cc', 'C:\\CC\\Config')[platform.system() == 'Windows'],
-            buildinfo.SETTINGS_DIR
+            ('/etc/cc', 'C:\\CC\\Config')[platform.system() == 'Windows'], # Local overrides
+            buildinfo.SETTINGS_DIR, # Package defaults
+            'settings'              # Inside virtualenv/`.whl` container
         ]
 
     return normalizedSearchPath(searchpath)

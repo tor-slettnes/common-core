@@ -64,9 +64,9 @@ class SettingsStore (JsonReader):
           installed.
 
         For example, consider a deployment where this module is located
-        somewhere inside `/usr/share/python-wheels/`, and default configurations
-        are stored in JSON files within the folder `/usr/share/cc/settings/`.
-        Let's say you create a SettingsStore instance as follows:
+        somewhere inside `/opt/cc`, and default configurations are stored in
+        JSON files within the folder `/opt/cc/share/settings/`.  Let's say you
+        create a SettingsStore instance as follows:
 
         ```
         my_settings = SettingsStore(
@@ -74,13 +74,13 @@ class SettingsStore (JsonReader):
         ```
 
         Since `searchpath` is not explicitly provided, the default value
-        `['/etc/cc', 'share/cc/settings']` is used.  Settings are then loaded
+        `['/etc/cc', 'share/settings']` is used.  Settings are then loaded
         and merged in from whichever of the following paths exist, in turn:
 
         1. `/etc/cc/my_settings.json`
-        2. `/usr/share/cc/settings/my_settings.json`
+        2. `/opt/cc/share/settings/my_settings.json`
         3. `/etc/cc/factory_settings.json`
-        4. `/usr/share/cc/settings/factory_settings.json`
+        4. `/opt/cc/share/settings/factory_settings.json`
 
         See also `load_settings()`.
 

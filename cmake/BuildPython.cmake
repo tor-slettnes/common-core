@@ -6,7 +6,7 @@
 #===============================================================================
 
 set(PYTHON_INSTALL_DIR "share/python"
-  CACHE STRING "Top-level installation directory for Python modules")
+  CACHE STRING "Top-level installation directory for Python modules" FORCE)
 
 function(BuildPython TARGET)
   set(_options)

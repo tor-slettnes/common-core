@@ -35,6 +35,7 @@ packages = [@INCLUDE_DIRS@]
 
 [tool.hatch.build.targets.wheel]
 include = [ "*" ]
+exclude = ["pyproject.toml", ".gitignore"]
 
 [tool.hatch.build.targets.wheel.sources]
 "python" = ""

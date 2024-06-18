@@ -6,7 +6,7 @@
 #===============================================================================
 
 set(SETTINGS_DIR "share/settings"
-  CACHE STRING "Top-level installation directory for settings files")
+  CACHE STRING "Top-level installation directory for settings files" FORCE)
 
 function(BuildSettings)
   set(_options)

@@ -1,18 +1,19 @@
-message(STATUS "----- cpack_wheel begin --------")
-message(STATUS "CPACK_TOPLEVEL_DIRECTORY = ${CPACK_TOPLEVEL_DIRECTORY}")
-message(STATUS "CPACK_TEMPORARY_DIRECTORY = ${CPACK_TEMPORARY_DIRECTORY}")
+#===============================================================================
+## @file cpack_wheel.cmake
+## @author Tor Slettnes <tor@slett.net>
+## @brief CPack generator script for Python Wheel output
+#===============================================================================
 
-file(GLOB _json_file "${CPACK_TOPLEVEL_DIRECTORY}/*.json")
-message(STATUS "JSON FILE: '${_json_file}'")
-
-file(SIZE "${_json_file}" _json_file_size)
-file(READ "${_json_file}" _json_text)
-message(STATUS "JSON TEXT (${_json_file_size} bytes): ${_json_text}")
-
-# string(JSON _num_groups LENGTH "${_json_text}" "componentGroups")
-# message(STATUS "Group count: ${_num_groups}")
-
-message(STATUS "----- cpack_wheel end --------")
+# message(STATUS "----- cpack_wheel begin --------")
+# message(STATUS "CPACK_TOPLEVEL_DIRECTORY = ${CPACK_TOPLEVEL_DIRECTORY}")
+# message(STATUS "CPACK_TEMPORARY_DIRECTORY = ${CPACK_TEMPORARY_DIRECTORY}")
+# file(GLOB _json_file "${CPACK_TOPLEVEL_DIRECTORY}/*.json")
+# message(STATUS "JSON FILE: '${_json_file}'")
+# file(SIZE "${_json_file}" _json_file_size)
+# file(TIMESTAMP "${_json_file}" _json_file_time)
+# file(READ "${_json_file}" _json_text)
+# message(STATUS "JSON TEXT (${_json_file_size} bytes, ${_json_file_time}): ${_json_text}")
+# message(STATUS "----- cpack_wheel end --------")
 
 ### Generate `pyproject.toml` file
 set(PACKAGE "${CPACK_PACKAGE_NAME}")
@@ -31,13 +32,14 @@ list(TRANSFORM CPACK_PYTHON_DEPENDENCIES REPLACE "^(.+)$" "\"\\1\"")
 list(JOIN CPACK_PYTHON_DEPENDENCIES ", " DEPENDENCIES)
 
 ### Gather a list of Python folders to include
-file(GLOB _python_dirs
+file(GLOB _include_dirs
   RELATIVE "${CPACK_TEMPORARY_DIRECTORY}"
-  "${CPACK_TEMPORARY_DIRECTORY}/*/share/python")
+  "${CPACK_TEMPORARY_DIRECTORY}/*${CPACK_PACKAGING_INSTALL_PREFIX}/${CPACK_PYTHON_SOURCE_DIR}"
+  "${CPACK_TEMPORARY_DIRECTORY}/*${CPACK_PACKAGING_INSTALL_PREFIX}/${CPACK_SETTINGS_DIR}"
+)
 
-message(STATUS "_python_dirs=${_python_dirs}")
-list(TRANSFORM _python_dirs REPLACE "^(.+)$" "\"\\1\"")
-list(JOIN _python_dirs ", " INCLUDE_DIRS)
+list(TRANSFORM _include_dirs REPLACE "^(.+)$" "\"\\1\"")
+list(JOIN _include_dirs ", " INCLUDE_DIRS)
 
 configure_file(
   "${CMAKE_CURRENT_LIST_DIR}/python/pyproject.toml.in"
@@ -49,7 +51,7 @@ find_package(Python3
 )
 
 if(Python3_Interpreter_FOUND)
-  message(STATUS "Invoking ${Python3_EXECUTABLE} -m build --outdir ${CPACK_PACKAGE_DIRECTORY} .")
+  message(STATUS "Invoking ${Python3_EXECUTABLE} -m build --outdir '${CPACK_PACKAGE_DIRECTORY}' .")
 
   execute_process(
     COMMAND "${Python3_EXECUTABLE}" -m build --outdir "${CPACK_PACKAGE_DIRECTORY}" "."
