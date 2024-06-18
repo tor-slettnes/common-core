@@ -13,20 +13,20 @@ cpack_add_component_group(${PKG_GROUP}
 )
 
 
-if(BUILD_CPP)
-  add_subdirectory(cpp)
-endif()
-
-if(BUILD_PYTHON)
-  add_subdirectory(python)
-endif()
-
 if(BUILD_DDS)
   add_subdirectory(idl)
 endif()
 
 if(BUILD_PROTOBUF)
   add_subdirectory(proto)
+endif()
+
+if(BUILD_CPP)
+  add_subdirectory(cpp)
+endif()
+
+if(BUILD_PYTHON)
+  add_subdirectory(python)
 endif()
 
 ### Install "settings/" folder as data

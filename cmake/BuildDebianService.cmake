@@ -15,6 +15,12 @@ function(InstallDebianService UNIT)
 
   ### Install service unit: ${UNIT}.service
 
+  if(CPACK_PACKAGING_INSTALL_PREFIX)
+    set(_install_root "${CPACK_PACKAGING_INSTALL_PREFIX}")
+  else()
+    set(_install_root "/usr")
+  endif()
+
   if(arg_USER)
     set(_dest "lib/systemd/user")
   else()
@@ -32,7 +38,7 @@ function(InstallDebianService UNIT)
   elseif(IS_ABSOLUTE "${arg_PROGRAM}")
     set(_program "${arg_PROGRAM}")
   else()
-    set(_program "${INSTALL_ROOT}/${arg_PROGRAM}")
+    set(_program "${_install_root}/${arg_PROGRAM}")
   endif()
 
 
@@ -46,7 +52,7 @@ function(InstallDebianService UNIT)
   set(SERVICE_PROGRAM "${_program}")
   set(SERVICE_ARGS "${arg_ARGS}")
   set(SERVICE_DESCRIPTION "${arg_DESCRIPTION}")
-  set(SERVICE_UNIT_PATH "${INSTALL_ROOT}/${_dest}/${SERVICE_UNIT}")
+  set(SERVICE_UNIT_PATH "${_install_root}/${_dest}/${SERVICE_UNIT}")
   set(_service_file "${CMAKE_CURRENT_BINARY_DIR}/${SERVICE_UNIT}")
 
   configure_file(

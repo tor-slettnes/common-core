@@ -5,6 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Create a custom target for the Python Wheel
+set(TARGET "cc_demo_python")
+
 ### Package component
 set(PKG_COMPONENT "demo-python")
 
@@ -16,20 +19,19 @@ set(PROGRAMS
   demo-zmq-server.py
 )
 
-### Subdirectories
 set(DIRECTORIES
   demo
   protobuf
 )
 
 ### Common recipe
-BuildPython(
-  PROGRAMS ${PROGRAMS}
-  DIRECTORIES ${DIRECTORIES}
-  COMPONENT ${PKG_COMPONENT}
+BuildPython("${TARGET}"
+  PROGRAMS "${PROGRAMS}"
+  DIRECTORIES "${DIRECTORIES}"
+  COMPONENT "${PKG_COMPONENT}"
 )
 
-cpack_add_component(${PKG_COMPONENT}
+cpack_add_component("${PKG_COMPONENT}"
   DEPENDS core-python demo-proto
   GROUP "${PKG_GROUP}"
   DISPLAY_NAME "DEMO Example - Python modules"

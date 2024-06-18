@@ -6,10 +6,7 @@
 #===============================================================================
 
 ### Create a library target to facilitate get_target_property()
-add_library(cc_core_python INTERFACE)
-
-configure_file(buildinfo.py.in buildinfo.py)
-#configure_file(pyproject.toml.in pyproject.toml)
+set(TARGET "cc_core_python")
 
 ### Package component
 set(PKG_COMPONENT "core-python")
@@ -20,9 +17,8 @@ set(PROGRAMS
 
 ### Files to be installed as is, without execute permissionss
 set(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/buildinfo.py
+  ${CMAKE_CURRENT_BINARY_DIR}/generated/buildinfo.py
 )
-
 
 ### Subdirectories
 set(DIRECTORIES
@@ -31,16 +27,27 @@ set(DIRECTORIES
   messaging
 )
 
-BuildPython(
-  PROGRAMS ${PROGRAMS}
-  FILES ${FILES}
-  DIRECTORIES ${DIRECTORIES}
-  COMPONENT ${PKG_COMPONENT}
+### Wheel dependencies
+set(PKG_DEPS
+  grpcio
+  protobuf
+  zmq
 )
 
-cpack_add_component(${PKG_COMPONENT}
-  GROUP ${PKG_GROUP}
-  DEPENDS core-proto
-  DISPLAY_NAME "Common ProtoBuf/gRPC modules"
-  DESCRIPTION "Generated Protocol Buffers/gRPC modules for common components"
+### Populate version/build info
+configure_file(buildinfo.py.in "generated/buildinfo.py")
+
+BuildPython("${TARGET}"
+  PROGRAMS "${PROGRAMS}"
+  FILES "${FILES}"
+  DIRECTORIES "${DIRECTORIES}"
+  COMPONENT "${PKG_COMPONENT}"
+)
+
+### Add a installation package component
+cpack_add_component("${PKG_COMPONENT}"
+  GROUP "${PKG_GROUP}"
+  DISPLAY_NAME "Common Core - Python core"
+  DESCRIPTION "Python shared components"
+  INSTALL_TYPES python
 )

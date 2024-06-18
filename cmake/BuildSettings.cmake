@@ -5,6 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+set(SETTINGS_DIR "share/settings"
+  CACHE STRING "Top-level installation directory for settings files")
+
 function(BuildSettings)
   set(_options)
   set(_singleargs DIRECTORY DESTINATION COMPONENT)
@@ -14,7 +17,7 @@ function(BuildSettings)
   if(arg_DESTINATION)
     set(_destination "${arg_DESTINATION}")
   else()
-    set(_destination "share/settings")
+    set(_destination "${SETTINGS_DIR}")
   endif()
 
   if(arg_DIRECTORY)

@@ -8,14 +8,8 @@
 ### Modules relative to install folder
 from .error import Error
 from ..basic.requester import Requester
+from protobuf.wellknown import Message, MessageType, Empty
 import protobuf.rr
-import protobuf.wellknown
-
-### Third-party modules
-from google.protobuf.message import Message
-from google.protobuf.pyext.cpp_message \
-    import GeneratedProtocolMessageType as MessageType
-from google.protobuf.empty_pb2 import Empty
 
 class Client (Requester):
     '''ZMQ RPC client using ProtoBuf messages'''

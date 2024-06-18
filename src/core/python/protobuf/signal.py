@@ -7,8 +7,8 @@
 
 ### Modules relative to install path
 from .variant import Value, ValueList
-from .wellknown import Message, MessageType
-from .utils import enumToValue
+from .wellknown import Message
+from .utils import enumToValue, check_type
 from .import_proto import import_proto
 from core.invocation import safe_invoke
 
@@ -114,7 +114,7 @@ class SignalStore:
 
     def __init__(self,
                  use_cache   : bool = False,
-                 signal_type : MessageType = None):
+                 signal_type : type = None):
 
         '''Instance initialization.
 
@@ -146,9 +146,9 @@ class SignalStore:
              "declaring a static member or passing it as argument "
              "to SignalStore.__init__()"%(type(self).__name__,))
 
-        assert isinstance(self.signal_type, MessageType), \
+        assert isinstance(self.signal_type, type) and issubclass(self.signal_type, Message), \
             'Signal type must be derived from %s, not %s'% \
-            (MessageType.__name__, self.signal_type)
+            (Message.__name__, self.signal_type)
 
         self.slots                = {}
         self._completion_event    = threading.Event()

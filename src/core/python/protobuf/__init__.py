@@ -12,4 +12,5 @@ import sys
 ## subfolder. However, that code is itself unaware of this fact, so we need
 ## to append that folder to Python's module search path.
 _pythonRoot, _generatedRoot = core.paths.locateDominatingPath('generated')
-sys.path.append(_generatedRoot)
+if _generatedRoot:
+    sys.path.append(_generatedRoot)

@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### CMake 3.15 or newer required for Connext DDS logging macros
-cmake_minimum_required(VERSION 3.15)
+#cmake_minimum_required(VERSION 3.15)
 
 ### RTI DDS version
 set(CONNEXTDDS_VERSION 6.1.2)

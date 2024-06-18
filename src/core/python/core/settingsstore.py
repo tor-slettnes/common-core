@@ -55,13 +55,17 @@ class SettingsStore (JsonReader):
         by the OS-specific path separator (`:` on UNIX, `;` on Windows).
 
         If `CONFIGPATH` is not defined, the default search path comprises:
-        * a per-unit configuration folder (`/etc/cc` on UNIX or `C:/CC` on Windows)
-        * an application-provided default settings folder (`share/settings`), presumed
-          relative to the top-level folder where the software is installed.
+
+        * a per-unit configuration folder (`/etc/cc` on UNIX or `C:/CC` on
+          Windows)
+
+        * an application-provided default settings folder (`share/cc/settings`),
+          presumed relative to the top-level folder where the software is
+          installed.
 
         For example, consider a deployment where this module is located
-        somewhere inside `/opt/cc/share/python/`, and default configurations are
-        stored in JSON files within the folder `/opt/cc/share/settings/`. 
+        somewhere inside `/usr/share/python-wheels/`, and default configurations
+        are stored in JSON files within the folder `/usr/share/cc/settings/`.
         Let's say you create a SettingsStore instance as follows:
 
         ```
@@ -70,13 +74,13 @@ class SettingsStore (JsonReader):
         ```
 
         Since `searchpath` is not explicitly provided, the default value
-        `['/etc/cc', 'share/settings']` is used.  Settings are then loaded
+        `['/etc/cc', 'share/cc/settings']` is used.  Settings are then loaded
         and merged in from whichever of the following paths exist, in turn:
 
         1. `/etc/cc/my_settings.json`
-        2. `/opt/cc/share/settings/my_settings.json`
+        2. `/usr/share/cc/settings/my_settings.json`
         3. `/etc/cc/factory_settings.json`
-        4. `/opt/cc/share/settings/factory_settings.json`
+        4. `/usr/share/cc/settings/factory_settings.json`
 
         See also `load_settings()`.
 

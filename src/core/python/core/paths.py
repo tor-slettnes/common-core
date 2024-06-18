@@ -8,6 +8,7 @@
 import os
 import os.path
 import platform
+import buildinfo
 
 from typing import Sequence, Optional
 FilePath   = str
@@ -16,13 +17,13 @@ SearchPath = Sequence[FilePath]
 def installRoot() -> FilePath:
     '''Obtain installation root folder'''
 
-    installRoot, pythonRoot = locateDominatingPath('share/python')
+    installRoot, _ = locateDominatingPath('share')
     return installRoot
 
 def pythonRoot() -> FilePath:
     '''Obtain installation folder for Python modules'''
 
-    installRoot, pythonRoot = locateDominatingPath('share/python')
+    pythonRoot, _ = locateDominatingPath('core')
     return pythonRoot
 
 def settingsPath() -> SearchPath:
@@ -31,7 +32,7 @@ def settingsPath() -> SearchPath:
     except AttributeError:
         searchpath = [
             ('/etc/cc', 'C:\\CC\\Config')[platform.system() == 'Windows'],
-            'share/settings'
+            buildinfo.SETTINGS_DIR
         ]
 
     return normalizedSearchPath(searchpath)

@@ -13,9 +13,6 @@ from google.protobuf.json_format import ParseDict
 from google.protobuf.message \
     import Message, Error, EncodeError, DecodeError
 
-from google.protobuf.pyext.cpp_message \
-    import GeneratedProtocolMessageType as MessageType
-
 from google.protobuf.internal.enum_type_wrapper \
     import EnumTypeWrapper
 
@@ -35,7 +32,7 @@ from enum import Enum
 
 ### Type type hint for timestamps
 TimestampType = Timestamp|float|int|str|struct_time|datetime
-
+MessageType = type
 
 def decodeTimestamp(prototime: Timestamp) -> float:
     '''Convert a ProtoBuf `Timestamp` value as an Python timestamp (seconds

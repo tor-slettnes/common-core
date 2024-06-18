@@ -117,4 +117,4 @@ $(BUILD_DIR):
 	@$(MAKE) -C "$(BUILD_DIR)" $(MAKECMDGOALS)
 
 
-.PHONY: all package install install/test test build cmake clean realclean realclean_all pristine
+.PHONY: develop release package deb install install/test test build cmake cmake/clean clean realclean realclean_all pristine

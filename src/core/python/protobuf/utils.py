@@ -6,14 +6,11 @@
 #===============================================================================
 
 ### Modules relative to current folder
-from .wellknown import MessageToString, MessageToDict, ParseDict
+from .wellknown import MessageType, MessageToString, MessageToDict, ParseDict
 
 ### Third-party modules
 from google.protobuf.message \
     import Message, Error, EncodeError, DecodeError
-
-from google.protobuf.pyext.cpp_message \
-    import GeneratedProtocolMessageType as MessageType
 
 from google.protobuf.internal.enum_type_wrapper \
     import EnumTypeWrapper
@@ -26,7 +23,8 @@ import enum
 # Methods
 
 def check_type(value: Message,
-               expected: MessageType = Message):
+               expected: type = Message,
+               argument: str|None = None):
     '''Ensure that a provided value is an of the specified ProtoBuf message
     type. If not, a TypeError is raised.
 
@@ -37,10 +35,12 @@ def check_type(value: Message,
     `protoc`.
     '''
 
-    assert (expected is Message) or isinstance(expected, MessageType)
+    assert(isinstance(expected, MessageType) and issubclass(expected, Message))
     if not isinstance(value, expected):
-        raise TypeError('Expected %s, not %s'%
-                        (expected.DESCRIPTOR.full_name, type(value).__name__)) from None
+        raise TypeError('%sExpected %s, not %s'%(
+            'Argument %r: '%(argument,) if argument else '',
+            expected.DESCRIPTOR.full_name,
+            type(value).__name__)) from None
 
 
 def messageToDict(message : Message,
@@ -64,6 +64,7 @@ def dictToMessage(value     : dict,
     of a given type.  Refer to `ParseDict` for details.
     '''
 
+    check_type(prototype)
     msg = prototype()
     ParseDict(
         value,

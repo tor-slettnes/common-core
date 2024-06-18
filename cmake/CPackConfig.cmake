@@ -5,10 +5,17 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### General CPack settings
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
-set(CPACK_GENERATOR "DEB")
+set(CPACK_GENERATOR "DEB" "External")
+#set(CPACK_GENERATOR "DEB")
 set(CPACK_STRIP_FILES ON)
-set(CPACK_COMPONENTS_GROUPING IGNORE)
+#set(CPACK_COMPONENTS_GROUPING IGNORE)
+#set(CPACK_COMPONENTS_GROUPING ALL_COMPONENTS_IN_ONE)
+set(CPACK_COMPONENTS_GROUPING ONE_PER_GROUP)
+
+#===============================================================================
+### DEB generator settings
 
 set(CPACK_DEB_COMPONENT_INSTALL TRUE)
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
@@ -25,3 +32,9 @@ else()
   )
 endif()
 set(CPACK_SYSTEM_NAME "${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
+
+#===============================================================================
+### External generator settings for producing a Python wheel
+
+set(CPACK_EXTERNAL_PACKAGE_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/cpack_wheel.cmake")
+set(CPACK_EXTERNAL_ENABLE_STAGING TRUE)

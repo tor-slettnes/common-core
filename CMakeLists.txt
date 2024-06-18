@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.15)
 set(VERSION_FILE "${CMAKE_SOURCE_DIR}/.version")
 if(CMAKE_PROJECT_VERSION)
   set(VERSION "${CMAKE_PROJECT_VERSION}")
-  message(STATUS "Using inherited version: ${VERSION}")
+  message(STATUS "Using inherited or cached version: ${VERSION}")
 elseif(NOT "$ENV{VERSION}" STREQUAL "")
   set(VERSION "$ENV{VERSION}")
   message(STATUS "Setting new version: ${VERSION}")
@@ -28,7 +28,7 @@ endif()
 project(common-core
   VERSION "${VERSION}"
   DESCRIPTION "Cross-platform development framework for embedded microservice applications"
-  HOMEPAGE_URL https://github.com/tor-slettnes/common-core/
+  HOMEPAGE_URL "https://github.com/tor-slettnes/common-core/"
   LANGUAGES CXX
 )
 

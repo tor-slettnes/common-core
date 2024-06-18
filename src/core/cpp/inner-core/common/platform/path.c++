@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "path.h++"
+#include "buildinfo.h"
 #include <fstream>
 
 #define LOCAL_FOLDER          "/shared"
@@ -15,7 +16,6 @@
 #define CONFIGPATH_VAR        "CONFIGPATH"
 #define DATADIR_VAR           "DATADIR"
 #define LOGDIR_VAR            "LOGDIR"
-#define SETTINGS_DEF_BASE     "share/settings"
 
 /// Default filesystem paths.
 namespace core::platform
@@ -103,7 +103,7 @@ namespace core::platform
     {
         return this->locate_dominating_folder(
             this->exec_folder_path(),  // start
-            SETTINGS_DEF_BASE,         // name
+            SETTINGS_DIR,              // name
             ".");                      // fallback
     }
 
@@ -123,7 +123,7 @@ namespace core::platform
         {
             return {
                 this->default_config_folder(),
-                this->install_folder() / SETTINGS_DEF_BASE,
+                this->install_folder() / SETTINGS_DIR,
             };
         }
     }

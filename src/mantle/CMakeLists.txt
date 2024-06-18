@@ -5,10 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-include(BuildExecutable)
-include(BuildLibrary)
-include(BuildPython)
-
 if (BUILD_DEMO)
   add_subdirectory(demo)
 endif()

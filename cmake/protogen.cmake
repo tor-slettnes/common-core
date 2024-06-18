@@ -10,7 +10,7 @@
 ## @brief Invoke `protoc` to generate bindings for a specified language/plugin
 
 function(protogen)
-  set(_singleargs TARGET COMMENT GENERATOR PLUGIN)
+  set(_singleargs TARGET COMMENT GENERATOR PLUGIN OUT_DIR COMPONENT)
   set(_multiargs DEPENDS PROTOS SUFFIXES OUT_VARS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
@@ -19,11 +19,13 @@ function(protogen)
     return()
   endif()
 
+  if(arg_COMPONENT)
+    message(WARNING "protogen() invoked with legacy option COMPONENT in ${CMAKE_CURRENT_SOURCE_DIR}")
+  endif()
+
   if(arg_PLUGIN)
     set(_plugin_arg "--plugin=${arg_PLUGIN}")
   endif()
-
-  set(_proto_files "${arg_PROTOS}")
 
   ## ProtoBuf Compiler setup
   set(_include_dirs "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -50,7 +52,10 @@ function(protogen)
   ## Also add the system include folders from `protobuf`
   list(APPEND _include_dirs "$<TARGET_PROPERTY:${TARGET},INTERFACE_INCLUDE_DIRECTORIES>")
 
-  ## Add any `.proto` files that were supplied as target sources
+  ### Add `.proto` files supplied in the PROTOS argumen
+  set(_proto_files "${arg_PROTOS}")
+
+  ## Also add any `.proto` files that were supplied as target sources
   if(arg_TARGET)
     get_target_property(_files ${arg_TARGET} SOURCES)
     foreach(_file ${_files})
@@ -60,7 +65,18 @@ function(protogen)
     endforeach()
   endif()
 
-  ## Constuct a list of C++ files to be generated
+  ## Determine output directory
+  if(arg_OUT_DIR)
+    file(REAL_PATH "${arg_OUT_DIR}" _outdir
+      BASE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    )
+    file(MAKE_DIRECTORY "${_outdir}")
+  else()
+    set(_outdir "${CMAKE_CURRENT_BINARY_DIR}")
+  endif()
+
+
+  ## Constuct a list of language-specific files to be generated
   set(_proto_src)
   set(_outputs)
   foreach(_src ${_proto_files})
@@ -68,7 +84,7 @@ function(protogen)
     list(APPEND _proto_src ${_abs})
 
     get_filename_component(_base ${_src} NAME_WLE)
-    set(_stem ${CMAKE_CURRENT_BINARY_DIR}/${_base})
+    set(_stem ${_outdir}/${_base})
     set(_out_vars ${arg_OUT_VARS})
 
     foreach(_suffix ${arg_SUFFIXES})
@@ -85,16 +101,17 @@ function(protogen)
     find_program(_protoc protoc)
   endif()
 
+
   ## Finally let's do the generation
   add_custom_command(
     OUTPUT ${_outputs}
+    DEPENDS ${_proto_src}
     COMMAND ${_protoc}
-    ARGS --${arg_GENERATOR}_out "${CMAKE_CURRENT_BINARY_DIR}"
+    ARGS --${arg_GENERATOR}_out "${_outdir}"
        "-I$<JOIN:${_include_dirs},;-I>"
        ${_plugin_arg}
        ${_proto_src}
     COMMAND_EXPAND_LISTS
-    DEPENDS ${_proto_src}
     COMMENT "${arg_COMMENT}"
     VERBATIM
   )
@@ -181,7 +198,7 @@ endfunction()
 
 
 #===============================================================================
-## @fn PROTOGEN_PROTOBUF_PYTHON
+## @fn PROTOGEN_PROTOBUF_PY
 ## @brief Generate Python ProtoBuf bindings
 
 function(PROTOGEN_PROTOBUF_PY SRCS)
@@ -196,13 +213,14 @@ function(PROTOGEN_PROTOBUF_PY SRCS)
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
     SUFFIXES "_pb2.py"
+    OUT_DIR "python"
     OUT_VARS ${SRCS})
 
   set(${SRCS} ${${SRCS}} PARENT_SCOPE)
 endfunction()
 
 #===============================================================================
-## @fn PROTOGEN_GRPC_PYTHON
+## @fn PROTOGEN_GRPC_PY
 ## @brief Generate Python gRPC bindings
 
 function(PROTOGEN_GRPC_PY SRCS)
@@ -224,6 +242,7 @@ function(PROTOGEN_GRPC_PY SRCS)
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
     SUFFIXES "_pb2_grpc.py"
+    OUT_DIR "python"
     OUT_VARS ${SRCS}
   )
 

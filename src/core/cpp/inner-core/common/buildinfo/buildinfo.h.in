@@ -24,3 +24,4 @@
 #define PROJECT_BUILD_TIME    "@CMAKE_PROJECT_BUILD_TIME@"
 
 #define SOURCE_DIR            "@CMAKE_SOURCE_DIR@"
+#define SETTINGS_DIR          "@SETTINGS_DIR@"

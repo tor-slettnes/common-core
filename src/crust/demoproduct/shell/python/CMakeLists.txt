@@ -5,12 +5,25 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Create a custom target for the Python Wheel
+set(TARGET "cc_shell_demo")
+
 ### Modules to be installed as programs, with execute permissionss
 set(PROGRAMS
   demoshell.py
 )
 
-BuildPython(
-  PROGRAMS ${PROGRAMS}
-  COMPONENT ${PKG_COMPONENT}
+BuildPython("${TARGET}"
+  PROGRAMS "${PROGRAMS}"
+  COMPONENT "${PKG_COMPONENT}"
 )
+
+# BuildPythonWheel(common_core_wheel
+#   PACKAGE "common_core"
+#   COMPONENT "python-core"
+#   CONTENTS "${PROGRAMS}"
+#   PYTHON_DEPS cc_core_python cc_demo_python
+#   PROTO_DEPS cc_core_proto cc_demo_proto
+#   PKG_DEPS grpcio protobuf zmq
+# )
+

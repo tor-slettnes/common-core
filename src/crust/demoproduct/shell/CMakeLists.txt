@@ -12,7 +12,7 @@ add_subdirectory(python)
 
 cpack_add_component(${PKG_COMPONENT}
   GROUP ${PKG_GROUP}
-  DEPENDS core-python
+  DEPENDS core-python demo-python
   DISPLAY_NAME "DEMO example - Interactive shell"
   DESCRIPTION "Interactive shell template for DEMO example."
 )
