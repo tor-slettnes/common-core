@@ -123,7 +123,7 @@ namespace core
 
         void dur_to_stream(std::ostream &stream,
                            const Duration &dur,
-                           const std::optional<std::string> &secondsformat = "%.3fs",
+                           const std::optional<std::string> &secondsformat = "%.3gs",
                            const std::optional<std::string> &minutesformat = "%zm",
                            const std::optional<std::string> &hoursformat = "%zh",
                            const std::optional<std::string> &daysformat = "%zd",
