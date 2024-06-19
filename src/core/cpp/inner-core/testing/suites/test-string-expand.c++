@@ -36,7 +36,7 @@ namespace core::str
             "two=2, "
             "three=3.14159, "
             "four=IV, "
-            "five=5 hr"};
+            "five=5h"};
 
         EXPECT_EQ(expanded, expected);
     }

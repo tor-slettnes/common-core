@@ -205,8 +205,7 @@ namespace core::status
 
         parts->add_value(EVENT_FIELD_TIME,
                          this->timepoint(),
-                         this->timepoint() != dt::epoch,
-                         "%.3Z");
+                         this->timepoint() != dt::epoch);
 
         parts->add_value(EVENT_FIELD_ATTRIBUTES,
                          this->attributes(),

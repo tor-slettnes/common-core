@@ -38,7 +38,7 @@ namespace core::str
             "([#0\\-\\ \\+\\'\\^,]*)"            // (2) 0 or more flags #|0|-| |+|'|^|,
             "(?:(\\d*)|(\\*))"                   // (3) fixed or (4) variable field width
             "(?:\\.(\\d*))?"                     // (5) precision
-            "(hh|h|ll|l|q|L|j|z|Z|t)?"           // (6) length modifier (ignored)
+            "(hh|h|ll|l|q|L|j|t)?"               // (6) length modifier (ignored)
             "(?:([abcdefghinoprsuxzAEFGOXTZ])|"  // (7) argument conversion specifier, or
             "([m%])))"                           // (8) non-argument specifier
         );

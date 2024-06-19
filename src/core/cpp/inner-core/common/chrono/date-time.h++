@@ -26,10 +26,10 @@ namespace core
     namespace dt
     {
         // constexpr auto ISO_FORMAT = "%F %T";
-        constexpr auto DEFAULT_FORMAT = "%F %T";
+        constexpr auto DEFAULT_FORMAT = "%F@%T";
         constexpr auto DEFAULT_TIME_FORMAT = "%T";
         constexpr auto DEFAULT_DURATION_FORMAT = "%S";
-        constexpr auto JS_FORMAT = "%y-%m-%dT%H:%M:%S";
+        constexpr auto JS_FORMAT = "%FT%T";
 
         // typedef std::chrono::system_clock Clock;
         // typedef Clock::duration Duration;
@@ -123,13 +123,13 @@ namespace core
 
         void dur_to_stream(std::ostream &stream,
                            const Duration &dur,
-                           const std::optional<std::string> &secondsformat = "%.3f sec",
-                           const std::optional<std::string> &minutesformat = "%z min",
-                           const std::optional<std::string> &hoursformat = "%z hr",
-                           const std::optional<std::string> &daysformat = "%z days",
+                           const std::optional<std::string> &secondsformat = "%.3fs",
+                           const std::optional<std::string> &minutesformat = "%zs",
+                           const std::optional<std::string> &hoursformat = "%zh",
+                           const std::optional<std::string> &daysformat = "%zd",
                            const std::optional<std::string> &monthsformat = {},
-                           const std::optional<std::string> &yearsformat = "%z years",
-                           uint max_divisions = 6,
+                           const std::optional<std::string> &yearsformat = "%zy",
+                           uint max_divisions = 3,
                            const std::string delimiter = " ");
 
         /// Return the provided timepoint as a JavaScript time string
