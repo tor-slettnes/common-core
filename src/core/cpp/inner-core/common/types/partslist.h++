@@ -42,7 +42,7 @@ namespace core::types
                            bool condition = true,
                            const std::string &format = "%s")
         {
-            this->add_if(condition, tag, str::convert_from<ValueType>(value), format);
+            this->add_if(condition, tag, str::format(format, value), "");
         }
 
         TaggedValueList as_tvlist() const;

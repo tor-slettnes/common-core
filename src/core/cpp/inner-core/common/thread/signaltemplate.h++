@@ -319,6 +319,10 @@ namespace core::signal
         size_t clear_if_cached(const KeyType &key);
 
         /// @brief
+        ///     Clean the cache, emitting a REMOVED signal for every item in it.
+        size_t clear_all_cached();
+
+        /// @brief
         ///    Get the current cached value, if any.
         /// @return
         ///    std::optional<DataType> object

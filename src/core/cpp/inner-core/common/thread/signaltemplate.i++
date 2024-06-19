@@ -264,6 +264,20 @@ namespace core::signal
     }
 
     template <class DataType, class KeyType>
+    inline size_t MappingSignal<DataType, KeyType>::clear_all_cached()
+    {
+        Futures futures;
+        this->mtx_.lock();
+        for (const auto &[key, value]: this->cached_)
+        {
+            futures = this->sendall(MAP_REMOVAL, key, {});
+        }
+        this->cached_.clear();
+        this->mtx_.unlock();
+        return this->collect_futures(futures);
+    }
+
+    template <class DataType, class KeyType>
     inline std::unordered_map<KeyType, DataType> MappingSignal<DataType, KeyType>::get_cached()
     {
         std::scoped_lock lck(this->mtx_);

@@ -57,8 +57,20 @@ namespace core::types
             {
                 stream << *tag << "=";
             }
-            stream << str::format(format, value);
-            delimiter = ", ";
+
+            if (format.empty())
+            {
+                stream << value;
+            }
+            else
+            {
+                stream << str::format(format, value);
+            }
+
+            if (delimiter.empty())
+            {
+                delimiter = ", ";
+            }
         }
         stream << "}";
     }
