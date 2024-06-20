@@ -30,12 +30,6 @@ classifiers = [
 [project.urls]
 Homepage = "@HOMEPAGE_URL@"
 
-[tool.hatch.build.targets.sdist]
-packages = [@INCLUDE_DIRS@]
-
-[tool.hatch.build.targets.wheel]
-include = [ "*" ]
-exclude = ["pyproject.toml", ".gitignore"]
-
-[tool.hatch.build.targets.wheel.sources]
-"python" = ""
+[tool.hatch.build.targets.wheel.force-include]
+@PYTHON_INCLUDE@
+@SETTINGS_INCLUDE@
