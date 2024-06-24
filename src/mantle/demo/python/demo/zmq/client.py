@@ -10,15 +10,18 @@ from .common import DEMO_PUBLISHER_CHANNEL, DEMO_SERVICE_CHANNEL, DEMO_RPC_INTER
 from ..core  import API, signal_store
 
 ### Modules relative to install dir
-from messaging.zmq.basic.subscriber import Subscriber
-from messaging.zmq.protobuf.client import Client as BaseClient
-from messaging.zmq.protobuf.signalhandler import SignalHandler
-import protobuf.demo
-import protobuf.utils
+from cc.messaging.zmq.basic.subscriber import Subscriber
+from cc.messaging.zmq.protobuf.client import Client as BaseClient
+from cc.messaging.zmq.protobuf.signalhandler import SignalHandler
+from cc.protobuf.import_proto import import_proto
+from cc.protobuf.utils import check_type
 
 ### Standard Python modules
 import time, sys, os.path
 
+## Import symbols generted from `demo.proto`. These will appear in the namespace
+## `cc.demo`.
+import_proto('demo', globals())
 
 #===============================================================================
 # DemoClient class
@@ -54,12 +57,12 @@ class DemoClient (API, BaseClient):
         self.subscriber.remove(self.signalhandler)
         self.subscriber.disconnect()
 
-    def say_hello(self, greeting: protobuf.demo.Greeting):
-        protobuf.utils.check_type(greeting, protobuf.demo.Greeting)
+    def say_hello(self, greeting: cc.demo.Greeting):
+        check_type(greeting, cc.demo.Greeting)
         self.call('say_hello', greeting)
 
-    def get_current_time(self) -> protobuf.demo.TimeData:
-        return self.call('get_current_time', None, protobuf.demo.TimeData)
+    def get_current_time(self) -> cc.demo.TimeData:
+        return self.call('get_current_time', None, cc.demo.TimeData)
 
     def start_ticking(self) -> None:
         return self.call('start_ticking')

@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules that are relative to install folder
+### Modules within package
 from ...common.endpoint import Endpoint as EndpointBase
 
 ### Standard Python modules

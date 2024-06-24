@@ -14,8 +14,7 @@ Directory stsructure
   - [signal_slot.py](core/signal_slot.py) - Event notifications using [Signal/Slot pattern](https://en.wikipedia.org/wiki/Signals_and_slots)
   - [stringexpander.py](core/stringexpander.py) - parse string using shell-style `${}`/`$()`/`$[]` expansions
 
-* [io](io) - I/O interfaces
- - [protobuf](io/protobuf) - Containers and methods for various [ProtoBuf](https://protobuf.dev/) types
+* [protobuf](protobuf) - Containers and methods for various [ProtoBuf](https://protobuf.dev/) types
 
 * [messaging](messaging) - Modules for inter-process communication (messaging):
  - [base](messaging/base) - Base modules/classes for all messaging platforms

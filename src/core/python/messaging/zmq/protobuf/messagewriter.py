@@ -5,11 +5,10 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to current folder
+### Modules within package
 from ..basic import Publisher, Filter, MessageWriter as BaseWriter
-
-### Modules relative to install folder
-import protobuf.wellknown
+from ....protobuf.wellknown import Message, MessageType
+from ....protobuf.utils import dictToMessage
 
 
 class MessageWriter (BaseWriter):
@@ -21,22 +20,22 @@ class MessageWriter (BaseWriter):
 
     def __init__ (self,
                   publisher: Publisher,
-                  message_type: protobuf.wellknown.MessageType|None = None):
+                  message_type: MessageType|None = None):
 
         self.message_type = message_type or type(self).message_type
-        assert isinstance(self.message_type, protobuf.wellknown.MessageType)
+        assert isinstance(self.message_type, MessageType)
 
         topic = self.message_type.DESCRIPTOR.full_name
         BaseWriter.__init__(self, publisher, Filter.create_from_topic(topic))
 
     def write_proto(self,
-                    message : protobuf.wellknown.Message):
+                    message : Message):
         '''Publish a ProtoBuf message over ZMQ'''
 
         self.write_bytes(message.SerializeToString())
 
     def write_dict_as_proto(self,
-                            prototype: protobuf.wellknown.MessageType,
+                            prototype: MessageType,
                             data : dict,
                             ignore_unknown_fields: bool = False):
         '''
@@ -45,4 +44,4 @@ class MessageWriter (BaseWriter):
         '''
 
         self.write_proto(
-            protobuf.wellknown.encodeFromDict(data, prototype, ignore_unknown_fields))
+            dictToMessage(data, prototype, ignore_unknown_fields))

@@ -5,22 +5,21 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to current folder
+### Modules within package
 from .messagehandler import MessageHandler
+from ....protobuf.signal import SignalStore
+from ....protobuf.wellknown import Message
 
-### Modules relative to install folder
-import protobuf.signal
-import protobuf.wellknown
 
 class SignalHandler (MessageHandler):
     '''Subscribe to `Signal` messages from ZMQ publisher and re-emit locally as signals.'''
 
     def __init__(self,
-                 signal_store: protobuf.signal.SignalStore):
+                 signal_store: SignalStore):
 
         MessageHandler.__init__(self, signal_store.signal_type)
         self.signal_store = signal_store
 
-    def handle_proto(self, message: protobuf.wellknown.Message):
+    def handle_proto(self, message: Message):
         self.signal_store.emit(message)
 

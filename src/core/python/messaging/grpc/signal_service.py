@@ -5,11 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to current dir
+### Modules within package
 from .service import Service
-
-### Modules relative to install dir
-from protobuf.signal import SignalStore, cc
+from ...protobuf.signal import SignalStore, cc
 
 ### Third-party modules
 import google.protobuf.message

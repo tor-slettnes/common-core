@@ -6,4 +6,4 @@
 #===============================================================================
 
 ### Populate symbols from `request_reply.proto`
-from generated.request_reply_pb2 import *
+from ..generated.request_reply_pb2 import *

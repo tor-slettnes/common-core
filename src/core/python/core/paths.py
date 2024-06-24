@@ -5,12 +5,15 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Package modules
+from ..buildinfo import SETTINGS_DIR
+
+### Standard python modules
 import os
 import os.path
 import platform
-import buildinfo
-
 from typing import Sequence, Optional
+
 FilePath   = str
 SearchPath = Sequence[FilePath]
 
@@ -32,8 +35,8 @@ def settingsPath() -> SearchPath:
     except AttributeError:
         searchpath = [
             ('/etc/cc', 'C:\\CC\\Config')[platform.system() == 'Windows'], # Local overrides
-            buildinfo.SETTINGS_DIR, # Package defaults
-            'settings'              # Inside virtualenv/`.whl` container
+            SETTINGS_DIR, # Package defaults
+            'settings'    # Inside virtualenv/`.whl` container
         ]
 
     return normalizedSearchPath(searchpath)

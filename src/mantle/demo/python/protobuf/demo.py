@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Generated from `demo.proto`
-from generated.demo_pb2 import Greeting, TimeStruct, TimeData, Weekday, Signal
+from ..generated.demo_pb2 import Greeting, TimeStruct, TimeData, Weekday, Signal
 
 ### Standard Python modules
 import time, enum

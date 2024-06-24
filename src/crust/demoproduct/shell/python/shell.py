@@ -5,18 +5,19 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
-from protobuf.import_proto\
+### Modules within package
+from .grpc.client import DemoClient as gRPCDemoClient
+from .zmq.client import DemoClient as ZMQDemoClient
+
+from cc.protobuf.import_proto \
     import import_wellknown_protos, import_core_protos, import_proto
 
-import demo.grpc.client
-import demo.zmq.client
-import protobuf.demo
-import protobuf.wellknown
-import protobuf.variant
-import protobuf.signal
-import protobuf.status
-import protobuf.rr
+import cc.protobuf.demo
+import cc.protobuf.wellknown
+import cc.protobuf.variant
+import cc.protobuf.signal
+import cc.protobuf.status
+import cc.protobuf.rr
 
 ### Third-party modules
 import google.protobuf.message
@@ -77,7 +78,7 @@ def legend():
 
         google.protobuf - Well-known types from Google
         cc.* - Various custom types
-        protobuf.* - General utilities and wrapper modules
+        cc.protobuf.* - General utilities and wrapper modules
 
     Use 'help(subsystem)' to list available subcomponents or methods
     '''
@@ -90,12 +91,12 @@ if __name__ == "__main__":
     logger = logging.getLogger()
     logger.setLevel((logging.INFO, logging.DEBUG)[args.debug])
 
-    demo_grpc = demo.grpc.client.DemoClient(
+    demo_grpc = gRPCDemoClient(
         args.host,
         identity = args.identity,
         wait_for_ready = args.wait_for_ready)
 
-    demo_zmq  = demo.zmq.client.DemoClient(
+    demo_zmq  = ZMQDemoClient(
         args.host,
         identity = args.identity)
 

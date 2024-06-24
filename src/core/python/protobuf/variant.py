@@ -10,7 +10,10 @@
 
 '''
 
-from generated.variant_pb2 import Value, ValueList
+### Modules wihtin package
+from ..generated.variant_pb2 import Value, ValueList
+
+### Third-party modules
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.duration_pb2 import Duration
 

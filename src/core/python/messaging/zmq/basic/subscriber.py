@@ -5,11 +5,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
-from .satellite      import Satellite
-from .filter         import Filter, Topic
+### Modules within package
+from .satellite import Satellite
+from .filter import Filter, Topic
 from .messagehandler import MessageHandler
-from core.invocation import safe_invoke
+from ....core.invocation import safe_invoke
 
 ### Third-party modules
 import zmq

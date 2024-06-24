@@ -5,17 +5,18 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-target_name="demo/shell.py"
+target_name="cc/demo/shell.py"
 prog_path=$(realpath "$0")
 prog_dir=${prog_path%/*}
 base_dir=${prog_dir%/*}
 
-for candidate_dir in share/python python
+for candidate_dir in lib/python3/dist-packages share/python python
 do
     candidate="${base_dir}/${candidate_dir}/${target_name}"
     if [ -r "${candidate}" ]
     then
-        exec "${candidate}" "$@"
+        PYTHONPATH="${base_dir}/${candidate_dir}" exec python3 -i -m cc.demo.shell
+        # exec "${candidate}" "$@"
     fi
 done
 

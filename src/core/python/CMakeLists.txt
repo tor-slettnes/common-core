@@ -17,6 +17,7 @@ set(PROGRAMS
 
 ### Files to be installed as is, without execute permissionss
 set(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/generated/__init__.py
   ${CMAKE_CURRENT_BINARY_DIR}/generated/buildinfo.py
 )
 
@@ -25,6 +26,7 @@ set(DIRECTORIES
   core
   protobuf
   messaging
+  # generated
 )
 
 ### Wheel dependencies
@@ -35,14 +37,24 @@ set(PKG_DEPS
 )
 
 ### Populate version/build info
+configure_file(__init__.py.in "generated/__init__.py")
 configure_file(buildinfo.py.in "generated/buildinfo.py")
 
+
 BuildPython("${TARGET}"
+  COMPONENT "${PKG_COMPONENT}"
+  PACKAGE "${PYTHON_PACKAGE}"
   PROGRAMS "${PROGRAMS}"
   FILES "${FILES}"
   DIRECTORIES "${DIRECTORIES}"
-  COMPONENT "${PKG_COMPONENT}"
 )
+
+# BuildPythonWheel("${TARGET}_wheel"
+#   CONTENTS ${DIRECTORIES} ${PROGRAMS} ${FILES}
+#   COMPONENT "${PKG_COMPONENT}"
+#   PROTO_DEPS "cc_core_proto"
+# )
+
 
 ### Add a installation package component
 cpack_add_component("${PKG_COMPONENT}"

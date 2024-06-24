@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-
+### Standard Python modules
 import threading, asyncio
 
 class ThreadReader (object):

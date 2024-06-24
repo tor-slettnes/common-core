@@ -104,7 +104,7 @@ namespace core
             if (d >= YEAR && yearsformat.has_value())
             {
                 sep = delimiter;
-                uint years = (uint)std::trunc(d / YEAR);
+                uint years = static_cast<uint>(std::trunc(d / YEAR));
                 str::format(stream, yearsformat.value(), years);
                 d -= years * YEAR;
                 divs++;
@@ -118,7 +118,7 @@ namespace core
             {
                 stream << sep;
                 sep = delimiter;
-                uint months = (uint)std::trunc(d / MONTH);
+                uint months = static_cast<uint>(std::trunc(d / MONTH));
                 str::format(stream, monthsformat.value(), months);
                 d -= months * MONTH;
                 divs++;
@@ -132,7 +132,7 @@ namespace core
             {
                 stream << sep;
                 sep = delimiter;
-                uint days = (uint)std::trunc(d / DAY);
+                uint days = static_cast<uint>(std::trunc(d / DAY));
                 str::format(stream, daysformat.value(), days);
                 d -= days * DAY;
                 divs++;
@@ -146,7 +146,7 @@ namespace core
             {
                 stream << sep;
                 sep = delimiter;
-                uint hours = (uint)std::trunc(d / HOUR);
+                uint hours = static_cast<uint>(std::trunc(d / HOUR));
                 str::format(stream, hoursformat.value(), hours);
                 d -= hours * HOUR;
                 divs++;
@@ -160,7 +160,7 @@ namespace core
             {
                 stream << sep;
                 sep = delimiter;
-                uint minutes = (uint)std::trunc(d / MINUTE);
+                uint minutes = static_cast<uint>(std::trunc(d / MINUTE));
                 str::format(stream, minutesformat.value(), minutes);
                 d -= minutes * MINUTE;
                 divs++;

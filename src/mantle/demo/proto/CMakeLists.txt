@@ -25,6 +25,7 @@ BuildProto("${TARGET}"
   LIB_TYPE STATIC
   PROTO_DEPS ${PROTO_DEPS}
   SOURCES ${SOURCES}
+  COMPONENT "${PKG_COMPONENT}"
 )
 
 cpack_add_component(${PKG_COMPONENT}

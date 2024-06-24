@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### This can be used as a downstream dependency.
-set(TARGET cc_core_proto)
+set(TARGET "cc_core_proto")
 
 ### Package component
 set(PKG_COMPONENT "core-proto")
@@ -22,9 +22,11 @@ set(SOURCES
 
 ### Generate language bindings
 include(BuildProto)
+
 BuildProto("${TARGET}"
   LIB_TYPE STATIC
   SOURCES "${SOURCES}"
+  COMPONENT "${PKG_COMPONENT}"
 )
 
 cpack_add_component(${PKG_COMPONENT}

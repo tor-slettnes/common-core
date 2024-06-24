@@ -6,12 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install folder
-from protobuf.import_proto import import_wellknown_protos, import_core_protos
-import protobuf.wellknown
-import protobuf.variant
-import protobuf.signal
-import protobuf.status
-import protobuf.rr
+from ..protobuf.import_proto import import_wellknown_protos, import_core_protos
 
 ### Third-party modules
 import google.protobuf.message
@@ -41,7 +36,7 @@ class ArgParser (argparse.ArgumentParser):
                           help='Print debug messages')
 
 
-def legend ():
+def legend():
     '''
     Interactive Python shell with ProtoBuf data types preloaded
     into namespaces corresponding to their respective package names:

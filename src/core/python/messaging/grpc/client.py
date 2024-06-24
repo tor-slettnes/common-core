@@ -5,10 +5,10 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
+### Modules within package
 from .base import Base
 from .client_interceptor import ClientInterceptor, AsyncClientInterceptor
-from core.invocation import invocation
+from ...core.invocation import invocation
 
 ### Third-party modules
 import grpc

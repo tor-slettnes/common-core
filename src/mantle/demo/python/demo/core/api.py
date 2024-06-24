@@ -7,15 +7,22 @@
 
 ### Modules relative to install dir
 from .signals import signal_store
-import protobuf.demo
-import protobuf.variant
-import protobuf.wellknown
+from cc.protobuf.import_proto import import_proto
+from cc.protobuf.wellknown import encodeTimestamp
+from cc.protobuf.variant import encodeValueList
+
+### Import ProtoBuf generated types. Symbols will appear within namespaces
+### corresponding to the package naems in the respective `.proto` files:
+### `cc.demo` and `cc.signal`.
+import_proto('demo', globals())
+#import_proto('signal', globals())
+
 
 ### Standard Python modules
 from typing import Callable
 import sys, os.path, time
 
-SignalSlot = Callable[[protobuf.demo.Signal], None]
+SignalSlot = Callable[[cc.demo.Signal], None]
 
 #===============================================================================
 # Native Demo implementation
@@ -41,21 +48,21 @@ class API:
         @param[in] kwargs
             Arbitrary attributes included in greeting
         @note
-            This is a convencience wrapper to build a `protobuf.demo.Greeting` object
+            This is a convencience wrapper to build a `cc.demo.Greeting` object
             and pass it to `say_hello()`.
         '''
 
-        greeting = protobuf.demo.Greeting(
+        greeting = cc.demo.Greeting(
             text = text,
             identity = self.identity,
             implementation = self.implementation,
-            birth = protobuf.wellknown.encodeTimestamp(self.birth),
-            data = protobuf.variant.encodeValueList(kwargs))
+            birth = encodeTimestamp(self.birth),
+            data = encodeValueList(kwargs))
 
         return self.say_hello(greeting)
 
 
-    def say_hello(self, greeting: protobuf.demo.Greeting):
+    def say_hello(self, greeting: cc.demo.Greeting):
         '''Issue a greeting to anyone who may be listening.
         For interactive use, the `hello()` wrapper method may be more convenient.
 
@@ -66,7 +73,7 @@ class API:
         raise NotImplementedError("Method not implemented by %s"%(self,))
 
 
-    def get_current_time(self) -> protobuf.demo.TimeData:
+    def get_current_time(self) -> cc.demo.TimeData:
         '''Get current time data.
 
         @return
@@ -94,7 +101,7 @@ class API:
         '''Register a callback to be invoked whenever a greeting is received
 
         @param[in] callback
-            Callback method, which will receive the `protobuf.demo.Signal()`
+            Callback method, which will receive the `cc.demo.Signal()`
             message containing the greeting as argument.
         '''
         signal_store.connect_signal('signal_greeting', callback)

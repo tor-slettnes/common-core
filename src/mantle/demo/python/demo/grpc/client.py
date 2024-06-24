@@ -5,16 +5,18 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to current dir
+### Modules within package
 from ..core import API, SignalSlot, signal_store
-from messaging.grpc import SignalClient
-
-### Modules relative to install dir
-import protobuf.demo
-import protobuf.utils
+from cc.messaging.grpc import SignalClient
+from cc.protobuf.import_proto import import_proto
+from cc.protobuf.utils import check_type
 
 ### Third-party modules
 from google.protobuf.empty_pb2 import Empty
+
+## Import symbols generted from `demo.proto`. These will appear in
+## the namespace `cc.demo`.
+import_proto('demo', globals())
 
 #===============================================================================
 # SignalClient class
@@ -24,7 +26,7 @@ class DemoClient (API, SignalClient):
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
-    from generated.demo_pb2_grpc import DemoStub as Stub
+    from cc.generated.demo_pb2_grpc import DemoStub as Stub
 
     ## `service_name` is optional. If not provided here it is determined
     ## from the above stub.  It is used to look up service specific settings,
@@ -35,7 +37,7 @@ class DemoClient (API, SignalClient):
     ## SignalStore() instance to the `SignalClient.__init__()` base, below.
     ## In our case we do, since we share the signal store with other message
     ## clients which also receive and re-emit signals from remote endpoints.
-    #signal_type = protobuf.demo.Signal
+    #signal_type = cc.demo.Signal
 
     def __init__(self,
                  host           : str = "",      # gRPC server
@@ -52,11 +54,11 @@ class DemoClient (API, SignalClient):
                               watch_all = False)
 
 
-    def say_hello(self, greeting: protobuf.demo.Greeting):
-        protobuf.utils.check_type(greeting, protobuf.demo.Greeting)
+    def say_hello(self, greeting: cc.demo.Greeting):
+        check_type(greeting, cc.demo.Greeting)
         self.stub.say_hello(greeting)
 
-    def get_current_time(self) -> protobuf.demo.TimeData:
+    def get_current_time(self) -> cc.demo.TimeData:
         return self.stub.get_current_time(Empty())
 
     def start_ticking(self) -> None:

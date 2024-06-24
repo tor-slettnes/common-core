@@ -5,6 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Standard Python modules
 import importlib, types
 
 default_suffix = '_pb2'

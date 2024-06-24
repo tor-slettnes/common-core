@@ -5,9 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
-from .host           import Host
-from core.invocation import safe_invoke
+### Modules within package
+from .host import Host
+from ....core.invocation import safe_invoke
 
 ### Third-party modules
 import zmq

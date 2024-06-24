@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
+### Modules within package
 from .filter import Filter, Topic
 
 ### Standard Python modules

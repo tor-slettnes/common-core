@@ -6,21 +6,17 @@
 #===============================================================================
 
 #===============================================================================
-## @fn protogen
+## @fn protogen_common
 ## @brief Invoke `protoc` to generate bindings for a specified language/plugin
 
-function(protogen)
-  set(_singleargs TARGET COMMENT GENERATOR PLUGIN OUT_DIR COMPONENT)
+function(PROTOGEN_COMMON)
+  set(_singleargs TARGET COMMENT GENERATOR PLUGIN OUT_DIR)
   set(_multiargs DEPENDS PROTOS SUFFIXES OUT_VARS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
   if(NOT arg_TARGET AND NOT arg_PROTOS)
     message(SEND_ERROR "Error: protogen() called without any TARGET or PROTO files")
     return()
-  endif()
-
-  if(arg_COMPONENT)
-    message(WARNING "protogen() invoked with legacy option COMPONENT in ${CMAKE_CURRENT_SOURCE_DIR}")
   endif()
 
   if(arg_PLUGIN)
@@ -52,7 +48,7 @@ function(protogen)
   ## Also add the system include folders from `protobuf`
   list(APPEND _include_dirs "$<TARGET_PROPERTY:${TARGET},INTERFACE_INCLUDE_DIRECTORIES>")
 
-  ### Add `.proto` files supplied in the PROTOS argumen
+  ### Add `.proto` files supplied in the PROTOS argument
   set(_proto_files "${arg_PROTOS}")
 
   ## Also add any `.proto` files that were supplied as target sources
@@ -136,7 +132,7 @@ function(PROTOGEN_PROTOBUF_CPP SRCS HDRS)
   set(_multiargs PROTOS DEPENDS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
-  protogen(
+  protogen_common(
     TARGET "${arg_TARGET}"
     COMMENT "Generating C++ protocol buffer bindings for ${arg_TARGET}"
     GENERATOR cpp
@@ -172,7 +168,7 @@ function(PROTOGEN_GRPC_CPP SRCS HDRS)
     find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin)
   endif()
 
-  protogen(
+  protogen_common(
     TARGET "${arg_TARGET}"
     COMMENT "Generating C++ gRPC bindings for ${arg_TARGET}"
     GENERATOR grpc
@@ -202,18 +198,18 @@ endfunction()
 ## @brief Generate Python ProtoBuf bindings
 
 function(PROTOGEN_PROTOBUF_PY SRCS)
-  set(_singleargs TARGET)
+  set(_singleargs TARGET OUT_DIR)
   set(_multiargs PROTOS DEPENDS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
-  protogen(
+  protogen_common(
     TARGET "${arg_TARGET}"
     COMMENT "Generating Python protocol buffer bindings for ${arg_TARGET}"
     GENERATOR python
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
     SUFFIXES "_pb2.py"
-    OUT_DIR "python"
+    OUT_DIR "${arg_OUT_DIR}"
     OUT_VARS ${SRCS})
 
   set(${SRCS} ${${SRCS}} PARENT_SCOPE)
@@ -224,7 +220,7 @@ endfunction()
 ## @brief Generate Python gRPC bindings
 
 function(PROTOGEN_GRPC_PY SRCS)
-  set(_singleargs TARGET)
+  set(_singleargs TARGET OUT_DIR)
   set(_multiargs PROTOS DEPENDS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
@@ -234,7 +230,7 @@ function(PROTOGEN_GRPC_PY SRCS)
     find_program(GRPC_PYTHON_PLUGIN grpc_python_plugin)
   endif()
 
-  protogen(
+  protogen_common(
     TARGET "${arg_TARGET}"
     COMMENT "Generating Python gRPC bindings for ${arg_TARGET}"
     GENERATOR grpc
@@ -242,7 +238,7 @@ function(PROTOGEN_GRPC_PY SRCS)
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
     SUFFIXES "_pb2_grpc.py"
-    OUT_DIR "python"
+    OUT_DIR "${arg_OUT_DIR}"
     OUT_VARS ${SRCS}
   )
 

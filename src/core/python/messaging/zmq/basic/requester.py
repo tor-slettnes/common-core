@@ -5,8 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
-from .satellite   import Satellite
+### Modules within package
+from .satellite import Satellite
 
 ### Third-party modules
 import zmq

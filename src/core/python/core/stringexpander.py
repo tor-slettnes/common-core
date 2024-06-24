@@ -5,6 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Standard Python modules
 import re
 import typing
 import sys

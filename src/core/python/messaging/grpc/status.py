@@ -5,9 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from protobuf.status import Event
+### Modules wihtin package
+from ...protobuf.status import Event
 
+### Third-party modules
 import grpc
+
+### Standard Python modules
 import traceback
 import sys
 

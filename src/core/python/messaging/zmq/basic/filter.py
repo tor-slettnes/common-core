@@ -4,6 +4,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Standard Python modules
 from typing import Tuple
 
 Topic = str

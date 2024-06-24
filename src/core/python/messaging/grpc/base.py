@@ -5,9 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
+### Modules within package
 from ..common import Endpoint
-from core.settingsstore import SettingsStore
+from ...core.settingsstore import SettingsStore
 
 ### Stanard Python modules
 import re, logging

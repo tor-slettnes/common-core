@@ -5,8 +5,10 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
-from ..http import HTTPClient
+### Modules within package
+from ..http.client import HTTPClient
+
+### Standard Python modules
 import json
 import asyncio
 from typing import Union, Mapping, List

@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to current folder
+### Modules within package
 from .wellknown import MessageType, MessageToString, MessageToDict, ParseDict
 
 ### Third-party modules

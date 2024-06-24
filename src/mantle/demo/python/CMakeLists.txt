@@ -26,9 +26,10 @@ set(DIRECTORIES
 
 ### Common recipe
 BuildPython("${TARGET}"
+  PACKAGE "${PYTHON_PACKAGE}"
+  COMPONENT "${PKG_COMPONENT}"
   PROGRAMS "${PROGRAMS}"
   DIRECTORIES "${DIRECTORIES}"
-  COMPONENT "${PKG_COMPONENT}"
 )
 
 cpack_add_component("${PKG_COMPONENT}"

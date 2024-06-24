@@ -30,9 +30,8 @@ classifiers = [
 [project.urls]
 Homepage = "@HOMEPAGE_URL@"
 
-[tool.hatch.build.targets.wheel.force-include]
-@PYTHON_INCLUDE@
-@SETTINGS_INCLUDE@
+[tool.hatch.build.targets.wheel]
+@CONTENT_SPEC@
 
-[project.scripts]
-demoshell = "demo.shell:main"
+[tool.hatch.build.targets.wheel.force-include]
+@PYTHON_INCLUDES@

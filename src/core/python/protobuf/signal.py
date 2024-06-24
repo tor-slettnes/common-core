@@ -5,12 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install path
-from .variant import Value, ValueList
-from .wellknown import Message
+### Modules withn package
 from .utils import enumToValue, check_type
 from .import_proto import import_proto
-from core.invocation import safe_invoke
+from ..core.invocation import safe_invoke
+
+### Third-party modules
+from google.protobuf.message import Message
 
 ### Standard Python modules
 from typing import Optional, Callable, Mapping, Union
@@ -461,10 +462,10 @@ class SignalStore:
 
     def _update_cache(self, signalname, action, key, data):
         datamap = self._cache.setdefault(signalname, {})
-        if action in (MappingAction.MAP_ADDITION, MappingAction.MAP_UPDATE):
-            datamap[key] = data
-        elif action == MappingAction.MAP_REMOVAL:
+        if action == MappingAction.MAP_REMOVAL:
             datamap.pop(key, None)
+        else:
+            datamap[key] = data
 
     def _emit_to(self, name, slot, signal):
         action, key = self._mapping_controls(signal)

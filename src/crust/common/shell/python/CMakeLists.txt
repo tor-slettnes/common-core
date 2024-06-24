@@ -14,7 +14,7 @@ set(PROGRAMS
 )
 
 BuildPython("${TARGET}"
-  MODULE "common"
-  PROGRAMS "${PROGRAMS}"
+  PACKAGE "${PYTHON_PACKAGE}.common"
   COMPONENT "${PKG_COMPONENT}"
+  PROGRAMS "${PROGRAMS}"
 )

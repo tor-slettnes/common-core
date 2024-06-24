@@ -5,11 +5,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
+### Modules within package
 from .error import Error
 from ..basic.requester import Requester
-from protobuf.wellknown import Message, MessageType, Empty
-import protobuf.rr
+from ....protobuf.wellknown import Message, MessageType, Empty
+from ....protobuf.rr import Parameter, Request, Reply, STATUS_OK
 
 class Client (Requester):
     '''ZMQ RPC client using ProtoBuf messages'''
@@ -57,38 +57,38 @@ class Client (Requester):
         '''Invoke a remote method using a ProtoBuf envelope, then return immediately.
         To reeive the response invoke `receive_protobuf_result()`.
         '''
-        params = protobuf.rr.Parameter(serialized_proto = args.SerializeToString())
+        params = Parameter(serialized_proto = args.SerializeToString())
         self.send_invocation(method_name, params)
 
 
     def send_invocation(self,
                         method_name: str,
-                        input_param: protobuf.rr.Parameter):
+                        input_param: Parameter):
 
         self.request_id += 1
 
-        req = protobuf.rr.Request(request_id = self.request_id,
-                                     client_id  = self.client_id,
-                                     interface_name = self.interface_name,
-                                     method_name = method_name,
-                                     param = input_param)
+        req = Request(request_id = self.request_id,
+                      client_id  = self.client_id,
+                      interface_name = self.interface_name,
+                      method_name = method_name,
+                      param = input_param)
 
         self.send_request(req)
 
-    def send_request(self, request: protobuf.rr.Request):
+    def send_request(self, request: Request):
         self.send_bytes(request.SerializeToString())
 
     def receive_protobuf_result(self, response_type : MessageType) -> Message:
         response_param = self.receive_response_param()
         return response_type.FromString(response_param.serialized_proto)
 
-    def receive_response_param(self) -> protobuf.rr.Parameter:
+    def receive_response_param(self) -> Parameter:
         reply = self.receive_reply()
-        if reply.status.code == protobuf.rr.STATUS_OK:
+        if reply.status.code == STATUS_OK:
             return reply.param
         else:
             raise Error(reply.status.code, reply.status.details) from None
 
-    def receive_reply(self) -> protobuf.rr.Reply:
+    def receive_reply(self) -> Reply:
         data = self.receive_bytes()
-        return protobuf.rr.Reply.FromString(data)
+        return Reply.FromString(data)

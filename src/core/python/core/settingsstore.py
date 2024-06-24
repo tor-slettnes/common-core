@@ -5,8 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Modules within package
 from .jsonreader import JsonReader
 from .paths      import normalizedSearchPath, settingsPath, FilePath, SearchPath
+
+
+### Standard Python modules
 from typing     import Sequence, Optional, Union
 import os
 import os.path

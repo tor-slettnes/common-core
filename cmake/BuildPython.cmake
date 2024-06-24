@@ -5,12 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(PYTHON_INSTALL_DIR "share/python"
+set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules" FORCE)
 
 function(BuildPython TARGET)
   set(_options)
-  set(_singleargs DESTINATION MODULE COMPONENT)
+  set(_singleargs DESTINATION PACKAGE COMPONENT)
   set(_multiargs PROGRAMS FILES DIRECTORIES)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -30,9 +30,9 @@ function(BuildPython TARGET)
     set(_destination ${PYTHON_INSTALL_DIR})
   endif()
 
-  if(arg_MODULE)
-    string(REPLACE "." "/" _module_dir "${arg_MODULE}")
-    set(_destination "${_destination}/${_module_dir}")
+  if(arg_PACKAGE)
+    string(REPLACE "." "/" _package_dir "${arg_PACKAGE}")
+    set(_destination "${_destination}/${_package_dir}")
   endif()
 
   if(arg_PROGRAMS)

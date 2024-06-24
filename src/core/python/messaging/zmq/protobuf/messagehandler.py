@@ -5,12 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to current folder
+### Modules within package
 from ..basic import Filter, Topic, MessageHandler as BaseHandler
-
-### Modules relative to install folder
-import protobuf.wellknown
-
+from ....protobuf.wellknown import Message, MessageType
 
 class MessageHandler (BaseHandler):
     '''ZMQ subscriber with support for ProtoBuf messages'''
@@ -20,10 +17,10 @@ class MessageHandler (BaseHandler):
     message_type = None
 
     def __init__(self,
-                 message_type : protobuf.wellknown.MessageType|None = None):
+                 message_type : MessageType|None = None):
 
         self.message_type = message_type or type(self).message_type
-        assert isinstance(self.message_type, protobuf.wellknown.MessageType)
+        assert isinstance(self.message_type, MessageType)
 
         topic = self.message_type.DESCRIPTOR.full_name
         BaseHandler.__init__(self, topic, Filter.create_from_topic(topic))
@@ -39,7 +36,7 @@ class MessageHandler (BaseHandler):
     ### Subclasses must override _one_ of the following two methods
     ### to process incoming ProtoBuf payloads
 
-    def handle_proto(self, message: protobuf.wellknown.Message):
+    def handle_proto(self, message: Message):
         '''Process incoming ProtoBuf message.
 
         Unless overridden in subclasses this further decodes the message to a

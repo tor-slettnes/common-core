@@ -5,14 +5,10 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to current folder
+### Modules within package
 from .client  import Client
 from .client_reader import ThreadReader, AsyncReader
-
-### Modules relative to install folder
-from protobuf.signal import SignalStore, cc
-# from protobuf.import_proto import import_proto
-# import_proto('signal', globals())
+from ...protobuf.signal import SignalStore, cc
 
 #===============================================================================
 # Client

@@ -5,9 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
+### Modules within package
 from ..common import Endpoint
-from core.invocation import check_type
+from ...core.invocation import check_type
 
 ### Standard Python modules
 from typing import Optional

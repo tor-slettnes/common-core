@@ -5,7 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from generated.version_pb2 import Version, ComponentVersions
+### Modules within package
+from ..generated.version_pb2 import Version, ComponentVersions
 
 def version(major: int,
             minor: int = 0,

@@ -5,17 +5,17 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install folder
-import protobuf.utils
-import protobuf.rr
-import protobuf.status
+### Modules within package
+from ....protobuf.utils import messageToDict
+from ....protobuf.rr import Reply, StatusCode
+from ....protobuf.status import Event
 
 class Error (RuntimeError):
     '''ZMQ RPC error'''
 
     def __init__(self,
-                 code    : protobuf.rr.StatusCode,
-                 details : protobuf.status.Event):
+                 code    : StatusCode,
+                 details : Event):
 
         RuntimeError.__init__(self, details.text)
         self.code    = code
@@ -25,8 +25,8 @@ class Error (RuntimeError):
         return "%s(code=%d, details=%s)"%(
             type(self).__name__,
             self.code,
-            protobuf.utils.messageToDict(self.details, use_integers_for_enums=False))
+            messageToDict(self.details, use_integers_for_enums=False))
 
-    def add_to_reply (self, reply: protobuf.rr.Reply):
+    def add_to_reply (self, reply: Reply):
         reply.status.code = self.code
         reply.status.details.CopyFrom(self.details)
