@@ -40,10 +40,9 @@ set(PKG_DEPS
 configure_file(__init__.py.in "generated/__init__.py")
 configure_file(buildinfo.py.in "generated/buildinfo.py")
 
-
 BuildPython("${TARGET}"
+  PACKAGE "${CPACK_PYTHON_PACKAGE}"
   COMPONENT "${PKG_COMPONENT}"
-  PACKAGE "${PYTHON_PACKAGE}"
   PROGRAMS "${PROGRAMS}"
   FILES "${FILES}"
   DIRECTORIES "${DIRECTORIES}"

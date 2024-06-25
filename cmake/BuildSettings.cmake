@@ -5,8 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(SETTINGS_DIR "share/settings"
-  CACHE STRING "Top-level installation directory for settings files" FORCE)
+set(SETTINGS_DIR "share/cc/settings"
+  CACHE STRING "Top-level installation directory for settings files")
 
 function(BuildSettings)
   set(_options)

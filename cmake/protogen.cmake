@@ -11,7 +11,7 @@
 
 function(PROTOGEN_COMMON)
   set(_singleargs TARGET COMMENT GENERATOR PLUGIN OUT_DIR)
-  set(_multiargs DEPENDS PROTOS SUFFIXES OUT_VARS)
+  set(_multiargs PROTOS SUFFIXES OUT_VARS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
   if(NOT arg_TARGET AND NOT arg_PROTOS)
@@ -24,29 +24,15 @@ function(PROTOGEN_COMMON)
   endif()
 
   ## ProtoBuf Compiler setup
-  set(_include_dirs "${CMAKE_CURRENT_SOURCE_DIR}")
-
-  ## For statements like "import DEPENDENCY.proto" to work, also include
-  ## directories from the "proto_include_dirs" property from each direct dependency.
-  foreach(_dep ${arg_DEPENDS})
-    get_target_property(_include_dir ${_dep} proto_include_dirs)
-    list(APPEND _include_dirs ${_include_dir})
-  endforeach()
-
-  ## Correspondingly, update the `proto_include_dirs` property on this target
-  if(arg_TARGET)
-    set_target_properties(${arg_TARGET} PROPERTIES
-      proto_include_dirs "${_include_dirs}"
-    )
-  endif()
+  set(_include_dirs
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "$<TARGET_PROPERTY:${TARGET},INTERFACE_INCLUDE_DIRECTORIES>"
+  )
 
   ## Append any directories supplied in the `Protobuf_IMPORT_DIRS` variable
   if(DEFINED Protobuf_IMPORT_DIRS)
     list(APPEND _include_dirs ${Protobuf_IMPORT_DIRS})
   endif()
-
-  ## Also add the system include folders from `protobuf`
-  list(APPEND _include_dirs "$<TARGET_PROPERTY:${TARGET},INTERFACE_INCLUDE_DIRECTORIES>")
 
   ### Add `.proto` files supplied in the PROTOS argument
   set(_proto_files "${arg_PROTOS}")
@@ -108,7 +94,7 @@ function(PROTOGEN_COMMON)
        ${_plugin_arg}
        ${_proto_src}
     COMMAND_EXPAND_LISTS
-    COMMENT "${arg_COMMENT}"
+    COMMENT "${arg_COMMENT}, include_dirs=${_include_dirs}"
     VERBATIM
   )
 

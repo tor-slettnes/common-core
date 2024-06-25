@@ -35,7 +35,6 @@ project(common-core
 ### Language components
 option(BUILD_CPP        "Build/Install C++ code" ON)
 option(BUILD_PYTHON     "Install Python clients/scripts" ON)
-set(PYTHON_PACKAGE "cc")
 
 ### Optional core components
 option(BUILD_RAPIDJSON  "Build support for RapidJSON parser" ON)

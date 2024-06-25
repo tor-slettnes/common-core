@@ -14,17 +14,7 @@ set(PROGRAMS
 )
 
 BuildPython("${TARGET}"
-  PACKAGE "${PYTHON_PACKAGE}.demo"
+  PACKAGE "${CPACK_PYTHON_PACKAGE}.demo"
   PROGRAMS "${PROGRAMS}"
   COMPONENT "${PKG_COMPONENT}"
 )
-
-# BuildPythonWheel(common_core_wheel
-#   PACKAGE "common_core"
-#   COMPONENT "python-core"
-#   CONTENTS "${PROGRAMS}"
-#   PYTHON_DEPS cc_core_python cc_demo_python
-#   PROTO_DEPS cc_core_proto cc_demo_proto
-#   PKG_DEPS grpcio protobuf zmq
-# )
-

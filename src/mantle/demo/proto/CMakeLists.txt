@@ -12,7 +12,7 @@ set(TARGET "cc_demo_proto")
 set(PKG_COMPONENT "demo-proto")
 
 ### Static/shared library dependencies.
-set(PROTO_DEPS cc_core_proto)
+set(LIB_DEPS cc_core_proto)
 
 ### Source files
 set(SOURCES
@@ -20,10 +20,9 @@ set(SOURCES
 )
 
 ### Generate language bindings
-include(BuildProto)
 BuildProto("${TARGET}"
   LIB_TYPE STATIC
-  PROTO_DEPS ${PROTO_DEPS}
+  LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
   COMPONENT "${PKG_COMPONENT}"
 )

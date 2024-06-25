@@ -14,41 +14,12 @@ include(pkgconf)
 function(BuildProto_CPP TARGET)
   set(_options)
   set(_singleargs LIB_TYPE SCOPE)
-  set(_multiargs  PROTOS LIB_DEPS OBJ_DEPS PKG_DEPS PROTO_DEPS)
+  set(_multiargs  PROTOS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  if(arg_LIB_TYPE)
-    string(TOUPPER "${arg_LIB_TYPE}" _type)
-  else()
-    set(_type STATIC)
-  endif()
-
-  if(arg_SCOPE)
-    string(TOUPPER "${arg_SCOPE}" _scope)
-  else()
-    set(_scope PUBLIC)
-  endif()
-
-  set(_sources)
-  foreach(_dep ${arg_OBJ_DEPS})
-    list(APPEND _sources $<TARGET_OBJECTS:${_dep}>)
-  endforeach()
-
-  add_library("${TARGET}" "${_type}" ${_sources})
-
-  target_include_directories("${TARGET}" ${_scope}
+  target_include_directories("${TARGET}" ${arg_SCOPE}
     ${CMAKE_CURRENT_BINARY_DIR}
   )
-
-  target_link_libraries("${TARGET}" ${_scope}
-    ${arg_LIB_DEPS}
-    ${arg_OBJ_DEPS}
-    ${arg_PROTO_DEPS}
-  )
-
-  add_package_dependencies("${TARGET}"
-    LIB_TYPE "${_type}"
-    DEPENDS "${arg_PKG_DEPS}")
 
   if(BUILD_PROTOBUF)
     find_package(Protobuf REQUIRED)
@@ -56,7 +27,6 @@ function(BuildProto_CPP TARGET)
     protogen_protobuf_cpp(PROTO_CPP_SRCS PROTO_CPP_HDRS
       TARGET "${TARGET}"
       PROTOS "${arg_PROTOS}"
-      DEPENDS "${arg_PROTO_DEPS}"
     )
   endif()
 
@@ -67,13 +37,12 @@ function(BuildProto_CPP TARGET)
     ### gRPC releases.  Let's obtain additional package dependencies from
     ### `pkg-config`.
     add_package_dependencies("${TARGET}"
-      LIB_TYPE "${_type}"
+      LIB_TYPE "${arg_LIB_TYPE}"
       DEPENDS grpc++)
 
     protogen_grpc_cpp(GRPC_CPP_SRCS GRPC_CPP_HDRS
       TARGET "${TARGET}"
       PROTOS "${arg_PROTOS}"
-      DEPENDS "${arg_PROTO_DEPS}"
     )
   endif()
 
@@ -85,7 +54,7 @@ endfunction()
 function(BuildProto_PYTHON TARGET)
   set(_options)
   set(_singleargs COMPONENT INSTALL_DIR PACKAGE)
-  set(_multiargs PROTOS LIB_DEPS OBJ_DEPS PROTO_DEPS)
+  set(_multiargs PROTOS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if (arg_INSTALL_DIR)
@@ -96,19 +65,16 @@ function(BuildProto_PYTHON TARGET)
 
   if(arg_PACKAGE)
     set(_install_dir "${_install_dir}/${_arg_PACKAGE}")
-  elseif(PYTHON_PACKAGE)
-    set(_install_dir "${_install_dir}/${PYTHON_PACKAGE}")
+  elseif(CPACK_PYTHON_PACKAGE)
+    set(_install_dir "${_install_dir}/${CPACK_PYTHON_PACKAGE}")
   endif()
 
   set(_install_dir "${_install_dir}/generated")
-
-  add_custom_target(${TARGET} DEPENDS ${LIB_DEPS} ${OBJ_DEPS})
 
   if (BUILD_PROTOBUF)
     protogen_protobuf_py(PROTO_PY
       TARGET "${TARGET}"
       PROTOS "${arg_PROTOS}"
-      DEPENDS "${arg_PROTO_DEPS}"
       OUT_DIR "python"
     )
 
@@ -123,7 +89,6 @@ function(BuildProto_PYTHON TARGET)
     protogen_grpc_py(GRPC_PY
       TARGET "${TARGET}"
       PROTOS "${arg_PROTOS}"
-      DEPENDS "${arg_PROTO_DEPS}"
       OUT_DIR "python"
     )
 
@@ -143,7 +108,7 @@ endfunction()
 function(BuildProto TARGET)
   set(_options)
   set(_singleargs LIB_TYPE SCOPE COMPONENT PYTHON_INSTALL_DIR PYTHON_PACKAGE)
-  set(_multiargs SOURCES PROTO_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS)
+  set(_multiargs SOURCES LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if(arg_COMPONENT)
@@ -154,32 +119,37 @@ function(BuildProto TARGET)
     set(_component common)
   endif()
 
-  add_library("${TARGET}" INTERFACE)
+  if(NOT BUILD_CPP)
+    set(_scope INTERFACE)
+  elseif(arg_SCOPE)
+    string(TOUPPER "${arg_SCOPE}" _scope)
+  else()
+    set(_scope PUBLIC)
+  endif()
+
+  BuildLibrary("${TARGET}"
+    SCOPE    "${_scope}"
+    LIB_TYPE "${arg_LIB_TYPE}"
+    LIB_DEPS "${arg_LIB_DEPS}"
+    OBJ_DEPS "${arg_OBJ_DEPS}"
+    PKG_DEPS "${arg_PKG_DEPS}"
+    MOD_DEPS "${arg_MOD_DEPS}"
+  )
 
   if(BUILD_CPP)
-    list(TRANSFORM arg_PROTO_DEPS APPEND "_cpp" OUTPUT_VARIABLE _proto_deps_cpp)
-    BuildProto_CPP("${TARGET}_cpp"
-      PROTOS "${arg_SOURCES}"
+    BuildProto_CPP("${TARGET}"
       LIB_TYPE "${arg_LIB_TYPE}"
-      SCOPE "${arg_SCOPE}"
-      LIB_DEPS "${arg_LIB_DEPS}"
-      OBJ_DEPS "${arg_OBJ_DEPS}"
-      PKG_DEPS "${arg_PKG_DEPS}"
-      PROTO_DEPS "${_proto_deps_cpp}"
+      SCOPE "${_scope}"
+      PROTOS "${arg_SOURCES}"
     )
-    target_link_libraries("${TARGET}" INTERFACE "${TARGET}_cpp")
   endif()
 
   if (BUILD_PYTHON)
-    list(TRANSFORM arg_PROTO_DEPS APPEND "_py" OUTPUT_VARIABLE _proto_deps_py)
-    BuildProto_PYTHON("${TARGET}_py"
+    BuildProto_PYTHON("${TARGET}"
       COMPONENT "${_component}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       PACKAGE "${arg_PYTHON_PACKAGE}"
       PROTOS "${arg_SOURCES}"
-      LIB_DEPS "${arg_LIB_DEPS}"
-      OBJ_DEPS "${arg_OBJ_DEPS}"
-      PROTO_DEPS "${_proto_deps_py}"
     )
   endif()
 endfunction()

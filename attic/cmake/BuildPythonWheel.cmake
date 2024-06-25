@@ -1,26 +1,50 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file BuildPythonWheel.cmake
-## @brief CMake include file to "build" (install) Python modules
+## @brief CMake include file to create Python wheels
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(DEFAULT_TEMPLATE "${CMAKE_CURRENT_LIST_DIR}/python/pyproject.toml.in")
+set(DEFAULT_TEMPLATE "${CMAKE_CURRENT_LIST_DIR}/python/default.toml.in")
 
 function(BuildPythonWheel TARGET)
   set(_options)
-  set(_singleargs PACKAGE TEMPLATE MODULE COMPONENT VERSION DESCRIPTION DESTINATION PKG_DIR)
-  set(_multiargs CONTENTS PYTHON_DEPS PROTO_DEPS PKG_DEPS)
+  set(_singleargs TEMPLATE DISTRIBUTION PACKAGE COMPONENT VERSION DESCRIPTION DESTINATION OUT_DIR)
+  set(_multiargs CONTENTS PYTHON_DEPS PROTO_DEPS DIST_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
+  if(arg_OUT_DIR)
+    set(_outdir "${arg_OUT_DIR}")
+  else()
+    set(_outdir "${CMAKE_SOURCE_DIR}/out/packages/python-wheels")
+  endif()
+
+  ### Define the target
+  find_package(Python3
+    COMPONENTS Interpreter
+  )
+
+  if(Python3_Interpreter_FOUND)
+    add_custom_target("${TARGET}"
+      ALL
+      COMMAND "${Python3_EXECUTABLE}" -m build --wheel --outdir "${_outdir}" .
+      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+      COMMENT "Building Python wheel"
+      COMMAND_EXPAND_LISTS
+      VERBATIM
+    )
+  else()
+    message(WARNING "Python3 Interpreter was not found, not building target '${TARGET}'!")
+  endif()
+
   ### Ensure our package name does not contain any dashes
-  string(REPLACE "-" "_" PACKAGE "${PACKAGE}")
+  string(REPLACE "-" "_" DISTRIBUTION "${DISTRIBUTION}")
 
   ### Obtain parameters from provided arguments or their respective defaults.
-  if(arg_PACKAGE)
-    set(PACKAGE "${arg_PACKAGE}")
+  if(arg_DISTRIBUTION)
+    set(DISTRIBUTION "${arg_DISTRIBUTION}")
   else()
-    set(PACKAGE "${PROJECT_NAME}-${TARGET}")
+    set(DISTRIBUTION "${TARGET}")
   endif()
 
   if(arg_TEMPLATE)
@@ -29,11 +53,14 @@ function(BuildPythonWheel TARGET)
     set(_template "${DEFAULT_TEMPLATE}")
   endif()
 
-  if(arg_PKG_DIR)
-    set(_outdir "${arg_PKG_DIR}")
+  if(arg_DIST_DEPS)
+    list(JOIN arg_DIST_DEPS "\", \"" _deps)
+    string(REPLACE "-" "_" _deps "${_deps}")
+    set(DEPENDENCIES "\"${_deps}\"")
   else()
-    set(_outdir "${CMAKE_SOURCE_DIR}/out/packages/python-wheels")
+    set(DEPENDENCIES)
   endif()
+
 
   if(arg_DESTINATION)
     set(_destination "${arg_DESTINATION}")
@@ -41,13 +68,12 @@ function(BuildPythonWheel TARGET)
     set(_destination "share")
   endif()
 
-  if(arg_PKG_DEPS)
-    list(JOIN arg_PKG_DEPS "\", \"" _deps)
-    string(REPLACE "-" "_" _deps "${_deps}")
-    set(DEPENDENCIES "\"${_deps}\"")
+  if(arg_PACKAGE)
+    set(_package "${arg_PACKAGE}")
   else()
-    set(DEPENDENCIES)
+    set(_package "${PYTHON_PACKAGE}")
   endif()
+
 
   if(arg_CONTENTS)
     list(JOIN arg_CONTENTS "\", \"" _contents)
@@ -68,31 +94,37 @@ function(BuildPythonWheel TARGET)
     set(VERSION "${PROJECT_VERSION}")
   endif()
 
-  string(REPLACE "." "/" _target_dir "${arg_MODULE}")
+
+  set(HOMEPAGE_URL "${PROJECT_HOMEPAGE_URL}")
+
+  ### Get author name and email from `${CPACK_PACKAGE_CONTACT}`
+  if(CPACK_PACKAGE_CONTACT)
+    string(REGEX MATCH "^([^<]+) <(.*)>" _match "${CPACK_PACKAGE_CONTACT}")
+    set(AUTHOR_NAME "${CMAKE_MATCH_1}")
+    set(AUTHOR_EMAIL "${CMAKE_MATCH_2}")
+  endif()
 
   ### Collect folders that we want to include in the distribution,
   ### starting with the source directory
-  set(_force_include
-    "\"${CMAKE_CURRENT_SOURCE_DIR}\" = \"${_target_dir}/\""
-  )
 
-  ### Add any generated output files (e.g. from `configure_file()`)
-  if(IS_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generated")
-    list(APPEND _force_include
-      "\"${CMAKE_CURRENT_BINARY_DIR}/generated\" = \"${_target_dir}/\""
-    )
-  endif()
+  string(REPLACE "." "/" _target_dir "${_package}")
+  set(_targets ${TARGET} ${arg_PYTHON_DEPS})
+  set(_force_include)
 
-  ### Walk through source directories from our dependencies
-  foreach(_dep ${arg_PYTHON_DEPS})
-    get_target_property(_source_dir "${_dep}" SOURCE_DIR)
+  foreach(_target ${_targets})
+    get_target_property(_source_dir "${_target}" SOURCE_DIR)
     list(APPEND _force_include "\"${_source_dir}\" = \"${_target_dir}/\"")
 
-    get_target_property(_binary_dir "${_dep}" BINARY_DIR)
+    get_target_property(_binary_dir "${_target}" BINARY_DIR)
     if(IS_DIRECTORY "${_binary_dir}/generated")
       list(APPEND _force_include "\"${_binary_dir}/generated\" = \"${_target_dir}/\"")
     endif()
   endforeach()
+
+  if(arg_PYTHON_DEPS)
+    add_dependencies("${TARGET}" ${arg_PYTHON_DEPS})
+  endif()
+
 
   ### Finally, add generated ProtoBuf Python bindings from `${PROTO_DEPS}` targets.
   ### These were built using `BuildProto()`, and are written to the `python` subfolder
@@ -102,27 +134,16 @@ function(BuildPythonWheel TARGET)
     list(APPEND _force_include "\"${_binary_dir}/python/\" = \"${_target_dir}/generated/\"")
   endforeach()
 
-  ### Construct our `FORCE_INCLUDE` value for Hatchling
-  list(JOIN _force_include "\n" FORCE_INCLUDE)
+  if(arg_PROTO_DEPS)
+    add_dependencies("${TARGET}" ${arg_PROTO_DEPS})
+  endif()
 
+  ### Construct our `FORCE_INCLUDE` value for Hatchling
+  list(JOIN _force_include "\n" PYTHON_INCLUDES)
 
   ### We have now gathered enough information to generate `pyproject.toml`,
   ### and then invoke the Python builder.
   configure_file("${_template}" "pyproject.toml")
-
-  add_custom_target("${TARGET}"
-    ALL
-    COMMAND python3 -m build --outdir "${_outdir}" .
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-    COMMENT "Building Python wheel"
-    COMMAND_EXPAND_LISTS
-    VERBATIM
-  )
-
-  if(PROTO_DEPS)
-    add_dependencies("${TARGET}" "${PROTO_DEPS}")
-  endif()
-
 
   ### Lastly, let's install this wheel.
   if(arg_COMPONENT)

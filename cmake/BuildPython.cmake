@@ -6,7 +6,7 @@
 #===============================================================================
 
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
-  CACHE STRING "Top-level installation directory for Python modules" FORCE)
+  CACHE STRING "Top-level installation directory for Python modules")
 
 function(BuildPython TARGET)
   set(_options)
@@ -31,7 +31,13 @@ function(BuildPython TARGET)
   endif()
 
   if(arg_PACKAGE)
-    string(REPLACE "." "/" _package_dir "${arg_PACKAGE}")
+    set(_package "${arg_PACKAGE}")
+  else()
+    set(_package "${CPACK_PYTHON_PACKAGE}")
+  endif()
+
+  if(_package)
+    string(REPLACE "." "/" _package_dir "${_package}")
     set(_destination "${_destination}/${_package_dir}")
   endif()
 
