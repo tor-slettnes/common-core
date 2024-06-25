@@ -15,7 +15,7 @@ do
     candidate="${base_dir}/${candidate_dir}/${target_name}"
     if [ -r "${candidate}" ]
     then
-        PYTHONPATH="${base_dir}/${candidate_dir}" exec python3 -i -m cc.demo.shell
+        PYTHONPATH="${base_dir}/${candidate_dir}" exec python3 -i -m cc.demo.shell "$@"
         # exec "${candidate}" "$@"
     fi
 done

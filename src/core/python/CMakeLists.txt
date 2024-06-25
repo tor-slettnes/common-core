@@ -26,7 +26,7 @@ set(DIRECTORIES
   core
   protobuf
   messaging
-  # generated
+  generated
 )
 
 ### Wheel dependencies

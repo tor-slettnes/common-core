@@ -8,16 +8,20 @@
 cmake_minimum_required(VERSION 3.15)
 
 set(VERSION_FILE "${CMAKE_SOURCE_DIR}/.version")
+
 if(CMAKE_PROJECT_VERSION)
   set(VERSION "${CMAKE_PROJECT_VERSION}")
   message(STATUS "Using inherited or cached version: ${VERSION}")
+
 elseif(NOT "$ENV{VERSION}" STREQUAL "")
   set(VERSION "$ENV{VERSION}")
   message(STATUS "Setting new version: ${VERSION}")
   file(WRITE "${VERSION_FILE}" "${VERSION}\n")
+
 elseif(EXISTS "${VERSION_FILE}")
   file(STRINGS "${VERSION_FILE}" VERSION)
   message(STATUS "Using saved version: ${VERSION}")
+
 else()
   set(VERSION 0.0.0)
   message(WARNING
