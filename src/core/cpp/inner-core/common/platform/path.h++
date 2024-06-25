@@ -103,19 +103,19 @@ namespace core::platform
         /// @brief
         ///     Determine the install folder for this application, using
         ///     @sa locateDominatingFolder() to look up the directory tree from
-        ///     @sa exec_path() until we find "share/settings".
+        ///     @sa exec_path() until we find "share/cc/settings".
         fs::path install_folder() const noexcept;
 
         /// @brief
         ///     Return search path for settings/configuration files.
         ///
-        /// Obtain absolute folder names in which to look for configuration files.
-        /// This may be specified using the "CONFIGPATH" environment variable.  If
-        /// that variable is unset, use `/local/config` and `share/settings` in that
-        /// order; the latter is relative to the parent directory of the directory
-        /// containing the program.  For instance, if the if the executable is in
-        /// /usr/local/bin, the search path becomes
-        /// `/local/config:/usr/local/share/settings`.
+        /// Obtain absolute folder names in which to look for configuration
+        /// files.  This may be specified using the "CONFIGPATH" environment
+        /// variable.  If that variable is unset, use `/etc/cc/settings` and
+        /// `share/cc/settings` in that order; the latter is relative to the
+        /// parent directory of the directory containing the program.  For
+        /// instance, if the if the executable is in /usr/local/bin, the search
+        /// path becomes `/etc/cc/settings:/usr/local/share/cc/settings`.
         types::PathList settings_paths() const noexcept;
 
         /// @brief

@@ -12,10 +12,13 @@ from ..buildinfo import SETTINGS_DIR
 import os
 import os.path
 import platform
+import pathlib
+import importlib.resources
 from typing import Sequence, Optional
 
-FilePath   = str
+FilePath   = str | pathlib.Path
 SearchPath = Sequence[FilePath]
+ModuleName = str
 
 def installRoot() -> FilePath:
     '''Obtain installation root folder'''
@@ -43,12 +46,15 @@ def settingsPath() -> SearchPath:
 
 def normalizedSearchPath(searchpath: SearchPath):
     if isinstance(searchpath, str):
-        searchpath = os.pathsep.split(searchpath)
+        searchpath = searchpath.split(os.pathsep)
 
     normpath = []
     for folder in searchpath:
-        if not os.path.isabs(folder):
-            base, folder = locateDominatingPath(folder)
+        if isinstance(folder, str):
+            if os.path.isabs(folder):
+                folder = pathlib.Path(folder)
+            else:
+                _, folder = locateDominatingPath(folder)
 
         if folder:
             normpath.append(folder)
@@ -56,14 +62,16 @@ def normalizedSearchPath(searchpath: SearchPath):
     return normpath
 
 def locateDominatingPath(name: FilePath,
-                         start: FilePath = os.path.dirname(__file__)):
+                         start: ModuleName = __spec__.name):
 
-    base = os.path.normpath(start)
+    package = start.rsplit('.', 1)[0]
+    base = importlib.resources.files(package)
     previous = None
-    while not os.path.exists(os.path.join(base, name)):
+
+    while not base.joinpath(name).exists():
         if base == previous:
             return None, None
         previous = base
-        base = os.path.dirname(base)
+        base = base.parent
 
-    return base, os.path.normpath(os.path.join(base, name))
+    return base, base.joinpath(name)

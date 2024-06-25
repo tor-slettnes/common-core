@@ -16,4 +16,4 @@ import sys
 ## to append that folder to Python's module search path.
 _pythonRoot, _generatedRoot = cc.core.paths.locateDominatingPath('generated')
 if _generatedRoot:
-    sys.path.append(_generatedRoot)
+    sys.path.insert(0, str(_generatedRoot))

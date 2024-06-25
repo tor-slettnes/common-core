@@ -17,6 +17,7 @@ import os.path
 import sys
 import platform
 import re
+import pathlib
 
 FilePath  = str
 FilePaths = Sequence[FilePath]
@@ -68,9 +69,9 @@ class SettingsStore (JsonReader):
           installed.
 
         For example, consider a deployment where this module is located
-        somewhere inside `/opt/cc`, and default configurations are stored in
-        JSON files within the folder `/opt/cc/share/settings/`.  Let's say you
-        create a SettingsStore instance as follows:
+        somewhere inside `/usr`, and default configurations are stored in JSON
+        files within the folder `/usr/share/cc/settings/`.  Let's say you create
+        a SettingsStore instance as follows:
 
         ```
         my_settings = SettingsStore(
@@ -78,13 +79,13 @@ class SettingsStore (JsonReader):
         ```
 
         Since `searchpath` is not explicitly provided, the default value
-        `['/etc/cc', 'share/settings']` is used.  Settings are then loaded
+        `['/etc/cc', 'share/cc/settings']` is used.  Settings are then loaded
         and merged in from whichever of the following paths exist, in turn:
 
         1. `/etc/cc/my_settings.json`
-        2. `/opt/cc/share/settings/my_settings.json`
+        2. `/usr/share/cc/settings/my_settings.json`
         3. `/etc/cc/factory_settings.json`
-        4. `/opt/cc/share/settings/factory_settings.json`
+        4. `/usr/share/cc/settings/factory_settings.json`
 
         See also `load_settings()`.
 
@@ -92,7 +93,7 @@ class SettingsStore (JsonReader):
 
         self.filepath   = None
         if searchpath is not None:
-            self.searchpath = searchpath
+            self.searchpath = normalizedSearchPath(searchpath)
         else:
             self.searchpath = type(self).search_path
 
@@ -158,11 +159,11 @@ class SettingsStore (JsonReader):
         filepaths = []
 
         if os.path.isabs(basename):
-            filepaths.append(basename)
+            filepaths.append(pathlib.Path(basename))
         else:
             for folder in searchpath:
-                filepath = os.path.join(folder, basename)
-                if os.path.isfile(filepath):
+                filepath = folder.joinpath(basename)
+                if filepath.is_file():
                     filepaths.append(filepath)
 
         return filepaths

@@ -8,6 +8,7 @@
 import re
 import json
 import typing
+import pathlib
 import os.path
 
 FilePath = str
@@ -66,7 +67,10 @@ class JsonReader (dict):
 
     @classmethod
     def read_file(cls, filepath):
-        with open(filepath) as fp:
+        if isinstance(filepath, str):
+            filepath = pathlib.Path(filepath)
+
+        with filepath.open() as fp:
             text = fp.read()
 
         text = cls._remove_comments(text)
