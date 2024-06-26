@@ -1,7 +1,7 @@
 // -*- Protocol-Buffers -*-
 //==============================================================================
 /// @file request_reply.proto
-/// @brief Envelope for Request/Reply pattern over Pub/Sub schemes like ZMQ
+/// @brief Envelope for Request/Reply messages over channels like ZMQ
 /// @note Not applicable with gRPC
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

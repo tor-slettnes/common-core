@@ -13,51 +13,51 @@
 // Our implementation makes use of a container message to multiplex between the
 // various signals your application provides, looking something like this:
 //
-// ```proto
-// message MySignalMultiplexer
-// {
-//     oneof signal
-//     {
-//         MyTypeA signal_a = 8;
-//         MyTypeB signal_b = 9;
-//         ...
-//     }
-// }
-// ```
+//   ```proto
+//   message MySignalMultiplexer
+//   {
+//       oneof signal
+//       {
+//           MyTypeA signal_a = 8;
+//           MyTypeB signal_b = 9;
+//           ...
+//       }
+//   }
+//   ```
 //
 // Our implementation also supports a specialization of the above, which we
 // will refer to as "mapping signal". Here, two extra fields are introduced:
 //
-// ```proto
-// message MySignalMultiplexer
-// {
-//     // Mapping action: one of MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL
-//     cc.signal.MappingAction mapping_action = 1;
+//   ```proto
+//   message MySignalMultiplexer
+//   {
+//       // Mapping action: one of MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL
+//       cc.signal.MappingAction mapping_action = 1;
 //
-//     // Mapping key
-//     string mapping_key = 2;
+//       // Mapping key
+//       string mapping_key = 2;
 //
-//     oneof signal
-//     {
-//         MyTypeA signal_a = 8;
-//         MyTypeB signal_b = 9;
-//         ...
-//     }
-// }
-// ```
+//       oneof signal
+//       {
+//           MyTypeA signal_a = 8;
+//           MyTypeB signal_b = 9;
+//           ...
+//       }
+//   }
+//   ```
 //
 // Below you will find the `MappingAction` type used for this purpose.
 //
 // Secondly, to propagate such signals over gRPC, your service needs
 // a method to stream signals, similar to the following:
 //
-// ```proto
-// service MyService
-// {
-//     ...
-//     rpc watch (cc.signal.Filter) returns (stream MySignalMultiplexer);
-// }
-// ```
+//   ```proto
+//   service MyService
+//   {
+//       ...
+//       rpc watch (cc.signal.Filter) returns (stream MySignalMultiplexer);
+//   }
+//   ```
 //
 // The `Filter` type is defined and described below, and is used by the client
 // to select which of the available signals the client wants to receive (similar
@@ -97,36 +97,36 @@ message Filter
     //
     // For instance, consider the following definitions
     //
-    // ```
-    // package CC.Example;
+    //   ```proto
+    //   package CC.Example;
     //
-    // service SignalExample
-    // {
-    //   /// Watch for signals from server.
-    //   rpc watch (CC.Signal.Filter) returns (stream Signal);
-    // }
-    //
-    // message Signal
-    // {
-    //   ...
-    //   oneof signal
+    //   service SignalExample
     //   {
-    //      FooType foo = 9;
-    //      BarType bar = 10;
-    //      BazType baz = 11;
+    //     /// Watch for signals from server.
+    //     rpc watch (CC.Signal.Filter) returns (stream Signal);
     //   }
-    // }
-    // ```
+    //
+    //   message Signal
+    //   {
+    //     ...
+    //     oneof signal
+    //     {
+    //        FooType foo = 9;
+    //        BarType bar = 10;
+    //        BazType baz = 11;
+    //     }
+    //   }
+    //   ```
     //
     // The following Python invocation will stream back only the signals `bar`
     // and `baz`, but not `foo`:
     //
-    // ```
-    // >>> for event in client_stub.watch(CC.Signal.Filter(
-    // ...         polarity=True,
-    // ...         indices=[10, 11])):
-    // ...    my_handler(event)
-    // ```
+    //   ```python
+    //   >>> for event in client_stub.watch(CC.Signal.Filter(
+    //   ...         polarity=True,
+    //   ...         indices=[10, 11])):
+    //   ...    my_handler(event)
+    //   ```
     //
     repeated uint32 indices = 2;
 }

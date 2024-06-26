@@ -9,6 +9,7 @@
 from ..buildinfo import SETTINGS_DIR
 
 ### Standard python modules
+from importlib.resources.abc import Traversable
 import os
 import os.path
 import platform
@@ -16,7 +17,7 @@ import pathlib
 import importlib.resources
 from typing import Sequence, Optional
 
-FilePath   = str | pathlib.Path
+FilePath   = str | Traversable
 SearchPath = Sequence[FilePath]
 ModuleName = str
 
@@ -44,7 +45,7 @@ def settingsPath() -> SearchPath:
 
     return normalizedSearchPath(searchpath)
 
-def normalizedSearchPath(searchpath: SearchPath):
+def normalizedSearchPath(searchpath: SearchPath) -> list[pathlib.Path]:
     if isinstance(searchpath, str):
         searchpath = searchpath.split(os.pathsep)
 
@@ -55,6 +56,9 @@ def normalizedSearchPath(searchpath: SearchPath):
                 folder = pathlib.Path(folder)
             else:
                 _, folder = locateDominatingPath(folder)
+
+        elif isinstance(folder, pathlib.Path):
+            folder = folder.absolute()
 
         if folder:
             normpath.append(folder)

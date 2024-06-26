@@ -11,7 +11,8 @@ from .paths      import normalizedSearchPath, settingsPath, FilePath, SearchPath
 
 
 ### Standard Python modules
-from typing     import Sequence, Optional, Union
+from typing import Sequence, Optional, Union
+from importlib.resources.abc import Traversable
 import os
 import os.path
 import sys
@@ -19,7 +20,7 @@ import platform
 import re
 import pathlib
 
-FilePath  = str
+FilePath  = str | Traversable
 FilePaths = Sequence[FilePath]
 
 
@@ -97,7 +98,7 @@ class SettingsStore (JsonReader):
         else:
             self.searchpath = type(self).search_path
 
-        if isinstance(filenames, str):
+        if isinstance(filenames, (str, Traversable)):
             self.filenames = (filenames,)
         elif isinstance(filenames, (list, tuple)):
             self.filenames = filenames
@@ -152,14 +153,17 @@ class SettingsStore (JsonReader):
     def _settingsFilePaths(cls,
                            basename : FilePath,
                            searchpath):
-        stem, ext = os.path.splitext(basename)
-        if not ext:
-            basename += ".json"
+
+        if isinstance(basename, str):
+            stem, ext = os.path.splitext(basename)
+            if not ext:
+                basename += ".json"
+            basename = pathlib.Path(basename)
 
         filepaths = []
 
-        if os.path.isabs(basename):
-            filepaths.append(pathlib.Path(basename))
+        if basename.is_absolute():
+            filepaths.append(basename)
         else:
             for folder in searchpath:
                 filepath = folder.joinpath(basename)
