@@ -4,17 +4,6 @@
 ## @brief CPack generator script for Python Wheel output
 #===============================================================================
 
-# message(STATUS "----- cpack_wheel begin --------")
-# message(STATUS "CPACK_TOPLEVEL_DIRECTORY = ${CPACK_TOPLEVEL_DIRECTORY}")
-# message(STATUS "CPACK_TEMPORARY_DIRECTORY = ${CPACK_TEMPORARY_DIRECTORY}")
-# file(GLOB _json_file "${CPACK_TOPLEVEL_DIRECTORY}/*.json")
-# message(STATUS "JSON FILE: '${_json_file}'")
-# file(SIZE "${_json_file}" _json_file_size)
-# file(TIMESTAMP "${_json_file}" _json_file_time)
-# file(READ "${_json_file}" _json_text)
-# message(STATUS "JSON TEXT (${_json_file_size} bytes, ${_json_file_time}): ${_json_text}")
-# message(STATUS "----- cpack_wheel end --------")
-
 function(find_include_dirs SOURCE_DIR TARGET_DIR OUT_VAR)
   file(GLOB _include_dirs
     RELATIVE "${CPACK_TEMPORARY_DIRECTORY}"
@@ -26,7 +15,7 @@ function(find_include_dirs SOURCE_DIR TARGET_DIR OUT_VAR)
   set(${OUT_VAR} "${_include_string}" PARENT_SCOPE)
 endfunction()
 
-### Generate `pyproject.toml` file
+### Prepare data for `pyproject.toml` file
 set(PACKAGE "${CPACK_PACKAGE_NAME}")
 set(DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
 set(VERSION "${CPACK_PACKAGE_VERSION}")
@@ -38,7 +27,6 @@ if(CPACK_PACKAGE_CONTACT)
   set(AUTHOR_NAME "${CMAKE_MATCH_1}")
   set(AUTHOR_EMAIL "${CMAKE_MATCH_2}")
 endif()
-
 
 ### Get Python package dependencies from `${CPACK_PYTHON_DEPENDENCIES}`
 list(TRANSFORM CPACK_PYTHON_DEPENDENCIES REPLACE "^(.+)$" "\"\\1\"")
