@@ -104,6 +104,8 @@ realclean:
 realclean_all:
 	@rm -rfv "$(OUT_DIR)"/build "$(OUT_DIR)"/install
 
+distclean: pristine
+
 pristine:
 	@rm -rfv "$(OUT_DIR)"
 
@@ -117,4 +119,4 @@ $(BUILD_DIR):
 	@$(MAKE) -C "$(BUILD_DIR)" $(MAKECMDGOALS)
 
 
-.PHONY: develop release package deb install install/test test build cmake cmake/clean clean realclean realclean_all pristine
+.PHONY: develop release package deb install install/test test build cmake cmake/clean clean realclean realclean_all distclean pristine
