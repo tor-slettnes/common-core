@@ -94,7 +94,7 @@ function(PROTOGEN_COMMON)
        ${_plugin_arg}
        ${_proto_src}
     COMMAND_EXPAND_LISTS
-    COMMENT "${arg_COMMENT}, include_dirs=${_include_dirs}"
+    COMMENT "${arg_COMMENT}"
     VERBATIM
   )
 
