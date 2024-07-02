@@ -1,19 +1,17 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build static/shared library
+## @description CMake rules to build Common Core Demo
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(PKG_COMPONENT "demo-shell")
+set(PKG_COMPONENT "demo-scripts")
 
 add_subdirectory(bin)
-add_subdirectory(python)
 
 cpack_add_component(${PKG_COMPONENT}
+  DEPENDS "demo-python"
   GROUP ${PKG_GROUP}
-  DEPENDS core-python demo-python
-  DISPLAY_NAME "DEMO example - Interactive shell"
-  DESCRIPTION "Interactive shell template for DEMO example."
+  DISPLAY_NAME "Common Core DEMO - launcher scripts"
+  DESCRIPTION "Shell script to launch interactive Python shell for the Common Core DEMO service"
 )
-

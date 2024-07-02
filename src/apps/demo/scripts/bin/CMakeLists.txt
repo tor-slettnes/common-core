@@ -7,6 +7,7 @@
 
 if (BUILD_PYTHON)
   set(SOURCES demoshell)
+
   install(PROGRAMS ${SOURCES}
     TYPE BIN
     COMPONENT ${PKG_COMPONENT}

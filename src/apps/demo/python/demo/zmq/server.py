@@ -39,3 +39,15 @@ class Server (ProtoServer):
         self.signalwriter.stop()
         self.publisher.deinitialize()
         ProtoServer.deinitialize(self)
+
+
+if __name__ == '__main__':
+    from ..native import NativeDemo
+    import logging
+
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    demoserver = Server(api_provider = NativeDemo())
+    logging.info("Starting Python ZMQ Demo Server")
+    demoserver.initialize()

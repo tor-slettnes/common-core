@@ -16,7 +16,7 @@ if (BUILD_PROTOBUF)
   add_subdirectory(proto)
 endif()
 
-if (BUILD_RTI_DDS)
+if (BUILD_DDS)
   add_subdirectory(idl)
 endif()
 
@@ -28,6 +28,7 @@ if (BUILD_PYTHON)
   add_subdirectory(python)
 endif()
 
+add_subdirectory(scripts)
 add_subdirectory(settings)
 
 cpack_add_component(demo-common

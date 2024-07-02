@@ -11,28 +11,12 @@ set(TARGET "cc_demo_python")
 ### Package component
 set(PKG_COMPONENT "demo-python")
 
-### Modules to be installed as programs, with execute permissionss
-set(PROGRAMS
-  demo-grpc-server.py
-  demo-grpc-async-server.py
-  demo-grpc-async-client.py
-  demo-zmq-server.py
-)
-
-set(DIRECTORIES
-  demo
-  protobuf
-)
-
-BuildPython("${TARGET}"
-  PACKAGE "${CPACK_PYTHON_PACKAGE}"
-  COMPONENT "${PKG_COMPONENT}"
-  PROGRAMS "${PROGRAMS}"
-  DIRECTORIES "${DIRECTORIES}"
-)
+add_subdirectory(protobuf)
+add_subdirectory(demo)
+add_subdirectory(bin)
 
 cpack_add_component("${PKG_COMPONENT}"
-  DEPENDS core-python demo-proto
+  DEPENDS "core-python" "common-settings" "demo-proto" "demo-settings"
   GROUP "${PKG_GROUP}"
   DISPLAY_NAME "DEMO Example - Python modules"
   DESCRIPTION "Python client and server moduules for demo application example"

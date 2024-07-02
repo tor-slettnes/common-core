@@ -7,4 +7,3 @@
 
 add_subdirectory(core)     # Shared components (modules, libraries)
 add_subdirectory(apps)     # Common applications/microservices
-add_subdirectory(products) # Deployments: project settings, scripts, ...

@@ -5,4 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-BuildSettings(COMPONENT demo-common)
+set(PKG_COMPONENT "demo-settings")
+
+BuildSettings(COMPONENT ${PKG_COMPONENT})
+
+cpack_add_component(${PKG_COMPONENT}
+  GROUP ${PKG_GROUP}
+  DISPLAY_NAME "Common Core - DEMO service settings"
+  DESCRIPTION "Settings for Common Core DEMO service."
+)
