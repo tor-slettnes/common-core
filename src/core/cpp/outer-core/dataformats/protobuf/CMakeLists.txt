@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET cc_core_io_protobuf)
+set(TARGET "cc_core_io_protobuf")
 
 ### CMake module dependencies
 set(MOD_DEPS

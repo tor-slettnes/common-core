@@ -11,6 +11,7 @@
 #include "protobuf-message.h++"
 
 #include "platform/symbols.h++"
+#include "logging/logging.h++"
 
 namespace core::grpc
 {

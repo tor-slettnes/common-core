@@ -219,12 +219,54 @@ namespace core::str
         }
         if (keep_empties || string.length() > pos)
         {
-            parts.push_back(std::move(string.substr(pos)));
+            parts.push_back(string.substr(pos));
         }
         return parts;
     }
 
+    std::vector<std::string> splitlines(
+        const std::string &string,
+        uint maxsplits,
+        bool keep_empties)
+    {
+        std::vector<std::string> parts;
+        size_t start = 0;
+        uint splits = 0;
+        const char *ch = string.data();
+        char last = '\0';
+
+        for (size_t pos = 0;
+             (pos < string.length()) && (!maxsplits || (splits < maxsplits));
+             ch++, pos++)
+        {
+            switch (*ch)
+            {
+            case '\r':
+            case '\n':
+                if ((*ch == '\r') || (last != '\r'))
+                {
+                    if (keep_empties || (pos > start))
+                    {
+                        parts.push_back(string.substr(start, pos - start));
+                        splits++;
+                    }
+                }
+                start = pos + 1;
+                break;
+            }
+            last = *ch;
+        }
+
+        if (keep_empties || (string.length() > start))
+        {
+            parts.push_back(string.substr(start));
+        }
+
+        return parts;
+    }
+
     std::string join(const std::vector<std::string> &vector,
+
                      const std::string &delimiter,
                      bool keep_empties,
                      bool quoted)
@@ -435,7 +477,7 @@ namespace core::str
         for (uint pos = 0;; pos++)
         {
             char common_char = '\0';
-            for (const std::string &s: strings)
+            for (const std::string &s : strings)
             {
                 if ((s.length() <= pos) || (common_char && (common_char != s.at(pos))))
                 {

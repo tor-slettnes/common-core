@@ -98,12 +98,12 @@ message Filter
     // For instance, consider the following definitions
     //
     //   ```proto
-    //   package CC.Example;
+    //   package cc.example;
     //
     //   service SignalExample
     //   {
     //     /// Watch for signals from server.
-    //     rpc watch (CC.Signal.Filter) returns (stream Signal);
+    //     rpc watch (cc.signal.Filter) returns (stream Signal);
     //   }
     //
     //   message Signal
@@ -122,10 +122,11 @@ message Filter
     // and `baz`, but not `foo`:
     //
     //   ```python
-    //   >>> for event in client_stub.watch(CC.Signal.Filter(
+    //   >>> for event in client_stub.watch(
+    //   ...     cc.signal.Filter(
     //   ...         polarity=True,
     //   ...         indices=[10, 11])):
-    //   ...    my_handler(event)
+    //   ...     my_handler(event)
     //   ```
     //
     repeated uint32 indices = 2;

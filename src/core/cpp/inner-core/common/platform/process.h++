@@ -121,8 +121,39 @@ namespace core::platform
                                       int *fdout = nullptr,
                                       int *fderr = nullptr) const;
 
+        /// @fn capture_pipe
+        /// @brief Communicate with a child process through an established pipe
+        /// @param[in] pid
+        ///     Process ID, as returned from invoke_async_pipe
+        /// @param[out] fdin
+        ///     Writable UNIX file descriptor of a pipe to the program's `stdin`.
+        /// @param[out] fdout
+        ///     Readable UNIX file descriptor of a pipe from the program's `stdout`.
+        /// @param[out] fderr
+        ///     Readable UNIX file descriptor of a pipe from the program's `stderr`.
+        /// @param[in] input
+        ///     Text to be sent on `stdin'.
+        /// @param[out] output
+        ///     Text captured from `stdout`.
+        ///     Passing in `nullptr` discards the child's standard output.
+        /// @param[out] diag
+        ///     Text captured from `stderr`.
+        ///     Passing in `nullptr` discards the child's standard error.
+        /// @return
+        ///     The exit code returned from the process, as returned from `waitpid(2)`.
+        /// @exception std::system_error
+        ///     An underlying system call failed.
+
+        virtual ExitStatus pipe_capture(PID pid,
+                                        int fdin,
+                                        int fdout,
+                                        int fderr,
+                                        const std::string &input,
+                                        std::string *output,
+                                        std::string *diag) const;
+
         /// @fn invoke_capture
-        /// @brief Invoke a command with stdid/stdout/stderr capture.
+        /// @brief Invoke a command with stdin/stdout/stderr capture.
         /// @param[in] argv
         ///     Argument vector. The first element (index #0) is the full path
         ///     of the program file to invoke.
@@ -134,7 +165,7 @@ namespace core::platform
         ///     Text captured from `stdout`.
         ///     Passing in `nullptr` discards the child's standard output.
         /// @param[out] diag
-        ///     Text captured from `stdout`.
+        ///     Text captured from `stderr`.
         ///     Passing in `nullptr` discards the child's standard error.
         /// @return
         ///     The exit code returned from the process, as returned from `waitpid(2)`.
@@ -162,7 +193,7 @@ namespace core::platform
         ///     Text captured from `stdout`.
         ///     Passing in `nullptr` discards the child's standard output.
         /// @param[out] diag
-        ///     Text captured from `stdout`.
+        ///     Text captured from `stderr`.
         ///     Passing in `nullptr` discards the child's standard error.
         /// @exception std::system_error
         ///     An underlying system call failed, or the process returned a

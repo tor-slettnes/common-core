@@ -181,6 +181,27 @@ namespace core::str
         uint maxsplits = 0,
         bool keep_empties = false);
 
+    /// @fn splitlines
+    /// @brief
+    ///     Split a string into lines, separated by either UNIX, DOS, or legacy
+    ///     MacOS newline conventions: `\n`, `\r\n`, or `\r`.
+    /// @param[in] string
+    ///     Original string
+    /// @param[in] keep_empties
+    ///     Keep empty substrings from input string.
+    ///     This guarantess at least one element in the response.
+    /// @param[in] maxsplits
+    ///     If non-zero, split at most this number of times
+    ///     (returning no more than `maxsplit+1` substrings)
+    /// @return
+    ///     List of one or more lines
+
+    [[nodiscard]] std::vector<std::string> splitlines(
+        const std::string &string,
+        uint maxsplits = 0,
+        bool keep_empties = false);
+
+
     /// Join a sequence of strings by the specified delimiter to an output stream
     /// @param[in] out
     ///     Output stream

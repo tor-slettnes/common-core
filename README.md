@@ -16,7 +16,6 @@ This repository is organized as follows:
 * [src](src) -- top-level source directory; see [source](src/README.md) for details.
   * [core](src/core) - Shared modules and libraries providing the application framework
   * [mantle](src/mantle) - Common applications/services, deployed across product lines
-  * [crust](src/crust) - Glue code and configuration for specific products
 
 In addition, an `out` directory is created as part of the build process:
 

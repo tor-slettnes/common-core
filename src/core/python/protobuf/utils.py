@@ -22,9 +22,9 @@ import enum
 #===============================================================================
 # Methods
 
-def check_type(value: Message,
-               expected: type = Message,
-               argument: str|None = None):
+def check_message_type(value: Message,
+                       expected: type = Message,
+                       argument: str|None = None):
     '''Ensure that a provided value is an of the specified ProtoBuf message
     type. If not, a TypeError is raised.
 
@@ -64,7 +64,7 @@ def dictToMessage(value     : dict,
     of a given type.  Refer to `ParseDict` for details.
     '''
 
-    check_type(prototype)
+    check_message_type(prototype)
     msg = prototype()
     ParseDict(
         value,

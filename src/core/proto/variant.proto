@@ -24,20 +24,25 @@ import "google/protobuf/timestamp.proto";
 //   ValueList represeting an ordered tag/value sequence or a key/value map
 //   ("dictionary" in Python).
 //
-// When translating the value to JSON, the following conventions are recommended:
+// Though outside the scope of this definition, when translating the value to
+// JSON, e.g. for logging, the following conventions are *recommended*:
 // * a timestamp should be represented as a string in JavaScript-compliant ISO format:
 //   `yyyy-mm-ddThh:mm:ssZ`. Note that the trailing `Z` implies "zero offset" from UTC.
 // * a duration should be represented as a real number, denoting seconds.
 // * a string should be represented with UTF-8 character encoding, particularly over the wire.
 // * a byte sequence should be represented as a base64-encoded string.
+// * a ValueList item must be either `untagged` or `mappable` (may be determined implicitly):
+//   - An `untagged` ValueList can be represented as a JSON *array*
+//   - A `mappable` ValueList can be represented as a JSON *object*
+//   - Any other ValueList cannot be represented unambiguously with JSON.
 
 message Value {
-    // Data tag when used in TagValueList, or Key for KeyValueMap.
-    // Not populated inside KeyValueMap or ValueList.
+    // Data tag when used in TagValueList, or key for KeyValueMap.
+    // Not present for items in a ValueList.
     string tag = 1;
 
     oneof value {
-        // Scalar tpes
+        // Scalar types
         bool value_bool  = 4;
         uint64 value_uint = 5;
         sint64 value_sint = 6;
@@ -53,9 +58,9 @@ message Value {
 }
 
 // A sequence of Value items.  This can be used to represent:
-// - a plain list of (untagged) values, where there should be no tags present
-// - ordered tag/value pairs, where the tags need not exist for every item nor be unique
-// - key/value map ("dictionary" in Python) where every value has a unique key.
+// * a plain list of (untagged) values, where there should be no tags present
+// * ordered tag/value pairs, where the tags need not exist for every item nor be unique
+// * key/value map ("dictionary" in Python) where every value has a unique key.
 
 message ValueList {
     repeated Value items = 1;

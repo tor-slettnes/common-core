@@ -15,7 +15,8 @@ namespace core::argparse
 
     CommandOptions::CommandOptions()
         : ClientOptions(),
-          use_exit_status(false)
+          use_exit_status(false),
+          current_arg(this->args.begin())
     {
     }
 
@@ -48,6 +49,12 @@ namespace core::argparse
             std::bind(&CommandOptions::help_commands, this, std::placeholders::_1));
     }
 
+    void CommandOptions::enact()
+    {
+        this->current_arg = this->args.begin();
+        Super::enact();
+    }
+
     void CommandOptions::report_status_and_exit(bool success)
     {
         if (this->use_exit_status)
@@ -61,13 +68,11 @@ namespace core::argparse
         }
     }
 
-    std::optional<std::string> CommandOptions::pop_arg()
+    std::optional<std::string> CommandOptions::next_arg()
     {
-        if (args.size())
+        if (this->current_arg != this->args.end())
         {
-            std::string front = this->args.front();
-            this->args.erase(args.begin());
-            return front;
+            return *this->current_arg++;
         }
         else
         {
@@ -75,9 +80,9 @@ namespace core::argparse
         }
     }
 
-    std::string CommandOptions::pop_arg(const std::string &what)
+    std::string CommandOptions::get_arg(const std::string &what)
     {
-        if (auto arg = this->pop_arg())
+        if (auto arg = this->next_arg())
         {
             return arg.value();
         }
@@ -89,50 +94,48 @@ namespace core::argparse
         }
     }
 
-    types::TaggedValueList CommandOptions::pop_tvlist(bool required)
+    types::TaggedValueList CommandOptions::get_tvlist(bool required)
     {
-        if (required && this->args.empty())
+        if (required && (this->current_arg == this->args.end()))
         {
             throwf(exception::MissingArgument,
                    "At least one key/value pair is required");
         }
 
         types::TaggedValueList tvlist;
-        while (this->args.size())
+        while (this->current_arg != this->args.end())
         {
-            std::string key = this->pop_arg("key");
-            std::string value = this->pop_arg("value");
+            std::string key = this->get_arg("key");
+            std::string value = this->get_arg("value");
             tvlist.emplace_back(key, types::Value::from_literal(value));
         }
         return tvlist;
     }
 
-    types::KeyValueMap CommandOptions::pop_attributes(bool required)
+    types::KeyValueMap CommandOptions::get_attributes(bool required)
     {
-        return this->pop_tvlist(required).as_kvmap();
+        return this->get_tvlist(required).as_kvmap();
     }
 
     void CommandOptions::get_flags(FlagMap *map, bool allow_leftovers)
     {
-        auto it = this->args.begin();
-        while (it != this->args.end())
+        while (this->current_arg != this->args.end())
         {
             try
             {
-                map->at(*it) = true;
-                it++;
+                map->at(*this->current_arg) = true;
+                this->current_arg++;
             }
             catch (const std::out_of_range &)
             {
                 if (allow_leftovers)
                 {
-                    it = this->args.erase(it);
+                    return;
                 }
                 else
                 {
-                    throwf_args(exception::InvalidArgument,
-                                ("Invalid argument: %s", *it),
-                                *it);
+                    throw exception::InvalidArgument("Invalid argument",
+                                                     *this->current_arg);
                 }
             }
         }

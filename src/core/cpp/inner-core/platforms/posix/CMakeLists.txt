@@ -15,14 +15,15 @@ set(LIB_DEPS
 
 ### Sources
 set(SOURCES
-  posix-providers.c++
-  posix-symbols.c++
+  posix-host.c++
+  posix-logsink.c++
   posix-path.c++
   posix-process.c++
+  posix-providers.c++
   posix-runtime.c++
-  posix-timezone.c++
-  posix-logsink.c++
   posix-serialport.c++
+  posix-symbols.c++
+  posix-timezone.c++
 )
 
 ### Build library

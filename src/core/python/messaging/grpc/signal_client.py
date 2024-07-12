@@ -169,13 +169,13 @@ class SignalClient (Client):
         '''
 
         if not signal_store:
-            assert signal_type is not None, \
+            assert self.signal_type is not None, \
                    ('SignalClient() subclass %s() must either pass in a '
                     '`SignalStore()` instance or set the `signal_type`'
                     'class variable to an appropriate ProtoBuf Signal() type'%
                     (type(self).__name__))
 
-            signal_store = SignalStore(signal_type=signal_type, use_cache=use_cache)
+            signal_store = SignalStore(signal_type=self.signal_type, use_cache=use_cache)
 
         Client.__init__(self, host,
                         wait_for_ready = wait_for_ready,

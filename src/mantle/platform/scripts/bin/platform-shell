@@ -1,0 +1,26 @@
+#!/bin/bash
+#===============================================================================
+## @file cc-shell
+## @brief Interactive Python session with Common Core client modules
+## @author Tor Slettnes <tor@slett.net>
+#===============================================================================
+
+prog_path=$(realpath "$0")
+prog_dir=${prog_path%/*}
+base_dir=${prog_dir%/*}
+
+module_name="cc.platform.shell"
+target_name="${module_name//.//}.py"
+
+for candidate_dir in lib/python3/dist-packages share/python python
+do
+    candidate="${base_dir}/${candidate_dir}/${target_name}"
+    if [ -r "${candidate}" ]
+    then
+        PYTHONPATH="${base_dir}/${candidate_dir}" exec python3 -i -m "${module_name}" "$@"
+        #exec "${candidate}" "$@"
+    fi
+done
+
+echo "Unable to locate '${target_name}'"
+exit 1

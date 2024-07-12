@@ -1,0 +1,209 @@
+// -*- Protocol-Buffers -*-
+//==============================================================================
+/// @file sysconfig.proto
+/// @brief Host configuration interface
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+syntax = "proto3";
+
+package cc.platform.system;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+import "version.proto";
+import "signal.proto";
+
+service System
+{
+    //==========================================================================
+    // Product information
+
+    rpc get_product_info (google.protobuf.Empty) returns (ProductInfo);
+    rpc set_serial_number (google.protobuf.StringValue) returns (google.protobuf.Empty);
+    rpc set_model_name (google.protobuf.StringValue) returns (google.protobuf.Empty);
+
+    //==========================================================================
+    // Host Information
+
+    rpc get_host_info (google.protobuf.Empty) returns (HostInfo);
+    rpc set_host_name (google.protobuf.StringValue) returns (google.protobuf.Empty);
+
+    //==========================================================================
+    // Time configuration
+
+    // Current timestamp
+    rpc set_current_time (google.protobuf.Timestamp) returns (google.protobuf.Empty);
+    rpc get_current_time (google.protobuf.Empty) returns (google.protobuf.Timestamp);
+
+    // Get or set time configuration
+    rpc set_time_config (TimeConfig) returns (google.protobuf.Empty);
+    rpc get_time_config (google.protobuf.Empty) returns (TimeConfig);
+
+    //==========================================================================
+    // Time zone configuration
+
+    /// Obtain geographic information about all available time zones.
+    rpc get_timezone_specs (google.protobuf.Empty) returns (stream TimeZoneSpec);
+
+    /// Return geographic information about an arbitrary timezone.
+    /// If no zone name is provided, return information about the configured zone.
+    rpc get_timezone_spec (TimeZoneName) returns (TimeZoneSpec);
+
+    /// Get or set the timezone configuration
+    rpc set_timezone (TimeZoneConfig) returns (TimeZoneInfo);
+    rpc get_configured_timezone (google.protobuf.Empty) returns (TimeZoneConfig);
+    rpc get_current_timezone (google.protobuf.Empty) returns (TimeZoneInfo);
+
+    //==========================================================================
+    // Spawn a new process, with or without capturing stdin/stdout/stderr.
+
+    rpc invoke_sync (CommandInvocation) returns (CommandResponse);
+    rpc invoke_async (CommandInvocation) returns (CommandInvocationStatus);
+    rpc invoke_finish (CommandInput) returns (CommandResponse);
+    // rpc invoke_piped (stream CommandInvocation) returns (stream CommandResponse);
+
+    rpc reboot (google.protobuf.Empty) returns (google.protobuf.Empty);
+
+    //==========================================================================
+    // Watch for changes from server
+
+    rpc watch (cc.signal.Filter) returns (stream Signal);
+}
+
+//==============================================================================
+// Product Information
+
+message ProductInfo
+{
+    string product_model = 1;
+    string product_serial = 2;
+    string hardware_model = 3;
+
+    cc.version.Version release_version = 8;
+    cc.version.ComponentVersions component_versions = 9;
+    repeated ProductInfo subsystem_info = 15;
+}
+
+//==============================================================================
+// Host Information
+
+message HostInfo
+{
+    string hostname = 1;
+
+    string os_name = 16;
+    string os_version = 17;
+    string os_release_flavor_short = 20;
+    string os_release_flavor_long = 21;
+    string os_release_version_id = 22;
+    string os_release_version_name = 23;
+
+    string machine_arch = 24;
+    string machine_cpu = 25;
+    string machine_name = 26;
+    string machine_description = 27;
+    string machine_serial = 28;
+    string machine_uid = 29;
+}
+
+//==============================================================================
+// Time Configuration
+
+enum TimeSync
+{
+    // Synchronized to TimeSync enumeration in
+    // '../cpp/interface/sysconfig/sysconfig-time.h'.
+    TSYNC_NONE = 0;             // No settings change
+    TSYNC_NTP = 1;              // Synchronization via NTP
+}
+
+message TimeConfig
+{
+    // Synchronization scheme (e.g. NTP)
+    TimeSync synchronization = 1;
+
+    // Server(s) with which to synchronize (e.g. "pool.ntp.org").
+    // When settting, only include this to change current service(s).
+    repeated string hostname = 2;
+}
+
+
+//==============================================================================
+// Time Zone Configuration
+
+message TimeZoneName
+{
+    string zonename = 1;        // Zone name, e.g., UTC, America/Los_Angeles
+}
+
+message TimeZoneConfig
+{
+    oneof optional_automatic
+    {
+        bool automatic = 1;     // Whether timezone is automatically detected
+    }
+
+    string zonename = 2;        // Zone name, e.g., UTC, America/Los_Angeles
+    string provider = 3;        // Automatic Time Zone provider, if any
+}
+
+message TimeZoneSpec
+{
+    string zonename = 1;        // Zone name, e.g. America/Los_Angeles
+    string continent = 2;       // World region, e.g. "Americas" or "Atlantic Ocean"
+    string countrycode = 3;     // 2-letter code, e.g. US
+    string countryname = 4;     // Full country name, e.g. United States
+    string displayname = 5;     // Display name within country, e.g. Pacific
+    int32 latitude = 6;         // Latitude, seconds north
+    int32 longitude = 7;        // Longitude, seconds east
+}
+
+message TimeZoneInfo
+{
+    string shortname = 1;       // Short name, e.g. PST or PDT
+    //string longname = 2;        // Long name, e.g. Pacific Daylight Time
+    google.protobuf.Duration offset = 3;    // Current offset, e.g. -7 hours for PDT
+    google.protobuf.Duration stdoffset = 4; // Standard offset, e.g. -8 hours for PST
+    bool dst = 5;               // Whether daylight savings is in effect
+}
+
+message CommandInvocation
+{
+    string working_directory = 1;
+    repeated string argv = 2;
+    string stdin = 3;
+}
+
+message CommandInvocationStatus
+{
+    uint64 pid = 1;
+}
+
+message CommandInput
+{
+    uint64 pid = 1;
+    string stdin = 2;
+}
+
+message CommandResponse
+{
+    string stdout = 1;
+    string stderr = 2;
+    int32 exit_status = 3;
+}
+
+
+message Signal
+{
+    oneof signal {
+        google.protobuf.Timestamp time = 8; // Updates 1x/second
+        TimeConfig time_config = 9;          // Automatic time setting
+        TimeZoneInfo tz_info = 10;           // Effective zone change
+        TimeZoneConfig tz_config = 11;       // Timezone change
+        HostInfo host_info = 14;             // Host information change
+        ProductInfo product_info = 15;       // Product information change
+    }
+}

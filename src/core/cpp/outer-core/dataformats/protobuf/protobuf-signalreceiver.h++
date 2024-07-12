@@ -54,7 +54,7 @@ namespace core::protobuf
             this->slots.clear();
         }
 
-    protected:
+    public:
         /// @brief Add a callback handler for a specific Signal type
         /// @param[in] signal_case
         ///     Enumerated index of a specific signal within the protobuf

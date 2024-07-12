@@ -46,5 +46,23 @@
     {
         // "interface" : "",       // Listen on all interfaces by default
         "port"      : 3366      // D-E-M-O on T9 keypad
+    },
+
+    "System":
+    {
+        // "interface" : "",    // Listen on all interfaces by default
+        "port"      : 7528      // P-L-A-T on T9 keypad
+    },
+
+    "Network":
+    {
+        // "interface" : "",    // Listen on all interfaces by default
+        "port"      : 7528      // P-L-A-T on T9 keypad
+    },
+
+    "File":
+    {
+        // "interface" : "",    // Listen on all interfaces by default
+        "port"      : 7528      // P-L-A-T on T9 keypad
     }
 }

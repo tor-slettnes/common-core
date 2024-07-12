@@ -51,6 +51,15 @@ namespace core::platform
             int *fdout,
             int *fderr) const override;
 
+        ExitStatus pipe_capture(
+            PID pid,
+            int fdin,
+            int fdout,
+            int fderr,
+            const std::string &input,
+            std::string *output,
+            std::string *diag) const override;
+
         ExitStatus invoke_capture(
             const ArgVector &argv,
             const fs::path &cwd,

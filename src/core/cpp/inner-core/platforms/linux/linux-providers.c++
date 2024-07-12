@@ -8,6 +8,8 @@
 #include "posix-providers.h++"
 #include "linux-path.h++"
 #include "linux-symbols.h++"
+#include "linux-host.h++"
+#include "linux-time.h++"
 
 namespace core::platform
 {
@@ -15,10 +17,14 @@ namespace core::platform
     {
         symbols.registerProvider<LinuxSymbolsProvider>();
         path.registerProvider<LinuxPathProvider>(exec_name);
+        host.registerProvider<LinuxHostProvider>();
+        time.registerProvider<LinuxTimeProvider>();
     }
 
     void unregister_linux_providers()
     {
+        time.unregisterProvider<LinuxTimeProvider>();
+        host.unregisterProvider<LinuxHostProvider>();
         path.unregisterProvider<LinuxPathProvider>();
         symbols.unregisterProvider<LinuxSymbolsProvider>();
     }

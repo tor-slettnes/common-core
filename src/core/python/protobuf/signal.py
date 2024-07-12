@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules withn package
-from .utils import enumToValue, check_type
+from .utils import enumToValue
 from .import_proto import import_proto
 from ..core.invocation import safe_invoke
 

@@ -45,8 +45,8 @@ namespace core::platform
     protected:
         Provider(const std::string &name,
                  ProviderPriority priority = PRIORITY_NORMAL)
-            : name(name),
-              priority(priority)
+            : name_(name),
+              priority_(priority)
         {
         }
 
@@ -57,10 +57,12 @@ namespace core::platform
         virtual bool is_pertinent() { return true; }
         virtual void initialize() {}
         virtual void deinitialize() {}
+        std::string name() const { return this->name_; }
+        ProviderPriority priority() const { return this->priority_; }
 
-    public:
-        const std::string name;
-        const ProviderPriority priority;
+    private:
+        const std::string name_;
+        const ProviderPriority priority_;
     };
 
     //==========================================================================
@@ -87,13 +89,14 @@ namespace core::platform
                 types::create_shared<ProviderType>(std::forward<Args>(args)...);
 
             bool accepted =
-                (!this->provider || (candidate->priority > this->provider->priority)) &&
+                (!this->provider ||
+                 (candidate->priority() > this->provider->priority())) &&
                 candidate->is_pertinent();
 
             if (accepted)
             {
                 this->provider = candidate;
-                candidate->initialize();
+                std::static_pointer_cast<Provider>(candidate)->initialize();
                 return candidate;
             }
             else

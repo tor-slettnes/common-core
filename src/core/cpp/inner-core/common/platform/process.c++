@@ -49,6 +49,18 @@ namespace core::platform
         throw std::invalid_argument("invoke_async_pipe() is not implemented on this platform");
     }
 
+    ExitStatus ProcessProvider::pipe_capture(
+        PID pid,
+        int fdin,
+        int fdout,
+        int fderr,
+        const std::string &input,
+        std::string *output,
+        std::string *diag) const
+    {
+        throw std::invalid_argument("pipe_capture() is not implemented on this platform");
+    }
+
     ExitStatus ProcessProvider::invoke_capture(
         const ArgVector &,
         const fs::path &,

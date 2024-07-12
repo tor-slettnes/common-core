@@ -17,6 +17,7 @@
 #include "protobuf-signalreceiver.h++"
 #include "thread/binaryevent.h++"
 #include "status/exceptions.h++"
+#include "logging/logging.h++"
 
 #include <functional>
 
@@ -96,7 +97,6 @@ namespace core::grpc
             SignalReceiver::deinitialize();
         }
 
-    protected:
         /// @brief Start watching for signals from server.
         ///
         /// @note
@@ -123,16 +123,24 @@ namespace core::grpc
             {
                 this->watching = true;
                 this->watch_start = steady::Clock::now();
+                cc::signal::Filter filter = this->signal_filter();
+                logf_debug("Invoking %s::watch(filter=%s)",
+                           this->servicename(true),
+                           filter);
                 this->receiver.start(
                     &ServiceT::Stub::watch,
                     this->stub.get(),
-                    this->signal_filter());
+                    filter);
             }
         }
 
         /// @brief Stop watching for signals from server
         inline void stop_watching()
         {
+            if (this->watching)
+            {
+                logf_debug("Ending %s::watch()", this->servicename(true));
+            }
             this->watching = false;
             this->completion_event.cancel();
             this->receiver.stop();

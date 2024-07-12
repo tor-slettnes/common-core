@@ -6,13 +6,15 @@
 #===============================================================================
 
 target_sources(${TARGET} PRIVATE
+  init.c++
+  host.c++
+  logsink.c++
   path.c++
-  symbols.c++
-  timezone.c++
   process.c++
   runtime.c++
-  systemservice.c++
-  logsink.c++
   serialport.c++
-  init.c++
+  symbols.c++
+  systemservice.c++
+  timezone.c++
+  time.c++
 )

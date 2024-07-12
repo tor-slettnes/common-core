@@ -105,9 +105,9 @@ namespace core::platform
 
         int inpipe[2], outpipe[2], errpipe[2];
 
-        this->checkstatus(pipe(inpipe));
-        this->checkstatus(pipe(outpipe));
-        this->checkstatus(pipe(errpipe));
+        this->checkstatus(::pipe(inpipe));
+        this->checkstatus(::pipe(outpipe));
+        this->checkstatus(::pipe(errpipe));
 
         PID pid = this->checkstatus(fork());
 
@@ -135,16 +135,15 @@ namespace core::platform
         return pid;
     }
 
-    ExitStatus PosixProcessProvider::invoke_capture(
-        const ArgVector &argv,
-        const fs::path &cwd,
+    ExitStatus PosixProcessProvider::pipe_capture(
+        PID pid,
+        int fdin,
+        int fdout,
+        int fderr,
         const std::string &input,
         std::string *output,
         std::string *diag) const
     {
-        int fdin, fdout, fderr;
-        PID pid = this->invoke_async_pipe(argv, cwd, &fdin, &fdout, &fderr);
-
         struct pollfd pfds[] = {
             {fdin, POLLOUT, 0},
             {fdout, POLLIN, 0},
@@ -220,6 +219,18 @@ namespace core::platform
         return exitstatus;
     }
 
+    ExitStatus PosixProcessProvider::invoke_capture(
+        const ArgVector &argv,
+        const fs::path &cwd,
+        const std::string &input,
+        std::string *output,
+        std::string *diag) const
+    {
+        int fdin, fdout, fderr;
+        PID pid = this->invoke_async_pipe(argv, cwd, &fdin, &fdout, &fderr);
+        return this->pipe_capture(pid, fdin, fdout, fderr, input, output, diag);
+    }
+
     void PosixProcessProvider::invoke_check(
         const ArgVector &argv,
         const fs::path &cwd,
@@ -290,7 +301,7 @@ namespace core::platform
         *c_argp = nullptr;
 
         // Here we go. This should be the last thing we do. Goodbye!
-        execv(c_argv.at(0), c_argv.data());
+        execv(c_argv.front(), c_argv.data());
 
         // Why are we still here?
         throw std::system_error(errno, std::system_category());

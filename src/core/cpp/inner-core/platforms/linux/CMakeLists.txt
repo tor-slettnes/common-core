@@ -22,7 +22,9 @@ set(PKG_DEPS
 set(SOURCES
   linux-providers.c++
   linux-symbols.c++
+  linux-host.c++
   linux-path.c++
+  linux-time.c++
 )
 
 ### Build library
