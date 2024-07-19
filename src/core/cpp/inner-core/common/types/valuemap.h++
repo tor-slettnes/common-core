@@ -42,7 +42,7 @@ namespace core::types
             }
         }
 
-        inline std::optional<V> get_optional(const K &key) const noexcept
+        inline std::optional<V> get_opt(const K &key) const noexcept
         {
             try
             {

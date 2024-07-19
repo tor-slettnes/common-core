@@ -67,8 +67,8 @@ namespace core::logging
         ///     Key/value pairs associated with message
 
         Message(const std::string &text,
-                Scope::Ref scope,
                 status::Level level,
+                Scope::Ref scope,
                 status::Flow flow,
                 const dt::TimePoint &tp,
                 const fs::path &path,

@@ -1,6 +1,6 @@
 // -*- Protocol-Buffers -*-
 //==============================================================================
-/// @file sysconfig.proto
+/// @file system.proto
 /// @brief Host configuration interface
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

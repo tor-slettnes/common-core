@@ -90,10 +90,8 @@ namespace core::grpc
     ///      int main (int argc, char **argv)
     ///      {
     ///        ...
-    ///        ::grpc::ServerBuilder builder;
-    ///        your::Service svc(address);
-    ///        builder.RegisterService(&svc);
-    ///        svc.addToBuilder(&builder);
+    ///        core::grpc::ServerBuilder builder;
+    ///        builder.add_service(std::make_shared<MyRequestHandler>());
     ///        ...
     ///        auto server = builder.BuildAndStart();
     ///        ...

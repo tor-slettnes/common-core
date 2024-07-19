@@ -11,8 +11,8 @@
 namespace core::logging
 {
     MessageBuilder::MessageBuilder(Dispatcher *dispatcher,
-                                   Scope::Ref scope,
                                    status::Level level,
+                                   Scope::Ref scope,
                                    status::Flow flow,
                                    const dt::TimePoint &tp,
                                    const fs::path &path,
@@ -20,8 +20,8 @@ namespace core::logging
                                    const std::string &function,
                                    pid_t thread_id)
         : Message({},                                                // text
-                  scope,                                             // scope
                   level,                                             // level
+                  scope,                                             // scope
                   flow,                                              // flow
                   tp,                                                // tp
                   fs::relative(path, SOURCE_DIR, this->path_error),  // path

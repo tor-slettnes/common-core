@@ -1,13 +1,13 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file system-grpc-requesthandler.h++
-/// @brief Handle System RPC requests
+/// @brief Handle System gRPC service requests
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
 #include "system.grpc.pb.h"  // Generated from `system.proto`
-#include "system-api.h++"
+#include "system-providers.h++"
 
 #include "grpc-signalrequesthandler.h++"
 #include "types/create-shared.h++"

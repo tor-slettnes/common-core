@@ -159,7 +159,7 @@ namespace core::grpc
 
     void Status::populate_fields(types::PartsList *parts) const noexcept
     {
-        parts->add_string({}, this->status_code_name(), true, "%s");
+        parts->add({}, this->status_code_name(), true, "%s");
         Event::populate_fields(parts);
     }
 

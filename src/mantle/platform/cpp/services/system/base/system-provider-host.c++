@@ -1,11 +1,11 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file system-api-host.c++
+/// @file system-provider-host.c++
 /// @brief System service - Host Configuration API
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "system-api-host.h++"
+#include "system-provider-host.h++"
 
 namespace platform::system
 {

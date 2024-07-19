@@ -57,21 +57,31 @@ namespace core::types
             return from_string(symbol).value_or(fallback);
         }
 
-        inline std::ostream &to_stream(std::ostream &stream,
-                                       const KeyType &key,
-                                       const std::optional<std::string> &fallback = {}) const
+        inline std::ostream &to_stream(std::ostream &stream, const KeyType &key) const
         {
             if (const std::optional<std::string> &opt_symbol = this->to_string(key))
             {
                 stream << *opt_symbol;
             }
-            else if (fallback)
-            {
-                stream << *fallback;
-            }
             else
             {
                 stream.setstate(std::ios_base::failbit);
+            }
+            return stream;
+        }
+
+        template <class ValueType>
+        inline std::ostream &to_stream(std::ostream &stream,
+                                       const KeyType &key,
+                                       const ValueType &fallback) const
+        {
+            if (const std::optional<std::string> &opt_symbol = this->to_string(key))
+            {
+                stream << *opt_symbol;
+            }
+            else
+            {
+                stream << fallback;
             }
             return stream;
         }

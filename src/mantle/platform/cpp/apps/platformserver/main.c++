@@ -6,10 +6,13 @@
 //==============================================================================
 
 #include "options.h++"                  // Command-line options
+#include "platform-glib-mainloop.h++"   // Load gRPC server
 #include "platform-grpc-server.h++"     // Load gRPC server
 #include "system-providers-native.h++"  // System services
+#include "network-providers-dbus.h++"   // Network services
 #include "application/init.h++"         // Common init routines
 #include "status/exceptions.h++"
+#include "thread/supervised_thread.h++"
 
 int main(int argc, char** argv)
 {
@@ -21,8 +24,29 @@ int main(int argc, char** argv)
         ::options->apply(argc, argv);
 
         platform::system::native::register_providers();
-        platform::run_grpc_service();
+        platform::network::dbus::register_providers();
+
+        std::vector<std::thread> server_threads;
+
+        logf_debug("Spawning GLib main loop");
+        server_threads.push_back(
+            core::thread::supervised_thread(
+                platform::glib_mainloop));
+
+        logf_debug("Spawning gRPC service");
+        server_threads.push_back(
+            core::thread::supervised_thread(
+                platform::run_grpc_service,
+                ::options->bind_address));
+
+        for (std::thread& t : server_threads)
+        {
+            t.join();
+        }
+
+        platform::network::dbus::unregister_providers();
         platform::system::native::unregister_providers();
+
         return 0;
     }
     catch (...)

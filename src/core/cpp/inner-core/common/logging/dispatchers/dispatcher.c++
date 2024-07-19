@@ -32,6 +32,7 @@ namespace core::logging
 
     void Dispatcher::deinitialize()
     {
+        this->sinks_.clear();
     }
 
     bool Dispatcher::is_applicable(const types::Loggable &item) const

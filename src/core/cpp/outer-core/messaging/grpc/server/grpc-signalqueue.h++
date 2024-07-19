@@ -105,12 +105,45 @@ namespace core::grpc
                 signal.connect(this->id,                  // handle
                                [=](const SignalT &value)  // slot
                                {
-                                   ProtoT msg = this->create_signal_message();
+                                   ProtoT msg;
                                    encoder(value, &msg);
                                    this->forward(std::move(msg));
                                });
             }
         }
+
+        /// @brief
+        ///    Connect a signal of type MappingSignal<T> for encoding/enqueung
+        ///    ProtoBuf messages with `mapping_action` and `mapping_key` fields.
+        /// @tparam T
+        ///    Signal data type
+        /// @param[in] signal_index
+        ///     Signal enumeration in .proto file, to decide whether to actually connect.
+        /// @param[in] signal
+        ///    Signal to which to connect
+        /// @param[in] encoder
+        ///    Routine to encode signal data to ProtoBuf Signal message
+
+        template <class SignalT>
+        void connect(uint signal_index,
+                     signal::MappingSignal<SignalT> &signal,
+                     const MappingEncoder<SignalT> &encoder)
+        {
+            if (this->is_included(signal_index))
+            {
+                signal.connect(
+                    this->id,                          // handle
+                    [=](signal::MappingAction action,  // |
+                        const std::string &key,        // | slot
+                        const SignalT &value)          // |
+                    {
+                        ProtoT msg;
+                        encoder(action, key, value, &msg);
+                        this->forward(std::move(msg));
+                    });
+            }
+        }
+
 
         /// @brief
         ///    Connect a signal of type MappingSignal<T> for encoding/enqueung

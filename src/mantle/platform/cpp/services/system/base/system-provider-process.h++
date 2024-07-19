@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file system-api-process.h++
+/// @file system-provider-process.h++
 /// @brief System service - Process invocation API
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

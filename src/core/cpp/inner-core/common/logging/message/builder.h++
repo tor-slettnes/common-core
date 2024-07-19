@@ -65,8 +65,8 @@ namespace core::logging
         ///     Identity of thread in which the message originated
 
         MessageBuilder(Dispatcher *dispatcher,
-                       Scope::Ref scope,
                        status::Level level,
+                       Scope::Ref scope,
                        status::Flow flow,
                        const dt::TimePoint &tp,
                        const fs::path &path,

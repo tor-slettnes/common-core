@@ -109,6 +109,7 @@ namespace core::grpc
     {
         auto msg = custom_log_msg(
             status::Level::NOTICE,
+            log_scope,
             flow,
             dt::Clock::now(),
             path,

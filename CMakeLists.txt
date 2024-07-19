@@ -54,6 +54,7 @@ option(BUILD_RTI_LOGGER "Build support for RTI Distributed Logger" OFF)
 option(BUILD_PROTOBUF   "Build support for Google Protocol Buffers" ON)
 option(BUILD_DDS        "Build support for Distributed Data Service (DDS)" ${BUILD_RTI_DDS})
 option(BUILD_PYTHON_IO  "Build Python embedded environment for C++" ON)
+option(BUILD_DBUS       "Build support for D-Bus" ${LINUX})
 
 ### Build DEMO application
 option(BUILD_DEMO       "Build DEMO application example" ON)

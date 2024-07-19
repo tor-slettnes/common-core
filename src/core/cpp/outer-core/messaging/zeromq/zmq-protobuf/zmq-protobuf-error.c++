@@ -40,7 +40,7 @@ namespace core::zmq
 
     void ProtoBufError::populate_fields(types::PartsList *parts) const noexcept
     {
-        parts->add_value(STATUS_FIELD_CODE, this->status_code());
+        parts->add(STATUS_FIELD_CODE, this->status_code());
         Event::populate_fields(parts);
     }
 

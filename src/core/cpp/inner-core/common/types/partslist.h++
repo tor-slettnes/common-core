@@ -26,21 +26,21 @@ namespace core::types
                       public Streamable
     {
     public:
-        void add_string(const Tag &tag,
-                        const std::string &value,
-                        const std::optional<bool> &condition = {},
-                        const std::string &format = "%r");
+        void add(const Tag &tag,
+                 const std::string &value,
+                 const std::optional<bool> &condition = {},
+                 const std::string &format = "%r");
 
-        void add_value(const Tag &tag,
-                       const Value &value,
-                       const std::optional<bool> &condition = {},
-                       const std::string &format = "%s");
+        void add(const Tag &tag,
+                 const Value &value,
+                 const std::optional<bool> &condition = {},
+                 const std::string &format = "%s");
 
         template <class ValueType>
-        void add_as_string(const Tag &tag,
-                           const ValueType &value,
-                           bool condition = true,
-                           const std::string &format = "%s")
+        void add(const Tag &tag,
+                 const ValueType &value,
+                 bool condition = true,
+                 const std::string &format = "%s")
         {
             this->add_if(condition, tag, str::format(format, value), "");
         }

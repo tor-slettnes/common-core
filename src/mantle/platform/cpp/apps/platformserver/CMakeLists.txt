@@ -14,14 +14,17 @@ set(TARGET platformserver)
 set(LIB_DEPS
   cc_core_platform
   cc_platform_system_native
+  cc_platform_network_dbus
   cc_platform_system_grpc_service
+  cc_platform_network_grpc_service
 )
 
 ### Source files
 set(SOURCES
-  main.c++
-  options.c++
   platform-grpc-server.c++
+  platform-glib-mainloop.c++
+  options.c++
+  main.c++
 )
 
 ## Invoke common CMake rules to build executable

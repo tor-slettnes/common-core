@@ -6,7 +6,6 @@
 //==============================================================================
 
 #include "posix-logsink.h++"
-
 #include <syslog.h>
 
 namespace core::platform
@@ -32,9 +31,9 @@ namespace core::platform
 
     void PosixLogSinkProvider::capture_message(const logging::Message::Ref &msg)
     {
-        if (const int *level = levelmap.get_ptr(msg->level()))
+        if (std::optional<int> level = levelmap.get_opt(msg->level()))
         {
-            ::syslog(*level,                       // priority
+            ::syslog(level.value(),                // priority
                      "%s%s",                       // format
                      this->preamble(msg).c_str(),  // args...
                      msg->text().c_str());         //

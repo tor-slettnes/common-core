@@ -1,11 +1,11 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file system-api-process.c++
+/// @file system-provider-process.c++
 /// @brief System service - Process invocation API
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "system-api-process.h++"
+#include "system-provider-process.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-inline.h++"
 

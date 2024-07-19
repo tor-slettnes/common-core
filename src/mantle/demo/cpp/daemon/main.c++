@@ -52,7 +52,7 @@ int main(int argc, char** argv)
             server_threads.push_back(core::thread::supervised_thread(
                 demo::grpc::run_grpc_service,
                 api_provider,
-                ""));
+                demo::options->bind_address));
         }
 #endif
 

@@ -81,20 +81,21 @@
 /// "<<" output stream operator. Frequently, this means the appropriate header
 /// file needs to be included.
 
-#define custom_log_msg(level, flow, timepoint, path, lineno, function) \
-    core::logging::MessageBuilder::create_shared(                      \
-        &core::logging::message_dispatcher,                            \
-        log_scope,                                                     \
-        level,                                                         \
-        flow,                                                          \
-        timepoint,                                                     \
-        path,                                                          \
-        lineno,                                                        \
+#define custom_log_msg(level, scope, flow, timepoint, path, lineno, function) \
+    core::logging::MessageBuilder::create_shared(                             \
+        &core::logging::message_dispatcher,                                   \
+        level,                                                                \
+        scope,                                                                \
+        flow,                                                                 \
+        timepoint,                                                            \
+        path,                                                                 \
+        lineno,                                                               \
         function)
 
 #define default_log_msg(level)    \
     custom_log_msg(               \
         level,                    \
+        log_scope,                \
         core::status::Flow::NONE, \
         core::dt::Clock::now(),   \
         __builtin_FILE(),         \

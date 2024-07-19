@@ -1,11 +1,11 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file system-api-product.c++
+/// @file system-provider-product.c++
 /// @brief System service - Product Information API
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "system-api-product.h++"
+#include "system-provider-product.h++"
 
 namespace platform::system
 {

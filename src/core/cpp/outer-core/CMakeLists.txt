@@ -5,5 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+add_subdirectory(tools)
 add_subdirectory(dataformats)
 add_subdirectory(messaging)

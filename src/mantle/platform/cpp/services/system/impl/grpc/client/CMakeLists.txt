@@ -1,22 +1,18 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build Common Core applications
+## @description CMake rules to build Common Core components
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Name of this library. This can be used as a dependency for downstream
-### libraries/executables.
 set(TARGET "cc_platform_system_grpc_client")
 
-### Static/shared library dependencies, either from this build or provided by the system.
 set(LIB_DEPS
   cc_platform_system_base
-  cc_platform_system_grpc_common
+  cc_platform_system_protobuf
   cc_core_messaging_grpc_client
 )
 
-### Source files
 set(SOURCES
   system-grpc-time.c++
   system-grpc-host.c++
@@ -24,7 +20,6 @@ set(SOURCES
 )
 
 BuildLibrary("${TARGET}"
-  LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
 )

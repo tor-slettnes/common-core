@@ -44,14 +44,14 @@ namespace core::argparse
             "Install system service, then quit.",
             std::bind(&platform::SystemServiceProvider::install, platform::system_service));
 
-        // this->add_opt(
-        //     {"-b", "--bind"},
-        //     "ADDRESS",
-        //     "Listener address in the form [INTERFACE][:PORT]. "
-        //     "Default values are found in the endpoint settings file. "
-        //     "To bind only to the loopback (localhost) "
-        //     "interface use \"localhost\".",
-        //     &this->interface);
+        this->add_opt(
+            {"-b", "--bind"},
+            "ADDRESS",
+            "Listener address in the form [INTERFACE][:PORT]. "
+            "Default values are found in the endpoint settings file. "
+            "To bind only to the loopback (localhost) "
+            "interface use \"localhost\".",
+            &this->bind_address);
     }
 
     void ServerOptions::enact()

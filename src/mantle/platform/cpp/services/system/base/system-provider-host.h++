@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file system-api-product.h++
-/// @brief System service - Product Information API
+/// @file system-provider-host.h++
+/// @brief System service - Host Configuration API
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -15,7 +15,7 @@ namespace platform::system
     //==========================================================================
     // HostConfig provider
 
-    class ProductProvider : public core::platform::Provider
+    class HostConfigProvider : public core::platform::Provider
     {
         using Super = core::platform::Provider;
 
@@ -23,17 +23,20 @@ namespace platform::system
         using Super::Super;
 
     public:
-        virtual ProductInfo get_product_info() const;
-        virtual void set_serial_number(const std::string &serial);
-        virtual void set_model_name(const std::string &model);
+        //==========================================================================
+        // Host identification
+
+        virtual HostInfo get_host_info() const = 0;
+        virtual void set_host_name(const std::string &hostname) = 0;
+        virtual void reboot() = 0;
     };
 
     //==========================================================================
     // Provider instance
 
-    extern core::platform::ProviderProxy<ProductProvider> product;
+    extern core::platform::ProviderProxy<HostConfigProvider> hostconfig;
 
     //==========================================================================
     // Signals
-    extern core::signal::DataSignal<ProductInfo> signal_productinfo;
+    extern core::signal::DataSignal<HostInfo> signal_hostinfo;
 }  // namespace platform::system

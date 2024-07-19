@@ -422,9 +422,9 @@ namespace core
 
 namespace std::chrono
 {
-    std::ostream &operator<<(std::ostream &stream, const core::dt::TimePoint &tp);
-    std::ostream &operator<<(std::ostream &stream, const core::dt::Duration &dur);
-    std::ostream &operator<<(std::ostream &stream, const core::steady::TimePoint &stp);
+    std::ostream &operator<<(std::ostream &stream, const system_clock::time_point &tp);
+    std::ostream &operator<<(std::ostream &stream, const system_clock::duration &dur);
+    std::ostream &operator<<(std::ostream &stream, const steady_clock::time_point &stp);
 }  // namespace std::chrono
 
 

@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "system-grpc-signalqueue.h++"
-#include "system-api.h++"
+#include "system-providers.h++"
 #include "protobuf-system-types.h++"
 #include "protobuf-standard-types.h++"
 
@@ -63,6 +63,8 @@ namespace platform::system::grpc
             {
                 msg->mutable_product_info()->CopyFrom(pi);
             });
+
+        Super::initialize();
     }
 
     void SignalQueue::deinitialize()
@@ -73,5 +75,6 @@ namespace platform::system::grpc
         this->disconnect(platform::system::signal_tzinfo);
         this->disconnect(platform::system::signal_timeconfig);
         this->disconnect(platform::system::signal_time);
+        Super::deinitialize();
     }
 }  // namespace sam::foup::grpc

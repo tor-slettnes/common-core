@@ -32,7 +32,7 @@ namespace core::argparse
         bool daemon = false;
         fs::path default_pid_file;
         fs::path pidfile;
-        // std::string interface;
+        std::string bind_address;
     };
 
 }  // namespace core::argparse

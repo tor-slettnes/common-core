@@ -20,11 +20,11 @@ namespace demo::grpc
     /// Each SignalQueue instance is associated with a specific invocation of
     /// the server's `watch()` method, and captures signals on the server side
     /// to be streamed back to the client. We connect the desired signals to
-    /// corresponding handler methods, which in turn encode the emitted payload
-    /// to our own protobuf Signal() message and then appends the result to this
-    /// queue, from which they are then streamed back to the client.
+    /// corresponding handler methods, which in turn encode the payload to our
+    /// own protobuf Signal() message and then appends the result to this queue,
+    /// from which they are then streamed back to the client.
     ///
-    /// See `service::SignalQueue<T>` for additional info.
+    /// See `core::grpc::SignalQueue<T>` for additional info.
 
     class SignalQueue : public core::grpc::SignalQueue<cc::demo::Signal>
     {

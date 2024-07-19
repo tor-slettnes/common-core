@@ -7,7 +7,7 @@
 
 ### Name of this library. This can be used as a dependency for downstream
 ### libraries/executables.
-set(TARGET "cc_platform_system_grpc_common")
+set(TARGET "cc_platform_system_protobuf")
 
 ### Static/shared library dependencies, either from this build or provided by the system.
 set(LIB_DEPS

@@ -9,18 +9,18 @@
 
 namespace core::types
 {
-    void PartsList::add_string(const Tag &tag,
-                               const std::string &value,
-                               const std::optional<bool> &condition,
-                               const std::string &format)
+    void PartsList::add(const Tag &tag,
+                        const std::string &value,
+                        const std::optional<bool> &condition,
+                        const std::string &format)
     {
         this->add_if(condition.value_or(!value.empty()), tag, value, format);
     }
 
-    void PartsList::add_value(const Tag &tag,
-                              const Value &value,
-                              const std::optional<bool> &condition,
-                              const std::string &format)
+    void PartsList::add(const Tag &tag,
+                        const Value &value,
+                        const std::optional<bool> &condition,
+                        const std::string &format)
     {
         this->add_if(condition.value_or(!value.empty()), tag, value, format);
     }

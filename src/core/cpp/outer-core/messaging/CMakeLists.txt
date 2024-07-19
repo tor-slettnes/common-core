@@ -23,3 +23,7 @@ endif()
 if(BUILD_HTTP)
   add_subdirectory(http)
 endif()
+
+if(BUILD_DBUS)
+  add_subdirectory(dbus)
+endif()

@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file system-api-time.h++
+/// @file system-provider-time.h++
 /// @brief System service - Abstract C++ interface
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

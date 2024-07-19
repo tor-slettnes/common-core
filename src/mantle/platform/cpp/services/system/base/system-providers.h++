@@ -1,13 +1,13 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file system-api.h++
+/// @file system-providers.h++
 /// @brief System service - Abstract C++ interface
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
-#include "system-api-time.h++"
-#include "system-api-timezone.h++"
-#include "system-api-host.h++"
-#include "system-api-product.h++"
-#include "system-api-process.h++"
+#include "system-provider-time.h++"
+#include "system-provider-timezone.h++"
+#include "system-provider-host.h++"
+#include "system-provider-product.h++"
+#include "system-provider-process.h++"

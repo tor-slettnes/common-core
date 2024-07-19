@@ -9,7 +9,7 @@
 #include "zmq-protobuf-requesthandler.h++"
 #include "zmq-responder.h++"
 #include "protobuf-message.h++"
-#include "types/symbolmap.h++"
+#include "types/valuemap.h++"
 
 #include "request_reply.pb.h"
 
@@ -22,7 +22,7 @@ namespace core::zmq
 
     protected:
         using RequestHandlerPtr = std::shared_ptr<ProtoBufRequestHandler>;
-        using RequestHandlerMap = types::ValueMap<std::string, RequestHandlerPtr>;
+        using RequestHandlerMap = core::types::ValueMap<std::string, RequestHandlerPtr>;
 
     protected:
         ProtoBufServer(const std::string &bind_address,

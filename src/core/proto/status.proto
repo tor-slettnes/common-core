@@ -14,9 +14,9 @@ import "google/protobuf/timestamp.proto";
 
 // Data pertaining to an status/event.
 // This message structure is
-//  - embedded inside the `cc::grpc::Status()` structure, which is derived from
-//    and may be included in `::grpc::Status()` responses.
-//  - used for asynchronous events, repported via EventService.
+//  - serialized by the server and included in the `error_details()` field of
+//    `::grpc::Status()` responses after a failure
+//  - used for asynchronous events
 
 message Event
 {

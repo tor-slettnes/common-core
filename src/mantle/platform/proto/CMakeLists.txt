@@ -17,6 +17,7 @@ set(LIB_DEPS cc_core_proto)
 ### Source files
 set(SOURCES
   system.proto
+  network.proto
 )
 
 ### Generate language bindings

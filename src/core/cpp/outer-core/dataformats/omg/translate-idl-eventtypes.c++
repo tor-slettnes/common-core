@@ -108,8 +108,8 @@ namespace core::idl
     {
         return {
             idl.text(),
-            core::logging::scopes.get(idl.log_scope()),
             decoded<core::status::Level>(idl.level()),
+            core::logging::scopes.get(idl.log_scope()),
             decoded<core::status::Flow>(idl.flow()),
             decoded<core::dt::TimePoint>(idl.timestamp()),
             idl.filename(),

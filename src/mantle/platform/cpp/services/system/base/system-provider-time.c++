@@ -1,11 +1,11 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file system-api-time.c++
+/// @file system-provider-time.c++
 /// @brief System service - Abstract C++ interface
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "system-api-time.h++"
+#include "system-provider-time.h++"
 
 namespace platform::system
 {
