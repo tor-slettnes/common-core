@@ -14,8 +14,8 @@ set(LIB_DEPS
 )
 
 set(SOURCES
-  # network-grpc-client.h++
-  # network-providers-grpc.c++
+  network-grpc-provider.c++
+  network-providers-grpc.c++
 )
 
 BuildLibrary("${TARGET}"

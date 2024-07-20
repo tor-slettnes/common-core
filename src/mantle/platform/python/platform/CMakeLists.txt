@@ -18,6 +18,7 @@ set(FILES
 
 set(DIRECTORIES
   system
+  network
 )
 
 BuildPython("${TARGET}"

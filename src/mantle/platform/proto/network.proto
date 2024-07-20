@@ -127,9 +127,9 @@ message WirelessConnectionData
     AuthenticationType auth_type = 7;
     oneof auth
     {
-        AuthenticationData_WEP wep = 8;
-        AuthenticationData_WPA wpa = 9;
-        AuthenticationData_EAP eap = 10;
+        WEP_Data wep = 8;
+        WPA_Data wpa = 9;
+        EAP_Data eap = 10;
     }
     oneof optional_band
     {
@@ -334,7 +334,7 @@ enum AuthenticationType
     AUTH_TYPE_UNKNOWN = 15;
 };
 
-message AuthenticationData_WEP
+message WEP_Data
 {
     AuthenticationAlgorithm auth_alg = 1;
     repeated bytes key = 2;
@@ -342,12 +342,12 @@ message AuthenticationData_WEP
     WEP_KeyType key_type = 4;
 }
 
-message AuthenticationData_WPA
+message WPA_Data
 {
     string psk = 1;
 }
 
-message AuthenticationData_EAP
+message EAP_Data
 {
     AuthenticationAlgorithm auth_alg = 1;
     EAP_Type eap_type = 2;

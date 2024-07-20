@@ -1,30 +1,30 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file network-provider-dbus.h++
-/// @brief Network service - D-BUS implementation
+/// @file network-grpc-provider.h++
+/// @brief Network service - gRPC client implementation
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
 #include "network-provider.h++"
-#include "nm-manager.h++"
+#include "network-grpc-client.h++"
 
-namespace platform::network::dbus
+namespace platform::network::grpc
 {
-    //======================================================================
-    /// Abstract base for network providers
-
-    class DBusProvider : public Provider
+    class ClientProvider : public Provider
     {
-        using This = DBusProvider;
+        using This = ClientProvider;
         using Super = Provider;
 
-    protected:
-        DBusProvider();
-
     public:
+        ClientProvider(const std::shared_ptr<Client> &client,
+                       bool use_cached = false);
+
         bool is_pertinent() override;
         void initialize() override;
+
+        void set_use_cached(bool use_cached);
+        bool get_use_cached() const;
 
     public:
         //======================================================================
@@ -72,7 +72,7 @@ namespace platform::network::dbus
         void select_wireless_band(WirelessBandSelection band) override;
 
     private:
-        std::shared_ptr<Manager> manager;
-        std::shared_ptr<Settings> settings;
+        std::shared_ptr<Client> client;
+        bool use_cached;
     };
-}  // namespace platform::network::dbus
+}  // namespace platform::network::grpc

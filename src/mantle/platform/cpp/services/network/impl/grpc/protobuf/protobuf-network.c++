@@ -227,15 +227,15 @@ namespace core::protobuf
         msg->set_auth_protos(data.auth_protos);
         msg->set_auth_type(encoded<::cc::platform::network::AuthenticationType>(data.auth_type()));
 
-        if (auto *wep = std::get_if<::platform::network::AuthenticationData_WEP>(&data.auth))
+        if (auto *wep = std::get_if<::platform::network::WEP_Data>(&data.auth))
         {
             encode(*wep, msg->mutable_wep());
         }
-        else if (auto *wpa = std::get_if<::platform::network::AuthenticationData_WPA>(&data.auth))
+        else if (auto *wpa = std::get_if<::platform::network::WPA_Data>(&data.auth))
         {
             encode(*wpa, msg->mutable_wpa());
         }
-        else if (auto *eap = std::get_if<::platform::network::AuthenticationData_EAP>(&data.auth))
+        else if (auto *eap = std::get_if<::platform::network::EAP_Data>(&data.auth))
         {
             encode(*eap, msg->mutable_eap());
         }
@@ -259,15 +259,15 @@ namespace core::protobuf
         switch (msg.auth_case())
         {
         case ::cc::platform::network::WirelessConnectionData::AuthCase::kWep:
-            data->auth = decoded<::platform::network::AuthenticationData_WEP>(msg.wep());
+            data->auth = decoded<::platform::network::WEP_Data>(msg.wep());
             break;
 
         case ::cc::platform::network::WirelessConnectionData::AuthCase::kWpa:
-            data->auth = decoded<::platform::network::AuthenticationData_WPA>(msg.wpa());
+            data->auth = decoded<::platform::network::WPA_Data>(msg.wpa());
             break;
 
         case ::cc::platform::network::WirelessConnectionData::AuthCase::kEap:
-            data->auth = decoded<::platform::network::AuthenticationData_EAP>(msg.eap());
+            data->auth = decoded<::platform::network::EAP_Data>(msg.eap());
             break;
 
         default:
@@ -344,10 +344,10 @@ namespace core::protobuf
     }
 
     //==========================================================================
-    // ::platform::network::AuthenticationData_WEP
+    // ::platform::network::WEP_Data
 
-    void encode(const ::platform::network::AuthenticationData_WEP &auth,
-                ::cc::platform::network::AuthenticationData_WEP *msg) noexcept
+    void encode(const ::platform::network::WEP_Data &auth,
+                ::cc::platform::network::WEP_Data *msg) noexcept
     {
         msg->set_auth_alg(encoded<::cc::platform::network::AuthenticationAlgorithm>(auth.auth_alg));
         for (const core::types::ByteVector &key : auth.keys)
@@ -358,8 +358,8 @@ namespace core::protobuf
         msg->set_key_type(encoded<::cc::platform::network::WEP_KeyType>(auth.key_type));
     }
 
-    void decode(const ::cc::platform::network::AuthenticationData_WEP &msg,
-                ::platform::network::AuthenticationData_WEP *auth) noexcept
+    void decode(const ::cc::platform::network::WEP_Data &msg,
+                ::platform::network::WEP_Data *auth) noexcept
     {
         auth->auth_alg =
             decoded<::platform::network::AuthenticationAlgorithm>(msg.auth_alg());
@@ -384,25 +384,25 @@ namespace core::protobuf
     }
 
     //==========================================================================
-    // ::platform::network::AuthenticationData_WPA
+    // ::platform::network::WPA_Data
 
-    void encode(const ::platform::network::AuthenticationData_WPA &auth,
-                ::cc::platform::network::AuthenticationData_WPA *msg) noexcept
+    void encode(const ::platform::network::WPA_Data &auth,
+                ::cc::platform::network::WPA_Data *msg) noexcept
     {
         msg->set_psk(auth.psk);
     }
 
-    void decode(const ::cc::platform::network::AuthenticationData_WPA &msg,
-                ::platform::network::AuthenticationData_WPA *auth) noexcept
+    void decode(const ::cc::platform::network::WPA_Data &msg,
+                ::platform::network::WPA_Data *auth) noexcept
     {
         auth->psk = msg.psk();
     }
 
     //==========================================================================
-    // ::platform::network::AuthenticationData_EAP
+    // ::platform::network::EAP_Data
 
-    void encode(const ::platform::network::AuthenticationData_EAP &auth,
-                ::cc::platform::network::AuthenticationData_EAP *msg) noexcept
+    void encode(const ::platform::network::EAP_Data &auth,
+                ::cc::platform::network::EAP_Data *msg) noexcept
     {
         msg->set_auth_alg(
             encoded<::cc::platform::network::AuthenticationAlgorithm>(
@@ -424,8 +424,8 @@ namespace core::protobuf
             encoded<::cc::platform::network::FAST_Provisioning>(auth.fast_provisioning));
     }
 
-    void decode(const ::cc::platform::network::AuthenticationData_EAP &msg,
-                ::platform::network::AuthenticationData_EAP *auth) noexcept
+    void decode(const ::cc::platform::network::EAP_Data &msg,
+                ::platform::network::EAP_Data *auth) noexcept
     {
         auth->auth_alg =
             decoded<::platform::network::AuthenticationAlgorithm>(msg.auth_alg());

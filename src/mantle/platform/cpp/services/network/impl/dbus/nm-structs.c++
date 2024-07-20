@@ -127,10 +127,10 @@ namespace platform::network::dbus
                 &wireless->mode);
         }
 
-        AuthenticationData_WEP
+        WEP_Data
         auth_data_wep(const core::glib::VariantMap& map)
         {
-            AuthenticationData_WEP wep;
+            WEP_Data wep;
             core::glib::extract_mapped(
                 map,
                 auth_alg_map,
@@ -161,10 +161,10 @@ namespace platform::network::dbus
             return wep;
         }
 
-        AuthenticationData_WPA
+        WPA_Data
         auth_data_wpa(const core::glib::VariantMap& map)
         {
-            AuthenticationData_WPA wpa;
+            WPA_Data wpa;
             core::glib::extract_value(
                 map,
                 NM_SETTING_WIRELESS_SECURITY_PSK,
@@ -172,10 +172,10 @@ namespace platform::network::dbus
             return wpa;
         }
 
-        AuthenticationData_EAP
+        EAP_Data
         auth_data_eap(const core::glib::VariantMap& map)
         {
-            AuthenticationData_EAP eap;
+            EAP_Data eap;
             core::glib::extract_mapped(
                 map,
                 auth_alg_map,
@@ -235,7 +235,7 @@ namespace platform::network::dbus
 
         void extract_eap(
             const core::glib::VariantMap& map,
-            AuthenticationData_EAP* data)
+            EAP_Data* data)
         {
             std::vector<std::string> eap_schemes;
 
@@ -407,7 +407,7 @@ namespace platform::network::dbus
 
                     if ((it = map.find(NM_SETTING_802_1X_SETTING_NAME)) != map.end())
                     {
-                        if (auto* auth = std::get_if<AuthenticationData_EAP>(&wireless.auth))
+                        if (auto* auth = std::get_if<EAP_Data>(&wireless.auth))
                         {
                             extract_eap(it->second, auth);
                         }
@@ -535,7 +535,7 @@ namespace platform::network::dbus
                     protos);
             }
 
-            if (auto* wep = std::get_if<AuthenticationData_WEP>(&wireless.auth))
+            if (auto* wep = std::get_if<WEP_Data>(&wireless.auth))
             {
                 if (wep->auth_alg != AUTH_ALG_NONE)
                 {
@@ -568,7 +568,7 @@ namespace platform::network::dbus
                 }
             }
 
-            else if (auto* wpa = std::get_if<AuthenticationData_WPA>(&wireless.auth))
+            else if (auto* wpa = std::get_if<WPA_Data>(&wireless.auth))
             {
                 core::glib::insert_value(
                     map,
@@ -576,7 +576,7 @@ namespace platform::network::dbus
                     std::string(wpa->psk));
             }
 
-            else if (auto* eap = std::get_if<AuthenticationData_EAP>(&wireless.auth))
+            else if (auto* eap = std::get_if<EAP_Data>(&wireless.auth))
             {
                 core::glib::insert_mapped(
                     map,
@@ -587,7 +587,7 @@ namespace platform::network::dbus
         }
 
         void insert_eap(
-            const AuthenticationData_EAP& data,
+            const EAP_Data& data,
             core::glib::VariantMap* map)
         {
             if (const auto& eap_scheme = eap_type_map.to_string(data.eap_type))
@@ -814,7 +814,7 @@ namespace platform::network::dbus
                         &(*settings)[NM_SETTING_WIRELESS_SECURITY_SETTING_NAME]);
                 }
 
-                if (auto* eap = std::get_if<AuthenticationData_EAP>(&wireless->auth))
+                if (auto* eap = std::get_if<EAP_Data>(&wireless->auth))
                 {
                     insert_eap(*eap,
                                &(*settings)[NM_SETTING_802_1X_SETTING_NAME]);

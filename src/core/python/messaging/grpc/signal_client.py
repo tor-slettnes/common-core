@@ -8,7 +8,14 @@
 ### Modules within package
 from .client  import Client
 from .client_reader import ThreadReader, AsyncReader
-from ...protobuf.signal import SignalStore, cc
+from ...protobuf.signal import SignalStore, Slot, cc
+from ...protobuf.import_proto import import_proto
+
+from typing import Callable, Sequence, Optional
+
+### Import generated types from `signal.proto`. Symbols will appear within a new
+### `cc.signal` namespace.
+import_proto('signal', globals())
 
 #===============================================================================
 # Client
@@ -195,6 +202,32 @@ class SignalClient (Client):
             indexmap   = self.signal_store.signal_fields()
             indices    = [indexmap.get(slot) for slot in self.signal_store.slots]
             return cc.signal.Filter(polarity=True, index=filter(None, indices))
+
+
+    def start_notify_signals(self,
+                             callback: Slot,
+                             signals: Sequence[str]|None = None):
+        '''Connect a callback method (slot) to specific signals, or all signals if not specified.
+        '''
+
+        if signals:
+            for signal in signals:
+                self.signal_store.connect_signal(signal, callback)
+        else:
+            self.signal_store.connect_all(callback)
+
+        self.start_watching()
+
+    def stop_notify_signals(self,
+                            callback: Optional[Slot] = None,
+                            signals: Sequence[str]|None = None):
+        '''Disconnect from the specified signal, or all signals if not specified.'''
+
+        if signals:
+            for signal in signals:
+                self.signal_store.disconnect_signal(signal, callback)
+        else:
+            self.signal_store.disconnect_all(callback)
 
 
     def start_watching(self, watch_all: bool = True):

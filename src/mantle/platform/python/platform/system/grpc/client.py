@@ -25,7 +25,7 @@ import_proto('google.protobuf.wrappers', globals())
 import_proto('google.protobuf.timestamp', globals())
 
 #===============================================================================
-# SignalClient class
+# SystemClient class
 
 class SystemClient (SignalClient):
     '''Client for System service.'''

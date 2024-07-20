@@ -58,9 +58,9 @@ namespace platform::network::dbus
                 this->settings.get(SETTING_WIFI_BAND, {}).as_string(),
                 BAND_ANY);
 
-        logf_info("Read band selection: %r -> %r",
-                  this->settings.get(SETTING_WIFI_BAND, {}).as_string(),
-                  this->wireless_band_selection);
+        logf_debug("Read band selection: %r -> %r",
+                   this->settings.get(SETTING_WIFI_BAND, {}).as_string(),
+                   this->wireless_band_selection);
     }
 
     void Manager::initialize()

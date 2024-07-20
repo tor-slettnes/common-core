@@ -150,7 +150,7 @@ namespace platform::network
         Provisioning_ANY = 7
     };
 
-    struct AuthenticationData_WEP : public core::types::Streamable
+    struct WEP_Data : public core::types::Streamable
     {
         AuthenticationAlgorithm auth_alg = AUTH_ALG_NONE;
         std::vector<core::types::ByteVector> keys = {{}, {}, {}, {}};
@@ -160,14 +160,14 @@ namespace platform::network
         void to_stream(std::ostream &stream) const override;
     };
 
-    struct AuthenticationData_WPA : public core::types::Streamable
+    struct WPA_Data : public core::types::Streamable
     {
         std::string psk;
 
         void to_stream(std::ostream &stream) const override;
     };
 
-    struct AuthenticationData_EAP : public core::types::Streamable
+    struct EAP_Data : public core::types::Streamable
     {
         AuthenticationAlgorithm auth_alg = AUTH_ALG_NONE;
         EAP_Type eap_type = EAP_NONE;
@@ -204,9 +204,9 @@ namespace platform::network
 
     using AuthenticationData =
         std::variant<std::monostate,
-                     AuthenticationData_WEP,
-                     AuthenticationData_WPA,
-                     AuthenticationData_EAP>;
+                     WEP_Data,
+                     WPA_Data,
+                     EAP_Data>;
 
     struct WirelessConnectionData : public core::types::Streamable
     {
@@ -221,9 +221,9 @@ namespace platform::network
 
         KeyManagement key_mgmt_type() const;
         AuthenticationType auth_type() const;
-        AuthenticationData_WEP *auth_wep();
-        AuthenticationData_WPA *auth_wpa();
-        AuthenticationData_EAP *auth_eap();
+        WEP_Data *auth_wep();
+        WPA_Data *auth_wpa();
+        EAP_Data *auth_eap();
         void to_stream(std::ostream &stream) const override;
     };
 

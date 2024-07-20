@@ -51,7 +51,7 @@ namespace platform::network
         stream << parts;
     }
 
-    void AuthenticationData_WEP::to_stream(std::ostream &stream) const
+    void WEP_Data::to_stream(std::ostream &stream) const
     {
         core::types::PartsList parts;
         parts.add("auth_alg", this->auth_alg, this->auth_alg, "%s");
@@ -67,14 +67,14 @@ namespace platform::network
         stream << "WEP" << parts;
     }
 
-    void AuthenticationData_WPA::to_stream(std::ostream &stream) const
+    void WPA_Data::to_stream(std::ostream &stream) const
     {
         core::types::PartsList parts;
         parts.add("psk", this->psk, true, "%h");
         stream << "WPA" << parts;
     }
 
-    void AuthenticationData_EAP::to_stream(std::ostream &stream) const
+    void EAP_Data::to_stream(std::ostream &stream) const
     {
         core::types::PartsList parts;
         parts.add("auth_alg", this->auth_alg, this->auth_alg);
@@ -121,19 +121,19 @@ namespace platform::network
         return static_cast<AuthenticationType>(auth.index());
     }
 
-    AuthenticationData_WEP *WirelessConnectionData::auth_wep()
+    WEP_Data *WirelessConnectionData::auth_wep()
     {
-        return std::get_if<AuthenticationData_WEP>(&this->auth);
+        return std::get_if<WEP_Data>(&this->auth);
     }
 
-    AuthenticationData_WPA *WirelessConnectionData::auth_wpa()
+    WPA_Data *WirelessConnectionData::auth_wpa()
     {
-        return std::get_if<AuthenticationData_WPA>(&this->auth);
+        return std::get_if<WPA_Data>(&this->auth);
     }
 
-    AuthenticationData_EAP *WirelessConnectionData::auth_eap()
+    EAP_Data *WirelessConnectionData::auth_eap()
     {
-        return std::get_if<AuthenticationData_EAP>(&this->auth);
+        return std::get_if<EAP_Data>(&this->auth);
     }
 
     void WirelessConnectionData::to_stream(std::ostream &stream) const
@@ -511,15 +511,15 @@ namespace platform::network
         switch (static_cast<AuthenticationType>(auth_data.index()))
         {
         case AUTH_TYPE_WEP:
-            stream << std::get<AuthenticationData_WEP>(auth_data);
+            stream << std::get<WEP_Data>(auth_data);
             break;
 
         case AUTH_TYPE_WPA:
-            stream << std::get<AuthenticationData_WPA>(auth_data);
+            stream << std::get<WPA_Data>(auth_data);
             break;
 
         case AUTH_TYPE_EAP:
-            stream << std::get<AuthenticationData_EAP>(auth_data);
+            stream << std::get<EAP_Data>(auth_data);
             break;
 
         default:

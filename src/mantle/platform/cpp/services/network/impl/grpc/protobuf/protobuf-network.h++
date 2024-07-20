@@ -84,31 +84,31 @@ namespace core::protobuf
                 ::platform::network::WirelessConnectionData *data) noexcept;
 
     //==========================================================================
-    // ::platform::network::AuthenticationData_WEP
+    // ::platform::network::WEP_Data
 
-    void encode(const ::platform::network::AuthenticationData_WEP &auth,
-                ::cc::platform::network::AuthenticationData_WEP *msg) noexcept;
+    void encode(const ::platform::network::WEP_Data &auth,
+                ::cc::platform::network::WEP_Data *msg) noexcept;
 
-    void decode(const ::cc::platform::network::AuthenticationData_WEP &msg,
-                ::platform::network::AuthenticationData_WEP *data) noexcept;
-
-    //==========================================================================
-    // ::platform::network::AuthenticationData_WPA
-
-    void encode(const ::platform::network::AuthenticationData_WPA &auth,
-                ::cc::platform::network::AuthenticationData_WPA *msg) noexcept;
-
-    void decode(const ::cc::platform::network::AuthenticationData_WPA &msg,
-                ::platform::network::AuthenticationData_WPA *data) noexcept;
+    void decode(const ::cc::platform::network::WEP_Data &msg,
+                ::platform::network::WEP_Data *data) noexcept;
 
     //==========================================================================
-    // ::platform::network::AuthenticationData_EAP
+    // ::platform::network::WPA_Data
 
-    void encode(const ::platform::network::AuthenticationData_EAP &auth,
-                ::cc::platform::network::AuthenticationData_EAP *msg) noexcept;
+    void encode(const ::platform::network::WPA_Data &auth,
+                ::cc::platform::network::WPA_Data *msg) noexcept;
 
-    void decode(const ::cc::platform::network::AuthenticationData_EAP &msg,
-                ::platform::network::AuthenticationData_EAP *data) noexcept;
+    void decode(const ::cc::platform::network::WPA_Data &msg,
+                ::platform::network::WPA_Data *data) noexcept;
+
+    //==========================================================================
+    // ::platform::network::EAP_Data
+
+    void encode(const ::platform::network::EAP_Data &auth,
+                ::cc::platform::network::EAP_Data *msg) noexcept;
+
+    void decode(const ::cc::platform::network::EAP_Data &msg,
+                ::platform::network::EAP_Data *data) noexcept;
 
     //==========================================================================
     // ::platform::network::ActiveConnectionMap

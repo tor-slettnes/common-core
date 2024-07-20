@@ -39,6 +39,10 @@ namespace platform::network::dbus
         using core::dbus::ProxyWrapper::ProxyWrapper;
     };
 
+    //==========================================================================
+    /// \class MappedDataWrapper<T>
+    /// \brief DBus Proxy wrapper with abstraction for mapped data storage
+
     template <class MappedDataType>
     class MappedDataWrapper : public DataWrapper<MappedDataType>
     {

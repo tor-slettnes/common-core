@@ -1,16 +1,16 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build System gRPC client tool
+## @description CMake rules to build Network gRPC client tool
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET system-tool)
+set(TARGET network-tool)
 
 set(LIB_DEPS
   cc_core_platform
-  cc_platform_system_native
-  cc_platform_system_grpc_client
+  cc_platform_network_dbus
+  cc_platform_network_grpc_client
 )
 
 set(SOURCES
