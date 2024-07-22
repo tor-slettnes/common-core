@@ -115,6 +115,9 @@ cmake/clean:
 $(BUILD_DIR):
 	@mkdir -p "$(BUILD_DIR)"
 
+docker_%:
+	@$(MAKE) -C $(SHARED_DIR)/scripts/docker $(MAKECMDGOALS) HOST_DIR=$(CURDIR)
+
 %:
 	@$(MAKE) -C "$(BUILD_DIR)" $(MAKECMDGOALS)
 

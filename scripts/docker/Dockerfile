@@ -1,32 +1,50 @@
 FROM debian:bookworm
 
-# Set Docker variables for creating picarro user
-ARG USERNAME=developer
-ARG HOMEDIR=/home/${USERNAME}
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
+### Install runtime utilities
+RUN apt-get update
+RUN apt-get install -y \
+    build-essential         \
+    cmake                   \
+    cppzmq-dev              \
+    doxygen                 \
+    file                    \
+    git                     \
+    libcurl4-gnutls-dev     \
+    libglibmm-2.4-dev       \
+    libgrpc++-dev           \
+    libgtest-dev            \
+    libnm-dev               \
+    libprotobuf-dev         \
+    libudev-dev             \
+    libwebsocketpp-dev      \
+    locales-all             \
+    pkgconf                 \
+    protobuf-compiler       \
+    protobuf-compiler-grpc  \
+    python3-cffi-backend    \
+    python3-dev             \
+    python3-venv            \
+    python3-build           \
+    python3-hatchling       \
+    python3-grpcio          \
+    python3-protobuf        \
+    python3-zmq             \
+    rapidjson-dev           \
+    sudo                    \
+    uuid-dev
 
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt update
-RUN apt -y install \
-    build-essential cmake pkgconf uuid-dev \
-    locales-all libgtest-dev \
-    rapidjson-dev \
-    libprotobuf-dev protobuf-compiler \
-    protobuf-compiler-grpc libgrpc++-dev \
-    cppzmq-dev \
-    libcurl4-gnutls-dev \
-    libwebsocketpp-dev \
-    python3-dev \
-    python3-protobuf python3-grpcio python3-zmq python3-cffi-backend \
-    doxygen
-ENV DEBIAN_FRONTEND=dialog
+# Duplicate external account
 
-# Create the user
-RUN addgroup --gid ${USER_GID} ${USERNAME}
-RUN adduser --uid ${USER_UID} --ingroup ${USERNAME} ${USERNAME}
-RUN adduser ${USERNAME} sudo
+ARG USERNAME
+ARG UID
+ARG GID
 
-# Switch to picarro user to set up user environment
+RUN adduser --disabled-password $USERNAME --uid $UID
+RUN adduser $USERNAME sudo
+
+# Do not require password for users in the `sudo` group to invoke `sudo`
+RUN sed -e 's/\(%sudo\s\+.\+\)\s\+\(ALL\)$/\1 NOPASSWD:\2/g' -i /etc/sudoers
+
 USER $USERNAME
-WORKDIR /home/${USERNAME}
+
+CMD ["sleep", "infinity"]

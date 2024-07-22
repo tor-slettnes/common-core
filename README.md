@@ -11,6 +11,7 @@ Directory Structure
 
 This repository is organized as follows:
 
+* [docs][docs] -- Developer documentation
 * [cmake](cmake) -- CMake build recipes & include files
 * [scripts](scripts) -- Miscellaneious scripts used for configuration, building & testing.
 * [src](src) -- top-level source directory; see [source](src/README.md) for details.
@@ -22,71 +23,17 @@ In addition, an `out` directory is created as part of the build process:
 * `out` - Artifacts generated as part of the build
   * `build` - Various outputs including generated code, object files, and executables.
   * `install` - Default installation folder
+  * `packages` - Deployable installation packages (currently Debian packages and Python wheels)
   * `docs` - Documentation generated from sources, readmes, etc. by Doxygen
 
 
 Getting Started
 ---------------
 
-## Preparing your development/build host
+For instructions on setting up your host environment, cloning, and building the code in this repository, please choose your desired target platform:
 
-First, you need a Linux host computer to develop, build, and test your code.
-
-* If you are new to Linux or if you like the idea of corporate backing, the latest [Ubuntu](https://ubuntu.com/download/desktop) will be a good choice. It has one of the simplest-to-use installers arund and a comprehensive out-of-box experience.  (*Note* that to build natively on Ubuntu, _the minimum requires version is 22.04!_ Some of the tools and libraries included in older versions are too far out of date for our needs already at the time of its release, for instance `python-3.11` and `cppzmq-dev`).
-
-* If you don't need training wheels you wish to go straight to [Debian](https://www.debian.org/), the community-created, upstream base for Ubuntu (and ohers such as Mint). The installer asks a few more questions, but you will end up with in some ways a more flexible but simpler system with fewer dependency layers (for instance, system updates are provided directly via APT tools, `snapd` is an optional add-on and not a core requirement).
-
-In either case, you may install this
-* natively on your computer, perhaps creating a separate disk partition so you can still keep your existing OS (you can then choose OS at boot time, or run one in a VM inside the other),
-* entirely inside VM, such as [VirtualBox](https://www.virtualbox.org/), or
-* using Windows Subsystem For Linux ([WSL](https://docs.microsoft.com/en-us/windows/wsl/)).
-
-Which option you choose is a matter of getting started quickly vs. ongoing ease of use.  The VM route may be easiest to install, but with some performance penalty and ongoing complexity (especially if you also choose to share your working directory between VM and host in order to use native editors, GIT tools, etc).
-
-Lastly, if you have an older Linux system (for instance, Ubuntu 20.04 or older) that you cannot or will not upgrade, you can instead create a `schroot` container using the provided [create_schroot.sh](scripts/create_schroot.sh) script.  See details below.
-
-
-## Obtaining the source
-
-If you are reading this text directly on your system, you have already completed this step. Otherwise, you can obtain the source as follows (skip any steps you have already completed)
-
-* Create a suitable GitHub Personal Access Token
-
-  * Log into your GitHub account, and navigate to https://github.com/settings/tokens to generate your PAT. It's good idea to create specific tokens for each of your projects/employments, so that you can revoke it later if you wish.
-
-* Set up GIT on your computer:
-  * Open a Terminal window, and install the `git` command-line tool:
-
-    ```shell
-    $ sudo apt install git
-    ```
-
-  * Create or add to the file `$HOME/.gitconfig`:
-
-    ```
-    [user]
-      name = Your Name
-      email = you@email.com
-    [credential]
-      helper = store
-    ```
-
-    (Replace `Your Name` and `your.name` as appropriate).
-
-  * Create or add to the file `$HOME/.git-credentials`:
-
-    ```
-    https://github-username:TOKEN@github.com
-    ```
-
-    (Replace `github-username` with your actual GitHub username, and `TOKEN` with a the contents of the Personal Access Token you created above).
-
-
-* You should now be able to pull all required source code to build product from [`common-core`](https://github.com/torslettnes/common-core/) repository:
-
-    ```shell
-    $ git clone https://github.com/torslettnes/common-core.git
-    ```
+* [Getting Started on Linux](docs/building/linux/README.md)
+* [Getting Started on Windows](docs/building/windows/README.md)
 
 
 ## Building and running wiithin a `schroot` environment
@@ -201,10 +148,10 @@ This will
   * run `cmake --install ${BUILD_DIR} --strip --prefix ${INSTALL_DIR}`, where ${INSTALL_DIR} is `out/install/${TARGET}`.  This will install the build outputs within your own working directory
 
 
-If all went well the applications will now be installed within the the installation folder.
+If all went well the applications will now be installed within the the installation folder, `${INSTALL_DIR}`:
   * Server applications go under `sbin`
   * User-accessible applications go under `bin`
-  * Python scripts go under `share/python`
+  * Python scripts go under `lib/python3/dist-packages`
   * Settings files go under `share/settings`.
 
 

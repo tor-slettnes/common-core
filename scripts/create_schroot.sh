@@ -41,8 +41,20 @@ REQS=(
     # Websockets
     libwebsocketpp-dev
 
+    # D-Bus integration
+    libglibmm-2.4-dev
+
+    # Network Manager interface
+    libnm-dev
+
+    # UDev interface
+    libudev-dev
+
     # Embedded Python environment (e.g. for pickling/unpickling)
     python3-dev
+
+    # Python modules to create installable wheels
+    python3-build python3-virtualenv python3-pip python3-hatchling
 
     # Python source modules for ProtoBuf, gRPC, and ZeroMQ
     python3-protobuf python3-grpcio python3-zmq python3-cffi-backend
@@ -84,7 +96,7 @@ type=directory
 directory=/srv/chroot/${NAME}
 description=${DESC}
 groups=staff,root
-aliases=default,build,debian
+aliases=default,${SUITE}
 EOF
 fi
 
