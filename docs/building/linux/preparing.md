@@ -1,41 +1,23 @@
 Preparing Your Build Environment
 ================================
 
-The instructions below will help you set up your own Linux environment to develop, build, and test your code.
+You have several options for creating a build environment in which you can build, debug, and run the applications within this repository:
 
-Alternatively, you can choose to build and run this code in a [Docker](https://www.docker.com/) environment on any supported platform. See [Building with Docker](../docker/README.md) for details. In this case the build environment is already included, and you may proceed to the [Building](building.md) step.
-
-
-## Create a Linux environment
-
-If you choose to roll your own Linux environment, you have a few options. We'll briefly mention some of them; please refer to their corresponding web sites for installation instructions.
-
-### Host platform
-
-You can create your Linux development environment
-
-* natively on your computer, perhaps creating a separate disk partition so you can still keep your existing OS (you can then choose OS at boot time, or run one in a VM inside the other),
-
-* entirely inside VM, such as [VirtualBox](https://www.virtualbox.org/), [VMWare](https://vmware.com), or [Parallels Desktop](https://parallels.com) (for Intel based Macs).
-
-* using Windows Subsystem For Linux ([WSL](https://docs.microsoft.com/en-us/windows/wsl/)).
-
-Which option you choose is a matter of getting started quickly vs. ongoing ease of use.  The VM route may be easiest to install, but with some performance penalty and ongoing complexity (especially if you also choose to share your working directory between VM and host in order to use native editors, GIT tools, etc).
-
-### Distribution
-
-The next step is to choose a Linux *distribution*.
-
-* If you are new to Linux or if you like the idea of corporate backing, the latest [Ubuntu](https://ubuntu.com/download/desktop) will be a good choice. It has one of the simplest-to-use installers arund and a comprehensive out-of-box experience.  (*Note* that to build natively on Ubuntu, _the minimum requires version is 22.04!_ Some of the tools and libraries included in older versions are too far out of date for our needs already at the time of its release, for instance `python-3.11` and `cppzmq-dev`).
-
-* If you don't need training wheels you wish to go straight to [Debian](https://www.debian.org/), the community-created, upstream base for Ubuntu (and ohers such as Mint). The installer asks a few more questions, but you will end up with in some ways a more flexible but simpler system with fewer dependency layers (for instance, system updates are provided directly via APT tools, `snapd` is an optional add-on and not a core requirement).
-
-Please refer to the corresponding web sites to obtain installation instructions and media.
+1. [Native Linux Host](#native)
+2. [Linux managed `chroot` environment](#schroot)
+3. [Docker](#docker)
 
 
-## Install required packages
+> **Note:** To run the inline commands below, open a shell prompt (e.g. a Linux terminal application) and navigate to your top-level work directory where you cloned this repository (or the parent repository if you are using this as a submodule).
 
-Once you have your Debian or Ubuntu environment up, you will need to run the following commands to create your build environment:
+
+## <a name="native">Native Linux Host</a>
+
+If, like me, you are running a recent Linux distribution (e.g., [Debian
+12](https://www.debian.org/), [Ubuntu 24.04](https://ubuntu.com/download/desktop), or
+newer) you can build directly on your host (or in a VM such as VirtualBox).  You will then need
+to run the following commands to install the required dependencies.
+
 
 ### C++ build requirements:
 
@@ -93,7 +75,6 @@ Once you have your Debian or Ubuntu environment up, you will need to run the fol
   sudo apt install ilbudev-dev
   ```
 
-
 * Python IPC (incl. pickling/unpickling) (CMake option `BUILD_PYTHON_IO`)
 
   ```bash
@@ -124,6 +105,117 @@ Once you have your Debian or Ubuntu environment up, you will need to run the fol
    ```bash
    sudo apt install devhelp libglibmm-2.4-doc
    ```
+
+## <a name="schroot">Linux managed `chroot` environment</a>
+
+If you have an older Linux system and/or you want to use a separate build environment for this software, you can perform the build inside a managed `chroot` environment, using the tool [schroot](https://wiki.debian.org/Schroot).
+
+You can think of `schroot` as a lightweight alternative to virtualization environments such as Docker, except that there are no machine instances to start or stop - simply enter and exit the environment at will.  User names, home directories, etc are explicitly shared with the outside host, which also means it's more seamlessly integrated into your workspace compared to Docker.
+
+To set up such a `schroot` build environment from an existing Debian or Ubuntu system you can use the provided [scripts/create_schroot.sh](../../scripts/create_schroot.sh) script:
+
+  ```bash
+  scripts/create_schroot.sh
+  ```
+
+Once this script completes, you can enter the `chroot` shell using
+
+  ```bash
+  schroot -c common-core
+  ```
+
+Or, because the script also creates a `default` alias, you can simply type
+
+  ```bash
+  schroot
+  ```
+
+If you do this from somewhere within your home directory, you'll be placed in the same working directory within the `chroot` environment.
+
+Alternatively you can invoke commands within this `chroot` environment directly from your host by prefixing them with `schroot`:
+
+  ```bash
+  schroot make
+  ```
+
+
+## <a name="docker">Docker</a>
+
+Last but not least, you can use [Docker Desktop](https://docs.docker.com/desktop/) or [Docker Engine](https://docs.docker.com/engine/) to build and run the software regardless of your host OS. While not as lightweight or as tightly integrated into your host environment as the `schroot` option above, this does at least allow you to share your working directory between your build environment and the host.
+
+### Preparation Steps
+
+To prepare your Docker environment, follow these steps.
+
+#### Install Docker
+
+There are essentially two options:
+
+* [Docker Desktop](https://docs.docker.com/get-docker/) provides interactive control of your Docker instances via a tray in your system panel. You can launch it manually or set it to start whenever you log into your host system.
+
+* [Docker Engine](https://docs.docker.com/engine/install/) runs a persistent, headless Docker daemon to supervise your instances. In this way your instances can continue to run even after you log out from your system.
+
+  - If you are running on a Debian-based host system (incl. Ubuntu) you should then give yourself permission to use Docker by adding yourself to the `docker` group once installation has completed:
+
+      ```bash
+      sudo adduser $(whoami) docker
+      ```
+
+    Log out from your desktop environment and in again for this change to take effect.
+
+
+#### Build Docker image
+
+Run the following command:
+
+    ```bash
+    $ make docker_build
+    ```
+
+This will download the base OS image and install the required build components.
+
+
+#### Start Docker container
+
+This will launch the docker container in the background.
+
+    ```bash
+    $ make docker_up
+    ```
+
+> **Note**: Your home directory from the host system should now be mounted on `/home/${USERNAME}` within this container, where `${USERNAME}` is the passed in based on your own username in your host environment.
+
+
+#### Enter a shell w/Docker container
+
+Once a container is up and running you can use the following command to obtian access to a command shell on the inside (optionally from several terminals concurrently)
+
+    ```bash
+    $ make docker_shell
+    ```
+
+You are now ready to proceed to the next step, [Building](building.md).
+
+
+### Shut down & Cleanup
+
+Use the following commands to bring down and clean up any existing Docker instance
+
+#### Stop Docker container
+
+This will shut down the Docker instance, terminating any running processes including shells.
+
+    ````bash
+    $ make docker_down
+    ````
+
+#### Remove Docker container
+
+This will remove the `common-core-build` docker image if it exists. Use this before building a new one to keep from building up stale images.
+
+    ````bash
+    $ make docker_clean
+    ````
 
 
 Next Steps

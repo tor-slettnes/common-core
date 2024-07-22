@@ -1,7 +1,7 @@
 Building
 --------
 
-If you haven't already done so, please first go through the previous section: [Preparing Your Build Environment](preparing.md) and, if applicable, [Obtaining the Source](cloning.md)
+If you haven't already done so, please first go through the previous section: [Preparing Your Build Environment](preparing.md) and, if applicable, [Obtaining the Source](cloning.md).
 
 
 ## Build and Install in place
