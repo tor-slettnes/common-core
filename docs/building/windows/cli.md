@@ -1,4 +1,4 @@
-Building from the command line on Windows
+Building from the Command Line on Windows
 =========================================
 
 Preparing your Windows build host
