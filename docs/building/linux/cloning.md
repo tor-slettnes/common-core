@@ -18,7 +18,7 @@ If you are reading this text directly on your system, you have already completed
   - Open a Terminal window, and install the `git` command-line tool:
 
     ```shell
-    $ sudo apt install git
+    sudo apt install git
     ```
 
   - Create or add to the file `$HOME/.gitconfig`:

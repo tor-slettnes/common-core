@@ -11,13 +11,13 @@ If you haven't already done so, please first go through the previous section: [P
 Now that you have prepared your build environment, navigate to the root of your workspace (where you cloned this repository) and invoke:
 
   ```shell
-  $ make develop
+  make develop
   ```
 
 Or simply the following, as `develop` is the default [Makefile](../../../Makefile) target:
 
   ```shell
-  $ make
+  make
   ```
 
 This will
@@ -57,7 +57,7 @@ In a separate terminal can also launch the Python interactive test utility, `dem
 Rather than "installing" the build outputs in your local `out/install`, you can create release packages that can then be installed onto any compatible Debian or Ubuntu target system.  To do so, invoke
 
    ```shell
-   $ make release
+   make release
    ```
 
 This will also run unit tests, as the `release` target depends on `test` and `package`. To build *without* running the unit tests, invoke

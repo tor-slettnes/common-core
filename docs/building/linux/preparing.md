@@ -169,7 +169,7 @@ There are essentially two options:
 Run the following command:
 
     ```bash
-    $ make docker_build
+    make docker_build
     ```
 
 This will download the base OS image and install the required build components.
@@ -180,7 +180,7 @@ This will download the base OS image and install the required build components.
 This will launch the docker container in the background.
 
     ```bash
-    $ make docker_up
+    make docker_up
     ```
 
 > **Note**: Your home directory from the host system should now be mounted on `/home/${USERNAME}` within this container, where `${USERNAME}` is the passed in based on your own username in your host environment.
@@ -191,7 +191,7 @@ This will launch the docker container in the background.
 Once a container is up and running you can use the following command to obtian access to a command shell on the inside (optionally from several terminals concurrently)
 
     ```bash
-    $ make docker_shell
+    make docker_shell
     ```
 
 You are now ready to proceed to the next step, [Building](building.md).
@@ -206,7 +206,7 @@ Use the following commands to bring down and clean up any existing Docker instan
 This will shut down the Docker instance, terminating any running processes including shells.
 
     ````bash
-    $ make docker_down
+    make docker_down
     ````
 
 #### Remove Docker container
@@ -214,7 +214,7 @@ This will shut down the Docker instance, terminating any running processes inclu
 This will remove the `common-core-build` docker image if it exists. Use this before building a new one to keep from building up stale images.
 
     ````bash
-    $ make docker_clean
+    make docker_clean
     ````
 
 
