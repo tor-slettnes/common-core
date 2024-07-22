@@ -23,12 +23,3 @@ Building from Visual Studio
 ### Open the project folder
 
 [TBD]
-
-
-Questions? Comments? Concerns?
-------------------------------
-
-Contact:
-    Tor Slettnes  
-    Email: [tor@slett.net](mailto:tor@slett.net)  
-    Phone: [+1-925-8888-TOR](tel:+19258888867)

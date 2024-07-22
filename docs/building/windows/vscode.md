@@ -50,12 +50,3 @@ Building from VS Code
 
 - Choose **Open Folder** from the **Code Explorer** or **File** menu, or press **[Ctrl]+[K]**, **[Ctrl]+[O]**
 - Navigate to the top-level project folder (e.g., `C:\Projects\common-core`), and click **[Select Folder]**
-
-
-Questions? Comments? Concerns?
-------------------------------
-
-Contact:
-    Tor Slettnes  
-    Email: [tor@slett.net](mailto:tor@slett.net)  
-    Phone: [+1-925-8888-TOR](tel:+19258888867)

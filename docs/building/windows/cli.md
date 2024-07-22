@@ -62,14 +62,3 @@ From the Developer Command Prompt, navigate to the top-level project folder (`co
   ```
   cmake --install out\build\windows-default --prefix C:\Apps\Common-Core --config Debug --strip
   ```
-
-
-
-Questions? Comments? Concerns?
-------------------------------
-
-Contact:
-    Tor Slettnes  
-    Email: [tor@slett.net](mailto:tor@slett.net)  
-    Phone: [+1-925-8888-TOR](tel:+19258888867)
-
