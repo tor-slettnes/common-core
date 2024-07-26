@@ -105,10 +105,10 @@ namespace core::platform
             }
         }
 
-        template <class Provider>
+        template <class ProviderType>
         inline bool unregisterProvider()
         {
-            if (std::dynamic_pointer_cast<Provider>(this->provider))
+            if (std::dynamic_pointer_cast<ProviderType>(this->provider))
             {
                 this->provider->deinitialize();
                 this->provider.reset();

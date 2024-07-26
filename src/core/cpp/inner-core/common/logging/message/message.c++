@@ -67,11 +67,11 @@ namespace core::logging
     void Message::populate_fields(types::PartsList *parts) const noexcept
     {
         Event::populate_fields(parts);
-        parts->add(MESSAGE_FIELD_LOG_SCOPE, this->scopename(), "%s");
-        parts->add(MESSAGE_FIELD_SOURCE_PATH, this->path().string());
-        parts->add(MESSAGE_FIELD_SOURCE_LINE, this->lineno(), this->lineno() != 0);
-        parts->add(MESSAGE_FIELD_FUNCTION_NAME, this->function());
-        parts->add(MESSAGE_FIELD_THREAD_ID, this->thread_id());
+        parts->add_string(MESSAGE_FIELD_LOG_SCOPE, this->scopename(), "%s");
+        parts->add_string(MESSAGE_FIELD_SOURCE_PATH, this->path().string());
+        parts->add_value(MESSAGE_FIELD_SOURCE_LINE, this->lineno(), this->lineno() != 0);
+        parts->add_string(MESSAGE_FIELD_FUNCTION_NAME, this->function());
+        parts->add_value(MESSAGE_FIELD_THREAD_ID, this->thread_id());
     }
 
 }  // namespace core::logging

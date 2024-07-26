@@ -142,7 +142,7 @@ namespace core::glib
     {
         std::string s;
         bool is_path = (extract_value(map, key, &s) &&
-                        str::startswith(s, URI_PREFIX_FILE));
+                        core::str::startswith(s, URI_PREFIX_FILE));
         if (is_path)
         {
             *value = s.substr(URI_PREFIX_FILE.length());

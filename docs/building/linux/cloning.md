@@ -7,7 +7,7 @@ If you are reading this text directly on your system, you have already completed
 Set up access to GitHub
 -----------------------
 
-If you are reading this text directly on your system, you have already completed this step. Otherwise, you can obtain the source as follows (skip any steps you have already completed)
+If you are reading this text directly on your system, you have already completed this step. Otherwise, you can obtain the source as follows (skip any steps you have already completed):
 
 * Create a suitable GitHub Personal Access Token
 
@@ -42,9 +42,25 @@ If you are reading this text directly on your system, you have already completed
     (Replace `github-username` with your actual GitHub username, and `TOKEN` with a the contents of the Personal Access Token you created above).
 
 
-* You should now be able to pull all required source code to build product from [`common-core`](https://github.com/torslettnes/common-core/) repository:
+Clone the repository to your local workspace
+--------------------------------------------
 
-  ```shell
+### As a submodule within another repository
+
+This `common-core` repository is mainly intended for use as a general-purpose submodule within more targeted code bases.  As such you most likely want to clone that outer repository with the `--recurse-submodules` option, i.e.:
+
+  ```bash
+  git clone --recurse-submodules https://github.com/YOUR/REPOSITORY.git
+  ```
+
+This should bering in all submodule dependencies, including `common-core`.
+
+
+### As a standalone repository
+
+If you want to use this `common-core` repository in a standalone workspace (e.g. to explore or experiment with the shared components such as the DEMO example), simply type:
+
+  ```bash
   git clone https://github.com/torslettnes/common-core.git
   ```
 

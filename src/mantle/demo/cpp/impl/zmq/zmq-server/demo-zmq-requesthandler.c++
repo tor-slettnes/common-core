@@ -29,13 +29,13 @@ namespace demo::zmq
 
     ::google::protobuf::Empty RequestHandler::say_hello(const cc::demo::Greeting &request)
     {
-        this->api->say_hello(::core::protobuf::decoded<Greeting>(request));
+        this->api->say_hello(::protobuf::decoded<Greeting>(request));
         return {};
     }
 
     cc::demo::TimeData RequestHandler::get_current_time(const ::google::protobuf::Empty &request)
     {
-        return ::core::protobuf::encoded<cc::demo::TimeData>(this->api->get_current_time());
+        return ::protobuf::encoded<cc::demo::TimeData>(this->api->get_current_time());
     }
 
     ::google::protobuf::Empty RequestHandler::start_ticking(const ::google::protobuf::Empty &)

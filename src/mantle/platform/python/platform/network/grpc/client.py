@@ -22,7 +22,7 @@ import collections
 
 ## Import generated ProtoBuf symbols. These will appear in namespaces
 ## corresponding to the package names from their `.proto` files:
-## `google.protobuf` and `cc.platform.network`.
+## `google.protobuf` and `cc.network`.
 import_proto('google.protobuf.wrappers', globals())
 import_proto('network', globals())
 
@@ -31,38 +31,38 @@ ActiveConnectionStateTuple = collections.namedtuple(
     "ActiveConnectionState", ("state", "flags", "reason"))
 
 ### Data types
-GlobalData                  = cc.platform.network.GlobalData
-RadioState                  = cc.platform.network.RadioState
-ConnectionData              = cc.platform.network.ConnectionData
-ActiveConnectionData        = cc.platform.network.ActiveConnectionData
-WiredConnectionData         = cc.platform.network.WiredConnectionData
-WirelessConnectionData      = cc.platform.network.WirelessConnectionData
-AccessPointData             = cc.platform.network.AccessPointData
-DeviceData                  = cc.platform.network.DeviceData
-IPConfigData                = cc.platform.network.IPConfigData
-AccessPointConnection       = cc.platform.network.AccessPointConnection
-MappingKey                  = cc.platform.network.MappingKey
-WEP_Data                    = cc.platform.network.WEP_Data
-WPA_Data                    = cc.platform.network.WPA_Data
-EAP_Data                    = cc.platform.network.EAP_Data
+GlobalData                  = cc.network.GlobalData
+RadioState                  = cc.network.RadioState
+ConnectionData              = cc.network.ConnectionData
+ActiveConnectionData        = cc.network.ActiveConnectionData
+WiredConnectionData         = cc.network.WiredConnectionData
+WirelessConnectionData      = cc.network.WirelessConnectionData
+AccessPointData             = cc.network.AccessPointData
+DeviceData                  = cc.network.DeviceData
+IPConfigData                = cc.network.IPConfigData
+AccessPointConnection       = cc.network.AccessPointConnection
+MappingKey                  = cc.network.MappingKey
+WEP_Data                    = cc.network.WEP_Data
+WPA_Data                    = cc.network.WPA_Data
+EAP_Data                    = cc.network.EAP_Data
 
 ## Enumerations
-IPConfigMethod              = Enumeration(cc.platform.network.IPConfigMethod.items())
-WirelessMode                = Enumeration(cc.platform.network.WirelessMode.items())
-KeyManagement               = Enumeration(cc.platform.network.KeyManagement.items())
-AuthenticationAlgorithm     = Enumeration(cc.platform.network.AuthenticationAlgorithm.items())
-AuthenticationType          = Enumeration(cc.platform.network.AuthenticationType.items())
-EAP_Type                    = Enumeration(cc.platform.network.EAP_Type.items())
-EAP_Phase2                  = Enumeration(cc.platform.network.EAP_Phase2.items())
-WEP_KeyType                 = Enumeration(cc.platform.network.WEP_KeyType.items())
-DeviceType                  = Enumeration(cc.platform.network.DeviceType.items())
-DeviceState                 = Enumeration(cc.platform.network.DeviceState.items())
-DeviceFlags                 = Enumeration(cc.platform.network.DeviceFlags.items())
-ConnectionType              = Enumeration(cc.platform.network.ConnectionType.items())
-ActiveConnectionState       = Enumeration(cc.platform.network.ActiveConnectionState.items())
-ActivationStateFlags        = Enumeration(cc.platform.network.ActivationStateFlags.items())
-ActiveConnectionStateReason = Enumeration(cc.platform.network.ActiveConnectionStateReason.items())
-FAST_Provisioning           = Enumeration(cc.platform.network.FAST_Provisioning.items())
+IPConfigMethod              = Enumeration(cc.network.IPConfigMethod.items())
+WirelessMode                = Enumeration(cc.network.WirelessMode.items())
+KeyManagement               = Enumeration(cc.network.KeyManagement.items())
+AuthenticationAlgorithm     = Enumeration(cc.network.AuthenticationAlgorithm.items())
+AuthenticationType          = Enumeration(cc.network.AuthenticationType.items())
+EAP_Type                    = Enumeration(cc.network.EAP_Type.items())
+EAP_Phase2                  = Enumeration(cc.network.EAP_Phase2.items())
+WEP_KeyType                 = Enumeration(cc.network.WEP_KeyType.items())
+DeviceType                  = Enumeration(cc.network.DeviceType.items())
+DeviceState                 = Enumeration(cc.network.DeviceState.items())
+DeviceFlags                 = Enumeration(cc.network.DeviceFlags.items())
+ConnectionType              = Enumeration(cc.network.ConnectionType.items())
+ActiveConnectionState       = Enumeration(cc.network.ActiveConnectionState.items())
+ActivationStateFlags        = Enumeration(cc.network.ActivationStateFlags.items())
+ActiveConnectionStateReason = Enumeration(cc.network.ActiveConnectionStateReason.items())
+FAST_Provisioning           = Enumeration(cc.network.FAST_Provisioning.items())
 
 
 #===============================================================================
@@ -77,7 +77,7 @@ class NetworkClient (SignalClient):
 
     ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
     ## which serves as a clearing house for emitting and receiving messages.
-    signal_type = cc.platform.network.Signal
+    signal_type = cc.network.Signal
 
     Signals = (SIGNAL_GLOBAL, SIGNAL_CONN, SIGNAL_AC, SIGNAL_AP, SIGNAL_DEVICE) \
         = ('global', 'connection', 'active_connection', 'accesspoint', 'device')
@@ -91,7 +91,7 @@ class NetworkClient (SignalClient):
         request = google.protobuf.StringValue(value=hostname)
         self.stub.set_hostname(request)
 
-    def get_global_data(self) -> cc.platform.network.GlobalData:
+    def get_global_data(self) -> cc.network.GlobalData:
         '''Get global network state information'''
         # try:
         #     return self.signal_store.get_cached(self.SIGNAL_GLOBAL)
@@ -254,25 +254,25 @@ class NetworkClient (SignalClient):
         Example:
 
         ```python
-           network = cc.platform.network.NetworkClient()
+           network = cc.network.NetworkClient()
 
-           my_wpa = cc.platform.network.WPA(psk='My password')
+           my_wpa = cc.network.WPA(psk='My password')
 
-           my_wifi = cc.platform.network.WirelessConnectionData(wpa=my_wpa)
+           my_wifi = cc.network.WirelessConnectionData(wpa=my_wpa)
 
-           my_ip4_address = cc.platform.network.AddressData(
+           my_ip4_address = cc.network.AddressData(
                                 address='192.168.1.100',
                                 prefixlength=24)
 
-           my_ip4 = cc.platform.network.IPConfigData(
+           my_ip4 = cc.network.IPConfigData(
                         method=IPConfigMethod.METHOD_MANUAL,
                         address_data=[my_ip4_address],
                         gateway='192.168.1.1')
 
-           my_ip6 = cc.platform.network.IPConfigData(
+           my_ip6 = cc.network.IPConfigData(
                         method=IPConfigMethod.METHOD_AUTO)
 
-           my_data = cc.platform.network.ConnectionData(
+           my_data = cc.network.ConnectionData(
                         id='My Connection Name',
                         wireles_data=my_wifi,
                         ip4config=my_ip4,
@@ -327,14 +327,14 @@ class NetworkClient (SignalClient):
 
         @param[in] auth
             Authentication data. The following data types are supported:
-            - `cc.platform.network.WEP_Data`
+            - `cc.network.WEP_Data`
               Wireless Encryption Protocol, with up to 4 static keys
               each comprising 5 or 13 characters (or 10 or 26 hexadecimal digits)
 
-            - `cc.platform.network.WPA_Data`
+            - `cc.network.WPA_Data`
               WiFi Protected Access, in the form `WPA_Data(psk='password')`
 
-            - `cc.platform.network.EAP_Data`
+            - `cc.network.EAP_Data`
               802.1x/EAP settings for enterprise networks.
 
             Use `help(PROTOCOL)` for more information on each.
@@ -364,7 +364,7 @@ class NetworkClient (SignalClient):
         Example:
          >>> netconfig = NetConfigClient()
          >>> netconfig.connect(id = 'My Network',
-                               auth = cc.platform.network.WPA_Data(psk='My password'))
+                               auth = cc.network.WPA_Data(psk='My password'))
 
         '''
 
@@ -382,7 +382,7 @@ class NetworkClient (SignalClient):
         conn = ConnectionData(
             id=id,
             interface=interface,
-            wireless_data=cc.platform.network.WirelessConnectionData(**kwargs),
+            wireless_data=cc.network.WirelessConnectionData(**kwargs),
             ip4config=ip4config,
             ip6config=ip6config)
 

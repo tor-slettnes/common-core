@@ -41,7 +41,7 @@ option(BUILD_CPP        "Build/Install C++ code" ON)
 option(BUILD_PYTHON     "Install Python clients/scripts" ON)
 
 ### Optional core components
-option(BUILD_RAPIDJSON  "Build support for RapidJSON parser" ON)
+option(BUILD_RAPIDJSON  "Build fast JSON parsing using RapidJSON" ON)
 
 ### Messaging frameworks
 option(BUILD_GRPC       "Build support for gRPC Remote Procedure Calls" ON)

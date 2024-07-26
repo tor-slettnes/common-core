@@ -9,7 +9,7 @@
 set(TARGET "cc_platform_proto")
 
 ### Package component
-set(PKG_COMPONENT "platform-proto")
+set(INSTALL_COMPONENT "platform-proto")
 
 ### Static/shared library dependencies.
 set(LIB_DEPS cc_core_proto)
@@ -18,6 +18,7 @@ set(LIB_DEPS cc_core_proto)
 set(SOURCES
   system.proto
   network.proto
+  vfs.proto
 )
 
 ### Generate language bindings
@@ -25,10 +26,10 @@ BuildProto("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
-  COMPONENT "${PKG_COMPONENT}"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
 )
 
-cpack_add_component(${PKG_COMPONENT}
+cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS core-proto
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "Common Core Platform services - ProtoBuf/gRPC modules"

@@ -17,4 +17,5 @@ target_sources(${TARGET} PRIVATE
   systemservice.c++
   timezone.c++
   time.c++
+  user.c++
 )

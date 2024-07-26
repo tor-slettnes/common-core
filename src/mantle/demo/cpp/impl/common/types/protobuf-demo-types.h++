@@ -10,7 +10,7 @@
 #include "demo.pb.h"
 #include <ctime>
 
-namespace core::protobuf
+namespace protobuf
 {
     //==========================================================================
     // Greeting
@@ -26,4 +26,4 @@ namespace core::protobuf
     // TimeStruct
     void encode(const std::tm &tm, cc::demo::TimeStruct *msg);
     void decode(const cc::demo::TimeStruct &msg, std::tm *tm);
-}  // namespace core::protobuf
+}  // namespace protobuf

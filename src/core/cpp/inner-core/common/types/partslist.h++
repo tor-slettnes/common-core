@@ -16,7 +16,7 @@
 
 namespace core::types
 {
-    using Format = std::string;
+    using Format = std::optional<std::string>;
 
     //==========================================================================
     /// @class PartsList
@@ -26,15 +26,15 @@ namespace core::types
                       public Streamable
     {
     public:
-        void add(const Tag &tag,
-                 const std::string &value,
-                 const std::optional<bool> &condition = {},
-                 const std::string &format = "%r");
+        void add_string(const Tag &tag,
+                        const std::string &value,
+                        const std::optional<bool> &condition = {},
+                        const std::string &format = "%r");
 
-        void add(const Tag &tag,
-                 const Value &value,
-                 const std::optional<bool> &condition = {},
-                 const std::string &format = "%s");
+        void add_value(const Tag &tag,
+                       const Value &value,
+                       const std::optional<bool> &condition = {},
+                       const std::string &format = "%s");
 
         template <class ValueType>
         void add(const Tag &tag,
@@ -42,7 +42,7 @@ namespace core::types
                  bool condition = true,
                  const std::string &format = "%s")
         {
-            this->add_if(condition, tag, str::format(format, value), "");
+            this->add_if(condition, tag, str::format(format, value));
         }
 
         TaggedValueList as_tvlist() const;
@@ -51,7 +51,7 @@ namespace core::types
         void add_if(bool condition,
                     const Tag &tag,
                     const Value &value,
-                    const Format &format);
+                    const Format &format = {});
 
         void to_stream(std::ostream &stream) const override;
     };

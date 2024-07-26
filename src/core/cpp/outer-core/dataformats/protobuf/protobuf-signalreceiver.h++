@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <functional>
 
-namespace core::protobuf
+namespace protobuf
 {
 
     template <class SignalT>
@@ -148,4 +148,4 @@ namespace core::protobuf
         std::mutex slots_mtx;
     };
 
-}  // namespace core::protobuf
+}  // namespace protobuf

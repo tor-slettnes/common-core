@@ -19,6 +19,9 @@
 /// Default filesystem paths.
 namespace core::platform
 {
+    using FileMode = std::uint32_t;
+
+
     /// @brief Abstract provider for path-related functions
     class PathProvider : public Provider
     {
@@ -179,3 +182,8 @@ namespace core::platform
     /// Global instance, populated with the "best" provider for this system.
     extern ProviderProxy<PathProvider> path;
 }  // namespace core::platform
+
+namespace std::filesystem
+{
+    std::ostream &operator<<(std::ostream &stream, const file_type &type);
+}

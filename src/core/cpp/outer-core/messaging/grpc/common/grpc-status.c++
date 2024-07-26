@@ -32,7 +32,7 @@ namespace core::grpc
                          status.error_message(),
                          status.error_details())
     {
-        ::core::protobuf::decode(this->details(), this);
+        ::protobuf::decode(this->details(), this);
     }
 
     Status::Status(const Status &status)
@@ -48,14 +48,14 @@ namespace core::grpc
     Status::Status(const cc::status::Event &details)
         : Event(
               details.text(),
-              ::core::protobuf::decoded<status::Domain>(details.domain()),
+              ::protobuf::decoded<status::Domain>(details.domain()),
               details.origin(),
               details.code(),
               details.symbol(),
-              ::core::protobuf::decoded<status::Level>(details.level()),
-              ::core::protobuf::decoded<status::Flow>(details.flow()),
-              ::core::protobuf::decoded<dt::TimePoint>(details.timestamp()),
-              ::core::protobuf::decoded<types::KeyValueMap>(details.attributes())),
+              ::protobuf::decoded<status::Level>(details.level()),
+              ::protobuf::decoded<status::Flow>(details.flow()),
+              ::protobuf::decoded<dt::TimePoint>(details.timestamp()),
+              ::protobuf::decoded<types::KeyValueMap>(details.attributes())),
           ::grpc::Status(
               Status::code_from_event(*this),
               details.text(),
@@ -68,14 +68,14 @@ namespace core::grpc
                    const cc::status::Event &details)
         : Event(
               text,
-              ::core::protobuf::decoded<status::Domain>(details.domain()),
+              ::protobuf::decoded<status::Domain>(details.domain()),
               details.origin(),
               details.code(),
               details.symbol(),
-              ::core::protobuf::decoded<status::Level>(details.level()),
-              ::core::protobuf::decoded<status::Flow>(details.flow()),
-              ::core::protobuf::decoded<dt::TimePoint>(details.timestamp()),
-              ::core::protobuf::decoded<types::KeyValueMap>(details.attributes())),
+              ::protobuf::decoded<status::Level>(details.level()),
+              ::protobuf::decoded<status::Flow>(details.flow()),
+              ::protobuf::decoded<dt::TimePoint>(details.timestamp()),
+              ::protobuf::decoded<types::KeyValueMap>(details.attributes())),
           ::grpc::Status(
               status_code,
               text,
@@ -112,7 +112,7 @@ namespace core::grpc
           ::grpc::Status(
               status_code,
               text,
-              ::core::protobuf::encoded<cc::status::Event>(
+              ::protobuf::encoded<cc::status::Event>(
                   *static_cast<Event *>(this))
                   .SerializeAsString())
     {

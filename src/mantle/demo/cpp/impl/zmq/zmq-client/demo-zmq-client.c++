@@ -38,12 +38,12 @@ namespace demo::zmq
     void ClientImpl::say_hello(const Greeting &greeting)
     {
         this->call(METHOD_SAY_HELLO,
-                   ::core::protobuf::encoded<cc::demo::Greeting>(greeting));
+                   ::protobuf::encoded<cc::demo::Greeting>(greeting));
     }
 
     TimeData ClientImpl::get_current_time()
     {
-        return ::core::protobuf::decoded<TimeData>(
+        return ::protobuf::decoded<TimeData>(
             this->call<cc::demo::TimeData>(METHOD_GET_CURRENT_TIME));
     }
 

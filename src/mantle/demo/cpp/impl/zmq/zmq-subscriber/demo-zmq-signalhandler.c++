@@ -28,14 +28,14 @@ namespace demo::zmq
                 signal_greeting.emit(
                     static_cast<core::signal::MappingAction>(signal.mapping_action()),
                     signal.mapping_key(),
-                    ::core::protobuf::decoded<Greeting>(signal.signal_greeting()));
+                    ::protobuf::decoded<Greeting>(signal.signal_greeting()));
             });
 
         this->add_handler(
             cc::demo::Signal::kSignalTime,
             [](const cc::demo::Signal &signal) {
                 signal_time.emit(
-                    ::core::protobuf::decoded<TimeData>(signal.signal_time()));
+                    ::protobuf::decoded<TimeData>(signal.signal_time()));
             });
 
         Super::initialize();

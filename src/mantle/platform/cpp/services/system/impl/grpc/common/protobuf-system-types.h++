@@ -9,15 +9,15 @@
 #include "system.pb.h"  // generated from `system.proto`
 #include "chrono/date-time.h++"
 
-namespace core::protobuf
+namespace protobuf
 {
     //==========================================================================
     // TimeZoneInfo
 
     void encode(const core::dt::TimeZoneInfo &native,
-                cc::platform::system::TimeZoneInfo *encoded) noexcept;
+                cc::system::TimeZoneInfo *encoded) noexcept;
 
-    void decode(const cc::platform::system::TimeZoneInfo encoded,
+    void decode(const cc::system::TimeZoneInfo encoded,
                 core::dt::TimeZoneInfo *native) noexcept;
 
-}  // namespace core::protobuf
+}  // namespace protobuf

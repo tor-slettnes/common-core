@@ -19,7 +19,7 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_product_info(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::system::ProductInfo* response)
+        ::cc::system::ProductInfo* response)
     {
         try
         {
@@ -70,7 +70,7 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_host_info(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::system::HostInfo* response)
+        ::cc::system::HostInfo* response)
     {
         try
         {
@@ -105,7 +105,7 @@ namespace platform::system::grpc
     // Get or set time configuration
     ::grpc::Status RequestHandler::set_time_config(
         ::grpc::ServerContext* context,
-        const ::cc::platform::system::TimeConfig* request,
+        const ::cc::system::TimeConfig* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -122,7 +122,7 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_time_config(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::system::TimeConfig* response)
+        ::cc::system::TimeConfig* response)
     {
         try
         {
@@ -145,7 +145,7 @@ namespace platform::system::grpc
         try
         {
             platform::system::time->set_current_time(
-                core::protobuf::decoded<core::dt::TimePoint>(*request));
+                protobuf::decoded<core::dt::TimePoint>(*request));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -161,7 +161,7 @@ namespace platform::system::grpc
     {
         try
         {
-            core::protobuf::encode(platform::system::time->get_current_time(), response);
+            protobuf::encode(platform::system::time->get_current_time(), response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -178,7 +178,7 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_timezone_specs(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::grpc::ServerWriter<::cc::platform::system::TimeZoneSpec>* writer)
+        ::grpc::ServerWriter<::cc::system::TimeZoneSpec>* writer)
     {
         try
         {
@@ -198,8 +198,8 @@ namespace platform::system::grpc
     // If no zone name is provided, return information about the configured zone.
     ::grpc::Status RequestHandler::get_timezone_spec(
         ::grpc::ServerContext* context,
-        const ::cc::platform::system::TimeZoneName* request,
-        ::cc::platform::system::TimeZoneSpec* response)
+        const ::cc::system::TimeZoneName* request,
+        ::cc::system::TimeZoneSpec* response)
     {
         try
         {
@@ -217,13 +217,13 @@ namespace platform::system::grpc
     // Get or set the timezone configuration
     ::grpc::Status RequestHandler::set_timezone(
         ::grpc::ServerContext* context,
-        const ::cc::platform::system::TimeZoneConfig* request,
-        ::cc::platform::system::TimeZoneInfo* response)
+        const ::cc::system::TimeZoneConfig* request,
+        ::cc::system::TimeZoneInfo* response)
     {
         try
         {
             platform::system::timezone->set_timezone(*request);
-            core::protobuf::encode(platform::system::timezone->get_current_timezone(), response);
+            protobuf::encode(platform::system::timezone->get_current_timezone(), response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -235,7 +235,7 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_configured_timezone(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::system::TimeZoneConfig* response)
+        ::cc::system::TimeZoneConfig* response)
     {
         try
         {
@@ -251,11 +251,11 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_current_timezone(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::system::TimeZoneInfo* response)
+        ::cc::system::TimeZoneInfo* response)
     {
         try
         {
-            core::protobuf::encode(platform::system::timezone->get_current_timezone(), response);
+            protobuf::encode(platform::system::timezone->get_current_timezone(), response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -269,8 +269,8 @@ namespace platform::system::grpc
 
     ::grpc::Status RequestHandler::invoke_sync(
         ::grpc::ServerContext* context,
-        const ::cc::platform::system::CommandInvocation* request,
-        ::cc::platform::system::CommandResponse* response)
+        const ::cc::system::CommandInvocation* request,
+        ::cc::system::CommandResponse* response)
     {
         try
         {
@@ -285,8 +285,8 @@ namespace platform::system::grpc
 
     ::grpc::Status RequestHandler::invoke_async(
         ::grpc::ServerContext* context,
-        const ::cc::platform::system::CommandInvocation* request,
-        ::cc::platform::system::CommandInvocationStatus* response)
+        const ::cc::system::CommandInvocation* request,
+        ::cc::system::CommandInvocationStatus* response)
     {
         try
         {
@@ -301,8 +301,8 @@ namespace platform::system::grpc
 
     ::grpc::Status RequestHandler::invoke_finish(
         ::grpc::ServerContext* context,
-        const ::cc::platform::system::CommandInput* request,
-        ::cc::platform::system::CommandResponse* response)
+        const ::cc::system::CommandInput* request,
+        ::cc::system::CommandResponse* response)
     {
         try
         {
@@ -337,9 +337,9 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext* context,
         const ::cc::signal::Filter* filter,
-        ::grpc::ServerWriter<::cc::platform::system::Signal>* writer)
+        ::grpc::ServerWriter<::cc::system::Signal>* writer)
     {
-        return this->stream_signals<cc::platform::system::Signal, SignalQueue>(
+        return this->stream_signals<cc::system::Signal, SignalQueue>(
             context,
             filter,
             writer);

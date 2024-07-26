@@ -9,7 +9,7 @@
 set(TARGET demoserver)
 
 ### Package component
-set(PKG_COMPONENT "demo-server")
+set(INSTALL_COMPONENT "demo-server")
 
 ### Libraries we depend on, either from this build or provided by the
 ### system. Only direct dependencies are needed; e.g., do not list "cc_core"
@@ -41,18 +41,18 @@ BuildExecutable("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
   DESTINATION sbin
-  COMPONENT ${PKG_COMPONENT}
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
 )
 
 if(ENABLE_SERVICES)
   InstallDebianService("demo"
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "DEMO service"
-    COMPONENT "${PKG_COMPONENT}"
+    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   )
 endif()
 
-cpack_add_component(${PKG_COMPONENT}
+cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS demo-common
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "DEMO example - C++ server"

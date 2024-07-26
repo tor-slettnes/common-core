@@ -12,8 +12,10 @@
 
 using google::protobuf::util::MessageDifferencer;
 
-namespace core::protobuf
+namespace protobuf
 {
+    const google::protobuf::Empty empty;
+
     //==========================================================================
     // Message (de)serialization
 
@@ -45,7 +47,7 @@ namespace core::protobuf
         return bytes;
     }
 
-}  // namespace core::protobuf
+}  // namespace protobuf
 
 /// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
 namespace google::protobuf
@@ -62,7 +64,7 @@ namespace google::protobuf
 
     std::ostream &operator<<(std::ostream &stream, const Message &msg)
     {
-        stream << ::core::protobuf::to_string(msg);
+        stream << ::protobuf::to_string(msg);
         return stream;
     }
 }  // namespace google::protobuf

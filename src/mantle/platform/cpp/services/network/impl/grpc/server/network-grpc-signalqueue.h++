@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "network.pb.h"  // generated from `foup.proto`
+#include "network.pb.h"  // generated from `network.proto`
 #include "grpc-signalqueue.h++"
 
 namespace platform::network::grpc
@@ -24,9 +24,9 @@ namespace platform::network::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<cc::platform::network::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<cc::network::Signal>
     {
-        using Super = core::grpc::SignalQueue<cc::platform::network::Signal>;
+        using Super = core::grpc::SignalQueue<cc::network::Signal>;
 
     public:
         using Super::Super;

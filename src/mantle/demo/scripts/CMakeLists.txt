@@ -5,11 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(PKG_COMPONENT "demo-scripts")
+set(INSTALL_COMPONENT "demo-scripts")
 
 add_subdirectory(bin)
+add_subdirectory(sbin)
 
-cpack_add_component(${PKG_COMPONENT}
+cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS "demo-python"
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "Common Core DEMO - launcher scripts"

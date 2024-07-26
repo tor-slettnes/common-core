@@ -9,7 +9,7 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-variant-types.h++"
 
-namespace core::protobuf
+namespace protobuf
 {
     //==========================================================================
     // Greeting
@@ -79,4 +79,4 @@ namespace core::protobuf
             .tm_isdst = static_cast<int>(msg.is_dst()),
         };
     }
-}  // namespace core::protobuf
+}  // namespace protobuf

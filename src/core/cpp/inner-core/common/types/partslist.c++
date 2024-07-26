@@ -9,18 +9,18 @@
 
 namespace core::types
 {
-    void PartsList::add(const Tag &tag,
-                        const std::string &value,
-                        const std::optional<bool> &condition,
-                        const std::string &format)
+    void PartsList::add_string(const Tag &tag,
+                               const std::string &value,
+                               const std::optional<bool> &condition,
+                               const std::string &format)
     {
         this->add_if(condition.value_or(!value.empty()), tag, value, format);
     }
 
-    void PartsList::add(const Tag &tag,
-                        const Value &value,
-                        const std::optional<bool> &condition,
-                        const std::string &format)
+    void PartsList::add_value(const Tag &tag,
+                              const Value &value,
+                              const std::optional<bool> &condition,
+                              const std::string &format)
     {
         this->add_if(condition.value_or(!value.empty()), tag, value, format);
     }
@@ -58,13 +58,13 @@ namespace core::types
                 stream << *tag << "=";
             }
 
-            if (format.empty())
+            if (format)
             {
-                stream << value;
+                stream << str::format(format.value(), value);
             }
             else
             {
-                stream << str::format(format, value);
+                stream << value;
             }
 
             if (delimiter.empty())

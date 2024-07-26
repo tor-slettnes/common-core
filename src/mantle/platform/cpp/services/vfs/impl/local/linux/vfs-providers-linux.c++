@@ -1,0 +1,23 @@
+// -*- c++ -*-
+//==============================================================================
+/// @file vfs-providers-local-linux.c++
+/// @brief VFS service - Native implementation wrapper
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#include "vfs-providers-local.h++"
+#include "vfs-linux-provider.h++"
+
+namespace platform::vfs::local
+{
+    void register_providers()
+    {
+        provider.registerProvider<LinuxProvider>();
+    }
+
+    void unregister_providers()
+    {
+        provider.unregisterProvider<LinuxProvider>();
+    }
+
+}  // namespace platform::vfs::local

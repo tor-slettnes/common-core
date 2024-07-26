@@ -5,11 +5,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(PKG_COMPONENT "platform-scripts")
+set(INSTALL_COMPONENT "platform-scripts")
 
 add_subdirectory(bin)
 
-cpack_add_component(${PKG_COMPONENT}
+cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS "platform-python"
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "Common Core Platform Services - launcher scripts"

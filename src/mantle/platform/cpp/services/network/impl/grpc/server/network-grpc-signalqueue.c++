@@ -15,41 +15,41 @@ namespace platform::network::grpc
 {
     void SignalQueue::initialize()
     {
-        using cc::platform::network::Signal;
+        using cc::network::Signal;
 
         this->connect<ConnectionRef>(
             Signal::kConnection,
             platform::network::signal_connection,
             [](ConnectionRef ref, Signal *msg) {
-                core::protobuf::encode_shared(ref, msg->mutable_connection());
+                protobuf::encode_shared(ref, msg->mutable_connection());
             });
 
         this->connect<ActiveConnectionRef>(
             Signal::kActiveConnection,
             platform::network::signal_active_connection,
             [](ActiveConnectionRef ref, Signal *msg) {
-                core::protobuf::encode_shared(ref, msg->mutable_active_connection());
+                protobuf::encode_shared(ref, msg->mutable_active_connection());
             });
 
         this->connect<AccessPointRef>(
             Signal::kAccesspoint,
             platform::network::signal_accesspoint,
             [](AccessPointRef ref, Signal *msg) {
-                core::protobuf::encode_shared(ref, msg->mutable_accesspoint());
+                protobuf::encode_shared(ref, msg->mutable_accesspoint());
             });
 
         this->connect<DeviceRef>(
             Signal::kDevice,
             platform::network::signal_device,
             [](DeviceRef ref, Signal *msg) {
-                core::protobuf::encode_shared(ref, msg->mutable_device());
+                protobuf::encode_shared(ref, msg->mutable_device());
             });
 
         this->connect<GlobalDataRef>(
             Signal::kGlobal,
             platform::network::signal_globaldata,
             [](GlobalDataRef ref, Signal *msg) {
-                core::protobuf::encode_shared(ref, msg->mutable_global());
+                protobuf::encode_shared(ref, msg->mutable_global());
             });
         Super::initialize();
     }

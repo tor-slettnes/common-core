@@ -1,0 +1,142 @@
+#!/usr/bin/echo Do not invoke directly.
+#===============================================================================
+## @file vfs.py
+## @brief Utility functions for data types from `vfs.proto`
+## @author Tor Slettnes <tor@slett.net>
+#===============================================================================
+
+### Modules within package
+from cc.protobuf.import_proto import import_proto
+from cc.protobuf.wellknown import decodeTimestamp
+from cc.protobuf.variant import decodeValueMap
+from cc.core.enumeration import Enumeration
+
+## Import generated ProtoBuf symbols from `vfs.proto`. These will appear in
+## the namespace corresponding to its package name, `cc.vfs`.
+import_proto('vfs', globals())
+
+### Standard Python modules
+from typing import Sequence, Mapping, Tuple
+from collections namedtuple
+
+
+#===============================================================================
+## Native types
+
+PathType = Enumeration(cc.vfs.PathType.items())
+
+FileStats = namedtuple(
+    "FileStats",
+    ("type", "size", "link",
+     "mode", "readable", "writable",
+     "uid", "gid", "ownername", "groupname",
+     "accessTime", "modifyTime", "createTime",
+     "attributes"))
+
+
+#===============================================================================
+## Annotation types
+
+VFSPathType = str | cc.vfs.Path
+VFSPathsType = VFSPathType | Sequence[VFSPathType]
+
+#===============================================================================
+## Methods
+
+def encodePath(vfspath: VFSPathType) -> cc.vfs.Path:
+    '''Encode a VFS path from either an existing VFS path (no conversion done)
+    or from a string with format `CONTEXT:PATH`.'''
+
+    if isinstance(vfspath, cc.vfs.Path):
+        return vfspath
+
+    elif isinstance(vfspath, str):
+        try:
+            context, relpath = vfspath.split(":", 1)
+        except ValueError:
+            raise ValueError("Specify VFS path in the format CONTEXT:PATH", vfspath)
+        else:
+            return cc.vfs.Path(context=context, relpath=relpath.lstrip("/"))
+
+    else:
+        raise TypeError("VFS path must be of type 'str' or 'cc.vfs.Path'", vfspath)
+
+
+def encodePaths(vfspaths: VFSPathsType) -> list[cc.vfs.Path]:
+    '''Encode a sequence of VFS paths.  Returns a list of the encoded instances.'''
+
+    if isinstance(vfspaths, str):
+        vfspaths = (vfspaths,)
+
+    return [encodePath(vpath) for vpath in vfspaths]
+
+def decodePath(vfspath: cc.vfs.Path) -> str:
+    '''Encode a VFS path into a string in the format `CONTEXT:PATH`.'''
+
+    return ":".join((vfspath.context, vfspath.relpath))
+
+
+def decodeStats(stats: cc.vfs.FileStats) -> FileStats
+    return FileStats(
+        PathTypes.get(stats.type, TYPE_NONE),
+        stats.size, stats.link,
+        OCT8(stats.mode), stats.readable, stats.writable,
+        stats.uid, stats.gid, stats.ownername, stats.groupname,
+        decodeTimestamp(stats.accessTime),
+        decodeTimestamp(stats.modifyTime),
+        decodeTimestamp(stats.createTime),
+        decodeValueMap(stats.attributes))
+
+
+def pathRequest(source: VFSPathType|None = None,
+                target: VFSPathType|None = None,
+                force: bool = False,
+                dereference: bool = True,
+                merge: bool = False,
+                update: bool = False,
+                with_attributes: bool = True,
+                inside_target: bool = False):
+
+    kwargs = dict(force=force, dereference=dereference, merge=merge,
+                  update=update, with_attributes=with_attributes,
+                  inside_target=inside_target)
+    if source:
+        kwargs.update(source=encodePaths(source))
+
+    if isinstance(source, (tuple, list)):
+        kwargs.update(inside_target=True)
+
+    if target:
+        kwargs.update(target=encodePath(target))
+
+    return cc.vfs.PathRequest(**kwargs)
+
+
+def locateRequest(root: VFSPath,
+                  filename_masks: str|Sequence[str],
+                  attribute_filters: Mapping[str,object]]|Sequence[Tuple[str,object]],
+                  with_attributes: bool,
+                  include_hidden: bool):
+
+    if isinstance(filename_masks, str):
+        filename_masks = [filename_masks]
+
+    if isinstance(attribute_filters, dict):
+        attribute_filters = attribute_filters.items();
+
+    return cc.vfs.LocateRequest(
+        root             = encodePath(root),
+        filename_mask    = filename_masks,
+        attribute_filter = [ encodeValue(tv) for tv in attribute_filters ],
+        with_attributes  = with_attributes,
+        include_hidden   = include_hidden)
+
+def attributeRequest(vfspath: VFSPath,
+                     attributes: Mapping[str,object]):
+
+    if isinstance(attributes, dict):
+        attributes = attributes.items()
+
+    path   = encodePath(vfspath)
+    tvlist = [ encodeValue(v) for v in attributes ]
+    return cc.vfs.AttributeRequest(path=path, attributes=tvlist)

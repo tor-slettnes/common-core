@@ -1,11 +1,11 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file platform-glib-mainloop.h++
-/// @brief Platform Server - GLib main loop
+/// @file glib-mainloop.h++
+/// @brief GLib main loop
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-namespace platform
+namespace core::glib
 {
-    void glib_mainloop();
-}  // namespace platform
+    void mainloop();
+}  // namespace core::glib

@@ -21,15 +21,15 @@ namespace platform::system::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            cc::platform::system::Signal::kTime,
-            [&](const cc::platform::system::Signal &signal) {
+            cc::system::Signal::kTime,
+            [&](const cc::system::Signal &signal) {
                 platform::system::signal_time.emit(
-                    core::protobuf::decoded<core::dt::TimePoint>(signal.time()));
+                    protobuf::decoded<core::dt::TimePoint>(signal.time()));
             });
 
         this->client->add_handler(
-            cc::platform::system::Signal::kTimeConfig,
-            [&](const cc::platform::system::Signal &signal) {
+            cc::system::Signal::kTimeConfig,
+            [&](const cc::system::Signal &signal) {
                 platform::system::signal_timeconfig.emit(signal.time_config());
             });
     }
@@ -38,12 +38,12 @@ namespace platform::system::grpc
     {
         this->client->call_check(
             &Client::Stub::set_current_time,
-            core::protobuf::encoded<google::protobuf::Timestamp>(tp));
+            protobuf::encoded<google::protobuf::Timestamp>(tp));
     }
 
     core::dt::TimePoint Time::get_current_time() const
     {
-        return core::protobuf::decoded<core::dt::TimePoint>(
+        return protobuf::decoded<core::dt::TimePoint>(
             this->client->call_check(
                 &Client::Stub::get_current_time));
     }

@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(PKG_COMPONENT "demo-utils")
+set(INSTALL_COMPONENT "demo-utils")
 
 add_subdirectory(common)
 
@@ -22,7 +22,7 @@ if(BUILD_ZMQ)
 endif()
 
 
-cpack_add_component(${PKG_COMPONENT}
+cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS demo-common
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "DEMO example - C++ utilities"

@@ -6,10 +6,14 @@
 #===============================================================================
 
 if (BUILD_PYTHON)
-  set(SOURCES demoshell)
+  set(SOURCES
+    demoshell
+    demo_grpc_aio_client_py
+  )
 
-  install(PROGRAMS ${SOURCES}
+  install(
+    PROGRAMS ${SOURCES}
     TYPE BIN
-    COMPONENT ${PKG_COMPONENT}
+    COMPONENT "${INSTALL_COMPONENT}"
   )
 endif()

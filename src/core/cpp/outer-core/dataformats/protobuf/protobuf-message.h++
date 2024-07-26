@@ -10,11 +10,14 @@
 #include "string/stream.h++"
 
 #include <google/protobuf/message.h>
+#include <google/protobuf/empty.pb.h>
 
 #include <ostream>
 
-namespace core::protobuf
+namespace protobuf
 {
+    extern const google::protobuf::Empty empty;
+
     //==========================================================================
     // Message deserialization
 
@@ -69,7 +72,7 @@ namespace core::protobuf
         msg.ParseFromString(packed_string);
         return msg;
     }
-}  // namespace core::protobuf
+}  // namespace protobuf
 
 /// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
 namespace google::protobuf

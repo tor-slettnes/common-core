@@ -9,13 +9,12 @@
 set(TARGET "cc_demo_python")
 
 ### Package component
-set(PKG_COMPONENT "demo-python")
+set(INSTALL_COMPONENT "demo-python")
 
 add_subdirectory(protobuf)
 add_subdirectory(demo)
-add_subdirectory(bin)
 
-cpack_add_component("${PKG_COMPONENT}"
+cpack_add_component("${INSTALL_COMPONENT}"
   DEPENDS "core-python" "common-settings" "demo-proto" "demo-settings"
   GROUP "${PKG_GROUP}"
   DISPLAY_NAME "DEMO Example - Python modules"

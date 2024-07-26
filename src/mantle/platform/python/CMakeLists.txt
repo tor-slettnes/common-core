@@ -9,11 +9,11 @@
 set(TARGET "cc_platform_python")
 
 ### Package component
-set(PKG_COMPONENT "platform-python")
+set(INSTALL_COMPONENT "platform-python")
 
 add_subdirectory(platform)
 
-cpack_add_component("${PKG_COMPONENT}"
+cpack_add_component("${INSTALL_COMPONENT}"
   DEPENDS "core-python" "common-settings" "platform-proto" "platform-settings"
   GROUP "${PKG_GROUP}"
   DISPLAY_NAME "Platform Services - Python modules"

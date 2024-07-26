@@ -21,8 +21,8 @@ namespace platform::system::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            cc::platform::system::Signal::kHostInfo,
-            [&](const cc::platform::system::Signal &signal) {
+            cc::system::Signal::kHostInfo,
+            [&](const cc::system::Signal &signal) {
                 platform::system::signal_hostinfo.emit(signal.host_info());
             });
     }
@@ -37,7 +37,7 @@ namespace platform::system::grpc
     {
         this->client->call_check(
             &Client::Stub::set_host_name,
-            core::protobuf::encoded<google::protobuf::StringValue>(hostname));
+            protobuf::encoded<google::protobuf::StringValue>(hostname));
     }
 
     void HostConfig::reboot()

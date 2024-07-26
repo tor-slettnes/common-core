@@ -10,7 +10,7 @@
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
 
-namespace core::protobuf
+namespace protobuf
 {
     //==========================================================================
     // core::status::Domain encoding to/decoding from cc::status::Domain
@@ -81,4 +81,4 @@ namespace core::protobuf
             decoded<core::types::KeyValueMap>(msg.attributes()));
     }
 
-}  // namespace core::protobuf
+}  // namespace protobuf

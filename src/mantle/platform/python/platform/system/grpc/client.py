@@ -19,7 +19,7 @@ from typing import Optional, Sequence, Iterator
 
 ## Import generated ProtoBuf symbols. These will appear in namespaces
 ## corresponding to the package names from their `.proto` files:
-## `google.protobuf` and `cc.platform.system`.
+## `google.protobuf` and `cc.system`.
 import_proto('system', globals())
 import_proto('google.protobuf.wrappers', globals())
 import_proto('google.protobuf.timestamp', globals())
@@ -36,9 +36,9 @@ class SystemClient (SignalClient):
 
     ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
     ## which serves as a clearing house for emitting and receiving messages.
-    signal_type = cc.platform.system.Signal
+    signal_type = cc.system.Signal
 
-    def get_product_info(self) -> cc.platform.system.ProductInfo:
+    def get_product_info(self) -> cc.system.ProductInfo:
         '''Get information about this product:
         model, serial number, versions, subsystems'''
         return self.stub.get_product_info(Empty())
@@ -51,7 +51,7 @@ class SystemClient (SignalClient):
         '''Set the product model. For manufacturing use.'''
         self.stub.set_model_name(google.protobuf.StringValue(value=model))
 
-    def get_host_info(self) -> cc.platform.system.HostInfo:
+    def get_host_info(self) -> cc.system.HostInfo:
         '''Get information about this host:
         hostname, OS, hardware.
         '''
@@ -80,12 +80,12 @@ class SystemClient (SignalClient):
         Enable or disable automatic time configuration,
         with optional NTP server list.
         '''
-        request = cc.platform.system.TimeConfig(synchronization=synchronization)
+        request = cc.system.TimeConfig(synchronization=synchronization)
         if servers is not None:
             request.servers.extend(servers)
         self.stub.set_time_config(request)
 
-    def get_timezone_specs(self) -> Iterator[cc.platform.system.TimeZoneSpec]:
+    def get_timezone_specs(self) -> Iterator[cc.system.TimeZoneSpec]:
         '''
         Obtain information about all available timezones:
         zone name, continent, country, display name, longitude/latitude.
@@ -99,13 +99,13 @@ class SystemClient (SignalClient):
         for spec in self.stub.get_timezone_specs(Empty()):
             yield spec
 
-    def get_timezone_spec(self, zonename: str|None = None) -> cc.platform.system.TimeZoneSpec:
+    def get_timezone_spec(self, zonename: str|None = None) -> cc.system.TimeZoneSpec:
         '''
         Obtain information about a specifc zone. See also `get_timezone_specs()`.
         If no zone is provided, obtain information about the currently configured zone.
         '''
         return self.stub.get_timezone_spec(
-            cc.platform.system.TimeZoneName(
+            cc.system.TimeZoneName(
                 zonename=zonename))
 
 
@@ -121,7 +121,7 @@ class SystemClient (SignalClient):
         - `provider`: Online service provider for automatic zone configuration.
         '''
 
-        request = cc.platform.system.TimeZoneConfig()
+        request = cc.system.TimeZoneConfig()
 
         if automatic is not None:
             request.automatic = automatic
@@ -134,7 +134,7 @@ class SystemClient (SignalClient):
 
         self.stub.set_timezone(request)
 
-    def get_configured_timezone(self) -> cc.platform.system.TimeZoneConfig:
+    def get_configured_timezone(self) -> cc.system.TimeZoneConfig:
         '''
         Get current timezone configuration, including:
         - `zonename`: Configured zone, e.g. `America/Los_Angeles' (not `PST` or `PDT`)
@@ -144,7 +144,7 @@ class SystemClient (SignalClient):
         return self.stub.get_configured_timezone(Empty())
 
 
-    def get_current_timezone(self) -> cc.platform.system.TimeZoneInfo:
+    def get_current_timezone(self) -> cc.system.TimeZoneInfo:
         '''
         Get current/effecitve time zone info, including:
         - `shortname`: effective zone abbreviation, e.g. `PST`, `PDT`, `CET`, `CEST`...
@@ -157,7 +157,7 @@ class SystemClient (SignalClient):
     def invoke_sync(self,
                     argv : Sequence[str] = (),
                     working_directory: str = None,
-                    stdin : str = None) -> cc.platform.system.CommandResponse:
+                    stdin : str = None) -> cc.system.CommandResponse:
         '''Invoke a subprocess and wait for its completion.
 
         Inputs:
@@ -170,7 +170,7 @@ class SystemClient (SignalClient):
 
         '''
 
-        request = cc.platform.system.CommandInvocation(
+        request = cc.system.CommandInvocation(
             argv = argv,
             working_directory = working_directory,
             stdin = stdin)
@@ -194,7 +194,7 @@ class SystemClient (SignalClient):
         This can subsequently be passed to `invoke_finish()`.
         '''
 
-        request = cc.platform.system.CommandInvocation(
+        request = cc.system.CommandInvocation(
             argv = argv,
             working_directory = working_directory,
             stdin = stdin)
@@ -204,7 +204,7 @@ class SystemClient (SignalClient):
 
     def invoke_finish(self,
                       pid: int,
-                      stdin: str = None) -> cc.platform.system.CommandResponse:
+                      stdin: str = None) -> cc.system.CommandResponse:
         '''Wait for a asynchronous process to finish.
 
         Inputs:
@@ -212,7 +212,7 @@ class SystemClient (SignalClient):
         - `stdin`: Text which will be piped to the command's standard input
         '''
 
-        request = cc.platform.system.CommandInput(
+        request = cc.system.CommandInput(
             pid = pid,
             stdin = stdin)
 

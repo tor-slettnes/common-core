@@ -1,0 +1,267 @@
+// -*- Protocol-Buffers -*-
+//==============================================================================
+/// @file vfs.proto
+/// @brief Virtual Filesystem  gRPC/ProtoBuf interface
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+syntax = "proto3";
+
+package cc.vfs;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "signal.proto";
+import "variant.proto";
+
+service VirtualFileSystem
+{
+    // List known virtual filesystem contexts.
+    rpc getContexts (google.protobuf.Empty) returns (ContextMap);
+
+    // List open virtual filesystem contexts.
+    rpc getOpenContexts (google.protobuf.Empty) returns (ContextMap);
+
+    // List known virtual filesystem contexts.
+    rpc getContextSpec (Path) returns (ContextSpec);
+
+    // Explicitly open a virtual context. Internally this increments a reference
+    // counter to keep the corresponding virtual filesystem context (VFC) open.
+    // For instance, in the case of a removable or remote drive, the drive will
+    // remain mounted, thereby eliminating overhead associated with
+    // mounting/unmounting for individual file transactions.
+    //
+    // Once access is no longer needed The client should invoke
+    // `closeContext()', thereby allowing the context to be closed.
+    rpc openContext (Path) returns (ContextSpec);
+
+    // Close a previously-opened path. Internally, this decrements a reference
+    // counter associated with the underlying filesystem context, and closes the
+    // context (e.g. unmounts) if it reaches zero.
+    rpc closeContext (Path) returns (google.protobuf.Empty);
+
+    // Return information about mounted filesystem containing source path.
+    rpc volumeStats (PathRequest) returns (VolumeStats);
+
+    // Return status of specified source paths.
+    // Unlike `listPath()` this does not descent into folders.
+    rpc fileStats (PathRequest) returns (FileStats);
+
+    // List contents of the specified source path (context/folder).
+    // Deprecated; please use getDirectory instead.
+    rpc getDirectory (PathRequest) returns (Directory);
+
+    // List contents of the specified source path (context/folder).
+    // Deprecated; please use getDirectory instead.
+    rpc list (PathRequest) returns (DirectoryList);
+
+    /// Recursively locate files matching specific filename and/or attribute patterns.
+    rpc locate (LocateRequest) returns (Directory);
+
+    // Copy `source` to `target`
+    rpc copy (PathRequest) returns (google.protobuf.Empty);
+
+    // Move `source` to `target`
+    rpc move (PathRequest) returns (google.protobuf.Empty);
+
+    // Create `target` folder
+    rpc createFolder (PathRequest) returns (google.protobuf.Empty);
+
+    // Remove `source` path(s).
+    rpc remove (PathRequest) returns (google.protobuf.Empty);
+
+    // Read the specified file, and return its contents in chunks.
+    rpc readFile (Path) returns (stream FileChunk);
+
+    // Write to a file in chunks. The path must be specified with the first chunk.
+    rpc writeFile (stream FileChunk) returns (google.protobuf.Empty);
+
+    // Return attributes associated with the specified path.
+    rpc getAttributes (Path) returns (cc.variant.ValueList);
+
+    // Set/update attributes associated with the specified path.
+    rpc setAttributes (AttributeRequest) returns (google.protobuf.Empty);
+
+    // Clear all attributes associated with the specified path.
+    rpc clearAttributes (Path) returns (google.protobuf.Empty);
+
+    //========================================================================
+    // Watch for changes
+    rpc watch (cc.signal.Filter) returns (stream Signal);
+}
+
+
+enum PathType
+{
+    // Synchronized to C++ STL 'std::filesystem::file_type'
+    TYPE_NONE      = 0;         // Not applicable, or unknown
+    TYPE_FILE      = 1;         // Regular file
+    TYPE_DIRECTORY = 2;         // Regular directory
+    TYPE_SYMLINK   = 3;         // Symbolic link
+    TYPE_CHARDEV   = 4;         // Character special device
+    TYPE_BLOCKDEV  = 5;         // Block special device
+    TYPE_PIPE      = 6;         // Named pipe
+    TYPE_SOCKET    = 7;         // Named (UNIX domain) socket
+}
+
+
+message ContextSpec
+{
+    // Name for this context.
+    string name = 1;
+
+    // Root of context within native filesystem
+    string root = 2;
+
+    // Writable access granted
+    // Individual files/folers may have further restrictions.
+    bool writable = 3;
+
+    // Whether the context represents a removable volume (e.g. USB drive);
+    // Only used in replies from server.
+    bool removable = 4;
+
+    // Human readable name (e.g volume label for a removable drive)
+    string title = 5;
+
+}
+
+message ContextMap
+{
+    map<string, ContextSpec> map = 1;
+}
+
+
+message Path
+{
+    // Virtual Filesystem Context, e.g., "usb0", "logs", ...
+    string context = 1;
+
+    // Path relative to context
+    string relpath = 2;
+}
+
+message PathRequest
+{
+    // Source path(s). We expect that these already exist.
+    repeated Path source = 1;
+
+    // Target path for move/copy/createFolder. We expect to create/replace this.
+    Path target = 2;
+
+    // Enables the following behaviors:
+    //   - Recursively copy/move/remove a folder and its children
+    //   - Replaces an existing target regardless of type
+    //   - Copies metadata from source, even if replacing existing target
+    //   - Creates missing parent folder(s) leading up to `target`.
+    bool force = 4;
+
+    // Whether to follow symbolic links on source or target.
+    // Be vewwy vewwy cautious when used together with `force`.
+    // Note that links are never followed outside the context.
+    bool dereference = 5;
+
+    // Merge rather than replace an existing target folder.
+    // Effective only if both `source` and `target` are folders.
+    bool merge = 6;
+
+    // Update only; only copy if target does not exist or is older than source.
+    bool update = 7;
+
+    // Include custom attributes in request
+    bool with_attributes = 8;
+
+    // Include hidden files in directory list
+    bool include_hidden = 9;
+
+    // Indicates that `target` is not the final target path, but an
+    // existing folder into which the source path(s) will be copied/moved.
+    // copy()/move() require this option if there is more than one source.
+    bool inside_target = 10;
+
+}
+
+
+message LocateRequest
+{
+    // Where to start the search
+    Path root = 1;
+
+    // Zero or more glob-style filename masks, e.g., `*.txt`.
+    repeated string filename_mask = 2;
+
+    // Zero or more tag/value pairs to match.
+    // Tags may be repeated for cumulative value matches.
+    repeated cc.variant.Value attribute_filter = 5;
+
+    // Include custom attributes in request
+    bool with_attributes = 8;
+
+    // Include hidden files in directory list
+    bool include_hidden = 9;
+
+    // Ignore case in filename
+    bool ignore_case = 10;
+}
+
+
+
+message FileStats
+{
+    string name = 1;         // Base name, without leading directory
+    PathType type = 2;       // DIRECTORY, FILE, etc.
+    uint64 size = 3;         // Size in bytes
+    string link = 4;         // Target for symbolic links
+    uint32 mode = 5;         // UNIX mode mask
+    bool readable = 6;       // Readable file/listable directory
+    bool writable = 7;       // Writable file/modifiable directory
+    uint32 uid   = 8;        // Owner numeric ID
+    uint32 gid   = 9;        // Group numeric ID
+    string ownername = 10;   // Owner name
+    string groupname = 11;   // Group name (`group` is a reserved ProtoBuf word)
+    google.protobuf.Timestamp accessTime = 12;  // Last access
+    google.protobuf.Timestamp modifyTime = 13;  // Last modification
+    google.protobuf.Timestamp createTime = 14;  // Creation
+    repeated cc.variant.Value attributes = 15; // Custom file attributes
+    // TBD: Access Control Lists, SELinux contexts
+}
+
+message Directory
+{
+    map<string, FileStats> map = 1;
+}
+
+message DirectoryList
+{
+    repeated FileStats entry = 1;
+}
+
+message AttributeRequest
+{
+    Path path = 1;
+    repeated cc.variant.Value attributes = 2;
+}
+
+message VolumeStats
+{
+    uint64 capacity   = 1;      // Total size, in bytes
+    uint64 free       = 2;      // Free size, in bytes
+    uint64 available  = 3;      // Available size, in bytes
+}
+
+message FileChunk
+{
+    Path path = 1;
+    bytes data = 2;
+}
+
+message Signal
+{
+    cc.signal.MappingAction mapping_action = 1;
+    string mapping_key = 2;
+
+    oneof signal {
+        ContextSpec context = 8; // A filesystem context has been added/removed/modified
+        ContextSpec context_in_use = 9; // A context has been opened/closed
+    };
+}

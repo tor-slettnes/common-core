@@ -81,8 +81,10 @@ def valueToEnum(value: int|enum.Enum,
         return value
     elif isinstance(value, int):
         return enumeration(value)
+    elif value is None:
+        return enumeration(0)
     else:
-        raise TypeError('Value must be an integer or enumeration')
+        raise TypeError('Value must be an integer or enumeration: %r'%(value,))
 
 
 def enumToValue(value: int|enum.Enum) -> int:
@@ -90,8 +92,10 @@ def enumToValue(value: int|enum.Enum) -> int:
         return value.value
     elif isinstance(value, int):
         return value
+    elif value is None:
+        return 0
     else:
-        raise TypeError('Value must be an integer or enumeration')
+        raise TypeError('Value must be an integer or enumeration: %r'%(value,))
 
 
 def print_message(message: Message, as_one_line=True):

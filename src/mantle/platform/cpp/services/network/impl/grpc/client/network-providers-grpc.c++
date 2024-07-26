@@ -28,4 +28,4 @@ namespace platform::network::grpc
     {
         network.unregisterProvider<ClientProvider>();
     }
-}  // namespace platform::system::grpc
+}  // namespace platform::network::grpc

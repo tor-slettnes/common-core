@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-namespace core::protobuf
+namespace protobuf
 {
     Version version(std::uint64_t major,
                     std::uint64_t minor,
@@ -47,13 +47,13 @@ namespace core::protobuf
         return ((client.major() == server.major()) &&
                 ((client.minor() <= server.minor()) || !strict));
     }
-}  // namespace core::protobuf
+}  // namespace protobuf
 
 namespace cc::version
 {
     std::ostream &operator<<(std::ostream &stream, const Version &version)
     {
-        stream << core::protobuf::to_string(version);
+        stream << protobuf::to_string(version);
         return stream;
     }
 }  // namespace cc::version

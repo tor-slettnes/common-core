@@ -105,7 +105,7 @@ namespace core
         /// settings were originally loaded from `my-settings.json` (in either
         /// of these folders or merged in from both), then the updated settings
         /// will be saved in `"/etc/local-settings/my-settings.json"`.
-        void save(bool delta = true);
+        virtual void save(bool delta = true);
 
         /// @brief
         ///     Save current settings to `filename[.json]`.

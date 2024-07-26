@@ -17,6 +17,7 @@ set(PKG_DEPS
 set(SOURCES
   glib-errors.c++
   glib-variant.c++
+  glib-mainloop.c++
 )
 
 BuildLibrary("${TARGET}"

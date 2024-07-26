@@ -29,7 +29,7 @@ namespace core::zmq
         void handle(const types::ByteVector &bytes) override
         {
             log_trace("ProtoBufMessageHandler() handling message: ", bytes);
-            this->handle_message(::core::protobuf::to_message<ProtoT>(bytes));
+            this->handle_message(::protobuf::to_message<ProtoT>(bytes));
         }
 
     protected:

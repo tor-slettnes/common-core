@@ -14,4 +14,4 @@ namespace platform::network::grpc
                             bool wait_for_ready = true,
                             bool start_watching = true);
     void unregister_providers();
-}  // namespace platform::system::grpc
+}  // namespace platform::network::grpc

@@ -15,14 +15,15 @@ set(LIB_DEPS
   cc_core_platform
   cc_platform_system_native
   cc_platform_network_dbus
+  cc_platform_vfs_local
   cc_platform_system_grpc_service
   cc_platform_network_grpc_service
+  cc_platform_vfs_grpc_service
 )
 
 ### Source files
 set(SOURCES
   platform-grpc-server.c++
-  platform-glib-mainloop.c++
   options.c++
   main.c++
 )
@@ -32,18 +33,18 @@ BuildExecutable("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
   DESTINATION sbin
-  COMPONENT ${PKG_COMPONENT}
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
 )
 
 if(ENABLE_SERVICES)
   InstallDebianService("platformserver"
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "Platform server: System configuration, Networking, File access, Upgrade"
-    COMPONENT "${PKG_COMPONENT}"
+    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   )
 endif()
 
-cpack_add_component(${PKG_COMPONENT}
+cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS core-common
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "Platform server"

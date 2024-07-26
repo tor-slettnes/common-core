@@ -16,7 +16,7 @@
 /// ("decode...()") "common" ProtoBuf messages (including those defined in
 /// "common_types.proto").
 
-namespace core::protobuf
+namespace protobuf
 {
     using RepeatedValue = google::protobuf::RepeatedPtrField<cc::variant::Value>;
 
@@ -105,4 +105,4 @@ namespace core::protobuf
     void decode(const cc::variant::ValueList &msg,
                core::types::Value *value) noexcept;
 
-}  // core::protobuf
+}  // protobuf

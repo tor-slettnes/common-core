@@ -68,8 +68,8 @@ class ArgParser (argparse.ArgumentParser):
 def legend():
     '''Interactive Service Control.  Subsystems loaded:
 
-        system - `cc.platform.system.System` gRPC service client
-        network - `cc.platform.network.Network` gRPC service client
+        system - `cc.system.System` gRPC service client
+        network - `cc.network.Network` gRPC service client
 
     ProtoBuf types are generally loaded into namespaces matching the package
     names from their respective `.proto` files:

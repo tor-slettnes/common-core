@@ -34,7 +34,7 @@ namespace core::zmq
     {
         try
         {
-            this->send(::core::protobuf::to_bytes(request), flags);
+            this->send(::protobuf::to_bytes(request), flags);
         }
         catch (const ::zmq::error_t &e)
         {
@@ -117,7 +117,7 @@ namespace core::zmq
             default:
                 ProtoBufError(
                     status.code(),
-                    ::core::protobuf::decoded<status::Event>(status.details())
+                    ::protobuf::decoded<status::Event>(status.details())
                     ).throw_if_error();
                 break;
             }
@@ -138,13 +138,13 @@ namespace core::zmq
                                       ::zmq::recv_flags recv_flags)
     {
         cc::rr::Parameter request_params;
-        ::core::protobuf::encode(request, request_params.mutable_variant_value());
+        ::protobuf::encode(request, request_params.mutable_variant_value());
         this->send_invocation(method_name, request_params, send_flags);
 
         cc::rr::Parameter reply_params;
         if (this->read_result(&reply_params, recv_flags))
         {
-            return ::core::protobuf::decoded<types::Value>(reply_params.variant_value());
+            return ::protobuf::decoded<types::Value>(reply_params.variant_value());
         }
         else
         {

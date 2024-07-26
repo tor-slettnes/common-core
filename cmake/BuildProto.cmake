@@ -31,11 +31,11 @@ function(BuildProto_CPP TARGET)
   endif()
 
   if(BUILD_GRPC)
-    find_package(gRPC REQUIRED)
+    # find_package(gRPC REQUIRED)
 
-    ### The above fails to capture all required library dependencies from recent
-    ### gRPC releases.  Let's obtain additional package dependencies from
-    ### `pkg-config`.
+    # The above fails to capture all required library dependencies from recent
+    # gRPC releases.  Let's obtain additional package dependencies from
+    # `pkg-config`.
     add_package_dependencies("${TARGET}"
       LIB_TYPE "${arg_LIB_TYPE}"
       DEPENDS grpc++)
@@ -53,7 +53,7 @@ endfunction()
 
 function(BuildProto_PYTHON TARGET)
   set(_options)
-  set(_singleargs COMPONENT INSTALL_DIR PACKAGE)
+  set(_singleargs INSTALL_COMPONENT INSTALL_DIR PACKAGE)
   set(_multiargs PROTOS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -64,9 +64,7 @@ function(BuildProto_PYTHON TARGET)
   endif()
 
   if(arg_PACKAGE)
-    set(_install_dir "${_install_dir}/${_arg_PACKAGE}")
-  elseif(CPACK_PYTHON_PACKAGE)
-    set(_install_dir "${_install_dir}/${CPACK_PYTHON_PACKAGE}")
+    set(_install_dir "${_install_dir}/${arg_PACKAGE}")
   endif()
 
   set(_install_dir "${_install_dir}/generated")
@@ -81,7 +79,7 @@ function(BuildProto_PYTHON TARGET)
     install(
       FILES ${PROTO_PY}
       DESTINATION "${_install_dir}"
-      COMPONENT "${arg_COMPONENT}"
+      COMPONENT "${arg_INSTALL_COMPONENT}"
     )
   endif()
 
@@ -95,7 +93,7 @@ function(BuildProto_PYTHON TARGET)
     install(
       FILES ${GRPC_PY}
       DESTINATION "${_install_dir}"
-      COMPONENT "${_component}"
+      COMPONENT "${_arg_INSTALL_COMPONENT}"
     )
   endif()
 
@@ -107,12 +105,12 @@ endfunction()
 
 function(BuildProto TARGET)
   set(_options)
-  set(_singleargs LIB_TYPE SCOPE COMPONENT PYTHON_INSTALL_DIR PYTHON_PACKAGE)
+  set(_singleargs LIB_TYPE SCOPE INSTALL_COMPONENT PYTHON_INSTALL_DIR PYTHON_PACKAGE)
   set(_multiargs SOURCES LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  if(arg_COMPONENT)
-    set(_component ${arg_COMPONENT})
+  if(arg_INSTALL_COMPONENT)
+    set(_component ${arg_INSTALL_COMPONENT})
   elseif(CPACK_CURRENT_COMPONENT)
     set(_component ${CPACK_CURRENT_COMPONENT})
   else()
@@ -145,10 +143,19 @@ function(BuildProto TARGET)
   endif()
 
   if (BUILD_PYTHON)
+    if(arg_PYTHON_PACKAGE)
+      set(_package "${arg_PACKAGE}")
+    else()
+      list(FIND arg_KEYWORDS_MISSING_VALUES PYTHON_PACKAGE _found)
+      if(${_found} LESS 0 AND CPACK_PYTHON_PACKAGE)
+        set(_package "${CPACK_PYTHON_PACKAGE}")
+      endif()
+    endif()
+
     BuildProto_PYTHON("${TARGET}"
-      COMPONENT "${_component}"
+      INSTALL_COMPONENT "${_component}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
-      PACKAGE "${arg_PYTHON_PACKAGE}"
+      PACKAGE "${_package}"
       PROTOS "${arg_SOURCES}"
     )
   endif()

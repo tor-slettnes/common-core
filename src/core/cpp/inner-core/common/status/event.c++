@@ -177,39 +177,39 @@ namespace core::status
 
     void Event::populate_fields(types::PartsList *parts) const noexcept
     {
-        parts->add(EVENT_FIELD_TEXT,
-                   this->text());
+        parts->add_string(EVENT_FIELD_TEXT,
+                          this->text());
 
-        parts->add(EVENT_FIELD_DOMAIN,
-                   this->domain(),
-                   this->domain() != Domain::NONE);
+        parts->add<Domain>(EVENT_FIELD_DOMAIN,
+                           this->domain(),
+                           this->domain() != Domain::NONE);
 
-        parts->add(EVENT_FIELD_ORIGIN,
-                   this->origin(),
-                   !this->origin().empty());
+        parts->add_string(EVENT_FIELD_ORIGIN,
+                          this->origin(),
+                          !this->origin().empty());
 
-        parts->add(EVENT_FIELD_CODE,
-                   this->code(),
-                   this->code());
+        parts->add_value(EVENT_FIELD_CODE,
+                         this->code(),
+                         this->code());
 
-        parts->add(EVENT_FIELD_SYMBOL,
-                   this->symbol());
+        parts->add_string(EVENT_FIELD_SYMBOL,
+                          this->symbol());
 
-        parts->add(EVENT_FIELD_LEVEL,
-                   this->level(),
-                   this->level() != Level::NONE);
+        parts->add<Level>(EVENT_FIELD_LEVEL,
+                          this->level(),
+                          this->level() != Level::NONE);
 
-        parts->add(EVENT_FIELD_FLOW,
-                   this->flow(),
-                   this->flow() != Flow::NONE);
+        parts->add<Flow>(EVENT_FIELD_FLOW,
+                         this->flow(),
+                         this->flow() != Flow::NONE);
 
-        parts->add(EVENT_FIELD_TIME,
-                   this->timepoint(),
-                   this->timepoint() != dt::epoch);
+        parts->add_value(EVENT_FIELD_TIME,
+                         this->timepoint(),
+                         this->timepoint() != dt::epoch);
 
-        parts->add(EVENT_FIELD_ATTRIBUTES,
-                   this->attributes(),
-                   !this->attributes().empty());
+        parts->add_value(EVENT_FIELD_ATTRIBUTES,
+                         this->attributes(),
+                         !this->attributes().empty());
     }
 
     void Event::to_stream(std::ostream &stream) const

@@ -1,0 +1,27 @@
+#!/bin/bash
+#===============================================================================
+## @file demo_grpc_server_py
+## @brief Locate and launch Python DEMO server
+## @author Tor Slettnes <tor@slett.net>
+#===============================================================================
+
+module_name="cc.demo.grpc.server"
+target_name="${module_name//.//}.py"
+
+prog_path=$(realpath "$0")
+prog_dir=${prog_path%/*}
+base_dir=${prog_dir%/*}
+
+for candidate_dir in lib/python3/dist-packages share/python python
+do
+    candidate="${base_dir}/${candidate_dir}/${target_name}"
+    if [ -r "${candidate}" ]
+    then
+        PYTHONPATH="${base_dir}/${candidate_dir}" exec python3 -m "${module_name}" "$@"
+        #exec "${candidate}" "$@"
+    fi
+done
+
+echo "Unable to locate '${target_name}'"
+exit 1
+

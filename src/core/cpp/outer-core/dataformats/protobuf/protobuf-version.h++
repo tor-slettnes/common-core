@@ -9,7 +9,7 @@
 #include "version.pb.h"  // generated from `variant.proto`
 #include "string/format.h++"
 
-namespace core::protobuf
+namespace protobuf
 {
     using cc::version::Version;
 
@@ -23,7 +23,7 @@ namespace core::protobuf
     bool is_compatible(const Version &client,
                        const Version &server,
                        bool strict = true);
-}  // namespace core::protobuf
+}  // namespace protobuf
 
 namespace cc::version
 {

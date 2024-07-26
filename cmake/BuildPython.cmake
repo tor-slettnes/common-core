@@ -10,13 +10,13 @@ set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
 
 function(BuildPython TARGET)
   set(_options)
-  set(_singleargs DESTINATION PACKAGE COMPONENT)
+  set(_singleargs DESTINATION PACKAGE PACKAGE_COMPONENT INSTALL_COMPONENT)
   set(_multiargs PROGRAMS FILES DIRECTORIES)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   add_library("${TARGET}" INTERFACE)
 
-  if(arg_COMPONENT)
+  if(arg_INSTALL_COMPONENT)
     set(_component ${arg_COMPONENT})
   elseif(CPACK_CURRENT_COMPONENT)
     set(_component ${CPACK_CURRENT_COMPONENT})
@@ -33,7 +33,14 @@ function(BuildPython TARGET)
   if(arg_PACKAGE)
     set(_package "${arg_PACKAGE}")
   else()
-    set(_package "${CPACK_PYTHON_PACKAGE}")
+    list(FIND arg_KEYWORDS_MISSING_VALUES PACKAGE _found)
+    if(${_found} LESS 0 AND CPACK_PYTHON_PACKAGE)
+      set(_package "${CPACK_PYTHON_PACKAGE}")
+    endif()
+  endif()
+
+  if(arg_PACKAGE_COMPONENT)
+    string(JOIN "." _package "${_package}" "${arg_PACKAGE_COMPONENT}")
   endif()
 
   if(_package)

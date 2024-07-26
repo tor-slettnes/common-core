@@ -1,12 +1,13 @@
 Building
 --------
 
-If you haven't already done so, please first go through the previous section: [Preparing Your Build Environment](preparing.md) and, if applicable, [Obtaining the Source](cloning.md).
+If you haven't already done so, please first go through the previous sections:
+
+1. [Preparing Your Build Environment](preparing.md)
+2. [Obtaining the Source](cloning.md) (if applicable)
 
 
 ## Build and Install in place
-
-### Build and Install
 
 Now that you have prepared your build environment, navigate to the root of your workspace (where you cloned this repository) and invoke:
 
@@ -75,7 +76,7 @@ The outputs will be:
 
 #### About components
 
-Whther the above creates a single `.deb` package containing all installable components, or a separate `.deb` file for each. This behavior is controlled by the option `CPACK_DEB_COMPONENT_INSTALL` found in any of these places (in order of priority):
+The above will either create a single `.deb` package containing all installable components, or a separate `.deb` file for each. This behavior is controlled by the option `CPACK_DEB_COMPONENT_INSTALL` found in any of these places (in order of priority):
 
 1. `CPackConfig.cmake` within the top-level folder of your project root (if you are using `common-core` as a submodule within another repository)
 2. [CPackConfig.cmake](../../../CPackConfig.cmake) within [common-core](../../..)

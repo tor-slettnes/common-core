@@ -5,11 +5,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(PKG_COMPONENT "common-settings")
+set(INSTALL_COMPONENT "common-settings")
 
-BuildSettings(COMPONENT ${PKG_COMPONENT})
+BuildSettings(INSTALL_COMPONENT "${INSTALL_COMPONENT}")
 
-cpack_add_component(${PKG_COMPONENT}
+cpack_add_component(${INSTALL_COMPONENT}
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "Common Core - Common product settings"
   DESCRIPTION "Generic template for overall product components, "

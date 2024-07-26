@@ -9,25 +9,25 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-inline.h++"
 
-namespace core::protobuf
+namespace protobuf
 {
     //==========================================================================
     // ::platform::network::GlobalData
 
     void encode(const ::platform::network::GlobalData &data,
-                ::cc::platform::network::GlobalData *msg) noexcept
+                ::cc::network::GlobalData *msg) noexcept
     {
-        msg->set_state(encoded<::cc::platform::network::NetworkState>(data.state));
+        msg->set_state(encoded<::cc::network::NetworkState>(data.state));
         msg->set_connectivity(
-            encoded<::cc::platform::network::ConnectivityState>(data.connectivity));
+            encoded<::cc::network::ConnectivityState>(data.connectivity));
         msg->set_wireless_hardware_enabled(data.wireless_hardware_enabled);
         msg->set_wireless_enabled(data.wireless_enabled);
         msg->set_wireless_allowed(data.wireless_allowed);
         msg->set_wireless_band_selection(
-            encoded<::cc::platform::network::WirelessBandSelection>(data.wireless_band_selection));
+            encoded<::cc::network::WirelessBandSelection>(data.wireless_band_selection));
     }
 
-    void decode(const ::cc::platform::network::GlobalData &msg,
+    void decode(const ::cc::network::GlobalData &msg,
                 ::platform::network::GlobalData *data) noexcept
     {
         data->state = decoded<NMState>(msg.state());
@@ -43,9 +43,9 @@ namespace core::protobuf
     // ::platform::network::IPConfig
 
     void encode(const ::platform::network::IPConfigData &config,
-                ::cc::platform::network::IPConfigData *msg) noexcept
+                ::cc::network::IPConfigData *msg) noexcept
     {
-        msg->set_method(encoded<::cc::platform::network::IPConfigMethod>(config.method));
+        msg->set_method(encoded<::cc::network::IPConfigMethod>(config.method));
 
         for (const ::platform::network::AddressData &data : config.address_data)
         {
@@ -62,7 +62,7 @@ namespace core::protobuf
         }
     }
 
-    void decode(const ::cc::platform::network::IPConfigData &msg,
+    void decode(const ::cc::network::IPConfigData &msg,
                 ::platform::network::IPConfigData *config) noexcept
     {
         config->method = decoded<::platform::network::IPConfigMethod>(msg.method());
@@ -89,12 +89,12 @@ namespace core::protobuf
     // ::platform::network::IPConfigMethod
 
     void encode(::platform::network::IPConfigMethod method,
-                ::cc::platform::network::IPConfigMethod *protomethod) noexcept
+                ::cc::network::IPConfigMethod *protomethod) noexcept
     {
-        *protomethod = static_cast<::cc::platform::network::IPConfigMethod>(method);
+        *protomethod = static_cast<::cc::network::IPConfigMethod>(method);
     }
 
-    void decode(::cc::platform::network::IPConfigMethod protomethod,
+    void decode(::cc::network::IPConfigMethod protomethod,
                 ::platform::network::IPConfigMethod *method) noexcept
     {
         *method = static_cast<::platform::network::IPConfigMethod>(protomethod);
@@ -104,13 +104,13 @@ namespace core::protobuf
     // ::platform::network::AddressData
 
     void encode(const ::platform::network::AddressData &data,
-                ::cc::platform::network::AddressData *msg) noexcept
+                ::cc::network::AddressData *msg) noexcept
     {
         msg->set_address(data.address);
         msg->set_prefixlength(data.prefixlength);
     }
 
-    void decode(const ::cc::platform::network::AddressData &msg,
+    void decode(const ::cc::network::AddressData &msg,
                 ::platform::network::AddressData *data) noexcept
     {
         data->address = msg.address();
@@ -121,7 +121,7 @@ namespace core::protobuf
     // ::platform::network::ConnectionMap
 
     void encode(const ::platform::network::ConnectionMap &map,
-                ::cc::platform::network::ConnectionMap *msg) noexcept
+                ::cc::network::ConnectionMap *msg) noexcept
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[key, ref] : map)
@@ -130,7 +130,7 @@ namespace core::protobuf
         }
     }
 
-    void decode(const ::cc::platform::network::ConnectionMap &msg,
+    void decode(const ::cc::network::ConnectionMap &msg,
                 ::platform::network::ConnectionMap *map) noexcept
     {
         for (const auto &[key, data] : msg.map())
@@ -144,7 +144,7 @@ namespace core::protobuf
     // ::platform::network::ConnectionData
 
     void encode(const ::platform::network::ConnectionData &data,
-                ::cc::platform::network::ConnectionData *msg) noexcept
+                ::cc::network::ConnectionData *msg) noexcept
     {
         msg->set_id(data.id);
         msg->set_interface(data.interface);
@@ -170,7 +170,7 @@ namespace core::protobuf
         }
     }
 
-    void decode(const ::cc::platform::network::ConnectionData &msg,
+    void decode(const ::cc::network::ConnectionData &msg,
                 ::platform::network::ConnectionData *data) noexcept
     {
         data->id = msg.id();
@@ -182,12 +182,12 @@ namespace core::protobuf
 
         switch (msg.data_case())
         {
-        case ::cc::platform::network::ConnectionData::DataCase::kWiredData:
+        case ::cc::network::ConnectionData::DataCase::kWiredData:
             data->specific_data =
                 decoded<::platform::network::WiredConnectionData>(msg.wired_data());
             break;
 
-        case ::cc::platform::network::ConnectionData::DataCase::kWirelessData:
+        case ::cc::network::ConnectionData::DataCase::kWirelessData:
             data->specific_data =
                 decoded<::platform::network::WirelessConnectionData>(msg.wireless_data());
             break;
@@ -202,12 +202,12 @@ namespace core::protobuf
     // ::platform::network::WiredConnectionData
 
     void encode(const ::platform::network::WiredConnectionData &data,
-                ::cc::platform::network::WiredConnectionData *msg) noexcept
+                ::cc::network::WiredConnectionData *msg) noexcept
     {
         msg->set_auto_negotiate(data.auto_negotiate);
     }
 
-    void decode(const ::cc::platform::network::WiredConnectionData &msg,
+    void decode(const ::cc::network::WiredConnectionData &msg,
                 ::platform::network::WiredConnectionData *data) noexcept
     {
         data->auto_negotiate = msg.auto_negotiate();
@@ -217,15 +217,15 @@ namespace core::protobuf
     // ::platform::network::WirelessConnectionData
 
     void encode(const ::platform::network::WirelessConnectionData &data,
-                ::cc::platform::network::WirelessConnectionData *msg) noexcept
+                ::cc::network::WirelessConnectionData *msg) noexcept
     {
         msg->set_ssid(data.ssid.data(), data.ssid.size());
-        msg->set_mode(encoded<::cc::platform::network::WirelessMode>(data.mode));
+        msg->set_mode(encoded<::cc::network::WirelessMode>(data.mode));
         msg->set_hidden(data.hidden);
         msg->set_tx_power(data.tx_power);
-        msg->set_key_mgmt(encoded<::cc::platform::network::KeyManagement>(data.key_mgmt_type()));
+        msg->set_key_mgmt(encoded<::cc::network::KeyManagement>(data.key_mgmt_type()));
         msg->set_auth_protos(data.auth_protos);
-        msg->set_auth_type(encoded<::cc::platform::network::AuthenticationType>(data.auth_type()));
+        msg->set_auth_type(encoded<::cc::network::AuthenticationType>(data.auth_type()));
 
         if (auto *wep = std::get_if<::platform::network::WEP_Data>(&data.auth))
         {
@@ -242,11 +242,11 @@ namespace core::protobuf
 
         if (data.band)
         {
-            msg->set_band(encoded<::cc::platform::network::WirelessBandSelection>(*data.band));
+            msg->set_band(encoded<::cc::network::WirelessBandSelection>(*data.band));
         }
     }
 
-    void decode(const ::cc::platform::network::WirelessConnectionData &msg,
+    void decode(const ::cc::network::WirelessConnectionData &msg,
                 ::platform::network::WirelessConnectionData *data) noexcept
     {
         data->ssid = msg.ssid();
@@ -258,20 +258,20 @@ namespace core::protobuf
 
         switch (msg.auth_case())
         {
-        case ::cc::platform::network::WirelessConnectionData::AuthCase::kWep:
+        case ::cc::network::WirelessConnectionData::AuthCase::kWep:
             data->auth = decoded<::platform::network::WEP_Data>(msg.wep());
             break;
 
-        case ::cc::platform::network::WirelessConnectionData::AuthCase::kWpa:
+        case ::cc::network::WirelessConnectionData::AuthCase::kWpa:
             data->auth = decoded<::platform::network::WPA_Data>(msg.wpa());
             break;
 
-        case ::cc::platform::network::WirelessConnectionData::AuthCase::kEap:
+        case ::cc::network::WirelessConnectionData::AuthCase::kEap:
             data->auth = decoded<::platform::network::EAP_Data>(msg.eap());
             break;
 
         default:
-            data->auth = types::nullvalue;
+            data->auth = core::types::nullvalue;
             break;
         }
 
@@ -285,7 +285,7 @@ namespace core::protobuf
     // ::platform::network::ActiveConnectionMap
 
     void encode(const ::platform::network::ActiveConnectionMap &map,
-                ::cc::platform::network::ActiveConnectionMap *msg) noexcept
+                ::cc::network::ActiveConnectionMap *msg) noexcept
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[key, ref] : map)
@@ -294,7 +294,7 @@ namespace core::protobuf
         }
     }
 
-    void decode(const ::cc::platform::network::ActiveConnectionMap &msg,
+    void decode(const ::cc::network::ActiveConnectionMap &msg,
                 ::platform::network::ActiveConnectionMap *map) noexcept
     {
         for (const auto &[key, data] : msg.map())
@@ -308,13 +308,13 @@ namespace core::protobuf
     // ::platform::network::ActiveConnectionData
 
     void encode(const ::platform::network::ActiveConnectionData &data,
-                ::cc::platform::network::ActiveConnectionData *msg) noexcept
+                ::cc::network::ActiveConnectionData *msg) noexcept
     {
         msg->set_id(data.id);
-        msg->set_type(encoded<::cc::platform::network::ConnectionType>(data.type));
-        msg->set_state(encoded<::cc::platform::network::ActiveConnectionState>(data.state));
+        msg->set_type(encoded<::cc::network::ConnectionType>(data.type));
+        msg->set_state(encoded<::cc::network::ActiveConnectionState>(data.state));
         msg->set_state_reason(
-            encoded<::cc::platform::network::ActiveConnectionStateReason>(data.state_reason));
+            encoded<::cc::network::ActiveConnectionStateReason>(data.state_reason));
 
         msg->set_state_flags(data.state_flags);
         msg->set_default4(data.default4);
@@ -326,7 +326,7 @@ namespace core::protobuf
         encode(data.ip6config, msg->mutable_ip6config());
     }
 
-    void decode(const ::cc::platform::network::ActiveConnectionData &msg,
+    void decode(const ::cc::network::ActiveConnectionData &msg,
                 ::platform::network::ActiveConnectionData *data) noexcept
     {
         data->id = msg.id();
@@ -347,18 +347,18 @@ namespace core::protobuf
     // ::platform::network::WEP_Data
 
     void encode(const ::platform::network::WEP_Data &auth,
-                ::cc::platform::network::WEP_Data *msg) noexcept
+                ::cc::network::WEP_Data *msg) noexcept
     {
-        msg->set_auth_alg(encoded<::cc::platform::network::AuthenticationAlgorithm>(auth.auth_alg));
+        msg->set_auth_alg(encoded<::cc::network::AuthenticationAlgorithm>(auth.auth_alg));
         for (const core::types::ByteVector &key : auth.keys)
         {
             msg->add_key(key.data(), key.size());
         }
         msg->set_key_idx(auth.key_idx);
-        msg->set_key_type(encoded<::cc::platform::network::WEP_KeyType>(auth.key_type));
+        msg->set_key_type(encoded<::cc::network::WEP_KeyType>(auth.key_type));
     }
 
-    void decode(const ::cc::platform::network::WEP_Data &msg,
+    void decode(const ::cc::network::WEP_Data &msg,
                 ::platform::network::WEP_Data *auth) noexcept
     {
         auth->auth_alg =
@@ -387,12 +387,12 @@ namespace core::protobuf
     // ::platform::network::WPA_Data
 
     void encode(const ::platform::network::WPA_Data &auth,
-                ::cc::platform::network::WPA_Data *msg) noexcept
+                ::cc::network::WPA_Data *msg) noexcept
     {
         msg->set_psk(auth.psk);
     }
 
-    void decode(const ::cc::platform::network::WPA_Data &msg,
+    void decode(const ::cc::network::WPA_Data &msg,
                 ::platform::network::WPA_Data *auth) noexcept
     {
         auth->psk = msg.psk();
@@ -402,14 +402,14 @@ namespace core::protobuf
     // ::platform::network::EAP_Data
 
     void encode(const ::platform::network::EAP_Data &auth,
-                ::cc::platform::network::EAP_Data *msg) noexcept
+                ::cc::network::EAP_Data *msg) noexcept
     {
         msg->set_auth_alg(
-            encoded<::cc::platform::network::AuthenticationAlgorithm>(
+            encoded<::cc::network::AuthenticationAlgorithm>(
                 auth.auth_alg));
 
-        msg->set_eap_type(encoded<::cc::platform::network::EAP_Type>(auth.eap_type));
-        msg->set_eap_phase2(encoded<::cc::platform::network::EAP_Phase2>(auth.eap_phase2));
+        msg->set_eap_type(encoded<::cc::network::EAP_Type>(auth.eap_type));
+        msg->set_eap_phase2(encoded<::cc::network::EAP_Phase2>(auth.eap_phase2));
         msg->set_anonymous_identity(auth.anonymous_identity);
         msg->set_domain(auth.domain);
         msg->set_identity(auth.identity);
@@ -421,10 +421,10 @@ namespace core::protobuf
         msg->set_client_cert_password(auth.client_cert_password);
         msg->set_pac_file(auth.pac_file.string());
         msg->set_fast_provisioning(
-            encoded<::cc::platform::network::FAST_Provisioning>(auth.fast_provisioning));
+            encoded<::cc::network::FAST_Provisioning>(auth.fast_provisioning));
     }
 
-    void decode(const ::cc::platform::network::EAP_Data &msg,
+    void decode(const ::cc::network::EAP_Data &msg,
                 ::platform::network::EAP_Data *auth) noexcept
     {
         auth->auth_alg =
@@ -450,12 +450,12 @@ namespace core::protobuf
     // ::platform::network::Device
 
     void encode(const ::platform::network::DeviceData &device,
-                ::cc::platform::network::DeviceData *msg) noexcept
+                ::cc::network::DeviceData *msg) noexcept
     {
-        msg->set_type(encoded<::cc::platform::network::DeviceType>(device.type));
-        msg->set_state(encoded<::cc::platform::network::DeviceState>(device.state));
+        msg->set_type(encoded<::cc::network::DeviceType>(device.type));
+        msg->set_state(encoded<::cc::network::DeviceState>(device.state));
         msg->set_state_reason(
-            encoded<::cc::platform::network::DeviceStateReason>(device.state_reason));
+            encoded<::cc::network::DeviceStateReason>(device.state_reason));
         msg->set_flags(device.flags);
         msg->set_interface(device.interface);
         msg->set_hwaddress(device.hwAddress);
@@ -465,9 +465,9 @@ namespace core::protobuf
         encode(device.ip6config, msg->mutable_ip6config());
 
         msg->set_ip4connectivity(
-            encoded<::cc::platform::network::ConnectivityState>(device.ip4connectivity));
+            encoded<::cc::network::ConnectivityState>(device.ip4connectivity));
         msg->set_ip6connectivity(
-            encoded<::cc::platform::network::ConnectivityState>(device.ip6connectivity));
+            encoded<::cc::network::ConnectivityState>(device.ip6connectivity));
 
         if (auto *data = std::get_if<::platform::network::WiredDeviceData>(&device.specific_data))
         {
@@ -479,7 +479,7 @@ namespace core::protobuf
         }
     }
 
-    void decode(const ::cc::platform::network::DeviceData &msg,
+    void decode(const ::cc::network::DeviceData &msg,
                 ::platform::network::DeviceData *device) noexcept
     {
         device->type = decoded<NMDeviceType>(msg.type());
@@ -496,12 +496,12 @@ namespace core::protobuf
 
         switch (msg.devicedata_case())
         {
-        case ::cc::platform::network::DeviceData::DevicedataCase::kWiredData:
+        case ::cc::network::DeviceData::DevicedataCase::kWiredData:
             device->specific_data =
                 decoded<::platform::network::WiredDeviceData>(msg.wired_data());
             break;
 
-        case ::cc::platform::network::DeviceData::DevicedataCase::kWirelessData:
+        case ::cc::network::DeviceData::DevicedataCase::kWirelessData:
             device->specific_data =
                 decoded<::platform::network::WirelessDeviceData>(msg.wireless_data());
             break;
@@ -515,12 +515,12 @@ namespace core::protobuf
     // ::platform::network::WiredDeviceData
 
     void encode(const ::platform::network::WiredDeviceData &data,
-                ::cc::platform::network::WiredDeviceData *msg) noexcept
+                ::cc::network::WiredDeviceData *msg) noexcept
     {
         msg->set_speed(data.speed);
     }
 
-    void decode(const ::cc::platform::network::WiredDeviceData &msg,
+    void decode(const ::cc::network::WiredDeviceData &msg,
                 ::platform::network::WiredDeviceData *data) noexcept
     {
         data->speed = msg.speed();
@@ -530,15 +530,15 @@ namespace core::protobuf
     // ::platform::network::WirelessDeviceData
 
     void encode(const ::platform::network::WirelessDeviceData &data,
-                ::cc::platform::network::WirelessDeviceData *msg) noexcept
+                ::cc::network::WirelessDeviceData *msg) noexcept
     {
-        msg->set_mode(encoded<::cc::platform::network::WirelessMode>(data.mode));
+        msg->set_mode(encoded<::cc::network::WirelessMode>(data.mode));
         msg->set_bitrate(data.bitrate);
         msg->set_active_accesspoint(data.active_accesspoint);
         encode(data.lastScan, msg->mutable_last_scan());
     }
 
-    void decode(const ::cc::platform::network::WirelessDeviceData &msg,
+    void decode(const ::cc::network::WirelessDeviceData &msg,
                 ::platform::network::WirelessDeviceData *data) noexcept
     {
         data->mode = decoded<NM80211Mode>(msg.mode());
@@ -551,7 +551,7 @@ namespace core::protobuf
     // ::platform::network::DeviceMap
 
     void encode(const ::platform::network::DeviceMap &map,
-                ::cc::platform::network::DeviceMap *msg) noexcept
+                ::cc::network::DeviceMap *msg) noexcept
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[key, ref] : map)
@@ -560,7 +560,7 @@ namespace core::protobuf
         }
     }
 
-    void decode(const ::cc::platform::network::DeviceMap &msg,
+    void decode(const ::cc::network::DeviceMap &msg,
                 ::platform::network::DeviceMap *map) noexcept
     {
         for (const auto &[key, data] : msg.map())
@@ -574,7 +574,7 @@ namespace core::protobuf
     // ::platform::network::AccessPoint
 
     void encode(const ::platform::network::AccessPointData &ap,
-                ::cc::platform::network::AccessPointData *msg) noexcept
+                ::cc::network::AccessPointData *msg) noexcept
     {
         msg->set_ssid(ap.ssid.data(), ap.ssid.size());
         msg->set_frequency(ap.frequency);
@@ -582,14 +582,14 @@ namespace core::protobuf
         msg->set_rsn_flags(ap.rsn_flags);
         msg->set_wpa_flags(ap.wpa_flags);
         msg->set_hwaddress(ap.hwAddress);
-        msg->set_mode(encoded<::cc::platform::network::WirelessMode>(ap.mode));
+        msg->set_mode(encoded<::cc::network::WirelessMode>(ap.mode));
         msg->set_maxbitrate(ap.maxbitrate);
         msg->set_strength(ap.strength);
         encode(ap.lastSeen, msg->mutable_lastseen());
-        msg->set_auth_type(encoded<::cc::platform::network::AuthenticationType>(ap.auth_type()));
+        msg->set_auth_type(encoded<::cc::network::AuthenticationType>(ap.auth_type()));
     }
 
-    void decode(const ::cc::platform::network::AccessPointData &msg,
+    void decode(const ::cc::network::AccessPointData &msg,
                 ::platform::network::AccessPointData *ap) noexcept
     {
         ap->ssid = msg.ssid();
@@ -601,14 +601,14 @@ namespace core::protobuf
         ap->mode = decoded<NM80211Mode>(msg.mode());
         ap->maxbitrate = msg.maxbitrate();
         ap->strength = msg.strength();
-        ap->lastSeen = decoded<dt::TimePoint>(msg.lastseen());
+        ap->lastSeen = decoded<core::dt::TimePoint>(msg.lastseen());
     }
 
     //==========================================================================
     // ::platform::network::AccessPointMap
 
     void encode(const ::platform::network::AccessPointMap &map,
-                ::cc::platform::network::AccessPointMap *msg) noexcept
+                ::cc::network::AccessPointMap *msg) noexcept
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[key, ref] : map)
@@ -617,7 +617,7 @@ namespace core::protobuf
         }
     }
 
-    void decode(const ::cc::platform::network::AccessPointMap &msg,
+    void decode(const ::cc::network::AccessPointMap &msg,
                 ::platform::network::AccessPointMap *map) noexcept
     {
         for (const auto &[key, data] : msg.map())
@@ -631,7 +631,7 @@ namespace core::protobuf
     // ::platform::network::SSIDMap
 
     void encode(const ::platform::network::SSIDMap &map,
-                ::cc::platform::network::AccessPointMap *msg) noexcept
+                ::cc::network::AccessPointMap *msg) noexcept
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[key, ref] : map)
@@ -640,7 +640,7 @@ namespace core::protobuf
         }
     }
 
-    void decode(const ::cc::platform::network::AccessPointMap &msg,
+    void decode(const ::cc::network::AccessPointMap &msg,
                 ::platform::network::SSIDMap *map) noexcept
     {
         for (const auto &[key, data] : msg.map())
@@ -654,12 +654,12 @@ namespace core::protobuf
     // ::platform::network::WirelessBandSetting
 
     void encode(::platform::network::WirelessBandSelection band_selection,
-                ::cc::platform::network::WirelessBandSelection *protoband) noexcept
+                ::cc::network::WirelessBandSelection *protoband) noexcept
     {
-        *protoband = static_cast<::cc::platform::network::WirelessBandSelection>(band_selection);
+        *protoband = static_cast<::cc::network::WirelessBandSelection>(band_selection);
     }
 
-    void decode(::cc::platform::network::WirelessBandSelection proto_band,
+    void decode(::cc::network::WirelessBandSelection proto_band,
                 ::platform::network::WirelessBandSelection *band_selection) noexcept
     {
         *band_selection = static_cast<::platform::network::WirelessBandSelection>(proto_band);
@@ -668,12 +668,12 @@ namespace core::protobuf
     //==========================================================================
     // ::platform::network::NM80211Mode
 
-    void encode(NM80211Mode mode, ::cc::platform::network::WirelessMode *protomode) noexcept
+    void encode(NM80211Mode mode, ::cc::network::WirelessMode *protomode) noexcept
     {
-        *protomode = static_cast<::cc::platform::network::WirelessMode>(mode);
+        *protomode = static_cast<::cc::network::WirelessMode>(mode);
     }
 
-    void decode(::cc::platform::network::WirelessMode protomode, NM80211Mode *mode) noexcept
+    void decode(::cc::network::WirelessMode protomode, NM80211Mode *mode) noexcept
     {
         *mode = static_cast<NM80211Mode>(protomode);
     }
@@ -682,12 +682,12 @@ namespace core::protobuf
     // ::platform::network::KeyManagement
 
     void encode(::platform::network::KeyManagement key_mgmt,
-                ::cc::platform::network::KeyManagement *proto_key_mgmt) noexcept
+                ::cc::network::KeyManagement *proto_key_mgmt) noexcept
     {
-        *proto_key_mgmt = static_cast<::cc::platform::network::KeyManagement>(key_mgmt);
+        *proto_key_mgmt = static_cast<::cc::network::KeyManagement>(key_mgmt);
     }
 
-    void decode(::cc::platform::network::KeyManagement proto_key_mgmt,
+    void decode(::cc::network::KeyManagement proto_key_mgmt,
                 ::platform::network::KeyManagement *key_mgmt) noexcept
     {
         *key_mgmt = static_cast<::platform::network::KeyManagement>(proto_key_mgmt);
@@ -697,12 +697,12 @@ namespace core::protobuf
     // ::platform::network::KeyManagement
 
     void encode(::platform::network::AuthenticationType key_mgmt,
-                ::cc::platform::network::AuthenticationType *proto_key_mgmt) noexcept
+                ::cc::network::AuthenticationType *proto_key_mgmt) noexcept
     {
-        *proto_key_mgmt = static_cast<::cc::platform::network::AuthenticationType>(key_mgmt);
+        *proto_key_mgmt = static_cast<::cc::network::AuthenticationType>(key_mgmt);
     }
 
-    void decode(::cc::platform::network::AuthenticationType proto_key_mgmt,
+    void decode(::cc::network::AuthenticationType proto_key_mgmt,
                 ::platform::network::AuthenticationType *key_mgmt) noexcept
     {
         *key_mgmt = static_cast<::platform::network::AuthenticationType>(proto_key_mgmt);
@@ -712,12 +712,12 @@ namespace core::protobuf
     // ::platform::network::AuthenticationAlgorithm
 
     void encode(::platform::network::AuthenticationAlgorithm alg,
-                ::cc::platform::network::AuthenticationAlgorithm *proto_alg) noexcept
+                ::cc::network::AuthenticationAlgorithm *proto_alg) noexcept
     {
-        *proto_alg = static_cast<::cc::platform::network::AuthenticationAlgorithm>(alg);
+        *proto_alg = static_cast<::cc::network::AuthenticationAlgorithm>(alg);
     }
 
-    void decode(::cc::platform::network::AuthenticationAlgorithm proto_alg,
+    void decode(::cc::network::AuthenticationAlgorithm proto_alg,
                 ::platform::network::AuthenticationAlgorithm *alg) noexcept
     {
         *alg = static_cast<::platform::network::AuthenticationAlgorithm>(proto_alg);
@@ -727,12 +727,12 @@ namespace core::protobuf
     // ::platform::network::EAP_Type
 
     void encode(::platform::network::EAP_Type eap_type,
-                ::cc::platform::network::EAP_Type *proto_eap_type) noexcept
+                ::cc::network::EAP_Type *proto_eap_type) noexcept
     {
-        *proto_eap_type = static_cast<::cc::platform::network::EAP_Type>(eap_type);
+        *proto_eap_type = static_cast<::cc::network::EAP_Type>(eap_type);
     }
 
-    void decode(::cc::platform::network::EAP_Type proto_eap_type,
+    void decode(::cc::network::EAP_Type proto_eap_type,
                 ::platform::network::EAP_Type *eap_type) noexcept
     {
         *eap_type = static_cast<::platform::network::EAP_Type>(proto_eap_type);
@@ -742,12 +742,12 @@ namespace core::protobuf
     // ::platform::network::EAP_Phase2
 
     void encode(::platform::network::EAP_Phase2 phase2,
-                ::cc::platform::network::EAP_Phase2 *proto_phase2) noexcept
+                ::cc::network::EAP_Phase2 *proto_phase2) noexcept
     {
-        *proto_phase2 = static_cast<::cc::platform::network::EAP_Phase2>(phase2);
+        *proto_phase2 = static_cast<::cc::network::EAP_Phase2>(phase2);
     }
 
-    void decode(::cc::platform::network::EAP_Phase2 proto_phase2,
+    void decode(::cc::network::EAP_Phase2 proto_phase2,
                 ::platform::network::EAP_Phase2 *phase2) noexcept
     {
         *phase2 = static_cast<::platform::network::EAP_Phase2>(proto_phase2);
@@ -757,12 +757,12 @@ namespace core::protobuf
     // ::platform::network::FAST_Provisioning
 
     void encode(::platform::network::FAST_Provisioning provisioning,
-                ::cc::platform::network::FAST_Provisioning *proto_provisioning) noexcept
+                ::cc::network::FAST_Provisioning *proto_provisioning) noexcept
     {
-        *proto_provisioning = static_cast<::cc::platform::network::FAST_Provisioning>(provisioning);
+        *proto_provisioning = static_cast<::cc::network::FAST_Provisioning>(provisioning);
     }
 
-    void decode(::cc::platform::network::FAST_Provisioning proto_provisioning,
+    void decode(::cc::network::FAST_Provisioning proto_provisioning,
                 ::platform::network::FAST_Provisioning *provisioning) noexcept
     {
         *provisioning = static_cast<::platform::network::FAST_Provisioning>(proto_provisioning);
@@ -772,12 +772,12 @@ namespace core::protobuf
     // NMWepKeyType
 
     void encode(NMWepKeyType type,
-                ::cc::platform::network::WEP_KeyType *proto_type) noexcept
+                ::cc::network::WEP_KeyType *proto_type) noexcept
     {
-        *proto_type = static_cast<::cc::platform::network::WEP_KeyType>(type);
+        *proto_type = static_cast<::cc::network::WEP_KeyType>(type);
     }
 
-    void decode(::cc::platform::network::WEP_KeyType proto_type,
+    void decode(::cc::network::WEP_KeyType proto_type,
                 NMWepKeyType *type) noexcept
     {
         *type = static_cast<NMWepKeyType>(proto_type);
@@ -786,12 +786,12 @@ namespace core::protobuf
     //==========================================================================
     // NMDeviceType
 
-    void encode(NMDeviceType type, ::cc::platform::network::DeviceType *prototype) noexcept
+    void encode(NMDeviceType type, ::cc::network::DeviceType *prototype) noexcept
     {
-        *prototype = static_cast<::cc::platform::network::DeviceType>(type);
+        *prototype = static_cast<::cc::network::DeviceType>(type);
     }
 
-    void decode(::cc::platform::network::DeviceType prototype, NMDeviceType *type) noexcept
+    void decode(::cc::network::DeviceType prototype, NMDeviceType *type) noexcept
     {
         *type = static_cast<NMDeviceType>(prototype);
     }
@@ -800,12 +800,12 @@ namespace core::protobuf
     // NMDeviceState
 
     void encode(NMDeviceState state,
-                ::cc::platform::network::DeviceState *protostate) noexcept
+                ::cc::network::DeviceState *protostate) noexcept
     {
-        *protostate = static_cast<::cc::platform::network::DeviceState>(state);
+        *protostate = static_cast<::cc::network::DeviceState>(state);
     }
 
-    void decode(::cc::platform::network::DeviceState protostate,
+    void decode(::cc::network::DeviceState protostate,
                 NMDeviceState *state) noexcept
     {
         *state = static_cast<NMDeviceState>(protostate);
@@ -815,12 +815,12 @@ namespace core::protobuf
     // NMDeviceReason
 
     void encode(NMDeviceStateReason reason,
-                ::cc::platform::network::DeviceStateReason *proto) noexcept
+                ::cc::network::DeviceStateReason *proto) noexcept
     {
-        *proto = static_cast<::cc::platform::network::DeviceStateReason>(reason);
+        *proto = static_cast<::cc::network::DeviceStateReason>(reason);
     }
 
-    void decode(::cc::platform::network::DeviceStateReason proto,
+    void decode(::cc::network::DeviceStateReason proto,
                 NMDeviceStateReason *reason) noexcept
     {
         *reason = static_cast<NMDeviceStateReason>(proto);
@@ -830,12 +830,12 @@ namespace core::protobuf
     // ::platform::network::ConnectionType
 
     void encode(::platform::network::ConnectionType type,
-                ::cc::platform::network::ConnectionType *prototype) noexcept
+                ::cc::network::ConnectionType *prototype) noexcept
     {
-        *prototype = static_cast<::cc::platform::network::ConnectionType>(type);
+        *prototype = static_cast<::cc::network::ConnectionType>(type);
     }
 
-    void decode(::cc::platform::network::ConnectionType prototype,
+    void decode(::cc::network::ConnectionType prototype,
                 ::platform::network::ConnectionType *type) noexcept
     {
         *type = static_cast<::platform::network::ConnectionType>(prototype);
@@ -845,12 +845,12 @@ namespace core::protobuf
     // NMActiveConnectionState
 
     void encode(NMActiveConnectionState state,
-                ::cc::platform::network::ActiveConnectionState *protostate) noexcept
+                ::cc::network::ActiveConnectionState *protostate) noexcept
     {
-        *protostate = static_cast<::cc::platform::network::ActiveConnectionState>(state);
+        *protostate = static_cast<::cc::network::ActiveConnectionState>(state);
     }
 
-    void decode(::cc::platform::network::ActiveConnectionState protostate,
+    void decode(::cc::network::ActiveConnectionState protostate,
                 NMActiveConnectionState *state) noexcept
     {
         *state = static_cast<NMActiveConnectionState>(protostate);
@@ -860,12 +860,12 @@ namespace core::protobuf
     // NMActiveConnectionStateReason
 
     void encode(NMActiveConnectionStateReason reason,
-                ::cc::platform::network::ActiveConnectionStateReason *proto) noexcept
+                ::cc::network::ActiveConnectionStateReason *proto) noexcept
     {
-        *proto = static_cast<::cc::platform::network::ActiveConnectionStateReason>(reason);
+        *proto = static_cast<::cc::network::ActiveConnectionStateReason>(reason);
     }
 
-    void decode(::cc::platform::network::ActiveConnectionStateReason proto,
+    void decode(::cc::network::ActiveConnectionStateReason proto,
                 NMActiveConnectionStateReason *reason) noexcept
     {
         *reason = static_cast<NMActiveConnectionStateReason>(proto);
@@ -875,12 +875,12 @@ namespace core::protobuf
     // NMConnectivityState
 
     void encode(NMConnectivityState state,
-                ::cc::platform::network::ConnectivityState *proto) noexcept
+                ::cc::network::ConnectivityState *proto) noexcept
     {
-        *proto = static_cast<::cc::platform::network::ConnectivityState>(state);
+        *proto = static_cast<::cc::network::ConnectivityState>(state);
     }
 
-    void decode(::cc::platform::network::ConnectivityState proto,
+    void decode(::cc::network::ConnectivityState proto,
                 NMConnectivityState *state) noexcept
     {
         *state = static_cast<NMConnectivityState>(proto);
@@ -890,14 +890,14 @@ namespace core::protobuf
     // NMState
 
     void encode(NMState state,
-                ::cc::platform::network::NetworkState *proto) noexcept
+                ::cc::network::NetworkState *proto) noexcept
     {
-        *proto = static_cast<::cc::platform::network::NetworkState>(state);
+        *proto = static_cast<::cc::network::NetworkState>(state);
     }
 
-    void decode(::cc::platform::network::NetworkState proto,
+    void decode(::cc::network::NetworkState proto,
                 NMState *state) noexcept
     {
         *state = static_cast<NMState>(proto);
     }
-}  // core::protobuf
+}  // protobuf

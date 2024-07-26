@@ -50,11 +50,11 @@ namespace platform::network::grpc
     ::grpc::Status RequestHandler::get_connections(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::network::ConnectionMap* response)
+        ::cc::network::ConnectionMap* response)
     {
         try
         {
-            core::protobuf::encode(
+            protobuf::encode(
                 network->get_connections(),
                 response);
 
@@ -68,13 +68,13 @@ namespace platform::network::grpc
 
     ::grpc::Status RequestHandler::define_connection(
         ::grpc::ServerContext* context,
-        const ::cc::platform::network::ConnectionRequest* request,
+        const ::cc::network::ConnectionRequest* request,
         ::google::protobuf::Empty* response)
     {
         try
         {
             network->define_connection(
-                core::protobuf::decoded<ConnectionData>(request->data()),
+                protobuf::decoded<ConnectionData>(request->data()),
                 request->activate());
 
             return ::grpc::Status::OK;
@@ -87,7 +87,7 @@ namespace platform::network::grpc
 
     ::grpc::Status RequestHandler::remove_connection(
         ::grpc::ServerContext* context,
-        const ::cc::platform::network::MappingKey* request,
+        const ::cc::network::MappingKey* request,
         ::google::protobuf::BoolValue* response)
     {
         try
@@ -104,7 +104,7 @@ namespace platform::network::grpc
 
     ::grpc::Status RequestHandler::activate_connection(
         ::grpc::ServerContext* context,
-        const ::cc::platform::network::MappingKey* request,
+        const ::cc::network::MappingKey* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -120,7 +120,7 @@ namespace platform::network::grpc
 
     ::grpc::Status RequestHandler::deactivate_connection(
         ::grpc::ServerContext* context,
-        const ::cc::platform::network::MappingKey* request,
+        const ::cc::network::MappingKey* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -137,11 +137,11 @@ namespace platform::network::grpc
     ::grpc::Status RequestHandler::get_active_connections(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::network::ActiveConnectionMap* response)
+        ::cc::network::ActiveConnectionMap* response)
     {
         try
         {
-            core::protobuf::encode(
+            protobuf::encode(
                 network->get_active_connections(),
                 response);
             return ::grpc::Status::OK;
@@ -171,11 +171,11 @@ namespace platform::network::grpc
     ::grpc::Status RequestHandler::get_aps(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::network::AccessPointMap* response)
+        ::cc::network::AccessPointMap* response)
     {
         try
         {
-            core::protobuf::encode(
+            protobuf::encode(
                 network->get_aps(),
                 response);
             return ::grpc::Status::OK;
@@ -188,22 +188,22 @@ namespace platform::network::grpc
 
     ::grpc::Status RequestHandler::connect_ap(
         ::grpc::ServerContext* context,
-        const ::cc::platform::network::AccessPointConnection* request,
+        const ::cc::network::AccessPointConnection* request,
         ::google::protobuf::Empty* response)
     {
         ConnectionData data;
         std::string apname;
-        core::protobuf::decode(request->connection(), &data);
+        protobuf::decode(request->connection(), &data);
 
         try
         {
             switch (request->key_case())
             {
-            case cc::platform::network::AccessPointConnection::KeyCase::kBssid:
+            case cc::network::AccessPointConnection::KeyCase::kBssid:
                 network->connect_ap(request->bssid(), data);
                 break;
 
-            case cc::platform::network::AccessPointConnection::KeyCase::kSsid:
+            case cc::network::AccessPointConnection::KeyCase::kSsid:
                 network->connect_ap(core::types::ByteVector(request->ssid()), data);
                 break;
 
@@ -222,11 +222,11 @@ namespace platform::network::grpc
     ::grpc::Status RequestHandler::get_devices(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::network::DeviceMap* response)
+        ::cc::network::DeviceMap* response)
     {
         try
         {
-            core::protobuf::encode(
+            protobuf::encode(
                 network->get_devices(),
                 response);
 
@@ -241,11 +241,11 @@ namespace platform::network::grpc
     ::grpc::Status RequestHandler::get_global_data(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::network::GlobalData* response)
+        ::cc::network::GlobalData* response)
     {
         try
         {
-            core::protobuf::encode(
+            protobuf::encode(
                 *network->get_global_data(),
                 response);
 
@@ -259,7 +259,7 @@ namespace platform::network::grpc
 
     ::grpc::Status RequestHandler::set_wireless_enabled(
         ::grpc::ServerContext* context,
-        const ::cc::platform::network::RadioState* request,
+        const ::cc::network::RadioState* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -291,13 +291,13 @@ namespace platform::network::grpc
 
     ::grpc::Status RequestHandler::select_wireless_band(
         ::grpc::ServerContext* context,
-        const ::cc::platform::network::WirelessBandSetting* request,
+        const ::cc::network::WirelessBandSetting* request,
         ::google::protobuf::Empty* response)
     {
         try
         {
             network->select_wireless_band(
-                core::protobuf::decoded<WirelessBandSelection>(request->band_selection()));
+                protobuf::decoded<WirelessBandSelection>(request->band_selection()));
 
             return ::grpc::Status::OK;
         }
@@ -310,9 +310,9 @@ namespace platform::network::grpc
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext* context,
         const ::cc::signal::Filter* filter,
-        ::grpc::ServerWriter<::cc::platform::network::Signal>* writer)
+        ::grpc::ServerWriter<::cc::network::Signal>* writer)
     {
-        return this->stream_signals<cc::platform::network::Signal, SignalQueue>(
+        return this->stream_signals<cc::network::Signal, SignalQueue>(
             context,
             filter,
             writer);

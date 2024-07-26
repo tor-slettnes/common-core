@@ -6,14 +6,14 @@
 //==============================================================================
 
 #pragma once
-#include "network.grpc.pb.h"  // Generated from `demo-interface.idl`
+#include "network.grpc.pb.h"  // Generated from `network.proto`
 #include "grpc-signalclient.h++"
 #include "types/create-shared.h++"
 
 namespace platform::network::grpc
 {
-    using ClientBaseImpl = core::grpc::SignalClient<cc::platform::network::Network,
-                                                    cc::platform::network::Signal>;
+    using ClientBaseImpl = core::grpc::SignalClient<cc::network::Network,
+                                                    cc::network::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>

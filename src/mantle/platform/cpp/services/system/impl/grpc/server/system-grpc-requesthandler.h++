@@ -15,12 +15,12 @@
 namespace platform::system::grpc
 {
     class RequestHandler
-        : public core::grpc::SignalRequestHandler<cc::platform::system::System>,
+        : public core::grpc::SignalRequestHandler<cc::system::System>,
           public core::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;
-        using Super = core::grpc::RequestHandler<cc::platform::system::System>;
+        using Super = core::grpc::RequestHandler<cc::system::System>;
 
     protected:
         //======================================================================
@@ -29,7 +29,7 @@ namespace platform::system::grpc
         ::grpc::Status get_product_info(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::platform::system::ProductInfo* response) override;
+            ::cc::system::ProductInfo* response) override;
 
         ::grpc::Status set_serial_number(
             ::grpc::ServerContext* context,
@@ -47,7 +47,7 @@ namespace platform::system::grpc
         ::grpc::Status get_host_info(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::platform::system::HostInfo* response) override;
+            ::cc::system::HostInfo* response) override;
 
         ::grpc::Status set_host_name(
             ::grpc::ServerContext* context,
@@ -61,13 +61,13 @@ namespace platform::system::grpc
 
         ::grpc::Status set_time_config(
             ::grpc::ServerContext* context,
-            const ::cc::platform::system::TimeConfig* request,
+            const ::cc::system::TimeConfig* request,
             ::google::protobuf::Empty* response) override;
 
         ::grpc::Status get_time_config(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::platform::system::TimeConfig* response) override;
+            ::cc::system::TimeConfig* response) override;
 
         // Current timestamp
         ::grpc::Status set_current_time(
@@ -88,48 +88,48 @@ namespace platform::system::grpc
         ::grpc::Status get_timezone_specs(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::grpc::ServerWriter<::cc::platform::system::TimeZoneSpec>* writer) override;
+            ::grpc::ServerWriter<::cc::system::TimeZoneSpec>* writer) override;
 
         // Return geographic information about an arbitrary timezone.
         // If no zone name is provided, return information about the configured zone.
         ::grpc::Status get_timezone_spec(
             ::grpc::ServerContext* context,
-            const ::cc::platform::system::TimeZoneName* request,
-            ::cc::platform::system::TimeZoneSpec* response) override;
+            const ::cc::system::TimeZoneName* request,
+            ::cc::system::TimeZoneSpec* response) override;
 
         // Get or set the timezone configuration
         ::grpc::Status set_timezone(
             ::grpc::ServerContext* context,
-            const ::cc::platform::system::TimeZoneConfig* request,
-            ::cc::platform::system::TimeZoneInfo* response) override;
+            const ::cc::system::TimeZoneConfig* request,
+            ::cc::system::TimeZoneInfo* response) override;
 
         ::grpc::Status get_configured_timezone(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::platform::system::TimeZoneConfig* response) override;
+            ::cc::system::TimeZoneConfig* response) override;
 
         ::grpc::Status get_current_timezone(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::platform::system::TimeZoneInfo* response) override;
+            ::cc::system::TimeZoneInfo* response) override;
 
         //======================================================================
         // Spawn a new process, with or without capturing stdin/stdout/stderr.
 
         ::grpc::Status invoke_sync(
             ::grpc::ServerContext* context,
-            const ::cc::platform::system::CommandInvocation* request,
-            ::cc::platform::system::CommandResponse* response) override;
+            const ::cc::system::CommandInvocation* request,
+            ::cc::system::CommandResponse* response) override;
 
         ::grpc::Status invoke_async(
             ::grpc::ServerContext* context,
-            const ::cc::platform::system::CommandInvocation* request,
-            ::cc::platform::system::CommandInvocationStatus* response) override;
+            const ::cc::system::CommandInvocation* request,
+            ::cc::system::CommandInvocationStatus* response) override;
 
         ::grpc::Status invoke_finish(
             ::grpc::ServerContext* context,
-            const ::cc::platform::system::CommandInput* request,
-            ::cc::platform::system::CommandResponse* response) override;
+            const ::cc::system::CommandInput* request,
+            ::cc::system::CommandResponse* response) override;
 
         ::grpc::Status reboot(
             ::grpc::ServerContext* context,
@@ -142,6 +142,6 @@ namespace platform::system::grpc
         ::grpc::Status watch(
             ::grpc::ServerContext* context,
             const ::cc::signal::Filter* filter,
-            ::grpc::ServerWriter<::cc::platform::system::Signal>* writer) override;
+            ::grpc::ServerWriter<::cc::system::Signal>* writer) override;
     };
 }  // namespace platform::system::grpc

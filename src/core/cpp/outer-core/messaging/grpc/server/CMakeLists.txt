@@ -12,7 +12,6 @@ set(TARGET cc_core_messaging_grpc_server)
 set(LIB_DEPS
   cc_core_messaging_grpc_common
   cc_core_messaging_http
-  grpc++_reflection
 )
 
 set(SOURCES

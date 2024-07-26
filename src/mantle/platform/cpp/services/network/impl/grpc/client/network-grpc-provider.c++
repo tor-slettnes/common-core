@@ -32,54 +32,54 @@ namespace platform::network::grpc
         using namespace std::placeholders;
 
         this->client->add_mapping_handler(
-            cc::platform::network::Signal::kConnection,
+            cc::network::Signal::kConnection,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::platform::network::Signal &signal) {
+               const cc::network::Signal &signal) {
                 platform::network::signal_connection.emit(
                     action,
                     key,
-                    core::protobuf::decode_shared<ConnectionData>(signal.connection()));
+                    protobuf::decode_shared<ConnectionData>(signal.connection()));
             });
 
         this->client->add_mapping_handler(
-            cc::platform::network::Signal::kActiveConnection,
+            cc::network::Signal::kActiveConnection,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::platform::network::Signal &signal) {
+               const cc::network::Signal &signal) {
                 platform::network::signal_active_connection.emit(
                     action,
                     key,
-                    core::protobuf::decode_shared<ActiveConnectionData>(signal.active_connection()));
+                    protobuf::decode_shared<ActiveConnectionData>(signal.active_connection()));
             });
 
         this->client->add_mapping_handler(
-            cc::platform::network::Signal::kAccesspoint,
+            cc::network::Signal::kAccesspoint,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::platform::network::Signal &signal) {
+               const cc::network::Signal &signal) {
                 platform::network::signal_accesspoint.emit(
                     action,
                     key,
-                    core::protobuf::decode_shared<AccessPointData>(signal.accesspoint()));
+                    protobuf::decode_shared<AccessPointData>(signal.accesspoint()));
             });
 
         this->client->add_mapping_handler(
-            cc::platform::network::Signal::kDevice,
+            cc::network::Signal::kDevice,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::platform::network::Signal &signal) {
+               const cc::network::Signal &signal) {
                 platform::network::signal_device.emit(
                     action,
                     key,
-                    core::protobuf::decode_shared<DeviceData>(signal.device()));
+                    protobuf::decode_shared<DeviceData>(signal.device()));
             });
 
         this->client->add_handler(
-            cc::platform::network::Signal::kGlobal,
-            [](const cc::platform::network::Signal &signal) {
+            cc::network::Signal::kGlobal,
+            [](const cc::network::Signal &signal) {
                 platform::network::signal_globaldata.emit(
-                    core::protobuf::decode_shared<GlobalData>(signal.global()));
+                    protobuf::decode_shared<GlobalData>(signal.global()));
             });
     }
 
@@ -98,7 +98,7 @@ namespace platform::network::grpc
 
     std::string ClientProvider::get_hostname() const
     {
-        return core::protobuf::decoded<std::string>(
+        return protobuf::decoded<std::string>(
             this->client->call_check(&Client::Stub::get_hostname));
     }
 
@@ -106,7 +106,7 @@ namespace platform::network::grpc
     {
         this->client->call_check(
             &Client::Stub::set_hostname,
-            core::protobuf::encoded<core::protobuf::StringValue>(hostname));
+            protobuf::encoded<protobuf::StringValue>(hostname));
     }
 
     //==========================================================================
@@ -120,7 +120,7 @@ namespace platform::network::grpc
         }
         else
         {
-            return core::protobuf::decoded<ConnectionMap>(
+            return protobuf::decoded<ConnectionMap>(
                 this->client->call_check(&Client::Stub::get_connections));
         }
     }
@@ -129,31 +129,31 @@ namespace platform::network::grpc
         const ConnectionData &connection,
         bool activate)
     {
-        cc::platform::network::ConnectionRequest request;
-        core::protobuf::encode(connection, request.mutable_data());
+        cc::network::ConnectionRequest request;
+        protobuf::encode(connection, request.mutable_data());
         request.set_activate(activate);
         this->client->call_check(&Client::Stub::define_connection, request);
     }
 
     bool ClientProvider::remove_connection(const Key &key)
     {
-        cc::platform::network::MappingKey req;
+        cc::network::MappingKey req;
         req.set_key(key);
-        return core::protobuf::decoded<bool>(
+        return protobuf::decoded<bool>(
             this->client->call_check(
                 &Client::Stub::remove_connection, req));
     }
 
     void ClientProvider::activate_connection(const Key &key)
     {
-        cc::platform::network::MappingKey req;
+        cc::network::MappingKey req;
         req.set_key(key);
         this->client->call_check(&Client::Stub::activate_connection, req);
     }
 
     void ClientProvider::deactivate_connection(const Key &key)
     {
-        cc::platform::network::MappingKey req;
+        cc::network::MappingKey req;
         req.set_key(key);
         this->client->call_check(&Client::Stub::deactivate_connection, req);
     }
@@ -169,7 +169,7 @@ namespace platform::network::grpc
         }
         else
         {
-            return core::protobuf::decoded<ActiveConnectionMap>(
+            return protobuf::decoded<ActiveConnectionMap>(
                 this->client->call_check(&Client::Stub::get_active_connections));
         }
     }
@@ -190,7 +190,7 @@ namespace platform::network::grpc
         }
         else
         {
-            return core::protobuf::decoded<AccessPointMap>(
+            return protobuf::decoded<AccessPointMap>(
                 this->client->call_check(&Client::Stub::get_aps));
         }
     }
@@ -198,18 +198,18 @@ namespace platform::network::grpc
     void ClientProvider::connect_ap(const Key &bssid,
                                     const ConnectionData &connection)
     {
-        cc::platform::network::AccessPointConnection req;
+        cc::network::AccessPointConnection req;
         req.set_bssid(bssid);
-        core::protobuf::encode(connection, req.mutable_connection());
+        protobuf::encode(connection, req.mutable_connection());
         this->client->call_check(&Client::Stub::connect_ap, req);
     }
 
     void ClientProvider::connect_ap(const core::types::ByteVector &ssid,
                                     const ConnectionData &connection)
     {
-        cc::platform::network::AccessPointConnection req;
+        cc::network::AccessPointConnection req;
         req.set_ssid(ssid.data(), ssid.size());
-        core::protobuf::encode(connection, req.mutable_connection());
+        protobuf::encode(connection, req.mutable_connection());
         this->client->call_check(&Client::Stub::connect_ap, req);
     }
 
@@ -224,7 +224,7 @@ namespace platform::network::grpc
         }
         else
         {
-            return core::protobuf::decoded<DeviceMap>(
+            return protobuf::decoded<DeviceMap>(
                 this->client->call_check(&Client::Stub::get_devices));
         }
     }
@@ -241,7 +241,7 @@ namespace platform::network::grpc
         else
         {
             auto ref = std::make_shared<GlobalData>();
-            core::protobuf::decode(
+            protobuf::decode(
                 this->client->call_check(&Client::Stub::get_global_data),
                 ref.get());
             return ref;
@@ -250,7 +250,7 @@ namespace platform::network::grpc
 
     void ClientProvider::set_wireless_enabled(bool enabled)
     {
-        cc::platform::network::RadioState req;
+        cc::network::RadioState req;
         req.set_wireless_enabled(enabled);
         logf_debug("Setting wireless radio switch: %b", enabled);
         this->client->call_check(&Client::Stub::set_wireless_enabled, req);
@@ -261,15 +261,15 @@ namespace platform::network::grpc
         logf_debug("Setting wireless allowed flag: %b", allowed);
         this->client->call_check(
             &Client::Stub::set_wireless_allowed,
-            core::protobuf::encoded<google::protobuf::BoolValue>(allowed));
+            protobuf::encoded<google::protobuf::BoolValue>(allowed));
     }
 
     void ClientProvider::select_wireless_band(WirelessBandSelection band_selection)
     {
         logf_debug("Selecting wireless band: %s", band_selection);
-        cc::platform::network::WirelessBandSetting req;
+        cc::network::WirelessBandSetting req;
         req.set_band_selection(
-            core::protobuf::encoded<cc::platform::network::WirelessBandSelection>(band_selection));
+            protobuf::encoded<cc::network::WirelessBandSelection>(band_selection));
 
         this->client->call_check(&Client::Stub::select_wireless_band, req);
     }

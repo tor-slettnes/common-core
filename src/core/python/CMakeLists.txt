@@ -9,7 +9,7 @@
 set(TARGET "cc_core_python")
 
 ### Package component
-set(PKG_COMPONENT "core-python")
+set(INSTALL_COMPONENT "core-python")
 
 ### Modules to be installed as programs, with execute permissionss
 set(PROGRAMS
@@ -42,7 +42,7 @@ configure_file(buildinfo.py.in "generated/buildinfo.py")
 
 BuildPython("${TARGET}"
   PACKAGE "${CPACK_PYTHON_PACKAGE}"
-  COMPONENT "${PKG_COMPONENT}"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   PROGRAMS "${PROGRAMS}"
   FILES "${FILES}"
   DIRECTORIES "${DIRECTORIES}"
@@ -50,13 +50,13 @@ BuildPython("${TARGET}"
 
 # BuildPythonWheel("${TARGET}_wheel"
 #   CONTENTS ${DIRECTORIES} ${PROGRAMS} ${FILES}
-#   COMPONENT "${PKG_COMPONENT}"
+#   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
 #   PROTO_DEPS "cc_core_proto"
 # )
 
 
 ### Add a installation package component
-cpack_add_component("${PKG_COMPONENT}"
+cpack_add_component("${INSTALL_COMPONENT}"
   GROUP "${PKG_GROUP}"
   DISPLAY_NAME "Common Core - Python core"
   DESCRIPTION "Python shared components"

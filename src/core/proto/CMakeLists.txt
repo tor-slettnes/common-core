@@ -9,7 +9,7 @@
 set(TARGET "cc_core_proto")
 
 ### Package component
-set(PKG_COMPONENT "core-proto")
+set(INSTALL_COMPONENT "core-proto")
 
 ### Source files
 set(SOURCES
@@ -20,16 +20,13 @@ set(SOURCES
   version.proto
 )
 
-### Generate language bindings
-include(BuildProto)
-
 BuildProto("${TARGET}"
   LIB_TYPE STATIC
   SOURCES "${SOURCES}"
-  COMPONENT "${PKG_COMPONENT}"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
 )
 
-cpack_add_component(${PKG_COMPONENT}
+cpack_add_component(${INSTALL_COMPONENT}
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "Common ProtoBuf/gRPC modules"
   DESCRIPTION "Generated Protocol Buffers/gRPC modules for common components"

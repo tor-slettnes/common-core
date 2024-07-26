@@ -61,7 +61,7 @@ namespace core::zmq
                  {"payload", packed_request}});
         }
 
-        core::protobuf::to_bytes(reply, packed_reply);
+        protobuf::to_bytes(reply, packed_reply);
     }
 
     void ProtoBufServer::process_protobuf_request(const cc::rr::Request &request,
@@ -105,7 +105,7 @@ namespace core::zmq
                             {},
                             attributes);
 
-        ::core::protobuf::encode(event, status->mutable_details());
+        ::protobuf::encode(event, status->mutable_details());
     }
 
 }  // namespace core::zmq

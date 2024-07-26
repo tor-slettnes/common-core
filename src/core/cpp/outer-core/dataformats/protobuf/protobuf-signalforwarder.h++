@@ -16,7 +16,7 @@
 #include <functional>
 #include <unordered_set>
 
-namespace core::protobuf
+namespace protobuf
 {
     //==========================================================================
     /// @brief
@@ -65,4 +65,4 @@ namespace core::protobuf
             return msg;
         }
     };
-}  // namespace core::protobuf
+}  // namespace protobuf

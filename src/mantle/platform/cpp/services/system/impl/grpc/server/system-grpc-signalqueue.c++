@@ -14,14 +14,14 @@ namespace platform::system::grpc
 {
     void SignalQueue::initialize()
     {
-        using cc::platform::system::Signal;
+        using cc::system::Signal;
 
         this->connect<core::dt::TimePoint>(
             Signal::kTime,
             platform::system::signal_time,
             [](const core::dt::TimePoint &tp, Signal *msg)
             {
-                core::protobuf::encode(tp, msg->mutable_time());
+                protobuf::encode(tp, msg->mutable_time());
             });
 
         this->connect<TimeConfig>(
@@ -37,7 +37,7 @@ namespace platform::system::grpc
             platform::system::signal_tzinfo,
             [](const core::dt::TimeZoneInfo &zi, Signal *msg)
             {
-                core::protobuf::encode(zi, msg->mutable_tz_info());
+                protobuf::encode(zi, msg->mutable_tz_info());
             });
 
         this->connect<TimeZoneConfig>(

@@ -8,6 +8,7 @@
 #include "platform-grpc-server.h++"
 #include "system-grpc-requesthandler.h++"
 #include "network-grpc-requesthandler.h++"
+#include "vfs-grpc-requesthandler.h++"
 #include "grpc-serverbuilder.h++"
 #include "logging/logging.h++"
 
@@ -29,6 +30,10 @@ namespace platform
         builder.add_service(
             platform::network::grpc::RequestHandler::create_shared(),  // handler
             listen_address.empty());                                   // add_listener
+
+        builder.add_service(
+            platform::vfs::grpc::RequestHandler::create_shared(),  // handler
+            listen_address.empty());                               // add_listener
 
         logf_debug("Starting gRPC Server");
         std::unique_ptr<::grpc::Server> server = builder.BuildAndStart();

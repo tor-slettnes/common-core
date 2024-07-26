@@ -9,7 +9,7 @@
 set(TARGET "cc_demo_proto")
 
 ### Package component
-set(PKG_COMPONENT "demo-proto")
+set(INSTALL_COMPONENT "demo-proto")
 
 ### Static/shared library dependencies.
 set(LIB_DEPS cc_core_proto)
@@ -24,10 +24,10 @@ BuildProto("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
-  COMPONENT "${PKG_COMPONENT}"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
 )
 
-cpack_add_component(${PKG_COMPONENT}
+cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS core-proto
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "DEMO Example - Generated ProtoBuf/gRPC modules"
