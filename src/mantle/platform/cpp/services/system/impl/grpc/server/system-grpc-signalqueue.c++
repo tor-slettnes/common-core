@@ -14,7 +14,7 @@ namespace platform::system::grpc
 {
     void SignalQueue::initialize()
     {
-        using cc::system::Signal;
+        using cc::platform::system::Signal;
 
         this->connect<core::dt::TimePoint>(
             Signal::kTime,

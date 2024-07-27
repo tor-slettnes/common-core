@@ -6,26 +6,14 @@
 #===============================================================================
 
 ### Create a custom target for the Python Wheel
-set(TARGET "cc_platform_python_modules")
-
-set(PROGRAMS
-  shell.py
-)
+set(TARGET "cc_platform_protobuf")
 
 set(FILES
-  __init__.py
-)
-
-set(DIRECTORIES
-  system
-  network
-  vfs
+  vfs.py
 )
 
 BuildPython("${TARGET}"
-  PACKAGE_COMPONENT "platform"
+  PACKAGE_COMPONENT "protobuf"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  PROGRAMS "${PROGRAMS}"
   FILES "${FILES}"
-  DIRECTORIES "${DIRECTORIES}"
 )

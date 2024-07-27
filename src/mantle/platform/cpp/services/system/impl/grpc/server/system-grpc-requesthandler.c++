@@ -19,7 +19,7 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_product_info(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::system::ProductInfo* response)
+        ::cc::platform::system::ProductInfo* response)
     {
         try
         {
@@ -70,7 +70,7 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_host_info(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::system::HostInfo* response)
+        ::cc::platform::system::HostInfo* response)
     {
         try
         {
@@ -105,7 +105,7 @@ namespace platform::system::grpc
     // Get or set time configuration
     ::grpc::Status RequestHandler::set_time_config(
         ::grpc::ServerContext* context,
-        const ::cc::system::TimeConfig* request,
+        const ::cc::platform::system::TimeConfig* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -122,7 +122,7 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_time_config(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::system::TimeConfig* response)
+        ::cc::platform::system::TimeConfig* response)
     {
         try
         {
@@ -178,7 +178,7 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_timezone_specs(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::grpc::ServerWriter<::cc::system::TimeZoneSpec>* writer)
+        ::grpc::ServerWriter<::cc::platform::system::TimeZoneSpec>* writer)
     {
         try
         {
@@ -198,8 +198,8 @@ namespace platform::system::grpc
     // If no zone name is provided, return information about the configured zone.
     ::grpc::Status RequestHandler::get_timezone_spec(
         ::grpc::ServerContext* context,
-        const ::cc::system::TimeZoneName* request,
-        ::cc::system::TimeZoneSpec* response)
+        const ::cc::platform::system::TimeZoneName* request,
+        ::cc::platform::system::TimeZoneSpec* response)
     {
         try
         {
@@ -217,8 +217,8 @@ namespace platform::system::grpc
     // Get or set the timezone configuration
     ::grpc::Status RequestHandler::set_timezone(
         ::grpc::ServerContext* context,
-        const ::cc::system::TimeZoneConfig* request,
-        ::cc::system::TimeZoneInfo* response)
+        const ::cc::platform::system::TimeZoneConfig* request,
+        ::cc::platform::system::TimeZoneInfo* response)
     {
         try
         {
@@ -235,7 +235,7 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_configured_timezone(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::system::TimeZoneConfig* response)
+        ::cc::platform::system::TimeZoneConfig* response)
     {
         try
         {
@@ -251,7 +251,7 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::get_current_timezone(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::system::TimeZoneInfo* response)
+        ::cc::platform::system::TimeZoneInfo* response)
     {
         try
         {
@@ -269,8 +269,8 @@ namespace platform::system::grpc
 
     ::grpc::Status RequestHandler::invoke_sync(
         ::grpc::ServerContext* context,
-        const ::cc::system::CommandInvocation* request,
-        ::cc::system::CommandResponse* response)
+        const ::cc::platform::system::CommandInvocation* request,
+        ::cc::platform::system::CommandResponse* response)
     {
         try
         {
@@ -285,8 +285,8 @@ namespace platform::system::grpc
 
     ::grpc::Status RequestHandler::invoke_async(
         ::grpc::ServerContext* context,
-        const ::cc::system::CommandInvocation* request,
-        ::cc::system::CommandInvocationStatus* response)
+        const ::cc::platform::system::CommandInvocation* request,
+        ::cc::platform::system::CommandInvocationStatus* response)
     {
         try
         {
@@ -301,8 +301,8 @@ namespace platform::system::grpc
 
     ::grpc::Status RequestHandler::invoke_finish(
         ::grpc::ServerContext* context,
-        const ::cc::system::CommandInput* request,
-        ::cc::system::CommandResponse* response)
+        const ::cc::platform::system::CommandInput* request,
+        ::cc::platform::system::CommandResponse* response)
     {
         try
         {
@@ -337,9 +337,9 @@ namespace platform::system::grpc
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext* context,
         const ::cc::signal::Filter* filter,
-        ::grpc::ServerWriter<::cc::system::Signal>* writer)
+        ::grpc::ServerWriter<::cc::platform::system::Signal>* writer)
     {
-        return this->stream_signals<cc::system::Signal, SignalQueue>(
+        return this->stream_signals<cc::platform::system::Signal, SignalQueue>(
             context,
             filter,
             writer);

@@ -32,10 +32,10 @@ namespace platform::network::grpc
         using namespace std::placeholders;
 
         this->client->add_mapping_handler(
-            cc::network::Signal::kConnection,
+            cc::platform::network::Signal::kConnection,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::network::Signal &signal) {
+               const cc::platform::network::Signal &signal) {
                 platform::network::signal_connection.emit(
                     action,
                     key,
@@ -43,10 +43,10 @@ namespace platform::network::grpc
             });
 
         this->client->add_mapping_handler(
-            cc::network::Signal::kActiveConnection,
+            cc::platform::network::Signal::kActiveConnection,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::network::Signal &signal) {
+               const cc::platform::network::Signal &signal) {
                 platform::network::signal_active_connection.emit(
                     action,
                     key,
@@ -54,10 +54,10 @@ namespace platform::network::grpc
             });
 
         this->client->add_mapping_handler(
-            cc::network::Signal::kAccesspoint,
+            cc::platform::network::Signal::kAccesspoint,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::network::Signal &signal) {
+               const cc::platform::network::Signal &signal) {
                 platform::network::signal_accesspoint.emit(
                     action,
                     key,
@@ -65,10 +65,10 @@ namespace platform::network::grpc
             });
 
         this->client->add_mapping_handler(
-            cc::network::Signal::kDevice,
+            cc::platform::network::Signal::kDevice,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::network::Signal &signal) {
+               const cc::platform::network::Signal &signal) {
                 platform::network::signal_device.emit(
                     action,
                     key,
@@ -76,8 +76,8 @@ namespace platform::network::grpc
             });
 
         this->client->add_handler(
-            cc::network::Signal::kGlobal,
-            [](const cc::network::Signal &signal) {
+            cc::platform::network::Signal::kGlobal,
+            [](const cc::platform::network::Signal &signal) {
                 platform::network::signal_globaldata.emit(
                     protobuf::decode_shared<GlobalData>(signal.global()));
             });
@@ -129,7 +129,7 @@ namespace platform::network::grpc
         const ConnectionData &connection,
         bool activate)
     {
-        cc::network::ConnectionRequest request;
+        cc::platform::network::ConnectionRequest request;
         protobuf::encode(connection, request.mutable_data());
         request.set_activate(activate);
         this->client->call_check(&Client::Stub::define_connection, request);
@@ -137,7 +137,7 @@ namespace platform::network::grpc
 
     bool ClientProvider::remove_connection(const Key &key)
     {
-        cc::network::MappingKey req;
+        cc::platform::network::MappingKey req;
         req.set_key(key);
         return protobuf::decoded<bool>(
             this->client->call_check(
@@ -146,14 +146,14 @@ namespace platform::network::grpc
 
     void ClientProvider::activate_connection(const Key &key)
     {
-        cc::network::MappingKey req;
+        cc::platform::network::MappingKey req;
         req.set_key(key);
         this->client->call_check(&Client::Stub::activate_connection, req);
     }
 
     void ClientProvider::deactivate_connection(const Key &key)
     {
-        cc::network::MappingKey req;
+        cc::platform::network::MappingKey req;
         req.set_key(key);
         this->client->call_check(&Client::Stub::deactivate_connection, req);
     }
@@ -198,7 +198,7 @@ namespace platform::network::grpc
     void ClientProvider::connect_ap(const Key &bssid,
                                     const ConnectionData &connection)
     {
-        cc::network::AccessPointConnection req;
+        cc::platform::network::AccessPointConnection req;
         req.set_bssid(bssid);
         protobuf::encode(connection, req.mutable_connection());
         this->client->call_check(&Client::Stub::connect_ap, req);
@@ -207,7 +207,7 @@ namespace platform::network::grpc
     void ClientProvider::connect_ap(const core::types::ByteVector &ssid,
                                     const ConnectionData &connection)
     {
-        cc::network::AccessPointConnection req;
+        cc::platform::network::AccessPointConnection req;
         req.set_ssid(ssid.data(), ssid.size());
         protobuf::encode(connection, req.mutable_connection());
         this->client->call_check(&Client::Stub::connect_ap, req);
@@ -250,7 +250,7 @@ namespace platform::network::grpc
 
     void ClientProvider::set_wireless_enabled(bool enabled)
     {
-        cc::network::RadioState req;
+        cc::platform::network::RadioState req;
         req.set_wireless_enabled(enabled);
         logf_debug("Setting wireless radio switch: %b", enabled);
         this->client->call_check(&Client::Stub::set_wireless_enabled, req);
@@ -267,9 +267,9 @@ namespace platform::network::grpc
     void ClientProvider::select_wireless_band(WirelessBandSelection band_selection)
     {
         logf_debug("Selecting wireless band: %s", band_selection);
-        cc::network::WirelessBandSetting req;
+        cc::platform::network::WirelessBandSetting req;
         req.set_band_selection(
-            protobuf::encoded<cc::network::WirelessBandSelection>(band_selection));
+            protobuf::encoded<cc::platform::network::WirelessBandSelection>(band_selection));
 
         this->client->call_check(&Client::Stub::select_wireless_band, req);
     }

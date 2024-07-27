@@ -15,9 +15,9 @@ namespace protobuf
     // TimeZoneInfo
 
     void encode(const core::dt::TimeZoneInfo &native,
-                cc::system::TimeZoneInfo *encoded) noexcept;
+                cc::platform::system::TimeZoneInfo *encoded) noexcept;
 
-    void decode(const cc::system::TimeZoneInfo encoded,
+    void decode(const cc::platform::system::TimeZoneInfo encoded,
                 core::dt::TimeZoneInfo *native) noexcept;
 
 }  // namespace protobuf

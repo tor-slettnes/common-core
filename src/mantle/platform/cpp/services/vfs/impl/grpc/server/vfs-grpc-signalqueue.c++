@@ -14,7 +14,7 @@ namespace platform::vfs::grpc
 {
     void SignalQueue::initialize()
     {
-        using cc::vfs::Signal;
+        using cc::platform::vfs::Signal;
 
         this->connect<ContextRef>(
             Signal::kContext,

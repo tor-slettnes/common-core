@@ -10,18 +10,18 @@
 
 namespace platform::system
 {
-    using cc::system::ProductInfo;
-    using cc::system::HostInfo;
+    using cc::platform::system::ProductInfo;
+    using cc::platform::system::HostInfo;
 
-    using cc::system::TimeSync;
-    using cc::system::TimeConfig;
+    using cc::platform::system::TimeSync;
+    using cc::platform::system::TimeConfig;
 
-    using cc::system::TimeZoneConfig;
-    using cc::system::TimeZoneSpec;
-    using cc::system::TimeZoneInfo;
+    using cc::platform::system::TimeZoneConfig;
+    using cc::platform::system::TimeZoneSpec;
+    using cc::platform::system::TimeZoneInfo;
 
-    using cc::system::CommandInvocation;
-    using cc::system::CommandInvocationStatus;
-    using cc::system::CommandInput;
-    using cc::system::CommandResponse;
+    using cc::platform::system::CommandInvocation;
+    using cc::platform::system::CommandInvocationStatus;
+    using cc::platform::system::CommandInput;
+    using cc::platform::system::CommandResponse;
 }

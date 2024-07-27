@@ -38,7 +38,7 @@ namespace platform::vfs::grpc
 
     bool ClientInputBuffer::read_some(std::string *buffer)
     {
-        cc::vfs::FileChunk msg;
+        cc::platform::vfs::FileChunk msg;
         if (this->reader->Read(&msg))
         {
             buffer->assign(msg.data());
@@ -74,7 +74,7 @@ namespace platform::vfs::grpc
 
     bool ClientOutputBuffer::write_some(const std::string &data)
     {
-        cc::vfs::FileChunk msg;
+        cc::platform::vfs::FileChunk msg;
         protobuf::encode(this->vpath, msg.mutable_path());
         msg.set_data(data);
 
@@ -96,7 +96,7 @@ namespace platform::vfs::grpc
     ClientInputStream::ClientInputStream(const std::unique_ptr<ClientStub> &stub,
                                          const Path &vpath)
         : cxt(std::make_unique<::grpc::ClientContext>()),
-          input_buffer(stub->readFile(cxt.get(), protobuf::encoded<cc::vfs::Path>(vpath)))
+          input_buffer(stub->readFile(cxt.get(), protobuf::encoded<cc::platform::vfs::Path>(vpath)))
     {
         this->rdbuf(&this->input_buffer);
     }

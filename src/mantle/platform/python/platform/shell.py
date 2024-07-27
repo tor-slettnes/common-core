@@ -8,6 +8,7 @@
 ### Modules within package
 from .system.grpc.client import SystemClient
 from .network.grpc.client import NetworkClient
+from .vfs.grpc.client import VirtualFileSystemClient
 
 from cc.protobuf.import_proto \
     import import_wellknown_protos, import_core_protos, import_proto
@@ -38,6 +39,7 @@ import_core_protos(globals())
 ### namespace matching its package declaration: `cc.demo'.
 import_proto('system', globals())
 import_proto('network', globals())
+import_proto('vfs', globals())
 
 ### Add a few arguments to the base argparser
 class ArgParser (argparse.ArgumentParser):
@@ -68,8 +70,9 @@ class ArgParser (argparse.ArgumentParser):
 def legend():
     '''Interactive Service Control.  Subsystems loaded:
 
-        system - `cc.system.System` gRPC service client
-        network - `cc.network.Network` gRPC service client
+        system - `System` gRPC service client
+        network - `Network` gRPC service client
+        vfs - `VirtualFileSystem` gRPC service client
 
     ProtoBuf types are generally loaded into namespaces matching the package
     names from their respective `.proto` files:
@@ -94,6 +97,10 @@ if __name__ == "__main__":
         wait_for_ready = args.wait_for_ready)
 
     network = NetworkClient(
+        args.host,
+        wait_for_ready = args.wait_for_ready)
+
+    vfs = VirtualFileSystemClient(
         args.host,
         wait_for_ready = args.wait_for_ready)
 

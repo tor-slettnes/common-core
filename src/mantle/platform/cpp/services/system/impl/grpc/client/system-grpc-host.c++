@@ -21,8 +21,8 @@ namespace platform::system::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            cc::system::Signal::kHostInfo,
-            [&](const cc::system::Signal &signal) {
+            cc::platform::system::Signal::kHostInfo,
+            [&](const cc::platform::system::Signal &signal) {
                 platform::system::signal_hostinfo.emit(signal.host_info());
             });
     }

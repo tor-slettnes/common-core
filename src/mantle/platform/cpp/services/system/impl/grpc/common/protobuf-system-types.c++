@@ -14,7 +14,7 @@ namespace protobuf
     // TimeZoneInfo
 
     void encode(const core::dt::TimeZoneInfo &native,
-                cc::system::TimeZoneInfo *encoded) noexcept
+                cc::platform::system::TimeZoneInfo *encoded) noexcept
     {
         encoded->set_shortname(native.shortname);
         encode(native.offset, encoded->mutable_offset());
@@ -22,7 +22,7 @@ namespace protobuf
         encoded->set_dst(native.dst);
     }
 
-    void decode(const cc::system::TimeZoneInfo encoded,
+    void decode(const cc::platform::system::TimeZoneInfo encoded,
                 core::dt::TimeZoneInfo *native) noexcept
     {
         native->shortname = encoded.shortname();

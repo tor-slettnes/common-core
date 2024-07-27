@@ -12,8 +12,8 @@
 
 namespace platform::vfs::grpc
 {
-    using ClientBaseImpl = core::grpc::SignalClient<cc::vfs::VirtualFileSystem,
-                                                    cc::vfs::Signal>;
+    using ClientBaseImpl = core::grpc::SignalClient<cc::platform::vfs::VirtualFileSystem,
+                                                    cc::platform::vfs::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>

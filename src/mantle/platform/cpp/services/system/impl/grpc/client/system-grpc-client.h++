@@ -12,8 +12,8 @@
 
 namespace platform::system::grpc
 {
-    using ClientBaseImpl = core::grpc::SignalClient<cc::system::System,
-                                                    cc::system::Signal>;
+    using ClientBaseImpl = core::grpc::SignalClient<cc::platform::system::System,
+                                                    cc::platform::system::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>

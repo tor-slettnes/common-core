@@ -21,15 +21,15 @@ namespace platform::system::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            cc::system::Signal::kTime,
-            [&](const cc::system::Signal &signal) {
+            cc::platform::system::Signal::kTime,
+            [&](const cc::platform::system::Signal &signal) {
                 platform::system::signal_time.emit(
                     protobuf::decoded<core::dt::TimePoint>(signal.time()));
             });
 
         this->client->add_handler(
-            cc::system::Signal::kTimeConfig,
-            [&](const cc::system::Signal &signal) {
+            cc::platform::system::Signal::kTimeConfig,
+            [&](const cc::platform::system::Signal &signal) {
                 platform::system::signal_timeconfig.emit(signal.time_config());
             });
     }

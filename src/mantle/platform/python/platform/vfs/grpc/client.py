@@ -8,34 +8,29 @@
 ### Modules within package
 from cc.messaging.grpc import SignalClient, DetailedError
 from cc.protobuf.import_proto import import_proto
-from cc.protobuf.vfs import encodePath, encodePaths, decodeStats, \
+from cc.protobuf.vfs import VFSPathType, VFSPathsType, \
+    encodePath, encodePaths, decodeStats, \
     pathRequest, locateRequest, attributeRequest
 from cc.core.enumeration import Enumeration
-from core.
 
 ### Third-party modules
 from google.protobuf.empty_pb2 import Empty
 
 ### Standard Python modules
 from typing import Mapping
+import io
 
 ## Import generated ProtoBuf symbols. These will appear in namespaces
 ## corresponding to the package names from their `.proto` files:
-## `google.protobuf` and `cc.vfs`.
+## `google.protobuf` and `cc.platform.vfs`.
 import_proto('vfs', globals())
 
 
 #===============================================================================
 ## Enumerated values
 
-PathType = Enumeration(cc.vfs.PathType.items())
+#PathType = Enumeration(cc.platform.vfs.PathType.items())
 
-
-#===============================================================================
-## Annotation types
-
-VFSPathType = str | cc.vfs.Path
-VFSPathsType = VFSPathType | Sequence[VFSPathType]
 
 
 #===============================================================================
@@ -50,15 +45,15 @@ class VirtualFileSystemClient (SignalClient):
 
     ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
     ## which serves as a clearing house for emitting and receiving messages.
-    signal_type = cc.vfs.Signal
+    signal_type = cc.platform.vfs.Signal
 
-    Signals = (SIGNAL_CONTEXT, SIGNAL_CONTEXT_IN_USE) @
+    Signals = (SIGNAL_CONTEXT, SIGNAL_CONTEXT_IN_USE) \
         = ('context', 'context_in_use')
 
 
     def getContexts(self,
                     removable_only: bool = False,
-                    open_only: bool = False) -> Mapping[str, cc.vfs.ContextSpec]:
+                    open_only: bool = False) -> Mapping[str, cc.platform.vfs.ContextSpec]:
         '''
         List available virtual filesystem contexts.
         @param[in] removable_only
@@ -80,33 +75,33 @@ class VirtualFileSystemClient (SignalClient):
         return dict(data)
 
     def getRemovableContexts(self,
-                             open_only: bool = False) -> Mapping[str, cc.vfs.ContextSpec]:
+                             open_only: bool = False) -> Mapping[str, cc.platform.vfs.ContextSpec]:
         '''
         List filesystem contexts that map to removable drives
         '''
         return self.getContexts(True, open_only)
 
-    def getAllContexts(self) -> Mapping[str, cc.vfs.ContextSpec]:
+    def getAllContexts(self) -> Mapping[str, cc.platform.vfs.ContextSpec]:
         '''
         List all available VFS contexts.
         '''
         return self.stub.getContexts(Empty()).map
 
-    def getOpenContexts (self) -> Mapping[str, cc.vfs.ContextSpec]:
+    def getOpenContexts (self) -> Mapping[str, cc.platform.vfs.ContextSpec]:
         '''
         List VFS contexts that are currently being held open.
         '''
         return self.stub.getOpenContexts(Empty()).map
 
 
-    def getContext(self, name: str) -> cc.vfs.ContextSpec:
+    def getContext(self, name: str) -> cc.platform.vfs.ContextSpec:
         '''
         List available virtual filesystem contexts.
         '''
-        return self.stub.getContextSpec(cc.vfs.Path(context=name))
+        return self.stub.getContextSpec(cc.platform.vfs.Path(context=name))
 
 
-    def openContext(self, name: str) -> cc.vfs.ContextSpec:
+    def openContext(self, name: str) -> cc.platform.vfs.ContextSpec:
         '''
         Explicitly open a virtual context. Internally this increments a
         reference counter to keep the corresponding virtual filesystem
@@ -119,7 +114,7 @@ class VirtualFileSystemClient (SignalClient):
         'closeContext()', thereby allowing the context to be closed.
         '''
 
-        return self.stub.openContext(cc.vfs.Path(context=name))
+        return self.stub.openContext(cc.platform.vfs.Path(context=name))
 
 
     def closeContext(self, name: str):
@@ -129,12 +124,12 @@ class VirtualFileSystemClient (SignalClient):
         and closes the context (e.g. unmounts) if it reaches zero.
         '''
 
-        return self.stub.closeContext(cc.vfs.Path(context=name))
+        return self.stub.closeContext(cc.platform.vfs.Path(context=name))
 
 
     def volumeStats(self,
                      vfspath: VFSPathType,
-                     dereference: bool =False) -> cc.vfs.VolumeStats:
+                     dereference: bool =False) -> cc.platform.vfs.VolumeStats:
         '''
         Return information about mounted filesystem containing path.
         '''
@@ -143,9 +138,9 @@ class VirtualFileSystemClient (SignalClient):
 
 
     def fileStats(self,
-                   vfspath: VFSPathType,
-                   dereference: bool = True,
-                   with_attributes: bool = True) -> FileStats:
+                  vfspath: VFSPathType,
+                  dereference: bool = True,
+                  with_attributes: bool = True) -> cc.platform.vfs.FileStats:
         '''
         Return file stats for specified VFS path, specified in the format
         CONTEXT:PATH.
@@ -179,7 +174,7 @@ class VirtualFileSystemClient (SignalClient):
     def list(self,
              vfspath: VFSPathType,
              dereference: bool = True,
-             with_attributes: bool = True) -> cc.vfs.DirectoryList:
+             with_attributes: bool = True) -> cc.platform.vfs.DirectoryList:
         '''
         List contents of the specified virtual path, specified in the format
         CONTEXT:PATH.
@@ -196,14 +191,14 @@ class VirtualFileSystemClient (SignalClient):
     def getDirectory(self,
                       vfspath: VFSPathType,
                       dereference: bool = True,
-                      with_attributes: bool = True) -> Mapping[str, FileStats]:
+                      with_attributes: bool = True) -> Mapping[str, cc.platform.vfs.FileStats]:
         '''
         List contents of the specified virtual path, specified in the format
         CONTEXT:PATH.
 
         The returned value is a Python dictionary where keys represent the
         name of each entry and the associated value is a FileStats instance
-        containing detailed information about the file. See `help(fileStats)`
+        containing detailed information about the file. See `fileStats()`
         for more info.
         '''
 
@@ -221,7 +216,7 @@ class VirtualFileSystemClient (SignalClient):
                 filename_masks: VFSPathsType,
                 attribute_filters: dict = {},
                 with_attributes: bool = True,
-                include_hidden: bool = False) -> Mapping[str, FileStats]:
+                include_hidden: bool = False) -> Mapping[str, cc.platform.vfs.FileStats]:
         '''
         Recursively locate file(s) matching the specificed filename masks
         and attribute values.
@@ -402,7 +397,7 @@ class VirtualFileSystemClient (SignalClient):
 
     def download(self,
                   vfspath: VFSPathType,
-                  localfile: Union[str, io.IOBase]):
+                  localfile: str | io.IOBase):
         '''Download the file `vfspath` from the server, specified in the format
         CONTEXT:PATH.
 
@@ -422,7 +417,7 @@ class VirtualFileSystemClient (SignalClient):
 
 
     def upload(self,
-                localfile: Union[str, io.IOBase],
+                localfile: str | io.IOBase,
                 vfspath: VFSPathType):
         '''Upload the contents of `localfile`, which can either be a local file path or
          a readable file object, to the file `vfspath` on the server, specified
@@ -446,7 +441,7 @@ class VirtualFileSystemClient (SignalClient):
         while not eof:
             text = fp.read(chunksize)
             if text:
-                yield cc.vfs.FileChunk(path=path, data=text)
+                yield cc.platform.vfs.FileChunk(path=path, data=text)
             else:
                 eof = True
 

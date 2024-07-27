@@ -24,9 +24,9 @@ namespace platform::network::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<cc::network::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<cc::platform::network::Signal>
     {
-        using Super = core::grpc::SignalQueue<cc::network::Signal>;
+        using Super = core::grpc::SignalQueue<cc::platform::network::Signal>;
 
     public:
         using Super::Super;

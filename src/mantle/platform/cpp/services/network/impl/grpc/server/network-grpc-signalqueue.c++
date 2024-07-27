@@ -15,7 +15,7 @@ namespace platform::network::grpc
 {
     void SignalQueue::initialize()
     {
-        using cc::network::Signal;
+        using cc::platform::network::Signal;
 
         this->connect<ConnectionRef>(
             Signal::kConnection,
