@@ -18,5 +18,5 @@ cpack_add_component("${INSTALL_COMPONENT}"
   DEPENDS "core-python" "common-settings" "platform-proto" "platform-settings"
   GROUP "${PKG_GROUP}"
   DISPLAY_NAME "Platform Services - Python modules"
-  DESCRIPTION "Python client moduules for platform services: System, Network, File"
+  DESCRIPTION "Python client moduules for platform services: SysConfig, NetConfig, VFS"
 )

@@ -15,7 +15,7 @@ set(SOURCES
   vfs-types.c++
   vfs-context.c++
   vfs-signals.c++
-  vfs-provider.c++
+  vfs-base.c++
   vfs.c++
 )
 

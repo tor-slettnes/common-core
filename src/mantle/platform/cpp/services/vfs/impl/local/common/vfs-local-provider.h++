@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "vfs-provider.h++"
+#include "vfs-base.h++"
 #include "settings/settingsstore.h++"
 
 namespace platform::vfs::local
@@ -22,9 +22,10 @@ namespace platform::vfs::local
     //==========================================================================
     // NativeProvider
 
-    class LocalProvider : public platform::vfs::Provider
+    class LocalProvider : public ProviderInterface
     {
-        using Super = platform::vfs::Provider;
+        using This = LocalProvider;
+        using Super = ProviderInterface;
 
     protected:
         LocalProvider(

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file vfs-grpc-provider.c++
-/// @brief Virtual File System service - gRPC client implementation
+/// @brief Virtual File SysConfig service - gRPC client implementation
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 

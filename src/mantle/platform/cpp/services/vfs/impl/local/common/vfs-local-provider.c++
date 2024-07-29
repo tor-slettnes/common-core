@@ -27,7 +27,7 @@ namespace platform::vfs::local
 {
     LocalProvider::LocalProvider(const std::string &name,
                                  core::platform::ProviderPriority priority)
-        : Provider(name, priority),
+        : Super(name, priority),
           settings(SETTINGS_STORE)
     {
     }

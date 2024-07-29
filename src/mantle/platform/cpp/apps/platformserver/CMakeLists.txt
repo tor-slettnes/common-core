@@ -9,15 +9,15 @@
 set(TARGET platformserver)
 
 ### Libraries we depend on, either from this build or provided by the
-### system. Only direct dependencies are needed; e.g., do not list "cc_core"
+### sysconfig. Only direct dependencies are needed; e.g., do not list "cc_core"
 ### if you also list another library that depends on it.
 set(LIB_DEPS
   cc_core_platform
-  cc_platform_system_native
-  cc_platform_network_dbus
+  cc_platform_sysconfig_native
+  cc_platform_netconfig_dbus
   cc_platform_vfs_local
-  cc_platform_system_grpc_service
-  cc_platform_network_grpc_service
+  cc_platform_sysconfig_grpc_service
+  cc_platform_netconfig_grpc_service
   cc_platform_vfs_grpc_service
 )
 

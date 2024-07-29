@@ -15,11 +15,11 @@
 namespace platform::vfs::grpc
 {
     RequestHandler::RequestHandler()
-        : provider(platform::vfs::provider.get_shared())
+        : provider(platform::vfs::vfs.get_shared())
     {
     }
 
-    RequestHandler::RequestHandler(const std::shared_ptr<platform::vfs::Provider> &provider)
+    RequestHandler::RequestHandler(const std::shared_ptr<platform::vfs::ProviderInterface> &provider)
         : provider(provider)
     {
     }

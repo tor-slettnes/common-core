@@ -6,8 +6,8 @@
 //==============================================================================
 
 #include "platform-grpc-server.h++"
-#include "system-grpc-requesthandler.h++"
-#include "network-grpc-requesthandler.h++"
+#include "sysconfig-grpc-requesthandler.h++"
+#include "netconfig-grpc-requesthandler.h++"
 #include "vfs-grpc-requesthandler.h++"
 #include "grpc-serverbuilder.h++"
 #include "logging/logging.h++"
@@ -24,11 +24,11 @@ namespace platform
         core::grpc::ServerBuilder builder(listen_address);
 
         builder.add_service(
-            platform::system::grpc::RequestHandler::create_shared(),  // handler
+            platform::sysconfig::grpc::RequestHandler::create_shared(),  // handler
             listen_address.empty());                                  // add_listener
 
         builder.add_service(
-            platform::network::grpc::RequestHandler::create_shared(),  // handler
+            platform::netconfig::grpc::RequestHandler::create_shared(),  // handler
             listen_address.empty());                                   // add_listener
 
         builder.add_service(

@@ -1,20 +1,20 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file vfs-grpc-provider.h++
-/// @brief Virtual File System service - gRPC client implementation
+/// @brief Virtual File SysConfig service - gRPC client implementation
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
-#include "vfs-provider.h++"
+#include "vfs-base.h++"
 #include "vfs-grpc-client.h++"
 
 namespace platform::vfs::grpc
 {
-    class ClientProvider : public Provider
+    class ClientProvider : public ProviderInterface
     {
         using This = ClientProvider;
-        using Super = Provider;
+        using Super = ProviderInterface;
 
     public:
         ClientProvider(const std::shared_ptr<Client> &client,

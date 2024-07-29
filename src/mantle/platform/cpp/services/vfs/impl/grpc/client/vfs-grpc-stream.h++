@@ -1,14 +1,14 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file vfs-grpc-stream.h++
-/// @brief Virtual File System service - I/O stream implementation over gRPC
+/// @brief Virtual File SysConfig service - I/O stream implementation over gRPC
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
 #include "vfs.grpc.pb.h"  // Generated from `vfs.proto`
 
-#include "vfs-provider.h++"
+#include "vfs-base.h++"
 #include "io/streambuffer.h++"
 #include "grpc-status.h++"
 

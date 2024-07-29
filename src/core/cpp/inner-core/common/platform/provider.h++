@@ -134,7 +134,7 @@ namespace core::platform
             else
             {
                 throwf(std::runtime_error,
-                       "No suitable %s provider is available for this system",
+                       "No suitable %s implementation is available for this system",
                        this->typeName);
             }
         }

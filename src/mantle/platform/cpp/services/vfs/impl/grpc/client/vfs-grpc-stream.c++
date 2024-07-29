@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file vfs-grpc-stream.c++
-/// @brief Virtual File System service - I/O stream implementation over gRPC
+/// @brief Virtual File SysConfig service - I/O stream implementation over gRPC
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 

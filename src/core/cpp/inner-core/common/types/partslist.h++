@@ -34,7 +34,7 @@ namespace core::types
         void add_value(const Tag &tag,
                        const Value &value,
                        const std::optional<bool> &condition = {},
-                       const std::string &format = "%s");
+                       const std::string &format = "%r");
 
         template <class ValueType>
         void add(const Tag &tag,

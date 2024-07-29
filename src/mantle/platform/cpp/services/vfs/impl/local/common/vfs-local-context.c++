@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file vfs-local-context.c++
-/// @brief VFS service - local system context
+/// @brief VFS service - local filesystem context
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 

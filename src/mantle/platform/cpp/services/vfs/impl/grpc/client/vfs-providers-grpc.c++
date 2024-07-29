@@ -16,7 +16,7 @@ namespace platform::vfs::grpc
                             bool start_watching)
     {
         auto client = Client::create_shared(host, wait_for_ready);
-        provider.registerProvider<ClientProvider>(client);
+        vfs.registerProvider<ClientProvider>(client);
 
         if (start_watching)
         {
@@ -26,6 +26,6 @@ namespace platform::vfs::grpc
 
     void unregister_providers()
     {
-        provider.unregisterProvider<ClientProvider>();
+        vfs.unregisterProvider<ClientProvider>();
     }
 }  // namespace platform::vfs::grpc

@@ -18,6 +18,7 @@ if(LINUX)
   )
 endif()
 
+### Build container library
 set(TARGET
   cc_platform_vfs_local
 )

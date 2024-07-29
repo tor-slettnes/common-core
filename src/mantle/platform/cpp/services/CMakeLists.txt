@@ -5,6 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(system)
-add_subdirectory(network)
+add_subdirectory(sysconfig)
+add_subdirectory(netconfig)
 add_subdirectory(vfs)

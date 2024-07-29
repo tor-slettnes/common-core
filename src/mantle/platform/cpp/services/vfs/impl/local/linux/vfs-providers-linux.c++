@@ -12,12 +12,12 @@ namespace platform::vfs::local
 {
     void register_providers()
     {
-        provider.registerProvider<LinuxProvider>();
+        vfs.registerProvider<LinuxProvider>();
     }
 
     void unregister_providers()
     {
-        provider.unregisterProvider<LinuxProvider>();
+        vfs.unregisterProvider<LinuxProvider>();
     }
 
 }  // namespace platform::vfs::local

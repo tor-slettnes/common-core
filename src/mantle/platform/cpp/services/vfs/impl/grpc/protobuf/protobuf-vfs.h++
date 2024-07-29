@@ -7,7 +7,7 @@
 
 #pragma once
 #include "vfs.pb.h"  // generated from `variant.proto`
-#include "vfs-provider.h++"
+#include "vfs-base.h++"
 
 namespace protobuf
 {

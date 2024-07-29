@@ -15,7 +15,7 @@ namespace platform::vfs
 
     ContextProxy contextProxy(const std::string &name, bool modify)
     {
-        return vfs::ContextProxy(provider->getContext(name), modify);
+        return vfs::ContextProxy(vfs->getContext(name), modify);
     }
 
     ContextProxy contextProxy(ContextRef ref, bool modify)
@@ -32,7 +32,7 @@ namespace platform::vfs
                       const fs::path &relpath,
                       bool modify)
     {
-        ContextRef cxt = provider->getContext(context);
+        ContextRef cxt = vfs->getContext(context);
         return vfs::Location(cxt, relpath, modify);
     }
 
@@ -78,8 +78,8 @@ namespace platform::vfs
     ContextMap getContexts(bool removable_only, bool open_only)
     {
         ContextMap contexts = open_only
-                                  ? provider->getOpenContexts()
-                                  : provider->getContexts();
+                                  ? vfs->getOpenContexts()
+                                  : vfs->getContexts();
 
         if (removable_only)
         {
@@ -111,24 +111,24 @@ namespace platform::vfs
 
     ContextRef getContext(const std::string &name, bool required)
     {
-        return provider->getContext(name, required);
+        return vfs->getContext(name, required);
     }
 
     ContextRef openContext(const std::string &name, bool required)
     {
-        return provider->openContext(name, required);
+        return vfs->openContext(name, required);
     }
 
     void closeContext(const ContextRef &cxt)
     {
-        return provider->closeContext(cxt);
+        return vfs->closeContext(cxt);
     }
 
     void closeContext(const std::string &name)
     {
         if (auto cxt = vfs::getContext(name, false))
         {
-            provider->closeContext(cxt);
+            vfs->closeContext(cxt);
         }
     }
 
@@ -139,14 +139,14 @@ namespace platform::vfs
 
     VolumeStats volumeStats(const Path &vpath)
     {
-        return provider->volumeStats(vpath, {});
+        return vfs->volumeStats(vpath, {});
     }
 
     FileStats fileStats(const Path &vpath,
                         bool with_attributes,
                         bool dereference)
     {
-        return provider->fileStats(
+        return vfs->fileStats(
             vpath,
             {
                 .dereference = dereference,
@@ -159,7 +159,7 @@ namespace platform::vfs
                            bool dereference,
                            bool include_hidden)
     {
-        return provider->getDirectory(
+        return vfs->getDirectory(
             vpath,
             {
                 .dereference = dereference,
@@ -190,7 +190,7 @@ namespace platform::vfs
         bool include_hidden,
         bool ignore_case)
     {
-        return provider->locate(
+        return vfs->locate(
             root,
             filename_masks,
             attribute_filters,
@@ -210,7 +210,7 @@ namespace platform::vfs
               bool with_attributes,
               bool inside_target)
     {
-        return provider->copy(
+        return vfs->copy(
             {source},
             target,
             {
@@ -231,7 +231,7 @@ namespace platform::vfs
               bool update,
               bool with_attributes)
     {
-        return provider->copy(
+        return vfs->copy(
             sources,
             target,
             {
@@ -250,7 +250,7 @@ namespace platform::vfs
               bool with_attributes,
               bool inside_target)
     {
-        return provider->move(
+        return vfs->move(
             {source},
             target,
             {
@@ -265,7 +265,7 @@ namespace platform::vfs
               bool force,
               bool with_attributes)
     {
-        return provider->move(
+        return vfs->move(
             sources,
             target,
             {
@@ -286,7 +286,7 @@ namespace platform::vfs
                 bool force,
                 bool with_attributes)
     {
-        return provider->remove(
+        return vfs->remove(
             sources,
             {
                 .force = force,
@@ -297,7 +297,7 @@ namespace platform::vfs
     void createFolder(const Path &vpath,
                       bool force)
     {
-        return provider->createFolder(
+        return vfs->createFolder(
             vpath,
             {
                 .force = force,
@@ -306,18 +306,18 @@ namespace platform::vfs
 
     ReaderRef readFile(const Path &vpath)
     {
-        return provider->readFile(vpath);
+        return vfs->readFile(vpath);
     }
 
     WriterRef writeFile(const Path &vpath)
     {
-        return provider->writeFile(vpath);
+        return vfs->writeFile(vpath);
     }
 
     void download(const Path &remote,
                   const fs::path &local)
     {
-        auto istream = provider->readFile(remote);
+        auto istream = vfs->readFile(remote);
         auto ostream = std::make_unique<std::ofstream>(local);
 
         ostream->setstate(std::ios::failbit);
@@ -328,14 +328,14 @@ namespace platform::vfs
                 const Path &remote)
     {
         auto istream = std::make_unique<std::ifstream>(local);
-        auto ostream = provider->writeFile(remote);
+        auto ostream = vfs->writeFile(remote);
 
         (*ostream) << istream->rdbuf();
     }
 
     core::types::KeyValueMap getAttributes(const Path &vpath)
     {
-        return provider->getAttributes(vpath);
+        return vfs->getAttributes(vpath);
     }
 
     core::types::Value getAttribute(const Path &vpath,
@@ -349,18 +349,18 @@ namespace platform::vfs
     void setAttributes(const Path &vpath,
                        const core::types::KeyValueMap &attributes)
     {
-        return provider->setAttributes(vpath, attributes);
+        return vfs->setAttributes(vpath, attributes);
     }
 
     void setAttribute(const Path &vpath,
                       const std::string &key,
                       const core::types::Value &value)
     {
-        return provider->setAttributes(vpath, {{key, value}});
+        return vfs->setAttributes(vpath, {{key, value}});
     }
 
     void clearAttributes(const Path &vpath)
     {
-        return provider->clearAttributes(vpath);
+        return vfs->clearAttributes(vpath);
     }
 }  // namespace platform::vfs

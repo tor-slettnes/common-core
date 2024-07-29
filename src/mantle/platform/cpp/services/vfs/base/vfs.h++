@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "vfs-provider.h++"
+#include "vfs-base.h++"
 
 namespace platform::vfs
 {

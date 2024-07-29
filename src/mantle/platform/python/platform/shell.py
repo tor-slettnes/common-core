@@ -6,8 +6,8 @@
 #===============================================================================
 
 ### Modules within package
-from .system.grpc.client import SystemClient
-from .network.grpc.client import NetworkClient
+from .sysconfig.grpc.client import SysConfigClient
+from .netconfig.grpc.client import NetConfigClient
 from .vfs.grpc.client import VirtualFileSystemClient
 
 from cc.protobuf.import_proto \
@@ -35,10 +35,11 @@ import_wellknown_protos(globals())
 ### that matches their respective `package` declarations (starting with `cc.`).
 import_core_protos(globals())
 
-### Import ProtoBuf data types from `demo.proto`.  These will appear in the
-### namespace matching its package declaration: `cc.demo'.
-import_proto('system', globals())
-import_proto('network', globals())
+### Import generated ProtoBuf data types.  These will appear in namespaces
+### corresponding to the package names in their respective `.proto` files:
+### `cc.platform.sysconfig`, `cc.platform.netconfig`, `cc.platform.vfs`.
+import_proto('sysconfig', globals())
+import_proto('netconfig', globals())
 import_proto('vfs', globals())
 
 ### Add a few arguments to the base argparser
@@ -70,9 +71,9 @@ class ArgParser (argparse.ArgumentParser):
 def legend():
     '''Interactive Service Control.  Subsystems loaded:
 
-        system - `System` gRPC service client
-        network - `Network` gRPC service client
-        vfs - `VirtualFileSystem` gRPC service client
+        sysconfig - `SysConfig` gRPC service client
+        netconfig - `NetConfig` gRPC service client
+        vfs       - `VirtualFileSystem` gRPC service client
 
     ProtoBuf types are generally loaded into namespaces matching the package
     names from their respective `.proto` files:
@@ -92,11 +93,11 @@ if __name__ == "__main__":
     logger = logging.getLogger()
     logger.setLevel((logging.INFO, logging.DEBUG)[args.debug])
 
-    system = SystemClient(
+    sysconfig = SysConfigClient(
         args.host,
         wait_for_ready = args.wait_for_ready)
 
-    network = NetworkClient(
+    netconfig = NetConfigClient(
         args.host,
         wait_for_ready = args.wait_for_ready)
 
@@ -104,6 +105,8 @@ if __name__ == "__main__":
         args.host,
         wait_for_ready = args.wait_for_ready)
 
+    sysconfig.initialize()
+    netconfig.initialize()
+    vfs.initialize()
 
-    system.initialize()
     legend()

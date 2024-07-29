@@ -7,7 +7,7 @@
 
 #pragma once
 #include "vfs.grpc.pb.h"  // Generated from `vfs.proto`
-#include "vfs-provider.h++"
+#include "vfs-base.h++"
 
 #include "grpc-signalrequesthandler.h++"
 #include "types/create-shared.h++"
@@ -24,7 +24,7 @@ namespace platform::vfs::grpc
 
     protected:
         RequestHandler();
-        RequestHandler(const std::shared_ptr<vfs::Provider>& provider);
+        RequestHandler(const std::shared_ptr<vfs::ProviderInterface>& provider);
 
         ::grpc::Status getContexts(
             ::grpc::ServerContext* context,
@@ -127,6 +127,6 @@ namespace platform::vfs::grpc
             ::grpc::ServerWriter< ::cc::platform::vfs::Signal>* writer) override;
 
     protected:
-        std::shared_ptr<vfs::Provider> provider;
+        std::shared_ptr<vfs::ProviderInterface> provider;
     };
 }  // namespace platform::vfs::grpc

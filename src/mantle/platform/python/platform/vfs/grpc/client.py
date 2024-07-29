@@ -11,7 +11,6 @@ from cc.protobuf.import_proto import import_proto
 from cc.protobuf.vfs import VFSPathType, VFSPathsType, \
     encodePath, encodePaths, decodeStats, \
     pathRequest, locateRequest, attributeRequest
-from cc.core.enumeration import Enumeration
 
 ### Third-party modules
 from google.protobuf.empty_pb2 import Empty
@@ -25,19 +24,11 @@ import io
 ## `google.protobuf` and `cc.platform.vfs`.
 import_proto('vfs', globals())
 
-
-#===============================================================================
-## Enumerated values
-
-#PathType = Enumeration(cc.platform.vfs.PathType.items())
-
-
-
 #===============================================================================
 ## VirtualFileSystemClient
 
 class VirtualFileSystemClient (SignalClient):
-    '''Client for VirtualFileSystem service.'''
+    '''Client for VirtualFileSysConfig service.'''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
@@ -463,6 +454,5 @@ class VirtualFileSystemClient (SignalClient):
         self.self.stub.clearAttributes(encodePath(vfspath))
 
 
-
 if __name__ == '__main__':
-    network = VirtualFileSystemClient()
+    vfs = VirtualFileSystemClient()

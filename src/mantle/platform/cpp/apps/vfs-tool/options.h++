@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "vfs-provider.h++"
+#include "vfs-base.h++"
 #include "argparse/command.h++"
 
 class Options : public core::argparse::CommandOptions

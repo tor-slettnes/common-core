@@ -8,8 +8,8 @@
 #include "options.h++"                  // Command-line options
 #include "glib-mainloop.h++"            // GLib main loop
 #include "platform-grpc-server.h++"     // Load gRPC server
-#include "system-providers-native.h++"  // System services
-#include "network-providers-dbus.h++"   // Network services
+#include "sysconfig-providers-native.h++"  // SysConfig services
+#include "netconfig-providers-dbus.h++"   // NetConfig services
 #include "vfs-providers-local.h++"      // Virtual Filesystem services
 #include "application/init.h++"         // Common init routines
 #include "status/exceptions.h++"
@@ -24,8 +24,8 @@ int main(int argc, char** argv)
         ::options = std::make_unique<Options>();
         ::options->apply(argc, argv);
 
-        platform::system::native::register_providers();
-        platform::network::dbus::register_providers();
+        platform::sysconfig::native::register_providers();
+        platform::netconfig::dbus::register_providers();
         platform::vfs::local::register_providers();
 
         std::vector<std::thread> server_threads;
@@ -47,8 +47,8 @@ int main(int argc, char** argv)
         }
 
         platform::vfs::local::unregister_providers();
-        platform::network::dbus::unregister_providers();
-        platform::system::native::unregister_providers();
+        platform::netconfig::dbus::unregister_providers();
+        platform::sysconfig::native::unregister_providers();
 
         return 0;
     }

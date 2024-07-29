@@ -17,8 +17,8 @@ set(FILES
 )
 
 set(DIRECTORIES
-  system
-  network
+  sysconfig
+  netconfig
   vfs
 )
 
