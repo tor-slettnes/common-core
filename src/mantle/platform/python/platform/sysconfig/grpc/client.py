@@ -10,6 +10,7 @@ from cc.messaging.grpc import SignalClient
 from cc.protobuf.import_proto import import_proto
 from cc.protobuf.wellknown import TimestampType, encodeTimestamp, decodeTimestamp
 from cc.core.invocation import check_type
+from cc.protobuf.sysconfig import encodeCountry
 
 ### Third-party modules
 from google.protobuf.empty_pb2 import Empty
@@ -94,7 +95,7 @@ class SysConfigClient (SignalClient):
         return self.stub.list_timezone_areas(Empty()).areas
 
     def list_timezone_countries(self,
-                                area: str
+                                area: str|None = None
                                 ) -> list[cc.platform.sysconfig.TimeZoneCountry]:
         '''Obtain a list of Time Zone countries within a specific area.
 
@@ -104,6 +105,19 @@ class SysConfigClient (SignalClient):
         '''
         request = cc.platform.sysconfig.TimeZoneArea(name = area)
         return list(self.stub.list_timezone_countries(request).countries)
+
+    def list_timezone_regions(self,
+                              country: str,
+                              area: str|None = None
+                                ) -> list[cc.platform.sysconfig.TimeZoneCountry]:
+        '''Obtain a list of Time Zone regions within a specific country,
+        specified by its 2-letter ISO 3166 code (e.g. "US") or its English name.
+        '''
+        request = cc.platform.sysconfig.TimeZoneLocationFilter(
+            area = area,
+            country = encodeCountry(country))
+
+        return list(self.stub.list_timezone_regions(request).regions)
 
     def list_timezone_specs(self,
                             area: str|None = None,
@@ -118,38 +132,17 @@ class SysConfigClient (SignalClient):
         Results are sorted reasonably for grouping and presentation to an end
         user, as follows:
 
-          - first by area
-              - geographical regions west to east ("America", "Atlantic Ocean", ...)
-              - "Antarctica"
-              - "Etc"
+          - first by area (continents or oceans), roughly west to east
           - then alphabetical by short country code, except:
-              - within in America, countries in North America first, west to east
+              - within in "Americas", countries in North America first, west to east
 
-        '''
-
-        return [spec for spec in self.read_timezone_specs(area, country)]
-
-
-    def read_timezone_specs(self,
-                            area: str|None = None,
-                            country: str|None = None
-                            ) -> Iterator[cc.platform.sysconfig.TimeZoneCanonicalSpec]:
-        '''Same as `list_timezone_specs()`, but returns an iterator over zone
-        specifiations rather than a single list. See `get_timezone_spec()` for
-        details on what information is included.
         '''
 
         request = cc.platform.sysconfig.TimeZoneLocationFilter(
-            area = area)
+            area = area,
+            country = encodeCountry(country))
 
-        if isinstance(country, str):
-            if len(country) == 2:
-                request.country_code = country
-            else:
-                request.country_name = country
-
-        for spec in self.stub.read_timezone_specs(request):
-            yield spec
+        return self.stub.list_timezone_specs(request).specs
 
 
     def get_timezone_spec(self,
@@ -174,42 +167,6 @@ class SysConfigClient (SignalClient):
             cc.platform.sysconfig.TimeZoneName(
                 zonename=zonename))
 
-
-    def set_timezone(self,
-                     zonename: str = None,
-                     automatic: bool|None = None,
-                     provider: str = None):
-        '''
-        Configure the system time zone. Inputs:
-
-        - `zonename`: Configured zone, e.g. `America/Los_Angeles' (not `PST` or `PDT`)
-        - `automatic`: Whether to automatically obtain timezone from an online service
-        - `provider`: Online service provider for automatic zone configuration.
-        '''
-
-        request = cc.platform.sysconfig.TimeZoneConfig()
-
-        if automatic is not None:
-            request.automatic = automatic
-
-        if zonename is not None:
-            request.zonename = zonename
-
-        if provider is not None:
-            request.provider = provider;
-
-        self.stub.set_timezone(request)
-
-    def get_timezone_config(self) -> cc.platform.sysconfig.TimeZoneConfig:
-        '''
-        Get current timezone configuration, including:
-        - `zonename`: Configured zone, e.g. `America/Los_Angeles' (not `PST` or `PDT`)
-        - `automatic`: Whether to automatically obtain timezone from an online service
-        - `provider`: Online service provider for automatic zone configuration.
-        '''
-        return self.stub.get_timezone_config(Empty())
-
-
     def get_timezone_info(self,
                           canonical_zone: str|None = None,
                           time: TimestampType|None = None
@@ -231,6 +188,47 @@ class SysConfigClient (SignalClient):
             time = time)
 
         return self.stub.get_timezone_info(request)
+
+
+    def set_timezone_by_name(self,
+                             zonename: str
+                             ) -> cc.platform.sysconfig.TimeZoneInfo:
+        '''
+        Set the system timezone to the specified canonical name,
+        e.g. `America/Los_Angeles' (not `PST` or `PDT`).
+        '''
+
+        request = cc.platform.sysconfig.TimeZoneConfig(
+            zonename = zonename)
+
+        return self.stub.set_timezone(request)
+
+    def set_timezone_by_location(self,
+                                 country: str,
+                                 region: str|None = None
+                                 ) -> cc.platform.sysconfig.TimeZoneInfo:
+        '''
+        Set the system timezone based on country and, if appliicable, region
+        within country.
+        * `country` may be specified by its 2-character ISO 3166
+          code (e.g. "US") or by its common English name (e.g. "United States").
+        * `region` should be present if *and only if* the country
+          contains multiple timezones.
+
+        Examples:
+        * `set_timezone_by_location(country="NO")`
+        * `set_timezone_by_location(country="US", region="Pacific")`
+        '''
+
+        location = cc.platform.sysconfig.TimeZoneLocation(
+            country = encodeCountry(country),
+            region = region)
+
+        request = cc.platform.sysconfig.TimeZoneConfig(
+            location = location)
+
+        return self.stub.set_timezone(request)
+
 
 
     def invoke_sync(self,

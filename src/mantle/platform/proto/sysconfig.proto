@@ -45,45 +45,43 @@ service SysConfig
     //==========================================================================
     // Time zone configuration
 
-    // List time zone [areas](https://en.wikipedia.org/wiki/Tz_database#Area).
-    // These are roughly: continents, oceans, or `Etc`.
-    // North and South America are considered one area: `America`.
+    // List time zone _areas_, which are continents or oceans. Results are
+    // sorted roughly with a west to east then north to south bias.
     rpc list_timezone_areas (google.protobuf.Empty) returns (TimeZoneAreas);
 
     // List countries, optionally within a specific area.
-    // This includes countries that may also span into other areas.
+    // Results are sorted alphabetically, except that within "Americas"
+    // the North American countries (US, Canada, Mexico) appear first
+    // in that order (coincidentally, by their westernmost points).
     rpc list_timezone_countries (TimeZoneArea) returns (TimeZoneCountries);
+
+    // List regions within a specified country, optionally also limited by area.
+    // Results are sorted alphabetically, except that within the US the four
+    // major timezone regions (Eastern, Central, Mountain, Pacific) appear in
+    // that order.
+    //
+    // If there are no subregions within the specified country, return an empty
+    // response.
+    rpc list_timezone_regions (TimeZoneLocationFilter) returns (TimeZoneRegions);
 
     // Obtain canonical time zone specifications, optionally restricted by a
     // specific area and/or country.
     rpc list_timezone_specs (TimeZoneLocationFilter) returns (TimeZoneCanonicalSpecs);
 
-    // Same, but as a stream rather than a single large response.
-    rpc read_timezone_specs (TimeZoneLocationFilter) returns (stream TimeZoneCanonicalSpec);
-
     /// Return geographic information about a specific canonical timezone. If no
     /// zone name is specified, return info about the currently configured zone.
     rpc get_timezone_spec (TimeZoneCanonicalName) returns (TimeZoneCanonicalSpec);
-
-    /// Configure the system time zone. Return the resulting applied zone
-    /// information.
-    rpc set_timezone (TimeZoneConfig) returns (TimeZoneInfo);
-
-    /// Get the current timezone configuration, including canonical name and
-    /// whether it is automatically being kept up to date using an external
-    /// location service.
-    rpc get_timezone_config (google.protobuf.Empty) returns (TimeZoneConfig);
 
     /// Get offset information about the specified time zone at the specified
     /// time, or the currently configured zone and/or system time if not
     /// specified. Information includes current and
     /// standard time offsets from UTC, and whether Daylight Savings Time (or
     /// Summer Time) is currently in effect.
-
-    /// Get information about the currently applied timezone, including time
-    /// offsets from UTC and whether Daylight Savings / Summer Time is currently
-    /// in effect.
     rpc get_timezone_info (TimeZoneInfoRequest) returns (TimeZoneInfo);
+
+    /// Configure the system time zone. Return the resulting applied zone
+    /// information.
+    rpc set_timezone (TimeZoneConfig) returns (TimeZoneInfo);
 
     //==========================================================================
     // Spawn a new process, with or without capturing stdin/stdout/stderr.
@@ -169,6 +167,19 @@ message TimeZoneAreas
 
 message TimeZoneArea
 {
+    // Time zone area name. This corresponds to the first component of the
+    // available canonical names, transcribed slightly for more descriptive
+    // English names:
+    //   - America/*  -> "Americas"
+    //   - Atlantic/* -> "Atlantic Ocean"
+    //   - Europe/* -> "Europe"
+    //   - Africa/* -> "Africa"
+    //   - Asia/* -> "Asia"
+    //   - Indian/* -> "Indian Ocean"
+    //   - Australia/* -> "Australia"
+    //   - Pacific/* -> "Pacific Ocean"
+    //   - Antarctica/* -> "Antarctica"
+
     string name = 1;
 }
 
@@ -183,15 +194,40 @@ message TimeZoneCountry
     string name = 2;            // English name, e.g. "United States, "Germany", ...
 }
 
+message TimeZoneRegions
+{
+    repeated string regions = 1;
+}
+
+message TimeZoneLocation
+{
+    // Country code and/or name, and possibly a region within.
+    //
+    // For example, if included in `TimeZoneConfig()` when invoking `set_timezone()`:
+    //  * `country.code = NO` is sufficient, and equivalent to `canonical_zone = Europe/Berlin`
+    //  * `country.code = US` is insufficient, and requires a named region (e.g. `Pacific`).
+    //
+    // As included in `TimeZoneCanonicalSpec`, this message is guaranteed to
+    // include a country specified by both `code` and `name`.  It includes a
+    // `region` if *and only if* that country has more than one time zone.
+
+    // Country, specified either by its 2-letter code (e.g. "DE") or its name in
+    // English (e.g. "Germany").
+    TimeZoneCountry country = 1;
+
+    // Region within country. Present only for countries with more than one timezone.
+    string region = 2;
+}
+
 message TimeZoneLocationFilter
 {
-    string area = 1;            // Optional continent, ocean, or "Etc"
+    // Optional area (continent or ocean). This can be either the first
+    // component of the canonical name (e.g. "America") or its transcribed name
+    // (e.g. "Americas") - see the `TimeZoneArea` message above.
+    TimeZoneArea area = 1;
 
-    oneof country               // Optional country
-    {
-        string country_code = 2; // ISO 3166 country code, e.g. "DE"
-        string country_name = 3; // English name, e.g. "Germany"
-    }
+    // Optional country, identified by either `code` or `name`
+    TimeZoneCountry country = 2;
 }
 
 message TimeZoneCanonicalName
@@ -210,12 +246,17 @@ message TimeZoneCanonicalSpec
     // Canonical name ("Olson" name), e.g. `America/Los_Angeles` or `Etc/UTC`.
     string name = 1;
 
-    // The `Area` component of the name, e.g. `America`, `Atlantic`, `Etc`.
+    // The English name for the area (continent or ocean) where this zone is
+    // located. This corresponds to the first component of the canonical name,
+    // e.g.:
+    //   - America/*  -> "Americas"
+    //   - Atlantic/* -> "Atlantic Ocean" 
+   //   -  ...
     string area = 2;
 
-    // One or more countries (and possibly a region within at most one of these
-    // countries) where this time zone is used
-    repeated TimeZoneCountryRegion countries = 3;
+    // One or more countries (and possibly a region within any of these
+    // countries) where this time zone is used.
+    repeated TimeZoneLocation locations = 3;
 
     // Geographical cordinates of the canonical location. For instance the
     // coordinates of `Europe/Berlin` is that of Berlin, not any other countries
@@ -224,25 +265,17 @@ message TimeZoneCanonicalSpec
     int32 longitude = 7;        // Seconds east of Prime Meridian
 }
 
-message TimeZoneCountryRegion
-{
-    TimeZoneCountry country = 1;
-
-    // Region within country. Present only for countries with more than one timezone.
-    string region = 2;
-}
-
 message TimeZoneConfig
 {
-    oneof optional_automatic
+    // Used to uniquely identify a timezone, either by name or geographical locaion.
+    oneof config
     {
-        // Whether to use an external location service to set time zone
-        // Not yet implemented.
-        bool automatic = 1;
-    }
+        // Canonical zone name, e.g. "America/Los_Angeles"
+        string canonical_zone = 1;
 
-    string zonename = 2;        // Canonical zone name, e.g. "America/Los_Angeles"
-    string provider = 3;    // Timezone/Location service provider. TBD.
+        // Country name and possibly region within.
+        TimeZoneLocation location = 2;
+    }
 }
 
 message TimeZoneInfoRequest
@@ -254,6 +287,7 @@ message TimeZoneInfoRequest
     // the server's current system time.
     google.protobuf.Timestamp time = 2;
 }
+
 
 message TimeZoneInfo
 {
@@ -312,7 +346,7 @@ message Signal
         TimeConfig time_config = 9;
 
         // Emitted when canonical timezone configuration changes.
-        TimeZoneConfig tz_config = 10;
+        TimeZoneCanonicalName tz_config = 10;
 
         // Effective zone change. Emitted when the canonical zone is updated,
         // or when daylight savings time stars or ends.

@@ -53,6 +53,15 @@ namespace protobuf
                 platform::sysconfig::ComponentVersions *native) noexcept;
 
     //==========================================================================
+    // TimeZoneCanonicalName
+
+    void encode(const platform::sysconfig::TimeZoneCanonicalName &native,
+                cc::platform::sysconfig::TimeZoneCanonicalName *proto) noexcept;
+
+    void decode(const cc::platform::sysconfig::TimeZoneCanonicalName &proto,
+                platform::sysconfig::TimeZoneCanonicalName *native) noexcept;
+
+    //==========================================================================
     // TimeZoneCanonicalSpec
 
     void encode(const platform::sysconfig::TimeZoneCanonicalSpec &native,
@@ -89,22 +98,14 @@ namespace protobuf
                 platform::sysconfig::TimeZoneCountry *native) noexcept;
 
     //==========================================================================
-    // TimeZoneCountryRegion
+    // TimeZoneLocation
 
-    void encode(const platform::sysconfig::TimeZoneCountryRegion &native,
-                cc::platform::sysconfig::TimeZoneCountryRegion *proto) noexcept;
+    void encode(const platform::sysconfig::TimeZoneLocation &native,
+                cc::platform::sysconfig::TimeZoneLocation *proto) noexcept;
 
-    void decode(const cc::platform::sysconfig::TimeZoneCountryRegion &proto,
-                platform::sysconfig::TimeZoneCountryRegion *native) noexcept;
+    void decode(const cc::platform::sysconfig::TimeZoneLocation &proto,
+                platform::sysconfig::TimeZoneLocation *native) noexcept;
 
-    //==========================================================================
-    // TimeZoneConfig
-
-    void encode(const platform::sysconfig::TimeZoneConfig &native,
-                cc::platform::sysconfig::TimeZoneConfig *proto) noexcept;
-
-    void decode(const cc::platform::sysconfig::TimeZoneConfig &proto,
-                platform::sysconfig::TimeZoneConfig *native) noexcept;
 
     //==========================================================================
     // TimeZoneInfo

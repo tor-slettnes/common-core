@@ -8,6 +8,7 @@
 #pragma once
 #include "sysconfig-timezone.h++"
 #include "types/valuemap.h++"
+#include "settings/settingsstore.h++"
 
 #define READCHUNK 256
 #define TZROOT    "/usr/share/zoneinfo"
@@ -43,22 +44,26 @@ namespace platform::sysconfig::native
         TimeZoneCountries list_timezone_countries(
             const TimeZoneArea &area) override;
 
+        TimeZoneRegions list_timezone_regions(
+            const TimeZoneLocationFilter &filter) override;
+
         TimeZoneCanonicalSpecs list_timezone_specs(
             const TimeZoneLocationFilter &filter) const override;
 
         TimeZoneCanonicalSpec get_timezone_spec(
             const TimeZoneCanonicalName &zone) const override;
 
-        TimeZoneInfo set_timezone(
-            const TimeZoneConfig &config) override;
-
-        TimeZoneConfig get_timezone_config() const override;
-
         TimeZoneInfo get_timezone_info(
             const TimeZoneCanonicalName &canonical_zone = {},
             const core::dt::TimePoint &timepoint = {}) const override;
 
-    private:
+        TimeZoneInfo set_timezone(
+            const TimeZoneCanonicalName &zone) override;
+
+        TimeZoneInfo set_timezone(
+            const TimeZoneLocation &location) override;
+
+    protected:
         std::string get_configured_zonename() const;
         void set_configured_zonename(const std::string &zone);
 
@@ -79,9 +84,15 @@ namespace platform::sysconfig::native
 
         CountryMap load_countries(const fs::path &cctab = CNFILE) const;
 
-        bool filter_empty_or_includes_country(const TimeZoneCountry &filter,
-                                              const TimeZoneCountryRegions &candidates) const;
+        bool filter_includes_zone(const TimeZoneLocationFilter &filter,
+                                  const TimeZoneCanonicalSpec &spec) const;
+
+        bool country_match(const TimeZoneCountry &filter,
+                           const TimeZoneCountry &candidate) const;
 
         int to_scalar_coord(const std::string &coord) const;
+
+    protected:
+        core::SettingsStore zone_settings;
     };
 }  // namespace platform::sysconfig::native

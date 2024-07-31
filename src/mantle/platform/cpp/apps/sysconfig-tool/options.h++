@@ -33,7 +33,7 @@ private:
     void on_time(const core::dt::TimePoint &tp);
     void on_time_config(const platform::sysconfig::TimeConfig &tc);
     void on_tz_info(const core::dt::TimeZoneInfo &ti);
-    void on_tz_config(const platform::sysconfig::TimeZoneConfig &tc);
+    void on_tz_config(const platform::sysconfig::TimeZoneCanonicalName &zone);
     void on_hostinfo(const platform::sysconfig::HostInfo &hi);
     void on_productinfo(const platform::sysconfig::ProductInfo &pi);
 
@@ -43,10 +43,11 @@ private:
     void get_ntp();
     void list_timezone_areas();
     void list_timezone_countries();
+    void list_timezone_regions();
     void list_timezone_specs();
     void get_timezone_spec();
-    void set_timezone();
-    void get_timezone_config();
+    void set_timezone_by_name();
+    void set_timezone_by_location();
     void get_timezone_info();
     void get_host_info();
     void set_host_name();

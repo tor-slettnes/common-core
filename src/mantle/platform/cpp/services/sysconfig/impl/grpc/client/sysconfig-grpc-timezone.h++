@@ -30,21 +30,24 @@ namespace platform::sysconfig::grpc
         TimeZoneCountries list_timezone_countries(
             const TimeZoneArea &area) override;
 
+        TimeZoneRegions list_timezone_regions(
+            const TimeZoneLocationFilter &filter) override;
+
         TimeZoneCanonicalSpecs list_timezone_specs(
             const TimeZoneLocationFilter &filter) const override;
 
         TimeZoneCanonicalSpec get_timezone_spec(
             const TimeZoneCanonicalName &zone) const override;
 
-        TimeZoneInfo set_timezone(
-            const TimeZoneConfig &config) override;
-
-        TimeZoneConfig get_timezone_config() const override;
-
         TimeZoneInfo get_timezone_info(
             const TimeZoneCanonicalName &canonical_zone = {},
             const core::dt::TimePoint &timepoint = {}) const override;
 
+        TimeZoneInfo set_timezone(
+            const TimeZoneCanonicalName &zone) override;
+
+        TimeZoneInfo set_timezone(
+            const TimeZoneLocation &location) override;
 
     private:
         std::shared_ptr<Client> client;

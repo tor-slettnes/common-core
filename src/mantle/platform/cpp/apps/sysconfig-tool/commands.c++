@@ -53,6 +53,12 @@ void Options::add_commands()
         std::bind(&Options::list_timezone_countries, this));
 
     this->add_command(
+        "list_timezone_regions",
+        {"COUNTRY", "[AREA]"},
+        "List zones within a country, optionally also restricted to a specific area.",
+        std::bind(&Options::list_timezone_regions, this));
+
+    this->add_command(
         "list_timezone_specs",
         {"[AREA]", "[COUNTRY]"},
         "List canoncial zone specifications, "
@@ -67,16 +73,20 @@ void Options::add_commands()
         std::bind(&Options::get_timezone_spec, this));
 
     this->add_command(
-        "set_timezone",
+        "set_timezone_by_name",
         {"ZONE"},
-        "Set the canonical system timezone to the the specified ZONE.",
-        std::bind(&Options::set_timezone, this));
+        "Set the system timezone to the the specified ZONE.",
+        std::bind(&Options::set_timezone_by_name, this));
 
     this->add_command(
-        "get_timezone_config",
-        {""},
-        "Get current timezone configuration: Canonical zone, automatic timezone settings.",
-        std::bind(&Options::get_timezone_config, this));
+        "set_timezone_by_location",
+        {"COUNTRY", "[REGION]"},
+        "Set the system timezone according to the specified country, "
+        "and if applicable, region.  COUNTRY should be specified either "
+        "by its ISO 3166 code (e.g. \"US\") or its name in English "
+        "(e.g., \"United States\").  REGION should be included if and "
+        "only if the specified country has more than one time zone.",
+        std::bind(&Options::set_timezone_by_location, this));
 
     this->add_command(
         "get_timezone_info",
@@ -176,6 +186,26 @@ void Options::list_timezone_countries()
     }
 }
 
+void Options::list_timezone_regions()
+{
+    std::string country = this->get_arg("country");
+    std::string area = this->next_arg().value_or("");
+
+    platform::sysconfig::TimeZoneLocationFilter filter = {
+        .area = area,
+        .country = {
+            .code = (country.size() == 2) ? country : "",
+            .name = (country.size() != 2) ? country : "",
+        },
+    };
+
+    for (const platform::sysconfig::TimeZoneRegion &region :
+         platform::sysconfig::timezone->list_timezone_regions(filter))
+    {
+        std::cout << region << std::endl;
+    }
+}
+
 void Options::list_timezone_specs()
 {
     std::string area = this->next_arg().value_or("");
@@ -203,19 +233,33 @@ void Options::get_timezone_spec()
               << std::endl;
 }
 
-void Options::set_timezone()
+void Options::set_timezone_by_name()
 {
     std::string zonename = this->get_arg("time zone");
-    platform::sysconfig::TimeZoneInfo result = platform::sysconfig::timezone->set_timezone({
-        .zonename = zonename,
-    });
+
+    platform::sysconfig::TimeZoneInfo result =
+        platform::sysconfig::timezone->set_timezone(zonename);
+
     std::cout << result << std::endl;
 }
 
-void Options::get_timezone_config()
+void Options::set_timezone_by_location()
 {
-    std::cout << platform::sysconfig::timezone->get_timezone_config()
-              << std::endl;
+    std::string country = this->get_arg("country");
+    std::string region = this->next_arg().value_or("");
+
+    platform::sysconfig::TimeZoneLocation location = {
+        .country = {
+            .code = country.size() == 2 ? country : "",
+            .name = country.size() != 2 ? country : "",
+        },
+        .region = region,
+    };
+
+    platform::sysconfig::TimeZoneInfo result =
+        platform::sysconfig::timezone->set_timezone(location);
+
+    std::cout << result << std::endl;
 }
 
 void Options::get_timezone_info()

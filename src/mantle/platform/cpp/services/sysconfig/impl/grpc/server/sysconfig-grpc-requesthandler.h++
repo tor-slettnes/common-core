@@ -93,15 +93,15 @@ namespace platform::sysconfig::grpc
             const ::cc::platform::sysconfig::TimeZoneArea* request,
             ::cc::platform::sysconfig::TimeZoneCountries* response) override;
 
+        ::grpc::Status list_timezone_regions(
+            ::grpc::ServerContext* context,
+            const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
+            ::cc::platform::sysconfig::TimeZoneRegions* response) override;
+
         ::grpc::Status list_timezone_specs(
             ::grpc::ServerContext* context,
             const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
             ::cc::platform::sysconfig::TimeZoneCanonicalSpecs* response) override;
-
-        ::grpc::Status read_timezone_specs(
-            ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
-            ::grpc::ServerWriter<::cc::platform::sysconfig::TimeZoneCanonicalSpec>* writer) override;
 
         ::grpc::Status get_timezone_spec(
             ::grpc::ServerContext* context,
@@ -112,11 +112,6 @@ namespace platform::sysconfig::grpc
             ::grpc::ServerContext* context,
             const ::cc::platform::sysconfig::TimeZoneConfig* request,
             ::cc::platform::sysconfig::TimeZoneInfo* response) override;
-
-        ::grpc::Status get_timezone_config(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            ::cc::platform::sysconfig::TimeZoneConfig* response) override;
 
         ::grpc::Status get_timezone_info(
             ::grpc::ServerContext* context,

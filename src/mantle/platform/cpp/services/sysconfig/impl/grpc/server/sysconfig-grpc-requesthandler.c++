@@ -212,6 +212,25 @@ namespace platform::sysconfig::grpc
         }
     }
 
+    ::grpc::Status RequestHandler::list_timezone_regions(
+        ::grpc::ServerContext* context,
+        const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
+        ::cc::platform::sysconfig::TimeZoneRegions* response)
+    {
+        try
+        {
+            protobuf::assign_repeated(
+                platform::sysconfig::timezone->list_timezone_regions(
+                    protobuf::decoded<platform::sysconfig::TimeZoneLocationFilter>(*request)),
+                response->mutable_regions());
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
+    }
+
     ::grpc::Status RequestHandler::list_timezone_specs(
         ::grpc::ServerContext* context,
         const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
@@ -231,28 +250,6 @@ namespace platform::sysconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::read_timezone_specs(
-        ::grpc::ServerContext* context,
-        const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
-        ::grpc::ServerWriter<::cc::platform::sysconfig::TimeZoneCanonicalSpec>* writer)
-    {
-        ::cc::platform::sysconfig::TimeZoneCanonicalSpecs response;
-        this->list_timezone_specs(context, request, &response);
-
-        try
-        {
-            for (const ::cc::platform::sysconfig::TimeZoneCanonicalSpec& spec : response.specs())
-            {
-                writer->Write(spec);
-            }
-            return ::grpc::Status::OK;
-        }
-        catch (...)
-        {
-            return this->failure(std::current_exception(), *request, context->peer());
-        }
-    }
-
     // Return geographic information about an arbitrary timezone.
     // If no zone name is provided, return information about the configured zone.
     ::grpc::Status RequestHandler::get_timezone_spec(
@@ -263,7 +260,8 @@ namespace platform::sysconfig::grpc
         try
         {
             protobuf::encode(
-                platform::sysconfig::timezone->get_timezone_spec(request->name()),
+                platform::sysconfig::timezone->get_timezone_spec(
+                    protobuf::decoded<platform::sysconfig::TimeZoneCanonicalName>(*request)),
                 response);
             return ::grpc::Status::OK;
         }
@@ -281,28 +279,18 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            protobuf::encode(
-                platform::sysconfig::timezone->set_timezone(
-                    protobuf::decoded<TimeZoneConfig>(*request)),
-                response);
-            return ::grpc::Status::OK;
-        }
-        catch (...)
-        {
-            return this->failure(std::current_exception(), *request, context->peer());
-        }
-    }
-
-    ::grpc::Status RequestHandler::get_timezone_config(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        ::cc::platform::sysconfig::TimeZoneConfig* response)
-    {
-        try
-        {
-            protobuf::encode(
-                platform::sysconfig::timezone->get_timezone_config(),
-                response);
+            TimeZoneInfo info;
+            if (request->has_canonical_zone())
+            {
+                info = platform::sysconfig::timezone->set_timezone(
+                    request->canonical_zone());
+            }
+            else if (request->has_location())
+            {
+                info = platform::sysconfig::timezone->set_timezone(
+                    protobuf::decoded<TimeZoneLocation>(request->location()));
+            }
+            protobuf::encode(info, response);
             return ::grpc::Status::OK;
         }
         catch (...)

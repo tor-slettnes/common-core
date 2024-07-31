@@ -25,7 +25,7 @@ namespace platform::sysconfig::grpc
             cc::platform::sysconfig::Signal::kTzConfig,
             [&](const cc::platform::sysconfig::Signal &signal) {
                 platform::sysconfig::signal_tzconfig.emit(
-                    protobuf::decoded<TimeZoneConfig>(signal.tz_config()));
+                    protobuf::decoded<TimeZoneCanonicalName>(signal.tz_config()));
             });
 
         this->client->add_handler(
@@ -38,18 +38,36 @@ namespace platform::sysconfig::grpc
 
     TimeZoneAreas TimeZoneProvider::list_timezone_areas() const
     {
-        return protobuf::assign_to_vector<std::string>(
-            this->client->call_check(&Client::Stub::list_timezone_areas).areas());
+        cc::platform::sysconfig::TimeZoneAreas response = this->client->call_check(
+            &Client::Stub::list_timezone_areas);
+
+        return {
+            response.areas().begin(),
+            response.areas().end(),
+        };
     }
 
     TimeZoneCountries TimeZoneProvider::list_timezone_countries(
         const TimeZoneArea &area)
     {
-        return protobuf::decode_to_vector<TimeZoneCountry>(
-            this->client->call_check(
-                            &Client::Stub::list_timezone_countries,
-                            protobuf::encoded<cc::platform::sysconfig::TimeZoneArea>(area))
-                .countries());
+        cc::platform::sysconfig::TimeZoneCountries response = this->client->call_check(
+            &Client::Stub::list_timezone_countries,
+            protobuf::encoded<cc::platform::sysconfig::TimeZoneArea>(area));
+
+        return protobuf::decode_to_vector<TimeZoneCountry>(response.countries());
+    }
+
+    TimeZoneRegions TimeZoneProvider::list_timezone_regions(
+        const TimeZoneLocationFilter &filter)
+    {
+        cc::platform::sysconfig::TimeZoneRegions response = this->client->call_check(
+            &Client::Stub::list_timezone_regions,
+            protobuf::encoded<cc::platform::sysconfig::TimeZoneLocationFilter>(filter));
+
+        return {
+            response.regions().begin(),
+            response.regions().end(),
+        };
     }
 
     TimeZoneCanonicalSpecs TimeZoneProvider::list_timezone_specs(
@@ -66,27 +84,10 @@ namespace platform::sysconfig::grpc
     TimeZoneCanonicalSpec TimeZoneProvider::get_timezone_spec(
         const TimeZoneCanonicalName &zone) const
     {
-        cc::platform::sysconfig::TimeZoneCanonicalName request;
-        request.set_name(zone);
-
         return protobuf::decoded<TimeZoneCanonicalSpec>(
-            this->client->call_check(&Client::Stub::get_timezone_spec, request));
-    }
-
-    TimeZoneInfo TimeZoneProvider::set_timezone(
-        const TimeZoneConfig &config)
-    {
-        return protobuf::decoded<TimeZoneInfo>(
             this->client->call_check(
-                &Client::Stub::set_timezone,
-                protobuf::encoded<cc::platform::sysconfig::TimeZoneConfig>(config)));
-    }
-
-    TimeZoneConfig TimeZoneProvider::get_timezone_config() const
-    {
-        return protobuf::decoded<TimeZoneConfig>(
-            this->client->call_check(
-                &Client::Stub::get_timezone_config));
+                &Client::Stub::get_timezone_spec,
+                protobuf::encoded<cc::platform::sysconfig::TimeZoneCanonicalName>(zone)));
     }
 
     TimeZoneInfo TimeZoneProvider::get_timezone_info(
@@ -99,6 +100,26 @@ namespace platform::sysconfig::grpc
                 protobuf::encoded<cc::platform::sysconfig::TimeZoneInfoRequest>(
                     canonical_zone,
                     timepoint)));
+    }
+
+    TimeZoneInfo TimeZoneProvider::set_timezone(
+        const TimeZoneCanonicalName &zone)
+    {
+        cc::platform::sysconfig::TimeZoneConfig request;
+        request.set_canonical_zone(zone);
+
+        return protobuf::decoded<TimeZoneInfo>(
+            this->client->call_check(&Client::Stub::set_timezone, request));
+    }
+
+    TimeZoneInfo TimeZoneProvider::set_timezone(
+        const TimeZoneLocation &location)
+    {
+        cc::platform::sysconfig::TimeZoneConfig request;
+        protobuf::encode(location, request.mutable_location());
+
+        return protobuf::decoded<TimeZoneInfo>(
+            this->client->call_check(&Client::Stub::set_timezone, request));
     }
 
 }  // namespace platform::sysconfig::grpc

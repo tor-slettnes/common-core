@@ -146,12 +146,12 @@ void Options::on_tz_info(const core::dt::TimeZoneInfo &ti)
                       ti);
 }
 
-void Options::on_tz_config(const platform::sysconfig::TimeZoneConfig &tc)
+void Options::on_tz_config(const platform::sysconfig::TimeZoneCanonicalName &zone)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_tz_config(%s)\n",
                       core::dt::Clock::now(),
-                      tc);
+                      zone);
 }
 
 void Options::on_hostinfo(const platform::sysconfig::HostInfo &hi)

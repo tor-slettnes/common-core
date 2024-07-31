@@ -1,0 +1,39 @@
+// -*- javascript -*-
+//==============================================================================
+/// @file timezones.json
+/// @brief Timezone presentation settings
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+{
+    "area names" : {
+        "America": "Americas",
+        "Atlantic": "Atlantic Ocean",
+        "Indian": "Indian Ocean",
+        "Pacific": "Pacific Ocean",
+        "Arctic": "Arctic Ocean"
+    },
+
+    "area order" : [
+        "Americas", "Atlantic Ocean", "Europe",
+        "Africa", "Asia", "Indian Ocean",
+        "Australia", "Pacific Ocean"
+    ],
+
+    "country order" : {
+        "Americas" : [
+            "United States",
+            "Canada",
+            "Mexico"
+        ]
+    },
+
+    "region order" : {
+        "United States" : [
+            "Eastern (most areas)",
+            "Central (most areas)",
+            "Mountain (most areas)",
+            "Pacific"
+        ]
+    }
+}

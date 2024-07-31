@@ -29,11 +29,11 @@ namespace platform::sysconfig
         return stream;
     }
 
-    std::ostream &operator<<(std::ostream &stream, const TimeZoneCountryRegion &region)
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneLocation &location)
     {
         core::types::PartsList parts;
-        parts.add("country", region.country);
-        parts.add_string("region", region.region, !region.region.empty());
+        parts.add("country", location.country);
+        parts.add_string("region", location.region, !location.region.empty());
         stream << parts;
         return stream;
     }
@@ -78,26 +78,13 @@ namespace platform::sysconfig
     std::ostream &operator<<(std::ostream &stream, const TimeZoneCanonicalSpec &spec)
     {
         core::str::format(stream,
-                          "{name=%r, area=%r, regions=%r, "
+                          "{name=%r, area=%r, locations=%r, "
                           "latitude=%r, longitude=%r",
                           spec.name,
                           spec.area,
-                          spec.countries,
+                          spec.locations,
                           dms(spec.latitude, "N", "S"),
                           dms(spec.longitude, "E", "W"));
-        return stream;
-    }
-
-    //==========================================================================
-    // TimeZoneConfig
-
-    std::ostream &operator<<(std::ostream &stream, const TimeZoneConfig &config)
-    {
-        core::types::PartsList parts;
-        parts.add_string("zonename", config.zonename);
-        parts.add_value("automatic", config.automatic);
-        parts.add_string("provider", config.provider, !config.provider.empty());
-        stream << parts;
         return stream;
     }
 
@@ -110,5 +97,5 @@ namespace platform::sysconfig
     // Signals
 
     core::signal::DataSignal<TimeZoneInfo> signal_tzinfo("TimeZoneInfo", true);
-    core::signal::DataSignal<TimeZoneConfig> signal_tzconfig("TimeZoneConfig", true);
+    core::signal::DataSignal<TimeZoneCanonicalName> signal_tzconfig("TimeZoneConfig", true);
 }  // namespace platform::sysconfig

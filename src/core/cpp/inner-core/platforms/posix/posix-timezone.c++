@@ -28,7 +28,9 @@ namespace core::platform
         return dt;
     }
 
-    std::tm PosixTimeZoneProvider::localtime(const std::time_t &time, const std::string &timezone) const
+    std::tm PosixTimeZoneProvider::localtime(
+        const std::time_t &time,
+        const std::string &timezone) const
     {
         auto lck = std::lock_guard(const_cast<This *>(this)->mtx);
         SavedValue saved = this->apply_zone(timezone);

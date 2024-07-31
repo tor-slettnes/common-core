@@ -10,6 +10,7 @@ set(TARGET "cc_platform_protobuf")
 
 set(FILES
   vfs.py
+  sysconfig.py
 )
 
 BuildPython("${TARGET}"
