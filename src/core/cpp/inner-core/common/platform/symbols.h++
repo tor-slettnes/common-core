@@ -26,6 +26,8 @@ namespace core::platform
         /// @brief Generate a Universally Unique IDentifier
         virtual std::string uuid() const noexcept = 0;
 
+        virtual std::string errno_name(int num) const noexcept;
+
         /// @brief Demangle a type/class name, i.e. `typeid(Class).name`
         virtual std::string cpp_demangle(
             const std::string &abiname,

@@ -7,6 +7,7 @@
 
 #pragma once
 #include "provider.h++"
+#include "types/valuemap.h++"
 
 namespace core::platform
 {
@@ -27,11 +28,28 @@ namespace core::platform
         using Super::Super;
 
     public:
+        virtual std::optional<std::string> getenv(const std::string &variable);
+
+        // @brief Add a new environment variable.  This effectively wraps
+        //     OS-specific `putenv()` implementations by ensuring the newly
+        //     added environment string remains in memory (something which
+        //     `putenv()` does not do).
+        void setenv(const std::string &variable, const std::string &value);
+
+        // @brief remove an exiting environment variable.  If this variable
+        //     had been previously added with `setenv()` it is also removed
+        //     from our local cache (thus freed).
+        void unsetenv(const std::string &variable);
+
         /// @brief Return the maximum length of a filesystem path.
         virtual bool isatty(int fd) const = 0;
 
-        /// @brief Return the maximum length of a filesystem path.
+    protected:
+        /// @brief Add a an entry of the form "VARIABLE=value" to the environment.
         virtual void putenv(const std::string &envstring) = 0;
+
+    private:
+        static types::ValueMap<std::string, std::string> env;
     };
 
     extern ProviderProxy<RunTimeProvider> runtime;

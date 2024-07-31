@@ -82,35 +82,45 @@ namespace platform::sysconfig::grpc
 
         //======================================================================
         // Time zone configuration
-        //
-        // Obtain geographic information about all available time zones.
 
-        ::grpc::Status get_timezone_specs(
+        ::grpc::Status list_timezone_areas(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::grpc::ServerWriter<::cc::platform::sysconfig::TimeZoneSpec>* writer) override;
+            ::cc::platform::sysconfig::TimeZoneAreas* response) override;
 
-        // Return geographic information about an arbitrary timezone.
-        // If no zone name is provided, return information about the configured zone.
+        ::grpc::Status list_timezone_countries(
+            ::grpc::ServerContext* context,
+            const ::cc::platform::sysconfig::TimeZoneArea* request,
+            ::cc::platform::sysconfig::TimeZoneCountries* response) override;
+
+        ::grpc::Status list_timezone_specs(
+            ::grpc::ServerContext* context,
+            const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
+            ::cc::platform::sysconfig::TimeZoneCanonicalSpecs* response) override;
+
+        ::grpc::Status read_timezone_specs(
+            ::grpc::ServerContext* context,
+            const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
+            ::grpc::ServerWriter<::cc::platform::sysconfig::TimeZoneCanonicalSpec>* writer) override;
+
         ::grpc::Status get_timezone_spec(
             ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::TimeZoneName* request,
-            ::cc::platform::sysconfig::TimeZoneSpec* response) override;
+            const ::cc::platform::sysconfig::TimeZoneCanonicalName* request,
+            ::cc::platform::sysconfig::TimeZoneCanonicalSpec* response) override;
 
-        // Get or set the timezone configuration
         ::grpc::Status set_timezone(
             ::grpc::ServerContext* context,
             const ::cc::platform::sysconfig::TimeZoneConfig* request,
             ::cc::platform::sysconfig::TimeZoneInfo* response) override;
 
-        ::grpc::Status get_configured_timezone(
+        ::grpc::Status get_timezone_config(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::platform::sysconfig::TimeZoneConfig* response) override;
 
-        ::grpc::Status get_current_timezone(
+        ::grpc::Status get_timezone_info(
             ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
+            const ::cc::platform::sysconfig::TimeZoneInfoRequest* request,
             ::cc::platform::sysconfig::TimeZoneInfo* response) override;
 
         //======================================================================

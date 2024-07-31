@@ -7,6 +7,7 @@
 
 #pragma once
 #include "posix-time.h++"
+#include "types/valuemap.h++"
 
 namespace core::platform
 {
@@ -21,6 +22,15 @@ namespace core::platform
 
     public:
         void set_time(const dt::TimePoint &tp) override;
+
+        void set_ntp(bool ntp) override;
+        bool get_ntp() const override;
+
+        void set_ntp_servers(const std::vector<std::string> &servers) override;
+        std::vector<std::string> get_ntp_servers() const override;
+
+    private:
+        core::types::ValueMap<std::string, std::string> read_settings() const;
     };
 
 }  // namespace core::platform

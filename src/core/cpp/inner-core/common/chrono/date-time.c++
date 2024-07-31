@@ -7,6 +7,7 @@
 
 #include "date-time.h++"
 #include "string/format.h++"
+#include "string/convert.h++"
 #include "platform/timezone.h++"
 
 #include <string.h>
@@ -353,13 +354,36 @@ namespace core
         {
             std::tm dt = {};
             std::stringstream ss(string);
-            ss >> std::get_time(&dt, format.c_str());
+            std::string s = ss.str();
 
-            if (ss.fail())
+            // First try to interpret the string as seconds since epoch
+            try
             {
-                return fallback;
+                double seconds = str::convert_to<double>(s);
+                return to_timepoint(seconds);
             }
-            return to_timepoint(dt, local);
+            catch (const std::invalid_argument &)
+            {
+                // Next, try JavaScript format (with a 'T' separating date and time)
+                if (const char *end = strptime(s.data(), JS_FORMAT, &dt))
+                {
+                    local = (*end != 'Z');
+                    return to_timepoint(dt, local);
+                }
+
+                // Next, try "default" format (with an @ separator between date and time)
+                else if (const char *end = strptime(s.data(), DEFAULT_FORMAT, &dt))
+                {
+                    local = (*end != 'Z');
+                    return to_timepoint(dt, local);
+                }
+
+                // Failed to convert timepoint.
+                else
+                {
+                    return fallback;
+                }
+            }
         }
 
         /// Convert from "struct tm" to TimePoint, or fallback if the time is zero.

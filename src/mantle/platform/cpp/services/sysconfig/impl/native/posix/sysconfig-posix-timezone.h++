@@ -19,7 +19,7 @@
 namespace platform::sysconfig::native
 {
     using CountryMap = core::types::ValueMap<std::string, std::string>;
-    using TimeZoneMap = std::multimap<std::string, TimeZoneSpec>;
+    using TimeZoneMap = core::types::ValueMap<std::string, TimeZoneCanonicalSpec>;
 
     class PosixTimeZoneProvider : public TimeZoneInterface
     {
@@ -38,26 +38,50 @@ namespace platform::sysconfig::native
         //==========================================================================
         // Time zone configuration
 
-        /// Obtain information about available time zones
-        std::vector<TimeZoneSpec> get_timezone_specs() const override;
+        TimeZoneAreas list_timezone_areas() const override;
 
-        /// Return geographic information about an arbitrary timezone.
-        /// If no zone name is provided, return information about the configured zone.
-        TimeZoneSpec get_timezone_spec(const std::string &zonename = {}) const override;
+        TimeZoneCountries list_timezone_countries(
+            const TimeZoneArea &area) override;
 
-        /// Get or set the timezone configuration
-        TimeZoneInfo set_timezone(const TimeZoneConfig &config) override;
-        TimeZoneConfig get_configured_timezone() const override;
-        TimeZoneInfo get_current_timezone() const override;
+        TimeZoneCanonicalSpecs list_timezone_specs(
+            const TimeZoneLocationFilter &filter) const override;
+
+        TimeZoneCanonicalSpec get_timezone_spec(
+            const TimeZoneCanonicalName &zone) const override;
+
+        TimeZoneInfo set_timezone(
+            const TimeZoneConfig &config) override;
+
+        TimeZoneConfig get_timezone_config() const override;
+
+        TimeZoneInfo get_timezone_info(
+            const TimeZoneCanonicalName &canonical_zone = {},
+            const core::dt::TimePoint &timepoint = {}) const override;
 
     private:
         std::string get_configured_zonename() const;
         void set_configured_zonename(const std::string &zone);
 
-        TimeZoneList load_zones(const fs::path &zonetab = CCFILE) const;
+        TimeZoneCanonicalSpecs load_zones(const fs::path &zonetab = CCFILE) const;
+
         TimeZoneMap load_zone_map(const fs::path &zonetab = CCFILE) const;
 
+        TimeZoneCanonicalSpec build_canonical_spec(
+            const TimeZoneCanonicalName &zonename,
+            const TimeZoneArea &area,
+            const std::vector<TimeZoneCountryCode> &country_codes,
+            const std::string &description,
+            int latitude,
+            int longitude,
+            const CountryMap &country_name_map) const;
+
+        void prune_redundant_regions(TimeZoneMap *zonemap) const;
+
         CountryMap load_countries(const fs::path &cctab = CNFILE) const;
+
+        bool filter_empty_or_includes_country(const TimeZoneCountry &filter,
+                                              const TimeZoneCountryRegions &candidates) const;
+
         int to_scalar_coord(const std::string &coord) const;
     };
 }  // namespace platform::sysconfig::native

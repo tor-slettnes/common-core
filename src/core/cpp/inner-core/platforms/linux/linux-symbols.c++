@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "linux-symbols.h++"
+#include "errno-list.gen"
 
 #include <uuid.h>
 
@@ -25,4 +26,17 @@ namespace core::platform
         uuid_unparse(uuid, buffer);
         return buffer;
     }
+
+    std::string LinuxSymbolsProvider::errno_name(int num) const noexcept
+    {
+        if (auto it = errno_names.find(num); it != errno_names.end())
+        {
+            return it->second;
+        }
+        else
+        {
+            return "unknown";
+        }
+    }
+
 }  // namespace core::platform

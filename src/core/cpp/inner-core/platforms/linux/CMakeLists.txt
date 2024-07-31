@@ -36,3 +36,17 @@ BuildLibrary("${TARGET}"
   SOURCES ${SOURCES}
 )
 
+set(ERRNOFILE   ${CMAKE_CURRENT_BINARY_DIR}/errno-list.gen)
+set(ERRNOSCRIPT ${BUILD_SCRIPTS_DIR}/generate_errnos.py)
+add_custom_command(
+  OUTPUT ${ERRNOFILE}
+  COMMAND python3 ${ERRNOSCRIPT} --output ${ERRNOFILE} --sysroot "${BUILD_ROOT}/"
+  COMMENT "Generating ${ERRNOFILE}"
+  BYPRODUCTS "${ERRNOFILE}"
+)
+
+add_custom_target(errnos DEPENDS ${ERRNOFILE})
+add_dependencies(${TARGET} errnos)
+
+### Include binary output dir
+target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

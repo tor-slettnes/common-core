@@ -51,11 +51,19 @@ namespace platform::sysconfig::native
 
     void TimeConfigProvider::set_time_config(const TimeConfig &config)
     {
+        core::platform::time->set_ntp(config.synchronization == TSYNC_NTP);
+        if (!config.servers.empty())
+        {
+            core::platform::time->set_ntp_servers(config.servers);
+        }
     }
 
     TimeConfig TimeConfigProvider::get_time_config() const
     {
-        return {};
+        return {
+            .synchronization = (core::platform::time->get_ntp() ? TSYNC_NTP : TSYNC_NONE),
+            .servers = core::platform::time->get_ntp_servers(),
+        };
     }
 
 }  // namespace platform::sysconfig::native

@@ -13,6 +13,80 @@
 void Options::add_commands()
 {
     this->add_command(
+        "get_time",
+        {"[local|utc|epoch]"},
+        "Return the current time. The options `local`, `utc`, and `epoch` "
+        "determine the output format  as, respectively:yyyy-mm-ddTHH:MM:SS, "
+        "yyyy-mm-ddTHH:MM:SSZ, or an integer represening seconds since UNIX epoch.",
+        std::bind(&Options::get_time, this));
+
+    this->add_command(
+        "set_time",
+        {"TIMESTAMP"},
+        "Set the system time to TIMESTAMP, interpreted as either seconds since "
+        "UNIX epoch or a JavaScript compatible string: yyyy-mm-ddTHH:MM:SS for "
+        "local time, or yyyy-mm-ddTHH:MM:SSZ for UTC",
+        std::bind(&Options::set_time, this));
+
+    this->add_command(
+        "get_ntp",
+        {},
+        "Indicate whether automatic time upates via NTP are currently enabled.",
+        std::bind(&Options::get_ntp, this));
+
+    this->add_command(
+        "set_ntp",
+        {"{off|on}", "[SERVER]", "..."},
+        "Turn automatic time updates via NTP off or on.",
+        std::bind(&Options::set_ntp, this));
+
+    this->add_command(
+        "list_timezone_areas",
+        {},
+        "List top-level time zone areas",
+        std::bind(&Options::list_timezone_areas, this));
+
+    this->add_command(
+        "list_timezone_countries",
+        {"[AREA]"},
+        "List countries, optionally within a specific timezone area.",
+        std::bind(&Options::list_timezone_countries, this));
+
+    this->add_command(
+        "list_timezone_specs",
+        {"[AREA]", "[COUNTRY]"},
+        "List canoncial zone specifications, "
+        "optionally within a specific timezone area and/or country.",
+        std::bind(&Options::list_timezone_specs, this));
+
+    this->add_command(
+        "get_timezone_spec",
+        {"[ZONE]"},
+        "Get specifications for the specified canonical ZONE. "
+        "If no zone is provided, get specifications for the currently configured zone.",
+        std::bind(&Options::get_timezone_spec, this));
+
+    this->add_command(
+        "set_timezone",
+        {"ZONE"},
+        "Set the canonical system timezone to the the specified ZONE.",
+        std::bind(&Options::set_timezone, this));
+
+    this->add_command(
+        "get_timezone_config",
+        {""},
+        "Get current timezone configuration: Canonical zone, automatic timezone settings.",
+        std::bind(&Options::get_timezone_config, this));
+
+    this->add_command(
+        "get_timezone_info",
+        {"[ZONE]", "[TIMESTAMP]"},
+        "Get offset information for the specified canonical zone. "
+        "If no canonical zone name is provided, get information "
+        "for the current effective zone.",
+        std::bind(&Options::get_timezone_info, this));
+
+    this->add_command(
         "get_host_info",
         {},
         "Get general information about the host system",
@@ -37,6 +111,128 @@ void Options::add_commands()
         std::bind(&Options::monitor, this));
 }
 
+void Options::get_time()
+{
+    FlagMap flags;
+    bool &local = flags["local"];
+    bool &utc = flags["utc"];
+    bool &epoch = flags["epoch"];
+    this->get_flags(&flags);
+
+    std::string format =
+        epoch ? "%.3f"
+        : utc ? "%.0Z"
+              : "%.0T";
+
+    core::str::format(
+        std::cout,
+        format + "\n",
+        platform::sysconfig::time->get_current_time());
+}
+
+void Options::set_time()
+{
+    auto value = core::types::Value::from_literal(this->get_arg("timestamp"));
+    core::dt::TimePoint tp = value.as_timepoint();
+    core::str::format(std::cout, "Setting timepoint: %.3Z\n", tp);
+    platform::sysconfig::time->set_current_time(tp);
+}
+
+void Options::set_ntp()
+{
+    bool enable = core::str::convert_to<bool>(this->get_arg("ON or OFF"));
+    platform::sysconfig::TimeConfig config = {
+        .synchronization = (enable ? platform::sysconfig::TSYNC_NTP
+                                   : platform::sysconfig::TSYNC_NONE),
+    };
+
+    platform::sysconfig::time->set_time_config(config);
+}
+
+void Options::get_ntp()
+{
+    this->report_status_and_exit(
+        platform::sysconfig::time->get_time_config().synchronization == platform::sysconfig::TSYNC_NTP);
+
+    // this->report_status_and_exit(platform::sysconfig::time->get_ntp());
+}
+
+void Options::list_timezone_areas()
+{
+    for (const platform::sysconfig::TimeZoneArea &area :
+         platform::sysconfig::timezone->list_timezone_areas())
+    {
+        std::cout << area << std::endl;
+    }
+}
+
+void Options::list_timezone_countries()
+{
+    std::string area = this->next_arg().value_or("");
+    for (const platform::sysconfig::TimeZoneCountry &country :
+         platform::sysconfig::timezone->list_timezone_countries(area))
+    {
+        std::cout << country << std::endl;
+    }
+}
+
+void Options::list_timezone_specs()
+{
+    std::string area = this->next_arg().value_or("");
+    std::string country = this->next_arg().value_or("");
+
+    platform::sysconfig::TimeZoneLocationFilter filter = {
+        .area = area,
+        .country = {
+            .code = (country.size() == 2) ? country : "",
+            .name = (country.size() != 2) ? country : "",
+        },
+    };
+
+    for (const platform::sysconfig::TimeZoneCanonicalSpec &spec :
+         platform::sysconfig::timezone->list_timezone_specs(filter))
+    {
+        std::cout << spec << std::endl;
+    }
+}
+
+void Options::get_timezone_spec()
+{
+    std::string zonename = this->next_arg().value_or("");
+    std::cout << platform::sysconfig::timezone->get_timezone_spec(zonename)
+              << std::endl;
+}
+
+void Options::set_timezone()
+{
+    std::string zonename = this->get_arg("time zone");
+    platform::sysconfig::TimeZoneInfo result = platform::sysconfig::timezone->set_timezone({
+        .zonename = zonename,
+    });
+    std::cout << result << std::endl;
+}
+
+void Options::get_timezone_config()
+{
+    std::cout << platform::sysconfig::timezone->get_timezone_config()
+              << std::endl;
+}
+
+void Options::get_timezone_info()
+{
+    std::string zonename = this->next_arg().value_or("");
+    core::dt::TimePoint tp;
+
+    if (auto timestamp = this->next_arg())
+    {
+        auto value = core::types::Value::from_literal(timestamp.value());
+        tp = value.as_timepoint();
+    }
+
+    std::cout << platform::sysconfig::timezone->get_timezone_info(zonename, tp)
+              << std::endl;
+}
+
 void Options::get_host_info()
 {
     std::cout << platform::sysconfig::hostconfig->get_host_info()
@@ -53,4 +249,3 @@ void Options::reboot()
 {
     platform::sysconfig::hostconfig->reboot();
 }
-

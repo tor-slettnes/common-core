@@ -176,16 +176,74 @@ namespace platform::sysconfig::grpc
     //
     // Obtain geographic information about all available time zones.
 
-    ::grpc::Status RequestHandler::get_timezone_specs(
+    ::grpc::Status RequestHandler::list_timezone_areas(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::grpc::ServerWriter<::cc::platform::sysconfig::TimeZoneSpec>* writer)
+        ::cc::platform::sysconfig::TimeZoneAreas* response)
     {
         try
         {
-            for (const TimeZoneSpec& spec : platform::sysconfig::timezone->get_timezone_specs())
+            protobuf::assign_repeated(
+                platform::sysconfig::timezone->list_timezone_areas(),
+                response->mutable_areas());
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
+    }
+
+    ::grpc::Status RequestHandler::list_timezone_countries(
+        ::grpc::ServerContext* context,
+        const ::cc::platform::sysconfig::TimeZoneArea* request,
+        ::cc::platform::sysconfig::TimeZoneCountries* response)
+    {
+        try
+        {
+            protobuf::encode_vector(
+                platform::sysconfig::timezone->list_timezone_countries(request->name()),
+                response->mutable_countries());
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
+    }
+
+    ::grpc::Status RequestHandler::list_timezone_specs(
+        ::grpc::ServerContext* context,
+        const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
+        ::cc::platform::sysconfig::TimeZoneCanonicalSpecs* response)
+    {
+        try
+        {
+            protobuf::encode_vector(
+                platform::sysconfig::timezone->list_timezone_specs(
+                    protobuf::decoded<platform::sysconfig::TimeZoneLocationFilter>(*request)),
+                response->mutable_specs());
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
+    }
+
+    ::grpc::Status RequestHandler::read_timezone_specs(
+        ::grpc::ServerContext* context,
+        const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
+        ::grpc::ServerWriter<::cc::platform::sysconfig::TimeZoneCanonicalSpec>* writer)
+    {
+        ::cc::platform::sysconfig::TimeZoneCanonicalSpecs response;
+        this->list_timezone_specs(context, request, &response);
+
+        try
+        {
+            for (const ::cc::platform::sysconfig::TimeZoneCanonicalSpec& spec : response.specs())
             {
-                writer->Write(protobuf::encoded<cc::platform::sysconfig::TimeZoneSpec>(spec));
+                writer->Write(spec);
             }
             return ::grpc::Status::OK;
         }
@@ -199,13 +257,13 @@ namespace platform::sysconfig::grpc
     // If no zone name is provided, return information about the configured zone.
     ::grpc::Status RequestHandler::get_timezone_spec(
         ::grpc::ServerContext* context,
-        const ::cc::platform::sysconfig::TimeZoneName* request,
-        ::cc::platform::sysconfig::TimeZoneSpec* response)
+        const ::cc::platform::sysconfig::TimeZoneCanonicalName* request,
+        ::cc::platform::sysconfig::TimeZoneCanonicalSpec* response)
     {
         try
         {
             protobuf::encode(
-                platform::sysconfig::timezone->get_timezone_spec(request->zonename()),
+                platform::sysconfig::timezone->get_timezone_spec(request->name()),
                 response);
             return ::grpc::Status::OK;
         }
@@ -223,10 +281,9 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            platform::sysconfig::timezone->set_timezone(
-                protobuf::decoded<TimeZoneConfig>(*request));
             protobuf::encode(
-                platform::sysconfig::timezone->get_current_timezone(),
+                platform::sysconfig::timezone->set_timezone(
+                    protobuf::decoded<TimeZoneConfig>(*request)),
                 response);
             return ::grpc::Status::OK;
         }
@@ -236,7 +293,7 @@ namespace platform::sysconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_configured_timezone(
+    ::grpc::Status RequestHandler::get_timezone_config(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::sysconfig::TimeZoneConfig* response)
@@ -244,7 +301,7 @@ namespace platform::sysconfig::grpc
         try
         {
             protobuf::encode(
-                platform::sysconfig::timezone->get_configured_timezone(),
+                platform::sysconfig::timezone->get_timezone_config(),
                 response);
             return ::grpc::Status::OK;
         }
@@ -254,15 +311,17 @@ namespace platform::sysconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_current_timezone(
+    ::grpc::Status RequestHandler::get_timezone_info(
         ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
+        const ::cc::platform::sysconfig::TimeZoneInfoRequest* request,
         ::cc::platform::sysconfig::TimeZoneInfo* response)
     {
         try
         {
             protobuf::encode(
-                platform::sysconfig::timezone->get_current_timezone(),
+                platform::sysconfig::timezone->get_timezone_info(
+                    request->canonical_zone(),
+                    protobuf::decoded<core::dt::TimePoint>(request->time())),
                 response);
             return ::grpc::Status::OK;
         }

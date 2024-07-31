@@ -22,10 +22,12 @@ namespace core::platform
     public:
         virtual void set_time(const dt::TimePoint &tp) = 0;
 
-        // virtual void set_time_config(bool ntp,
-        //                              const std::vector<std::string> &servers) = 0;
+        virtual void set_ntp(bool ntp);
+        virtual bool get_ntp() const;
 
-        // virtual void set_time_config(const dt::TimePoint &tp) = 0;
+        virtual void set_ntp_servers(const std::vector<std::string> &servers);
+        virtual std::vector<std::string> get_ntp_servers() const;
+
     };
 
     extern ProviderProxy<TimeProvider> time;

@@ -6,6 +6,7 @@
 //==============================================================================
 
 #pragma once
+#include "sysconfig-types.h++"
 #include "platform/provider.h++"
 #include "thread/signaltemplate.h++"
 

@@ -53,13 +53,49 @@ namespace protobuf
                 platform::sysconfig::ComponentVersions *native) noexcept;
 
     //==========================================================================
-    // TimeZoneNative
+    // TimeZoneCanonicalSpec
 
-    void encode(const platform::sysconfig::TimeZoneSpec &native,
-                cc::platform::sysconfig::TimeZoneSpec *proto) noexcept;
+    void encode(const platform::sysconfig::TimeZoneCanonicalSpec &native,
+                cc::platform::sysconfig::TimeZoneCanonicalSpec *proto) noexcept;
 
-    void decode(const cc::platform::sysconfig::TimeZoneSpec &proto,
-                platform::sysconfig::TimeZoneSpec *native) noexcept;
+    void decode(const cc::platform::sysconfig::TimeZoneCanonicalSpec &proto,
+                platform::sysconfig::TimeZoneCanonicalSpec *native) noexcept;
+
+    //==========================================================================
+    // TimeLocationFilter
+
+    void encode(const platform::sysconfig::TimeZoneLocationFilter &native,
+                cc::platform::sysconfig::TimeZoneLocationFilter *proto) noexcept;
+
+    void decode(const cc::platform::sysconfig::TimeZoneLocationFilter &proto,
+                platform::sysconfig::TimeZoneLocationFilter *native) noexcept;
+
+    //==========================================================================
+    // TimeZoneArea
+
+    void encode(const platform::sysconfig::TimeZoneArea &native,
+                cc::platform::sysconfig::TimeZoneArea *proto) noexcept;
+
+    void decode(const cc::platform::sysconfig::TimeZoneArea &proto,
+                platform::sysconfig::TimeZoneArea *native) noexcept;
+
+    //==========================================================================
+    // TimeZoneCountry
+
+    void encode(const platform::sysconfig::TimeZoneCountry &native,
+                cc::platform::sysconfig::TimeZoneCountry *proto) noexcept;
+
+    void decode(const cc::platform::sysconfig::TimeZoneCountry &proto,
+                platform::sysconfig::TimeZoneCountry *native) noexcept;
+
+    //==========================================================================
+    // TimeZoneCountryRegion
+
+    void encode(const platform::sysconfig::TimeZoneCountryRegion &native,
+                cc::platform::sysconfig::TimeZoneCountryRegion *proto) noexcept;
+
+    void decode(const cc::platform::sysconfig::TimeZoneCountryRegion &proto,
+                platform::sysconfig::TimeZoneCountryRegion *native) noexcept;
 
     //==========================================================================
     // TimeZoneConfig
@@ -78,6 +114,17 @@ namespace protobuf
 
     void decode(const cc::platform::sysconfig::TimeZoneInfo &proto,
                 core::dt::TimeZoneInfo *native) noexcept;
+
+    //==========================================================================
+    // TimeZoneInfoRequest
+
+    void encode(const platform::sysconfig::TimeZoneCanonicalName &canonical_zone,
+                const core::dt::TimePoint &timepoint,
+                cc::platform::sysconfig::TimeZoneInfoRequest *proto) noexcept;
+
+    void decode(const cc::platform::sysconfig::TimeZoneInfoRequest &proto,
+                platform::sysconfig::TimeZoneCanonicalName *canonical_zone,
+                core::dt::TimePoint *timepoint) noexcept;
 
     //==========================================================================
     // TimeSync

@@ -9,6 +9,7 @@
 #include "platform/timezone.h++"
 
 #include <mutex>
+#include <optional>
 
 namespace core::platform
 {
@@ -16,6 +17,7 @@ namespace core::platform
     {
         using This = PosixTimeZoneProvider;
         using Super = TimeZoneProvider;
+        using SavedValue = std::optional<std::string>;
 
     protected:
         PosixTimeZoneProvider();
@@ -30,8 +32,8 @@ namespace core::platform
         dt::TimeZoneInfo tzinfo(const std::time_t &time) const override;
 
     private:
-        std::string apply_zone(const std::string &zonename) const;
-        void restore_zone(const std::string &saved) const;
+        SavedValue apply_zone(const std::string &zonename) const;
+        void restore_zone(const SavedValue &saved) const;
 
     private:
         std::recursive_mutex mtx;

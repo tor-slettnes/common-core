@@ -10,6 +10,50 @@
 
 namespace platform::sysconfig
 {
+    //======================================================================
+    // Time Zone Area/Location types
+
+    bool operator<(const TimeZoneCountry &lhs, const TimeZoneCountry &rhs)
+    {
+        return (lhs.code < rhs.code)   ? true
+               : (rhs.code > rhs.code) ? false
+                                       : rhs.name < rhs.name;
+    }
+
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneCountry &country)
+    {
+        core::types::PartsList parts;
+        parts.add_string("code", country.code, !country.code.empty());
+        parts.add_string("name", country.name, !country.name.empty());
+        stream << parts;
+        return stream;
+    }
+
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneCountryRegion &region)
+    {
+        core::types::PartsList parts;
+        parts.add("country", region.country);
+        parts.add_string("region", region.region, !region.region.empty());
+        stream << parts;
+        return stream;
+    }
+
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneLocationFilter &filter)
+    {
+        core::types::PartsList parts;
+
+        parts.add("area",
+                  filter.area,
+                  !filter.area.empty());
+
+        parts.add("country",
+                  filter.country,
+                  !filter.country.code.empty() || !filter.country.name.empty());
+
+        stream << parts;
+        return stream;
+    }
+
     //==========================================================================
     // TimeZoneSpec
 
@@ -24,24 +68,21 @@ namespace platform::sysconfig
             : seconds < 0 ? negative_suffix
                           : ""s;
 
-        return core::str::format("%d\xb0 %d' %d\" %s",
+        return core::str::format("%d\u00b0%d'%d\"%s",
                                  abs_seconds / 3600,
                                  (abs_seconds / 60) % 60,
                                  abs_seconds % 60,
                                  suffix);
     }
 
-    std::ostream &operator<<(std::ostream &stream, const TimeZoneSpec &spec)
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneCanonicalSpec &spec)
     {
         core::str::format(stream,
-                          "{zonename=%r, continent=%r, "
-                          "countrycode=%r, countryname=%r, displayname=%r, "
+                          "{name=%r, area=%r, regions=%r, "
                           "latitude=%r, longitude=%r",
-                          spec.zonename,
-                          spec.continent,
-                          spec.countrycode,
-                          spec.countryname,
-                          spec.displayname,
+                          spec.name,
+                          spec.area,
+                          spec.countries,
                           dms(spec.latitude, "N", "S"),
                           dms(spec.longitude, "E", "W"));
         return stream;

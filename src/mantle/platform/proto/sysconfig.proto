@@ -45,17 +45,45 @@ service SysConfig
     //==========================================================================
     // Time zone configuration
 
-    /// Obtain geographic information about all available time zones.
-    rpc get_timezone_specs (google.protobuf.Empty) returns (stream TimeZoneSpec);
+    // List time zone [areas](https://en.wikipedia.org/wiki/Tz_database#Area).
+    // These are roughly: continents, oceans, or `Etc`.
+    // North and South America are considered one area: `America`.
+    rpc list_timezone_areas (google.protobuf.Empty) returns (TimeZoneAreas);
 
-    /// Return geographic information about an arbitrary timezone.
-    /// If no zone name is provided, return information about the configured zone.
-    rpc get_timezone_spec (TimeZoneName) returns (TimeZoneSpec);
+    // List countries, optionally within a specific area.
+    // This includes countries that may also span into other areas.
+    rpc list_timezone_countries (TimeZoneArea) returns (TimeZoneCountries);
 
-    /// Get or set the timezone configuration
+    // Obtain canonical time zone specifications, optionally restricted by a
+    // specific area and/or country.
+    rpc list_timezone_specs (TimeZoneLocationFilter) returns (TimeZoneCanonicalSpecs);
+
+    // Same, but as a stream rather than a single large response.
+    rpc read_timezone_specs (TimeZoneLocationFilter) returns (stream TimeZoneCanonicalSpec);
+
+    /// Return geographic information about a specific canonical timezone. If no
+    /// zone name is specified, return info about the currently configured zone.
+    rpc get_timezone_spec (TimeZoneCanonicalName) returns (TimeZoneCanonicalSpec);
+
+    /// Configure the system time zone. Return the resulting applied zone
+    /// information.
     rpc set_timezone (TimeZoneConfig) returns (TimeZoneInfo);
-    rpc get_configured_timezone (google.protobuf.Empty) returns (TimeZoneConfig);
-    rpc get_current_timezone (google.protobuf.Empty) returns (TimeZoneInfo);
+
+    /// Get the current timezone configuration, including canonical name and
+    /// whether it is automatically being kept up to date using an external
+    /// location service.
+    rpc get_timezone_config (google.protobuf.Empty) returns (TimeZoneConfig);
+
+    /// Get offset information about the specified time zone at the specified
+    /// time, or the currently configured zone and/or system time if not
+    /// specified. Information includes current and
+    /// standard time offsets from UTC, and whether Daylight Savings Time (or
+    /// Summer Time) is currently in effect.
+
+    /// Get information about the currently applied timezone, including time
+    /// offsets from UTC and whether Daylight Savings / Summer Time is currently
+    /// in effect.
+    rpc get_timezone_info (TimeZoneInfoRequest) returns (TimeZoneInfo);
 
     //==========================================================================
     // Spawn a new process, with or without capturing stdin/stdout/stderr.
@@ -115,7 +143,7 @@ message HostInfo
 enum TimeSync
 {
     // Synchronized to TimeSync enumeration in
-    // '../cpp/interface/sysconfig/sysconfig-time.h'.
+    // '../cpp/services/sysconfig/base/sysconfig-time.h++'.
     TSYNC_NONE = 0;             // No settings change
     TSYNC_NTP = 1;              // Synchronization via NTP
 }
@@ -134,47 +162,118 @@ message TimeConfig
 //==============================================================================
 // Time Zone Configuration
 
-message TimeZoneName
+message TimeZoneAreas
 {
-    string zonename = 1;        // Zone name, e.g., UTC, America/Los_Angeles
+    repeated string areas = 1;
+}
+
+message TimeZoneArea
+{
+    string name = 1;
+}
+
+message TimeZoneCountries
+{
+    repeated TimeZoneCountry countries = 1;
+}
+
+message TimeZoneCountry
+{
+    string code = 1;            // ISO 3166 country code, e.g., "US, "DE", ...
+    string name = 2;            // English name, e.g. "United States, "Germany", ...
+}
+
+message TimeZoneLocationFilter
+{
+    string area = 1;            // Optional continent, ocean, or "Etc"
+
+    oneof country               // Optional country
+    {
+        string country_code = 2; // ISO 3166 country code, e.g. "DE"
+        string country_name = 3; // English name, e.g. "Germany"
+    }
+}
+
+message TimeZoneCanonicalName
+{
+    // Canonical/Olson name, e.g., "Etc/UTC", "America/Los_Angeles"
+    string name = 1;
+}
+
+message TimeZoneCanonicalSpecs
+{
+    repeated TimeZoneCanonicalSpec specs = 1;
+}
+
+message TimeZoneCanonicalSpec
+{
+    // Canonical name ("Olson" name), e.g. `America/Los_Angeles` or `Etc/UTC`.
+    string name = 1;
+
+    // The `Area` component of the name, e.g. `America`, `Atlantic`, `Etc`.
+    string area = 2;
+
+    // One or more countries (and possibly a region within at most one of these
+    // countries) where this time zone is used
+    repeated TimeZoneCountryRegion countries = 3;
+
+    // Geographical cordinates of the canonical location. For instance the
+    // coordinates of `Europe/Berlin` is that of Berlin, not any other countries
+    // where it is used (e.g. Norway, Sweden, Denmark)
+    int32 latitude = 6;         // Seconds north of Equator
+    int32 longitude = 7;        // Seconds east of Prime Meridian
+}
+
+message TimeZoneCountryRegion
+{
+    TimeZoneCountry country = 1;
+
+    // Region within country. Present only for countries with more than one timezone.
+    string region = 2;
 }
 
 message TimeZoneConfig
 {
     oneof optional_automatic
     {
-        bool automatic = 1;     // Whether timezone is automatically detected
+        // Whether to use an external location service to set time zone
+        // Not yet implemented.
+        bool automatic = 1;
     }
 
-    string zonename = 2;        // Zone name, e.g., UTC, America/Los_Angeles
-    string provider = 3;        // Automatic Time Zone provider, if any
+    string zonename = 2;        // Canonical zone name, e.g. "America/Los_Angeles"
+    string provider = 3;    // Timezone/Location service provider. TBD.
 }
 
-message TimeZoneSpec
+message TimeZoneInfoRequest
 {
-    string zonename = 1;        // Zone name, e.g. America/Los_Angeles
-    string continent = 2;       // World region, e.g. "Americas" or "Atlantic Ocean"
-    string countrycode = 3;     // 2-letter code, e.g. US
-    string countryname = 4;     // Full country name, e.g. United States
-    string displayname = 5;     // Display name within country, e.g. Pacific
-    int32 latitude = 6;         // Latitude, seconds north
-    int32 longitude = 7;        // Longitude, seconds east
+    // Canonical zone name.  If unspecified, use the currently configured zone.
+    string canonical_zone = 1;
+
+    // Timestamp, used to determine if DST is applicable. If unspecified, use
+    // the server's current system time.
+    google.protobuf.Timestamp time = 2;
 }
 
 message TimeZoneInfo
 {
+    /// Effective zone abbreviation, e.g.
+    ///   - `PST` or `PDT` for Pacific standard/daylight time
+    ///   - `CET` or `CEST` for European standard/summer time
     string shortname = 1;       // Short name, e.g. PST or PDT
-    //string longname = 2;        // Long name, e.g. Pacific Daylight Time
-    google.protobuf.Duration offset = 3;    // Current offset, e.g. -7 hours for PDT
-    google.protobuf.Duration stdoffset = 4; // Standard offset, e.g. -8 hours for PST
-    bool dst = 5;               // Whether daylight savings is in effect
+
+    /// Current zone offset from UTC, e.g. -7 hours if zone is PDT
+    google.protobuf.Duration offset = 3;
+
+    /// Current standard zone offset from UTC, e.g. -8 hours for PST
+    google.protobuf.Duration stdoffset = 4;
+
+    /// Whether Daylight Savings Time / Summer Time is currently in effect
+    bool dst = 5;
 }
 
-message Country
-{
-    string code = 1;            // 2-letter code, e.g. "US"
-    string name = 2;            // Full name, e.g. "United States"
-}
+//==============================================================================
+// Process management
 
 message CommandInvocation
 {
@@ -205,11 +304,24 @@ message CommandResponse
 message Signal
 {
     oneof signal {
-        google.protobuf.Timestamp time = 8; // Updates 1x/second
-        TimeConfig time_config = 9;          // Automatic time setting
-        TimeZoneInfo tz_info = 10;           // Effective zone change
-        TimeZoneConfig tz_config = 11;       // Timezone change
-        HostInfo host_info = 14;             // Host information change
-        ProductInfo product_info = 15;       // Product information change
+
+        // Emitted 1x/second based on the server's current time.
+        google.protobuf.Timestamp time = 8;
+
+        // Emitted when automatic time settings changes.
+        TimeConfig time_config = 9;
+
+        // Emitted when canonical timezone configuration changes.
+        TimeZoneConfig tz_config = 10;
+
+        // Effective zone change. Emitted when the canonical zone is updated,
+        // or when daylight savings time stars or ends.
+        TimeZoneInfo tz_info = 11;
+
+        // Emitted when the server's primary host name changes
+        HostInfo host_info = 14;
+
+        // Emitted when there's a change in the product info, e.g. serial number configured
+        ProductInfo product_info = 15;
     }
 }

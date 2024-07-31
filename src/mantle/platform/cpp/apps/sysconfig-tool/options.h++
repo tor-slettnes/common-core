@@ -37,6 +37,17 @@ private:
     void on_hostinfo(const platform::sysconfig::HostInfo &hi);
     void on_productinfo(const platform::sysconfig::ProductInfo &pi);
 
+    void get_time();
+    void set_time();
+    void set_ntp();
+    void get_ntp();
+    void list_timezone_areas();
+    void list_timezone_countries();
+    void list_timezone_specs();
+    void get_timezone_spec();
+    void set_timezone();
+    void get_timezone_config();
+    void get_timezone_info();
     void get_host_info();
     void set_host_name();
     void reboot();

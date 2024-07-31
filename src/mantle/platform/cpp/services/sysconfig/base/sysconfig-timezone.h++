@@ -6,6 +6,7 @@
 //==============================================================================
 
 #pragma once
+#include "sysconfig-types.h++"
 #include "platform/provider.h++"
 #include "chrono/date-time.h++"
 #include "thread/signaltemplate.h++"
@@ -13,37 +14,90 @@
 namespace platform::sysconfig
 {
     //======================================================================
-    // TimeZoneSpec
+    // Time Zone Area/Location aliases
 
-    struct TimeZoneSpec
+    using TimeZoneCanonicalName = std::string;
+    using TimeZoneArea = std::string;
+    using TimeZoneAreas = std::vector<TimeZoneArea>;
+    using TimeZoneCountryCode = std::string;
+    using TimeZoneCountryName = std::string;
+    using TimeZoneRegion = std::string;
+
+    //======================================================================
+    // Time Zone Country
+
+    struct TimeZoneCountry
     {
-        std::string zonename;        // TimeZone name, e.g. America/Los_Angeles
-        std::string continent;       // World region, e.g. America
-        std::string countrycode;     // 2-letter country code, e.g. US
-        std::string countryname;     // Fully country name, e.g. United States
-        std::string displayname;     // Display name within region, e.g. Pacific
-        std::int32_t latitude = 0;   // Latitude, seconds north
-        std::int32_t longitude = 0;  // Longitude, seconds east
+        TimeZoneCountryCode code;  // ISO 3166 code, e.g. "US" or "DE"
+        TimeZoneCountryName name;  // English name, e.g. "United States" or "Germany"
     };
 
-    std::ostream &operator<<(std::ostream &stream, const TimeZoneSpec &spec);
+    bool operator<(const TimeZoneCountry &lhs, const TimeZoneCountry &rhs);
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneCountry &country);
+    using TimeZoneCountries = std::vector<TimeZoneCountry>;
+
+    //======================================================================
+    // Time Zone Country + Region
+
+    struct TimeZoneCountryRegion
+    {
+        TimeZoneCountry country;
+        TimeZoneRegion region;
+    };
+    using TimeZoneCountryRegions = std::vector<TimeZoneCountryRegion>;
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneCountryRegion &region);
+
+    //======================================================================
+    // Time Zone Area + Country filter
+
+    struct TimeZoneLocationFilter
+    {
+        TimeZoneArea area;
+        TimeZoneCountry country;
+    };
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneLocationFilter &filter);
+
+    //======================================================================
+    // TimeZoneCanonicalSpec
+
+    struct TimeZoneCanonicalSpec
+    {
+        // Canonical name ("Olson" name), e.g. `America/Los_Angeles` or `Etc/UTC`.
+        TimeZoneCanonicalName name;
+
+        // The `Area` component of the name, e.g. `America`, `Atlantic`, `Etc`.
+        TimeZoneArea area;
+
+        // One or more countries and possibly region within a country where this
+        // time zone is used
+        TimeZoneCountryRegions countries;
+
+        // Geographical cordinates of the canonical location. For instance the
+        // coordinates of `Europe/Berlin` is that of Berlin, not any other
+        // countries where it is used (e.g. Norway, Sweden, Denmark)
+        std::int32_t latitude = 0;   // Seconds north of Equator
+        std::int32_t longitude = 0;  // Seconds east of Prime Meridian
+    };
+
+    std::ostream &operator<<(std::ostream &stream, const TimeZoneCanonicalSpec &spec);
+
+    using TimeZoneCanonicalSpecs = std::vector<TimeZoneCanonicalSpec>;
 
     //======================================================================
     // TimeZoneConfig
 
     struct TimeZoneConfig
     {
-        std::string zonename;  // Configured zone, e.g. America/Los_Angeles
-        bool automatic;        // Whether timezone is automatically detected
-        std::string provider;  // Timezone service, if any.
+        TimeZoneCanonicalName zonename;  // Configured zone, e.g. America/Los_Angeles
+        bool automatic;              // Whether timezone is automatically detected
+        std::string provider;        // Timezone service, if any.
     };
 
     std::ostream &operator<<(std::ostream &stream, const TimeZoneConfig &spec);
 
     //==========================================================================
-    // Type aliases
+    // Time Zone Offset Info
 
-    using TimeZoneList = std::vector<TimeZoneSpec>;
     using TimeZoneInfo = core::dt::TimeZoneInfo;
 
     //==========================================================================
@@ -61,17 +115,36 @@ namespace platform::sysconfig
         //==========================================================================
         // Time zone configuration
 
+        virtual TimeZoneAreas list_timezone_areas() const = 0;
+
+        virtual TimeZoneCountries list_timezone_countries(
+            const TimeZoneArea &area = {}) = 0;
+
         /// Obtain information about available time zones
-        virtual std::vector<TimeZoneSpec> get_timezone_specs() const = 0;
+        virtual TimeZoneCanonicalSpecs list_timezone_specs(
+            const TimeZoneLocationFilter &filter = {}) const = 0;
 
-        /// Return geographic information about an arbitrary timezone.
-        /// If no zone name is provided, return information about the configured zone.
-        virtual TimeZoneSpec get_timezone_spec(const std::string &zone = {}) const = 0;
+        /// Return geographic information about a specific canonical timezone. If no
+        /// zone name is specified, return info about the currently configured zone.
+        virtual TimeZoneCanonicalSpec get_timezone_spec(
+            const TimeZoneCanonicalName &zone = {}) const = 0;
 
-        /// Get or set the timezone configuration
-        virtual TimeZoneInfo set_timezone(const TimeZoneConfig &config) = 0;
-        virtual TimeZoneConfig get_configured_timezone() const = 0;
-        virtual TimeZoneInfo get_current_timezone() const = 0;
+        /// Configure the system time zone. Return the resulting applied zone
+        /// information.
+        virtual TimeZoneInfo set_timezone(
+            const TimeZoneConfig &config) = 0;
+
+        /// Get the current timezone configuration, including canonical name and
+        /// whether it is automatically being kept up to date using an external
+        /// location service.
+        virtual TimeZoneConfig get_timezone_config() const = 0;
+
+        /// Get information about the currently applied timezone, including time
+        /// offsets from UTC and whether Daylight Savings / Summer Time is currently
+        /// in effect.
+        virtual TimeZoneInfo get_timezone_info(
+            const TimeZoneCanonicalName &canonical_zone = {},
+            const core::dt::TimePoint &timepoint = {}) const = 0;
     };
 
     //==========================================================================

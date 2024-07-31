@@ -125,37 +125,119 @@ namespace protobuf
     void decode(const cc::version::ComponentVersions &proto,
                 platform::sysconfig::ComponentVersions *native) noexcept
     {
-        for (const auto &[component, version]: proto.components())
+        for (const auto &[component, version] : proto.components())
         {
             decode(version, &(*native)[component]);
         }
     }
 
     //==========================================================================
-    // TimeZone Specs
+    // TimeZoneCanonicalSpec
 
-    void encode(const platform::sysconfig::TimeZoneSpec &native,
-                cc::platform::sysconfig::TimeZoneSpec *proto) noexcept
+    void encode(const platform::sysconfig::TimeZoneCanonicalSpec &native,
+                cc::platform::sysconfig::TimeZoneCanonicalSpec *proto) noexcept
     {
-        proto->set_zonename(native.zonename);
-        proto->set_continent(native.continent);
-        proto->set_countrycode(native.countrycode);
-        proto->set_countryname(native.countryname);
-        proto->set_displayname(native.displayname);
+        proto->set_name(native.name);
+        proto->set_area(native.area);
+
+        encode_vector<cc::platform::sysconfig::TimeZoneCountryRegion>(
+            native.countries,
+            proto->mutable_countries());
+
         proto->set_latitude(native.latitude);
         proto->set_longitude(native.longitude);
     }
 
-    void decode(const cc::platform::sysconfig::TimeZoneSpec &proto,
-                platform::sysconfig::TimeZoneSpec *native) noexcept
+    void decode(const cc::platform::sysconfig::TimeZoneCanonicalSpec &proto,
+                platform::sysconfig::TimeZoneCanonicalSpec *native) noexcept
     {
-        native->zonename = proto.zonename();
-        native->continent = proto.continent();
-        native->countrycode = proto.countrycode();
-        native->countryname = proto.countryname();
-        native->displayname = proto.displayname();
+        native->name = proto.name();
+        native->area = proto.area();
+        decode_to_vector<platform::sysconfig::TimeZoneCountryRegion>(
+            proto.countries(),
+            &native->countries);
         native->latitude = proto.latitude();
         native->longitude = proto.longitude();
+    }
+
+    //==========================================================================
+    // TimeLocationFilter
+
+    void encode(const platform::sysconfig::TimeZoneLocationFilter &native,
+                cc::platform::sysconfig::TimeZoneLocationFilter *proto) noexcept
+    {
+        proto->set_area(native.area);
+        if (!native.country.code.empty())
+        {
+            proto->set_country_code(native.country.code);
+        }
+        else if (!native.country.name.empty())
+        {
+            proto->set_country_name(native.country.name);
+        }
+    }
+
+    void decode(const cc::platform::sysconfig::TimeZoneLocationFilter &proto,
+                platform::sysconfig::TimeZoneLocationFilter *native) noexcept
+    {
+        native->area = proto.area();
+        if (proto.has_country_code())
+        {
+            native->country.code = proto.country_code();
+        }
+        else if (proto.has_country_name())
+        {
+            native->country.name = proto.country_name();
+        }
+    }
+
+    //==========================================================================
+    // TimeZoneArea
+
+    void encode(const platform::sysconfig::TimeZoneArea &native,
+                cc::platform::sysconfig::TimeZoneArea *proto) noexcept
+    {
+        proto->set_name(native);
+    }
+
+    void decode(const cc::platform::sysconfig::TimeZoneArea &proto,
+                platform::sysconfig::TimeZoneArea *native) noexcept
+    {
+        *native = proto.name();
+    }
+
+    //==========================================================================
+    // TimeZoneCountry
+
+    void encode(const platform::sysconfig::TimeZoneCountry &native,
+                cc::platform::sysconfig::TimeZoneCountry *proto) noexcept
+    {
+        proto->set_code(native.code);
+        proto->set_name(native.name);
+    }
+
+    void decode(const cc::platform::sysconfig::TimeZoneCountry &proto,
+                platform::sysconfig::TimeZoneCountry *native) noexcept
+    {
+        native->code = proto.code();
+        native->name = proto.name();
+    }
+
+    //==========================================================================
+    // TimeZoneCountryRegion
+
+    void encode(const platform::sysconfig::TimeZoneCountryRegion &native,
+                cc::platform::sysconfig::TimeZoneCountryRegion *proto) noexcept
+    {
+        encode(native.country, proto->mutable_country());
+        proto->set_region(native.region);
+    }
+
+    void decode(const cc::platform::sysconfig::TimeZoneCountryRegion &proto,
+                platform::sysconfig::TimeZoneCountryRegion *native) noexcept
+    {
+        decode(proto.country(), &native->country);
+        native->region = proto.region();
     }
 
     //==========================================================================
@@ -185,11 +267,12 @@ namespace protobuf
     {
         proto->set_shortname(native.shortname);
         encode(native.offset, proto->mutable_offset());
-        encode(native.stdoffset, proto->mutable_offset());
+        encode(native.stdoffset, proto->mutable_stdoffset());
         proto->set_dst(native.dst);
     }
 
-    void decode(const cc::platform::sysconfig::TimeZoneInfo proto,
+
+    void decode(const cc::platform::sysconfig::TimeZoneInfo &proto,
                 core::dt::TimeZoneInfo *native) noexcept
     {
         native->shortname = proto.shortname();
@@ -197,6 +280,26 @@ namespace protobuf
         decode(proto.stdoffset(), &native->stdoffset);
         native->dst = proto.dst();
     }
+
+    //==========================================================================
+    // TimeZoneInfoRequest
+
+    void encode(const platform::sysconfig::TimeZoneCanonicalName &canonical_zone,
+                const core::dt::TimePoint &timepoint,
+                cc::platform::sysconfig::TimeZoneInfoRequest *proto) noexcept
+    {
+        proto->set_canonical_zone(canonical_zone);
+        encode(timepoint, proto->mutable_time());
+    }
+
+    void decode(const cc::platform::sysconfig::TimeZoneInfoRequest &proto,
+                platform::sysconfig::TimeZoneCanonicalName *canonical_zone,
+                core::dt::TimePoint *timepoint) noexcept
+    {
+        *canonical_zone = proto.canonical_zone();
+        decode(proto.time(), timepoint);
+    }
+
 
     //==========================================================================
     // Time Synchronization

@@ -80,30 +80,96 @@ class SysConfigClient (SignalClient):
         Enable or disable automatic time configuration,
         with optional NTP server list.
         '''
+
         request = cc.platform.sysconfig.TimeConfig(synchronization=synchronization)
         if servers is not None:
             request.servers.extend(servers)
         self.stub.set_time_config(request)
 
-    def get_timezone_specs(self) -> Iterator[cc.platform.sysconfig.TimeZoneSpec]:
+    def list_timezone_areas(self) -> list[str]:
+        '''Obtain a list of Time Zone "areas": continents, oceans, or the
+        literal "Etc".  These are the top-level grouping and first part of
+        canonical zone names such as "America/Los_Angeles".
         '''
-        Obtain information about all available timezones:
-        zone name, continent, country, display name, longitude/latitude.
+        return self.stub.list_timezone_areas(Empty()).areas
 
-        Results are sorted as follows:
-          - first by continent, west to east
-          - then by country
-              - west to east within North America
-              - alphabetical by short country code for other continents
+    def list_timezone_countries(self,
+                                area: str
+                                ) -> list[cc.platform.sysconfig.TimeZoneCountry]:
+        '''Obtain a list of Time Zone countries within a specific area.
+
+        Each country is represented by
+         - "code" - its 2-letter ISO 3166 code (e.g. "US" or "DE")
+         - "name" - its name in English (e.g. "United States" or "Germany")
         '''
-        for spec in self.stub.get_timezone_specs(Empty()):
+        request = cc.platform.sysconfig.TimeZoneArea(name = area)
+        return list(self.stub.list_timezone_countries(request).countries)
+
+    def list_timezone_specs(self,
+                            area: str|None = None,
+                            country: str|None = None
+                            ) -> list[cc.platform.sysconfig.TimeZoneCanonicalSpec]:
+        '''
+        Return a list of canonical time zones and their specifications,
+        optionally filtered by a specific area or country (specified by its
+        2-letter ISO 3166 code, e.g. "US"). See `get_timezone_spec()` for
+        details on what information is included.
+
+        Results are sorted reasonably for grouping and presentation to an end
+        user, as follows:
+
+          - first by area
+              - geographical regions west to east ("America", "Atlantic Ocean", ...)
+              - "Antarctica"
+              - "Etc"
+          - then alphabetical by short country code, except:
+              - within in America, countries in North America first, west to east
+
+        '''
+
+        return [spec for spec in self.read_timezone_specs(area, country)]
+
+
+    def read_timezone_specs(self,
+                            area: str|None = None,
+                            country: str|None = None
+                            ) -> Iterator[cc.platform.sysconfig.TimeZoneCanonicalSpec]:
+        '''Same as `list_timezone_specs()`, but returns an iterator over zone
+        specifiations rather than a single list. See `get_timezone_spec()` for
+        details on what information is included.
+        '''
+
+        request = cc.platform.sysconfig.TimeZoneLocationFilter(
+            area = area)
+
+        if isinstance(country, str):
+            if len(country) == 2:
+                request.country_code = country
+            else:
+                request.country_name = country
+
+        for spec in self.stub.read_timezone_specs(request):
             yield spec
 
-    def get_timezone_spec(self, zonename: str|None = None) -> cc.platform.sysconfig.TimeZoneSpec:
+
+    def get_timezone_spec(self,
+                          canonical_zone: str|None = None
+                          ) -> cc.platform.sysconfig.TimeZoneCanonicalSpec:
+        '''Obtain specifications about a specifc canonical zone.  If no zone is
+        provided, obtain information about the currently configured zone.
+
+        Information returned includes:
+        * The canonical name (reflecting the provided name if any)
+        * Area name (continent, ocean, or "Etc')
+        * One or more countries for which this zone is applicable
+          - Each country is represented by a 2-letter ISO 3166 code and its English name
+          - If a country spans more than one zone, a `region` field describes
+            this particular zone within that country
+        * Geographical coordinates of the canonical location:
+          - Latitude represented as seconds north of Equator
+          - Longitude represented as seconds east of the Prime Meridian
         '''
-        Obtain information about a specifc zone. See also `get_timezone_specs()`.
-        If no zone is provided, obtain information about the currently configured zone.
-        '''
+
         return self.stub.get_timezone_spec(
             cc.platform.sysconfig.TimeZoneName(
                 zonename=zonename))
@@ -134,25 +200,38 @@ class SysConfigClient (SignalClient):
 
         self.stub.set_timezone(request)
 
-    def get_configured_timezone(self) -> cc.platform.sysconfig.TimeZoneConfig:
+    def get_timezone_config(self) -> cc.platform.sysconfig.TimeZoneConfig:
         '''
         Get current timezone configuration, including:
         - `zonename`: Configured zone, e.g. `America/Los_Angeles' (not `PST` or `PDT`)
         - `automatic`: Whether to automatically obtain timezone from an online service
         - `provider`: Online service provider for automatic zone configuration.
         '''
-        return self.stub.get_configured_timezone(Empty())
+        return self.stub.get_timezone_config(Empty())
 
 
-    def get_current_timezone(self) -> cc.platform.sysconfig.TimeZoneInfo:
+    def get_timezone_info(self,
+                          canonical_zone: str|None = None,
+                          time: TimestampType|None = None
+                          ) -> cc.platform.sysconfig.TimeZoneInfo:
         '''
-        Get current/effecitve time zone info, including:
+        Get effecitve time zone info for the specified canonical zone and time.
+        If either value is missing, the currently configured zone and/or the
+        current system time is used.
+
+        Information returned includes:
         - `shortname`: effective zone abbreviation, e.g. `PST`, `PDT`, `CET`, `CEST`...
         - `offset`: offset from UTC in seconds, e.g. -7 * 60 * 60
         - `stdoffset`: standard offset from UTC in seconds, e.g. -8 * 60 * 60
         - `dst`: whether Daylight Savings Time / Summer Time is in efffect
         '''
-        return self.stub.get_current_timezone(Empty())
+
+        request = cc.platform.sysconfig.TimeZoneInfoRequest(
+            canonical_zone = canonical_zone,
+            time = time)
+
+        return self.stub.get_timezone_info(request)
+
 
     def invoke_sync(self,
                     argv : Sequence[str] = (),

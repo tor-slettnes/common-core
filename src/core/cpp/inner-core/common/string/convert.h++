@@ -49,92 +49,86 @@ namespace core::str
     //==========================================================================
     /// Integral type conversions
 
-    // template <class T>
-    // class StringConvert<T,
-    //                      typename std::enable_if_t<std::is_integral_v<T>>>
-    // {
-    // public:
-    //     static T from_string(const std::string_view &s)
-    //     {
-    //         static const std::errc ok{};
-    //         const char *start = &*s.begin();
-    //         const char *end = &*s.end();
+    template <class T>
+    class StringConvert<T, typename std::enable_if_t<std::is_integral_v<T>>>
+    {
+    public:
+        static T from_string(const std::string_view &s)
+        {
+            static const std::errc ok{};
+            const char *start = &*s.begin();
+            const char *end = &*s.end();
 
-    //         T value = 0;
-    //         // First we try to parse the string as a decimal number
-    //         std::cout << "Converting as integral" << std::endl;
-    //         auto [ptr, ec] = std::from_chars(start, end, value);
-    //         if ((ec == ok) && (ptr == end))
-    //         {
-    //             return value;
-    //         }
-    //         else
-    //         {
-    //             // Next, we try to parse it without an explicit base, allowing
-    //             // `0x` to indicate hexadecimal. (The reason we didn't do this
-    //             // in the first place is that a leading `0` would then be
-    //             // considered an octal indicator).
-    //             std::cout << "Converting as integral with base 0" << std::endl;
-    //             auto [ptr2, ec2] = std::from_chars(start, end, value, 0);
-    //             if ((ec2 == ok) && (ptr2 == end))
-    //             {
-    //                 return value;
-    //             }
-    //             else if (ec != ok)
-    //             {
-    //                 throw std::invalid_argument(std::make_error_code(ec).message());
-    //             }
-    //             else
-    //             {
-    //                 throw std::invalid_argument(
-    //                     str::format("Not all characters converted: %s", s));
-    //             }
-    //         }
-    //     }
+            T value = 0;
+            // First we try to parse the string as a decimal number
+            auto [ptr, ec] = std::from_chars(start, end, value);
+            if ((ec == ok) && (ptr == end))
+            {
+                return value;
+            }
+            else
+            {
+                // Next, we try to parse it without an explicit base, allowing
+                // `0x` to indicate hexadecimal. (The reason we didn't do this
+                // in the first place is that a leading `0` would then be
+                // considered an octal indicator).
+                auto [ptr2, ec2] = std::from_chars(start, end, value, 0);
+                if ((ec2 == ok) && (ptr2 == end))
+                {
+                    return value;
+                }
+                else if (ec != ok)
+                {
+                    throw std::invalid_argument(std::make_error_code(ec).message());
+                }
+                else
+                {
+                    throw std::invalid_argument("Not all characters converted");
+                }
+            }
+        }
 
-    //     static std::string to_string(const T &value)
-    //     {
-    //         std::ostringstream ss;
-    //         ss << value;
-    //         return ss.str();
-    //     }
-    // };
+        static std::string to_string(const T &value)
+        {
+            std::ostringstream ss;
+            ss << value;
+            return ss.str();
+        }
+    };
 
     //==========================================================================
     /// Floating pointconversions
 
-    // template <class T>
-    // class StringConvert<T,
-    //                      typename std::enable_if_t<std::is_floating_point_v<T>>>
-    // {
-    // public:
-    //     static T from_string(const std::string_view &s)
-    //     {
-    //         static const std::errc ok{};
-    //         const char *start = &*s.begin();
-    //         const char *end = &*s.end();
+    template <class T>
+    class StringConvert<T, typename std::enable_if_t<std::is_floating_point_v<T>>>
+    {
+    public:
+        static T from_string(const std::string_view &s)
+        {
+            static const std::errc ok{};
+            const char *start = &*s.begin();
+            const char *end = &*s.end();
 
-    //         T value = 0.0;
-    //         auto [ptr, ec] = std::from_chars(start, end, value);
-    //         if (ec != ok)
-    //         {
-    //             throw std::invalid_argument(std::make_error_code(ec).message());
-    //         }
-    //         else if (ptr != end)
-    //         {
-    //             throw std::invalid_argument(
-    //                 str::format("Not all characters converted: %s", s));
-    //         }
-    //         return value;
-    //     }
+            T value = 0.0;
+            auto [ptr, ec] = std::from_chars(start, end, value);
+            if (ec != ok)
+            {
+                throw std::invalid_argument(std::make_error_code(ec).message());
+            }
+            else if (ptr != end)
+            {
+                throw std::invalid_argument("Not all characters converted");
+            }
+            return value;
+        }
 
-    //     static std::string to_string(const T &value)
-    //     {
-    //         std::ostringstream ss;
-    //         ss << value;
-    //         return ss.str();
-    //     }
-    // };
+        static std::string to_string(const T &value)
+        {
+            std::ostringstream ss;
+            ss << value;
+            return ss.str();
+        }
+    };
 
     //==========================================================================
     /// Partial template specialization for string<>string passthrough

@@ -7,6 +7,7 @@
 
 #include "posix-timezone.h++"
 #include "platform/runtime.h++"
+#include "logging/logging.h++"
 
 #include <mutex>
 #include <ctime>
@@ -30,9 +31,9 @@ namespace core::platform
     std::tm PosixTimeZoneProvider::localtime(const std::time_t &time, const std::string &timezone) const
     {
         auto lck = std::lock_guard(const_cast<This *>(this)->mtx);
-        std::string tzrestore = this->apply_zone(timezone);
+        SavedValue saved = this->apply_zone(timezone);
         std::tm dt = this->localtime(time);
-        this->restore_zone(tzrestore);
+        this->restore_zone(saved);
         return dt;
     }
 
@@ -43,12 +44,14 @@ namespace core::platform
         return dt;
     }
 
-    dt::TimeZoneInfo PosixTimeZoneProvider::tzinfo(const std::string &timezone, const std::time_t &time) const
+    dt::TimeZoneInfo PosixTimeZoneProvider::tzinfo(
+        const std::string &timezone,
+        const std::time_t &time) const
     {
         auto lck = std::lock_guard(const_cast<This *>(this)->mtx);
-        std::string tzrestore = this->apply_zone(timezone);
+        SavedValue saved = this->apply_zone(timezone);
         dt::TimeZoneInfo zi = this->tzinfo(time);
-        this->restore_zone(tzrestore);
+        this->restore_zone(saved);
         return zi;
     }
 
@@ -56,41 +59,43 @@ namespace core::platform
     {
         tzset();
 
-        std::tm local;
-        localtime_r(&time, &local);
+        std::tm local_tm;
+        localtime_r(&time, &local_tm);
 
-        std::time_t local_t = dt::mktime(local, false);
-
-        dt::Duration offset = std::chrono::seconds(local_t - time);
-        dt::Duration stdoffset = offset + std::chrono::hours(local.tm_isdst);
+        std::time_t local_time = dt::mktime(local_tm, false);
+        dt::Duration offset = std::chrono::seconds(local_time - time);
+        dt::Duration stdoffset = offset - std::chrono::hours(local_tm.tm_isdst);
 
         return {
-            tzname[local.tm_isdst > 0],  // Effective zone, e.g., "PST" or "PDT"
-            offset,                      // Current timezone offset, east of UTC
-            stdoffset,                   // Standard timezone offset, east of UTC
-            local.tm_isdst > 0,          // Daylight savings time flag
+            tzname[local_tm.tm_isdst > 0],  // Effective zone, e.g., "PST" or "PDT"
+            offset,                         // Current timezone offset, east of UTC
+            stdoffset,                      // Standard timezone offset, east of UTC
+            local_tm.tm_isdst > 0,          // Daylight savings time flag
         };
     }
 
-    std::string PosixTimeZoneProvider::apply_zone(const std::string &zonename) const
+    PosixTimeZoneProvider::SavedValue PosixTimeZoneProvider::apply_zone(
+        const std::string &zonename) const
     {
-        std::string tzrestore = TZENV;
-        // Backup & modify TZ environment variable
-        if (char *envzone = std::getenv(TZENV))
-        {
-            tzrestore = tzrestore + "=" + envzone;
-        }
+        std::optional<std::string> tzrestore = platform::runtime->getenv(TZENV);
 
         // Change zone
-        platform::runtime->putenv(TZENV "=" + zonename);
+        platform::runtime->setenv(TZENV, zonename);
         tzset();
         return tzrestore;
     }
 
-    void PosixTimeZoneProvider::restore_zone(const std::string &saved) const
+    void PosixTimeZoneProvider::restore_zone(const SavedValue &saved) const
     {
         // Restore zone
-        platform::runtime->putenv(saved);
+        if (saved)
+        {
+            platform::runtime->setenv(TZENV, saved.value());
+        }
+        else
+        {
+            platform::runtime->unsetenv(TZENV);
+        }
         tzset();
     }
 

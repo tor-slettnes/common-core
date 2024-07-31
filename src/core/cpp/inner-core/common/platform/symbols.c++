@@ -6,9 +6,17 @@
 //==============================================================================
 
 #include "symbols.h++"
+#include "string/format.h++"
 
 /// Default filesystem paths.
 namespace core::platform
 {
+    std::string SymbolsProvider::errno_name(int num) const noexcept
+    {
+        return "";
+    }
+
     ProviderProxy<SymbolsProvider> symbols("symbols");
+
+
 }  // namespace core::platform

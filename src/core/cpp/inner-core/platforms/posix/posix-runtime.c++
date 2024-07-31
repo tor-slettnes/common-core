@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "posix-runtime.h++"
+#include "logging/logging.h++"
 
 #include <stdexcept>
 

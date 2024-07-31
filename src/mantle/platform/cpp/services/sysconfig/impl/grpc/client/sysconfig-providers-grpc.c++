@@ -7,6 +7,7 @@
 
 #include "sysconfig-providers-grpc.h++"
 #include "sysconfig-grpc-time.h++"
+#include "sysconfig-grpc-timezone.h++"
 #include "sysconfig-grpc-host.h++"
 
 namespace platform::sysconfig::grpc
@@ -18,6 +19,7 @@ namespace platform::sysconfig::grpc
         auto client = Client::create_shared(host, wait_for_ready);
         time.registerProvider<TimeConfigProvider>(client);
         hostconfig.registerProvider<HostConfigProvider>(client);
+        timezone.registerProvider<TimeZoneProvider>(client);
 
         if (start_watching)
         {
@@ -27,6 +29,7 @@ namespace platform::sysconfig::grpc
 
     void unregister_providers()
     {
+        timezone.unregisterProvider<TimeZoneProvider>();
         hostconfig.unregisterProvider<HostConfigProvider>();
         time.unregisterProvider<TimeConfigProvider>();
     }

@@ -14,8 +14,9 @@ set(LIB_DEPS
 )
 
 set(SOURCES
-  sysconfig-grpc-time.c++
   sysconfig-grpc-host.c++
+  sysconfig-grpc-time.c++
+  sysconfig-grpc-timezone.c++
   sysconfig-providers-grpc.c++
 )
 

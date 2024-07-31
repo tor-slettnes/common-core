@@ -11,6 +11,7 @@
 #include "types/streamable.h++"
 #include "types/filesystem.h++"
 #include "types/symbolmap.h++"
+#include "logging/logging.h++"
 
 #include <NetworkManager.h>
 #include <map>
@@ -19,6 +20,8 @@
 
 namespace platform::netconfig
 {
+    define_log_scope("netconfig");
+
     using Key = std::string;
     using HWAddress = std::string;
     using IPAddress = std::string;

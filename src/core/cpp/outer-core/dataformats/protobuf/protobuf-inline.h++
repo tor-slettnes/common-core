@@ -26,9 +26,9 @@ namespace protobuf
     // Decode repeated fields
 
     template <class ProtoType, class NativeType>
-    void encode_list(const typename NativeType::const_iterator &begin,
-                     const typename NativeType::const_iterator &end,
-                     google::protobuf::RepeatedPtrField<ProtoType> *items)
+    void encode_sequence(const typename NativeType::const_iterator &begin,
+                         const typename NativeType::const_iterator &end,
+                         google::protobuf::RepeatedPtrField<ProtoType> *items)
     {
         items->Clear();
         items->Reserve(std::distance(begin, end));
@@ -38,17 +38,69 @@ namespace protobuf
         }
     }
 
+    template <class ProtoType, class NativeType>
+    void encode_vector(const std::vector<NativeType> &vector,
+                       google::protobuf::RepeatedPtrField<ProtoType> *items)
+    {
+        items->Clear();
+        items->Reserve(vector.size());
+        for (const NativeType &item: vector)
+        {
+            encode(item, items->Add());
+        }
+    }
+
+    template <class NativeType, class ProtoType>
+    void decode_to_vector(const google::protobuf::RepeatedPtrField<ProtoType> &items,
+                          std::vector<NativeType> *vector)
+    {
+        vector->reserve(items.size());
+        for (const ProtoType &item : items)
+        {
+            decode(item, &vector->emplace_back());
+        }
+    }
+
+    template <class NativeType, class ProtoType>
+    std::vector<NativeType> decode_to_vector(
+        const google::protobuf::RepeatedPtrField<ProtoType> &items)
+    {
+        std::vector<NativeType> vector;
+        vector.reserve(items.size());
+        for (const ProtoType &item : items)
+        {
+            decode(item, &vector.emplace_back());
+        }
+        return vector;
+    }
+
     template <class Type>
     void assign_to_vector(const google::protobuf::RepeatedPtrField<Type> &items,
                           std::vector<Type> *vector)
     {
-        vector->clear();
-        vector->reserve(items.size());
-        for (const Type &item : items)
+        vector->assign(items.begin(), items.end());
+    }
+
+    template <class Type>
+    std::vector<Type> assign_to_vector(const google::protobuf::RepeatedPtrField<Type> &items)
+    {
+        std::vector<Type> vector;
+        assign_to_vector(items, &vector);
+        return vector;
+    }
+
+    template <class Type>
+    void assign_repeated(const std::vector<Type> &vector,
+                         google::protobuf::RepeatedPtrField<Type> *repeated_value)
+    {
+        repeated_value->Clear();
+        repeated_value->Reserve(vector.size());
+        for (const Type &value : vector)
         {
-            vector->push_back(item);
+            *repeated_value->Add() = value;
         }
     }
+
 
     //==========================================================================
     // Template to return converted value

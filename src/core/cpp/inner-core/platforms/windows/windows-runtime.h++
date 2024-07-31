@@ -23,6 +23,7 @@ namespace core::platform
         /// @brief Return the maximum length of a filesystem path.
         bool isatty(int fd) const override;
 
+    protected:
         /// @brief Return the maximum length of a filesystem path.
         void putenv(const std::string &envstring) override;
     };

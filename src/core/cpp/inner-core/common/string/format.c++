@@ -191,6 +191,7 @@ namespace core::str
             // Decimal integer representation
             this->stream << std::dec << std::fixed << std::setprecision(0);
             modifiers->truncate = (conversion == 'z');
+            modifiers->timeformat = conversion;
             if (modifiers->alternate || (conversion == 'n'))
             {
                 // Use locale-specific grouping for numeric output
@@ -231,6 +232,7 @@ namespace core::str
         case 'F':
             this->stream << std::fixed;
             modifiers->nonegativezero = modifiers->alternate;
+            modifiers->timeformat = conversion;
             break;
 
         case 'g':
@@ -423,17 +425,30 @@ namespace core::str
     void Formatter::appendvalue(const std::chrono::system_clock::time_point &tp,
                                 const Modifiers &modifiers)
     {
-        dt::tp_to_stream(this->stream,                   // stream
-                         tp,                             // tp
-                         (modifiers.timeformat != 'Z'),  // local
-                         this->stream.precision(),       // decimals
-                         modifiers.timeformat            // format
-                             ? dt::JS_FORMAT
-                             : dt::DEFAULT_FORMAT);
-
-        if (modifiers.timeformat == 'Z')
+        switch (modifiers.timeformat)
         {
-            this->stream << 'Z';
+        case 'd':
+            this->stream << dt::to_time_t(tp);
+            break;
+
+        case 'f':
+            this->appendvalue(dt::to_double(tp), modifiers);
+            break;
+
+        default:
+            dt::tp_to_stream(this->stream,                   // stream
+                             tp,                             // tp
+                             (modifiers.timeformat != 'Z'),  // local
+                             this->stream.precision(),       // decimals
+                             modifiers.timeformat            // format
+                                 ? dt::JS_FORMAT
+                                 : dt::DEFAULT_FORMAT);
+
+            if (modifiers.timeformat == 'Z')
+            {
+                this->stream << 'Z';
+            }
+            break;
         }
     }
 
