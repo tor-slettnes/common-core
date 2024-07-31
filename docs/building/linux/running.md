@@ -27,8 +27,6 @@ After copying the `.deb` file(s) from `out/packages` onto the desired target sys
   sudo apt -y install $HOME/Downloads/common-core-*.deb
   ```
 
-(Note that the leading `./` is required for the `apt` tool to recognize this as a local filename, rather than a package name to be retrieved from your Debian/Ubuntu repository).
-
 
 ## Launching service daemons
 

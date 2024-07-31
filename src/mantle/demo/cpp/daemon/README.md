@@ -5,7 +5,7 @@ The `demoserver` executable provides backend/indirect access to the demo app's f
 
 * [cc_demo_native](../impl/native/README.md), the core library, which is the ultimate endpoint for requests,
 
-* [cc_demo_grpc_service](../impl/grpc/server), containng the gRPC server.
+* [cc_demo_grpc_service](../impl/grpc/server), containng the gRPC server, which in turn implements the gRPC interface declared in [demo.proto](../../proto/demo.proto).
 
 * [cc_dds_publisher](../impl/dds/dds-publisher), containing the DDS publisher,
 

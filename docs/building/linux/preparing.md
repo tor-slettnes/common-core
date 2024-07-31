@@ -72,7 +72,7 @@ to run the following commands to install the required dependencies.
 * Linux UDev support for notifications related to removable drives (CMake optipon `BUILD_UDEV`):
 
   ```bash
-  sudo apt install ilbudev-dev
+  sudo apt install libudev-dev
   ```
 
 * Python IPC (incl. pickling/unpickling) (CMake option `BUILD_PYTHON_IO`)

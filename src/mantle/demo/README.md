@@ -47,18 +47,20 @@ important methods are:
 Our demo defines two signals in [demo-signals.h++](cpp/api/demo-signals.h++) to
 support the functionality described above:
 
-- `demo::signal_time` is emitted at periodic intervals once
-  `start_ticking()` has been invoked, and
+- `demo::signal_time` is emitted at periodic intervals once `start_ticking()`
+  has been invoked, and
 
-- `demo::signal_greeting` is emitted whenever someone (a thread or an
-  external client) invokes `say_hello()`.
+- `demo::signal_greeting` is emitted whenever someone (a thread or an external
+  client) invokes `say_hello()`.
 
 
 Implementations
 ---------------
 
+### C++ implementations
+
 Four different implementtations of this API are included here, illustrating
-different building blocks within the Common Core codebase.  Each implementation
+different building blocks within the Common Core codebase. Each implementation
 includes a linkable library with a C++ class derived from the above API, more
 specifically as it is defined in [demo-api.h++](cpp/api/demo-api.h++):
 
@@ -77,9 +79,8 @@ specifically as it is defined in [demo-api.h++](cpp/api/demo-api.h++):
    as signals.
 
    The gRPC service definition as well as the required ProtoBuf message
-   structures can be found in the [proto](proto) folder, in
-   [demo_service.proto](proto/demo_service.proto) and
-   [demo_types.proto](proto/demo_service.proto), respectively.
+   structures can be found in the [demo.proto](proto/demo.proto) within the
+   [proto](proto) folder.
 
    For more information about using gRPC and Protocol Buffers, see
    [grpc.io](https://grpc.io) and [protobuf.dev](https://protobuf.dev),
@@ -97,7 +98,7 @@ specifically as it is defined in [demo-api.h++](cpp/api/demo-api.h++):
    client process.
 
    Interface Definition Language files containing the DDS service defintions
-   along with associated data types can be found in the [idl](idl) folder.  DDS
+   along with associated data types can be found in the [idl](idl) folder. DDS
    and IDL are documented in more detail at
    [OMG](https://www.omg.org/omg-dds-portal/). (If you use a search engine,
    please specify `OMG IDL`, as simply searching for `IDL` will yield a lot of
@@ -105,15 +106,15 @@ specifically as it is defined in [demo-api.h++](cpp/api/demo-api.h++):
 
 4. A [ZeroMQ adapter](cpp/impl/zmq). Like above, a [demo
    client](cpp/impl/zmq/zmq-client) establishes a connection to a remote [demo
-   server](cpp/impl/zmq/zmq-server).  Also as with DDS, events are captured on
+   server](cpp/impl/zmq/zmq-server). Also as with DDS, events are captured on
    the server side and passed to the client with a [demo
    publisher](cpp/impl/zmq/zmq-publisher), where a corresponding [demo
    subscriber](cpp/impl/zmq/zmq-subscriber) reads and then forwards these as
    signals within the local process space.
 
    One twist in this case is that ZeroMQ does not prescribe any particular
-   message structure, and indeed treats payloads as opaque blobs.  Put
-   differently, we need to provide our own message encoding.  Well, didn't we
+   message structure, and indeed treats payloads as opaque blobs. Put
+   differently, we need to provide our own message encoding. Well, didn't we
    already do that? Since we already adopted a couple of structure declaration
    languages above, why not simply reuse one of those?
 
@@ -127,14 +128,34 @@ specifically as it is defined in [demo-api.h++](cpp/api/demo-api.h++):
 #### Interchangability
 
 Since our implementations all derive from the same abstract API, they are
-interchangable from the perspective of the client/application.  In fact, neither
+interchangable from the perspective of the client/application. In fact, neither
 the abstract API nor the *native* flavor has any dependencies on gRPC, DDS, or
 ZeroMQ; any of these implementation libraries can be excluded or replaced with
 something else altogether.
 
 ### Python modules
 
-Coming soon.
+Similarly, there are client and server modules implemented in Python:
+
+1. A [core API](python/demo/core) module that defines Python flavor of the
+   above API. This is the base for each of the following implementations.
+
+2. A [native](python/demo/native) implementation, which (similar to its C++
+   counterpart) is the ultimate endpoint which implements this API directly.
+
+3. A [gRPC adapter](python/demo/grpc) adapter comprising
+   - a client, which implements the core API by forwarding requests to
+   - a server, which in turn servers client requests by invoking the
+     corresponding API functions in its own process space.
+
+4. A [ZeroMQ adapter](python/demo/zmq) adapter, comprising
+   - a [client](python/demo/zmq/client.py), which implements the core API by
+     forwarding calls to and relaying events from
+   - a [server](python/demo/zmq/server.py) and assocated
+     [request handler](python/demo/zmq/requesthandler.py), which servers these
+     requests by invoking corresponding API methods and publishing any signals
+     that it receives in its local process space.
+
 
 
 Communications interface
@@ -168,7 +189,8 @@ Our demo application is organized into the following parts:
 
 1. [C++ Application](cpp/README.md)
    * [API](cpp/api/README.md)
-   * [Implementations](cpp/impl/README.md), contianing the native library as well as client and server libraries for each messaging platform.
+   * [Implementations](cpp/impl/README.md), contianing the native library as
+     well as client and server libraries for each messaging platform.
    * [Server Executable (Daemon)](cpp/daemon), supporting all of the above
      messaging interfaces
    * [Command Line Tools](cpp/utils), one for each messaging platform
@@ -183,7 +205,7 @@ Our demo application is organized into the following parts:
    just as easily be converted into source code for other languages such as C#.
 
 4. [IDL](idl), containing Interface Defintion Language files that describe the
-   data types and RPC interfaces used for communicating over DDS.  These are
+   data types and RPC interfaces used for communicating over DDS. These are
    converted to C++ source code via the CMake recipe
    [BuildIDL.cmake](../../../cmake/BuildIDL.cmake), and can similarly be
    converted into source code for other languages such as C#. They are also
