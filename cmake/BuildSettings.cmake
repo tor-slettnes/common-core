@@ -10,7 +10,7 @@ set(SETTINGS_DIR "share/cc/settings"
 
 function(BuildSettings)
   set(_options)
-  set(_singleargs DIRECTORY DESTINATION COMPONENT)
+  set(_singleargs DIRECTORY DESTINATION INSTALL_COMPONENT)
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -26,8 +26,8 @@ function(BuildSettings)
     set(_directory ".")
   endif()
 
-  if(arg_COMPONENT)
-    set(_component ${arg_COMPONENT})
+  if(arg_INSTALL_COMPONENT)
+    set(_component ${arg_INSTALL_COMPONENT})
   elseif(CPACK_CURRENT_COMPONENT)
     set(_component ${CPACK_CURRENT_COMPONENT})
   else()

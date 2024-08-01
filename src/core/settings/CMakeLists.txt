@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(INSTALL_COMPONENT "common-settings")
+set(INSTALL_COMPONENT "core-settings")
 
 BuildSettings(INSTALL_COMPONENT "${INSTALL_COMPONENT}")
 
