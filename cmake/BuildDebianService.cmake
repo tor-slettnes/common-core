@@ -9,7 +9,7 @@ set(_service_template_dir ${CMAKE_CURRENT_LIST_DIR}/debian)
 
 function(InstallDebianService UNIT)
   set(_options USER)
-  set(_singleargs PROGRAM DESCRIPTION COMPONENT)
+  set(_singleargs PROGRAM DESCRIPTION INSTALL_COMPONENT)
   set(_multiargs ARGS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -27,8 +27,8 @@ function(InstallDebianService UNIT)
     set(_dest "lib/systemd/system")
   endif()
 
-  if(arg_COMPONENT)
-    string(TOUPPER "${arg_COMPONENT}" _component)
+  if(arg_INSTALL_COMPONENT)
+    set(_component "${arg_INSTALL_COMPONENT}")
   else()
     set(_component "COMMON")
   endif()
@@ -63,7 +63,7 @@ function(InstallDebianService UNIT)
   install(
     FILES "${_service_file}"
     DESTINATION "${_dest}"
-    COMPONENT "${arg_COMPONENT}"
+    COMPONENT "${_component}"
   )
 
   ### Add `postinst`/`prerm` hooks
@@ -79,7 +79,7 @@ function(InstallDebianService UNIT)
     "${_prerm_file}"
   )
 
-  if(arg_COMPONENT AND CPACK_DEB_COMPONENT_INSTALL)
+  if(CPACK_DEB_COMPONENT_INSTALL)
     CPackConfig("CPACK_DEBIAN_${_component}_PACKAGE_CONTROL_EXTRA"
       "${_postinst_file};${_prerm_file}"
     )

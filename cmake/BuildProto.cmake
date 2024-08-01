@@ -93,7 +93,7 @@ function(BuildProto_PYTHON TARGET)
     install(
       FILES ${GRPC_PY}
       DESTINATION "${_install_dir}"
-      COMPONENT "${_arg_INSTALL_COMPONENT}"
+      COMPONENT "${arg_INSTALL_COMPONENT}"
     )
   endif()
 

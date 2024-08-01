@@ -17,7 +17,7 @@ function(BuildPython TARGET)
   add_library("${TARGET}" INTERFACE)
 
   if(arg_INSTALL_COMPONENT)
-    set(_component ${arg_COMPONENT})
+    set(_component ${arg_INSTALL_COMPONENT})
   elseif(CPACK_CURRENT_COMPONENT)
     set(_component ${CPACK_CURRENT_COMPONENT})
   else()
