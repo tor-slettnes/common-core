@@ -31,14 +31,14 @@ function(BuildProto_CPP TARGET)
   endif()
 
   if(BUILD_GRPC)
-    # find_package(gRPC REQUIRED)
+    find_package(gRPC REQUIRED)
 
     # The above fails to capture all required library dependencies from recent
     # gRPC releases.  Let's obtain additional package dependencies from
     # `pkg-config`.
     add_package_dependencies("${TARGET}"
       LIB_TYPE "${arg_LIB_TYPE}"
-      DEPENDS grpc++)
+      DEPENDS gpr)
 
     protogen_grpc_cpp(GRPC_CPP_SRCS GRPC_CPP_HDRS
       TARGET "${TARGET}"

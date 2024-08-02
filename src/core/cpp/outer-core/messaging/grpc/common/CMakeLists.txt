@@ -9,7 +9,7 @@
 set(TARGET cc_core_messaging_grpc_common)
 
 set(MOD_DEPS
-  gRPC
+   gRPC
 )
 
 ### Library dependencies.

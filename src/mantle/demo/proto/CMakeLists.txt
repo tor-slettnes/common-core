@@ -12,7 +12,9 @@ set(TARGET "cc_demo_proto")
 set(INSTALL_COMPONENT "demo-proto")
 
 ### Static/shared library dependencies.
-set(LIB_DEPS cc_core_proto)
+set(LIB_DEPS
+  cc_core_proto
+)
 
 ### Source files
 set(SOURCES
