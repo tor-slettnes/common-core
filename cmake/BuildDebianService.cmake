@@ -7,13 +7,18 @@
 include(BuildPackage)
 set(_service_template_dir ${CMAKE_CURRENT_LIST_DIR}/debian)
 
+#===============================================================================
+# @fn InstallDebianService
+# @brief Create, install and optionally enable a SystemD service unit
+
 function(InstallDebianService UNIT)
-  set(_options USER)
+  set(_options USER ENABLE)
   set(_singleargs PROGRAM DESCRIPTION INSTALL_COMPONENT)
   set(_multiargs ARGS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  ### Install service unit: ${UNIT}.service
+  #=============================================================================
+  # Determine paths for the systemd `.service` file
 
   if(CPACK_PACKAGING_INSTALL_PREFIX)
     set(_install_root "${CPACK_PACKAGING_INSTALL_PREFIX}")
@@ -41,20 +46,18 @@ function(InstallDebianService UNIT)
     set(_program "${_install_root}/${arg_PROGRAM}")
   endif()
 
-
   string(REGEX MATCH ".service$" SERVICE_SUFFIX "${UNIT}")
   if(SERVICE_SUFFIX)
-    set(SERVICE_UNIT "${UNIT}")
+    set(_service_unit "${UNIT}")
   else()
-    set(SERVICE_UNIT "${UNIT}.service")
+    set(_service_unit "${UNIT}.service")
   endif()
 
   set(SERVICE_PROGRAM "${_program}")
   set(SERVICE_ARGS "${arg_ARGS}")
   set(SERVICE_DESCRIPTION "${arg_DESCRIPTION}")
-  set(SERVICE_UNIT_PATH "${_install_root}/${_dest}/${SERVICE_UNIT}")
-  set(_service_file "${CMAKE_CURRENT_BINARY_DIR}/${SERVICE_UNIT}")
 
+  set(_service_file "${CMAKE_CURRENT_BINARY_DIR}/${_service_unit}")
   configure_file(
     "${_service_template_dir}/service.in"
     "${_service_file}"
@@ -66,21 +69,84 @@ function(InstallDebianService UNIT)
     COMPONENT "${_component}"
   )
 
+  if(arg_ENABLE)
+    AddEnableHooks("${_service_unit}"
+      INSTALL_DIRECTORY "${_install_root}/${_dest}"
+      INSTALL_COMPONENT "${_component}"
+    )
+  endif()
+endfunction()
+
+
+#===============================================================================
+# @fn AddEnableHooks
+# @brief Add post-install and pre-removal hooks to enable/disable service unit
+
+function(AddEnableHooks UNIT)
+  set(_options)
+  set(_singleargs INSTALL_DIRECTORY INSTALL_COMPONENT)
+  set(_multiargs)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  #=============================================================================
+  # Next follows some logic to create a `postinst` and `postrm` script to
+  # enable/disable the systemd service unit during install/remove/upgrade.
+  #
+  # First we determine if we have already done this for other service units
+  # within the same `.deb` package.  We do this by
+  #    (a) using a unique staging directory for each package component,
+  #        if and only if we use component based installs to create one
+  #        `.deb` per component.
+  #    (b) maintaining an associated directory property to keep track
+  #        of this and prior service units associated with this directory
+  #    (c) using this property to create a cumulative list of
+  #        service units to be enabled/disabled.
+
+
+  if(CPACK_DEB_COMPONENT_INSTALL)
+    set(_staging_dir "${CMAKE_BINARY_DIR}/${arg_INSTALL_COMPONENT}")
+    file(MAKE_DIRECTORY "${_staging_dir}")
+  else()
+    set(_staging_dir "${CMAKE_BINARY_DIR}")
+  endif()
+
+  # Create or add this unit to the `service_units` directory property
+  set_property(
+    DIRECTORY "${_staging_dir}"
+    APPEND
+    PROPERTY service_units
+    "${UNIT}"
+  )
+
+  get_property(_service_units
+    DIRECTORY "${_staging_dir}"
+    PROPERTY service_units
+  )
+
+  # Define `SERVICE_UNITS` and `SERVICE_UNIT_PATHS` for `config_file()` 
+  list(TRANSFORM _service_units
+    PREPEND "${arg_INSTALL_DIRECTORY}/"
+    OUTPUT_VARIABLE _service_unit_paths)
+
+  list(JOIN _service_units " " SERVICE_UNITS)
+  list(JOIN _service_unit_paths " " SERVICE_UNIT_PATHS)
+
   ### Add `postinst`/`prerm` hooks
-  set(_postinst_file "${CMAKE_CURRENT_BINARY_DIR}/postinst")
+  set(_postinst_file "${_staging_dir}/postinst")
   configure_file(
     "${_service_template_dir}/postinst.in"
     "${_postinst_file}"
   )
 
-  set(_prerm_file "${CMAKE_CURRENT_BINARY_DIR}/prerm")
+  set(_prerm_file "${_staging_dir}/prerm")
   configure_file(
     "${_service_template_dir}/prerm.in"
     "${_prerm_file}"
   )
 
+  ### Add these generated hooks to the Debian package `control` file.
   if(CPACK_DEB_COMPONENT_INSTALL)
-    CPackConfig("CPACK_DEBIAN_${_component}_PACKAGE_CONTROL_EXTRA"
+    CPackConfig("CPACK_DEBIAN_${arg_INSTALL_COMPONENT}_PACKAGE_CONTROL_EXTRA"
       "${_postinst_file};${_prerm_file}"
     )
   else()
@@ -90,4 +156,3 @@ function(InstallDebianService UNIT)
   endif()
 
 endfunction()
-

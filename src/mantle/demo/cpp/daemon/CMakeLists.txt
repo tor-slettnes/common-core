@@ -49,6 +49,7 @@ if(ENABLE_SERVICES)
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "DEMO service"
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    ENABLE
   )
 endif()
 
