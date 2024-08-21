@@ -292,8 +292,8 @@ message TimeZoneInfoRequest
 message TimeZoneInfo
 {
     /// Effective zone abbreviation, e.g.
-    ///   - `PST` or `PDT` for Pacific standard/daylight time
-    ///   - `CET` or `CEST` for European standard/summer time
+    ///   - `PST` or `PDT` for Pacific Standard/Daylight Time
+    ///   - `CET` or `CEST` for Central European Time / Summer Time
     string shortname = 1;       // Short name, e.g. PST or PDT
 
     /// Current zone offset from UTC, e.g. -7 hours if zone is PDT

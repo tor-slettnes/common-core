@@ -15,7 +15,7 @@ namespace protobuf
 
     Version version(std::uint64_t major,
                     std::uint64_t minor = 0,
-                    std::uint64_t tweak = 0,
+                    std::uint64_t patch = 0,
                     const std::string printable_version = "");
 
     std::string to_string(const Version &version);

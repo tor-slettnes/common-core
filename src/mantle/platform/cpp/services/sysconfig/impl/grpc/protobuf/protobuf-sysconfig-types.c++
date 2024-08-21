@@ -95,8 +95,9 @@ namespace protobuf
     {
         proto->set_major(native.major);
         proto->set_minor(native.minor);
-        proto->set_tweak(native.tweak);
+        proto->set_patch(native.patch);
         proto->set_printable_version(native.printable_version);
+        proto->set_build_number(native.build_number);
     }
 
     void decode(const cc::version::Version &proto,
@@ -104,8 +105,9 @@ namespace protobuf
     {
         native->major = proto.major();
         native->minor = proto.minor();
-        native->tweak = proto.tweak();
+        native->patch = proto.patch();
         native->printable_version = proto.printable_version();
+        native->build_number = proto.build_number();
     }
 
     //==========================================================================

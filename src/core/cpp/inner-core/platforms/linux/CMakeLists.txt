@@ -42,7 +42,6 @@ add_custom_command(
   OUTPUT ${ERRNOFILE}
   COMMAND python3 ${ERRNOSCRIPT} --output ${ERRNOFILE} --sysroot "${BUILD_ROOT}/"
   COMMENT "Generating ${ERRNOFILE}"
-  BYPRODUCTS "${ERRNOFILE}"
 )
 
 add_custom_target(errnos DEPENDS ${ERRNOFILE})

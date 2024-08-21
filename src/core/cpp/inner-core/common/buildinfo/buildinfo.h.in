@@ -21,6 +21,7 @@
 #define PROJECT_NAME          "@CMAKE_PROJECT_NAME@"
 #define PROJECT_DESCRIPTION   "@CMAKE_PROJECT_DESCRIPTION@"
 
+#define BUILD_NUMBER                   @BUILD_NUMBER@
 #define BUILD_DATE_LOCAL               "@BUILD_DATE_LOCAL@"
 #define BUILD_TIME_LOCAL               "@BUILD_TIME_LOCAL@"
 #define BUILD_DATE_UTC                 "@BUILD_DATE_UTC@"

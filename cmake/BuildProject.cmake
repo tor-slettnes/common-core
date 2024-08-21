@@ -51,21 +51,6 @@ if(NOT PROJECT_INCLUDED)
   #=============================================================================
   ### CPack configuration
 
-  ### Load CPack configuration, first from this folder
-  foreach(dir
-      "${CMAKE_CURRENT_LIST_DIR}"
-      "${COMMON_CORE_DIR}"
-      "${CMAKE_SOURCE_DIR}")
-
-    include("${dir}/CPackConfig.cmake"
-      OPTIONAL
-      RESULT_VARIABLE CPackConfig_FOUND)
-
-    if(CPackConfig_FOUND)
-      message(STATUS "Found ${dir}/CPackConfig.cmake")
-    else()
-      message(STATUS "Did not find ${dir}/CPackConfig.cmake")
-    endif()
-  endforeach()
+  include(CPackInit)
   include(CPack)
 endif()

@@ -10,13 +10,13 @@ from ..generated.version_pb2 import Version, ComponentVersions
 
 def version(major: int,
             minor: int = 0,
-            tweak: int = 0,
+            patch: int = 0,
             printable_version: str|None = None) -> Version:
     '''Return a new ProtoBuf Version message with the specified values'''
 
     return Version(major=major,
                    minor=minor,
-                   tweak=tweak,
+                   patch=patch,
                    printable_version=printable_version)
 
 
@@ -26,7 +26,7 @@ def version_to_string(version: Version) -> str:
     if version.printed_version:
         return version.printed_version
     else:
-        return "%d.%d.%d"%(version.major, version.minor, version.tweak)
+        return "%d.%d.%d"%(version.major, version.minor, version.patch)
 
 
 def is_compatible(client_version : Version,

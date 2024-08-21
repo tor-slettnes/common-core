@@ -19,6 +19,7 @@ set(SOURCES
   sysconfig.proto
   netconfig.proto
   vfs.proto
+  upgrade.proto
 )
 
 ### Generate language bindings

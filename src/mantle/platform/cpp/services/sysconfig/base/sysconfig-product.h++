@@ -19,7 +19,8 @@ namespace platform::sysconfig
     {
         uint major = 0;
         uint minor = 0;
-        uint tweak = 0;
+        uint patch = 0;
+        uint build_number = 0;
         std::string printable_version;
 
     public:

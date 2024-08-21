@@ -8,3 +8,4 @@
 add_subdirectory(sysconfig)
 add_subdirectory(netconfig)
 add_subdirectory(vfs)
+#add_subdirectory(upgrade)

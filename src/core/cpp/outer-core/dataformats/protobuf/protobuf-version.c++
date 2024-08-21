@@ -13,13 +13,13 @@ namespace protobuf
 {
     Version version(std::uint64_t major,
                     std::uint64_t minor,
-                    std::uint64_t tweak,
+                    std::uint64_t patch,
                     const std::string &printable_version)
     {
         Version version;
         version.set_major(major);
         version.set_minor(minor);
-        version.set_tweak(tweak);
+        version.set_patch(patch);
         version.set_printable_version(printable_version);
         return version;
     }
@@ -36,7 +36,7 @@ namespace protobuf
                 "%d.%d.%d",
                 version.major(),
                 version.minor(),
-                version.tweak());
+                version.patch());
         }
     }
 

@@ -18,7 +18,11 @@ message Version
 {
     uint64 major = 1;
     uint64 minor = 2;
-    uint64 tweak = 3;
-    string printable_version = 8; // Present if different from "major.minor.tweak"
+    uint64 patch = 3;
 
+    // Human readable version, if different from `major.minor.patch`.
+    string printable_version = 8;
+
+    // Optional build number
+    uint64 build_number = 9;
 }

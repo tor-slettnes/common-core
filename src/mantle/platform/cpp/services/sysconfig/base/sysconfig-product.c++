@@ -14,16 +14,21 @@ namespace platform::sysconfig
 
     void Version::to_stream(std::ostream &stream) const
     {
-        core::types::TaggedValueList parts = {
-            {"major", this->major},
-            {"minor", this->minor},
-            {"tweak", this->tweak},
-        };
+        core::types::PartsList parts;
+        parts.add("major", this->major);
+        parts.add("minor", this->minor);
+        parts.add("patch", this->patch);
 
-        parts.push_if(!this->printable_version.empty(), this->printable_version);
-        parts.to_stream(stream);
+        parts.add_string("version_string",
+                         this->printable_version,
+                         !this->printable_version.empty());
+
+        parts.add("build_number",
+                  this->build_number,
+                  this->build_number != 0);
+
+        stream << parts;
     }
-
 
     void ProductInfo::to_stream(std::ostream &stream) const
     {
@@ -36,7 +41,6 @@ namespace platform::sysconfig
         parts.add("subsystem_info", this->subsystem_info, true, "%s");
         stream << parts;
     }
-
 
     //==========================================================================
     // Provider instance
