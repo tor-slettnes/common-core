@@ -120,6 +120,22 @@ namespace protobuf
             return filter;
         }
 
+        static std::optional<bool> is_mapped(cc::signal::MappingAction action)
+        {
+            switch(action)
+            {
+            case cc::signal::MAP_ADDITION:
+            case cc::signal::MAP_UPDATE:
+                return true;
+
+            case cc::signal::MAP_REMOVAL:
+                return false;
+
+            default:
+                return {};
+            }
+        }
+
     public:
         void process_signal(const SignalT &msg)
         {

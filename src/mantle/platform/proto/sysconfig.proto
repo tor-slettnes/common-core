@@ -104,7 +104,7 @@ service SysConfig
 
 message ProductInfo
 {
-    string product_model = 1;
+    string product_name = 1;
     string product_serial = 2;
     string hardware_model = 3;
 

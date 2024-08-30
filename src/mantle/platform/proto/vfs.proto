@@ -17,13 +17,13 @@ import "variant.proto";
 service VirtualFileSystem
 {
     // List known virtual filesystem contexts.
-    rpc getContexts (google.protobuf.Empty) returns (ContextMap);
+    rpc get_contexts (google.protobuf.Empty) returns (ContextMap);
 
     // List open virtual filesystem contexts.
-    rpc getOpenContexts (google.protobuf.Empty) returns (ContextMap);
+    rpc get_open_context (google.protobuf.Empty) returns (ContextMap);
 
     // List known virtual filesystem contexts.
-    rpc getContextSpec (Path) returns (ContextSpec);
+    rpc get_context_spec (Path) returns (ContextSpec);
 
     // Explicitly open a virtual context. Internally this increments a reference
     // counter to keep the corresponding virtual filesystem context (VFC) open.
@@ -32,27 +32,27 @@ service VirtualFileSystem
     // mounting/unmounting for individual file transactions.
     //
     // Once access is no longer needed The client should invoke
-    // `closeContext()', thereby allowing the context to be closed.
-    rpc openContext (Path) returns (ContextSpec);
+    // `close_context()', thereby allowing the context to be closed.
+    rpc open_context (Path) returns (ContextSpec);
 
     // Close a previously-opened path. Internally, this decrements a reference
     // counter associated with the underlying filesystem context, and closes the
     // context (e.g. unmounts) if it reaches zero.
-    rpc closeContext (Path) returns (google.protobuf.Empty);
+    rpc close_context (Path) returns (google.protobuf.Empty);
 
     // Return information about mounted filesystem containing source path.
-    rpc volumeStats (PathRequest) returns (VolumeStats);
+    rpc volume_stats (PathRequest) returns (VolumeStats);
 
     // Return status of specified source paths.
     // Unlike `listPath()` this does not descent into folders.
-    rpc fileStats (PathRequest) returns (FileStats);
+    rpc file_stats (PathRequest) returns (FileStats);
 
     // List contents of the specified source path (context/folder).
-    // Deprecated; please use getDirectory instead.
-    rpc getDirectory (PathRequest) returns (Directory);
+    // Deprecated; please use get_directory instead.
+    rpc get_directory (PathRequest) returns (Directory);
 
     // List contents of the specified source path (context/folder).
-    // Deprecated; please use getDirectory instead.
+    // Deprecated; please use get_directory instead.
     rpc list (PathRequest) returns (DirectoryList);
 
     /// Recursively locate files matching specific filename and/or attribute patterns.
@@ -65,25 +65,25 @@ service VirtualFileSystem
     rpc move (PathRequest) returns (google.protobuf.Empty);
 
     // Create `target` folder
-    rpc createFolder (PathRequest) returns (google.protobuf.Empty);
+    rpc create_folder (PathRequest) returns (google.protobuf.Empty);
 
     // Remove `source` path(s).
     rpc remove (PathRequest) returns (google.protobuf.Empty);
 
     // Read the specified file, and return its contents in chunks.
-    rpc readFile (Path) returns (stream FileChunk);
+    rpc read_file (Path) returns (stream FileChunk);
 
     // Write to a file in chunks. The path must be specified with the first chunk.
-    rpc writeFile (stream FileChunk) returns (google.protobuf.Empty);
+    rpc write_file (stream FileChunk) returns (google.protobuf.Empty);
 
     // Return attributes associated with the specified path.
-    rpc getAttributes (Path) returns (cc.variant.ValueList);
+    rpc get_attributes (Path) returns (cc.variant.ValueList);
 
     // Set/update attributes associated with the specified path.
-    rpc setAttributes (AttributeRequest) returns (google.protobuf.Empty);
+    rpc set_attributes (AttributeRequest) returns (google.protobuf.Empty);
 
     // Clear all attributes associated with the specified path.
-    rpc clearAttributes (Path) returns (google.protobuf.Empty);
+    rpc clear_attributes (Path) returns (google.protobuf.Empty);
 
     //========================================================================
     // Watch for changes
@@ -146,7 +146,7 @@ message PathRequest
     // Source path(s). We expect that these already exist.
     repeated Path source = 1;
 
-    // Target path for move/copy/createFolder. We expect to create/replace this.
+    // Target path for move/copy/create_folder. We expect to create/replace this.
     Path target = 2;
 
     // Enables the following behaviors:

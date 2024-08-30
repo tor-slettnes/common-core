@@ -21,36 +21,35 @@ namespace platform::vfs::grpc
                        bool use_cached = false);
 
         bool is_pertinent() override;
-        void initialize() override;
 
         void set_use_cached(bool use_cached);
         bool get_use_cached() const;
 
     public:
-        ContextMap getContexts() const override;
+        ContextMap get_contexts() const override;
 
-        ContextMap getOpenContexts() const override;
+        ContextMap get_open_context() const override;
 
-        ContextRef getContext(
+        ContextRef get_context(
             const std::string &name,
             bool required) const override;
 
-        ContextRef openContext(
+        ContextRef open_context(
             const std::string &name,
             bool required) override;
 
-        void closeContext(
+        void close_context(
             const ContextRef &cxt) override;
 
-        VolumeStats volumeStats(
+        VolumeStats volume_stats(
             const Path &vpath,
             const OperationFlags &flags) const override;
 
-        FileStats fileStats(
+        FileStats file_stats(
             const Path &vpath,
             const OperationFlags &flags) const override;
 
-        Directory getDirectory(
+        Directory get_directory(
             const Path &vpath,
             const OperationFlags &flags) const override;
 
@@ -74,24 +73,24 @@ namespace platform::vfs::grpc
             const Paths &sources,
             const OperationFlags &flags) const override;
 
-        void createFolder(
+        void create_folder(
             const Path &vpath,
             const OperationFlags &flags) const override;
 
-        ReaderRef readFile(
+        ReaderRef read_file(
             const Path &vpath) const override;
 
-        WriterRef writeFile(
+        WriterRef write_file(
             const Path &vpath) const override;
 
-        core::types::KeyValueMap getAttributes(
+        core::types::KeyValueMap get_attributes(
             const Path &vpath) const override;
 
-        void setAttributes(
+        void set_attributes(
             const Path &vpath,
             const core::types::KeyValueMap &attributes) const override;
 
-        void clearAttributes(
+        void clear_attributes(
             const Path &vpath) const override;
 
     private:

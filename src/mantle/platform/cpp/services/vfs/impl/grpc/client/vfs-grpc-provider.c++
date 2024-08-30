@@ -8,7 +8,7 @@
 #include "vfs-grpc-provider.h++"
 #include "vfs-grpc-stream.h++"
 #include "vfs-remote-context.h++"
-#include "protobuf-vfs.h++"
+#include "protobuf-vfs-types.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
 
@@ -29,34 +29,6 @@ namespace platform::vfs::grpc
         return bool(client);
     }
 
-    void ClientProvider::initialize()
-    {
-        Provider::initialize();
-        using namespace std::placeholders;
-
-        this->client->add_mapping_handler(
-            cc::platform::vfs::Signal::kContext,
-            [](core::signal::MappingAction action,
-               const std::string &key,
-               const cc::platform::vfs::Signal &signal) {
-                platform::vfs::signal_context.emit(
-                    action,
-                    key,
-                    protobuf::decode_shared<RemoteContext>(signal.context()));
-            });
-
-        this->client->add_mapping_handler(
-            cc::platform::vfs::Signal::kContextInUse,
-            [](core::signal::MappingAction action,
-               const std::string &key,
-               const cc::platform::vfs::Signal &signal) {
-                platform::vfs::signal_context_in_use.emit(
-                    action,
-                    key,
-                    protobuf::decode_shared<RemoteContext>(signal.context_in_use()));
-            });
-    }
-
     void ClientProvider::set_use_cached(bool use_cached)
     {
         this->use_cached = use_cached;
@@ -67,7 +39,7 @@ namespace platform::vfs::grpc
         return this->use_cached;
     }
 
-    ContextMap ClientProvider::getContexts() const
+    ContextMap ClientProvider::get_contexts() const
     {
         if (this->get_use_cached())
         {
@@ -76,12 +48,12 @@ namespace platform::vfs::grpc
         else
         {
             return protobuf::decoded<ContextMap>(
-                client->call_check("vfs::getContexts",
-                                   &Client::Stub::getContexts));
+                this->client->call_check("vfs::get_contexts",
+                                         &Client::Stub::get_contexts));
         }
     }
 
-    ContextMap ClientProvider::getOpenContexts() const
+    ContextMap ClientProvider::get_open_context() const
     {
         if (this->get_use_cached())
         {
@@ -90,12 +62,12 @@ namespace platform::vfs::grpc
         else
         {
             return protobuf::decoded<ContextMap>(
-                client->call_check("vfs::getOpenContexts",
-                                   &Client::Stub::getOpenContexts));
+                this->client->call_check("vfs::get_open_context",
+                                         &Client::Stub::get_open_context));
         }
     }
 
-    ContextRef ClientProvider::getContext(const std::string &name, bool required) const
+    ContextRef ClientProvider::get_context(const std::string &name, bool required) const
     {
         ContextRef cxt;
         if (this->get_use_cached())
@@ -116,9 +88,9 @@ namespace platform::vfs::grpc
             try
             {
                 cxt = protobuf::decode_shared<RemoteContext>(
-                    client->call_check("vfs::getContextSpec",
-                                       &Client::Stub::getContextSpec,
-                                       request));
+                    this->client->call_check("vfs::get_context_spec",
+                                             &Client::Stub::get_context_spec,
+                                             request));
             }
             catch (...)
             {
@@ -131,16 +103,16 @@ namespace platform::vfs::grpc
         return cxt;
     }
 
-    ContextRef ClientProvider::openContext(const std::string &name, bool required)
+    ContextRef ClientProvider::open_context(const std::string &name, bool required)
     {
         cc::platform::vfs::Path request;
         request.set_context(name);
         try
         {
             return protobuf::decode_shared<RemoteContext>(
-                client->call_check("vfs::openContext",
-                                   &Client::Stub::openContext,
-                                   request));
+                this->client->call_check("vfs::open_context",
+                                         &Client::Stub::open_context,
+                                         request));
         }
         catch (...)
         {
@@ -155,7 +127,7 @@ namespace platform::vfs::grpc
         }
     }
 
-    void ClientProvider::closeContext(const ContextRef &cxt)
+    void ClientProvider::close_context(const ContextRef &cxt)
     {
         if (cxt)
         {
@@ -164,9 +136,9 @@ namespace platform::vfs::grpc
 
             try
             {
-                client->call_check("vfs::closeContext",
-                                   &Client::Stub::closeContext,
-                                   request);
+                this->client->call_check("vfs::close_context",
+                                         &Client::Stub::close_context,
+                                         request);
             }
             catch (const std::exception &e)
             {
@@ -175,33 +147,33 @@ namespace platform::vfs::grpc
         }
     }
 
-    VolumeStats ClientProvider::volumeStats(const Path &vpath,
-                                            const OperationFlags &flags) const
+    VolumeStats ClientProvider::volume_stats(const Path &vpath,
+                                             const OperationFlags &flags) const
     {
         return protobuf::decoded<VolumeStats>(
-            client->call_check(
-                "vfs::volumeStats",
-                &Client::Stub::volumeStats,
+            this->client->call_check(
+                "vfs::volume_stats",
+                &Client::Stub::volume_stats,
                 protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, nullpath, flags)));
     }
 
-    FileStats ClientProvider::fileStats(const Path &vpath,
-                                        const OperationFlags &flags) const
+    FileStats ClientProvider::file_stats(const Path &vpath,
+                                         const OperationFlags &flags) const
     {
         return protobuf::decoded<FileStats>(
-            client->call_check(
-                "vfs::fileStats",
-                &Client::Stub::fileStats,
+            this->client->call_check(
+                "vfs::file_stats",
+                &Client::Stub::file_stats,
                 protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, nullpath, flags)));
     }
 
-    Directory ClientProvider::getDirectory(const Path &vpath,
-                                           const OperationFlags &flags) const
+    Directory ClientProvider::get_directory(const Path &vpath,
+                                            const OperationFlags &flags) const
     {
         return protobuf::decoded<Directory>(
-            client->call_check(
-                "vfs::getDirectory",
-                &Client::Stub::getDirectory,
+            this->client->call_check(
+                "vfs::get_directory",
+                &Client::Stub::get_directory,
                 protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, nullpath, flags)));
     }
 
@@ -211,7 +183,7 @@ namespace platform::vfs::grpc
                                      const OperationFlags &flags) const
     {
         return protobuf::decoded<Directory>(
-            client->call_check(
+            this->client->call_check(
                 "vfs::locate",
                 &Client::Stub::locate,
                 protobuf::encoded<cc::platform::vfs::LocateRequest>(
@@ -222,7 +194,7 @@ namespace platform::vfs::grpc
                               const Path &target,
                               const OperationFlags &flags) const
     {
-        client->call_check(
+        this->client->call_check(
             "vfs::copy",
             &Client::Stub::copy,
             protobuf::encoded<cc::platform::vfs::PathRequest>(sources, target, flags));
@@ -232,7 +204,7 @@ namespace platform::vfs::grpc
                               const Path &target,
                               const OperationFlags &flags) const
     {
-        client->call_check(
+        this->client->call_check(
             "vfs::move",
             &Client::Stub::move,
             protobuf::encoded<cc::platform::vfs::PathRequest>(sources, target, flags));
@@ -241,54 +213,54 @@ namespace platform::vfs::grpc
     void ClientProvider::remove(const Paths &sources,
                                 const OperationFlags &flags) const
     {
-        client->call_check(
+        this->client->call_check(
             "vfs::remove",
             &Client::Stub::remove,
             protobuf::encoded<cc::platform::vfs::PathRequest>(sources, nullpath, flags));
     }
 
-    void ClientProvider::createFolder(const Path &vpath,
-                                      const OperationFlags &flags) const
+    void ClientProvider::create_folder(const Path &vpath,
+                                       const OperationFlags &flags) const
     {
-        client->call_check(
-            "vfs::createFolder",
-            &Client::Stub::createFolder,
+        this->client->call_check(
+            "vfs::create_folder",
+            &Client::Stub::create_folder,
             protobuf::encoded<cc::platform::vfs::PathRequest>(nullpath, vpath, flags));
     }
 
-    ReaderRef ClientProvider::readFile(const Path &vpath) const
+    ReaderRef ClientProvider::read_file(const Path &vpath) const
     {
-        return std::make_unique<ClientInputStream>(client->stub, vpath);
+        return std::make_unique<ClientInputStream>(this->client->stub, vpath);
     }
 
-    WriterRef ClientProvider::writeFile(const Path &vpath) const
+    WriterRef ClientProvider::write_file(const Path &vpath) const
     {
-        return std::make_unique<ClientOutputStream>(client->stub, vpath);
+        return std::make_unique<ClientOutputStream>(this->client->stub, vpath);
     }
 
-    core::types::KeyValueMap ClientProvider::getAttributes(const Path &vpath) const
+    core::types::KeyValueMap ClientProvider::get_attributes(const Path &vpath) const
     {
         return protobuf::decoded<core::types::KeyValueMap>(
-            client->call_check(
-                "vfs::getAttributes",
-                &Client::Stub::getAttributes,
+            this->client->call_check(
+                "vfs::get_attributes",
+                &Client::Stub::get_attributes,
                 protobuf::encoded<cc::platform::vfs::Path>(vpath)));
     }
 
-    void ClientProvider::setAttributes(const Path &vpath,
-                                       const core::types::KeyValueMap &attributes) const
+    void ClientProvider::set_attributes(const Path &vpath,
+                                        const core::types::KeyValueMap &attributes) const
     {
-        client->call_check(
-            "vfs::setAttributes",
-            &Client::Stub::setAttributes,
+        this->client->call_check(
+            "vfs::set_attributes",
+            &Client::Stub::set_attributes,
             protobuf::encoded<cc::platform::vfs::AttributeRequest>(vpath, attributes));
     }
 
-    void ClientProvider::clearAttributes(const Path &vpath) const
+    void ClientProvider::clear_attributes(const Path &vpath) const
     {
-        client->call_check(
-            "vfs::clearAttributes",
-            &Client::Stub::clearAttributes,
+        this->client->call_check(
+            "vfs::clear_attributes",
+            &Client::Stub::clear_attributes,
             protobuf::encoded<cc::platform::vfs::Path>(vpath));
     }
 

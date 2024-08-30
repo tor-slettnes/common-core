@@ -23,12 +23,24 @@ namespace core::platform
             OUTPUT = 1
         };
 
+        // struct InvocationStatus
+        // {
+        //     std::string command;
+        //     PID pid;
+        //     FileDescriptor fd_out;
+        //     FileDescriptor fd_err;
+        //     std::exception_ptr eptr;
+
+        // };
+
     protected:
         PosixProcessProvider(const std::string &name = "PosixProcessProvider");
 
     public:
         PID thread_id() const override;
         PID process_id() const override;
+
+        ArgVector shell_command(const std::string &command_line) const override;
 
         PID invoke_async(
             const ArgVector &argv,
@@ -47,15 +59,22 @@ namespace core::platform
         PID invoke_async_pipe(
             const ArgVector &argv,
             const fs::path &cwd,
-            int *fdin,
-            int *fdout,
-            int *fderr) const override;
+            FileDescriptor *fdin,
+            FileDescriptor *fdout,
+            FileDescriptor *fderr) const override;
+
+        PID invoke_async_from_pipe(
+            const ArgVector &argv,
+            const fs::path &cwd,
+            FileDescriptor from_fdin,
+            FileDescriptor *fdout,
+            FileDescriptor *fderr) const override;
 
         ExitStatus pipe_capture(
             PID pid,
-            int fdin,
-            int fdout,
-            int fderr,
+            FileDescriptor fdin,
+            FileDescriptor fdout,
+            FileDescriptor fderr,
             const std::string &input,
             std::string *output,
             std::string *diag) const override;
@@ -74,10 +93,34 @@ namespace core::platform
             std::string *output,
             std::string *diag) const override;
 
+        void pipeline(
+            const Invocations &invocations,
+            FileDescriptor fdin,
+            FileDescriptor *fdout) const override;
+
+        void pipe_from_stream(
+            const Invocations &invocations,
+            std::istream &instream,
+            FileDescriptor *fdout) const override;
+
+        ExitStatus waitpid(PID pid, bool checkstatus = false) const override;
+
     protected:
-        void trim_pipe(int pipefd[2], Direction direction, int *fd) const;
-        void close_fds(int pipefd[2]) const;
-        void execute(ArgVector argv, const fs::path &cwd) const;
+        void write_from_stream(
+            std::istream &stream,
+            FileDescriptor fd) const;
+
+        void trim_pipe(
+            FileDescriptor pipefd[2],
+            Direction direction,
+            FileDescriptor *fd) const;
+
+        void close_fds(
+            FileDescriptor pipefd[2]) const;
+
+        void execute(
+            ArgVector argv,
+            const fs::path &cwd) const;
     };
 
 }  // namespace core::platform

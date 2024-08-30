@@ -45,16 +45,16 @@ namespace platform::vfs
     ///    Return only open contexts
     /// @return
     ///    Vector of contexts IDs and corresponding instances
-    ContextMap getContexts(bool removable_only = false, bool open_only = false);
+    ContextMap get_contexts(bool removable_only = false, bool open_only = false);
 
     /// Get a context reference without incrementing reference counter.
     ContextMap getRemovableContexts();
 
     /// Get a context reference without incrementing reference counter.
-    ContextMap getOpenContexts(bool removable = false);
+    ContextMap get_open_context(bool removable = false);
 
     /// Get a context reference without incrementing reference counter.
-    ContextRef getContext(const std::string &name, bool required = true);
+    ContextRef get_context(const std::string &name, bool required = true);
 
     /// @brief Explicitly open a virtual context.
     /// @param[in] name
@@ -70,35 +70,35 @@ namespace platform::vfs
     /// file transactions.
     ///
     /// Once access is no longer needed The client should invoke
-    /// `closeContext()', thereby allowing the context to be closed.
-    ContextRef openContext(const std::string &name, bool required = true);
+    /// `close_context()', thereby allowing the context to be closed.
+    ContextRef open_context(const std::string &name, bool required = true);
 
     /// Close a previously-opened path. Internally, this decrements a
     /// reference counter associated with the underlying filesystem context,
     /// and closes the context (e.g. unmounts) if it reaches zero.
-    void closeContext(const ContextRef &cxt);
+    void close_context(const ContextRef &cxt);
 
     /// Close a previously-opened path. Internally, this decrements a
     /// reference counter associated with the underlying filesystem context,
     /// and closes the context (e.g. unmounts) if it reaches zero.
-    void closeContext(const std::string &name);
+    void close_context(const std::string &name);
 
     /// Check if a given path exist
     bool exists(const Path &vpath);
 
     /// Return information about mounted filesystem containing path.
-    VolumeStats volumeStats(
+    VolumeStats volume_stats(
         const Path &vpath);
 
     /// Return status of specified paths.
     /// Unlike `list()` this does not descent into folders.
-    FileStats fileStats(
+    FileStats file_stats(
         const Path &vpath,
         bool with_attributes = true,
         bool dereference = true);
 
     /// List contents of the specified virtual path (context+folder).
-    Directory getDirectory(
+    Directory get_directory(
         const Path &vpath,
         bool with_attributes = true,
         bool dereference = true,
@@ -262,7 +262,7 @@ namespace platform::vfs
         bool force = false,
         bool with_attributes = true);
 
-    /// @fn createFolder
+    /// @fn create_folder
     /// @brief Create a new folder
     /// @param[in] loc
     ///     VFS location of the new folder
@@ -270,11 +270,11 @@ namespace platform::vfs
     ///     Enables the following behaviors
     ///       - If the parent folder does not exist, create it
     ///       - Do not raise error if the folder already exists
-    void createFolder(
+    void create_folder(
         const Path &vpath,
         bool force = false);
 
-    /// @fn readFile
+    /// @fn read_file
     /// @brief Read the contents of file from the server
     /// @param[in] vpath
     ///     Path to new folder
@@ -282,23 +282,23 @@ namespace platform::vfs
     ///     Unique pointer to a FileReader instance, which in turn is
     ///     dervived from `std::istream`.
 
-    ReaderRef readFile(const Path &vpath);
-    WriterRef writeFile(const Path &vpath);
+    ReaderRef read_file(const Path &vpath);
+    WriterRef write_file(const Path &vpath);
 
     void download(const Path &remote, const fs::path &local);
 
     void upload(const fs::path &local, const Path &remote);
 
-    core::types::KeyValueMap getAttributes(const Path &vpath);
+    core::types::KeyValueMap get_attributes(const Path &vpath);
     core::types::Value getAttribute(const Path &vpath,
                                     const std::string attribute,
                                     const core::types::Value fallback = {});
-    void setAttributes(const Path &vpath,
-                       const core::types::KeyValueMap &attributes);
+    void set_attributes(const Path &vpath,
+                        const core::types::KeyValueMap &attributes);
 
     void setAttribute(const Path &vpath,
                       const std::string &key,
                       const core::types::Value &value);
 
-    void clearAttributes(const Path &vpath);
+    void clear_attributes(const Path &vpath);
 }  // namespace platform::vfs

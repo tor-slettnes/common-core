@@ -96,7 +96,8 @@ namespace platform::netconfig
     {
         std::multimap<core::types::Byte,
                       AccessPointRef,
-                      std::greater<core::types::Byte>> mmap;
+                      std::greater<core::types::Byte>>
+            mmap;
 
         for (const auto &[ssid, ap] : this->get_aps_by_ssid())
         {
@@ -249,4 +250,3 @@ namespace platform::netconfig
     core::platform::ProviderProxy<ProviderInterface> network("network");
 
 }  // namespace platform::netconfig
-

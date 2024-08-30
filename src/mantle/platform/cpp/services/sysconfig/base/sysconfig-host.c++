@@ -29,11 +29,10 @@ namespace platform::sysconfig
         return stream;
     }
 
-
     //==========================================================================
     // Provider instance
 
-    core::platform::ProviderProxy<HostConfigInterface> hostconfig("hostconfig");
+    core::platform::ProviderProxy<HostConfigInterface> host("host");
 
     //==========================================================================
     // Signals

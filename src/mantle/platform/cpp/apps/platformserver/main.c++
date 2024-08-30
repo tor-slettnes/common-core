@@ -5,13 +5,13 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "options.h++"                  // Command-line options
-#include "glib-mainloop.h++"            // GLib main loop
-#include "platform-grpc-server.h++"     // Load gRPC server
+#include "options.h++"                     // Command-line options
+#include "glib-mainloop.h++"               // GLib main loop
+#include "platform-grpc-server.h++"        // Load gRPC server
 #include "sysconfig-providers-native.h++"  // SysConfig services
-#include "netconfig-providers-dbus.h++"   // NetConfig services
-#include "vfs-providers-local.h++"      // Virtual Filesystem services
-#include "application/init.h++"         // Common init routines
+#include "netconfig-providers-dbus.h++"    // NetConfig services
+#include "vfs-providers-local.h++"         // Virtual Filesystem services
+#include "application/init.h++"            // Common init routines
 #include "status/exceptions.h++"
 #include "thread/supervised_thread.h++"
 

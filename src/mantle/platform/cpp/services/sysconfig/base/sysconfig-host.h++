@@ -59,7 +59,7 @@ namespace platform::sysconfig
     //==========================================================================
     // Provider instance
 
-    extern core::platform::ProviderProxy<HostConfigInterface> hostconfig;
+    extern core::platform::ProviderProxy<HostConfigInterface> host;
 
     //==========================================================================
     // Signals

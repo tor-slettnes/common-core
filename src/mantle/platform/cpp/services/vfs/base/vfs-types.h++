@@ -18,7 +18,7 @@ namespace platform::vfs
     using ReaderRef = std::unique_ptr<std::istream>;
     using WriterRef = std::unique_ptr<std::ostream>;
 
-    /// Flags for copy(), move(), remove(), createFolder()
+    /// Flags for copy(), move(), remove(), create_folder()
     struct OperationFlags
     {
         bool force = false;
@@ -32,4 +32,4 @@ namespace platform::vfs
     };
 
     std::ostream &operator<<(std::ostream &stream, const OperationFlags &flags);
-}
+}  // namespace platform::vfs

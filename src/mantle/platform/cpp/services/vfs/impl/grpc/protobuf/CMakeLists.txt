@@ -14,7 +14,7 @@ set(LIB_DEPS
 )
 
 set(SOURCES
-  protobuf-vfs.c++
+  protobuf-vfs-types.c++
   vfs-remote-context.c++
 )
 

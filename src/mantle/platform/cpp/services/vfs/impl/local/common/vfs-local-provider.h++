@@ -36,24 +36,24 @@ namespace platform::vfs::local
         void initialize() override;
 
     public:
-        ContextMap getContexts() const override;
+        ContextMap get_contexts() const override;
 
-        ContextMap getOpenContexts() const override;
+        ContextMap get_open_context() const override;
 
-        ContextRef getContext(const std::string &name, bool required) const override;
+        ContextRef get_context(const std::string &name, bool required) const override;
 
-        ContextRef openContext(const std::string &name, bool required) override;
+        ContextRef open_context(const std::string &name, bool required) override;
 
-        void closeContext(const ContextRef &cxt) override;
+        void close_context(const ContextRef &cxt) override;
 
-        VolumeStats volumeStats(const Path &vpath,
+        VolumeStats volume_stats(const Path &vpath,
+                                 const OperationFlags &flags) const override;
+
+        FileStats file_stats(const Path &vpath,
+                             const OperationFlags &flags) const override;
+
+        Directory get_directory(const Path &vpath,
                                 const OperationFlags &flags) const override;
-
-        FileStats fileStats(const Path &vpath,
-                            const OperationFlags &flags) const override;
-
-        Directory getDirectory(const Path &vpath,
-                               const OperationFlags &flags) const override;
 
         Directory locate(const Path &vpath,
                          const std::vector<std::string> &filename_masks,
@@ -71,19 +71,19 @@ namespace platform::vfs::local
         void remove(const Paths &sources,
                     const OperationFlags &flags) const override;
 
-        void createFolder(const Path &vpath,
-                          const OperationFlags &flags) const override;
+        void create_folder(const Path &vpath,
+                           const OperationFlags &flags) const override;
 
-        ReaderRef readFile(const Path &vpath) const override;
+        ReaderRef read_file(const Path &vpath) const override;
 
-        WriterRef writeFile(const Path &vpath) const override;
+        WriterRef write_file(const Path &vpath) const override;
 
-        core::types::KeyValueMap getAttributes(const Path &vpath) const override;
+        core::types::KeyValueMap get_attributes(const Path &vpath) const override;
 
-        void setAttributes(const Path &vpath,
-                           const core::types::KeyValueMap &attributes) const override;
+        void set_attributes(const Path &vpath,
+                            const core::types::KeyValueMap &attributes) const override;
 
-        void clearAttributes(const Path &vpath) const override;
+        void clear_attributes(const Path &vpath) const override;
 
     protected:
         void addContext(const std::string &name, ContextRef cxt);
@@ -134,17 +134,17 @@ namespace platform::vfs::local
             const core::types::TaggedValueList &attribute_filters,
             const core::types::KeyValueMap &attributes) const;
 
-        virtual core::types::KeyValueMap getAttributes(
+        virtual core::types::KeyValueMap get_attributes(
             const fs::path &localpath,
             fs::file_type type_hint = fs::file_type::none) const;
 
-        virtual void setAttributes(
+        virtual void set_attributes(
             const fs::path &localpath,
             const core::types::KeyValueMap &attributes,
             fs::file_type pathtype = fs::file_type::none,
             bool save = true) const;
 
-        virtual void clearAttributes(
+        virtual void clear_attributes(
             const fs::path &localpath,
             fs::file_type type_hint = fs::file_type::none,
             bool save = true) const;

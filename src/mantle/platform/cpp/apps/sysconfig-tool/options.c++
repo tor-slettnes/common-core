@@ -170,5 +170,4 @@ void Options::on_productinfo(const platform::sysconfig::ProductInfo &pi)
                       pi);
 }
 
-
 std::unique_ptr<Options> options;

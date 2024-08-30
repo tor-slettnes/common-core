@@ -106,7 +106,6 @@ namespace protobuf
     void decode(const cc::platform::sysconfig::TimeZoneLocation &proto,
                 platform::sysconfig::TimeZoneLocation *native) noexcept;
 
-
     //==========================================================================
     // TimeZoneInfo
 

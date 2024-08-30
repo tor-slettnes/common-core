@@ -46,6 +46,16 @@ namespace protobuf
         virtual void forward(ProtoT &&message) = 0;
 
     protected:
+        static cc::signal::MappingAction boolean_mapping(bool present)
+        {
+            return present ? cc::signal::MAP_UPDATE : cc::signal::MAP_REMOVAL;
+        }
+
+        static cc::signal::MappingAction mapping_action(core::signal::MappingAction action)
+        {
+            return static_cast<cc::signal::MappingAction>(action);
+        }
+
         /// @brief
         ///    Create a new Signal message with optional mapping controls.
         static ProtoT create_signal_message()
@@ -56,11 +66,20 @@ namespace protobuf
         /// @brief
         ///    Create a new Signal message with optional mapping controls.
         static ProtoT create_signal_message(
+            core::signal::MappingAction mapping_action)
+        {
+            ProtoT msg;
+            msg.set_mapping_action(SignalForwarder::mapping_action(mapping_action));
+            return msg;
+        }
+
+        /// @brief
+        ///    Create a new Signal message with optional mapping controls.
+        static ProtoT create_signal_message(
             core::signal::MappingAction mapping_action,
             const std::string &mapping_key)
         {
-            ProtoT msg;
-            msg.set_mapping_action(static_cast<cc::signal::MappingAction>(mapping_action));
+            ProtoT msg = SignalForwarder::create_signal_message(mapping_action);
             msg.set_mapping_key(mapping_key);
             return msg;
         }

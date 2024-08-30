@@ -14,4 +14,4 @@ namespace platform::vfs
 
     core::signal::MappingSignal<ContextRef> signal_context("context", true);
     core::signal::MappingSignal<ContextRef> signal_context_in_use("context_in_use", true);
-}
+}  // namespace platform::vfs

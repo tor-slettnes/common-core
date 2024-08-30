@@ -9,7 +9,6 @@
 #include "vfs-signals.h++"
 #include "status/exceptions.h++"
 
-
 namespace platform::vfs::local
 {
     LocalContext::LocalContext(const std::string &name,

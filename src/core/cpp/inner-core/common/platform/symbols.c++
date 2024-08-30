@@ -8,6 +8,8 @@
 #include "symbols.h++"
 #include "string/format.h++"
 
+#include <string.h>
+
 /// Default filesystem paths.
 namespace core::platform
 {
@@ -15,6 +17,12 @@ namespace core::platform
     {
         return "";
     }
+
+    std::string SymbolsProvider::errno_string(int num) const noexcept
+    {
+        return ::strerror(num);
+    }
+
 
     ProviderProxy<SymbolsProvider> symbols("symbols");
 

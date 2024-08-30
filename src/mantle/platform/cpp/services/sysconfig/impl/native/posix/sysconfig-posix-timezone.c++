@@ -465,7 +465,7 @@ namespace platform::sysconfig::native
     }
 
     bool PosixTimeZoneProvider::country_match(const TimeZoneCountry &filter,
-                                             const TimeZoneCountry &candidate) const
+                                              const TimeZoneCountry &candidate) const
     {
         return (filter.code == candidate.code) || (filter.name == candidate.name);
     }

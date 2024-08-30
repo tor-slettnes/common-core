@@ -6,13 +6,17 @@
 #===============================================================================
 
 ### General CPack settings
-set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
+set(CPACK_PACKAGE_NAME "${PACKAGE_NAME}")
+set(CPACK_PACKAGE_VENDOR "${PACKAGE_VENDOR}")
+set(CPACK_PACKAGE_CONTACT "${PACKAGE_CONTACT}")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}-${BUILD_NUMBER}")
+
 set(CPACK_GENERATOR "External" "DEB")
 set(CPACK_STRIP_FILES ON)
 #set(CPACK_COMPONENTS_GROUPING IGNORE)
 #set(CPACK_COMPONENTS_GROUPING ALL_COMPONENTS_IN_ONE)
 set(CPACK_COMPONENTS_GROUPING ONE_PER_GROUP)
-set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/CPackConfig.cmake")
+#set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/CPackConfig.cmake")
 
 #===============================================================================
 ### DEB generator settings
@@ -44,3 +48,15 @@ set(CPACK_EXTERNAL_ENABLE_STAGING TRUE)
 
 set(CPACK_PYTHON_INSTALL_DIR "${PYTHON_INSTALL_DIR}")
 set(CPACK_SETTINGS_DIR "${SETTINGS_DIR}")
+
+#===============================================================================
+### Include project specific settings
+include("${CMAKE_SOURCE_DIR}/CPackConfig.cmake"
+  OPTIONAL
+  RESULT_VARIABLE CPackConfig_FOUND)
+
+if(CPackConfig_FOUND)
+  message(STATUS "Found ${CMAKE_SOURCE_DIR}/CPackConfig.cmake")
+else()
+  message(STATUS "Did not find ${CMAKE_SOURCE_DIR}/CPackConfig.cmake")
+endif()

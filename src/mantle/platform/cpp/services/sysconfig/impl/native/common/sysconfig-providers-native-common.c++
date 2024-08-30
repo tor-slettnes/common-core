@@ -15,14 +15,14 @@ namespace platform::sysconfig::native
     void register_common_providers()
     {
         time.registerProvider<TimeConfigProvider>();
-        hostconfig.registerProvider<HostConfigProvider>();
+        host.registerProvider<HostConfigProvider>();
         process.registerProvider<ProcessProvider>();
     }
 
     void unregister_common_providers()
     {
         process.unregisterProvider<ProcessProvider>();
-        hostconfig.unregisterProvider<HostConfigProvider>();
+        host.unregisterProvider<HostConfigProvider>();
         time.unregisterProvider<TimeConfigProvider>();
     }
-}  // namespace platform::sysconfig
+}  // namespace platform::sysconfig::native

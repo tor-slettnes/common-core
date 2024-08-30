@@ -1,11 +1,11 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file protobuf-vfs.c++
+/// @file protobuf-vfs-types.c++
 /// @brief Encode/decode routines for vfs ProtoBuf types
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "protobuf-vfs.h++"
+#include "protobuf-vfs-types.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"

@@ -19,7 +19,6 @@ namespace platform::sysconfig::native
     {
     }
 
-
     void register_providers()
     {
         register_common_providers();
@@ -34,5 +33,4 @@ namespace platform::sysconfig::native
         unregister_common_providers();
     }
 
-}  // namespace platform::sysconfig
-
+}  // namespace platform::sysconfig::native

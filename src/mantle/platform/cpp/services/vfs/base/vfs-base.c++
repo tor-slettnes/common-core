@@ -13,4 +13,4 @@ namespace platform::vfs
     // Provider instance
 
     core::platform::ProviderProxy<ProviderInterface> vfs("VFS");
-}
+}  // namespace platform::vfs

@@ -27,6 +27,7 @@ PACKAGE_DIR  ?= $(OUT_DIR)/packages
 export CMAKE_INSTALL_PREFIX ?= ${INSTALL_DIR}
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
 export CPACK_PACKAGE_DIRECTORY ?= $(PACKAGE_DIR)
+export CPACK_PACKAGE_NAME ?= $(PACKAGE_NAME)
 
 ifeq ($(shell uname), Linux)
    export CMAKE_BUILD_PARALLEL_LEVEL ?= $(shell nproc)
@@ -89,7 +90,9 @@ cmake: $(BUILD_DIR)
 	@echo "Generating build files in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cmake -B "$(BUILD_DIR)" -D BUILD_NUMBER="$(BUILD_NUMBER)" -D VERSION="$(VERSION)"
+	@cmake -B "$(BUILD_DIR)" \
+		-D BUILD_NUMBER="$(BUILD_NUMBER)" \
+		-D VERSION="$(VERSION)"
 
 clean: uninstall cmake/clean
 

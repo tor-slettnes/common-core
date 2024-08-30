@@ -31,11 +31,10 @@ namespace platform::sysconfig
     struct TimeConfig
     {
         TimeSync synchronization = TSYNC_NONE;  // Synchronization scheme
-        std::vector<std::string> servers;  // Synchronization services
+        std::vector<std::string> servers;       // Synchronization services
     };
 
     std::ostream &operator<<(std::ostream &stream, const TimeConfig &tc);
-
 
     //==========================================================================
     // TimeInterface

@@ -20,4 +20,4 @@ namespace platform::sysconfig::native
     {
         timezone.unregisterProvider<PosixTimeZoneProvider>();
     }
-}  // namespace platform::sysconfig
+}  // namespace platform::sysconfig::native

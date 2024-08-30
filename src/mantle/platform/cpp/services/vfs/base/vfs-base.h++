@@ -24,26 +24,25 @@ namespace platform::vfs
         using Super::Super;
 
     public:
-
     public:
-        virtual ContextMap getContexts() const = 0;
+        virtual ContextMap get_contexts() const = 0;
 
-        virtual ContextMap getOpenContexts() const = 0;
+        virtual ContextMap get_open_context() const = 0;
 
-        virtual ContextRef getContext(const std::string &name, bool required = true) const = 0;
+        virtual ContextRef get_context(const std::string &name, bool required = true) const = 0;
 
-        virtual ContextRef openContext(const std::string &name, bool required = true) = 0;
+        virtual ContextRef open_context(const std::string &name, bool required = true) = 0;
 
-        virtual void closeContext(const ContextRef &cxt) = 0;
+        virtual void close_context(const ContextRef &cxt) = 0;
 
-        virtual VolumeStats volumeStats(const Path &vpath,
+        virtual VolumeStats volume_stats(const Path &vpath,
+                                         const OperationFlags &flags) const = 0;
+
+        virtual FileStats file_stats(const Path &vpath,
+                                     const OperationFlags &flags) const = 0;
+
+        virtual Directory get_directory(const Path &vpath,
                                         const OperationFlags &flags) const = 0;
-
-        virtual FileStats fileStats(const Path &vpath,
-                                    const OperationFlags &flags) const = 0;
-
-        virtual Directory getDirectory(const Path &vpath,
-                                       const OperationFlags &flags) const = 0;
 
         virtual Directory locate(const Path &vpath,
                                  const std::vector<std::string> &filename_masks,
@@ -61,19 +60,19 @@ namespace platform::vfs
         virtual void remove(const Paths &sources,
                             const OperationFlags &flags) const = 0;
 
-        virtual void createFolder(const Path &vpath,
-                                  const OperationFlags &flags) const = 0;
+        virtual void create_folder(const Path &vpath,
+                                   const OperationFlags &flags) const = 0;
 
-        virtual ReaderRef readFile(const Path &vpath) const = 0;
+        virtual ReaderRef read_file(const Path &vpath) const = 0;
 
-        virtual WriterRef writeFile(const Path &vpath) const = 0;
+        virtual WriterRef write_file(const Path &vpath) const = 0;
 
-        virtual core::types::KeyValueMap getAttributes(const Path &vpath) const = 0;
+        virtual core::types::KeyValueMap get_attributes(const Path &vpath) const = 0;
 
-        virtual void setAttributes(const Path &vpath,
-                                   const core::types::KeyValueMap &attributes) const = 0;
+        virtual void set_attributes(const Path &vpath,
+                                    const core::types::KeyValueMap &attributes) const = 0;
 
-        virtual void clearAttributes(const Path &vpath) const = 0;
+        virtual void clear_attributes(const Path &vpath) const = 0;
     };
 
     //==========================================================================
@@ -81,4 +80,4 @@ namespace platform::vfs
 
     extern core::platform::ProviderProxy<ProviderInterface> vfs;
 
-}
+}  // namespace platform::vfs

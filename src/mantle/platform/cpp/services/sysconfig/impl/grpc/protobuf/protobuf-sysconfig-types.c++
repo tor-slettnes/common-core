@@ -56,7 +56,7 @@ namespace protobuf
     void encode(const platform::sysconfig::ProductInfo &native,
                 cc::platform::sysconfig::ProductInfo *proto) noexcept
     {
-        proto->set_product_model(native.product_model);
+        proto->set_product_name(native.product_name);
         proto->set_product_serial(native.product_serial);
         proto->set_hardware_model(native.hardware_model);
         encode(native.release_version, proto->mutable_release_version());
@@ -74,7 +74,7 @@ namespace protobuf
     void decode(const cc::platform::sysconfig::ProductInfo &proto,
                 platform::sysconfig::ProductInfo *native) noexcept
     {
-        native->product_model = proto.product_model();
+        native->product_name = proto.product_name();
         native->product_serial = proto.product_serial();
         native->hardware_model = proto.hardware_model();
         decode(proto.release_version(), &native->release_version);
@@ -147,7 +147,6 @@ namespace protobuf
     {
         *native = proto.name();
     }
-
 
     //==========================================================================
     // TimeZoneCanonicalSpec

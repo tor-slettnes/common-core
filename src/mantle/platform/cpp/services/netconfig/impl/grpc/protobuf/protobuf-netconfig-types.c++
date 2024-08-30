@@ -900,4 +900,4 @@ namespace protobuf
     {
         *state = static_cast<NMState>(proto);
     }
-}  // protobuf
+}  // namespace protobuf

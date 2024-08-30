@@ -33,4 +33,4 @@ namespace platform::vfs::grpc
         void initialize() override;
         void deinitialize() override;
     };
-}
+}  // namespace platform::vfs::grpc

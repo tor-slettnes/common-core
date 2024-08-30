@@ -223,7 +223,9 @@ namespace core::argparse
     {
         try
         {
+            this->initialize();
             handler();
+            this->deinitialize();
             return true;
         }
         catch (...)

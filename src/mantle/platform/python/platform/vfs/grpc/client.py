@@ -42,7 +42,7 @@ class VirtualFileSystemClient (SignalClient):
         = ('context', 'context_in_use')
 
 
-    def getContexts(self,
+    def get_contexts(self,
                     removable_only: bool = False,
                     open_only: bool = False) -> Mapping[str, cc.platform.vfs.ContextSpec]:
         '''
@@ -55,7 +55,7 @@ class VirtualFileSystemClient (SignalClient):
             List of `(name, cxt)` tuples.
         '''
         if open_only:
-            data = self.getOpenContexts()
+            data = self.get_open_context()
         else:
             data = self.getAllContexts()
 
@@ -65,34 +65,34 @@ class VirtualFileSystemClient (SignalClient):
                      if cxt.removable ]
         return dict(data)
 
-    def getRemovableContexts(self,
-                             open_only: bool = False) -> Mapping[str, cc.platform.vfs.ContextSpec]:
+    def get_removable_contexts(self,
+                               open_only: bool = False) -> Mapping[str, cc.platform.vfs.ContextSpec]:
         '''
         List filesystem contexts that map to removable drives
         '''
-        return self.getContexts(True, open_only)
+        return self.get_contexts(True, open_only)
 
-    def getAllContexts(self) -> Mapping[str, cc.platform.vfs.ContextSpec]:
+    def get_all_contexts(self) -> Mapping[str, cc.platform.vfs.ContextSpec]:
         '''
         List all available VFS contexts.
         '''
-        return self.stub.getContexts(Empty()).map
+        return self.stub.get_contexts(Empty()).map
 
-    def getOpenContexts (self) -> Mapping[str, cc.platform.vfs.ContextSpec]:
+    def get_open_context (self) -> Mapping[str, cc.platform.vfs.ContextSpec]:
         '''
         List VFS contexts that are currently being held open.
         '''
-        return self.stub.getOpenContexts(Empty()).map
+        return self.stub.get_open_context(Empty()).map
 
 
-    def getContext(self, name: str) -> cc.platform.vfs.ContextSpec:
+    def get_context(self, name: str) -> cc.platform.vfs.ContextSpec:
         '''
         List available virtual filesystem contexts.
         '''
-        return self.stub.getContextSpec(cc.platform.vfs.Path(context=name))
+        return self.stub.get_context_spec(cc.platform.vfs.Path(context=name))
 
 
-    def openContext(self, name: str) -> cc.platform.vfs.ContextSpec:
+    def open_context(self, name: str) -> cc.platform.vfs.ContextSpec:
         '''
         Explicitly open a virtual context. Internally this increments a
         reference counter to keep the corresponding virtual filesystem
@@ -102,33 +102,33 @@ class VirtualFileSystemClient (SignalClient):
         transactions.
 
         Once access is no longer needed The client should invoke
-        'closeContext()', thereby allowing the context to be closed.
+        'close_context()', thereby allowing the context to be closed.
         '''
 
-        return self.stub.openContext(cc.platform.vfs.Path(context=name))
+        return self.stub.open_context(cc.platform.vfs.Path(context=name))
 
 
-    def closeContext(self, name: str):
+    def close_context(self, name: str):
         '''
         Close a previously-opened path. Internally, this decrements a
         reference counter associated with the underlying filesystem context,
         and closes the context (e.g. unmounts) if it reaches zero.
         '''
 
-        return self.stub.closeContext(cc.platform.vfs.Path(context=name))
+        return self.stub.close_context(cc.platform.vfs.Path(context=name))
 
 
-    def volumeStats(self,
+    def volume_stats(self,
                      vfspath: VFSPathType,
                      dereference: bool =False) -> cc.platform.vfs.VolumeStats:
         '''
         Return information about mounted filesystem containing path.
         '''
-        return self.stub.volumeStats(
+        return self.stub.volume_stats(
             pathRequest(vfspath, dereference=dereference))
 
 
-    def fileStats(self,
+    def file_stats(self,
                   vfspath: VFSPathType,
                   dereference: bool = True,
                   with_attributes: bool = True) -> cc.platform.vfs.FileStats:
@@ -158,7 +158,7 @@ class VirtualFileSystemClient (SignalClient):
         request = pathRequest(source=vfspath,
                               dereference=dereference,
                               with_attributes=with_attributes)
-        reply = self.stub.fileStats(request)
+        reply = self.stub.file_stats(request)
         return decodeStats(reply)
 
 
@@ -170,7 +170,7 @@ class VirtualFileSystemClient (SignalClient):
         List contents of the specified virtual path, specified in the format
         CONTEXT:PATH.
 
-        To list available contexts, use 'getContexts()'.
+        To list available contexts, use 'get_contexts()'.
         '''
 
         return self.stub.list(pathRequest(
@@ -179,7 +179,7 @@ class VirtualFileSystemClient (SignalClient):
             with_attributes=with_attributes))
 
 
-    def getDirectory(self,
+    def get_directory(self,
                       vfspath: VFSPathType,
                       dereference: bool = True,
                       with_attributes: bool = True) -> Mapping[str, cc.platform.vfs.FileStats]:
@@ -189,11 +189,11 @@ class VirtualFileSystemClient (SignalClient):
 
         The returned value is a Python dictionary where keys represent the
         name of each entry and the associated value is a FileStats instance
-        containing detailed information about the file. See `fileStats()`
+        containing detailed information about the file. See `file_stats()`
         for more info.
         '''
 
-        reply = self.stub.getDirectory(
+        reply = self.stub.get_directory(
             pathRequest(source=vfspath,
                         dereference=dereference,
                         with_attributes=with_attributes))
@@ -335,7 +335,7 @@ class VirtualFileSystemClient (SignalClient):
 
 
 
-    def createFolder(self,
+    def create_folder(self,
                      vfspath: VFSPathType,
                      force: bool = False,
                      dereference: bool = False):
@@ -346,7 +346,7 @@ class VirtualFileSystemClient (SignalClient):
         needed, and any non-directory components in the way are silently
         removed.
         '''
-        return self.stub.createFolder(
+        return self.stub.create_folder(
             pathRequest(target=vfspath,
                         force=force,
                         dereference=dereference))
@@ -376,14 +376,14 @@ class VirtualFileSystemClient (SignalClient):
                         with_attributes=with_attributes))
 
 
-    def readFile(self, vfspath: VFSPathType): ### TODO Type return value
+    def read_file(self, vfspath: VFSPathType): ### TODO Type return value
         '''Read a from the file `vfspath` from the server, specified in the format
         CONTEXT:PATH.
 
         Returns a gRPC ClientReader instance, which can be used to iterate over
         the file contents. in chunk.s
         '''
-        return self.stub.readFile(encodePath(vfspath))
+        return self.stub.read_file(encodePath(vfspath))
 
 
     def download(self,
@@ -401,7 +401,7 @@ class VirtualFileSystemClient (SignalClient):
         if isinstance(localfile, str):
             localfile = open(localfile, "wb")
 
-        reader = self.readFile(vfspath)
+        reader = self.read_file(vfspath)
         for chunk in reader:
             print("Writing %d bytes to local file %r"%(len(chunk.data), localfile.name))
             localfile.write(chunk.data)
@@ -420,7 +420,7 @@ class VirtualFileSystemClient (SignalClient):
         if isinstance(localfile, str):
             localfile = open(localfile, "rb")
 
-        return self.stub.writeFile(
+        return self.stub.write_file(
             self._uploadIterator(localfile, vfspath))
 
 
@@ -436,22 +436,22 @@ class VirtualFileSystemClient (SignalClient):
             else:
                 eof = True
 
-    def getAttributes(self, vfspath: VFSPathType) -> Mapping[str, object]:
+    def get_attributes(self, vfspath: VFSPathType) -> Mapping[str, object]:
         '''Returns a dictionary of attributes associated with the specified path'''
 
         req = encodePath(vfspath)
-        resp = self.stub.getAttributes(req)
+        resp = self.stub.get_attributes(req)
         return decodeValueMap(resp.items)
 
-    def setAttributes(self, vfspath: VFSPathType, **attributes):
+    def set_attributes(self, vfspath: VFSPathType, **attributes):
         '''Add/update custom attributes associated with the specified path.'''
 
-        self.stub.setAttributes(attributeRequest(vfspath, attributes))
+        self.stub.set_attributes(attributeRequest(vfspath, attributes))
 
-    def clearAttributes(self, vfspath: VFSPathType):
+    def clear_attributes(self, vfspath: VFSPathType):
         '''Clear all custom attributes associated with the specified path.'''
 
-        self.self.stub.clearAttributes(encodePath(vfspath))
+        self.self.stub.clear_attributes(encodePath(vfspath))
 
 
 if __name__ == '__main__':

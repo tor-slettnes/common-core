@@ -1,6 +1,16 @@
 {
     "project": "common-core",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "Cross-platform development framework for embedded microservice applications",
-    "home page": "https://github.com/tor-slettnes/common-core/"
+    "home page": "https://github.com/tor-slettnes/common-core/",
+    "package" : {
+        "name": "common-platform",
+        "vendor": "Common Core Authors",
+        "contact": "Tor Slettnes <tor@slett.net>"
+    },
+    "upgrade": {
+        "download url": "https://slett.net/cc-upgrade/",
+        "package suffix": ".ccpkg",
+        "keyring": "common-core-release.kbx"
+    }
 }

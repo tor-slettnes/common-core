@@ -127,7 +127,7 @@ namespace platform::netconfig::dbus
     {
         auto hostname = core::glib::variant_cast<std::string>(change);
         logf_debug("signal_hostname: %s", hostname);
-        platform::sysconfig::signal_hostinfo.emit(platform::sysconfig::hostconfig->get_host_info());
+        platform::sysconfig::signal_hostinfo.emit(platform::sysconfig::host->get_host_info());
     }
 
 }  // namespace platform::netconfig::dbus

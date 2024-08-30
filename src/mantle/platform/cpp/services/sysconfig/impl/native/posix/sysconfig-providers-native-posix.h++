@@ -11,4 +11,4 @@ namespace platform::sysconfig::native
 {
     void register_posix_providers();
     void unregister_posix_providers();
-}  // namespace platform::sysconfig
+}  // namespace platform::sysconfig::native

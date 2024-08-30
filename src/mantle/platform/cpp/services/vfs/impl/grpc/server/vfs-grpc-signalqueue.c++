@@ -7,7 +7,7 @@
 
 #include "vfs-grpc-signalqueue.h++"
 #include "vfs-signals.h++"
-#include "protobuf-vfs.h++"
+#include "protobuf-vfs-types.h++"
 #include "protobuf-inline.h++"
 
 namespace platform::vfs::grpc

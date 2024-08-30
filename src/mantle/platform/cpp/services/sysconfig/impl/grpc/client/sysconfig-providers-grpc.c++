@@ -12,13 +12,13 @@
 
 namespace platform::sysconfig::grpc
 {
-    void register_providers(const std::string &host,
+    void register_providers(const std::string &target_host,
                             bool wait_for_ready,
                             bool start_watching)
     {
-        auto client = Client::create_shared(host, wait_for_ready);
+        auto client = Client::create_shared(target_host, wait_for_ready);
         time.registerProvider<TimeConfigProvider>(client);
-        hostconfig.registerProvider<HostConfigProvider>(client);
+        host.registerProvider<HostConfigProvider>(client);
         timezone.registerProvider<TimeZoneProvider>(client);
 
         if (start_watching)
@@ -30,7 +30,7 @@ namespace platform::sysconfig::grpc
     void unregister_providers()
     {
         timezone.unregisterProvider<TimeZoneProvider>();
-        hostconfig.unregisterProvider<HostConfigProvider>();
+        host.unregisterProvider<HostConfigProvider>();
         time.unregisterProvider<TimeConfigProvider>();
     }
 }  // namespace platform::sysconfig::grpc

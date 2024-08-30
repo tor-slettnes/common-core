@@ -103,7 +103,7 @@ namespace platform::netconfig::dbus
     //==========================================================================
     // ActiveConnection Methods
 
-    ActiveConnectionMap DBusProvider::get_active_connections()  const
+    ActiveConnectionMap DBusProvider::get_active_connections() const
     {
         return datamap<ActiveConnection, ActiveConnectionData>();
     }
@@ -179,6 +179,5 @@ namespace platform::netconfig::dbus
     {
         this->manager->select_wireless_band(band);
     }
-
 
 }  // namespace platform::netconfig::dbus

@@ -74,7 +74,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            protobuf::encode(platform::sysconfig::hostconfig->get_host_info(), response);
+            protobuf::encode(platform::sysconfig::host->get_host_info(), response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -90,7 +90,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            platform::sysconfig::hostconfig->set_host_name(request->value());
+            platform::sysconfig::host->set_host_name(request->value());
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -386,7 +386,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            platform::sysconfig::hostconfig->reboot();
+            platform::sysconfig::host->reboot();
             return ::grpc::Status::OK;
         }
         catch (...)

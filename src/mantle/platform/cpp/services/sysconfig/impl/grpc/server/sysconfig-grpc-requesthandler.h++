@@ -20,7 +20,7 @@ namespace platform::sysconfig::grpc
     {
         // Convencience aliases
         using This = RequestHandler;
-        using Super = core::grpc::RequestHandler<cc::platform::sysconfig::SysConfig>;
+        using Super = core::grpc::SignalRequestHandler<cc::platform::sysconfig::SysConfig>;
 
     protected:
         //======================================================================

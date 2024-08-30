@@ -25,11 +25,11 @@ namespace platform
 
         builder.add_service(
             platform::sysconfig::grpc::RequestHandler::create_shared(),  // handler
-            listen_address.empty());                                  // add_listener
+            listen_address.empty());                                     // add_listener
 
         builder.add_service(
             platform::netconfig::grpc::RequestHandler::create_shared(),  // handler
-            listen_address.empty());                                   // add_listener
+            listen_address.empty());                                     // add_listener
 
         builder.add_service(
             platform::vfs::grpc::RequestHandler::create_shared(),  // handler

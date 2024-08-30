@@ -17,14 +17,21 @@ namespace platform::sysconfig
 
     struct Version : public core::types::Streamable
     {
+    public:
+        static Version from_string(const std::string &version_string);
+
+        bool operator<(const Version &other) const;
+        bool operator>(const Version &other) const;
+
+    protected:
+        void to_stream(std::ostream &stream) const override;
+
+    public:
         uint major = 0;
         uint minor = 0;
         uint patch = 0;
         uint build_number = 0;
         std::string printable_version;
-
-    public:
-        void to_stream(std::ostream &stream) const override;
     };
 
     using ComponentName = std::string;
@@ -32,7 +39,7 @@ namespace platform::sysconfig
 
     struct ProductInfo : public core::types::Streamable
     {
-        std::string product_model;
+        std::string product_name;
         std::string product_serial;
         std::string hardware_model;
 
@@ -70,3 +77,17 @@ namespace platform::sysconfig
     // Signals
     extern core::signal::DataSignal<ProductInfo> signal_productinfo;
 }  // namespace platform::sysconfig
+
+namespace std
+{
+    // Sorting support for platform::sysconfig::Version
+    template <>
+    struct less<platform::sysconfig::Version>
+    {
+        inline bool operator()(const platform::sysconfig::Version &lhs,
+                               const platform::sysconfig::Version &rhs) const
+        {
+            return lhs < rhs;
+        }
+    };
+}  // namespace std

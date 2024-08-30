@@ -87,6 +87,23 @@ namespace core::signal
     }
 
     template <class DataType>
+    inline DataType DataSignal<DataType>::get_cached(
+        const DataType &fallback)
+    {
+        return this->get_cached().value_or(fallback);
+    }
+
+    template <class DataType>
+    inline bool DataSignal<DataType>::clear_cached()
+    {
+        std::scoped_lock lck(this->mtx_);
+        bool exists = this->cached_.has_value();
+        this->cached_.reset();
+        return exists;
+    }
+
+
+    template <class DataType>
     inline size_t DataSignal<DataType>::connection_count()
     {
         return this->slots_.size();

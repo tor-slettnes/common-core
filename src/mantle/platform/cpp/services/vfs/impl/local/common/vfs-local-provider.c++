@@ -38,12 +38,12 @@ namespace platform::vfs::local
         this->loadContexts();
     }
 
-    ContextMap LocalProvider::getContexts() const
+    ContextMap LocalProvider::get_contexts() const
     {
         return this->contexts;
     }
 
-    ContextMap LocalProvider::getOpenContexts() const
+    ContextMap LocalProvider::get_open_context() const
     {
         ContextMap cmap;
         for (const auto &[key, ref] : this->contexts)
@@ -59,7 +59,7 @@ namespace platform::vfs::local
         return cmap;
     }
 
-    ContextRef LocalProvider::getContext(const std::string &name, bool required) const
+    ContextRef LocalProvider::get_context(const std::string &name, bool required) const
     {
         try
         {
@@ -79,9 +79,9 @@ namespace platform::vfs::local
         }
     }
 
-    ContextRef LocalProvider::openContext(const std::string &name, bool required)
+    ContextRef LocalProvider::open_context(const std::string &name, bool required)
     {
-        if (ContextRef cxt = this->getContext(name, required))
+        if (ContextRef cxt = this->get_context(name, required))
         {
             cxt->add_ref();
             return cxt;
@@ -92,7 +92,7 @@ namespace platform::vfs::local
         }
     }
 
-    void LocalProvider::closeContext(const ContextRef &cxt)
+    void LocalProvider::close_context(const ContextRef &cxt)
     {
         if (cxt)
         {
@@ -100,16 +100,16 @@ namespace platform::vfs::local
         }
     }
 
-    VolumeStats LocalProvider::volumeStats(const Path &vpath,
-                                           const OperationFlags &flags) const
+    VolumeStats LocalProvider::volume_stats(const Path &vpath,
+                                            const OperationFlags &flags) const
     {
         Location loc = vfs::location(vpath, false);
         fs::path lpath = loc.localPath();
         return fs::space(lpath);
     }
 
-    FileStats LocalProvider::fileStats(const Path &vpath,
-                                       const OperationFlags &flags) const
+    FileStats LocalProvider::file_stats(const Path &vpath,
+                                        const OperationFlags &flags) const
     {
         Location loc = vfs::location(vpath, false);
         fs::path lpath = loc.localPath();
@@ -121,8 +121,8 @@ namespace platform::vfs::local
         return stats;
     }
 
-    Directory LocalProvider::getDirectory(const Path &vpath,
-                                          const OperationFlags &flags) const
+    Directory LocalProvider::get_directory(const Path &vpath,
+                                           const OperationFlags &flags) const
     {
         Location loc = vfs::location(vpath, false);
         fs::path lpath = loc.localPath();
@@ -209,8 +209,8 @@ namespace platform::vfs::local
         }
     }
 
-    void LocalProvider::createFolder(const Path &vpath,
-                                     const OperationFlags &flags) const
+    void LocalProvider::create_folder(const Path &vpath,
+                                      const OperationFlags &flags) const
     {
         Location loc = vfs::location(vpath, true);
         if (flags.force)
@@ -232,12 +232,12 @@ namespace platform::vfs::local
         }
     }
 
-    ReaderRef LocalProvider::readFile(const Path &vpath) const
+    ReaderRef LocalProvider::read_file(const Path &vpath) const
     {
         return std::make_unique<FileReader>(vfs::location(vpath, false));
     }
 
-    WriterRef LocalProvider::writeFile(const Path &vpath) const
+    WriterRef LocalProvider::write_file(const Path &vpath) const
     {
         return std::make_unique<FileWriter>(vfs::location(vpath, true));
     }
@@ -302,24 +302,24 @@ namespace platform::vfs::local
             settings.get(SETTING_CXT_TITLE).as_string());
     }
 
-    core::types::KeyValueMap LocalProvider::getAttributes(const Path &vpath) const
+    core::types::KeyValueMap LocalProvider::get_attributes(const Path &vpath) const
     {
         Location loc = vfs::location(vpath, false);
-        return this->getAttributes(loc.localPath());
+        return this->get_attributes(loc.localPath());
     }
 
-    void LocalProvider::setAttributes(
+    void LocalProvider::set_attributes(
         const Path &vpath,
         const core::types::KeyValueMap &attributes) const
     {
         Location loc = vfs::location(vpath, true);
-        this->setAttributes(loc.localPath(), attributes);
+        this->set_attributes(loc.localPath(), attributes);
     }
 
-    void LocalProvider::clearAttributes(const Path &vpath) const
+    void LocalProvider::clear_attributes(const Path &vpath) const
     {
         Location loc = vfs::location(vpath, true);
-        this->clearAttributes(loc.localPath());
+        this->clear_attributes(loc.localPath());
     }
 
     //==========================================================================
@@ -512,7 +512,7 @@ namespace platform::vfs::local
                 core::types::KeyValueMap attributes;
                 if (with_attributes || attribute_filters.size())
                 {
-                    attributes = this->getAttributes(pi.path(), pi.status().type());
+                    attributes = this->get_attributes(pi.path(), pi.status().type());
                 }
 
                 if (attribute_filters.empty() ||
@@ -556,23 +556,23 @@ namespace platform::vfs::local
         return true;
     }
 
-    core::types::KeyValueMap LocalProvider::getAttributes(const fs::path &localpath,
-                                                          fs::file_type type_hint) const
+    core::types::KeyValueMap LocalProvider::get_attributes(const fs::path &localpath,
+                                                           fs::file_type type_hint) const
     {
         return AttributeStore(localpath, type_hint).get_attributes();
     }
 
-    void LocalProvider::setAttributes(const fs::path &localpath,
-                                      const core::types::KeyValueMap &attributes,
-                                      fs::file_type type_hint,
-                                      bool save) const
+    void LocalProvider::set_attributes(const fs::path &localpath,
+                                       const core::types::KeyValueMap &attributes,
+                                       fs::file_type type_hint,
+                                       bool save) const
     {
         AttributeStore(localpath, type_hint).set_attributes(attributes, save);
     }
 
-    void LocalProvider::clearAttributes(const fs::path &localpath,
-                                        fs::file_type type_hint,
-                                        bool save) const
+    void LocalProvider::clear_attributes(const fs::path &localpath,
+                                         fs::file_type type_hint,
+                                         bool save) const
     {
         AttributeStore(localpath, type_hint).clear();
     }

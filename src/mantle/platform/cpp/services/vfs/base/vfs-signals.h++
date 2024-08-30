@@ -20,4 +20,4 @@ namespace platform::vfs
 
     // Emitted whenever a context changes status, e.g., is opened or closed.
     extern core::signal::MappingSignal<ContextRef> signal_context_in_use;
-}
+}  // namespace platform::vfs

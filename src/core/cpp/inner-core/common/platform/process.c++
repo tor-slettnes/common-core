@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "process.h++"
+#include "io/streambuffer.h++"
 
 namespace core::platform
 {
@@ -17,6 +18,27 @@ namespace core::platform
     PID ProcessProvider::process_id() const
     {
         throw std::invalid_argument("process_id() is not implemented on this platform");
+    }
+
+    ArgVector ProcessProvider::arg_vector(const types::Value &command) const
+    {
+        if (const types::ValueListRef &list = command.get_valuelist())
+        {
+            return list->filter_by_type<std::string>();
+        }
+        else if (const std::string *command_string = command.get_if<std::string>())
+        {
+            return this->shell_command(*command_string);
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    ArgVector ProcessProvider::shell_command(const std::string &command_line) const
+    {
+        throw std::invalid_argument("shell_command() is not implemented on this platform");
     }
 
     PID ProcessProvider::invoke_async(
@@ -42,18 +64,28 @@ namespace core::platform
     PID ProcessProvider::invoke_async_pipe(
         const ArgVector &,
         const fs::path &,
-        int *,
-        int *,
-        int *) const
+        FileDescriptor *,
+        FileDescriptor *,
+        FileDescriptor *) const
     {
         throw std::invalid_argument("invoke_async_pipe() is not implemented on this platform");
     }
 
+    PID ProcessProvider::invoke_async_from_pipe(
+        const ArgVector &,
+        const fs::path &,
+        FileDescriptor,
+        FileDescriptor *,
+        FileDescriptor *) const
+    {
+        throw std::invalid_argument("invoke_async_from_pipe() is not implemented on this platform");
+    }
+
     ExitStatus ProcessProvider::pipe_capture(
         PID pid,
-        int fdin,
-        int fdout,
-        int fderr,
+        FileDescriptor fdin,
+        FileDescriptor fdout,
+        FileDescriptor fderr,
         const std::string &input,
         std::string *output,
         std::string *diag) const
@@ -79,6 +111,27 @@ namespace core::platform
         std::string *) const
     {
         throw std::invalid_argument("invoke_check() is not implemented on this platform");
+    }
+
+    void ProcessProvider::pipeline(
+        const Invocations &invocations,
+        FileDescriptor fdin,
+        FileDescriptor *fdout) const
+    {
+        throw std::invalid_argument("pipeline() is not implemented on this platform");
+    }
+
+    void ProcessProvider::pipe_from_stream(
+        const Invocations &invocations,
+        std::istream &instream,
+        FileDescriptor *fdout) const
+    {
+        throw std::invalid_argument("pipe_from_stream() is not implemented on this platform");
+    }
+
+    ExitStatus ProcessProvider::waitpid(PID pid, bool checkstatus) const
+    {
+        throw std::invalid_argument("waitpid() is not implemented on this platform");
     }
 
     /// Global instance, populated with the "best" provider for this system.

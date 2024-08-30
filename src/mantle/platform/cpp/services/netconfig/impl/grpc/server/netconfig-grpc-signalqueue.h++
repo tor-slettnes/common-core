@@ -33,4 +33,4 @@ namespace platform::netconfig::grpc
         void initialize() override;
         void deinitialize() override;
     };
-}
+}  // namespace platform::netconfig::grpc

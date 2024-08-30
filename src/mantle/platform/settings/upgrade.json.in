@@ -1,0 +1,13 @@
+// -*- javascript -*-
+//==============================================================================
+/// @file upgrade.json
+/// @brief Upgrade service settings
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+{
+    "manifest file" : "manifest.json",
+    "download url"  : "@UPGRADE_DOWNLOAD_URL@"
+    "package suffix": "@UPGRADE_PACKAGE_SUFFIX@",
+    "keyring file"  : "/usr/share/keyrings/@UPGRADE_KEYRING@"
+}

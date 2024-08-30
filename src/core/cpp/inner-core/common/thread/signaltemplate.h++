@@ -194,6 +194,20 @@ namespace core::signal
         std::optional<DataType> get_cached();
 
         /// @brief
+        ///    Get the current cached value if any, otherwise a fallback value.
+        /// @param[in] fallback
+        ///    Value to return if there's no cached value.
+        /// @return
+        ///    std::optional<DataType> object
+        DataType get_cached(const DataType &fallback);
+
+        /// @brief
+        ///    Clear any cached signal
+        /// @return
+        ///    Boolean indicator of whether a signal were held in cache prior to clearing.
+        bool clear_cached();
+
+        /// @brief
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
@@ -396,6 +410,7 @@ namespace core::signal
         std::unordered_map<KeyType, DataType> cached_;
         std::unordered_map<std::string, Slot> slots_;
     };
+
 
     //==========================================================================
     // I/O stream support

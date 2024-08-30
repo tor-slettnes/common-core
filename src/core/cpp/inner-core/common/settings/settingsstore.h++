@@ -32,6 +32,9 @@ namespace core
     class SettingsStore : public types::KeyValueMap,
                           public types::enable_create_shared<SettingsStore>
     {
+    public:
+        using Ref = std::shared_ptr<SettingsStore>;
+
         // protected:
         //     use_shared_scope();
 
@@ -164,5 +167,6 @@ namespace core
         std::vector<fs::path> filenames_;
     };
 
-    using SettingsStoreRef = std::shared_ptr<SettingsStore>;
+    // using SettingsStoreRef = std::shared_ptr<SettingsStore>;
 }  // namespace core
+

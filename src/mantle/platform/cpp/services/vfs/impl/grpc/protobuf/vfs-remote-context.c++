@@ -12,11 +12,11 @@ namespace platform::vfs
 {
     void RemoteContext::add_ref()
     {
-        vfs::openContext(this->name);
+        vfs::open_context(this->name);
     }
 
     void RemoteContext::del_ref()
     {
-        vfs::closeContext(this->name);
+        vfs::close_context(this->name);
     }
-}  // namespace platform::vfs::grpc
+}  // namespace platform::vfs

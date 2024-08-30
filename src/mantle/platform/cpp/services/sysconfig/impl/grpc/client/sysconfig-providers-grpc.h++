@@ -14,4 +14,4 @@ namespace platform::sysconfig::grpc
                             bool wait_for_ready = true,
                             bool start_watching = true);
     void unregister_providers();
-}  // namespace platform::sysconfig
+}  // namespace platform::sysconfig::grpc

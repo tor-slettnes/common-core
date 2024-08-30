@@ -50,6 +50,8 @@ namespace core::argparse
         virtual void monitor();
         virtual void on_monitor_start() {}
         virtual void on_monitor_end() {}
+        virtual void initialize() {}
+        virtual void deinitialize() {}
 
     protected:
         template <class T>

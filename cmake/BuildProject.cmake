@@ -51,6 +51,6 @@ if(NOT PROJECT_INCLUDED)
   #=============================================================================
   ### CPack configuration
 
-  include(CPackInit)
+  include(cpack_init)
   include(CPack)
 endif()

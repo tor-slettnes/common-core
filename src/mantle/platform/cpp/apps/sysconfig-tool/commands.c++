@@ -279,17 +279,17 @@ void Options::get_timezone_info()
 
 void Options::get_host_info()
 {
-    std::cout << platform::sysconfig::hostconfig->get_host_info()
+    std::cout << platform::sysconfig::host->get_host_info()
               << std::endl;
 }
 
 void Options::set_host_name()
 {
     std::string hostname = this->get_arg("NAME");
-    platform::sysconfig::hostconfig->set_host_name(hostname);
+    platform::sysconfig::host->set_host_name(hostname);
 }
 
 void Options::reboot()
 {
-    platform::sysconfig::hostconfig->reboot();
+    platform::sysconfig::host->reboot();
 }

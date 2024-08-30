@@ -11,4 +11,4 @@ namespace platform::sysconfig::native
 {
     void register_linux_providers();
     void unregister_linux_providers();
-}  // namespace platform::sysconfig
+}  // namespace platform::sysconfig::native

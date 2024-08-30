@@ -34,6 +34,7 @@
 
 #define throwf_args(_EXC, ...) throw _EXC(core::str::format __VA_ARGS__)
 
+
 namespace core::exception
 {
     //==========================================================================

@@ -248,7 +248,7 @@ namespace core::exception
                              const std::string &what)
         : SystemError(
               std::system_error(
-                  std::error_code(static_cast<int>(errcode), std::generic_category()),
+                  std::error_code(errcode, std::generic_category()),
                   what))
     {
     }

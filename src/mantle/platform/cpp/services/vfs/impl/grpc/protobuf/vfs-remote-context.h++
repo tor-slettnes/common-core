@@ -19,4 +19,4 @@ namespace platform::vfs
         void del_ref() override;
         // fs::path localPath(const fs::path &relpath) const override;
     };
-}  // namespace platform::vfs::remote
+}  // namespace platform::vfs

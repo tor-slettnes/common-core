@@ -15,7 +15,7 @@ namespace platform::vfs
 
     ContextProxy contextProxy(const std::string &name, bool modify)
     {
-        return vfs::ContextProxy(vfs->getContext(name), modify);
+        return vfs::ContextProxy(vfs->get_context(name), modify);
     }
 
     ContextProxy contextProxy(ContextRef ref, bool modify)
@@ -32,7 +32,7 @@ namespace platform::vfs
                       const fs::path &relpath,
                       bool modify)
     {
-        ContextRef cxt = vfs->getContext(context);
+        ContextRef cxt = vfs->get_context(context);
         return vfs::Location(cxt, relpath, modify);
     }
 
@@ -54,7 +54,7 @@ namespace platform::vfs
 
     fs::path localPath(const Path &vpath)
     {
-        return getContext(vpath.context)->localPath(vpath.relpath);
+        return get_context(vpath.context)->localPath(vpath.relpath);
     }
 
     Path getParentPath(const Path &vpath)
@@ -67,7 +67,7 @@ namespace platform::vfs
 
     ContextList listContexts()
     {
-        ContextMap map = getContexts();
+        ContextMap map = get_contexts();
         ContextList list;
         list.reserve(map.size());
         for (const auto &[name, ref] : map)
@@ -75,11 +75,11 @@ namespace platform::vfs
         return list;
     }
 
-    ContextMap getContexts(bool removable_only, bool open_only)
+    ContextMap get_contexts(bool removable_only, bool open_only)
     {
         ContextMap contexts = open_only
-                                  ? vfs->getOpenContexts()
-                                  : vfs->getContexts();
+                                  ? vfs->get_open_context()
+                                  : vfs->get_contexts();
 
         if (removable_only)
         {
@@ -99,54 +99,54 @@ namespace platform::vfs
         return contexts;
     }
 
-    ContextMap getOpenContexts(bool removable)
+    ContextMap get_open_context(bool removable)
     {
-        return getContexts(removable, true);
+        return get_contexts(removable, true);
     }
 
     ContextMap getRemovableContexts()
     {
-        return getContexts(true);
+        return get_contexts(true);
     }
 
-    ContextRef getContext(const std::string &name, bool required)
+    ContextRef get_context(const std::string &name, bool required)
     {
-        return vfs->getContext(name, required);
+        return vfs->get_context(name, required);
     }
 
-    ContextRef openContext(const std::string &name, bool required)
+    ContextRef open_context(const std::string &name, bool required)
     {
-        return vfs->openContext(name, required);
+        return vfs->open_context(name, required);
     }
 
-    void closeContext(const ContextRef &cxt)
+    void close_context(const ContextRef &cxt)
     {
-        return vfs->closeContext(cxt);
+        return vfs->close_context(cxt);
     }
 
-    void closeContext(const std::string &name)
+    void close_context(const std::string &name)
     {
-        if (auto cxt = vfs::getContext(name, false))
+        if (auto cxt = vfs::get_context(name, false))
         {
-            vfs->closeContext(cxt);
+            vfs->close_context(cxt);
         }
     }
 
     bool exists(const Path &vpath)
     {
-        return (vfs::fileStats(vpath, false).type != fs::file_type::none);
+        return (vfs::file_stats(vpath, false).type != fs::file_type::none);
     }
 
-    VolumeStats volumeStats(const Path &vpath)
+    VolumeStats volume_stats(const Path &vpath)
     {
-        return vfs->volumeStats(vpath, {});
+        return vfs->volume_stats(vpath, {});
     }
 
-    FileStats fileStats(const Path &vpath,
-                        bool with_attributes,
-                        bool dereference)
+    FileStats file_stats(const Path &vpath,
+                         bool with_attributes,
+                         bool dereference)
     {
-        return vfs->fileStats(
+        return vfs->file_stats(
             vpath,
             {
                 .dereference = dereference,
@@ -154,12 +154,12 @@ namespace platform::vfs
             });
     }
 
-    Directory getDirectory(const Path &vpath,
-                           bool with_attributes,
-                           bool dereference,
-                           bool include_hidden)
+    Directory get_directory(const Path &vpath,
+                            bool with_attributes,
+                            bool dereference,
+                            bool include_hidden)
     {
-        return vfs->getDirectory(
+        return vfs->get_directory(
             vpath,
             {
                 .dereference = dereference,
@@ -173,7 +173,7 @@ namespace platform::vfs
                        bool dereference,
                        bool include_hidden)
     {
-        Directory dir = getDirectory(
+        Directory dir = get_directory(
             vpath,
             with_attributes,
             dereference,
@@ -294,30 +294,30 @@ namespace platform::vfs
             });
     }
 
-    void createFolder(const Path &vpath,
-                      bool force)
+    void create_folder(const Path &vpath,
+                       bool force)
     {
-        return vfs->createFolder(
+        return vfs->create_folder(
             vpath,
             {
                 .force = force,
             });
     }
 
-    ReaderRef readFile(const Path &vpath)
+    ReaderRef read_file(const Path &vpath)
     {
-        return vfs->readFile(vpath);
+        return vfs->read_file(vpath);
     }
 
-    WriterRef writeFile(const Path &vpath)
+    WriterRef write_file(const Path &vpath)
     {
-        return vfs->writeFile(vpath);
+        return vfs->write_file(vpath);
     }
 
     void download(const Path &remote,
                   const fs::path &local)
     {
-        auto istream = vfs->readFile(remote);
+        auto istream = vfs->read_file(remote);
         auto ostream = std::make_unique<std::ofstream>(local);
 
         ostream->setstate(std::ios::failbit);
@@ -328,39 +328,39 @@ namespace platform::vfs
                 const Path &remote)
     {
         auto istream = std::make_unique<std::ifstream>(local);
-        auto ostream = vfs->writeFile(remote);
+        auto ostream = vfs->write_file(remote);
 
         (*ostream) << istream->rdbuf();
     }
 
-    core::types::KeyValueMap getAttributes(const Path &vpath)
+    core::types::KeyValueMap get_attributes(const Path &vpath)
     {
-        return vfs->getAttributes(vpath);
+        return vfs->get_attributes(vpath);
     }
 
     core::types::Value getAttribute(const Path &vpath,
                                     const std::string attribute,
                                     const core::types::Value fallback)
     {
-        core::types::KeyValueMap attributes = vfs::getAttributes(vpath);
+        core::types::KeyValueMap attributes = vfs::get_attributes(vpath);
         return attributes.get(attribute, fallback);
     }
 
-    void setAttributes(const Path &vpath,
-                       const core::types::KeyValueMap &attributes)
+    void set_attributes(const Path &vpath,
+                        const core::types::KeyValueMap &attributes)
     {
-        return vfs->setAttributes(vpath, attributes);
+        return vfs->set_attributes(vpath, attributes);
     }
 
     void setAttribute(const Path &vpath,
                       const std::string &key,
                       const core::types::Value &value)
     {
-        return vfs->setAttributes(vpath, {{key, value}});
+        return vfs->set_attributes(vpath, {{key, value}});
     }
 
-    void clearAttributes(const Path &vpath)
+    void clear_attributes(const Path &vpath)
     {
-        return vfs->clearAttributes(vpath);
+        return vfs->clear_attributes(vpath);
     }
 }  // namespace platform::vfs

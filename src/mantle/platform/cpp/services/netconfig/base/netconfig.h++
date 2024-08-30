@@ -8,6 +8,7 @@
 #pragma once
 #include "netconfig-types.h++"
 #include "netconfig-signals.h++"
+#include "platform/provider.h++"
 
 namespace platform::netconfig
 {
