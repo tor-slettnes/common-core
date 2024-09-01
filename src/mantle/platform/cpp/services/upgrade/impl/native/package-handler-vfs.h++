@@ -24,7 +24,7 @@ namespace platform::upgrade::native
 
     public:
         void scan() override;
-        void unpack(const PackageInfo::Ref &info,
+        void unpack(const PackageSource &source,
                     const fs::path &staging_folder) override;
 
     private:

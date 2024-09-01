@@ -29,14 +29,14 @@ namespace platform::upgrade::native
         return this->available_packages;
     }
 
-    void PackageHandler::install(const PackageInfo::Ref &package_info)
+    void PackageHandler::install(const PackageSource &source)
     {
         fs::path staging_folder = this->create_staging_folder();
         std::exception_ptr eptr;
 
         try
         {
-            this->unpack(package_info, staging_folder);
+            this->unpack(source, staging_folder);
             this->install_unpacked(staging_folder);
         }
         catch (...)
@@ -108,12 +108,10 @@ namespace platform::upgrade::native
 
     PackageInfo::Ref PackageHandler::create_package_info(
         const PackageSource &package_source,
-        const fs::path &package_name,
         const PackageManifest &manifest)
     {
         return std::make_shared<PackageInfo>(
             package_source,                  // source
-            package_name,                    // package_name
             manifest.product_name(),         // product_name
             manifest.version(),              // release_version
             manifest.description(),          // description

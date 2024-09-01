@@ -29,6 +29,7 @@ namespace platform::upgrade::grpc
     private:
         static void on_scan_progress(const cc::platform::upgrade::Signal &signal);
         static void on_upgrade_available(const cc::platform::upgrade::Signal &signal);
+        static void on_upgrade_pending(const cc::platform::upgrade::Signal &signal);
         static void on_upgrade_progress(const cc::platform::upgrade::Signal &signal);
     };
 }  // namespace platform::upgrade::grpc

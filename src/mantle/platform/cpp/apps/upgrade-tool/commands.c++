@@ -18,18 +18,22 @@ void Options::add_commands()
 {
     this->add_command(
         "scan",
-        {"[SOURCE]"},
-        "Scan a VFS path or online for upgrade packages. "
-        "The optional SOURCE is either a VFS path in the format "
-        "'CONTEXT:[PATH]' or a URL. If no source is given, "
+        {"{default | vfs CONTEXT:[PATH] | url URL"},
+        "Scan a VFS path or online for upgrade packages. If no source is given, "
         "scan the default download site.",
         std::bind(&Options::scan, this));
 
     this->add_command(
-        "get_available",
+        "list_available",
         {},
         "List upgrade packages discovered from prior scans.",
-        std::bind(&Options::get_available, this));
+        std::bind(&Options::list_available, this));
+
+    this->add_command(
+        "best_available",
+        {},
+        "List upgrade packages discovered from prior scans.",
+        std::bind(&Options::best_available, this));
 
     this->add_command(
         "install",
@@ -43,7 +47,8 @@ void Options::add_commands()
         "finalize",
         {},
         "Finalize a software upgrade.  If the release requires a system reboot, "
-        "do so now." std::bind(&Options::finalize, this));
+        "do so now.",
+        std::bind(&Options::finalize, this));
 
     this->add_command(
         "monitor",
@@ -57,28 +62,30 @@ void Options::add_commands()
 void Options::scan()
 {
     platform::upgrade::PackageSource source;
-    if (std::optional<std::string> arg = this->next_arg())
+    std::string arg = this->get_arg("source type");
+    if (core::str::tolower(arg) == "vfs")
     {
-        if (arg->find("://") != std::string::npos)
-        {
-            source = arg.value(); // URL
-        }
-        else if (arg->find(":") != std::string::npos)
-        {
-            source = this->vfspath(arg.value());
-        }
-        else
-        {
-            std::cerr << "SOURCE bust be a VFS path formateed as 'CONTEXT:[PATH]' or a URL"
-                      << std::endl;
-            std::exit(-1);
-        }
+        source.location = this->vfspath(this->get_arg("vfs path"));
+    }
+    else if (core::str::tolower(arg) == "url")
+    {
+        source.location = this->get_arg("url");
+    }
+    else if (core::str::tolower(arg) != "default")
+    {
+        std::cerr << "source type bust be one of 'default', 'vfs', 'url'"
+                  << std::endl;
+        std::exit(-1);
     }
 
     platform::upgrade::upgrade->scan(source);
 }
 
-void Options::get_available()
+void Options::list_available()
+{
+}
+
+void Options::best_available()
 {
 }
 

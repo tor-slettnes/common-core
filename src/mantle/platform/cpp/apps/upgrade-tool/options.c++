@@ -6,8 +6,9 @@
 //==============================================================================
 
 #include "options.h++"
-#include "upgrade-provider-native.h++"
-#include "upgrade-provider-grpc.h++"
+#include "upgrade-providers-native.h++"
+#include "upgrade-providers-grpc.h++"
+#include "upgrade-signals.h++"
 #include "platform/path.h++"
 
 Options::Options()

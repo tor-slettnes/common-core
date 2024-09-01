@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET "cc_platform_upgrade_grpc_server")
+set(TARGET "cc_platform_upgrade_grpc_service")
 
 set(LIB_DEPS
   cc_platform_upgrade_base

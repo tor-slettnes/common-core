@@ -24,12 +24,10 @@ namespace platform::upgrade
 
         // Explicit scan for available upgrade packages in the specified package
         // source if provided, otherwise in the preconfigured/default locations.
-        // Only packages for a matching product name and with a version number
-        // that's "better" than the currently installed release are considered.
         //
-        // This function returns immediately.  Connect to `signal_scan_progress`
-        // and `signal_upgrade_available` to monitor the progress and result of
-        // the check.
+        // This call returns immediately, without waiting for the results of the
+        // scan.  To monitor progress and results of the scan connect to
+        // `signal_scan_progress` and `signal_upgrade_available`, respectively.
         //
         // This call is not required for ongoing upgrade availability notifications.
         // By default, removable devices (e.g. USB drives) are scanned on insertion,
@@ -37,19 +35,28 @@ namespace platform::upgrade
         // connection is available.
         virtual void scan(const PackageSource &source = {}) = 0;
 
-        // Return information about any available upgrade package based on prior
-        // scans. This call returns immediately.
+        // Return information about all currently available available upgrade
+        // packages discovered during prior scans.
+        virtual std::vector<PackageInfo::Ref> list_available() const = 0;
+
+        // Return information about the "best" available upgrade package
+        // discovered during prior scans, if any. This will normally be the
+        // package with the highest version number, with local (VFS) sources
+        // preferered over remote (URL).
+        //
+        // An empty pointer is returned if no applicable update is available.
         //
         // This information is also available by connecting to
         // `signal_upgrade_available`.
-        virtual PackageInfo::Ref get_available() const = 0;
+        virtual PackageInfo::Ref best_available() const = 0;
 
         // Install an upgrade from the specified package source if provided,
         // otherwise the current "best" package source based on prior scans.  To
         // perform an explicit scan, invoke `check()` before `install()`.
         //
-        // This call returns immediately. use the `watch()` streaming call
-        // to monitor the progress and result of the upgrade.
+        // This call returns as soon as installation is underway. To monitor the
+        // progress of the upgrade process, connect to `signal_upgrade_pending`
+        // and `signal_upgrade_progress`.
         virtual PackageInfo::Ref install(const PackageSource &source = {}) = 0;
 
         // Finalize a completed upgrade.  This clears `signal_upgrade_progress`,

@@ -31,7 +31,12 @@ namespace platform::upgrade::grpc
             const ::cc::platform::upgrade::PackageSource* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status get_available(
+        ::grpc::Status list_available(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ::grpc::ServerWriter<::cc::platform::upgrade::PackageInfo>* writer) override;
+
+        ::grpc::Status best_available(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::platform::upgrade::PackageInfo* response) override;
@@ -49,7 +54,7 @@ namespace platform::upgrade::grpc
         ::grpc::Status watch(
             ::grpc::ServerContext* context,
             const ::cc::signal::Filter* filter,
-            ::grpc::ServerWriter< ::cc::platform::upgrade::Signal>* writer) override;
+            ::grpc::ServerWriter<::cc::platform::upgrade::Signal>* writer) override;
 
     protected:
         std::shared_ptr<upgrade::ProviderInterface> provider;

@@ -32,6 +32,14 @@ namespace platform::upgrade::grpc
                 protobuf::encode_shared(ref, msg->mutable_upgrade_available());
             });
 
+        this->connect<PackageInfo::Ref>(
+            Signal::kUpgradePending,
+            platform::upgrade::signal_upgrade_pending,
+            [=](PackageInfo::Ref ref, Signal *msg) {
+                msg->set_mapping_action(this->boolean_mapping(bool(ref)));
+                protobuf::encode_shared(ref, msg->mutable_upgrade_pending());
+            });
+
         this->connect<UpgradeProgress::Ref>(
             Signal::kUpgradeProgress,
             platform::upgrade::signal_upgrade_progress,
@@ -46,6 +54,7 @@ namespace platform::upgrade::grpc
     void SignalQueue::deinitialize()
     {
         this->disconnect(platform::upgrade::signal_upgrade_progress);
+        this->disconnect(platform::upgrade::signal_upgrade_pending);
         this->disconnect(platform::upgrade::signal_upgrade_available);
         this->disconnect(platform::upgrade::signal_scan_progress);
         Super::deinitialize();

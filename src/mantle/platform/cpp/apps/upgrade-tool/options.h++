@@ -39,9 +39,13 @@ private:
 
 private:
     void scan();
-    void get_available();
+    void list_available();
+    void best_available();
     void install();
     void finalize();
+
+private:
+    platform::vfs::Path vfspath(const std::string &path);
 
 public:
     bool local = false;

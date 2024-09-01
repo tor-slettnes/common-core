@@ -10,24 +10,51 @@
 #include "sysconfig-product.h++"
 #include "vfs-context.h++"
 #include "status/event.h++"
+#include "types/symbolmap.h++"
 
 namespace platform::upgrade
 {
     define_log_scope("upgrade");
 
-    enum PackageSourceType
-    {
-        SOURCE_NONE,
-        SOURCE_VFS,
-        SOURCE_URL
-    };
-
     using sysconfig::Version;
     using URL = std::string;
-    using PackageSource = std::variant<
-        std::monostate,
-        platform::vfs::Path,
-        URL>;
+
+    //==========================================================================
+    // PackageSource
+
+    struct PackageSource : public core::types::Streamable
+    {
+    public:
+        enum LocationType
+        {
+            LOC_NONE,
+            LOC_VFS,
+            LOC_URL
+        };
+
+        using Location = std::variant<
+            std::monostate,
+            platform::vfs::Path,
+            URL>;
+
+    public:
+        PackageSource(const Location &location = {},
+                      const fs::path &filename = {});
+
+        LocationType location_type() const;
+        std::optional<vfs::Path> vfs_path() const;
+        std::optional<URL> url() const;
+
+    protected:
+        void to_stream(std::ostream &stream) const override;
+
+    public:
+        Location location;
+        fs::path filename;
+    };
+
+    //==========================================================================
+    // PackageInfo
 
     struct PackageInfo : public core::types::Streamable
     {
@@ -35,7 +62,6 @@ namespace platform::upgrade
 
     public:
         PackageInfo(const PackageSource &source = {},
-                    const fs::path &package_name = {},
                     const std::string &product_name = {},
                     const sysconfig::Version &release_version = {},
                     const std::string &release_description = {},
@@ -47,7 +73,6 @@ namespace platform::upgrade
 
     public:
         PackageSource source;
-        fs::path package_name;
         std::string product_name;
         sysconfig::Version release_version;
         std::string release_description;
@@ -55,14 +80,24 @@ namespace platform::upgrade
         bool applicable;
     };
 
-    struct ScanProgress
+    //==========================================================================
+    // ScanProgress
+
+    struct ScanProgress : public core::types::Streamable
     {
         using Ref = std::shared_ptr<ScanProgress>;
 
+    public:
+        void to_stream(std::ostream &stream) const override;
+
+    public:
         PackageSource source;
     };
 
-    struct UpgradeProgress
+    //==========================================================================
+    // upgradeProgress
+
+    struct UpgradeProgress : public core::types::Streamable
     {
         using Ref = std::shared_ptr<UpgradeProgress>;
 
@@ -76,11 +111,21 @@ namespace platform::upgrade
             STATE_FINISHED,
         };
 
-        struct Fraction
+        struct Fraction : public core::types::Streamable
         {
+        public:
+            void to_stream(std::ostream &stream) const override;
+
+        public:
             std::uint32_t current = 0;
             std::uint32_t total = 0;
         };
+
+    public:
+        void to_stream(std::ostream &stream) const override;
+
+    public:
+        static core::types::SymbolMap<State> state_names;
 
         State state;
         std::string task_description;
@@ -88,10 +133,8 @@ namespace platform::upgrade
         Fraction total_progress;
         core::status::Event::Ref error;
     };
-}  // namespace platform::upgrade
 
-namespace std
-{
-    std::ostream &operator<<(std::ostream &stream,
-                             const platform::upgrade::PackageSource &source);
-}
+    static std::ostream &operator<<(std::ostream &stream,
+                                    UpgradeProgress::State state);
+
+}  // namespace platform::upgrade

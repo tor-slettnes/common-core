@@ -41,12 +41,11 @@ namespace platform::upgrade::native
         }
     }
 
-
-    void VFSPackageHandler::unpack(const PackageInfo::Ref &info,
+    void VFSPackageHandler::unpack(const PackageSource &source,
                                    const fs::path &staging_folder)
     {
-        vfs::Location loc = vfs::location(std::get<vfs::Path>(info->source), false);
-        unpack_file(loc.localPath(info->package_name), staging_folder);
+        vfs::Location loc = vfs::location(source.vfs_path().value(), false);
+        unpack_file(loc.localPath(source.filename), staging_folder);
     }
 
     PackageInfo::Ref VFSPackageHandler::scan_file(const vfs::Location &location,
@@ -59,9 +58,8 @@ namespace platform::upgrade::native
             this->unpack_file(location.localPath(package_name), staging_folder);
             PackageManifest manifest(staging_folder / this->manifest_file());
             fs::remove_all(staging_folder);
-            return this->create_package_info(location.virtualPath(),
-                                             package_name,
-                                             manifest);
+            PackageSource package_source(location.virtualPath(), package_name);
+            return this->create_package_info(package_source, manifest);
         }
         catch (...)
         {

@@ -20,7 +20,7 @@ namespace platform::upgrade::native
     {
     }
 
-    void HTTPPackageHandler::unpack(const PackageInfo::Ref &info,
+    void HTTPPackageHandler::unpack(const PackageSource &source,
                                     const fs::path &staging_folder)
     {
     }

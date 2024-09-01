@@ -1,16 +1,16 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build VFS gRPC client tool
+## @description CMake rules to build upgrade client tool
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET vfs-tool)
+set(TARGET upgrade-tool)
 
 set(LIB_DEPS
   cc_core_platform
-  cc_platform_vfs_local
-  cc_platform_vfs_grpc_client
+  cc_platform_upgrade_native
+  cc_platform_upgrade_grpc_client
 )
 
 set(SOURCES

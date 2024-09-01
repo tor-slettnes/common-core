@@ -133,6 +133,15 @@ namespace protobuf
         }
     }
 
+    template <class ProtoType, class NativeType>
+    ProtoType encode_shared(const std::shared_ptr<NativeType> &ref)
+    {
+        ProtoType msg;
+        encode_shared<ProtoType, NativeType>(ref, &msg);
+        return msg;
+    }
+
+
     template <class NativeType, class ProtoType>
     void decode_shared(const ProtoType &msg, std::shared_ptr<NativeType> *ref)
     {

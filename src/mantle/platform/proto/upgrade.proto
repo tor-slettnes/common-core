@@ -19,34 +19,39 @@ service Upgrade
 {
     // Explicit scan for available upgrade packages in the specified package
     // source if provided, otherwise in the preconfigured/default locations.
-    // Only packages for a matching product name and with a version number
-    // that's "better" than the currently installed release are considered.
     //
-    // This function returns immediately.  Use the `watch()` streaming call to
-    // monitor the progress and result of the check.
+    // This call returns immediately, without waiting for the results of the
+    // scan. To observe scan progress and results, use the `watch()` streaming
+    // call below to monitor the `scan_progress` and `upgrade_available`
+    // signals, respectively.
     //
     // This call is not required for ongoing upgrade availability notifications.
     // By default, removable devices (e.g. USB drives) are scanned on insertion,
     // and online checks are performed at regular intervals if an Internet
     // connection is available.
-    rpc scan(PackageSource)
+    rpc scan (PackageSource)
         returns (google.protobuf.Empty);
 
+    // Return information about available upgrade packages discovered during
+    // prior (implicit or explicit) scans.
+    rpc list_available (google.protobuf.Empty)
+        returns (stream PackageInfo);
 
-    // Return information about any available upgrade package based on prior
-    // scans.
+    // Return information about the best available upgrade package discovered
+    // during prior scans. This will normally be the package with the highest
+    // version number higher than the currently installed release.
     //
     // This information is also available by watching the signal
     // `upgrade_available`, below.
-    rpc get_available (google.protobuf.Empty)
+    rpc best_available (google.protobuf.Empty)
         returns (PackageInfo);
 
     // Install an upgrade from the specified package source if provided,
     // otherwise the current "best" package source based on prior scans.
     // To perform an explicit scan, invoke `scan()` before `install()`.
     //
-    // This call returns immediately. use the `watch()` streaming call
-    // to monitor the progress and result of the upgrade.
+    // This call returns immediately. To monitor the upgrade progress
+    // and result use the `watch()` method below.
     rpc install (PackageSource)
         returns (PackageInfo);
 
@@ -70,35 +75,35 @@ service Upgrade
 
 message PackageSource
 {
-    // Specific package file name, if applicable.
-    // Included in `PackageInfo` responses from `get_available()` and `install()`.
-    // Optional alongside `oneof source` below for `install()`.
-    // Ignored for `scan()`.
-    string filename = 1;
-
     // Source folder/location for packages.
     // This may be a VFS context/path or a web URL.
-    // Included in `PackageInfo` responses from `get_available()` and `install()`.
-    // Optional alonside `package_name` above for `install()`.
-    oneof source
+    // Included in `PackageInfo` responses from `list_available()` and `install()`.
+    // Optional alonside `package_name` below for `install()`.
+    oneof location
     {
-        // Specific filesystem context/path, e.g. removable drive
-        vfs.Path vfs_path = 8;
-
         // Specific URL
-        string url = 9;
+        string url = 2;
+
+        // Specific filesystem context/path, e.g. removable drive
+        vfs.Path vfs_path = 3;
     }
+
+    // Specific package file name, if applicable.
+    // Included in `PackageInfo` responses from `list_available()` and `install()`.
+    // Optional alongside `oneof location` above for `install()`.
+    // Ignored for `scan()`.
+    string filename = 8;
+
 }
 
 message PackageInfo
 {
-    PackageSource source = 1;
-    string package_name = 2;
+    bool applicable = 1;
+    PackageSource source = 2;
     string product_name = 4;
     cc.version.Version release_version = 5;
     string release_description = 6;
-    bool reboot_required = 14;
-    bool applicable = 15;
+    bool reboot_required = 8;
 }
 
 message ScanProgress
@@ -149,45 +154,44 @@ message UpgradeProgress
 
 message Signal
 {
+    // All of the signals below are cached on the server side,
+    // and replayed in response to subsequant `watch()` invocations
+    // (cfr. "late subscriber pattern").
+
     // Mapping type, one of: MAP_ADDITION, MAP_UPDATE or MAP_REMOVAL.
     // Indicates whether the event is new/updated or no longer applicable.
     cc.signal.MappingAction mapping_action = 1;
 
-    // Mapping key for the item that was added/removed/updated.
-    // Not applicable for all signals; see below.
-    string mapping_key = 2;
-
     oneof signal {
-        // A package scan is in progress.
-        //
-        // * `mapping_action` is `MAP_UPDATE` durng the scan,
-        //    and `MAP_REMOVAL` to signify that the scan completed.
-        // * `mapping_key` is not used.
+
+        // A package scan is in progress.  `mapping_action` is
+        //  * `MAP_ADDITION' if the scan has just started
+        //  * `MAP_UPDATE` for scan progress updates
+        //  * `MAP_REMOVAL` if the scan has completed.
         //
         // This signal is cached and re-emitted in response to subsequent
         // `watch()` invocations from newly connected clients.
         ScanProgress scan_progress = 8;
 
-        // Emitted on a software update availability change.
-        //
-        // * `mapping_action` is `MAP_ADDITION` or `MAP_REMOVAL`, indicating
-        //   whether a package source was added or removed.
-        // * `mapping_key` is a unique string representation of the
-        //   package source for mapping purposes.
-        //
-        // This signal is cached and re-emitted in response to subsequent
-        // `watch()` invocations from newly connected clients.
+        // Emitted on (applicable) software update availability changes.
+        // `mapping_action` is
+        //  * `MAP_ADDITION` if this is the first/only applicable source
+        //  * `MAP_UPDATE` if the "best" available upgrade has changed
+        //    (for instance, after a removable drive insertion/removal)
+        //  * `MAP_REMOVAL` if the last applicable source was removed
         PackageInfo upgrade_available = 9;
 
+        // Emitted with information about a pending software upgrade.
+        // `mapping_action` is
+        //  * `MAP_ADDITION` if the upgrade has started
+        //  * `MAP_REMOVAL` if the upgrade has ended.
+        PackageInfo upgrade_pending = 10;
+
         // Emitted continuously during a software upgrade.
-        //
-        // * `mapping_action` is `MAP_ADDITION`, `MAP_UPDATE` and `MAP_REMOVAL`,
-        //   indicating whether the upgrade process just started, is underway,
-        //   of completed.
-        // * `mapping_key` is not used.
-        //
-        // This signal is cached and re-emitted in response to subsequent
-        // `watch()` invocations from newly connected clients.
-        UpgradeProgress upgrade_progress = 10;
+        // `mapping_action` is
+        //  * `MAP_ADDITION` if the upgrade has just stared
+        //  * `MAP_UPDATE` whenver the progress is updated
+        //  * `MAP_REMOVAL` once the upgrade has ended.
+        UpgradeProgress upgrade_progress = 11;
     }
 }

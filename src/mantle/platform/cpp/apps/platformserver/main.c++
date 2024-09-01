@@ -11,6 +11,7 @@
 #include "sysconfig-providers-native.h++"  // SysConfig services
 #include "netconfig-providers-dbus.h++"    // NetConfig services
 #include "vfs-providers-local.h++"         // Virtual Filesystem services
+#include "upgrade-providers-native.h++"    // Virtual Filesystem services
 #include "application/init.h++"            // Common init routines
 #include "status/exceptions.h++"
 #include "thread/supervised_thread.h++"
@@ -27,6 +28,7 @@ int main(int argc, char** argv)
         platform::sysconfig::native::register_providers();
         platform::netconfig::dbus::register_providers();
         platform::vfs::local::register_providers();
+        platform::upgrade::native::register_providers();
 
         std::vector<std::thread> server_threads;
 
@@ -46,6 +48,7 @@ int main(int argc, char** argv)
             t.join();
         }
 
+        platform::upgrade::native::unregister_providers();
         platform::vfs::local::unregister_providers();
         platform::netconfig::dbus::unregister_providers();
         platform::sysconfig::native::unregister_providers();

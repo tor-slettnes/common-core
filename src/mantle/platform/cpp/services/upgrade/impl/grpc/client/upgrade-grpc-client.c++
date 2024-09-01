@@ -25,6 +25,10 @@ namespace platform::upgrade::grpc
             &This::on_upgrade_available);
 
         this->add_handler(
+            cc::platform::upgrade::Signal::kUpgradePending,
+            &This::on_upgrade_pending);
+
+        this->add_handler(
             cc::platform::upgrade::Signal::kUpgradeProgress,
             &This::on_upgrade_progress);
     }
@@ -47,6 +51,16 @@ namespace platform::upgrade::grpc
             protobuf::decode_shared(signal.upgrade_available(), &available_info);
         }
         platform::upgrade::signal_upgrade_available.emit(available_info);
+    }
+
+    void Client::on_upgrade_pending(const cc::platform::upgrade::Signal &signal)
+    {
+        platform::upgrade::PackageInfo::Ref pending_info;
+        if (This::is_mapped(signal.mapping_action()))
+        {
+            protobuf::decode_shared(signal.upgrade_pending(), &pending_info);
+        }
+        platform::upgrade::signal_upgrade_pending.emit(pending_info);
     }
 
     void Client::on_upgrade_progress(const cc::platform::upgrade::Signal &signal)

@@ -29,11 +29,26 @@ namespace platform::upgrade::grpc
             protobuf::encoded<cc::platform::upgrade::PackageSource>(source));
     }
 
-    PackageInfo::Ref ClientProvider::get_available() const
+    std::vector<PackageInfo::Ref> ClientProvider::list_available() const
+    {
+        std::vector<PackageInfo::Ref> list;
+        ::grpc::ClientContext cxt;
+        ::google::protobuf::Empty request;
+        cc::platform::upgrade::PackageInfo msg;
+        auto reader = this->client->stub->list_available(&cxt, request);
+        while (reader->Read(&msg))
+        {
+            PackageInfo::Ref &info = list.emplace_back();
+            protobuf::decode_shared(msg, &info);
+        }
+        return list;
+    }
+
+    PackageInfo::Ref ClientProvider::best_available() const
     {
         return protobuf::decode_shared<PackageInfo>(
             this->client->call_check(
-                &Client::Stub::get_available));
+                &Client::Stub::best_available));
     }
 
     PackageInfo::Ref ClientProvider::install(const PackageSource &source)

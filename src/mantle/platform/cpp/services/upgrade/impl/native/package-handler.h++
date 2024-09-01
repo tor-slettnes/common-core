@@ -23,12 +23,12 @@ namespace platform::upgrade::native
     public:
         virtual void scan() = 0;
         virtual std::vector<PackageInfo::Ref> get_available() const;
-        virtual void install(const PackageInfo::Ref &package_info);
+        virtual void install(const PackageSource &source);
         virtual void finalize(const PackageInfo::Ref &package_info);
 
     protected:
         virtual void unpack(
-            const PackageInfo::Ref &info,
+            const PackageSource &source,
             const fs::path &staging_folder) = 0;
 
     protected:
@@ -45,8 +45,7 @@ namespace platform::upgrade::native
         fs::path manifest_file() const;
 
         PackageInfo::Ref create_package_info(
-            const PackageSource &package_source,
-            const fs::path &package_name,
+            const PackageSource &source,
             const PackageManifest &manifest);
 
         void unpack_file(

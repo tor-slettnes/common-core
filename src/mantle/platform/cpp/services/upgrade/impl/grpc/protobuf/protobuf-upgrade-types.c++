@@ -20,33 +20,37 @@ namespace protobuf
     void encode(const ::platform::upgrade::PackageSource &native,
                 ::cc::platform::upgrade::PackageSource *msg)
     {
-        if (auto *vfs_path = std::get_if<platform::vfs::Path>(&native))
+        if (auto *vfs_path = std::get_if<platform::vfs::Path>(&native.location))
         {
             encode(*vfs_path, msg->mutable_vfs_path());
         }
-        else if (auto *url = std::get_if<platform::upgrade::URL>(&native))
+        else if (auto *url = std::get_if<platform::upgrade::URL>(&native.location))
         {
             msg->set_url(*url);
         }
+
+        msg->set_filename(native.filename);
     }
 
     void decode(const ::cc::platform::upgrade::PackageSource &msg,
                 ::platform::upgrade::PackageSource *native)
     {
-        switch (msg.source_case())
+        switch (msg.location_case())
         {
         case ::cc::platform::upgrade::PackageSource::kVfsPath:
-            *native = decoded<::platform::vfs::Path>(msg.vfs_path());
+            native->location = decoded<::platform::vfs::Path>(msg.vfs_path());
             break;
 
         case ::cc::platform::upgrade::PackageSource::kUrl:
-            *native = msg.url();
+            native->location = msg.url();
             break;
 
         default:
-            *native = {};
+            native->location = {};
             break;
         }
+
+        native->filename = msg.filename();
     }
 
     //==========================================================================
@@ -56,7 +60,6 @@ namespace protobuf
                 ::cc::platform::upgrade::PackageInfo *msg)
     {
         encode(native.source, msg->mutable_source());
-        msg->set_package_name(native.package_name);
         msg->set_product_name(native.product_name);
         encode(native.release_version, msg->mutable_release_version());
         msg->set_release_description(native.release_description);
@@ -68,7 +71,6 @@ namespace protobuf
                 ::platform::upgrade::PackageInfo *native)
     {
         decode(msg.source(), &native->source);
-        native->package_name = msg.package_name();
         native->product_name = msg.product_name();
         decode(msg.release_version(), &native->release_version);
         native->release_description = msg.release_description();

@@ -17,6 +17,7 @@ set(SOURCES
   package-handler.c++
   package-handler-vfs.c++
   package-handler-http.c++
+  upgrade-providers-native.c++
 )
 
 BuildLibrary("${TARGET}"

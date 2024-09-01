@@ -24,23 +24,43 @@ namespace platform::upgrade::native
 
     void NativeProvider::scan(const PackageSource &source)
     {
-        switch (static_cast<PackageSourceType>(source.index()))
+        switch (source.location_type())
         {
-        case SOURCE_NONE:
+        case PackageSource::LOC_NONE:
             if (core::types::Value default_url = this->settings->get(SETTING_DOWNLOAD_URL))
             {
                 this->scan_http(default_url.as_string());
             }
             break;
 
-        case SOURCE_VFS:
-            this->scan_vfs(std::get<vfs::Path>(source));
+        case PackageSource::LOC_VFS:
+            this->scan_vfs(source.vfs_path().value());
             break;
 
-        case SOURCE_URL:
-            this->scan_http(std::get<URL>(source));
+        case PackageSource::LOC_URL:
+            this->scan_http(source.url().value());
             break;
         }
+    }
+
+    std::vector<PackageInfo::Ref> NativeProvider::list_available() const
+    {
+        return {};
+    }
+
+    PackageInfo::Ref NativeProvider::best_available() const
+    {
+        return {};
+    }
+
+    PackageInfo::Ref NativeProvider::install(const PackageSource &source)
+    {
+        fs::path staging_folder = core::platform::path->mktemp();
+        return {};
+    }
+
+    void NativeProvider::finalize()
+    {
     }
 
     void NativeProvider::scan_vfs(const vfs::Path &source)
@@ -67,14 +87,14 @@ namespace platform::upgrade::native
 
     void NativeProvider::remove(const PackageSource &source)
     {
-        switch (static_cast<PackageSourceType>(source.index()))
+        switch (source.location_type())
         {
-        case SOURCE_VFS:
-            this->remove_vfs(std::get<vfs::Path>(source));
+        case PackageSource::LOC_VFS:
+            this->remove_vfs(source.vfs_path().value());
             break;
 
-        case SOURCE_URL:
-            this->remove_http(std::get<URL>(source));
+        case PackageSource::LOC_URL:
+            this->remove_http(source.url().value());
             break;
         }
     }
@@ -87,21 +107,6 @@ namespace platform::upgrade::native
     void NativeProvider::remove_http(const URL &source)
     {
         this->http_handlers.erase(source);
-    }
-
-    PackageInfo::Ref NativeProvider::get_available() const
-    {
-        return {};
-    }
-
-    PackageInfo::Ref NativeProvider::install(const PackageSource &source)
-    {
-        fs::path staging_folder = core::platform::path->mktemp();
-        return {};
-    }
-
-    void NativeProvider::finalize()
-    {
     }
 
 }  // namespace platform::upgrade::native

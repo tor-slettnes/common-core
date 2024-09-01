@@ -39,7 +39,32 @@ namespace platform::upgrade::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_available(
+    ::grpc::Status RequestHandler::list_available(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ::grpc::ServerWriter<::cc::platform::upgrade::PackageInfo> *writer)
+    {
+        try
+        {
+            for (const PackageInfo::Ref& info : this->provider->list_available())
+            {
+                if (context->IsCancelled())
+                {
+                    break;
+                }
+
+                writer->Write(
+                    protobuf::encode_shared<::cc::platform::upgrade::PackageInfo>(info));
+            }
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), context->peer());
+        }
+    }
+
+    ::grpc::Status RequestHandler::best_available(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::upgrade::PackageInfo* response)
@@ -47,7 +72,7 @@ namespace platform::upgrade::grpc
         try
         {
             protobuf::encode_shared(
-                this->provider->get_available(),
+                this->provider->best_available(),
                 response);
             return ::grpc::Status::OK;
         }
