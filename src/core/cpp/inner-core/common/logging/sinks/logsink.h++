@@ -23,19 +23,19 @@ namespace core::logging
         using Super = Sink;
 
     public:
-        using Ref = std::shared_ptr<LogSink>;
+        using ptr = std::shared_ptr<LogSink>;
 
     protected:
         LogSink();
 
     public:
         bool is_applicable(const types::Loggable &item) const override;
-        bool capture(const types::Loggable::Ref &item) override;
+        bool capture(const types::Loggable::ptr &item) override;
         virtual void set_threshold(status::Level threshold);
         status::Level threshold() const;
 
     protected:
-        virtual void capture_event(const status::Event::Ref &event) = 0;
+        virtual void capture_event(const status::Event::ptr &event) = 0;
 
     private:
         status::Level threshold_;

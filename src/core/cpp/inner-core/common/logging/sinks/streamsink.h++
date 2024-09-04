@@ -42,7 +42,7 @@ namespace core::logging
         StreamSink(std::ostream &&stream);
 
     public:
-        void capture_message(const Message::Ref &msg) override;
+        void capture_message(const Message::ptr &msg) override;
 
     private:
         void load_styles(const types::KeyValueMap &stylemap);

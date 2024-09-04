@@ -41,7 +41,7 @@ namespace demo::dds
                                 const Greeting &greeting);
 
     private:
-        DataWriterRef<CC::Demo::TimeData> time_writer;
-        DataWriterRef<CC::Demo::Greeting> greeting_writer;
+        DataWriterPtr<CC::Demo::TimeData> time_writer;
+        DataWriterPtr<CC::Demo::Greeting> greeting_writer;
     };
 }  // namespace demo::dds

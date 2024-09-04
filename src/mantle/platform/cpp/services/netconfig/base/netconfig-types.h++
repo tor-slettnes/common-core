@@ -61,6 +61,8 @@ namespace platform::netconfig
 
     struct IPConfigData : public core::types::Streamable
     {
+        using ptr = std::shared_ptr<IPConfigData>;
+
         IPConfigMethod method = METHOD_NONE;
         AddressVector address_data;
         IPAddress gateway;
@@ -70,9 +72,6 @@ namespace platform::netconfig
         void clear();
         void to_stream(std::ostream &stream) const override;
     };
-
-    using IPConfigRef = std::shared_ptr<IPConfigData>;
-    // using IPConfigMap = std::unordered_map<Key, IPConfigRef>;
 
     //==========================================================================
     // Wired connection data
@@ -246,6 +245,8 @@ namespace platform::netconfig
 
     struct ConnectionData : public core::types::Streamable, public MappedData
     {
+        using ptr = std::shared_ptr<ConnectionData>;
+
         std::string id;
         std::string uuid;
         std::string interface;
@@ -261,14 +262,15 @@ namespace platform::netconfig
         void to_stream(std::ostream &stream) const override;
     };
 
-    using ConnectionRef = std::shared_ptr<ConnectionData>;
-    using ConnectionMap = std::unordered_map<Key, ConnectionRef>;
+    using ConnectionMap = std::unordered_map<Key, ConnectionData::ptr>;
 
     //==========================================================================
     // ActiveConnection Data
 
     struct ActiveConnectionData : public core::types::Streamable, public MappedData
     {
+        using ptr = std::shared_ptr<ActiveConnectionData>;
+
         std::string uuid;
         std::string id;
         ConnectionType type = CONN_TYPE_UNKNOWN;
@@ -288,8 +290,7 @@ namespace platform::netconfig
         bool has_gateway() const;
     };
 
-    using ActiveConnectionRef = std::shared_ptr<ActiveConnectionData>;
-    using ActiveConnectionMap = std::unordered_map<Key, ActiveConnectionRef>;
+    using ActiveConnectionMap = std::unordered_map<Key, ActiveConnectionData::ptr>;
 
     //==========================================================================
     // Access Point Data
@@ -298,6 +299,7 @@ namespace platform::netconfig
 
     struct AccessPointData : public core::types::Streamable, public MappedData
     {
+        using ptr = std::shared_ptr<AccessPointData>;
         static FrequencyRangeMap frequency_ranges;
 
         SSID ssid;
@@ -320,17 +322,8 @@ namespace platform::netconfig
         void to_stream(std::ostream &stream) const override;
     };
 
-    // class AccessPointMap : std::map<Key, AccessPointData, AccessPointMap::stronger>
-    // {
-    //     constexpr bool stronger(const Key &lhs, const Key &rhs)
-    //     {
-    //         return (this->at(lhs).strength > this->at(rhs).strength);
-    //     }
-    // };
-
-    using AccessPointRef = std::shared_ptr<AccessPointData>;
-    using AccessPointMap = std::unordered_map<Key, AccessPointRef>;
-    using SSIDMap = std::unordered_map<SSID, AccessPointRef>;
+    using AccessPointMap = std::unordered_map<Key, AccessPointData::ptr>;
+    using SSIDMap = std::unordered_map<SSID, AccessPointData::ptr>;
 
     //==========================================================================
     // Device Data
@@ -359,6 +352,8 @@ namespace platform::netconfig
 
     struct DeviceData : public core::types::Streamable, public MappedData
     {
+        using ptr = std::shared_ptr<DeviceData>;
+
         NMDeviceType type = NM_DEVICE_TYPE_UNKNOWN;
         NMDeviceState state = NM_DEVICE_STATE_UNKNOWN;
         NMDeviceStateReason state_reason = NM_DEVICE_STATE_REASON_NONE;
@@ -379,19 +374,20 @@ namespace platform::netconfig
         void to_stream(std::ostream &stream) const override;
     };
 
-    using DeviceRef = std::shared_ptr<DeviceData>;
-    using DeviceMap = std::unordered_map<Key, DeviceRef>;
+    using DeviceMap = std::unordered_map<Key, DeviceData::ptr>;
 
-    using WifiTuple = std::tuple<DeviceRef,
-                                 AccessPointRef,
-                                 ActiveConnectionRef,
-                                 ConnectionRef>;
+    using WifiTuple = std::tuple<DeviceData::ptr,
+                                 AccessPointData::ptr,
+                                 ActiveConnectionData::ptr,
+                                 ConnectionData::ptr>;
 
     //==========================================================================
     // Global State Data
 
     struct GlobalData : public core::types::Streamable
     {
+        using ptr = std::shared_ptr<GlobalData>;
+
         NMState state = NM_STATE_UNKNOWN;
         NMConnectivityState connectivity = NM_CONNECTIVITY_UNKNOWN;
         bool wireless_hardware_enabled = false;
@@ -401,8 +397,6 @@ namespace platform::netconfig
 
         void to_stream(std::ostream &stream) const override;
     };
-
-    using GlobalDataRef = std::shared_ptr<GlobalData>;
 
     /// Input stream support for enumerated types and variants
     std::istream &operator>>(std::istream &stream, WirelessBandSelection &band);

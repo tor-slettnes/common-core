@@ -58,14 +58,6 @@ void Options::deinitialize()
     }
 }
 
-bool Options::handle_command(const Handler &handler)
-{
-    this->initialize();
-    bool result = Super::handle_command(handler);
-    this->deinitialize();
-    return result;
-}
-
 void Options::on_monitor_start()
 {
     FlagMap flags;
@@ -105,7 +97,7 @@ void Options::on_monitor_end()
 void Options::on_context(
     core::signal::MappingAction action,
     const std::string &key,
-    const platform::vfs::ContextRef &cxt)
+    const platform::vfs::Context::ptr &cxt)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_context(%s, %s, %s)\n",
@@ -118,7 +110,7 @@ void Options::on_context(
 void Options::on_context_in_use(
     core::signal::MappingAction action,
     const std::string &key,
-    const platform::vfs::ContextRef &cxt)
+    const platform::vfs::Context::ptr &cxt)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_context(%s, %s, %s)\n",

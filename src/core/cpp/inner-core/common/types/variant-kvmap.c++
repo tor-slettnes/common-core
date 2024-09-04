@@ -103,8 +103,8 @@ namespace core::types
         {
             if (auto this_it = this->find(key); this_it != this->end())
             {
-                KeyValueMapRef *this_map = std::get_if<KeyValueMapRef>(&this_it->second);
-                KeyValueMapRef *other_map = std::get_if<KeyValueMapRef>(&other_value);
+                KeyValueMapPtr *this_map = std::get_if<KeyValueMapPtr>(&this_it->second);
+                KeyValueMapPtr *other_map = std::get_if<KeyValueMapPtr>(&other_value);
                 if (this_map && other_map)
                 {
                     (*this_map)->recursive_merge(**other_map);
@@ -129,8 +129,8 @@ namespace core::types
         {
             if (auto this_it = this->find(base_it->first); this_it != this->end())
             {
-                KeyValueMapRef *this_ptr = std::get_if<KeyValueMapRef>(&this_it->second);
-                const KeyValueMapRef *base_ptr = std::get_if<KeyValueMapRef>(&base_it->second);
+                KeyValueMapPtr *this_ptr = std::get_if<KeyValueMapPtr>(&this_it->second);
+                const KeyValueMapPtr *base_ptr = std::get_if<KeyValueMapPtr>(&base_it->second);
                 if (this_ptr && base_ptr)
                 {
                     (*this_ptr)->recursive_unmerge(**base_ptr);
@@ -154,8 +154,8 @@ namespace core::types
 
             if (auto base_it = basemap.find(key); base_it != basemap.end())
             {
-                const KeyValueMapRef *this_ptr = std::get_if<KeyValueMapRef>(&this_it->second);
-                const KeyValueMapRef *base_ptr = std::get_if<KeyValueMapRef>(&base_it->second);
+                const KeyValueMapPtr *this_ptr = std::get_if<KeyValueMapPtr>(&this_it->second);
+                const KeyValueMapPtr *base_ptr = std::get_if<KeyValueMapPtr>(&base_it->second);
                 if (this_ptr && base_ptr)
                 {
                     auto submap = KeyValueMap::create_shared((*this_ptr)->recursive_delta(**base_ptr));

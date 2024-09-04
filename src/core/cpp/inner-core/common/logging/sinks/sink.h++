@@ -20,7 +20,7 @@ namespace core::logging
     class Sink
     {
     public:
-        using Ref = std::shared_ptr<Sink>;
+        using ptr = std::shared_ptr<Sink>;
 
     protected:
         Sink() {}
@@ -30,6 +30,6 @@ namespace core::logging
         virtual inline void close() {}
 
         virtual inline bool is_applicable(const types::Loggable &) const { return true; }
-        virtual bool capture(const types::Loggable::Ref &loggable) = 0;
+        virtual bool capture(const types::Loggable::ptr &loggable) = 0;
     };
 }  // namespace core::logging

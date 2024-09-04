@@ -103,7 +103,7 @@ void Options::on_monitor_end()
 }
 
 void Options::on_scan_progress(
-    const platform::upgrade::ScanProgress::Ref &progress)
+    const platform::upgrade::ScanProgress::ptr &progress)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_scan_progress(%s)\n",
@@ -112,7 +112,7 @@ void Options::on_scan_progress(
 }
 
 void Options::on_upgrade_available(
-    const platform::upgrade::PackageInfo::Ref &package_info)
+    const platform::upgrade::PackageManifest::ptr &package_info)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_upgrade_available(%s)\n",
@@ -121,7 +121,7 @@ void Options::on_upgrade_available(
 }
 
 void Options::on_upgrade_progress(
-    const platform::upgrade::UpgradeProgress::Ref &progress)
+    const platform::upgrade::UpgradeProgress::ptr &progress)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_upgrade_progress(%s)\n",

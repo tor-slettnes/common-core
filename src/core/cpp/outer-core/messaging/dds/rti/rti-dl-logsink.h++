@@ -32,7 +32,7 @@ namespace core::dds
     protected:
         void open() override;
         void close() override;
-        void capture_message(const core::logging::Message::Ref &msg) override;
+        void capture_message(const core::logging::Message::ptr &msg) override;
 
     private:
         static const core::types::ValueMap<core::status::Level, DDS_Long> levelmap;

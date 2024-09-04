@@ -40,11 +40,11 @@ namespace platform::vfs::local
 
         ContextMap get_open_context() const override;
 
-        ContextRef get_context(const std::string &name, bool required) const override;
+        Context::ptr get_context(const std::string &name, bool required) const override;
 
-        ContextRef open_context(const std::string &name, bool required) override;
+        Context::ptr open_context(const std::string &name, bool required) override;
 
-        void close_context(const ContextRef &cxt) override;
+        void close_context(const Context::ptr &cxt) override;
 
         VolumeStats volume_stats(const Path &vpath,
                                  const OperationFlags &flags) const override;
@@ -74,9 +74,9 @@ namespace platform::vfs::local
         void create_folder(const Path &vpath,
                            const OperationFlags &flags) const override;
 
-        ReaderRef read_file(const Path &vpath) const override;
+        UniqueReader read_file(const Path &vpath) const override;
 
-        WriterRef write_file(const Path &vpath) const override;
+        UniqueWriter write_file(const Path &vpath) const override;
 
         core::types::KeyValueMap get_attributes(const Path &vpath) const override;
 
@@ -86,12 +86,12 @@ namespace platform::vfs::local
         void clear_attributes(const Path &vpath) const override;
 
     protected:
-        void addContext(const std::string &name, ContextRef cxt);
+        void addContext(const std::string &name, Context::ptr cxt);
         bool removeContext(const std::string &name);
 
     private:
         void loadContexts(void);
-        ContextRef newContext(
+        Context::ptr newContext(
             const std::string &name,
             const core::types::Value &settings);
 

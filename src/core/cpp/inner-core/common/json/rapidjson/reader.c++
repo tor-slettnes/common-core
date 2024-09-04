@@ -160,7 +160,7 @@ namespace core::json
         }
     }
 
-    types::ValueListRef RapidReader::decodeArray(const ::rapidjson::Value &jarray)
+    types::ValueListPtr RapidReader::decodeArray(const ::rapidjson::Value &jarray)
     {
         auto list = types::ValueList::create_shared();
         for (auto it = jarray.Begin(); it != jarray.End(); it++)
@@ -170,7 +170,7 @@ namespace core::json
         return list;
     }
 
-    types::KeyValueMapRef RapidReader::decodeObject(const ::rapidjson::Value &jobject)
+    types::KeyValueMapPtr RapidReader::decodeObject(const ::rapidjson::Value &jobject)
     {
         auto kvmap = types::KeyValueMap::create_shared();
         for (auto &&item : jobject.GetObject())

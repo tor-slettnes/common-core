@@ -12,19 +12,22 @@ namespace platform::upgrade
     //==========================================================================
     // PackageSource
 
-    PackageSource::PackageSource(const Location &location,
-                                 const fs::path &filename)
+    PackageSource::PackageSource(
+        const Location &location,
+        const fs::path &filename)
         : location(location),
           filename(filename)
     {
     }
 
-    PackageSource::LocationType PackageSource::location_type() const
+    PackageSource::LocationType
+    PackageSource::location_type() const
     {
         return static_cast<LocationType>(this->location.index());
     }
 
-    std::optional<vfs::Path> PackageSource::vfs_path() const
+    std::optional<vfs::Path>
+    PackageSource::vfs_path() const
     {
         if (auto *vpath = std::get_if<vfs::Path>(&this->location))
         {
@@ -36,7 +39,8 @@ namespace platform::upgrade
         }
     }
 
-    std::optional<URL> PackageSource::url() const
+    std::optional<URL>
+    PackageSource::url() const
     {
         if (auto *url = std::get_if<URL>(&this->location))
         {
@@ -48,7 +52,9 @@ namespace platform::upgrade
         }
     }
 
-    void PackageSource::to_stream(std::ostream &stream) const
+    void
+    PackageSource::to_stream(
+        std::ostream &stream) const
     {
         core::types::PartsList parts;
 
@@ -68,41 +74,80 @@ namespace platform::upgrade
     }
 
     //==========================================================================
-    // PackageInfo
+    // PackageManifest
 
-    PackageInfo::PackageInfo(const PackageSource &source,
-                             const std::string &product_name,
-                             const sysconfig::Version &release_version,
-                             const std::string &release_description,
-                             bool reboot_required,
-                             bool applicable)
-        : source(source),
-          product_name(product_name),
-          release_version(release_version),
-          release_description(release_description),
-          reboot_required(reboot_required),
-          applicable(applicable)
+    PackageManifest::PackageManifest(
+        const PackageSource &source,
+        const std::string &product,
+        const sysconfig::Version &version,
+        const std::string &description,
+        bool reboot_required,
+        bool is_applicable)
+        : source_(source),
+          product_(product),
+          version_(version),
+          description_(description),
+          reboot_required_(reboot_required),
+          is_applicable_(is_applicable)
     {
     }
 
-    void PackageInfo::to_stream(std::ostream &stream) const
+    const PackageSource &
+    PackageManifest::source() const
+    {
+        return this->source_;
+    }
+
+    const std::string &
+    PackageManifest::product() const
+    {
+        return this->product_;
+    }
+
+    const Version &
+    PackageManifest::version() const
+    {
+        return this->version_;
+    }
+
+    const std::string &
+    PackageManifest::description() const
+    {
+        return this->description_;
+    }
+
+    const bool
+    PackageManifest::reboot_required() const
+    {
+        return this->reboot_required_;
+    }
+
+    const bool
+    PackageManifest::is_applicable() const
+    {
+        return this->is_applicable_;
+    }
+
+    void
+    PackageManifest::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
-                          "{source=%s, product_name=%r, "
-                          "release_version=%s, release_description=%r, "
-                          "reboot_required=%b, applicable=%b}",
-                          this->source,
-                          this->product_name,
-                          this->release_version,
-                          this->release_description,
-                          this->reboot_required,
-                          this->applicable);
+                          "{source=%s, product=%r, "
+                          "version=%s, description=%r, "
+                          "reboot_required=%b, is_applicable=%b}",
+                          this->source(),
+                          this->product(),
+                          this->version(),
+                          this->description(),
+                          this->reboot_required(),
+                          this->is_applicable());
     }
 
     //==========================================================================
     // ScanProgress
 
-    void ScanProgress::to_stream(std::ostream &stream) const
+    void
+    ScanProgress::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
                           "{source=%s}",
@@ -112,7 +157,8 @@ namespace platform::upgrade
     //==========================================================================
     // UpgradeProgress
 
-    void UpgradeProgress::to_stream(std::ostream &stream) const
+    void
+    UpgradeProgress::to_stream(std::ostream &stream) const
     {
         core::types::PartsList parts;
         parts.add("state", this->state);
@@ -126,7 +172,8 @@ namespace platform::upgrade
         stream << parts;
     }
 
-    void UpgradeProgress::Fraction::to_stream(std::ostream &stream) const
+    void
+    UpgradeProgress::Fraction::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
                           "%d of %d",
@@ -134,7 +181,8 @@ namespace platform::upgrade
                           this->total);
     }
 
-    std::ostream &operator<<(
+    std::ostream &
+    operator<<(
         std::ostream &stream,
         UpgradeProgress::State state)
     {

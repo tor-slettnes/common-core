@@ -11,6 +11,7 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
+#include "logging/logging.h++"
 
 namespace platform::vfs::grpc
 {
@@ -315,7 +316,7 @@ namespace platform::vfs::grpc
         try
         {
             Path vpath = protobuf::decoded<Path>(*req);
-            ReaderRef reader = this->provider->read_file(vpath);
+            UniqueReader reader = this->provider->read_file(vpath);
             reader->exceptions(std::ios::badbit);
 
             //char buf[protobuf::chunksize];
@@ -353,7 +354,7 @@ namespace platform::vfs::grpc
         protobuf::Empty *)
     {
         platform::vfs::Path vpath;
-        WriterRef writer;
+        UniqueWriter writer;
         ::cc::platform::vfs::FileChunk chunk;
         try
         {

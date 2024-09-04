@@ -66,7 +66,7 @@ namespace platform::netconfig::grpc
         //======================================================================
         // Manager methods
 
-        GlobalDataRef get_global_data() const override;
+        GlobalData::ptr get_global_data() const override;
         void set_wireless_enabled(bool enabled) override;
         void set_wireless_allowed(bool allowed) override;
         void select_wireless_band(WirelessBandSelection band) override;

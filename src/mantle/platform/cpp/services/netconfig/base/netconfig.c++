@@ -12,7 +12,7 @@ namespace platform::netconfig
     //==========================================================================
     // Provider class
 
-    ConnectionRef ProviderInterface::get_connection(const Key &key) const
+    ConnectionData::ptr ProviderInterface::get_connection(const Key &key) const
     {
         try
         {
@@ -24,7 +24,7 @@ namespace platform::netconfig
         }
     }
 
-    ConnectionRef ProviderInterface::get_connection_by_ssid(const SSID &ssid) const
+    ConnectionData::ptr ProviderInterface::get_connection_by_ssid(const SSID &ssid) const
     {
         for (auto &[name, ref] : this->get_connections())
         {
@@ -39,7 +39,7 @@ namespace platform::netconfig
         return {};
     }
 
-    ActiveConnectionRef ProviderInterface::get_active_connection(const Key &key) const
+    ActiveConnectionData::ptr ProviderInterface::get_active_connection(const Key &key) const
     {
         try
         {
@@ -51,7 +51,7 @@ namespace platform::netconfig
         }
     }
 
-    ActiveConnectionRef ProviderInterface::get_active_connection(ConnectionType type) const
+    ActiveConnectionData::ptr ProviderInterface::get_active_connection(ConnectionType type) const
     {
         for (const auto &[key, ref] : this->get_active_connections())
         {
@@ -63,7 +63,7 @@ namespace platform::netconfig
         return {};
     }
 
-    AccessPointRef ProviderInterface::get_ap(const Key &key) const
+    AccessPointData::ptr ProviderInterface::get_ap(const Key &key) const
     {
         try
         {
@@ -92,10 +92,10 @@ namespace platform::netconfig
         return map;
     }
 
-    std::vector<AccessPointRef> ProviderInterface::get_aps_by_strongest_ssid() const
+    std::vector<AccessPointData::ptr> ProviderInterface::get_aps_by_strongest_ssid() const
     {
         std::multimap<core::types::Byte,
-                      AccessPointRef,
+                      AccessPointData::ptr,
                       std::greater<core::types::Byte>>
             mmap;
 
@@ -104,7 +104,7 @@ namespace platform::netconfig
             mmap.emplace(ap->strength, ap);
         }
 
-        std::vector<AccessPointRef> aps;
+        std::vector<AccessPointData::ptr> aps;
         aps.reserve(mmap.size());
         for (const auto &[strength, ap] : mmap)
         {
@@ -113,7 +113,7 @@ namespace platform::netconfig
         return aps;
     }
 
-    AccessPointRef ProviderInterface::get_active_ap() const
+    AccessPointData::ptr ProviderInterface::get_active_ap() const
     {
         for (const auto &[key, device] : this->get_devices())
         {
@@ -125,7 +125,7 @@ namespace platform::netconfig
         return {};
     }
 
-    AccessPointRef ProviderInterface::get_active_ap(const DeviceRef &dev) const
+    AccessPointData::ptr ProviderInterface::get_active_ap(const DeviceData::ptr &dev) const
     {
         if (auto *wifi = dev->wifi_data())
         {
@@ -160,7 +160,7 @@ namespace platform::netconfig
         return active;
     }
 
-    bool ProviderInterface::ap_supported(AccessPointRef ap) const
+    bool ProviderInterface::ap_supported(AccessPointData::ptr ap) const
     {
         switch (ap->auth_type())
         {
@@ -176,7 +176,7 @@ namespace platform::netconfig
         }
     }
 
-    DeviceRef ProviderInterface::get_device(const Key &key) const
+    DeviceData::ptr ProviderInterface::get_device(const Key &key) const
     {
         try
         {
@@ -188,7 +188,7 @@ namespace platform::netconfig
         }
     }
 
-    DeviceRef ProviderInterface::get_device(NMDeviceType type) const
+    DeviceData::ptr ProviderInterface::get_device(NMDeviceType type) const
     {
         for (const auto &[key, ref] : this->get_devices())
         {
@@ -210,9 +210,9 @@ namespace platform::netconfig
             {
                 if (wifi->active_accesspoint.size())
                 {
-                    AccessPointRef ap = this->get_ap(wifi->active_accesspoint);
-                    ActiveConnectionRef ac = this->get_active_connection(dev->active_connection);
-                    ConnectionRef cs = this->get_connection(dev->active_connection);
+                    AccessPointData::ptr ap = this->get_ap(wifi->active_accesspoint);
+                    ActiveConnectionData::ptr ac = this->get_active_connection(dev->active_connection);
+                    ConnectionData::ptr cs = this->get_connection(dev->active_connection);
                     return {dev, ap, ac, cs};
                 }
             }
@@ -234,7 +234,7 @@ namespace platform::netconfig
 
     NMConnectivityState ProviderInterface::get_connectivity() const
     {
-        if (GlobalDataRef data = this->get_global_data())
+        if (GlobalData::ptr data = this->get_global_data())
         {
             return data->connectivity;
         }

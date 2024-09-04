@@ -33,7 +33,7 @@ namespace core::dds
         Super::close();
     }
 
-    void DDSLogger::capture_message(const logging::Message::Ref &msg)
+    void DDSLogger::capture_message(const logging::Message::ptr &msg)
     {
         if (this->log_writer)
         {

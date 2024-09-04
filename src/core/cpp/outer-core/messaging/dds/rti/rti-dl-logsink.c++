@@ -47,7 +47,7 @@ namespace core::dds
         Super::close();
     }
 
-    void RTIDistributedLogger::capture_message(const core::logging::Message::Ref &msg)
+    void RTIDistributedLogger::capture_message(const core::logging::Message::ptr &msg)
     {
         if (this->dist_logger_)
         {

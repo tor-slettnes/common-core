@@ -223,17 +223,17 @@ namespace core::types
 
     bool Value::is_valuelist() const noexcept
     {
-        return this->holdsAnyOf<ValueListRef>();
+        return this->holdsAnyOf<ValueListPtr>();
     }
 
     bool Value::is_kvmap() const noexcept
     {
-        return this->holdsAnyOf<KeyValueMapRef>();
+        return this->holdsAnyOf<KeyValueMapPtr>();
     }
 
     bool Value::is_tvlist() const noexcept
     {
-        return this->holdsAnyOf<TaggedValueListRef>();
+        return this->holdsAnyOf<TaggedValueListPtr>();
     }
 
     bool Value::as_bool(bool fallback) const noexcept
@@ -297,13 +297,13 @@ namespace core::types
             return this->get<dt::Duration>() != dt::Duration::zero();
 
         case ValueType::VALUELIST:
-            return this->get<ValueListRef>()->size() > 0;
+            return this->get<ValueListPtr>()->size() > 0;
 
         case ValueType::KVMAP:
-            return this->get<KeyValueMapRef>()->size() > 0;
+            return this->get<KeyValueMapPtr>()->size() > 0;
 
         case ValueType::TVLIST:
-            return this->get<TaggedValueListRef>()->size() > 0;
+            return this->get<TaggedValueListPtr>()->size() > 0;
 
         default:
             return this->numeric_cast<bool>(fallback ? 1 : 0);
@@ -454,7 +454,7 @@ namespace core::types
 
         case ValueType::VALUELIST:
         {
-            auto list = this->get<ValueListRef>();
+            auto list = this->get<ValueListPtr>();
             auto it = list->begin();
             return {
                 list->get(0).as_real(),
@@ -464,7 +464,7 @@ namespace core::types
 
         case ValueType::KVMAP:
         {
-            auto map = this->get<KeyValueMapRef>();
+            auto map = this->get<KeyValueMapPtr>();
             return {
                 map->get(REAL_PART).as_real(),
                 map->get(IMAG_PART).as_real(),
@@ -473,7 +473,7 @@ namespace core::types
 
         case ValueType::TVLIST:
         {
-            auto tvlist = this->get<TaggedValueListRef>();
+            auto tvlist = this->get<TaggedValueListPtr>();
             return {
                 tvlist->get(0).as_real(),
                 tvlist->get(1).as_real(),
@@ -631,13 +631,13 @@ namespace core::types
         switch (this->type())
         {
         case ValueType::VALUELIST:
-            return *this->get<ValueListRef>();
+            return *this->get<ValueListPtr>();
 
         case ValueType::KVMAP:
-            return this->get<KeyValueMapRef>()->values();
+            return this->get<KeyValueMapPtr>()->values();
 
         case ValueType::TVLIST:
-            return this->get<TaggedValueListRef>()->values();
+            return this->get<TaggedValueListPtr>()->values();
 
         case ValueType::COMPLEX:
             return {this->as_real(), this->as_imag()};
@@ -657,10 +657,10 @@ namespace core::types
         switch (this->type())
         {
         case ValueType::KVMAP:
-            return *this->get<KeyValueMapRef>();
+            return *this->get<KeyValueMapPtr>();
 
         case ValueType::TVLIST:
-            return this->get<TaggedValueListRef>()->as_kvmap();
+            return this->get<TaggedValueListPtr>()->as_kvmap();
 
         case ValueType::COMPLEX:
             return {
@@ -683,13 +683,13 @@ namespace core::types
         switch (this->type())
         {
         case ValueType::VALUELIST:
-            return this->get<ValueListRef>()->as_tvlist();
+            return this->get<ValueListPtr>()->as_tvlist();
 
         case ValueType::KVMAP:
-            return this->get<KeyValueMapRef>()->as_tvlist();
+            return this->get<KeyValueMapPtr>()->as_tvlist();
 
         case ValueType::TVLIST:
-            return *this->get<TaggedValueListRef>();
+            return *this->get<TaggedValueListPtr>();
 
         case ValueType::COMPLEX:
             return {
@@ -702,9 +702,9 @@ namespace core::types
         }
     }
 
-    ValueListRef Value::get_valuelist() const noexcept
+    ValueListPtr Value::get_valuelist() const noexcept
     {
-        if (auto *ptr = this->get_if<ValueListRef>())
+        if (auto *ptr = this->get_if<ValueListPtr>())
         {
             return *ptr;
         }
@@ -714,9 +714,9 @@ namespace core::types
         }
     }
 
-    KeyValueMapRef Value::get_kvmap() const noexcept
+    KeyValueMapPtr Value::get_kvmap() const noexcept
     {
-        if (auto *ptr = this->get_if<KeyValueMapRef>())
+        if (auto *ptr = this->get_if<KeyValueMapPtr>())
         {
             return *ptr;
         }
@@ -726,9 +726,9 @@ namespace core::types
         }
     }
 
-    TaggedValueListRef Value::get_tvlist() const noexcept
+    TaggedValueListPtr Value::get_tvlist() const noexcept
     {
-        if (auto *ptr = this->get_if<TaggedValueListRef>())
+        if (auto *ptr = this->get_if<TaggedValueListPtr>())
         {
             return *ptr;
         }
@@ -743,10 +743,10 @@ namespace core::types
         switch (this->type())
         {
         case ValueType::KVMAP:
-            return std::get<KeyValueMapRef>(*this)->operator[](key);
+            return std::get<KeyValueMapPtr>(*this)->operator[](key);
 
         case ValueType::TVLIST:
-            return std::get<TaggedValueListRef>(*this)->operator[](key);
+            return std::get<TaggedValueListPtr>(*this)->operator[](key);
 
         default:
             throw std::invalid_argument("Value instance is not mappable");
@@ -758,10 +758,10 @@ namespace core::types
         switch (this->type())
         {
         case ValueType::VALUELIST:
-            return std::get<ValueListRef>(*this)->at(index);
+            return std::get<ValueListPtr>(*this)->at(index);
 
         case ValueType::TVLIST:
-            return std::get<TaggedValueListRef>(*this)->at(index).second;
+            return std::get<TaggedValueListPtr>(*this)->at(index).second;
 
         default:
             throw std::invalid_argument("Value instance is not indexable");
@@ -773,10 +773,10 @@ namespace core::types
         switch (this->type())
         {
         case ValueType::VALUELIST:
-            return std::get<ValueListRef>(*this)->front(fallback);
+            return std::get<ValueListPtr>(*this)->front(fallback);
 
         case ValueType::TVLIST:
-            return std::get<TaggedValueListRef>(*this)->front(fallback);
+            return std::get<TaggedValueListPtr>(*this)->front(fallback);
 
         default:
             return fallback;
@@ -788,10 +788,10 @@ namespace core::types
         switch (this->type())
         {
         case ValueType::VALUELIST:
-            return std::get<ValueListRef>(*this)->back(fallback);
+            return std::get<ValueListPtr>(*this)->back(fallback);
 
         case ValueType::TVLIST:
-            return std::get<TaggedValueListRef>(*this)->back(fallback);
+            return std::get<TaggedValueListPtr>(*this)->back(fallback);
 
         default:
             return fallback;
@@ -803,10 +803,10 @@ namespace core::types
         switch (this->type())
         {
         case ValueType::KVMAP:
-            return std::get<KeyValueMapRef>(*this)->get(key, fallback);
+            return std::get<KeyValueMapPtr>(*this)->get(key, fallback);
 
         case ValueType::TVLIST:
-            return std::get<TaggedValueListRef>(*this)->get(key, fallback);
+            return std::get<TaggedValueListPtr>(*this)->get(key, fallback);
 
         default:
             return fallback;
@@ -818,10 +818,10 @@ namespace core::types
         switch (this->type())
         {
         case ValueType::VALUELIST:
-            return std::get<ValueListRef>(*this)->get(index, fallback);
+            return std::get<ValueListPtr>(*this)->get(index, fallback);
 
         case ValueType::TVLIST:
-            return std::get<TaggedValueListRef>(*this)->get(index, fallback);
+            return std::get<TaggedValueListPtr>(*this)->get(index, fallback);
 
         default:
             return fallback;
@@ -833,10 +833,10 @@ namespace core::types
         switch (this->type())
         {
         case ValueType::VALUELIST:
-            return std::get<ValueListRef>(*this)->get(index, fallback);
+            return std::get<ValueListPtr>(*this)->get(index, fallback);
 
         case ValueType::TVLIST:
-            return std::get<TaggedValueListRef>(*this)->get(index, fallback);
+            return std::get<TaggedValueListPtr>(*this)->get(index, fallback);
 
         default:
             return fallback;

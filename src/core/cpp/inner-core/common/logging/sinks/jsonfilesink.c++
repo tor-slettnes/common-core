@@ -43,7 +43,7 @@ namespace core::logging
         this->open(tp);
     }
 
-    void JsonFileSink::capture_event(const status::Event::Ref &event)
+    void JsonFileSink::capture_event(const status::Event::ptr &event)
     {
         if (this->writer_)
         {

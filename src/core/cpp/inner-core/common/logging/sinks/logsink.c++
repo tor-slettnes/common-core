@@ -30,7 +30,7 @@ namespace core::logging
         }
     }
 
-    bool LogSink::capture(const types::Loggable::Ref &item)
+    bool LogSink::capture(const types::Loggable::ptr &item)
     {
         if (auto event = std::dynamic_pointer_cast<status::Event>(item))
         {

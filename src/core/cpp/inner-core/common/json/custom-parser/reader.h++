@@ -16,8 +16,6 @@ namespace core::json
         using This = CustomReader;
         using Super = BaseReader;
 
-        using ParserRef = std::shared_ptr<TokenParser>;
-
     public:
         CustomReader();
 
@@ -27,12 +25,12 @@ namespace core::json
         types::Value read_stream(std::istream &&stream) const override;
 
     private:
-        static types::Value parse_input(const ParserRef &parser);
-        static types::Value parse_value(const ParserRef &parser);
-        static types::KeyValueMapRef parse_object(const ParserRef &parser);
-        static types::ValueListRef parse_array(const ParserRef &parser);
+        static types::Value parse_input(const TokenParser::ptr &parser);
+        static types::Value parse_value(const TokenParser::ptr &parser);
+        static types::KeyValueMapPtr parse_object(const TokenParser::ptr &parser);
+        static types::ValueListPtr parse_array(const TokenParser::ptr &parser);
 
-        static TokenPair next_value(const ParserRef &parser,
+        static TokenPair next_value(const TokenParser::ptr &parser,
                                     const TokenMask &endtokens = TI_NONE);
     };
 }  // namespace core::json

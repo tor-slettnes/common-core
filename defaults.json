@@ -12,5 +12,8 @@
         "download url": "https://slett.net/cc-upgrade/",
         "package suffix": ".ccpkg",
         "keyring": "common-core-release.kbx"
+    },
+    "python": {
+        "namespace": "cc"
     }
 }

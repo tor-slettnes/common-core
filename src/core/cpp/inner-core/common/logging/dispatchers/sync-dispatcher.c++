@@ -9,11 +9,11 @@
 
 namespace core::logging
 {
-    void SyncDispatcher::submit(const types::Loggable::Ref &item)
+    void SyncDispatcher::submit(const types::Loggable::ptr &item)
     {
         std::lock_guard<std::mutex> lck(this->mtx_);
 
-        for (const Sink::Ref &sink : this->sinks())
+        for (const Sink::ptr &sink : this->sinks())
         {
             if (sink->is_applicable(*item))
             {

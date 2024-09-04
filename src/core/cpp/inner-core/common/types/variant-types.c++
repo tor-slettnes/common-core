@@ -56,17 +56,17 @@ namespace core::types
         switch (value.type())
         {
         case ValueType::VALUELIST:
-            return typetree(std::get<ValueListRef>(value));
+            return typetree(std::get<ValueListPtr>(value));
         case ValueType::KVMAP:
-            return typetree(std::get<KeyValueMapRef>(value));
+            return typetree(std::get<KeyValueMapPtr>(value));
         case ValueType::TVLIST:
-            return typetree(std::get<TaggedValueListRef>(value));
+            return typetree(std::get<TaggedValueListPtr>(value));
         default:
             return value.type_name();
         }
     }
 
-    std::string typetree(const ValueListRef &list)
+    std::string typetree(const ValueListPtr &list)
     {
         std::string delimiter;
         std::stringstream ss;
@@ -84,7 +84,7 @@ namespace core::types
         return ss.str();
     }
 
-    std::string typetree(const KeyValueMapRef &kvmap)
+    std::string typetree(const KeyValueMapPtr &kvmap)
     {
         std::string delimiter;
         std::stringstream ss;
@@ -101,7 +101,7 @@ namespace core::types
         return ss.str();
     }
 
-    std::string typetree(const TaggedValueListRef &tvlist)
+    std::string typetree(const TaggedValueListPtr &tvlist)
     {
         std::string delimiter;
         std::stringstream ss;

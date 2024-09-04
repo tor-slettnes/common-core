@@ -18,10 +18,16 @@ void Options::add_commands()
 {
     this->add_command(
         "scan",
-        {"{default | vfs CONTEXT:[PATH] | url URL"},
+        {"{default | vfs CONTEXT:[PATH] | url URL}"},
         "Scan a VFS path or online for upgrade packages. If no source is given, "
         "scan the default download site.",
         std::bind(&Options::scan, this));
+
+    this->add_command(
+        "list_sources",
+        {},
+        "List upgrade packages discovered from prior scans.",
+        std::bind(&Options::list_sources, this));
 
     this->add_command(
         "list_available",
@@ -37,8 +43,7 @@ void Options::add_commands()
 
     this->add_command(
         "install",
-        {"[PACKAGE]"},
-
+        {"[{default | vfs CONTEXT:[PATH] | url URL} PACKAGE]"},
         "Install an software upgrade package. If no package path is provided, "
         "install the best available package discovered from prior scans.",
         std::bind(&Options::install, this));
@@ -81,20 +86,57 @@ void Options::scan()
     platform::upgrade::upgrade->scan(source);
 }
 
+void Options::list_sources()
+{
+    for (const auto &src : platform::upgrade::upgrade->list_sources())
+    {
+        std::cout << src << std::endl;
+    }
+}
+
 void Options::list_available()
 {
+    for (const auto &manifest : platform::upgrade::upgrade->list_available())
+    {
+        std::cout << *manifest << std::endl;
+    }
 }
 
 void Options::best_available()
 {
+    std::cout << *platform::upgrade::upgrade->best_available() << std::endl;
 }
 
 void Options::install()
 {
+    platform::upgrade::PackageSource source;
+
+    if (std::optional<std::string> arg = this->next_arg())
+    {
+        if (core::str::tolower(arg.value()) == "vfs")
+        {
+            source.location = this->vfspath(this->get_arg("vfs path"));
+        }
+        else if (core::str::tolower(arg.value()) == "url")
+        {
+            source.location = this->get_arg("url");
+        }
+        else if (core::str::tolower(arg.value()) != "default")
+        {
+            std::cerr << "source type bust be one of 'default', 'vfs', 'url'"
+                      << std::endl;
+            std::exit(-1);
+        }
+
+        source.filename = this->get_arg("package name");
+    }
+
+    std::cout << *platform::upgrade::upgrade->install(source) << std::endl;
 }
 
 void Options::finalize()
 {
+    platform::upgrade::upgrade->finalize();
 }
 
 platform::vfs::Path Options::vfspath(const std::string &path)

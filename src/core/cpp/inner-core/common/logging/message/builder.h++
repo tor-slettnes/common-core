@@ -39,7 +39,7 @@ namespace core::logging
         using Super = std::ostringstream;
 
     public:
-        using Ref = std::shared_ptr<MessageBuilder>;
+        using ptr = std::shared_ptr<MessageBuilder>;
 
     protected:
         /// @brief
@@ -66,7 +66,7 @@ namespace core::logging
 
         MessageBuilder(Dispatcher *dispatcher,
                        status::Level level,
-                       Scope::Ref scope,
+                       Scope::ptr scope,
                        status::Flow flow,
                        const dt::TimePoint &tp,
                        const fs::path &path,

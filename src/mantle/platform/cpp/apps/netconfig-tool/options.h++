@@ -16,8 +16,6 @@ class Options : public core::argparse::CommandOptions
 public:
     Options();
 
-    using Super::handle_command;
-
 private:
     void add_options() override;
     void add_commands();
@@ -25,33 +23,31 @@ private:
     void initialize();
     void deinitialize();
 
-    bool handle_command(const Handler &handler) override;
-
     void on_monitor_start() override;
     void on_monitor_end() override;
 
     void on_globaldata(
-        const platform::netconfig::GlobalDataRef &data);
+        const platform::netconfig::GlobalData::ptr &data);
 
     void on_connection(
         core::signal::MappingAction action,
         const std::string &key,
-        platform::netconfig::ConnectionRef data);
+        platform::netconfig::ConnectionData::ptr data);
 
     void on_active_connection(
         core::signal::MappingAction action,
         const std::string &key,
-        platform::netconfig::ActiveConnectionRef data);
+        platform::netconfig::ActiveConnectionData::ptr data);
 
     void on_accesspoint(
         core::signal::MappingAction action,
         const std::string &key,
-        platform::netconfig::AccessPointRef data);
+        platform::netconfig::AccessPointData::ptr data);
 
     void on_device(
         core::signal::MappingAction action,
         const std::string &key,
-        platform::netconfig::DeviceRef data);
+        platform::netconfig::DeviceData::ptr data);
 
 private:
     void get_state();

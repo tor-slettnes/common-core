@@ -15,7 +15,7 @@ namespace core::dbus
     public:
         PropertiesProxy(
             ProxyContainer* container,
-            const dbus::ConnectionRef& connection,
+            const dbus::ConnectionPtr& connection,
             const dbus::ServiceName& servicename,
             const dbus::ObjectPath& objectpath,
             const dbus::InterfaceName& interfacename);

@@ -35,7 +35,7 @@ namespace platform::upgrade::grpc
 
     void Client::on_scan_progress(const cc::platform::upgrade::Signal &signal)
     {
-        platform::upgrade::ScanProgress::Ref progress;
+        platform::upgrade::ScanProgress::ptr progress;
         if (This::is_mapped(signal.mapping_action()))
         {
             protobuf::decode_shared(signal.scan_progress(), &progress);
@@ -45,7 +45,7 @@ namespace platform::upgrade::grpc
 
     void Client::on_upgrade_available(const cc::platform::upgrade::Signal &signal)
     {
-        platform::upgrade::PackageInfo::Ref available_info;
+        platform::upgrade::PackageManifest::ptr available_info;
         if (This::is_mapped(signal.mapping_action()))
         {
             protobuf::decode_shared(signal.upgrade_available(), &available_info);
@@ -55,7 +55,7 @@ namespace platform::upgrade::grpc
 
     void Client::on_upgrade_pending(const cc::platform::upgrade::Signal &signal)
     {
-        platform::upgrade::PackageInfo::Ref pending_info;
+        platform::upgrade::PackageManifest::ptr pending_info;
         if (This::is_mapped(signal.mapping_action()))
         {
             protobuf::decode_shared(signal.upgrade_pending(), &pending_info);
@@ -65,7 +65,7 @@ namespace platform::upgrade::grpc
 
     void Client::on_upgrade_progress(const cc::platform::upgrade::Signal &signal)
     {
-        platform::upgrade::UpgradeProgress::Ref progress;
+        platform::upgrade::UpgradeProgress::ptr progress;
         if (This::is_mapped(signal.mapping_action()))
         {
             protobuf::decode_shared(signal.upgrade_progress(), &progress);

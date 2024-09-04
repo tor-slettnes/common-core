@@ -10,18 +10,18 @@
 
 namespace core::logging
 {
-    Sink::Ref Dispatcher::add_sink(const Sink::Ref &sink)
+    Sink::ptr Dispatcher::add_sink(const Sink::ptr &sink)
     {
         auto [it, inserted] = this->sinks_.insert(sink);
         return *it;
     }
 
-    bool Dispatcher::remove_sink(const Sink::Ref &sink)
+    bool Dispatcher::remove_sink(const Sink::ptr &sink)
     {
         return this->sinks_.erase(sink) > 0;
     }
 
-    const std::set<Sink::Ref> &Dispatcher::sinks() const
+    const std::set<Sink::ptr> &Dispatcher::sinks() const
     {
         return this->sinks_;
     }
@@ -37,7 +37,7 @@ namespace core::logging
 
     bool Dispatcher::is_applicable(const types::Loggable &item) const
     {
-        for (const Sink::Ref &sink : this->sinks())
+        for (const Sink::ptr &sink : this->sinks())
         {
             if (sink->is_applicable(item))
             {
@@ -47,9 +47,9 @@ namespace core::logging
         return false;
     }
 
-    void Dispatcher::submit(const types::Loggable::Ref &item)
+    void Dispatcher::submit(const types::Loggable::ptr &item)
     {
-        for (const Sink::Ref &sink : this->sinks())
+        for (const Sink::ptr &sink : this->sinks())
         {
             if (sink->is_applicable(*item))
             {

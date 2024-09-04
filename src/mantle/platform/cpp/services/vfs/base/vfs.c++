@@ -18,7 +18,7 @@ namespace platform::vfs
         return vfs::ContextProxy(vfs->get_context(name), modify);
     }
 
-    ContextProxy contextProxy(ContextRef ref, bool modify)
+    ContextProxy contextProxy(Context::ptr ref, bool modify)
     {
         return vfs::ContextProxy(ref, modify);
     }
@@ -32,11 +32,11 @@ namespace platform::vfs
                       const fs::path &relpath,
                       bool modify)
     {
-        ContextRef cxt = vfs->get_context(context);
+        Context::ptr cxt = vfs->get_context(context);
         return vfs::Location(cxt, relpath, modify);
     }
 
-    Location location(ContextRef ref, const fs::path &relpath, bool modify)
+    Location location(Context::ptr ref, const fs::path &relpath, bool modify)
     {
         return vfs::Location(ref, relpath, modify);
     }
@@ -109,17 +109,17 @@ namespace platform::vfs
         return get_contexts(true);
     }
 
-    ContextRef get_context(const std::string &name, bool required)
+    Context::ptr get_context(const std::string &name, bool required)
     {
         return vfs->get_context(name, required);
     }
 
-    ContextRef open_context(const std::string &name, bool required)
+    Context::ptr open_context(const std::string &name, bool required)
     {
         return vfs->open_context(name, required);
     }
 
-    void close_context(const ContextRef &cxt)
+    void close_context(const Context::ptr &cxt)
     {
         return vfs->close_context(cxt);
     }
@@ -304,12 +304,12 @@ namespace platform::vfs
             });
     }
 
-    ReaderRef read_file(const Path &vpath)
+    UniqueReader read_file(const Path &vpath)
     {
         return vfs->read_file(vpath);
     }
 
-    WriterRef write_file(const Path &vpath)
+    UniqueWriter write_file(const Path &vpath)
     {
         return vfs->write_file(vpath);
     }

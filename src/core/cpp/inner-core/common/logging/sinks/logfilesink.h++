@@ -35,7 +35,7 @@ namespace core::logging
         void open(const dt::TimePoint &tp);
         void close() override;
         void rotate(const dt::TimePoint &tp) override;
-        void capture_message(const Message::Ref &msg) override;
+        void capture_message(const Message::ptr &msg) override;
 
     private:
         std::shared_ptr<std::ofstream> stream_;

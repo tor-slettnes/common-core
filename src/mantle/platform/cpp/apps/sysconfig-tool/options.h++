@@ -16,16 +16,12 @@ class Options : public core::argparse::CommandOptions
 public:
     Options();
 
-    using Super::handle_command;
-
 private:
     void add_options() override;
     void add_commands();
 
     void initialize();
     void deinitialize();
-
-    bool handle_command(const Handler &handler) override;
 
     void on_monitor_start() override;
     void on_monitor_end() override;

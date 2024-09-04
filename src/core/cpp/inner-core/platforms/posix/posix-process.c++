@@ -6,19 +6,19 @@
 //==============================================================================
 
 #include "posix-process.h++"
+#include "platform/symbols.h++"
+#include "logging/logging.h++"
 
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <poll.h>
 
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
 #include <future>
-
 
 #define ELEMENTS(array) (sizeof(array) / sizeof(array[0]))
 
@@ -90,8 +90,54 @@ namespace core::platform
         const fs::path &errfile) const
     {
         PID pid = this->invoke_async(argv, cwd, infile, outfile, errfile);
-        return this->waitpid(pid, false);
+        int wstatus = 0;
+        ::waitpid(pid, &wstatus, 0);
+        return wstatus;
     }
+
+    // PID PosixProcessProvider::invoke_async_pipe(
+    //     const ArgVector &argv,
+    //     const fs::path &cwd,
+    //     FileDescriptor *fdin,
+    //     FileDescriptor *fdout,
+    //     FileDescriptor *fderr) const
+    // {
+    //     if (argv.empty())
+    //     {
+    //         throw std::invalid_argument("Missing command");
+    //     }
+
+    //     FileDescriptor inpipe[2], outpipe[2], errpipe[2];
+
+    //     this->checkstatus(::pipe(inpipe));
+    //     this->checkstatus(::pipe(outpipe));
+    //     this->checkstatus(::pipe(errpipe));
+
+    //     PID pid = this->checkstatus(fork());
+
+    //     if (pid == 0)
+    //     {
+    //         // Child uses inpipe/outpipe/errpipe as stdin/stdout/sderr.
+    //         this->checkstatus(dup2(inpipe[INPUT], STDIN_FILENO));
+    //         this->checkstatus(dup2(outpipe[OUTPUT], STDOUT_FILENO));
+    //         this->checkstatus(dup2(errpipe[OUTPUT], STDERR_FILENO));
+
+    //         this->close_fds(inpipe);
+    //         this->close_fds(outpipe);
+    //         this->close_fds(errpipe);
+
+    //         this->execute(argv, cwd);
+    //     }
+    //     else
+    //     {
+    //         // Parent writes to inpipe and reads from outpipe and errpipe.
+    //         this->trim_pipe(inpipe, OUTPUT, fdin);
+    //         this->trim_pipe(outpipe, INPUT, fdout);
+    //         this->trim_pipe(errpipe, INPUT, fderr);
+    //     }
+
+    //     return pid;
+    // }
 
     PID PosixProcessProvider::invoke_async_pipe(
         const ArgVector &argv,
@@ -100,84 +146,15 @@ namespace core::platform
         FileDescriptor *fdout,
         FileDescriptor *fderr) const
     {
-        if (argv.empty())
+        Pipe inpipe = {-1, -1};
+
+        if (fdin)
         {
-            throw std::invalid_argument("Missing command");
+            inpipe = this->create_pipe();
+            *fdin = inpipe[OUTPUT];
         }
 
-        FileDescriptor inpipe[2], outpipe[2], errpipe[2];
-
-        this->checkstatus(::pipe(inpipe));
-        this->checkstatus(::pipe(outpipe));
-        this->checkstatus(::pipe(errpipe));
-
-        PID pid = this->checkstatus(fork());
-
-        if (pid == 0)
-        {
-            // Child uses inpipe/outpipe/errpipe as stdin/stdout/sderr.
-            this->checkstatus(dup2(inpipe[INPUT], STDIN_FILENO));
-            this->checkstatus(dup2(outpipe[OUTPUT], STDOUT_FILENO));
-            this->checkstatus(dup2(errpipe[OUTPUT], STDERR_FILENO));
-
-            this->close_fds(inpipe);
-            this->close_fds(outpipe);
-            this->close_fds(errpipe);
-
-            this->execute(argv, cwd);
-        }
-        else
-        {
-            // Parent writes to inpipe and reads from outpipe and errpipe.
-            this->trim_pipe(inpipe, OUTPUT, fdin);
-            this->trim_pipe(outpipe, INPUT, fdout);
-            this->trim_pipe(errpipe, INPUT, fderr);
-        }
-
-        return pid;
-    }
-
-    PID PosixProcessProvider::invoke_async_from_pipe(
-        const ArgVector &argv,
-        const fs::path &cwd,
-        FileDescriptor from_fdin,
-        FileDescriptor *fdout,
-        FileDescriptor *fderr) const
-    {
-        if (argv.empty())
-        {
-            throw std::invalid_argument("Missing command");
-        }
-
-        FileDescriptor outpipe[2], errpipe[2];
-
-        this->checkstatus(::pipe(outpipe));
-        this->checkstatus(::pipe(errpipe));
-
-        PID pid = this->checkstatus(fork());
-
-        if (pid == 0)
-        {
-            // Child uses from_fdin as input and outpipe/errpipe as stdout/sderr.
-            this->checkstatus(dup2(from_fdin, STDIN_FILENO));
-            this->checkstatus(dup2(outpipe[OUTPUT], STDOUT_FILENO));
-            this->checkstatus(dup2(errpipe[OUTPUT], STDERR_FILENO));
-
-            close(from_fdin);
-            this->close_fds(outpipe);
-            this->close_fds(errpipe);
-
-            this->execute(argv, cwd);
-        }
-        else
-        {
-            // Parent reads from outpipe and errpipe.
-            close(from_fdin);
-            this->trim_pipe(outpipe, INPUT, fdout);
-            this->trim_pipe(errpipe, INPUT, fderr);
-        }
-
-        return pid;
+        return this->invoke_async_from_fd(argv, cwd, inpipe[INPUT], fdout, fderr);
     }
 
     ExitStatus PosixProcessProvider::pipe_capture(
@@ -189,12 +166,13 @@ namespace core::platform
         std::string *output,
         std::string *diag) const
     {
-        struct pollfd pfds[] = {
+        std::vector<struct pollfd> pfds = {
             {fdin, POLLOUT, 0},
             {fdout, POLLIN, 0},
-            {fderr, POLLIN, 0}};
+            {fderr, POLLIN, 0},
+        };
 
-        for (uint i = 0; i < ELEMENTS(pfds); i++)
+        for (uint i = 0; i < pfds.size(); i++)
         {
             if (FileDescriptor fd = pfds[i].fd; fd >= 0)
             {
@@ -211,12 +189,12 @@ namespace core::platform
         {
             if (written >= input.size())
             {
-                close(fdin);
+                ::close(fdin);
                 pfds[STDIN_FILENO].fd = -1;
                 pfds[STDIN_FILENO].events = 0;
             }
 
-            this->checkstatus(poll(pfds, ELEMENTS(pfds), -1));
+            this->checkstatus(::poll(pfds.data(), pfds.size(), -1));
 
             if (pfds[STDIN_FILENO].revents & POLLOUT)
             {
@@ -246,12 +224,9 @@ namespace core::platform
             }
         }
 
-        for (uint i = 0; i < ELEMENTS(pfds); i++)
+        for (uint i = 0; i < pfds.size(); i++)
         {
-            if (FileDescriptor fd = pfds[i].fd; fd >= 0)
-            {
-                close(fd);
-            }
+            this->close_fd(pfds[i].fd);
         }
 
         if (output)
@@ -312,116 +287,67 @@ namespace core::platform
         }
     }
 
-    void PosixProcessProvider::pipeline(
+    InvocationResults PosixProcessProvider::pipeline(
         const Invocations &invocations,
         FileDescriptor fdin,
-        FileDescriptor *fdout) const
+        bool checkstatus) const
     {
         FileDescriptor pipe_fd = fdin;
-        std::vector<PID> pids;
-        std::vector<struct pollfd> stderr_pfds;
-        std::vector<std::shared_ptr<std::stringstream>> stderr_streams(invocations.size());
-
-        // std::vector<std::pair<PID, std::string>> processes;
-        // processes.reserve(invocations.size());
-        // std::vector<std::tuple<std::string, PID, FileDescriptor>> results;
-        // results.reserve(invocations.size());
+        std::vector<struct pollfd> pfds;
+        InvocationResults results;
+        results.reserve(invocations.size());
 
         // Invoke commands
         for (const Invocation &invocation : invocations)
         {
             FileDescriptor stderr_fd;
-            pids.push_back(
-                this->invoke_async_from_pipe(
-                    invocation.argv,
-                    invocation.cwd,
-                    pipe_fd,
-                    &pipe_fd,
-                    &stderr_fd));
+            PID pid = this->invoke_async_from_fd(
+                invocation.argv,
+                invocation.cwd,
+                pipe_fd,
+                &pipe_fd,
+                &stderr_fd);
 
-            stderr_pfds.push_back({
+            results.push_back({.pid = pid});
+
+            pfds.push_back({
                 .fd = stderr_fd,
                 .events = POLLIN,
                 .revents = 0,
             });
-
-            fcntl(stderr_fd, F_SETFL, O_NONBLOCK);
         }
 
-        if (fdout != nullptr)
-        {
-            *fdout = pipe_fd;
-        }
+        // Append stdout from the last command in the pipeline to
+        // the file descriptors that we monitor.
 
-        // Collect anything printed on `stderr` from each subprocess.
-        // We do this with `poll()` rather than sequentially in order to
-        // avoid deadlocks in case the text from a given process fills
-        // up the corresponding pipe's temporary buffer.
+        pfds.push_back({
+            .fd = pipe_fd,
+            .events = POLLIN,
+            .revents = 0,
+        });
 
-        std::vector<char> outbuf(CHUNKSIZE);
-        for (bool received = true; received; received = false)
-        {
-            this->checkstatus(poll(stderr_pfds.data(), stderr_pfds.size(), -1));
-
-            for (uint c = 0; c < stderr_pfds.size(); c++)
-            {
-                struct pollfd &pfd = stderr_pfds.at(c);
-                if (pfd.revents & POLLIN)
-                {
-                    std::shared_ptr<std::stringstream> &ss = stderr_streams.at(c);
-                    if (!ss)
-                    {
-                        ss = std::make_shared<std::stringstream>();
-                        *ss << invocations.at(c).argv.front() << ": ";
-                    }
-
-                    int nchars = this->checkstatus(
-                        ::read(pfd.fd,
-                               (void *)outbuf.data(),
-                               outbuf.size()));
-
-                    ss->write(outbuf.data(), nchars);
-                    received = true;
-                }
-            }
-        }
-
-        // Now wait for all subprocesses to complete.  We capture the error from
-        // the first process to exit with a non-zero code, if any.
-        std::exception_ptr eptr;
-        for (uint c = 0; c < pids.size(); c++)
-        {
-            if (ExitStatus err = this->waitpid(pids.at(c)))
-            {
-                if (!eptr)
-                {
-                    eptr = std::make_exception_ptr(
-                        std::system_error(err,
-                                          std::system_category(),
-                                          invocations.at(c).argv.front()));
-                }
-            }
-        }
-
-        if (eptr)
-        {
-            std::rethrow_exception(eptr);
-        }
+        this->poll_outputs(pfds, invocations, &results);
+        this->wait_results(invocations, checkstatus, &results);
+        return results;
     }
 
-    void PosixProcessProvider::pipe_from_stream(
+    InvocationResults PosixProcessProvider::pipe_from_stream(
         const Invocations &invocations,
         std::istream &instream,
-        FileDescriptor *fdout) const
+        bool checkstatus) const
     {
-        FileDescriptor inpipe[2];
-        this->checkstatus(::pipe(inpipe));
+        Pipe inpipe = this->create_pipe();
+        logf_debug("Created pipe from stream, %d -> %d", inpipe[OUTPUT], inpipe[INPUT]);
 
-        std::future<void> future = std::async(
-            &This::pipeline, this, invocations, inpipe[INPUT], fdout);
+        std::future<InvocationResults> future = std::async(
+            &This::pipeline, this, invocations, inpipe[INPUT], checkstatus);
 
         this->write_from_stream(instream, inpipe[OUTPUT]);
-        future.wait();
+        this->close_fd(inpipe[OUTPUT]);
+        logf_debug("Closed pipe output %d; waiting for pipeline", inpipe[OUTPUT]);
+        InvocationResults results = future.get();
+        logf_debug("Pipeline finished");
+        return results;
     }
 
     ExitStatus PosixProcessProvider::waitpid(PID pid, bool checkstatus) const
@@ -429,53 +355,118 @@ namespace core::platform
         int wstatus = 0;
         int options = 0;
         ::waitpid(pid, &wstatus, options);
-        if (checkstatus && (wstatus != 0))
+        if (checkstatus && (WEXITSTATUS(wstatus) != EXIT_SUCCESS))
         {
             throw std::system_error(wstatus, std::system_category());
         }
         return wstatus;
     }
 
-    void PosixProcessProvider::write_from_stream(std::istream &stream, FileDescriptor fd) const
+    PID PosixProcessProvider::invoke_async_from_fd(
+        const ArgVector &argv,
+        const fs::path &cwd,
+        FileDescriptor fdin,
+        FileDescriptor *fdout,
+        FileDescriptor *fderr) const
     {
-        std::vector<char> buffer(CHUNKSIZE);
-        while (stream.good())
+        if (argv.empty())
         {
-            stream.read(reinterpret_cast<char *>(buffer.data()), buffer.size());
-            ::write(fd, buffer.data(), stream.gcount());
+            throw std::invalid_argument("Missing command");
         }
-        // logf_debug("Wrote %d bytes from input stream to file descriptor %d",
-        //            stream->tellg(),
-        //            fd);
-    }
 
-    void PosixProcessProvider::trim_pipe(
-        FileDescriptor pipefd[2],
-        Direction direction,
-        FileDescriptor *fd) const
-    {
-        close(pipefd[!direction]);
-        if (fd)
+        Pipe outpipe = this->create_pipe();
+        Pipe errpipe = this->create_pipe();
+        PID pid = this->checkstatus(fork());
+
+        if (pid == 0)
         {
-            *fd = pipefd[direction];
+            // Child uses inpipe as input and outpipe/errpipe as stdout/sderr.
+            if (fdin > 0)
+            {
+                this->checkstatus(dup2(fdin, STDIN_FILENO));
+            }
+            // this->close_pipe(inpipe);
+
+            this->checkstatus(dup2(outpipe[OUTPUT], STDOUT_FILENO));
+            // this->close_pipe(outpipe);
+
+            this->checkstatus(dup2(errpipe[OUTPUT], STDERR_FILENO));
+            // this->close_pipe(errpipe);
+
+            this->execute(argv, cwd);
         }
         else
         {
-            close(pipefd[direction]);
+            // Parent writes to inpipe and reads from outpipe and errpipe.
+            this->close_fd(fdin);
+            this->trim_pipe(outpipe, INPUT, fdout);
+            this->trim_pipe(errpipe, INPUT, fderr);
+
+            logf_debug("Forked pid=%d; cwd=%s, argv=%s", pid, cwd, argv);
+        }
+
+        return pid;
+    }
+
+    void PosixProcessProvider::write_from_stream(std::istream &stream, FileDescriptor fd) const
+    {
+        std::vector<char> buffer(CHUNKSIZE);
+        std::size_t count = 0;
+        while (stream.good())
+        {
+            stream.read(reinterpret_cast<char *>(buffer.data()), buffer.size());
+            count += stream.gcount();
+            ::write(fd, buffer.data(), stream.gcount());
+        }
+        logf_debug("Wrote %d bytes from input stream to file descriptor %d", count, fd);
+    }
+
+    void PosixProcessProvider::trim_pipe(
+        const Pipe &pipe,
+        Direction direction,
+        FileDescriptor *fd) const
+    {
+        this->close_fd(pipe[!direction]);
+
+        if (fd)
+        {
+            *fd = pipe[direction];
+        }
+        else
+        {
+            this->close_fd(pipe[direction]);
         }
     }
 
-    void PosixProcessProvider::close_fds(FileDescriptor pipefd[2]) const
+    void PosixProcessProvider::close_pipe(const Pipe &pipe) const
     {
-        close(pipefd[INPUT]);
-        close(pipefd[OUTPUT]);
+        this->close_fd(pipe[INPUT]);
+        this->close_fd(pipe[OUTPUT]);
+    }
+
+    void PosixProcessProvider::close_fd(FileDescriptor fd) const
+    {
+        if (fd >= 0)
+        {
+            this->checkstatus(::close(fd));
+            This::open_fds.erase(fd);
+        }
+    }
+
+    Pipe PosixProcessProvider::create_pipe() const
+    {
+        Pipe pipe;
+        this->checkstatus(::pipe(pipe.data()));
+        This::open_fds.insert(pipe[INPUT]);
+        This::open_fds.insert(pipe[OUTPUT]);
+        return pipe;
     }
 
     void PosixProcessProvider::execute(ArgVector argv, const fs::path &cwd) const
     {
         if (!cwd.empty())
         {
-            this->checkstatus(chdir(cwd.string().data()));
+            this->checkstatus(::chdir(cwd.string().data()));
         }
 
         // Convert our argument vector into a plain old
@@ -488,11 +479,148 @@ namespace core::platform
         }
         *c_argp = nullptr;
 
+        // Close any open pipes (these should already have been reassigned to
+        // stdin/stdout/stderr).
+        for (FileDescriptor fd : This::open_fds)
+        {
+            ::close(fd);
+        }
+
         // Here we go. This should be the last thing we do. Goodbye!
         execv(c_argv.front(), c_argv.data());
 
         // Why are we still here?
-        throw std::system_error(errno, std::system_category());
+        throw std::system_error(errno, std::system_category(), argv.front());
     }
+
+    void PosixProcessProvider::poll_outputs(
+        const std::vector<struct pollfd> &pfds,
+        const Invocations &invocations,
+        InvocationResults *results) const
+    {
+        std::unordered_set<FileDescriptor> open_fds;
+        for (const struct pollfd &pfd : pfds)
+        {
+            open_fds.insert(pfd.fd);
+            fcntl(pfd.fd, F_SETFL, O_NONBLOCK);
+        }
+
+        // Collect anything printed on `stderr` from each subprocess,
+        // as well as on `stdout` from the last process in the pipeline.
+        // We do this with `poll()` rather than sequentially in order to
+        // avoid deadlocks in case the text from a given process fills
+        // up the corresponding pipe's temporary buffer.
+
+        for (bool received = true; received || !open_fds.empty(); received = false)
+        {
+            logf_trace("Polling %d FDs", pfds.size());
+            this->checkstatus(
+                ::poll(const_cast<struct pollfd *>(pfds.data()), pfds.size(), -1));
+
+            for (uint c = 0; c < invocations.size(); c++)
+            {
+                received |= this->check_poll(pfds.at(c),
+                                             invocations.at(c),
+                                             results->at(c),
+                                             "stderr",
+                                             &results->at(c).stderr,
+                                             &open_fds);
+            }
+
+            received |= this->check_poll(pfds.back(),
+                                         invocations.back(),
+                                         results->back(),
+                                         "stdout",
+                                         &results->back().stdout,
+                                         &open_fds);
+        }
+    }
+
+    bool PosixProcessProvider::check_poll(
+        const struct pollfd &pfd,
+        const Invocation &invocation,
+        const InvocationResult &result,
+        const std::string &stream_name,
+        std::shared_ptr<std::stringstream> *outstream,
+        std::unordered_set<FileDescriptor> *open_fds) const
+    {
+        static std::vector<char> outbuf(CHUNKSIZE);
+        bool received = false;
+
+        if (pfd.revents & POLLIN)
+        {
+            int nchars = this->checkstatus(
+                ::read(pfd.fd,
+                       outbuf.data(),
+                       outbuf.size()));
+
+            logf_trace("Captured %d bytes from PID %d stderr",
+                       nchars,
+                       result.pid);
+
+            if (!*outstream)
+            {
+                *outstream = std::make_shared<std::stringstream>();
+            }
+
+            (*outstream)->write(outbuf.data(), nchars);
+            received = true;
+        }
+        else if (pfd.revents)
+        {
+            logf_trace("No longer monitoring %s from PID %d [%s]",
+                       stream_name,
+                       result.pid,
+                       invocation.argv.front());
+            open_fds->erase(pfd.fd);
+        }
+        return received;
+    }
+
+    void PosixProcessProvider::wait_results(
+        const Invocations &invocations,
+        bool checkstatus,
+        InvocationResults *results) const
+    {
+        // Now wait for all subprocesses to complete.  We capture the error from
+        // the first process to exit with a non-zero code, if any.
+        std::exception_ptr eptr;
+        for (uint c = 0; c < invocations.size(); c++)
+        {
+            const Invocation &invocation = invocations.at(c);
+            InvocationResult &result = results->at(c);
+
+            logf_trace("Waiting for PID %d: %s", result.pid, invocation.argv);
+            ::waitpid(result.pid, &result.exit_status, 0);
+            if (ExitStatus err = WEXITSTATUS(result.exit_status))
+            {
+                if (checkstatus && !eptr)
+                {
+                    eptr = std::make_exception_ptr(
+                        std::system_error(err,
+                                          std::system_category(),
+                                          invocation.argv.front()));
+                }
+                logf_info("PID %d [%s] returned non-zero exit status %d (%s)",
+                          result.pid,
+                          invocation.argv.front(),
+                          err,
+                          core::platform::symbols->errno_name(err));
+            }
+            else
+            {
+                logf_debug("PID %d [%s] returned successfully",
+                           result.pid,
+                           invocation.argv.front());
+            }
+        }
+
+        if (eptr)
+        {
+            std::rethrow_exception(eptr);
+        }
+    }
+
+    std::unordered_set<FileDescriptor> PosixProcessProvider::open_fds;
 
 }  // namespace core::platform

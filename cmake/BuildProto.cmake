@@ -53,7 +53,7 @@ endfunction()
 
 function(BuildProto_PYTHON TARGET)
   set(_options)
-  set(_singleargs INSTALL_COMPONENT INSTALL_DIR PACKAGE)
+  set(_singleargs INSTALL_COMPONENT INSTALL_DIR NAMESPACE)
   set(_multiargs PROTOS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -63,8 +63,8 @@ function(BuildProto_PYTHON TARGET)
     set(_install_dir "${PYTHON_INSTALL_DIR}")
   endif()
 
-  if(arg_PACKAGE)
-    set(_install_dir "${_install_dir}/${arg_PACKAGE}")
+  if(arg_NAMESPACE)
+    set(_install_dir "${_install_dir}/${arg_NAMESPACE}")
   endif()
 
   set(_install_dir "${_install_dir}/generated")
@@ -105,7 +105,7 @@ endfunction()
 
 function(BuildProto TARGET)
   set(_options)
-  set(_singleargs LIB_TYPE SCOPE INSTALL_COMPONENT PYTHON_INSTALL_DIR PYTHON_PACKAGE)
+  set(_singleargs LIB_TYPE SCOPE INSTALL_COMPONENT PYTHON_INSTALL_DIR PYTHON_NAMESPACE)
   set(_multiargs SOURCES LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -143,19 +143,19 @@ function(BuildProto TARGET)
   endif()
 
   if (BUILD_PYTHON)
-    if(arg_PYTHON_PACKAGE)
-      set(_package "${arg_PACKAGE}")
+    if(arg_PYTHON_NAMESPACE)
+      set(_namespace "${arg_PYTHON_NAMESPACE}")
     else()
-      list(FIND arg_KEYWORDS_MISSING_VALUES PYTHON_PACKAGE _found)
-      if(${_found} LESS 0 AND CPACK_PYTHON_PACKAGE)
-        set(_package "${CPACK_PYTHON_PACKAGE}")
+      list(FIND arg_KEYWORDS_MISSING_VALUES PYTHON_NAMESPACE _found)
+      if(${_found} LESS 0 AND PYTHON_NAMESPACE)
+        set(_namespace "${PYTHON_NAMESPACE}")
       endif()
     endif()
 
     BuildProto_PYTHON("${TARGET}"
       INSTALL_COMPONENT "${_component}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
-      PACKAGE "${_package}"
+      NAMESPACE "${_namespace}"
       PROTOS "${arg_SOURCES}"
     )
   endif()

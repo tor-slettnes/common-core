@@ -15,7 +15,7 @@ namespace platform::netconfig::dbus
 {
     Connection::Connection(
         core::dbus::ProxyContainer* container,
-        const core::dbus::ConnectionRef& connection,
+        const core::dbus::ConnectionPtr& connection,
         const core::dbus::ServiceName& servicename,
         const core::dbus::ObjectPath& objectpath)
         : MappedDataWrapper<ConnectionData>(
@@ -152,7 +152,7 @@ namespace platform::netconfig::dbus
 
     core::dbus::ObjectPath Connection::find_suitable_device()
     {
-        core::dbus::WrapperRef ref;
+        core::dbus::ProxyWrapper::ptr ref;
         if (this->interface.size() > 0)
         {
             ref = lookup<Device>(this->interface, true);

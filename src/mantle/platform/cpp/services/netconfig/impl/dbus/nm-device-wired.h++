@@ -23,7 +23,7 @@ namespace platform::netconfig::dbus
     public:
         WiredDevice(
             core::dbus::ProxyContainer* container,
-            const core::dbus::ConnectionRef& connection,
+            const core::dbus::ConnectionPtr& connection,
             const core::dbus::ServiceName& servicename,
             const core::dbus::ObjectPath& objectpath);
         void emit_change(core::signal::MappingAction action) override;

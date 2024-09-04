@@ -158,7 +158,7 @@ namespace core::platform
     }
 
     types::ByteVector PathProvider::readdata(const fs::path &path,
-                                            ssize_t maxsize) const noexcept
+                                             ssize_t maxsize) const noexcept
     {
         types::ByteVector buffer;
         fs::file_status status = fs::status(path);
@@ -208,6 +208,12 @@ namespace core::platform
         return text;
     }
 
+    fs::path PathProvider::mktempdir(const std::string &prefix,
+                                     const std::string &suffix)
+    {
+        return this->mktempdir(this->tempfolder(), prefix, suffix);
+    }
+
     fs::path PathProvider::mktemp(const std::string &prefix,
                                   const std::string &suffix)
     {
@@ -218,7 +224,6 @@ namespace core::platform
     ProviderProxy<PathProvider> path("path");
 
 };  // namespace core::platform
-
 
 namespace std::filesystem
 {

@@ -14,7 +14,7 @@ namespace platform::vfs
     ContextProxy contextProxy(const std::string &name, bool modify);
 
     /// Open a new ContextProxy object to access the specified context.
-    ContextProxy contextProxy(ContextRef ref, bool modify);
+    ContextProxy contextProxy(Context::ptr ref, bool modify);
 
     /// Open a new location object to access the specified virtual path
     Location location(const Path &vpath, bool modify);
@@ -23,7 +23,7 @@ namespace platform::vfs
     Location location(const std::string &context, const fs::path &relpath, bool modify);
 
     /// Open a new Location object to access the specified context instance/path.
-    Location location(ContextRef ref, const fs::path &relpath, bool modify);
+    Location location(Context::ptr ref, const fs::path &relpath, bool modify);
 
     /// Open multiple locations, possibly within different contexts.
     LocationList locations(const Paths &vpaths, bool modify);
@@ -54,7 +54,7 @@ namespace platform::vfs
     ContextMap get_open_context(bool removable = false);
 
     /// Get a context reference without incrementing reference counter.
-    ContextRef get_context(const std::string &name, bool required = true);
+    Context::ptr get_context(const std::string &name, bool required = true);
 
     /// @brief Explicitly open a virtual context.
     /// @param[in] name
@@ -71,12 +71,12 @@ namespace platform::vfs
     ///
     /// Once access is no longer needed The client should invoke
     /// `close_context()', thereby allowing the context to be closed.
-    ContextRef open_context(const std::string &name, bool required = true);
+    Context::ptr open_context(const std::string &name, bool required = true);
 
     /// Close a previously-opened path. Internally, this decrements a
     /// reference counter associated with the underlying filesystem context,
     /// and closes the context (e.g. unmounts) if it reaches zero.
-    void close_context(const ContextRef &cxt);
+    void close_context(const Context::ptr &cxt);
 
     /// Close a previously-opened path. Internally, this decrements a
     /// reference counter associated with the underlying filesystem context,
@@ -282,8 +282,8 @@ namespace platform::vfs
     ///     Unique pointer to a FileReader instance, which in turn is
     ///     dervived from `std::istream`.
 
-    ReaderRef read_file(const Path &vpath);
-    WriterRef write_file(const Path &vpath);
+    UniqueReader read_file(const Path &vpath);
+    UniqueWriter write_file(const Path &vpath);
 
     void download(const Path &remote, const fs::path &local);
 

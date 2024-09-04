@@ -50,7 +50,7 @@ namespace platform::vfs::local
 
         volume::Enumerator enumerator;
         enumerator.init();
-        while (volume::EventRef event = enumerator.next())
+        while (volume::Event::ptr event = enumerator.next())
         {
             this->processEvent(*event);
         }

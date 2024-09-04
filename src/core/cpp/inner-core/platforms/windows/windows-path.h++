@@ -31,6 +31,9 @@ namespace core::platform
         fs::path mktemp(const fs::path &folder,
                         const std::string &prefix = "tmp.",
                         const std::string &suffix = {}) override;
+        fs::path mktempdir(const fs::path &folder,
+                           const std::string &prefix,
+                           const std::string &suffix) override;
 
     protected:
         fs::path fs_root() const;

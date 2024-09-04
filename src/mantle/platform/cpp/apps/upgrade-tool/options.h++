@@ -29,16 +29,17 @@ private:
     void on_monitor_end() override;
 
     void on_scan_progress(
-        const platform::upgrade::ScanProgress::Ref &progress);
+        const platform::upgrade::ScanProgress::ptr &progress);
 
     void on_upgrade_available(
-        const platform::upgrade::PackageInfo::Ref &package_info);
+        const platform::upgrade::PackageManifest::ptr &package_info);
 
     void on_upgrade_progress(
-        const platform::upgrade::UpgradeProgress::Ref &progress);
+        const platform::upgrade::UpgradeProgress::ptr &progress);
 
 private:
     void scan();
+    void list_sources();
     void list_available();
     void best_available();
     void install();

@@ -298,7 +298,7 @@ namespace core::status
         return std::make_exception_ptr<exception::UnknownError>(*this);
     }
 
-    bool operator==(const Event::Ref &lhs, const Event::Ref &rhs)
+    bool operator==(const Event::ptr &lhs, const Event::ptr &rhs)
     {
         return (!lhs && !rhs)   ? true
                : (!lhs || !rhs) ? false

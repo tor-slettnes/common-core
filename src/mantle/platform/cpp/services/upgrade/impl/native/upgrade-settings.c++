@@ -11,7 +11,7 @@
 
 namespace platform::upgrade::native
 {
-    core::SettingsStore::Ref settings;
+    core::SettingsStore::ptr settings;
 
     void init_settings()
     {

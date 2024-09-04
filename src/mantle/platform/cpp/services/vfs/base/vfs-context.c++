@@ -149,7 +149,7 @@ namespace platform::vfs
     {
     }
 
-    ContextProxy::ContextProxy(ContextRef context, bool modify)
+    ContextProxy::ContextProxy(Context::ptr context, bool modify)
         : context(context),
           modify(modify)
     {
@@ -235,7 +235,7 @@ namespace platform::vfs
     {
     }
 
-    Location::Location(ContextRef ref,
+    Location::Location(Context::ptr ref,
                        const fs::path &relpath,
                        bool modify)
         : ContextProxy(ref, modify),
@@ -244,7 +244,7 @@ namespace platform::vfs
         Path::check_relative(this->context->name, relpath);
     }
 
-    Location::Location(ContextRef ref,
+    Location::Location(Context::ptr ref,
                        bool modify)
         : ContextProxy(ref, modify)
     {

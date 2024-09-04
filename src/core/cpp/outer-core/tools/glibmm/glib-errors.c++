@@ -57,7 +57,7 @@ namespace core::glib
     void log_exception(std::exception_ptr eptr,
                        const std::string &preamble,
                        core::status::Level level,
-                       core::logging::Scope::Ref scope,
+                       core::logging::Scope::ptr scope,
                        core::status::Flow flow,
                        const dt::TimePoint &tp,
                        const std::filesystem::path &path,
@@ -66,7 +66,7 @@ namespace core::glib
     {
         if (eptr)
         {
-            core::logging::MessageBuilder::Ref msg = custom_log_msg(
+            core::logging::MessageBuilder::ptr msg = custom_log_msg(
                 level, scope, flow, tp, path, lineno, function);
 
             if (preamble.size())

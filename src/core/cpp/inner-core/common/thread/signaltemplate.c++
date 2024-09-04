@@ -16,7 +16,7 @@ namespace core::signal
 
     //==========================================================================
     /// \class BaseSignal
-    /// \brief Abstract base for Signal<T> and MappingSignal<T>
+    /// \brief Abstract base for VoidSignal, DataSignal<T> and MappingSignal<T>
 
     BaseSignal::BaseSignal(const std::string &name, bool caching)
         : name_(name),

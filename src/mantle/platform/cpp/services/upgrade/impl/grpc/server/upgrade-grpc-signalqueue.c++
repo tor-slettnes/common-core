@@ -16,34 +16,34 @@ namespace platform::upgrade::grpc
     {
         using cc::platform::upgrade::Signal;
 
-        this->connect<ScanProgress::Ref>(
+        this->connect<ScanProgress::ptr>(
             Signal::kScanProgress,
             platform::upgrade::signal_scan_progress,
-            [=](ScanProgress::Ref ref, Signal *msg) {
+            [=](ScanProgress::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 protobuf::encode_shared(ref, msg->mutable_scan_progress());
             });
 
-        this->connect<PackageInfo::Ref>(
+        this->connect<PackageManifest::ptr>(
             Signal::kUpgradeAvailable,
             platform::upgrade::signal_upgrade_available,
-            [=](PackageInfo::Ref ref, Signal *msg) {
+            [=](PackageManifest::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 protobuf::encode_shared(ref, msg->mutable_upgrade_available());
             });
 
-        this->connect<PackageInfo::Ref>(
+        this->connect<PackageManifest::ptr>(
             Signal::kUpgradePending,
             platform::upgrade::signal_upgrade_pending,
-            [=](PackageInfo::Ref ref, Signal *msg) {
+            [=](PackageManifest::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 protobuf::encode_shared(ref, msg->mutable_upgrade_pending());
             });
 
-        this->connect<UpgradeProgress::Ref>(
+        this->connect<UpgradeProgress::ptr>(
             Signal::kUpgradeProgress,
             platform::upgrade::signal_upgrade_progress,
-            [=](UpgradeProgress::Ref ref, Signal *msg) {
+            [=](UpgradeProgress::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 protobuf::encode_shared(ref, msg->mutable_upgrade_progress());
             });

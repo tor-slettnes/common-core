@@ -21,7 +21,7 @@ namespace platform::netconfig::dbus
     public:
         ActiveConnection(
             core::dbus::ProxyContainer* container,
-            const core::dbus::ConnectionRef& connection,
+            const core::dbus::ConnectionPtr& connection,
             const core::dbus::ServiceName& servicename,
             const core::dbus::ObjectPath& objectpath);
 

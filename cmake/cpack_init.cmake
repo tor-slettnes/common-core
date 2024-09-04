@@ -47,6 +47,7 @@ set(CPACK_EXTERNAL_ENABLE_STAGING TRUE)
 ### Custom settings propagated to external generator
 
 set(CPACK_PYTHON_INSTALL_DIR "${PYTHON_INSTALL_DIR}")
+#set(CPACK_PYTHON_NAMESPACE "${PYTHON_NAMESPACE}")
 set(CPACK_SETTINGS_DIR "${SETTINGS_DIR}")
 
 #===============================================================================

@@ -22,7 +22,7 @@
 namespace core::dbus
 {
     define_log_scope("dbus");
-    using ConnectionRef = Glib::RefPtr<Gio::DBus::Connection>;
+    using ConnectionPtr = Glib::RefPtr<Gio::DBus::Connection>;
     using ServiceName = std::string;
     using ObjectPath = Glib::DBusObjectPathString;  // <-- Non-hashable
 
@@ -37,7 +37,4 @@ namespace core::dbus
     class ProxyContainer;
     class ProxyWrapper;
     class PropertiesProxyWrapper;
-
-    using WrapperRef = std::shared_ptr<ProxyWrapper>;
-
 }  // namespace core::dbus

@@ -16,17 +16,17 @@ namespace platform::vfs::grpc
     {
         using cc::platform::vfs::Signal;
 
-        this->connect<ContextRef>(
+        this->connect<Context::ptr>(
             Signal::kContext,
             platform::vfs::signal_context,
-            [=](ContextRef ref, Signal *msg) {
+            [=](Context::ptr ref, Signal *msg) {
                 protobuf::encode_shared(ref, msg->mutable_context());
             });
 
-        this->connect<ContextRef>(
+        this->connect<Context::ptr>(
             Signal::kContextInUse,
             platform::vfs::signal_context_in_use,
-            [=](ContextRef ref, Signal *msg) {
+            [=](Context::ptr ref, Signal *msg) {
                 protobuf::encode_shared(ref, msg->mutable_context_in_use());
             });
 

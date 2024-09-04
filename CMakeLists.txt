@@ -15,6 +15,7 @@ get_build_arg(HOME_PAGE "home page")
 get_build_arg(PACKAGE_NAME "package" "name")
 get_build_arg(PACKAGE_VENDOR "package" "vendor")
 get_build_arg(PACKAGE_CONTACT "package" "contact")
+get_build_arg(PYTHON_NAMESPACE "python" "namespace")
 get_build_number(BUILD_NUMBER)
 
 project("${PROJECT}"

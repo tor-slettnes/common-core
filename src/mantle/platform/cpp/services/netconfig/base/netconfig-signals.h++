@@ -11,9 +11,9 @@
 
 namespace platform::netconfig
 {
-    extern core::signal::DataSignal<GlobalDataRef> signal_globaldata;
-    extern core::signal::MappingSignal<ConnectionRef> signal_connection;
-    extern core::signal::MappingSignal<ActiveConnectionRef> signal_active_connection;
-    extern core::signal::MappingSignal<AccessPointRef> signal_accesspoint;
-    extern core::signal::MappingSignal<DeviceRef> signal_device;
+    extern core::signal::DataSignal<GlobalData::ptr> signal_globaldata;
+    extern core::signal::MappingSignal<ConnectionData::ptr> signal_connection;
+    extern core::signal::MappingSignal<ActiveConnectionData::ptr> signal_active_connection;
+    extern core::signal::MappingSignal<AccessPointData::ptr> signal_accesspoint;
+    extern core::signal::MappingSignal<DeviceData::ptr> signal_device;
 }  // namespace platform::netconfig

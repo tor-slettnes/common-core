@@ -26,10 +26,10 @@ namespace core::dds
     protected:
         void open() override;
         void close() override;
-        void capture_message(const logging::Message::Ref &msg) override;
+        void capture_message(const logging::Message::ptr &msg) override;
 
     private:
-        DataWriterRef<CC::Status::LogMessage> log_writer;
+        DataWriterPtr<CC::Status::LogMessage> log_writer;
     };
 
 }  // namespace core::dds

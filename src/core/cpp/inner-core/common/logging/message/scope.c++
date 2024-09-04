@@ -18,7 +18,7 @@ namespace core::logging
     {
     }
 
-    Scope::Ref Scope::create(const std::string &name, status::Level threshold)
+    Scope::ptr Scope::create(const std::string &name, status::Level threshold)
     {
         auto [it, inserted] = scopes.try_emplace(name);
         if (inserted)

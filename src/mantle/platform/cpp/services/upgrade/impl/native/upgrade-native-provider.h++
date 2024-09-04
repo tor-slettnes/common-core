@@ -6,10 +6,13 @@
 //==============================================================================
 
 #pragma once
+#include "package-handler.h++"
 #include "package-handler-vfs.h++"
 #include "package-handler-http.h++"
 #include "upgrade-base.h++"
 #include "upgrade-signals.h++"
+#include "vfs-context.h++"
+#include "types/shared_ptr_map.h++"
 
 namespace platform::upgrade::native
 {
@@ -24,9 +27,10 @@ namespace platform::upgrade::native
     protected:
         void initialize() override;
         void scan(const PackageSource &source) override;
-        std::vector<PackageInfo::Ref> list_available() const override;
-        PackageInfo::Ref best_available() const override;
-        PackageInfo::Ref install(const PackageSource &source) override;
+        PackageSources list_sources() const override;
+        PackageManifests list_available() const override;
+        PackageManifest::ptr best_available() const override;
+        PackageManifest::ptr install(const PackageSource &source) override;
         void finalize() override;
 
         void remove(const PackageSource &source);
@@ -38,9 +42,15 @@ namespace platform::upgrade::native
         void remove_vfs(const vfs::Path &source);
         void remove_http(const URL &source);
 
+    protected:
+        std::vector<PackageHandler::Ptr> handlers() const;
     private:
-        core::SettingsStore::Ref settings;
-        std::unordered_map<platform::vfs::Path, std::shared_ptr<VFSPackageHandler>> vfs_handlers;
-        std::unordered_map<URL, std::shared_ptr<HTTPPackageHandler>> http_handlers;
+        std::shared_ptr<core::SettingsStore> settings;
+        vfs::Path default_vfs_path;
+        std::string default_url;
+        core::types::shared_ptr_map<platform::vfs::Path, VFSPackageHandler> vfs_handlers;
+        core::types::shared_ptr_map<URL, HTTPPackageHandler> http_handlers;
+        // std::unordered_map<platform::vfs::Path, std::shared_ptr<VFSPackageHandler>> vfs_handlers;
+        // std::unordered_map<URL, std::shared_ptr<HTTPPackageHandler>> http_handlers;
     };
 }  // namespace platform::upgrade::native

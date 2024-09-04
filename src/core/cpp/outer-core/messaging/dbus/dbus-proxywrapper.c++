@@ -17,7 +17,7 @@ namespace core::dbus
 
     ProxyWrapper::ProxyWrapper(
         ProxyContainer* container,
-        const ConnectionRef& connection,
+        const ConnectionPtr& connection,
         const ServiceName& servicename,
         const ObjectPath& objectpath,
         const InterfaceName& interfacename,
@@ -141,7 +141,7 @@ namespace core::dbus
     }
 
     void ProxyWrapper::callback_handler(
-        ResultRef result,
+        ResultPtr result,
         const std::string& methodname,
         const Glib::VariantContainerBase& parameters,
         const Gio::SlotAsyncReady& slot) const
@@ -158,16 +158,9 @@ namespace core::dbus
         }
     }
 
-    Glib::VariantContainerBase ProxyWrapper::call_finish(ResultRef result) const
+    Glib::VariantContainerBase ProxyWrapper::call_finish(ResultPtr result) const
     {
-        // try
-        // {
         return this->proxy->call_finish(result);
-        // }
-        // catch (const Glib::Error& e)
-        // {
-        //     throw gwrap::GlibError(e);
-        // }
     }
 
     Glib::VariantContainerBase ProxyWrapper::call_sync(
@@ -321,7 +314,7 @@ namespace core::dbus
                 const auto& [path, subscription] = *it;
                 const auto& [weakref, updatemethod] = subscription;
 
-                if (WrapperRef dep = weakref.lock())
+                if (ProxyWrapper::ptr dep = weakref.lock())
                 {
                     logf_trace("Deferred %s update from %s",
                                dep->identifier(),

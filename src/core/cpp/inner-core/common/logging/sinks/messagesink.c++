@@ -33,7 +33,7 @@ namespace core::logging
         }
     }
 
-    void MessageSink::capture_event(const status::Event::Ref &event)
+    void MessageSink::capture_event(const status::Event::ptr &event)
     {
         if (auto msg = std::dynamic_pointer_cast<Message>(event))
         {
@@ -42,7 +42,7 @@ namespace core::logging
     }
 
     void MessageSink::send_preamble(std::ostream &stream,
-                                    const Message::Ref &msg,
+                                    const Message::ptr &msg,
                                     const std::string &suffix) const
     {
         if (this->include_context())
@@ -61,7 +61,7 @@ namespace core::logging
         }
     }
 
-    std::string MessageSink::preamble(const Message::Ref &msg,
+    std::string MessageSink::preamble(const Message::ptr &msg,
                                       const std::string &suffix) const
     {
         std::stringstream ss;

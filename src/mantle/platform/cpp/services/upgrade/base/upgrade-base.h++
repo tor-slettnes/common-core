@@ -35,9 +35,12 @@ namespace platform::upgrade
         // connection is available.
         virtual void scan(const PackageSource &source = {}) = 0;
 
-        // Return information about all currently available available upgrade
-        // packages discovered during prior scans.
-        virtual std::vector<PackageInfo::Ref> list_available() const = 0;
+        // Return information about all currently enabled upgrade sources.
+        virtual PackageSources list_sources() const = 0;
+
+        // Return information about all currently available upgrade packages
+        // discovered during prior scans.
+        virtual PackageManifests list_available() const = 0;
 
         // Return information about the "best" available upgrade package
         // discovered during prior scans, if any. This will normally be the
@@ -48,7 +51,7 @@ namespace platform::upgrade
         //
         // This information is also available by connecting to
         // `signal_upgrade_available`.
-        virtual PackageInfo::Ref best_available() const = 0;
+        virtual PackageManifest::ptr best_available() const = 0;
 
         // Install an upgrade from the specified package source if provided,
         // otherwise the current "best" package source based on prior scans.  To
@@ -57,7 +60,7 @@ namespace platform::upgrade
         // This call returns as soon as installation is underway. To monitor the
         // progress of the upgrade process, connect to `signal_upgrade_pending`
         // and `signal_upgrade_progress`.
-        virtual PackageInfo::Ref install(const PackageSource &source = {}) = 0;
+        virtual PackageManifest::ptr install(const PackageSource &source = {}) = 0;
 
         // Finalize a completed upgrade.  This clears `signal_upgrade_progress`,
         // and if the upgrade requires a system reboot, do so now.

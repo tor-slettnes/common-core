@@ -22,7 +22,7 @@ namespace core::types
     class Loggable
     {
     public:
-        using Ref = std::shared_ptr<Loggable>;
+        using ptr = std::shared_ptr<Loggable>;
 
     public:
         virtual ~Loggable() {}  // Hack to ensure class is polymorphic

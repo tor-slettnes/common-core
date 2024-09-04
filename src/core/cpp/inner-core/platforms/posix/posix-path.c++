@@ -61,8 +61,7 @@ namespace core::platform
                                        const std::string &prefix,
                                        const std::string &suffix)
     {
-        fs::path path = folder;
-        path /= prefix + "XXXXXX" + suffix;
+        fs::path path = folder / (prefix + "XXXXXX" + suffix);
         std::string name = path.string();
         int fd = mkstemps(name.data(), suffix.length());
         if (fd < 0)
@@ -74,6 +73,24 @@ namespace core::platform
         }
         close(fd);
         return name;
+    }
+
+    fs::path PosixPathProvider::mktempdir(const fs::path &folder,
+                                          const std::string &prefix,
+                                          const std::string &suffix)
+    {
+        fs::path path_template = folder / (prefix + "XXXXXX" + suffix);
+        if (char *c_path = ::mkdtemp(const_cast<char*>(path_template.c_str())))
+        {
+            return c_path;
+        }
+        else
+        {
+            throw fs::filesystem_error(
+                strerror(errno),
+                path_template,
+                std::error_code(errno, std::system_category()));
+        }
     }
 
 }  // namespace core::platform

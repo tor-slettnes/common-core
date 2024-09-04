@@ -65,7 +65,7 @@ namespace core::json
             return this->encodeObject(*value.get_kvmap());
 
         case types::ValueType::TVLIST:
-            if (types::TaggedValueListRef tvlist = value.get_tvlist())
+            if (types::TaggedValueListPtr tvlist = value.get_tvlist())
             {
                 if (tvlist->mappable())
                 {

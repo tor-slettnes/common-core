@@ -9,11 +9,16 @@
 
 namespace platform::upgrade::native
 {
-    HTTPPackageHandler::HTTPPackageHandler(const core::SettingsStore::Ref &settings,
+    HTTPPackageHandler::HTTPPackageHandler(const core::SettingsStore::ptr &settings,
                                            const URL &url)
         : Super(settings),
           url(url)
     {
+    }
+
+    PackageSource HTTPPackageHandler::get_source() const
+    {
+        return {this->url};
     }
 
     void HTTPPackageHandler::scan()

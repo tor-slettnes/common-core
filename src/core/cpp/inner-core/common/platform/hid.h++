@@ -64,6 +64,9 @@ namespace core::platform
     class HIDDevice
     {
     public:
+        using ptr = std::shared_ptr<HIDDevice>;
+
+    public:
         virtual void write(const types::ByteVector &buffer) = 0;
         virtual types::ByteVector read() = 0;
         virtual std::optional<types::ByteVector> read(const dt::Duration &timeout) = 0;
@@ -78,8 +81,6 @@ namespace core::platform
         // virtual types::ByteVector get_report_descriptor() = 0;
         virtual std::string hid_api_version() = 0;
     };
-
-    using HIDDeviceRef = std::shared_ptr<HIDDevice>;
 
     //==========================================================================
     // HID Provider
@@ -99,14 +100,14 @@ namespace core::platform
             uint vendor_id = 0,
             uint product_id = 0) = 0;
 
-        virtual HIDDeviceRef open(uint vendor_id,
-                                  uint product_id) = 0;
+        virtual HIDDevice::ptr open(uint vendor_id,
+                                    uint product_id) = 0;
 
-        virtual HIDDeviceRef open(uint vendor_id,
-                                  uint product_id,
-                                  const std::string &serial_number) = 0;
+        virtual HIDDevice::ptr open(uint vendor_id,
+                                    uint product_id,
+                                    const std::string &serial_number) = 0;
 
-        virtual HIDDeviceRef open(const fs::path &path) = 0;
+        virtual HIDDevice::ptr open(const fs::path &path) = 0;
 
     public:
         void start_monitoring(const dt::Duration &poll_interval = std::chrono::seconds(1));

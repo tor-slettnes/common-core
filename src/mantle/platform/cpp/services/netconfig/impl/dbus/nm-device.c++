@@ -18,7 +18,7 @@ namespace platform::netconfig::dbus
 
     Device::Device(
         core::dbus::ProxyContainer* container,
-        const core::dbus::ConnectionRef& connection,
+        const core::dbus::ConnectionPtr& connection,
         const core::dbus::ServiceName& servicename,
         const core::dbus::ObjectPath& objectpath)
         : MappedDataWrapper<DeviceData>(

@@ -296,7 +296,7 @@ namespace platform::vfs::local::volume
         return bool(this->udev);
     }
 
-    EventRef Base::next()
+    Event::ptr Base::next()
     {
         this->device = udev_device_unref(this->device);
         return {};
@@ -325,7 +325,7 @@ namespace platform::vfs::local::volume
         this->dev_list_entry = this->devices;
     }
 
-    EventRef Enumerator::next()
+    Event::ptr Enumerator::next()
     {
         Base::next();
 
@@ -395,7 +395,7 @@ namespace platform::vfs::local::volume
         }
     }
 
-    EventRef Monitor::next()
+    Event::ptr Monitor::next()
     {
         Base::next();
 

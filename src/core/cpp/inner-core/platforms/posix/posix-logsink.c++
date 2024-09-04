@@ -29,7 +29,7 @@ namespace core::platform
         Super::close();
     }
 
-    void PosixLogSinkProvider::capture_message(const logging::Message::Ref &msg)
+    void PosixLogSinkProvider::capture_message(const logging::Message::ptr &msg)
     {
         if (std::optional<int> level = levelmap.get_opt(msg->level()))
         {

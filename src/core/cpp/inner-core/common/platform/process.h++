@@ -9,6 +9,7 @@
 #include "provider.h++"
 #include "path.h++"
 #include "types/platform.h++"
+#include "types/streamable.h++"
 
 #include <string>
 #include <vector>
@@ -29,7 +30,16 @@ namespace core::platform
         fs::path cwd;
     };
 
+    struct InvocationResult
+    {
+        PID pid = 0;
+        ExitStatus exit_status = 0;
+        std::shared_ptr<std::stringstream> stdout;
+        std::shared_ptr<std::stringstream> stderr;
+    };
+
     using Invocations = std::vector<Invocation>;
+    using InvocationResults = std::vector<InvocationResult>;
 
     /// @brief Abstract provider for process invocation
     class ProcessProvider : public Provider
@@ -141,35 +151,6 @@ namespace core::platform
                                       FileDescriptor *fdout = nullptr,
                                       FileDescriptor *fderr = nullptr) const;
 
-        /// @fn invoke_async_from_pipe
-        /// @brief Invoke a command with UNIX pipes
-        /// @param[in] argv
-        ///     Argument vector. The first element (index #0) is the full path
-        ///     of the program file to invoke.
-        /// @param[in] cwd
-        ///     Change working directory
-        /// @param[out] from_fdin
-        ///     Readable file descriptor which will be redirected to the program's `stdin`.
-        /// @param[out] fdout
-        ///     Readable UNIX file descriptor of a pipe from the program's `stdout`.
-        ///     Passing in `nullptr` closes the child's standard output.
-        /// @param[out] fderr
-        ///     Readable UNIX file descriptor of a pipe from the program's `stderr`.
-        ///     Passing in `nullptr` closes the child's standard error.
-        /// @return
-        ///     The process ID of the child.
-        /// @exception std::system_error
-        ///     An underlying system call failed.
-        /// @note
-        ///     It is the caller's responsibility to close the file descriptors
-        ///     `from_fdin`, `fdout`, and `fderr`, if provided.
-
-        virtual PID invoke_async_from_pipe(const ArgVector &argv,
-                                           const fs::path &cwd,
-                                           FileDescriptor from_fdin,
-                                           FileDescriptor *fdout = nullptr,
-                                           FileDescriptor *fderr = nullptr) const;
-
         /// @fn capture_pipe
         /// @brief Communicate with a child process through an established pipe
         /// @param[in] pid
@@ -248,39 +229,41 @@ namespace core::platform
         ///     An underlying system call failed, or the process returned a
         ///     non-zero exit status.
 
-        virtual void invoke_check(const ArgVector &argv,
-                                  const fs::path &cwd = {},
-                                  const std::string &input = {},
-                                  std::string *output = nullptr,
-                                  std::string *diag = nullptr) const;
+        virtual void invoke_check(
+            const ArgVector &argv,
+            const fs::path &cwd = {},
+            const std::string &input = {},
+            std::string *output = nullptr,
+            std::string *diag = nullptr) const;
 
-        virtual void pipeline(const Invocations &invocations,
-                              FileDescriptor fdin,
-                              FileDescriptor *fdout) const;
+        virtual InvocationResults pipeline(
+            const Invocations &invocations,
+            FileDescriptor fdin,
+            bool checkstatus = false) const;
 
-        virtual void pipe_from_stream(
+        virtual InvocationResults pipe_from_stream(
             const Invocations &invocations,
             std::istream &instream,
-            FileDescriptor *fdout = nullptr) const;
+            bool checkstatus = false) const;
 
         virtual ExitStatus waitpid(PID pid, bool checkstatus = false) const = 0;
 
     protected:
         template <class T, std::enable_if_t<std::is_integral_v<T>, bool> = true>
-        inline T checkstatus(T status) const
+        inline T checkstatus(T status, const std::string &context = {}) const
         {
             if (status < 0)
             {
-                throw std::system_error(errno, std::system_category());
+                throw std::system_error(errno, std::system_category(), context);
             }
             return status;
         }
 
-        inline FILE *checkstatus(FILE *fp) const
+        inline FILE *checkstatus(FILE *fp, const std::string &context = {}) const
         {
             if (fp == NULL)
             {
-                throw std::system_error(errno, std::system_category());
+                throw std::system_error(errno, std::system_category(), context);
             }
             return fp;
         }

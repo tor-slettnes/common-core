@@ -67,9 +67,9 @@ namespace platform::vfs::grpc
         }
     }
 
-    ContextRef ClientProvider::get_context(const std::string &name, bool required) const
+    Context::ptr ClientProvider::get_context(const std::string &name, bool required) const
     {
-        ContextRef cxt;
+        Context::ptr cxt;
         if (this->get_use_cached())
         {
             cxt = signal_context.get_cached(name, {});
@@ -103,7 +103,7 @@ namespace platform::vfs::grpc
         return cxt;
     }
 
-    ContextRef ClientProvider::open_context(const std::string &name, bool required)
+    Context::ptr ClientProvider::open_context(const std::string &name, bool required)
     {
         cc::platform::vfs::Path request;
         request.set_context(name);
@@ -127,7 +127,7 @@ namespace platform::vfs::grpc
         }
     }
 
-    void ClientProvider::close_context(const ContextRef &cxt)
+    void ClientProvider::close_context(const Context::ptr &cxt)
     {
         if (cxt)
         {
@@ -228,12 +228,12 @@ namespace platform::vfs::grpc
             protobuf::encoded<cc::platform::vfs::PathRequest>(nullpath, vpath, flags));
     }
 
-    ReaderRef ClientProvider::read_file(const Path &vpath) const
+    UniqueReader ClientProvider::read_file(const Path &vpath) const
     {
         return std::make_unique<ClientInputStream>(this->client->stub, vpath);
     }
 
-    WriterRef ClientProvider::write_file(const Path &vpath) const
+    UniqueWriter ClientProvider::write_file(const Path &vpath) const
     {
         return std::make_unique<ClientOutputStream>(this->client->stub, vpath);
     }

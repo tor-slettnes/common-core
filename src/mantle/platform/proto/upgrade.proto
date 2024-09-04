@@ -32,10 +32,15 @@ service Upgrade
     rpc scan (PackageSource)
         returns (google.protobuf.Empty);
 
+    // List available package sources, whether or not they contain applicable
+    // packages.
+    rpc list_sources (google.protobuf.Empty)
+        returns (PackageSources);
+
     // Return information about available upgrade packages discovered during
     // prior (implicit or explicit) scans.
     rpc list_available (google.protobuf.Empty)
-        returns (stream PackageInfo);
+        returns (PackageManifests);
 
     // Return information about the best available upgrade package discovered
     // during prior scans. This will normally be the package with the highest
@@ -44,16 +49,17 @@ service Upgrade
     // This information is also available by watching the signal
     // `upgrade_available`, below.
     rpc best_available (google.protobuf.Empty)
-        returns (PackageInfo);
+        returns (PackageManifest);
 
     // Install an upgrade from the specified package source if provided,
     // otherwise the current "best" package source based on prior scans.
     // To perform an explicit scan, invoke `scan()` before `install()`.
     //
-    // This call returns immediately. To monitor the upgrade progress
-    // and result use the `watch()` method below.
-    rpc install (PackageSource)
-        returns (PackageInfo);
+    // This call returns immediately with information about the package being
+    // installed. To monitor the upgrade progress and result use the `watch()`
+    // method below.
+    rpc install (InstallRequest)
+        returns (PackageManifest);
 
 
     // Finalize a completed upgrade.  This clears the `upgrade_progress`
@@ -77,7 +83,7 @@ message PackageSource
 {
     // Source folder/location for packages.
     // This may be a VFS context/path or a web URL.
-    // Included in `PackageInfo` responses from `list_available()` and `install()`.
+    // Included in `PackageManifest` responses from `list_available()` and `install()`.
     // Optional alonside `package_name` below for `install()`.
     oneof location
     {
@@ -89,21 +95,38 @@ message PackageSource
     }
 
     // Specific package file name, if applicable.
-    // Included in `PackageInfo` responses from `list_available()` and `install()`.
+    // Included in `PackageManifest` responses from `list_available()` and `install()`.
     // Optional alongside `oneof location` above for `install()`.
     // Ignored for `scan()`.
     string filename = 8;
 
 }
 
-message PackageInfo
+
+message PackageSources
 {
-    bool applicable = 1;
+    repeated PackageSource sources = 1;
+}
+
+message InstallRequest
+{
+    PackageSource source = 1;
+}
+
+
+message PackageManifest
+{
+    bool is_applicable = 1;
     PackageSource source = 2;
     string product_name = 4;
     cc.version.Version release_version = 5;
     string release_description = 6;
     bool reboot_required = 8;
+}
+
+message PackageManifests
+{
+    repeated PackageManifest manifests = 1;
 }
 
 message ScanProgress
@@ -179,13 +202,13 @@ message Signal
         //  * `MAP_UPDATE` if the "best" available upgrade has changed
         //    (for instance, after a removable drive insertion/removal)
         //  * `MAP_REMOVAL` if the last applicable source was removed
-        PackageInfo upgrade_available = 9;
+        PackageManifest upgrade_available = 9;
 
         // Emitted with information about a pending software upgrade.
         // `mapping_action` is
         //  * `MAP_ADDITION` if the upgrade has started
         //  * `MAP_REMOVAL` if the upgrade has ended.
-        PackageInfo upgrade_pending = 10;
+        PackageManifest upgrade_pending = 10;
 
         // Emitted continuously during a software upgrade.
         // `mapping_action` is

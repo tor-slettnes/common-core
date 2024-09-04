@@ -64,7 +64,6 @@ namespace core::json
     //==========================================================================
     // Convenience aliases
 
-    using RapidBuilderRef = std::shared_ptr<RapidBuilderBase>;
 
     using DefaultWriter = ::rapidjson::Writer<::rapidjson::OStreamWrapper>;
     using PrettyWriter = ::rapidjson::PrettyWriter<::rapidjson::OStreamWrapper>;

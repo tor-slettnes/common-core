@@ -15,7 +15,7 @@ namespace core::logging
 
     Message::Message(const std::string &text,
                      status::Level level,
-                     Scope::Ref scope,
+                     Scope::ptr scope,
                      status::Flow flow,
                      const dt::TimePoint &tp,
                      const fs::path &path,

@@ -53,39 +53,52 @@ namespace platform::upgrade
         fs::path filename;
     };
 
-    //==========================================================================
-    // PackageInfo
+    using PackageSources = std::vector<PackageSource>;
 
-    struct PackageInfo : public core::types::Streamable
+    //==========================================================================
+    // PackageManifest
+
+    struct PackageManifest : public core::types::Streamable
     {
-        using Ref = std::shared_ptr<PackageInfo>;
+    public:
+        using ptr = std::shared_ptr<PackageManifest>;
 
     public:
-        PackageInfo(const PackageSource &source = {},
-                    const std::string &product_name = {},
-                    const sysconfig::Version &release_version = {},
-                    const std::string &release_description = {},
-                    bool reboot_Required = false,
-                    bool applicable = false);
+        PackageManifest(const PackageSource &source = {},
+                        const std::string &product = {},
+                        const sysconfig::Version &version = {},
+                        const std::string &description = {},
+                        bool reboot_required = false,
+                        bool applicable = false);
+
+    public:
+        virtual const PackageSource &source() const;
+        virtual const std::string &product() const;
+        virtual const Version &version() const;
+        virtual const std::string &description() const;
+        virtual const bool reboot_required() const;
+        virtual const bool is_applicable() const;
 
     protected:
         void to_stream(std::ostream &stream) const override;
 
-    public:
-        PackageSource source;
-        std::string product_name;
-        sysconfig::Version release_version;
-        std::string release_description;
-        bool reboot_required;
-        bool applicable;
+    private:
+        PackageSource source_;
+        std::string product_;
+        Version version_;
+        std::string description_;
+        bool reboot_required_;
+        bool is_applicable_;
     };
+
+    using PackageManifests = std::vector<PackageManifest::ptr>;
 
     //==========================================================================
     // ScanProgress
 
     struct ScanProgress : public core::types::Streamable
     {
-        using Ref = std::shared_ptr<ScanProgress>;
+        using ptr = std::shared_ptr<ScanProgress>;
 
     public:
         void to_stream(std::ostream &stream) const override;
@@ -99,7 +112,7 @@ namespace platform::upgrade
 
     struct UpgradeProgress : public core::types::Streamable
     {
-        using Ref = std::shared_ptr<UpgradeProgress>;
+        using ptr = std::shared_ptr<UpgradeProgress>;
 
         enum State
         {
@@ -131,7 +144,7 @@ namespace platform::upgrade
         std::string task_description;
         Fraction task_progress;
         Fraction total_progress;
-        core::status::Event::Ref error;
+        core::status::Event::ptr error;
     };
 
     static std::ostream &operator<<(std::ostream &stream,

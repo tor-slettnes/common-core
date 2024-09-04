@@ -30,16 +30,16 @@ namespace platform::vfs::grpc
 
         ContextMap get_open_context() const override;
 
-        ContextRef get_context(
+        Context::ptr get_context(
             const std::string &name,
             bool required) const override;
 
-        ContextRef open_context(
+        Context::ptr open_context(
             const std::string &name,
             bool required) override;
 
         void close_context(
-            const ContextRef &cxt) override;
+            const Context::ptr &cxt) override;
 
         VolumeStats volume_stats(
             const Path &vpath,
@@ -77,10 +77,10 @@ namespace platform::vfs::grpc
             const Path &vpath,
             const OperationFlags &flags) const override;
 
-        ReaderRef read_file(
+        UniqueReader read_file(
             const Path &vpath) const override;
 
-        WriterRef write_file(
+        UniqueWriter write_file(
             const Path &vpath) const override;
 
         core::types::KeyValueMap get_attributes(

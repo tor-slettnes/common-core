@@ -19,17 +19,18 @@ namespace platform::upgrade::native
         using Super = PackageHandler;
 
     public:
-        VFSPackageHandler(const core::SettingsStore::Ref &settings,
+        VFSPackageHandler(const core::SettingsStore::ptr &settings,
                           const vfs::Path &vfs_path);
 
     public:
+        PackageSource get_source() const override;
         void scan() override;
         void unpack(const PackageSource &source,
                     const fs::path &staging_folder) override;
 
     private:
-        PackageInfo::Ref scan_file(const vfs::Location &location,
-                                   const fs::path &package_name);
+        PackageManifest::ptr scan_file(const vfs::Location &location,
+                                       const fs::path &package_name);
 
     private:
         vfs::Path vfs_path;

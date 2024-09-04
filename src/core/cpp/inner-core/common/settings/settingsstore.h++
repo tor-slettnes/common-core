@@ -33,7 +33,7 @@ namespace core
                           public types::enable_create_shared<SettingsStore>
     {
     public:
-        using Ref = std::shared_ptr<SettingsStore>;
+        using ptr = std::shared_ptr<SettingsStore>;
 
         // protected:
         //     use_shared_scope();
@@ -166,7 +166,5 @@ namespace core
         types::PathList directories_;
         std::vector<fs::path> filenames_;
     };
-
-    // using SettingsStoreRef = std::shared_ptr<SettingsStore>;
 }  // namespace core
 

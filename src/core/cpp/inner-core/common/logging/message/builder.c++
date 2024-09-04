@@ -12,7 +12,7 @@ namespace core::logging
 {
     MessageBuilder::MessageBuilder(Dispatcher *dispatcher,
                                    status::Level level,
-                                   Scope::Ref scope,
+                                   Scope::ptr scope,
                                    status::Flow flow,
                                    const dt::TimePoint &tp,
                                    const fs::path &path,

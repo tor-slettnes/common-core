@@ -35,9 +35,9 @@ namespace core::types
     using KeyValuePair = std::pair<std::string, Value>;
     using TaggedValue = std::pair<Tag, Value>;
 
-    using KeyValueMapRef = std::shared_ptr<KeyValueMap>;
-    using ValueListRef = std::shared_ptr<ValueList>;
-    using TaggedValueListRef = std::shared_ptr<TaggedValueList>;
+    using KeyValueMapPtr = std::shared_ptr<KeyValueMap>;
+    using ValueListPtr = std::shared_ptr<ValueList>;
+    using TaggedValueListPtr = std::shared_ptr<TaggedValueList>;
 
     /// Type aliases
     using largest_uint = std::uintmax_t;
@@ -58,9 +58,9 @@ namespace core::types
         ByteVector,
         dt::TimePoint,
         dt::Duration,
-        ValueListRef,
-        KeyValueMapRef,
-        TaggedValueListRef>;
+        ValueListPtr,
+        KeyValueMapPtr,
+        TaggedValueListPtr>;
 
     /// Enumeration of different types corresponding to ValueBase::index().
     enum class ValueType
@@ -97,8 +97,8 @@ namespace core::types
     std::istream &operator>>(std::istream &stream, ValueType &type);
 
     extern std::string typetree(const Value &value);
-    extern std::string typetree(const ValueListRef &list);
-    extern std::string typetree(const KeyValueMapRef &kvmap);
-    extern std::string typetree(const TaggedValueListRef &tvlist);
+    extern std::string typetree(const ValueListPtr &list);
+    extern std::string typetree(const KeyValueMapPtr &kvmap);
+    extern std::string typetree(const TaggedValueListPtr &tvlist);
 
 }  // namespace core::types

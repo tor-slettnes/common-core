@@ -16,8 +16,6 @@ class Options : public core::argparse::CommandOptions
 public:
     Options();
 
-    using Super::handle_command;
-
 private:
     void add_options() override;
     void add_commands();
@@ -25,20 +23,18 @@ private:
     void initialize();
     void deinitialize();
 
-    bool handle_command(const Handler &handler) override;
-
     void on_monitor_start() override;
     void on_monitor_end() override;
 
     void on_context(
         core::signal::MappingAction action,
         const std::string &key,
-        const platform::vfs::ContextRef &cxt);
+        const platform::vfs::Context::ptr &cxt);
 
     void on_context_in_use(
         core::signal::MappingAction action,
         const std::string &key,
-        const platform::vfs::ContextRef &cxt);
+        const platform::vfs::Context::ptr &cxt);
 
 private:
     void get_contexts();

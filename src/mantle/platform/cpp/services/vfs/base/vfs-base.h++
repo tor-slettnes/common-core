@@ -29,11 +29,11 @@ namespace platform::vfs
 
         virtual ContextMap get_open_context() const = 0;
 
-        virtual ContextRef get_context(const std::string &name, bool required = true) const = 0;
+        virtual Context::ptr get_context(const std::string &name, bool required = true) const = 0;
 
-        virtual ContextRef open_context(const std::string &name, bool required = true) = 0;
+        virtual Context::ptr open_context(const std::string &name, bool required = true) = 0;
 
-        virtual void close_context(const ContextRef &cxt) = 0;
+        virtual void close_context(const Context::ptr &cxt) = 0;
 
         virtual VolumeStats volume_stats(const Path &vpath,
                                          const OperationFlags &flags) const = 0;
@@ -63,9 +63,9 @@ namespace platform::vfs
         virtual void create_folder(const Path &vpath,
                                    const OperationFlags &flags) const = 0;
 
-        virtual ReaderRef read_file(const Path &vpath) const = 0;
+        virtual UniqueReader read_file(const Path &vpath) const = 0;
 
-        virtual WriterRef write_file(const Path &vpath) const = 0;
+        virtual UniqueWriter write_file(const Path &vpath) const = 0;
 
         virtual core::types::KeyValueMap get_attributes(const Path &vpath) const = 0;
 

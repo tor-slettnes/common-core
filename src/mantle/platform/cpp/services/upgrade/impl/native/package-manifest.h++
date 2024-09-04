@@ -8,6 +8,7 @@
 #pragma once
 #include "upgrade-types.h++"
 #include "settings/settingsstore.h++"
+#include "types/create-shared.h++"
 
 namespace platform::upgrade::native
 {
@@ -21,22 +22,26 @@ namespace platform::upgrade::native
     //==========================================================================
     // Package Manifest
 
-    class PackageManifest : public core::SettingsStore
+    class LocalManifest : public core::SettingsStore,
+                          public PackageManifest
     {
-        using This = PackageManifest;
-        using Super = core::SettingsStore;
-
-    protected:
-        using Super::Super;
+        using This = LocalManifest;
+        using Super = PackageManifest;
 
     public:
-        std::string product_name(const std::string &fallback={}) const;
-        Version version(const Version &fallback={}) const;
-        std::string description(const std::string &fallback={}) const;
-        bool reboot_required(bool fallback=false) const;
+        LocalManifest(const fs::path &manifest_file,
+                      const PackageSource &source);
 
-        bool product_match(const std::string &installed_product) const;
-        bool version_match(const Version &installed_version) const;
+    public:
+        const bool is_applicable() const override;
+        void check_applicable() const;
+
+    private:
+        static Version decode_version(const core::types::Value &value);
+        static std::string decode_description(const core::types::Value &value);
+
+        bool product_match(const std::string &current_product) const;
+        bool version_match(const Version &current_version) const;
     };
 
 }  // namespace platform::upgrade::native

@@ -8,8 +8,14 @@
 #pragma once
 #include "platform/process.h++"
 
+#include <poll.h>
+
+#include <array>
+
 namespace core::platform
 {
+    using Pipe = std::array<FileDescriptor, 2>;
+
     /// @brief Process invocation on Linux
     class PosixProcessProvider : public ProcessProvider
     {
@@ -63,13 +69,6 @@ namespace core::platform
             FileDescriptor *fdout,
             FileDescriptor *fderr) const override;
 
-        PID invoke_async_from_pipe(
-            const ArgVector &argv,
-            const fs::path &cwd,
-            FileDescriptor from_fdin,
-            FileDescriptor *fdout,
-            FileDescriptor *fderr) const override;
-
         ExitStatus pipe_capture(
             PID pid,
             FileDescriptor fdin,
@@ -93,34 +92,67 @@ namespace core::platform
             std::string *output,
             std::string *diag) const override;
 
-        void pipeline(
+        InvocationResults pipeline(
             const Invocations &invocations,
             FileDescriptor fdin,
-            FileDescriptor *fdout) const override;
+            bool checkstatus) const override;
 
-        void pipe_from_stream(
+        InvocationResults pipe_from_stream(
             const Invocations &invocations,
             std::istream &instream,
-            FileDescriptor *fdout) const override;
+            bool checkstatus) const override;
 
         ExitStatus waitpid(PID pid, bool checkstatus = false) const override;
 
     protected:
+        PID invoke_async_from_fd(
+            const ArgVector &argv,
+            const fs::path &cwd,
+            FileDescriptor from_fd,
+            FileDescriptor *fdout,
+            FileDescriptor *fderr) const;
+
         void write_from_stream(
             std::istream &stream,
             FileDescriptor fd) const;
 
         void trim_pipe(
-            FileDescriptor pipefd[2],
+            const Pipe &pipe,
             Direction direction,
             FileDescriptor *fd) const;
 
-        void close_fds(
-            FileDescriptor pipefd[2]) const;
+        void close_pipe(
+            const Pipe &pipe) const;
+
+        void close_fd(
+            FileDescriptor fd) const;
+
+        Pipe create_pipe() const;
 
         void execute(
             ArgVector argv,
             const fs::path &cwd) const;
+
+        void poll_outputs(
+            const std::vector<struct pollfd> &pfds,
+            const Invocations &invocations,
+            InvocationResults *results) const;
+
+        bool check_poll(
+            const struct pollfd &pfd,
+            const Invocation &invocation,
+            const InvocationResult &result,
+            const std::string &stream_name,
+            std::shared_ptr<std::stringstream> *outstream,
+            std::unordered_set<FileDescriptor> *open_fds) const;
+
+        void wait_results(
+            const Invocations &invocations,
+            bool checkstatus,
+            InvocationResults *results) const;
+
+    private:
+        static std::unordered_set<FileDescriptor> open_fds;
     };
 
 }  // namespace core::platform

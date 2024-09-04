@@ -23,9 +23,10 @@ namespace platform::upgrade::grpc
 
     protected:
         void scan(const PackageSource &source) override;
-        std::vector<PackageInfo::Ref> list_available() const override;
-        PackageInfo::Ref best_available() const override;
-        PackageInfo::Ref install(const PackageSource &source) override;
+        PackageSources list_sources() const override;
+        PackageManifests list_available() const override;
+        PackageManifest::ptr best_available() const override;
+        PackageManifest::ptr install(const PackageSource &source) override;
         void finalize() override;
 
     private:

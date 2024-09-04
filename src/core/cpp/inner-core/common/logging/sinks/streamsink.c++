@@ -36,7 +36,7 @@ namespace core::logging
     {
     }
 
-    void StreamSink::capture_message(const Message::Ref &msg)
+    void StreamSink::capture_message(const Message::ptr &msg)
     {
         const StyleMap *styles = this->styles.get_ptr(msg->level());
 

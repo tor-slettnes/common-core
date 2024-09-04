@@ -21,13 +21,31 @@ namespace protobuf
                 ::platform::upgrade::PackageSource *native);
 
     //==========================================================================
-    // Package Info
+    // Package Sources
 
-    void encode(const ::platform::upgrade::PackageInfo &native,
-                ::cc::platform::upgrade::PackageInfo *msg);
+    void encode(const ::platform::upgrade::PackageSources &native,
+                ::cc::platform::upgrade::PackageSources *msg);
 
-    void decode(const ::cc::platform::upgrade::PackageInfo &msg,
-                ::platform::upgrade::PackageInfo *native);
+    void decode(const ::cc::platform::upgrade::PackageSources &msg,
+                ::platform::upgrade::PackageSources *native);
+
+    //==========================================================================
+    // Package Manifest
+
+    void encode(const ::platform::upgrade::PackageManifest &native,
+                ::cc::platform::upgrade::PackageManifest *msg);
+
+    void decode(const ::cc::platform::upgrade::PackageManifest &msg,
+                ::platform::upgrade::PackageManifest *native);
+
+    //==========================================================================
+    // Package Manifests
+
+    void encode(const ::platform::upgrade::PackageManifests &native,
+                ::cc::platform::upgrade::PackageManifests *msg);
+
+    void decode(const ::cc::platform::upgrade::PackageManifests &msg,
+                ::platform::upgrade::PackageManifests *native);
 
     //==========================================================================
     // Scan Progress

@@ -99,7 +99,7 @@ namespace core
             return false;
         }
 
-        if (auto *kvmap = std::get_if<types::KeyValueMapRef>(&value))
+        if (auto *kvmap = std::get_if<types::KeyValueMapPtr>(&value))
         {
             this->recursive_merge(**kvmap);
             return true;
@@ -214,7 +214,7 @@ namespace core
                 {
                     next_value = types::KeyValueMap::create_shared();
                 }
-                if (auto *next_map = std::get_if<types::KeyValueMapRef>(&next_value))
+                if (auto *next_map = std::get_if<types::KeyValueMapPtr>(&next_value))
                 {
                     current = next_map->get();
                 }

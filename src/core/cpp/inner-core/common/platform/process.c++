@@ -10,6 +10,15 @@
 
 namespace core::platform
 {
+    std::ostream &operator<<(std::ostream &stream, const Invocation &invocation)
+    {
+        stream << "{argv=" << invocation.argv
+               << ", cwd=" << invocation.cwd
+               << "}";
+
+        return stream;
+    }
+
     PID ProcessProvider::thread_id() const
     {
         throw std::invalid_argument("thread_id() is not implemented on this platform");
@@ -22,7 +31,7 @@ namespace core::platform
 
     ArgVector ProcessProvider::arg_vector(const types::Value &command) const
     {
-        if (const types::ValueListRef &list = command.get_valuelist())
+        if (const types::ValueListPtr &list = command.get_valuelist())
         {
             return list->filter_by_type<std::string>();
         }
@@ -71,16 +80,6 @@ namespace core::platform
         throw std::invalid_argument("invoke_async_pipe() is not implemented on this platform");
     }
 
-    PID ProcessProvider::invoke_async_from_pipe(
-        const ArgVector &,
-        const fs::path &,
-        FileDescriptor,
-        FileDescriptor *,
-        FileDescriptor *) const
-    {
-        throw std::invalid_argument("invoke_async_from_pipe() is not implemented on this platform");
-    }
-
     ExitStatus ProcessProvider::pipe_capture(
         PID pid,
         FileDescriptor fdin,
@@ -113,18 +112,18 @@ namespace core::platform
         throw std::invalid_argument("invoke_check() is not implemented on this platform");
     }
 
-    void ProcessProvider::pipeline(
+    InvocationResults ProcessProvider::pipeline(
         const Invocations &invocations,
         FileDescriptor fdin,
-        FileDescriptor *fdout) const
+        bool checkstatus) const
     {
         throw std::invalid_argument("pipeline() is not implemented on this platform");
     }
 
-    void ProcessProvider::pipe_from_stream(
+    InvocationResults ProcessProvider::pipe_from_stream(
         const Invocations &invocations,
         std::istream &instream,
-        FileDescriptor *fdout) const
+        bool checkstatus) const
     {
         throw std::invalid_argument("pipe_from_stream() is not implemented on this platform");
     }

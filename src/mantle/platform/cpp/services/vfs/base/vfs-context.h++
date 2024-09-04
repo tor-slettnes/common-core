@@ -91,6 +91,9 @@ namespace platform::vfs
     class Context : public core::types::Streamable
     {
     public:
+        using ptr = std::shared_ptr<Context>;
+
+    public:
         Context(const ContextName &name = {},
                 const fs::path &root = {},
                 bool writable = false,
@@ -116,9 +119,8 @@ namespace platform::vfs
         std::string title;
     };
 
-    using ContextRef = std::shared_ptr<Context>;
-    using ContextMap = std::unordered_map<ContextName, ContextRef>;
-    using ContextList = std::vector<ContextRef>;
+    using ContextMap = std::unordered_map<ContextName, Context::ptr>;
+    using ContextList = std::vector<Context::ptr>;
 
     //==========================================================================
     /// \class ContextProxy
@@ -132,7 +134,7 @@ namespace platform::vfs
     {
     public:
         ContextProxy();
-        ContextProxy(ContextRef context, bool modify);
+        ContextProxy(Context::ptr context, bool modify);
         ContextProxy(const ContextProxy &other);
         ~ContextProxy();
 
@@ -147,7 +149,7 @@ namespace platform::vfs
         void check_access(bool modify) const;
 
     public:
-        ContextRef context;
+        Context::ptr context;
         bool modify;
     };
 
@@ -160,11 +162,11 @@ namespace platform::vfs
     public:
         Location();
 
-        Location(ContextRef context,
+        Location(Context::ptr context,
                  const fs::path &relpath,
                  bool modify);
 
-        Location(ContextRef context,
+        Location(Context::ptr context,
                  bool modify);
 
         Location(const Location &other);
@@ -181,8 +183,6 @@ namespace platform::vfs
     };
 
     using LocationList = std::vector<Location>;
-    //using LocationRef = std::shared_ptr<Location>;
-
 }  // namespace platform::vfs
 
 namespace std

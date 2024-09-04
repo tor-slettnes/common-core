@@ -24,7 +24,7 @@ namespace core::logging
         using Super = LogSink;
 
     public:
-        using Ref = std::shared_ptr<MessageSink>;
+        using ptr = std::shared_ptr<MessageSink>;
 
     public:
         void set_include_context(bool include_context);
@@ -32,14 +32,14 @@ namespace core::logging
 
     protected:
         bool is_applicable(const types::Loggable &item) const override;
-        void capture_event(const status::Event::Ref &event) override;
-        virtual void capture_message(const Message::Ref &msg) = 0;
+        void capture_event(const status::Event::ptr &event) override;
+        virtual void capture_message(const Message::ptr &msg) = 0;
 
         void send_preamble(std::ostream &stream,
-                           const Message::Ref &msg,
+                           const Message::ptr &msg,
                            const std::string &suffix = ": ") const;
 
-        std::string preamble(const Message::Ref &msg,
+        std::string preamble(const Message::ptr &msg,
                              const std::string &suffix = "") const;
 
     protected:

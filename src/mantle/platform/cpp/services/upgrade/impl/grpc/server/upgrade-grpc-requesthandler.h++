@@ -31,20 +31,25 @@ namespace platform::upgrade::grpc
             const ::cc::platform::upgrade::PackageSource* request,
             ::google::protobuf::Empty* response) override;
 
+        ::grpc::Status list_sources(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ::cc::platform::upgrade::PackageSources* response) override;
+
         ::grpc::Status list_available(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::grpc::ServerWriter<::cc::platform::upgrade::PackageInfo>* writer) override;
+            ::cc::platform::upgrade::PackageManifests* response) override;
 
         ::grpc::Status best_available(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::platform::upgrade::PackageInfo* response) override;
+            ::cc::platform::upgrade::PackageManifest* response) override;
 
         ::grpc::Status install(
             ::grpc::ServerContext* context,
-            const ::cc::platform::upgrade::PackageSource* request,
-            ::cc::platform::upgrade::PackageInfo* response) override;
+            const ::cc::platform::upgrade::InstallRequest* request,
+            ::cc::platform::upgrade::PackageManifest* response) override;
 
         ::grpc::Status finalize(
             ::grpc::ServerContext* context,

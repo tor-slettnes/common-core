@@ -18,10 +18,11 @@ namespace platform::upgrade::native
         using Super = PackageHandler;
 
     public:
-        HTTPPackageHandler(const core::SettingsStore::Ref &settings,
+        HTTPPackageHandler(const core::SettingsStore::ptr &settings,
                            const URL &url);
 
     public:
+        PackageSource get_source() const override;
         void scan() override;
         void unpack(const PackageSource &source,
                     const fs::path &staging_folder) override;

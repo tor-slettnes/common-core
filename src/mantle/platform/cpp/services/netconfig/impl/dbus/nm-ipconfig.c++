@@ -30,7 +30,7 @@ namespace platform::netconfig::dbus
 
     IP4Config::IP4Config(
         core::dbus::ProxyContainer* container,
-        const core::dbus::ConnectionRef& connection,
+        const core::dbus::ConnectionPtr& connection,
         const core::dbus::ServiceName& servicename,
         const core::dbus::ObjectPath& objectpath)
         : IPConfig(
@@ -64,7 +64,7 @@ namespace platform::netconfig::dbus
 
     IP6Config::IP6Config(
         core::dbus::ProxyContainer* container,
-        const core::dbus::ConnectionRef& connection,
+        const core::dbus::ConnectionPtr& connection,
         const core::dbus::ServiceName& servicename,
         const core::dbus::ObjectPath& objectpath)
         : IPConfig(

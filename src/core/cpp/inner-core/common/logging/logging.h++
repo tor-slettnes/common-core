@@ -52,7 +52,7 @@
 ///    \endcode
 ///  * Alternatively, to build a message in steps:
 ///    \code
-///      core::Logging::MessageBuilder::Ref msg = create_log_message(status::Level::LEVELNAME);
+///      core::Logging::MessageBuilder::ptr msg = create_log_message(status::Level::LEVELNAME);
 ///      *msg << arg << ... ;
 ///      ...
 ///      msg->submit();

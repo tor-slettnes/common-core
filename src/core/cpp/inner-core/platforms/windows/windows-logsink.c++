@@ -29,7 +29,7 @@ namespace core::platform
         Super::close();
     }
 
-    void WindowsLogSinkProvider::capture_message(const logging::Message::Ref &msg)
+    void WindowsLogSinkProvider::capture_message(const logging::Message::ptr &msg)
     {
         if (auto *eventType = this->levelmap.get_ptr(msg->level()))
         {

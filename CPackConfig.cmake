@@ -6,4 +6,4 @@
 #===============================================================================
 
 ## Add any custom CPACK_* variables here.
-
+#set(CPACK_PYTHON_PACKAGE "cc")

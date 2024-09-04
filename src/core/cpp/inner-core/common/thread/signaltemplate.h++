@@ -39,7 +39,7 @@ namespace core::signal
 
     //==========================================================================
     /// @class BaseSignal
-    /// @brief Abstract/untyped base for Signal<T> and MappingSignal<T>
+    /// @brief Abstract base for VoidSignal, DataSignal<T> and MappingSignal<T>
 
     class BaseSignal
     {

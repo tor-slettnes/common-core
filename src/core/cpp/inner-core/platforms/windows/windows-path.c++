@@ -95,6 +95,13 @@ namespace core::platform
         return path;
     }
 
+    fs::path WindowsPathProvider::mktempdir(const fs::path &folder,
+                                            const std::string &prefix,
+                                            const std::string &suffix)
+    {
+        throw std::invalid_argument("mktempdir() is not implemented on this platform");
+    }
+
     fs::path WindowsPathProvider::fs_root() const
     {
         return "C:";

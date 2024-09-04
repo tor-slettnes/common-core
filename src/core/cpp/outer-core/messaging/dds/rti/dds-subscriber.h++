@@ -35,7 +35,7 @@ namespace core::dds
         using Handler = std::function<void(core::signal::MappingAction, const T &)>;
 
         template <class T>
-        using DataReaderRef = std::shared_ptr<::dds::sub::DataReader<T>>;
+        using DataReaderPtr = std::shared_ptr<::dds::sub::DataReader<T>>;
 
     public:
         Subscriber(const std::string &channel_name, int domain_id);
@@ -61,7 +61,7 @@ namespace core::dds
         ///     Whether to assign the TRANSIENT_LOCAL or VOLATILE QoS to this topic
 
         template <class T>
-        inline DataReaderRef<T>
+        inline std::shared_ptr<::dds::sub::DataReader<T>>
         create_reader(const std::string &topic_name,
                       bool reliable = false,
                       bool sync_latest = false)
@@ -87,7 +87,7 @@ namespace core::dds
         ///     Whether to assign the TRANSIENT_LOCAL or VOLATILE QoS to this topic
 
         template <class T>
-        inline DataReaderRef<T>
+        inline std::shared_ptr<::dds::sub::DataReader<T>>
         create_reader(const std::string &topic_name,
                       const Handler<T> &handler,
                       bool reliable = true,
@@ -123,7 +123,7 @@ namespace core::dds
         ///     Whether to assign the TRANSIENT_LOCAL or VOLATILE QoS to this topic
 
         template <class T>
-        inline DataReaderRef<T>
+        inline std::shared_ptr<::dds::sub::DataReader<T>>
         create_signal_reader(core::signal::DataSignal<T> *signal,
                              const std::string &topic_name = TYPE_NAME_BASE(T),
                              bool reliable = true,
@@ -139,7 +139,7 @@ namespace core::dds
     private:
         template <class T>
         static void
-        read_samples(const DataReaderRef<T> &reader,
+        read_samples(const std::shared_ptr<::dds::sub::DataReader<T>> &reader,
                      const Handler<T> &handler)
         {
             ::dds::sub::LoanedSamples<T> samples = reader->take();

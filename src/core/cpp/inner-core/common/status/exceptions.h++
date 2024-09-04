@@ -381,8 +381,8 @@ namespace core::exception
     //==========================================================================
     // Map various exceptions to appropriate Event objects
 
-    status::Event::Ref map_to_event(const std::exception &e) noexcept;
-    status::Event::Ref map_to_event(std::exception_ptr eptr) noexcept;
+    status::Event::ptr map_to_event(const std::exception &e) noexcept;
+    status::Event::ptr map_to_event(std::exception_ptr eptr) noexcept;
 
 };  // namespace core::exception
 

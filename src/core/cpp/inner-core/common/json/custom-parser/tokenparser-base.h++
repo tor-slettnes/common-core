@@ -36,6 +36,9 @@ namespace core::json
     class TokenParser
     {
     public:
+        using ptr = std::shared_ptr<TokenParser>;
+
+    public:
         TokenPair next_of(const TokenMask &expected,
                           const TokenMask &endtokens = TI_NONE);
 

@@ -58,14 +58,6 @@ void Options::deinitialize()
     }
 }
 
-bool Options::handle_command(const Handler &handler)
-{
-    this->initialize();
-    bool result = Super::handle_command(handler);
-    this->deinitialize();
-    return result;
-}
-
 void Options::on_monitor_start()
 {
     FlagMap flags;
@@ -132,7 +124,7 @@ void Options::on_monitor_end()
 }
 
 void Options::on_globaldata(
-    const platform::netconfig::GlobalDataRef &data)
+    const platform::netconfig::GlobalData::ptr &data)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_globaldata(%data)\n",
@@ -143,7 +135,7 @@ void Options::on_globaldata(
 void Options::on_connection(
     core::signal::MappingAction action,
     const std::string &key,
-    platform::netconfig::ConnectionRef data)
+    platform::netconfig::ConnectionData::ptr data)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_connection(%s, %r, %s)\n",
@@ -156,7 +148,7 @@ void Options::on_connection(
 void Options::on_active_connection(
     core::signal::MappingAction action,
     const std::string &key,
-    platform::netconfig::ActiveConnectionRef data)
+    platform::netconfig::ActiveConnectionData::ptr data)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_active_connection(%s, %r, %s)\n",
@@ -169,7 +161,7 @@ void Options::on_active_connection(
 void Options::on_accesspoint(
     core::signal::MappingAction action,
     const std::string &key,
-    platform::netconfig::AccessPointRef data)
+    platform::netconfig::AccessPointData::ptr data)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_accesspoint(%s, %r, %s)\n",
@@ -182,7 +174,7 @@ void Options::on_accesspoint(
 void Options::on_device(
     core::signal::MappingAction action,
     const std::string &key,
-    platform::netconfig::DeviceRef data)
+    platform::netconfig::DeviceData::ptr data)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_device(%s, %r, %s)\n",

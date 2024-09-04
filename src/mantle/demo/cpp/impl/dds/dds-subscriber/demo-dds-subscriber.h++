@@ -39,8 +39,8 @@ namespace demo::dds
             const CC::Demo::Greeting &greeting);
 
     private:
-        DataReaderRef<CC::Demo::TimeData> time_reader;
-        DataReaderRef<CC::Demo::Greeting> greeting_reader;
+        DataReaderPtr<CC::Demo::TimeData> time_reader;
+        DataReaderPtr<CC::Demo::Greeting> greeting_reader;
     };
 
 }  // namespace demo::dds

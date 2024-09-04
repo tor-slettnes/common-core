@@ -33,7 +33,7 @@ namespace core::dbus
         }
     }
 
-    ConnectionRef ProxyContainer::get_connection() const
+    ConnectionPtr ProxyContainer::get_connection() const
     {
         return this->connection;
     }
@@ -43,9 +43,9 @@ namespace core::dbus
         return this->wrappers;
     }
 
-    std::vector<WrapperRef> ProxyContainer::list() const
+    std::vector<ProxyWrapper::ptr> ProxyContainer::list() const
     {
-        std::vector<WrapperRef> refs;
+        std::vector<ProxyWrapper::ptr> refs;
         for (auto pathitem : this->wrappers)
         {
             for (auto interfaceitem : pathitem.second)
@@ -56,11 +56,11 @@ namespace core::dbus
         return refs;
     }
 
-    std::vector<WrapperRef> ProxyContainer::list(
+    std::vector<ProxyWrapper::ptr> ProxyContainer::list(
         const InterfaceName& interfacename) const
     {
-        std::vector<WrapperRef> refs;
-        for (const WrapperRef& ref : this->list())
+        std::vector<ProxyWrapper::ptr> refs;
+        for (const ProxyWrapper::ptr& ref : this->list())
         {
             if (ref->interfacename == interfacename)
             {
@@ -70,11 +70,11 @@ namespace core::dbus
         return refs;
     }
 
-    std::vector<WrapperRef> ProxyContainer::list(
+    std::vector<ProxyWrapper::ptr> ProxyContainer::list(
         const ObjectPath& prefix,
         const InterfaceName& interfacename) const
     {
-        std::vector<WrapperRef> refs;
+        std::vector<ProxyWrapper::ptr> refs;
         for (auto pathitem : this->wrappers)
         {
             if (core::str::startswith(pathitem.first, prefix))
@@ -91,7 +91,7 @@ namespace core::dbus
         return refs;
     }
 
-    WrapperRef ProxyContainer::add(WrapperRef wrapper)
+    ProxyWrapper::ptr ProxyContainer::add(ProxyWrapper::ptr wrapper)
     {
         const auto& [it, inserted] = this->wrappers[wrapper->objectpath]
                                          .emplace(wrapper->interfacename, wrapper);
@@ -124,11 +124,11 @@ namespace core::dbus
     //     return this->wrappers.erase(it);
     // }
 
-    WrapperRef ProxyContainer::get(
+    ProxyWrapper::ptr ProxyContainer::get(
         const ObjectPath& objectpath,
         const InterfaceName& interfacename) const
     {
-        WrapperRef ref;
+        ProxyWrapper::ptr ref;
         auto it1 = this->wrappers.find(objectpath);
         if (it1 != this->wrappers.end())
         {
@@ -141,7 +141,7 @@ namespace core::dbus
         return ref;
     }
 
-    void ProxyContainer::set_wrapper_ready(WrapperRef wrapper)
+    void ProxyContainer::set_wrapper_ready(ProxyWrapper::ptr wrapper)
     {
         this->pending_init.erase(wrapper);
         if (this->pending_init.empty() && !this->ready)

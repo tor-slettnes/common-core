@@ -17,14 +17,19 @@ namespace platform::upgrade::native
     {
         using This = PackageHandler;
 
+    public:
+        using Ptr = std::shared_ptr<This>;
+
     protected:
-        PackageHandler(const core::SettingsStore::Ref &settings);
+        PackageHandler(const core::SettingsStore::ptr &settings);
 
     public:
         virtual void scan() = 0;
-        virtual std::vector<PackageInfo::Ref> get_available() const;
+        virtual PackageSource get_source() const = 0;
+        virtual std::vector<PackageManifest::ptr> get_available() const;
+        virtual std::size_t get_available_count() const;
         virtual void install(const PackageSource &source);
-        virtual void finalize(const PackageInfo::Ref &package_info);
+        virtual void finalize(const PackageManifest::ptr &package_info);
 
     protected:
         virtual void unpack(
@@ -33,20 +38,11 @@ namespace platform::upgrade::native
 
     protected:
         void install_unpacked(
+            const PackageSource &source,
             const fs::path &staging_folder);
-
-        void check_applicable(
-            const PackageManifest &manifest) const;
-
-        bool is_applicable(
-            const PackageManifest &manifest) const;
 
         fs::path create_staging_folder() const;
         fs::path manifest_file() const;
-
-        PackageInfo::Ref create_package_info(
-            const PackageSource &source,
-            const PackageManifest &manifest);
 
         void unpack_file(
             const fs::path &filepath,
@@ -56,25 +52,8 @@ namespace platform::upgrade::native
             std::istream &stream,
             const fs::path &staging_folder);
 
-    private:
-        core::platform::PID invoke_decrypt(
-            std::shared_ptr<std::istream> stream,
-            int *stdin_fd,
-            int *stdout_fd,
-            int *stderr_fd);
-
-        core::platform::PID invoke_unpack(
-            int input_fd,
-            const fs::path &staging_folder,
-            int *stdout_fd,
-            int *stderr_fd);
-
-        void write_from_stream(
-            std::shared_ptr<std::istream> stream,
-            int fd);
-
     protected:
-        std::vector<PackageInfo::Ref> available_packages;
-        core::SettingsStore::Ref settings;
+        std::vector<PackageManifest::ptr> available_packages;
+        core::SettingsStore::ptr settings;
     };
 }  // namespace platform::upgrade::native

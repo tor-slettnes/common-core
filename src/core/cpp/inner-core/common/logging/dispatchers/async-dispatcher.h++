@@ -19,14 +19,14 @@ namespace core::logging
         void initialize() override;
         void deinitialize() override;
 
-        void submit(const types::Loggable::Ref &item) override;
+        void submit(const types::Loggable::ptr &item) override;
 
     private:
         void worker();
 
     private:
         std::thread workerthread_;
-        types::BlockingQueue<types::Loggable::Ref> queue_;
+        types::BlockingQueue<types::Loggable::ptr> queue_;
     };
 
 }  // namespace core::logging

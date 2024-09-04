@@ -29,34 +29,31 @@ namespace platform::upgrade::grpc
             protobuf::encoded<cc::platform::upgrade::PackageSource>(source));
     }
 
-    std::vector<PackageInfo::Ref> ClientProvider::list_available() const
+    PackageSources ClientProvider::list_sources() const
     {
-        std::vector<PackageInfo::Ref> list;
-        ::grpc::ClientContext cxt;
-        ::google::protobuf::Empty request;
-        cc::platform::upgrade::PackageInfo msg;
-        auto reader = this->client->stub->list_available(&cxt, request);
-        while (reader->Read(&msg))
-        {
-            PackageInfo::Ref &info = list.emplace_back();
-            protobuf::decode_shared(msg, &info);
-        }
-        return list;
+        return protobuf::decoded<PackageSources>(
+            this->client->call_check(&Client::Stub::list_sources));
     }
 
-    PackageInfo::Ref ClientProvider::best_available() const
+    PackageManifests ClientProvider::list_available() const
     {
-        return protobuf::decode_shared<PackageInfo>(
-            this->client->call_check(
-                &Client::Stub::best_available));
+        return protobuf::decoded<PackageManifests>(
+            this->client->call_check(&Client::Stub::list_available));
     }
 
-    PackageInfo::Ref ClientProvider::install(const PackageSource &source)
+    PackageManifest::ptr ClientProvider::best_available() const
     {
-        return protobuf::decode_shared<PackageInfo>(
-            this->client->call_check(
-                &Client::Stub::install,
-                protobuf::encoded<cc::platform::upgrade::PackageSource>(source)));
+        return protobuf::decode_shared<PackageManifest>(
+            this->client->call_check(&Client::Stub::best_available));
+    }
+
+    PackageManifest::ptr ClientProvider::install(const PackageSource &source)
+    {
+        cc::platform::upgrade::InstallRequest request;
+        protobuf::encode(source, request.mutable_source());
+
+        return protobuf::decode_shared<PackageManifest>(
+            this->client->call_check(&Client::Stub::install, request));
     }
 
     void ClientProvider::finalize()

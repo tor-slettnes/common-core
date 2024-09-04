@@ -160,7 +160,7 @@ namespace platform::netconfig::dbus
     //======================================================================
     // Manager methods
 
-    GlobalDataRef DBusProvider::get_global_data() const
+    GlobalData::ptr DBusProvider::get_global_data() const
     {
         return this->manager;
     }

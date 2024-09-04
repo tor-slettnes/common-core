@@ -7,34 +7,35 @@
 
 #pragma once
 #include "dbus-types.h++"
+#include "dbus-proxywrapper.h++"
 #include "platform/symbols.h++"
 
 namespace core::dbus
 {
     class ProxyContainer
     {
-        using WrapperMap = std::map<ObjectPath, std::map<InterfaceName, WrapperRef>>;
+        using WrapperMap = std::map<ObjectPath, std::map<InterfaceName, ProxyWrapper::ptr>>;
 
     public:
         ProxyContainer(Gio::DBus::BusType bus, const ServiceName& servicename);
 
         void connect();
-        ConnectionRef get_connection() const;
+        ConnectionPtr get_connection() const;
 
         const WrapperMap map() const;
 
-        std::vector<WrapperRef> list() const;
-        std::vector<WrapperRef> list(const InterfaceName& interfacename) const;
-        std::vector<WrapperRef> list(const ObjectPath& prefix,
+        std::vector<ProxyWrapper::ptr> list() const;
+        std::vector<ProxyWrapper::ptr> list(const InterfaceName& interfacename) const;
+        std::vector<ProxyWrapper::ptr> list(const ObjectPath& prefix,
                                      const InterfaceName& interfacename) const;
 
-        WrapperRef add(WrapperRef wrapper);
+        ProxyWrapper::ptr add(ProxyWrapper::ptr wrapper);
         WrapperMap::iterator remove(const ObjectPath& objectpath);
         // WrapperMap::iterator remove(WrapperMap::iterator it);
-        WrapperRef get(const ObjectPath& objectpath,
+        ProxyWrapper::ptr get(const ObjectPath& objectpath,
                        const InterfaceName& interfacename) const;
 
-        virtual void set_wrapper_ready(WrapperRef wrapper);
+        virtual void set_wrapper_ready(ProxyWrapper::ptr wrapper);
         virtual void set_ready();
         bool is_ready();
 
@@ -177,13 +178,13 @@ namespace core::dbus
 
     private:
         Gio::DBus::BusType bus;
-        ConnectionRef connection;
+        ConnectionPtr connection;
         std::string servicename;
 
     public:
         WrapperMap wrappers;
         bool ready;
-        std::unordered_set<WrapperRef> pending_init;
+        std::unordered_set<ProxyWrapper::ptr> pending_init;
         sigc::signal<void> signal_ready;
     };
 }  // namespace core::dbus

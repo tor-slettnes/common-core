@@ -33,7 +33,7 @@ namespace core::logging
         using Super = status::Event;
 
     public:
-        using Ref = std::shared_ptr<Message>;
+        using ptr = std::shared_ptr<Message>;
 
     public:
         /// @brief
@@ -68,7 +68,7 @@ namespace core::logging
 
         Message(const std::string &text,
                 status::Level level,
-                Scope::Ref scope,
+                Scope::ptr scope,
                 status::Flow flow,
                 const dt::TimePoint &tp,
                 const fs::path &path,
@@ -93,7 +93,7 @@ namespace core::logging
         /// Will this message be accepted by at least one available sink?
         inline virtual bool is_applicable() const noexcept
         {
-            if (const Scope::Ref &scope = this->scope())
+            if (const Scope::ptr &scope = this->scope())
             {
                 return scope->is_applicable(this->level());
             }
@@ -103,7 +103,7 @@ namespace core::logging
             }
         }
 
-        virtual inline Scope::Ref scope() const noexcept
+        virtual inline Scope::ptr scope() const noexcept
         {
             return this->scope_;
         }
@@ -142,7 +142,7 @@ namespace core::logging
         void populate_fields(types::PartsList *parts) const noexcept override;
 
     protected:
-        Scope::Ref scope_;
+        Scope::ptr scope_;
         fs::path path_;
         uint lineno_;
         std::string function_;

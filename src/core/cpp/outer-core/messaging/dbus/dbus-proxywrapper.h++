@@ -21,6 +21,10 @@ namespace core::dbus
 {
     class ProxyWrapper : public std::enable_shared_from_this<ProxyWrapper>
     {
+    public:
+        using ptr = std::shared_ptr<ProxyWrapper>;
+
+    private:
         friend class ProxyContainer;
 
         // Callback method to hande updates propagated from another object.
@@ -37,12 +41,12 @@ namespace core::dbus
         using SignalHandlerMap = std::unordered_map<SignalName, SignalHandler>;
         using PropertyHandlerMap = std::unordered_map<PropertyName, PropertyHandler>;
 
-        using ResultRef = Glib::RefPtr<Gio::AsyncResult>;
+        using ResultPtr = Glib::RefPtr<Gio::AsyncResult>;
 
     protected:
         ProxyWrapper(
             ProxyContainer* container,
-            const ConnectionRef& connection,
+            const ConnectionPtr& connection,
             const ServiceName& servicename,
             const ObjectPath& objectpath,
             const InterfaceName& interfacename,
@@ -55,7 +59,7 @@ namespace core::dbus
         virtual std::string identifier() const;
 
     private:
-        void on_ready(const ResultRef& result, const std::string& identifier);
+        void on_ready(const ResultPtr& result, const std::string& identifier);
 
     protected:
         virtual void initialize();
@@ -69,13 +73,13 @@ namespace core::dbus
             const Gio::SlotAsyncReady& slot = {}) const;
 
         void callback_handler(
-            ResultRef result,
+            ResultPtr result,
             const std::string& methodname,
             const Glib::VariantContainerBase& parameters,
             const Gio::SlotAsyncReady& slot) const;
 
         Glib::VariantContainerBase call_finish(
-            ResultRef result) const;
+            ResultPtr result) const;
 
         Glib::VariantContainerBase call_sync(
             const std::string& methodname,
@@ -142,7 +146,7 @@ namespace core::dbus
         ProxyContainer* container;
 
     public:
-        ConnectionRef connection;
+        ConnectionPtr connection;
         const std::string servicename;
         const ObjectPath objectpath;
         const InterfaceName interfacename;
@@ -158,5 +162,4 @@ namespace core::dbus
         std::map<ObjectPath, UpdateRequest> subscribers;
     };  // namespace dbus
 
-    using WrapperRef = std::shared_ptr<ProxyWrapper>;
 }  // namespace core::dbus

@@ -21,7 +21,6 @@ namespace core::platform
 {
     using FileMode = std::uint32_t;
 
-
     /// @brief Abstract provider for path-related functions
     class PathProvider : public Provider
     {
@@ -137,7 +136,7 @@ namespace core::platform
 
         /// @brief  Return the binary content of the specified file, up to the specified maximum.
         virtual types::ByteVector readdata(const fs::path &path,
-                                          ssize_t maxsize = 0) const noexcept;
+                                           ssize_t maxsize = 0) const noexcept;
 
         /// @brief Return the contents off the specified file, up to the specified maximum
         virtual std::string readtext(const fs::path &path,
@@ -171,8 +170,35 @@ namespace core::platform
         ///     The file is created and immediately closed, allowing it to be
         ///     subsequently reopened by e.g. a subprocess.
         virtual fs::path mktemp(const fs::path &folder,
-                                const std::string &prefix = "tmp.",
-                                const std::string &suffix = {}) = 0;
+                                const std::string &prefix,
+                                const std::string &suffix) = 0;
+
+        /// @brief
+        ///     Create a temporary directory in a specific folder
+        /// @param[in] folder
+        ///     Directory in which to create the file.
+        /// @param[in] prefix
+        ///     Basename prefix
+        /// @param[in] suffix
+        ///     Basename suffix
+        /// @note
+        ///     Uniqueness and ownership is guaranteed via `mkdtemp(3)`.
+        fs::path mktempdir(const std::string &prefix = "tmp.",
+                           const std::string &suffix = {});
+
+        /// @brief
+        ///     Create a temporary directory in a specific folder
+        /// @param[in] folder
+        ///     Directory in which to create the file.
+        /// @param[in] prefix
+        ///     Basename prefix
+        /// @param[in] suffix
+        ///     Basename suffix
+        /// @note
+        ///     Uniqueness and ownership is guaranteed via `mkdtemp(3)`.
+        virtual fs::path mktempdir(const fs::path &folder,
+                                   const std::string &prefix,
+                                   const std::string &suffix) = 0;
 
     private:
         fs::path exec_name_;

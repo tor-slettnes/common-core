@@ -50,7 +50,7 @@ namespace core::logging
         this->open(tp);
     }
 
-    void LogFileSink::capture_message(const Message::Ref &msg)
+    void LogFileSink::capture_message(const Message::ptr &msg)
     {
         if (this->stream_ && this->stream_->good())
         {

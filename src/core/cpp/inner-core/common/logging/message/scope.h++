@@ -67,11 +67,11 @@
 /// \endcode
 
 #define define_log_scope(...) \
-    inline static ::core::logging::Scope::Ref log_scope = \
+    inline static ::core::logging::Scope::ptr log_scope = \
         ::core::logging::Scope::create(__VA_ARGS__)
 
 #define use_log_scope(other) \
-    inline static ::core::logging::Scope::Ref log_scope = other
+    inline static ::core::logging::Scope::ptr log_scope = other
 
 #define use_shared_scope() \
     use_log_scope(::core::log_scope)
@@ -98,7 +98,7 @@ namespace core::logging
         ///     `default_threshold` is used.
 
     public:
-        using Ref = std::shared_ptr<Scope>;
+        using ptr = std::shared_ptr<Scope>;
 
     public:
         Scope(const std::string &name, status::Level threshold);
@@ -106,7 +106,7 @@ namespace core::logging
         status::Level effective_threshold() const;
         bool is_applicable(status::Level level) const;
 
-        static Ref create(const std::string &name, status::Level threshold = status::Level::NONE);
+        static ptr create(const std::string &name, status::Level threshold = status::Level::NONE);
 
     public:
         std::string name;
@@ -116,7 +116,7 @@ namespace core::logging
     /// Default threshold.  This may be overridden by specific scopes (including Global);
     /// \sa scope.hpp.
     inline status::Level default_threshold = status::Level::NOTICE;
-    inline types::ValueMap<std::string, Scope::Ref> scopes;
+    inline types::ValueMap<std::string, Scope::ptr> scopes;
 
     void set_default_threshold(status::Level threshold);
     void set_universal_threshold(status::Level threshold);

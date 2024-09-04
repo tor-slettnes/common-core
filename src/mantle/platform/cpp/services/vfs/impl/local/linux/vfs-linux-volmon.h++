@@ -62,6 +62,9 @@ namespace platform::vfs::local::volume
         using ValueSet = std::set<std::string>;
 
     public:
+        using ptr = std::shared_ptr<Event>;
+
+    public:
         Event(struct udev_device *device,
               ActionType actionType = ACTION_UNKNOWN);
 
@@ -128,8 +131,6 @@ namespace platform::vfs::local::volume
         bool writable;
     };
 
-    using EventRef = std::shared_ptr<Event>;
-
     //==========================================================================
     /// BaseIterator - Base for Enumerator and Monitor, below
 
@@ -140,7 +141,7 @@ namespace platform::vfs::local::volume
         ~Base();
         virtual bool available();
         virtual void init(){};
-        virtual EventRef next() = 0;
+        virtual Event::ptr next() = 0;
 
     protected:
         struct udev *udev = nullptr;
@@ -157,7 +158,7 @@ namespace platform::vfs::local::volume
         ~Enumerator();
 
         void init() override;
-        EventRef next() override;
+        Event::ptr next() override;
 
     protected:
         struct udev_enumerate *enumerator = nullptr;
@@ -175,7 +176,7 @@ namespace platform::vfs::local::volume
 
         bool available() override;
         void init() override;
-        EventRef next() override;
+        Event::ptr next() override;
 
         void start();
         void stop();

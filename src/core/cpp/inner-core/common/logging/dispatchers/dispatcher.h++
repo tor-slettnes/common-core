@@ -17,18 +17,18 @@ namespace core::logging
     class Dispatcher
     {
     public:
-        virtual Sink::Ref add_sink(const Sink::Ref &sink);
-        virtual bool remove_sink(const Sink::Ref &sink);
-        const std::set<Sink::Ref> &sinks() const;
+        virtual Sink::ptr add_sink(const Sink::ptr &sink);
+        virtual bool remove_sink(const Sink::ptr &sink);
+        const std::set<Sink::ptr> &sinks() const;
 
         virtual void initialize();
         virtual void deinitialize();
 
         virtual bool is_applicable(const types::Loggable &item) const;
-        virtual void submit(const types::Loggable::Ref &item) = 0;
+        virtual void submit(const types::Loggable::ptr &item) = 0;
 
     protected:
-        std::set<Sink::Ref> sinks_;
+        std::set<Sink::ptr> sinks_;
     };
 
 }  // namespace core::logging

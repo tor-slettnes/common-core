@@ -124,9 +124,9 @@ namespace core::types
         const Value &get(const uint index, const Value &fallback = {}) const noexcept;
         const Value &get(const int index, const Value &fallback = {}) const noexcept;
 
-        ValueListRef get_valuelist() const noexcept;
-        KeyValueMapRef get_kvmap() const noexcept;
-        TaggedValueListRef get_tvlist() const noexcept;
+        ValueListPtr get_valuelist() const noexcept;
+        KeyValueMapPtr get_kvmap() const noexcept;
+        TaggedValueListPtr get_tvlist() const noexcept;
 
         // void replace_from(const Value &other);
 

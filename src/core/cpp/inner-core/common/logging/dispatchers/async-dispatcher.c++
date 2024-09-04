@@ -14,7 +14,7 @@ namespace core::logging
         Dispatcher::initialize();
         if (!this->workerthread_.joinable())
         {
-            for (const Sink::Ref &sink : this->sinks())
+            for (const Sink::ptr &sink : this->sinks())
             {
                 sink->open();
             }
@@ -29,7 +29,7 @@ namespace core::logging
         {
             this->queue_.close();
             this->workerthread_.join();
-            for (const Sink::Ref &sink : this->sinks())
+            for (const Sink::ptr &sink : this->sinks())
             {
                 sink->close();
             }
@@ -37,18 +37,18 @@ namespace core::logging
         Dispatcher::deinitialize();
     }
 
-    void AsyncDispatcher::submit(const types::Loggable::Ref &item)
+    void AsyncDispatcher::submit(const types::Loggable::ptr &item)
     {
         this->queue_.put(item);
     }
 
     void AsyncDispatcher::worker()
     {
-        while (const std::optional<types::Loggable::Ref> &opt_item = this->queue_.get())
+        while (const std::optional<types::Loggable::ptr> &opt_item = this->queue_.get())
         {
-            for (const Sink::Ref &sink : this->sinks())
+            for (const Sink::ptr &sink : this->sinks())
             {
-                const types::Loggable::Ref &item = *opt_item;
+                const types::Loggable::ptr &item = *opt_item;
                 if (sink->is_applicable(*item))
                 {
                     sink->capture(item);

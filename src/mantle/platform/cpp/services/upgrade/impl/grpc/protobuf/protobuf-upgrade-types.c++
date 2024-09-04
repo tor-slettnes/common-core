@@ -54,28 +54,81 @@ namespace protobuf
     }
 
     //==========================================================================
-    // Package Info
+    // Package Sources
 
-    void encode(const ::platform::upgrade::PackageInfo &native,
-                ::cc::platform::upgrade::PackageInfo *msg)
+    void encode(const ::platform::upgrade::PackageSources &native,
+                ::cc::platform::upgrade::PackageSources *msg)
     {
-        encode(native.source, msg->mutable_source());
-        msg->set_product_name(native.product_name);
-        encode(native.release_version, msg->mutable_release_version());
-        msg->set_release_description(native.release_description);
-        msg->set_reboot_required(native.reboot_required);
-        msg->set_applicable(native.applicable);
+        auto sources = msg->mutable_sources();
+        sources->Clear();
+        sources->Reserve(native.size());
+        for (const ::platform::upgrade::PackageSource &src: native)
+        {
+            encode(src, sources->Add());
+        }
     }
 
-    void decode(const ::cc::platform::upgrade::PackageInfo &msg,
-                ::platform::upgrade::PackageInfo *native)
+    void decode(const ::cc::platform::upgrade::PackageSources &msg,
+                ::platform::upgrade::PackageSources *native)
     {
-        decode(msg.source(), &native->source);
-        native->product_name = msg.product_name();
-        decode(msg.release_version(), &native->release_version);
-        native->release_description = msg.release_description();
-        native->reboot_required = msg.reboot_required();
-        native->applicable = msg.applicable();
+        native->clear();
+        native->reserve(msg.sources().size());
+        for (const ::cc::platform::upgrade::PackageSource &src: msg.sources())
+        {
+            decode(src, &native->emplace_back());
+        }
+    }
+
+    //==========================================================================
+    // Package Manifest
+
+    void encode(const ::platform::upgrade::PackageManifest &native,
+                ::cc::platform::upgrade::PackageManifest *msg)
+    {
+        encode(native.source(), msg->mutable_source());
+        msg->set_product_name(native.product());
+        encode(native.version(), msg->mutable_release_version());
+        msg->set_release_description(native.description());
+        msg->set_reboot_required(native.reboot_required());
+        msg->set_is_applicable(native.is_applicable());
+    }
+
+    void decode(const ::cc::platform::upgrade::PackageManifest &msg,
+                ::platform::upgrade::PackageManifest *native)
+    {
+        *native = ::platform::upgrade::PackageManifest(
+            decoded<::platform::upgrade::PackageSource>(msg.source()),
+            msg.product_name(),
+            decoded<::platform::sysconfig::Version>(msg.release_version()),
+            msg.release_description(),
+            msg.reboot_required(),
+            msg.is_applicable());
+    }
+
+    //==========================================================================
+    // Package Manifests
+
+    void encode(const ::platform::upgrade::PackageManifests &native,
+                ::cc::platform::upgrade::PackageManifests *msg)
+    {
+        auto manifests = msg->mutable_manifests();
+        manifests->Clear();
+        manifests->Reserve(native.size());
+        for (const ::platform::upgrade::PackageManifest::ptr &ptr: native)
+        {
+            encode(*ptr, manifests->Add());
+        }
+    }
+
+    void decode(const ::cc::platform::upgrade::PackageManifests &msg,
+                ::platform::upgrade::PackageManifests *native)
+    {
+        native->clear();
+        native->reserve(msg.manifests().size());
+        for (const ::cc::platform::upgrade::PackageManifest &manifest: msg.manifests())
+        {
+            decode_shared(manifest, &native->emplace_back());
+        }
     }
 
     //==========================================================================

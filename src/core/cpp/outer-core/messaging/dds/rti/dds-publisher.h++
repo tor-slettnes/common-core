@@ -28,7 +28,7 @@ namespace core::dds
 
     public:
         template <class T>
-        using DataWriterRef = std::shared_ptr<::dds::pub::DataWriter<T>>;
+        using DataWriterPtr = std::shared_ptr<::dds::pub::DataWriter<T>>;
 
     public:
         Publisher(const std::string &channel_name, int domain_id);
@@ -46,7 +46,7 @@ namespace core::dds
         ///     Whether to assign the TRANSIENT_LOCAL or VOLATILE QoS to this topic
 
         template <class T>
-        DataWriterRef<T>
+        std::shared_ptr<::dds::pub::DataWriter<T>>
         create_writer(const std::string &topic_name,
                       bool reliable = true,
                       bool sync_latest = false)
@@ -70,7 +70,7 @@ namespace core::dds
         ///     The payload to be published
 
         template <class T>
-        void publish(DataWriterRef<T> &writer, const T &update)
+        void publish(std::shared_ptr<::dds::pub::DataWriter<T>> &writer, const T &update)
         {
             logf_trace("Publishing: %s", update);
             writer->write(update);
@@ -87,7 +87,7 @@ namespace core::dds
         ///     The payload to publish
 
         template <class T>
-        void publish_change(DataWriterRef<T> &writer,
+        void publish_change(std::shared_ptr<::dds::pub::DataWriter<T>> &writer,
                             core::signal::MappingAction mapping_action,
                             const T &update)
         {

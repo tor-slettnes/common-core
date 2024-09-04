@@ -50,19 +50,19 @@ namespace core::json
         return this->read_stream(stream);
     }
 
-    types::Value CustomReader::parse_input(const ParserRef &parser)
+    types::Value CustomReader::parse_input(const TokenParser::ptr &parser)
     {
         types::Value value = This::parse_value(parser);
         parser->next_of(TI_END);
         return value;
     }
 
-    types::Value CustomReader::parse_value(const ParserRef &parser)
+    types::Value CustomReader::parse_value(const TokenParser::ptr &parser)
     {
         return This::next_value(parser).second;
     }
 
-    types::KeyValueMapRef CustomReader::parse_object(const ParserRef &parser)
+    types::KeyValueMapPtr CustomReader::parse_object(const TokenParser::ptr &parser)
     {
         auto map = types::KeyValueMap::create_shared();
 
@@ -82,7 +82,7 @@ namespace core::json
         return map;
     }
 
-    types::ValueListRef CustomReader::parse_array(const ParserRef &parser)
+    types::ValueListPtr CustomReader::parse_array(const TokenParser::ptr &parser)
     {
         auto list = types::ValueList::create_shared();
 
@@ -100,7 +100,7 @@ namespace core::json
         return list;
     }
 
-    TokenPair CustomReader::next_value(const ParserRef &parser,
+    TokenPair CustomReader::next_value(const TokenParser::ptr &parser,
                                  const TokenMask &endtokens)
     {
         static const std::uint64_t value_mask =

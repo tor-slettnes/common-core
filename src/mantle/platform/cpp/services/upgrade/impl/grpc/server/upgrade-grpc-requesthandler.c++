@@ -39,23 +39,31 @@ namespace platform::upgrade::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::list_available(
-        ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        ::grpc::ServerWriter<::cc::platform::upgrade::PackageInfo> *writer)
+    ::grpc::Status RequestHandler::list_sources(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ::cc::platform::upgrade::PackageSources* response)
     {
         try
         {
-            for (const PackageInfo::Ref& info : this->provider->list_available())
-            {
-                if (context->IsCancelled())
-                {
-                    break;
-                }
+            protobuf::encode(this->provider->list_sources(), response);
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), context->peer());
+        }
+    }
 
-                writer->Write(
-                    protobuf::encode_shared<::cc::platform::upgrade::PackageInfo>(info));
-            }
+
+    ::grpc::Status RequestHandler::list_available(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ::cc::platform::upgrade::PackageManifests *response)
+    {
+        try
+        {
+            protobuf::encode(this->provider->list_available(), response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -67,7 +75,7 @@ namespace platform::upgrade::grpc
     ::grpc::Status RequestHandler::best_available(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::upgrade::PackageInfo* response)
+        ::cc::platform::upgrade::PackageManifest* response)
     {
         try
         {
@@ -84,12 +92,12 @@ namespace platform::upgrade::grpc
 
     ::grpc::Status RequestHandler::install(
         ::grpc::ServerContext* context,
-        const ::cc::platform::upgrade::PackageSource* request,
-        ::cc::platform::upgrade::PackageInfo* response)
+        const ::cc::platform::upgrade::InstallRequest* request,
+        ::cc::platform::upgrade::PackageManifest* response)
     {
         try
         {
-            auto source = protobuf::decoded<PackageSource>(*request);
+            auto source = protobuf::decoded<PackageSource>(request->source());
             protobuf::encode_shared(
                 this->provider->install(source),
                 response);

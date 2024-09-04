@@ -38,6 +38,12 @@
             // "postexec" : "echo 'POST-EXEC HOOK FOR LOGS CONTEXT'",
             "writable" : false,
             "title"    : "System Logs"
+        },
+        "releases":
+        {
+            "root"     : "/var/lib/releases",
+            "writable" : true,
+            "title"    : "Software Releases"
         }
     }
 }

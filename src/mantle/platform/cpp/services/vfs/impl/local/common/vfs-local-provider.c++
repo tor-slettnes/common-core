@@ -59,7 +59,7 @@ namespace platform::vfs::local
         return cmap;
     }
 
-    ContextRef LocalProvider::get_context(const std::string &name, bool required) const
+    Context::ptr LocalProvider::get_context(const std::string &name, bool required) const
     {
         try
         {
@@ -79,9 +79,9 @@ namespace platform::vfs::local
         }
     }
 
-    ContextRef LocalProvider::open_context(const std::string &name, bool required)
+    Context::ptr LocalProvider::open_context(const std::string &name, bool required)
     {
-        if (ContextRef cxt = this->get_context(name, required))
+        if (Context::ptr cxt = this->get_context(name, required))
         {
             cxt->add_ref();
             return cxt;
@@ -92,7 +92,7 @@ namespace platform::vfs::local
         }
     }
 
-    void LocalProvider::close_context(const ContextRef &cxt)
+    void LocalProvider::close_context(const Context::ptr &cxt)
     {
         if (cxt)
         {
@@ -232,17 +232,17 @@ namespace platform::vfs::local
         }
     }
 
-    ReaderRef LocalProvider::read_file(const Path &vpath) const
+    UniqueReader LocalProvider::read_file(const Path &vpath) const
     {
         return std::make_unique<FileReader>(vfs::location(vpath, false));
     }
 
-    WriterRef LocalProvider::write_file(const Path &vpath) const
+    UniqueWriter LocalProvider::write_file(const Path &vpath) const
     {
         return std::make_unique<FileWriter>(vfs::location(vpath, true));
     }
 
-    void LocalProvider::addContext(const std::string &name, ContextRef cxt)
+    void LocalProvider::addContext(const std::string &name, Context::ptr cxt)
     {
         log_message(cxt->removable
                         ? core::status::Level::DEBUG
@@ -280,7 +280,7 @@ namespace platform::vfs::local
 
     void LocalProvider::loadContexts(void)
     {
-        if (core::types::KeyValueMapRef cxts = this->settings.get(SETTING_CONTEXTS).get_kvmap())
+        if (core::types::KeyValueMapPtr cxts = this->settings.get(SETTING_CONTEXTS).get_kvmap())
         {
             for (const auto &[key, value] : *cxts)
             {
@@ -289,7 +289,7 @@ namespace platform::vfs::local
         }
     }
 
-    ContextRef LocalProvider::newContext(
+    Context::ptr LocalProvider::newContext(
         const std::string &name,
         const core::types::Value &settings)
     {

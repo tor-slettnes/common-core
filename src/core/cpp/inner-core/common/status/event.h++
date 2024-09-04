@@ -46,7 +46,7 @@ namespace core::status
                   public types::Loggable
     {
     public:
-        using Ref = std::shared_ptr<Event>;
+        using ptr = std::shared_ptr<Event>;
         using Symbol = std::string;
         using Code = std::int64_t;
 
@@ -119,6 +119,6 @@ namespace core::status
         types::KeyValueMap attributes_;
     };
 
-    bool operator==(const Event::Ref &lhs, const Event::Ref &rhs);
+    bool operator==(const Event::ptr &lhs, const Event::ptr &rhs);
 
 }  // namespace core::status

@@ -52,7 +52,7 @@ namespace platform::vfs::local
 
         std::string newContextName(const std::string &basename);
 
-        ContextRef newContext(const std::string &name,
+        Context::ptr newContext(const std::string &name,
                               const core::types::Value &settings,
                               bool writeable);
 

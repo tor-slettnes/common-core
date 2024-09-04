@@ -38,7 +38,7 @@ namespace core::logging
         void open(const dt::TimePoint &tp);
         void close() override;
         void rotate(const dt::TimePoint &tp) override;
-        void capture_event(const status::Event::Ref &event) override;
+        void capture_event(const status::Event::ptr &event) override;
 
     private:
         std::shared_ptr<json::Writer> writer_;

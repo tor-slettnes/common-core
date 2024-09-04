@@ -40,14 +40,6 @@ void Options::deinitialize()
     platform::sysconfig::grpc::unregister_providers();
 }
 
-bool Options::handle_command(const Handler &handler)
-{
-    this->initialize();
-    bool result = Super::handle_command(handler);
-    this->deinitialize();
-    return result;
-}
-
 void Options::on_monitor_start()
 {
     FlagMap flags;

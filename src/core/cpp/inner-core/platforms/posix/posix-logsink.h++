@@ -23,7 +23,7 @@ namespace core::platform
     public:
         void open() override;
         void close() override;
-        void capture_message(const logging::Message::Ref &msg) override;
+        void capture_message(const logging::Message::ptr &msg) override;
 
     private:
         static const core::types::ValueMap<status::Level, int> levelmap;

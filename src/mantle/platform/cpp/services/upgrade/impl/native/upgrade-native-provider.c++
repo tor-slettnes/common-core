@@ -13,7 +13,9 @@ namespace platform::upgrade::native
 {
     NativeProvider::NativeProvider()
         : Super("native"),
-          settings(core::SettingsStore::create_shared(SETTINGS_FILE))
+          settings(core::SettingsStore::create_shared(SETTINGS_FILE)),
+          default_vfs_path(settings->get(SETTING_VFS_CONTEXT, DEFAULT_VFS_CONTEXT).as_string(), {}),
+          default_url(settings->get(SETTING_DOWNLOAD_URL).as_string())
     {
     }
 
@@ -27,33 +29,55 @@ namespace platform::upgrade::native
         switch (source.location_type())
         {
         case PackageSource::LOC_NONE:
-            if (core::types::Value default_url = this->settings->get(SETTING_DOWNLOAD_URL))
+            if (!this->default_url.empty())
             {
-                this->scan_http(default_url.as_string());
+                this->scan_http(this->default_url);
             }
             break;
 
         case PackageSource::LOC_VFS:
-            this->scan_vfs(source.vfs_path().value());
+            this->scan_vfs(source.vfs_path().value_or(this->default_vfs_path));
             break;
 
         case PackageSource::LOC_URL:
-            this->scan_http(source.url().value());
+            this->scan_http(source.url().value_or(this->default_url));
             break;
         }
     }
 
-    std::vector<PackageInfo::Ref> NativeProvider::list_available() const
+    PackageSources NativeProvider::list_sources() const
     {
-        return {};
+        PackageSources sources;
+        for (const std::shared_ptr<PackageHandler> &handler : this->handlers())
+        {
+            sources.push_back(handler->get_source());
+        }
+        return sources;
     }
 
-    PackageInfo::Ref NativeProvider::best_available() const
+    PackageManifests NativeProvider::list_available() const
     {
-        return {};
+        PackageManifests available;
+        for (const std::shared_ptr<PackageHandler> &handler : this->handlers())
+        {
+            for (const PackageManifest::ptr &pkg_info : handler->get_available())
+            {
+                available.push_back(pkg_info);
+            }
+        }
+        return available;
     }
 
-    PackageInfo::Ref NativeProvider::install(const PackageSource &source)
+    PackageManifest::ptr NativeProvider::best_available() const
+    {
+        PackageManifest::ptr best;
+        for (const PackageManifest::ptr &candidate : this->list_available())
+        {
+        }
+        return best;
+    }
+
+    PackageManifest::ptr NativeProvider::install(const PackageSource &source)
     {
         fs::path staging_folder = core::platform::path->mktemp();
         return {};
@@ -65,24 +89,14 @@ namespace platform::upgrade::native
 
     void NativeProvider::scan_vfs(const vfs::Path &source)
     {
-        std::shared_ptr<VFSPackageHandler> handler = this->vfs_handlers[source];
-        if (!handler)
-        {
-            handler = std::make_shared<VFSPackageHandler>(this->settings, source);
-            this->vfs_handlers[source] = handler;
-        }
-        handler->scan();
+        this->vfs_handlers.emplace_shared(source, this->settings, source)
+            ->scan();
     }
 
     void NativeProvider::scan_http(const URL &source)
     {
-        std::shared_ptr<HTTPPackageHandler> handler = this->http_handlers[source];
-        if (!handler)
-        {
-            handler = std::make_shared<HTTPPackageHandler>(this->settings, source);
-            this->http_handlers[source] = handler;
-        }
-        handler->scan();
+        this->http_handlers.emplace_shared(source, this->settings, source)
+            ->scan();
     }
 
     void NativeProvider::remove(const PackageSource &source)
@@ -107,6 +121,23 @@ namespace platform::upgrade::native
     void NativeProvider::remove_http(const URL &source)
     {
         this->http_handlers.erase(source);
+    }
+
+    std::vector<std::shared_ptr<PackageHandler>> NativeProvider::handlers() const
+    {
+        std::vector<std::shared_ptr<PackageHandler>> handlers;
+        handlers.reserve(this->vfs_handlers.size() + this->http_handlers.size());
+
+        for (const auto &[vfs_path, handler] : this->vfs_handlers)
+        {
+            handlers.push_back(handler);
+        }
+
+        for (const auto &[url, handler] : this->http_handlers)
+        {
+            handlers.push_back(handler);
+        }
+        return handlers;
     }
 
 }  // namespace platform::upgrade::native

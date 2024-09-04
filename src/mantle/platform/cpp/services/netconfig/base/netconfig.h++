@@ -33,8 +33,8 @@ namespace platform::netconfig
         //======================================================================
         // Connection methods
 
-        ConnectionRef get_connection(const Key &key) const;
-        ConnectionRef get_connection_by_ssid(const SSID &ssid) const;
+        ConnectionData::ptr get_connection(const Key &key) const;
+        ConnectionData::ptr get_connection_by_ssid(const SSID &ssid) const;
 
         virtual ConnectionMap get_connections() const = 0;
         virtual void define_connection(const ConnectionData &connection,
@@ -46,20 +46,20 @@ namespace platform::netconfig
         //======================================================================
         // ActiveConnection methods
 
-        ActiveConnectionRef get_active_connection(const Key &key) const;
-        ActiveConnectionRef get_active_connection(ConnectionType type) const;
+        ActiveConnectionData::ptr get_active_connection(const Key &key) const;
+        ActiveConnectionData::ptr get_active_connection(ConnectionType type) const;
         virtual ActiveConnectionMap get_active_connections() const = 0;
 
         //======================================================================
         // AccessPoint methods
 
-        AccessPointRef get_ap(const Key &key) const;
+        AccessPointData::ptr get_ap(const Key &key) const;
         SSIDMap get_aps_by_ssid() const;
-        std::vector<AccessPointRef> get_aps_by_strongest_ssid() const;
-        AccessPointRef get_active_ap() const;
-        AccessPointRef get_active_ap(const DeviceRef &dev) const;
+        std::vector<AccessPointData::ptr> get_aps_by_strongest_ssid() const;
+        AccessPointData::ptr get_active_ap() const;
+        AccessPointData::ptr get_active_ap(const DeviceData::ptr &dev) const;
         std::set<SSID> get_active_ssids() const;
-        bool ap_supported(AccessPointRef ap) const;
+        bool ap_supported(AccessPointData::ptr ap) const;
 
         virtual void request_scan() = 0;
         virtual AccessPointMap get_aps() const = 0;
@@ -71,8 +71,8 @@ namespace platform::netconfig
         //======================================================================
         // Device methods
 
-        DeviceRef get_device(const Key &key) const;
-        DeviceRef get_device(NMDeviceType type) const;
+        DeviceData::ptr get_device(const Key &key) const;
+        DeviceData::ptr get_device(NMDeviceType type) const;
         virtual DeviceMap get_devices() const = 0;
 
         //======================================================================
@@ -82,7 +82,7 @@ namespace platform::netconfig
         bool has_gateway() const;
         NMConnectivityState get_connectivity() const;
 
-        virtual GlobalDataRef get_global_data() const = 0;
+        virtual GlobalData::ptr get_global_data() const = 0;
         virtual void set_wireless_enabled(bool enabled) = 0;
         virtual void set_wireless_allowed(bool allowed) = 0;
         virtual void select_wireless_band(WirelessBandSelection band) = 0;

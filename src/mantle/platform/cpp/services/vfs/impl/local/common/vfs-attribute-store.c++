@@ -70,7 +70,7 @@ namespace platform::vfs::local
     core::types::Value AttributeStore::get_attribute(const fs::path &basename,
                                                      const std::string &key)
     {
-        if (core::types::KeyValueMapRef map = this->get(this->key(basename)).get_kvmap())
+        if (core::types::KeyValueMapPtr map = this->get(this->key(basename)).get_kvmap())
         {
             return map->get(key);
         }
@@ -85,7 +85,7 @@ namespace platform::vfs::local
                                         bool save)
 
     {
-        if (core::types::KeyValueMapRef attrs = this->get(this->key(basename)).get_kvmap())
+        if (core::types::KeyValueMapPtr attrs = this->get(this->key(basename)).get_kvmap())
         {
             attrs->update(map);
         }

@@ -232,11 +232,11 @@ namespace platform::netconfig::grpc
     //======================================================================
     // Manager methods
 
-    GlobalDataRef ClientProvider::get_global_data() const
+    GlobalData::ptr ClientProvider::get_global_data() const
     {
         if (this->get_use_cached())
         {
-            return signal_globaldata.get_cached().value_or(GlobalDataRef());
+            return signal_globaldata.get_cached().value_or(GlobalData::ptr());
         }
         else
         {

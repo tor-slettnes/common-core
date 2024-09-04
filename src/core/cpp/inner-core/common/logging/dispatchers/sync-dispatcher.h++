@@ -16,7 +16,7 @@ namespace core::logging
         using Super = Dispatcher;
 
     public:
-        void submit(const types::Loggable::Ref &item) override;
+        void submit(const types::Loggable::ptr &item) override;
 
     private:
         std::mutex mtx_;

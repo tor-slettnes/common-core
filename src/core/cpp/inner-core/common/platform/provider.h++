@@ -18,7 +18,6 @@
 namespace core::platform
 {
     class Provider;
-    using ProviderRef = std::shared_ptr<Provider>;
 
     //==========================================================================
     // Provider priority

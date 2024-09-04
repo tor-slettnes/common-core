@@ -25,7 +25,7 @@ namespace core::json
                                    const types::Value &value,
                                    bool pretty) const
     {
-        RapidBuilderRef builder;
+        std::shared_ptr<RapidBuilderBase> builder;
         if (pretty)
         {
             builder = std::make_shared<DefaultBuilder>(stream);
