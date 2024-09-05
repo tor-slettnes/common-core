@@ -14,6 +14,7 @@ set(LIB_DEPS
 set(SOURCES
   sysconfig-native-time.c++
   sysconfig-native-host.c++
+  sysconfig-native-product.c++
   sysconfig-native-process.c++
   sysconfig-providers-native-common.c++
 )

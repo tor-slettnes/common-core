@@ -34,12 +34,21 @@ namespace platform::vfs
         }
     }
 
+    void Path::to_literal_stream(std::ostream &stream) const
+    {
+        stream << "\""
+               << this->context
+               << ":"
+               << this->relpath.string()
+               << "\"";
+    }
+
+
     void Path::to_stream(std::ostream &stream) const
     {
-        core::str::format(stream,
-                          "%s:%s",
-                          this->context,
-                          this->relpath.string());
+        stream << this->context
+               << ":"
+               << this->relpath.string();
     }
 
     Path::operator bool() const noexcept

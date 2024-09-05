@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file sysconfig-native-process.h++
-/// @brief SysConfig service - Native process invocation
+/// @brief SysConfig native implementation - Process invocation
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 

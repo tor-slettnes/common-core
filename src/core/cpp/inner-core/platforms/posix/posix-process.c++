@@ -95,50 +95,6 @@ namespace core::platform
         return wstatus;
     }
 
-    // PID PosixProcessProvider::invoke_async_pipe(
-    //     const ArgVector &argv,
-    //     const fs::path &cwd,
-    //     FileDescriptor *fdin,
-    //     FileDescriptor *fdout,
-    //     FileDescriptor *fderr) const
-    // {
-    //     if (argv.empty())
-    //     {
-    //         throw std::invalid_argument("Missing command");
-    //     }
-
-    //     FileDescriptor inpipe[2], outpipe[2], errpipe[2];
-
-    //     this->checkstatus(::pipe(inpipe));
-    //     this->checkstatus(::pipe(outpipe));
-    //     this->checkstatus(::pipe(errpipe));
-
-    //     PID pid = this->checkstatus(fork());
-
-    //     if (pid == 0)
-    //     {
-    //         // Child uses inpipe/outpipe/errpipe as stdin/stdout/sderr.
-    //         this->checkstatus(dup2(inpipe[INPUT], STDIN_FILENO));
-    //         this->checkstatus(dup2(outpipe[OUTPUT], STDOUT_FILENO));
-    //         this->checkstatus(dup2(errpipe[OUTPUT], STDERR_FILENO));
-
-    //         this->close_fds(inpipe);
-    //         this->close_fds(outpipe);
-    //         this->close_fds(errpipe);
-
-    //         this->execute(argv, cwd);
-    //     }
-    //     else
-    //     {
-    //         // Parent writes to inpipe and reads from outpipe and errpipe.
-    //         this->trim_pipe(inpipe, OUTPUT, fdin);
-    //         this->trim_pipe(outpipe, INPUT, fdout);
-    //         this->trim_pipe(errpipe, INPUT, fderr);
-    //     }
-
-    //     return pid;
-    // }
-
     PID PosixProcessProvider::invoke_async_pipe(
         const ArgVector &argv,
         const fs::path &cwd,
@@ -601,7 +557,7 @@ namespace core::platform
                                           std::system_category(),
                                           invocation.argv.front()));
                 }
-                logf_info("PID %d [%s] returned non-zero exit status %d (%s)",
+                logf_info("PID %d [%s] exited with non-zero status %d (%s)",
                           result.pid,
                           invocation.argv.front(),
                           err,
@@ -609,7 +565,7 @@ namespace core::platform
             }
             else
             {
-                logf_debug("PID %d [%s] returned successfully",
+                logf_debug("PID %d [%s] completed successfully",
                            result.pid,
                            invocation.argv.front());
             }

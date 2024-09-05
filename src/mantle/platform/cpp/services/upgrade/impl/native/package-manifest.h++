@@ -7,41 +7,41 @@
 
 #pragma once
 #include "upgrade-types.h++"
+#include "platform/process.h++"
 #include "settings/settingsstore.h++"
 #include "types/create-shared.h++"
 
 namespace platform::upgrade::native
 {
-    constexpr auto SETTING_PRODUCT = "product";
-    constexpr auto SETTING_PRODUCT_MATCH = "product match";
-    constexpr auto SETTING_VERSION = "version";
-    constexpr auto SETTING_VERSION_MATCH = "version match";
-    constexpr auto SETTING_DESCRIPTION = "description";
-    constexpr auto SETTING_REBOOT = "reboot required";
-
     //==========================================================================
     // Package Manifest
 
-    class LocalManifest : public core::SettingsStore,
-                          public PackageManifest
+    class LocalManifest : public PackageManifest
     {
         using This = LocalManifest;
         using Super = PackageManifest;
 
     public:
-        LocalManifest(const fs::path &manifest_file,
+        LocalManifest(const core::SettingsStore &settings,
                       const PackageSource &source);
 
     public:
         const bool is_applicable() const override;
         void check_applicable() const;
 
+        core::platform::ArgVector install_command() const;
+
     private:
         static Version decode_version(const core::types::Value &value);
         static std::string decode_description(const core::types::Value &value);
 
-        bool product_match(const std::string &current_product) const;
-        bool version_match(const Version &current_version) const;
+        bool is_applicable_product(const std::string &current_product) const;
+        bool is_applicable_version(const Version &current_version) const;
+
+    protected:
+        std::string product_match;
+        std::string version_match;
+        core::types::Value command;
     };
 
 }  // namespace platform::upgrade::native

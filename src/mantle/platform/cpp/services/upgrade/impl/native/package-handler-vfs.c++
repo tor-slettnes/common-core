@@ -8,6 +8,7 @@
 #include "package-handler-vfs.h++"
 #include "upgrade-settings.h++"
 #include "vfs.h++"
+#include "status/exceptions.h++"
 
 namespace platform::upgrade::native
 {
@@ -31,52 +32,57 @@ namespace platform::upgrade::native
         fs::path required_extension(
             this->settings->get(SETTING_PACKAGE_SUFFIX, DEFAULT_PACKAGE_SUFFIX).as_string());
 
-        // for (const auto &[name, stat]: vfs::get_directory(this->vfs_path, false))
-        // {
-        //     if (name.extension() == required_extension)
-        //     {
-        //         this->scan_file(name);
-        //     }
-        // }
+        std::vector<PackageManifest::ptr> manifests;
+
         for (const auto &pi : fs::directory_iterator(loc.localPath()))
         {
             fs::path filepath = pi.path();
             if (filepath.extension() == required_extension)
             {
-                logf_debug("Scanning upgrade package: %r", filepath);
-                this->scan_file(loc, filepath.filename());
-                logf_debug("Scanned upgrade package: %r", filepath);
+                if (const PackageManifest::ptr &manifest = this->scan_file(loc, filepath.filename()))
+                {
+                    manifests.push_back(manifest);
+                    logf_debug("Adding upgrade package: %r", filepath);
+                }
             }
         }
+        this->available_packages = manifests;
     }
 
-    void VFSPackageHandler::unpack(const PackageSource &source,
+    void VFSPackageHandler::unpack(const fs::path &filename,
                                    const fs::path &staging_folder)
     {
-        vfs::Location loc = vfs::location(source.vfs_path().value(), false);
-        unpack_file(loc.localPath(source.filename), staging_folder);
+        if (filename.empty())
+        {
+            throw core::exception::MissingArgument("Missing package file");
+        }
+
+        vfs::Location loc = vfs::location(this->vfs_path, false);
+        this->unpack_file(loc.localPath(filename), staging_folder);
     }
 
     PackageManifest::ptr VFSPackageHandler::scan_file(const vfs::Location &location,
                                                       const fs::path &package_name)
     {
         fs::path staging_folder = this->create_staging_folder();
+        PackageManifest::ptr manifest;
 
         try
         {
             this->unpack_file(location.localPath(package_name), staging_folder);
-            auto manifest = std::make_shared<LocalManifest>(
+            manifest = std::make_shared<LocalManifest>(
                 staging_folder / this->manifest_file(),                // manifest_file
                 PackageSource(location.virtualPath(), package_name));  // source
-
-            // fs::remove_all(staging_folder);
-            return manifest;
         }
         catch (...)
         {
-            // fs::remove_all(staging_folder);
-            throw;
+            logf_info("Unable to scan VFS path %s: %s",
+                      location.virtualPath(package_name),
+                      std::current_exception());
         }
+
+        fs::remove_all(staging_folder);
+        return manifest;
     }
 
 }  // namespace platform::upgrade::native

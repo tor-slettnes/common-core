@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file sysconfig-grpc-host.c++
-/// @brief SysConfig service - Host Configuration gRPC client
+/// @brief SysConfig gRPC implementation - host configuration
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 

@@ -67,7 +67,7 @@ namespace core::signal
         Futures futures;
 
         this->mtx_.lock();
-        if (!this->caching_ || !this->cached_ || (value != *this->cached_))
+        if (!this->caching_ || !this->cached_ || !(value == *this->cached_))
         {
             if (this->caching_)
             {
@@ -101,7 +101,6 @@ namespace core::signal
         this->cached_.reset();
         return exists;
     }
-
 
     template <class DataType>
     inline size_t DataSignal<DataType>::connection_count()
@@ -243,10 +242,10 @@ namespace core::signal
     {
         this->mtx_.lock();
         MappingAction action(
-            !this->caching_                    ? MAP_NONE
-            : (this->cached_.count(key) == 0)  ? MAP_ADDITION
-            : (this->cached_.at(key) != value) ? MAP_UPDATE
-                                               : MAP_NONE);
+            !this->caching_                     ? MAP_NONE
+            : (this->cached_.count(key) == 0)   ? MAP_ADDITION
+            : !(this->cached_.at(key) == value) ? MAP_UPDATE
+                                                : MAP_NONE);
         Futures futures;
         if (action != MAP_NONE)
         {
@@ -285,7 +284,7 @@ namespace core::signal
     {
         Futures futures;
         this->mtx_.lock();
-        for (const auto &[key, value]: this->cached_)
+        for (const auto &[key, value] : this->cached_)
         {
             futures = this->sendall(MAP_REMOVAL, key, {});
         }

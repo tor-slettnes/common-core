@@ -10,15 +10,26 @@
 
 namespace platform::upgrade::native
 {
-    LocalManifest::LocalManifest(const fs::path &manifest_file,
+    constexpr auto SETTING_PRODUCT = "product";
+    constexpr auto SETTING_PRODUCT_MATCH = "product match";
+    constexpr auto SETTING_VERSION = "version";
+    constexpr auto SETTING_VERSION_MATCH = "version match";
+    constexpr auto SETTING_DESCRIPTION = "description";
+    constexpr auto SETTING_INSTALL_COMMAND = "install command";
+    constexpr auto SETTING_REBOOT = "reboot required";
+    constexpr auto DEFAULT_INSTALL_COMMAND = "install.sh";
+
+    LocalManifest::LocalManifest(const core::SettingsStore &settings,
                                  const PackageSource &source)
-        : SettingsStore(manifest_file),
-          PackageManifest(
+        : Super(
               source,
-              this->get(SETTING_PRODUCT).as_string(),
-              This::decode_version(this->get(SETTING_VERSION).as_string()),
-              This::decode_description(this->get(SETTING_DESCRIPTION).as_string()),
-              this->get(SETTING_REBOOT, false).as_bool())
+              settings.get(SETTING_PRODUCT).as_string(),
+              This::decode_version(settings.get(SETTING_VERSION).as_string()),
+              This::decode_description(settings.get(SETTING_DESCRIPTION).as_string()),
+              settings.get(SETTING_REBOOT, false).as_bool()),
+          product_match(settings.get(SETTING_PRODUCT_MATCH).as_string()),
+          version_match(settings.get(SETTING_VERSION_MATCH).as_string()),
+          command(settings.get(SETTING_INSTALL_COMMAND, DEFAULT_INSTALL_COMMAND))
     {
     }
 
@@ -29,8 +40,12 @@ namespace platform::upgrade::native
             this->check_applicable();
             return true;
         }
-        catch (const core::exception::FailedPrecondition &)
+        catch (const std::exception &e)
         {
+            logf_debug("Product %r version %s manifest not applicable: %s",
+                       this->product(),
+                       this->version(),
+                       e);
             return false;
         }
     }
@@ -38,16 +53,21 @@ namespace platform::upgrade::native
     void LocalManifest::check_applicable() const
     {
         platform::sysconfig::ProductInfo pi = platform::sysconfig::product->get_product_info();
-        if (!this->product_match(pi.product_name))
+        if (!this->is_applicable_product(pi.product_name))
         {
             throw core::exception::FailedPrecondition(
                 "Package does not match installed product");
         }
-        else if (!this->version_match(pi.release_version))
+        else if (!this->is_applicable_version(pi.release_version))
         {
             throw core::exception::FailedPrecondition(
                 "Package version is not newer than installed version");
         }
+    }
+
+    core::platform::ArgVector LocalManifest::install_command() const
+    {
+        return core::platform::process->arg_vector(this->command);
     }
 
     Version LocalManifest::decode_version(const core::types::Value &value)
@@ -87,11 +107,11 @@ namespace platform::upgrade::native
         }
     }
 
-    bool LocalManifest::product_match(const std::string &current_product) const
+    bool LocalManifest::is_applicable_product(const std::string &current_product) const
     {
-        if (const core::types::Value &product_match = this->get(SETTING_PRODUCT_MATCH))
+        if (!this->product_match.empty())
         {
-            std::regex rx(product_match.as_string());
+            std::regex rx(this->product_match);
             std::smatch match;
 
             if (std::regex_match(current_product, match, rx))
@@ -107,12 +127,12 @@ namespace platform::upgrade::native
         return false;
     }
 
-    bool LocalManifest::version_match(const Version &current_version) const
+    bool LocalManifest::is_applicable_version(const Version &current_version) const
     {
-        if (const core::types::Value &version_match = this->get(SETTING_VERSION_MATCH))
+        if (!this->version_match.empty())
         {
             std::string current_version_string = current_version.to_string();
-            std::regex rx(version_match.as_string());
+            std::regex rx(this->version_match);
             std::smatch match;
 
             if (std::regex_match(current_version_string, match, rx))
@@ -127,5 +147,4 @@ namespace platform::upgrade::native
 
         return false;
     }
-
 }  // namespace platform::upgrade::native

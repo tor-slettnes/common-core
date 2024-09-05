@@ -105,13 +105,21 @@ service SysConfig
 message ProductInfo
 {
     string product_name = 1;
-    string product_serial = 2;
-    string hardware_model = 3;
+    string product_description = 2;
+
+    string product_serial = 4;
+    string hardware_model = 5;
 
     cc.version.Version release_version = 8;
     cc.version.ComponentVersions component_versions = 9;
-    repeated ProductInfo subsystem_info = 15;
+    SubsystemInfo subsystem_info = 15;
 }
+
+message SubsystemInfo
+{
+    repeated ProductInfo subsystems  = 1;
+}
+
 
 //==============================================================================
 // Host Information
@@ -350,7 +358,7 @@ message Signal
 
         // Effective zone change. Emitted when the canonical zone is updated,
         // or when daylight savings time stars or ends.
-        TimeZoneInfo tz_info = 11;
+        TimeZoneInfo tz_info = 12;
 
         // Emitted when the server's primary host name changes
         HostInfo host_info = 14;

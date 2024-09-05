@@ -47,6 +47,9 @@ private:
     void get_timezone_info();
     void get_host_info();
     void set_host_name();
+    void get_product_info();
+    void set_serial_number();
+    void set_model_name();
     void reboot();
 
 private:

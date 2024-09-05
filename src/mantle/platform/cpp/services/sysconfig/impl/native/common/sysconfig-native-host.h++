@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file sysconfig-native-host.h++
-/// @brief SysConfig service - Host Configuration Native Implementation
+/// @brief SysConfig native implementation - Host Configuration
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -17,8 +17,13 @@ namespace platform::sysconfig::native
     public:
         HostConfigProvider();
 
+        void initialize() override;
+
         HostInfo get_host_info() const override;
         void set_host_name(const std::string &hostname) override;
         void reboot() override;
+
+    private:
+        void emit() const;
     };
 }  // namespace platform::sysconfig::native

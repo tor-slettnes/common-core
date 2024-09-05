@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file sysconfig-native-time.h++
-/// @brief SysConfig service - Time Configuration Native Implementation
+/// @brief SysConfig native implementation - Time Configuration
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -29,5 +29,7 @@ namespace platform::sysconfig::native
         // Get or set time configuration
         void set_time_config(const TimeConfig &config) override;
         TimeConfig get_time_config() const override;
+
+        void emit_time_config() const;
     };
 }  // namespace platform::sysconfig::native

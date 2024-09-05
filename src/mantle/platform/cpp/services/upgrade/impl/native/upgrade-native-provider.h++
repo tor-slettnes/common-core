@@ -44,12 +44,14 @@ namespace platform::upgrade::native
 
     protected:
         std::vector<PackageHandler::Ptr> handlers() const;
+
     private:
         std::shared_ptr<core::SettingsStore> settings;
         vfs::Path default_vfs_path;
         std::string default_url;
         core::types::shared_ptr_map<platform::vfs::Path, VFSPackageHandler> vfs_handlers;
         core::types::shared_ptr_map<URL, HTTPPackageHandler> http_handlers;
+        PackageManifest::ptr pending_install;
         // std::unordered_map<platform::vfs::Path, std::shared_ptr<VFSPackageHandler>> vfs_handlers;
         // std::unordered_map<URL, std::shared_ptr<HTTPPackageHandler>> http_handlers;
     };

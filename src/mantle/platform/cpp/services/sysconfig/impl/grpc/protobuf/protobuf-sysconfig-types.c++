@@ -57,35 +57,41 @@ namespace protobuf
                 cc::platform::sysconfig::ProductInfo *proto) noexcept
     {
         proto->set_product_name(native.product_name);
+        proto->set_product_description(native.product_description);
         proto->set_product_serial(native.product_serial);
         proto->set_hardware_model(native.hardware_model);
         encode(native.release_version, proto->mutable_release_version());
         encode(native.component_versions, proto->mutable_component_versions());
-        for (const platform::sysconfig::ProductInfo &si : native.subsystem_info)
-        {
-            encode(si, proto->add_subsystem_info());
-        }
-        // protobuf::encode_list<cc::platform::sysconfig::ProductInfo>(
-        //     native.subsystem_info.cbegin(),
-        //     native.subsystem_info.cend(),
-        //     proto->mutable_subsystem_info());
+        encode(native.subsystem_info, proto->mutable_subsystem_info());
     }
 
     void decode(const cc::platform::sysconfig::ProductInfo &proto,
                 platform::sysconfig::ProductInfo *native) noexcept
     {
         native->product_name = proto.product_name();
+        native->product_description = proto.product_description();
         native->product_serial = proto.product_serial();
         native->hardware_model = proto.hardware_model();
         decode(proto.release_version(), &native->release_version);
         decode(proto.component_versions(), &native->component_versions);
-        native->subsystem_info.reserve(proto.subsystem_info_size());
-
-        for (const cc::platform::sysconfig::ProductInfo &si : proto.subsystem_info())
-        {
-            decode(si, &native->subsystem_info.emplace_back());
-        }
+        decode(proto.subsystem_info(), &native->subsystem_info);
     }
+
+    //==========================================================================
+    // SubsystemInfo
+
+    void encode(const std::vector<platform::sysconfig::ProductInfo> &native,
+                cc::platform::sysconfig::SubsystemInfo *proto) noexcept
+    {
+        encode_vector(native, proto->mutable_subsystems());
+    }
+
+    void decode(const cc::platform::sysconfig::SubsystemInfo &proto,
+                std::vector<platform::sysconfig::ProductInfo> *native) noexcept
+    {
+        decode_to_vector(proto.subsystems(), native);
+    }
+
 
     //==========================================================================
     // Version

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file sysconfig-grpc-timezone.h++
-/// @brief SysConfig service - Time Zone Configuration - gRPC Implementation
+/// @brief SysConfig gRPC implementation - time zone settings
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 

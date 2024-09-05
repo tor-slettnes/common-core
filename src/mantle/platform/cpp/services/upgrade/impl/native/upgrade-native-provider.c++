@@ -60,6 +60,8 @@ namespace platform::upgrade::native
         PackageManifests available;
         for (const std::shared_ptr<PackageHandler> &handler : this->handlers())
         {
+            logf_debug("Considering package source %s", handler->get_source());
+
             for (const PackageManifest::ptr &pkg_info : handler->get_available())
             {
                 available.push_back(pkg_info);
@@ -73,6 +75,11 @@ namespace platform::upgrade::native
         PackageManifest::ptr best;
         for (const PackageManifest::ptr &candidate : this->list_available())
         {
+            if (candidate->is_applicable() &&
+                (!best || (candidate->version() > best->version())))
+            {
+                best = candidate;
+            }
         }
         return best;
     }

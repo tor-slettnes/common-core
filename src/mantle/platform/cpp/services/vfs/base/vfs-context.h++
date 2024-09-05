@@ -69,6 +69,7 @@ namespace platform::vfs
         Path &operator+=(const fs::path &relpath);
         bool operator==(const Path &other) const;
 
+        void to_literal_stream(std::ostream &stream) const override;
         void to_stream(std::ostream &stream) const override;
         void check_relative() const;
         static void check_relative(const ContextName &context,

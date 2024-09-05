@@ -9,7 +9,7 @@
 #include "buildinfo.h"
 #include <fstream>
 
-#define LOCAL_FOLDER          "/shared"
+#define LOCAL_FOLDER          "/cc"
 #define DEFAULT_CONFIG_FOLDER LOCAL_FOLDER "/config"
 #define DEFAULT_DATA_FOLDER   LOCAL_FOLDER "/data"
 #define DEFAULT_LOG_FOLDER    LOCAL_FOLDER "/logs"

@@ -61,11 +61,11 @@ namespace platform::upgrade
         switch (this->location_type())
         {
         case LOC_VFS:
-            parts.add("vpath", std::get<vfs::Path>(this->location));
+            parts.add("vpath", this->vfs_path().value(), true, "%r");
             break;
 
         case LOC_URL:
-            parts.add("url", std::get<URL>(this->location));
+            parts.add("url", this->url().value(), true, "%r");
             break;
         }
 
@@ -133,7 +133,7 @@ namespace platform::upgrade
     {
         core::str::format(stream,
                           "{source=%s, product=%r, "
-                          "version=%s, description=%r, "
+                          "version=%r, description=%r, "
                           "reboot_required=%b, is_applicable=%b}",
                           this->source(),
                           this->product(),

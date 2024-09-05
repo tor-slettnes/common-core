@@ -19,12 +19,14 @@ namespace platform::sysconfig
     {
     public:
         static Version from_string(const std::string &version_string);
+        static Version from_value(const core::types::Value &value);
 
         bool operator<(const Version &other) const;
         bool operator>(const Version &other) const;
 
     protected:
         void to_stream(std::ostream &stream) const override;
+        void to_literal_stream(std::ostream &stream) const override;
 
     public:
         uint major = 0;
@@ -40,6 +42,7 @@ namespace platform::sysconfig
     struct ProductInfo : public core::types::Streamable
     {
         std::string product_name;
+        std::string product_description;
         std::string product_serial;
         std::string hardware_model;
 

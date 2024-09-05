@@ -33,7 +33,7 @@ namespace platform::upgrade::native
 
     protected:
         virtual void unpack(
-            const PackageSource &source,
+            const fs::path &filename,
             const fs::path &staging_folder) = 0;
 
     protected:

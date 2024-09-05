@@ -41,6 +41,22 @@ namespace core::platform
         return "/tmp";
     }
 
+
+    fs::path PosixPathProvider::default_config_folder() const noexcept
+    {
+        return "/etc/cc";
+    }
+
+    fs::path PosixPathProvider::default_data_folder() const noexcept
+    {
+        return "/data";
+    }
+
+    fs::path PosixPathProvider::default_log_folder() const noexcept
+    {
+        return "/var/log/picarro";
+    }
+
     fs::path PosixPathProvider::readlink(const fs::path &path) const noexcept
     {
         fs::path linktarget;

@@ -13,6 +13,24 @@
 void Options::add_commands()
 {
     this->add_command(
+        "get_product_info",
+        {},
+        "Get general information about the installed product",
+        std::bind(&Options::get_product_info, this));
+
+    this->add_command(
+        "set_serial_number",
+        {},
+        "Set the unique serial number for this system. Intended for manufacturing use.",
+        std::bind(&Options::set_serial_number, this));
+
+    this->add_command(
+        "set_model_name",
+        {},
+        "Set the model name for this system. Intended for manufacturing use.",
+        std::bind(&Options::set_model_name, this));
+
+    this->add_command(
         "get_time",
         {"[local|utc|epoch]"},
         "Return the current time. The options `local`, `utc`, and `epoch` "
@@ -287,6 +305,23 @@ void Options::set_host_name()
 {
     std::string hostname = this->get_arg("NAME");
     platform::sysconfig::host->set_host_name(hostname);
+}
+
+void Options::get_product_info()
+{
+    std::cout << platform::sysconfig::product->get_product_info()
+              << std::endl;
+}
+void Options::set_serial_number()
+{
+    std::string serial = this->get_arg("SERIAL_NUMBER");
+    platform::sysconfig::product->set_serial_number(serial);
+}
+
+void Options::set_model_name()
+{
+    std::string model = this->get_arg("MODEL_NAME");
+    platform::sysconfig::product->set_model_name(model);
 }
 
 void Options::reboot()

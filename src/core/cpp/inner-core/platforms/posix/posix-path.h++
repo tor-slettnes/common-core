@@ -23,6 +23,10 @@ namespace core::platform
         std::string dir_separator() const noexcept override;
         fs::path devnull() const noexcept override;
         fs::path tempfolder() const noexcept override;
+        fs::path default_config_folder() const noexcept override;
+        fs::path default_data_folder() const noexcept override;
+        fs::path default_log_folder() const noexcept override;
+
         fs::path readlink(const fs::path &path) const noexcept override;
         fs::path mktemp(const fs::path &folder,
                         const std::string &prefix = "tmp.",

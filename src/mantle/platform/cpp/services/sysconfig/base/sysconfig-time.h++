@@ -36,6 +36,7 @@ namespace platform::sysconfig
 
     std::ostream &operator<<(std::ostream &stream, const TimeConfig &tc);
 
+
     //==========================================================================
     // TimeInterface
 

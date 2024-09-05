@@ -33,7 +33,13 @@ namespace core::platform
     {
         if (const types::ValueListPtr &list = command.get_valuelist())
         {
-            return list->filter_by_type<std::string>();
+            ArgVector argv;
+            argv.reserve(list->size());
+            for (types::Value &value: *list)
+            {
+                argv.push_back(value.as_string());
+            }
+            return argv;
         }
         else if (const std::string *command_string = command.get_if<std::string>())
         {

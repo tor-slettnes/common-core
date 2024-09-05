@@ -7,7 +7,6 @@
 
 #include "package-handler.h++"
 #include "upgrade-settings.h++"
-#include "sysconfig-product.h++"
 #include "sysconfig-host.h++"
 #include "sysconfig-process.h++"
 #include "status/exceptions.h++"
@@ -41,7 +40,7 @@ namespace platform::upgrade::native
 
         try
         {
-            this->unpack(source, staging_folder);
+            this->unpack(source.filename, staging_folder);
             this->install_unpacked(source, staging_folder);
         }
         catch (...)
@@ -62,7 +61,7 @@ namespace platform::upgrade::native
         const fs::path &staging_folder)
     {
         LocalManifest manifest(staging_folder / this->manifest_file(), source);
-        manifest.check_applicable();
+        core::platform::ArgVector argv = manifest.install_command();
     }
 
     void PackageHandler::finalize(const PackageManifest::ptr &package_info)
@@ -119,8 +118,8 @@ namespace platform::upgrade::native
         };
 
         core::platform::Invocations pipeline = {
-            { argv_gpgv, {} },
-            { argv_tar, staging_folder },
+            {argv_gpgv, {}},
+            {argv_tar, staging_folder},
         };
 
         core::platform::process->pipe_from_stream(pipeline, stream);

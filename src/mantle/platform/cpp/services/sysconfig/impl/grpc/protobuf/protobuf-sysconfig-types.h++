@@ -35,6 +35,15 @@ namespace protobuf
                 platform::sysconfig::ProductInfo *native) noexcept;
 
     //==========================================================================
+    // SubsystemInfo
+
+    void encode(const std::vector<platform::sysconfig::ProductInfo> &native,
+                cc::platform::sysconfig::SubsystemInfo *proto) noexcept;
+
+    void decode(const cc::platform::sysconfig::SubsystemInfo &proto,
+                std::vector<platform::sysconfig::ProductInfo> *native) noexcept;
+
+    //==========================================================================
     // Version
 
     void encode(const platform::sysconfig::Version &native,

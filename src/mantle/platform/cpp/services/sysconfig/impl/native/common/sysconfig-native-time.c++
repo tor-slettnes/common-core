@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file sysconfig-native-time.h++
-/// @brief SysConfig service - Time Configuration Native Implementation
+/// @brief SysConfig native implementation - Time Configuration
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -30,6 +30,8 @@ namespace platform::sysconfig::native
             1s,                                  // Interval
             core::Scheduler::ALIGN_UTC,          // alignment
             core::status::Level::TRACE);         // loglevel
+
+        this->emit_time_config();
     }
 
     void TimeConfigProvider::deinitialize()
@@ -64,6 +66,11 @@ namespace platform::sysconfig::native
             .synchronization = (core::platform::time->get_ntp() ? TSYNC_NTP : TSYNC_NONE),
             .servers = core::platform::time->get_ntp_servers(),
         };
+    }
+
+    void TimeConfigProvider::emit_time_config() const
+    {
+        signal_timeconfig.emit(this->get_time_config());
     }
 
 }  // namespace platform::sysconfig::native

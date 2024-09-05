@@ -9,6 +9,7 @@
 #include "sysconfig-grpc-time.h++"
 #include "sysconfig-grpc-timezone.h++"
 #include "sysconfig-grpc-host.h++"
+#include "sysconfig-grpc-product.h++"
 
 namespace platform::sysconfig::grpc
 {
@@ -18,8 +19,9 @@ namespace platform::sysconfig::grpc
     {
         auto client = Client::create_shared(target_host, wait_for_ready);
         time.registerProvider<TimeConfigProvider>(client);
-        host.registerProvider<HostConfigProvider>(client);
         timezone.registerProvider<TimeZoneProvider>(client);
+        host.registerProvider<HostConfigProvider>(client);
+        product.registerProvider<ProductProvider>(client);
 
         if (start_watching)
         {
@@ -29,8 +31,9 @@ namespace platform::sysconfig::grpc
 
     void unregister_providers()
     {
-        timezone.unregisterProvider<TimeZoneProvider>();
+        product.unregisterProvider<ProductProvider>();
         host.unregisterProvider<HostConfigProvider>();
+        timezone.unregisterProvider<TimeZoneProvider>();
         time.unregisterProvider<TimeConfigProvider>();
     }
 }  // namespace platform::sysconfig::grpc

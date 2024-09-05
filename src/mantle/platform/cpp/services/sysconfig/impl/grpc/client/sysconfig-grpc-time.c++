@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file sysconfig-grpc-time.c++
-/// @brief SysConfig service - Time configuration gRPC client
+/// @brief SysConfig gRPC implementation - time/date settings
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 

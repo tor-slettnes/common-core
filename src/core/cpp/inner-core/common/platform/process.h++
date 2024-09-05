@@ -236,16 +236,65 @@ namespace core::platform
             std::string *output = nullptr,
             std::string *diag = nullptr) const;
 
+        /// @fn pipeline
+        /// @brief
+        ///     Invoke multiple commands in parallel, with standard output from
+        ///     each piped to standard input of the next.
+        /// @param[in] invocations
+        ///     A vector of argument vectors and associated current working
+        ///     directories.
+        /// @param[in] fdin
+        ///     Readable file descriptor redirected to standard input for the
+        ///     first command.
+        /// @param[in] checkstatus
+        ///     Whether to throw an exception if any command returns a non-zero
+        ///     exit status.  Note that this means detailed results from each
+        ///     command will not be returned.
+        /// @return
+        ///     Process ID, exit status, and diagnostic output (stderr) from
+        ///     each pcocess in the pipeline.  Standard output (stdout) is also
+        ///     captured from the last process.
+
         virtual InvocationResults pipeline(
             const Invocations &invocations,
             FileDescriptor fdin,
             bool checkstatus = false) const;
+
+        /// @fn pipe_from_stream
+        /// @brief
+        ///     Invoke multiple commands in parallel, with standard input to the
+        ///     first command from the provided input stream.  Standard output
+        ///     from each command is then piped to standard input of the next.
+        /// @param[in] invocations
+        ///     A vector of argument vectors and associated current working
+        ///     directories.
+        /// @param[in] instream
+        ///     Input stream from which data is piped to standard input for the
+        ///     first command.
+        /// @param[in] checkstatus
+        ///     Whether to throw an exception if any command returns a non-zero
+        ///     exit status.  Note that this means detailed results from each
+        ///     command will not be returned.
+        /// @return
+        ///     Process ID, exit status, and diagnostic output (stderr) from
+        ///     each pcocess in the pipeline.  Standard output (stdout) is also
+        ///     captured from the last process.
 
         virtual InvocationResults pipe_from_stream(
             const Invocations &invocations,
             std::istream &instream,
             bool checkstatus = false) const;
 
+
+        /// @fn waitpid
+        /// @brief
+        ///     Wait for the specified Process ID to exit.
+        /// @param[in] checkstatus
+        ///     Whether to throw an exception if the command returns a non-zero
+        ///     exit status.
+        /// @return
+        ///     Exit status from the process. Use the `WEXITSTSTUS()` macro
+        ///     to convert this to a system error code.
         virtual ExitStatus waitpid(PID pid, bool checkstatus = false) const = 0;
 
     protected:
