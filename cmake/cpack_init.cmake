@@ -5,6 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Load settings from `defaults.json`
+get_build_arg(PACKAGE_NAME "package" "name")
+get_build_arg(PACKAGE_VENDOR "package" "vendor")
+get_build_arg(PACKAGE_CONTACT "package" "contact")
+
+
 ### General CPack settings
 set(CPACK_PACKAGE_NAME "${PACKAGE_NAME}")
 set(CPACK_PACKAGE_VENDOR "${PACKAGE_VENDOR}")
@@ -47,17 +53,6 @@ set(CPACK_EXTERNAL_ENABLE_STAGING TRUE)
 ### Custom settings propagated to external generator
 
 set(CPACK_PYTHON_INSTALL_DIR "${PYTHON_INSTALL_DIR}")
-#set(CPACK_PYTHON_NAMESPACE "${PYTHON_NAMESPACE}")
+set(CPACK_PYTHON_NAMESPACE "${PYTHON_NAMESPACE}")
 set(CPACK_SETTINGS_DIR "${SETTINGS_DIR}")
-
-#===============================================================================
-### Include project specific settings
-include("${CMAKE_SOURCE_DIR}/CPackConfig.cmake"
-  OPTIONAL
-  RESULT_VARIABLE CPackConfig_FOUND)
-
-if(CPackConfig_FOUND)
-  message(STATUS "Found ${CMAKE_SOURCE_DIR}/CPackConfig.cmake")
-else()
-  message(STATUS "Did not find ${CMAKE_SOURCE_DIR}/CPackConfig.cmake")
-endif()
+string(REPLACE "\"" "\\\"" CPACK_PYTHON_DEPENDENCIES "${PYTHON_DEPENDENCIES}")

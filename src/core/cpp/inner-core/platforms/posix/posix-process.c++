@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <string>
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
@@ -90,9 +91,7 @@ namespace core::platform
         const fs::path &errfile) const
     {
         PID pid = this->invoke_async(argv, cwd, infile, outfile, errfile);
-        int wstatus = 0;
-        ::waitpid(pid, &wstatus, 0);
-        return wstatus;
+        return this->waitpid(pid);
     }
 
     PID PosixProcessProvider::invoke_async_pipe(
@@ -118,9 +117,9 @@ namespace core::platform
         FileDescriptor fdin,
         FileDescriptor fdout,
         FileDescriptor fderr,
-        const std::string &input,
-        std::string *output,
-        std::string *diag) const
+        std::istream *instream,
+        std::ostream *outstream,
+        std::ostream *errstream) const
     {
         std::vector<struct pollfd> pfds = {
             {fdin, POLLOUT, 0},
@@ -136,46 +135,45 @@ namespace core::platform
             }
         }
 
-        std::string::size_type written = 0;
-        std::vector<char> outbuf(CHUNKSIZE);
-        std::stringstream out, err;
+        std::vector<char> buf(CHUNKSIZE);
         ExitStatus exitstatus;
 
         while (::waitpid(pid, &exitstatus, WNOHANG) == 0)
         {
-            if (written >= input.size())
+            if (!instream || !instream->good())
             {
                 ::close(fdin);
                 pfds[STDIN_FILENO].fd = -1;
                 pfds[STDIN_FILENO].events = 0;
+                instream = nullptr;
             }
 
             this->checkstatus(::poll(pfds.data(), pfds.size(), -1));
 
-            if (pfds[STDIN_FILENO].revents & POLLOUT)
+            if (instream && (pfds[STDIN_FILENO].revents & POLLOUT))
             {
-                const char *inbuf = input.data() + written;
-                if (ssize_t bytes = this->checkstatus(write(fdin, inbuf, input.size() - written)))
+                instream->read(buf.data(), buf.size());
+                if (std::streamsize nbytes = instream->gcount())
                 {
-                    written += bytes;
+                    this->write(fdin, buf.data(), nbytes);
                 }
             }
 
             if (pfds[STDOUT_FILENO].revents & POLLIN)
             {
-                int nchars = this->checkstatus(read(fdout, (void *)outbuf.data(), outbuf.size()));
-                if (nchars && output)
+                int nchars = this->read(fdout, buf.data(), buf.size());
+                if (nchars && outstream && *outstream)
                 {
-                    out.write(outbuf.data(), nchars);
+                    outstream->write(buf.data(), nchars);
                 }
             }
 
             if (pfds[STDERR_FILENO].revents & POLLIN)
             {
-                int nchars = this->checkstatus(read(fderr, (void *)outbuf.data(), outbuf.size()));
-                if (nchars && diag)
+                int nchars = this->read(fderr, buf.data(), buf.size());
+                if (nchars && errstream && *errstream)
                 {
-                    err.write(outbuf.data(), nchars);
+                    errstream->write(buf.data(), nchars);
                 }
             }
         }
@@ -185,62 +183,7 @@ namespace core::platform
             this->close_fd(pfds[i].fd);
         }
 
-        if (output)
-        {
-            *output = out.str();
-        }
-
-        if (diag)
-        {
-            *diag = err.str();
-        }
-
         return exitstatus;
-    }
-
-    ExitStatus PosixProcessProvider::invoke_capture(
-        const ArgVector &argv,
-        const fs::path &cwd,
-        const std::string &input,
-        std::string *output,
-        std::string *diag) const
-    {
-        FileDescriptor fdin, fdout, fderr;
-        PID pid = this->invoke_async_pipe(argv, cwd, &fdin, &fdout, &fderr);
-        return this->pipe_capture(pid, fdin, fdout, fderr, input, output, diag);
-    }
-
-    void PosixProcessProvider::invoke_check(
-        const ArgVector &argv,
-        const fs::path &cwd,
-        const std::string &input,
-        std::string *output,
-        std::string *diag) const
-    {
-        std::string out, err;
-
-        ExitStatus stat = this->invoke_capture(argv, cwd, input, &out, &err);
-        if (output)
-        {
-            *output = out;
-        }
-        if (diag)
-        {
-            *diag = err;
-        }
-
-        if (stat != 0)
-        {
-            if (err.empty())
-            {
-                err = std::move(out);
-            }
-            if (err.empty())
-            {
-                err = "[" + std::to_string(stat) + "]: " + strerror(stat);
-            }
-            throw std::system_error(stat, std::generic_category(), err);
-        }
     }
 
     InvocationResults PosixProcessProvider::pipeline(
@@ -306,6 +249,22 @@ namespace core::platform
         return results;
     }
 
+    std::size_t PosixProcessProvider::read(
+        FileDescriptor fd,
+        void *buffer,
+        std::size_t bufsize) const
+    {
+        return this->checkstatus(::read(fd, buffer, bufsize));
+    }
+
+    std::size_t PosixProcessProvider::write(
+        FileDescriptor fd,
+        void *buffer,
+        std::size_t length) const
+    {
+        return this->checkstatus(::write(fd, buffer, length));
+    }
+
     ExitStatus PosixProcessProvider::waitpid(PID pid, bool checkstatus) const
     {
         int wstatus = 0;
@@ -313,7 +272,7 @@ namespace core::platform
         ::waitpid(pid, &wstatus, options);
         if (checkstatus && (WEXITSTATUS(wstatus) != EXIT_SUCCESS))
         {
-            throw std::system_error(wstatus, std::system_category());
+            throw std::system_error(WEXITSTATUS(wstatus), std::system_category());
         }
         return wstatus;
     }
@@ -341,14 +300,13 @@ namespace core::platform
             {
                 this->checkstatus(dup2(fdin, STDIN_FILENO));
             }
-            // this->close_pipe(inpipe);
+            else if (fdin < 0)
+            {
+                this->close_fd(STDIN_FILENO);
+            }
 
             this->checkstatus(dup2(outpipe[OUTPUT], STDOUT_FILENO));
-            // this->close_pipe(outpipe);
-
             this->checkstatus(dup2(errpipe[OUTPUT], STDERR_FILENO));
-            // this->close_pipe(errpipe);
-
             this->execute(argv, cwd);
         }
         else
@@ -505,10 +463,7 @@ namespace core::platform
 
         if (pfd.revents & POLLIN)
         {
-            int nchars = this->checkstatus(
-                ::read(pfd.fd,
-                       outbuf.data(),
-                       outbuf.size()));
+            int nchars = this->read(pfd.fd, outbuf.data(), outbuf.size());
 
             logf_trace("Captured %d bytes from PID %d stderr",
                        nchars,

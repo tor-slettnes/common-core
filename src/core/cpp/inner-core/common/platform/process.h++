@@ -61,11 +61,13 @@ namespace core::platform
 
         /// @fn arg_vector
         /// @brief Convert a variant value of type string or valuelist to argument vector
-        virtual ArgVector arg_vector(const types::Value &command) const;
+        virtual ArgVector arg_vector(
+            const types::Value &command) const;
 
         /// @fn shell_command
         /// @brief Return an argument vector to run the specified command line in a shell
-        virtual ArgVector shell_command(const std::string &command_line) const;
+        virtual ArgVector shell_command(
+            const std::string &command_line) const;
 
         /// @fn invoke_async
         /// @brief Invoke a command, and immediately return its PID
@@ -91,11 +93,12 @@ namespace core::platform
         /// empty, in which case the corresponding value is inherited from this
         /// (parent) process.
 
-        virtual PID invoke_async(const ArgVector &argv,
-                                 const fs::path &cwd = {},
-                                 const fs::path &infile = path->devnull(),
-                                 const fs::path &outfile = {},
-                                 const fs::path &errfile = {}) const;
+        virtual PID invoke_async(
+            const ArgVector &argv,
+            const fs::path &cwd = {},
+            const fs::path &infile = path->devnull(),
+            const fs::path &outfile = {},
+            const fs::path &errfile = {}) const;
 
         /// @fn invoke_sync
         /// @brief Invoke a command, and wait (block this thread) until it exits.
@@ -115,11 +118,12 @@ namespace core::platform
         /// @exception std::system_error
         ///     An underlying system call failed.
 
-        virtual ExitStatus invoke_sync(const ArgVector &argv,
-                                       const fs::path &cwd = {},
-                                       const fs::path &infile = path->devnull(),
-                                       const fs::path &outfile = {},
-                                       const fs::path &errfile = {}) const;
+        virtual ExitStatus invoke_sync(
+            const ArgVector &argv,
+            const fs::path &cwd = {},
+            const fs::path &infile = path->devnull(),
+            const fs::path &outfile = {},
+            const fs::path &errfile = {}) const;
 
         /// @fn invoke_async_pipe
         /// @brief Invoke a command with UNIX pipes
@@ -145,11 +149,12 @@ namespace core::platform
         ///     It is the caller's responsibility to close the file descriptors
         ///     `fdin`, `fdout`, and `fderr`, if provided.
 
-        virtual PID invoke_async_pipe(const ArgVector &argv,
-                                      const fs::path &cwd = {},
-                                      FileDescriptor *fdin = nullptr,
-                                      FileDescriptor *fdout = nullptr,
-                                      FileDescriptor *fderr = nullptr) const;
+        virtual PID invoke_async_pipe(
+            const ArgVector &argv,
+            const fs::path &cwd = {},
+            FileDescriptor *fdin = nullptr,
+            FileDescriptor *fdout = nullptr,
+            FileDescriptor *fderr = nullptr) const;
 
         /// @fn capture_pipe
         /// @brief Communicate with a child process through an established pipe
@@ -161,26 +166,56 @@ namespace core::platform
         ///     Readable UNIX file descriptor of a pipe from the program's `stdout`.
         /// @param[out] fderr
         ///     Readable UNIX file descriptor of a pipe from the program's `stderr`.
-        /// @param[in] input
-        ///     Text to be sent on `stdin'.
-        /// @param[out] output
-        ///     Text captured from `stdout`.
-        ///     Passing in `nullptr` discards the child's standard output.
-        /// @param[out] diag
-        ///     Text captured from `stderr`.
-        ///     Passing in `nullptr` discards the child's standard error.
+        /// @param[in] instream
+        ///     Input stream from which data will be sent to program's `stdin`.
+        ///     Passing in `nullptr` closes `fdin`.
+        /// @param[out] outstream
+        ///     Output stream to which data will be sent from the program's `stdout`.
+        ///     Passing in `nullptr` discard the child's standard output.
+        /// @param[out] errstream
+        ///     Output stream to which data will be sent from the program's `stderr`.
+        ///     Passing in `nullptr` discard the child's standard error.
         /// @return
         ///     The exit code returned from the process, as returned from `waitpid(2)`.
         /// @exception std::system_error
         ///     An underlying system call failed.
 
-        virtual ExitStatus pipe_capture(PID pid,
-                                        FileDescriptor fdin,
-                                        FileDescriptor fdout,
-                                        FileDescriptor fderr,
-                                        const std::string &input,
-                                        std::string *output,
-                                        std::string *diag) const;
+        virtual ExitStatus pipe_capture(
+            PID pid,
+            FileDescriptor fdin,
+            FileDescriptor fdout,
+            FileDescriptor fderr,
+            std::istream *instream,
+            std::ostream *outstream,
+            std::ostream *errstream) const;
+
+        /// @fn invoke_capture
+        /// @brief Invoke a command with stdin/stdout/stderr capture.
+        /// @param[in] argv
+        ///     Argument vector. The first element (index #0) is the full path
+        ///     of the program file to invoke.
+        /// @param[in] cwd
+        ///     Change working directory
+        /// @param[in] instream
+        ///     Input stream from which data will be sent to program's `stdin`.
+        ///     Passing in `nullptr` closes `fdin`.
+        /// @param[out] outstream
+        ///     Output stream to which data will be sent from the program's `stdout`.
+        ///     Passing in `nullptr` discard the child's standard output.
+        /// @param[out] errstream
+        ///     Output stream to which data will be sent from the program's `stderr`.
+        ///     Passing in `nullptr` discard the child's standard error.
+        /// @return
+        ///     The exit code returned from the process, as returned from `waitpid(2)`.
+        /// @exception std::system_error
+        ///     An underlying system call failed.
+
+        virtual ExitStatus invoke_capture(
+            const ArgVector &argv,
+            const fs::path &cwd = {},
+            std::istream *instream = nullptr,
+            std::ostream *outstream = nullptr,
+            std::ostream *errstream = nullptr) const;
 
         /// @fn invoke_capture
         /// @brief Invoke a command with stdin/stdout/stderr capture.
@@ -202,11 +237,41 @@ namespace core::platform
         /// @exception std::system_error
         ///     An underlying system call failed.
 
-        virtual ExitStatus invoke_capture(const ArgVector &argv,
-                                          const fs::path &cwd = {},
-                                          const std::string &input = {},
-                                          std::string *output = nullptr,
-                                          std::string *diag = nullptr) const;
+        virtual ExitStatus invoke_capture(
+            const ArgVector &argv,
+            const fs::path &cwd,
+            const std::string &input,
+            std::string *output = nullptr,
+            std::string *diag = nullptr) const;
+
+        /// @fn invoke_check
+        /// @brief
+        ///     Invoke a command with stdio capture,
+        ///     throw SystemError on non-zero exit status
+        /// @param[in] argv
+        ///     Argument vector. The first element (index #0) is the full path
+        ///     of the program file to invoke.
+        /// @param[in] cwd
+        ///     Change working directory
+        /// @param[in] instream
+        ///     Input stream from which data will be sent to program's `stdin`.
+        ///     Passing in `nullptr` closes `fdin`.
+        /// @param[out] outstream
+        ///     Output stream to which data will be sent from the program's `stdout`.
+        ///     Passing in `nullptr` discard the child's standard output.
+        /// @param[out] errstream
+        ///     Output stream to which data will be sent from the program's `stderr`.
+        ///     Passing in `nullptr` discard the child's standard error.
+        /// @exception std::system_error
+        ///     An underlying system call failed, or the process returned a
+        ///     non-zero exit status.
+
+        virtual void invoke_check(
+            const ArgVector &argv,
+            const fs::path &cwd = {},
+            std::istream *instream = nullptr,
+            std::ostream *outstream = nullptr,
+            std::ostream *errstream = nullptr) const;
 
         /// @fn invoke_check
         /// @brief
@@ -231,8 +296,8 @@ namespace core::platform
 
         virtual void invoke_check(
             const ArgVector &argv,
-            const fs::path &cwd = {},
-            const std::string &input = {},
+            const fs::path &cwd,
+            const std::string &input,
             std::string *output = nullptr,
             std::string *diag = nullptr) const;
 
@@ -285,6 +350,43 @@ namespace core::platform
             std::istream &instream,
             bool checkstatus = false) const;
 
+        /// @fn read
+        /// @brief
+        ///     Read from a file descriptor
+        /// @param[in] fd
+        ///     Readable file descriptor
+        /// @param[in] buffer
+        ///     Buffer to hold received data
+        /// @param[in] bufsize
+        ///     Maximum number of bytes to read
+        /// @return
+        ///     Number of characters read
+        /// @exception std::system_error
+        ///     Read operation failed
+
+        virtual std::size_t read(
+            FileDescriptor fd,
+            void *buffer,
+            std::size_t bufsize) const = 0;
+
+        /// @fn write
+        /// @brief
+        ///     Write to a file descriptor
+        /// @param[in] fd
+        ///     Writeable file descriptor
+        /// @param[in] buffer
+        ///     Buffer containing data to write
+        /// @param[in] bufsize
+        ///     Bytes to write
+        /// @return
+        ///     Number of characters written
+        /// @exception std::system_error
+        ///     Write operation failed
+
+        virtual std::size_t write(
+            FileDescriptor fd,
+            void *buffer,
+            std::size_t length) const = 0;
 
         /// @fn waitpid
         /// @brief
@@ -295,7 +397,8 @@ namespace core::platform
         /// @return
         ///     Exit status from the process. Use the `WEXITSTSTUS()` macro
         ///     to convert this to a system error code.
-        virtual ExitStatus waitpid(PID pid, bool checkstatus = false) const = 0;
+        virtual ExitStatus waitpid(PID pid,
+                                   bool checkstatus = false) const = 0;
 
     protected:
         template <class T, std::enable_if_t<std::is_integral_v<T>, bool> = true>

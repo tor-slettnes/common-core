@@ -38,17 +38,21 @@ service Upgrade
         returns (PackageSources);
 
     // Return information about available upgrade packages discovered during
-    // prior (implicit or explicit) scans.
-    rpc list_available (google.protobuf.Empty)
+    // a prior (implicit or explicit) scan of the specified package source
+    // if specified, otherwise across all preconfigured/default sources.
+    rpc list_available (PackageSource)
         returns (PackageManifests);
 
     // Return information about the best available upgrade package discovered
-    // during prior scans. This will normally be the package with the highest
-    // version number higher than the currently installed release.
+    // during a prior scan of the specified package source if specified,
+    // otherwise the best overall candidate discovered across all
+    // preconfigured/default locations. This will normally be the package with
+    // the highest version number, with local (VFS) sources preferered over
+    // remote (URL).
     //
     // This information is also available by watching the signal
     // `upgrade_available`, below.
-    rpc best_available (google.protobuf.Empty)
+    rpc best_available (PackageSource)
         returns (PackageManifest);
 
     // Install an upgrade from the specified package source if provided,

@@ -33,15 +33,16 @@ namespace platform::upgrade::native
         return this->available_packages.size();
     }
 
-    void PackageHandler::install(const PackageSource &source)
+    PackageManifest::ptr PackageHandler::install(const PackageSource &source)
     {
         fs::path staging_folder = this->create_staging_folder();
         std::exception_ptr eptr;
+        PackageManifest::ptr manifest;
 
         try
         {
             this->unpack(source.filename, staging_folder);
-            this->install_unpacked(source, staging_folder);
+            manifest = this->install_unpacked(source, staging_folder);
         }
         catch (...)
         {
@@ -54,14 +55,43 @@ namespace platform::upgrade::native
         {
             std::rethrow_exception(eptr);
         }
+
+        return manifest;
     }
 
-    void PackageHandler::install_unpacked(
+    PackageManifest::ptr PackageHandler::install_unpacked(
         const PackageSource &source,
         const fs::path &staging_folder)
     {
-        LocalManifest manifest(staging_folder / this->manifest_file(), source);
-        core::platform::ArgVector argv = manifest.install_command();
+        auto manifest = std::make_shared<LocalManifest>(
+            staging_folder / this->manifest_file(),
+            source);
+
+        core::platform::ArgVector argv = manifest->install_command();
+        logf_notice("Installing upgrade from %s: %s", staging_folder, argv);
+
+        core::platform::FileDescriptor stdout_fd, stderr_fd;
+        core::platform::PID pid = core::platform::process->invoke_async_pipe(
+            argv,
+            staging_folder,
+            nullptr,
+            &stdout_fd,
+            &stderr_fd);
+
+        std::future<void> stdout_future = std::async(
+            &This::capture_pipe_output,
+            this,
+            stdout_fd,
+            "stdout");
+
+        std::future<void> stderr_future = std::async(
+            &This::capture_pipe_output,
+            this,
+            stderr_fd,
+            "stderr");
+
+        core::platform::process->waitpid(pid, true);
+        return manifest;
     }
 
     void PackageHandler::finalize(const PackageManifest::ptr &package_info)
@@ -123,6 +153,21 @@ namespace platform::upgrade::native
         };
 
         core::platform::process->pipe_from_stream(pipeline, stream);
+    }
+
+    void PackageHandler::capture_pipe_output(
+        core::platform::FileDescriptor fd,
+        const std::string output_name)
+    {
+        std::vector<char> buf(core::platform::CHUNKSIZE);
+
+        while (std::size_t nbytes = core::platform::process->read(fd, buf.data(), buf.size()))
+        {
+            logf_info("Read %d bytes from %s: %s",
+                      nbytes,
+                      output_name,
+                      std::string_view(buf.data(), nbytes));
+        }
     }
 
 }  // namespace platform::upgrade::native

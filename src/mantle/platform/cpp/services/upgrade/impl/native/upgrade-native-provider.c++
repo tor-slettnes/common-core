@@ -8,6 +8,8 @@
 #include "upgrade-native-provider.h++"
 #include "package-handler-vfs.h++"
 #include "upgrade-settings.h++"
+#include "sysconfig-host.h++"
+#include "status/exceptions.h++"
 
 namespace platform::upgrade::native
 {
@@ -26,22 +28,17 @@ namespace platform::upgrade::native
 
     void NativeProvider::scan(const PackageSource &source)
     {
-        switch (source.location_type())
+        if (source)
         {
-        case PackageSource::LOC_NONE:
+            this->get_or_add_handler(source)->scan();
+        }
+        else
+        {
+            this->get_or_add_handler({this->default_vfs_path})->scan();
             if (!this->default_url.empty())
             {
-                this->scan_http(this->default_url);
+                this->get_or_add_handler({this->default_url})->scan();
             }
-            break;
-
-        case PackageSource::LOC_VFS:
-            this->scan_vfs(source.vfs_path().value_or(this->default_vfs_path));
-            break;
-
-        case PackageSource::LOC_URL:
-            this->scan_http(source.url().value_or(this->default_url));
-            break;
         }
     }
 
@@ -55,7 +52,7 @@ namespace platform::upgrade::native
         return sources;
     }
 
-    PackageManifests NativeProvider::list_available() const
+    PackageManifests NativeProvider::list_available(const PackageSource &source) const
     {
         PackageManifests available;
         for (const std::shared_ptr<PackageHandler> &handler : this->handlers())
@@ -70,10 +67,10 @@ namespace platform::upgrade::native
         return available;
     }
 
-    PackageManifest::ptr NativeProvider::best_available() const
+    PackageManifest::ptr NativeProvider::best_available(const PackageSource &source) const
     {
         PackageManifest::ptr best;
-        for (const PackageManifest::ptr &candidate : this->list_available())
+        for (const PackageManifest::ptr &candidate : this->list_available(source))
         {
             if (candidate->is_applicable() &&
                 (!best || (candidate->version() > best->version())))
@@ -86,24 +83,55 @@ namespace platform::upgrade::native
 
     PackageManifest::ptr NativeProvider::install(const PackageSource &source)
     {
-        fs::path staging_folder = core::platform::path->mktemp();
-        return {};
+        PackageSource install_source;
+
+        if (source && !source.filename.empty())
+        {
+            install_source = source;
+        }
+        else if (PackageManifest::ptr manifest = this->best_available(source))
+        {
+            install_source = manifest->source();
+        }
+
+        if (!this->install_lock.try_lock())
+        {
+            throw core::exception::Unavailable("An install task is already pending");
+        }
+
+        try
+        {
+            if (const PackageHandler::ptr &handler = this->get_or_add_handler(install_source))
+            {
+                return this->installed_manifest = handler->install(install_source);
+            }
+            else
+            {
+                throw core::exception::NotFound(
+                    "No package file specified and "
+                    "no applicable package discovered from prior scans");
+            }
+        }
+        catch (...)
+        {
+            this->install_lock.unlock();
+            throw;
+        }
     }
 
     void NativeProvider::finalize()
     {
-    }
+        if (this->install_lock.locked())
+        {
+            logf_info("Finalizing upgrade");
+            if (this->installed_manifest && this->installed_manifest->reboot_required())
+            {
+                logf_notice("Rebooting system");
+                platform::sysconfig::host->reboot();
+            }
 
-    void NativeProvider::scan_vfs(const vfs::Path &source)
-    {
-        this->vfs_handlers.emplace_shared(source, this->settings, source)
-            ->scan();
-    }
-
-    void NativeProvider::scan_http(const URL &source)
-    {
-        this->http_handlers.emplace_shared(source, this->settings, source)
-            ->scan();
+            this->install_lock.unlock();
+        }
     }
 
     void NativeProvider::remove(const PackageSource &source)
@@ -111,23 +139,13 @@ namespace platform::upgrade::native
         switch (source.location_type())
         {
         case PackageSource::LOC_VFS:
-            this->remove_vfs(source.vfs_path().value());
+            this->vfs_handlers.erase(source.vfs_path());
             break;
 
         case PackageSource::LOC_URL:
-            this->remove_http(source.url().value());
+            this->http_handlers.erase(source.url());
             break;
         }
-    }
-
-    void NativeProvider::remove_vfs(const vfs::Path &source)
-    {
-        this->vfs_handlers.erase(source);
-    }
-
-    void NativeProvider::remove_http(const URL &source)
-    {
-        this->http_handlers.erase(source);
     }
 
     std::vector<std::shared_ptr<PackageHandler>> NativeProvider::handlers() const
@@ -145,6 +163,27 @@ namespace platform::upgrade::native
             handlers.push_back(handler);
         }
         return handlers;
+    }
+
+    PackageHandler::ptr NativeProvider::get_or_add_handler(const PackageSource &source)
+    {
+        switch (source.location_type())
+        {
+        case PackageSource::LOC_VFS:
+            return this->vfs_handlers.emplace_shared(
+                source.vfs_path(this->default_vfs_path),
+                this->settings,
+                source.vfs_path(this->default_vfs_path));
+
+        case PackageSource::LOC_URL:
+            return this->http_handlers.emplace_shared(
+                source.url(this->default_url),
+                this->settings,
+                source.url(this->default_url));
+
+        default:
+            return {};
+        }
     }
 
 }  // namespace platform::upgrade::native

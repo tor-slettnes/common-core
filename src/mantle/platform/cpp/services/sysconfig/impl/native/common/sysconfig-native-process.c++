@@ -55,14 +55,22 @@ namespace platform::sysconfig::native
         if (auto nh = this->process_map.extract(input.pid))
         {
             auto [fdin, fdout, fderr] = nh.mapped();
+            std::stringstream stdin(input.stdin);
+            stdin.setstate(std::ios_base::eofbit);
+            std::stringstream stdout;
+            std::stringstream stderr;
+
             response.exit_status = core::platform::process->pipe_capture(
                 input.pid,
                 fdin,
                 fdout,
                 fderr,
-                input.stdin,
-                &response.stdout,
-                &response.stderr);
+                &stdin,
+                &stdout,
+                &stderr);
+
+            response.stdout = stdout.str();
+            response.stderr = stderr.str();
         }
         else
         {

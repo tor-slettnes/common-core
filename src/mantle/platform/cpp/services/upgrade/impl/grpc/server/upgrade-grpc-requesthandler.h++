@@ -38,12 +38,12 @@ namespace platform::upgrade::grpc
 
         ::grpc::Status list_available(
             ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
+            const ::cc::platform::upgrade::PackageSource* request,
             ::cc::platform::upgrade::PackageManifests* response) override;
 
         ::grpc::Status best_available(
             ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
+            const ::cc::platform::upgrade::PackageSource* request,
             ::cc::platform::upgrade::PackageManifest* response) override;
 
         ::grpc::Status install(

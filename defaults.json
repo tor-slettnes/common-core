@@ -4,7 +4,7 @@
     "description": "Cross-platform development framework for embedded microservice applications",
     "home page": "https://github.com/tor-slettnes/common-core/",
     "package" : {
-        "name": "common-platform",
+        "name": "cc-platform-apps",
         "vendor": "Common Core Authors",
         "contact": "Tor Slettnes <tor@slett.net>"
     },
@@ -14,6 +14,7 @@
         "keyring": "common-core-release.kbx"
     },
     "python": {
-        "namespace": "cc"
+        "namespace": "cc",
+        "dependencies" : ["grpcio", "protobuf", "zmq"]
     }
 }

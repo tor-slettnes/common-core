@@ -70,11 +70,11 @@ void Options::scan()
     std::string arg = this->get_arg("source type");
     if (core::str::tolower(arg) == "vfs")
     {
-        source.location = this->vfspath(this->get_arg("vfs path"));
+        source.location = this->vfspath(this->next_arg().value_or(""));
     }
     else if (core::str::tolower(arg) == "url")
     {
-        source.location = this->get_arg("url");
+        source.location = this->get_arg("URL");
     }
     else if (core::str::tolower(arg) != "default")
     {

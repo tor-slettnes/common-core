@@ -41,9 +41,11 @@ namespace platform::upgrade
         PackageSource(const Location &location = {},
                       const fs::path &filename = {});
 
+        operator bool() const noexcept;
+
         LocationType location_type() const;
-        std::optional<vfs::Path> vfs_path() const;
-        std::optional<URL> url() const;
+        vfs::Path vfs_path(const vfs::Path &fallback={}) const;
+        URL url(const URL &fallback={}) const;
 
     protected:
         void to_stream(std::ostream &stream) const override;

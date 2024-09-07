@@ -19,7 +19,7 @@ namespace platform::upgrade::native
     constexpr auto DEFAULT_MANIFEST_FILE = "manifest.json";
 
     constexpr auto SETTING_VFS_CONTEXT = "vfs context";
-    constexpr auto DEFAULT_VFS_CONTEXT = "RELEASES";
+    constexpr auto DEFAULT_VFS_CONTEXT = "releases";
 
     constexpr auto SETTING_DOWNLOAD_URL = "download url";
     constexpr auto SETTING_VERIFY_COMMAND = "verify command";

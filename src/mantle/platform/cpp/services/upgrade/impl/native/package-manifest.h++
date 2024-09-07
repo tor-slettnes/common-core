@@ -23,7 +23,7 @@ namespace platform::upgrade::native
 
     public:
         LocalManifest(const core::SettingsStore &settings,
-                      const PackageSource &source);
+                      const PackageSource &source = {});
 
     public:
         const bool is_applicable() const override;

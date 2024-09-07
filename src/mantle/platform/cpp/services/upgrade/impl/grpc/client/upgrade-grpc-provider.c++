@@ -22,7 +22,8 @@ namespace platform::upgrade::grpc
         return bool(client);
     }
 
-    void ClientProvider::scan(const PackageSource &source)
+    void ClientProvider::scan(
+        const PackageSource &source)
     {
         this->client->call_check(
             &Client::Stub::scan,
@@ -35,19 +36,26 @@ namespace platform::upgrade::grpc
             this->client->call_check(&Client::Stub::list_sources));
     }
 
-    PackageManifests ClientProvider::list_available() const
+    PackageManifests ClientProvider::list_available(
+        const PackageSource &source) const
     {
         return protobuf::decoded<PackageManifests>(
-            this->client->call_check(&Client::Stub::list_available));
+            this->client->call_check(
+                &Client::Stub::list_available,
+                protobuf::encoded<cc::platform::upgrade::PackageSource>(source)));
     }
 
-    PackageManifest::ptr ClientProvider::best_available() const
+    PackageManifest::ptr ClientProvider::best_available(
+        const PackageSource &source) const
     {
         return protobuf::decode_shared<PackageManifest>(
-            this->client->call_check(&Client::Stub::best_available));
+            this->client->call_check(
+                &Client::Stub::best_available,
+                protobuf::encoded<cc::platform::upgrade::PackageSource>(source)));
     }
 
-    PackageManifest::ptr ClientProvider::install(const PackageSource &source)
+    PackageManifest::ptr ClientProvider::install(
+        const PackageSource &source)
     {
         cc::platform::upgrade::InstallRequest request;
         protobuf::encode(source, request.mutable_source());

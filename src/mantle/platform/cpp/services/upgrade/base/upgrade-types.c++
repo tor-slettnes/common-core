@@ -12,48 +12,49 @@ namespace platform::upgrade
     //==========================================================================
     // PackageSource
 
-    PackageSource::PackageSource(
-        const Location &location,
-        const fs::path &filename)
+    PackageSource::PackageSource(const Location &location,
+                                 const fs::path &filename)
         : location(location),
           filename(filename)
     {
     }
 
-    PackageSource::LocationType
-    PackageSource::location_type() const
+    PackageSource::operator bool() const noexcept
+    {
+        return this->location_type() != LOC_NONE;
+    }
+
+
+    PackageSource::LocationType PackageSource::location_type() const
     {
         return static_cast<LocationType>(this->location.index());
     }
 
-    std::optional<vfs::Path>
-    PackageSource::vfs_path() const
+    vfs::Path PackageSource::vfs_path(const vfs::Path &fallback) const
     {
-        if (auto *vpath = std::get_if<vfs::Path>(&this->location))
+        if (auto *candidate = std::get_if<vfs::Path>(&this->location))
         {
-            return *vpath;
+            if (*candidate)
+            {
+                return *candidate;
+            }
         }
-        else
-        {
-            return {};
-        }
+        return fallback;
     }
 
-    std::optional<URL>
-    PackageSource::url() const
+    URL PackageSource::url(const URL &fallback) const
     {
-        if (auto *url = std::get_if<URL>(&this->location))
+        if (auto *candidate = std::get_if<URL>(&this->location))
         {
-            return *url;
+            if (!candidate->empty())
+            {
+                return *candidate;
+            }
         }
-        else
-        {
-            return {};
-        }
+        return fallback;
     }
 
-    void
-    PackageSource::to_stream(
+    void PackageSource::to_stream(
         std::ostream &stream) const
     {
         core::types::PartsList parts;
@@ -61,11 +62,11 @@ namespace platform::upgrade
         switch (this->location_type())
         {
         case LOC_VFS:
-            parts.add("vpath", this->vfs_path().value(), true, "%r");
+            parts.add("vpath", this->vfs_path(), true, "%r");
             break;
 
         case LOC_URL:
-            parts.add("url", this->url().value(), true, "%r");
+            parts.add("url", this->url(), true, "%r");
             break;
         }
 
@@ -92,44 +93,37 @@ namespace platform::upgrade
     {
     }
 
-    const PackageSource &
-    PackageManifest::source() const
+    const PackageSource &PackageManifest::source() const
     {
         return this->source_;
     }
 
-    const std::string &
-    PackageManifest::product() const
+    const std::string &PackageManifest::product() const
     {
         return this->product_;
     }
 
-    const Version &
-    PackageManifest::version() const
+    const Version &PackageManifest::version() const
     {
         return this->version_;
     }
 
-    const std::string &
-    PackageManifest::description() const
+    const std::string &PackageManifest::description() const
     {
         return this->description_;
     }
 
-    const bool
-    PackageManifest::reboot_required() const
+    const bool PackageManifest::reboot_required() const
     {
         return this->reboot_required_;
     }
 
-    const bool
-    PackageManifest::is_applicable() const
+    const bool PackageManifest::is_applicable() const
     {
         return this->is_applicable_;
     }
 
-    void
-    PackageManifest::to_stream(std::ostream &stream) const
+    void PackageManifest::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
                           "{source=%s, product=%r, "
@@ -146,8 +140,7 @@ namespace platform::upgrade
     //==========================================================================
     // ScanProgress
 
-    void
-    ScanProgress::to_stream(std::ostream &stream) const
+    void ScanProgress::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
                           "{source=%s}",
@@ -157,8 +150,7 @@ namespace platform::upgrade
     //==========================================================================
     // UpgradeProgress
 
-    void
-    UpgradeProgress::to_stream(std::ostream &stream) const
+    void UpgradeProgress::to_stream(std::ostream &stream) const
     {
         core::types::PartsList parts;
         parts.add("state", this->state);
@@ -172,8 +164,7 @@ namespace platform::upgrade
         stream << parts;
     }
 
-    void
-    UpgradeProgress::Fraction::to_stream(std::ostream &stream) const
+    void UpgradeProgress::Fraction::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
                           "%d of %d",
@@ -181,10 +172,7 @@ namespace platform::upgrade
                           this->total);
     }
 
-    std::ostream &
-    operator<<(
-        std::ostream &stream,
-        UpgradeProgress::State state)
+    std::ostream &operator<<(std::ostream &stream, UpgradeProgress::State state)
     {
         return UpgradeProgress::state_names.to_stream(stream, state);
     }

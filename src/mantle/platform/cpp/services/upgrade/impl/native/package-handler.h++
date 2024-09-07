@@ -9,6 +9,7 @@
 #include "package-manifest.h++"
 #include "upgrade-types.h++"
 #include "platform/path.h++"
+#include "platform/process.h++"
 #include "settings/settingsstore.h++"
 
 namespace platform::upgrade::native
@@ -18,7 +19,7 @@ namespace platform::upgrade::native
         using This = PackageHandler;
 
     public:
-        using Ptr = std::shared_ptr<This>;
+        using ptr = std::shared_ptr<This>;
 
     protected:
         PackageHandler(const core::SettingsStore::ptr &settings);
@@ -28,7 +29,7 @@ namespace platform::upgrade::native
         virtual PackageSource get_source() const = 0;
         virtual std::vector<PackageManifest::ptr> get_available() const;
         virtual std::size_t get_available_count() const;
-        virtual void install(const PackageSource &source);
+        virtual PackageManifest::ptr install(const PackageSource &source);
         virtual void finalize(const PackageManifest::ptr &package_info);
 
     protected:
@@ -37,7 +38,7 @@ namespace platform::upgrade::native
             const fs::path &staging_folder) = 0;
 
     protected:
-        void install_unpacked(
+        PackageManifest::ptr install_unpacked(
             const PackageSource &source,
             const fs::path &staging_folder);
 
@@ -51,6 +52,10 @@ namespace platform::upgrade::native
         void unpack_stream(
             std::istream &stream,
             const fs::path &staging_folder);
+
+        void capture_pipe_output(
+            core::platform::FileDescriptor fd,
+            const std::string output_name);
 
     protected:
         std::vector<PackageManifest::ptr> available_packages;

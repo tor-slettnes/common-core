@@ -74,23 +74,9 @@ namespace core::platform
             FileDescriptor fdin,
             FileDescriptor fdout,
             FileDescriptor fderr,
-            const std::string &input,
-            std::string *output,
-            std::string *diag) const override;
-
-        ExitStatus invoke_capture(
-            const ArgVector &argv,
-            const fs::path &cwd,
-            const std::string &input,
-            std::string *output,
-            std::string *diag) const override;
-
-        void invoke_check(
-            const ArgVector &argv,
-            const fs::path &cwd,
-            const std::string &input,
-            std::string *output,
-            std::string *diag) const override;
+            std::istream *instream,
+            std::ostream *outstream,
+            std::ostream *errstream) const override;
 
         InvocationResults pipeline(
             const Invocations &invocations,
@@ -102,7 +88,19 @@ namespace core::platform
             std::istream &instream,
             bool checkstatus) const override;
 
-        ExitStatus waitpid(PID pid, bool checkstatus = false) const override;
+        std::size_t read(
+            FileDescriptor fd,
+            void *buffer,
+            std::size_t bufsize) const override;
+
+        std::size_t write(
+            FileDescriptor fd,
+            void *buffer,
+            std::size_t length) const override;
+
+        ExitStatus waitpid(
+            PID pid,
+            bool checkstatus = false) const override;
 
     protected:
         PID invoke_async_from_fd(

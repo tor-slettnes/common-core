@@ -40,9 +40,9 @@ namespace platform::upgrade::grpc
     }
 
     ::grpc::Status RequestHandler::list_sources(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            ::cc::platform::upgrade::PackageSources* response)
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ::cc::platform::upgrade::PackageSources* response)
     {
         try
         {
@@ -55,15 +55,16 @@ namespace platform::upgrade::grpc
         }
     }
 
-
     ::grpc::Status RequestHandler::list_available(
         ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
-        ::cc::platform::upgrade::PackageManifests *response)
+        const ::cc::platform::upgrade::PackageSource* request,
+        ::cc::platform::upgrade::PackageManifests* response)
     {
         try
         {
-            protobuf::encode(this->provider->list_available(), response);
+            protobuf::encode(
+                this->provider->list_available(protobuf::decoded<PackageSource>(*request)),
+                response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -74,13 +75,13 @@ namespace platform::upgrade::grpc
 
     ::grpc::Status RequestHandler::best_available(
         ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
+        const ::cc::platform::upgrade::PackageSource* request,
         ::cc::platform::upgrade::PackageManifest* response)
     {
         try
         {
             protobuf::encode_shared(
-                this->provider->best_available(),
+                this->provider->best_available(protobuf::decoded<PackageSource>(*request)),
                 response);
             return ::grpc::Status::OK;
         }

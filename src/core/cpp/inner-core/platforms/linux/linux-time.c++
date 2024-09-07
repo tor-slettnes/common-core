@@ -48,7 +48,7 @@ namespace core::platform
     bool LinuxTimeProvider::get_ntp() const
     {
         std::string setting = this->read_settings().get(SETTING_NTP);
-        return core::str::convert_to<bool>(setting);
+        return core::str::convert_to<bool>(setting, false);
     }
 
     void LinuxTimeProvider::set_ntp_servers(const std::vector<std::string> &servers)
@@ -63,15 +63,15 @@ namespace core::platform
 
     core::types::ValueMap<std::string, std::string> LinuxTimeProvider::read_settings() const
     {
-        std::string out, err;
+        std::stringstream out, err;
         try
         {
             process->invoke_check(
                 {TIMEDATECTL_PATH, TIMEDATECTL_SHOW},
-                {},     // cwd
-                {},     // input
-                &out,   // standard output
-                &err);  // diagnostic output
+                {},       // cwd
+                nullptr,  // stdin
+                &out,     // stdout
+                &err);    // stderr
         }
         catch (const std::system_error &e)
         {
@@ -83,12 +83,12 @@ namespace core::platform
                 e.code().value(),
                 symbols->errno_name(e.code().value()),
                 e,
-                out,
-                err);
+                out.str(),
+                err.str());
         }
 
         core::types::ValueMap<std::string, std::string> valuemap;
-        for (const std::string &line : str::splitlines(out))
+        for (const std::string &line : str::splitlines(out.str()))
         {
             std::vector<std::string> subparts = str::split(line, "=", 1);
             if (subparts.size() == 2)

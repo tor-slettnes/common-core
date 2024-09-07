@@ -12,7 +12,10 @@
 #include "upgrade-base.h++"
 #include "upgrade-signals.h++"
 #include "vfs-context.h++"
+#include "thread/uniquelock.h++"
 #include "types/shared_ptr_map.h++"
+
+#include <mutex>
 
 namespace platform::upgrade::native
 {
@@ -28,22 +31,15 @@ namespace platform::upgrade::native
         void initialize() override;
         void scan(const PackageSource &source) override;
         PackageSources list_sources() const override;
-        PackageManifests list_available() const override;
-        PackageManifest::ptr best_available() const override;
+        PackageManifests list_available(const PackageSource &source) const override;
+        PackageManifest::ptr best_available(const PackageSource &source) const override;
         PackageManifest::ptr install(const PackageSource &source) override;
         void finalize() override;
-
         void remove(const PackageSource &source);
 
     protected:
-        void scan_vfs(const vfs::Path &source);
-        void scan_http(const URL &source);
-
-        void remove_vfs(const vfs::Path &source);
-        void remove_http(const URL &source);
-
-    protected:
-        std::vector<PackageHandler::Ptr> handlers() const;
+        std::vector<PackageHandler::ptr> handlers() const;
+        PackageHandler::ptr get_or_add_handler(const PackageSource &source);
 
     private:
         std::shared_ptr<core::SettingsStore> settings;
@@ -51,8 +47,7 @@ namespace platform::upgrade::native
         std::string default_url;
         core::types::shared_ptr_map<platform::vfs::Path, VFSPackageHandler> vfs_handlers;
         core::types::shared_ptr_map<URL, HTTPPackageHandler> http_handlers;
-        PackageManifest::ptr pending_install;
-        // std::unordered_map<platform::vfs::Path, std::shared_ptr<VFSPackageHandler>> vfs_handlers;
-        // std::unordered_map<URL, std::shared_ptr<HTTPPackageHandler>> http_handlers;
+        core::types::UniqueLock install_lock;
+        PackageManifest::ptr installed_manifest;
     };
 }  // namespace platform::upgrade::native

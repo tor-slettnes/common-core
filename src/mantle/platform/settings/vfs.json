@@ -41,7 +41,7 @@
         },
         "releases":
         {
-            "root"     : "/var/lib/cc-releases",
+            "root"     : "/var/cache/cc-releases",
             "writable" : true,
             "title"    : "Common Core Software Release Packages"
         }
