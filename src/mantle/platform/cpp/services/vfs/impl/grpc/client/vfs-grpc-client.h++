@@ -21,6 +21,7 @@ namespace platform::vfs::grpc
         using This = Client;
         using Super = ClientBaseImpl;
 
+    public:
         void initialize() override;
 
     private:

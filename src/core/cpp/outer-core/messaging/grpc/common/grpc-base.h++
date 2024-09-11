@@ -10,7 +10,6 @@
 //==============================================================================
 
 #pragma once
-#include "grpc-base.h++"
 #include "grpc-status.h++"
 #include "messaging-endpoint.h++"
 #include "settings/settingsstore.h++"

@@ -62,6 +62,14 @@ namespace platform::sysconfig
         }
     }
 
+    Version::operator bool() const noexcept
+    {
+        return (this->major > 0) ||
+               (this->minor > 0) ||
+               (this->patch > 0) ||
+               (this->build_number > 0);
+    }
+
     bool Version::operator<(const Version &other) const
     {
         return (this->major != other.major)   ? (this->major < other.major)

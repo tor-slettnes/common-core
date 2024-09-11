@@ -7,6 +7,7 @@
 
 #pragma once
 #include "platform/process.h++"
+#include "types/create-shared.h++"
 
 #include <poll.h>
 
@@ -15,6 +16,22 @@
 namespace core::platform
 {
     using Pipe = std::array<FileDescriptor, 2>;
+
+    class PosixExitStatus : public ExitStatus
+    {
+    public:
+        PosixExitStatus(int combined_code);
+
+        int exit_code() const override;
+        int exit_signal() const override;
+        bool success() const override;
+        std::string symbol() const override;
+        std::string text() const override;
+
+    private:
+        int code_;
+    };
+
 
     /// @brief Process invocation on Linux
     class PosixProcessProvider : public ProcessProvider
@@ -29,16 +46,6 @@ namespace core::platform
             OUTPUT = 1
         };
 
-        // struct InvocationStatus
-        // {
-        //     std::string command;
-        //     PID pid;
-        //     FileDescriptor fd_out;
-        //     FileDescriptor fd_err;
-        //     std::exception_ptr eptr;
-
-        // };
-
     protected:
         PosixProcessProvider(const std::string &name = "PosixProcessProvider");
 
@@ -48,14 +55,14 @@ namespace core::platform
 
         ArgVector shell_command(const std::string &command_line) const override;
 
-        PID invoke_async(
+        PID invoke_async_fileio(
             const ArgVector &argv,
             const fs::path &cwd,
             const fs::path &infile,
             const fs::path &outfile,
             const fs::path &errfile) const override;
 
-        ExitStatus invoke_sync(
+        ExitStatus::ptr invoke_sync_fileio(
             const ArgVector &argv,
             const fs::path &cwd,
             const fs::path &infile,
@@ -69,14 +76,12 @@ namespace core::platform
             FileDescriptor *fdout,
             FileDescriptor *fderr) const override;
 
-        ExitStatus pipe_capture(
+        InvocationResult pipe_capture(
             PID pid,
             FileDescriptor fdin,
             FileDescriptor fdout,
             FileDescriptor fderr,
-            std::istream *instream,
-            std::ostream *outstream,
-            std::ostream *errstream) const override;
+            std::istream *instream) const override;
 
         InvocationResults pipeline(
             const Invocations &invocations,
@@ -88,17 +93,17 @@ namespace core::platform
             std::istream &instream,
             bool checkstatus) const override;
 
-        std::size_t read(
+        std::size_t readfd(
             FileDescriptor fd,
             void *buffer,
             std::size_t bufsize) const override;
 
-        std::size_t write(
+        std::size_t writefd(
             FileDescriptor fd,
-            void *buffer,
+            const void *buffer,
             std::size_t length) const override;
 
-        ExitStatus waitpid(
+        ExitStatus::ptr waitpid(
             PID pid,
             bool checkstatus = false) const override;
 

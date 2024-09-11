@@ -13,60 +13,46 @@
 
 namespace platform::sysconfig
 {
-    // //==========================================================================
-    // // Helper methods for this module
+    //==========================================================================
+    // Helper methods for this module
 
-    // void print_first_line(std::ostream &stream,
-    //                       const std::string &text,
-    //                       const std::string &prefix,
-    //                       const std::string &continuation = "...",
-    //                       const std::string &posfix = "")
-    // {
-    //     std::vector<std::string> lines = core::str::split(text, "\n", 1);
-    //     if (!lines.empty())
-    //     {
-    //         stream << prefix
-    //                << lines.front();
+    PortableExitStatus::PortableExitStatus(bool success,
+                                           int exit_code,
+                                           int exit_signal,
+                                           const std::string &symbol,
+                                           const std::string &text)
+        : success_(success),
+          code_(exit_code),
+          signal_(exit_signal),
+          symbol_(symbol),
+          text_(text)
+    {
+    }
 
-    //         if (lines.size() > 1)
-    //         {
-    //             stream << continuation;
-    //         }
-    //     }
-    // }
+    int PortableExitStatus::exit_code() const
+    {
+        return this->code_;
+    }
 
-    // //==========================================================================
-    // // CommandInvocation
+    int PortableExitStatus::exit_signal() const
+    {
+        return this->signal_;
+    }
 
-    // void CommandInvocation::to_stream(std::ostream &stream) const
-    // {
-    //     core::str::format(
-    //         stream,
-    //         "{cwd=%s, argv=%s}",
-    //         this->working_directory,
-    //         this->argv);
-    // }
+    bool PortableExitStatus::success() const
+    {
+        return this->success_;
+    }
 
-    // //==========================================================================
-    // // CommandInvocation
+    std::string PortableExitStatus::symbol() const
+    {
+        return this->symbol_;
+    }
 
-    // void CommandContinuation::to_stream(std::ostream &stream) const
-    // {
-    //     stream << "{pid=" << this->pid;
-    //     print_first_line(stream, this->input, ", input=");
-    //     stream << "}";
-    // }
-
-    // //==========================================================================
-    // // CommandResponse
-
-    // void CommandResponse::to_stream(std::ostream &stream) const
-    // {
-    //     stream << "{exit_status=" << this->exit_status;
-    //     print_first_line(stream, this->stdout, ", stdout=");
-    //     print_first_line(stream, this->stderr, ", stderr=");
-    //     stream << "}";
-    // }
+    std::string PortableExitStatus::text() const
+    {
+        return this->text_;
+    }
 
     core::platform::ProviderProxy<ProcessInterface> process("process");
 }  // namespace platform::sysconfig

@@ -26,9 +26,17 @@ namespace platform::sysconfig::native
         ProcessProvider();
 
     public:
-        CommandResponse invoke_sync(const CommandInvocation &command) override;
-        CommandInvocationResponse invoke_async(const CommandInvocation &command) override;
-        CommandResponse invoke_finish(const CommandContinuation &input) override;
+        InvocationResult invoke_sync(
+            const Invocation &invocation,
+            const std::string &input) override;
+
+        PID invoke_async(
+            const Invocation &invocation,
+            const std::string &input) override;
+
+        InvocationResult invoke_finish(
+            PID pid,
+            const std::string &input) override;
 
     private:
         std::unordered_map<PID, FDSet> process_map;

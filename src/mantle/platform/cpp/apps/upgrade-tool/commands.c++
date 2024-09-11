@@ -57,7 +57,7 @@ void Options::add_commands()
 
     this->add_command(
         "monitor",
-        {"[except]", "[scan_progress|available|upgrade_progress]", "..."},
+        {"[except]", "[scan_progress|available|pending|upgrade_progress]", "..."},
         "Stay alive and monitor events. Unless specified, all events are printed.",
         std::bind(&Options::monitor, this));
 

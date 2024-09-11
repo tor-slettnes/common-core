@@ -18,6 +18,7 @@ namespace platform::upgrade::grpc
         auto client = Client::create_shared(host, wait_for_ready);
         upgrade.registerProvider<ClientProvider>(client);
 
+        client->initialize();
         if (start_watching)
         {
             client->start_watching();

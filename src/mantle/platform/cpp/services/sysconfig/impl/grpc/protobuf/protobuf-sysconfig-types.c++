@@ -334,75 +334,80 @@ namespace protobuf
     //==========================================================================
     // CommandInvocation
 
-    void encode(const platform::sysconfig::CommandInvocation &native,
+    void encode(const core::platform::Invocation &native,
                 cc::platform::sysconfig::CommandInvocation *proto) noexcept
     {
-        proto->set_working_directory(native.working_directory.string());
-        for (const auto &arg : native.argv)
-        {
-            proto->add_argv(arg);
-        }
+        assign_repeated(native.argv, proto->mutable_argv());
+        proto->set_working_directory(native.cwd);
     }
 
     void decode(const cc::platform::sysconfig::CommandInvocation &proto,
-                platform::sysconfig::CommandInvocation *native) noexcept
+                core::platform::Invocation *native) noexcept
     {
-        native->working_directory = fs::path(proto.working_directory());
-        native->argv.clear();
-        for (const auto &arg : proto.argv())
-        {
-            native->argv.push_back(arg);
-        }
+        assign_to_vector(proto.argv(), &native->argv);
+        native->cwd = proto.working_directory();
     }
 
     //==========================================================================
     // CommandInvocationResponse
 
-    void encode(const platform::sysconfig::CommandInvocationResponse &native,
+    void encode(const core::platform::PID &native,
                 cc::platform::sysconfig::CommandInvocationResponse *proto) noexcept
     {
-        proto->set_pid(native.pid);
+        proto->set_pid(native);
     }
 
     void decode(const cc::platform::sysconfig::CommandInvocationResponse &proto,
-                platform::sysconfig::CommandInvocationResponse *native) noexcept
+                core::platform::PID *native) noexcept
     {
-        native->pid = proto.pid();
-    }
-
-    //==========================================================================
-    // CommandContinuation
-
-    void encode(const platform::sysconfig::CommandContinuation &native,
-                cc::platform::sysconfig::CommandContinuation *proto) noexcept
-    {
-        proto->set_pid(native.pid);
-        proto->set_stdin(native.stdin);
-    }
-
-    void decode(const cc::platform::sysconfig::CommandContinuation &proto,
-                platform::sysconfig::CommandContinuation *native) noexcept
-    {
-        native->pid = proto.pid();
-        native->stdin = proto.stdin();
+        *native = proto.pid();
     }
 
     //==========================================================================
     // CommandResponse
 
-    void encode(const platform::sysconfig::CommandResponse &native,
+    void encode(const core::platform::InvocationResult &native,
                 cc::platform::sysconfig::CommandResponse *proto) noexcept
     {
-        proto->set_stdout(native.stdout);
-        proto->set_stderr(native.stderr);
-        proto->set_exit_status(native.exit_status);
+        if (native.stdout)
+        {
+            proto->set_stdout(native.stdout->str());
+        }
+
+        if (native.stderr)
+        {
+            proto->set_stderr(native.stderr->str());
+        }
+
+        if (native.status)
+        {
+            proto->set_success(native.status->success());
+
+            if (int code = native.status->exit_code())
+            {
+                proto->set_exit_code(code);
+            }
+            else if (int signal = native.status->exit_signal())
+            {
+                proto->set_exit_signal(signal);
+            }
+
+            proto->set_error_symbol(native.status->symbol());
+            proto->set_error_text(native.status->text());
+        }
     }
 
     void decode(const cc::platform::sysconfig::CommandResponse &proto,
-                platform::sysconfig::CommandResponse *native) noexcept
+                core::platform::InvocationResult *native) noexcept
     {
-        native->stdout = proto.stdout();
-        native->stderr = proto.stderr();
-        native->exit_status = proto.exit_status();
+        native->stdout = std::make_shared<std::stringstream>(proto.stdout());
+        native->stderr = std::make_shared<std::stringstream>(proto.stderr());
+        native->status = std::make_shared<platform::sysconfig::PortableExitStatus>(
+            proto.success(),
+            proto.exit_code(),
+            proto.exit_signal(),
+            proto.error_symbol(),
+            proto.error_text());
+
     }
 }  // namespace protobuf

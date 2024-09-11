@@ -23,7 +23,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            protobuf::encode(platform::sysconfig::product->get_product_info(), response);
+            protobuf::encode(product->get_product_info(), response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -39,7 +39,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            platform::sysconfig::product->set_serial_number(request->value());
+            product->set_serial_number(request->value());
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -55,7 +55,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            platform::sysconfig::product->set_model_name(request->value());
+            product->set_model_name(request->value());
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -74,7 +74,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            protobuf::encode(platform::sysconfig::host->get_host_info(), response);
+            protobuf::encode(host->get_host_info(), response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -90,7 +90,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            platform::sysconfig::host->set_host_name(request->value());
+            host->set_host_name(request->value());
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -110,7 +110,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            platform::sysconfig::time->set_time_config(
+            time->set_time_config(
                 protobuf::decoded<TimeConfig>(*request));
             return ::grpc::Status::OK;
         }
@@ -127,7 +127,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            protobuf::encode(platform::sysconfig::time->get_time_config(), response);
+            protobuf::encode(time->get_time_config(), response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -145,7 +145,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            platform::sysconfig::time->set_current_time(
+            time->set_current_time(
                 protobuf::decoded<core::dt::TimePoint>(*request));
             return ::grpc::Status::OK;
         }
@@ -162,7 +162,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            protobuf::encode(platform::sysconfig::time->get_current_time(), response);
+            protobuf::encode(time->get_current_time(), response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -184,7 +184,7 @@ namespace platform::sysconfig::grpc
         try
         {
             protobuf::assign_repeated(
-                platform::sysconfig::timezone->list_timezone_areas(),
+                timezone->list_timezone_areas(),
                 response->mutable_areas());
             return ::grpc::Status::OK;
         }
@@ -202,7 +202,7 @@ namespace platform::sysconfig::grpc
         try
         {
             protobuf::encode_vector(
-                platform::sysconfig::timezone->list_timezone_countries(request->name()),
+                timezone->list_timezone_countries(request->name()),
                 response->mutable_countries());
             return ::grpc::Status::OK;
         }
@@ -221,7 +221,7 @@ namespace platform::sysconfig::grpc
         {
             protobuf::assign_repeated(
                 platform::sysconfig::timezone->list_timezone_regions(
-                    protobuf::decoded<platform::sysconfig::TimeZoneLocationFilter>(*request)),
+                    protobuf::decoded<TimeZoneLocationFilter>(*request)),
                 response->mutable_regions());
             return ::grpc::Status::OK;
         }
@@ -240,7 +240,7 @@ namespace platform::sysconfig::grpc
         {
             protobuf::encode_vector(
                 platform::sysconfig::timezone->list_timezone_specs(
-                    protobuf::decoded<platform::sysconfig::TimeZoneLocationFilter>(*request)),
+                    protobuf::decoded<TimeZoneLocationFilter>(*request)),
                 response->mutable_specs());
             return ::grpc::Status::OK;
         }
@@ -261,7 +261,7 @@ namespace platform::sysconfig::grpc
         {
             protobuf::encode(
                 platform::sysconfig::timezone->get_timezone_spec(
-                    protobuf::decoded<platform::sysconfig::TimeZoneCanonicalName>(*request)),
+                    protobuf::decoded<TimeZoneCanonicalName>(*request)),
                 response);
             return ::grpc::Status::OK;
         }
@@ -282,12 +282,12 @@ namespace platform::sysconfig::grpc
             TimeZoneInfo info;
             if (request->has_canonical_zone())
             {
-                info = platform::sysconfig::timezone->set_timezone(
+                info = timezone->set_timezone(
                     request->canonical_zone());
             }
             else if (request->has_location())
             {
-                info = platform::sysconfig::timezone->set_timezone(
+                info = timezone->set_timezone(
                     protobuf::decoded<TimeZoneLocation>(request->location()));
             }
             protobuf::encode(info, response);
@@ -307,7 +307,7 @@ namespace platform::sysconfig::grpc
         try
         {
             protobuf::encode(
-                platform::sysconfig::timezone->get_timezone_info(
+                timezone->get_timezone_info(
                     request->canonical_zone(),
                     protobuf::decoded<core::dt::TimePoint>(request->time())),
                 response);
@@ -329,10 +329,11 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            protobuf::encode(
-                platform::sysconfig::process->invoke_sync(
-                    protobuf::decoded<CommandInvocation>(*request)),
-                response);
+            InvocationResult result = process->invoke_sync(
+                    protobuf::decoded<Invocation>(*request),
+                    request->stdin());
+
+            protobuf::encode(result, response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -348,10 +349,11 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            protobuf::encode(
-                platform::sysconfig::process->invoke_async(
-                    protobuf::decoded<CommandInvocation>(*request)),
-                response);
+            PID pid = process->invoke_async(
+                protobuf::decoded<Invocation>(*request),
+                request->stdin());
+
+            response->set_pid(pid);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -368,8 +370,9 @@ namespace platform::sysconfig::grpc
         try
         {
             protobuf::encode(
-                platform::sysconfig::process->invoke_finish(
-                    protobuf::decoded<CommandContinuation>(*request)),
+                process->invoke_finish(
+                    request->pid(),
+                    request->stdin()),
                 response);
             return ::grpc::Status::OK;
         }
@@ -386,7 +389,7 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            platform::sysconfig::host->reboot();
+            host->reboot();
             return ::grpc::Status::OK;
         }
         catch (...)

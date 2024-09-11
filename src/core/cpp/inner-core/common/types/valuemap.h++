@@ -12,11 +12,11 @@
 
 namespace core::types
 {
-    template <class K, class V>
-    class ValueMap : public std::map<K, V>
+    template <class K, class V, class MapType = std::map<K, V>>
+    class ValueMap : public MapType
     {
     public:
-        using std::map<K, V>::map;
+        using MapType::MapType;
 
         inline const V &get(const K &key, const V &fallback = {}) const noexcept
         {

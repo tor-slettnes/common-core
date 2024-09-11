@@ -10,6 +10,7 @@
 #include "event.h++"
 #include "platform/symbols.h++"
 #include "platform/path.h++"
+#include "platform/process.h++"
 
 #include <stdexcept>
 
@@ -281,6 +282,30 @@ namespace core::exception
     };
 
     //==========================================================================
+    /// @class InvocationError
+    /// @brief Error created from a process invocation
+
+    class InvocationError : public Exception<std::runtime_error>
+    {
+        using This = InvocationError;
+        using Super = Exception<std::runtime_error>;
+
+    public:
+        InvocationError(const status::Event &event);
+
+        InvocationError(const std::string &source,
+                        int exit_code,
+                        const std::string &symbol,
+                        const std::string &text);
+
+        InvocationError(const std::string &source,
+                        const platform::ExitStatus::ptr &exit_status);
+
+        InvocationError(const std::string &source,
+                        const platform::InvocationResult &result);
+    };
+
+    //==========================================================================
     /// @class SystemError
     /// @brief Error created from a `std::system_error` instance
 
@@ -368,15 +393,14 @@ namespace core::exception
         using Super::Super;
 
         ServiceError(const std::string &text,
-                    const std::string &service,
-                    Code code,
-                    const std::string &id,
-                    status::Level level = status::Level::FAILED,
-                    status::Flow flow = status::Flow::ABORTED,
-                    const dt::TimePoint &timepoint = {},
-                    const types::KeyValueMap &attributes = {});
+                     const std::string &service,
+                     Code code,
+                     const std::string &id,
+                     status::Level level = status::Level::FAILED,
+                     status::Flow flow = status::Flow::ABORTED,
+                     const dt::TimePoint &timepoint = {},
+                     const types::KeyValueMap &attributes = {});
     };
-
 
     //==========================================================================
     // Map various exceptions to appropriate Event objects

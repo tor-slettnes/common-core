@@ -24,6 +24,10 @@ namespace platform::upgrade
         return this->location_type() != LOC_NONE;
     }
 
+    bool PackageSource::empty() const noexcept
+    {
+        return this->location_type() == LOC_NONE;
+    }
 
     PackageSource::LocationType PackageSource::location_type() const
     {
@@ -113,28 +117,35 @@ namespace platform::upgrade
         return this->description_;
     }
 
-    const bool PackageManifest::reboot_required() const
+    bool PackageManifest::reboot_required() const
     {
         return this->reboot_required_;
     }
 
-    const bool PackageManifest::is_applicable() const
+    bool PackageManifest::is_applicable() const
     {
         return this->is_applicable_;
     }
 
     void PackageManifest::to_stream(std::ostream &stream) const
     {
-        core::str::format(stream,
-                          "{source=%s, product=%r, "
-                          "version=%r, description=%r, "
-                          "reboot_required=%b, is_applicable=%b}",
-                          this->source(),
-                          this->product(),
-                          this->version(),
-                          this->description(),
-                          this->reboot_required(),
-                          this->is_applicable());
+        if (this->source())
+        {
+            core::str::format(stream,
+                              "{source=%s, product=%r, "
+                              "version=%r, description=%r, "
+                              "reboot_required=%b, is_applicable=%b}",
+                              this->source(),
+                              this->product(),
+                              this->version(),
+                              this->description(),
+                              this->reboot_required(),
+                              this->is_applicable());
+        }
+        else
+        {
+            stream << "{}";
+        }
     }
 
     //==========================================================================
@@ -164,10 +175,17 @@ namespace platform::upgrade
         stream << parts;
     }
 
+    UpgradeProgress::Fraction::Fraction(const core::types::Value &current,
+                                        const core::types::Value &total)
+        : current(current.as_uint32()),
+          total(total.as_uint32(100))
+    {
+    }
+
     void UpgradeProgress::Fraction::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
-                          "%d of %d",
+                          "%d/%d",
                           this->current,
                           this->total);
     }
@@ -180,9 +198,10 @@ namespace platform::upgrade
     core::types::SymbolMap<UpgradeProgress::State> UpgradeProgress::state_names = {
         {STATE_NONE, "NONE"},
         {STATE_DOWNLOADING, "DOWNLOADING"},
-        {STATE_VALIDATING, "VALIDATING"},
         {STATE_UNPACKING, "UNPACKING"},
         {STATE_INSTALLING, "INSTALLING"},
-        {STATE_FINISHED, "FINISHED"},
+        {STATE_COMPLETED, "COMPLETED"},
+        {STATE_FAILED, "FAILED"},
+        {STATE_FINALIZED, "FINALIZED"},
     };
 }  // namespace platform::upgrade

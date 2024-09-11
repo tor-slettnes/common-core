@@ -111,6 +111,7 @@ namespace core::grpc
 
             while (reader->Read(&msg))
             {
+                logf_trace("Received streamed message: %s", msg);
                 this->handler(msg);
             }
 

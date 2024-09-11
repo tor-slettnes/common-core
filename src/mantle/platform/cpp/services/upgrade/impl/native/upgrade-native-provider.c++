@@ -40,6 +40,16 @@ namespace platform::upgrade::native
                 this->get_or_add_handler({this->default_url})->scan();
             }
         }
+
+        if (PackageManifest::ptr best = this->best_available({}))
+        {
+            logf_info("Emitting signal_upgrade_available: %s", *best);
+        }
+        else
+        {
+            log_info("Emitting signal_upgrade_available: {}");
+        }
+        signal_upgrade_available.emit(this->best_available({}));
     }
 
     PackageSources NativeProvider::list_sources() const
@@ -54,17 +64,28 @@ namespace platform::upgrade::native
 
     PackageManifests NativeProvider::list_available(const PackageSource &source) const
     {
-        PackageManifests available;
-        for (const std::shared_ptr<PackageHandler> &handler : this->handlers())
+        if (source.empty())
         {
-            logf_debug("Considering package source %s", handler->get_source());
-
-            for (const PackageManifest::ptr &pkg_info : handler->get_available())
+            PackageManifests available;
+            for (const PackageHandler::ptr &handler : this->handlers())
             {
-                available.push_back(pkg_info);
+                PackageManifests handler_sources = handler->get_available();
+                available.insert(available.end(),
+                                 handler_sources.begin(),
+                                 handler_sources.end());
             }
+            return available;
         }
-        return available;
+        else if (const PackageHandler::ptr &handler = this->get_handler(source))
+        {
+            return handler->get_available();
+        }
+        else
+        {
+            throw core::exception::NotFound(
+                "Package source has not been scanned",
+                source.to_string());
+        }
     }
 
     PackageManifest::ptr NativeProvider::best_available(const PackageSource &source) const
@@ -93,6 +114,8 @@ namespace platform::upgrade::native
         {
             install_source = manifest->source();
         }
+
+        logf_notice("Installing from %s", install_source);
 
         if (!this->install_lock.try_lock())
         {
@@ -123,7 +146,7 @@ namespace platform::upgrade::native
     {
         if (this->install_lock.locked())
         {
-            logf_info("Finalizing upgrade");
+            logf_notice("Finalizing upgrade");
             if (this->installed_manifest && this->installed_manifest->reboot_required())
             {
                 logf_notice("Rebooting system");
@@ -163,6 +186,21 @@ namespace platform::upgrade::native
             handlers.push_back(handler);
         }
         return handlers;
+    }
+
+    PackageHandler::ptr NativeProvider::get_handler(const PackageSource &source) const
+    {
+        switch (source.location_type())
+        {
+        case PackageSource::LOC_VFS:
+            return this->vfs_handlers.get(source.vfs_path(this->default_vfs_path));
+
+        case PackageSource::LOC_URL:
+            return this->http_handlers.get(source.url(this->default_url));
+
+        default:
+            return {};
+        }
     }
 
     PackageHandler::ptr NativeProvider::get_or_add_handler(const PackageSource &source)

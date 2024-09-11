@@ -186,11 +186,11 @@ void Options::list()
     {
         if (verbose)
         {
-            core::str::format(std::cout, "%s : %s\n", path.string(), stats);
+            core::str::format(std::cout, "%s : %s\n", vpath / path, stats);
         }
         else
         {
-            std::cout << path.string() << std::endl;
+            std::cout << vpath / path << std::endl;
         }
     }
 }

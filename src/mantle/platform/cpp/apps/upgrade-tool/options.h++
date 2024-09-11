@@ -34,6 +34,9 @@ private:
     void on_upgrade_available(
         const platform::upgrade::PackageManifest::ptr &package_info);
 
+    void on_upgrade_pending(
+        const platform::upgrade::PackageManifest::ptr &package_info);
+
     void on_upgrade_progress(
         const platform::upgrade::UpgradeProgress::ptr &progress);
 

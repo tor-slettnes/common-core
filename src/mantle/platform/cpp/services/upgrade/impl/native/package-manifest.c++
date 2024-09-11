@@ -16,24 +16,35 @@ namespace platform::upgrade::native
     constexpr auto SETTING_VERSION_MATCH = "version match";
     constexpr auto SETTING_DESCRIPTION = "description";
     constexpr auto SETTING_INSTALL_COMMAND = "install command";
+    constexpr auto SETTING_PROGRESS_CAPTURE = "progress capture";
+    constexpr auto SETTING_CAPTURE_TOTAL_PROGRESS = "total progress";
+    constexpr auto SETTING_CAPTURE_TASK_PROGRESS = "task progress";
+    constexpr auto SETTING_CAPTURE_TASK_DESCRIPTION = "task description";
+
     constexpr auto SETTING_REBOOT = "reboot required";
     constexpr auto DEFAULT_INSTALL_COMMAND = "install.sh";
 
-    LocalManifest::LocalManifest(const core::SettingsStore &settings,
+    LocalManifest::LocalManifest(const fs::path &settings_file,
                                  const PackageSource &source)
-        : Super(
-              source,
-              settings.get(SETTING_PRODUCT).as_string(),
-              This::decode_version(settings.get(SETTING_VERSION).as_string()),
-              This::decode_description(settings.get(SETTING_DESCRIPTION).as_string()),
-              settings.get(SETTING_REBOOT, false).as_bool()),
-          product_match(settings.get(SETTING_PRODUCT_MATCH).as_string()),
-          version_match(settings.get(SETTING_VERSION_MATCH).as_string()),
-          command(settings.get(SETTING_INSTALL_COMMAND, DEFAULT_INSTALL_COMMAND))
+        : This(
+              core::SettingsStore::create_shared(settings_file),
+              source)
     {
     }
 
-    const bool LocalManifest::is_applicable() const
+    LocalManifest::LocalManifest(const core::SettingsStore::ptr &settings,
+                                 const PackageSource &source)
+        : Super(
+              source,
+              settings->get(SETTING_PRODUCT).as_string(),
+              This::decode_version(settings->get(SETTING_VERSION).as_string()),
+              This::decode_description(settings->get(SETTING_DESCRIPTION).as_string()),
+              settings->get(SETTING_REBOOT, false).as_bool()),
+          settings(settings)
+    {
+    }
+
+    bool LocalManifest::is_applicable() const
     {
         try
         {
@@ -67,7 +78,33 @@ namespace platform::upgrade::native
 
     core::platform::ArgVector LocalManifest::install_command() const
     {
-        return core::platform::process->arg_vector(this->command);
+        return core::platform::process->arg_vector(
+            this->settings->get(SETTING_INSTALL_COMMAND,
+                                DEFAULT_INSTALL_COMMAND));
+    }
+
+    std::string LocalManifest::match_capture_total_progress() const
+    {
+        return this->capture_setting(SETTING_CAPTURE_TOTAL_PROGRESS);
+    }
+
+    std::string LocalManifest::match_capture_task_progress() const
+    {
+        return this->capture_setting(SETTING_CAPTURE_TASK_PROGRESS);
+    }
+
+    std::string LocalManifest::match_capture_task_description() const
+    {
+        return this->capture_setting(SETTING_CAPTURE_TASK_DESCRIPTION);
+    }
+
+    std::string LocalManifest::capture_setting(const std::string &setting,
+                                               const std::string &fallback) const
+    {
+        return this->settings
+            ->get(SETTING_PROGRESS_CAPTURE)
+            .get(setting, fallback)
+            .as_string();
     }
 
     Version LocalManifest::decode_version(const core::types::Value &value)
@@ -109,9 +146,9 @@ namespace platform::upgrade::native
 
     bool LocalManifest::is_applicable_product(const std::string &current_product) const
     {
-        if (!this->product_match.empty())
+        if (const core::types::Value &product_match = this->settings->get(SETTING_PRODUCT_MATCH))
         {
-            std::regex rx(this->product_match);
+            std::regex rx(product_match.as_string());
             std::smatch match;
 
             if (std::regex_match(current_product, match, rx))
@@ -129,10 +166,10 @@ namespace platform::upgrade::native
 
     bool LocalManifest::is_applicable_version(const Version &current_version) const
     {
-        if (!this->version_match.empty())
+        if (const core::types::Value &version_match = this->settings->get(SETTING_VERSION_MATCH))
         {
             std::string current_version_string = current_version.to_string();
-            std::regex rx(this->version_match);
+            std::regex rx(version_match.to_string());
             std::smatch match;
 
             if (std::regex_match(current_version_string, match, rx))

@@ -39,6 +39,7 @@ namespace platform::upgrade::native
 
     protected:
         std::vector<PackageHandler::ptr> handlers() const;
+        PackageHandler::ptr get_handler(const PackageSource &source) const;
         PackageHandler::ptr get_or_add_handler(const PackageSource &source);
 
     private:

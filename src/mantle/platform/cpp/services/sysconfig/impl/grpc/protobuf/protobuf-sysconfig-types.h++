@@ -156,37 +156,28 @@ namespace protobuf
     //==========================================================================
     // CommandInvocation
 
-    void encode(const platform::sysconfig::CommandInvocation &native,
+    void encode(const core::platform::Invocation &native,
                 cc::platform::sysconfig::CommandInvocation *proto) noexcept;
 
     void decode(const cc::platform::sysconfig::CommandInvocation &proto,
-                platform::sysconfig::CommandInvocation *native) noexcept;
+                core::platform::Invocation *native) noexcept;
 
     //==========================================================================
     // CommandInvocationResponse
 
-    void encode(const platform::sysconfig::CommandInvocationResponse &native,
+    void encode(const core::platform::PID &native,
                 cc::platform::sysconfig::CommandInvocationResponse *proto) noexcept;
 
     void decode(const cc::platform::sysconfig::CommandInvocationResponse &proto,
-                platform::sysconfig::CommandInvocationResponse *native) noexcept;
-
-    //==========================================================================
-    // CommandContinuation
-
-    void encode(const platform::sysconfig::CommandContinuation &native,
-                cc::platform::sysconfig::CommandContinuation *proto) noexcept;
-
-    void decode(const cc::platform::sysconfig::CommandContinuation &proto,
-                platform::sysconfig::CommandContinuation *native) noexcept;
+                core::platform::PID *native) noexcept;
 
     //==========================================================================
     // CommandResponse
 
-    void encode(const platform::sysconfig::CommandResponse &native,
+    void encode(const core::platform::InvocationResult &native,
                 cc::platform::sysconfig::CommandResponse *proto) noexcept;
 
     void decode(const cc::platform::sysconfig::CommandResponse &proto,
-                platform::sysconfig::CommandResponse *native) noexcept;
+                core::platform::InvocationResult *native) noexcept;
 
 }  // namespace protobuf

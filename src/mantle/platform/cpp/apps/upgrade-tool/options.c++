@@ -62,6 +62,7 @@ void Options::on_monitor_start()
     bool &except = flags["except"];
     bool &show_scan_progress = flags["scan_progress"];
     bool &show_upgrade_available = flags["available"];
+    bool &show_upgrade_pending = flags["pending"];
     bool &show_upgrade_progress = flags["upgrade_progress"];
 
     this->get_flags(&flags, false);
@@ -87,6 +88,13 @@ void Options::on_monitor_start()
             std::bind(&Options::on_upgrade_available, this, _1));
     }
 
+    if (show_upgrade_pending != except)
+    {
+        platform::upgrade::signal_upgrade_pending.connect(
+            this->signal_handle,
+            std::bind(&Options::on_upgrade_pending, this, _1));
+    }
+
     if (show_upgrade_progress != except)
     {
         platform::upgrade::signal_upgrade_progress.connect(
@@ -98,6 +106,7 @@ void Options::on_monitor_start()
 void Options::on_monitor_end()
 {
     platform::upgrade::signal_upgrade_progress.disconnect(this->signal_handle);
+    platform::upgrade::signal_upgrade_pending.disconnect(this->signal_handle);
     platform::upgrade::signal_upgrade_available.disconnect(this->signal_handle);
     platform::upgrade::signal_scan_progress.disconnect(this->signal_handle);
 }
@@ -119,6 +128,16 @@ void Options::on_upgrade_available(
                       core::dt::Clock::now(),
                       package_info);
 }
+
+void Options::on_upgrade_pending(
+    const platform::upgrade::PackageManifest::ptr &package_info)
+{
+    core::str::format(std::cout,
+                      "[%.0s] signal_upgrade_pending(%s)\n",
+                      core::dt::Clock::now(),
+                      package_info);
+}
+
 
 void Options::on_upgrade_progress(
     const platform::upgrade::UpgradeProgress::ptr &progress)

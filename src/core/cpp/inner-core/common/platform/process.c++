@@ -7,20 +7,126 @@
 
 #include "process.h++"
 #include "io/streambuffer.h++"
+#include "status/exceptions.h++"
 
 #include <cstring>
 #include <sys/wait.h>
 
 namespace core::platform
 {
-    std::ostream &operator<<(std::ostream &stream, const Invocation &invocation)
-    {
-        stream << "{argv=" << invocation.argv
-               << ", cwd=" << invocation.cwd
-               << "}";
+    // std::ostream &operator<<(std::ostream &stream, const Invocation &invocation)
+    // {
+    //     stream << "{argv=" << invocation.argv
+    //            << ", cwd=" << invocation.cwd
+    //            << "}";
 
-        return stream;
+    //     return stream;
+    // }
+
+    //==========================================================================
+    // ExitStatus
+
+    int ExitStatus::combined_code() const
+    {
+        if (int code = this->exit_code())
+        {
+            return code;
+        }
+        else
+        {
+            return this->exit_signal();
+        }
     }
+
+    void ExitStatus::to_stream(std::ostream &stream) const
+    {
+        core::types::PartsList parts;
+        parts.add("code", this->exit_code(), this->exit_code() != 0);
+        parts.add("signal", this->exit_signal(), this->exit_signal() != 0);
+        parts.add("symbol", this->symbol());
+        parts.add("text", this->text());
+        stream << parts;
+    }
+
+    //==========================================================================
+    // InvocationResult
+
+    InvocationResult::InvocationResult(
+        PID pid,
+        ExitStatus::ptr status,
+        std::shared_ptr<std::stringstream> stdout,
+        std::shared_ptr<std::stringstream> stderr)
+        : pid(pid),
+          status(status),
+          stdout(stdout ? stdout : std::make_shared<std::stringstream>()),
+          stderr(stderr ? stderr : std::make_shared<std::stringstream>())
+    {
+    }
+
+    int InvocationResult::error_code() const
+    {
+        if (this->status)
+        {
+            return this->status->combined_code();
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    std::string InvocationResult::error_symbol() const
+    {
+        if (this->status)
+        {
+            return this->status->symbol();
+        }
+        else
+        {
+            return "OK";
+        }
+    }
+
+    std::string InvocationResult::error_text() const
+    {
+        if (this->error_code())
+        {
+            if (this->stderr && (this->stderr->tellp() > 0))
+            {
+                return this->stderr->str();
+            }
+            else if (this->stdout && (this->stdout->tellp() > 0))
+            {
+                return this->stdout->str();
+            }
+            else
+            {
+                return this->status->text();
+            }
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    void InvocationResult::to_stream(std::ostream &stream) const
+    {
+        if (this->error_code())
+        {
+            core::str::format(stream,
+                              "{error_code=%d, text=%r}",
+                              this->error_code(),
+                              this->error_text());
+        }
+        else
+        {
+            stream << "success";
+        }
+    }
+
+    //==========================================================================
+    // ProcessProvider
 
     PID ProcessProvider::thread_id() const
     {
@@ -59,7 +165,7 @@ namespace core::platform
         throw std::invalid_argument("shell_command() is not implemented on this platform");
     }
 
-    PID ProcessProvider::invoke_async(
+    PID ProcessProvider::invoke_async_fileio(
         const ArgVector &,
         const fs::path &,
         const fs::path &,
@@ -69,7 +175,7 @@ namespace core::platform
         throw std::invalid_argument("invoke_async() is not implemented on this platform");
     }
 
-    ExitStatus ProcessProvider::invoke_sync(
+    ExitStatus::ptr ProcessProvider::invoke_sync_fileio(
         const ArgVector &,
         const fs::path &,
         const fs::path &,
@@ -89,103 +195,58 @@ namespace core::platform
         throw std::invalid_argument("invoke_async_pipe() is not implemented on this platform");
     }
 
-    ExitStatus ProcessProvider::pipe_capture(
+    InvocationResult ProcessProvider::pipe_capture(
         PID pid,
         FileDescriptor fdin,
         FileDescriptor fdout,
         FileDescriptor fderr,
-        std::istream *instream,
-        std::ostream *outstream,
-        std::ostream *errstream) const
+        std::istream *instream) const
     {
         throw std::invalid_argument("pipe_capture() is not implemented on this platform");
     }
 
-    ExitStatus ProcessProvider::invoke_capture(
+    InvocationResult ProcessProvider::invoke_capture(
         const ArgVector &argv,
         const fs::path &cwd,
-        std::istream *instream,
-        std::ostream *outstream,
-        std::ostream *errstream) const
+        std::istream *instream) const
     {
         FileDescriptor fdin, fdout, fderr;
         PID pid = this->invoke_async_pipe(argv, cwd, &fdin, &fdout, &fderr);
-        return this->pipe_capture(pid, fdin, fdout, fderr, instream, outstream, errstream);
+        return this->pipe_capture(pid, fdin, fdout, fderr, instream);
     }
 
-    ExitStatus ProcessProvider::invoke_capture(
+    InvocationResult ProcessProvider::invoke_capture(
         const ArgVector &argv,
         const fs::path &cwd,
-        const std::string &input,
-        std::string *output,
-        std::string *diag) const
+        const std::string &input) const
     {
         std::istringstream stdin(input);
-        std::ostringstream stdout, stderr;
-
-        ExitStatus status = this->invoke_capture(argv, cwd, &stdin, &stdout, &stderr);
-        if (output)
-        {
-            *output = stdout.str();
-        }
-        if (diag)
-        {
-            *diag = stderr.str();
-        }
-        return status;
+        return this->invoke_capture(argv, cwd, &stdin);
     }
 
     void ProcessProvider::invoke_check(
         const ArgVector &argv,
         const fs::path &cwd,
-        std::istream *instream,
-        std::ostream *outstream,
-        std::ostream *errstream) const
+        std::istream *instream) const
     {
         // std::ostringstream out, err;
-        ExitStatus stat = this->invoke_capture(argv, cwd, instream, outstream, errstream);
+        InvocationResult result = this->invoke_capture(argv, cwd, instream);
 
-        if (stat != EXIT_SUCCESS)
+        if (!result.status->success())
         {
-            // std::string msg =
-            //     err.tellp()   ? err.str()
-            //     : out.tellp() ? out.str()
-            //                   : core::str::format("[%s]: %s", stat, strerror(stat));
-
-            // throw std::system_error(stat, std::generic_category(), msg);
-            throw std::system_error(stat, std::generic_category());
+            throw core::exception::InvocationError(
+                argv.front(),
+                result.status);
         }
-
-        // if (outstream)
-        // {
-        //     (*outstream) << out.rdbuf();
-        // }
-        // if (errstream)
-        // {
-        //     (*errstream) << err.rdbuf();
-        // }
     }
 
     void ProcessProvider::invoke_check(
         const ArgVector &argv,
         const fs::path &cwd,
-        const std::string &input,
-        std::string *output,
-        std::string *diag) const
+        const std::string &input) const
     {
         std::istringstream stdin(input);
-        std::ostringstream stdout, stderr;
-
-        this->invoke_check(argv, cwd, &stdin, &stdout, &stderr);
-
-        if (output)
-        {
-            *output = stdout.str();
-        }
-        if (diag)
-        {
-            *diag = stderr.str();
-        }
+        this->invoke_check(argv, cwd, &stdin);
     }
 
     InvocationResults ProcessProvider::pipeline(
@@ -193,7 +254,8 @@ namespace core::platform
         FileDescriptor fdin,
         bool checkstatus) const
     {
-        throw std::invalid_argument("pipeline() is not implemented on this platform");
+        throw std::invalid_argument(
+            "pipeline() is not implemented on this platform");
     }
 
     InvocationResults ProcessProvider::pipe_from_stream(
@@ -201,13 +263,9 @@ namespace core::platform
         std::istream &instream,
         bool checkstatus) const
     {
-        throw std::invalid_argument("pipe_from_stream() is not implemented on this platform");
+        throw std::invalid_argument(
+            "pipe_from_stream() is not implemented on this platform");
     }
-
-    // ExitStatus ProcessProvider::waitpid(PID pid, bool checkstatus) const
-    // {
-    //     throw std::invalid_argument("waitpid() is not implemented on this platform");
-    // }
 
     /// Global instance, populated with the "best" provider for this system.
     ProviderProxy<ProcessProvider> process("process");

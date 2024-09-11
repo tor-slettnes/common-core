@@ -35,7 +35,7 @@ namespace platform::vfs::local
             this->root,
         };
 
-        if (core::platform::process->invoke_capture(mountpoint) != 0)
+        if (!core::platform::process->invoke_capture(mountpoint).status->success())
         {
             core::platform::ArgVector mount = {
                 "/bin/mount",

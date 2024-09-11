@@ -28,7 +28,7 @@ import_proto('vfs', globals())
 ## VirtualFileSystemClient
 
 class VirtualFileSystemClient (SignalClient):
-    '''Client for VirtualFileSysConfig service.'''
+    '''Client for VirtualFileSystem service.'''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.

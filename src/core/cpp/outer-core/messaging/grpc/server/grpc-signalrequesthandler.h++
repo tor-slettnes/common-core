@@ -42,9 +42,10 @@ namespace core::grpc
             std::string who = this->servicename(true);
             try
             {
-                logf_debug("Opening %s stream to client %s",
+                logf_debug("Opening %s stream to client %s with filter %s",
                            SignalT().GetTypeName(),
-                           cxt->peer());
+                           cxt->peer(),
+                           *req);
                 SignalQueueT queue(platform::symbols->uuid(), *req);
                 queue.initialize();
 
@@ -54,7 +55,10 @@ namespace core::grpc
                     {
                         break;
                     }
-                    writer->Write(*msg);
+                    logf_trace("Sending signal to client %s: %s",
+                               cxt->peer(),
+                               msg.value());
+                    writer->Write(msg.value());
                 }
 
                 queue.deinitialize();

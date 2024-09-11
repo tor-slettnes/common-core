@@ -339,9 +339,18 @@ message CommandResponse
 {
     string stdout = 1;
     string stderr = 2;
-    int32 exit_status = 3;
-}
 
+    bool success = 3;
+
+    oneof exit_status
+    {
+        int32 exit_code = 4;
+        int32 exit_signal = 5;
+    }
+
+    string error_symbol = 6;
+    string error_text = 7;
+}
 
 message Signal
 {

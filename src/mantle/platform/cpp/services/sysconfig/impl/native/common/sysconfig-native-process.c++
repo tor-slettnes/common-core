@@ -7,6 +7,7 @@
 
 #include "sysconfig-native-process.h++"
 #include "platform/symbols.h++"
+#include "status/exceptions.h++"
 
 namespace platform::sysconfig::native
 {
@@ -18,66 +19,54 @@ namespace platform::sysconfig::native
     {
     }
 
-    CommandResponse ProcessProvider::invoke_sync(const CommandInvocation &command)
+    InvocationResult ProcessProvider::invoke_sync(
+        const core::platform::Invocation &invocation,
+        const std::string &input)
     {
-        CommandResponse response;
-
-        response.exit_status = core::platform::process->invoke_capture(
-            command.argv,
-            command.working_directory,
-            command.stdin,
-            &response.stdout,
-            &response.stderr);
-        return response;
+        return core::platform::process->invoke_capture(
+            invocation.argv,
+            invocation.cwd,
+            input);
     }
 
-    CommandInvocationResponse ProcessProvider::invoke_async(const CommandInvocation &command)
+    PID ProcessProvider::invoke_async(
+        const core::platform::Invocation &invocation,
+        const std::string &input)
     {
         int fdin, fdout, fderr;
         PID pid = core::platform::process->invoke_async_pipe(
-            command.argv,
-            command.working_directory,
+            invocation.argv,
+            invocation.cwd,
             &fdin,
             &fdout,
             &fderr);
 
+        core::platform::process->writefd(fdin, input.data(), input.size());
+
         FDSet fds{fdin, fdout, fderr};
         this->process_map.insert_or_assign(pid, fds);
-
-        return {
-            .pid = pid,
-        };
+        return pid;
     }
 
-    CommandResponse ProcessProvider::invoke_finish(const CommandContinuation &input)
+    InvocationResult ProcessProvider::invoke_finish(
+        PID pid,
+        const std::string &input)
     {
-        CommandResponse response;
-        if (auto nh = this->process_map.extract(input.pid))
+        InvocationResult result;
+        if (auto nh = this->process_map.extract(pid))
         {
             auto [fdin, fdout, fderr] = nh.mapped();
-            std::stringstream stdin(input.stdin);
-            stdin.setstate(std::ios_base::eofbit);
-            std::stringstream stdout;
-            std::stringstream stderr;
-
-            response.exit_status = core::platform::process->pipe_capture(
-                input.pid,
+            std::stringstream stdin(input);
+            return core::platform::process->pipe_capture(
+                pid,
                 fdin,
                 fdout,
                 fderr,
-                &stdin,
-                &stdout,
-                &stderr);
-
-            response.stdout = stdout.str();
-            response.stderr = stderr.str();
+                &stdin);
         }
         else
         {
-            response.exit_status =
-                std::make_error_code(std::errc::no_such_process).value();
+            throw core::exception::NotFound("No such process ID exists", pid);
         }
-
-        return response;
     }
 }  // namespace platform::sysconfig::native

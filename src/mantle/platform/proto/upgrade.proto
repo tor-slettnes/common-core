@@ -114,7 +114,14 @@ message PackageSources
 
 message InstallRequest
 {
+    // Optional package source. If not provided, the best available source
+    // discovered from prior scans is used.
     PackageSource source = 1;
+
+    // Force install even if the specified package source is not applicable
+    // (e.g. because the product name does not match or the release version
+    // is older than the currently installed release).
+    bool force = 8;
 }
 
 
@@ -144,10 +151,11 @@ message UpgradeProgress
     {
         STATE_NONE = 0;
         STATE_DOWNLOADING = 1;
-        STATE_VALIDATING = 2;
-        STATE_UNPACKING = 3;
-        STATE_INSTALLING = 4;
-        STATE_FINISHED = 9;
+        STATE_UNPACKING = 2;
+        STATE_INSTALLING = 3;
+        STATE_COMPLETED = 4;
+        STATE_FAILED = 5;
+        STATE_FINALIZED = 9;
     };
 
     message ProgressFraction

@@ -20,13 +20,15 @@ namespace protobuf
     void encode(const ::platform::upgrade::PackageSource &native,
                 ::cc::platform::upgrade::PackageSource *msg)
     {
-        if (auto *vfs_path = std::get_if<platform::vfs::Path>(&native.location))
+        switch (native.location_type())
         {
-            encode(*vfs_path, msg->mutable_vfs_path());
-        }
-        else if (auto *url = std::get_if<platform::upgrade::URL>(&native.location))
-        {
-            msg->set_url(*url);
+        case ::platform::upgrade::PackageSource::LOC_VFS:
+            encode(native.vfs_path(), msg->mutable_vfs_path());
+            break;;
+
+        case ::platform::upgrade::PackageSource::LOC_URL:
+            msg->set_url(native.url());
+            break;
         }
 
         msg->set_filename(native.filename);

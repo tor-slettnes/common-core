@@ -18,7 +18,8 @@ namespace core::types
         using MapType::MapType;
 
         template <class... Args>
-        inline std::shared_ptr<V> &emplace_shared(const K &key, Args &&...args)
+        inline std::shared_ptr<V> &
+        emplace_shared(const K &key, Args &&...args)
         {
             std::shared_ptr<V> &item = (*this)[key];
             if (!item)
@@ -26,6 +27,19 @@ namespace core::types
                 item = std::make_shared<V>(args...);
             }
             return item;
+        }
+
+        inline std::shared_ptr<V>
+        get(const K &key, const std::shared_ptr<V> &fallback = {}) const noexcept
+        {
+            try
+            {
+                return this->at(key);
+            }
+            catch (const std::out_of_range &)
+            {
+                return fallback;
+            }
         }
     };
 }  // namespace core::types

@@ -38,7 +38,7 @@ namespace platform::upgrade::native
             const fs::path &staging_folder) = 0;
 
     protected:
-        PackageManifest::ptr install_unpacked(
+        std::shared_ptr<LocalManifest> install_unpacked(
             const PackageSource &source,
             const fs::path &staging_folder);
 
@@ -53,12 +53,37 @@ namespace platform::upgrade::native
             std::istream &stream,
             const fs::path &staging_folder);
 
-        void capture_pipe_output(
+    private:
+        void check_gpg_verify_result(
+            const core::platform::Invocation &invocation,
+            const core::platform::InvocationResult &result);
+
+        void check_tar_unpack_result(
+            const core::platform::Invocation &invocation,
+            const core::platform::InvocationResult &result);
+
+        void capture_install_progress(
             core::platform::FileDescriptor fd,
-            const std::string output_name);
+            std::shared_ptr<LocalManifest> manifest);
+
+        void capture_install_diagnostics(
+            core::platform::FileDescriptor fd,
+            std::shared_ptr<LocalManifest> manifest);
+
+    protected:
+        void emit_scan_progress(
+            const std::optional<PackageSource> &source) const;
+
+        void emit_upgrade_progress(
+            const std::optional<UpgradeProgress::State> &state = {},
+            const std::optional<std::string> &task_description = {},
+            const std::optional<UpgradeProgress::Fraction> &task_progress = {},
+            const std::optional<UpgradeProgress::Fraction> &total_progress = {},
+            const std::optional<core::status::Event::ptr> error = {}) const;
 
     protected:
         std::vector<PackageManifest::ptr> available_packages;
         core::SettingsStore::ptr settings;
+        std::stringstream install_diagnostics;
     };
 }  // namespace platform::upgrade::native

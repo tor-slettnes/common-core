@@ -27,7 +27,7 @@ namespace platform::upgrade::native
 
     void VFSPackageHandler::scan()
     {
-        logf_info("Upgrade scan in VFS path: %r", this->vfs_path);
+        logf_debug("Upgrade scan in VFS path: %r", this->vfs_path);
         vfs::Location loc = vfs::location(this->vfs_path, false);
         fs::path required_extension(
             this->settings->get(SETTING_PACKAGE_SUFFIX, DEFAULT_PACKAGE_SUFFIX).as_string());
@@ -58,6 +58,7 @@ namespace platform::upgrade::native
         }
 
         vfs::Location loc = vfs::location(this->vfs_path, false);
+        this->emit_upgrade_progress(UpgradeProgress::STATE_UNPACKING);
         this->unpack_file(loc.localPath(filename), staging_folder);
     }
 

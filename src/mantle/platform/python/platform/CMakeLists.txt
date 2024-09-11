@@ -20,6 +20,7 @@ set(DIRECTORIES
   sysconfig
   netconfig
   vfs
+  upgrade
 )
 
 BuildPython("${TARGET}"

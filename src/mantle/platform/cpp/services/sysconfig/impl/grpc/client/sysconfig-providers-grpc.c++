@@ -23,6 +23,7 @@ namespace platform::sysconfig::grpc
         host.registerProvider<HostConfigProvider>(client);
         product.registerProvider<ProductProvider>(client);
 
+        client->initialize();
         if (start_watching)
         {
             client->start_watching();

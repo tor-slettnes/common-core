@@ -184,12 +184,13 @@ class SignalClient (Client):
 
             signal_store = SignalStore(signal_type=self.signal_type, use_cache=use_cache)
 
+        self.signal_store = signal_store
+
         Client.__init__(self, host,
                         wait_for_ready = wait_for_ready,
                         use_asyncio = use_asyncio,
                         **kwargs)
 
-        self.signal_store = signal_store
         self.reader = (ThreadReader, AsyncReader)[self.use_asyncio]()
         if watch_all:
             self.start_watching(True)

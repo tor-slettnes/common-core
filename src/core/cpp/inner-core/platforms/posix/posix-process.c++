@@ -8,6 +8,7 @@
 #include "posix-process.h++"
 #include "platform/symbols.h++"
 #include "logging/logging.h++"
+#include "status/exceptions.h++"
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -25,6 +26,66 @@
 
 namespace core::platform
 {
+
+    //==========================================================================
+    // PosixExitStatus
+
+    PosixExitStatus::PosixExitStatus(int combined_code)
+        : ExitStatus(),
+          code_(combined_code)
+    {
+    }
+
+    int PosixExitStatus::exit_code() const
+    {
+        return WIFEXITED(this->code_) ? WEXITSTATUS(this->code_) : 0;
+    }
+
+    int PosixExitStatus::exit_signal() const
+    {
+        return WIFSIGNALED(this->code_) ? WTERMSIG(this->code_) : 0;
+    }
+
+    bool PosixExitStatus::success() const
+    {
+        return this->combined_code() == EXIT_SUCCESS;
+    }
+
+    std::string PosixExitStatus::symbol() const
+    {
+        if (uint code = this->exit_code())
+        {
+            return symbols->errno_name(code);
+        }
+        else if (uint signal = this->exit_signal())
+        {
+            return ::sigabbrev_np(signal);
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::string PosixExitStatus::text() const
+    {
+        if (int code = this->exit_code())
+        {
+            return symbols->errno_string(code);
+        }
+        else if (int signal = this->exit_signal())
+        {
+            return ::sigdescr_np(this->exit_signal());
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    //==========================================================================
+    // PosixProcessProvider
+
     PosixProcessProvider::PosixProcessProvider(const std::string &name)
         : Super(name)
     {
@@ -45,7 +106,7 @@ namespace core::platform
         return {"/bin/sh", "-c", command_line};
     }
 
-    PID PosixProcessProvider::invoke_async(
+    PID PosixProcessProvider::invoke_async_fileio(
         const ArgVector &argv,
         const fs::path &cwd,
         const fs::path &infile,
@@ -83,14 +144,14 @@ namespace core::platform
         return pid;
     }
 
-    ExitStatus PosixProcessProvider::invoke_sync(
+    ExitStatus::ptr PosixProcessProvider::invoke_sync_fileio(
         const ArgVector &argv,
         const fs::path &cwd,
         const fs::path &infile,
         const fs::path &outfile,
         const fs::path &errfile) const
     {
-        PID pid = this->invoke_async(argv, cwd, infile, outfile, errfile);
+        PID pid = this->invoke_async_fileio(argv, cwd, infile, outfile, errfile);
         return this->waitpid(pid);
     }
 
@@ -112,14 +173,12 @@ namespace core::platform
         return this->invoke_async_from_fd(argv, cwd, inpipe[INPUT], fdout, fderr);
     }
 
-    ExitStatus PosixProcessProvider::pipe_capture(
+    InvocationResult PosixProcessProvider::pipe_capture(
         PID pid,
         FileDescriptor fdin,
         FileDescriptor fdout,
         FileDescriptor fderr,
-        std::istream *instream,
-        std::ostream *outstream,
-        std::ostream *errstream) const
+        std::istream *instream) const
     {
         std::vector<struct pollfd> pfds = {
             {fdin, POLLOUT, 0},
@@ -135,12 +194,14 @@ namespace core::platform
             }
         }
 
-        std::vector<char> buf(CHUNKSIZE);
-        ExitStatus exitstatus;
+        InvocationResult result(pid);
 
-        while (::waitpid(pid, &exitstatus, WNOHANG) == 0)
+        std::vector<char> buf(CHUNKSIZE);
+        int wstatus;
+
+        while (::waitpid(pid, &wstatus, WNOHANG) == 0)
         {
-            if (!instream || !instream->good())
+            if ((!instream || !instream->good()) && (pfds[STDIN_FILENO].fd >= 0))
             {
                 ::close(fdin);
                 pfds[STDIN_FILENO].fd = -1;
@@ -155,25 +216,23 @@ namespace core::platform
                 instream->read(buf.data(), buf.size());
                 if (std::streamsize nbytes = instream->gcount())
                 {
-                    this->write(fdin, buf.data(), nbytes);
+                    this->writefd(fdin, buf.data(), nbytes);
                 }
             }
 
             if (pfds[STDOUT_FILENO].revents & POLLIN)
             {
-                int nchars = this->read(fdout, buf.data(), buf.size());
-                if (nchars && outstream && *outstream)
+                if (int nchars = this->readfd(fdout, buf.data(), buf.size()))
                 {
-                    outstream->write(buf.data(), nchars);
+                    result.stdout->write(buf.data(), nchars);
                 }
             }
 
             if (pfds[STDERR_FILENO].revents & POLLIN)
             {
-                int nchars = this->read(fderr, buf.data(), buf.size());
-                if (nchars && errstream && *errstream)
+                if (int nchars = this->readfd(fderr, buf.data(), buf.size()))
                 {
-                    errstream->write(buf.data(), nchars);
+                    result.stderr->write(buf.data(), nchars);
                 }
             }
         }
@@ -183,7 +242,8 @@ namespace core::platform
             this->close_fd(pfds[i].fd);
         }
 
-        return exitstatus;
+        result.status = std::make_shared<PosixExitStatus>(wstatus);
+        return result;
     }
 
     InvocationResults PosixProcessProvider::pipeline(
@@ -207,7 +267,7 @@ namespace core::platform
                 &pipe_fd,
                 &stderr_fd);
 
-            results.push_back({.pid = pid});
+            results.emplace_back(pid);
 
             pfds.push_back({
                 .fd = stderr_fd,
@@ -236,20 +296,18 @@ namespace core::platform
         bool checkstatus) const
     {
         Pipe inpipe = this->create_pipe();
-        logf_debug("Created pipe from stream, %d -> %d", inpipe[OUTPUT], inpipe[INPUT]);
+        logf_trace("Created pipe from stream, %d -> %d", inpipe[OUTPUT], inpipe[INPUT]);
 
         std::future<InvocationResults> future = std::async(
             &This::pipeline, this, invocations, inpipe[INPUT], checkstatus);
 
         this->write_from_stream(instream, inpipe[OUTPUT]);
         this->close_fd(inpipe[OUTPUT]);
-        logf_debug("Closed pipe output %d; waiting for pipeline", inpipe[OUTPUT]);
         InvocationResults results = future.get();
-        logf_debug("Pipeline finished");
         return results;
     }
 
-    std::size_t PosixProcessProvider::read(
+    std::size_t PosixProcessProvider::readfd(
         FileDescriptor fd,
         void *buffer,
         std::size_t bufsize) const
@@ -257,24 +315,29 @@ namespace core::platform
         return this->checkstatus(::read(fd, buffer, bufsize));
     }
 
-    std::size_t PosixProcessProvider::write(
+    std::size_t PosixProcessProvider::writefd(
         FileDescriptor fd,
-        void *buffer,
+        const void *buffer,
         std::size_t length) const
     {
         return this->checkstatus(::write(fd, buffer, length));
     }
 
-    ExitStatus PosixProcessProvider::waitpid(PID pid, bool checkstatus) const
+    ExitStatus::ptr PosixProcessProvider::waitpid(PID pid, bool checkstatus) const
     {
         int wstatus = 0;
         int options = 0;
         ::waitpid(pid, &wstatus, options);
-        if (checkstatus && (WEXITSTATUS(wstatus) != EXIT_SUCCESS))
+        ExitStatus::ptr status = std::make_shared<PosixExitStatus>(wstatus);
+
+        if (checkstatus && status->combined_code())
         {
-            throw std::system_error(WEXITSTATUS(wstatus), std::system_category());
+            throw core::exception::InvocationError(
+                core::str::format("PID %d", pid),
+                status);
         }
-        return wstatus;
+
+        return status;
     }
 
     PID PosixProcessProvider::invoke_async_from_fd(
@@ -463,16 +526,14 @@ namespace core::platform
 
         if (pfd.revents & POLLIN)
         {
-            int nchars = this->read(pfd.fd, outbuf.data(), outbuf.size());
+            int nchars = this->readfd(pfd.fd, outbuf.data(), outbuf.size());
+            std::string_view text(outbuf.data(), nchars);
 
-            logf_trace("Captured %d bytes from PID %d stderr",
+            logf_trace("Captured %d bytes from PID %d %s: %s",
                        nchars,
-                       result.pid);
-
-            if (!*outstream)
-            {
-                *outstream = std::make_shared<std::stringstream>();
-            }
+                       result.pid,
+                       stream_name,
+                       text);
 
             (*outstream)->write(outbuf.data(), nchars);
             received = true;
@@ -502,27 +563,26 @@ namespace core::platform
             InvocationResult &result = results->at(c);
 
             logf_trace("Waiting for PID %d: %s", result.pid, invocation.argv);
-            ::waitpid(result.pid, &result.exit_status, 0);
-            if (ExitStatus err = WEXITSTATUS(result.exit_status))
+            result.status = this->waitpid(result.pid);
+
+            if (!result.status->success())
             {
+                logf_debug("PID %d [%s] exited abnormally: [%s] %s",
+                           result.pid,
+                           invocation.argv.front(),
+                           result.error_code(),
+                           result.error_text(),
+                           result.stderr->str());
+
                 if (checkstatus && !eptr)
                 {
-                    eptr = std::make_exception_ptr(
-                        std::system_error(err,
-                                          std::system_category(),
-                                          invocation.argv.front()));
+                    eptr = std::make_exception_ptr<core::exception::InvocationError>({
+                        invocation.argv.front(),
+                        result.error_code(),
+                        result.error_symbol(),
+                        result.error_text(),
+                    });
                 }
-                logf_info("PID %d [%s] exited with non-zero status %d (%s)",
-                          result.pid,
-                          invocation.argv.front(),
-                          err,
-                          core::platform::symbols->errno_name(err));
-            }
-            else
-            {
-                logf_debug("PID %d [%s] completed successfully",
-                           result.pid,
-                           invocation.argv.front());
             }
         }
 

@@ -9,6 +9,7 @@
 from .sysconfig.grpc.client import SysConfigClient
 from .netconfig.grpc.client import NetConfigClient
 from .vfs.grpc.client import VirtualFileSystemClient
+from .upgrade.grpc.client import UpgradeClient
 
 from cc.protobuf.import_proto \
     import import_wellknown_protos, import_core_protos, import_proto
@@ -17,6 +18,9 @@ import cc.protobuf.wellknown
 import cc.protobuf.variant
 import cc.protobuf.signal
 import cc.protobuf.status
+import cc.protobuf.sysconfig
+import cc.protobuf.vfs
+import cc.protobuf.upgrade
 
 ### Third-party modules
 import google.protobuf.message
@@ -41,6 +45,7 @@ import_core_protos(globals())
 import_proto('sysconfig', globals())
 import_proto('netconfig', globals())
 import_proto('vfs', globals())
+import_proto('upgrade', globals())
 
 ### Add a few arguments to the base argparser
 class ArgParser (argparse.ArgumentParser):
@@ -74,6 +79,7 @@ def legend():
         sysconfig - `SysConfig` gRPC service client
         netconfig - `NetConfig` gRPC service client
         vfs       - `VirtualFileSystem` gRPC service client
+        upgrade   - `Upgrade` gRPC service client
 
     ProtoBuf types are generally loaded into namespaces matching the package
     names from their respective `.proto` files:
@@ -105,8 +111,14 @@ if __name__ == "__main__":
         args.host,
         wait_for_ready = args.wait_for_ready)
 
+    upgrade = UpgradeClient(
+        args.host,
+        wait_for_ready = args.wait_for_ready)
+
+
     sysconfig.initialize()
     netconfig.initialize()
     vfs.initialize()
+    upgrade.initialize()
 
     legend()

@@ -1,4 +1,4 @@
-// -*- c++ -*-
+// -*- c++ -*-exitsta
 //==============================================================================
 /// @file process.h++
 /// @brief Process invocation - Abstract interface
@@ -20,9 +20,31 @@ namespace core::platform
     constexpr uint CHUNKSIZE = 4096;
 
     using PID = pid_t;
-    using ExitStatus = int;
     using FileDescriptor = int;
     using ArgVector = std::vector<std::string>;
+
+    //==========================================================================
+    // ExitStatus
+
+    class ExitStatus : public core::types::Streamable
+    {
+    public:
+        using ptr = std::shared_ptr<ExitStatus>;
+
+    public:
+        virtual int combined_code() const;
+        virtual int exit_code() const = 0;
+        virtual int exit_signal() const = 0;
+        virtual bool success() const = 0;
+        virtual std::string symbol() const = 0;
+        virtual std::string text() const = 0;
+
+    protected:
+        void to_stream(std::ostream &stream) const override;
+    };
+
+    //==========================================================================
+    // Invocation
 
     struct Invocation
     {
@@ -30,18 +52,38 @@ namespace core::platform
         fs::path cwd;
     };
 
-    struct InvocationResult
+    using Invocations = std::vector<Invocation>;
+
+    //==========================================================================
+    // InvocationResult
+
+    class InvocationResult : public core::types::Streamable
     {
+    public:
+        InvocationResult(PID pid = {},
+                         ExitStatus::ptr status = {},
+                         std::shared_ptr<std::stringstream> stdout = {},
+                         std::shared_ptr<std::stringstream> stderr = {});
+
+        int error_code() const;
+        std::string error_symbol() const;
+        std::string error_text() const;
+
+    protected:
+        void to_stream(std::ostream &stream) const override;
+
+    public:
         PID pid = 0;
-        ExitStatus exit_status = 0;
+        ExitStatus::ptr status;
         std::shared_ptr<std::stringstream> stdout;
         std::shared_ptr<std::stringstream> stderr;
     };
 
-    using Invocations = std::vector<Invocation>;
     using InvocationResults = std::vector<InvocationResult>;
 
-    /// @brief Abstract provider for process invocation
+    //==========================================================================
+    // ProcessProvider
+
     class ProcessProvider : public Provider
     {
         using This = ProcessProvider;
@@ -93,7 +135,7 @@ namespace core::platform
         /// empty, in which case the corresponding value is inherited from this
         /// (parent) process.
 
-        virtual PID invoke_async(
+        virtual PID invoke_async_fileio(
             const ArgVector &argv,
             const fs::path &cwd = {},
             const fs::path &infile = path->devnull(),
@@ -118,7 +160,7 @@ namespace core::platform
         /// @exception std::system_error
         ///     An underlying system call failed.
 
-        virtual ExitStatus invoke_sync(
+        virtual ExitStatus::ptr invoke_sync_fileio(
             const ArgVector &argv,
             const fs::path &cwd = {},
             const fs::path &infile = path->devnull(),
@@ -180,14 +222,12 @@ namespace core::platform
         /// @exception std::system_error
         ///     An underlying system call failed.
 
-        virtual ExitStatus pipe_capture(
+        virtual InvocationResult pipe_capture(
             PID pid,
             FileDescriptor fdin,
             FileDescriptor fdout,
             FileDescriptor fderr,
-            std::istream *instream,
-            std::ostream *outstream,
-            std::ostream *errstream) const;
+            std::istream *instream) const;
 
         /// @fn invoke_capture
         /// @brief Invoke a command with stdin/stdout/stderr capture.
@@ -210,12 +250,10 @@ namespace core::platform
         /// @exception std::system_error
         ///     An underlying system call failed.
 
-        virtual ExitStatus invoke_capture(
+        virtual InvocationResult invoke_capture(
             const ArgVector &argv,
             const fs::path &cwd = {},
-            std::istream *instream = nullptr,
-            std::ostream *outstream = nullptr,
-            std::ostream *errstream = nullptr) const;
+            std::istream *instream = nullptr) const;
 
         /// @fn invoke_capture
         /// @brief Invoke a command with stdin/stdout/stderr capture.
@@ -237,12 +275,10 @@ namespace core::platform
         /// @exception std::system_error
         ///     An underlying system call failed.
 
-        virtual ExitStatus invoke_capture(
+        virtual InvocationResult invoke_capture(
             const ArgVector &argv,
             const fs::path &cwd,
-            const std::string &input,
-            std::string *output = nullptr,
-            std::string *diag = nullptr) const;
+            const std::string &input) const;
 
         /// @fn invoke_check
         /// @brief
@@ -269,9 +305,7 @@ namespace core::platform
         virtual void invoke_check(
             const ArgVector &argv,
             const fs::path &cwd = {},
-            std::istream *instream = nullptr,
-            std::ostream *outstream = nullptr,
-            std::ostream *errstream = nullptr) const;
+            std::istream *instream = nullptr) const;
 
         /// @fn invoke_check
         /// @brief
@@ -297,9 +331,7 @@ namespace core::platform
         virtual void invoke_check(
             const ArgVector &argv,
             const fs::path &cwd,
-            const std::string &input,
-            std::string *output = nullptr,
-            std::string *diag = nullptr) const;
+            const std::string &input) const;
 
         /// @fn pipeline
         /// @brief
@@ -350,7 +382,7 @@ namespace core::platform
             std::istream &instream,
             bool checkstatus = false) const;
 
-        /// @fn read
+        /// @fn readfd
         /// @brief
         ///     Read from a file descriptor
         /// @param[in] fd
@@ -364,12 +396,12 @@ namespace core::platform
         /// @exception std::system_error
         ///     Read operation failed
 
-        virtual std::size_t read(
+        virtual std::size_t readfd(
             FileDescriptor fd,
             void *buffer,
             std::size_t bufsize) const = 0;
 
-        /// @fn write
+        /// @fn writefd
         /// @brief
         ///     Write to a file descriptor
         /// @param[in] fd
@@ -383,9 +415,9 @@ namespace core::platform
         /// @exception std::system_error
         ///     Write operation failed
 
-        virtual std::size_t write(
+        virtual std::size_t writefd(
             FileDescriptor fd,
-            void *buffer,
+            const void *buffer,
             std::size_t length) const = 0;
 
         /// @fn waitpid
@@ -397,8 +429,9 @@ namespace core::platform
         /// @return
         ///     Exit status from the process. Use the `WEXITSTSTUS()` macro
         ///     to convert this to a system error code.
-        virtual ExitStatus waitpid(PID pid,
-                                   bool checkstatus = false) const = 0;
+        virtual ExitStatus::ptr waitpid(
+            PID pid,
+            bool checkstatus = false) const = 0;
 
     protected:
         template <class T, std::enable_if_t<std::is_integral_v<T>, bool> = true>

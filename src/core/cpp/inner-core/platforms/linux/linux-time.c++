@@ -63,32 +63,29 @@ namespace core::platform
 
     core::types::ValueMap<std::string, std::string> LinuxTimeProvider::read_settings() const
     {
-        std::stringstream out, err;
-        try
-        {
-            process->invoke_check(
-                {TIMEDATECTL_PATH, TIMEDATECTL_SHOW},
-                {},       // cwd
-                nullptr,  // stdin
-                &out,     // stdout
-                &err);    // stderr
-        }
-        catch (const std::system_error &e)
+        core::platform::InvocationResult result = process->invoke_capture(
+            {TIMEDATECTL_PATH, TIMEDATECTL_SHOW});
+
+        if (!result.status->success())
         {
             logf_notice(
                 "Command %r returned status %d (%s): %s"
                 "\n\tstdout=%r"
                 "\n\tstderr=%r",
                 TIMEDATECTL_PATH,
-                e.code().value(),
-                symbols->errno_name(e.code().value()),
-                e,
-                out.str(),
-                err.str());
+                result.status->combined_code(),
+                result.status->symbol(),
+                result.status->text(),
+                result.stdout->str(),
+                result.stderr->str());
+
+            throw core::exception::InvocationError(
+                TIMEDATECTL_PATH,
+                result.status);
         }
 
         core::types::ValueMap<std::string, std::string> valuemap;
-        for (const std::string &line : str::splitlines(out.str()))
+        for (const std::string &line : str::splitlines(result.stdout->str()))
         {
             std::vector<std::string> subparts = str::split(line, "=", 1);
             if (subparts.size() == 2)

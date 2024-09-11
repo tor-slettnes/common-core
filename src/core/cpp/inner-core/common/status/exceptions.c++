@@ -220,6 +220,49 @@ namespace core::exception
     }
 
     //==========================================================================
+    // InvocationError
+
+    InvocationError::InvocationError(const status::Event &event)
+        : Super(event, std::runtime_error(event.text()))
+    {
+    }
+
+    InvocationError::InvocationError(const std::string &source,
+                                     int exit_code,
+                                     const std::string &symbol,
+                                     const std::string &text)
+        : Super({text,
+                 status::Domain::PROCESS,
+                 source,
+                 exit_code,
+                 symbol,
+                 status::Level::FAILED,
+                 status::Flow::ABORTED},
+                std::runtime_error(text))
+    {
+    }
+
+    InvocationError::InvocationError(const std::string &source,
+                                     const platform::ExitStatus::ptr &exit_status)
+        : InvocationError(
+              source,
+              exit_status->combined_code(),
+              exit_status->symbol(),
+              exit_status->text())
+    {
+    }
+
+    InvocationError::InvocationError(const std::string &source,
+                                     const platform::InvocationResult &result)
+        : InvocationError(
+              source,
+              result.error_code(),
+              result.error_symbol(),
+              result.error_text())
+    {
+    }
+
+    //==========================================================================
     // SystemError
 
     SystemError::SystemError(const status::Event &event)

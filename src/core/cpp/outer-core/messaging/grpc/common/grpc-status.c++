@@ -108,7 +108,7 @@ namespace core::grpc
                    status::Flow flow,
                    const dt::TimePoint &timepoint,
                    const types::KeyValueMap &attributes)
-        : Event(text, domain, origin, code, symbol, level, flow, timepoint, attributes),
+        : Event({}, domain, origin, code, symbol, level, flow, timepoint, attributes),
           ::grpc::Status(
               status_code,
               text,
@@ -178,6 +178,7 @@ namespace core::grpc
 
         case status::Domain::SERVICE:
         case status::Domain::DEVICE:
+        case status::Domain::PROCESS:
             return (event.flow() == status::Flow::CANCELLED)
                        ? ::grpc::StatusCode::FAILED_PRECONDITION
                        : ::grpc::StatusCode::ABORTED;

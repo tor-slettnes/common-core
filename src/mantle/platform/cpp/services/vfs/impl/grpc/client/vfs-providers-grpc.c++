@@ -16,8 +16,10 @@ namespace platform::vfs::grpc
                             bool start_watching)
     {
         auto client = Client::create_shared(host, wait_for_ready);
+
         vfs.registerProvider<ClientProvider>(client);
 
+        client->initialize();
         if (start_watching)
         {
             client->start_watching();

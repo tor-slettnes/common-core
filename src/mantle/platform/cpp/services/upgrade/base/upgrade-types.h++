@@ -42,10 +42,11 @@ namespace platform::upgrade
                       const fs::path &filename = {});
 
         operator bool() const noexcept;
+        bool empty() const noexcept;
 
         LocationType location_type() const;
-        vfs::Path vfs_path(const vfs::Path &fallback={}) const;
-        URL url(const URL &fallback={}) const;
+        vfs::Path vfs_path(const vfs::Path &fallback = {}) const;
+        URL url(const URL &fallback = {}) const;
 
     protected:
         void to_stream(std::ostream &stream) const override;
@@ -78,8 +79,8 @@ namespace platform::upgrade
         virtual const std::string &product() const;
         virtual const Version &version() const;
         virtual const std::string &description() const;
-        virtual const bool reboot_required() const;
-        virtual const bool is_applicable() const;
+        virtual bool reboot_required() const;
+        virtual bool is_applicable() const;
 
     protected:
         void to_stream(std::ostream &stream) const override;
@@ -120,15 +121,19 @@ namespace platform::upgrade
         {
             STATE_NONE,
             STATE_DOWNLOADING,
-            STATE_VALIDATING,
             STATE_UNPACKING,
             STATE_INSTALLING,
-            STATE_FINISHED,
+            STATE_COMPLETED,
+            STATE_FAILED,
+            STATE_FINALIZED = 9,
         };
 
-        struct Fraction : public core::types::Streamable
+        class Fraction : public core::types::Streamable
         {
         public:
+            Fraction(const core::types::Value &current = 0,
+                     const core::types::Value &total = 0);
+
             void to_stream(std::ostream &stream) const override;
 
         public:
@@ -142,7 +147,7 @@ namespace platform::upgrade
     public:
         static core::types::SymbolMap<State> state_names;
 
-        State state;
+        State state = STATE_NONE;
         std::string task_description;
         Fraction task_progress;
         Fraction total_progress;

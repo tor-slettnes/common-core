@@ -58,16 +58,23 @@ namespace core::exception
 
     public:
         inline Exception(const status::Event &event)
-            : status::Event(event),
+            : Super(event),
               E(event.text())
         {
         }
 
         inline Exception(const status::Event &event, const E &exc)
-            : status::Event(event),
+            : Super(event),
               E(exc)
         {
         }
+
+        // template <class ... Args>
+        // inline Exception(Args &&... args)
+        //     : Super(args...),
+        //       E("")
+        // {
+        // }
 
     protected:
         inline std::string class_name() const noexcept override

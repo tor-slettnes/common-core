@@ -15,62 +15,36 @@ namespace platform::sysconfig
     using core::platform::ArgVector;
     using core::platform::ExitStatus;
     using core::platform::PID;
+    using core::platform::Invocation;
+    using core::platform::InvocationResult;
+
 
     //==========================================================================
-    // CommandInvocation
+    // PortableExitStatus
 
-    struct CommandInvocation
+    class PortableExitStatus : public core::platform::ExitStatus
     {
-        std::filesystem::path working_directory;
-        std::vector<std::string> argv;
-        std::string stdin;
+    public:
+        PortableExitStatus(bool success,
+                           int exit_code,
+                           int exit_signal,
+                           const std::string &symbol,
+                           const std::string &text);
+
+        int exit_code() const override;
+        int exit_signal() const override;
+        bool success() const override;
+        std::string symbol() const override;
+        std::string text() const override;
+
+    private:
+        bool success_;
+        int code_;
+        int signal_;
+        std::string symbol_;
+        std::string text_;
     };
 
-    //==========================================================================
-    // CommandInvocation
-
-    struct CommandInvocationResponse
-    {
-        PID pid = 0;
-    };
-
-    //==========================================================================
-    // CommandContinuation
-
-    struct CommandContinuation
-    {
-        PID pid = 0;
-        std::string stdin;
-    };
-
-    //==========================================================================
-    // CommandResponse
-
-    struct CommandResponse
-    {
-        std::string stdout;
-        std::string stderr;
-        int exit_status = 0;
-    };
-
-    //==========================================================================
-    // CommandPipe
-
-    struct CommandPipe
-    {
-        PID pid;
-        int stdin;
-        int stdout;
-        int stderr;
-    };
-
-    //==========================================================================
-    // Stream I/O
-
-    // std::ostream operator<<(std::ostream &stream, const CommandInvocation &invocation);
-    // std::ostream operator<<(std::ostream &stream, const CommandInvocationResponse &response);
-    // std::ostream operator<<(std::ostream &stream, const CommandContinuation &continuation);
-    // std::ostream operator<<(std::ostream &stream, const CommandResponse &response);
 
     //==========================================================================
     // ProcessInterface
@@ -87,9 +61,17 @@ namespace platform::sysconfig
         //==========================================================================
         // Spawn a new process, with or without capturing stdin/stdout/stderr.
 
-        virtual CommandResponse invoke_sync(const CommandInvocation &command) = 0;
-        virtual CommandInvocationResponse invoke_async(const CommandInvocation &command) = 0;
-        virtual CommandResponse invoke_finish(const CommandContinuation &input) = 0;
+        virtual InvocationResult invoke_sync(
+            const Invocation &invocation,
+            const std::string &input) = 0;
+
+        virtual PID invoke_async(
+            const Invocation &invocation,
+            const std::string &input) = 0;
+
+        virtual InvocationResult invoke_finish(
+            PID pid,
+            const std::string &input) = 0;
     };
 
     //==========================================================================
