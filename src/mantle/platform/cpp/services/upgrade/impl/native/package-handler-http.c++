@@ -21,8 +21,10 @@ namespace platform::upgrade::native
         return {this->url};
     }
 
-    void HTTPPackageHandler::scan()
+    PackageManifests HTTPPackageHandler::scan()
     {
+        PackageManifests manifests;
+        return manifests;
     }
 
     void HTTPPackageHandler::unpack(const fs::path &filename,

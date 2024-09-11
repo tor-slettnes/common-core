@@ -20,6 +20,16 @@ namespace platform::vfs
     {
     }
 
+    Path Path::parent() const
+    {
+        return {this->context, this->relpath.parent_path()};
+    }
+
+    fs::path Path::filename() const
+    {
+        return this->relpath.filename();
+    }
+
     void Path::check_relative(const ContextName &context,
                               const fs::path &relpath,
                               const fs::path &abspath)

@@ -19,27 +19,25 @@ namespace platform::upgrade
     using sysconfig::Version;
     using URL = std::string;
 
+    enum class LocationType
+    {
+        NONE,
+        VFS,
+        URL
+    };
+
+    using Location = std::variant<
+        std::monostate,
+        platform::vfs::Path,
+        URL>;
+
     //==========================================================================
     // PackageSource
 
     struct PackageSource : public core::types::Streamable
     {
     public:
-        enum LocationType
-        {
-            LOC_NONE,
-            LOC_VFS,
-            LOC_URL
-        };
-
-        using Location = std::variant<
-            std::monostate,
-            platform::vfs::Path,
-            URL>;
-
-    public:
-        PackageSource(const Location &location = {},
-                      const fs::path &filename = {});
+        PackageSource(const Location &location = {});
 
         operator bool() const noexcept;
         bool empty() const noexcept;
@@ -47,13 +45,14 @@ namespace platform::upgrade
         LocationType location_type() const;
         vfs::Path vfs_path(const vfs::Path &fallback = {}) const;
         URL url(const URL &fallback = {}) const;
+        fs::path filename() const;
+        PackageSource parent_path() const;
 
     protected:
         void to_stream(std::ostream &stream) const override;
 
     public:
         Location location;
-        fs::path filename;
     };
 
     using PackageSources = std::vector<PackageSource>;
@@ -158,3 +157,9 @@ namespace platform::upgrade
                                     UpgradeProgress::State state);
 
 }  // namespace platform::upgrade
+
+namespace std
+{
+    std::ostream &operator<<(std::ostream &stream,
+                             const platform::upgrade::Location &location);
+}

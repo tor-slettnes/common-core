@@ -30,7 +30,7 @@ service Upgrade
     // and online checks are performed at regular intervals if an Internet
     // connection is available.
     rpc scan (PackageSource)
-        returns (google.protobuf.Empty);
+        returns (PackageManifests);
 
     // List available package sources, whether or not they contain applicable
     // packages.
@@ -85,10 +85,12 @@ service Upgrade
 
 message PackageSource
 {
-    // Source folder/location for packages.
-    // This may be a VFS context/path or a web URL.
-    // Included in `PackageManifest` responses from `list_available()` and `install()`.
-    // Optional alonside `package_name` below for `install()`.
+    // Source folder/location for packages.  This may be a VFS context/path or a
+    // web URL, and may refer to a folder containing packages (e.g. as optional
+    // input for `scan()` or returned from `list_sources()`), or alternatively a
+    // specific package file (e.g. as optional input for `install()` or within a
+    // PackageManifest message).
+
     oneof location
     {
         // Specific URL
@@ -97,13 +99,6 @@ message PackageSource
         // Specific filesystem context/path, e.g. removable drive
         vfs.Path vfs_path = 3;
     }
-
-    // Specific package file name, if applicable.
-    // Included in `PackageManifest` responses from `list_available()` and `install()`.
-    // Optional alongside `oneof location` above for `install()`.
-    // Ignored for `scan()`.
-    string filename = 8;
-
 }
 
 

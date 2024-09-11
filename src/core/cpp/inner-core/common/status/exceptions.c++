@@ -7,6 +7,7 @@
 
 #include "exceptions.h++"
 #include "platform/path.h++"
+#include "platform/symbols.h++"
 #include "types/create-shared.h++"
 
 #include <exception>
@@ -19,7 +20,8 @@ namespace core::exception
 
     Cancelled::Cancelled(const std::string &msg,
                          const std::string &operation)
-        : Super(std::errc::operation_canceled,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::operation_canceled,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
@@ -32,7 +34,8 @@ namespace core::exception
     // Timeout
 
     Timeout::Timeout(std::string msg, dt::Duration timeout)
-        : Super(std::errc::timed_out,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::timed_out,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::ABORTED,
@@ -51,7 +54,8 @@ namespace core::exception
 
     InvalidArgument::InvalidArgument(const std::string &msg,
                                      const types::Value &argument)
-        : Super(std::errc::invalid_argument,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::invalid_argument,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
@@ -65,7 +69,8 @@ namespace core::exception
     MissingArgument::MissingArgument(const std::string &msg,
                                      uint provided,
                                      uint expected)
-        : Super(std::errc::invalid_argument,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::invalid_argument,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
@@ -80,7 +85,8 @@ namespace core::exception
     ExtraneousArgument::ExtraneousArgument(const std::string &msg,
                                            uint provided,
                                            uint expected)
-        : Super(std::errc::argument_list_too_long,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::argument_list_too_long,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
@@ -94,7 +100,8 @@ namespace core::exception
 
     OutOfRange::OutOfRange(const std::string &msg,
                            const types::Value &item)
-        : Super(std::errc::result_out_of_range,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::result_out_of_range,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
@@ -107,7 +114,8 @@ namespace core::exception
 
     FailedPrecondition::FailedPrecondition(const std::string &msg,
                                            const types::KeyValueMap &attributes)
-        : Super(std::errc::operation_not_supported,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::operation_not_supported,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
@@ -120,7 +128,8 @@ namespace core::exception
 
     FailedPostcondition::FailedPostcondition(const std::string &msg,
                                              const types::KeyValueMap &attributes)
-        : Super(std::errc::interrupted,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::interrupted,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::ABORTED,
@@ -133,7 +142,8 @@ namespace core::exception
 
     NotFound::NotFound(const std::string &msg,
                        const types::Value &item)
-        : Super(std::errc::no_such_file_or_directory,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::no_such_file_or_directory,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
@@ -146,7 +156,8 @@ namespace core::exception
 
     Duplicate::Duplicate(const std::string &msg,
                          const types::Value &item)
-        : Super(std::errc::file_exists,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::file_exists,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
@@ -159,7 +170,8 @@ namespace core::exception
 
     PermissionDenied::PermissionDenied(const std::string &msg,
                                        const std::string &operation)
-        : Super(std::errc::permission_denied,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::permission_denied,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
@@ -172,7 +184,8 @@ namespace core::exception
 
     ResourceExhausted::ResourceExhausted(const std::string &msg,
                                          const std::string &resource)
-        : Super(std::errc::resource_unavailable_try_again,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::resource_unavailable_try_again,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::ABORTED,
@@ -185,7 +198,8 @@ namespace core::exception
 
     Unavailable::Unavailable(const std::string &msg,
                              const std::string &resource)
-        : Super(std::errc::resource_unavailable_try_again,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::resource_unavailable_try_again,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::CANCELLED,
@@ -198,7 +212,8 @@ namespace core::exception
 
     RuntimeError::RuntimeError(const std::string &msg,
                                const types::KeyValueMap &attributes)
-        : Super(std::errc::interrupted,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::interrupted,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::ABORTED,
@@ -211,7 +226,8 @@ namespace core::exception
 
     UnknownError::UnknownError(const std::string &msg,
                                const types::KeyValueMap &attributes)
-        : Super(std::errc::interrupted,
+        : Super(TYPE_NAME_BASE(This),
+                std::errc::interrupted,
                 TYPE_NAME_BASE(This),
                 msg,
                 status::Flow::ABORTED,
@@ -223,7 +239,9 @@ namespace core::exception
     // InvocationError
 
     InvocationError::InvocationError(const status::Event &event)
-        : Super(event, std::runtime_error(event.text()))
+        : Super(event,
+                std::runtime_error(event.text()),
+                TYPE_NAME_BASE(This))
     {
     }
 
@@ -238,7 +256,8 @@ namespace core::exception
                  symbol,
                  status::Level::FAILED,
                  status::Flow::ABORTED},
-                std::runtime_error(text))
+                std::runtime_error(text),
+                TYPE_NAME_BASE(This))
     {
     }
 
@@ -269,7 +288,8 @@ namespace core::exception
         : Super(event,
                 std::system_error(
                     std::error_code(event.code(), std::generic_category()),
-                    event.text()))
+                    event.text()),
+                TYPE_NAME_BASE(This))
     {
     }
 
@@ -283,7 +303,8 @@ namespace core::exception
                  status::Flow::ABORTED,       // flow
                  {},                          // timepoint
                  {}},                         // attributes
-                std::system_error(e))
+                std::system_error(e),
+                TYPE_NAME_BASE(This))
     {
     }
 
@@ -327,7 +348,8 @@ namespace core::exception
                     event.attribute("path1").as_string(),
                     event.attribute("path2").as_string(),
                     std::error_code(static_cast<int>(event.code()),
-                                    std::system_category())))
+                                    std::system_category())),
+                TYPE_NAME_BASE(This))
     {
     }
 
@@ -343,7 +365,8 @@ namespace core::exception
                  {                            // attributes
                   {"path1", types::Value(e.path1().string())},
                   {"path2", types::Value(e.path2().string())}}},
-                fs::filesystem_error(e))
+                fs::filesystem_error(e),
+                TYPE_NAME_BASE(This))
     {
     }
 
@@ -399,7 +422,8 @@ namespace core::exception
                  flow,                    // flow
                  dt,                      // timepoint
                  attributes},             // attributes
-                std::runtime_error(text))
+                std::runtime_error(text),
+                TYPE_NAME_BASE(This))
     {
     }
 
@@ -423,7 +447,8 @@ namespace core::exception
                  flow,                     // flow
                  dt,                       // timepoint
                  attributes},              // attributes
-                std::runtime_error(text))
+                std::runtime_error(text),
+                TYPE_NAME_BASE(This))
     {
     }
 

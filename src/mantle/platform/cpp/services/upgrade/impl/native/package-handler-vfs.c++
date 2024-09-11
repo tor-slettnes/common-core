@@ -24,15 +24,14 @@ namespace platform::upgrade::native
         return {this->vfs_path};
     }
 
-
-    void VFSPackageHandler::scan()
+    PackageManifests VFSPackageHandler::scan()
     {
         logf_debug("Upgrade scan in VFS path: %r", this->vfs_path);
         vfs::Location loc = vfs::location(this->vfs_path, false);
         fs::path required_extension(
             this->settings->get(SETTING_PACKAGE_SUFFIX, DEFAULT_PACKAGE_SUFFIX).as_string());
 
-        std::vector<PackageManifest::ptr> manifests;
+        PackageManifests manifests;
 
         for (const auto &pi : fs::directory_iterator(loc.localPath()))
         {
@@ -47,6 +46,7 @@ namespace platform::upgrade::native
             }
         }
         this->available_packages = manifests;
+        return manifests;
     }
 
     void VFSPackageHandler::unpack(const fs::path &filename,
@@ -72,8 +72,8 @@ namespace platform::upgrade::native
         {
             this->unpack_file(location.localPath(package_name), staging_folder);
             manifest = std::make_shared<LocalManifest>(
-                staging_folder / this->manifest_file(),                // manifest_file
-                PackageSource(location.virtualPath(), package_name));  // source
+                staging_folder / this->manifest_file(),              // manifest_file
+                PackageSource(location.virtualPath(package_name)));  // source
         }
         catch (...)
         {

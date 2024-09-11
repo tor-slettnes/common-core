@@ -22,16 +22,14 @@ namespace protobuf
     {
         switch (native.location_type())
         {
-        case ::platform::upgrade::PackageSource::LOC_VFS:
+        case ::platform::upgrade::LocationType::VFS:
             encode(native.vfs_path(), msg->mutable_vfs_path());
             break;;
 
-        case ::platform::upgrade::PackageSource::LOC_URL:
+        case ::platform::upgrade::LocationType::URL:
             msg->set_url(native.url());
             break;
         }
-
-        msg->set_filename(native.filename);
     }
 
     void decode(const ::cc::platform::upgrade::PackageSource &msg,
@@ -51,8 +49,6 @@ namespace protobuf
             native->location = {};
             break;
         }
-
-        native->filename = msg.filename();
     }
 
     //==========================================================================

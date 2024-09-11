@@ -41,11 +41,13 @@ namespace platform::upgrade::native
         PackageManifest::ptr manifest;
         signal_upgrade_progress.clear_cached();
 
-        logf_notice("Installing upgrade: %s", source);
+        logf_notice("Installing upgrade: %s (filename=%s)",
+                    source,
+                    source.filename());
 
         try
         {
-            this->unpack(source.filename, staging_folder);
+            this->unpack(source.filename(), staging_folder);
             manifest = this->install_unpacked(source, staging_folder);
         }
         catch (...)
@@ -150,6 +152,7 @@ namespace platform::upgrade::native
         const fs::path &filepath,
         const fs::path &staging_folder)
     {
+        logf_debug("Unpacking file %r", filepath);
         std::ifstream stream(filepath, std::ios_base::binary);
         this->unpack_stream(stream, staging_folder);
     }

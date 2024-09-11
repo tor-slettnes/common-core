@@ -26,7 +26,7 @@ namespace platform::upgrade::native
         Super::initialize();
     }
 
-    void NativeProvider::scan(const PackageSource &source)
+    PackageManifests NativeProvider::scan(const PackageSource &source)
     {
         if (source)
         {
@@ -50,6 +50,8 @@ namespace platform::upgrade::native
             log_info("Emitting signal_upgrade_available: {}");
         }
         signal_upgrade_available.emit(this->best_available({}));
+
+        return this->list_available(source);
     }
 
     PackageSources NativeProvider::list_sources() const
@@ -106,7 +108,7 @@ namespace platform::upgrade::native
     {
         PackageSource install_source;
 
-        if (source && !source.filename.empty())
+        if (source && !source.filename().empty())
         {
             install_source = source;
         }
@@ -124,7 +126,8 @@ namespace platform::upgrade::native
 
         try
         {
-            if (const PackageHandler::ptr &handler = this->get_or_add_handler(install_source))
+            if (const PackageHandler::ptr &handler =
+                this->get_or_add_handler(install_source.parent_path()))
             {
                 return this->installed_manifest = handler->install(install_source);
             }
@@ -161,11 +164,11 @@ namespace platform::upgrade::native
     {
         switch (source.location_type())
         {
-        case PackageSource::LOC_VFS:
+        case LocationType::VFS:
             this->vfs_handlers.erase(source.vfs_path());
             break;
 
-        case PackageSource::LOC_URL:
+        case LocationType::URL:
             this->http_handlers.erase(source.url());
             break;
         }
@@ -192,10 +195,10 @@ namespace platform::upgrade::native
     {
         switch (source.location_type())
         {
-        case PackageSource::LOC_VFS:
+        case LocationType::VFS:
             return this->vfs_handlers.get(source.vfs_path(this->default_vfs_path));
 
-        case PackageSource::LOC_URL:
+        case LocationType::URL:
             return this->http_handlers.get(source.url(this->default_url));
 
         default:
@@ -207,13 +210,13 @@ namespace platform::upgrade::native
     {
         switch (source.location_type())
         {
-        case PackageSource::LOC_VFS:
+        case LocationType::VFS:
             return this->vfs_handlers.emplace_shared(
                 source.vfs_path(this->default_vfs_path),
                 this->settings,
                 source.vfs_path(this->default_vfs_path));
 
-        case PackageSource::LOC_URL:
+        case LocationType::URL:
             return this->http_handlers.emplace_shared(
                 source.url(this->default_url),
                 this->settings,

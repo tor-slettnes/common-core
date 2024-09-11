@@ -28,7 +28,8 @@ namespace core::exception
     public:
         using Super::Super;
 
-        inline CustomException(std::errc code,
+        inline CustomException(const std::string &class_name,
+                               std::errc code,
                                const status::Event::Symbol &symbol,
                                const std::string &text,
                                status::Flow flow,
@@ -42,7 +43,8 @@ namespace core::exception
                      level,                                   // level
                      flow,                                    // flow
                      {},                                      // timepoint
-                     attributes})                             // attributes
+                     attributes},
+                    class_name)  // attributes
         {
         }
     };

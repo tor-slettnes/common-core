@@ -34,7 +34,6 @@
 
 #define throwf_args(_EXC, ...) throw _EXC(core::str::format __VA_ARGS__)
 
-
 namespace core::exception
 {
     //==========================================================================
@@ -57,15 +56,20 @@ namespace core::exception
         using Super = status::Event;
 
     public:
-        inline Exception(const status::Event &event)
+        inline Exception(const status::Event &event,
+                         const std::string class_name="Exception")
             : Super(event),
-              E(event.text())
+              E(event.text()),
+              class_name_(class_name)
         {
         }
 
-        inline Exception(const status::Event &event, const E &exc)
+        inline Exception(const status::Event &event,
+                         const E &exc,
+                         const std::string class_name="Exception")
             : Super(event),
-              E(exc)
+              E(exc),
+              class_name_(class_name)
         {
         }
 
@@ -79,8 +83,11 @@ namespace core::exception
     protected:
         inline std::string class_name() const noexcept override
         {
-            return "Exception";
+            return this->class_name_;
         }
+
+    private:
+        const std::string class_name_;
     };
 
 }  // namespace core::exception

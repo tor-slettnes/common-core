@@ -22,12 +22,13 @@ namespace platform::upgrade::grpc
         return bool(client);
     }
 
-    void ClientProvider::scan(
+    PackageManifests ClientProvider::scan(
         const PackageSource &source)
     {
-        this->client->call_check(
-            &Client::Stub::scan,
-            protobuf::encoded<cc::platform::upgrade::PackageSource>(source));
+        return protobuf::decoded<PackageManifests>(
+            this->client->call_check(
+                &Client::Stub::scan,
+                protobuf::encoded<cc::platform::upgrade::PackageSource>(source)));
     }
 
     PackageSources ClientProvider::list_sources() const

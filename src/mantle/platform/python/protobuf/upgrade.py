@@ -43,27 +43,18 @@ def encodeSource(source: SourceType,
     if isinstance(source, cc.platform.upgrade.PackageSource):
         return source
 
-    elif isinstance(source, str) and re.match(r'\w+://', source):
-        return cc.platform.upgrade.PackageSource(
-            url = os.path.dirname(source),
-            filename = os.path.basename(source))
+    elif isinstance(source, cc.platform.vfs.Path):
+        return cc.platform.upgrade.PackageSource(vfs_path = source)
 
     elif isinstance(source, str):
-        try:
-            context, relpath = source.split(":", 1)
-        except ValueError:
-            raise ValueError("Source must be a URL or a VFS path in the format CONTEXT:PATH", source)
-        else:
-            return cc.platform.upgrade.PackageSource(
-                vfs_path = cc.platform.vfs.Path(context = context,
-                                                relpath = os.path.dirname(relpath)),
-                filename = os.path.basename(relpath))
+        if re.match(r'\w+://', source):
+            return cc.platform.upgrade.PackageSource(url = source)
 
-    elif isinstance(source, cc.platform.vfs.Path):
-        return cc.platform.upgrade.PackageSource(
-            vfs_path = cc.platform.vfs.Path(context = source.context,
-                                            relpath = os.path.dirname(source.relpath)),
-            filename = os.path.basename(source.relpath))
+        elif re.match(r'\w+:', source):
+            return cc.platform.upgrade.PackageSource(vfs_path = encodePath(source))
+
+        else:
+            raise ValueError("Source must be a URL or a VFS path in the format CONTEXT:PATH", source)
 
     elif source:
         raise TypeError('`source` must be of type `cc.platform.upgrade.Source`, '

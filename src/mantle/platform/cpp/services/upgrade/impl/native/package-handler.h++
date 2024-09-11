@@ -25,7 +25,7 @@ namespace platform::upgrade::native
         PackageHandler(const core::SettingsStore::ptr &settings);
 
     public:
-        virtual void scan() = 0;
+        virtual PackageManifests scan() = 0;
         virtual PackageSource get_source() const = 0;
         virtual std::vector<PackageManifest::ptr> get_available() const;
         virtual std::size_t get_available_count() const;

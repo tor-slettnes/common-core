@@ -33,7 +33,7 @@ namespace platform::upgrade
         // By default, removable devices (e.g. USB drives) are scanned on insertion,
         // and online checks are performed at regular intervals if an Internet
         // connection is available.
-        virtual void scan(
+        virtual PackageManifests scan(
             const PackageSource &source = {}) = 0;
 
         // Return information about all currently enabled upgrade sources.

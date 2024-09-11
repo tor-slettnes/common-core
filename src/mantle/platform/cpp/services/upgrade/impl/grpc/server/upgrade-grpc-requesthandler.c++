@@ -26,11 +26,13 @@ namespace platform::upgrade::grpc
     ::grpc::Status RequestHandler::scan(
         ::grpc::ServerContext* context,
         const ::cc::platform::upgrade::PackageSource* request,
-        ::google::protobuf::Empty* response)
+        ::cc::platform::upgrade::PackageManifests* response)
     {
         try
         {
-            this->provider->scan(protobuf::decoded<PackageSource>(*request));
+            protobuf::encode(
+                this->provider->scan(protobuf::decoded<PackageSource>(*request)),
+                response);
             return ::grpc::Status::OK;
         }
         catch (...)

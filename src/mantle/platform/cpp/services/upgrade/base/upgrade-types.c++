@@ -12,24 +12,22 @@ namespace platform::upgrade
     //==========================================================================
     // PackageSource
 
-    PackageSource::PackageSource(const Location &location,
-                                 const fs::path &filename)
-        : location(location),
-          filename(filename)
+    PackageSource::PackageSource(const Location &location)
+        : location(location)
     {
     }
 
     PackageSource::operator bool() const noexcept
     {
-        return this->location_type() != LOC_NONE;
+        return this->location_type() != LocationType::NONE;
     }
 
     bool PackageSource::empty() const noexcept
     {
-        return this->location_type() == LOC_NONE;
+        return this->location_type() == LocationType::NONE;
     }
 
-    PackageSource::LocationType PackageSource::location_type() const
+    LocationType PackageSource::location_type() const
     {
         return static_cast<LocationType>(this->location.index());
     }
@@ -58,6 +56,36 @@ namespace platform::upgrade
         return fallback;
     }
 
+    fs::path PackageSource::filename() const
+    {
+        switch (this->location_type())
+        {
+        case LocationType::VFS:
+            return this->vfs_path().filename();
+
+        case LocationType::URL:
+            return fs::path(this->url()).filename();
+
+        default:
+            return {};
+        }
+    }
+
+    PackageSource PackageSource::parent_path() const
+    {
+        switch (this->location_type())
+        {
+        case LocationType::VFS:
+            return {this->vfs_path().parent()};
+
+        case LocationType::URL:
+            return {fs::path(this->url()).parent_path()};
+
+        default:
+            return {};
+        }
+    }
+
     void PackageSource::to_stream(
         std::ostream &stream) const
     {
@@ -65,16 +93,15 @@ namespace platform::upgrade
 
         switch (this->location_type())
         {
-        case LOC_VFS:
+        case LocationType::VFS:
             parts.add("vpath", this->vfs_path(), true, "%r");
             break;
 
-        case LOC_URL:
+        case LocationType::URL:
             parts.add("url", this->url(), true, "%r");
             break;
         }
 
-        parts.add("filename", this->filename, !this->filename.empty());
         stream << parts;
     }
 
@@ -205,3 +232,24 @@ namespace platform::upgrade
         {STATE_FINALIZED, "FINALIZED"},
     };
 }  // namespace platform::upgrade
+
+namespace std
+{
+    std::ostream &operator<<(std::ostream &stream,
+                             const platform::upgrade::Location &location)
+    {
+        if (auto *vpath = std::get_if<platform::vfs::Path>(&location))
+        {
+            stream << "{vfs_path=" << *vpath << "}";
+        }
+        else if (auto *url = std::get_if<platform::upgrade::URL>(&location))
+        {
+            stream << "{url=" << *url << "}";
+        }
+        else
+        {
+            stream << "{}";
+        }
+        return stream;
+    }
+}  // namespace std

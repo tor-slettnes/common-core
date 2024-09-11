@@ -43,7 +43,7 @@ void Options::add_commands()
 
     this->add_command(
         "install",
-        {"[{default | vfs CONTEXT:[PATH] | url URL} PACKAGE]"},
+        {"[{default | vfs CONTEXT:PATH | url URL}]"},
         "Install an software upgrade package. If no package path is provided, "
         "install the best available package discovered from prior scans.",
         std::bind(&Options::install, this));
@@ -83,7 +83,10 @@ void Options::scan()
         std::exit(-1);
     }
 
-    platform::upgrade::upgrade->scan(source);
+    for (const auto &src : platform::upgrade::upgrade->scan(source))
+    {
+        std::cout << src << std::endl;
+    }
 }
 
 void Options::list_sources()
@@ -127,8 +130,6 @@ void Options::install()
                       << std::endl;
             std::exit(-1);
         }
-
-        source.filename = this->get_arg("package name");
     }
 
     std::cout << *platform::upgrade::upgrade->install(source) << std::endl;

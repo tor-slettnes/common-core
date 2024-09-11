@@ -29,7 +29,7 @@ namespace platform::upgrade::grpc
         ::grpc::Status scan(
             ::grpc::ServerContext* context,
             const ::cc::platform::upgrade::PackageSource* request,
-            ::google::protobuf::Empty* response) override;
+            ::cc::platform::upgrade::PackageManifests* response) override;
 
         ::grpc::Status list_sources(
             ::grpc::ServerContext* context,
