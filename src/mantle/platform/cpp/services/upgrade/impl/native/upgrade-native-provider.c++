@@ -127,7 +127,7 @@ namespace platform::upgrade::native
         try
         {
             if (const PackageHandler::ptr &handler =
-                this->get_or_add_handler(install_source.parent_path()))
+                this->get_or_add_handler(install_source.remove_filename()))
             {
                 return this->installed_manifest = handler->install(install_source);
             }

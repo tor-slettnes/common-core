@@ -24,14 +24,36 @@ namespace platform::vfs
         using Super::Super;
 
     public:
+        Location location(const Path &path,
+                          bool modify) const;
+
+        Location location(const ContextName &context,
+                          const fs::path &relpath,
+                          bool modify) const;
+
+        Location location(const Context::ptr &context,
+                          const fs::path &relpath,
+                          bool modify) const;
+
+        LocationList locations(const Paths &vpaths,
+                               bool modify) const;
+
+        ContextProxy context_proxy(const std::string &name,
+                                   bool modify) const;
+
+        ContextProxy context_proxy(const Context::ptr &context,
+                                   bool modify) const;
+
     public:
         virtual ContextMap get_contexts() const = 0;
 
         virtual ContextMap get_open_context() const = 0;
 
-        virtual Context::ptr get_context(const std::string &name, bool required = true) const = 0;
+        virtual Context::ptr get_context(const std::string &name,
+                                         bool required = true) const = 0;
 
-        virtual Context::ptr open_context(const std::string &name, bool required = true) = 0;
+        virtual Context::ptr open_context(const std::string &name,
+                                          bool required = true) = 0;
 
         virtual void close_context(const Context::ptr &cxt) = 0;
 

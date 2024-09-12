@@ -10,23 +10,6 @@
 
 namespace platform::vfs
 {
-    /// Open a new ContextProxy object to access the specified context.
-    ContextProxy contextProxy(const std::string &name, bool modify);
-
-    /// Open a new ContextProxy object to access the specified context.
-    ContextProxy contextProxy(Context::ptr ref, bool modify);
-
-    /// Open a new location object to access the specified virtual path
-    Location location(const Path &vpath, bool modify);
-
-    /// Open a new Location object to access the specified context/path.
-    Location location(const std::string &context, const fs::path &relpath, bool modify);
-
-    /// Open a new Location object to access the specified context instance/path.
-    Location location(Context::ptr ref, const fs::path &relpath, bool modify);
-
-    /// Open multiple locations, possibly within different contexts.
-    LocationList locations(const Paths &vpaths, bool modify);
 
     /// Obtain local path to the specified virtual path.
     fs::path localPath(const Path &vpath);

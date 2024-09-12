@@ -71,15 +71,15 @@ namespace platform::upgrade
         }
     }
 
-    PackageSource PackageSource::parent_path() const
+    PackageSource PackageSource::remove_filename() const
     {
         switch (this->location_type())
         {
         case LocationType::VFS:
-            return {this->vfs_path().parent()};
+            return {this->vfs_path().remove_filename()};
 
         case LocationType::URL:
-            return {fs::path(this->url()).parent_path()};
+            return {fs::path(this->url()).remove_filename()};
 
         default:
             return {};

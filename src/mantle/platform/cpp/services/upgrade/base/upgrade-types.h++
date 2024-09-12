@@ -46,7 +46,7 @@ namespace platform::upgrade
         vfs::Path vfs_path(const vfs::Path &fallback = {}) const;
         URL url(const URL &fallback = {}) const;
         fs::path filename() const;
-        PackageSource parent_path() const;
+        PackageSource remove_filename() const;
 
     protected:
         void to_stream(std::ostream &stream) const override;

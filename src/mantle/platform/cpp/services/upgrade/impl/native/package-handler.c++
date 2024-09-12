@@ -233,7 +233,6 @@ namespace platform::upgrade::native
         }
     }
 
-
     void PackageHandler::capture_install_progress(
         core::platform::FileDescriptor fd,
         std::shared_ptr<LocalManifest> manifest)
@@ -306,9 +305,9 @@ namespace platform::upgrade::native
                    buf.data(),
                    buf.size()))
         {
-            logf_info("Read %d bytes from stderr: %s",
-                      nbytes,
-                      std::string_view(buf.data(), nbytes));
+            logf_debug("Read %d bytes from stderr: %s",
+                       nbytes,
+                       std::string_view(buf.data(), nbytes));
             this->install_diagnostics.write(buf.data(), nbytes);
         }
     }

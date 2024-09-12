@@ -20,31 +20,42 @@ namespace core::exception
     /// @class CustomException
     /// @brief `Event` wrapper for local errors derived on std::exception
 
-    template <class E>
-    class CustomException : public Exception<E>
+    template <class Exc, class Class>
+    class CustomException : public Exception<Exc>
     {
-        using Super = Exception<E>;
+    protected:
+        // These symbols are defined for use in derived classes so
+        // `This` refers to the derived class.
+        using This = Class;
+        using Super = CustomException<Exc, Class>;
 
     public:
-        using Super::Super;
+        inline CustomException(const status::Event &event)
+            : Exception<Exc>(
+                event,
+                TYPE_NAME_BASE(Class))
+        {
+        }
 
-        inline CustomException(const std::string &class_name,
-                               std::errc code,
+        inline CustomException(std::errc code,
                                const status::Event::Symbol &symbol,
                                const std::string &text,
                                status::Flow flow,
                                const types::KeyValueMap &attributes = {},
                                status::Level level = status::Level::FAILED)
-            : Super({text,                                    // text
-                     status::Domain::APPLICATION,             // domain
-                     platform::path->exec_name(),             // origin
-                     static_cast<status::Event::Code>(code),  // code
-                     symbol,                                  // symbol
-                     level,                                   // level
-                     flow,                                    // flow
-                     {},                                      // timepoint
-                     attributes},
-                    class_name)  // attributes
+            : Exception<Exc>(
+                  {
+                      text,                                    // text
+                      status::Domain::APPLICATION,             // domain
+                      platform::path->exec_name(),             // origin
+                      static_cast<status::Event::Code>(code),  // code
+                      symbol,                                  // symbol
+                      level,                                   // level
+                      flow,                                    // flow
+                      {},                                      // timepoint
+                      attributes,                              // attributes
+                  },
+                  TYPE_NAME_BASE(Class))  // class_name
         {
         }
     };
@@ -53,11 +64,8 @@ namespace core::exception
     /// @class Cancelled
     /// @brief Indicates that an operation was cancelled
 
-    class Cancelled : public CustomException<std::runtime_error>
+    class Cancelled : public CustomException<std::runtime_error, Cancelled>
     {
-        using This = Cancelled;
-        using Super = CustomException<std::runtime_error>;
-
     public:
         using Super::Super;
 
@@ -69,11 +77,8 @@ namespace core::exception
     /// @class Timeout
     /// @brief Indicates that an operation timed out, along with the timeout value.
 
-    class Timeout : public CustomException<std::runtime_error>
+    class Timeout : public CustomException<std::runtime_error, Timeout>
     {
-        using This = Timeout;
-        using Super = CustomException<std::runtime_error>;
-
     public:
         using Super::Super;
 
@@ -85,11 +90,8 @@ namespace core::exception
     /// @class InvalidArgument
     /// @brief Indicates an invalid argument value.
 
-    class InvalidArgument : public CustomException<std::invalid_argument>
+    class InvalidArgument : public CustomException<std::invalid_argument, InvalidArgument>
     {
-        using This = InvalidArgument;
-        using Super = CustomException<std::invalid_argument>;
-
     public:
         using Super::Super;
 
@@ -98,11 +100,8 @@ namespace core::exception
     };
 
     /// Indicates not enough arguments were provided
-    class MissingArgument : public CustomException<std::invalid_argument>
+    class MissingArgument : public CustomException<std::invalid_argument, MissingArgument>
     {
-        using This = MissingArgument;
-        using Super = CustomException<std::invalid_argument>;
-
     public:
         using Super::Super;
 
@@ -112,11 +111,8 @@ namespace core::exception
     };
 
     /// Indicates too many arguments were provided
-    class ExtraneousArgument : public CustomException<std::length_error>
+    class ExtraneousArgument : public CustomException<std::length_error, ExtraneousArgument>
     {
-        using This = ExtraneousArgument;
-        using Super = CustomException<std::length_error>;
-
     public:
         using Super::Super;
 
@@ -129,11 +125,8 @@ namespace core::exception
     /// @class OutOfRange
     /// @brief Indicates that a out-of-bounds index or missing key
 
-    class OutOfRange : public CustomException<std::out_of_range>
+    class OutOfRange : public CustomException<std::out_of_range, OutOfRange>
     {
-        using This = OutOfRange;
-        using Super = CustomException<std::out_of_range>;
-
     public:
         using Super::Super;
 
@@ -144,11 +137,8 @@ namespace core::exception
     /// @class NotFound
     /// @brief Indicates that an item was not found (e.g. in a lookup table)
 
-    class NotFound : public CustomException<std::out_of_range>
+    class NotFound : public CustomException<std::out_of_range, NotFound>
     {
-        using This = NotFound;
-        using Super = CustomException<std::out_of_range>;
-
     public:
         using Super::Super;
 
@@ -159,11 +149,8 @@ namespace core::exception
     /// @class Duplicate
     /// @brief Indicates that an item was duplicated
 
-    class Duplicate : public CustomException<std::out_of_range>
+    class Duplicate : public CustomException<std::out_of_range, Duplicate>
     {
-        using This = Duplicate;
-        using Super = CustomException<std::out_of_range>;
-
     public:
         using Super::Super;
 
@@ -175,11 +162,8 @@ namespace core::exception
     /// @class FailedPrecondition
     /// @brief Indicates that an operation could not proceed
 
-    class FailedPrecondition : public CustomException<std::runtime_error>
+    class FailedPrecondition : public CustomException<std::runtime_error, FailedPrecondition>
     {
-        using This = FailedPrecondition;
-        using Super = CustomException<std::runtime_error>;
-
     public:
         using Super::Super;
 
@@ -191,11 +175,8 @@ namespace core::exception
     /// @class FailedPostcondition
     /// @brief Indicates that an operation could not proceed
 
-    class FailedPostcondition : public CustomException<std::runtime_error>
+    class FailedPostcondition : public CustomException<std::runtime_error, FailedPostcondition>
     {
-        using This = FailedPostcondition;
-        using Super = CustomException<std::runtime_error>;
-
     public:
         using Super::Super;
 
@@ -207,11 +188,8 @@ namespace core::exception
     /// @class PermissionDenied
     /// @brief Indicates that an item could not be accessed due to missing permissions
 
-    class PermissionDenied : public CustomException<std::runtime_error>
+    class PermissionDenied : public CustomException<std::runtime_error, PermissionDenied>
     {
-        using This = PermissionDenied;
-        using Super = CustomException<std::runtime_error>;
-
     public:
         using Super::Super;
 
@@ -223,11 +201,8 @@ namespace core::exception
     /// @class ResourceExhausted
     /// @brief Indicates that an operation failed due to lack of system resources
 
-    class ResourceExhausted : public CustomException<std::runtime_error>
+    class ResourceExhausted : public CustomException<std::runtime_error, ResourceExhausted>
     {
-        using This = ResourceExhausted;
-        using Super = CustomException<std::runtime_error>;
-
     public:
         using Super::Super;
 
@@ -239,11 +214,8 @@ namespace core::exception
     /// @class Unavailable
     /// @brief Indicates that an resource is currenly unavailable
 
-    class Unavailable : public CustomException<std::runtime_error>
+    class Unavailable : public CustomException<std::runtime_error, Unavailable>
     {
-        using This = Unavailable;
-        using Super = CustomException<std::runtime_error>;
-
     public:
         using Super::Super;
 
@@ -255,11 +227,8 @@ namespace core::exception
     /// @class RuntimeError
     /// @brief Indicates that an operation failed
 
-    class RuntimeError : public CustomException<std::runtime_error>
+    class RuntimeError : public CustomException<std::runtime_error, RuntimeError>
     {
-        using This = RuntimeError;
-        using Super = CustomException<std::runtime_error>;
-
     public:
         using Super::Super;
 
@@ -271,11 +240,8 @@ namespace core::exception
     /// @class UnknownError
     /// @brief Represents an unknown exception
 
-    class UnknownError : public CustomException<std::runtime_error>
+    class UnknownError : public CustomException<std::runtime_error, UnknownError>
     {
-        using This = UnknownError;
-        using Super = CustomException<std::runtime_error>;
-
     public:
         using Super::Super;
 
@@ -346,16 +312,24 @@ namespace core::exception
 
         FilesystemError(const fs::filesystem_error &e);
 
+        FilesystemError(const std::error_code &error_code,
+                        const std::filesystem::path &path1,
+                        const std::filesystem::path &path2,
+                        const std::string &what);
+
         explicit FilesystemError(int errcode,
                                  const std::filesystem::path &path1,
                                  const std::filesystem::path &path2,
                                  const std::string &what);
+
         explicit FilesystemError(int errcode,
                                  const std::filesystem::path &path1,
                                  const std::filesystem::path &path2);
+
         explicit FilesystemError(int errcode,
                                  const std::filesystem::path &path1,
                                  const std::string &what);
+
         explicit FilesystemError(int errcode,
                                  const std::filesystem::path &path1);
     };

@@ -13,44 +13,6 @@ namespace platform::vfs
     //==========================================================================
     // Public API
 
-    ContextProxy contextProxy(const std::string &name, bool modify)
-    {
-        return vfs::ContextProxy(vfs->get_context(name), modify);
-    }
-
-    ContextProxy contextProxy(Context::ptr ref, bool modify)
-    {
-        return vfs::ContextProxy(ref, modify);
-    }
-
-    Location location(const Path &vpath, bool modify)
-    {
-        return vfs::location(vpath.context, vpath.relpath, modify);
-    }
-
-    Location location(const std::string &context,
-                      const fs::path &relpath,
-                      bool modify)
-    {
-        Context::ptr cxt = vfs->get_context(context);
-        return vfs::Location(cxt, relpath, modify);
-    }
-
-    Location location(Context::ptr ref, const fs::path &relpath, bool modify)
-    {
-        return vfs::Location(ref, relpath, modify);
-    }
-
-    LocationList locations(const Paths &vpaths, bool modify)
-    {
-        LocationList locations;
-        locations.reserve(vpaths.size());
-        for (const auto &vpath : vpaths)
-        {
-            locations.emplace_back(vfs::location(vpath, modify));
-        }
-        return locations;
-    }
 
     fs::path localPath(const Path &vpath)
     {

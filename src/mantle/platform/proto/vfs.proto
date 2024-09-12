@@ -174,8 +174,8 @@ message PathRequest
     // Include hidden files in directory list
     bool include_hidden = 9;
 
-    // Indicates that `target` is not the final target path, but an
-    // existing folder into which the source path(s) will be copied/moved.
+    // Indicates that `target` is not the final target path, but an existing
+    // parent folder into which the source path(s) will be copied/moved.
     // copy()/move() require this option if there is more than one source.
     bool inside_target = 10;
 

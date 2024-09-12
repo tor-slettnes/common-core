@@ -11,86 +11,6 @@
 
 namespace platform::vfs
 {
-    //==========================================================================
-    // VFS Path
-
-    Path::Path(const ContextName &context, const fs::path &relpath)
-        : context(context),
-          relpath(relpath)
-    {
-    }
-
-    Path Path::parent() const
-    {
-        return {this->context, this->relpath.parent_path()};
-    }
-
-    fs::path Path::filename() const
-    {
-        return this->relpath.filename();
-    }
-
-    void Path::check_relative(const ContextName &context,
-                              const fs::path &relpath,
-                              const fs::path &abspath)
-    {
-        if (relpath.is_absolute())
-        {
-            throw fs::filesystem_error(
-                "Absolute path not allowed in virtual context",
-                context + ":" + relpath.string(),
-                abspath,
-                std::make_error_code(std::errc::no_such_file_or_directory));
-        }
-    }
-
-    void Path::to_literal_stream(std::ostream &stream) const
-    {
-        stream << "\""
-               << this->context
-               << ":"
-               << this->relpath.string()
-               << "\"";
-    }
-
-
-    void Path::to_stream(std::ostream &stream) const
-    {
-        stream << this->context
-               << ":"
-               << this->relpath.string();
-    }
-
-    Path::operator bool() const noexcept
-    {
-        return this->context.size();
-    }
-
-    Path &Path::operator/=(const fs::path &relpath)
-    {
-        Path::check_relative(this->context, this->relpath / relpath);
-        this->relpath /= relpath;
-        return *this;
-    }
-
-    Path &Path::operator+=(const fs::path &relpath)
-    {
-        Path::check_relative(this->context, this->relpath / relpath);
-        this->relpath += relpath;
-        return *this;
-    }
-
-    bool Path::operator==(const Path &other) const
-    {
-        return (this->context == other.context) &&
-               (this->relpath == other.relpath);
-    }
-
-    Path operator/(const Path &lhs, const fs::path &rhs)
-    {
-        Path::check_relative(lhs.context, lhs.relpath / rhs);
-        return {lhs.context, lhs.relpath / rhs};
-    }
 
     //==========================================================================
     // Context methods
@@ -138,7 +58,7 @@ namespace platform::vfs
     void Context::check_jail(const fs::path &relpath) const
     {
         fs::path jail = fs::weakly_canonical(this->root);
-        fs::path provided = fs::weakly_canonical(this->root / relpath);
+        fs::path provided = fs::weakly_canonical(this->root / relpath.relative_path());
 
         auto it1 = jail.begin();
         auto it2 = provided.begin();
@@ -151,11 +71,11 @@ namespace platform::vfs
 
         if (it1 != jail.end())
         {
-            throw fs::filesystem_error(
-                "Virtual path would fall outside context root",
+            throw core::exception::FilesystemError(
+                std::make_error_code(std::errc::no_such_file_or_directory).value(),
                 this->name + ":" + relpath.string(),
                 provided,
-                std::make_error_code(std::errc::no_such_file_or_directory));
+                "Virtual path would fall outside context root");
         }
     }
 
@@ -230,6 +150,21 @@ namespace platform::vfs
         }
     }
 
+    void ContextProxy::check_modify_access() const
+    {
+        this->check_access(true);
+    }
+
+    fs::path ContextProxy::localPath(const fs::path &relpath) const
+    {
+        return (*this)->localPath(relpath);
+    }
+
+    Path ContextProxy::virtualPath(const fs::path &relpath) const
+    {
+        return (*this)->virtualPath(relpath);
+    }
+
     void ContextProxy::to_stream(std::ostream &stream) const
     {
         if (this->context)
@@ -246,18 +181,100 @@ namespace platform::vfs
         }
     }
 
+
+    // VolumeStats ContextProxy::volume_stats(
+    //     const fs::path &relpath,
+    //     const OperationFlags &flags) const
+    // {
+    //     return fs::space(this->localPath(relpath));
+    // }
+
+    // FileStats ContextProxy::file_stats(
+    //     const fs::path &relpath,
+    //     const OperationFlags &flags) const
+    // {
+    // }
+
+    // Directory ContextProxy::get_directory(
+    //     const fs::path &relpath,
+    //     const OperationFlags &flags) const
+    // {
+    // }
+
+    // Directory ContextProxy::locate(
+    //     const fs::path &relpath,
+    //     const std::vector<std::string> &filename_masks,
+    //     const core::types::TaggedValueList &attribute_filters,
+    //     const OperationFlags &flags) const
+    // {
+    // }
+
+    // void ContextProxy::copy_from(
+    //     const ContextProxy &other_context,
+    //     const fs::path &other_path,
+    //     const fs::path &this_path,
+    //     const OperationFlags &flags) const
+    // {
+    // }
+
+    // void ContextProxy::move_from(
+    //     const ContextProxy &other_context,
+    //     const fs::path &other_path,
+    //     const fs::path &this_path,
+    //     const OperationFlags &flags) const
+    // {
+    // }
+
+    // void ContextProxy::remove(
+    //     const fs::path &relpath,
+    //     const OperationFlags &flags) const
+    // {
+    // }
+
+    // void ContextProxy::create_folder(
+    //     const fs::path &relpath,
+    //     const OperationFlags &flags) const
+    // {
+    // }
+
+    // UniqueReader ContextProxy::read_file(
+    //     const fs::path &relpath) const
+    // {
+    // }
+
+    // UniqueWriter ContextProxy::write_file(
+    //     const fs::path &relpath) const
+    // {
+    // }
+
+    // core::types::KeyValueMap ContextProxy::get_attributes(
+    //     const fs::path &relpath) const
+    // {
+    // }
+
+    // void ContextProxy::set_attributes(
+    //     const fs::path &relpath,
+    //     const core::types::KeyValueMap &attributes) const
+    // {
+    // }
+
+    // void ContextProxy::clear_attributes(
+    //     const fs::path &relpath) const
+    // {
+    // }
+
     //==========================================================================
     // platform::vfs::ContextProxy methods
 
     Location::Location()
-        : ContextProxy()
+        : Super()
     {
     }
 
     Location::Location(Context::ptr ref,
                        const fs::path &relpath,
                        bool modify)
-        : ContextProxy(ref, modify),
+        : Super(ref, modify),
           relpath(relpath)
     {
         Path::check_relative(this->context->name, relpath);
@@ -265,48 +282,24 @@ namespace platform::vfs
 
     Location::Location(Context::ptr ref,
                        bool modify)
-        : ContextProxy(ref, modify)
+        : Super(ref, modify)
     {
     }
 
     Location::Location(const Location &other)
-        : ContextProxy(other),
+        : Super(other),
           relpath(other.relpath)
     {
     }
 
-    fs::path Location::localPath() const
-    {
-        if (this->context)
-        {
-            return this->context->localPath(this->relpath);
-        }
-        else
-        {
-            return {};
-        }
-    }
-
     fs::path Location::localPath(const fs::path &relpath) const
     {
-        if (this->context)
-        {
-            return this->context->localPath(this->relpath / relpath);
-        }
-        else
-        {
-            return {};
-        }
-    }
-
-    Path Location::virtualPath() const
-    {
-        return this->context->virtualPath(this->relpath);
+        return Super::localPath(this->relpath / relpath);
     }
 
     Path Location::virtualPath(const fs::path &relpath) const
     {
-        return this->context->virtualPath(this->relpath / relpath);
+        return Super::virtualPath(this->relpath / relpath);
     }
 
     void Location::to_stream(std::ostream &stream) const
@@ -318,37 +311,4 @@ namespace platform::vfs
                           this->modify);
     }
 
-    //========================================================================
-    // Output stream representations
-
-    std::ostream &operator<<(std::ostream &stream, const FileStats &stats)
-    {
-        core::types::PartsList parts;
-        parts.add("type", stats.type, true);
-        parts.add("size", stats.size, true, "%'d");
-        parts.add("link", stats.link, !stats.link.empty(), "%r");
-        parts.add("mode", stats.mode, true, "0%03o");
-        parts.add("readable", stats.readable, true, "%b");
-        parts.add("writable", stats.writable, true, "%b");
-        parts.add("uid", stats.uid, true, "%d");
-        parts.add("gid", stats.gid, true, "%d");
-        parts.add("owner", stats.owner, true, "%r");
-        parts.add("group", stats.group, true, "%r");
-        parts.add_value("accessTime", stats.accessTime, true, "%s");
-        parts.add_value("modifyTime", stats.modifyTime, true, "%s");
-        parts.add_value("createTime", stats.createTime, true, "%s");
-        parts.add_value("attributes", stats.attributes, true, "%s");
-        stream << parts;
-        return stream;
-    }
-
-    std::ostream &operator<<(std::ostream &stream, const VolumeStats &stats)
-    {
-        core::types::PartsList parts;
-        parts.add("capacity", stats.capacity, true, "%'d");
-        parts.add("free", stats.free, true, "%'d");
-        parts.add("available", stats.available, true, "%'d");
-        stream << parts;
-        return stream;
-    }
 }  // namespace platform::vfs

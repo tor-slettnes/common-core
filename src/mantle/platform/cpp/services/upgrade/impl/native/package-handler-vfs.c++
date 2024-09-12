@@ -27,7 +27,7 @@ namespace platform::upgrade::native
     PackageManifests VFSPackageHandler::scan()
     {
         logf_debug("Upgrade scan in VFS path: %r", this->vfs_path);
-        vfs::Location loc = vfs::location(this->vfs_path, false);
+        vfs::Location loc = vfs::vfs->location(this->vfs_path, false);
         fs::path required_extension(
             this->settings->get(SETTING_PACKAGE_SUFFIX, DEFAULT_PACKAGE_SUFFIX).as_string());
 
@@ -57,7 +57,7 @@ namespace platform::upgrade::native
             throw core::exception::MissingArgument("Missing package file");
         }
 
-        vfs::Location loc = vfs::location(this->vfs_path, false);
+        vfs::Location loc = vfs::vfs->location(this->vfs_path, false);
         this->emit_upgrade_progress(UpgradeProgress::STATE_UNPACKING);
         this->unpack_file(loc.localPath(filename), staging_folder);
     }

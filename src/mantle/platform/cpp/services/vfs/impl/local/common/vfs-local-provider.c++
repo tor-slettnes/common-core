@@ -103,7 +103,7 @@ namespace platform::vfs::local
     VolumeStats LocalProvider::volume_stats(const Path &vpath,
                                             const OperationFlags &flags) const
     {
-        Location loc = vfs::location(vpath, false);
+        Location loc = this->location(vpath, false);
         fs::path lpath = loc.localPath();
         return fs::space(lpath);
     }
@@ -111,7 +111,7 @@ namespace platform::vfs::local
     FileStats LocalProvider::file_stats(const Path &vpath,
                                         const OperationFlags &flags) const
     {
-        Location loc = vfs::location(vpath, false);
+        Location loc = this->location(vpath, false);
         fs::path lpath = loc.localPath();
         FileStats stats = this->read_stats(lpath, flags.dereference);
         if (flags.with_attributes)
@@ -124,7 +124,7 @@ namespace platform::vfs::local
     Directory LocalProvider::get_directory(const Path &vpath,
                                            const OperationFlags &flags) const
     {
-        Location loc = vfs::location(vpath, false);
+        Location loc = this->location(vpath, false);
         fs::path lpath = loc.localPath();
 
         Directory dir;
@@ -158,7 +158,7 @@ namespace platform::vfs::local
                                     const core::types::TaggedValueList &attributes,
                                     const OperationFlags &flags) const
     {
-        Location loc = vfs::location(root, false);
+        Location loc = this->location(root, false);
         Directory dir;
         LocalProvider::locate_inside(loc.localPath(),
                                      "",
@@ -181,8 +181,8 @@ namespace platform::vfs::local
                 "Multiple source paths require 'inside_target' option");
         }
 
-        LocationList srclocs = vfs::locations(sources, false);
-        Location tgtloc = vfs::location(target, true);
+        LocationList srclocs = this->locations(sources, false);
+        Location tgtloc = this->location(target, true);
 
         for (const Location &srcloc : srclocs)
         {
@@ -200,8 +200,8 @@ namespace platform::vfs::local
                 "Multiple source paths require 'inside_target' option");
         }
 
-        LocationList srclocs = vfs::locations(sources, false);
-        Location tgtloc = vfs::location(target, true);
+        LocationList srclocs = this->locations(sources, false);
+        Location tgtloc = this->location(target, true);
 
         for (const Location &srcloc : srclocs)
         {
@@ -212,7 +212,7 @@ namespace platform::vfs::local
     void LocalProvider::create_folder(const Path &vpath,
                                       const OperationFlags &flags) const
     {
-        Location loc = vfs::location(vpath, true);
+        Location loc = this->location(vpath, true);
         if (flags.force)
         {
             fs::create_directories(loc.localPath());
@@ -226,7 +226,7 @@ namespace platform::vfs::local
     void LocalProvider::remove(const Paths &sources,
                                const OperationFlags &flags) const
     {
-        for (const Location &loc : vfs::locations(sources, true))
+        for (const Location &loc : this->locations(sources, true))
         {
             LocalProvider::remove(loc, flags);
         }
@@ -234,12 +234,12 @@ namespace platform::vfs::local
 
     UniqueReader LocalProvider::read_file(const Path &vpath) const
     {
-        return std::make_unique<FileReader>(vfs::location(vpath, false));
+        return std::make_unique<FileReader>(this->location(vpath, false));
     }
 
     UniqueWriter LocalProvider::write_file(const Path &vpath) const
     {
-        return std::make_unique<FileWriter>(vfs::location(vpath, true));
+        return std::make_unique<FileWriter>(this->location(vpath, true));
     }
 
     void LocalProvider::addContext(const std::string &name, Context::ptr cxt)
@@ -304,7 +304,7 @@ namespace platform::vfs::local
 
     core::types::KeyValueMap LocalProvider::get_attributes(const Path &vpath) const
     {
-        Location loc = vfs::location(vpath, false);
+        Location loc = this->location(vpath, false);
         return this->get_attributes(loc.localPath());
     }
 
@@ -312,13 +312,13 @@ namespace platform::vfs::local
         const Path &vpath,
         const core::types::KeyValueMap &attributes) const
     {
-        Location loc = vfs::location(vpath, true);
+        Location loc = this->location(vpath, true);
         this->set_attributes(loc.localPath(), attributes);
     }
 
     void LocalProvider::clear_attributes(const Path &vpath) const
     {
-        Location loc = vfs::location(vpath, true);
+        Location loc = this->location(vpath, true);
         this->clear_attributes(loc.localPath());
     }
 
