@@ -72,10 +72,6 @@ namespace core::platform
         return path;
     }
 
-    fs::path WindowsPathProvider::readlink(const fs::path &path) const noexcept
-    {
-        return path;
-    }
 
     fs::path WindowsPathProvider::mktemp(const fs::path &folder,
                                          const std::string &prefix,

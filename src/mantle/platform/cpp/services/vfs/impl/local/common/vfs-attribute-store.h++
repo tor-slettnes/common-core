@@ -42,8 +42,8 @@ namespace platform::vfs::local
         void set_attributes(const core::types::KeyValueMap &map,
                             bool save = true);
 
-        void clear(const fs::path &basename = {},
-                   bool save = true);
+        void clear_attributes(const fs::path &basename = {},
+                              bool save = true);
 
     protected:
         void save(bool delta = true) override;

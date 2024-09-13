@@ -8,6 +8,7 @@
 #pragma once
 #include "vfs-types.h++"
 #include "vfs-context.h++"
+#include "vfs-location.h++"
 #include "vfs-signals.h++"
 
 namespace platform::vfs
@@ -47,54 +48,74 @@ namespace platform::vfs
     public:
         virtual ContextMap get_contexts() const = 0;
 
-        virtual ContextMap get_open_context() const = 0;
+        virtual ContextMap get_open_contexts() const = 0;
 
-        virtual Context::ptr get_context(const std::string &name,
-                                         bool required = true) const = 0;
+        virtual Context::ptr get_context(
+            const std::string &name,
+            bool required = true) const = 0;
 
-        virtual Context::ptr open_context(const std::string &name,
-                                          bool required = true) = 0;
+        virtual Context::ptr open_context(
+            const std::string &name,
+            bool required = true) = 0;
 
-        virtual void close_context(const Context::ptr &cxt) = 0;
+        virtual void close_context(
+            const std::string &name,
+            bool required = false) = 0;
 
-        virtual VolumeStats volume_stats(const Path &vpath,
-                                         const OperationFlags &flags) const = 0;
+        virtual void close_context(
+            const Context::ptr &cxt) = 0;
 
-        virtual FileStats file_stats(const Path &vpath,
-                                     const OperationFlags &flags) const = 0;
+        virtual VolumeStats volume_stats(
+            const Path &vpath,
+            const OperationFlags &flags) const = 0;
 
-        virtual Directory get_directory(const Path &vpath,
-                                        const OperationFlags &flags) const = 0;
+        virtual FileStats file_stats(
+            const Path &vpath,
+            const OperationFlags &flags) const = 0;
 
-        virtual Directory locate(const Path &vpath,
-                                 const std::vector<std::string> &filename_masks,
-                                 const core::types::TaggedValueList &attribute_filters,
-                                 const OperationFlags &flags) const = 0;
+        virtual Directory get_directory(
+            const Path &vpath,
+            const OperationFlags &flags) const = 0;
 
-        virtual void copy(const Paths &sources,
-                          const Path &target,
-                          const OperationFlags &flags) const = 0;
+        virtual Directory locate(
+            const Path &vpath,
+            const std::vector<std::string> &filename_masks,
+            const core::types::TaggedValueList &attribute_filters,
+            const OperationFlags &flags) const = 0;
 
-        virtual void move(const Paths &sources,
-                          const Path &target,
-                          const OperationFlags &flags) const = 0;
+        virtual void copy(
+            const Paths &sources,
+            const Path &target,
+            const OperationFlags &flags) const = 0;
 
-        virtual void remove(const Paths &sources,
-                            const OperationFlags &flags) const = 0;
+        virtual void move(
+            const Paths &sources,
+            const Path &target,
+            const OperationFlags &flags) const = 0;
 
-        virtual void create_folder(const Path &vpath,
-                                   const OperationFlags &flags) const = 0;
+        virtual void remove(
+            const Path &vpath,
+            const OperationFlags &flags) const = 0;
 
-        virtual UniqueReader read_file(const Path &vpath) const = 0;
+        virtual void create_folder(
+            const Path &vpath,
+            const OperationFlags &flags) const = 0;
 
-        virtual UniqueWriter write_file(const Path &vpath) const = 0;
+        virtual UniqueReader read_file(
+            const Path &vpath) const = 0;
 
-        virtual core::types::KeyValueMap get_attributes(const Path &vpath) const = 0;
+        virtual UniqueWriter write_file(
+            const Path &vpath) const = 0;
 
-        virtual void set_attributes(const Path &vpath,
-                                    const core::types::KeyValueMap &attributes) const = 0;
+        virtual core::types::KeyValueMap get_attributes(
+            const Path &vpath) const = 0;
 
-        virtual void clear_attributes(const Path &vpath) const = 0;
+        virtual void set_attributes(
+            const Path &vpath,
+            const core::types::KeyValueMap &attributes) const = 0;
+
+        virtual void clear_attributes(
+            const Path &vpath) const = 0;
     };
 
     //==========================================================================

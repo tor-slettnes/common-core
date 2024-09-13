@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "vfs-context.h++"
+#include "vfs-location.h++"
 #include <fstream>
 
 namespace platform::vfs::local

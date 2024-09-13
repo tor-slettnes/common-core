@@ -31,7 +31,7 @@ namespace platform::vfs::grpc
             const ::google::protobuf::Empty* request,
             ::cc::platform::vfs::ContextMap* response) override;
 
-        ::grpc::Status get_open_context(
+        ::grpc::Status get_open_contexts(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::platform::vfs::ContextMap* response) override;
@@ -65,11 +65,6 @@ namespace platform::vfs::grpc
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::PathRequest* request,
             ::cc::platform::vfs::Directory* response) override;
-
-        ::grpc::Status list(
-            ::grpc::ServerContext* context,
-            const ::cc::platform::vfs::PathRequest* request,
-            ::cc::platform::vfs::DirectoryList* response) override;
 
         ::grpc::Status locate(
             ::grpc::ServerContext* context,

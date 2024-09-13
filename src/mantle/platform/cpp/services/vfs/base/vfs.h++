@@ -240,11 +240,6 @@ namespace platform::vfs
         bool force = false,
         bool with_attributes = true);
 
-    void remove(
-        const Paths &sources,
-        bool force = false,
-        bool with_attributes = true);
-
     /// @fn create_folder
     /// @brief Create a new folder
     /// @param[in] loc

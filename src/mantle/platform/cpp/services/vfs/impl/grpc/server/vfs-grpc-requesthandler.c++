@@ -44,7 +44,7 @@ namespace platform::vfs::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_open_context(
+    ::grpc::Status RequestHandler::get_open_contexts(
         ::grpc::ServerContext *cxt,
         const protobuf::Empty *,
         ::cc::platform::vfs::ContextMap *response)
@@ -52,7 +52,7 @@ namespace platform::vfs::grpc
         try
         {
             protobuf::encode(
-                this->provider->get_open_context(),
+                this->provider->get_open_contexts(),
                 response);
 
             return ::grpc::Status::OK;
@@ -66,50 +66,50 @@ namespace platform::vfs::grpc
     // Get a single context's specification
     ::grpc::Status RequestHandler::get_context_spec(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *req,
-        ::cc::platform::vfs::ContextSpec *resp)
+        const ::cc::platform::vfs::Path *request,
+        ::cc::platform::vfs::ContextSpec *response)
     {
         try
         {
             protobuf::encode_shared(
-                this->provider->get_context(req->context(), true),
-                resp);
+                this->provider->get_context(request->context(), true),
+                response);
 
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
     ::grpc::Status RequestHandler::open_context(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *req,
-        ::cc::platform::vfs::ContextSpec *resp)
+        const ::cc::platform::vfs::Path *request,
+        ::cc::platform::vfs::ContextSpec *response)
     {
         try
         {
             protobuf::encode_shared(
-                this->provider->open_context(req->context(), true),
-                resp);
+                this->provider->open_context(request->context(), true),
+                response);
 
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
     ::grpc::Status RequestHandler::close_context(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *req,
+        const ::cc::platform::vfs::Path *request,
         protobuf::Empty *)
     {
         try
         {
-            if (auto c = this->provider->get_context(req->context(), false))
+            if (auto c = this->provider->get_context(request->context(), false))
             {
                 this->provider->close_context(c);
             }
@@ -117,87 +117,67 @@ namespace platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
     ::grpc::Status RequestHandler::volume_stats(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *req,
+        const ::cc::platform::vfs::PathRequest *request,
         ::cc::platform::vfs::VolumeStats *response)
     {
         try
         {
             platform::vfs::Path vpath;
             platform::vfs::OperationFlags flags;
-            protobuf::decode(*req, &vpath, nullptr, &flags);
+            protobuf::decode(*request, &vpath, &flags);
             platform::vfs::VolumeStats vstat = this->provider->volume_stats(vpath, flags);
             protobuf::encode(vstat, response);
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
     ::grpc::Status RequestHandler::file_stats(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *req,
+        const ::cc::platform::vfs::PathRequest *request,
         ::cc::platform::vfs::FileStats *response)
     {
         try
         {
             platform::vfs::Path vpath;
             platform::vfs::OperationFlags flags;
-            protobuf::decode(*req, &vpath, nullptr, &flags);
+            protobuf::decode(*request, &vpath, &flags);
             platform::vfs::FileStats stat = this->provider->file_stats(vpath, flags);
             protobuf::encode(stat, response);
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
     ::grpc::Status RequestHandler::get_directory(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *req,
-        ::cc::platform::vfs::Directory *resp)
+        const ::cc::platform::vfs::PathRequest *request,
+        ::cc::platform::vfs::Directory *response)
     {
         try
         {
             platform::vfs::Path vpath;
             platform::vfs::OperationFlags flags;
-            protobuf::decode(*req, &vpath, nullptr, &flags);
+            protobuf::decode(*request, &vpath, &flags);
             platform::vfs::Directory dir = this->provider->get_directory(vpath, flags);
-            protobuf::encode(dir, resp);
+            protobuf::encode(dir, response);
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
-        }
-    }
-
-    ::grpc::Status RequestHandler::list(
-        ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *req,
-        ::cc::platform::vfs::DirectoryList *resp)
-    {
-        try
-        {
-            platform::vfs::Path vpath;
-            platform::vfs::OperationFlags flags;
-            protobuf::decode(*req, &vpath, nullptr, &flags);
-            platform::vfs::Directory dir = this->provider->get_directory(vpath, flags);
-            protobuf::encode(dir, resp);
-            return ::grpc::Status::OK;
-        }
-        catch (...)
-        {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
@@ -231,7 +211,7 @@ namespace platform::vfs::grpc
 
     ::grpc::Status RequestHandler::copy(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *req,
+        const ::cc::platform::vfs::PathRequest *request,
         protobuf::Empty *)
     {
         try
@@ -239,19 +219,19 @@ namespace platform::vfs::grpc
             platform::vfs::Paths sources;
             platform::vfs::Path target;
             platform::vfs::OperationFlags flags;
-            protobuf::decode(*req, &sources, &target, &flags);
+            protobuf::decode(*request, &sources, &target, &flags);
             this->provider->copy(sources, target, flags);
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
     ::grpc::Status RequestHandler::move(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *req,
+        const ::cc::platform::vfs::PathRequest *request,
         protobuf::Empty *)
     {
         try
@@ -259,69 +239,68 @@ namespace platform::vfs::grpc
             platform::vfs::Paths sources;
             platform::vfs::Path target;
             platform::vfs::OperationFlags flags;
-            protobuf::decode(*req, &sources, &target, &flags);
+            protobuf::decode(*request, &sources, &target, &flags);
             this->provider->move(sources, target, flags);
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
     ::grpc::Status RequestHandler::remove(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *req,
+        const ::cc::platform::vfs::PathRequest *request,
         protobuf::Empty *)
     {
         try
         {
-            platform::vfs::Paths sources;
+            platform::vfs::Path vpath;
             platform::vfs::OperationFlags flags;
-            protobuf::decode(*req, &sources, nullptr, &flags);
-            this->provider->remove(sources, flags);
+            protobuf::decode(*request, &vpath, &flags);
+            this->provider->remove(vpath, flags);
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
     ::grpc::Status RequestHandler::create_folder(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *req,
+        const ::cc::platform::vfs::PathRequest *request,
         protobuf::Empty *)
     {
         try
         {
-            platform::vfs::Paths sources;
-            platform::vfs::Path target;
+            platform::vfs::Path vpath;
             platform::vfs::OperationFlags flags;
-            protobuf::decode(*req, &sources, &target, &flags);
-            this->provider->create_folder(target, flags);
+            protobuf::decode(*request, &vpath, &flags);
+            this->provider->create_folder(vpath, flags);
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
     ::grpc::Status RequestHandler::read_file(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *req,
+        const ::cc::platform::vfs::Path *request,
         ::grpc::ServerWriter<::cc::platform::vfs::FileChunk> *writer)
     {
         try
         {
-            Path vpath = protobuf::decoded<Path>(*req);
+            Path vpath = protobuf::decoded<Path>(*request);
             UniqueReader reader = this->provider->read_file(vpath);
             reader->exceptions(std::ios::badbit);
 
             //char buf[protobuf::chunksize];
             ::cc::platform::vfs::FileChunk chunk;
-            chunk.mutable_path()->CopyFrom(*req);
+            chunk.mutable_path()->CopyFrom(*request);
             uint chunks = 0;
             std::streamsize total = 0;
             while (reader->peek() != std::char_traits<char>::eof())
@@ -344,7 +323,7 @@ namespace platform::vfs::grpc
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
@@ -382,53 +361,54 @@ namespace platform::vfs::grpc
 
     ::grpc::Status RequestHandler::get_attributes(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *req,
-        ::cc::variant::ValueList *resp)
+        const ::cc::platform::vfs::Path *request,
+        ::cc::variant::ValueList *response)
     {
         try
         {
-            Path vpath = protobuf::decoded<Path>(*req);
-            core::types::KeyValueMap attributes = this->provider->get_attributes(vpath);
-            protobuf::encode(attributes, resp);
+            protobuf::encode(
+                this->provider->get_attributes(
+                    protobuf::decoded<Path>(*request)),
+                response);
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
     ::grpc::Status RequestHandler::set_attributes(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::AttributeRequest *req,
+        const ::cc::platform::vfs::AttributeRequest *request,
         protobuf::Empty *)
     {
         try
         {
             this->provider->set_attributes(
-                protobuf::decoded<Path>(req->path()),
-                protobuf::decoded<core::types::KeyValueMap>(req->attributes()));
+                protobuf::decoded<Path>(request->path()),
+                protobuf::decoded<core::types::KeyValueMap>(request->attributes()));
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 
     ::grpc::Status RequestHandler::clear_attributes(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *req,
+        const ::cc::platform::vfs::Path *request,
         protobuf::Empty *)
     {
         try
         {
-            this->provider->clear_attributes(protobuf::decoded<Path>(*req));
+            this->provider->clear_attributes(protobuf::decoded<Path>(*request));
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(), *req, cxt->peer());
+            return this->failure(std::current_exception(), *request, cxt->peer());
         }
     }
 

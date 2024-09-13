@@ -20,14 +20,14 @@ service VirtualFileSystem
     rpc get_contexts (google.protobuf.Empty) returns (ContextMap);
 
     // List open virtual filesystem contexts.
-    rpc get_open_context (google.protobuf.Empty) returns (ContextMap);
+    rpc get_open_contexts (google.protobuf.Empty) returns (ContextMap);
 
     // List known virtual filesystem contexts.
     rpc get_context_spec (Path) returns (ContextSpec);
 
     // Explicitly open a virtual context. Internally this increments a reference
     // counter to keep the corresponding virtual filesystem context (VFC) open.
-    // For instance, in the case of a removable or remote drive, the drive will
+    // For instance, in the case of a removable or remote drive the drive will
     // remain mounted, thereby eliminating overhead associated with
     // mounting/unmounting for individual file transactions.
     //
@@ -40,37 +40,37 @@ service VirtualFileSystem
     // context (e.g. unmounts) if it reaches zero.
     rpc close_context (Path) returns (google.protobuf.Empty);
 
-    // Return information about mounted filesystem containing source path.
+    // Return information about the mounted filesystem containing the specified path.
     rpc volume_stats (PathRequest) returns (VolumeStats);
 
-    // Return status of specified source paths.
-    // Unlike `listPath()` this does not descent into folders.
+    // Return status of specified path.
+    // Unlike `list_folder()` this does not descend if the path is a folder,
+    // but rather returns the status of the folder itself.
     rpc file_stats (PathRequest) returns (FileStats);
 
-    // List contents of the specified source path (context/folder).
-    // Deprecated; please use get_directory instead.
+    // List contents of the specified path (context/folder).
     rpc get_directory (PathRequest) returns (Directory);
-
-    // List contents of the specified source path (context/folder).
-    // Deprecated; please use get_directory instead.
-    rpc list (PathRequest) returns (DirectoryList);
 
     /// Recursively locate files matching specific filename and/or attribute patterns.
     rpc locate (LocateRequest) returns (Directory);
 
-    // Copy `source` to `target`
+    // Copy files or folders into the specified target path from each `source` path.
+    // If multiple sources are specified, `inside_target` must be set to indicate
+    // that the target `path` represents a folder.
     rpc copy (PathRequest) returns (google.protobuf.Empty);
 
-    // Move `source` to `target`
+    // Copy files or folders into the specified target path from each `source` path.
+    // If multiple sources are specified, `inside_target` must be set to indicate
+    // that the target `path` represents a folder.
     rpc move (PathRequest) returns (google.protobuf.Empty);
 
-    // Create `target` folder
+    // Create a folder
     rpc create_folder (PathRequest) returns (google.protobuf.Empty);
 
-    // Remove `source` path(s).
+    // Remove the specified file or folder.
     rpc remove (PathRequest) returns (google.protobuf.Empty);
 
-    // Read the specified file, and return its contents in chunks.
+    // Read the specified file, and stream its contents in chunks.
     rpc read_file (Path) returns (stream FileChunk);
 
     // Write to a file in chunks. The path must be specified with the first chunk.
@@ -143,13 +143,13 @@ message Path
 
 message PathRequest
 {
-    // Source path(s). We expect that these already exist.
-    repeated Path source = 1;
+    // Target path for filesystem operations.
+    Path path = 2;
 
-    // Target path for move/copy/create_folder. We expect to create/replace this.
-    Path target = 2;
+    // Source path for `move()` and `copy()`.
+    repeated Path sources = 3;
 
-    // Enables the following behaviors:
+    // Enables the following behaviors, rather than failing:
     //   - Recursively copy/move/remove a folder and its children
     //   - Replaces an existing target regardless of type
     //   - Copies metadata from source, even if replacing existing target
@@ -162,7 +162,7 @@ message PathRequest
     bool dereference = 5;
 
     // Merge rather than replace an existing target folder.
-    // Effective only if both `source` and `target` are folders.
+    // Effective only if `path` and all `sources` are folders.
     bool merge = 6;
 
     // Update only; only copy if target does not exist or is older than source.
@@ -174,12 +174,13 @@ message PathRequest
     // Include hidden files in directory list
     bool include_hidden = 9;
 
-    // Indicates that `target` is not the final target path, but an existing
+    // Indicates that `target` is not the final target path, but a
     // parent folder into which the source path(s) will be copied/moved.
     // copy()/move() require this option if there is more than one source.
     bool inside_target = 10;
-
 }
+
+
 
 
 message LocateRequest
@@ -188,7 +189,7 @@ message LocateRequest
     Path root = 1;
 
     // Zero or more glob-style filename masks, e.g., `*.txt`.
-    repeated string filename_mask = 2;
+    repeated string filename_masks = 2;
 
     // Zero or more tag/value pairs to match.
     // Tags may be repeated for cumulative value matches.
@@ -203,8 +204,6 @@ message LocateRequest
     // Ignore case in filename
     bool ignore_case = 10;
 }
-
-
 
 message FileStats
 {
@@ -229,11 +228,6 @@ message FileStats
 message Directory
 {
     map<string, FileStats> map = 1;
-}
-
-message DirectoryList
-{
-    repeated FileStats entry = 1;
 }
 
 message AttributeRequest

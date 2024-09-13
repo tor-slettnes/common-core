@@ -9,7 +9,6 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
-#include "vfs-remote-context.h++"
 #include "status/exceptions.h++"
 
 #include <unordered_map>
@@ -122,17 +121,6 @@ namespace protobuf
         }
     }
 
-    void decode(const ::cc::platform::vfs::ContextMap &msg,
-                ::platform::vfs::ContextMap *map)
-    {
-        for (const auto &[id, data] : msg.map())
-        {
-            map->insert_or_assign(
-                id,
-                protobuf::decode_shared<::platform::vfs::RemoteContext>(data));
-        }
-    }
-
     //==========================================================================
     // Path
 
@@ -153,12 +141,12 @@ namespace protobuf
     //==========================================================================
     // PathRequest
 
-    void encode(const ::platform::vfs::Path &source,
-                const ::platform::vfs::Path &target,
+    void encode(const ::platform::vfs::Path &vpath,
                 const ::platform::vfs::OperationFlags &flags,
                 ::cc::platform::vfs::PathRequest *msg)
     {
-        encode(::platform::vfs::Paths({source}), target, flags, msg);
+        encode(vpath, msg->mutable_path());
+        encode(flags, msg);
     }
 
     void encode(const ::platform::vfs::Paths &sources,
@@ -166,29 +154,16 @@ namespace protobuf
                 const ::platform::vfs::OperationFlags &flags,
                 ::cc::platform::vfs::PathRequest *msg)
     {
-        for (const ::platform::vfs::Path &source : sources)
-        {
-            encode(source, msg->add_source());
-        }
-        encode(target, msg->mutable_target());
-        encode(flags, msg);
+        encode_vector(sources, msg->mutable_sources());
+        encode(target, flags, msg);
     }
 
     void decode(const ::cc::platform::vfs::PathRequest &msg,
-                ::platform::vfs::Path *source,
-                ::platform::vfs::Path *target,
+                ::platform::vfs::Path *vpath,
                 ::platform::vfs::OperationFlags *flags)
     {
-        if (msg.source_size() != 1)
-        {
-            throw core::exception::InvalidArgument("Exactly one source path is required");
-        }
-        else
-        {
-            ::platform::vfs::Paths sources;
-            decode(msg, &sources, target, flags);
-            *source = sources.front();
-        }
+        decode(msg.path(), vpath);
+        decode(msg, flags);
     }
 
     void decode(const ::cc::platform::vfs::PathRequest &msg,
@@ -196,21 +171,8 @@ namespace protobuf
                 ::platform::vfs::Path *target,
                 ::platform::vfs::OperationFlags *flags)
     {
-        sources->clear();
-        for (const ::cc::platform::vfs::Path &source : msg.source())
-        {
-            decode(source, &sources->emplace_back());
-        }
-
-        if (target != nullptr)
-        {
-            decode(msg.target(), target);
-        }
-
-        if (flags != nullptr)
-        {
-            decode(msg, flags);
-        }
+        decode_to_vector(msg.sources(), sources);
+        decode(msg, target, flags);
     }
 
     //==========================================================================
@@ -223,10 +185,7 @@ namespace protobuf
                 ::cc::platform::vfs::LocateRequest *msg)
     {
         encode(root, msg->mutable_root());
-        for (const std::string &mask : filename_masks)
-        {
-            msg->add_filename_mask(mask);
-        }
+        assign_repeated(filename_masks, msg->mutable_filename_masks());
         encode(attribute_filters, msg->mutable_attribute_filter());
         msg->set_with_attributes(flags.with_attributes);
         msg->set_include_hidden(flags.include_hidden);
@@ -240,12 +199,7 @@ namespace protobuf
                 ::platform::vfs::OperationFlags *flags)
     {
         decode(msg.root(), root);
-        filename_masks->clear();
-        filename_masks->reserve(msg.filename_mask_size());
-        for (const std::string &mask : msg.filename_mask())
-        {
-            filename_masks->push_back(mask);
-        }
+        assign_to_vector(msg.filename_masks(), filename_masks);
         decode(msg.attribute_filter(), attribute_filters);
         flags->with_attributes = msg.with_attributes();
         flags->include_hidden = msg.include_hidden();
@@ -260,12 +214,7 @@ namespace protobuf
                 ::cc::platform::vfs::AttributeRequest *msg)
     {
         encode(vpath, msg->mutable_path());
-        for (auto it = attributes.begin(); it != attributes.end(); it++)
-        {
-            cc::variant::Value *tv = msg->add_attributes();
-            tv->set_tag(it->first);
-            encode(it->second, tv);
-        }
+        encode(attributes, msg->mutable_attributes());
     }
 
     void decode(const ::cc::platform::vfs::AttributeRequest &msg,
@@ -375,27 +324,6 @@ namespace protobuf
             {
                 decode(stats, &(*dir)[filename]);
             }
-        }
-    }
-
-    //==========================================================================
-    // DirectoryList
-
-    void encode(const ::platform::vfs::Directory &dir,
-                ::cc::platform::vfs::DirectoryList *msg)
-    {
-        for (const auto &[filename, stats] : dir)
-        {
-            encode(filename, stats, msg->add_entry());
-        }
-    }
-
-    void decode(const ::cc::platform::vfs::DirectoryList &msg,
-                ::platform::vfs::Directory *dir)
-    {
-        for (const ::cc::platform::vfs::FileStats &entry : msg.entry())
-        {
-            decode(entry, &(*dir)[entry.name()]);
         }
     }
 }  // namespace protobuf

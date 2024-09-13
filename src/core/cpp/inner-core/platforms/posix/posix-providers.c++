@@ -10,6 +10,7 @@
 #include "posix-logsink.h++"
 #include "posix-process.h++"
 #include "posix-serialport.h++"
+#include "posix-user.h++"
 
 namespace core::platform
 {
@@ -20,10 +21,12 @@ namespace core::platform
         logsink.registerProvider<PosixLogSinkProvider>(exec_name);
         process.registerProvider<PosixProcessProvider>();
         serialport.registerProvider<PosixSerialPortProvider>();
+        user.registerProvider<PosixUserProvider>();
     }
 
     void unregister_posix_providers()
     {
+        user.unregisterProvider<PosixUserProvider>();
         serialport.unregisterProvider<PosixSerialPortProvider>();
         process.unregisterProvider<PosixProcessProvider>();
         logsink.unregisterProvider<PosixLogSinkProvider>();

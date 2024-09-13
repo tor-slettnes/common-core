@@ -47,13 +47,13 @@ namespace platform::vfs::grpc
         }
         else
         {
-            return protobuf::decoded<ContextMap>(
-                this->client->call_check("vfs::get_contexts",
-                                         &Client::Stub::get_contexts));
+            return this->context_map(
+                this->client->call_check(
+                    &Client::Stub::get_contexts));
         }
     }
 
-    ContextMap ClientProvider::get_open_context() const
+    ContextMap ClientProvider::get_open_contexts() const
     {
         if (this->get_use_cached())
         {
@@ -61,13 +61,15 @@ namespace platform::vfs::grpc
         }
         else
         {
-            return protobuf::decoded<ContextMap>(
-                this->client->call_check("vfs::get_open_context",
-                                         &Client::Stub::get_open_context));
+            return this->context_map(
+                this->client->call_check(
+                    &Client::Stub::get_open_contexts));
         }
     }
 
-    Context::ptr ClientProvider::get_context(const std::string &name, bool required) const
+    Context::ptr ClientProvider::get_context(
+        const std::string &name,
+        bool required) const
     {
         Context::ptr cxt;
         if (this->get_use_cached())
@@ -88,9 +90,9 @@ namespace platform::vfs::grpc
             try
             {
                 cxt = protobuf::decode_shared<RemoteContext>(
-                    this->client->call_check("vfs::get_context_spec",
-                                             &Client::Stub::get_context_spec,
-                                             request));
+                    this->client->call_check(
+                        &Client::Stub::get_context_spec,
+                        request));
             }
             catch (...)
             {
@@ -103,16 +105,18 @@ namespace platform::vfs::grpc
         return cxt;
     }
 
-    Context::ptr ClientProvider::open_context(const std::string &name, bool required)
+    Context::ptr ClientProvider::open_context(
+        const std::string &name,
+        bool required)
     {
         cc::platform::vfs::Path request;
         request.set_context(name);
         try
         {
             return protobuf::decode_shared<RemoteContext>(
-                this->client->call_check("vfs::open_context",
-                                         &Client::Stub::open_context,
-                                         request));
+                this->client->call_check(
+                    &Client::Stub::open_context,
+                    request));
         }
         catch (...)
         {
@@ -127,141 +131,161 @@ namespace platform::vfs::grpc
         }
     }
 
-    void ClientProvider::close_context(const Context::ptr &cxt)
+    void ClientProvider::close_context(
+        const std::string &name,
+        bool required)
     {
-        if (cxt)
+        cc::platform::vfs::Path request;
+        request.set_context(name);
+        try
         {
-            cc::platform::vfs::Path request;
-            request.set_context(cxt->name);
-
-            try
+            this->client->call_check(&Client::Stub::close_context, request);
+        }
+        catch (...)
+        {
+            logf_info("Failed to close context %r: %r", name, std::current_exception());
+            if (required)
             {
-                this->client->call_check("vfs::close_context",
-                                         &Client::Stub::close_context,
-                                         request);
-            }
-            catch (const std::exception &e)
-            {
-                logf_notice("Failed to close context %r: %r", cxt->name, e);
+                throw;
             }
         }
     }
 
-    VolumeStats ClientProvider::volume_stats(const Path &vpath,
-                                             const OperationFlags &flags) const
+    void ClientProvider::close_context(
+        const Context::ptr &cxt)
+    {
+        this->close_context(cxt->name, false);
+    }
+
+    VolumeStats ClientProvider::volume_stats(
+        const Path &vpath,
+        const OperationFlags &flags) const
     {
         return protobuf::decoded<VolumeStats>(
             this->client->call_check(
-                "vfs::volume_stats",
                 &Client::Stub::volume_stats,
-                protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, nullpath, flags)));
+                protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, flags)));
     }
 
-    FileStats ClientProvider::file_stats(const Path &vpath,
-                                         const OperationFlags &flags) const
+    FileStats ClientProvider::file_stats(
+        const Path &vpath,
+        const OperationFlags &flags) const
     {
         return protobuf::decoded<FileStats>(
             this->client->call_check(
-                "vfs::file_stats",
                 &Client::Stub::file_stats,
-                protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, nullpath, flags)));
+                protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, flags)));
     }
 
-    Directory ClientProvider::get_directory(const Path &vpath,
-                                            const OperationFlags &flags) const
+    Directory ClientProvider::get_directory(
+        const Path &vpath,
+        const OperationFlags &flags) const
     {
         return protobuf::decoded<Directory>(
             this->client->call_check(
-                "vfs::get_directory",
                 &Client::Stub::get_directory,
-                protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, nullpath, flags)));
+                protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, flags)));
     }
 
-    Directory ClientProvider::locate(const Path &root,
-                                     const std::vector<std::string> &filename_masks,
-                                     const core::types::TaggedValueList &attribute_filters,
-                                     const OperationFlags &flags) const
+    Directory ClientProvider::locate(
+        const Path &root,
+        const std::vector<std::string> &filename_masks,
+        const core::types::TaggedValueList &attribute_filters,
+        const OperationFlags &flags) const
     {
         return protobuf::decoded<Directory>(
             this->client->call_check(
-                "vfs::locate",
                 &Client::Stub::locate,
                 protobuf::encoded<cc::platform::vfs::LocateRequest>(
                     root, filename_masks, attribute_filters, flags)));
     }
 
-    void ClientProvider::copy(const Paths &sources,
-                              const Path &target,
-                              const OperationFlags &flags) const
+    void ClientProvider::copy(
+        const Paths &sources,
+        const Path &target,
+        const OperationFlags &flags) const
     {
         this->client->call_check(
-            "vfs::copy",
             &Client::Stub::copy,
             protobuf::encoded<cc::platform::vfs::PathRequest>(sources, target, flags));
     }
 
-    void ClientProvider::move(const Paths &sources,
-                              const Path &target,
-                              const OperationFlags &flags) const
+    void ClientProvider::move(
+        const Paths &sources,
+        const Path &target,
+        const OperationFlags &flags) const
     {
         this->client->call_check(
-            "vfs::move",
             &Client::Stub::move,
             protobuf::encoded<cc::platform::vfs::PathRequest>(sources, target, flags));
     }
 
-    void ClientProvider::remove(const Paths &sources,
-                                const OperationFlags &flags) const
+    void ClientProvider::remove(
+        const Path &vpath,
+        const OperationFlags &flags) const
     {
         this->client->call_check(
-            "vfs::remove",
             &Client::Stub::remove,
-            protobuf::encoded<cc::platform::vfs::PathRequest>(sources, nullpath, flags));
+            protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, flags));
     }
 
-    void ClientProvider::create_folder(const Path &vpath,
-                                       const OperationFlags &flags) const
+    void ClientProvider::create_folder(
+        const Path &vpath,
+        const OperationFlags &flags) const
     {
         this->client->call_check(
-            "vfs::create_folder",
             &Client::Stub::create_folder,
-            protobuf::encoded<cc::platform::vfs::PathRequest>(nullpath, vpath, flags));
+            protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, flags));
     }
 
-    UniqueReader ClientProvider::read_file(const Path &vpath) const
+    UniqueReader ClientProvider::read_file(
+        const Path &vpath) const
     {
         return std::make_unique<ClientInputStream>(this->client->stub, vpath);
     }
 
-    UniqueWriter ClientProvider::write_file(const Path &vpath) const
+    UniqueWriter ClientProvider::write_file(
+        const Path &vpath) const
     {
         return std::make_unique<ClientOutputStream>(this->client->stub, vpath);
     }
 
-    core::types::KeyValueMap ClientProvider::get_attributes(const Path &vpath) const
+    core::types::KeyValueMap ClientProvider::get_attributes(
+        const Path &vpath) const
     {
         return protobuf::decoded<core::types::KeyValueMap>(
             this->client->call_check(
-                "vfs::get_attributes",
                 &Client::Stub::get_attributes,
                 protobuf::encoded<cc::platform::vfs::Path>(vpath)));
     }
 
-    void ClientProvider::set_attributes(const Path &vpath,
-                                        const core::types::KeyValueMap &attributes) const
+    void ClientProvider::set_attributes(
+        const Path &vpath,
+        const core::types::KeyValueMap &attributes) const
     {
         this->client->call_check(
-            "vfs::set_attributes",
             &Client::Stub::set_attributes,
             protobuf::encoded<cc::platform::vfs::AttributeRequest>(vpath, attributes));
     }
 
-    void ClientProvider::clear_attributes(const Path &vpath) const
+    void ClientProvider::clear_attributes(
+        const Path &vpath) const
     {
         this->client->call_check(
-            "vfs::clear_attributes",
             &Client::Stub::clear_attributes,
             protobuf::encoded<cc::platform::vfs::Path>(vpath));
     }
 
+    ContextMap ClientProvider::context_map(
+        const ::cc::platform::vfs::ContextMap &msg) const
+    {
+        ContextMap map;
+        for (const auto &[id, data] : msg.map())
+        {
+            auto cxt = RemoteContext::create_shared(this->client);
+            protobuf::decode(data, cxt.get());
+            map.insert_or_assign(id, cxt);
+        }
+        return map;
+    }
 }  // namespace platform::vfs::grpc

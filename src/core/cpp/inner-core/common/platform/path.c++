@@ -157,6 +157,44 @@ namespace core::platform
         }
     }
 
+    FileStats PathProvider::readstats(const fs::path &path,
+                                      bool dereference) const noexcept
+    {
+        std::error_code ec;
+        fs::file_status status =
+            dereference ? fs::symlink_status(path, ec)
+                        : fs::status(path, ec);
+
+        std::size_t size =
+            fs::is_regular_file(status) ? fs::file_size(path, ec)
+                                        : 0;
+
+        // core::dt::TimePoint last_write_time =
+        //     fs::to_sys(fs::last_write_time(localpath));
+
+        return {
+            .type = status.type(),
+            .size = size,
+            .link = core::platform::path->readlink(path),
+            .mode = 0,
+            .readable = ::access(path.c_str(), R_OK) == 0,
+            .writable = ::access(path.c_str(), W_OK) == 0,
+            // .uid = 0,
+            // .gid = 0,
+            // .owner = "",
+            // .group = "",
+            // .accessTime = {},
+            // .modfiyTime = {},
+            // .createTime = {},
+            // .attributes = {}
+        };
+    }
+
+    fs::path PathProvider::readlink(const fs::path &path) const noexcept
+    {
+        return {};
+    }
+
     types::ByteVector PathProvider::readdata(const fs::path &path,
                                              ssize_t maxsize) const noexcept
     {

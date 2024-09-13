@@ -43,8 +43,6 @@ namespace protobuf
 
     void encode(const ::platform::vfs::ContextMap &list,
                 ::cc::platform::vfs::ContextMap *msg);
-    void decode(const ::cc::platform::vfs::ContextMap &msg,
-                ::platform::vfs::ContextMap *list);
 
     //==========================================================================
     // Path
@@ -58,8 +56,7 @@ namespace protobuf
     //==========================================================================
     // PathRequest
 
-    void encode(const ::platform::vfs::Path &source,
-                const ::platform::vfs::Path &target,
+    void encode(const ::platform::vfs::Path &path,
                 const ::platform::vfs::OperationFlags &flags,
                 ::cc::platform::vfs::PathRequest *msg);
 
@@ -69,8 +66,7 @@ namespace protobuf
                 ::cc::platform::vfs::PathRequest *msg);
 
     void decode(const ::cc::platform::vfs::PathRequest &msg,
-                ::platform::vfs::Path *source,
-                ::platform::vfs::Path *target,
+                ::platform::vfs::Path *path,
                 ::platform::vfs::OperationFlags *flags);
 
     void decode(const ::cc::platform::vfs::PathRequest &msg,
@@ -135,12 +131,4 @@ namespace protobuf
     void decode(const ::cc::platform::vfs::Directory &msg,
                 ::platform::vfs::Directory *dir);
 
-    //==========================================================================
-    // DirectoryList (legacy API)
-
-    void encode(const ::platform::vfs::Directory &dir,
-                ::cc::platform::vfs::DirectoryList *msg);
-
-    void decode(const ::cc::platform::vfs::DirectoryList &msg,
-                ::platform::vfs::Directory *dir);
 }  // namespace protobuf

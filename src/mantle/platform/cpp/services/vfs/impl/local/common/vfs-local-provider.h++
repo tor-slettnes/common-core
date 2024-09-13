@@ -37,13 +37,10 @@ namespace platform::vfs::local
 
     public:
         ContextMap get_contexts() const override;
-
-        ContextMap get_open_context() const override;
-
+        ContextMap get_open_contexts() const override;
         Context::ptr get_context(const std::string &name, bool required) const override;
-
         Context::ptr open_context(const std::string &name, bool required) override;
-
+        void close_context(const std::string &name, bool required) override;
         void close_context(const Context::ptr &cxt) override;
 
         VolumeStats volume_stats(const Path &vpath,
@@ -68,7 +65,7 @@ namespace platform::vfs::local
                   const Path &target,
                   const OperationFlags &flags) const override;
 
-        void remove(const Paths &sources,
+        void remove(const Path &vpath,
                     const OperationFlags &flags) const override;
 
         void create_folder(const Path &vpath,

@@ -12,6 +12,8 @@ namespace core::platform
 {
     using UID = std::uint32_t;
     using GID = std::uint32_t;
+    using UserName = std::string;
+    using GroupName = std::string;
 
     /// @brief Abstract provider for user-related functions
     class UserProvider : public Provider
@@ -20,6 +22,10 @@ namespace core::platform
 
     protected:
         using Super::Super;
+
+    public:
+        virtual UserName get_username(UID uid) const = 0;
+        virtual GroupName get_groupname(GID gid) const = 0;
     };
 
     /// Global instance, populated with the "best" provider for this system.

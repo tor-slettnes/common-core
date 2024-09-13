@@ -15,7 +15,6 @@ set(LIB_DEPS
 
 set(SOURCES
   protobuf-vfs-types.c++
-  vfs-remote-context.c++
 )
 
 BuildLibrary("${TARGET}"

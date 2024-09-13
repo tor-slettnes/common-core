@@ -11,6 +11,7 @@
 #include "types/bytevector.h++"
 #include "types/filesystem.h++"
 #include "types/platform.h++"
+#include "user.h++"
 
 #include <iostream>
 #include <filesystem>
@@ -19,9 +20,34 @@
 /// Default filesystem paths.
 namespace core::platform
 {
+    //==========================================================================
+    // File information
+
     using FileMode = std::uint32_t;
 
+    struct FileStats
+    {
+        fs::file_type type = fs::file_type::none;          // regular, directory, etc..
+        std::size_t size = 0;                              // Size in bytes
+        fs::path link;                                     // Target for symbolic links
+        FileMode mode = 0;                                 // UNIX mode mask
+        bool readable = false;                             // Readable file/listable directory
+        bool writable = false;                             // Writable file/modifiable directory
+        UID uid = 0;                                       // Owner numeric ID
+        GID gid = 0;                                       // Group numeric ID
+        std::string owner;                                 // Owner name
+        std::string group;                                 // Group name
+        std::chrono::system_clock::time_point accessTime;  // Last access
+        std::chrono::system_clock::time_point modifyTime;  // Last modification
+        std::chrono::system_clock::time_point createTime;  // Creation
+    };
+
+    std::ostream &operator<<(std::ostream &stream, const FileStats &stats);
+
+    //==========================================================================
+    /// @class PathProvider
     /// @brief Abstract provider for path-related functions
+
     class PathProvider : public Provider
     {
         using Super = Provider;
@@ -131,8 +157,11 @@ namespace core::platform
         ///     Obtain folder for log files.
         fs::path log_folder() const noexcept;
 
+        virtual FileStats readstats(const fs::path &path,
+                                    bool dereference) const noexcept;
+
         /// Obtain the target of a symbolic link
-        virtual fs::path readlink(const fs::path &path) const noexcept = 0;
+        virtual fs::path readlink(const fs::path &path) const noexcept;
 
         /// @brief  Return the binary content of the specified file, up to the specified maximum.
         virtual types::ByteVector readdata(const fs::path &path,

@@ -24,6 +24,7 @@ set(SOURCES
   posix-serialport.c++
   posix-symbols.c++
   posix-timezone.c++
+  posix-user.c++
 )
 
 ### Build library

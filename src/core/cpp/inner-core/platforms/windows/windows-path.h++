@@ -27,7 +27,6 @@ namespace core::platform
         fs::path default_data_folder() const noexcept override;
         fs::path default_log_folder() const noexcept override;
         fs::path exec_path() const noexcept override;
-        fs::path readlink(const fs::path &path) const noexcept override;
         fs::path mktemp(const fs::path &folder,
                         const std::string &prefix = "tmp.",
                         const std::string &suffix = {}) override;

@@ -13,6 +13,10 @@
 #include <fcntl.h>
 #include <unistd.h>  // readlink()
 #include <limits.h>  // PATH_MAX
+#include <pwd.h>
+#include <grp.h>
+
+#include <cstring>
 
 namespace core::platform
 {
@@ -55,6 +59,40 @@ namespace core::platform
     fs::path PosixPathProvider::default_log_folder() const noexcept
     {
         return "/var/log/picarro";
+    }
+
+    FileStats PosixPathProvider::readstats(const fs::path &path,
+                                           bool dereference) const noexcept
+    {
+        struct stat statbuf;
+        std::memset(&statbuf, 0, sizeof(statbuf));
+        int (*statmethod)(const char *pathname, struct stat *statbuf);
+
+        statmethod = dereference ? ::stat : ::lstat;
+
+        struct passwd *pwd = nullptr;
+        struct group *grp = nullptr;
+        if (statmethod(path.c_str(), &statbuf) != -1)
+        {
+            pwd = ::getpwuid(statbuf.st_uid);
+            grp = ::getgrgid(statbuf.st_gid);
+        }
+
+        return {
+            .type = this->path_type(statbuf.st_mode),
+            .size = static_cast<std::size_t>(statbuf.st_size),
+            .link = core::platform::path->readlink(path),
+            .mode = statbuf.st_mode,
+            .readable = ::access(path.c_str(), R_OK) == 0,
+            .writable = ::access(path.c_str(), W_OK) == 0,
+            .uid = statbuf.st_uid,
+            .gid = statbuf.st_gid,
+            .owner = pwd ? pwd->pw_name : "",
+            .group = grp ? grp->gr_name : "",
+            .accessTime = core::dt::to_timepoint(statbuf.st_atim),
+            .modifyTime = core::dt::to_timepoint(statbuf.st_mtim),
+            .createTime = core::dt::to_timepoint(statbuf.st_ctim),
+        };
     }
 
     fs::path PosixPathProvider::readlink(const fs::path &path) const noexcept
@@ -109,4 +147,24 @@ namespace core::platform
         }
     }
 
+    fs::file_type PosixPathProvider::path_type(mode_t mode) const
+    {
+        static const std::unordered_map<mode_t, fs::file_type> modemap = {
+            {S_IFREG, fs::file_type::regular},
+            {S_IFDIR, fs::file_type::directory},
+            {S_IFLNK, fs::file_type::symlink},
+            {S_IFCHR, fs::file_type::character},
+            {S_IFBLK, fs::file_type::block},
+            {S_IFIFO, fs::file_type::fifo},
+            {S_IFSOCK, fs::file_type::socket}};
+
+        try
+        {
+            return modemap.at(mode & S_IFMT);
+        }
+        catch (const std::out_of_range &e)
+        {
+            return fs::file_type::none;
+        }
+    }
 }  // namespace core::platform

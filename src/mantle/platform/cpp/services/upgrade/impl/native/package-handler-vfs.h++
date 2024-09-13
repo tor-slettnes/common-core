@@ -7,7 +7,7 @@
 
 #pragma once
 #include "package-handler.h++"
-#include "vfs-context.h++"
+#include "vfs-location.h++"
 #include "types/create-shared.h++"
 
 namespace platform::upgrade::native

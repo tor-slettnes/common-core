@@ -107,7 +107,7 @@ namespace platform::vfs::local
         this->set_attributes({}, map, save);
     }
 
-    void AttributeStore::clear(const fs::path &basename, bool save)
+    void AttributeStore::clear_attributes(const fs::path &basename, bool save)
     {
         if (this->erase(this->key(basename)))
         {

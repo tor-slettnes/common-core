@@ -14,6 +14,7 @@ set(LIB_DEPS
 set(SOURCES
   vfs-types.c++
   vfs-context.c++
+  vfs-location.c++
   vfs-signals.c++
   vfs-base.c++
   vfs.c++

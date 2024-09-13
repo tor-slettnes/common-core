@@ -40,7 +40,7 @@ namespace platform::vfs
     ContextMap get_contexts(bool removable_only, bool open_only)
     {
         ContextMap contexts = open_only
-                                  ? vfs->get_open_context()
+                                  ? vfs->get_open_contexts()
                                   : vfs->get_contexts();
 
         if (removable_only)
@@ -237,19 +237,12 @@ namespace platform::vfs
             });
     }
 
-    void remove(const Path &source,
-                bool force,
-                bool with_attributes)
-    {
-        return remove(Paths({source}), force, with_attributes);
-    }
-
-    void remove(const Paths &sources,
+    void remove(const Path &vpath,
                 bool force,
                 bool with_attributes)
     {
         return vfs->remove(
-            sources,
+            vpath,
             {
                 .force = force,
                 .with_attributes = with_attributes,

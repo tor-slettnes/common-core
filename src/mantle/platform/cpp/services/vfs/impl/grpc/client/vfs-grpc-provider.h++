@@ -28,13 +28,17 @@ namespace platform::vfs::grpc
     public:
         ContextMap get_contexts() const override;
 
-        ContextMap get_open_context() const override;
+        ContextMap get_open_contexts() const override;
 
         Context::ptr get_context(
             const std::string &name,
             bool required) const override;
 
         Context::ptr open_context(
+            const std::string &name,
+            bool required) override;
+
+        void close_context(
             const std::string &name,
             bool required) override;
 
@@ -70,7 +74,7 @@ namespace platform::vfs::grpc
             const OperationFlags &flags) const override;
 
         void remove(
-            const Paths &sources,
+            const Path &vpath,
             const OperationFlags &flags) const override;
 
         void create_folder(
@@ -92,6 +96,10 @@ namespace platform::vfs::grpc
 
         void clear_attributes(
             const Path &vpath) const override;
+
+    private:
+        ContextMap context_map(
+            const ::cc::platform::vfs::ContextMap &msg) const;
 
     private:
         std::shared_ptr<Client> client;

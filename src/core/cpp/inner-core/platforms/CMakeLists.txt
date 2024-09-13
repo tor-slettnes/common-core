@@ -21,16 +21,19 @@ BuildLibrary("${TARGET}"
 
 ## Include appropriate system libraries based on platform
 if(PLATFORM_QNX)
+  message(STATUS "Building for QNX platform")
   add_subdirectory(posix)
   add_subdirectory(qnx)
   target_link_libraries("${TARGET}" PRIVATE cc_core_platform_qnx)
 
 elseif(LINUX)
+  message(STATUS "Building for Linux platform")
   add_subdirectory(posix)
   add_subdirectory(linux)
   target_link_libraries("${TARGET}" PRIVATE cc_core_platform_linux)
 
 elseif(WIN32)
+  message(STATUS "Building for Windows platform")
   add_subdirectory(windows)
   target_link_libraries("${TARGET}" PRIVATE cc_core_platform_windows)
 
