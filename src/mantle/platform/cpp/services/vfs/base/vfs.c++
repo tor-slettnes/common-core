@@ -96,19 +96,19 @@ namespace platform::vfs
 
     bool exists(const Path &vpath)
     {
-        return (vfs::file_stats(vpath, false).type != fs::file_type::none);
+        return (vfs::get_file_info(vpath, false).type != fs::file_type::none);
     }
 
-    VolumeStats volume_stats(const Path &vpath)
+    VolumeInfo get_volume_info(const Path &vpath)
     {
-        return vfs->volume_stats(vpath, {});
+        return vfs->get_volume_info(vpath, {});
     }
 
-    FileStats file_stats(const Path &vpath,
+    FileInfo get_file_info(const Path &vpath,
                          bool with_attributes,
                          bool dereference)
     {
-        return vfs->file_stats(
+        return vfs->get_file_info(
             vpath,
             {
                 .dereference = dereference,

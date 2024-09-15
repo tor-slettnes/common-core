@@ -63,7 +63,7 @@ namespace platform::vfs
     //========================================================================
     // Output stream representations
 
-    std::ostream &operator<<(std::ostream &stream, const FileStats &stats)
+    std::ostream &operator<<(std::ostream &stream, const FileInfo &stats)
     {
         core::types::PartsList parts;
         parts.add("type", stats.type, true);
@@ -80,16 +80,6 @@ namespace platform::vfs
         parts.add_value("modifyTime", stats.modifyTime, true, "%s");
         parts.add_value("createTime", stats.createTime, true, "%s");
         parts.add_value("attributes", stats.attributes, true, "%s");
-        stream << parts;
-        return stream;
-    }
-
-    std::ostream &operator<<(std::ostream &stream, const VolumeStats &stats)
-    {
-        core::types::PartsList parts;
-        parts.add("capacity", stats.capacity, true, "%'d");
-        parts.add("free", stats.free, true, "%'d");
-        parts.add("available", stats.available, true, "%'d");
         stream << parts;
         return stream;
     }
@@ -138,7 +128,6 @@ namespace platform::vfs
                << "\"";
     }
 
-
     void Path::to_stream(std::ostream &stream) const
     {
         stream << this->context
@@ -177,3 +166,17 @@ namespace platform::vfs
         return {lhs.context, lhs.relpath / rhs};
     }
 }  // namespace platform::vfs
+
+namespace std::filesystem
+{
+    std::ostream &operator<<(std::ostream &stream, const space_info &info)
+    {
+        core::types::PartsList parts;
+        parts.add("capacity", info.capacity, true, "%'d");
+        parts.add("free", info.free, true, "%'d");
+        parts.add("available", info.available, true, "%'d");
+        stream << parts;
+        return stream;
+    }
+
+}  // namespace std::filesystem

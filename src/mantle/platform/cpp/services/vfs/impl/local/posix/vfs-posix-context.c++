@@ -19,7 +19,7 @@ namespace platform::vfs::local
     //==========================================================================
     // PosixLocation
 
-    FileStats PosixLocation::read_stats(
+    FileInfo PosixLocation::read_stats(
         const fs::path &localpath,
         bool dereference = false) const
     {

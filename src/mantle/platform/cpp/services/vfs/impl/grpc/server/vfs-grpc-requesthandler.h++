@@ -51,15 +51,15 @@ namespace platform::vfs::grpc
             const ::cc::platform::vfs::Path* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status volume_stats(
+        ::grpc::Status get_volume_info(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::PathRequest* request,
-            ::cc::platform::vfs::VolumeStats* response) override;
+            ::cc::platform::vfs::VolumeInfo* response) override;
 
-        ::grpc::Status file_stats(
+        ::grpc::Status get_file_info(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::PathRequest* request,
-            ::cc::platform::vfs::FileStats* response) override;
+            ::cc::platform::vfs::FileInfo* response) override;
 
         ::grpc::Status get_directory(
             ::grpc::ServerContext* context,

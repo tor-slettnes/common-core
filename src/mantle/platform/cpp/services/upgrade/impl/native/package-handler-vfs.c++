@@ -12,8 +12,9 @@
 
 namespace platform::upgrade::native
 {
-    VFSPackageHandler::VFSPackageHandler(const core::SettingsStore::ptr &settings,
-                                         const vfs::Path &vfs_path)
+    VFSPackageHandler::VFSPackageHandler(
+        const core::SettingsStore::ptr &settings,
+        const vfs::Path &vfs_path)
         : Super(settings),
           vfs_path(vfs_path)
     {
@@ -49,8 +50,9 @@ namespace platform::upgrade::native
         return manifests;
     }
 
-    void VFSPackageHandler::unpack(const fs::path &filename,
-                                   const fs::path &staging_folder)
+    void VFSPackageHandler::unpack(
+        const fs::path &filename,
+        const fs::path &staging_folder)
     {
         if (filename.empty())
         {
@@ -62,8 +64,9 @@ namespace platform::upgrade::native
         this->unpack_file(loc.localPath(filename), staging_folder);
     }
 
-    PackageManifest::ptr VFSPackageHandler::scan_file(const vfs::Location &location,
-                                                      const fs::path &package_name)
+    PackageManifest::ptr VFSPackageHandler::scan_file(
+        const vfs::Location &location,
+        const fs::path &package_name)
     {
         fs::path staging_folder = this->create_staging_folder();
         PackageManifest::ptr manifest;

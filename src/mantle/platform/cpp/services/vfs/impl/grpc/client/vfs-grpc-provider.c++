@@ -7,7 +7,6 @@
 
 #include "vfs-grpc-provider.h++"
 #include "vfs-grpc-stream.h++"
-#include "vfs-remote-context.h++"
 #include "protobuf-vfs-types.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
@@ -27,6 +26,21 @@ namespace platform::vfs::grpc
     bool ClientProvider::is_pertinent()
     {
         return bool(client);
+    }
+
+    void ClientProvider::initialize()
+    {
+        Super::initialize();
+
+        using namespace std::placeholders;
+
+        this->client->add_mapping_handler(
+            cc::platform::vfs::Signal::kContext,
+            std::bind(&This::on_context, this, _1, _2, _3));
+
+        this->client->add_mapping_handler(
+            cc::platform::vfs::Signal::kContextInUse,
+            std::bind(&This::on_context_in_use, this, _1, _2, _3));
     }
 
     void ClientProvider::set_use_cached(bool use_cached)
@@ -89,7 +103,7 @@ namespace platform::vfs::grpc
 
             try
             {
-                cxt = protobuf::decode_shared<RemoteContext>(
+                cxt = this->decoded_context(
                     this->client->call_check(
                         &Client::Stub::get_context_spec,
                         request));
@@ -113,7 +127,7 @@ namespace platform::vfs::grpc
         request.set_context(name);
         try
         {
-            return protobuf::decode_shared<RemoteContext>(
+            return this->decoded_context(
                 this->client->call_check(
                     &Client::Stub::open_context,
                     request));
@@ -157,23 +171,23 @@ namespace platform::vfs::grpc
         this->close_context(cxt->name, false);
     }
 
-    VolumeStats ClientProvider::volume_stats(
+    VolumeInfo ClientProvider::get_volume_info(
         const Path &vpath,
         const OperationFlags &flags) const
     {
-        return protobuf::decoded<VolumeStats>(
+        return protobuf::decoded<VolumeInfo>(
             this->client->call_check(
-                &Client::Stub::volume_stats,
+                &Client::Stub::get_volume_info,
                 protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, flags)));
     }
 
-    FileStats ClientProvider::file_stats(
+    FileInfo ClientProvider::get_file_info(
         const Path &vpath,
         const OperationFlags &flags) const
     {
-        return protobuf::decoded<FileStats>(
+        return protobuf::decoded<FileInfo>(
             this->client->call_check(
-                &Client::Stub::file_stats,
+                &Client::Stub::get_file_info,
                 protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, flags)));
     }
 
@@ -276,16 +290,47 @@ namespace platform::vfs::grpc
             protobuf::encoded<cc::platform::vfs::Path>(vpath));
     }
 
+    void ClientProvider::on_context(
+        core::signal::MappingAction action,
+        const std::string &key,
+        const cc::platform::vfs::Signal &signal) const
+    {
+        platform::vfs::signal_context.emit(
+            action,
+            key,
+            this->decoded_context(signal.context()));
+    }
+
+    void ClientProvider::on_context_in_use(
+        core::signal::MappingAction action,
+        const std::string &key,
+        const cc::platform::vfs::Signal &signal) const
+    {
+        platform::vfs::signal_context_in_use.emit(
+            action,
+            key,
+            this->decoded_context(signal.context_in_use()));
+    }
+
     ContextMap ClientProvider::context_map(
         const ::cc::platform::vfs::ContextMap &msg) const
     {
         ContextMap map;
         for (const auto &[id, data] : msg.map())
         {
-            auto cxt = RemoteContext::create_shared(this->client);
-            protobuf::decode(data, cxt.get());
-            map.insert_or_assign(id, cxt);
+            map.insert_or_assign(id, this->decoded_context(data));
         }
         return map;
     }
+
+    std::shared_ptr<RemoteContext> ClientProvider::decoded_context(
+        const ::cc::platform::vfs::ContextSpec &spec) const
+    {
+        auto cxt = std::make_shared<RemoteContext>(
+            const_cast<ClientProvider *>(this)->shared_from_this());
+
+        protobuf::decode(spec, cxt.get());
+        return cxt;
+    }
+
 }  // namespace platform::vfs::grpc

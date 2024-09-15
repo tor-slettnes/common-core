@@ -8,10 +8,12 @@
 #pragma once
 #include "vfs-base.h++"
 #include "vfs-grpc-client.h++"
+#include "vfs-remote-context.h++"
 
 namespace platform::vfs::grpc
 {
-    class ClientProvider : public ProviderInterface
+    class ClientProvider : public ProviderInterface,
+                           public std::enable_shared_from_this<ClientProvider>
     {
         using This = ClientProvider;
         using Super = ProviderInterface;
@@ -21,6 +23,7 @@ namespace platform::vfs::grpc
                        bool use_cached = false);
 
         bool is_pertinent() override;
+        void initialize() override;
 
         void set_use_cached(bool use_cached);
         bool get_use_cached() const;
@@ -45,11 +48,11 @@ namespace platform::vfs::grpc
         void close_context(
             const Context::ptr &cxt) override;
 
-        VolumeStats volume_stats(
+        VolumeInfo get_volume_info(
             const Path &vpath,
             const OperationFlags &flags) const override;
 
-        FileStats file_stats(
+        FileInfo get_file_info(
             const Path &vpath,
             const OperationFlags &flags) const override;
 
@@ -98,8 +101,21 @@ namespace platform::vfs::grpc
             const Path &vpath) const override;
 
     private:
+        void on_context(
+            core::signal::MappingAction action,
+            const std::string &key,
+            const cc::platform::vfs::Signal &signal) const;
+
+        void on_context_in_use(
+            core::signal::MappingAction action,
+            const std::string &key,
+            const cc::platform::vfs::Signal &signal) const;
+
         ContextMap context_map(
             const ::cc::platform::vfs::ContextMap &msg) const;
+
+        std::shared_ptr<RemoteContext> decoded_context(
+            const ::cc::platform::vfs::ContextSpec &spec) const;
 
     private:
         std::shared_ptr<Client> client;

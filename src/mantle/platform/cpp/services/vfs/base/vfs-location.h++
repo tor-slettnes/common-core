@@ -78,10 +78,10 @@ namespace platform::vfs
         void to_stream(std::ostream &stream) const override;
 
     public:
-        // virtual VolumeStats volume_stats(
+        // virtual VolumeInfo get_volume_info(
         //     const OperationFlags &flags = {}) const = 0;
 
-        // virtual FileStats file_stats(
+        // virtual FileInfo get_file_info(
         //     const OperationFlags &flags = {}) const = 0;
 
         // virtual Directory get_directory(

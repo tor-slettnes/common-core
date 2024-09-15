@@ -43,10 +43,10 @@ namespace platform::vfs::local
         void close_context(const std::string &name, bool required) override;
         void close_context(const Context::ptr &cxt) override;
 
-        VolumeStats volume_stats(const Path &vpath,
+        VolumeInfo get_volume_info(const Path &vpath,
                                  const OperationFlags &flags) const override;
 
-        FileStats file_stats(const Path &vpath,
+        FileInfo get_file_info(const Path &vpath,
                              const OperationFlags &flags) const override;
 
         Directory get_directory(const Path &vpath,
@@ -107,7 +107,7 @@ namespace platform::vfs::local
             const Location &loc,
             const OperationFlags &flags) const;
 
-        virtual FileStats read_stats(
+        virtual FileInfo read_stats(
             const fs::path &localpath,
             bool dereference = false) const;
 

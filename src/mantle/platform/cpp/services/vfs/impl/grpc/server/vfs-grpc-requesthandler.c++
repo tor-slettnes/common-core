@@ -121,17 +121,17 @@ namespace platform::vfs::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::volume_stats(
+    ::grpc::Status RequestHandler::get_volume_info(
         ::grpc::ServerContext *cxt,
         const ::cc::platform::vfs::PathRequest *request,
-        ::cc::platform::vfs::VolumeStats *response)
+        ::cc::platform::vfs::VolumeInfo *response)
     {
         try
         {
             platform::vfs::Path vpath;
             platform::vfs::OperationFlags flags;
             protobuf::decode(*request, &vpath, &flags);
-            platform::vfs::VolumeStats vstat = this->provider->volume_stats(vpath, flags);
+            platform::vfs::VolumeInfo vstat = this->provider->get_volume_info(vpath, flags);
             protobuf::encode(vstat, response);
             return ::grpc::Status::OK;
         }
@@ -141,17 +141,17 @@ namespace platform::vfs::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::file_stats(
+    ::grpc::Status RequestHandler::get_file_info(
         ::grpc::ServerContext *cxt,
         const ::cc::platform::vfs::PathRequest *request,
-        ::cc::platform::vfs::FileStats *response)
+        ::cc::platform::vfs::FileInfo *response)
     {
         try
         {
             platform::vfs::Path vpath;
             platform::vfs::OperationFlags flags;
             protobuf::decode(*request, &vpath, &flags);
-            platform::vfs::FileStats stat = this->provider->file_stats(vpath, flags);
+            platform::vfs::FileInfo stat = this->provider->get_file_info(vpath, flags);
             protobuf::encode(stat, response);
             return ::grpc::Status::OK;
         }

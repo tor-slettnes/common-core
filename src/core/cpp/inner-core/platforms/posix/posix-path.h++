@@ -27,8 +27,6 @@ namespace core::platform
         fs::path default_data_folder() const noexcept override;
         fs::path default_log_folder() const noexcept override;
 
-        FileStats readstats(const fs::path &path,
-                            bool dereference) const noexcept override;
         fs::path readlink(const fs::path &path) const noexcept override;
         fs::path mktemp(const fs::path &folder,
                         const std::string &prefix = "tmp.",
@@ -36,10 +34,6 @@ namespace core::platform
         fs::path mktempdir(const fs::path &folder,
                            const std::string &prefix,
                            const std::string &suffix) override;
-
-    private:
-        fs::file_type path_type(mode_t mode) const;
-
     };
 
 }  // namespace core::platform

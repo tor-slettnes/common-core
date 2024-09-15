@@ -118,25 +118,25 @@ class VirtualFileSystemClient (SignalClient):
         return self.stub.close_context(cc.platform.vfs.Path(context=name))
 
 
-    def volume_stats(self,
+    def get_volume_info(self,
                      vfspath: VFSPathType,
-                     dereference: bool =False) -> cc.platform.vfs.VolumeStats:
+                     dereference: bool =False) -> cc.platform.vfs.VolumeInfo:
         '''
         Return information about mounted filesystem containing path.
         '''
-        return self.stub.volume_stats(
+        return self.stub.get_volume_info(
             pathRequest(vfspath, dereference=dereference))
 
 
-    def file_stats(self,
+    def get_file_info(self,
                   vfspath: VFSPathType,
                   dereference: bool = True,
-                  with_attributes: bool = True) -> cc.platform.vfs.FileStats:
+                  with_attributes: bool = True) -> cc.platform.vfs.FileInfo:
         '''
         Return file stats for specified VFS path, specified in the format
         CONTEXT:PATH.
 
-        The returned value is a 'FileStats()` named tuple, and includes
+        The returned value is a 'FileInfo()` named tuple, and includes
         the following attributes:
            name       : Base name, without leading directory
            type       : TYPE_FILE, TYPE_DIRECTORY, etc
@@ -158,7 +158,7 @@ class VirtualFileSystemClient (SignalClient):
         request = pathRequest(source=vfspath,
                               dereference=dereference,
                               with_attributes=with_attributes)
-        reply = self.stub.file_stats(request)
+        reply = self.stub.get_file_info(request)
         return decodeStats(reply)
 
 
@@ -182,14 +182,14 @@ class VirtualFileSystemClient (SignalClient):
     def get_directory(self,
                       vfspath: VFSPathType,
                       dereference: bool = True,
-                      with_attributes: bool = True) -> Mapping[str, cc.platform.vfs.FileStats]:
+                      with_attributes: bool = True) -> Mapping[str, cc.platform.vfs.FileInfo]:
         '''
         List contents of the specified virtual path, specified in the format
         CONTEXT:PATH.
 
         The returned value is a Python dictionary where keys represent the
-        name of each entry and the associated value is a FileStats instance
-        containing detailed information about the file. See `file_stats()`
+        name of each entry and the associated value is a FileInfo instance
+        containing detailed information about the file. See `get_file_info()`
         for more info.
         '''
 
@@ -207,7 +207,7 @@ class VirtualFileSystemClient (SignalClient):
                 filename_masks: VFSPathsType,
                 attribute_filters: dict = {},
                 with_attributes: bool = True,
-                include_hidden: bool = False) -> Mapping[str, cc.platform.vfs.FileStats]:
+                include_hidden: bool = False) -> Mapping[str, cc.platform.vfs.FileInfo]:
         '''
         Recursively locate file(s) matching the specificed filename masks
         and attribute values.

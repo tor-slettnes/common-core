@@ -101,26 +101,26 @@ namespace protobuf
                 core::types::KeyValueMap *attributes);
 
     //==========================================================================
-    // VolumeStats
+    // VolumeInfo
 
-    void encode(const ::platform::vfs::VolumeStats &stats,
-                ::cc::platform::vfs::VolumeStats *msg);
+    void encode(const ::platform::vfs::VolumeInfo &stats,
+                ::cc::platform::vfs::VolumeInfo *msg);
 
-    void decode(const ::cc::platform::vfs::VolumeStats &msg,
-                ::platform::vfs::VolumeStats *stats);
+    void decode(const ::cc::platform::vfs::VolumeInfo &msg,
+                ::platform::vfs::VolumeInfo *stats);
 
     //==========================================================================
-    // FileStats
+    // FileInfo
 
-    void encode(const ::platform::vfs::FileStats &stats,
-                ::cc::platform::vfs::FileStats *msg);
+    void encode(const ::platform::vfs::FileInfo &stats,
+                ::cc::platform::vfs::FileInfo *msg);
 
     void encode(const std::string &name,
-                const ::platform::vfs::FileStats &stats,
-                ::cc::platform::vfs::FileStats *msg);
+                const ::platform::vfs::FileInfo &stats,
+                ::cc::platform::vfs::FileInfo *msg);
 
-    void decode(const ::cc::platform::vfs::FileStats &msg,
-                ::platform::vfs::FileStats *stats);
+    void decode(const ::cc::platform::vfs::FileInfo &msg,
+                ::platform::vfs::FileInfo *stats);
 
     //==========================================================================
     // Directory

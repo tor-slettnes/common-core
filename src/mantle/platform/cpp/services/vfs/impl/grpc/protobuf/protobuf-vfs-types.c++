@@ -226,18 +226,18 @@ namespace protobuf
     }
 
     //==========================================================================
-    // VolumeStats
+    // VolumeInfo
 
-    void encode(const ::platform::vfs::VolumeStats &stats,
-                ::cc::platform::vfs::VolumeStats *msg)
+    void encode(const ::platform::vfs::VolumeInfo &stats,
+                ::cc::platform::vfs::VolumeInfo *msg)
     {
         msg->set_capacity(stats.capacity);
         msg->set_free(stats.free);
         msg->set_available(stats.available);
     }
 
-    void decode(const ::cc::platform::vfs::VolumeStats &msg,
-                ::platform::vfs::VolumeStats *stats)
+    void decode(const ::cc::platform::vfs::VolumeInfo &msg,
+                ::platform::vfs::VolumeInfo *stats)
     {
         stats->capacity = msg.capacity();
         stats->free = msg.free();
@@ -245,10 +245,10 @@ namespace protobuf
     }
 
     //==========================================================================
-    // FileStats
+    // FileInfo
 
-    void encode(const ::platform::vfs::FileStats &stats,
-                ::cc::platform::vfs::FileStats *msg)
+    void encode(const ::platform::vfs::FileInfo &stats,
+                ::cc::platform::vfs::FileInfo *msg)
     {
         msg->set_type(encoded<::cc::platform::vfs::PathType>(stats.type));
         msg->set_size(stats.size);
@@ -273,15 +273,15 @@ namespace protobuf
     }
 
     void encode(const std::string &name,
-                const ::platform::vfs::FileStats &stats,
-                ::cc::platform::vfs::FileStats *msg)
+                const ::platform::vfs::FileInfo &stats,
+                ::cc::platform::vfs::FileInfo *msg)
     {
         msg->set_name(name);
         encode(stats, msg);
     }
 
-    void decode(const ::cc::platform::vfs::FileStats &msg,
-                ::platform::vfs::FileStats *stats)
+    void decode(const ::cc::platform::vfs::FileInfo &msg,
+                ::platform::vfs::FileInfo *stats)
     {
         stats->type = decoded<fs::file_type>(msg.type());
         stats->size = msg.size();

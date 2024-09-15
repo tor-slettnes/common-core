@@ -35,18 +35,18 @@ service VirtualFileSystem
     // `close_context()', thereby allowing the context to be closed.
     rpc open_context (Path) returns (ContextSpec);
 
-    // Close a previously-opened path. Internally, this decrements a reference
-    // counter associated with the underlying filesystem context, and closes the
-    // context (e.g. unmounts) if it reaches zero.
+    // Close a previously-opened virtual context. Internally, this decrements a
+    // reference counter associated with the underlying filesystem context, and
+    // closes the context (e.g. unmounts) if it reaches zero.
     rpc close_context (Path) returns (google.protobuf.Empty);
 
-    // Return information about the mounted filesystem containing the specified path.
-    rpc volume_stats (PathRequest) returns (VolumeStats);
+    // Return information about the mounted filesystem containing the specified `path`.
+    rpc get_volume_info (PathRequest) returns (VolumeInfo);
 
-    // Return status of specified path.
+    // Return information about the specified `path`.
     // Unlike `list_folder()` this does not descend if the path is a folder,
     // but rather returns the status of the folder itself.
-    rpc file_stats (PathRequest) returns (FileStats);
+    rpc get_file_info (PathRequest) returns (FileInfo);
 
     // List contents of the specified path (context/folder).
     rpc get_directory (PathRequest) returns (Directory);
@@ -54,20 +54,21 @@ service VirtualFileSystem
     /// Recursively locate files matching specific filename and/or attribute patterns.
     rpc locate (LocateRequest) returns (Directory);
 
-    // Copy files or folders into the specified target path from each `source` path.
-    // If multiple sources are specified, `inside_target` must be set to indicate
-    // that the target `path` represents a folder.
+    // Copy `sources` to `path`.
+    // If multiple sources are specified, `inside_target` must be set to
+    // indicate that the target `path` represents a folder.
     rpc copy (PathRequest) returns (google.protobuf.Empty);
 
-    // Copy files or folders into the specified target path from each `source` path.
-    // If multiple sources are specified, `inside_target` must be set to indicate
-    // that the target `path` represents a folder.
+    // Move `sources` to `target`.
+    // If multiple sources are specified, `inside_target` must be set to
+    // indicate that the target `path` represents a folder.
     rpc move (PathRequest) returns (google.protobuf.Empty);
 
     // Create a folder
     rpc create_folder (PathRequest) returns (google.protobuf.Empty);
 
-    // Remove the specified file or folder.
+    // Delete a file or folder as specified by `path`,
+    // or multiple files and/or folders specified as `sources`.
     rpc remove (PathRequest) returns (google.protobuf.Empty);
 
     // Read the specified file, and stream its contents in chunks.
@@ -143,10 +144,11 @@ message Path
 
 message PathRequest
 {
-    // Target path for filesystem operations.
+    // Virtual path comprising a filesystem context and a relative path.
     Path path = 2;
 
-    // Source path for `move()` and `copy()`.
+    // Source path(s) for `copy()` / `move()`, as well as optional additional
+    // paths for `remove()`.
     repeated Path sources = 3;
 
     // Enables the following behaviors, rather than failing:
@@ -180,9 +182,6 @@ message PathRequest
     bool inside_target = 10;
 }
 
-
-
-
 message LocateRequest
 {
     // Where to start the search
@@ -205,7 +204,7 @@ message LocateRequest
     bool ignore_case = 10;
 }
 
-message FileStats
+message FileInfo
 {
     string name = 1;         // Base name, without leading directory
     PathType type = 2;       // DIRECTORY, FILE, etc.
@@ -227,7 +226,7 @@ message FileStats
 
 message Directory
 {
-    map<string, FileStats> map = 1;
+    map<string, FileInfo> map = 1;
 }
 
 message AttributeRequest
@@ -236,7 +235,7 @@ message AttributeRequest
     repeated cc.variant.Value attributes = 2;
 }
 
-message VolumeStats
+message VolumeInfo
 {
     uint64 capacity   = 1;      // Total size, in bytes
     uint64 free       = 2;      // Free size, in bytes

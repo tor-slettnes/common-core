@@ -41,7 +41,8 @@ private:
     void get_context();
     void open_context();
     void close_context();
-    void get_stats();
+    void get_volume_info();
+    void get_file_info();
     void get_dir();
     void list();
     void copy();

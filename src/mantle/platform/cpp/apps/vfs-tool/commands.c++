@@ -40,21 +40,27 @@ void Options::add_commands()
         std::bind(&Options::close_context, this));
 
     this->add_command(
-        "stats",
+        "volumeinfo",
+        {"CXT[:PATH]"},
+        "get information about the mounted volume for a specific path",
+        std::bind(&Options::get_volume_info, this));
+
+    this->add_command(
+        "fileinfo",
         {"CXT:PATH"},
-        "get file statistics for a specific path",
-        std::bind(&Options::get_stats, this));
+        "get file information for a specific path",
+        std::bind(&Options::get_file_info, this));
 
     this->add_command(
         "dir",
         {"CXT[:PATH]"},
-        "detailed contents of a directory",
+        "Directory list, with details per entry",
         std::bind(&Options::get_dir, this));
 
     this->add_command(
         "list",
-        {"CXT[:PATH]", "[verbose]"},
-        "Directory list. By default names only, but \"verbose\" shows additional details.",
+        {"CXT[:PATH]"},
+        "Brief directory list, names only.",
         std::bind(&Options::list, this));
 
     this->add_command(
@@ -159,10 +165,16 @@ void Options::close_context()
     platform::vfs::close_context(cxt_name);
 }
 
-void Options::get_stats()
+void Options::get_volume_info()
 {
     platform::vfs::Path vpath = this->get_vfspath_arg();
-    std::cout << platform::vfs::file_stats(vpath) << std::endl;
+    std::cout << platform::vfs::get_volume_info(vpath) << std::endl;
+}
+
+void Options::get_file_info()
+{
+    platform::vfs::Path vpath = this->get_vfspath_arg();
+    std::cout << platform::vfs::get_file_info(vpath) << std::endl;
 }
 
 void Options::get_dir()
@@ -170,7 +182,13 @@ void Options::get_dir()
     platform::vfs::Path vpath = this->get_vfspath_arg();
     for (const auto &[path, stats] : platform::vfs::get_directory(vpath))
     {
-        core::str::format(std::cout, "%s:\n\t%s\n", path.string(), stats);
+        std::stringstream ss;
+        ss << stats;
+
+        core::str::format(std::cout,
+                          "%s\n%s",
+                          vpath / path,
+                          core::str::wrap(ss.str(), 0, 8));
     }
 }
 
@@ -178,20 +196,9 @@ void Options::list()
 {
     platform::vfs::Path vpath = this->get_vfspath_arg();
 
-    FlagMap flags;
-    bool &verbose = flags["verbose"];
-    this->get_flags(&flags);
-
     for (const auto &[path, stats] : platform::vfs::get_directory(vpath))
     {
-        if (verbose)
-        {
-            core::str::format(std::cout, "%s : %s\n", vpath / path, stats);
-        }
-        else
-        {
-            std::cout << vpath / path << std::endl;
-        }
+        std::cout << vpath / path << std::endl;
     }
 }
 

@@ -14,7 +14,6 @@ set(LIB_DEPS
 )
 
 set(SOURCES
-  vfs-grpc-client.c++
   vfs-grpc-provider.c++
   vfs-grpc-stream.c++
   vfs-remote-context.c++

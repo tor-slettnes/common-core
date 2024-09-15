@@ -117,7 +117,7 @@ namespace platform::vfs::local
         }
     }
 
-    VolumeStats LocalProvider::volume_stats(
+    VolumeInfo LocalProvider::get_volume_info(
         const Path &vpath,
         const OperationFlags &flags) const
     {
@@ -125,13 +125,13 @@ namespace platform::vfs::local
         return fs::space(loc.localPath());
     }
 
-    FileStats LocalProvider::file_stats(
+    FileInfo LocalProvider::get_file_info(
         const Path &vpath,
         const OperationFlags &flags) const
     {
         Location loc = this->location(vpath, false);
         fs::path lpath = loc.localPath();
-        FileStats stats = this->read_stats(lpath, flags.dereference);
+        FileInfo stats = this->read_stats(lpath, flags.dereference);
         if (flags.with_attributes)
         {
             stats.attributes = AttributeStore(lpath, stats.type).get_attributes();
@@ -483,7 +483,7 @@ namespace platform::vfs::local
         }
     }
 
-    FileStats LocalProvider::read_stats(
+    FileInfo LocalProvider::read_stats(
         const fs::path &localpath,
         bool dereference) const
     {
@@ -552,7 +552,7 @@ namespace platform::vfs::local
                 if (attribute_filters.empty() ||
                     attribute_match(attribute_filters, attributes))
                 {
-                    FileStats stats = read_stats(pi.path());
+                    FileInfo stats = read_stats(pi.path());
                     stats.attributes = std::move(attributes);
                     dir->insert_or_assign(relpath / basename, std::move(stats));
                 }

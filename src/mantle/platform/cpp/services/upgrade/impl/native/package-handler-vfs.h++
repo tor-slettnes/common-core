@@ -24,13 +24,17 @@ namespace platform::upgrade::native
 
     public:
         PackageSource get_source() const override;
+
         PackageManifests scan() override;
-        void unpack(const fs::path &filename,
-                    const fs::path &staging_folder) override;
+
+        void unpack(
+            const fs::path &filename,
+            const fs::path &staging_folder) override;
 
     private:
-        PackageManifest::ptr scan_file(const vfs::Location &location,
-                                       const fs::path &package_name);
+        PackageManifest::ptr scan_file(
+            const vfs::Location &location,
+            const fs::path &package_name);
 
     private:
         vfs::Path vfs_path;

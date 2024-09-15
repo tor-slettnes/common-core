@@ -10,7 +10,6 @@
 
 namespace platform::vfs
 {
-
     /// Obtain local path to the specified virtual path.
     fs::path localPath(const Path &vpath);
 
@@ -70,12 +69,12 @@ namespace platform::vfs
     bool exists(const Path &vpath);
 
     /// Return information about mounted filesystem containing path.
-    VolumeStats volume_stats(
+    VolumeInfo get_volume_info(
         const Path &vpath);
 
     /// Return status of specified paths.
     /// Unlike `list()` this does not descent into folders.
-    FileStats file_stats(
+    FileInfo get_file_info(
         const Path &vpath,
         bool with_attributes = true,
         bool dereference = true);

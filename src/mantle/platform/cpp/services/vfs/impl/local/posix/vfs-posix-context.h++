@@ -21,7 +21,7 @@ namespace platform::vfs::local
     public:
         using Super::Super;
 
-        FileStats read_stats(
+        FileInfo read_stats(
             const fs::path &localpath,
             bool dereference = false) const override;
 

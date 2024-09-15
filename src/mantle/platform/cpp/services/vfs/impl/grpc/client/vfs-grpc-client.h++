@@ -12,8 +12,9 @@
 
 namespace platform::vfs::grpc
 {
-    using ClientBaseImpl = core::grpc::SignalClient<cc::platform::vfs::VirtualFileSystem,
-                                                    cc::platform::vfs::Signal>;
+    using ClientBaseImpl = core::grpc::SignalClient<
+        ::cc::platform::vfs::VirtualFileSystem,
+        ::cc::platform::vfs::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>
@@ -21,22 +22,9 @@ namespace platform::vfs::grpc
         using This = Client;
         using Super = ClientBaseImpl;
 
-    public:
-        void initialize() override;
-
-    private:
-        static void on_context(
-            core::signal::MappingAction action,
-            const std::string &key,
-            const cc::platform::vfs::Signal &signal);
-
-        static void on_context_in_use(
-            core::signal::MappingAction action,
-            const std::string &key,
-            const cc::platform::vfs::Signal &signal);
-
     protected:
         using Super::Super;
+
     };
 
 }  // namespace platform::vfs::grpc

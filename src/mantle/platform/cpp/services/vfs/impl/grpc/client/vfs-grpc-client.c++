@@ -16,36 +16,37 @@ namespace platform::vfs::grpc
     void Client::initialize()
     {
         Super::initialize();
+        using namespace std::placeholders;
 
         this->add_mapping_handler(
             cc::platform::vfs::Signal::kContext,
-            &This::on_context);
+            std::bind(&This::on_context, this, _1, _2, _3));
 
         this->add_mapping_handler(
             cc::platform::vfs::Signal::kContextInUse,
-            &This::on_context_in_use);
+            std::bind(&This::on_context_in_use, this, _1, _2, _3)
     }
 
     void Client::on_context(
         core::signal::MappingAction action,
         const std::string &key,
-        const cc::platform::vfs::Signal &signal)
+        const cc::platform::vfs::Signal &signal) const
     {
         platform::vfs::signal_context.emit(
             action,
             key,
-            protobuf::decode_shared<RemoteContext>(signal.context()));
+            this->decoded_context(signal.context()));
     }
 
     void Client::on_context_in_use(
         core::signal::MappingAction action,
         const std::string &key,
-        const cc::platform::vfs::Signal &signal)
+        const cc::platform::vfs::Signal &signal) const
     {
         platform::vfs::signal_context_in_use.emit(
             action,
             key,
-            protobuf::decode_shared<RemoteContext>(signal.context_in_use()));
+            this->decoded_context(signal.context_in_use()));
     }
 
 }  // namespace platform::vfs::grpc

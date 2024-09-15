@@ -25,25 +25,31 @@ namespace platform::vfs
         using Super::Super;
 
     public:
-        Location location(const Path &path,
-                          bool modify) const;
+        ContextProxy context_proxy(
+            const std::string &name,
+            bool modify) const;
 
-        Location location(const ContextName &context,
-                          const fs::path &relpath,
-                          bool modify) const;
+        ContextProxy context_proxy(
+            const Context::ptr &context,
+            bool modify) const;
 
-        Location location(const Context::ptr &context,
-                          const fs::path &relpath,
-                          bool modify) const;
+        Location location(
+            const Path &path,
+            bool modify) const;
 
-        LocationList locations(const Paths &vpaths,
-                               bool modify) const;
+        Location location(
+            const ContextName &context,
+            const fs::path &relpath,
+            bool modify) const;
 
-        ContextProxy context_proxy(const std::string &name,
-                                   bool modify) const;
+        Location location(
+            const Context::ptr &context,
+            const fs::path &relpath,
+            bool modify) const;
 
-        ContextProxy context_proxy(const Context::ptr &context,
-                                   bool modify) const;
+        LocationList locations(
+            const Paths &vpaths,
+            bool modify) const;
 
     public:
         virtual ContextMap get_contexts() const = 0;
@@ -65,11 +71,11 @@ namespace platform::vfs
         virtual void close_context(
             const Context::ptr &cxt) = 0;
 
-        virtual VolumeStats volume_stats(
+        virtual VolumeInfo get_volume_info(
             const Path &vpath,
             const OperationFlags &flags) const = 0;
 
-        virtual FileStats file_stats(
+        virtual FileInfo get_file_info(
             const Path &vpath,
             const OperationFlags &flags) const = 0;
 

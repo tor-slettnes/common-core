@@ -39,12 +39,13 @@ namespace platform::vfs
     //==========================================================================
     // File information
 
-    struct FileStats
+    using FileMode = std::uint32_t;
+    struct FileInfo
     {
         fs::file_type type = fs::file_type::none;  // regular, directory, etc..
         std::size_t size = 0;                      // Size in bytes
         fs::path link;                             // Target for symbolic links
-        core::platform::FileMode mode = 0;         // UNIX mode mask
+        FileMode mode = 0;                         // UNIX mode mask
         bool readable = false;                     // Readable file/listable directory
         bool writable = false;                     // Writable file/modifiable directory
         core::platform::UID uid = 0;               // Owner numeric ID
@@ -57,19 +58,18 @@ namespace platform::vfs
         core::types::KeyValueMap attributes;       // Custom file attributes
     };
 
-    std::ostream &operator<<(std::ostream &stream, const FileStats &stats);
+    std::ostream &operator<<(std::ostream &stream, const FileInfo &stats);
 
     //==========================================================================
     // Volume information
 
-    using VolumeStats = fs::space_info;
-    std::ostream &operator<<(std::ostream &stream, const VolumeStats &stats);
+    using VolumeInfo = fs::space_info;
 
     //==========================================================================
     // Directory listing
 
-    using Directory = std::map<fs::path, FileStats>;
-    using DirectoryEntry = std::pair<fs::path, vfs::FileStats>;
+    using Directory = std::map<fs::path, FileInfo>;
+    using DirectoryEntry = std::pair<fs::path, vfs::FileInfo>;
     using DirectoryList = std::vector<DirectoryEntry>;
 
     //==========================================================================
@@ -145,3 +145,9 @@ namespace std
         }
     };
 }  // namespace std
+
+namespace std::filesystem
+{
+    std::ostream &operator<<(std::ostream &stream, const space_info &volinfo);
+
+}

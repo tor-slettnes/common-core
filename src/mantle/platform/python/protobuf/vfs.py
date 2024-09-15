@@ -24,8 +24,8 @@ import_proto('vfs', globals())
 
 PathType = Enumeration(cc.platform.vfs.PathType.items())
 
-FileStats = namedtuple(
-    "FileStats",
+FileInfo = namedtuple(
+    "FileInfo",
     ("type", "size", "link",
      "mode", "readable", "writable",
      "uid", "gid", "ownername", "groupname",
@@ -75,8 +75,8 @@ def decodePath(vfspath: cc.platform.vfs.Path) -> str:
     return ":".join((vfspath.context, vfspath.relpath))
 
 
-def decodeStats(stats: cc.platform.vfs.FileStats) -> FileStats:
-    return FileStats(
+def decodeStats(stats: cc.platform.vfs.FileInfo) -> FileInfo:
+    return FileInfo(
         PathTypes.get(stats.type, TYPE_NONE),
         stats.size, stats.link,
         OCT8(stats.mode), stats.readable, stats.writable,

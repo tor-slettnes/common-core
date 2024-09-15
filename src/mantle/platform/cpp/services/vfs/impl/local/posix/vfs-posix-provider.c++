@@ -47,7 +47,7 @@ namespace platform::vfs::local
         return false;
     }
 
-    FileStats PosixProvider::read_stats(
+    FileInfo PosixProvider::read_stats(
         const fs::path &localpath,
         bool dereference) const
     {
