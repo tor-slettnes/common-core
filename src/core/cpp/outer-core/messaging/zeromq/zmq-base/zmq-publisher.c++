@@ -16,7 +16,7 @@ namespace core::zmq
         : Super(bind_address,
                 "publisher",
                 channel_name,
-                ::zmq::socket_type::pub)
+                ZMQ_PUB)
     {
     }
 
@@ -26,7 +26,7 @@ namespace core::zmq
         logf_trace("Publishing filter=%r, bytes=%r", filter, bytes);
         if (!filter.empty())
         {
-            this->send(filter, ::zmq::send_flags::dontwait | ::zmq::send_flags::sndmore);
+            this->send(filter, ZMQ_SNDMORE);
         }
         this->send(bytes);
     }

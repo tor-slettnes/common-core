@@ -11,7 +11,11 @@
 #include "types/value.h++"
 #include "settings/settingsstore.h++"
 
+#if CPPZMQ
 #include <zmq.hpp>
+#else
+#include <zmq.h>
+#endif
 
 #include <memory>
 #include <optional>
@@ -20,6 +24,24 @@
 namespace core::zmq
 {
     define_log_scope("zmq");
+
+#if CPPZMQ
+    using Context = void;
+    using Socket = void;
+    using SocketType = ::zmq::socket_type;
+    using SendFlags = ::zmq::send_flags;
+    using RecvFlags = ::zmq::recv_flags;
+    using Message = ::zmq::message_t;
+    using Error = ::zmq::error_t;
+#else
+    using Context = void;
+    using Socket = void;
+    using SocketType = int;
+    using SendFlags = int;
+    using RecvFlags = int;
+    using Message = zmq_msg_t;
+    using Error = std::system_error;
+#endif
 
     constexpr auto SCHEME_OPTION = "scheme";
     constexpr auto CONNECT_OPTION = "connect";
@@ -37,38 +59,38 @@ namespace core::zmq
     protected:
         Endpoint(const std::string &endpoint_type,
                  const std::string &channel_name,
-                 ::zmq::socket_type socket_type);
+                 SocketType socket_type);
+
+        ~Endpoint();
 
     public:
-        static std::shared_ptr<::zmq::context_t> context();
-        std::shared_ptr<::zmq::socket_t> socket();
+        static Context *context();
+        Socket *socket();
 
         void initialize() override;
         void deinitialize() override;
 
     protected:
-        void log_zmq_error(const std::string &action, const ::zmq::error_t &e);
+        static void *check_error(void *ptr);
+        static int check_error(int rc);
+
+        void log_zmq_error(const std::string &action, const Error &e);
 
     public:
         void send(
             const types::ByteVector &bytes,
-            ::zmq::send_flags flags = ::zmq::send_flags::none);
+            SendFlags flags = 0);
 
         std::optional<types::ByteVector> receive(
-            ::zmq::recv_flags flags = ::zmq::recv_flags::none);
+            RecvFlags flags = 0);
 
-        bool receive(
+        std::size_t receive(
             types::ByteVector *bytes,
-            ::zmq::recv_flags flags = ::zmq::recv_flags::none);
+            RecvFlags flags = 0);
 
         std::size_t receive(
             std::ostream &stream,
-            ::zmq::recv_flags flags = ::zmq::recv_flags::none);
-
-    private:
-        bool receive_chunk(
-            ::zmq::message_t *msg,
-            ::zmq::recv_flags flags = ::zmq::recv_flags::none);
+            RecvFlags flags = 0);
 
     protected:
         /// @param[in] address
@@ -131,12 +153,11 @@ namespace core::zmq
 
     private:
         static std::mutex context_mtx_;
-        // static ::zmq::context_t context_;
-        static std::shared_ptr<::zmq::context_t> context_;
-        static std::shared_ptr<SettingsStore> settings_;
+        // static Context context_;
+        static Context* context_;
 
-        std::shared_ptr<::zmq::socket_t> socket_;
-        ::zmq::socket_type socket_type_;
+        Socket *socket_;
+        SocketType socket_type_;
     };
 
 }  // namespace core::zmq

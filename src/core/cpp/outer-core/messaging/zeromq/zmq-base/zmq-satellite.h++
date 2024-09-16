@@ -18,7 +18,7 @@ namespace core::zmq
         Satellite(const std::string &host_address,
                   const std::string &endpoint_type,
                   const std::string &channel_name,
-                  ::zmq::socket_type socket_type);
+                  SocketType socket_type);
 
     public:
         void initialize() override;

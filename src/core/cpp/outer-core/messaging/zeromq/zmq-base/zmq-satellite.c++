@@ -14,7 +14,7 @@ namespace core::zmq
     Satellite::Satellite(const std::string &host_address,
                          const std::string &endpoint_type,
                          const std::string &channel_name,
-                         ::zmq::socket_type socket_type)
+                         SocketType socket_type)
         : Super(endpoint_type, channel_name, socket_type),
           host_address_(host_address)
     {
@@ -35,7 +35,7 @@ namespace core::zmq
     void Satellite::connect()
     {
         logf_debug("%s connecting to %s", *this, this->host_address());
-        this->socket()->connect(this->host_address());
+        this->check_error(::zmq_connect(this->socket(), this->host_address().c_str()));
     }
 
     void Satellite::disconnect()
@@ -43,9 +43,9 @@ namespace core::zmq
         try
         {
             logf_debug("%s disconnecting from %s", *this, this->host_address());
-            this->socket()->disconnect(this->host_address());
+            this->check_error(::zmq_disconnect(this->socket(), this->host_address().c_str()));
         }
-        catch (const ::zmq::error_t &e)
+        catch (const Error &e)
         {
             this->log_zmq_error("could not disconnect from " + this->host_address(), e);
         }

@@ -32,37 +32,37 @@ namespace core::zmq
         // Methods to send/receive populated ProboBuf Request/Reply structures
 
         void send_request(const cc::rr::Request &request,
-                          ::zmq::send_flags flags = ::zmq::send_flags::none);
+                          SendFlags flags = 0);
 
         bool receive_reply(cc::rr::Reply *reply,
-                           ::zmq::recv_flags flags = ::zmq::recv_flags::none);
+                           RecvFlags flags = 0);
 
         bool send_receive(const cc::rr::Request &request,
                           cc::rr::Reply *reply,
-                          ::zmq::send_flags send_flags = ::zmq::send_flags::none,
-                          ::zmq::recv_flags recv_flags = ::zmq::recv_flags::none);
+                          SendFlags send_flags = 0,
+                          RecvFlags recv_flags = 0);
 
         //======================================================================
         // Invoke method with populated Input/Output parameter messages
 
         void send_invocation(const std::string &method_name,
                              const cc::rr::Parameter &param,
-                             ::zmq::send_flags send_flags = ::zmq::send_flags::none);
+                             SendFlags send_flags = 0);
 
         bool read_result(cc::rr::Parameter *param,
                          cc::rr::Status *status,
-                         ::zmq::recv_flags flags = ::zmq::recv_flags::none);
+                         RecvFlags flags = 0);
 
         bool read_result(cc::rr::Parameter *param,
-                         ::zmq::recv_flags recv_flags = ::zmq::recv_flags::none);
+                         RecvFlags recv_flags = 0);
 
         //======================================================================
         // Invoke method  with variant request/reply parameters
 
         types::Value call(const std::string &method_name,
                           const types::Value &request,
-                          ::zmq::send_flags send_flags = ::zmq::send_flags::none,
-                          ::zmq::recv_flags recv_flags = ::zmq::recv_flags::none);
+                          SendFlags send_flags = 0,
+                          RecvFlags recv_flags = 0);
 
         //======================================================================
         // Invoke method with ProtoBuf request/reply parameters
@@ -70,18 +70,18 @@ namespace core::zmq
     private:
         void send_protobuf_invocation(const std::string method_name,
                                       const ::google::protobuf::Message &request,
-                                      ::zmq::send_flags send_flags);
+                                      SendFlags send_flags);
 
         bool read_protobuf_result(types::ByteVector *bytes,
-                                  ::zmq::recv_flags recv_flags);
+                                  RecvFlags recv_flags);
 
     public:
         template <class ResponseType = ::google::protobuf::Empty>
         ResponseType call(
             const std::string method_name,
             const ::google::protobuf::Message &request = ::google::protobuf::Empty(),
-            ::zmq::send_flags send_flags = ::zmq::send_flags::none,
-            ::zmq::recv_flags recv_flags = ::zmq::recv_flags::none)
+            SendFlags send_flags = 0,
+            RecvFlags recv_flags = 0)
         {
             this->send_protobuf_invocation(method_name, request, send_flags);
 

@@ -13,7 +13,7 @@ namespace core::zmq
     Host::Host(const std::string &bind_address,
                const std::string &endpoint_type,
                const std::string &channel_name,
-               ::zmq::socket_type socket_type)
+               SocketType socket_type)
         : Super(endpoint_type, channel_name, socket_type),
           bind_address_(bind_address)
     {
@@ -25,9 +25,9 @@ namespace core::zmq
         logf_debug("%s binding to %s", *this, this->bind_address());
         try
         {
-            this->socket()->bind(this->bind_address());
+            this->check_error(::zmq_bind(this->socket(), this->bind_address().c_str()));
         }
-        catch (const ::zmq::error_t &e)
+        catch (const Error &e)
         {
             this->log_zmq_error(
                 str::format("could not bind to socket %s:", this->bind_address()),

@@ -12,7 +12,6 @@ set(TARGET cc_core_messaging_zmq_base)
 # FetchContent_MakeAvailable(libzmq)
 set(PKG_DEPS
   libzmq
-  cppzmq
 )
 
 ### Library dependencies.

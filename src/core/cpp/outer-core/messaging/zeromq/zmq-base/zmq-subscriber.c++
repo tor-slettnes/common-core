@@ -9,6 +9,8 @@
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 
+#include <cstring>
+
 namespace core::zmq
 {
     Subscriber::Subscriber(const std::string &host_address,
@@ -16,7 +18,7 @@ namespace core::zmq
         : Super(host_address,
                 "subscriber",
                 channel_name,
-                ::zmq::socket_type::sub),
+                ZMQ_SUB),
           keep_receiving(false)
     {
     }
@@ -96,7 +98,7 @@ namespace core::zmq
                 }
             }
         }
-        catch (const ::zmq::error_t &e)
+        catch (const Error &e)
         {
             this->log_zmq_error("could not continue receiving publications", e);
             this->keep_receiving = false;
@@ -126,8 +128,11 @@ namespace core::zmq
                    *this,
                    handler->id(),
                    filter);
-        this->socket()->set(::zmq::sockopt::subscribe,
-                            filter.stringview());
+        this->check_error(::zmq_setsockopt(
+            this->socket(),
+            ZMQ_SUBSCRIBE,
+            filter.data(),
+            filter.size()));
     }
 
     void Subscriber::deinit_handler(const std::shared_ptr<MessageHandler> &handler)
@@ -138,10 +143,14 @@ namespace core::zmq
                    handler->filter());
         try
         {
-            this->socket()->set(::zmq::sockopt::unsubscribe,
-                                handler->filter().stringview());
+            const Filter &filter = handler->filter();
+            this->check_error(::zmq_setsockopt(
+                this->socket(),
+                ZMQ_UNSUBSCRIBE,
+                filter.data(),
+                filter.size()));
         }
-        catch (const ::zmq::error_t &e)
+        catch (const Error &e)
         {
             this->log_zmq_error("could not unsubscribe", e);
         }

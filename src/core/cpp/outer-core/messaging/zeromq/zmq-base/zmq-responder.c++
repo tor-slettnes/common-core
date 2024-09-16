@@ -17,7 +17,7 @@ namespace core::zmq
         : Super(bind_address,
                 "responder",
                 channel_name,
-                ::zmq::socket_type::rep),
+                ZMQ_REP),
           keep_listening(false)
     {
     }
@@ -57,7 +57,7 @@ namespace core::zmq
                 }
             }
         }
-        catch (const ::zmq::error_t &e)
+        catch (const Error &e)
         {
             this->log_zmq_error("could not continue receiving requests", e);
         }

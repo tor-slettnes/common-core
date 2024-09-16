@@ -26,8 +26,8 @@ namespace core::zmq
     public:
         std::optional<types::ByteVector> send_receive(
             const types::ByteVector &request,
-            ::zmq::send_flags send_flags = ::zmq::send_flags::none,
-            ::zmq::recv_flags recv_flags = ::zmq::recv_flags::none);
+            SendFlags send_flags = 0,
+            RecvFlags recv_flags = 0);
     };
 
 }  // namespace core::zmq
