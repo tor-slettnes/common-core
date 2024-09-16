@@ -20,7 +20,7 @@ namespace core::platform
     class PosixExitStatus : public ExitStatus
     {
     public:
-        PosixExitStatus(int combined_code);
+        PosixExitStatus(int raw_code);
 
         int exit_code() const override;
         int exit_signal() const override;
@@ -29,7 +29,7 @@ namespace core::platform
         std::string text() const override;
 
     private:
-        int code_;
+        int raw_code;
     };
 
 
@@ -116,7 +116,7 @@ namespace core::platform
             FileDescriptor *fderr) const;
 
         void write_from_stream(
-            std::istream &stream,
+            std::istream *stream,
             FileDescriptor fd) const;
 
         void trim_pipe(
@@ -130,6 +130,9 @@ namespace core::platform
         void close_fd(
             FileDescriptor fd) const;
 
+        void close_poll(
+            struct pollfd *pfd) const;
+
         Pipe create_pipe() const;
 
         void execute(
@@ -137,17 +140,16 @@ namespace core::platform
             const fs::path &cwd) const;
 
         void poll_outputs(
-            const std::vector<struct pollfd> &pfds,
             const Invocations &invocations,
+            std::vector<struct pollfd> *pfds,
             InvocationResults *results) const;
 
         bool check_poll(
-            const struct pollfd &pfd,
-            const Invocation &invocation,
-            const InvocationResult &result,
+            PID pid,
             const std::string &stream_name,
+            struct pollfd *pfd,
             std::shared_ptr<std::stringstream> *outstream,
-            std::unordered_set<FileDescriptor> *open_fds) const;
+            std::unordered_set<FileDescriptor> *open_fds = nullptr) const;
 
         void wait_results(
             const Invocations &invocations,
@@ -155,7 +157,7 @@ namespace core::platform
             InvocationResults *results) const;
 
     private:
-        static std::unordered_set<FileDescriptor> open_fds;
+        static std::set<FileDescriptor> open_fds;
     };
 
 }  // namespace core::platform

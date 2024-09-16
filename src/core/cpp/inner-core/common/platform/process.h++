@@ -69,6 +69,11 @@ namespace core::platform
         std::string error_symbol() const;
         std::string error_text() const;
 
+        std::string stdout_text() const;
+        std::string stderr_text() const;
+        std::ios::pos_type stdout_size() const;
+        std::ios::pos_type stderr_size() const;
+
     protected:
         void to_stream(std::ostream &stream) const override;
 

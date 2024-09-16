@@ -30,7 +30,7 @@ namespace platform::vfs::local
         ~LinuxProvider();
 
     public:
-        bool is_pertinent() override;
+        bool is_pertinent() const override;
         void initialize() override;
 
     protected:

@@ -27,7 +27,7 @@ namespace platform::sysconfig::native
     {
     }
 
-    bool PosixTimeZoneProvider::is_pertinent()
+    bool PosixTimeZoneProvider::is_pertinent() const
     {
         return fs::exists(CCFILE) && fs::exists(CNFILE);
     }

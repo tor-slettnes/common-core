@@ -22,7 +22,7 @@ namespace platform::vfs::grpc
         ClientProvider(const std::shared_ptr<Client> &client,
                        bool use_cached = false);
 
-        bool is_pertinent() override;
+        bool is_pertinent() const override;
         void initialize() override;
 
         void set_use_cached(bool use_cached);

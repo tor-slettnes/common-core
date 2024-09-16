@@ -18,6 +18,7 @@ set(SOURCES
   sysconfig-grpc-timezone.c++
   sysconfig-grpc-host.c++
   sysconfig-grpc-product.c++
+  sysconfig-grpc-process.c++
   sysconfig-providers-grpc.c++
 )
 

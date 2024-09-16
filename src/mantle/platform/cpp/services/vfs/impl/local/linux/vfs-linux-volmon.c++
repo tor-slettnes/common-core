@@ -290,9 +290,8 @@ namespace platform::vfs::local::volume
         udev_unref(this->udev);
     }
 
-    bool Base::available()
+    bool Base::available() const
     {
-        this->init();
         return bool(this->udev);
     }
 
@@ -355,9 +354,8 @@ namespace platform::vfs::local::volume
         udev_monitor_unref(this->monitor);
     }
 
-    bool Monitor::available()
+    bool Monitor::available() const
     {
-        this->init();
         return Base::available() && bool(this->monitor);
     }
 

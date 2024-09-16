@@ -19,7 +19,7 @@ namespace platform::upgrade::grpc
     public:
         ClientProvider(const std::shared_ptr<Client> &client);
 
-        bool is_pertinent() override;
+        bool is_pertinent() const override;
 
     protected:
         PackageManifests scan(const PackageSource &source) override;

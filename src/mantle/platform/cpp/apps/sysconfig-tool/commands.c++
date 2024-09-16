@@ -127,6 +127,27 @@ void Options::add_commands()
         std::bind(&Options::set_host_name, this));
 
     this->add_command(
+        "invoke",
+        {"COMMAND", "..."},
+        "Invoke a command and wait for its completion. "
+        "Its exit status is passed on to the caller (see the '--status' option).",
+        std::bind(&Options::invoke_sync, this));
+
+    this->add_command(
+        "invoke_async",
+        {"COMMAND", "..."},
+        "Invoke a command asynchronously. and print out its process ID (PID)."
+        "This PID can subsequently be used to wait for its completion with 'invoke_finish'.",
+        std::bind(&Options::invoke_async, this));
+
+    this->add_command(
+        "invoke_finish",
+        {"PID"},
+        "Wait for a previously invoked asynchronous command to finish."
+        "Its exit status is passed on to the caller (see the '--status' option).",
+        std::bind(&Options::invoke_finish, this));
+
+    this->add_command(
         "reboot",
         {},
         "Reboot the system",
@@ -322,6 +343,58 @@ void Options::set_model_name()
 {
     std::string model = this->get_arg("MODEL_NAME");
     platform::sysconfig::product->set_model_name(model);
+}
+
+void Options::invoke_sync()
+{
+    std::string command = this->get_arg("COMMAND");
+
+    core::platform::InvocationResult result = platform::sysconfig::process->invoke_sync(
+        {.argv = this->args},  // invocation
+        {});                   // input
+
+    if (result.stdout_size())
+    {
+        std::cout << result.stdout->rdbuf();
+    }
+
+    if (result.stderr_size())
+    {
+        std::cerr << result.stderr->rdbuf();
+    }
+
+    this->report_status_and_exit(result.error_code());
+}
+
+void Options::invoke_async()
+{
+    std::string command = this->get_arg("COMMAND");
+    core::platform::PID pid = platform::sysconfig::process->invoke_async(
+        {.argv = this->args},  // invocation
+        {});                   // input
+
+    std::cout << pid << std::endl;
+}
+
+void Options::invoke_finish()
+{
+    auto pid = core::str::convert_to<core::platform::PID>(this->get_arg("PID"));
+
+    core::platform::InvocationResult result = platform::sysconfig::process->invoke_finish(
+        pid,
+        {});
+
+    if (result.stdout_size())
+    {
+        std::cout << result.stdout->rdbuf();
+    }
+
+    if (result.stderr_size())
+    {
+        std::cerr << result.stderr->rdbuf();
+    }
+
+    this->report_status_and_exit(result.error_code());
 }
 
 void Options::reboot()

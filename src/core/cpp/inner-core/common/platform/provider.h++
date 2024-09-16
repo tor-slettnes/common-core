@@ -53,7 +53,7 @@ namespace core::platform
 
     public:
         /// Determine if derived provider type is applicable on this host.
-        virtual bool is_pertinent() { return true; }
+        virtual bool is_pertinent() const { return true; }
         virtual void initialize() {}
         virtual void deinitialize() {}
         std::string name() const { return this->name_; }

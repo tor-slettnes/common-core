@@ -31,7 +31,7 @@ namespace platform::sysconfig::native
         PosixTimeZoneProvider();
 
     public:
-        bool is_pertinent() override;
+        bool is_pertinent() const override;
         void initialize() override;
         void deinitialize() override;
 

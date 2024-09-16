@@ -17,7 +17,7 @@ namespace platform::upgrade::grpc
     {
     }
 
-    bool ClientProvider::is_pertinent()
+    bool ClientProvider::is_pertinent() const
     {
         return bool(client);
     }

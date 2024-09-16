@@ -27,6 +27,11 @@ namespace core::platform
     {
     }
 
+    bool LinuxTimeProvider::is_pertinent() const
+    {
+        return fs::exists(TIMEDATECTL_PATH);
+    }
+
     void LinuxTimeProvider::set_time(const dt::TimePoint &tp)
     {
         process->invoke_check({

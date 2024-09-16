@@ -139,7 +139,7 @@ namespace platform::vfs::local::volume
     public:
         Base();
         ~Base();
-        virtual bool available();
+        virtual bool available() const;
         virtual void init(){};
         virtual Event::ptr next() = 0;
 
@@ -174,7 +174,7 @@ namespace platform::vfs::local::volume
         Monitor();
         ~Monitor();
 
-        bool available() override;
+        bool available() const override;
         void init() override;
         Event::ptr next() override;
 

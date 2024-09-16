@@ -280,15 +280,20 @@ namespace platform::sysconfig::grpc
         try
         {
             TimeZoneInfo info;
-            if (request->has_canonical_zone())
+            switch (request->config_case())
             {
+            case ::cc::platform::sysconfig::TimeZoneConfig::ConfigCase::kCanonicalZone:
                 info = timezone->set_timezone(
                     request->canonical_zone());
-            }
-            else if (request->has_location())
-            {
+                break;
+
+            case ::cc::platform::sysconfig::TimeZoneConfig::ConfigCase::kLocation:
                 info = timezone->set_timezone(
                     protobuf::decoded<TimeZoneLocation>(request->location()));
+                break;
+
+            default:
+                break;
             }
             protobuf::encode(info, response);
             return ::grpc::Status::OK;

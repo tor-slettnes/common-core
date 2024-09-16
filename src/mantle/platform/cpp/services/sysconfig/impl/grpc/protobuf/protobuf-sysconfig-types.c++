@@ -7,6 +7,7 @@
 
 #include "protobuf-sysconfig-types.h++"
 #include "protobuf-standard-types.h++"
+#include "protobuf-message.h++"
 #include "protobuf-inline.h++"
 
 namespace protobuf
@@ -334,18 +335,25 @@ namespace protobuf
     //==========================================================================
     // CommandInvocation
 
-    void encode(const core::platform::Invocation &native,
+    void encode(const core::platform::Invocation &invocation,
+                const std::string &input,
                 cc::platform::sysconfig::CommandInvocation *proto) noexcept
     {
-        assign_repeated(native.argv, proto->mutable_argv());
-        proto->set_working_directory(native.cwd);
+        assign_repeated(invocation.argv, proto->mutable_argv());
+        proto->set_working_directory(invocation.cwd);
+        proto->set_stdin(input);
     }
 
     void decode(const cc::platform::sysconfig::CommandInvocation &proto,
-                core::platform::Invocation *native) noexcept
+                core::platform::Invocation *invocation,
+                std::string *input) noexcept
     {
-        assign_to_vector(proto.argv(), &native->argv);
-        native->cwd = proto.working_directory();
+        assign_to_vector(proto.argv(), &invocation->argv);
+        invocation->cwd = proto.working_directory();
+        if (input)
+        {
+            *input = proto.stdin();
+        }
     }
 
     //==========================================================================
@@ -362,6 +370,33 @@ namespace protobuf
     {
         *native = proto.pid();
     }
+
+    //==========================================================================
+    // CommandContinuation
+
+    void encode(const core::platform::PID &pid,
+                const std::string &input,
+                cc::platform::sysconfig::CommandContinuation *proto) noexcept
+    {
+        proto->set_pid(pid);
+        proto->set_stdin(input);
+    }
+
+    void decode(const cc::platform::sysconfig::CommandContinuation &proto,
+                core::platform::PID *pid,
+                std::string *input) noexcept
+    {
+        if (pid)
+        {
+            *pid = proto.pid();
+        }
+
+        if (input)
+        {
+            *input = proto.stdin();
+        }
+    }
+
 
     //==========================================================================
     // CommandResponse
@@ -400,8 +435,8 @@ namespace protobuf
     void decode(const cc::platform::sysconfig::CommandResponse &proto,
                 core::platform::InvocationResult *native) noexcept
     {
-        native->stdout = std::make_shared<std::stringstream>(proto.stdout());
-        native->stderr = std::make_shared<std::stringstream>(proto.stderr());
+        native->stdout->write(proto.stdout().data(), proto.stdout().size());
+        native->stderr->write(proto.stderr().data(), proto.stderr().size());
         native->status = std::make_shared<platform::sysconfig::PortableExitStatus>(
             proto.success(),
             proto.exit_code(),

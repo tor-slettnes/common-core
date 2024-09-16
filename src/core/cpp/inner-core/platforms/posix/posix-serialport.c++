@@ -78,7 +78,12 @@ namespace core::platform
     {
         if (int fd = this->fd_; this->fd_ >= 0)
         {
-            ::write(fd, text.data(), text.size());
+            if (::write(fd, text.data(), text.size()) < 0)
+            {
+                throwf(core::exception::SystemError,
+                       "Writing to %s",
+                       this->device());
+            }
         }
     }
 

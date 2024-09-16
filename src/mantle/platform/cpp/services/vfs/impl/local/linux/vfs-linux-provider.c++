@@ -24,6 +24,8 @@ namespace platform::vfs::local
         this->preexec = setting.get(SETTING_CXT_PREEXEC).as_string();
         this->postexec = setting.get(SETTING_CXT_POSTEXEC).as_string();
         this->writable = setting.get(SETTING_CXT_POSTEXEC, true).as_bool();
+
+        this->monitor.init();
     }
 
     LinuxProvider::~LinuxProvider()
@@ -32,7 +34,7 @@ namespace platform::vfs::local
         this->monitor.signal_event.disconnect(this->name());
     }
 
-    bool LinuxProvider::is_pertinent()
+    bool LinuxProvider::is_pertinent() const
     {
         return this->monitor.available();
     }

@@ -1,14 +1,15 @@
-FROM debian:bookworm
+#FROM debian:bookworm
+FROM ubuntu:jammy
 
 ### Install runtime utilities
 RUN apt-get update
 RUN apt-get install -y \
     build-essential         \
     cmake                   \
-    cppzmq-dev              \
     doxygen                 \
     file                    \
     git                     \
+    libzmq3-dev             \
     libcurl4-gnutls-dev     \
     libglibmm-2.4-dev       \
     libgrpc++-dev           \

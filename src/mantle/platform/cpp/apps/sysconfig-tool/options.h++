@@ -50,6 +50,9 @@ private:
     void get_product_info();
     void set_serial_number();
     void set_model_name();
+    void invoke_sync();
+    void invoke_async();
+    void invoke_finish();
     void reboot();
 
 private:

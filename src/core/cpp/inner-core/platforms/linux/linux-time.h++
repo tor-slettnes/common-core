@@ -21,6 +21,7 @@ namespace core::platform
         LinuxTimeProvider();
 
     public:
+        bool is_pertinent() const override;
         void set_time(const dt::TimePoint &tp) override;
 
         void set_ntp(bool ntp) override;

@@ -18,7 +18,7 @@ namespace platform::netconfig::dbus
     {
     }
 
-    bool DBusProvider::is_pertinent()
+    bool DBusProvider::is_pertinent() const
     {
         try
         {

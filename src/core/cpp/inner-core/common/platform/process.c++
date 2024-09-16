@@ -43,8 +43,8 @@ namespace core::platform
         core::types::PartsList parts;
         parts.add("code", this->exit_code(), this->exit_code() != 0);
         parts.add("signal", this->exit_signal(), this->exit_signal() != 0);
-        parts.add("symbol", this->symbol());
-        parts.add("text", this->text());
+        parts.add("symbol", this->symbol(), !this->symbol().empty(), "%r");
+        parts.add("text", this->text(), !this->text().empty(), "%r");
         stream << parts;
     }
 
@@ -110,19 +110,69 @@ namespace core::platform
         }
     }
 
-    void InvocationResult::to_stream(std::ostream &stream) const
+    std::string InvocationResult::stdout_text() const
     {
-        if (this->error_code())
+        if (this->stdout)
         {
-            core::str::format(stream,
-                              "{error_code=%d, text=%r}",
-                              this->error_code(),
-                              this->error_text());
+            return this->stdout->str();
         }
         else
         {
-            stream << "success";
+            return {};
         }
+    }
+
+    std::string InvocationResult::stderr_text() const
+    {
+        if (this->stderr)
+        {
+            return this->stderr->str();
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::ios::pos_type InvocationResult::stdout_size() const
+    {
+        if (this->stdout)
+        {
+            return this->stdout->tellp();
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    std::ios::pos_type InvocationResult::stderr_size() const
+    {
+        if (this->stderr)
+        {
+            return this->stderr->tellp();
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    void InvocationResult::to_stream(std::ostream &stream) const
+    {
+        core::types::PartsList parts;
+        if (this->status)
+        {
+            parts.add("status", *this->status);
+        }
+        else
+        {
+            parts.add("status", "success");
+        }
+
+        parts.add("stdout", this->stdout_text(), this->stdout_size(), "%r");
+        parts.add("stderr", this->stderr_text(), this->stderr_size(), "%r");
+        stream << parts;
     }
 
     //==========================================================================

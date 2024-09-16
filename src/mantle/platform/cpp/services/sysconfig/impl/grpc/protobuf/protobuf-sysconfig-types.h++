@@ -156,11 +156,13 @@ namespace protobuf
     //==========================================================================
     // CommandInvocation
 
-    void encode(const core::platform::Invocation &native,
+    void encode(const core::platform::Invocation &invocation,
+                const std::string &input,
                 cc::platform::sysconfig::CommandInvocation *proto) noexcept;
 
     void decode(const cc::platform::sysconfig::CommandInvocation &proto,
-                core::platform::Invocation *native) noexcept;
+                core::platform::Invocation *invocation,
+                std::string *input = nullptr) noexcept;
 
     //==========================================================================
     // CommandInvocationResponse
@@ -170,6 +172,18 @@ namespace protobuf
 
     void decode(const cc::platform::sysconfig::CommandInvocationResponse &proto,
                 core::platform::PID *native) noexcept;
+
+    //==========================================================================
+    // CommandContinuation
+
+    void encode(const core::platform::PID &pid,
+                const std::string &input,
+                cc::platform::sysconfig::CommandContinuation *proto) noexcept;
+
+    void decode(const cc::platform::sysconfig::CommandContinuation &proto,
+                core::platform::PID *pid,
+                std::string *input = nullptr) noexcept;
+
 
     //==========================================================================
     // CommandResponse
