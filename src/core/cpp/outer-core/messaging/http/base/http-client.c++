@@ -44,7 +44,12 @@ namespace core::http
     std::stringstream HTTPClient::get(const std::string &location) const
     {
         std::stringstream content;
-        this->get(location, nullptr, nullptr, nullptr, &content, true);
+        this->get(location,  // location
+                  nullptr,   // content_type
+                  nullptr,   // header_stream
+                  &content,  // content_stream
+                  true,      // fail_on_error
+                  nullptr);  // response_code
         return content;
     }
 
@@ -55,17 +60,32 @@ namespace core::http
     {
         std::string content_type;
         std::stringstream stream;
-        this->get(location, response_code, &content_type, nullptr, &stream, fail_on_error);
+        this->get(location, &content_type, nullptr, &stream, fail_on_error, response_code);
         this->check_content_type(location, content_type, expected_content_type);
         return stream;
     }
 
     bool HTTPClient::get(const std::string &location,
-                         ResponseCode *response_code,
                          std::string *content_type,
                          std::ostream *header_stream,
                          std::ostream *content_stream,
-                         bool fail_on_error) const
+                         bool fail_on_error,
+                         ResponseCode *response_code) const
+    {
+        return this->get(location,
+                         content_type,
+                         This::stream_receiver(header_stream),
+                         This::stream_receiver(content_stream),
+                         fail_on_error,
+                         response_code);
+    }
+
+    bool HTTPClient::get(const std::string &location,
+                         std::string *content_type,
+                         const ReceiveFunction &header_receiver,
+                         const ReceiveFunction &content_receiver,
+                         bool fail_on_error,
+                         ResponseCode *response_code) const
     {
         std::string url = this->url(location);
         CURL *handle = this->handle();
@@ -78,11 +98,11 @@ namespace core::http
         return This::perform_request(url,
                                      handle,
                                      code,
-                                     response_code,
                                      content_type,
-                                     header_stream,
-                                     content_stream,
-                                     fail_on_error);
+                                     header_receiver,
+                                     content_receiver,
+                                     fail_on_error,
+                                     response_code);
     }
 
     std::stringstream HTTPClient::post(const std::string &location,
@@ -97,11 +117,11 @@ namespace core::http
         this->post(location,                // location
                    content_type,            // content_type
                    data,                    // data
-                   response_code,           // response_code
                    &received_content_type,  // received_content_type
                    nullptr,                 // received_header_stream
                    &received_stream,        // received_content_stream
-                   fail_on_error);          // fail_on_error
+                   fail_on_error,           // fail_on_error
+                   response_code);          // response_code
 
         this->check_content_type(location, received_content_type, expected_content_type);
         return received_stream;
@@ -110,11 +130,30 @@ namespace core::http
     bool HTTPClient::post(const std::string &location,
                           const std::string &content_type,
                           const std::string &data,
-                          ResponseCode *response_code,
                           std::string *received_content_type,
                           std::ostream *received_header_stream,
                           std::ostream *received_content_stream,
-                          bool fail_on_error) const
+                          bool fail_on_error,
+                          ResponseCode *response_code) const
+    {
+        return this->post(location,
+                          content_type,
+                          data,
+                          received_content_type,
+                          This::stream_receiver(received_header_stream),
+                          This::stream_receiver(received_content_stream),
+                          fail_on_error,
+                          response_code);
+    }
+
+    bool HTTPClient::post(const std::string &location,
+                          const std::string &content_type,
+                          const std::string &data,
+                          std::string *received_content_type,
+                          const ReceiveFunction &header_receiver,
+                          const ReceiveFunction &content_receiver,
+                          bool fail_on_error,
+                          ResponseCode *response_code) const
     {
         ResponseCode response = 0;
         std::string url = this->url(location);
@@ -151,11 +190,11 @@ namespace core::http
             ok = This::perform_request(url,
                                        handle,
                                        code,
-                                       response_code,
                                        received_content_type,
-                                       received_header_stream,
-                                       received_content_stream,
-                                       fail_on_error);
+                                       header_receiver,
+                                       content_receiver,
+                                       fail_on_error,
+                                       response_code);
         }
         catch (...)
         {
@@ -182,17 +221,32 @@ namespace core::http
     {
         std::string content_type;
         std::stringstream stream;
-        this->del(location, response_code, &content_type, nullptr, &stream, fail_on_error);
+        this->del(location, &content_type, nullptr, &stream, fail_on_error, response_code);
         this->check_content_type(location, content_type, expected_content_type);
         return stream;
     }
 
     bool HTTPClient::del(const std::string &location,
-                         ResponseCode *response_code,
                          std::string *content_type,
                          std::ostream *header_stream,
                          std::ostream *content_stream,
-                         bool fail_on_error) const
+                         bool fail_on_error,
+                         ResponseCode *response_code) const
+    {
+        return this->del(location,
+                         content_type,
+                         This::stream_receiver(header_stream),
+                         This::stream_receiver(content_stream),
+                         fail_on_error,
+                         response_code);
+    }
+
+    bool HTTPClient::del(const std::string &location,
+                         std::string *content_type,
+                         const ReceiveFunction &receive_header_data,
+                         const ReceiveFunction &receive_content_data,
+                         bool fail_on_error,
+                         ResponseCode *response_code) const
     {
         std::string url = this->url(location);
         CURL *handle = this->handle();
@@ -203,24 +257,24 @@ namespace core::http
             logf_debug("HTTP client deleting resource: %s", url);
         }
 
-        return This::perform_request(url,             // url
-                                     handle,          // handle
-                                     code,            // code
-                                     response_code,   // response_code
-                                     content_type,    // received_content_type
-                                     header_stream,   // received_header_stream
-                                     content_stream,  // received_content_stream
-                                     fail_on_error);  // fail_on_error
+        return This::perform_request(url,                   // url
+                                     handle,                // handle
+                                     code,                  // code
+                                     content_type,          // received_content_type
+                                     receive_header_data,   // receive_header_data
+                                     receive_content_data,  // receive_content_data
+                                     fail_on_error,         // fail_on_error
+                                     response_code);        // response_code
     }
 
     bool HTTPClient::perform_request(const std::string &url,
                                      CURL *handle,
                                      CURLcode code,
-                                     ResponseCode *response_code,
                                      std::string *received_content_type,
-                                     std::ostream *received_header_stream,
-                                     std::ostream *received_content_stream,
-                                     bool fail_on_error)
+                                     const ReceiveFunction &receive_header_data,
+                                     const ReceiveFunction &receive_content_data,
+                                     bool fail_on_error,
+                                     ResponseCode *response_code)
     {
         ResponseCode response = 0;
 
@@ -234,14 +288,14 @@ namespace core::http
             code = curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, HTTPClient::receive);
         }
 
-        if ((code == CURLE_OK) && (received_header_stream != nullptr))
+        if (code == CURLE_OK)
         {
-            code = curl_easy_setopt(handle, CURLOPT_HEADERDATA, received_header_stream);
+            code = curl_easy_setopt(handle, CURLOPT_HEADERDATA, &receive_header_data);
         }
 
-        if ((code == CURLE_OK) && (received_content_stream != nullptr))
+        if (code == CURLE_OK)
         {
-            code = curl_easy_setopt(handle, CURLOPT_WRITEDATA, received_content_stream);
+            code = curl_easy_setopt(handle, CURLOPT_WRITEDATA, &receive_content_data);
         }
 
         if (code == CURLE_OK)
@@ -304,13 +358,35 @@ namespace core::http
         }
     }
 
+    HTTPClient::ReceiveFunction HTTPClient::stream_receiver(std::ostream *stream)
+    {
+        return [=](const char *data, std::size_t size) -> void {
+            if (stream)
+            {
+                stream->write(data, size);
+            }
+        };
+    }
+
     size_t HTTPClient::receive(char *ptr, size_t item_size, size_t num_items, void *userdata)
     {
-        auto *ss = reinterpret_cast<std::ostream *>(userdata);
+        auto *callback = reinterpret_cast<const ReceiveFunction *>(userdata);
         ssize_t size = item_size * num_items;
-        logf_trace("HTTP client received %d bytes from server", size);
-        ss->write(ptr, size);
-        return ss->good() ? size : 0;
+        try
+        {
+            if (callback)
+            {
+                (*callback)(ptr, size);
+            }
+            return size;
+        }
+        catch (...)
+        {
+            logf_info("Failed to send %d bytes to HTTP receive function: %s",
+                      size,
+                      std::current_exception());
+            return 0;
+        }
     }
 
     CURL *HTTPClient::handle() const
