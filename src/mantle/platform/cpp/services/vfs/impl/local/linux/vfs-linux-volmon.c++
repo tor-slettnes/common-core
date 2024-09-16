@@ -8,6 +8,7 @@
 #include "vfs-linux-volmon.h++"
 #include "types/symbolmap.h++"
 #include "types/valuemap.h++"
+#include "types/partslist.h++"
 #include "logging/logging.h++"
 
 #include <thread>
@@ -91,25 +92,26 @@ namespace platform::vfs::local::volume
 
     void Event::to_stream(std::ostream &stream) const
     {
-        stream << "{action=" << std::quoted(this->action)
-               << " (type " << this->actionType() << ")"
-               << ", devicetype=" << this->deviceType()
-               << ", devpath=" << std::quoted(this->devpath)
-               << ", subsystem=" << std::quoted(this->subsystem)
-               << ", devtype=" << std::quoted(this->devtype)
-               << ", syspath=" << std::quoted(this->syspath)
-               << ", sysname=" << std::quoted(this->sysname)
-               << ", sysnum=" << std::quoted(this->sysnum)
-               << ", devnode=" << std::quoted(this->devnode)
-               << ", driver=" << std::quoted(this->driver)
-               << ", devnum=" << this->devnum
-               << ", seqnum=" << this->seqnum
-               << ", age=" << this->age
-               << ", properties=" << this->properties
-               << ", devlinks=" << this->devlinks
-               << ", tags=" << this->tags
-               << ", sysattrs=" << this->sysattrs
-               << "}";
+        core::types::PartsList parts;
+        parts.add_string("action", this->action);
+        parts.add("actionType", this->actionType());
+        parts.add("devicetype", this->deviceType());
+        parts.add_string("devpath", this->devpath);
+        parts.add_string("subsystem", this->subsystem);
+        parts.add_string("devtype", this->devtype);
+        parts.add_string("syspath", this->syspath);
+        parts.add_string("sysname", this->sysname);
+        parts.add_string("sysnum", this->sysnum);
+        parts.add_string("devnode", this->devnode);
+        parts.add_string("driver", this->driver);
+        parts.add("devnum", this->devnum);
+        parts.add("seqnum", this->seqnum);
+        parts.add("age", this->age);
+        parts.add("properties", this->properties);
+        parts.add("devlinks", this->devlinks);
+        parts.add("tags", this->tags);
+        parts.add("esysattrs", this->sysattrs);
+        stream << parts;
     }
 
     Event::KeyValueMap Event::valuemap(struct udev_list_entry *list) noexcept

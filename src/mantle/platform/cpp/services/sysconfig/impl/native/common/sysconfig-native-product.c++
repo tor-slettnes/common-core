@@ -22,7 +22,7 @@ namespace platform::sysconfig::native
     ProductProvider::ProductProvider()
         : Super(TYPE_NAME_FULL(This)),
           release_settings(RELEASE_SETTINGS_FILE),
-          product_settings(RELEASE_SETTINGS_FILE)
+          product_settings(PRODUCT_SETTINGS_FILE)
     {
     }
 

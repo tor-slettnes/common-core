@@ -9,7 +9,7 @@
         "contact": "Tor Slettnes <tor@slett.net>"
     },
     "upgrade": {
-        "download url": "https://slett.net/cc-upgrade/",
+        "package summary url": "https://slett.net/cc-upgrade/releases.json",
         "package suffix": ".ccpkg",
         "keyring": "common-core-release.kbx"
     },

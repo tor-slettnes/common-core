@@ -6,8 +6,9 @@
 //==============================================================================
 
 {
-    "manifest file" : "manifest.json",
-    "download url"  : "@UPGRADE_DOWNLOAD_URL@",
-    "package suffix": "@UPGRADE_PACKAGE_SUFFIX@",
-    "keyring file"  : "/usr/share/keyrings/@UPGRADE_KEYRING@"
+    // Where to check for upgrades at periodic intervals.
+    "package summary url": "@UPGRADE_PACKAGE_SUMMARY_URL@",
+    "manifest file"      : "manifest.json",
+    "package suffix"     : "@UPGRADE_PACKAGE_SUFFIX@",
+    "keyring file"       : "/usr/share/keyrings/@UPGRADE_KEYRING@"
 }

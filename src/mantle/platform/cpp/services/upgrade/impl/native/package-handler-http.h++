@@ -23,9 +23,12 @@ namespace platform::upgrade::native
 
     public:
         PackageSource get_source() const override;
+
         PackageManifests scan() override;
-        void unpack(const fs::path &filename,
-                    const fs::path &staging_folder) override;
+
+        void unpack(
+            const fs::path &filename,
+            const fs::path &staging_folder) override;
 
     private:
         URL url;

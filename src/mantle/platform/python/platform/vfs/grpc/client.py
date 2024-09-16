@@ -162,23 +162,6 @@ class VirtualFileSystemClient (SignalClient):
         return decodeStats(reply)
 
 
-    def list(self,
-             vfspath: VFSPathType,
-             dereference: bool = True,
-             with_attributes: bool = True) -> cc.platform.vfs.DirectoryList:
-        '''
-        List contents of the specified virtual path, specified in the format
-        CONTEXT:PATH.
-
-        To list available contexts, use 'get_contexts()'.
-        '''
-
-        return self.stub.list(pathRequest(
-            source=vfspath,
-            dereference=dereference,
-            with_attributes=with_attributes))
-
-
     def get_directory(self,
                       vfspath: VFSPathType,
                       dereference: bool = True,
