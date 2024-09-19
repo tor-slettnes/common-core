@@ -10,6 +10,7 @@
 #include "string/format.h++"
 #include "types/value.h++"
 #include <iostream>
+#include <stdexcept>
 
 /// Throw exception with formatted message
 ///
@@ -33,6 +34,7 @@
 /// ```
 
 #define throwf_args(_EXC, ...) throw _EXC(core::str::format __VA_ARGS__)
+
 
 namespace core::exception
 {

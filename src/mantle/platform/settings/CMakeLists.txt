@@ -13,10 +13,10 @@ BuildSettings(
 
 
 ### Create `upgrade.json` with values from `${CMAKE_SOURCE_DIR}/defaults.json`
-get_build_arg(UPGRADE_DOWNLOAD_URL         "upgrade" "download url")
-get_build_arg(UPGRADE_PACKAGE_SUFFIX       "upgrade" "package suffix")
-get_build_arg(UPGRADE_PACKAGE_SUMMARY_URL  "upgrade" "package summary url")
-get_build_arg(UPGRADE_KEYRING              "upgrade" "keyring")
+get_build_arg(UPGRADE_PACKAGE_SUFFIX  "upgrade" "package suffix")
+get_build_arg(UPGRADE_SCAN_URL        "upgrade" "scan url")
+get_build_arg(UPGRADE_KEYRING         "upgrade" "keyring")
+
 
 configure_file(upgrade.json.in upgrade.json)
 install(

@@ -154,6 +154,16 @@ namespace platform::upgrade
         return this->is_applicable_;
     }
 
+    bool PackageManifest::operator==(const PackageManifest &other) const
+    {
+        return (this->source() == other.source()) &&
+               (this->product() == other.product()) &&
+               (this->version() == other.version()) &&
+               (this->description() == other.description()) &&
+               (this->reboot_required() == other.reboot_required()) &&
+               (this->is_applicable() == other.is_applicable());
+    }
+
     void PackageManifest::to_stream(std::ostream &stream) const
     {
         if (this->source())

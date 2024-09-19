@@ -8,35 +8,25 @@
 #pragma once
 #include "package-handler.h++"
 #include "vfs-location.h++"
-#include "types/create-shared.h++"
 
 namespace platform::upgrade::native
 {
-    class VFSPackageHandler : public PackageHandler,
-                              public core::types::enable_create_shared<VFSPackageHandler>
+    class VFSPackageHandler : public PackageHandler
     {
         using This = VFSPackageHandler;
         using Super = PackageHandler;
 
     public:
-        VFSPackageHandler(const core::SettingsStore::ptr &settings,
-                          const vfs::Path &vfs_path);
+        VFSPackageHandler(const core::SettingsStore::ptr &settings);
 
     public:
-        PackageSource get_source() const override;
-
-        PackageManifests scan() override;
-
         void unpack(
-            const fs::path &filename,
+            const PackageSource &source,
             const fs::path &staging_folder) override;
 
-    private:
-        PackageManifest::ptr scan_file(
-            const vfs::Location &location,
-            const fs::path &package_name);
-
-    private:
-        vfs::Path vfs_path;
+    protected:
+        void unpack_file(
+            const fs::path &filepath,
+            const fs::path &staging_folder);
     };
 }  // namespace platform::upgrade::native

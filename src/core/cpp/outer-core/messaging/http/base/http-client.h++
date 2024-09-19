@@ -32,7 +32,7 @@ namespace core::http
         using ReceiveFunction = std::function<void(const char *, std::size_t)>;
 
     public:
-        HTTPClient(const URL &base_url);
+        HTTPClient(const URL &base_url={});
         virtual ~HTTPClient();
 
     public:

@@ -48,6 +48,4 @@ namespace core::http
     std::string join_urls(const std::string &base, const std::string &rel);
     std::string url_encode(const std::string &decoded);
     std::string url_decode(const std::string &encoded);
-
-
 }  // namespace core::http

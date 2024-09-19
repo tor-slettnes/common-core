@@ -8,8 +8,7 @@
 #pragma once
 #include "upgrade-types.h++"
 #include "platform/process.h++"
-#include "settings/settingsstore.h++"
-#include "types/create-shared.h++"
+#include "types/value.h++"
 
 namespace platform::upgrade::native
 {
@@ -25,7 +24,7 @@ namespace platform::upgrade::native
         LocalManifest(const fs::path &path,
                       const PackageSource &source = {});
 
-        LocalManifest(const core::SettingsStore::ptr &settings,
+        LocalManifest(const core::types::KeyValueMap &settings,
                       const PackageSource &source = {});
 
     public:
@@ -48,7 +47,10 @@ namespace platform::upgrade::native
         bool is_applicable_version(const Version &current_version) const;
 
     protected:
-        core::SettingsStore::ptr settings;
+        core::types::KeyValueMap settings;
+
+    private:
+        std::optional<bool> is_applicable_;
     };
 
 }  // namespace platform::upgrade::native

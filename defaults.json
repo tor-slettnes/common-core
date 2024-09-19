@@ -9,8 +9,8 @@
         "contact": "Tor Slettnes <tor@slett.net>"
     },
     "upgrade": {
-        "package summary url": "https://slett.net/cc-upgrade/releases.json",
         "package suffix": ".ccpkg",
+        "scan url": "https://slett.net/common-core/package-index.json",
         "keyring": "common-core-release.kbx"
     },
     "python": {

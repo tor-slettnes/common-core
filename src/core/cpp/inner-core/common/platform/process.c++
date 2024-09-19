@@ -8,9 +8,13 @@
 #include "process.h++"
 #include "io/streambuffer.h++"
 #include "status/exceptions.h++"
+#include "logging/logging.h++"
+
+#include <sys/wait.h>
 
 #include <cstring>
-#include <sys/wait.h>
+#include <future>
+#include <utility>
 
 namespace core::platform
 {
@@ -299,22 +303,43 @@ namespace core::platform
         this->invoke_check(argv, cwd, &stdin);
     }
 
-    InvocationResults ProcessProvider::pipeline(
-        const Invocations &invocations,
-        FileDescriptor fdin,
-        bool checkstatus) const
-    {
-        throw std::invalid_argument(
-            "pipeline() is not implemented on this platform");
-    }
-
     InvocationResults ProcessProvider::pipe_from_stream(
         const Invocations &invocations,
         std::istream &instream,
         bool checkstatus) const
     {
-        throw std::invalid_argument(
-            "pipe_from_stream() is not implemented on this platform");
+        Pipe inpipe = this->create_pipe();
+        logf_trace("Created pipe from stream, %d -> %d", inpipe[OUTPUT], inpipe[INPUT]);
+
+        std::future<InvocationResults> future = std::async(
+            &This::pipeline, this, invocations, inpipe[INPUT], checkstatus);
+
+        this->write_from_stream(&instream, inpipe[OUTPUT]);
+        this->close_fd(inpipe[OUTPUT]);
+        return future.get();
+    }
+
+    InvocationResults ProcessProvider::pipeline(
+        const Invocations &invocations,
+        FileDescriptor fdin,
+        bool checkstatus) const
+    {
+        InvocationStates states = this->create_pipeline(invocations, fdin);
+        return this->capture_pipeline(states, checkstatus);
+    }
+
+    void ProcessProvider::write_from_stream(
+        std::istream *stream,
+        FileDescriptor fd) const
+    {
+        std::vector<char> buffer(CHUNKSIZE);
+        std::size_t count = 0;
+        while (stream->good())
+        {
+            stream->read(reinterpret_cast<char *>(buffer.data()), buffer.size());
+            count += stream->gcount();
+            this->write_fd(fd, buffer.data(), stream->gcount());
+        }
     }
 
     /// Global instance, populated with the "best" provider for this system.

@@ -25,16 +25,12 @@ namespace platform::upgrade::native
         PackageHandler(const core::SettingsStore::ptr &settings);
 
     public:
-        virtual PackageManifests scan() = 0;
-        virtual PackageSource get_source() const = 0;
-        virtual std::vector<PackageManifest::ptr> get_available() const;
-        virtual std::size_t get_available_count() const;
         virtual PackageManifest::ptr install(const PackageSource &source);
         virtual void finalize(const PackageManifest::ptr &package_info);
 
     protected:
         virtual void unpack(
-            const fs::path &filename,
+            const PackageSource &source,
             const fs::path &staging_folder) = 0;
 
     protected:
@@ -45,35 +41,28 @@ namespace platform::upgrade::native
         fs::path create_staging_folder() const;
         fs::path manifest_file() const;
 
-        void unpack_file(
-            const fs::path &filepath,
-            const fs::path &staging_folder);
-
-        void unpack_stream(
-            std::istream &stream,
-            const fs::path &staging_folder);
+        void unpack_from_fd(
+            core::platform::FileDescriptor fd,
+            const fs::path &staging_folder) const;
 
     private:
         void check_gpg_verify_result(
             const core::platform::Invocation &invocation,
-            const core::platform::InvocationResult &result);
+            const core::platform::InvocationResult &result) const;
 
         void check_tar_unpack_result(
             const core::platform::Invocation &invocation,
-            const core::platform::InvocationResult &result);
+            const core::platform::InvocationResult &result) const;
 
         void capture_install_progress(
             core::platform::FileDescriptor fd,
-            std::shared_ptr<LocalManifest> manifest);
+            std::shared_ptr<LocalManifest> manifest) const;
 
         void capture_install_diagnostics(
             core::platform::FileDescriptor fd,
             std::shared_ptr<LocalManifest> manifest);
 
     protected:
-        void emit_scan_progress(
-            const std::optional<PackageSource> &source) const;
-
         void emit_upgrade_progress(
             const std::optional<UpgradeProgress::State> &state = {},
             const std::optional<std::string> &task_description = {},
@@ -82,8 +71,7 @@ namespace platform::upgrade::native
             const std::optional<core::status::Event::ptr> error = {}) const;
 
     protected:
-        std::vector<PackageManifest::ptr> available_packages;
         core::SettingsStore::ptr settings;
-        std::stringstream install_diagnostics;
+        std::shared_ptr<std::stringstream> install_diagnostics;
     };
 }  // namespace platform::upgrade::native

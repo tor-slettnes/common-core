@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "package-manifest.h++"
+#include "settings/settingsstore.h++"
 #include "status/exceptions.h++"
 
 namespace platform::upgrade::native
@@ -26,39 +27,47 @@ namespace platform::upgrade::native
 
     LocalManifest::LocalManifest(const fs::path &settings_file,
                                  const PackageSource &source)
-        : This(
-              core::SettingsStore::create_shared(settings_file),
-              source)
+        : This(core::SettingsStore(settings_file), source)
     {
     }
 
-    LocalManifest::LocalManifest(const core::SettingsStore::ptr &settings,
+    LocalManifest::LocalManifest(const core::types::KeyValueMap &settings,
                                  const PackageSource &source)
         : Super(
               source,
-              settings->get(SETTING_PRODUCT).as_string(),
-              This::decode_version(settings->get(SETTING_VERSION).as_string()),
-              This::decode_description(settings->get(SETTING_DESCRIPTION).as_string()),
-              settings->get(SETTING_REBOOT, false).as_bool()),
+              settings.get(SETTING_PRODUCT).as_string(),
+              This::decode_version(settings.get(SETTING_VERSION).as_string()),
+              This::decode_description(settings.get(SETTING_DESCRIPTION).as_string()),
+              settings.get(SETTING_REBOOT, false).as_bool()),
           settings(settings)
     {
     }
 
     bool LocalManifest::is_applicable() const
     {
-        try
+        if (!this->is_applicable_.has_value())
         {
-            this->check_applicable();
-            return true;
+            try
+            {
+                this->check_applicable();
+                logf_debug("Product %r version %s manifest from %s is an applicable candidate",
+                           this->product(),
+                           this->version(),
+                           this->source());
+                const_cast<LocalManifest *>(this)->is_applicable_ = true;
+            }
+            catch (const std::exception &e)
+            {
+                logf_debug("Product %r version %s manifest from %s is not applicable: %s",
+                           this->product(),
+                           this->version(),
+                           this->source(),
+                           e);
+                const_cast<LocalManifest *>(this)->is_applicable_ = false;
+            }
         }
-        catch (const std::exception &e)
-        {
-            logf_debug("Product %r version %s manifest not applicable: %s",
-                       this->product(),
-                       this->version(),
-                       e);
-            return false;
-        }
+
+        return this->is_applicable_.value();
     }
 
     void LocalManifest::check_applicable() const
@@ -67,20 +76,28 @@ namespace platform::upgrade::native
         if (!this->is_applicable_product(pi.product_name))
         {
             throw core::exception::FailedPrecondition(
-                "Package does not match installed product");
+                "Package does not match installed product",
+                {
+                    {"provided", this->product()},
+                    {"installed", pi.product_name},
+                });
         }
         else if (!this->is_applicable_version(pi.release_version))
         {
             throw core::exception::FailedPrecondition(
-                "Package version is not newer than installed version");
+                "Package version is not newer than installed version",
+                {
+                    {"provided", this->version()},
+                    {"installed", pi.release_version},
+                });
         }
     }
 
     core::platform::ArgVector LocalManifest::install_command() const
     {
         return core::platform::process->arg_vector(
-            this->settings->get(SETTING_INSTALL_COMMAND,
-                                DEFAULT_INSTALL_COMMAND));
+            this->settings.get(SETTING_INSTALL_COMMAND,
+                               DEFAULT_INSTALL_COMMAND));
     }
 
     std::string LocalManifest::match_capture_total_progress() const
@@ -102,7 +119,7 @@ namespace platform::upgrade::native
                                                const std::string &fallback) const
     {
         return this->settings
-            ->get(SETTING_PROGRESS_CAPTURE)
+            .get(SETTING_PROGRESS_CAPTURE)
             .get(setting, fallback)
             .as_string();
     }
@@ -146,7 +163,7 @@ namespace platform::upgrade::native
 
     bool LocalManifest::is_applicable_product(const std::string &current_product) const
     {
-        if (const core::types::Value &product_match = this->settings->get(SETTING_PRODUCT_MATCH))
+        if (const core::types::Value &product_match = this->settings.get(SETTING_PRODUCT_MATCH))
         {
             std::regex rx(product_match.as_string());
             std::smatch match;
@@ -166,7 +183,7 @@ namespace platform::upgrade::native
 
     bool LocalManifest::is_applicable_version(const Version &current_version) const
     {
-        if (const core::types::Value &version_match = this->settings->get(SETTING_VERSION_MATCH))
+        if (const core::types::Value &version_match = this->settings.get(SETTING_VERSION_MATCH))
         {
             std::string current_version_string = current_version.to_string();
             std::regex rx(version_match.to_string());

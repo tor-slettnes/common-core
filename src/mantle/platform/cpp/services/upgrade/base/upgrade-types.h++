@@ -80,6 +80,7 @@ namespace platform::upgrade
         virtual const std::string &description() const;
         virtual bool reboot_required() const;
         virtual bool is_applicable() const;
+        virtual bool operator==(const PackageManifest &other) const;
 
     protected:
         void to_stream(std::ostream &stream) const override;

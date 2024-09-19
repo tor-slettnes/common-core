@@ -374,7 +374,7 @@ namespace core::http
         ssize_t size = item_size * num_items;
         try
         {
-            if (callback)
+            if (callback && *callback)
             {
                 (*callback)(ptr, size);
             }

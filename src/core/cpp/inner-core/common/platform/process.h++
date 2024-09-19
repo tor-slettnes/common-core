@@ -14,14 +14,21 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <array>
 
 namespace core::platform
 {
     constexpr uint CHUNKSIZE = 4096;
 
-    using PID = pid_t;
     using FileDescriptor = int;
+    using PID = pid_t;
     using ArgVector = std::vector<std::string>;
+    using Pipe = std::array<FileDescriptor, 2>;
+    enum PipeDirection
+    {
+        INPUT = 0,
+        OUTPUT = 1
+    };
 
     //==========================================================================
     // ExitStatus
@@ -53,6 +60,20 @@ namespace core::platform
     };
 
     using Invocations = std::vector<Invocation>;
+
+    //==========================================================================
+    // Invocation
+
+    struct InvocationState
+    {
+        std::string command;
+        PID pid = 0;
+        FileDescriptor stdin = -1;
+        FileDescriptor stdout = -1;
+        FileDescriptor stderr = -1;
+    };
+
+    using InvocationStates = std::vector<InvocationState>;
 
     //==========================================================================
     // InvocationResult
@@ -338,30 +359,6 @@ namespace core::platform
             const fs::path &cwd,
             const std::string &input) const;
 
-        /// @fn pipeline
-        /// @brief
-        ///     Invoke multiple commands in parallel, with standard output from
-        ///     each piped to standard input of the next.
-        /// @param[in] invocations
-        ///     A vector of argument vectors and associated current working
-        ///     directories.
-        /// @param[in] fdin
-        ///     Readable file descriptor redirected to standard input for the
-        ///     first command.
-        /// @param[in] checkstatus
-        ///     Whether to throw an exception if any command returns a non-zero
-        ///     exit status.  Note that this means detailed results from each
-        ///     command will not be returned.
-        /// @return
-        ///     Process ID, exit status, and diagnostic output (stderr) from
-        ///     each pcocess in the pipeline.  Standard output (stdout) is also
-        ///     captured from the last process.
-
-        virtual InvocationResults pipeline(
-            const Invocations &invocations,
-            FileDescriptor fdin,
-            bool checkstatus = false) const;
-
         /// @fn pipe_from_stream
         /// @brief
         ///     Invoke multiple commands in parallel, with standard input to the
@@ -387,7 +384,80 @@ namespace core::platform
             std::istream &instream,
             bool checkstatus = false) const;
 
-        /// @fn readfd
+        /// @fn pipeline
+        /// @brief
+        ///     Invoke multiple commands in parallel, with standard output from
+        ///     each piped to standard input of the next.
+        /// @param[in] invocations
+        ///     A vector of argument vectors and associated current working
+        ///     directories.
+        /// @param[in] fdin
+        ///     Readable file descriptor redirected to standard input for the
+        ///     first command.
+        /// @param[in] checkstatus
+        ///     Whether to throw an exception if any command returns a non-zero
+        ///     exit status.  Note that this means detailed results from each
+        ///     command will not be returned.
+        /// @return
+        ///     Process ID, exit status, and diagnostic output (stderr) from
+        ///     each pcocess in the pipeline.  Standard output (stdout) is also
+        ///     captured from the last process.
+
+        virtual InvocationResults pipeline(
+            const Invocations &invocations,
+            FileDescriptor fdin,
+            bool checkstatus = false) const;
+
+        virtual InvocationStates create_pipeline(
+            const Invocations &invocations,
+            FileDescriptor fdin) const = 0;
+
+        virtual InvocationResults capture_pipeline(
+            const InvocationStates &states,
+            bool checkstatus) const = 0;
+
+        /// @fn create_pipe
+        /// @brief
+        ///     Create a pipe, comprising a pair of connected file descriptors
+        ///     for reading and writing, respectively.
+        /// @return
+        ///     A pair of file descriptors for reading and writing, respectively.
+        ///     Data written to Pipe[OUTPUT] can subsequently be read from
+        ///     Pipe[INPUT].
+        virtual Pipe create_pipe() const = 0;
+
+        /// @fn open_read
+        /// @brief
+        ///     Open a file for reading
+        /// @param[in] filename
+        ///     Path to file which will be opeend
+        /// @return
+        ///     Readable file descriptor to the open file.
+
+        virtual FileDescriptor open_read(
+            const fs::path &filename) const = 0;
+
+        /// @fn open_write
+        /// @brief
+        ///     Open a file for writing
+        /// @param[in] filename
+        ///     Path to file which will be opeend
+        /// @return
+        ///     Writable file descriptor to the open file.
+
+        virtual FileDescriptor open_write(
+            const fs::path &filename) const = 0;
+
+        /// @fn close_fd
+        /// @brief
+        ///     Close an open file descriptor
+        /// @param[in] fd
+        ///     Readable file descriptor
+
+        virtual void close_fd(
+            FileDescriptor fd) const = 0;
+
+        /// @fn read_fd
         /// @brief
         ///     Read from a file descriptor
         /// @param[in] fd
@@ -401,12 +471,12 @@ namespace core::platform
         /// @exception std::system_error
         ///     Read operation failed
 
-        virtual std::size_t readfd(
+        virtual std::size_t read_fd(
             FileDescriptor fd,
             void *buffer,
             std::size_t bufsize) const = 0;
 
-        /// @fn writefd
+        /// @fn write_fd
         /// @brief
         ///     Write to a file descriptor
         /// @param[in] fd
@@ -420,10 +490,29 @@ namespace core::platform
         /// @exception std::system_error
         ///     Write operation failed
 
-        virtual std::size_t writefd(
+        virtual std::size_t write_fd(
             FileDescriptor fd,
             const void *buffer,
             std::size_t length) const = 0;
+
+        /// @fn write_fd
+        /// @brief
+        ///     Write to a file descriptor from a C++ input stream
+        /// @param[in] stream
+        ///     Input stream from which data is read
+        /// @param[in] fd
+        ///     Writeable file descriptor to which data is written
+
+        virtual void write_from_stream(
+            std::istream *stream,
+            FileDescriptor fd) const;
+
+        /// @fn close_pipe
+        /// @brief
+        ///    Close both input/output file descriptors of a pipe
+
+        virtual void close_pipe(
+            const Pipe &pipe) const = 0;
 
         /// @fn waitpid
         /// @brief

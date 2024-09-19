@@ -28,7 +28,6 @@ namespace platform::vfs::local
 
     void RemovableContext::on_open()
     {
-        Super::on_open();
         core::platform::ArgVector mountpoint = {
             "/bin/mountpoint",
             "-q",
@@ -48,10 +47,12 @@ namespace platform::vfs::local
             logf_debug("Spawning: %s", mount);
             core::platform::process->invoke_check(mount);
         }
+        Super::on_open();
     }
 
     void RemovableContext::on_close()
     {
+        Super::on_close();
         core::platform::ArgVector argv = {
             "/bin/umount",
             this->devnode,
@@ -59,6 +60,5 @@ namespace platform::vfs::local
 
         logf_debug("Spawning: %s", argv);
         core::platform::process->invoke_check(argv);
-        Super::on_close();
     }
 }  // namespace platform::vfs::local

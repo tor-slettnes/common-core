@@ -113,7 +113,7 @@ void Options::on_context_in_use(
     const platform::vfs::Context::ptr &cxt)
 {
     core::str::format(std::cout,
-                      "[%.0s] signal_context(%s, %s, %s)\n",
+                      "[%.0s] signal_context_in_use(%s, %s, %s)\n",
                       core::dt::Clock::now(),
                       action,
                       key,

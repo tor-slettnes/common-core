@@ -225,6 +225,7 @@ namespace core::platform
         return this->mktemp(this->tempfolder(), prefix, suffix);
     }
 
+
     /// Global instance, populated with the "best" provider for this system.
     ProviderProxy<PathProvider> path("path");
 

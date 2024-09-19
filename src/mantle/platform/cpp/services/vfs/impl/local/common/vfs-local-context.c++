@@ -70,9 +70,11 @@ namespace platform::vfs::local
         }
 
         this->on_open();
-        signal_context_in_use.emit(core::signal::MAP_ADDITION,
-                                   this->name,
-                                   this->shared_from_this());
+
+        signal_context_in_use.emit(
+            core::signal::MAP_ADDITION,
+            this->name,
+            this->shared_from_this());
     }
 
     void LocalContext::close()
@@ -94,6 +96,11 @@ namespace platform::vfs::local
                         std::current_exception());
         }
 
+        vfs::signal_context_in_use.emit(
+            core::signal::MAP_REMOVAL,
+            this->name,
+            this->shared_from_this());
+
         if (fs::is_directory(this->root) && fs::is_empty(this->root))
         {
             logf_debug("Removing context %r root folder %r", this->name, this->root);
@@ -109,10 +116,6 @@ namespace platform::vfs::local
                           e);
             }
         }
-
-        vfs::signal_context_in_use.emit(core::signal::MAP_REMOVAL,
-                                        this->name,
-                                        this->shared_from_this());
     }
 
     void LocalContext::on_open()

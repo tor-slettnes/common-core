@@ -119,6 +119,6 @@ namespace core::status
         types::KeyValueMap attributes_;
     };
 
-    bool operator==(const Event::ptr &lhs, const Event::ptr &rhs);
+    // bool operator==(const Event::ptr &lhs, const Event::ptr &rhs);
 
 }  // namespace core::status

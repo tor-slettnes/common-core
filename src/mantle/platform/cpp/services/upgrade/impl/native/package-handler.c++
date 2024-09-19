@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file package-handler.h++
+/// @file package-handler.c++
 /// @brief Generic upgrade package handler interface
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
@@ -11,7 +11,6 @@
 #include "sysconfig-host.h++"
 #include "sysconfig-process.h++"
 #include "status/exceptions.h++"
-#include "io/streambuffer.h++"
 
 #include <future>
 #include <functional>
@@ -24,16 +23,6 @@ namespace platform::upgrade::native
     {
     }
 
-    std::vector<PackageManifest::ptr> PackageHandler::get_available() const
-    {
-        return this->available_packages;
-    }
-
-    std::size_t PackageHandler::get_available_count() const
-    {
-        return this->available_packages.size();
-    }
-
     PackageManifest::ptr PackageHandler::install(const PackageSource &source)
     {
         fs::path staging_folder = this->create_staging_folder();
@@ -41,13 +30,11 @@ namespace platform::upgrade::native
         PackageManifest::ptr manifest;
         signal_upgrade_progress.clear_cached();
 
-        logf_notice("Installing upgrade: %s (filename=%s)",
-                    source,
-                    source.filename());
+        logf_notice("Installing software update from %s", source);
 
         try
         {
-            this->unpack(source.filename(), staging_folder);
+            this->unpack(source, staging_folder);
             manifest = this->install_unpacked(source, staging_folder);
         }
         catch (...)
@@ -65,6 +52,15 @@ namespace platform::upgrade::native
 
         logf_notice("Upgrade succeeded: %s", *manifest);
         return manifest;
+    }
+
+    void PackageHandler::finalize(const PackageManifest::ptr &package_info)
+    {
+        if (package_info->reboot_required())
+        {
+            sysconfig::host->reboot();
+        }
+        this->emit_upgrade_progress(UpgradeProgress::STATE_FINALIZED);
     }
 
     std::shared_ptr<LocalManifest> PackageHandler::install_unpacked(
@@ -112,11 +108,17 @@ namespace platform::upgrade::native
         }
         else
         {
+            std::string text;
+            if (this->install_diagnostics)
+            {
+                text = core::str::strip(this->install_diagnostics->str());
+            }
+
             auto error = std::make_shared<core::exception::InvocationError>(
                 argv.front(),
                 err->combined_code(),
                 "",
-                core::str::strip(this->install_diagnostics.str()));
+                text);
 
             this->emit_upgrade_progress(
                 UpgradeProgress::STATE_FAILED,  // state
@@ -129,15 +131,6 @@ namespace platform::upgrade::native
         }
     }
 
-    void PackageHandler::finalize(const PackageManifest::ptr &package_info)
-    {
-        if (package_info->reboot_required())
-        {
-            sysconfig::host->reboot();
-        }
-        this->emit_upgrade_progress(UpgradeProgress::STATE_FINALIZED);
-    }
-
     fs::path PackageHandler::create_staging_folder() const
     {
         return core::platform::path->mktempdir("upgrade.");
@@ -148,18 +141,9 @@ namespace platform::upgrade::native
         return this->settings->get(SETTING_MANIFEST_FILE, DEFAULT_MANIFEST_FILE).as_string();
     }
 
-    void PackageHandler::unpack_file(
-        const fs::path &filepath,
-        const fs::path &staging_folder)
-    {
-        logf_debug("Unpacking file %r", filepath);
-        std::ifstream stream(filepath, std::ios_base::binary);
-        this->unpack_stream(stream, staging_folder);
-    }
-
-    void PackageHandler::unpack_stream(
-        std::istream &stream,
-        const fs::path &staging_folder)
+    void PackageHandler::unpack_from_fd(
+        core::platform::FileDescriptor fd,
+        const fs::path &staging_folder) const
     {
         core::platform::ArgVector argv_gpgv = {
             "/usr/bin/gpgv",
@@ -196,8 +180,10 @@ namespace platform::upgrade::native
             {argv_tar, staging_folder},
         };
 
+        logf_debug("Opening pipeline from file descriptor %d", fd);
+
         core::platform::InvocationResults results =
-            core::platform::process->pipe_from_stream(pipeline, stream);
+            core::platform::process->pipeline(pipeline, fd);
 
         this->check_gpg_verify_result(pipeline.at(0), results.at(0));
         this->check_tar_unpack_result(pipeline.at(1), results.at(1));
@@ -205,7 +191,7 @@ namespace platform::upgrade::native
 
     void PackageHandler::check_gpg_verify_result(
         const core::platform::Invocation &invocation,
-        const core::platform::InvocationResult &result)
+        const core::platform::InvocationResult &result) const
     {
         switch (result.error_code())
         {
@@ -224,7 +210,7 @@ namespace platform::upgrade::native
 
     void PackageHandler::check_tar_unpack_result(
         const core::platform::Invocation &invocation,
-        const core::platform::InvocationResult &result)
+        const core::platform::InvocationResult &result) const
     {
         if (result.error_code())
         {
@@ -235,7 +221,7 @@ namespace platform::upgrade::native
 
     void PackageHandler::capture_install_progress(
         core::platform::FileDescriptor fd,
-        std::shared_ptr<LocalManifest> manifest)
+        std::shared_ptr<LocalManifest> manifest) const
     {
         std::vector<char> buf(core::platform::CHUNKSIZE);
         std::regex rx_total_progress(manifest->match_capture_total_progress());
@@ -245,7 +231,7 @@ namespace platform::upgrade::native
 
         UpgradeProgress::State state = UpgradeProgress::STATE_INSTALLING;
 
-        while (std::size_t nbytes = core::platform::process->readfd(
+        while (std::size_t nbytes = core::platform::process->read_fd(
                    fd,
                    buf.data(),
                    buf.size()))
@@ -297,10 +283,10 @@ namespace platform::upgrade::native
         core::platform::FileDescriptor fd,
         std::shared_ptr<LocalManifest> manifest)
     {
-        this->install_diagnostics = {};
+        this->install_diagnostics = std::make_shared<std::stringstream>();
         std::vector<char> buf(core::platform::CHUNKSIZE);
 
-        while (std::size_t nbytes = core::platform::process->readfd(
+        while (std::size_t nbytes = core::platform::process->read_fd(
                    fd,
                    buf.data(),
                    buf.size()))
@@ -308,19 +294,8 @@ namespace platform::upgrade::native
             logf_debug("Read %d bytes from stderr: %s",
                        nbytes,
                        std::string_view(buf.data(), nbytes));
-            this->install_diagnostics.write(buf.data(), nbytes);
+            this->install_diagnostics->write(buf.data(), nbytes);
         }
-    }
-
-    void PackageHandler::emit_scan_progress(
-        const std::optional<PackageSource> &source) const
-    {
-        auto progress = std::make_shared<ScanProgress>();
-        if (source)
-        {
-            progress->source = source.value();
-        }
-        signal_scan_progress.emit(progress);
     }
 
     void PackageHandler::emit_upgrade_progress(

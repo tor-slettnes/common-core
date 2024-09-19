@@ -45,7 +45,6 @@ namespace core::platform
         return "/tmp";
     }
 
-
     fs::path PosixPathProvider::default_config_folder() const noexcept
     {
         return "/etc/cc";
@@ -100,7 +99,7 @@ namespace core::platform
                                           const std::string &suffix)
     {
         fs::path path_template = folder / (prefix + "XXXXXX" + suffix);
-        if (char *c_path = ::mkdtemp(const_cast<char*>(path_template.c_str())))
+        if (char *c_path = ::mkdtemp(const_cast<char *>(path_template.c_str())))
         {
             return c_path;
         }

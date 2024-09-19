@@ -112,13 +112,7 @@ class HTTPBase (Endpoint):
         scheme, netloc, base_path, base_query, fragment = urllib.parse.urlsplit(base_url)
         _, _,  rel_path, rel_query, _ = urllib.parse.urlsplit(rel_path)
 
-        if base_path.endswith('/') and rel_path.startswith('/'):
-            path = base_path[:-1] + rel_path
-        elif base_path or rel_path:
-            path = base_path + rel_path
-        else:
-            path = '/'
-
+        path  = os.path.join("/", base_path, rel_path)
         items = [q for q in (base_query, rel_query) if q]
         tuples = []
         for (key, arg) in kwargs.items():

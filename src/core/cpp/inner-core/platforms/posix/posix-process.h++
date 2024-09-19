@@ -11,12 +11,8 @@
 
 #include <poll.h>
 
-#include <array>
-
 namespace core::platform
 {
-    using Pipe = std::array<FileDescriptor, 2>;
-
     class PosixExitStatus : public ExitStatus
     {
     public:
@@ -32,19 +28,11 @@ namespace core::platform
         int raw_code;
     };
 
-
     /// @brief Process invocation on Linux
     class PosixProcessProvider : public ProcessProvider
     {
         using This = PosixProcessProvider;
         using Super = ProcessProvider;
-
-    protected:
-        enum Direction
-        {
-            INPUT = 0,
-            OUTPUT = 1
-        };
 
     protected:
         PosixProcessProvider(const std::string &name = "PosixProcessProvider");
@@ -83,25 +71,34 @@ namespace core::platform
             FileDescriptor fderr,
             std::istream *instream) const override;
 
-        InvocationResults pipeline(
+        InvocationStates create_pipeline(
             const Invocations &invocations,
-            FileDescriptor fdin,
+            FileDescriptor fdin) const override;
+
+        InvocationResults capture_pipeline(
+            const InvocationStates &states,
             bool checkstatus) const override;
 
-        InvocationResults pipe_from_stream(
-            const Invocations &invocations,
-            std::istream &instream,
-            bool checkstatus) const override;
+        Pipe create_pipe() const override;
 
-        std::size_t readfd(
+        FileDescriptor open_read(
+            const fs::path &filename) const override;
+
+        FileDescriptor open_write(
+            const fs::path &filename) const override;
+
+        std::size_t read_fd(
             FileDescriptor fd,
             void *buffer,
             std::size_t bufsize) const override;
 
-        std::size_t writefd(
+        std::size_t write_fd(
             FileDescriptor fd,
             const void *buffer,
             std::size_t length) const override;
+
+        void close_fd(
+            FileDescriptor fd) const override;
 
         ExitStatus::ptr waitpid(
             PID pid,
@@ -115,46 +112,38 @@ namespace core::platform
             FileDescriptor *fdout,
             FileDescriptor *fderr) const;
 
-        void write_from_stream(
-            std::istream *stream,
-            FileDescriptor fd) const;
-
         void trim_pipe(
             const Pipe &pipe,
-            Direction direction,
+            PipeDirection direction,
             FileDescriptor *fd) const;
 
-        void close_pipe(
-            const Pipe &pipe) const;
+        void reassign_fd(FileDescriptor from,
+                         FileDescriptor to) const;
 
-        void close_fd(
-            FileDescriptor fd) const;
+        void close_pipe(
+            const Pipe &pipe) const override;
 
         void close_poll(
             struct pollfd *pfd) const;
-
-        Pipe create_pipe() const;
 
         void execute(
             ArgVector argv,
             const fs::path &cwd) const;
 
         void poll_outputs(
-            const Invocations &invocations,
-            std::vector<struct pollfd> *pfds,
+            const InvocationStates &states,
             InvocationResults *results) const;
 
         bool check_poll(
-            PID pid,
             const std::string &stream_name,
             struct pollfd *pfd,
             std::shared_ptr<std::stringstream> *outstream,
             std::unordered_set<FileDescriptor> *open_fds = nullptr) const;
 
         void wait_results(
-            const Invocations &invocations,
-            bool checkstatus,
-            InvocationResults *results) const;
+            const InvocationStates &states,
+            InvocationResults *results,
+            bool checkstatus) const;
 
     private:
         static std::set<FileDescriptor> open_fds;

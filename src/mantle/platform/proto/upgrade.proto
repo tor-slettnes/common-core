@@ -17,13 +17,17 @@ import "google/protobuf/empty.proto";
 
 service Upgrade
 {
-    // Explicit scan for available upgrade packages in the specified package
-    // source if provided, otherwise in the preconfigured/default locations.
+    // Explicit scan for available upgrade packages in the specified location
+    // if provided, otherwise in the preconfigured/default locations.
     //
-    // This call returns immediately, without waiting for the results of the
-    // scan. To observe scan progress and results, use the `watch()` streaming
-    // call below to monitor the `scan_progress` and `upgrade_available`
-    // signals, respectively.
+    // To observe scan progress, use the `watch()` streaming call
+    // to monitor the `scan_progress` signal, below.
+    //
+    // Once the scan completes a list of package manifests discovered in this
+    // location is returned.  Additionally, a `upgrade_available` signal may be
+    // emitted if the "best available" package is changed as a result of this
+    // scan (either because a new package is discovered or because a previous
+    // "best candidate" from this scanned location is no longer available).
     //
     // This call is not required for ongoing upgrade availability notifications.
     // By default, removable devices (e.g. USB drives) are scanned on insertion,
@@ -32,8 +36,8 @@ service Upgrade
     rpc scan (PackageSource)
         returns (PackageManifests);
 
-    // List available package sources, whether or not they contain applicable
-    // packages.
+    // List available package sources (indexes), whether or not they contain
+    // applicable packages.
     rpc list_sources (google.protobuf.Empty)
         returns (PackageSources);
 
@@ -65,8 +69,7 @@ service Upgrade
     rpc install (InstallRequest)
         returns (PackageManifest);
 
-
-    // Finalize a completed upgrade.  This clears the `upgrade_progress`
+    // Finalize a completed upgrade. This clears the `upgrade_progress`
     // signal, and if the upgrade requires a system reboot, do so now.
     rpc finalize (google.protobuf.Empty)
         returns (google.protobuf.Empty);
@@ -85,11 +88,16 @@ service Upgrade
 
 message PackageSource
 {
-    // Source folder/location for packages.  This may be a VFS context/path or a
-    // web URL, and may refer to a folder containing packages (e.g. as optional
-    // input for `scan()` or returned from `list_sources()`), or alternatively a
-    // specific package file (e.g. as optional input for `install()` or within a
-    // PackageManifest message).
+    // Source folder/location for packages.  Depending on context, this may be
+    //
+    //  - a VFS context/path or a referring to a local folder containing release
+    //    packages, or a web URL referring to a JSON package index hat enumerates
+    //    specific retrievable release packages (e.g. as input for `scan()` or
+    //    as returned from `list_sources()`).
+    //
+    //  - a VFS context/path or a web URL pointing to a specific release package
+    //    (e.g. as optional input for `install()`, as or included in manifests
+    //    returned from `list_available()`).
 
     oneof location
     {
@@ -179,8 +187,8 @@ message UpgradeProgress
 // as input parameter to the `watch()` call. The filter should contain a list of
 // field indices to include or exclude, based on their field numbers within the
 // `oneof` block below. The filter also contains a `polarity` field to indicate
-// whether the listed fields are to be included (1) or excluded (0).  As such,
-// an empty filter means that all events will be streamed back to the client.
+// whether the listed fields are to be included (1) or excluded (0). As such, an
+// empty filter means that all events will be streamed back to the client.
 
 message Signal
 {

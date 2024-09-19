@@ -7,49 +7,81 @@
 
 #include "upgrade-native-provider.h++"
 #include "package-handler-vfs.h++"
+#include "package-handler-url.h++"
 #include "upgrade-settings.h++"
+#include "vfs-signals.h++"
 #include "sysconfig-host.h++"
+#include "platform/symbols.h++"
 #include "status/exceptions.h++"
+#include "chrono/scheduler.h++"
+#include "types/create-shared.h++"
 
 namespace platform::upgrade::native
 {
     NativeProvider::NativeProvider()
-        : Super("native"),
+        : Super(TYPE_NAME_BASE(This)),
           settings(core::SettingsStore::create_shared(SETTINGS_FILE)),
           default_vfs_path(settings->get(SETTING_VFS_CONTEXT, DEFAULT_VFS_CONTEXT).as_string(), {}),
-          default_url(settings->get(SETTING_DOWNLOAD_URL).as_string())
+          default_url(settings->get(SETTING_SCAN_URL).as_string()),
+          scan_interval(settings->get(SETTING_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL).as_duration()),
+          scan_retries(settings->get(SETTING_SCAN_RETRIES, DEFAULT_SCAN_RETRIES).as_uint())
     {
     }
 
     void NativeProvider::initialize()
     {
         Super::initialize();
+        if (!this->default_url.empty())
+        {
+            core::scheduler.add(
+                this->name(),                                // handle
+                [&] {                                        // |
+                    this->scan_source({this->default_url});  // |> invocation
+                },                                           // |
+                this->scan_interval,                         // interval
+                core::Scheduler::ALIGN_LOCAL,                // align
+                core::status::Level::DEBUG,                  // loglevel
+                0,                                           // count
+                this->scan_retries,                          // retries
+                false);                                      // catchup
+        }
+
+        using namespace std::placeholders;
+        platform::vfs::signal_context.connect(
+            this->name(),
+            std::bind(&This::on_vfs_context, this, _1, _2, _3));
+
+        // platform::vfs::signal_context_in_use.connect(
+        //     this->name(),
+        //     std::bind(&This::on_vfs_context_in_use, this, _1, _2, _3));
+    }
+
+    void NativeProvider::deinitialize()
+    {
+        // platform::vfs::signal_context_in_use.disconnect(this->name());
+        platform::vfs::signal_context.disconnect(this->name());
+        core::scheduler.remove(this->name());
+        Super::deinitialize();
     }
 
     PackageManifests NativeProvider::scan(const PackageSource &source)
     {
         if (source)
         {
-            this->get_or_add_handler(source)->scan();
+            this->scan_source(source);
         }
         else
         {
-            this->get_or_add_handler({this->default_vfs_path})->scan();
+            if (this->default_vfs_path)
+            {
+                this->get_or_add_index({this->default_vfs_path})->scan();
+            }
             if (!this->default_url.empty())
             {
-                this->get_or_add_handler({this->default_url})->scan();
+                this->get_or_add_index({this->default_url})->scan();
             }
+            this->emit_best_available();
         }
-
-        if (PackageManifest::ptr best = this->best_available({}))
-        {
-            logf_info("Emitting signal_upgrade_available: %s", *best);
-        }
-        else
-        {
-            log_info("Emitting signal_upgrade_available: {}");
-        }
-        signal_upgrade_available.emit(this->best_available({}));
 
         return this->list_available(source);
     }
@@ -57,9 +89,14 @@ namespace platform::upgrade::native
     PackageSources NativeProvider::list_sources() const
     {
         PackageSources sources;
-        for (const std::shared_ptr<PackageHandler> &handler : this->handlers())
+        sources.reserve(this->vfs_indices.size() + this->url_indices.size());
+        for (const auto &[vfs_path, index] : this->vfs_indices)
         {
-            sources.push_back(handler->get_source());
+            sources.emplace_back(vfs_path);
+        }
+        for (const auto &[url, index] : this->url_indices)
+        {
+            sources.emplace_back(url);
         }
         return sources;
     }
@@ -69,18 +106,18 @@ namespace platform::upgrade::native
         if (source.empty())
         {
             PackageManifests available;
-            for (const PackageHandler::ptr &handler : this->handlers())
+            for (const PackageIndex::ptr &index : this->indices())
             {
-                PackageManifests handler_sources = handler->get_available();
+                PackageManifests sources = index->get_available();
                 available.insert(available.end(),
-                                 handler_sources.begin(),
-                                 handler_sources.end());
+                                 sources.begin(),
+                                 sources.end());
             }
             return available;
         }
-        else if (const PackageHandler::ptr &handler = this->get_handler(source))
+        else if (const PackageIndex::ptr &index = this->get_index(source))
         {
-            return handler->get_available();
+            return index->get_available();
         }
         else
         {
@@ -108,7 +145,7 @@ namespace platform::upgrade::native
     {
         PackageSource install_source;
 
-        if (source && !source.filename().empty())
+        if (source)
         {
             install_source = source;
         }
@@ -116,8 +153,12 @@ namespace platform::upgrade::native
         {
             install_source = manifest->source();
         }
-
-        logf_notice("Installing from %s", install_source);
+        else
+        {
+            throw core::exception::NotFound(
+                "No package file specified and "
+                "no applicable package discovered from prior scans");
+        }
 
         if (!this->install_lock.try_lock())
         {
@@ -126,16 +167,13 @@ namespace platform::upgrade::native
 
         try
         {
-            if (const PackageHandler::ptr &handler =
-                this->get_or_add_handler(install_source.remove_filename()))
+            if (const PackageHandler::ptr &handler = this->get_handler(install_source))
             {
                 return this->installed_manifest = handler->install(install_source);
             }
             else
             {
-                throw core::exception::NotFound(
-                    "No package file specified and "
-                    "no applicable package discovered from prior scans");
+                return {};
             }
         }
         catch (...)
@@ -160,35 +198,71 @@ namespace platform::upgrade::native
         }
     }
 
-    void NativeProvider::remove(const PackageSource &source)
+    bool NativeProvider::remove_index(const PackageSource &source)
     {
         switch (source.location_type())
         {
         case LocationType::VFS:
-            this->vfs_handlers.erase(source.vfs_path());
-            break;
+            return this->vfs_indices.erase(source.vfs_path());
 
         case LocationType::URL:
-            this->http_handlers.erase(source.url());
-            break;
+            return this->url_indices.erase(source.url());
+
+        default:
+            return false;
         }
     }
 
-    std::vector<std::shared_ptr<PackageHandler>> NativeProvider::handlers() const
+    std::vector<PackageIndex::ptr> NativeProvider::indices() const
     {
-        std::vector<std::shared_ptr<PackageHandler>> handlers;
-        handlers.reserve(this->vfs_handlers.size() + this->http_handlers.size());
+        std::vector<PackageIndex::ptr> indices;
+        indices.reserve(this->vfs_indices.size() + this->url_indices.size());
 
-        for (const auto &[vfs_path, handler] : this->vfs_handlers)
+        for (const auto &[vfs_path, index] : this->vfs_indices)
         {
-            handlers.push_back(handler);
+            indices.push_back(index);
         }
 
-        for (const auto &[url, handler] : this->http_handlers)
+        for (const auto &[url, index] : this->url_indices)
         {
-            handlers.push_back(handler);
+            indices.push_back(index);
         }
-        return handlers;
+        return indices;
+    }
+
+    PackageIndex::ptr NativeProvider::get_index(const PackageSource &source) const
+    {
+        switch (source.location_type())
+        {
+        case LocationType::VFS:
+            return this->vfs_indices.get(source.vfs_path(this->default_vfs_path));
+
+        case LocationType::URL:
+            return this->url_indices.get(source.url(this->default_url));
+
+        default:
+            return {};
+        }
+    }
+
+    PackageIndex::ptr NativeProvider::get_or_add_index(const PackageSource &source)
+    {
+        switch (source.location_type())
+        {
+        case LocationType::VFS:
+            return this->vfs_indices.emplace_shared(
+                source.vfs_path(),
+                this->settings,
+                source.vfs_path());
+
+        case LocationType::URL:
+            return this->url_indices.emplace_shared(
+                source.url(),
+                source.url());
+
+        default:
+            return {};
+        }
     }
 
     PackageHandler::ptr NativeProvider::get_handler(const PackageSource &source) const
@@ -196,34 +270,53 @@ namespace platform::upgrade::native
         switch (source.location_type())
         {
         case LocationType::VFS:
-            return this->vfs_handlers.get(source.vfs_path(this->default_vfs_path));
+            return std::make_shared<VFSPackageHandler>(this->settings);
 
         case LocationType::URL:
-            return this->http_handlers.get(source.url(this->default_url));
+            return std::make_shared<URLPackageHandler>(this->settings);
 
         default:
             return {};
         }
     }
 
-    PackageHandler::ptr NativeProvider::get_or_add_handler(const PackageSource &source)
+    void NativeProvider::emit_best_available() const
     {
-        switch (source.location_type())
+        PackageManifest::ptr best = this->best_available({});
+        PackageManifest::ptr previous = signal_upgrade_available.get_cached({});
+
+        if (!core::types::equivalent(best, previous))
         {
-        case LocationType::VFS:
-            return this->vfs_handlers.emplace_shared(
-                source.vfs_path(this->default_vfs_path),
-                this->settings,
-                source.vfs_path(this->default_vfs_path));
+            signal_upgrade_available.emit(best);
+        }
+    }
 
-        case LocationType::URL:
-            return this->http_handlers.emplace_shared(
-                source.url(this->default_url),
-                this->settings,
-                source.url(this->default_url));
+    void NativeProvider::scan_source(const PackageSource &source)
+    {
+        this->get_or_add_index(source)->scan();
+        this->emit_best_available();
+    }
 
-        default:
-            return {};
+    void NativeProvider::on_vfs_context(
+        core::signal::MappingAction action,
+        const platform::vfs::ContextName &name,
+        const platform::vfs::Context::ptr &context)
+    {
+        if ((action == core::signal::MAP_ADDITION) && context->removable)
+        {
+            this->scan_source({context->virtualPath()});
+        }
+    }
+
+    void NativeProvider::on_vfs_context_in_use(
+        core::signal::MappingAction action,
+        const platform::vfs::ContextName &name,
+        const platform::vfs::Context::ptr &context)
+    {
+        if ((action == core::signal::MAP_REMOVAL) &&
+            (name == this->default_vfs_path.context))
+        {
+            this->scan_source({context->virtualPath()});
         }
     }
 

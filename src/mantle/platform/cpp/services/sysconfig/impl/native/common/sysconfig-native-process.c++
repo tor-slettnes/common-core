@@ -41,7 +41,7 @@ namespace platform::sysconfig::native
             &fdout,
             &fderr);
 
-        core::platform::process->writefd(fdin, input.data(), input.size());
+        core::platform::process->write_fd(fdin, input.data(), input.size());
 
         FDSet fds{fdin, fdout, fderr};
         this->process_map.insert_or_assign(pid, fds);

@@ -8,6 +8,7 @@
 #include "http-utils.h++"
 #include "string/misc.h++"
 #include "status/exceptions.h++"
+#include "logging/logging.h++"
 
 #include <curl/curl.h>
 
@@ -15,8 +16,6 @@
 
 namespace core::http
 {
-
-
     bool decompose_header(const std::string &text, Header *header)
     {
         static std::regex rx(
@@ -51,6 +50,28 @@ namespace core::http
 
         default:
             return false;
+        }
+    }
+
+    void _curl_check_code(CURLUcode code, const std::string &url = {})
+    {
+        if (code != CURLUE_OK)
+        {
+#if LIBCURL_VERSION_NUM >= 0x075000
+            std::string message = curl_url_strerror(code);
+#else
+            std::string message = str::format("CURL URL code %d", code);
+#endif
+            core::types::KeyValueMap attributes = {
+                {"curl_code", code},
+            };
+
+            if (!url.empty())
+            {
+                attributes.insert_or_assign("url", url);
+            }
+
+            throw exception::FailedPrecondition(message, attributes);
         }
     }
 
@@ -140,17 +161,7 @@ namespace core::http
         _curl_url_get(&rc, handle, CURLUPART_FRAGMENT, fragment, flags);
         curl_url_cleanup(handle);
 
-        if (rc != CURLUE_OK)
-        {
-            throw exception::FailedPrecondition(
-#if LIBCURL_VERSION_NUM >= 0x075000
-                curl_url_strerror(rc),
-#else
-                str::format("CURL URL code %d", rc),
-#endif
-                {{"url", url},
-                 {"curl_code", rc}});
-        }
+        _curl_check_code(rc, url);
     }
 
     std::string join_url(const std::optional<std::string> &scheme,
@@ -225,40 +236,69 @@ namespace core::http
         std::string url;
         _curl_url_get(&rc, handle, CURLUPART_URL, &url, 0);
         curl_url_cleanup(handle);
-
-        if (rc != CURLUE_OK)
-        {
-            throw exception::FailedPrecondition(
-#if LIBCURL_VERSION_NUM >= 0x075000
-                curl_url_strerror(rc),
-#else
-                str::format("CURL URL code %d", rc),
-#endif
-                {{"curl_code", rc}});
-        }
+        _curl_check_code(rc, url);
         return url;
     }
+
+    // std::string join_urls(const std::string &base,
+    //                       const std::string &rel)
+    // {
+    //     static const std::regex rx("\\w+://.*");
+    //     if (std::regex_match(rel, rx))
+    //     {
+    //         // `rel` is already a full URL starting with schema.
+    //         return rel;
+    //     }
+    //     else
+    //     {
+    //         std::stringstream ss;
+
+    //         // Eliminate double `/` when joining `base/` and `/rel`.
+    //         bool base_slash = str::endswith(base, "/");
+    //         bool rel_slash = str::startswith(rel, "/");
+
+    //         ss.write(base.data(), base.size() - ((base_slash && rel_slash) ? 1 : 0));
+    //         ss.write(rel.data(), rel.size());
+    //         return ss.str();
+    //     }
+    // }
 
     std::string join_urls(const std::string &base,
                           const std::string &rel)
     {
-        static const std::regex rx("\\w+://.*");
-        if (std::regex_match(rel, rx))
+        if (base.empty())
         {
-            // `rel` is already a full URL starting with schema.
             return rel;
+        }
+        else if (rel.empty())
+        {
+            return base;
         }
         else
         {
-            std::stringstream ss;
+            CURLU *handle = curl_url();
+            CURLUcode rc = curl_url_set(handle, CURLUPART_URL, base.c_str(), 0);
 
-            // Eliminate double `/` when joining `base/` and `/rel`.
-            bool base_slash = str::endswith(base, "/");
-            bool rel_slash = str::startswith(rel, "/");
+            std::string base_path;
+            _curl_url_get(&rc, handle, CURLUPART_PATH, &base_path, 0);
 
-            ss.write(base.data(), base.size() - ((base_slash && rel_slash) ? 1 : 0));
-            ss.write(rel.data(), rel.size());
-            return ss.str();
+
+            if (rc == CURLUE_OK)
+            {
+                fs::path combined_path(base_path);
+                combined_path /= rel;
+
+                rc = curl_url_set(handle,
+                                  CURLUPART_PATH,
+                                  fs::weakly_canonical(combined_path).c_str(),
+                                  0);
+            }
+
+            std::string combined_url;
+            _curl_url_get(&rc, handle, CURLUPART_URL, &combined_url, 0);
+            curl_url_cleanup(handle);
+            _curl_check_code(rc, combined_url);
+            return combined_url;
         }
     }
 
