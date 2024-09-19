@@ -65,7 +65,7 @@ namespace platform::vfs::local
                   const Path &target,
                   const OperationFlags &flags) const override;
 
-        void remove(const Path &vpath,
+        void remove(const Paths &vpaths,
                     const OperationFlags &flags) const override;
 
         void create_folder(const Path &vpath,

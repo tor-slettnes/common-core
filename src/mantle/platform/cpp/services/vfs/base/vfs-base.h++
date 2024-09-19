@@ -100,7 +100,7 @@ namespace platform::vfs
             const OperationFlags &flags) const = 0;
 
         virtual void remove(
-            const Path &vpath,
+            const Paths &vpaths,
             const OperationFlags &flags) const = 0;
 
         virtual void create_folder(

@@ -257,9 +257,14 @@ namespace platform::vfs::grpc
         try
         {
             platform::vfs::Path vpath;
+            platform::vfs::Paths vpaths;
             platform::vfs::OperationFlags flags;
-            protobuf::decode(*request, &vpath, &flags);
-            this->provider->remove(vpath, flags);
+            protobuf::decode(*request, &vpaths, &vpath, &flags);
+            if (vpath)
+            {
+                vpaths.insert(vpaths.begin(), vpath);
+            }
+            this->provider->remove(vpaths, flags);
             return ::grpc::Status::OK;
         }
         catch (...)

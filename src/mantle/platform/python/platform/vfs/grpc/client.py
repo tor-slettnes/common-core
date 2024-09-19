@@ -9,14 +9,14 @@
 from cc.messaging.grpc import SignalClient, DetailedError
 from cc.protobuf.import_proto import import_proto
 from cc.protobuf.vfs import VFSPathType, VFSPathsType, \
-    encodePath, encodePaths, decodeStats, \
+    encodePath, decodePath, encodePaths, decodeStats, \
     pathRequest, locateRequest, attributeRequest
 
 ### Third-party modules
 from google.protobuf.empty_pb2 import Empty
 
 ### Standard Python modules
-from typing import Mapping
+from typing import Mapping, Sequence
 import io
 
 ## Import generated ProtoBuf symbols. These will appear in namespaces
@@ -155,7 +155,7 @@ class VirtualFileSystemClient (SignalClient):
            attributes : Dictionary of custom attributes
         '''
 
-        request = pathRequest(source=vfspath,
+        request = pathRequest(path=vfspath,
                               dereference=dereference,
                               with_attributes=with_attributes)
         reply = self.stub.get_file_info(request)
@@ -177,12 +177,29 @@ class VirtualFileSystemClient (SignalClient):
         '''
 
         reply = self.stub.get_directory(
-            pathRequest(source=vfspath,
+            pathRequest(path=vfspath,
                         dereference=dereference,
                         with_attributes=with_attributes))
         entries = [ (key, decodeStats(stats))
                     for (key, stats) in reply.map.items() ]
         return dict(entries)
+
+
+    def list(self,
+             vfspath: VFSPathType,
+             dereference: bool = True) -> list[str]:
+        '''List contents of the specified virtual path, specified in the format
+        CONTEXT:PATH.
+
+        The returned value is a Python list containing the virtual path of each
+        item in the specified folder.
+
+        '''
+
+        reply = self.stub.get_directory(
+            pathRequest(path=vfspath, dereference=dereference))
+
+        return [key for key in reply.map.keys()]
 
 
     def locate(self,
@@ -220,7 +237,7 @@ class VirtualFileSystemClient (SignalClient):
 
 
     def copy(self,
-              source: str,
+              sources: str|Sequence[str],
               target: str,
               force: bool = False,
               dereference: bool = False,
@@ -234,7 +251,7 @@ class VirtualFileSystemClient (SignalClient):
            CONTEXT is a predefined, possibly removable location within the filesystem
            RELPATH is a path relative to the context's root.
 
-        The 'source' argument may be a string containing a single path, or a
+        The 'sources' argument may be a string containing a single path, or a
         tuple or list with multiple paths. In the latter case, the option
         'inside_target' must also be set.
 
@@ -260,17 +277,17 @@ class VirtualFileSystemClient (SignalClient):
         '''
 
         return self.stub.copy(
-            pathRequest(source=source,
-                          target=target,
-                          force=force,
-                          dereference=dereference,
-                          merge=merge,
-                          update=update,
-                          with_attributes=with_attributes,
-                          inside_target=inside_target))
+            pathRequest(path=target,
+                        sources=sources,
+                        force=force,
+                        dereference=dereference,
+                        merge=merge,
+                        update=update,
+                        with_attributes=with_attributes,
+                        inside_target=inside_target))
 
     def move(self,
-             source: str,
+             sources: str,
              target: str,
              force: bool = False,
              dereference: bool = False,
@@ -283,7 +300,7 @@ class VirtualFileSystemClient (SignalClient):
            CONTEXT is a predefined, possibly removable location within the filesystem
            RELPATH is a path relative to the context's root.
 
-        The 'source' argument may be a string containing a single path, or a
+        The 'sources' argument may be a string containing a single path, or a
         tuple or list with multiple paths. In the latter case, the option
         'inside_target' must also be set.
 
@@ -308,8 +325,8 @@ class VirtualFileSystemClient (SignalClient):
         are moved alongside the file.
         '''
         return self.stub.move(
-            pathRequest(source=source,
-                        target=target,
+            pathRequest(path=target,
+                        source=source,
                         force=force,
                         dereference=dereference,
                         merge=merge,
@@ -330,7 +347,7 @@ class VirtualFileSystemClient (SignalClient):
         removed.
         '''
         return self.stub.create_folder(
-            pathRequest(target=vfspath,
+            pathRequest(path=vfspath,
                         force=force,
                         dereference=dereference))
 
@@ -353,7 +370,7 @@ class VirtualFileSystemClient (SignalClient):
         'force' is given, in which case it is removed recursively.
         '''
         return self.stub.remove(
-            pathRequest(target=paths,
+            pathRequest(sources=paths,
                         force=force,
                         dereference=dereference,
                         with_attributes=with_attributes))

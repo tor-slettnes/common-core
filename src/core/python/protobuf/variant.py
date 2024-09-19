@@ -17,6 +17,9 @@ from ..generated.variant_pb2 import Value, ValueList
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.duration_pb2 import Duration
 
+### Standard Python modules
+from typing import Sequence
+
 def encodeValue(value : object) -> Value:
     '''Encode a Python value as a `protobuf.variant.Value` instance'''
 
@@ -148,7 +151,7 @@ def encodeValueList(value: list|dict) -> ValueList:
     else:
         raise ValueError("encodeToValueList() expects a dictionary or list")
 
-def decodeTaggedValueList(valuelist: ValueList,
+def decodeTaggedValueList(valuelist: ValueList|Sequence[Value],
                           autotype=False) -> list[tuple[str|None, object]]:
     '''Decode a `protobuf.variant.ValueList` instance to a list of native
     `(tag, value)` pairs.
@@ -160,8 +163,10 @@ def decodeTaggedValueList(valuelist: ValueList,
 
     if isinstance(valuelist, ValueList):
         return [decodeTaggedValue(tv, autotype) for tv in valuelist.items]
+    elif isinstance(valuelist, Sequence):
+        return [decodeTaggedValue(tv, autotype) for tv in valuelist]
     else:
-        raise ValueError("Argument must be a protobuf.variant.ValueList() instance")
+        raise ValueError("Argument must be a protobuf.variant.ValueList() instance or a native list, not %s"%(type(valuelist),))
 
 def decodeValueList(valuelist, autotype=True) -> list[object]:
     '''Decode a `protobuf.variant.ValueList` instance to a list of native

@@ -228,14 +228,27 @@ namespace platform::vfs
 
     /// @fn remove
     /// @brief Remove file or folder
-    /// @param[in] source
+    /// @param[in] path
     ///     File location to be removed
     /// @param[in] force
     ///     Attempts to remove the target even if
     ///       - It is a non-empty folder
     ///       - It is not writable (and in the case of folders, executable)
     void remove(
-        const Path &source,
+        const Path &path,
+        bool force = false,
+        bool with_attributes = true);
+
+    /// @fn remove
+    /// @brief Remove file or folder
+    /// @param[in] paths
+    ///     File location to be removed
+    /// @param[in] force
+    ///     Attempts to remove the target even if
+    ///       - It is a non-empty folder
+    ///       - It is not writable (and in the case of folders, executable)
+    void remove(
+        const Paths &paths,
         bool force = false,
         bool with_attributes = true);
 

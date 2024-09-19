@@ -247,11 +247,14 @@ namespace platform::vfs::local
     }
 
     void LocalProvider::remove(
-        const Path &vpath,
+        const Paths &vpaths,
         const OperationFlags &flags) const
     {
-        Location loc = this->location(vpath, true);
-        this->remove(loc, flags);
+        LocationList locs = this->locations(vpaths, true);
+        for (const Location &loc: locs)
+        {
+            this->remove(loc, flags);
+        }
     }
 
     UniqueReader LocalProvider::read_file(

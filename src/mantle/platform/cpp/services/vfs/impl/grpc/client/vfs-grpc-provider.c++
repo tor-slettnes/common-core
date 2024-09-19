@@ -235,12 +235,12 @@ namespace platform::vfs::grpc
     }
 
     void ClientProvider::remove(
-        const Path &vpath,
+        const Paths &vpaths,
         const OperationFlags &flags) const
     {
         this->client->call_check(
             &Client::Stub::remove,
-            protobuf::encoded<cc::platform::vfs::PathRequest>(vpath, flags));
+            protobuf::encoded<cc::platform::vfs::PathRequest>(vpaths, Path(), flags));
     }
 
     void ClientProvider::create_folder(

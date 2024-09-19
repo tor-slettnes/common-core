@@ -77,7 +77,7 @@ namespace platform::vfs::grpc
             const OperationFlags &flags) const override;
 
         void remove(
-            const Path &vpath,
+            const Paths &vpaths,
             const OperationFlags &flags) const override;
 
         void create_folder(

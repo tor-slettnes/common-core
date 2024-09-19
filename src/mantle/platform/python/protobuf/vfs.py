@@ -10,6 +10,7 @@ from cc.protobuf.import_proto import import_proto
 from cc.protobuf.wellknown import decodeTimestamp
 from cc.protobuf.variant import decodeValueMap
 from cc.core.enumeration import Enumeration
+from cc.core.scalar_types import OCT8
 
 ### Standard Python modules
 from typing import Sequence, Mapping, Tuple
@@ -77,7 +78,7 @@ def decodePath(vfspath: cc.platform.vfs.Path) -> str:
 
 def decodeStats(stats: cc.platform.vfs.FileInfo) -> FileInfo:
     return FileInfo(
-        PathTypes.get(stats.type, TYPE_NONE),
+        PathType.get(stats.type, PathType.TYPE_NONE),
         stats.size, stats.link,
         OCT8(stats.mode), stats.readable, stats.writable,
         stats.uid, stats.gid, stats.ownername, stats.groupname,
@@ -87,8 +88,8 @@ def decodeStats(stats: cc.platform.vfs.FileInfo) -> FileInfo:
         decodeValueMap(stats.attributes))
 
 
-def pathRequest(source: VFSPathType|None = None,
-                target: VFSPathType|None = None,
+def pathRequest(path: VFSPathType|None = None,
+                sources: VFSPathsType|None = None,
                 force: bool = False,
                 dereference: bool = True,
                 merge: bool = False,
@@ -99,14 +100,14 @@ def pathRequest(source: VFSPathType|None = None,
     kwargs = dict(force=force, dereference=dereference, merge=merge,
                   update=update, with_attributes=with_attributes,
                   inside_target=inside_target)
-    if source:
-        kwargs.update(source=encodePaths(source))
+    if sources:
+        kwargs.update(sources=encodePaths(sources))
 
-    if isinstance(source, (tuple, list)):
+    if isinstance(sources, (tuple, list)):
         kwargs.update(inside_target=True)
 
-    if target:
-        kwargs.update(target=encodePath(target))
+    if path:
+        kwargs.update(path=encodePath(path))
 
     return cc.platform.vfs.PathRequest(**kwargs)
 
