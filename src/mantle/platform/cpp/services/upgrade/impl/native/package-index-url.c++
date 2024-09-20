@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "package-index-url.h++"
-#include "package-manifest.h++"
+#include "package-info.h++"
 #include "http-client.h++"
 #include "json/reader.h++"
 
@@ -23,9 +23,9 @@ namespace platform::upgrade::native
         return {core::http::join_urls(base_url, package_name)};
     }
 
-    PackageManifests URLPackageIndex::scan()
+    PackageCatalogue URLPackageIndex::scan()
     {
-        PackageManifests manifests;
+        PackageCatalogue packages;
 
         logf_debug("Package scan at URL: %s", this->url);
 
@@ -35,21 +35,21 @@ namespace platform::upgrade::native
 
         if (core::types::KeyValueMapPtr package_map = response.get_kvmap())
         {
-            for (const auto &[package_name, manifest_data] : *package_map)
+            for (const auto &[package_name, package_info_data] : *package_map)
             {
-                if (core::types::KeyValueMapPtr manifest_settings = manifest_data.get_kvmap())
+                if (core::types::KeyValueMapPtr package_info_settings = package_info_data.get_kvmap())
                 {
-                    auto manifest = std::make_shared<LocalManifest>(
-                        *manifest_settings,
+                    auto package_info = std::make_shared<NativePackageInfo>(
+                        *package_info_settings,
                         this->package_source(package_name));
-                    manifests.push_back(manifest);
-                    logf_debug("Added upgrade package: %s", manifest->source());
+                    packages.push_back(package_info);
+                    logf_debug("Added upgrade package: %s", package_info->source());
                 }
             }
         }
 
-        this->available_packages = manifests;
-        return manifests;
+        this->available_packages = packages;
+        return packages;
     }
 
 }  // namespace platform::upgrade::native

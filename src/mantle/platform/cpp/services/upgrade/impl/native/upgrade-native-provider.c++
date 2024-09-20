@@ -64,7 +64,7 @@ namespace platform::upgrade::native
         Super::deinitialize();
     }
 
-    PackageManifests NativeProvider::scan(const PackageSource &source)
+    PackageCatalogue NativeProvider::scan(const PackageSource &source)
     {
         if (source)
         {
@@ -101,14 +101,14 @@ namespace platform::upgrade::native
         return sources;
     }
 
-    PackageManifests NativeProvider::list_available(const PackageSource &source) const
+    PackageCatalogue NativeProvider::list_available(const PackageSource &source) const
     {
         if (source.empty())
         {
-            PackageManifests available;
+            PackageCatalogue available;
             for (const PackageIndex::ptr &index : this->indices())
             {
-                PackageManifests sources = index->get_available();
+                PackageCatalogue sources = index->get_available();
                 available.insert(available.end(),
                                  sources.begin(),
                                  sources.end());
@@ -127,10 +127,10 @@ namespace platform::upgrade::native
         }
     }
 
-    PackageManifest::ptr NativeProvider::best_available(const PackageSource &source) const
+    PackageInfo::ptr NativeProvider::best_available(const PackageSource &source) const
     {
-        PackageManifest::ptr best;
-        for (const PackageManifest::ptr &candidate : this->list_available(source))
+        PackageInfo::ptr best;
+        for (const PackageInfo::ptr &candidate : this->list_available(source))
         {
             if (candidate->is_applicable() &&
                 (!best || (candidate->version() > best->version())))
@@ -141,7 +141,7 @@ namespace platform::upgrade::native
         return best;
     }
 
-    PackageManifest::ptr NativeProvider::install(const PackageSource &source)
+    PackageInfo::ptr NativeProvider::install(const PackageSource &source)
     {
         PackageSource install_source;
 
@@ -149,9 +149,9 @@ namespace platform::upgrade::native
         {
             install_source = source;
         }
-        else if (PackageManifest::ptr manifest = this->best_available(source))
+        else if (PackageInfo::ptr package_info = this->best_available(source))
         {
-            install_source = manifest->source();
+            install_source = package_info->source();
         }
         else
         {
@@ -169,7 +169,7 @@ namespace platform::upgrade::native
         {
             if (const PackageHandler::ptr &handler = this->get_handler(install_source))
             {
-                return this->installed_manifest = handler->install(install_source);
+                return this->installed_package_info = handler->install(install_source);
             }
             else
             {
@@ -188,7 +188,7 @@ namespace platform::upgrade::native
         if (this->install_lock.locked())
         {
             logf_notice("Finalizing upgrade");
-            if (this->installed_manifest && this->installed_manifest->reboot_required())
+            if (this->installed_package_info && this->installed_package_info->reboot_required())
             {
                 logf_notice("Rebooting system");
                 platform::sysconfig::host->reboot();
@@ -282,8 +282,8 @@ namespace platform::upgrade::native
 
     void NativeProvider::emit_best_available() const
     {
-        PackageManifest::ptr best = this->best_available({});
-        PackageManifest::ptr previous = signal_upgrade_available.get_cached({});
+        PackageInfo::ptr best = this->best_available({});
+        PackageInfo::ptr previous = signal_upgrade_available.get_cached({});
 
         if (!core::types::equivalent(best, previous))
         {

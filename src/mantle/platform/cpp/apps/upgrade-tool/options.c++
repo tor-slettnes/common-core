@@ -121,7 +121,7 @@ void Options::on_scan_progress(
 }
 
 void Options::on_upgrade_available(
-    const platform::upgrade::PackageManifest::ptr &package_info)
+    const platform::upgrade::PackageInfo::ptr &package_info)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_upgrade_available(%s)\n",
@@ -130,7 +130,7 @@ void Options::on_upgrade_available(
 }
 
 void Options::on_upgrade_pending(
-    const platform::upgrade::PackageManifest::ptr &package_info)
+    const platform::upgrade::PackageInfo::ptr &package_info)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_upgrade_pending(%s)\n",

@@ -29,7 +29,7 @@ namespace platform::upgrade::grpc
         ::grpc::Status scan(
             ::grpc::ServerContext* context,
             const ::cc::platform::upgrade::PackageSource* request,
-            ::cc::platform::upgrade::PackageManifests* response) override;
+            ::cc::platform::upgrade::PackageCatalogue* response) override;
 
         ::grpc::Status list_sources(
             ::grpc::ServerContext* context,
@@ -39,17 +39,17 @@ namespace platform::upgrade::grpc
         ::grpc::Status list_available(
             ::grpc::ServerContext* context,
             const ::cc::platform::upgrade::PackageSource* request,
-            ::cc::platform::upgrade::PackageManifests* response) override;
+            ::cc::platform::upgrade::PackageCatalogue* response) override;
 
         ::grpc::Status best_available(
             ::grpc::ServerContext* context,
             const ::cc::platform::upgrade::PackageSource* request,
-            ::cc::platform::upgrade::PackageManifest* response) override;
+            ::cc::platform::upgrade::PackageInfo* response) override;
 
         ::grpc::Status install(
             ::grpc::ServerContext* context,
             const ::cc::platform::upgrade::InstallRequest* request,
-            ::cc::platform::upgrade::PackageManifest* response) override;
+            ::cc::platform::upgrade::PackageInfo* response) override;
 
         ::grpc::Status finalize(
             ::grpc::ServerContext* context,

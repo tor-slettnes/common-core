@@ -26,7 +26,7 @@ namespace platform::upgrade::grpc
     ::grpc::Status RequestHandler::scan(
         ::grpc::ServerContext* context,
         const ::cc::platform::upgrade::PackageSource* request,
-        ::cc::platform::upgrade::PackageManifests* response)
+        ::cc::platform::upgrade::PackageCatalogue* response)
     {
         try
         {
@@ -60,7 +60,7 @@ namespace platform::upgrade::grpc
     ::grpc::Status RequestHandler::list_available(
         ::grpc::ServerContext* context,
         const ::cc::platform::upgrade::PackageSource* request,
-        ::cc::platform::upgrade::PackageManifests* response)
+        ::cc::platform::upgrade::PackageCatalogue* response)
     {
         try
         {
@@ -78,7 +78,7 @@ namespace platform::upgrade::grpc
     ::grpc::Status RequestHandler::best_available(
         ::grpc::ServerContext* context,
         const ::cc::platform::upgrade::PackageSource* request,
-        ::cc::platform::upgrade::PackageManifest* response)
+        ::cc::platform::upgrade::PackageInfo* response)
     {
         try
         {
@@ -96,7 +96,7 @@ namespace platform::upgrade::grpc
     ::grpc::Status RequestHandler::install(
         ::grpc::ServerContext* context,
         const ::cc::platform::upgrade::InstallRequest* request,
-        ::cc::platform::upgrade::PackageManifest* response)
+        ::cc::platform::upgrade::PackageInfo* response)
     {
         try
         {

@@ -12,10 +12,10 @@ namespace platform::upgrade
     core::signal::DataSignal<ScanProgress::ptr>
         signal_scan_progress("signal_scan_progress", true);
 
-    core::signal::DataSignal<PackageManifest::ptr>
+    core::signal::DataSignal<PackageInfo::ptr>
         signal_upgrade_available("upgrade_available", true);
 
-    core::signal::DataSignal<PackageManifest::ptr>
+    core::signal::DataSignal<PackageInfo::ptr>
         signal_upgrade_pending("upgrade_pending", true);
 
     core::signal::DataSignal<UpgradeProgress::ptr>

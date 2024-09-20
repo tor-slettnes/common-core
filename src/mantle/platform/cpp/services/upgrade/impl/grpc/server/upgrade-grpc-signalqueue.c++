@@ -24,18 +24,18 @@ namespace platform::upgrade::grpc
                 protobuf::encode_shared(ref, msg->mutable_scan_progress());
             });
 
-        this->connect<PackageManifest::ptr>(
+        this->connect<PackageInfo::ptr>(
             Signal::kUpgradeAvailable,
             platform::upgrade::signal_upgrade_available,
-            [=](PackageManifest::ptr ref, Signal *msg) {
+            [=](PackageInfo::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 protobuf::encode_shared(ref, msg->mutable_upgrade_available());
             });
 
-        this->connect<PackageManifest::ptr>(
+        this->connect<PackageInfo::ptr>(
             Signal::kUpgradePending,
             platform::upgrade::signal_upgrade_pending,
-            [=](PackageManifest::ptr ref, Signal *msg) {
+            [=](PackageInfo::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 protobuf::encode_shared(ref, msg->mutable_upgrade_pending());
             });

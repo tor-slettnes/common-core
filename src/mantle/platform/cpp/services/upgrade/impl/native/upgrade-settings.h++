@@ -17,8 +17,8 @@ namespace platform::upgrade::native
     constexpr auto SETTING_PACKAGE_SUFFIX = "package suffix";
     constexpr auto DEFAULT_PACKAGE_SUFFIX = ".pkg";
 
-    constexpr auto SETTING_MANIFEST_FILE = "manifest file";
-    constexpr auto DEFAULT_MANIFEST_FILE = "manifest.json";
+    constexpr auto SETTING_PACKAGE_INFO_FILE = "package info file";
+    constexpr auto DEFAULT_PACKAGE_INFO_FILE = "package-info.json";
 
     constexpr auto SETTING_VFS_CONTEXT = "vfs context";
     constexpr auto DEFAULT_VFS_CONTEXT = "releases";

@@ -74,7 +74,7 @@ class UpgradeClient (SignalClient):
 
     def list_available(self,
                         source: Optional[SourceType] = None) \
-                        -> cc.platform.upgrade.PackageManifests:
+                        -> cc.platform.upgrade.PackageCatalogue:
         '''
         Return information about available upgrade packages discovered during a
         prior (implicit or explicit) scan of the specified package source if
@@ -85,7 +85,7 @@ class UpgradeClient (SignalClient):
 
     def best_available(self,
                         source: Optional[SourceType] = None) \
-                        -> cc.platform.upgrade.PackageManifest:
+                        -> cc.platform.upgrade.PackageInfo:
         '''
         Return information about the best available upgrade package discovered
         during a prior scan of the specified package source if specified,
@@ -101,7 +101,7 @@ class UpgradeClient (SignalClient):
     def install(self,
                 source_file: Optional[SourceType] = None,
                 force: bool = False) \
-                -> cc.platform.upgrade.PackageManifest:
+                -> cc.platform.upgrade.PackageInfo:
         '''.
 
         Install an upgrade from the specified source file if provided, otherwise
@@ -112,7 +112,7 @@ class UpgradeClient (SignalClient):
         - `source_file` is an optional HTTP/HTTPS URL or a VFS path to the
           specified in the format `CONTEXT:PATH`, pointing to the exact release
           package to install.
-        - `force` indicates whether to install the package even if its manifest
+        - `force` indicates whether to install the package even if its package_info
           declares a different product name than what is currently installed or
           its version number is older than the currently installed release.
 

@@ -30,11 +30,11 @@ namespace platform::upgrade::native
     protected:
         void initialize() override;
         void deinitialize() override;
-        PackageManifests scan(const PackageSource &source) override;
+        PackageCatalogue scan(const PackageSource &source) override;
         PackageSources list_sources() const override;
-        PackageManifests list_available(const PackageSource &source) const override;
-        PackageManifest::ptr best_available(const PackageSource &source) const override;
-        PackageManifest::ptr install(const PackageSource &source) override;
+        PackageCatalogue list_available(const PackageSource &source) const override;
+        PackageInfo::ptr best_available(const PackageSource &source) const override;
+        PackageInfo::ptr install(const PackageSource &source) override;
         void finalize() override;
         bool remove_index(const PackageSource &source);
 
@@ -72,6 +72,6 @@ namespace platform::upgrade::native
         core::types::shared_ptr_map<platform::vfs::Path, VFSPackageIndex> vfs_indices;
         core::types::shared_ptr_map<URL, URLPackageIndex> url_indices;
         core::types::UniqueLock install_lock;
-        PackageManifest::ptr installed_manifest;
+        PackageInfo::ptr installed_package_info;
     };
 }  // namespace platform::upgrade::native

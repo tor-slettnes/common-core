@@ -22,11 +22,11 @@ namespace platform::upgrade::grpc
         bool is_pertinent() const override;
 
     protected:
-        PackageManifests scan(const PackageSource &source) override;
+        PackageCatalogue scan(const PackageSource &source) override;
         PackageSources list_sources() const override;
-        PackageManifests list_available(const PackageSource &source) const override;
-        PackageManifest::ptr best_available(const PackageSource &source) const override;
-        PackageManifest::ptr install(const PackageSource &source) override;
+        PackageCatalogue list_available(const PackageSource &source) const override;
+        PackageInfo::ptr best_available(const PackageSource &source) const override;
+        PackageInfo::ptr install(const PackageSource &source) override;
         void finalize() override;
 
     private:

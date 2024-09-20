@@ -24,10 +24,10 @@ namespace platform::upgrade::native
 
     public:
         PackageSource package_source(const std::string &package_name) const override;
-        PackageManifests scan() override;
+        PackageCatalogue scan() override;
 
     private:
-        PackageManifest::ptr scan_file(
+        PackageInfo::ptr scan_file(
             const vfs::Location &location,
             const fs::path &package_name);
 

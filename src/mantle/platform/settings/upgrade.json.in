@@ -10,7 +10,7 @@
     "keyring file"  : "/usr/share/keyrings/@UPGRADE_KEYRING@",
 
     // Embedded JSON file containing information about the upgrade
-    "manifest file" : "manifest.json",
+    "package info file" : "package-info.json",
 
     // Filename suffixes to consider when doing local package scans
     "package suffix": "@UPGRADE_PACKAGE_SUFFIX@",

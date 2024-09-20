@@ -106,9 +106,9 @@ namespace platform::upgrade
     }
 
     //==========================================================================
-    // PackageManifest
+    // PackageInfo
 
-    PackageManifest::PackageManifest(
+    PackageInfo::PackageInfo(
         const PackageSource &source,
         const std::string &product,
         const sysconfig::Version &version,
@@ -124,37 +124,37 @@ namespace platform::upgrade
     {
     }
 
-    const PackageSource &PackageManifest::source() const
+    const PackageSource &PackageInfo::source() const
     {
         return this->source_;
     }
 
-    const std::string &PackageManifest::product() const
+    const std::string &PackageInfo::product() const
     {
         return this->product_;
     }
 
-    const Version &PackageManifest::version() const
+    const Version &PackageInfo::version() const
     {
         return this->version_;
     }
 
-    const std::string &PackageManifest::description() const
+    const std::string &PackageInfo::description() const
     {
         return this->description_;
     }
 
-    bool PackageManifest::reboot_required() const
+    bool PackageInfo::reboot_required() const
     {
         return this->reboot_required_;
     }
 
-    bool PackageManifest::is_applicable() const
+    bool PackageInfo::is_applicable() const
     {
         return this->is_applicable_;
     }
 
-    bool PackageManifest::operator==(const PackageManifest &other) const
+    bool PackageInfo::operator==(const PackageInfo &other) const
     {
         return (this->source() == other.source()) &&
                (this->product() == other.product()) &&
@@ -164,7 +164,7 @@ namespace platform::upgrade
                (this->is_applicable() == other.is_applicable());
     }
 
-    void PackageManifest::to_stream(std::ostream &stream) const
+    void PackageInfo::to_stream(std::ostream &stream) const
     {
         if (this->source())
         {

@@ -23,11 +23,11 @@ namespace platform::upgrade::native
     {
     }
 
-    PackageManifest::ptr PackageHandler::install(const PackageSource &source)
+    PackageInfo::ptr PackageHandler::install(const PackageSource &source)
     {
         fs::path staging_folder = this->create_staging_folder();
         std::exception_ptr eptr;
-        PackageManifest::ptr manifest;
+        PackageInfo::ptr package_info;
         signal_upgrade_progress.clear_cached();
 
         logf_notice("Installing software update from %s", source);
@@ -35,7 +35,7 @@ namespace platform::upgrade::native
         try
         {
             this->unpack(source, staging_folder);
-            manifest = this->install_unpacked(source, staging_folder);
+            package_info = this->install_unpacked(source, staging_folder);
         }
         catch (...)
         {
@@ -50,11 +50,11 @@ namespace platform::upgrade::native
             std::rethrow_exception(eptr);
         }
 
-        logf_notice("Upgrade succeeded: %s", *manifest);
-        return manifest;
+        logf_notice("Upgrade succeeded: %s", *package_info);
+        return package_info;
     }
 
-    void PackageHandler::finalize(const PackageManifest::ptr &package_info)
+    void PackageHandler::finalize(const PackageInfo::ptr &package_info)
     {
         if (package_info->reboot_required())
         {
@@ -63,17 +63,17 @@ namespace platform::upgrade::native
         this->emit_upgrade_progress(UpgradeProgress::STATE_FINALIZED);
     }
 
-    std::shared_ptr<LocalManifest> PackageHandler::install_unpacked(
+    std::shared_ptr<NativePackageInfo> PackageHandler::install_unpacked(
         const PackageSource &source,
         const fs::path &staging_folder)
     {
-        auto manifest = std::make_shared<LocalManifest>(
-            staging_folder / this->manifest_file(),
+        auto package_info = std::make_shared<NativePackageInfo>(
+            staging_folder / this->package_info_file(),
             source);
 
-        core::platform::ArgVector argv = manifest->install_command();
+        core::platform::ArgVector argv = package_info->install_command();
 
-        signal_upgrade_pending.emit(manifest);
+        signal_upgrade_pending.emit(package_info);
         this->emit_upgrade_progress(UpgradeProgress::STATE_INSTALLING);
 
         core::platform::FileDescriptor stdout_fd, stderr_fd;
@@ -88,13 +88,13 @@ namespace platform::upgrade::native
             &This::capture_install_progress,
             this,
             stdout_fd,
-            manifest);
+            package_info);
 
         std::future<void> stderr_future = std::async(
             &This::capture_install_diagnostics,
             this,
             stderr_fd,
-            manifest);
+            package_info);
 
         core::platform::ExitStatus::ptr err = core::platform::process->waitpid(pid);
 
@@ -104,7 +104,7 @@ namespace platform::upgrade::native
         if (err->success())
         {
             this->emit_upgrade_progress(UpgradeProgress::STATE_COMPLETED);
-            return manifest;
+            return package_info;
         }
         else
         {
@@ -136,9 +136,9 @@ namespace platform::upgrade::native
         return core::platform::path->mktempdir("upgrade.");
     }
 
-    fs::path PackageHandler::manifest_file() const
+    fs::path PackageHandler::package_info_file() const
     {
-        return this->settings->get(SETTING_MANIFEST_FILE, DEFAULT_MANIFEST_FILE).as_string();
+        return this->settings->get(SETTING_PACKAGE_INFO_FILE, DEFAULT_PACKAGE_INFO_FILE).as_string();
     }
 
     void PackageHandler::unpack_from_fd(
@@ -221,12 +221,12 @@ namespace platform::upgrade::native
 
     void PackageHandler::capture_install_progress(
         core::platform::FileDescriptor fd,
-        std::shared_ptr<LocalManifest> manifest) const
+        std::shared_ptr<NativePackageInfo> package_info) const
     {
         std::vector<char> buf(core::platform::CHUNKSIZE);
-        std::regex rx_total_progress(manifest->match_capture_total_progress());
-        std::regex rx_task_progress(manifest->match_capture_task_progress());
-        std::regex rx_task_description(manifest->match_capture_task_description());
+        std::regex rx_total_progress(package_info->match_capture_total_progress());
+        std::regex rx_task_progress(package_info->match_capture_task_progress());
+        std::regex rx_task_description(package_info->match_capture_task_description());
         std::smatch match;
 
         UpgradeProgress::State state = UpgradeProgress::STATE_INSTALLING;
@@ -281,7 +281,7 @@ namespace platform::upgrade::native
 
     void PackageHandler::capture_install_diagnostics(
         core::platform::FileDescriptor fd,
-        std::shared_ptr<LocalManifest> manifest)
+        std::shared_ptr<NativePackageInfo> package_info)
     {
         this->install_diagnostics = std::make_shared<std::stringstream>();
         std::vector<char> buf(core::platform::CHUNKSIZE);

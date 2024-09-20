@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "package-manifest.h++"
+#include "package-info.h++"
 #include "upgrade-types.h++"
 #include "platform/path.h++"
 #include "platform/process.h++"
@@ -25,8 +25,8 @@ namespace platform::upgrade::native
         PackageHandler(const core::SettingsStore::ptr &settings);
 
     public:
-        virtual PackageManifest::ptr install(const PackageSource &source);
-        virtual void finalize(const PackageManifest::ptr &package_info);
+        virtual PackageInfo::ptr install(const PackageSource &source);
+        virtual void finalize(const PackageInfo::ptr &package_info);
 
     protected:
         virtual void unpack(
@@ -34,12 +34,12 @@ namespace platform::upgrade::native
             const fs::path &staging_folder) = 0;
 
     protected:
-        std::shared_ptr<LocalManifest> install_unpacked(
+        std::shared_ptr<NativePackageInfo> install_unpacked(
             const PackageSource &source,
             const fs::path &staging_folder);
 
         fs::path create_staging_folder() const;
-        fs::path manifest_file() const;
+        fs::path package_info_file() const;
 
         void unpack_from_fd(
             core::platform::FileDescriptor fd,
@@ -56,11 +56,11 @@ namespace platform::upgrade::native
 
         void capture_install_progress(
             core::platform::FileDescriptor fd,
-            std::shared_ptr<LocalManifest> manifest) const;
+            std::shared_ptr<NativePackageInfo> package_info) const;
 
         void capture_install_diagnostics(
             core::platform::FileDescriptor fd,
-            std::shared_ptr<LocalManifest> manifest);
+            std::shared_ptr<NativePackageInfo> package_info);
 
     protected:
         void emit_upgrade_progress(

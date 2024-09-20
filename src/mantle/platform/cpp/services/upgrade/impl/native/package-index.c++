@@ -10,7 +10,7 @@
 
 namespace platform::upgrade::native
 {
-    std::vector<PackageManifest::ptr> PackageIndex::get_available() const
+    std::vector<PackageInfo::ptr> PackageIndex::get_available() const
     {
         return this->available_packages;
     }

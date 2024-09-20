@@ -45,7 +45,7 @@ namespace platform::upgrade::grpc
 
     void Client::on_upgrade_available(const cc::platform::upgrade::Signal &signal)
     {
-        platform::upgrade::PackageManifest::ptr available_info;
+        platform::upgrade::PackageInfo::ptr available_info;
         if (This::is_mapped(signal.mapping_action()))
         {
             protobuf::decode_shared(signal.upgrade_available(), &available_info);
@@ -55,7 +55,7 @@ namespace platform::upgrade::grpc
 
     void Client::on_upgrade_pending(const cc::platform::upgrade::Signal &signal)
     {
-        platform::upgrade::PackageManifest::ptr pending_info;
+        platform::upgrade::PackageInfo::ptr pending_info;
         if (This::is_mapped(signal.mapping_action()))
         {
             protobuf::decode_shared(signal.upgrade_pending(), &pending_info);

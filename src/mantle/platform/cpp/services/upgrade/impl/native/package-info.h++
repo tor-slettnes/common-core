@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file package-manifest.h++
-/// @brief Manifest describing package contents
+/// @file package-info.h++
+/// @brief Information aobut package contents
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -13,19 +13,19 @@
 namespace platform::upgrade::native
 {
     //==========================================================================
-    // Package Manifest
+    // Package Information
 
-    class LocalManifest : public PackageManifest
+    class NativePackageInfo : public PackageInfo
     {
-        using This = LocalManifest;
-        using Super = PackageManifest;
+        using This = NativePackageInfo;
+        using Super = PackageInfo;
 
     public:
-        LocalManifest(const fs::path &path,
-                      const PackageSource &source = {});
+        NativePackageInfo(const fs::path &path,
+                          const PackageSource &source = {});
 
-        LocalManifest(const core::types::KeyValueMap &settings,
-                      const PackageSource &source = {});
+        NativePackageInfo(const core::types::KeyValueMap &settings,
+                          const PackageSource &source = {});
 
     public:
         bool is_applicable() const override;
@@ -41,7 +41,7 @@ namespace platform::upgrade::native
         static std::string decode_description(const core::types::Value &value);
 
         std::string capture_setting(const std::string &setting,
-                                    const std::string &fallback={}) const;
+                                    const std::string &fallback = {}) const;
 
         bool is_applicable_product(const std::string &current_product) const;
         bool is_applicable_version(const Version &current_version) const;

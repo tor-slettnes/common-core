@@ -99,9 +99,9 @@ void Options::list_sources()
 
 void Options::list_available()
 {
-    for (const auto &manifest : platform::upgrade::upgrade->list_available())
+    for (const auto &package_info : platform::upgrade::upgrade->list_available())
     {
-        std::cout << *manifest << std::endl;
+        std::cout << *package_info << std::endl;
     }
 }
 

@@ -19,8 +19,8 @@ namespace platform::upgrade::native
 
     public:
         virtual PackageSource package_source(const std::string &package_name) const = 0;
-        virtual PackageManifests scan() = 0;
-        virtual std::vector<PackageManifest::ptr> get_available() const;
+        virtual PackageCatalogue scan() = 0;
+        virtual std::vector<PackageInfo::ptr> get_available() const;
         virtual std::size_t get_available_count() const;
 
     protected:
@@ -28,6 +28,6 @@ namespace platform::upgrade::native
             const std::optional<PackageSource> &source) const;
 
     protected:
-        std::vector<PackageManifest::ptr> available_packages;
+        std::vector<PackageInfo::ptr> available_packages;
     };
 }  // namespace platform::upgrade::native

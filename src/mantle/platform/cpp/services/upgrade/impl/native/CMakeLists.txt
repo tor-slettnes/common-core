@@ -14,7 +14,7 @@ set(LIB_DEPS
 
 set(SOURCES
   upgrade-native-provider.c++
-  package-manifest.c++
+  package-info.c++
   package-handler.c++
   package-handler-vfs.c++
   package-handler-url.c++

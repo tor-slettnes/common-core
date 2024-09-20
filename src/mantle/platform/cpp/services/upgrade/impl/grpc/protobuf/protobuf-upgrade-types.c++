@@ -78,10 +78,10 @@ namespace protobuf
     }
 
     //==========================================================================
-    // Package Manifest
+    // Package Information
 
-    void encode(const ::platform::upgrade::PackageManifest &native,
-                ::cc::platform::upgrade::PackageManifest *msg)
+    void encode(const ::platform::upgrade::PackageInfo &native,
+                ::cc::platform::upgrade::PackageInfo *msg)
     {
         encode(native.source(), msg->mutable_source());
         msg->set_product_name(native.product());
@@ -91,10 +91,10 @@ namespace protobuf
         msg->set_is_applicable(native.is_applicable());
     }
 
-    void decode(const ::cc::platform::upgrade::PackageManifest &msg,
-                ::platform::upgrade::PackageManifest *native)
+    void decode(const ::cc::platform::upgrade::PackageInfo &msg,
+                ::platform::upgrade::PackageInfo *native)
     {
-        *native = ::platform::upgrade::PackageManifest(
+        *native = ::platform::upgrade::PackageInfo(
             decoded<::platform::upgrade::PackageSource>(msg.source()),
             msg.product_name(),
             decoded<::platform::sysconfig::Version>(msg.release_version()),
@@ -104,28 +104,28 @@ namespace protobuf
     }
 
     //==========================================================================
-    // Package Manifests
+    // Package Catalogue
 
-    void encode(const ::platform::upgrade::PackageManifests &native,
-                ::cc::platform::upgrade::PackageManifests *msg)
+    void encode(const ::platform::upgrade::PackageCatalogue &native,
+                ::cc::platform::upgrade::PackageCatalogue *msg)
     {
-        auto manifests = msg->mutable_manifests();
-        manifests->Clear();
-        manifests->Reserve(native.size());
-        for (const ::platform::upgrade::PackageManifest::ptr &ptr: native)
+        auto packages = msg->mutable_packages();
+        packages->Clear();
+        packages->Reserve(native.size());
+        for (const ::platform::upgrade::PackageInfo::ptr &ptr: native)
         {
-            encode(*ptr, manifests->Add());
+            encode(*ptr, packages->Add());
         }
     }
 
-    void decode(const ::cc::platform::upgrade::PackageManifests &msg,
-                ::platform::upgrade::PackageManifests *native)
+    void decode(const ::cc::platform::upgrade::PackageCatalogue &msg,
+                ::platform::upgrade::PackageCatalogue *native)
     {
         native->clear();
-        native->reserve(msg.manifests().size());
-        for (const ::cc::platform::upgrade::PackageManifest &manifest: msg.manifests())
+        native->reserve(msg.packages().size());
+        for (const ::cc::platform::upgrade::PackageInfo &package_info: msg.packages())
         {
-            decode_shared(manifest, &native->emplace_back());
+            decode_shared(package_info, &native->emplace_back());
         }
     }
 

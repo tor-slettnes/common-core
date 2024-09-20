@@ -58,15 +58,15 @@ namespace platform::upgrade
     using PackageSources = std::vector<PackageSource>;
 
     //==========================================================================
-    // PackageManifest
+    // PackageInfo
 
-    struct PackageManifest : public core::types::Streamable
+    struct PackageInfo : public core::types::Streamable
     {
     public:
-        using ptr = std::shared_ptr<PackageManifest>;
+        using ptr = std::shared_ptr<PackageInfo>;
 
     public:
-        PackageManifest(const PackageSource &source = {},
+        PackageInfo(const PackageSource &source = {},
                         const std::string &product = {},
                         const sysconfig::Version &version = {},
                         const std::string &description = {},
@@ -80,7 +80,7 @@ namespace platform::upgrade
         virtual const std::string &description() const;
         virtual bool reboot_required() const;
         virtual bool is_applicable() const;
-        virtual bool operator==(const PackageManifest &other) const;
+        virtual bool operator==(const PackageInfo &other) const;
 
     protected:
         void to_stream(std::ostream &stream) const override;
@@ -94,7 +94,7 @@ namespace platform::upgrade
         bool is_applicable_;
     };
 
-    using PackageManifests = std::vector<PackageManifest::ptr>;
+    using PackageCatalogue = std::vector<PackageInfo::ptr>;
 
     //==========================================================================
     // ScanProgress

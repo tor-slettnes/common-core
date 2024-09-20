@@ -25,43 +25,43 @@ namespace platform::upgrade::native
         return {this->vfs_path / package_name};
     }
 
-    PackageManifests VFSPackageIndex::scan()
+    PackageCatalogue VFSPackageIndex::scan()
     {
         logf_debug("Upgrade scan in VFS path: %r", this->vfs_path);
         vfs::Location loc = vfs::vfs->location(this->vfs_path, false);
         fs::path required_extension(
             this->settings->get(SETTING_PACKAGE_SUFFIX, DEFAULT_PACKAGE_SUFFIX).as_string());
 
-        PackageManifests manifests;
+        PackageCatalogue packages;
 
         for (const auto &pi : fs::directory_iterator(loc.localPath()))
         {
             fs::path filepath = pi.path();
             if (filepath.extension() == required_extension)
             {
-                if (PackageManifest::ptr manifest = this->scan_file(loc, filepath.filename()))
+                if (PackageInfo::ptr package_info = this->scan_file(loc, filepath.filename()))
                 {
-                    manifests.push_back(manifest);
-                    logf_debug("Adding upgrade package: %r", manifest->source());
+                    packages.push_back(package_info);
+                    logf_debug("Adding upgrade package: %r", package_info->source());
                 }
             }
         }
-        this->available_packages = manifests;
-        return manifests;
+        this->available_packages = packages;
+        return packages;
     }
 
-    PackageManifest::ptr VFSPackageIndex::scan_file(
+    PackageInfo::ptr VFSPackageIndex::scan_file(
         const vfs::Location &location,
         const fs::path &package_file)
     {
         fs::path staging_folder = this->create_staging_folder();
-        PackageManifest::ptr manifest;
+        PackageInfo::ptr package_info;
 
         try
         {
             this->unpack_file(location.localPath(package_file), staging_folder);
-            manifest = std::make_shared<LocalManifest>(
-                staging_folder / this->manifest_file(),              // manifest_file
+            package_info = std::make_shared<NativePackageInfo>(
+                staging_folder / this->package_info_file(),          // path
                 PackageSource(location.virtualPath(package_file)));  // source
         }
         catch (...)
@@ -72,7 +72,7 @@ namespace platform::upgrade::native
         }
 
         fs::remove_all(staging_folder);
-        return manifest;
+        return package_info;
     }
 
 }  // namespace platform::upgrade::native

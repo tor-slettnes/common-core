@@ -33,7 +33,7 @@ namespace platform::upgrade
         // By default, removable devices (e.g. USB drives) are scanned on insertion,
         // and online checks are performed at regular intervals if an Internet
         // connection is available.
-        virtual PackageManifests scan(
+        virtual PackageCatalogue scan(
             const PackageSource &source = {}) = 0;
 
         // Return information about all currently enabled upgrade sources.
@@ -42,7 +42,7 @@ namespace platform::upgrade
         // Return information about available upgrade packages discovered during
         // a prior (implicit or explicit) scan of the specified package source
         // if specified, otherwise across all preconfigured/default sources.
-        virtual PackageManifests list_available(
+        virtual PackageCatalogue list_available(
             const PackageSource &source = {}) const = 0;
 
         // Return information about the "best" available upgrade package
@@ -56,7 +56,7 @@ namespace platform::upgrade
         //
         // This information is also available by connecting to
         // `signal_upgrade_available`.
-        virtual PackageManifest::ptr best_available(
+        virtual PackageInfo::ptr best_available(
             const PackageSource &source = {}) const = 0;
 
         // Install an upgrade from the specified package source if provided,
@@ -66,7 +66,7 @@ namespace platform::upgrade
         // This call returns as soon as installation is underway. To monitor the
         // progress of the upgrade process, connect to `signal_upgrade_pending`
         // and `signal_upgrade_progress`.
-        virtual PackageManifest::ptr install(
+        virtual PackageInfo::ptr install(
             const PackageSource &source = {}) = 0;
 
         // Finalize a completed upgrade.  This clears `signal_upgrade_progress`,

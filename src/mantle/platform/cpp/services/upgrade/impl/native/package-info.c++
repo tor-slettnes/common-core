@@ -1,11 +1,11 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file package-manifest.h++
-/// @brief Manifest describing package contents
+/// @file package-info.h++
+/// @brief Information aobut package contents
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "package-manifest.h++"
+#include "package-info.h++"
 #include "settings/settingsstore.h++"
 #include "status/exceptions.h++"
 
@@ -25,13 +25,13 @@ namespace platform::upgrade::native
     constexpr auto SETTING_REBOOT = "reboot required";
     constexpr auto DEFAULT_INSTALL_COMMAND = "install.sh";
 
-    LocalManifest::LocalManifest(const fs::path &settings_file,
+    NativePackageInfo::NativePackageInfo(const fs::path &settings_file,
                                  const PackageSource &source)
         : This(core::SettingsStore(settings_file), source)
     {
     }
 
-    LocalManifest::LocalManifest(const core::types::KeyValueMap &settings,
+    NativePackageInfo::NativePackageInfo(const core::types::KeyValueMap &settings,
                                  const PackageSource &source)
         : Super(
               source,
@@ -43,34 +43,34 @@ namespace platform::upgrade::native
     {
     }
 
-    bool LocalManifest::is_applicable() const
+    bool NativePackageInfo::is_applicable() const
     {
         if (!this->is_applicable_.has_value())
         {
             try
             {
                 this->check_applicable();
-                logf_debug("Product %r version %s manifest from %s is an applicable candidate",
+                logf_debug("Product %r version %s from %s is an applicable candidate",
                            this->product(),
                            this->version(),
                            this->source());
-                const_cast<LocalManifest *>(this)->is_applicable_ = true;
+                const_cast<NativePackageInfo *>(this)->is_applicable_ = true;
             }
             catch (const std::exception &e)
             {
-                logf_debug("Product %r version %s manifest from %s is not applicable: %s",
+                logf_debug("Product %r version %s from %s is not applicable: %s",
                            this->product(),
                            this->version(),
                            this->source(),
                            e);
-                const_cast<LocalManifest *>(this)->is_applicable_ = false;
+                const_cast<NativePackageInfo *>(this)->is_applicable_ = false;
             }
         }
 
         return this->is_applicable_.value();
     }
 
-    void LocalManifest::check_applicable() const
+    void NativePackageInfo::check_applicable() const
     {
         platform::sysconfig::ProductInfo pi = platform::sysconfig::product->get_product_info();
         if (!this->is_applicable_product(pi.product_name))
@@ -93,29 +93,29 @@ namespace platform::upgrade::native
         }
     }
 
-    core::platform::ArgVector LocalManifest::install_command() const
+    core::platform::ArgVector NativePackageInfo::install_command() const
     {
         return core::platform::process->arg_vector(
             this->settings.get(SETTING_INSTALL_COMMAND,
                                DEFAULT_INSTALL_COMMAND));
     }
 
-    std::string LocalManifest::match_capture_total_progress() const
+    std::string NativePackageInfo::match_capture_total_progress() const
     {
         return this->capture_setting(SETTING_CAPTURE_TOTAL_PROGRESS);
     }
 
-    std::string LocalManifest::match_capture_task_progress() const
+    std::string NativePackageInfo::match_capture_task_progress() const
     {
         return this->capture_setting(SETTING_CAPTURE_TASK_PROGRESS);
     }
 
-    std::string LocalManifest::match_capture_task_description() const
+    std::string NativePackageInfo::match_capture_task_description() const
     {
         return this->capture_setting(SETTING_CAPTURE_TASK_DESCRIPTION);
     }
 
-    std::string LocalManifest::capture_setting(const std::string &setting,
+    std::string NativePackageInfo::capture_setting(const std::string &setting,
                                                const std::string &fallback) const
     {
         return this->settings
@@ -124,7 +124,7 @@ namespace platform::upgrade::native
             .as_string();
     }
 
-    Version LocalManifest::decode_version(const core::types::Value &value)
+    Version NativePackageInfo::decode_version(const core::types::Value &value)
     {
         if (auto *version_string = value.get_if<std::string>())
         {
@@ -145,7 +145,7 @@ namespace platform::upgrade::native
         }
     }
 
-    std::string LocalManifest::decode_description(const core::types::Value &value)
+    std::string NativePackageInfo::decode_description(const core::types::Value &value)
     {
         if (auto *description = value.get_if<std::string>())
         {
@@ -161,7 +161,7 @@ namespace platform::upgrade::native
         }
     }
 
-    bool LocalManifest::is_applicable_product(const std::string &current_product) const
+    bool NativePackageInfo::is_applicable_product(const std::string &current_product) const
     {
         if (const core::types::Value &product_match = this->settings.get(SETTING_PRODUCT_MATCH))
         {
@@ -181,7 +181,7 @@ namespace platform::upgrade::native
         return false;
     }
 
-    bool LocalManifest::is_applicable_version(const Version &current_version) const
+    bool NativePackageInfo::is_applicable_version(const Version &current_version) const
     {
         if (const core::types::Value &version_match = this->settings.get(SETTING_VERSION_MATCH))
         {

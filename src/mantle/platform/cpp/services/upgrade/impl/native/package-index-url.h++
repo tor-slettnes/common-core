@@ -20,7 +20,7 @@ namespace platform::upgrade::native
         URLPackageIndex(const URL &url);
 
         PackageSource package_source(const std::string &package_name) const override;
-        PackageManifests scan() override;
+        PackageCatalogue scan() override;
 
     private:
         URL url;

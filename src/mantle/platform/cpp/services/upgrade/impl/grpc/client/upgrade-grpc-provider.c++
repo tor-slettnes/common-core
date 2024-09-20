@@ -22,10 +22,10 @@ namespace platform::upgrade::grpc
         return bool(client);
     }
 
-    PackageManifests ClientProvider::scan(
+    PackageCatalogue ClientProvider::scan(
         const PackageSource &source)
     {
-        return protobuf::decoded<PackageManifests>(
+        return protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
                 &Client::Stub::scan,
                 protobuf::encoded<cc::platform::upgrade::PackageSource>(source)));
@@ -37,31 +37,31 @@ namespace platform::upgrade::grpc
             this->client->call_check(&Client::Stub::list_sources));
     }
 
-    PackageManifests ClientProvider::list_available(
+    PackageCatalogue ClientProvider::list_available(
         const PackageSource &source) const
     {
-        return protobuf::decoded<PackageManifests>(
+        return protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
                 &Client::Stub::list_available,
                 protobuf::encoded<cc::platform::upgrade::PackageSource>(source)));
     }
 
-    PackageManifest::ptr ClientProvider::best_available(
+    PackageInfo::ptr ClientProvider::best_available(
         const PackageSource &source) const
     {
-        return protobuf::decode_shared<PackageManifest>(
+        return protobuf::decode_shared<PackageInfo>(
             this->client->call_check(
                 &Client::Stub::best_available,
                 protobuf::encoded<cc::platform::upgrade::PackageSource>(source)));
     }
 
-    PackageManifest::ptr ClientProvider::install(
+    PackageInfo::ptr ClientProvider::install(
         const PackageSource &source)
     {
         cc::platform::upgrade::InstallRequest request;
         protobuf::encode(source, request.mutable_source());
 
-        return protobuf::decode_shared<PackageManifest>(
+        return protobuf::decode_shared<PackageInfo>(
             this->client->call_check(&Client::Stub::install, request));
     }
 

@@ -23,7 +23,7 @@ service Upgrade
     // To observe scan progress, use the `watch()` streaming call
     // to monitor the `scan_progress` signal, below.
     //
-    // Once the scan completes a list of package manifests discovered in this
+    // Once the scan completes a list of package packages discovered in this
     // location is returned.  Additionally, a `upgrade_available` signal may be
     // emitted if the "best available" package is changed as a result of this
     // scan (either because a new package is discovered or because a previous
@@ -34,7 +34,7 @@ service Upgrade
     // and online checks are performed at regular intervals if an Internet
     // connection is available.
     rpc scan (PackageSource)
-        returns (PackageManifests);
+        returns (PackageCatalogue);
 
     // List available package sources (indexes), whether or not they contain
     // applicable packages.
@@ -45,7 +45,7 @@ service Upgrade
     // a prior (implicit or explicit) scan of the specified package source
     // if specified, otherwise across all preconfigured/default sources.
     rpc list_available (PackageSource)
-        returns (PackageManifests);
+        returns (PackageCatalogue);
 
     // Return information about the best available upgrade package discovered
     // during a prior scan of the specified package source if specified,
@@ -57,7 +57,7 @@ service Upgrade
     // This information is also available by watching the signal
     // `upgrade_available`, below.
     rpc best_available (PackageSource)
-        returns (PackageManifest);
+        returns (PackageInfo);
 
     // Install an upgrade from the specified package source if provided,
     // otherwise the current "best" package source based on prior scans.
@@ -67,7 +67,7 @@ service Upgrade
     // installed. To monitor the upgrade progress and result use the `watch()`
     // method below.
     rpc install (InstallRequest)
-        returns (PackageManifest);
+        returns (PackageInfo);
 
     // Finalize a completed upgrade. This clears the `upgrade_progress`
     // signal, and if the upgrade requires a system reboot, do so now.
@@ -96,7 +96,7 @@ message PackageSource
     //    as returned from `list_sources()`).
     //
     //  - a VFS context/path or a web URL pointing to a specific release package
-    //    (e.g. as optional input for `install()`, as or included in manifests
+    //    (e.g. as optional input for `install()`, as or included in packages
     //    returned from `list_available()`).
 
     oneof location
@@ -128,7 +128,7 @@ message InstallRequest
 }
 
 
-message PackageManifest
+message PackageInfo
 {
     bool is_applicable = 1;
     PackageSource source = 2;
@@ -138,9 +138,9 @@ message PackageManifest
     bool reboot_required = 8;
 }
 
-message PackageManifests
+message PackageCatalogue
 {
-    repeated PackageManifest manifests = 1;
+    repeated PackageInfo packages = 1;
 }
 
 message ScanProgress
@@ -217,13 +217,13 @@ message Signal
         //  * `MAP_UPDATE` if the "best" available upgrade has changed
         //    (for instance, after a removable drive insertion/removal)
         //  * `MAP_REMOVAL` if the last applicable source was removed
-        PackageManifest upgrade_available = 9;
+        PackageInfo upgrade_available = 9;
 
         // Emitted with information about a pending software upgrade.
         // `mapping_action` is
         //  * `MAP_ADDITION` if the upgrade has started
         //  * `MAP_REMOVAL` if the upgrade has ended.
-        PackageManifest upgrade_pending = 10;
+        PackageInfo upgrade_pending = 10;
 
         // Emitted continuously during a software upgrade.
         // `mapping_action` is

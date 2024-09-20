@@ -280,12 +280,12 @@ namespace core::str
     ///  `d`, `i`, `u`  sets std::dec to apply decimal integer representation.
     ///                 with alternate flag apply locale-specific grouping.
     ///  `z` [*]        truncates a floating point value and represents as integer;
-    ///                 with alternate flag apply locale-specific grouping.
+    ///                 with alternate flag, apply locale-specific grouping.
     ///  `n` [*]        apply locale-specific grouping (e.g. thousands separator) to numbers
     ///  `o`            sets std::oct to apply octal integer representation.
-    ///                 With alternate flag include leading `0`.
+    ///                 With alternate flag, include leading `0`.
     ///  `x`, `X`       sets std::hex to apply hexadecimal representation
-    ///                 With alternate flag include leading `0x` or `0X`.
+    ///                 With alternate flag, include leading `0x` or `0X`.
     ///  `f`            sets std::fixed floating point representation
     ///  `F` [*]        sets std::fixed while eliminating "negative zero" values
     ///  `e`, `E`       sets std::scientific floating point representation
@@ -294,10 +294,12 @@ namespace core::str
     ///  `c`, `s`       no modifications; intended for char and std::string
     ///  `O` [*]        no modifications; intended for arbitrary C++ objects
     ///  `h` [*]        hide characters in string by replacing each with `*`
-    ///  `r` [*]        applies std::quoted() around string arguments.
+    ///  `r` [*]        applies `literal` format, e.g., std::quoted() around string arg.
     ///  `b` [*]        sets std::boolalpha to show boolean values as "false"/"true"
-    ///  `T` [*]        timepoint as a ISO 8601 string with `T` as date/time separator
-    ///  `Z` [*]        timepoint as a JavaScript time string (UTC/Zulu with `Z` suffix)
+    ///  `T` [*]        timepoint as a ISO 8601 string with `T` as date/time separator,
+    ///                 representing local date/time.
+    ///  `Z` [*]        timepoint as a JavaScript time string (UTC/Zulu with `Z` suffix),
+    ///                 representing UTC date/time.
     ///  `p`            pointer format: std::hex, std::showbase, std::internal,
     ///                 std::setw(2+sizeof(void*)*2), std::setfill(`0`)
     ///
