@@ -159,28 +159,28 @@ Languages like Python enforce this syntactically (using `self.` by convention), 
 
   ```c++
 
-    class MyClass
-    {
-       using This = MyClass;
+  class MyClass
+  {
+     using This = MyClass;
 
-    public:
-       inline static void say_my_name_bad()
-       {
-           std::cout << my_name() << std::endl;       // Bad
-       }
+  public:
+     inline static void say_my_name_bad()
+     {
+         std::cout << my_name() << std::endl;       // Bad
+     }
 
-       inline static void say_my_name_good()
-       {
-           std::cout << This::my_name() << std::endl; // Good
-       }
+     inline static void say_my_name_good()
+     {
+         std::cout << This::my_name() << std::endl; // Good
+     }
 
-    private:
-       inline static std::string my_name()
-       {
-           return "Count Olaf II";
-       }
-    };
-    ```
+  private:
+     inline static std::string my_name()
+     {
+         return "Count Olaf II";
+     }
+  };
+  ```
 
 #### Use explicit namespaces
 
@@ -553,19 +553,19 @@ Now for everyone's favorite topic: Code formatting.  Once again, the emphasis sh
 
 * *Do* insert a space character before opening parentheses following `if`, `for`, `while`, `switch`.
 
-      ```c++
-      /// Incorrect: No space before condition:
-      if(condition)
-      {
-          // ...
-      }
+    ```c++
+    /// Incorrect: No space before condition:
+    if(condition)
+    {
+        // ...
+    }
 
-      /// Ccorrect: Space before condition:
-      if (condition)
-      {
-          // ...
-      }
-      ```
+    /// Correct: Space before condition:
+    if (condition)
+    {
+        // ...
+    }
+    ```
 
 
 ## <a name="reference">C++ documentation</a>
