@@ -290,7 +290,7 @@ As a general principle, using `auto` is acceptable (and even encouraged) when
     }
 
     // Acceptable, and well documented; see:
-    // <https://en.cppreference.com/w/cpp/container/unordered_map/extract>
+    // [std::unordered_map<>::extract()](https://en.cppreference.com/w/cpp/container/unordered_map/extract)
     if (auto nh = my_map.extract("Some key"))
     {
         some_value = nh.mapped();
@@ -426,33 +426,109 @@ Of note:
 * `public` before `protected` before `private`
 
 
-
 #### Methods
 
 Here we use *method* to refer to a function defined within a class.  There are two subtypes:
 
-  * A *static method* does not belong to a specific object instance (and cannot refer to `this`).  A static method declaration is prefixed with the keyword `static`.
+* A *static method* does not belong to a specific object instance (and cannot refer to `this`).  A static method declaration is prefixed with the keyword `static`.
 
-  * An *instance method* belongs to an object instance, and can be further classified with the following decorators:
+* An *instance method* belongs to an object instance, and can be further classified with the following decorators:
 
-    - A `virtual` prefix to indicate that this is a polymorphic method, which may be overriden in subclasses.  Specifically, an object reference to a derived type will invoke the overridden method rather than that this (base) method.
+  - A `virtual` prefix to indicate that this is a polymorphic method, which may be overriden in subclasses.  Specifically, an object reference to a derived type will invoke the overridden method rather than that this (base) method.
 
-    - A `= 0` suffix turns this into a *pure virtual* method, with no implementation in this (base) class.  Implicitly this turns the class into an *abstract class*, which cannot be instantiated other than through a subclass that overrides this method.
+  - A `= 0` suffix turns this into a *pure virtual* method, with no implementation in this (base) class.  Implicitly this turns the class into an *abstract class*, which cannot be instantiated other than through a subclass that overrides this method.
 
-    - An `override` suffix indicates that this was declared as a virtual method in the base class. Some compilers such as `g++` will implicitly override virtual methods by the same name, while others such as `clang` will complain without explicitly calling this out with the `override` keyword.  As such, we require this.
+  - An `override` suffix indicates that this was declared as a virtual method in the base class. Some compilers such as `g++` will implicitly override virtual methods by the same name, while others such as `clang` will complain without explicitly calling this out with the `override` keyword.  As such, we require this.
 
-    - A `const` suffix indicates that this method does not alter the object instance (and specifically any instance variables) in any way.  This is required in order to allow this method to be invoked from `const` class instance.
+  - A `const` suffix indicates that this method does not alter the object instance (and specifically any instance variables) in any way.  This is required in order to allow this method to be invoked from `const` class instance.
 
-       - Note that this is different from a `const` prefix in the declaration, which indicates that the return type is a constant value (or reference).
+    - Note that this is different from a `const` prefix in the declaration, which indicates that the return type is a constant value (or reference).
 
 
 
-### <a name="namespaces>Namespaces</a>
+### <a name="namespaces">Namespaces</a>
 
 We use namespaces to group related code, frequently in a hierarchical fashion.  This allows the "base name" of identifiers to be short and succinct, without the risk of conflicts with similarly-named identifiers from other namespaces.  As discussed in the section on [explicit scoping](#explicit-scoping) above, we use fully scoped names at the call site.
 
 
 ## <a name="formatting">Code Formatting</a>
 
-TBD.  4 space indents.  Explicit braces at every block.
+Now for everyone's favorite topic: Code formatting.  Once again, the emphasis should be on readability and consistency.
 
+* Each indentation level is 4 spaces.
+
+* Tabs are strictly forbidden. Their use will be prosecuted to the maximum extent of the law.
+
+  - Thanks to Borland there is no universal interpretation of their meaning.
+
+  - Although there are interesting perspectives and ideas behind their use (e.g. [Indent with tabs, align with spaces](https://dmitryfrank.com/articles/indent_with_tabs_align_with_spaces)), applications of such approaches tend to be sporadic and inconsistent, especially as new developers come onboard.
+
+* Do not be afraid of vertical space.  Add empty lines between classes, functions, and logical code blocks.
+
+* We have no strict limit on the length of each line. Instead, you should start feeling uncomfortable with lines exceeding 80 characters, and even more so beyond 96 characters.
+
+  - Consider splitting up complex statements at logical points.  For example:
+
+      ```c++
+      // Ternary statement, single line
+      return condition ? true_value : false_value;
+
+      // Ternary statement, two lines
+      return condition ? true_value
+                       : false_value;
+
+      // Ternary statement, three lines
+      return condition
+          ? true_value
+          : false_value;
+      ```
+
+
+* Left curly braces begin on their own line, in line with the parent statement and the closing right curly brace:
+
+    ```c++
+    // Wrong: Braces do not line up.  Code looks crammed.
+    void my_function(bool condition) {
+        if (condition) {
+            do_something();
+        }
+    }
+
+    // Wrong, and inconsistent:
+    void my_function(bool condition)
+    {
+        if (condition) {
+            do_something();
+        }
+    }
+
+    // Correct:
+    void my_function(bool condition)
+    {
+        if (condition) 
+        {
+            do_something();
+        }
+    }
+    ```
+
+* Use curly braces for nested blocks, even where it contains a single statement:
+
+    ```bash
+    // Wrong:
+    if (condition)
+        statement;
+
+    // Correct:
+    if (condition)
+    {
+        statement;
+    }
+    ```
+
+
+## <a name="reference">C++ documentation</a>
+
+You'll find by far the most comprehensive standard C++ reference at [cppreference.com](https://cppreference.com/).  You can also access this documentation offline in the [DevHelp](https://wiki.gnome.org/Apps/Devhelp) application on your Linux desktop by installing the package `cppreference-doc-en-html` (for [Debian](https://packages.debian.org/search?keywords=cppreference&searchon=names&suite=all&section=all) or [Ubuntu](https://packages.ubuntu.com/search?keywords=cppreference&searchon=names&suite=all&section=all)).
+
+Slightly more accessible documentation for people new to C++ can be found at [cplusplus.com](https://cplusplus.com/).
