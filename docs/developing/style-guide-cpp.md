@@ -463,9 +463,21 @@ Now for everyone's favorite topic: Code formatting.  Once again, the emphasis sh
 
   - Although there are interesting perspectives and ideas behind their use (e.g. [Indent with tabs, align with spaces](https://dmitryfrank.com/articles/indent_with_tabs_align_with_spaces)), applications of such approaches tend to be sporadic and inconsistent, especially as new developers come onboard.
 
-* Do not be afraid of vertical space.  Add empty lines between classes, functions, and logical code blocks.
+* Do not be afraid of vertical space.
+   - Add empty lines between classes, functions, and logical code blocks.
 
 * We have no strict limit on the length of each line. Instead, you should start feeling uncomfortable with lines exceeding 80 characters, and even more so beyond 96 characters.
+
+  - Split up long argument lists to one argument per line (both when declaring/defining functions and at the call site where they are invoked):
+
+      ```c++
+      std::string wrap(
+          const std::string &input,
+          size_t start_column = 0,
+          size_t left_margin = 24,
+          size_t right_margin = 80,
+          bool keep_empties = false);
+      ```
 
   - Consider splitting up complex statements at logical points.  For example:
 
