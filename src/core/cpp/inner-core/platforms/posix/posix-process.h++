@@ -85,7 +85,8 @@ namespace core::platform
             const fs::path &filename) const override;
 
         FileDescriptor open_write(
-            const fs::path &filename) const override;
+            const fs::path &filename,
+            int create_mode) const override;
 
         std::size_t read_fd(
             FileDescriptor fd,

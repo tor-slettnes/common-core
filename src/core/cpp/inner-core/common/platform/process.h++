@@ -446,7 +446,8 @@ namespace core::platform
         ///     Writable file descriptor to the open file.
 
         virtual FileDescriptor open_write(
-            const fs::path &filename) const = 0;
+            const fs::path &filename,
+            int create_mode = 0644) const = 0;
 
         /// @fn close_fd
         /// @brief

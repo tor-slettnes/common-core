@@ -425,10 +425,11 @@ namespace core::platform
     }
 
     FileDescriptor PosixProcessProvider::open_write(
-        const fs::path &filename) const
+        const fs::path &filename,
+        int create_mode) const
     {
         FileDescriptor fd = this->checkstatus(
-            ::open(filename.c_str(), O_WRONLY | O_CREAT));
+            ::open(filename.c_str(), O_WRONLY | O_CREAT, create_mode));
 
         This::open_fds.insert(fd);
         return fd;

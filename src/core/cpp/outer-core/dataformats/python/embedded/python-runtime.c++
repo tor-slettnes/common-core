@@ -130,7 +130,7 @@ namespace core::python
     Exception Runtime::get_exception() const
     {
 #if PY_VERSION_HEX >= 0x030C0000  // Python >= 3.12  has a new exception API
-        ContainerObject exc(PyError_GetRaisedException());
+        ContainerObject exc(PyErr_GetRaisedException());
         return Exception(exc.to_string(), exc.type_name(), exc.attributes_as_kvmap());
 #else
         PyObject *py_type, *py_value, *py_tb;

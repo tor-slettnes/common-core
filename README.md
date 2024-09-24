@@ -40,6 +40,7 @@ For instructions on setting up your host environment, cloning, and building the 
 
 To learn how to contribute, either by making updates to an existing application or by creating a new one, you may want to start with the [demo](src/mantle/demo) application and its [documentation](src/mantle/demo/README.md).
 
+Also look at the [C++ Style Guide](docs/developing/style-guide-cpp.md) for coding conventions used in this repository.
 
 
 Questions? Comments? Concerns?
