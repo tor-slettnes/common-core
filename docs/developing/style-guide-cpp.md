@@ -514,7 +514,7 @@ Now for everyone's favorite topic: Code formatting.  Once again, the emphasis sh
 
 * Use curly braces for nested blocks, even where it contains a single statement:
 
-    ```bash
+    ```c++
     // Wrong:
     if (condition)
         statement;
@@ -525,6 +525,35 @@ Now for everyone's favorite topic: Code formatting.  Once again, the emphasis sh
         statement;
     }
     ```
+
+* *Do not* insert space characters before opening parentheses of argument lists
+
+  - This holds for declarations/definitions as well as call site.
+
+      ```c++
+      /// Incorrect: Space before argument list
+      void my_function (int arg1, int arg2);
+
+      /// Correct: No space before argument list:
+      void my_function(int arg1, int arg2);
+      ```
+
+
+* *Do* insert a space character before opening parentheses following `if`, `for`, `while`, `switch`.
+
+      ```c++
+      /// Incorrect: No space before condition:
+      if(condition)
+      {
+          // ...
+      }
+
+      /// Ccorrect: Space before condition:
+      if (condition)
+      {
+          // ...
+      }
+      ```
 
 
 ## <a name="reference">C++ documentation</a>
