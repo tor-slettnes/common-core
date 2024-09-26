@@ -10,6 +10,8 @@
 #include "linux-symbols.h++"
 #include "linux-host.h++"
 #include "linux-time.h++"
+#include "linux-dns-sd-avahi.h++"
+#include "logging/logging.h++"
 
 namespace core::platform
 {
@@ -19,10 +21,12 @@ namespace core::platform
         path.registerProvider<LinuxPathProvider>(exec_name);
         host.registerProvider<LinuxHostProvider>();
         time.registerProvider<LinuxTimeProvider>();
+        dns_sd.registerProvider<AvahiServiceDiscoveryProvider>();
     }
 
     void unregister_linux_providers()
     {
+        dns_sd.unregisterProvider<AvahiServiceDiscoveryProvider>();
         time.unregisterProvider<LinuxTimeProvider>();
         host.unregisterProvider<LinuxHostProvider>();
         path.unregisterProvider<LinuxPathProvider>();

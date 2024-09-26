@@ -37,8 +37,9 @@
     // Default settings for any service
     "*":
     {
-        "host" : "localhost",   // Connect to localhost by default
-        "interface" : "[::]"    // Listen on all interfaces by default
+        "host" : "localhost",      // Connect to localhost by default
+        "interface" : "[::]",      // Listen on all interfaces by default
+        "dnssd type": "_grpc._tcp" // DNS Service Discovery type
     },
 
     // Settings for specific services. Service names are from .proto files.

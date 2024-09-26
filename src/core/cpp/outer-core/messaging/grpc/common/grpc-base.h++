@@ -37,6 +37,7 @@ namespace core::grpc
         static constexpr auto PORT_OPTION = "port";
         static constexpr auto HOST_OPTION = "host";
         static constexpr auto BIND_OPTION = "interface";
+        static constexpr auto DNSSD_TYPE_OPTION = "dnssd type";
 
     protected:
         Base(const std::string &endpoint_type,
@@ -51,6 +52,11 @@ namespace core::grpc
         /// @return
         ///     Service name
         std::string servicename(bool full = false) const;
+
+        /// @fn dnssd_type
+        /// @return
+        ///     DNS-SD service type
+        std::string dnssd_type() const;
 
     protected:
         /// Sanitize a target address of the form [HOST][:PORT] (where either or both
@@ -88,7 +94,6 @@ namespace core::grpc
 
         uint max_reply_size() const;
 
-    private:
         // Split an address of the form [PERSONALITY@][HOST][:PORT] into
         // separate values
         void splitaddress(const std::string &address,

@@ -51,7 +51,7 @@ namespace platform
             });
 
         log_notice("gRPC server is ready on ",
-                   core::str::join(builder.listener_ports()));
+                   core::str::join(builder.listener_addresses()));
         server->Wait();
 
         log_notice("gRPC server is shutting down");

@@ -18,4 +18,5 @@ target_sources(${TARGET} PRIVATE
   timezone.c++
   time.c++
   user.c++
+  dns-sd.c++
 )

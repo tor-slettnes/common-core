@@ -102,7 +102,7 @@ It is however acceptable to define *private* template functions and classes with
    #include "types/value.h++"       // File from common repository (submodule)
 
    // Use `#include <>` for files from system-wide include dirs
-   // (also those obtained from `pkg-config --cppflags PACKAGENAME`)
+   // (also those obtained from `pkg-config --cflags PACKAGENAME`)
    #include <grpc++/grpc++.h>       // Third-party, installed under `/usr/include` on POSIX
    #include <stdio.h>               // System library
    #include <filesystem>            // C++ STL
@@ -238,7 +238,7 @@ One possible exception is the use of a `_` suffix to denote private identifiers 
 
 Rather than using generic data types such as `int` or `std::string` for things that have a more specific meaning, create type aliases where it improves readability of your code.
 
-Use Consider this example:
+Consider this example:
 
   ```c++
   // Not great

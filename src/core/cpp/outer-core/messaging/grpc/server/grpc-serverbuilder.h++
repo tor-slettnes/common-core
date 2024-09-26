@@ -17,11 +17,13 @@ namespace core::grpc
     public:
         ServerBuilder(
             const std::string &listen_address = {},
-            bool enable_reflection = true,
             const std::shared_ptr<::grpc::ServerCredentials> &credentials =
-                ::grpc::InsecureServerCredentials());
+                ::grpc::InsecureServerCredentials(),
+            bool dnssd_advertise = true,
+            bool enable_reflection = true);
 
-        std::vector<std::string> listener_ports() const;
+        std::string listener_address() const;
+        std::vector<std::string> listener_addresses() const;
         std::unique_ptr<::grpc::Server> BuildAndStart() override;
 
         template <class HandlerT>
@@ -30,7 +32,7 @@ namespace core::grpc
         {
             this->RegisterService(handler.get());
             this->add_handler_settings(handler, add_listener);
-            this->handlers_.push_back(handler); // Keep from being destroyed
+            this->handlers_.push_back(handler);  // Keep from being destroyed
         }
 
     private:
@@ -42,9 +44,11 @@ namespace core::grpc
 
     private:
         std::vector<std::shared_ptr<RequestHandlerBase>> handlers_;
+        std::string listen_address_;
         std::shared_ptr<::grpc::ServerCredentials> credentials_;
         uint max_request_size_;
         uint max_reply_size_;
+        bool dnssd_advertise_;
         std::set<std::string> listeners_;
     };
 

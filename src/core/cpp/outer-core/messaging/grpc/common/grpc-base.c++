@@ -35,6 +35,11 @@ namespace core::grpc
                     : str::stem(this->full_service_name_, ".");
     }
 
+    std::string Base::dnssd_type() const
+    {
+        return this->setting(DNSSD_TYPE_OPTION).as_string();
+    }
+
     std::string Base::realaddress(const std::string &address,
                                   const std::string &hostOption,
                                   const std::string &portOption,
