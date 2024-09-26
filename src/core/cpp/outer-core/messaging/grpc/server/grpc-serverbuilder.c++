@@ -36,12 +36,12 @@ namespace core::grpc
         }
     }
 
-    std::string ServerBuilder::listener_address() const
+    std::string ServerBuilder::listener_port() const
     {
         return this->listen_address_;
     }
 
-    std::vector<std::string> ServerBuilder::listener_addresses() const
+    std::vector<std::string> ServerBuilder::listener_ports() const
     {
         return {this->listeners_.begin(), this->listeners_.end()};
     }
@@ -64,7 +64,7 @@ namespace core::grpc
             std::string host;
             uint port = 0;
             handler->splitaddress(
-                add_listener ? handler->address_setting() : this->listener_address(),
+                add_listener ? handler->address_setting() : this->listener_port(),
                 &host,
                 &port);
 

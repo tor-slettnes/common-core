@@ -22,8 +22,8 @@ namespace core::grpc
             bool dnssd_advertise = true,
             bool enable_reflection = true);
 
-        std::string listener_address() const;
-        std::vector<std::string> listener_addresses() const;
+        std::string listener_port() const;
+        std::vector<std::string> listener_ports() const;
         std::unique_ptr<::grpc::Server> BuildAndStart() override;
 
         template <class HandlerT>

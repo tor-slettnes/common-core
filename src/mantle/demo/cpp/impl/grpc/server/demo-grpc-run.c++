@@ -36,7 +36,7 @@ namespace demo::grpc
                 log_info("Requested gRPC server shutdown with a 5s timeout");
             });
 
-        log_notice("Demo gRPC server is ready on ", core::str::join(builder.listener_addresses()));
+        log_notice("Demo gRPC server is ready on ", core::str::join(builder.listener_ports()));
         server->Wait();
         log_notice("Demo gRPC server is shutting down");
 
