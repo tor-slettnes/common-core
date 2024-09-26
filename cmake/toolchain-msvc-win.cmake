@@ -11,12 +11,14 @@ set(CMAKE_SYSTEM_NAME Windows)
 set(PLATFORM_WIN32 ON)
 
 ### "#ifdef PLATFORM_QNX" in source code
-add_definitions(
-  -DPLATFORM_WIN32=1
+add_compile_definitions(
+  PLATFORM_WIN32=1
 )
 
 if(WIN32)
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+  add_compile_definitions(
+    _CRT_SECURE_NO_WARNINGS
+  )
 endif()
 
 

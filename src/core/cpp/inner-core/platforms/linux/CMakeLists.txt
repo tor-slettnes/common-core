@@ -29,6 +29,20 @@ set(SOURCES
   linux-dns-sd-avahi.c++
 )
 
+if(BUILD_DNSSD_AVAHI)
+  list(APPEND PKG_DEPS
+    avahi-client
+  )
+
+  list(APPEND SOURCES
+    linux-dns-sd-avahi.c++
+  )
+
+  add_compile_definitions(BUILD_DNSSD_AVAHI=1)
+endif()
+
+
+
 ### Build library
 include(BuildLibrary)
 BuildLibrary("${TARGET}"

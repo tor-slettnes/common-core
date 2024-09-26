@@ -21,12 +21,16 @@ namespace core::platform
         path.registerProvider<LinuxPathProvider>(exec_name);
         host.registerProvider<LinuxHostProvider>();
         time.registerProvider<LinuxTimeProvider>();
+#ifdef BUILD_DNSSD_AVAHI
         dns_sd.registerProvider<AvahiServiceDiscoveryProvider>();
+#endif
     }
 
     void unregister_linux_providers()
     {
+#ifdef BUILD_DNSSD_AVAHI
         dns_sd.unregisterProvider<AvahiServiceDiscoveryProvider>();
+#endif
         time.unregisterProvider<LinuxTimeProvider>();
         host.unregisterProvider<LinuxHostProvider>();
         path.unregisterProvider<LinuxPathProvider>();
