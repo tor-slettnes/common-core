@@ -16,7 +16,6 @@ set(LIB_DEPS
 ### External package dependencies
 set(PKG_DEPS
   uuid
-  avahi-client
 )
 
 ### Sources
@@ -26,7 +25,6 @@ set(SOURCES
   linux-host.c++
   linux-path.c++
   linux-time.c++
-  linux-dns-sd-avahi.c++
 )
 
 if(BUILD_DNSSD_AVAHI)

@@ -10,8 +10,9 @@
 #include "linux-symbols.h++"
 #include "linux-host.h++"
 #include "linux-time.h++"
+#ifdef BUILD_DNSSD_AVAHI
 #include "linux-dns-sd-avahi.h++"
-#include "logging/logging.h++"
+#endif
 
 namespace core::platform
 {
