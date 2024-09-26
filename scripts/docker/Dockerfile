@@ -1,5 +1,4 @@
-#FROM debian:bookworm
-FROM ubuntu:jammy
+FROM debian:bookworm
 
 ### Install runtime utilities
 RUN apt-get update
@@ -9,6 +8,7 @@ RUN apt-get install -y \
     doxygen                 \
     file                    \
     git                     \
+    libavahi-client-dev     \
     libzmq3-dev             \
     libcurl4-gnutls-dev     \
     libglibmm-2.4-dev       \
