@@ -63,4 +63,3 @@ namespace core::types
 }  // namespace core::types
 
 #include "create-shared.i++"
-

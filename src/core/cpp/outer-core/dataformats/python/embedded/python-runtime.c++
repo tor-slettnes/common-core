@@ -149,5 +149,4 @@ namespace core::python
     static core::platform::InitTask py_init("Python init", Runtime::global_init);
     static core::platform::ExitTask py_cleanup("Python cleanup", Runtime::global_cleanup);
 
-
 }  // namespace core::python

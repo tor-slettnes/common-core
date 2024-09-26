@@ -201,7 +201,6 @@ namespace core::str
         uint maxsplits = 0,
         bool keep_empties = false);
 
-
     /// Join a sequence of strings by the specified delimiter to an output stream
     /// @param[in] out
     ///     Output stream

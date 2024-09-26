@@ -17,7 +17,6 @@
 // C++ STL modules
 #include <functional>
 
-
 namespace demo::zmq
 {
     void SignalHandler::initialize()

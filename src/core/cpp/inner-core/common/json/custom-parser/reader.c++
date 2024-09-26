@@ -101,7 +101,7 @@ namespace core::json
     }
 
     TokenPair CustomReader::next_value(const TokenParser::ptr &parser,
-                                 const TokenMask &endtokens)
+                                       const TokenMask &endtokens)
     {
         static const std::uint64_t value_mask =
             (TI_OBJECT_OPEN | TI_ARRAY_OPEN |
@@ -120,6 +120,5 @@ namespace core::json
             return tp;
         }
     }
-
 
 }  // namespace core::json

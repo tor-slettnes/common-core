@@ -50,5 +50,4 @@ namespace demo::zmq
         return {};
     }
 
-}
-
+}  // namespace demo::zmq

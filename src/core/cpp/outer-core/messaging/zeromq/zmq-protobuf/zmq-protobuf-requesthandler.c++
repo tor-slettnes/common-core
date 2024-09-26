@@ -68,7 +68,7 @@ namespace core::zmq
 
             std::vector<std::string> method_names;
             method_names.reserve(this->handler_map.size());
-            for (const auto &[name, method]: this->handler_map)
+            for (const auto &[name, method] : this->handler_map)
             {
                 method_names.push_back(name);
             }

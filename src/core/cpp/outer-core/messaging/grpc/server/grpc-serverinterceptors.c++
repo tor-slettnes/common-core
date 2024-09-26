@@ -31,7 +31,7 @@ namespace core::grpc
         {
             if (void* data = methods->GetRecvMessage())
             {
-                auto *message = static_cast<google::protobuf::Message*>(data);
+                auto* message = static_cast<google::protobuf::Message*>(data);
                 log_trace("Received message: ", protobuf::to_string(*message, true));
             }
         }

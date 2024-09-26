@@ -26,13 +26,13 @@ namespace platform::upgrade::native
     constexpr auto DEFAULT_INSTALL_COMMAND = "install.sh";
 
     NativePackageInfo::NativePackageInfo(const fs::path &settings_file,
-                                 const PackageSource &source)
+                                         const PackageSource &source)
         : This(core::SettingsStore(settings_file), source)
     {
     }
 
     NativePackageInfo::NativePackageInfo(const core::types::KeyValueMap &settings,
-                                 const PackageSource &source)
+                                         const PackageSource &source)
         : Super(
               source,
               settings.get(SETTING_PRODUCT).as_string(),
@@ -116,7 +116,7 @@ namespace platform::upgrade::native
     }
 
     std::string NativePackageInfo::capture_setting(const std::string &setting,
-                                               const std::string &fallback) const
+                                                   const std::string &fallback) const
     {
         return this->settings
             .get(SETTING_PROGRESS_CAPTURE)

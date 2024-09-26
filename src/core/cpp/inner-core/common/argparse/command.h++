@@ -80,7 +80,6 @@ namespace core::argparse
         bool use_exit_status;
         std::unordered_map<std::string, Handler> handlers;
         std::vector<CommandDescription> command_descriptions;
-
     };
 
 }  // namespace core::argparse

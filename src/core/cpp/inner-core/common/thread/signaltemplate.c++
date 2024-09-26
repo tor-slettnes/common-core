@@ -64,13 +64,12 @@ namespace core::signal
 
     size_t BaseSignal::collect_futures(Futures &futures)
     {
-        for (std::future<void> &future: futures)
+        for (std::future<void> &future : futures)
         {
             future.get();
         }
         return futures.size();
     }
-
 
     //==========================================================================
     /// \class VoidSignal

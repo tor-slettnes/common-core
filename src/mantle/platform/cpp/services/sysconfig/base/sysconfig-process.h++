@@ -14,10 +14,9 @@ namespace platform::sysconfig
 {
     using core::platform::ArgVector;
     using core::platform::ExitStatus;
-    using core::platform::PID;
     using core::platform::Invocation;
     using core::platform::InvocationResult;
-
+    using core::platform::PID;
 
     //==========================================================================
     // PortableExitStatus
@@ -44,7 +43,6 @@ namespace platform::sysconfig
         std::string symbol_;
         std::string text_;
     };
-
 
     //==========================================================================
     // ProcessInterface

@@ -184,7 +184,6 @@ namespace protobuf
                 core::platform::PID *pid,
                 std::string *input = nullptr) noexcept;
 
-
     //==========================================================================
     // CommandResponse
 

@@ -18,11 +18,11 @@ namespace demo
         core::types::KeyValueMap data = this->get_attributes(false);
 
         demo::Greeting greeting(
-            text,                                         // text
-            this->identity,                               // identity
+            text,                                           // text
+            this->identity,                                 // identity
             core::str::convert_from(this->implementation),  // implementation
             core::dt::Clock::now(),                         // birth
-            data);                                        // data
+            data);                                          // data
 
         demo::provider->say_hello(greeting);
     }
@@ -45,8 +45,8 @@ namespace demo
     void Options::on_time(const demo::TimeData &timedata)
     {
         core::str::format(std::cout,
-                        "signal_time(%s)\n",
-                        timedata);
+                          "signal_time(%s)\n",
+                          timedata);
     }
 
     void Options::on_greeting(core::signal::MappingAction mapping_action,
@@ -54,9 +54,9 @@ namespace demo
                               const demo::Greeting &greeting)
     {
         core::str::format(std::cout,
-                        "signal_greeting(%s, %r, %s)\n",
-                        mapping_action,
-                        mapping_key,
-                        greeting);
+                          "signal_greeting(%s, %r, %s)\n",
+                          mapping_action,
+                          mapping_key,
+                          greeting);
     }
 }  // namespace demo

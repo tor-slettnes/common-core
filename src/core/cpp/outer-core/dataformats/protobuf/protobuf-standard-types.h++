@@ -19,7 +19,6 @@
 
 #include <google/protobuf/util/time_util.h>  // ProtoBuf Duration operators
 
-
 /// ProtoBuf message conversions.
 ///
 /// These are convenience methods to convert to ("encode...()") or from
@@ -105,7 +104,7 @@ namespace protobuf
                 google::protobuf::BytesValue *msg) noexcept;
 
     void decode(const google::protobuf::BytesValue &msg,
-               core::types::Bytes *b) noexcept;
+                core::types::Bytes *b) noexcept;
 
     //==========================================================================
     // Timestamp encoding/decoding
@@ -118,7 +117,7 @@ namespace protobuf
                 google::protobuf::Timestamp *ts) noexcept;
 
     void decode(const google::protobuf::Timestamp &ts,
-               core::dt::TimePoint *tp) noexcept;
+                core::dt::TimePoint *tp) noexcept;
 
     //==========================================================================
     // Duration encoding/decoding
@@ -127,7 +126,7 @@ namespace protobuf
                 google::protobuf::Duration *msg) noexcept;
 
     void decode(const google::protobuf::Duration &msg,
-               core::dt::Duration *duration) noexcept;
+                core::dt::Duration *duration) noexcept;
 
     //==========================================================================
     // Google variant value encoding/decoding
@@ -136,7 +135,7 @@ namespace protobuf
                 google::protobuf::Value *msg) noexcept;
 
     void decode(const google::protobuf::Value &msg,
-               core::types::Value *value) noexcept;
+                core::types::Value *value) noexcept;
 
     //==========================================================================
     // Google variant struct encoding/decoding
@@ -145,13 +144,13 @@ namespace protobuf
                 google::protobuf::Struct *msg) noexcept;
 
     void decode(const google::protobuf::Struct &msg,
-               core::types::KeyValueMap *kvmap) noexcept;
+                core::types::KeyValueMap *kvmap) noexcept;
 
     void encode(const core::types::TaggedValueList &tvlist,
                 google::protobuf::Struct *msg) noexcept;
 
     void decode(const google::protobuf::Struct &msg,
-               core::types::TaggedValueList *tvlist) noexcept;
+                core::types::TaggedValueList *tvlist) noexcept;
 
     //==========================================================================
     // Google variant list encoding/decoding

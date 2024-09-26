@@ -24,4 +24,4 @@ namespace core::json
 
     extern Writer writer;
     extern FastWriter fast_writer;
-}
+}  // namespace core::json

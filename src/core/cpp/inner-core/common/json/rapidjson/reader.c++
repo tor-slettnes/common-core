@@ -44,7 +44,7 @@ namespace core::json
 
     types::Value RapidReader::read_stream(std::istream &stream) const
     {
-        if (auto *ss = dynamic_cast<std::stringstream*>(&stream))
+        if (auto *ss = dynamic_cast<std::stringstream *>(&stream))
         {
             return this->decoded(ss->str());
         }
@@ -63,7 +63,6 @@ namespace core::json
     {
         return this->read_stream(stream);
     }
-
 
     std::string RapidReader::read_text_from_file(const fs::path &path)
     {

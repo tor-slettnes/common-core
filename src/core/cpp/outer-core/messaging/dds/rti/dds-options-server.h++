@@ -26,4 +26,4 @@ namespace core::dds
         bool log_to_dl;
     };
 
-}  // namespace core::argparse
+}  // namespace core::dds

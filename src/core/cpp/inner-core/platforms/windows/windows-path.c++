@@ -72,7 +72,6 @@ namespace core::platform
         return path;
     }
 
-
     fs::path WindowsPathProvider::mktemp(const fs::path &folder,
                                          const std::string &prefix,
                                          const std::string &suffix)

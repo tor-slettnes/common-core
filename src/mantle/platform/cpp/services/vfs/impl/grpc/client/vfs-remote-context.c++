@@ -32,4 +32,4 @@ namespace platform::vfs
             provider->close_context(this->name);
         }
     }
-}  // namespace platform::vfs::grpc
+}  // namespace platform::vfs

@@ -138,7 +138,7 @@ namespace core::json
     template <class T, class... Args>
     TokenPair TokenParser::parse_numeric(Args &&...args)
     {
-#if __GNUC__  >= 10
+#if __GNUC__ >= 10
         static const std::errc ok{};
         const char *const start = &*this->token().begin();
         const char *const end = &*this->token().end();
@@ -166,7 +166,6 @@ namespace core::json
             return {TI_INVALID, {}};
         }
 #endif
-
     }
 
     TokenPair TokenParser::parse_number()

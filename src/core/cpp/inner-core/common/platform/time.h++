@@ -27,7 +27,6 @@ namespace core::platform
 
         virtual void set_ntp_servers(const std::vector<std::string> &servers);
         virtual std::vector<std::string> get_ntp_servers() const;
-
     };
 
     extern ProviderProxy<TimeProvider> time;

@@ -76,4 +76,4 @@ namespace core::dds
         {core::status::Level::FATAL, 100},
     };
 
-}  // namespace core::logging
+}  // namespace core::dds

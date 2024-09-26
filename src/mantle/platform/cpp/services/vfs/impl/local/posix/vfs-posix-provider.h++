@@ -28,7 +28,7 @@ namespace platform::vfs::local
                             bool ignore_case) const override;
 
         FileInfo read_stats(const fs::path &localpath,
-                             bool dereference = false) const override;
+                            bool dereference = false) const override;
 
         fs::file_type path_type(mode_t mode) const;
     };

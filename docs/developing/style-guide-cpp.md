@@ -318,7 +318,7 @@ There are multiple different ways of passing in arguments to a function in C++:
       std::string arg1,        // by value; the function receives a copy of `arg1`
       std::string &arg2,       // by (`lvalue`) reference; the function can modify the caller's copy
       const std::string &arg3, // by constant reference; the function can view the caller's copy
-      std::string &&arg4,      // by `rvalue` reference; the function takes a transient value
+      std::string &&arg4,      // by `rvalue` reference; the function takes over a transient value
       std::string *arg5,       // by pointer; the function receives the memory location of the value
       const std:string *arg6); // by const pointer; same, but the function cannot modify the value
   ```
@@ -566,6 +566,24 @@ Now for everyone's favorite topic: Code formatting.  Once again, the emphasis sh
         // ...
     }
     ```
+
+### Automatic formatting with `clang-format`
+
+The above formatting rules are captured in the [clang-format](https://packages.debian.org/search?keywords=clang-format&searchon=names&suite=stable&section=all) configuration file [src/.clang-format](../../src/.clang-format).
+
+You can use the command [clang-format](https://packages.debian.org/search?keywords=clang-format&searchon=names&suite=stable&section=all) to automatically "fix" formatting of your code.  The above rules are captured in the configuration file [src/.clang-format](../../src/.clang-format), thus you can simply run:
+
+  ```bash
+  clang-format -i FILENAME.c++ FILENAME.h++
+  ```
+
+Or, to apply automatic formatting to *all* C++ code in the repository:
+
+  ```bash
+  find src -name '*.[chi]++' -exec clang-format -i {} +
+  ```
+
+If your editor supports it, you also add automatic `clang-format` integraton, e.g. when saving your file.  (I'll happily help you set this up for `emacs`).
 
 
 ## <a name="reference">C++ documentation</a>

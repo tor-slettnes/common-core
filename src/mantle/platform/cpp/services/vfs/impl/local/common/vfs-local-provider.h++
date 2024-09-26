@@ -44,10 +44,10 @@ namespace platform::vfs::local
         void close_context(const Context::ptr &cxt) override;
 
         VolumeInfo get_volume_info(const Path &vpath,
-                                 const OperationFlags &flags) const override;
+                                   const OperationFlags &flags) const override;
 
         FileInfo get_file_info(const Path &vpath,
-                             const OperationFlags &flags) const override;
+                               const OperationFlags &flags) const override;
 
         Directory get_directory(const Path &vpath,
                                 const OperationFlags &flags) const override;

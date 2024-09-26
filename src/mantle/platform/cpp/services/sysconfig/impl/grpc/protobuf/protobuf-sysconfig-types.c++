@@ -93,7 +93,6 @@ namespace protobuf
         decode_to_vector(proto.subsystems(), native);
     }
 
-
     //==========================================================================
     // Version
 
@@ -397,7 +396,6 @@ namespace protobuf
         }
     }
 
-
     //==========================================================================
     // CommandResponse
 
@@ -443,6 +441,5 @@ namespace protobuf
             proto.exit_signal(),
             proto.error_symbol(),
             proto.error_text());
-
     }
 }  // namespace protobuf

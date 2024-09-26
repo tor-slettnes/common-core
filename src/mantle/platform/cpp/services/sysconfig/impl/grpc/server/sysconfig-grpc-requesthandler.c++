@@ -335,8 +335,8 @@ namespace platform::sysconfig::grpc
         try
         {
             InvocationResult result = process->invoke_sync(
-                    protobuf::decoded<Invocation>(*request),
-                    request->stdin());
+                protobuf::decoded<Invocation>(*request),
+                request->stdin());
 
             protobuf::encode(result, response);
             return ::grpc::Status::OK;

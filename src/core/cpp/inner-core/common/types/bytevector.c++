@@ -19,7 +19,7 @@ namespace core::types
     {
         static const std::string hex_digits = "0123456789abcdef";
 
-        for (Byte byte: *this)
+        for (Byte byte : *this)
         {
             if (byte == '\\')
             {

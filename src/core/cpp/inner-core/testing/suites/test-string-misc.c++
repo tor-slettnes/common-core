@@ -73,7 +73,14 @@ namespace core::str
     TEST(StringTest, SplitJoin)
     {
         std::vector<std::string> words{
-            "Seven", "words", "do", "", "not", "a", "sentence", "make",
+            "Seven",
+            "words",
+            "do",
+            "",
+            "not",
+            "a",
+            "sentence",
+            "make",
         };
 
         std::size_t nwords = words.size();
@@ -84,8 +91,8 @@ namespace core::str
         EXPECT_EQ(joined_with_empties, "Seven,words,do,,not,a,sentence,make");
 
         std::vector<std::string> partial_split = split(joined_with_empties, ",", 4, true);
-        std::vector<std::string> partial_expected(words.begin(), words.begin()+4);
-        partial_expected.push_back(join(words.begin()+4, words.end(), ",", true));
+        std::vector<std::string> partial_expected(words.begin(), words.begin() + 4);
+        partial_expected.push_back(join(words.begin() + 4, words.end(), ",", true));
         EXPECT_EQ(partial_split, partial_expected);
     }
 

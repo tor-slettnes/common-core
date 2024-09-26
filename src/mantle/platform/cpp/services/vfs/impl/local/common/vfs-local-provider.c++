@@ -107,7 +107,6 @@ namespace platform::vfs::local
         }
     }
 
-
     void LocalProvider::close_context(
         const Context::ptr &cxt)
     {
@@ -251,7 +250,7 @@ namespace platform::vfs::local
         const OperationFlags &flags) const
     {
         LocationList locs = this->locations(vpaths, true);
-        for (const Location &loc: locs)
+        for (const Location &loc : locs)
         {
             this->remove(loc, flags);
         }

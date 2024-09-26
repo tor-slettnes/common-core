@@ -7,7 +7,7 @@
 
 #pragma once
 #include "zmq-filter.h++"
-#include "zmq-endpoint.h++"     // for `log_scope`
+#include "zmq-endpoint.h++"  // for `log_scope`
 #include "types/bytevector.h++"
 
 namespace core::zmq

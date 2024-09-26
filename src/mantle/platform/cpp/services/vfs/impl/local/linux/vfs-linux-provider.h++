@@ -53,8 +53,8 @@ namespace platform::vfs::local
         std::string newContextName(const std::string &basename);
 
         Context::ptr newContext(const std::string &name,
-                              const core::types::Value &settings,
-                              bool writeable);
+                                const core::types::Value &settings,
+                                bool writeable);
 
     private:
         static VolumeHandlerMap volumeHandlers;

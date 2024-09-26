@@ -39,8 +39,6 @@ namespace core::grpc
         Interceptor* CreateServerInterceptor(ServerRpcInfo* info) override;
     };
 
-
-
     //==========================================================================
     // Exception Handling Interceptor
 

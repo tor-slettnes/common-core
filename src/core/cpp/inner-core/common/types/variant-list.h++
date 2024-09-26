@@ -37,7 +37,7 @@ namespace core::types
         {
             std::vector<T> result;
             result.reserve(this->size());
-            for (const types::Value &value: *this)
+            for (const types::Value &value : *this)
             {
                 if (const T *ptr = value.get_if<T>())
                 {

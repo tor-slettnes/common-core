@@ -92,7 +92,6 @@ namespace core
         ///     Settings file to load.
         bool load_from(const fs::path &abspath);
 
-
         /// @brief
         ///     Save current settings to the default .json file for this store,
         ///     relative to the first directory in CONFIGPATH.
@@ -167,4 +166,3 @@ namespace core
         std::vector<fs::path> filenames_;
     };
 }  // namespace core
-

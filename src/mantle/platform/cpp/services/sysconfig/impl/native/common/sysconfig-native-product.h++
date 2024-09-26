@@ -34,6 +34,7 @@ namespace platform::sysconfig::native
         std::vector<ProductInfo> get_subsystem_info() const;
 
         void emit() const;
+
     private:
         core::SettingsStore release_settings;
         core::SettingsStore product_settings;

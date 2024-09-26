@@ -26,4 +26,4 @@ namespace platform::upgrade::native
         }
     }
 
-}  // namespace platform::upgrade
+}  // namespace platform::upgrade::native

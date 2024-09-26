@@ -170,7 +170,7 @@ namespace core::zmq
             this->check_error(::zmq_msg_init(&msg));
             this->check_error(::zmq_msg_recv(&msg, this->socket(), flags));
 
-            const char *data = static_cast<const char*>(::zmq_msg_data(&msg));
+            const char *data = static_cast<const char *>(::zmq_msg_data(&msg));
             size_t size = ::zmq_msg_size(&msg);
 
             stream.write(data, size);

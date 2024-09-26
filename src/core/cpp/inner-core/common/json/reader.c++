@@ -11,4 +11,4 @@ namespace core::json
 {
     Reader reader;
     FastReader fast_reader;
-}
+}  // namespace core::json

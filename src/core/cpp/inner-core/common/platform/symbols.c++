@@ -23,8 +23,6 @@ namespace core::platform
         return ::strerror(num);
     }
 
-
     ProviderProxy<SymbolsProvider> symbols("symbols");
-
 
 }  // namespace core::platform

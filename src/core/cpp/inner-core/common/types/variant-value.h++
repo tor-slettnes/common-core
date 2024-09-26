@@ -182,5 +182,4 @@ namespace core::types
 
 }  // namespace core::types
 
-
 #include "variant-value.i++"

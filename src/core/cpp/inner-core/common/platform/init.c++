@@ -19,7 +19,6 @@ namespace core::platform
     {
     }
 
-
     //==========================================================================
     // InitTask
 
@@ -57,7 +56,7 @@ namespace core::platform
 
     void TaskSet::execute() const
     {
-        for (const Task* task : *this)
+        for (const Task *task : *this)
         {
             (*task)();
         }

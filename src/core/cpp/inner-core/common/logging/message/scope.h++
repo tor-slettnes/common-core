@@ -66,7 +66,7 @@
 ///    myapplication --log-threshold-MyNamespaceScope=DEBUG --log-threshold-MyClassScope=INFO
 /// \endcode
 
-#define define_log_scope(...) \
+#define define_log_scope(...)                             \
     inline static ::core::logging::Scope::ptr log_scope = \
         ::core::logging::Scope::create(__VA_ARGS__)
 

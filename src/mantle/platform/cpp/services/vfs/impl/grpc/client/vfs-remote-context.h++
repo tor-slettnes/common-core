@@ -26,4 +26,4 @@ namespace platform::vfs
         std::weak_ptr<ProviderInterface> provider;
     };
 
-}  // namespace platform::vfs::grpc
+}  // namespace platform::vfs

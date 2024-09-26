@@ -61,7 +61,6 @@ namespace core::messaging
         void to_stream(std::ostream &stream) const override;
 
     private:
-
     private:
         std::shared_ptr<SettingsStore> settings_;
         std::string messaging_flavor_;

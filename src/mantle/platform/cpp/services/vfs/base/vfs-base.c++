@@ -61,7 +61,6 @@ namespace platform::vfs
         return ContextProxy(cxt, modify);
     }
 
-
     //==========================================================================
     // Provider instance
 

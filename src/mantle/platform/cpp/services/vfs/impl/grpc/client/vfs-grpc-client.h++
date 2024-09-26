@@ -24,7 +24,6 @@ namespace platform::vfs::grpc
 
     protected:
         using Super::Super;
-
     };
 
 }  // namespace platform::vfs::grpc

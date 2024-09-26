@@ -32,8 +32,8 @@ namespace core::exception
     public:
         inline CustomException(const status::Event &event)
             : Exception<Exc>(
-                event,
-                TYPE_NAME_BASE(Class))
+                  event,
+                  TYPE_NAME_BASE(Class))
         {
         }
 

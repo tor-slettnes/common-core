@@ -11,4 +11,4 @@ namespace core::json
 {
     Writer writer;
     FastWriter fast_writer;
-}
+}  // namespace core::json

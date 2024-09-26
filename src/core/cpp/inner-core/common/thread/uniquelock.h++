@@ -22,7 +22,7 @@ namespace core::types
         void lock() noexcept;
         bool try_lock() noexcept;
         bool locked() const noexcept;
-        void unlock(bool check=false) noexcept;
+        void unlock(bool check = false) noexcept;
 
     private:
         std::mutex mtx;

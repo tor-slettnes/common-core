@@ -24,4 +24,4 @@ namespace core::json
 
     extern Reader reader;
     extern FastReader fast_reader;
-}
+}  // namespace core::json

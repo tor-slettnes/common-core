@@ -17,9 +17,9 @@ namespace demo::zmq
 {
     Publisher::Publisher(const std::string &bind_address,
                          const std::string &channel_name)
-        : Super(bind_address, channel_name)// ,
-          // signal_writer(SignalWriter::create_shared(
-          //                   this->shared_from_this()))
+        : Super(bind_address, channel_name)  // ,
+                                             // signal_writer(SignalWriter::create_shared(
+                                             //                   this->shared_from_this()))
     {
     }
 

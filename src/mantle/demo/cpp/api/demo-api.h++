@@ -36,7 +36,7 @@ namespace demo
         /// @param[in] data
         ///     Arbitrary key/value items to include in greeting
         void say_hello(const std::string &message,
-                       const core::types::KeyValueMap &data={});
+                       const core::types::KeyValueMap &data = {});
 
         /// @brief Issue a greeting to anyone who may be listening
         /// @param[in] greeting

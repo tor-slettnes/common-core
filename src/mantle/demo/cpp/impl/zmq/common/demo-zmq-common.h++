@@ -15,7 +15,7 @@ namespace demo::zmq
 
     // Interface name to use for RPC calls
     constexpr auto SERVICE_CHANNEL = "Demo Service";
-    constexpr auto DEMO_INTERFACE  = "Demo";
+    constexpr auto DEMO_INTERFACE = "Demo";
 
     // Method names within this interface
     constexpr auto METHOD_SAY_HELLO = "say_hello";

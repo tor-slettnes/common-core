@@ -81,7 +81,7 @@ namespace core::types
     TaggedValueList ValueList::as_tvlist() const noexcept
     {
         TaggedValueList tvlist;
-        for (const auto &value: *this)
+        for (const auto &value : *this)
         {
             tvlist.push_back({nulltag, value});
         }

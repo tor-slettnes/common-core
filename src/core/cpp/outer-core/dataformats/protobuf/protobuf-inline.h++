@@ -44,7 +44,7 @@ namespace protobuf
     {
         items->Clear();
         items->Reserve(vector.size());
-        for (const NativeType &item: vector)
+        for (const NativeType &item : vector)
         {
             encode(item, items->Add());
         }
@@ -101,7 +101,6 @@ namespace protobuf
         }
     }
 
-
     //==========================================================================
     // Template to return converted value
 
@@ -140,7 +139,6 @@ namespace protobuf
         encode_shared<ProtoType, NativeType>(ref, &msg);
         return msg;
     }
-
 
     template <class NativeType, class ProtoType>
     void decode_shared(const ProtoType &msg, std::shared_ptr<NativeType> *ref)

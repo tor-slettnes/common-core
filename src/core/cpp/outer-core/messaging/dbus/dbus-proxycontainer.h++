@@ -27,13 +27,13 @@ namespace core::dbus
         std::vector<ProxyWrapper::ptr> list() const;
         std::vector<ProxyWrapper::ptr> list(const InterfaceName& interfacename) const;
         std::vector<ProxyWrapper::ptr> list(const ObjectPath& prefix,
-                                     const InterfaceName& interfacename) const;
+                                            const InterfaceName& interfacename) const;
 
         ProxyWrapper::ptr add(ProxyWrapper::ptr wrapper);
         WrapperMap::iterator remove(const ObjectPath& objectpath);
         // WrapperMap::iterator remove(WrapperMap::iterator it);
         ProxyWrapper::ptr get(const ObjectPath& objectpath,
-                       const InterfaceName& interfacename) const;
+                              const InterfaceName& interfacename) const;
 
         virtual void set_wrapper_ready(ProxyWrapper::ptr wrapper);
         virtual void set_ready();

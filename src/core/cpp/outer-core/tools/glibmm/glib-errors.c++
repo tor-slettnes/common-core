@@ -98,8 +98,7 @@ namespace core::glib
             msg->dispatch();
         }
     }
-}  // namespace gwrap
-
+}  // namespace core::glib
 
 namespace Glib
 {
@@ -108,4 +107,4 @@ namespace Glib
         stream << e.what();
         return stream;
     }
-}
+}  // namespace Glib

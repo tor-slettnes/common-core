@@ -25,7 +25,7 @@ namespace core::grpc
                    const std::string &host,
                    bool wait_for_ready = false,
                    const std::shared_ptr<::grpc::ChannelCredentials> &creds =
-                   ::grpc::InsecureChannelCredentials());
+                       ::grpc::InsecureChannelCredentials());
 
     private:
         std::shared_ptr<::grpc::ChannelInterface> create_channel(
@@ -71,7 +71,6 @@ namespace core::grpc
         ///
         void check(const ::grpc::Status &status) const;
         void check(const Status &status) const;
-
 
     protected:
         std::string host_;

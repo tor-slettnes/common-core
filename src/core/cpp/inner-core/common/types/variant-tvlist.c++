@@ -145,7 +145,6 @@ namespace core::types
         }
     }
 
-
     const Value &TaggedValueList::get(const Tag &tag,
                                       const Value &fallback,
                                       bool ignoreCase) const noexcept

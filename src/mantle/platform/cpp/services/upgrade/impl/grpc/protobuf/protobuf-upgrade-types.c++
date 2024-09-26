@@ -24,7 +24,8 @@ namespace protobuf
         {
         case ::platform::upgrade::LocationType::VFS:
             encode(native.vfs_path(), msg->mutable_vfs_path());
-            break;;
+            break;
+            ;
 
         case ::platform::upgrade::LocationType::URL:
             msg->set_url(native.url());
@@ -60,7 +61,7 @@ namespace protobuf
         auto sources = msg->mutable_sources();
         sources->Clear();
         sources->Reserve(native.size());
-        for (const ::platform::upgrade::PackageSource &src: native)
+        for (const ::platform::upgrade::PackageSource &src : native)
         {
             encode(src, sources->Add());
         }
@@ -71,7 +72,7 @@ namespace protobuf
     {
         native->clear();
         native->reserve(msg.sources().size());
-        for (const ::cc::platform::upgrade::PackageSource &src: msg.sources())
+        for (const ::cc::platform::upgrade::PackageSource &src : msg.sources())
         {
             decode(src, &native->emplace_back());
         }
@@ -112,7 +113,7 @@ namespace protobuf
         auto packages = msg->mutable_packages();
         packages->Clear();
         packages->Reserve(native.size());
-        for (const ::platform::upgrade::PackageInfo::ptr &ptr: native)
+        for (const ::platform::upgrade::PackageInfo::ptr &ptr : native)
         {
             encode(*ptr, packages->Add());
         }
@@ -123,7 +124,7 @@ namespace protobuf
     {
         native->clear();
         native->reserve(msg.packages().size());
-        for (const ::cc::platform::upgrade::PackageInfo &package_info: msg.packages())
+        for (const ::cc::platform::upgrade::PackageInfo &package_info : msg.packages())
         {
             decode_shared(package_info, &native->emplace_back());
         }

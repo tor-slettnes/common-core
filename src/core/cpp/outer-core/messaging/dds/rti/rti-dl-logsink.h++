@@ -42,4 +42,4 @@ namespace core::dds
         RTI_DLDistLogger *dist_logger_;
     };
 
-}  // namespace core::logging
+}  // namespace core::dds

@@ -32,7 +32,6 @@ namespace core::python
         virtual Map attributes_as_objects() const;
         virtual types::KeyValueMap attributes_as_kvmap() const;
 
-        ContainerObject find_qualified_symbol(const std::string &qualified_name) const;
-
+        ContainerObject find_qualified_symbol(const std::string& qualified_name) const;
     };
 }  // namespace core::python

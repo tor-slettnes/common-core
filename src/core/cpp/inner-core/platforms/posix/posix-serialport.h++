@@ -45,7 +45,6 @@ namespace core::platform
         int fd_;
     };
 
-
     //==========================================================================
     /// @class PosixSerialPortProvider
     /// @brief Seral port provider for POSIX systems

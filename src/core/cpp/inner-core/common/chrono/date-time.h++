@@ -139,7 +139,6 @@ namespace core
         ///     Timepoint represented as a JavaScript time string
         std::string to_js_string(const TimePoint &tp);
 
-
         /// Return the provided timepoint as a string representing UTC or local time.
         /// \param[in] tp
         ///     A timepoint
@@ -427,8 +426,6 @@ namespace std::chrono
     std::ostream &operator<<(std::ostream &stream, const steady_clock::time_point &stp);
 }  // namespace std::chrono
 
-
 // Compare `std::tm` structs.  This is actually an alias for `struct tm`,
 // so we need to define it in the global namespace.
 bool operator==(const std::tm &lhs, const std::tm &rhs);
-

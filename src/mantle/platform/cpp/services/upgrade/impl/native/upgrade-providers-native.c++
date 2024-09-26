@@ -19,4 +19,4 @@ namespace platform::upgrade::native
     {
         upgrade.unregisterProvider<NativeProvider>();
     }
-}  // namespace platform::upgrade::grpc
+}  // namespace platform::upgrade::native

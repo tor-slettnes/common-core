@@ -32,7 +32,7 @@ namespace core::grpc
         ServerStreamer(Args &&...args)
             : Super(args...),
               shutdown_handle(core::platform::signal_shutdown.connect(
-                                  std::bind(&This::close, this)))
+                  std::bind(&This::close, this)))
         {
         }
 

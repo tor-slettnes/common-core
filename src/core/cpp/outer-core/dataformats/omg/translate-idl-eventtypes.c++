@@ -70,11 +70,11 @@ namespace core::idl
     core::status::Event decoded_event(const CC::Status::Event &idl) noexcept
     {
         return {
-            idl.text(),                                        // text
+            idl.text(),                                          // text
             decoded<core::status::Domain>(idl.domain()),         // domain
-            idl.origin(),                                      // origin
-            static_cast<int>(idl.code()),                      // code
-            idl.symbol(),                                      // symbol
+            idl.origin(),                                        // origin
+            static_cast<int>(idl.code()),                        // code
+            idl.symbol(),                                        // symbol
             decoded<core::status::Level>(idl.level()),           // level
             decoded<core::status::Flow>(idl.flow()),             // flow
             decoded<core::dt::TimePoint>(idl.timestamp()),       // timepoint

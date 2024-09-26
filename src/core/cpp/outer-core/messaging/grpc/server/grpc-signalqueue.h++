@@ -144,7 +144,6 @@ namespace core::grpc
             }
         }
 
-
         /// @brief
         ///    Connect a signal of type MappingSignal<T> for encoding/enqueung
         ///    ProtoBuf messages with `mapping_action` and `mapping_key` fields.

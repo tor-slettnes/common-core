@@ -282,7 +282,6 @@ namespace core::http
             std::string base_path;
             _curl_url_get(&rc, handle, CURLUPART_PATH, &base_path, 0);
 
-
             if (rc == CURLUE_OK)
             {
                 fs::path combined_path(base_path);

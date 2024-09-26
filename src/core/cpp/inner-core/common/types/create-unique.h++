@@ -52,10 +52,8 @@ namespace core::types
         [[nodiscard]] static std::unique_ptr<UniqueBase> create_unique(Args &&...args);
     };
 
-
     template <class T>
     bool equivalent(const std::unique_ptr<T> &lhs, const std::unique_ptr<T> &rhs);
 }  // namespace core::types
 
 #include "create-unique.i++"
-

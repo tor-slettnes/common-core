@@ -67,11 +67,11 @@ namespace platform::upgrade
 
     public:
         PackageInfo(const PackageSource &source = {},
-                        const std::string &product = {},
-                        const sysconfig::Version &version = {},
-                        const std::string &description = {},
-                        bool reboot_required = false,
-                        bool applicable = false);
+                    const std::string &product = {},
+                    const sysconfig::Version &version = {},
+                    const std::string &description = {},
+                    bool reboot_required = false,
+                    bool applicable = false);
 
     public:
         virtual const PackageSource &source() const;

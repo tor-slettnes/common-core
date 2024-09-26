@@ -40,7 +40,6 @@ namespace core::platform
         BaudRate speed_;
     };
 
-
     //==========================================================================
     /// @class SerialPortProvider
     /// @brief Abstract serial port provider

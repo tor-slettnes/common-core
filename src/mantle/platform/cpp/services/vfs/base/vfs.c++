@@ -13,7 +13,6 @@ namespace platform::vfs
     //==========================================================================
     // Public API
 
-
     fs::path localPath(const Path &vpath)
     {
         return get_context(vpath.context)->localPath(vpath.relpath);
@@ -105,8 +104,8 @@ namespace platform::vfs
     }
 
     FileInfo get_file_info(const Path &vpath,
-                         bool with_attributes,
-                         bool dereference)
+                           bool with_attributes,
+                           bool dereference)
     {
         return vfs->get_file_info(
             vpath,

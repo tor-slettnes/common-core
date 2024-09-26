@@ -411,7 +411,6 @@ namespace core::signal
         std::unordered_map<std::string, Slot> slots_;
     };
 
-
     //==========================================================================
     // I/O stream support
 

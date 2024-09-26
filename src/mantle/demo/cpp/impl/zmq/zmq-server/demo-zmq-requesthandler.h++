@@ -34,7 +34,6 @@ namespace demo::zmq
 
     private:
         std::shared_ptr<API> api;
-
     };
 
 }  // namespace demo::zmq

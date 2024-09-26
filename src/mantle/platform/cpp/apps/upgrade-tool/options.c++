@@ -138,7 +138,6 @@ void Options::on_upgrade_pending(
                       package_info);
 }
 
-
 void Options::on_upgrade_progress(
     const platform::upgrade::UpgradeProgress::ptr &progress)
 {

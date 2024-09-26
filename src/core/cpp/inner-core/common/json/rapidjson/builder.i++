@@ -136,4 +136,4 @@ namespace core::json
         }
         return this->writer.EndObject();
     }
-}  // namespace core::rapidjson
+}  // namespace core::json

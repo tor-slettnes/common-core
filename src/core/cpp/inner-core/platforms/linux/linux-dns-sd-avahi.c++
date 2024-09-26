@@ -100,7 +100,6 @@ namespace core::platform
         }
     }
 
-
     void AvahiServiceDiscoveryProvider::create_entry_group()
     {
         if (!this->group)

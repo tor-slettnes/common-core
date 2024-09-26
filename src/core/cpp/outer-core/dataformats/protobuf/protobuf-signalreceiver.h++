@@ -8,7 +8,7 @@
 #pragma once
 #include "protobuf-message.h++"
 #include "thread/signaltemplate.h++"
-#include "signal.pb.h"          // Generated from `signal.proto`
+#include "signal.pb.h"  // Generated from `signal.proto`
 
 #include <unordered_map>
 #include <functional>
@@ -25,7 +25,7 @@ namespace protobuf
         using Callback = std::function<void(const SignalT &signal)>;
 
         using MappingCallback = std::function<void(core::signal::MappingAction action,
-                                                   const std::string& key,
+                                                   const std::string &key,
                                                    const SignalT &signal)>;
 
         using SignalMap = std::unordered_map<typename SignalT::SignalCase, Callback>;
@@ -90,7 +90,6 @@ namespace protobuf
                 });
         }
 
-
         /// @brief Add a callback handler for all Signal messages
         /// @param[in] callback
         ///     Method that will be invoked to handle Signal messages as they
@@ -122,7 +121,7 @@ namespace protobuf
 
         static std::optional<bool> is_mapped(cc::signal::MappingAction action)
         {
-            switch(action)
+            switch (action)
             {
             case cc::signal::MAP_ADDITION:
             case cc::signal::MAP_UPDATE:

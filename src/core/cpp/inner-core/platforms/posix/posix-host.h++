@@ -30,4 +30,3 @@ namespace core::platform
     };
 
 }  // namespace core::platform
-

@@ -14,7 +14,6 @@
 //#include "zmq-client.h++"
 #include "types/create-shared.h++"
 
-
 namespace demo::zmq
 {
     //==========================================================================
