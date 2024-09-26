@@ -24,18 +24,18 @@ project("${PROJECT}"
 message("Building project \"${PROJECT_NAME}\" version ${PROJECT_VERSION}, build #${BUILD_NUMBER}")
 
 ### Language components
-option(BUILD_CPP        "Build/Install C++ code" ON)
-option(BUILD_PYTHON     "Install Python clients/scripts" ON)
+option(BUILD_CPP         "Build/Install C++ code" ON)
+option(BUILD_PYTHON      "Install Python clients/scripts" ON)
 
 ### Optional core components
-option(BUILD_RAPIDJSON  "Build fast JSON parsing using RapidJSON" ON)
+option(BUILD_RAPIDJSON   "Build fast JSON parsing using RapidJSON" ON)
 
 ### Messaging frameworks
-option(BUILD_GRPC       "Build support for gRPC Remote Procedure Calls" ON)
-option(BUILD_ZMQ        "Build support for ZeroMQ" ON)
-option(BUILD_HTTP       "Build support for HTTP requests, incl. REST API" ON)
-option(BUILD_RTI_DDS    "Build support for RTI ConnextDDS" OFF)
-option(BUILD_RTI_LOGGER "Build support for RTI Distributed Logger" OFF)
+option(BUILD_GRPC        "Build support for gRPC Remote Procedure Calls" ON)
+option(BUILD_ZMQ         "Build support for ZeroMQ" ON)
+option(BUILD_HTTP        "Build support for HTTP requests, incl. REST API" ON)
+option(BUILD_RTI_DDS     "Build support for RTI ConnextDDS" OFF)
+option(BUILD_RTI_LOGGER  "Build support for RTI Distributed Logger" OFF)
 
 ### Object serialization
 option(BUILD_PROTOBUF    "Build support for Google Protocol Buffers" ON)
@@ -45,16 +45,16 @@ option(BUILD_DBUS        "Build support for D-Bus" ${LINUX})
 option(BUILD_DNSSD_AVAHI "Build suport for DNS-SD via Avahi" ON)
 
 ### Build DEMO application
-option(BUILD_DEMO       "Build DEMO application example" ON)
+option(BUILD_DEMO        "Build DEMO application example" ON)
 
 ### Build tests
-option(BUILD_TESTING    "Build testing modules" ON)
+option(BUILD_TESTING     "Build testing modules" ON)
 
 ### Use static linking
-option(USE_STATIC_LIBS "Use static libraries for linking" OFF)
+option(USE_STATIC_LIBS   "Use static libraries for linking" OFF)
 
 ### Enable SystemD service integration
-option(ENABLE_SERVICES "Enable SystemD service units" ON)
+option(ENABLE_SERVICES   "Enable SystemD service units" ON)
 
 ### gRPC requires ProtoBuf
 if(BUILD_GRPC OR BUILD_ZMQ)
