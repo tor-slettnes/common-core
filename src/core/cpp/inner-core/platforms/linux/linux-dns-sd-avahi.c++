@@ -76,12 +76,6 @@ namespace core::platform
             .port = port,
             .attributes = attributes,
         });
-        // auto service_info = std::make_shared<ServiceInfo>();
-        // service_info->name = name;
-        // service_info->port = port;
-        // service_info->attributes = attributes;
-
-        // this->add_service(service_info);
     }
 
     void AvahiServiceDiscoveryProvider::commit()
