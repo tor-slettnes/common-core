@@ -24,11 +24,16 @@ namespace core::platform
         using Super::Super;
 
     public:
-        virtual void advertise_service(
+        virtual void add_service(
             const std::string &name,
             const std::string &type,
             uint port,
             const AttributeMap &attributes = {}) = 0;
+
+        virtual void add_service_subtype(
+            const std::string &name,
+            const std::string &type,
+            const std::string &subtype) = 0;
 
         virtual void commit() = 0;
 

@@ -8,6 +8,7 @@
 #include "grpc-serverbuilder.h++"
 #include "grpc-serverinterceptors.h++"
 #include "platform/dns-sd.h++"
+#include "platform/host.h++"
 
 #include <grpc++/ext/proto_server_reflection_plugin.h>
 
@@ -70,8 +71,12 @@ namespace core::grpc
 
             if (port != 0)
             {
-                core::platform::dns_sd->advertise_service(
-                    handler->servicename(true),  // name
+                std::string service_name = handler->servicename(true) +
+                    " on " +
+                    core::platform::host->get_host_name();
+
+                core::platform::dns_sd->add_service(
+                    service_name,  // name
                     handler->dnssd_type(),       // type
                     port,                        // port
                     {

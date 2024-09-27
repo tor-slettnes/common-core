@@ -57,7 +57,7 @@ namespace core::platform
         Super::deinitialize();
     }
 
-    void AvahiServiceDiscoveryProvider::advertise_service(
+    void AvahiServiceDiscoveryProvider::add_service(
         const std::string &name,
         const std::string &type,
         uint port,
@@ -70,12 +70,19 @@ namespace core::platform
                    avahi_strerror(this->client_error));
         }
 
-        this->add_service({
+        this->add_service_info({
             .name = name,
             .type = type,
             .port = port,
             .attributes = attributes,
         });
+    }
+
+    void AvahiServiceDiscoveryProvider::add_service_subtype(
+        const std::string &name,
+        const std::string &type,
+        const std::string &subtype)
+    {
     }
 
     void AvahiServiceDiscoveryProvider::commit()
@@ -118,7 +125,7 @@ namespace core::platform
         }
     }
 
-    void AvahiServiceDiscoveryProvider::add_service(
+    void AvahiServiceDiscoveryProvider::add_service_info(
         const ServiceInfo &service_info)
     {
         this->create_entry_group();

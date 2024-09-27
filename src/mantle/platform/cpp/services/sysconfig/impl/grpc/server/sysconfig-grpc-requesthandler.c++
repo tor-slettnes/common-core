@@ -374,11 +374,10 @@ namespace platform::sysconfig::grpc
     {
         try
         {
-            protobuf::encode(
-                process->invoke_finish(
-                    request->pid(),
-                    request->stdin()),
-                response);
+            InvocationResult result = process->invoke_finish(
+                request->pid(),
+                request->stdin());
+            protobuf::encode(result, response);
             return ::grpc::Status::OK;
         }
         catch (...)

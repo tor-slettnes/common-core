@@ -41,11 +41,16 @@ namespace core::platform
         void initialize() override;
         void deinitialize() override;
 
-        void advertise_service(
+        void add_service(
             const std::string &name,
             const std::string &type,
             uint port,
             const AttributeMap &attributes) override;
+
+        void add_service_subtype(
+            const std::string &name,
+            const std::string &type,
+            const std::string &subtype) override;
 
         void commit() override;
 
@@ -54,7 +59,7 @@ namespace core::platform
     private:
         void create_entry_group();
 
-        void add_service(const ServiceInfo &service_info);
+        void add_service_info(const ServiceInfo &service_info);
 
         static AvahiStringList *avahi_string_list(
             const AttributeMap &attributes);

@@ -33,7 +33,7 @@ namespace platform::sysconfig::native
         const core::platform::Invocation &invocation,
         const std::string &input)
     {
-        int fdin, fdout, fderr;
+        core::platform::FileDescriptor fdin, fdout, fderr;
         PID pid = core::platform::process->invoke_async_pipe(
             invocation.argv,
             invocation.cwd,

@@ -57,7 +57,7 @@ class VirtualFileSystemClient (SignalClient):
         if open_only:
             data = self.get_open_context()
         else:
-            data = self.getAllContexts()
+            data = self.get_all_contexts()
 
         if removable_only:
             data = [ (name, cxt)
@@ -408,8 +408,8 @@ class VirtualFileSystemClient (SignalClient):
 
 
     def upload(self,
-                localfile: str | io.IOBase,
-                vfspath: VFSPathType):
+               localfile: str | io.IOBase,
+               vfspath: VFSPathType):
         '''Upload the contents of `localfile`, which can either be a local file path or
          a readable file object, to the file `vfspath` on the server, specified
          in the format CONTEXT:PATH.

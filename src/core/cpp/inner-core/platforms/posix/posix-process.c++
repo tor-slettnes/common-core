@@ -211,8 +211,7 @@ namespace core::platform
 
         while ((::waitpid(pid, &wstatus, WNOHANG) == 0) && !open_fds.empty())
         {
-            int status = ::poll(pfds.data(), pfds.size(), -1);
-            this->checkstatus(status);
+            this->checkstatus(::poll(pfds.data(), pfds.size(), -1));
 
             if (int stdin_event = pfds[STDIN_FILENO].revents)
             {
@@ -333,6 +332,8 @@ namespace core::platform
 
         Pipe outpipe = this->create_pipe();
         Pipe errpipe = this->create_pipe();
+
+        logf_trace("Invoking command, cwd=%s: %s", cwd, argv);
 
         PID pid = ::fork();
 

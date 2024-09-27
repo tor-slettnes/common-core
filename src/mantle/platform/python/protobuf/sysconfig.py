@@ -13,7 +13,7 @@ from cc.protobuf.import_proto import import_proto
 import_proto('sysconfig', globals())
 
 
-def encodeCountry(country: str, allow_empty=False):
+def encodeCountry(country: str|None, required=False):
     result = cc.platform.sysconfig.TimeZoneCountry()
 
     if isinstance(country, str):
@@ -25,7 +25,7 @@ def encodeCountry(country: str, allow_empty=False):
     elif isinstance(country, cc.platform.sysconfig.TimeZoneCountry):
         result = country
 
-    elif not country and allow_empty:
+    elif not country and not required:
         pass
 
     else:
