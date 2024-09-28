@@ -11,6 +11,10 @@ set(LIB_DEPS
   cc_core_platform
   cc_platform_upgrade_native
   cc_platform_upgrade_grpc_client
+  cc_platform_vfs_local
+  cc_platform_vfs_grpc_client
+  cc_platform_sysconfig_native
+  cc_platform_sysconfig_grpc_client
 )
 
 set(SOURCES

@@ -18,6 +18,9 @@
     // URL to a JSON package index describing available upgrade packages
     "scan url"      : "@UPGRADE_SCAN_URL@",
 
+    // VFS context for local upgrade packages
+    "vfs context"      : "@UPGRADE_VFS_CONTEXT@",
+
     // Interval between successive checks, in seconds (aligned at midnight local time)
     "scan interval" : 86400,
 

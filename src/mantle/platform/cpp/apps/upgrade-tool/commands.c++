@@ -7,6 +7,8 @@
 
 #include "options.h++"
 #include "upgrade.h++"
+#include "vfs.h++"
+#include "sysconfig.h++"
 #include "protobuf-message.h++"
 #include "string/format.h++"
 #include "string/convert.h++"
@@ -16,6 +18,12 @@
 
 void Options::add_commands()
 {
+    this->add_command(
+        "get_current",
+        {},
+        "Return currently installed release info.",
+        std::bind(&Options::get_current, this));
+
     this->add_command(
         "scan",
         {"{default | vfs CONTEXT:[PATH] | url URL}"},
@@ -43,7 +51,7 @@ void Options::add_commands()
 
     this->add_command(
         "install",
-        {"[{default | vfs CONTEXT:PATH | url URL}]"},
+        {"[{default | file LOCAL_PACKAGE | vfs CONTEXT:PATH | url URL}]"},
         "Install an software upgrade package. If no package path is provided, "
         "install the best available package discovered from prior scans.",
         std::bind(&Options::install, this));
@@ -62,6 +70,11 @@ void Options::add_commands()
         std::bind(&Options::monitor, this));
 
     this->describe("Upgrade service utility");
+}
+
+void Options::get_current()
+{
+    std::cout << platform::sysconfig::product->get_product_info() << std::endl;
 }
 
 void Options::scan()
@@ -123,6 +136,14 @@ void Options::install()
         else if (core::str::tolower(arg.value()) == "url")
         {
             source.location = this->get_arg("url");
+        }
+        else if (core::str::tolower(arg.value()) == "file")
+        {
+            fs::path local_path(this->get_arg("filename"));
+            platform::vfs::Path remote_path("releases", local_path.filename());
+            platform::vfs::upload(local_path, remote_path);
+
+            source.location = remote_path;
         }
         else if (core::str::tolower(arg.value()) != "default")
         {

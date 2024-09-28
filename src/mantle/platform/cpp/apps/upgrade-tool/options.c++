@@ -9,6 +9,10 @@
 #include "upgrade-providers-native.h++"
 #include "upgrade-providers-grpc.h++"
 #include "upgrade-signals.h++"
+#include "vfs-providers-local.h++"
+#include "vfs-providers-grpc.h++"
+#include "sysconfig-providers-native.h++"
+#include "sysconfig-providers-grpc.h++"
 #include "platform/path.h++"
 
 Options::Options()
@@ -33,9 +37,14 @@ void Options::initialize()
     if (this->local)
     {
         platform::upgrade::native::register_providers();
+        platform::vfs::local::register_providers();
+        platform::sysconfig::native::register_providers();
+
     }
     else
     {
+        platform::vfs::grpc::register_providers(this->host);
+        platform::sysconfig::grpc::register_providers(this->host);
         platform::upgrade::grpc::register_providers(this->host);
     }
     core::platform::signal_shutdown.connect(
@@ -48,10 +57,14 @@ void Options::deinitialize()
     core::platform::signal_shutdown.disconnect(this->signal_handle);
     if (this->local)
     {
+        platform::sysconfig::native::unregister_providers();
+        platform::vfs::local::unregister_providers();
         platform::upgrade::native::unregister_providers();
     }
     else
     {
+        platform::sysconfig::grpc::unregister_providers();
+        platform::vfs::grpc::unregister_providers();
         platform::upgrade::grpc::unregister_providers();
     }
 }

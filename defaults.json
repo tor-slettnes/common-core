@@ -10,6 +10,7 @@
     },
     "upgrade": {
         "package suffix": ".ccpkg",
+        "vfs context": "releases",
         "scan url": "https://slett.net/common-core/package-index.json",
         "keyring": "common-core-release.kbx"
     },

@@ -41,6 +41,7 @@ private:
         const platform::upgrade::UpgradeProgress::ptr &progress);
 
 private:
+    void get_current();
     void scan();
     void list_sources();
     void list_available();

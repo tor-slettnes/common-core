@@ -14,6 +14,7 @@ BuildSettings(
 
 ### Create `upgrade.json` with values from `${CMAKE_SOURCE_DIR}/defaults.json`
 get_build_arg(UPGRADE_PACKAGE_SUFFIX  "upgrade" "package suffix")
+get_build_arg(UPGRADE_VFS_CONTEXT     "upgrade" "vfs context")
 get_build_arg(UPGRADE_SCAN_URL        "upgrade" "scan url")
 get_build_arg(UPGRADE_KEYRING         "upgrade" "keyring")
 

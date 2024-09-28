@@ -282,8 +282,12 @@ namespace platform::vfs
         auto istream = vfs->read_file(remote);
         auto ostream = std::make_unique<std::ofstream>(local);
 
-        ostream->setstate(std::ios::failbit);
-        (*ostream) << istream->rdbuf();
+        istream->exceptions(std::ios::badbit | std::ios::failbit);
+        ostream->exceptions(std::ios::badbit | std::ios::failbit);
+        while (auto chunk = vfs->read_chunk(*istream))
+        {
+            vfs->write_chunk(*ostream, chunk.value());
+        }
     }
 
     void upload(const fs::path &local,
@@ -292,7 +296,12 @@ namespace platform::vfs
         auto istream = std::make_unique<std::ifstream>(local);
         auto ostream = vfs->write_file(remote);
 
-        (*ostream) << istream->rdbuf();
+        istream->exceptions(std::ios::badbit | std::ios::failbit);
+        ostream->exceptions(std::ios::badbit | std::ios::failbit);
+        while (auto chunk = vfs->read_chunk(*istream))
+        {
+            vfs->write_chunk(*ostream, chunk.value());
+        }
     }
 
     core::types::KeyValueMap get_attributes(const Path &vpath)
