@@ -73,6 +73,8 @@ namespace core
 
         bool loaded() const;
 
+        bool reload();
+
         /// @brief
         ///     Load settings from the specified file.
         /// @param[in] filename
@@ -83,8 +85,11 @@ namespace core
         /// are read and merged in from any and all matching files relative to
         /// each folder from the `directories`, as passed into the constructor.
 
-        bool load(const fs::path &filename);
-        bool load(const std::vector<fs::path> &filenames);
+        bool load(const fs::path &filename,
+                  bool update_filenames = true);
+
+        bool load(const std::vector<fs::path> &filenames,
+                  bool update_filenames = true);
 
         /// @brief
         ///     Load and merge in settings from an absolute path.

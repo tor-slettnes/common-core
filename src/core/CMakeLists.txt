@@ -52,8 +52,8 @@ BuildLibrary("${TARGET}" INTERFACE
   LIB_DEPS ${LIB_DEPS}
 )
 
-cpack_add_component(core-common
-  GROUP ${PKG_GROUP}
-  DISPLAY_NAME "Common Core - common components"
-  DESCRIPTION "Common components for Common Core application framework"
-)
+# cpack_add_component(core-common
+#   GROUP ${PKG_GROUP}
+#   DISPLAY_NAME "Common Core - common components"
+#   DESCRIPTION "Common components for Common Core application framework"
+# )

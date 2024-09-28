@@ -42,11 +42,21 @@ namespace core
         return !this->filenames_.empty();
     }
 
-    bool SettingsStore::load(const fs::path &filename)
+    bool SettingsStore::reload()
+    {
+        this->clear();
+        return this->load(this->filenames_, false);
+    }
+
+    bool SettingsStore::load(const fs::path &filename,
+                             bool update_filenames)
     {
         bool success = false;
         fs::path extendedname = platform::path->extended_filename(filename, ".json");
-        this->filenames_.push_back(extendedname);
+        if (update_filenames)
+        {
+            this->filenames_.push_back(extendedname);
+        }
 
         if (extendedname.is_absolute())
         {
@@ -71,12 +81,13 @@ namespace core
         return success;
     }
 
-    bool SettingsStore::load(const std::vector<fs::path> &filenames)
+    bool SettingsStore::load(const std::vector<fs::path> &filenames,
+                             bool update_filenames)
     {
         bool success = false;
         for (const fs::path &filename : filenames)
         {
-            success |= this->load(filename);
+            success |= this->load(filename, update_filenames);
         }
         return success;
     }

@@ -21,8 +21,8 @@ namespace platform::sysconfig::native
 
     ProductProvider::ProductProvider()
         : Super(TYPE_NAME_FULL(This)),
-          release_settings(RELEASE_SETTINGS_FILE),
-          product_settings(PRODUCT_SETTINGS_FILE)
+          release_settings(core::SettingsStore::create_shared(RELEASE_SETTINGS_FILE)),
+          product_settings(core::SettingsStore::create_shared(PRODUCT_SETTINGS_FILE))
     {
     }
 
@@ -35,6 +35,7 @@ namespace platform::sysconfig::native
     ProductInfo ProductProvider::get_product_info() const
     {
         ProductInfo pi;
+        this->release_settings->reload();
         pi.product_name = this->get_product_name();
         pi.product_description = this->get_product_description();
         pi.product_serial = this->get_serial_number();
@@ -47,41 +48,41 @@ namespace platform::sysconfig::native
 
     void ProductProvider::set_serial_number(const std::string &serial)
     {
-        this->product_settings.insert_or_assign(PRODUCT_SETTING_SERIAL, serial);
-        this->product_settings.save();
+        this->product_settings->insert_or_assign(PRODUCT_SETTING_SERIAL, serial);
+        this->product_settings->save();
         this->emit();
     }
 
     void ProductProvider::set_model_name(const std::string &model)
     {
-        this->product_settings.insert_or_assign(PRODUCT_SETTING_MODEL, model);
-        this->product_settings.save();
+        this->product_settings->insert_or_assign(PRODUCT_SETTING_MODEL, model);
+        this->product_settings->save();
         this->emit();
     }
 
     std::string ProductProvider::get_product_name() const
     {
-        return this->release_settings.get(RELEASE_SETTING_PRODUCT).as_string();
+        return this->release_settings->get(RELEASE_SETTING_PRODUCT).as_string();
     }
 
     std::string ProductProvider::get_product_description() const
     {
-        return this->release_settings.get(RELEASE_SETTING_DESCRIPTION).as_string();
+        return this->release_settings->get(RELEASE_SETTING_DESCRIPTION).as_string();
     }
 
     Version ProductProvider::get_release_version() const
     {
-        return Version::from_value(this->release_settings.get(RELEASE_SETTING_VERSION));
+        return Version::from_value(this->release_settings->get(RELEASE_SETTING_VERSION));
     }
 
     std::string ProductProvider::get_serial_number() const
     {
-        return this->product_settings.get(PRODUCT_SETTING_SERIAL).as_string();
+        return this->product_settings->get(PRODUCT_SETTING_SERIAL).as_string();
     }
 
     std::string ProductProvider::get_model_name() const
     {
-        return this->product_settings.get(PRODUCT_SETTING_MODEL).as_string();
+        return this->product_settings->get(PRODUCT_SETTING_MODEL).as_string();
     }
 
     ComponentVersions ProductProvider::get_component_versions() const

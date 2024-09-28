@@ -32,7 +32,7 @@ add_subdirectory(scripts)
 add_subdirectory(settings)
 
 cpack_add_component(demo-common
-  DEPENDS core-common
+  DEPENDS demo-settings
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "DEMO example - common components"
   DESCRIPTION "Common components for DEMO clients and servers"

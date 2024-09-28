@@ -15,7 +15,7 @@ add_subdirectory(protobuf)
 add_subdirectory(demo)
 
 cpack_add_component("${INSTALL_COMPONENT}"
-  DEPENDS "core-python" "common-settings" "demo-proto" "demo-settings"
+  DEPENDS "core-python" "core-settings" "demo-proto" "demo-settings"
   GROUP "${PKG_GROUP}"
   DISPLAY_NAME "DEMO Example - Python modules"
   DESCRIPTION "Python client and server moduules for demo application example"

@@ -308,22 +308,20 @@ namespace platform::vfs::grpc
             chunk.mutable_path()->CopyFrom(*request);
             uint chunks = 0;
             std::streamsize total = 0;
-            while (reader->peek() != std::char_traits<char>::eof())
+            while (auto bytes = this->provider->read_chunk(*reader))
             {
-                std::streamsize chunksize = reader->rdbuf()->in_avail();
-                std::string buf(chunksize, '\0');
-                reader->readsome(buf.data(), buf.size());
-                chunk.set_data(std::move(buf));
-                writer->Write(chunk);
                 chunks++;
-                total += chunksize;
+                total += bytes->size();
+                chunk.set_data(std::move(bytes.value()));
+                writer->Write(chunk);
             }
-            reader->sync();
+
             logf_debug("Sent file %s to client %s in %d chunks, totally %d bytes",
                        vpath,
                        cxt->peer(),
                        chunks,
                        total);
+
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -340,6 +338,9 @@ namespace platform::vfs::grpc
         platform::vfs::Path vpath;
         UniqueWriter writer;
         ::cc::platform::vfs::FileChunk chunk;
+
+        std::streamsize total = 0;
+        uint chunks = 0;
         try
         {
             while (reader->Read(&chunk))
@@ -352,8 +353,12 @@ namespace platform::vfs::grpc
                                        std::ios::failbit |
                                        std::ios::badbit);
                 }
-                writer->write(chunk.data().data(), chunk.data().length());
+
+                chunks++;
+                total += chunk.data().size();
+                this->provider->write_chunk(*writer, chunk.data());
             }
+            logf_debug("Received %d bytes in in %d chunks\n", total, chunks);
             return ::grpc::Status::OK;
         }
         catch (...)

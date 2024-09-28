@@ -8,6 +8,8 @@
 ### Name of this executable. This also becomes the name of the project.
 set(TARGET platformserver)
 
+set(INSTALL_COMPONENT "platform-server")
+
 ### Libraries we depend on, either from this build or provided by the
 ### sysconfig. Only direct dependencies are needed; e.g., do not list "cc_core"
 ### if you also list another library that depends on it.
@@ -48,7 +50,7 @@ if(ENABLE_SERVICES)
 endif()
 
 cpack_add_component(${INSTALL_COMPONENT}
-  DEPENDS core-common
+  DEPENDS platform-settings
   GROUP ${PKG_GROUP}
   DISPLAY_NAME "Platform server"
   DESCRIPTION "Platform services: System configuration, networking, filesystem, upgrade, logging"

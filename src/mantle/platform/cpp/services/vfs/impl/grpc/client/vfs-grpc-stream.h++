@@ -32,12 +32,13 @@ namespace platform::vfs::grpc
 
     class ClientInputBuffer : public ClientBuffer
     {
+        using Super = ClientBuffer;
     public:
         using Reader = std::unique_ptr<::grpc::ClientReader<cc::platform::vfs::FileChunk>>;
 
     public:
         ClientInputBuffer(Reader &&reader);
-        bool read_some(std::string *buffer) override;
+        bool read_some(BufferType *buffer) override;
 
     private:
         Reader reader;
@@ -48,6 +49,7 @@ namespace platform::vfs::grpc
 
     class ClientOutputBuffer : public ClientBuffer
     {
+        using Super = ClientBuffer;
     public:
         using Writer = std::unique_ptr<::grpc::ClientWriter<cc::platform::vfs::FileChunk>>;
 
@@ -55,7 +57,8 @@ namespace platform::vfs::grpc
         ClientOutputBuffer(Writer &&writer, const Path &vpath);
         ~ClientOutputBuffer();
 
-        bool write_some(const std::string &buffer) override;
+        bool write_some(const BufferType &buffer) override;
+        int sync() override;
 
     private:
         Writer writer;

@@ -69,7 +69,8 @@ namespace core::io
                    this->__input.data(),          // gnext
                    this->__input.data() + size);  // gend
 
-        return size ? *this->gptr() : traits_type::eof();
+        return size ? traits_type::to_int_type(*this->gptr())
+                    : traits_type::eof();
     }
 
     StreamBuffer::int_type StreamBuffer::pbackfail(int_type __c)

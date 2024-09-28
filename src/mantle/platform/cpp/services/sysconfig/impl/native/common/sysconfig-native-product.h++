@@ -36,7 +36,7 @@ namespace platform::sysconfig::native
         void emit() const;
 
     private:
-        core::SettingsStore release_settings;
-        core::SettingsStore product_settings;
+        core::SettingsStore::ptr release_settings;
+        core::SettingsStore::ptr product_settings;
     };
 }  // namespace platform::sysconfig::native

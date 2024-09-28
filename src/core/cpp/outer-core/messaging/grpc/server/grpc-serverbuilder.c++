@@ -58,31 +58,11 @@ namespace core::grpc
         this->adjust_max(handler->max_request_size(), &this->max_request_size_);
         this->adjust_max(handler->max_reply_size(), &this->max_reply_size_);
 
-        if (this->dnssd_advertise_ &&
-            core::platform::dns_sd &&
-            !handler->dnssd_type().empty())
+        if (this->dnssd_advertise_)
         {
-            std::string host;
-            uint port = 0;
-            handler->splitaddress(
-                add_listener ? handler->address_setting() : this->listener_port(),
-                &host,
-                &port);
-
-            if (port != 0)
-            {
-                std::string service_name = handler->servicename(true) +
-                    " on " +
-                    core::platform::host->get_host_name();
-
-                core::platform::dns_sd->add_service(
-                    service_name,  // name
-                    handler->dnssd_type(),       // type
-                    port,                        // port
-                    {
-                        // {"foo", "bar"},
-                    });
-            }
+            this->add_dnssd(
+                handler,
+                add_listener ? handler->address_setting() : this->listener_port());
         }
     }
 
@@ -92,6 +72,32 @@ namespace core::grpc
         {
             this->AddListeningPort(address, this->credentials_);
             this->listeners_.insert(address);
+        }
+    }
+
+    void ServerBuilder::add_dnssd(std::shared_ptr<RequestHandlerBase> handler,
+                                  const std::string &address)
+    {
+        if (core::platform::dns_sd && !handler->dnssd_type().empty())
+        {
+            std::string host;
+            uint port = 0;
+            handler->splitaddress(address, &host, &port);
+
+            if (port != 0)
+            {
+                std::string service_name = handler->servicename(true);
+                std::string host_name = core::platform::host->get_host_name();
+
+                core::platform::dns_sd->add_service(
+                    service_name + "@" + host_name,  // name
+                    handler->dnssd_type(),           // type
+                    port,                            // port
+                    {
+                        {"service", service_name},
+                        {"host", host_name},
+                    });
+            }
         }
     }
 

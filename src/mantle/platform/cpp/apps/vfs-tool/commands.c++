@@ -282,10 +282,23 @@ void Options::download()
     fs::path localpath = this->get_arg("local target path");
 
     std::ofstream local(localpath, std::ios::out | std::ios::binary);
-    local.exceptions(std::ios_base::failbit);
-    auto remote = platform::vfs::read_file(remotepath);
-    remote->exceptions(std::ios_base::badbit);
-    local << remote->rdbuf();
+    local.exceptions(std::ios::failbit);
+    auto remote = platform::vfs::vfs->read_file(remotepath);
+    remote->exceptions(std::ios::badbit);
+
+    std::streamsize total = 0;
+    uint chunks = 0;
+
+    while (auto chunk = platform::vfs::vfs->read_chunk(*remote))
+    {
+        chunks++;
+        total += chunk->size();
+        platform::vfs::vfs->write_chunk(local, chunk.value());
+    }
+    core::str::format(std::cerr,
+                      "Received %d bytes in in %d chunks\n",
+                      total,
+                      chunks);
 }
 
 void Options::upload()
@@ -294,8 +307,21 @@ void Options::upload()
     platform::vfs::Path remotepath = this->get_vfspath_arg("remote target VFS path");
 
     std::ifstream local(localpath, std::ios::in | std::ios::binary);
-    auto remote = platform::vfs::write_file(remotepath);
-    *remote << local.rdbuf();
+    auto remote = platform::vfs::vfs->write_file(remotepath);
+    remote->exceptions(std::ios::failbit | std::ios::badbit);
+
+    std::streamsize total = 0;
+    uint chunks = 0;
+    while (auto chunk = platform::vfs::vfs->read_chunk(local))
+    {
+        chunks++;
+        total += chunk->size();
+        platform::vfs::vfs->write_chunk(*remote, chunk.value());
+    }
+    core::str::format(std::cerr,
+                      "Sent %d bytes in in %d chunks\n",
+                      total,
+                      chunks);
 }
 
 std::string Options::get_context_arg(const std::string &what)

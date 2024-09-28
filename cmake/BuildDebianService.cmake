@@ -106,22 +106,24 @@ function(AddEnableHooks UNIT)
   if(CPACK_DEB_COMPONENT_INSTALL)
     set(_staging_dir "${CMAKE_BINARY_DIR}/${arg_INSTALL_COMPONENT}")
     file(MAKE_DIRECTORY "${_staging_dir}")
+
+    set(_service_units "${UNIT}")
   else()
     set(_staging_dir "${CMAKE_BINARY_DIR}")
+
+    # Create or add this unit to the `service_units` directory property
+    set_property(
+      DIRECTORY "${_staging_dir}"
+      APPEND
+      PROPERTY service_units
+      "${UNIT}"
+    )
+
+    get_property(_service_units
+      DIRECTORY "${_staging_dir}"
+      PROPERTY service_units
+    )
   endif()
-
-  # Create or add this unit to the `service_units` directory property
-  set_property(
-    DIRECTORY "${_staging_dir}"
-    APPEND
-    PROPERTY service_units
-    "${UNIT}"
-  )
-
-  get_property(_service_units
-    DIRECTORY "${_staging_dir}"
-    PROPERTY service_units
-  )
 
   # Define `SERVICE_UNITS` and `SERVICE_UNIT_PATHS` for `config_file()` 
   list(TRANSFORM _service_units

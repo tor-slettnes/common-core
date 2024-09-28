@@ -7,7 +7,7 @@
 
 #pragma once
 #include <streambuf>
-#include <string>
+#include <vector>
 #include <utility>
 
 namespace core::io
@@ -22,19 +22,22 @@ namespace core::io
     class StreamBuffer : public std::streambuf
     {
     protected:
-        /// Virtual method to read a new chunk into our string buffer.
+        using BufferType = std::string;
+
+    protected:
+        /// Virtual method to read a new chunk into our bytes buffer.
         /// @param[out] buffer
         ///     buffer to populate
         /// @return
         ///     Number of characters that was read
-        virtual inline bool read_some(std::string *buffer) { return false; }
+        virtual inline bool read_some(BufferType *buffer) { return false; }
 
         /// Virtual method to read a new chunk into our string buffer.
         /// @param[in] buffer
         ///     buffer to populate
         /// @return
         ///     Number of characters that was written
-        virtual inline bool write_some(const std::string &buffer) { return false; }
+        virtual inline bool write_some(const BufferType &buffer) { return false; }
 
     protected:
         // buffer management
@@ -51,7 +54,7 @@ namespace core::io
         int_type overflow(int_type __c = traits_type::eof()) override;
 
     private:
-        std::string __input;
+        BufferType __input;
         bool __input_completed = false;
     };
 }  // namespace core::io

@@ -36,11 +36,22 @@ namespace core::grpc
         }
 
     private:
-        void add_handler_settings(std::shared_ptr<RequestHandlerBase> handler,
-                                  bool add_listener);
-        void add_listener(const std::string &address);
+        void add_handler_settings(
+            std::shared_ptr<RequestHandlerBase> handler,
+            bool add_listener);
+
+        void add_listener(
+            const std::string &address);
+
+        void add_dnssd(
+            std::shared_ptr<RequestHandlerBase> handler,
+            const std::string &address);
+
         void add_interceptors();
-        void adjust_max(uint candidate, uint *target);
+
+        void adjust_max(
+            uint candidate,
+            uint *target);
 
     private:
         std::vector<std::shared_ptr<RequestHandlerBase>> handlers_;

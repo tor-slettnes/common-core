@@ -51,6 +51,16 @@ namespace platform::vfs
             const Paths &vpaths,
             bool modify) const;
 
+
+    public:
+        std::optional<std::string> read_chunk(
+            std::istream &stream);
+
+        std::streamsize write_chunk(
+            std::ostream &stream,
+            const std::string &chunk);
+
+
     public:
         virtual ContextMap get_contexts() const = 0;
 

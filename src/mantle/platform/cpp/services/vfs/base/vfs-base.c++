@@ -61,6 +61,38 @@ namespace platform::vfs
         return ContextProxy(cxt, modify);
     }
 
+    std::optional<std::string> ProviderInterface::read_chunk(
+        std::istream &stream)
+    {
+        stream.peek();  // Trigger underflow() if buffer is empty
+        if (!stream.eof())
+        {
+            std::streamsize chunksize = stream.rdbuf()->in_avail();
+            std::string buf(chunksize, '\0');
+            stream.readsome(buf.data(), buf.size());
+            return buf;
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::streamsize ProviderInterface::write_chunk(
+        std::ostream &stream,
+        const std::string &chunk)
+    {
+        stream.write(chunk.data(), chunk.size());
+        if (stream.good())
+        {
+            return chunk.size();
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
     //==========================================================================
     // Provider instance
 

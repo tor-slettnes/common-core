@@ -22,10 +22,6 @@ namespace platform::vfs::grpc
     void ClientBuffer::set_status(const core::grpc::Status &status)
     {
         this->status = status;
-        if (!status.ok())
-        {
-            logf_info("ClientBuffer notice: %s", status);
-        }
     }
 
     //==========================================================================
@@ -36,7 +32,7 @@ namespace platform::vfs::grpc
     {
     }
 
-    bool ClientInputBuffer::read_some(std::string *buffer)
+    bool ClientInputBuffer::read_some(BufferType *buffer)
     {
         cc::platform::vfs::FileChunk msg;
         if (this->reader->Read(&msg))
@@ -72,7 +68,7 @@ namespace platform::vfs::grpc
                    this->vpath);
     }
 
-    bool ClientOutputBuffer::write_some(const std::string &data)
+    bool ClientOutputBuffer::write_some(const BufferType &data)
     {
         cc::platform::vfs::FileChunk msg;
         protobuf::encode(this->vpath, msg.mutable_path());
@@ -88,6 +84,13 @@ namespace platform::vfs::grpc
             this->set_status(this->writer->Finish());
             return false;
         }
+    }
+
+    int ClientOutputBuffer::sync()
+    {
+        this->writer->WritesDone();
+        this->set_status(this->writer->Finish());
+        return Super::sync();
     }
 
     //==========================================================================
