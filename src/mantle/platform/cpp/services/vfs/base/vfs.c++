@@ -240,7 +240,8 @@ namespace platform::vfs
                 bool force,
                 bool with_attributes)
     {
-        return remove({vpath}, force, with_attributes);
+        Paths paths = {vpath};
+        return remove(paths, force, with_attributes);
     }
 
     void remove(const Paths &vpaths,
