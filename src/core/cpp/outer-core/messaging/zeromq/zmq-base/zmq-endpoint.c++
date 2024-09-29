@@ -31,6 +31,7 @@ namespace core::zmq
         if (this->socket_)
         {
             ::zmq_close(this->socket_);
+            this->socket_ = nullptr;
         }
     }
 
@@ -99,6 +100,7 @@ namespace core::zmq
         if (this->socket_)
         {
             ::zmq_close(this->socket_);
+            this->socket_ = nullptr;
         }
         Super::deinitialize();
     }

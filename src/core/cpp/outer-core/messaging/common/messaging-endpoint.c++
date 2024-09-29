@@ -8,6 +8,7 @@
 #include "messaging-endpoint.h++"
 #include "logging/logging.h++"
 #include "string/stream.h++"
+#include "platform/init.h++"
 #include "buildinfo.h"
 
 #include <iomanip>
@@ -24,6 +25,7 @@ namespace core::messaging
         : messaging_flavor_(messaging_flavor),
           endpoint_type_(endpoint_type),
           channel_name_(channel_name),
+          signal_handle_(messaging_flavor + "/" + endpoint_type + "/" + channel_name),
           settings_(SettingsStore::create_shared())
     {
     }
@@ -31,6 +33,19 @@ namespace core::messaging
     Endpoint::~Endpoint()
     {
         this->deinitialize();
+    }
+
+    void Endpoint::initialize()
+    {
+        core::platform::signal_shutdown.connect(
+            this->signal_handle_,
+            std::bind(&Endpoint::deinitialize, this));
+    }
+
+    void Endpoint::deinitialize()
+    {
+        core::platform::signal_shutdown.disconnect(
+            this->signal_handle_);
     }
 
     std::string Endpoint::messaging_flavor() const

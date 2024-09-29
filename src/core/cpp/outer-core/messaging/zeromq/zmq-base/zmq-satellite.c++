@@ -43,7 +43,10 @@ namespace core::zmq
         try
         {
             logf_debug("%s disconnecting from %s", *this, this->host_address());
-            this->check_error(::zmq_disconnect(this->socket(), this->host_address().c_str()));
+            if (this->socket())
+            {
+                this->check_error(::zmq_disconnect(this->socket(), this->host_address().c_str()));
+            }
         }
         catch (const Error &e)
         {

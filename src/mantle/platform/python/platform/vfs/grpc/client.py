@@ -11,12 +11,10 @@ from cc.protobuf.import_proto import import_proto
 from cc.protobuf.vfs import VFSPathType, VFSPathsType, \
     encodePath, decodePath, encodePaths, decodeStats, \
     pathRequest, locateRequest, attributeRequest
-
-### Third-party modules
-from google.protobuf.empty_pb2 import Empty
+from cc.protobuf.wellknown import empty
 
 ### Standard Python modules
-from typing import Mapping, Sequence
+from typing import Mapping, Sequence, Iterator
 import io
 
 ## Import generated ProtoBuf symbols. These will appear in namespaces
@@ -76,13 +74,13 @@ class VirtualFileSystemClient (SignalClient):
         '''
         List all available VFS contexts.
         '''
-        return self.stub.get_contexts(Empty()).map
+        return self.stub.get_contexts(empty).map
 
     def get_open_context (self) -> Mapping[str, cc.platform.vfs.ContextSpec]:
         '''
         List VFS contexts that are currently being held open.
         '''
-        return self.stub.get_open_context(Empty()).map
+        return self.stub.get_open_context(empty).map
 
 
     def get_context(self, name: str) -> cc.platform.vfs.ContextSpec:
@@ -203,11 +201,12 @@ class VirtualFileSystemClient (SignalClient):
 
 
     def locate(self,
-                vfspath: VFSPathType,
-                filename_masks: VFSPathsType,
-                attribute_filters: dict = {},
-                with_attributes: bool = True,
-                include_hidden: bool = False) -> Mapping[str, cc.platform.vfs.FileInfo]:
+               vfspath: VFSPathType,
+               filename_masks: VFSPathsType,
+               attribute_filters: dict = {},
+               with_attributes: bool = True,
+               include_hidden: bool = False,
+               ignore_case: bool = False) -> Mapping[str, cc.platform.vfs.FileInfo]:
         '''
         Recursively locate file(s) matching the specificed filename masks
         and attribute values.
@@ -224,11 +223,15 @@ class VirtualFileSystemClient (SignalClient):
         @param[in] include_hidden
             Also match leading "." in filename expansion patterns like "*".
             (Normally such filenames need to be matched specifically, i.e. ".*").
+
+        @param[in] ignore_case
+            Case insensitive filename matching.
+
         '''
 
         reply = self.stub.locate(
             locateRequest(vfspath, filename_masks, attribute_filters,
-                          with_attributes, include_hidden))
+                          with_attributes, include_hidden, ignore_case))
 
         entries = [ (key, decodeStats(stats))
                     for (key, stats) in reply.map.items() ]
@@ -376,33 +379,45 @@ class VirtualFileSystemClient (SignalClient):
                         with_attributes=with_attributes))
 
 
-    def read_file(self, vfspath: VFSPathType): ### TODO Type return value
+    def read_file(self, vfspath: VFSPathType) -> Iterator[cc.platform.vfs.FileChunk]:
+        '''Read a from the file `vfspath` from the server, specified in the format
+        CONTEXT:PATH.
+
+        Returns a gRPC ClientReader instance, which can be used to iterate over
+        `cc.platform.vfs.FileChunk` instances.  See also `read()` if you want to
+        iterate over just the file contents, or `download()` if you want to
+        download and save a file from the server to a local file.
+        '''
+        return self.stub.read_file(encodePath(vfspath))
+
+
+    def read(self, vfspath: VFSPathType) -> Iterator[bytes]:
         '''Read a from the file `vfspath` from the server, specified in the format
         CONTEXT:PATH.
 
         Returns a gRPC ClientReader instance, which can be used to iterate over
         the file contents. in chunk.s
         '''
-        return self.stub.read_file(encodePath(vfspath))
+        for chunk in self.read_file(vfspath):
+            return chunk.data
 
 
     def download(self,
                   vfspath: VFSPathType,
                   localfile: str | io.IOBase):
-        '''Download the file `vfspath` from the server, specified in the format
+        '''
+        Download the file `vfspath` from the server, specified in the format
         CONTEXT:PATH.
 
         Contents are saved to `localfile`, which can either be a local file path
         or a writable file object (or any object with a compatible `write()`
         method).
-
         '''
 
         if isinstance(localfile, str):
             localfile = open(localfile, "wb")
 
-        reader = self.read_file(vfspath)
-        for chunk in reader:
+        for chunk in self.read_file(vfspath):
             print("Writing %d bytes to local file %r"%(len(chunk.data), localfile.name))
             localfile.write(chunk.data)
 
@@ -410,10 +425,10 @@ class VirtualFileSystemClient (SignalClient):
     def upload(self,
                localfile: str | io.IOBase,
                vfspath: VFSPathType):
-        '''Upload the contents of `localfile`, which can either be a local file path or
-         a readable file object, to the file `vfspath` on the server, specified
-         in the format CONTEXT:PATH.
-
+        '''
+        Upload the contents of `localfile`, which can either be a local file
+        path or a readable file object, to the file `vfspath` on the server,
+        specified in the format CONTEXT:PATH.
         '''
 
         path = encodePath(vfspath)
@@ -424,15 +439,17 @@ class VirtualFileSystemClient (SignalClient):
             self._uploadIterator(localfile, vfspath))
 
 
-    def _uploadIterator(self, fp, vfspath, chunksize=4096):
-        '''Internal: Iterate over contents of a file and generate FileChunk messages'''
+    def _uploadIterator(self, fp, vfspath):
+        '''
+        Internal: Iterate over contents of a file and generate FileChunk messages
+        '''
 
         eof = False
         path = encodePath(vfspath)
         while not eof:
-            text = fp.read(chunksize)
-            if text:
-                yield cc.platform.vfs.FileChunk(path=path, data=text)
+            if data := fp.read1():
+                yield cc.platform.vfs.FileChunk(path=path, data=data)
+                path = None
             else:
                 eof = True
 

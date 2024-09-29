@@ -8,13 +8,9 @@
 ### Modules within package
 from cc.messaging.grpc import SignalClient
 from cc.protobuf.import_proto import import_proto
-from cc.protobuf.wellknown import TimestampType, encodeTimestamp, decodeTimestamp
-from cc.core.invocation import check_type
+from cc.protobuf.wellknown import empty
 from cc.core.scalar_types import HEX8
 from cc.core.enumeration import Enumeration
-
-### Third-party modules
-from google.protobuf.empty_pb2 import Empty
 
 ### Standard Python modules
 from typing import Optional, Sequence, Union, Iterator
@@ -84,7 +80,7 @@ class NetConfigClient (SignalClient):
 
     def get_hostname(self) -> str:
         '''Return the primary hostname'''
-        return self.stub.get_hostname(Empty()).value
+        return self.stub.get_hostname(empty).value
 
     def set_hostname(self, hostname: str):
         '''Set the primary hostname'''
@@ -96,7 +92,7 @@ class NetConfigClient (SignalClient):
         # try:
         #     return self.signal_store.get_cached(self.SIGNAL_GLOBAL)
         # except KeyError:
-        return dict(self.stub.get_global_data(Empty()).map)
+        return dict(self.stub.get_global_data(empty).map)
 
     def get_connections(self) -> dict[str, ConnectionData]:
         '''Get a map of available network connections'''
@@ -104,7 +100,7 @@ class NetConfigClient (SignalClient):
         # try:
         #     return self.signal_store.get_cached(self.SIGNAL_CONN)
         # except KeyError:
-        return dict(self.stub.get_connections(Empty()).map)
+        return dict(self.stub.get_connections(empty).map)
 
     def define_connection(
             self,
@@ -207,7 +203,7 @@ class NetConfigClient (SignalClient):
         # try:
         #     return self.signal_store.get_cached(self.SIGNAL_AC)
         # except KeyError:
-        return dict(self.stub.get_active_connections(Empty()).map)
+        return dict(self.stub.get_active_connections(empty).map)
 
     def request_scan(self):
         '''
@@ -215,7 +211,7 @@ class NetConfigClient (SignalClient):
         place asynchronously, and any access point changes are emitted as
         signals.
         '''
-        return self.stub.request_scan(Empty())
+        return self.stub.request_scan(empty)
 
     def get_aps(self) -> dict[str, AccessPointData]:
         '''Return a dictionary mapping access point BSSIDs (MAC addresses)
@@ -224,7 +220,7 @@ class NetConfigClient (SignalClient):
         # try:
         #     return self.signal_store.get_cached(self.SIGNAL_AP)
         # except KeyError:
-        return dict(self.stub.get_aps(Empty()).map)
+        return dict(self.stub.get_aps(empty).map)
 
     def get_aps_by_ssid(self) -> dict[bytes, AccessPointData]:
         '''Return a dictionary mapping SSIDs to the strongest corresponding
@@ -452,7 +448,7 @@ class NetConfigClient (SignalClient):
         # try:
         #     return self.signal_store.get_cached(self.SIGNAL_DEVICE)
         # except KeyError:
-        return dict(self.stub.get_devices(Empty()).map)
+        return dict(self.stub.get_devices(empty).map)
 
     def set_wireless_enabled(self, enabled: bool):
         '''

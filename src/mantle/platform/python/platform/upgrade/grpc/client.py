@@ -7,11 +7,9 @@
 
 ### Modules within package
 from cc.messaging.grpc import SignalClient
-from cc.protobuf.upgrade import encodeSource, decodeSource, SourceType
+from cc.protobuf.wellknown import empty
 from cc.protobuf.import_proto import import_proto
-
-### Third-party modules
-from google.protobuf.empty_pb2 import Empty
+from cc.protobuf.upgrade import encodeSource, decodeSource, SourceType
 
 ### Standard Python modules
 from typing import Mapping, Optional

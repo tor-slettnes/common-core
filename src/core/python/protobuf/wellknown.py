@@ -34,6 +34,9 @@ from enum import Enum
 TimestampType = Timestamp|float|int|str|struct_time|datetime
 MessageType = type
 
+### Static values
+empty = Empty()
+
 def decodeTimestamp(prototime: Timestamp) -> float:
     '''Convert a ProtoBuf `Timestamp` value as an Python timestamp (seconds
     since UNIX epoch).

@@ -44,8 +44,8 @@ namespace core::messaging
         virtual ~Endpoint();
 
     public:
-        virtual void initialize() {}
-        virtual void deinitialize() {}
+        virtual void initialize();
+        virtual void deinitialize();
 
         virtual std::string messaging_flavor() const;
         virtual std::string endpoint_type() const;
@@ -61,10 +61,10 @@ namespace core::messaging
         void to_stream(std::ostream &stream) const override;
 
     private:
-    private:
-        std::shared_ptr<SettingsStore> settings_;
         std::string messaging_flavor_;
         std::string endpoint_type_;
         std::string channel_name_;
+        std::string signal_handle_;
+        std::shared_ptr<SettingsStore> settings_;
     };
 }  // namespace core::messaging

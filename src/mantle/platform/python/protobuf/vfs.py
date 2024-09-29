@@ -54,13 +54,12 @@ def encodePath(vfspath: VFSPathType) -> cc.platform.vfs.Path:
         try:
             context, relpath = vfspath.split(":", 1)
         except ValueError:
-            raise ValueError("Specify VFS path in the format CONTEXT:PATH", vfspath)
-        else:
-            return cc.platform.vfs.Path(context=context, relpath=relpath.lstrip("/"))
+            context, relpath = vfspath, ""
+
+        return cc.platform.vfs.Path(context=context, relpath=relpath.lstrip("/"))
 
     else:
         raise TypeError("VFS path must be of type 'str' or 'cc.platform.vfs.Path'", vfspath)
-
 
 def encodePaths(vfspaths: VFSPathsType) -> list[cc.platform.vfs.Path]:
     '''Encode a sequence of VFS paths.  Returns a list of the encoded instances.'''
@@ -75,7 +74,6 @@ def decodePath(vfspath: cc.platform.vfs.Path) -> str:
 
     return ":".join((vfspath.context, vfspath.relpath))
 
-
 def decodeStats(stats: cc.platform.vfs.FileInfo) -> FileInfo:
     return FileInfo(
         PathType.get(stats.type, PathType.TYPE_NONE),
@@ -86,7 +84,6 @@ def decodeStats(stats: cc.platform.vfs.FileInfo) -> FileInfo:
         decodeTimestamp(stats.modifyTime),
         decodeTimestamp(stats.createTime),
         decodeValueMap(stats.attributes))
-
 
 def pathRequest(path: VFSPathType|None = None,
                 sources: VFSPathsType|None = None,
@@ -111,12 +108,12 @@ def pathRequest(path: VFSPathType|None = None,
 
     return cc.platform.vfs.PathRequest(**kwargs)
 
-
 def locateRequest(root: VFSPathType,
                   filename_masks: str|Sequence[str],
                   attribute_filters: Mapping[str, object] | Sequence[Tuple[str, object]],
                   with_attributes: bool,
-                  include_hidden: bool):
+                  include_hidden: bool,
+                  ignore_case: bool):
 
     if isinstance(filename_masks, str):
         filename_masks = [filename_masks]
@@ -126,10 +123,11 @@ def locateRequest(root: VFSPathType,
 
     return cc.platform.vfs.LocateRequest(
         root             = encodePath(root),
-        filename_mask    = filename_masks,
+        filename_masks   = filename_masks,
         attribute_filter = [ encodeValue(tv) for tv in attribute_filters ],
         with_attributes  = with_attributes,
-        include_hidden   = include_hidden)
+        include_hidden   = include_hidden,
+        ignore_case      = ignore_case)
 
 def attributeRequest(vfspath: VFSPathType,
                      attributes: Mapping[str, object]):

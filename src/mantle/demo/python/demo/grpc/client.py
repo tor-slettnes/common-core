@@ -8,11 +8,9 @@
 ### Modules within package
 from ..core import API, SignalSlot, signal_store
 from cc.messaging.grpc import SignalClient
+from cc.protobuf.wellknown import empty
 from cc.protobuf.import_proto import import_proto
 from cc.protobuf.utils import check_message_type
-
-### Third-party modules
-from google.protobuf.empty_pb2 import Empty
 
 ## Import symbols generted from `demo.proto`. These will appear in
 ## the namespace `cc.demo`.
@@ -59,13 +57,13 @@ class DemoClient (API, SignalClient):
         self.stub.say_hello(greeting)
 
     def get_current_time(self) -> cc.demo.TimeData:
-        return self.stub.get_current_time(Empty())
+        return self.stub.get_current_time(empty)
 
     def start_ticking(self) -> None:
-        return self.stub.start_ticking(Empty())
+        return self.stub.start_ticking(empty)
 
     def stop_ticking(self) -> None:
-        return self.stub.stop_ticking(Empty())
+        return self.stub.stop_ticking(empty)
 
     def start_notify_greetings(self, callback: SignalSlot):
         API.start_notify_greetings(self, callback)

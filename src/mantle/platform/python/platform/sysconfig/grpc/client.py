@@ -8,12 +8,9 @@
 ### Modules within package
 from cc.messaging.grpc import SignalClient
 from cc.protobuf.import_proto import import_proto
-from cc.protobuf.wellknown import TimestampType, encodeTimestamp, decodeTimestamp
-from cc.core.invocation import check_type
+from cc.protobuf.wellknown import TimestampType, encodeTimestamp, decodeTimestamp, empty
 from cc.protobuf.sysconfig import encodeCountry
-
-### Third-party modules
-from google.protobuf.empty_pb2 import Empty
+from cc.core.invocation import check_type
 
 ### Standard Python modules
 from typing import Optional, Sequence, Iterator
@@ -42,7 +39,7 @@ class SysConfigClient (SignalClient):
     def get_product_info(self) -> cc.platform.sysconfig.ProductInfo:
         '''Get information about this product:
         model, serial number, versions, subsystems'''
-        return self.stub.get_product_info(Empty())
+        return self.stub.get_product_info(empty)
 
     def set_serial_number(self, serial: str|int):
         '''Set the product serial number. For manufacturing use.'''
@@ -56,7 +53,7 @@ class SysConfigClient (SignalClient):
         '''Get information about this host:
         hostname, OS, hardware.
         '''
-        return self.stub.get_host_info(Empty())
+        return self.stub.get_host_info(empty)
 
     def set_host_name(self, name: str):
         '''Set the host name.'''
@@ -68,7 +65,7 @@ class SysConfigClient (SignalClient):
 
     def get_current_timestamp(self) -> google.protobuf.Timestamp:
         '''Get the current time as a `google.protobuf.Timestamp` instance'''
-        return self.stub.get_current_time(Empty())
+        return self.stub.get_current_time(empty)
 
     def get_current_time(self) -> float:
         '''Get the current time in native Python semantics:
@@ -91,14 +88,14 @@ class SysConfigClient (SignalClient):
         '''Get the current time in native Python semantics:
         a double floating point representing seconds since UNIX epoch
         '''
-        return self.stub.get_time_config(Empty())
+        return self.stub.get_time_config(empty)
 
     def list_timezone_areas(self) -> list[str]:
         '''Obtain a list of Time Zone "areas": continents, oceans, or the
         literal "Etc".  These are the top-level grouping and first part of
         canonical zone names such as "America/Los_Angeles".
         '''
-        return self.stub.list_timezone_areas(Empty()).areas
+        return self.stub.list_timezone_areas(empty).areas
 
     def list_timezone_countries(self,
                                 area: str|None = None
