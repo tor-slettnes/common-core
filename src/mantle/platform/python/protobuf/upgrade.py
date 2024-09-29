@@ -46,15 +46,12 @@ def encodeSource(source: SourceType,
     elif isinstance(source, cc.platform.vfs.Path):
         return cc.platform.upgrade.PackageSource(vfs_path = source)
 
-    elif isinstance(source, str):
+    elif isinstance(source, str) and source:
         if re.match(r'\w+://', source):
             return cc.platform.upgrade.PackageSource(url = source)
 
-        elif re.match(r'\w+:', source):
-            return cc.platform.upgrade.PackageSource(vfs_path = encodePath(source))
-
         else:
-            raise ValueError("Source must be a URL or a VFS path in the format CONTEXT:PATH", source)
+            return cc.platform.upgrade.PackageSource(vfs_path = encodePath(source))
 
     elif source:
         raise TypeError('`source` must be of type `cc.platform.upgrade.Source`, '

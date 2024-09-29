@@ -135,7 +135,7 @@ class UpgradeClient (SignalClient):
         signal, and if the upgrade requires a system reboot, do so now.
         '''
 
-        return self.stub.finalize()
+        return self.stub.finalize(empty)
 
 
 
