@@ -7,21 +7,15 @@
 
 cmake_minimum_required(VERSION 3.15)
 
+### File containing build specifications.
+set(PRODUCT "platform"
+  CACHE STRING "Product name")
+
+set(DEFAULTS_FILE "${CMAKE_SOURCE_DIR}/defaults.json"
+  CACHE FILEPATH "Default build settings")
+
+### Obtain build settings, with defaults from `${PRODUCT}.json`
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/build_args.cmake)
-get_build_arg(PROJECT "project")
-get_build_arg(VERSION "version")
-get_build_arg(DESCRIPTION "description")
-get_build_arg(HOME_PAGE "home page")
-get_build_number(BUILD_NUMBER)
-
-project("${PROJECT}"
-  VERSION "${VERSION}"
-  DESCRIPTION "${DESCRIPTION}"
-  HOMEPAGE_URL "${HOME_PAGE}"
-  LANGUAGES CXX
-)
-
-message("Building project \"${PROJECT_NAME}\" version ${PROJECT_VERSION}, build #${BUILD_NUMBER}")
 
 ### Language components
 option(BUILD_CPP         "Build/Install C++ code" ON)
@@ -60,6 +54,15 @@ option(ENABLE_SERVICES   "Enable SystemD service units" ON)
 if(BUILD_GRPC OR BUILD_ZMQ)
   set(BUILD_PROTOBUF ON)
 endif()
+
+project("${PROJECT}"
+  VERSION "${VERSION}"
+  DESCRIPTION "${DESCRIPTION}"
+  HOMEPAGE_URL "${HOME_PAGE}"
+  LANGUAGES CXX
+)
+
+message("Building project \"${PROJECT_NAME}\" version ${PROJECT_VERSION}, build #${BUILD_NUMBER}")
 
 ### Invoke common project settings
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/BuildProject.cmake)

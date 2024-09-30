@@ -5,24 +5,15 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Load settings from `defaults.json`
-get_build_arg(PACKAGE_NAME "package" "name")
-get_build_arg(PACKAGE_VENDOR "package" "vendor")
-get_build_arg(PACKAGE_CONTACT "package" "contact")
-
-
 ### General CPack settings
-set(CPACK_PACKAGE_NAME "${PACKAGE_NAME}")
+set(CPACK_PACKAGE_NAME "${PACKAGE_NAME_PREFIX}")
 set(CPACK_PACKAGE_VENDOR "${PACKAGE_VENDOR}")
 set(CPACK_PACKAGE_CONTACT "${PACKAGE_CONTACT}")
 #set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 
 set(CPACK_GENERATOR "External" "DEB")
 set(CPACK_STRIP_FILES ON)
-#set(CPACK_COMPONENTS_GROUPING IGNORE)
-#set(CPACK_COMPONENTS_GROUPING ALL_COMPONENTS_IN_ONE)
 set(CPACK_COMPONENTS_GROUPING ONE_PER_GROUP)
-#set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_SOURCE_DIR}/CPackConfig.cmake")
 
 #===============================================================================
 ### DEB generator settings
@@ -43,7 +34,7 @@ set(CPACK_EXTERNAL_ENABLE_STAGING TRUE)
 #===============================================================================
 ### Custom settings propagated to external generator
 
+set(CPACK_SETTINGS_DIR "${SETTINGS_DIR}")
 set(CPACK_PYTHON_INSTALL_DIR "${PYTHON_INSTALL_DIR}")
 set(CPACK_PYTHON_NAMESPACE "${PYTHON_NAMESPACE}")
-set(CPACK_SETTINGS_DIR "${SETTINGS_DIR}")
 string(REPLACE "\"" "\\\"" CPACK_PYTHON_DEPENDENCIES "${PYTHON_DEPENDENCIES}")

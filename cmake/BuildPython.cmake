@@ -8,9 +8,6 @@
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules" FORCE)
 
-get_build_arg(PYTHON_NAMESPACE "python" "namespace")
-get_build_arg(PYTHON_DEPENDENCIES "python" "dependencies")
-
 function(BuildPython TARGET)
   set(_options)
   set(_singleargs DESTINATION NAMESPACE PACKAGE_COMPONENT INSTALL_COMPONENT)

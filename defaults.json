@@ -4,14 +4,14 @@
     "description": "Cross-platform development framework for embedded microservice applications",
     "home page": "https://github.com/tor-slettnes/common-core/",
     "package" : {
-        "name": "cc-platform-apps",
+        "name prefix": "common-core",
         "vendor": "Common Core Authors",
         "contact": "Tor Slettnes <tor@slett.net>"
     },
     "upgrade": {
         "package suffix": ".ccpkg",
-        "vfs context": "releases",
         "scan url": "https://slett.net/common-core/package-index.json",
+        "vfs context": "releases",
         "keyring": "common-core-release.kbx"
     },
     "python": {

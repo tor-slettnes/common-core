@@ -7,23 +7,23 @@
 
 {
     // Keyring contining public key used to validate upgrade package
-    "keyring file"  : "/usr/share/keyrings/@UPGRADE_KEYRING@",
+    "keyring file": "/usr/share/keyrings/@UPGRADE_KEYRING@",
 
     // Embedded JSON file containing information about the upgrade
-    "package info file" : "package-info.json",
+    "package info file": "package-info.json",
 
     // Filename suffixes to consider when doing local package scans
     "package suffix": "@UPGRADE_PACKAGE_SUFFIX@",
 
     // URL to a JSON package index describing available upgrade packages
-    "scan url"      : "@UPGRADE_SCAN_URL@",
+    "scan url": "@UPGRADE_SCAN_URL@",
 
     // VFS context for local upgrade packages
-    "vfs context"      : "@UPGRADE_VFS_CONTEXT@",
+    "vfs context": "@UPGRADE_VFS_CONTEXT@",
 
     // Interval between successive checks, in seconds (aligned at midnight local time)
-    "scan interval" : 86400,
+    "scan interval": 86400,
 
     // How many successve failures to allow before discontinuing online scans
-    "scan retries"  : 10
+    "scan retries": 10
 }

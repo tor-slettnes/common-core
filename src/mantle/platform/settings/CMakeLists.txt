@@ -11,14 +11,7 @@ BuildSettings(
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
 )
 
-
-### Create `upgrade.json` with values from `${CMAKE_SOURCE_DIR}/defaults.json`
-get_build_arg(UPGRADE_PACKAGE_SUFFIX  "upgrade" "package suffix")
-get_build_arg(UPGRADE_VFS_CONTEXT     "upgrade" "vfs context")
-get_build_arg(UPGRADE_SCAN_URL        "upgrade" "scan url")
-get_build_arg(UPGRADE_KEYRING         "upgrade" "keyring")
-
-
+### Generate `upgrade.json` with values from `build_args.cmake`
 configure_file(upgrade.json.in upgrade.json)
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/upgrade.json

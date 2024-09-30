@@ -91,8 +91,10 @@ cmake: $(BUILD_DIR)
 	@echo "#############################################################"
 	@echo
 	@cmake -B "$(BUILD_DIR)" \
-		-D BUILD_NUMBER="$(BUILD_NUMBER)" \
-		-D VERSION="$(VERSION)"
+		$(if $(PRODUCT),-D PRODUCT="$(PRODUCT)") \
+		$(if $(VERSION),-D VERSION="$(VERSION)") \
+		$(if $(BUILD_NUMBER),-D BUILD_NUMBER="$(BUILD_NUMBER)") \
+		$(if $(PACKAGE_NAME),-D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
 
 clean: uninstall cmake/clean
 
