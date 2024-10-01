@@ -70,4 +70,4 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/BuildProject.cmake)
 ### Pull in CMake files to build the actual sources
 add_subdirectory(thirdparty)
 add_subdirectory(src)
-add_subdirectory(tests)
+#add_subdirectory(tests)

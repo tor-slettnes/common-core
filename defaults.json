@@ -4,7 +4,9 @@
     "description": "Cross-platform development framework for embedded microservice applications",
     "home page": "https://github.com/tor-slettnes/common-core/",
     "package" : {
-        "name prefix": "common-core",
+        "name prefix": "cc",
+        "name suffix": "",
+        "split by group": true,
         "vendor": "Common Core Authors",
         "contact": "Tor Slettnes <tor@slett.net>"
     },

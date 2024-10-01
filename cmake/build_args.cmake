@@ -21,10 +21,14 @@ function(get_build_arg OUT_VAR)
         GET "${_DEFAULTS}" ${ARGN})
 
       if(_error STREQUAL "NOTFOUND")
+        # No error
         set("${OUT_VAR}" "${_value}" PARENT_SCOPE)
-      elseif(DEFAULTS_FILE AND NOT _WARNED_DEFAULTS)
+
+      elseif(DEFAULTS_FILE AND NOT _error MATCHES "not found$" AND NOT _WARNED_DEFAULTS)
+        ### JSON Parsing error (triggered only once)
         message(FATAL_ERROR "Unable to read build settings from ${DEFAULTS_FILE}: ${_error}")
         set(_WARNED_DEFAULTS TRUE PARENT_SCOPE)
+
       endif()
     endif()
   endif()
@@ -52,9 +56,12 @@ get_build_arg(HOME_PAGE "home page")
 get_build_number(BUILD_NUMBER)
 
 ### Debian package settings
-get_build_arg(PACKAGE_NAME_PREFIX     "package" "name prefix")
-get_build_arg(PACKAGE_VENDOR          "package" "vendor")
-get_build_arg(PACKAGE_CONTACT         "package" "contact")
+get_build_arg(PACKAGE_NAME_PREFIX        "package" "name prefix")
+get_build_arg(PACKAGE_VENDOR             "package" "vendor")
+get_build_arg(PACKAGE_CONTACT            "package" "contact")
+get_build_arg(PACKAGE_SPLIT_BY_COMPONENT "package" "split by component")
+get_build_arg(PACKAGE_SPLIT_BY_GROUP     "package" "split by group")
+
 
 ### External (Python package) generator settings
 get_build_arg(PYTHON_NAMESPACE        "python" "namespace")

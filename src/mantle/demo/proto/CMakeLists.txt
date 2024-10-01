@@ -12,7 +12,7 @@ set(TARGET "cc_demo_proto")
 set(INSTALL_COMPONENT "demo-proto")
 
 ### Static/shared library dependencies.
-set(LIB_DEPS
+set(PROTO_DEPS
   cc_core_proto
 )
 
@@ -24,7 +24,7 @@ set(SOURCES
 ### Generate language bindings
 BuildProto("${TARGET}"
   LIB_TYPE STATIC
-  LIB_DEPS ${LIB_DEPS}
+  PROTO_DEPS ${PROTO_DEPS}
   SOURCES ${SOURCES}
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
 )

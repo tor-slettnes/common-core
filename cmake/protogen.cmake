@@ -11,7 +11,7 @@
 
 function(PROTOGEN_COMMON)
   set(_singleargs TARGET COMMENT GENERATOR PLUGIN OUT_DIR)
-  set(_multiargs PROTOS SUFFIXES OUT_VARS)
+  set(_multiargs PROTOS DEPENDS SUFFIXES OUT_VARS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
   if(NOT arg_TARGET AND NOT arg_PROTOS)
@@ -24,10 +24,17 @@ function(PROTOGEN_COMMON)
   endif()
 
   ## ProtoBuf Compiler setup
-  set(_include_dirs
-    "${CMAKE_CURRENT_SOURCE_DIR}"
-    "$<TARGET_PROPERTY:${TARGET},INTERFACE_INCLUDE_DIRECTORIES>"
-  )
+  set(_include_dirs "${CMAKE_CURRENT_SOURCE_DIR}")
+
+  foreach(_candidate ${arg_DEPENDS})
+    get_target_property(source_dirs "${_candidate}" source_dirs)
+    if (NOT source_dirs STREQUAL "source_dirs-NOTFOUND")
+      list(APPEND _include_dirs "${source_dirs}")
+    endif()
+  endforeach()
+
+  set_target_properties("${TARGET}"
+    PROPERTIES source_dirs "${_include_dirs}")
 
   ## Append any directories supplied in the `Protobuf_IMPORT_DIRS` variable
   if(DEFINED Protobuf_IMPORT_DIRS)

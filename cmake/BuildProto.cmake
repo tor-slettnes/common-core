@@ -14,7 +14,7 @@ include(pkgconf)
 function(BuildProto_CPP TARGET)
   set(_options)
   set(_singleargs LIB_TYPE SCOPE)
-  set(_multiargs  PROTOS)
+  set(_multiargs  DEPENDS PROTOS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   target_include_directories("${TARGET}" ${arg_SCOPE}
@@ -26,6 +26,7 @@ function(BuildProto_CPP TARGET)
 
     protogen_protobuf_cpp(PROTO_CPP_SRCS PROTO_CPP_HDRS
       TARGET "${TARGET}"
+      DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
     )
   endif()
@@ -42,6 +43,7 @@ function(BuildProto_CPP TARGET)
 
     protogen_grpc_cpp(GRPC_CPP_SRCS GRPC_CPP_HDRS
       TARGET "${TARGET}"
+      DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
     )
   endif()
@@ -54,7 +56,7 @@ endfunction()
 function(BuildProto_PYTHON TARGET)
   set(_options)
   set(_singleargs INSTALL_COMPONENT INSTALL_DIR NAMESPACE)
-  set(_multiargs PROTOS)
+  set(_multiargs DEPENDS PROTOS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if (arg_INSTALL_DIR)
@@ -72,6 +74,7 @@ function(BuildProto_PYTHON TARGET)
   if (BUILD_PROTOBUF)
     protogen_protobuf_py(PROTO_PY
       TARGET "${TARGET}"
+      DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
       OUT_DIR "python"
     )
@@ -86,6 +89,7 @@ function(BuildProto_PYTHON TARGET)
   if (BUILD_GRPC)
     protogen_grpc_py(GRPC_PY
       TARGET "${TARGET}"
+      DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
       OUT_DIR "python"
     )
@@ -106,7 +110,7 @@ endfunction()
 function(BuildProto TARGET)
   set(_options)
   set(_singleargs LIB_TYPE SCOPE INSTALL_COMPONENT PYTHON_INSTALL_DIR PYTHON_NAMESPACE)
-  set(_multiargs SOURCES LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
+  set(_multiargs SOURCES PROTO_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if(arg_INSTALL_COMPONENT)
@@ -117,6 +121,12 @@ function(BuildProto TARGET)
     set(_component common)
   endif()
 
+  if(arg_LIB_TYPE)
+    set(_lib_type ${arg_LIB_TYPE})
+  else()
+    set(_lib_type STATIC)
+  endif()
+
   if(NOT BUILD_CPP)
     set(_scope INTERFACE)
   elseif(arg_SCOPE)
@@ -125,21 +135,25 @@ function(BuildProto TARGET)
     set(_scope PUBLIC)
   endif()
 
-  BuildLibrary("${TARGET}"
-    SCOPE    "${_scope}"
-    LIB_TYPE "${arg_LIB_TYPE}"
-    LIB_DEPS "${arg_LIB_DEPS}"
-    OBJ_DEPS "${arg_OBJ_DEPS}"
-    PKG_DEPS "${arg_PKG_DEPS}"
-    MOD_DEPS "${arg_MOD_DEPS}"
-  )
 
   if(BUILD_CPP)
-    BuildProto_CPP("${TARGET}"
+    BuildLibrary("${TARGET}"
+      SCOPE    "${_scope}"
       LIB_TYPE "${arg_LIB_TYPE}"
+      LIB_DEPS "${arg_LIB_DEPS}"
+      OBJ_DEPS "${arg_OBJ_DEPS}" "${arg_PROTO_DEPS}"
+      PKG_DEPS "${arg_PKG_DEPS}"
+      MOD_DEPS "${arg_MOD_DEPS}"
+    )
+
+    BuildProto_CPP("${TARGET}"
+      LIB_TYPE "${_lib_type}"
       SCOPE "${_scope}"
+      DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_SOURCES}"
     )
+  else()
+    add_custom_target("${TARGET}" ALL)
   endif()
 
   if (BUILD_PYTHON)
@@ -156,6 +170,7 @@ function(BuildProto TARGET)
       INSTALL_COMPONENT "${_component}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       NAMESPACE "${_namespace}"
+      DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_SOURCES}"
     )
   endif()

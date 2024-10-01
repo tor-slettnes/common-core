@@ -7,13 +7,23 @@
 
 set(PKG_GROUP "platform")
 
+if (BUILD_PROTOBUF)
+  add_subdirectory(proto)
+endif()
+
+if (BUILD_CPP)
+  add_subdirectory(cpp)
+endif()
+
+if (BUILD_PYTHON)
+  add_subdirectory(python)
+endif()
+
+add_subdirectory(scripts)
+add_subdirectory(settings)
+
+
 cpack_add_component_group(${PKG_GROUP}
   DISPLAY_NAME "Platform services"
   DESCRIPTION "Common platform services: System configuration, networking, file access, upgrade"
 )
-
-add_subdirectory(proto)
-add_subdirectory(cpp)
-add_subdirectory(python)
-add_subdirectory(scripts)
-add_subdirectory(settings)
