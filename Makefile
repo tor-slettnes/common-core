@@ -35,7 +35,7 @@ endif
 
 ### Check for a target-specific toolchain and use that if available
 
-develop: test install
+local: test install
 
 release: test package
 
@@ -75,6 +75,7 @@ test: build
 	@echo "#############################################################"
 	@echo
 	@cd "$(BUILD_DIR)" && ctest
+
 
 build: cmake
 	@echo

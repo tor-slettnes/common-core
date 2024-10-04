@@ -6,8 +6,8 @@
 #===============================================================================
 
 ### Modules within package
-from .grpc.client import DemoClient as gRPCDemoClient
-from .zmq.client import DemoClient as ZMQDemoClient
+from cc.demo.grpc.client import DemoClient as gRPCDemoClient
+from cc.demo.zmq.client import DemoClient as ZMQDemoClient
 
 from cc.protobuf.import_proto \
     import import_wellknown_protos, import_core_protos, import_proto
@@ -85,7 +85,7 @@ def legend():
     print(legend.__doc__)
 
 
-if __name__ == "__main__":
+def main():
     args   = ArgParser().parse_args()
 
     logger = logging.getLogger()

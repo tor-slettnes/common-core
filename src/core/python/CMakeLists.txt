@@ -11,6 +11,10 @@ set(TARGET "cc_core_python")
 ### Package component
 set(INSTALL_COMPONENT "core-python")
 
+### Populate version/build info
+configure_file(__init__.py.in "generated/__init__.py")
+configure_file(buildinfo.py.in "generated/buildinfo.py")
+
 ### Modules to be installed as programs, with execute permissionss
 set(PROGRAMS
 )
@@ -36,12 +40,9 @@ set(PKG_DEPS
   zmq
 )
 
-### Populate version/build info
-configure_file(__init__.py.in "generated/__init__.py")
-configure_file(buildinfo.py.in "generated/buildinfo.py")
-
 BuildPython("${TARGET}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  PROTO_DEPS "cc_core_proto"
   PROGRAMS "${PROGRAMS}"
   FILES "${FILES}"
   DIRECTORIES "${DIRECTORIES}"

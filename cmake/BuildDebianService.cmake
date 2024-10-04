@@ -95,10 +95,9 @@ function(AddEnableHooks UNIT)
   # First we determine if we have already done this for other service units
   # within the same `.deb` package.  We do this by
   #    (a) using a unique staging directory for each package component,
-  #        if and only if we use component based installs to create one
-  #        `.deb` per component.
-  #    (b) maintaining an associated directory property to keep track
-  #        of this and prior service units associated with this directory
+  #        if and only if CPACK_DEB_COMPONENT_INSTALL is set
+  #    (b) otherwise, maintaining an associated directory property to keep
+  #        track of this and prior services associated with this directory
   #    (c) using this property to create a cumulative list of
   #        service units to be enabled/disabled.
 

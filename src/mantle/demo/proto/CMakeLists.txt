@@ -9,7 +9,8 @@
 set(TARGET "cc_demo_proto")
 
 ### Package component
-set(INSTALL_COMPONENT "demo-proto")
+#set(INSTALL_COMPONENT "demo-proto")
+set(INSTALL_COMPONENT "")
 
 ### Static/shared library dependencies.
 set(PROTO_DEPS
@@ -29,9 +30,9 @@ BuildProto("${TARGET}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
 )
 
-cpack_add_component(${INSTALL_COMPONENT}
-  DEPENDS core-proto
-  GROUP ${PKG_GROUP}
-  DISPLAY_NAME "DEMO Example - Generated ProtoBuf/gRPC modules"
-  DESCRIPTION "Generated runtime modules for communication with DEMO example over ProtoBuf/gRPC"
-)
+# cpack_add_component(${INSTALL_COMPONENT}
+#   DEPENDS core-proto
+#   GROUP ${PKG_GROUP}
+#   DISPLAY_NAME "DEMO Example - Generated ProtoBuf/gRPC modules"
+#   DESCRIPTION "Generated runtime modules for communication with DEMO example over ProtoBuf/gRPC"
+# )

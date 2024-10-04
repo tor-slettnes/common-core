@@ -25,8 +25,26 @@ set(DIRECTORIES
 
 BuildPython("${TARGET}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  PACKAGE_COMPONENT "demo"
+  NAMESPACE_COMPONENT "demo"
+  PYTHON_DEPS cc_core_python cc_demo_python_protobuf
+  PROTO_DEPS cc_demo_proto
   PROGRAMS "${PROGRAMS}"
   FILES "${FILES}"
   DIRECTORIES "${DIRECTORIES}"
+)
+
+BuildPythonExecutable("demoshell"
+  PYTHON_DEPS "${TARGET}"
+  SCRIPT "shell.py"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  VENV "${CMAKE_SOURCE_DIR}/venv"
+  DIRECTORY_BUNDLE
+)
+
+BuildPythonExecutable("pydemo_grpc_server"
+  PYTHON_DEPS "${TARGET}"
+  SCRIPT "grpc/server.py"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  VENV "${CMAKE_SOURCE_DIR}/venv"
+  TYPE SBIN
 )

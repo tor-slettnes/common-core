@@ -15,7 +15,7 @@ set(FILES
 )
 
 BuildPython("${TARGET}"
-  PACKAGE_COMPONENT "protobuf"
+  NAMESPACE_COMPONENT "protobuf"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   FILES "${FILES}"
 )

@@ -14,9 +14,12 @@ function(PROTOGEN_COMMON)
   set(_multiargs PROTOS DEPENDS SUFFIXES OUT_VARS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
-  if(NOT arg_TARGET AND NOT arg_PROTOS)
-    message(SEND_ERROR "Error: protogen() called without any TARGET or PROTO files")
+  if(NOT arg_TARGET)
+    message(SEND_ERROR "Error: protogen() needs TARGET")
     return()
+
+  elseif(NOT TARGET "${arg_TARGET}")
+    add_custom_target("${arg_TARGET}")
   endif()
 
   if(arg_PLUGIN)
@@ -28,12 +31,12 @@ function(PROTOGEN_COMMON)
 
   foreach(_candidate ${arg_DEPENDS})
     get_target_property(source_dirs "${_candidate}" source_dirs)
-    if (NOT source_dirs STREQUAL "source_dirs-NOTFOUND")
+    if (source_dirs)
       list(APPEND _include_dirs "${source_dirs}")
     endif()
   endforeach()
 
-  set_target_properties("${TARGET}"
+  set_target_properties("${arg_TARGET}"
     PROPERTIES source_dirs "${_include_dirs}")
 
   ## Append any directories supplied in the `Protobuf_IMPORT_DIRS` variable
@@ -90,7 +93,6 @@ function(PROTOGEN_COMMON)
     find_program(_protoc protoc)
   endif()
 
-
   ## Finally let's do the generation
   add_custom_command(
     OUTPUT ${_outputs}
@@ -105,9 +107,7 @@ function(PROTOGEN_COMMON)
     VERBATIM
   )
 
-  if(arg_TARGET)
-    target_sources("${arg_TARGET}" PRIVATE ${_outputs})
-  endif()
+  target_sources("${arg_TARGET}" PRIVATE ${_outputs})
 
   ### Promote each symbol from `OUT_VARS` to parent scope
   foreach(_out_var ${arg_OUT_VARS})

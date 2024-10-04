@@ -40,10 +40,11 @@ if(NOT PROJECT_INCLUDED)
   include(Doxygen)
 
   ### Load targeted build functions
-  include(BuildProto)
   include(BuildLibrary)
   include(BuildExecutable)
   include(BuildPython)
+  include(BuildPythonExecutable)
+  include(BuildProto)
   include(BuildSettings)
   include(BuildPackage)
   include(BuildDebianService)

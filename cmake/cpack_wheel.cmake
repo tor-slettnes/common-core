@@ -18,7 +18,7 @@ endfunction()
 ### Prepare data for `pyproject.toml` file
 set(PACKAGE "${CPACK_PACKAGE_NAME}")
 set(DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
-set(VERSION "${CPACK_PACKAGE_VERSION}")
+set(VERSION "${CPACK_PACKAGE_VERSION}-${CPACK_BUILD_NUMBER}")
 set(HOMEPAGE_URL "${CPACK_PACKAGE_HOMEPAGE_URL}")
 
 ### Get author name and email from `${CPACK_PACKAGE_CONTACT}`

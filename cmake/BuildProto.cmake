@@ -7,102 +7,7 @@
 
 include(protogen)
 include(pkgconf)
-
-#===============================================================================
-## @fn BuildProto_CPP
-
-function(BuildProto_CPP TARGET)
-  set(_options)
-  set(_singleargs LIB_TYPE SCOPE)
-  set(_multiargs  DEPENDS PROTOS)
-  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  target_include_directories("${TARGET}" ${arg_SCOPE}
-    ${CMAKE_CURRENT_BINARY_DIR}
-  )
-
-  if(BUILD_PROTOBUF)
-    find_package(Protobuf REQUIRED)
-
-    protogen_protobuf_cpp(PROTO_CPP_SRCS PROTO_CPP_HDRS
-      TARGET "${TARGET}"
-      DEPENDS "${arg_DEPENDS}"
-      PROTOS "${arg_PROTOS}"
-    )
-  endif()
-
-  if(BUILD_GRPC)
-    find_package(gRPC REQUIRED)
-
-    # The above fails to capture all required library dependencies from recent
-    # gRPC releases.  Let's obtain additional package dependencies from
-    # `pkg-config`.
-    add_package_dependencies("${TARGET}"
-      LIB_TYPE "${arg_LIB_TYPE}"
-      DEPENDS gpr)
-
-    protogen_grpc_cpp(GRPC_CPP_SRCS GRPC_CPP_HDRS
-      TARGET "${TARGET}"
-      DEPENDS "${arg_DEPENDS}"
-      PROTOS "${arg_PROTOS}"
-    )
-  endif()
-
-endfunction()
-
-#===============================================================================
-## @fn BuildProto_PYTHON
-
-function(BuildProto_PYTHON TARGET)
-  set(_options)
-  set(_singleargs INSTALL_COMPONENT INSTALL_DIR NAMESPACE)
-  set(_multiargs DEPENDS PROTOS)
-  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  if (arg_INSTALL_DIR)
-    set(_install_dir "${arg_INSTALL_DIR}")
-  else()
-    set(_install_dir "${PYTHON_INSTALL_DIR}")
-  endif()
-
-  if(arg_NAMESPACE)
-    set(_install_dir "${_install_dir}/${arg_NAMESPACE}")
-  endif()
-
-  set(_install_dir "${_install_dir}/generated")
-
-  if (BUILD_PROTOBUF)
-    protogen_protobuf_py(PROTO_PY
-      TARGET "${TARGET}"
-      DEPENDS "${arg_DEPENDS}"
-      PROTOS "${arg_PROTOS}"
-      OUT_DIR "python"
-    )
-
-    install(
-      FILES ${PROTO_PY}
-      DESTINATION "${_install_dir}"
-      COMPONENT "${arg_INSTALL_COMPONENT}"
-    )
-  endif()
-
-  if (BUILD_GRPC)
-    protogen_grpc_py(GRPC_PY
-      TARGET "${TARGET}"
-      DEPENDS "${arg_DEPENDS}"
-      PROTOS "${arg_PROTOS}"
-      OUT_DIR "python"
-    )
-
-    install(
-      FILES ${GRPC_PY}
-      DESTINATION "${_install_dir}"
-      COMPONENT "${arg_INSTALL_COMPONENT}"
-    )
-  endif()
-
-endfunction()
-
+include(BuildPython)
 
 #===============================================================================
 ## @fn BuildProto
@@ -169,9 +74,125 @@ function(BuildProto TARGET)
     BuildProto_PYTHON("${TARGET}"
       INSTALL_COMPONENT "${_component}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
-      NAMESPACE "${_namespace}"
       DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_SOURCES}"
     )
   endif()
 endfunction()
+
+
+#===============================================================================
+## @fn BuildProto_CPP
+
+function(BuildProto_CPP TARGET)
+  set(_options)
+  set(_singleargs LIB_TYPE SCOPE)
+  set(_multiargs  DEPENDS PROTOS)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  target_include_directories("${TARGET}" ${arg_SCOPE}
+    ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
+  if(BUILD_PROTOBUF)
+    find_package(Protobuf REQUIRED)
+
+    protogen_protobuf_cpp(PROTO_CPP_SRCS PROTO_CPP_HDRS
+      TARGET "${TARGET}"
+      DEPENDS "${arg_DEPENDS}"
+      PROTOS "${arg_PROTOS}"
+    )
+  endif()
+
+  if(BUILD_GRPC)
+    find_package(gRPC REQUIRED)
+
+    # The above fails to capture all required library dependencies from recent
+    # gRPC releases.  Let's obtain additional package dependencies from
+    # `pkg-config`.
+    add_package_dependencies("${TARGET}"
+      LIB_TYPE "${arg_LIB_TYPE}"
+      DEPENDS gpr)
+
+    protogen_grpc_cpp(GRPC_CPP_SRCS GRPC_CPP_HDRS
+      TARGET "${TARGET}"
+      DEPENDS "${arg_DEPENDS}"
+      PROTOS "${arg_PROTOS}"
+    )
+  endif()
+
+endfunction()
+
+#===============================================================================
+## @fn BuildProto_PYTHON
+
+function(BuildProto_PYTHON TARGET)
+  set(_options INSTALL)
+  set(_singleargs STAGING_DIR INSTALL_COMPONENT INSTALL_DIR NAMESPACE NAMESPACE_COMPONENT)
+  set(_multiargs DEPENDS PROTOS)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  if (arg_NAMESPACE_COMPONENT)
+    set(_namespace_component "${arg_NAMESPACE_COMPONENT}")
+  else()
+    set(_namespace_component "generated")
+  endif()
+
+  if (arg_STAGING_DIR)
+    set(staging_root "${arg_STAGING_DIR}")
+  else()
+    set(staging_root "${CMAKE_BINARY_DIR}/python-protos")
+    # set(staging_root "${CMAKE_CURRENT_BINARY_DIR}/python")
+  endif()
+
+  ### Construct namespace for Python modules
+  get_namespace_dir(
+    NAMESPACE "${arg_NAMESPACE}"
+    NAMESPACE_COMPONENT "${_namespace_component}"
+    MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
+    ROOT_DIR "${staging_root}"
+    OUTPUT_VARIABLE staging_dir)
+
+  file(MAKE_DIRECTORY "${staging_dir}")
+
+  ### Construct a list of staging root folders for this target and its dependencies,
+  cascade_inherited_property(
+    TARGET "${TARGET}"
+    PROPERTY python_paths
+    OUTPUT_VARIABLE python_paths
+    INITIAL_VALUE "${staging_root}"
+    DEPENDENCIES "${arg_DEPENDS}"
+    REMOVE_DUPLICATES)
+
+  if (BUILD_PROTOBUF)
+    protogen_protobuf_py(PROTO_PY
+      TARGET "${TARGET}"
+      DEPENDS "${arg_DEPENDS}"
+      PROTOS "${arg_PROTOS}"
+      OUT_DIR "${staging_dir}"
+    )
+  endif()
+
+  if (BUILD_GRPC)
+    protogen_grpc_py(GRPC_PY
+      TARGET "${TARGET}"
+      DEPENDS "${arg_DEPENDS}"
+      PROTOS "${arg_PROTOS}"
+      OUT_DIR "${staging_dir}"
+    )
+  endif()
+
+
+  if (arg_INSTALL OR INSTALL_PYTHON_MODULES)
+    if (arg_INSTALL_DIR)
+      set(_install_dir "${arg_INSTALL_DIR}")
+    else()
+      set(_install_dir "${PYTHON_INSTALL_DIR}")
+    endif()
+
+    install(DIRECTORY "${staging_root}/"
+      DESTINATION "${_install_dir}"
+      COMPONENT "${arg_INSTALL_COMPONENT}")
+  endif()
+endfunction()
+

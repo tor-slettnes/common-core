@@ -6,14 +6,15 @@
 #===============================================================================
 
 ### Create a custom target for the Python Wheel
-set(TARGET "cc_demo_protobuf")
+set(TARGET "cc_demo_python_protobuf")
 
 set(FILES
   demo.py
 )
 
 BuildPython("${TARGET}"
-  PACKAGE_COMPONENT "protobuf"
+  NAMESPACE_COMPONENT "protobuf"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  PYTHON_DEPS cc_core_python
   FILES "${FILES}"
 )

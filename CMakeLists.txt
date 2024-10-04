@@ -20,6 +20,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/build_args.cmake)
 ### Language components
 option(BUILD_CPP         "Build/Install C++ code" ON)
 option(BUILD_PYTHON      "Install Python clients/scripts" ON)
+option(INSTALL_PYTHON_MODULES "Install individual Python modules" ON)
+
 
 ### Optional core components
 option(BUILD_RAPIDJSON   "Build fast JSON parsing using RapidJSON" ON)

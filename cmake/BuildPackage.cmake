@@ -5,8 +5,21 @@
 #===============================================================================
 
 function(CPackConfig VARIABLE VALUE)
-    file(APPEND "${CMAKE_BINARY_DIR}/CPackConfig.cmake"
-      "set(${VARIABLE} \"${VALUE}\")\n")
+  set(_options APPEND)
+  set(_singleargs)
+  set(_multiargs)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  string(REPLACE "\"" "\\\"" _value "${VALUE}")
+  string(TOUPPER "${VARIABLE}" _variable)
+
+  if (arg_APPEND)
+    set(_command "list(APPEND ${_variable} \"${_value}\")")
+  else()
+    set(_command "set(${_variable} \"${_value}\")")
+  endif()
+
+  file(APPEND "${CMAKE_BINARY_DIR}/CPackConfig.cmake" "${_command}\n")
 endfunction()
 
 
