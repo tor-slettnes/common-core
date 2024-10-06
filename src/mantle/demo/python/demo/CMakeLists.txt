@@ -33,13 +33,6 @@ BuildPython("${TARGET}"
   DIRECTORIES "${DIRECTORIES}"
 )
 
-BuildPythonExecutable("demoshell"
-  PYTHON_DEPS "${TARGET}"
-  SCRIPT "shell.py"
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  VENV "${CMAKE_SOURCE_DIR}/venv"
-  DIRECTORY_BUNDLE
-)
 
 BuildPythonExecutable("pydemo_grpc_server"
   PYTHON_DEPS "${TARGET}"
@@ -47,4 +40,13 @@ BuildPythonExecutable("pydemo_grpc_server"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   VENV "${CMAKE_SOURCE_DIR}/venv"
   TYPE SBIN
+)
+
+BuildPythonExecutable("pydemo_zmq_server"
+  PYTHON_DEPS "${TARGET}"
+  SCRIPT "zmq/server.py"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  VENV "${CMAKE_SOURCE_DIR}/venv"
+  TYPE SBIN
+  DIRECTORY_BUNDLE
 )

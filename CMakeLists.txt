@@ -17,14 +17,15 @@ set(DEFAULTS_FILE "${CMAKE_SOURCE_DIR}/defaults.json"
 ### Obtain build settings, with defaults from `${PRODUCT}.json`
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/build_args.cmake)
 
-### Language components
+### C++ options
 option(BUILD_CPP         "Build/Install C++ code" ON)
-option(BUILD_PYTHON      "Install Python clients/scripts" ON)
-option(INSTALL_PYTHON_MODULES "Install individual Python modules" ON)
-
-
-### Optional core components
 option(BUILD_RAPIDJSON   "Build fast JSON parsing using RapidJSON" ON)
+option(USE_STATIC_LIBS   "Use static libraries for linking" OFF)
+
+### Python options
+option(BUILD_PYTHON      "Install Python clients/scripts" ON)
+option(BUILD_PYTHON_EXECUTABLE "Build and install Python executables with PyInstaller" ON)
+option(INSTALL_PYTHON_MODULES  "Install/package Python source modules" ON)
 
 ### Messaging frameworks
 option(BUILD_GRPC        "Build support for gRPC Remote Procedure Calls" ON)
@@ -45,9 +46,6 @@ option(BUILD_DEMO        "Build DEMO application example" ON)
 
 ### Build tests
 option(BUILD_TESTING     "Build testing modules" ON)
-
-### Use static linking
-option(USE_STATIC_LIBS   "Use static libraries for linking" OFF)
 
 ### Enable SystemD service integration
 option(ENABLE_SERVICES   "Enable SystemD service units" ON)

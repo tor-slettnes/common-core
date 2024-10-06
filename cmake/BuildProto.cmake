@@ -141,8 +141,8 @@ function(BuildProto_PYTHON TARGET)
   if (arg_STAGING_DIR)
     set(staging_root "${arg_STAGING_DIR}")
   else()
-    set(staging_root "${CMAKE_BINARY_DIR}/python-protos")
-    # set(staging_root "${CMAKE_CURRENT_BINARY_DIR}/python")
+    # set(staging_root "${CMAKE_BINARY_DIR}/python-protos")
+    set(staging_root "${CMAKE_CURRENT_BINARY_DIR}/python")
   endif()
 
   ### Construct namespace for Python modules

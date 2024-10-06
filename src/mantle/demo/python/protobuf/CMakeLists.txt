@@ -13,8 +13,8 @@ set(FILES
 )
 
 BuildPython("${TARGET}"
-  NAMESPACE_COMPONENT "protobuf"
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  PYTHON_DEPS cc_core_python
+  NAMESPACE_COMPONENT "protobuf" # Python 2nd level namespace component
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}" # Debian package component
+  PYTHON_DEPS cc_core_python               # Python dependencies
   FILES "${FILES}"
 )

@@ -25,15 +25,6 @@ function(BuildPython TARGET)
   endif()
 
 
-  ### Specify root folder for staging python modules for this target
-  if(arg_STAGING_DIR)
-    cmake_path(APPEND "${CMAKE_CURRENT_BINARY_DIR}" "${arg_STAGING_DIR}"
-      OUTPUT_VARIABLE staging_root)
-  else()
-     set(staging_root "${CMAKE_BINARY_DIR}/python-staging")
-     # set(staging_root "${CMAKE_CURRENT_BINARY_DIR}/staging")
-  endif()
-
   ### Construct namespace for Python modules
   get_namespace_dir(
     NAMESPACE "${arg_NAMESPACE}"
@@ -41,61 +32,9 @@ function(BuildPython TARGET)
     MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
     OUTPUT_VARIABLE namespace_dir)
 
-  cmake_path(APPEND staging_root "${namespace_dir}" OUTPUT_VARIABLE staging_dir)
-  file(MAKE_DIRECTORY "${staging_dir}")
+  #=============================================================================
+  ### Install source modules locally or via CPack
 
-  ### Construct a list of staging roots for this target and its dependencies.
-  cascade_inherited_property(
-    TARGET "${TARGET}"
-    PROPERTY python_paths
-    OUTPUT_VARIABLE python_paths
-    INITIAL_VALUE "${staging_root}"
-    DEPENDENCIES "${arg_PYTHON_DEPS}"
-    REMOVE_DUPLICATES
-  )
-
-  ### Construct a list of Python output folders for each ProtoBuf dependency.
-  cascade_inherited_property(
-    TARGET "${TARGET}"
-    PROPERTY python_paths
-    OUTPUT_VARIABLE proto_paths
-    DEPENDENCIES "${arg_PROTO_DEPS}"
-    REMOVE_DUPLICATES
-  )
-
-  ### Also add staging folder from indirect protobuf dependencies
-  cascade_inherited_property(
-    TARGET "${TARGET}"
-    PROPERTY proto_paths
-    OUTPUT_VARIABLE proto_paths
-    INITIAL_VALUE "${proto_paths}"
-    DEPENDENCIES "${arg_PYTHON_DEPS}"
-    REMOVE_DUPLICATES
-  )
-
-  ### Copy programs, files and directories to the staging subfolder
-  foreach(_file ${arg_PROGRAMS})
-    file(COPY "${_file}"
-      DESTINATION "${staging_dir}"
-      FILE_PERMISSIONS
-      OWNER_READ OWNER_EXECUTE
-      GROUP_READ GROUP_EXECUTE
-      WORLD_READ WORLD_EXECUTE)
-  endforeach()
-
-  foreach(_file ${arg_FILES})
-    file(COPY "${_file}"
-      DESTINATION "${staging_dir}")
-  endforeach()
-
-  foreach(_dir ${arg_DIRECTORIES})
-    file(COPY "${_dir}"
-      DESTINATION "${staging_dir}"
-      PATTERN __pycache__ EXCLUDE)
-  endforeach()
-
-
-  ### Install these modules locally or via CPack
   if (arg_INSTALL OR INSTALL_PYTHON_MODULES)
     if (arg_INSTALL_DIR)
       set(_install_dir "${arg_INSTALL_DIR}")
@@ -125,11 +64,102 @@ function(BuildPython TARGET)
         DESTINATION "${_destination}"
         COMPONENT "${arg_INSTALL_COMPONENT}")
     endif()
-
-    # install(DIRECTORY "${staging_root}/"
-    #   DESTINATION "${_install_dir}"
-    #   COMPONENT "${arg_INSTALL_COMPONENT}")
   endif()
+
+  if (BUILD_PYTHON_EXECUTABLE)
+    populate_staging_dir(
+      STAGING_DIR "${arg_STAGING_DIR}"
+      NAMESPACE_DIR "${namespace_dir}"
+      PYTHON_DEPS ${arg_PYTHON_DEPS}
+      PROTO_DEPS ${arg_PROTO_DEPS}
+      PROGRAMS ${arg_PROGRAMS}
+      FILES ${arg_FILES}
+      DIRECTORIES ${arg_DIRECTORIES}
+    )
+  endif()
+endfunction()
+
+
+#===============================================================================
+## @fn POPULATE_STAGING_FOLDER
+## @brief Populate a staging folder for `PyInstaller`.
+
+function(POPULATE_STAGING_DIR)
+  set(_options)
+  set(_singleargs STAGING_DIR NAMESPACE_DIR)
+  set(_multiargs PYTHON_DEPS PROTO_DEPS PROGRAMS FILES DIRECTORIES)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  ### Specify root folder for staging python modules for this target
+  if(arg_STAGING_DIR)
+    cmake_path(APPEND "${CMAKE_CURRENT_BINARY_DIR}" "${arg_STAGING_DIR}"
+      OUTPUT_VARIABLE staging_root)
+  else()
+     set(staging_root "${CMAKE_BINARY_DIR}/python-staging")
+     # set(staging_root "${CMAKE_CURRENT_BINARY_DIR}/staging")
+  endif()
+
+  cmake_path(APPEND staging_root "${namespace_dir}" OUTPUT_VARIABLE staging_dir)
+
+  ### Copy programs, files and directories to a staging subfolder for PyInstaller
+  file(MAKE_DIRECTORY "${staging_dir}")
+
+  if (arg_PROGRAMS)
+    file(COPY ${arg_PROGRAMS}
+      DESTINATION "${staging_dir}"
+      FILE_PERMISSIONS
+      OWNER_READ OWNER_WRITE OWNER_EXECUTE
+      GROUP_READ GROUP_EXECUTE
+      WORLD_READ WORLD_EXECUTE)
+  endif()
+
+  if (arg_FILES)
+    file(COPY ${arg_FILES}
+      DESTINATION "${staging_dir}")
+  endif()
+
+  if (arg_DIRECTORIES)
+    file(COPY ${arg_DIRECTORIES}
+      DESTINATION "${staging_dir}"
+      PATTERN __pycache__ EXCLUDE)
+  endif()
+
+  #=============================================================================
+  ### Construct a list of staging roots for this target and its dependencies.
+  ### This is then cascaded to downstream dependents as paths for PyInstaller.
+
+  ### Collect Python source folders in the target property `python_paths`.
+  cascade_inherited_property(
+    TARGET "${TARGET}"
+    PROPERTY python_paths
+    OUTPUT_VARIABLE python_paths
+    INITIAL_VALUE "${staging_root}"
+    DEPENDENCIES "${arg_PYTHON_DEPS}"
+    REMOVE_DUPLICATES
+  )
+
+  ### Collect ProtoBuf-generated Python source folders from our direct
+  ### ProtoBuf target dependencies in the target property `proto_paths`.
+  cascade_inherited_property(
+    TARGET "${TARGET}"
+    PROPERTY python_paths
+    TARGET_PROPERTY proto_paths
+    OUTPUT_VARIABLE proto_paths
+    DEPENDENCIES "${arg_PROTO_DEPS}"
+    REMOVE_DUPLICATES
+  )
+
+  ### Collect indirect ProtoBuf-generated Python source folders
+  ### from the target property `proto_paths` from our Python dependencies.
+  cascade_inherited_property(
+    TARGET "${TARGET}"
+    PROPERTY proto_paths
+    OUTPUT_VARIABLE proto_paths
+    INITIAL_VALUE "${proto_paths}"
+    DEPENDENCIES "${arg_PYTHON_DEPS}"
+    REMOVE_DUPLICATES
+  )
+
 
 endfunction()
 
@@ -197,30 +227,35 @@ endfunction()
 
 function(CASCADE_INHERITED_PROPERTY)
   set(_options REMOVE_DUPLICATES)
-  set(_singleargs PROPERTY TARGET INITIAL_VALUE OUTPUT_VARIABLE)
+  set(_singleargs PROPERTY TARGET TARGET_PROPERTY INITIAL_VALUE OUTPUT_VARIABLE)
   set(_multiargs DEPENDENCIES)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  set(_values "${arg_INITIAL_VALUE}")
+  set(values "${arg_INITIAL_VALUE}")
   foreach(_dep ${arg_DEPENDENCIES})
-    get_target_property(_inherited_values "${_dep}" ${arg_PROPERTY})
+    get_target_property(inherited_values "${_dep}" "${arg_PROPERTY}")
 
-    if(_inherited_values)
-      list(APPEND _values "${_inherited_values}")
+    if(inherited_values)
+      list(APPEND values "${inherited_values}")
     endif()
   endforeach()
 
   if(arg_REMOVE_DUPLICATES)
-    list(REMOVE_DUPLICATES _values)
+    list(REMOVE_DUPLICATES values)
   endif()
 
   if (arg_TARGET)
+    if (arg_TARGET_PROPERTY)
+      set(property "${arg_TARGET_PROPERTY}")
+    else()
+      set(property "${arg_PROPERTY}")
+    endif()
+
     set_target_properties("${arg_TARGET}"
-      PROPERTIES "${arg_PROPERTY}" "${_values}")
+      PROPERTIES "${property}" "${values}")
   endif()
 
   if (arg_OUTPUT_VARIABLE)
-    set("${arg_OUTPUT_VARIABLE}" "${_values}" PARENT_SCOPE)
+    set("${arg_OUTPUT_VARIABLE}" "${values}" PARENT_SCOPE)
   endif()
-
 endfunction()
