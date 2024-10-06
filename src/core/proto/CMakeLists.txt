@@ -27,7 +27,7 @@ BuildProto("${TARGET}"
 )
 
 cpack_add_component(${INSTALL_COMPONENT}
-  GROUP ${PKG_GROUP}
+  GROUP ${INSTALL_GROUP}
   DISPLAY_NAME "Common ProtoBuf/gRPC modules"
   DESCRIPTION "Generated Protocol Buffers/gRPC modules for common components"
 )

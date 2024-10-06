@@ -49,24 +49,15 @@ if(ENABLE_SERVICES)
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "DEMO service"
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    INSTALL_GROUP "${INSTALL_GROUP}"
     ENABLE
   )
 endif()
 
 cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS demo-common
-  GROUP ${PKG_GROUP}
+  GROUP ${INSTALL_GROUP}
   DISPLAY_NAME "DEMO example - C++ server"
   DESCRIPTION "DEMO application server written in C++"
 )
-
-# BuildPackageComponent(demo-server
-#   DEPENDS demo-common
-#   GROUP ${PKG_GROUP}
-#   DISPLAY_NAME "DEMO example - C++ server"
-#   DESCRIPTION "DEMO application server written in C++"
-#   EXTRA_CONTROL
-#   "${CMAKE_CURRENT_SOURCE_DIR}/systemd/postinst"
-#   "${CMAKE_CURRENT_SOURCE_DIR}/systemd/prerm"
-# )
 

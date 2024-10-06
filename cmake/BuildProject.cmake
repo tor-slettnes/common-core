@@ -31,6 +31,7 @@ if(NOT PROJECT_INCLUDED)
   endif()
 
   ### Common utility functions
+  include(utility)
   include(pkgconf)
 
   ### Enable testing

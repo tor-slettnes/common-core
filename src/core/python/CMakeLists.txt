@@ -57,7 +57,7 @@ BuildPython("${TARGET}"
 
 ### Add a installation package component
 cpack_add_component("${INSTALL_COMPONENT}"
-  GROUP "${PKG_GROUP}"
+  GROUP "${INSTALL_GROUP}"
   DISPLAY_NAME "Common Core - Python core"
   DESCRIPTION "Python shared components"
   INSTALL_TYPES python

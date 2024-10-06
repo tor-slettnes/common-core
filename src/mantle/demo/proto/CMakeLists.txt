@@ -32,7 +32,7 @@ BuildProto("${TARGET}"
 
 # cpack_add_component(${INSTALL_COMPONENT}
 #   DEPENDS core-proto
-#   GROUP ${PKG_GROUP}
+#   GROUP ${INSTALL_GROUP}
 #   DISPLAY_NAME "DEMO Example - Generated ProtoBuf/gRPC modules"
 #   DESCRIPTION "Generated runtime modules for communication with DEMO example over ProtoBuf/gRPC"
 # )

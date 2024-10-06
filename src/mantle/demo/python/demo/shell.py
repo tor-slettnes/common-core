@@ -103,3 +103,6 @@ def main():
     demo_grpc.initialize()
     demo_zmq.initialize()
     legend()
+
+if __name__ == '__main__':
+    main()

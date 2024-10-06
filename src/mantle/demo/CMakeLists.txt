@@ -5,9 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(PKG_GROUP "demo")
+set(INSTALL_GROUP "demo")
 
-cpack_add_component_group(${PKG_GROUP}
+cpack_add_component_group(${INSTALL_GROUP}
   DISPLAY_NAME "DEMO Example"
   DESCRIPTION "DEMO application example"
 )
@@ -33,7 +33,7 @@ add_subdirectory(settings)
 
 cpack_add_component(demo-common
   DEPENDS demo-settings
-  GROUP ${PKG_GROUP}
+  GROUP ${INSTALL_GROUP}
   DISPLAY_NAME "DEMO example - common components"
   DESCRIPTION "Common components for DEMO clients and servers"
 )

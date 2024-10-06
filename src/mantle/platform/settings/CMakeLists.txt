@@ -20,7 +20,7 @@ install(
 )
 
 cpack_add_component(${INSTALL_COMPONENT}
-  GROUP ${PKG_GROUP}
+  GROUP ${INSTALL_GROUP}
   DEPENDS core-settings
   DISPLAY_NAME "Common Core - common service settings"
   DESCRIPTION "Settings for common/platform applications"

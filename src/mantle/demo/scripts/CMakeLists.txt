@@ -12,7 +12,7 @@ add_subdirectory(sbin)
 
 cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS "demo-python"
-  GROUP ${PKG_GROUP}
+  GROUP ${INSTALL_GROUP}
   DISPLAY_NAME "Common Core DEMO - launcher scripts"
   DESCRIPTION "Shell script to launch interactive Python shell for the Common Core DEMO service"
 )

@@ -16,7 +16,7 @@ add_subdirectory(demo)
 
 cpack_add_component("${INSTALL_COMPONENT}"
   DEPENDS "core-python" "core-settings" "demo-proto" "demo-settings"
-  GROUP "${PKG_GROUP}"
+  GROUP "${INSTALL_GROUP}"
   DISPLAY_NAME "DEMO Example - Python modules"
   DESCRIPTION "Python client and server moduules for demo application example"
 )

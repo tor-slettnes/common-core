@@ -11,7 +11,7 @@ add_subdirectory(bin)
 
 cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS "platform-python"
-  GROUP ${PKG_GROUP}
+  GROUP ${INSTALL_GROUP}
   DISPLAY_NAME "Common Core Platform Services - launcher scripts"
   DESCRIPTION "Common Core Platform Services launcher scripts"
 )

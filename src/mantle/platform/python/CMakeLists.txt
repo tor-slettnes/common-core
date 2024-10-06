@@ -16,7 +16,7 @@ add_subdirectory(protobuf)
 
 cpack_add_component("${INSTALL_COMPONENT}"
   DEPENDS "core-python" "core-settings" "platform-proto" "platform-settings"
-  GROUP "${PKG_GROUP}"
+  GROUP "${INSTALL_GROUP}"
   DISPLAY_NAME "Platform Services - Python modules"
   DESCRIPTION "Python client moduules for platform services: SysConfig, NetConfig, VFS"
 )

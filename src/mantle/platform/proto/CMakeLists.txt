@@ -32,7 +32,7 @@ BuildProto("${TARGET}"
 
 cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS core-proto
-  GROUP ${PKG_GROUP}
+  GROUP ${INSTALL_GROUP}
   DISPLAY_NAME "Common Core Platform services - ProtoBuf/gRPC modules"
   DESCRIPTION "Generated runtime modules for communication with "
   "Common Core platform services over ProtoBuf/gRPC."

@@ -35,17 +35,21 @@ function(get_build_arg OUT_VAR)
 endfunction()
 
 function(get_build_number OUT_VAR)
-  if(NOT ${OUT_VAR})
-    if ($ENV{${OUT_VAR}})
-      set("${OUT_VAR}" "$ENV{${OUT_VAR}}" PARENT_SCOPE)
-    else()
-      math(EXPR _result "${LAST_BUILD}+1")
-      set("${OUT_VAR}" "${_result}" PARENT_SCOPE)
-    endif()
+  if(${OUT_VAR})
+    set(build_number "${${OUT_VAR}}")
+
+  elseif(DEFINED ENV{${OUT_VAR}})
+    set(build_number "$ENV{${OUT_VAR}}")
+
+  else()
+    math(EXPR _result "${LAST_BUILD}+1")
+    set(build_number "${_result}")
   endif()
 
-  set(LAST_BUILD "${${OUT_VAR}}"
-      CACHE INTERNAL "..." FORCE)
+  set(LAST_BUILD "${build_number}"
+    CACHE INTERNAL "..." FORCE)
+
+  set("${OUT_VAR}" "${build_number}" PARENT_SCOPE)
 endfunction()
 
 ### Global build configuration

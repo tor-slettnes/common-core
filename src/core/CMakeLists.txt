@@ -5,9 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(PKG_GROUP "core")
+set(INSTALL_GROUP "core")
 
-cpack_add_component_group(${PKG_GROUP}
+cpack_add_component_group(${INSTALL_GROUP}
   DISPLAY_NAME "Core components"
   DESCRIPTION "Common core - common components"
 )
@@ -53,7 +53,7 @@ BuildLibrary("${TARGET}" INTERFACE
 )
 
 # cpack_add_component(core-common
-#   GROUP ${PKG_GROUP}
+#   GROUP ${INSTALL_GROUP}
 #   DISPLAY_NAME "Common Core - common components"
 #   DESCRIPTION "Common components for Common Core application framework"
 # )

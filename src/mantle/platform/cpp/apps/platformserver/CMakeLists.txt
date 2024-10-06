@@ -45,13 +45,14 @@ if(ENABLE_SERVICES)
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "Platform server: System configuration, Networking, File access, Upgrade"
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    INSTALL_GROUP "${INSTALL_GROUP}"
     ENABLE
   )
 endif()
 
 cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS platform-settings
-  GROUP ${PKG_GROUP}
+  GROUP ${INSTALL_GROUP}
   DISPLAY_NAME "Platform server"
   DESCRIPTION "Platform services: System configuration, networking, filesystem, upgrade, logging"
 )

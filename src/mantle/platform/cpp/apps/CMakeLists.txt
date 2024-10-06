@@ -15,7 +15,7 @@ add_subdirectory(upgrade-tool)
 
 cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS platform-settings
-  GROUP ${PKG_GROUP}
+  GROUP ${INSTALL_GROUP}
   DISPLAY_NAME "Platform server"
   DESCRIPTION "Platform services: System configuration, networking, filesystem, upgrade, logging"
 )

@@ -10,7 +10,7 @@ set(INSTALL_COMPONENT "demo-settings")
 BuildSettings(INSTALL_COMPONENT "${INSTALL_COMPONENT}")
 
 cpack_add_component(${INSTALL_COMPONENT}
-  GROUP ${PKG_GROUP}
+  GROUP ${INSTALL_GROUP}
   DEPENDS core-settings
   DISPLAY_NAME "Common Core - DEMO service settings"
   DESCRIPTION "Settings for Common Core DEMO service."

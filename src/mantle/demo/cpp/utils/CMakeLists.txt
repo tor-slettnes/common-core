@@ -24,7 +24,7 @@ endif()
 
 cpack_add_component(${INSTALL_COMPONENT}
   DEPENDS demo-common
-  GROUP ${PKG_GROUP}
+  GROUP ${INSTALL_GROUP}
   DISPLAY_NAME "DEMO example - C++ utilities"
   DESCRIPTION "DEMO command-line utilitie written in C++"
 )
