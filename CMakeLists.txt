@@ -7,16 +7,6 @@
 
 cmake_minimum_required(VERSION 3.15)
 
-### File containing build specifications.
-set(PRODUCT "platform"
-  CACHE STRING "Product name")
-
-set(DEFAULTS_FILE "${CMAKE_SOURCE_DIR}/defaults.json"
-  CACHE FILEPATH "Default build settings")
-
-### Obtain build settings, with defaults from `${PRODUCT}.json`
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/build_args.cmake)
-
 ### C++ options
 option(BUILD_CPP         "Build/Install C++ code" ON)
 option(BUILD_RAPIDJSON   "Build fast JSON parsing using RapidJSON" ON)
@@ -55,6 +45,36 @@ if(BUILD_GRPC OR BUILD_ZMQ)
   set(BUILD_PROTOBUF ON)
 endif()
 
+### Method to obtain build settings, with defaults from `defaults.json`
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/build_args.cmake)
+
+### Global build configuration
+get_build_arg(PROJECT
+  SETTTING "project"
+  DOCSTRING "Top-level project name. Used e.g. to look up some run-time service settings from corresponding .json filenames"
+  DEFAULT "common-core")
+
+get_build_arg(PRODUCT
+  SETTING "product"
+  DOCSTRING "Product name"
+  DEFAULT "platform")
+
+get_build_arg(VERSION
+  SETTING "version"
+  DOCSTRING "Build version, in the format MAJOR.MINOR.PATCH"
+  REQUIRED)
+
+get_build_arg(DESCRIPTION
+  SETTING "description"
+  DOCSTRING "Project description"
+)
+
+get_build_arg(HOME_PAGE
+  SETTING "home page"
+  DOCSTRING "Home page for this project, if any")
+
+get_build_number(BUILD_NUMBER)
+
 project("${PROJECT}"
   VERSION "${VERSION}"
   DESCRIPTION "${DESCRIPTION}"
@@ -62,7 +82,8 @@ project("${PROJECT}"
   LANGUAGES CXX
 )
 
-message("Building project \"${PROJECT_NAME}\" version ${PROJECT_VERSION}, build #${BUILD_NUMBER}")
+message(STATUS
+  "Building project \"${PROJECT_NAME}\" version ${PROJECT_VERSION}, build #${BUILD_NUMBER}")
 
 ### Invoke common project settings
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/BuildProject.cmake)

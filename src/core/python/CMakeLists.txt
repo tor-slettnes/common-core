@@ -5,6 +5,10 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Build environment for PyInstaller
+add_subdirectory(build)
+
+
 ### Create a library target to facilitate get_target_property()
 set(TARGET "cc_core_python")
 
@@ -62,3 +66,4 @@ cpack_add_component("${INSTALL_COMPONENT}"
   DESCRIPTION "Python shared components"
   INSTALL_TYPES python
 )
+

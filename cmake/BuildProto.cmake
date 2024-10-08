@@ -59,6 +59,9 @@ function(BuildProto TARGET)
     )
   else()
     add_custom_target("${TARGET}" ALL)
+    if (arg_PROTO_DEPS)
+      add_dependencies("${TARGET}" ${arg_PROTO_DEPS})
+    endif()
   endif()
 
   if (BUILD_PYTHON)
@@ -139,10 +142,10 @@ function(BuildProto_PYTHON TARGET)
   endif()
 
   if (arg_STAGING_DIR)
-    set(staging_root "${arg_STAGING_DIR}")
+    set(staging_dir "${arg_STAGING_DIR}")
   else()
-    # set(staging_root "${CMAKE_BINARY_DIR}/python-protos")
-    set(staging_root "${CMAKE_CURRENT_BINARY_DIR}/python")
+    # set(staging_dir "${CMAKE_BINARY_DIR}/python-protos")
+    set(staging_dir "${CMAKE_CURRENT_BINARY_DIR}/python")
   endif()
 
   ### Construct namespace for Python modules
@@ -150,26 +153,18 @@ function(BuildProto_PYTHON TARGET)
     NAMESPACE "${arg_NAMESPACE}"
     NAMESPACE_COMPONENT "${_namespace_component}"
     MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
-    ROOT_DIR "${staging_root}"
-    OUTPUT_VARIABLE staging_dir)
+    ROOT_DIR "${staging_dir}"
+    OUTPUT_VARIABLE gen_dir)
 
-  file(MAKE_DIRECTORY "${staging_dir}")
-
-  ### Construct a list of staging root folders for this target and its dependencies,
-  cascade_inherited_property(
-    TARGET "${TARGET}"
-    PROPERTY python_paths
-    OUTPUT_VARIABLE python_paths
-    INITIAL_VALUE "${staging_root}"
-    DEPENDENCIES "${arg_DEPENDS}"
-    REMOVE_DUPLICATES)
+  ### Generate Python bindings
+  file(MAKE_DIRECTORY "${gen_dir}")
 
   if (BUILD_PROTOBUF)
     protogen_protobuf_py(PROTO_PY
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
-      OUT_DIR "${staging_dir}"
+      OUT_DIR "${gen_dir}"
     )
   endif()
 
@@ -178,11 +173,21 @@ function(BuildProto_PYTHON TARGET)
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
-      OUT_DIR "${staging_dir}"
+      OUT_DIR "${gen_dir}"
     )
   endif()
 
+  if(arg_DEPENDS)
+    add_dependencies("${TARGET}" ${arg_DEPENDS})
+  endif()
 
+  ### Set target property `staging_dir` for downstream targets
+  ### (e.g. via `BuildPythonExecutable()`)
+  set_target_properties("${TARGET}"
+    PROPERTIES staging_dir "${staging_dir}")
+
+
+  ### Install generated Python modules if requested
   if (arg_INSTALL OR INSTALL_PYTHON_MODULES)
     if (arg_INSTALL_DIR)
       set(_install_dir "${arg_INSTALL_DIR}")
@@ -190,7 +195,7 @@ function(BuildProto_PYTHON TARGET)
       set(_install_dir "${PYTHON_INSTALL_DIR}")
     endif()
 
-    install(DIRECTORY "${staging_root}/"
+    install(DIRECTORY "${staging_dir}/"
       DESTINATION "${_install_dir}"
       COMPONENT "${arg_INSTALL_COMPONENT}")
   endif()

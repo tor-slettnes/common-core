@@ -1,0 +1,4 @@
+pyinstaller
+grpcio
+protobuf
+zmq

@@ -15,6 +15,7 @@ set(FILES
 BuildPython("${TARGET}"
   NAMESPACE_COMPONENT "protobuf" # Python 2nd level namespace component
   INSTALL_COMPONENT "${INSTALL_COMPONENT}" # Debian package component
-  PYTHON_DEPS cc_core_python               # Python dependencies
+  PYTHON_DEPS "cc_core_python"             # Python dependencies
+  PROTO_DEPS "cc_demo_proto"               # ProtoBuf dependencies
   FILES "${FILES}"
 )

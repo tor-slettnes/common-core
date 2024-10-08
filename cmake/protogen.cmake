@@ -5,6 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+include(utility)                # cascade_inherited_property()
+
 #===============================================================================
 ## @fn protogen_common
 ## @brief Invoke `protoc` to generate bindings for a specified language/plugin
@@ -26,18 +28,18 @@ function(PROTOGEN_COMMON)
     set(_plugin_arg "--plugin=${arg_PLUGIN}")
   endif()
 
-  ## ProtoBuf Compiler setup
-  set(_include_dirs "${CMAKE_CURRENT_SOURCE_DIR}")
+  ### Collect ProtoBuf source folders from this target and its dependencies in
+  ### the target property `source_dirs`. The resulting list is then passed into
+  ### the ProtoBuf compiler as include directories.
 
-  foreach(_candidate ${arg_DEPENDS})
-    get_target_property(source_dirs "${_candidate}" source_dirs)
-    if (source_dirs)
-      list(APPEND _include_dirs "${source_dirs}")
-    endif()
-  endforeach()
-
-  set_target_properties("${arg_TARGET}"
-    PROPERTIES source_dirs "${_include_dirs}")
+  cascade_inherited_property(
+    TARGET "${arg_TARGET}"
+    PROPERTY source_dirs
+    INITIAL_VALUE "${CMAKE_CURRENT_SOURCE_DIR}"
+    OUTPUT_VARIABLE _include_dirs
+    DEPENDENCIES ${arg_DEPENDS}
+    REMOVE_DUPLICATES
+  )
 
   ## Append any directories supplied in the `Protobuf_IMPORT_DIRS` variable
   if(DEFINED Protobuf_IMPORT_DIRS)
@@ -48,14 +50,12 @@ function(PROTOGEN_COMMON)
   set(_proto_files "${arg_PROTOS}")
 
   ## Also add any `.proto` files that were supplied as target sources
-  if(arg_TARGET)
-    get_target_property(_files ${arg_TARGET} SOURCES)
-    foreach(_file ${_files})
-      if (_file MATCHES "proto$")
-        list(APPEND _proto_files ${_file})
-      endif()
-    endforeach()
-  endif()
+  get_target_property(_files ${arg_TARGET} SOURCES)
+  foreach(_file ${_files})
+    if (_file MATCHES "proto$")
+      list(APPEND _proto_files ${_file})
+    endif()
+  endforeach()
 
   ## Determine output directory
   if(arg_OUT_DIR)
@@ -66,7 +66,6 @@ function(PROTOGEN_COMMON)
   else()
     set(_outdir "${CMAKE_CURRENT_BINARY_DIR}")
   endif()
-
 
   ## Constuct a list of language-specific files to be generated
   set(_proto_src)
@@ -93,7 +92,7 @@ function(PROTOGEN_COMMON)
     find_program(_protoc protoc)
   endif()
 
-  ## Finally let's do the generation
+  ## Finally let's do the generation.
   add_custom_command(
     OUTPUT ${_outputs}
     DEPENDS ${_proto_src}

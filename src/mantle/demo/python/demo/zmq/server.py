@@ -6,9 +6,9 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from .requesthandler import DemoRequestHandler
-from .common import DEMO_SERVICE_CHANNEL, DEMO_PUBLISHER_CHANNEL
-from ..core import API, signal_store
+from cc.demo.zmq.requesthandler import DemoRequestHandler
+from cc.cemo.zmq.common import DEMO_SERVICE_CHANNEL, DEMO_PUBLISHER_CHANNEL
+from cc.demo.core import API, signal_store
 from messaging.zmq.basic import Publisher
 from messaging.zmq.protobuf import Server as ProtoServer, SignalWriter
 
@@ -42,7 +42,7 @@ class Server (ProtoServer):
 
 
 if __name__ == '__main__':
-    from ..native import NativeDemo
+    from cc.demo.native import NativeDemo
     import logging
 
     logger = logging.getLogger()

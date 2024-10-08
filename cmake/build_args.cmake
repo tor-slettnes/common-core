@@ -4,42 +4,97 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-function(get_build_arg OUT_VAR)
-  if(NOT ${OUT_VAR})
-    if ($ENV{${OUT_VAR}})
-      set("${OUT_VAR}" "$ENV{${OUT_VAR}}" PARENT_SCOPE)
-    else()
+set(DEFAULTS_FILE "${CMAKE_SOURCE_DIR}/defaults.json"
+  CACHE FILEPATH "Default build settings")
+
+#===============================================================================
+## @fn get_build_arg
+## @brief
+##    Look up the value of VARIABLE as a CMake or Environemnt variable,
+##    with fallback to a setting from `defaults.json`.
+##
+## `VARIABLE` is assigned in the parent (caller's) scope in order of precedence:
+##    - Its current value as a CMake or Cache variable, if available
+##    - The corresponding environment variable
+##    - By looking up the provided SETTING from `defaults.json`
+##    - If not yet assigned and the `REQUIRED` option is set, raise an error
+##    - The provided `DEFAULT` value, if any.
+##
+## The resulting value, if any, is assigned as a cache variable and thus
+## saved for future invocations (until the CMake cache is cleaned).
+
+function(get_build_arg VARIABLE)
+  set(_options REQUIRED)
+  set(_singleargs TYPE DOCSTRING DEFAULT)
+  set(_multiargs SETTING)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" "${ARGN}")
+
+  if(NOT ${VARIABLE})
+    set(value)
+
+    if ($ENV{${VARIABLE}})
+      set(value "$ENV{${VARIABLE}}")
+
+    elseif(arg_SETTING)
       if(NOT DEFAULTS_FILE)
         message(FATAL_ERROR "Variable DEFAULTS_FILE was not defined.")
-      elseif(NOT _DEFAULTS)
-        file(STRINGS "${DEFAULTS_FILE}" _DEFAULTS NEWLINE_CONSUME)
-        set(_DEFAULTS "${_DEFAULTS}" PARENT_SCOPE)
+
+      elseif(NOT _DEFAULTS_TEXT)
+        file(STRINGS "${DEFAULTS_FILE}" _DEFAULTS_TEXT NEWLINE_CONSUME)
+        set(_DEFAULTS_TEXT "${_DEFAULTS_TEXT}" PARENT_SCOPE)
       endif()
 
-      string(JSON _value
+      string(JSON value
         ERROR_VARIABLE _error
-        GET "${_DEFAULTS}" ${ARGN})
+        GET "${_DEFAULTS_TEXT}" ${arg_SETTING})
 
-      if(_error STREQUAL "NOTFOUND")
-        # No error
-        set("${OUT_VAR}" "${_value}" PARENT_SCOPE)
+      if(_error)
+        if (_error MATCHES "not found$")
+          if (arg_REQUIRED)
+            message(FATAL_ERROR
+              "Either ${VARIABLE} must be provided, "
+              "or the setting ${setting} must be added in ${DEFAULTS_FILE}")
+          else()
+            set(value "${arg_DEFAULT}")
+          endif()
 
-      elseif(DEFAULTS_FILE AND NOT _error MATCHES "not found$" AND NOT _WARNED_DEFAULTS)
-        ### JSON Parsing error (triggered only once)
-        message(FATAL_ERROR "Unable to read build settings from ${DEFAULTS_FILE}: ${_error}")
-        set(_WARNED_DEFAULTS TRUE PARENT_SCOPE)
-
+        elseif(NOT _WARNED_DEFAULTS)
+          ### JSON Parsing error (triggered only once)
+          message(FATAL_ERROR "Unable to read build settings from ${DEFAULTS_FILE}: ${_error}")
+          set(_WARNED_DEFAULTS TRUE PARENT_SCOPE)
+        endif()
       endif()
+
+    elseif(arg_REQUIRED)
+      message(FATAL_ERROR "Build argument ${VARIABLE} is required")
+
+    endif()
+
+    if (value)
+      if (arg_TYPE)
+        set(type "${arg_TYPE}")
+      else()
+        set(type "STRING")
+      endif()
+
+      set("${VARIABLE}" "${value}"
+        CACHE "${type}" "${arg_DOCSTRING}")
     endif()
   endif()
 endfunction()
 
-function(get_build_number OUT_VAR)
-  if(${OUT_VAR})
-    set(build_number "${${OUT_VAR}}")
+#===============================================================================
+## @fn get_build_arg
+## @brief
+##   Get the build number as passed in;
+##   otherwise incremented by one from the last build number
 
-  elseif(DEFINED ENV{${OUT_VAR}})
-    set(build_number "$ENV{${OUT_VAR}}")
+function(get_build_number VARIABLE)
+  if(${VARIABLE})
+    set(build_number "${${VARIABLE}}")
+
+  elseif(DEFINED ENV{${VARIABLE}})
+    set(build_number "$ENV{${VARIABLE}}")
 
   else()
     math(EXPR _result "${LAST_BUILD}+1")
@@ -49,51 +104,5 @@ function(get_build_number OUT_VAR)
   set(LAST_BUILD "${build_number}"
     CACHE INTERNAL "..." FORCE)
 
-  set("${OUT_VAR}" "${build_number}" PARENT_SCOPE)
+  set("${VARIABLE}" "${build_number}" PARENT_SCOPE)
 endfunction()
-
-### Global build configuration
-get_build_arg(PROJECT "project")
-get_build_arg(VERSION "version")
-get_build_arg(DESCRIPTION "description")
-get_build_arg(HOME_PAGE "home page")
-get_build_number(BUILD_NUMBER)
-
-### Debian package settings
-get_build_arg(PACKAGE_NAME_PREFIX        "package" "name prefix")
-get_build_arg(PACKAGE_VENDOR             "package" "vendor")
-get_build_arg(PACKAGE_CONTACT            "package" "contact")
-get_build_arg(PACKAGE_SPLIT_BY_COMPONENT "package" "split by component")
-get_build_arg(PACKAGE_SPLIT_BY_GROUP     "package" "split by group")
-
-
-### External (Python package) generator settings
-get_build_arg(PYTHON_NAMESPACE        "python" "namespace")
-get_build_arg(PYTHON_DEPENDENCIES     "python" "dependencies")
-
-### Software upgrade settings
-get_build_arg(UPGRADE_PACKAGE_SUFFIX "upgrade" "package suffix")
-get_build_arg(UPGRADE_SCAN_URL       "upgrade" "scan url")
-get_build_arg(UPGRADE_VFS_CONTEXT    "upgrade" "vfs context")
-get_build_arg(UPGRADE_KEYRING        "upgrade" "keyring")
-
-
-
-### Timestamp
-string(TIMESTAMP BUILD_DATE_UTC "%Y-%m-%d" UTC)
-string(TIMESTAMP BUILD_TIME_UTC "%H:%M:%S" UTC)
-string(TIMESTAMP BUILD_DATE_LOCAL "%Y-%m-%d")
-string(TIMESTAMP BUILD_TIME_LOCAL "%H:%M:%S")
-string(TIMESTAMP BUILD_TIMESTAMP "%s")
-
-### Host information
-cmake_host_system_information(RESULT BUILD_HOST QUERY HOSTNAME)
-cmake_host_system_information(RESULT BUILD_OS QUERY OS_NAME)
-cmake_host_system_information(RESULT BUILD_OS_RELEASE QUERY OS_RELEASE)
-cmake_host_system_information(RESULT BUILD_OS_VERSION QUERY OS_VERSION)
-cmake_host_system_information(RESULT BUILD_DISTRIB_ID QUERY DISTRIB_ID)
-cmake_host_system_information(RESULT BUILD_DISTRIB_NAME QUERY DISTRIB_NAME)
-cmake_host_system_information(RESULT BUILD_DISTRIB_VERSION QUERY DISTRIB_VERSION)
-cmake_host_system_information(RESULT BUILD_DISTRIB_VERSION_ID QUERY DISTRIB_VERSION_ID)
-cmake_host_system_information(RESULT BUILD_DISTRIB_VERSION_CODENAME QUERY DISTRIB_VERSION_CODENAME)
-cmake_host_system_information(RESULT BUILD_DISTRIB_PRETTY_NAME QUERY DISTRIB_PRETTY_NAME)

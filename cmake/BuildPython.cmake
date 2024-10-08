@@ -5,8 +5,15 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+include(utility)
+
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules" FORCE)
+
+get_build_arg(PYTHON_NAMESPACE
+  SETTING "python" "namespace"
+  DOCSTRING "Top-level namespace for Python moddules")
+
 
 #===============================================================================
 ## @fn BuildPython
@@ -16,7 +23,7 @@ set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
 function(BuildPython TARGET)
   set(_options INSTALL)
   set(_singleargs NAMESPACE NAMESPACE_COMPONENT STAGING_DIR INSTALL_COMPONENT INSTALL_DIR)
-  set(_multiargs PYTHON_DEPS PROTO_DEPS PROGRAMS FILES DIRECTORIES)
+  set(_multiargs PYTHON_DEPS PROTO_DEPS PROGRAMS FILES DIRECTORIES FILENAME_PATTERN)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### Create a Custom CMake target plus staging folder
@@ -24,6 +31,11 @@ function(BuildPython TARGET)
     add_custom_target("${TARGET}" ALL)
   endif()
 
+  if (arg_PYTHON_DEPS OR arg_PROTO_DEPS)
+    add_dependencies("${TARGET}" ${arg_PYTHON_DEPS} ${arg_PROTO_DEPS})
+  endif()
+
+  target_sources("${TARGET}" PRIVATE "${arg_PROGRAMS}" "${arg_FILES}" "${arg_DIRECTORIES}")
 
   ### Construct namespace for Python modules
   get_namespace_dir(
@@ -32,9 +44,37 @@ function(BuildPython TARGET)
     MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
     OUTPUT_VARIABLE namespace_dir)
 
-  #=============================================================================
-  ### Install source modules locally or via CPack
+  ### We populate sources into a target-specific staging directory, from where
+  ### they will be:
+  ###  * Picked up by `BuildPythonWheel()` and added to `pyproject.toml`
+  ###  * Consolidated and staged to a common folder by `BuildPythonExecutable()`
+  ###    (because PyInstaller does not handle multiple source locations with
+  ###    overlapping module namespaces / directory structures)
+  ###  * Installed, if the option `INSTALL_PYTHON_MODDULES` is enabled
 
+  ### Specify root folder for staging python modules for this target
+  if(arg_STAGING_DIR)
+    cmake_path(APPEND "${CMAKE_CURRENT_BINARY_DIR}" "${arg_STAGING_DIR}"
+      OUTPUT_VARIABLE staging_dir)
+  else()
+     #set(staging_dir "${CMAKE_BINARY_DIR}/python-staging")
+     set(staging_dir "${CMAKE_CURRENT_BINARY_DIR}/staging")
+  endif()
+
+  populate_staging_dir("${staging_dir}"
+    NAMESPACE_DIR "${namespace_dir}"
+    PROGRAMS ${arg_PROGRAMS}
+    FILES ${arg_FILES}
+    DIRECTORIES ${arg_DIRECTORIES}
+    FILENAME_PATTERN ${arg_FILENAME_PATTERN}
+  )
+
+  ### Set target property `staging_dir` for downstream targets
+  ### (e.g. via `BuildPythonExecutable()`)
+  set_target_properties("${TARGET}"
+    PROPERTIES staging_dir "${staging_dir}")
+
+  ### Install source modules locally or via CPack
   if (arg_INSTALL OR INSTALL_PYTHON_MODULES)
     if (arg_INSTALL_DIR)
       set(_install_dir "${arg_INSTALL_DIR}")
@@ -43,70 +83,35 @@ function(BuildPython TARGET)
     endif()
 
     cmake_path(APPEND _install_dir "${namespace_dir}" OUTPUT_VARIABLE _destination)
-
-    if (arg_PROGRAMS)
-      install(
-        PROGRAMS ${arg_PROGRAMS}
-        DESTINATION "${_destination}"
-        COMPONENT "${arg_INSTALL_COMPONENT}")
-    endif()
-
-    if (arg_FILES)
-      install(
-        FILES ${arg_FILES}
-        DESTINATION "${_destination}"
-        COMPONENT "${arg_INSTALL_COMPONENT}")
-    endif()
-
-    if (arg_DIRECTORIES)
-      install(
-        DIRECTORY ${arg_DIRECTORIES}
-        DESTINATION "${_destination}"
-        COMPONENT "${arg_INSTALL_COMPONENT}")
-    endif()
-  endif()
-
-  if (BUILD_PYTHON_EXECUTABLE)
-    populate_staging_dir(
-      STAGING_DIR "${arg_STAGING_DIR}"
-      NAMESPACE_DIR "${namespace_dir}"
-      PYTHON_DEPS ${arg_PYTHON_DEPS}
-      PROTO_DEPS ${arg_PROTO_DEPS}
-      PROGRAMS ${arg_PROGRAMS}
-      FILES ${arg_FILES}
-      DIRECTORIES ${arg_DIRECTORIES}
+    install(
+      DIRECTORY "${staging_dir}/"
+      DESTINATION "${_destination}"
+      COMPONENT "${arg_INSTALL_COMPONENT}"
     )
+
   endif()
 endfunction()
 
 
 #===============================================================================
-## @fn POPULATE_STAGING_FOLDER
+## @fn POPULATE_STAGING_DIR
 ## @brief Populate a staging folder for `PyInstaller`.
 
-function(POPULATE_STAGING_DIR)
+function(POPULATE_STAGING_DIR STAGING_DIR)
   set(_options)
-  set(_singleargs STAGING_DIR NAMESPACE_DIR)
-  set(_multiargs PYTHON_DEPS PROTO_DEPS PROGRAMS FILES DIRECTORIES)
+  set(_singleargs NAMESPACE_DIR)
+  set(_multiargs PROGRAMS FILES DIRECTORIES FILENAME_PATTERN)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  ### Specify root folder for staging python modules for this target
-  if(arg_STAGING_DIR)
-    cmake_path(APPEND "${CMAKE_CURRENT_BINARY_DIR}" "${arg_STAGING_DIR}"
-      OUTPUT_VARIABLE staging_root)
-  else()
-     set(staging_root "${CMAKE_BINARY_DIR}/python-staging")
-     # set(staging_root "${CMAKE_CURRENT_BINARY_DIR}/staging")
-  endif()
-
-  cmake_path(APPEND staging_root "${namespace_dir}" OUTPUT_VARIABLE staging_dir)
+  cmake_path(APPEND STAGING_DIR "${arg_NAMESPACE_DIR}"
+    OUTPUT_VARIABLE modules_dir)
 
   ### Copy programs, files and directories to a staging subfolder for PyInstaller
-  file(MAKE_DIRECTORY "${staging_dir}")
+  file(MAKE_DIRECTORY "${modules_dir}")
 
   if (arg_PROGRAMS)
     file(COPY ${arg_PROGRAMS}
-      DESTINATION "${staging_dir}"
+      DESTINATION "${modules_dir}"
       FILE_PERMISSIONS
       OWNER_READ OWNER_WRITE OWNER_EXECUTE
       GROUP_READ GROUP_EXECUTE
@@ -115,53 +120,26 @@ function(POPULATE_STAGING_DIR)
 
   if (arg_FILES)
     file(COPY ${arg_FILES}
-      DESTINATION "${staging_dir}")
+      DESTINATION "${modules_dir}")
   endif()
 
   if (arg_DIRECTORIES)
-    file(COPY ${arg_DIRECTORIES}
-      DESTINATION "${staging_dir}"
-      PATTERN __pycache__ EXCLUDE)
+    if (arg_FILENAME_PATTERN)
+      list(TRANSFORM arg_FILENAME_PATTERN PREPEND "PATTERN;"
+        OUTPUT_VARIABLE match_expr)
+
+      file(COPY ${arg_DIRECTORIES}
+        DESTINATION "${modules_dir}"
+        FILES_MATCHING ${match_expr})
+
+    else()
+      file(COPY ${arg_DIRECTORIES}
+        DESTINATION "${modules_dir}"
+        PATTERN __pycache__ EXCLUDE)
+    endif()
   endif()
-
-  #=============================================================================
-  ### Construct a list of staging roots for this target and its dependencies.
-  ### This is then cascaded to downstream dependents as paths for PyInstaller.
-
-  ### Collect Python source folders in the target property `python_paths`.
-  cascade_inherited_property(
-    TARGET "${TARGET}"
-    PROPERTY python_paths
-    OUTPUT_VARIABLE python_paths
-    INITIAL_VALUE "${staging_root}"
-    DEPENDENCIES "${arg_PYTHON_DEPS}"
-    REMOVE_DUPLICATES
-  )
-
-  ### Collect ProtoBuf-generated Python source folders from our direct
-  ### ProtoBuf target dependencies in the target property `proto_paths`.
-  cascade_inherited_property(
-    TARGET "${TARGET}"
-    PROPERTY python_paths
-    TARGET_PROPERTY proto_paths
-    OUTPUT_VARIABLE proto_paths
-    DEPENDENCIES "${arg_PROTO_DEPS}"
-    REMOVE_DUPLICATES
-  )
-
-  ### Collect indirect ProtoBuf-generated Python source folders
-  ### from the target property `proto_paths` from our Python dependencies.
-  cascade_inherited_property(
-    TARGET "${TARGET}"
-    PROPERTY proto_paths
-    OUTPUT_VARIABLE proto_paths
-    INITIAL_VALUE "${proto_paths}"
-    DEPENDENCIES "${arg_PYTHON_DEPS}"
-    REMOVE_DUPLICATES
-  )
-
-
 endfunction()
+
 
 
 #===============================================================================
@@ -204,6 +182,7 @@ function(GET_NAMESPACE)
   ### Construct namespace for Python modules
   if(arg_NAMESPACE)
     set(namespace "${arg_NAMESPACE}")
+
   else()
     list(FIND arg_MISSING_VALUES "NAMESPACE" _found)
     if(${_found} LESS 0 AND PYTHON_NAMESPACE)
@@ -218,44 +197,3 @@ function(GET_NAMESPACE)
   set("${arg_OUTPUT_VARIABLE}" "${namespace}" PARENT_SCOPE)
 endfunction()
 
-
-#===============================================================================
-## @fn CASCADE_INHERITED_PROPERTY
-## @brief
-##    Build a list of values stored as a property on the specified target,
-##    and subsequently/recursively in its downstream dependents
-
-function(CASCADE_INHERITED_PROPERTY)
-  set(_options REMOVE_DUPLICATES)
-  set(_singleargs PROPERTY TARGET TARGET_PROPERTY INITIAL_VALUE OUTPUT_VARIABLE)
-  set(_multiargs DEPENDENCIES)
-  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  set(values "${arg_INITIAL_VALUE}")
-  foreach(_dep ${arg_DEPENDENCIES})
-    get_target_property(inherited_values "${_dep}" "${arg_PROPERTY}")
-
-    if(inherited_values)
-      list(APPEND values "${inherited_values}")
-    endif()
-  endforeach()
-
-  if(arg_REMOVE_DUPLICATES)
-    list(REMOVE_DUPLICATES values)
-  endif()
-
-  if (arg_TARGET)
-    if (arg_TARGET_PROPERTY)
-      set(property "${arg_TARGET_PROPERTY}")
-    else()
-      set(property "${arg_PROPERTY}")
-    endif()
-
-    set_target_properties("${arg_TARGET}"
-      PROPERTIES "${property}" "${values}")
-  endif()
-
-  if (arg_OUTPUT_VARIABLE)
-    set("${arg_OUTPUT_VARIABLE}" "${values}" PARENT_SCOPE)
-  endif()
-endfunction()

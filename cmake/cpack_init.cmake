@@ -5,6 +5,27 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Debian package settings
+get_build_arg(PACKAGE_NAME_PREFIX
+  SETTING "package" "name prefix")
+
+get_build_arg(PACKAGE_VENDOR
+  SETTING "package" "vendor")
+
+get_build_arg(PACKAGE_CONTACT
+  SETTING "package" "contact")
+
+get_build_arg(PACKAGE_SPLIT_BY_COMPONENT
+  SETTING "package" "split by component")
+
+get_build_arg(PACKAGE_SPLIT_BY_GROUP
+  SETTING "package" "split by group")
+
+
+get_build_arg(PYTHON_DEPENDENCIES
+  SETTING "python" "dependencies")
+
+
 ### General CPack settings
 set(CPACK_PACKAGE_NAME "${PACKAGE_NAME_PREFIX}")
 set(CPACK_PACKAGE_VENDOR "${PACKAGE_VENDOR}")

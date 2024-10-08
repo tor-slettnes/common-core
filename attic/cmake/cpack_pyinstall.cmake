@@ -10,7 +10,7 @@
 ## @fn GET_COMPONENT_DIR
 ## @brief Get CPack staging folder for the specified package component
 
-function(GET_COMPONENT_DIR COMPONENT OUT_VAR)
+function(get_component_dir COMPONENT OUT_VAR)
   set(_dir "${CPACK_TEMPORARY_DIRECTORY}")
 
   if (CPACK_DEB_COMPONENT_INSTALL)
@@ -31,7 +31,7 @@ endfunction()
 ## @fn GET_COMPONENT_DEPENDS
 ## @brief Get depended CPack package components for the specified component
 
-function(GET_COMPONENT_DEPENDS COMPONENT OUT_VAR)
+function(get_component_depends COMPONENT OUT_VAR)
   string(TOUPPER "${COMPONENT}" _upper)
   set(_var "CPACK_COMPONENT_${_upper}_DEPENDS")
   set(${OUT_VAR} ${${_var}} PARENT_SCOPE)
@@ -42,7 +42,7 @@ endfunction()
 ## @brief
 ##   Get Python programs to install for the specified CPack package component
 
-function(GET_COMPONENT_PYINSTALLS COMPONENT OUT_VAR)
+function(get_component_pyinstalls COMPONENT OUT_VAR)
   string(TOUPPER "${COMPONENT}" _upper)
   set(_var "CPACK_COMPONENT_${_upper}_PYINSTALL")
   set(${OUT_VAR} ${${_var}} PARENT_SCOPE)
@@ -53,7 +53,7 @@ endfunction()
 ## @brief
 ##   Get PyInstall work directory for the specified component
 
-function(GET_COMPONENT_BUILD_DIR COMPONENT OUT_VAR)
+function(get_component_build_dir COMPONENT OUT_VAR)
   string(TOUPPER "${COMPONENT}" _upper)
   set(_var "CPACK_COMPONENT_${_upper}_BUILD_DIR")
   set(${OUT_VAR} ${${_var}} PARENT_SCOPE)
@@ -67,12 +67,12 @@ endfunction()
 ##   Get CPack staging folder fo the specified package component and its
 ##   dependencies
 
-function(GET_COMPONENT_DEP_DIRS COMPONENT OUT_VAR)
+function(get_component_dep_dirs COMPONENT OUT_VAR)
   get_component_dir("${COMPONENT}" _roots)
   get_component_depends("${COMPONENT}" _depends)
 
-  foreach(_dependee ${_depends})
-    get_component_dir("${_dependee}" _dir)
+  foreach(_dependency ${_depends})
+    get_component_dir("${_dependency}" _dir)
     list(APPEND _roots "${_dir}")
   endforeach()
 
@@ -80,10 +80,10 @@ function(GET_COMPONENT_DEP_DIRS COMPONENT OUT_VAR)
 endfunction()
 
 #===============================================================================
-## @fn GET_COMPONENT_PYTHON_ROOT)
+## @fn GET_COMPONENT_PYTHON_ROOT
 ## @brief Get Python root install folder for the specified component
 
-function(GET_COMPONENT_PYTHON_ROOT COMPONENT OUT_VAR)
+function(get_component_python_root COMPONENT OUT_VAR)
   get_component_dir("${COMPONENT}" _root)
 
   if (CPACK_PACKAGING_INSTALL_PREFIX)
@@ -98,12 +98,36 @@ endfunction()
 
 
 #===============================================================================
-## @fn PY_INSTALL
+## @fn copy_to_staging_dir
+## @brief Copy Python files from the specified component to a staging directory
+
+function(consolidate_to_staging_dir STAGING_DIR)
+  if(ARGN)
+    set(components "${ARGN}")
+  else()
+    set(components "${CPACK_COMPONENTS_ALL}")
+  endif()
+
+  file(MAKE_DIRECTORY "${STATGING_DIR}")
+
+  foreach(component ${components})
+    get_component_python_root("${component}" _root)
+    if (IS_DIRECTORY "${_root}")
+      file(COPY "${_root}/."
+        DESTINATION "${STAGING_DIR}")
+    endif(
+  endforeach()
+  file(COPY "${_root}/." "${STAGING_DIR}")
+
+endfunction()
+
+#===============================================================================
+## @fn py_install_program
 ## @brief
 ##   Create a Python executable with PyInstaller using the specified
 ##   Python virtual environment
 
-function(PY_INSTALL)
+function(py_install_program)
   set(_options)
   set(_singleargs PROGRAM SCRIPT COMPONENT)
   set(_multiargs)
@@ -131,7 +155,7 @@ function(PY_INSTALL)
   execute_process(
     COMMAND /home/tslettnes/bin/testenv
       "${CPACK_PYTHON_VENV}/bin/python" -m PyInstaller
-      -F
+      --clean --noconfirm --onefile
       --name "${program_name}"
       ${_path_args}
       --workpath "${_staging_dir}"
@@ -145,27 +169,37 @@ function(PY_INSTALL)
 endfunction()
 
 
+#===============================================================================
+## @fn py_install_component
+
+function(py_install_component COMPONENT PROGRAM_PAIRS)
+  message(STATUS "Creating PyInstalls in VENV ${CPACK_PYTHON_VENV} for component ${COMPONENT}: ${PROGRAM_PAIRS}")
+
+  foreach(_program_pair ${PROGRAM_PAIRS})
+    string(REGEX_MATCH "^([^:]+):(.*)" _match "${_program_pair}")
+    set(_program "${CMAKE_MATCH_1}")
+    set(_script  "${CMAKE_MATCH_2}")
+
+    message(STATUS
+      "Building Python executable from "
+      "program=${_program}, script=${_script}")
+
+    py_install_program(
+      PROGRAM "${_program}"
+      SCRIPT "${_script}"
+      COMPONENT "${COMPONENT}"
+    )
+  endforeach()
+endfunction()
+
+#===============================================================================
+## Entry point
+
 if (IS_DIRECTORY "${CPACK_PYTHON_VENV}")
   foreach(_component ${CPACK_COMPONENTS_ALL})
-    get_component_pyinstalls(${_component} _pyinstall)
-    if (_pyinstall)
-      message(STATUS "Creating PyInstalls in VENV ${CPACK_PYTHON_VENV} for component ${_component}: ${_pyinstall}")
-
-      foreach(_program_pair ${_pyinstall})
-        string(REGEX_MATCH "^([^:]+):(.*)" _match "${_program_pair}")
-        set(_program "${CMAKE_MATCH_1}")
-        set(_script  "${CMAKE_MATCH_2}")
-
-        message(STATUS
-          "Building Python executable from "
-          "program=${_program}, script=${_script}")
-
-        py_install(
-          PROGRAM "${_program}"
-          SCRIPT "${_script}"
-          COMPONENT "${_component}"
-        )
-      endforeach()
+    get_component_pyinstalls(${_component} _program_pairs)
+    if (_program_pairs)
+      py_install_component("${_component}" "${_program_pairs}")
     endif()
   endforeach()
 else()

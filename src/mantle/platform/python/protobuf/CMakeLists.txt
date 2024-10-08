@@ -17,5 +17,7 @@ set(FILES
 BuildPython("${TARGET}"
   NAMESPACE_COMPONENT "protobuf"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  PYTHON_DEPS "cc_core_python"
+  PROTO_DEPS "cc_platform_proto"
   FILES "${FILES}"
 )

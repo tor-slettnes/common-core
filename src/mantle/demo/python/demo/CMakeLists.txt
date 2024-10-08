@@ -26,8 +26,7 @@ set(DIRECTORIES
 BuildPython("${TARGET}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   NAMESPACE_COMPONENT "demo"
-  PYTHON_DEPS cc_core_python cc_demo_python_protobuf
-  PROTO_DEPS cc_demo_proto
+  PYTHON_DEPS "cc_demo_python_protobuf"
   PROGRAMS "${PROGRAMS}"
   FILES "${FILES}"
   DIRECTORIES "${DIRECTORIES}"
@@ -36,17 +35,19 @@ BuildPython("${TARGET}"
 
 BuildPythonExecutable("pydemo_grpc_server"
   PYTHON_DEPS "${TARGET}"
+  BUILD_DEPS "cc_python_pyinstaller"
+  VENV "${PY_VENV_ROOT}"
   SCRIPT "grpc/server.py"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  VENV "${CMAKE_SOURCE_DIR}/venv"
   TYPE SBIN
 )
 
 BuildPythonExecutable("pydemo_zmq_server"
   PYTHON_DEPS "${TARGET}"
+  BUILD_DEPS "cc_python_pyinstaller"
+  VENV "${PY_VENV_ROOT}"
   SCRIPT "zmq/server.py"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  VENV "${CMAKE_SOURCE_DIR}/venv"
   TYPE SBIN
   DIRECTORY_BUNDLE
 )

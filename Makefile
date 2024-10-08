@@ -5,6 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+MAKEFLAGS    += --no-print-directory
 SHARED_DIR   ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 OUT_DIR      ?= $(CURDIR)/out
 BUILD_TYPE   ?= Release
