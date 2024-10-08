@@ -65,23 +65,39 @@ endfunction()
 ##    Get a property for a specified target as well as its dependencies.
 ##    The result is returned as a list.
 
-function(get_target_property_recursively OUTPUT_VARIABLE TARGET PROPERTY)
+function(get_target_property_recursively PROPERTY)
+  set(_options REMOVE_DUPLICATES REQUIRED)
+  set(_singleargs OUTPUT_VARIABLE)
+  set(_multiargs TARGETS)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  set(properties)
-  get_target_property(value "${TARGET}" "${PROPERTY}")
-  if (value)
-    set(properties "${value}")
+  set(values)
+
+  foreach(target ${arg_TARGETS})
+    get_target_property(value "${target}" "${PROPERTY}")
+    if (value)
+      list(APPEND values "${value}")
+    endif()
+
+    get_target_property(dependencies "${target}" MANUALLY_ADDED_DEPENDENCIES)
+    if (dependencies)
+      get_target_property_recursively("${PROPERTY}"
+        TARGETS ${dependencies}
+        OUTPUT_VARIABLE dep_props
+      )
+      list(APPEND values ${dep_props})
+    endif()
+  endforeach()
+
+  if (arg_REMOVE_DUPLICATES)
+    list(REMOVE_DUPLICATES values)
   endif()
 
-  get_target_property(dependencies "${TARGET}" MANUALLY_ADDED_DEPENDENCIES)
-  if (dependencies)
-    foreach (dep ${dependencies})
-      get_target_property_recursively(dep_prop "${dep}" "${PROPERTY}")
-      list(APPEND properties "${dep_prop}")
-    endforeach()
+  if (arg_REQUIRED AND NOT values)
+    message(FATAL_ERROR
+      "Target property '${PROPERTY}' is required but not present present in any of: ${arg_TARGETS}")
   endif()
 
-  list(REMOVE_DUPLICATES properties)
-  set("${OUTPUT_VARIABLE}" "${properties}" PARENT_SCOPE)
+  set("${arg_OUTPUT_VARIABLE}" "${values}" PARENT_SCOPE)
 endfunction()
 

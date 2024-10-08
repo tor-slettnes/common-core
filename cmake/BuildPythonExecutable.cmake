@@ -13,7 +13,7 @@
 function(BuildPythonExecutable TARGET)
   set(_options DEBUG INFO DIRECTORY_BUNDLE)
   set(_singleargs SCRIPT PROGRAM TYPE INSTALL_COMPONENT PYTHON_INTERPRETER VENV)
-  set(_multiargs PYTHON_DEPS BUILD_DEPS PYINSTALLER_EXTRA_ARGS)
+  set(_multiargs BUILD_DEPS PYTHON_DEPS PYINSTALLER_EXTRA_ARGS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### Do this only if the option `BUILD_PYTHON_EXECUTABLE` is enabled
@@ -26,8 +26,10 @@ function(BuildPythonExecutable TARGET)
     set(python "${arg_PYTHON_INTERPRETER}")
   elseif(arg_VENV)
     set(python "${arg_VENV}/bin/python")
+  elseif(PYTHON_VENV)
+    set(python "${PYTHON_VENV}/bin/python")
   else()
-    message(FATAL_ERRROR "BuildPythonExecutable() requires PYTHON_INTERPRETER or VENV")
+    message(FATAL_ERRROR "BuildPythonExecutable(${TARGET}) requires PYTHON_INTERPRETER or VENV")
   endif()
 
   ### Determine name of executable from PROGRAM or else TARGET
@@ -35,6 +37,10 @@ function(BuildPythonExecutable TARGET)
     set(program "${arg_PROGRAM}")
   else()
     set(program "${TARGET}")
+  endif()
+
+  if (NOT arg_PYTHON_DEPS)
+    message(FATAL_ERROR "BuildPythonExecutable(${TARGET}) requires PYTHON_DEPS")
   endif()
 
   ### Specify a working directory for PyIntaller
@@ -51,7 +57,10 @@ function(BuildPythonExecutable TARGET)
   ### staging area.  This is needed because `PyInstaller` cannot handle
   ### multiple source paths with overlappiing directoreis/namespaces.
   set(staging_dir "${out_dir}/staging")
-  get_target_property_recursively(dep_staging_dirs "${TARGET}" staging_dir)
+  get_target_property_recursively(staging_dir
+    TARGETS ${arg_PYTHON_DEPS}
+    OUTPUT_VARIABLE dep_staging_dirs
+    REQUIRED)
 
   message(DEBUG
     "Creating PyInstaller staging directory ${staging_dir} from: ${dep_staging_dirs}")

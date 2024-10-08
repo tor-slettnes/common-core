@@ -5,40 +5,25 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET "cc_python_venv")
-
-set(PY_VENV_ROOT "${CMAKE_SOURCE_DIR}/venv"
-  CACHE STRING "Python Virtual Environment Root Folder")
+set(TARGET "python_venv")
 
 find_package(Python3
   COMPONENTS Interpreter
 )
 
-add_custom_target(cc_python_venv
-  DEPENDS "${PY_VENV_ROOT}/bin/pip")
+add_custom_target("${TARGET}"
+  DEPENDS "${PYTHON_VENV}/bin/pip")
 
 add_custom_command(
-  OUTPUT "${PY_VENV_ROOT}/bin/pip"
+  OUTPUT "${PYTHON_VENV}/bin/pip"
   COMMAND "${Python3_EXECUTABLE}"
-  ARGS -m virtualenv -p "${Python3_EXECUTABLE}" "${PY_VENV_ROOT}"
-  COMMENT "Creating Python Virual Environment: ${PY_VENV_ROOT}"
+  ARGS -m virtualenv -p "${Python3_EXECUTABLE}" "${PYTHON_VENV}"
+  COMMENT "Creating Python Virual Environment: ${PYTHON_VENV}"
 )
-
-
-get_build_arg(PYTHON_PIP_REQUIREMENTS_FILE
-  SETTING "python" "pip requirements file"
-  TYPE FILEPATH
-  DOCSTRING "Package requirements file for Python Virtual Environment"
-  DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
-)
-
-cmake_path(APPEND CMAKE_SOURCE_DIR "${PYTHON_PIP_REQUIREMENTS_FILE}"
-  OUTPUT_VARIABLE requirements_file)
-
 
 add_custom_command(
-  OUTPUT "${PY_VENV_ROOT}/bin/pip"
-  COMMAND "${PY_VENV_ROOT}/bin/python"
-  ARGS -m pip install -r "${requirements_file}"
+  OUTPUT "${PYTHON_VENV}/bin/pip"
+  COMMAND "${PYTHON_VENV}/bin/python"
+  ARGS -m pip install -r "${PYTHON_PIP_REQUIREMENTS_FILE}"
   APPEND
 )

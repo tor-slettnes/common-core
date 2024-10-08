@@ -1,6 +1,6 @@
 {
     "project": "common-core",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "description": "Cross-platform development framework for embedded microservice applications",
     "home page": "https://github.com/tor-slettnes/common-core/",
     "package" : {
@@ -10,14 +10,16 @@
         "vendor": "Common Core Authors",
         "contact": "Tor Slettnes <tor@slett.net>"
     },
+    "python": {
+        "namespace": "cc",
+        "dependencies" : ["grpcio", "protobuf", "zmq"],
+        "venv": "venv",
+        "pip requirements file" : "src/core/python/build/venv/requirements.txt"
+    },
     "upgrade": {
         "package suffix": ".ccpkg",
         "scan url": "https://slett.net/common-core/package-index.json",
         "vfs context": "releases",
         "keyring": "common-core-release.kbx"
-    },
-    "python": {
-        "namespace": "cc",
-        "dependencies" : ["grpcio", "protobuf", "zmq"]
     }
 }

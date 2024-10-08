@@ -35,8 +35,8 @@ BuildPython("${TARGET}"
 
 BuildPythonExecutable("pydemo_grpc_server"
   PYTHON_DEPS "${TARGET}"
-  BUILD_DEPS "cc_python_pyinstaller"
-  VENV "${PY_VENV_ROOT}"
+  BUILD_DEPS "python_pyinstaller"
+  VENV "${PYTHON_VENV}"
   SCRIPT "grpc/server.py"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   TYPE SBIN
@@ -44,8 +44,8 @@ BuildPythonExecutable("pydemo_grpc_server"
 
 BuildPythonExecutable("pydemo_zmq_server"
   PYTHON_DEPS "${TARGET}"
-  BUILD_DEPS "cc_python_pyinstaller"
-  VENV "${PY_VENV_ROOT}"
+  BUILD_DEPS "python_pyinstaller"
+  VENV "${PYTHON_VENV}"
   SCRIPT "zmq/server.py"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   TYPE SBIN

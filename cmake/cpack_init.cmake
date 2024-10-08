@@ -62,31 +62,4 @@ set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 ### Use BUILD_NUMBER as Debian release number
 set(CPACK_DEBIAN_PACKAGE_RELEASE "${BUILD_NUMBER}")
 
-#===============================================================================
-### External generator settings for producing a Python wheel
-
-### CMake script to generate Python wheel
-set(CPACK_EXTERNAL_PACKAGE_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/cpack_wheel.cmake")
-
-### Create a staging folder for external generation
-set(CPACK_EXTERNAL_ENABLE_STAGING TRUE)
-
-#===============================================================================
-### Custom settings propagated to PyInstall
-set(CPACK_PYTHON_VENV "${CMAKE_SOURCE_DIR}/venv")
-
-#===============================================================================
-### Custom settings propagated to external generator
-
-set(CPACK_BUILD_NUMBER "${BUILD_NUMBER}")
-set(CPACK_SETTINGS_DIR "${SETTINGS_DIR}")
-set(CPACK_PYTHON_INSTALL_DIR "${PYTHON_INSTALL_DIR}")
-set(CPACK_PYTHON_NAMESPACE "${PYTHON_NAMESPACE}")
-string(REPLACE "\"" "\\\"" CPACK_PYTHON_DEPENDENCIES "${PYTHON_DEPENDENCIES}")
-
-
-#===============================================================================
-
-#set(CPACK_INSTALL_SCRIPTS "${CMAKE_CURRENT_LIST_DIR}/cpack_install.cmake")
-#set(CPACK_PRE_BUILD_SCRIPTS "${CMAKE_CURRENT_LIST_DIR}/cpack_pyinstall.cmake")
 

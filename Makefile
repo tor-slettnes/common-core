@@ -28,7 +28,7 @@ PACKAGE_DIR  ?= $(OUT_DIR)/packages
 export CMAKE_INSTALL_PREFIX ?= ${INSTALL_DIR}
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
 export CPACK_PACKAGE_DIRECTORY ?= $(PACKAGE_DIR)
-export CPACK_PACKAGE_NAME ?= $(PACKAGE_NAME)
+export PYTHON_VENV=venv
 
 ifeq ($(shell uname), Linux)
    export CMAKE_BUILD_PARALLEL_LEVEL ?= $(shell nproc)
@@ -45,7 +45,7 @@ package: deb
 deb: build
 	@echo
 	@echo "#############################################################"
-	@echo "Creating packages in ${PACKAGE_DIR}"
+	@echo "Creating release packages in ${PACKAGE_DIR}"
 	@echo "#############################################################"
 	@echo
 	@cpack --config "${BUILD_DIR}/CPackConfig.cmake" -B "${PACKAGE_DIR}"
@@ -98,27 +98,34 @@ cmake: $(BUILD_DIR)
 		$(if $(BUILD_NUMBER),-D BUILD_NUMBER="$(BUILD_NUMBER)") \
 		$(if $(PACKAGE_NAME),-D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
 
-clean: uninstall cmake/clean
+clean: pkg_clean uninstall cmake/clean
+
+cmake/clean:
+	@[ -d "$(BUILD_DIR)" ] && $(MAKE) -C "$(BUILD_DIR)" clean || true
 
 pkg_clean:
 	@rm -rfv "$(PACKAGE_DIR)"
 
 realclean:
-	@rm -rfv "$(BUILD_DIR)" "$(INSTALL_DIR)"
+	@rm -rfv "$(BUILD_DIR)" "$(INSTALL_DIR)" "$(PACKAGE_DIR)"
 
 realclean_all:
-	@rm -rfv "$(OUT_DIR)"/build "$(OUT_DIR)"/install
+	@rm -rfv "$(OUT_DIR)"/build "$(OUT_DIR)"/install "$(PACKAGE_DIR)"
 
-distclean: pristine
+distclean: pristine venvclean
 
 pristine:
 	@rm -rfv "$(OUT_DIR)"
 
-cmake/clean:
-	@[ -d "$(BUILD_DIR)" ] && $(MAKE) -C "$(BUILD_DIR)" clean || true
-
 $(BUILD_DIR):
 	@mkdir -p "$(BUILD_DIR)"
+
+venv: cmake
+	@$(MAKE) -C "$(BUILD_DIR)" python_venv
+
+venvclean:
+	@echo "Removing Python Virtual Environment (VENV)"
+	@rm -rf "$(PYTHON_VENV)"
 
 docker_%:
 	@$(MAKE) -C $(SHARED_DIR)/scripts/docker $(MAKECMDGOALS) HOST_DIR=$(CURDIR)
@@ -127,4 +134,4 @@ docker_%:
 	@$(MAKE) -C "$(BUILD_DIR)" $(MAKECMDGOALS)
 
 
-.PHONY: develop release package deb install install/test test build cmake cmake/clean clean realclean realclean_all distclean pristine
+.PHONY: local release package deb install install/strip test build cmake cmake/clean clean realclean realclean_all distclean pristine

@@ -8,13 +8,14 @@
 cmake_minimum_required(VERSION 3.15)
 
 ### C++ options
-option(BUILD_CPP         "Build/Install C++ code" ON)
+option(BUILD_CPP         "Build/Install C++ code" OFF)
 option(BUILD_RAPIDJSON   "Build fast JSON parsing using RapidJSON" ON)
 option(USE_STATIC_LIBS   "Use static libraries for linking" OFF)
 
 ### Python options
-option(BUILD_PYTHON      "Install Python clients/scripts" ON)
+option(BUILD_PYTHON            "Install Python clients/scripts" ON)
 option(BUILD_PYTHON_EXECUTABLE "Build and install Python executables with PyInstaller" ON)
+option(BUILD_PYTHON_WHEELS     "Build and install Python distributions (`.whl`)" ON)
 option(INSTALL_PYTHON_MODULES  "Install/package Python source modules" ON)
 
 ### Messaging frameworks
@@ -50,7 +51,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/build_args.cmake)
 
 ### Global build configuration
 get_build_arg(PROJECT
-  SETTTING "project"
+  SETTING "project"
   DOCSTRING "Top-level project name. Used e.g. to look up some run-time service settings from corresponding .json filenames"
   DEFAULT "common-core")
 
