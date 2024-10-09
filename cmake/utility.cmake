@@ -18,6 +18,28 @@ endfunction()
 
 
 #===============================================================================
+## @fn get_optional_keyword
+## @brief Get the contents of the specified variable, or else a defaultvalue
+
+function(get_optional_keyword KEYWORD VALUE)
+  set(_options)
+  set(_singleargs OUTPUT_VARIABLE)
+  set(_multiargs)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  get_value_or_default(output_variable
+    arg_OUTPUT_VARIABLE
+    "${KEYWORD}")
+
+  if(${VALUE})
+    set("${output_variable}" "${KEYWORD}" PARENT_SCOPE)
+  else()
+    set("${output_variable}" "" PARENT_SCOPE)
+  endif()
+endfunction()
+
+
+#===============================================================================
 ## @fn cascade_inherited_property
 ## @brief
 ##    Build a list of values stored as a property on the specified target,

@@ -59,12 +59,12 @@ function(BuildProto TARGET)
     )
   else()
     add_custom_target("${TARGET}" ALL)
-    if (arg_PROTO_DEPS)
+    if(arg_PROTO_DEPS)
       add_dependencies("${TARGET}" ${arg_PROTO_DEPS})
     endif()
   endif()
 
-  if (BUILD_PYTHON)
+  if(BUILD_PYTHON)
     if(arg_PYTHON_NAMESPACE)
       set(_namespace "${arg_PYTHON_NAMESPACE}")
     else()
@@ -135,13 +135,13 @@ function(BuildProto_PYTHON TARGET)
   set(_multiargs DEPENDS PROTOS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  if (arg_NAMESPACE_COMPONENT)
+  if(arg_NAMESPACE_COMPONENT)
     set(_namespace_component "${arg_NAMESPACE_COMPONENT}")
   else()
     set(_namespace_component "generated")
   endif()
 
-  if (arg_STAGING_DIR)
+  if(arg_STAGING_DIR)
     set(staging_dir "${arg_STAGING_DIR}")
   else()
     # set(staging_dir "${CMAKE_BINARY_DIR}/python-protos")
@@ -159,7 +159,7 @@ function(BuildProto_PYTHON TARGET)
   ### Generate Python bindings
   file(MAKE_DIRECTORY "${gen_dir}")
 
-  if (BUILD_PROTOBUF)
+  if(BUILD_PROTOBUF)
     protogen_protobuf_py(PROTO_PY
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"
@@ -168,7 +168,7 @@ function(BuildProto_PYTHON TARGET)
     )
   endif()
 
-  if (BUILD_GRPC)
+  if(BUILD_GRPC)
     protogen_grpc_py(GRPC_PY
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"
@@ -188,8 +188,8 @@ function(BuildProto_PYTHON TARGET)
 
 
   ### Install generated Python modules if requested
-  if (arg_INSTALL OR INSTALL_PYTHON_MODULES)
-    if (arg_INSTALL_DIR)
+  if(arg_INSTALL OR INSTALL_PYTHON_MODULES)
+    if(arg_INSTALL_DIR)
       set(_install_dir "${arg_INSTALL_DIR}")
     else()
       set(_install_dir "${PYTHON_INSTALL_DIR}")

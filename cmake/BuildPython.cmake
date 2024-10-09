@@ -46,11 +46,11 @@ function(BuildPython TARGET)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### Create a Custom CMake target plus staging folder
-  if (NOT TARGET "${TARGET}")
+  if(NOT TARGET "${TARGET}")
     add_custom_target("${TARGET}" ALL)
   endif()
 
-  if (arg_PYTHON_DEPS OR arg_PROTO_DEPS)
+  if(arg_PYTHON_DEPS OR arg_PROTO_DEPS)
     add_dependencies("${TARGET}" ${arg_PYTHON_DEPS} ${arg_PROTO_DEPS})
   endif()
 
@@ -94,8 +94,10 @@ function(BuildPython TARGET)
     PROPERTIES staging_dir "${staging_dir}")
 
   ### Install source modules locally or via CPack
-  if (arg_INSTALL OR INSTALL_PYTHON_MODULES)
-    if (arg_INSTALL_DIR)
+  if((arg_INSTALL OR INSTALL_PYTHON_MODULES)
+      AND arg_INSTALL_COMPONENT)
+
+    if(arg_INSTALL_DIR)
       set(_install_dir "${arg_INSTALL_DIR}")
     else()
       set(_install_dir "${PYTHON_INSTALL_DIR}")
@@ -107,7 +109,6 @@ function(BuildPython TARGET)
       DESTINATION "${_destination}"
       COMPONENT "${arg_INSTALL_COMPONENT}"
     )
-
   endif()
 endfunction()
 
@@ -128,7 +129,7 @@ function(POPULATE_STAGING_DIR STAGING_DIR)
   ### Copy programs, files and directories to a staging subfolder for PyInstaller
   file(MAKE_DIRECTORY "${modules_dir}")
 
-  if (arg_PROGRAMS)
+  if(arg_PROGRAMS)
     file(COPY ${arg_PROGRAMS}
       DESTINATION "${modules_dir}"
       FILE_PERMISSIONS
@@ -137,13 +138,13 @@ function(POPULATE_STAGING_DIR STAGING_DIR)
       WORLD_READ WORLD_EXECUTE)
   endif()
 
-  if (arg_FILES)
+  if(arg_FILES)
     file(COPY ${arg_FILES}
       DESTINATION "${modules_dir}")
   endif()
 
-  if (arg_DIRECTORIES)
-    if (arg_FILENAME_PATTERN)
+  if(arg_DIRECTORIES)
+    if(arg_FILENAME_PATTERN)
       list(TRANSFORM arg_FILENAME_PATTERN PREPEND "PATTERN;"
         OUTPUT_VARIABLE match_expr)
 

@@ -32,7 +32,7 @@ function(get_build_arg VARIABLE)
   if(NOT ${VARIABLE})
     set(value)
 
-    if ($ENV{${VARIABLE}})
+    if($ENV{${VARIABLE}})
       set(value "$ENV{${VARIABLE}}")
 
     elseif(arg_SETTING)
@@ -49,8 +49,8 @@ function(get_build_arg VARIABLE)
         GET "${_DEFAULTS_TEXT}" ${arg_SETTING})
 
       if(_error)
-        if (_error MATCHES "not found$")
-          if (arg_REQUIRED)
+        if(_error MATCHES "not found$")
+          if(arg_REQUIRED)
             message(FATAL_ERROR
               "Either ${VARIABLE} must be provided, "
               "or the setting ${setting} must be added in ${DEFAULTS_FILE}")
@@ -70,8 +70,8 @@ function(get_build_arg VARIABLE)
 
     endif()
 
-    if (value)
-      if (arg_TYPE)
+    if(value)
+      if(arg_TYPE)
         set(type "${arg_TYPE}")
       else()
         set(type "STRING")

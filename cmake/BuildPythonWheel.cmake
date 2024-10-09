@@ -5,8 +5,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+set(PYTHON_TEMPLATE_DIR "${CMAKE_CURRENT_LIST_DIR}/python")
+
 set(PYTHON_WHEEL_DIR "share/python-wheels"
   CACHE STRING "Installation directory for Python  wheels")
+
 
 
 #===============================================================================
@@ -19,7 +22,7 @@ function(BuildPythonWheel TARGET)
 
   set(_singleargs
     PACKAGE DESCRIPTION VERSION CONTACT URL
-    VENV PYTHON_INTERPRETER PYPROJECT_TEMPLATE INSTALL_DIR)
+    VENV PYTHON_INTERPRETER PYPROJECT_TEMPLATE INSTALL_COMPONENT INSTALL_DIR)
 
   set(_multiargs
     PROGRAMS BUILD_DEPS PYTHON_DEPS SETTINGS_DEPS PACKAGE_DEPS)
@@ -27,25 +30,18 @@ function(BuildPythonWheel TARGET)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### Do this only if the option `BUILD_PYTHON_WHEELS` is enabled
-  if (NOT BUILD_PYTHON_WHEELS)
+  if(NOT BUILD_PYTHON_WHEELS)
     return()
   endif()
 
-
   ### Copy sources from the specified target dependencies into a consolidated
   ### staging area.
-  set(wheel_dir "${CMAKE_CURRENT_BINARY_DIR}")
+  set(wheel_dir "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}")
   set(wheel_base "${wheel_dir}/${TARGET}")
   set(wheel_path "${wheel_base}")
 
-  get_value_or_default(
-    install_dir
-    arg_INSTALL_DIR
-    ${wheel_dir})
-
-
   ### Determine Python interpreter from PYTHON_INTERPRETER, VENV, or host native
-  if (arg_PYTHON_INTERPRETER)
+  if(arg_PYTHON_INTERPRETER)
     set(python "${arg_PYTHON_INTERPRETER}")
   elseif(arg_VENV)
     set(python "${arg_VENV}/bin/python")
@@ -74,7 +70,8 @@ function(BuildPythonWheel TARGET)
     DEPENDENCIES ${arg_PYTHON_DEPS}
     PROPERTY staging_dir
     TARGET_DIR "/"
-    OUTPUT_VARIABLE PYTHON_INCLUDE)
+    OUTPUT_VARIABLE PYTHON_INCLUDE
+    REQUIRED)
 
   ### Likewise, collect staged settings folders from targets listed in
   ### `SETTTINS_DEPS`, producing a suitable `SETTINGS_INCLUDE` string.
@@ -90,7 +87,7 @@ function(BuildPythonWheel TARGET)
   get_value_or_default(
     pyproject_template
     arg_PYPROJECT_TEMPLATE
-    "${CMAKE_CURRENT_LIST_DIR}/python/pyproject.toml.in")
+    "${PYTHON_TEMPLATE_DIR}/pyproject.toml.in")
 
   get_value_or_default(
     PACKAGE
@@ -133,6 +130,7 @@ function(BuildPythonWheel TARGET)
     "pyproject.toml")
 
   ### Define command to build wheel
+  file(MAKE_DIRECTORY "${wheel_dir}")
   add_custom_command(
     OUTPUT "${wheel_path}"
     COMMAND ${python}
@@ -145,11 +143,18 @@ function(BuildPythonWheel TARGET)
 
 
   ### Install/package resulting executable
-  if (arg_INSTALL_COMPONENT)
+  if(arg_INSTALL_COMPONENT)
+    get_value_or_default(
+      install_dir
+      arg_INSTALL_DIR
+      "${PYTHON_WHEEL_DIR}")
+
+    message(STATUS "Will install wheel from '${wheel_dir}/' to '${install_dir}'")
+
     install(
-      FILES "${wheel_path}"
-      DESTINATION "${_destination}"
-      COMPONENT "${install_dir}"
+      DIRECTORY "${wheel_dir}/"
+      DESTINATION "${install_dir}"
+      COMPONENT "${arg_INSTALL_COMPONENT}"
     )
   endif()
 endfunction()
@@ -165,15 +170,18 @@ endfunction()
 ## (using the "hatchling" build back-end).
 
 function(create_include_map)
-  set(_options)
+  set(_options REQUIRED)
   set(_singleargs PROPERTY TARGET_DIR OUTPUT_VARIABLE)
   set(_multiargs DEPENDENCIES)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  get_target_property_recursively("${PROPERTY}"
+  get_optional_keyword(REQUIRED "${arg_REQUIRED}")
+
+  get_target_property_recursively("${arg_PROPERTY}"
     TARGETS "${arg_DEPENDENCIES}"
     OUTPUT_VARIABLE include_dirs
-    REQUIRED)
+    REMOVE_DUPLICATES
+    ${REQUIRED})
 
   list(TRANSFORM include_dirs
     REPLACE "^(.+)$" "\"\\1\" = \"${arg_TARGET_DIR}\""

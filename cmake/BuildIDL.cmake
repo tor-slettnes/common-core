@@ -13,22 +13,22 @@ macro(generate_sources sources example_modules)
   ### Construct extra flags to `rtiddsgen` based on options and dependencies
   set(include_flags)
 
-  foreach (dep ${LIB_DEPS})
+  foreach(dep ${LIB_DEPS})
     get_target_property(include_dirs ${dep} INCLUDE_DIRECTORIES)
-    foreach (dir ${include_dirs})
+    foreach(dir ${include_dirs})
       list(APPEND include_flags -I${dir})
     endforeach()
   endforeach()
 
   #=============================================================================
   ### Invoke RTI DDS Generator on each IDL input file.
-  foreach (src ${sources})
+  foreach(src ${sources})
     ### Determine basename and C++ sources
     string(REGEX REPLACE "(.*)\\.idl$" "\\1" basename ${src})
 
     #===========================================================================
     ### C++ sources
-    if (BUILD_CPP)
+    if(BUILD_CPP)
       set(cpp_sources ${basename}.cxx ${basename}Plugin.cxx)
 
       set(cpp_flags)
@@ -155,7 +155,7 @@ function(BuildIDL TARGET)
 
   #===============================================================================
   ### Generate sources from data types listed in RECIPES
-  if (arg_RECIPES)
+  if(arg_RECIPES)
     generate_sources("${arg_RECIPES}" "publisher;subscriber")
   endif()
 

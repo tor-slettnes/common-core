@@ -5,11 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(INSTALL_COMPONENT "platform-settings")
-
-BuildSettings(
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-)
+set(TARGET "platform-settings")
+set(INSTALL_COMPONENT "${TARGET}")
 
 ### Software upgrade settings (normally from `defaults.json`)
 get_build_arg(UPGRADE_PACKAGE_SUFFIX
@@ -25,6 +22,13 @@ get_build_arg(UPGRADE_KEYRING
   SETTING "upgrade" "keyring")
 
 configure_file(upgrade.json.in upgrade.json)
+
+BuildSettings("${TARGET}"
+  SETTINGS_DEPS "core-settings"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/upgrade.json"
+  DIRECTORIES "./"
+)
 
 ### Install the settings file
 install(

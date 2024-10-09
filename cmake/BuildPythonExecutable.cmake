@@ -17,12 +17,12 @@ function(BuildPythonExecutable TARGET)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### Do this only if the option `BUILD_PYTHON_EXECUTABLE` is enabled
-  if (NOT BUILD_PYTHON_EXECUTABLE)
+  if(NOT BUILD_PYTHON_EXECUTABLE)
     return()
   endif()
 
   ### Determine Python interpreter based on PYTHON_INTERPRETER or VENV
-  if (arg_PYTHON_INTERPRETER)
+  if(arg_PYTHON_INTERPRETER)
     set(python "${arg_PYTHON_INTERPRETER}")
   elseif(arg_VENV)
     set(python "${arg_VENV}/bin/python")
@@ -33,13 +33,13 @@ function(BuildPythonExecutable TARGET)
   endif()
 
   ### Determine name of executable from PROGRAM or else TARGET
-  if (arg_PROGRAM)
+  if(arg_PROGRAM)
     set(program "${arg_PROGRAM}")
   else()
     set(program "${TARGET}")
   endif()
 
-  if (NOT arg_PYTHON_DEPS)
+  if(NOT arg_PYTHON_DEPS)
     message(FATAL_ERROR "BuildPythonExecutable(${TARGET}) requires PYTHON_DEPS")
   endif()
 
@@ -117,14 +117,14 @@ function(BuildPythonExecutable TARGET)
   )
 
   ### Install/package resulting executable
-  if (arg_INSTALL_COMPONENT)
+  if(arg_INSTALL_COMPONENT)
     if(arg_TYPE)
       set(type "${arg_TYPE}")
     else()
       set(type BIN)
     endif()
 
-    if (arg_DIRECTORY_BUNDLE)
+    if(arg_DIRECTORY_BUNDLE)
       install(
         DIRECTORY "${program_path}"
         TYPE "${type}"

@@ -184,11 +184,11 @@ function(add_debian_file_from_template)
     return()
   endif()
 
-  if (arg_OUTPUT_FILE)
+  if(arg_OUTPUT_FILE)
     configure_file("${template_file}" "${arg_OUTPUT_FILE}")
   endif()
 
-  if (arg_EXTRA_CONTROL_VARIABLE)
+  if(arg_EXTRA_CONTROL_VARIABLE)
     set(extra_control "${${arg_EXTRA_CONTROL_VARIABLE}}")
     list(APPEND extra_control "${arg_OUTPUT_FILE}")
     set("${arg_EXTRA_CONTROL_VARIABLE}" "${extra_control}" PARENT_SCOPE)

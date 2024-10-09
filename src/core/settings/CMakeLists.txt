@@ -5,9 +5,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(INSTALL_COMPONENT "core-settings")
+set(TARGET "core-settings")
+set(INSTALL_COMPONENT "${TARGET}")
 
-BuildSettings(INSTALL_COMPONENT "${INSTALL_COMPONENT}")
+BuildSettings("${TARGET}"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}")
 
 cpack_add_component(${INSTALL_COMPONENT}
   GROUP ${INSTALL_GROUP}

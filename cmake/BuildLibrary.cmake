@@ -37,7 +37,7 @@ function(BuildLibrary TARGET)
     list(APPEND _sources $<TARGET_OBJECTS:${_dep}>)
   endforeach()
 
-  foreach (_dep ${arg_MOD_DEPS})
+  foreach(_dep ${arg_MOD_DEPS})
     find_package("${_dep}" REQUIRED)
   endforeach()
 

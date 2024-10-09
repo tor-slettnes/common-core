@@ -51,3 +51,10 @@ BuildPythonExecutable("pydemo_zmq_server"
   TYPE SBIN
   DIRECTORY_BUNDLE
 )
+
+BuildPythonWheel("demo-shell"
+  PYTHON_DEPS "${TARGET}"
+  DESCRIPTION "Interactive shell to communicate with DEMO service over gRPC or ZMQ"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+)
+

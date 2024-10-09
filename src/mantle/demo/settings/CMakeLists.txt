@@ -5,9 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(INSTALL_COMPONENT "demo-settings")
+set(TARGET "demo-settings")
+set(INSTALL_COMPONENT "${TARGET}")
 
-BuildSettings(INSTALL_COMPONENT "${INSTALL_COMPONENT}")
+BuildSettings("${TARGET}"
+  SETTINGS_DEPS "core-settings"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+)
 
 cpack_add_component(${INSTALL_COMPONENT}
   GROUP ${INSTALL_GROUP}

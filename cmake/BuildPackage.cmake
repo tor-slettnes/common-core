@@ -17,7 +17,7 @@ function(CPackConfig VARIABLE VALUE)
   string(REPLACE "\"" "\\\"" _value "${VALUE}")
   string(TOUPPER "${VARIABLE}" _variable)
 
-  if (arg_APPEND)
+  if(arg_APPEND)
     set(_command "list(APPEND ${_variable} \"${_value}\")")
   else()
     set(_command "set(${_variable} \"${_value}\")")
@@ -45,11 +45,9 @@ function(CPackDebianConfig VARIABLE_SUFFIX VALUE)
     GROUP "${arg_GROUP}"
     OUTPUT_VARIABLE variable_name)
 
-  if (_append)
-    set(_append "APPEND")
-  endif()
+  get_optional_keyword(APPEND "${arg_APPEND}")
 
-  CPackConfig("${variable_name}" "${VALUE}" ${_append})
+  CPackConfig("${variable_name}" "${VALUE}" ${APPEND})
 endfunction()
 
 #===============================================================================
@@ -96,8 +94,8 @@ function(get_cpack_debian_grouping)
 
   set(parts ${arg_PREFIX})
 
-  if (CPACK_DEB_COMPONENT_INSTALL)
-    if (CPACK_COMPONENTS_GROUPING STREQUAL "IGNORE")
+  if(CPACK_DEB_COMPONENT_INSTALL)
+    if(CPACK_COMPONENTS_GROUPING STREQUAL "IGNORE")
       list(APPEND parts "${arg_COMPONENT}")
     elseif(CPACK_COMPONENTS_GROUPING STREQUAL "ONE_PER_GROUP")
       list(APPEND parts "${arg_GROUP}")
