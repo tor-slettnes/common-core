@@ -38,9 +38,14 @@ function(BuildPythonWheel TARGET)
 
   ### Determine Python interpreter from PYTHON_INTERPRETER, VENV, or host native
   if(arg_PYTHON_INTERPRETER)
-    set(python "${arg_PYTHON_INTERPRETER}")
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_PYTHON_INTERPRETER}"
+      OUTPUT_VARIABLE python)
   elseif(arg_VENV)
-    set(python "${arg_VENV}/bin/python")
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin/python"
+      OUTPUT_VARIABLE python)
+  elseif(PYTHON_VENV)
+    cmake_path(APPEND CMAKE_SOURCE_DIR "${PYTHON_VENV}" "bin/python"
+      OUTPUT_VARIABLE python)
   else()
     find_package(Python3
       COMPONENTS Interpreter
@@ -101,9 +106,12 @@ function(BuildPythonWheel TARGET)
     "${PROJECT_VERSION}")
 
   get_value_or_default(
-    DEPENDENCIES
+    wheel_dependencies
     arg_PACKAGE_DEPS
     "${PYTHON_DEPENDENCIES}")
+
+  list(TRANSFORM wheel_dependencies REPLACE "^(.+)$" "\"\\1\"")
+  list(JOIN wheel_dependencies ", " DEPENDENCIES)
 
   get_value_or_default(
     CONTACT
@@ -115,8 +123,8 @@ function(BuildPythonWheel TARGET)
     arg_URL
     "${PROJECT_HOMEPAGE_URL}")
 
-  if(CONTACT)
-    string(REGEX MATCH "^([^<]+) ?(<(.*)>)?" _match "${CONTACT}")
+  if(CPACK_PACKAGE_CONTACT)
+    string(REGEX MATCH "^([^<]+) ?(<(.*)>)?" _match "${CPACK_PACKAGE_CONTACT}")
     set(AUTHOR_NAME "${CMAKE_MATCH_1}")
     set(AUTHOR_EMAIL "${CMAKE_MATCH_3}")
   endif()

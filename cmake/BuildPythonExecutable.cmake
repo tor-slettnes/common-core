@@ -23,11 +23,14 @@ function(BuildPythonExecutable TARGET)
 
   ### Determine Python interpreter based on PYTHON_INTERPRETER or VENV
   if(arg_PYTHON_INTERPRETER)
-    set(python "${arg_PYTHON_INTERPRETER}")
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_PYTHON_INTERPRETER}"
+      OUTPUT_VARIABLE python)
   elseif(arg_VENV)
-    set(python "${arg_VENV}/bin/python")
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin/python"
+      OUTPUT_VARIABLE python)
   elseif(PYTHON_VENV)
-    set(python "${PYTHON_VENV}/bin/python")
+    cmake_path(APPEND CMAKE_SOURCE_DIR "${PYTHON_VENV}" "bin/python"
+      OUTPUT_VARIABLE python)
   else()
     message(FATAL_ERRROR "BuildPythonExecutable(${TARGET}) requires PYTHON_INTERPRETER or VENV")
   endif()

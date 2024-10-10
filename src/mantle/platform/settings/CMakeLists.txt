@@ -8,19 +8,6 @@
 set(TARGET "platform-settings")
 set(INSTALL_COMPONENT "${TARGET}")
 
-### Software upgrade settings (normally from `defaults.json`)
-get_build_arg(UPGRADE_PACKAGE_SUFFIX
-  SETTING "upgrade" "package suffix")
-
-get_build_arg(UPGRADE_SCAN_URL
-  SETTING "upgrade" "scan url")
-
-get_build_arg(UPGRADE_VFS_CONTEXT
-  SETTING "upgrade" "vfs context")
-
-get_build_arg(UPGRADE_KEYRING
-  SETTING "upgrade" "keyring")
-
 configure_file(upgrade.json.in upgrade.json)
 
 BuildSettings("${TARGET}"

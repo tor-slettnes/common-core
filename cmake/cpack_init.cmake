@@ -5,50 +5,28 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Debian package settings
-get_build_arg(PACKAGE_NAME_PREFIX
-  SETTING "package" "name prefix")
+### Import build configuration for the top-level project
+include("${CMAKE_SOURCE_DIR}/defaults.cmake")
 
-get_build_arg(PACKAGE_VENDOR
-  SETTING "package" "vendor")
-
-get_build_arg(PACKAGE_CONTACT
-  SETTING "package" "contact")
-
-get_build_arg(PACKAGE_SPLIT_BY_COMPONENT
-  SETTING "package" "split by component")
-
-get_build_arg(PACKAGE_SPLIT_BY_GROUP
-  SETTING "package" "split by group")
-
-
-get_build_arg(PYTHON_DEPENDENCIES
-  SETTING "python" "dependencies")
-
+### Merge in shared configuration if this is a submodule within a parent project.
+cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH shared_dir)
+if(NOT shared_dir STREQUAL CMAKE_SOURCE_DIR)
+  include("${shared_dir}/defaults.cmake")
+endif()
 
 ### General CPack settings
-set(CPACK_PACKAGE_NAME "${PACKAGE_NAME_PREFIX}")
-set(CPACK_PACKAGE_VENDOR "${PACKAGE_VENDOR}")
-set(CPACK_PACKAGE_CONTACT "${PACKAGE_CONTACT}")
-#set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
 
 #set(CPACK_GENERATOR "External" "DEB")
-set(CPACK_GENERATOR "DEB")
 set(CPACK_STRIP_FILES ON)
-
-if(PACKAGE_SPLIT_BY_COMPONENT)
-  set(CPACK_COMPONENTS_GROUPING "IGNORE")
-  set(CPACK_DEB_COMPONENT_INSTALL TRUE)
-elseif(PACKAGE_SPLIT_BY_GROUP)
-  set(CPACK_COMPONENTS_GROUPING "ONE_PER_GROUP")
-  set(CPACK_DEB_COMPONENT_INSTALL TRUE)
-else()
-  set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
-endif()
+set(CPACK_GENERATOR "DEB")
 
 #===============================================================================
 ### DEB generator settings
+
+if(NOT CPACK_COMPONENTS_GROUPING STREQUAL "ALL_COMPONENTS_IN_ONE")
+  set(CPACK_DEB_COMPONENT_INSTALL TRUE)
+endif()
 
 ### Generate automatic package dependencies based on shared lib references
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)

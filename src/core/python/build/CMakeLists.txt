@@ -7,3 +7,4 @@
 
 add_subdirectory(venv)
 add_subdirectory(pyinstaller)
+add_subdirectory(pyproject-build)

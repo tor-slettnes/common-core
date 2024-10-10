@@ -13,29 +13,6 @@ set(PYTHON_TEMPLATE_DIR
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules")
 
-get_build_arg(PYTHON_NAMESPACE
-  SETTING "python" "namespace"
-  DOCSTRING "Top-level namespace for Python moddules")
-
-get_build_arg(PYTHON_VENV
-  SETTING "python" "venv"
-  TYPE FILEPATH
-  DOCSTRING "Python Virtual Environment (VENV) root folder"
-  DEFAULT "venv")
-
-cmake_path(APPEND CMAKE_SOURCE_DIR "${PYTHON_VENV}"
-  OUTPUT_VARIABLE PYTHON_VENV)
-
-get_build_arg(PYTHON_PIP_REQUIREMENTS_FILE
-  SETTING "python" "pip requirements file"
-  TYPE FILEPATH
-  DOCSTRING "Package requirements file for Python Virtual Environment"
-  DEFAULT "requirements.txt"
-)
-
-cmake_path(APPEND CMAKE_SOURCE_DIR "${PYTHON_PIP_REQUIREMENTS_FILE}"
-  OUTPUT_VARIABLE PYTHON_PIP_REQUIREMENTS_FILE)
-
 
 #===============================================================================
 ## @fn BuildPython

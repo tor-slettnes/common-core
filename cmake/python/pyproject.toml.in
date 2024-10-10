@@ -14,7 +14,7 @@ keywords = [
 ]
 requires-python = ">=3.9"
 #readme = "@CMAKE_CURRENT_SOURCE_DIR@/README.md"
-dependencies = @DEPENDENCIES@
+dependencies = [@DEPENDENCIES@]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
