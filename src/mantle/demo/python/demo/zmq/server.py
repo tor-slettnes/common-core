@@ -7,10 +7,11 @@
 
 ### Modules relative to install dir
 from cc.demo.zmq.requesthandler import DemoRequestHandler
-from cc.cemo.zmq.common import DEMO_SERVICE_CHANNEL, DEMO_PUBLISHER_CHANNEL
+from cc.demo.zmq.common import DEMO_SERVICE_CHANNEL, DEMO_PUBLISHER_CHANNEL
 from cc.demo.core import API, signal_store
-from messaging.zmq.basic import Publisher
-from messaging.zmq.protobuf import Server as ProtoServer, SignalWriter
+from cc.messaging.zmq.basic import Publisher
+from cc.messaging.zmq.protobuf.server import Server as ProtoServer
+from cc.messaging.zmq.protobuf.signalwriter import SignalWriter
 
 class Server (ProtoServer):
     def __init__(self,
@@ -50,4 +51,4 @@ if __name__ == '__main__':
 
     demoserver = Server(api_provider = NativeDemo())
     logging.info("Starting Python ZMQ Demo Server")
-    demoserver.initialize()
+    demoserver.run()

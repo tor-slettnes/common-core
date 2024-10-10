@@ -5,17 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(PYTHON_TEMPLATE_DIR "${CMAKE_CURRENT_LIST_DIR}/python")
-
 set(PYTHON_WHEEL_DIR "share/python-wheels"
   CACHE STRING "Installation directory for Python  wheels")
-
-
 
 #===============================================================================
 ## @fn BuildPythonWheel
 ## @brief
-##  Build a self-contained Python executable with PyInstaller
+##  Build a Python binary distribution package ("wheel", or `.whl` file)
 
 function(BuildPythonWheel TARGET)
   set(_options)
@@ -149,8 +145,6 @@ function(BuildPythonWheel TARGET)
       arg_INSTALL_DIR
       "${PYTHON_WHEEL_DIR}")
 
-    message(STATUS "Will install wheel from '${wheel_dir}/' to '${install_dir}'")
-
     install(
       DIRECTORY "${wheel_dir}/"
       DESTINATION "${install_dir}"
@@ -177,7 +171,8 @@ function(create_include_map)
 
   get_optional_keyword(REQUIRED "${arg_REQUIRED}")
 
-  get_target_property_recursively("${arg_PROPERTY}"
+  get_target_properties_recursively(
+    PROPERTIES "${arg_PROPERTY}"
     TARGETS "${arg_DEPENDENCIES}"
     OUTPUT_VARIABLE include_dirs
     REMOVE_DUPLICATES

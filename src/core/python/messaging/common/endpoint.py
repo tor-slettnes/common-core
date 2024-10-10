@@ -42,6 +42,7 @@ class Endpoint (object):
             self.settings_file(self.product_name),
             self.settings_file("common")
         ]
+
         self.settings = SettingsStore(settings_files)
         logging.debug("Loaded settings from %s: %s"%(settings_files, self.settings))
 

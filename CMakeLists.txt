@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 ### C++ options
-option(BUILD_CPP         "Build/Install C++ code" OFF)
+option(BUILD_CPP         "Build/Install C++ code" ON)
 option(BUILD_RAPIDJSON   "Build fast JSON parsing using RapidJSON" ON)
 option(USE_STATIC_LIBS   "Use static libraries for linking" OFF)
 

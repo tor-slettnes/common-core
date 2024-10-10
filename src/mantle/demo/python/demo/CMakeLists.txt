@@ -34,8 +34,9 @@ BuildPython("${TARGET}"
 
 
 BuildPythonExecutable("pydemo_grpc_server"
-  PYTHON_DEPS "${TARGET}"
   BUILD_DEPS "python_pyinstaller"
+  PYTHON_DEPS "${TARGET}"
+  DATA_DEPS "demo-settings"
   VENV "${PYTHON_VENV}"
   SCRIPT "grpc/server.py"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
@@ -45,16 +46,16 @@ BuildPythonExecutable("pydemo_grpc_server"
 BuildPythonExecutable("pydemo_zmq_server"
   PYTHON_DEPS "${TARGET}"
   BUILD_DEPS "python_pyinstaller"
+  DATA_DEPS "demo-settings"
   VENV "${PYTHON_VENV}"
   SCRIPT "zmq/server.py"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   TYPE SBIN
-  DIRECTORY_BUNDLE
 )
 
-BuildPythonWheel("demo-shell"
-  PYTHON_DEPS "${TARGET}"
-  DESCRIPTION "Interactive shell to communicate with DEMO service over gRPC or ZMQ"
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-)
+# BuildPythonWheel("demo-shell"
+#   PYTHON_DEPS "${TARGET}"
+#   DESCRIPTION "Interactive shell to communicate with DEMO service over gRPC or ZMQ"
+#   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+# )
 

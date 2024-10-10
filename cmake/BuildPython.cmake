@@ -7,6 +7,9 @@
 
 include(utility)
 
+set(PYTHON_TEMPLATE_DIR
+  "${CMAKE_CURRENT_LIST_DIR}/python")
+
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules")
 
@@ -42,7 +45,11 @@ cmake_path(APPEND CMAKE_SOURCE_DIR "${PYTHON_PIP_REQUIREMENTS_FILE}"
 function(BuildPython TARGET)
   set(_options INSTALL)
   set(_singleargs NAMESPACE NAMESPACE_COMPONENT STAGING_DIR INSTALL_COMPONENT INSTALL_DIR)
-  set(_multiargs PYTHON_DEPS PROTO_DEPS PROGRAMS FILES DIRECTORIES FILENAME_PATTERN)
+  set(_multiargs
+    PYTHON_DEPS PROTO_DEPS
+    PROGRAMS FILES DIRECTORIES FILENAME_PATTERN
+    HIDDEN_IMPORTS REQUIRED_SUBMODULES
+  )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### Create a Custom CMake target plus staging folder
@@ -93,6 +100,16 @@ function(BuildPython TARGET)
   set_target_properties("${TARGET}"
     PROPERTIES staging_dir "${staging_dir}")
 
+  if(arg_HIDDEN_IMPORTS)
+    set_target_properties("${TARGET}"
+      PROPERTIES hidden_imports ${arg_HIDDEN_IMPORTS})
+  endif()
+
+  if(arg_REQUIRED_SUBMODULES)
+    set_target_properties("${TARGET}"
+      PROPERTIES required_submodules ${arg_REQUIRED_SUBMODULES})
+  endif()
+
   ### Install source modules locally or via CPack
   if((arg_INSTALL OR INSTALL_PYTHON_MODULES)
       AND arg_INSTALL_COMPONENT)
@@ -103,10 +120,9 @@ function(BuildPython TARGET)
       set(_install_dir "${PYTHON_INSTALL_DIR}")
     endif()
 
-    cmake_path(APPEND _install_dir "${namespace_dir}" OUTPUT_VARIABLE _destination)
     install(
       DIRECTORY "${staging_dir}/"
-      DESTINATION "${_destination}"
+      DESTINATION "${_install_dir}"
       COMPONENT "${arg_INSTALL_COMPONENT}"
     )
   endif()
@@ -206,11 +222,12 @@ function(GET_NAMESPACE)
   else()
     list(FIND arg_MISSING_VALUES "NAMESPACE" _found)
     if(${_found} LESS 0 AND PYTHON_NAMESPACE)
+      ### No 'NAMESPACE` keyword with missing/empty value.  Assign default.
       set(namespace "${PYTHON_NAMESPACE}")
     endif()
 
     if(arg_NAMESPACE_COMPONENT)
-      string(JOIN "." namespace "${namespace}" "${arg_NAMESPACE_COMPONENT}")
+      string(JOIN "." namespace ${namespace} "${arg_NAMESPACE_COMPONENT}")
     endif()
   endif()
 

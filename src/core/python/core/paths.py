@@ -70,6 +70,7 @@ def locateDominatingPath(name: FilePath,
 
     package = start.rsplit('.', 1)[0]
     base = importlib.resources.files(package)
+    candidate = base.joinpath(name)
     previous = None
 
     while not base.joinpath(name).exists():
@@ -77,5 +78,6 @@ def locateDominatingPath(name: FilePath,
             return None, None
         previous = base
         base = base.parent
+        candidate = base.joinpath(name)
 
-    return base, base.joinpath(name)
+    return base, candidate

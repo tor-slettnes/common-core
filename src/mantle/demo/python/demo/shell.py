@@ -85,7 +85,7 @@ def legend():
     print(legend.__doc__)
 
 
-def main():
+if __name__ == '__main__':
     args   = ArgParser().parse_args()
 
     logger = logging.getLogger()
@@ -103,6 +103,3 @@ def main():
     demo_grpc.initialize()
     demo_zmq.initialize()
     legend()
-
-if __name__ == '__main__':
-    main()

@@ -12,6 +12,9 @@ cpack_add_component_group(${INSTALL_GROUP}
   DESCRIPTION "DEMO application example"
 )
 
+add_subdirectory(scripts)
+add_subdirectory(settings)
+
 if (BUILD_PROTOBUF)
   add_subdirectory(proto)
 endif()
@@ -27,9 +30,6 @@ endif()
 if (BUILD_PYTHON)
   add_subdirectory(python)
 endif()
-
-add_subdirectory(scripts)
-add_subdirectory(settings)
 
 cpack_add_component(demo-common
   DEPENDS demo-settings

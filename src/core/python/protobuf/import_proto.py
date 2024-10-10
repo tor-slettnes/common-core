@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Standard Python modules
-import importlib, types
+import importlib, types, sys
 
 default_suffix = '_pb2'
 
@@ -60,15 +60,17 @@ def import_proto(module_name: str,
                  target_scope: object,
                  namespace: str|None = None):
 
-    '''Import a generated ProtoBuf module (normally with suffix `_pb2`) into a
-    local namespace derived from its `package` name.
+    '''Import a generated ProtoBuf module.  Their symbols will appear in
+    namespace containers that match the `package` declarations in their
+    respective `.proto` files, which are created as class objects if missing.
 
     Inputs:
     @param[in] module_name
         Module name.  The base name portion (following any leading path) can be
         the stem of the original `.proto` file name (without the extension), or
         it can be the name of the corresponding generated Python module (with a
-        `_pb2` suffix added).
+        `_pb2` suffix added).  If the name is unqualified (without any leading
+        package name) it will be loaded from the `generated` namespace.
 
     @param[in] target_scope
         Where to create the target namespace. This could be a dictionary
@@ -79,21 +81,26 @@ def import_proto(module_name: str,
         name is used.  Leading elements of this namespace are reused/updated if
         they already exist as one of the above types, otherwise new empty
         container objects are created recursively.
+
+    Example:
+
+    * Import `cc.generated.variant_pb2` into the namespace `cc.variant` per
+      the `package` declaration from `variant.proto`:
+
+      ```
+      import_proto('variant', globals())
+      pi_value = cc.variant.Value(value_real = math.pi)
+      ```
+
     '''
 
-    candidates = [module_name]
-    if not module_name.endswith(default_suffix):
-        candidates.insert(0, module_name + default_suffix)
+    module_path = (module_name if "." in module_name
+                   else "...generated." + module_name)
 
-    for candidate in candidates:
-        try:
-            module = importlib.import_module(candidate)
-            break
-        except ImportError as e:
-            failure = e
-    else:
-        raise failure from None
+    if not module_path.endswith(default_suffix):
+        module_path += default_suffix
 
+    module = importlib.import_module(module_path, __spec__.name)
     scope = target_scope
 
     if namespace is None:

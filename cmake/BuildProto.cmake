@@ -149,10 +149,14 @@ function(BuildProto_PYTHON TARGET)
   endif()
 
   ### Construct namespace for Python modules
-  get_namespace_dir(
+  get_namespace(
     NAMESPACE "${arg_NAMESPACE}"
     NAMESPACE_COMPONENT "${_namespace_component}"
     MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
+    OUTPUT_VARIABLE namespace)
+
+  get_namespace_dir(
+    NAMESPACE "${namespace}"
     ROOT_DIR "${staging_dir}"
     OUTPUT_VARIABLE gen_dir)
 
@@ -181,11 +185,14 @@ function(BuildProto_PYTHON TARGET)
     add_dependencies("${TARGET}" ${arg_DEPENDS})
   endif()
 
-  ### Set target property `staging_dir` for downstream targets
-  ### (e.g. via `BuildPythonExecutable()`)
-  set_target_properties("${TARGET}"
-    PROPERTIES staging_dir "${staging_dir}")
-
+  ### Set target properties for downstream targets
+  ###   - `staging_dir` indicating where to find the generated modules
+  ###   - `required_submodules` to indicate that this namespace must
+  ###     be explicitly imported by `BuildPythonExecutable()`.
+  set_target_properties("${TARGET}" PROPERTIES
+    staging_dir "${staging_dir}"
+    required_submodules "${namespace}"
+  )
 
   ### Install generated Python modules if requested
   if(arg_INSTALL OR INSTALL_PYTHON_MODULES)

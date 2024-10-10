@@ -61,10 +61,15 @@ function(BuildSettings TARGET)
       FILES_MATCHING ${match_expr})
   endif()
 
-  ### Set target property `staging_dir` for downstream targets
-  ### (e.g. via `BuildPythonWheel()`)
-  set_target_properties("${TARGET}"
-    PROPERTIES staging_dir "${staging_dir}")
+  ### Set target properties for downstream targets
+  ###   - `staging_dir` indicating where to find these settings files
+  ###   - `data_dir` to indicate where these files should be added
+  ###     to the final target by BuildPythonWheel()/BuildPythonExecutable().
+
+  set_target_properties("${TARGET}" PROPERTIES
+    staging_dir "${staging_dir}"
+    data_dir "settings"
+  )
 
   ### Install from staging folder, if requested.
   if(arg_INSTALL_COMPONENT)

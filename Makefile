@@ -8,10 +8,15 @@
 MAKEFLAGS    += --no-print-directory
 SHARED_DIR   ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 OUT_DIR      ?= $(CURDIR)/out
-BUILD_TYPE   ?= Release
+BUILD_DIR    ?= $(OUT_DIR)/build
+INSTALL_DIR  ?= $(OUT_DIR)/install
+PACKAGE_DIR  ?= $(OUT_DIR)/packages
 
 ifdef TARGET
     export CMAKE_TOOLCHAIN_FILE ?= $(SHARED_DIR)cmake/toolchain-$(TARGET).cmake
+	BUILD_DIR += -$(TARGET)
+	INSTALL_DIR += $(TARGET)
+	PACKAGE_DIR += $(TARGET)
 else
 	TARGET := $(shell uname -s)-$(shell uname -m)
 
@@ -20,10 +25,11 @@ else
     endif
 endif
 
-BUILD_FLAVOR ?= $(TARGET)-$(BUILD_TYPE)
-BUILD_DIR    ?= $(OUT_DIR)/build/$(BUILD_FLAVOR)
-INSTALL_DIR  ?= $(OUT_DIR)/install/$(TARGET)
-PACKAGE_DIR  ?= $(OUT_DIR)/packages
+ifdef BUILD_TYPE
+	BUILD_DIR += -$(BUILD_TYPE)
+else
+	BUILD_TYPE = Release
+endif
 
 export CMAKE_INSTALL_PREFIX ?= ${INSTALL_DIR}
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
