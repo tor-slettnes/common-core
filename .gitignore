@@ -7,6 +7,9 @@
 ### Build artifacts
 /out/
 
+### Local CMake settings
+local.cmake
+
 ### CTest state
 /Testing
 
