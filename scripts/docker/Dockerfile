@@ -24,7 +24,7 @@ RUN apt-get install -y \
     protobuf-compiler-grpc  \
     python3-cffi-backend    \
     python3-dev             \
-    python3-venv            \
+    python3-virtualenv      \
     python3-build           \
     python3-hatchling       \
     python3-grpcio          \
