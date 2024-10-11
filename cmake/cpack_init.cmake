@@ -5,14 +5,25 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Import build configuration for the top-level project
-include("${CMAKE_SOURCE_DIR}/defaults.cmake")
+### Import build configuration for the top-level project, then merge in
+### configuration from _this_ project if different (i.e. this is a submodule).
+
+set(project_dirs "${CMAKE_SOURCE_DIR}")
+
+cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH this_project_dir)
+list(APPEND project_dirs "${this_project_dir}")
+list(REMOVE_DUPLICATES project_dirs)
 
 ### Merge in shared configuration if this is a submodule within a parent project.
-cmake_path(GET CMAKE_CURRENT_LIST_DIR PARENT_PATH shared_dir)
-if(NOT shared_dir STREQUAL CMAKE_SOURCE_DIR)
-  include("${shared_dir}/defaults.cmake")
-endif()
+foreach(dir ${project_dirs})
+  if(EXISTS "${dir}/local.cmake")
+    include("${dir}/local.cmake")
+  endif()
+
+  if(EXISTS "${dir}/defaults.cmake")
+    include("${dir}/defaults.cmake")
+  endif()
+endforeach()
 
 ### General CPack settings
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
