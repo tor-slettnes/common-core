@@ -92,7 +92,7 @@ endfunction()
 
 function(get_target_properties_recursively)
   set(_options REMOVE_DUPLICATES ALL_OR_NOTHING REQUIRED)
-  set(_singleargs SEPARATOR OUTPUT_VARIABLE)
+  set(_singleargs PREFIX SEPARATOR SUFFIX OUTPUT_VARIABLE)
   set(_multiargs PROPERTIES TARGETS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -108,7 +108,7 @@ function(get_target_properties_recursively)
 
     if(values)
       list(JOIN values "${separator}" props)
-      list(APPEND propslist "${props}")
+      list(APPEND propslist "${arg_PREFIX}${props}${arg_SUFFIX}")
     endif()
 
     get_target_property(dependencies "${target}" MANUALLY_ADDED_DEPENDENCIES)
@@ -116,7 +116,9 @@ function(get_target_properties_recursively)
       get_target_properties_recursively(
         PROPERTIES "${arg_PROPERTIES}"
         TARGETS ${dependencies}
+        PREFIX "${arg_PREFIX}"
         SEPARATOR "${separator}"
+        SUFFIX "${arg_SUFFIX}"
         OUTPUT_VARIABLE dep_props
         ${ALL_OR_NOTHING})
 

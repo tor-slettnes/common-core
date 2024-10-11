@@ -21,7 +21,7 @@ function(BuildPythonWheel TARGET)
     VENV PYTHON_INTERPRETER PYPROJECT_TEMPLATE INSTALL_COMPONENT INSTALL_DIR)
 
   set(_multiargs
-    PROGRAMS BUILD_DEPS PYTHON_DEPS SETTINGS_DEPS PACKAGE_DEPS)
+    PROGRAMS BUILD_DEPS PYTHON_DEPS DATA_DEPS PACKAGE_DEPS)
 
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -29,12 +29,6 @@ function(BuildPythonWheel TARGET)
   if(NOT BUILD_PYTHON_WHEELS)
     return()
   endif()
-
-  ### Copy sources from the specified target dependencies into a consolidated
-  ### staging area.
-  set(wheel_dir "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}")
-  set(wheel_base "${wheel_dir}/${TARGET}")
-  set(wheel_path "${wheel_base}")
 
   ### Determine Python interpreter from PYTHON_INTERPRETER, VENV, or host native
   if(arg_PYTHON_INTERPRETER)
@@ -59,32 +53,9 @@ function(BuildPythonWheel TARGET)
   endif()
 
 
-  add_custom_target("${TARGET}" ALL DEPENDS "${wheel_path}")
-  add_dependencies("${TARGET}" ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS})
+  #-----------------------------------------------------------------------------
+  ## Assign some variables based on provided inputs and project defaults
 
-  ### Collect staged python modules from targets listed in `PYTHON_DEPS`,
-  ### and generate a corresponding multi-line string in `PYTHON_INCLUDE`
-  ### suitable for the `[...force-include]` section of `pyproject.toml`
-  ### (using the "hatchling" build back-end).
-
-  create_include_map(
-    DEPENDENCIES ${arg_PYTHON_DEPS}
-    PROPERTY staging_dir
-    TARGET_DIR "/"
-    OUTPUT_VARIABLE PYTHON_INCLUDE
-    REQUIRED)
-
-  ### Likewise, collect staged settings folders from targets listed in
-  ### `SETTTINS_DEPS`, producing a suitable `SETTINGS_INCLUDE` string.
-
-  create_include_map(
-    DEPENDENCIES ${arg_SETTINGS_DEPS}
-    PROPERTY staging_dir
-    TARGET_DIR "settings/"
-    OUTPUT_VARIABLE SETTINGS_INCLUDE)
-
-
-  ### Now create `pyproject.toml` based on the above contents
   get_value_or_default(
     pyproject_template
     arg_PYPROJECT_TEMPLATE
@@ -129,22 +100,83 @@ function(BuildPythonWheel TARGET)
     set(AUTHOR_EMAIL "${CMAKE_MATCH_3}")
   endif()
 
+
+  get_wheel_name(
+    PACKAGE "${PACKAGE}"
+    VERSION "${VERSION}"
+    OUTPUT_VARIABLE wheel_name)
+
+  message(STATUS "Package ${PACKAGE} version ${VERSION} Wheel name: ${wheel_name}")
+
+  ### Define output directories for `pyproject.toml` and the resulting wheel
+  set(gen_dir "${CMAKE_CURRENT_BINARY_DIR}/wheels/${TARGET}")
+  set(wheel_dir "${gen_dir}/whl")
+  set(wheel_path "${wheel_dir}/${wheel_name}")
+
+  ### Create TARGET with dependencies
+  add_custom_target("${TARGET}" ALL
+    DEPENDS "${wheel_path}"
+  )
+
+  add_dependencies("${TARGET}" ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS})
+
+
+  #-----------------------------------------------------------------------------
+  ## Collect staged python staging diretories from targets listed in
+  ## `PYTHON_DEPS`, and generate `"source_dir" = "/"` mappings suitable for the
+  ## `[...force-include]` section of `pyproject.toml` (using the "hatchling"
+  ## build back-end).
+
+  set(include_map)
+
+  get_target_properties_recursively(
+    PROPERTIES staging_dir
+    TARGETS ${arg_PYTHON_DEPS}
+    PREFIX "\""
+    SUFFIX "\" = \"/\""
+    OUTPUT_VARIABLE dep_staging_dirs
+    REMOVE_DUPLICATES
+    REQUIRED)
+
+  list(APPEND include_map ${dep_staging_dirs})
+
+  ## Likewise, collect staged source / destination folder listed in `DATA_DEPS`:
+  get_target_properties_recursively(
+    PROPERTIES staging_dir data_dir
+    TARGETS ${arg_DATA_DEPS}
+    PREFIX "\""
+    SEPARATOR "\" = \""
+    SUFFIX "/\""
+    OUTPUT_VARIABLE extra_data
+    ALL_OR_NOTHING
+    REMOVE_DUPLICATES)
+
+  list(APPEND include_map ${extra_data})
+
+  ### Create a multi-line string in INCLUDE_MAP holding these directory mappings.
+  list(JOIN include_map "\n" INCLUDE_MAP)
+
+
+
+  #-----------------------------------------------------------------------------
+  ### Now create `pyproject.toml` based on the above contents
+  file(REMOVE_RECURSE "${wheel_dir}")
+  file(MAKE_DIRECTORY "${wheel_dir}")
+
   configure_file(
     "${pyproject_template}"
-    "pyproject.toml")
+    "${gen_dir}/pyproject.toml")
 
   ### Define command to build wheel
-  file(MAKE_DIRECTORY "${wheel_dir}")
   add_custom_command(
     OUTPUT "${wheel_path}"
     COMMAND ${python}
     ARGS -m build --wheel --outdir "${wheel_dir}" "."
-    COMMENT "Building PyIntaller executable: ${program}"
+    COMMENT "Building Python Wheel: ${wheel_path}"
     COMMAND_EXPAND_LISTS
     VERBATIM
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    WORKING_DIRECTORY "${gen_dir}"
   )
-
 
   ### Install/package resulting executable
   if(arg_INSTALL_COMPONENT)
@@ -163,33 +195,22 @@ endfunction()
 
 
 #===============================================================================
-## @fn create_include_map
-## @brief Generate include specifications for the Hatchling build back-end
-##
-## Collect staged python modules from targets listed in `PYTHON_DEPS`,
-## and generate a corresponding multi-line string in `PYTHON_INCLUDE`
-## suitable for the `[...force-include]` section of `pyproject.toml`
-## (using the "hatchling" build back-end).
+## @fn get_wheel_name
+## @brief
+##  Guesstimate name of `.whl` package file
 
-function(create_include_map)
-  set(_options REQUIRED)
-  set(_singleargs PROPERTY TARGET_DIR OUTPUT_VARIABLE)
-  set(_multiargs DEPENDENCIES)
+function(get_wheel_name)
+  set(_options)
+  set(_singleargs PACKAGE VERSION OUTPUT_VARIABLE)
+  set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  get_optional_keyword(REQUIRED "${arg_REQUIRED}")
-
-  get_target_properties_recursively(
-    PROPERTIES "${arg_PROPERTY}"
-    TARGETS "${arg_DEPENDENCIES}"
-    OUTPUT_VARIABLE include_dirs
-    REMOVE_DUPLICATES
-    ${REQUIRED})
-
-  list(TRANSFORM include_dirs
-    REPLACE "^(.+)$" "\"\\1\" = \"${arg_TARGET_DIR}\""
-    OUTPUT_VARIABLE include_map)
-
-  list(JOIN include_map "\n" include_spec)
-  set("${arg_OUTPUT_VARIABLE}" "${include_spec}" PARENT_SCOPE)
+  string(REPLACE "-" "_" stem "${arg_PACKAGE}")
+  if(arg_OUTPUT_VARIABLE)
+    set("${arg_OUTPUT_VARIABLE}"
+      "${stem}-${arg_VERSION}-py3-none-any.whl"
+      PARENT_SCOPE)
+  endif()
 endfunction()
+
+

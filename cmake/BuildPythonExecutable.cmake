@@ -56,6 +56,9 @@ function(BuildPythonExecutable TARGET)
   set(distdir "${out_dir}/dist")
   set(program_path "${distdir}/${program}")
 
+  ### Clean it
+  file(REMOVE_RECURSE "${out_dir}")
+
   ### Create a CMake target
   add_custom_target("${TARGET}" ALL DEPENDS "${program_path}")
   add_dependencies("${TARGET}" ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS})

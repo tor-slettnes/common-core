@@ -16,14 +16,13 @@ add_custom_target("${TARGET}"
 
 add_custom_command(
   OUTPUT "${PYTHON_VENV}/bin/pip"
+  DEPENDS "${PYTHON_PIP_REQUIREMENTS_FILE}"
+
   COMMAND "${Python3_EXECUTABLE}"
   ARGS -m virtualenv -p "${Python3_EXECUTABLE}" "${PYTHON_VENV}"
-  COMMENT "Creating Python Virual Environment: ${PYTHON_VENV}"
-)
 
-add_custom_command(
-  OUTPUT "${PYTHON_VENV}/bin/pip"
   COMMAND "${PYTHON_VENV}/bin/python"
   ARGS -m pip install -r "${PYTHON_PIP_REQUIREMENTS_FILE}"
-  APPEND
+
+  COMMENT "Creating Python Virual Environment: ${PYTHON_VENV}"
 )
