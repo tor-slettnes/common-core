@@ -25,7 +25,7 @@ function(BuildPython TARGET)
   set(_multiargs
     PYTHON_DEPS PROTO_DEPS
     PROGRAMS FILES DIRECTORIES FILENAME_PATTERN
-    HIDDEN_IMPORTS REQUIRED_SUBMODULES
+    HIDDEN_IMPORTS REQUIRED_PACKAGES
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -82,9 +82,9 @@ function(BuildPython TARGET)
       PROPERTIES hidden_imports ${arg_HIDDEN_IMPORTS})
   endif()
 
-  if(arg_REQUIRED_SUBMODULES)
+  if(arg_REQUIRED_PACKAGES)
     set_target_properties("${TARGET}"
-      PROPERTIES required_submodules ${arg_REQUIRED_SUBMODULES})
+      PROPERTIES required_PACKAGES ${arg_REQUIRED_PACKAGES})
   endif()
 
   ### Install source modules locally or via CPack

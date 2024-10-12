@@ -32,18 +32,17 @@ function(PROTOGEN_COMMON)
   ### the target property `source_dirs`. The resulting list is then passed into
   ### the ProtoBuf compiler as include directories.
 
-  cascade_inherited_property(
-    TARGET "${arg_TARGET}"
-    PROPERTY source_dirs
+  get_target_properties_recursively(
+    PROPERTIES SOURCE_DIR
+    TARGETS ${arg_DEPENDS}
     INITIAL_VALUE "${CMAKE_CURRENT_SOURCE_DIR}"
-    OUTPUT_VARIABLE _include_dirs
-    DEPENDENCIES ${arg_DEPENDS}
+    OUTPUT_VARIABLE include_dirs
     REMOVE_DUPLICATES
   )
 
   ## Append any directories supplied in the `Protobuf_IMPORT_DIRS` variable
   if(DEFINED Protobuf_IMPORT_DIRS)
-    list(APPEND _include_dirs ${Protobuf_IMPORT_DIRS})
+    list(APPEND include_dirs ${Protobuf_IMPORT_DIRS})
   endif()
 
   ### Add `.proto` files supplied in the PROTOS argument
@@ -98,7 +97,7 @@ function(PROTOGEN_COMMON)
     DEPENDS ${_proto_src}
     COMMAND ${_protoc}
     ARGS --${arg_GENERATOR}_out "${_outdir}"
-       "-I$<JOIN:${_include_dirs},;-I>"
+       "-I$<JOIN:${include_dirs},;-I>"
        ${_plugin_arg}
        ${_proto_src}
     COMMAND_EXPAND_LISTS

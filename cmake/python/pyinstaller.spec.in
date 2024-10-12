@@ -1,0 +1,67 @@
+# -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import collect_submodules, collect_all
+import importlib, pathlib
+
+### Capture HIDDEN_IMPORTS into a list
+hidden_imports = [@HIDDEN_IMPORTS@]
+
+### Split colon-separated strings in 'EXTRA_DATA' and `EXTRA_BINARIES` into pairs
+extra_data = [tuple(item.split(':')) for item in [@EXTRA_DATA@]]
+extra_binaries = [tuple(item.split(':')) for item in [@EXTRA_BINARIES@]]
+
+### Determine the source/destination path of EXTRA_MODULES
+### and append these to `extra_data`.
+for module_name in [@EXTRA_MODULES@]:
+    module = importlib.import_module(module_name)
+    module_path = pathlib.Path(module.__file__)
+    if module_path.stem == '__init__':
+        module_path = module_path.parent
+    extra_data.append((str(module_path), module_name))
+
+### Collect submodules from packages in COLLECT_SUBMODULES
+for package_name in [@COLLECT_SUBMODULES@]:
+    hidden_imports += collect_submodules(package_name)
+
+### Collect everything from packages in COLLECT_ALL
+for package_name in [@COLLECT_ALL@]:
+    data, binaries, imports = collect_all(package_name)
+    extra_data += data
+    extra_binaries += binaries
+    hidden_imports += imports
+
+a = Analysis(
+    [@SCRIPTS@],
+    pathex=[@EXTRA_PATHS@],
+    binaries=extra_binaries,
+    datas=extra_data,
+    hiddenimports=hidden_imports,
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[@RUNTIME_HOOKS@],
+    excludes=[],
+    noarchive=False,
+    optimize=0,
+)
+pyz = PYZ(a.pure)
+
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.datas,
+    [],
+    name='@EXECUTABLE_NAME@',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=True,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)

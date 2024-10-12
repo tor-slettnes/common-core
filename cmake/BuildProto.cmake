@@ -187,11 +187,11 @@ function(BuildProto_PYTHON TARGET)
 
   ### Set target properties for downstream targets
   ###   - `staging_dir` indicating where to find the generated modules
-  ###   - `required_submodules` to indicate that this namespace must
+  ###   - `required_packages` to indicate that this namespace must
   ###     be explicitly imported by `BuildPythonExecutable()`.
   set_target_properties("${TARGET}" PROPERTIES
     staging_dir "${staging_dir}"
-    required_submodules "${namespace}"
+    required_packages "${namespace}"
   )
 
   ### Install generated Python modules if requested

@@ -80,7 +80,7 @@ set(PYTHON_DEPENDENCIES "gprcio;protobuf;zmq"
   CACHE STRING "Python wheel runtime dependencies")
 
 set(PYTHON_PIP_REQUIREMENTS_FILE
-  "${CMAKE_SOURCE_DIR}/src/core/python/build/venv/requirements.txt"
+  "${CMAKE_CURRENT_LIST_DIR}/src/core/python/build/venv/requirements.txt"
   CACHE FILEPATH
   "File containing required PIP-installable packages for virtual environment")
 

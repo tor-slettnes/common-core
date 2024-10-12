@@ -81,8 +81,8 @@ function(BuildPythonWheel TARGET)
     arg_PACKAGE_DEPS
     "${PYTHON_DEPENDENCIES}")
 
-  list(TRANSFORM wheel_dependencies REPLACE "^(.+)$" "\"\\1\"")
-  list(JOIN wheel_dependencies ", " DEPENDENCIES)
+  join_quoted(wheel_dependencies
+    OUTPUT_VARIABLE DEPENDENCIES)
 
   get_value_or_default(
     CONTACT

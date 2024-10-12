@@ -38,47 +38,30 @@ function(get_optional_keyword KEYWORD VALUE)
   endif()
 endfunction()
 
-
 #===============================================================================
-## @fn cascade_inherited_property
+## @fn get_quoted_strings
 ## @brief
-##    Build a list of values stored as a property on the specified target,
-##    and subsequently/recursively in its downstream dependents
+##   Tranform a list to a single string of quoted and comma-separated items.
 
-function(cascade_inherited_property)
-  set(_options REMOVE_DUPLICATES)
-  set(_singleargs PROPERTY TARGET TARGET_PROPERTY OUTPUT_VARIABLE)
-  set(_multiargs DEPENDENCIES INITIAL_VALUE)
+function(join_quoted LIST)
+  set(_options)
+  set(_singleargs QUOTE LEFTQUOTE RIGHTQUOTE GLUE OUTPUT_VARIABLE)
+  set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  set(values "${arg_INITIAL_VALUE}")
-  foreach(_dep ${arg_DEPENDENCIES})
-    get_target_property(inherited_values "${_dep}" "${arg_PROPERTY}")
+  get_value_or_default(quote arg_QUOTE "\"")
+  get_value_or_default(leftquote arg_LEFTQUOTE "${quote}")
+  get_value_or_default(rightquote arg_RIGHTQUOTE "${quote}")
+  get_value_or_default(glue arg_GLUE ", ")
 
-    if(inherited_values)
-      list(APPEND values "${inherited_values}")
-    endif()
-  endforeach()
+  list(TRANSFORM "${LIST}"
+    REPLACE "^(.+)$" "${leftquote}\\1${rightquote}"
+    OUTPUT_VARIABLE quoted_list)
 
-  if(arg_REMOVE_DUPLICATES)
-    list(REMOVE_DUPLICATES values)
-  endif()
-
-  if (arg_TARGET)
-    if (arg_TARGET_PROPERTY)
-      set(property "${arg_TARGET_PROPERTY}")
-    else()
-      set(property "${arg_PROPERTY}")
-    endif()
-
-    set_target_properties("${arg_TARGET}"
-      PROPERTIES "${property}" "${values}")
-  endif()
-
-  if (arg_OUTPUT_VARIABLE)
-    set("${arg_OUTPUT_VARIABLE}" "${values}" PARENT_SCOPE)
-  endif()
+  list(JOIN quoted_list "${glue}" joined)
+  set("${arg_OUTPUT_VARIABLE}" "${joined}" PARENT_SCOPE)
 endfunction()
+
 
 
 #===============================================================================
@@ -93,13 +76,13 @@ endfunction()
 function(get_target_properties_recursively)
   set(_options REMOVE_DUPLICATES ALL_OR_NOTHING REQUIRED)
   set(_singleargs PREFIX SEPARATOR SUFFIX OUTPUT_VARIABLE)
-  set(_multiargs PROPERTIES TARGETS)
+  set(_multiargs INITIAL_VALUE PROPERTIES TARGETS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   get_optional_keyword(ALL_OR_NOTHING "${arg_ALL_OR_NOTHING}")
   get_value_or_default(separator arg_SEPARATOR ":")
 
-  set(propslist)
+  set(propslist ${arg_INITIAL_VALUE})
   foreach(target ${arg_TARGETS})
     get_target_properties("${target}"
       PROPERTIES "${arg_PROPERTIES}"

@@ -39,6 +39,7 @@ BuildPythonExecutable("pydemo_grpc_server"
   DATA_DEPS "demo-settings"
   VENV "${PYTHON_VENV}"
   SCRIPT "grpc/server.py"
+  RUNTIME_HOOKS "starthook.py"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   TYPE SBIN
 )
