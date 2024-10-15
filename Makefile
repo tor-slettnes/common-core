@@ -118,10 +118,11 @@ realclean:
 realclean_all:
 	@rm -rfv "$(OUT_DIR)"/build "$(OUT_DIR)"/install "$(PACKAGE_DIR)"
 
-distclean: pristine venvclean
+pristine: distclean venvclean
 
-pristine:
-	@rm -rfv "$(OUT_DIR)"
+distclean:
+	@echo "Removing all build outputs ${OUT_DIR}"
+	@rm -rf "$(OUT_DIR)"
 
 $(BUILD_DIR):
 	@mkdir -p "$(BUILD_DIR)"

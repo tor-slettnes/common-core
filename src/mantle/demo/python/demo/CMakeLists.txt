@@ -23,6 +23,7 @@ set(DIRECTORIES
   zmq
 )
 
+
 BuildPython("${TARGET}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   NAMESPACE_COMPONENT "demo"
@@ -32,33 +33,33 @@ BuildPython("${TARGET}"
   DIRECTORIES "${DIRECTORIES}"
 )
 
+if(INCLUDE_DEMO)
+  BuildPythonExecutable("pydemo_grpc_server"
+    BUILD_DEPS "python_pyinstaller"
+    PYTHON_DEPS "${TARGET}"
+    DATA_DEPS "demo-settings"
+    VENV "${PYTHON_VENV}"
+    SCRIPT "grpc/server.py"
+    RUNTIME_HOOKS "starthook.py"
+    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    TYPE SBIN
+  )
 
-BuildPythonExecutable("pydemo_grpc_server"
-  BUILD_DEPS "python_pyinstaller"
-  PYTHON_DEPS "${TARGET}"
-  DATA_DEPS "demo-settings"
-  VENV "${PYTHON_VENV}"
-  SCRIPT "grpc/server.py"
-  RUNTIME_HOOKS "starthook.py"
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  TYPE SBIN
-)
+  BuildPythonExecutable("pydemo_zmq_server"
+    PYTHON_DEPS "${TARGET}"
+    BUILD_DEPS "python_pyinstaller"
+    DATA_DEPS "demo-settings"
+    VENV "${PYTHON_VENV}"
+    SCRIPT "zmq/server.py"
+    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    TYPE SBIN
+  )
 
-BuildPythonExecutable("pydemo_zmq_server"
-  PYTHON_DEPS "${TARGET}"
-  BUILD_DEPS "python_pyinstaller"
-  DATA_DEPS "demo-settings"
-  VENV "${PYTHON_VENV}"
-  SCRIPT "zmq/server.py"
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  TYPE SBIN
-)
-
-BuildPythonWheel("demo-shell"
-  BUILD_DEPS "python_build"
-  PYTHON_DEPS "${TARGET}"
-  DATA_DEPS "demo-settings"
-  DESCRIPTION "Interactive shell to communicate with DEMO service over gRPC or ZMQ"
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-)
-
+  BuildPythonWheel("demo-shell"
+    BUILD_DEPS "python_build"
+    PYTHON_DEPS "${TARGET}"
+    DATA_DEPS "demo-settings"
+    DESCRIPTION "Interactive shell to communicate with DEMO service over gRPC or ZMQ"
+    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  )
+endif()

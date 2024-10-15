@@ -5,7 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(INSTALL_COMPONENT "demo-utils")
+if(INCLUDE_DEMO)
+  set(INSTALL_COMPONENT "demo-utils")
+endif()
 
 add_subdirectory(common)
 
@@ -21,10 +23,11 @@ if(BUILD_ZMQ)
   add_subdirectory(zmq-tool)
 endif()
 
-
-cpack_add_component(${INSTALL_COMPONENT}
-  DEPENDS demo-common
-  GROUP ${INSTALL_GROUP}
-  DISPLAY_NAME "DEMO example - C++ utilities"
-  DESCRIPTION "DEMO command-line utilitie written in C++"
-)
+if(INSTALL_COMPONENT)
+  cpack_add_component(${INSTALL_COMPONENT}
+    DEPENDS demo-settings
+    GROUP ${INSTALL_GROUP}
+    DISPLAY_NAME "DEMO example - C++ utilities"
+    DESCRIPTION "DEMO command-line utilitie written in C++"
+  )
+endif()

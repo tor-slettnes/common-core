@@ -20,8 +20,10 @@ set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
 ##  Add/populate a Python target, with sources organized by namespace in a staging directory
 
 function(BuildPython TARGET)
-  set(_options INSTALL)
-  set(_singleargs NAMESPACE NAMESPACE_COMPONENT STAGING_DIR INSTALL_COMPONENT INSTALL_DIR)
+  set(_options)
+  set(_singleargs
+    NAMESPACE NAMESPACE_COMPONENT STAGING_DIR
+    INSTALL_COMPONENT INSTALL_DIR)
   set(_multiargs
     PYTHON_DEPS PROTO_DEPS
     PROGRAMS FILES DIRECTORIES FILENAME_PATTERN
@@ -64,6 +66,8 @@ function(BuildPython TARGET)
      set(staging_dir "${CMAKE_CURRENT_BINARY_DIR}/staging")
   endif()
 
+  message(STATUS "Staging Python modules for target ${TARGET}")
+
   populate_staging_dir("${staging_dir}"
     NAMESPACE_DIR "${namespace_dir}"
     PROGRAMS ${arg_PROGRAMS}
@@ -88,9 +92,12 @@ function(BuildPython TARGET)
   endif()
 
   ### Install source modules locally or via CPack
-  if((arg_INSTALL OR INSTALL_PYTHON_MODULES)
-      AND arg_INSTALL_COMPONENT)
+  message(DEBUG "BuildPython(${TARGET})"
+    " - staging_dir='${staging_dir}'"
+    " - INSTALL_PYTHON_MODULES='${INSTALL_PYTHON_MODULES}'"
+    " - INSTALL_COMPONENT='${arg_INSTALL_COMPONENT}'")
 
+  if(INSTALL_PYTHON_MODULES AND arg_INSTALL_COMPONENT)
     if(arg_INSTALL_DIR)
       set(_install_dir "${arg_INSTALL_DIR}")
     else()

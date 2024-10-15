@@ -51,6 +51,27 @@ function(CPackDebianConfig VARIABLE_SUFFIX VALUE)
 endfunction()
 
 #===============================================================================
+## @fn add_cpack_component
+## @brief
+###    Wrap `cpack_add_component()`, with a fix for an issue where
+###    `CPACK_COMPONENTS_ALL` did not get updated
+
+function(add_cpack_component COMPONENT)
+  cpack_add_component("${COMPONENT}" ${ARGN})
+  CPackConfig(CPACK_COMPONENTS_ALL "${COMPONENT}" APPEND)
+endfunction()
+
+#===============================================================================
+## @fn add_cpack_group
+## @brief
+###    Wrap `cpack_add_component_group(), for consistency
+
+function(add_cpack_group)
+  cpack_add_component_group(${ARGN})
+endfunction()
+
+
+#===============================================================================
 ## @fn get_cpack_debian_variable
 ## @brief Obtain variable name corresponding to the provided suffix,
 ##    with with COMPONENT or GROUP inserted if the corresponding component-based
@@ -80,7 +101,8 @@ endfunction()
 
 #===============================================================================
 ## @fn get_cpack_debian_grouping
-## @brief Obtain a string containing COMPONENT or GROUP if and only if
+## @brief
+##    Obtain a string containing COMPONENT or GROUP if and only if
 ##    the corresponding component-based packaging is used.
 ##
 ## For an overview of component-specific CPack Debian variables, see:

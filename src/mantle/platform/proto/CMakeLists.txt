@@ -9,7 +9,9 @@
 set(TARGET "cc_platform_proto")
 
 ### Package component
-set(INSTALL_COMPONENT "platform-proto")
+if(INCLUDE_PLATFORM)
+  set(INSTALL_COMPONENT "platform-proto")
+endif()
 
 ### Static/shared library dependencies.
 set(PROTO_DEPS cc_core_proto)
@@ -30,10 +32,12 @@ BuildProto("${TARGET}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
 )
 
-cpack_add_component(${INSTALL_COMPONENT}
-  DEPENDS core-proto
-  GROUP ${INSTALL_GROUP}
-  DISPLAY_NAME "Common Core Platform services - ProtoBuf/gRPC modules"
-  DESCRIPTION "Generated runtime modules for communication with "
-  "Common Core platform services over ProtoBuf/gRPC."
-)
+if(INSTALL_COMPONENT)
+  cpack_add_component("${INSTALL_COMPONENT}"
+    DEPENDS core-proto
+    GROUP ${INSTALL_GROUP}
+    DISPLAY_NAME "Common Core Platform services - ProtoBuf/gRPC modules"
+    DESCRIPTION "Generated runtime modules for communication with "
+    "Common Core platform services over ProtoBuf/gRPC."
+  )
+endif()

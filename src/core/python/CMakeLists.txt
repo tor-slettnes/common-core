@@ -12,8 +12,10 @@ add_subdirectory(build)
 ### Create a library target to facilitate get_target_property()
 set(TARGET "cc_core_python")
 
-### Package component
-set(INSTALL_COMPONENT "core-python")
+if(INCLUDE_SHARED)
+  ### Package component
+  set(INSTALL_COMPONENT "core-python")
+endif()
 
 ### Populate version/build info
 configure_file(__init__.py.in "generated/__init__.py")
@@ -52,18 +54,11 @@ BuildPython("${TARGET}"
   DIRECTORIES "${DIRECTORIES}"
 )
 
-# BuildPythonWheel("${TARGET}_wheel"
-#   CONTENTS ${DIRECTORIES} ${PROGRAMS} ${FILES}
-#   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-#   PROTO_DEPS "cc_core_proto"
-# )
-
-
-### Add a installation package component
-cpack_add_component("${INSTALL_COMPONENT}"
-  GROUP "${INSTALL_GROUP}"
-  DISPLAY_NAME "Common Core - Python core"
-  DESCRIPTION "Python shared components"
-  INSTALL_TYPES python
-)
-
+if(INSTALL_COMPONENT)
+  ### Add a installation package component
+  cpack_add_component("${INSTALL_COMPONENT}"
+    GROUP "${INSTALL_GROUP}"
+    DISPLAY_NAME "Common Core - Python core"
+    DESCRIPTION "Python shared components"
+  )
+endif()

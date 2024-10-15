@@ -5,6 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(venv)
+add_subdirectory(virtualenv)
 add_subdirectory(pyinstaller)
 add_subdirectory(pyproject-build)

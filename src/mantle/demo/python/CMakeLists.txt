@@ -9,14 +9,18 @@
 set(TARGET "cc_demo_python")
 
 ### Package component
-set(INSTALL_COMPONENT "demo-python")
+if(INCLUDE_DEMO)
+  set(INSTALL_COMPONENT "demo-python")
+endif()
 
 add_subdirectory(protobuf)
 add_subdirectory(demo)
 
-cpack_add_component("${INSTALL_COMPONENT}"
-  DEPENDS "core-python" "core-settings" "demo-proto" "demo-settings"
-  GROUP "${INSTALL_GROUP}"
-  DISPLAY_NAME "DEMO Example - Python modules"
-  DESCRIPTION "Python client and server moduules for demo application example"
-)
+if(INSTALL_COMPONENT)
+  cpack_add_component("${INSTALL_COMPONENT}"
+    DEPENDS "core-python" "core-settings" "demo-proto" "demo-settings"
+    GROUP "${INSTALL_GROUP}"
+    DISPLAY_NAME "DEMO Example - Python modules"
+    DESCRIPTION "Python client and server moduules for demo application example"
+  )
+endif()

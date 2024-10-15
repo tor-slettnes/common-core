@@ -9,14 +9,18 @@
 set(TARGET "cc_platform_python")
 
 ### Package component
-set(INSTALL_COMPONENT "platform-python")
+if(INCLUDE_PLATFORM)
+  set(INSTALL_COMPONENT "platform-python")
+endif()
 
 add_subdirectory(protobuf)
 add_subdirectory(platform)
 
-cpack_add_component("${INSTALL_COMPONENT}"
-  DEPENDS "core-python" "core-settings" "platform-proto" "platform-settings"
-  GROUP "${INSTALL_GROUP}"
-  DISPLAY_NAME "Platform Services - Python modules"
-  DESCRIPTION "Python client moduules for platform services: SysConfig, NetConfig, VFS"
-)
+if(INSTALL_COMPONENT)
+  cpack_add_component("${INSTALL_COMPONENT}"
+    DEPENDS "core-python" "core-settings" "platform-proto" "platform-settings"
+    GROUP "${INSTALL_GROUP}"
+    DISPLAY_NAME "Platform Services - Python modules"
+    DESCRIPTION "Python client moduules for platform services: SysConfig, NetConfig, VFS"
+  )
+endif()

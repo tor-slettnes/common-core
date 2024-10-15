@@ -5,8 +5,5 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-if (BUILD_DEMO)
-  add_subdirectory(demo)
-endif()
-
+add_subdirectory(demo)
 add_subdirectory(platform)

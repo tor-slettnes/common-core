@@ -6,27 +6,31 @@
 #===============================================================================
 
 set(TARGET "platform-settings")
-set(INSTALL_COMPONENT "${TARGET}")
 
-configure_file(upgrade.json.in upgrade.json)
+if(INCLUDE_PLATFORM)
+  set(INSTALL_COMPONENT "${TARGET}")
 
-BuildSettings("${TARGET}"
-  SETTINGS_DEPS "core-settings"
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  FILES "${CMAKE_CURRENT_BINARY_DIR}/upgrade.json"
-  DIRECTORIES "./"
-)
+  configure_file(upgrade.json.in upgrade.json)
 
-### Install the settings file
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/upgrade.json
-  DESTINATION "${SETTINGS_DIR}"
-  COMPONENT "${INSTALL_COMPONENT}"
-)
+  BuildSettings("${TARGET}"
+    SETTINGS_DEPS "core-settings"
+    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/upgrade.json"
+    DIRECTORIES "./"
+  )
 
-cpack_add_component(${INSTALL_COMPONENT}
-  GROUP ${INSTALL_GROUP}
-  DEPENDS core-settings
-  DISPLAY_NAME "Common Core - common service settings"
-  DESCRIPTION "Settings for common/platform applications"
-)
+  ### Install the settings file
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/upgrade.json
+    DESTINATION "${SETTINGS_DIR}"
+    COMPONENT "${INSTALL_COMPONENT}"
+  )
+
+  cpack_add_component(${INSTALL_COMPONENT}
+    GROUP ${INSTALL_GROUP}
+    DEPENDS core-settings
+    DISPLAY_NAME "Common Core - common service settings"
+    DESCRIPTION "Settings for common/platform applications"
+  )
+
+endif()

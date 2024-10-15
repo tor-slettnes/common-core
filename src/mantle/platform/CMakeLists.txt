@@ -5,7 +5,16 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+project("platform"
+  VERSION "${VERSION}"
+  DESCRIPTION "Services to interact with the host platform"
+  HOMEPAGE_URL "${HOME_PAGE}"
+  LANGUAGES CXX)
+
 set(INSTALL_GROUP "platform")
+
+add_subdirectory(scripts)
+add_subdirectory(settings)
 
 if (BUILD_PROTOBUF)
   add_subdirectory(proto)
@@ -19,11 +28,9 @@ if (BUILD_PYTHON)
   add_subdirectory(python)
 endif()
 
-add_subdirectory(scripts)
-add_subdirectory(settings)
-
-
-cpack_add_component_group(${INSTALL_GROUP}
-  DISPLAY_NAME "Platform services"
-  DESCRIPTION "Common platform services: System configuration, networking, file access, upgrade"
-)
+if(INSTALL_GROUP)
+  cpack_add_component_group(${INSTALL_GROUP}
+    DISPLAY_NAME "Platform services"
+    DESCRIPTION "Common platform services: System configuration, networking, file access, upgrade"
+  )
+endif()

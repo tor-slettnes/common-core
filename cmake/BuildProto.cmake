@@ -22,8 +22,6 @@ function(BuildProto TARGET)
     set(_component ${arg_INSTALL_COMPONENT})
   elseif(CPACK_CURRENT_COMPONENT)
     set(_component ${CPACK_CURRENT_COMPONENT})
-  else()
-    set(_component common)
   endif()
 
   if(arg_LIB_TYPE)
@@ -130,7 +128,7 @@ endfunction()
 ## @fn BuildProto_PYTHON
 
 function(BuildProto_PYTHON TARGET)
-  set(_options INSTALL)
+  set(_options)
   set(_singleargs STAGING_DIR INSTALL_COMPONENT INSTALL_DIR NAMESPACE NAMESPACE_COMPONENT)
   set(_multiargs DEPENDS PROTOS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -195,7 +193,7 @@ function(BuildProto_PYTHON TARGET)
   )
 
   ### Install generated Python modules if requested
-  if(arg_INSTALL OR INSTALL_PYTHON_MODULES)
+  if(INSTALL_PYTHON_MODULES AND arg_INSTALL_COMPONENT)
     if(arg_INSTALL_DIR)
       set(_install_dir "${arg_INSTALL_DIR}")
     else()

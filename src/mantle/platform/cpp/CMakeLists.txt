@@ -6,4 +6,8 @@
 #===============================================================================
 
 add_subdirectory(services)
-add_subdirectory(apps)
+
+if(INCLUDE_PLATFORM)
+  add_subdirectory(apps)
+endif()
+

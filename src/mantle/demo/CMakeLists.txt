@@ -5,15 +5,22 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(INSTALL_GROUP "demo")
-
-cpack_add_component_group(${INSTALL_GROUP}
-  DISPLAY_NAME "DEMO Example"
-  DESCRIPTION "DEMO application example"
+project("demo"
+  VERSION "${VERSION}"
+  DESCRIPTION "Developer reference example"
+  HOMEPAGE_URL "${HOME_PAGE}"
+  LANGUAGES CXX
 )
+
+if(INCLUDE_DEMO)
+  set(INSTALL_GROUP "demo")
+endif()
 
 add_subdirectory(scripts)
 add_subdirectory(settings)
+
+### Each of the following subdirectories contain targets that may be needed by
+### downstream targets, even if we don't build the DEMO application itself.
 
 if (BUILD_PROTOBUF)
   add_subdirectory(proto)
@@ -31,9 +38,9 @@ if (BUILD_PYTHON)
   add_subdirectory(python)
 endif()
 
-cpack_add_component(demo-common
-  DEPENDS demo-settings
-  GROUP ${INSTALL_GROUP}
-  DISPLAY_NAME "DEMO example - common components"
-  DESCRIPTION "Common components for DEMO clients and servers"
-)
+if(INSTALL_GROUP)
+  cpack_add_component_group(${INSTALL_GROUP}
+    DISPLAY_NAME "DEMO Example"
+    DESCRIPTION "DEMO application example"
+  )
+endif()

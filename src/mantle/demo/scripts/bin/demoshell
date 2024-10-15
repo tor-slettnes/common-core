@@ -10,6 +10,7 @@ prog_path=$(realpath "$0")
 prog_dir=${prog_path%/*}
 base_dir=${prog_dir%/*}
 
+### Locate `target_name`, first as a Python module on disk
 for candidate_dir in lib/python3/dist-packages share/python python
 do
     candidate="${base_dir}/${candidate_dir}/${target_name}"

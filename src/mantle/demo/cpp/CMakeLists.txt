@@ -5,11 +5,15 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(api)
-add_subdirectory(impl)
-add_subdirectory(daemon)
-add_subdirectory(utils)
+add_subdirectory(api EXCLUDE_FROM_ALL)
+add_subdirectory(impl EXCLUDE_FROM_ALL)
 
-if(BUILD_TESTING)
-  add_subdirectory(tests)
+if(INCLUDE_DEMO)
+  add_subdirectory(daemon)
+  add_subdirectory(utils)
+
+  if(BUILD_TESTING)
+    add_subdirectory(tests)
+  endif()
 endif()
+

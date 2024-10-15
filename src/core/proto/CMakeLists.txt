@@ -9,7 +9,9 @@
 set(TARGET "cc_core_proto")
 
 ### Package component
-set(INSTALL_COMPONENT "core-proto")
+if(INCLUDE_SHARED)
+  set(INSTALL_COMPONENT "core-proto")
+endif()
 
 ### Source files
 set(SOURCES
@@ -24,10 +26,14 @@ BuildProto("${TARGET}"
   LIB_TYPE STATIC
   SOURCES "${SOURCES}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  INSTALL
 )
 
-cpack_add_component(${INSTALL_COMPONENT}
-  GROUP ${INSTALL_GROUP}
-  DISPLAY_NAME "Common ProtoBuf/gRPC modules"
-  DESCRIPTION "Generated Protocol Buffers/gRPC modules for common components"
-)
+if(INSTALL_COMPONENT)
+  cpack_add_component(${INSTALL_COMPONENT}
+    GROUP ${INSTALL_GROUP}
+    DISPLAY_NAME "Common ProtoBuf/gRPC modules"
+    DESCRIPTION "Generated Protocol Buffers/gRPC modules for common components"
+  )
+endif()
+

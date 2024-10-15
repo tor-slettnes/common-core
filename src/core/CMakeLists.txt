@@ -12,7 +12,6 @@ cpack_add_component_group(${INSTALL_GROUP}
   DESCRIPTION "Common core - common components"
 )
 
-
 if(BUILD_DDS)
   add_subdirectory(idl)
 endif()

@@ -11,7 +11,7 @@
 ## @fn BuildLibrary
 
 function(BuildLibrary TARGET)
-  set(_options)
+  set(_options INCLUDE_IN_ALL)
   set(_singleargs LIB_TYPE SCOPE)
   set(_multiargs SOURCES LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -41,7 +41,11 @@ function(BuildLibrary TARGET)
     find_package("${_dep}" REQUIRED)
   endforeach()
 
-  add_library("${TARGET}" ${_type} ${arg_SOURCES})
+  if (NOT INCULDE_IN_ALL)
+    set(exclude_from_all EXCLUDE_FROM_ALL)
+  endif()
+
+  add_library("${TARGET}" ${_type} ${exclude_from_all} ${arg_SOURCES})
   target_include_directories(${TARGET} ${_scope} ${CMAKE_CURRENT_SOURCE_DIR})
   target_link_libraries(${TARGET} ${_scope} ${arg_LIB_DEPS} ${arg_OBJ_DEPS})
 
