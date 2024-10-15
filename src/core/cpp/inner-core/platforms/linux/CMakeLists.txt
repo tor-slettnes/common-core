@@ -52,11 +52,22 @@ BuildLibrary("${TARGET}"
 
 set(ERRNOFILE   ${CMAKE_CURRENT_BINARY_DIR}/errno-list.gen)
 set(ERRNOSCRIPT ${BUILD_SCRIPTS_DIR}/generate_errnos.py)
-add_custom_command(
-  OUTPUT ${ERRNOFILE}
-  COMMAND python3 ${ERRNOSCRIPT} --output ${ERRNOFILE} --sysroot "${BUILD_ROOT}/"
-  COMMENT "Generating ${ERRNOFILE}"
+
+cmake_path(RELATIVE_PATH ERRNOFILE
+  BASE_DIRECTORY ${CMAKE_BINARY_DIR}
+  OUTPUT_VARIABLE errno_relpath)
+
+find_package(Python3
+  COMPONENTS Interpreter
 )
+
+if(Python3_Interpreter_FOUND)
+  add_custom_command(
+    OUTPUT ${ERRNOFILE}
+    COMMAND "${Python3_EXECUTABLE}" ${ERRNOSCRIPT} --output ${ERRNOFILE} --sysroot "${BUILD_ROOT}/"
+    COMMENT "Generating ${errno_relpath}"
+  )
+endif()
 
 add_custom_target(errnos DEPENDS ${ERRNOFILE})
 add_dependencies(${TARGET} errnos)

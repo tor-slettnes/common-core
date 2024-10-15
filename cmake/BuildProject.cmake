@@ -30,6 +30,9 @@ if(NOT PROJECT_INCLUDED)
     endif()
   endif()
 
+  # Set build version, date and time
+  string(TIMESTAMP BUILD_TIME "%s")
+
   ### Common utility functions
   include(utility)
   include(pkgconf)

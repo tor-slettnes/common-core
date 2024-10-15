@@ -36,10 +36,15 @@ BuildLibrary("${TARGET}"
 ### Generate "grpc-status-names.gen"
 set(GRPCSTATUSFILE   ${CMAKE_CURRENT_BINARY_DIR}/grpc-status-names.gen)
 set(GRPCSTATUSSCRIPT ${BUILD_SCRIPTS_DIR}/generate_grpcstatus.py)
+
+cmake_path(RELATIVE_PATH GRPCSTATUSFILE
+  BASE_DIRECTORY ${CMAKE_BINARY_DIR}
+  OUTPUT_VARIABLE statusfile_relpath)
+
 add_custom_command(
     OUTPUT ${GRPCSTATUSFILE}
     COMMAND python3 ${GRPCSTATUSSCRIPT} --output ${GRPCSTATUSFILE} --sysroot "${BUILD_ROOT}/"
-    COMMENT "Generating ${GRPCSTATUSFILE}"
+    COMMENT "Generating ${statusfile_relpath}"
     BYPRODUCTS ${GRPCSTATUSFILE})
 add_custom_target(grpcstatuslist DEPENDS ${GRPCSTATUSFILE})
 add_dependencies(${TARGET} grpcstatuslist)

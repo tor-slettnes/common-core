@@ -6,12 +6,6 @@
 #===============================================================================
 
 # Set build version, date and time
-string(TIMESTAMP BUILD_DATE_UTC "%Y-%m-%d" UTC)
-string(TIMESTAMP BUILD_TIME_UTC "%H:%M:%S" UTC)
-string(TIMESTAMP BUILD_DATE_LOCAL "%Y-%m-%d")
-string(TIMESTAMP BUILD_TIME_LOCAL "%H:%M:%S")
-string(TIMESTAMP BUILD_TIMESTAMP "%s")
-
 cmake_host_system_information(RESULT BUILD_HOST QUERY HOSTNAME)
 cmake_host_system_information(RESULT BUILD_OS QUERY OS_NAME)
 cmake_host_system_information(RESULT BUILD_OS_RELEASE QUERY OS_RELEASE)

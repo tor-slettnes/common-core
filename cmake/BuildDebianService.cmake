@@ -94,7 +94,8 @@ endfunction()
 
 function(AddEnableHooks UNIT)
   set(_options)
-  set(_singleargs INSTALL_DIRECTORY INSTALL_COMPONENT INSTALL_GROUP)
+  set(_singleargs INSTALL_DIRECTORY INSTALL_COMPONENT INSTALL_GROUP
+    PREINST_TEMPLATE POSTINST_TEMPLATE PRERM_TEMPLATE POSTRM_TEMPLATE)
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 

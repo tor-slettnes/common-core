@@ -50,26 +50,6 @@ function(CPackDebianConfig VARIABLE_SUFFIX VALUE)
   CPackConfig("${variable_name}" "${VALUE}" ${APPEND})
 endfunction()
 
-#===============================================================================
-## @fn add_cpack_component
-## @brief
-###    Wrap `cpack_add_component()`, with a fix for an issue where
-###    `CPACK_COMPONENTS_ALL` did not get updated
-
-function(add_cpack_component COMPONENT)
-  cpack_add_component("${COMPONENT}" ${ARGN})
-  CPackConfig(CPACK_COMPONENTS_ALL "${COMPONENT}" APPEND)
-endfunction()
-
-#===============================================================================
-## @fn add_cpack_group
-## @brief
-###    Wrap `cpack_add_component_group(), for consistency
-
-function(add_cpack_group)
-  cpack_add_component_group(${ARGN})
-endfunction()
-
 
 #===============================================================================
 ## @fn get_cpack_debian_variable
