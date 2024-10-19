@@ -94,7 +94,7 @@ function(PROTOGEN_COMMON)
   ## Finally let's do the generation.
   add_custom_command(
     OUTPUT ${_outputs}
-    DEPENDS ${_proto_src}
+    DEPENDS ${_proto_src} ${arg_DEPENDS}
     COMMAND ${_protoc}
     ARGS --${arg_GENERATOR}_out "${_outdir}"
        "-I$<JOIN:${include_dirs},;-I>"

@@ -4,4 +4,5 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+__package__ = "@PYTHON_NAMESPACE@"
 __version__ = "@PROJECT_VERSION@"

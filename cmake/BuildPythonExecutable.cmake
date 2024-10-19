@@ -62,10 +62,11 @@ function(BuildPythonExecutable TARGET)
 
   ### Clean it
   file(REMOVE_RECURSE "${out_dir}")
+  file(MAKE_DIRECTORY "${staging_dir}")
 
   ### Create a CMake target
-  add_custom_target("${TARGET}" ALL DEPENDS "${program_path}")
-  add_dependencies("${TARGET}" ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS})
+  add_custom_target("${TARGET}" ALL
+    DEPENDS "${program_path}")
 
   ### Copy sources from the specified target dependencies into a consolidated
   ### staging area.  This is needed because `PyInstaller` cannot handle
@@ -77,16 +78,15 @@ function(BuildPythonExecutable TARGET)
     REMOVE_DUPLICATES
     REQUIRED)
 
-  set_property(SOURCE staged-${TARGET}
-    PROPERTY SYMBOLIC)
-
   add_custom_command(
-    OUTPUT staged-${TARGET}
+    OUTPUT "${program_path}"
+    DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS}
     COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_directory ${dep_staging_dirs} "${staging_dir}"
-    COMMENT "Staging modules for PyInstaller in ${staging_dir}."
+    ARGS -E copy_directory ${dep_staging_dirs} ${staging_dir}
     COMMAND_EXPAND_LISTS
     VERBATIM
+    COMMENT "Building PyInstaller executable: ${program}"
+    WORKING_DIRECTORY "${staging_dir}"
   )
 
   ### Construct arguments for PyInstaller
@@ -204,14 +204,9 @@ function(BuildPythonExecutable TARGET)
 
   ### Rule for running PyInstaller
   add_custom_command(
-    OUTPUT "${program_path}"
-    DEPENDS staged-${TARGET} "${arg_PYTHON_DEPS}"
-    COMMAND "${python}"
+    OUTPUT "${program_path}" APPEND
+    COMMAND ${python}
     ARGS -m PyInstaller ${pyinstall_args}
-    COMMAND_EXPAND_LISTS
-    COMMENT "Building PyInstaller executable: ${program}"
-    VERBATIM
-    WORKING_DIRECTORY "${staging_dir}"
   )
 
   ### Install/package resulting executable

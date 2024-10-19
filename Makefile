@@ -11,6 +11,7 @@ OUT_DIR      ?= $(CURDIR)/out
 BUILD_DIR    ?= $(OUT_DIR)/build
 INSTALL_DIR  ?= $(OUT_DIR)/install
 PACKAGE_DIR  ?= $(OUT_DIR)/packages
+PYTHON_VENV  ?= $(CURDIR)/venv
 
 ifdef TARGET
     export CMAKE_TOOLCHAIN_FILE ?= $(SHARED_DIR)cmake/toolchain-$(TARGET).cmake
@@ -31,23 +32,31 @@ else
 	BUILD_TYPE = Release
 endif
 
-export CMAKE_INSTALL_PREFIX ?= ${INSTALL_DIR}
+#export CMAKE_INSTALL_PREFIX ?= ${INSTALL_DIR}
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
-export CPACK_PACKAGE_DIRECTORY ?= $(PACKAGE_DIR)
-export PYTHON_VENV=venv
+#export CPACK_PACKAGE_DIRECTORY ?= $(PACKAGE_DIR)
 
-ifeq ($(shell uname), Linux)
-   export CMAKE_BUILD_PARALLEL_LEVEL ?= $(shell nproc)
-endif
+CMAKE_ARGS = -D PYTHON_VENV=$(PYTHON_VENV)
+CMAKE_ARGS += $(if $(PRODUCT),-D PRODUCT="$(PRODUCT)")
+CMAKE_ARGS += $(if $(VERSION),-D VERSION="$(VERSION)")
+CMAKE_ARGS += $(if $(BUILD_NUMBER),-D BUILD_NUMBER="$(BUILD_NUMBER)")
+CMAKE_ARGS += $(if $(PACKAGE_NAME),-D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
+
+CMAKE_CACHE = $(BUILD_DIR)/CMakeCache.txt
+
+# ifeq ($(shell uname), Linux)
+#    export CMAKE_BUILD_PARALLEL_LEVEL ?= $(shell nproc)
+# endif
 
 ### Check for a target-specific toolchain and use that if available
 
+.PHONY: local
 local: test install
 
+.PHONY: release
 release: test package
 
-package: deb
-
+.PHONY: deb
 deb: build
 	@echo
 	@echo "#############################################################"
@@ -56,6 +65,7 @@ deb: build
 	@echo
 	@cpack --config "${BUILD_DIR}/CPackConfig.cmake" -B "${PACKAGE_DIR}"
 
+.PHONY: install
 install: build
 	@echo
 	@echo "#############################################################"
@@ -64,6 +74,7 @@ install: build
 	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR)
 
+.PHONY: install/strip
 install/strip: build
 	@echo
 	@echo "#############################################################"
@@ -72,18 +83,20 @@ install/strip: build
 	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR) --strip
 
+.PHONY: uninstall
 uninstall:
 	@rm -rfv "$(INSTALL_DIR)"
 
+.PHONY: test
 test: build
 	@echo
 	@echo "#############################################################"
 	@echo "Testing in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cd "$(BUILD_DIR)" && ctest
+	@cmake --build "$(BUILD_DIR)" --target test
 
-
+.PHONY: build
 build: cmake
 	@echo
 	@echo "#############################################################"
@@ -92,53 +105,62 @@ build: cmake
 	@echo
 	@cmake --build "$(BUILD_DIR)"
 
-cmake: $(BUILD_DIR)
+.PHONY: cmake
+cmake: $(CMAKE_CACHE)
+
+$(CMAKE_CACHE):
 	@echo
 	@echo "#############################################################"
 	@echo "Generating build files in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cmake -B "$(BUILD_DIR)" \
-		$(if $(PRODUCT),-D PRODUCT="$(PRODUCT)") \
-		$(if $(VERSION),-D VERSION="$(VERSION)") \
-		$(if $(BUILD_NUMBER),-D BUILD_NUMBER="$(BUILD_NUMBER)") \
-		$(if $(PACKAGE_NAME),-D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
+	@cmake -B "$(BUILD_DIR)" $(CMAKE_ARGS)
 
-clean: pkg_clean uninstall cmake/clean
+.PHONY: cmake_clean
+cmake_clean:
+	@[ -d "$(BUILD_DIR)" ] && cmake --build "$(BUILD_DIR)" --target clean
 
-cmake/clean:
-	@[ -d "$(BUILD_DIR)" ] && $(MAKE) -C "$(BUILD_DIR)" clean || true
-
-pkg_clean:
+.PHONY: pkg_clean package_clean
+pkg_clean package_clean:
 	@rm -rfv "$(PACKAGE_DIR)"
 
+.PHONY: clean
+clean: uninstall pkg_clean cmake_clean
+
+.PHONY: realclean
 realclean:
 	@rm -rfv "$(BUILD_DIR)" "$(INSTALL_DIR)" "$(PACKAGE_DIR)"
 
+.PHONY: realclean_all
 realclean_all:
-	@rm -rfv "$(OUT_DIR)"/build "$(OUT_DIR)"/install "$(PACKAGE_DIR)"
+	@rm -rfv "$(OUT_DIR)/build" "$(OUT_DIR)/install" "$(OUT_DIR)/packages"
 
-pristine: distclean venvclean
-
+.PHONY: distclean
 distclean:
-	@echo "Removing all build outputs ${OUT_DIR}"
+	@echo "Removing all build outputs: ${OUT_DIR}"
 	@rm -rf "$(OUT_DIR)"
+
+.PHONY: pristine
+pristine: distclean venv_clean
+
+# .PHONY: venv
+venv: cmake
+	@cmake --build "$(BUILD_DIR)" --target python_venv
+
+.PHONY: venv_clean
+venv_clean:
+	@echo "Removing Python Virtual Environment: $(PYTHON_VENV)"
+	@rm -rf "$(PYTHON_VENV)"
 
 $(BUILD_DIR):
 	@mkdir -p "$(BUILD_DIR)"
 
-venv: cmake
-	@$(MAKE) -C "$(BUILD_DIR)" python_venv
-
-venvclean:
-	@echo "Removing Python Virtual Environment (VENV)"
-	@rm -rf "$(PYTHON_VENV)"
-
+### Delegate docker_ targets to its own Makefile
 docker_%:
 	@$(MAKE) -C $(SHARED_DIR)/scripts/docker $(MAKECMDGOALS) HOST_DIR=$(CURDIR)
 
+### Delegate any other target to CMake
 %:
-	@$(MAKE) -C "$(BUILD_DIR)" $(MAKECMDGOALS)
+	@[ -f "$(CMAKE_CACHE)" ] || cmake -B "$(BUILD_DIR)" $(CMAKE_ARGS)
+	@cmake --build "$(BUILD_DIR)" --target $(patsubst cmake_%,%,$@)
 
-
-.PHONY: local release package deb install install/strip test build cmake cmake/clean clean realclean realclean_all distclean pristine

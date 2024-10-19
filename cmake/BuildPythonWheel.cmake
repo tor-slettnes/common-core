@@ -106,8 +106,6 @@ function(BuildPythonWheel TARGET)
     VERSION "${VERSION}"
     OUTPUT_VARIABLE wheel_name)
 
-  message(STATUS "Package ${PACKAGE} version ${VERSION} Wheel name: ${wheel_name}")
-
   ### Define output directories for `pyproject.toml` and the resulting wheel
   set(gen_dir "${CMAKE_CURRENT_BINARY_DIR}/wheels/${TARGET}")
   set(wheel_dir "${gen_dir}/whl")
@@ -117,9 +115,6 @@ function(BuildPythonWheel TARGET)
   add_custom_target("${TARGET}" ALL
     DEPENDS "${wheel_path}"
   )
-
-  add_dependencies("${TARGET}" ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS})
-
 
   #-----------------------------------------------------------------------------
   ## Collect staged python staging diretories from targets listed in
@@ -170,9 +165,10 @@ function(BuildPythonWheel TARGET)
   ### Define command to build wheel
   add_custom_command(
     OUTPUT "${wheel_path}"
+    DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS}
     COMMAND ${python}
     ARGS -m build --wheel --outdir "${wheel_dir}" "."
-    COMMENT "Building Python Wheel: ${wheel_path}"
+    COMMENT "Building Python Wheel: ${wheel_name}"
     COMMAND_EXPAND_LISTS
     VERBATIM
     WORKING_DIRECTORY "${gen_dir}"

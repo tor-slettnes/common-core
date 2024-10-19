@@ -22,32 +22,15 @@ set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
 function(BuildPython TARGET)
   set(_options)
   set(_singleargs
-    NAMESPACE NAMESPACE_COMPONENT STAGING_DIR
+    NAMESPACE NAMESPACE_COMPONENT
+    STAGING_DIR FILENAME_PATTERN
     INSTALL_COMPONENT INSTALL_DIR)
   set(_multiargs
     PYTHON_DEPS PROTO_DEPS
-    PROGRAMS FILES DIRECTORIES FILENAME_PATTERN
+    PROGRAMS FILES DIRECTORIES
     HIDDEN_IMPORTS REQUIRED_PACKAGES
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  ### Create a Custom CMake target plus staging folder
-  if(NOT TARGET "${TARGET}")
-    add_custom_target("${TARGET}" ALL)
-  endif()
-
-  if(arg_PYTHON_DEPS OR arg_PROTO_DEPS)
-    add_dependencies("${TARGET}" ${arg_PYTHON_DEPS} ${arg_PROTO_DEPS})
-  endif()
-
-  target_sources("${TARGET}" PRIVATE "${arg_PROGRAMS}" "${arg_FILES}" "${arg_DIRECTORIES}")
-
-  ### Construct namespace for Python modules
-  get_namespace_dir(
-    NAMESPACE "${arg_NAMESPACE}"
-    NAMESPACE_COMPONENT "${arg_NAMESPACE_COMPONENT}"
-    MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
-    OUTPUT_VARIABLE namespace_dir)
 
   ### We populate sources into a target-specific staging directory, from where
   ### they will be:
@@ -66,15 +49,55 @@ function(BuildPython TARGET)
      set(staging_dir "${CMAKE_CURRENT_BINARY_DIR}/staging")
   endif()
 
-  message(STATUS "Staging Python modules for target ${TARGET}")
+  ### Clean staging directory (this happens immediately at configuration time).
+  file(REMOVE_RECURSE "${staging_dir}")
 
-  populate_staging_dir("${staging_dir}"
-    NAMESPACE_DIR "${namespace_dir}"
+  ### Construct namespace for Python modules
+  get_namespace_dir(
+    NAMESPACE "${arg_NAMESPACE}"
+    NAMESPACE_COMPONENT "${arg_NAMESPACE_COMPONENT}"
+    MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
+    ROOT_DIR "${staging_dir}"
+    OUTPUT_VARIABLE namespace_dir)
+
+  ### Add commands to populate staging directory
+  get_value_or_default(
+    filename_pattern
+    arg_FILENAME_PATTERN
+    "*.py")
+
+  get_python_modules(
+    OUTPUT_VARIABLE staged_files
+    FILES ${arg_PROGRAMS} ${arg_FILES}
+    DIRECTORIES ${arg_DIRECTORIES}
+    FILENAME_PATTERN ${filename_pattern}
+  )
+
+  ### Create a Custom CMake target plus staging folder
+  if(NOT TARGET "${TARGET}")
+    add_custom_target("${TARGET}" ALL
+      DEPENDS ${staged_files}
+    )
+  endif()
+
+  message(STATUS
+    "Added python staging dir ${namespace_dir} for target ${TARGET}: ${staged_files}")
+
+
+  if(arg_PYTHON_DEPS OR arg_PROTO_DEPS)
+    add_dependencies("${TARGET}" ${arg_PYTHON_DEPS} ${arg_PROTO_DEPS})
+  endif()
+
+  stage_python_modules(
+    TARGET "${TARGET}"
+    MODULES_DIR "${namespace_dir}"
+    OUTPUT ${staged_files}
     PROGRAMS ${arg_PROGRAMS}
     FILES ${arg_FILES}
     DIRECTORIES ${arg_DIRECTORIES}
-    FILENAME_PATTERN ${arg_FILENAME_PATTERN}
+    FILENAME_PATTERN ${filename_pattern}
   )
+
 
   ### Set target property `staging_dir` for downstream targets
   ### (e.g. via `BuildPythonExecutable()`)
@@ -88,7 +111,7 @@ function(BuildPython TARGET)
 
   if(arg_REQUIRED_PACKAGES)
     set_target_properties("${TARGET}"
-      PROPERTIES required_PACKAGES ${arg_REQUIRED_PACKAGES})
+      PROPERTIES required_packages ${arg_REQUIRED_PACKAGES})
   endif()
 
   ### Install source modules locally or via CPack
@@ -113,51 +136,130 @@ function(BuildPython TARGET)
 endfunction()
 
 
-#===============================================================================
-## @fn POPULATE_STAGING_DIR
-## @brief Populate a staging folder for `PyInstaller`.
 
-function(POPULATE_STAGING_DIR STAGING_DIR)
+#===============================================================================
+## @fn get_python_modules
+## @brief Get a recursive list of python modules given the specified targets
+
+function(get_python_modules)
   set(_options)
-  set(_singleargs NAMESPACE_DIR)
-  set(_multiargs PROGRAMS FILES DIRECTORIES FILENAME_PATTERN)
+  set(_singleargs OUTPUT_VARIABLE FILENAME_PATTERN)
+  set(_multiargs FILES DIRECTORIES)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  cmake_path(APPEND STAGING_DIR "${arg_NAMESPACE_DIR}"
-    OUTPUT_VARIABLE modules_dir)
+  set(modules)
+  foreach(path ${arg_FILES})
+    cmake_path(GET path FILENAME filename)
+    list(APPEND modules "${filename}")
+  endforeach()
 
-  ### Copy programs, files and directories to a staging subfolder for PyInstaller
-  file(MAKE_DIRECTORY "${modules_dir}")
+  ### We process each directory separately in case they are not located
+  ### directly below ${CMAKE_CURRENT_SOURCE_DIR}. Paths are then constructed
+  ### as relative to the parent folder of each directory (${anchor_dir}, which
+  ### may or may not be identical to ${CMAKE_CURRENT_SOURCE_DIR}).
+
+  foreach(dir ${arg_DIRECTORIES})
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${dir}"
+      OUTPUT_VARIABLE abs_dir)
+
+    cmake_path(GET abs_dir PARENT_PATH anchor_dir)
+
+    file(GLOB_RECURSE rel_paths
+      RELATIVE "${anchor_dir}"
+      LIST_DIRECTORIES FALSE
+      CONFIGURE_DEPENDS  # Trigger reconfiguration on new/deleted files
+      "${abs_dir}/${arg_FILENAME_PATTERN}")
+
+    list(APPEND modules "${rel_paths}")
+  endforeach()
+
+  if(arg_OUTPUT_VARIABLE)
+    set("${arg_OUTPUT_VARIABLE}" "${modules}" PARENT_SCOPE)
+  endif()
+endfunction()
+
+
+#===============================================================================
+## @fn stage_python_moduls
+## @brief Populate a staging folder
+##
+## Instead of installing Python modules directly, we copy them to a
+## target-specific staging folder from where they will be
+##  - Added to dependent Python Wheel targets (via `BuildPythonWheel()`)
+##  - Merged alongside other dependencies into a single staging
+##    folder for Pyinstaller (via `BuildPythonExecutable()`)
+##  - Installed/packaged (if the option `INSTALL_PYTHON_MODULES` is enabled)
+
+function(stage_python_modules)
+  set(_options)
+  set(_singleargs TARGET MODULES_DIR FILENAME_PATTERN)
+  set(_multiargs OUTPUT PROGRAMS FILES DIRECTORIES)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  ### Now define the first of several commands that will populate the output folder.
+
+  add_custom_command(
+    OUTPUT ${arg_OUTPUT}
+    COMMENT "Staging Python modules for target ${arg_TARGET}, outputs ${arg_OUTPUT}"
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E make_directory ${arg_MODULES_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND_EXPAND_LISTS
+    VERBATIM
+  )
 
   if(arg_PROGRAMS)
-    file(COPY ${arg_PROGRAMS}
-      DESTINATION "${modules_dir}"
-      FILE_PERMISSIONS
-      OWNER_READ OWNER_WRITE OWNER_EXECUTE
-      GROUP_READ GROUP_EXECUTE
-      WORLD_READ WORLD_EXECUTE)
+    ### In order to set/retain executable permissions on PROGRAMS we use
+    ### the external `install` command if available.
+    ### Otherwise (i.e. if we're running on Windows) we simply treat PROGRAMS
+    ### as regular files, and use CMake's own `copy` command.
+
+    if(EXISTS "/usr/bin/install")
+      add_custom_command(
+        OUTPUT ${arg_OUTPUT} APPEND
+        DEPENDS ${arg_PROGRAMS}
+        COMMAND /usr/bin/install
+        ARGS --mode=755 --target-directory=${arg_MODULES_DIR} ${arg_PROGRAMS}
+      )
+    else()
+      add_custom_command(
+        OUTPUT ${arg_OUTPUT} APPEND
+        DEPENDS ${arg_PROGRAMS}
+        COMMAND ${CMAKE_COMMAND}
+        ARGS -E copy ${arg_PROGRAMS} ${arg_MODULES_DIR}
+      )
+    endif()
   endif()
 
   if(arg_FILES)
-    file(COPY ${arg_FILES}
-      DESTINATION "${modules_dir}")
+    add_custom_command(
+      OUTPUT ${arg_OUTPUT} APPEND
+      DEPENDS ${arg_FILES}
+      COMMAND ${CMAKE_COMMAND}
+      ARGS -E copy ${arg_FILES} ${arg_MODULES_DIR}
+    )
   endif()
 
-  if(arg_DIRECTORIES)
-    if(arg_FILENAME_PATTERN)
-      list(TRANSFORM arg_FILENAME_PATTERN PREPEND "PATTERN;"
-        OUTPUT_VARIABLE match_expr)
+  foreach(dir ${arg_DIRECTORIES})
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${dir}"
+      OUTPUT_VARIABLE abs_dir)
 
-      file(COPY ${arg_DIRECTORIES}
-        DESTINATION "${modules_dir}"
-        FILES_MATCHING ${match_expr})
+    cmake_path(GET abs_dir PARENT_PATH anchor_dir)
 
-    else()
-      file(COPY ${arg_DIRECTORIES}
-        DESTINATION "${modules_dir}"
-        PATTERN __pycache__ EXCLUDE)
-    endif()
-  endif()
+    file(GLOB_RECURSE rel_paths
+      RELATIVE "${anchor_dir}"
+      LIST_DIRECTORIES FALSE
+      "${abs_dir}/${arg_FILENAME_PATTERN}")
+
+    foreach(rel_path ${rel_paths})
+      add_custom_command(
+        OUTPUT ${arg_OUTPUT} APPEND
+        DEPENDS ${anchor_dir}/${rel_path}
+        COMMAND ${CMAKE_COMMAND}
+        ARGS -E copy ${anchor_dir}/${rel_path} ${arg_MODULES_DIR}/${rel_path}
+      )
+    endforeach()
+  endforeach()
 endfunction()
 
 

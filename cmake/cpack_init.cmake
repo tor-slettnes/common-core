@@ -28,6 +28,9 @@ endforeach()
 ### General CPack settings
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
 
+### Installation folder
+#set(CPACK_PACKAGING_INSTALL_PREFIX "/opt")
+
 #set(CPACK_GENERATOR "External" "DEB")
 set(CPACK_STRIP_FILES ON)
 set(CPACK_GENERATOR "DEB")

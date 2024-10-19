@@ -55,11 +55,6 @@ function(BuildProto TARGET)
       DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_SOURCES}"
     )
-  else()
-    add_custom_target("${TARGET}" ALL)
-    if(arg_PROTO_DEPS)
-      add_dependencies("${TARGET}" ${arg_PROTO_DEPS})
-    endif()
   endif()
 
   if(BUILD_PYTHON)
