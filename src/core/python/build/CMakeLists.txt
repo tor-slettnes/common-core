@@ -6,5 +6,5 @@
 #===============================================================================
 
 add_subdirectory(virtualenv)
+add_subdirectory(pybuild)
 add_subdirectory(pyinstaller)
-add_subdirectory(pyproject-build)

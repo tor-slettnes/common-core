@@ -30,8 +30,13 @@ def installRoot() -> FilePath:
 def pythonRoot() -> FilePath:
     '''Obtain installation folder for Python modules'''
 
-    pythonRoot, _ = locateDominatingPath('core')
-    return pythonRoot
+    package_path = importlib.resources.files(__package__)
+    package_parts = __package__.split('.')
+    while package_parts:
+        package_path = parent_path(package_path)
+        package_parts.pop()
+    return package_path
+
 
 def settingsPath() -> SearchPath:
     try:
@@ -66,11 +71,8 @@ def normalizedSearchPath(searchpath: SearchPath) -> list[pathlib.Path]:
 
     return normpath
 
-def locateDominatingPath(name: FilePath,
-                         start: ModuleName = __spec__.name):
-
-    package = start.rsplit('.', 1)[0]
-    base = importlib.resources.files(package)
+def locateDominatingPath(name: FilePath):
+    base = importlib.resources.files(__package__)
     candidate = base.joinpath(name)
     previous = None
 
@@ -78,7 +80,13 @@ def locateDominatingPath(name: FilePath,
         if base == previous:
             return None, None
         previous = base
-        base = base.parent
+        base = parent_path(base)
         candidate = base.joinpath(name)
 
     return base, candidate
+
+def parent_path(path: FilePath):
+    try:
+        return path.parent
+    except AttributeError:
+        return path.joinpath("..").resolve()

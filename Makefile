@@ -32,9 +32,7 @@ else
 	BUILD_TYPE = Release
 endif
 
-#export CMAKE_INSTALL_PREFIX ?= ${INSTALL_DIR}
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
-#export CPACK_PACKAGE_DIRECTORY ?= $(PACKAGE_DIR)
 
 CMAKE_ARGS = -D PYTHON_VENV=$(PYTHON_VENV)
 CMAKE_ARGS += $(if $(PRODUCT),-D PRODUCT="$(PRODUCT)")
@@ -63,7 +61,7 @@ deb: build
 	@echo "Creating release packages in ${PACKAGE_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cpack --config "${BUILD_DIR}/CPackConfig.cmake" -B "${PACKAGE_DIR}"
+	@cpack --config "${BUILD_DIR}/CPackConfig.cmake" -B "${PACKAGE_DIR}" -G DEB
 
 .PHONY: install
 install: build
@@ -125,7 +123,7 @@ pkg_clean package_clean:
 	@rm -rfv "$(PACKAGE_DIR)"
 
 .PHONY: clean
-clean: uninstall pkg_clean cmake_clean
+clean: pkg_clean cmake_clean
 
 .PHONY: realclean
 realclean:

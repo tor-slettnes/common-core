@@ -218,7 +218,7 @@ function(stage_python_modules)
 
   add_custom_command(
     OUTPUT ${arg_OUTPUT}
-    COMMENT "Staging Python modules for target ${arg_TARGET} in ${arg_MODULES_DIR}"
+    COMMENT "Staging Python modules for target ${arg_TARGET}"
     COMMAND ${CMAKE_COMMAND}
     ARGS -E rm -rf ${arg_MODULES_DIR}
     COMMAND ${CMAKE_COMMAND}

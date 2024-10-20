@@ -13,6 +13,7 @@ set(PROGRAMS
 )
 
 set(FILES
+  __init__.py
 )
 
 set(DIRECTORIES
