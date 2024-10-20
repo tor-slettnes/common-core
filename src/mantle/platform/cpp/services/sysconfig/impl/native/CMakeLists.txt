@@ -21,6 +21,6 @@ endif()
 ### Build container library
 set(TARGET cc_platform_sysconfig_native)
 
-BuildLibrary("${TARGET}"
+cc_add_library("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
 )

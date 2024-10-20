@@ -10,7 +10,7 @@ set(TARGET "demo-settings")
 if(INCLUDE_DEMO)
   set(INSTALL_COMPONENT "${TARGET}")
 
-  BuildSettings("${TARGET}"
+  cc_add_settings("${TARGET}"
     SETTINGS_DEPS "core-settings"
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   )

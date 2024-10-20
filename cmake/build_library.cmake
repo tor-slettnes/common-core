@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file BuildLibrary.cmake
+## @file cc_add_library.cmake
 ## @brief Wrapper function for building libraries
 ## @author Tor Slettnes <tor@slett.net>
 ##
@@ -8,9 +8,9 @@
 #===============================================================================
 
 #===============================================================================
-## @fn BuildLibrary
+## @fn cc_add_library
 
-function(BuildLibrary TARGET)
+function(cc_add_library TARGET)
   set(_options INCLUDE_IN_ALL)
   set(_singleargs LIB_TYPE SCOPE)
   set(_multiargs SOURCES LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
@@ -50,8 +50,7 @@ function(BuildLibrary TARGET)
   target_link_libraries(${TARGET} ${_scope} ${arg_LIB_DEPS} ${arg_OBJ_DEPS})
 
   if(arg_PKG_DEPS)
-    include(pkgconf)
-    add_package_dependencies("${TARGET}"
+    cc_add_package_dependencies("${TARGET}"
       LIB_TYPE ${_type}
       DEPENDS ${arg_PKG_DEPS}
     )

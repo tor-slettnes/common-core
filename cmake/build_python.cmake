@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file BuildPython.cmake
+## @file cc_add_python.cmake
 ## @brief Build an executable file from a PIP deployment with PyInstaller
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
@@ -15,11 +15,11 @@ set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
 
 
 #===============================================================================
-## @fn BuildPython
+## @fn cc_add_python
 ## @brief
 ##  Add/populate a Python target, with sources organized by namespace in a staging directory
 
-function(BuildPython TARGET)
+function(cc_add_python TARGET)
   set(_options)
   set(_singleargs
     NAMESPACE NAMESPACE_COMPONENT
@@ -34,8 +34,8 @@ function(BuildPython TARGET)
 
   ### We populate sources into a target-specific staging directory, from where
   ### they will be:
-  ###  * Picked up by `BuildPythonWheel()` and added to `pyproject.toml`
-  ###  * Consolidated and staged to a common folder by `BuildPythonExecutable()`
+  ###  * Picked up by `cc_add_python_wheel()` and added to `pyproject.toml`
+  ###  * Consolidated and staged to a common folder by `cc_add_python_executable()`
   ###    (because PyInstaller does not handle multiple source locations with
   ###    overlapping module namespaces / directory structures)
   ###  * Installed, if the option `INSTALL_PYTHON_MODDULES` is enabled
@@ -53,7 +53,7 @@ function(BuildPython TARGET)
   file(REMOVE_RECURSE "${staging_dir}")
 
   ### Construct namespace for Python modules
-  get_namespace_dir(
+  cc_get_namespace_dir(
     NAMESPACE "${arg_NAMESPACE}"
     NAMESPACE_COMPONENT "${arg_NAMESPACE_COMPONENT}"
     MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
@@ -61,12 +61,12 @@ function(BuildPython TARGET)
     OUTPUT_VARIABLE namespace_dir)
 
   ### Add commands to populate staging directory
-  get_value_or_default(
+  cc_get_value_or_default(
     filename_pattern
     arg_FILENAME_PATTERN
     "*.py")
 
-  get_python_modules(
+  cc_get_python_modules(
     FILES ${arg_PROGRAMS} ${arg_FILES}
     DIRECTORIES ${arg_DIRECTORIES}
     FILENAME_PATTERN "${filename_pattern}"
@@ -77,7 +77,7 @@ function(BuildPython TARGET)
   # set(staged_outputs "${staging_dir}")
   # set_property(SOURCE "${staged_output}" PROPERTY SYMBOLIC)
 
-  stage_python_modules(
+  cc_stage_python_modules(
     TARGET "${TARGET}"
     OUTPUT "${staged_outputs}"
     MODULES_DIR "${namespace_dir}"
@@ -104,7 +104,7 @@ function(BuildPython TARGET)
 
 
   ### Set target property `staging_dir` for downstream targets
-  ### (e.g. via `BuildPythonExecutable()`)
+  ### (e.g. via `cc_add_python_executable()`)
   set_target_properties("${TARGET}"
     PROPERTIES staging_dir "${staging_dir}")
 
@@ -119,7 +119,7 @@ function(BuildPython TARGET)
   endif()
 
   ### Install source modules locally or via CPack
-  message(DEBUG "BuildPython(${TARGET})"
+  message(DEBUG "cc_add_python(${TARGET})"
     " - staging_dir='${staging_dir}'"
     " - INSTALL_PYTHON_MODULES='${INSTALL_PYTHON_MODULES}'"
     " - INSTALL_COMPONENT='${arg_INSTALL_COMPONENT}'")
@@ -142,10 +142,10 @@ endfunction()
 
 
 #===============================================================================
-## @fn get_python_modules
+## @fn cc_get_python_modules
 ## @brief Get a recursive list of python modules given the specified targets
 
-function(get_python_modules)
+function(cc_get_python_modules)
   set(_options)
   set(_singleargs OUTPUT_DIR FILENAME_PATTERN SOURCES_VARIABLE OUTPUTS_VARIABLE)
   set(_multiargs FILES DIRECTORIES)
@@ -203,12 +203,12 @@ endfunction()
 ##
 ## Instead of installing Python modules directly, we copy them to a
 ## target-specific staging folder from where they will be
-##  - Added to dependent Python Wheel targets (via `BuildPythonWheel()`)
+##  - Added to dependent Python Wheel targets (via `cc_add_python_wheel()`)
 ##  - Merged alongside other dependencies into a single staging
-##    folder for Pyinstaller (via `BuildPythonExecutable()`)
+##    folder for Pyinstaller (via `cc_add_python_executable()`)
 ##  - Installed/packaged (if the option `INSTALL_PYTHON_MODULES` is enabled)
 
-function(stage_python_modules)
+function(cc_stage_python_modules)
   set(_options)
   set(_singleargs TARGET MODULES_DIR FILENAME_PATTERN SOURCES_VARIABLE)
   set(_multiargs OUTPUT PROGRAMS FILES DIRECTORIES)
@@ -293,16 +293,16 @@ endfunction()
 
 
 #===============================================================================
-## @fn GET_NAMESPACE_DIR
+## @fn cc_get_namespace_dir
 ## @brief Helper function to construct Python namespace folder
 
-function(GET_NAMESPACE_DIR)
+function(cc_get_namespace_dir)
   set(_options)
   set(_singleargs ROOT_DIR NAMESPACE NAMESPACE_COMPONENT OUTPUT_VARIABLE)
   set(_multiargs MISSING_VALUES)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  get_namespace(
+  cc_get_namespace(
     OUTPUT_VARIABLE namespace
     NAMESPACE "${arg_NAMESPACE}"
     NAMESPACE_COMPONENT "${arg_NAMESPACE_COMPONENT}"
@@ -320,10 +320,10 @@ function(GET_NAMESPACE_DIR)
 endfunction()
 
 #===============================================================================
-## @fn GET_NAMESPACE
+## @fn cc_get_namespace
 ## @brief Helper function to construct Python namespace folder
 
-function(GET_NAMESPACE)
+function(cc_get_namespace)
   set(_options)
   set(_singleargs NAMESPACE NAMESPACE_COMPONENT OUTPUT_VARIABLE)
   set(_multiargs MISSING_VALUES)

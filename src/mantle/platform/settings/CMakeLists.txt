@@ -12,7 +12,7 @@ if(INCLUDE_PLATFORM)
 
   configure_file(upgrade.json.in upgrade.json)
 
-  BuildSettings("${TARGET}"
+  cc_add_settings("${TARGET}"
     SETTINGS_DEPS "core-settings"
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
     FILES "${CMAKE_CURRENT_BINARY_DIR}/upgrade.json"

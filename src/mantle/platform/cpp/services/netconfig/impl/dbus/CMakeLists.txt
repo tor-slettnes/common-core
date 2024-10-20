@@ -29,7 +29,7 @@ set(SOURCES
   nm-ipconfig.c++
 )
 
-BuildLibrary("${TARGET}"
+cc_add_library("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
 )

@@ -1,16 +1,16 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file BuildPythonExecutable.cmake
+## @file cc_add_python_executable.cmake
 ## @brief Build an executable file from a PIP deployment with PyInstaller
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
 #===============================================================================
-## @fn BuildPythonExecutable
+## @fn cc_add_python_executable
 ## @brief
 ##  Build a self-contained Python executable with PyInstaller
 
-function(BuildPythonExecutable TARGET)
+function(cc_add_python_executable TARGET)
   set(_options DEBUG INFO USE_SPEC DIRECTORY_BUNDLE)
   set(_singleargs SCRIPT PROGRAM TYPE INSTALL_COMPONENT SPEC_TEMPLATE PYTHON_INTERPRETER VENV)
   set(_multiargs BUILD_DEPS PYTHON_DEPS DATA_DEPS RUNTIME_HOOKS PYINSTALLER_EXTRA_ARGS)
@@ -33,19 +33,19 @@ function(BuildPythonExecutable TARGET)
     cmake_path(APPEND CMAKE_SOURCE_DIR "${PYTHON_VENV}" "bin/python"
       OUTPUT_VARIABLE python)
   else()
-    message(FATAL_ERRROR "BuildPythonExecutable(${TARGET}) requires PYTHON_INTERPRETER or VENV")
+    message(FATAL_ERRROR "cc_add_python_executable(${TARGET}) requires PYTHON_INTERPRETER or VENV")
   endif()
 
   if(NOT arg_SCRIPT)
-    message(FATAL_ERROR "BuildPythonExecutable{${TARGET}) requires SCRIPT")
+    message(FATAL_ERROR "cc_add_python_executable{${TARGET}) requires SCRIPT")
   endif()
 
   if(NOT arg_PYTHON_DEPS)
-    message(FATAL_ERROR "BuildPythonExecutable(${TARGET}) requires PYTHON_DEPS")
+    message(FATAL_ERROR "cc_add_python_executable(${TARGET}) requires PYTHON_DEPS")
   endif()
 
   ### Determine name of executable from PROGRAM or else TARGET
-  get_value_or_default(program
+  cc_get_value_or_default(program
     arg_PROGRAM
     "${TARGET}")
 
@@ -80,14 +80,14 @@ function(BuildPythonExecutable TARGET)
   ### Copy sources from the specified target dependencies into a consolidated
   ### staging area.  This is needed because `PyInstaller` cannot handle
   ### multiple source paths with overlappiing directoreis/namespaces.
-  get_target_properties_recursively(
+  cc_get_target_properties_recursively(
     PROPERTIES staging_dir
     TARGETS ${arg_PYTHON_DEPS}
     OUTPUT_VARIABLE dep_staging_dirs
     REMOVE_DUPLICATES
     REQUIRED)
 
-  get_target_property_recursively(
+  cc_get_target_property_recursively(
     PROPERTY SOURCES
     TARGETS ${TARGET}
     OUTPUT_VARIABLE sources
@@ -129,21 +129,21 @@ function(BuildPythonExecutable TARGET)
 
   ### Prepare substitutions for `pyinstaller.spec.in`
   ## Get hidden imports (modules/packages that PyInstaller does not detect)
-  get_target_properties_recursively(
+  cc_get_target_properties_recursively(
     PROPERTIES hidden_imports
     TARGETS ${arg_PYTHON_DEPS}
     OUTPUT_VARIABLE hidden_imports
     REMOVE_DUPLICATES)
 
   ## Get packages that must be collected explicitly
-  get_target_properties_recursively(
+  cc_get_target_properties_recursively(
     PROPERTIES required_packages
     TARGETS ${arg_PYTHON_DEPS}
     OUTPUT_VARIABLE required_packages
     REMOVE_DUPLICATES)
 
   ## Get settings files and other data that should also be included in output.
-  get_target_properties_recursively(
+  cc_get_target_properties_recursively(
     PROPERTIES staging_dir data_dir
     TARGETS ${arg_DATA_DEPS}
     SEPARATOR "/.:"
@@ -166,13 +166,13 @@ function(BuildPythonExecutable TARGET)
   if(arg_SPEC_TEMPLATE OR arg_USE_SPEC)
     set(EXECUTABLE_NAME "${program}")
 
-    join_quoted(script OUTPUT_VARIABLE SCRIPTS)
-    join_quoted(hidden_imports OUTPUT_VARIABLE HIDDEN_IMPORTS)
-    join_quoted(required_packages OUTPUT_VARIABLE COLLECT_ALL)
-    join_quoted(extra_data OUTPUT_VARIABLE EXTRA_DATA)
-    join_quoted(runtime_hooks OUTPUT_VARIABLE RUNTIME_HOOKS)
+    cc_join_quoted(script OUTPUT_VARIABLE SCRIPTS)
+    cc_join_quoted(hidden_imports OUTPUT_VARIABLE HIDDEN_IMPORTS)
+    cc_join_quoted(required_packages OUTPUT_VARIABLE COLLECT_ALL)
+    cc_join_quoted(extra_data OUTPUT_VARIABLE EXTRA_DATA)
+    cc_join_quoted(runtime_hooks OUTPUT_VARIABLE RUNTIME_HOOKS)
 
-    get_value_or_default(
+    cc_get_value_or_default(
       spec_template
       arg_SPEC_TEMPLATE
       ${PYTHON_TEMPLATE_DIR}/pyinstaller.spec.in)
@@ -229,7 +229,7 @@ function(BuildPythonExecutable TARGET)
 
   ### Install/package resulting executable
   if(arg_INSTALL_COMPONENT)
-    get_value_or_default(type arg_TYPE "BIN")
+    cc_get_value_or_default(type arg_TYPE "BIN")
 
     if(arg_DIRECTORY_BUNDLE)
       install(

@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file BuildPythonWheel.cmake
+## @file cc_add_python_wheel.cmake
 ## @brief Build a Python redistributable package (`.whl`)
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
@@ -9,11 +9,11 @@ set(PYTHON_WHEEL_DIR "share/python-wheels"
   CACHE STRING "Installation directory for Python  wheels")
 
 #===============================================================================
-## @fn BuildPythonWheel
+## @fn cc_add_python_wheel
 ## @brief
 ##  Build a Python binary distribution package ("wheel", or `.whl` file)
 
-function(BuildPythonWheel TARGET)
+function(cc_add_python_wheel TARGET)
   set(_options)
   set(_singleargs
     PACKAGE DESCRIPTION VERSION CONTACT URL
@@ -48,7 +48,7 @@ function(BuildPythonWheel TARGET)
     if(Python3_Interpreter_FOUND)
       set(python "${Python3_EXECUTABLE}")
     else()
-      message(FATAL_ERRROR "BuildPythonWheel() requires a Python interpreter")
+      message(FATAL_ERRROR "cc_add_python_wheel() requires a Python interpreter")
     endif()
   endif()
 
@@ -56,40 +56,40 @@ function(BuildPythonWheel TARGET)
   #-----------------------------------------------------------------------------
   ## Assign some variables based on provided inputs and project defaults
 
-  get_value_or_default(
+  cc_get_value_or_default(
     pyproject_template
     arg_PYPROJECT_TEMPLATE
     "${PYTHON_TEMPLATE_DIR}/pyproject.toml.in")
 
-  get_value_or_default(
+  cc_get_value_or_default(
     PACKAGE
     arg_PACKAGE
     "${TARGET}")
 
-  get_value_or_default(
+  cc_get_value_or_default(
     DESCRIPTION
     arg_DESCRIPTION
     "${PROJECT_DESCRIPTION}")
 
-  get_value_or_default(
+  cc_get_value_or_default(
     VERSION
     arg_VERSION
     "${PROJECT_VERSION}")
 
-  get_value_or_default(
+  cc_get_value_or_default(
     wheel_dependencies
     arg_PACKAGE_DEPS
     "${PYTHON_DEPENDENCIES}")
 
-  join_quoted(wheel_dependencies
+  cc_join_quoted(wheel_dependencies
     OUTPUT_VARIABLE DEPENDENCIES)
 
-  get_value_or_default(
+  cc_get_value_or_default(
     CONTACT
     arg_CONTACT
     "${PACKAGE_CONTACT}")
 
-  get_value_or_default(
+  cc_get_value_or_default(
     URL
     arg_URL
     "${PROJECT_HOMEPAGE_URL}")
@@ -100,7 +100,7 @@ function(BuildPythonWheel TARGET)
     set(AUTHOR_EMAIL "${CMAKE_MATCH_3}")
   endif()
 
-  get_wheel_name(
+  cc_get_wheel_name(
     PACKAGE "${PACKAGE}"
     VERSION "${VERSION}"
     OUTPUT_VARIABLE wheel_name)
@@ -131,7 +131,7 @@ function(BuildPythonWheel TARGET)
 
   set(include_map)
 
-  get_target_properties_recursively(
+  cc_get_target_properties_recursively(
     PROPERTIES staging_dir
     TARGETS ${arg_PYTHON_DEPS}
     PREFIX "\""
@@ -143,7 +143,7 @@ function(BuildPythonWheel TARGET)
   list(APPEND include_map ${dep_staging_dirs})
 
   ## Likewise, collect staged source+destination folders listed in `DATA_DEPS`:
-  get_target_properties_recursively(
+  cc_get_target_properties_recursively(
     PROPERTIES staging_dir data_dir
     TARGETS ${arg_DATA_DEPS}
     PREFIX "\""
@@ -170,7 +170,7 @@ function(BuildPythonWheel TARGET)
     "${gen_dir}/pyproject.toml")
 
   ### Define command to build wheel
-  get_target_property_recursively(
+  cc_get_target_property_recursively(
     PROPERTY SOURCES
     TARGETS ${TARGET}
     OUTPUT_VARIABLE sources
@@ -189,7 +189,7 @@ function(BuildPythonWheel TARGET)
 
   ### Install/package resulting executable
   if(arg_INSTALL_COMPONENT)
-    get_value_or_default(
+    cc_get_value_or_default(
       install_dir
       arg_INSTALL_DIR
       "${PYTHON_WHEEL_DIR}")
@@ -204,11 +204,11 @@ endfunction()
 
 
 #===============================================================================
-## @fn get_wheel_name
+## @fn cc_get_wheel_name
 ## @brief
 ##  Guesstimate name of `.whl` package file
 
-function(get_wheel_name)
+function(cc_get_wheel_name)
   set(_options)
   set(_singleargs PACKAGE VERSION OUTPUT_VARIABLE)
   set(_multiargs)

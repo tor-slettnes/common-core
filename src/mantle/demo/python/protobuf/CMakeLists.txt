@@ -12,7 +12,7 @@ set(FILES
   demo.py
 )
 
-BuildPython("${TARGET}"
+cc_add_python("${TARGET}"
   NAMESPACE_COMPONENT "protobuf" # Python 2nd level namespace component
   INSTALL_COMPONENT "${INSTALL_COMPONENT}" # Debian package component
   PYTHON_DEPS "cc_core_python"             # Python dependencies

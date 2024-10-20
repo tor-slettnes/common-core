@@ -21,7 +21,7 @@ set(SOURCES
   demo-zmq-run.c++
 )
 
-BuildLibrary("${TARGET}"
+cc_add_library("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}

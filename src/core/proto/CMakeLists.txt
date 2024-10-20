@@ -22,7 +22,7 @@ set(SOURCES
   version.proto
 )
 
-BuildProto("${TARGET}"
+cc_add_proto("${TARGET}"
   LIB_TYPE STATIC
   SOURCES "${SOURCES}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"

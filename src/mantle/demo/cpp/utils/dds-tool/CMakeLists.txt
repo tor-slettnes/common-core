@@ -22,7 +22,7 @@ set(SOURCES
   )
 
 ## Invoke common CMake rules to build executable
-BuildExecutable(${TARGET}
+cc_add_executable(${TARGET}
   SOURCES ${SOURCES}
   LIB_DEPS ${LIB_DEPS}
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"

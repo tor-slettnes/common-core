@@ -1,18 +1,18 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file BuildProto.cmake
+## @file cc_add_proto.cmake
 ## @brief Wrapper function for building libraries from `.proto` files
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
 include(protogen)
 include(pkgconf)
-include(BuildPython)
+include(build_python)
 
 #===============================================================================
-## @fn BuildProto
+## @fn cc_add_proto
 
-function(BuildProto TARGET)
+function(cc_add_proto TARGET)
   set(_options)
   set(_singleargs LIB_TYPE SCOPE INSTALL_COMPONENT PYTHON_INSTALL_DIR PYTHON_NAMESPACE)
   set(_multiargs SOURCES PROTO_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
@@ -40,7 +40,7 @@ function(BuildProto TARGET)
 
 
   if(BUILD_CPP)
-    BuildLibrary("${TARGET}"
+    cc_add_library("${TARGET}"
       SCOPE    "${_scope}"
       LIB_TYPE "${arg_LIB_TYPE}"
       LIB_DEPS "${arg_LIB_DEPS}"
@@ -49,7 +49,7 @@ function(BuildProto TARGET)
       MOD_DEPS "${arg_MOD_DEPS}"
     )
 
-    BuildProto_CPP("${TARGET}"
+    cc_add_proto_cpp("${TARGET}"
       LIB_TYPE "${_lib_type}"
       SCOPE "${_scope}"
       DEPENDS "${arg_PROTO_DEPS}"
@@ -67,7 +67,7 @@ function(BuildProto TARGET)
       endif()
     endif()
 
-    BuildProto_PYTHON("${TARGET}"
+    cc_add_proto_python("${TARGET}"
       INSTALL_COMPONENT "${_component}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       DEPENDS "${arg_PROTO_DEPS}"
@@ -78,9 +78,9 @@ endfunction()
 
 
 #===============================================================================
-## @fn BuildProto_CPP
+## @fn cc_add_proto_cpp
 
-function(BuildProto_CPP TARGET)
+function(cc_add_proto_cpp TARGET)
   set(_options)
   set(_singleargs LIB_TYPE SCOPE)
   set(_multiargs  DEPENDS PROTOS)
@@ -93,7 +93,7 @@ function(BuildProto_CPP TARGET)
   if(BUILD_PROTOBUF)
     find_package(Protobuf REQUIRED)
 
-    protogen_protobuf_cpp(PROTO_CPP_SRCS PROTO_CPP_HDRS
+    cc_protogen_protobuf_cpp(PROTO_CPP_SRCS PROTO_CPP_HDRS
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
@@ -106,11 +106,11 @@ function(BuildProto_CPP TARGET)
     # The above fails to capture all required library dependencies from recent
     # gRPC releases.  Let's obtain additional package dependencies from
     # `pkg-config`.
-    add_package_dependencies("${TARGET}"
+    cc_add_package_dependencies("${TARGET}"
       LIB_TYPE "${arg_LIB_TYPE}"
       DEPENDS gpr)
 
-    protogen_grpc_cpp(GRPC_CPP_SRCS GRPC_CPP_HDRS
+    cc_protogen_grpc_cpp(GRPC_CPP_SRCS GRPC_CPP_HDRS
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
@@ -120,9 +120,9 @@ function(BuildProto_CPP TARGET)
 endfunction()
 
 #===============================================================================
-## @fn BuildProto_PYTHON
+## @fn cc_add_proto_python
 
-function(BuildProto_PYTHON TARGET)
+function(cc_add_proto_python TARGET)
   set(_options)
   set(_singleargs STAGING_DIR INSTALL_COMPONENT INSTALL_DIR NAMESPACE NAMESPACE_COMPONENT)
   set(_multiargs DEPENDS PROTOS)
@@ -142,13 +142,13 @@ function(BuildProto_PYTHON TARGET)
   endif()
 
   ### Construct namespace for Python modules
-  get_namespace(
+  cc_get_namespace(
     NAMESPACE "${arg_NAMESPACE}"
     NAMESPACE_COMPONENT "${_namespace_component}"
     MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
     OUTPUT_VARIABLE namespace)
 
-  get_namespace_dir(
+  cc_get_namespace_dir(
     NAMESPACE "${namespace}"
     ROOT_DIR "${staging_dir}"
     OUTPUT_VARIABLE gen_dir)
@@ -157,7 +157,7 @@ function(BuildProto_PYTHON TARGET)
   file(MAKE_DIRECTORY "${gen_dir}")
 
   if(BUILD_PROTOBUF)
-    protogen_protobuf_py(PROTO_PY
+    cc_protogen_protobuf_py(PROTO_PY
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
@@ -166,7 +166,7 @@ function(BuildProto_PYTHON TARGET)
   endif()
 
   if(BUILD_GRPC)
-    protogen_grpc_py(GRPC_PY
+    cc_protogen_grpc_py(GRPC_PY
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
@@ -181,7 +181,7 @@ function(BuildProto_PYTHON TARGET)
   ### Set target properties for downstream targets
   ###   - `staging_dir` indicating where to find the generated modules
   ###   - `required_packages` to indicate that this namespace must
-  ###     be explicitly imported by `BuildPythonExecutable()`.
+  ###     be explicitly imported by `cc_add_python_executable()`.
   set_target_properties("${TARGET}" PROPERTIES
     staging_dir "${staging_dir}"
     required_packages "${namespace}"

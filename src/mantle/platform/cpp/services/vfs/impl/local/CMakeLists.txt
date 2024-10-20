@@ -23,6 +23,6 @@ set(TARGET
   cc_platform_vfs_local
 )
 
-BuildLibrary("${TARGET}"
+cc_add_library("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
 )

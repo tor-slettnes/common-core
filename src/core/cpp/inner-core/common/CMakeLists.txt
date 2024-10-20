@@ -9,7 +9,7 @@
 set(TARGET cc_core_common)
 
 ### Library type.  We use static linking for convenience.
-BuildLibrary(${TARGET}
+cc_add_library(${TARGET}
   LIB_TYPE STATIC
 )
 

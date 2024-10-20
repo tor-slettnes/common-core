@@ -20,7 +20,7 @@ set(SOURCES
   protobuf-sysconfig-types.c++
 )
 
-BuildLibrary("${TARGET}"
+cc_add_library("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
 )

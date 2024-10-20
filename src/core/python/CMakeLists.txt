@@ -46,7 +46,7 @@ set(PKG_DEPS
   zmq
 )
 
-BuildPython("${TARGET}"
+cc_add_python("${TARGET}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   PROTO_DEPS "cc_core_proto"
   PROGRAMS "${PROGRAMS}"

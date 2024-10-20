@@ -11,7 +11,7 @@ if(INCLUDE_SHARED)
   set(INSTALL_COMPONENT "${TARGET}")
 endif()
 
-BuildSettings("${TARGET}"
+cc_add_settings("${TARGET}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}")
 
 if(INSTALL_COMPONENT)

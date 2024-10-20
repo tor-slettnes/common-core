@@ -24,7 +24,7 @@ set(DIRECTORIES
 )
 
 
-BuildPython("${TARGET}"
+cc_add_python("${TARGET}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   NAMESPACE_COMPONENT "demo"
   PYTHON_DEPS "cc_demo_python_protobuf"
@@ -34,7 +34,7 @@ BuildPython("${TARGET}"
 )
 
 if(INCLUDE_DEMO)
-  BuildPythonWheel("demo-shell"
+  cc_add_python_wheel("demo-shell"
     BUILD_DEPS "python_build"
     PYTHON_DEPS ${TARGET}
     DATA_DEPS "demo-settings"
@@ -42,7 +42,7 @@ if(INCLUDE_DEMO)
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   )
 
-  BuildPythonExecutable("pydemo_grpc_server"
+  cc_add_python_executable("pydemo_grpc_server"
     BUILD_DEPS "python_pyinstaller"
     PYTHON_DEPS ${TARGET}
     DATA_DEPS "demo-settings"
@@ -53,7 +53,7 @@ if(INCLUDE_DEMO)
     TYPE SBIN
   )
 
-  BuildPythonExecutable("pydemo_zmq_server"
+  cc_add_python_executable("pydemo_zmq_server"
     PYTHON_DEPS "${TARGET}"
     BUILD_DEPS "python_pyinstaller"
     DATA_DEPS "demo-settings"

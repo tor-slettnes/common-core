@@ -23,7 +23,7 @@ set(DIRECTORIES
   upgrade
 )
 
-BuildPython("${TARGET}"
+cc_add_python("${TARGET}"
   NAMESPACE_COMPONENT "platform"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   PYTHON_DEPS "cc_platform_protobuf"

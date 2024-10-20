@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file BuildExecutable.cmake
+## @file cc_add_executable.cmake
 ## @brief Wrapper function for building executables
 ## @author Tor Slettnes <tor@slett.net>
 ##
@@ -8,9 +8,9 @@
 #===============================================================================
 
 #===============================================================================
-## @fn BuildExecutable
+## @fn cc_add_executable
 
-function(BuildExecutable TARGET)
+function(cc_add_executable TARGET)
   set(_options INSTALL)
   set(_singleargs DESTINATION INSTALL_COMPONENT)
   set(_multiargs SOURCES LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
@@ -30,8 +30,7 @@ function(BuildExecutable TARGET)
   target_link_libraries(${TARGET} PRIVATE ${arg_LIB_DEPS} ${arg_OBJ_DEPS})
 
   if(arg_PKG_DEPS)
-    include(pkgconf)
-    add_package_dependencies("${TARGET}"
+    cc_add_package_dependencies("${TARGET}"
       LIB_TYPE STATIC
       DEPENDS ${arg_PKG_DEPS}
     )

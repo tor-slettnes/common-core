@@ -41,7 +41,7 @@ set(SOURCES
 
 ## Invoke common CMake rules to build executable
 if(INSTALL_COMPONENT)
-  BuildExecutable("${TARGET}"
+  cc_add_executable("${TARGET}"
     LIB_DEPS ${LIB_DEPS}
     SOURCES ${SOURCES}
     DESTINATION sbin
@@ -49,7 +49,7 @@ if(INSTALL_COMPONENT)
   )
 
   if(ENABLE_SERVICES)
-    InstallDebianService("demo"
+    cc_add_debian_service("demo"
       PROGRAM "sbin/${TARGET}"
       DESCRIPTION "DEMO service"
       INSTALL_COMPONENT "${INSTALL_COMPONENT}"

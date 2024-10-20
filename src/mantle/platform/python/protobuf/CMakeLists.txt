@@ -14,7 +14,7 @@ set(FILES
   upgrade.py
 )
 
-BuildPython("${TARGET}"
+cc_add_python("${TARGET}"
   NAMESPACE_COMPONENT "protobuf"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   PYTHON_DEPS "cc_core_python"

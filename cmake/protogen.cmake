@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file protogen.cmake
+## @file cc_protogen.cmake
 ## @brief CMake rules to generate/build ProtoBuf/gRPC bindings from ".proto" sources
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
@@ -8,16 +8,16 @@
 include(utility)                # cascade_inherited_property()
 
 #===============================================================================
-## @fn protogen_common
+## @fn cc_protogen_common
 ## @brief Invoke `protoc` to generate bindings for a specified language/plugin
 
-function(PROTOGEN_COMMON)
+function(cc_protogen_common)
   set(_singleargs TARGET COMMENT GENERATOR PLUGIN OUT_DIR)
   set(_multiargs PROTOS DEPENDS SUFFIXES OUT_VARS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
   if(NOT arg_TARGET)
-    message(SEND_ERROR "Error: protogen() needs TARGET")
+    message(SEND_ERROR "Error: cc_protogen() needs TARGET")
     return()
 
   elseif(NOT TARGET "${arg_TARGET}")
@@ -32,7 +32,7 @@ function(PROTOGEN_COMMON)
   ### the target property `source_dirs`. The resulting list is then passed into
   ### the ProtoBuf compiler as include directories.
 
-  get_target_properties_recursively(
+  cc_get_target_properties_recursively(
     PROPERTIES SOURCE_DIR
     TARGETS ${arg_DEPENDS}
     INITIAL_VALUE "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -115,15 +115,15 @@ function(PROTOGEN_COMMON)
 endfunction()
 
 #===============================================================================
-## @fn PROTOGEN_PROTOBUF_CPP
+## @fn cc_protogen_protobuf_cpp
 ## @brief Generate C++ ProtoBuf bindings
 
-function(PROTOGEN_PROTOBUF_CPP SRCS HDRS)
+function(cc_protogen_protobuf_cpp SRCS HDRS)
   set(_singleargs TARGET)
   set(_multiargs PROTOS DEPENDS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
-  protogen_common(
+  cc_protogen_common(
     TARGET "${arg_TARGET}"
     COMMENT "Generating C++ protocol buffer bindings for ${arg_TARGET}"
     GENERATOR cpp
@@ -145,10 +145,10 @@ function(PROTOGEN_PROTOBUF_CPP SRCS HDRS)
 endfunction()
 
 #===============================================================================
-## @fn PROTOGEN_GRPC_CPP
+## @fn cc_protogen_grpc_cpp
 ## @brief Generate C++ gRPC bindings
 
-function(PROTOGEN_GRPC_CPP SRCS HDRS)
+function(cc_protogen_grpc_cpp SRCS HDRS)
   set(_singleargs TARGET)
   set(_multiargs PROTOS DEPENDS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
@@ -159,7 +159,7 @@ function(PROTOGEN_GRPC_CPP SRCS HDRS)
     find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin)
   endif()
 
-  protogen_common(
+  cc_protogen_common(
     TARGET "${arg_TARGET}"
     COMMENT "Generating C++ gRPC bindings for ${arg_TARGET}"
     GENERATOR grpc
@@ -185,15 +185,15 @@ endfunction()
 
 
 #===============================================================================
-## @fn PROTOGEN_PROTOBUF_PY
+## @fn cc_protogen_protobuf_py
 ## @brief Generate Python ProtoBuf bindings
 
-function(PROTOGEN_PROTOBUF_PY SRCS)
+function(cc_protogen_protobuf_py SRCS)
   set(_singleargs TARGET OUT_DIR)
   set(_multiargs PROTOS DEPENDS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
-  protogen_common(
+  cc_protogen_common(
     TARGET "${arg_TARGET}"
     COMMENT "Generating Python protocol buffer bindings for ${arg_TARGET}"
     GENERATOR python
@@ -207,10 +207,10 @@ function(PROTOGEN_PROTOBUF_PY SRCS)
 endfunction()
 
 #===============================================================================
-## @fn PROTOGEN_GRPC_PY
+## @fn cc_protogen_grpc_py
 ## @brief Generate Python gRPC bindings
 
-function(PROTOGEN_GRPC_PY SRCS)
+function(cc_protogen_grpc_py SRCS)
   set(_singleargs TARGET OUT_DIR)
   set(_multiargs PROTOS DEPENDS)
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
@@ -221,7 +221,7 @@ function(PROTOGEN_GRPC_PY SRCS)
     find_program(GRPC_PYTHON_PLUGIN grpc_python_plugin)
   endif()
 
-  protogen_common(
+  cc_protogen_common(
     TARGET "${arg_TARGET}"
     COMMENT "Generating Python gRPC bindings for ${arg_TARGET}"
     GENERATOR grpc

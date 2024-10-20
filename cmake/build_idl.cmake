@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file BuildIDL.cmake
+## @file build_idl.cmake
 ## @brief CMake include file for building DDS intterfaces from IDL files
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
@@ -9,7 +9,7 @@
 include(rti-connext-dds)
 
 ### Define function go generate sources
-macro(generate_sources sources example_modules)
+macro(cc_idl_generate_sources sources example_modules)
   ### Construct extra flags to `rtiddsgen` based on options and dependencies
   set(include_flags)
 
@@ -116,10 +116,10 @@ macro(generate_sources sources example_modules)
 endmacro()
 
 #===============================================================================
-## @fn BuildIDL
+## @fn cc_add_idl
 ## @brief create C++ library from .`idl` files
 
-function(BuildIDL TARGET)
+function(cc_add_idl TARGET)
   set(_singleargs LIB_TYPE SCOPE GENERATE_EXAMPLE)
   set(_multiargs RECIPES SERVICES IDL_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -156,12 +156,12 @@ function(BuildIDL TARGET)
   #===============================================================================
   ### Generate sources from data types listed in RECIPES
   if(arg_RECIPES)
-    generate_sources("${arg_RECIPES}" "publisher;subscriber")
+    cc_idl_generate_sources("${arg_RECIPES}" "publisher;subscriber")
   endif()
 
   ### Generate sources from RPC service interfaces listed in SERVICES
   if(arg_SERVICES)
-    generate_sources("${arg_SERVICES}" "client;service")
+    cc_idl_generate_sources("${arg_SERVICES}" "client;service")
   endif()
 
   add_library("${TARGET}" ${_type} ${GENERATED_SOURCES})

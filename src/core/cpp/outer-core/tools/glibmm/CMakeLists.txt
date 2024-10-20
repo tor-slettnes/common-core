@@ -20,7 +20,7 @@ set(SOURCES
   glib-mainloop.c++
 )
 
-BuildLibrary("${TARGET}"
+cc_add_library("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   PKG_DEPS ${PKG_DEPS}
   SOURCES ${SOURCES}

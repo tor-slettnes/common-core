@@ -19,7 +19,7 @@ set(LIB_DEPS
 )
 
 ### Recepies to build the library
-BuildLibrary("${TARGET}"
+cc_add_library("${TARGET}"
   LIB_TYPE INTERFACE
   LIB_DEPS ${LIB_DEPS}
 )

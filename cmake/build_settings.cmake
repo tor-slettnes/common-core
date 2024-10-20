@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file BuildSettings.cmake
+## @file cc_add_settings.cmake
 ## @brief CMake include file to "build" (install) settings files
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
@@ -8,7 +8,7 @@
 set(SETTINGS_DIR "share/cc/settings"
   CACHE STRING "Top-level installation directory for settings files" FORCE)
 
-function(BuildSettings TARGET)
+function(cc_add_settings TARGET)
   set(_options)
   set(_singleargs DESTINATION STAGING_DIR INSTALL_COMPONENT)
   set(_multiargs FILES DIRECTORIES SETTINGS_DEPS FILENAME_PATTERN)
@@ -24,7 +24,7 @@ function(BuildSettings TARGET)
 
   ### We populate sources into a target-specific staging directory, from where
   ### they will be:
-  ###  * Picked up by `BuildPythonWheel()` and added to `pyproject.toml`
+  ###  * Picked up by `cc_add_python_wheel()` and added to `pyproject.toml`
   ###  * Installed
 
   ### Specify root folder for staging python modules for this target
@@ -49,7 +49,7 @@ function(BuildSettings TARGET)
   endif()
 
   if(directories)
-    get_value_or_default(filename_pattern
+    cc_get_value_or_default(filename_pattern
       arg_FILENAME_PATTERN
       "*.json;*.yaml;*.ini")
 
@@ -64,7 +64,7 @@ function(BuildSettings TARGET)
   ### Set target properties for downstream targets
   ###   - `staging_dir` indicating where to find these settings files
   ###   - `data_dir` to indicate where these files should be added
-  ###     to the final target by BuildPythonWheel()/BuildPythonExecutable().
+  ###     to the final target by cc_add_python_wheel()/cc_add_python_executable().
 
   set_target_properties("${TARGET}" PROPERTIES
     staging_dir "${staging_dir}"
@@ -73,7 +73,7 @@ function(BuildSettings TARGET)
 
   ### Install from staging folder, if requested.
   if(arg_INSTALL_COMPONENT)
-    get_value_or_default(destination
+    cc_get_value_or_default(destination
       arg_DESTINATION
       "${SETTINGS_DIR}")
 

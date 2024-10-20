@@ -28,18 +28,18 @@ if(NOT PROJECT_INCLUDED)
   include(CTest)
 
   ### Include rules to build doxygen
-  include(Doxygen)
+  include(doxygen)
 
   ### Load targeted build functions
-  include(BuildLibrary)
-  include(BuildExecutable)
-  include(BuildPython)
-  include(BuildPythonExecutable)
-  include(BuildPythonWheel)
-  include(BuildProto)
-  include(BuildSettings)
-  include(BuildPackage)
-  include(BuildDebianService)
+  include(build_library)
+  include(build_executable)
+  include(build_python)
+  include(build_python_executable)
+  include(build_python_wheel)
+  include(build_proto)
+  include(build_settings)
+  include(build_package)
+  include(build_debian_service)
 
   #=============================================================================
   ### CPack configuration

@@ -16,7 +16,7 @@ if(BUILD_PYTHON_IO)
     cc_core_io_python_embedded
   )
 
-  BuildLibrary("${TARGET}"
+  cc_add_library("${TARGET}"
     LIB_TYPE INTERFACE
     LIB_DEPS ${LIB_DEPS}
   )

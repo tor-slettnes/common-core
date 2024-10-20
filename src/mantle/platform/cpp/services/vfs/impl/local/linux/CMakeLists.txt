@@ -22,7 +22,7 @@ set(SOURCES
   vfs-providers-linux.c++
 )
 
-BuildLibrary("${TARGET}"
+cc_add_library("${TARGET}"
   PKG_DEPS ${PKG_DEPS}
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}

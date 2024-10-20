@@ -5,10 +5,10 @@
 #===============================================================================
 
 #===============================================================================
-## @fn get_value_or_default
+## @fn cc_get_value_or_default
 ## @brief Get the contents of the specified variable, or else a defaultvalue
 
-function(get_value_or_default OUTPUT_VARIABLE VARIABLE DEFAULT)
+function(cc_get_value_or_default OUTPUT_VARIABLE VARIABLE DEFAULT)
   if(${VARIABLE})
     set("${OUTPUT_VARIABLE}" "${${VARIABLE}}" PARENT_SCOPE)
   else()
@@ -18,16 +18,16 @@ endfunction()
 
 
 #===============================================================================
-## @fn get_optional_keyword
+## @fn cc_get_optional_keyword
 ## @brief Get the contents of the specified variable, or else a defaultvalue
 
-function(get_optional_keyword KEYWORD VALUE)
+function(cc_get_optional_keyword KEYWORD VALUE)
   set(_options)
   set(_singleargs OUTPUT_VARIABLE)
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  get_value_or_default(output_variable
+  cc_get_value_or_default(output_variable
     arg_OUTPUT_VARIABLE
     "${KEYWORD}")
 
@@ -43,16 +43,16 @@ endfunction()
 ## @brief
 ##   Tranform a list to a single string of quoted and comma-separated items.
 
-function(join_quoted LIST)
+function(cc_join_quoted LIST)
   set(_options)
   set(_singleargs QUOTE LEFTQUOTE RIGHTQUOTE GLUE OUTPUT_VARIABLE)
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  get_value_or_default(quote arg_QUOTE "\"")
-  get_value_or_default(leftquote arg_LEFTQUOTE "${quote}")
-  get_value_or_default(rightquote arg_RIGHTQUOTE "${quote}")
-  get_value_or_default(glue arg_GLUE ", ")
+  cc_get_value_or_default(quote arg_QUOTE "\"")
+  cc_get_value_or_default(leftquote arg_LEFTQUOTE "${quote}")
+  cc_get_value_or_default(rightquote arg_RIGHTQUOTE "${quote}")
+  cc_get_value_or_default(glue arg_GLUE ", ")
 
   list(TRANSFORM "${LIST}"
     REPLACE "^(.+)$" "${leftquote}\\1${rightquote}"
@@ -65,13 +65,13 @@ endfunction()
 
 
 #===============================================================================
-## @fn get_target_property_recursively
+## @fn cc_get_target_property_recursively
 ## @brief
 ##    Get a property for a specified target as well as its upstream
 ##    dependencies.  The result is a list containing the corresponding property
 ##    values for each target, each of which may or may not in turn be a list.
 
-function(get_target_property_recursively)
+function(cc_get_target_property_recursively)
   set(_options REMOVE_DUPLICATES REQUIRED)
   set(_singleargs OUTPUT_VARIABLE)
   set(_multiargs INITIAL_VALUE PROPERTY TARGETS)
@@ -85,7 +85,7 @@ function(get_target_property_recursively)
     endif()
     get_target_property(dependencies "${target}" MANUALLY_ADDED_DEPENDENCIES)
     if (dependencies)
-      get_target_property_recursively(
+      cc_get_target_property_recursively(
         PROPERTY "${arg_PROPERTY}"
         TARGETS "${dependencies}"
         INITIAL_VALUE "${propslist}"
@@ -109,7 +109,7 @@ endfunction()
 
 
 #===============================================================================
-## @fn get_target_properties_recursively
+## @fn cc_get_target_properties_recursively
 ## @brief
 ##    Get multiple properties at once for a specified target as well as its
 ##    dependencies. The result is a list containing the corresponding property
@@ -117,18 +117,18 @@ endfunction()
 ##    the option `ALL_OR_NOTHING`, only targets that have defined all of the
 ##    requested properties are represented.
 
-function(get_target_properties_recursively)
+function(cc_get_target_properties_recursively)
   set(_options REMOVE_DUPLICATES ALL_OR_NOTHING REQUIRED)
   set(_singleargs PREFIX SEPARATOR SUFFIX OUTPUT_VARIABLE)
   set(_multiargs INITIAL_VALUE PROPERTIES TARGETS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  get_optional_keyword(ALL_OR_NOTHING "${arg_ALL_OR_NOTHING}")
-  get_value_or_default(separator arg_SEPARATOR ":")
+  cc_get_optional_keyword(ALL_OR_NOTHING "${arg_ALL_OR_NOTHING}")
+  cc_get_value_or_default(separator arg_SEPARATOR ":")
 
   set(propslist ${arg_INITIAL_VALUE})
   foreach(target ${arg_TARGETS})
-    get_target_properties("${target}"
+    cc_get_target_properties("${target}"
       PROPERTIES "${arg_PROPERTIES}"
       OUTPUT_VARIABLE values
       ${ALL_OR_NOTHING})
@@ -140,7 +140,7 @@ function(get_target_properties_recursively)
 
     get_target_property(dependencies "${target}" MANUALLY_ADDED_DEPENDENCIES)
     if (dependencies)
-      get_target_properties_recursively(
+      cc_get_target_properties_recursively(
         PROPERTIES "${arg_PROPERTIES}"
         TARGETS ${dependencies}
         PREFIX "${arg_PREFIX}"
@@ -167,12 +167,12 @@ function(get_target_properties_recursively)
 endfunction()
 
 #===============================================================================
-## @fn get_target_properties
+## @fn cc_get_target_properties
 ## @brief
 ##    Get multiple target properties at once.  The option `ALL_OR_NOTHING`
 ##    returns an empty string unless all properties are defined.
 
-function(get_target_properties TARGET)
+function(cc_get_target_properties TARGET)
   set(_options ALL_OR_NOTHING)
   set(_singleargs OUTPUT_VARIABLE)
   set(_multiargs PROPERTIES)

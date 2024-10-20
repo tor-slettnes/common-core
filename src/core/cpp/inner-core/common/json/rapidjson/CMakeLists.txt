@@ -15,11 +15,11 @@ target_compile_definitions(${TARGET} PUBLIC
   BUILD_RAPIDJSON=1
 )
 
-add_package_dependencies(${TARGET}
+cc_add_package_dependencies(${TARGET}
   DEPENDS RapidJSON
 )
 
-# pkgconf(RapidJSON RapidJSON)
+# cc_pkgconf(RapidJSON RapidJSON)
 # if(RapidJSON_FOUND)
 #   target_include_directories("${TARGET}" PUBLIC ${RapidJSON_INCLUDE_DIRS})
 # else()
@@ -27,7 +27,7 @@ add_package_dependencies(${TARGET}
 #   target_include_directories("${TARGET}" PUBLIC ${rapidjson_SOURCE_DIR}/include)
 # endif()
 
-#add_external_dependency("${TARGET}" RapidJSON INCLUDE_DIRS)
+#cc_add_external_dependency("${TARGET}" RapidJSON INCLUDE_DIRS)
 
 # if(rapidjson_SOURCE_DIR)
 #   target_include_directories(${TARGET} PUBLIC ${rapidjson_SOURCE_DIR}/include)

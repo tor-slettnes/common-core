@@ -40,7 +40,7 @@ CMAKE_ARGS += $(if $(VERSION),-D VERSION="$(VERSION)")
 CMAKE_ARGS += $(if $(BUILD_NUMBER),-D BUILD_NUMBER="$(BUILD_NUMBER)")
 CMAKE_ARGS += $(if $(PACKAGE_NAME),-D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
 
-CMAKE_CACHE = $(BUILD_DIR)/CMakeCache.txt
+CMAKE_TAG = $(BUILD_DIR)/Makefile
 
 ifeq ($(shell uname), Linux)
    export CMAKE_BUILD_PARALLEL_LEVEL ?= $(shell nproc)
@@ -104,9 +104,9 @@ build: cmake
 	@cmake --build "$(BUILD_DIR)"
 
 .PHONY: cmake
-cmake: $(CMAKE_CACHE)
+cmake: $(CMAKE_TAG)
 
-$(CMAKE_CACHE):
+$(CMAKE_TAG):
 	@echo
 	@echo "#############################################################"
 	@echo "Generating build files in ${BUILD_DIR}"
@@ -159,6 +159,6 @@ docker_%:
 
 ### Delegate any other target to CMake
 %:
-	@[ -f "$(CMAKE_CACHE)" ] || cmake -B "$(BUILD_DIR)" $(CMAKE_ARGS)
+	@[ -f "$(CMAKE_TAG)" ] || cmake -B "$(BUILD_DIR)" $(CMAKE_ARGS)
 	@cmake --build "$(BUILD_DIR)" --target $(patsubst cmake_%,%,$@)
 

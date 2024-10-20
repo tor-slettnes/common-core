@@ -33,7 +33,7 @@ set(SOURCES
 )
 
 ## Invoke common CMake rules to build executable
-BuildExecutable("${TARGET}"
+cc_add_executable("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
   DESTINATION sbin
@@ -41,7 +41,7 @@ BuildExecutable("${TARGET}"
 )
 
 if(ENABLE_SERVICES)
-  InstallDebianService("platformserver"
+  cc_add_debian_service("platformserver"
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "Platform server: System configuration, Networking, File access, Upgrade"
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"

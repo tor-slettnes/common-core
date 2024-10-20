@@ -18,7 +18,7 @@ set(LIB_DEPS
 )
 
 
-BuildLibrary("${TARGET}"
+cc_add_library("${TARGET}"
   LIB_TYPE INTERFACE
   LIB_DEPS ${LIB_DEPS}
 )

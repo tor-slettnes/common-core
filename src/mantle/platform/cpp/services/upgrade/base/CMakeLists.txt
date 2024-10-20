@@ -18,7 +18,7 @@ set(SOURCES
   upgrade-base.c++
 )
 
-BuildLibrary("${TARGET}"
+cc_add_library("${TARGET}"
   LIB_DEPS "${LIB_DEPS}"
   SOURCES "${SOURCES}"
 )

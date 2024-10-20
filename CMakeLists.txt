@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.20)
 
 ### Obtain build configuration
 if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/local.cmake)
@@ -24,7 +24,7 @@ message(STATUS
   "Building project \"${PROJECT_NAME}\" version ${PROJECT_VERSION}, build #${BUILD_NUMBER}")
 
 ### Invoke common project settings
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/BuildProject.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/build_project.cmake)
 
 
 ### Pull in CMake files to build the actual sources

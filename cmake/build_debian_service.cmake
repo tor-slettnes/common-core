@@ -4,14 +4,14 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-include(BuildPackage)
+include(build_package)
 set(SERVICE_TEMPLATE_DIR ${CMAKE_CURRENT_LIST_DIR}/debian)
 
 #===============================================================================
-# @fn InstallDebianService
+# @fn cc_add_debian_service
 # @brief Create, install and optionally enable a SystemD service unit
 
-function(InstallDebianService UNIT)
+function(cc_add_debian_service UNIT)
   set(_options USER ENABLE)
   set(_singleargs PROGRAM DESCRIPTION
     INSTALL_COMPONENT INSTALL_GROUP
@@ -36,15 +36,15 @@ function(InstallDebianService UNIT)
   endif()
 
   if(NOT arg_INSTALL_COMPONENT)
-    message(SEND_ERROR "InstallDebianService(${UNIT}) needs INSTALL_COMPONENT")
+    message(SEND_ERROR "cc_add_debian_service(${UNIT}) needs INSTALL_COMPONENT")
   endif()
 
   if(NOT arg_INSTALL_GROUP)
-    message(SEND_ERROR "InstallDebianService(${UNIT}) needs INSTALL_GROUP")
+    message(SEND_ERROR "cc_add_debian_service(${UNIT}) needs INSTALL_GROUP")
   endif()
 
   if(NOT arg_PROGRAM)
-    message(SEND_ERROR "InstallDebianService(${UNIT}) needs PROGRAM")
+    message(SEND_ERROR "cc_add_debian_service(${UNIT}) needs PROGRAM")
   elseif(IS_ABSOLUTE "${arg_PROGRAM}")
     set(_program "${arg_PROGRAM}")
   else()
@@ -62,7 +62,7 @@ function(InstallDebianService UNIT)
   set(SERVICE_ARGS "${arg_ARGS}")
   set(SERVICE_DESCRIPTION "${arg_DESCRIPTION}")
 
-  add_debian_file_from_template(
+  cc_add_debian_file_from_template(
     TEMPLATE_VARIABLE arg_SERVICE_TEMPLATE
     DEFAULT_TEMPLATE "${SERVICE_TEMPLATE_DIR}/service.in"
     OUTPUT_FILE "${_service_unit}"
@@ -75,7 +75,7 @@ function(InstallDebianService UNIT)
   )
 
   if(arg_ENABLE)
-    AddEnableHooks("${_service_unit}"
+    cc_add_enable_hooks("${_service_unit}"
       INSTALL_DIRECTORY "${_install_root}/${_dest}"
       INSTALL_COMPONENT "${arg_INSTALL_COMPONENT}"
       INSTALL_GROUP "${arg_INSTALL_GROUP}"
@@ -89,10 +89,10 @@ endfunction()
 
 
 #===============================================================================
-# @fn AddEnableHooks
+# @fn cc_add_enable_hooks
 # @brief Add post-install and pre-removal hooks to enable/disable service unit
 
-function(AddEnableHooks UNIT)
+function(cc_add_enable_hooks UNIT)
   set(_options)
   set(_singleargs INSTALL_DIRECTORY INSTALL_COMPONENT INSTALL_GROUP
     PREINST_TEMPLATE POSTINST_TEMPLATE PRERM_TEMPLATE POSTRM_TEMPLATE)
@@ -113,7 +113,7 @@ function(AddEnableHooks UNIT)
   #        service units to be enabled/disabled.
 
   # Obtain the CPack Debian grouping name into `staging_group`
-  get_cpack_debian_grouping(
+  cc_get_cpack_debian_grouping(
     PREFIX "service_units"
     GLUE "_"
     COMPONENT "${arg_INSTALL_COMPONENT}"
@@ -141,37 +141,37 @@ function(AddEnableHooks UNIT)
 
   ### Add install/remove hooks
   set(extra_control)
-  add_debian_file_from_template(
+  cc_add_debian_file_from_template(
     TEMPLATE_VARIABLE arg_PREINST_TEMPLATE
     OUTPUT_FILE "${_staging_dir}/preinst"
     EXTRA_CONTROL_VARIABLE extra_control)
 
-  add_debian_file_from_template(
+  cc_add_debian_file_from_template(
     TEMPLATE_VARIABLE arg_POSTINST_TEMPLATE
     DEFAULT_TEMPLATE "${SERVICE_TEMPLATE_DIR}/postinst.in"
     OUTPUT_FILE "${_staging_dir}/postinst"
     EXTRA_CONTROL_VARIABLE extra_control)
 
-  add_debian_file_from_template(
+  cc_add_debian_file_from_template(
     TEMPLATE_VARIABLE arg_PRERM_TEMPLATE
     DEFAULT_TEMPLATE "${SERVICE_TEMPLATE_DIR}/prerm.in"
     OUTPUT_FILE "${_staging_dir}/prerm"
     EXTRA_CONTROL_VARIABLE extra_control)
 
-  add_debian_file_from_template(
+  cc_add_debian_file_from_template(
     TEMPLATE_VARIABLE arg_POSTRM_TEMPLATE
     OUTPUT_FILE "${_staging_dir}/postrm"
     EXTRA_CONTROL_VARIABLE extra_control)
 
   ### Add these generated hooks to the Debian package `control` file.
-  CPackDebianConfig(PACKAGE_CONTROL_EXTRA "${extra_control}"
+  cc_cpack_debian_config(PACKAGE_CONTROL_EXTRA "${extra_control}"
     COMPONENT "${arg_INSTALL_COMPONENT}"
     GROUP "${arg_INSTALL_GROUP}"
     APPEND)
 endfunction()
 
 
-function(add_debian_file_from_template)
+function(cc_add_debian_file_from_template)
   set(_options)
   set(_singleargs TEMPLATE_VARIABLE DEFAULT_TEMPLATE OUTPUT_FILE EXTRA_CONTROL_VARIABLE)
   set(_multiargs)

@@ -5,10 +5,10 @@
 #===============================================================================
 
 #===============================================================================
-## @fn CPackConfig
-## @brief Append a setting to `CPackConfig.cmake`, to be consumed by `cpack`.
+## @fn cc_cpack_config
+## @brief Append a setting to `cc_cpack_config.cmake`, to be consumed by `cpack`.
 
-function(CPackConfig VARIABLE VALUE)
+function(cc_cpack_config VARIABLE VALUE)
   set(_options APPEND)
   set(_singleargs)
   set(_multiargs)
@@ -23,36 +23,36 @@ function(CPackConfig VARIABLE VALUE)
     set(_command "set(${_variable} \"${_value}\")")
   endif()
 
-  file(APPEND "${CMAKE_BINARY_DIR}/CPackConfig.cmake" "${_command}\n")
+  file(APPEND "${CMAKE_BINARY_DIR}/cc_cpack_config.cmake" "${_command}\n")
 endfunction()
 
 #===============================================================================
-## @fn CPackDebianConfig
+## @fn cc_cpack_debian_config
 ## @brief Set a `CPACK_DEBIAN[_GROUPING]_*` value
 ##    depending on whether component-based packaging is enabled.
 ##
 ## For an overview of component-specific CPack Debian variables, see:
 ## https://cmake.org/cmake/help/latest/cpack_gen/deb.html
 
-function(CPackDebianConfig VARIABLE_SUFFIX VALUE)
+function(cc_cpack_debian_config VARIABLE_SUFFIX VALUE)
   set(_options APPEND)
   set(_singleargs COMPONENT GROUP)
   set(_multiargs VALUE)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  get_cpack_debian_variable("${VARIABLE_SUFFIX}"
+  cc_get_cpack_debian_variable("${VARIABLE_SUFFIX}"
     COMPONENT "${arg_COMPONENT}"
     GROUP "${arg_GROUP}"
     OUTPUT_VARIABLE variable_name)
 
-  get_optional_keyword(APPEND "${arg_APPEND}")
+  cc_get_optional_keyword(APPEND "${arg_APPEND}")
 
-  CPackConfig("${variable_name}" "${VALUE}" ${APPEND})
+  cc_cpack_config("${variable_name}" "${VALUE}" ${APPEND})
 endfunction()
 
 
 #===============================================================================
-## @fn get_cpack_debian_variable
+## @fn cc_get_cpack_debian_variable
 ## @brief Obtain variable name corresponding to the provided suffix,
 ##    with with COMPONENT or GROUP inserted if the corresponding component-based
 ##    packaging is used.
@@ -60,13 +60,13 @@ endfunction()
 ## For an overview of component-specific CPack Debian variables, see:
 ## https://cmake.org/cmake/help/latest/cpack_gen/deb.html
 
-function(get_cpack_debian_variable VARIABLE_SUFFIX)
+function(cc_get_cpack_debian_variable VARIABLE_SUFFIX)
   set(_options)
   set(_singleargs PREFIX SUFFIX COMPONENT GROUP OUTPUT_VARIABLE)
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  get_cpack_debian_grouping(
+  cc_get_cpack_debian_grouping(
     PREFIX "CPACK_DEBIAN"
     SUFFIX "${VARIABLE_SUFFIX}"
     GLUE "_"
@@ -80,7 +80,7 @@ endfunction()
 
 
 #===============================================================================
-## @fn get_cpack_debian_grouping
+## @fn cc_get_cpack_debian_grouping
 ## @brief
 ##    Obtain a string containing COMPONENT or GROUP if and only if
 ##    the corresponding component-based packaging is used.
@@ -88,7 +88,7 @@ endfunction()
 ## For an overview of component-specific CPack Debian variables, see:
 ## https://cmake.org/cmake/help/latest/cpack_gen/deb.html
 
-function(get_cpack_debian_grouping)
+function(cc_get_cpack_debian_grouping)
   set(_options)
   set(_singleargs PREFIX SUFFIX GLUE COMPONENT GROUP OUTPUT_VARIABLE)
   set(_multiargs)

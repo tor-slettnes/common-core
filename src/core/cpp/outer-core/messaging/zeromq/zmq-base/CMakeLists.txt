@@ -35,7 +35,7 @@ set(SOURCES
 )
 
 ### Recepies to build the library
-BuildLibrary("${TARGET}"
+cc_add_library("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   PKG_DEPS ${PKG_DEPS}
@@ -46,5 +46,5 @@ BuildLibrary("${TARGET}"
 target_compile_definitions(${TARGET} PUBLIC USE_ZMQ=1)
 
 ## Experimental interface ahead.
-# add_external_dependency(${TARGET} libzmq INCLUDE_DIRS LIBRARIES)
-# add_external_dependency(${TARGET} cppzmq INCLUDE_DIRS)
+# cc_add_external_dependency(${TARGET} libzmq INCLUDE_DIRS LIBRARIES)
+# cc_add_external_dependency(${TARGET} cppzmq INCLUDE_DIRS)

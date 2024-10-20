@@ -1,6 +1,6 @@
 ## -*- cmake -*-
 #===============================================================================
-## @file pkgconf.cmake
+## @file cc_pkgconf.cmake
 ## @brief Wrapper function for adding package dependencies
 ## @author Tor Slettnes <tor@slett.net>
 ##
@@ -8,9 +8,9 @@
 #===============================================================================
 
 #===============================================================================
-## @fn pkgconf
+## @fn cc_pkgconf
 
-function(pkgconf PREFIX PACKAGE)
+function(cc_pkgconf PREFIX PACKAGE)
   set(_options REQUIRED)
   set(_singleargs)
   set(_multiargs)
@@ -22,7 +22,7 @@ function(pkgconf PREFIX PACKAGE)
   else()
     message(WARNING
       "Unable to find 'pkg-config', which is needed to obtain information about "
-      "available packages. Please install the 'pkgconf' system package.")
+      "available packages. Please install the 'cc_pkgconf' system package.")
   endif()
 
   if (arg_REQUIRED AND NOT ${PREFIX}_FOUND)
@@ -36,9 +36,9 @@ endfunction()
 
 
 #===============================================================================
-## @fn add_package_dependencies
+## @fn cc_add_package_dependencies
 
-function(add_package_dependencies TARGET)
+function(cc_add_package_dependencies TARGET)
   set(_options)
   set(_singleargs LIB_TYPE)
   set(_multiargs DEPENDS)
@@ -53,7 +53,7 @@ function(add_package_dependencies TARGET)
   endif()
 
   foreach (pkg ${arg_DEPENDS})
-    pkgconf(PKG ${pkg} REQUIRED)
+    cc_pkgconf(PKG ${pkg} REQUIRED)
 
     target_include_directories("${TARGET}" SYSTEM ${_include_scope} ${PKG_INCLUDE_DIRS})
     if(USE_STATIC_LIBS)
@@ -67,12 +67,12 @@ function(add_package_dependencies TARGET)
 endfunction()
 
 #===============================================================================
-## @fn add_external_dependency
+## @fn cc_add_external_dependency
 ##
 ## THE CODE BELOW IS EXPERIMENTAL.
 ## While it may work for some thrid-party software, it is by no means robus.
 
-function(add_external_dependency TARGET SUITE)
+function(cc_add_external_dependency TARGET SUITE)
   set(_options INCLUDE_DIRS LIBRARY_DIRS LIBRARIES)
   set(_singleargs)
   set(_multiargs PKGCONF_TARGETS BUILD_TARGETS)
