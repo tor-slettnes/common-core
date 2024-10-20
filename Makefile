@@ -44,9 +44,9 @@ CMAKE_ARGS += $(if $(PACKAGE_NAME),-D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
 
 CMAKE_CACHE = $(BUILD_DIR)/CMakeCache.txt
 
-# ifeq ($(shell uname), Linux)
-#    export CMAKE_BUILD_PARALLEL_LEVEL ?= $(shell nproc)
-# endif
+ifeq ($(shell uname), Linux)
+   export CMAKE_BUILD_PARALLEL_LEVEL ?= $(shell nproc)
+endif
 
 ### Check for a target-specific toolchain and use that if available
 

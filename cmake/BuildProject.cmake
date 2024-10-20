@@ -11,24 +11,11 @@ if(NOT PROJECT_INCLUDED)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
   ### Identify the Common Core root folder even if used as a submodule
-  get_filename_component(COMMON_CORE_DIR ".." REALPATH
-    BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
+  file(REAL_PATH ".." COMMON_CORE_DIR
+    BASE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
 
-  ### Folder in which to find custom build scripts
-  get_filename_component(BUILD_SCRIPTS_DIR "../scripts" REALPATH
-    BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
-
-  ### Assign installation folder
-  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    if(NOT $ENV{CMAKE_INSTALL_PREFIX} STREQUAL "")
-      get_filename_component(_install_prefix "$ENV{CMAKE_INSTALL_PREFIX}" REALPATH
-        BASE_DIR "${CMAKE_SOURCE_DIR}")
-
-      set(CMAKE_INSTALL_PREFIX "${_install_prefix}"
-        CACHE PATH "Folder in which to install build artifacts"
-        FORCE)
-    endif()
-  endif()
+  cmake_path(APPEND COMMON_CORE_DIR "scripts"
+    OUTPUT_VARIABLE BUILD_SCRIPTS_DIR)
 
   # Set build version, date and time
   string(TIMESTAMP BUILD_TIME "%s")

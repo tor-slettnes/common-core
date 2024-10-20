@@ -65,6 +65,50 @@ endfunction()
 
 
 #===============================================================================
+## @fn get_target_property_recursively
+## @brief
+##    Get a property for a specified target as well as its upstream
+##    dependencies.  The result is a list containing the corresponding property
+##    values for each target, each of which may or may not in turn be a list.
+
+function(get_target_property_recursively)
+  set(_options REMOVE_DUPLICATES REQUIRED)
+  set(_singleargs OUTPUT_VARIABLE)
+  set(_multiargs INITIAL_VALUE PROPERTY TARGETS)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  set(propslist ${arg_INITIAL_VALUE})
+  foreach(target ${arg_TARGETS})
+    get_target_property(values "${target}" "${arg_PROPERTY}")
+    if(values)
+      list(APPEND propslist "${values}")
+    endif()
+    get_target_property(dependencies "${target}" MANUALLY_ADDED_DEPENDENCIES)
+    if (dependencies)
+      get_target_property_recursively(
+        PROPERTY "${arg_PROPERTY}"
+        TARGETS "${dependencies}"
+        INITIAL_VALUE "${propslist}"
+        OUTPUT_VARIABLE propslist)
+    endif()
+  endforeach()
+
+  if (arg_REMOVE_DUPLICATES)
+    list(REMOVE_DUPLICATES propslist)
+  endif()
+
+  if (arg_REQUIRED AND NOT propslist)
+    message(FATAL_ERROR
+      "Target property '${arg_PROPERTY}' is required "
+      "but not present present in any of: ${arg_TARGETS}")
+  endif()
+
+  set("${arg_OUTPUT_VARIABLE}" "${propslist}" PARENT_SCOPE)
+endfunction()
+
+
+
+#===============================================================================
 ## @fn get_target_properties_recursively
 ## @brief
 ##    Get multiple properties at once for a specified target as well as its

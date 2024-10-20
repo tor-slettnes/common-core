@@ -15,20 +15,20 @@ set(PYTHON_WHEEL_DIR "share/python-wheels"
 
 function(BuildPythonWheel TARGET)
   set(_options)
-
   set(_singleargs
     PACKAGE DESCRIPTION VERSION CONTACT URL
     VENV PYTHON_INTERPRETER PYPROJECT_TEMPLATE INSTALL_COMPONENT INSTALL_DIR)
-
   set(_multiargs
     PROGRAMS BUILD_DEPS PYTHON_DEPS DATA_DEPS PACKAGE_DEPS)
-
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
 
   ### Do this only if the option `BUILD_PYTHON_WHEELS` is enabled
   if(NOT BUILD_PYTHON_WHEELS)
+    message(STATUS "Skipping target ${TARGET}, as BUILD_PYTHON_WHEELS is disabled")
     return()
   endif()
+
 
   ### Determine Python interpreter from PYTHON_INTERPRETER, VENV, or host native
   if(arg_PYTHON_INTERPRETER)
@@ -100,11 +100,11 @@ function(BuildPythonWheel TARGET)
     set(AUTHOR_EMAIL "${CMAKE_MATCH_3}")
   endif()
 
-
   get_wheel_name(
     PACKAGE "${PACKAGE}"
     VERSION "${VERSION}"
     OUTPUT_VARIABLE wheel_name)
+
 
   ### Define output directories for `pyproject.toml` and the resulting wheel
   set(gen_dir "${CMAKE_CURRENT_BINARY_DIR}/wheels/${TARGET}")
@@ -116,11 +116,18 @@ function(BuildPythonWheel TARGET)
     DEPENDS "${wheel_path}"
   )
 
+  if(arg_BUILD_DEPS OR arg_PYTHON_DEPS OR arg_DATA_DEPS)
+    add_dependencies("${TARGET}"
+      ${arg_BUILD_DEPS}
+      ${arg_PYTHON_DEPS}
+      ${arg_DATA_DEPS})
+  endif()
+
+
   #-----------------------------------------------------------------------------
-  ## Collect staged python staging diretories from targets listed in
-  ## `PYTHON_DEPS`, and generate `"source_dir" = "/"` mappings suitable for the
-  ## `[...force-include]` section of `pyproject.toml` (using the "hatchling"
-  ## build back-end).
+  ## Collect Python staging directories from targets listed in `PYTHON_DEPS`,
+  ## and generate corresponding `"SOURCE_DIR" = "/"` statements for the
+  ## `[...force-include]` section in `pyproject.toml`.
 
   set(include_map)
 
@@ -135,7 +142,7 @@ function(BuildPythonWheel TARGET)
 
   list(APPEND include_map ${dep_staging_dirs})
 
-  ## Likewise, collect staged source / destination folder listed in `DATA_DEPS`:
+  ## Likewise, collect staged source+destination folders listed in `DATA_DEPS`:
   get_target_properties_recursively(
     PROPERTIES staging_dir data_dir
     TARGETS ${arg_DATA_DEPS}
@@ -163,9 +170,15 @@ function(BuildPythonWheel TARGET)
     "${gen_dir}/pyproject.toml")
 
   ### Define command to build wheel
+  get_target_property_recursively(
+    PROPERTY SOURCES
+    TARGETS ${TARGET}
+    OUTPUT_VARIABLE sources
+    REMOVE_DUPLICATES)
+
   add_custom_command(
     OUTPUT "${wheel_path}"
-    DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS}
+    DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
     COMMAND ${python}
     ARGS -m build --wheel --outdir "${wheel_dir}" "."
     COMMENT "Building Python Wheel: ${wheel_name}"

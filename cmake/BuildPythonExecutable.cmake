@@ -18,6 +18,7 @@ function(BuildPythonExecutable TARGET)
 
   ### Do this only if the option `BUILD_PYTHON_EXECUTABLE` is enabled
   if(NOT BUILD_PYTHON_EXECUTABLE)
+    message(STATUS "Skipping target ${TARGET}, as BUILD_PYTHON_EXECUTABLE is disabled")
     return()
   endif()
 
@@ -68,6 +69,14 @@ function(BuildPythonExecutable TARGET)
   add_custom_target("${TARGET}" ALL
     DEPENDS "${program_path}")
 
+  if(arg_BUILD_DEPS OR arg_PYTHON_DEPS OR arg_DATA_DEPS)
+    add_dependencies("${TARGET}"
+      ${arg_BUILD_DEPS}
+      ${arg_PYTHON_DEPS}
+      ${arg_DATA_DEPS})
+  endif()
+
+
   ### Copy sources from the specified target dependencies into a consolidated
   ### staging area.  This is needed because `PyInstaller` cannot handle
   ### multiple source paths with overlappiing directoreis/namespaces.
@@ -78,9 +87,18 @@ function(BuildPythonExecutable TARGET)
     REMOVE_DUPLICATES
     REQUIRED)
 
+  get_target_property_recursively(
+    PROPERTY SOURCES
+    TARGETS ${TARGET}
+    OUTPUT_VARIABLE sources
+    REMOVE_DUPLICATES)
+
+  message(DEBUG
+    "Building target ${TARGET} executable ${program_path} with deps ${sources}")
+
   add_custom_command(
     OUTPUT "${program_path}"
-    DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS}
+    DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_directory ${dep_staging_dirs} ${staging_dir}
     COMMAND_EXPAND_LISTS

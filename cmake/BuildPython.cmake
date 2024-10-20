@@ -49,7 +49,7 @@ function(BuildPython TARGET)
      set(staging_dir "${CMAKE_CURRENT_BINARY_DIR}/staging")
   endif()
 
-  ### Clean staging directory (this happens immediately at configuration time).
+  ### Clean staging directory (this happens immediately when (re)configuring).
   file(REMOVE_RECURSE "${staging_dir}")
 
   ### Construct namespace for Python modules
@@ -67,36 +67,39 @@ function(BuildPython TARGET)
     "*.py")
 
   get_python_modules(
-    OUTPUT_VARIABLE staged_files
     FILES ${arg_PROGRAMS} ${arg_FILES}
     DIRECTORIES ${arg_DIRECTORIES}
+    FILENAME_PATTERN "${filename_pattern}"
+    OUTPUT_DIR "${namespace_dir}"
+    SOURCES_VARIABLE sources
+    OUTPUTS_VARIABLE staged_outputs)
+
+  # set(staged_outputs "${namespace_dir}")
+  # set_property(SOURCE "${staged_output}" PROPERTY SYMBOLIC)
+
+  stage_python_modules(
+    TARGET "${TARGET}"
+    OUTPUT "${staged_outputs}"
+    MODULES_DIR "${namespace_dir}"
+    PROGRAMS ${arg_PROGRAMS}
+    FILES ${arg_FILES}
+    DIRECTORIES ${arg_DIRECTORIES}
     FILENAME_PATTERN ${filename_pattern}
+    SOURCES_VARIABLE sources
   )
 
   ### Create a Custom CMake target plus staging folder
   if(NOT TARGET "${TARGET}")
     add_custom_target("${TARGET}" ALL
-      DEPENDS ${staged_files}
+      DEPENDS ${staged_outputs}
     )
   endif()
 
-  message(STATUS
-    "Added python staging dir ${namespace_dir} for target ${TARGET}: ${staged_files}")
-
+  target_sources(${TARGET} PRIVATE ${staged_outputs})
 
   if(arg_PYTHON_DEPS OR arg_PROTO_DEPS)
     add_dependencies("${TARGET}" ${arg_PYTHON_DEPS} ${arg_PROTO_DEPS})
   endif()
-
-  stage_python_modules(
-    TARGET "${TARGET}"
-    MODULES_DIR "${namespace_dir}"
-    OUTPUT ${staged_files}
-    PROGRAMS ${arg_PROGRAMS}
-    FILES ${arg_FILES}
-    DIRECTORIES ${arg_DIRECTORIES}
-    FILENAME_PATTERN ${filename_pattern}
-  )
 
 
   ### Set target property `staging_dir` for downstream targets
@@ -143,14 +146,20 @@ endfunction()
 
 function(get_python_modules)
   set(_options)
-  set(_singleargs OUTPUT_VARIABLE FILENAME_PATTERN)
+  set(_singleargs OUTPUT_DIR FILENAME_PATTERN SOURCES_VARIABLE OUTPUTS_VARIABLE)
   set(_multiargs FILES DIRECTORIES)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  set(modules)
+  set(sources)
+  set(outputs)
+
   foreach(path ${arg_FILES})
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${path}"
+      OUTPUT_VARIABLE abs_source)
+    list(APPEND sources "${abs_source}")
+
     cmake_path(GET path FILENAME filename)
-    list(APPEND modules "${filename}")
+    list(APPEND outputs "${arg_OUTPUT_DIR}/${filename}")
   endforeach()
 
   ### We process each directory separately in case they are not located
@@ -170,12 +179,20 @@ function(get_python_modules)
       CONFIGURE_DEPENDS  # Trigger reconfiguration on new/deleted files
       "${abs_dir}/${arg_FILENAME_PATTERN}")
 
-    list(APPEND modules "${rel_paths}")
+    foreach(rel_path ${rel_paths})
+      list(APPEND sources "${anchor_dir}/${rel_path}")
+      list(APPEND outputs "${arg_OUTPUT_DIR}/${rel_path}")
+    endforeach()
   endforeach()
 
-  if(arg_OUTPUT_VARIABLE)
-    set("${arg_OUTPUT_VARIABLE}" "${modules}" PARENT_SCOPE)
+  if(arg_SOURCES_VARIABLE)
+    set("${arg_SOURCES_VARIABLE}" "${sources}" PARENT_SCOPE)
   endif()
+
+  if(arg_OUTPUTS_VARIABLE)
+    set("${arg_OUTPUTS_VARIABLE}" "${outputs}" PARENT_SCOPE)
+  endif()
+
 endfunction()
 
 
@@ -192,7 +209,7 @@ endfunction()
 
 function(stage_python_modules)
   set(_options)
-  set(_singleargs TARGET MODULES_DIR FILENAME_PATTERN)
+  set(_singleargs TARGET MODULES_DIR FILENAME_PATTERN SOURCES_VARIABLE)
   set(_multiargs OUTPUT PROGRAMS FILES DIRECTORIES)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -200,7 +217,9 @@ function(stage_python_modules)
 
   add_custom_command(
     OUTPUT ${arg_OUTPUT}
-    COMMENT "Staging Python modules for target ${arg_TARGET}, outputs ${arg_OUTPUT}"
+    COMMENT "Staging Python modules for target ${arg_TARGET} in ${arg_MODULES_DIR}"
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E rm -rf ${arg_MODULES_DIR}
     COMMAND ${CMAKE_COMMAND}
     ARGS -E make_directory ${arg_MODULES_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -229,6 +248,7 @@ function(stage_python_modules)
         ARGS -E copy ${arg_PROGRAMS} ${arg_MODULES_DIR}
       )
     endif()
+    list(APPEND sources ${arg_PROGRAMS})
   endif()
 
   if(arg_FILES)
@@ -238,6 +258,7 @@ function(stage_python_modules)
       COMMAND ${CMAKE_COMMAND}
       ARGS -E copy ${arg_FILES} ${arg_MODULES_DIR}
     )
+    list(APPEND sources ${arg_FILES})
   endif()
 
   foreach(dir ${arg_DIRECTORIES})
@@ -249,6 +270,7 @@ function(stage_python_modules)
     file(GLOB_RECURSE rel_paths
       RELATIVE "${anchor_dir}"
       LIST_DIRECTORIES FALSE
+      CONFIGURE_DEPENDS         # Regenerate cache on new/deleted files
       "${abs_dir}/${arg_FILENAME_PATTERN}")
 
     foreach(rel_path ${rel_paths})
@@ -258,8 +280,13 @@ function(stage_python_modules)
         COMMAND ${CMAKE_COMMAND}
         ARGS -E copy ${anchor_dir}/${rel_path} ${arg_MODULES_DIR}/${rel_path}
       )
+      list(APPEND sources "${anchor_dir}/${rel_path}")
     endforeach()
   endforeach()
+
+  if(arg_SOURCES_VARIABLE)
+    set("${arg_SOURCES_VARIABLE}" "${sources}" PARENT_SCOPE)
+  endif()
 endfunction()
 
 
