@@ -28,7 +28,7 @@ set(PROGRAMS
 ### Files to be installed as is, without execute permissionss
 set(FILES
   # ${CMAKE_CURRENT_BINARY_DIR}/generated/__init__.py
-  # ${CMAKE_CURRENT_BINARY_DIR}/generated/buildinfo.py
+  ${CMAKE_CURRENT_BINARY_DIR}/generated/buildinfo.py
 )
 
 ### Subdirectories

@@ -74,7 +74,7 @@ function(BuildPython TARGET)
     SOURCES_VARIABLE sources
     OUTPUTS_VARIABLE staged_outputs)
 
-  # set(staged_outputs "${namespace_dir}")
+  # set(staged_outputs "${staging_dir}")
   # set_property(SOURCE "${staged_output}" PROPERTY SYMBOLIC)
 
   stage_python_modules(
@@ -96,6 +96,7 @@ function(BuildPython TARGET)
   endif()
 
   target_sources(${TARGET} PRIVATE ${staged_outputs})
+  # target_sources(${TARGET} PRIVATE ${sources})
 
   if(arg_PYTHON_DEPS OR arg_PROTO_DEPS)
     add_dependencies("${TARGET}" ${arg_PYTHON_DEPS} ${arg_PROTO_DEPS})
