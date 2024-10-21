@@ -10,6 +10,9 @@ include(utility)
 set(PYTHON_TEMPLATE_DIR
   "${CMAKE_CURRENT_LIST_DIR}/python")
 
+set(PYTHON_STAGING_DIR
+  "${CMAKE_BINARY_DIR}/python-staging")
+
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules")
 
@@ -45,8 +48,7 @@ function(cc_add_python TARGET)
     cmake_path(APPEND "${CMAKE_CURRENT_BINARY_DIR}" "${arg_STAGING_DIR}"
       OUTPUT_VARIABLE staging_dir)
   else()
-     #set(staging_dir "${CMAKE_BINARY_DIR}/python-staging")
-     set(staging_dir "${CMAKE_CURRENT_BINARY_DIR}/staging")
+     set(staging_dir "${PYTHON_STAGING_DIR}/${TARGET}")
   endif()
 
   ### Clean staging directory (this happens immediately when (re)configuring).
@@ -118,23 +120,21 @@ function(cc_add_python TARGET)
       PROPERTIES required_packages ${arg_REQUIRED_PACKAGES})
   endif()
 
-  ### Install source modules locally or via CPack
-  message(DEBUG "cc_add_python(${TARGET})"
-    " - staging_dir='${staging_dir}'"
-    " - INSTALL_PYTHON_MODULES='${INSTALL_PYTHON_MODULES}'"
-    " - INSTALL_COMPONENT='${arg_INSTALL_COMPONENT}'")
+  if(INSTALL_PYTHON_MODULES)
+    cc_get_value_or_default(
+      install_component
+      arg_INSTALL_COMPONENT
+      "${TARGET}")
 
-  if(INSTALL_PYTHON_MODULES AND arg_INSTALL_COMPONENT)
-    if(arg_INSTALL_DIR)
-      set(_install_dir "${arg_INSTALL_DIR}")
-    else()
-      set(_install_dir "${PYTHON_INSTALL_DIR}")
-    endif()
+    cc_get_value_or_default(
+      install_dir
+      arg_INSTALL_DIR
+      "${PYTHON_INSTALL_DIR}")
 
     install(
       DIRECTORY "${staging_dir}/"
-      DESTINATION "${_install_dir}"
-      COMPONENT "${arg_INSTALL_COMPONENT}"
+      DESTINATION "${install_dir}"
+      COMPONENT "${install_component}"
     )
   endif()
 endfunction()

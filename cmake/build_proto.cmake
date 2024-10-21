@@ -18,30 +18,28 @@ function(cc_add_proto TARGET)
   set(_multiargs SOURCES PROTO_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  if(arg_INSTALL_COMPONENT)
-    set(_component ${arg_INSTALL_COMPONENT})
-  elseif(CPACK_CURRENT_COMPONENT)
-    set(_component ${CPACK_CURRENT_COMPONENT})
-  endif()
+  cc_get_value_or_default(
+    install_component
+    arg_INSTALL_COMPONENT
+    "${arg_TARGET}")
 
-  if(arg_LIB_TYPE)
-    set(_lib_type ${arg_LIB_TYPE})
-  else()
-    set(_lib_type STATIC)
-  endif()
+  cc_get_value_or_default(
+    lib_type
+    arg_LIB_TYPE
+    STATIC)
 
   if(NOT BUILD_CPP)
-    set(_scope INTERFACE)
+    set(scope INTERFACE)
   elseif(arg_SCOPE)
-    string(TOUPPER "${arg_SCOPE}" _scope)
+    string(TOUPPER "${arg_SCOPE}" scope)
   else()
-    set(_scope PUBLIC)
+    set(scope PUBLIC)
   endif()
 
 
   if(BUILD_CPP)
     cc_add_library("${TARGET}"
-      SCOPE    "${_scope}"
+      SCOPE    "${scope}"
       LIB_TYPE "${arg_LIB_TYPE}"
       LIB_DEPS "${arg_LIB_DEPS}"
       OBJ_DEPS "${arg_OBJ_DEPS}" "${arg_PROTO_DEPS}"
@@ -50,8 +48,8 @@ function(cc_add_proto TARGET)
     )
 
     cc_add_proto_cpp("${TARGET}"
-      LIB_TYPE "${_lib_type}"
-      SCOPE "${_scope}"
+      LIB_TYPE "${lib_type}"
+      SCOPE "${scope}"
       DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_SOURCES}"
     )
@@ -61,14 +59,14 @@ function(cc_add_proto TARGET)
     if(arg_PYTHON_NAMESPACE)
       set(_namespace "${arg_PYTHON_NAMESPACE}")
     else()
-      list(FIND arg_KEYWORDS_MISSING_VALUES PYTHON_NAMESPACE _found)
-      if(${_found} LESS 0 AND PYTHON_NAMESPACE)
+      list(FIND arg_KEYWORDS_MISSING_VALUES PYTHON_NAMESPACE found)
+      if(${found} LESS 0 AND PYTHON_NAMESPACE)
         set(_namespace "${PYTHON_NAMESPACE}")
       endif()
     endif()
 
     cc_add_proto_python("${TARGET}"
-      INSTALL_COMPONENT "${_component}"
+      INSTALL_COMPONENT "${install_component}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_SOURCES}"
@@ -137,8 +135,7 @@ function(cc_add_proto_python TARGET)
   if(arg_STAGING_DIR)
     set(staging_dir "${arg_STAGING_DIR}")
   else()
-    # set(staging_dir "${CMAKE_BINARY_DIR}/python-protos")
-    set(staging_dir "${CMAKE_CURRENT_BINARY_DIR}/python")
+    set(staging_dir "${PYTHON_STAGING_DIR}/${TARGET}")
   endif()
 
   ### Construct namespace for Python modules
