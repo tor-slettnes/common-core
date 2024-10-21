@@ -16,7 +16,7 @@ set(PYTHON_WHEEL_DIR "share/python-wheels"
 function(cc_add_python_wheel TARGET)
   set(_options)
   set(_singleargs
-    PACKAGE DESCRIPTION VERSION CONTACT URL
+    PACKAGE_NAME DESCRIPTION VERSION CONTACT URL
     VENV PYTHON_INTERPRETER PYPROJECT_TEMPLATE INSTALL_COMPONENT INSTALL_DIR)
   set(_multiargs
     PROGRAMS BUILD_DEPS PYTHON_DEPS DATA_DEPS PACKAGE_DEPS)
@@ -62,8 +62,8 @@ function(cc_add_python_wheel TARGET)
     "${PYTHON_TEMPLATE_DIR}/pyproject.toml.in")
 
   cc_get_value_or_default(
-    PACKAGE
-    arg_PACKAGE
+    PACKAGE_NAME
+    arg_PACKAGE_NAME
     "${TARGET}")
 
   cc_get_value_or_default(
@@ -101,7 +101,7 @@ function(cc_add_python_wheel TARGET)
   endif()
 
   cc_get_wheel_name(
-    PACKAGE "${PACKAGE}"
+    PACKAGE_NAME "${PACKAGE_NAME}"
     VERSION "${VERSION}"
     OUTPUT_VARIABLE wheel_name)
 
@@ -210,11 +210,11 @@ endfunction()
 
 function(cc_get_wheel_name)
   set(_options)
-  set(_singleargs PACKAGE VERSION OUTPUT_VARIABLE)
+  set(_singleargs PACKAGE_NAME VERSION OUTPUT_VARIABLE)
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  string(REPLACE "-" "_" stem "${arg_PACKAGE}")
+  string(REPLACE "-" "_" stem "${arg_PACKAGE_NAME}")
   if(arg_OUTPUT_VARIABLE)
     set("${arg_OUTPUT_VARIABLE}"
       "${stem}-${arg_VERSION}-py3-none-any.whl"

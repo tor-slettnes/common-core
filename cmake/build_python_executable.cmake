@@ -77,11 +77,13 @@ function(cc_add_python_executable TARGET)
   endif()
 
 
-  ### Copy sources from the specified target dependencies into a consolidated
-  ### staging area.  This is needed because `PyInstaller` cannot handle
-  ### multiple source paths with overlappiing directoreis/namespaces.
-  cc_get_target_properties_recursively(
-    PROPERTIES staging_dir
+  ### Collect per-target staged modules from the specified target dependencies
+  ### into a consolidated staging area.  This is needed because `PyInstaller`
+  ### cannot handle multiple source paths with overlappiing
+  ### directoreis/namespaces.
+
+  cc_get_target_property_recursively(
+    PROPERTY staging_dir
     TARGETS ${arg_PYTHON_DEPS}
     OUTPUT_VARIABLE dep_staging_dirs
     REMOVE_DUPLICATES

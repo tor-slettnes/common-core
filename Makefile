@@ -54,6 +54,9 @@ local: test install
 .PHONY: release
 release: test package
 
+.PHONY: package
+package: deb
+
 .PHONY: deb
 deb: build
 	@echo

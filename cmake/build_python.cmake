@@ -120,12 +120,7 @@ function(cc_add_python TARGET)
       PROPERTIES required_packages ${arg_REQUIRED_PACKAGES})
   endif()
 
-  if(INSTALL_PYTHON_MODULES)
-    cc_get_value_or_default(
-      install_component
-      arg_INSTALL_COMPONENT
-      "${TARGET}")
-
+  if(INSTALL_PYTHON_MODULES AND arg_INSTALL_COMPONENT)
     cc_get_value_or_default(
       install_dir
       arg_INSTALL_DIR
@@ -134,7 +129,7 @@ function(cc_add_python TARGET)
     install(
       DIRECTORY "${staging_dir}/"
       DESTINATION "${install_dir}"
-      COMPONENT "${install_component}"
+      COMPONENT "${arg_INSTALL_COMPONENT}"
     )
   endif()
 endfunction()
@@ -159,7 +154,9 @@ function(cc_get_python_modules)
       OUTPUT_VARIABLE abs_source)
     list(APPEND sources "${abs_source}")
 
-    cmake_path(GET path FILENAME filename)
+    cmake_path(GET path
+      FILENAME filename)
+
     list(APPEND outputs "${arg_OUTPUT_DIR}/${filename}")
   endforeach()
 
@@ -172,7 +169,8 @@ function(cc_get_python_modules)
     cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${dir}"
       OUTPUT_VARIABLE abs_dir)
 
-    cmake_path(GET abs_dir PARENT_PATH anchor_dir)
+    cmake_path(GET abs_dir
+      PARENT_PATH anchor_dir)
 
     file(GLOB_RECURSE rel_paths
       RELATIVE "${anchor_dir}"
@@ -266,7 +264,8 @@ function(cc_stage_python_modules)
     cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${dir}"
       OUTPUT_VARIABLE abs_dir)
 
-    cmake_path(GET abs_dir PARENT_PATH anchor_dir)
+    cmake_path(GET abs_dir
+      PARENT_PATH anchor_dir)
 
     file(GLOB_RECURSE rel_paths
       RELATIVE "${anchor_dir}"
@@ -289,7 +288,6 @@ function(cc_stage_python_modules)
     set("${arg_SOURCES_VARIABLE}" "${sources}" PARENT_SCOPE)
   endif()
 endfunction()
-
 
 
 #===============================================================================

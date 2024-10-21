@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "@PACKAGE@"
+name = "@PACKAGE_NAME@"
 description = "@DESCRIPTION@"
 version = "@VERSION@"
 authors = [

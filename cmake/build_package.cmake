@@ -24,7 +24,7 @@ function(cc_cpack_config VARIABLE VALUE)
     set(_command "set(${_variable} \"${_value}\")")
   endif()
 
-  file(APPEND "${CMAKE_BINARY_DIR}/cc_cpack_config.cmake" "${_command}\n")
+  file(APPEND "${CMAKE_BINARY_DIR}/CPackConfig.cmake" "${_command}\n")
 endfunction()
 
 #===============================================================================
@@ -47,7 +47,6 @@ function(cc_cpack_debian_config VARIABLE_SUFFIX VALUE)
     OUTPUT_VARIABLE variable_name)
 
   cc_get_optional_keyword(APPEND "${arg_APPEND}")
-
   cc_cpack_config("${variable_name}" "${VALUE}" ${APPEND})
 endfunction()
 
