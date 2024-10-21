@@ -107,7 +107,7 @@ function(cc_add_python_wheel TARGET)
 
 
   ### Define output directories for `pyproject.toml` and the resulting wheel
-  set(gen_dir "${CMAKE_CURRENT_BINARY_DIR}/wheels/${TARGET}")
+  set(gen_dir "${PYTHON_WORK_DIR}/wheels/${TARGET}")
   set(wheel_dir "${gen_dir}/whl")
   set(wheel_path "${wheel_dir}/${wheel_name}")
 

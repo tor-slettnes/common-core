@@ -4,6 +4,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+
 #===============================================================================
 ## @fn cc_cpack_config
 ## @brief Append a setting to `cc_cpack_config.cmake`, to be consumed by `cpack`.

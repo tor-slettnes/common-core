@@ -112,21 +112,19 @@ function(cc_add_enable_hooks UNIT)
   #    (c) using this property to create a cumulative list of
   #        service units to be enabled/disabled.
 
-  # Obtain the CPack Debian grouping name into `staging_group`
+  # Obtain the CPack Debian grouping name into `package`
   cc_get_cpack_debian_grouping(
-    PREFIX "service_units"
-    GLUE "_"
     COMPONENT "${arg_INSTALL_COMPONENT}"
     GROUP "${arg_INSTALL_GROUP}"
-    OUTPUT_VARIABLE staging_group)
+    OUTPUT_VARIABLE package)
 
   # Add this to any previous units in the same group
-  set(_service_units "$ENV{${staging_group}}")
+  set(_service_units "$ENV{service_units_${package}}")
   list(APPEND _service_units "${UNIT}")
-  set(ENV{${staging_group}} "${_service_units}")
+  set(ENV{service_units_${package}} "${_service_units}")
 
   # Set up a staging directory for this package
-  cmake_path(APPEND CMAKE_BINARY_DIR "${staging_group}"
+  cmake_path(APPEND CMAKE_BINARY_DIR "deb" "${package}"
     OUTPUT_VARIABLE _staging_dir)
 
   file(MAKE_DIRECTORY "${_staging_dir}")

@@ -10,8 +10,8 @@ include(utility)
 set(PYTHON_TEMPLATE_DIR
   "${CMAKE_CURRENT_LIST_DIR}/python")
 
-set(PYTHON_STAGING_DIR
-  "${CMAKE_BINARY_DIR}/python-staging")
+set(PYTHON_WORK_DIR
+  "${CMAKE_BINARY_DIR}/python")
 
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules")
@@ -48,7 +48,7 @@ function(cc_add_python TARGET)
     cmake_path(APPEND "${CMAKE_CURRENT_BINARY_DIR}" "${arg_STAGING_DIR}"
       OUTPUT_VARIABLE staging_dir)
   else()
-     set(staging_dir "${PYTHON_STAGING_DIR}/${TARGET}")
+     set(staging_dir "${PYTHON_WORK_DIR}/staging/${TARGET}")
   endif()
 
   ### Clean staging directory (this happens immediately when (re)configuring).

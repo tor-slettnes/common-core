@@ -50,9 +50,9 @@ function(cc_add_python_executable TARGET)
     "${TARGET}")
 
   ### Specify a working directory for PyIntaller
-  set(out_dir "${CMAKE_CURRENT_BINARY_DIR}/pyinstaller/${TARGET}")
+  set(out_dir "${PYTHON_WORK_DIR}/pyinstaller/${TARGET}")
+  set(workdir "${out_dir}")
   set(staging_dir "${out_dir}/staging")
-  set(workdir "${out_dir}/workdir")
   set(distdir "${out_dir}/dist")
 
   cmake_path(APPEND distdir "${program}"
