@@ -8,7 +8,6 @@
 ### Build environment for PyInstaller
 add_subdirectory(build)
 
-
 ### Create a library target to facilitate get_target_property()
 set(TARGET "cc_core_python")
 

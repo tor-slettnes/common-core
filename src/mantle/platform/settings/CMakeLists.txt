@@ -5,18 +5,18 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET "platform-settings")
+set(TARGET "cc_platform_settings")
 
 if(INCLUDE_PLATFORM)
-  set(INSTALL_COMPONENT "${TARGET}")
+  set(INSTALL_COMPONENT "platform-settings")
 
   configure_file(upgrade.json.in upgrade.json)
 
   cc_add_settings("${TARGET}"
-    SETTINGS_DEPS "core-settings"
+    SETTINGS_DEPS cc_core_settings
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
     FILES "${CMAKE_CURRENT_BINARY_DIR}/upgrade.json"
-    DIRECTORIES "./"
+    DIRECTORIES "."
   )
 
   ### Install the settings file

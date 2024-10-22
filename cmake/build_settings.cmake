@@ -29,26 +29,16 @@ function(cc_add_settings TARGET)
   set(_multiargs FILES DIRECTORIES SETTINGS_DEPS FILENAME_PATTERN)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  if(NOT TARGET "${TARGET}")
-    add_custom_target("${TARGET}" ALL)
-  endif()
-
-  if(arg_SETTINGS_DEPS)
-    add_dependencies("${TARGET}" ${arg_SETTINGS_DEPS})
-  endif()
-
   ### We populate sources into a target-specific staging directory, from where
   ### they will be:
   ###  * Picked up by `cc_add_python_wheel()` and added to `pyproject.toml`
   ###  * Installed
 
   ### Specify root folder for staging python modules for this target
-  if(arg_STAGING_DIR)
-    cmake_path(APPEND "${CMAKE_CURRENT_BINARY_DIR}" "${arg_STAGING_DIR}"
-      OUTPUT_VARIABLE staging_dir)
-  else()
-     set(staging_dir "${SETTINGS_STAGING_ROOT}/${TARGET}")
-  endif()
+  cc_get_value_or_default(
+    staging_dir
+    arg_STAGING_DIR
+    "${SETTINGS_STAGING_ROOT}/${TARGET}")
 
   if(arg_FILES OR arg_DIRECTORIES)
     set(files "${arg_FILES}")
@@ -58,22 +48,32 @@ function(cc_add_settings TARGET)
     set(directories "./")
   endif()
 
-  if(files)
-    FILE(COPY "${files}"
-      DESTINATION "${staging_dir}")
+  cc_get_value_or_default(
+    filename_pattern
+    arg_FILENAME_PATTERN
+    "*.json;*.yaml;*.ini")
+
+  cc_get_staging_list(
+    FILES ${files}
+    DIRECTORIES ${directories}
+    FILENAME_PATTERN "${filename_pattern}"
+    OUTPUT_DIR ${staging_dir}
+    SOURCES_VARIABLE sources
+    OUTPUTS_VARIABLE staged_outputs
+  )
+
+  if(NOT TARGET ${TARGET})
+    add_custom_target("${TARGET}" ALL
+      DEPENDS ${staged_outputs})
   endif()
 
-  if(directories)
-    cc_get_value_or_default(filename_pattern
-      arg_FILENAME_PATTERN
-      "*.json;*.yaml;*.ini")
+  ### Populate `SOURCES` property for downstream dependents.
+  ### (It's marked `PRIVATE` because a custom target cannot have INTERFACE sources;
+  ### however still available by looking up the `SOURCES` property explicitly).
+  target_sources(${TARGET} PRIVATE ${staged_outputs})
 
-    list(TRANSFORM filename_pattern PREPEND "PATTERN;"
-      OUTPUT_VARIABLE match_expr)
-
-    FILE(COPY "${directories}"
-      DESTINATION "${staging_dir}"
-      FILES_MATCHING ${match_expr})
+  if(arg_SETTINGS_DEPS)
+    add_dependencies("${TARGET}" ${arg_SETTINGS_DEPS})
   endif()
 
   ### Set target properties for downstream targets
@@ -85,6 +85,54 @@ function(cc_add_settings TARGET)
     staging_dir "${staging_dir}"
     data_dir "settings"
   )
+
+  ### Add commands to perform the actual staging.
+  add_custom_command(
+    OUTPUT ${staged_outputs}
+    COMMENT "Staging settings files for target ${TARGET}"
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E make_directory ${staging_dir}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND_EXPAND_LISTS
+    VERBATIM
+  )
+
+  if(files)
+    add_custom_command(
+      OUTPUT ${staged_outputs} APPEND
+      DEPENDS ${files}
+      COMMAND ${CMAKE_COMMAND}
+      ARGS -E copy ${files} ${staging_dir}
+    )
+  endif()
+
+  foreach(dir ${directories})
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${dir}"
+      OUTPUT_VARIABLE abs_dir)
+
+    cmake_path(GET abs_dir
+      PARENT_PATH anchor_dir)
+
+    list(TRANSFORM filename_pattern
+      PREPEND "${abs_dir}/"
+      OUTPUT_VARIABLE path_mask)
+
+    file(GLOB_RECURSE rel_paths
+      RELATIVE "${anchor_dir}"
+      LIST_DIRECTORIES FALSE
+      CONFIGURE_DEPENDS
+      ${path_mask})
+
+    foreach(rel_path ${rel_paths})
+      add_custom_command(
+        OUTPUT ${staged_outputs} APPEND
+        DEPENDS ${anchor_dir}/${rel_path}
+        COMMAND ${CMAKE_COMMAND}
+        ARGS -E copy ${anchor_dir}/${rel_path} ${staging_dir}/${rel_path}
+      )
+    endforeach()
+  endforeach()
+
 
   ### Install from staging folder, if requested.
   if(arg_INSTALL_COMPONENT)

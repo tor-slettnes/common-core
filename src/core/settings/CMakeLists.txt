@@ -5,14 +5,16 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET "core-settings")
+set(TARGET "cc_core_settings")
 
 if(INCLUDE_SHARED)
-  set(INSTALL_COMPONENT "${TARGET}")
+  set(INSTALL_COMPONENT "core-settings")
 endif()
 
 cc_add_settings("${TARGET}"
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}")
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  DIRECTORIES "."
+)
 
 if(INSTALL_COMPONENT)
   cpack_add_component(${INSTALL_COMPONENT}

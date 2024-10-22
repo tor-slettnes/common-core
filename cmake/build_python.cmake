@@ -33,11 +33,11 @@ function(cc_add_python TARGET)
   set(_options)
   set(_singleargs
     NAMESPACE NAMESPACE_COMPONENT
-    STAGING_DIR FILENAME_PATTERN
+    STAGING_DIR
     INSTALL_COMPONENT INSTALL_DIR)
   set(_multiargs
     PYTHON_DEPS PROTO_DEPS
-    PROGRAMS FILES DIRECTORIES
+    PROGRAMS FILES DIRECTORIES FILENAME_PATTERN
     HIDDEN_IMPORTS COLLECT_SUBMODULES COLLECT_PACKAGES EXTRA_DATA_MODULES
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -75,13 +75,14 @@ function(cc_add_python TARGET)
     arg_FILENAME_PATTERN
     "*.py")
 
-  cc_get_python_modules(
+  cc_get_staging_list(
     FILES ${arg_PROGRAMS} ${arg_FILES}
     DIRECTORIES ${arg_DIRECTORIES}
-    FILENAME_PATTERN "${filename_pattern}"
+    FILENAME_PATTERN ${filename_pattern}
     OUTPUT_DIR "${namespace_dir}"
     SOURCES_VARIABLE sources
-    OUTPUTS_VARIABLE staged_outputs)
+    OUTPUTS_VARIABLE staged_outputs
+  )
 
   # set(staged_outputs "${staging_dir}")
   # set_property(SOURCE "${staged_output}" PROPERTY SYMBOLIC)
@@ -94,7 +95,6 @@ function(cc_add_python TARGET)
     FILES ${arg_FILES}
     DIRECTORIES ${arg_DIRECTORIES}
     FILENAME_PATTERN ${filename_pattern}
-    SOURCES_VARIABLE sources
   )
 
   ### Create a Custom CMake target plus staging folder
@@ -104,6 +104,9 @@ function(cc_add_python TARGET)
     )
   endif()
 
+  ### Populate `SOURCES` property for downstream dependents
+  ### (It's marked `PRIVATE` because a custom target cannot have INTERFACE sources;
+  ### however still available by looking up the `SOURCES` property explicitly).
   target_sources(${TARGET} PRIVATE ${staged_outputs})
   # target_sources(${TARGET} PRIVATE ${sources})
 
@@ -152,66 +155,6 @@ function(cc_add_python TARGET)
 endfunction()
 
 
-
-#===============================================================================
-## @fn cc_get_python_modules
-## @brief Get a recursive list of python modules given the specified targets
-
-function(cc_get_python_modules)
-  set(_options)
-  set(_singleargs OUTPUT_DIR FILENAME_PATTERN SOURCES_VARIABLE OUTPUTS_VARIABLE)
-  set(_multiargs FILES DIRECTORIES)
-  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  set(sources)
-  set(outputs)
-
-  foreach(path ${arg_FILES})
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${path}"
-      OUTPUT_VARIABLE abs_source)
-    list(APPEND sources "${abs_source}")
-
-    cmake_path(GET path
-      FILENAME filename)
-
-    list(APPEND outputs "${arg_OUTPUT_DIR}/${filename}")
-  endforeach()
-
-  ### We process each directory separately in case they are not located
-  ### directly below ${CMAKE_CURRENT_SOURCE_DIR}. Paths are then constructed
-  ### as relative to the parent folder of each directory (${anchor_dir}, which
-  ### may or may not be identical to ${CMAKE_CURRENT_SOURCE_DIR}).
-
-  foreach(dir ${arg_DIRECTORIES})
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${dir}"
-      OUTPUT_VARIABLE abs_dir)
-
-    cmake_path(GET abs_dir
-      PARENT_PATH anchor_dir)
-
-    file(GLOB_RECURSE rel_paths
-      RELATIVE "${anchor_dir}"
-      LIST_DIRECTORIES FALSE
-      CONFIGURE_DEPENDS  # Trigger reconfiguration on new/deleted files
-      "${abs_dir}/${arg_FILENAME_PATTERN}")
-
-    foreach(rel_path ${rel_paths})
-      list(APPEND sources "${anchor_dir}/${rel_path}")
-      list(APPEND outputs "${arg_OUTPUT_DIR}/${rel_path}")
-    endforeach()
-  endforeach()
-
-  if(arg_SOURCES_VARIABLE)
-    set("${arg_SOURCES_VARIABLE}" "${sources}" PARENT_SCOPE)
-  endif()
-
-  if(arg_OUTPUTS_VARIABLE)
-    set("${arg_OUTPUTS_VARIABLE}" "${outputs}" PARENT_SCOPE)
-  endif()
-
-endfunction()
-
-
 #===============================================================================
 ## @fn stage_python_moduls
 ## @brief Populate a staging folder
@@ -225,8 +168,8 @@ endfunction()
 
 function(cc_stage_python_modules)
   set(_options)
-  set(_singleargs TARGET MODULES_DIR FILENAME_PATTERN SOURCES_VARIABLE)
-  set(_multiargs OUTPUT PROGRAMS FILES DIRECTORIES)
+  set(_singleargs TARGET MODULES_DIR)
+  set(_multiargs OUTPUT PROGRAMS FILES DIRECTORIES FILENAME_PATTERN)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### Now define the first of several commands that will populate the output folder.
@@ -234,8 +177,6 @@ function(cc_stage_python_modules)
   add_custom_command(
     OUTPUT ${arg_OUTPUT}
     COMMENT "Staging Python modules for target ${arg_TARGET}"
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E rm -rf ${arg_MODULES_DIR}
     COMMAND ${CMAKE_COMMAND}
     ARGS -E make_directory ${arg_MODULES_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -264,7 +205,6 @@ function(cc_stage_python_modules)
         ARGS -E copy ${arg_PROGRAMS} ${arg_MODULES_DIR}
       )
     endif()
-    list(APPEND sources ${arg_PROGRAMS})
   endif()
 
   if(arg_FILES)
@@ -274,7 +214,6 @@ function(cc_stage_python_modules)
       COMMAND ${CMAKE_COMMAND}
       ARGS -E copy ${arg_FILES} ${arg_MODULES_DIR}
     )
-    list(APPEND sources ${arg_FILES})
   endif()
 
   foreach(dir ${arg_DIRECTORIES})
@@ -284,11 +223,15 @@ function(cc_stage_python_modules)
     cmake_path(GET abs_dir
       PARENT_PATH anchor_dir)
 
+    list(TRANSFORM arg_FILENAME_PATTERN
+      PREPEND "${abs_dir}/"
+      OUTPUT_VARIABLE filename_pattern)
+
     file(GLOB_RECURSE rel_paths
       RELATIVE "${anchor_dir}"
       LIST_DIRECTORIES FALSE
       CONFIGURE_DEPENDS         # Regenerate cache on new/deleted files
-      "${abs_dir}/${arg_FILENAME_PATTERN}")
+      ${filename_pattern})
 
     foreach(rel_path ${rel_paths})
       add_custom_command(
@@ -297,13 +240,8 @@ function(cc_stage_python_modules)
         COMMAND ${CMAKE_COMMAND}
         ARGS -E copy ${anchor_dir}/${rel_path} ${arg_MODULES_DIR}/${rel_path}
       )
-      list(APPEND sources "${anchor_dir}/${rel_path}")
     endforeach()
   endforeach()
-
-  if(arg_SOURCES_VARIABLE)
-    set("${arg_SOURCES_VARIABLE}" "${sources}" PARENT_SCOPE)
-  endif()
 endfunction()
 
 

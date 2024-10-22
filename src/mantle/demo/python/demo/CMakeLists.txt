@@ -37,7 +37,7 @@ if(INCLUDE_DEMO)
   cc_add_python_wheel("demo-shell"
     BUILD_DEPS "python_build"
     PYTHON_DEPS ${TARGET}
-    DATA_DEPS "demo-settings"
+    DATA_DEPS cc_demo_settings
     DESCRIPTION "Interactive shell to communicate with DEMO service over gRPC or ZMQ"
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   )
@@ -45,7 +45,7 @@ if(INCLUDE_DEMO)
   cc_add_python_executable("pydemo_grpc_server"
     BUILD_DEPS "python_pyinstaller"
     PYTHON_DEPS ${TARGET}
-    DATA_DEPS "demo-settings"
+    DATA_DEPS cc_demo_settings
     VENV "${PYTHON_VENV}"
     SCRIPT "grpc/server.py"
     RUNTIME_HOOKS "starthook.py"
@@ -56,7 +56,7 @@ if(INCLUDE_DEMO)
   cc_add_python_executable("pydemo_zmq_server"
     PYTHON_DEPS "${TARGET}"
     BUILD_DEPS "python_pyinstaller"
-    DATA_DEPS "demo-settings"
+    DATA_DEPS cc_demo_settings
     VENV "${PYTHON_VENV}"
     SCRIPT "zmq/server.py"
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"

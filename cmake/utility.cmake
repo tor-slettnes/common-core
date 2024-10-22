@@ -194,3 +194,68 @@ function(cc_get_target_properties TARGET)
     set("${arg_OUTPUT_VARIABLE}" "${values}" PARENT_SCOPE)
   endif()
 endfunction()
+
+
+
+#===============================================================================
+## @fn cc_get_staging_list
+## @brief Get a recursive list of source + staged files
+
+function(cc_get_staging_list)
+  set(_options CONFIGURE_DEPENDS)
+  set(_singleargs OUTPUT_DIR SOURCES_VARIABLE OUTPUTS_VARIABLE)
+  set(_multiargs FILES DIRECTORIES FILENAME_PATTERN)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  set(sources)
+  set(outputs)
+
+  foreach(path ${arg_FILES})
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${path}"
+      OUTPUT_VARIABLE abs_source)
+
+    cmake_path(GET path
+      FILENAME filename)
+
+    list(APPEND sources "${abs_source}")
+    list(APPEND outputs "${arg_OUTPUT_DIR}/${filename}")
+  endforeach()
+
+  ### We process each directory separately in case they are not located
+  ### directly below ${CMAKE_CURRENT_SOURCE_DIR}. Paths are then constructed
+  ### as relative to the parent folder of each directory (${anchor_dir}, which
+  ### may or may not be identical to ${CMAKE_CURRENT_SOURCE_DIR}).
+
+  cc_get_optional_keyword(CONFIGURE_DEPENDS "${arg_CONFIGURE_DEPENDS}")
+
+  foreach(dir ${arg_DIRECTORIES})
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${dir}"
+      OUTPUT_VARIABLE abs_dir)
+
+    cmake_path(GET abs_dir
+      PARENT_PATH anchor_dir)
+
+    list(TRANSFORM arg_FILENAME_PATTERN
+      PREPEND "${abs_dir}/"
+      OUTPUT_VARIABLE filename_patterns)
+
+    file(GLOB_RECURSE rel_paths
+      RELATIVE "${anchor_dir}"
+      LIST_DIRECTORIES FALSE
+      ${CONFIGURE_DEPENDS}
+      ${filename_patterns})
+
+    foreach(rel_path ${rel_paths})
+      list(APPEND sources "${anchor_dir}/${rel_path}")
+      list(APPEND outputs "${arg_OUTPUT_DIR}/${rel_path}")
+    endforeach()
+  endforeach()
+
+  if(arg_SOURCES_VARIABLE)
+    set("${arg_SOURCES_VARIABLE}" "${sources}" PARENT_SCOPE)
+  endif()
+
+  if(arg_OUTPUTS_VARIABLE)
+    set("${arg_OUTPUTS_VARIABLE}" "${outputs}" PARENT_SCOPE)
+  endif()
+endfunction()

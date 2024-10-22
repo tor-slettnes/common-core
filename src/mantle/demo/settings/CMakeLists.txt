@@ -5,14 +5,15 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET "demo-settings")
+set(TARGET "cc_demo_settings")
 
 if(INCLUDE_DEMO)
-  set(INSTALL_COMPONENT "${TARGET}")
+  set(INSTALL_COMPONENT "demo-settings")
 
   cc_add_settings("${TARGET}"
-    SETTINGS_DEPS "core-settings"
+    SETTINGS_DEPS cc_core_settings
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    DIRECTORIES "."
   )
 
   cpack_add_component(${INSTALL_COMPONENT}
