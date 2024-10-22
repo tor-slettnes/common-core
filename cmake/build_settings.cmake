@@ -8,6 +8,21 @@
 set(SETTINGS_DIR "share/cc/settings"
   CACHE STRING "Top-level installation directory for settings files" FORCE)
 
+set(SETTINGS_STAGING_ROOT
+  "${CMAKE_BINARY_DIR}/settings")
+
+### Add the above directories to the global `clean` target
+set_property(
+  DIRECTORY "${CMAKE_BINARY_DIR}"
+  APPEND
+  PROPERTY ADDITIONAL_CLEAN_FILES  ${SETTINGS_STAGING_ROOT}
+)
+
+#===============================================================================
+## @fn cc_add_settings
+## @brief
+##  Stage settings files/directories for output
+
 function(cc_add_settings TARGET)
   set(_options)
   set(_singleargs DESTINATION STAGING_DIR INSTALL_COMPONENT)
@@ -32,7 +47,7 @@ function(cc_add_settings TARGET)
     cmake_path(APPEND "${CMAKE_CURRENT_BINARY_DIR}" "${arg_STAGING_DIR}"
       OUTPUT_VARIABLE staging_dir)
   else()
-     set(staging_dir "${CMAKE_CURRENT_BINARY_DIR}/staging")
+     set(staging_dir "${SETTINGS_STAGING_ROOT}/${TARGET}")
   endif()
 
   if(arg_FILES OR arg_DIRECTORIES)

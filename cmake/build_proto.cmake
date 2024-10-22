@@ -135,7 +135,7 @@ function(cc_add_proto_python TARGET)
   if(arg_STAGING_DIR)
     set(staging_dir "${arg_STAGING_DIR}")
   else()
-    set(staging_dir "${PYTHON_WORK_DIR}/staging/${TARGET}")
+    set(staging_dir "${PYTHON_STAGING_ROOT}/staging/${TARGET}")
   endif()
 
   ### Construct namespace for Python modules
@@ -177,11 +177,11 @@ function(cc_add_proto_python TARGET)
 
   ### Set target properties for downstream targets
   ###   - `staging_dir` indicating where to find the generated modules
-  ###   - `required_packages` to indicate that this namespace must
+  ###   - `collect_submodules` to indicate that this namespace must
   ###     be explicitly imported by `cc_add_python_executable()`.
   set_target_properties("${TARGET}" PROPERTIES
     staging_dir "${staging_dir}"
-    required_packages "${namespace}"
+    collect_submodules "${namespace}"
   )
 
   ### Install generated Python modules if requested

@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(INSTALL_GROUP "core")
+set(INSTALL_GROUP "common")
 
 cpack_add_component_group(${INSTALL_GROUP}
   DISPLAY_NAME "Core components"

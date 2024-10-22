@@ -107,9 +107,11 @@ function(cc_add_python_wheel TARGET)
 
 
   ### Define output directories for `pyproject.toml` and the resulting wheel
-  set(gen_dir "${PYTHON_WORK_DIR}/wheels/${TARGET}")
-  set(wheel_dir "${gen_dir}/whl")
+  set(gen_dir "${PYTHON_STAGING_ROOT}/wheels/${TARGET}")
+  set(wheel_dir "${gen_dir}")
   set(wheel_path "${wheel_dir}/${wheel_name}")
+
+  file(REMOVE_RECURSE "${gen_dir}")
 
   ### Create TARGET with dependencies
   add_custom_target("${TARGET}" ALL
@@ -129,7 +131,7 @@ function(cc_add_python_wheel TARGET)
   ## and generate corresponding `"SOURCE_DIR" = "/"` statements for the
   ## `[...force-include]` section in `pyproject.toml`.
 
-  set(include_map)
+  set(package_map)
 
   cc_get_target_properties_recursively(
     PROPERTIES staging_dir
@@ -140,7 +142,7 @@ function(cc_add_python_wheel TARGET)
     REMOVE_DUPLICATES
     REQUIRED)
 
-  list(APPEND include_map ${dep_staging_dirs})
+  list(APPEND package_map ${dep_staging_dirs})
 
   ## Likewise, collect staged source+destination folders listed in `DATA_DEPS`:
   cc_get_target_properties_recursively(
@@ -153,12 +155,10 @@ function(cc_add_python_wheel TARGET)
     ALL_OR_NOTHING
     REMOVE_DUPLICATES)
 
-  list(APPEND include_map ${extra_data})
+  list(APPEND package_map ${extra_data})
 
-  ### Create a multi-line string in INCLUDE_MAP holding these directory mappings.
-  list(JOIN include_map "\n" INCLUDE_MAP)
-
-
+  ### Create a multi-line string in PACKAGE_MAP holding these directory mappings.
+  list(JOIN package_map "\n" PACKAGE_MAP)
 
   #-----------------------------------------------------------------------------
   ### Now create `pyproject.toml` based on the above contents

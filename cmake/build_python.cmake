@@ -10,11 +10,18 @@ include(utility)
 set(PYTHON_TEMPLATE_DIR
   "${CMAKE_CURRENT_LIST_DIR}/python")
 
-set(PYTHON_WORK_DIR
+set(PYTHON_STAGING_ROOT
   "${CMAKE_BINARY_DIR}/python")
 
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules")
+
+### Add the above directories to the global `clean` target
+set_property(
+  DIRECTORY "${CMAKE_BINARY_DIR}"
+  APPEND
+  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_STAGING_ROOT} ${PYTHON_INSTALL_DIR}
+)
 
 
 #===============================================================================
@@ -31,7 +38,7 @@ function(cc_add_python TARGET)
   set(_multiargs
     PYTHON_DEPS PROTO_DEPS
     PROGRAMS FILES DIRECTORIES
-    HIDDEN_IMPORTS REQUIRED_PACKAGES
+    HIDDEN_IMPORTS COLLECT_SUBMODULES COLLECT_PACKAGES EXTRA_DATA_MODULES
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -48,7 +55,7 @@ function(cc_add_python TARGET)
     cmake_path(APPEND "${CMAKE_CURRENT_BINARY_DIR}" "${arg_STAGING_DIR}"
       OUTPUT_VARIABLE staging_dir)
   else()
-     set(staging_dir "${PYTHON_WORK_DIR}/staging/${TARGET}")
+     set(staging_dir "${PYTHON_STAGING_ROOT}/staging/${TARGET}")
   endif()
 
   ### Clean staging directory (this happens immediately when (re)configuring).
@@ -115,9 +122,19 @@ function(cc_add_python TARGET)
       PROPERTIES hidden_imports ${arg_HIDDEN_IMPORTS})
   endif()
 
-  if(arg_REQUIRED_PACKAGES)
+  if(arg_COLLECT_SUBMODULES)
     set_target_properties("${TARGET}"
-      PROPERTIES required_packages ${arg_REQUIRED_PACKAGES})
+      PROPERTIES collect_submodules ${arg_COLLECT_SUBMODULES})
+  endif()
+
+  if(arg_COLLECT_PACKAGES)
+    set_target_properties("${TARGET}"
+      PROPERTIES collect_packages ${arg_COLLECT_PACKAGES})
+  endif()
+
+  if(arg_EXTRA_DATA_MODULES)
+    set_target_properties("${TARGET}"
+      PROPERTIES extra_data_modules ${arg_EXTRA_DATA_MUDULES})
   endif()
 
   if(INSTALL_PYTHON_MODULES AND arg_INSTALL_COMPONENT)

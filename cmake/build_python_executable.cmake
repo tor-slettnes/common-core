@@ -50,7 +50,7 @@ function(cc_add_python_executable TARGET)
     "${TARGET}")
 
   ### Specify a working directory for PyIntaller
-  set(out_dir "${PYTHON_WORK_DIR}/pyinstaller/${TARGET}")
+  set(out_dir "${PYTHON_STAGING_ROOT}/pyinstaller/${TARGET}")
   set(workdir "${out_dir}")
   set(staging_dir "${out_dir}/staging")
   set(distdir "${out_dir}/dist")
@@ -125,23 +125,47 @@ function(cc_add_python_executable TARGET)
     "--distpath" "${distdir}"
   )
 
+  ## Expand paths of any provided runtime hooks
+  set(runtime_hooks)
+  foreach(hook ${arg_RUNTIME_HOOKS})
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${hook}"
+      OUTPUT_VARIABLE hook_path)
+
+    list(APPEND runtime_hooks "${hook_path}")
+  endforeach()
+
+
   #-----------------------------------------------------------------------------
   ## Collect various properties from our dependencies and set
   ## corresponding options for PyInstaller
 
   ### Prepare substitutions for `pyinstaller.spec.in`
   ## Get hidden imports (modules/packages that PyInstaller does not detect)
-  cc_get_target_properties_recursively(
-    PROPERTIES hidden_imports
+  cc_get_target_property_recursively(
+    PROPERTY hidden_imports
     TARGETS ${arg_PYTHON_DEPS}
     OUTPUT_VARIABLE hidden_imports
     REMOVE_DUPLICATES)
 
   ## Get packages that must be collected explicitly
-  cc_get_target_properties_recursively(
-    PROPERTIES required_packages
+  cc_get_target_property_recursively(
+    PROPERTY collect_submodules
     TARGETS ${arg_PYTHON_DEPS}
-    OUTPUT_VARIABLE required_packages
+    OUTPUT_VARIABLE collect_submodules
+    REMOVE_DUPLICATES)
+
+  ## Get packages that must be collected explicitly
+  cc_get_target_property_recursively(
+    PROPERTY collect_packages
+    TARGETS ${arg_PYTHON_DEPS}
+    OUTPUT_VARIABLE collect_packages
+    REMOVE_DUPLICATES)
+
+  ## Get packages that must be collected explicitly
+  cc_get_target_property_recursively(
+    PROPERTY extra_data_modules
+    TARGETS ${arg_PYTHON_DEPS}
+    OUTPUT_VARIABLE extra_data_modules
     REMOVE_DUPLICATES)
 
   ## Get settings files and other data that should also be included in output.
@@ -153,16 +177,6 @@ function(cc_add_python_executable TARGET)
     ALL_OR_NOTHING
     REMOVE_DUPLICATES)
 
-  ## Expand paths of any provided runtime hooks
-  set(runtime_hooks)
-  foreach(hook ${arg_RUNTIME_HOOKS})
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${hook}"
-      OUTPUT_VARIABLE hook_path)
-
-    list(APPEND runtime_hooks "${hook_path}")
-  endforeach()
-
-
   ## If we are asked to use a spec template file, define variable subtitutions
   ## and generate the coresponding `.spec` file now.
   if(arg_SPEC_TEMPLATE OR arg_USE_SPEC)
@@ -170,8 +184,10 @@ function(cc_add_python_executable TARGET)
 
     cc_join_quoted(script OUTPUT_VARIABLE SCRIPTS)
     cc_join_quoted(hidden_imports OUTPUT_VARIABLE HIDDEN_IMPORTS)
-    cc_join_quoted(required_packages OUTPUT_VARIABLE COLLECT_ALL)
+    cc_join_quoted(collect_submodules OUTPUT_VARIABLE COLLECT_SUBMODULES)
+    cc_join_quoted(collect_packages OUTPUT_VARIABLE COLLECT_PACKAGES)
     cc_join_quoted(extra_data OUTPUT_VARIABLE EXTRA_DATA)
+    cc_join_quoted(extra_data_modules OUTPUT_VARIABLE EXTRA_DATA_MODULES)
     cc_join_quoted(runtime_hooks OUTPUT_VARIABLE RUNTIME_HOOKS)
 
     cc_get_value_or_default(
@@ -188,6 +204,13 @@ function(cc_add_python_executable TARGET)
     list(APPEND pyinstall_args "${spec_file}")
 
   else()
+    if(extra_data_modules)
+      message(WARNING "One or more Python depenencies were defined with EXTRA_DATA_MODULES; "
+        "however, this can only be supported with a custom PyInstaller .spec file. "
+        "Consider adding `USE_SPEC` in invocation `cc_add_python_executable(${TARGET} ...)`."
+      )
+    endif()
+
     list(APPEND pyinstall_args
       "--specpath" "${workdir}"
       "--name" "${program}")
@@ -202,7 +225,11 @@ function(cc_add_python_executable TARGET)
       list(APPEND pyinstall_args "--hidden-import" "${import}")
     endforeach()
 
-    foreach(package ${required_packages})
+    foreach(package ${collect_submodules})
+      list(APPEND pyinstall_args "--collect-submodules" "${package}")
+    endforeach()
+
+    foreach(package ${collect_packages})
       list(APPEND pyinstall_args "--collect-all" "${package}")
     endforeach()
 

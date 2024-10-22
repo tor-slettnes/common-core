@@ -129,7 +129,7 @@ pkg_clean package_clean:
 clean: pkg_clean cmake_clean
 
 .PHONY: realclean
-realclean:
+realclean: clean
 	@rm -rfv "$(BUILD_DIR)" "$(INSTALL_DIR)" "$(PACKAGE_DIR)"
 
 .PHONY: realclean_all
@@ -137,7 +137,7 @@ realclean_all:
 	@rm -rfv "$(OUT_DIR)/build" "$(OUT_DIR)/install" "$(OUT_DIR)/packages"
 
 .PHONY: distclean
-distclean:
+distclean: clean
 	@echo "Removing all build outputs: ${OUT_DIR}"
 	@rm -rf "$(OUT_DIR)"
 

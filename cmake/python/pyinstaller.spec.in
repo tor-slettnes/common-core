@@ -20,9 +20,9 @@ hidden_imports = [@HIDDEN_IMPORTS@]
 extra_data = [tuple(item.split(':')) for item in [@EXTRA_DATA@]]
 extra_binaries = [tuple(item.split(':')) for item in [@EXTRA_BINARIES@]]
 
-### Determine the source/destination path of EXTRA_MODULES
+### Determine the source/destination path of EXTRA_DATA_MODULES
 ### and append these to `extra_data`.
-for module_name in [@EXTRA_MODULES@]:
+for module_name in [@EXTRA_DATA_MODULES@]:
     module = importlib.import_module(module_name)
     module_path = pathlib.Path(module.__file__)
     if module_path.stem == '__init__':
@@ -30,11 +30,11 @@ for module_name in [@EXTRA_MODULES@]:
     extra_data.append((str(module_path), module_name))
 
 ### Collect submodules from packages in COLLECT_SUBMODULES
-for package_name in [@COLLECT_SUBMODULES@]:
+for package_name in [@HIDDEN_SUBMODULES@]:
     hidden_imports += collect_submodules(package_name)
 
 ### Collect everything from packages in COLLECT_ALL
-for package_name in [@COLLECT_ALL@]:
+for package_name in [@COLLECT_PACKAGES@]:
     data, binaries, imports = collect_all(package_name)
     extra_data += data
     extra_binaries += binaries

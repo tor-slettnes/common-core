@@ -7,6 +7,16 @@
 include(build_package)
 set(SERVICE_TEMPLATE_DIR ${CMAKE_CURRENT_LIST_DIR}/debian)
 
+set(SERVICE_STAGING_DIR "${CMAKE_BINARY_DIR}/deb")
+
+### Add the above directory to the global `clean` target
+set_property(
+  DIRECTORY "${CMAKE_BINARY_DIR}"
+  APPEND
+  PROPERTY ADDITIONAL_CLEAN_FILES ${SERVICE_STAGING_DIR}
+)
+
+
 #===============================================================================
 # @fn cc_add_debian_service
 # @brief Create, install and optionally enable a SystemD service unit
@@ -124,9 +134,7 @@ function(cc_add_enable_hooks UNIT)
   set(ENV{service_units_${package}} "${_service_units}")
 
   # Set up a staging directory for this package
-  cmake_path(APPEND CMAKE_BINARY_DIR "deb" "${package}"
-    OUTPUT_VARIABLE _staging_dir)
-
+  set(_staging_dir "${SERVICE_STAGING_DIR}/${package}")
   file(MAKE_DIRECTORY "${_staging_dir}")
 
   # Define `SERVICE_UNITS` and `SERVICE_UNIT_PATHS` for `config_file()` 
