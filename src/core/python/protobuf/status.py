@@ -21,14 +21,14 @@ level_map = {
     LEVEL_FATAL: logging.FATAL,
 }
 
-def decodeLogLevel(self, level: Level) -> int:
-    return level_map.get(level, logging.NOTSET)
+def decodeLogLevel(event_level: Level) -> int:
+    return level_map.get(event_level, logging.NOTSET)
 
-def encodeLogLevel(self, log_level: int) -> Level:
+def encodeLogLevel(log_level: int) -> Level:
     current_event_level = LEVEL_NONE
 
     for candidate_event_level, candidate_log_level in level_map.items():
-        if (level >= candidate_log_level) and (candidate_event_level > current_event_level):
+        if (log_level >= candidate_log_level) and (candidate_event_level > current_event_level):
             current_event_level = candidate_event_level
 
     return current_event_level
