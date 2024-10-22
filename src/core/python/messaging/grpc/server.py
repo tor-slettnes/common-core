@@ -9,16 +9,16 @@
 import grpc
 
 ### Standard Python modules
-from concurrent import futures
+import concurrent
 
 def create_server(*servicers):
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(concurrent.futures.ThreadPoolExecutor(max_workers=10))
     for servicer in servicers:
         servicer.add_to_server(server)
     return server
 
 def create_async_server(*servicers):
-    server = grpc.aio.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.aio.server(concurrent.futures.ThreadPoolExecutor(max_workers=10))
     for servicer in servicers:
         servicer.add_to_server(server)
     return server

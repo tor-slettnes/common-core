@@ -141,7 +141,7 @@ function(cc_get_target_properties_recursively)
     get_target_property(dependencies "${target}" MANUALLY_ADDED_DEPENDENCIES)
     if (dependencies)
       cc_get_target_properties_recursively(
-        PROPERTIES "${arg_PROPERTIES}"
+        PROPERTIES ${arg_PROPERTIES}
         TARGETS ${dependencies}
         PREFIX "${arg_PREFIX}"
         SEPARATOR "${separator}"
