@@ -20,7 +20,12 @@ namespace core::logging
                      const std::string &default_suffix,
                      const dt::Duration &rotation_interval);
 
+        virtual ~RotatingPath();
+
     protected:
+        void open();
+        virtual void open(const dt::TimePoint &tp) {}
+        virtual void close() {}
         virtual void rotate(const dt::TimePoint &tp);
 
         std::string path_template() const;
@@ -29,7 +34,8 @@ namespace core::logging
 
         fs::path current_path() const;
         fs::path construct_path(const dt::TimePoint &tp) const;
-        void update_current_path(const dt::TimePoint &tp);
+        void update_current_path(const dt::TimePoint &tp,
+                                 bool create_directory = true);
 
     private:
         std::string path_template_;

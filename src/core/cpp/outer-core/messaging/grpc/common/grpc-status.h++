@@ -113,9 +113,10 @@ namespace core::grpc
                Code code = 0,
                const Symbol &symbol = "",
                status::Level level = status::Level::NONE,
-               status::Flow flow = status::Flow::NONE,
                const dt::TimePoint &timepoint = dt::Clock::now(),
-               const types::KeyValueMap &attributes = {});
+               const types::KeyValueMap &attributes = {},
+               const std::string &contract_id = {},
+               const std::string &host = {});
 
         /// @brief
         ///     Get the gRPC status code that was provided in the constructor.

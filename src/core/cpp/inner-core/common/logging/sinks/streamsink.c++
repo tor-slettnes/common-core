@@ -23,7 +23,7 @@ namespace core::logging
     // StreamSink methods
 
     StreamSink::StreamSink(std::ostream &stream)
-        : MessageSink(),
+        : Super(),
           stream(stream)
     {
 #ifndef _WIN32
@@ -36,9 +36,9 @@ namespace core::logging
     {
     }
 
-    void StreamSink::capture_message(const Message::ptr &msg)
+    void StreamSink::capture_event(const status::Event::ptr &event)
     {
-        const StyleMap *styles = this->styles.get_ptr(msg->level());
+        const StyleMap *styles = this->styles.get_ptr(event->level());
 
         // auto lck = std::lock_guard(this->mtx);
 
@@ -47,24 +47,24 @@ namespace core::logging
             this->stream << styles->get(INTRO);
         }
 
-        dt::tp_to_stream(this->stream, msg->timepoint(), true, 3, "%F|%T");
+        dt::tp_to_stream(this->stream, event->timepoint(), true, 3, "%F|%T");
 
         this->stream << "|"
                      << std::setfill(' ') << std::setw(8)
-                     << msg->level() << std::setw(0) << "|";
+                     << event->level() << std::setw(0) << "|";
 
-        this->send_preamble(this->stream, msg);
+        this->send_preamble(this->stream, event);
 
         if (styles)
         {
             this->stream << styles->get(RESET)
                          << styles->get(TEXT)
-                         << msg->text()
+                         << event->text()
                          << styles->get(RESET);
         }
         else
         {
-            this->stream << msg->text();
+            this->stream << event->text();
         }
 
         this->stream << std::endl;

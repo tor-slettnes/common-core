@@ -5,21 +5,15 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-if(INCLUDE_PLATFORM)
-  set(INSTALL_COMPONENT "platform-tools")
-endif()
+set(INSTALL_COMPONENT "logger-tools")
 
-add_subdirectory(platformserver)
-add_subdirectory(sysconfig-tool)
-add_subdirectory(netconfig-tool)
-add_subdirectory(vfs-tool)
-add_subdirectory(upgrade-tool)
+add_subdirectory(logger-tool)
 
 if(INSTALL_COMPONENT)
   cpack_add_component(${INSTALL_COMPONENT}
-    DEPENDS platform-settings
+    DEPENDS logger-settings
     GROUP ${INSTALL_GROUP}
     DISPLAY_NAME "Platform server"
-    DESCRIPTION "Platform services: System configuration, networking, filesystem, upgrade, logging"
+    DESCRIPTION "Platform services: System configuration, networking, filesystem, upgrade, logger"
   )
 endif()

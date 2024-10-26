@@ -17,15 +17,9 @@ namespace core::logging
     {
     }
 
-    void JsonFileSink::open()
-    {
-        this->open(dt::Clock::now());
-    }
-
     void JsonFileSink::open(const dt::TimePoint &tp)
     {
         this->update_current_path(tp);
-        fs::create_directories(this->current_path().parent_path());
         this->writer_ = std::make_shared<json::Writer>(this->current_path());
     }
 
@@ -35,12 +29,6 @@ namespace core::logging
         {
             this->writer_.reset();
         }
-    }
-
-    void JsonFileSink::rotate(const dt::TimePoint &tp)
-    {
-        this->close();
-        this->open(tp);
     }
 
     void JsonFileSink::capture_event(const status::Event::ptr &event)

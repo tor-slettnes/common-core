@@ -21,7 +21,6 @@ namespace core::zmq
                        const std::string &channel_name,
                        SocketType socket_type)
         : Super("ZMQ", endpoint_type, channel_name),
-          // socket_type_(socket_type)
           socket_(this->check_error(::zmq_socket(Endpoint::context(), socket_type)))
     {
     }
@@ -30,6 +29,8 @@ namespace core::zmq
     {
         if (this->socket_)
         {
+            logf_info("Closing %s socket", this->to_string());
+
             ::zmq_close(this->socket_);
             this->socket_ = nullptr;
         }
@@ -50,12 +51,6 @@ namespace core::zmq
 
     Socket *Endpoint::socket()
     {
-        // if (!this->socket_)
-        // {
-        //     this->socket_ = std::make_shared<Socket>(
-        //         *Endpoint::context(),
-        //         this->socket_type_);
-        // }
         return this->socket_;
     }
 

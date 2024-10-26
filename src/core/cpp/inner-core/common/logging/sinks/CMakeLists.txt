@@ -7,9 +7,12 @@
 
 target_sources(${TARGET} PRIVATE
   rotatingpath.c++
+  messageformatter.c++
   logsink.c++
-  messagesink.c++
+  asynclogsink.c++
+  streamsink.c++
   logfilesink.c++
   jsonfilesink.c++
-  streamsink.c++
+  tabulardatasink.c++
+  csvfilesink.c++
 )

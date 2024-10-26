@@ -9,7 +9,7 @@
 #include "protobuf-message.h++"
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
-#include "http-utils.h++"
+#include "string/misc.h++"
 //#include "errnos.h"
 
 namespace core::grpc
@@ -31,19 +31,17 @@ namespace core::grpc
 
     Status RequestHandlerBase::failure(const std::exception &e,
                                        const std::string &operation,
-                                       status::Flow flow,
                                        const fs::path &path,
                                        const int &lineno,
                                        const std::string &function)
     {
         Status status(*core::exception::map_to_event(e));
-        this->log_status(status, operation, flow, path, lineno, function);
+        this->log_status(status, operation, path, lineno, function);
         return status;
     }
 
     Status RequestHandlerBase::failure(std::exception_ptr eptr,
                                        const std::string &operation,
-                                       status::Flow flow,
                                        const fs::path &path,
                                        const int &lineno,
                                        const std::string &function)
@@ -54,7 +52,7 @@ namespace core::grpc
         }
         catch (const std::exception &e)
         {
-            return this->failure(e, operation, flow, path, lineno, function);
+            return this->failure(e, operation, path, lineno, function);
         }
         catch (...)
         {
@@ -63,7 +61,7 @@ namespace core::grpc
                           status::Domain::APPLICATION,
                           this->servicename());
 
-            this->log_status(status, operation, flow, path, lineno, function);
+            this->log_status(status, operation, path, lineno, function);
             return status;
         }
     }
@@ -71,14 +69,12 @@ namespace core::grpc
     Status RequestHandlerBase::failure(const std::exception &exception,
                                        const ::google::protobuf::Message &request,
                                        const std::string &peer,
-                                       status::Flow flow,
                                        const fs::path &path,
                                        const int &lineno,
                                        const std::string &function)
     {
         return this->failure(exception,
                              this->request_description(request, peer, function),
-                             flow,
                              path,
                              lineno,
                              function);
@@ -87,14 +83,12 @@ namespace core::grpc
     Status RequestHandlerBase::failure(std::exception_ptr eptr,
                                        const ::google::protobuf::Message &request,
                                        const std::string &peer,
-                                       status::Flow flow,
                                        const fs::path &path,
                                        const int &lineno,
                                        const std::string &function)
     {
         return this->failure(eptr,
                              this->request_description(request, peer, function),
-                             flow,
                              path,
                              lineno,
                              function);
@@ -102,7 +96,6 @@ namespace core::grpc
 
     void RequestHandlerBase::log_status(const Status &status,
                                         const std::string &operation,
-                                        status::Flow flow,
                                         const fs::path &path,
                                         const int &lineno,
                                         const std::string &function)
@@ -110,7 +103,6 @@ namespace core::grpc
         auto msg = custom_log_msg(
             status::Level::NOTICE,
             log_scope,
-            flow,
             dt::Clock::now(),
             path,
             lineno,
@@ -135,7 +127,7 @@ namespace core::grpc
         std::stringstream ss;
         if (peer.size())
         {
-            ss << "request from " << core::http::url_decode(peer) << ": ";
+            ss << "request from " << core::str::url_decoded(peer) << ": ";
         }
         ss << function << "(" << protobuf::to_string(request) << ")";
         return ss.str();

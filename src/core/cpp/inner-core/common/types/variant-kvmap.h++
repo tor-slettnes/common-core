@@ -26,6 +26,10 @@ namespace core::types
                          const Value &fallback = {},
                          bool ignoreCase = false) const noexcept;
 
+        Value extract_value(const std::string &key,
+                            const Value &fallback = {}) noexcept;
+
+
         std::vector<std::string> keys() const noexcept;
         ValueList values() const noexcept;
         TaggedValueList as_tvlist() const;

@@ -6,21 +6,24 @@
 //==============================================================================
 
 #pragma once
-#include "logging/sinks/messagesink.h++"
+#include "logging/sinks/logsink.h++"
+#include "logging/sinks/messageformatter.h++"
 #include "types/valuemap.h++"
 #include "types/create-shared.h++"
 
+#include <dds/domain/DomainParticipant.hpp>
 #include <rti_dl/rti_dl_cpp.h>
 #include <ndds/ndds_cpp.h>
-#include <dds/domain/DomainParticipant.hpp>
+
 
 namespace core::dds
 {
-    class RTIDistributedLogger : public core::logging::MessageSink,
+    class RTIDistributedLogger : public core::logging::LogSink,
+                                 public core::logging::MessageFormatter,
                                  public core::types::enable_create_shared<RTIDistributedLogger>
     {
         using This = RTIDistributedLogger;
-        using Super = core::logging::MessageSink;
+        using Super = core::logging::LogSink;
 
     protected:
         RTIDistributedLogger(const std::string &identity,
@@ -32,7 +35,7 @@ namespace core::dds
     protected:
         void open() override;
         void close() override;
-        void capture_message(const core::logging::Message::ptr &msg) override;
+        void capture_event(const core::status::Event::ptr &event) override;
 
     private:
         static const core::types::ValueMap<core::status::Level, DDS_Long> levelmap;

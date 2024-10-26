@@ -29,14 +29,14 @@ namespace core::platform
         Super::close();
     }
 
-    void PosixLogSinkProvider::capture_message(const logging::Message::ptr &msg)
+    void PosixLogSinkProvider::capture_event(const status::Event::ptr &event)
     {
-        if (std::optional<int> level = levelmap.get_opt(msg->level()))
+        if (std::optional<int> level = levelmap.get_opt(event->level()))
         {
-            ::syslog(level.value(),                // priority
-                     "%s%s",                       // format
-                     this->preamble(msg).c_str(),  // args...
-                     msg->text().c_str());         //
+            ::syslog(level.value(),                   // priority
+                     "%s",                            // format
+                     this->formatted(event).c_str(),  // args...
+                     event->text().c_str());          //
         }
     }
 

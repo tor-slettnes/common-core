@@ -21,8 +21,8 @@ endfunction()
 ## @fn cc_get_optional_keyword
 ## @brief Get the contents of the specified variable, or else a defaultvalue
 
-function(cc_get_optional_keyword KEYWORD VALUE)
-  set(_options)
+function(cc_get_optional_keyword KEYWORD PRESENT)
+  set(_options INVERSE)
   set(_singleargs OUTPUT_VARIABLE)
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -31,7 +31,7 @@ function(cc_get_optional_keyword KEYWORD VALUE)
     arg_OUTPUT_VARIABLE
     "${KEYWORD}")
 
-  if(${VALUE})
+  if((PRESENT AND NOT arg_INVERSE) OR (arg_INSVERSE AND NOT PRESENT))
     set("${output_variable}" "${KEYWORD}" PARENT_SCOPE)
   else()
     set("${output_variable}" "" PARENT_SCOPE)

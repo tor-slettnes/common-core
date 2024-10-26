@@ -11,7 +11,7 @@
 ## @fn cc_add_library
 
 function(cc_add_library TARGET)
-  set(_options INCLUDE_IN_ALL)
+  set(_options)
   set(_singleargs LIB_TYPE SCOPE)
   set(_multiargs SOURCES LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -40,10 +40,6 @@ function(cc_add_library TARGET)
   foreach(_dep ${arg_MOD_DEPS})
     find_package("${_dep}" REQUIRED)
   endforeach()
-
-  if (NOT INCULDE_IN_ALL)
-    set(exclude_from_all EXCLUDE_FROM_ALL)
-  endif()
 
   add_library("${TARGET}" ${_type} ${exclude_from_all} ${arg_SOURCES})
   target_include_directories(${TARGET} ${_scope} ${CMAKE_CURRENT_SOURCE_DIR})

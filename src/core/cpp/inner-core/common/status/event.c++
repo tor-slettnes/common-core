@@ -18,7 +18,6 @@ namespace core::status
     Event::Event()
         : domain_(Domain::NONE),
           level_(Level::NONE),
-          flow_(Flow::NONE),
           code_(0)
     {
     }
@@ -39,18 +38,20 @@ namespace core::status
                  const Code &code,
                  const Symbol &symbol,
                  Level level,
-                 Flow flow,
                  const dt::TimePoint &timepoint,
-                 const types::KeyValueMap &attributes)
+                 const types::KeyValueMap &attributes,
+                 const std::string &contract_id,
+                 const std::string &host)
         : text_(text),
           domain_(domain),
           origin_(origin),
           code_(code),
           symbol_(symbol),
           level_(level),
-          flow_(flow),
           timepoint_(timepoint),
-          attributes_(attributes)
+          attributes_(attributes),
+          contract_id_(contract_id),
+          host_(host)
     {
     }
 
@@ -62,9 +63,10 @@ namespace core::status
         std::swap(this->code_, other.code_);
         std::swap(this->symbol_, other.symbol_);
         std::swap(this->level_, other.level_);
-        std::swap(this->flow_, other.flow_);
         std::swap(this->timepoint_, other.timepoint_);
         std::swap(this->attributes_, other.attributes_);
+        std::swap(this->contract_id_, other.contract_id_);
+        std::swap(this->host_, other.host_);
         return *this;
     }
 
@@ -76,9 +78,10 @@ namespace core::status
         this->code_ = other.code_;
         this->symbol_ = other.symbol_;
         this->level_ = other.level();
-        this->flow_ = other.flow();
         this->timepoint_ = other.timepoint();
         this->attributes_ = other.attributes();
+        this->contract_id_ = other.contract_id();
+        this->host_ = other.host();
         return *this;
     }
 
@@ -90,9 +93,10 @@ namespace core::status
                (this->code() == other.code()) &&
                (this->symbol() == other.symbol()) &&
                (this->level() == other.level()) &&
-               (this->flow() == other.flow()) &&
                (this->timepoint() == other.timepoint()) &&
-               (this->attributes() == other.attributes());
+               (this->attributes() == other.attributes()) &&
+               (this->contract_id() == other.contract_id()) &&
+               (this->host() == other.host());
     }
 
     bool Event::operator!=(const Event &other) const noexcept
@@ -104,7 +108,7 @@ namespace core::status
     {
         return ((this->code() == 0) &&
                 this->symbol().empty() &&
-                (this->flow() == Flow::NONE));
+                (this->domain() == Domain::NONE));
     }
 
     Domain Event::domain() const noexcept
@@ -132,12 +136,7 @@ namespace core::status
         return this->level_;
     }
 
-    Flow Event::flow() const noexcept
-    {
-        return this->flow_;
-    }
-
-    const dt::TimePoint &Event::timepoint() const noexcept
+    dt::TimePoint Event::timepoint() const noexcept
     {
         return this->timepoint_;
     }
@@ -145,6 +144,16 @@ namespace core::status
     std::string Event::text() const noexcept
     {
         return this->text_;
+    }
+
+    std::string Event::contract_id() const noexcept
+    {
+        return this->contract_id_;
+    }
+
+    std::string Event::host() const noexcept
+    {
+        return this->host_;
     }
 
     const types::KeyValueMap &Event::attributes() const noexcept
@@ -199,10 +208,6 @@ namespace core::status
                           this->level(),
                           this->level() != Level::NONE);
 
-        parts->add<Flow>(EVENT_FIELD_FLOW,
-                         this->flow(),
-                         this->flow() != Flow::NONE);
-
         parts->add_value(EVENT_FIELD_TIME,
                          this->timepoint(),
                          this->timepoint() != dt::epoch);
@@ -210,6 +215,14 @@ namespace core::status
         parts->add_value(EVENT_FIELD_ATTRIBUTES,
                          this->attributes(),
                          !this->attributes().empty());
+
+        parts->add_string(EVENT_FIELD_CONTRACT_ID,
+                          this->contract_id(),
+                          !this->contract_id().empty());
+
+        parts->add_string(EVENT_FIELD_HOST,
+                          this->host(),
+                          !this->host().empty());
     }
 
     void Event::to_stream(std::ostream &stream) const
@@ -264,14 +277,7 @@ namespace core::status
     std::exception_ptr Event::as_device_error() const
     {
         return std::make_exception_ptr<exception::DeviceError>(
-            {this->text(),
-             this->origin(),
-             this->code(),
-             this->symbol(),
-             this->level(),
-             this->flow(),
-             this->timepoint(),
-             this->attributes()});
+            Event(*this));
     }
 
     std::exception_ptr Event::as_system_error() const

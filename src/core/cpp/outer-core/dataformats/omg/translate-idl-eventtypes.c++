@@ -36,18 +36,6 @@ namespace core::idl
     }
 
     //==========================================================================
-    // Execution flow
-    void encode(const core::status::Flow &native, CC::Status::Flow *idl) noexcept
-    {
-        *idl = static_cast<CC::Status::Flow>(native);
-    }
-
-    void decode(const CC::Status::Flow &idl, core::status::Flow *native) noexcept
-    {
-        *native = static_cast<core::status::Flow>(idl);
-    }
-
-    //==========================================================================
     // Event
     void encode(const core::status::Event &native, CC::Status::Event *idl) noexcept
     {
@@ -57,9 +45,9 @@ namespace core::idl
         idl->code(native.code());
         idl->symbol(native.symbol());
         encode(native.level(), &idl->level());
-        encode(native.flow(), &idl->flow());
         encode(native.timepoint(), &idl->timestamp());
         encode(native.attributes(), &idl->attributes());
+        idl->host(native.host());
     }
 
     void decode(const CC::Status::Event &idl, core::status::Event *native) noexcept
@@ -76,9 +64,10 @@ namespace core::idl
             static_cast<int>(idl.code()),                        // code
             idl.symbol(),                                        // symbol
             decoded<core::status::Level>(idl.level()),           // level
-            decoded<core::status::Flow>(idl.flow()),             // flow
             decoded<core::dt::TimePoint>(idl.timestamp()),       // timepoint
-            decoded<core::types::KeyValueMap>(idl.attributes())  // attributes
+            decoded<core::types::KeyValueMap>(idl.attributes()),  // attributes
+            {},                                                   // contract_id
+            idl.host(),                                           // host
         };
     }
 
@@ -88,15 +77,8 @@ namespace core::idl
     void encode(const core::logging::Message &native,
                 CC::Status::LogMessage *idl) noexcept
     {
-        idl->text(native.text());
-        idl->domain(CC::Status::Domain::APPLICATION);
-        idl->origin(native.origin());
-        idl->symbol(native.symbol());
-        idl->code(native.code());
-        encode(native.level(), &idl->level());
-        encode(native.flow(), &idl->flow());
-        encode(native.timepoint(), &idl->timestamp());
-        encode(native.attributes(), &idl->attributes());
+        encode(static_cast<core::status::Event>(native),
+               static_cast<CC::Status::Event*>(idl));
         idl->log_scope(native.scopename());
         idl->filename(native.path().string());
         idl->lineno(native.lineno());
@@ -106,11 +88,11 @@ namespace core::idl
 
     core::logging::Message decoded_logmessage(CC::Status::LogMessage idl) noexcept
     {
+        auto level = decoded<core::status::Level>(idl.level());
         return {
             idl.text(),
-            decoded<core::status::Level>(idl.level()),
-            core::logging::scopes.get(idl.log_scope()),
-            decoded<core::status::Flow>(idl.flow()),
+            level,
+            core::logging::Scope::create(idl.log_scope(), level),
             decoded<core::dt::TimePoint>(idl.timestamp()),
             idl.filename(),
             idl.lineno(),

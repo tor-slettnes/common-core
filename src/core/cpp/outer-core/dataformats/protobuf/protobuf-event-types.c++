@@ -39,46 +39,92 @@ namespace protobuf
     }
 
     //==========================================================================
-    // core::status::Flow encoding to/decoding from cc::status::Flow
+    // core::status::Event encoding to/decoding from core::status::Details
 
-    void encode(core::status::Flow flow, cc::status::Flow *encoded) noexcept
+    void encode(const core::status::Event &native, cc::status::Event *proto) noexcept
     {
-        *encoded = static_cast<cc::status::Flow>(flow);
+        proto->set_text(native.text());
+        proto->set_domain(encoded<cc::status::Domain>(native.domain()));
+        proto->set_origin(native.origin());
+        proto->set_code(native.code());
+        proto->set_symbol(native.symbol());
+        proto->set_level(encoded<cc::status::Level>(native.level()));
+        encode(native.timepoint(), proto->mutable_timestamp());
+        encode(native.attributes(), proto->mutable_attributes());
+        proto->set_contract_id(native.contract_id());
+        proto->set_host(native.host());
     }
 
-    void decode(cc::status::Flow flow, core::status::Flow *decoded) noexcept
+    void decode(const cc::status::Event &proto, core::status::Event *native) noexcept
     {
-        *decoded = static_cast<core::status::Flow>(flow);
+        *native = core::status::Event(
+            proto.text(),
+            decoded<core::status::Domain>(proto.domain()),
+            proto.origin(),
+            proto.code(),
+            proto.symbol(),
+            decoded<core::status::Level>(proto.level()),
+            decoded<core::dt::TimePoint>(proto.timestamp()),
+            decoded<core::types::KeyValueMap>(proto.attributes()),
+            proto.contract_id(),
+            proto.host());
     }
 
     //==========================================================================
-    // core::status::Event encoding to/decoding from core::status::Details
+    // core::logging::Message encoding to/decoding from cc::status::Event
 
-    void encode(const core::status::Event &event, cc::status::Event *msg) noexcept
+    void encode(const core::logging::Message &native, cc::status::Event *proto) noexcept
     {
-        msg->set_domain(encoded<cc::status::Domain>(event.domain()));
-        msg->set_origin(event.origin());
-        msg->set_code(event.code());
-        msg->set_symbol(event.symbol());
-        msg->set_level(encoded<cc::status::Level>(event.level()));
-        msg->set_flow(encoded<cc::status::Flow>(event.flow()));
-        encode(event.timepoint(), msg->mutable_timestamp());
-        encode(event.attributes(), msg->mutable_attributes());
-        msg->set_text(event.text());
+        encode(static_cast<core::status::Event>(native), proto);
+        core::types::KeyValueMap attributes;
+
+        attributes.insert_if(native.scope() != nullptr,
+                             core::logging::MESSAGE_FIELD_LOG_SCOPE,
+                             native.scopename());
+
+        attributes.insert_if(!native.path().empty(),
+                             core::logging::MESSAGE_FIELD_SOURCE_PATH,
+                             native.path());
+
+        attributes.insert_if(native.lineno(),
+                             core::logging::MESSAGE_FIELD_SOURCE_LINE,
+                             native.lineno());
+
+        attributes.insert_if(!native.function().empty(),
+                             core::logging::MESSAGE_FIELD_FUNCTION_NAME,
+                             native.function());
+
+        attributes.insert_if(native.thread_id(),
+                             core::logging::MESSAGE_FIELD_THREAD_ID,
+                             native.thread_id());
+
+        encode(attributes, proto->mutable_attributes());
     }
 
-    void decode(const cc::status::Event &msg, core::status::Event *event) noexcept
+    void decode(const cc::status::Event &proto, core::logging::Message *native) noexcept
     {
-        *event = core::status::Event(
-            msg.text(),
-            decoded<core::status::Domain>(msg.domain()),
-            msg.origin(),
-            msg.code(),
-            msg.symbol(),
-            decoded<core::status::Level>(msg.level()),
-            decoded<core::status::Flow>(msg.flow()),
-            decoded<core::dt::TimePoint>(msg.timestamp()),
-            decoded<core::types::KeyValueMap>(msg.attributes()));
-    }
+        decode(proto, static_cast<core::status::Event *>(native));
+        auto level = decoded<core::status::Level>(proto.level());
+        auto attributes = decoded<core::types::KeyValueMap>(proto.attributes());
 
+        auto scope = attributes.extract_value(
+            core::logging::MESSAGE_FIELD_LOG_SCOPE,
+            "remote");
+
+        *native = core::logging::Message(
+            proto.text(),
+            level,
+            core::logging::Scope::create(scope.as_string(), level),
+            decoded<core::dt::TimePoint>(proto.timestamp()),
+            attributes.extract_value(core::logging::MESSAGE_FIELD_SOURCE_PATH).as_string(),
+            attributes.extract_value(core::logging::MESSAGE_FIELD_SOURCE_LINE).as_uint(),
+            attributes.extract_value(core::logging::MESSAGE_FIELD_FUNCTION_NAME).as_string(),
+            static_cast<pid_t>(attributes.extract_value(core::logging::MESSAGE_FIELD_THREAD_ID).as_uint()),
+            proto.origin(),
+            proto.code(),
+            proto.symbol(),
+            attributes,
+            proto.contract_id(),
+            proto.host());
+    }
 }  // namespace protobuf

@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "logsink.h++"
+#include "asynclogsink.h++"
 #include "rotatingpath.h++"
 #include "json/writer.h++"
 #include "types/filesystem.h++"
@@ -18,12 +18,12 @@
 
 namespace core::logging
 {
-    class JsonFileSink : public LogSink,
+    class JsonFileSink : public AsyncLogSink,
                          public RotatingPath,
                          public types::enable_create_shared<JsonFileSink>
     {
         using This = JsonFileSink;
-        using Super = LogSink;
+        using Super = AsyncLogSink;
 
     protected:
         /// @brief Constructor
@@ -34,10 +34,8 @@ namespace core::logging
         JsonFileSink(const std::string &path_template,
                      const dt::Duration &rotation_interval);
 
-        void open() override;
-        void open(const dt::TimePoint &tp);
+        void open(const dt::TimePoint &tp) override;
         void close() override;
-        void rotate(const dt::TimePoint &tp) override;
         void capture_event(const status::Event::ptr &event) override;
 
     private:

@@ -27,7 +27,7 @@ namespace demo::grpc
         ::google::protobuf::Empty* response)
     {
         // We received a greeting from a client.  We decode and pass this on to
-        // our `api_provider`. Normally this is the native C++ implementation,
+        // our `api_provider`. Normally this is the host-native implementation,
         // which will then emit a signal to registered callbacks (slots). (These
         // include gRPC client proxies that are streaming back greetings via the
         // `watch()` method, as well as available interfaces for other messaging

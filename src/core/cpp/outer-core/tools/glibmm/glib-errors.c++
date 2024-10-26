@@ -58,7 +58,6 @@ namespace core::glib
                        const std::string &preamble,
                        core::status::Level level,
                        core::logging::Scope::ptr scope,
-                       core::status::Flow flow,
                        const dt::TimePoint &tp,
                        const std::filesystem::path &path,
                        const int &lineno,
@@ -67,7 +66,7 @@ namespace core::glib
         if (eptr)
         {
             core::logging::MessageBuilder::ptr msg = custom_log_msg(
-                level, scope, flow, tp, path, lineno, function);
+                level, scope, tp, path, lineno, function);
 
             if (preamble.size())
             {

@@ -26,9 +26,10 @@ namespace core::logging
         Sink() {}
 
     public:
-        virtual inline void open() {}
-        virtual inline void close() {}
+        virtual void open() {}
+        virtual void close() {}
 
+    public:
         virtual inline bool is_applicable(const types::Loggable &) const { return true; }
         virtual bool capture(const types::Loggable::ptr &loggable) = 0;
     };

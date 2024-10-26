@@ -1,0 +1,115 @@
+// -*- Protocol-Buffers -*-
+//==============================================================================
+/// @file logging.proto
+/// @brief Logging interface
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+syntax = "proto3";
+
+package cc.logger;
+
+import "status.proto";
+import "variant.proto";
+import "google/protobuf/empty.proto";
+
+service Logger
+{
+    // Log a single message
+    rpc log (LogRecord) returns (LogResponse);
+
+    // Open a writable stream for continuous logging
+    rpc writer (stream LogRecord) returns (LogResponse);
+
+    // Open a readable stream for continuous monitoring
+    rpc listen (LogFilter) returns (stream LogRecord);
+
+    // Define a new data contract/schema for data logging.  This is required
+    // some log sinks (e.g., .csv file and database outputs) to create table
+    // columns; such sinks may be created as a result of this call.
+    //
+    // Data records with unpredictable tags and/or nested data (i.e. one or more
+    // values of type `ValueList`) cannot be described in a contract; those are
+    // still applicable for log sinks such as JSON outputs.
+    rpc add_contract (Contract) returns (AddContractResponse);
+
+    // Delete an existing data contract.  This may remove corresponding log
+    // sinks.
+    rpc remove_contract (ContractID) returns (RemoveContractResponse);
+
+    // Return definition for a signle contract ID
+    rpc get_contract (ContractID) returns (Contract);
+
+    // Return a list of keys corresponding to fixed (always available) fields in
+    // log events - i.e. the static field names from the `cc.status.Event`
+    // message. These can be included alongside custom attributes as field
+    // names when defining a log contract with `add_contract()`.
+    rpc get_static_fields (google.protobuf.Empty) returns (FieldNames);
+
+    // Return all defined data contracts.
+    rpc list_contracts (ContractFilter) returns (Contracts);
+}
+
+
+message LogRecord
+{
+    // Diagnostic message
+    cc.status.Event event = 8;
+}
+
+
+message LogFilter
+{
+    // Event stream: Minimum severity / logging level
+    cc.status.Level min_level = 1;
+
+    // Data stream: contract/schema ID
+    string contract_id = 2;
+}
+
+message LogResponse
+{
+}
+
+message ContractID
+{
+    string contract_id = 1;
+}
+
+message Contracts
+{
+    repeated Contract contract_list = 1;
+}
+
+message Contract
+{
+    // Unique name for this contract. This may be used name for log files,
+    // database tables, etc.
+    string contract_id = 1;
+
+    // List of field names and default values for this contract:
+    // Each Variant value is interpreted as follows:
+    //  - `tag` becomes the name of the field (column)
+    //  - The `oneoof value` selector determines the value type as well as
+    //    the default value if not provided in a loggable event.
+    //    Note that the contract can only specify simple value types,
+    //    not a nested `value_list`.
+    cc.variant.ValueList fields = 3;
+}
+
+message FieldNames
+{
+    repeated string name = 1;
+}
+
+message ContractFilter
+{
+}
+
+message AddContractResponse
+{
+}
+
+message RemoveContractResponse
+{
+}

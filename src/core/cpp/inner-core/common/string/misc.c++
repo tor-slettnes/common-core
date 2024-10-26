@@ -288,24 +288,87 @@ namespace core::str
         return out;
     }
 
-    // std::string unquoted (const std::string &input, const std::string &openquote, const std::string &closequote)
-    // {
-    //     std::string::size_type quote_length = openquote.length() + closequote.length();
-    //     if (input.length() >= quote_length  &&
-    //         input.compare(openquote) == 0 &&
-    //         input.compare(input.length()-closequote.length(), closequote.length(), closequote) == 0)
-    //     {
-    //         return unescaped(input.substr(openquote.length(), input.length()-quote_length));
-    //     }
-    //     else
-    //     {
-    //         throw(std::runtime_error("Missing quotation mark(s)"));
-    //     }
-    // }
+    std::string escaped(
+        const std::string &input,
+        const std::unordered_set<char> &extra_escapes)
+    {
+        std::stringstream out;
+        escape(out, input, extra_escapes);
+        return out.str();
+    }
+
+    void escape(
+        std::ostream &out,
+        const std::string &input,
+        const std::unordered_set<char> &extra_escapes)
+    {
+        std::ios_base::fmtflags original_flags = out.flags();
+        out << std::hex;
+
+        for (auto it = input.begin(); it != input.end(); it++)
+        {
+            switch(*it)
+            {
+            case '\0':
+                out << "\\0";
+                break;
+            case '\\':
+                out << "\\\\";
+                break;
+            case '\a':
+                out << "\\a";
+                break;
+            case '\b':
+                out << "\\b";
+                break;
+            case '\f':
+                out << "\\f";
+                break;
+            case '\n':
+                out << "\\n";
+                break;
+            case '\r':
+                out << "\\r";
+                break;
+            case '\t':
+                out << "\\t";
+                break;
+            case '\v':
+                out << "\\v";
+                break;
+            case '\x7f':
+                out << "\\x7f";
+                break;
+            default:
+                if (*it < ' ')
+                {
+                    out << "\\x" << static_cast<std::uint8_t>(*it);
+                }
+                else if (extra_escapes.count(*it))
+                {
+                    out << "\\" << *it;
+                }
+                else
+                {
+                    out << *it;
+                }
+                break;
+            }
+        }
+        out.flags(original_flags);
+    }
 
     std::string unescaped(const std::string &input)
     {
-        std::stringstream out, ord;
+        std::stringstream out;
+        unescape(out, input);
+        return out.str();
+    }
+
+    void unescape(std::ostream &out,
+                  const std::string &input)
+    {
+        std::stringstream ord;
         std::size_t digitsRemaining = 0;
         bool escaped = false;
 
@@ -381,10 +444,86 @@ namespace core::str
 
         if (escaped)
         {
-            throw(std::runtime_error("Character escape at end of string"));
+            //throw(std::runtime_error("Character escape at end of string"));
+            out.setstate(std::ios::failbit);
         }
+    }
+
+    /// Escape and quote a string
+    /// Escape and quote a string
+    std::string to_literal(
+        const std::string &input)
+    {
+        std::stringstream out;
+        to_literal(out, input);
         return out.str();
     }
+
+    void to_literal(
+        std::ostream &out,
+        const std::string &input)
+    {
+        out << '"';
+        escape(out, input, {'"'});
+        out << '"';
+    }
+
+    /// Escape and quote a string
+    std::string from_literal(
+        const std::string &input)
+    {
+        std::stringstream out;
+        from_literal(out, input);
+        return out.str();
+    }
+
+    void from_literal(
+        std::ostream &out,
+        const std::string &input)
+    {
+        unescape(out, unquoted(input));
+    }
+
+    std::string url_decoded(
+        const std::string &encoded_url)
+    {
+        std::string output;
+        output.reserve(encoded_url.size());
+
+        std::string escape;
+        for(char c: encoded_url)
+        {
+            if (escape.empty())
+            {
+                if (c != '%')
+                {
+                    output += c;
+                }
+                else
+                {
+                    escape = c;
+                }
+            }
+            else if (std::isxdigit(c))
+            {
+                escape += c;
+                if (escape.size() == 3)
+                {
+                    unsigned long byte_value = stoul(escape.substr(1), nullptr, 16);
+                    output += static_cast<char>(byte_value);
+                    escape.clear();
+                }
+            }
+            else
+            {
+                output += escape;
+                escape.clear();
+            }
+        }
+        output.shrink_to_fit();
+        return output;
+    }
+
 
     void substitute(const std::string &original,
                     const std::string &replacement,

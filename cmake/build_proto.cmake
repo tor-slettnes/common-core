@@ -23,10 +23,8 @@ function(cc_add_proto TARGET)
     arg_INSTALL_COMPONENT
     "${arg_TARGET}")
 
-  cc_get_value_or_default(
-    lib_type
-    arg_LIB_TYPE
-    STATIC)
+  cc_get_optional_keyword(ALL "${arg_ALL}")
+
 
   if(NOT BUILD_CPP)
     set(scope INTERFACE)
@@ -36,11 +34,19 @@ function(cc_add_proto TARGET)
     set(scope PUBLIC)
   endif()
 
+  if(arg_LIB_TYPE)
+    set(lib_type ${arg_LIB_TYPE})
+  elseif(scope STREQUAL INTERFACE)
+    set(lib_type INTERFACE)
+  else()
+    set(lib_type STATIC)
+  endif()
+
 
   if(BUILD_CPP)
     cc_add_library("${TARGET}"
       SCOPE    "${scope}"
-      LIB_TYPE "${arg_LIB_TYPE}"
+      LIB_TYPE "${lib_type}"
       LIB_DEPS "${arg_LIB_DEPS}"
       OBJ_DEPS "${arg_OBJ_DEPS}" "${arg_PROTO_DEPS}"
       PKG_DEPS "${arg_PKG_DEPS}"

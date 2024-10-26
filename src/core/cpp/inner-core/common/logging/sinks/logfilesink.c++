@@ -6,10 +6,7 @@
 //==============================================================================
 
 #include "logfilesink.h++"
-
-#include "chrono/date-time.h++"
 #include "platform/path.h++"
-
 #include <iomanip>
 
 namespace core::logging
@@ -21,16 +18,9 @@ namespace core::logging
     {
     }
 
-    void LogFileSink::open()
-    {
-        this->open(dt::Clock::now());
-    }
-
     void LogFileSink::open(const dt::TimePoint &tp)
     {
-        // std::lock_guard(this->mtx_);
         this->update_current_path(tp);
-        fs::create_directories(this->current_path().parent_path());
         this->stream_ = std::make_shared<std::ofstream>(this->current_path(), std::ios::ate);
         this->stream_->exceptions(std::ios::failbit);
     }
@@ -44,32 +34,26 @@ namespace core::logging
         }
     }
 
-    void LogFileSink::rotate(const dt::TimePoint &tp)
-    {
-        this->close();
-        this->open(tp);
-    }
-
-    void LogFileSink::capture_message(const Message::ptr &msg)
+    void LogFileSink::capture_event(const status::Event::ptr &event)
     {
         if (this->stream_ && this->stream_->good())
         {
-            this->check_rotation(msg->timepoint());
+            this->check_rotation(event->timepoint());
 
             // auto lck = std::lock_guard(this->mtx_);
             auto &stream = *this->stream_;
 
-            dt::tp_to_stream(stream, msg->timepoint(), true, 3, "%F|%T");
+            dt::tp_to_stream(stream, event->timepoint(), true, 3, "%F|%T");
 
             stream << "|"
                    << std::setfill(' ')
                    << std::setw(8)
-                   << msg->level()
+                   << event->level()
                    << std::setw(0)
                    << "|";
 
-            this->send_preamble(stream, msg);
-            stream << msg->text() << std::endl;
+            this->send_preamble(stream, event);
+            stream << event->text() << std::endl;
         }
     }
 

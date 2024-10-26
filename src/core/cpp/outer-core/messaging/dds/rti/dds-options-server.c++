@@ -47,7 +47,6 @@ namespace core::dds
                     this->domain_id))
             {
                 core::logging::message_dispatcher.add_sink(sink);
-                sink->set_include_context(this->log_context);
 
                 core::types::KeyValueMap config = this->logsink_setting(LOG_TO_DDS_SINK);
                 this->set_threshold_from_config(sink, config);

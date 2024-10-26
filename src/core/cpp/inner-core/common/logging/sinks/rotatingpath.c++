@@ -7,6 +7,7 @@
 
 #include "rotatingpath.h++"
 #include "string/expand.h++"
+#include "chrono/date-time.h++"
 #include "platform/path.h++"
 
 namespace core::logging
@@ -20,6 +21,11 @@ namespace core::logging
           log_folder_(platform::path->log_folder()),
           exec_name_(platform::path->exec_name())
     {
+    }
+
+    RotatingPath::~RotatingPath()
+    {
+        this->close();
     }
 
     std::string RotatingPath::path_template() const
@@ -36,9 +42,16 @@ namespace core::logging
         }
     }
 
-    void RotatingPath::rotate(const dt::TimePoint &starttime)
+    void RotatingPath::open()
     {
-        this->update_current_path(starttime);
+        this->open(dt::Clock::now());
+    }
+
+
+    void RotatingPath::rotate(const dt::TimePoint &tp)
+    {
+        this->close();
+        this->open(tp);
     }
 
     dt::TimePoint RotatingPath::current_rotation() const
@@ -80,10 +93,16 @@ namespace core::logging
         return fs::weakly_canonical(this->log_folder_ / log_file);
     }
 
-    void RotatingPath::update_current_path(const dt::TimePoint &starttime)
+    void RotatingPath::update_current_path(const dt::TimePoint &starttime,
+                                           bool create_directory)
     {
         this->current_path_ = this->construct_path(starttime);
         this->current_rotation_ = starttime;
+
+        if (create_directory)
+        {
+            fs::create_directories(this->current_path_.parent_path());
+        }
     }
 
 }  // namespace core::logging

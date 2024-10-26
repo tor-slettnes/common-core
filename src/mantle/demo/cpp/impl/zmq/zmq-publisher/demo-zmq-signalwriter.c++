@@ -55,9 +55,11 @@ namespace demo::zmq
     {
         // We are about to be destroyed, so the callback pointers
         // will no longer remain valid. Disconnect from active signals.
+        logf_info("Disconnecting %s signals", TYPE_NAME_FULL(This));
         signal_greeting.disconnect(TYPE_NAME_FULL(This));
         signal_time.disconnect(TYPE_NAME_FULL(This));
 
+        logf_info("Deinitializing %s base", TYPE_NAME_FULL(This));
         Super::deinitialize();
     }
 

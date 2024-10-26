@@ -16,7 +16,6 @@ namespace core::logging
     Message::Message(const std::string &text,
                      status::Level level,
                      Scope::ptr scope,
-                     status::Flow flow,
                      const dt::TimePoint &tp,
                      const fs::path &path,
                      uint lineno,
@@ -25,16 +24,19 @@ namespace core::logging
                      const std::string &origin,
                      Code code,
                      const Symbol &symbol,
-                     const types::KeyValueMap &attributes)
-        : Event(text,
-                status::Domain::APPLICATION,
-                origin,
-                code,
-                symbol,
-                level,
-                flow,
-                tp,
-                attributes),
+                     const types::KeyValueMap &attributes,
+                     const std::string &contract_id,
+                     const std::string &host)
+        : Event(text,                         // text
+                status::Domain::APPLICATION,  // domain
+                origin,                       // origin
+                code,                         // code
+                symbol,                       // symbol
+                level,                        // level
+                tp,                           // timepoint
+                attributes,                   // attributes
+                contract_id,                  // contract_id
+                host),                        // host
           scope_(scope),
           path_(path),
           lineno_(lineno),

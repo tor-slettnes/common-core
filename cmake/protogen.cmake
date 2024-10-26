@@ -125,7 +125,7 @@ function(cc_protogen_protobuf_cpp SRCS HDRS)
 
   cc_protogen_common(
     TARGET "${arg_TARGET}"
-    COMMENT "Generating C++ protocol buffer bindings for ${arg_TARGET}"
+    COMMENT "Generating C++ ProtoBuf bindings for ${arg_TARGET}"
     GENERATOR cpp
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
@@ -195,7 +195,7 @@ function(cc_protogen_protobuf_py SRCS)
 
   cc_protogen_common(
     TARGET "${arg_TARGET}"
-    COMMENT "Generating Python protocol buffer bindings for ${arg_TARGET}"
+    COMMENT "Generating Python ProtoBuf bindings for ${arg_TARGET}"
     GENERATOR python
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"

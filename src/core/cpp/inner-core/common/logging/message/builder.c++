@@ -13,7 +13,6 @@ namespace core::logging
     MessageBuilder::MessageBuilder(Dispatcher *dispatcher,
                                    status::Level level,
                                    Scope::ptr scope,
-                                   status::Flow flow,
                                    const dt::TimePoint &tp,
                                    const fs::path &path,
                                    const uint &lineno,
@@ -22,16 +21,11 @@ namespace core::logging
         : Message({},                                                // text
                   level,                                             // level
                   scope,                                             // scope
-                  flow,                                              // flow
                   tp,                                                // tp
                   fs::relative(path, SOURCE_DIR, this->path_error),  // path
                   lineno,                                            // lineno
                   function,                                          // function
-                  thread_id,                                         // thread_id
-                  {},                                                // origin
-                  0,                                                 // code
-                  {},                                                // symbol
-                  {}),                                               // attributes
+                  thread_id),                                         // thread_id
           dispatcher_(dispatcher),
           is_applicable_(Message::is_applicable() && dispatcher->is_applicable(*this))
     {

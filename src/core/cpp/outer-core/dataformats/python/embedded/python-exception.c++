@@ -39,7 +39,6 @@ namespace core::python
                   0,                            // code
                   symbol,                       // symbol
                   status::Level::FAILED,        // level
-                  status::Flow::CANCELLED,      // flow
                   {},                           // timepoint
                   attributes))                  // attributes
     {

@@ -153,11 +153,9 @@ namespace core::zmq
 
     private:
         static std::mutex context_mtx_;
-        // static Context context_;
         static Context *context_;
 
         Socket *socket_;
-        SocketType socket_type_;
     };
 
 }  // namespace core::zmq

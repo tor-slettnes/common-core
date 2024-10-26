@@ -6,7 +6,6 @@
 //==============================================================================
 
 #pragma once
-#include "http-utils.h++"
 #include "thread/signaltemplate.h++"
 #include "status/exceptions.h++"
 
@@ -97,7 +96,7 @@ namespace core::grpc
                     std::this_thread::sleep_for(2s);
                     logf_notice("Reconnecting to grpc service %r at %s",
                                 ServiceT::service_full_name(),
-                                core::http::url_decode(cxt->peer()));
+                                core::str::url_decoded(cxt->peer()));
                 }
                 this->cxt.reset();
             }

@@ -29,11 +29,11 @@ namespace core::platform
         Super::close();
     }
 
-    void WindowsLogSinkProvider::capture_message(const logging::Message::ptr &msg)
+    void WindowsLogSinkProvider::capture_event(const status::Event::ptr &event)
     {
-        if (auto *eventType = this->levelmap.get_ptr(msg->level()))
+        if (auto *eventType = this->levelmap.get_ptr(event->level()))
         {
-            const std::string &text = msg->text();
+            const std::string &text = this->formatted(event);
             LPCSTR cstr = text.c_str();
             ReportEvent(this->event_log,  // hEventLog
                         *eventType,       // dwEventId

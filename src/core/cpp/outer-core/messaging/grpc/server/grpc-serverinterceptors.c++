@@ -24,6 +24,12 @@ namespace core::grpc
     //==========================================================================
     // Exception Handling Interceptor
 
+    LoggingInterceptor::LoggingInterceptor(ServerRpcInfo* rpc_info)
+        : Interceptor(),
+          rpc_info(rpc_info)
+    {
+    }
+
     void LoggingInterceptor::Intercept(InterceptorBatchMethods* methods)
     {
         if (methods->QueryInterceptionHookPoint(
@@ -32,7 +38,25 @@ namespace core::grpc
             if (void* data = methods->GetRecvMessage())
             {
                 auto* message = static_cast<google::protobuf::Message*>(data);
-                log_trace("Received message: ", protobuf::to_string(*message, true));
+                if (this->rpc_info && message)
+                {
+                    logf_trace("Received invocation from %s: %s(%s)",
+                               core::str::url_decoded(this->rpc_info->server_context()->peer()),
+                               this->rpc_info->method(),
+                               *message);
+                }
+            }
+        }
+
+        if (methods->QueryInterceptionHookPoint(
+                InterceptionHookPoints::PRE_SEND_STATUS))
+        {
+            if (this->rpc_info)
+            {
+                Status status(methods->GetSendStatus());
+                logf_trace("Response status to %s: %s",
+                           core::str::url_decoded(this->rpc_info->server_context()->peer()),
+                           status);
             }
         }
 
@@ -42,9 +66,9 @@ namespace core::grpc
     //==========================================================================
     // Exception Handling Interceptor Factory
 
-    Interceptor* LoggingInterceptorFactory::CreateServerInterceptor(ServerRpcInfo* info)
+    Interceptor* LoggingInterceptorFactory::CreateServerInterceptor(ServerRpcInfo* rpc_info)
     {
-        return new LoggingInterceptor();
+        return new LoggingInterceptor(rpc_info);
     }
 
     //==========================================================================
@@ -55,7 +79,7 @@ namespace core::grpc
         if (methods->QueryInterceptionHookPoint(
                 InterceptionHookPoints::PRE_SEND_STATUS))
         {
-            log_info("Sending status: ", Status(methods->GetSendStatus()));
+            log_trace("Sending status: ", Status(methods->GetSendStatus()));
         }
 
         try

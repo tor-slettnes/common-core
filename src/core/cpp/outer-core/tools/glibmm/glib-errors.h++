@@ -56,7 +56,6 @@ namespace core::glib
                        const std::string& preamble = {},
                        core::status::Level level = core::status::Level::NOTICE,
                        core::logging::Scope::ptr scope = log_scope,
-                       core::status::Flow flow = core::status::Flow::NONE,
                        const dt::TimePoint& tp = dt::Clock::now(),
                        const std::filesystem::path& path = __builtin_FILE(),
                        const int& lineno = __builtin_LINE(),

@@ -15,9 +15,9 @@ PYTHON_VENV  ?= $(CURDIR)/venv
 
 ifdef TARGET
     export CMAKE_TOOLCHAIN_FILE ?= $(SHARED_DIR)cmake/toolchain-$(TARGET).cmake
-	BUILD_DIR += -$(TARGET)
-	INSTALL_DIR += $(TARGET)
-	PACKAGE_DIR += $(TARGET)
+	BUILD_DIR := $(BUILD_DIR)-$(TARGET)
+	INSTALL_DIR := $(BUILD_DIR)-$(TARGET)
+	PACKAGE_DIR := $(BUILD_DIR)-$(TARGET)
 else
 	TARGET := $(shell uname -s)-$(shell uname -m)
 
@@ -27,7 +27,7 @@ else
 endif
 
 ifdef BUILD_TYPE
-	BUILD_DIR += -$(BUILD_TYPE)
+	BUILD_DIR := $(BUILD_DIR)-$(BUILD_TYPE)
 else
 	BUILD_TYPE = Release
 endif

@@ -8,7 +8,7 @@
 #pragma once
 #include "status.pb.h"  // generated from `status.proto`
 #include "status/event.h++"
-#include "status/event.h++"
+#include "logging/message/message.h++"
 
 /// ProtoBuf message conversions.
 ///
@@ -31,15 +31,15 @@ namespace protobuf
     void decode(cc::status::Level level, core::status::Level *decoded) noexcept;
 
     //==========================================================================
-    // core::status::Level encoding to/decoding from cc::status::Level
+    // core::status::Event encoding to/decoding from cc::status::Event
 
-    void encode(core::status::Flow flow, cc::status::Flow *encoded) noexcept;
-    void decode(cc::status::Flow flow, core::status::Flow *decoded) noexcept;
+    void encode(const core::status::Event &native, cc::status::Event *proto) noexcept;
+    void decode(const cc::status::Event &proto, core::status::Event *native) noexcept;
 
     //==========================================================================
-    // core::status::Event encoding to/decoding from cc::status::::EventData
+    // core::logging::Message encoding to/decoding from cc::status::Event
 
-    void encode(const core::status::Event &event, cc::status::Event *msg) noexcept;
-    void decode(const cc::status::Event &msg, core::status::Event *event) noexcept;
+    void encode(const core::logging::Message &native, cc::status::Event *proto) noexcept;
+    void decode(const cc::status::Event &proto, core::logging::Message *native) noexcept;
 
 }  // namespace protobuf

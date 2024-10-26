@@ -53,9 +53,10 @@ namespace core::grpc
               details.code(),
               details.symbol(),
               ::protobuf::decoded<status::Level>(details.level()),
-              ::protobuf::decoded<status::Flow>(details.flow()),
               ::protobuf::decoded<dt::TimePoint>(details.timestamp()),
-              ::protobuf::decoded<types::KeyValueMap>(details.attributes())),
+              ::protobuf::decoded<types::KeyValueMap>(details.attributes()),
+              details.contract_id(),
+              details.host()),
           ::grpc::Status(
               Status::code_from_event(*this),
               details.text(),
@@ -73,9 +74,10 @@ namespace core::grpc
               details.code(),
               details.symbol(),
               ::protobuf::decoded<status::Level>(details.level()),
-              ::protobuf::decoded<status::Flow>(details.flow()),
               ::protobuf::decoded<dt::TimePoint>(details.timestamp()),
-              ::protobuf::decoded<types::KeyValueMap>(details.attributes())),
+              ::protobuf::decoded<types::KeyValueMap>(details.attributes()),
+              details.contract_id(),
+              details.host()),
           ::grpc::Status(
               status_code,
               text,
@@ -92,9 +94,10 @@ namespace core::grpc
                  event.code(),
                  event.symbol(),
                  event.level(),
-                 event.flow(),
                  event.timepoint(),
-                 event.attributes())
+                 event.attributes(),
+                 event.contract_id(),
+                 event.host())
     {
     }
 
@@ -105,10 +108,11 @@ namespace core::grpc
                    Code code,
                    const Symbol &symbol,
                    status::Level level,
-                   status::Flow flow,
                    const dt::TimePoint &timepoint,
-                   const types::KeyValueMap &attributes)
-        : Event({}, domain, origin, code, symbol, level, flow, timepoint, attributes),
+                   const types::KeyValueMap &attributes,
+                   const std::string &contract_id,
+                   const std::string &host)
+        : Event({}, domain, origin, code, symbol, level, timepoint, attributes, contract_id, host),
           ::grpc::Status(
               status_code,
               text,
@@ -179,9 +183,7 @@ namespace core::grpc
         case status::Domain::SERVICE:
         case status::Domain::DEVICE:
         case status::Domain::PROCESS:
-            return (event.flow() == status::Flow::CANCELLED)
-                       ? ::grpc::StatusCode::FAILED_PRECONDITION
-                       : ::grpc::StatusCode::ABORTED;
+            return ::grpc::StatusCode::ABORTED;
 
         default:
             return ::grpc::StatusCode::UNKNOWN;

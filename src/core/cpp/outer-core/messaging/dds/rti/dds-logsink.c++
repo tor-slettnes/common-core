@@ -21,7 +21,7 @@ namespace core::dds
     void DDSLogger::open()
     {
         Super::open();
-        this->log_writer = this->create_writer<CC::Status::LogMessage>(
+        this->log_writer = this->create_writer<CC::Status::Event>(
             CC::Status::LOG_TOPIC,  // topic_name
             true,                   // reliable
             false);                 // sync_latest
@@ -33,11 +33,11 @@ namespace core::dds
         Super::close();
     }
 
-    void DDSLogger::capture_message(const logging::Message::ptr &msg)
+    void DDSLogger::capture_event(const status::Event::ptr &event)
     {
         if (this->log_writer)
         {
-            this->log_writer->write(core::idl::encoded<CC::Status::LogMessage>(*msg));
+            this->log_writer->write(core::idl::encoded_shared<CC::Status::Event>(event));
         }
     }
 

@@ -25,11 +25,6 @@ namespace core::idl
     void decode(const CC::Status::Level &idl, core::status::Level *native) noexcept;
 
     //==========================================================================
-    // Flow
-    void encode(const core::status::Flow &native, CC::Status::Flow *idl) noexcept;
-    void decode(const CC::Status::Flow &idl, core::status::Flow *native) noexcept;
-
-    //==========================================================================
     // Event
     void encode(const core::status::Event &native, CC::Status::Event *idl) noexcept;
     void decode(const CC::Status::Event &idl, core::status::Event *native) noexcept;

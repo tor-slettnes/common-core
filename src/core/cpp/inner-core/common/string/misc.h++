@@ -273,8 +273,41 @@ namespace core::str
         const std::string &input);
 
     /// Translate embedded escape sequences
+    [[nodiscard]] std::string escaped(
+        const std::string &input,
+        const std::unordered_set<char> &extra_escapes={});
+
+    void escape(
+        std::ostream &out,
+        const std::string &input,
+        const std::unordered_set<char> &extra_escapes={});
+
     [[nodiscard]] std::string unescaped(
         const std::string &input);
+
+    void unescape(
+        std::ostream &out,
+        const std::string &input);
+
+    /// Escape and quote a string
+    [[nodiscard]] std::string to_literal(
+        const std::string &input);
+
+    void to_literal(
+        std::ostream &stream,
+        const std::string &input);
+
+    /// Escape and quote a string
+    [[nodiscard]] std::string from_literal(
+        const std::string &input);
+
+    void from_literal(
+        std::ostream &stream,
+        const std::string &input);
+
+    // Decode %-encoded characters in a URL string
+    [[nodiscard]] std::string url_decoded(
+        const std::string &encoded_url);
 
     /// @brief Substitute occurences of a substring with a replacement
     /// @param[in] original

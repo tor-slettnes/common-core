@@ -68,17 +68,18 @@ namespace core::logging
 
         Message(const std::string &text,
                 status::Level level,
-                Scope::ptr scope,
-                status::Flow flow,
-                const dt::TimePoint &tp,
-                const fs::path &path,
-                uint lineno,
-                const std::string &function,
-                pid_t thread_id,
-                const std::string &origin,
-                Code code,
-                const Symbol &symbol,
-                const types::KeyValueMap &attributes);
+                Scope::ptr scope = nullptr,
+                const dt::TimePoint &tp = {},
+                const fs::path &path = {},
+                uint lineno = 0,
+                const std::string &function = {},
+                pid_t thread_id = 0,
+                const std::string &origin = {},
+                Code code = 0,
+                const Symbol &symbol = {},
+                const types::KeyValueMap &attributes = {},
+                const std::string &contract_id = {},
+                const std::string &host = {});
 
         // Copy constructor to ensure we obtain values from derived classes
         Message(const Message &other);
@@ -144,9 +145,9 @@ namespace core::logging
     protected:
         Scope::ptr scope_;
         fs::path path_;
-        uint lineno_;
+        uint lineno_ = 0;
         std::string function_;
-        pid_t thread_id_;
+        pid_t thread_id_ = 0;
     };
 
 }  // namespace core::logging

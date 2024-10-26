@@ -47,17 +47,19 @@ namespace core::dds
         Super::close();
     }
 
-    void RTIDistributedLogger::capture_message(const core::logging::Message::ptr &msg)
+    void RTIDistributedLogger::capture_event(const core::status::Event::ptr &event)
     {
         if (this->dist_logger_)
         {
-            if (const int *level = RTIDistributedLogger::levelmap.get_ptr(msg->level()))
+            if (const int *level = RTIDistributedLogger::levelmap.get_ptr(event->level()))
             {
-                timespec ts = core::dt::to_timespec(msg->timepoint());
+                timespec ts = core::dt::to_timespec(event->timepoint());
+                std::string text = this->formatted(event);
+                std::string domain_name = core::status::DomainNames.to_string(event->domain(), "NONE");
                 this->dist_logger_->logMessageWithParams({
                     *level,                             // log_level
-                    msg->text().c_str(),                // message
-                    msg->scopename().c_str(),           // category
+                    text.c_str(),                       // message
+                    domain_name.c_str(),                // category
                     {static_cast<DDS_Long>(ts.tv_sec),  // timestamp
                      static_cast<DDS_UnsignedLong>(ts.tv_nsec)},
                 });

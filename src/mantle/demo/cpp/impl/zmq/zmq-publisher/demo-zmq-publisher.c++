@@ -32,8 +32,11 @@ namespace demo::zmq
 
     void Publisher::deinitialize()
     {
-        this->signal_writer->deinitialize();
-        this->signal_writer.reset();
+        if (this->signal_writer)
+        {
+            this->signal_writer->deinitialize();
+            this->signal_writer.reset();
+        }
         Super::deinitialize();
     }
 }  // namespace demo::zmq

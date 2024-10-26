@@ -8,7 +8,6 @@
 #pragma once
 #include "domain.h++"
 #include "level.h++"
-#include "flow.h++"
 #include "chrono/date-time.h++"
 #include "types/value.h++"
 #include "types/streamable.h++"
@@ -26,18 +25,17 @@ namespace core::status
 
     class Event;
 
-    //==========================================================================
-    // Field names, e.g. for string representation
 
     constexpr auto EVENT_FIELD_DOMAIN = "domain";
     constexpr auto EVENT_FIELD_ORIGIN = "origin";
     constexpr auto EVENT_FIELD_CODE = "code";
     constexpr auto EVENT_FIELD_SYMBOL = "symbol";
     constexpr auto EVENT_FIELD_LEVEL = "level";
-    constexpr auto EVENT_FIELD_FLOW = "flow";
-    constexpr auto EVENT_FIELD_TIME = "timepoint";
+    constexpr auto EVENT_FIELD_TIME = "timestamp";
     constexpr auto EVENT_FIELD_TEXT = "text";
     constexpr auto EVENT_FIELD_ATTRIBUTES = "attributes";
+    constexpr auto EVENT_FIELD_CONTRACT_ID = "contract_id";
+    constexpr auto EVENT_FIELD_HOST = "host";
 
     //==========================================================================
     // \class Event
@@ -62,9 +60,10 @@ namespace core::status
               const Code &code,
               const Symbol &symbol,
               Level level = Level::NONE,
-              Flow flow = Flow::NONE,
               const dt::TimePoint &timepoint = {},
-              const types::KeyValueMap &attributes = {});
+              const types::KeyValueMap &attributes = {},
+              const std::string &contract_id = {},
+              const std::string &host = {});
 
         Event &operator=(Event &&other) noexcept;
         virtual Event &operator=(const Event &other) noexcept;
@@ -77,13 +76,14 @@ namespace core::status
         virtual Code code() const noexcept;
         virtual Symbol symbol() const noexcept;
         virtual Level level() const noexcept;
-        virtual Flow flow() const noexcept;
-        virtual const dt::TimePoint &timepoint() const noexcept;
+        virtual dt::TimePoint timepoint() const noexcept;
         virtual std::string text() const noexcept;
         virtual const types::KeyValueMap &attributes() const noexcept;
         virtual types::KeyValueMap &attributes() noexcept;
         virtual types::Value attribute(const std::string &key,
                                        const types::Value &fallback = {}) const noexcept;
+        virtual std::string contract_id() const noexcept;
+        virtual std::string host() const noexcept;
 
         types::TaggedValueList as_tvlist() const noexcept;
         types::KeyValueMap as_kvmap() const noexcept;
@@ -114,9 +114,10 @@ namespace core::status
         Code code_;
         Symbol symbol_;
         Level level_;
-        Flow flow_;
         dt::TimePoint timepoint_;
         types::KeyValueMap attributes_;
+        std::string contract_id_;
+        std::string host_;
     };
 
     // bool operator==(const Event::ptr &lhs, const Event::ptr &rhs);

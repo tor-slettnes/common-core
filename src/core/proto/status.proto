@@ -36,14 +36,17 @@ message Event
     // This is normally unique within each domain, regardless of origin.
     string symbol = 5;
 
-    // Resulting execution flow
-    Flow flow = 6;
-
     // Time of occurence
     google.protobuf.Timestamp timestamp = 7;
 
-    // Tag/value pairs indicating error attributes
+    // Tag/value pairs indicating event attributes
     cc.variant.ValueList attributes = 8;
+
+    // Contract identifier for tabular data attributes
+    string contract_id = 9;
+
+    // Reporting hostname. Used for remote logging.
+    string host = 10;
 
     // Description of error, possibly expanded with attribute values.
     string text = 15;
@@ -57,14 +60,6 @@ enum Domain
     DOMAIN_PROCESS     = 3; // Process exit; see `kill -l`  to interpret `code`/`symbol`
     DOMAIN_DEVICE      = 4; // Error code from a subsystem, name indicated in `origin`
     DOMAIN_SERVICE     = 5; // Error code from a (network) service (e.g. HTTP, SMTP, ...)
-}
-
-enum Flow
-{
-    FLOW_NONE      = 0;         // No interruption
-    FLOW_PAUSED    = 1;         // Execution suspended; may resume.
-    FLOW_CANCELLED = 2;         // Cancelled; state unchanged
-    FLOW_ABORTED   = 3;         // Aborted underway; state may have changed
 }
 
 enum Level

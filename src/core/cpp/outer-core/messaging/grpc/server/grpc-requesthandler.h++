@@ -27,14 +27,12 @@ namespace core::grpc
     protected:
         Status failure(const std::exception &exception,
                        const std::string &operation,
-                       status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
                        const int &line = __builtin_LINE(),
                        const std::string &function = __builtin_FUNCTION());
 
         Status failure(std::exception_ptr eptr,
                        const std::string &operation,
-                       status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
                        const int &line = __builtin_LINE(),
                        const std::string &function = __builtin_FUNCTION());
@@ -42,7 +40,6 @@ namespace core::grpc
         Status failure(const std::exception &exception,
                        const ::google::protobuf::Message &request,
                        const std::string &peer = {},
-                       status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
                        const int &line = __builtin_LINE(),
                        const std::string &function = __builtin_FUNCTION());
@@ -50,14 +47,12 @@ namespace core::grpc
         Status failure(std::exception_ptr eptr,
                        const ::google::protobuf::Message &request,
                        const std::string &peer = {},
-                       status::Flow flow = status::Flow::ABORTED,
                        const fs::path &path = __builtin_FILE(),
                        const int &line = __builtin_LINE(),
                        const std::string &function = __builtin_FUNCTION());
 
         void log_status(const Status &status,
                         const std::string &operation,
-                        status::Flow flow = status::Flow::NONE,
                         const fs::path &path = __builtin_FILE(),
                         const int &line = __builtin_LINE(),
                         const std::string &function = __builtin_FUNCTION());
@@ -132,7 +127,6 @@ namespace core::grpc
                             const RequestType *request,
                             ResponseType *response,
                             const std::function<ResponseType(const RequestType &)> &function,
-                            status::Flow flow = status::Flow::ABORTED,
                             const fs::path &src_path = __builtin_FILE(),
                             const int &src_line = __builtin_LINE(),
                             const std::string &src_function = __builtin_FUNCTION())
@@ -147,7 +141,6 @@ namespace core::grpc
                 return this->failure(std::current_exception(),
                                      *request,
                                      context->peer(),
-                                     flow,
                                      src_path,
                                      src_line,
                                      src_function);

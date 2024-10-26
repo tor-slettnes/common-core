@@ -6,7 +6,6 @@
 //==============================================================================
 
 #pragma once
-#include "http-utils.h++"
 #include "thread/signaltemplate.h++"
 #include "thread/blockingqueue.h++"
 #include "status/exceptions.h++"

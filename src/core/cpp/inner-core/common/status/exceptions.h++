@@ -40,7 +40,6 @@ namespace core::exception
         inline CustomException(std::errc code,
                                const status::Event::Symbol &symbol,
                                const std::string &text,
-                               status::Flow flow,
                                const types::KeyValueMap &attributes = {},
                                status::Level level = status::Level::FAILED)
             : Exception<Exc>(
@@ -51,7 +50,6 @@ namespace core::exception
                       static_cast<status::Event::Code>(code),  // code
                       symbol,                                  // symbol
                       level,                                   // level
-                      flow,                                    // flow
                       {},                                      // timepoint
                       attributes,                              // attributes
                   },
@@ -185,19 +183,6 @@ namespace core::exception
     };
 
     //==========================================================================
-    /// @class PermissionDenied
-    /// @brief Indicates that an item could not be accessed due to missing permissions
-
-    class PermissionDenied : public CustomException<std::runtime_error, PermissionDenied>
-    {
-    public:
-        using Super::Super;
-
-        PermissionDenied(const std::string &msg = "Permission denied",
-                         const std::string &operation = "");
-    };
-
-    //==========================================================================
     /// @class ResourceExhausted
     /// @brief Indicates that an operation failed due to lack of system resources
 
@@ -298,6 +283,25 @@ namespace core::exception
                              const std::string &what);
     };
 
+
+
+    //==========================================================================
+    /// @class PermissionDenied
+    /// @brief Indicates that an item could not be accessed due to missing permissions
+
+    class PermissionDenied : public Exception<std::system_error>
+    {
+        using This = PermissionDenied;
+        using Super = Exception<std::system_error>;
+
+    public:
+        PermissionDenied(const std::string &msg = "Permission denied",
+                         const std::string &operation = "");
+
+        PermissionDenied(const status::Event &event);
+    };
+
+
     //==========================================================================
     /// @class FilesystemError
     /// @brief Error created from a `std::filesystem_error` instance
@@ -351,7 +355,6 @@ namespace core::exception
                     Code code,
                     const std::string &id,
                     status::Level level = status::Level::FAILED,
-                    status::Flow flow = status::Flow::ABORTED,
                     const dt::TimePoint &timepoint = {},
                     const types::KeyValueMap &attributes = {});
     };
@@ -373,7 +376,6 @@ namespace core::exception
                      Code code,
                      const std::string &id,
                      status::Level level = status::Level::FAILED,
-                     status::Flow flow = status::Flow::ABORTED,
                      const dt::TimePoint &timepoint = {},
                      const types::KeyValueMap &attributes = {});
     };

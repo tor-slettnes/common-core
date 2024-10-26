@@ -40,6 +40,20 @@ namespace core::types
         }
     }
 
+    Value KeyValueMap::extract_value(const std::string &key,
+                                     const Value &fallback) noexcept
+    {
+        if (auto nh = this->extract(key))
+        {
+            return nh.mapped();
+        }
+        else
+        {
+            return fallback;
+        }
+    }
+
+
     TaggedValueList KeyValueMap::as_tvlist() const
     {
         return TaggedValueList(this->cbegin(), this->cend());

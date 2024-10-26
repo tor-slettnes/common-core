@@ -42,14 +42,6 @@ module CC
             FATAL      // Reporting entity is disabled and cannot recover
         };
 
-        enum Flow
-        {
-            NONE,       // No interruption
-            PAUSED,     // Execution suspended; may resume.
-            CANCELLED,  // Cancelled; state unchanged
-            ABORTED     // Aborted underway; state may have changed
-        };
-
         typedef string OriginName;
         typedef string<4096> Description;
 
@@ -77,14 +69,14 @@ module CC
             // Log level
             Level level;
 
-            // Execution flow impact
-            Flow flow;
-
             // Time of occurence
             Common::Timestamp timestamp;
 
             // Tag/value pairs indicating custom attributes
             Variant::TaggedValueList attributes;
+
+            // Reporting hostname. Used for remote loging.
+            string host;
         };
 
         //======================================================================

@@ -67,7 +67,6 @@ namespace core::logging
         MessageBuilder(Dispatcher *dispatcher,
                        status::Level level,
                        Scope::ptr scope,
-                       status::Flow flow,
                        const dt::TimePoint &tp,
                        const fs::path &path,
                        const uint &lineno,

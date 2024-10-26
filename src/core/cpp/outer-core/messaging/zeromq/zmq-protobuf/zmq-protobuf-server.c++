@@ -56,7 +56,6 @@ namespace core::zmq
                 &reply,
                 cc::rr::STATUS_INVALID,
                 "Failed to deserialize ProtoBuf request",
-                core::status::Flow::CANCELLED,
                 {{"channel", this->channel_name()},
                  {"payload", packed_request}});
         }
@@ -80,7 +79,6 @@ namespace core::zmq
                 reply,
                 cc::rr::STATUS_INVALID,
                 "No such interface",
-                core::status::Flow::CANCELLED,
                 {{"channel", this->channel_name()},
                  {"interface", request.interface_name()}});
         }
@@ -89,21 +87,21 @@ namespace core::zmq
     void ProtoBufServer::insert_error_response(cc::rr::Reply *reply,
                                                cc::rr::StatusCode status_code,
                                                const std::string &text,
-                                               core::status::Flow flow,
                                                const types::KeyValueMap &attributes)
     {
         cc::rr::Status *status = reply->mutable_status();
         status->set_code(status_code);
 
-        status::Event event(text,
-                            core::status::Domain::APPLICATION,
-                            platform::path->exec_name(),
-                            static_cast<status::Event::Code>(status_code),
-                            cc::rr::StatusCode_Name(status_code),
-                            core::status::Level::FAILED,
-                            flow,
-                            {},
-                            attributes);
+        status::Event event(text,                                           // text
+                            core::status::Domain::APPLICATION,              // domain
+                            platform::path->exec_name(),                    // origin
+                            static_cast<status::Event::Code>(status_code),  // code
+                            cc::rr::StatusCode_Name(status_code),           // symbol
+                            core::status::Level::FAILED,                    // level
+                            {},                                             // timepoint
+                            attributes,                                     // attributes
+                            {},                                             // contract_id
+                            {});                                            // host
 
         ::protobuf::encode(event, status->mutable_details());
     }

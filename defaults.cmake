@@ -133,6 +133,7 @@ option(BUILD_TESTING     "Build testing modules" ON)
 option(INCLUDE_SHARED    "Install shared artifacts (e.g. common settings)" ON)
 option(INCLUDE_DEMO      "Build/install DEMO application example" ${INCLUDE_SHARED})
 option(INCLUDE_PLATFORM  "Build/install Platform services" ${INCLUDE_SHARED})
+option(INCLUDE_LOGGER    "Build/install Platform services" ${INCLUDE_SHARED})
 
 ### Enable SystemD service integration
 option(ENABLE_SERVICES   "Enable SystemD service units" ON)

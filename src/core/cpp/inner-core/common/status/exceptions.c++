@@ -23,9 +23,7 @@ namespace core::exception
         : Super(std::errc::operation_canceled,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::CANCELLED,
-                {{"operation", operation}},
-                status::Level::WARNING)
+                {{"operation", operation}})
     {
     }
 
@@ -36,7 +34,6 @@ namespace core::exception
         : Super(std::errc::timed_out,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::ABORTED,
                 {{"timeout", timeout}})
     {
     }
@@ -55,7 +52,6 @@ namespace core::exception
         : Super(std::errc::invalid_argument,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::CANCELLED,
                 {{"argument", argument}})
     {
     }
@@ -69,7 +65,6 @@ namespace core::exception
         : Super(std::errc::invalid_argument,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::CANCELLED,
                 {{"provided", provided},
                  {"expected", expected}})
     {
@@ -84,7 +79,6 @@ namespace core::exception
         : Super(std::errc::argument_list_too_long,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::CANCELLED,
                 {{"provided", provided},
                  {"expected", expected}})
     {
@@ -98,7 +92,6 @@ namespace core::exception
         : Super(std::errc::result_out_of_range,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::CANCELLED,
                 {{"item", item}})
     {
     }
@@ -111,7 +104,6 @@ namespace core::exception
         : Super(std::errc::operation_not_supported,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::CANCELLED,
                 attributes)
     {
     }
@@ -124,7 +116,6 @@ namespace core::exception
         : Super(std::errc::interrupted,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::ABORTED,
                 attributes)
     {
     }
@@ -137,7 +128,6 @@ namespace core::exception
         : Super(std::errc::no_such_file_or_directory,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::CANCELLED,
                 {{"item", item}})
     {
     }
@@ -150,21 +140,7 @@ namespace core::exception
         : Super(std::errc::file_exists,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::CANCELLED,
                 {{"item", item}})
-    {
-    }
-
-    //==========================================================================
-    // PermissionDenied
-
-    PermissionDenied::PermissionDenied(const std::string &msg,
-                                       const std::string &operation)
-        : Super(std::errc::permission_denied,
-                TYPE_NAME_BASE(This),
-                msg,
-                status::Flow::CANCELLED,
-                {{"operation", operation}})
     {
     }
 
@@ -176,7 +152,6 @@ namespace core::exception
         : Super(std::errc::resource_unavailable_try_again,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::ABORTED,
                 {{"resource", resource}})
     {
     }
@@ -189,7 +164,6 @@ namespace core::exception
         : Super(std::errc::resource_unavailable_try_again,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::CANCELLED,
                 {{"resource", resource}})
     {
     }
@@ -202,7 +176,6 @@ namespace core::exception
         : Super(std::errc::interrupted,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::ABORTED,
                 attributes)
     {
     }
@@ -215,7 +188,6 @@ namespace core::exception
         : Super(std::errc::interrupted,
                 TYPE_NAME_BASE(This),
                 msg,
-                status::Flow::ABORTED,
                 attributes)
     {
     }
@@ -234,13 +206,13 @@ namespace core::exception
                                      int exit_code,
                                      const std::string &symbol,
                                      const std::string &text)
-        : Super({text,
-                 status::Domain::PROCESS,
-                 source,
-                 exit_code,
-                 symbol,
-                 status::Level::FAILED,
-                 status::Flow::ABORTED},
+        : Super(status::Event(
+                    text,
+                    status::Domain::PROCESS,
+                    source,
+                    exit_code,
+                    symbol,
+                    status::Level::FAILED),
                 std::runtime_error(text),
                 TYPE_NAME_BASE(This))
     {
@@ -279,15 +251,15 @@ namespace core::exception
     }
 
     SystemError::SystemError(const std::system_error &e)
-        : Super({e.what(),                    // text
-                 status::Domain::SYSTEM,      // domain
-                 e.code().category().name(),  // origin
-                 e.code().value(),            // code
-                 {},                          // id
-                 status::Level::FAILED,       // level
-                 status::Flow::ABORTED,       // flow
-                 {},                          // timepoint
-                 {}},                         // attributes
+        : Super(status::Event(
+                    e.what(),                    // text
+                    status::Domain::SYSTEM,      // domain
+                    e.code().category().name(),  // origin
+                    e.code().value(),            // code
+                    {},                          // id
+                    status::Level::FAILED,       // level
+                    {},                          // timepoint
+                    {}),                         // attributes
                 std::system_error(e),
                 TYPE_NAME_BASE(This))
     {
@@ -326,6 +298,35 @@ namespace core::exception
     {
     }
 
+    //==========================================================================
+    // PermissionDenied
+
+    PermissionDenied::PermissionDenied(const status::Event &event)
+        : Super(event,
+                std::make_error_code(std::errc::permission_denied),
+                TYPE_NAME_BASE(This))
+    {
+    }
+
+    PermissionDenied::PermissionDenied(const std::string &msg,
+                                       const std::string &operation)
+        : Super(status::Event(
+                    msg,                          // text
+                    status::Domain::SYSTEM,       // domain
+                    platform::path->exec_name(),  // origin
+                    EPERM,                        // code
+                    TYPE_NAME_BASE(This),         // symbol
+                    status::Level::FAILED,        // level
+                    {},                           // timepoint
+                    {{"operation", operation}}),  // attributes
+                std::make_error_code(std::errc::permission_denied),
+                TYPE_NAME_BASE(This))
+    {
+    }
+
+    //==========================================================================
+    // FileSystemError
+
     FilesystemError::FilesystemError(const status::Event &event)
         : Super(event,
                 fs::filesystem_error(
@@ -339,17 +340,18 @@ namespace core::exception
     }
 
     FilesystemError::FilesystemError(const fs::filesystem_error &e)
-        : Super({e.what(),                    // text
-                 status::Domain::SYSTEM,      // domain
-                 e.code().category().name(),  // origin
-                 e.code().value(),            // code
-                 TYPE_NAME_BASE(This),        // id
-                 status::Level::FAILED,       // level
-                 status::Flow::ABORTED,       // flow
-                 {},                          // timepoint
-                 {                            // attributes
-                  {"path1", types::Value(e.path1().string())},
-                  {"path2", types::Value(e.path2().string())}}},
+        : Super(status::Event(
+                    e.what(),                    // text
+                    status::Domain::SYSTEM,      // domain
+                    e.code().category().name(),  // origin
+                    e.code().value(),            // code
+                    TYPE_NAME_BASE(This),        // id
+                    status::Level::FAILED,       // level
+                    {},                          // timepoint
+                    {
+                        {"path1", types::Value(e.path1().string())},
+                        {"path2", types::Value(e.path2().string())},
+                    }),
                 fs::filesystem_error(e),
                 TYPE_NAME_BASE(This))
     {
@@ -407,18 +409,17 @@ namespace core::exception
                              Code code,
                              const std::string &id,
                              status::Level level,
-                             status::Flow flow,
                              const dt::TimePoint &dt,
                              const types::KeyValueMap &attributes)
-        : Super({text,                    // text
-                 status::Domain::DEVICE,  // domain
-                 device,                  // origin
-                 code,                    // code
-                 id,                      // id
-                 level,                   // level
-                 flow,                    // flow
-                 dt,                      // timepoint
-                 attributes},             // attributes
+        : Super(status::Event(
+                    text,                    // text
+                    status::Domain::DEVICE,  // domain
+                    device,                  // origin
+                    code,                    // code
+                    id,                      // id
+                    level,                   // level
+                    dt,                      // timepoint
+                    attributes),             // attributes
                 std::runtime_error(text),
                 TYPE_NAME_BASE(This))
     {
@@ -432,18 +433,17 @@ namespace core::exception
                                Code code,
                                const std::string &id,
                                status::Level level,
-                               status::Flow flow,
                                const dt::TimePoint &dt,
                                const types::KeyValueMap &attributes)
-        : Super({text,                     // text
-                 status::Domain::SERVICE,  // domain
-                 service,                  // origin
-                 code,                     // code
-                 id,                       // id
-                 level,                    // level
-                 flow,                     // flow
-                 dt,                       // timepoint
-                 attributes},              // attributes
+        : Super(status::Event(
+                    text,                     // text
+                    status::Domain::SERVICE,  // domain
+                    service,                  // origin
+                    code,                     // code
+                    id,                       // id
+                    level,                    // level
+                    dt,                       // timepoint
+                    attributes),              // attributes
                 std::runtime_error(text),
                 TYPE_NAME_BASE(This))
     {
@@ -508,8 +508,7 @@ namespace core::exception
                     platform::path->exec_name(),  // origin
                     0,                            // code
                     "UNKNOWN",                    // symbol
-                    status::Level::FAILED,        // level
-                    status::Flow::ABORTED);       // flow
+                    status::Level::FAILED);       // level
             }
         }
         else

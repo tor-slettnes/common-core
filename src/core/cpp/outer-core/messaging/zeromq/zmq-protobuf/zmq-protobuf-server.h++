@@ -44,7 +44,6 @@ namespace core::zmq
         void insert_error_response(cc::rr::Reply *reply,
                                    cc::rr::StatusCode status_code,
                                    const std::string &text,
-                                   core::status::Flow flow,
                                    const types::KeyValueMap &attributes);
 
     private:

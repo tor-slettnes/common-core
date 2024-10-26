@@ -24,7 +24,12 @@ namespace core::grpc
     class LoggingInterceptor : public Interceptor
     {
     public:
+        LoggingInterceptor(ServerRpcInfo* rpc_info);
+
         void Intercept(InterceptorBatchMethods* methods) override;
+
+    private:
+        ServerRpcInfo* rpc_info;
     };
 
     //==========================================================================
@@ -36,7 +41,7 @@ namespace core::grpc
                                              ServerInterceptorFactoryInterface>
     {
     protected:
-        Interceptor* CreateServerInterceptor(ServerRpcInfo* info) override;
+        Interceptor* CreateServerInterceptor(ServerRpcInfo* rpc_info) override;
     };
 
     //==========================================================================

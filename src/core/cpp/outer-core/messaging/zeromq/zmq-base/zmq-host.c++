@@ -36,6 +36,13 @@ namespace core::zmq
         }
     }
 
+    void Host::deinitialize()
+    {
+        logf_debug("%s unbinding from %s", *this, this->bind_address());
+        ::zmq_unbind(this->socket(), this->bind_address().c_str());
+        Super::deinitialize();
+    }
+
     std::string Host::bind_address() const
     {
         return this->realaddress(this->bind_address_,

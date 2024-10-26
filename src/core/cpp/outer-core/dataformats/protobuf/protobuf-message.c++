@@ -6,9 +6,12 @@
 //==============================================================================
 
 #include "protobuf-message.h++"
+#include "string/misc.h++"
 
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/util/message_differencer.h>
+
+#include <iostream>
 
 using google::protobuf::util::MessageDifferencer;
 

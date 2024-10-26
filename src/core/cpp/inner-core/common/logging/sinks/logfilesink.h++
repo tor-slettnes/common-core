@@ -6,7 +6,8 @@
 //==============================================================================
 
 #pragma once
-#include "messagesink.h++"
+#include "asynclogsink.h++"
+#include "messageformatter.h++"
 #include "rotatingpath.h++"
 #include "types/create-shared.h++"
 #include "types/filesystem.h++"
@@ -15,12 +16,13 @@
 
 namespace core::logging
 {
-    class LogFileSink : public MessageSink,
+    class LogFileSink : public AsyncLogSink,
+                        public MessageFormatter,
                         public RotatingPath,
                         public types::enable_create_shared<LogFileSink>
     {
         using This = LogFileSink;
-        using Super = MessageSink;
+        using Super = AsyncLogSink;
 
     protected:
         /// @brief Constructor
@@ -31,11 +33,9 @@ namespace core::logging
         LogFileSink(const std::string &path_template,
                     const dt::Duration &rotation_interval);
 
-        void open() override;
-        void open(const dt::TimePoint &tp);
+        void open(const dt::TimePoint &tp) override;
         void close() override;
-        void rotate(const dt::TimePoint &tp) override;
-        void capture_message(const Message::ptr &msg) override;
+        void capture_event(const status::Event::ptr &event) override;
 
     private:
         std::shared_ptr<std::ofstream> stream_;

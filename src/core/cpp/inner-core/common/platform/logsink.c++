@@ -11,7 +11,7 @@ namespace core::platform
 {
     LogSinkProvider::LogSinkProvider(const std::string &implementation,
                                      const std::string &identity)
-        : logging::MessageSink(),
+        : Super(),
           Provider(implementation),
           identity_(identity)
     {

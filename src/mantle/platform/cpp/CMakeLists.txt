@@ -8,6 +8,7 @@
 add_subdirectory(services)
 
 if(INCLUDE_PLATFORM)
-  add_subdirectory(apps)
+  add_subdirectory(daemon)
+  add_subdirectory(tools)
 endif()
 

@@ -113,8 +113,7 @@ namespace core::logging
         status::Level threshold;
     };
 
-    /// Default threshold.  This may be overridden by specific scopes (including Global);
-    /// \sa scope.hpp.
+    /// Default threshold.  This may be overridden by specific scopes (including Global).
     inline status::Level default_threshold = status::Level::NOTICE;
     inline types::ValueMap<std::string, Scope::ptr> scopes;
 

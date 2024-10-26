@@ -11,7 +11,6 @@ set(TARGET cc_core_messaging_grpc_server)
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_grpc_common
-  cc_core_messaging_http
 )
 
 set(SOURCES

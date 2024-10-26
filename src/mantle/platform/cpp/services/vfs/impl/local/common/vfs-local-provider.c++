@@ -273,8 +273,8 @@ namespace platform::vfs::local
         Context::ptr cxt)
     {
         log_message(cxt->removable
-                        ? core::status::Level::DEBUG
-                        : core::status::Level::TRACE,
+                        ? core::status::Level::INFO
+                        : core::status::Level::DEBUG,
                     "Addding VFS context: ",
                     *cxt);
 
@@ -289,8 +289,8 @@ namespace platform::vfs::local
         if (nh)
         {
             logf_message(nh.mapped()->removable
-                             ? core::status::Level::DEBUG
-                             : core::status::Level::TRACE,
+                             ? core::status::Level::INFO
+                             : core::status::Level::DEBUG,
                          "Removing VFS context: %s",
                          *nh.mapped());
 

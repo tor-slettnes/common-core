@@ -7,16 +7,18 @@
 
 #pragma once
 #include "provider.h++"
-#include "logging/sinks/messagesink.h++"
+#include "logging/sinks/logsink.h++"
+#include "logging/sinks/messageformatter.h++"
 
 #include <string>
 
 namespace core::platform
 {
-    class LogSinkProvider : public logging::MessageSink,
+    class LogSinkProvider : public logging::LogSink,
+                            public logging::MessageFormatter,
                             public Provider
     {
-        using Super = logging::MessageSink;
+        using Super = logging::LogSink;
 
     protected:
         /// @param[in] implementation
