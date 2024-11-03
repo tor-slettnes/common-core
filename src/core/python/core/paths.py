@@ -42,7 +42,7 @@ def settingsPath() -> SearchPath:
     try:
         searchpath = os.getenv('CONFIGPATH').split(os.pathsep)
     except AttributeError:
-        local_dir = ('/etc/cc', 'C:\\CC\\Config')[platform.system() == 'Windows']
+        local_dir = ('/etc/common-core', 'c:\\common-core\\config')[platform.system() == 'Windows']
         searchpath = [
             local_dir,          # Local overrides
             SETTINGS_DIR,       # Package defaults

@@ -20,15 +20,19 @@ namespace core::platform
         using Super = LogSinkProvider;
 
     protected:
-        WindowsLogSinkProvider(const std::string &identity);
+        WindowsLogSinkProvider(const std::string &application_id,
+                               const std::string &sink_id = "eventlog",
+                               status::Level threshold = status::level::DEBUG);
 
     public:
         void open() override;
         void close() override;
         void capture_event(const status::Event::ptr &event) override;
+        std::string application_id() const;
 
     private:
         static const types::ValueMap<status::Level, WORD> levelmap;
+        std::string application_id_;
         HANDLE event_log;
     };
 

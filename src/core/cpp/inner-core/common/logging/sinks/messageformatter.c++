@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "messageformatter.h++"
+#include "chrono/date-time.h++"
 
 #include <sstream>
 
@@ -22,9 +23,17 @@ namespace core::logging
     }
 
     void MessageFormatter::send_preamble(std::ostream &stream,
-                                         const status::Event::ptr &event,
-                                         const std::string &suffix) const
+                                         const status::Event::ptr &event) const
     {
+        dt::tp_to_stream(stream, event->timepoint(), true, 3, "%F|%T");
+
+        stream << "|"
+               << std::setfill(' ')
+               << std::setw(8)
+               << event->level()
+               << std::setw(0)
+               << "|";
+
         if (this->include_context())
         {
             if (auto msg = std::dynamic_pointer_cast<Message>(event))
@@ -38,8 +47,7 @@ namespace core::logging
                        << msg->lineno()
                        << ":"
                        << msg->function()
-                       << "()"
-                       << suffix;
+                       << "(): ";
             }
         }
     }

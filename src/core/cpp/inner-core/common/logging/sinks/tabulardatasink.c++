@@ -9,19 +9,16 @@
 
 namespace core::logging
 {
-    TabularDataSink::TabularDataSink(const std::string contract_id,
+    TabularDataSink::TabularDataSink(const std::string &sink_id,
+                                     status::Level threshold,
+                                     const std::optional<std::string> &contract_id,
                                      const ColumnDefaults &columns)
-        : contract_id_(contract_id),
+        : AsyncLogSink(sink_id, threshold, contract_id),
           columns_(columns)
     {
     }
 
-    std::string TabularDataSink::contract_id() const
-    {
-        return this->contract_id_;
-    }
-
-    ColumnDefaults TabularDataSink::column_defaults() const
+    const ColumnDefaults &TabularDataSink::column_defaults() const
     {
         return this->columns_;
     }
@@ -30,11 +27,14 @@ namespace core::logging
     {
         std::vector<std::string> names;
         names.reserve(this->columns_.size());
-        for (uint c = 0; c < this->columns_.size(); c++)
+        for (const auto &[tag, default_value] : this->column_defaults())
         {
-            const auto &[tag, value] = this->columns_.at(c);
-            names.push_back(tag.value_or(""));
+            if (tag.has_value())
+            {
+                names.push_back(tag.value());
+            }
         }
+        names.shrink_to_fit();
         return names;
     }
 

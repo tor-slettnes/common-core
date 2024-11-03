@@ -68,11 +68,11 @@ namespace core::grpc
         using Super = ServerStreamer<MessageT>;
 
     public:
+        template <class... Args>
         ServerSignalStreamer(
             core::signal::DataSignal<MessageT> *signal,
-            uint maxsize = 0,
-            types::OverflowDisposition overflow = types::OverflowDisposition::DISCARD_OLDEST)
-            : Super(maxsize, overflow),
+            Args &&...args)
+            : Super(args...),
               signal(signal)
         {
         }

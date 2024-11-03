@@ -21,9 +21,5 @@ namespace protobuf
     // TimeData
     void encode(const demo::TimeData &timedata, cc::demo::TimeData *msg);
     void decode(const cc::demo::TimeData &msg, demo::TimeData *timedata);
-
-    //==========================================================================
-    // TimeStruct
-    void encode(const std::tm &tm, cc::demo::TimeStruct *msg);
-    void decode(const cc::demo::TimeStruct &msg, std::tm *tm);
-}  // namespace protobuf
+  // namespace protobuf
+}

@@ -14,7 +14,7 @@ namespace core::logging
         Dispatcher::initialize();
         if (!this->workerthread_.joinable())
         {
-            for (const Sink::ptr &sink : this->sinks())
+            for (const auto &[sink_id, sink] : this->sinks())
             {
                 sink->open();
             }
@@ -29,7 +29,7 @@ namespace core::logging
         {
             this->queue_.close();
             this->workerthread_.join();
-            for (const Sink::ptr &sink : this->sinks())
+            for (const auto &[sink_id, sink] : this->sinks())
             {
                 sink->close();
             }
@@ -46,7 +46,7 @@ namespace core::logging
     {
         while (const std::optional<types::Loggable::ptr> &opt_item = this->queue_.get())
         {
-            for (const Sink::ptr &sink : this->sinks())
+            for (const auto &[sink_id, sink] : this->sinks())
             {
                 const types::Loggable::ptr &item = *opt_item;
                 if (sink->is_applicable(*item))
@@ -56,4 +56,5 @@ namespace core::logging
             }
         }
     }
+
 }  // namespace core::logging

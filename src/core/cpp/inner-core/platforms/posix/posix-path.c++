@@ -47,7 +47,7 @@ namespace core::platform
 
     fs::path PosixPathProvider::default_config_folder() const noexcept
     {
-        return "/etc/cc";
+        return "/etc/common-core";
     }
 
     fs::path PosixPathProvider::default_data_folder() const noexcept
@@ -57,7 +57,7 @@ namespace core::platform
 
     fs::path PosixPathProvider::default_log_folder() const noexcept
     {
-        return "/var/log/picarro";
+        return "/var/log/common-core";
     }
 
     fs::path PosixPathProvider::readlink(const fs::path &path) const noexcept

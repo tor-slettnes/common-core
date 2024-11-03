@@ -40,7 +40,7 @@ namespace core::status
                  Level level,
                  const dt::TimePoint &timepoint,
                  const types::KeyValueMap &attributes,
-                 const std::string &contract_id,
+                 const ContractID &contract_id,
                  const std::string &host)
         : text_(text),
           domain_(domain),
@@ -116,7 +116,7 @@ namespace core::status
         return this->domain_;
     }
 
-    const std::string &Event::origin() const noexcept
+    std::string Event::origin() const noexcept
     {
         return this->origin_;
     }
@@ -146,7 +146,7 @@ namespace core::status
         return this->text_;
     }
 
-    std::string Event::contract_id() const noexcept
+    Event::ContractID Event::contract_id() const noexcept
     {
         return this->contract_id_;
     }
@@ -176,6 +176,7 @@ namespace core::status
     {
         types::PartsList parts;
         this->populate_fields(&parts);
+        this->populate_attributes(&parts);
         return parts.as_tvlist();
     }
 
@@ -212,10 +213,6 @@ namespace core::status
                          this->timepoint(),
                          this->timepoint() != dt::epoch);
 
-        parts->add_value(EVENT_FIELD_ATTRIBUTES,
-                         this->attributes(),
-                         !this->attributes().empty());
-
         parts->add_string(EVENT_FIELD_CONTRACT_ID,
                           this->contract_id(),
                           !this->contract_id().empty());
@@ -223,6 +220,30 @@ namespace core::status
         parts->add_string(EVENT_FIELD_HOST,
                           this->host(),
                           !this->host().empty());
+
+    }
+
+    void Event::populate_attributes(types::PartsList *parts) const noexcept
+    {
+        for (const auto &[key, value]: this->attributes())
+        {
+            parts->add_value(key, value, bool(value));
+        }
+    }
+
+    std::vector<std::string> Event::field_names() noexcept
+    {
+        return {
+            EVENT_FIELD_TIME,
+            EVENT_FIELD_DOMAIN,
+            EVENT_FIELD_ORIGIN,
+            EVENT_FIELD_HOST,
+            EVENT_FIELD_CONTRACT_ID,
+            EVENT_FIELD_CODE,
+            EVENT_FIELD_SYMBOL,
+            EVENT_FIELD_LEVEL,
+            EVENT_FIELD_TEXT,
+        };
     }
 
     void Event::to_stream(std::ostream &stream) const

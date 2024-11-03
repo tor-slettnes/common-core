@@ -32,18 +32,16 @@ namespace core::str
         }
     }
 
-    std::string toupper(const std::string &s, const std::locale &loc)
+    std::string toupper(std::string s, const std::locale &loc)
     {
-        std::string result(s);
-        toupper(&result, loc);
-        return result;
+        toupper(&s, loc);
+        return s;
     }
 
-    std::string tolower(const std::string &s, const std::locale &loc)
+    std::string tolower(std::string s, const std::locale &loc)
     {
-        std::string result(s);
-        tolower(&result, loc);
-        return result;
+        tolower(&s, loc);
+        return s;
     }
 
     std::string obfuscated(const std::string &s)
@@ -299,60 +297,42 @@ namespace core::str
 
     void escape(
         std::ostream &out,
-        const std::string &input,
+        const std::string_view &input,
         const std::unordered_set<char> &extra_escapes)
     {
+        static const std::unordered_map<char, std::string> escape_map = {
+            {'\0', "\\0"},
+            {'\\', "\\\\"},
+            {'\a', "\\a"},
+            {'\b', "\\b"},
+            {'\f', "\\f"},
+            {'\n', "\\n"},
+            {'\r', "\\r"},
+            {'\t', "\\t"},
+            {'\v', "\\v"},
+            {'\x7f', "\\x7f"},
+        };
+
         std::ios_base::fmtflags original_flags = out.flags();
         out << std::hex;
 
         for (auto it = input.begin(); it != input.end(); it++)
         {
-            switch(*it)
+            if (auto it2 = escape_map.find(*it); it2 != escape_map.end())
             {
-            case '\0':
-                out << "\\0";
-                break;
-            case '\\':
-                out << "\\\\";
-                break;
-            case '\a':
-                out << "\\a";
-                break;
-            case '\b':
-                out << "\\b";
-                break;
-            case '\f':
-                out << "\\f";
-                break;
-            case '\n':
-                out << "\\n";
-                break;
-            case '\r':
-                out << "\\r";
-                break;
-            case '\t':
-                out << "\\t";
-                break;
-            case '\v':
-                out << "\\v";
-                break;
-            case '\x7f':
-                out << "\\x7f";
-                break;
-            default:
-                if (*it < ' ')
-                {
-                    out << "\\x" << static_cast<std::uint8_t>(*it);
-                }
-                else if (extra_escapes.count(*it))
-                {
-                    out << "\\" << *it;
-                }
-                else
-                {
-                    out << *it;
-                }
-                break;
+                out << it2->second;
+            }
+            else if (*it < ' ')
+            {
+                out << "\\x" << static_cast<std::uint8_t>(*it);
+            }
+            else if (extra_escapes.count(*it))
+            {
+                out << "\\" << *it;
+            }
+            else
+            {
+                out << *it;
             }
         }
         out.flags(original_flags);
@@ -366,7 +346,7 @@ namespace core::str
     }
 
     void unescape(std::ostream &out,
-                  const std::string &input)
+                  const std::string_view &input)
     {
         std::stringstream ord;
         std::size_t digitsRemaining = 0;
@@ -450,7 +430,6 @@ namespace core::str
     }
 
     /// Escape and quote a string
-    /// Escape and quote a string
     std::string to_literal(
         const std::string &input)
     {
@@ -461,7 +440,7 @@ namespace core::str
 
     void to_literal(
         std::ostream &out,
-        const std::string &input)
+        const std::string_view &input)
     {
         out << '"';
         escape(out, input, {'"'});
@@ -479,9 +458,23 @@ namespace core::str
 
     void from_literal(
         std::ostream &out,
-        const std::string &input)
+        const std::string_view &input)
     {
-        unescape(out, unquoted(input));
+        const char *begin = input.data();
+        const char *end = begin + input.size();
+
+        if ((begin != end) && (*begin == '"'))
+        {
+            begin++;
+        }
+
+        if ((begin != end) && (*(end - 1) == '"'))
+        {
+            end--;
+        }
+
+        std::string_view::size_type size = (end - begin);
+        unescape(out, {begin, size});
     }
 
     std::string url_decoded(
@@ -491,7 +484,7 @@ namespace core::str
         output.reserve(encoded_url.size());
 
         std::string escape;
-        for(char c: encoded_url)
+        for (char c : encoded_url)
         {
             if (escape.empty())
             {
@@ -524,11 +517,11 @@ namespace core::str
         return output;
     }
 
-
-    void substitute(const std::string &original,
+    std::size_t substitute(const std::string &original,
                     const std::string &replacement,
                     std::string *string)
     {
+        std::size_t substitutions = 0;
         if (original.length() > 0)
         {
             std::string::size_type pos = string->find(original);
@@ -536,8 +529,10 @@ namespace core::str
             {
                 string->replace(pos, original.length(), replacement);
                 pos = string->find(original, pos + replacement.length());
+                substitutions++;
             }
         }
+        return substitutions;
     }
 
     bool startswith(const std::string &input,

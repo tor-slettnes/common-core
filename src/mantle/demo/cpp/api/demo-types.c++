@@ -47,12 +47,12 @@ namespace demo
     void Greeting::to_stream(std::ostream &stream) const
     {
         core::types::PartsList parts;
-        parts.add("text", this->text);
-        parts.add("identity", this->identity);
-        parts.add("implementation", this->implementation);
+        parts.add_string("text", this->text);
+        parts.add_string("identity", this->identity);
+        parts.add_string("implementation", this->implementation);
         parts.add("birth", this->birth, this->birth != core::dt::TimePoint());
         parts.add("uptime", core::dt::Clock::now() - this->birth);
-        parts.add("data", this->data, !this->data.empty());
+        parts.add_value("data", this->data, !this->data.empty());
         stream << parts;
     }
 

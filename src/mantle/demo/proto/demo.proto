@@ -9,6 +9,7 @@ syntax = "proto3";
 
 package cc.demo;
 
+import "datetime.proto";
 import "variant.proto";
 import "signal.proto";
 import "google/protobuf/timestamp.proto";
@@ -56,42 +57,12 @@ message Greeting
     cc.variant.ValueList data = 5;
 }
 
-//==============================================================================
-// TimeData
-
-enum Weekday
-{
-    SUNDAY    = 0;              // Sun's day
-    MONDAY    = 1;              // Moon's day
-    TUESDAY   = 2;              // Týr's day
-    WEDNESDAY = 3;              // Odin's day
-    THURSDAY  = 4;              // Thor's day
-    FRIDAY    = 5;              // Frey's day
-    SATURDAY  = 6;              // Saturn's day
-}
-
-message TimeStruct
-{
-    uint32 year = 1;            // Year. Must be >= 1900.
-    uint32 month = 2;           // Month within year, 1-12
-    uint32 day = 3;             // Day within month, 1-31
-    uint32 hour = 4;            // Hour within day, 0-23
-    uint32 minute = 5;          // Minute within hour, 0-59
-    uint32 second = 6;          // Second within minute, 0-61 (normally 0-59)
-    Weekday weekday = 7;        // Enumerated day
-    uint32 year_day = 8;        // Day within year, 1-366
-
-    oneof explicit_dst {        // Ensure the DST flag is explicit, even if false
-        bool is_dst = 9;        // Whether daylight savings time is in use
-    };
-}
-
 
 message TimeData
 {
     google.protobuf.Timestamp timestamp = 1; // Common timestamp
-    TimeStruct local_time = 2;  // Local calendar time
-    TimeStruct utc_time = 3;    // Greenwich calendar time
+    cc.datetime.TimeStruct local_time = 2;   // Local calendar time
+    cc.datetime.TimeStruct utc_time = 3;     // Greenwich calendar time
 }
 
 

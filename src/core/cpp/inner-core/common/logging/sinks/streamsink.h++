@@ -40,8 +40,13 @@ namespace core::logging
         /// \brief Constructor
         /// \param[in] stream
         ///     Stream to log the messages to
-        StreamSink(std::ostream &stream);
-        StreamSink(std::ostream &&stream);
+        StreamSink(const std::string &sink_id,
+                   status::Level threshold,
+                   std::ostream &stream);
+
+        StreamSink(const std::string &sink_id,
+                   status::Level threshold,
+                   std::ostream &&stream);
 
     public:
         void capture_event(const status::Event::ptr &event) override;

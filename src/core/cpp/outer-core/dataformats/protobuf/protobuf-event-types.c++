@@ -103,10 +103,8 @@ namespace protobuf
 
     void decode(const cc::status::Event &proto, core::logging::Message *native) noexcept
     {
-        decode(proto, static_cast<core::status::Event *>(native));
         auto level = decoded<core::status::Level>(proto.level());
         auto attributes = decoded<core::types::KeyValueMap>(proto.attributes());
-
         auto scope = attributes.extract_value(
             core::logging::MESSAGE_FIELD_LOG_SCOPE,
             "remote");
@@ -127,4 +125,50 @@ namespace protobuf
             proto.contract_id(),
             proto.host());
     }
+
+
+    //==========================================================================
+    // encode/decode a loggable item as either an event or a message,
+    // whichever applies
+
+    void encode_event(const core::status::Event::ptr &event, cc::status::Event *proto) noexcept
+    {
+        if (const auto &message = std::dynamic_pointer_cast<core::logging::Message>(event))
+        {
+            encode(*message, proto);
+        }
+        else
+        {
+            encode(*event, proto);
+        }
+    }
+
+    cc::status::Event encoded_event(const core::status::Event::ptr &event) noexcept
+    {
+        cc::status::Event msg;
+        encode_event(event, &msg);
+        return msg;
+    }
+
+    void decode_event(const cc::status::Event &proto, core::status::Event::ptr *native) noexcept
+    {
+        if (proto.text().empty())
+        {
+            *native = std::make_shared<core::status::Event>();
+            decode(proto, native->get());
+        }
+        else
+        {
+            *native = std::make_shared<core::logging::Message>(proto.text());
+            decode(proto, native->get());
+        }
+    }
+
+    core::status::Event::ptr decoded_event(const cc::status::Event &proto) noexcept
+    {
+        core::status::Event::ptr ptr;
+        decode_event(proto, &ptr);
+        return ptr;
+    }
+
 }  // namespace protobuf

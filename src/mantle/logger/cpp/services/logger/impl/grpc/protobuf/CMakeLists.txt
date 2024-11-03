@@ -18,7 +18,7 @@ set(LIB_DEPS
 
 ### Source files
 set(SOURCES
-  # protobuf-logger-types.c++
+  protobuf-logger-types.c++
 )
 
 cc_add_library("${TARGET}"

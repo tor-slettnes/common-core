@@ -6,6 +6,8 @@
 //==============================================================================
 
 #pragma once
+#include "types/getter.h++"
+
 #include <chrono>
 #include <optional>
 #include <condition_variable>
@@ -17,21 +19,22 @@
 namespace core::types
 {
     //==========================================================================
-    /// @enum OverflowDisposition
-    /// @brief How to handle `.put()` invocatinos into a full queue
-    enum class OverflowDisposition
-    {
-        BLOCK,           // Block the calling thread until space is available
-        DISCARD_ITEM,    // Discard the new item instead of placing into queue
-        DISCARD_OLDEST,  // Discard the oldest item in the queue to make space
-    };
-
-    //==========================================================================
     /// @class BlockingQueueBase
     /// @brief Untyped base for BlockingQueue
 
     class BlockingQueueBase
     {
+    public:
+        //==========================================================================
+        /// @enum OverflowDisposition
+        /// @brief How to handle `.put()` invocatinos into a full queue
+        enum class OverflowDisposition
+        {
+            BLOCK,           // Block the calling thread until space is available
+            DISCARD_ITEM,    // Discard the new item instead of placing into queue
+            DISCARD_OLDEST,  // Discard the oldest item in the queue to make space
+        };
+
     protected:
         /// @brief
         ///     Constructor
@@ -107,7 +110,8 @@ namespace core::types
     ///    Data type
 
     template <class T>
-    class BlockingQueue : public BlockingQueueBase
+    class BlockingQueue : public BlockingQueueBase,
+                          public Getter<T>
     {
     public:
         /// @brief Constructor
@@ -122,12 +126,6 @@ namespace core::types
             OverflowDisposition overflow_disposition = OverflowDisposition::DISCARD_OLDEST)
             : BlockingQueueBase(maxsize, overflow_disposition)
         {
-        }
-
-        template <class... Args>
-        static std::shared_ptr<BlockingQueue<T>> create_shared(Args &&...args)
-        {
-            return std::make_shared<BlockingQueue<T>>(args...);
         }
 
         inline std::size_t size() const override
@@ -256,7 +254,7 @@ namespace core::types
         ///     The call blocks until an item is available or until closed.
         ///     \sa end().
 
-        inline std::optional<T> get()
+        inline std::optional<T> get() override
         {
             std::optional<T> value;
 

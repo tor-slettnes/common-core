@@ -10,25 +10,41 @@
 
 namespace core::logging
 {
-    JsonFileSink::JsonFileSink(const std::string &path_template,
-                               const dt::Duration &rotation_interval)
-        : Super(),
-          RotatingPath(path_template, ".json", rotation_interval)
+    JsonFileSink::JsonFileSink(const std::string &sink_id,
+                               status::Level threshold,
+                               const std::string &path_template,
+                               const dt::DateTimeInterval &rotation_interval,
+                               bool local_time)
+        : AsyncLogSink(sink_id, threshold),
+          RotatingPath(sink_id, path_template, ".json", rotation_interval, local_time)
     {
     }
 
-    void JsonFileSink::open(const dt::TimePoint &tp)
+    void JsonFileSink::open()
     {
-        this->update_current_path(tp);
-        this->writer_ = std::make_shared<json::Writer>(this->current_path());
+        this->open_file(dt::Clock::now());
+        AsyncLogSink::open();
     }
 
     void JsonFileSink::close()
+    {
+        AsyncLogSink::close();
+        this->close_file();
+    }
+
+    void JsonFileSink::open_file(const dt::TimePoint &tp)
+    {
+        RotatingPath::open_file(tp);
+        this->writer_ = std::make_shared<json::Writer>(this->current_path());
+    }
+
+    void JsonFileSink::close_file()
     {
         if (this->writer_)
         {
             this->writer_.reset();
         }
+        RotatingPath::close_file();
     }
 
     void JsonFileSink::capture_event(const status::Event::ptr &event)
@@ -36,7 +52,9 @@ namespace core::logging
         if (this->writer_)
         {
             this->check_rotation(event->timepoint());
-            this->writer_->write(event->as_tvlist(), false);
+            this->writer_->write(event->as_tvlist(), // value
+                                 false,              // pretty
+                                 true);              // newline
         }
     }
 }  // namespace core::logging

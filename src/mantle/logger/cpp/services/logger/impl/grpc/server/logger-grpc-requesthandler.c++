@@ -6,8 +6,11 @@
 //==============================================================================
 
 #include "logger-grpc-requesthandler.h++"
+#include "protobuf-logger-types.h++"
+#include "protobuf-event-types.h++"
+#include "protobuf-inline.h++"
 
-namespace logger
+namespace logger::grpc
 {
     RequestHandler::RequestHandler(const std::shared_ptr<BaseLogger>& provider)
         : provider(provider)
@@ -16,11 +19,12 @@ namespace logger
 
     ::grpc::Status RequestHandler::log(
         ::grpc::ServerContext* context,
-        const ::cc::logger::LogRecord* request,
-        ::cc::logger::LogResponse* response)
+        const ::cc::status::Event* request,
+        ::google::protobuf::Empty* response)
     {
         try
         {
+            this->provider->log(protobuf::decoded_event(*request));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -31,27 +35,40 @@ namespace logger
 
     ::grpc::Status RequestHandler::writer(
         ::grpc::ServerContext* context,
-        ::grpc::ServerReader< ::cc::logger::LogRecord>* reader,
-        ::cc::logger::LogResponse* response)
+        ::grpc::ServerReader<::cc::status::Event>* reader,
+        ::google::protobuf::Empty* response)
     {
         try
         {
+            ::cc::status::Event event;
+            while (reader->Read(&event))
+            {
+                this->provider->log(protobuf::decoded_event(event));
+            }
             return ::grpc::Status::OK;
         }
         catch (...)
         {
-            return this->failure(std::current_exception(),
-                                 "writing to log");
+            return this->failure(std::current_exception(), "writing to log");
         }
     }
 
-    ::grpc::Status RequestHandler::listen(
+    ::grpc::Status RequestHandler::add_sink(
         ::grpc::ServerContext* context,
-        const ::cc::logger::LogFilter* request,
-        ::grpc::ServerWriter< ::cc::logger::LogRecord>* writer)
+        const ::cc::logger::SinkSpec* request,
+        ::cc::logger::AddSinkResult* response)
     {
         try
         {
+            auto spec = protobuf::decoded<logger::SinkSpec>(*request);
+            if (spec.sink_id.empty())
+            {
+                spec.sink_id = core::str::url_decoded(context->peer());
+            }
+
+            response->set_added(
+                this->provider->add_sink(spec));
+
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -60,13 +77,16 @@ namespace logger
         }
     }
 
-    ::grpc::Status RequestHandler::add_contract(
+    ::grpc::Status RequestHandler::remove_sink(
         ::grpc::ServerContext* context,
-        const ::cc::logger::Contract* request,
-        ::cc::logger::AddContractResponse* response)
+        const ::cc::logger::SinkID* request,
+        ::cc::logger::RemoveSinkResult* response)
     {
         try
         {
+            response->set_removed(
+                this->provider->remove_sink(request->sink_id()));
+
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -75,13 +95,17 @@ namespace logger
         }
     }
 
-    ::grpc::Status RequestHandler::remove_contract(
+    ::grpc::Status RequestHandler::get_sink(
         ::grpc::ServerContext* context,
-        const ::cc::logger::ContractID* request,
-        ::cc::logger::RemoveContractResponse* response)
+        const ::cc::logger::SinkID* request,
+        ::cc::logger::SinkSpec* response)
     {
         try
         {
+            protobuf::encode(
+                this->provider->get_sink_spec(request->sink_id()),
+                response);
+
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -90,13 +114,17 @@ namespace logger
         }
     }
 
-    ::grpc::Status RequestHandler::get_contract(
+    ::grpc::Status RequestHandler::list_sinks(
         ::grpc::ServerContext* context,
-        const ::cc::logger::ContractID* request,
-        ::cc::logger::Contract* response)
+        const ::google::protobuf::Empty* request,
+        ::cc::logger::SinkSpecs* response)
     {
         try
         {
+            protobuf::encode(
+                this->provider->list_sinks(),
+                response);
+
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -105,13 +133,17 @@ namespace logger
         }
     }
 
-    ::grpc::Status RequestHandler::get_static_fields(
+    ::grpc::Status RequestHandler::list_static_fields(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::logger::FieldNames* response)
     {
         try
         {
+            protobuf::assign_repeated(
+                this->provider->list_static_fields(),
+                response->mutable_field_names());
+
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -120,19 +152,4 @@ namespace logger
         }
     }
 
-    ::grpc::Status RequestHandler::list_contracts(
-        ::grpc::ServerContext* context,
-        const ::cc::logger::ContractFilter* request,
-        ::cc::logger::Contracts* response)
-    {
-        try
-        {
-            return ::grpc::Status::OK;
-        }
-        catch (...)
-        {
-            return this->failure(std::current_exception(), *request, context->peer());
-        }
-    }
-
-}  // namespace logger
+}  // namespace logger::grpc

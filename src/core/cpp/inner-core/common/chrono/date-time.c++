@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "date-time.h++"
+#include "types/symbolmap.h++"
 #include "string/format.h++"
 #include "string/convert.h++"
 #include "platform/timezone.h++"
@@ -31,6 +32,43 @@ namespace core
         const uint YEAR = 365 * DAY;
         const uint LEAP = 4 * YEAR;
 
+        core::types::SymbolMap<TimeUnit, std::multimap<TimeUnit, std::string>>
+            time_unit_names = {
+                {TimeUnit::ZERO_TIME, "zero time"},
+                {TimeUnit::NANOSECOND, "nanosecond"},
+                {TimeUnit::NANOSECOND, "nanoseconds"},
+                {TimeUnit::NANOSECOND, "ns"},
+                {TimeUnit::MICROSECOND, "microsecond"},
+                {TimeUnit::MICROSECOND, "microseconds"},
+                {TimeUnit::MICROSECOND, "us"},
+                {TimeUnit::MILLISECOND, "millisecond"},
+                {TimeUnit::MILLISECOND, "milliseconds"},
+                {TimeUnit::MILLISECOND, "ms"},
+                {TimeUnit::SECOND, "second"},
+                {TimeUnit::SECOND, "seconds"},
+                {TimeUnit::SECOND, "s"},
+                {TimeUnit::MINUTE, "minute"},
+                {TimeUnit::MINUTE, "minutes"},
+                {TimeUnit::MINUTE, "m"},
+                {TimeUnit::HOUR, "hour"},
+                {TimeUnit::HOUR, "hours"},
+                {TimeUnit::HOUR, "hourly"},
+                {TimeUnit::HOUR, "h"},
+                {TimeUnit::DAY, "day"},
+                {TimeUnit::DAY, "days"},
+                {TimeUnit::DAY, "daily"},
+                {TimeUnit::WEEK, "week"},
+                {TimeUnit::WEEK, "weeks"},
+                {TimeUnit::WEEK, "weekly"},
+                {TimeUnit::MONTH, "month"},
+                {TimeUnit::MONTH, "months"},
+                {TimeUnit::MONTH, "monthly"},
+                {TimeUnit::YEAR, "year"},
+                {TimeUnit::YEAR, "years"},
+                {TimeUnit::YEAR, "yearly"},
+                {TimeUnit::ETERNITY, "eternity"},
+        };
+
         std::ostream &operator<<(std::ostream &stream, const TimeZoneInfo &zi)
         {
             str::format(stream,
@@ -41,6 +79,112 @@ namespace core
                         zi.dst);
             return stream;
         }
+
+        std::ostream &operator<<(std::ostream &stream, const TimeUnit &unit)
+        {
+            return time_unit_names.to_stream(stream, unit);
+        }
+
+        std::istream &operator>>(std::istream &stream, TimeUnit &unit)
+        {
+            return time_unit_names.from_stream(stream,  // stream
+                                               &unit,   // key
+                                               {},      // fallback
+                                               true,    // flag_unknown
+                                               true);   // allow_partial
+        }
+
+        std::ostream &operator<<(std::ostream &stream, const DateTimeInterval &interval)
+        {
+            switch (interval.unit)
+            {
+            case TimeUnit::ZERO_TIME:
+            case TimeUnit::ETERNITY:
+                time_unit_names.to_stream(stream, interval.unit);
+                break;
+
+            default:
+                stream << interval.count << " ";
+                time_unit_names.to_stream(stream, interval.unit);
+                if ((interval.count != 1) && (interval.count != -1))
+                {
+                    stream << "s";
+                }
+            }
+            return stream;
+        }
+
+        std::istream &operator>>(std::istream &stream, DateTimeInterval &interval)
+        {
+            std::istream::pos_type start = stream.tellg();
+            stream >> interval.count;
+
+            if (stream.fail())
+            {
+                interval.count = 1;
+                stream.clear();
+                stream.seekg(start);
+            }
+            else
+            {
+                interval.unit = TimeUnit::SECOND;
+            }
+
+            if (!stream.eof())
+            {
+                stream >> interval.unit;
+            }
+            return stream;
+        }
+
+        //==========================================================================
+        // Helper functions, used below.
+
+        template <class Dur, class Ref>
+        TimePoint last_aligned_tp(const TimePoint &tp, uint count)
+        {
+            auto ref = std::chrono::floor<Ref>(tp);
+
+            if (count)
+            {
+                auto rel = tp - std::chrono::time_point_cast<Dur>(ref);
+                auto rel_aligned = rel - (rel % Dur(count));
+                return std::chrono::time_point_cast<Dur>(ref) + rel_aligned;
+            }
+            else
+            {
+                return std::chrono::time_point_cast<Dur>(ref);
+            }
+        }
+
+        TimePoint last_aligned_dt(TimePoint tp,
+                                  int years,
+                                  int months,
+                                  int days,
+                                  int hours,
+                                  int minutes,
+                                  int seconds,
+                                  bool local)
+        {
+            std::tm dt = local ? localtime(tp) : gmtime(tp);
+
+            std::tm aligned = {
+                .tm_sec = seconds ? (dt.tm_sec / seconds) * seconds : 0,
+                .tm_min = minutes ? (dt.tm_min / minutes) * minutes : 0,
+                .tm_hour = hours ? (dt.tm_hour / hours) * hours : 0,
+                .tm_mday = days ? ((dt.tm_mday - 1) / days) * days + 1 : 1,
+                .tm_mon = months ? (dt.tm_mon / months) * months : 0,
+                .tm_year = years ? ((dt.tm_year + TM_YEAR_OFFSET) / years) * years - TM_YEAR_OFFSET : 0,
+                .tm_wday = 0,
+                .tm_yday = 0,
+                .tm_isdst = -1,
+            };
+
+            return to_timepoint(mktime(aligned, local));
+        }
+
+        //==========================================================================
+        // Public functions
 
         void tp_to_stream(std::ostream &stream,
                           const TimePoint &tp,
@@ -243,12 +387,9 @@ namespace core
 
         timespec to_timespec(const TimePoint &tp)
         {
-            auto seconds = std::chrono::time_point_cast<std::chrono::seconds>(tp);
-            if (seconds > tp)
-            {
-                seconds -= std::chrono::seconds(1);
-            }
-            auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(tp - seconds);
+            auto seconds = std::chrono::floor<std::chrono::seconds>(tp);
+            auto nanos = std::chrono::time_point_cast<std::chrono::nanoseconds>(tp) -
+                         std::chrono::time_point_cast<std::chrono::nanoseconds>(seconds);
 
             struct timespec ts;
             // ts.tv_sec = dt::to_time_t(seconds);
@@ -266,18 +407,12 @@ namespace core
 
         long long to_seconds(const Duration &d)
         {
-            auto seconds = std::chrono::duration_cast<std::chrono::seconds>(d);
-            if (seconds > d)
-            {
-                seconds -= std::chrono::seconds(1);
-            }
-            return seconds.count();
+            return std::chrono::floor<std::chrono::seconds>(d).count();
         }
 
         long long to_milliseconds(const Duration &d)
         {
-            auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(d);
-            return millis.count();
+            return std::chrono::floor<std::chrono::milliseconds>(d).count();
         }
 
         double to_double(const TimePoint &tp)
@@ -470,6 +605,56 @@ namespace core
         }
 
         TimePoint last_aligned(const TimePoint &tp,
+                               const DateTimeInterval &interval,
+                               bool local)
+        {
+            using namespace std::chrono;
+            switch (interval.unit)
+            {
+            case TimeUnit::NANOSECOND:
+                return last_aligned_tp<nanoseconds, seconds>(tp, interval.count);
+
+            case TimeUnit::MICROSECOND:
+                return last_aligned_tp<microseconds, seconds>(tp, interval.count);
+
+            case TimeUnit::MILLISECOND:
+                return last_aligned_tp<milliseconds, seconds>(tp, interval.count);
+
+            case TimeUnit::SECOND:
+                return last_aligned_tp<seconds, minutes>(tp, interval.count);
+
+            case TimeUnit::MINUTE:
+                // Aligned to daytime because some timezones are offset from UTC
+                // by partial hours (e.g. India, Bangladesh).
+                return last_aligned_dt(tp, 1, 1, 1, 1, interval.count, 0, local);
+
+            case TimeUnit::HOUR:
+                return last_aligned_dt(tp, 1, 1, 1, interval.count, 0, 0, local);
+
+            case TimeUnit::DAY:
+                return last_aligned_dt(tp, 1, 1, interval.count, 0, 0, 0, local);
+
+            case TimeUnit::WEEK:
+                // Use midnight, last Sunday (weekday 0) as reference.
+                return last_aligned(
+                    tp,
+                    last_midnight(tp, local) - (localtime(tp).tm_wday * 24h),
+                    interval.count * 7 * 24h);
+
+            case TimeUnit::MONTH:
+                return last_aligned_dt(tp, 1, interval.count, 0, 0, 0, 0, local);
+
+            case TimeUnit::YEAR:
+                return last_aligned_dt(tp, interval.count, 0, 0, 0, 0, 0, local);
+
+            default:
+                break;
+            }
+
+            return tp;
+        }
+
+        TimePoint last_aligned(const TimePoint &tp,
                                const Duration &interval,
                                bool local)
         {
@@ -478,7 +663,9 @@ namespace core
             {
                 reference -= local_adjustment(tp);
             }
-            return last_aligned(tp, reference, interval);
+            return last_aligned(tp,
+                                reference,
+                                std::chrono::floor<std::chrono::seconds>(interval));
         }
 
         TimePoint last_aligned(const TimePoint &tp,

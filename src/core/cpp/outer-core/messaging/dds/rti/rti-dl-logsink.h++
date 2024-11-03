@@ -15,7 +15,6 @@
 #include <rti_dl/rti_dl_cpp.h>
 #include <ndds/ndds_cpp.h>
 
-
 namespace core::dds
 {
     class RTIDistributedLogger : public core::logging::LogSink,
@@ -26,7 +25,9 @@ namespace core::dds
         using Super = core::logging::LogSink;
 
     protected:
-        RTIDistributedLogger(const std::string &identity,
+        RTIDistributedLogger(const std::string &sink_id,
+                             status::Level threshold,
+                             const std::string &application_id,
                              int domain_id);
 
     public:

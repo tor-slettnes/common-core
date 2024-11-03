@@ -18,12 +18,11 @@ set(LIB_DEPS
 
 ### Source files
 set(SOURCES
-  # logger-grpc-messagequeue.c++
   logger-grpc-requesthandler.c++
+  logger-grpc-serverlistener.c++
 )
 
 cc_add_library("${TARGET}"
-  LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
 )

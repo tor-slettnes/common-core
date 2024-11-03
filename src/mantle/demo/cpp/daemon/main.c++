@@ -9,6 +9,7 @@
 #include "options.h++"           // Command-line options
 #include "demo-native.h++"       // Native Demo API implementation
 #include "status/exceptions.h++"
+#include "logging/logging.h++"
 #include "thread/supervised_thread.h++"
 
 #ifdef USE_DDS

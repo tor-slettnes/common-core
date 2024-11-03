@@ -10,17 +10,21 @@
 
 namespace core::platform
 {
-    PosixLogSinkProvider::PosixLogSinkProvider(const std::string &identity)
-        : Super("PosixLogSinkProvider", identity)
+    PosixLogSinkProvider::PosixLogSinkProvider(
+        const std::string &application_id,
+        const std::string &sink_id,
+        status::Level threshold)
+        : LogSinkProvider("PosixLogSinkProvider", sink_id, threshold),
+          application_id_(application_id)
     {
     }
 
     void PosixLogSinkProvider::open()
     {
         Super::open();
-        ::openlog(this->identity().c_str(),  // ident
-                  LOG_NDELAY | LOG_PID,      // option
-                  LOG_DAEMON);               // facility
+        ::openlog(this->application_id().c_str(),  // ident
+                  LOG_NDELAY | LOG_PID,       // option
+                  LOG_DAEMON);                // facility
     }
 
     void PosixLogSinkProvider::close()
@@ -38,6 +42,11 @@ namespace core::platform
                      this->formatted(event).c_str(),  // args...
                      event->text().c_str());          //
         }
+    }
+
+    std::string PosixLogSinkProvider::application_id() const
+    {
+        return this->application_id_;
     }
 
     const types::ValueMap<status::Level, int> PosixLogSinkProvider::levelmap = {

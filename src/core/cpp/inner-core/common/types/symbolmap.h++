@@ -22,7 +22,8 @@ namespace core::types
     public:
         using MapType::MapType;
 
-        inline std::optional<std::string> to_string(const KeyType &key) const noexcept
+        inline std::optional<std::string> to_string(
+            const KeyType &key) const noexcept
         {
             if (auto it = this->find(key); it != this->end())
             {
@@ -34,17 +35,25 @@ namespace core::types
             }
         }
 
-        inline std::string to_string(const KeyType &key, const std::string &fallback) const noexcept
+        inline std::string to_string(
+            const KeyType &key,
+            const std::string &fallback) const noexcept
         {
             return to_string(key).value_or(fallback);
         }
 
-        inline std::optional<KeyType> from_string(const std::string &symbol) const noexcept
+        inline std::optional<KeyType> from_string(
+            const std::string &symbol,
+            bool allow_partial = false) const noexcept
         {
             std::string lower_symbol = str::tolower(symbol);
             for (const auto &[candidate_key, candidate_symbol] : *this)
             {
-                if (str::tolower(candidate_symbol) == lower_symbol)
+                bool match = allow_partial
+                                 ? str::startswith(str::tolower(candidate_symbol), lower_symbol)
+                                 : str::tolower(candidate_symbol) == lower_symbol;
+
+                if (match)
                 {
                     return candidate_key;
                 }
@@ -52,12 +61,17 @@ namespace core::types
             return {};
         }
 
-        inline KeyType from_string(const std::string &symbol, const KeyType &fallback) const noexcept
+        inline KeyType from_string(
+            const std::string &symbol,
+            const KeyType &fallback,
+            bool allow_partial = false) const noexcept
         {
-            return from_string(symbol).value_or(fallback);
+            return from_string(symbol, allow_partial).value_or(fallback);
         }
 
-        inline std::ostream &to_stream(std::ostream &stream, const KeyType &key) const
+        inline std::ostream &to_stream(
+            std::ostream &stream,
+            const KeyType &key) const
         {
             if (const std::optional<std::string> &opt_symbol = this->to_string(key))
             {
@@ -71,9 +85,10 @@ namespace core::types
         }
 
         template <class ValueType>
-        inline std::ostream &to_stream(std::ostream &stream,
-                                       const KeyType &key,
-                                       const ValueType &fallback) const
+        inline std::ostream &to_stream(
+            std::ostream &stream,
+            const KeyType &key,
+            const ValueType &fallback) const
         {
             if (const std::optional<std::string> &opt_symbol = this->to_string(key))
             {
@@ -86,15 +101,18 @@ namespace core::types
             return stream;
         }
 
-        inline std::istream &from_stream(std::istream &stream,
-                                         KeyType *key,
-                                         const std::optional<KeyType> &fallback = {},
-                                         bool flag_unknown = true) const
+        inline std::istream &from_stream(
+            std::istream &stream,
+            KeyType *key,
+            const std::optional<KeyType> &fallback = {},
+            bool flag_unknown = true,
+            bool allow_partial = false) const
         {
             std::string symbol;
             stream >> symbol;
             str::tolower(&symbol);
-            if (const std::optional<KeyType> &opt_key = this->from_string(symbol))
+            if (const std::optional<KeyType> &opt_key =
+                    this->from_string(symbol, allow_partial))
             {
                 *key = *opt_key;
             }
@@ -113,10 +131,11 @@ namespace core::types
             return stream;
         }
 
-        inline void join_keys(std::ostream &stream,
-                              const std::string &separator = "|",
-                              const std::string &prefix = "{",
-                              const std::string &suffix = "}") const
+        inline void join_keys(
+            std::ostream &stream,
+            const std::string &separator = "|",
+            const std::string &prefix = "{",
+            const std::string &suffix = "}") const
         {
             stream << prefix;
             bool print_sep = false;
@@ -132,9 +151,10 @@ namespace core::types
             stream << suffix;
         }
 
-        inline std::string joined_keys(const std::string &separator = "|",
-                                       const std::string &prefix = "{",
-                                       const std::string &suffix = "}") const
+        inline std::string joined_keys(
+            const std::string &separator = "|",
+            const std::string &prefix = "{",
+            const std::string &suffix = "}") const
         {
             std::stringstream s;
             this->join_keys(s, separator, prefix, suffix);
@@ -163,9 +183,10 @@ namespace core::types
             return symbols;
         }
 
-        inline std::string joined_symbols(const std::string &separator = "|",
-                                          const std::string &prefix = "{",
-                                          const std::string &suffix = "}") const
+        inline std::string joined_symbols(
+            const std::string &separator = "|",
+            const std::string &prefix = "{",
+            const std::string &suffix = "}") const
         {
             return prefix + str::join(this->symbols(), separator) + suffix;
         }

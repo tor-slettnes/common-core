@@ -12,12 +12,16 @@
 
 namespace core::logging
 {
-    RotatingPath::RotatingPath(const std::string &path_template,
+    RotatingPath::RotatingPath(const std::string &sink_name,
+                               const std::string &path_template,
                                const std::string &default_suffix,
-                               const dt::Duration &rotation_interval)
-        : path_template_(path_template),
+                               const dt::DateTimeInterval &rotation_interval,
+                               bool use_local_time)
+        : sink_name_(sink_name),
+          path_template_(path_template),
           default_suffix_(default_suffix),
           rotation_interval_(rotation_interval),
+          use_local_time_(use_local_time),
           log_folder_(platform::path->log_folder()),
           exec_name_(platform::path->exec_name())
     {
@@ -25,53 +29,56 @@ namespace core::logging
 
     RotatingPath::~RotatingPath()
     {
-        this->close();
+        this->close_file();
     }
 
-    std::string RotatingPath::path_template() const
+
+    void RotatingPath::open_file(const dt::TimePoint &tp)
     {
-        return this->path_template_;
+        this->update_current_path(tp);
+    }
+
+    void RotatingPath::rotate(const dt::TimePoint &tp)
+    {
+        this->close_file();
+        this->open_file(tp);
     }
 
     void RotatingPath::check_rotation(const dt::TimePoint &tp)
     {
-        dt::TimePoint aligned = dt::last_aligned(tp, this->rotation_interval_);
+        dt::TimePoint aligned = dt::last_aligned(
+            tp,
+            this->rotation_interval(),
+            this->use_local_time());
+
         if (aligned > this->current_rotation())
         {
             this->rotate(aligned);
         }
     }
 
-    void RotatingPath::open()
+    void RotatingPath::update_current_path(const dt::TimePoint &starttime,
+                                           bool create_directory)
     {
-        this->open(dt::Clock::now());
-    }
+        this->current_path_ = this->construct_path(starttime);
+        this->current_rotation_ = starttime;
 
-
-    void RotatingPath::rotate(const dt::TimePoint &tp)
-    {
-        this->close();
-        this->open(tp);
-    }
-
-    dt::TimePoint RotatingPath::current_rotation() const
-    {
-        return this->current_rotation_;
-    }
-
-    fs::path RotatingPath::current_path() const
-    {
-        return this->current_path_;
+        if (create_directory)
+        {
+            fs::create_directories(this->current_path_.parent_path());
+        }
     }
 
     fs::path RotatingPath::construct_path(const dt::TimePoint &starttime) const
     {
         static const std::unordered_map<std::string, std::string> expansions = {
-            {"execname", platform::path->exec_name()},
+            {"executable", platform::path->exec_name()},
+            {"sink", this->sink_name()},
             {"isodate", "%F"},
             {"isotime", "%T"},
             {"year", "%Y"},
             {"month", "%m"},
+            {"week", "%U"},
             {"day", "%d"},
             {"hour", "%H"},
             {"minute", "%M"},
@@ -93,16 +100,33 @@ namespace core::logging
         return fs::weakly_canonical(this->log_folder_ / log_file);
     }
 
-    void RotatingPath::update_current_path(const dt::TimePoint &starttime,
-                                           bool create_directory)
+    std::string RotatingPath::sink_name() const
     {
-        this->current_path_ = this->construct_path(starttime);
-        this->current_rotation_ = starttime;
-
-        if (create_directory)
-        {
-            fs::create_directories(this->current_path_.parent_path());
-        }
+        return this->sink_name_;
     }
 
+    std::string RotatingPath::path_template() const
+    {
+        return this->path_template_;
+    }
+
+    dt::DateTimeInterval RotatingPath::rotation_interval() const
+    {
+        return this->rotation_interval_;
+    }
+
+    dt::TimePoint RotatingPath::current_rotation() const
+    {
+        return this->current_rotation_;
+    }
+
+    bool RotatingPath::use_local_time() const
+    {
+        return this->use_local_time_;
+    }
+
+    fs::path RotatingPath::current_path() const
+    {
+        return this->current_path_;
+    }
 }  // namespace core::logging

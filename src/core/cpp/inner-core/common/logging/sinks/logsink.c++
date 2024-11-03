@@ -12,8 +12,12 @@ namespace core::logging
     //==========================================================================
     // LogSink
 
-    LogSink::LogSink()
-        : threshold_(status::Level::TRACE)
+    LogSink::LogSink(const std::string &sink_id,
+                     status::Level threshold,
+                     const std::optional<status::Event::ContractID> contract_id)
+        : Sink(sink_id),
+          threshold_(threshold),
+          contract_id_(contract_id)
     {
     }
 
@@ -21,8 +25,9 @@ namespace core::logging
     {
         if (auto event = dynamic_cast<const status::Event *>(&item))
         {
-            return (this->threshold() != status::Level::NONE) &&
-                   (event->level() >= this->threshold());
+            return (event->level() >= this->threshold()) &&
+                   (!this->contract_id().has_value() ||
+                    (event->contract_id() == this->contract_id().value()));
         }
         else
         {
@@ -48,6 +53,16 @@ namespace core::logging
     status::Level LogSink::threshold() const
     {
         return this->threshold_;
+    }
+
+    void LogSink::set_contract_id(std::optional<status::Event::ContractID> contract_id)
+    {
+        this->contract_id_ = contract_id;
+    }
+
+    std::optional<status::Event::ContractID> LogSink::contract_id() const
+    {
+        return this->contract_id_;
     }
 
 }  // namespace core::logging

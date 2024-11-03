@@ -22,7 +22,10 @@ namespace core::dds
         using Super = logging::LogSink;
 
     protected:
-        DDSLogger(const std::string &channel_name, int domain_id);
+        DDSLogger(const std::string &sink_id,
+                  status::Level threshold,
+                  const std::string &channel_name,
+                  int domain_id);
 
     protected:
         void open() override;

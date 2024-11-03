@@ -18,14 +18,15 @@ namespace core::logging
                                    const uint &lineno,
                                    const std::string &function,
                                    pid_t thread_id)
-        : Message({},                                                // text
-                  level,                                             // level
-                  scope,                                             // scope
-                  tp,                                                // tp
-                  fs::relative(path, SOURCE_DIR, this->path_error),  // path
-                  lineno,                                            // lineno
-                  function,                                          // function
-                  thread_id),                                         // thread_id
+        : Message({},                                                   // text
+                  level,                                                // level
+                  scope,                                                // scope
+                  tp,                                                   // tp
+                  fs::relative(path, SOURCE_DIR, this->path_error),     // path
+                  lineno,                                               // lineno
+                  function,                                             // function
+                  thread_id,                                            // thread_id
+                  platform::path ? platform::path->exec_name() : ""s),  // origin
           dispatcher_(dispatcher),
           is_applicable_(Message::is_applicable() && dispatcher->is_applicable(*this))
     {

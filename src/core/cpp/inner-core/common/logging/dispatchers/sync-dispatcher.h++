@@ -22,4 +22,5 @@ namespace core::logging
         std::mutex mtx_;
     };
 
+    extern SyncDispatcher message_dispatcher;
 }  // namespace core::logging

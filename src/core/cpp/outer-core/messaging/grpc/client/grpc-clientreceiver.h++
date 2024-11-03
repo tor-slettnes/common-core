@@ -12,6 +12,8 @@
 #include <grpcpp/impl/codegen/sync_stream.h>
 #include <grpcpp/impl/codegen/client_context.h>
 
+#include <thread>
+
 namespace core::grpc
 {
     //==========================================================================

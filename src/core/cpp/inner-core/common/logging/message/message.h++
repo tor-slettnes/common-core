@@ -66,8 +66,8 @@ namespace core::logging
         /// @param[in] attributes
         ///     Key/value pairs associated with message
 
-        Message(const std::string &text,
-                status::Level level,
+        Message(const std::string &text = "",
+                status::Level level = status::Level::NONE,
                 Scope::ptr scope = nullptr,
                 const dt::TimePoint &tp = {},
                 const fs::path &path = {},
@@ -78,7 +78,7 @@ namespace core::logging
                 Code code = 0,
                 const Symbol &symbol = {},
                 const types::KeyValueMap &attributes = {},
-                const std::string &contract_id = {},
+                const ContractID &contract_id = {},
                 const std::string &host = {});
 
         // Copy constructor to ensure we obtain values from derived classes
@@ -138,6 +138,8 @@ namespace core::logging
         {
             return this->thread_id_;
         }
+
+        static std::vector<std::string> field_names() noexcept;
 
     protected:
         void populate_fields(types::PartsList *parts) const noexcept override;

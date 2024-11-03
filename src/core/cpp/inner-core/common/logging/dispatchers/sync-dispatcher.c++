@@ -13,7 +13,7 @@ namespace core::logging
     {
         std::lock_guard<std::mutex> lck(this->mtx_);
 
-        for (const Sink::ptr &sink : this->sinks())
+        for (const auto &[sink_id, sink] : this->sinks())
         {
             if (sink->is_applicable(*item))
             {
@@ -21,4 +21,6 @@ namespace core::logging
             }
         }
     }
+
+    SyncDispatcher message_dispatcher;
 }  // namespace core::logging

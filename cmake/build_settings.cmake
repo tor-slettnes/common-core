@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(SETTINGS_DIR "share/cc/settings"
+set(SETTINGS_DIR "share/common-core/settings"
   CACHE STRING "Top-level installation directory for settings files" FORCE)
 
 set(SETTINGS_STAGING_ROOT

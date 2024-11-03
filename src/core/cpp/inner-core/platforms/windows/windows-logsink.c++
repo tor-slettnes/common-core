@@ -12,15 +12,19 @@
 
 namespace core::platform
 {
-    WindowsLogSinkProvider::WindowsLogSinkProvider(const std::string &identity)
-        : Super("WindowsLogSinkProvider", identity)
+    WindowsLogSinkProvider::WindowsLogSinkProvider(
+        const std::string &application_id,
+        const std::string &sink_id,
+        status::Level threshold)
+        : Super("WindowsLogSinkProvider", sink_id, threshold),
+          application_id_(application_id)
     {
     }
 
     void WindowsLogSinkProvider::open()
     {
         Super::open();
-        this->event_log = RegisterEventSource(NULL, this->identity().c_str());
+        this->event_log = RegisterEventSource(NULL, this->application_id().c_str());
     }
 
     void WindowsLogSinkProvider::close()
@@ -45,6 +49,11 @@ namespace core::platform
                         &cstr,            // lpStrings
                         nullptr);         // lpRawData
         }
+    }
+
+    std::string WindowsLogSinkProvider::application_id() const
+    {
+        return this->application_id_;
     }
 
     const types::ValueMap<status::Level, WORD> WindowsLogSinkProvider::levelmap = {

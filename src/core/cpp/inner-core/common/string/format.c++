@@ -5,7 +5,8 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "string/format.h++"
+#include "format.h++"
+#include "misc.h++"
 #include "chrono/date-time.h++"
 
 #include <string.h>
@@ -369,7 +370,7 @@ namespace core::str
         }
         else if (modifiers.quoted)
         {
-            this->stream << std::quoted(value);
+            str::to_literal(this->stream, value);
         }
         else
         {
@@ -387,7 +388,7 @@ namespace core::str
         }
         else if (modifiers.quoted)
         {
-            this->stream << std::quoted(value);
+            str::to_literal(this->stream, value);
         }
         else
         {
@@ -413,7 +414,7 @@ namespace core::str
 
         if (modifiers.quoted)
         {
-            this->stream << std::quoted(rvalue);
+            str::to_literal(this->stream, rvalue);
         }
         else
         {

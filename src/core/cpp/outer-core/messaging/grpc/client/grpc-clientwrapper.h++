@@ -100,7 +100,7 @@ namespace core::grpc
         /// @return
         ///      gRPC status code
 
-        template <class ResponseT, class RequestT = ::google::protobuf::Empty>
+        template <class ResponseT, class RequestT>
         inline Status call_sync(
             const gRPCMethod<ResponseT, RequestT> &method,
             const RequestT &request,
@@ -140,7 +140,7 @@ namespace core::grpc
         /// @return
         ///      gRPC status code
 
-        template <class ResponseT, class RequestT = ::google::protobuf::Empty>
+        template <class ResponseT, class RequestT>
         inline Status call_sync(
             const std::string &methodname,
             const gRPCMethod<ResponseT, RequestT> &method,
@@ -162,7 +162,7 @@ namespace core::grpc
             return status;
         }
 
-        template <class ResponseT, class RequestT = ::google::protobuf::Empty>
+        template <class ResponseT, class RequestT>
         inline Status call_sync(
             const std::string &methodname,
             const gRPCMethod<ResponseT, RequestT> &method,
@@ -189,7 +189,7 @@ namespace core::grpc
         /// @throw core::grpc::ServiceError
         ///     Non-OK gRPC status code
 
-        template <class ResponseT, class RequestT = ::google::protobuf::Empty>
+        template <class ResponseT, class RequestT>
         inline ResponseT call_check(
             const gRPCMethod<ResponseT, RequestT> &method,
             const RequestT &request = {},
@@ -218,7 +218,7 @@ namespace core::grpc
         /// @throw core::grpc::ServiceError
         ///     Non-OK gRPC status code
 
-        template <class ResponseT, class RequestT = ::google::protobuf::Empty>
+        template <class ResponseT, class RequestT>
         inline ResponseT call_check(
             const std::string &methodname,
             const gRPCMethod<ResponseT, RequestT> &method,

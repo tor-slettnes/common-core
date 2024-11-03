@@ -66,24 +66,22 @@ namespace core::argparse
         /// Register available loggers
         virtual void register_loggers();
 
-        std::optional<status::Level> level_setting(
-            const std::string &option,
-            const types::KeyValueMap &root = *core::settings);
-
-        status::Level level_setting(
-            const std::string &option,
-            const types::KeyValueMap &root,
-            status::Level fallback);
-
         types::KeyValueMap logsink_setting(
-            const std::string &key);
+            const std::string &sink_name) const;
 
         bool logsink_setting_enabled(
             const std::string &key,
-            bool fallback = false);
+            bool fallback = false) const;
 
-        void set_threshold_from_config(const std::shared_ptr<logging::LogSink> &sink,
-                                       const types::KeyValueMap &config);
+        std::optional<status::Level> get_optional_level(
+            const std::string &option,
+            const types::KeyValueMap &root = *core::settings) const;
+
+        status::Level get_threshold(
+            const types::KeyValueMap &config) const;
+
+        dt::DateTimeInterval get_rotation(
+            const types::KeyValueMap &config) const;
 
     public:
         bool is_server;
@@ -95,8 +93,9 @@ namespace core::argparse
         bool log_to_syslog;
         bool log_to_stdout;
         bool log_to_stderr;
-        bool log_to_json;
         bool log_to_file;
+        bool log_to_json;
+        bool log_to_csv;
     };
 
     using RegisterLoggerFunction = std::function<void(Parser *)>;

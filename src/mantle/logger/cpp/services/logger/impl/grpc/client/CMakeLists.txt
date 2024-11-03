@@ -15,9 +15,10 @@ set(LIB_DEPS
 
 set(SOURCES
   logger-grpc-client.c++
+  logger-grpc-clientlistener.c++
 )
 
-# cc_add_library("${TARGET}"
-#   LIB_DEPS ${LIB_DEPS}
-#   SOURCES ${SOURCES}
-# )
+cc_add_library("${TARGET}"
+  LIB_DEPS ${LIB_DEPS}
+  SOURCES ${SOURCES}
+)

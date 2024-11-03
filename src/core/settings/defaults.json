@@ -9,6 +9,9 @@
     // DDS domain to join
     "dds domain id" : 0,
 
+    // Default logging threshold; may be overridden for specific scopes.
+    "log default" : "notice",
+
     // Override the default log level setting above for specific scopes.
     "log thresholds":
     {
@@ -16,8 +19,8 @@
         "shared"      : "notice"
     },
 
-    // Default logging threshold; may be overridden for specific scopes.
-    "log default" : "notice",
+    // Include extra detail: log scope, thread ID, filename, function, line number
+    "log context"  : false,
 
     // ANSI coloring for specific log levels sent to console
     "log styles" :
@@ -36,17 +39,15 @@
         "reset" : "\\e[0m"
     },
 
-    // Log to JSON files
-    "log to json" :
-    {
-        // Log to JSON file enabled.  Defaults to `true` for server applicatins, `false` otherwise.
-        // "enabled" : false,
+    "log sinks": {
 
-        // JSON logger threshold 
-        "threshold" : "trace",
-
-        // JSON log file name template.  The following placeholders are expanded:
-        //   - "execname"  : the name of the executable, minus any suffix (e.g. `.exe`)
+        // Log sinks that write directly to output files include "file", "json",
+        // and "csv"; their corresponding settings sections below include a
+        // "name template" which controls the name of the output files with the
+        // following placeholders expanded:
+        //
+        //   - "executable": the name of the executable, minus any suffix (e.g. `.exe`)
+        //   - "sink"      : the identity of the log sink, e.g. `"log"` or `"csv"`
         //   - "isodate"   : date formatted as "YYYY-MM-DD"
         //   - "isotime    : time of day formatted as "HH:MM:SS"
         //   - "year"      : four-digit year
@@ -62,67 +63,89 @@
         // time truncated according to the setting "log json rotatation", below.
         // For instance, given a six-hour rotation interval the timestamps would
         // be truncated to 00:00, 06:00, 12:00, and 18:00, local time.
-        "name template" : "{execname}-{isodate}-{hour}{minute}{zoneoffset}.json",
 
-        // How often do we want to switch to a new log file, in seconds.
-        // Default: 6 hours = 21600 seconds
-        "rotation" : 21600,
+        // Log to JSON files
+        "json":
+        {
+            // Log to JSON file enabled.  Defaults to `false`
+            // "enabled" : false,
 
-        // Derive JSON log file name from local time.
-        "local time" : true
-    },
+            // Level threshold.  Events with a lower severity level will be ignored.
+            "threshold" : "trace",
 
+            // JSON filename template, expanded as described above.
+            "Name template" : "{executable}-{isodate}-{hour}{minute}{zoneoffset}.json",
 
-    // Log to plaintext `.log` files
-    "log to file" :
-    {
-        // Log to text file enabled.  Defaults to `false`.
-        // "enabled" : false,
+            // How often do we want to switch to a new log file, in seconds.
+            // Default: 6 hours = 21600 seconds
+            "rotation" : "6 hours",
 
-        // JSON logger threshold 
-        "threshold" : "trace",
+            // Derive JSON log file name from local time.
+            "local time" : true
+        },
 
-        // JSON log file name template.  The following placeholders are expanded:
-        //   - "execname"  : the name of the executable, minus any suffix (e.g. `.exe`)
-        //   - "isodate"   : date formatted as "YYYY-MM-DD"
-        //   - "isotime    : time of day formatted as "HH:MM:SS"
-        //   - "year"      : four-digit year
-        //   - "month"     : two-digit month (01 - 12)
-        //   - "day"       : two-digit day (01 - 31)
-        //   - "hour"      : two-digit hour (00 - 23)
-        //   - "minute"    : two-digit minute (00 - 59)
-        //   - "second"    : two-digit second (00 - 61)
-        //   - "zonename"  : time zone name or abbreviation (e.g., "PST")
-        //   - "zoneoffset": time zone offset (e.g. "-0700")
-        ///
-        // The timestamp  is the  "last aligned" time  point, i.e.,  the current
-        // time truncated according to the setting "log json rotatation", below.
-        // For instance, given a six-hour rotation interval the timestamps would
-        // be truncated to 00:00, 06:00, 12:00, and 18:00, local time.
-        "name template" : "{execname}-{isodate}-{hour}{minute}{zoneoffset}.log",
+        // Log to plaintext `.log` files
+        "file" :
+        {
+            // Log to text file enabled.  Defaults to `false`.
+            // "enabled" : false,
 
-        // How often do we want to switch to a new log file, in seconds.
-        // Default: 6 hours = 21600 seconds
-        "rotation" : 21600,
+            // Log logger threshold
+            "threshold" : "trace",
 
-        // Derive JSON log file name from local time.
-        "local time" : true
-    },
+            // Logfile name template, expanded as described above.
+            "name template" : "{executable}-{isodate}-{hour}{minute}{zoneoffset}.log",
 
-    // Log via RTI distributed logger (if built with option `USE_RTI_DISTRIBUTED_LOGGER`)
-    "log to rti distributed logger":
-    {
-        "enabled" : false,
-        "threshold": "trace"
-    },
+            // How often do we want to switch to a new log file, in seconds.
+            // Default: 6 hours = 21600 seconds
+            "rotation" : "6 hours",
 
-    // Log via DDS (Topic `cc::status::LogEvent`)
-    "log to dds":
-    {
-        "enabled": true,
-        "threshold": "trace"
-    },
+            // Derive log file name from local time.
+            "local time" : true
+        },
 
-    // Include extra detail: log scope, thread ID, filename, function, line number
-    "log context"  : false
+        // Log to plaintext `.log` files
+        "csv" :
+        {
+            // Log to text file enabled.  Defaults to `true` for server applications, `false` otherwise.
+            // "enabled" : false,
+
+            // Log logger threshold
+            "threshold" : "debug",
+
+            // Columns to include.
+            "column names" : [
+                "timestamp", "host", "origin", "level",
+                "log_scope", "thread_id", "source_path", "source_line", "function_name",
+                "text"
+            ],
+
+            // Column separator; `","` by default
+            // "column separator" : "\t",
+
+            // Logfile name template, expanded as described above.
+            "name template" : "{executable}-{isodate}-{hour}{minute}{zoneoffset}.csv",
+
+            // How often do we want to switch to a new log file, in seconds.
+            // Default: 6 hours = 21600 seconds
+            "rotation" : "6 hours",
+
+            // Derive log file name from local time.
+            "local time" : true
+        },
+
+        // Log via RTI distributed logger (if built with option `USE_RTI_DISTRIBUTED_LOGGER`)
+        "rti-dl":
+        {
+            "enabled" : false,
+            "threshold": "trace"
+        },
+
+        // Log via DDS (Topic `cc::status::LogEvent`)
+        "dds":
+        {
+            "enabled": true,
+            "threshold": "trace"
+        }
+    }
 }

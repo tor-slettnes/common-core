@@ -150,6 +150,10 @@ namespace core::types
         template <class T>
         T numeric_cast(T fallback = 0) const;
 
+        /// Convert value to a desired value via istream `>>' operator
+        template <class T>
+        T convert_to(const T &fallback = {}) const;
+
         /// Parse and return a new Value instance from a literal string.
         /// Some examples (where the literal is shown `between backticks`):
         ///  - ``                 becomes an "empty" value (std::monostate)

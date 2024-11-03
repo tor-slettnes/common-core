@@ -493,16 +493,7 @@ namespace core::types
     std::string Value::as_string() const noexcept
     {
         std::ostringstream out;
-        switch (this->type())
-        {
-        case ValueType::TIMEPOINT:
-            out << dt::to_js_string(this->get<dt::TimePoint>());
-            break;
-
-        default:
-            out << *this;
-            break;
-        }
+        out << *this;
         return out.str();
     }
 
@@ -917,7 +908,7 @@ namespace core::types
             break;
 
         case ValueType::BYTEVECTOR:
-            stream << "%" << this->get<ByteVector>().to_base64();
+            stream << "\"%" << this->get<ByteVector>().to_base64() << "%\"";
             break;
 
         case ValueType::TIMEPOINT:
@@ -925,7 +916,7 @@ namespace core::types
             break;
 
         case ValueType::STRING:
-            stream << std::quoted(this->get<std::string>());
+            str::to_literal(stream, this->get<std::string>());
             break;
 
         default:
@@ -986,7 +977,7 @@ namespace core::types
             {ValueType::UINT, std::regex("^([[:digit:]]+|0x[[:xdigit:]]+)$", std::regex::icase)},
             {ValueType::REAL,
              std::regex("^[+-]?[[:digit:]]+(\\.[[:digit:]]*)?([eE][+-]?[[:digit:]]+)?$")},
-            {ValueType::BYTEVECTOR, std::regex("^%[[:alnum:]\\+/]+={0,2}$")},
+            {ValueType::BYTEVECTOR, std::regex("^\"?%[[:alnum:]\\+/]+={0,2}%?\"?$")},
             {ValueType::STRING, std::regex("\"((?:\\\\.|[^\"\\\\\\r\\n])*)\"")},
             // {ValueType::STRING, std::regex("\"((?>\\\\\\\\|\\\\\"|[^\"\\r\\n])*)\"")},
             {ValueType::TIMEPOINT,

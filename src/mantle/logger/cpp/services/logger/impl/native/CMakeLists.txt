@@ -13,6 +13,7 @@ set(LIB_DEPS
 
 set(SOURCES
   logger-native.c++
+  logger-sink.c++
 )
 
 cc_add_library("${TARGET}"

@@ -26,12 +26,8 @@ namespace core::platform
         /// @param[in] identity
         ///     Logging entity name, e.g. application name
         LogSinkProvider(const std::string &implementation,
-                        const std::string &identity);
-
-        const std::string &identity() const;
-
-    protected:
-        std::string identity_;
+                        const std::string &sink_id = "syslog",
+                        status::Level threshold = status::Level::NONE);
     };
 
     extern ProviderProxy<LogSinkProvider> logsink;

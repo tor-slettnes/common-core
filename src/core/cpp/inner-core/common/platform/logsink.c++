@@ -10,16 +10,11 @@
 namespace core::platform
 {
     LogSinkProvider::LogSinkProvider(const std::string &implementation,
-                                     const std::string &identity)
-        : Super(),
-          Provider(implementation),
-          identity_(identity)
+                                     const std::string &sink_id,
+                                     status::Level threshold)
+        : LogSink(sink_id, threshold),
+          Provider(implementation)
     {
-    }
-
-    const std::string &LogSinkProvider::identity() const
-    {
-        return this->identity_;
     }
 
     ProviderProxy<LogSinkProvider> logsink("logsink");

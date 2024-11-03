@@ -22,10 +22,14 @@ namespace core::json
     {
     }
 
-    void BaseWriter::write(const types::Value &value, bool pretty)
+    void BaseWriter::write(const types::Value &value, bool pretty, bool newline)
     {
         assertf(this->stream_, "Cannot write JSON object with no output file");
         this->write_stream(*this->stream_, value, pretty);
+        if (newline)
+        {
+            *this->stream_ << std::endl;
+        }
     }
 
     void BaseWriter::append_file(const fs::path &path,

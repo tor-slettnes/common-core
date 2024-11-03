@@ -11,27 +11,43 @@
 
 namespace core::logging
 {
-    LogFileSink::LogFileSink(const std::string &path_template,
-                             const dt::Duration &rotation_interval)
-        : Super(),
-          RotatingPath(path_template, ".log", rotation_interval)
+    LogFileSink::LogFileSink(const std::string &sink_id,
+                             status::Level threshold,
+                             const std::string &path_template,
+                             const dt::DateTimeInterval &rotation_interval,
+                             bool local_time)
+        : AsyncLogSink(sink_id, threshold),
+          RotatingPath(sink_id, path_template, ".log", rotation_interval, local_time)
     {
     }
 
-    void LogFileSink::open(const dt::TimePoint &tp)
+    void LogFileSink::open()
     {
-        this->update_current_path(tp);
+        this->open_file(dt::Clock::now());
+        AsyncLogSink::open();
+    }
+
+    void LogFileSink::close()
+    {
+        AsyncLogSink::close();
+        this->close_file();
+    }
+
+    void LogFileSink::open_file(const dt::TimePoint &tp)
+    {
+        RotatingPath::open_file(tp);
         this->stream_ = std::make_shared<std::ofstream>(this->current_path(), std::ios::ate);
         this->stream_->exceptions(std::ios::failbit);
     }
 
-    void LogFileSink::close()
+    void LogFileSink::close_file()
     {
         if (this->stream_)
         {
             this->stream_->close();
             this->stream_.reset();
         }
+        RotatingPath::close_file();
     }
 
     void LogFileSink::capture_event(const status::Event::ptr &event)
@@ -39,19 +55,7 @@ namespace core::logging
         if (this->stream_ && this->stream_->good())
         {
             this->check_rotation(event->timepoint());
-
-            // auto lck = std::lock_guard(this->mtx_);
             auto &stream = *this->stream_;
-
-            dt::tp_to_stream(stream, event->timepoint(), true, 3, "%F|%T");
-
-            stream << "|"
-                   << std::setfill(' ')
-                   << std::setw(8)
-                   << event->level()
-                   << std::setw(0)
-                   << "|";
-
             this->send_preamble(stream, event);
             stream << event->text() << std::endl;
         }

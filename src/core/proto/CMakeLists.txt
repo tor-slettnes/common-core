@@ -18,6 +18,7 @@ set(SOURCES
   variant.proto
   status.proto
   signal.proto
+  datetime.proto
   request_reply.proto
   version.proto
 )

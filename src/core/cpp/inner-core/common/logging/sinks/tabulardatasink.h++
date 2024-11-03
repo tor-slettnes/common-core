@@ -29,20 +29,19 @@ namespace core::logging
         using ptr = std::shared_ptr<TabularDataSink>;
 
     protected:
-        TabularDataSink(const std::string contract_id,
+        TabularDataSink(const std::string &sink_id,
+                        status::Level threshold,
+                        const std::optional<std::string> &contract_id,
                         const ColumnDefaults &columns);
 
-
     public:
-        std::string contract_id() const;
-        ColumnDefaults column_defaults() const;
+        const ColumnDefaults &column_defaults() const;
         std::vector<std::string> column_names() const;
 
     protected:
         bool is_applicable(const types::Loggable &item) const override;
 
     private:
-        std::string contract_id_;
         ColumnDefaults columns_;
     };
 }  // namespace core::logging

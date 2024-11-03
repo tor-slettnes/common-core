@@ -25,7 +25,6 @@ namespace core::status
 
     class Event;
 
-
     constexpr auto EVENT_FIELD_DOMAIN = "domain";
     constexpr auto EVENT_FIELD_ORIGIN = "origin";
     constexpr auto EVENT_FIELD_CODE = "code";
@@ -47,6 +46,7 @@ namespace core::status
         using ptr = std::shared_ptr<Event>;
         using Symbol = std::string;
         using Code = std::int64_t;
+        using ContractID = std::string;
 
         Event();
 
@@ -62,7 +62,7 @@ namespace core::status
               Level level = Level::NONE,
               const dt::TimePoint &timepoint = {},
               const types::KeyValueMap &attributes = {},
-              const std::string &contract_id = {},
+              const ContractID &contract_id = {},
               const std::string &host = {});
 
         Event &operator=(Event &&other) noexcept;
@@ -72,7 +72,7 @@ namespace core::status
 
     public:
         virtual Domain domain() const noexcept;
-        virtual const std::string &origin() const noexcept;
+        virtual std::string origin() const noexcept;
         virtual Code code() const noexcept;
         virtual Symbol symbol() const noexcept;
         virtual Level level() const noexcept;
@@ -82,7 +82,7 @@ namespace core::status
         virtual types::KeyValueMap &attributes() noexcept;
         virtual types::Value attribute(const std::string &key,
                                        const types::Value &fallback = {}) const noexcept;
-        virtual std::string contract_id() const noexcept;
+        virtual ContractID contract_id() const noexcept;
         virtual std::string host() const noexcept;
 
         types::TaggedValueList as_tvlist() const noexcept;
@@ -93,8 +93,10 @@ namespace core::status
     protected:
         virtual std::string class_name() const noexcept;
         virtual void populate_fields(types::PartsList *parts) const noexcept;
+        virtual void populate_attributes(types::PartsList *parts) const noexcept;
 
     public:
+        static std::vector<std::string> field_names() noexcept;
         virtual void throw_if_error() const;
         virtual std::exception_ptr as_exception_ptr() const;
 
@@ -116,7 +118,7 @@ namespace core::status
         Level level_;
         dt::TimePoint timepoint_;
         types::KeyValueMap attributes_;
-        std::string contract_id_;
+        ContractID contract_id_;
         std::string host_;
     };
 

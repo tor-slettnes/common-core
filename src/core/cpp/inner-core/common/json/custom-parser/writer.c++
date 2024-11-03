@@ -131,12 +131,10 @@ namespace core::json
         return stream;
     }
 
-    std::ostream &CustomWriter::to_stream(
-        std::ostream &stream,
-        const types::TaggedValueList &tvlist,
-        bool pretty,
-        const std::string &indent)
-
+    std::ostream &CustomWriter::to_stream(std::ostream &stream,
+                                          const types::TaggedValueList &tvlist,
+                                          bool pretty,
+                                          const std::string &indent)
     {
         if (tvlist.mappable())
         {

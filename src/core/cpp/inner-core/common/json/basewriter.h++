@@ -23,7 +23,8 @@ namespace core::json
 
         virtual void write(
             const types::Value &value,
-            bool pretty = false);
+            bool pretty = false,
+            bool newline = false);
 
         virtual void append_file(
             const fs::path &path,

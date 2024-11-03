@@ -31,11 +31,18 @@ namespace core::logging
         ///     Path of the files where messaged will be logged to
         /// @param[in] rotation_interval
         ///     How often to switch to a new log file.
-        JsonFileSink(const std::string &path_template,
-                     const dt::Duration &rotation_interval);
+        /// @param[in] local_time
+        ///     Use local time when expanding `path_template`.
+        JsonFileSink(const std::string &sink_id,
+                     status::Level threshold,
+                     const std::string &path_template,
+                     const dt::DateTimeInterval &rotation_interval,
+                     bool local_time = true);
 
-        void open(const dt::TimePoint &tp) override;
+        void open() override;
         void close() override;
+        void open_file(const dt::TimePoint &tp) override;
+        void close_file() override;
         void capture_event(const status::Event::ptr &event) override;
 
     private:

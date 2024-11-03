@@ -12,8 +12,11 @@
 
 namespace core::dds
 {
-    DDSLogger::DDSLogger(const std::string &channel_name, int domain_id)
-        : Super(),
+    DDSLogger::DDSLogger(const std::string &sink_id,
+                         status::Level threshold,
+                         const std::string &channel_name,
+                         int domain_id)
+        : LogSink(sink_id, threshold),
           Publisher(channel_name, domain_id)
     {
     }

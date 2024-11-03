@@ -7,7 +7,6 @@
 
 #pragma once
 #include "logger-base.h++"
-#include "logging/dispatchers/async-dispatcher.h++"
 
 namespace logger
 {
@@ -21,21 +20,23 @@ namespace logger
 
     public:
         void log(
-            core::status::Event::ptr event) override;
+            const core::status::Event::ptr &event) override;
 
-        void add_contract(
-            const std::string &contract_id,
-            const ContractTemplate &contract_template) override;
+        bool add_sink(
+            const SinkSpec &spec) override;
 
-        void remove_contract(
-            const std::string &contract_id) override;
+        bool remove_sink(
+            const SinkID &id) override;
 
-        ContractTemplate get_contract(
-            const std::string &contract_id) const override;
+        SinkSpec get_sink_spec(
+            const SinkID &id) const override;
 
-        ContractsMap list_contracts() const override;
+        SinkSpecs list_sinks() const override;
 
-        std::shared_ptr<EventQueue> listen(
-            const Filter &filter) override;
+        FieldNames list_static_fields() const override;
+
+    protected:
+        core::logging::Sink::ptr new_sink(const SinkSpec &spec) const;
+        SinkSpec sink_spec(const core::logging::Sink::ptr &sink) const;
     };
 }  // namespace logger

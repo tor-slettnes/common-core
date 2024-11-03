@@ -79,4 +79,17 @@ namespace core::types
         }
     }
 
+    template <class T>
+    T Value::convert_to(const T &fallback) const
+    {
+        switch (this->type())
+        {
+        case ValueType::STRING:
+            return str::convert_to<T>(this->get<std::string>(), fallback);
+
+        default:
+            return str::convert_to<T>(this->as_string(), fallback);
+        };
+    }
+
 }  // namespace core::types

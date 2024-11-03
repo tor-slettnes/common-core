@@ -7,6 +7,7 @@
 
 #pragma once
 #include "variant-value.h++"
+#include "string/convert.h++"
 #include "types/streamable.h++"
 #include "types/create-shared.h++"
 
@@ -98,6 +99,20 @@ namespace core::types
         ///    Valuie to insert
         std::pair<KeyValueMap::iterator, bool>
         insert_if(bool condition, const std::string &key, const Value &value);
+
+        template <class T>
+        T get_as(const std::string &key, const T &fallback={}, bool ignore_case=false) const
+        {
+            if (const Value &value = this->get(key, {}, ignore_case))
+            {
+                return str::convert_to<T>(value.as_string(), fallback);
+            }
+            else
+            {
+                return fallback;
+            }
+        }
+
 
         /// @brief
         ///   Obtain key/value pairs where the value is a specific type

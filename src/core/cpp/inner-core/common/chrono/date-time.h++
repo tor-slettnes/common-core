@@ -26,7 +26,7 @@ namespace core
     namespace dt
     {
         // constexpr auto ISO_FORMAT = "%F %T";
-        constexpr auto DEFAULT_FORMAT = "%F@%T";
+        constexpr auto DEFAULT_FORMAT = "%F %T";
         constexpr auto DEFAULT_TIME_FORMAT = "%T";
         constexpr auto DEFAULT_DURATION_FORMAT = "%S";
         constexpr auto JS_FORMAT = "%FT%T";
@@ -58,6 +58,35 @@ namespace core
         constexpr auto TM_DAY_OFFSET = 0;
         constexpr auto TM_YEARDAY_OFFSET = 1;
         constexpr auto TM_WEEKDAY_OFFSET = 0;
+
+        enum class TimeUnit
+        {
+            ZERO_TIME,    // No/Unspecified time
+            NANOSECOND,   // 1e-9 second
+            MICROSECOND,  // 1e-6 second
+            MILLISECOND,  // 1e-3 second
+            SECOND,       // SI time unit
+            MINUTE,       // 60 seconds
+            HOUR,         // 60 minutes
+            DAY,          // 24 hours, approx 1 Earth rotation towards Sun
+            WEEK,         // 7 days
+            MONTH,        // 28-31 days (variable)
+            YEAR,         // 12 months (variable)
+            ETERNITY      // Inifinite time
+        };
+
+        std::ostream &operator<<(std::ostream &stream, const TimeUnit &unit);
+        std::istream &operator>>(std::istream &stream, TimeUnit &unit);
+
+        struct DateTimeInterval
+        {
+            TimeUnit unit = TimeUnit::ZERO_TIME;
+            std::int64_t count = 0;
+        };
+
+        std::ostream &operator<<(std::ostream &stream, const DateTimeInterval &interval);
+        std::istream &operator>>(std::istream &stream, DateTimeInterval &interval);
+
 
         /// Write out provided timepoint as a string representing UTC or local time.
         /// \param[in] stream
@@ -329,7 +358,13 @@ namespace core
         /// in either the local timezone or UTC.
         TimePoint last_midnight(const TimePoint &tp = Clock::now(), bool local = true);
 
-        /// Return the most recent time aligned to the specific interval
+        /// Return the most recent time aligned to the specific date/time interval
+        TimePoint last_aligned(const TimePoint &tp,
+                               const DateTimeInterval &interval,
+                               bool local = true);
+
+
+        /// Return the most recent time aligned to the specific clock interval
         TimePoint last_aligned(const TimePoint &tp,
                                const Duration &interval,
                                bool local = true);

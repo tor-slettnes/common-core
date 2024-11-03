@@ -26,8 +26,7 @@ namespace core::logging
 
     protected:
         void send_preamble(std::ostream &stream,
-                           const status::Event::ptr &event,
-                           const std::string &suffix = ": ") const;
+                           const status::Event::ptr &event) const;
 
         std::string formatted(const status::Event::ptr &event) const;
 

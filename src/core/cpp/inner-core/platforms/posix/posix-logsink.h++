@@ -18,15 +18,19 @@ namespace core::platform
         using Super = LogSinkProvider;
 
     protected:
-        PosixLogSinkProvider(const std::string &identity);
+        PosixLogSinkProvider(const std::string &application_id,
+                             const std::string &sink_id = "syslog",
+                             status::Level threshold = status::Level::DEBUG);
 
     public:
         void open() override;
         void close() override;
         void capture_event(const status::Event::ptr &event) override;
+        std::string application_id() const;
 
     private:
         static const core::types::ValueMap<status::Level, int> levelmap;
+        std::string application_id_;
     };
 
 }  // namespace core::platform

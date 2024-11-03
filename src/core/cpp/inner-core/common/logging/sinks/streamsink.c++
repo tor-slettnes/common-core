@@ -22,8 +22,10 @@ namespace core::logging
     //==========================================================================
     // StreamSink methods
 
-    StreamSink::StreamSink(std::ostream &stream)
-        : Super(),
+    StreamSink::StreamSink(const std::string &sink_id,
+                           status::Level threshold,
+                           std::ostream &stream)
+        : LogSink(sink_id, threshold),
           stream(stream)
     {
 #ifndef _WIN32
@@ -31,8 +33,10 @@ namespace core::logging
 #endif
     }
 
-    StreamSink::StreamSink(std::ostream &&stream)
-        : StreamSink(stream)
+    StreamSink::StreamSink(const std::string &sink_id,
+                           status::Level threshold,
+                           std::ostream &&stream)
+        : StreamSink(sink_id, threshold, stream)
     {
     }
 
@@ -46,12 +50,6 @@ namespace core::logging
         {
             this->stream << styles->get(INTRO);
         }
-
-        dt::tp_to_stream(this->stream, event->timepoint(), true, 3, "%F|%T");
-
-        this->stream << "|"
-                     << std::setfill(' ') << std::setw(8)
-                     << event->level() << std::setw(0) << "|";
 
         this->send_preamble(this->stream, event);
 

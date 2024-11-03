@@ -25,7 +25,7 @@ namespace core::logging
                      Code code,
                      const Symbol &symbol,
                      const types::KeyValueMap &attributes,
-                     const std::string &contract_id,
+                     const ContractID &contract_id,
                      const std::string &host)
         : Event(text,                         // text
                 status::Domain::APPLICATION,  // domain
@@ -64,6 +64,21 @@ namespace core::logging
         this->function_ = other.function();
         this->thread_id_ = other.thread_id();
         return *this;
+    }
+
+    std::vector<std::string> Message::field_names() noexcept
+    {
+        return {
+            core::status::EVENT_FIELD_TIME,
+            core::status::EVENT_FIELD_HOST,
+            core::status::EVENT_FIELD_LEVEL,
+            MESSAGE_FIELD_LOG_SCOPE,
+            MESSAGE_FIELD_THREAD_ID,
+            MESSAGE_FIELD_SOURCE_PATH,
+            MESSAGE_FIELD_SOURCE_LINE,
+            MESSAGE_FIELD_FUNCTION_NAME,
+            core::status::EVENT_FIELD_TEXT,
+        };
     }
 
     void Message::populate_fields(types::PartsList *parts) const noexcept

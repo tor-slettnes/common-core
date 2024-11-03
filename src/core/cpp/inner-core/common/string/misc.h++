@@ -6,7 +6,6 @@
 //==============================================================================
 
 #pragma once
-#include "format.h++"
 #include "stream.h++"
 
 #include <iomanip>
@@ -59,7 +58,7 @@ namespace core::str
     ///     Locale. Defaults to global locale.
     /// @return Copy of string converted to uppercsae.
     [[nodiscard]] std::string toupper(
-        const std::string &s,
+        std::string s,
         const std::locale &loc = {});
 
     /// @brief Convert string to lowercase in place, using the specified locale or current locale.
@@ -69,7 +68,7 @@ namespace core::str
     ///      Locale. Defaults to global locale.
     /// @return Copy of string converted to lowercase.
     [[nodiscard]] std::string tolower(
-        const std::string &s,
+        std::string s,
         const std::locale &loc = {});
 
     /// @brief Convert from (UTF8-encoded) `std::string` to (UTF16 or UCS2-encoded) `std::wstring`.
@@ -275,19 +274,19 @@ namespace core::str
     /// Translate embedded escape sequences
     [[nodiscard]] std::string escaped(
         const std::string &input,
-        const std::unordered_set<char> &extra_escapes={});
+        const std::unordered_set<char> &extra_escapes = {});
 
     void escape(
         std::ostream &out,
-        const std::string &input,
-        const std::unordered_set<char> &extra_escapes={});
+        const std::string_view &input,
+        const std::unordered_set<char> &extra_escapes = {});
 
     [[nodiscard]] std::string unescaped(
         const std::string &input);
 
     void unescape(
         std::ostream &out,
-        const std::string &input);
+        const std::string_view &input);
 
     /// Escape and quote a string
     [[nodiscard]] std::string to_literal(
@@ -295,7 +294,7 @@ namespace core::str
 
     void to_literal(
         std::ostream &stream,
-        const std::string &input);
+        const std::string_view &input);
 
     /// Escape and quote a string
     [[nodiscard]] std::string from_literal(
@@ -303,7 +302,7 @@ namespace core::str
 
     void from_literal(
         std::ostream &stream,
-        const std::string &input);
+        const std::string_view &input);
 
     // Decode %-encoded characters in a URL string
     [[nodiscard]] std::string url_decoded(
@@ -316,7 +315,9 @@ namespace core::str
     ///     Text to take its place
     /// @param[in,out] string
     ///     String in which to perform replacements
-    void substitute(
+    /// @return
+    ///     Number of subtitutions performed
+    std::size_t substitute(
         const std::string &original,
         const std::string &replacement,
         std::string *string);

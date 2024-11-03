@@ -21,7 +21,10 @@ namespace core::logging
         using Super = LogSink;
 
     protected:
-        AsyncLogSink();
+        AsyncLogSink(
+            const std::string &sink_id,
+            status::Level threshold,
+            const std::optional<status::Event::ContractID> &contract_id = {});
 
     public:
         void open() override;

@@ -9,7 +9,11 @@
 
 namespace core::logging
 {
-    AsyncLogSink::AsyncLogSink()
+    AsyncLogSink::AsyncLogSink(
+        const std::string &sink_id,
+        status::Level threshold,
+        const std::optional<status::Event::ContractID> &contract_id)
+        : LogSink(sink_id, threshold, contract_id)
     {
     }
 
@@ -35,6 +39,11 @@ namespace core::logging
 
     bool AsyncLogSink::capture(const types::Loggable::ptr &item)
     {
+        if (!this->is_open())
+        {
+            this->open();
+        }
+
         if (auto event = std::dynamic_pointer_cast<status::Event>(item))
         {
             this->queue_.put(event);

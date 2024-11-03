@@ -26,18 +26,25 @@ namespace core::logging
         using ptr = std::shared_ptr<LogSink>;
 
     protected:
-        LogSink();
+        LogSink(const SinkID &sink_id,
+                status::Level threshold,
+                const std::optional<status::Event::ContractID> contract_id = {});
 
     public:
         bool is_applicable(const types::Loggable &item) const override;
         bool capture(const types::Loggable::ptr &item) override;
+
         virtual void set_threshold(status::Level threshold);
         status::Level threshold() const;
+
+        virtual void set_contract_id(std::optional<status::Event::ContractID> contract_id);
+        std::optional<status::Event::ContractID> contract_id() const;
 
     protected:
         virtual void capture_event(const status::Event::ptr &event) = 0;
 
     private:
         status::Level threshold_;
+        std::optional<status::Event::ContractID> contract_id_;
     };
 }  // namespace core::logging

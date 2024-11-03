@@ -67,7 +67,6 @@
 #pragma once
 #include "message/builder.h++"
 #include "dispatchers/sync-dispatcher.h++"
-#include "dispatchers/async-dispatcher.h++"
 
 //==============================================================================
 /// Wrapper macros for generating & logging a message in one step.  Macros are
@@ -138,8 +137,3 @@
 #define assertf(cond, ...)
 #endif
 
-namespace core::logging
-{
-    extern SyncDispatcher message_dispatcher;
-    extern AsyncDispatcher structured_dispatcher;
-}  // namespace core::logging
