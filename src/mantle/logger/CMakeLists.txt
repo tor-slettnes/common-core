@@ -7,6 +7,7 @@
 
 set(INSTALL_GROUP "logger")
 
+add_subdirectory(settings)
 add_subdirectory(proto)
 add_subdirectory(cpp)
 

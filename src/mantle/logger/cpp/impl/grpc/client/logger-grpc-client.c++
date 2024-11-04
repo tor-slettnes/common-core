@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "logger-grpc-client.h++"
+#include "logger-grpc-clientlistener.h++"
 #include "protobuf-logger-types.h++"
 #include "protobuf-event-types.h++"
 #include "protobuf-inline.h++"
@@ -75,6 +76,11 @@ namespace logger::grpc
         return protobuf::decoded<FieldNames>(
             this->call_check(
                 &Stub::list_static_fields));
+    }
+
+    std::shared_ptr<EventSource> LoggerClient::listen(const ListenerSpec &spec)
+    {
+        return ClientListener::create_shared(this->stub, spec);
     }
 
     void LoggerClient::open()

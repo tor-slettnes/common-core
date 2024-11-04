@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "logger-base.h++"
+#include "logger-api.h++"
 #include "grpc-requesthandler.h++"
 
 #include "logger.grpc.pb.h"  // generated from `logger.proto`
@@ -22,7 +22,7 @@ namespace logger::grpc
         using Super = core::grpc::RequestHandler<cc::logger::Logger>;
 
     protected:
-        RequestHandler(const std::shared_ptr<BaseLogger>& provider);
+        RequestHandler(const std::shared_ptr<API>& provider);
 
     public:
         ::grpc::Status log(
@@ -34,6 +34,11 @@ namespace logger::grpc
             ::grpc::ServerContext* context,
             ::grpc::ServerReader<::cc::status::Event>* reader,
             ::google::protobuf::Empty* response) override;
+
+        ::grpc::Status listen(
+            ::grpc::ServerContext* context,
+            const ::cc::logger::ListenerSpec* request,
+            ::grpc::ServerWriter<::cc::status::Event>* writer) override;
 
         ::grpc::Status add_sink(
             ::grpc::ServerContext* context,
@@ -61,6 +66,6 @@ namespace logger::grpc
             ::cc::logger::FieldNames* response) override;
 
     private:
-        std::shared_ptr<BaseLogger> provider;
+        std::shared_ptr<API> provider;
     };
 }  // namespace logger::grpc

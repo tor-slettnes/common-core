@@ -12,7 +12,7 @@
 
 namespace logger::grpc
 {
-    RequestHandler::RequestHandler(const std::shared_ptr<BaseLogger>& provider)
+    RequestHandler::RequestHandler(const std::shared_ptr<API>& provider)
         : provider(provider)
     {
     }
@@ -50,6 +50,39 @@ namespace logger::grpc
         catch (...)
         {
             return this->failure(std::current_exception(), "writing to log");
+        }
+    }
+
+    ::grpc::Status RequestHandler::listen(
+        ::grpc::ServerContext* context,
+        const ::cc::logger::ListenerSpec* request,
+        ::grpc::ServerWriter<::cc::status::Event>* writer)
+    {
+        try
+        {
+            auto spec = protobuf::decoded<logger::ListenerSpec>(*request);
+            if (spec.sink_id.empty())
+            {
+                spec.sink_id = core::str::url_decoded(context->peer());
+            }
+
+            auto listener = this->provider->listen(spec);
+
+            while (const std::optional<core::status::Event::ptr>& event = listener->get())
+            {
+                if (context->IsCancelled())
+                {
+                    break;
+                }
+
+                writer->Write(protobuf::encoded_event(*event));
+            }
+
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
         }
     }
 

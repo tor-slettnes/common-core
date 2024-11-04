@@ -7,7 +7,7 @@
 
 #pragma once
 #include "argparse/command.h++"
-#include "logger-base.h++"
+#include "logger-api.h++"
 
 class Options : public core::argparse::CommandOptions
 {

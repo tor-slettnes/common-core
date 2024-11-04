@@ -7,7 +7,7 @@
 
 #pragma once
 #include "logger.grpc.pb.h"  // Generated from `logger.proto`
-#include "logger-base.h++"
+#include "logger-api.h++"
 #include "grpc-clientwrapper.h++"
 #include "types/create-shared.h++"
 #include "logging/sinks/asynclogsink.h++"
@@ -17,7 +17,7 @@ namespace logger::grpc
     using ClientBase = core::grpc::ClientWrapper<cc::logger::Logger>;
 
     class LoggerClient
-        : public BaseLogger,
+        : public API,
           public ClientBase,
           public core::logging::AsyncLogSink,
           public core::types::enable_create_shared_from_this<LoggerClient>
@@ -30,7 +30,7 @@ namespace logger::grpc
                      const std::string &host = "",
                      bool add_local_sink = true,
                      Args &&...args)
-            : BaseLogger(identity),
+            : API(identity),
               ClientBase(host, std::forward<Args>(args)...),
               add_local_sink(add_local_sink)
         {
@@ -46,6 +46,9 @@ namespace logger::grpc
         SinkSpec get_sink_spec(const SinkID &id) const override;
         SinkSpecs list_sinks() const override;
         FieldNames list_static_fields() const override;
+
+        std::shared_ptr<EventSource> listen(
+            const ListenerSpec &spec) override;
 
     protected:
         void open() override;

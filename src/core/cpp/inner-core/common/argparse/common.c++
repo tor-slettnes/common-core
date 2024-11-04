@@ -264,7 +264,7 @@ namespace core::argparse
             {"--log-to-csv"},
             "Log to a CSV file, with column headers matching plaintext log message fields.",
             &this->log_to_csv,
-            this->logsink_setting_enabled(CSV_SINK, this->is_server));
+            this->logsink_setting_enabled(CSV_SINK, false));
     }
 
     void CommonOptions::add_log_scope_options()

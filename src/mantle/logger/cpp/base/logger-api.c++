@@ -1,20 +1,20 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file logger-base.c++
+/// @file logger-api.c++
 /// @brief Logging service - abstract base
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "logger-base.h++"
+#include "logger-api.h++"
 
 namespace logger
 {
-    BaseLogger::BaseLogger(const std::string &identity)
+    API::API(const std::string &identity)
         : identity_(identity)
     {
     }
 
-    const std::string &BaseLogger::identity() const
+    const std::string &API::identity() const
     {
         return this->identity_;
     }

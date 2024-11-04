@@ -49,7 +49,7 @@ namespace core::platform
         {
         }
 
-        virtual ~Provider() = default;
+        virtual ~Provider() {}
 
     public:
         /// Determine if derived provider type is applicable on this host.

@@ -54,13 +54,13 @@ namespace core::types
         /// value.  Future calls are also closed, until either a new item is
         /// placed in the queue with `put()`, or the queue is explicitly resumed
         /// with `reopen()`.
-        void close();
+        virtual void close();
 
         /// @brief
         ///     Resume the queue after `end()`
         ///
         /// Future `get()` calls will again block.
-        void reopen();
+        virtual void reopen();
 
         /// @brief
         ///     Indicate whether this queue has been closed
@@ -126,6 +126,12 @@ namespace core::types
             OverflowDisposition overflow_disposition = OverflowDisposition::DISCARD_OLDEST)
             : BlockingQueueBase(maxsize, overflow_disposition)
         {
+        }
+
+        // Resolve base for multiply-inherited method `close()`
+        void close() override
+        {
+            BlockingQueueBase::close();
         }
 
         inline std::size_t size() const override

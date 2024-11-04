@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file logger-base.h++
+/// @file logger-api.h++
 /// @brief Logging service - abstract base
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
@@ -14,15 +14,18 @@
 namespace logger
 {
     //--------------------------------------------------------------------------
-    // BaseLogger
+    // API
 
-    class BaseLogger
+    class API
     {
     protected:
-        BaseLogger(const std::string &identity);
+        API(const std::string &identity);
 
     public:
         const std::string &identity() const;
+
+        virtual void initialize() {}
+        virtual void deinitialize() {}
 
         virtual void log(
             const core::status::Event::ptr &event) = 0;
@@ -40,17 +43,10 @@ namespace logger
 
         virtual FieldNames list_static_fields() const = 0;
 
+        virtual std::shared_ptr<EventSource> listen(
+            const ListenerSpec &spec) = 0;
+
     private:
         std::string identity_;
-    };
-
-    //--------------------------------------------------------------------------
-    // BaseListener
-
-    class BaseListener
-    {
-    public:
-        virtual std::shared_ptr<EventQueue> listen(
-            const ListenerSpec &spec) = 0;
     };
 }  // namespace logger

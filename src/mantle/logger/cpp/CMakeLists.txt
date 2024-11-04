@@ -5,7 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(services)
+add_subdirectory(base)
+add_subdirectory(impl)
 
 if(INCLUDE_LOGGER)
   add_subdirectory(daemon)

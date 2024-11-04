@@ -1,0 +1,28 @@
+// -*- javascript -*-
+//==============================================================================
+/// @file logserver.json
+/// @brief Settings for Logging servie
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+// See `defaults.json` for descriptions of the following settings.
+
+
+{
+    "log sinks": {
+        "csv": {
+            "enabled" : true,
+            "threshold" : "debug",
+            "column names" : [
+                "timestamp", "host", "origin", "level",
+                "log_scope", "thread_id", "source_path", "source_line", "function_name",
+                "text"
+            ],
+
+            // "column separator" : "\t",
+            "name template" : "{isodate}-{hour}{minute}{zoneoffset}.csv",
+            "rotation" : "1 day",
+            "local time" : true
+        }
+    }
+}

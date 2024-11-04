@@ -64,9 +64,13 @@
         // For instance, given a six-hour rotation interval the timestamps would
         // be truncated to 00:00, 06:00, 12:00, and 18:00, local time.
 
+        "syslog": {
+            "threshold" : "debug"
+        },
+
         // Log to JSON files
-        "json":
-        {
+        "json": {
+
             // Log to JSON file enabled.  Defaults to `false`
             // "enabled" : false,
 
@@ -74,7 +78,7 @@
             "threshold" : "trace",
 
             // JSON filename template, expanded as described above.
-            "Name template" : "{executable}-{isodate}-{hour}{minute}{zoneoffset}.json",
+            "name template" : "{executable}-{isodate}-{hour}{minute}{zoneoffset}.json",
 
             // How often do we want to switch to a new log file, in seconds.
             // Default: 6 hours = 21600 seconds
@@ -107,7 +111,7 @@
         // Log to plaintext `.log` files
         "csv" :
         {
-            // Log to text file enabled.  Defaults to `true` for server applications, `false` otherwise.
+            // Log to text file enabled.  Defaults to `false`.
             // "enabled" : false,
 
             // Log logger threshold

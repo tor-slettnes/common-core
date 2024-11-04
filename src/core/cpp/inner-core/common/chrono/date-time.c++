@@ -624,12 +624,10 @@ namespace core
                 return last_aligned_tp<seconds, minutes>(tp, interval.count);
 
             case TimeUnit::MINUTE:
-                // Aligned to daytime because some timezones are offset from UTC
-                // by partial hours (e.g. India, Bangladesh).
-                return last_aligned_dt(tp, 1, 1, 1, 1, interval.count, 0, local);
+                return last_aligned(tp, std::chrono::minutes(interval.count), local);
 
             case TimeUnit::HOUR:
-                return last_aligned_dt(tp, 1, 1, 1, interval.count, 0, 0, local);
+                return last_aligned(tp, std::chrono::hours(interval.count), local);
 
             case TimeUnit::DAY:
                 return last_aligned_dt(tp, 1, 1, interval.count, 0, 0, 0, local);

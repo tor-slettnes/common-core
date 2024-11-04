@@ -20,7 +20,7 @@ int main(int argc, char** argv)
         ::options = std::make_unique<Options>();
         ::options->apply(argc, argv);
 
-        auto log_provider = logger::NativeImpl::create_shared();
+        auto log_provider = logger::native::Logger::create_shared(::options->identity);
 
         log_provider->initialize();
         logger::grpc::run_service(log_provider);

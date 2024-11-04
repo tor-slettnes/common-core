@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "logger-native.h++"
-#include "logger-sink.h++"
+#include "logger-native-listener.h++"
 #include "logging/logging.h++"
 #include "logging/sinks/logfilesink.h++"
 #include "logging/sinks/jsonfilesink.h++"
@@ -15,43 +15,42 @@
 #include "status/exceptions.h++"
 #include "settings/settings.h++"
 
-namespace logger
+namespace logger::native
 {
-    NativeLogger::NativeLogger(const std::string &identity)
+    Logger::Logger(const std::string &identity)
         : Super(identity)
     {
     }
 
-    void NativeLogger::log(
+    void Logger::log(
         const core::status::Event::ptr &event)
     {
         core::logging::message_dispatcher.submit(event);
     }
 
-    bool NativeLogger::add_sink(
+    bool Logger::add_sink(
         const SinkSpec &spec)
     {
         core::logging::Sink::ptr sink = core::logging::message_dispatcher.get_sink(spec.sink_id);
 
         if (!sink)
         {
-            sink = this->new_sink(spec);
-            sink->open();
-            return core::logging::message_dispatcher.add_sink(sink) != nullptr;
+            if (sink = this->new_sink(spec))
+            {
+                sink->open();
+                return core::logging::message_dispatcher.add_sink(sink) != nullptr;
+            }
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
-    bool NativeLogger::remove_sink(
+    bool Logger::remove_sink(
         const SinkID &id)
     {
         return core::logging::message_dispatcher.remove_sink(id);
     }
 
-    SinkSpec NativeLogger::get_sink_spec(
+    SinkSpec Logger::get_sink_spec(
         const SinkID &id) const
     {
         if (core::logging::Sink::ptr sink = core::logging::message_dispatcher.get_sink(id))
@@ -64,17 +63,37 @@ namespace logger
         }
     }
 
-    SinkSpecs NativeLogger::list_sinks() const
+    SinkSpecs Logger::list_sinks() const
     {
-        return {};
+        SinkSpecs specs;
+        specs.reserve(core::logging::message_dispatcher.sinks().size());
+
+        for (const auto &[sink_id, sink] : core::logging::message_dispatcher.sinks())
+        {
+            specs.push_back(this->sink_spec(sink));
+        }
+
+        return specs;
     }
 
-    FieldNames NativeLogger::list_static_fields() const
+    FieldNames Logger::list_static_fields() const
     {
         return core::logging::Message::field_names();
     }
 
-    core::logging::Sink::ptr NativeLogger::new_sink(const SinkSpec &spec) const
+    std::shared_ptr<EventSource> Logger::listen(
+        const ListenerSpec &spec)
+    {
+        auto sink = EventListener::create_shared(
+            spec.sink_id,
+            spec.min_level,
+            spec.contract_id,
+            core::settings->get("log sinks").get("client").get("queue size", 4096).as_uint());
+        sink->open();
+        return sink;
+    }
+
+    core::logging::Sink::ptr Logger::new_sink(const SinkSpec &spec) const
     {
         switch (spec.sink_type)
         {
@@ -114,7 +133,7 @@ namespace logger
         }
     }
 
-    SinkSpec NativeLogger::sink_spec(const core::logging::Sink::ptr &sink) const
+    SinkSpec Logger::sink_spec(const core::logging::Sink::ptr &sink) const
     {
         if (auto syslogsink = std::dynamic_pointer_cast<core::platform::LogSinkProvider>(sink))
         {
@@ -165,6 +184,11 @@ namespace logger
                 .fields = csvsink->column_defaults(),
             };
         }
-        return {};
+        else
+        {
+            return {
+                .sink_id = sink->sink_id(),
+            };
+        }
     }
 }  // namespace logger

@@ -17,7 +17,7 @@ set(LIB_DEPS
 )
 
 set(SOURCES
-  logger-base.c++
+  logger-api.c++
 )
 
 cc_add_library("${TARGET}"

@@ -8,6 +8,8 @@
 #include "grpc-service.h++"
 #include "grpc-serverbuilder.h++"
 #include "logger-grpc-requesthandler.h++"
+#include "platform/init.h++"
+#include "logging/logging.h++"
 
 constexpr auto SHUTDOWN_SIGNAL_HANDLE = "logger-grpc-service";
 
@@ -18,14 +20,14 @@ namespace logger::grpc
         const std::string &listen_address)
     {
         log_debug("Creating gRPC server builder");
-        core::grpc::ServerBuilder(listen_address);
+        core::grpc::ServerBuilder builder(listen_address);
 
         if (logger_provider)
         {
             log_debug("Creating gRPC request handler: logger::API");
-            auto logger_handler = logger::grpc::RequestHandler(logger_provider);
-            builder.add_service(logger_handler,          // handler
-                                listen_address.empty());  // add_listener
+            builder.add_service(
+                logger::grpc::RequestHandler::create_shared(logger_provider),
+                listen_address.empty());  // add_listener
         }
 
         log_debug("Starting gRPC server");

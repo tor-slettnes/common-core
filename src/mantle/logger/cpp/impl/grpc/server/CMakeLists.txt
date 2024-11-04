@@ -19,7 +19,6 @@ set(LIB_DEPS
 ### Source files
 set(SOURCES
   logger-grpc-requesthandler.c++
-  logger-grpc-serverlistener.c++
 )
 
 cc_add_library("${TARGET}"

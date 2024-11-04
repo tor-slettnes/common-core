@@ -7,7 +7,7 @@
 
 #pragma once
 #include "status/event.h++"
-#include "thread/blockingqueue.h++"
+#include "types/getter.h++"
 #include "types/value.h++"
 #include "logging/sinks/sink.h++"
 
@@ -52,5 +52,5 @@ namespace logger
         std::optional<ContractID> contract_id;
     };
 
-    using EventQueue = core::types::BlockingQueue<core::status::Event::ptr>;
+    using EventSource = core::types::Getter<core::status::Event::ptr>;
 }  // namespace logger

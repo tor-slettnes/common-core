@@ -85,21 +85,10 @@ namespace core::grpc
                 this->put(msg);
             });
 
-            try
-            {
-                Super::stream(cxt, writer);
-            }
-            catch (...)
-            {
-                eptr = std::current_exception();
-            }
-
+            std::packaged_task stream_task(&Super::stream, this, cxt, writer);
+            auto future = stream_task.run();
             signal->disconnect(handle);
-
-            if (eptr)
-            {
-                std::rethrow_exception(eptr);
-            }
+            future.wait();
         }
 
     private:

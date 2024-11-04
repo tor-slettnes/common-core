@@ -22,6 +22,10 @@ service Logger
     // Open a writable stream for continuous logging
     rpc writer (stream cc.status.Event) returns (google.protobuf.Empty);
 
+    // Open a readable stream for continuous monitoring.  A new log sink is
+    // created on the server side to capture events on behalf of the client.
+    rpc listen (ListenerSpec) returns (stream cc.status.Event);
+
     // Add a new log sink to capture events meeting the specified criteria.
     rpc add_sink (SinkSpec) returns (AddSinkResult);
 
@@ -40,13 +44,7 @@ service Logger
     // message. These can be included alongside custom attributes as
     // `contract_fields` when adding a sink.
     rpc list_static_fields (google.protobuf.Empty) returns (FieldNames);
-}
 
-service Listener
-{
-    // Open a readable stream for continuous monitoring.  A new log sink is
-    // created on the server side to capture events on behalf of the client.
-    rpc listen (ListenerSpec) returns (stream cc.status.Event);
 }
 
 
