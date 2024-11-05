@@ -14,11 +14,11 @@
 
 namespace logger::grpc
 {
-    using ClientBase = core::grpc::ClientWrapper<cc::logger::Logger>;
+    using LoggerClientBase = core::grpc::ClientWrapper<cc::logger::Logger>;
 
     class LoggerClient
         : public API,
-          public ClientBase,
+          public LoggerClientBase,
           public core::logging::AsyncLogSink,
           public core::types::enable_create_shared_from_this<LoggerClient>
     {
@@ -27,11 +27,13 @@ namespace logger::grpc
     protected:
         template <class... Args>
         LoggerClient(const std::string &identity,
+                     core::status::Level threshold = core::status::Level::NONE,
                      const std::string &host = "",
                      bool add_local_sink = true,
                      Args &&...args)
             : API(identity),
-              ClientBase(host, std::forward<Args>(args)...),
+              LoggerClientBase(host, std::forward<Args>(args)...),
+              AsyncLogSink(this->host(), threshold),
               add_local_sink(add_local_sink)
         {
         }

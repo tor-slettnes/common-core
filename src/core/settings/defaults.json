@@ -64,6 +64,10 @@
         // For instance, given a six-hour rotation interval the timestamps would
         // be truncated to 00:00, 06:00, 12:00, and 18:00, local time.
 
+        "stderr": {
+            "threshold" : "debug"
+        },
+
         "syslog": {
             "threshold" : "debug"
         },

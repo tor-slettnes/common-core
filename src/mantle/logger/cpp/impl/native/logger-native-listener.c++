@@ -20,6 +20,30 @@ namespace logger::native
         : LogSink(sink_id, threshold, contract_id),
           BlockingQueue(maxsize, overflow_disposition)
     {
+        logf_debug("Created native::EventListener(sink_id=%r, threshold=%s)",
+                   sink_id, threshold);
+
+        core::platform::signal_shutdown.connect(
+            this->sink_id(),
+            std::bind(&EventListener::close, this));
+    }
+
+    EventListener::~EventListener()
+    {
+        core::platform::signal_shutdown.disconnect(this->sink_id());
+    }
+
+    void EventListener::open()
+    {
+        LogSink::open();
+        core::logging::message_dispatcher.add_sink(this->shared_from_this());
+    }
+
+    void EventListener::close()
+    {
+        core::logging::message_dispatcher.remove_sink(this->shared_from_this());
+        BlockingQueue::close();
+        LogSink::close();
     }
 
     void EventListener::capture_event(const core::status::Event::ptr &event)

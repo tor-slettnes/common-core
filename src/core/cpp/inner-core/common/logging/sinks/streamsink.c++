@@ -81,7 +81,7 @@ namespace core::logging
     {
         if (const types::Value &styles = stylemap.get(partname))
         {
-            for (const auto &[level, levelname] : status::LevelNames)
+            for (const auto &[level, levelname] : status::level_names)
             {
                 std::string style =
                     styles.is_kvmap() ? styles.as_kvmap().get(str::tolower(levelname)).as_string()

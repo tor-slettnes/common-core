@@ -110,8 +110,8 @@ message SinkSpec
     // Minimum severity level to capture
     cc.status.Level min_level = 8;
 
-    // Specific log contract, if any.  Only events with matching `contract_id`
-    // will be captured.
+    // Specific log contract.  If provided, only events with matching
+    // `contract_id` will be captured by this sink.
     optional string contract_id = 10;
 
     // What fields from matching events to include in log. These may be:

@@ -29,6 +29,9 @@ namespace logger
         DB
     };
 
+    std::ostream &operator<<(std::ostream &stream, SinkType sink_type);
+    std::istream &operator>>(std::istream &stream, SinkType &sink_type);
+
     struct SinkSpec
     {
         SinkID sink_id;
@@ -42,6 +45,8 @@ namespace logger
         core::types::TaggedValueList fields;
     };
 
+    std::ostream &operator<<(std::ostream &stream, const SinkSpec &spec);
+
     using SinkSpecs = std::vector<SinkSpec>;
     using FieldNames = std::vector<std::string>;
 
@@ -51,6 +56,8 @@ namespace logger
         core::status::Level min_level = core::status::Level::NONE;
         std::optional<ContractID> contract_id;
     };
+
+    std::ostream &operator<<(std::ostream &stream, const ListenerSpec &spec);
 
     using EventSource = core::types::Getter<core::status::Event::ptr>;
 }  // namespace logger

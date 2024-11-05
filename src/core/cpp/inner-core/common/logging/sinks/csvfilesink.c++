@@ -141,8 +141,17 @@ namespace core::logging
 
     bool CSVMessageSink::is_applicable(const types::Loggable &item) const
     {
-        bool is_message = dynamic_cast<const logging::Message *>(&item) != nullptr;
-        return is_message && AsyncLogSink::is_applicable(item);
+        if (auto event = dynamic_cast<const status::Event *>(&item))
+        {
+            return ((event->level() >= this->threshold()) &&
+                    (!this->contract_id().has_value() ||
+                     (event->contract_id() == this->contract_id().value())) &&
+                    !event->text().empty());
+        }
+        else
+        {
+            return false;
+        }
     }
 
     types::TaggedValueList CSVMessageSink::message_columns(

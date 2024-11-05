@@ -34,5 +34,10 @@ namespace logger::native
     protected:
         core::logging::Sink::ptr new_sink(const SinkSpec &spec) const;
         SinkSpec sink_spec(const core::logging::Sink::ptr &sink) const;
+
+    private:
+        std::thread listener_thread_;
+        std::shared_ptr<EventSource> listener_;
+
     };
 }  // namespace logger::native

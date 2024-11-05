@@ -78,7 +78,7 @@ namespace core::grpc
                 std::bind(&SignalQueue::close, this));
         }
 
-        virtual ~SignalQueue()
+        ~SignalQueue()
         {
             this->close();
             core::platform::signal_shutdown.disconnect(this->id);

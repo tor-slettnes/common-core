@@ -7,9 +7,11 @@
 
 #include "level.h++"
 
+#include <string>
+
 namespace core::status
 {
-    const types::SymbolMap<Level> LevelNames = {
+    const LevelMap level_names = {
         {Level::NONE, "NONE"},
         {Level::TRACE, "TRACE"},
         {Level::DEBUG, "DEBUG"},
@@ -17,26 +19,21 @@ namespace core::status
         {Level::NOTICE, "NOTICE"},
         {Level::WARNING, "WARNING"},
         {Level::FAILED, "FAILED"},
+        {Level::FAILED, "ERROR"},
         {Level::CRITICAL, "CRITICAL"},
         {Level::FATAL, "FATAL"},
     };
 
     std::ostream &operator<<(std::ostream &stream, Level lvl)
     {
-        try
-        {
-            stream << LevelNames.at(lvl);
-        }
-        catch (const std::out_of_range &)
-        {
-            stream << "UNKNOWN_" << static_cast<uint>(lvl);
-        }
-        return stream;
+        return level_names.to_stream(stream,
+                                     lvl,
+                                     "UNKNOWN_" + std::to_string(static_cast<uint>(lvl)));
     }
 
     std::istream &operator>>(std::istream &stream, Level &lvl)
     {
-        return LevelNames.from_stream(stream, &lvl);
+        return level_names.from_stream(stream, &lvl);
     }
 
 }  // namespace core::status

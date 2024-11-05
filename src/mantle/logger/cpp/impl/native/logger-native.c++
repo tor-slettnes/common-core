@@ -89,6 +89,7 @@ namespace logger::native
             spec.min_level,
             spec.contract_id,
             core::settings->get("log sinks").get("client").get("queue size", 4096).as_uint());
+
         sink->open();
         return sink;
     }

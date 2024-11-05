@@ -250,6 +250,7 @@ namespace core::status
     {
         types::PartsList parts;
         this->populate_fields(&parts);
+        this->populate_attributes(&parts);
         stream << this->class_name() << parts;
     }
 

@@ -51,7 +51,7 @@ namespace demo
 
         this->add_command(
             "monitor",
-            {"[time|greetings|all]"},
+            {"[except]", "[time|greetings]"},
             "Stay alive and watch for notification events from the underlying "
             "implementation. If one or more types are listed, only watch "
             "for the corresponding event type.",
@@ -61,21 +61,21 @@ namespace demo
     void Options::on_monitor_start()
     {
         FlagMap flags;
+        bool &except = flags["except"];
         bool &show_time = flags["time"];
         bool &show_greetings = flags["greetings"];
-        bool &show_all = flags["all"];
         this->get_flags(&flags, false);
 
-        if (show_all || (!show_time && !show_greetings))
+        if (!show_time && !show_greetings)
         {
-            show_time = show_greetings = true;
+            except = true;
         }
 
         // Connect signals from `demo/signals.hpp` to our callback
         // functions.
 
         using namespace std::placeholders;
-        if (show_time)
+        if (show_time != except)
         {
             // Invoke `on_time_update` whenever there is a time update.
             // This signal is based on the `core::signal::DataSignal<>` template,
@@ -85,7 +85,7 @@ namespace demo
                 std::bind(&Options::on_time, this, _1));
         }
 
-        if (show_greetings)
+        if (show_greetings != except)
         {
             // Invoke `on_greeting_update` whenever someone sends a greeting.
             // This signal is based on `core::signal::MappingSignal<>`, so

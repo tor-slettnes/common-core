@@ -29,6 +29,12 @@ namespace logger::native
             unsigned int maxsize = 0,
             OverflowDisposition overflow_disposition = OverflowDisposition::DISCARD_OLDEST);
 
+        ~EventListener();
+
+    public:
+        void open() override;
+        void close() override;
+
     protected:
         void capture_event(const core::status::Event::ptr &event) override;
     };

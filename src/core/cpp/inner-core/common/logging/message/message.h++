@@ -86,59 +86,20 @@ namespace core::logging
 
         Message &operator=(const Message &other) noexcept;
 
-        void to_stream(std::ostream &stream) const override
-        {
-            stream << this->text();
-        }
+        std::string class_name() const noexcept override;
+        // void to_stream(std::ostream &stream) const override;
 
         /// Will this message be accepted by at least one available sink?
-        inline virtual bool is_applicable() const noexcept
-        {
-            if (const Scope::ptr &scope = this->scope())
-            {
-                return scope->is_applicable(this->level());
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        virtual inline Scope::ptr scope() const noexcept
-        {
-            return this->scope_;
-        }
-
-        virtual inline std::string scopename_or(const std::string &fallback) const noexcept
-        {
-            return this->scope() ? this->scope()->name : fallback;
-        }
-
-        virtual inline std::string scopename() const noexcept
-        {
-            return this->scopename_or("");
-        }
-
-        virtual inline const fs::path &path() const noexcept
-        {
-            return this->path_;
-        }
-
-        virtual inline uint lineno() const noexcept
-        {
-            return this->lineno_;
-        }
-
-        virtual inline const std::string &function() const noexcept
-        {
-            return this->function_;
-        }
-
-        virtual inline pid_t thread_id() const noexcept
-        {
-            return this->thread_id_;
-        }
-
+        virtual bool is_applicable() const noexcept;
+        virtual Scope::ptr scope() const noexcept;
+        virtual std::string scopename_or(const std::string &fallback) const noexcept;
+        virtual std::string scopename() const noexcept;
+        virtual const fs::path &path() const noexcept;
+        virtual uint lineno() const noexcept;
+        virtual const std::string &function() const noexcept;
+        virtual pid_t thread_id() const noexcept;
+        virtual status::Event::ptr as_event() const noexcept;
+        static Message::ptr create_from_event(const Event &event) noexcept;
         static std::vector<std::string> field_names() noexcept;
 
     protected:

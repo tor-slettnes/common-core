@@ -99,6 +99,7 @@ namespace core::types
         const unsigned int maxsize_;
         const OverflowDisposition overflow_disposition_;
         bool closed_;
+        std::string signal_handle_;
         std::condition_variable item_available, space_available;
         std::mutex mtx;
     };

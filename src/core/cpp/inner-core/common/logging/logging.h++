@@ -78,18 +78,18 @@
 /// "<<" output stream operator. Frequently, this means the appropriate header
 /// file needs to be included.
 
-#define custom_log_msg(level, scope, timepoint, path, lineno, function) \
-    core::logging::MessageBuilder::create_shared(                       \
-        &core::logging::message_dispatcher,                             \
-        level,                                                          \
-        scope,                                                          \
-        timepoint,                                                      \
-        path,                                                           \
-        lineno,                                                         \
+#define CUSTOM_LOG_MESSAGE(level, scope, timepoint, path, lineno, function) \
+    core::logging::MessageBuilder::create_shared(                           \
+        &core::logging::message_dispatcher,                                 \
+        level,                                                              \
+        scope,                                                              \
+        timepoint,                                                          \
+        path,                                                               \
+        lineno,                                                             \
         function)
 
-#define default_log_msg(level)  \
-    custom_log_msg(             \
+#define DEFAULT_LOG_MESSAGE(level)  \
+    CUSTOM_LOG_MESSAGE(         \
         level,                  \
         log_scope,              \
         core::dt::Clock::now(), \
@@ -97,43 +97,42 @@
         __builtin_LINE(),       \
         __builtin_FUNCTION())
 
-#define log_message(level, ...) \
-    default_log_msg(level)->add(__VA_ARGS__).dispatch()
+#define LOG_MESSAGE(level, ...) \
+    DEFAULT_LOG_MESSAGE(level)->add(__VA_ARGS__).dispatch()
 
-#define log_trace(...)    log_message(core::status::Level::TRACE, __VA_ARGS__)
-#define log_debug(...)    log_message(core::status::Level::DEBUG, __VA_ARGS__)
-#define log_info(...)     log_message(core::status::Level::INFO, __VA_ARGS__)
-#define log_notice(...)   log_message(core::status::Level::NOTICE, __VA_ARGS__)
-#define log_warning(...)  log_message(core::status::Level::WARNING, __VA_ARGS__)
-#define log_error(...)    log_message(core::status::Level::FAILED, __VA_ARGS__)
-#define log_critical(...) log_message(core::status::Level::CRITICAL, __VA_ARGS__)
-#define log_fatal(...)    log_message(core::status::Level::FATAL, __VA_ARGS__)
+#define log_trace(...)    LOG_MESSAGE(core::status::Level::TRACE, __VA_ARGS__)
+#define log_debug(...)    LOG_MESSAGE(core::status::Level::DEBUG, __VA_ARGS__)
+#define log_info(...)     LOG_MESSAGE(core::status::Level::INFO, __VA_ARGS__)
+#define log_notice(...)   LOG_MESSAGE(core::status::Level::NOTICE, __VA_ARGS__)
+#define log_warning(...)  LOG_MESSAGE(core::status::Level::WARNING, __VA_ARGS__)
+#define log_error(...)    LOG_MESSAGE(core::status::Level::FAILED, __VA_ARGS__)
+#define log_critical(...) LOG_MESSAGE(core::status::Level::CRITICAL, __VA_ARGS__)
+#define log_fatal(...)    LOG_MESSAGE(core::status::Level::FATAL, __VA_ARGS__)
 
 /// Construct messages from an format template and corresponding arguments.
 /// Arguments must be supported by the "<<" output stream operator.  See
 /// [string/format.h++](../string/format.h++) for details.
 
-#define logf_message(level, ...) \
-    default_log_msg(level)->format(__VA_ARGS__).dispatch()
+#define LOGF_MESSAGE(level, ...) \
+    DEFAULT_LOG_MESSAGE(level)->format(__VA_ARGS__).dispatch()
 
-#define logf_trace(...)    logf_message(core::status::Level::TRACE, __VA_ARGS__)
-#define logf_debug(...)    logf_message(core::status::Level::DEBUG, __VA_ARGS__)
-#define logf_info(...)     logf_message(core::status::Level::INFO, __VA_ARGS__)
-#define logf_notice(...)   logf_message(core::status::Level::NOTICE, __VA_ARGS__)
-#define logf_warning(...)  logf_message(core::status::Level::WARNING, __VA_ARGS__)
-#define logf_error(...)    logf_message(core::status::Level::FAILED, __VA_ARGS__)
-#define logf_critical(...) logf_message(core::status::Level::CRITICAL, __VA_ARGS__)
-#define logf_fatal(...)    logf_message(core::status::Level::FATAL, __VA_ARGS__)
+#define logf_trace(...)    LOGF_MESSAGE(core::status::Level::TRACE, __VA_ARGS__)
+#define logf_debug(...)    LOGF_MESSAGE(core::status::Level::DEBUG, __VA_ARGS__)
+#define logf_info(...)     LOGF_MESSAGE(core::status::Level::INFO, __VA_ARGS__)
+#define logf_notice(...)   LOGF_MESSAGE(core::status::Level::NOTICE, __VA_ARGS__)
+#define logf_warning(...)  LOGF_MESSAGE(core::status::Level::WARNING, __VA_ARGS__)
+#define logf_error(...)    LOGF_MESSAGE(core::status::Level::FAILED, __VA_ARGS__)
+#define logf_critical(...) LOGF_MESSAGE(core::status::Level::CRITICAL, __VA_ARGS__)
+#define logf_fatal(...)    LOGF_MESSAGE(core::status::Level::FATAL, __VA_ARGS__)
 
 #ifndef NDEBUG
 /// Evaluate a condition, exit with a fatal error if it fails.
 #define assertf(cond, ...)                                                             \
     if (!(cond))                                                                       \
     {                                                                                  \
-        logf_message(core::status::Level::FATAL, "Assertion failed: "s + __VA_ARGS__); \
+        LOGF_MESSAGE(core::status::Level::FATAL, "Assertion failed: "s + __VA_ARGS__); \
         std::exit(-1);                                                                 \
     }
 #else
 #define assertf(cond, ...)
 #endif
-

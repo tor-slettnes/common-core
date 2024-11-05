@@ -8,6 +8,7 @@
 #include "protobuf-event-types.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-variant-types.h++"
+#include "protobuf-message.h++"
 #include "protobuf-inline.h++"
 
 namespace protobuf
@@ -70,105 +71,33 @@ namespace protobuf
             proto.host());
     }
 
-    //==========================================================================
-    // core::logging::Message encoding to/decoding from cc::status::Event
-
-    void encode(const core::logging::Message &native, cc::status::Event *proto) noexcept
+    void encode(core::status::Event::ptr native, cc::status::Event *proto) noexcept
     {
-        encode(static_cast<core::status::Event>(native), proto);
-        core::types::KeyValueMap attributes;
-
-        attributes.insert_if(native.scope() != nullptr,
-                             core::logging::MESSAGE_FIELD_LOG_SCOPE,
-                             native.scopename());
-
-        attributes.insert_if(!native.path().empty(),
-                             core::logging::MESSAGE_FIELD_SOURCE_PATH,
-                             native.path());
-
-        attributes.insert_if(native.lineno(),
-                             core::logging::MESSAGE_FIELD_SOURCE_LINE,
-                             native.lineno());
-
-        attributes.insert_if(!native.function().empty(),
-                             core::logging::MESSAGE_FIELD_FUNCTION_NAME,
-                             native.function());
-
-        attributes.insert_if(native.thread_id(),
-                             core::logging::MESSAGE_FIELD_THREAD_ID,
-                             native.thread_id());
-
-        encode(attributes, proto->mutable_attributes());
-    }
-
-    void decode(const cc::status::Event &proto, core::logging::Message *native) noexcept
-    {
-        auto level = decoded<core::status::Level>(proto.level());
-        auto attributes = decoded<core::types::KeyValueMap>(proto.attributes());
-        auto scope = attributes.extract_value(
-            core::logging::MESSAGE_FIELD_LOG_SCOPE,
-            "remote");
-
-        *native = core::logging::Message(
-            proto.text(),
-            level,
-            core::logging::Scope::create(scope.as_string(), level),
-            decoded<core::dt::TimePoint>(proto.timestamp()),
-            attributes.extract_value(core::logging::MESSAGE_FIELD_SOURCE_PATH).as_string(),
-            attributes.extract_value(core::logging::MESSAGE_FIELD_SOURCE_LINE).as_uint(),
-            attributes.extract_value(core::logging::MESSAGE_FIELD_FUNCTION_NAME).as_string(),
-            static_cast<pid_t>(attributes.extract_value(core::logging::MESSAGE_FIELD_THREAD_ID).as_uint()),
-            proto.origin(),
-            proto.code(),
-            proto.symbol(),
-            attributes,
-            proto.contract_id(),
-            proto.host());
-    }
-
-
-    //==========================================================================
-    // encode/decode a loggable item as either an event or a message,
-    // whichever applies
-
-    void encode_event(const core::status::Event::ptr &event, cc::status::Event *proto) noexcept
-    {
-        if (const auto &message = std::dynamic_pointer_cast<core::logging::Message>(event))
+        if (auto message = std::dynamic_pointer_cast<core::logging::Message>(native))
         {
-            encode(*message, proto);
+            native = message->as_event();
+        }
+
+        if (native)
+        {
+            encode(*native, proto);
+        }
+    }
+
+    void decode(const cc::status::Event &proto,
+                core::status::Event::ptr *native) noexcept
+    {
+        core::status::Event event;
+        decode(proto, &event);
+
+        if (auto message = core::logging::Message::create_from_event(event))
+        {
+            *native = message;
         }
         else
         {
-            encode(*event, proto);
+            *native = std::make_shared<core::status::Event>(std::move(event));
         }
-    }
-
-    cc::status::Event encoded_event(const core::status::Event::ptr &event) noexcept
-    {
-        cc::status::Event msg;
-        encode_event(event, &msg);
-        return msg;
-    }
-
-    void decode_event(const cc::status::Event &proto, core::status::Event::ptr *native) noexcept
-    {
-        if (proto.text().empty())
-        {
-            *native = std::make_shared<core::status::Event>();
-            decode(proto, native->get());
-        }
-        else
-        {
-            *native = std::make_shared<core::logging::Message>(proto.text());
-            decode(proto, native->get());
-        }
-    }
-
-    core::status::Event::ptr decoded_event(const cc::status::Event &proto) noexcept
-    {
-        core::status::Event::ptr ptr;
-        decode_event(proto, &ptr);
-        return ptr;
     }
 
 }  // namespace protobuf

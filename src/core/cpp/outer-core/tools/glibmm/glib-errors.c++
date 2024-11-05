@@ -65,7 +65,7 @@ namespace core::glib
     {
         if (eptr)
         {
-            core::logging::MessageBuilder::ptr msg = custom_log_msg(
+            core::logging::MessageBuilder::ptr msg = CUSTOM_LOG_MESSAGE(
                 level, scope, tp, path, lineno, function);
 
             if (preamble.size())

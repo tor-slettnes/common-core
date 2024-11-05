@@ -137,6 +137,12 @@ namespace core
             return stream;
         }
 
+        DateTimeInterval::operator bool() const noexcept
+        {
+            return (this->unit == TimeUnit::ETERNITY) ||
+                   ((this->unit != TimeUnit::ZERO_TIME) && (this->count != 0));
+        }
+
         //==========================================================================
         // Helper functions, used below.
 

@@ -272,11 +272,11 @@ namespace platform::vfs::local
         const std::string &name,
         Context::ptr cxt)
     {
-        log_message(cxt->removable
-                        ? core::status::Level::INFO
-                        : core::status::Level::DEBUG,
-                    "Addding VFS context: ",
-                    *cxt);
+        LOGF_MESSAGE(cxt->removable
+                         ? core::status::Level::INFO
+                         : core::status::Level::DEBUG,
+                     "Addding VFS context: %s",
+                     *cxt);
 
         this->contexts[name] = cxt;
         vfs::signal_context.emit(core::signal::MAP_ADDITION, name, cxt);
@@ -288,7 +288,7 @@ namespace platform::vfs::local
         auto nh = this->contexts.extract(name);
         if (nh)
         {
-            logf_message(nh.mapped()->removable
+            LOGF_MESSAGE(nh.mapped()->removable
                              ? core::status::Level::INFO
                              : core::status::Level::DEBUG,
                          "Removing VFS context: %s",

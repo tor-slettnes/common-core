@@ -32,7 +32,11 @@ namespace core::status
         FATAL      // Reporting entity is disabled and cannot recover
     };
 
-    extern const types::SymbolMap<Level> LevelNames;
+    using LevelMap = types::SymbolMap<
+        Level,
+        std::multimap<Level, std::string>>;
+
+    extern const LevelMap level_names;
 
     std::ostream &operator<<(std::ostream &stream, Level lvl);
     std::istream &operator>>(std::istream &stream, Level &lvl);

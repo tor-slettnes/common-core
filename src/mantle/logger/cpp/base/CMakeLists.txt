@@ -17,6 +17,7 @@ set(LIB_DEPS
 )
 
 set(SOURCES
+  logger-types.c++
   logger-api.c++
 )
 

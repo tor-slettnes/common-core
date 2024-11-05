@@ -24,7 +24,7 @@ namespace logger::grpc
     {
         try
         {
-            this->provider->log(protobuf::decoded_event(*request));
+            this->provider->log(protobuf::decoded<core::status::Event::ptr>(*request));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -43,7 +43,7 @@ namespace logger::grpc
             ::cc::status::Event event;
             while (reader->Read(&event))
             {
-                this->provider->log(protobuf::decoded_event(event));
+                this->provider->log(protobuf::decoded<core::status::Event::ptr>(event));
             }
             return ::grpc::Status::OK;
         }
@@ -67,7 +67,6 @@ namespace logger::grpc
             }
 
             auto listener = this->provider->listen(spec);
-
             while (const std::optional<core::status::Event::ptr>& event = listener->get())
             {
                 if (context->IsCancelled())
@@ -75,8 +74,9 @@ namespace logger::grpc
                     break;
                 }
 
-                writer->Write(protobuf::encoded_event(*event));
+                writer->Write(protobuf::encoded<cc::status::Event>(*event));
             }
+            listener->close();
 
             return ::grpc::Status::OK;
         }

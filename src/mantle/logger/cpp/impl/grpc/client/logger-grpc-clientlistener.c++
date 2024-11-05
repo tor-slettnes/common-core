@@ -23,6 +23,7 @@ namespace logger::grpc
         : reader_(stub->listen(&this->context_,
                                protobuf::encoded<::cc::logger::ListenerSpec>(request)))
     {
+        logf_debug("Created grpc::ClientListener(%s)", request);
     }
 
     ClientListener::~ClientListener()
@@ -35,7 +36,6 @@ namespace logger::grpc
         if (this->reader_)
         {
             this->context().TryCancel();
-            this->reader_.reset();
         }
     }
 
@@ -44,10 +44,12 @@ namespace logger::grpc
         cc::status::Event msg;
         if (this->reader_->Read(&msg))
         {
-            return protobuf::decoded_event(msg);
+            return protobuf::decoded<core::status::Event::ptr>(msg);
         }
         else
         {
+            this->reader_->Finish();
+            this->reader_.reset();
             return {};
         }
     }

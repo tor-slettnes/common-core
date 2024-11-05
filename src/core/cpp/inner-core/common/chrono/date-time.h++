@@ -80,6 +80,8 @@ namespace core
 
         struct DateTimeInterval
         {
+            operator bool() const noexcept;
+
             TimeUnit unit = TimeUnit::ZERO_TIME;
             std::int64_t count = 0;
         };

@@ -100,7 +100,7 @@ namespace core::grpc
                                         const int &lineno,
                                         const std::string &function)
     {
-        auto msg = custom_log_msg(
+        auto msg = CUSTOM_LOG_MESSAGE(
             status::Level::NOTICE,
             log_scope,
             dt::Clock::now(),

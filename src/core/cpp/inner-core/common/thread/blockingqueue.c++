@@ -24,8 +24,8 @@ namespace core::types
             std::lock_guard lock(this->mtx);
             this->closed_ = true;
         }
-        this->space_available.notify_all();
         this->item_available.notify_all();
+        this->space_available.notify_all();
     }
 
     void BlockingQueueBase::reopen()

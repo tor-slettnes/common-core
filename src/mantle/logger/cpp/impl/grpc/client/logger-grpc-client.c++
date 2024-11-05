@@ -15,7 +15,7 @@ namespace logger::grpc
 {
     void LoggerClient::initialize()
     {
-        ClientBase::initialize();
+        LoggerClientBase::initialize();
         if (this->add_local_sink)
         {
             this->open();
@@ -30,14 +30,14 @@ namespace logger::grpc
             core::logging::message_dispatcher.remove_sink(this->identity());
             this->close();
         }
-        ClientBase::deinitialize();
+        LoggerClientBase::deinitialize();
     }
 
     void LoggerClient::log(const core::status::Event::ptr &event)
     {
         this->call_check(
             &Stub::log,
-            ::protobuf::encoded_event(event));
+            ::protobuf::encoded<cc::status::Event>(event));
     }
 
     bool LoggerClient::add_sink(const SinkSpec &spec)
@@ -109,7 +109,7 @@ namespace logger::grpc
 
     void LoggerClient::capture_event(const core::status::Event::ptr &event)
     {
-        if (!this->writer->Write(protobuf::encoded_event(event)))
+        if (!this->writer->Write(protobuf::encoded<cc::status::Event>(event)))
         {
             this->close();
         }

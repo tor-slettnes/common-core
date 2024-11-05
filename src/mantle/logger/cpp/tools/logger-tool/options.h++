@@ -20,13 +20,25 @@ private:
     void add_options() override;
     void add_commands();
 
+    void initialize() override;
+    void deinitialize() override;
+
     void on_monitor_start() override;
     void on_monitor_end() override;
+    void on_log_event(core::status::Event::ptr event);
 
     void log();
-    void define_contract();
-    void get_contract();
-    void list_contracts();
+    void add_sink();
+    void remove_sink();
+    void get_sink();
+    void list_sinks();
+    void list_static_fields();
+
+public:
+    std::shared_ptr<logger::API> provider;
+
+private:
+    std::string signal_handle;
 };
 
 extern std::unique_ptr<Options> options;

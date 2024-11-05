@@ -8,11 +8,15 @@
 #pragma once
 #include "logger-types.h++"
 #include "status/event.h++"
+#include "thread/signaltemplate.h++"
+#include "logging/logging.h++"
 
 #include <optional>
 
 namespace logger
 {
+    define_log_scope("logger");
+
     //--------------------------------------------------------------------------
     // API
 
@@ -20,6 +24,7 @@ namespace logger
     {
     protected:
         API(const std::string &identity);
+        virtual ~API();
 
     public:
         const std::string &identity() const;
@@ -46,7 +51,21 @@ namespace logger
         virtual std::shared_ptr<EventSource> listen(
             const ListenerSpec &spec) = 0;
 
+    public:
+        void start_listening(const ListenerSpec &spec);
+        void stop_listening();
+
+    private:
+        void keep_listening(const ListenerSpec &spec);
+
     private:
         std::string identity_;
+        bool keep_listening_;
+        std::thread listener_thread_;
+        std::weak_ptr<EventSource> listener_;
     };
+
+
+    extern core::signal::DataSignal<core::status::Event::ptr> signal_log_event;
+
 }  // namespace logger

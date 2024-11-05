@@ -329,7 +329,7 @@ namespace core
         try
         {
             const Invocation &f = this->invocation;
-            logf_message(this->loglevel,
+            LOGF_MESSAGE(this->loglevel,
                          "Scheduled task %r invocation (variant %d)",
                          this->handle,
                          f.index());

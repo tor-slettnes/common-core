@@ -11,6 +11,7 @@
 #include <string>
 #include <string_view>
 #include <sstream>
+#include <optional>
 
 using namespace std::literals::string_literals;  // ""s
 
@@ -165,9 +166,43 @@ namespace core::str
         return StringConvert<T>::from_string(s);
     }
 
+    // /// \brief Convert string to the specified template type.
+    // /// \param[in] s
+    // ///     Input string
+    // /// \param[in] fallback
+    // ///     Value to return if conversion cannot take place
+    // /// \param[out] eptr
+    // ///     Any exception that occurred ducring conversion. Pass in a `nullptr`
+    // ///     to completely disable exception handling.
+    // /// \return
+    // ///     Converted value.
+    // ///
+    // /// This variant does not throw exceptions. Instead, any exceptions thrown
+    // /// by underlying conversion methods are stored in the `eptr` argument, can
+    // /// can be accessed via `std::rethrow_exception()`.
+
+    // template <class T>
+    // T convert_to(const std::string_view &s,
+    //              const T &fallback,
+    //              std::exception_ptr *eptr = nullptr) noexcept
+    // {
+    //     try
+    //     {
+    //         return convert_to<T>(s);
+    //     }
+    //     catch (...)
+    //     {
+    //         if (eptr)
+    //         {
+    //             *eptr = std::current_exception();
+    //         }
+    //         return fallback;
+    //     }
+    // }
+
     /// \brief Convert string to the specified template type.
     /// \param[in] s
-    ///     Input string
+    ///     Optional input string. If not provided, fallback value is returned.
     /// \param[in] fallback
     ///     Value to return if conversion cannot take place
     /// \param[out] eptr
@@ -181,22 +216,26 @@ namespace core::str
     /// can be accessed via `std::rethrow_exception()`.
 
     template <class T>
-    T convert_to(const std::string_view &s,
+    T convert_to(const std::optional<std::string_view> &s,
                  const T &fallback,
                  std::exception_ptr *eptr = nullptr) noexcept
     {
-        try
+        if (s)
         {
-            return convert_to<T>(s);
-        }
-        catch (...)
-        {
-            if (eptr)
+            try
             {
-                *eptr = std::current_exception();
+                return convert_to<T>(*s);
             }
-            return fallback;
+            catch (...)
+            {
+                if (eptr)
+                {
+                    *eptr = std::current_exception();
+                }
+            }
         }
+
+        return fallback;
     }
 
     /// Convert an arbitrary type to string
