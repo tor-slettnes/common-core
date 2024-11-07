@@ -36,7 +36,7 @@ namespace logger
     {
         SinkID sink_id;
         SinkType sink_type = SinkType::UNSPECIFIED;
-        bool persistent = false;
+        bool permanent = false;
         std::string filename_template;
         core::dt::DateTimeInterval rotation_interval;
         bool use_local_time = true;

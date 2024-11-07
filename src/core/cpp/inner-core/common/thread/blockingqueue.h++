@@ -42,9 +42,14 @@ namespace core::types
         ///     Maximum queue size.
         /// @param[in] overflow_disposition
         ///     How to handle `put()` requests into a full queue.
+        /// @param[in] close_on_shutdown
+        ///     Close this queue on program shutdown (to prevent hang)
+
         BlockingQueueBase(
             unsigned int maxsize,
             OverflowDisposition overflow_disposition);
+
+        virtual ~BlockingQueueBase();
 
     public:
         /// @brief

@@ -17,7 +17,7 @@ import "google/protobuf/empty.proto";
 service Logger
 {
     // Log a single message
-    rpc log (cc.status.Event) returns (google.protobuf.Empty);
+    rpc submit (cc.status.Event) returns (google.protobuf.Empty);
 
     // Open a writable stream for continuous logging
     rpc writer (stream cc.status.Event) returns (google.protobuf.Empty);
@@ -70,7 +70,7 @@ message SinkSpec
     SinkType sink_type = 2;
 
     // Whether this sink should be added permanently (saved to config)
-    bool persistent = 3;
+    bool permanent = 3;
 
     // Filename template, used by log sinks that write directly to files.  If
     // not provided, defaults to `{sink_id}` followed by enough date/time fields
@@ -91,7 +91,7 @@ message SinkSpec
     //   - `{minute}`     : two-digit minute (00 - 59)
     //   - `{second}`     : two-digit second (00 - 61)
     //   - `{zonename}`   : time zone name or abbreviation (e.g., "PST")
-    //   - `{zoneoffset}` : time zone offset (e.g. "-0700")
+    //   - `{zoneoffset}` : time zone offset (e.g. "+0100" or "-0700")
     //
     // The timestamp is the current time aligned according to the last nominal
     // rotation time, given `rotation_interval` above.  For instance, given a
@@ -108,7 +108,7 @@ message SinkSpec
     optional bool use_local_time = 6;
 
     // Minimum severity level to capture
-    cc.status.Level min_level = 8;
+    optional cc.status.Level min_level = 8;
 
     // Specific log contract.  If provided, only events with matching
     // `contract_id` will be captured by this sink.

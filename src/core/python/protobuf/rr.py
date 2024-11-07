@@ -6,4 +6,8 @@
 #===============================================================================
 
 ### Populate symbols from `request_reply.proto`
-from ..generated.request_reply_pb2 import *
+from .utils import proto_enum
+from ..generated.request_reply_pb2 import Request, Reply, Parameter, \
+    Status, StatusCode
+
+StatusCode = proto_enum(StatusCode)

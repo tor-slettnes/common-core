@@ -19,6 +19,8 @@ import cc.protobuf.signal
 import cc.protobuf.status
 import cc.protobuf.rr
 
+import cc.core.invocation
+
 ### Third-party modules
 import google.protobuf.message
 
@@ -66,6 +68,10 @@ class ArgParser (argparse.ArgumentParser):
                           default=False,
                           const=True,
                           help='Print debug messages')
+
+def foo():
+    cc.core.invocation.caller_frame()
+
 
 def legend():
     '''Interactive Service Control.  Subsystems loaded:

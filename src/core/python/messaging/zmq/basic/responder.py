@@ -7,7 +7,7 @@
 
 ### Modules within package
 from .host import Host
-from ....core.invocation import safe_invoke
+from cc.core.invocation import safe_invoke
 
 ### Third-party modules
 import zmq

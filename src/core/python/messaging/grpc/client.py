@@ -8,7 +8,7 @@
 ### Modules within package
 from .base import Base
 from .client_interceptor import ClientInterceptor, AsyncClientInterceptor
-from ...core.invocation import invocation
+from cc.core.invocation import invocation
 
 ### Third-party modules
 import grpc
@@ -24,7 +24,6 @@ class Client (Base):
     connect to the correct server address (host and port) as specified in the
     corresponding service settings.  Additionally, call wrappers are provided to
     extract custom error details in case of failures.
-
     '''
 
     ## Messaging endpoint type
@@ -73,7 +72,6 @@ class Client (Base):
 
         self.wait_for_ready = wait_for_ready
         self.use_asyncio    = use_asyncio
-        self.lastError      = None
         self.host           = self.realaddress(host, "host", "port", "localhost", 8080)
         self._init_channel()
 

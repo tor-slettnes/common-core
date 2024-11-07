@@ -10,7 +10,6 @@ from cc.protobuf.import_proto import import_proto
 from cc.protobuf.wellknown import decodeTimestamp
 from cc.protobuf.variant import decodeValueMap
 from cc.protobuf.vfs import VFSPathType, VFSPathsType, encodePath, decodePath
-from cc.core.enumeration import Enumeration
 
 ### Standard Python modules
 from typing import Sequence, Mapping, Tuple

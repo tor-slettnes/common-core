@@ -32,7 +32,7 @@ namespace logger
         virtual void initialize() {}
         virtual void deinitialize() {}
 
-        virtual void log(
+        virtual void submit(
             const core::status::Event::ptr &event) = 0;
 
         virtual bool add_sink(

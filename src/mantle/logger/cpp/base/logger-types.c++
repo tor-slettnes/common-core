@@ -35,7 +35,7 @@ namespace logger
         core::types::PartsList parts;
         parts.add_string("sink_id", spec.sink_id);
         parts.add("sink_type", spec.sink_type);
-        parts.add_value("persistent", spec.persistent, spec.persistent);
+        parts.add_value("permanent", spec.permanent, spec.permanent);
         parts.add_string("filename_template", spec.filename_template);
         parts.add("rotation_interval", spec.rotation_interval, spec.rotation_interval);
         parts.add_value("use_local_time", spec.use_local_time);

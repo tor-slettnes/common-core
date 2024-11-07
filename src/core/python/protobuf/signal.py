@@ -6,29 +6,23 @@
 #===============================================================================
 
 ### Modules withn package
-from .utils import enumToValue
-from .import_proto import import_proto
+from .utils import proto_enum
 from ..core.invocation import safe_invoke
+from ..generated.signal_pb2 import Filter, MappingAction
 
 ### Third-party modules
 from google.protobuf.message import Message
 
 ### Standard Python modules
 from typing import Optional, Callable, Mapping, Union
-import enum
 import threading
 import asyncio
-
-### Import generated types from `signal.proto`. Symbols will appear within a new
-### `cc.signal` namespace.
-import_proto('signal', globals())
-
 
 #===============================================================================
 # Annotation types
 
+MappingAction = proto_enum(MappingAction)
 Slot = Callable[[Message], None]
-MappingAction = enum.Enum('MappingAction', cc.signal.MappingAction.items())
 
 #===============================================================================
 # SignalStore class
@@ -446,7 +440,7 @@ class SignalStore:
                      key         : str,
                      value       : Message):
 
-        if key and not enumToValue(action):
+        if key and action:
             if value.ByteSize() == 0:
                 action = MappingAction.MAP_REMOVAL
             elif key in self.get_cached(signal_name, {}):
@@ -454,7 +448,7 @@ class SignalStore:
             else:
                 action = MappingAction.MAP_ADDITION
 
-        signal = self.signal_type(mapping_action = enumToValue(action),
+        signal = self.signal_type(mapping_action = action,
                                   mapping_key = key,
                                   **{signal_name: value})
         self.emit(signal)

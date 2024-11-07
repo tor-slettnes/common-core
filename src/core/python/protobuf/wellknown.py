@@ -28,7 +28,6 @@ from google.protobuf.struct_pb2 import Value, ListValue, Struct
 ### Standard Python modules
 from time import struct_time, mktime
 from datetime import datetime
-from enum import Enum
 
 ### Type type hint for timestamps
 TimestampType = Timestamp|float|int|str|struct_time|datetime

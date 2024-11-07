@@ -6,9 +6,9 @@
 #===============================================================================
 
 ### Modules within package
-from ....protobuf.utils import messageToDict
-from ....protobuf.rr import Reply, StatusCode
-from ....protobuf.status import Event
+from cc.protobuf.utils import messageToDict
+from cc.protobuf.rr import Reply, StatusCode
+from cc.protobuf.status import Event
 
 class Error (RuntimeError):
     '''ZMQ RPC error'''

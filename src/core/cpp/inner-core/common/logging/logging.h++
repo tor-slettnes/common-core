@@ -69,14 +69,14 @@
 #include "dispatchers/sync-dispatcher.h++"
 
 //==============================================================================
-/// Wrapper macros for generating & logging a message in one step.  Macros are
-/// used rather than function templates in order to preserve source context for
-/// Message() constructor, below.
-///
-/// Construct messages by sending each provided argument directly to the output
-/// stream, with no additional formatting. Arguments must be supported by the
-/// "<<" output stream operator. Frequently, this means the appropriate header
-/// file needs to be included.
+// Wrapper macros for generating & logging a message in one step.  We use macros
+// rather than function templates in order to preserve source context for the
+// MessageBuilder constructor.
+//
+// Construct messages by sending each provided argument directly to the output
+// stream, with no additional formatting. Arguments must be supported by the
+// "<<" output stream operator. Frequently, this means the appropriate header
+// file needs to be included.
 
 #define CUSTOM_LOG_MESSAGE(level, scope, timepoint, path, lineno, function) \
     core::logging::MessageBuilder::create_shared(                           \

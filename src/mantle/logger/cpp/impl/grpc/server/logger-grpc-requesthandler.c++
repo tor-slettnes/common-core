@@ -17,14 +17,14 @@ namespace logger::grpc
     {
     }
 
-    ::grpc::Status RequestHandler::log(
+    ::grpc::Status RequestHandler::submit(
         ::grpc::ServerContext* context,
         const ::cc::status::Event* request,
         ::google::protobuf::Empty* response)
     {
         try
         {
-            this->provider->log(protobuf::decoded<core::status::Event::ptr>(*request));
+            this->provider->submit(protobuf::decoded<core::status::Event::ptr>(*request));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -43,7 +43,7 @@ namespace logger::grpc
             ::cc::status::Event event;
             while (reader->Read(&event))
             {
-                this->provider->log(protobuf::decoded<core::status::Event::ptr>(event));
+                this->provider->submit(protobuf::decoded<core::status::Event::ptr>(event));
             }
             return ::grpc::Status::OK;
         }

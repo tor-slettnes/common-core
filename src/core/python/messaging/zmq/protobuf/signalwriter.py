@@ -8,7 +8,7 @@
 ### Modules within package
 from .messagewriter import MessageWriter
 from ..basic import Publisher
-from ....protobuf.signal import SignalStore
+from cc.protobuf.signal import SignalStore
 
 class SignalWriter (MessageWriter):
     '''Capture local signals and forward to remote peers as ZMQ publications'''

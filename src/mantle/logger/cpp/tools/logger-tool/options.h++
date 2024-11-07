@@ -27,7 +27,7 @@ private:
     void on_monitor_end() override;
     void on_log_event(core::status::Event::ptr event);
 
-    void log();
+    void submit();
     void add_sink();
     void remove_sink();
     void get_sink();

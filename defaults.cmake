@@ -74,7 +74,7 @@ set(PYTHON_DEPENDENCIES "gprcio;protobuf;zmq"
   CACHE STRING "Python wheel runtime dependencies")
 
 set(PYTHON_PIP_REQUIREMENTS_FILE
-  "${CMAKE_CURRENT_LIST_DIR}/src/core/python/build/virtualenv/requirements.txt"
+  "${CMAKE_CURRENT_LIST_DIR}/src/core/python/buildtools/virtualenv/requirements.txt"
   CACHE FILEPATH
   "File containing required PIP-installable packages for virtual environment")
 
@@ -89,8 +89,16 @@ option(PACKAGE_SPLIT_BY_GROUP
   "Create one installation package per component group"
   TRUE)
 
-set(CPACK_PACKAGE_NAME "cc"
-  CACHE  STRING "Base name for installable packages. Component or group name may be appended to this")
+if(PACKAGE_NAME_PREFIX)
+  set(force FORCE)
+else()
+  set(force)
+  set(PACKAGE_NAME_PREFIX "cc")
+endif()
+
+set(CPACK_PACKAGE_NAME ${PACKAGE_NAME_PREFIX}
+  CACHE STRING "Base name for installable packages. Component or group name may be appended to this"
+  ${force})
 
 set(CPACK_PACKAGE_VENDOR "Common Core Authors"
   CACHE STRING "Name of package vendor")

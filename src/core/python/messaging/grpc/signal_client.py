@@ -8,14 +8,9 @@
 ### Modules within package
 from .client  import Client
 from .client_reader import ThreadReader, AsyncReader
-from ...protobuf.signal import SignalStore, Slot, cc
-from ...protobuf.import_proto import import_proto
+from cc.protobuf.signal import SignalStore, Slot, Filter
 
 from typing import Callable, Sequence, Optional
-
-### Import generated types from `signal.proto`. Symbols will appear within a new
-### `cc.signal` namespace.
-import_proto('signal', globals())
 
 #===============================================================================
 # Client
@@ -62,7 +57,7 @@ class SignalClient (Client):
      * Pass an existing `SignalStore()` instance to `__init__()`:
 
        ```python
-       my_signal_store = protobuf.signal.SignalStore(signal_type = mypackage.MySignal)
+       my_signal_store = cc.protobuf.signal.SignalStore(signal_type = mypackage.MySignal)
 
        class MyServiceClient (messaging.grpc.SignalClient):
            from my_service_pb2_grpc import MyServiceStub as Stub
@@ -119,8 +114,8 @@ class SignalClient (Client):
     ```
 
     This will invoke the gRPC `watch()` method in a new thread, with a
-    Signal.Filter input based on which signal slots were previously connected
-    to one or more handlers.
+    `cc.protobuf.signal.Filter` input based on which signal slots were
+    previously connected to one or more handlers.
 
     '''
 
@@ -198,11 +193,11 @@ class SignalClient (Client):
 
     def signal_filter(self, watch_all):
         if watch_all:
-            return cc.signal.Filter()
+            return Filter()
         else:
             indexmap   = self.signal_store.signal_fields()
             indices    = [indexmap.get(slot) for slot in self.signal_store.slots]
-            return cc.signal.Filter(polarity=True, index=filter(None, indices))
+            return Filter(polarity=True, index=filter(None, indices))
 
 
     def start_notify_signals(self,
@@ -256,5 +251,5 @@ class SignalClient (Client):
         self.reader.stop()
 
 
-    def watch(self, signal_filter : cc.signal.Filter = cc.signal.Filter()):
+    def watch(self, signal_filter : Filter = Filter()):
         return self.stub.watch(signal_filter, wait_for_ready=True)

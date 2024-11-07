@@ -46,7 +46,7 @@ namespace protobuf
     {
         proto->set_sink_id(native.sink_id);
         proto->set_sink_type(encoded<cc::logger::SinkType>(native.sink_type));
-        proto->set_persistent(native.persistent);
+        proto->set_permanent(native.permanent);
         proto->set_filename_template(native.filename_template);
         encode(native.rotation_interval, proto->mutable_rotation_interval());
         proto->set_use_local_time(native.use_local_time);
@@ -67,7 +67,7 @@ namespace protobuf
     {
         native->sink_id = proto.sink_id();
         decode(proto.sink_type(), &native->sink_type);
-        native->persistent = proto.persistent();
+        native->permanent = proto.permanent();
         native->filename_template = proto.filename_template();
         decode(proto.rotation_interval(), &native->rotation_interval);
         native->use_local_time = proto.use_local_time();

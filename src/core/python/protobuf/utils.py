@@ -17,10 +17,18 @@ from google.protobuf.internal.enum_type_wrapper \
 
 ### Standard Python modules
 from typing import Optional, Callable, Mapping, Union
-import enum
+from enum import IntEnum
 
 #===============================================================================
 # Methods
+
+def proto_enum(proto_type: EnumTypeWrapper) -> IntEnum:
+    '''Convert a ProtoBuf `enum` type to Python `enum.IntEnum`.
+    These are interchangable as both are derived from `int`, but the latter
+    provides for better documentation/introspective representation.
+    '''
+    return IntEnum(proto_type.DESCRIPTOR.name, proto_type.items())
+
 
 def check_message_type(value: Message,
                        expected: type = Message,
@@ -71,32 +79,6 @@ def dictToMessage(value     : dict,
         msg,
         ignore_unknown_fields = ignore_unknown_fields)
     return msg
-
-
-def valueToEnum(value: int|enum.Enum,
-                enumeration: enum.EnumType) -> enum.Enum:
-    '''Convert an integer value to a Python enumerated value'''
-
-    if isinstance(value, enumeration):
-        return value
-    elif isinstance(value, int):
-        return enumeration(value)
-    elif value is None:
-        return enumeration(0)
-    else:
-        raise TypeError('Value must be an integer or enumeration: %r'%(value,))
-
-
-def enumToValue(value: int|enum.Enum) -> int:
-    if isinstance(value, enum.Enum):
-        return value.value
-    elif isinstance(value, int):
-        return value
-    elif value is None:
-        return 0
-    else:
-        raise TypeError('Value must be an integer or enumeration: %r'%(value,))
-
 
 def print_message(message: Message, as_one_line=True):
     '''Convenience wrapper to print a protobuf message.'''

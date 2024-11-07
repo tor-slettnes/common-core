@@ -7,7 +7,7 @@
 
 ### Modules within package
 from .service import Service
-from ...protobuf.signal import SignalStore, cc
+from cc.protobuf.signal import SignalStore, Filter
 
 ### Third-party modules
 import google.protobuf.message
@@ -49,7 +49,7 @@ class SignalService (Service):
 
 
     def watch(self,
-              request: cc.signal.Filter,
+              request: Filter,
               context: grpc.ServicerContext
               ) -> Generator[None, google.protobuf.message.Message, None]:
         '''
@@ -75,7 +75,7 @@ class SignalService (Service):
             self.signal_store.disconnect_signal(signal_name)
 
 
-    def signal_list(self, signal_filter: cc.signal.Filter):
+    def signal_list(self, signal_filter: Filter):
         polarity = bool(signal_filter.polarity)
         requested = set(signal_filter.indices)
 

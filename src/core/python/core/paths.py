@@ -14,12 +14,16 @@ import os
 import os.path
 import platform
 import pathlib
+import sys
 import importlib.resources
 from typing import Sequence, Optional
 
 FilePath   = str | Traversable
 SearchPath = Sequence[FilePath]
 ModuleName = str
+
+def programName() -> str:
+    return os.path.splitext(os.path.basename(sys.argv[0]))[0]
 
 def installRoot() -> FilePath:
     '''Obtain installation root folder'''

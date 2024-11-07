@@ -98,6 +98,7 @@ namespace core::idl
             idl.lineno(),
             idl.function(),
             static_cast<pid_t>(idl.thread_id()),
+            decoded<core::status::Domain>(idl.domain()),
             idl.origin(),
             idl.code(),
             idl.symbol(),

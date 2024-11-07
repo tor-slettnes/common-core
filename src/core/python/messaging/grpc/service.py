@@ -9,7 +9,7 @@
 from .base import Base
 
 ### Third-party modules
-from google.protobuf.empty_pb2 import Empty
+from cc.protobuf.wellknown import Empty
 import grpc
 
 ### Standard Python modules

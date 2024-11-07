@@ -50,6 +50,24 @@ message Event
 
     // Description of error, possibly expanded with attribute values.
     string text = 15;
+
+    //--------------------------------------------------------------------------
+    // Fields specific to log messages
+
+    // Thread ID
+    uint64 thread_id = 128;
+
+    // Log scope, e,.g. `shared`, `vfs`, etc.
+    string log_scope = 132;
+
+    // Source file
+    string source_path = 136;
+
+    // Source line
+    uint64 source_line = 137;
+
+    // Function name
+    string function_name = 140;
 }
 
 enum Domain

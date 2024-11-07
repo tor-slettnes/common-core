@@ -9,9 +9,8 @@
 from .error import Error
 from .requesthandler import RequestHandler
 from ..basic.responder import Responder
-from ....protobuf.rr import Request, Reply, STATUS_INVALID
-from ....protobuf.status import FLOW_CANCELLED
-from ....protobuf.variant import valueList
+from cc.protobuf.rr import Request, Reply, StatusCode
+from cc.protobuf.variant import valueList
 
 ### Third-party modules
 import google.protobuf.message
@@ -43,11 +42,10 @@ class Server (Responder):
             logging.warning('ZMQ RPC server failed to decode ProtoBuf request: %s'%
                             (binary_request,))
 
-            Error(STATUS_INVALID,
+            Error(StatusCode.STATUS_INVALID,
                   Event(
                       text = str(e),
                       symbol = type(e).__name__,
-                      flow = FLOW_CANCELLED,
                       attributes = valueList(
                           data = binary_request
                       )
@@ -75,11 +73,10 @@ class Server (Responder):
         try:
             handler = self.request_handlers[request.interface_name]
         except KeyError:
-            Error(STATUS_INVALID,
+            Error(StatusCode.STATUS_INVALID,
                   Event(
                       text = "No such RPC interface",
                       symbol = 'KeyError',
-                      flow = FLOW_CANCELLED,
                       attributes = valueList(
                           interface_name = request.interface_name,
                           available_interfaces = list(self.request_handlers.keys())

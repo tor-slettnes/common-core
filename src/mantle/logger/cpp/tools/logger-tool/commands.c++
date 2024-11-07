@@ -11,11 +11,11 @@
 void Options::add_commands()
 {
     this->add_command(
-        "log",
+        "submit",
         {"TEXT", "[LEVEL]"},
         "Log a message at the specified level. [%default]If no level is provided, use the "
         "default log level (as set with `--log-default` or its aliases)",
-        std::bind(&Options::log, this));
+        std::bind(&Options::submit, this));
 
     this->add_command(
         "add_sink",
@@ -54,7 +54,7 @@ void Options::add_commands()
         std::bind(&Options::monitor, this));
 }
 
-void Options::log()
+void Options::submit()
 {
     std::string text = this->get_arg("text");
     auto level = core::str::convert_to<core::status::Level>(
@@ -64,7 +64,7 @@ void Options::log()
     auto log_scope = core::logging::Scope::create("logtool", level);
     auto message = DEFAULT_LOG_MESSAGE(level);
     message->add(text);
-    this->provider->log(message);
+    this->provider->submit(message);
 }
 
 void Options::add_sink()

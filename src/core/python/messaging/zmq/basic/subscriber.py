@@ -9,7 +9,7 @@
 from .satellite import Satellite
 from .filter import Filter, Topic
 from .messagehandler import MessageHandler
-from ....core.invocation import safe_invoke
+from cc.core.invocation import safe_invoke
 
 ### Third-party modules
 import zmq

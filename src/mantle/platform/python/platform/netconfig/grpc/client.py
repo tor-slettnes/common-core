@@ -10,11 +10,11 @@ from cc.messaging.grpc import SignalClient
 from cc.protobuf.import_proto import import_proto
 from cc.protobuf.wellknown import empty
 from cc.core.scalar_types import HEX8
-from cc.core.enumeration import Enumeration
 
 ### Standard Python modules
 from typing import Optional, Sequence, Union, Iterator
-import collections
+from enum import IntEnum
+from collections import NamedTuple
 
 ## Import generated ProtoBuf symbols. These will appear in namespaces
 ## corresponding to the package names from their `.proto` files:
@@ -23,8 +23,8 @@ import_proto('google.protobuf.wrappers', globals())
 import_proto('netconfig', globals())
 
 ### Local types
-ActiveConnectionStateTuple = collections.namedtuple(
-    "ActiveConnectionState", ("state", "flags", "reason"))
+ActiveConnectionStateTuple = namedtuple("ActiveConnectionState",
+                                        ("state", "flags", "reason"))
 
 ### Data types
 GlobalData                  = cc.platform.netconfig.GlobalData
@@ -43,22 +43,22 @@ WPA_Data                    = cc.platform.netconfig.WPA_Data
 EAP_Data                    = cc.platform.netconfig.EAP_Data
 
 ## Enumerations
-IPConfigMethod              = Enumeration(cc.platform.netconfig.IPConfigMethod.items())
-WirelessMode                = Enumeration(cc.platform.netconfig.WirelessMode.items())
-KeyManagement               = Enumeration(cc.platform.netconfig.KeyManagement.items())
-AuthenticationAlgorithm     = Enumeration(cc.platform.netconfig.AuthenticationAlgorithm.items())
-AuthenticationType          = Enumeration(cc.platform.netconfig.AuthenticationType.items())
-EAP_Type                    = Enumeration(cc.platform.netconfig.EAP_Type.items())
-EAP_Phase2                  = Enumeration(cc.platform.netconfig.EAP_Phase2.items())
-WEP_KeyType                 = Enumeration(cc.platform.netconfig.WEP_KeyType.items())
-DeviceType                  = Enumeration(cc.platform.netconfig.DeviceType.items())
-DeviceState                 = Enumeration(cc.platform.netconfig.DeviceState.items())
-DeviceFlags                 = Enumeration(cc.platform.netconfig.DeviceFlags.items())
-ConnectionType              = Enumeration(cc.platform.netconfig.ConnectionType.items())
-ActiveConnectionState       = Enumeration(cc.platform.netconfig.ActiveConnectionState.items())
-ActivationStateFlags        = Enumeration(cc.platform.netconfig.ActivationStateFlags.items())
-ActiveConnectionStateReason = Enumeration(cc.platform.netconfig.ActiveConnectionStateReason.items())
-FAST_Provisioning           = Enumeration(cc.platform.netconfig.FAST_Provisioning.items())
+IPConfigMethod              = IntEnum("IPConfigMethod", cc.platform.netconfig.IPConfigMethod.items())
+WirelessMode                = IntEnum("WirelessMode", cc.platform.netconfig.WirelessMode.items())
+KeyManagement               = IntEnum("KeyManagement", cc.platform.neptconfig.KeyManagement.items())
+AuthenticationAlgorithm     = IntEnum("AuthenticationAlgorithm", cc.platform.netconfig.AuthenticationAlgorithm.items())
+AuthenticationType          = IntEnum("AuthenticationType", cc.platform.netconfig.AuthenticationType.items())
+EAP_Type                    = IntEnum("EAP_Type", cc.platform.netconfig.EAP_Type.items())
+EAP_Phase2                  = IntEnum("EAP_Phase2", cc.platform.netconfig.EAP_Phase2.items())
+WEP_KeyType                 = IntEnum("WEP_KeyTYpe", cc.platform.netconfig.WEP_KeyType.items())
+DeviceType                  = IntEnum("DeviceType", cc.platform.netconfig.DeviceType.items())
+DeviceState                 = IntEnum("DeviceState", cc.platform.netconfig.DeviceState.items())
+DeviceFlags                 = IntEnum("DeviceFlags", cc.platform.netconfig.DeviceFlags.items())
+ConnectionType              = IntEnum("ConnectionType", cc.platform.netconfig.ConnectionType.items())
+ActiveConnectionState       = IntEnum("ActiveConnectionState", cc.platform.netconfig.ActiveConnectionState.items())
+ActivationStateFlags        = IntEnum("ActivationStateFlags", cc.platform.netconfig.ActivationStateFlags.items())
+ActiveConnectionStateReason = IntEnum("ActiveConnectionStateReason", cc.platform.netconfig.ActiveConnectionStateReason.items())
+FAST_Provisioning           = IntEnum("FAST_provisioning", cc.platform.netconfig.FAST_Provisioning.items())
 
 
 #===============================================================================

@@ -7,8 +7,8 @@
 
 ### Modules within package
 from ..basic import Publisher, Filter, MessageWriter as BaseWriter
-from ....protobuf.wellknown import Message, MessageType
-from ....protobuf.utils import dictToMessage
+from cc.protobuf.wellknown import Message, MessageType
+from cc.protobuf.utils import dictToMessage
 
 
 class MessageWriter (BaseWriter):

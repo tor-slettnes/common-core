@@ -9,7 +9,10 @@ from typing import Callable, Sequence, Mapping, Optional, Any
 
 import sys
 import traceback
+import inspect
 import logging
+
+tb = None
 
 def check_type (argument: object,
                 expected_type: type):
@@ -61,3 +64,10 @@ def invocation(method, args, kwargs):
     arglist  = [ "%r"%(arg,) for arg in args ]
     arglist += [ "%s=%r"%item for item in kwargs.items() ]
     return "%s(%s)"%(method.__name__, ", ".join(arglist))
+
+
+def caller_frame(hops: int = 1):
+    stack = inspect.stack()
+    return stack[hops+1]
+
+    # tb = inspect.getframeinfo(inspect.currentframe())

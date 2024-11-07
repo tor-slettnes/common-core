@@ -53,6 +53,7 @@ def import_core_protos(target_scope: object,
     import_proto('variant', target_scope, namespace)
     import_proto('status', target_scope, namespace)
     import_proto('signal', target_scope, namespace)
+    import_proto('datetime', target_scope, namespace)
     import_proto('request_reply', target_scope, namespace)
 
 

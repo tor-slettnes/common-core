@@ -10,7 +10,7 @@ from ..core import API, signal_store
 from cc.core.scheduler import scheduler, TaskAlignment
 from cc.protobuf.import_proto import import_proto
 from cc.protobuf.wellknown import MessageToString, encodeTimestamp
-from cc.protobuf.demo import encodeTimeStruct
+from cc.protobuf.datetime import encodeTimeStruct
 
 ### Standard Python modules
 from typing import Callable

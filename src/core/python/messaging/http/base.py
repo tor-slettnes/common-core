@@ -7,7 +7,7 @@
 
 ### Modules within package
 from ..common import Endpoint
-from ...core.invocation import check_type
+from cc.core.invocation import check_type
 
 ### Standard Python modules
 from typing import Optional

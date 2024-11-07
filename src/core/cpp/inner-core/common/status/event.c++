@@ -234,15 +234,15 @@ namespace core::status
     std::vector<std::string> Event::field_names() noexcept
     {
         return {
+            EVENT_FIELD_TEXT,
             EVENT_FIELD_TIME,
+            EVENT_FIELD_LEVEL,
             EVENT_FIELD_DOMAIN,
             EVENT_FIELD_ORIGIN,
-            EVENT_FIELD_HOST,
-            EVENT_FIELD_CONTRACT_ID,
             EVENT_FIELD_CODE,
             EVENT_FIELD_SYMBOL,
-            EVENT_FIELD_LEVEL,
-            EVENT_FIELD_TEXT,
+            EVENT_FIELD_HOST,
+            EVENT_FIELD_CONTRACT_ID,
         };
     }
 

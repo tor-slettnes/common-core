@@ -74,6 +74,7 @@ namespace core::logging
                 uint lineno = 0,
                 const std::string &function = {},
                 pid_t thread_id = 0,
+                status::Domain domain = status::Domain::APPLICATION,
                 const std::string &origin = {},
                 Code code = 0,
                 const Symbol &symbol = {},

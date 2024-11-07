@@ -26,6 +26,7 @@ namespace core::logging
                   lineno,                                               // lineno
                   function,                                             // function
                   thread_id,                                            // thread_id
+                  status::Domain::APPLICATION,                          // domain
                   platform::path ? platform::path->exec_name() : ""s),  // origin
           dispatcher_(dispatcher),
           is_applicable_(Message::is_applicable() && dispatcher->is_applicable(*this))

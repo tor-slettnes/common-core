@@ -33,18 +33,16 @@ else
 endif
 
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
+ifeq ($(shell uname), Linux)
+   export CMAKE_BUILD_PARALLEL_LEVEL = $(shell nproc)
+endif
 
-CMAKE_ARGS = -D PYTHON_VENV=$(PYTHON_VENV)
-CMAKE_ARGS += $(if $(PRODUCT),-D PRODUCT="$(PRODUCT)")
-CMAKE_ARGS += $(if $(VERSION),-D VERSION="$(VERSION)")
-CMAKE_ARGS += $(if $(BUILD_NUMBER),-D BUILD_NUMBER="$(BUILD_NUMBER)")
-CMAKE_ARGS += $(if $(PACKAGE_NAME),-D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
+CONFIG_ARGS=$(if $(PRODUCT),-D PRODUCT="$(PRODUCT)")
+CONFIG_ARGS+=$(if $(VERSION), -D VERSION="$(VERSION)")
+CONFIG_ARGS+=$(if $(BUILD_NUMBER), -D BUILD_NUMBER="$(BUILD_NUMBER)")
+CONFIG_ARGS+=$(if $(PACKAGE_NAME), -D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
 
 CMAKE_TAG = $(BUILD_DIR)/Makefile
-
-ifeq ($(shell uname), Linux)
-   export CMAKE_BUILD_PARALLEL_LEVEL ?= $(shell nproc)
-endif
 
 ### Check for a target-specific toolchain and use that if available
 
@@ -95,7 +93,7 @@ test: build
 	@echo "Testing in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cmake --build "$(BUILD_DIR)" --target test
+	cmake --build "$(BUILD_DIR)" --target test
 
 .PHONY: build
 build: cmake
@@ -104,10 +102,14 @@ build: cmake
 	@echo "Building in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cmake --build "$(BUILD_DIR)"
+	cmake --build "$(BUILD_DIR)"
 
 .PHONY: cmake
 cmake: $(CMAKE_TAG)
+
+ifneq ($(strip $(CONFIG_ARGS)),)
+.PHONY: $(CMAKE_TAG)
+endif
 
 $(CMAKE_TAG):
 	@echo
@@ -115,7 +117,7 @@ $(CMAKE_TAG):
 	@echo "Generating build files in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cmake -B "$(BUILD_DIR)" $(CMAKE_ARGS)
+	cmake -B "$(BUILD_DIR)" $(CONFIG_ARGS) -D PYTHON_VENV=$(PYTHON_VENV)
 
 .PHONY: cmake_clean
 cmake_clean:
@@ -137,7 +139,7 @@ realclean_all:
 	@rm -rfv "$(OUT_DIR)/build" "$(OUT_DIR)/install" "$(OUT_DIR)/packages"
 
 .PHONY: distclean
-distclean: clean
+distclean:
 	@echo "Removing all build outputs: ${OUT_DIR}"
 	@rm -rf "$(OUT_DIR)"
 
@@ -162,6 +164,6 @@ docker_%:
 
 ### Delegate any other target to CMake
 %:
-	@[ -f "$(CMAKE_TAG)" ] || cmake -B "$(BUILD_DIR)" $(CMAKE_ARGS)
+	@[ -f "$(CMAKE_TAG)" ] || cmake -B "$(BUILD_DIR)" $(CONFIG_ARGS)
 	@cmake --build "$(BUILD_DIR)" --target $(patsubst cmake_%,%,$@)
 

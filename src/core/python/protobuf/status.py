@@ -5,30 +5,53 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Populate symbols from `request_reply.proto`
-from ..generated.status_pb2 import *
+from .utils import proto_enum
+from ..generated.status_pb2 import Event, Level, Domain
+
 import logging
 
+Level = proto_enum(Level)
+Domain = proto_enum(Domain)
+
 level_map = {
-    LEVEL_NONE: logging.NOTSET,
-    LEVEL_TRACE: (logging.NOTSET + logging.DEBUG) // 2,
-    LEVEL_DEBUG: logging.DEBUG,
-    LEVEL_INFO: logging.INFO,
-    LEVEL_NOTICE: (logging.INFO + logging.WARNING) // 2,
-    LEVEL_WARNING: logging.WARNING,
-    LEVEL_FAILED: logging.ERROR,
-    LEVEL_CRITICAL: logging.CRITICAL,
-    LEVEL_FATAL: logging.FATAL,
+    Level.LEVEL_NONE: logging.NOTSET,
+    Level.LEVEL_TRACE: (logging.NOTSET + logging.DEBUG) // 2,
+    Level.LEVEL_DEBUG: logging.DEBUG,
+    Level.LEVEL_INFO: logging.INFO,
+    Level.LEVEL_NOTICE: (logging.INFO + logging.WARNING) // 2,
+    Level.LEVEL_WARNING: logging.WARNING,
+    Level.LEVEL_FAILED: logging.ERROR,
+    Level.LEVEL_CRITICAL: logging.CRITICAL,
+    Level.LEVEL_FATAL: logging.FATAL,
 }
 
 def decodeLogLevel(event_level: Level) -> int:
-    return level_map.get(event_level, logging.NOTSET)
+    '''Decode a `cc.status.Level` enumeration from `status.proto` to a
+    log level as established in the Python `logging` module.
+
+    If the input is not a valid `cc.status.Level` enumeration,
+    `None` is returned.
+    '''
+
+    return level_map.get(event_level)
+
 
 def encodeLogLevel(log_level: int) -> Level:
-    current_event_level = LEVEL_NONE
+    '''Encode a log level as established in the Python `logging` module to
+    an enumerated `cc.status.Level` value from `status.proto`.
+    '''
 
-    for candidate_event_level, candidate_log_level in level_map.items():
-        if (log_level >= candidate_log_level) and (candidate_event_level > current_event_level):
-            current_event_level = candidate_event_level
+    if isinstance(log_level, Level):
+        return log_level
 
-    return current_event_level
+    elif log_level in Level:
+        return Level[log_level]
+
+    else:
+        current_event_level = Level.LEVEL_NONE
+        for candidate_event_level, candidate_log_level in level_map.items():
+            if ((log_level >= candidate_log_level) and
+                (candidate_event_level > current_event_level)):
+                current_event_level = candidate_event_level
+
+        return current_event_level

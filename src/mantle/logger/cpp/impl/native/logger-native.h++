@@ -21,7 +21,7 @@ namespace logger::native
         Logger(const std::string &identity);
 
     public:
-        void log(const core::status::Event::ptr &event) override;
+        void submit(const core::status::Event::ptr &event) override;
         bool add_sink(const SinkSpec &spec) override;
         bool remove_sink(const SinkID &id) override;
         SinkSpec get_sink_spec(const SinkID &id) const override;

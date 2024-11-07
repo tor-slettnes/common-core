@@ -9,10 +9,10 @@
 from cc.protobuf.import_proto import import_proto
 from cc.protobuf.wellknown import decodeTimestamp
 from cc.protobuf.variant import decodeValueMap
-from cc.core.enumeration import Enumeration
 from cc.core.scalar_types import OCT8
 
 ### Standard Python modules
+from enum import IntEnum
 from typing import Sequence, Mapping, Tuple
 from collections import namedtuple
 
@@ -23,15 +23,14 @@ import_proto('vfs', globals())
 #===============================================================================
 ## Native types
 
-PathType = Enumeration(cc.platform.vfs.PathType.items())
+PathType = IntEnum('PathType', cc.platform.vfs.PathType.items())
 
-FileInfo = namedtuple(
-    "FileInfo",
-    ("type", "size", "link",
-     "mode", "readable", "writable",
-     "uid", "gid", "ownername", "groupname",
-     "accessTime", "modifyTime", "createTime",
-     "attributes"))
+FileInfo = namedtuple("FileInfo",
+                      ("type", "size", "link",
+                       "mode", "readable", "writable",
+                       "uid", "gid", "ownername", "groupname",
+                       "accessTime", "modifyTime", "createTime",
+                       "attributes"))
 
 
 #===============================================================================

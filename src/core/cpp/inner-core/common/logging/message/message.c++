@@ -21,22 +21,14 @@ namespace core::logging
                      uint lineno,
                      const std::string &function,
                      pid_t thread_id,
+                     status::Domain domain,
                      const std::string &origin,
                      Code code,
                      const Symbol &symbol,
                      const types::KeyValueMap &attributes,
                      const ContractID &contract_id,
                      const std::string &host)
-        : Event(text,                         // text
-                status::Domain::APPLICATION,  // domain
-                origin,                       // origin
-                code,                         // code
-                symbol,                       // symbol
-                level,                        // level
-                tp,                           // timepoint
-                attributes,                   // attributes
-                contract_id,                  // contract_id
-                host),                        // host
+        : Event(text, domain, origin, code, symbol, level, tp, attributes, contract_id, host),
           scope_(scope),
           path_(path),
           lineno_(lineno),
@@ -193,6 +185,7 @@ namespace core::logging
                 source_line.as_uint(),    // lineno
                 fn_name.as_string(),      // function
                 thread_id.as_uint(),      // thread_id
+                event.domain(),           // domain
                 event.origin(),           // origin
                 event.code(),             // code
                 event.symbol(),           // symbol
@@ -208,17 +201,17 @@ namespace core::logging
 
     std::vector<std::string> Message::field_names() noexcept
     {
-        return {
-            core::status::EVENT_FIELD_TIME,
-            core::status::EVENT_FIELD_HOST,
-            core::status::EVENT_FIELD_LEVEL,
-            MESSAGE_FIELD_LOG_SCOPE,
-            MESSAGE_FIELD_THREAD_ID,
-            MESSAGE_FIELD_SOURCE_PATH,
-            MESSAGE_FIELD_SOURCE_LINE,
-            MESSAGE_FIELD_FUNCTION_NAME,
-            core::status::EVENT_FIELD_TEXT,
-        };
-    }
+        std::vector<std::string> fields = Event::field_names();
+        fields.insert(
+            fields.end(),
+            {
+                MESSAGE_FIELD_THREAD_ID,
+                MESSAGE_FIELD_LOG_SCOPE,
+                MESSAGE_FIELD_SOURCE_PATH,
+                MESSAGE_FIELD_SOURCE_LINE,
+                MESSAGE_FIELD_FUNCTION_NAME,
+            });
 
+        return fields;
+    };
 }  // namespace core::logging

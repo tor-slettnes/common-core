@@ -22,7 +22,7 @@ namespace logger::native
     {
     }
 
-    void Logger::log(
+    void Logger::submit(
         const core::status::Event::ptr &event)
     {
         core::logging::message_dispatcher.submit(event);

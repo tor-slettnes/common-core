@@ -7,6 +7,11 @@
 
 from collections import UserDict
 
+logging.warning(
+    f"Module {__package__}.enumeration is deprecated."
+    "Consider using `enum.IntEnum` instead.")
+
+
 class EnumValue(int):
     '''An enumerated value, derived from and compatible with `int`.'''
 
@@ -37,7 +42,6 @@ class Enumeration (dict):
     >>> my_enum.ONE == 1
     True
     ```
-
     '''
 
     def __init__ (self,

@@ -25,7 +25,7 @@ namespace logger::grpc
         RequestHandler(const std::shared_ptr<API>& provider);
 
     public:
-        ::grpc::Status log(
+        ::grpc::Status submit(
             ::grpc::ServerContext* context,
             const ::cc::status::Event* request,
             ::google::protobuf::Empty* response) override;

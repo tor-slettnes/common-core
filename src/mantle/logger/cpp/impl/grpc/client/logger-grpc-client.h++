@@ -42,7 +42,7 @@ namespace logger::grpc
         void initialize() override;
         void deinitialize() override;
 
-        void log(const core::status::Event::ptr &event) override;
+        void submit(const core::status::Event::ptr &event) override;
         bool add_sink(const SinkSpec &spec) override;
         bool remove_sink(const SinkID &id) override;
         SinkSpec get_sink_spec(const SinkID &id) const override;

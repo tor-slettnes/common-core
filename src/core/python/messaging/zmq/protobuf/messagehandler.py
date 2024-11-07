@@ -7,7 +7,7 @@
 
 ### Modules within package
 from ..basic import Filter, Topic, MessageHandler as BaseHandler
-from ....protobuf.wellknown import Message, MessageType
+from cc.protobuf.wellknown import Message, MessageType
 
 class MessageHandler (BaseHandler):
     '''ZMQ subscriber with support for ProtoBuf messages'''

@@ -33,10 +33,10 @@ namespace logger::grpc
         LoggerClientBase::deinitialize();
     }
 
-    void LoggerClient::log(const core::status::Event::ptr &event)
+    void LoggerClient::submit(const core::status::Event::ptr &event)
     {
         this->call_check(
-            &Stub::log,
+            &Stub::submit,
             ::protobuf::encoded<cc::status::Event>(event));
     }
 

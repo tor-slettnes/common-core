@@ -8,8 +8,8 @@
 ### Modules within package
 from .error import Error
 from ..basic.requester import Requester
-from ....protobuf.wellknown import Message, MessageType, Empty
-from ....protobuf.rr import Parameter, Request, Reply, STATUS_OK
+from cc.protobuf.wellknown import Message, MessageType, Empty
+from cc.protobuf.rr import Parameter, Request, Reply, StatusCode
 
 class Client (Requester):
     '''ZMQ RPC client using ProtoBuf messages'''
@@ -84,7 +84,7 @@ class Client (Requester):
 
     def receive_response_param(self) -> Parameter:
         reply = self.receive_reply()
-        if reply.status.code == STATUS_OK:
+        if reply.status.code == StatusCode.STATUS_OK:
             return reply.param
         else:
             raise Error(reply.status.code, reply.status.details) from None

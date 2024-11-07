@@ -7,10 +7,10 @@
 
 ### Modules within package
 from .error import Error
-from ....protobuf.wellknown import Empty
-from ....protobuf.status import Event, FLOW_CANCELLED, FLOW_ABORTED
-from ....protobuf.variant import valueList
-from ....protobuf.rr import Request, Reply, STATUS_INVALID, STATUS_FAILED
+from cc.protobuf.wellknown import Empty
+from cc.protobuf.status import Event
+from cc.protobuf.variant import valueList
+from cc.protobuf.rr import Request, Reply, StatusCode
 
 ### Third-party modules
 from google.protobuf.message import Message
@@ -85,10 +85,9 @@ class RequestHandler:
         try:
             handler = getattr(self, request.method_name)
         except AttributeError:
-            Error(STATUS_INVALID,
+            Error(StatusCode.STATUS_INVALID,
                   Event(text = 'Requested method not found',
                         symbol = 'NotFound',
-                        flow = FLOW_CANCELLED,
                         attributes = valueList(
                             interface_name = request.interface_name,
                             method_name = request.method_name)
@@ -114,12 +113,11 @@ class RequestHandler:
             self._invoke_handler(handler, (), reply)
 
         except (KeyError, IndexError, AttributeError):
-            Error(STATUS_FAILED,
+            Error(StatusCode.STATUS_FAILED,
                   Event(
                       text = "Handler method does not have an input argument "
                       "with a ProtoBuf message annottation",
                       symbol = 'InvalidHandlerMethod',
-                      flow = FLOW_CANCELLED,
                       attributes = valueList(
                           interface_name = self.interface_name,
                           method_name = handler.__name__
@@ -140,10 +138,9 @@ class RequestHandler:
         try:
             result = handler(*args)
         except Exception as e:
-            Error(STATUS_FAILED,
+            Error(StatusCode.STATUS_FAILED,
                   Event(text = str(e),
                         symbol = type(e).__name__,
-                        flow = FLOW_ABORTED,
                         attributes = valueList(
                             exception_args = e.args)
                         )
