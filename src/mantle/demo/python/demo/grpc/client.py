@@ -9,12 +9,8 @@
 from ..core import API, SignalSlot, signal_store
 from cc.messaging.grpc import SignalClient
 from cc.protobuf.wellknown import empty
-from cc.protobuf.import_proto import import_proto
 from cc.protobuf.utils import check_message_type
-
-## Import symbols generted from `demo.proto`. These will appear in
-## the namespace `cc.demo`.
-import_proto('demo', globals())
+from cc.protobuf.demo import Signal, Greeting, TimeData
 
 #===============================================================================
 # SignalClient class
@@ -35,7 +31,7 @@ class DemoClient (API, SignalClient):
     ## SignalStore() instance to the `SignalClient.__init__()` base, below.
     ## In our case we do, since we share the signal store with other message
     ## clients which also receive and re-emit signals from remote endpoints.
-    #signal_type = cc.demo.Signal
+    #signal_type = Signal
 
     def __init__(self,
                  host           : str = "",      # gRPC server
@@ -52,11 +48,11 @@ class DemoClient (API, SignalClient):
                               watch_all = False)
 
 
-    def say_hello(self, greeting: cc.demo.Greeting):
-        check_message_type(greeting, cc.demo.Greeting)
+    def say_hello(self, greeting: Greeting):
+        check_message_type(greeting, Greeting)
         self.stub.say_hello(greeting)
 
-    def get_current_time(self) -> cc.demo.TimeData:
+    def get_current_time(self) -> TimeData:
         return self.stub.get_current_time(empty)
 
     def start_ticking(self) -> None:

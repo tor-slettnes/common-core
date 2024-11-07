@@ -71,32 +71,55 @@ namespace protobuf
             proto.host());
     }
 
-    void encode(core::status::Event::ptr native, cc::status::Event *proto) noexcept
+    void encode(const core::logging::Message &native, cc::status::Event *proto) noexcept
     {
-        if (auto message = std::dynamic_pointer_cast<core::logging::Message>(native))
-        {
-            native = message->as_event();
-        }
-
-        if (native)
-        {
-            encode(*native, proto);
-        }
+        encode(static_cast<const core::status::Event>(native), proto);
+        proto->set_thread_id(native.thread_id());
+        proto->set_log_scope(native.scopename());
+        proto->set_source_path(native.path());
+        proto->set_source_line(native.lineno());
+        proto->set_function_name(native.function());
     }
 
-    void decode(const cc::status::Event &proto,
-                core::status::Event::ptr *native) noexcept
+    void decode(const cc::status::Event &proto, core::logging::Message *native) noexcept
     {
-        core::status::Event event;
-        decode(proto, &event);
+        core::status::Level level = decoded<core::status::Level>(proto.level());
 
-        if (auto message = core::logging::Message::create_from_event(event))
+        core::logging::Scope::ptr scope =
+            proto.log_scope().empty()
+                ? log_scope
+                : core::logging::Scope::create(proto.log_scope(), level);
+
+        *native = core::logging::Message(
+            proto.text(),                                           // text
+            level,                                                  // level
+            scope,                                                  // scope
+            decoded<core::dt::TimePoint>(proto.timestamp()),        // tp
+            proto.source_path(),                                    // path
+            proto.source_line(),                                    // lineno
+            proto.function_name(),                                  // function
+            proto.thread_id(),                                      // thread_id
+            decoded<core::status::Domain>(proto.domain()),          // domain
+            proto.origin(),                                         // origin
+            proto.code(),                                           // code
+            proto.symbol(),                                         // symbol
+            decoded<core::types::KeyValueMap>(proto.attributes()),  // attributes
+            proto.contract_id(),                                    // contract_id
+            proto.host());                                          // host
+    }
+
+    void encode(core::status::Event::ptr native_ptr, cc::status::Event *proto) noexcept
+    {
+        if (native_ptr)
         {
-            *native = message;
-        }
-        else
-        {
-            *native = std::make_shared<core::status::Event>(std::move(event));
+            if (auto message_ptr = std::dynamic_pointer_cast<core::logging::Message>(native_ptr))
+            {
+                encode(*message_ptr, proto);
+            }
+            else
+            {
+                encode(*native_ptr, proto);
+            }
         }
     }
 

@@ -7,58 +7,24 @@
 
 ### Modules within package
 from cc.messaging.grpc import SignalClient
-from cc.protobuf.import_proto import import_proto
-from cc.protobuf.wellknown import empty
+from cc.protobuf.wellknown import empty, StringValue
 from cc.core.scalar_types import HEX8
+
+from cc.protobuf.netconfig import Signal, MappingKey, \
+    GlobalData, RadioState, DeviceData, IPConfigData, ConnectionData, \
+    ActiveConnectionData, WiredConnectionData, WirelessConnectionData, \
+    AccessPointData, AccessPointConnection, WEP_Data, WPA_Data, EAP_Data, \
+    IPConfigMethod, WirelessMode, KeyManagement, \
+    ActiveConnectionState, ActiveConnectionStateReason
 
 ### Standard Python modules
 from typing import Optional, Sequence, Union, Iterator
 from enum import IntEnum
-from collections import NamedTuple
-
-## Import generated ProtoBuf symbols. These will appear in namespaces
-## corresponding to the package names from their `.proto` files:
-## `google.protobuf` and `cc.platform.netconfig`.
-import_proto('google.protobuf.wrappers', globals())
-import_proto('netconfig', globals())
+from collections import namedtuple
 
 ### Local types
 ActiveConnectionStateTuple = namedtuple("ActiveConnectionState",
                                         ("state", "flags", "reason"))
-
-### Data types
-GlobalData                  = cc.platform.netconfig.GlobalData
-RadioState                  = cc.platform.netconfig.RadioState
-ConnectionData              = cc.platform.netconfig.ConnectionData
-ActiveConnectionData        = cc.platform.netconfig.ActiveConnectionData
-WiredConnectionData         = cc.platform.netconfig.WiredConnectionData
-WirelessConnectionData      = cc.platform.netconfig.WirelessConnectionData
-AccessPointData             = cc.platform.netconfig.AccessPointData
-DeviceData                  = cc.platform.netconfig.DeviceData
-IPConfigData                = cc.platform.netconfig.IPConfigData
-AccessPointConnection       = cc.platform.netconfig.AccessPointConnection
-MappingKey                  = cc.platform.netconfig.MappingKey
-WEP_Data                    = cc.platform.netconfig.WEP_Data
-WPA_Data                    = cc.platform.netconfig.WPA_Data
-EAP_Data                    = cc.platform.netconfig.EAP_Data
-
-## Enumerations
-IPConfigMethod              = IntEnum("IPConfigMethod", cc.platform.netconfig.IPConfigMethod.items())
-WirelessMode                = IntEnum("WirelessMode", cc.platform.netconfig.WirelessMode.items())
-KeyManagement               = IntEnum("KeyManagement", cc.platform.neptconfig.KeyManagement.items())
-AuthenticationAlgorithm     = IntEnum("AuthenticationAlgorithm", cc.platform.netconfig.AuthenticationAlgorithm.items())
-AuthenticationType          = IntEnum("AuthenticationType", cc.platform.netconfig.AuthenticationType.items())
-EAP_Type                    = IntEnum("EAP_Type", cc.platform.netconfig.EAP_Type.items())
-EAP_Phase2                  = IntEnum("EAP_Phase2", cc.platform.netconfig.EAP_Phase2.items())
-WEP_KeyType                 = IntEnum("WEP_KeyTYpe", cc.platform.netconfig.WEP_KeyType.items())
-DeviceType                  = IntEnum("DeviceType", cc.platform.netconfig.DeviceType.items())
-DeviceState                 = IntEnum("DeviceState", cc.platform.netconfig.DeviceState.items())
-DeviceFlags                 = IntEnum("DeviceFlags", cc.platform.netconfig.DeviceFlags.items())
-ConnectionType              = IntEnum("ConnectionType", cc.platform.netconfig.ConnectionType.items())
-ActiveConnectionState       = IntEnum("ActiveConnectionState", cc.platform.netconfig.ActiveConnectionState.items())
-ActivationStateFlags        = IntEnum("ActivationStateFlags", cc.platform.netconfig.ActivationStateFlags.items())
-ActiveConnectionStateReason = IntEnum("ActiveConnectionStateReason", cc.platform.netconfig.ActiveConnectionStateReason.items())
-FAST_Provisioning           = IntEnum("FAST_provisioning", cc.platform.netconfig.FAST_Provisioning.items())
 
 
 #===============================================================================
@@ -73,7 +39,7 @@ class NetConfigClient (SignalClient):
 
     ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
     ## which serves as a clearing house for emitting and receiving messages.
-    signal_type = cc.platform.netconfig.Signal
+    signal_type = Signal
 
     Signals = (SIGNAL_GLOBAL, SIGNAL_CONN, SIGNAL_AC, SIGNAL_AP, SIGNAL_DEVICE) \
         = ('global', 'connection', 'active_connection', 'accesspoint', 'device')
@@ -84,10 +50,10 @@ class NetConfigClient (SignalClient):
 
     def set_hostname(self, hostname: str):
         '''Set the primary hostname'''
-        request = google.protobuf.StringValue(value=hostname)
+        request = StringValue(value=hostname)
         self.stub.set_hostname(request)
 
-    def get_global_data(self) -> cc.platform.netconfig.GlobalData:
+    def get_global_data(self) -> GlobalData:
         '''Get global network state information'''
         # try:
         #     return self.signal_store.get_cached(self.SIGNAL_GLOBAL)
@@ -109,8 +75,9 @@ class NetConfigClient (SignalClient):
                         WirelessConnectionData,
                         None] = None,
             interface: Optional[str] = None,
-            ip4config: IPConfigData = IPConfigData(method=IPConfigMethod.METHOD_AUTO),
-            ip6config: IPConfigData = IPConfigData(method=IPConfigMethod.METHOD_AUTO)):
+            ip4config: IPConfigData = IPConfigData(method = IPConfigMethod.METHOD_AUTO),
+            ip6config: IPConfigData = IPConfigData(method = IPConfigMethod.METHOD_AUTO)):
+
         '''Add or update a network connection profile.
 
         Parameters:
@@ -250,25 +217,25 @@ class NetConfigClient (SignalClient):
         Example:
 
         ```python
-           network = cc.platform.netconfig.NetworkClient()
+           network = cc.protobuf.netconfig.NetworkClient()
 
-           my_wpa = cc.platform.netconfig.WPA(psk='My password')
+           my_wpa = cc.protobuf.netconfig.WPA(psk='My password')
 
-           my_wifi = cc.platform.netconfig.WirelessConnectionData(wpa=my_wpa)
+           my_wifi = cc.protobuf.netconfig.WirelessConnectionData(wpa=my_wpa)
 
-           my_ip4_address = cc.platform.netconfig.AddressData(
+           my_ip4_address = cc.protobuf.netconfig.AddressData(
                                 address='192.168.1.100',
                                 prefixlength=24)
 
-           my_ip4 = cc.platform.netconfig.IPConfigData(
+           my_ip4 = cc.protobuf.netconfig.IPConfigData(
                         method=IPConfigMethod.METHOD_MANUAL,
                         address_data=[my_ip4_address],
                         gateway='192.168.1.1')
 
-           my_ip6 = cc.platform.netconfig.IPConfigData(
+           my_ip6 = cc.protobuf.netconfig.IPConfigData(
                         method=IPConfigMethod.METHOD_AUTO)
 
-           my_data = cc.platform.netconfig.ConnectionData(
+           my_data = cc.protobuf.netconfig.ConnectionData(
                         id='My Connection Name',
                         wireles_data=my_wifi,
                         ip4config=my_ip4,
@@ -323,14 +290,14 @@ class NetConfigClient (SignalClient):
 
         @param[in] auth
             Authentication data. The following data types are supported:
-            - `cc.platform.netconfig.WEP_Data`
+            - `cc.protobuf.netconfig.WEP_Data`
               Wireless Encryption Protocol, with up to 4 static keys
               each comprising 5 or 13 characters (or 10 or 26 hexadecimal digits)
 
-            - `cc.platform.netconfig.WPA_Data`
+            - `cc.protobuf.netconfig.WPA_Data`
               WiFi Protected Access, in the form `WPA_Data(psk='password')`
 
-            - `cc.platform.netconfig.EAP_Data`
+            - `cc.protobuf.netconfig.EAP_Data`
               802.1x/EAP settings for enterprise networks.
 
             Use `help(PROTOCOL)` for more information on each.
@@ -360,7 +327,7 @@ class NetConfigClient (SignalClient):
         Example:
          >>> netconfig = NetConfigClient()
          >>> netconfig.connect(id = 'My Network',
-                               auth = cc.platform.netconfig.WPA_Data(psk='My password'))
+                               auth = cc.protobuf.netconfig.WPA_Data(psk='My password'))
 
         '''
 
@@ -378,7 +345,7 @@ class NetConfigClient (SignalClient):
         conn = ConnectionData(
             id=id,
             interface=interface,
-            wireless_data=cc.platform.netconfig.WirelessConnectionData(**kwargs),
+            wireless_data=WirelessConnectionData(**kwargs),
             ip4config=ip4config,
             ip6config=ip6config)
 

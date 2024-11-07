@@ -6,20 +6,16 @@
 #===============================================================================
 
 ### Modules within package
-from cc.messaging.grpc import SignalClient
 from cc.protobuf.wellknown import empty
-from cc.protobuf.import_proto import import_proto
-from cc.protobuf.upgrade import encodeSource, decodeSource, SourceType
+from cc.protobuf.upgrade import Signal, \
+    PackageSource, SourceType, encodeSource, decodeSource, \
+    PackageCatalogue, PackageInfo, \
+    InstallRequest
+from cc.messaging.grpc import SignalClient
 
 ### Standard Python modules
 from typing import Mapping, Optional
 import io
-
-## Import generated ProtoBuf symbols. These will appear in namespaces
-## corresponding to the package names from their `.proto` files:
-## (e.g. `cc.platform.upgrade`).
-import_proto('upgrade', globals())
-import_proto('vfs', globals())
 
 #===============================================================================
 ## UpgradeClient
@@ -33,7 +29,7 @@ class UpgradeClient (SignalClient):
 
     ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
     ## which serves as a clearing house for emitting and receiving messages.
-    signal_type = cc.platform.upgrade.Signal
+    signal_type = Signal
 
     Signals = (SIGNAL_SCAN_PROGRESS, SIGNAL_UPGRADE_AVAILABLE,
                SIGNAL_UPGRADE_PENDING, SIGNAL_UPGRADE_PROGRESS) \
@@ -63,7 +59,7 @@ class UpgradeClient (SignalClient):
 
 
     def list_sources(self) \
-        -> list[cc.platform.upgrade.PackageSource]:
+        -> list[PackageSource]:
         '''
         List available package sources, whether or not they contain applicable
         packages.
@@ -72,7 +68,7 @@ class UpgradeClient (SignalClient):
 
     def list_available(self,
                         source: Optional[SourceType] = None) \
-                        -> cc.platform.upgrade.PackageCatalogue:
+                        -> PackageCatalogue:
         '''
         Return information about available upgrade packages discovered during a
         prior (implicit or explicit) scan of the specified package source if
@@ -83,7 +79,7 @@ class UpgradeClient (SignalClient):
 
     def best_available(self,
                         source: Optional[SourceType] = None) \
-                        -> cc.platform.upgrade.PackageInfo:
+                        -> PackageInfo:
         '''
         Return information about the best available upgrade package discovered
         during a prior scan of the specified package source if specified,
@@ -99,7 +95,7 @@ class UpgradeClient (SignalClient):
     def install(self,
                 source_file: Optional[SourceType] = None,
                 force: bool = False) \
-                -> cc.platform.upgrade.PackageInfo:
+                -> PackageInfo:
         '''.
 
         Install an upgrade from the specified source file if provided, otherwise
@@ -120,7 +116,7 @@ class UpgradeClient (SignalClient):
 
         '''
 
-        request = cc.platform.upgrade.InstallRequest(
+        request = InstallRequest(
             source = encodeSource(source_file, is_file=True),
             force = force)
 

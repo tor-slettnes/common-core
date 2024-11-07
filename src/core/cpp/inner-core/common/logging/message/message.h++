@@ -65,6 +65,10 @@ namespace core::logging
         ///     Symbolic event code, unique within origin
         /// @param[in] attributes
         ///     Key/value pairs associated with message
+        /// @param[in] contract_id
+        ///     Log contract
+        /// @param[in] host
+        ///     Reporting host
 
         Message(const std::string &text = "",
                 status::Level level = status::Level::NONE,
@@ -99,8 +103,6 @@ namespace core::logging
         virtual uint lineno() const noexcept;
         virtual const std::string &function() const noexcept;
         virtual pid_t thread_id() const noexcept;
-        virtual status::Event::ptr as_event() const noexcept;
-        static Message::ptr create_from_event(const Event &event) noexcept;
         static std::vector<std::string> field_names() noexcept;
 
     protected:

@@ -66,10 +66,11 @@ void Options::on_log_event(core::status::Event::ptr event)
 {
     if (event)
     {
-        core::str::format(std::cout,
-                          "[%.0s] signal_log_event(%s)\n",
-                          core::dt::Clock::now(),
-                          *event);
+        std::cout << *event << std::endl;
+        // core::str::format(std::cout,
+        //                   "[%.0s] signal_log_event(%s)\n",
+        //                   core::dt::Clock::now(),
+        //                   *event);
     }
 }
 

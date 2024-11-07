@@ -37,9 +37,14 @@ namespace protobuf
     void decode(const cc::status::Event &proto, core::status::Event *native) noexcept;
 
     //==========================================================================
-    // core::status::Event::ptr encoding to/decoding from cc::status::Event
+    // core::logging::Message encoding to/decoding from cc::status::Event
 
-    void encode(core::status::Event::ptr native, cc::status::Event *proto) noexcept;
-    void decode(const cc::status::Event &proto, core::status::Event::ptr *native) noexcept;
+    void encode(const core::logging::Message &native, cc::status::Event *proto) noexcept;
+    void decode(const cc::status::Event &proto, core::logging::Message *native) noexcept;
+
+    //==========================================================================
+    // core::logging::Event::ptr encoding to/decoding from cc::status::Event
+
+    void encode(core::status::Event::ptr native_ptr, cc::status::Event *proto) noexcept;
 
 }  // namespace protobuf

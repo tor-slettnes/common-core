@@ -12,8 +12,6 @@ import traceback
 import inspect
 import logging
 
-tb = None
-
 def check_type (argument: object,
                 expected_type: type):
 
@@ -69,5 +67,3 @@ def invocation(method, args, kwargs):
 def caller_frame(hops: int = 1):
     stack = inspect.stack()
     return stack[hops+1]
-
-    # tb = inspect.getframeinfo(inspect.currentframe())

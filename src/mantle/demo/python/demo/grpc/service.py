@@ -5,12 +5,10 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to current folder
+### Modules within current package
 from ..core import API, signal_store
-
-### Modules relative to install dir
 from cc.messaging.grpc.signal_service import SignalService
-from cc.protobuf.import_proto import import_proto
+from cc.protobuf.demo import Greeting, TimeData
 
 ### Generated modules
 from cc.generated.demo_pb2_grpc import DemoServicer
@@ -21,10 +19,6 @@ import grpc
 
 ### Standard Python modules
 import time
-
-## Import symbols generted from `demo.proto`. These will appear in
-## the namespace `cc.demo`
-import_proto('demo', globals());
 
 
 ## We derive our service class from
@@ -51,13 +45,13 @@ class DemoService (SignalService, DemoServicer):
         self.demo_provider = demo_provider
 
     def say_hello(self,
-                  request: cc.demo.Greeting,
+                  request: Greeting,
                   context: grpc.ServicerContext):
         return self._wrap(self.demo_provider.say_hello, request)
 
     def get_current_time(self,
                          request: Empty,
-                         context: grpc.ServicerContext) -> cc.demo.TimeData:
+                         context: grpc.ServicerContext) -> TimeData:
         return self._wrap(self.demo_provider.get_current_time)
 
     def start_ticking(self,

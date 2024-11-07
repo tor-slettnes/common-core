@@ -7,20 +7,19 @@
 
 ### Modules within package
 from cc.messaging.grpc import SignalClient
-from cc.protobuf.import_proto import import_proto
-from cc.protobuf.wellknown import TimestampType, encodeTimestamp, decodeTimestamp, empty
-from cc.protobuf.sysconfig import encodeCountry
-from cc.core.invocation import check_type
+
+from cc.protobuf.wellknown import empty, StringValue, \
+    Timestamp, TimestampType, encodeTimestamp, decodeTimestamp
+
+from cc.protobuf.sysconfig import Signal, ProductInfo, HostInfo, \
+    TimeConfig, TimeZoneCanonicalSpec, TimeZoneCanonicalName, \
+    TimeZoneConfig, TimeZoneInfo, TimeZoneInfoRequest, \
+    TimeZoneArea, TimeZoneCountry, TimeZoneLocation, TimeZoneLocationFilter, \
+    CommandInvocation, CommandContinuation, CommandResponse, \
+    encodeCountry
 
 ### Standard Python modules
 from typing import Optional, Sequence, Iterator
-
-## Import generated ProtoBuf symbols. These will appear in namespaces
-## corresponding to the package names from their `.proto` files:
-## `google.protobuf` and `cc.platform.sysconfig`.
-import_proto('sysconfig', globals())
-import_proto('google.protobuf.wrappers', globals())
-import_proto('google.protobuf.timestamp', globals())
 
 #===============================================================================
 # SysConfigClient class
@@ -34,22 +33,22 @@ class SysConfigClient (SignalClient):
 
     ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
     ## which serves as a clearing house for emitting and receiving messages.
-    signal_type = cc.platform.sysconfig.Signal
+    signal_type = Signal
 
-    def get_product_info(self) -> cc.platform.sysconfig.ProductInfo:
+    def get_product_info(self) -> ProductInfo:
         '''Get information about this product:
         model, serial number, versions, subsystems'''
         return self.stub.get_product_info(empty)
 
     def set_serial_number(self, serial: str|int):
         '''Set the product serial number. For manufacturing use.'''
-        self.stub.set_serial_number(google.protobuf.StringValue(value=str(serial)))
+        self.stub.set_serial_number(StringValue(value=str(serial)))
 
     def set_model_name(self, model: str):
         '''Set the product model. For manufacturing use.'''
-        self.stub.set_model_name(google.protobuf.StringValue(value=model))
+        self.stub.set_model_name(StringValue(value=model))
 
-    def get_host_info(self) -> cc.platform.sysconfig.HostInfo:
+    def get_host_info(self) -> HostInfo:
         '''Get information about this host:
         hostname, OS, hardware.
         '''
@@ -57,13 +56,13 @@ class SysConfigClient (SignalClient):
 
     def set_host_name(self, name: str):
         '''Set the host name.'''
-        self.stub.set_host_name(google.protobuf.StringValue(value=name))
+        self.stub.set_host_name(StringValue(value=name))
 
     def set_current_time(self, timestamp: TimestampType):
         '''Set the current time. Not available with automatic time configuration.'''
         self.stub.set_current_time(encodeTimestamp(timestamp))
 
-    def get_current_timestamp(self) -> google.protobuf.Timestamp:
+    def get_current_timestamp(self) -> Timestamp:
         '''Get the current time as a `google.protobuf.Timestamp` instance'''
         return self.stub.get_current_time(empty)
 
@@ -79,12 +78,12 @@ class SysConfigClient (SignalClient):
         with optional NTP server list.
         '''
 
-        request = cc.platform.sysconfig.TimeConfig(synchronization=synchronization)
+        request = TimeConfig(synchronization=synchronization)
         if servers is not None:
             request.servers.extend(servers)
         self.stub.set_time_config(request)
 
-    def get_time_config(self) -> cc.platform.sysconfig.TimeConfig:
+    def get_time_config(self) -> TimeConfig:
         '''Get the current time in native Python semantics:
         a double floating point representing seconds since UNIX epoch
         '''
@@ -99,25 +98,25 @@ class SysConfigClient (SignalClient):
 
     def list_timezone_countries(self,
                                 area: str|None = None
-                                ) -> list[cc.platform.sysconfig.TimeZoneCountry]:
+                                ) -> list[TimeZoneCountry]:
         '''Obtain a list of Time Zone countries within a specific area.
 
         Each country is represented by
          - "code" - its 2-letter ISO 3166 code (e.g. "US" or "DE")
          - "name" - its name in English (e.g. "United States" or "Germany")
         '''
-        request = cc.platform.sysconfig.TimeZoneArea(name = area)
+        request = TimeZoneArea(name = area)
         return list(self.stub.list_timezone_countries(request).countries)
 
     def list_timezone_regions(self,
                               country: str,
                               area: str|None = None
-                                ) -> list[cc.platform.sysconfig.TimeZoneCountry]:
+                                ) -> list[TimeZoneCountry]:
         '''Obtain a list of Time Zone regions within a specific country,
         specified by its 2-letter ISO 3166 code (e.g. "US") or its English name.
         '''
-        request = cc.platform.sysconfig.TimeZoneLocationFilter(
-            area = cc.platform.sysconfig.TimeZoneArea(name=area),
+        request = TimeZoneLocationFilter(
+            area = TimeZoneArea(name=area),
             country = encodeCountry(country))
 
         return list(self.stub.list_timezone_regions(request).regions)
@@ -125,7 +124,7 @@ class SysConfigClient (SignalClient):
     def list_timezone_specs(self,
                             area: str|None = None,
                             country: str|None = None
-                            ) -> list[cc.platform.sysconfig.TimeZoneCanonicalSpec]:
+                            ) -> list[TimeZoneCanonicalSpec]:
         '''
         Return a list of canonical time zones and their specifications,
         optionally filtered by a specific area or country (specified by its
@@ -141,8 +140,8 @@ class SysConfigClient (SignalClient):
 
         '''
 
-        request = cc.platform.sysconfig.TimeZoneLocationFilter(
-            area = cc.platform.sysconfig.TimeZoneArea(name=area),
+        request = TimeZoneLocationFilter(
+            area = TimeZoneArea(name=area),
             country = encodeCountry(country))
 
         return self.stub.list_timezone_specs(request).specs
@@ -150,7 +149,7 @@ class SysConfigClient (SignalClient):
 
     def get_timezone_spec(self,
                           canonical_zone: str|None = None
-                          ) -> cc.platform.sysconfig.TimeZoneCanonicalSpec:
+                          ) -> TimeZoneCanonicalSpec:
         '''Obtain specifications about a specifc canonical zone.  If no zone is
         provided, obtain information about the currently configured zone.
 
@@ -167,13 +166,13 @@ class SysConfigClient (SignalClient):
         '''
 
         return self.stub.get_timezone_spec(
-            cc.platform.sysconfig.TimeZoneCanonicalName(
+            TimeZoneCanonicalName(
                 name = canonical_zone))
 
     def get_timezone_info(self,
                           canonical_zone: str|None = None,
                           time: TimestampType|None = None
-                          ) -> cc.platform.sysconfig.TimeZoneInfo:
+                          ) -> TimeZoneInfo:
         '''
         Get effecitve time zone info for the specified canonical zone and time.
         If either value is missing, the currently configured zone and/or the
@@ -186,7 +185,7 @@ class SysConfigClient (SignalClient):
         - `dst`: whether Daylight Savings Time / Summer Time is in efffect
         '''
 
-        request = cc.platform.sysconfig.TimeZoneInfoRequest(
+        request = TimeZoneInfoRequest(
             canonical_zone = canonical_zone,
             time = time)
 
@@ -195,13 +194,13 @@ class SysConfigClient (SignalClient):
 
     def set_timezone_by_name(self,
                              zonename: str
-                             ) -> cc.platform.sysconfig.TimeZoneInfo:
+                             ) -> TimeZoneInfo:
         '''
         Set the system timezone to the specified canonical name,
         e.g. `America/Los_Angeles' (not `PST` or `PDT`).
         '''
 
-        request = cc.platform.sysconfig.TimeZoneConfig(
+        request = TimeZoneConfig(
             canonical_zone = zonename)
 
         return self.stub.set_timezone(request)
@@ -209,7 +208,7 @@ class SysConfigClient (SignalClient):
     def set_timezone_by_location(self,
                                  country: str,
                                  region: str|None = None
-                                 ) -> cc.platform.sysconfig.TimeZoneInfo:
+                                 ) -> TimeZoneInfo:
         '''
         Set the system timezone based on country and, if appliicable, region
         within country.
@@ -223,11 +222,11 @@ class SysConfigClient (SignalClient):
         * `set_timezone_by_location(country="US", region="Pacific")`
         '''
 
-        location = cc.platform.sysconfig.TimeZoneLocation(
+        location = TimeZoneLocation(
             country = encodeCountry(country),
             region = region)
 
-        request = cc.platform.sysconfig.TimeZoneConfig(
+        request = TimeZoneConfig(
             location = location)
 
         return self.stub.set_timezone(request)
@@ -237,7 +236,7 @@ class SysConfigClient (SignalClient):
     def invoke_sync(self,
                     argv : Sequence[str] = (),
                     working_directory: str = None,
-                    stdin : str = None) -> cc.platform.sysconfig.CommandResponse:
+                    stdin : str = None) -> CommandResponse:
         '''Invoke a subprocess and wait for its completion.
 
         Inputs:
@@ -250,7 +249,7 @@ class SysConfigClient (SignalClient):
 
         '''
 
-        request = cc.platform.sysconfig.CommandInvocation(
+        request = CommandInvocation(
             argv = argv,
             working_directory = working_directory,
             stdin = stdin)
@@ -274,7 +273,7 @@ class SysConfigClient (SignalClient):
         This can subsequently be passed to `invoke_finish()`.
         '''
 
-        request = cc.platform.sysconfig.CommandInvocation(
+        request = CommandInvocation(
             argv = argv,
             working_directory = working_directory,
             stdin = stdin)
@@ -284,7 +283,7 @@ class SysConfigClient (SignalClient):
 
     def invoke_finish(self,
                       pid: int,
-                      stdin: str = None) -> cc.platform.sysconfig.CommandResponse:
+                      stdin: str = None) -> CommandResponse:
         '''Wait for a asynchronous process to finish.
 
         Inputs:
@@ -292,7 +291,7 @@ class SysConfigClient (SignalClient):
         - `stdin`: Text which will be piped to the command's standard input
         '''
 
-        request = cc.platform.sysconfig.CommandContinuation(
+        request = CommandContinuation(
             pid = pid,
             stdin = stdin)
 

@@ -71,8 +71,7 @@ class Client (API, BaseClient):
                  min_level: Level = Level.LEVEL_NONE,
                  contract_id: Optional[str] = None,
                  fields: Optional[PyTaggedValueList] = None) -> bool:
-        '''.
-
+        '''
         Add a log sink of the specified type. This will capture log events with
         `min_level` or higher priority, optionally restrictecd to those with a
         specific `contract_id`.
@@ -181,6 +180,7 @@ class Client (API, BaseClient):
     def list_sinks(self) -> list[SinkSpec]:
         '''List available log sinks along with their specifications'''
         return self.stub.list_sinks(empty).specs
+
 
     def list_static_fields(self) -> list[str]:
         '''List static fields for log messages'''

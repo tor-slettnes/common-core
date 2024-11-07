@@ -138,6 +138,7 @@ class API (logging.Handler):
                        timestamp: TimestampType|None = None,
                        contract_id: str|None = None,
                        host: str|None = None,
+                       thread_id: int|None = None,
                        source_path: str|None = None,
                        source_line: int|None = None,
                        function_name: str|None = None,
@@ -147,25 +148,22 @@ class API (logging.Handler):
         if source_path:
             source_path = os.path.relpath(source_path, self.pathbase)
 
-        attributes = dict(
-            source_path = source_path,
-            source_line = source_line,
-            function_name = function_name,
-            log_scope = log_scope or "python")
-
-        attributes.update(kwargs)
-
         return Event(
-            domain      = domain,
-            origin      = origin or self.identity,
-            level       = encodeLogLevel(level),
-            code        = code,
-            symbol      = symbol,
-            timestamp   = encodeTimestamp(timestamp or time.time()),
-            attributes  = encodeValueList(attributes),
-            contract_id = contract_id,
-            host        = host or socket.gethostname(),
-            text        = text)
+            text          = text,
+            domain        = domain,
+            origin        = origin or self.identity,
+            level         = encodeLogLevel(level),
+            code          = code,
+            symbol        = symbol,
+            timestamp     = encodeTimestamp(timestamp or time.time()),
+            attributes    = encodeValueList(kwargs),
+            contract_id   = contract_id,
+            host          = host or socket.gethostname(),
+            thread_id     = thread_id,
+            log_scope     = log_scope or "python",
+            source_path   = source_path,
+            source_line   = source_line,
+            function_name = function_name)
 
     @abc.abstractmethod
     def submit(self, message: Event):

@@ -7,22 +7,15 @@
 
 ### Modules relative to install dir
 from .signals import signal_store
-from cc.protobuf.import_proto import import_proto
 from cc.protobuf.wellknown import encodeTimestamp
 from cc.protobuf.variant import encodeValueList
-
-### Import ProtoBuf generated types. Symbols will appear within namespaces
-### corresponding to the package naems in the respective `.proto` files:
-### `cc.demo` and `cc.signal`.
-import_proto('demo', globals())
-#import_proto('signal', globals())
-
+from cc.protobuf.demo import Greeting, TimeData, Signal
 
 ### Standard Python modules
 from typing import Callable
 import sys, os.path, time
 
-SignalSlot = Callable[[cc.demo.Signal], None]
+SignalSlot = Callable[[Signal], None]
 
 #===============================================================================
 # Native Demo implementation
@@ -48,11 +41,11 @@ class API:
         @param[in] kwargs
             Arbitrary attributes included in greeting
         @note
-            This is a convencience wrapper to build a `cc.demo.Greeting` object
-            and pass it to `say_hello()`.
+            This is a wrapper function to build a `cc.protobuf.demo.Greeting`
+            object and pass it to `say_hello()`.
         '''
 
-        greeting = cc.demo.Greeting(
+        greeting = Greeting(
             text = text,
             identity = self.identity,
             implementation = self.implementation,
@@ -62,7 +55,7 @@ class API:
         return self.say_hello(greeting)
 
 
-    def say_hello(self, greeting: cc.demo.Greeting):
+    def say_hello(self, greeting: Greeting):
         '''Issue a greeting to anyone who may be listening.
         For interactive use, the `hello()` wrapper method may be more convenient.
 
@@ -73,7 +66,7 @@ class API:
         raise NotImplementedError("Method not implemented by %s"%(self,))
 
 
-    def get_current_time(self) -> cc.demo.TimeData:
+    def get_current_time(self) -> TimeData:
         '''Get current time data.
 
         @return
@@ -101,8 +94,8 @@ class API:
         '''Register a callback to be invoked whenever a greeting is received
 
         @param[in] callback
-            Callback method, which will receive the `cc.demo.Signal()`
-            message containing the greeting as argument.
+            Callback method, which will receive `cc.protobuf.demo.Signal()`
+            messages containing the greeting as its sole argument.
         '''
         signal_store.connect_signal('signal_greeting', callback)
 

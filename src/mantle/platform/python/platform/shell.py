@@ -11,9 +11,6 @@ from .netconfig.grpc.client import NetConfigClient
 from .vfs.grpc.client import VirtualFileSystemClient
 from .upgrade.grpc.client import UpgradeClient
 
-from cc.protobuf.import_proto \
-    import import_wellknown_protos, import_core_protos, import_proto
-
 import cc.protobuf.wellknown
 import cc.protobuf.variant
 import cc.protobuf.signal
@@ -30,22 +27,6 @@ import logging
 import argparse
 import sys
 import os.path
-
-### Import well-known ProtoBuf modules from Google. Their symbols will appear within
-### the namespace that matches their `package` declarations: `google.protobuf`.
-import_wellknown_protos(globals())
-
-### Import core ProtoBuf modules. Their symbols will appear within namespaces
-### that matches their respective `package` declarations (starting with `cc.`).
-import_core_protos(globals())
-
-### Import generated ProtoBuf data types.  These will appear in namespaces
-### corresponding to the package names in their respective `.proto` files:
-### `cc.platform.sysconfig`, `cc.platform.netconfig`, `cc.platform.vfs`.
-import_proto('sysconfig', globals())
-import_proto('netconfig', globals())
-import_proto('vfs', globals())
-import_proto('upgrade', globals())
 
 ### Add a few arguments to the base argparser
 class ArgParser (argparse.ArgumentParser):
@@ -81,14 +62,17 @@ def legend():
         vfs       - `VirtualFileSystem` gRPC service client
         upgrade   - `Upgrade` gRPC service client
 
-    ProtoBuf types are generally loaded into namespaces matching the package
-    names from their respective `.proto` files:
+    Generated ProtoBuf data types and associated wrapper methods are generally
+    available in the `cc.protobuf` namespace, e.g.:
 
-        google.protobuf - Well-known types from Google
-        cc.* - Various custom types
-        cc.protobuf.* - General utilities and wrapper modules
+      - cc.protobuf.sysconfig - Data types for the SysConfig service
+      - cc.protobuf.netconfig - Data types for the NetConfig service
+      - cc.protobuf.vfs       - Data types for the VirtualFileSystem service
+      - cc.protobuf.ugprade   - Data types for the Upgrade service
+      - cc.protobuf.wellknown - Well-known types from Google
 
     Use 'help(subsystem)' to list available subcomponents or methods
+
     '''
     print(legend.__doc__)
 
@@ -96,8 +80,7 @@ def legend():
 if __name__ == "__main__":
     args   = ArgParser().parse_args()
 
-    logger = logging.getLogger()
-    logger.setLevel((logging.INFO, logging.DEBUG)[args.debug])
+    logging.getLogger().setLevel(logging.DEBUG if args.debug else logging.INFO)
 
     sysconfig = SysConfigClient(
         args.host,

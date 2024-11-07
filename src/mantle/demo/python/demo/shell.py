@@ -9,9 +9,6 @@
 from cc.demo.grpc.client import DemoClient as gRPCDemoClient
 from cc.demo.zmq.client import DemoClient as ZMQDemoClient
 
-from cc.protobuf.import_proto \
-    import import_wellknown_protos, import_core_protos, import_proto
-
 import cc.protobuf.demo
 import cc.protobuf.wellknown
 import cc.protobuf.variant
@@ -29,18 +26,6 @@ import logging
 import argparse
 import sys
 import os.path
-
-### Import well-known ProtoBuf modules from Google. Their symbols will appear within
-### the namespace that matches their `package` declarations: `google.protobuf`.
-import_wellknown_protos(globals())
-
-### Import core ProtoBuf modules. Their symbols will appear within namespaces
-### that matches their respective `package` declarations (starting with `cc.`).
-import_core_protos(globals())
-
-### Import ProtoBuf data types from `demo.proto`.  These will appear in the
-### namespace matching its package declaration: `cc.demo'.
-import_proto('demo', globals())
 
 ### Add a few arguments to the base argparser
 class ArgParser (argparse.ArgumentParser):
@@ -79,12 +64,11 @@ def legend():
         demo_grpc - Simple gRPC communications example
         demo_zmq - Simple 0MQ communications example
 
-    ProtoBuf types are generally loaded into namespaces matching the package
-    names from their respective `.proto` files:
+    Generated ProtoBuf data types and associated wrapper methods are generally
+    available in the `cc.protobuf` namespace, e.g.:
 
-        google.protobuf - Well-known types from Google
-        cc.* - Various custom types
-        cc.protobuf.* - General utilities and wrapper modules
+      - cc.protobuf.demo      - Data types for the Demo service
+      - cc.protobuf.wellknown - Well-known types from Google
 
     Use 'help(subsystem)' to list available subcomponents or methods
     '''
