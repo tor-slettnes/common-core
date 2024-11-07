@@ -44,7 +44,7 @@ namespace logger::grpc
         cc::status::Event msg;
         if (this->reader_->Read(&msg))
         {
-            return protobuf::decode_shared<core::logging::Message>(msg);
+            return protobuf::decoded<core::status::Event::ptr>(msg);
         }
         else
         {

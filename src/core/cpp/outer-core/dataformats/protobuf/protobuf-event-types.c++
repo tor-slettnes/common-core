@@ -123,4 +123,15 @@ namespace protobuf
         }
     }
 
+    void decode(const cc::status::Event &proto, core::status::Event::ptr *native_ptr) noexcept
+    {
+        if (!proto.text().empty())
+        {
+            *native_ptr = decode_shared<core::logging::Message>(proto);
+        }
+        else
+        {
+            *native_ptr = decode_shared<core::status::Event>(proto);
+        }
+    }
 }  // namespace protobuf

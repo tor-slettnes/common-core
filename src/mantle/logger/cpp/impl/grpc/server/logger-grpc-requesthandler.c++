@@ -24,7 +24,7 @@ namespace logger::grpc
     {
         try
         {
-            this->provider->submit(protobuf::decode_shared<core::logging::Message>(*request));
+            this->provider->submit(protobuf::decoded<core::status::Event::ptr>(*request));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -43,7 +43,7 @@ namespace logger::grpc
             ::cc::status::Event event;
             while (reader->Read(&event))
             {
-                this->provider->submit(protobuf::decode_shared<core::logging::Message>(event));
+                this->provider->submit(protobuf::decoded<core::status::Event::ptr>(event));
             }
             return ::grpc::Status::OK;
         }

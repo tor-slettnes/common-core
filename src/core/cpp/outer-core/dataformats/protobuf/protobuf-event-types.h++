@@ -46,5 +46,6 @@ namespace protobuf
     // core::logging::Event::ptr encoding to/decoding from cc::status::Event
 
     void encode(core::status::Event::ptr native_ptr, cc::status::Event *proto) noexcept;
+    void decode(const cc::status::Event &proto, core::status::Event::ptr *native_ptr) noexcept;
 
 }  // namespace protobuf
