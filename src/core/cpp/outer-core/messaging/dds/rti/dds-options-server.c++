@@ -40,34 +40,24 @@ namespace core::dds
     void ServerOptions::register_loggers()
     {
         Super::register_loggers();
+
         if (this->log_to_dds)
         {
-            types::KeyValueMap sinkspec = this->logsink_setting(DDS_SINK);
-
-            if (auto sink = DDSLogger::create_shared(
+            core::logging::message_dispatcher.add_sink(
+                DDSLogger::create_shared(
                     DDS_SINK,                               // sink_id
-                    this->get_threshold(sinkspec),      // threshold
                     core::platform::path->exec_name(true),  // channel_name
-                    this->domain_id))                       // domain
-            {
-                core::logging::message_dispatcher.add_sink(sink);
-            }
+                    this->domain_id));                      // domain
         }
 
 #ifdef USE_RTI_LOGGER
         if (this->log_to_dl)
         {
-            types::KeyValueMap sinkspec = this->logsink_setting(DDS_SINK);
-
-            if (auto sink = RTIDistributedLogger::create_shared(
+            core::logging::message_dispatcher.add_sink(
+                RTIDistributedLogger::create_shared(
                     RTI_DL_SINK,                            // sink_id
-                    this->get_threshold(sinkspec),      // threshold
                     core::platform::path->exec_name(true),  // application_id
-                    this->domain_id))                       // domain
-            {
-                core::logging::message_dispatcher.add_sink(sink);
-                sink->set_include_source(this->log_source);
-            }
+                    this->domain_id));                      // domain
         }
 #endif
     }

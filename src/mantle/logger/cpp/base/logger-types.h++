@@ -10,18 +10,22 @@
 #include "types/getter.h++"
 #include "types/value.h++"
 #include "logging/sinks/sink.h++"
+#include "logging/sinks/tabulardata.h++"
 
 #include <optional>
 
 namespace logger
 {
     using SinkID = std::string;
+    using SinkIDs = std::vector<std::string>;
+
     using ContractID = core::status::Event::ContractID;
 
     // Sink types that can be added by remote client
     enum class SinkType
     {
         UNSPECIFIED,
+        STREAM,
         SYSLOG,
         LOGFILE,
         JSON,
@@ -42,7 +46,7 @@ namespace logger
         bool use_local_time = true;
         core::status::Level min_level = core::status::Level::NONE;
         std::optional<ContractID> contract_id;
-        core::types::TaggedValueList fields;
+        core::logging::ColumnSpecs columns;
     };
 
     std::ostream &operator<<(std::ostream &stream, const SinkSpec &spec);

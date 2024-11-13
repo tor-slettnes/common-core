@@ -27,7 +27,6 @@ void Options::initialize()
 {
     this->provider = logger::grpc::LoggerClient::create_shared(
         ::options->identity,
-        core::status::Level::INFO,
         ::options->host);
     this->provider->initialize();
 }

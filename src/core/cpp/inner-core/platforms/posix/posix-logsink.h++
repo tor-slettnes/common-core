@@ -19,8 +19,7 @@ namespace core::platform
 
     protected:
         PosixLogSinkProvider(const std::string &application_id,
-                             const std::string &sink_id = "syslog",
-                             status::Level threshold = status::Level::DEBUG);
+                             const std::string &sink_id = "syslog");
 
     public:
         void open() override;

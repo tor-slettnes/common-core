@@ -33,6 +33,22 @@ namespace core::types
         TaggedValueList as_tvlist() const noexcept;
 
         template <class T>
+        std::optional<T> get_as(const uint index) const
+        {
+            if (const Value &value = this->get(index))
+            {
+                try
+                {
+                    return str::convert_to<T>(value.as_string());
+                }
+                catch (...)
+                {
+                }
+            }
+            return {};
+        }
+
+        template <class T>
         std::vector<T> filter_by_type() const
         {
             std::vector<T> result;

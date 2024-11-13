@@ -25,7 +25,8 @@ namespace logger::native
         bool add_sink(const SinkSpec &spec) override;
         bool remove_sink(const SinkID &id) override;
         SinkSpec get_sink_spec(const SinkID &id) const override;
-        SinkSpecs list_sinks() const override;
+        SinkSpecs get_all_sink_specs() const override;
+        SinkIDs list_sinks() const override;
         FieldNames list_static_fields() const override;
 
         std::shared_ptr<EventSource> listen(

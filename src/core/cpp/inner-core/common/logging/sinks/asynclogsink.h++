@@ -21,18 +21,15 @@ namespace core::logging
         using Super = LogSink;
 
     protected:
-        AsyncLogSink(
-            const std::string &sink_id,
-            status::Level threshold,
-            const std::optional<status::Event::ContractID> &contract_id = {});
+        AsyncLogSink(const std::string &sink_id);
 
     public:
         void open() override;
         void close() override;
         bool capture(const types::Loggable::ptr &item) override;
 
-    private:
-        void worker();
+    protected:
+        virtual void worker();
 
     private:
         std::thread workerthread_;

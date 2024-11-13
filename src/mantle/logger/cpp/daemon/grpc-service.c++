@@ -44,7 +44,7 @@ namespace logger::grpc
         log_notice("gRPC server is ready on ", core::str::join(builder.listener_ports()));
         server->Wait();
 
-        log_notice("Shutting down gRPC server");
+        log_notice("gRPC server is shutting down");
         core::platform::signal_shutdown.disconnect(SHUTDOWN_SIGNAL_HANDLE);
         server.reset();
     }

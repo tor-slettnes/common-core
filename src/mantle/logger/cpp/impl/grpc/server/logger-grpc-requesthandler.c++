@@ -149,14 +149,23 @@ namespace logger::grpc
 
     ::grpc::Status RequestHandler::list_sinks(
         ::grpc::ServerContext* context,
-        const ::google::protobuf::Empty* request,
+        const ::cc::logger::ListSinkRequest* request,
         ::cc::logger::SinkSpecs* response)
     {
         try
         {
-            protobuf::encode(
-                this->provider->list_sinks(),
-                response);
+            if (request->verbose())
+            {
+                protobuf::encode(
+                    this->provider->get_all_sink_specs(),
+                    response);
+            }
+            else
+            {
+                protobuf::encode(
+                    this->provider->list_sinks(),
+                    response);
+            }
 
             return ::grpc::Status::OK;
         }

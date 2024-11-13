@@ -6,9 +6,10 @@
 //==============================================================================
 
 #pragma once
-#include "tabulardatasink.h++"
+#include "asynclogsink.h++"
+#include "tabulardata.h++"
 #include "rotatingpath.h++"
-#include "json/writer.h++"
+#include "messageformatter.h++"
 #include "types/filesystem.h++"
 #include "types/create-shared.h++"
 
@@ -18,27 +19,23 @@
 
 namespace core::logging
 {
+    const std::string SETTING_COL_SEP = "column separator";
+    const std::string DEFAULT_COL_SEP = ",";
+
     //--------------------------------------------------------------------------
     // CSVFileSink
 
-    class CSVBaseSink : public TabularDataSink,
+    class CSVBaseSink : public AsyncLogSink,
+                        public TabularData,
                         public RotatingPath
     {
         using This = CSVBaseSink;
-        using Super = TabularDataSink;
+        using Super = AsyncLogSink;
 
     protected:
-        CSVBaseSink(const std::string &sink_id,
-                    status::Level threshold,
-                    const std::optional<std::string> &contract_id,
-                    const ColumnDefaults &columns,
-                    const std::string &path_template,
-                    const dt::DateTimeInterval &rotation_interval,
-                    bool local_time = true,
-                    const std::string &separator = ",");
+        CSVBaseSink(const std::string &sink_id);
 
-    protected:
-        const std::string &separator() const;
+        void load_settings(const types::KeyValueMap &settings) override;
         void open() override;
         void close() override;
         void open_file(const dt::TimePoint &tp) override;
@@ -46,6 +43,9 @@ namespace core::logging
         void capture_event(const status::Event::ptr &event) override;
 
         void write_header();
+
+        const std::string &separator() const;
+        void set_separator(const std::string &separator);
         std::string protect_separator(std::string &&field) const;
 
     private:
@@ -59,34 +59,28 @@ namespace core::logging
     class CSVEventSink : public CSVBaseSink,
                          public types::enable_create_shared<CSVEventSink>
     {
+        using This = CSVEventSink;
+        using Super = CSVBaseSink;
+
     protected:
-        using CSVBaseSink::CSVBaseSink;
+        CSVEventSink(const std::string &sink_id);
     };
 
     //--------------------------------------------------------------------------
     // CSVMessageSink
 
     class CSVMessageSink : public CSVBaseSink,
+                           public MessageFormatter,
                            public types::enable_create_shared<CSVMessageSink>
     {
         using This = CSVMessageSink;
         using Super = CSVBaseSink;
 
     protected:
-        CSVMessageSink(const std::string &sink_id,
-                       status::Level threshold,
-                       const std::vector<std::string> &column_names,
-                       const std::string &path_template,
-                       const dt::DateTimeInterval &rotation_interval,
-                       bool local_time = true,
-                       const std::string &separator = ",");
+        CSVMessageSink(const std::string &sink_id);
 
     protected:
         bool is_applicable(const types::Loggable &item) const override;
-
-    private:
-        static types::TaggedValueList message_columns(
-            const std::vector<std::string> &column_names);
     };
 
 }  // namespace core::logging

@@ -23,11 +23,13 @@ namespace core::platform
     protected:
         /// @param[in] implementation
         ///     Implementation name, e.g. final class name
-        /// @param[in] identity
-        ///     Logging entity name, e.g. application name
+        /// @param[in] sink_id
+        ///     Sink identifier
         LogSinkProvider(const std::string &implementation,
-                        const std::string &sink_id = "syslog",
-                        status::Level threshold = status::Level::NONE);
+                        const std::string &sink_id = "syslog");
+
+    protected:
+        void load_settings(const types::KeyValueMap &settings) override;
     };
 
     extern ProviderProxy<LogSinkProvider> logsink;

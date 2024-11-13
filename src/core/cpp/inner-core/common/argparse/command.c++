@@ -250,7 +250,7 @@ namespace core::argparse
         catch (...)
         {
             this->on_monitor_end();
-            std::rethrow_exception(std::current_exception());
+            throw;
         }
         this->on_monitor_end();
     }

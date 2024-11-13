@@ -15,6 +15,7 @@
 namespace core::dds
 {
     class DDSLogger : public logging::LogSink,
+                      public logging::MessageFormatter,
                       public Publisher,
                       public core::types::enable_create_shared<DDSLogger>
     {
@@ -23,11 +24,11 @@ namespace core::dds
 
     protected:
         DDSLogger(const std::string &sink_id,
-                  status::Level threshold,
                   const std::string &channel_name,
                   int domain_id);
 
     protected:
+        void load_settings(const types::KeyValueMap &settings) override;
         void open() override;
         void close() override;
         void capture_event(const status::Event::ptr &event) override;

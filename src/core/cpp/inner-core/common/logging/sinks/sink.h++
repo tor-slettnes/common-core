@@ -7,6 +7,7 @@
 
 #pragma once
 #include "types/loggable.h++"
+#include "types/value.h++"
 
 #include <memory>
 #include <string>
@@ -15,7 +16,13 @@ namespace core::logging
 {
     using SinkID = std::string;
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
+    // Constants
+
+    constexpr auto SETTING_LOG_SINKS = "log sinks";
+
+
+    //--------------------------------------------------------------------------
     /// \class Sink
     /// \brief Abstract data receiver
 
@@ -30,6 +37,12 @@ namespace core::logging
 
     public:
         SinkID sink_id() const;
+        void load_settings();
+
+    protected:
+        virtual void load_settings(const types::KeyValueMap &settings) {}
+
+    public:
         virtual bool is_applicable(const types::Loggable &) const;
         virtual bool is_open() const;
         virtual void open();

@@ -134,9 +134,13 @@ namespace core::types
         template <class T>
         inline const T &get() const;
 
-        // Convencience wrapper around std::get<T>(*this)
+        // Convencience wrapper around std::get_if<T>(*this)
         template <class T>
         inline const T *get_if() const;
+
+        // Convencience wrapper around std::get_if<T>(*this)
+        template <class T>
+        inline std::optional<T> get_opt() const;
 
         template <class T>
         inline T &emplace_from(const Value &other);

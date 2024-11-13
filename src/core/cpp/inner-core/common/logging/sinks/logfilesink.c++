@@ -11,25 +11,29 @@
 
 namespace core::logging
 {
-    LogFileSink::LogFileSink(const std::string &sink_id,
-                             status::Level threshold,
-                             const std::string &path_template,
-                             const dt::DateTimeInterval &rotation_interval,
-                             bool local_time)
-        : AsyncLogSink(sink_id, threshold),
-          RotatingPath(sink_id, path_template, ".log", rotation_interval, local_time)
+    LogFileSink::LogFileSink(const std::string &sink_id)
+        : Super(sink_id),
+          MessageFormatter(),
+          RotatingPath(sink_id, ".log")
     {
+    }
+
+    void LogFileSink::load_settings(const types::KeyValueMap &settings)
+    {
+        Super::load_settings(settings);
+        this->load_message_format(settings);
+        this->load_rotation(settings);
     }
 
     void LogFileSink::open()
     {
         this->open_file(dt::Clock::now());
-        AsyncLogSink::open();
+        Super::open();
     }
 
     void LogFileSink::close()
     {
-        AsyncLogSink::close();
+        Super::close();
         this->close_file();
     }
 

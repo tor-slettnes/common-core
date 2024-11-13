@@ -46,7 +46,7 @@ namespace core::types
         ///     Close this queue on program shutdown (to prevent hang)
 
         BlockingQueueBase(
-            unsigned int maxsize,
+            std::size_t maxsize,
             OverflowDisposition overflow_disposition);
 
         virtual ~BlockingQueueBase();
@@ -101,7 +101,7 @@ namespace core::types
         bool pushable(std::unique_lock<std::mutex> *lock);
 
     protected:
-        const unsigned int maxsize_;
+        const std::size_t maxsize_;
         const OverflowDisposition overflow_disposition_;
         bool closed_;
         std::string signal_handle_;
@@ -128,7 +128,7 @@ namespace core::types
         ///    How to handle `.put()` invocatinos into a full queue
 
         BlockingQueue(
-            unsigned int maxsize = 0,
+            std::size_t maxsize = 0,
             OverflowDisposition overflow_disposition = OverflowDisposition::DISCARD_OLDEST)
             : BlockingQueueBase(maxsize, overflow_disposition)
         {

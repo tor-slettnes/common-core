@@ -10,14 +10,16 @@
 
 namespace core::logging
 {
-    JsonFileSink::JsonFileSink(const std::string &sink_id,
-                               status::Level threshold,
-                               const std::string &path_template,
-                               const dt::DateTimeInterval &rotation_interval,
-                               bool local_time)
-        : AsyncLogSink(sink_id, threshold),
-          RotatingPath(sink_id, path_template, ".json", rotation_interval, local_time)
+    JsonFileSink::JsonFileSink(const std::string &sink_id)
+        : AsyncLogSink(sink_id),
+          RotatingPath(sink_id, ".json")
     {
+    }
+
+    void JsonFileSink::load_settings(const types::KeyValueMap &settings)
+    {
+        Super::load_settings(settings);
+        this->load_rotation(settings);
     }
 
     void JsonFileSink::open()
@@ -52,9 +54,9 @@ namespace core::logging
         if (this->writer_)
         {
             this->check_rotation(event->timepoint());
-            this->writer_->write(event->as_tvlist(), // value
-                                 false,              // pretty
-                                 true);              // newline
+            this->writer_->write(event->as_tvlist(),  // value
+                                 false,               // pretty
+                                 true);               // newline
         }
     }
 }  // namespace core::logging

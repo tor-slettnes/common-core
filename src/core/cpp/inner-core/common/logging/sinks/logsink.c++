@@ -12,13 +12,22 @@ namespace core::logging
     //==========================================================================
     // LogSink
 
-    LogSink::LogSink(const std::string &sink_id,
-                     status::Level threshold,
-                     const std::optional<status::Event::ContractID> contract_id)
-        : Sink(sink_id),
-          threshold_(threshold),
-          contract_id_(contract_id)
+    LogSink::LogSink(const std::string &sink_id)
+        : Sink(sink_id)
     {
+    }
+
+    void LogSink::load_settings(const types::KeyValueMap &settings)
+    {
+        if (auto threshold = settings.get_as<status::Level>(SETTING_THRESHOLD))
+        {
+            this->set_threshold(threshold.value());
+        }
+
+        if (const core::types::Value &contract_id = settings.get(SETTING_CONTRACT_ID))
+        {
+            this->set_contract_id(contract_id.as_string());
+        }
     }
 
     bool LogSink::is_applicable(const types::Loggable &item) const

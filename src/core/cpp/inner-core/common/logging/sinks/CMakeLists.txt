@@ -14,6 +14,6 @@ target_sources(${TARGET} PRIVATE
   streamsink.c++
   logfilesink.c++
   jsonfilesink.c++
-  tabulardatasink.c++
+  tabulardata.c++
   csvfilesink.c++
 )

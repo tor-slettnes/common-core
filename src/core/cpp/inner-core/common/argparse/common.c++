@@ -20,35 +20,24 @@
 
 #include <functional>
 
-#define LOG_SINKS   "log sinks"
-#define SYSLOG_SINK "syslog"
-#define STDOUT_SINK "stdout"
-#define STDERR_SINK "stderr"
-#define FILE_SINK   "file"
-#define JSON_SINK   "json"
-#define CSV_SINK    "csv"
-
-#define LOGSINK_ENABLED   "enabled"
-#define LOGSINK_THRESHOLD "threshold"
-#define LOGSINK_PATHSPEC  "name template"
-#define LOGSINK_ROTATION  "rotation"
-#define LOGSINK_LOCALTIME "local time"
-#define LOGSINK_COLUMNS   "column names"
-#define LOGSINK_COLSEP    "column separator"
-
-#define DEFAULT_ENABLED   false
-#define DEFAULT_THRESHOLD core::status::Level::NONE
-#define DEFAULT_PATHSPEC  "{executable}-{isodate}-{hour}{minute}{zoneoffset}"
-#define DEFAULT_LOCALTIME true
-#define DEFAULT_COLSEP    ","
-#define DEFAULT_ROTATION                  \
-    {                                     \
-        .unit = core::dt::TimeUnit::HOUR, \
-        .count = 6                        \
-    }
-
 namespace core::argparse
 {
+    //--------------------------------------------------------------------------
+    // Constants
+
+    constexpr auto SYSLOG_SINK = "syslog";
+    constexpr auto STDOUT_SINK = "stdout";
+    constexpr auto STDERR_SINK = "stderr";
+    constexpr auto FILE_SINK = "file";
+    constexpr auto JSON_SINK = "json";
+    constexpr auto CSV_SINK = "csv";
+
+    constexpr auto SETTING_LOGSINK_ENABLED = "enabled";
+    constexpr auto DEFAULT_LOGSINK_ENABLED = false;
+
+    //--------------------------------------------------------------------------
+    // CommonOptions
+
     CommonOptions::CommonOptions(bool is_server)
         : Parser(),
           is_server(is_server)
@@ -292,106 +281,48 @@ namespace core::argparse
     {
         if (this->log_to_syslog)
         {
-            if (auto sink = platform::logsink.get_shared())
-            {
-                logging::message_dispatcher.add_sink(sink);
-                sink->set_include_context(this->log_context);
-
-                types::KeyValueMap sinkspec = this->logsink_setting(SYSLOG_SINK);
-                if (auto threshold = this->get_optional_level(LOGSINK_THRESHOLD, sinkspec))
-                {
-                    sink->set_threshold(threshold.value());
-                }
-            }
+            logging::message_dispatcher.add_sink(platform::logsink.get_shared());
         }
 
         if (this->log_to_stderr)
         {
-            types::KeyValueMap sinkspec = this->logsink_setting(STDERR_SINK);
-
-            if (auto sink = logging::StreamSink::create_shared(
-                    STDERR_SINK,
-                    this->get_threshold(sinkspec),
-                    std::cerr))
-            {
-                logging::message_dispatcher.add_sink(sink);
-                sink->set_include_context(this->log_context);
-            }
+            logging::message_dispatcher.add_sink(
+                logging::StreamSink::create_shared(STDERR_SINK, std::cerr));
         }
         else if (this->log_to_stdout)
         {
-            types::KeyValueMap sinkspec = this->logsink_setting(STDOUT_SINK);
-
-            if (auto sink = logging::StreamSink::create_shared(
-                    STDOUT_SINK,
-                    this->get_threshold(sinkspec),
-                    std::cout))
-            {
-                logging::message_dispatcher.add_sink(sink);
-                sink->set_include_context(this->log_context);
-            }
+            logging::message_dispatcher.add_sink(
+                logging::StreamSink::create_shared(STDOUT_SINK, std::cout));
         }
 
         if (this->log_to_file)
         {
-            types::KeyValueMap sinkspec = this->logsink_setting(FILE_SINK);
-
-            if (auto sink = logging::LogFileSink::create_shared(
-                    FILE_SINK,
-                    this->get_threshold(sinkspec),
-                    sinkspec.get(LOGSINK_PATHSPEC, DEFAULT_PATHSPEC).as_string(),
-                    this->get_rotation(sinkspec),
-                    sinkspec.get(LOGSINK_LOCALTIME, DEFAULT_LOCALTIME).as_bool()))
-            {
-                logging::message_dispatcher.add_sink(sink);
-                sink->set_include_context(this->log_context);
-            }
+            logging::message_dispatcher.add_sink(
+                logging::LogFileSink::create_shared(FILE_SINK));
         }
 
         if (this->log_to_json)
         {
-            types::KeyValueMap sinkspec = this->logsink_setting(JSON_SINK);
-
-            if (auto sink = logging::JsonFileSink::create_shared(
-                    JSON_SINK,
-                    this->get_threshold(sinkspec),
-                    sinkspec.get(LOGSINK_PATHSPEC, DEFAULT_PATHSPEC).as_string(),
-                    this->get_rotation(sinkspec),
-                    sinkspec.get(LOGSINK_LOCALTIME, DEFAULT_LOCALTIME).as_bool()))
-            {
-                logging::message_dispatcher.add_sink(sink);
-            }
+            logging::message_dispatcher.add_sink(
+                logging::JsonFileSink::create_shared(JSON_SINK));
         }
 
         if (this->log_to_csv)
         {
-            types::KeyValueMap sinkspec = this->logsink_setting(CSV_SINK);
-
-            if (auto sink = logging::CSVMessageSink::create_shared(
-                    CSV_SINK,
-                    this->get_threshold(sinkspec),
-                    sinkspec.get(LOGSINK_COLUMNS).as_valuelist().filter_by_type<std::string>(),
-                    sinkspec.get(LOGSINK_PATHSPEC, DEFAULT_PATHSPEC).as_string(),
-                    this->get_rotation(sinkspec),
-                    sinkspec.get(LOGSINK_LOCALTIME, DEFAULT_LOCALTIME).as_bool(),
-                    sinkspec.get(LOGSINK_COLSEP, DEFAULT_COLSEP).as_string()))
-            {
-                logging::message_dispatcher.add_sink(sink);
-            }
+            logging::message_dispatcher.add_sink(
+                logging::CSVMessageSink::create_shared(CSV_SINK));
         }
-    }
-
-    types::KeyValueMap CommonOptions::logsink_setting(
-        const std::string &sink_name) const
-    {
-        return core::settings->get(LOG_SINKS).get(sink_name).as_kvmap();
     }
 
     bool CommonOptions::logsink_setting_enabled(
         const std::string &sink_name,
         bool fallback) const
     {
-        return this->logsink_setting(sink_name).get(LOGSINK_ENABLED, fallback).as_bool();
+        return core::settings
+            ->get(logging::SETTING_LOG_SINKS)
+            .get(sink_name)
+            .get(SETTING_LOGSINK_ENABLED, fallback)
+            .as_bool();
     }
 
     std::optional<status::Level> CommonOptions::get_optional_level(
@@ -409,21 +340,6 @@ namespace core::argparse
             }
         }
         return {};
-    }
-
-    status::Level CommonOptions::get_threshold(
-        const types::KeyValueMap &config) const
-    {
-        return this->get_optional_level(LOGSINK_THRESHOLD, config)
-            .value_or(DEFAULT_THRESHOLD);
-    }
-
-    dt::DateTimeInterval CommonOptions::get_rotation(
-        const types::KeyValueMap &config) const
-    {
-        return str::convert_to<dt::DateTimeInterval>(
-            config.get(LOGSINK_ROTATION).as_string(),
-            DEFAULT_ROTATION);
     }
 
 }  // namespace core::argparse

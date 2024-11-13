@@ -13,12 +13,17 @@
 namespace core::dds
 {
     DDSLogger::DDSLogger(const std::string &sink_id,
-                         status::Level threshold,
                          const std::string &channel_name,
                          int domain_id)
-        : LogSink(sink_id, threshold),
+        : LogSink(sink_id),
           Publisher(channel_name, domain_id)
     {
+    }
+
+    void DDSLogger::load_settings(const types::KeyValueMap &settings)
+    {
+        Super::load_settings(settings);
+        this->load_message_format(settings);
     }
 
     void DDSLogger::open()

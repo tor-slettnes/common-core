@@ -13,6 +13,7 @@ namespace logger
 
     // Sink types that can be added by remote client
     core::types::SymbolMap<SinkType> sinktype_names = {
+        {SinkType::STREAM, "stream"},
         {SinkType::SYSLOG, "syslog"},
         {SinkType::LOGFILE, "file"},
         {SinkType::JSON, "json"},
@@ -41,7 +42,7 @@ namespace logger
         parts.add_value("use_local_time", spec.use_local_time);
         parts.add("min_level", spec.min_level, spec.min_level != core::status::Level::NONE);
         parts.add_string("contract_id", spec.contract_id.value_or(""));
-        parts.add_value("fields", spec.fields, !spec.fields.empty());
+        parts.add("columns", spec.columns, !spec.columns.empty());
 
         stream << parts;
         return stream;

@@ -13,6 +13,10 @@
 
 namespace core::logging
 {
+    const std::string SETTING_THRESHOLD = "threshold";
+    const std::string SETTING_CONTRACT_ID = "contract_id";
+    const status::Level DEFAULT_THRESHOLD = status::Level::NONE;
+
     //==========================================================================
     /// \class LogSink
     /// \brief Base for logging text
@@ -26,11 +30,10 @@ namespace core::logging
         using ptr = std::shared_ptr<LogSink>;
 
     protected:
-        LogSink(const SinkID &sink_id,
-                status::Level threshold,
-                const std::optional<status::Event::ContractID> contract_id = {});
+        LogSink(const SinkID &sink_id);
 
     public:
+        void load_settings(const types::KeyValueMap &settings) override;
         bool is_applicable(const types::Loggable &item) const override;
         bool capture(const types::Loggable::ptr &item) override;
 

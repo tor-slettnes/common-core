@@ -17,11 +17,14 @@ namespace logger::native
         const std::optional<core::status::Event::ContractID> &contract_id,
         unsigned int maxsize,
         OverflowDisposition overflow_disposition)
-        : LogSink(sink_id, threshold, contract_id),
+        : LogSink(sink_id),
           BlockingQueue(maxsize, overflow_disposition)
     {
         logf_debug("Created native::EventListener(sink_id=%r, threshold=%s)",
                    sink_id, threshold);
+
+        this->set_threshold(threshold);
+        this->set_contract_id(contract_id);
 
         core::platform::signal_shutdown.connect(
             this->sink_id(),

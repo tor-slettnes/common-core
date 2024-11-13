@@ -9,11 +9,8 @@
 
 namespace core::logging
 {
-    AsyncLogSink::AsyncLogSink(
-        const std::string &sink_id,
-        status::Level threshold,
-        const std::optional<status::Event::ContractID> &contract_id)
-        : LogSink(sink_id, threshold, contract_id)
+    AsyncLogSink::AsyncLogSink(const std::string &sink_id)
+        : LogSink(sink_id)
     {
     }
 

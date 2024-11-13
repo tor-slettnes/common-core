@@ -7,7 +7,9 @@
 
 #include "logger-native.h++"
 #include "logger-native-listener.h++"
+#include "logger-sqlite3-sink.h++"
 #include "logging/logging.h++"
+#include "logging/sinks/streamsink.h++"
 #include "logging/sinks/logfilesink.h++"
 #include "logging/sinks/jsonfilesink.h++"
 #include "logging/sinks/csvfilesink.h++"
@@ -63,7 +65,7 @@ namespace logger::native
         }
     }
 
-    SinkSpecs Logger::list_sinks() const
+    SinkSpecs Logger::get_all_sink_specs() const
     {
         SinkSpecs specs;
         specs.reserve(core::logging::message_dispatcher.sinks().size());
@@ -74,6 +76,18 @@ namespace logger::native
         }
 
         return specs;
+    }
+
+    SinkIDs Logger::list_sinks() const
+    {
+        SinkIDs sink_ids;
+        sink_ids.reserve(core::logging::message_dispatcher.sinks().size());
+        for (const auto &[sink_id, sink]: core::logging::message_dispatcher.sinks())
+        {
+            sink_ids.push_back(sink_id);
+        }
+
+        return sink_ids;
     }
 
     FieldNames Logger::list_static_fields() const
@@ -96,47 +110,69 @@ namespace logger::native
 
     core::logging::Sink::ptr Logger::new_sink(const SinkSpec &spec) const
     {
+        core::logging::Sink::ptr sink;
+
         switch (spec.sink_type)
         {
         case SinkType::LOGFILE:
-            return core::logging::LogFileSink::create_shared(
-                spec.sink_id,            // sink_id
-                spec.min_level,          // threshold
-                spec.filename_template,  // path_template
-                spec.rotation_interval,  // rotation_interval
-                spec.use_local_time);    // local_time
+            sink = core::logging::LogFileSink::create_shared(spec.sink_id);
+            break;
 
         case SinkType::JSON:
-            return core::logging::JsonFileSink::create_shared(
-                spec.sink_id,            // sink_id
-                spec.min_level,          // threshold
-                spec.filename_template,  // path_template
-                spec.rotation_interval,  // rotation_interval
-                spec.use_local_time);    // local_time
+            sink = core::logging::JsonFileSink::create_shared(spec.sink_id);
+            break;
 
         case SinkType::CSV:
-            return core::logging::CSVEventSink::create_shared(
-                spec.sink_id,            // sink_id
-                spec.min_level,          // threshold
-                spec.contract_id,        // contract_id
-                spec.fields,             // columns
-                spec.filename_template,  // path_template
-                spec.rotation_interval,  // rotation_interval
-                spec.use_local_time);    // local_time
+            sink = core::logging::CSVEventSink::create_shared(spec.sink_id);
+            break;
 
         case SinkType::DB:
-            return {};
+            break;
 
         default:
             throw core::exception::InvalidArgument(
                 "Unsupported sink type",
                 static_cast<int>(spec.sink_type));
         }
+
+        if (auto logsink = std::dynamic_pointer_cast<core::logging::LogSink>(sink))
+        {
+            logsink->set_threshold(spec.min_level);
+            logsink->set_contract_id(spec.contract_id);
+        }
+
+        if (auto rotating_path = std::dynamic_pointer_cast<core::logging::RotatingPath>(sink))
+        {
+            rotating_path->set_filename_template(spec.filename_template);
+            rotating_path->set_rotation_interval(spec.rotation_interval);
+            rotating_path->set_use_local_time(spec.use_local_time);
+        }
+
+        if (auto tabular_data = std::dynamic_pointer_cast<core::logging::TabularData>(sink))
+        {
+            tabular_data->set_columns(spec.columns);
+        }
+
+        // if (auto db_sink = std::dynamic_pointer_cast<logger::SQLiteSink>(sink))
+        // {
+        // }
+
+        return sink;
     }
 
     SinkSpec Logger::sink_spec(const core::logging::Sink::ptr &sink) const
     {
-        if (auto syslogsink = std::dynamic_pointer_cast<core::platform::LogSinkProvider>(sink))
+        if (auto streamsink = std::dynamic_pointer_cast<core::logging::StreamSink>(sink))
+        {
+            return {
+                .sink_id = streamsink->sink_id(),
+                .sink_type = SinkType::STREAM,
+                .min_level = streamsink->threshold(),
+                .contract_id = streamsink->contract_id(),
+            };
+        }
+
+        else if (auto syslogsink = std::dynamic_pointer_cast<core::platform::LogSinkProvider>(sink))
         {
             return {
                 .sink_id = syslogsink->sink_id(),
@@ -151,7 +187,7 @@ namespace logger::native
             return {
                 .sink_id = filesink->sink_id(),
                 .sink_type = SinkType::LOGFILE,
-                .filename_template = filesink->path_template(),
+                .filename_template = filesink->filename_template(),
                 .rotation_interval = filesink->rotation_interval(),
                 .use_local_time = filesink->use_local_time(),
                 .min_level = filesink->threshold(),
@@ -164,7 +200,7 @@ namespace logger::native
             return {
                 .sink_id = jsonsink->sink_id(),
                 .sink_type = SinkType::JSON,
-                .filename_template = jsonsink->path_template(),
+                .filename_template = jsonsink->filename_template(),
                 .rotation_interval = jsonsink->rotation_interval(),
                 .use_local_time = jsonsink->use_local_time(),
                 .min_level = jsonsink->threshold(),
@@ -177,12 +213,12 @@ namespace logger::native
             return {
                 .sink_id = csvsink->sink_id(),
                 .sink_type = SinkType::CSV,
-                .filename_template = csvsink->path_template(),
+                .filename_template = csvsink->filename_template(),
                 .rotation_interval = csvsink->rotation_interval(),
                 .use_local_time = csvsink->use_local_time(),
                 .min_level = csvsink->threshold(),
                 .contract_id = csvsink->contract_id(),
-                .fields = csvsink->column_defaults(),
+                .columns = csvsink->columns(),
             };
         }
         else
@@ -192,4 +228,4 @@ namespace logger::native
             };
         }
     }
-}  // namespace logger
+}  // namespace logger::native

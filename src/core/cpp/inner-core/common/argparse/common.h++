@@ -8,7 +8,6 @@
 #pragma once
 #include "argparse/parser.h++"
 #include "logging/logging.h++"
-#include "logging/sinks/logsink.h++"
 #include "settings/settings.h++"
 
 namespace core::argparse
@@ -66,22 +65,13 @@ namespace core::argparse
         /// Register available loggers
         virtual void register_loggers();
 
-        types::KeyValueMap logsink_setting(
-            const std::string &sink_name) const;
-
         bool logsink_setting_enabled(
             const std::string &key,
             bool fallback = false) const;
 
         std::optional<status::Level> get_optional_level(
             const std::string &option,
-            const types::KeyValueMap &root = *core::settings) const;
-
-        status::Level get_threshold(
-            const types::KeyValueMap &config) const;
-
-        dt::DateTimeInterval get_rotation(
-            const types::KeyValueMap &config) const;
+            const types::KeyValueMap &config = *core::settings) const;
 
     public:
         bool is_server;

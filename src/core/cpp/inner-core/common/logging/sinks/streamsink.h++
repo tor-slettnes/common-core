@@ -41,14 +41,14 @@ namespace core::logging
         /// \param[in] stream
         ///     Stream to log the messages to
         StreamSink(const std::string &sink_id,
-                   status::Level threshold,
                    std::ostream &stream);
 
         StreamSink(const std::string &sink_id,
-                   status::Level threshold,
                    std::ostream &&stream);
 
     public:
+        void load_settings(const types::KeyValueMap &settings) override;
+        bool is_applicable(const types::Loggable &item) const override;
         void capture_event(const status::Event::ptr &event) override;
 
     private:

@@ -30,10 +30,10 @@ module CC
             VT_STRING,
             VT_BYTEARRAY,
             VT_TIMEPOINT,
-            VT_DURATION
-            // VT_SEQUENCE,
-            // VT_KEYVALUEMAP,
-            // VT_TAGGEDSEQUENCE
+            VT_DURATION,
+            VT_SEQUENCE,
+            VT_KEYVALUEMAP,
+            VT_TAGGEDSEQUENCE
         };
 
         const uint32 MAX_VALUES = 256;

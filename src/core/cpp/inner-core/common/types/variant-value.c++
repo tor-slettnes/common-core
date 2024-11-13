@@ -10,6 +10,8 @@
 #include "variant-kvmap.h++"
 #include "variant-tvlist.h++"
 
+#include "string/convert.h++"
+
 #include <sstream>
 
 namespace core::types
@@ -124,17 +126,17 @@ namespace core::types
 
     bool Value::empty() const noexcept
     {
-        return this->holdsAnyOf<NullValueType>();
+        return this->type() == ValueType::NONE;
     }
 
     Value::operator bool() const noexcept
     {
-        return !this->empty();
+        return this->type() != ValueType::NONE;
     }
 
     bool Value::has_value() const noexcept
     {
-        return !this->empty();
+        return this->type() != ValueType::NONE;
     }
 
     bool Value::is_simple() const noexcept

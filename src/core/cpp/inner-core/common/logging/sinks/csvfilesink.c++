@@ -14,23 +14,24 @@ namespace core::logging
     //--------------------------------------------------------------------------
     // CSVBaseSink
 
-    CSVBaseSink::CSVBaseSink(const std::string &sink_id,
-                             status::Level threshold,
-                             const std::optional<std::string> &contract_id,
-                             const ColumnDefaults &columns,
-                             const std::string &path_template,
-                             const dt::DateTimeInterval &rotation_interval,
-                             bool local_time,
-                             const std::string &separator)
-        : TabularDataSink(sink_id, threshold, contract_id, columns),
-          RotatingPath(sink_id, path_template, ".csv", rotation_interval, local_time),
-          separator_(separator)
+    CSVBaseSink::CSVBaseSink(const std::string &sink_id)
+        : AsyncLogSink(sink_id),
+          TabularData(),
+          RotatingPath(sink_id, ".csv"),
+          separator_(DEFAULT_COL_SEP)
     {
     }
 
-    const std::string &CSVBaseSink::separator() const
+    void CSVBaseSink::load_settings(const types::KeyValueMap &settings)
     {
-        return this->separator_;
+        Super::load_settings(settings);
+        this->load_columns(settings);
+        this->load_rotation(settings);
+
+        if (const core::types::Value &value = settings.get(SETTING_COL_SEP))
+        {
+            this->set_separator(value.as_string());
+        }
     }
 
     void CSVBaseSink::open()
@@ -77,16 +78,18 @@ namespace core::logging
             const core::types::KeyValueMap &kvmap = event->as_kvmap();
             std::string separator;
 
-            for (const auto &[column_name, default_value] : this->column_defaults())
+            for (const ColumnSpec &spec : this->columns())
             {
                 stream << separator;
                 separator = this->separator();
 
-                const core::types::Value &value = kvmap.get(
-                    column_name.value_or(""),
-                    default_value);
-
-                core::str::escape(stream, this->protect_separator(value.as_string()));
+                core::types::Value value = kvmap.get(spec.event_field);
+                core::str::escape(
+                    stream,
+                    this->protect_separator(
+                        !spec.format_string.empty()
+                            ? str::format(spec.format_string, value)
+                            : value.as_string()));
             }
 
             stream << std::endl;
@@ -105,6 +108,16 @@ namespace core::logging
         *this->stream_ << std::endl;
     }
 
+    const std::string &CSVBaseSink::separator() const
+    {
+        return this->separator_;
+    }
+
+    void CSVBaseSink::set_separator(const std::string &separator)
+    {
+        this->separator_ = separator;
+    }
+
     std::string CSVBaseSink::protect_separator(std::string &&field) const
     {
         if (field.find(this->separator()) != std::string::npos)
@@ -119,54 +132,24 @@ namespace core::logging
     }
 
     //--------------------------------------------------------------------------
+    // CSVEventSink
+
+    CSVEventSink::CSVEventSink(const std::string &sink_id)
+        : Super(sink_id)
+    {
+    }
+
+    //--------------------------------------------------------------------------
     // CSVMessageSink
 
-    CSVMessageSink::CSVMessageSink(const std::string &sink_id,
-                                   status::Level threshold,
-                                   const std::vector<std::string> &column_names,
-                                   const std::string &path_template,
-                                   const dt::DateTimeInterval &rotation_interval,
-                                   bool local_time,
-                                   const std::string &separator)
-        : Super(sink_id,                              // sink_id
-                threshold,                            // threshold
-                {},                                   // contract_id
-                This::message_columns(column_names),  // columns
-                path_template,                        // path_template
-                rotation_interval,                    // rotation_interval
-                local_time,                           // local_time
-                separator)                            // separator
+    CSVMessageSink::CSVMessageSink(const std::string &sink_id)
+        : Super(sink_id)
     {
     }
 
     bool CSVMessageSink::is_applicable(const types::Loggable &item) const
     {
-        if (auto event = dynamic_cast<const status::Event *>(&item))
-        {
-            return ((event->level() >= this->threshold()) &&
-                    (!this->contract_id().has_value() ||
-                     (event->contract_id() == this->contract_id().value())) &&
-                    !event->text().empty());
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    types::TaggedValueList CSVMessageSink::message_columns(
-        const std::vector<std::string> &column_names)
-    {
-        std::vector<std::string> field_names = !column_names.empty()
-                                                   ? column_names
-                                                   : Message::field_names();
-        types::TaggedValueList tvlist;
-        for (const std::string &field_name : field_names)
-        {
-            tvlist.push_back({field_name, ""});
-        }
-
-        return tvlist;
+        return this->is_message(item) && Super::is_applicable(item);
     }
 
 }  // namespace core::logging

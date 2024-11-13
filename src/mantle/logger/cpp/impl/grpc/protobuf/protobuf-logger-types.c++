@@ -57,9 +57,9 @@ namespace protobuf
             proto->set_contract_id(native.contract_id.value());
         }
 
-        if (!native.fields.empty())
+        if (!native.columns.empty())
         {
-            encode(native.fields, proto->mutable_fields());
+            encode_vector(native.columns, proto->mutable_columns());
         }
     }
 
@@ -78,11 +78,11 @@ namespace protobuf
             native->contract_id = proto.contract_id();
         }
 
-        decode(proto.fields(), &native->fields);
+        decode_to_vector(proto.columns(), &native->columns);
     }
 
     //==========================================================================
-    // SinkSpecs
+    // logger::SinkSpecs <-> cc::logger::SinkSpecs
 
     void encode(const logger::SinkSpecs &native, cc::logger::SinkSpecs *proto)
     {
@@ -92,6 +92,61 @@ namespace protobuf
     void decode(const cc::logger::SinkSpecs &proto, logger::SinkSpecs *native)
     {
         decode_to_vector(proto.specs(), native);
+    }
+
+    //==========================================================================
+    // logger::SinkIDs <-> cc::logger::SinkSpecs
+
+    void encode(const logger::SinkIDs &native, cc::logger::SinkSpecs *proto)
+    {
+        auto specs = proto->mutable_specs();
+        specs->Reserve(native.size());
+        for (const logger::SinkID &sink_id : native)
+        {
+            cc::logger::SinkSpec *spec = specs->Add();
+            spec->set_sink_id(sink_id);
+        }
+    }
+
+    void decode(const cc::logger::SinkSpecs &proto, logger::SinkIDs *native)
+    {
+        native->reserve(proto.specs_size());
+        for (const cc::logger::SinkSpec &spec : proto.specs())
+        {
+            native->push_back(spec.sink_id());
+        }
+    }
+
+    //==========================================================================
+    // ColumnSpec
+
+    void encode(const core::logging::ColumnSpec &native, cc::logger::ColumnSpec *proto)
+    {
+        proto->set_event_field(native.event_field);
+        proto->set_column_name(native.column_name);
+        proto->set_column_type(encoded<cc::logger::ColumnType>(native.column_type));
+        proto->set_format_string(native.format_string);
+    }
+
+    void decode(const cc::logger::ColumnSpec &proto, core::logging::ColumnSpec *native)
+    {
+        native->event_field = proto.event_field();
+        native->column_name = proto.column_name();
+        decode(proto.column_type(), &native->column_type);
+        native->format_string = proto.format_string();
+    }
+
+    //==========================================================================
+    // ColumnType
+
+    void encode(const core::logging::ColumnType &native, cc::logger::ColumnType *proto)
+    {
+        *proto = static_cast<cc::logger::ColumnType>(native);
+    }
+
+    void decode(const cc::logger::ColumnType &proto, core::logging::ColumnType *native)
+    {
+        *native = static_cast<core::logging::ColumnType>(proto);
     }
 
     //==========================================================================

@@ -17,27 +17,37 @@
 
 namespace core::logging
 {
-    constexpr auto LOG_STYLES_SETTING = "log styles";
+    constexpr auto SETTING_LOG_STYLES = "log styles";
 
     //==========================================================================
     // StreamSink methods
 
     StreamSink::StreamSink(const std::string &sink_id,
-                           status::Level threshold,
                            std::ostream &stream)
-        : LogSink(sink_id, threshold),
+        : LogSink(sink_id),
           stream(stream)
     {
-#ifndef _WIN32
-        this->load_styles(core::settings->get(LOG_STYLES_SETTING).as_kvmap());
-#endif
     }
 
     StreamSink::StreamSink(const std::string &sink_id,
-                           status::Level threshold,
                            std::ostream &&stream)
-        : StreamSink(sink_id, threshold, stream)
+        : StreamSink(sink_id, stream)
     {
+    }
+
+    void StreamSink::load_settings(const types::KeyValueMap &settings)
+    {
+        Super::load_settings(settings);
+        this->load_message_format(settings);
+
+#ifndef _WIN32
+        this->load_styles(core::settings->get(SETTING_LOG_STYLES).as_kvmap());
+#endif
+    }
+
+    bool StreamSink::is_applicable(const types::Loggable &item) const
+    {
+        return this->is_message(item) && LogSink::is_applicable(item);
     }
 
     void StreamSink::capture_event(const status::Event::ptr &event)

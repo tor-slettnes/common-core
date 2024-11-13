@@ -21,8 +21,7 @@ namespace core::platform
 
     protected:
         WindowsLogSinkProvider(const std::string &application_id,
-                               const std::string &sink_id = "eventlog",
-                               status::Level threshold = status::level::DEBUG);
+                               const std::string &sink_id = "eventlog");
 
     public:
         void open() override;

@@ -10,7 +10,7 @@
 namespace core::types
 {
     BlockingQueueBase::BlockingQueueBase(
-        unsigned int maxsize,
+        std::size_t maxsize,
         OverflowDisposition overflow_disposition)
         : maxsize_(maxsize),
           overflow_disposition_(overflow_disposition),

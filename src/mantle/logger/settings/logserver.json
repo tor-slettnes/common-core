@@ -23,6 +23,25 @@
             "name template" : "{isodate}-{hour}{minute}{zoneoffset}.csv",
             "rotation" : "1 day",
             "local time" : true
+        },
+
+        "lologger": {
+            "enabled": true,
+            "type": "sqlite3",
+            "threshold": "debug",
+            "name template" : "{hostname}-{year}-{month}.db",
+            "rotation" : "1 month",
+            "local time": true,
+            "table name": "Events",
+            "capture fields" : [
+                // event_field, column_name, column_type[, extra_args]
+                ["timestamp", "ClientTimestamp", "TEXT"],
+                ["origin", "ClientName", "TEXT"],
+                ["timestamp", "EpochTime", "INT", "PRIMARY KEY"],
+                ["text", "LogMessage", "TEXT"],
+                ["level", "Level", "INT"],
+                ["host", "IP", "TEXT"]
+            ]
         }
     }
 }

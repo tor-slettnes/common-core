@@ -1,0 +1,323 @@
+/// -*- c++ -*-
+//==============================================================================
+/// @file sqlite3.c++
+/// @brief Wrapper for Sqlite3 C library
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#include "sqlite3.h++"
+#include "status/exceptions.h++"
+#include "json/writer.h++"
+#include "chrono/date-time.h++"
+#include "types/value.h++"
+#include "logging/logging.h++"
+
+namespace core::db
+{
+    SQLite3::SQLite3()
+        : SQLBase(),
+          connection_(nullptr)
+    {
+    }
+
+    SQLite3::~SQLite3()
+    {
+        this->close();
+    }
+
+
+    bool SQLite3::is_open() const
+    {
+        return !this->db_file_.empty();
+    }
+
+    fs::path SQLite3::db_file() const
+    {
+        return this->db_file_;
+    }
+
+    void SQLite3::open(const fs::path &db_file)
+    {
+        if (this->db_file_ != db_file)
+        {
+            this->close();
+
+            this->check_status(
+                sqlite3_open(db_file.string().data(), &this->connection_));
+
+            this->db_file_ = db_file;
+        }
+    }
+
+    void SQLite3::close()
+    {
+        if (this->is_open())
+        {
+            this->check_status(
+                sqlite3_close(this->connection_));
+            this->connection_ = nullptr;
+            this->db_file_.clear();
+        }
+    }
+
+    void SQLite3::execute_multi(
+        const std::string &sql,
+        const MultiRowData &parameter_rows,
+        const QueryCallbackFunction &callback) const
+    {
+        ::sqlite3_stmt *statement = nullptr;
+        this->check_status(
+            ::sqlite3_prepare_v2(
+                this->connection(),  // db
+                sql.c_str(),         // zSql
+                sql.size() + 1,      // nBytes
+                &statement,          // ppStmt
+                nullptr));           // pzTail
+
+        try
+        {
+            for (const RowData &parameters : parameter_rows)
+            {
+                this->bind_input_parameters(statement, parameters);
+                this->execute_statement(statement, callback);
+                this->check_status(sqlite3_reset(statement));
+                this->check_status(sqlite3_clear_bindings(statement));
+            }
+        }
+        catch (...)
+        {
+            sqlite3_finalize(statement);
+            throw;
+        }
+
+        this->check_status(sqlite3_finalize(statement));
+    }
+
+    ::sqlite3 *SQLite3::connection() const
+    {
+        if (!this->is_open())
+        {
+            throw core::exception::FailedPrecondition("No connection to SQLite3 database");
+        }
+        return this->connection_;
+    }
+
+    void SQLite3::bind_input_parameters(::sqlite3_stmt *statement,
+                                        const RowData &parameters) const
+    {
+        for (int index = 0; index < parameters.size(); index++)
+        {
+            const core::types::Value &value = parameters.at(index);
+            int status = SQLITE_OK;
+
+            switch (value.type())
+            {
+            case core::types::ValueType::NONE:
+                status = sqlite3_bind_null(statement,
+                                           index + 1);
+                break;
+
+            case core::types::ValueType::BOOL:
+            case core::types::ValueType::CHAR:
+            case core::types::ValueType::UINT:
+            case core::types::ValueType::SINT:
+            {
+                auto numeric_value = value.as_largest_sint();
+                if ((numeric_value < std::numeric_limits<std::int64_t>::min()) ||
+                    (numeric_value > std::numeric_limits<std::int64_t>::max()))
+                {
+                    status = sqlite3_bind_double(statement,
+                                                 index + 1,
+                                                 value.as_double());
+                }
+                else if ((numeric_value < std::numeric_limits<int>::min()) ||
+                         (numeric_value > std::numeric_limits<int>::max()))
+                {
+                    status = sqlite3_bind_int64(statement,
+                                                index + 1,
+                                                numeric_value);
+                }
+                else
+                {
+                    status = sqlite3_bind_int(statement,
+                                              index + 1,
+                                              value.as_sint32());
+                }
+                break;
+            }
+
+            case core::types::ValueType::REAL:
+                status = sqlite3_bind_double(statement,
+                                             index + 1,
+                                             value.as_double());
+                break;
+
+            case core::types::ValueType::STRING:
+                if (auto *string = value.get_if<std::string>())
+                {
+                    sqlite3_bind_text(statement,
+                                      index + 1,
+                                      string->data(),
+                                      string->size(),
+                                      SQLITE_STATIC);
+                }
+                break;
+
+            case core::types::ValueType::BYTEVECTOR:
+                if (auto *bytes = value.get_if<core::types::ByteVector>())
+                {
+                    status = sqlite3_bind_blob(statement,
+                                               index + 1,
+                                               bytes->data(),
+                                               bytes->size(),
+                                               SQLITE_STATIC);
+                }
+                break;
+
+            default:
+            {
+                std::string encoded = core::json::writer.encoded(value);
+                status = sqlite3_bind_text(statement,
+                                           index + 1,
+                                           encoded.data(),
+                                           encoded.size(),
+                                           SQLITE_TRANSIENT);
+            }
+            }
+
+            this->check_status(status);
+        }
+    }
+
+    void SQLite3::execute_statement(::sqlite3_stmt *statement,
+                                    const QueryCallbackFunction &callback) const
+    {
+        bool done = false;
+        ColumnNames column_names = this->column_names(statement);
+
+        while (!done)
+        {
+            switch (int statuscode = ::sqlite3_step(statement))
+            {
+                // case SQLITE_BUSY:
+                //     break;
+
+            case SQLITE_ROW:
+                if (callback)
+                {
+                    this->process_row(statement, column_names, callback);
+                }
+                break;
+
+            case SQLITE_DONE:
+                done = true;
+                break;
+
+            default:
+                this->check_status(statuscode);
+                break;
+            }
+        }
+    }
+
+    SQLite3::ColumnNames SQLite3::column_names(::sqlite3_stmt *statement) const
+    {
+        int column_count = sqlite3_column_count(statement);
+        ColumnNames column_names(column_count);
+        for (int col_index = 0; col_index < column_count; col_index++)
+        {
+            if (const char *name = sqlite3_column_name(statement, col_index))
+            {
+                column_names.at(col_index).assign(name);
+            }
+        }
+        return column_names;
+    }
+
+    bool SQLite3::process_row(
+        ::sqlite3_stmt *statement,
+        const ColumnNames &column_names,
+        const QueryCallbackFunction &callback) const
+    {
+        try
+        {
+            return callback(this->extract_row(
+                statement,
+                column_names));
+        }
+        catch (...)
+        {
+            logf_error("SQLite3 query callback from DB row #%d failed: %s",
+                       this->db_file(),
+                       std::current_exception());
+            return false;
+        }
+    }
+
+    core::types::TaggedValueList SQLite3::extract_row(
+        ::sqlite3_stmt *statement,
+        const ColumnNames &column_names) const
+    {
+        int ncols = sqlite3_column_count(statement);
+        core::types::TaggedValueList row_data;
+        // row_data.reserve(ncols);
+        for (int col_index = 0; col_index < ncols; col_index++)
+        {
+            const std::string &column_name = column_names.at(col_index);
+            auto &[tag, value] = row_data.emplace_back(column_name, core::types::Value());
+
+            switch (sqlite3_column_type(statement, col_index))
+            {
+            case SQLITE_INTEGER:
+                value = sqlite3_column_int64(statement, col_index);
+                break;
+
+            case SQLITE_FLOAT:
+                value = sqlite3_column_double(statement, col_index);
+                break;
+
+            case SQLITE_TEXT:
+                if (const unsigned char *text = sqlite3_column_text(statement, col_index))
+                {
+                    int nbytes = sqlite3_column_bytes(statement, col_index);
+                    value = std::string(reinterpret_cast<const char *>(text), nbytes);
+                }
+                break;
+
+            case SQLITE_BLOB:
+                if (const void *blob = sqlite3_column_blob(statement, col_index))
+                {
+                    auto *data = static_cast<const std::uint8_t *>(blob);
+                    int nbytes = sqlite3_column_bytes(statement, col_index);
+                    value = core::types::ByteVector(data, data + nbytes);
+                }
+                else
+                {
+                    value = core::types::ByteVector();
+                }
+                break;
+
+            case SQLITE_NULL:
+                break;
+            }
+        }
+        return row_data;
+    }
+
+    void SQLite3::check_status(
+        int code,
+        const core::types::KeyValueMap &attributes) const
+    {
+        if (code != SQLITE_OK)
+        {
+            throw core::exception::ServiceError(
+                sqlite3_errstr(code) ? sqlite3_errstr(code) : "Unknown SQLite3 failure",
+                "SQLite3",                                     // service
+                static_cast<core::status::Event::Code>(code),  // code
+                "",                                            // id
+                core::status::Level::FAILED,                   // level
+                core::dt::Clock::now(),                        // timepoint
+                attributes);
+        }
+    }
+}  // namespace core::db

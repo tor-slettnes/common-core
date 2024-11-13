@@ -69,7 +69,11 @@
         // },
 
         "syslog": {
-            "threshold" : "debug"
+            // Minimum log level to capture
+            "threshold" : "debug",
+
+            // Include source context in message
+            "include context" : false
         },
 
         // Log to JSON files
@@ -101,6 +105,9 @@
             // Log logger threshold
             "threshold" : "trace",
 
+            // Include source context in message
+            "include context" : false,
+
             // Logfile name template, expanded as described above.
             "name template" : "{executable}-{isodate}-{hour}{minute}{zoneoffset}.log",
 
@@ -116,16 +123,24 @@
         "csv" :
         {
             // Log to text file enabled.  Defaults to `false`.
-            // "enabled" : false,
+            // "enabled" : true,
 
             // Log logger threshold
             "threshold" : "debug",
 
             // Columns to include.
-            "column names" : [
-                "timestamp", "host", "origin", "level",
-                "log_scope", "thread_id", "source_path", "source_line", "function_name",
-                "text"
+            "columns" : [
+                // Event field, optional CSV column header, optional format string
+                ["timestamp", "TIME", "%T"],
+                ["host", "HOST"],
+                ["origin", "ORIGIN"],
+                ["level", "LEVEL"],
+                ["log_scope", "SCOPE"],
+                ["thread_id", "THREAD"],
+                ["source_path", "FILE"],
+                ["source_line", "LINE"],
+                ["function_name", "FUNCTION", "%s()"],
+                ["text", "TEXT"]
             ],
 
             // Column separator; `","` by default
@@ -141,6 +156,42 @@
             // Derive log file name from local time.
             "local time" : true
         },
+
+        // Log to SQLite3 `.db` files
+        "sqlite3" :
+        {
+            // Log to text file enabled.  Defaults to `false`.
+            // "enabled" : false,
+
+            // Log logger threshold
+            "threshold" : "debug",
+
+            // Columns to include.
+            "columns" : [
+                // Event field, optional column name, column type, optional format string
+                ["timestamp", "timestamp", "INT", "%d"],
+                ["host", "hostname", "TEXT"],
+                ["origin", "origin", "TEXT"],
+                ["level", "level", "TEXT"],
+                ["log_scope", "scope", "TEXT"],
+                ["thread_id", "thread", "INT"],
+                ["source_path", "file", "TEXT"],
+                ["source_line", "line", "INT"],
+                ["function_name", "function", "TEXT"],
+                ["text", "text", "TEXT"]
+            ],
+
+            // Logfile name template, expanded as described above.
+            "name template" : "{executable}-{isodate}.db",
+
+            // How often do we want to switch to a new log file, in seconds.
+            // Default: 6 hours = 21600 seconds
+            "rotation" : "1 week",
+
+            // Derive log file name from local time.
+            "local time" : true
+        },
+
 
         // Log via RTI distributed logger (if built with option `USE_RTI_DISTRIBUTED_LOGGER`)
         "rti-dl":

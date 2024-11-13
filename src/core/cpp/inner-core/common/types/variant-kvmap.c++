@@ -12,14 +12,13 @@
 
 namespace core::types
 {
-    const Value &KeyValueMap::get(const std::string &key,
-                                  const Value &fallback,
-                                  bool ignoreCase) const noexcept
+    const Value *KeyValueMap::get_ptr(const std::string &key,
+                                      bool ignoreCase) const noexcept
     {
         try
         {
             // First a plain lookup
-            return this->at(key);
+            return &this->at(key);
         }
         catch (const std::out_of_range &)
         {
@@ -31,11 +30,25 @@ namespace core::types
                 {
                     if (str::tolower(c_key) == lowerkey)
                     {
-                        return c_value;
+                        return &c_value;
                     }
                 }
             }
-            // Nope, return fallback.
+            // Nope, nothing found.
+            return nullptr;
+        }
+    }
+
+    const Value &KeyValueMap::get(const std::string &key,
+                                  const Value &fallback,
+                                  bool ignoreCase) const noexcept
+    {
+        if (const Value *value = this->get_ptr(key, ignoreCase))
+        {
+            return *value;
+        }
+        else
+        {
             return fallback;
         }
     }
@@ -52,7 +65,6 @@ namespace core::types
             return fallback;
         }
     }
-
 
     TaggedValueList KeyValueMap::as_tvlist() const
     {

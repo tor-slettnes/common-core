@@ -5,6 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+add_subdirectory(sinks)
 add_subdirectory(base)
 add_subdirectory(impl)
 

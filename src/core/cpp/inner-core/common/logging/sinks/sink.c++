@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "sink.h++"
+#include "settings/settings.h++"
 
 #include <iostream>
 
@@ -28,6 +29,14 @@ namespace core::logging
     SinkID Sink::sink_id() const
     {
         return this->sink_id_;
+    }
+
+    void Sink::load_settings()
+    {
+        this->load_settings(core::settings
+                                ->get(SETTING_LOG_SINKS)
+                                .get(this->sink_id())
+                                .as_kvmap());
     }
 
     bool Sink::is_applicable(const types::Loggable &) const

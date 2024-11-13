@@ -10,11 +10,16 @@
 namespace core::platform
 {
     LogSinkProvider::LogSinkProvider(const std::string &implementation,
-                                     const std::string &sink_id,
-                                     status::Level threshold)
-        : LogSink(sink_id, threshold),
+                                     const std::string &sink_id)
+        : LogSink(sink_id),
           Provider(implementation)
     {
+    }
+
+    void LogSinkProvider::load_settings(const types::KeyValueMap &settings)
+    {
+        Super::load_settings(settings);
+        this->load_message_format(settings);
     }
 
     ProviderProxy<LogSinkProvider> logsink("logsink");

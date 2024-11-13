@@ -8,6 +8,8 @@ RUN apt-get install -y \
     doxygen                 \
     file                    \
     git                     \
+    rapidjson-dev           \
+    libsqlite3-dev          \
     libavahi-client-dev     \
     libzmq3-dev             \
     libcurl4-gnutls-dev     \
@@ -30,7 +32,6 @@ RUN apt-get install -y \
     python3-grpcio          \
     python3-protobuf        \
     python3-zmq             \
-    rapidjson-dev           \
     sudo                    \
     uuid-dev
 

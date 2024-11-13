@@ -26,9 +26,11 @@ namespace core::dds
 
     protected:
         RTIDistributedLogger(const std::string &sink_id,
-                             status::Level threshold,
                              const std::string &application_id,
                              int domain_id);
+
+    protected:
+        void load_settings(const types::KeyValueMap &settings) override;
 
     public:
         void set_threshold(core::status::Level threshold) override;

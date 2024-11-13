@@ -44,7 +44,9 @@ namespace logger
         virtual SinkSpec get_sink_spec(
             const SinkID &id) const = 0;
 
-        virtual SinkSpecs list_sinks() const = 0;
+        virtual SinkSpecs get_all_sink_specs() const = 0;
+
+        virtual SinkIDs list_sinks() const = 0;
 
         virtual FieldNames list_static_fields() const = 0;
 

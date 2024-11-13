@@ -27,13 +27,12 @@ namespace logger::grpc
     protected:
         template <class... Args>
         LoggerClient(const std::string &identity,
-                     core::status::Level threshold = core::status::Level::NONE,
                      const std::string &host = "",
                      bool add_local_sink = true,
                      Args &&...args)
             : API(identity),
               LoggerClientBase(host, std::forward<Args>(args)...),
-              AsyncLogSink(this->host(), threshold),
+              AsyncLogSink(this->host()),
               add_local_sink(add_local_sink)
         {
         }
@@ -46,7 +45,8 @@ namespace logger::grpc
         bool add_sink(const SinkSpec &spec) override;
         bool remove_sink(const SinkID &id) override;
         SinkSpec get_sink_spec(const SinkID &id) const override;
-        SinkSpecs list_sinks() const override;
+        SinkSpecs get_all_sink_specs() const override;
+        SinkIDs list_sinks() const override;
         FieldNames list_static_fields() const override;
 
         std::shared_ptr<EventSource> listen(

@@ -10,7 +10,6 @@ syntax = "proto3";
 package cc.logger;
 
 import "status.proto";
-import "variant.proto";
 import "datetime.proto";
 import "google/protobuf/empty.proto";
 
@@ -37,7 +36,7 @@ service Logger
     rpc get_sink (SinkID) returns (SinkSpec);
 
     // Return defintions for all available log sinks
-    rpc list_sinks (google.protobuf.Empty) returns (SinkSpecs);
+    rpc list_sinks (ListSinkRequest) returns (SinkSpecs);
 
     // Return a list of keys corresponding to fixed (always available) fields in
     // log events - i.e. the static field names from the `cc.status.Event`
@@ -54,11 +53,6 @@ service Logger
 message SinkID
 {
     string sink_id = 1;
-}
-
-message SinkSpecs
-{
-    repeated SinkSpec specs = 1;
 }
 
 message SinkSpec
@@ -132,27 +126,63 @@ message SinkSpec
     //   implicitly denotes the type of event field, along with the default
     //   value to log if the field is not present in a message.  This is
     //   required for `DB` sinks, but may omitted for static fields.
-    cc.variant.ValueList fields = 11;
+    repeated ColumnSpec columns = 11;
 }
 
 enum SinkType
 {
+    // Keep in sync with 'enum class SinkType' in 'logger-types.h++'
+    // (which is not ProtoBuf-aware).
+
     SINKTYPE_UNSPECIFIED = 0;   // Unknown/no type
-    SINKTYPE_SYSLOG = 1;        // OS-specific text based system/event log
-    SINKTYPE_LOGFILE  = 2;      // Plaintext log file
-    SINKTYPE_JSON = 3;          // JSON file with (possibly nested) data fields
-    SINKTYPE_CSV = 4;           // Comma-separated values, fixed data fields
-    SINKTYPE_DB = 5;            // Database with fixed fields
+    SINKTYPE_STREAM = 1;        // Standard output/error streams
+    SINKTYPE_SYSLOG = 2;        // OS-specific text based system/event log
+    SINKTYPE_LOGFILE  = 3;      // Plaintext log file
+    SINKTYPE_JSON = 4;          // JSON file, arbitrary (possibly nested) data fields
+    SINKTYPE_CSV = 5;           // Comma-separated values, fixed data fields
+    SINKTYPE_DB = 6;            // Database with fixed fields
+}
+
+message SinkSpecs
+{
+    repeated SinkSpec specs = 1;
 }
 
 message AddSinkResult
 {
-    bool added = 1;
+    bool added = 1;             // A new sink was added.
 }
 
 message RemoveSinkResult
 {
-    bool removed = 1;
+    bool removed = 1;           // An existing sink was removed
+}
+
+message ListSinkRequest
+{
+    bool verbose = 1;           // Include sink specifications, not just name.
+}
+
+message ColumnSpec
+{
+    string event_field = 1;
+    string column_name = 2;
+    ColumnType column_type = 3;
+    string format_string = 4;
+}
+
+enum ColumnType
+{
+    // Keep in sync with 'enum class ColumnType' in 'tabulardatasink.[ch]++',
+    // which are not ProtoBuf-aware.
+
+    COLTYPE_NONE = 0;
+    COLTYPE_BOOL = 1;
+    COLTYPE_INT  = 2;
+    COLTYPE_REAL = 3;
+    COLTYPE_TEXT = 4;
+    COLTYPE_BLOB = 5;
+    COLTYPE_DATETIME = 6;
 }
 
 

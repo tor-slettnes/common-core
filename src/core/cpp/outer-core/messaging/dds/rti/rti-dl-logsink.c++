@@ -11,16 +11,20 @@ namespace core::dds
 {
     RTIDistributedLogger::RTIDistributedLogger(
         const std::string &sink_id,
-        status::Level threshold,
         const std::string &application_id,
         int domain_id)
-        : LogSink(sink_id, threshold),
+        : LogSink(sink_id),
           dist_logger_(nullptr)
     {
         this->dl_options_.setApplicationKind(application_id.c_str());
         this->dl_options_.setDomainId(domain_id);
         this->dl_options_.setEchoToStdout(false);
-        this->set_threshold(this->threshold());
+    }
+
+    void RTIDistributedLogger::load_settings(const types::KeyValueMap &settings)
+    {
+        Super::load_settings(settings);
+        this->load_message_format(settings);
     }
 
     void RTIDistributedLogger::set_threshold(core::status::Level threshold)

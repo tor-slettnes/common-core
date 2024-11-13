@@ -12,6 +12,19 @@
 
 namespace core::logging
 {
+    MessageFormatter::MessageFormatter()
+        : include_context_(DEFAULT_INCLUDE_CONTEXT)
+    {
+    }
+
+    void MessageFormatter::load_message_format(const types::KeyValueMap &settings)
+    {
+        if (const types::Value &value = settings.get(SETTING_INCLUDE_CONTEXT))
+        {
+            this->set_include_context(value.as_bool());
+        }
+    }
+
     void MessageFormatter::set_include_context(bool include_context)
     {
         this->include_context_ = include_context;
@@ -20,6 +33,11 @@ namespace core::logging
     bool MessageFormatter::include_context() const
     {
         return this->include_context_;
+    }
+
+    bool MessageFormatter::is_message(const core::types::Loggable &item) const
+    {
+        return dynamic_cast<const Message *>(&item) != nullptr;
     }
 
     void MessageFormatter::send_preamble(std::ostream &stream,

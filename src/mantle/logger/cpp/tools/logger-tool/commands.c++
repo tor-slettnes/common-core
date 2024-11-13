@@ -37,7 +37,7 @@ void Options::add_commands()
 
     this->add_command(
         "list_sinks",
-        {},
+        {"[verbose]"},
         "List currently active log sinks.",
         std::bind(&Options::list_sinks, this));
 
@@ -100,9 +100,23 @@ void Options::get_sink()
 
 void Options::list_sinks()
 {
-    for (const logger::SinkSpec &spec : this->provider->list_sinks())
+    FlagMap flags;
+    bool &verbose = flags["verbose"];
+    this->get_flags(&flags);
+
+    if (verbose)
     {
-        std::cout << spec << std::endl;
+        for (const logger::SinkSpec &spec : this->provider->get_all_sink_specs())
+        {
+            std::cout << spec << std::endl;
+        }
+    }
+    else
+    {
+        for (const logger::SinkID &sink_id : this->provider->list_sinks())
+        {
+            std::cout << sink_id << std::endl;
+        }
     }
 }
 

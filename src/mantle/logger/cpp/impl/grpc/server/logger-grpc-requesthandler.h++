@@ -57,7 +57,7 @@ namespace logger::grpc
 
         ::grpc::Status list_sinks(
             ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
+            const ::cc::logger::ListSinkRequest* request,
             ::cc::logger::SinkSpecs* response) override;
 
         ::grpc::Status list_static_fields(

@@ -397,12 +397,14 @@ namespace core::http
         std::thread::id thread_id = std::this_thread::get_id();
         try
         {
+            // Renew an existing CURL handle
             CURL *handle = this->handles_.at(thread_id);
             curl_easy_reset(handle);
             return handle;
         }
         catch (const std::out_of_range &)
         {
+            // This thread has not performed any prior requests; create a new handle.
             auto handles = const_cast<HandleMap *>(&this->handles_);
             auto [it, inserted] = handles->insert_or_assign(thread_id, curl_easy_init());
             return it->second;

@@ -64,11 +64,24 @@ namespace logger::grpc
                 ::protobuf::encoded<cc::logger::SinkID>(id)));
     }
 
-    SinkSpecs LoggerClient::list_sinks() const
+    SinkSpecs LoggerClient::get_all_sink_specs() const
     {
+        cc::logger::ListSinkRequest request;
+        request.set_verbose(true);
         return protobuf::decoded<SinkSpecs>(
             this->call_check(
-                &Stub::list_sinks));
+                &Stub::list_sinks,
+                request));
+    }
+
+    SinkIDs LoggerClient::list_sinks() const
+    {
+        cc::logger::ListSinkRequest request;
+        request.set_verbose(false);
+        return protobuf::decoded<SinkIDs>(
+            this->call_check(
+                &Stub::list_sinks,
+                request));
     }
 
     FieldNames LoggerClient::list_static_fields() const

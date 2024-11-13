@@ -23,13 +23,15 @@ namespace core::types
         using Super::Super;
 
     public:
+        const Value *get_ptr(const std::string &key,
+                             bool ignoreCase = false) const noexcept;
+
         const Value &get(const std::string &key,
                          const Value &fallback = {},
                          bool ignoreCase = false) const noexcept;
 
         Value extract_value(const std::string &key,
                             const Value &fallback = {}) noexcept;
-
 
         std::vector<std::string> keys() const noexcept;
         ValueList values() const noexcept;
@@ -101,18 +103,20 @@ namespace core::types
         insert_if(bool condition, const std::string &key, const Value &value);
 
         template <class T>
-        T get_as(const std::string &key, const T &fallback={}, bool ignore_case=false) const
+        std::optional<T> get_as(const std::string &key, bool ignore_case = false) const
         {
             if (const Value &value = this->get(key, {}, ignore_case))
             {
-                return str::convert_to<T>(value.as_string(), fallback);
+                try
+                {
+                    return str::convert_to<T>(value.as_string());
+                }
+                catch (...)
+                {
+                }
             }
-            else
-            {
-                return fallback;
-            }
+            return {};
         }
-
 
         /// @brief
         ///   Obtain key/value pairs where the value is a specific type

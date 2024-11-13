@@ -25,13 +25,17 @@ namespace core::logging
     Sink::ptr Dispatcher::add_sink(const SinkID &sink_id,
                                    const Sink::ptr &sink)
     {
-        auto [it, inserted] = this->sinks_.insert_or_assign(sink_id, sink);
+        auto [it, inserted] = this->sinks_.emplace(sink_id, sink);
+        if (inserted)
+        {
+            sink->load_settings();
+        }
         return it->second;
     }
 
     bool Dispatcher::remove_sink(const SinkID &sink_id)
     {
-        return this->sinks_.erase(sink_id) > 0;
+        return this->sinks_.erase(sink_id);
     }
 
     bool Dispatcher::remove_sink(const Sink::ptr &sink)
@@ -84,16 +88,4 @@ namespace core::logging
         }
         return false;
     }
-
-    void Dispatcher::submit(const types::Loggable::ptr &item)
-    {
-        for (const auto &[sink_id, sink] : this->sinks())
-        {
-            if (sink->is_applicable(*item))
-            {
-                sink->capture(item);
-            }
-        }
-    }
-
 }  // namespace core::logging

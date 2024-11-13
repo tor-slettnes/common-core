@@ -14,9 +14,8 @@ namespace core::platform
 {
     WindowsLogSinkProvider::WindowsLogSinkProvider(
         const std::string &application_id,
-        const std::string &sink_id,
-        status::Level threshold)
-        : Super("WindowsLogSinkProvider", sink_id, threshold),
+        const std::string &sink_id)
+        : Super("WindowsLogSinkProvider", sink_id),
           application_id_(application_id)
     {
     }

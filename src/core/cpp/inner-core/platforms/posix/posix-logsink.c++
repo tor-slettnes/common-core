@@ -12,9 +12,8 @@ namespace core::platform
 {
     PosixLogSinkProvider::PosixLogSinkProvider(
         const std::string &application_id,
-        const std::string &sink_id,
-        status::Level threshold)
-        : LogSinkProvider("PosixLogSinkProvider", sink_id, threshold),
+        const std::string &sink_id)
+        : LogSinkProvider("PosixLogSinkProvider", sink_id),
           application_id_(application_id)
     {
     }
@@ -23,8 +22,8 @@ namespace core::platform
     {
         Super::open();
         ::openlog(this->application_id().c_str(),  // ident
-                  LOG_NDELAY | LOG_PID,       // option
-                  LOG_DAEMON);                // facility
+                  LOG_NDELAY | LOG_PID,            // option
+                  LOG_DAEMON);                     // facility
     }
 
     void PosixLogSinkProvider::close()
