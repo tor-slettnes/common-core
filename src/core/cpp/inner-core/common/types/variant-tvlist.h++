@@ -18,6 +18,8 @@ namespace core::types
     {
         using Super = std::deque<TaggedValue>;
 
+        using AppendResult = std::pair<TaggedValueList::iterator, bool>;
+
     protected:
         // Inherit constructors from std::vector<>
         using Super::Super;
@@ -29,6 +31,10 @@ namespace core::types
         TaggedValueList::iterator find(
             const Tag &tag,
             bool ignoreCase = false) noexcept;
+
+        // No-ops for compatibility with std::vector<>;
+        void reserve(std::size_t capacity) {}
+        void shrink_to_fit() {}
 
         // Inherit .at(position) from std::deque
         using Super::at;
@@ -116,8 +122,14 @@ namespace core::types
         ///    Tagged Value to push
         /// \param[in] condition
         ///    Whether to actually push or not
-        bool push_if(bool condition, const TaggedValue &tv);
-        bool push_if(bool condition, const Value &value);
+
+        TaggedValueList::iterator append(const TaggedValue &tv);
+        TaggedValueList::iterator append(const Value &value);
+        TaggedValueList::iterator append(const Tag &tag, const Value &value);
+
+        AppendResult append_if(bool condition, const TaggedValue &tv);
+        AppendResult append_if(bool condition, const Value &value);
+        AppendResult append_if(bool condition, const Tag &tag, const Value &value);
 
     public:
         void to_stream(std::ostream &stream) const override;
@@ -125,6 +137,23 @@ namespace core::types
                        const std::string &prefix,
                        const std::string &infix,
                        const std::string &postfix) const;
+
+
+        template<class T>
+        static std::shared_ptr<TaggedValueList> create_shared_from(const T &obj)
+        {
+            auto tvlist = std::make_shared<TaggedValueList>();
+            (*tvlist) << obj;
+            return tvlist;
+        }
+
+        template<class T>
+        static TaggedValueList create_from(const T &obj)
+        {
+            TaggedValueList tvlist;
+            tvlist << obj;
+            return tvlist;
+        }
     };
 
 }  // namespace core::types

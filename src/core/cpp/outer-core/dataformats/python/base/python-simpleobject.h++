@@ -144,17 +144,19 @@ namespace core::python
         static PyObject *pystring_from_string(const std::string &string);
         static PyObject *pybytes_from_bytes(const types::ByteVector &bytes);
         static PyObject *pytuple_from_values(const types::ValueList &values);
+        static PyObject *pytuple_from_objects(const Vector &objects);
         static PyObject *pylist_from_values(const types::ValueList &values);
         static PyObject *pylist_from_tagged_values(const types::TaggedValueList &tvlist);
         static PyObject *pydict_from_kvmap(const types::KeyValueMap &kvmap);
+        static PyObject *pydict_from_objects(const Map &kvmap);
         static PyObject *pyobj_from_value(const types::Value &value);
 
         static std::ostream &write_to_stream(std::ostream &stream,
                                              PyObject *obj,
                                              bool literal);
 
-    private:
-        static std::unordered_map<PyTypeObject *, types::ValueType> type_map;
+    // private:
+    //     static std::unordered_map<PyTypeObject *, types::ValueType> type_map;
 
     protected:
         PyObject *cobj;

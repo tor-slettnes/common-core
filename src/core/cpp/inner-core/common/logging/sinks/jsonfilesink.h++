@@ -8,6 +8,7 @@
 #pragma once
 #include "asynclogsink.h++"
 #include "rotatingpath.h++"
+#include "factory.h++"
 #include "json/writer.h++"
 #include "types/filesystem.h++"
 #include "types/create-shared.h++"
@@ -18,6 +19,9 @@
 
 namespace core::logging
 {
+    //--------------------------------------------------------------------------
+    // JsonFileSink
+
     class JsonFileSink : public AsyncLogSink,
                          public RotatingPath,
                          public types::enable_create_shared<JsonFileSink>
@@ -38,4 +42,15 @@ namespace core::logging
     private:
         std::shared_ptr<json::Writer> writer_;
     };
+
+    //--------------------------------------------------------------------------
+    // Add sink factory to enable `--log-to-json` option.
+
+    inline static SinkFactory json_factory(
+        "json",
+        "Log to a JSON file, on JSON-formatted log entry per line",
+        [](const SinkID &sink_id) -> Sink::ptr {
+            return JsonFileSink::create_shared(sink_id);
+        });
+
 }  // namespace core::logging

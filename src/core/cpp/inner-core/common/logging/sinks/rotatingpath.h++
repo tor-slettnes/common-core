@@ -65,7 +65,7 @@ namespace core::logging
         dt::DateTimeInterval rotation_interval_;
         bool use_local_time_;
         fs::path log_folder_;
-        std::string exec_name_;
+        std::unordered_map<std::string, std::string> expansions_;
         dt::TimePoint current_rotation_;
         fs::path current_path_;
     };

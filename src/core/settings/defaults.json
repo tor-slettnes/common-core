@@ -47,7 +47,7 @@
         // following placeholders expanded:
         //
         //   - "executable": the name of the executable, minus any suffix (e.g. `.exe`)
-        //   - "sink"      : the identity of the log sink, e.g. `"log"` or `"csv"`
+        //   - "sink_id"   : the identity of the log sink, e.g. `"log"` or `"csv"`
         //   - "isodate"   : date formatted as "YYYY-MM-DD"
         //   - "isotime    : time of day formatted as "HH:MM:SS"
         //   - "year"      : four-digit year
@@ -64,9 +64,9 @@
         // For instance, given a six-hour rotation interval the timestamps would
         // be truncated to 00:00, 06:00, 12:00, and 18:00, local time.
 
-        // "stderr": {
-        //     "threshold" : "debug"
-        // },
+        "stderr": {
+            "include context": true
+        },
 
         "syslog": {
             // Minimum log level to capture
@@ -100,7 +100,7 @@
         "file" :
         {
             // Log to text file enabled.  Defaults to `false`.
-            // "enabled" : false,
+            // "enabled" : true,
 
             // Log logger threshold
             "threshold" : "trace",
@@ -128,6 +128,9 @@
             // Log logger threshold
             "threshold" : "debug",
 
+            // Contract ID to capture
+            "contract id" : "text",
+
             // Columns to include.
             "columns" : [
                 // Event field, optional CSV column header, optional format string
@@ -149,9 +152,9 @@
             // Logfile name template, expanded as described above.
             "name template" : "{executable}-{isodate}-{hour}{minute}{zoneoffset}.csv",
 
-            // How often do we want to switch to a new log file, in seconds.
-            // Default: 6 hours = 21600 seconds
-            "rotation" : "6 hours",
+            // How often do we want to switch to a new log file.
+            // Default is 6 hours.
+            "rotation" : "1 day",
 
             // Derive log file name from local time.
             "local time" : true

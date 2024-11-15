@@ -5,43 +5,44 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-// See `defaults.json` for descriptions of the following settings.
-
+// See `defaults.json` for default values and descriptions
 
 {
     "log sinks": {
         "csv": {
-            "enabled" : true,
-            "threshold" : "debug",
-            "column names" : [
-                "timestamp", "host", "origin", "level",
-                "log_scope", "thread_id", "source_path", "source_line", "function_name",
-                "text"
-            ],
-
-            // "column separator" : "\t",
-            "name template" : "{isodate}-{hour}{minute}{zoneoffset}.csv",
-            "rotation" : "1 day",
-            "local time" : true
+            "enabled"      : true,
+            "name template" : "{isodate}-{hour}{minute}{zoneoffset}.csv"
         },
 
         "lologger": {
-            "enabled": true,
-            "type": "sqlite3",
-            "threshold": "debug",
+            "enabled"       : true,
+            "type"          : "sqlite3",
+            "threshold"     : "debug",
+            "contract id"   : "text",
             "name template" : "{hostname}-{year}-{month}.db",
-            "rotation" : "1 month",
-            "local time": true,
-            "table name": "Events",
-            "capture fields" : [
+            "rotation"      : "1 month",
+            "local time"    : true,
+            "table name"    : "Events",
+            "columns" : [
                 // event_field, column_name, column_type[, extra_args]
-                ["timestamp", "ClientTimestamp", "TEXT"],
+                ["timestamp", "ClientTimestamp", "INT", "%T"],
                 ["origin", "ClientName", "TEXT"],
-                ["timestamp", "EpochTime", "INT", "PRIMARY KEY"],
+                ["timestamp", "EpochTime", "INT"],
                 ["text", "LogMessage", "TEXT"],
                 ["level", "Level", "INT"],
                 ["host", "IP", "TEXT"]
-            ]
+            ],
+            "level map" : {
+                "NONE" : 0,
+                "TRACE" : 5,
+                "DEBUG" : 10,
+                "INFO" : 20,
+                "NOTICE" : 25,
+                "WARNING" : 30,
+                "FAILED" : 40,
+                "CRITICAL" : 50,
+                "FATAL": 75
+            }
         }
     }
 }

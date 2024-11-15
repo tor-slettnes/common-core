@@ -15,7 +15,7 @@ set(PKG_DEPS
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_core_sqlbase
+  cc_core_inner
 )
 
 ### Source files in this folder

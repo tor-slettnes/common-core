@@ -81,11 +81,38 @@ namespace core::types
     TaggedValueList ValueList::as_tvlist() const noexcept
     {
         TaggedValueList tvlist;
+        tvlist.reserve(this->size());
         for (const auto &value : *this)
         {
             tvlist.push_back({nulltag, value});
         }
         return tvlist;
+    }
+
+    ValueList::iterator ValueList::append(const Value &value)
+    {
+        return this->insert(this->end(), value);
+    }
+
+    ValueList::iterator ValueList::append(Value &&value)
+    {
+        return this->insert(this->end(), std::move(value));
+    }
+
+    ValueList::AppendResult ValueList::append_if(bool condition, const Value &value)
+    {
+        return {
+            condition ? this->insert(this->end(), value) : this->end(),
+            condition,
+        };
+    }
+
+    ValueList::AppendResult ValueList::append_if(bool condition, Value &&value)
+    {
+        return {
+            condition ? this->insert(this->end(), std::move(value)) : this->end(),
+            condition,
+        };
     }
 
 }  // namespace core::types

@@ -86,23 +86,18 @@ namespace platform::upgrade
         }
     }
 
-    void PackageSource::to_stream(
-        std::ostream &stream) const
+    void PackageSource::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-
         switch (this->location_type())
         {
         case LocationType::VFS:
-            parts.add("vpath", this->vfs_path(), true, "%r");
+            tvlist->append("vpath", this->vfs_path().as_tvlist());
             break;
 
         case LocationType::URL:
-            parts.add("url", this->url(), true, "%r");
+            tvlist->append("url", this->url());
             break;
         }
-
-        stream << parts;
     }
 
     //==========================================================================
@@ -198,19 +193,18 @@ namespace platform::upgrade
     //==========================================================================
     // UpgradeProgress
 
-    void UpgradeProgress::to_stream(std::ostream &stream) const
+    void UpgradeProgress::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("state", this->state);
-        parts.add_string("task_description", this->task_description);
-        parts.add("task_progress", this->task_progress);
-        parts.add("total_progress", this->total_progress);
+        tvlist->append("state", this->state);
+        tvlist->append("task_description", this->task_description);
+        tvlist->append("task_progress", this->task_progress.as_tvlist());
+        tvlist->append("total_progress", this->total_progress.as_tvlist());
         if (this->error)
         {
-            parts.add("error", this->error);
+            tvlist->append("error", this->error->as_tvlist());
         }
-        stream << parts;
     }
+
 
     UpgradeProgress::Fraction::Fraction(const core::types::Value &current,
                                         const core::types::Value &total)
@@ -219,12 +213,10 @@ namespace platform::upgrade
     {
     }
 
-    void UpgradeProgress::Fraction::to_stream(std::ostream &stream) const
+    void UpgradeProgress::Fraction::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::str::format(stream,
-                          "%d/%d",
-                          this->current,
-                          this->total);
+        tvlist->append("current", this->current);
+        tvlist->append("total", this->total);
     }
 
     std::ostream &operator<<(std::ostream &stream, UpgradeProgress::State state)

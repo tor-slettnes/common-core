@@ -30,22 +30,25 @@ namespace core::platform
     //==========================================================================
     // Device Info
 
+    types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
+                                       const HIDDeviceInfo &info)
+    {
+        tvlist.append_if(!info.path.empty(), "path", info.path.string());
+        tvlist.append("vendor_id", info.vendor_id);
+        tvlist.append("product_id", info.product_id);
+        tvlist.append_if(!info.serial_number.empty(), "serial_number", info.serial_number);
+        tvlist.append_if(info.release_number != 0, "release_number", info.release_number);
+        tvlist.append_if(!info.manufacturer.empty(), "manufacturer", info.manufacturer);
+        tvlist.append_if(!info.product.empty(), "product", info.product);
+        tvlist.append_if(info.usage_page != 0, "usage_page", info.usage_page);
+        tvlist.append_if(info.usage != 0, "usage", info.usage);
+        tvlist.append("interface_number", info.interface_number);
+        tvlist.append_if(info.bus_type != BusType::UNKNOWN, "bus_type", info.bus_type);
+    }
+
     std::ostream &operator<<(std::ostream &stream, const HIDDeviceInfo &info)
     {
-        types::PartsList list;
-        list.add("path", info.path.string(), !info.path.empty());
-        list.add("vendor_id", info.vendor_id, true, "%04x");
-        list.add("product_id", info.product_id, true, "%04x");
-        list.add("serial_number", info.serial_number, !info.serial_number.empty());
-        list.add("release_number", info.release_number, info.release_number != 0);
-        list.add("manufacturer", info.manufacturer, !info.manufacturer.empty());
-        list.add("product", info.product, !info.product.empty());
-        list.add("usage_page", info.usage_page, info.usage_page != 0);
-        list.add("usage", info.usage, info.usage != 0);
-        list.add("interface_number", info.interface_number);
-        list.add("bus_type", info.bus_type, info.bus_type != BusType::UNKNOWN);
-        stream << list;
-        return stream;
+        return stream << types::TaggedValueList::create_from(info);
     }
 
     bool operator==(const HIDDeviceInfo &lhs, const HIDDeviceInfo &rhs)

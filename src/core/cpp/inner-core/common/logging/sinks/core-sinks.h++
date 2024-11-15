@@ -1,13 +1,11 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file logging.c++
-/// @brief Message capture
+/// @file core-sinks.h++
+/// @brief Wrapper to include all core log sinks
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "logging.h++"
-
-namespace core::logging
-{
-    SyncDispatcher message_dispatcher;
-}  // namespace core::logging
+#include "streamsink.h++"
+#include "logfilesink.h++"
+#include "csvfilesink.h++"
+#include "jsonfilesink.h++"

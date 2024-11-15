@@ -48,9 +48,9 @@ namespace core::python
         /// @param[in] method_name
         ///    Method name to be called
         /// @param[in] args
-        ///    A managed object containing a tuple with positional input arguments
+        ///    A vector of managed objects as positional input arguments
         /// @param[in] kwargs
-        ///    A managed object containing a dictionary with keyword (named) input arguments
+        ///    A map of managed objects as keyword (named) input arguments
         /// @return
         ///    Returned value from the called method
         ContainerObject call(const std::optional<std::string> &module_name,

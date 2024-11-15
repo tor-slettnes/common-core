@@ -42,14 +42,19 @@ namespace core::platform
         }
     }
 
+    types::TaggedValueList ExitStatus::as_tvlist() const
+    {
+        core::types::TaggedValueList tvlist;
+        tvlist.append_if(this->exit_code() != 0, "code", this->exit_code());
+        tvlist.append_if(this->exit_signal() != 0, "signal", this->exit_signal());
+        tvlist.append_if(!this->symbol().empty(), "symbol", this->symbol());
+        tvlist.append_if(!this->text().empty(), "text", this->text());
+        return tvlist;
+    }
+
     void ExitStatus::to_stream(std::ostream &stream) const
     {
-        core::types::PartsList parts;
-        parts.add("code", this->exit_code(), this->exit_code() != 0);
-        parts.add("signal", this->exit_signal(), this->exit_signal() != 0);
-        parts.add("symbol", this->symbol(), !this->symbol().empty(), "%r");
-        parts.add("text", this->text(), !this->text().empty(), "%r");
-        stream << parts;
+        stream << this->as_tvlist();
     }
 
     //==========================================================================
@@ -162,21 +167,30 @@ namespace core::platform
         }
     }
 
-    void InvocationResult::to_stream(std::ostream &stream) const
+    types::TaggedValueList InvocationResult::as_tvlist() const
     {
-        core::types::PartsList parts;
+        core::types::TaggedValueList tvlist;
         if (this->status)
         {
-            parts.add("status", *this->status);
+            tvlist.emplace_back("status", this->status->as_tvlist());
         }
         else
         {
-            parts.add("status", "success");
+            tvlist.emplace_back("status", "success");
         }
 
-        parts.add("stdout", this->stdout_text(), this->stdout_size(), "%r");
-        parts.add("stderr", this->stderr_text(), this->stderr_size(), "%r");
-        stream << parts;
+        tvlist.append_if(this->stdout_size() > 0,
+                          "stdout",
+                          this->stdout_text());
+        tvlist.append_if(this->stderr_size() > 0,
+                          "stderr",
+                          this->stderr_size());
+        return tvlist;
+    }
+
+    void InvocationResult::to_stream(std::ostream &stream) const
+    {
+        stream << this->as_tvlist();
     }
 
     //==========================================================================

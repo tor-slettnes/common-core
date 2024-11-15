@@ -8,13 +8,14 @@
 #pragma once
 #include "sink.h++"
 #include "status/event.h++"
+#include "../message/scope.h++"
 
 #include <string>
 
 namespace core::logging
 {
     const std::string SETTING_THRESHOLD = "threshold";
-    const std::string SETTING_CONTRACT_ID = "contract_id";
+    const std::string SETTING_CONTRACT_ID = "contract id";
     const status::Level DEFAULT_THRESHOLD = status::Level::NONE;
 
     //==========================================================================
@@ -30,7 +31,8 @@ namespace core::logging
         using ptr = std::shared_ptr<LogSink>;
 
     protected:
-        LogSink(const SinkID &sink_id);
+        LogSink(const SinkID &sink_id,
+                const SinkType &sink_type = {});
 
     public:
         void load_settings(const types::KeyValueMap &settings) override;

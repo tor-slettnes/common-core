@@ -18,7 +18,7 @@ namespace core::types
     public:
         using MapType::MapType;
 
-        inline const V &get(const K &key, const V &fallback = {}) const noexcept
+        const V &get(const K &key, const V &fallback = {}) const noexcept
         {
             try
             {
@@ -30,7 +30,7 @@ namespace core::types
             }
         }
 
-        inline const V *get_ptr(const K &key) const noexcept
+        const V *get_ptr(const K &key) const noexcept
         {
             try
             {
@@ -42,7 +42,7 @@ namespace core::types
             }
         }
 
-        inline std::optional<V> get_opt(const K &key) const noexcept
+        std::optional<V> get_opt(const K &key) const noexcept
         {
             try
             {
@@ -52,6 +52,28 @@ namespace core::types
             {
                 return {};
             }
+        }
+
+        std::vector<K> keys() const noexcept
+        {
+            std::vector<K> result;
+            result.reserve(this->size());
+            for (const auto &[key, value]: *this)
+            {
+                result.push_back(key);
+            }
+            return result;
+        }
+
+        std::vector<V> values() const noexcept
+        {
+            std::vector<V> result;
+            result.reserve(this->size());
+            for (const auto &[key, value]: *this)
+            {
+                result.push_back(value);
+            }
+            return result;
         }
     };
 }  // namespace core::types

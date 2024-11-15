@@ -109,7 +109,7 @@ namespace core::str
     /// @return
     ///     String with characters replaced by asterisks
     [[nodiscard]] std::string obfuscated(
-        const std::string &s);
+        const std::string_view &s);
 
     /// Return a universally unique identifier (UUID)
     // std::string uuid();

@@ -10,7 +10,6 @@
 
 // Shared modules
 #include "types/value.h++"
-#include "types/partslist.h++"
 
 namespace demo
 {
@@ -44,16 +43,28 @@ namespace demo
         return !(*this == other);
     }
 
-    void Greeting::to_stream(std::ostream &stream) const
+    void Greeting::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add_string("text", this->text);
-        parts.add_string("identity", this->identity);
-        parts.add_string("implementation", this->implementation);
-        parts.add("birth", this->birth, this->birth != core::dt::TimePoint());
-        parts.add("uptime", core::dt::Clock::now() - this->birth);
-        parts.add_value("data", this->data, !this->data.empty());
-        stream << parts;
+        tvlist->extend({
+            {"text", this->text},
+            {"identity", this->identity},
+            {"implementation", this->implementation},
+        });
+
+        tvlist->append_if(
+            this->birth != core::dt::epoch,
+            "birth",
+            this->birth);
+
+        tvlist->append_if(
+            this->birth != core::dt::epoch,
+            "uptime",
+            core::dt::Clock::now() - this->birth);
+
+        tvlist->append_if(
+            !this->data.empty(),
+            "data",
+            this->data);
     }
 
     //==========================================================================
@@ -88,13 +99,11 @@ namespace demo
         return !(*this == other);
     }
 
-    void TimeData::to_stream(std::ostream &stream) const
+    void TimeData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::str::format(stream,
-                          "TimeData(epoch=%d, local=%T, utc=%Z)",
-                          core::dt::to_time_t(this->timepoint),
-                          this->localtime,
-                          this->utctime);
+        tvlist->append("epoch", core::dt::to_time_t(this->timepoint));
+        tvlist->append("local", core::str::format("%T", this->localtime));
+        tvlist->append("utc", core::str::format("%Z", this->utctime));
     }
 
 }  // namespace demo

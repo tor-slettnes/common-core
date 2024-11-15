@@ -6,7 +6,6 @@
 //==============================================================================
 
 #pragma once
-#include "platform/init.h++"
 #include "types/value.h++"
 #include <string>
 #include <unordered_map>

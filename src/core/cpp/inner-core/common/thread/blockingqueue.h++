@@ -47,7 +47,8 @@ namespace core::types
 
         BlockingQueueBase(
             std::size_t maxsize,
-            OverflowDisposition overflow_disposition);
+            OverflowDisposition overflow_disposition,
+            bool close_on_shutdown = true);
 
         virtual ~BlockingQueueBase();
 
@@ -104,7 +105,7 @@ namespace core::types
         const std::size_t maxsize_;
         const OverflowDisposition overflow_disposition_;
         bool closed_;
-        std::string signal_handle_;
+        std::string shutdown_handle_;
         std::condition_variable item_available, space_available;
         std::mutex mtx;
     };

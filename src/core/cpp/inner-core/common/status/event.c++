@@ -172,62 +172,65 @@ namespace core::status
         return this->attributes_.get(key, fallback);
     }
 
-    types::TaggedValueList Event::as_tvlist() const noexcept
+    void Event::populate_fields(types::TaggedValueList *tvlist) const noexcept
     {
-        types::PartsList parts;
-        this->populate_fields(&parts);
-        this->populate_attributes(&parts);
-        return parts.as_tvlist();
-    }
-
-    types::KeyValueMap Event::as_kvmap() const noexcept
-    {
-        return this->as_tvlist().as_kvmap();
-    }
-
-    void Event::populate_fields(types::PartsList *parts) const noexcept
-    {
-        parts->add_string(EVENT_FIELD_TEXT,
+        tvlist->append_if(!this->text().empty(),
+                          EVENT_FIELD_TEXT,
                           this->text());
 
-        parts->add<Domain>(EVENT_FIELD_DOMAIN,
-                           this->domain(),
-                           this->domain() != Domain::NONE);
+        tvlist->append_if(this->domain() != Domain::NONE,
+                          EVENT_FIELD_DOMAIN,
+                          str::convert_from(this->domain()));
 
-        parts->add_string(EVENT_FIELD_ORIGIN,
-                          this->origin(),
-                          !this->origin().empty());
+        tvlist->append_if(!this->origin().empty(),
+                          EVENT_FIELD_ORIGIN,
+                          this->origin());
 
-        parts->add_value(EVENT_FIELD_CODE,
-                         this->code(),
-                         this->code());
+        tvlist->append_if(this->code() != 0,
+                          EVENT_FIELD_CODE,
+                          this->code());
 
-        parts->add_string(EVENT_FIELD_SYMBOL,
+        tvlist->append_if(!this->symbol().empty(),
+                          EVENT_FIELD_SYMBOL,
                           this->symbol());
 
-        parts->add<Level>(EVENT_FIELD_LEVEL,
-                          this->level(),
-                          this->level() != Level::NONE);
+        tvlist->append_if(this->level() != Level::NONE,
+                          EVENT_FIELD_LEVEL,
+                          str::convert_from(this->level()));
 
-        parts->add_value(EVENT_FIELD_TIME,
-                         this->timepoint(),
-                         this->timepoint() != dt::epoch);
+        tvlist->append_if(this->timepoint() != dt::epoch,
+                          EVENT_FIELD_TIME,
+                          this->timepoint());
 
-        parts->add_string(EVENT_FIELD_CONTRACT_ID,
-                          this->contract_id(),
-                          !this->contract_id().empty());
+        tvlist->append_if(!this->contract_id().empty(),
+                          EVENT_FIELD_CONTRACT_ID,
+                          this->contract_id());
 
-        parts->add_string(EVENT_FIELD_HOST,
-                          this->host(),
-                          !this->host().empty());
-
+        tvlist->append_if(!this->host().empty(),
+                          EVENT_FIELD_HOST,
+                          this->host());
     }
 
-    void Event::populate_attributes(types::PartsList *parts) const noexcept
+    void Event::populate_attributes(types::TaggedValueList *tvlist) const noexcept
     {
-        for (const auto &[key, value]: this->attributes())
+        tvlist->insert(tvlist->end(),
+                       this->attributes().begin(),
+                       this->attributes().end());
+    }
+
+    void Event::populate_mapped_level(types::TaggedValueList *tvlist,
+                                      const types::KeyValueMap &level_map) const noexcept
+    {
+        if (!level_map.empty())
         {
-            parts->add_value(key, value, bool(value));
+            if (auto it = tvlist->find(EVENT_FIELD_LEVEL); it != tvlist->end())
+            {
+                std::string level_name = it->second.as_string();
+                if (const types::Value &mapped_level = level_map.get(level_name))
+                {
+                    it->second = mapped_level;
+                }
+            }
         }
     }
 
@@ -246,12 +249,27 @@ namespace core::status
         };
     }
 
+    types::TaggedValueList Event::as_tvlist(const types::KeyValueMap &level_map) const noexcept
+    {
+        types::TaggedValueList tvlist = this->as_tvlist();
+        this->populate_mapped_level(&tvlist, level_map);
+        return tvlist;
+    }
+
+    types::KeyValueMap Event::as_kvmap(const types::KeyValueMap &level_map) const noexcept
+    {
+        return this->as_tvlist(level_map).as_kvmap();
+    }
+
+    void Event::to_tvlist(core::types::TaggedValueList *tvlist) const
+    {
+        this->populate_fields(tvlist);
+        this->populate_attributes(tvlist);
+    }
+
     void Event::to_stream(std::ostream &stream) const
     {
-        types::PartsList parts;
-        this->populate_fields(&parts);
-        this->populate_attributes(&parts);
-        stream << this->class_name() << parts;
+        stream << this->class_name() << this->as_tvlist();
     }
 
     std::string Event::class_name() const noexcept

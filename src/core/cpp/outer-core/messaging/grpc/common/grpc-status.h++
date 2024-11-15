@@ -152,7 +152,7 @@ namespace core::grpc
 
     protected:
         std::string class_name() const noexcept override;
-        void populate_fields(types::PartsList *parts) const noexcept override;
+        void populate_fields(types::TaggedValueList *tvlist) const noexcept override;
         std::exception_ptr as_application_error() const override;
 
     private:

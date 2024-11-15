@@ -115,14 +115,28 @@ namespace core::logging
         return this->thread_id_;
     }
 
-    void Message::populate_fields(types::PartsList *parts) const noexcept
+    void Message::populate_fields(types::TaggedValueList *tvlist) const noexcept
     {
-        Event::populate_fields(parts);
-        parts->add_string(MESSAGE_FIELD_LOG_SCOPE, this->scopename(), "%s");
-        parts->add_string(MESSAGE_FIELD_SOURCE_PATH, this->path().string());
-        parts->add_value(MESSAGE_FIELD_SOURCE_LINE, this->lineno(), this->lineno() != 0);
-        parts->add_string(MESSAGE_FIELD_FUNCTION_NAME, this->function());
-        parts->add_value(MESSAGE_FIELD_THREAD_ID, this->thread_id());
+        Event::populate_fields(tvlist);
+
+        tvlist->append_if(this->thread_id() != 0,
+                           MESSAGE_FIELD_THREAD_ID,
+                           this->thread_id());
+
+        tvlist->emplace_back(MESSAGE_FIELD_LOG_SCOPE,
+                             this->scopename());
+
+        tvlist->emplace_back(MESSAGE_FIELD_SOURCE_PATH,
+                             this->path().string());
+
+        tvlist->append_if(this->lineno() != 0,
+                           MESSAGE_FIELD_SOURCE_LINE,
+                           this->lineno());
+
+        tvlist->append_if(!this->function().empty(),
+                           MESSAGE_FIELD_FUNCTION_NAME,
+                           this->function());
+
     }
 
     std::vector<std::string> Message::field_names() noexcept

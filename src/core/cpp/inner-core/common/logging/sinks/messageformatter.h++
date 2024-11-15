@@ -29,7 +29,7 @@ namespace core::logging
     public:
         void set_include_context(bool include_context);
         bool include_context() const;
-        bool is_message(const core::types::Loggable &item) const;
+        bool is_valid_message(const core::types::Loggable &item) const;
 
     protected:
         void load_message_format(const types::KeyValueMap &settings);

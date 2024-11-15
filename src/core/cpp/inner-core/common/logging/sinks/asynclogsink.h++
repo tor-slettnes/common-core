@@ -21,7 +21,7 @@ namespace core::logging
         using Super = LogSink;
 
     protected:
-        AsyncLogSink(const std::string &sink_id);
+        using LogSink::LogSink;
 
     public:
         void open() override;
@@ -33,6 +33,8 @@ namespace core::logging
 
     private:
         std::thread workerthread_;
-        types::BlockingQueue<status::Event::ptr> queue_;
+
+    protected:
+        types::BlockingQueue<status::Event::ptr> queue;
     };
 }  // namespace core::logging

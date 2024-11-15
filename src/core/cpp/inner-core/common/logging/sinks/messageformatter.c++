@@ -35,7 +35,7 @@ namespace core::logging
         return this->include_context_;
     }
 
-    bool MessageFormatter::is_message(const core::types::Loggable &item) const
+    bool MessageFormatter::is_valid_message(const core::types::Loggable &item) const
     {
         return dynamic_cast<const Message *>(&item) != nullptr;
     }

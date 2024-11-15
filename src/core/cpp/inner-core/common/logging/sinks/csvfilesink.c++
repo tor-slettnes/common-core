@@ -6,15 +6,15 @@
 //==============================================================================
 
 #include "csvfilesink.h++"
-#include "../message/message.h++"
+#include "factory.h++"
 #include "string/misc.h++"
 
 namespace core::logging
 {
     //--------------------------------------------------------------------------
-    // CSVBaseSink
+    // CSVFileSink
 
-    CSVBaseSink::CSVBaseSink(const std::string &sink_id)
+    CSVFileSink::CSVFileSink(const std::string &sink_id)
         : AsyncLogSink(sink_id),
           TabularData(),
           RotatingPath(sink_id, ".csv"),
@@ -22,7 +22,7 @@ namespace core::logging
     {
     }
 
-    void CSVBaseSink::load_settings(const types::KeyValueMap &settings)
+    void CSVFileSink::load_settings(const types::KeyValueMap &settings)
     {
         Super::load_settings(settings);
         this->load_columns(settings);
@@ -34,19 +34,19 @@ namespace core::logging
         }
     }
 
-    void CSVBaseSink::open()
+    void CSVFileSink::open()
     {
         this->open_file(dt::Clock::now());
         AsyncLogSink::open();
     }
 
-    void CSVBaseSink::close()
+    void CSVFileSink::close()
     {
         AsyncLogSink::close();
         this->close_file();
     }
 
-    void CSVBaseSink::open_file(const dt::TimePoint &tp)
+    void CSVFileSink::open_file(const dt::TimePoint &tp)
     {
         RotatingPath::open_file(tp);
         this->stream_ = std::make_shared<std::ofstream>(this->current_path(), std::ios::ate);
@@ -58,7 +58,7 @@ namespace core::logging
         }
     }
 
-    void CSVBaseSink::close_file()
+    void CSVFileSink::close_file()
     {
         if (this->stream_)
         {
@@ -68,7 +68,7 @@ namespace core::logging
         RotatingPath::close_file();
     }
 
-    void CSVBaseSink::capture_event(const status::Event::ptr &event)
+    void CSVFileSink::capture_event(const status::Event::ptr &event)
     {
         if (this->stream_ && this->stream_->good())
         {
@@ -96,7 +96,7 @@ namespace core::logging
         }
     }
 
-    void CSVBaseSink::write_header()
+    void CSVFileSink::write_header()
     {
         std::vector<std::string> columns = this->column_names();
         core::str::join(*this->stream_,     // out
@@ -108,17 +108,17 @@ namespace core::logging
         *this->stream_ << std::endl;
     }
 
-    const std::string &CSVBaseSink::separator() const
+    const std::string &CSVFileSink::separator() const
     {
         return this->separator_;
     }
 
-    void CSVBaseSink::set_separator(const std::string &separator)
+    void CSVFileSink::set_separator(const std::string &separator)
     {
         this->separator_ = separator;
     }
 
-    std::string CSVBaseSink::protect_separator(std::string &&field) const
+    std::string CSVFileSink::protect_separator(std::string &&field) const
     {
         if (field.find(this->separator()) != std::string::npos)
         {
@@ -130,26 +130,4 @@ namespace core::logging
             return field;
         }
     }
-
-    //--------------------------------------------------------------------------
-    // CSVEventSink
-
-    CSVEventSink::CSVEventSink(const std::string &sink_id)
-        : Super(sink_id)
-    {
-    }
-
-    //--------------------------------------------------------------------------
-    // CSVMessageSink
-
-    CSVMessageSink::CSVMessageSink(const std::string &sink_id)
-        : Super(sink_id)
-    {
-    }
-
-    bool CSVMessageSink::is_applicable(const types::Loggable &item) const
-    {
-        return this->is_message(item) && Super::is_applicable(item);
-    }
-
 }  // namespace core::logging

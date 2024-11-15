@@ -31,7 +31,11 @@ namespace core::logging
 
     std::istream &operator>>(std::istream &stream, ColumnType &type)
     {
-        return column_type_names.from_stream(stream, &type);
+        return column_type_names.from_stream(stream,  // stream
+                                             &type,   // key
+                                             {},      // fallback
+                                             true,    // flag_unknown
+                                             true);   // allow_partial
     }
 
     std::ostream &operator<<(std::ostream &stream, const ColumnSpec &spec)
@@ -43,6 +47,36 @@ namespace core::logging
         }
         stream << spec.event_field;
         return stream;
+    }
+
+    types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
+                                       const ColumnSpec &spec)
+    {
+        tvlist.append("event_field",
+                      spec.event_field);
+
+        tvlist.append_if(!spec.column_name.empty(),
+                         "column_name",
+                         spec.column_name);
+
+        tvlist.append("column_type",
+                      str::convert_from(spec.column_type));
+
+        tvlist.append_if(!spec.format_string.empty(),
+                         "format_string",
+                         spec.format_string);
+        return tvlist;
+    }
+
+    types::ValueList &operator<<(types::ValueList &valuelist,
+                                 const ColumnSpecs &specs)
+    {
+        for (const ColumnSpec &spec : specs)
+        {
+            valuelist.push_back(
+                types::TaggedValueList::create_shared_from(spec));
+        }
+        return valuelist;
     }
 
     //--------------------------------------------------------------------------
@@ -115,7 +149,6 @@ namespace core::logging
         }
         return names;
     }
-
 
     ColumnSpecs TabularData::default_columns()
     {

@@ -10,51 +10,56 @@
 
 namespace logger
 {
-
-    // Sink types that can be added by remote client
-    core::types::SymbolMap<SinkType> sinktype_names = {
-        {SinkType::STREAM, "stream"},
-        {SinkType::SYSLOG, "syslog"},
-        {SinkType::LOGFILE, "file"},
-        {SinkType::JSON, "json"},
-        {SinkType::CSV, "csv"},
-        {SinkType::DB, "db"},
-    };
-
-    std::ostream &operator<<(std::ostream &stream, SinkType sink_type)
-    {
-        return sinktype_names.to_stream(stream, sink_type);
-    }
-
-    std::istream &operator>>(std::istream &stream, SinkType &sink_type)
-    {
-        return sinktype_names.from_stream(stream, &sink_type);
-    }
-
     std::ostream &operator<<(std::ostream &stream, const SinkSpec &spec)
     {
-        core::types::PartsList parts;
-        parts.add_string("sink_id", spec.sink_id);
-        parts.add("sink_type", spec.sink_type);
-        parts.add_value("permanent", spec.permanent, spec.permanent);
-        parts.add_string("filename_template", spec.filename_template);
-        parts.add("rotation_interval", spec.rotation_interval, spec.rotation_interval);
-        parts.add_value("use_local_time", spec.use_local_time);
-        parts.add("min_level", spec.min_level, spec.min_level != core::status::Level::NONE);
-        parts.add_string("contract_id", spec.contract_id.value_or(""));
-        parts.add("columns", spec.columns, !spec.columns.empty());
+        core::types::TaggedValueList tvlist;
+        tvlist.emplace_back("sink_id", spec.sink_id);
+        tvlist.emplace_back("sink_type", spec.sink_type);
+        tvlist.emplace_back("permanent", spec.permanent);
 
-        stream << parts;
-        return stream;
+        tvlist.append_if(!spec.filename_template.empty(),
+                         "filename_template",
+                         spec.filename_template);
+
+        tvlist.append_if(spec.rotation_interval,
+                         "rotation_interval",
+                         spec.rotation_interval);
+
+        tvlist.emplace_back("use_local_time",
+                            spec.use_local_time);
+
+        tvlist.append_if(spec.min_level != core::status::Level::NONE,
+                         "min_level",
+                         core::str::convert_from(spec.min_level));
+
+        tvlist.append_if(spec.contract_id.has_value(),
+                         "contract_id",
+                         spec.contract_id.value_or(""));
+
+        if (!spec.columns.empty())
+        {
+            tvlist.append_if(
+                !spec.columns.empty(),
+                "columns",
+                core::types::ValueList::create_shared_from(spec.columns));
+        }
+
+        return stream << tvlist;
     }
 
     std::ostream &operator<<(std::ostream &stream, const ListenerSpec &spec)
     {
-        core::types::PartsList parts;
-        parts.add_string("sink_id", spec.sink_id);
-        parts.add("min_level", spec.min_level, spec.min_level != core::status::Level::NONE);
-        parts.add_string("contract_id", spec.contract_id.value_or(""));
-        stream << parts;
+        core::types::TaggedValueList tvlist;
+        tvlist.emplace_back("sink_id", spec.sink_id);
+
+        tvlist.append_if(spec.min_level != core::status::Level::NONE,
+                         "min_level",
+                         core::str::convert_from(spec.min_level));
+
+        tvlist.append_if(spec.contract_id.has_value(),
+                         "contract_id",
+                         spec.contract_id.value_or(""));
+        tvlist.to_stream(stream);
         return stream;
     }
 

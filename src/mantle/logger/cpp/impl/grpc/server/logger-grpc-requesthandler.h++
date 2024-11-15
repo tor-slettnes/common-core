@@ -60,6 +60,11 @@ namespace logger::grpc
             const ::cc::logger::ListSinkRequest* request,
             ::cc::logger::SinkSpecs* response) override;
 
+        ::grpc::Status list_sink_types(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ::cc::logger::SinkTypes* response) override;
+
         ::grpc::Status list_static_fields(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,

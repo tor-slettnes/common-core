@@ -9,17 +9,12 @@
 
 namespace core::logging
 {
-    AsyncLogSink::AsyncLogSink(const std::string &sink_id)
-        : LogSink(sink_id)
-    {
-    }
-
     void AsyncLogSink::open()
     {
         Super::open();
         if (!this->workerthread_.joinable())
         {
-            this->queue_.reopen();
+            this->queue.reopen();
             this->workerthread_ = std::thread(&This::worker, this);
         }
     }
@@ -28,7 +23,7 @@ namespace core::logging
     {
         if (this->workerthread_.joinable())
         {
-            this->queue_.close();
+            this->queue.close();
             this->workerthread_.join();
         }
         Super::close();
@@ -43,7 +38,7 @@ namespace core::logging
 
         if (auto event = std::dynamic_pointer_cast<status::Event>(item))
         {
-            this->queue_.put(event);
+            this->queue.put(event);
             return true;
         }
         else
@@ -54,7 +49,7 @@ namespace core::logging
 
     void AsyncLogSink::worker()
     {
-        while (const std::optional<status::Event::ptr> &opt_event = this->queue_.get())
+        while (const std::optional<status::Event::ptr> &opt_event = this->queue.get())
         {
             this->capture_event(opt_event.value());
         }

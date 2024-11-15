@@ -33,7 +33,7 @@ namespace demo
     //==========================================================================
     /// @class Greeting
     /// @brief Data used to introduce ourselves to our peers
-    class Greeting : public core::types::Streamable
+    class Greeting : public core::types::Listable
     {
     public:
         Greeting(const std::string &text = {},
@@ -48,7 +48,7 @@ namespace demo
         bool operator!=(const Greeting &other) const;
 
     protected:
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
         // Message presented by the greeter
@@ -71,7 +71,7 @@ namespace demo
     /// @class TimeData
     /// @brief Time representation from the server.
 
-    class TimeData : public core::types::Streamable
+    class TimeData : public core::types::Listable
     {
     public:
         TimeData(const core::dt::TimePoint &tp = {});
@@ -84,7 +84,7 @@ namespace demo
         bool operator!=(const TimeData &other) const;
 
     protected:
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
         core::dt::TimePoint timepoint;

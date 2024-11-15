@@ -9,13 +9,14 @@
 #include "sysconfig-types.h++"
 #include "platform/provider.h++"
 #include "thread/signaltemplate.h++"
+#include "types/listable.h++"
 
 namespace platform::sysconfig
 {
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Data types
 
-    struct Version : public core::types::Streamable
+    struct Version : public core::types::Listable
     {
     public:
         static Version from_string(const std::string &version_string);
@@ -26,6 +27,7 @@ namespace platform::sysconfig
         bool operator>(const Version &other) const;
 
     protected:
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
         void to_stream(std::ostream &stream) const override;
         void to_literal_stream(std::ostream &stream) const override;
 
@@ -40,7 +42,7 @@ namespace platform::sysconfig
     using ComponentName = std::string;
     using ComponentVersions = std::map<ComponentName, Version>;
 
-    struct ProductInfo : public core::types::Streamable
+    struct ProductInfo : public core::types::Listable
     {
         std::string product_name;
         std::string product_description;
@@ -51,11 +53,11 @@ namespace platform::sysconfig
         ComponentVersions component_versions;
         std::vector<ProductInfo> subsystem_info;
 
-    public:
-        void to_stream(std::ostream &stream) const override;
+    protected:
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Product provider interface
 
     class ProductInterface : public core::platform::Provider
@@ -72,13 +74,14 @@ namespace platform::sysconfig
         virtual void set_model_name(const std::string &model) {}
     };
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Provider instance
 
     extern core::platform::ProviderProxy<ProductInterface> product;
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Signals
+
     extern core::signal::DataSignal<ProductInfo> signal_productinfo;
 }  // namespace platform::sysconfig
 

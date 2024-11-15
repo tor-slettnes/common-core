@@ -58,13 +58,13 @@ namespace core::idl
     core::status::Event decoded_event(const CC::Status::Event &idl) noexcept
     {
         return {
-            idl.text(),                                          // text
-            decoded<core::status::Domain>(idl.domain()),         // domain
-            idl.origin(),                                        // origin
-            static_cast<int>(idl.code()),                        // code
-            idl.symbol(),                                        // symbol
-            decoded<core::status::Level>(idl.level()),           // level
-            decoded<core::dt::TimePoint>(idl.timestamp()),       // timepoint
+            idl.text(),                                           // text
+            decoded<core::status::Domain>(idl.domain()),          // domain
+            idl.origin(),                                         // origin
+            static_cast<int>(idl.code()),                         // code
+            idl.symbol(),                                         // symbol
+            decoded<core::status::Level>(idl.level()),            // level
+            decoded<core::dt::TimePoint>(idl.timestamp()),        // timepoint
             decoded<core::types::KeyValueMap>(idl.attributes()),  // attributes
             {},                                                   // contract_id
             idl.host(),                                           // host
@@ -78,7 +78,7 @@ namespace core::idl
                 CC::Status::LogMessage *idl) noexcept
     {
         encode(static_cast<core::status::Event>(native),
-               static_cast<CC::Status::Event*>(idl));
+               static_cast<CC::Status::Event *>(idl));
         idl->log_scope(native.scopename());
         idl->filename(native.path().string());
         idl->lineno(native.lineno());
@@ -89,10 +89,16 @@ namespace core::idl
     core::logging::Message decoded_logmessage(CC::Status::LogMessage idl) noexcept
     {
         auto level = decoded<core::status::Level>(idl.level());
+
+        core::logging::Scope::ptr scope =
+            !idl.log_scope().empty()
+                ? core::logging::Scope::create(idl.log_scope(), level)
+                : log_scope;
+
         return {
             idl.text(),
             level,
-            core::logging::Scope::create(idl.log_scope(), level),
+            scope,
             decoded<core::dt::TimePoint>(idl.timestamp()),
             idl.filename(),
             idl.lineno(),

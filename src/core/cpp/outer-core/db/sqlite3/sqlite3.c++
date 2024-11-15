@@ -12,11 +12,12 @@
 #include "types/value.h++"
 #include "logging/logging.h++"
 
+#include <functional>
+
 namespace core::db
 {
     SQLite3::SQLite3()
-        : SQLBase(),
-          connection_(nullptr)
+        : connection_(nullptr)
     {
     }
 
@@ -24,7 +25,6 @@ namespace core::db
     {
         this->close();
     }
-
 
     bool SQLite3::is_open() const
     {
@@ -41,11 +41,10 @@ namespace core::db
         if (this->db_file_ != db_file)
         {
             this->close();
+            this->db_file_ = db_file;
 
             this->check_status(
-                sqlite3_open(db_file.string().data(), &this->connection_));
-
-            this->db_file_ = db_file;
+                sqlite3_open(db_file.string().c_str(), &this->connection_));
         }
     }
 
@@ -60,19 +59,42 @@ namespace core::db
         }
     }
 
+    void SQLite3::execute(
+        const std::string &sql,
+        const QueryCallbackFunction &callback) const
+    {
+        this->execute(sql, {}, callback);
+    }
+
+    void SQLite3::execute(
+        const std::string &sql,
+        const RowData &parameters,
+        const QueryCallbackFunction &callback) const
+    {
+        this->execute_multi(sql, {parameters}, callback);
+    }
+
     void SQLite3::execute_multi(
         const std::string &sql,
         const MultiRowData &parameter_rows,
         const QueryCallbackFunction &callback) const
     {
-        ::sqlite3_stmt *statement = nullptr;
+        str::format(std::cout,
+                    "execute_multi(sql = %s,\n"
+                    "              rows = %s)\n",
+                    sql,
+                    parameter_rows);
+
+        sqlite3_stmt *statement = nullptr;
         this->check_status(
-            ::sqlite3_prepare_v2(
+            sqlite3_prepare_v2(
                 this->connection(),  // db
                 sql.c_str(),         // zSql
                 sql.size() + 1,      // nBytes
                 &statement,          // ppStmt
-                nullptr));           // pzTail
+                nullptr),            // pzTail
+            "sqlite3_prepare",
+            {{"sql", sql}});
 
         try
         {
@@ -80,8 +102,12 @@ namespace core::db
             {
                 this->bind_input_parameters(statement, parameters);
                 this->execute_statement(statement, callback);
-                this->check_status(sqlite3_reset(statement));
-                this->check_status(sqlite3_clear_bindings(statement));
+
+                this->check_status(sqlite3_reset(statement),
+                                   "sqlite3_reset");
+
+                this->check_status(sqlite3_clear_bindings(statement),
+                                   "sqlite3_clear_bindings");
             }
         }
         catch (...)
@@ -90,7 +116,29 @@ namespace core::db
             throw;
         }
 
-        this->check_status(sqlite3_finalize(statement));
+        this->check_status(sqlite3_finalize(statement), "sqlite3_finalize");
+    }
+
+    std::shared_ptr<SQLite3::QueryResponseQueue> SQLite3::execute_async_query(
+        const std::string &sql,
+        const RowData &parameters,
+        std::size_t queue_size) const
+    {
+        using namespace std::placeholders;
+
+        auto queue = std::make_shared<QueryResponseQueue>(
+            queue_size,
+            QueryResponseQueue::OverflowDisposition::BLOCK);
+
+        std::thread executor_thread([=] {
+            this->execute(sql, parameters, [=](core::types::TaggedValueList &&row) -> bool {
+                return queue->put(row);
+            });
+            queue->close();
+        });
+
+        executor_thread.detach();
+        return queue;
     }
 
     ::sqlite3 *SQLite3::connection() const
@@ -147,6 +195,8 @@ namespace core::db
             }
 
             case core::types::ValueType::REAL:
+            case core::types::ValueType::DURATION:
+            case core::types::ValueType::TIMEPOINT:
                 status = sqlite3_bind_double(statement,
                                              index + 1,
                                              value.as_double());
@@ -163,6 +213,7 @@ namespace core::db
                 }
                 break;
 
+
             case core::types::ValueType::BYTEVECTOR:
                 if (auto *bytes = value.get_if<core::types::ByteVector>())
                 {
@@ -175,17 +226,27 @@ namespace core::db
                 break;
 
             default:
-            {
-                std::string encoded = core::json::writer.encoded(value);
-                status = sqlite3_bind_text(statement,
-                                           index + 1,
-                                           encoded.data(),
-                                           encoded.size(),
-                                           SQLITE_TRANSIENT);
-            }
+                if (std::string encoded = core::json::writer.encoded(value); !encoded.empty())
+                {
+                    status = sqlite3_bind_text(statement,
+                                               index + 1,
+                                               encoded.data(),
+                                               encoded.size(),
+                                               SQLITE_TRANSIENT);
+                }
+                else
+                {
+                    status = sqlite3_bind_null(statement, index + 1);
+                }
+                break;
             }
 
-            this->check_status(status);
+            this->check_status(status,
+                               "sqlite3_bind",
+                               {
+                                   {"parameter index", index},
+                                   {"parameter value", value},
+                               });
         }
     }
 
@@ -209,12 +270,13 @@ namespace core::db
                 }
                 break;
 
+            case SQLITE_OK:
             case SQLITE_DONE:
                 done = true;
                 break;
 
             default:
-                this->check_status(statuscode);
+                this->check_status(statuscode, "sqlite3_step");
                 break;
             }
         }
@@ -260,7 +322,7 @@ namespace core::db
     {
         int ncols = sqlite3_column_count(statement);
         core::types::TaggedValueList row_data;
-        // row_data.reserve(ncols);
+        row_data.reserve(ncols);
         for (int col_index = 0; col_index < ncols; col_index++)
         {
             const std::string &column_name = column_names.at(col_index);
@@ -306,10 +368,17 @@ namespace core::db
 
     void SQLite3::check_status(
         int code,
+        const std::string &action,
         const core::types::KeyValueMap &attributes) const
     {
         if (code != SQLITE_OK)
         {
+            core::types::KeyValueMap diag_info = attributes;
+            if (!action.empty())
+            {
+                diag_info["action"] = action;
+            }
+
             throw core::exception::ServiceError(
                 sqlite3_errstr(code) ? sqlite3_errstr(code) : "Unknown SQLite3 failure",
                 "SQLite3",                                     // service
@@ -317,7 +386,7 @@ namespace core::db
                 "",                                            // id
                 core::status::Level::FAILED,                   // level
                 core::dt::Clock::now(),                        // timepoint
-                attributes);
+                diag_info);                                    // attributes
         }
     }
 }  // namespace core::db

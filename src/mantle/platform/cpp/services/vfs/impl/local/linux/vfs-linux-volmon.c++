@@ -8,7 +8,6 @@
 #include "vfs-linux-volmon.h++"
 #include "types/symbolmap.h++"
 #include "types/valuemap.h++"
-#include "types/partslist.h++"
 #include "logging/logging.h++"
 
 #include <thread>
@@ -90,28 +89,30 @@ namespace platform::vfs::local::volume
         return devicetype_map.from_string(this->devtype, DEVTYPE_UNKNOWN);
     }
 
-    void Event::to_stream(std::ostream &stream) const
+    void Event::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add_string("action", this->action);
-        parts.add("actionType", this->actionType());
-        parts.add("devicetype", this->deviceType());
-        parts.add_string("devpath", this->devpath);
-        parts.add_string("subsystem", this->subsystem);
-        parts.add_string("devtype", this->devtype);
-        parts.add_string("syspath", this->syspath);
-        parts.add_string("sysname", this->sysname);
-        parts.add_string("sysnum", this->sysnum);
-        parts.add_string("devnode", this->devnode);
-        parts.add_string("driver", this->driver);
-        parts.add("devnum", this->devnum);
-        parts.add("seqnum", this->seqnum);
-        parts.add("age", this->age);
-        parts.add("properties", this->properties);
-        parts.add("devlinks", this->devlinks);
-        parts.add("tags", this->tags);
-        parts.add("esysattrs", this->sysattrs);
-        stream << parts;
+        tvlist->extend({
+            {"action", this->action},
+            {"actionType", core::str::convert_from(this->actionType())},
+            {"devicetype", core::str::convert_from(this->deviceType())},
+            {"devpath", this->devpath},
+            {"subsystem", this->subsystem},
+            {"devtype", this->devtype},
+            {"syspath", this->syspath},
+            {"sysname", this->sysname},
+            {"sysnum", this->sysnum},
+            {"devnode", this->devnode},
+            {"driver", this->driver},
+            {"devnum", this->devnum},
+            {"seqnum", this->seqnum},
+            {"age", this->age},
+            {"properties", this->properties},
+            {"devlinks",
+             core::types::ValueList(this->devlinks.begin(), this->devlinks.end())},
+            {"tags",
+             core::types::ValueList(this->tags.begin(), this->tags.end())},
+            {"esysattrs", this->sysattrs},
+        });
     }
 
     Event::KeyValueMap Event::valuemap(struct udev_list_entry *list) noexcept
@@ -207,15 +208,14 @@ namespace platform::vfs::local::volume
     {
     }
 
-    void DiskInfo::to_stream(std::ostream &stream) const
+    void DiskInfo::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::str::format(
-            stream,
-            "Disk(devnode=%r, serial=%r, removable=%b, writable=%b)",
-            this->devnode,
-            this->serial,
-            this->removable,
-            this->writable);
+        tvlist->extend({
+            {"devnode", this->devnode},
+            {"serial", this->serial},
+            {"removable", this->removable},
+            {"writable", this->writable},
+        });
     }
 
     bool DiskInfo::is_removable(const Event &event)
@@ -247,21 +247,19 @@ namespace platform::vfs::local::volume
     {
     }
 
-    void PartitionInfo::to_stream(std::ostream &stream) const
+    void PartitionInfo::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::str::format(
-            stream,
-            "Partition(devnode=%r, sysname=%r, uuid=%r, serial=%r, "
-            "label=%r, fstype=%r, vendor=%r, model=%r, partition=%d)",
-            this->devnode,
-            this->sysname,
-            this->uuid,
-            this->serial,
-            this->label,
-            this->fstype,
-            this->vendor,
-            this->model,
-            this->partnumber);
+        tvlist->extend({
+            {"devnode", this->devnode},
+            {"sysname", this->sysname},
+            {"uuid", this->uuid},
+            {"serial", this->serial},
+            {"label", this->label},
+            {"fstype", this->fstype},
+            {"vendor", this->vendor},
+            {"model", this->model},
+            {"partnumber", this->partnumber},
+        });
     }
 
     std::string PartitionInfo::friendlyName() const

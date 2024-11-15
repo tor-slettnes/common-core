@@ -24,7 +24,8 @@ namespace logger::grpc
     {
         try
         {
-            this->provider->submit(protobuf::decoded<core::status::Event::ptr>(*request));
+            this->provider->submit(protobuf::decoded<core::status::Event::ptr>(
+                *request, context->peer()));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -43,7 +44,8 @@ namespace logger::grpc
             ::cc::status::Event event;
             while (reader->Read(&event))
             {
-                this->provider->submit(protobuf::decoded<core::status::Event::ptr>(event));
+                this->provider->submit(protobuf::decoded<core::status::Event::ptr>(
+                    event, context->peer()));
             }
             return ::grpc::Status::OK;
         }
@@ -166,6 +168,25 @@ namespace logger::grpc
                     this->provider->list_sinks(),
                     response);
             }
+
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
+    }
+
+    ::grpc::Status RequestHandler::list_sink_types(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ::cc::logger::SinkTypes* response)
+    {
+        try
+        {
+            protobuf::assign_repeated(
+                this->provider->list_sink_types(),
+                response->mutable_sink_types());
 
             return ::grpc::Status::OK;
         }

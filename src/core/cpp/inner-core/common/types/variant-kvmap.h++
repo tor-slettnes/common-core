@@ -135,8 +135,25 @@ namespace core::types
             return result;
         }
 
+        template<class T>
+        static std::shared_ptr<KeyValueMap> create_shared_from(const T &obj)
+        {
+            auto kvmap = std::make_shared<KeyValueMap>();
+            (*kvmap) << obj;
+            return kvmap;
+        }
+
+        template<class T>
+        static KeyValueMap create_from(const T &obj)
+        {
+            T kvmap;
+            kvmap << obj;
+            return kvmap;
+        }
+
     public:
         void to_stream(std::ostream &stream) const override;
+
     };
 
 }  // namespace core::types

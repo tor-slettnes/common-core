@@ -9,6 +9,7 @@
 #include "asynclogsink.h++"
 #include "tabulardata.h++"
 #include "rotatingpath.h++"
+#include "factory.h++"
 #include "messageformatter.h++"
 #include "types/filesystem.h++"
 #include "types/create-shared.h++"
@@ -25,15 +26,16 @@ namespace core::logging
     //--------------------------------------------------------------------------
     // CSVFileSink
 
-    class CSVBaseSink : public AsyncLogSink,
+    class CSVFileSink : public AsyncLogSink,
                         public TabularData,
-                        public RotatingPath
+                        public RotatingPath,
+                        public types::enable_create_shared<CSVFileSink>
     {
-        using This = CSVBaseSink;
+        using This = CSVFileSink;
         using Super = AsyncLogSink;
 
     protected:
-        CSVBaseSink(const std::string &sink_id);
+        CSVFileSink(const std::string &sink_id);
 
         void load_settings(const types::KeyValueMap &settings) override;
         void open() override;
@@ -54,33 +56,13 @@ namespace core::logging
     };
 
     //--------------------------------------------------------------------------
-    // CSVEventSink
+    // Add sink factory to enable `--log-to-csv` option.
 
-    class CSVEventSink : public CSVBaseSink,
-                         public types::enable_create_shared<CSVEventSink>
-    {
-        using This = CSVEventSink;
-        using Super = CSVBaseSink;
-
-    protected:
-        CSVEventSink(const std::string &sink_id);
-    };
-
-    //--------------------------------------------------------------------------
-    // CSVMessageSink
-
-    class CSVMessageSink : public CSVBaseSink,
-                           public MessageFormatter,
-                           public types::enable_create_shared<CSVMessageSink>
-    {
-        using This = CSVMessageSink;
-        using Super = CSVBaseSink;
-
-    protected:
-        CSVMessageSink(const std::string &sink_id);
-
-    protected:
-        bool is_applicable(const types::Loggable &item) const override;
-    };
+    inline static SinkFactory csv_factory(
+        "csv",
+        "Log to a CSV file, capturing specific event fields per column",
+        [](const SinkID &sink_id) -> Sink::ptr {
+            return CSVFileSink::create_shared(sink_id);
+        });
 
 }  // namespace core::logging

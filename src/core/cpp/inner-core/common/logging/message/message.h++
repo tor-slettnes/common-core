@@ -8,6 +8,7 @@
 #pragma once
 #include "scope.h++"
 #include "status/event.h++"
+#include "platform/host.h++"
 #include "types/platform.h++"  // pid_t, ssize_t
 #include "types/filesystem.h++"
 
@@ -18,6 +19,8 @@ namespace core::logging
     constexpr auto MESSAGE_FIELD_SOURCE_LINE = "source_line";
     constexpr auto MESSAGE_FIELD_FUNCTION_NAME = "function_name";
     constexpr auto MESSAGE_FIELD_THREAD_ID = "thread_id";
+
+    constexpr auto MESSAGE_CONTRACT = "text";
 
     //==========================================================================
     /// @class Message
@@ -83,8 +86,8 @@ namespace core::logging
                 Code code = 0,
                 const Symbol &symbol = {},
                 const types::KeyValueMap &attributes = {},
-                const ContractID &contract_id = {},
-                const std::string &host = {});
+                const ContractID &contract_id = MESSAGE_CONTRACT,
+                const std::string &host = platform::host->get_host_name());
 
         // Copy constructor to ensure we obtain values from derived classes
         Message(const Message &other);
@@ -106,7 +109,7 @@ namespace core::logging
         static std::vector<std::string> field_names() noexcept;
 
     protected:
-        void populate_fields(types::PartsList *parts) const noexcept override;
+        void populate_fields(types::TaggedValueList *tvlist) const noexcept override;
 
     protected:
         Scope::ptr scope_;

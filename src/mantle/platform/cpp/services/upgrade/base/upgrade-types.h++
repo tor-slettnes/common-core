@@ -11,6 +11,7 @@
 #include "vfs-context.h++"
 #include "status/event.h++"
 #include "types/symbolmap.h++"
+#include "types/listable.h++"
 
 namespace platform::upgrade
 {
@@ -34,7 +35,7 @@ namespace platform::upgrade
     //==========================================================================
     // PackageSource
 
-    struct PackageSource : public core::types::Streamable
+    struct PackageSource : public core::types::Listable
     {
     public:
         PackageSource(const Location &location = {});
@@ -49,7 +50,7 @@ namespace platform::upgrade
         PackageSource remove_filename() const;
 
     protected:
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
         Location location;
@@ -113,7 +114,7 @@ namespace platform::upgrade
     //==========================================================================
     // upgradeProgress
 
-    struct UpgradeProgress : public core::types::Streamable
+    struct UpgradeProgress : public core::types::Listable
     {
         using ptr = std::shared_ptr<UpgradeProgress>;
 
@@ -128,13 +129,13 @@ namespace platform::upgrade
             STATE_FINALIZED = 9,
         };
 
-        class Fraction : public core::types::Streamable
+        class Fraction : public core::types::Listable
         {
         public:
             Fraction(const core::types::Value &current = 0,
                      const core::types::Value &total = 0);
 
-            void to_stream(std::ostream &stream) const override;
+            void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
         public:
             std::uint32_t current = 0;
@@ -142,7 +143,7 @@ namespace platform::upgrade
         };
 
     public:
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
         static core::types::SymbolMap<State> state_names;

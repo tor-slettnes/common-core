@@ -26,13 +26,25 @@ namespace core::platform
         : Task(handle, functor)
     {
         init_tasks.insert(this);
-        // signal_startup.connect(handle, *this);
     }
 
     InitTask::~InitTask()
     {
         init_tasks.erase(this);
-        // signal_startup.disconnect(handle);
+    }
+
+    //==========================================================================
+    // ShutdownTask
+
+    ShutdownTask::ShutdownTask(const std::string &handle, const Function &functor)
+        : Task(handle, functor)
+    {
+        signal_shutdown.connect(handle, *this);
+    }
+
+    ShutdownTask::~ShutdownTask()
+    {
+        signal_shutdown.disconnect(handle);
     }
 
     //==========================================================================
@@ -42,13 +54,11 @@ namespace core::platform
         : Task(handle, functor)
     {
         exit_tasks.insert(this);
-        // signal_shutdown.connect(handle, *this);
     }
 
     ExitTask::~ExitTask()
     {
         exit_tasks.erase(this);
-        // signal_shutdown.disconnect(handle);
     }
 
     //==========================================================================

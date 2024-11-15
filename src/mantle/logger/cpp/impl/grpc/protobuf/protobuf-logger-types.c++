@@ -14,19 +14,6 @@
 namespace protobuf
 {
     //==========================================================================
-    // SinkType
-
-    void encode(const logger::SinkType &native, cc::logger::SinkType *proto)
-    {
-        *proto = static_cast<cc::logger::SinkType>(native);
-    }
-
-    void decode(const cc::logger::SinkType &proto, logger::SinkType *native)
-    {
-        *native = static_cast<logger::SinkType>(proto);
-    }
-
-    //==========================================================================
     // SinkID
 
     void encode(const logger::SinkID &native, cc::logger::SinkID *proto)
@@ -45,7 +32,7 @@ namespace protobuf
     void encode(const logger::SinkSpec &native, cc::logger::SinkSpec *proto)
     {
         proto->set_sink_id(native.sink_id);
-        proto->set_sink_type(encoded<cc::logger::SinkType>(native.sink_type));
+        proto->set_sink_type(native.sink_type);
         proto->set_permanent(native.permanent);
         proto->set_filename_template(native.filename_template);
         encode(native.rotation_interval, proto->mutable_rotation_interval());
@@ -66,7 +53,7 @@ namespace protobuf
     void decode(const cc::logger::SinkSpec &proto, logger::SinkSpec *native)
     {
         native->sink_id = proto.sink_id();
-        decode(proto.sink_type(), &native->sink_type);
+        native->sink_type = proto.sink_type();
         native->permanent = proto.permanent();
         native->filename_template = proto.filename_template();
         decode(proto.rotation_interval(), &native->rotation_interval);
@@ -115,6 +102,19 @@ namespace protobuf
         {
             native->push_back(spec.sink_id());
         }
+    }
+
+    //==========================================================================
+    // SinkTypes
+
+    void encode(const logger::SinkTypes &native, cc::logger::SinkTypes *proto)
+    {
+        protobuf::assign_repeated(native, proto->mutable_sink_types());
+    }
+
+    void decode(const cc::logger::SinkTypes &proto, logger::SinkTypes *native)
+    {
+        protobuf::assign_to_vector(proto.sink_types(), native);
     }
 
     //==========================================================================

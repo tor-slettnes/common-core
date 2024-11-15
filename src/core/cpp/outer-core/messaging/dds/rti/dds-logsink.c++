@@ -48,5 +48,4 @@ namespace core::dds
             this->log_writer->write(core::idl::encoded_shared<CC::Status::Event>(event));
         }
     }
-
 }  // namespace core::dds

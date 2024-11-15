@@ -64,21 +64,8 @@ namespace core::python
                                   const SimpleObject::Vector &args,
                                   const SimpleObject::Map &kwargs)
     {
-        // Construct a Python object for the positional arguments
-        SimpleObject py_args(PyTuple_New(args.size()));
-        for (uint c = 0; c < args.size(); c++)
-        {
-            PyTuple_SET_ITEM(py_args.borrow(), c, args.at(c).acquire());
-        }
-
-        // Construct a Python object for the key/value arguments
-        SimpleObject py_kwargs(PyDict_New());
-        for (auto &[key, obj] : kwargs)
-        {
-            SimpleObject key_obj(PyUnicode_DecodeUTF8(key.data(), key.size(), nullptr));
-            PyDict_SetItem(py_kwargs.borrow(), key_obj.borrow(), obj.borrow());
-        }
-
+        SimpleObject py_args(SimpleObject::pytuple_from_objects(args));
+        SimpleObject py_kwargs(SimpleObject::pydict_from_objects(kwargs));
         return this->call(module_name, method_name, py_args, py_kwargs);
     }
 

@@ -9,6 +9,7 @@
 #include "string/misc.h++"
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
+#include "platform/init.h++"
 
 #include <curl/curl.h>
 

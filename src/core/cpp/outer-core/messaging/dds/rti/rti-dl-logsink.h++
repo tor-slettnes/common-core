@@ -6,6 +6,8 @@
 //==============================================================================
 
 #pragma once
+#include "platform/path.h++"
+#include "logging/sinks/factory.h++"
 #include "logging/sinks/logsink.h++"
 #include "logging/sinks/messageformatter.h++"
 #include "types/valuemap.h++"
@@ -26,8 +28,8 @@ namespace core::dds
 
     protected:
         RTIDistributedLogger(const std::string &sink_id,
-                             const std::string &application_id,
-                             int domain_id);
+                             const std::string &application_id = core::platform::path->exec_name(),
+                             int domain_id = 0);
 
     protected:
         void load_settings(const types::KeyValueMap &settings) override;
@@ -47,5 +49,12 @@ namespace core::dds
         RTI_DLOptions dl_options_;
         RTI_DLDistLogger *dist_logger_;
     };
+
+    inline static logging::SinkFactory rti_dl_factory(
+        "rti-dl",
+        "Enable logging via RTI Distributed Logger [Default: %default]",
+        [](const logging::SinkID &sink_id) -> logging::Sink::ptr {
+            return RTIDistributedLogger::create_shared(sink_id);
+        });
 
 }  // namespace core::dds

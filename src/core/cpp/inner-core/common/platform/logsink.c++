@@ -22,5 +22,10 @@ namespace core::platform
         this->load_message_format(settings);
     }
 
+    bool LogSinkProvider::is_applicable(const types::Loggable &item) const
+    {
+        return this->is_valid_message(item) && Super::is_applicable(item);
+    }
+
     ProviderProxy<LogSinkProvider> logsink("logsink");
 }  // namespace core::platform

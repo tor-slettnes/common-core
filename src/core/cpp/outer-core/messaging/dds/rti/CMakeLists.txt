@@ -20,7 +20,7 @@ set(SOURCES
   dds-publisher.c++
   dds-subscriber.c++
   dds-logsink.c++
-  dds-options-server.c++
+#  dds-options-server.c++
   dds-server.c++
 )
 

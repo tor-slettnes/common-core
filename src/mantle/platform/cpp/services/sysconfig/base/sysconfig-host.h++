@@ -8,6 +8,7 @@
 #pragma once
 #include "sysconfig-types.h++"
 #include "platform/provider.h++"
+#include "types/listable.h++"
 #include "thread/signaltemplate.h++"
 
 namespace platform::sysconfig
@@ -34,7 +35,13 @@ namespace platform::sysconfig
         std::string machine_uid;
     };
 
-    std::ostream &operator<<(std::ostream &stream, const HostInfo &hi);
+    core::types::TaggedValueList &operator<<(
+        core::types::TaggedValueList &tvlist,
+        const HostInfo &hi);
+
+    std::ostream &operator<<(
+        std::ostream &stream,
+        const HostInfo &hi);
 
     //==========================================================================
     // HostConfig provider

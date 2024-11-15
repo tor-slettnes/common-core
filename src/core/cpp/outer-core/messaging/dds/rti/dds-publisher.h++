@@ -5,6 +5,7 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
+#pragma once
 #include "dds-endpoint.h++"
 #include "thread/signaltemplate.h++"
 #include "logging/logging.h++"

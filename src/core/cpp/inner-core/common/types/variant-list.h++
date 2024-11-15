@@ -18,6 +18,7 @@ namespace core::types
                       public enable_create_shared<ValueList>
     {
         using Super = std::deque<Value>;
+        using AppendResult = std::pair<ValueList::iterator, bool>;
 
     protected:
         using Super::Super;
@@ -25,12 +26,22 @@ namespace core::types
     public:
         void to_stream(std::ostream &stream) const override;
 
+        // No-ops for compatibility with std::vector<>;
+        void reserve(std::size_t capacity) {}
+        void shrink_to_fit() {}
+
     public:
         const Value &front(const Value &fallback = {}) const noexcept;
         const Value &back(const Value &fallback = {}) const noexcept;
         const Value &get(uint index, const Value &fallback = {}) const noexcept;
         const Value &get(int index, const Value &fallback = {}) const noexcept;
         TaggedValueList as_tvlist() const noexcept;
+
+        iterator append(const Value &value);
+        iterator append(Value &&value);
+
+        AppendResult append_if(bool condition, const Value &value);
+        AppendResult append_if(bool condition, Value &&value);
 
         template <class T>
         std::optional<T> get_as(const uint index) const
@@ -61,6 +72,22 @@ namespace core::types
                 }
             }
             return result;
+        }
+
+        template<class T>
+        static std::shared_ptr<ValueList> create_shared_from(const T &obj)
+        {
+            auto vlist = std::make_shared<ValueList>();
+            (*vlist) << obj;
+            return vlist;
+        }
+
+        template<class T>
+        static ValueList create_from(const T &obj)
+        {
+            T vlist;
+            vlist << obj;
+            return vlist;
         }
     };
 

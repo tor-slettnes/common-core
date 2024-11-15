@@ -161,10 +161,10 @@ namespace core::grpc
         return TYPE_NAME_BASE(Status);
     }
 
-    void Status::populate_fields(types::PartsList *parts) const noexcept
+    void Status::populate_fields(types::TaggedValueList *tvlist) const noexcept
     {
-        parts->add({}, this->status_code_name(), true, "%s");
-        Event::populate_fields(parts);
+        tvlist->append({}, this->status_code_name());
+        Event::populate_fields(tvlist);
     }
 
     ::grpc::StatusCode Status::code_from_event(const status::Event &event) noexcept

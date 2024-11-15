@@ -22,35 +22,35 @@ namespace platform::sysconfig
 
     std::ostream &operator<<(std::ostream &stream, const TimeZoneCountry &country)
     {
-        core::types::PartsList parts;
-        parts.add_string("code", country.code, !country.code.empty());
-        parts.add_string("name", country.name, !country.name.empty());
-        stream << parts;
+        core::types::TaggedValueList tvlist;
+        tvlist.append_if(!country.code.empty(), "code", country.code);
+        tvlist.append_if(!country.name.empty(), "name", country.name);
+        tvlist.to_stream(stream);
         return stream;
     }
 
     std::ostream &operator<<(std::ostream &stream, const TimeZoneLocation &location)
     {
-        core::types::PartsList parts;
-        parts.add("country", location.country);
-        parts.add_string("region", location.region, !location.region.empty());
-        stream << parts;
+        core::types::TaggedValueList tvlist;
+        tvlist.emplace_back("country", core::str::convert_from(location.country));
+        tvlist.append_if(!location.region.empty(), "region", location.region);
+        tvlist.to_stream(stream);
         return stream;
     }
 
     std::ostream &operator<<(std::ostream &stream, const TimeZoneLocationFilter &filter)
     {
-        core::types::PartsList parts;
+        core::types::TaggedValueList tvlist;
 
-        parts.add("area",
-                  filter.area,
-                  !filter.area.empty());
+        tvlist.append_if(!filter.area.empty(),
+                          "area",
+                          filter.area);
 
-        parts.add("country",
-                  filter.country,
-                  !filter.country.code.empty() || !filter.country.name.empty());
+        tvlist.append_if(!filter.country.code.empty() || !filter.country.name.empty(),
+                          "country",
+                          core::str::convert_from(filter.country));
 
-        stream << parts;
+        tvlist.to_stream(stream);
         return stream;
     }
 

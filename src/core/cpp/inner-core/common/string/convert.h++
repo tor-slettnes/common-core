@@ -248,4 +248,18 @@ namespace core::str
     {
         return StringConvert<T>::to_string(value);
     }
+
+    template <class T>
+    std::string convert_from(const std::optional<T> &value) noexcept
+    {
+        if (value)
+        {
+            return StringConvert<T>::to_string(value.value());
+        }
+        else
+        {
+            return {};
+        }
+    }
+
 }  // namespace core::str

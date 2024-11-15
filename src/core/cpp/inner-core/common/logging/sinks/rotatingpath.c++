@@ -9,6 +9,7 @@
 #include "string/expand.h++"
 #include "chrono/date-time.h++"
 #include "platform/path.h++"
+#include "platform/host.h++"
 
 namespace core::logging
 {
@@ -20,7 +21,22 @@ namespace core::logging
           rotation_interval_(DEFAULT_ROTATION),
           use_local_time_(DEFAULT_LOCAL_TIME),
           log_folder_(platform::path->log_folder()),
-          exec_name_(platform::path->exec_name())
+          expansions_({
+              {"executable", platform::path->exec_name()},
+              {"hostname", platform::host->get_host_name()},
+              {"sink_id", this->sink_name()},
+              {"isodate", "%F"},
+              {"isotime", "%T"},
+              {"year", "%Y"},
+              {"month", "%m"},
+              {"week", "%U"},
+              {"day", "%d"},
+              {"hour", "%H"},
+              {"minute", "%M"},
+              {"second", "%S"},
+              {"zonename", "%Z"},
+              {"zoneoffset", "%z"},
+          })
     {
     }
 
@@ -81,26 +97,10 @@ namespace core::logging
 
     fs::path RotatingPath::construct_path(const dt::TimePoint &starttime) const
     {
-        static const std::unordered_map<std::string, std::string> expansions = {
-            {"executable", platform::path->exec_name()},
-            {"sink", this->sink_name()},
-            {"isodate", "%F"},
-            {"isotime", "%T"},
-            {"year", "%Y"},
-            {"month", "%m"},
-            {"week", "%U"},
-            {"day", "%d"},
-            {"hour", "%H"},
-            {"minute", "%M"},
-            {"second", "%S"},
-            {"zonename", "%Z"},
-            {"zoneoffset", "%z"},
-        };
-
         std::string log_name = dt::to_string(
-            starttime,                                            // tp
-            0,                                                    // decimals
-            str::expand(this->filename_template(), expansions));  // format
+            starttime,                                                   // tp
+            0,                                                           // decimals
+            str::expand(this->filename_template(), this->expansions_));  // format
 
         fs::path log_file = platform::path->extended_filename(
             log_name,

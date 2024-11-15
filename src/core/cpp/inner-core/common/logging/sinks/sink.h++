@@ -8,6 +8,7 @@
 #pragma once
 #include "types/loggable.h++"
 #include "types/value.h++"
+#include "types/valuemap.h++"
 
 #include <memory>
 #include <string>
@@ -15,12 +16,12 @@
 namespace core::logging
 {
     using SinkID = std::string;
+    using SinkType = std::string;
 
     //--------------------------------------------------------------------------
     // Constants
 
     constexpr auto SETTING_LOG_SINKS = "log sinks";
-
 
     //--------------------------------------------------------------------------
     /// \class Sink
@@ -28,18 +29,23 @@ namespace core::logging
 
     class Sink
     {
+        friend class SinkFactory;
+
     public:
         using ptr = std::shared_ptr<Sink>;
 
     protected:
-        Sink(const SinkID &sink_id);
-        virtual ~Sink();
+        Sink(const SinkID &sink_id,
+             const SinkType &sink_type = {});
+        virtual ~Sink() {}
 
     public:
         SinkID sink_id() const;
-        void load_settings();
+        SinkType sink_type() const;
+        //void load_settings();
 
     protected:
+        void set_sink_type(const SinkType &sink_type);
         virtual void load_settings(const types::KeyValueMap &settings) {}
 
     public:
@@ -52,6 +58,7 @@ namespace core::logging
     private:
         bool is_open_;
         SinkID sink_id_;
+        SinkType sink_type_;
     };
 
 }  // namespace core::logging

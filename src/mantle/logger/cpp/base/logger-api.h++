@@ -48,6 +48,8 @@ namespace logger
 
         virtual SinkIDs list_sinks() const = 0;
 
+        virtual SinkTypes list_sink_types() const = 0;
+
         virtual FieldNames list_static_fields() const = 0;
 
         virtual std::shared_ptr<EventSource> listen(

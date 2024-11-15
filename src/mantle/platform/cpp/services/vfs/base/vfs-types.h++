@@ -8,10 +8,11 @@
 #pragma once
 #include "logging/logging.h++"
 #include "types/filesystem.h++"
+#include "types/listable.h++"
+#include "types/value.h++"
 #include "platform/path.h++"
 #include "platform/user.h++"
 #include "chrono/date-time.h++"
-#include "types/value.h++"
 
 #include <iostream>
 
@@ -58,7 +59,14 @@ namespace platform::vfs
         core::types::KeyValueMap attributes;       // Custom file attributes
     };
 
-    std::ostream &operator<<(std::ostream &stream, const FileInfo &stats);
+    core::types::TaggedValueList &operator<<(
+        core::types::TaggedValueList &tvlist,
+        const FileInfo &fileinfo);
+
+    std::ostream &operator<<(
+        std::ostream &stream,
+        const FileInfo &fileinfo);
+
 
     //==========================================================================
     // Volume information
@@ -77,7 +85,7 @@ namespace platform::vfs
 
     using ContextName = std::string;
 
-    class Path : public core::types::Streamable
+    class Path : public core::types::Listable
     {
     public:
         Path(const ContextName &context = {}, const fs::path &path = {});
@@ -91,6 +99,8 @@ namespace platform::vfs
 
         void to_literal_stream(std::ostream &stream) const override;
         void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+
         void check_relative() const;
         static void check_relative(const ContextName &context,
                                    const fs::path &relpath,
@@ -148,6 +158,12 @@ namespace std
 
 namespace std::filesystem
 {
-    std::ostream &operator<<(std::ostream &stream, const space_info &volinfo);
+    core::types::TaggedValueList &operator<<(
+        core::types::TaggedValueList &tvlist,
+        const space_info &volinfo);
+
+    std::ostream &operator<<(
+        std::ostream &stream,
+        const space_info &volinfo);
 
 }

@@ -10,8 +10,7 @@
 #include "level.h++"
 #include "chrono/date-time.h++"
 #include "types/value.h++"
-#include "types/streamable.h++"
-#include "types/partslist.h++"
+#include "types/listable.h++"
 #include "types/loggable.h++"
 #include "types/create-shared.h++"
 
@@ -39,7 +38,7 @@ namespace core::status
     //==========================================================================
     // \class Event
 
-    class Event : public types::Streamable,
+    class Event : public types::Listable,
                   public types::Loggable
     {
     public:
@@ -85,15 +84,14 @@ namespace core::status
         virtual ContractID contract_id() const noexcept;
         virtual std::string host() const noexcept;
 
-        types::TaggedValueList as_tvlist() const noexcept;
-        types::KeyValueMap as_kvmap() const noexcept;
-
         virtual bool empty() const noexcept;
 
     protected:
         virtual std::string class_name() const noexcept;
-        virtual void populate_fields(types::PartsList *parts) const noexcept;
-        virtual void populate_attributes(types::PartsList *parts) const noexcept;
+        virtual void populate_fields(types::TaggedValueList *tvlist) const noexcept;
+        virtual void populate_attributes(types::TaggedValueList *tvlist) const noexcept;
+        virtual void populate_mapped_level(types::TaggedValueList *tvlist,
+                                           const types::KeyValueMap &level_map) const noexcept;
 
     public:
         static std::vector<std::string> field_names() noexcept;
@@ -105,6 +103,14 @@ namespace core::status
         virtual std::exception_ptr as_system_error() const;
         virtual std::exception_ptr as_application_error() const;
         virtual std::exception_ptr as_service_error() const;
+
+    public:
+        using types::Listable::as_tvlist;
+        types::TaggedValueList as_tvlist(const types::KeyValueMap &level_map) const noexcept;
+        types::KeyValueMap as_kvmap(const types::KeyValueMap &level_map = {}) const noexcept;
+
+    protected:
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
         void to_stream(std::ostream &stream) const override;

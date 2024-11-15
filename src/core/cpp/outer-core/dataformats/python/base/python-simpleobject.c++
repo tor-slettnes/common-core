@@ -375,11 +375,23 @@ namespace core::python
         return tuple;
     }
 
+    PyObject *SimpleObject::pytuple_from_objects(const Vector &objects)
+    {
+        PyObject *tuple = PyTuple_New(objects.size());
+        for (uint c = 0; c < objects.size(); c++)
+        {
+            // PyList_SET_ITEM steals reference, so acquire a new one.
+            PyTuple_SET_ITEM(tuple, c, objects.at(c).acquire());
+        }
+        return tuple;
+    }
+
     PyObject *SimpleObject::pylist_from_values(const types::ValueList &values)
     {
         PyObject *list = PyList_New(values.size());
         for (uint c = 0; c < values.size(); c++)
         {
+            // PyList_SET_ITEM steals newly allocated value
             PyList_SET_ITEM(list, c, SimpleObject::pyobj_from_value(values.at(c)));
         }
         return list;
@@ -407,14 +419,24 @@ namespace core::python
         PyObject *dict = PyDict_New();
         for (const auto &[key, value] : kvmap)
         {
-            PyObject *key_obj = PyUnicode_DecodeUTF8(key.data(), key.size(), nullptr);
-            PyObject *value_obj = SimpleObject::pyobj_from_value(value);
-            PyDict_SetItem(dict, key_obj, value_obj);
-            Py_DECREF(key_obj);
-            Py_DECREF(value_obj);
+            SimpleObject key_obj(PyUnicode_DecodeUTF8(key.data(), key.size(), nullptr));
+            SimpleObject value_obj(SimpleObject::pyobj_from_value(value));
+            PyDict_SetItem(dict, key_obj.borrow(), value_obj.borrow());
         }
         return dict;
     }
+
+    PyObject *SimpleObject::pydict_from_objects(const Map &kvmap)
+    {
+        PyObject *dict = PyDict_New();
+        for (const auto &[key, value] : kvmap)
+        {
+            SimpleObject key_obj(PyUnicode_DecodeUTF8(key.data(), key.size(), nullptr));
+            PyDict_SetItem(dict, key_obj.borrow(), value.borrow());
+        }
+        return dict;
+    }
+
 
     PyObject *SimpleObject::pyobj_from_value(const types::Value &value)
     {
@@ -480,18 +502,18 @@ namespace core::python
         return stream;
     }
 
-    std::unordered_map<PyTypeObject *, types::ValueType> SimpleObject::type_map = {
-        {&PyBool_Type, types::ValueType::BOOL},
-        {&PyLong_Type, types::ValueType::SINT},
-        {&PyFloat_Type, types::ValueType::REAL},
-        {&PyComplex_Type, types::ValueType::COMPLEX},
-        {&PyUnicode_Type, types::ValueType::STRING},
-        {&PyBytes_Type, types::ValueType::BYTEVECTOR},
-        {&PyByteArray_Type, types::ValueType::BYTEVECTOR},
-        {&PyList_Type, types::ValueType::VALUELIST},
-        {&PyTuple_Type, types::ValueType::VALUELIST},
-        {&PyDict_Type, types::ValueType::KVMAP},
-    };
+    // std::unordered_map<PyTypeObject *, types::ValueType> SimpleObject::type_map = {
+    //     {&PyBool_Type, types::ValueType::BOOL},
+    //     {&PyLong_Type, types::ValueType::SINT},
+    //     {&PyFloat_Type, types::ValueType::REAL},
+    //     {&PyComplex_Type, types::ValueType::COMPLEX},
+    //     {&PyUnicode_Type, types::ValueType::STRING},
+    //     {&PyBytes_Type, types::ValueType::BYTEVECTOR},
+    //     {&PyByteArray_Type, types::ValueType::BYTEVECTOR},
+    //     {&PyList_Type, types::ValueType::VALUELIST},
+    //     {&PyTuple_Type, types::ValueType::VALUELIST},
+    //     {&PyDict_Type, types::ValueType::KVMAP},
+    // };
 
 }  // namespace core::python
 

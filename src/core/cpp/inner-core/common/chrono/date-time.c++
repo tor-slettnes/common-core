@@ -855,3 +855,9 @@ bool operator==(const std::tm &lhs, const std::tm &rhs)
             (lhs.tm_yday == rhs.tm_yday) &&
             (lhs.tm_isdst == rhs.tm_isdst));
 }
+
+std::ostream &operator<<(std::ostream &stream, const std::tm &tm)
+{
+    stream << std::put_time(&tm, core::dt::DEFAULT_FORMAT);
+    return stream;
+}

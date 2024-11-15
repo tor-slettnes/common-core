@@ -132,9 +132,11 @@ namespace core::platform
             }
             else
             {
-                throwf(std::runtime_error,
-                       "No suitable %s implementation is available for this system",
-                       this->typeName);
+                std::string message = str::format(
+                    "No suitable %s implementation is available for this system",
+                    this->typeName);
+
+                throw std::runtime_error(message);
             }
         }
 

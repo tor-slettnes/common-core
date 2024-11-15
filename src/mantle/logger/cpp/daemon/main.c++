@@ -29,7 +29,8 @@ int main(int argc, char** argv)
     }
     catch (...)
     {
-        log_critical(std::current_exception());
+        std::cerr << std::current_exception() << std::endl;
+        // log_critical(std::current_exception());
         return -1;
     }
 }

@@ -84,6 +84,13 @@ namespace logger::grpc
                 request));
     }
 
+    SinkTypes LoggerClient::list_sink_types() const
+    {
+        return protobuf::decoded<SinkTypes>(
+            this->call_check(
+                &Stub::list_sink_types));
+    }
+
     FieldNames LoggerClient::list_static_fields() const
     {
         return protobuf::decoded<FieldNames>(

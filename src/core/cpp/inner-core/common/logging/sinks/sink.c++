@@ -12,18 +12,15 @@
 
 namespace core::logging
 {
-    Sink::Sink(const SinkID &sink_id)
-        : is_open_(false),
-          sink_id_(sink_id)
-    {
-    }
+    //--------------------------------------------------------------------------
+    /// \class Sink
 
-    Sink::~Sink()
+    Sink::Sink(const SinkID &sink_id,
+               const SinkType &sink_type)
+        : is_open_(false),
+          sink_id_(sink_id),
+          sink_type_(sink_type)
     {
-        // if (this->is_open_)
-        // {
-        //     this->close();
-        // }
     }
 
     SinkID Sink::sink_id() const
@@ -31,12 +28,14 @@ namespace core::logging
         return this->sink_id_;
     }
 
-    void Sink::load_settings()
+    SinkType Sink::sink_type() const
     {
-        this->load_settings(core::settings
-                                ->get(SETTING_LOG_SINKS)
-                                .get(this->sink_id())
-                                .as_kvmap());
+        return this->sink_type_;
+    }
+
+    void Sink::set_sink_type(const SinkType &sink_type)
+    {
+        this->sink_type_ = sink_type;
     }
 
     bool Sink::is_applicable(const types::Loggable &) const

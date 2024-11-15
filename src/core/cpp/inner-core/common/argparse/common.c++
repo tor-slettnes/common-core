@@ -9,11 +9,7 @@
 #include "settings/settings.h++"
 #include "status/level.h++"
 #include "logging/logging.h++"
-#include "logging/sinks/streamsink.h++"
-#include "logging/sinks/logfilesink.h++"
-#include "logging/sinks/jsonfilesink.h++"
-#include "logging/sinks/csvfilesink.h++"
-#include "platform/logsink.h++"
+#include "logging/sinks/core-sinks.h++"
 #include "platform/path.h++"
 #include "platform/runtime.h++"
 #include "buildinfo.h"
@@ -70,7 +66,6 @@ namespace core::argparse
 
     void CommonOptions::enact()
     {
-        this->register_loggers();
         logging::message_dispatcher.initialize();
     }
 
@@ -218,43 +213,46 @@ namespace core::argparse
             "Disable logging completely.  Identical to \"--log-all=NONE\"",
             std::bind(&logging::set_universal_threshold, status::Level::NONE));
 
-        this->add_flag(
-            {"--log-to-syslog", "--syslog"},
-            "Log to syslog on UNIX, or Event Log on Windows. "
-            "Enabled by default is standard input is not a terminal.",
-            &this->log_to_syslog,
-            this->logsink_setting_enabled(SYSLOG_SINK, !interactive));
-
-        this->add_flag(
-            {"--log-to-stdout", "--stdout"},
-            "Log to standard output. Implicitly disables `--log-to-stderr`.",
-            &this->log_to_stdout,
-            this->logsink_setting_enabled(STDOUT_SINK, false));
-
-        this->add_flag(
-            {"--log-to-stderr", "--stderr"},
-            "Log to standard error. Enabled by default if standard input is a terminal.",
-            &this->log_to_stderr,
-            this->logsink_setting_enabled(STDERR_SINK, interactive));
-
-        this->add_flag(
-            {"--log-to-file"},
-            "Log messages to a plaintext `.log` file. ",
-            &this->log_to_file,
-            this->logsink_setting_enabled(FILE_SINK, false));
-
-        this->add_flag(
-            {"--log-to-json"},
-            "Log to a JSON file; one JSON-formatted log entry per line.",
-            &this->log_to_json,
-            this->logsink_setting_enabled(JSON_SINK, false));
-
-        this->add_flag(
-            {"--log-to-csv"},
-            "Log to a CSV file, with column headers matching plaintext log message fields.",
-            &this->log_to_csv,
-            this->logsink_setting_enabled(CSV_SINK, false));
+        this->add_log_sinks();
     }
+
+    //     this->add_flag(
+    //         {"--log-to-syslog", "--syslog"},
+    //         "Log to syslog on UNIX, or Event Log on Windows. "
+    //         "Enabled by default is standard input is not a terminal.",
+    //         &this->log_to_syslog,
+    //         this->logsink_setting_enabled(SYSLOG_SINK, !interactive));
+
+    //     this->add_flag(
+    //         {"--log-to-stdout", "--stdout"},
+    //         "Log to standard output. Implicitly disables `--log-to-stderr`.",
+    //         &this->log_to_stdout,
+    //         this->logsink_setting_enabled(STDOUT_SINK, false));
+
+    //     this->add_flag(
+    //         {"--log-to-stderr", "--stderr"},
+    //         "Log to standard error. Enabled by default if standard input is a terminal.",
+    //         &this->log_to_stderr,
+    //         this->logsink_setting_enabled(STDERR_SINK, interactive));
+
+    //     this->add_flag(
+    //         {"--log-to-file"},
+    //         "Log messages to a plaintext `.log` file. ",
+    //         &this->log_to_file,
+    //         this->logsink_setting_enabled(FILE_SINK, false));
+
+    //     this->add_flag(
+    //         {"--log-to-json"},
+    //         "Log to a JSON file; one JSON-formatted log entry per line.",
+    //         &this->log_to_json,
+    //         this->logsink_setting_enabled(JSON_SINK, false));
+
+    //     this->add_flag(
+    //         {"--log-to-csv"},
+    //         "Log to a CSV file, with column headers matching plaintext log message fields.",
+    //         &this->log_to_csv,
+    //         this->logsink_setting_enabled(CSV_SINK, false));
+    // }
 
     void CommonOptions::add_log_scope_options()
     {
@@ -277,53 +275,106 @@ namespace core::argparse
         }
     }
 
-    void CommonOptions::register_loggers()
+    void CommonOptions::add_log_sinks()
     {
-        if (this->log_to_syslog)
+        std::set<std::string> consumed_sink_types;
+
+        // First we add options to log to sinks with IDs corresponding to keys
+        // from the "log sinks" section in settings. The settings for each sink
+        // may include a "type" value, in which case the corresponding sink
+        // factory is used.  Otherwise, the type is assumed to be the same as
+        // the sink ID (e.g. "file").
+
+        if (auto sink_map = core::settings->get("log sinks").get_kvmap())
         {
-            logging::message_dispatcher.add_sink(platform::logsink.get_shared());
+            for (const auto &[sink_id, sink_specs] : *sink_map)
+            {
+                std::string sink_type = sink_specs.get("type", sink_id).as_string();
+                if (logging::SinkFactory *factory =
+                        logging::sink_registry.get(sink_type, nullptr))
+                {
+                    this->add_log_sink_option(sink_id, factory, sink_specs.as_kvmap());
+                    consumed_sink_types.insert(sink_type);
+                }
+            }
         }
 
-        if (this->log_to_stderr)
+        // We now add sink factories that wasn't yet mentioned, with sink IDs
+        // matching the sink type name (e.g. "stderr").
+        for (const auto &[sink_type, factory] : logging::sink_registry)
         {
-            logging::message_dispatcher.add_sink(
-                logging::StreamSink::create_shared(STDERR_SINK, std::cerr));
-        }
-        else if (this->log_to_stdout)
-        {
-            logging::message_dispatcher.add_sink(
-                logging::StreamSink::create_shared(STDOUT_SINK, std::cout));
-        }
-
-        if (this->log_to_file)
-        {
-            logging::message_dispatcher.add_sink(
-                logging::LogFileSink::create_shared(FILE_SINK));
-        }
-
-        if (this->log_to_json)
-        {
-            logging::message_dispatcher.add_sink(
-                logging::JsonFileSink::create_shared(JSON_SINK));
-        }
-
-        if (this->log_to_csv)
-        {
-            logging::message_dispatcher.add_sink(
-                logging::CSVMessageSink::create_shared(CSV_SINK));
+            if (consumed_sink_types.count(sink_type) == 0)
+            {
+                this->add_log_sink_option(sink_type, factory, {});
+            }
         }
     }
 
-    bool CommonOptions::logsink_setting_enabled(
-        const std::string &sink_name,
-        bool fallback) const
+    void CommonOptions::add_log_sink_option(
+        const std::string &sink_id,
+        logging::SinkFactory *factory,
+        const types::KeyValueMap &sink_settings)
     {
-        return core::settings
-            ->get(logging::SETTING_LOG_SINKS)
-            .get(sink_name)
-            .get(SETTING_LOGSINK_ENABLED, fallback)
-            .as_bool();
+        this->add_flag(
+            {str::format("--log-to-%s", sink_id)},
+            factory->description(),
+            [=](bool enabled) {
+                if (enabled)
+                {
+                    logging::message_dispatcher.add_sink(
+                        factory->create(sink_id, sink_settings));
+                }
+            },
+            factory->default_enabled(sink_settings));
     }
+
+    // void CommonOptions::register_loggers()
+    // {
+    //     if (this->log_to_syslog)
+    //     {
+    //         logging::message_dispatcher.add_sink(platform::logsink.get_shared());
+    //     }
+
+    //     if (this->log_to_stderr)
+    //     {
+    //         logging::message_dispatcher.add_sink(
+    //             logging::StreamSink::create_shared(STDERR_SINK, std::cerr));
+    //     }
+    //     else if (this->log_to_stdout)
+    //     {
+    //         logging::message_dispatcher.add_sink(
+    //             logging::StreamSink::create_shared(STDOUT_SINK, std::cout));
+    //     }
+
+    //     if (this->log_to_file)
+    //     {
+    //         logging::message_dispatcher.add_sink(
+    //             logging::LogFileSink::create_shared(FILE_SINK));
+    //     }
+
+    //     if (this->log_to_json)
+    //     {
+    //         logging::message_dispatcher.add_sink(
+    //             logging::JsonFileSink::create_shared(JSON_SINK));
+    //     }
+
+    //     if (this->log_to_csv)
+    //     {
+    //         logging::message_dispatcher.add_sink(
+    //             logging::CSVMessageSink::create_shared(CSV_SINK));
+    //     }
+    // }
+
+    // bool CommonOptions::logsink_setting_enabled(
+    //     const std::string &sink_name,
+    //     bool fallback) const
+    // {
+    //     return core::settings
+    //         ->get(logging::SETTING_LOG_SINKS)
+    //         .get(sink_name)
+    //         .get(SETTING_LOGSINK_ENABLED, fallback)
+    //         .as_bool();
+    // }
 
     std::optional<status::Level> CommonOptions::get_optional_level(
         const std::string &option,

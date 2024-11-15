@@ -27,7 +27,7 @@ namespace core::zmq
         std::exception_ptr as_application_error() const override;
 
         std::string class_name() const noexcept override;
-        void populate_fields(types::PartsList *parts) const noexcept override;
+        void populate_fields(types::TaggedValueList *tvlist) const noexcept override;
 
     private:
         cc::rr::StatusCode status_code_;

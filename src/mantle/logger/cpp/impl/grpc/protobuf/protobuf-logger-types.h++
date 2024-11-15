@@ -12,12 +12,6 @@
 namespace protobuf
 {
     //==========================================================================
-    // SinkType
-
-    void encode(const logger::SinkType &native, cc::logger::SinkType *proto);
-    void decode(const cc::logger::SinkType &proto, logger::SinkType *native);
-
-    //==========================================================================
     // SinkID
 
     void encode(const logger::SinkID &native, cc::logger::SinkID *proto);
@@ -40,6 +34,12 @@ namespace protobuf
 
     void encode(const logger::SinkIDs &native, cc::logger::SinkSpecs *proto);
     void decode(const cc::logger::SinkSpecs &proto, logger::SinkIDs *native);
+
+    //==========================================================================
+    // SinkTypes
+
+    void encode(const logger::SinkTypes &native, cc::logger::SinkTypes *proto);
+    void decode(const cc::logger::SinkTypes &proto, logger::SinkTypes *native);
 
     //==========================================================================
     // ColumnSpec

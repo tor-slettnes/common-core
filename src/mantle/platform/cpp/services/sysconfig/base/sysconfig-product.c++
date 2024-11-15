@@ -83,6 +83,23 @@ namespace platform::sysconfig
         return other.operator<(*this);
     }
 
+    void Version::to_tvlist(core::types::TaggedValueList *tvlist) const
+    {
+        tvlist->append_if(
+            !this->printable_version.empty(),
+            "printable",
+            this->printable_version);
+
+        tvlist->append(
+            "canonical",
+            core::str::format("%d.%d.%d", this->major, this->minor, this->patch));
+
+        tvlist->append_if(
+            this->build_number != 0,
+            "build",
+            this->build_number);
+    }
+
     void Version::to_stream(std::ostream &stream) const
     {
         if (!this->printable_version.empty())
@@ -101,27 +118,40 @@ namespace platform::sysconfig
 
     void Version::to_literal_stream(std::ostream &stream) const
     {
-        std::string printable = this->printable_version;
-        std::string canonical = core::str::format("%d.%d.%d", this->major, this->minor, this->patch);
-
-        core::types::PartsList parts;
-        parts.add("printable", printable, !printable.empty(), "%r");
-        parts.add("canonical", canonical);
-        parts.add("build", this->build_number, this->build_number != 0);
-        stream << parts;
+        this->as_tvlist().to_stream(stream);
     }
 
-    void ProductInfo::to_stream(std::ostream &stream) const
+    void ProductInfo::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add_string("product_name", this->product_name);
-        parts.add_string("product_description", this->product_description);
-        parts.add_string("product_serial", this->product_serial);
-        parts.add_string("hardware_model", this->hardware_model);
-        parts.add("release_version", this->release_version, true, "%s");
-        parts.add("component_versions", this->component_versions, true, "%s");
-        parts.add("subsystem_info", this->subsystem_info, true, "%s");
-        stream << parts;
+        tvlist->extend({
+            {"product_name", this->product_name},
+            {"product_description", this->product_description},
+            {"product_serial", this->product_serial},
+            {"hardware_model", this->hardware_model},
+            {"release_version", this->release_version.as_tvlist()},
+        });
+
+        if (!this->component_versions.empty())
+        {
+            core::types::TaggedValueList component_map;
+            for (const auto &[component, version] : this->component_versions)
+            {
+                component_map.append(component, version.as_tvlist());
+            }
+
+            tvlist->append("component_versions", component_map);
+        }
+
+        if (!this->subsystem_info.empty())
+        {
+            core::types::ValueList subsystems;
+            for (const ProductInfo &subsystem : this->subsystem_info)
+            {
+                subsystems.append(subsystem.as_tvlist());
+            }
+
+            tvlist->append("subsystem_info", subsystems);
+        }
     }
 
     //==========================================================================

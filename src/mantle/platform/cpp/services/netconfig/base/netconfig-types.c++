@@ -9,11 +9,9 @@
 
 namespace platform::netconfig
 {
-    void SystemData::to_stream(std::ostream &stream) const
+    void SystemData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("hostname", this->hostname, this->hostname.size(), "%r");
-        stream << parts;
+        tvlist->append_if(this->hostname.size(), "hostname", this->hostname);
     }
 
     void AddressData::to_stream(std::ostream &stream) const
@@ -22,6 +20,14 @@ namespace platform::netconfig
         {
             stream << this->address << "/" << this->prefixlength;
         }
+    }
+
+    void AddressData::to_tvlist(core::types::TaggedValueList *tvlist) const
+    {
+        tvlist->extend({
+            {"address", this->address},
+            {"prefix_length", this->prefixlength},
+        });
     }
 
     void IPConfigData::clear()
@@ -33,65 +39,95 @@ namespace platform::netconfig
         this->searches.clear();
     }
 
-    void IPConfigData::to_stream(std::ostream &stream) const
+    void IPConfigData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("method", this->method, this->method, "%s");
-        parts.add("address_data", this->address_data, this->address_data.size(), "%s");
-        parts.add("gateway", this->gateway, this->gateway.size(), "%s");
-        parts.add("dns", this->dns, this->dns.size(), "%s");
-        parts.add("searches", this->searches.size(), "%s");
-        stream << parts;
+        tvlist->append_if(this->method,
+                          "method",
+                          core::str::convert_from(this->method));
+
+        tvlist->append_if(this->address_data.size(),
+                          "address_data",
+                          core::str::convert_from(this->address_data));
+
+        tvlist->append_if(this->gateway.size(),
+                          "gateway",
+                          this->gateway);
+
+        tvlist->append_if(this->dns.size(),
+                          "dns",
+                          core::str::convert_from(this->dns));
+
+        tvlist->append("searches",
+                       this->searches.size());
     }
 
-    void WiredConnectionData::to_stream(std::ostream &stream) const
+    void WiredConnectionData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("auto_negotiate", this->auto_negotiate, true, "%b");
-        stream << parts;
+        tvlist->append("auto_negotiate", this->auto_negotiate);
     }
 
-    void WEP_Data::to_stream(std::ostream &stream) const
+    void WEP_Data::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("auth_alg", this->auth_alg, this->auth_alg, "%s");
-        parts.add("key_idx", this->key_idx, true, "%d");
+        tvlist->append_if(this->auth_alg,
+                          "auth_alg",
+                          this->auth_alg);
+
+        tvlist->append("key_idx", this->key_idx);
         for (int i = 0; i < this->keys.size(); i++)
         {
-            parts.add(core::str::format("key%d", i),
-                      this->keys.at(i),
-                      this->keys.at(i).size(),
-                      "%h");
+            tvlist->append_if(this->keys.at(i).size(),
+                              core::str::format("key%d", i),
+                              core::str::obfuscated(this->keys.at(i).stringview()));
         }
-        parts.add("key_type", this->key_type, this->key_type, "%s");
-        stream << "WEP" << parts;
+        tvlist->append_if(this->key_type, "key_type", this->key_type);
     }
 
-    void WPA_Data::to_stream(std::ostream &stream) const
+    void WPA_Data::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("psk", this->psk, true, "%h");
-        stream << "WPA" << parts;
+        tvlist->append("psk", core::str::obfuscated(this->psk));
     }
 
-    void EAP_Data::to_stream(std::ostream &stream) const
+    void EAP_Data::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("auth_alg", this->auth_alg, this->auth_alg);
-        parts.add("eap_type", this->eap_type, this->eap_type);
-        parts.add("eap_phase2", this->eap_phase2, this->eap_phase2);
-        parts.add("anonymous_identity", this->anonymous_identity, this->anonymous_identity.size());
-        parts.add("domain", this->domain, this->domain.size());
-        parts.add("identity", this->identity, this->identity.size());
-        parts.add("password", this->password, this->password.size(), "%h");
-        parts.add("ca_cert", this->ca_cert, !this->ca_cert.empty());
-        parts.add("client_cert", this->client_cert, !this->client_cert.empty());
-        parts.add("client_cert_key", this->client_cert_key, !this->client_cert_key.empty());
-        parts.add("client_cert_password", this->client_cert_password, this->client_cert_password.size(), "%h");
-
-        parts.add("pac_file", this->pac_file, !this->pac_file.empty());
-        parts.add("fast_provisioning", this->fast_provisioning, this->fast_provisioning);
-        stream << "EAP" << parts;
+        tvlist->append_if(this->auth_alg,
+                          "auth_alg",
+                          core::str::convert_from(this->auth_alg));
+        tvlist->append_if(this->eap_type,
+                          "eap_type",
+                          core::str::convert_from(this->eap_type));
+        tvlist->append_if(this->eap_phase2,
+                          "eap_phase2",
+                          core::str::convert_from(this->eap_phase2));
+        tvlist->append_if(!this->anonymous_identity.empty(),
+                          "anonymous_identity",
+                          this->anonymous_identity);
+        tvlist->append_if(!this->domain.empty(),
+                          "domain",
+                          this->domain);
+        tvlist->append_if(!this->identity.empty(),
+                          "identity",
+                          this->identity);
+        tvlist->append_if(!this->password.empty(),
+                          "password",
+                          core::str::obfuscated(this->password));
+        tvlist->append_if(!this->ca_cert.empty(),
+                          "ca_cert",
+                          this->ca_cert);
+        tvlist->append_if(!this->client_cert.empty(),
+                          "client_cert",
+                          this->client_cert);
+        tvlist->append_if(!this->client_cert_key.empty(),
+                          "client_cert_key",
+                          this->client_cert_key);
+        tvlist->append_if(!this->client_cert_password.empty(),
+                          "client_cert_password",
+                          core::str::obfuscated(this->client_cert_password));
+        tvlist->append_if(!this->pac_file.empty(),
+                          "pac_file",
+                          this->pac_file);
+        tvlist->append_if(this->fast_provisioning,
+                          "fast_provisioning",
+                          core::str::convert_from(this->fast_provisioning));
     }
 
     KeyManagement WirelessConnectionData::key_mgmt_type() const
@@ -136,17 +172,33 @@ namespace platform::netconfig
         return std::get_if<EAP_Data>(&this->auth);
     }
 
-    void WirelessConnectionData::to_stream(std::ostream &stream) const
+    void WirelessConnectionData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("ssid", this->ssid.stringview(), this->ssid.size(), "%r");
-        parts.add("ap_mode", this->mode, this->mode);
-        parts.add("hidden", this->hidden, "%b");
-        parts.add("tx_power", this->tx_power);
-        parts.add("key_mgmt", this->key_mgmt, this->key_mgmt);
-        parts.add("auth", this->auth, this->auth.index());
-        parts.add("auth_protos", this->auth_protos, this->auth_protos, "%#0x");
-        stream << parts;
+        tvlist->append_if(!this->ssid.empty(), "ssid", this->ssid);
+        tvlist->append_if(this->mode, "ap_mode", core::str::convert_from(this->mode));
+        tvlist->append("hidden", this->hidden);
+        tvlist->append("tx_power", this->tx_power);
+        tvlist->append_if(this->band.has_value(), "band", core::str::convert_from(this->band));
+        tvlist->append_if(this->key_mgmt, "key_mgmt", core::str::convert_from(this->key_mgmt));
+        tvlist->append_if(this->auth_protos, "auth_protos", this->auth_protos);
+
+        switch (this->auth_type())
+        {
+        case AUTH_TYPE_WEP:
+            tvlist->append("wep", std::get<WEP_Data>(this->auth).as_tvlist());
+            break;
+
+        case AUTH_TYPE_WPA:
+            tvlist->append("wpa", std::get<WPA_Data>(this->auth).as_tvlist());
+            break;
+
+        case AUTH_TYPE_EAP:
+            tvlist->append("eap", std::get<EAP_Data>(this->auth).as_tvlist());
+            break;
+
+        default:
+            break;
+        }
     }
 
     std::string ConnectionData::key() const
@@ -176,30 +228,32 @@ namespace platform::netconfig
                (this->ip6config.method != METHOD_NONE);
     }
 
-    void ConnectionData::to_stream(std::ostream &stream) const
+    void ConnectionData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("id", this->id, this->id.size());
-        parts.add("uuid", this->uuid, this->uuid.size());
-        parts.add("interface", this->interface, this->interface.size());
+        tvlist->append_if(!this->id.empty(), "id", this->id);
+        tvlist->append_if(!this->uuid.empty(), "uuid", this->uuid);
+        tvlist->append_if(!this->interface.empty(), "interface", this->interface);
 
         switch (this->type())
         {
         case CONN_TYPE_WIRED:
-            parts.add("wired", this->specific_data);
+            tvlist->append(
+                "wired",
+                std::get<WiredConnectionData>(this->specific_data).as_tvlist());
             break;
 
         case CONN_TYPE_WIRELESS:
-            parts.add("wireless", this->specific_data);
+            tvlist->append(
+                "wireless",
+                std::get<WirelessConnectionData>(this->specific_data).as_tvlist());
             break;
 
         default:
             break;
         }
 
-        parts.add("ip4config", this->ip4config);
-        parts.add("ip6config", this->ip6config);
-        stream << parts;
+        tvlist->append("ip4config", this->ip4config.as_tvlist());
+        tvlist->append("ip6config", this->ip6config.as_tvlist());
     }
 
     std::string ActiveConnectionData::key() const
@@ -207,21 +261,21 @@ namespace platform::netconfig
         return this->id;
     }
 
-    void ActiveConnectionData::to_stream(std::ostream &stream) const
+    void ActiveConnectionData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("id", this->id);
-        parts.add("uuid", this->uuid);
-        parts.add("type", this->type);
-        parts.add("state", this->state);
-        parts.add("reason", this->state_reason);
-        parts.add("flags", this->state_flags, true, "%#0x");
-        parts.add("default4", this->default4, true, "%b");
-        parts.add("ip4config", this->ip4config);
-        parts.add("default6", this->default6, true, "%b");
-        parts.add("ip6config", this->ip6config);
-        parts.add("vpn", this->vpn, true, "%b");
-        stream << parts;
+        tvlist->extend({
+            {"id", this->id},
+            {"uuid", this->uuid},
+            {"type", core::str::convert_from(this->type)},
+            {"state", core::str::convert_from(this->state)},
+            {"reason", core::str::convert_from(this->state_reason)},
+            {"flags", this->state_flags},
+            {"default4", this->default4},
+            {"ip4config", this->ip4config.as_tvlist()},
+            {"default6", this->default6},
+            {"ip6config", this->ip6config.as_tvlist()},
+            {"vpn", this->vpn},
+        });
     }
 
     bool ActiveConnectionData::is_connected() const
@@ -308,42 +362,43 @@ namespace platform::netconfig
         return BAND_ANY;
     }
 
-    void AccessPointData::to_stream(std::ostream &stream) const
+    void AccessPointData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("ssid", this->ssid.stringview(), this->ssid.size(), "%r");
-        parts.add("frequency", this->frequency, this->frequency, "%d");
-        parts.add("flags", this->flags, true, "%#0x");
-        parts.add("rsn_flags", this->rsn_flags, this->rsn_flags, "%#0x");
-        parts.add("wpa_flags", this->wpa_flags, this->wpa_flags, "%#0x");
-        parts.add("auth_type", this->auth_type(), this->auth_type());
-        parts.add("hwAddress", this->hwAddress, this->hwAddress.size());
-        parts.add("ap_mode", this->mode, this->mode);
-        parts.add("maxbitrate", this->maxbitrate, this->maxbitrate);
-        parts.add("strength", this->strength, this->strength);
-        parts.add("lastSeen", this->lastSeen, this->lastSeen != core::dt::epoch);
-        stream << parts;
+        tvlist->append_if(!this->ssid.empty(), "ssid", this->ssid);
+        tvlist->append_if(this->frequency != 0, "frequency", this->frequency);
+        tvlist->append_if(this->flags != 0, "flags", this->flags);
+        tvlist->append_if(this->rsn_flags != 0, "rsn_flags", this->rsn_flags);
+        tvlist->append_if(this->wpa_flags != 0, "wpa_flags", this->wpa_flags);
+        tvlist->append_if(this->auth_type(), "auth_type", this->auth_type());
+        tvlist->append_if(!this->hwAddress.empty(), "hwAddress", this->hwAddress);
+        tvlist->append_if(this->mode, "ap_mode", core::str::convert_from(this->mode));
+        tvlist->append_if(this->maxbitrate != 0, "maxbitrate", this->maxbitrate);
+        tvlist->append_if(this->strength != 0, "strength", this->strength);
+        tvlist->append_if(this->lastSeen != core::dt::epoch, "lastSeen", this->lastSeen);
     }
 
-    void WiredDeviceData::to_stream(std::ostream &stream) const
+    void WiredDeviceData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("speed", this->speed, this->speed);
-        stream << parts;
+        tvlist->append_if(this->speed, "speed", this->speed);
     }
 
-    void WirelessDeviceData::to_stream(std::ostream &stream) const
+    void WirelessDeviceData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("ap_mode", this->mode, this->mode);
-        parts.add("bitrate", this->bitrate, this->bitrate);
-        parts.add("active_accesspoint",
-                  this->active_accesspoint,
-                  this->active_accesspoint.size());
-        parts.add("lastScan",
-                  this->lastScan,
-                  this->lastScan != core::dt::epoch);
-        stream << parts;
+        tvlist->append_if(this->mode,
+                          "ap_mode",
+                          core::str::convert_from(this->mode));
+
+        tvlist->append_if(this->bitrate,
+                          "bitrate",
+                          this->bitrate);
+
+        tvlist->append_if(!this->active_accesspoint.empty(),
+                          "active_accesspoint",
+                          this->active_accesspoint);
+
+        tvlist->append_if(this->lastScan != core::dt::epoch,
+                          "lastScan",
+                          this->lastScan);
     }
 
     std::string DeviceData::key() const
@@ -374,49 +429,86 @@ namespace platform::netconfig
         }
     }
 
-    void DeviceData::to_stream(std::ostream &stream) const
+    void DeviceData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("type", this->type, this->type);
-        parts.add("state", this->state, this->state);
-        parts.add("state_reason", this->state_reason, this->state_reason);
-        parts.add("interface", this->interface, this->interface.size());
-        parts.add("hwAddress", this->hwAddress, this->hwAddress.size());
-        parts.add("ip4config", this->ip4config);
-        parts.add("ip6config", this->ip6config);
-        parts.add("ip4connectivity", this->ip4connectivity, this->ip4connectivity);
-        parts.add("ip6connectivity", this->ip6connectivity, this->ip6connectivity);
-        parts.add("active_connection",
-                  this->active_connection,
-                  this->active_connection.size());
+        tvlist->append_if(this->type,
+                          "type",
+                          core::str::convert_from(this->type));
+
+        tvlist->append_if(this->state,
+                          "state",
+                          core::str::convert_from(this->state));
+
+        tvlist->append_if(this->state_reason,
+                          "state_reason",
+                          core::str::convert_from(this->state_reason));
+
+        tvlist->append_if(!this->interface.empty(),
+                          "interface",
+                          this->interface);
+
+        tvlist->append_if(!this->hwAddress.empty(),
+                          "hwAddress",
+                          this->hwAddress);
+
+        tvlist->append("ip4config",
+                       this->ip4config.as_tvlist());
+
+        tvlist->append("ip6config",
+                       this->ip6config.as_tvlist());
+
+        tvlist->append_if(this->ip4connectivity,
+                          "ip4connectivity",
+                          core::str::convert_from(this->ip4connectivity));
+
+        tvlist->append_if(this->ip6connectivity,
+                          "ip6connectivity",
+                          core::str::convert_from(this->ip6connectivity));
+
+        tvlist->append_if(!this->active_connection.empty(),
+                          "active_connection",
+                          this->active_connection);
 
         switch (this->type)
         {
         case NM_DEVICE_TYPE_ETHERNET:
-            parts.add("wired", this->specific_data);
+            tvlist->append(
+                "wired",
+                std::get<WiredDeviceData>(this->specific_data).as_tvlist());
             break;
 
         case NM_DEVICE_TYPE_WIFI:
-            parts.add("wifi", this->specific_data);
+            tvlist->append(
+                "wifi",
+                std::get<WirelessDeviceData>(this->specific_data).as_tvlist());
             break;
 
         default:
             break;
         }
-
-        stream << parts;
     }
 
-    void GlobalData::to_stream(std::ostream &stream) const
+    void GlobalData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::types::PartsList parts;
-        parts.add("state", this->state, this->state);
-        parts.add("connectivity", this->connectivity, this->connectivity);
-        parts.add("wireless_allowed", this->wireless_allowed, true, "%b");
-        parts.add("wireless_enabled", this->wireless_enabled, true, "%b");
-        parts.add("wireless_hw_enabled", this->wireless_hardware_enabled, true, "%b");
-        parts.add("wireless_band_selection", this->wireless_band_selection, true, "%s");
-        stream << parts;
+        tvlist->append_if(this->state,
+                          "state",
+                          core::str::convert_from(this->state));
+
+        tvlist->append_if(this->connectivity,
+                          "connectivity",
+                          core::str::convert_from(this->connectivity));
+
+        tvlist->append("wireless_allowed",
+                       this->wireless_allowed);
+
+        tvlist->append("wireless_enabled",
+                       this->wireless_enabled);
+
+        tvlist->append("wireless_hw_enabled",
+                       this->wireless_hardware_enabled);
+
+        tvlist->append("wireless_band_selection",
+                       core::str::convert_from(this->wireless_band_selection));
     }
 
     std::istream &operator>>(std::istream &stream, WirelessBandSelection &band)
@@ -511,15 +603,15 @@ namespace platform::netconfig
         switch (static_cast<AuthenticationType>(auth_data.index()))
         {
         case AUTH_TYPE_WEP:
-            stream << std::get<WEP_Data>(auth_data);
+            stream << "WEP" << std::get<WEP_Data>(auth_data);
             break;
 
         case AUTH_TYPE_WPA:
-            stream << std::get<WPA_Data>(auth_data);
+            stream << "WPA" << std::get<WPA_Data>(auth_data);
             break;
 
         case AUTH_TYPE_EAP:
-            stream << std::get<EAP_Data>(auth_data);
+            stream << "EAP" << std::get<EAP_Data>(auth_data);
             break;
 
         default:

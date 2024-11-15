@@ -12,8 +12,10 @@ namespace core::logging
     //==========================================================================
     // LogSink
 
-    LogSink::LogSink(const std::string &sink_id)
-        : Sink(sink_id)
+    LogSink::LogSink(const std::string &sink_id,
+                     const SinkType &sink_type)
+        : Sink(sink_id, sink_type),
+          threshold_(status::Level::NONE)
     {
     }
 

@@ -232,7 +232,7 @@ namespace core::platform
 
 namespace std::filesystem
 {
-    static std::unordered_map<file_type, std::string> typenames = {
+    static core::types::SymbolMap<file_type> typenames = {
         {file_type::none, "none"},
         {file_type::not_found, "not_found"},
         {file_type::regular, "regular"},
@@ -247,14 +247,6 @@ namespace std::filesystem
 
     std::ostream &operator<<(std::ostream &stream, const file_type &type)
     {
-        try
-        {
-            stream << typenames.at(type);
-        }
-        catch (const std::out_of_range &e)
-        {
-            stream << typenames.at(file_type::unknown);
-        }
-        return stream;
+        return typenames.to_stream(stream, type, typenames.at(file_type::unknown));
     }
 }  // namespace std::filesystem

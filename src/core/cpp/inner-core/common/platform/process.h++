@@ -45,6 +45,7 @@ namespace core::platform
         virtual bool success() const = 0;
         virtual std::string symbol() const = 0;
         virtual std::string text() const = 0;
+        virtual types::TaggedValueList as_tvlist() const;
 
     protected:
         void to_stream(std::ostream &stream) const override;
@@ -94,6 +95,8 @@ namespace core::platform
         std::string stderr_text() const;
         std::ios::pos_type stdout_size() const;
         std::ios::pos_type stderr_size() const;
+
+        types::TaggedValueList as_tvlist() const;
 
     protected:
         void to_stream(std::ostream &stream) const override;

@@ -47,7 +47,7 @@ namespace core::logging
 
     bool StreamSink::is_applicable(const types::Loggable &item) const
     {
-        return this->is_message(item) && LogSink::is_applicable(item);
+        return this->is_valid_message(item) && LogSink::is_applicable(item);
     }
 
     void StreamSink::capture_event(const status::Event::ptr &event)

@@ -8,6 +8,7 @@
 #pragma once
 #include "argparse/parser.h++"
 #include "logging/logging.h++"
+#include "logging/sinks/factory.h++"
 #include "settings/settings.h++"
 
 namespace core::argparse
@@ -59,15 +60,24 @@ namespace core::argparse
         /// Add options related to logging
         virtual void add_log_options();
 
+    private:
+        /// Add option to log to specific sink
+        void add_log_sink_option(
+            const std::string &sink_id,
+            logging::SinkFactory *factory,
+            const types::KeyValueMap &sink_settings);
+
         /// Add options related to logging in a specific scope
-        virtual void add_log_scope_options();
+        void add_log_scope_options();
 
-        /// Register available loggers
-        virtual void register_loggers();
+        /// Add options to enable available log sinks
+        void add_log_sinks();
 
-        bool logsink_setting_enabled(
-            const std::string &key,
-            bool fallback = false) const;
+        // /// Add options to enable available log sinks
+        // void add_log_sink_option(
+        //     const std::string &name,
+        //     const std::string &description,
+        //     const logging::sinks::CreatorFunction &creator);
 
         std::optional<status::Level> get_optional_level(
             const std::string &option,

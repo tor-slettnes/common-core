@@ -9,6 +9,7 @@
 #include "asynclogsink.h++"
 #include "messageformatter.h++"
 #include "rotatingpath.h++"
+#include "factory.h++"
 #include "types/create-shared.h++"
 #include "types/filesystem.h++"
 
@@ -37,4 +38,16 @@ namespace core::logging
     private:
         std::shared_ptr<std::ofstream> stream_;
     };
+
+    //--------------------------------------------------------------------------
+    // Add sink factory to enable `--log-to-file` option.
+
+    inline static SinkFactory file_factory(
+        "file",
+        "Log to a plain log file",
+        [](const SinkID &sink_id) -> Sink::ptr {
+            return LogFileSink::create_shared(sink_id);
+        });
+
+
 }  // namespace core::logging

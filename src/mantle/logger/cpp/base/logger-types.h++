@@ -18,28 +18,14 @@ namespace logger
 {
     using SinkID = std::string;
     using SinkIDs = std::vector<std::string>;
-
+    using SinkType = std::string;
+    using SinkTypes = std::vector<std::string>;
     using ContractID = core::status::Event::ContractID;
-
-    // Sink types that can be added by remote client
-    enum class SinkType
-    {
-        UNSPECIFIED,
-        STREAM,
-        SYSLOG,
-        LOGFILE,
-        JSON,
-        CSV,
-        DB
-    };
-
-    std::ostream &operator<<(std::ostream &stream, SinkType sink_type);
-    std::istream &operator>>(std::istream &stream, SinkType &sink_type);
 
     struct SinkSpec
     {
         SinkID sink_id;
-        SinkType sink_type = SinkType::UNSPECIFIED;
+        SinkType sink_type;
         bool permanent = false;
         std::string filename_template;
         core::dt::DateTimeInterval rotation_interval;

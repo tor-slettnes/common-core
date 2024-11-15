@@ -200,6 +200,7 @@ namespace core::types
     ValueList TaggedValueList::values() const noexcept
     {
         ValueList values;
+        values.reserve(this->size());
         for (const auto &[t, v] : *this)
         {
             values.push_back(v);
@@ -211,6 +212,7 @@ namespace core::types
     TaggedValueList TaggedValueList::filtered_tags() const noexcept
     {
         TaggedValueList filtered;
+        filtered.reserve(this->size());
 
         for (const auto &tv : *this)
         {
@@ -219,6 +221,8 @@ namespace core::types
                 filtered.push_back(tv);
             }
         }
+
+        filtered.shrink_to_fit();
         return filtered;
     }
 
@@ -226,6 +230,7 @@ namespace core::types
     TaggedValueList TaggedValueList::filtered_values() const noexcept
     {
         TaggedValueList filtered;
+        filtered.reserve(this->size());
 
         for (const auto &tv : *this)
         {
@@ -234,6 +239,8 @@ namespace core::types
                 filtered.push_back(tv);
             }
         }
+
+        filtered.shrink_to_fit();
         return filtered;
     }
 
@@ -259,6 +266,7 @@ namespace core::types
 
     TaggedValueList &TaggedValueList::extend(TaggedValueList &&other) noexcept
     {
+        this->reserve(this->size() + other.size());
         for (auto it = other.begin(); it != other.end(); it++)
         {
             this->push_back(std::move(*it));
@@ -268,6 +276,7 @@ namespace core::types
 
     TaggedValueList &TaggedValueList::update(const TaggedValueList &other) noexcept
     {
+        this->reserve(this->size() + other.size());
         for (auto input_it = other.begin(); input_it != other.end(); input_it++)
         {
             if (auto this_it = this->find(input_it->first); this_it != this->end())
@@ -279,11 +288,13 @@ namespace core::types
                 this->push_back(*input_it);
             }
         }
+        this->shrink_to_fit();
         return *this;
     }
 
     TaggedValueList &TaggedValueList::update(TaggedValueList &&other) noexcept
     {
+        this->reserve(this->size() + other.size());
         for (auto input_it = other.begin(); input_it != other.end(); input_it++)
         {
             if (auto this_it = this->find(input_it->first); this_it != this->end())
@@ -295,12 +306,14 @@ namespace core::types
                 this->push_back(std::move(*input_it));
             }
         }
+        this->shrink_to_fit();
         return *this;
     }
 
     TaggedValueList &TaggedValueList::merge(TaggedValueList &other) noexcept
     {
         // auto lck = std::lock_guard(this->mtx);
+        this->reserve(this->size() + other.size());
         auto it = other.begin();
         while (it != other.end())
         {
@@ -314,6 +327,7 @@ namespace core::types
                 it++;
             }
         }
+        this->shrink_to_fit();
         return *this;
     }
 
@@ -322,22 +336,41 @@ namespace core::types
         return this->merge(other);
     }
 
-    bool TaggedValueList::push_if(bool condition, const TaggedValue &tv)
+    TaggedValueList::iterator TaggedValueList::append(const TaggedValue &tv)
     {
-        if (condition)
-        {
-            this->push_back(tv);
-        }
-        return condition;
+        return this->insert(this->end(), tv);
     }
 
-    bool TaggedValueList::push_if(bool condition, const Value &value)
+    TaggedValueList::iterator TaggedValueList::append(const Value &value)
     {
-        if (condition)
-        {
-            this->push_back({{}, value});
-        }
-        return condition;
+        return this->insert(this->end(), TaggedValue(nulltag, value));
+    }
+
+    TaggedValueList::iterator TaggedValueList::append(const Tag &tag, const Value &value)
+    {
+        return this->insert(this->end(), TaggedValue(tag, value));
+    }
+
+    TaggedValueList::AppendResult TaggedValueList::append_if(bool condition, const TaggedValue &tv)
+    {
+        return {
+            condition ? this->append(tv) : this->end(),
+            condition,
+        };
+    }
+
+    TaggedValueList::AppendResult TaggedValueList::append_if(bool condition, const Value &value)
+    {
+        return {
+            condition ? this->append(value) : this->end(),
+            condition};
+    }
+
+    TaggedValueList::AppendResult TaggedValueList::append_if(bool condition, const Tag &tag, const Value &value)
+    {
+        return {
+            condition ? this->append(tag, value) : this->end(),
+            condition};
     }
 
     void TaggedValueList::to_stream(std::ostream &stream) const

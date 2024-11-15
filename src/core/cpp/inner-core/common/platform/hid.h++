@@ -54,6 +54,8 @@ namespace core::platform
         BusType bus_type;
     };
 
+    types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
+                                       const HIDDeviceInfo &device_info);
     std::ostream &operator<<(std::ostream &stream, const HIDDeviceInfo &device_info);
     bool operator==(const HIDDeviceInfo &lhs, const HIDDeviceInfo &rhs);
     bool operator!=(const HIDDeviceInfo &lhs, const HIDDeviceInfo &rhs);

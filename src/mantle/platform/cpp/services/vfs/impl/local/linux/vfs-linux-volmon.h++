@@ -7,7 +7,7 @@
 
 #pragma once
 #include "types/value.h++"
-#include "types/streamable.h++"
+#include "types/listable.h++"
 #include "thread/signaltemplate.h++"
 
 #include <libudev.h>
@@ -55,7 +55,7 @@ namespace platform::vfs::local::volume
 
     using DeviceLookupMethod = const char *(*)(udev_device *);
 
-    struct Event : public core::types::Streamable
+    struct Event : public core::types::Listable
     {
         using KeyValueMap = core::types::KeyValueMap;
         using ValueList = std::vector<std::string>;
@@ -72,7 +72,7 @@ namespace platform::vfs::local::volume
         DeviceType deviceType() const noexcept;
 
     protected:
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     private:
         static core::types::KeyValueMap valuemap(struct udev_list_entry *list) noexcept;
@@ -100,10 +100,10 @@ namespace platform::vfs::local::volume
         ActionType actionType_;
     };
 
-    struct DiskInfo : public core::types::Streamable
+    struct DiskInfo : public core::types::Listable
     {
         DiskInfo(const Event &event);
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
         static bool is_removable(const Event &event);
 
         std::string devnode;
@@ -112,10 +112,10 @@ namespace platform::vfs::local::volume
         bool writable;
     };
 
-    struct PartitionInfo : public core::types::Streamable
+    struct PartitionInfo : public core::types::Listable
     {
         PartitionInfo(const Event &event);
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
         std::string friendlyName() const;
 
         std::string devnode;

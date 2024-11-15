@@ -7,6 +7,7 @@
 
 #pragma once
 #include "provider.h++"
+#include "logging/sinks/factory.h++"
 #include "logging/sinks/logsink.h++"
 #include "logging/sinks/messageformatter.h++"
 
@@ -14,6 +15,9 @@
 
 namespace core::platform
 {
+    //--------------------------------------------------------------------------
+    // \class LogSinkProvider
+
     class LogSinkProvider : public logging::LogSink,
                             public logging::MessageFormatter,
                             public Provider
@@ -30,7 +34,23 @@ namespace core::platform
 
     protected:
         void load_settings(const types::KeyValueMap &settings) override;
+        bool is_applicable(const types::Loggable &item) const override;
     };
 
+    //--------------------------------------------------------------------------
+    // Global provider instance
+
     extern ProviderProxy<LogSinkProvider> logsink;
+
+    //--------------------------------------------------------------------------
+    // Add sink to factory
+
+    inline static logging::SinkFactory syslog_factory(
+        "syslog",
+        "Log via UNIX syslog.",
+        [](const logging::SinkID &sink_id) -> logging::Sink::ptr {
+            return logsink.get_shared();
+        },
+        logging::DefaultOption::UNLESS_INTERACTIVE);
+
 }  // namespace core::platform

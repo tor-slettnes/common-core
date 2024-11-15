@@ -6,7 +6,6 @@
 //==============================================================================
 
 #include "vfs-types.h++"
-#include "types/partslist.h++"
 
 namespace platform::vfs
 {
@@ -63,25 +62,32 @@ namespace platform::vfs
     //========================================================================
     // Output stream representations
 
-    std::ostream &operator<<(std::ostream &stream, const FileInfo &stats)
+    core::types::TaggedValueList &operator<<(
+        core::types::TaggedValueList &tvlist,
+        const FileInfo &fileinfo)
     {
-        core::types::PartsList parts;
-        parts.add("type", stats.type, true);
-        parts.add("size", stats.size, true, "%'d");
-        parts.add("link", stats.link, !stats.link.empty(), "%r");
-        parts.add("mode", stats.mode, true, "0%03o");
-        parts.add("readable", stats.readable, true, "%b");
-        parts.add("writable", stats.writable, true, "%b");
-        parts.add("uid", stats.uid, true, "%d");
-        parts.add("gid", stats.gid, true, "%d");
-        parts.add("owner", stats.owner, true, "%r");
-        parts.add("group", stats.group, true, "%r");
-        parts.add_value("accessTime", stats.accessTime, true, "%s");
-        parts.add_value("modifyTime", stats.modifyTime, true, "%s");
-        parts.add_value("createTime", stats.createTime, true, "%s");
-        parts.add_value("attributes", stats.attributes, true, "%s");
-        stream << parts;
-        return stream;
+        tvlist.append("type", core::str::convert_from(fileinfo.type));
+        tvlist.append("size", fileinfo.size);
+        tvlist.append_if(!fileinfo.link.empty(), "link", fileinfo.link);
+        tvlist.append("mode", core::str::format("0%03o", fileinfo.mode));
+        tvlist.append("readable", fileinfo.readable);
+        tvlist.append("writable", fileinfo.writable);
+        tvlist.append("uid", fileinfo.uid);
+        tvlist.append("gid", fileinfo.gid);
+        tvlist.append("owner", fileinfo.owner);
+        tvlist.append("group", fileinfo.group);
+        tvlist.append("accessTime", fileinfo.accessTime);
+        tvlist.append("modifyTime", fileinfo.modifyTime);
+        tvlist.append("createTime", fileinfo.createTime);
+        tvlist.append("attributes", fileinfo.attributes);
+        return tvlist;
+    }
+
+    std::ostream &operator<<(
+        std::ostream &stream,
+        const FileInfo &fileinfo)
+    {
+        return stream << core::types::TaggedValueList::create_from(fileinfo);
     }
 
     //==========================================================================
@@ -121,11 +127,7 @@ namespace platform::vfs
 
     void Path::to_literal_stream(std::ostream &stream) const
     {
-        stream << "\""
-               << this->context
-               << ":"
-               << this->relpath.string()
-               << "\"";
+        stream << this->as_tvlist();
     }
 
     void Path::to_stream(std::ostream &stream) const
@@ -133,6 +135,12 @@ namespace platform::vfs
         stream << this->context
                << ":"
                << this->relpath.string();
+    }
+
+    void Path::to_tvlist(core::types::TaggedValueList *tvlist) const
+    {
+        tvlist->append("context", this->context);
+        tvlist->append("relpath", this->relpath.string());
     }
 
     Path::operator bool() const noexcept
@@ -169,14 +177,20 @@ namespace platform::vfs
 
 namespace std::filesystem
 {
+    core::types::TaggedValueList &operator<<(
+        core::types::TaggedValueList &tvlist,
+        const space_info &volinfo)
+    {
+        return tvlist.extend({
+            {"capacity", volinfo.capacity},
+            {"free", volinfo.free},
+            {"available", volinfo.available},
+        });
+    }
+
     std::ostream &operator<<(std::ostream &stream, const space_info &info)
     {
-        core::types::PartsList parts;
-        parts.add("capacity", info.capacity, true, "%'d");
-        parts.add("free", info.free, true, "%'d");
-        parts.add("available", info.available, true, "%'d");
-        stream << parts;
-        return stream;
+        return stream << core::types::TaggedValueList::create_from(info);
     }
 
 }  // namespace std::filesystem

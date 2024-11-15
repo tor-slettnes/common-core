@@ -38,6 +38,9 @@ service Logger
     // Return defintions for all available log sinks
     rpc list_sinks (ListSinkRequest) returns (SinkSpecs);
 
+    // Return defintions for all available log sinks
+    rpc list_sink_types (google.protobuf.Empty) returns (SinkTypes);
+
     // Return a list of keys corresponding to fixed (always available) fields in
     // log events - i.e. the static field names from the `cc.status.Event`
     // message. These can be included alongside custom attributes as
@@ -60,8 +63,9 @@ message SinkSpec
     // Unique name for this sink
     string sink_id = 1;
 
-    // Sink type
-    SinkType sink_type = 2;
+    // Sink type, e.g., "text", "json", "csv", "sqlite3"...
+    // Use `list_sink_types()` to get a list of available types.
+    string sink_type = 2;
 
     // Whether this sink should be added permanently (saved to config)
     bool permanent = 3;
@@ -129,20 +133,6 @@ message SinkSpec
     repeated ColumnSpec columns = 11;
 }
 
-enum SinkType
-{
-    // Keep in sync with 'enum class SinkType' in 'logger-types.h++'
-    // (which is not ProtoBuf-aware).
-
-    SINKTYPE_UNSPECIFIED = 0;   // Unknown/no type
-    SINKTYPE_STREAM = 1;        // Standard output/error streams
-    SINKTYPE_SYSLOG = 2;        // OS-specific text based system/event log
-    SINKTYPE_LOGFILE  = 3;      // Plaintext log file
-    SINKTYPE_JSON = 4;          // JSON file, arbitrary (possibly nested) data fields
-    SINKTYPE_CSV = 5;           // Comma-separated values, fixed data fields
-    SINKTYPE_DB = 6;            // Database with fixed fields
-}
-
 message SinkSpecs
 {
     repeated SinkSpec specs = 1;
@@ -185,6 +175,11 @@ enum ColumnType
     COLTYPE_DATETIME = 6;
 }
 
+
+message SinkTypes
+{
+    repeated string sink_types = 1;
+}
 
 message FieldNames
 {

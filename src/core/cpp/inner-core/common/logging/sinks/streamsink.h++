@@ -7,6 +7,7 @@
 
 #pragma once
 #include "logsink.h++"
+#include "factory.h++"
 #include "messageformatter.h++"
 #include "types/create-shared.h++"
 #include "status/level.h++"
@@ -15,10 +16,12 @@
 
 #include <ostream>
 #include <string>
+#include <functional>
+#include <iostream>
 
 namespace core::logging
 {
-    //==========================================================================
+    //--------------------------------------------------------------------------
     /// \class StreamSink
     /// \brief Abstract base for logging to output streams (stdout, stderr, file)
 
@@ -61,4 +64,23 @@ namespace core::logging
         std::ostream &stream;
         types::ValueMap<status::Level, StyleMap> styles;
     };
+
+
+    //--------------------------------------------------------------------------
+    // Add factory instances to create `stdout` and `stderr` log options
+
+    inline static SinkFactory stdout_factory(
+        "stdout",
+        "Log to standard output.",
+        [](const SinkID &sink_id) -> Sink::ptr {
+            return StreamSink::create_shared(sink_id, std::cout);
+        });
+
+    inline static SinkFactory stderr_factory(
+        "stderr",
+        "Log to standard error. Enabled by default if standard output is a terminal.",
+        [](const SinkID &sink_id) -> Sink::ptr {
+            return StreamSink::create_shared(sink_id, std::cerr);
+        },
+        DefaultOption::IF_INTERACTIVE);
 }  // namespace core::logging

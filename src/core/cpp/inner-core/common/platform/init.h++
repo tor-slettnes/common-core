@@ -28,10 +28,8 @@ namespace core::platform
         std::string handle;
     };
 
-    // using Task = std::function<void()>;
-
     //==========================================================================
-    // InitTask
+    // InitTask - triggered after building platform providers
 
     class InitTask : public Task
     {
@@ -42,7 +40,19 @@ namespace core::platform
     };
 
     //==========================================================================
-    // ExitTask
+    // ShutdownTask - triggered by `signal_shutdown` (e.g. after signal)
+
+    class ShutdownTask : public Task
+    {
+    public:
+        ShutdownTask(const std::string &handle,
+                 const Function &functor);
+        virtual ~ShutdownTask();
+    };
+
+
+    //==========================================================================
+    // ExitTask - triggered on program exit (after leaving main())
 
     class ExitTask : public Task
     {

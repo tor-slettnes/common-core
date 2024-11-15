@@ -42,7 +42,8 @@ message Event
     // Tag/value pairs indicating event attributes
     cc.variant.ValueList attributes = 8;
 
-    // Contract identifier for tabular data attributes
+    // Contract identifier, used to process event data accordingly.
+    // Defaults to `"text"` if `text` field is present.
     string contract_id = 9;
 
     // Reporting hostname. Used for remote logging.
@@ -50,6 +51,7 @@ message Event
 
     // Description of error, possibly expanded with attribute values.
     string text = 15;
+
 
     //--------------------------------------------------------------------------
     // Fields specific to log messages

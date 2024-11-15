@@ -12,6 +12,9 @@
 
 namespace core::platform
 {
+    //--------------------------------------------------------------------------
+    // PosixLogSinkProvider
+
     class PosixLogSinkProvider : public LogSinkProvider
     {
         using This = PosixLogSinkProvider;
@@ -31,5 +34,4 @@ namespace core::platform
         static const core::types::ValueMap<status::Level, int> levelmap;
         std::string application_id_;
     };
-
 }  // namespace core::platform

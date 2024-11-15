@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "sync-dispatcher.h++"
+#include "../sinks/core-sinks.h++"
 
 namespace core::logging
 {

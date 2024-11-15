@@ -34,8 +34,7 @@ namespace core::logging
     std::ostream &operator<<(std::ostream &stream, const ColumnType &type);
     std::istream &operator>>(std::istream &stream, ColumnType &type);
 
-
-    struct ColumnSpec
+   struct ColumnSpec
     {
         std::string event_field;
         std::string column_name;
@@ -45,8 +44,15 @@ namespace core::logging
 
     std::ostream &operator<<(std::ostream &stream, const ColumnSpec &spec);
 
-    using ColumnSpecs = std::vector<ColumnSpec>;
+    types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
+                                       const ColumnSpec &spec);
+
+
     using ColumnNames = std::vector<std::string>;
+    using ColumnSpecs = std::vector<ColumnSpec>;
+
+    types::ValueList &operator<<(types::ValueList &valuelist,
+                                 const ColumnSpecs &specs);
 
     //--------------------------------------------------------------------------
     /// \class TabularData

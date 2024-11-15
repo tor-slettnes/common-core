@@ -93,7 +93,7 @@ test: build
 	@echo "Testing in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	cmake --build "$(BUILD_DIR)" --target test
+	@cmake --build "$(BUILD_DIR)" --target test
 
 .PHONY: build
 build: cmake
@@ -102,7 +102,7 @@ build: cmake
 	@echo "Building in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	cmake --build "$(BUILD_DIR)"
+	@cmake --build "$(BUILD_DIR)"
 
 .PHONY: cmake
 cmake: $(CMAKE_TAG)

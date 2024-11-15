@@ -7,7 +7,7 @@
 
 #pragma once
 #include "types/bytevector.h++"
-#include "types/streamable.h++"
+#include "types/listable.h++"
 #include "types/filesystem.h++"
 #include "types/symbolmap.h++"
 #include "logging/logging.h++"
@@ -42,24 +42,25 @@ namespace platform::netconfig
         virtual std::string key() const = 0;
     };
 
-    struct SystemData : public core::types::Streamable
+    struct SystemData : public core::types::Listable
     {
         std::string hostname;
 
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
-    struct AddressData : public core::types::Streamable
+    struct AddressData : public core::types::Listable
     {
         IPAddress address;
         uint prefixlength;
 
         void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     using AddressVector = std::vector<AddressData>;
 
-    struct IPConfigData : public core::types::Streamable
+    struct IPConfigData : public core::types::Listable
     {
         using ptr = std::shared_ptr<IPConfigData>;
 
@@ -70,16 +71,16 @@ namespace platform::netconfig
         std::vector<Domain> searches;
 
         void clear();
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     //==========================================================================
     // Wired connection data
 
-    struct WiredConnectionData : public core::types::Streamable
+    struct WiredConnectionData : public core::types::Listable
     {
         bool auto_negotiate;
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     //==========================================================================
@@ -151,24 +152,24 @@ namespace platform::netconfig
         Provisioning_ANY = 7
     };
 
-    struct WEP_Data : public core::types::Streamable
+    struct WEP_Data : public core::types::Listable
     {
         AuthenticationAlgorithm auth_alg = AUTH_ALG_NONE;
         std::vector<core::types::ByteVector> keys = {{}, {}, {}, {}};
         uint key_idx = 0;
         NMWepKeyType key_type = NM_WEP_KEY_TYPE_KEY;
 
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
-    struct WPA_Data : public core::types::Streamable
+    struct WPA_Data : public core::types::Listable
     {
         std::string psk;
 
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
-    struct EAP_Data : public core::types::Streamable
+    struct EAP_Data : public core::types::Listable
     {
         AuthenticationAlgorithm auth_alg = AUTH_ALG_NONE;
         EAP_Type eap_type = EAP_NONE;
@@ -185,7 +186,7 @@ namespace platform::netconfig
         std::filesystem::path pac_file;
         FAST_Provisioning fast_provisioning = Provisioning_NONE;
 
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     enum AuthenticationType
@@ -209,7 +210,7 @@ namespace platform::netconfig
                      WPA_Data,
                      EAP_Data>;
 
-    struct WirelessConnectionData : public core::types::Streamable
+    struct WirelessConnectionData : public core::types::Listable
     {
         SSID ssid;
         NM80211Mode mode = NM_802_11_MODE_UNKNOWN;
@@ -225,7 +226,7 @@ namespace platform::netconfig
         WEP_Data *auth_wep();
         WPA_Data *auth_wpa();
         EAP_Data *auth_eap();
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     //==========================================================================
@@ -243,7 +244,7 @@ namespace platform::netconfig
                      WiredConnectionData,
                      WirelessConnectionData>;
 
-    struct ConnectionData : public core::types::Streamable, public MappedData
+    struct ConnectionData : public core::types::Listable, public MappedData
     {
         using ptr = std::shared_ptr<ConnectionData>;
 
@@ -259,7 +260,7 @@ namespace platform::netconfig
         WiredConnectionData *wired_data();
         WirelessConnectionData *wifi_data();
         bool is_valid() const;
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     using ConnectionMap = std::unordered_map<Key, ConnectionData::ptr>;
@@ -267,7 +268,7 @@ namespace platform::netconfig
     //==========================================================================
     // ActiveConnection Data
 
-    struct ActiveConnectionData : public core::types::Streamable, public MappedData
+    struct ActiveConnectionData : public core::types::Listable, public MappedData
     {
         using ptr = std::shared_ptr<ActiveConnectionData>;
 
@@ -284,7 +285,7 @@ namespace platform::netconfig
         bool vpn = false;
 
         std::string key() const override;
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
         bool is_connected() const;
         bool is_busy() const;
         bool has_gateway() const;
@@ -297,7 +298,7 @@ namespace platform::netconfig
 
     using FrequencyRangeMap = std::unordered_map<WirelessBandSelection, std::pair<uint, uint>>;
 
-    struct AccessPointData : public core::types::Streamable, public MappedData
+    struct AccessPointData : public core::types::Listable, public MappedData
     {
         using ptr = std::shared_ptr<AccessPointData>;
         static FrequencyRangeMap frequency_ranges;
@@ -319,7 +320,7 @@ namespace platform::netconfig
         AuthenticationType auth_type() const;
         bool auth_required() const;
         WirelessBandSelection band() const;
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     using AccessPointMap = std::unordered_map<Key, AccessPointData::ptr>;
@@ -328,21 +329,21 @@ namespace platform::netconfig
     //==========================================================================
     // Device Data
 
-    struct WiredDeviceData : public core::types::Streamable
+    struct WiredDeviceData : public core::types::Listable
     {
         uint speed = 0;
 
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
-    struct WirelessDeviceData : public core::types::Streamable
+    struct WirelessDeviceData : public core::types::Listable
     {
         NM80211Mode mode = NM_802_11_MODE_UNKNOWN;
         uint bitrate = 0;
         Key active_accesspoint;
         core::dt::TimePoint lastScan;
 
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     using DeviceSpecificData =
@@ -350,7 +351,7 @@ namespace platform::netconfig
                      WiredDeviceData,
                      WirelessDeviceData>;
 
-    struct DeviceData : public core::types::Streamable, public MappedData
+    struct DeviceData : public core::types::Listable, public MappedData
     {
         using ptr = std::shared_ptr<DeviceData>;
 
@@ -371,7 +372,7 @@ namespace platform::netconfig
         const WiredDeviceData *wired_data() const;
         const WirelessDeviceData *wifi_data() const;
         bool is_managed() const;
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     using DeviceMap = std::unordered_map<Key, DeviceData::ptr>;
@@ -384,7 +385,7 @@ namespace platform::netconfig
     //==========================================================================
     // Global State Data
 
-    struct GlobalData : public core::types::Streamable
+    struct GlobalData : public core::types::Listable
     {
         using ptr = std::shared_ptr<GlobalData>;
 
@@ -395,7 +396,7 @@ namespace platform::netconfig
         bool wireless_allowed = true;
         WirelessBandSelection wireless_band_selection = BAND_ANY;
 
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
 
     /// Input stream support for enumerated types and variants

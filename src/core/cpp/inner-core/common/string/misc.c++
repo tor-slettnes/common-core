@@ -44,7 +44,7 @@ namespace core::str
         return s;
     }
 
-    std::string obfuscated(const std::string &s)
+    std::string obfuscated(const std::string_view &s)
     {
         static const std::string bullet = "\u2022";
         std::stringstream ss;
