@@ -17,9 +17,9 @@
         "lologger": {
             "enabled"       : true,
             "type"          : "sqlite3",
-            "threshold"     : "debug",
+            //"threshold"     : "debug",
             "contract id"   : "text",
-            "name template" : "{hostname}-{year}-{month}.db",
+            "name template" : "lologger/{hostname}-{year}-{month}.db",
             "rotation"      : "1 month",
             "local time"    : true,
             "table name"    : "Events",

@@ -43,8 +43,11 @@ namespace core::db
             this->close();
             this->db_file_ = db_file;
 
-            this->check_status(
-                sqlite3_open(db_file.string().c_str(), &this->connection_));
+            this->check_status(sqlite3_open_v2(
+                db_file.string().c_str(),
+                &this->connection_,
+                SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_EXRESCODE,
+                nullptr));
         }
     }
 
@@ -206,7 +209,6 @@ namespace core::db
                                       SQLITE_STATIC);
                 }
                 break;
-
 
             case core::types::ValueType::BYTEVECTOR:
                 if (auto *bytes = value.get_if<core::types::ByteVector>())
