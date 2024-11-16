@@ -42,7 +42,7 @@ void Options::deinitialize()
 
 void Options::on_monitor_start()
 {
-    auto min_level = core::str::convert_to<core::status::Level>(
+    auto min_level = core::str::convert_optional_to<core::status::Level>(
         this->next_arg(),
         core::status::Level::NONE);
 

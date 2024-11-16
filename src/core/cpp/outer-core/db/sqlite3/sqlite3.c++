@@ -79,12 +79,6 @@ namespace core::db
         const MultiRowData &parameter_rows,
         const QueryCallbackFunction &callback) const
     {
-        str::format(std::cout,
-                    "execute_multi(sql = %s,\n"
-                    "              rows = %s)\n",
-                    sql,
-                    parameter_rows);
-
         sqlite3_stmt *statement = nullptr;
         this->check_status(
             sqlite3_prepare_v2(

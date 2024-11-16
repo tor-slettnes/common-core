@@ -7,6 +7,8 @@
 
 #pragma once
 #include "types/value.h++"
+#include "types/valuemap.h++"
+#include "status/level.h++"
 
 #include <string>
 #include <memory>
@@ -16,6 +18,7 @@
 namespace core::logging
 {
     const std::string SETTING_COLUMNS = "columns";
+    const std::string SETTING_LEVEL_MAP = "level map";
 
     //--------------------------------------------------------------------------
     // Column specifications
@@ -34,7 +37,7 @@ namespace core::logging
     std::ostream &operator<<(std::ostream &stream, const ColumnType &type);
     std::istream &operator>>(std::istream &stream, ColumnType &type);
 
-   struct ColumnSpec
+    struct ColumnSpec
     {
         std::string event_field;
         std::string column_name;
@@ -46,7 +49,6 @@ namespace core::logging
 
     types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
                                        const ColumnSpec &spec);
-
 
     using ColumnNames = std::vector<std::string>;
     using ColumnSpecs = std::vector<ColumnSpec>;
@@ -61,12 +63,14 @@ namespace core::logging
     class TabularData
     {
         using This = TabularData;
+        using LevelMap = core::types::ValueMap<core::status::Level, core::types::Value>;
 
     protected:
         TabularData(const ColumnSpecs &columns = This::default_columns());
 
     protected:
-        virtual void load_columns(const types::KeyValueMap &settings);
+        void load_level_map(const core::types::KeyValueMap &settings);
+        void load_columns(const types::KeyValueMap &settings);
 
     private:
         virtual std::optional<ColumnSpec> column_spec(const types::Value &column_data);
@@ -75,12 +79,16 @@ namespace core::logging
         const ColumnSpecs &columns() const;
         void set_columns(const ColumnSpecs &columns);
 
+        const LevelMap &level_map() const;
+        void set_level_map(const LevelMap &level_map);
+
         std::vector<std::string> column_names() const;
 
     private:
         static ColumnSpecs default_columns();
 
     private:
+        LevelMap level_map_;
         ColumnSpecs columns_;
     };
 }  // namespace core::logging

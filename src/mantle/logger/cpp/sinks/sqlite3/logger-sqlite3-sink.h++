@@ -30,8 +30,6 @@ namespace logger
     const std::string SETTING_TABLE_NAME = "table name";
     const std::string DEFAULT_TABLE_NAME = "Events";
 
-    const std::string SETTING_LEVEL_MAP = "level map";
-
     //--------------------------------------------------------------------------
     // SQLiteSink
 
@@ -59,9 +57,6 @@ namespace logger
         core::dt::Duration batch_timeout() const;
         void set_batch_timeout(const core::dt::Duration &timeout);
 
-        const core::types::KeyValueMap &level_map() const;
-        void set_level_map(const core::types::KeyValueMap &level_map);
-
         std::optional<core::logging::ColumnSpec> column_spec(
             const core::types::Value &column_data) override;
 
@@ -81,7 +76,6 @@ namespace logger
         std::string table_name_;
         std::size_t batch_size_;
         core::dt::Duration batch_timeout_;
-        core::types::KeyValueMap level_map_;
 
     protected:
         core::db::SQLite3 db;

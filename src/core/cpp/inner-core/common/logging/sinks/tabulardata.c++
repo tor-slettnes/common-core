@@ -105,6 +105,20 @@ namespace core::logging
         }
     }
 
+    void TabularData::load_level_map(const core::types::KeyValueMap &settings)
+    {
+        if (core::types::KeyValueMapPtr map = settings.get(SETTING_LEVEL_MAP).get_kvmap())
+        {
+            for (const auto &[key, value] : *map)
+            {
+                if (auto level = core::str::try_convert_to<core::status::Level>(key))
+                {
+                    this->level_map_.insert_or_assign(level.value(), value);
+                }
+            }
+        }
+    }
+
     std::optional<ColumnSpec> TabularData::column_spec(const types::Value &column_data)
     {
         if (const core::types::ValueListPtr colspec = column_data.get_valuelist())
@@ -125,6 +139,16 @@ namespace core::logging
         {
             return {};
         }
+    }
+
+    const TabularData::LevelMap &TabularData::level_map() const
+    {
+        return this->level_map_;
+    }
+
+    void TabularData::set_level_map(const LevelMap &level_map)
+    {
+        this->level_map_ = level_map;
     }
 
     const ColumnSpecs &TabularData::columns() const

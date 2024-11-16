@@ -57,7 +57,7 @@ void Options::add_commands()
 void Options::submit()
 {
     std::string text = this->get_arg("text");
-    auto level = core::str::convert_to<core::status::Level>(
+    auto level = core::str::convert_optional_to<core::status::Level>(
         this->next_arg(),
         core::logging::default_threshold);
 
@@ -71,7 +71,7 @@ void Options::add_sink()
 {
     std::string sink_id = this->get_arg("sink_id");
     auto sink_type = core::str::convert_to<logger::SinkType>(this->get_arg("sink_type"));
-    auto min_level = core::str::convert_to<core::status::Level>(
+    auto min_level = core::str::convert_optional_to<core::status::Level>(
         this->next_arg(),
         core::status::Level::DEBUG);
     std::string fn_template = this->next_arg().value_or("");

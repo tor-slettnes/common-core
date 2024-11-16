@@ -218,22 +218,6 @@ namespace core::status
                        this->attributes().end());
     }
 
-    void Event::populate_mapped_level(types::TaggedValueList *tvlist,
-                                      const types::KeyValueMap &level_map) const noexcept
-    {
-        if (!level_map.empty())
-        {
-            if (auto it = tvlist->find(EVENT_FIELD_LEVEL); it != tvlist->end())
-            {
-                std::string level_name = it->second.as_string();
-                if (const types::Value &mapped_level = level_map.get(level_name))
-                {
-                    it->second = mapped_level;
-                }
-            }
-        }
-    }
-
     std::vector<std::string> Event::field_names() noexcept
     {
         return {
@@ -247,18 +231,6 @@ namespace core::status
             EVENT_FIELD_HOST,
             EVENT_FIELD_CONTRACT_ID,
         };
-    }
-
-    types::TaggedValueList Event::as_tvlist(const types::KeyValueMap &level_map) const noexcept
-    {
-        types::TaggedValueList tvlist = this->as_tvlist();
-        this->populate_mapped_level(&tvlist, level_map);
-        return tvlist;
-    }
-
-    types::KeyValueMap Event::as_kvmap(const types::KeyValueMap &level_map) const noexcept
-    {
-        return this->as_tvlist(level_map).as_kvmap();
     }
 
     void Event::to_tvlist(core::types::TaggedValueList *tvlist) const

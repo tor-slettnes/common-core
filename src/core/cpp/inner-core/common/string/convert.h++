@@ -166,39 +166,39 @@ namespace core::str
         return StringConvert<T>::from_string(s);
     }
 
-    // /// \brief Convert string to the specified template type.
-    // /// \param[in] s
-    // ///     Input string
-    // /// \param[in] fallback
-    // ///     Value to return if conversion cannot take place
-    // /// \param[out] eptr
-    // ///     Any exception that occurred ducring conversion. Pass in a `nullptr`
-    // ///     to completely disable exception handling.
-    // /// \return
-    // ///     Converted value.
-    // ///
-    // /// This variant does not throw exceptions. Instead, any exceptions thrown
-    // /// by underlying conversion methods are stored in the `eptr` argument, can
-    // /// can be accessed via `std::rethrow_exception()`.
+    /// \brief Convert string to the specified template type.
+    /// \param[in] s
+    ///     Input string
+    /// \param[in] fallback
+    ///     Value to return if conversion cannot take place
+    /// \param[out] eptr
+    ///     Any exception that occurred ducring conversion. Pass in a `nullptr`
+    ///     to completely disable exception handling.
+    /// \return
+    ///     Converted value.
+    ///
+    /// This variant does not throw exceptions. Instead, any exceptions thrown
+    /// by underlying conversion methods are stored in the `eptr` argument, can
+    /// can be accessed via `std::rethrow_exception()`.
 
-    // template <class T>
-    // T convert_to(const std::string_view &s,
-    //              const T &fallback,
-    //              std::exception_ptr *eptr = nullptr) noexcept
-    // {
-    //     try
-    //     {
-    //         return convert_to<T>(s);
-    //     }
-    //     catch (...)
-    //     {
-    //         if (eptr)
-    //         {
-    //             *eptr = std::current_exception();
-    //         }
-    //         return fallback;
-    //     }
-    // }
+    template <class T>
+    T convert_to(const std::string_view &s,
+                 const T &fallback,
+                 std::exception_ptr *eptr = nullptr) noexcept
+    {
+        try
+        {
+            return convert_to<T>(s);
+        }
+        catch (...)
+        {
+            if (eptr)
+            {
+                *eptr = std::current_exception();
+            }
+            return fallback;
+        }
+    }
 
     /// \brief Convert string to the specified template type.
     /// \param[in] s
@@ -216,9 +216,9 @@ namespace core::str
     /// can be accessed via `std::rethrow_exception()`.
 
     template <class T>
-    T convert_to(const std::optional<std::string_view> &s,
-                 const T &fallback,
-                 std::exception_ptr *eptr = nullptr) noexcept
+    T convert_optional_to(const std::optional<std::string_view> &s,
+                          const T &fallback,
+                          std::exception_ptr *eptr = nullptr) noexcept
     {
         if (s)
         {
@@ -236,6 +236,25 @@ namespace core::str
         }
 
         return fallback;
+    }
+
+    /// \brief Try converting string to the specified template type.
+    /// \param[in] s
+    ///     Input string
+    /// \return
+    ///     Optional container containing converted value iff successful.
+
+    template <class T>
+    std::optional<T> try_convert_to(const std::string_view &s)
+    {
+        try
+        {
+            return convert_to<T>(s);
+        }
+        catch (...)
+        {
+            return {};
+        }
     }
 
     /// Convert an arbitrary type to string

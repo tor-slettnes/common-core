@@ -29,6 +29,7 @@ namespace logger
         this->load_columns(settings);
         this->load_rotation(settings);
         this->load_db_settings(settings);
+        this->load_level_map(settings);
     }
 
     void SQLiteSink::load_db_settings(const core::types::KeyValueMap &settings)
@@ -46,7 +47,6 @@ namespace logger
         if (const core::types::Value &value = settings.get(SETTING_BATCH_TIMEOUT))
         {
             this->set_batch_timeout(std::chrono::seconds(value.as_uint()));
-            ;
         }
     }
 
@@ -79,17 +79,6 @@ namespace logger
     {
         this->batch_timeout_ = timeout;
     }
-
-    const core::types::KeyValueMap &SQLiteSink::level_map() const
-    {
-        return this->level_map_;
-    }
-
-    void SQLiteSink::set_level_map(const core::types::KeyValueMap &level_map)
-    {
-        this->level_map_ = level_map;
-    }
-
 
     std::optional<core::logging::ColumnSpec> SQLiteSink::column_spec(const core::types::Value &column_data)
     {
@@ -203,8 +192,13 @@ namespace logger
     void SQLiteSink::capture_event(const core::status::Event::ptr &event)
     {
         this->check_rotation(event->timepoint());
-        core::types::KeyValueMap kvmap = event->as_kvmap(this->level_map());
         core::types::ValueList row;
+
+        core::types::KeyValueMap kvmap = event->as_kvmap();
+        if (core::types::Value level_value = this->level_map().get(event->level()))
+        {
+            kvmap[core::status::EVENT_FIELD_LEVEL] = level_value;
+        }
 
         for (const core::logging::ColumnSpec &spec : this->columns())
         {
@@ -213,6 +207,7 @@ namespace logger
                               ? core::str::format(spec.format_string, value)
                               : value);
         }
+
         this->pending_rows.push_back(row);
     }
 
