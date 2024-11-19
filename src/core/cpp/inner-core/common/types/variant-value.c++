@@ -147,7 +147,7 @@ namespace core::types
             return false;
 
         case ValueType::BOOL:
-            return this->get<bool>();
+            return true;
 
         case ValueType::CHAR:
             return this->get<char>() != '\0';

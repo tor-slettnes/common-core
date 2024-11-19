@@ -88,6 +88,9 @@ namespace core::types
         ///    Whether to actually push or not
         /// @param[in] kv
         ///    Key/Value pair to insert
+        /// @return
+        ///    A pair comprising an iterator to the new value if inserted,
+        ///    and a boolean indicating whether the value was inserted.
         std::pair<KeyValueMap::iterator, bool>
         insert_if(bool condition, const KeyValuePair &kv);
 
@@ -99,8 +102,34 @@ namespace core::types
         ///    Mapping key. Any existing item with the same key is replaed
         /// @param[in] value
         ///    Valuie to insert
+        /// @return
+        ///    A pair comprising an iterator to the new value if inserted,
+        ///    and a boolean indicating whether the value was inserted.
         std::pair<KeyValueMap::iterator, bool>
         insert_if(bool condition, const std::string &key, const Value &value);
+
+        /// @brief
+        ///    Insert a key/value item into the map if the value is non-empty
+        /// @param[in] kv
+        ///    Key/Value pair to insert
+        /// @return
+        ///    A pair comprising an iterator to the new value if inserted,
+        ///    and a boolean indicating whether the value was inserted.
+        std::pair<KeyValueMap::iterator, bool>
+        insert_if_value(const KeyValuePair &kv);
+
+        /// @brief
+        ///    Insert a key/value item into the map if the value is non-empty
+        /// @param[in] key
+        ///    Mapping key. Any existing item with the same key is replaed
+        /// @param[in] value
+        ///    Valuie to insert
+        /// @return
+        ///    A pair comprising an iterator to the new value if inserted,
+        ///    and a boolean indicating whether the value was inserted.
+        std::pair<KeyValueMap::iterator, bool>
+        insert_if_value(const std::string &key, const Value &value);
+
 
         template <class T>
         std::optional<T> try_get_as(const std::string &key, bool ignore_case = false) const
@@ -136,7 +165,7 @@ namespace core::types
         template<class T>
         static KeyValueMap create_from(const T &obj)
         {
-            T kvmap;
+            KeyValueMap kvmap;
             kvmap << obj;
             return kvmap;
         }

@@ -89,6 +89,23 @@ namespace core::types
         return tvlist;
     }
 
+    ValueList ValueList::filtered_values() const noexcept
+    {
+        ValueList filtered;
+        filtered.reserve(this->size());
+
+        for (const auto &value : *this)
+        {
+            if (value.has_nonempty_value())
+            {
+                filtered.push_back(value);
+            }
+        }
+
+        filtered.shrink_to_fit();
+        return filtered;
+    }
+
     ValueList::iterator ValueList::append(const Value &value)
     {
         return this->insert(this->end(), value);
@@ -113,6 +130,16 @@ namespace core::types
             condition ? this->insert(this->end(), std::move(value)) : this->end(),
             condition,
         };
+    }
+
+    ValueList::AppendResult ValueList::append_if_value(const Value &value)
+    {
+        return this->append_if(value.has_nonempty_value(), value);
+    }
+
+    ValueList::AppendResult ValueList::append_if_value(Value &&value)
+    {
+        return this->append_if(value.has_nonempty_value(), std::move(value));
     }
 
 }  // namespace core::types

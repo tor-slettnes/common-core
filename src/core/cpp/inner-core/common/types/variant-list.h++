@@ -37,11 +37,17 @@ namespace core::types
         const Value &get(int index, const Value &fallback = {}) const noexcept;
         TaggedValueList as_tvlist() const noexcept;
 
+        /// Return a copy where items with empty values are filtered out
+        ValueList filtered_values() const noexcept;
+
         iterator append(const Value &value);
         iterator append(Value &&value);
 
         AppendResult append_if(bool condition, const Value &value);
         AppendResult append_if(bool condition, Value &&value);
+
+        AppendResult append_if_value(const Value &value);
+        AppendResult append_if_value(Value &&value);
 
         template <class T>
         std::optional<T> try_get_as(const uint index) const
@@ -75,7 +81,7 @@ namespace core::types
         template<class T>
         static ValueList create_from(const T &obj)
         {
-            T vlist;
+            ValueList vlist;
             vlist << obj;
             return vlist;
         }

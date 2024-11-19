@@ -232,6 +232,26 @@ namespace core::types
         }
     }
 
+    std::pair<KeyValueMap::iterator, bool>
+    KeyValueMap::insert_if_value(const KeyValuePair &kv)
+    {
+        return this->insert_if_value(kv.first, kv.second);
+    }
+
+    std::pair<KeyValueMap::iterator, bool>
+    KeyValueMap::insert_if_value(const std::string &key, const Value &value)
+    {
+        if (value.has_nonempty_value())
+        {
+            return this->insert_or_assign(key, value);
+        }
+        else
+        {
+            return {this->end(), false};
+        }
+    }
+
+
     void KeyValueMap::to_stream(std::ostream &stream) const
     {
         bool comma = false;

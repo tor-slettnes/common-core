@@ -131,6 +131,8 @@ namespace core::types
         AppendResult append_if(bool condition, const Value &value);
         AppendResult append_if(bool condition, const Tag &tag, const Value &value);
 
+        AppendResult append_if_value(const TaggedValue &tv);
+        AppendResult append_if_value(const Value &value);
         AppendResult append_if_value(const Tag &tag, const Value &value);
 
     public:

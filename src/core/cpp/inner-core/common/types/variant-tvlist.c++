@@ -216,7 +216,7 @@ namespace core::types
 
         for (const auto &tv : *this)
         {
-            if (tv.first)
+            if (tv.first && !tv.first.value().empty())
             {
                 filtered.push_back(tv);
             }
@@ -234,7 +234,7 @@ namespace core::types
 
         for (const auto &tv : *this)
         {
-            if (tv.second)
+            if (tv.second.has_nonempty_value())
             {
                 filtered.push_back(tv);
             }
@@ -384,6 +384,18 @@ namespace core::types
             condition ? this->append(tag, value) : this->end(),
             condition,
         };
+    }
+
+    TaggedValueList::AppendResult TaggedValueList::append_if_value(
+        const TaggedValue &tv)
+    {
+        return this->append_if(tv.second.has_nonempty_value(), tv);
+    }
+
+    TaggedValueList::AppendResult TaggedValueList::append_if_value(
+        const Value &value)
+    {
+        return this->append_if(value.has_nonempty_value(), value);
     }
 
     TaggedValueList::AppendResult TaggedValueList::append_if_value(
