@@ -10,6 +10,7 @@
 
 namespace logger
 {
+
     //--------------------------------------------------------------------------
     // SQLiteSink
 
@@ -80,30 +81,6 @@ namespace logger
         this->batch_timeout_ = timeout;
     }
 
-    std::optional<core::logging::ColumnSpec> SQLiteSink::column_spec(const core::types::Value &column_data)
-    {
-        if (const core::types::ValueListPtr colspec = column_data.get_valuelist())
-        {
-            return core::logging::ColumnSpec({
-                .event_field = colspec->get(0).as_string(),
-                .column_name = colspec->get(1).as_string(),
-                .column_type = colspec->get_as<core::logging::ColumnType>(2)
-                                   .value_or(core::logging::ColumnType::TEXT),
-                .format_string = colspec->get(3).as_string(),
-            });
-        }
-        else if (column_data.is_string())
-        {
-            return core::logging::ColumnSpec({
-                .event_field = column_data.as_string(),
-            });
-        }
-        else
-        {
-            return {};
-        }
-    }
-
     void SQLiteSink::open()
     {
         this->open_file(this->last_aligned(core::dt::Clock::now()));
@@ -139,11 +116,12 @@ namespace logger
         for (const core::logging::ColumnSpec &spec : this->columns())
         {
             header << delimiter
-                   << std::quoted(!spec.column_name.empty()
-                                      ? spec.column_name
-                                      : spec.event_field)
-                   << " "
-                   << spec.column_type;
+                   << std::quoted(spec.column_name.value_or(spec.event_field));
+
+            if (auto type_name = core::logging::column_type_names.to_string(spec.column_type))
+            {
+                header << " " << type_name.value();
+            }
 
             placeholders << delimiter
                          << "?";
@@ -169,9 +147,7 @@ namespace logger
         {
             bool flush = false;
 
-            if (auto opt_event = pending_count
-                                     ? this->queue.get(this->batch_timeout())
-                                     : this->queue.get())
+            if (auto opt_event = this->queue.get(this->batch_timeout()))
             {
                 this->capture_event(opt_event.value());
                 flush = (++pending_count >= this->batch_size());
@@ -192,23 +168,7 @@ namespace logger
     void SQLiteSink::capture_event(const core::status::Event::ptr &event)
     {
         this->check_rotation(event->timepoint());
-        core::types::ValueList row;
-
-        core::types::KeyValueMap kvmap = event->as_kvmap();
-        if (core::types::Value level_value = this->level_map().get(event->level()))
-        {
-            kvmap[core::status::EVENT_FIELD_LEVEL] = level_value;
-        }
-
-        for (const core::logging::ColumnSpec &spec : this->columns())
-        {
-            const core::types::Value &value = kvmap.get(spec.event_field);
-            row.push_back(!spec.format_string.empty()
-                              ? core::str::format(spec.format_string, value)
-                              : value);
-        }
-
-        this->pending_rows.push_back(row);
+        this->pending_rows.push_back(this->row_data(event, this->use_local_time()));
     }
 
     void SQLiteSink::flush_events()

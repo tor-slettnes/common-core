@@ -59,8 +59,8 @@ namespace core::types
         dt::TimePoint,
         dt::Duration,
         ValueListPtr,
-        KeyValueMapPtr,
-        TaggedValueListPtr>;
+        TaggedValueListPtr,
+        KeyValueMapPtr>;
 
     /// Enumeration of different types corresponding to ValueBase::index().
     enum class ValueType
@@ -77,8 +77,8 @@ namespace core::types
         TIMEPOINT,
         DURATION,
         VALUELIST,
-        KVMAP,
         TVLIST,
+        KVMAP,
     };
 
     /// Tag portion of a tag/value pair
@@ -95,6 +95,15 @@ namespace core::types
 
     std::ostream &operator<<(std::ostream &stream, ValueType type);
     std::istream &operator>>(std::istream &stream, ValueType &type);
+
+    extern bool is_simple(ValueType vt);
+    extern bool is_composite(ValueType vt);
+    extern bool is_integral(ValueType vt);
+    extern bool is_real(ValueType vt);
+    extern bool is_numeric(ValueType vt);
+    extern bool is_time(ValueType vt);
+    extern bool is_text(ValueType vt);
+    extern bool is_bytesequence(ValueType vt);
 
     extern std::string typetree(const Value &value);
     extern std::string typetree(const ValueListPtr &list);

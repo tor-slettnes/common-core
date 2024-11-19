@@ -9,7 +9,6 @@
 from cc.protobuf.wellknown import TimestampType, encodeTimestamp
 from cc.protobuf.variant import encodeValueList
 from cc.protobuf.status import Event, Domain, Level, encodeLogLevel
-from cc.protobuf.logger import SinkType
 
 import cc.core.paths
 

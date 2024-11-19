@@ -134,16 +134,16 @@
             // Columns to include.
             "columns" : [
                 // Event field, optional CSV column header, optional format string
-                ["timestamp", "TIME", "%T"],
-                ["host", "HOST"],
-                ["origin", "ORIGIN"],
-                ["level", "LEVEL"],
-                ["log_scope", "SCOPE"],
-                ["thread_id", "THREAD"],
-                ["source_path", "FILE"],
-                ["source_line", "LINE"],
-                ["function_name", "FUNCTION", "%s()"],
-                ["text", "TEXT"]
+                ["timestamp", "TIME", "TEXT"],
+                ["host", "HOST", "TEXT"],
+                ["origin", "ORIGIN", "TEXT"],
+                ["level", "LEVEL", "TEXT"],
+                ["log_scope", "SCOPE", "TEXT"],
+                ["thread_id", "THREAD", "INTEGER"],
+                ["source_path", "FILE", "TEXT"],
+                ["source_line", "LINE", "INTEGER"],
+                ["function_name", "FUNCTION", "TEXT"],
+                ["text", "TEXT", "TEXT"]
             ],
 
             // Column separator; `","` by default
@@ -172,7 +172,7 @@
             // Columns to include.
             "columns" : [
                 // Event field, optional column name, column type, optional format string
-                ["timestamp", "timestamp", "INT", "%d"],
+                ["timestamp", "timestamp", "INT"],
                 ["host", "hostname", "TEXT"],
                 ["origin", "origin", "TEXT"],
                 ["level", "level", "TEXT"],

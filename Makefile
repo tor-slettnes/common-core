@@ -37,10 +37,10 @@ ifeq ($(shell uname), Linux)
    export CMAKE_BUILD_PARALLEL_LEVEL = $(shell nproc)
 endif
 
-CONFIG_ARGS=$(if $(PRODUCT),-D PRODUCT="$(PRODUCT)")
-CONFIG_ARGS+=$(if $(VERSION), -D VERSION="$(VERSION)")
-CONFIG_ARGS+=$(if $(BUILD_NUMBER), -D BUILD_NUMBER="$(BUILD_NUMBER)")
-CONFIG_ARGS+=$(if $(PACKAGE_NAME), -D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
+CONFIG_ARGS = $(if $(PRODUCT),-D PRODUCT="$(PRODUCT)")
+CONFIG_ARGS += $(if $(VERSION), -D VERSION="$(VERSION)")
+CONFIG_ARGS += $(if $(BUILD_NUMBER), -D BUILD_NUMBER="$(BUILD_NUMBER)")
+CONFIG_ARGS += $(if $(PACKAGE_NAME), -D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
 
 CMAKE_TAG = $(BUILD_DIR)/Makefile
 
@@ -117,7 +117,7 @@ $(CMAKE_TAG):
 	@echo "Generating build files in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	cmake -B "$(BUILD_DIR)" $(CONFIG_ARGS) -D PYTHON_VENV=$(PYTHON_VENV)
+	@cmake -B "$(BUILD_DIR)" $(CONFIG_ARGS) -D PYTHON_VENV=$(PYTHON_VENV)
 
 .PHONY: cmake_clean
 cmake_clean:

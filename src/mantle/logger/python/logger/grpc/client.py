@@ -11,7 +11,8 @@ from cc.messaging.grpc import Client as BaseClient
 from cc.protobuf.wellknown import empty
 from cc.protobuf.status import Event, Level, encodeLogLevel
 from cc.protobuf.datetime import Interval, encodeInterval
-from cc.protobuf.logger import ListenerSpec, SinkType, SinkSpec
+from cc.protobuf.logger import ListenerSpec, SinkSpec, ListSinkRequest, \
+    ColumnType, ColumnSpec
 from cc.protobuf.variant import PyTaggedValueList, encodeTaggedValueList
 
 ### Standard Python modules
@@ -48,7 +49,7 @@ class Client (API, BaseClient):
         self.stub.submit(event)
 
     def listen(self,
-               min_level: Level|int = Level.LEVEL_DEBUG,
+               min_level: Level|int = Level.LEVEL_TRACE,
                contract_id: Optional[str] = None):
 
         spec = ListenerSpec(
@@ -62,7 +63,7 @@ class Client (API, BaseClient):
 
     def add_sink(self,
                  sink_id: str,
-                 sink_type: SinkType,
+                 sink_type: str,
                  /,
                  permanent: bool = False,
                  filename_template: Optional[str] = None,
@@ -70,9 +71,8 @@ class Client (API, BaseClient):
                  use_local_time: Optional[bool] = None,
                  min_level: Level = Level.LEVEL_NONE,
                  contract_id: Optional[str] = None,
-                 fields: Optional[PyTaggedValueList] = None) -> bool:
-        '''
-        Add a log sink of the specified type. This will capture log events with
+                 fields: None|tuple|ColumnSpec = None) -> bool:
+        '''Add a log sink of the specified type. This will capture log events with
         `min_level` or higher priority, optionally restrictecd to those with a
         specific `contract_id`.
 
@@ -82,7 +82,8 @@ class Client (API, BaseClient):
         The optional `filename_template` controls the naming of the output file.
         Within this template, the following placeholders are expanded:
 
-          - '{executable}` : then name of the log server executable
+          - '{executable}` : the name of the log server executable
+          - '{hostname}'   : the server's host name
           - `{sink_id}`    : the name of the log sink
           - `{isodate}`    : date formatted as "YYYY-MM-DD"
           - `{isotime}`    : time of day formatted as "HH:MM:SS"
@@ -104,20 +105,24 @@ class Client (API, BaseClient):
 
         File rotation and expansion is based on local time if `use_local_time`
         is unspecified or true, otherwise UTC time. Internally, each sink may or
-        may not log timestamps according to this setting; for instance a DB sink
-        records a simple UNI Epoch based timestamp.
+        may not log timestamps according to this setting.
 
         Sink types that expect specific fields in the log event (currently those
-        are `SINKTYPE_CSV` and `SINKTYPE_DB`) also require `fields` to specify
-        which fields/columns to capture, along with their field type. This
-        should be provided as a list of `(_NAME_, _TYPE_) tuples where _TYPE_ is
-        either a Python type object (such as `bool`, `int`, `float` or `str`) or
-        otherwise a default value (such as `True`, `1`, `3.14` or `"(none)"`).
-        In such cases, `contract_id` is useful to ensure agreement between what
-        fields are expected vs. what (static or custom) fields are present in
-        the log event. Use `get_static_fields()` to get a list of standard
-        field/column names, i.e. those present in the `cc.protobuf.status.Event`
-        message.
+        are `"csv"` and `"sqlite3"`) also require `fields` to specify which
+        fields/columns to capture.  These should be provided as either a
+        prepared `cc.protobuf.logger.ColumnSpec` instance, or as a tuple
+        containing 3 or 4 elements:
+          - The event field to capture; use `list_static_fields()` to get a
+            list of standard fields (but messages may contain additional fields,
+            normally indicated with `contract_id`)
+          - The column name (i.e. CSV header or database field)
+          - The column type; see `cc.protobuf.logging.ColumnType`.  This can
+            optionally be provided as a Python type object, currently one of
+            `None`, `bool`, `int`, `float`, str`, `bytes`.
+          - Optionally, a `printf()` style format string for text columns,
+            expanded in a fashion similar to the Python `%` string operator.
+            Refer to the description of `ColumnSpec` in `logger.proto` for
+            details.
 
         The return value indicates whether a new sink was created or not.
 
@@ -129,19 +134,19 @@ class Client (API, BaseClient):
           ```python
           logger = cc.logger.Client()
           logger.add_sink(
-              'my_data_logger', cc.protobuf.logger.SinkType.CSV,
-              filename_template = 'my_data-{year}-{month}.csv',
+              'my_data_logger',
+              sink_type = 'csv',
+              filename_template = '{hostname}-{year}-{month}.csv',
               rotation_interval = (1, cc.protobuf.logger.TimeUnit.MONTH),
               contract_id = 'mydatalogger',
-              fields = [('timestamp', str),        # Timestamp as string
-                        ('custom_header_1', bool), # Boolean column
-                        ('custom_header_2', 1.0)]) # Real number, default=1.0
+              fields = [('timestamp', 'EpochTime', int),
+                        ('timestamp', 'LocalTime', str, '%T'),
+                        ('level', 'SeverityLevel', str),
+                        ('text', 'Message', str)])
           ```
+
         '''
 
-        column_defaults = [
-            (key, default() if isinstance(default, type) else default)
-            for key, default in fields ]
 
         request = SinkSpec(
             sink_id = sink_id,
@@ -152,7 +157,7 @@ class Client (API, BaseClient):
             use_local_time = use_local_time,
             min_level = encodeLogLevel(min_level),
             contract_id = contract_id,
-            fields = encodeTaggedValueList(column_defaults))
+            fields = [encodeColumnSpec(field) for field in fields or ()])
 
         return self.stub.add_sink(request).added
 
@@ -177,9 +182,18 @@ class Client (API, BaseClient):
 
         return self.stub.get_sink(request)
 
-    def list_sinks(self) -> list[SinkSpec]:
-        '''List available log sinks along with their specifications'''
-        return self.stub.list_sinks(empty).specs
+    def list_sinks(self, verbose=False) -> list[SinkSpec]:
+        '''List available log sinks.
+
+        If `verbose` is True, include detailed specifications for each sink.
+        '''
+        request = ListSinkRequest(verbose = verbose)
+        return self.stub.list_sinks(request).specs
+
+
+    def list_sink_types(self) -> list[str]:
+        '''List available log sink types'''
+        return self.stub.list_sink_types(empty).sink_types
 
 
     def list_static_fields(self) -> list[str]:

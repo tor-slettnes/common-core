@@ -18,6 +18,8 @@
 
 namespace core::grpc
 {
+    constexpr auto STATUS_FIELD_CODE = "status_code";
+
     //==========================================================================
     /// @class Status
     /// @brief
@@ -29,6 +31,8 @@ namespace core::grpc
     class Status : public status::Event,
                    public ::grpc::Status
     {
+        using This = Status;
+
     public:
         /// @brief
         ///     Empty constructor
@@ -150,9 +154,13 @@ namespace core::grpc
         ///     Throw as an appropriate error based on domain, code, and id
         std::exception_ptr as_exception_ptr() const override;
 
+    public:
+        static std::vector<std::string> status_fields() noexcept;
+        std::vector<std::string> field_names() const noexcept override;
+        types::Value get_field_as_value(const std::string &field_name) const override;
+
     protected:
         std::string class_name() const noexcept override;
-        void populate_fields(types::TaggedValueList *tvlist) const noexcept override;
         std::exception_ptr as_application_error() const override;
 
     private:

@@ -161,10 +161,29 @@ namespace core::grpc
         return TYPE_NAME_BASE(Status);
     }
 
-    void Status::populate_fields(types::TaggedValueList *tvlist) const noexcept
+    std::vector<std::string> Status::field_names() const noexcept
     {
-        tvlist->append({}, this->status_code_name());
-        Event::populate_fields(tvlist);
+        return This::status_fields();
+    }
+
+    std::vector<std::string> Status::status_fields() noexcept
+    {
+        std::vector<std::string> fields = Event::event_fields();
+        fields.insert(fields.begin(), STATUS_FIELD_CODE);
+        return fields;
+    }
+
+    types::Value Status::get_field_as_value(
+        const std::string &field_name) const
+    {
+        if (field_name == STATUS_FIELD_CODE)
+        {
+            return this->status_code_name();
+        }
+        else
+        {
+            return Event::get_field_as_value(field_name);
+        }
     }
 
     ::grpc::StatusCode Status::code_from_event(const status::Event &event) noexcept

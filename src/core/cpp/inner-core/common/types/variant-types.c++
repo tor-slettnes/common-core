@@ -35,10 +35,11 @@ namespace core::types
         {ValueType::TIMEPOINT, "TimePoint"},
         {ValueType::DURATION, "Duration"},
         {ValueType::VALUELIST, "ValueList"},
-        {ValueType::KVMAP, "KeyValueMap"},
-        {ValueType::TVLIST, "TaggedValueList"},
-        {ValueType::KVMAP, "map"},
         {ValueType::VALUELIST, "list"},
+        {ValueType::TVLIST, "TaggedValueList"},
+        {ValueType::TVLIST, "tvlist"},
+        {ValueType::KVMAP, "KeyValueMap"},
+        {ValueType::KVMAP, "map"},
     };  // namespace types
 
     std::ostream &operator<<(std::ostream &stream, ValueType type)
@@ -49,6 +50,99 @@ namespace core::types
     std::istream &operator>>(std::istream &stream, ValueType &type)
     {
         return TypeNames.from_stream(stream, &type, ValueType::NONE);
+    }
+
+    bool is_simple(ValueType vt)
+    {
+        return !is_composite(vt);
+    }
+
+    bool is_composite(ValueType vt)
+    {
+        switch(vt)
+        {
+        case ValueType::VALUELIST:
+        case ValueType::TVLIST:
+        case ValueType::KVMAP:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool is_integral(ValueType vt)
+    {
+        switch(vt)
+        {
+        case ValueType::UINT:
+        case ValueType::SINT:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool is_real(ValueType vt)
+    {
+        switch(vt)
+        {
+        case ValueType::UINT:
+        case ValueType::SINT:
+        case ValueType::REAL:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool is_numeric(ValueType vt)
+    {
+        switch(vt)
+        {
+        case ValueType::UINT:
+        case ValueType::SINT:
+        case ValueType::REAL:
+        case ValueType::COMPLEX:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool is_time(ValueType vt)
+    {
+        switch(vt)
+        {
+        case ValueType::TIMEPOINT:
+        case ValueType::DURATION:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool is_text(ValueType vt)
+    {
+        switch(vt)
+        {
+        case ValueType::CHAR:
+        case ValueType::STRING:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool is_bytesequence(ValueType vt)
+    {
+        switch(vt)
+        {
+        case ValueType::STRING:
+        case ValueType::BYTEVECTOR:
+            return true;
+        default:
+            return false;
+        }
     }
 
     std::string typetree(const Value &value)
@@ -93,7 +187,7 @@ namespace core::types
         {
             for (const auto &[k, v] : *kvmap)
             {
-                ss << delimiter << std::quoted(k) << ": " << typetree(v);
+                ss << delimiter << k << ":" << typetree(v);
                 delimiter = ", ";
             }
         }

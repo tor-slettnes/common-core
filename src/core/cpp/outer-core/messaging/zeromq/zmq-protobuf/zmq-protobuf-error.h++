@@ -16,6 +16,9 @@ namespace core::zmq
 
     class ProtoBufError : public status::Event
     {
+        using This = ProtoBufError;
+        using Super = status::Event;
+
     public:
         using status::Event::Event;
 
@@ -27,7 +30,10 @@ namespace core::zmq
         std::exception_ptr as_application_error() const override;
 
         std::string class_name() const noexcept override;
-        void populate_fields(types::TaggedValueList *tvlist) const noexcept override;
+
+        static std::vector<std::string> status_fields() noexcept;
+        std::vector<std::string> field_names() const noexcept override;
+        types::Value get_field_as_value(const std::string &field_name) const override;
 
     private:
         cc::rr::StatusCode status_code_;

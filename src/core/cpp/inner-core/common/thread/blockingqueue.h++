@@ -314,7 +314,7 @@ namespace core::types
 
                 if (this->queue.size())
                 {
-                    T value = std::move(this->queue.front());
+                    value = std::move(this->queue.front());
                     this->discard_oldest();
                 }
             }

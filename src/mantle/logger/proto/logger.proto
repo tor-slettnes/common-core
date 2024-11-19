@@ -112,24 +112,9 @@ message SinkSpec
     // `contract_id` will be captured by this sink.
     optional string contract_id = 10;
 
-    // What fields from matching events to include in log. These may be:
-    //
-    //   - static fields (corresponding to fields in the `cc.status.Event`
-    //     ProtoBuf message; use `list_static_fields()` to get a list.
-    //
-    //   - dynamic fields assumed to be present in log events with a matching
-    //     `contract_id`.
-    //
-    // Each variant `Value` in the `fields` list is interpreted as follows:
-    //
-    // * `tag` denotes a field name, expected to be present as attributes in log
-    //   events with a matching `contract_id`.  This is required for `CSV` and
-    //   `DB` sinks.
-    //
-    // * The `oneof value` seletor and the corresponding `value_*` field
-    //   implicitly denotes the type of event field, along with the default
-    //   value to log if the field is not present in a message.  This is
-    //   required for `DB` sinks, but may omitted for static fields.
+    // What fields from matching events to include in log. This is used by
+    // column-oriented log sinks, such as CSV file output and when logging to a
+    // SQLite3 database. See `ColumnSpec` below for more details.
     repeated ColumnSpec columns = 11;
 }
 
@@ -155,10 +140,26 @@ message ListSinkRequest
 
 message ColumnSpec
 {
+    // Representation of a single event field to capture by column-oriented log
+    // sinks such as `"csv"` and `"sqlite3"`.
+
+    // What event field to capture. This may be:
+    //   - a static field (corresponding to a field from `cc.status.Event`
+    //     ProtoBuf message; use the `list_static_fields()` method to get a list).
+    //   - a dynamic field passed as an event attribute, assumed to be present
+    //     in log events with a matching `contract_id`.
     string event_field = 1;
-    string column_name = 2;
+
+    // How to name this column in the sink (e.g. DB column, CSV header).
+    // If not provided, the `event_field` name is used.
+    optional string column_name = 2;
+
+    // Field column type. This is used by DB sinks (currently `sqlite3`) to
+    // create correspondingly-typed data columns.  It is also used to interpret
+    // fields such as `level` and `timestamp` in one way or another. (Note that
+    // if the `"timestamp"` field set to type `COLTYPE_STRING`, the resulting
+    // string value is also determined by the Sink's `use_local_time` setting).
     ColumnType column_type = 3;
-    string format_string = 4;
 }
 
 enum ColumnType
@@ -178,11 +179,15 @@ enum ColumnType
 
 message SinkTypes
 {
+    // A list of available sink types.
     repeated string sink_types = 1;
 }
 
 message FieldNames
 {
+    // A list of static field names that may be included as columns in CSV and
+    // DB sinks. Log events may also include additional attributes not listed
+    // here.
     repeated string field_names = 1;
 }
 

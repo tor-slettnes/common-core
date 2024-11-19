@@ -40,7 +40,7 @@ namespace core::grpc
                 auto* message = static_cast<google::protobuf::Message*>(data);
                 if (this->rpc_info && message)
                 {
-                    logf_trace("Received invocation from %s: %s(%s)",
+                    logf_trace("Received invocation from %s: %s; inputs: %s",
                                core::str::url_decoded(this->rpc_info->server_context()->peer()),
                                this->rpc_info->method(),
                                *message);

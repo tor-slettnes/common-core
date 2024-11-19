@@ -38,6 +38,7 @@ namespace core::logging
         CSVFileSink(const std::string &sink_id);
 
         void load_settings(const types::KeyValueMap &settings) override;
+
         void open() override;
         void close() override;
         void open_file(const dt::TimePoint &tp) override;
@@ -52,7 +53,7 @@ namespace core::logging
 
     private:
         std::string separator_;
-        std::shared_ptr<std::ofstream> stream_;
+        std::ofstream stream;
     };
 
     //--------------------------------------------------------------------------

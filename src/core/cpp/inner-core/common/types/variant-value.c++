@@ -121,7 +121,7 @@ namespace core::types
 
     std::string Value::type_name() const
     {
-        return TypeNames.to_string(this->type()).value_or("(Unknown value type");
+        return TypeNames.to_string(this->type(), "(Unknown value type)");
     }
 
     bool Value::empty() const noexcept
@@ -134,28 +134,65 @@ namespace core::types
         return this->type() != ValueType::NONE;
     }
 
-    bool Value::has_value() const noexcept
+    bool Value::has_type() const noexcept
     {
         return this->type() != ValueType::NONE;
+    }
+
+    bool Value::has_nonempty_value() const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::NONE:
+            return false;
+
+        case ValueType::BOOL:
+            return this->get<bool>();
+
+        case ValueType::CHAR:
+            return this->get<char>() != '\0';
+
+        case ValueType::UINT:
+            return this->get<largest_uint>() != 0;
+
+        case ValueType::SINT:
+            return this->get<largest_sint>() != 0;
+
+        case ValueType::REAL:
+            return this->get<double>() != 0.0;
+
+        case ValueType::COMPLEX:
+            return this->get<complex>() != complex(0.0, 0.0);
+
+        case ValueType::STRING:
+            return !this->get<std::string>().empty();
+
+        case ValueType::BYTEVECTOR:
+            return !this->get<ByteVector>().empty();
+
+        case ValueType::TIMEPOINT:
+            return this->get<dt::TimePoint>() != dt::epoch;
+
+        case ValueType::DURATION:
+            return this->get<dt::Duration>() != dt::Duration::zero();
+
+        case ValueType::VALUELIST:
+            return !this->get<ValueListPtr>()->empty();
+
+        case ValueType::TVLIST:
+            return !this->get<TaggedValueListPtr>()->empty();
+
+        case ValueType::KVMAP:
+            return !this->get<KeyValueMapPtr>()->empty();
+
+        default:
+            return false;
+        }
     }
 
     bool Value::is_simple() const noexcept
     {
         return !this->is_composite();
-    }
-
-    bool Value::is_composite() const noexcept
-    {
-        switch (this->type())
-        {
-        case ValueType::VALUELIST:
-        case ValueType::KVMAP:
-        case ValueType::TVLIST:
-            return true;
-
-        default:
-            return false;
-        }
     }
 
     bool Value::is_bool() const noexcept
@@ -168,6 +205,16 @@ namespace core::types
         return this->holdsAnyOf<char>();
     }
 
+    bool Value::is_numeric() const noexcept
+    {
+        return this->holdsAnyOf<largest_uint, largest_sint, double, complex>();
+    }
+
+    bool Value::is_integral() const noexcept
+    {
+        return this->holdsAnyOf<largest_uint, largest_sint>();
+    }
+
     bool Value::is_uint() const noexcept
     {
         return this->holdsAnyOf<largest_uint>();
@@ -178,14 +225,9 @@ namespace core::types
         return this->holdsAnyOf<largest_sint>();
     }
 
-    bool Value::is_integral() const noexcept
+    bool Value::is_real() const noexcept
     {
-        return this->holdsAnyOf<largest_uint, largest_sint>();
-    }
-
-    bool Value::is_numeric() const noexcept
-    {
-        return this->holdsAnyOf<largest_uint, largest_sint, double, complex>();
+        return this->holdsAnyOf<largest_uint, largest_sint, double>();
     }
 
     bool Value::is_float() const noexcept
@@ -193,14 +235,14 @@ namespace core::types
         return this->holdsAnyOf<double>();
     }
 
-    bool Value::is_real() const noexcept
-    {
-        return this->holdsAnyOf<largest_uint, largest_sint, double>();
-    }
-
     bool Value::is_complex() const noexcept
     {
         return this->holdsAnyOf<complex>();
+    }
+
+    bool Value::is_text() const noexcept
+    {
+        return this->holdsAnyOf<char, std::string>();
     }
 
     bool Value::is_string() const noexcept
@@ -213,6 +255,16 @@ namespace core::types
         return this->holdsAnyOf<ByteVector>();
     }
 
+    bool Value::is_bytesequence() const noexcept
+    {
+        return this->holdsAnyOf<std::string, ByteVector>();
+    }
+
+    bool Value::is_time() const noexcept
+    {
+        return this->holdsAnyOf<dt::TimePoint, dt::Duration>();
+    }
+
     bool Value::is_timepoint() const noexcept
     {
         return this->holdsAnyOf<dt::TimePoint>();
@@ -223,19 +275,24 @@ namespace core::types
         return this->holdsAnyOf<dt::Duration>();
     }
 
+    bool Value::is_composite() const noexcept
+    {
+        return this->holdsAnyOf<ValueListPtr, TaggedValueListPtr, KeyValueMapPtr>();
+    }
+
     bool Value::is_valuelist() const noexcept
     {
         return this->holdsAnyOf<ValueListPtr>();
     }
 
-    bool Value::is_kvmap() const noexcept
-    {
-        return this->holdsAnyOf<KeyValueMapPtr>();
-    }
-
     bool Value::is_tvlist() const noexcept
     {
         return this->holdsAnyOf<TaggedValueListPtr>();
+    }
+
+    bool Value::is_kvmap() const noexcept
+    {
+        return this->holdsAnyOf<KeyValueMapPtr>();
     }
 
     bool Value::as_bool(bool fallback) const noexcept
@@ -301,11 +358,11 @@ namespace core::types
         case ValueType::VALUELIST:
             return this->get<ValueListPtr>()->size() > 0;
 
-        case ValueType::KVMAP:
-            return this->get<KeyValueMapPtr>()->size() > 0;
-
         case ValueType::TVLIST:
             return this->get<TaggedValueListPtr>()->size() > 0;
+
+        case ValueType::KVMAP:
+            return this->get<KeyValueMapPtr>()->size() > 0;
 
         default:
             return this->numeric_cast<bool>(fallback ? 1 : 0);
@@ -447,7 +504,7 @@ namespace core::types
         }
     }
 
-    complex Value::as_complex(const complex &fallback) const noexcept
+    std::optional<complex> Value::try_as_complex() const noexcept
     {
         switch (this->type())
         {
@@ -455,48 +512,69 @@ namespace core::types
             return this->get<complex>();
 
         case ValueType::VALUELIST:
-        {
-            auto list = this->get<ValueListPtr>();
-            auto it = list->begin();
-            return {
-                list->get(0).as_real(),
-                list->get(1).as_real(),
-            };
-        }
+            if (auto list = this->get_valuelist())
+            {
+                if ((list->size() == 2) &&
+                    list->front().is_numeric() &&
+                    list->back().is_numeric())
+                {
+                    return complex(list->front().as_real(),
+                                   list->back().as_real());
+                }
+            }
+            break;
 
         case ValueType::KVMAP:
-        {
-            auto map = this->get<KeyValueMapPtr>();
-            return {
-                map->get(REAL_PART).as_real(),
-                map->get(IMAG_PART).as_real(),
-            };
-        }
+            if (auto kvmap = this->get_kvmap())
+            {
+                if (kvmap->count(REAL_PART) &&
+                    kvmap->count(IMAG_PART))
+                {
+                    return complex(kvmap->get(REAL_PART).as_real(),
+                                   kvmap->get(IMAG_PART).as_real());
+                }
+            }
+            break;
 
         case ValueType::TVLIST:
-        {
-            auto tvlist = this->get<TaggedValueListPtr>();
-            return {
-                tvlist->get(0).as_real(),
-                tvlist->get(1).as_real(),
-            };
-        }
+            if (auto tvlist = this->get_tvlist())
+            {
+                if ((tvlist->size() == 2) &&
+                    tvlist->get(0).is_numeric() &&
+                    tvlist->get(1).is_numeric())
+                {
+                    return complex(tvlist->front().as_real(),
+                                   tvlist->back().as_real());
+                }
+            }
+            break;
 
         case ValueType::UINT:
         case ValueType::SINT:
         case ValueType::REAL:
-            return {this->numeric_cast<double>(), 0.0};
-
-        default:
-            return fallback;
+            return complex(this->numeric_cast<double>(), 0.0);
         }
+
+        return {};
+    }
+
+    complex Value::as_complex(const complex &fallback) const noexcept
+    {
+        return this->try_as_complex().value_or(fallback);
     }
 
     std::string Value::as_string() const noexcept
     {
-        std::ostringstream out;
-        out << *this;
-        return out.str();
+        if (auto *str = this->get_if<std::string>())
+        {
+            return *str;
+        }
+        else
+        {
+            std::ostringstream out;
+            out << *this;
+            return out.str();
+        }
     }
 
     ByteVector Value::as_bytevector(const ByteVector &fallback) const noexcept
@@ -626,40 +704,14 @@ namespace core::types
         case ValueType::VALUELIST:
             return *this->get<ValueListPtr>();
 
-        case ValueType::KVMAP:
-            return this->get<KeyValueMapPtr>()->values();
-
         case ValueType::TVLIST:
             return this->get<TaggedValueListPtr>()->values();
 
+        case ValueType::KVMAP:
+            return this->get<KeyValueMapPtr>()->values();
+
         case ValueType::COMPLEX:
             return {this->as_real(), this->as_imag()};
-
-        default:
-            return fallback;
-        }
-    }
-
-    KeyValueMap Value::as_kvmap() const noexcept
-    {
-        return this->as_kvmap({});
-    }
-
-    KeyValueMap Value::as_kvmap(const KeyValueMap &fallback) const noexcept
-    {
-        switch (this->type())
-        {
-        case ValueType::KVMAP:
-            return *this->get<KeyValueMapPtr>();
-
-        case ValueType::TVLIST:
-            return this->get<TaggedValueListPtr>()->as_kvmap();
-
-        case ValueType::COMPLEX:
-            return {
-                {REAL_PART, this->as_real()},
-                {IMAG_PART, this->as_imag()},
-            };
 
         default:
             return fallback;
@@ -695,6 +747,33 @@ namespace core::types
         }
     }
 
+    KeyValueMap Value::as_kvmap() const noexcept
+    {
+        return this->as_kvmap({});
+    }
+
+    KeyValueMap Value::as_kvmap(const KeyValueMap &fallback) const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::KVMAP:
+            return *this->get<KeyValueMapPtr>();
+
+        case ValueType::TVLIST:
+            return this->get<TaggedValueListPtr>()->as_kvmap();
+
+        case ValueType::COMPLEX:
+            return {
+                {REAL_PART, this->as_real()},
+                {IMAG_PART, this->as_imag()},
+            };
+
+        default:
+            return fallback;
+        }
+    }
+
+
     ValueListPtr Value::get_valuelist() const noexcept
     {
         if (auto *ptr = this->get_if<ValueListPtr>())
@@ -707,9 +786,9 @@ namespace core::types
         }
     }
 
-    KeyValueMapPtr Value::get_kvmap() const noexcept
+    TaggedValueListPtr Value::get_tvlist() const noexcept
     {
-        if (auto *ptr = this->get_if<KeyValueMapPtr>())
+        if (auto *ptr = this->get_if<TaggedValueListPtr>())
         {
             return *ptr;
         }
@@ -719,9 +798,9 @@ namespace core::types
         }
     }
 
-    TaggedValueListPtr Value::get_tvlist() const noexcept
+    KeyValueMapPtr Value::get_kvmap() const noexcept
     {
-        if (auto *ptr = this->get_if<TaggedValueListPtr>())
+        if (auto *ptr = this->get_if<KeyValueMapPtr>())
         {
             return *ptr;
         }
@@ -760,6 +839,22 @@ namespace core::types
             throw std::invalid_argument("Value instance is not indexable");
         }
     }
+
+    Value &Value::operator[](const int index)
+    {
+        switch (this->type())
+        {
+        case ValueType::VALUELIST:
+            return std::get<ValueListPtr>(*this)->at(index);
+
+        case ValueType::TVLIST:
+            return std::get<TaggedValueListPtr>(*this)->at(index).second;
+
+        default:
+            throw std::invalid_argument("Value instance is not indexable");
+        }
+    }
+
 
     const Value &Value::front(const Value &fallback) const noexcept
     {
@@ -998,13 +1093,6 @@ namespace core::types
         }
 
         return ValueType::STRING;
-    }
-
-    ValueType Value::implicit_type(const ValueBase &base) noexcept
-    {
-        return base.valueless_by_exception()
-                   ? ValueType::NONE
-                   : static_cast<ValueType>(base.index());
     }
 
     const Value emptyvalue;

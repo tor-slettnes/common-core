@@ -57,9 +57,6 @@ namespace logger
         core::dt::Duration batch_timeout() const;
         void set_batch_timeout(const core::dt::Duration &timeout);
 
-        std::optional<core::logging::ColumnSpec> column_spec(
-            const core::types::Value &column_data) override;
-
         void open() override;
         void close() override;
         void open_file(const core::dt::TimePoint &tp) override;

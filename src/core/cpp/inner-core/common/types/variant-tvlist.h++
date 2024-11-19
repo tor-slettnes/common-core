@@ -131,6 +131,8 @@ namespace core::types
         AppendResult append_if(bool condition, const Value &value);
         AppendResult append_if(bool condition, const Tag &tag, const Value &value);
 
+        AppendResult append_if_value(const Tag &tag, const Value &value);
+
     public:
         void to_stream(std::ostream &stream) const override;
         void to_stream(std::ostream &stream,
@@ -138,8 +140,19 @@ namespace core::types
                        const std::string &infix,
                        const std::string &postfix) const;
 
+        template <class T>
+        std::optional<T> try_get_as(const std::string &key, bool ignore_case = false) const
+        {
+            return this->get(key, {}, ignore_case).try_convert_to<T>();
+        }
 
-        template<class T>
+        template <class T>
+        std::optional<T> try_get_as(const uint index) const
+        {
+            return this->get(index).try_convert_to<T>();
+        }
+
+        template <class T>
         static std::shared_ptr<TaggedValueList> create_shared_from(const T &obj)
         {
             auto tvlist = std::make_shared<TaggedValueList>();
@@ -147,7 +160,7 @@ namespace core::types
             return tvlist;
         }
 
-        template<class T>
+        template <class T>
         static TaggedValueList create_from(const T &obj)
         {
             TaggedValueList tvlist;

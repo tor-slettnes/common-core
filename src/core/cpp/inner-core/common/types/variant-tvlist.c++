@@ -336,22 +336,28 @@ namespace core::types
         return this->merge(other);
     }
 
-    TaggedValueList::iterator TaggedValueList::append(const TaggedValue &tv)
+    TaggedValueList::iterator TaggedValueList::append(
+        const TaggedValue &tv)
     {
         return this->insert(this->end(), tv);
     }
 
-    TaggedValueList::iterator TaggedValueList::append(const Value &value)
+    TaggedValueList::iterator TaggedValueList::append(
+        const Value &value)
     {
         return this->insert(this->end(), TaggedValue(nulltag, value));
     }
 
-    TaggedValueList::iterator TaggedValueList::append(const Tag &tag, const Value &value)
+    TaggedValueList::iterator TaggedValueList::append(
+        const Tag &tag,
+        const Value &value)
     {
         return this->insert(this->end(), TaggedValue(tag, value));
     }
 
-    TaggedValueList::AppendResult TaggedValueList::append_if(bool condition, const TaggedValue &tv)
+    TaggedValueList::AppendResult TaggedValueList::append_if(
+        bool condition,
+        const TaggedValue &tv)
     {
         return {
             condition ? this->append(tv) : this->end(),
@@ -359,18 +365,32 @@ namespace core::types
         };
     }
 
-    TaggedValueList::AppendResult TaggedValueList::append_if(bool condition, const Value &value)
+    TaggedValueList::AppendResult TaggedValueList::append_if(
+        bool condition,
+        const Value &value)
     {
         return {
             condition ? this->append(value) : this->end(),
-            condition};
+            condition,
+        };
     }
 
-    TaggedValueList::AppendResult TaggedValueList::append_if(bool condition, const Tag &tag, const Value &value)
+    TaggedValueList::AppendResult TaggedValueList::append_if(
+        bool condition,
+        const Tag &tag,
+        const Value &value)
     {
         return {
             condition ? this->append(tag, value) : this->end(),
-            condition};
+            condition,
+        };
+    }
+
+    TaggedValueList::AppendResult TaggedValueList::append_if_value(
+        const Tag &tag,
+        const Value &value)
+    {
+        return this->append_if(value.has_nonempty_value(), tag, value);
     }
 
     void TaggedValueList::to_stream(std::ostream &stream) const

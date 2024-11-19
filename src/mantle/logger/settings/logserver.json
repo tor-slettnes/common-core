@@ -25,11 +25,11 @@
             "table name"    : "Events",
             "columns" : [
                 // event_field, column_name, column_type[, extra_args]
-                ["timestamp", "ClientTimestamp", "INT", "%T"],
+                ["timestamp", "ClientTimestamp", "TEXT", "%T"],
                 ["origin", "ClientName", "TEXT"],
-                ["timestamp", "EpochTime", "INT"],
+                ["timestamp", "EpochTime", "INTEGER"],
                 ["text", "LogMessage", "TEXT"],
-                ["level", "Level", "INT"],
+                ["level", "Level", "INTEGER"],
                 ["host", "IP", "TEXT"]
             ],
             "level map" : {

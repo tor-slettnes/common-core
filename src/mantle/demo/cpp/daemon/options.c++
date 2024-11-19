@@ -6,7 +6,10 @@
 //==============================================================================
 
 #include "options.h++"
+
+#if USE_DDS
 #include "dds-logsink.h++"
+#endif
 
 namespace demo
 {

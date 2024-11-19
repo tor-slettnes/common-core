@@ -44,19 +44,9 @@ namespace core::types
         AppendResult append_if(bool condition, Value &&value);
 
         template <class T>
-        std::optional<T> get_as(const uint index) const
+        std::optional<T> try_get_as(const uint index) const
         {
-            if (const Value &value = this->get(index))
-            {
-                try
-                {
-                    return str::convert_to<T>(value.as_string());
-                }
-                catch (...)
-                {
-                }
-            }
-            return {};
+            return this->get(index).try_convert_to<T>();
         }
 
         template <class T>

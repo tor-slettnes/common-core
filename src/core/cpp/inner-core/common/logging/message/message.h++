@@ -33,6 +33,7 @@ namespace core::logging
 
     class Message : public status::Event
     {
+        using This = Message;
         using Super = status::Event;
 
     public:
@@ -92,6 +93,7 @@ namespace core::logging
         // Copy constructor to ensure we obtain values from derived classes
         Message(const Message &other);
 
+        Message &operator=(Message &&other) noexcept;
         Message &operator=(const Message &other) noexcept;
 
         std::string class_name() const noexcept override;
@@ -106,10 +108,10 @@ namespace core::logging
         virtual uint lineno() const noexcept;
         virtual const std::string &function() const noexcept;
         virtual pid_t thread_id() const noexcept;
-        static std::vector<std::string> field_names() noexcept;
 
-    protected:
-        void populate_fields(types::TaggedValueList *tvlist) const noexcept override;
+        static std::vector<std::string> message_fields() noexcept;
+        std::vector<std::string> field_names() const noexcept override;
+        types::Value get_field_as_value(const std::string &field_name) const override;
 
     protected:
         Scope::ptr scope_;

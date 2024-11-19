@@ -22,19 +22,6 @@ namespace core::types
     }
 
     template <class T>
-    inline std::optional<T> Value::get_opt() const
-    {
-        if (const T *value = this->get_if<T>())
-        {
-            return *value;
-        }
-        else
-        {
-            return {};
-        }
-    }
-
-    template <class T>
     T &Value::emplace_from(const Value &other)
     {
         return this->emplace<T>(std::get<T>(other));
@@ -50,12 +37,12 @@ namespace core::types
 
     /// Cast value to a desired type
     template <class T>
-    T Value::numeric_cast(T fallback) const
+    std::optional<T> Value::try_numeric_cast() const
     {
         switch (this->type())
         {
         case ValueType::NONE:
-            return fallback;
+            return {};
 
         case ValueType::BOOL:
             return static_cast<T>(this->get<bool>());
@@ -76,7 +63,7 @@ namespace core::types
             return static_cast<T>(this->get<complex>().real());
 
         case ValueType::STRING:
-            return str::convert_to<T>(this->get<std::string>(), {});
+            return str::try_convert_to<T>(this->get<std::string>());
 
         case ValueType::BYTEVECTOR:
             return this->get<ByteVector>().unpack<T>();
@@ -88,26 +75,49 @@ namespace core::types
             return (T)dt::to_double(this->get<dt::Duration>());
 
         case ValueType::VALUELIST:
-        case ValueType::KVMAP:
         case ValueType::TVLIST:
-            return static_cast<T>(this->as_complex(fallback).real());
+        case ValueType::KVMAP:
+            if (auto opt_complex = this->try_as_complex())
+            {
+                return opt_complex->real();
+            }
+            else
+            {
+                return {};
+            }
 
         default:
-            return fallback;
+            return {};
+        }
+    }
+
+    /// Try to cast value to a desired type
+    template <class T>
+    T Value::numeric_cast(T fallback) const
+    {
+        return this->try_numeric_cast<T>().value_or(fallback);
+    }
+
+    template <class T>
+    std::optional<T> Value::try_convert_to() const
+    {
+        switch (this->type())
+        {
+        case ValueType::NONE:
+            return {};
+
+        case ValueType::STRING:
+            return str::try_convert_to<T>(this->get<std::string>());
+
+        default:
+            return str::try_convert_to<T>(this->as_string());
         }
     }
 
     template <class T>
     T Value::convert_to(const T &fallback) const
     {
-        switch (this->type())
-        {
-        case ValueType::STRING:
-            return str::convert_to<T>(this->get<std::string>(), fallback);
-
-        default:
-            return str::convert_to<T>(this->as_string(), fallback);
-        };
+        return this->try_convert_to<T>().value_or(fallback);
     }
 
 }  // namespace core::types

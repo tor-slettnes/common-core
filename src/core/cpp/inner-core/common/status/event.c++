@@ -75,8 +75,8 @@ namespace core::status
         this->text_ = other.text();
         this->domain_ = other.domain();
         this->origin_ = other.origin();
-        this->code_ = other.code_;
-        this->symbol_ = other.symbol_;
+        this->code_ = other.code();
+        this->symbol_ = other.symbol();
         this->level_ = other.level();
         this->timepoint_ = other.timepoint();
         this->attributes_ = other.attributes();
@@ -172,53 +172,12 @@ namespace core::status
         return this->attributes_.get(key, fallback);
     }
 
-    void Event::populate_fields(types::TaggedValueList *tvlist) const noexcept
+    std::string Event::class_name() const noexcept
     {
-        tvlist->append_if(!this->text().empty(),
-                          EVENT_FIELD_TEXT,
-                          this->text());
-
-        tvlist->append_if(this->domain() != Domain::NONE,
-                          EVENT_FIELD_DOMAIN,
-                          str::convert_from(this->domain()));
-
-        tvlist->append_if(!this->origin().empty(),
-                          EVENT_FIELD_ORIGIN,
-                          this->origin());
-
-        tvlist->append_if(this->code() != 0,
-                          EVENT_FIELD_CODE,
-                          this->code());
-
-        tvlist->append_if(!this->symbol().empty(),
-                          EVENT_FIELD_SYMBOL,
-                          this->symbol());
-
-        tvlist->append_if(this->level() != Level::NONE,
-                          EVENT_FIELD_LEVEL,
-                          str::convert_from(this->level()));
-
-        tvlist->append_if(this->timepoint() != dt::epoch,
-                          EVENT_FIELD_TIME,
-                          this->timepoint());
-
-        tvlist->append_if(!this->contract_id().empty(),
-                          EVENT_FIELD_CONTRACT_ID,
-                          this->contract_id());
-
-        tvlist->append_if(!this->host().empty(),
-                          EVENT_FIELD_HOST,
-                          this->host());
+        return "Event";
     }
 
-    void Event::populate_attributes(types::TaggedValueList *tvlist) const noexcept
-    {
-        tvlist->insert(tvlist->end(),
-                       this->attributes().begin(),
-                       this->attributes().end());
-    }
-
-    std::vector<std::string> Event::field_names() noexcept
+    std::vector<std::string> Event::event_fields() noexcept
     {
         return {
             EVENT_FIELD_TEXT,
@@ -230,13 +189,22 @@ namespace core::status
             EVENT_FIELD_SYMBOL,
             EVENT_FIELD_HOST,
             EVENT_FIELD_CONTRACT_ID,
+            EVENT_FIELD_ATTRIBUTES,
         };
     }
 
-    void Event::to_tvlist(core::types::TaggedValueList *tvlist) const
+    std::vector<std::string> Event::field_names() const noexcept
     {
-        this->populate_fields(tvlist);
-        this->populate_attributes(tvlist);
+        return This::event_fields();
+    }
+
+    void Event::to_tvlist(types::TaggedValueList *tvlist) const
+    {
+        for (const std::string &field_name : this->field_names())
+        {
+            tvlist->append_if_value(field_name,
+                                    this->get_field_as_value(field_name));
+        }
     }
 
     void Event::to_stream(std::ostream &stream) const
@@ -244,9 +212,50 @@ namespace core::status
         stream << this->class_name() << this->as_tvlist();
     }
 
-    std::string Event::class_name() const noexcept
+    types::Value Event::get_field_as_value(const std::string &field_name) const
     {
-        return "Event";
+        using LookupFunction = std::function<types::Value(const Event *event)>;
+        static const std::unordered_map<std::string, LookupFunction> lookup = {
+            {EVENT_FIELD_TEXT, [=](const Event *event) {
+                 return event->text();
+             }},
+            {EVENT_FIELD_TIME, [=](const Event *event) {
+                 return event->timepoint();
+             }},
+            {EVENT_FIELD_LEVEL, [=](const Event *event) {
+                 return str::convert_from(event->level());
+             }},
+            {EVENT_FIELD_DOMAIN, [=](const Event *event) {
+                 return str::convert_from(event->domain());
+             }},
+            {EVENT_FIELD_ORIGIN, [=](const Event *event) {
+                 return event->origin();
+             }},
+            {EVENT_FIELD_CODE, [=](const Event *event) {
+                 return event->code();
+             }},
+            {EVENT_FIELD_SYMBOL, [=](const Event *event) {
+                 return event->symbol();
+             }},
+            {EVENT_FIELD_HOST, [=](const Event *event) {
+                 return event->host();
+             }},
+            {EVENT_FIELD_CONTRACT_ID, [=](const Event *event) {
+                 return event->contract_id();
+             }},
+            {EVENT_FIELD_ATTRIBUTES, [=](const Event *event) {
+                 return event->attributes();
+             }},
+        };
+
+        try
+        {
+            return lookup.at(field_name)(this);
+        }
+        catch (const std::out_of_range &)
+        {
+            return this->attribute(field_name);
+        }
     }
 
     void Event::throw_if_error() const

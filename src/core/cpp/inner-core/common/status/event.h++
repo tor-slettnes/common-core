@@ -41,6 +41,8 @@ namespace core::status
     class Event : public types::Listable,
                   public types::Loggable
     {
+        using This = Event;
+
     public:
         using ptr = std::shared_ptr<Event>;
         using Symbol = std::string;
@@ -64,7 +66,7 @@ namespace core::status
               const ContractID &contract_id = {},
               const std::string &host = {});
 
-        Event &operator=(Event &&other) noexcept;
+        virtual Event &operator=(Event &&other) noexcept;
         virtual Event &operator=(const Event &other) noexcept;
         virtual bool operator==(const Event &other) const noexcept;
         virtual bool operator!=(const Event &other) const noexcept;
@@ -79,8 +81,9 @@ namespace core::status
         virtual std::string text() const noexcept;
         virtual const types::KeyValueMap &attributes() const noexcept;
         virtual types::KeyValueMap &attributes() noexcept;
-        virtual types::Value attribute(const std::string &key,
-                                       const types::Value &fallback = {}) const noexcept;
+        virtual types::Value attribute(
+            const std::string &key,
+            const types::Value &fallback = {}) const noexcept;
         virtual ContractID contract_id() const noexcept;
         virtual std::string host() const noexcept;
 
@@ -88,11 +91,19 @@ namespace core::status
 
     protected:
         virtual std::string class_name() const noexcept;
-        virtual void populate_fields(types::TaggedValueList *tvlist) const noexcept;
-        virtual void populate_attributes(types::TaggedValueList *tvlist) const noexcept;
 
     public:
-        static std::vector<std::string> field_names() noexcept;
+        static std::vector<std::string> event_fields() noexcept;
+
+    public:
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+        void to_stream(std::ostream &stream) const override;
+
+    public:
+        virtual std::vector<std::string> field_names() const noexcept;
+        virtual types::Value get_field_as_value(const std::string &field_name) const;
+
+    public:
         virtual void throw_if_error() const;
         virtual std::exception_ptr as_exception_ptr() const;
 
@@ -102,13 +113,7 @@ namespace core::status
         virtual std::exception_ptr as_application_error() const;
         virtual std::exception_ptr as_service_error() const;
 
-    protected:
-        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
-
-    public:
-        void to_stream(std::ostream &stream) const override;
-
-    protected:
+    private:
         std::string text_;
         Domain domain_;
         std::string origin_;

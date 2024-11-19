@@ -50,8 +50,8 @@ namespace protobuf
     //==========================================================================
     // ColumnType
 
-    void encode(const core::logging::ColumnType &native, cc::logger::ColumnType *proto);
-    void decode(const cc::logger::ColumnType &proto, core::logging::ColumnType *native);
+    void encode(const core::types::ValueType &native, cc::logger::ColumnType *proto);
+    void decode(const cc::logger::ColumnType &proto, core::types::ValueType *native);
 
     //==========================================================================
     // ListenerSpec

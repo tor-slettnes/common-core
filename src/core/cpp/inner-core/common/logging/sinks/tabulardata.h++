@@ -8,7 +8,8 @@
 #pragma once
 #include "types/value.h++"
 #include "types/valuemap.h++"
-#include "status/level.h++"
+#include "types/symbolmap.h++"
+#include "status/event.h++"
 
 #include <string>
 #include <memory>
@@ -23,30 +24,16 @@ namespace core::logging
     //--------------------------------------------------------------------------
     // Column specifications
 
-    enum class ColumnType
-    {
-        NONE,
-        BOOL,
-        INT,
-        REAL,
-        TEXT,
-        BINARY,
-        DATETIME
-    };
-
-    std::ostream &operator<<(std::ostream &stream, const ColumnType &type);
-    std::istream &operator>>(std::istream &stream, ColumnType &type);
-
     struct ColumnSpec
     {
         std::string event_field;
-        std::string column_name;
-        ColumnType column_type = ColumnType::NONE;
-        std::string format_string;
+        std::optional<std::string> column_name;
+        types::ValueType column_type = types::ValueType::NONE;
     };
 
-    std::ostream &operator<<(std::ostream &stream, const ColumnSpec &spec);
+    extern types::SymbolMap<core::types::ValueType> column_type_names;
 
+    std::ostream &operator<<(std::ostream &stream, const ColumnSpec &spec);
     types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
                                        const ColumnSpec &spec);
 
@@ -63,17 +50,17 @@ namespace core::logging
     class TabularData
     {
         using This = TabularData;
-        using LevelMap = core::types::ValueMap<core::status::Level, core::types::Value>;
+        using LevelMap = types::ValueMap<status::Level, types::Value>;
 
     protected:
         TabularData(const ColumnSpecs &columns = This::default_columns());
 
-    protected:
-        void load_level_map(const core::types::KeyValueMap &settings);
-        void load_columns(const types::KeyValueMap &settings);
-
     private:
-        virtual std::optional<ColumnSpec> column_spec(const types::Value &column_data);
+        static ColumnSpecs default_columns();
+
+    protected:
+        void load_level_map(const types::KeyValueMap &settings);
+        void load_columns(const types::KeyValueMap &settings);
 
     public:
         const ColumnSpecs &columns() const;
@@ -85,7 +72,26 @@ namespace core::logging
         std::vector<std::string> column_names() const;
 
     private:
-        static ColumnSpecs default_columns();
+        std::optional<ColumnSpec> column_spec(const types::Value &column_data) const;
+
+    protected:
+        types::ValueList row_data(status::Event::ptr event,
+                                  bool use_local_time) const;
+
+    private:
+        types::Value column_data(
+            const logging::ColumnSpec &spec,
+            status::Event::ptr event,
+            bool use_local_time) const;
+
+        types::Value time_value(
+            const dt::TimePoint &tp,
+            types::ValueType value_type,
+            bool use_local_time) const;
+
+        types::Value level_value(
+            status::Level level,
+            types::ValueType value_type) const;
 
     private:
         LevelMap level_map_;

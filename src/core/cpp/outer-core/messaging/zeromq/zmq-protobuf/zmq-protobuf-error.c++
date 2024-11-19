@@ -38,12 +38,6 @@ namespace core::zmq
         return "Error";
     }
 
-    void ProtoBufError::populate_fields(types::TaggedValueList *tvlist) const noexcept
-    {
-        tvlist->append(STATUS_FIELD_CODE, this->status_code());
-        Event::populate_fields(tvlist);
-    }
-
     std::exception_ptr ProtoBufError::as_application_error() const
     {
         switch (this->status_code())
@@ -63,6 +57,30 @@ namespace core::zmq
 
         default:
             return std::make_exception_ptr<exception::UnknownError>(*this);
+        }
+    }
+
+    std::vector<std::string> ProtoBufError::field_names() const noexcept
+    {
+        return this->status_fields();
+    }
+
+    std::vector<std::string> ProtoBufError::status_fields() noexcept
+    {
+        std::vector<std::string> fields = Event::event_fields();
+        fields.insert(fields.begin(), STATUS_FIELD_CODE);
+        return fields;
+    }
+
+    types::Value ProtoBufError::get_field_as_value(const std::string &field_name) const
+    {
+        if (field_name == STATUS_FIELD_CODE)
+        {
+            return cc::rr::StatusCode_Name(this->status_code());
+        }
+        else
+        {
+            return Super::get_field_as_value(field_name);
         }
     }
 

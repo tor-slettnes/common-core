@@ -123,30 +123,51 @@ namespace protobuf
     void encode(const core::logging::ColumnSpec &native, cc::logger::ColumnSpec *proto)
     {
         proto->set_event_field(native.event_field);
-        proto->set_column_name(native.column_name);
+        if (native.column_name)
+        {
+            proto->set_column_name(native.column_name.value());
+        }
         proto->set_column_type(encoded<cc::logger::ColumnType>(native.column_type));
-        proto->set_format_string(native.format_string);
     }
 
     void decode(const cc::logger::ColumnSpec &proto, core::logging::ColumnSpec *native)
     {
         native->event_field = proto.event_field();
-        native->column_name = proto.column_name();
+        if (proto.has_column_name())
+        {
+            native->column_name = proto.column_name();
+        }
         decode(proto.column_type(), &native->column_type);
-        native->format_string = proto.format_string();
     }
 
     //==========================================================================
     // ColumnType
 
-    void encode(const core::logging::ColumnType &native, cc::logger::ColumnType *proto)
+    static core::types::ValueMap<core::types::ValueType, cc::logger::ColumnType> coltype_map = {
+        {core::types::ValueType::NONE, cc::logger::COLTYPE_NONE},
+        {core::types::ValueType::BOOL, cc::logger::COLTYPE_BOOL},
+        {core::types::ValueType::SINT, cc::logger::COLTYPE_INT},
+        {core::types::ValueType::REAL, cc::logger::COLTYPE_REAL},
+        {core::types::ValueType::STRING, cc::logger::COLTYPE_TEXT},
+        {core::types::ValueType::BYTEVECTOR, cc::logger::COLTYPE_BLOB},
+        {core::types::ValueType::TIMEPOINT, cc::logger::COLTYPE_DATETIME},
+    };
+
+    void encode(const core::types::ValueType &native, cc::logger::ColumnType *proto)
     {
-        *proto = static_cast<cc::logger::ColumnType>(native);
+        *proto = coltype_map.get(native, cc::logger::COLTYPE_NONE);
     }
 
-    void decode(const cc::logger::ColumnType &proto, core::logging::ColumnType *native)
+    void decode(const cc::logger::ColumnType &proto, core::types::ValueType *native)
     {
-        *native = static_cast<core::logging::ColumnType>(proto);
+        *native = core::types::ValueType::NONE;
+        for (const auto &[native_candidate, proto_candidate] : coltype_map)
+        {
+            if (proto_candidate == proto)
+            {
+                *native = native_candidate;
+            }
+        }
     }
 
     //==========================================================================

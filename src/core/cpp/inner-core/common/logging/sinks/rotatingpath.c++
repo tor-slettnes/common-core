@@ -52,7 +52,7 @@ namespace core::logging
             this->set_filename_template(value.as_string());
         }
 
-        if (auto interval = settings.get_as<dt::DateTimeInterval>(SETTING_ROTATION))
+        if (auto interval = settings.try_get_as<dt::DateTimeInterval>(SETTING_ROTATION))
         {
             this->set_rotation_interval(interval.value());
         }

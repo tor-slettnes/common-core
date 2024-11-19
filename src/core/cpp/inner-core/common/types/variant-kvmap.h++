@@ -103,19 +103,9 @@ namespace core::types
         insert_if(bool condition, const std::string &key, const Value &value);
 
         template <class T>
-        std::optional<T> get_as(const std::string &key, bool ignore_case = false) const
+        std::optional<T> try_get_as(const std::string &key, bool ignore_case = false) const
         {
-            if (const Value &value = this->get(key, {}, ignore_case))
-            {
-                try
-                {
-                    return str::convert_to<T>(value.as_string());
-                }
-                catch (...)
-                {
-                }
-            }
-            return {};
+            return this->get(key, {}, ignore_case).try_convert_to<T>();
         }
 
         /// @brief

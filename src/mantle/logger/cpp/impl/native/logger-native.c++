@@ -90,7 +90,7 @@ namespace logger::native
 
     FieldNames Logger::list_static_fields() const
     {
-        return core::logging::Message::field_names();
+        return core::logging::Message::message_fields();
     }
 
     std::shared_ptr<EventSource> Logger::listen(
@@ -100,7 +100,7 @@ namespace logger::native
             spec.sink_id,
             spec.min_level,
             spec.contract_id,
-            core::settings->get("log sinks").get("client").get("queue size", 4096).as_uint());
+            core::settings->get("log sinks").get("logger").get("queue size", 4096).as_uint());
 
         sink->open();
         return sink;

@@ -47,6 +47,17 @@ namespace core::logging
     {
     }
 
+    Message &Message::operator=(Message &&other) noexcept
+    {
+        Event::operator=(std::move(other));
+        std::swap(this->scope_, other.scope_);
+        std::swap(this->path_, other.path_);
+        std::swap(this->lineno_, other.lineno_);
+        std::swap(this->function_, other.function_);
+        std::swap(this->thread_id_, other.thread_id_);
+        return *this;
+    }
+
     Message &Message::operator=(const Message &other) noexcept
     {
         Event::operator=(other);
@@ -115,33 +126,14 @@ namespace core::logging
         return this->thread_id_;
     }
 
-    void Message::populate_fields(types::TaggedValueList *tvlist) const noexcept
+    std::vector<std::string> Message::field_names() const noexcept
     {
-        Event::populate_fields(tvlist);
-
-        tvlist->append_if(this->thread_id() != 0,
-                           MESSAGE_FIELD_THREAD_ID,
-                           this->thread_id());
-
-        tvlist->emplace_back(MESSAGE_FIELD_LOG_SCOPE,
-                             this->scopename());
-
-        tvlist->emplace_back(MESSAGE_FIELD_SOURCE_PATH,
-                             this->path().string());
-
-        tvlist->append_if(this->lineno() != 0,
-                           MESSAGE_FIELD_SOURCE_LINE,
-                           this->lineno());
-
-        tvlist->append_if(!this->function().empty(),
-                           MESSAGE_FIELD_FUNCTION_NAME,
-                           this->function());
-
+        return This::message_fields();
     }
 
-    std::vector<std::string> Message::field_names() noexcept
+    std::vector<std::string> Message::message_fields() noexcept
     {
-        std::vector<std::string> fields = Event::field_names();
+        std::vector<std::string> fields = Event::event_fields();
         fields.insert(
             fields.end(),
             {
@@ -153,5 +145,38 @@ namespace core::logging
             });
 
         return fields;
-    };
+    }
+
+    types::Value Message::get_field_as_value(
+        const std::string &field_name) const
+    {
+        using LookupFunction = std::function<types::Value(const Message *message)>;
+        static const std::unordered_map<std::string, LookupFunction> lookup = {
+            {MESSAGE_FIELD_THREAD_ID, [=](const Message *message) {
+                 return message->thread_id();
+             }},
+            {MESSAGE_FIELD_LOG_SCOPE, [=](const Message *message) {
+                 return message->scopename();
+             }},
+            {MESSAGE_FIELD_SOURCE_PATH, [=](const Message *message) {
+                 return message->path();
+             }},
+            {MESSAGE_FIELD_SOURCE_LINE, [=](const Message *message) {
+                 return message->lineno();
+             }},
+            {MESSAGE_FIELD_FUNCTION_NAME, [=](const Message *message) {
+                 return message->function();
+             }},
+        };
+
+        try
+        {
+            return lookup.at(field_name)(this);
+        }
+        catch (const std::out_of_range &)
+        {
+            return Super::get_field_as_value(field_name);
+        }
+    }
+
 }  // namespace core::logging
