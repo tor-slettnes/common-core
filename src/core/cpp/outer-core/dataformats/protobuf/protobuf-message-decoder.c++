@@ -47,6 +47,51 @@ namespace protobuf
         {
             return decoded<core::dt::Duration>(*duration);
         }
+        else if (const auto *value = dynamic_cast<const google::protobuf::Struct *>(&this->msg))
+        {
+            return decode_shared<core::types::KeyValueMap>(*value);
+        }
+        else if (const auto *value = dynamic_cast<const google::protobuf::ListValue *>(&this->msg))
+        {
+            return decode_shared<core::types::ValueList>(*value);
+        }
+        else if (const auto *value = dynamic_cast<const google::protobuf::DoubleValue *>(&this->msg))
+        {
+            return value->value();
+        }
+        else if (const auto *value = dynamic_cast<const google::protobuf::FloatValue *>(&this->msg))
+        {
+            return value->value();
+        }
+        else if (const auto *value = dynamic_cast<const google::protobuf::Int64Value *>(&this->msg))
+        {
+            return value->value();
+        }
+        else if (const auto *value = dynamic_cast<const google::protobuf::UInt64Value *>(&this->msg))
+        {
+            return value->value();
+        }
+        else if (const auto *value = dynamic_cast<const google::protobuf::Int32Value *>(&this->msg))
+        {
+            return value->value();
+        }
+        else if (const auto *value = dynamic_cast<const google::protobuf::UInt32Value *>(&this->msg))
+        {
+            return value->value();
+        }
+        else if (const auto *value = dynamic_cast<const google::protobuf::BoolValue *>(&this->msg))
+        {
+            return value->value();
+        }
+        else if (const auto *value = dynamic_cast<const google::protobuf::StringValue *>(&this->msg))
+        {
+            return value->value();
+        }
+        else if (const auto *value = dynamic_cast<const google::protobuf::BytesValue *>(&this->msg))
+        {
+            return core::types::ByteVector(value->value().begin(),
+                                           value->value().end());
+        }
         else
         {
             return this->to_kvmap();

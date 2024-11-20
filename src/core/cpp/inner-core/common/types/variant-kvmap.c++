@@ -266,9 +266,30 @@ namespace core::types
             {
                 comma = true;
             }
+            stream << key << "=";
+            value.to_stream(stream);
+        }
+        stream << "}";
+    }
+
+    void KeyValueMap::to_literal_stream(std::ostream &stream) const
+    {
+        bool comma = false;
+        stream << "{";
+        for (const auto &[key, value] : *this)
+        {
+            if (comma)
+            {
+                stream << ", ";
+            }
+            else
+            {
+                comma = true;
+            }
             stream << std::quoted(key) << ": ";
             value.to_literal_stream(stream);
         }
         stream << "}";
     }
+
 }  // namespace core::types

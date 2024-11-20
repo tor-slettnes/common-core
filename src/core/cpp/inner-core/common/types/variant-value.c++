@@ -1016,6 +1016,18 @@ namespace core::types
             str::to_literal(stream, this->get<std::string>());
             break;
 
+        case ValueType::VALUELIST:
+            this->get_valuelist()->to_literal_stream(stream);
+            break;
+
+        case ValueType::KVMAP:
+            this->get_kvmap()->to_literal_stream(stream);
+            break;
+
+        case ValueType::TVLIST:
+            this->get_tvlist()->to_literal_stream(stream);
+            break;
+
         default:
             this->to_stream(stream);
             break;

@@ -24,8 +24,6 @@ namespace core::types
         using Super::Super;
 
     public:
-        void to_stream(std::ostream &stream) const override;
-
         // No-ops for compatibility with std::vector<>;
         void reserve(std::size_t capacity) {}
         void shrink_to_fit() {}
@@ -49,6 +47,11 @@ namespace core::types
         AppendResult append_if_value(const Value &value);
         AppendResult append_if_value(Value &&value);
 
+    public:
+        void to_stream(std::ostream &stream) const override;
+        void to_literal_stream(std::ostream &stream) const override;
+
+    public:
         template <class T>
         std::optional<T> try_get_as(const uint index) const
         {

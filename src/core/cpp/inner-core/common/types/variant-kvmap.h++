@@ -172,6 +172,7 @@ namespace core::types
 
     public:
         void to_stream(std::ostream &stream) const override;
+        void to_literal_stream(std::ostream &stream) const override;
 
     };
 

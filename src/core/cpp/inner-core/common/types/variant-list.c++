@@ -9,25 +9,6 @@
 
 namespace core::types
 {
-    void ValueList::to_stream(std::ostream &stream) const
-    {
-        stream << "{";
-        bool comma = false;
-        for (const Value &element : *this)
-        {
-            if (comma)
-            {
-                stream << ", ";
-            }
-            else
-            {
-                comma = true;
-            }
-            element.to_literal_stream(stream);
-        }
-        stream << "}";
-    }
-
     const Value &ValueList::front(const Value &fallback) const noexcept
     {
         if (!this->empty())
@@ -141,5 +122,44 @@ namespace core::types
     {
         return this->append_if(value.has_nonempty_value(), std::move(value));
     }
+
+    void ValueList::to_stream(std::ostream &stream) const
+    {
+        stream << "{";
+        bool comma = false;
+        for (const Value &element : *this)
+        {
+            if (comma)
+            {
+                stream << ", ";
+            }
+            else
+            {
+                comma = true;
+            }
+            element.to_stream(stream);
+        }
+        stream << "}";
+    }
+
+    void ValueList::to_literal_stream(std::ostream &stream) const
+    {
+        stream << "{";
+        bool comma = false;
+        for (const Value &element : *this)
+        {
+            if (comma)
+            {
+                stream << ", ";
+            }
+            else
+            {
+                comma = true;
+            }
+            element.to_literal_stream(stream);
+        }
+        stream << "}";
+    }
+
 
 }  // namespace core::types

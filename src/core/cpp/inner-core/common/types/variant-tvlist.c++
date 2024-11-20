@@ -432,9 +432,35 @@ namespace core::types
             {
                 stream << tag.value() << "=";
             }
-            value.to_literal_stream(stream);
+            value.to_stream(stream);
         }
         stream << postfix;
     }
+
+    void TaggedValueList::to_literal_stream(std::ostream &stream) const
+    {
+        stream << "{";
+        bool comma = false;
+        for (const auto &[tag, value] : *this)
+        {
+            if (comma)
+            {
+                stream << ", ";
+            }
+            else
+            {
+                comma = true;
+            }
+            stream << "(";
+            if (tag.has_value())
+            {
+                stream << tag.value() << ", ";
+            }
+            value.to_literal_stream(stream);
+            stream << ")";
+        }
+        stream << ")";
+    }
+
 
 }  // namespace core::types
