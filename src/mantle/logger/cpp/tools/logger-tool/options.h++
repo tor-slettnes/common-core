@@ -31,6 +31,7 @@ private:
     void add_sink();
     void remove_sink();
     void get_sink();
+    void get_all_sinks();
     void list_sinks();
     void list_static_fields();
 

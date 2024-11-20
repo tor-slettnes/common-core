@@ -82,42 +82,6 @@ namespace protobuf
     }
 
     //==========================================================================
-    // logger::SinkIDs <-> cc::logger::SinkSpecs
-
-    void encode(const logger::SinkIDs &native, cc::logger::SinkSpecs *proto)
-    {
-        auto specs = proto->mutable_specs();
-        specs->Reserve(native.size());
-        for (const logger::SinkID &sink_id : native)
-        {
-            cc::logger::SinkSpec *spec = specs->Add();
-            spec->set_sink_id(sink_id);
-        }
-    }
-
-    void decode(const cc::logger::SinkSpecs &proto, logger::SinkIDs *native)
-    {
-        native->reserve(proto.specs_size());
-        for (const cc::logger::SinkSpec &spec : proto.specs())
-        {
-            native->push_back(spec.sink_id());
-        }
-    }
-
-    //==========================================================================
-    // SinkTypes
-
-    void encode(const logger::SinkTypes &native, cc::logger::SinkTypes *proto)
-    {
-        protobuf::assign_repeated(native, proto->mutable_sink_types());
-    }
-
-    void decode(const cc::logger::SinkTypes &proto, logger::SinkTypes *native)
-    {
-        protobuf::assign_to_vector(proto.sink_types(), native);
-    }
-
-    //==========================================================================
     // ColumnSpec
 
     void encode(const core::logging::ColumnSpec &native, cc::logger::ColumnSpec *proto)
@@ -194,18 +158,4 @@ namespace protobuf
             native->contract_id = proto.contract_id();
         }
     }
-
-    //==========================================================================
-    // FieldNames
-
-    void encode(const logger::FieldNames &native, cc::logger::FieldNames *proto)
-    {
-        protobuf::assign_repeated(native, proto->mutable_field_names());
-    }
-
-    void decode(const cc::logger::FieldNames &proto, logger::FieldNames *native)
-    {
-        protobuf::assign_to_vector(proto.field_names(), native);
-    }
-
 }  // namespace protobuf

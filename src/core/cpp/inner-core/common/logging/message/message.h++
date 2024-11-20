@@ -82,13 +82,13 @@ namespace core::logging
                 uint lineno = 0,
                 const std::string &function = {},
                 pid_t thread_id = 0,
-                status::Domain domain = status::Domain::APPLICATION,
+                const std::string &host = {},
                 const std::string &origin = {},
+                status::Domain domain = status::Domain::APPLICATION,
                 Code code = 0,
                 const Symbol &symbol = {},
                 const types::KeyValueMap &attributes = {},
-                const ContractID &contract_id = MESSAGE_CONTRACT,
-                const std::string &host = platform::host->get_host_name());
+                const ContractID &contract_id = MESSAGE_CONTRACT);
 
         // Copy constructor to ensure we obtain values from derived classes
         Message(const Message &other);

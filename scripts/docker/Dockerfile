@@ -3,11 +3,13 @@ FROM debian:bookworm
 ### Install runtime utilities
 RUN apt-get update
 RUN apt-get install -y \
+    sudo                    \
     build-essential         \
     cmake                   \
     doxygen                 \
     file                    \
     git                     \
+    uuid-dev                \
     rapidjson-dev           \
     libsqlite3-dev          \
     libavahi-client-dev     \
@@ -31,9 +33,7 @@ RUN apt-get install -y \
     python3-hatchling       \
     python3-grpcio          \
     python3-protobuf        \
-    python3-zmq             \
-    sudo                    \
-    uuid-dev
+    python3-zmq
 
 # Duplicate external account
 

@@ -26,6 +26,7 @@ set(SOURCES
   protobuf-datetime-types.c++
   protobuf-version.c++
   protobuf-message.c++
+  protobuf-message-decoder.c++
 )
 
 ### Recepies to build the library

@@ -9,6 +9,7 @@
 #include "protobuf-logger-types.h++"
 #include "protobuf-event-types.h++"
 #include "protobuf-inline.h++"
+#include "protobuf-message.h++"
 
 namespace logger::grpc
 {
@@ -149,25 +150,34 @@ namespace logger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::list_sinks(
+    ::grpc::Status RequestHandler::get_all_sinks(
         ::grpc::ServerContext* context,
-        const ::cc::logger::ListSinkRequest* request,
+        const ::google::protobuf::Empty* request,
         ::cc::logger::SinkSpecs* response)
     {
         try
         {
-            if (request->verbose())
-            {
-                protobuf::encode(
-                    this->provider->get_all_sink_specs(),
-                    response);
-            }
-            else
-            {
-                protobuf::encode(
-                    this->provider->list_sinks(),
-                    response);
-            }
+            protobuf::encode(
+                this->provider->get_all_sink_specs(),
+                response);
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
+    }
+
+    ::grpc::Status RequestHandler::list_sinks(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ::cc::logger::SinkNames* response)
+    {
+        try
+        {
+            protobuf::assign_repeated(
+                this->provider->list_sinks(),
+                response->mutable_sink_names());
 
             return ::grpc::Status::OK;
         }

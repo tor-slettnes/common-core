@@ -30,18 +30,6 @@ namespace protobuf
     void decode(const cc::logger::SinkSpecs &proto, logger::SinkSpecs *native);
 
     //==========================================================================
-    // logger::SinkIDs <-> cc::logger::SinkSpecs
-
-    void encode(const logger::SinkIDs &native, cc::logger::SinkSpecs *proto);
-    void decode(const cc::logger::SinkSpecs &proto, logger::SinkIDs *native);
-
-    //==========================================================================
-    // SinkTypes
-
-    void encode(const logger::SinkTypes &native, cc::logger::SinkTypes *proto);
-    void decode(const cc::logger::SinkTypes &proto, logger::SinkTypes *native);
-
-    //==========================================================================
     // ColumnSpec
 
     void encode(const core::logging::ColumnSpec &native, cc::logger::ColumnSpec *proto);
@@ -59,10 +47,5 @@ namespace protobuf
     void encode(const logger::ListenerSpec &native, cc::logger::ListenerSpec *proto);
     void decode(const cc::logger::ListenerSpec &proto, logger::ListenerSpec *native);
 
-    //==========================================================================
-    // FieldNames
-
-    void encode(const logger::FieldNames &native, cc::logger::FieldNames *proto);
-    void decode(const cc::logger::FieldNames &proto, logger::FieldNames *native);
 
 }  // namespace protobuf

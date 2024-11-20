@@ -36,7 +36,10 @@ service Logger
     rpc get_sink (SinkID) returns (SinkSpec);
 
     // Return defintions for all available log sinks
-    rpc list_sinks (ListSinkRequest) returns (SinkSpecs);
+    rpc get_all_sinks (google.protobuf.Empty) returns (SinkSpecs);
+
+    // Return defintions for all available log sinks
+    rpc list_sinks (google.protobuf.Empty) returns (SinkNames);
 
     // Return defintions for all available log sinks
     rpc list_sink_types (google.protobuf.Empty) returns (SinkTypes);
@@ -133,11 +136,6 @@ message RemoveSinkResult
     bool removed = 1;           // An existing sink was removed
 }
 
-message ListSinkRequest
-{
-    bool verbose = 1;           // Include sink specifications, not just name.
-}
-
 message ColumnSpec
 {
     // Representation of a single event field to capture by column-oriented log
@@ -164,9 +162,6 @@ message ColumnSpec
 
 enum ColumnType
 {
-    // Keep in sync with 'enum class ColumnType' in 'tabulardatasink.[ch]++',
-    // which are not ProtoBuf-aware.
-
     COLTYPE_NONE = 0;
     COLTYPE_BOOL = 1;
     COLTYPE_INT  = 2;
@@ -176,6 +171,10 @@ enum ColumnType
     COLTYPE_DATETIME = 6;
 }
 
+message SinkNames
+{
+    repeated string sink_names = 1;
+}
 
 message SinkTypes
 {

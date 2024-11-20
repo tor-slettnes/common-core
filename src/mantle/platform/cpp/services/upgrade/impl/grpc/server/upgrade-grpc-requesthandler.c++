@@ -33,6 +33,7 @@ namespace platform::upgrade::grpc
             protobuf::encode(
                 this->provider->scan(protobuf::decoded<PackageSource>(*request)),
                 response);
+
             return ::grpc::Status::OK;
         }
         catch (...)

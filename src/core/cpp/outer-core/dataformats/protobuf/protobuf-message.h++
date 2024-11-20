@@ -6,6 +6,7 @@
 //==============================================================================
 
 #pragma once
+#include "protobuf-message-decoder.h++"
 #include "types/bytevector.h++"
 #include "string/stream.h++"
 
@@ -72,15 +73,17 @@ namespace protobuf
         msg.ParseFromString(packed_string);
         return msg;
     }
+
 }  // namespace protobuf
 
-/// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
+
+/// Additional convenience operators for ProtoBuf messages
 namespace google::protobuf
 {
     bool operator==(const Message &left, const Message &right);
     bool operator!=(const Message &left, const Message &right);
 
-    std::ostream &operator<<(std::ostream &stream, const Message &msg);
+    // std::ostream &operator<<(std::ostream &stream, const Message &msg);
 
     template <class T>
     std::ostream &operator<<(std::ostream &stream,

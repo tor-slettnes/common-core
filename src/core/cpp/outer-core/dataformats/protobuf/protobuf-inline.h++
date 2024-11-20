@@ -105,7 +105,7 @@ namespace protobuf
     // Template to return converted value
 
     template <class ProtoType, class... Args>
-    inline ProtoType encoded(const Args &...args)
+    inline ProtoType encoded(Args &&...args)
     {
         ProtoType msg;
         encode(args..., &msg);
@@ -113,7 +113,7 @@ namespace protobuf
     }
 
     template <class NativeType, class... Args>
-    inline NativeType decoded(const Args &...args) noexcept
+    inline NativeType decoded(Args &&...args) noexcept
     {
         NativeType value;
         decode(args..., &value);

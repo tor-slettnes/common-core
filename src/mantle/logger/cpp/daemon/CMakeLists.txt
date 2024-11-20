@@ -45,7 +45,7 @@ if(ENABLE_SERVICES)
 endif()
 
 cpack_add_component(${INSTALL_COMPONENT}
-  DEPENDS log-settings
+  DEPENDS "logger-settings"
   GROUP ${INSTALL_GROUP}
   DISPLAY_NAME "Log server"
   DESCRIPTION "Log server: Record events such as diagnostic messages, errors, and telemetry"

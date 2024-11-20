@@ -19,10 +19,7 @@ message TimeStruct
     uint32 second = 6;          // Second within minute, 0-61 (normally 0-59)
     Weekday weekday = 7;        // Enumerated day
     uint32 year_day = 8;        // Day within year, 1-366
-
-    oneof explicit_dst {        // Ensure the DST flag is explicit, even if false
-        bool is_dst = 9;        // Whether daylight savings time is in use
-    };
+    optional bool is_dst = 9;   // Whether daylight savings time is in use
 }
 
 message Interval

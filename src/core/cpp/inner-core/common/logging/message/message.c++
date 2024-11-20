@@ -21,13 +21,13 @@ namespace core::logging
                      uint lineno,
                      const std::string &function,
                      pid_t thread_id,
-                     status::Domain domain,
+                     const std::string &host,
                      const std::string &origin,
+                     status::Domain domain,
                      Code code,
                      const Symbol &symbol,
                      const types::KeyValueMap &attributes,
-                     const ContractID &contract_id,
-                     const std::string &host)
+                     const ContractID &contract_id)
         : Event(text, domain, origin, code, symbol, level, tp, attributes, contract_id, host),
           scope_(scope),
           path_(path),

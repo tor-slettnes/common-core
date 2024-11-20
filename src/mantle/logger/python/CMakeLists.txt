@@ -18,7 +18,7 @@ add_subdirectory(logger)
 
 if(INSTALL_COMPONENT)
   cpack_add_component("${INSTALL_COMPONENT}"
-    DEPENDS "core-python" "core-settings" "demo-proto" "demo-settings"
+    DEPENDS "core-python" "core-settings" "logger-proto" "logger-settings"
     GROUP "${INSTALL_GROUP}"
     DISPLAY_NAME "DEMO Example - Python modules"
     DESCRIPTION "Python client and server moduules for demo application example"

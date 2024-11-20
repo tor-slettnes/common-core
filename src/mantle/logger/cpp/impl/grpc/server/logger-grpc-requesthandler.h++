@@ -55,10 +55,15 @@ namespace logger::grpc
             const ::cc::logger::SinkID* request,
             ::cc::logger::SinkSpec* response) override;
 
+        ::grpc::Status get_all_sinks(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ::cc::logger::SinkSpecs* response) override;
+
         ::grpc::Status list_sinks(
             ::grpc::ServerContext* context,
-            const ::cc::logger::ListSinkRequest* request,
-            ::cc::logger::SinkSpecs* response) override;
+            const ::google::protobuf::Empty* request,
+            ::cc::logger::SinkNames* response) override;
 
         ::grpc::Status list_sink_types(
             ::grpc::ServerContext* context,

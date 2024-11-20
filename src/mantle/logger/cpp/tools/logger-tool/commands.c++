@@ -36,9 +36,15 @@ void Options::add_commands()
         std::bind(&Options::get_sink, this));
 
     this->add_command(
+        "get_all_sinks",
+        {},
+        "Return specifications for all currently registereed log sinks.",
+        std::bind(&Options::get_all_sinks, this));
+
+    this->add_command(
         "list_sinks",
-        {"[verbose]"},
-        "List currently active log sinks.",
+        {},
+        "List currently reistered log sinks.",
         std::bind(&Options::list_sinks, this));
 
     this->add_command(
@@ -98,25 +104,19 @@ void Options::get_sink()
     std::cout << this->provider->get_sink_spec(sink_id) << std::endl;
 }
 
+void Options::get_all_sinks()
+{
+    for (const logger::SinkSpec &spec : this->provider->get_all_sink_specs())
+    {
+        std::cout << spec << std::endl;
+    }
+}
+
 void Options::list_sinks()
 {
-    FlagMap flags;
-    bool &verbose = flags["verbose"];
-    this->get_flags(&flags);
-
-    if (verbose)
+    for (const logger::SinkID &sink_id : this->provider->list_sinks())
     {
-        for (const logger::SinkSpec &spec : this->provider->get_all_sink_specs())
-        {
-            std::cout << spec << std::endl;
-        }
-    }
-    else
-    {
-        for (const logger::SinkID &sink_id : this->provider->list_sinks())
-        {
-            std::cout << sink_id << std::endl;
-        }
+        std::cout << sink_id << std::endl;
     }
 }
 

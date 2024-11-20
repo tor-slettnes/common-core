@@ -135,13 +135,13 @@ namespace protobuf
             proto.source_line(),                                    // lineno
             proto.function_name(),                                  // function
             proto.thread_id(),                                      // thread_id
-            decoded<core::status::Domain>(proto.domain()),          // domain
+            host,                                                   // host
             proto.origin(),                                         // origin
+            decoded<core::status::Domain>(proto.domain()),          // domain
             proto.code(),                                           // code
             proto.symbol(),                                         // symbol
             decoded<core::types::KeyValueMap>(proto.attributes()),  // attributes
-            contract_id,                                            // contract_id
-            host);                                                  // host
+            contract_id);                                           // contract_id
     }
 
     //==========================================================================

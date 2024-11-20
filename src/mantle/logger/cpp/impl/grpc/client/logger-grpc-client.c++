@@ -66,36 +66,26 @@ namespace logger::grpc
 
     SinkSpecs LoggerClient::get_all_sink_specs() const
     {
-        cc::logger::ListSinkRequest request;
-        request.set_verbose(true);
         return protobuf::decoded<SinkSpecs>(
-            this->call_check(
-                &Stub::list_sinks,
-                request));
+            this->call_check(&Stub::get_all_sinks));
     }
 
     SinkIDs LoggerClient::list_sinks() const
     {
-        cc::logger::ListSinkRequest request;
-        request.set_verbose(false);
-        return protobuf::decoded<SinkIDs>(
-            this->call_check(
-                &Stub::list_sinks,
-                request));
+        return protobuf::assign_to_vector<SinkID>(
+            this->call_check(&Stub::list_sinks).sink_names());
     }
 
     SinkTypes LoggerClient::list_sink_types() const
     {
-        return protobuf::decoded<SinkTypes>(
-            this->call_check(
-                &Stub::list_sink_types));
+        return protobuf::assign_to_vector<SinkType>(
+            this->call_check(&Stub::list_sink_types).sink_types());
     }
 
     FieldNames LoggerClient::list_static_fields() const
     {
-        return protobuf::decoded<FieldNames>(
-            this->call_check(
-                &Stub::list_static_fields));
+        return protobuf::assign_to_vector<std::string>(
+            this->call_check(&Stub::list_static_fields).field_names());
     }
 
     std::shared_ptr<EventSource> LoggerClient::listen(const ListenerSpec &spec)

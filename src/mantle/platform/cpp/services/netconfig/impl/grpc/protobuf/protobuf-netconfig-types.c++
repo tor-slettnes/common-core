@@ -271,7 +271,7 @@ namespace protobuf
             break;
 
         default:
-            data->auth = core::types::nullvalue;
+            data->auth = {};
             break;
         }
 

@@ -7,7 +7,9 @@
 
 #include "logger-native.h++"
 #include "logger-native-listener.h++"
+#if USE_SQLITE3
 #include "logger-sqlite3-sink.h++"
+#endif
 #include "logging/logging.h++"
 #include "logging/sinks/streamsink.h++"
 #include "logging/sinks/logfilesink.h++"

@@ -49,10 +49,9 @@ namespace protobuf
         to_bytes(msg, &bytes);
         return bytes;
     }
-
 }  // namespace protobuf
 
-/// Add C++ output stream support for ProtoBuf messages (by reference and by pointer)
+/// Additional convenience operators for ProtoBuf messages
 namespace google::protobuf
 {
     bool operator==(const Message &left, const Message &right)
@@ -65,9 +64,9 @@ namespace google::protobuf
         return !MessageDifferencer::Equivalent(left, right);
     }
 
-    std::ostream &operator<<(std::ostream &stream, const Message &msg)
-    {
-        stream << ::protobuf::to_string(msg);
-        return stream;
-    }
+    // std::ostream &operator<<(std::ostream &stream, const Message &msg)
+    // {
+    //     stream << ::protobuf::to_string(msg);
+    //     return stream;
+    // }
 }  // namespace google::protobuf

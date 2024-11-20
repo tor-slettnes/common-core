@@ -11,6 +11,7 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
+#include "protobuf-message.h++"
 #include "logging/logging.h++"
 
 namespace platform::vfs::grpc

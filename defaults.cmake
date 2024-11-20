@@ -128,7 +128,7 @@ option(BUILD_RTI_DDS     "Build support for RTI ConnextDDS" OFF)
 option(BUILD_RTI_LOGGER  "Build support for RTI Distributed Logger" OFF)
 
 ### Object serialization
-option(BUILD_SQLITE3     "Build support for logging via SQLite3" ON)
+option(BUILD_SQLITE3     "Build support for SQLite3 DB" ON)
 option(BUILD_PROTOBUF    "Build support for Google Protocol Buffers" ON)
 option(BUILD_DDS         "Build support for Distributed Data Service (DDS)" ${BUILD_RTI_DDS})
 option(BUILD_PYTHON_IO   "Build Python embedded environment for C++" ON)
@@ -142,7 +142,7 @@ option(BUILD_TESTING     "Build testing modules" ON)
 option(INCLUDE_SHARED    "Install shared artifacts (e.g. common settings)" ON)
 option(INCLUDE_DEMO      "Build/install DEMO application example" ${INCLUDE_SHARED})
 option(INCLUDE_PLATFORM  "Build/install Platform services" ${INCLUDE_SHARED})
-option(INCLUDE_LOGGER    "Build/install Platform services" ${INCLUDE_SHARED})
+option(INCLUDE_LOGGER    "Build/install Logger service" ${INCLUDE_SHARED})
 
 ### Enable SystemD service integration
 option(ENABLE_SERVICES   "Enable SystemD service units" ON)
