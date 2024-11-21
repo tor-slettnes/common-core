@@ -137,25 +137,6 @@ namespace core::types
             {
                 comma = true;
             }
-            element.to_stream(stream);
-        }
-        stream << "}";
-    }
-
-    void ValueList::to_literal_stream(std::ostream &stream) const
-    {
-        stream << "{";
-        bool comma = false;
-        for (const Value &element : *this)
-        {
-            if (comma)
-            {
-                stream << ", ";
-            }
-            else
-            {
-                comma = true;
-            }
             element.to_literal_stream(stream);
         }
         stream << "}";

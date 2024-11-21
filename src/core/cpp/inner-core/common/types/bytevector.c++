@@ -15,6 +15,21 @@ namespace core::types
 {
     static const char pad_char = '=';
 
+    ByteVector::ByteVector(const Bytes &b)
+    {
+        this->assign(b.begin(), b.end());
+    }
+
+    ByteVector::ByteVector(const std::string &s)
+    {
+        this->assign(s.begin(), s.end());
+    }
+
+    ByteVector::ByteVector(const std::string_view &s)
+    {
+        this->assign(s.begin(), s.end());
+    }
+
     void ByteVector::to_stream(std::ostream &stream) const
     {
         static const std::string hex_digits = "0123456789abcdef";

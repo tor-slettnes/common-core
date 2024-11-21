@@ -31,71 +31,70 @@ namespace protobuf
 
     core::types::Value MessageDecoder::to_value() const
     {
-        if (const auto *value = dynamic_cast<const cc::variant::Value *>(&this->msg))
+        switch (this->descriptor.well_known_type())
         {
-            return decoded<core::types::Value>(*value);
-        }
-        else if (const auto *vlist = dynamic_cast<const cc::variant::ValueList *>(&this->msg))
-        {
-            return decoded<core::types::Value>(*vlist);
-        }
-        else if (const auto *timestamp = dynamic_cast<const google::protobuf::Timestamp *>(&this->msg))
-        {
-            return decoded<core::dt::TimePoint>(*timestamp);
-        }
-        else if (const auto *duration = dynamic_cast<const google::protobuf::Duration *>(&this->msg))
-        {
-            return decoded<core::dt::Duration>(*duration);
-        }
-        else if (const auto *value = dynamic_cast<const google::protobuf::Struct *>(&this->msg))
-        {
-            return decode_shared<core::types::KeyValueMap>(*value);
-        }
-        else if (const auto *value = dynamic_cast<const google::protobuf::ListValue *>(&this->msg))
-        {
-            return decode_shared<core::types::ValueList>(*value);
-        }
-        else if (const auto *value = dynamic_cast<const google::protobuf::DoubleValue *>(&this->msg))
-        {
-            return value->value();
-        }
-        else if (const auto *value = dynamic_cast<const google::protobuf::FloatValue *>(&this->msg))
-        {
-            return value->value();
-        }
-        else if (const auto *value = dynamic_cast<const google::protobuf::Int64Value *>(&this->msg))
-        {
-            return value->value();
-        }
-        else if (const auto *value = dynamic_cast<const google::protobuf::UInt64Value *>(&this->msg))
-        {
-            return value->value();
-        }
-        else if (const auto *value = dynamic_cast<const google::protobuf::Int32Value *>(&this->msg))
-        {
-            return value->value();
-        }
-        else if (const auto *value = dynamic_cast<const google::protobuf::UInt32Value *>(&this->msg))
-        {
-            return value->value();
-        }
-        else if (const auto *value = dynamic_cast<const google::protobuf::BoolValue *>(&this->msg))
-        {
-            return value->value();
-        }
-        else if (const auto *value = dynamic_cast<const google::protobuf::StringValue *>(&this->msg))
-        {
-            return value->value();
-        }
-        else if (const auto *value = dynamic_cast<const google::protobuf::BytesValue *>(&this->msg))
-        {
-            return core::types::ByteVector(value->value().begin(),
-                                           value->value().end());
-        }
-        else
-        {
-            return this->to_kvmap();
-        }
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_DOUBLEVALUE:
+            return dynamic_cast<const google::protobuf::DoubleValue *>(&this->msg)->value();
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_FLOATVALUE:
+            return dynamic_cast<const google::protobuf::FloatValue *>(&this->msg)->value();
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_INT64VALUE:
+            return dynamic_cast<const google::protobuf::Int64Value *>(&this->msg)->value();
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_UINT64VALUE:
+            return dynamic_cast<const google::protobuf::UInt64Value *>(&this->msg)->value();
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_INT32VALUE:
+            return dynamic_cast<const google::protobuf::Int32Value *>(&this->msg)->value();
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_UINT32VALUE:
+            return dynamic_cast<const google::protobuf::UInt32Value *>(&this->msg)->value();
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_STRINGVALUE:
+            return dynamic_cast<const google::protobuf::StringValue *>(&this->msg)->value();
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_BYTESVALUE:
+            return core::types::ByteVector(
+                dynamic_cast<const google::protobuf::BytesValue *>(&this->msg)->value());
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_BOOLVALUE:
+            return dynamic_cast<const google::protobuf::BoolValue *>(&this->msg)->value();
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_DURATION:
+            return decoded<core::dt::Duration>(
+                *dynamic_cast<const google::protobuf::Duration *>(&this->msg));
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_TIMESTAMP:
+            return decoded<core::dt::TimePoint>(
+                *dynamic_cast<const google::protobuf::Timestamp *>(&this->msg));
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_VALUE:
+            return decoded<core::types::Value>(
+                *dynamic_cast<const google::protobuf::Value *>(&this->msg));
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_LISTVALUE:
+            return decode_shared<core::types::ValueList>(
+                *dynamic_cast<const google::protobuf::ListValue *>(&this->msg));
+
+        case google::protobuf::Descriptor::WELLKNOWNTYPE_STRUCT:
+            return decode_shared<core::types::KeyValueMap>(
+                *dynamic_cast<const google::protobuf::Struct *>(&this->msg));
+
+        default:
+            if (const auto *value = dynamic_cast<const cc::variant::Value *>(&this->msg))
+            {
+                return decoded<core::types::Value>(*value);
+            }
+            else if (const auto *vlist = dynamic_cast<const cc::variant::ValueList *>(&this->msg))
+            {
+                return decoded<core::types::Value>(*vlist);
+            }
+            else
+            {
+                return this->to_kvmap();
+            }
+        };
     }
 
     core::types::KeyValueMapPtr MessageDecoder::to_kvmap() const

@@ -141,7 +141,6 @@ namespace core::types
                        const std::string &prefix,
                        const std::string &infix,
                        const std::string &postfix) const;
-        void to_literal_stream(std::ostream &stream) const override;
 
         template <class T>
         std::optional<T> try_get_as(const std::string &key, bool ignore_case = false) const

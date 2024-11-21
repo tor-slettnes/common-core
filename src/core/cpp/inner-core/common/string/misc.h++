@@ -24,6 +24,8 @@
         ' ', '\t', '\r', '\n', 'f', '\0' \
     }
 
+std::string operator""_u(const char *str, std::size_t len);
+
 /// Miscellaneous string manipulations
 namespace core::str
 {
@@ -34,6 +36,9 @@ namespace core::str
 #else
     constexpr auto NEWLINE = "\n";
 #endif
+
+    inline const std::string UNICODE_BOM = "\uFEFF";
+
 
     /// Convert string to uppercase in place, using the specified locale or current locale.
     /// @param[in,out] s String to convert.
@@ -350,6 +355,15 @@ namespace core::str
         const std::string &substring,
         bool ignore_case = false);
 
+    [[nodiscard]] bool is_valid_symbol(
+        const std::string &input);
+
+    [[nodiscard]] bool is_unicode_text(
+        const std::string &input);
+
+    [[nodiscard]] std::string to_unicode_text(
+        const std::string &input);
+
     /// @brief Return the last component of a namespace-qualified string
     /// @param[in] string
     ///     Original name, including path separator
@@ -404,6 +418,7 @@ namespace core::str
         std::string prefix = "0x");
 
 }  // namespace core::str
+
 
 // Inline definitions
 #include "misc.i++"

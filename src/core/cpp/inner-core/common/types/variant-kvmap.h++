@@ -130,7 +130,6 @@ namespace core::types
         std::pair<KeyValueMap::iterator, bool>
         insert_if_value(const std::string &key, const Value &value);
 
-
         template <class T>
         std::optional<T> try_get_as(const std::string &key, bool ignore_case = false) const
         {
@@ -154,7 +153,7 @@ namespace core::types
             return result;
         }
 
-        template<class T>
+        template <class T>
         static std::shared_ptr<KeyValueMap> create_shared_from(const T &obj)
         {
             auto kvmap = std::make_shared<KeyValueMap>();
@@ -162,7 +161,7 @@ namespace core::types
             return kvmap;
         }
 
-        template<class T>
+        template <class T>
         static KeyValueMap create_from(const T &obj)
         {
             KeyValueMap kvmap;
@@ -172,8 +171,6 @@ namespace core::types
 
     public:
         void to_stream(std::ostream &stream) const override;
-        void to_literal_stream(std::ostream &stream) const override;
-
     };
 
 }  // namespace core::types

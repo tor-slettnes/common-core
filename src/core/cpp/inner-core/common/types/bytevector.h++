@@ -31,15 +31,9 @@ namespace core::types
         // Inherit available constructors from base
         using Bytes::Bytes;
 
-        ByteVector(const Bytes &b)
-        {
-            this->assign(b.begin(), b.end());
-        }
-
-        ByteVector(const std::string &s)
-        {
-            this->assign(s.begin(), s.end());
-        }
+        ByteVector(const Bytes &b);
+        ByteVector(const std::string &s);
+        ByteVector(const std::string_view &s);
 
         void to_stream(std::ostream &stream) const override;
 

@@ -14,8 +14,14 @@
 #include <cwchar>
 #include <utility>  // std::move()
 
+std::string operator""_u(const char *str, std::size_t len)
+{
+    return core::str::to_unicode_text(std::string(str, len));
+}
+
 namespace core::str
 {
+
     void toupper(std::string *s, const std::locale &loc)
     {
         for (auto &c : *s)
@@ -518,8 +524,8 @@ namespace core::str
     }
 
     std::size_t substitute(const std::string &original,
-                    const std::string &replacement,
-                    std::string *string)
+                           const std::string &replacement,
+                           std::string *string)
     {
         std::size_t substitutions = 0;
         if (original.length() > 0)
@@ -569,6 +575,32 @@ namespace core::str
                                  substring.length(),
                                  substring) == 0;
         }
+    }
+
+    bool is_valid_symbol(const std::string &input)
+    {
+        return (
+            (input.size() > 0) &&
+            std::isalpha(static_cast<unsigned char>(input.front())) &&
+            std::all_of(
+                input.begin(),
+                input.end(),
+                [](char c) -> bool {
+                    return std::isalnum(static_cast<unsigned char>(c)) || (c == '_');
+                }));
+    }
+
+    bool is_unicode_text(const std::string &input)
+    {
+        return (input.compare(0, UNICODE_BOM.length(), UNICODE_BOM) == 0);
+    }
+
+    std::string to_unicode_text(
+        const std::string &input)
+    {
+        return is_unicode_text(input)
+                   ? input
+                   : (UNICODE_BOM + input);
     }
 
     std::string stem(const std::string &string,
