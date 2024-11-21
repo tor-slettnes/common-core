@@ -149,21 +149,6 @@ namespace core::argparse
             logging::default_threshold = level.value();
         }
 
-#ifndef _WIN32
-        this->add_flag(
-            {"--log-colors"},
-            "Use ANSI colors to indicate log level when logging to a TTY",
-            &this->log_colors,
-            core::settings->get("log colors", true).as_bool());
-#endif
-
-        this->add_flag(
-            {"--log-context", "--context"},
-            "Include context in log message: "
-            "log scope, thread ID, source file, line number, and method name.",
-            &this->log_context,
-            core::settings->get("log context", false).as_bool());
-
         this->add_opt<status::Level>(
             {"--log-default"},
             "LEVEL",
@@ -215,44 +200,6 @@ namespace core::argparse
 
         this->add_log_sinks();
     }
-
-    //     this->add_flag(
-    //         {"--log-to-syslog", "--syslog"},
-    //         "Log to syslog on UNIX, or Event Log on Windows. "
-    //         "Enabled by default is standard input is not a terminal.",
-    //         &this->log_to_syslog,
-    //         this->logsink_setting_enabled(SYSLOG_SINK, !interactive));
-
-    //     this->add_flag(
-    //         {"--log-to-stdout", "--stdout"},
-    //         "Log to standard output. Implicitly disables `--log-to-stderr`.",
-    //         &this->log_to_stdout,
-    //         this->logsink_setting_enabled(STDOUT_SINK, false));
-
-    //     this->add_flag(
-    //         {"--log-to-stderr", "--stderr"},
-    //         "Log to standard error. Enabled by default if standard input is a terminal.",
-    //         &this->log_to_stderr,
-    //         this->logsink_setting_enabled(STDERR_SINK, interactive));
-
-    //     this->add_flag(
-    //         {"--log-to-file"},
-    //         "Log messages to a plaintext `.log` file. ",
-    //         &this->log_to_file,
-    //         this->logsink_setting_enabled(FILE_SINK, false));
-
-    //     this->add_flag(
-    //         {"--log-to-json"},
-    //         "Log to a JSON file; one JSON-formatted log entry per line.",
-    //         &this->log_to_json,
-    //         this->logsink_setting_enabled(JSON_SINK, false));
-
-    //     this->add_flag(
-    //         {"--log-to-csv"},
-    //         "Log to a CSV file, with column headers matching plaintext log message fields.",
-    //         &this->log_to_csv,
-    //         this->logsink_setting_enabled(CSV_SINK, false));
-    // }
 
     void CommonOptions::add_log_scope_options()
     {
@@ -327,54 +274,6 @@ namespace core::argparse
             },
             factory->default_enabled(sink_settings));
     }
-
-    // void CommonOptions::register_loggers()
-    // {
-    //     if (this->log_to_syslog)
-    //     {
-    //         logging::message_dispatcher.add_sink(platform::logsink.get_shared());
-    //     }
-
-    //     if (this->log_to_stderr)
-    //     {
-    //         logging::message_dispatcher.add_sink(
-    //             logging::StreamSink::create_shared(STDERR_SINK, std::cerr));
-    //     }
-    //     else if (this->log_to_stdout)
-    //     {
-    //         logging::message_dispatcher.add_sink(
-    //             logging::StreamSink::create_shared(STDOUT_SINK, std::cout));
-    //     }
-
-    //     if (this->log_to_file)
-    //     {
-    //         logging::message_dispatcher.add_sink(
-    //             logging::LogFileSink::create_shared(FILE_SINK));
-    //     }
-
-    //     if (this->log_to_json)
-    //     {
-    //         logging::message_dispatcher.add_sink(
-    //             logging::JsonFileSink::create_shared(JSON_SINK));
-    //     }
-
-    //     if (this->log_to_csv)
-    //     {
-    //         logging::message_dispatcher.add_sink(
-    //             logging::CSVMessageSink::create_shared(CSV_SINK));
-    //     }
-    // }
-
-    // bool CommonOptions::logsink_setting_enabled(
-    //     const std::string &sink_name,
-    //     bool fallback) const
-    // {
-    //     return core::settings
-    //         ->get(logging::SETTING_LOG_SINKS)
-    //         .get(sink_name)
-    //         .get(SETTING_LOGSINK_ENABLED, fallback)
-    //         .as_bool();
-    // }
 
     std::optional<status::Level> CommonOptions::get_optional_level(
         const std::string &option,

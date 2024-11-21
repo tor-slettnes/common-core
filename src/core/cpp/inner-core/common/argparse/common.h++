@@ -88,8 +88,6 @@ namespace core::argparse
         std::string command;
         std::string identity;
         uint domain_id;
-        bool log_colors;
-        bool log_context;
         bool log_to_syslog;
         bool log_to_stdout;
         bool log_to_stderr;
