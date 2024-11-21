@@ -169,6 +169,11 @@ namespace core::argparse
             },
             this->get_optional_level("log all"));
 
+        this->add_void(
+            {"--log-none", "--quiet"},
+            "Disable logging completely.  Identical to \"--log-all=NONE\"",
+            std::bind(&logging::set_universal_threshold, status::Level::NONE));
+
         this->add_const(
             {"--trace"},
             "Shorthand for --log-default=TRACE.",
@@ -192,11 +197,6 @@ namespace core::argparse
             "Shorthand for --log-default=NOTICE.",
             &logging::default_threshold,
             status::Level::NOTICE);
-
-        this->add_void(
-            {"--log-none", "--quiet"},
-            "Disable logging completely.  Identical to \"--log-all=NONE\"",
-            std::bind(&logging::set_universal_threshold, status::Level::NONE));
 
         this->add_log_sinks();
     }

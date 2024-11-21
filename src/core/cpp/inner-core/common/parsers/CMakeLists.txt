@@ -5,15 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-target_sources(${TARGET} PRIVATE
-  basewriter.c++
-  reader.c++
-  writer.c++
-)
-
-add_subdirectory(custom-parser)
-
-if(BUILD_RAPIDJSON)
-  add_subdirectory(rapidjson)
-endif()
+add_subdirectory(common)
+add_subdirectory(json)
 

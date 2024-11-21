@@ -8,7 +8,7 @@
 #include "package-index-url.h++"
 #include "package-info.h++"
 #include "http-client.h++"
-#include "json/reader.h++"
+#include "parsers/json/reader.h++"
 
 namespace platform::upgrade::native
 {

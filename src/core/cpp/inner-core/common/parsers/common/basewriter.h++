@@ -11,7 +11,7 @@
 
 #include <fstream>
 
-namespace core::json
+namespace core::parsers
 {
     class BaseWriter
     {

@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-namespace core::json
+namespace core::parsers
 {
     class BaseReader
     {

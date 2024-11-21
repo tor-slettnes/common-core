@@ -9,7 +9,7 @@
 #include "asynclogsink.h++"
 #include "rotatingpath.h++"
 #include "factory.h++"
-#include "json/writer.h++"
+#include "parsers/json/writer.h++"
 #include "types/filesystem.h++"
 #include "types/create-shared.h++"
 

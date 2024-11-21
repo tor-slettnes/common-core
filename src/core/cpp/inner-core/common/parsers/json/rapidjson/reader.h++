@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "json/basereader.h++"
+#include "parsers/common/basereader.h++"
 
 #define RAPIDJSON_NO_SIZETYPEDEFINE
 namespace rapidjson
@@ -18,10 +18,10 @@ namespace rapidjson
 
 namespace core::json
 {
-    class RapidReader : public BaseReader
+    class RapidReader : public parsers::BaseReader
     {
         using This = RapidReader;
-        using Super = BaseReader;
+        using Super = parsers::BaseReader;
 
     public:
         RapidReader();

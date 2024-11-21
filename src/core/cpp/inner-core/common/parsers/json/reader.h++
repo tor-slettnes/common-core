@@ -1,27 +1,27 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file writer.h++
-/// @brief JSON writer implementations
+/// @file reader.h++
+/// @brief JSON parser implementations
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
-#include "custom-parser/writer.h++"
+#include "custom/reader.h++"
 
 #if BUILD_RAPIDJSON
-#include "rapidjson/writer.h++"
+#include "rapidjson/reader.h++"
 #endif
 
 namespace core::json
 {
-    using Writer = CustomWriter;
+    using Reader = CustomReader;
 
 #if BUILD_RAPIDJSON
-    using FastWriter = RapidWriter;
+    using FastReader = RapidReader;
 #else
-    using FastWriter = CustomWriter;
+    using FastReader = CustomReader;
 #endif
 
-    extern Writer writer;
-    extern FastWriter fast_writer;
+    extern Reader reader;
+    extern FastReader fast_reader;
 }  // namespace core::json

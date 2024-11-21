@@ -7,14 +7,14 @@
 
 #pragma once
 #include "builder.h++"
-#include "json/basewriter.h++"
+#include "parsers/common/basewriter.h++"
 
 namespace core::json
 {
-    class RapidWriter : public BaseWriter
+    class RapidWriter : public parsers::BaseWriter
     {
         using This = RapidWriter;
-        using Super = BaseWriter;
+        using Super = parsers::BaseWriter;
 
     public:
         RapidWriter();

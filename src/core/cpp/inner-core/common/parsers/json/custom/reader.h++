@@ -7,14 +7,14 @@
 
 #pragma once
 #include "tokenparser-base.h++"
-#include "json/basereader.h++"
+#include "parsers/common/basereader.h++"
 
 namespace core::json
 {
-    class CustomReader : public BaseReader
+    class CustomReader : public parsers::BaseReader
     {
         using This = CustomReader;
-        using Super = BaseReader;
+        using Super = parsers::BaseReader;
 
     public:
         CustomReader();

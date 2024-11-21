@@ -6,14 +6,14 @@
 //==============================================================================
 
 #pragma once
-#include "json/basewriter.h++"
+#include "parsers/common/basewriter.h++"
 
 namespace core::json
 {
-    class CustomWriter : public BaseWriter
+    class CustomWriter : public parsers::BaseWriter
     {
         using This = CustomWriter;
-        using Super = BaseWriter;
+        using Super = parsers::BaseWriter;
 
     public:
         CustomWriter();

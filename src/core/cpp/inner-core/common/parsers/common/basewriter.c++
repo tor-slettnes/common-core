@@ -9,7 +9,7 @@
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
 
-namespace core::json
+namespace core::parsers
 {
     BaseWriter::BaseWriter(const std::string &name)
         : name(name)

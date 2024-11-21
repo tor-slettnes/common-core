@@ -7,8 +7,8 @@
 
 #include "rest-client.h++"
 #include "logging/logging.h++"
-#include "json/reader.h++"
-#include "json/writer.h++"
+#include "parsers/json/reader.h++"
+#include "parsers/json/writer.h++"
 
 namespace core::http
 {

@@ -7,7 +7,7 @@
 
 #include "sqlite3.h++"
 #include "status/exceptions.h++"
-#include "json/writer.h++"
+#include "parsers/json/writer.h++"
 #include "chrono/date-time.h++"
 #include "types/value.h++"
 #include "logging/logging.h++"
