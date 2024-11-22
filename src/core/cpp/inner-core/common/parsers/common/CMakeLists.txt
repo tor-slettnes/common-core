@@ -6,6 +6,8 @@
 #===============================================================================
 
 target_sources(${TARGET} PRIVATE
+  parserinput-stream.c++
+  parserinput-string.c++
+  tokenparser-base.c++
   basewriter.c++
 )
-

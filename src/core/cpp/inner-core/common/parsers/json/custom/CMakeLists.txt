@@ -6,9 +6,7 @@
 #===============================================================================
 
 target_sources(${TARGET} PRIVATE
-  tokenparser-base.c++
-  tokenparser-stream.c++
-  tokenparser-string.c++
+  tokenparser-json.c++
   reader.c++
   writer.c++
 )

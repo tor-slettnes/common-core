@@ -110,9 +110,9 @@ namespace core
             return false;
         }
 
-        if (auto *kvmap = std::get_if<types::KeyValueMapPtr>(&value))
+        if (auto kvmap = value.get_kvmap())
         {
-            this->recursive_merge(**kvmap);
+            this->recursive_merge(*kvmap);
             return true;
         }
         else

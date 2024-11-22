@@ -46,8 +46,8 @@ CMAKE_TAG = $(BUILD_DIR)/Makefile
 
 ### Check for a target-specific toolchain and use that if available
 
-.PHONY: local
-local: test install
+.PHONY: install
+install: test local
 
 .PHONY: release
 release: test package
@@ -64,17 +64,17 @@ deb: build
 	@echo
 	@cpack --config "${BUILD_DIR}/CPackConfig.cmake" -B "${PACKAGE_DIR}" -G DEB
 
-.PHONY: install
-install: build
+.PHONY: local
+local: build
 	@echo
 	@echo "#############################################################"
-	@echo "Installing in ${INSTALL_DIR}"
+	@echo "Installing locally in ${INSTALL_DIR}"
 	@echo "#############################################################"
 	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR)
 
-.PHONY: install/strip
-install/strip: build
+.PHONY: local/strip
+local/strip: build
 	@echo
 	@echo "#############################################################"
 	@echo "Installing and stripping in ${INSTALL_DIR}"

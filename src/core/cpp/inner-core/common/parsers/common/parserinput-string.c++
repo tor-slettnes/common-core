@@ -1,34 +1,33 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file tokenparser-string.c++
-/// @brief JSON token iterator for string inputs
+/// @file parserinput-string.h++
+/// @brief Read tokens from strings
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "tokenparser-string.h++"
-#include "logging/logging.h++"
+#include "parserinput-string.h++"
 
-namespace core::json
+namespace core::parsers
 {
-    StringParser::StringParser(const std::string_view &string)
+    StringInput::StringInput(const std::string_view &string)
         : string_(string),
           pos_(0),
           token_pos_(string.size())
     {
     }
 
-    std::size_t StringParser::token_position() const
+    std::size_t StringInput::token_position() const
     {
         return this->token_pos_;
     }
 
-    std::string_view StringParser::token() const
+    std::string_view StringInput::token() const
     {
         return {this->string_.data() + this->token_pos_,
                 this->pos_ - this->token_pos_};
     }
 
-    int StringParser::getc()
+    int StringInput::getc()
     {
         if (this->pos_ < this->string_.size())
         {
@@ -40,7 +39,7 @@ namespace core::json
         }
     }
 
-    void StringParser::ungetc(int c)
+    void StringInput::ungetc(int c)
     {
         if (c != std::char_traits<char>::eof())
         {
@@ -48,9 +47,13 @@ namespace core::json
         }
     }
 
-    void StringParser::init_token(char c)
+    void StringInput::init_token(char c)
     {
         this->token_pos_ = this->pos_ - 1;
+    }
+
+    void StringInput::append_to_token(char c)
+    {
     }
 
 }  // namespace core::json

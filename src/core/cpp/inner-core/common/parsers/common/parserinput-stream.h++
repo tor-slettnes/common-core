@@ -1,19 +1,22 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file tokenparser-stream.h++
-/// @brief JSON token iterator for stream inputs
+/// @file parserinput-stream.h++
+/// @brief Read tokens from stream inputs
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
-#include "tokenparser-base.h++"
+#include "parserinput-base.h++"
 
-namespace core::json
+#include <iostream>
+#include <string>
+
+namespace core::parsers
 {
-    class StreamParser : public TokenParser
+    class StreamInput : public Input
     {
     public:
-        StreamParser(std::istream &stream);
+        StreamInput(std::istream &stream);
 
         std::size_t token_position() const override;
         std::string_view token() const override;
@@ -30,4 +33,4 @@ namespace core::json
         std::size_t token_size_;
         std::size_t token_capacity_;
     };
-}  // namespace core::json
+}  // namespace core::parser

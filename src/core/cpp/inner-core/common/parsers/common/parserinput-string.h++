@@ -1,19 +1,19 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file tokenparser-string.h++
-/// @brief JSON token iterator for string inputs
+/// @file parserinput-string.h++
+/// @brief Read tokens from strings
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once
-#include "tokenparser-base.h++"
+#include "parserinput-base.h++"
 
-namespace core::json
+namespace core::parsers
 {
-    class StringParser : public TokenParser
+    class StringInput : public Input
     {
     public:
-        StringParser(const std::string_view &string);
+        StringInput(const std::string_view &string);
 
         std::size_t token_position() const override;
         std::string_view token() const override;
@@ -21,9 +21,10 @@ namespace core::json
         int getc() override;
         void ungetc(int c) override;
         void init_token(char c) override;
+        void append_to_token(char c) override;
 
     private:
         std::string_view string_;
         std::size_t pos_, token_pos_;
     };
-}  // namespace core::json
+}  // namespace core::parsing
