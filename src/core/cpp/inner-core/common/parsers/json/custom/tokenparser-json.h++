@@ -1,7 +1,7 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file tokenparser-base.h++
-/// @brief Iterate over interesting tokens in a string
+/// @file tokenparser-json.h++
+/// @brief Iterate over interesting JSON tokens
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -15,12 +15,17 @@ namespace core::json
         using This = JsonParser;
         using Super = parsers::TokenParser;
 
+        using SymbolMapping =  std::unordered_map<std::string_view, TokenPair>;
+
     public:
         JsonParser(parsers::Input::ptr input);
         TokenPair next_token() override;
         TokenIndex token_index(int c) const override;
 
+    protected:
+        TokenPair parse_line_comment() override;
+
     private:
-        static SymbolMapping symbol_map;
+        static const SymbolMapping symbol_map;
     };
 }  // namespace core::json

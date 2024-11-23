@@ -18,10 +18,8 @@ namespace core::parsers
     const int eof = std::char_traits<char>::eof();
 
     TokenParser::TokenParser(parsers::Input::ptr input,
-                             const CommentStyles &comment_styles,
                              const SymbolMapping &symbol_map)
         : input(input),
-          comment_styles(comment_styles),
           symbol_map(symbol_map)
     {
     }
@@ -30,10 +28,6 @@ namespace core::parsers
                                                 const TokenMask &endtokens)
     {
         TokenPair tp = this->next_token();
-        while (tp.first == TI_LINE_COMMENT)
-        {
-            tp = this->next_token();
-        }
 
         if (expected & tp.first)
         {
@@ -64,27 +58,49 @@ namespace core::parsers
         }
     }
 
+    TokenParser::TokenPair TokenParser::parse_spaces()
+    {
+        int c = '\0';
+        while(this->token_index(c) == TI_SPACE);
+        {
+            c = this->input->getc();
+        }
+
+        this->input->ungetc(c);
+        return {TI_SPACE, this->input->token()};
+    }
+
     TokenParser::TokenPair TokenParser::parse_number()
     {
-        int c;
+        int c = '\0';
         bool got_sign = (*this->input->token().begin() == '-');
         bool got_real = (*this->input->token().begin() == '.');
         bool got_hex = false;
 
-        while (this->token_index(c = this->input->getc()) == TI_NONE)
+        for (bool is_numeric = true; is_numeric;)
         {
-            this->input->append_to_token(c);
-            switch (c)
+            c = this->input->getc();
+            switch(c)
             {
+            case '0' ... '9':
+                this->input->append_to_token(c);
+                break;
+
             case '.':
             case 'e':
             case 'E':
                 got_real = true;
+                this->input->append_to_token(c);
                 break;
 
             case 'x':
             case 'X':
                 got_hex = true;
+                this->input->append_to_token(c);
+                break;
+
+            default:
+                is_numeric = false;
                 break;
             }
         }
@@ -111,13 +127,7 @@ namespace core::parsers
 
     TokenParser::TokenPair TokenParser::parse_symbol()
     {
-        int c;
-        while (this->token_index(c = this->input->getc()) == TI_NONE)
-        {
-            this->input->append_to_token(c);
-        }
-        this->input->ungetc(c);
-
+        this->capture_identifier();
         try
         {
             return this->symbol_map.at(this->input->token());
@@ -139,16 +149,9 @@ namespace core::parsers
             }
             this->input->append_to_token(c);
         }
-
-        for (const std::string_view &candidate : this->comment_styles)
-        {
-            if (this->input->token().compare(0, candidate.size(), candidate.data()) == 0)
-            {
-                return {TI_LINE_COMMENT, {}};
-            }
-        }
-        return {TI_INVALID, {}};
+        return {TI_LINE_COMMENT, {}};
     }
+
 
     TokenParser::TokenPair TokenParser::parse_string(char quote, bool raw)
     {
@@ -175,7 +178,7 @@ namespace core::parsers
             }
             else if (c == quote)
             {
-                return {TI_STRING, string};
+                return {TI_QUOTED_STRING, string};
             }
 
             if (++size >= capacity)
@@ -187,6 +190,31 @@ namespace core::parsers
         }
 
         return {TI_END, string};
+    }
+
+
+    void TokenParser::capture_identifier()
+    {
+        int c = '\0';
+        for(bool is_symbolic = true; is_symbolic;)
+        {
+            c = this->input->getc();
+            switch (c)
+            {
+            case 'a'...'z':
+            case 'A'...'Z':
+            case '0'...'9':
+            case '-':
+            case '_':
+                this->input->append_to_token(c);
+                break;
+
+            default:
+                is_symbolic = false;
+                break;
+            }
+        }
+        this->input->ungetc(c);
     }
 
     char TokenParser::escape(char c)

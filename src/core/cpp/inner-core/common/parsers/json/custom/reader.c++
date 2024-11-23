@@ -66,18 +66,20 @@ namespace core::json
     types::KeyValueMapPtr CustomReader::parse_object(JsonParser *parser)
     {
         auto map = types::KeyValueMap::create_shared();
+        TokenParser::TokenPair tp = parser->next_of(TokenParser::TI_QUOTED_STRING,
+                                                    TokenParser::TI_MAP_CLOSE);
 
-        for (TokenParser::TokenPair tp = parser->next_of(TokenParser::TI_STRING, TokenParser::TI_OBJECT_CLOSE);
-             tp.first != TokenParser::TI_NONE;
-             tp = parser->next_of(TokenParser::TI_STRING))
+        while (tp.first != TokenParser::TI_NONE)
         {
             parser->next_of(TokenParser::TI_COLON);
             map->insert_or_assign(tp.second.as_string(), This::parse_value(parser));
 
-            if (!parser->next_of(TokenParser::TI_COMMA, TokenParser::TI_OBJECT_CLOSE).first)
+            if (!parser->next_of(TokenParser::TI_COMMA, TokenParser::TI_MAP_CLOSE).first)
             {
                 break;
             }
+
+            tp = parser->next_of(TokenParser::TI_QUOTED_STRING);
         }
 
         return map;
@@ -87,12 +89,12 @@ namespace core::json
     {
         auto list = types::ValueList::create_shared();
 
-        for (TokenParser::TokenPair tp = This::next_value(parser, {TokenParser::TI_ARRAY_CLOSE});
+        for (TokenParser::TokenPair tp = This::next_value(parser, {TokenParser::TI_LIST_CLOSE});
              tp.first != TokenParser::TI_NONE;
              tp = This::next_value(parser))
         {
             list->push_back(std::move(tp.second));
-            if (!parser->next_of(TokenParser::TI_COMMA, TokenParser::TI_ARRAY_CLOSE).first)
+            if (!parser->next_of(TokenParser::TI_COMMA, TokenParser::TI_LIST_CLOSE).first)
             {
                 break;
             }
@@ -106,20 +108,20 @@ namespace core::json
         const TokenParser::TokenMask &endtokens)
     {
         static const std::uint64_t value_mask =
-            (TokenParser::TI_OBJECT_OPEN |
-             TokenParser::TI_ARRAY_OPEN |
+            (TokenParser::TI_MAP_OPEN |
+             TokenParser::TI_LIST_OPEN |
              TokenParser::TI_NULLVALUE |
              TokenParser::TI_BOOL |
              TokenParser::TI_NUMERIC |
-             TokenParser::TI_STRING);
+             TokenParser::TI_QUOTED_STRING);
 
         auto tp = parser->next_of(value_mask, endtokens);
         switch (tp.first)
         {
-        case TokenParser::TI_OBJECT_OPEN:
+        case TokenParser::TI_MAP_OPEN:
             return {tp.first, This::parse_object(parser)};
 
-        case TokenParser::TI_ARRAY_OPEN:
+        case TokenParser::TI_LIST_OPEN:
             return {tp.first, This::parse_array(parser)};
 
         default:

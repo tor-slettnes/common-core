@@ -1,7 +1,7 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file tokenparser-base.c++
-/// @brief Iterate over interesting tokens in a string
+/// @file tokenparser-json.c++
+/// @brief Iterate over interesting JSON tokens
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -19,60 +19,46 @@ namespace core::json
     const int eof = std::char_traits<char>::eof();
 
     JsonParser::JsonParser(parsers::Input::ptr input)
-        : Super(input,                   // input
-                {"#", "//"},             // comment_syles
-                JsonParser::symbol_map)  // symbol_map
+        : Super(input, JsonParser::symbol_map)
     {
     }
 
     parsers::TokenParser::TokenPair JsonParser::next_token()
     {
-        int c = this->input->getc();
-
-        while (TokenIndex ti = this->token_index(c))
+        while (int c = this->input->getc())
         {
-            if (ti == TI_SPACE)
+            this->input->init_token(c);
+            switch (TokenIndex ti = this->token_index(c))
             {
-                c = this->input->getc();
-            }
-            else
-            {
-                this->input->init_token(c);
-                return {ti, {}};
+            case TI_SPACE:
+                this->parse_spaces();
+                continue;
+
+            case TI_LINE_COMMENT:
+                this->parse_line_comment();
+                continue;
+
+            case TI_QUOTED_STRING:
+                return this->parse_string(c);
+
+            case TI_NUMERIC:
+                return this->parse_number();
+
+            case TI_SYMBOL:
+                return this->parse_symbol();
+
+            default:
+                return {ti, this->input->token()};
             }
         }
 
-        this->input->init_token(c);
-        switch (c)
-        {
-        case '#':
-        case '/':
-            return this->parse_line_comment();
-
-        case '"':
-        case '\'':
-            return this->parse_string(c);
-
-        case '-':
-        case '0' ... '9':
-            return this->parse_number();
-
-        case 'a' ... 'z':
-        case 'A' ... 'Z':
-            return this->parse_symbol();
-
-        default:
-            return {TI_INVALID, {}};
-        }
+        return {TI_NONE, {}};
     }
 
     parsers::TokenParser::TokenIndex JsonParser::token_index(int c) const
     {
         switch (c)
         {
-        case std::char_traits<char>::eof():
-            return TI_END;
-
         case ' ':
         case '\r':
         case '\n':
@@ -81,17 +67,33 @@ namespace core::json
         case '\f':
             return TI_SPACE;
 
+        case '#':
+        case '/':
+            return TI_LINE_COMMENT;
+
+        case '"':
+        case '\'':
+            return TI_QUOTED_STRING;
+
+        case '-':
+        case '0' ... '9':
+            return TI_NUMERIC;
+
+        case 'a' ... 'z':
+        case 'A' ... 'Z':
+            return TI_SYMBOL;
+
         case '{':
-            return TI_OBJECT_OPEN;
+            return TI_MAP_OPEN;
 
         case '}':
-            return TI_OBJECT_CLOSE;
+            return TI_MAP_CLOSE;
 
         case '[':
-            return TI_ARRAY_OPEN;
+            return TI_LIST_OPEN;
 
         case ']':
-            return TI_ARRAY_CLOSE;
+            return TI_LIST_CLOSE;
 
         case ',':
             return TI_COMMA;
@@ -99,12 +101,30 @@ namespace core::json
         case ':':
             return TI_COLON;
 
+        case std::char_traits<char>::eof():
+            return TI_END;
+
         default:
             return TI_NONE;
         }
     }
 
-    parsers::TokenParser::SymbolMapping JsonParser::symbol_map = {
+    parsers::TokenParser::TokenPair JsonParser::parse_line_comment()
+    {
+        TokenPair tp = Super::parse_line_comment();
+
+        if ((this->input->token().compare(0, 2, "//") == 0) ||
+            (this->input->token().compare(0, 1, "#") == 0))
+        {
+            return tp;
+        }
+        else
+        {
+            return {TI_INVALID, {}};
+        }
+    }
+
+    const parsers::TokenParser::SymbolMapping JsonParser::symbol_map = {
         {"null", {TI_NULLVALUE, types::Value()}},
         {"false", {TI_BOOL, types::Value(false)}},
         {"true", {TI_BOOL, types::Value(true)}},
