@@ -13,7 +13,7 @@ namespace core::logging
     //--------------------------------------------------------------------------
     /// \class SinkFactory
 
-    SinkFactory::SinkFactory(const std::string &sink_type,
+    SinkFactory::SinkFactory(const SinkType &sink_type,
                              const std::string &description,
                              const CreatorFunction &creator,
                              DefaultOption default_option)
@@ -30,8 +30,8 @@ namespace core::logging
         sink_registry.erase(this->sink_type());
     }
 
-    Sink::ptr SinkFactory::create(const SinkID &sink_id,
-                                  const types::KeyValueMap &settings)
+    Sink::ptr SinkFactory::create_sink(const SinkID &sink_id,
+                                       const types::KeyValueMap &settings)
     {
         Sink::ptr sink = this->creator()(sink_id);
         sink->set_sink_type(this->sink_type());
@@ -39,7 +39,7 @@ namespace core::logging
         return sink;
     }
 
-    std::string SinkFactory::sink_type() const
+    SinkType SinkFactory::sink_type() const
     {
         return this->sink_type_;
     }

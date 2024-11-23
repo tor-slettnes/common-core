@@ -34,10 +34,10 @@ namespace core::logging
 
         virtual ~SinkFactory();
 
-        Sink::ptr create(const SinkID &sink_id,
-                         const types::KeyValueMap &settings);
+        Sink::ptr create_sink(const SinkID &sink_id,
+                              const types::KeyValueMap &settings);
 
-        std::string sink_type() const;
+        SinkType sink_type() const;
         std::string description() const;
         bool default_enabled(const types::KeyValueMap &settings) const;
 
@@ -45,11 +45,11 @@ namespace core::logging
         CreatorFunction creator() const;
 
     private:
-        std::string sink_type_;
+        SinkType sink_type_;
         std::string description_;
         CreatorFunction creator_;
         DefaultOption default_option_;
     };
 
-    inline types::ValueMap<std::string, SinkFactory *> sink_registry;
+    inline types::ValueMap<SinkType, SinkFactory *> sink_registry;
 }  // namespace core::logging

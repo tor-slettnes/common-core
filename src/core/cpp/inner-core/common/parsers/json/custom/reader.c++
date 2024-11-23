@@ -8,11 +8,8 @@
 #include "reader.h++"
 #include "parsers/common/parserinput-stream.h++"
 #include "parsers/common/parserinput-string.h++"
-#include "string/misc.h++"
-#include "status/exceptions.h++"
-#include "logging/logging.h++"
 
-#include <stdlib.h>
+//#include <stdlib.h>
 
 #include <fstream>
 
@@ -40,14 +37,14 @@ namespace core::json
         }
     }
 
-    types::Value CustomReader::read_stream(std::istream &stream) const
-    {
-        return This::parse_input(std::make_shared<parsers::StreamInput>(stream));
-    }
-
     types::Value CustomReader::read_stream(std::istream &&stream) const
     {
         return this->read_stream(stream);
+    }
+
+    types::Value CustomReader::read_stream(std::istream &stream) const
+    {
+        return This::parse_input(std::make_shared<parsers::StreamInput>(stream));
     }
 
     types::Value CustomReader::parse_input(const parsers::Input::ptr &input)

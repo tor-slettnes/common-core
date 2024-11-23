@@ -47,6 +47,11 @@ namespace core::parsers
         }
     }
 
+    void StringInput::init_token()
+    {
+        this->token_pos_ = this->pos_;
+    }
+
     void StringInput::init_token(char c)
     {
         this->token_pos_ = this->pos_ - 1;

@@ -23,8 +23,8 @@ namespace core::json
 
         types::Value decoded(const std::string_view &string) const override;
         types::Value read_file(const fs::path &path) const override;
-        types::Value read_stream(std::istream &stream) const override;
         types::Value read_stream(std::istream &&stream) const override;
+        types::Value read_stream(std::istream &stream) const override;
 
     private:
         static types::Value parse_input(const parsers::Input::ptr &input);

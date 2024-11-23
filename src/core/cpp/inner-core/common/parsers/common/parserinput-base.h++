@@ -21,6 +21,7 @@ namespace core::parsers
         virtual std::string_view token() const = 0;
         virtual int getc() = 0;
         virtual void ungetc(int c) = 0;
+        virtual void init_token() = 0;
         virtual void init_token(char c) = 0;
         virtual void append_to_token(char c) = 0;
     };

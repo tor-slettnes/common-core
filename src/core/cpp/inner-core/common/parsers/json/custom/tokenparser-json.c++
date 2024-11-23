@@ -23,6 +23,40 @@ namespace core::json
     {
     }
 
+    parsers::TokenParser::TokenPair JsonParser::next_of(const TokenMask &expected,
+                                                        const TokenMask &endtokens)
+    {
+        TokenPair tp = this->next_token();
+
+        if (expected & tp.first)
+        {
+            return tp;
+        }
+        else if (endtokens & tp.first)
+        {
+            return TokenPair(TI_NONE, {});
+        }
+        else if (tp.first == TI_END)
+        {
+            throwf(exception::MissingArgument,
+                   "Missing token at end of input");
+        }
+        else if (tp.first == TI_INVALID)
+        {
+            throwf(exception::InvalidArgument,
+                   "Invalid input at position %d: %s",
+                   this->input->token_position(),
+                   this->input->token());
+        }
+        else
+        {
+            throwf(exception::InvalidArgument,
+                   "Unexpected token at position %d: %s",
+                   this->input->token_position(),
+                   this->input->token());
+        }
+    }
+
     parsers::TokenParser::TokenPair JsonParser::next_token()
     {
         while (int c = this->input->getc())
@@ -31,6 +65,7 @@ namespace core::json
             switch (TokenIndex ti = this->token_index(c))
             {
             case TI_SPACE:
+            case TI_ENDLINE:
                 this->parse_spaces();
                 continue;
 
@@ -60,12 +95,12 @@ namespace core::json
         switch (c)
         {
         case ' ':
+        case '\t':
+            return TI_SPACE;
+
         case '\r':
         case '\n':
-        case '\t':
-        case '\v':
-        case '\f':
-            return TI_SPACE;
+            return TI_ENDLINE;
 
         case '#':
         case '/':

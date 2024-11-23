@@ -20,6 +20,7 @@ namespace core::parsers
 
         int getc() override;
         void ungetc(int c) override;
+        void init_token() override;
         void init_token(char c) override;
         void append_to_token(char c) override;
 

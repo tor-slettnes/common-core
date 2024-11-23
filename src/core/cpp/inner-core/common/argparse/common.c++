@@ -269,7 +269,7 @@ namespace core::argparse
                 if (enabled)
                 {
                     logging::message_dispatcher.add_sink(
-                        factory->create(sink_id, sink_settings));
+                        factory->create_sink(sink_id, sink_settings));
                 }
             },
             factory->default_enabled(sink_settings));

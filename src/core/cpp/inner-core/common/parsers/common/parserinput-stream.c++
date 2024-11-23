@@ -13,12 +13,11 @@ namespace core::parsers
     StreamInput::StreamInput(std::istream &stream)
         : stream_(stream),
           token_position_(0),
-          token_size_(0),
-          token_capacity_(64)
+          token_size_(0)
     {
         // Enough to contain most miscellaneous content;
         // expanded by powers of two when parsing longer strings.
-        this->token_.reserve(this->token_capacity_);
+        this->token_.reserve(64);
     }
 
     std::size_t StreamInput::token_position() const
@@ -41,22 +40,20 @@ namespace core::parsers
         this->stream_.unget();
     }
 
+    void StreamInput::init_token()
+    {
+        this->token_.clear();
+        this->token_position_ = this->stream_.tellg();
+    }
+
     void StreamInput::init_token(char c)
     {
         this->token_ = c;
-        this->token_size_ = 1;
-        this->token_capacity_ = this->token_.capacity();
         this->token_position_ = this->stream_.tellg() - std::basic_ios<char>::pos_type(1);
     }
 
     void StreamInput::append_to_token(char c)
     {
-        if (++this->token_size_ > this->token_capacity_)
-        {
-            // TODO: Test performance with this logic in place vs. without.
-            this->token_capacity_ = std::max(std::size_t(64), 2 * this->token_capacity_);
-            this->token_.reserve(this->token_capacity_);
-        }
         this->token_.push_back(c);
     }
 

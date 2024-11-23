@@ -51,6 +51,14 @@ namespace logger::native
     bool Logger::remove_sink(
         const SinkID &id)
     {
+        if (core::logging::sink_registry.get(id))
+        {
+            throw core::exception::InvalidArgument(
+                "Requested Sink ID is reserved for default log sink of "
+                "the corresponding type and cannot be removed.",
+                id);
+        }
+
         return core::logging::message_dispatcher.remove_sink(id);
     }
 
@@ -110,35 +118,47 @@ namespace logger::native
 
     core::logging::Sink::ptr Logger::new_sink(const SinkSpec &spec) const
     {
-        if (core::logging::SinkFactory *factory = core::logging::sink_registry.get(spec.sink_id, {}))
+        if (core::logging::sink_registry.get(spec.sink_id))
         {
-            core::logging::Sink::ptr sink = factory->create(spec.sink_id, {});
-
-            if (auto logsink = std::dynamic_pointer_cast<core::logging::LogSink>(sink))
-            {
-                logsink->set_threshold(spec.min_level);
-                logsink->set_contract_id(spec.contract_id);
-            }
-
-            if (auto rotating_path = std::dynamic_pointer_cast<core::logging::RotatingPath>(sink))
-            {
-                rotating_path->set_filename_template(spec.filename_template);
-                rotating_path->set_rotation_interval(spec.rotation_interval);
-                rotating_path->set_use_local_time(spec.use_local_time);
-            }
-
-            if (auto tabular_data = std::dynamic_pointer_cast<core::logging::TabularData>(sink))
-            {
-                tabular_data->set_columns(spec.columns);
-            }
-            return sink;
+            throw core::exception::InvalidArgument(
+                "Requested Sink ID is reserved for default log sink of the corresponding type.",
+                spec.sink_id);
+        }
+        else if (auto *factory = core::logging::sink_registry.get(spec.sink_type))
+        {
+            return this->create_sink(factory, spec);
         }
         else
         {
-            throw core::exception::InvalidArgument(
+            throw core::exception::OutOfRange(
                 "Unsupported sink type",
                 spec.sink_type);
         }
+    }
+
+    core::logging::Sink::ptr Logger::create_sink(core::logging::SinkFactory *factory,
+                                                 const SinkSpec &spec) const
+    {
+        core::logging::Sink::ptr sink = factory->create_sink(spec.sink_id, {});
+
+        if (auto logsink = std::dynamic_pointer_cast<core::logging::LogSink>(sink))
+        {
+            logsink->set_threshold(spec.min_level);
+            logsink->set_contract_id(spec.contract_id);
+        }
+
+        if (auto rotating_path = std::dynamic_pointer_cast<core::logging::RotatingPath>(sink))
+        {
+            rotating_path->set_filename_template(spec.filename_template);
+            rotating_path->set_rotation_interval(spec.rotation_interval);
+            rotating_path->set_use_local_time(spec.use_local_time);
+        }
+
+        if (auto tabular_data = std::dynamic_pointer_cast<core::logging::TabularData>(sink))
+        {
+            tabular_data->set_columns(spec.columns);
+        }
+        return sink;
     }
 
     SinkSpec Logger::sink_spec(const core::logging::Sink::ptr &sink) const

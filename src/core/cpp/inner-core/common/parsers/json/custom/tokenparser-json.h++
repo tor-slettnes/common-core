@@ -19,10 +19,13 @@ namespace core::json
 
     public:
         JsonParser(parsers::Input::ptr input);
-        TokenPair next_token() override;
-        TokenIndex token_index(int c) const override;
+
+        TokenPair next_of(const TokenMask &expected,
+                          const TokenMask &endtokens = TI_NONE);
 
     protected:
+        TokenPair next_token();
+        TokenIndex token_index(int c) const;
         TokenPair parse_line_comment() override;
 
     private:

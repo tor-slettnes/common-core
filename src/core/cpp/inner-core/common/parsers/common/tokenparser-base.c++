@@ -24,48 +24,14 @@ namespace core::parsers
     {
     }
 
-    TokenParser::TokenPair TokenParser::next_of(const TokenMask &expected,
-                                                const TokenMask &endtokens)
-    {
-        TokenPair tp = this->next_token();
-
-        if (expected & tp.first)
-        {
-            return tp;
-        }
-        else if (endtokens & tp.first)
-        {
-            return TokenPair(TI_NONE, {});
-        }
-        else if (tp.first == TI_END)
-        {
-            throwf(exception::MissingArgument,
-                   "Missing token at end of input");
-        }
-        else if (tp.first == TI_INVALID)
-        {
-            throwf(exception::InvalidArgument,
-                   "Invalid input at position %d: %s",
-                   this->input->token_position(),
-                   this->input->token());
-        }
-        else
-        {
-            throwf(exception::InvalidArgument,
-                   "Unexpected token at position %d: %s",
-                   this->input->token_position(),
-                   this->input->token());
-        }
-    }
-
     TokenParser::TokenPair TokenParser::parse_spaces()
     {
-        int c = '\0';
-        while(this->token_index(c) == TI_SPACE);
+        int c = this->input->getc();
+        while (std::isspace(c))
         {
+            this->input->append_to_token(c);
             c = this->input->getc();
         }
-
         this->input->ungetc(c);
         return {TI_SPACE, this->input->token()};
     }
@@ -80,7 +46,7 @@ namespace core::parsers
         for (bool is_numeric = true; is_numeric;)
         {
             c = this->input->getc();
-            switch(c)
+            switch (c)
             {
             case '0' ... '9':
                 this->input->append_to_token(c);
@@ -152,7 +118,6 @@ namespace core::parsers
         return {TI_LINE_COMMENT, {}};
     }
 
-
     TokenParser::TokenPair TokenParser::parse_string(char quote, bool raw)
     {
         int c = '\0';
@@ -192,18 +157,17 @@ namespace core::parsers
         return {TI_END, string};
     }
 
-
     void TokenParser::capture_identifier()
     {
         int c = '\0';
-        for(bool is_symbolic = true; is_symbolic;)
+        for (bool is_symbolic = true; is_symbolic;)
         {
             c = this->input->getc();
             switch (c)
             {
-            case 'a'...'z':
-            case 'A'...'Z':
-            case '0'...'9':
+            case 'a' ... 'z':
+            case 'A' ... 'Z':
+            case '0' ... '9':
             case '-':
             case '_':
                 this->input->append_to_token(c);

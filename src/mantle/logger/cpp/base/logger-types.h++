@@ -16,10 +16,10 @@
 
 namespace logger
 {
-    using SinkID = std::string;
-    using SinkIDs = std::vector<std::string>;
-    using SinkType = std::string;
-    using SinkTypes = std::vector<std::string>;
+    using SinkID = core::logging::SinkID;
+    using SinkIDs = std::vector<SinkID>;
+    using SinkType = core::logging::SinkType;
+    using SinkTypes = std::vector<SinkType>;
     using ContractID = core::status::Event::ContractID;
 
     struct SinkSpec

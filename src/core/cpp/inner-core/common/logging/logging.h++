@@ -68,6 +68,8 @@
 #include "message/builder.h++"
 #include "dispatchers/sync-dispatcher.h++"
 
+#include <cassert>
+
 //==============================================================================
 // Wrapper macros for generating & logging a message in one step.  We use macros
 // rather than function templates in order to preserve source context for the
@@ -88,13 +90,13 @@
         lineno,                                                             \
         function)
 
-#define DEFAULT_LOG_MESSAGE(level)  \
-    CUSTOM_LOG_MESSAGE(         \
-        level,                  \
-        log_scope,              \
-        core::dt::Clock::now(), \
-        __builtin_FILE(),       \
-        __builtin_LINE(),       \
+#define DEFAULT_LOG_MESSAGE(level) \
+    CUSTOM_LOG_MESSAGE(            \
+        level,                     \
+        log_scope,                 \
+        core::dt::Clock::now(),    \
+        __builtin_FILE(),          \
+        __builtin_LINE(),          \
         __builtin_FUNCTION())
 
 #define LOG_MESSAGE(level, ...) \
@@ -131,7 +133,7 @@
     if (!(cond))                                                                       \
     {                                                                                  \
         LOGF_MESSAGE(core::status::Level::FATAL, "Assertion failed: "s + __VA_ARGS__); \
-        std::exit(-1);                                                                 \
+        std::abort();                                                                  \
     }
 #else
 #define assertf(cond, ...)
