@@ -9,6 +9,7 @@
 //#include "string/misc.h++"
 #include "parsers/json/reader.h++"
 #include "parsers/json/writer.h++"
+#include "parsers/yaml/reader.h++"
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
 
@@ -18,6 +19,9 @@
 
 namespace core
 {
+    constexpr auto JSON_SUFFIX = ".json";
+    constexpr auto YAML_SUFFIX = ".yaml";
+
     SettingsStore::SettingsStore(const types::PathList &filenames,
                                  const types::PathList &directories)
         : composite_(false),
@@ -52,29 +56,44 @@ namespace core
                              bool update_filenames)
     {
         bool success = false;
-        fs::path extendedname = platform::path->extended_filename(filename, ".json");
         if (update_filenames)
         {
-            this->filenames_.push_back(extendedname);
+            this->filenames_.push_back(filename);
         }
 
-        if (extendedname.is_absolute())
+        if (filename.is_absolute())
         {
-            success = this->load_from(extendedname);
+            success = this->load_from(filename);
         }
         else
         {
-            bool secondary_folder = false;
+            std::vector<fs::path> extended_names;
+            if (!filename.extension().empty())
+            {
+                extended_names = {filename};
+            }
+            else
+            {
+                extended_names = {
+                    platform::path->extended_filename(filename, JSON_SUFFIX),
+                    platform::path->extended_filename(filename, YAML_SUFFIX),
+                };
+            }
+
+            bool secondary = false;
             // Iterate through directory list,
             // giving preference to values from earlier file occurences
             for (const fs::path &folder : this->directories_)
             {
-                if (this->load_from(folder / extendedname))
+                for (const fs::path &extendedname : extended_names)
                 {
-                    this->composite_ |= secondary_folder;
-                    success = true;
+                    if (this->load_from(folder / extendedname))
+                    {
+                        this->composite_ |= secondary;
+                        success = true;
+                        secondary = true;
+                    }
                 }
-                secondary_folder = true;
             }
         }
 
@@ -98,7 +117,18 @@ namespace core
 
         try
         {
-            value = json::reader.read_file(abspath);
+            if (abspath.extension() == JSON_SUFFIX)
+            {
+                value = json::reader.read_file(abspath);
+            }
+            else if (abspath.extension() == YAML_SUFFIX)
+            {
+                value = yaml::reader.read_file(abspath);
+            }
+            else
+            {
+                return false;
+            }
         }
         catch (const fs::filesystem_error &)
         {
@@ -106,7 +136,6 @@ namespace core
         }
         catch (const std::exception &e)
         {
-            logf_warning("Failed to parse settings file %s: %s", abspath, e);
             return false;
         }
 
@@ -128,7 +157,8 @@ namespace core
 
     void SettingsStore::save_to(const fs::path &filename, bool delta_only) const
     {
-        fs::path path = platform::path->config_folder() / filename;
+        fs::path path = platform::path->config_folder() /
+                        platform::path->extended_filename(filename, JSON_SUFFIX);
 
         // NOTE: there is no guarantee that `path` is located within `configFolder()`,
         // as `filename` may have been absolute.
@@ -138,9 +168,9 @@ namespace core
         if (delta_only && this->composite_)
         {
             json::writer.write_file(
-                path,                                             // path
-                this->recursive_delta(this->default_settings()),  // value
-                true);                                            // pretty
+                path,                                            // path
+                this->recursive_delta(this->default_settings()), // value
+                true);                                           // pretty
         }
         else
         {
@@ -241,4 +271,4 @@ namespace core
         return result;
     }
 
-}  // namespace core
+} // namespace core

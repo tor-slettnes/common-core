@@ -23,6 +23,15 @@ REQS=(
     # Fast JSON parser
     rapidjson-dev
 
+    # YAML parser
+    libyaml-dev
+
+    # SQLite3
+    libsqlite3-dev
+
+    # mDNS zero configuration via Avahi
+    libavahi-client-dev
+
     # GoogleTest
     libgtest-dev locales-all
 
@@ -33,7 +42,7 @@ REQS=(
     protobuf-compiler-grpc libgrpc++-dev
 
     # Send/receive messages over ZeroMQ
-    cppzmq-dev
+    libzmq3-dev
 
     # LibCURL
     libcurl4-gnutls-dev

@@ -23,7 +23,7 @@ If you are reading this text directly on your system, you have already completed
 
   - Create or add to the file `$HOME/.gitconfig`:
 
-    ```
+    ```ini
     [user]
       name = Your Name
       email = you@email.com
@@ -31,7 +31,7 @@ If you are reading this text directly on your system, you have already completed
       helper = store
     ```
 
-    (Replace `Your Name` and `your.name` as appropriate).
+    (Replace `Your Name` and `you@email.com` as appropriate).
 
   - Create or add to the file `$HOME/.git-credentials`:
 

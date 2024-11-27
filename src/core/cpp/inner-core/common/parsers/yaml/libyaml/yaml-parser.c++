@@ -46,7 +46,7 @@ namespace core::yaml
         }
         else
         {
-            throw std::system_error(errno, std::generic_category(), path.string());
+            throw exception::FilesystemError(errno, path.string());
         }
     }
 
