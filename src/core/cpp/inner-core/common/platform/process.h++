@@ -531,9 +531,9 @@ namespace core::platform
             PID pid,
             bool checkstatus = false) const = 0;
 
-    protected:
+    public:
         template <class T, std::enable_if_t<std::is_integral_v<T>, bool> = true>
-        inline T checkstatus(T status, const std::string &context = {}) const
+        static T checkstatus(T status, const std::string &context = {})
         {
             if (status < 0)
             {
@@ -542,13 +542,14 @@ namespace core::platform
             return status;
         }
 
-        inline FILE *checkstatus(FILE *fp, const std::string &context = {}) const
+        template <class PT>
+        static PT *checkstatus(PT *pointer, const std::string &context = {})
         {
-            if (fp == NULL)
+            if (pointer == nullptr)
             {
                 throw std::system_error(errno, std::system_category(), context);
             }
-            return fp;
+            return pointer;
         }
     };
 

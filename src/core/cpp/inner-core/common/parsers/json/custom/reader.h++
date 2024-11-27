@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "tokenparser-json.h++"
+#include "tokenparser.h++"
 #include "parsers/common/basereader.h++"
 
 namespace core::json
@@ -16,23 +16,21 @@ namespace core::json
         using This = CustomReader;
         using Super = parsers::BaseReader;
 
-        using TokenParser = parsers::TokenParser;
-
     public:
         CustomReader();
 
-        types::Value decoded(const std::string_view &string) const override;
-        types::Value read_file(const fs::path &path) const override;
-        types::Value read_stream(std::istream &&stream) const override;
+    public:
+        types::Value decoded(const std::string_view &text) const override;
         types::Value read_stream(std::istream &stream) const override;
+        using Super::read_stream;
 
     private:
         static types::Value parse_input(const parsers::Input::ptr &input);
-        static types::Value parse_value(JsonParser *parser);
-        static types::KeyValueMapPtr parse_object(JsonParser *parser);
-        static types::ValueListPtr parse_array(JsonParser *parser);
+        static types::Value parse_value(TokenParser *parser);
+        static types::KeyValueMapPtr parse_object(TokenParser *parser);
+        static types::ValueListPtr parse_array(TokenParser *parser);
         static TokenParser::TokenPair next_value(
-            JsonParser *parser,
+            TokenParser *parser,
             const TokenParser::TokenMask &endtokens = TokenParser::TI_NONE);
     };
 }  // namespace core::json

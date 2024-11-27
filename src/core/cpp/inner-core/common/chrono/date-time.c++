@@ -456,19 +456,20 @@ namespace core
             return to_duration(ts.tv_sec, ts.tv_nsec);
         }
 
-        Duration to_duration(const std::string &string, const std::string &format)
+        Duration to_duration(const std::string_view &input, const std::string &format)
         {
-            return to_timepoint(string, false, format).time_since_epoch();
+            return to_timepoint(input, false, format).time_since_epoch();
         }
 
-        TimePoint js_to_timepoint(const std::string &js_string,
+        TimePoint js_to_timepoint(const std::string_view &input,
                                   const TimePoint &fallback)
         {
             static const std::regex rx(
                 "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(\\.\\d+)?Z?");
-            std::smatch match;
 
-            if (std::regex_match(js_string, match, rx))
+            std::match_results<std::string_view::iterator> match;
+
+            if (std::regex_match(input.begin(), input.end(), match, rx))
             {
                 return core::dt::to_timepoint(
                     str::convert_to<std::int32_t>(match.str(1)),   // year
@@ -488,32 +489,30 @@ namespace core
             }
         }
 
-        TimePoint to_timepoint(const std::string &string,
+        TimePoint to_timepoint(const std::string_view &input,
                                bool local,
                                const std::string &format,
                                const TimePoint &fallback)
         {
             std::tm dt = {};
-            std::stringstream ss(string);
-            std::string s = ss.str();
 
             // First try to interpret the string as seconds since epoch
             try
             {
-                double seconds = str::convert_to<double>(s);
+                double seconds = str::convert_to<double>(input);
                 return to_timepoint(seconds);
             }
             catch (const std::invalid_argument &)
             {
                 // Next, try JavaScript format (with a 'T' separating date and time)
-                if (const char *end = strptime(s.data(), JS_FORMAT, &dt))
+                if (const char *end = strptime(input.data(), JS_FORMAT, &dt))
                 {
                     local = (*end != 'Z');
                     return to_timepoint(dt, local);
                 }
 
                 // Next, try "default" format (with an @ separator between date and time)
-                else if (const char *end = strptime(s.data(), DEFAULT_FORMAT, &dt))
+                else if (const char *end = strptime(input.data(), DEFAULT_FORMAT, &dt))
                 {
                     local = (*end != 'Z');
                     return to_timepoint(dt, local);

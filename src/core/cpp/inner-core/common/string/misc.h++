@@ -270,15 +270,18 @@ namespace core::str
 
     /// Surround in qutation marks
     [[nodiscard]] std::string quoted(
-        const std::string &input);
+        const std::string_view &input);
 
     /// Remove any surrounding quotation marks
+    [[nodiscard]] std::string unquoted(
+        const std::string_view &input);
+
     [[nodiscard]] std::string unquoted(
         const std::string &input);
 
     /// Translate embedded escape sequences
     [[nodiscard]] std::string escaped(
-        const std::string &input,
+        const std::string_view &input,
         const std::unordered_set<char> &extra_escapes = {});
 
     void escape(
@@ -287,7 +290,7 @@ namespace core::str
         const std::unordered_set<char> &extra_escapes = {});
 
     [[nodiscard]] std::string unescaped(
-        const std::string &input);
+        const std::string_view &input);
 
     void unescape(
         std::ostream &out,

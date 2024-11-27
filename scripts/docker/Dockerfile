@@ -11,6 +11,7 @@ RUN apt-get install -y \
     git                     \
     uuid-dev                \
     rapidjson-dev           \
+    libyaml-dev             \
     libsqlite3-dev          \
     libavahi-client-dev     \
     libzmq3-dev             \

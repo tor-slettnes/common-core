@@ -114,7 +114,7 @@ namespace core::types
         return encoded;
     }
 
-    ByteVector ByteVector::from_base64(const std::string &input)
+    ByteVector ByteVector::from_base64(const std::string_view &input)
     {
         if (input.length() % 4 > 0)
         {

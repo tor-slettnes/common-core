@@ -5,6 +5,10 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(common)
-add_subdirectory(json)
-add_subdirectory(yaml)
+if(BUILD_YAML)
+  target_sources(${TARGET} PRIVATE
+    reader.c++
+  )
+
+  add_subdirectory(libyaml)
+endif()

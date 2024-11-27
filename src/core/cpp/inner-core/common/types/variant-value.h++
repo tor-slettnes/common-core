@@ -156,11 +156,11 @@ namespace core::types
         ///  - `%base64string`    becomes a ByteVector instance
         ///  - `2020-01-01T00:00:00.000` becomes a dt::TimePoint instance
         ///  - `00:00:00.000`    becomes a dt::Duration instance
-        static Value from_literal(const std::string &literal);
+        static Value from_literal(const std::string_view &literal);
 
     protected:
         /// Determine value type from a literal representation
-        static ValueType literal_type(const std::string &literal);
+        static ValueType literal_type(const std::string_view &literal);
 
     public:
         // Convencience wrapper around std::get<T>(*this)

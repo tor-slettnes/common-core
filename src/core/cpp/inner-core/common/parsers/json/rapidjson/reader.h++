@@ -26,17 +26,16 @@ namespace core::json
     public:
         RapidReader();
 
-        // types::Value decoded_with_comments(const std::string &string) const;
-        types::Value decoded(const std::string_view &string) const override;
+        types::Value decoded(const std::string_view &text) const override;
         types::Value read_file(const fs::path &path) const override;
         types::Value read_stream(std::istream &stream) const override;
-        types::Value read_stream(std::istream &&stream) const override;
+        using Super::read_stream;
 
     private:
         static std::string read_text_from_file(const fs::path &path);
         // static std::string uncomment(const std::string &text);
-        static types::Value decodeValue(const ::rapidjson::Value &value);
-        static types::ValueListPtr decodeArray(const ::rapidjson::Value &jarray);
-        static types::KeyValueMapPtr decodeObject(const ::rapidjson::Value &jobject);
+        static types::Value decode_value(const ::rapidjson::Value &value);
+        static types::ValueListPtr decode_array(const ::rapidjson::Value &jarray);
+        static types::KeyValueMapPtr decode_object(const ::rapidjson::Value &jobject);
     };
 }  // namespace core::json

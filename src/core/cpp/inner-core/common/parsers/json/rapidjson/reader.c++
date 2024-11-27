@@ -19,11 +19,6 @@ namespace core::json
     {
     }
 
-    // types::Value RapidReader::decoded_with_comments(const std::string &text) const
-    // {
-    //     return RapidReader::decoded(RapidReader::uncomment(text));
-    // }
-
     types::Value RapidReader::decoded(const std::string_view &text) const
     {
         ::rapidjson::Document doc;
@@ -34,7 +29,7 @@ namespace core::json
             std::string msg(GetParseError_En(doc.GetParseError()));
             throw exception::FailedPostcondition(msg, {{"offset", offset}});
         }
-        return RapidReader::decodeValue(doc);
+        return This::decode_value(doc);
     }
 
     types::Value RapidReader::read_file(const fs::path &path) const
@@ -57,11 +52,6 @@ namespace core::json
             stream.read(string.data(), string.size());
             return this->decoded(string);
         }
-    }
-
-    types::Value RapidReader::read_stream(std::istream &&stream) const
-    {
-        return this->read_stream(stream);
     }
 
     std::string RapidReader::read_text_from_file(const fs::path &path)
@@ -109,7 +99,7 @@ namespace core::json
     //     return str::join(parts, "");
     // }
 
-    types::Value RapidReader::decodeValue(const ::rapidjson::Value &jv)
+    types::Value RapidReader::decode_value(const ::rapidjson::Value &jv)
     {
         switch (jv.GetType())
         {
@@ -123,10 +113,10 @@ namespace core::json
             return true;
 
         case ::rapidjson::Type::kObjectType:
-            return This::decodeObject(jv);
+            return This::decode_object(jv);
 
         case ::rapidjson::Type::kArrayType:
-            return This::decodeArray(jv);
+            return This::decode_array(jv);
 
         case ::rapidjson::Type::kStringType:
             return std::string(jv.GetString(), jv.GetStringLength());
@@ -159,23 +149,23 @@ namespace core::json
         }
     }
 
-    types::ValueListPtr RapidReader::decodeArray(const ::rapidjson::Value &jarray)
+    types::ValueListPtr RapidReader::decode_array(const ::rapidjson::Value &jarray)
     {
         auto list = types::ValueList::create_shared();
         for (auto it = jarray.Begin(); it != jarray.End(); it++)
         {
-            list->push_back(This::decodeValue(*it));
+            list->push_back(This::decode_value(*it));
         }
         return list;
     }
 
-    types::KeyValueMapPtr RapidReader::decodeObject(const ::rapidjson::Value &jobject)
+    types::KeyValueMapPtr RapidReader::decode_object(const ::rapidjson::Value &jobject)
     {
         auto kvmap = types::KeyValueMap::create_shared();
         for (auto &&item : jobject.GetObject())
         {
             kvmap->insert_or_assign(item.name.GetString(),
-                                    This::decodeValue(item.value));
+                                    This::decode_value(item.value));
         }
         return kvmap;
     }

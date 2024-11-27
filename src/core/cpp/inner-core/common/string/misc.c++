@@ -278,11 +278,45 @@ namespace core::str
         return join(vector.begin(), vector.end(), delimiter, keep_empties, quoted);
     }
 
-    std::string quoted(const std::string &input)
+    std::string quoted(const std::string_view &input)
     {
         std::stringstream out;
         out << std::quoted(input);
         return out.str();
+    }
+
+    std::string unquoted(const std::string_view &input)
+    {
+        if ((input.size() >= 2) && (input.front() == '"') && (input.back() == '"'))
+        {
+            std::string out;
+            char escape = '\0';
+            out.reserve(input.size() - 2);
+            for (char c: input)
+            {
+                if ((escape != '\0') && (c != '"'))
+                {
+                    escape = '\0';
+                    out.push_back(escape);
+                    out.push_back(c);
+                }
+                else if (c == '\\')
+                {
+                    escape = c;
+                }
+                else
+                {
+                    out.push_back(c);
+                    escape = '\0';
+                }
+            }
+            out.shrink_to_fit();
+            return out;
+        }
+        else
+        {
+            return std::string(input);
+        }
     }
 
     std::string unquoted(const std::string &input)
@@ -293,7 +327,7 @@ namespace core::str
     }
 
     std::string escaped(
-        const std::string &input,
+        const std::string_view &input,
         const std::unordered_set<char> &extra_escapes)
     {
         std::stringstream out;
@@ -344,7 +378,7 @@ namespace core::str
         out.flags(original_flags);
     }
 
-    std::string unescaped(const std::string &input)
+    std::string unescaped(const std::string_view &input)
     {
         std::stringstream out;
         unescape(out, input);

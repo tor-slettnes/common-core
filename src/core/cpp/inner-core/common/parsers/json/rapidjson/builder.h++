@@ -51,10 +51,10 @@ namespace core::json
     public:
         RapidBuilder(std::ostream &stream);
         void write_stream(const types::Value &value) override;
-        bool encodeValue(const types::Value &value);
-        bool encodeArray(const types::ValueList &list);
-        bool encodeObject(const types::KeyValueMap &kvmap);
-        bool encodeObject(const types::TaggedValueList &tvlist);
+        bool encode_value(const types::Value &value);
+        bool encode_array(const types::ValueList &list);
+        bool encode_object(const types::KeyValueMap &kvmap);
+        bool encode_object(const types::TaggedValueList &tvlist);
 
     private:
         rapidjson::OStreamWrapper streamwrapper;

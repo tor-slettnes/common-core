@@ -93,7 +93,7 @@ namespace core::types
         ///     A new ByteVector instance
         /// @exception exception::InvalidArgument
         ///     Invalid Base64 data encountered
-        static ByteVector from_base64(const std::string &string);
+        static ByteVector from_base64(const std::string_view &string);
 
         /// @brief
         ///     Encode data in this ByteVector instance as a hexacecimal string.

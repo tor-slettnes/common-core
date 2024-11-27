@@ -1,49 +1,79 @@
 /// -*- c++ -*-
 //==============================================================================
 /// @file reader.c++
-/// @brief Read JSON file, possibly with comments
+/// @brief Parse YAML content
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #include "reader.h++"
-#include "parserinput-stream.h++"
-#include "parserinput-string.h++"
+#include "parsers/common/parserinput-stream.h++"
+#include "parsers/common/parserinput-string.h++"
 
-#include <fstream>
-
-namespace core::json
+namespace core::yaml
 {
-    CustomReader::CustomReader()
-        : Super("JSON::CustomReader")
+    Reader::Reader()
+        : Super("YAML::Reader"),
+          indentation(0),
+          indentation_stack({indentation})
     {
     }
 
-    types::Value CustomReader::decoded(const std::string_view &text) const
+    types::Value Reader::decoded(const std::string_view &string) const
     {
         return This::parse_input(std::make_shared<parsers::StringInput>(text));
     }
 
-    types::Value CustomReader::read_stream(std::istream &stream) const
+    types::Value Reader::read_file(const fs::path &path) const
+    {
+        if (std::ifstream is{path})
+        {
+            return this->read_stream(is);
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    types::Value Reader::read_stream(std::istream &&stream) const
+    {
+        return this->read_stream(stream);
+    }
+
+    types::Value Reader::read_stream(std::istream &stream) const
     {
         return This::parse_input(std::make_shared<parsers::StreamInput>(stream));
     }
 
-    types::Value CustomReader::parse_input(const parsers::Input::ptr &input)
+    types::Value Reader::parse_input(const parsers::Input::ptr &input)
     {
-        TokenParser parser(input);
+        YamlParser parser(input);
         types::Value value = This::parse_value(&parser);
         parser.next_of(TokenParser::TI_END);
         return value;
     }
 
-    types::Value CustomReader::parse_value(TokenParser *parser)
+    types::Value Reader::parse_value(YamlParser *parser)
     {
         return This::next_value(parser).second;
     }
 
-    types::KeyValueMapPtr CustomReader::parse_object(TokenParser *parser)
+    types::KeyValueMapPtr Reader::parse_document(YamlParser *parser)
     {
         auto map = types::KeyValueMap::create_shared();
+        TokenParser::TokenPair tp = parser->next_of(
+            TokenParser::TI_INTRO,
+            TokenParser::TI_INDENTATION);
+
+        while (tp.first != TokenParser::TI_NONE)
+        {
+            tp = parser->next_of(TokenParser::TI_INDENTATION,
+                                 TokenParser::TI_SYMBOL);
+        }
+
+
+
+
         TokenParser::TokenPair tp = parser->next_of(TokenParser::TI_QUOTED_STRING,
                                                     TokenParser::TI_MAP_CLOSE);
 
@@ -63,7 +93,7 @@ namespace core::json
         return map;
     }
 
-    types::ValueListPtr CustomReader::parse_array(TokenParser *parser)
+    types::ValueListPtr Reader::parse_array(YamlParser *parser)
     {
         auto list = types::ValueList::create_shared();
 
@@ -81,8 +111,8 @@ namespace core::json
         return list;
     }
 
-    TokenParser::TokenPair CustomReader::next_value(
-        TokenParser *parser,
+    parsers::TokenParser::TokenPair Reader::next_value(
+        YamlParser *parser,
         const TokenParser::TokenMask &endtokens)
     {
         static const std::uint64_t value_mask =
@@ -107,4 +137,22 @@ namespace core::json
         }
     }
 
-}  // namespace core::json
+    void Reader::update_indendation(uint indentation)
+    {
+        this->indentation = indentation;
+
+        if (indentation > this->indentation_stack.back())
+        {
+            this->indentation_stack.push_back(indentation);
+        }
+        else
+        {
+            while (indentation < this->indentation_stack.back())
+            {
+                this->indentation_stack.pop_back();
+            }
+            if (indentation...)
+        }
+    }
+
+}  // namespace core::yaml

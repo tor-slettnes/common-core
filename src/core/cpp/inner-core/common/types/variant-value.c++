@@ -1034,7 +1034,7 @@ namespace core::types
         }
     }
 
-    Value Value::from_literal(const std::string &literal)
+    Value Value::from_literal(const std::string_view &literal)
     {
         switch (Value::literal_type(literal))
         {
@@ -1063,7 +1063,7 @@ namespace core::types
             return str::unquoted(literal);
 
         case ValueType::BYTEVECTOR:
-            return ByteVector::from_base64(literal.substr(1));
+            return ByteVector::from_base64(str::unquoted(literal).substr(1));
 
         case ValueType::TIMEPOINT:
             return dt::to_timepoint(literal);
@@ -1076,7 +1076,7 @@ namespace core::types
         }
     }
 
-    ValueType Value::literal_type(const std::string &literal)
+    ValueType Value::literal_type(const std::string_view &literal)
     {
         static const std::vector<std::pair<ValueType, std::regex>> rxlist = {
             {ValueType::NONE, std::regex("^(null|NULL|nullptr)?$")},

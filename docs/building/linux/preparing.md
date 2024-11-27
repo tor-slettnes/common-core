@@ -39,6 +39,24 @@ to run the following commands to install the required dependencies.
   sudo apt install rapidjson-dev
   ```
 
+* Yaml parser (CMake option `BUILD_YAML`)
+
+  ```bash
+  sudo apt install rapidjson-dev
+  ```
+
+* SQLite3 database (e.g. for logging) (CMake option `BUILD_SQLITE3`)
+
+  ```bash
+  sudo apt install rapidjson-dev
+  ```
+
+* Avahi mDNS library (CMake option `BUILD_DNSSD_AVAHI`)
+
+  ```bash
+  sudo apt install rapidjson-dev
+  ```
+
 * Google Testing framework (CMake option `BUILD_TESTING`):
 
   ```bash

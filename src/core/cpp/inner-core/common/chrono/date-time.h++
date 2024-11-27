@@ -291,15 +291,15 @@ namespace core
         Duration to_duration(time_t seconds, long nanoseconds = 0);
 
         /// Convert from string representation (`HH:MM:SS.sss`) to Duration
-        Duration to_duration(const std::string &string,
+        Duration to_duration(const std::string_view &string,
                              const std::string &format = DEFAULT_DURATION_FORMAT);
 
         /// Convert from JavaScript time string (`YYYY-MM-DDTHH:MM:SS.sssZ`) to TimePoint
-        TimePoint js_to_timepoint(const std::string &js_string,
+        TimePoint js_to_timepoint(const std::string_view &input,
                                   const TimePoint &fallback = {});
 
         /// Convert from string representation (`YYYY-MM-DD?HH:MM:SS.sss`) to TimePoint
-        TimePoint to_timepoint(const std::string &s,
+        TimePoint to_timepoint(const std::string_view &s,
                                bool local = true,
                                const std::string &format = DEFAULT_FORMAT,
                                const TimePoint &fallback = {});

@@ -18,12 +18,12 @@ namespace core::json
     template <class WriterType>
     void RapidBuilder<WriterType>::write_stream(const types::Value &value)
     {
-        this->encodeValue(value);
+        this->encode_value(value);
         this->stream << std::endl;
     }
 
     template <class WriterType>
-    bool RapidBuilder<WriterType>::encodeValue(const types::Value &value)
+    bool RapidBuilder<WriterType>::encode_value(const types::Value &value)
     {
         static bool warned_tv = false;
 
@@ -53,23 +53,23 @@ namespace core::json
             return this->writer.Double(value.as_real());
 
         case types::ValueType::COMPLEX:
-            return this->encodeObject(value.as_kvmap());
+            return this->encode_object(value.as_kvmap());
 
         case types::ValueType::BYTEVECTOR:
             return this->writer.String(value.get<types::ByteVector>().to_base64());
 
         case types::ValueType::VALUELIST:
-            return this->encodeArray(*value.get_valuelist());
+            return this->encode_array(*value.get_valuelist());
 
         case types::ValueType::KVMAP:
-            return this->encodeObject(*value.get_kvmap());
+            return this->encode_object(*value.get_kvmap());
 
         case types::ValueType::TVLIST:
             if (types::TaggedValueListPtr tvlist = value.get_tvlist())
             {
                 if (tvlist->mappable())
                 {
-                    return this->encodeObject(*tvlist);
+                    return this->encode_object(*tvlist);
                 }
                 else
                 {
@@ -81,7 +81,7 @@ namespace core::json
                     //         value);
                     //     warned_tv = true;
                     // }
-                    return this->encodeArray(tvlist->values());
+                    return this->encode_array(tvlist->values());
                 }
             }
             else
@@ -98,31 +98,31 @@ namespace core::json
     }
 
     template <class WriterType>
-    bool RapidBuilder<WriterType>::encodeArray(const types::ValueList &list)
+    bool RapidBuilder<WriterType>::encode_array(const types::ValueList &list)
     {
         this->writer.StartArray();
         for (const types::Value &v : list)
         {
-            this->encodeValue(v);
+            this->encode_value(v);
         }
         return this->writer.EndArray();
     }
 
     template <class WriterType>
-    bool RapidBuilder<WriterType>::encodeObject(const types::KeyValueMap &kvmap)
+    bool RapidBuilder<WriterType>::encode_object(const types::KeyValueMap &kvmap)
     {
         this->writer.StartObject();
 
         for (const auto &[k, v] : kvmap)
         {
             this->writer.String(k);
-            this->encodeValue(v);
+            this->encode_value(v);
         }
         return this->writer.EndObject();
     }
 
     template <class WriterType>
-    bool RapidBuilder<WriterType>::encodeObject(const types::TaggedValueList &tvlist)
+    bool RapidBuilder<WriterType>::encode_object(const types::TaggedValueList &tvlist)
     {
         this->writer.StartObject();
 
@@ -131,7 +131,7 @@ namespace core::json
             if (t)
             {
                 this->writer.String(*t);
-                this->encodeValue(v);
+                this->encode_value(v);
             }
         }
         return this->writer.EndObject();
