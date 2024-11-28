@@ -1,0 +1,21 @@
+## -*- yaml -*-
+#===============================================================================
+## @file demoserver.yaml
+## @brief Settings for `demoserver`
+## @author Tor Slettnes <tor@slett.net>
+#===============================================================================
+
+# Include source context in text logs
+log context: false
+
+# Enable gRPC service
+enable grpc: true
+
+# Enable DDS service
+enable dds : true
+
+# Enable ZMQ service
+enable zmq : true
+
+# DDS domain ID
+dds domain id: 0

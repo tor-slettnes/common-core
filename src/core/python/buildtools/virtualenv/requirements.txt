@@ -2,3 +2,5 @@ pyinstaller
 grpcio
 protobuf
 zmq
+pyyaml
+

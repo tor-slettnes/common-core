@@ -57,7 +57,7 @@ class Endpoint (object):
         pass
 
     def settings_file(self, product_name):
-        return "%s-endpoints-%s.json"%(self.messaging_flavor.lower(), product_name.lower())
+        return "%s-endpoints-%s"%(self.messaging_flavor.lower(), product_name.lower())
 
     def setting(self,
                 key     : str,
@@ -65,4 +65,4 @@ class Endpoint (object):
         try:
             return self.settings[self.channel_name][key]
         except (TypeError, KeyError):
-            return self.settings.get("*", {}).get(key, default)
+            return self.settings.get("_default_", {}).get(key, default)

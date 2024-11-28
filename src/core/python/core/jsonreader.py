@@ -5,13 +5,14 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+from importlib.resources.abc import Traversable
+from typing import Sequence
 import re
 import json
-import typing
 import pathlib
-import os.path
 
-FilePath = str
+FilePath  = str | Traversable
+FilePaths = Sequence[FilePath]
 
 class JsonReaderError (ValueError):
     '''Failed to parse JSON file %(filename)r: %(error)s'''
@@ -24,55 +25,24 @@ class JsonReaderError (ValueError):
         return self.__doc__%dict(filename=self.filename, error=self.error)
 
 
-class JsonReader (dict):
+class JsonReader:
     '''A specialized dictionary loaded from and saved to JSON file(s).
     Any script-style or C++-style comments (prefixed with either `#` or `//`)
     are stripped away before JSON parsing.
     '''
 
-    def load_file(self, filepath):
-        '''Load settings from the specified file.
-
-        @param[in] filepath
-            Settings file to load.
-        '''
-
-        self.clear()
-        self.update(self.read_file(filepath))
-
-
-    def merge_file(self, filepath : FilePath):
-        '''Merge in settings from the specified file.
-
-        @param[in] filepath
-            Settings file to load. The name may be absolute or relative.
-        '''
-        JsonReader._recursive_merge(self, self.read_file(filepath))
-
-
     @classmethod
-    def _recursive_merge(cls,
-                         base   : dict,
-                         update : dict):
-
-        for (key, value) in update.items():
-            basevalue = base.get(key)
-
-            if isinstance(value, dict) and isinstance(basevalue, dict):
-                JsonReader._recursive_merge(basevalue, value)
-            elif isinstance(value, (list, tuple)) and isinstance(basevalue, (list, tuple)):
-                base[key].extend(value)
-            else:
-                base[key] = value
-
-    @classmethod
-    def read_file(cls, filepath):
+    def read_file(cls, filepath: FilePath) -> dict:
         if isinstance(filepath, str):
             filepath = pathlib.Path(filepath)
 
         with filepath.open() as fp:
             text = fp.read()
 
+        return cls.parse_text(text)
+
+    @classmethod
+    def parse_text(cls, text: str) -> dict:
         text = cls._remove_comments(text)
         try:
             return json.loads(text)
@@ -81,7 +51,7 @@ class JsonReader (dict):
 
 
     @classmethod
-    def _remove_comments(cls, text):
+    def _remove_comments(cls, text: str):
         return re.sub(cls._jsonComments, r"\3\4", text)
 
     _jsonComments = re.compile(

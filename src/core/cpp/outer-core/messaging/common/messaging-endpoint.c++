@@ -85,7 +85,7 @@ namespace core::messaging
         {
             return value;
         }
-        else if (auto value = this->settings()->get("*").get(key))
+        else if (auto value = this->settings()->get("_default_").get(key))
         {
             return value;
         }
@@ -97,7 +97,7 @@ namespace core::messaging
 
     fs::path Endpoint::settings_file(const std::string &product) const
     {
-        return str::format("%,s-endpoints-%,s.json",
+        return str::format("%,s-endpoints-%,s",
                            this->messaging_flavor(),
                            product);
     }

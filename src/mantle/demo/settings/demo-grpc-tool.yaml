@@ -1,0 +1,9 @@
+# -*- yaml -*-
+#===============================================================================
+## @file demo-grpc-tool.yaml
+## @brief Settings for `demo-grpc-tool` utility
+## @author Tor Slettnes <tor@slett.net>
+#===============================================================================
+
+log default: INFO
+log context: true

@@ -1,0 +1,9 @@
+#  -*- yaml -*-
+#==============================================================================
+## @file demo-dds-tool.yaml
+## @brief Settings for `demo-dds-tool` utility
+## @author Tor Slettnes <tor@slett.net>
+#==============================================================================
+
+log default: INFO
+log context: true

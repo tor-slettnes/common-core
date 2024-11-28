@@ -25,7 +25,7 @@ set(PRODUCT "platform"
   CACHE STRING "Product name. Used to select build configurations and components")
 
 set(PROJECT "common-core"
-  CACHE STRING "Top-level project name, e.g. to look up some run-time service settings from corresponding .json filenames")
+  CACHE STRING "Top-level project name. Used to look up some run-time service settings")
 
 set(DESCRIPTION "Cross-platform development framework for embedded microservice applications"
   CACHE STRING "Project description")

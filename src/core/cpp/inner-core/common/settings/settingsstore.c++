@@ -134,8 +134,16 @@ namespace core
         {
             return false;
         }
+        catch (const std::system_error &)
+        {
+            return false;
+        }
         catch (const std::exception &e)
         {
+            str::format(std::cerr,
+                        "\nFailed to load settings from %s: %s\n",
+                        abspath,
+                        e);
             return false;
         }
 

@@ -1,0 +1,60 @@
+# -*- yaml -*-
+#==============================================================================
+## @file grpc-services-common.yaml
+## @brief gRPC service settings for core applications
+## @author Tor Slettnes <tor@slett.net>
+#==============================================================================
+
+# Default endpoints for common applications. In addtiion to these, settings for
+# product-specific applications can be found in
+# `grpc-services-PRODUCT_NAME.yaml`, where PRODUCT_NAME is provided at build
+# time.
+#
+# The following attributes are used to construct host/interface addresses
+# per gRPC endpoint.
+#  - `host`             : Host address to which clients connect
+#  - `interface`        : Interface address to which servers bind
+#  - `port`             : Destination port number
+#  - `max request size` : Custom max send/receive size for client/server
+#  - `max reply size`   : Custom max receive/send size for client/server
+#
+# The syntax for the user-provided service address for both the C++ and
+# Python gRPC wrappers is as follows:
+#   [HOST][:PORT]
+#
+# * If HOST and/or PORT is explicitly provided it takes precendence.
+#
+# * If either is missing, default values are provided below per gRPC
+#   service, identified by the service name provided in the corresponding
+#   `.proto` file.  Note that a single server process (daemon) may host
+#   multiple gRPC services, in which case the service endpoints defined
+#   below may overlap.
+#
+# * If still missing, the compile-time default is the IPv6 loopback address
+#   "[::1]:8080" for clients, and "[::]:8080" for servers.
+
+# Default settings for any service
+_default_:
+  host      : "localhost"       # Connect to localhost by default
+  interface : "[::]"            # Listen on all interfaces by default
+  dnssd type: "_grpc._tcp"      # DNS Service Discovery type
+
+
+# Settings for specific services. Service names are from .proto files.
+Demo:
+  port     : 3366               # D-E-M-O on T9 keypad
+
+SysConfig:
+  port     : 7528               # P-L-A-T on T9 keypad
+
+NetConfig:
+  port     : 7528               # P-L-A-T on T9 keypad
+
+VirtualFileSystem:
+  port     : 7528               # P-L-A-T on T9 keypad
+
+Upgrade:
+  port     : 7528               # P-L-A-T on T9 keypad
+
+Logger:
+  port     : 5644               # L-O-G-G on T9 keypad

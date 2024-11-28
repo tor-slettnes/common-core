@@ -27,13 +27,14 @@ RUN apt-get install -y \
     pkgconf                 \
     protobuf-compiler       \
     protobuf-compiler-grpc  \
-    python3-cffi-backend    \
-    python3-dev             \
     python3-virtualenv      \
     python3-build           \
     python3-hatchling       \
+    python3-cffi-backend    \
+    python3-yaml            \
     python3-grpcio          \
     python3-protobuf        \
+    python3-dev             \
     python3-zmq
 
 # Duplicate external account

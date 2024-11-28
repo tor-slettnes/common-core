@@ -1,0 +1,39 @@
+# -*- yaml -*-
+#===============================================================================
+## @file vfs.json
+## @brief Virtual Filesystem settings
+## @author Tor Slettnes <tor@slett.net>
+#===============================================================================
+
+
+removable:
+  root: "/mnt/removable"
+  # "preexec" : "echo \"PRE-EXEC FOR REMOVABLE CONTEXT ${name}\""
+  # "postexec" : "echo \"POST-EXEC FOR REMOVABLE CONTEXT ${name}\""
+  writable: true
+
+partition:
+  exclude-types: ["c12a7328-f81f-11d2-ba4b-00a0c93ec93b"]
+
+contexts:
+  root:
+    root     : "/"
+    writable : false
+    title    : "Filesystem"
+
+  temp:
+    root     : "/tmp"
+    writable : true
+    title    : "Temporary Files"
+
+  logs:
+    root     : "/var/logs"
+    # preexec  : "echo 'PRE-EXEC HOOK FOR LOGS CONTEXT'"
+    # postexec : "echo 'POST-EXEC HOOK FOR LOGS CONTEXT'"
+    writable : false
+    title    : "System Logs"
+
+  releases:
+    root     : "/var/cache/cc-releases"
+    writable : true
+    title    : "Common Core Software Release Packages"

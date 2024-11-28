@@ -10,7 +10,6 @@
 #include "demo-provider.h++"
 #include "application/init.h++"
 #include "logging/logging.h++"
-#include "parsers/yaml/reader.h++"
 
 int main(int argc, char **argv)
 {
