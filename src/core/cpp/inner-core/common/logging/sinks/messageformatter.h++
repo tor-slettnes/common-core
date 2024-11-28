@@ -23,10 +23,13 @@ namespace core::logging
 
     class MessageFormatter
     {
+        using This = MessageFormatter;
+
     protected:
         MessageFormatter();
 
     public:
+        static void set_all_include_context(bool include_context);
         void set_include_context(bool include_context);
         bool include_context() const;
         bool is_valid_message(const core::types::Loggable &item) const;
@@ -40,6 +43,7 @@ namespace core::logging
         std::string formatted(const status::Event::ptr &event) const;
 
     private:
+        static std::optional<bool> all_include_context_;
         bool include_context_;
     };
 }  // namespace core::logging

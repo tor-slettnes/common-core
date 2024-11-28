@@ -63,13 +63,13 @@ private:
     void set_wireless_allowed();
     void set_wireless_enabled();
 
+private:
+    std::string signal_handle;
+
 public:
     bool local;
     std::string command;
     std::vector<std::string> args;
-
-private:
-    std::string signal_handle;
 };
 
 extern std::unique_ptr<Options> options;

@@ -28,36 +28,38 @@ namespace core::logging
         return it->second;
     }
 
+    void Scope::set_default_threshold(status::Level threshold)
+    {
+        This::default_threshold = threshold;
+    }
+
+    void Scope::set_universal_threshold(status::Level threshold)
+    {
+        This::universal_threshold = threshold;
+    }
+
+    void Scope::clear_universal_threshold()
+    {
+        This::universal_threshold.reset();
+    }
+
     status::Level Scope::effective_threshold() const
     {
-        return (this->threshold != status::Level::NONE) ? this->threshold : default_threshold;
+        return This::universal_threshold          ? This::universal_threshold.value()
+               : (this->threshold != Level::NONE) ? this->threshold
+                                                  : This::default_threshold;
     }
 
     bool Scope::is_applicable(status::Level level) const
     {
-        return ((level >= this->effective_threshold()) &&
-                (this->effective_threshold() != status::Level::NONE));
+        status::Level threshold = this->effective_threshold();
+        return (level >= threshold) && (threshold != Level::NONE);
     }
 
     //==========================================================================
     // Threshold
 
-    void set_default_threshold(status::Level threshold)
-    {
-        logging::default_threshold = threshold;
-    }
+    status::Level Scope::default_threshold = status::Level::DEBUG;
+    std::optional<status::Level> Scope::universal_threshold = {};
 
-    void set_universal_threshold(status::Level threshold)
-    {
-        for (auto &[name, scope] : logging::scopes)
-        {
-            scope->threshold = threshold;
-        }
-    }
-
-    status::Level current_threshold()
-    {
-        return log_scope->threshold;
-    }
-
-}  // namespace core::logging
+} // namespace core::logging

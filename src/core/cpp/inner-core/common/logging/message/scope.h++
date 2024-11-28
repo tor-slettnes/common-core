@@ -89,6 +89,13 @@ namespace core::logging
 
     class Scope
     {
+        using This = Scope;
+        using Level = status::Level;
+
+    public:
+        using ptr = std::shared_ptr<Scope>;
+
+    public:
         /// \param[in] name
         ///     Log scope name, used in log output, as well as to construct
         ///     corresponding settings and command line options.
@@ -97,33 +104,26 @@ namespace core::logging
         ///     not overridden in application settings or on the command line,
         ///     `default_threshold` is used.
 
-    public:
-        using ptr = std::shared_ptr<Scope>;
-
-    public:
         Scope(const std::string &name, status::Level threshold);
 
         status::Level effective_threshold() const;
         bool is_applicable(status::Level level) const;
 
         static ptr create(const std::string &name, status::Level threshold = status::Level::NONE);
+        static void set_default_threshold(status::Level threshold);
+        static void set_universal_threshold(status::Level threshold);
+        static void clear_universal_threshold();
 
     public:
+        static status::Level default_threshold;
+        static std::optional<status::Level> universal_threshold;
         std::string name;
         status::Level threshold;
     };
 
-    /// Default threshold.  This may be overridden by specific scopes (including Global).
-    inline status::Level default_threshold = status::Level::NOTICE;
+    /// Log scopes. These may be defined per namespace, class, function...
     inline types::ValueMap<std::string, Scope::ptr> scopes;
-
-    void set_default_threshold(status::Level threshold);
-    void set_universal_threshold(status::Level threshold);
-
-    /// Methods
-    status::Level current_threshold();
-
-}  // namespace core::logging
+} // namespace core::logging
 
 namespace core
 {

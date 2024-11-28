@@ -60,14 +60,14 @@ private:
     platform::vfs::Path get_vfspath_arg(const std::string &what = "VFS path");
     platform::vfs::Path vfspath(const std::string &path);
 
+private:
+    std::string signal_handle;
+
 public:
-    bool local = false;
-    bool wait = false;
+    bool local;
     std::string command;
     std::vector<std::string> args;
 
-private:
-    std::string signal_handle;
 };
 
 extern std::unique_ptr<Options> options;

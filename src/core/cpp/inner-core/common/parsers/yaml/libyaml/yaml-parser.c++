@@ -62,6 +62,7 @@ namespace core::yaml
                                  size_t *size_read)
     {
         std::istream *stream = reinterpret_cast<std::istream *>(data);
+        assertf(stream, "YAML read handler received nullptr where input stream expected");
         stream->read(reinterpret_cast<char *>(buffer), size);
         *size_read = stream->gcount();
         return !stream->fail();
@@ -172,7 +173,7 @@ namespace core::yaml
         catch (const std::out_of_range &)
         {
             logf_warning(
-                "YAML input contains reference to non-existing alias %r at position %d",
+                "YAML input contains reference to non-existing anchor %r at position %d",
                 event.data.alias.anchor,
                 this->input_position());
             return {};

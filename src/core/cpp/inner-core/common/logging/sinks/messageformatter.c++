@@ -25,6 +25,11 @@ namespace core::logging
         }
     }
 
+    void MessageFormatter::set_all_include_context(bool include_context)
+    {
+        This::all_include_context_ = include_context;
+    }
+
     void MessageFormatter::set_include_context(bool include_context)
     {
         this->include_context_ = include_context;
@@ -32,7 +37,7 @@ namespace core::logging
 
     bool MessageFormatter::include_context() const
     {
-        return this->include_context_;
+        return this->all_include_context_.value_or(this->include_context_);
     }
 
     bool MessageFormatter::is_valid_message(const core::types::Loggable &item) const
@@ -77,4 +82,6 @@ namespace core::logging
         ss << event->text();
         return ss.str();
     }
+
+    std::optional<bool> MessageFormatter::all_include_context_;
 }  // namespace core::logging

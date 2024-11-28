@@ -97,10 +97,10 @@ namespace core::argparse
         inline void add_flag(const KeyList &keys,
                              const std::string &helptext,
                              Storage target,
-                             bool defaultValue = false)
+                             std::optional<bool> defaultValue = {})
         {
             this->add<bool, Storage>(
-                keys, {}, helptext, target, true, defaultValue, ExactlyOne);
+                keys, {}, helptext, target, true, defaultValue, defaultValue ? ExactlyOne : AtMostOne);
         }
 
         /// Named option with constant value if encountered, default value otherwise

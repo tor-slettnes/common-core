@@ -13,18 +13,20 @@
 
 Options::Options()
     : Super(),
-      signal_handle(core::platform::path->exec_name())
+      signal_handle(core::platform::path->exec_name()),
+      local(false)
 {
-    this->add_flag({"--local"},
-                   "Use built-in functions, do not connect to platform service",
-                   &this->local);
-
     this->describe("Network configuration via NetConfig gRPC service.");
 }
 
 void Options::add_options()
 {
     Super::add_options();
+
+    this->add_flag({"--local"},
+                   "Use built-in functions, do not connect to platform service",
+                   &this->local);
+
     this->add_commands();
 }
 

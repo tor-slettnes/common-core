@@ -65,7 +65,7 @@ void Options::submit()
     std::string text = this->get_arg("text");
     auto level = core::str::convert_optional_to<core::status::Level>(
         this->next_arg(),
-        core::logging::default_threshold);
+        core::logging::Scope::default_threshold);
 
     auto log_scope = core::logging::Scope::create("logtool", level);
     auto message = DEFAULT_LOG_MESSAGE(level);

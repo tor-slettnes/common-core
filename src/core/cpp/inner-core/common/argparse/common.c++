@@ -39,10 +39,10 @@ namespace core::argparse
           is_server(is_server)
     {
         this->add_arg<std::string>(
-            platform::path->exec_name(true),    // argname
-            "",                                 // helptext
-            &this->command,                     // target
-            platform::path->exec_name(false));  // defaultValue
+            platform::path->exec_name(true),   // argname
+            "",                                // helptext
+            &this->command,                    // target
+            platform::path->exec_name(false)); // defaultValue
     }
 
     void CommonOptions::apply(int argc, char **argv)
@@ -111,7 +111,8 @@ namespace core::argparse
             "SECTION",
             "Print help section SECTION (default: %default). "
             "Use \"--help=list\" to print a list of help sections.",
-            [&](const std::string &section) {
+            [&](const std::string &section)
+            {
                 this->show_help_and_exit(section);
             },
             "all",
@@ -120,7 +121,8 @@ namespace core::argparse
         this->add_void(
             {"-V", "--version"},
             "Print version number and exit",
-            [&] {
+            [&]
+            {
                 this->show_version_and_exit();
             });
 
@@ -146,7 +148,7 @@ namespace core::argparse
         bool interactive = platform::runtime->isatty(0);
         if (auto level = this->get_optional_level("log default"))
         {
-            logging::default_threshold = level.value();
+            logging::Scope::set_default_threshold(level.value());
         }
 
         this->add_opt<status::Level>(
@@ -155,7 +157,7 @@ namespace core::argparse
             "Default minimum log level to capture [%default]. "
             "This threshold may be overridden for specific log scopes, including "
             "the \"global\" scope.",
-            &logging::default_threshold);
+            &logging::Scope::default_threshold);
 
         this->add_log_scope_options();
 
@@ -164,38 +166,44 @@ namespace core::argparse
             "THRESHOLD",
             "Apply the specified minimum threshold in all logging scopes. "
             "This overrides the default and any scope-specific thresholds.",
-            [](status::Level level) {
-                logging::set_universal_threshold(level);
-            },
+            logging::Scope::set_universal_threshold,
             this->get_optional_level("log all"));
 
         this->add_void(
             {"--log-none", "--quiet"},
             "Disable logging completely.  Identical to \"--log-all=NONE\"",
-            std::bind(&logging::set_universal_threshold, status::Level::NONE));
+            std::bind(&logging::Scope::set_universal_threshold, status::Level::NONE));
+
+        this->add_flag(
+            {"--log-context", "--log-source-context"},
+            "Prefix log messagees with source context: source file, line number, "
+            "function name. Applicable only to message-based log sinks such as "
+            "stdout/stderr, syslog, and plaintext .log files, and if specified, "
+            "will then override the default setting for those sinks.",
+            logging::MessageFormatter::set_all_include_context);
 
         this->add_const(
             {"--trace"},
             "Shorthand for --log-default=TRACE.",
-            &logging::default_threshold,
+            &logging::Scope::default_threshold,
             status::Level::TRACE);
 
         this->add_const(
             {"--debug", "--verbose"},
             "Shorthand for --log-default=DEBUG.",
-            &logging::default_threshold,
+            &logging::Scope::default_threshold,
             status::Level::DEBUG);
 
         this->add_const(
             {"--info"},
             "Shorthand for --log-default=INFO.",
-            &logging::default_threshold,
+            &logging::Scope::default_threshold,
             status::Level::INFO);
 
         this->add_const(
             {"--notice", "--muted"},
             "Shorthand for --log-default=NOTICE.",
-            &logging::default_threshold,
+            &logging::Scope::default_threshold,
             status::Level::NOTICE);
 
         this->add_log_sinks();
@@ -265,7 +273,8 @@ namespace core::argparse
         this->add_flag(
             {str::format("--log-to-%s", sink_id)},
             factory->description(),
-            [=](bool enabled) {
+            [=](bool enabled)
+            {
                 if (enabled)
                 {
                     logging::message_dispatcher.add_sink(
@@ -292,4 +301,4 @@ namespace core::argparse
         return {};
     }
 
-}  // namespace core::argparse
+} // namespace core::argparse

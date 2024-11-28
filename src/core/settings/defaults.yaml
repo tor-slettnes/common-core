@@ -116,7 +116,7 @@ log sinks:
     contract id : "text"
 
     # Columns to include.
-    "columns":
+    columns:
       # Event field, optional CSV column header, optional format string
       - ["timestamp", "TIME", TEXT]
       - ["host", "HOST", TEXT]
@@ -130,7 +130,7 @@ log sinks:
       - ["text", "TEXT", TEXT]
 
     # Column separator; `","` by default
-    column separator: "\t"
+    #column separator: "\t"
 
     # Logfile name template, expanded as described above.
     name template: "{executable}-{isodate}-{hour}{minute}{zoneoffset}.csv"

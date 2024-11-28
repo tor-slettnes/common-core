@@ -26,10 +26,6 @@ namespace core::logging
                                    const Sink::ptr &sink)
     {
         auto [it, inserted] = this->sinks_.emplace(sink_id, sink);
-        // if (inserted)
-        // {
-        //     sink->load_settings();
-        // }
         return it->second;
     }
 
