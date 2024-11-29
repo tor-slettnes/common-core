@@ -88,7 +88,7 @@ namespace core::yaml
     types::ValueList YamlParser::read_all()
     {
         types::ValueList docs;
-        this->expect_event(YAML_STREAM_START_EVENT);
+        this->expect_next_event_type(YAML_STREAM_START_EVENT);
         while (auto doc = this->read_document())
         {
             docs.push_back(doc);
@@ -98,8 +98,8 @@ namespace core::yaml
 
     std::optional<types::Value> YamlParser::read_document()
     {
-        if (this->expect_event(YAML_DOCUMENT_START_EVENT,
-                               YAML_DOCUMENT_END_EVENT))
+        if (this->expect_next_event_type(YAML_DOCUMENT_START_EVENT,
+                                         YAML_DOCUMENT_END_EVENT))
         {
             return this->read_value();
         }
@@ -107,6 +107,23 @@ namespace core::yaml
         {
             return {};
         }
+    }
+
+    std::optional<std::string> YamlParser::read_key()
+    {
+        std::optional<std::string> key;
+        yaml_event_t event = this->next_event();
+        if (this->expect_event_type(event,
+                                    YAML_SCALAR_EVENT,
+                                    YAML_MAPPING_END_EVENT))
+        {
+            key = {
+                reinterpret_cast<const char *>(event.data.scalar.value),
+                event.data.scalar.length,
+            };
+        }
+        yaml_event_delete(&event);
+        return key;
     }
 
     std::optional<types::Value> YamlParser::read_value()
@@ -117,13 +134,22 @@ namespace core::yaml
         return opt_value;
     }
 
-    bool YamlParser::expect_event(
+    bool YamlParser::expect_next_event_type(
         yaml_event_type_t expected_type,
         yaml_event_type_t end_type)
     {
         yaml_event_t event = this->next_event();
-        yaml_event_type_t event_type = event.type;
+        bool expected = this->expect_event_type(event, expected_type, end_type);
         yaml_event_delete(&event);
+        return expected;
+    }
+
+    bool YamlParser::expect_event_type(
+        const yaml_event_t &event,
+        yaml_event_type_t expected_type,
+        yaml_event_type_t end_type)
+    {
+        yaml_event_type_t event_type = event.type;
 
         if (event_type == expected_type)
         {
@@ -212,11 +238,11 @@ namespace core::yaml
     types::Value YamlParser::process_mapping(const yaml_event_t &event)
     {
         auto map = std::make_shared<types::KeyValueMap>();
-        while (auto key = this->read_value())
+        while (auto key = this->read_key())
         {
             if (auto value = this->read_value())
             {
-                map->insert_or_assign(key->as_string(), *value);
+                map->insert_or_assign(*key, *value);
             }
             else
             {

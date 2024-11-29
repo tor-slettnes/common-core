@@ -36,8 +36,15 @@ namespace core::yaml
         yaml_event_t next_event();
         types::ValueList read_all();
         std::optional<types::Value> read_document();
+        std::optional<std::string> read_key();
         std::optional<types::Value> read_value();
-        bool expect_event(
+
+        bool expect_next_event_type(
+            yaml_event_type_t expected_type,
+            yaml_event_type_t end_type = YAML_NO_EVENT);
+
+        bool expect_event_type(
+            const yaml_event_t &event,
             yaml_event_type_t expected_type,
             yaml_event_type_t end_type = YAML_NO_EVENT);
 

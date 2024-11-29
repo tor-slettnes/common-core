@@ -9,7 +9,7 @@ find_package(Doxygen)
 if (DOXYGEN_FOUND)
   set(DOXYGEN_PROJECT_BRIEF "Common Core")
   set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/out/reference")
-  set(DOXYGEN_EXAMPLE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/source/applications/example")
+  set(DOXYGEN_EXAMPLE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/mantle/demo")
   set(DOXYGEN_EXTRACT_ALL YES)
   set(DOXYGEN_CLASS_DIAGRAMS YES)
   set(DOXYGEN_HIDE_UNDOC_RELATIONS NO)
@@ -33,7 +33,9 @@ if (DOXYGEN_FOUND)
   set(DOXYGEN_DOT_IMAGE_FORMAT png)
   set(DOXYGEN_EXCLUDE_PATTERNS
     "out"
-    "thirdparty")
+    "venv"
+    "thirdparty"
+    "tests")
 
   doxygen_add_docs(doxygen
     "${CMAKE_CURRENT_SOURCE_DIR}")

@@ -12,9 +12,6 @@ log default: NOTICE
 log thresholds:
   shared: NOTICE
 
-# Include extra detail: log scope, thread ID, filename, function, line number
-log context: false
-
 # ANSI coloring for specific log levels sent to console
 log styles:
   intro: ""
