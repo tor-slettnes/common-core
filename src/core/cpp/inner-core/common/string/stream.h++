@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <string>
+#include <array>
 #include <vector>
 #include <list>
 #include <deque>
@@ -74,6 +75,12 @@ namespace std
     {
         core::str::format(stream, "{%r: %r}", pair.first, pair.second);
         return stream;
+    }
+
+    template <class T, std::size_t N>
+    std::ostream &operator<<(std::ostream &stream, const std::array<T, N> &array)
+    {
+        return core::stream::write_sequence(stream, array);
     }
 
     template <class T>
