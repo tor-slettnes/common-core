@@ -10,6 +10,8 @@ import re
 import typing
 import sys
 import importlib
+import shlex
+import subprocess
 
 TOKENS = (BACKSLASH, SUBEXPRESSION, SUB_NESTED, SUB_END) = \
          ('space', 'subexpression', 'sub_nested', 'sub_end')
@@ -60,7 +62,8 @@ class PythonError (ParseError):
                 (self.name, self.expression.rstrip(), self.reason))
 
 
-class Expander (object):
+class Expander:
+    '''Expand placeholders in a string using values from a dictionary'''
 
     _wholeX = _tokenSearch(BACKSLASH, SUBEXPRESSION, SUB_NESTED)
 
@@ -69,8 +72,22 @@ class Expander (object):
                    substitutions: typing.Mapping[str, object],
                    /,
                    **kwargs) -> str:
-        '''
-        Expand the provided template string by substituting values from `substitutions`
+        '''Expand text from provided input by replacing placeholders with
+        correspoding values from the provided `substitutions` map.
+
+        The following placeholders are recognized:
+          - `${KEY}` is replaced with the value corresponding to `KEY` within
+            the map.
+          - `$[EXPR]` is replaced by evaluating `EXPR` as a Python expression,
+            where the contents of the `substitutions` map is available as local
+            variables.
+          - `$(COMMAND ARGS ...)` is replaced by invoking `COMMAND ARGS ...`
+            in a separate process, and returning its ouptut.  The contents
+            of the `substitutions` map are available as environment variables
+            within the subprocess.
+
+        To prevent expansion of the literal `$`, precede it with a single
+        backslash (`\\`).
         '''
 
         if isinstance(input, str):
@@ -288,9 +305,6 @@ class Expander (object):
 
         return text
 
-
-
-
     _escapeChars   = re.compile('(\\n)|(\\r)|(\\t)|(\')|(")|(\\$)|(\\\\)|(\x00-x1F\x7F-xA0)')
     _escapes       = (None, '\\n', '\\r', '\\t', '\\\'', '\\"', '\\$', '\\\\', None)
 
@@ -338,9 +352,9 @@ class Expander (object):
                          r'(\?)([^:]*):?(.*)'
                          r')?$')
 
-    def _getVariable (self,
-                      identifier    : str,
-                      substitutions : typing.Mapping[str, object]):
+    def _getVariable(self,
+                     identifier    : str,
+                     substitutions : typing.Mapping[str, object]):
 
         portion   = None
         handling  = None
@@ -395,7 +409,15 @@ class Expander (object):
     def _getCommandOutput(self,
                           text          : str,
                           substitutions : typing.Mapping[str, object]):
-        raise NotImplementedError
+        args = shlex.split(text)
+        cp = subprocess.run(args,
+                            input="",
+                            env=substitutions,
+                            capture_output=True,
+                            check=True,
+                            text=True)
+        return cp.stdout.rstrip()
+
 
     def _getEvaluationResult(self,
                              expression    : str,
