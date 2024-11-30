@@ -11,7 +11,7 @@ You have several options for creating a build environment in which you can build
 > **Note:** To run the inline commands below, open a shell prompt (e.g. a Linux terminal application) and navigate to your top-level work directory where you cloned this repository (or the parent repository if you are using this as a submodule).
 
 
-## <a name="native">Native Linux Host</a>
+## Native Linux Host{#native}
 
 If, like me, you are running a recent Linux distribution (e.g., [Debian
 12](https://www.debian.org/), [Ubuntu 24.04](https://ubuntu.com/download/desktop), or
@@ -124,7 +124,7 @@ to run the following commands to install the required dependencies.
    sudo apt install devhelp libglibmm-2.4-doc
    ```
 
-## <a name="schroot">Linux managed `chroot` environment</a>
+## Linux managed `chroot` environment{#schroot}
 
 If you have an older Linux system and/or you want to use a separate build environment for this software, you can perform the build inside a managed `chroot` environment, using the tool [schroot](https://wiki.debian.org/Schroot).
 
@@ -157,7 +157,7 @@ Alternatively you can invoke commands within this `chroot` environment directly 
   ```
 
 
-## <a name="docker">Docker</a>
+## Docker{#docker}
 
 Last but not least, you can use [Docker Desktop](https://docs.docker.com/desktop/) or [Docker Engine](https://docs.docker.com/engine/) to build and run the software regardless of your host OS. While not as lightweight or as tightly integrated into your host environment as the `schroot` option above, this does at least allow you to share your working directory between your build environment and the host.
 

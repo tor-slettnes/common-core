@@ -63,7 +63,6 @@ namespace core::grpc
     };
 
     //==========================================================================
-    /// @class RequestHandler<T>
     /// @brief Class template for gRPC services
     ///
     /// @b Examples

@@ -25,10 +25,12 @@ namespace protobuf
         case ::platform::upgrade::LocationType::VFS:
             encode(native.vfs_path(), msg->mutable_vfs_path());
             break;
-            ;
 
         case ::platform::upgrade::LocationType::URL:
             msg->set_url(native.url());
+            break;
+
+        default:
             break;
         }
     }

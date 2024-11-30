@@ -92,7 +92,7 @@ namespace platform::vfs::grpc
             if (required && !cxt)
             {
                 throwf(::core::exception::NotFound,
-                       ("No such filesystem context: %r", name),
+                       "No such filesystem context: %r",
                        name);
             }
         }

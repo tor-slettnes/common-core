@@ -26,12 +26,13 @@ FilePaths = Sequence[FilePath]
 
 
 class SettingsStore (dict):
-    '''A specialized dictionary containing configuration settings, loaded from one
-    or more JSON and/or YAML file(s) located within specific settings folders.
+    '''
+    A specialized dictionary containing configuration settings, loaded from
+    one or more JSON and/or YAML file(s) located within specific settings
+    folders.
 
-    Settings may be loaded on initialization (see :func:`__init__`) or
-    subsequently by invoking :func:`load_settings`.
-
+    Settings may be loaded on initialization (see `__init__()`) or subsequently
+    by invoking `load_settings()`.
     '''
 
     ## Set this to override default search path
@@ -46,10 +47,10 @@ class SettingsStore (dict):
                  filenames  : FilePath|FilePaths = [],
                  searchpath : FilePaths = None):
 
-        '''Initialize a new SettingsStore instance from the specified JSON
+        '''
+        Initialize a new SettingsStore instance from the specified JSON
         and/or YAML file(s), located relative to one or more folders in
-        `searchpath`.  See `:func:load_settings` for details.
-
+        `searchpath`.  See `load_settings()` for details.
         '''
 
         self.filepath   = None
@@ -73,57 +74,61 @@ class SettingsStore (dict):
                       filename   : FilePath,
                       searchpath : Optional[FilePaths] = None):
 
-        '''Load values from the specified JSON and/or YAML file, if found.
+        '''
+        Load values from the specified JSON and/or YAML file, if found.
         Values are merged in recursively, with precedence given to those already
         in the store.  To replace existing values, first invoke `.clear()`.
 
-        @param[in] filename
+        @param filename
             Absolute or relative path to a JSON or YAML file from which to load
             additional settings.
 
-            If the name is relative, it is resolved with respect to each folder
-            in `settingspath`, resulting in multiple candidate paths.
+        @param searchpath
+             A list of directories in which to look for relative filenames.
+             If not provided, it is obtained from the environment variable
+             `CONFIGPATH`, or ultimately from predefined folders (see below).
 
-            If the name ends in `.json` or `.yaml` the corresponding parser is
-            used; otherwise each suffix is in turn appended to each candidate
-            path.
+        The `filename` argument is resolved as follows:
+        - If the file name is relative, it is resolved with respect to each
+          folder in `settingspath`, possibly resulting in multiple candidate
+          paths.
+        - If the file name ends in `.json` or `.yaml` the corresponding parser
+          is used; otherwise each suffix is in turn appended to each candidate
+          path.
+        - If one or more of the resulting candidate path(s) exist on the
+          filesystem, they are consecutively parsed and merged in with the
+          existing settings.
 
-            If one or more of the resulting candidate path(s) exist on the
-            filesystem, they are consecutively parsed and merged in with the
-            existing settings.
-
-        @param[in] searchpath
-           A list of directories in which to look for relative filenames. Each
-           directory name may in turn be absolute or relative. In the latter
-           case, an upward search for that (dominating) folder name starts at
-           the installation folder where this application module is located, and
-           ends at the root of the filesystem.
-
-           If not provided, it is obtained from the environment variable
-           `CONFIGPATH`, where folder names are presumed to be separated by the
-           OS-specific path separator (`:` on UNIX, `;` on Windows).
-
-           If CONFIGPPATH is not defined, the default search path comprises:
-
+        If `searchpath` is not provided, a default search path is obtained as
+        follows:
+         - If the environment variable `CONFIGPATH` is defined, it is presumed
+           to contain folder names delimited by the OS-specific path separator
+           (`:` on UNIX, `;` on Windows)
+         - Otherwise, the default search path comprises:
            * a machine-specific configuration folder (`/etc/common-core` on UNIX
              or `c:\\common-core\\config` on Windows)
-
            * an application-provided default settings folder
              (`share/common-core/settings`), relative to the top-level folder
              where this application is installed.
-
            * a `settings` folder directly within an archive (such as a Python Wheel).
+
+        Each directory name in `searchpath` may be absolute or relative. In the
+        latter case, an upward search for that (dominating) folder name starts
+        at the installation folder where this application module is located, and
+        ends at the root of the filesystem.
 
         Any comments starting with `#` or `//` until the end of the line are
         stripped away prior to JSON parsing.  The YAML parser natively supports
         embedded comments starting with `#`.
 
-        For example, consider a deployment where this module is located
-        somewhere inside `/usr`, and default configurations are stored in YAML
-        files within the folder `/usr/share/common-core/settings/`.  Let's say
-        you create a SettingsStore instance as follows:
+        ### Example
 
-        ```
+        Consider a deployment where this module is located somewhere inside
+        `/usr`, and default configurations are stored in YAML files within the
+        folder `/usr/share/common-core/settings/`.  Let's say you create a
+        SettingsStore instance as follows:
+
+        ```python
         my_settings = SettingsStore()
         my_setings.load('my_settings')
         ```
@@ -137,7 +142,6 @@ class SettingsStore (dict):
         2. `/etc/common-core/my_settings.yaml`
         3. `/usr/share/common-core/settings/my_settings.json`
         4. `/usr/share/common-core/settings/my_settings.yaml`
-
         '''
 
         if searchpath:
@@ -151,9 +155,10 @@ class SettingsStore (dict):
 
 
     def merge_file(self, filepath: FilePath):
-        '''Merge in settings from the specified file.
+        '''
+        Merge in settings from the specified file.
 
-        @param[in] filepath
+        @param filepath
             Settings file to merge. The name may be absolute or relative,
             see `load_settings()` for details.
         '''

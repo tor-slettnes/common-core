@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file tokenparser-json.c++
+/// @file tokenparser.c++
 /// @brief Iterate over interesting JSON tokens
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

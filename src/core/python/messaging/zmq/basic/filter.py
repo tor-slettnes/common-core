@@ -14,14 +14,18 @@ class Filter (bytes):
 
     @classmethod
     def create_from_data (cls, data: bytes):
-        '''Extract a new topic filter instance from an existing byte sequence'''
+        '''
+        Extract a new topic filter instance from an existing byte sequence
+        '''
 
         filter_size = cls._extract_filter_size(data)
         return Filter(data[:filter_size])
 
     @classmethod
     def create_from_topic (cls, topic: str):
-        '''Create a new filter from a topic string'''
+        '''
+        Create a new filter from a topic string
+        '''
 
         topic_bytes = topic.encode(cls.STRING_ENCODING)
         preamble = cls.encoded_size(len(topic_bytes))
@@ -29,10 +33,13 @@ class Filter (bytes):
 
     @classmethod
     def encoded_size(cls, size: int) -> bytes:
-        '''Encode topic size into a packed bytes sequence, using variable-length encoding
+        '''
+        Encode topic size into a packed bytes sequence, using variable-length
+        encoding
 
-        @param[in] size
+        @param size
             Number of bytes needed to represent topic
+
         @return
             Byte sequence containing variable-length encoding of `size`
         '''
@@ -46,9 +53,11 @@ class Filter (bytes):
 
     @classmethod
     def _encoded_size_size(cls, size: int) -> int:
-        '''Determine how many bytes will be needed to represent a given topic size
+        '''
+        Determine how many bytes will be needed to represent a given topic
+        size
 
-        @param[in] size
+        @param size
             Number of bytes needed to represent topic
         @return
             Number of bytes needed to represent `size`
@@ -61,9 +70,10 @@ class Filter (bytes):
 
     @classmethod
     def _extract_filter_size(cls, data: bytes) -> Tuple[int, int]:
-        '''Extract topic length from a byte sequence.
+        '''
+        Extract topic length from a byte sequence.
 
-        @param[in] data
+        @param data
             Byte sequence from which size is extracted
 
         @return

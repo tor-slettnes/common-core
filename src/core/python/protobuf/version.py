@@ -12,7 +12,9 @@ def version(major: int,
             minor: int = 0,
             patch: int = 0,
             printable_version: str|None = None) -> Version:
-    '''Return a new ProtoBuf Version message with the specified values'''
+    '''
+    Return a new ProtoBuf Version message with the specified values
+    '''
 
     return Version(major=major,
                    minor=minor,
@@ -21,7 +23,9 @@ def version(major: int,
 
 
 def version_to_string(version: Version) -> str:
-    '''Return a string representation of the provided ProtoBuf Version message'''
+    '''
+    Return a string representation of the provided ProtoBuf Version message
+    '''
 
     if version.printed_version:
         return version.printed_version
@@ -33,7 +37,10 @@ def is_compatible(client_version : Version,
                   server_version : Version,
                   strict: bool = True) -> bool:
 
-    '''Indicate whether the provided client and server versions expected to be compatible'''
+    '''
+    Indicate whether the provided client and server versions expected to be
+    compatible
+    '''
 
     return ((client_version.major == server_version.major) and
             ((client_version.minor <= server_version.minor) or not strict))

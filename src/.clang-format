@@ -3,8 +3,8 @@ BasedOnStyle: LLVM
 IndentWidth: 4
 ColumnLimit: 0
 AccessModifierOffset: -4
-AlignArrayOfStructures: Left
 NamespaceIndentation: All
+IndentCaseLabels: false
 BinPackParameters: false
 BinPackArguments: false
 AllowAllConstructorInitializersOnNextLine: false

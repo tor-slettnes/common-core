@@ -11,7 +11,9 @@ from ..basic import Publisher
 from cc.protobuf.signal import SignalStore
 
 class SignalWriter (MessageWriter):
-    '''Capture local signals and forward to remote peers as ZMQ publications'''
+    '''
+    Capture local signals and forward to remote peers as ZMQ publications
+    '''
 
     def __init__(self,
                  publisher : Publisher,

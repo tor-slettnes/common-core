@@ -13,10 +13,10 @@
 namespace platform::netconfig::dbus
 {
     ActiveConnection::ActiveConnection(
-        core::dbus::ProxyContainer* container,
-        const core::dbus::ConnectionPtr& connection,
-        const core::dbus::ServiceName& servicename,
-        const core::dbus::ObjectPath& objectpath)
+        core::dbus::ProxyContainer *container,
+        const core::dbus::ConnectionPtr &connection,
+        const core::dbus::ServiceName &servicename,
+        const core::dbus::ObjectPath &objectpath)
         : MappedDataWrapper<ActiveConnectionData>(
               container,
               connection,
@@ -25,7 +25,7 @@ namespace platform::netconfig::dbus
               NM_DBUS_INTERFACE_ACTIVE_CONNECTION,
               {
                   {"StateChanged", SLOT(Class::on_signal_state_changed)},
-              },
+    },
               {
                   {"Id", DATASLOT(&this->id)},
                   {"Uuid", DATASLOT(&this->uuid)},
@@ -42,7 +42,7 @@ namespace platform::netconfig::dbus
     }
 
     std::shared_ptr<ActiveConnection> ActiveConnection::get_by_key(
-        const Key& key,
+        const Key &key,
         bool required)
     {
         if (auto ref = lookup<ActiveConnection>(key, false))
@@ -59,10 +59,10 @@ namespace platform::netconfig::dbus
     }
 
     std::shared_ptr<ActiveConnection> ActiveConnection::get_by_id(
-        const std::string& id,
+        const std::string &id,
         bool required)
     {
-        for (const auto& [path, ref] : dbus::container.instances<ActiveConnection>())
+        for (const auto &[path, ref] : dbus::container.instances<ActiveConnection>())
         {
             if (ref->id == id)
             {
@@ -75,9 +75,9 @@ namespace platform::netconfig::dbus
 
         if (required)
         {
-            throwf(core::exception::NotFound,
-                   ("No such connection: %r", id),
-                   id);
+            throwf_args(core::exception::NotFound,
+                        ("No such connection: %r", id),
+                        id);
         }
         return {};
     }
@@ -97,20 +97,20 @@ namespace platform::netconfig::dbus
     }
 
     void ActiveConnection::on_signal_state_changed(
-        const Glib::VariantContainerBase& parameters)
+        const Glib::VariantContainerBase &parameters)
     {
         core::glib::variant_cast(parameters, 0, &this->state);
         core::glib::variant_cast(parameters, 1, &this->state_reason);
         this->emit_change(core::signal::MAP_UPDATE);
     }
 
-    void ActiveConnection::on_property_type(const Glib::VariantBase& change)
+    void ActiveConnection::on_property_type(const Glib::VariantBase &change)
     {
         auto typestring = core::glib::variant_cast<std::string>(change);
         this->type = connection_type_map.from_string(typestring, CONN_TYPE_UNKNOWN);
     }
 
-    void ActiveConnection::on_property_ip4config(const Glib::VariantBase& change)
+    void ActiveConnection::on_property_ip4config(const Glib::VariantBase &change)
     {
         auto path = core::glib::variant_cast<core::dbus::ObjectPath>(change);
         if (this->valid_path(path))
@@ -120,7 +120,7 @@ namespace platform::netconfig::dbus
         }
     }
 
-    void ActiveConnection::on_property_ip6config(const Glib::VariantBase& change)
+    void ActiveConnection::on_property_ip6config(const Glib::VariantBase &change)
     {
         auto path = core::glib::variant_cast<core::dbus::ObjectPath>(change);
         if (this->valid_path(path))
@@ -131,26 +131,26 @@ namespace platform::netconfig::dbus
     }
 
     bool ActiveConnection::update_ip4config(
-        const core::dbus::ProxyWrapper* source,
+        const core::dbus::ProxyWrapper *source,
         core::signal::MappingAction action)
     {
-        if (const auto* datasource = dynamic_cast<const IP4Config*>(source))
+        if (const auto *datasource = dynamic_cast<const IP4Config *>(source))
         {
             this->ip4config = *datasource;
             this->emit_change(core::signal::MAP_UPDATE);
         }
-        return true;  // Stay subscribed to updates
+        return true; // Stay subscribed to updates
     }
 
     bool ActiveConnection::update_ip6config(
-        const core::dbus::ProxyWrapper* source,
+        const core::dbus::ProxyWrapper *source,
         core::signal::MappingAction action)
     {
-        if (const auto* datasource = dynamic_cast<const IP6Config*>(source))
+        if (const auto *datasource = dynamic_cast<const IP6Config *>(source))
         {
             this->ip6config = *datasource;
             this->emit_change(core::signal::MAP_UPDATE);
         }
-        return true;  // Stay subscribed to updates
+        return true; // Stay subscribed to updates
     }
-}  // namespace platform::netconfig::dbus
+} // namespace platform::netconfig::dbus

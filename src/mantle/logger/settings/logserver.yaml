@@ -8,7 +8,7 @@
 # See `defaults.yaml` for default values and descriptions
 
 log sinks:
-  csv:
+  csvfile:
     enabled      : true
     name template: "{isodate}-{hour}{minute}{zoneoffset}.csv"
 
@@ -23,7 +23,7 @@ log sinks:
     table name   : "Events"
     columns:
       # event_field, column_name, column_type[, extra_args]
-      - ["timestamp", "ClientTimestamp", TEXT, "%T"]
+      - ["timestamp", "ClientTimestamp", TEXT]
       - ["origin", "ClientName", TEXT]
       - ["timestamp", "EpochTime", INTEGER]
       - ["text", "LogMessage", TEXT]

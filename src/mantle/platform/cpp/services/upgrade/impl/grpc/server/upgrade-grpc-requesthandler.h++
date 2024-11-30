@@ -14,6 +14,7 @@
 
 namespace platform::upgrade::grpc
 {
+    /// Process requests from Upgrade gRPC clients
     class RequestHandler
         : public core::grpc::SignalRequestHandler<cc::platform::upgrade::Upgrade>,
           public core::types::enable_create_shared<RequestHandler>

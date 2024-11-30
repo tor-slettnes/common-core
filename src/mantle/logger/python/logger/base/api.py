@@ -23,7 +23,9 @@ import threading
 
 
 class API (logging.Handler):
-    '''Logger API'''
+    '''
+    Logger API
+    '''
 
     def __init__(self,
                  identity: str|None,

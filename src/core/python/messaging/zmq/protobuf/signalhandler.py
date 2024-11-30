@@ -12,7 +12,10 @@ from cc.protobuf.wellknown import Message
 
 
 class SignalHandler (MessageHandler):
-    '''Subscribe to `Signal` messages from ZMQ publisher and re-emit locally as signals.'''
+    '''
+    Subscribe to `Signal` messages from ZMQ publisher and re-emit locally as
+    signals.
+    '''
 
     def __init__(self,
                  signal_store: SignalStore):

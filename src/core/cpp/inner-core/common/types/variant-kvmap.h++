@@ -60,7 +60,6 @@ namespace core::types
         KeyValueMap &recursive_merge(KeyValueMap &other) noexcept;
         KeyValueMap &recursive_merge(KeyValueMap &&other) noexcept;
 
-        /// @fn recursive_unmerge
         /// @brief
         ///    Remove key/value pairs  that are identical to those
         ///    in \p basemap.
@@ -72,7 +71,6 @@ namespace core::types
 
         KeyValueMap &recursive_unmerge(const KeyValueMap &basemap) noexcept;
 
-        /// @fn recursive_delta
         /// @brief
         ///     Return the delta between the provided basemap and this instance
         //      as a new KeyValueMap reference.

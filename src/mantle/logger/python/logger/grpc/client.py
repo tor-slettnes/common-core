@@ -22,7 +22,9 @@ from typing import Optional
 # Logger Client
 
 class Client (API, BaseClient):
-    '''Client for Logger service.'''
+    '''
+    Client for Logger service.
+    '''
 
     from cc.generated.logger_pb2_grpc import LoggerStub as Stub
 
@@ -45,7 +47,9 @@ class Client (API, BaseClient):
     #     API.close(self)
 
     def submit(self, event: Event):
-        '''Send an log event to the gRPC Logger server.'''
+        '''
+        Send an log event to the gRPC Logger server.
+        '''
         self.stub.submit(event)
 
     def listen(self,
@@ -72,66 +76,103 @@ class Client (API, BaseClient):
                  min_level: Level = Level.LEVEL_NONE,
                  contract_id: Optional[str] = None,
                  fields: None|tuple|ColumnSpec = None) -> bool:
-        '''Add a log sink of the specified type. This will capture log events with
-        `min_level` or higher priority, optionally restrictecd to those with a
-        specific `contract_id`.
+        '''
+        Add a log sink of the specified type. This will capture log events
+        with `min_level` or higher priority, optionally restrictecd to those
+        with a specific `contract_id`.
 
-        If `permanent` is true, the server recreates the sink after future
-        restarts.
+        @param sink_id
+            Unique identity of this sink.  This cannot conflict with a sink type
+            (see `list_sink_types()` for a list), as these are reserved for
+            default log sinks.
 
-        The optional `filename_template` controls the naming of the output file.
-        Within this template, the following placeholders are expanded:
+        @param sink_type
+            Log sink type, such as `csv` or `logfile`.
 
-          - '{executable}` : the name of the log server executable
-          - '{hostname}'   : the server's host name
-          - `{sink_id}`    : the name of the log sink
-          - `{isodate}`    : date formatted as "YYYY-MM-DD"
-          - `{isotime}`    : time of day formatted as "HH:MM:SS"
-          - `{year}`       : four-digit year
-          - `{month}`      : two-digit month (01 - 12)
-          - `{day}`        : two-digit day (01 - 31)
-          - `{hour}`       : two-digit hour (00 - 23)
-          - `{minute}`     : two-digit minute (00 - 59)
-          - `{second}`     : two-digit second (00 - 61)
-          - `{zonename}`   : time zone name or abbreviation (e.g., "PST")
-          - `{zoneoffset}` : time zone offset (e.g. "-0700")
+        @param permanent
+            Recreate the sink after future restarts
 
-        The `rotation_interval` argument determines how frequently a new log
-        file is created. It should be specified either as
-         - an already-encoded `cc.protobuf.logger.Interval` ProtoBuf message, or
-         - as a 2-element tuple of the form `(COUNT, UNIT)`, where `COUNT` is an
-           integer and `UNIT` is an enumerated `cc.protobuf.datetime.TimeUnit`
-           instance.
+        @param filename_template
+            Output file template for log sinks that record events directly to
+            files. This template is expanded to an actual filename as as
+            described below.
 
-        File rotation and expansion is based on local time if `use_local_time`
-        is unspecified or true, otherwise UTC time. Internally, each sink may or
-        may not log timestamps according to this setting.
+        @param rotation_interval
+            Specifies frequently a new log file is created. See below.
 
-        Sink types that expect specific fields in the log event (currently those
-        are `"csv"` and `"sqlite3"`) also require `fields` to specify which
-        fields/columns to capture.  These should be provided as either a
-        prepared `cc.protobuf.logger.ColumnSpec` instance, or as a tuple
-        containing 3 or 4 elements:
+        @param use_local_time
+            Whether to align rotation intervals to local time, as opposed to UTC.
+            This also controls how timestamp are translated to strings within
+            certain log sinks.
+
+        @param min_level
+            Severy threshold below which messages will be ignored.
+
+        @param contract_id
+             If specified, capture only log messages with a matching
+             `contract_id` field. This can be used to capture telemetry,
+             where matching log events are expected to contain a specific
+             set of custom attributes.
+
+        @param fields
+             What fields to capture. Applicable only for *tabular data* (column
+             oriented) sink types, currently these are "csvfile" and "sqlite3"`.
+
+        The `filename_template` controls the naming of output files created by
+        the "logfile", "csvfile", "jsonfile", and "sqlite3" sinks. Within the
+        template name, the following holders are expanded:
+
+        - `{executable}`: the stem of the executable file (like "logserver")
+        - `{hostname}`  : the name of the host where the log file is created
+        - `{sink_id}`   : the unique identity of the log sink
+        - `{isodate}`   : date formatted as `YYYY-MM-DD`
+        - `{isotime}    : time of day formatted as `HH:MM:SS`
+        - `{year}`      : four-digit year
+        - `{month}`     : two-digit month (01 - 12)
+        - `{day}`       : two-digit day (01 - 31)
+        - `{hour}`      : two-digit hour (00 - 23)
+        - `{minute}`    : two-digit minute (00 - 59)
+        - `{second}`    : two-digit second (00 - 61)
+        - `{zonename}`  : time zone name or abbreviation (e.g., `PST`)
+        - `{zoneoffset}`: time zone offset (e.g. `-0700`)
+
+        The timestamp is the "last aligned" time point, i.e., the current time
+        truncated according to the specified rotation interval. For instance, given
+        the default settings `rotation: 6 hours` and `local time: true`, the
+        timestamps would be aligned at 00:00, 06:00, 12:00, and 18:00, local time.
+
+        The optional `rotation_interval` intervals may be specified in one of two ways:
+        1. a preconstructed `cc.protobuf.datetime.Interval` instance, or
+        2. a 2-element tuple of the form `(COUNT, UNIT)`, where `COUNT` is a
+           positive integer and `UNIT` is a `cc.protobuf.datetime.TimeUnit`
+           enumeration.
+
+        Finally, the `fields` parameter determines what specific event data is
+        captured by log sinks that organize event attributes into columns
+        (currently those are `"csv"` and `"sqlite3"`).  The argument should be
+        given as a list of 3-element tuples, each comprising:
           - The event field to capture; use `list_static_fields()` to get a
             list of standard fields (but messages may contain additional fields,
             normally indicated with `contract_id`)
           - The column name (i.e. CSV header or database field)
-          - The column type; see `cc.protobuf.logging.ColumnType`.  This can
-            optionally be provided as a Python type object, currently one of
-            `None`, `bool`, `int`, `float`, str`, `bytes`.
-          - Optionally, a `printf()` style format string for text columns,
-            expanded in a fashion similar to the Python `%` string operator.
-            Refer to the description of `ColumnSpec` in `logger.proto` for
-            details.
+          - The column type, as either a `cc.protobuf.logging.ColumnType`
+            enumeration, or alternatively as a Python type object (currently one
+            of: `None`, `bool`, `int`, `float`, str`, `bytes`)..
+
+        The column type argument is also used to interpret fields such as
+        `level` and `timestamp` in one way or another. (Note that if the type of
+        the `timestamp` field set to `TEXT`, the resulting string value is also
+        determined by the Sink's `local time` setting).
 
         The return value indicates whether a new sink was created or not.
 
-        Example:
+        ### Example:
 
-        * Log specific data fields per contract `"my_contract"` to a CSV file,
-          rotated (changed) every month.
+        Log specific data fields per contract `"my_contract"` to a CSV file,
+        rotated (changed) every month.
 
           ```python
+
           logger = cc.logger.Client()
           logger.add_sink(
               'my_data_logger',
@@ -140,11 +181,11 @@ class Client (API, BaseClient):
               rotation_interval = (1, cc.protobuf.logger.TimeUnit.MONTH),
               contract_id = 'mydatalogger',
               fields = [('timestamp', 'EpochTime', int),
-                        ('timestamp', 'LocalTime', str, '%T'),
+                        ('timestamp', 'LocalTime', str),
                         ('level', 'SeverityLevel', str),
-                        ('text', 'Message', str)])
+                        ('text', 'Message', str),
+                        ('custom_field', 'CustomValue', float)]
           ```
-
         '''
 
 
@@ -163,7 +204,8 @@ class Client (API, BaseClient):
 
 
     def remove_sink(self, sink_id: str) -> bool:
-        '''Remove an existing log sink.
+        '''
+        Remove an existing log sink.
 
         The return value indicates whether a sink was actually removed.
         '''
@@ -175,7 +217,9 @@ class Client (API, BaseClient):
 
 
     def get_sink(self, sink_id: str) -> SinkSpec:
-        '''Obtain specification for an existing sink.'''
+        '''
+        Obtain specification for an existing sink.
+        '''
 
         request = SinkID(
             sink_id = sink_id)
@@ -183,7 +227,8 @@ class Client (API, BaseClient):
         return self.stub.get_sink(request)
 
     def list_sinks(self, verbose=False) -> list[SinkSpec]:
-        '''List available log sinks.
+        '''
+        List available log sinks.
 
         If `verbose` is True, include detailed specifications for each sink.
         '''
@@ -192,10 +237,14 @@ class Client (API, BaseClient):
 
 
     def list_sink_types(self) -> list[str]:
-        '''List available log sink types'''
+        '''
+        List available log sink types
+        '''
         return self.stub.list_sink_types(empty).sink_types
 
 
     def list_static_fields(self) -> list[str]:
-        '''List static fields for log messages'''
+        '''
+        List static fields for log messages
+        '''
         return self.stub.list_static_fields(empty).field_names

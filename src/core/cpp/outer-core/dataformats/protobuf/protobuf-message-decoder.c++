@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file protobuf-message.c++
+/// @file protobuf-message-decoder.c++
 /// @brief Encode/decode routines for ProtoBuf types provided by Google
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

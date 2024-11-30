@@ -44,7 +44,6 @@ namespace core::grpc
              const std::string &full_service_name);
 
     public:
-        /// @fn servicename
         /// @brief
         ///     Return the name of this service
         /// @param[in] full
@@ -53,7 +52,6 @@ namespace core::grpc
         ///     Service name
         std::string servicename(bool full = false) const;
 
-        /// @fn dnssd_type
         /// @return
         ///     DNS-SD service type
         std::string dnssd_type() const;

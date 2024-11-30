@@ -21,7 +21,9 @@ import io
 ## UpgradeClient
 
 class UpgradeClient (SignalClient):
-    '''Client for Upgrade service.'''
+    '''
+    Client for Upgrade service.
+    '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
@@ -38,44 +40,49 @@ class UpgradeClient (SignalClient):
 
 
     def scan(self, source: Optional[SourceType] = None):
-        '''Explicit scan for available upgrade packages in the specified package
+        '''
+        Explicit scan for available upgrade packages in the specified package
         source if provided, otherwise in the preconfigured/default locations.
 
-        Inputs:
-         - `source` is either a HTTP/HTTPS URL or a VFS path specified in the
-           format `CONTEXT:PATH`. If no source is specified, perform scan in
-           the preconfigured/default locations.
+        @param source
+            Either a HTTP/HTTPS URL or a VFS path specified in the format
+            `CONTEXT:PATH`. If no source is specified, perform scan in the
+            preconfigured/default locations.
 
         This call returns immediately, without waiting for the results of the
         scan. To observe scan progress and results, see `start_notify_signals()`.
 
-        This call is not required for ongoing upgrade availability notifications.
-        By default, removable devices (e.g. USB drives) are scanned on insertion,
-        and online checks are performed at regular intervals if an Internet
-        connection is available.
+        This call is not required for ongoing upgrade availability
+        notifications.  By default, removable devices (e.g. USB drives) are
+        scanned on insertion, and online checks are performed at regular
+        intervals if an Internet connection is available.
         '''
 
         return self.stub.scan(encodeSource(source))
 
 
-    def list_sources(self) \
-        -> list[PackageSource]:
+    def list_sources(self) -> list[PackageSource]:
         '''
-        List available package sources, whether or not they contain applicable
-        packages.
+        List available package sources, whether or not they contain
+        applicable packages.
         '''
         return self.stub.list_sources()
 
     def list_available(self,
                         source: Optional[SourceType] = None) \
-                        -> PackageCatalogue:
+                        -> list[PackageInfo]:
         '''
-        Return information about available upgrade packages discovered during a
-        prior (implicit or explicit) scan of the specified package source if
-        specified, otherwise across all preconfigured/default sources.
+        Obtain information about available upgrade packages discovered
+        during a prior (implicit or explicit) scan.
+
+        @param source
+            Restrict listing to packages discovered from the specified source.
+
+        @return
+            Information about each package discovered.
         '''
 
-        return self.stub.list_available(encodeSource(source))
+        return self.stub.list_available(encodeSource(source)).packages
 
     def best_available(self,
                         source: Optional[SourceType] = None) \
@@ -96,24 +103,24 @@ class UpgradeClient (SignalClient):
                 source_file: Optional[SourceType] = None,
                 force: bool = False) \
                 -> PackageInfo:
-        '''.
+        '''
+        Install an upgrade from the specified source file if provided,
+        otherwise the current "best" package source based on prior scans.  To
+        perform an explicit scan, invoke `scan()` before `install()`.
 
-        Install an upgrade from the specified source file if provided, otherwise
-        the current "best" package source based on prior scans.  To perform an
-        explicit scan, invoke `scan()` before `install()`.
+        @param source_file
+          An optional HTTP/HTTPS URL or a VFS path to the specified in the
+          format `CONTEXT:PATH`, pointing to the exact release package to
+          install.
 
-        Inputs:
-        - `source_file` is an optional HTTP/HTTPS URL or a VFS path to the
-          specified in the format `CONTEXT:PATH`, pointing to the exact release
-          package to install.
-        - `force` indicates whether to install the package even if its package_info
-          declares a different product name than what is currently installed or
-          its version number is older than the currently installed release.
+        @param force
+          whether to install the package even if its package_info declares a
+          different product name than what is currently installed or its version
+          number is older than the currently installed release.
 
         This call returns immediately with information about the package being
         installed. To monitor the upgrade progress and result use the `watch()`
         method below.
-
         '''
 
         request = InstallRequest(

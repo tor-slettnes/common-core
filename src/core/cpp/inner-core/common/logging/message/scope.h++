@@ -99,7 +99,7 @@ namespace core::logging
         /// \param[in] name
         ///     Log scope name, used in log output, as well as to construct
         ///     corresponding settings and command line options.
-        /// \param[in] theshold
+        /// \param[in] threshold
         ///     Default logging threshold for this scope. If not specified, and
         ///     not overridden in application settings or on the command line,
         ///     `default_threshold` is used.

@@ -176,7 +176,6 @@ namespace core::grpc
             }
         }
 
-        /// @fn disconnect
         /// @brief Disconnect from a signal
         /// @tparam SignalT
         ///    Signal data tyhpe
@@ -189,7 +188,6 @@ namespace core::grpc
             signal.disconnect(this->id);
         }
 
-        /// @fn forward
         /// @brief
         ///     append encoded signals to this queue for subsequent streaming to client.
         /// @param[in] message

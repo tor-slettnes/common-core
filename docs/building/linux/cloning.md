@@ -24,18 +24,21 @@ If you are reading this text directly on your system, you have already completed
   - Create or add to the file `$HOME/.gitconfig`:
 
     ```ini
+
     [user]
       name = Your Name
       email = you@email.com
+
     [credential]
       helper = store
+
     ```
 
     (Replace `Your Name` and `you@email.com` as appropriate).
 
   - Create or add to the file `$HOME/.git-credentials`:
 
-    ```
+    ```txt
     https://github-username:TOKEN@github.com
     ```
 

@@ -6,7 +6,8 @@
 #===============================================================================
 
 ### Modules wihtin package
-from variant_pb2 import Value, ValueList
+from cc.generated.variant_pb2 import Value, ValueList, Complex
+from .wellknown import decodeTimestamp, decodeDuration
 
 ### Third-party modules
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -24,6 +25,12 @@ PyTaggedValueList = list[PyTaggedValue]
 PyOptTaggedValue = tuple[str|None, object]
 PyOptTaggedValueList = list[PyOptTaggedValue]
 
+def encodeComplex(value: complex) -> Complex:
+    return Complex(real = value.real, imag = value.imag)
+
+def decodeComplex(value: Complex) -> complex:
+    return complex(value.real, value.imag)
+
 
 def encodeValue(value : PyTaggedValue|PyValue) -> Value:
     '''Encode a Python value as a `protobuf.variant.Value` instance'''
@@ -36,7 +43,9 @@ def encodeValue(value : PyTaggedValue|PyValue) -> Value:
 
 def decodeValue(value: Value,
                 autotype: bool = True) -> PyValue:
-    '''Decode a ProtoBuf `cc.protobuf.variant.Value` instance to a native Python value.
+    '''
+    Decode a ProtoBuf `cc.protobuf.variant.Value` instance to a native Python
+    value.
 
     The `autotype` argument recursively controls the decoded data type in case
     `value` contains a `ValueList` instance with nested values. If `True` and
@@ -44,36 +53,38 @@ def decodeValue(value: Value,
     the resulting type becomes, respectively, a `{key: value)` dictionary or a
     list of these nested values.  Otherwise, the deocoded result becomes a list
     of `(tag, value)` pairs.
-
     '''
 
-    fieldname = value.WhichOneof('value')
+    if fieldname := value.WhichOneof('value'):
+        fieldvalue = getattr(value, fieldname)
 
-    if (fieldname == 'value_timestamp'):
-        result = decodeTimestamp(value.value_timestamp)
+        if isinstance(fieldvalue, Timestamp):
+            return decodeTimestamp(fieldvalue)
 
-    elif (fieldname == 'value_duration'):
-        result = decodeDuration(value.value_duration)
+        elif isinstance(fieldvalue, Duration):
+            return decodeDuration(fieldvalue)
 
-    elif (fieldname == 'value_list'):
-        if autotype and value.value_list.untagged:
-            result = decodeValueList(value, autotype)
-        elif autotype and value.value_list.mappable:
-            result = decodeValueMap(value, autotyhpe)
+        elif isinstance(fieldvalue, Complex):
+            return decodeComplex(fieldvalue)
+
+        elif isinstance(fieldvalue, ValueList):
+            if autotype and value.value_list.untagged:
+                return decodeValueList(value, autotype)
+            elif autotype and value.value_list.mappable:
+                return decodeValueMap(value, autotyhpe)
+            else:
+                return decodeTaggedValueList(value, autotype)
         else:
-            result = decodeTaggedValueList(value, autotype)
-
-    elif fieldname:
-        result = getattr(value, fieldname)
+            return fieldvalue
 
     else:
-        result = None
-
-    return result
+        return None
 
 
 def encodeTaggedValue(pair : PyOptTaggedValue) -> Value:
-    '''Encode a (tag, value) tuple as a `protobuf.variant.Value` instance'''
+    '''
+    Encode a (tag, value) tuple as a `protobuf.variant.Value` instance
+    '''
 
     tag, value = pair
     tv = Value(tag=tag)
@@ -95,6 +106,9 @@ def encodeTaggedValue(pair : PyOptTaggedValue) -> Value:
 
     elif isinstance(value, bytes):
         tv.value_bytes = value
+
+    elif isinstance(value, complex):
+        tv.value_complex.CopyFrom(encodeComplex(value))
 
     elif isinstance(value, Timestamp):
         tv.value_timestamp.CopyFrom(value)
@@ -118,11 +132,12 @@ def encodeTaggedValue(pair : PyOptTaggedValue) -> Value:
 
 
 def decodeTaggedValue(tv: Value, autotype=True) -> PyOptTaggedValue:
-    '''Decode a ProtoBuf `cc.protobuf.variant.Value` instance to a (tag, value) pair.
+    '''
+    Decode a ProtoBuf `cc.protobuf.variant.Value` instance to a (tag, value)
+    pair.
 
     The `autotype` argument controls the decoding in case the value is a
     `ValueList` instance; see `decodeValue()` for details.
-
     '''
 
     tag = None
@@ -134,14 +149,14 @@ def decodeTaggedValue(tv: Value, autotype=True) -> PyOptTaggedValue:
     return (tag, value)
 
 def encodeValueList(value: PyValueList|PyTaggedValueList|PyValueDict) -> ValueList:
-    '''Encode a native Python list or dictionary to a ProtoBuf
+    '''
+    Encode a native Python list or dictionary to a ProtoBuf
     `cc.protobuf.variant.ValueList` instance.
 
     The input should be one of the following:
      - A {key, value} dictionary
      - A list of (tag, value) items
      - A list of values
-
     '''
 
     if value is None:
@@ -163,7 +178,8 @@ def encodeValueList(value: PyValueList|PyTaggedValueList|PyValueDict) -> ValueLi
         raise ValueError("encodeToValueList() expects a dictionary or list")
 
 def decodeValueList(valuelist, autotype=True) -> PyValueList:
-    '''Decode a ProtoBuf `cc.protobuf.variant.ValueList` instance to a list of
+    '''
+    Decode a ProtoBuf `cc.protobuf.variant.ValueList` instance to a list of
     native values.
 
     The `autotype` argument recursively controls the decoding of any nested
@@ -173,7 +189,8 @@ def decodeValueList(valuelist, autotype=True) -> PyValueList:
     return [v for (t,v) in self.decodeTaggedValueList(valuelist, autotype)]
 
 def encodeTaggedValueList(valuelist: PyOptTaggedValueList) -> ValueList:
-    '''Encode a Python-native list of (tag, value) items to a
+    '''
+    Encode a Python-native list of (tag, value) items to a
     `cc.protobuf.variant.ValueList` instance.
     '''
 
@@ -189,13 +206,13 @@ def encodeTaggedValueList(valuelist: PyOptTaggedValueList) -> ValueList:
 
 def decodeTaggedValueList(valuelist: ValueList|Sequence[Value],
                           autotype=False) -> PyOptTaggedValueList:
-    '''Decode a ProtoBuf `cc.protobuf.variant.ValueList` instance to a list of
+    '''
+    Decode a ProtoBuf `cc.protobuf.variant.ValueList` instance to a list of
     native `(tag, value)` pairs.
 
     The `autotype` argument recursively controls the decoding of any nested
     `ValueList` items in the list; see `decodeValue()` for details.
     Note also the that the default value of this argument is different.
-
     '''
 
     if isinstance(valuelist, ValueList):
@@ -208,7 +225,8 @@ def decodeTaggedValueList(valuelist: ValueList|Sequence[Value],
             "or a native list, not %s"%(type(valuelist),))
 
 def decodeValueMap(valuelist, autotype=True) -> PyValueDict:
-    '''Decode a `protobuf.variant.Value` instance to a native Python list.
+    '''
+    Decode a `protobuf.variant.Value` instance to a native Python list.
 
     The `autotype` argument recursively controls the decoding of any nested
     `ValueList` instances in the list; see `decodeValue()` for details.
@@ -216,5 +234,8 @@ def decodeValueMap(valuelist, autotype=True) -> PyValueDict:
     return dict(decodeTaggedValueList(valuelist, autotype))
 
 def valueList(**kwargs) -> ValueList:
-    '''Build a `protobuf.variant.ValueList` instance from native key/value pairs.'''
+    '''
+    Build a `protobuf.variant.ValueList` instance from native key/value
+    pairs.
+    '''
     return encodeValueList(kwargs)

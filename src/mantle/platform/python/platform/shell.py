@@ -55,7 +55,8 @@ class ArgParser (argparse.ArgumentParser):
                           help='Print debug messages')
 
 def legend():
-    '''Interactive Service Control.  Subsystems loaded:
+    '''
+    Interactive Service Control.  Subsystems loaded:
 
         sysconfig - `SysConfig` gRPC service client
         netconfig - `NetConfig` gRPC service client
@@ -72,7 +73,6 @@ def legend():
       - cc.protobuf.wellknown - Well-known types from Google
 
     Use 'help(subsystem)' to list available subcomponents or methods
-
     '''
     print(legend.__doc__)
 

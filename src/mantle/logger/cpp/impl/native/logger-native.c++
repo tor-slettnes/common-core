@@ -39,11 +39,9 @@ namespace logger::native
 
         if (!sink)
         {
-            if (sink = this->new_sink(spec))
-            {
-                sink->open();
-                return core::logging::message_dispatcher.add_sink(sink) != nullptr;
-            }
+            sink = this->new_sink(spec);
+            sink->open();
+            return (core::logging::message_dispatcher.add_sink(sink) != nullptr);
         }
         return false;
     }

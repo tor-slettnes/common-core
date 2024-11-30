@@ -37,13 +37,15 @@ MessageType = type
 empty = Empty()
 
 def decodeTimestamp(prototime: Timestamp) -> float:
-    '''Convert a ProtoBuf `Timestamp` value as an Python timestamp (seconds
+    '''
+    Convert a ProtoBuf `Timestamp` value as an Python timestamp (seconds
     since UNIX epoch).
     '''
     return prototime.seconds + prototime.nanos*1e-9
 
 def encodeTimestamp(timestamp: TimestampType) -> Timestamp:
-    '''Convert the specified time to a ProtoBuf `Timestamp` value.
+    '''
+    Convert the specified time to a ProtoBuf `Timestamp` value.
 
     The input may be one of the following:
       - None, in which case the current system time is used
@@ -85,12 +87,16 @@ def encodeTimestamp(timestamp: TimestampType) -> Timestamp:
 
 
 def decodeDuration(duration: Duration) -> float:
-    '''Decode a ProtoBuf `Duration` value to number of seconds'''
+    '''
+    Decode a ProtoBuf `Duration` value to number of seconds
+    '''
     return duration.seconds + duration.nanos*1e-9
 
 
 def encodeDuration(duration: int|float) -> Duration:
-    '''Encode a number of seconds as `Duration` value'''
+    '''
+    Encode a number of seconds as `Duration` value
+    '''
 
     if not duration:
         duration = 0
@@ -100,7 +106,9 @@ def encodeDuration(duration: int|float) -> Duration:
 
 
 def encodeValue (value) -> Value:
-    '''Encode a simple Python value as a `google.protobuf.Value` variant'''
+    '''
+    Encode a simple Python value as a `google.protobuf.Value` variant
+    '''
 
     if value is None:
         return Value(null_value=protobuf.NullValue())
@@ -126,20 +134,26 @@ def encodeValue (value) -> Value:
 
 
 def encodeStruct (dictionary: dict) -> Struct:
-    '''Encode a Python dictionary as a `google.protobuf.Struct` instance'''
+    '''
+    Encode a Python dictionary as a `google.protobuf.Struct` instance
+    '''
 
     items = [(key, encodeProtoValue(value))
              for (key, value) in dictionary.items() ]
     return Struct(fields=dict(items))
 
 def encodeListValue (listvalue: list) -> ListValue:
-    '''Encode a Python list as a `google.protobuf.ListValue` instance'''
+    '''
+    Encode a Python list as a `google.protobuf.ListValue` instance
+    '''
     values = [encodeProtoValue(value) for value in listvalue]
     return ListValue(values=values)
 
 
 def decodeValue (value: Value) -> object:
-    '''Decode a `google.protobuf.Value` variant to a native Python value'''
+    '''
+    Decode a `google.protobuf.Value` variant to a native Python value
+    '''
     kind = v.WhichOneof('kind')
     if kind == 'null_value':
         return None
@@ -160,12 +174,16 @@ def decodeValue (value: Value) -> object:
         return None
 
 def decodeStruct(structvalue: Struct) -> dict:
-    '''Decode a `google.protobuf.Struct` instance to a native Python dictionary'''
+    '''
+    Decode a `google.protobuf.Struct` instance to a native Python dictionary
+    '''
     return dict([(key, decodeValue(value))
                  for (key, value) in structvalue.fields.items()])
 
 def decodeListValue(listvalue: ListValue) -> list:
-    '''Decode a `google.protobuf.ListValue` instance to a native Python list'''
+    '''
+    Decode a `google.protobuf.ListValue` instance to a native Python list
+    '''
     return [ decodeValue(value)
              for value in listvalue.values ]
 

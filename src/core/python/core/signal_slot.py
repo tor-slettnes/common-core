@@ -32,20 +32,23 @@ class DataSignal (object):
         self._cached = None
 
     def connection_count(self) -> int:
-        '''Return number of connected slots'''
+        '''
+        Return number of connected slots
+        '''
         return len(self.slots)
 
 
     def connect(self,
                 slot: SignalSlot,
                 handle : Optional[str] = None) -> str:
-        '''Connect a callback handler (slot) to receive emitted signals.
+        '''
+        Connect a callback handler (slot) to receive emitted signals.
 
-        @param[in] slot
+        @param slot
             A callable handler (e.g. a function) that accepts the payload
             as its first and only required argument.
 
-        @param[in] handle
+        @param handle
             A unique ID that can later be used to disconnect the handler from
             this signal.
 
@@ -66,9 +69,10 @@ class DataSignal (object):
 
 
     def disconnect(self, handle: str) -> bool:
-        '''Disconnect a simple handler from this signal.
+        '''
+        Disconnect a simple handler from this signal.
 
-        @param[in] handle
+        @param handle
            Signal handler
 
         Returns True if the handler was found and removed; False otherwise.

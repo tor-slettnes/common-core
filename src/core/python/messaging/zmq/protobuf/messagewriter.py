@@ -12,7 +12,9 @@ from cc.protobuf.utils import dictToMessage
 
 
 class MessageWriter (BaseWriter):
-    '''ZMQ publisher with support for ProtoBuf messages'''
+    '''
+    ZMQ publisher with support for ProtoBuf messages
+    '''
 
     ### Subclasses should override this with a ProtoBuf message type,
     ### or else provide the `message_type` argument to `__init__()`.
@@ -30,7 +32,9 @@ class MessageWriter (BaseWriter):
 
     def write_proto(self,
                     message : Message):
-        '''Publish a ProtoBuf message over ZMQ'''
+        '''
+        Publish a ProtoBuf message over ZMQ
+        '''
 
         self.write_bytes(message.SerializeToString())
 

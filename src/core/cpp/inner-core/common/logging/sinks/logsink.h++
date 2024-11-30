@@ -15,7 +15,7 @@
 namespace core::logging
 {
     const std::string SETTING_THRESHOLD = "threshold";
-    const std::string SETTING_CONTRACT_ID = "contract id";
+    const std::string SETTING_CONTRACT_ID = "contract_id";
     const status::Level DEFAULT_THRESHOLD = status::Level::NONE;
 
     //==========================================================================

@@ -13,9 +13,9 @@
 ///    to specific destination (log file, json file, syslog, etc).
 ///  * `LogDispatcher()` to distribute a message to applicable sinks.
 ///  * Wrapper macros @b log_message(), @b log_trace(), @b log_debug(), ...,
-///    @b log_error(), to create, build, and dispatch the message in one call.
+/// @b log_error(), to create, build, and dispatch the message in one call.
 ///  * Wrapper macros @b logf_message(), @b logf_trace(), @b logf_debug(), ...,
-///    @b logf_error(), to construct and log in place a message from a format
+/// @b logf_error(), to construct and log in place a message from a format
 ///    template followed by corresponding arguments.
 ///
 /// @b Usage

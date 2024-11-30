@@ -21,9 +21,9 @@ namespace core::platform
     void PosixLogSinkProvider::open()
     {
         Super::open();
-        ::openlog(this->application_id().c_str(),  // ident
-                  LOG_NDELAY | LOG_PID,            // option
-                  LOG_DAEMON);                     // facility
+        ::openlog(this->application_id().c_str(), // ident
+                  LOG_NDELAY | LOG_PID,           // option
+                  LOG_DAEMON);                    // facility
     }
 
     void PosixLogSinkProvider::close()
@@ -38,8 +38,7 @@ namespace core::platform
         {
             ::syslog(level.value(),                   // priority
                      "%s",                            // format
-                     this->formatted(event).c_str(),  // args...
-                     event->text().c_str());          //
+                     this->formatted(event).c_str()); // args...
         }
     }
 
@@ -49,14 +48,13 @@ namespace core::platform
     }
 
     const types::ValueMap<status::Level, int> PosixLogSinkProvider::levelmap = {
-        {status::Level::DEBUG, LOG_DEBUG},
-        {status::Level::INFO, LOG_INFO},
-        {status::Level::NOTICE, LOG_NOTICE},
-        {status::Level::WARNING, LOG_WARNING},
-        {status::Level::FAILED, LOG_ERR},
-        {status::Level::CRITICAL, LOG_CRIT},
-        {status::Level::FATAL, LOG_EMERG},
-
+        {status::Level::DEBUG,    LOG_DEBUG  },
+        {status::Level::INFO,     LOG_INFO   },
+        {status::Level::NOTICE,   LOG_NOTICE },
+        {status::Level::WARNING,  LOG_WARNING},
+        {status::Level::FAILED,   LOG_ERR    },
+        {status::Level::CRITICAL, LOG_CRIT   },
+        {status::Level::FATAL,    LOG_EMERG  },
     };
 
-}  // namespace core::platform
+} // namespace core::platform

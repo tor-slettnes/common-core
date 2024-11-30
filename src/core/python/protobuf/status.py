@@ -26,8 +26,9 @@ level_map = {
 }
 
 def decodeLogLevel(event_level: Level) -> int:
-    '''Decode a `cc.status.Level` enumeration from `status.proto` to a
-    log level as established in the Python `logging` module.
+    '''
+    Decode a `cc.status.Level` enumeration from `status.proto` to a log level
+    as established in the Python `logging` module.
 
     If the input is not a valid `cc.status.Level` enumeration,
     `None` is returned.
@@ -37,8 +38,9 @@ def decodeLogLevel(event_level: Level) -> int:
 
 
 def encodeLogLevel(log_level: int) -> Level:
-    '''Encode a log level as established in the Python `logging` module to
-    an enumerated `cc.status.Level` value from `status.proto`.
+    '''
+    Encode a log level as established in the Python `logging` module to an
+    enumerated `cc.status.Level` value from `status.proto`.
     '''
 
     if isinstance(log_level, Level):

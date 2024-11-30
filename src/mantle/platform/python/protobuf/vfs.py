@@ -40,8 +40,13 @@ VFSPathsType = VFSPathType | Sequence[VFSPathType]
 ## Methods
 
 def encodePath(vfspath: VFSPathType) -> Path:
-    '''Encode a VFS path from either an existing VFS path (no conversion done)
-    or from a string with format `CONTEXT:PATH`.'''
+    '''
+    Encode a VFS path
+
+    @param vfspath
+        Either an existing `cc.protobuf.vfs.Path` instance (no conversion done)
+        or a string in the format `CONTEXT:RELPATH`.
+    '''
 
     if isinstance(vfspath, Path):
         return vfspath
@@ -55,10 +60,12 @@ def encodePath(vfspath: VFSPathType) -> Path:
         return Path(context=context, relpath=relpath.lstrip("/"))
 
     else:
-        raise TypeError("VFS path must be of type 'str' or 'Path'", vfspath)
+        raise TypeError("VFS path must be of type 'str' or 'cc.protobuf.vfs.Path'", vfspath)
 
 def encodePaths(vfspaths: VFSPathsType) -> list[Path]:
-    '''Encode a sequence of VFS paths.  Returns a list of the encoded instances.'''
+    '''
+    Encode a sequence of VFS paths.
+    '''
 
     if isinstance(vfspaths, str):
         vfspaths = (vfspaths,)
@@ -66,7 +73,9 @@ def encodePaths(vfspaths: VFSPathsType) -> list[Path]:
     return [encodePath(vpath) for vpath in vfspaths]
 
 def decodePath(vfspath: Path) -> str:
-    '''Encode a VFS path into a string in the format `CONTEXT:PATH`.'''
+    '''
+    Encode a VFS path into a string in the format `CONTEXT:PATH`.
+    '''
 
     return ":".join((vfspath.context, vfspath.relpath))
 

@@ -16,15 +16,24 @@ from cc.protobuf.vfs import Signal, \
 
 from cc.messaging.grpc import SignalClient, DetailedError
 
+
 ### Standard Python modules
 from typing import Mapping, Sequence, Iterator
 import io
+import pathlib
+
+LocalPath = pathlib.Path | str
+LocalFile = LocalPath | io.IOBase
+
+
 
 #===============================================================================
 ## VirtualFileSystemClient
 
 class VirtualFileSystemClient (SignalClient):
-    '''Client for VirtualFileSystem service.'''
+    '''
+    Client for VirtualFileSystem service.
+    '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
@@ -43,10 +52,13 @@ class VirtualFileSystemClient (SignalClient):
                     open_only: bool = False) -> Mapping[str, ContextSpec]:
         '''
         List available virtual filesystem contexts.
-        @param[in] removable_only
+
+        @param removable_only
             include only removable contexts in repsonse
-        @param[in] open_only
+
+        @param open_only
             include only contexts currently held open
+
         @return
             List of `(name, cxt)` tuples.
         '''
@@ -91,11 +103,10 @@ class VirtualFileSystemClient (SignalClient):
     def open_context(self, name: str) -> ContextSpec:
         '''
         Explicitly open a virtual context. Internally this increments a
-        reference counter to keep the corresponding virtual filesystem
-        context (VFC) open.  For instance, in the case of a removable or
-        remote drive, the drive will remain mounted, thereby eliminating
-        overhead associated with mounting/unmounting for individual file
-        transactions.
+        reference counter to keep the corresponding virtual filesystem context
+        (VFC) open.  For instance, in the case of a removable or remote drive,
+        the drive will remain mounted, thereby eliminating overhead associated
+        with mounting/unmounting for individual file transactions.
 
         Once access is no longer needed The client should invoke
         'close_context()', thereby allowing the context to be closed.
@@ -130,25 +141,25 @@ class VirtualFileSystemClient (SignalClient):
                   with_attributes: bool = True) -> FileInfo:
         '''
         Return file stats for specified VFS path, specified in the format
-        CONTEXT:PATH.
+        CONTEXT:RELPATH.
 
-        The returned value is a 'FileInfo()` named tuple, and includes
-        the following attributes:
-           name       : Base name, without leading directory
-           type       : TYPE_FILE, TYPE_DIRECTORY, etc
-           size       : Size in bytes
-           link       : Target for symbolic links
-           mode       : UNIX mode mask
-           readable   : Boolean indicating readable file/listable directory
-           writable   : Boolean indicating writable file/modifiable directory
-           uid        : Owner numeric ID
-           gid        : Group numeric ID
-           ownername  : Owner name
-           groupname  : Group name
-           accessTime : Last access
-           modifyTime : Last modification
-           createTime : Creation time
-           attributes : Dictionary of custom attributes
+        The returned value is a 'FileInfo()` named tuple, and includes the
+        following attributes:
+         - `name`       : Base name, without leading directory
+         - `type`       : TYPE_FILE, TYPE_DIRECTORY, etc
+         - `size`       : Size in bytes
+         - `link`       : Target for symbolic links
+         - `mode`       : UNIX mode mask
+         - `readable`   : Boolean indicating readable file/listable directory
+         - `writable`   : Boolean indicating writable file/modifiable directory
+         - `uid`        : Owner numeric ID
+         - `gid`        : Group numeric ID
+         - `ownername`  : Owner name
+         - `groupname`  : Group name
+         - `accessTime` : Last access
+         - `modifyTime` : Last modification
+         - `createTime` : Creation time
+         - `attributes` : Dictionary of custom attributes
         '''
 
         request = pathRequest(path=vfspath,
@@ -164,7 +175,7 @@ class VirtualFileSystemClient (SignalClient):
                       with_attributes: bool = True) -> Mapping[str, FileInfo]:
         '''
         List contents of the specified virtual path, specified in the format
-        CONTEXT:PATH.
+        CONTEXT:RELPATH.
 
         The returned value is a Python dictionary where keys represent the
         name of each entry and the associated value is a FileInfo instance
@@ -184,12 +195,17 @@ class VirtualFileSystemClient (SignalClient):
     def list(self,
              vfspath: VFSPathType,
              dereference: bool = True) -> list[str]:
-        '''List contents of the specified virtual path, specified in the format
-        CONTEXT:PATH.
+        '''
+        List contents of the specified virtual path.
+
+        @param vfspath
+            Virtual path in the format CONTEXT:RELPATH.
+
+        @param dereference
+            Follow symlinks to include information about the underlying file.
 
         The returned value is a Python list containing the virtual path of each
         item in the specified folder.
-
         '''
 
         reply = self.stub.get_directory(
@@ -209,22 +225,27 @@ class VirtualFileSystemClient (SignalClient):
         Recursively locate file(s) matching the specificed filename masks
         and attribute values.
 
-        @param[in] filename_masks
-            a string or tuple of strings with glob-style pattners (like "*.txt")
+        @param vfspath
+            Folder below which to search
 
-        @param[in] attribute_filters
-            a dictionary of attribute patterns to match
+        @param filename_masks
+            A string or tuple of strings with glob-style pattners (like "*.txt")
 
-        @param[in] with_attributes
+        @param attribute_filters
+            A dictionary of attribute patterns to match
+
+        @param with_attributes
             Include custom attributes in response
 
-        @param[in] include_hidden
+        @param include_hidden
             Also match leading "." in filename expansion patterns like "*".
             (Normally such filenames need to be matched specifically, i.e. ".*").
 
-        @param[in] ignore_case
+        @param ignore_case
             Case insensitive filename matching.
 
+        @returns
+            Discovered file paths mapped to corresponding file information.
         '''
 
         reply = self.stub.locate(
@@ -238,43 +259,50 @@ class VirtualFileSystemClient (SignalClient):
 
 
     def copy(self,
-              sources: str|Sequence[str],
-              target: str,
-              force: bool = False,
-              dereference: bool = False,
-              merge: bool = False,
-              update: bool = False,
-              with_attributes: bool = True,
-              inside_target: bool = False):
+             sources: str|Sequence[str],
+             target: str,
+             force: bool = False,
+             dereference: bool = False,
+             merge: bool = False,
+             update: bool = False,
+             with_attributes: bool = True,
+             inside_target: bool = False):
         '''
         Copy the specified source path(s) to the specified target path.
-        Each path is specified in the format CONTEXT:RELPATH, where
-           CONTEXT is a predefined, possibly removable location within the filesystem
-           RELPATH is a path relative to the context's root.
 
-        The 'sources' argument may be a string containing a single path, or a
-        tuple or list with multiple paths. In the latter case, the option
-        'inside_target' must also be set.
+        @param sources
+            A string containing a single path, or a tuple or list with multiple
+            paths. In the latter case, the option 'inside_target' must also be
+            set; as a precaution, this is not automatically assumed.  Each path
+            is specified in the format `CONTEXT:RELPATH`.
 
-        By default 'target' specifies the final target path to be created or
-        replaced. However if 'inside_target' is set, 'target' specifies a folder
-        into which the source path(s) will be copied.
+        @param target
+            The final target path to be created or replaced. However if
+            'inside_target' is set, 'target' specifies a folder into which the
+            source path(s) will be copied.
 
-        If 'force' is set, any existing target path(s) will be replaced, and
-        any missing parent folders leading up to the target are implicitly created.
+        @param force
+            Replace any existing target path(s) by the same name. Additionally,
+            any missing parent folders leading up to the target are implicitly
+            created.
 
-        If 'dereference' is set, any symbolic links on source or target will
-        be followed.  However, note that links are never followed outside of the
-        context.  Be careful with this option in conjunction with 'force'.
+        @param dereference
+            Follow any symbolic links on source or target. However, note that
+            links are never followed outside of the context.  Be careful with
+            this option in conjunction with 'force'.
 
-        if 'merge' is set, any existing folder(s) on target are merged with
-        the corresponding source folder(s) rather than replaced.
+        @param merge
+            Merge source folders onto corresponding folders on target, rather
+            than entirely replacing the latter.
 
-        If 'update' is set, any existing paths that are newer than the source
-        are not replaced.
+        @param update
+            Only copy paths that are newer than the source than on the target.
 
-        If 'with_attributes' is set (as per default), custom VFS attributes
-        are copied alongside the file.
+        @param with_attributes
+            Copy custom VFS attributes associated with the file(s).
+
+        @param inside_target
+            Target specifies the parent directory rather than the target file.
         '''
 
         return self.stub.copy(
@@ -296,34 +324,39 @@ class VirtualFileSystemClient (SignalClient):
              update: bool = False,
              with_attributes: bool = True):
         '''
-        Move/rename the specified source path(s) to the specified target path.
-        Each path is specified in the format CONTEXT:RELPATH, where
-           CONTEXT is a predefined, possibly removable location within the filesystem
-           RELPATH is a path relative to the context's root.
+        Move the specified source path(s) to the specified target path.
 
-        The 'sources' argument may be a string containing a single path, or a
-        tuple or list with multiple paths. In the latter case, the option
-        'inside_target' must also be set.
+        @param sources
+            A string containing a single path, or a tuple or list with multiple
+            paths. In the latter case, the option 'inside_target' must also be
+            set; as a precaution, this is not automatically assumed.  Each path
+            is specified in the format `CONTEXT:RELPATH`.
 
-        By default 'target' specifies the final target path to be created or
-        replaced. However if 'inside_target' is set, 'target' specifies a folder
-        into which the source path(s) will be moved.
+        @param target
+            The final target path to be created or replaced. However if
+            'inside_target' is set, 'target' specifies a folder into which the
+            source path(s) will be moved.
 
-        If 'force' is set, any existing target path(s) will be replaced, and
-        any missing parent folders leading up to the target are implicitly created.
+        @param force
+            Replace any existing target path(s) by the same name. Additionally,
+            any missing parent folders leading up to the target are implicitly
+            created.
 
-        If 'dereference' is set, any symbolic links on source or target will
-        be followed.  However, note that links are never followed outside of the
-        context.  Be careful with this option in conjunction with 'force'.
+        @param dereference
+            Follow any symbolic links on source or target. However, note that
+            links are never followed outside of the context.  Be careful with
+            this option in conjunction with 'force'.
 
-        if 'merge' is set, any existing folder(s) on target are merged with
-        the corresponding source folder(s) rather than replaced.
+        @param merge
+            Merge source folders into corresponding folders on target, rather
+            than entirely replacing the latter.
 
-        If 'update' is set, any existing paths that are newer than the source
-        are not replaced.
+        @param update
+            Only move paths that are newer than the source than on the target.
 
-        If 'with_attributes' is set (as per default), custom VFS attributes
-        are moved alongside the file.
+        @param with_attributes
+            Move (remove on soure, add on target) any custom VFS attributes
+            associated with the file(s).
         '''
         return self.stub.move(
             pathRequest(path=target,
@@ -337,15 +370,23 @@ class VirtualFileSystemClient (SignalClient):
 
 
     def create_folder(self,
-                     vfspath: VFSPathType,
-                     force: bool = False,
-                     dereference: bool = False):
+                      vfspath: VFSPathType,
+                      force: bool = False,
+                      dereference: bool = False):
+        '''
+        Create a folder
 
-        '''Create a folder, specified in the format CONTEXT:PATH.
+        @param vfspath
+            Target folder in the format CONTEXT:RELPATH.
 
-        If 'force' is specified, missing parent directories are created as
-        needed, and any non-directory components in the way are silently
-        removed.
+        @param force
+            Create any missing parent folders leading up to the target folder.
+            Any non-directory components in the way are silently removed.
+
+        @param dereference
+            Follow any symbolic links within the target path. However, note that
+            links are never followed outside of the context.  Be careful with
+            this option in conjunction with 'force'.
         '''
         return self.stub.create_folder(
             pathRequest(path=vfspath,
@@ -358,17 +399,25 @@ class VirtualFileSystemClient (SignalClient):
                 force: bool = False,
                 dereference: bool = False,
                 with_attributes: bool = True):
+        '''
+        Remove one or more paths.
 
-        '''Remove 'paths', which is either a string containing a single VFS path
-        or a tuple or list with multiple paths.  Each path is specified in the
-        format CONTEXT:RELPATH, where
+        @param paths
+            A string containing a single path, or a tuple or list with multiple
+            paths, each in the format `CONTEXT:RELPATH`.
 
-        - CONTEXT is a predefined, possibly removable location within the filesystem
+        @param force
+            Recursively remove paths even if they are on-empty directories.
+            Additionally, do not complain about any missing paths.
 
-        - RELPATH is a path relative to the context's root.
+        @param dereference
+            Follow any symbolic links within the target path. However, note that
+            links are never followed outside of the context.  Be careful with
+            this option in conjunction with 'force'.
 
-        If the path refers to non-empty directory, an error is returned unless
-        'force' is given, in which case it is removed recursively.
+        @param with_attributes
+            Also remove any custom VFS attributes associated with the removed
+            path(s).
         '''
         return self.stub.remove(
             pathRequest(sources=paths,
@@ -378,23 +427,36 @@ class VirtualFileSystemClient (SignalClient):
 
 
     def read_file(self, vfspath: VFSPathType) -> Iterator[FileChunk]:
-        '''Read a from the file `vfspath` from the server, specified in the format
-        CONTEXT:PATH.
+        '''
+        Read from a file on the server.
 
-        Returns a gRPC ClientReader instance, which can be used to iterate over
-        `cc.protobuf.vfs.FileChunk` instances.  See also `read()` if you want to
-        iterate over just the file contents, or `download()` if you want to
-        download and save a file from the server to a local file.
+        @param vfspath
+            File path, specified in the format CONTEXT:RELPATH.
+
+        @return
+             A gRPC ClientReader instance, which can be used to iterate over
+             `cc.protobuf.vfs.FileChunk` instances.
+
+        See also `read()` if you want to iterate over just the file contents, or
+        `download()` if you want to download and save a file from the server to
+        a local file.
         '''
         return self.stub.read_file(encodePath(vfspath))
 
 
     def read(self, vfspath: VFSPathType) -> Iterator[bytes]:
-        '''Read a from the file `vfspath` from the server, specified in the format
-        CONTEXT:PATH.
+        '''
+        Read from a file on the server.
 
-        Returns a gRPC ClientReader instance, which can be used to iterate over
-        the file contents. in chunk.s
+        @param vfspath
+            File path, specified in the format CONTEXT:RELPATH.
+
+        @return
+            An iterator over byte chunks from the requested file.
+
+        See also `read_file()` if you want to iterate over the underlying
+        `cc.protobuf.vfs.FileChunk` instances, or `download()` if you just want
+        to download a file from the server and save onto the local fileysstem.
         '''
         for chunk in self.read_file(vfspath):
             return chunk.data
@@ -402,35 +464,51 @@ class VirtualFileSystemClient (SignalClient):
 
     def download(self,
                   vfspath: VFSPathType,
-                  localfile: str | io.IOBase):
+                  localfile: LocalFile):
         '''
-        Download the file `vfspath` from the server, specified in the format
-        CONTEXT:PATH.
+        Download a file from the server onto the local filesystem.
 
-        Contents are saved to `localfile`, which can either be a local file path
-        or a writable file object (or any object with a compatible `write()`
-        method).
+        @param vfspath
+            File path, specified in the format CONTEXT:RELPATH.
+
+        @param localfile
+            Either a local (host native) file path, relative to the client's
+            current working directory, or a writable file object (with a
+            compatible `write()` method).
         '''
 
-        if isinstance(localfile, str):
+        if isinstance(localfile, pathlib.Path):
+            localfile = localfile.open("wb")
+
+        elif isinstance(localfile, str):
             localfile = open(localfile, "wb")
 
         for chunk in self.read_file(vfspath):
-            print("Writing %d bytes to local file %r"%(len(chunk.data), localfile.name))
             localfile.write(chunk.data)
 
 
     def upload(self,
-               localfile: str | io.IOBase,
+               localfile: LocalFile,
                vfspath: VFSPathType):
         '''
-        Upload the contents of `localfile`, which can either be a local file
-        path or a readable file object, to the file `vfspath` on the server,
-        specified in the format CONTEXT:PATH.
+        Upload the contents of `localfile` onto the server.
+
+        @param localfile
+            Either an existing local (host native) file path, relative to the
+            client's current working directory, or a readable file object (with
+            a compatible `read1()` method).
+
+        @param vfspath
+            Server file path to create or replace, specified in the format
+            CONTEXT:RELPATH.
         '''
 
         path = encodePath(vfspath)
-        if isinstance(localfile, str):
+
+        if isinstance(localfile, pathlib.Path):
+            localfile = localfile.open("rb")
+
+        elif isinstance(localfile, str):
             localfile = open(localfile, "rb")
 
         return self.stub.write_file(
@@ -439,7 +517,8 @@ class VirtualFileSystemClient (SignalClient):
 
     def _uploadIterator(self, fp, vfspath):
         '''
-        Internal: Iterate over contents of a file and generate FileChunk messages
+        Internal: Iterate over contents of a file and generate FileChunk
+        messages
         '''
 
         eof = False
@@ -452,19 +531,43 @@ class VirtualFileSystemClient (SignalClient):
                 eof = True
 
     def get_attributes(self, vfspath: VFSPathType) -> Mapping[str, object]:
-        '''Returns a dictionary of attributes associated with the specified path'''
+        '''
+        Returns a dictionary of attributes associated with the specified path
+
+        @param vfspath
+            Virtual path on the server in the format CONTEXT:RELPATH.
+
+        @return
+            Key/value pairs representing custom attributes associated with the
+            specified path.
+        '''
 
         req = encodePath(vfspath)
         resp = self.stub.get_attributes(req)
         return decodeValueMap(resp.items)
 
     def set_attributes(self, vfspath: VFSPathType, **attributes):
-        '''Add/update custom attributes associated with the specified path.'''
+        '''
+        Add/update custom attributes associated with the specified path.
+
+        @param vfspath
+            Virtual path on the server in the format CONTEXT:RELPATH.
+
+        @param attributes
+            Arbitrary key/value pairs to add/replace as custom atrbutes on the
+            specified path.
+        '''
+
 
         self.stub.set_attributes(attributeRequest(vfspath, attributes))
 
     def clear_attributes(self, vfspath: VFSPathType):
-        '''Clear all custom attributes associated with the specified path.'''
+        '''
+        Clear all custom attributes associated with a path on the server.
+
+        @param vfspath
+            Virtual path on the server in the format CONTEXT:RELPATH.
+        '''
 
         self.self.stub.clear_attributes(encodePath(vfspath))
 

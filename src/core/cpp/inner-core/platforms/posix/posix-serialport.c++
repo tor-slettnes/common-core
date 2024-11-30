@@ -116,7 +116,7 @@ namespace core::platform
             std::string buf;
             char c;
             ssize_t nread;
-            while (nread = ::read(fd, &c, 1))
+            while ((nread = ::read(fd, &c, 1)) > 0)
             {
                 if (buf.size() >= buf.capacity())
                 {

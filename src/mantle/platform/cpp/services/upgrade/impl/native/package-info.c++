@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file package-info.h++
+/// @file package-info.c++
 /// @brief Information aobut package contents
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

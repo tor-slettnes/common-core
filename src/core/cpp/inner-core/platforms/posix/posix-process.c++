@@ -216,7 +216,7 @@ namespace core::platform
             if (int stdin_event = pfds[STDIN_FILENO].revents)
             {
                 bool sent = false;
-                if ((stdin_event & POLLOUT != 0) && instream)
+                if (((stdin_event & POLLOUT) != 0) && instream)
                 {
                     instream->read(buf.data(), buf.size());
                     if (std::streamsize nbytes = instream->gcount())
@@ -457,9 +457,9 @@ namespace core::platform
     std::size_t PosixProcessProvider::write_fd(
         FileDescriptor fd,
         const void *buffer,
-        std::size_t length) const
+        std::size_t size) const
     {
-        return this->checkstatus(::write(fd, buffer, length));
+        return this->checkstatus(::write(fd, buffer, size));
     }
 
     void PosixProcessProvider::reassign_fd(FileDescriptor from,

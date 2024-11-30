@@ -120,8 +120,6 @@ namespace core::types
         ///    Push an element at the end of the list if a boolean condition is satisfied
         /// \param[in] tv
         ///    Tagged Value to push
-        /// \param[in] condition
-        ///    Whether to actually push or not
 
         TaggedValueList::iterator append(const TaggedValue &tv);
         TaggedValueList::iterator append(const Value &value);

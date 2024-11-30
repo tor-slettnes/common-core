@@ -20,8 +20,8 @@ private:
     void add_options() override;
     void add_commands();
 
-    void initialize();
-    void deinitialize();
+    void initialize() override;
+    void deinitialize() override;
 
     void on_monitor_start() override;
     void on_monitor_end() override;

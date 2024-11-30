@@ -23,9 +23,10 @@ from enum import IntEnum
 # Methods
 
 def proto_enum(proto_type: EnumTypeWrapper) -> IntEnum:
-    '''Convert a ProtoBuf `enum` type to Python `enum.IntEnum`.
-    These are interchangable as both are derived from `int`, but the latter
-    provides for better documentation/introspective representation.
+    '''
+    Convert a ProtoBuf `enum` type to Python `enum.IntEnum`.  These are
+    interchangable as both are derived from `int`, but the latter provides for
+    better documentation/introspective representation.
     '''
     return IntEnum(proto_type.DESCRIPTOR.name, proto_type.items())
 
@@ -33,7 +34,8 @@ def proto_enum(proto_type: EnumTypeWrapper) -> IntEnum:
 def check_message_type(value: Message,
                        expected: type = Message,
                        argument: str|None = None):
-    '''Ensure that a provided value is an of the specified ProtoBuf message
+    '''
+    Ensure that a provided value is an of the specified ProtoBuf message
     type. If not, a TypeError is raised.
 
     This will typically be useful within a function body to validate its
@@ -68,7 +70,8 @@ def messageToDict(message : Message,
 def dictToMessage(value     : dict,
                   prototype : MessageType,
                   ignore_unknown_fields : bool = False) -> Message:
-    '''Convert a specially constructed Python dictionary to a ProtoBuf message
+    '''
+    Convert a specially constructed Python dictionary to a ProtoBuf message
     of a given type.  Refer to `ParseDict` for details.
     '''
 
@@ -81,12 +84,16 @@ def dictToMessage(value     : dict,
     return msg
 
 def print_message(message: Message, as_one_line=True):
-    '''Convenience wrapper to print a protobuf message.'''
+    '''
+    Convenience wrapper to print a protobuf message.
+    '''
 
     print(MessageToString(message, as_one_line=as_one_line))
 
 
 def print_dict(message: Message):
-    '''Convenience wrapper to print a protobuf message as a dictionary.'''
+    '''
+    Convenience wrapper to print a protobuf message as a dictionary.
+    '''
 
     print(MessageToDict(message))

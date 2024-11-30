@@ -27,28 +27,92 @@ log styles:
   reset: "\e[0m"
 
 log sinks:
-  # Log sinks that write directly to output files include "file", "json",
-  # and "csv"; their corresponding settings sections below include a
-  # "name template" which controls the name of the output files with the
-  # following placeholders expanded:
+  # Log sinks serve as the receivers/destinations of log messages.  They record
+  # the messages via various output channels, based on criteria specified here.
   #
-  #   - "executable": the name of the executable, minus any suffix (e.g. `.exe`)
-  #   - "sink_id"   : the identity of the log sink, e.g. `"log"` or `"csv"`
-  #   - "isodate"   : date formatted as "YYYY-MM-DD"
-  #   - "isotime    : time of day formatted as "HH:MM:SS"
-  #   - "year"      : four-digit year
-  #   - "month"     : two-digit month (01 - 12)
-  #   - "day"       : two-digit day (01 - 31)
-  #   - "hour"      : two-digit hour (00 - 23)
-  #   - "minute"    : two-digit minute (00 - 59)
-  #   - "second"    : two-digit second (00 - 61)
-  #   - "zonename"  : time zone name or abbreviation (e.g., "PST")
-  #   - "zoneoffset": time zone offset (e.g. "-0700")
+  # Each sink has an optional threshold. If set, it will accept only messages
+  # with the specified severity/log level or above.  The following level names
+  # are recognized:
+  #   - `NONE`             : No threshold/level restriction
+  #   - `TRACE`            : Trace event for detailed troubleshooting
+  #   - `DEBUG`            : Debug event for normal troubleshooting
+  #   - `INFO`             : Informational event only, no error
+  #   - `NOTICE`           : Important event
+  #   - `WARNING`          : Abnormal event, operation continues
+  #   - `FAILED` or `ERROR`: Operation failed, entity is still functional
+  #   - `CRITICAL`         : Operation failed, entity is disabled
+  #   - `FATAL`            : Reporting entity is disabled and cannot recover
   #
-  # The timestamp  is the  "last aligned" time  point, i.e.,  the current
-  # time truncated according to the setting "log json rotatation", below.
-  # For instance, given a six-hour rotation interval the timestamps would
-  # be truncated to 00:00, 06:00, 12:00, and 18:00, local time.
+  # The following settings pertain to specific sink types.
+  #
+  # * Log sinks that write directly to output files include "logfile",
+  #   "jsonfile", "csvfile", and "sqlite3"; their corresponding settings
+  #   sections below include a `name template` which controls the name of the
+  #   output files, wherein the following placeholders are expanded:
+  #
+  #   - `{executable}`: the stem of the executable file (like "logserver")
+  #   - `{hostname}`  : the name of the host where the log file is created
+  #   - `{sink_id}`   : the unique identity of the log sink
+  #   - `{isodate}`   : date formatted as `YYYY-MM-DD`
+  #   - `{isotime}    : time of day formatted as `HH:MM:SS`
+  #   - `{year}`      : four-digit year
+  #   - `{month}`     : two-digit month (01 - 12)
+  #   - `{day}`       : two-digit day (01 - 31)
+  #   - `{hour}`      : two-digit hour (00 - 23)
+  #   - `{minute}`    : two-digit minute (00 - 59)
+  #   - `{second}`    : two-digit second (00 - 61)
+  #   - `{zonename}`  : time zone name or abbreviation (e.g., `PST`)
+  #   - `{zoneoffset}`: time zone offset (e.g. `-0700`)
+  #
+  #   The timestamp is the "last aligned" time point, i.e., the current time
+  #   truncated according to the specified rotation interval. For instance, given
+  #   the default settings `rotation: 6 hours` and `local time: true`, the
+  #   timestamps would be aligned at 00:00, 06:00, 12:00, and 18:00, local time.
+  #
+  #   Rotation intervals may be specified in one or two words:
+  #   - An optional integer specifying the number of time units.
+  #     Defaults to `1` if omitted.
+  #   - One of the following time units:
+  #     - `s`, `second`, `seconds`
+  #     - `m`, `minute`, `minutes`
+  #     - `h`, `hour`, `hours`, `hourly`
+  #     - `day`, `days`, `daily`
+  #     - `week`, `weeks`, `weekly`
+  #     - `month`, `months`, `monthly`
+  #     - `year`, `years`, `yearly`
+  #     - `eternity` (never rotate)
+  #
+  # * Log sinks that record specific fields from loggable events include
+  #   "csvfile" and "sqlite3".  As, such these are suitable for recording not
+  #   just text messages, but also general data collection/telemetry based
+  #   on an established contract. Their settings include:
+  #
+  #   - `contract_id`:  If provided, only events with matching
+  #    `contract_id` field will be captured by this sink.  Plaintext log
+  #    messages are logged with `contract_id` set to `"text"`.
+  #
+  #   - `columns`: This is a sequence of column specifications,
+  #     each in turn a sequence comprising three values:
+  #     1. Event field to capture. This may be:
+  #        - a static field such as `"timestamp"`, `"level"`, or `"text"`;
+  #          use the `list_static_fields()` method to get a list.
+  #        - a dynamic field passed as an event attribute, assumed to be present
+  #          in log events with a matching `contract_id`.
+  #     2. Column name, specifying header row or database column, respectively.
+  #     3. Prefered column type; one of: `NULL`, `BOOLEAN`, `INTEGER`, `REAL`,
+  #        `TEXT`, or `BLOB`. This is used by DB sinks (currently `sqlite3`) to
+  #        create correspondingly-typed data columns.  It is also used to
+  #        interpret fields such as `level` and `timestamp` in one way or
+  #        another. (Note that if the type of the `timestamp` field set to
+  #        `TEXT`, the resulting string value is also determined by the Sink's
+  #        `local time` setting).
+  #
+  #   - `level map`: An optional key/value map to convert log level names
+  #      (TRACE, DEBUG, ... FATAL) to alternate values, such as integer levels.
+  #      This is mainly useful for specialized log sinks producing output
+  #      inteded for specific parsers such as ones based on Python an its
+  #      `logging` module.
+
 
   # Log to standard error
   stderr:
@@ -62,8 +126,8 @@ log sinks:
     # Include source context in message
     include context: false
 
-  # Log to JSON files
-  json:
+  # Log each event as a single-line JSON object
+  jsonfile:
     # Log to JSON file enabled.  Defaults to `false`
     # enabled : false
 
@@ -71,17 +135,17 @@ log sinks:
     threshold: TRACE
 
     # JSON filename template, expanded as described above.
-    name template: "{executable}-{isodate}-{hour}{minute}{zoneoffset}.json"
+    name template: "{executable}-{isodate}-{hour}{minute}{zoneoffset}.jsonlog"
 
-    # How often do we want to switch to a new log file, in seconds.
-    # Default: 6 hours = 21600 seconds
+    # How often do we want to switch to a new log file
+    # Default: 6 hours
     rotation: 6 hours
 
     # Derive JSON log file name from local time.
     local time: true
 
   # Log to plaintext `.log` files
-  file:
+  logfile:
     # Log to text file enabled.  Defaults to `false`.
     # enabled : true
 
@@ -101,8 +165,8 @@ log sinks:
     # Derive log file name from local time.
     local time : true
 
-  # Log to plaintext `.log` files
-  csv:
+  # Log specific event fields to comma-separated value files (with suffix `.csv`)
+  csvfile:
     # Log to text file enabled.  Defaults to `false`.
     # enabled: true
 
@@ -110,11 +174,11 @@ log sinks:
     threshold: DEBUG
 
     # Contract ID to capture
-    contract id : "text"
+    contract_id : "text"
 
     # Columns to include.
     columns:
-      # Event field, optional CSV column header, optional format string
+      # Event field, optional CSV column header
       - ["timestamp", "TIME", TEXT]
       - ["host", "HOST", TEXT]
       - ["origin", "ORIGIN", TEXT]
@@ -149,7 +213,7 @@ log sinks:
 
     # Columns to include.
     columns:
-      # Event field, optional column name, column type, optional format string
+      # Event field, optional column name, column type
       - ["timestamp", "timestamp", INTEGER]
       - ["host", "hostname", TEXT]
       - ["origin", "origin", TEXT]

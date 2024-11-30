@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file vfs-providers-local-linux.c++
+/// @file vfs-providers-linux.c++
 /// @brief VFS service - Native implementation wrapper
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

@@ -141,7 +141,6 @@ namespace core::str
         size_t right_margin = 80,
         bool keep_empties = false);
 
-    /// @fn wrap
     /// @brief Wrap words to fit between left and right margins.
     /// @param[in] words
     ///     Vector of words to wrap
@@ -161,7 +160,6 @@ namespace core::str
         size_t left_margin = 24,
         size_t right_margin = 80);
 
-    /// @fn split
     /// @brief
     ///     Separate a string at each occurence of \p delimiter into one or more
     ///     substrings.
@@ -185,7 +183,6 @@ namespace core::str
         uint maxsplits = 0,
         bool keep_empties = false);
 
-    /// @fn splitlines
     /// @brief
     ///     Split a string into lines, separated by either UNIX, DOS, or legacy
     ///     MacOS newline conventions: `\n`, `\r\n`, or `\r`.

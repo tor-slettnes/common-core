@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file sysconfig-timezone-api.h++
+/// @file sysconfig-timezone.h++
 /// @brief SysConfig service - Time Zone configuration API
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

@@ -26,9 +26,10 @@ class JsonReaderError (ValueError):
 
 
 class JsonReader:
-    '''A specialized dictionary loaded from and saved to JSON file(s).
-    Any script-style or C++-style comments (prefixed with either `#` or `//`)
-    are stripped away before JSON parsing.
+    '''
+    Remove a JSON file that may have embedded script-style or C++-style
+    comments (prefixed with either `#` or `//`).  These are stripped away before
+    passing the remaining text to `json.loads()`.
     '''
 
     @classmethod

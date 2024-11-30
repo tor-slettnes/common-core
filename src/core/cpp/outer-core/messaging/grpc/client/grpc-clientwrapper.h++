@@ -25,7 +25,7 @@ namespace core::grpc
     /// Typical usage:
     ///
     ///  * Include "ClientWrapper" as a base for your stub class:
-    ///    ```c++
+    ///    ```cxx
     ///      #include "servicewrapper.h"
     ///      class YourClient : [...,] public ClientWrapper<core::yourapp::YourService>
     ///      {

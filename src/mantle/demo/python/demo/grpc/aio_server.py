@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #===============================================================================
-## @file demo-grpc-async-server.py
+## @file aio_server.py
 ## @brief Python flavor of 'Demo' gRPC server
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================

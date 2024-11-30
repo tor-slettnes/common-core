@@ -18,7 +18,8 @@ import sys
 import logging
 
 class Client (Base):
-    '''gRPC client wrapper with miscellaneous convenience features.
+    '''
+    gRPC client wrapper with miscellaneous convenience features.
 
     By deriving from this class, dedicated service clients will automatically
     connect to the correct server address (host and port) as specified in the
@@ -45,24 +46,23 @@ class Client (Base):
                   host: str,
                   wait_for_ready: bool = False,
                   use_asyncio: bool = False):
-        '''Initializer.  Parameters:
+        '''
+        Initializer.  Parameters:
 
-        @param[in] host
-            Server host and/or port number, in the form `address:port`.
-            `address` may be a hostname or an IPv4 or IPv6 address string.
-            If either address or host is missing, the default value is
-            obtain from the service settings file (grpc-endpoints-PRODUCT.json).
+        @param host Server host and/or port number, in the form `address:port`.
+            `address` may be a hostname or an IPv4 or IPv6 address string.  If
+            either address or host is missing, the default value is obtain from
+            the service settings file (grpc-endpoints-PRODUCT.json).
 
-        @param[in] wait_for_ready
+        @param wait_for_ready
             If a connection attempt fails, keep retrying until successful.
             This value may be overriden per call.
 
-        @param[in] asyncio
+        @param use_asyncio
             Use Python AsyncIO.  Effectively this performs calls within a
             `grpc.aio.Channel` instance, rather than the default `grpc.Channel`.
             Additionally, the `call()` method uses AsyncIO semantics to capture
             any exceptions.
-
         '''
 
         Base.__init__(self, self.service_name or self._default_service_name())

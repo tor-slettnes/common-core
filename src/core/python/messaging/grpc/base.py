@@ -53,7 +53,8 @@ class Base (Endpoint):
                      portOption      : int,
                      defaultHost     : str,
                      defaultPort     : int = 8080):
-        '''Sanitize a service address of the form `[HOST][:PORT]` (where any or
+        '''
+        Sanitize a service address of the form `[HOST][:PORT]` (where any or
         all components may be present) to the full form `HOST:PORT`.
 
         If either HOST or PORT is missing, defaults are determined as follows:
@@ -69,21 +70,24 @@ class Base (Endpoint):
         * Any attribute(s) that are still missing are populated from
           `defaultHost` or `defaultPort`, respectively.
 
-
-        @param[in] provided
+        @param provided
           Address to sanitize, normally provided as a command-line option.
-        @param[in] hostOption
-          Key to locate the host name in the settings file
-        @param[in] portOption
-          Key to locate the port number in the settings file
-        @param[in] defaultHost
-          Fallback if host name is not provided nor found in settings file
-        @param[in] defaultPort
-          Fallback if port number is not provided nor found in settings file
-        @return
-          Sanitized address of the form HOST:PORT (where HOST
-          may still be empty)
 
+        @param hostOption
+          Key to locate the host name in the settings file
+
+        @param portOption
+          Key to locate the port number in the settings file
+
+        @param defaultHost
+          Fallback if host name is not provided nor found in settings file
+
+        @param defaultPort
+          Fallback if port number is not provided nor found in settings file
+
+        @return
+          Sanitized address of the form HOST:PORT (where HOST may still be
+          empty)
         '''
 
         (host, port) = self._splitAddress(provided or "")

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #===============================================================================
-## @file demo-grpc-async-client.py
+## @file aio_client.py
 ## @brief Invoke a server method using Python AsyncIO semantics
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================

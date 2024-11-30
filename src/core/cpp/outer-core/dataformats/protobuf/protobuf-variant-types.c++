@@ -12,6 +12,23 @@
 namespace protobuf
 {
     //==========================================================================
+    // Complex value encoding/decoding
+
+    void encode(const core::types::complex &value,
+                cc::variant::Complex *msg) noexcept
+    {
+        msg->set_real(value.real());
+        msg->set_imag(value.imag());
+    }
+
+    void decode(const cc::variant::Complex &msg,
+                core::types::complex *value) noexcept
+    {
+        value->real(msg.real());
+        value->imag(msg.imag());
+    }
+
+    //==========================================================================
     // Variant Value encoding
 
     void encode(const core::types::Value &value,
@@ -36,6 +53,10 @@ namespace protobuf
 
         case core::types::ValueType::REAL:
             msg->set_value_real(value.as_real());
+            break;
+
+        case core::types::ValueType::COMPLEX:
+            encode(value.as_complex(), msg->mutable_value_complex());
             break;
 
         case core::types::ValueType::CHAR:
@@ -105,6 +126,9 @@ namespace protobuf
         case cc::variant::Value::kValueDuration:
             *value = ::protobuf::decoded<core::dt::Duration>(msg.value_duration());
             break;
+
+        case cc::variant::Value::kValueComplex:
+            *value = ::protobuf::decoded<core::types::complex>(msg.value_complex());
 
         case cc::variant::Value::kValueList:
             decode(msg.value_list(), value);
@@ -326,4 +350,4 @@ namespace protobuf
         }
     }
 
-}  // namespace protobuf
+} // namespace protobuf

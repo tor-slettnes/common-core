@@ -16,7 +16,9 @@ Weekday = proto_enum(Weekday)
 TimeUnit = proto_enum(TimeUnit)
 
 def encodeInterval(interval: tuple[int, TimeUnit] | TimeUnit | Interval) -> Interval:
-    '''Convert a (COUNT, UNIT) tuple to an `Interval` message'''
+    '''
+    Convert a (COUNT, UNIT) tuple to an `Interval` message
+    '''
 
     if isinstance(interval, Interval):
         return interval
@@ -36,7 +38,9 @@ def encodeInterval(interval: tuple[int, TimeUnit] | TimeUnit | Interval) -> Inte
 
 
 def encodeTimeStruct(ts: time.struct_time) -> TimeStruct:
-    '''Convert a `time.time_struct` object to a `TimeStruct` message.'''
+    '''
+    Convert a `time.time_struct` object to a `TimeStruct` message.
+    '''
 
     return TimeStruct(
         year = ts.tm_year,
@@ -52,7 +56,9 @@ def encodeTimeStruct(ts: time.struct_time) -> TimeStruct:
 
 
 def decodeTimeStruct (ts: TimeStruct) -> time.struct_time:
-    '''Convert a `Timestruct` message to a `time.time_struct` object'''
+    '''
+    Convert a `Timestruct` message to a `time.time_struct` object
+    '''
 
     return time.time_struct((
         ts.year, ts.month, ts.day,

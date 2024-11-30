@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file protobuf-logger-types.h++
+/// @file protobuf-logger-types.c++
 /// @brief conversions to/from Protocol Buffer messages for Logger application
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

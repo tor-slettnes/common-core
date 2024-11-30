@@ -60,10 +60,10 @@ The receiver then uses the `oneof signal` selector to invoke a corresponding han
 Data type translations and portability
 --------------------------------------
 
-Since the above modules communcate over gRPC, their data exchange is defined in `.proto` files located in the [protodefs](../../../protodefs) folder.  However, by design, neither our abstract API nor our native/core implementation has any dependency on gRPC, and thus do not utilize the data types defined in these files.
+Since the above modules communcate over gRPC, their data exchange is defined in `.proto` files located in the [protodefs](../../../proto) folder.  However, by design, neither our abstract API nor our native/core implementation has any dependency on gRPC, and thus do not utilize the data types defined in these files.
 
-Thus, our implementation includes a number of `encode()` and `decode()` method signatures to translate between the native and IDL data types that make up our DDS Pub/Sub and Client/Server interfaces.  These methods are located in the [types](types) folder.
+Thus, our implementation includes a number of `encode()` and `decode()` method signatures to translate between the native and IDL data types that make up our DDS Pub/Sub and Client/Server interfaces.  These methods are located in the [types](../common/types) folder.
 
-(In turn, these make use of similar `encode()`/`decode()` routines from the [idl](../../../../../shared/cpp/messaging/google/protobuf) folder from our shared repository).
+(In turn, these make use of similar `encode()`/`decode()` routines from the [protobuf](../../../../../core/cpp/outer-core/dataformats/protobuf) folder from our shared repository).
 
 As an application developer you may certainly choose to omit this level of data abstraction, and instead use the generated ProtoBuf messages natively.  Note however that doing so would increase your coupling to to gRPC, and complicate any future efforts to choose a different communication infrastructure.

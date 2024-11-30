@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file glib-wrappers.h++
+/// @file glib-variant.h++
 /// @brief Wrappers/containers for Glib::VariantBase
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

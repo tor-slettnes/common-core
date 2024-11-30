@@ -40,5 +40,7 @@ class MessageHandler (object):
         pass
 
     def handle (self, data:bytes):
-        '''Handle payload of received messages'''
+        '''
+        Handle payload of received messages
+        '''
         raise NotImplementedError

@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file dbus-proxywrapper-properties.c++
+/// @file dbus-proxywrapper-properties.h++
 /// @brief Abstract base for DBus Interface handlers
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

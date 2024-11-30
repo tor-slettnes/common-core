@@ -22,15 +22,16 @@ class RESTClient (HTTPClient):
     service_name = None
 
     async def get_json_async(self, rel_url, kwargs={}, headers={}) -> object:
-        '''AsyncIO coroutine wrapper for `get_json()`
+        '''
+        AsyncIO coroutine wrapper for `get_json()`
 
-        @param[in] rel_url
+        @param rel_url
             REST endpoint URL relative to the `base_url` passed to `__init__()`.
 
-        @param[in] kwargs
+        @param kwargs
             Request arguments, used to construct the HTTP query
 
-        @param[in] headers
+        @param headers
             HTTP request headers
 
         @return
@@ -39,15 +40,16 @@ class RESTClient (HTTPClient):
         return await asyncio.to_thread(self.get_json, rel_url, kwargs, headers)
 
     def get_json(self, rel_url, kwargs={}, headers={}):
-        '''Request a JSON object from a REST-enabled web service.
+        '''
+        Request a JSON object from a REST-enabled web service.
 
-        @param[in] rel_url
+        @param rel_url
             REST endpoint URL relative to the `base_url` passed to `__init__()`.
 
-        @param[in] kwargs
+        @param kwargs
             Request arguments, used to construct the HTTP query
 
-        @param[in] headers
+        @param headers
             HTTP request headers
 
         @return

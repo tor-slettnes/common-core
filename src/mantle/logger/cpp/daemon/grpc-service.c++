@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-service.c++
 /// @brief Launch Logger gRPC services
-/// @author Tor Slettnes <tslettnes@picarro.com>
+/// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #include "grpc-service.h++"

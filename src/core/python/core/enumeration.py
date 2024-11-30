@@ -13,7 +13,9 @@ logging.warning(
 
 
 class EnumValue(int):
-    '''An enumerated value, derived from and compatible with `int`.'''
+    '''
+    An enumerated value, derived from and compatible with `int`.
+    '''
 
     def __new__ (cls, value, name):
         self = int.__new__(cls, value)
@@ -25,14 +27,16 @@ class EnumValue(int):
 
 
 class Enumeration (dict):
-    '''A dictionary container mapping integer values to corresponding
+    '''
+    A dictionary container mapping integer values to corresponding
     `EnumValue` instances.
 
     Additionally, these instances are added as attributes corresponding to their
     symbolic name.
 
-    Example:
-    ```
+    #### Example
+
+    ```python
     >>> from cc.core.enumeration import Enumeration
     >>> my_enum = Enumeration({"ONE":1, "TWO":2})
     >>> my_enum
@@ -47,7 +51,8 @@ class Enumeration (dict):
     def __init__ (self,
                   enumeration: dict[str,int]|list[tuple[str,int]]|list[str],
                   name = None):
-        '''Initializer.
+        '''
+        Initializer.
 
         The input is one of the following:
           - A sequence of (name, value) tuples

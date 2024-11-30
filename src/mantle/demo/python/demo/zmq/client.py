@@ -24,7 +24,9 @@ import time, sys, os.path
 # DemoClient class
 
 class DemoClient (API, BaseClient):
-    '''Client for Demo service.'''
+    '''
+    Client for Demo service.
+    '''
 
     def __init__(self,
                  service_host: str = "",
@@ -45,24 +47,51 @@ class DemoClient (API, BaseClient):
 
 
     def connect(self):
+        '''
+        Establish connection to the server, and start listening for signals.
+        '''
         self.subscriber.connect()
         self.subscriber.add(self.signalhandler)
         BaseClient.connect(self)
 
     def disconnect(self):
+        '''
+        Disconnect from the server. Unregister signal handler.
+        '''
+
         BaseClient.disconnect(self)
         self.subscriber.remove(self.signalhandler)
         self.subscriber.disconnect()
 
     def say_hello(self, greeting: Greeting):
+        '''
+        Send a greeting to the server.
+
+        @param greeting
+            A greeting object.
+
+        See also `hello()` if you want to pass in just the text of the greeting
+        rather than constructing your own `Greeting` object.
+        '''
+
         check_message_type(greeting, Greeting)
         self.call('say_hello', greeting)
 
     def get_current_time(self) -> TimeData:
+        '''
+        Ask for the current time (local, utc, epoch) from the server.
+        '''
         return self.call('get_current_time', None, TimeData)
 
     def start_ticking(self) -> None:
+        '''
+        Tell the server to start emitting `signal_time` once per second.
+        '''
+
         return self.call('start_ticking')
 
     def stop_ticking(self) -> None:
+        '''
+        Tell the server to stop emitting `singal_time`.
+        '''
         return self.call('stop_ticking')

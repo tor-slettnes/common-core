@@ -123,7 +123,8 @@ namespace platform::vfs::local
         if (!this->preexec.empty() && system(this->preexec.c_str()) == -1)
         {
             throwf(core::exception::SystemError,
-                   ("Could run context %r pre-exec hook", this->name));
+                   "Could run context %r pre-exec hook",
+                   this->name);
         }
     }
 
@@ -132,7 +133,8 @@ namespace platform::vfs::local
         if (!this->postexec.empty() && system(this->postexec.c_str()) == -1)
         {
             throwf(core::exception::SystemError,
-                   ("Could run context %r post-exec hook", this->name));
+                   "Could run context %r post-exec hook",
+                   this->name);
         }
     }
 }  // namespace platform::vfs::local

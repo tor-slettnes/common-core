@@ -36,7 +36,9 @@ import time
 ##          and as such more future proof.
 
 class DemoService (SignalService, DemoServicer):
-    '''Handle "Demo" service requests'''
+    '''
+    Handle "Demo" service requests
+    '''
 
     def __init__ (self,
                   demo_provider : API,

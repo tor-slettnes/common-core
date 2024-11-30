@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file parserinput-string.h++
+/// @file parserinput-string.c++
 /// @brief Read tokens from strings
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

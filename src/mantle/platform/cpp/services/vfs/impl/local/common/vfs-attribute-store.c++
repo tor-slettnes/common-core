@@ -122,7 +122,7 @@ namespace platform::vfs::local
     {
         this->prune();
 
-        if (this->size())
+        if (!this->empty())
         {
             Super::save(delta);
             this->loaded = true;

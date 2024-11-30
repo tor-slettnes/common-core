@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file sysconfig-providers.h++
+/// @file sysconfig.h++
 /// @brief SysConfig service - Abstract C++ interface
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

@@ -47,8 +47,8 @@ namespace core::logging
     // Add sink factory to enable `--log-to-json` option.
 
     inline static SinkFactory json_factory(
-        "json",
-        "Log to a JSON file, on JSON-formatted log entry per line",
+        "jsonfile",
+        "Log each event as a single-line JSON object",
         [](const SinkID &sink_id) -> Sink::ptr {
             return JsonFileSink::create_shared(sink_id);
         });

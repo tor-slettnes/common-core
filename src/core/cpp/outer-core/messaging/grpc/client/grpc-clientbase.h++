@@ -34,18 +34,15 @@ namespace core::grpc
     public:
         std::string host() const;
 
-        /// @fn get_wait_for_ready
         /// @brief Check whether set_for_ready flag should be set
         bool get_wait_for_ready();
 
-        /// @fn set_wait_for_ready
         /// @brief Set whether calls will wait for the service to be ready by default.
         /// @param[in] wait_for_ready
         ///     If set, the `wait_for_ready` flag will be set in future gRPC requests,
         ///     unless explicitly specified
         void set_wait_for_ready(bool wait_for_ready);
 
-        /// @fn set_request_timeout
         /// @brief Set gRPC call request timeout in ms.
         /// @param[in] request_timeout
         ///     If set, the `request_timeout` will be set in future gRPC requests,

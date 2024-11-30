@@ -45,10 +45,10 @@ namespace core
 
         struct TimeZoneInfo
         {
-            std::string shortname;  // Abreviation, e.g. PST or PDT
-            Duration offset;        // Offset from UTC, e.g. -7*60*60
-            Duration stdoffset;     // Standard offset from UTC, e.g. -8*60*60
-            bool dst = false;       // Whether daylight savings time is in effect
+            std::string shortname; // Abreviation, e.g. PST or PDT
+            Duration offset;       // Offset from UTC, e.g. -7*60*60
+            Duration stdoffset;    // Standard offset from UTC, e.g. -8*60*60
+            bool dst = false;      // Whether daylight savings time is in effect
         };
 
         std::ostream &operator<<(std::ostream &stream, const TimeZoneInfo &zi);
@@ -61,18 +61,18 @@ namespace core
 
         enum class TimeUnit
         {
-            ZERO_TIME,    // No/Unspecified time
-            NANOSECOND,   // 1e-9 second
-            MICROSECOND,  // 1e-6 second
-            MILLISECOND,  // 1e-3 second
-            SECOND,       // SI time unit
-            MINUTE,       // 60 seconds
-            HOUR,         // 60 minutes
-            DAY,          // 24 hours, approx 1 Earth rotation towards Sun
-            WEEK,         // 7 days
-            MONTH,        // 28-31 days (variable)
-            YEAR,         // 12 months (variable)
-            ETERNITY      // Inifinite time
+            ZERO_TIME,   // No/Unspecified time
+            NANOSECOND,  // 1e-9 second
+            MICROSECOND, // 1e-6 second
+            MILLISECOND, // 1e-3 second
+            SECOND,      // SI time unit
+            MINUTE,      // 60 seconds
+            HOUR,        // 60 minutes
+            DAY,         // 24 hours, approx 1 Earth rotation towards Sun
+            WEEK,        // 7 days
+            MONTH,       // 28-31 days (variable)
+            YEAR,        // 12 months (variable)
+            ETERNITY     // Inifinite time
         };
 
         std::ostream &operator<<(std::ostream &stream, const TimeUnit &unit);
@@ -88,7 +88,6 @@ namespace core
 
         std::ostream &operator<<(std::ostream &stream, const DateTimeInterval &interval);
         std::istream &operator>>(std::istream &stream, DateTimeInterval &interval);
-
 
         /// Write out provided timepoint as a string representing UTC or local time.
         /// \param[in] stream
@@ -291,39 +290,56 @@ namespace core
         Duration to_duration(time_t seconds, long nanoseconds = 0);
 
         /// Convert from string representation (`HH:MM:SS.sss`) to Duration
-        Duration to_duration(const std::string_view &string,
-                             const std::string &format = DEFAULT_DURATION_FORMAT);
+        Duration to_duration(
+            const std::string_view &text,
+            const std::string &format = DEFAULT_DURATION_FORMAT);
 
-        /// Convert from JavaScript time string (`YYYY-MM-DDTHH:MM:SS.sssZ`) to TimePoint
-        TimePoint js_to_timepoint(const std::string_view &input,
-                                  const TimePoint &fallback = {});
+        // Try to convert from a string to a duration
+        std::optional<Duration> try_to_duration(
+            const std::string_view &text,
+            const std::string &format = DEFAULT_DURATION_FORMAT);
 
-        /// Convert from string representation (`YYYY-MM-DD?HH:MM:SS.sss`) to TimePoint
-        TimePoint to_timepoint(const std::string_view &s,
-                               bool local = true,
-                               const std::string &format = DEFAULT_FORMAT,
-                               const TimePoint &fallback = {});
+        std::optional<TimePoint> try_to_timepoint(
+            const std::string_view &input,
+            const std::optional<bool> &local = {});
+
+        std::optional<TimePoint> try_to_timepoint(
+            const std::string_view &s,
+            const std::string &format,
+            const std::optional<bool> &local = {});
+
+        TimePoint to_timepoint(
+            const std::string_view &s,
+            const std::optional<bool> &local = {},
+            const TimePoint &fallback = {});
+
+        TimePoint to_timepoint(
+            const std::string_view &s,
+            const std::string &format,
+            const std::optional<bool> &local = {},
+            const TimePoint &fallback = {});
 
         /// Convert from "struct tm" to TimePoint, or fallback if the time is zero.
-        TimePoint to_timepoint(const tm &dt,
-                               bool local = true,
-                               const TimePoint &fallback = {});
+        TimePoint to_timepoint(
+            const tm &dt,
+            bool local = true);
 
         /// Convert from "struct timespec" to TimePoint, or fallback if the time is zero.
-        TimePoint to_timepoint(const timespec &ts,
-                               const TimePoint &fallback = {});
+        TimePoint to_timepoint(
+            const timespec &ts);
 
         /// Convert from seconds as a real number to timepoint
-        TimePoint to_timepoint(double seconds,
-                               const TimePoint &fallback = {});
+        TimePoint to_timepoint(
+            double seconds);
 
         /// Convert from milliseconds (Java style timestamp) to TimePoint
-        TimePoint ms_to_timepoint(std::int64_t milliseconds);
+        TimePoint ms_to_timepoint(
+            std::int64_t milliseconds);
 
         /// Convert from seconds and nanoseconds to TimePoint, or fallback if the time is zero.
-        TimePoint to_timepoint(time_t seconds,
-                               long nanoseconds = 0,
-                               const TimePoint &fallback = {});
+        TimePoint to_timepoint(
+            time_t seconds,
+            long nanoseconds = 0);
 
         /// \brief
         ///    Convert from year/month/day/hour/minute/second/fraction to timepoint.
@@ -364,7 +380,6 @@ namespace core
         TimePoint last_aligned(const TimePoint &tp,
                                const DateTimeInterval &interval,
                                bool local = true);
-
 
         /// Return the most recent time aligned to the specific clock interval
         TimePoint last_aligned(const TimePoint &tp,
@@ -435,7 +450,7 @@ namespace core
         /// Helper function to calculate day number within a year
         std::uint32_t day_of_year(uint year, uint month, uint day, bool gregorian = true);
 
-    }  // namespace dt
+    } // namespace dt
 
     /// Steady Time
     namespace steady
@@ -453,15 +468,15 @@ namespace core
 
         // Convert from System Clock to Steady Clock
         TimePoint to_timepoint(dt::TimePoint tp);
-    }  // namespace steady
-}  // namespace core
+    } // namespace steady
+} // namespace core
 
 namespace std::chrono
 {
     std::ostream &operator<<(std::ostream &stream, const system_clock::time_point &tp);
     std::ostream &operator<<(std::ostream &stream, const system_clock::duration &dur);
     std::ostream &operator<<(std::ostream &stream, const steady_clock::time_point &stp);
-}  // namespace std::chrono
+} // namespace std::chrono
 
 // Compare `std::tm` structs.  This is actually an alias for `struct tm`,
 // so we need to define it in the global namespace.

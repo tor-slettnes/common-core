@@ -12,6 +12,11 @@ package cc.variant;
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
+message Complex
+{
+    double real = 1;
+    double imag = 2;
+}
 
 // Container for a generic value, and optionally a tag.
 //
@@ -51,6 +56,7 @@ message Value {
         bytes value_bytes = 9;
         google.protobuf.Timestamp value_timestamp = 10;
         google.protobuf.Duration value_duration = 11;
+        Complex value_complex = 12;
 
         // Nested tag/value container
         ValueList value_list = 15;

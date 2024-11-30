@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -i
 #===============================================================================
-## @file demoshell.py
+## @file shell.py
 ## @brief Interactive service control via collection of clients.
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
@@ -59,7 +59,8 @@ def foo():
 
 
 def legend():
-    '''Interactive Service Control.  Subsystems loaded:
+    '''
+    Interactive Service Control.  Subsystems loaded:
 
         demo_grpc - Simple gRPC communications example
         demo_zmq - Simple 0MQ communications example

@@ -13,10 +13,10 @@
 namespace platform::netconfig::dbus
 {
     Settings::Settings(
-        core::dbus::ProxyContainer* container,
-        const core::dbus::ConnectionPtr& connection,
-        const core::dbus::ServiceName& servicename,
-        const core::dbus::ObjectPath& objectpath)
+        core::dbus::ProxyContainer *container,
+        const core::dbus::ConnectionPtr &connection,
+        const core::dbus::ServiceName &servicename,
+        const core::dbus::ObjectPath &objectpath)
         : DataWrapper<SystemData>(
               container,
               connection,
@@ -24,9 +24,9 @@ namespace platform::netconfig::dbus
               objectpath,
               NM_DBUS_INTERFACE_SETTINGS,
               {
-                  {"NewConnection", SLOT(Settings::on_signal_connection_added)},
+                  {"NewConnection",     SLOT(Settings::on_signal_connection_added)  },
                   {"ConnectionRemoved", SLOT(Settings::on_signal_connection_removed)},
-              },
+    },
               {
                   {"Hostname", DATASLOT(&this->hostname)},
               })
@@ -40,7 +40,7 @@ namespace platform::netconfig::dbus
         this->container->synchronize<Connection>(connections);
     }
 
-    void Settings::define_connection(const ConnectionData& data)
+    void Settings::define_connection(const ConnectionData &data)
     {
         if (auto conn = Connection::get_by_id(data.id, false))
         {
@@ -54,7 +54,7 @@ namespace platform::netconfig::dbus
         }
     }
 
-    void Settings::add_connection(const ConnectionData& data)
+    void Settings::add_connection(const ConnectionData &data)
     {
         auto inputs = Glib::VariantContainerBase::create_tuple({
             connection::build_settings_container(data),
@@ -63,17 +63,17 @@ namespace platform::netconfig::dbus
         this->call_sync("AddConnection", inputs);
     }
 
-    bool Settings::remove_connection(const std::string& key, bool required)
+    bool Settings::remove_connection(const std::string &key, bool required)
     {
         bool found = false;
-        if (auto ref = lookup<Connection>(key, false))  // UUID found
+        if (auto ref = lookup<Connection>(key, false)) // UUID found
         {
             ref->remove();
             found = true;
         }
         else
         {
-            for (const auto& [path, ref] : this->container->instances<Connection>())
+            for (const auto &[path, ref] : this->container->instances<Connection>())
             {
                 if (ref->id == key)
                 {
@@ -87,9 +87,9 @@ namespace platform::netconfig::dbus
         {
             if (required)
             {
-                throwf(core::exception::NotFound,
-                       ("No such connection exists: %r", key),
-                       key);
+                throwf_args(core::exception::NotFound,
+                            ("No such connection exists: %r", key),
+                            key);
             }
             else
             {
@@ -99,7 +99,7 @@ namespace platform::netconfig::dbus
         return found;
     }
 
-    void Settings::set_hostname(const std::string& hostname)
+    void Settings::set_hostname(const std::string &hostname)
     {
         auto inputs = Glib::VariantContainerBase::create_tuple({
             Glib::Variant<Glib::ustring>::create(hostname),
@@ -108,7 +108,7 @@ namespace platform::netconfig::dbus
     }
 
     void Settings::on_signal_connection_added(
-        const Glib::VariantContainerBase& parameters)
+        const Glib::VariantContainerBase &parameters)
     {
         auto path = core::glib::variant_cast<core::dbus::ObjectPath>(parameters, 0);
         logf_debug("Added connection %r", path);
@@ -116,18 +116,18 @@ namespace platform::netconfig::dbus
     }
 
     void Settings::on_signal_connection_removed(
-        const Glib::VariantContainerBase& parameters)
+        const Glib::VariantContainerBase &parameters)
     {
         auto path = core::glib::variant_cast<core::dbus::ObjectPath>(parameters, 0);
         logf_debug("Removed connection %r", path);
         auto conn = this->container->remove(path);
     }
 
-    void Settings::on_property_hostname(const Glib::VariantBase& change)
+    void Settings::on_property_hostname(const Glib::VariantBase &change)
     {
         auto hostname = core::glib::variant_cast<std::string>(change);
         logf_debug("signal_hostname: %s", hostname);
         platform::sysconfig::signal_hostinfo.emit(platform::sysconfig::host->get_host_info());
     }
 
-}  // namespace platform::netconfig::dbus
+} // namespace platform::netconfig::dbus

@@ -62,7 +62,8 @@ class Endpoint (EndpointBase):
                      defaultScheme : str = "tcp",
                      defaultHost   : str = "",
                      defaultPort   : int = 5555):
-        '''Sanitize a service address of the form `[SCHEME://][HOST][:PORT]`
+        '''
+        Sanitize a service address of the form `[SCHEME://][HOST][:PORT]`
         (where any or all components may be present) to the full form
         `SCHEME://HOST:PORT`.
 
@@ -80,24 +81,23 @@ class Endpoint (EndpointBase):
         * Any attribute(s) that are still missing are populated from
           `defaultScheme`, `defaultHost` or `defaultPort`, respectively.
 
-        @param[in] address
+        @param address
           Address to sanitize, normally provided as a command-line option.
-        @param[in] schemeOption
+        @param schemeOption
           Key to locate the scheme in the settings file
-        @param[in] hostOption
+        @param hostOption
           Key to locate the host name in the settings file
-        @param[in] portOption
+        @param portOption
           Key to locate the port number in the settings file
-        @param[in] defaultScheme
+        @param defaultScheme
           Fallback if scheme name is not provided nor found in settings file
-        @param[in] defaultHost
+        @param defaultHost
           Fallback if host name is not provided nor found in settings file
-        @param[in] defaultPort
+        @param defaultPort
           Fallback if port number is not provided nor found in settings file
         @return
           Sanitized address of the form SCHEME://HOST:PORT (where HOST
           may still be empty)
-
         '''
 
         (scheme, host, port) = self._splitAddress(provided or "")

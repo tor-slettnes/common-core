@@ -36,7 +36,9 @@ class Subscriber (Satellite):
 
     def add(self,
             handler: MessageHandler):
-        '''Add a message handler with subscribing message filter.'''
+        '''
+        Add a message handler with subscribing message filter.
+        '''
 
         with self._mtx:
             logging.debug("Subscriber(%r) adding handler %r with filter %r"%
@@ -48,7 +50,9 @@ class Subscriber (Satellite):
 
     def remove(self,
                handler: MessageHandler):
-        '''Remove an existing message handler.'''
+        '''
+        Remove an existing message handler.
+        '''
 
         with self._mtx:
             logging.debug("Subscriber(%r) removing handler %r"%
@@ -57,7 +61,9 @@ class Subscriber (Satellite):
             self._deinit_handler(handler)
 
     def clear(self):
-        '''Remove all existing message handlers'''
+        '''
+        Remove all existing message handlers
+        '''
 
         with self._mtx:
             for handler in self.subscriptions:

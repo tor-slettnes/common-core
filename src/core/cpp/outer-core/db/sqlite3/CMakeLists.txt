@@ -8,14 +8,12 @@
 ### Name of this library.
 set(TARGET cc_core_sqlite3)
 
-### Package dependencies
-set(PKG_DEPS
-  sqlite3
-)
+find_package(SQLite3 REQUIRED)
 
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_inner
+  SQLite::SQLite3
 )
 
 ### Source files in this folder
@@ -26,7 +24,6 @@ set(SOURCES
 ### Recepies to build the library
 cc_add_library("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
-  PKG_DEPS ${PKG_DEPS}
   SOURCES ${SOURCES}
 )
 

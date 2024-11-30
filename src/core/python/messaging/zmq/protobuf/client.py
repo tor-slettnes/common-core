@@ -12,7 +12,9 @@ from cc.protobuf.wellknown import Message, MessageType, Empty
 from cc.protobuf.rr import Parameter, Request, Reply, StatusCode
 
 class Client (Requester):
-    '''ZMQ RPC client using ProtoBuf messages'''
+    '''
+    ZMQ RPC client using ProtoBuf messages
+    '''
 
     last_client_id = 0
     interface_name = None
@@ -39,9 +41,9 @@ class Client (Requester):
              method_name  : str,
              request      : Message|None = None,
              response_type: MessageType = Empty) -> Message:
-        '''Invoke a remote method using a ProtoBuf envelope, then wait for and
+        '''
+        Invoke a remote method using a ProtoBuf envelope, then wait for and
         return the reply from the server.
-
         '''
 
         if request is None:
@@ -54,8 +56,9 @@ class Client (Requester):
     def send_protobuf_invocation(self,
                                  method_name  : str,
                                  args         : Message):
-        '''Invoke a remote method using a ProtoBuf envelope, then return immediately.
-        To reeive the response invoke `receive_protobuf_result()`.
+        '''
+        Invoke a remote method using a ProtoBuf envelope, then return
+        immediately.  To reeive the response invoke `receive_protobuf_result()`.
         '''
         params = Parameter(serialized_proto = args.SerializeToString())
         self.send_invocation(method_name, params)

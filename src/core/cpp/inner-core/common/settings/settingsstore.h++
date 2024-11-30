@@ -79,6 +79,10 @@ namespace core
         ///     Load settings from the specified file.
         /// @param[in] filename
         ///     Settings file to load.
+        /// @param[in] update_filenames
+        ///     Append this filenaem to files associated with this
+        ///     `SettingsStore` instance.  If this is the first file loaded,
+        ///     it also becomes the default filename to which updates are saved.
         ///
         /// The path name may be absolute or relative. If this does not include
         /// a suffix, ".json" is appended.  If the name is relative, settings
@@ -146,7 +150,6 @@ namespace core
         types::Value extract_value(const types::ValueList &path,
                                    const types::Value &fallback = {}) const noexcept;
 
-        /// @fn insert_value
         /// @brief
         ///    Insert or update a key/value pair into a subtree within the settings store
         /// @param[in] path

@@ -122,25 +122,20 @@ namespace core::platform
         using Super::Super;
 
     public:
-        /// @fn thread_id
         /// @brief Return an OS-level identifier for the current thread
         virtual PID thread_id() const;
 
-        /// @fn thread_id
         /// @brief Return an OS-level identifier for the current thread
         virtual PID process_id() const;
 
-        /// @fn arg_vector
         /// @brief Convert a variant value of type string or valuelist to argument vector
         virtual ArgVector arg_vector(
             const types::Value &command) const;
 
-        /// @fn shell_command
         /// @brief Return an argument vector to run the specified command line in a shell
         virtual ArgVector shell_command(
             const std::string &command_line) const;
 
-        /// @fn invoke_async
         /// @brief Invoke a command, and immediately return its PID
         /// @param[in] argv
         ///     Argument vector. The first element (index #0) is the full path
@@ -171,7 +166,6 @@ namespace core::platform
             const fs::path &outfile = {},
             const fs::path &errfile = {}) const;
 
-        /// @fn invoke_sync
         /// @brief Invoke a command, and wait (block this thread) until it exits.
         /// @param[in] argv
         ///     Argument vector. The first element (index #0) is the full path
@@ -196,7 +190,6 @@ namespace core::platform
             const fs::path &outfile = {},
             const fs::path &errfile = {}) const;
 
-        /// @fn invoke_async_pipe
         /// @brief Invoke a command with UNIX pipes
         /// @param[in] argv
         ///     Argument vector. The first element (index #0) is the full path
@@ -227,7 +220,6 @@ namespace core::platform
             FileDescriptor *fdout = nullptr,
             FileDescriptor *fderr = nullptr) const;
 
-        /// @fn capture_pipe
         /// @brief Communicate with a child process through an established pipe
         /// @param[in] pid
         ///     Process ID, as returned from invoke_async_pipe
@@ -240,12 +232,6 @@ namespace core::platform
         /// @param[in] instream
         ///     Input stream from which data will be sent to program's `stdin`.
         ///     Passing in `nullptr` closes `fdin`.
-        /// @param[out] outstream
-        ///     Output stream to which data will be sent from the program's `stdout`.
-        ///     Passing in `nullptr` discard the child's standard output.
-        /// @param[out] errstream
-        ///     Output stream to which data will be sent from the program's `stderr`.
-        ///     Passing in `nullptr` discard the child's standard error.
         /// @return
         ///     The exit code returned from the process, as returned from `waitpid(2)`.
         /// @exception std::system_error
@@ -258,8 +244,8 @@ namespace core::platform
             FileDescriptor fderr,
             std::istream *instream) const;
 
-        /// @fn invoke_capture
-        /// @brief Invoke a command with stdin/stdout/stderr capture.
+        /// @brief
+        ///     Invoke a command with stdin/stdout/stderr capture.
         /// @param[in] argv
         ///     Argument vector. The first element (index #0) is the full path
         ///     of the program file to invoke.
@@ -268,12 +254,6 @@ namespace core::platform
         /// @param[in] instream
         ///     Input stream from which data will be sent to program's `stdin`.
         ///     Passing in `nullptr` closes `fdin`.
-        /// @param[out] outstream
-        ///     Output stream to which data will be sent from the program's `stdout`.
-        ///     Passing in `nullptr` discard the child's standard output.
-        /// @param[out] errstream
-        ///     Output stream to which data will be sent from the program's `stderr`.
-        ///     Passing in `nullptr` discard the child's standard error.
         /// @return
         ///     The exit code returned from the process, as returned from `waitpid(2)`.
         /// @exception std::system_error
@@ -284,8 +264,8 @@ namespace core::platform
             const fs::path &cwd = {},
             std::istream *instream = nullptr) const;
 
-        /// @fn invoke_capture
-        /// @brief Invoke a command with stdin/stdout/stderr capture.
+        /// @brief
+        ///     Invoke a command with stdin/stdout/stderr capture.
         /// @param[in] argv
         ///     Argument vector. The first element (index #0) is the full path
         ///     of the program file to invoke.
@@ -293,12 +273,6 @@ namespace core::platform
         ///     Change working directory
         /// @param[in] input
         ///     Text to be sent on `stdin'.
-        /// @param[out] output
-        ///     Text captured from `stdout`.
-        ///     Passing in `nullptr` discards the child's standard output.
-        /// @param[out] diag
-        ///     Text captured from `stderr`.
-        ///     Passing in `nullptr` discards the child's standard error.
         /// @return
         ///     The exit code returned from the process, as returned from `waitpid(2)`.
         /// @exception std::system_error
@@ -309,7 +283,6 @@ namespace core::platform
             const fs::path &cwd,
             const std::string &input) const;
 
-        /// @fn invoke_check
         /// @brief
         ///     Invoke a command with stdio capture,
         ///     throw SystemError on non-zero exit status
@@ -321,12 +294,6 @@ namespace core::platform
         /// @param[in] instream
         ///     Input stream from which data will be sent to program's `stdin`.
         ///     Passing in `nullptr` closes `fdin`.
-        /// @param[out] outstream
-        ///     Output stream to which data will be sent from the program's `stdout`.
-        ///     Passing in `nullptr` discard the child's standard output.
-        /// @param[out] errstream
-        ///     Output stream to which data will be sent from the program's `stderr`.
-        ///     Passing in `nullptr` discard the child's standard error.
         /// @exception std::system_error
         ///     An underlying system call failed, or the process returned a
         ///     non-zero exit status.
@@ -336,7 +303,6 @@ namespace core::platform
             const fs::path &cwd = {},
             std::istream *instream = nullptr) const;
 
-        /// @fn invoke_check
         /// @brief
         ///     Invoke a command with stdio capture,
         ///     throw SystemError on non-zero exit status
@@ -347,12 +313,6 @@ namespace core::platform
         ///     Change working directory
         /// @param[in] input
         ///     Text to be sent on `stdin'.
-        /// @param[out] output
-        ///     Text captured from `stdout`.
-        ///     Passing in `nullptr` discards the child's standard output.
-        /// @param[out] diag
-        ///     Text captured from `stderr`.
-        ///     Passing in `nullptr` discards the child's standard error.
         /// @exception std::system_error
         ///     An underlying system call failed, or the process returned a
         ///     non-zero exit status.
@@ -362,7 +322,6 @@ namespace core::platform
             const fs::path &cwd,
             const std::string &input) const;
 
-        /// @fn pipe_from_stream
         /// @brief
         ///     Invoke multiple commands in parallel, with standard input to the
         ///     first command from the provided input stream.  Standard output
@@ -387,7 +346,6 @@ namespace core::platform
             std::istream &instream,
             bool checkstatus = false) const;
 
-        /// @fn pipeline
         /// @brief
         ///     Invoke multiple commands in parallel, with standard output from
         ///     each piped to standard input of the next.
@@ -419,7 +377,6 @@ namespace core::platform
             const InvocationStates &states,
             bool checkstatus) const = 0;
 
-        /// @fn create_pipe
         /// @brief
         ///     Create a pipe, comprising a pair of connected file descriptors
         ///     for reading and writing, respectively.
@@ -429,7 +386,6 @@ namespace core::platform
         ///     Pipe[INPUT].
         virtual Pipe create_pipe() const = 0;
 
-        /// @fn open_read
         /// @brief
         ///     Open a file for reading
         /// @param[in] filename
@@ -440,11 +396,12 @@ namespace core::platform
         virtual FileDescriptor open_read(
             const fs::path &filename) const = 0;
 
-        /// @fn open_write
         /// @brief
         ///     Open a file for writing
         /// @param[in] filename
         ///     Path to file which will be opeend
+        /// @param[in] create_mode
+        ///     UNIX file mode bits for the created file
         /// @return
         ///     Writable file descriptor to the open file.
 
@@ -452,7 +409,6 @@ namespace core::platform
             const fs::path &filename,
             int create_mode = 0644) const = 0;
 
-        /// @fn close_fd
         /// @brief
         ///     Close an open file descriptor
         /// @param[in] fd
@@ -461,7 +417,6 @@ namespace core::platform
         virtual void close_fd(
             FileDescriptor fd) const = 0;
 
-        /// @fn read_fd
         /// @brief
         ///     Read from a file descriptor
         /// @param[in] fd
@@ -480,15 +435,14 @@ namespace core::platform
             void *buffer,
             std::size_t bufsize) const = 0;
 
-        /// @fn write_fd
         /// @brief
         ///     Write to a file descriptor
         /// @param[in] fd
         ///     Writeable file descriptor
         /// @param[in] buffer
         ///     Buffer containing data to write
-        /// @param[in] bufsize
-        ///     Bytes to write
+        /// @param[in] size
+        ///     Number of bytes to write
         /// @return
         ///     Number of characters written
         /// @exception std::system_error
@@ -497,9 +451,8 @@ namespace core::platform
         virtual std::size_t write_fd(
             FileDescriptor fd,
             const void *buffer,
-            std::size_t length) const = 0;
+            std::size_t size) const = 0;
 
-        /// @fn write_fd
         /// @brief
         ///     Write to a file descriptor from a C++ input stream
         /// @param[in] stream
@@ -511,16 +464,16 @@ namespace core::platform
             std::istream *stream,
             FileDescriptor fd) const;
 
-        /// @fn close_pipe
         /// @brief
         ///    Close both input/output file descriptors of a pipe
 
         virtual void close_pipe(
             const Pipe &pipe) const = 0;
 
-        /// @fn waitpid
         /// @brief
         ///     Wait for the specified Process ID to exit.
+        /// @param[in] pid
+        ///     Process ID
         /// @param[in] checkstatus
         ///     Whether to throw an exception if the command returns a non-zero
         ///     exit status.

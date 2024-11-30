@@ -553,6 +553,9 @@ namespace core::types
         case ValueType::SINT:
         case ValueType::REAL:
             return complex(this->numeric_cast<double>(), 0.0);
+
+        default:
+            break;
         }
 
         return {};
@@ -636,7 +639,7 @@ namespace core::types
             return this->get<dt::TimePoint>();
 
         case ValueType::STRING:
-            return dt::js_to_timepoint(this->get<std::string>(), fallback);
+            return dt::try_to_timepoint(this->get<std::string>()).value_or(fallback);
 
         case ValueType::BYTEVECTOR:
             try
@@ -773,7 +776,6 @@ namespace core::types
         }
     }
 
-
     ValueListPtr Value::get_valuelist() const noexcept
     {
         if (auto *ptr = this->get_if<ValueListPtr>())
@@ -854,7 +856,6 @@ namespace core::types
             throw std::invalid_argument("Value instance is not indexable");
         }
     }
-
 
     const Value &Value::front(const Value &fallback) const noexcept
     {
@@ -1080,7 +1081,7 @@ namespace core::types
     {
         static const std::vector<std::pair<ValueType, std::regex>> rxlist = {
             {ValueType::NONE, std::regex("^(null|NULL|nullptr)?$")},
-            {ValueType::BOOL, std::regex("^(false|true)$", std::regex::icase)},
+            {ValueType::BOOL, std::regex("^(false|true|yes|no)$", std::regex::icase)},
             {ValueType::CHAR, std::regex("^'.'$")},
             {ValueType::SINT, std::regex("^[+-][[:digit:]]+$")},
             {ValueType::UINT, std::regex("^([[:digit:]]+|0x[[:xdigit:]]+)$", std::regex::icase)},
@@ -1088,7 +1089,6 @@ namespace core::types
              std::regex("^[+-]?[[:digit:]]+(\\.[[:digit:]]*)?([eE][+-]?[[:digit:]]+)?$")},
             {ValueType::BYTEVECTOR, std::regex("^\"?%[[:alnum:]\\+/]+={0,2}%?\"?$")},
             {ValueType::STRING, std::regex("\"((?:\\\\.|[^\"\\\\\\r\\n])*)\"")},
-            // {ValueType::STRING, std::regex("\"((?>\\\\\\\\|\\\\\"|[^\"\\r\\n])*)\"")},
             {ValueType::TIMEPOINT,
              std::regex("^(\\d{4}-\\d{2}-\\d{2})([@T\\s])"
                         "(\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d+))?"
@@ -1109,4 +1109,4 @@ namespace core::types
 
     const Value emptyvalue;
 
-}  // namespace core::types
+} // namespace core::types

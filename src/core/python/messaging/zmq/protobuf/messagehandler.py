@@ -10,7 +10,9 @@ from ..basic import Filter, Topic, MessageHandler as BaseHandler
 from cc.protobuf.wellknown import Message, MessageType
 
 class MessageHandler (BaseHandler):
-    '''ZMQ subscriber with support for ProtoBuf messages'''
+    '''
+    ZMQ subscriber with support for ProtoBuf messages
+    '''
 
     ### Subclasses should override this with a ProtoBuf message type,
     ### or else provide the `message_type` argument to `__init__()`.
@@ -26,10 +28,11 @@ class MessageHandler (BaseHandler):
         BaseHandler.__init__(self, topic, Filter.create_from_topic(topic))
 
     def handle(self, data: bytes):
-        '''Deserialize incoming binary payload as an instance of
-         `self.message_type` and pass it on to `self.handle_proto()`.
-
         '''
+        Deserialize incoming binary payload as an instance of
+        `self.message_type` and pass the result on to `self.handle_proto()`.
+        '''
+
         self.handle_proto(self.message_type.FromString(data))
 
 
@@ -37,11 +40,15 @@ class MessageHandler (BaseHandler):
     ### to process incoming ProtoBuf payloads
 
     def handle_proto(self, message: Message):
-        '''Process incoming ProtoBuf message.
+        '''
+        Process incoming ProtoBuf message.
 
         Unless overridden in subclasses this further decodes the message to a
         Python dictionary and passes the result to
         `self.handle_proto_as_dict()`, which must in that case be overridden.
+
+        In other words, subclasses should override either this method or
+        `handle_proto_as_dict()` to process incoming messages.
         '''
 
         self.handle_proto_as_dict(
@@ -49,6 +56,8 @@ class MessageHandler (BaseHandler):
 
 
     def handle_proto_as_dict(self, message : dict):
-        '''Handle incoming ProtoBuf payload, decodeed as a Python dictionary'''
+        '''
+        Handle incoming ProtoBuf payload, decodeed as a Python dictionary
+        '''
 
         raise NotImplementedError

@@ -27,9 +27,6 @@ if(NOT PROJECT_INCLUDED)
   ### Enable testing
   include(CTest)
 
-  ### Include rules to build doxygen
-  include(doxygen)
-
   ### Load targeted build functions
   include(build_library)
   include(build_executable)
@@ -40,6 +37,7 @@ if(NOT PROJECT_INCLUDED)
   include(build_settings)
   include(build_package)
   include(build_debian_service)
+  include(build_docs)
 
   #=============================================================================
   ### CPack configuration

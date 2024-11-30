@@ -11,10 +11,10 @@
 namespace platform::netconfig::dbus
 {
     WirelessDevice::WirelessDevice(
-        core::dbus::ProxyContainer* container,
-        const core::dbus::ConnectionPtr& connection,
-        const core::dbus::ServiceName& servicename,
-        const core::dbus::ObjectPath& objectpath)
+        core::dbus::ProxyContainer *container,
+        const core::dbus::ConnectionPtr &connection,
+        const core::dbus::ServiceName &servicename,
+        const core::dbus::ObjectPath &objectpath)
         : DataWrapper<WirelessDeviceData>(
               container,
               connection,
@@ -22,9 +22,9 @@ namespace platform::netconfig::dbus
               objectpath,
               NM_DBUS_INTERFACE_DEVICE_WIRELESS,
               {
-                  {"AccessPointAdded", SLOT(Class::on_signal_accesspoint_added)},
+                  {"AccessPointAdded",   SLOT(Class::on_signal_accesspoint_added)  },
                   {"AccessPointRemoved", SLOT(Class::on_signal_accesspoint_removed)},
-              },
+    },
               {
                   {"Mode", DATASLOT(&this->mode)},
                   {"Bitrate", DATASLOT(&this->bitrate)},
@@ -57,7 +57,7 @@ namespace platform::netconfig::dbus
         std::shared_ptr<AccessPoint> ap,
         bool required)
     {
-        for (const auto& [path, wifidev] : dbus::container.instances<WirelessDevice>())
+        for (const auto &[path, wifidev] : dbus::container.instances<WirelessDevice>())
         {
             if (auto dev = dbus::container.get<Device>(path))
             {
@@ -72,9 +72,9 @@ namespace platform::netconfig::dbus
         {
             assertf(ap, "Cannot require access point by empty reference");
 
-            throwf(core::exception::NotFound,
-                   ("Access point %r not found on any wireless device", ap->key()),
-                   ap->key());
+            throwf_args(core::exception::NotFound,
+                        ("Access point %r not found on any wireless device", ap->key()),
+                        ap->key());
         }
         return {};
     }
@@ -82,7 +82,7 @@ namespace platform::netconfig::dbus
     std::shared_ptr<WirelessDevice> WirelessDevice::first()
     {
         std::shared_ptr<WirelessDevice> dev;
-        for (const auto& [path, ref] : dbus::container.instances<WirelessDevice>())
+        for (const auto &[path, ref] : dbus::container.instances<WirelessDevice>())
         {
             if (auto dev = dbus::container.get<Device>(path))
             {
@@ -96,7 +96,7 @@ namespace platform::netconfig::dbus
     }
 
     void WirelessDevice::on_signal_accesspoint_added(
-        const Glib::VariantContainerBase& parameters)
+        const Glib::VariantContainerBase &parameters)
     {
         logf_trace("on_signal_accesspoint_added: %s", parameters);
         auto path = core::glib::variant_cast<core::dbus::ObjectPath>(parameters, 0);
@@ -108,7 +108,7 @@ namespace platform::netconfig::dbus
     }
 
     void WirelessDevice::on_signal_accesspoint_removed(
-        const Glib::VariantContainerBase& parameters)
+        const Glib::VariantContainerBase &parameters)
     {
         logf_trace("on_signal_accesspoint_removed: %s", parameters);
         auto path = core::glib::variant_cast<core::dbus::ObjectPath>(parameters, 0);
@@ -117,7 +117,7 @@ namespace platform::netconfig::dbus
     }
 
     void WirelessDevice::on_property_active_accesspoint(
-        const Glib::VariantBase& change)
+        const Glib::VariantBase &change)
     {
         auto path = core::glib::variant_cast<core::dbus::ObjectPath>(change);
         if (this->valid_path(path))
@@ -132,7 +132,7 @@ namespace platform::netconfig::dbus
     }
 
     void WirelessDevice::on_property_lastscan(
-        const Glib::VariantBase& change)
+        const Glib::VariantBase &change)
     {
         auto millisecs = core::glib::variant_cast<std::int64_t>(change);
         std::chrono::duration uptime = core::steady::Clock::now().time_since_epoch();
@@ -140,7 +140,7 @@ namespace platform::netconfig::dbus
     }
 
     void WirelessDevice::on_property_hwaddress(
-        const Glib::VariantBase& change)
+        const Glib::VariantBase &change)
     {
         // In NetworkManager v1.24 and newer,'HwAddress' is a property of
         // Device, not WirelessDevice. We emulate the newer behavior by
@@ -152,7 +152,7 @@ namespace platform::netconfig::dbus
     }
 
     void WirelessDevice::on_property_active_connection(
-        const Glib::VariantBase& change)
+        const Glib::VariantBase &change)
     {
         // Per NetworkManager DBus documentation, 'ActiveConnection' is a
         // property on ...Device, not ...Device.Wireless, but in practice
@@ -165,10 +165,10 @@ namespace platform::netconfig::dbus
     }
 
     bool WirelessDevice::update_active_accesspoint(
-        const core::dbus::ProxyWrapper* source,
+        const core::dbus::ProxyWrapper *source,
         core::signal::MappingAction action)
     {
-        if (const auto* datasource = dynamic_cast<const AccessPoint*>(source))
+        if (const auto *datasource = dynamic_cast<const AccessPoint *>(source))
         {
             switch (action)
             {
@@ -186,7 +186,7 @@ namespace platform::netconfig::dbus
             }
             this->emit_change(action);
         }
-        return false;  // No need for further updates from this AP
+        return false; // No need for further updates from this AP
     }
 
     void WirelessDevice::request_scan() const
@@ -204,4 +204,4 @@ namespace platform::netconfig::dbus
             }
         }
     }
-}  // namespace platform::netconfig::dbus
+} // namespace platform::netconfig::dbus

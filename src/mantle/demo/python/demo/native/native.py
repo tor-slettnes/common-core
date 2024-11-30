@@ -20,7 +20,9 @@ import time, sys, os.path
 # Native Demo implementation
 
 class NativeDemo (API):
-    '''Demo API'''
+    '''
+    Demo API
+    '''
 
     def __init__(self):
         API.__init__(self, 'Python Native')
@@ -35,6 +37,7 @@ class NativeDemo (API):
     def get_current_time(self) -> TimeData:
         '''
         Get current time data.
+
         @return
             Current time data provided by the specific implementation.
         '''

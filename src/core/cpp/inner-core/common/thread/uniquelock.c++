@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file uniquelock.h++
+/// @file uniquelock.c++
 /// @brief Convenience wrapper around std::unique_lock<std::mutex>;
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

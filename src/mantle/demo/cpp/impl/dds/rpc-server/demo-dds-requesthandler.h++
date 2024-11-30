@@ -15,7 +15,6 @@
 namespace demo::dds
 {
     //==========================================================================
-    // @class RequestHandler
     // @brief Process requests from DemoService clients
 
     class RequestHandler : public CC::Demo::DemoService,

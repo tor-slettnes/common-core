@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "variant.pb.h"  // generated from `variant.proto`
+#include "variant.pb.h" // generated from `variant.proto`
 #include "chrono/date-time.h++"
 #include "types/value.h++"
 
@@ -19,6 +19,15 @@
 namespace protobuf
 {
     using RepeatedValue = google::protobuf::RepeatedPtrField<cc::variant::Value>;
+
+    //==========================================================================
+    // Complex value encoding/decoding
+
+    void encode(const core::types::complex &value,
+                cc::variant::Complex *msg) noexcept;
+
+    void decode(const cc::variant::Complex &msg,
+                core::types::complex *value) noexcept;
 
     //==========================================================================
     // Variant Value encoding/decoding
@@ -105,4 +114,4 @@ namespace protobuf
     void decode(const cc::variant::ValueList &msg,
                 core::types::Value *value) noexcept;
 
-}  // namespace protobuf
+} // namespace protobuf

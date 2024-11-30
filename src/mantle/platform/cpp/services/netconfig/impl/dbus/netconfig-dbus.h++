@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file netconfig-provider-dbus.h++
+/// @file netconfig-dbus.h++
 /// @brief NetConfig service - D-BUS implementation
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

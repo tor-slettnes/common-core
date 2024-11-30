@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-service.h++
 /// @brief Launch Logger gRPC services
-/// @author Tor Slettnes <tslettnes@picarro.com>
+/// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once

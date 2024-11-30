@@ -14,7 +14,7 @@ This document descrives recommended styles and conventions for C++ code.  This i
   - Use "principle of least astonishment": When something surprising or unusual is happening in a snippet of code (for example, transfer of pointer ownership), leaving textual hints for the reader at the point of use is valuable (`std::unique_ptr<>` demonstrates the ownership transfer unambiguously at the call site).
 
 
-## <a name="code-compatibility">Code Compatibility</a>
+## Code Compatibility{#code-compatibility}
 
 ### C++ Version
 
@@ -25,9 +25,9 @@ Currently, code should target C++17, i.e. should not use C++20, C++23, or C++26 
 Code that is platform specific (e.g., POSIX-specific syntax, or depending on systems-specific features such as D-Bus or Network Manager) should as much as possible be abstracted out to a platform-agnostic interface with platform-specific implementations.  Examples of this include the [platform abstractions](../../src/core/cpp/inner-core/common/platform/) with corresponding [OS-specific implementations](../../src/core/cpp/inner-core/platforms/) within the [inner core](../../src/core/cpp/inner-core/) library.
 
 
-## <a name="source-files">Source files</a>
+## Source files{#source-files}
 
-### <a name="declaration-vs-definition">Declaration vs. Definition Files</a>
+### Declaration vs. Definition Files{#declaration-vs-definition}
 
 C++ filenames should follow these rules:
 
@@ -61,24 +61,27 @@ Please note that templates are not class or function declarations; they are mere
 It is however acceptable to define *private* template functions and classes within the sole `.c++` file where it is used.
 
 
-### <a name="include-statements">Include statements</a>
+### Include statements{#include-statements}
 
 * Generally, do not rely on not rely on transitive inclusions.
 
-  ```c++
+  ```cxx
+
   #include <filesystem>
 
   // Likely the above already includes <string>, but even so there is no
   // guarantee that this holds true across OS platforms and toolchains.
   // If we make direct use of `std::string`, also include this:
   #include <string>
+
   ```
 
   - You might skip some common ones such as `#include <string>` or `#include <memory>` in case where it is obvious that these _must_ be already included; for instance
 
-    ```c++
+    ```cxx
     #include "types/create-shared.h++"  // clearly depends on `std::shared_ptr<>`
     //#include <memory>                 // can be omitted
+
     ```
 
 * Order `#include` statements from "top" to "bottom":
@@ -95,7 +98,7 @@ It is however acceptable to define *private* template functions and classes with
 
 * Use `#include "NAME"` for include files within/relative to workspace, `#include <NAME>` for external files:
 
-   ```c++
+   ```cxx
    // Use `#include ""` for files relative to your workspace
    #include "my-header-file.h++"    // First party file
    #include "generated-file.pb.h"   // Generated within project
@@ -109,14 +112,14 @@ It is however acceptable to define *private* template functions and classes with
    ```
 
 
-## <a name="coding-conventions">Coding Conventions</a>
+## Coding Conventions{#coding-conventions}
 
 
-### <a name="explicit-scoping">Use explicit scoping syntax at call site</a>
+### Use explicit scoping syntax at call site{#explicit-scoping}
 
 Consider this example:
 
-  ```c++
+  ```cxx
   namespace my_outer_namespace::my_inner_namespace
   {
       void MyClass::print_something()
@@ -137,7 +140,7 @@ Following the principle of optimizing for readability, we make use of language f
 
 Languages like Python enforce this syntactically (using `self.` by convention), so the concept should be familiar.
 
-  ```c++
+  ```cxx
 
   std::string MyClass::my_name() const
   {
@@ -157,7 +160,7 @@ Languages like Python enforce this syntactically (using `self.` by convention), 
 
 #### Use `ClassName::` (or `This::` alias) to refer to class variables and methods
 
-  ```c++
+  ```cxx
 
   class MyClass
   {
@@ -186,7 +189,7 @@ Languages like Python enforce this syntactically (using `self.` by convention), 
 
 Avoid global `using namespace` declarations, especially in header files. Not only does this make it harder to trace back the origins of identifiers; it may also introduce ambiguity for symbols defined in multiple namespaces.
 
-  ```c++
+  ```cxx
   // Bad: implicit namespaces
   using namespace std;
   using namespace core::str;
@@ -202,7 +205,7 @@ Avoid global `using namespace` declarations, especially in header files. Not onl
   ```
 
 
-  ```c++
+  ```cxx
   // Better: Explicit namespaces
   std::string lowercase_string = core::str::tolower("MiXeD CaSe StriNG");
   std::cout << lowercse_string
@@ -211,7 +214,7 @@ Avoid global `using namespace` declarations, especially in header files. Not onl
 
 #### Use `::` for identifiers in global namespace, such as C functions:
 
-  ```c++
+  ```cxx
   using FileDescriptor = int;
   FileDescriptor fd = ::open(argv[1], O_RDONLY);
   ```
@@ -234,13 +237,13 @@ One possible exception is the use of a `_` suffix to denote private identifiers 
 
 
 
-### <a name="explicit-data-types">Use explicit data types</a>
+### Use explicit data types{#explicit-data-types}
 
 Rather than using generic data types such as `int` or `std::string` for things that have a more specific meaning, create type aliases where it improves readability of your code.
 
 Consider this example:
 
-  ```c++
+  ```cxx
   // Not great
   std::unordered_map<std::string, AccessPointData> accesspoint_map;
 
@@ -258,17 +261,17 @@ Consider this example:
 
 The `auto` keyword is sometimes misunderstood by people new to C++. It does *not* declare a dynamic data type (as identifiers in Python), nor some sort of of variant/"any" type.  Instead, it allows the compiler to figure out the data type based on context.   As such, these two statements are equivalent:
 
-  ```c++
+  ```cxx
   std::shared_ptr<MyType> my_ref = std::make_shared<MyType>(); // Explicit type declaration
   ```
 
-  ```c++
+  ```cxx
   auto my_ref = std::make_shared<MyType>(); // Allow the compiler to figure out the type
   ```
 
 In this example the type of `my_ref` is clear, either way. Other times, the use of `auto` can obfuscate the code (and you'll be back to Python before you know it):
 
-  ```c++
+  ```cxx
   auto result = my_object.get_result();
   // What is result now?  What can we do with it?  Not clear from this call site.
   ```
@@ -279,7 +282,7 @@ As a general principle, using `auto` is acceptable (and even encouraged) when
 
 * The type is "complex, but well known", e.g.
 
-    ```c++
+    ```cxx
     std::unordered_map<std::string, SomeType> my_map;
     SomeType some_value;
 
@@ -299,7 +302,7 @@ As a general principle, using `auto` is acceptable (and even encouraged) when
 
 
 
-### <a name="function-declarations">Function Declarations</a>
+### Function Declarations{#function-declarations}
 
 This section pertains to both standalone functions and methods within a class.
 
@@ -313,7 +316,7 @@ For people new to C++, one of the most confounding aspects is the different ways
 
 There are multiple different ways of passing in arguments to a function in C++:
 
-  ```c++
+  ```cxx
   void my_function(
       std::string arg1,        // by value; the function receives a copy of `arg1`
       std::string &arg2,       // by (`lvalue`) reference; the function can modify the caller's copy
@@ -327,7 +330,7 @@ For more information about the different reference types, see [C++ Value Categor
 
 The corresponding call site may look something like this:
 
-  ```c++
+  ```cxx
   std::string my_arg1 = "first argument";
   std::string my_arg2 = "second argument";
   std::string my_arg3 = "third argument";
@@ -357,7 +360,7 @@ Clearly these rules apply only to our own software interfaces, not third-party l
 
 
 
-### <a name="data-types">Classes and Data Types</a>
+### Classes and Data Types{#data-types}
 
 #### Naming
 
@@ -376,7 +379,7 @@ We adopt this same convention, which means we apply stricter criteria to `struct
 
 The above allows for C compatible (and frequently convenient) syntax like the following:
 
-  ```c++
+  ```cxx
   struct MyStruct
   {
       std::string my_text;
@@ -392,7 +395,7 @@ The above allows for C compatible (and frequently convenient) syntax like the fo
 
 Class declarations will generally follow variants of this pattern:
 
-  ```c++
+  ```cxx
   namespace some_namespace
   {
       class ClassName : public SuperClass
@@ -446,12 +449,12 @@ Here we use *method* to refer to a function defined within a class.  There are t
 
 
 
-### <a name="namespaces">Namespaces</a>
+### Namespaces{#namespaces}
 
 We use namespaces to group related code, frequently in a hierarchical fashion.  This allows the "base name" of identifiers to be short and succinct, without the risk of conflicts with similarly-named identifiers from other namespaces.  As discussed in the section on [explicit scoping](#explicit-scoping) above, we use fully scoped names at the call site.
 
 
-## <a name="formatting">Code Formatting</a>
+## Code Formatting{#formatting}
 
 Now for everyone's favorite topic: Code formatting.  Once again, the emphasis should be on readability and consistency.
 
@@ -470,7 +473,7 @@ Now for everyone's favorite topic: Code formatting.  Once again, the emphasis sh
 
   - Split up long argument lists to one argument per line (both when declaring/defining functions and at the call site where they are invoked):
 
-      ```c++
+      ```cxx
       std::string wrap(
           const std::string &input,
           size_t start_column = 0,
@@ -481,7 +484,7 @@ Now for everyone's favorite topic: Code formatting.  Once again, the emphasis sh
 
   - Consider splitting up complex statements at logical points.  For example:
 
-      ```c++
+      ```cxx
       // Ternary statement, single line
       return condition ? true_value : false_value;
 
@@ -498,7 +501,7 @@ Now for everyone's favorite topic: Code formatting.  Once again, the emphasis sh
 
 * Left curly braces begin on their own line, in line with the parent statement and the closing right curly brace:
 
-    ```c++
+    ```cxx
     // Wrong: Braces do not line up.  Code looks crammed.
     void my_function(bool condition) {
         if (condition) {
@@ -526,7 +529,7 @@ Now for everyone's favorite topic: Code formatting.  Once again, the emphasis sh
 
 * Use curly braces for nested blocks, even where it contains a single statement:
 
-    ```c++
+    ```cxx
     // Wrong:
     if (condition)
         statement;
@@ -542,7 +545,7 @@ Now for everyone's favorite topic: Code formatting.  Once again, the emphasis sh
 
   - This holds for declarations/definitions as well as call site.
 
-      ```c++
+      ```cxx
       /// Incorrect: Space before argument list
       void my_function (int arg1, int arg2);
 
@@ -553,7 +556,7 @@ Now for everyone's favorite topic: Code formatting.  Once again, the emphasis sh
 
 * *Do* insert a space character before opening parentheses following `if`, `for`, `while`, `switch`.
 
-    ```c++
+    ```cxx
     /// Incorrect: No space before condition:
     if(condition)
     {
@@ -586,7 +589,7 @@ Or, to apply automatic formatting to *all* C++ code in the repository:
 If your editor supports it, you also add automatic `clang-format` integraton, e.g. when saving your file.  (I'll happily help you set this up for `emacs`).
 
 
-## <a name="reference">C++ documentation</a>
+## C++ documentation{#reference}
 
 You'll find by far the most comprehensive standard C++ reference at [cppreference.com](https://cppreference.com/).  You can also access this documentation offline in the [DevHelp](https://wiki.gnome.org/Apps/Devhelp) application on your Linux desktop by installing the package `cppreference-doc-en-html` (for [Debian](https://packages.debian.org/search?keywords=cppreference&searchon=names&suite=all&section=all) or [Ubuntu](https://packages.ubuntu.com/search?keywords=cppreference&searchon=names&suite=all&section=all)).
 

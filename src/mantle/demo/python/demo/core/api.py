@@ -34,12 +34,14 @@ class API:
     def hello(self,
               text: str,
               **kwargs):
-        '''Say hello to anyone who might be listening.
+        '''
+        Say hello to anyone who might be listening.
 
-        @param[in] text
+        @param text
             What we're telling our listeners
-        @param[in] kwargs
+        @param kwargs
             Arbitrary attributes included in greeting
+
         @note
             This is a wrapper function to build a `cc.protobuf.demo.Greeting`
             object and pass it to `say_hello()`.
@@ -56,10 +58,11 @@ class API:
 
 
     def say_hello(self, greeting: Greeting):
-        '''Issue a greeting to anyone who may be listening.
-        For interactive use, the `hello()` wrapper method may be more convenient.
+        '''
+        Issue a greeting to anyone who may be listening.  For interactive
+        use, the `hello()` wrapper method may be more convenient.
 
-        @param[in] greeting
+        @param greeting
             A greeting for our listeners.
         '''
 
@@ -67,7 +70,8 @@ class API:
 
 
     def get_current_time(self) -> TimeData:
-        '''Get current time data.
+        '''
+        Get current time data.
 
         @return
             Current time data provided by the specific implementation.
@@ -91,9 +95,10 @@ class API:
 
 
     def start_notify_greetings(self, callback: SignalSlot):
-        '''Register a callback to be invoked whenever a greeting is received
+        '''
+        Register a callback to be invoked whenever a greeting is received
 
-        @param[in] callback
+        @param callback
             Callback method, which will receive `cc.protobuf.demo.Signal()`
             messages containing the greeting as its sole argument.
         '''
@@ -109,9 +114,10 @@ class API:
 
     def start_notify_time(self, callback: SignalSlot):
         '''
-        @brief Register a callback to be invoked whenver the time updated (1x/second)
+        Register a callback to be invoked whenver the time updated
+        (1x/second)
 
-        @param[in] callback
+        @param callback
             Callback method, which will receive the time data as argument.
         '''
         signal_store.connect_signal_data('signal_time', callback)
@@ -119,7 +125,7 @@ class API:
 
     def stop_notify_time (self):
         '''
-        @brief Unregister any existing time callbacks
+        Unregister any existing time callbacks
         '''
 
         signal_store.disconnect_signal('signal_time')

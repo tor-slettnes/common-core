@@ -97,6 +97,9 @@ namespace platform::upgrade
         case LocationType::URL:
             tvlist->append("url", this->url());
             break;
+
+        default:
+            break;
         }
     }
 

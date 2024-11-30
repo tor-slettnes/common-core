@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file vfs-context.c++
+/// @file vfs-location.c++
 /// @brief VFS service - abstract file context
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

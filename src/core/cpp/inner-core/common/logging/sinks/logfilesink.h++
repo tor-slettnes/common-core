@@ -43,7 +43,7 @@ namespace core::logging
     // Add sink factory to enable `--log-to-file` option.
 
     inline static SinkFactory file_factory(
-        "file",
+        "logfile",
         "Log to a plain log file",
         [](const SinkID &sink_id) -> Sink::ptr {
             return LogFileSink::create_shared(sink_id);

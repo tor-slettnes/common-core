@@ -21,7 +21,8 @@ from inspect import getfullargspec
 
 
 class RequestHandler:
-    '''Handle RPC requests received as ProtoBuf `protobuf.rr.Request` messages.
+    '''
+    Handle RPC requests received as ProtoBuf `protobuf.rr.Request` messages.
 
     The `Request` message is processed as follows:
 
@@ -59,20 +60,19 @@ class RequestHandler:
     * It should return a single ProtoBuf message, which is then serialized
       and sent back in the `Reply` message to the client.
 
-    ### Example:
+    ### Example
 
-    ```
-    from messaging.zmq.protobuf.requesthandler import RequestHandler
+      ```python
+      from messaging.zmq.protobuf.requesthandler import RequestHandler
 
-    class MyRequstHandler (RequestHandler):
+      class MyRequstHandler (RequestHandler):
 
-        interface_name = 'My RPC Service'
+          interface_name = 'My RPC Service'
 
-        def my_request(self, arg: MyProtoBufRequestType) -> MyProtoBufReplyType:
-            # Do something here
-            return MyProtoBufReplyType(myfield='my value', ...)
-    ```
-
+          def my_request(self, arg: MyProtoBufRequestType) -> MyProtoBufReplyType:
+              # Do something here
+              return MyProtoBufReplyType(myfield='my value', ...)
+      ```
     '''
 
     def __init__ (self, interface_name : str):

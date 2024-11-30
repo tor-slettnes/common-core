@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file sqlitesink.h++
+/// @file logger-sqlite3-sink.h++
 /// @brief Log tabular data to SQLite3 database
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

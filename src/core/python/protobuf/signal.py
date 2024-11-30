@@ -28,7 +28,8 @@ Slot = Callable[[Message], None]
 # SignalStore class
 
 class SignalStore:
-    '''Base implementation of signal/slot pattern using ProtoBuf messages as
+    '''
+    Base implementation of signal/slot pattern using ProtoBuf messages as
     payload. Emitted signals can thus be serialized and propagated over
     transports such as gRPC, thereby emulating the pub/sub pattern.
 
@@ -99,7 +100,6 @@ class SignalStore:
     data set.  (This should however not be used for stateful controls, where the
     consumer takes stateful actions based on received signals, because the
     action would be repeated after any and all disconnect/reconnnect cycles).
-
     '''
 
     ## `signal_type` should be set in the final subclass, and is used to decode
@@ -111,7 +111,8 @@ class SignalStore:
                  use_cache   : bool = False,
                  signal_type : type = None):
 
-        '''Instance initialization.
+        '''
+        Instance initialization.
 
         If `use_cache` is set, cache the latest emitted instance of each signal.
         These are then replayed in response to any future `connect_signal()` or
@@ -125,7 +126,6 @@ class SignalStore:
         `oneof` selector with one or more signal alternatives, and optionally
         mapping fields `mapping_action` and `mapping_key`. For details see
         the `SignalStore` class description.
-
         '''
 
         if signal_type:
@@ -171,6 +171,7 @@ class SignalStore:
         @exception KeyError
             The specified field number does not exist
         '''
+
         try:
             return self.descriptor().fields_by_number[fieldnumber].name
         except KeyError:
@@ -190,8 +191,10 @@ class SignalStore:
         return self.descriptor().fields_by_name[signalname].number
 
     def signal_fields(self) -> dict:
-        '''Return a dictionary of signal names to corresponding field numbers
-        within the protobuf Signal message'''
+        '''
+        Return a dictionary of signal names to corresponding field numbers
+        within the protobuf Signal message
+        '''
 
         items = [(f.name, f.number)
                  for f in self.descriptor().oneofs[0].fields]
@@ -214,13 +217,14 @@ class SignalStore:
     def get_cached(self,
                    signalname: str,
                    timeout: float=3) -> Mapping[str, Message]:
-        '''Get a specific signal map from the local cache.
+        '''
+        Get a specific signal map from the local cache.
 
-        @param[in] signalname
+        @param signalname
             Signal name, corresponding to a field of the Signal message
             streamed from the server's `watch()` method.
 
-        @param[in] timeout
+        @param timeout
             If the specified signal does not yet exist in the local cache, allow
             up to the specified timeout for it to be received from the server.
             Mainly applicable immediately after `start_watching()`, before the
@@ -272,22 +276,23 @@ class SignalStore:
                        name: str,
                        slot: Slot):
 
-        '''Connect a callback handler (slot) to receive emitted Signal messages.
+        '''
+        Connect a callback handler (slot) to receive emitted `Signal`
+        messages.
 
-        @param[in] name
-            Signal name, corresponding to a field within a `oneof` block of the
-            signal message.
+        @param name
+            Signal name, corresponding to a field within a `oneof`
+            block of the signal message.
 
-        @param[in] slot
+        @param slot
             A callable handler (e.g. a function) that accepts the Signal
             instance as its first and only required argument.
 
         This variant is mainly suitable for mapping signals, since the entire
-        Signal message including the `mapping_action` and `mapping_key`
-        fields are passed on to the receiver.  For simple signals where these
-        fields are unused, consider instead `connect_signal_data()` which passes
-        on just the extracted payload from the named signal.
-
+        Signal message including the `mapping_action` and `mapping_key` fields
+        are passed on to the receiver.  For simple signals where these fields
+        are unused, consider instead `connect_signal_data()` which passes on
+        just the extracted payload from the named signal.
         '''
 
         assert callable(slot), \
@@ -303,16 +308,17 @@ class SignalStore:
     def disconnect_signal(self,
                           name: str,
                           slot: Optional[Slot] = None):
-        '''Disconnect a simple handler from the specified signal.
+        '''
+        Disconnect a simple handler from the specified signal.
 
-        @param[in] name
+        @param name
            Signal name
 
-        @param[in] slot
+        @param slot
            Signal handler. If not provided, remove all handlers from the
            specified signal slot.
 
-        Returns True if the handler was found and removed; False otherwise.
+        Returns `True` if the handler was found and removed; `False` otherwise.
         '''
 
         if slot:
@@ -333,21 +339,19 @@ class SignalStore:
                             name: str,
                             slot: Slot):
 
-        '''.
-
+        '''
         Connect a callback handler (slot) to a receive just the extracted
         payload from emitted signals.  This is mainly suitable for simple
         (event) signals rather than mapping signals (where the receiver also
-        needs the `mapping_action` and `mapping_key` fields from the original `Signal`
-        container).
+        needs the `mapping_action` and `mapping_key` fields from the original
+        `Signal` container).
 
-        @param[in] name
+        @param name
             Signal name, corresponding to a field of the Signal message.
 
-        @param[in] slot
-            A callable handler (e.g. a function) that accepts the
-            extracted signal data as its first and only required argument.
-
+        @param slot
+            A callable handler (e.g. a function) that accepts the extracted
+            signal data as its first and only required argument.
         '''
 
         self.connect_signal(name,
@@ -358,12 +362,13 @@ class SignalStore:
     def disconnect_signal_data(self,
                                name: str,
                                slot: Optional[Slot] = None):
-        '''Disconnect a callback handler (slot) from a specific simple signal.
+        '''
+        Disconnect a callback handler (slot) from a specific simple signal.
 
-        @param[in] name
-            Signal name, corresponding to a field of the Signal message.
+        @param name Signal name, corresponding to a field of the Signal
+            message.
 
-        @param[in] slot
+        @param slot
             A callable handler (e.g. a function) that accepts the
             extracted signal data as its first and only required argument.
         '''
@@ -378,9 +383,9 @@ class SignalStore:
 
     def wait_complete(self) -> bool:
         '''
-        Wait for all currently mapping signals to be received from the server.
-        May be invoked after first connectint to ensure the local cache is
-        complete before proceeding.
+        Wait for all currently mapping signals to be received from the
+        server.  May be invoked after first connectint to ensure the local cache
+        is complete before proceeding.
 
         Note that it is not usually necessary to invoke this method in order to
         obtain values from the local cache, because the `get_cached()` method
@@ -395,7 +400,11 @@ class SignalStore:
         return self._completion_event.is_set()
 
 
-    def emit_cached_to(self, name, slot):
+    def emit_cached_to(self, name: str, slot: Slot):
+        '''
+        Emit a cached (previously emitted) signal to a specific slot/receiver.
+        '''
+
         if self._cache:
             mapped = False
             for key, signal in self.get_cached(name).items():
@@ -408,7 +417,7 @@ class SignalStore:
                 self._emit_to(name, slot, self.signal_type())
 
 
-    def emit(self, msg):
+    def emit(self, msg: Message):
         action, key = self._mapping_controls(msg);
         name = self.signal_name(msg)
 
@@ -475,7 +484,7 @@ class SignalStore:
         if asyncio.iscoroutine(result):
             asyncio.create_task(result)
 
-    def _mapping_controls(self, signal) -> tuple[MappingAction, str]:
+    def _mapping_controls(self, signal: Message) -> tuple[MappingAction, str]:
         try:
             action = MappingAction(signal.mapping_action)
             key = signal.mapping_key

@@ -41,6 +41,8 @@ namespace core::logging
 
     protected:
         /// \brief Constructor
+        /// \param[in] sink_id
+        ///     Identity of this log sink
         /// \param[in] stream
         ///     Stream to log the messages to
         StreamSink(const std::string &sink_id,

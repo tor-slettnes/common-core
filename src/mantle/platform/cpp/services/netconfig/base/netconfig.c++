@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file netconfig.h++
+/// @file netconfig.c++
 /// @brief NetConfig service - abstract interface
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

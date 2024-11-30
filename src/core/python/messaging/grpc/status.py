@@ -16,7 +16,9 @@ import traceback
 import sys
 
 class DetailedError (grpc.RpcError):
-    '''Mix-in class for gRPC exceptions'''
+    '''
+    Mix-in class for gRPC exceptions
+    '''
     _GRPC_DETAILS_METADATA_KEY = 'grpc-status-details-bin'
 
     def __init__ (self, exception):

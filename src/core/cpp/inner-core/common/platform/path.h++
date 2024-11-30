@@ -177,8 +177,6 @@ namespace core::platform
 
         /// @brief
         ///     Create a temporary directory in a specific folder
-        /// @param[in] folder
-        ///     Directory in which to create the file.
         /// @param[in] prefix
         ///     Basename prefix
         /// @param[in] suffix

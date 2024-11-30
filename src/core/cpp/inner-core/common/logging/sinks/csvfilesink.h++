@@ -60,7 +60,7 @@ namespace core::logging
     // Add sink factory to enable `--log-to-csv` option.
 
     inline static SinkFactory csv_factory(
-        "csv",
+        "csvfile",
         "Log to a CSV file, capturing specific event fields per column",
         [](const SinkID &sink_id) -> Sink::ptr {
             return CSVFileSink::create_shared(sink_id);

@@ -36,7 +36,6 @@ namespace core::dds
 
     public:
         //======================================================================
-        /// @fn create_writer
         /// @brief Create a new DDS writer instance on this publisher channel
         /// @param[in] topic_name
         ///     DDS publication topic.  By default we use the fully qualified

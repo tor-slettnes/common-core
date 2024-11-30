@@ -63,7 +63,9 @@ class PythonError (ParseError):
 
 
 class Expander:
-    '''Expand placeholders in a string using values from a dictionary'''
+    '''
+    Expand placeholders in a string using values from a dictionary
+    '''
 
     _wholeX = _tokenSearch(BACKSLASH, SUBEXPRESSION, SUB_NESTED)
 
@@ -72,7 +74,8 @@ class Expander:
                    substitutions: typing.Mapping[str, object],
                    /,
                    **kwargs) -> str:
-        '''Expand text from provided input by replacing placeholders with
+        '''
+        Expand text from provided input by replacing placeholders with
         correspoding values from the provided `substitutions` map.
 
         The following placeholders are recognized:

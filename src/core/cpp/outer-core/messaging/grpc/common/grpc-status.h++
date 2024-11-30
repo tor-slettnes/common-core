@@ -104,12 +104,15 @@ namespace core::grpc
         ///     Symbolic error ID within specified domain if available
         /// @param[in] level
         ///     Severity level
-        /// @param[in] flow
-        ///     Execution flow
         /// @param[in] timepoint
         ///     Time of occurence.
         /// @param[in] attributes
         ///     Additional information specific to the error
+        /// @param[in] contract_id
+        ///     Log contract, if any.  This informs the receiver of what fields
+        ///     to expect as custom attributes.
+        /// @param[in] host
+        ///     Reporting host name.
         Status(::grpc::StatusCode status_code,
                const std::string &text,
                status::Domain domain = status::Domain::APPLICATION,

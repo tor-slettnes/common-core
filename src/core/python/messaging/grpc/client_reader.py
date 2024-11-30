@@ -9,7 +9,9 @@
 import threading, asyncio
 
 class ThreadReader (object):
-    '''Stream reader implementation using threads'''
+    '''
+    Stream reader implementation using threads
+    '''
 
     thread = None
 
@@ -48,7 +50,9 @@ class ThreadReader (object):
 
 
 class AsyncReader (object):
-    '''Stream reader implementation using AsyncIO task.'''
+    '''
+    Stream reader implementation using AsyncIO task.
+    '''
 
     task = None
 

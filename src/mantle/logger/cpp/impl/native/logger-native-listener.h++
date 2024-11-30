@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file logger-native-listener.c++
+/// @file logger-native-listener.h++
 /// @brief A log sink appending to a queue
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

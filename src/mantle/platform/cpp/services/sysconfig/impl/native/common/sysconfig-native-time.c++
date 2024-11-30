@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file sysconfig-native-time.h++
+/// @file sysconfig-native-time.c++
 /// @brief SysConfig native implementation - Time Configuration
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

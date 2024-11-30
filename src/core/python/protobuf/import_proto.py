@@ -12,13 +12,13 @@ default_suffix = '_pb2'
 
 def import_common_protos(target_scope: object,
                          namespace: str|None = None):
-    '''Import well-known ProtoBuf defintions from Google as well as Common Core
+    '''
+    Import well-known ProtoBuf defintions from Google as well as Common Core
     shared defintions into `target_scope` (e.g., `globals()`).
 
     If `namespace` is provided all symbols will appear there, otherwise they
     will appear in namespaces corresponding to the `package` declaration from
     the respective `.proto` files.
-
     '''
     import_wellknown_protos(target_scope, namespace)
     import_core_protos(target_scope, namespace)
@@ -26,12 +26,12 @@ def import_common_protos(target_scope: object,
 
 def import_wellknown_protos (target_scope: object,
                              namespace: str|None = None):
-    '''Import well-known .proto files into `target_scope` (e.g., `globals()`).
+    '''
+    Import well-known .proto files into `target_scope` (e.g., `globals()`).
 
     If `namespace` is provided all symbols will appear there, otherwise they
     will appear in namespaces corresponding to the `package` declaration from
     the respective `.proto` files; in this case, `google.protobuf`
-
     '''
     import_proto('google.protobuf.empty', target_scope, namespace)
     import_proto('google.protobuf.wrappers', target_scope, namespace)
@@ -42,7 +42,8 @@ def import_wellknown_protos (target_scope: object,
 
 def import_core_protos(target_scope: object,
                        namespace: str|None = None):
-    '''Import Common Core shared ProtoBuf definitions into `target_scope`
+    '''
+    Import Common Core shared ProtoBuf definitions into `target_scope`
     (e.g., `globals()`).
 
     If `namespace` is provided all symbols will appear there, otherwise they
@@ -61,38 +62,54 @@ def import_proto(module_name: str,
                  target_scope: object,
                  namespace: str|None = None):
 
-    '''Import a generated ProtoBuf module.  Their symbols will appear in
+    '''
+    Import a generated ProtoBuf module.  Their symbols will appear in
     namespace containers that match the `package` declarations in their
     respective `.proto` files, which are created as class objects if missing.
 
-    Inputs:
-    @param[in] module_name
+    @param module_name
         Module name.  The base name portion (following any leading path) can be
         the stem of the original `.proto` file name (without the extension), or
         it can be the name of the corresponding generated Python module (with a
         `_pb2` suffix added).  If the name is unqualified (without any leading
         package name) it will be loaded from the `generated` namespace.
 
-    @param[in] target_scope
+    @param target_scope
         Where to create the target namespace. This could be a dictionary
         (e.g., `globals()`), class, class instance, or module.
 
-    @param[in] namespace
+    @param namespace
         What namespace to create or update.  By default, the ProtoBuf `package`
         name is used.  Leading elements of this namespace are reused/updated if
         they already exist as one of the above types, otherwise new empty
         container objects are created recursively.
 
-    Example:
+    ### Example
 
-    * Import `cc.generated.variant_pb2` into the namespace `cc.variant` per
-      the `package` declaration from `variant.proto`:
+    The ProtoBuf file `variant.proto` contains the following declaration:
 
+      ```protobuf
+
+      package cc.variant;
+
+      message Value {
+        string tag = 1;
+        oneof value {
+           // ...
+           double value_real = 7;
+           // ...
+        }
+      }
       ```
+
+    Given the above, the following produces a `Value` instance containing the real number π:
+
+      ```python
+      import math
       import_proto('variant', globals())
+
       pi_value = cc.variant.Value(value_real = math.pi)
       ```
-
     '''
 
     module_path = (module_name if "." in module_name
@@ -116,10 +133,11 @@ def import_proto(module_name: str,
 
 
 def add_container(scope: object, name: str) -> object:
-    '''Return an existing or new container within the specified scope.
-    If it exists it should be a dictionary, class, class instance, or module.
-    Otherwise, a new empty class is instantiated and added to the scope.
-    In either case, the resulting container is returned.
+    '''
+    Return an existing or new container within the specified scope.  If it
+    exists it should be a dictionary, class, class instance, or module.
+    Otherwise, a new empty class is instantiated and added to the scope.  In
+    either case, the resulting container is returned.
     '''
 
     if isinstance(scope, dict):
@@ -145,8 +163,9 @@ def add_container(scope: object, name: str) -> object:
 
 def populate_container(scope: object,
                        module: types.ModuleType) -> None:
-    '''Add symbols from `module` into the specified scope, which should be
-    a dictionary, class, class instance, or module.
+    '''
+    Add symbols from `module` into the specified scope, which should be a
+    dictionary, class, class instance, or module.
     '''
 
     items = [(name, value)

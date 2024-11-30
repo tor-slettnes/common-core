@@ -49,8 +49,6 @@ namespace core::logging
         /// @param[in] level
         ///     Severity level. Message will only be logged if its level is
         ///     equal to or higher than the threshold of the specified scope.
-        /// @param[in] flow
-        ///      Result on execution flow: NONE, CANCELLED, ABORTED
         /// @param[in] tp
         ///     Time point for the published message, if not now.
         /// @param[in] path
@@ -63,6 +61,8 @@ namespace core::logging
         ///     Thread ID where where the message was generated
         /// @param[in] origin
         ///     Originator entity, e.g. executable name
+        /// @param[in] domain
+        ///     Event domain, normally `status::Domain::APPLICATION` for log messages.
         /// @param[in] code
         ///     Numeric event code, unique within origin
         /// @param[in] symbol

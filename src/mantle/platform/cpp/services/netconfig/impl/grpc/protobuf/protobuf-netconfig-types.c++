@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file protobuf-netconfig.c++
+/// @file protobuf-netconfig-types.c++
 /// @brief Encode/decode routines for network ProtoBuf types
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

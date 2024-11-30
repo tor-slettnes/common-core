@@ -29,8 +29,10 @@ SourceType = PackageSource | VFSPathType | str
 ## Methods
 
 def encodeSource(source: SourceType) -> PackageSource:
-    '''Encode an package source from either an existing PackageSource instance
-    (no conversion done), a VFS Path, or an URL.'''
+    '''
+    Encode an package source from either an existing PackageSource instance
+    (no conversion done), a VFS Path, or an URL.
+    '''
 
 
     if isinstance(source, PackageSource):
@@ -56,7 +58,10 @@ def encodeSource(source: SourceType) -> PackageSource:
 
 
 def decodeSource(source: PackageSource) -> str:
-    '''Decode a package source to either a URL or a VFS path in the format `CONTEXT:PATH`'''
+    '''
+    Decode a package source to either a URL or a VFS path in the format
+    `CONTEXT:PATH`
+    '''
 
     if source.HasField('vfs_path'):
         path = decodePath(source.vfs_path)

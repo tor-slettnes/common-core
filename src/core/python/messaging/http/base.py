@@ -57,7 +57,8 @@ class HTTPBase (Endpoint):
                    defaultHost   : str = "localhost",
                    defaultPort   : int = None,
                    defaultPath   : str = ""):
-        '''Sanitize a service address of the form
+        '''
+        Sanitize a service address of the form
         `[SCHEME://][HOST][:PORT][/LOCATION]` (where any or all components may
         be present) to the full form `SCHEME://HOST:PORT/LOCATION`.
 
@@ -74,7 +75,6 @@ class HTTPBase (Endpoint):
         * Any attribute(s) that are still missing are populated from
           `defaultScheme`, `defaultHost`, `defaultPort`, and `defaultPath`,
           respectively.
-
         '''
 
         scheme, netloc, path, query, fragment = urllib.parse.urlsplit(provided or "")

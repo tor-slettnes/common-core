@@ -91,7 +91,7 @@ namespace core::platform
         std::size_t read_fd(
             FileDescriptor fd,
             void *buffer,
-            std::size_t bufsize) const override;
+            std::size_t size) const override;
 
         std::size_t write_fd(
             FileDescriptor fd,

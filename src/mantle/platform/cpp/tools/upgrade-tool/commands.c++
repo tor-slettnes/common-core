@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file commands.c++
 /// @brief VFS service control tool - command implementations
-/// @author Tor Slettnes <tslettnes@picarro.com>
+/// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #include "options.h++"

@@ -11,7 +11,9 @@ from cc.protobuf.rr import Reply, StatusCode
 from cc.protobuf.status import Event
 
 class Error (RuntimeError):
-    '''ZMQ RPC error'''
+    '''
+    ZMQ RPC error
+    '''
 
     def __init__(self,
                  code    : StatusCode,

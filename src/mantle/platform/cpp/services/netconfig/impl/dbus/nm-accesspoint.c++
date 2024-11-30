@@ -14,19 +14,20 @@
 namespace platform::netconfig::dbus
 {
     AccessPoint::AccessPoint(
-        core::dbus::ProxyContainer* container,
-        const core::dbus::ConnectionPtr& connection,
-        const core::dbus::ServiceName& servicename,
-        const core::dbus::ObjectPath& objectpath)
+        core::dbus::ProxyContainer *container,
+        const core::dbus::ConnectionPtr &connection,
+        const core::dbus::ServiceName &servicename,
+        const core::dbus::ObjectPath &objectpath)
         : MappedDataWrapper<AccessPointData>(
               container,
               connection,
               servicename,
               objectpath,
               NM_DBUS_INTERFACE_ACCESS_POINT,
-              {},
               {
-                  {"Ssid", DATASLOT(static_cast<core::types::Bytes*>(&this->ssid))},
+    },
+              {
+                  {"Ssid", DATASLOT(static_cast<core::types::Bytes *>(&this->ssid))},
                   {"Frequency", DATASLOT(&this->frequency)},
                   {"Flags", DATASLOT(&this->flags)},
                   {"WpaFlags", DATASLOT(&this->wpa_flags)},
@@ -42,12 +43,12 @@ namespace platform::netconfig::dbus
     }
 
     std::shared_ptr<AccessPoint> AccessPoint::get_by_ssid(
-        const core::types::Bytes& ssid,
+        const core::types::Bytes &ssid,
         bool required)
     {
         std::shared_ptr<AccessPoint> best = {};
 
-        for (const auto& [path, candidate] : dbus::container.instances<AccessPoint>())
+        for (const auto &[path, candidate] : dbus::container.instances<AccessPoint>())
         {
             if ((candidate->ssid == ssid) &&
                 (!best || best->strength < candidate->strength))
@@ -62,10 +63,10 @@ namespace platform::netconfig::dbus
         }
         if (required && !best)
         {
-            throwf(core::exception::NotFound,
-                   ("No access point with such SSID found: %s",
-                    core::types::ByteVector(ssid).to_string()),
-                   ssid);
+            throwf_args(core::exception::NotFound,
+                        ("No access point with such SSID found: %s",
+                         core::types::ByteVector(ssid).to_string()),
+                        ssid);
         }
 
         return best;
@@ -82,7 +83,7 @@ namespace platform::netconfig::dbus
     }
 
     void AccessPoint::on_property_lastseen(
-        const Glib::VariantBase& change)
+        const Glib::VariantBase &change)
     {
         int seconds = core::glib::variant_cast<int>(change);
         std::chrono::duration uptime = core::steady::Clock::now().time_since_epoch();
@@ -106,6 +107,9 @@ namespace platform::netconfig::dbus
         case core::signal::MAP_REMOVAL:
             relevant = netconfig::signal_accesspoint.get_cached(this->key()).has_value();
             break;
+
+        default:
+            break;
         }
 
         if (relevant)
@@ -116,4 +120,4 @@ namespace platform::netconfig::dbus
         }
     }
 
-}  // namespace platform::netconfig::dbus
+} // namespace platform::netconfig::dbus

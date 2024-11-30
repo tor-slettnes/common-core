@@ -87,11 +87,11 @@ namespace core
 
         std::istream &operator>>(std::istream &stream, TimeUnit &unit)
         {
-            return time_unit_names.from_stream(stream,  // stream
-                                               &unit,   // key
-                                               {},      // fallback
-                                               true,    // flag_unknown
-                                               true);   // allow_partial
+            return time_unit_names.from_stream(stream, // stream
+                                               &unit,  // key
+                                               {},     // fallback
+                                               true,   // flag_unknown
+                                               true);  // allow_partial
         }
 
         std::ostream &operator<<(std::ostream &stream, const DateTimeInterval &interval)
@@ -456,32 +456,18 @@ namespace core
             return to_duration(ts.tv_sec, ts.tv_nsec);
         }
 
-        Duration to_duration(const std::string_view &input, const std::string &format)
+        Duration to_duration(const std::string_view &input,
+                             const std::string &format)
         {
-            return to_timepoint(input, false, format).time_since_epoch();
+            return try_to_duration(input, format).value_or(dt::Duration::zero());
         }
 
-        TimePoint js_to_timepoint(const std::string_view &input,
-                                  const TimePoint &fallback)
+        std::optional<Duration> try_to_duration(const std::string_view &input,
+                                                const std::string &format)
         {
-            static const std::regex rx(
-                "(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(\\.\\d+)?Z?");
-
-            std::match_results<std::string_view::iterator> match;
-
-            if (std::regex_match(input.begin(), input.end(), match, rx))
+            if (auto tp = try_to_timepoint(input, format, false))
             {
-                return core::dt::to_timepoint(
-                    str::convert_to<std::int32_t>(match.str(1)),   // year
-                    str::convert_to<std::uint32_t>(match.str(2)),  // month
-                    str::convert_to<std::uint32_t>(match.str(3)),  // day
-                    str::convert_to<std::uint32_t>(match.str(4)),  // hour
-                    str::convert_to<std::uint32_t>(match.str(5)),  // minute
-                    str::convert_to<std::uint32_t>(match.str(6)),  // second
-                    match.length(7)
-                        ? str::convert_to<double>(match.str(7))  // fraction
-                        : 0.0,
-                    Duration::zero());  // tz_offset
+                return tp->time_since_epoch();
             }
             else
             {
@@ -489,65 +475,94 @@ namespace core
             }
         }
 
-        TimePoint to_timepoint(const std::string_view &input,
-                               bool local,
-                               const std::string &format,
-                               const TimePoint &fallback)
+        std::optional<TimePoint> try_to_timepoint(
+            const std::string_view &input,
+            const std::optional<bool> &local)
         {
-            std::tm dt = {};
+            static const std::regex rx(
+                "(\\d{4})-(\\d{2})-(\\d{2}).(\\d{2}):(\\d{2}):(\\d{2})(\\.\\d+)?(Z)?");
 
-            // First try to interpret the string as seconds since epoch
-            try
+            std::match_results<std::string_view::iterator> match;
+            if (std::regex_match(input.begin(), input.end(), match, rx))
             {
-                double seconds = str::convert_to<double>(input);
-                return to_timepoint(seconds);
+                std::optional<Duration> opt_zone_offset;
+                bool utc = local.has_value() ? !local.value()
+                                             : match.length(8) > 0;
+                if (utc)
+                {
+                    // Zulu suffix; let's specify "zero offset".
+                    opt_zone_offset = Duration::zero();
+                }
+
+                return core::dt::to_timepoint(
+                    str::convert_to<std::int32_t>(match.str(1)),  // year
+                    str::convert_to<std::uint32_t>(match.str(2)), // month
+                    str::convert_to<std::uint32_t>(match.str(3)), // day
+                    str::convert_to<std::uint32_t>(match.str(4)), // hour
+                    str::convert_to<std::uint32_t>(match.str(5)), // minute
+                    str::convert_to<std::uint32_t>(match.str(6)), // second
+                    match.length(7)                               // |-
+                        ? str::convert_to<double>(match.str(7))   // |> fraction
+                        : 0.0,                                    // |-
+                    opt_zone_offset);                             // tz_offset
             }
-            catch (const std::invalid_argument &)
+
+            else if (auto opt_seconds = str::try_convert_to<double>(input))
             {
-                // Next, try JavaScript format (with a 'T' separating date and time)
-                if (const char *end = strptime(input.data(), JS_FORMAT, &dt))
-                {
-                    local = (*end != 'Z');
-                    return to_timepoint(dt, local);
-                }
-
-                // Next, try "default" format (with an @ separator between date and time)
-                else if (const char *end = strptime(input.data(), DEFAULT_FORMAT, &dt))
-                {
-                    local = (*end != 'Z');
-                    return to_timepoint(dt, local);
-                }
-
-                // Failed to convert timepoint.
-                else
-                {
-                    return fallback;
-                }
-            }
-        }
-
-        /// Convert from "struct tm" to TimePoint, or fallback if the time is zero.
-        TimePoint to_timepoint(const std::tm &dt, bool local, const TimePoint &fallback)
-        {
-            return to_timepoint(dt::mktime(dt, local), 0, fallback);
-        }
-
-        TimePoint to_timepoint(const timespec &ts, const TimePoint &fallback)
-        {
-            return to_timepoint(ts.tv_sec, ts.tv_nsec, fallback);
-        }
-
-        TimePoint to_timepoint(double seconds, const TimePoint &fallback)
-        {
-            Duration duration = to_duration(seconds);
-            if (duration != Clock::duration::zero())
-            {
-                return TimePoint(duration);
+                return to_timepoint(opt_seconds.value());
             }
             else
             {
-                return fallback;
+                return {};
             }
+        }
+
+        std::optional<TimePoint> try_to_timepoint(
+            const std::string_view &input,
+            const std::string &format,
+            const std::optional<bool> &local)
+        {
+            std::tm dt = {};
+            if (const char *end = ::strptime(input.data(), format.c_str(), &dt))
+            {
+                return to_timepoint(dt, local.value_or(*end != 'Z'));
+            }
+            else
+            {
+                return {};
+            }
+        }
+
+        TimePoint to_timepoint(
+            const std::string_view &input,
+            const std::optional<bool> &local,
+            const TimePoint &fallback)
+        {
+            return try_to_timepoint(input, local).value_or(fallback);
+        }
+
+        TimePoint to_timepoint(
+            const std::string_view &input,
+            const std::string &format,
+            const std::optional<bool> &local,
+            const TimePoint &fallback)
+        {
+            return try_to_timepoint(input, format, local).value_or(fallback);
+        }
+
+        TimePoint to_timepoint(const std::tm &dt, bool local)
+        {
+            return to_timepoint(dt::mktime(dt, local), 0);
+        }
+
+        TimePoint to_timepoint(const timespec &ts)
+        {
+            return to_timepoint(ts.tv_sec, ts.tv_nsec);
+        }
+
+        TimePoint to_timepoint(double seconds)
+        {
+            return TimePoint(to_duration(seconds));
         }
 
         /// Convert from milliseconds (Java style timestamp) to TimePoint
@@ -556,17 +571,9 @@ namespace core
             return TimePoint(ms_to_duration(milliseconds));
         }
 
-        TimePoint to_timepoint(time_t seconds, long nanoseconds, const TimePoint &fallback)
+        TimePoint to_timepoint(time_t seconds, long nanoseconds)
         {
-            Duration duration = to_duration(seconds, nanoseconds);
-            if (duration != Clock::duration::zero())
-            {
-                return TimePoint(duration);
-            }
-            else
-            {
-                return fallback;
-            }
+            return TimePoint(to_duration(seconds, nanoseconds));
         }
 
         TimePoint to_timepoint(std::int32_t year,
@@ -798,7 +805,7 @@ namespace core
             return days;
         }
 
-    }  // namespace dt
+    } // namespace dt
 
     namespace steady
     {
@@ -817,8 +824,8 @@ namespace core
                               std::chrono::duration_cast<dt::Duration>(stp.time_since_epoch()),
                               decimals);
         }
-    }  // namespace steady
-}  // namespace core
+    } // namespace steady
+} // namespace core
 
 namespace std::chrono
 {
@@ -840,7 +847,7 @@ namespace std::chrono
         return stream;
     }
 
-}  // namespace std::chrono
+} // namespace std::chrono
 
 bool operator==(const std::tm &lhs, const std::tm &rhs)
 {

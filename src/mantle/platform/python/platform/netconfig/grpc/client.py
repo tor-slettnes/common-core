@@ -31,7 +31,9 @@ ActiveConnectionStateTuple = namedtuple("ActiveConnectionState",
 # NetConfigClient class
 
 class NetConfigClient (SignalClient):
-    '''Client for NetConfig service.'''
+    '''
+    Client for NetConfig service.
+    '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
@@ -45,23 +47,31 @@ class NetConfigClient (SignalClient):
         = ('global', 'connection', 'active_connection', 'accesspoint', 'device')
 
     def get_hostname(self) -> str:
-        '''Return the primary hostname'''
+        '''
+        Return the primary hostname
+        '''
         return self.stub.get_hostname(empty).value
 
     def set_hostname(self, hostname: str):
-        '''Set the primary hostname'''
+        '''
+        Set the primary hostname
+        '''
         request = StringValue(value=hostname)
         self.stub.set_hostname(request)
 
     def get_global_data(self) -> GlobalData:
-        '''Get global network state information'''
+        '''
+        Get global network state information
+        '''
         # try:
         #     return self.signal_store.get_cached(self.SIGNAL_GLOBAL)
         # except KeyError:
         return dict(self.stub.get_global_data(empty).map)
 
     def get_connections(self) -> dict[str, ConnectionData]:
-        '''Get a map of available network connections'''
+        '''
+        Get a map of available network connections
+        '''
 
         # try:
         #     return self.signal_store.get_cached(self.SIGNAL_CONN)
@@ -78,28 +88,28 @@ class NetConfigClient (SignalClient):
             ip4config: IPConfigData = IPConfigData(method = IPConfigMethod.METHOD_AUTO),
             ip6config: IPConfigData = IPConfigData(method = IPConfigMethod.METHOD_AUTO)):
 
-        '''Add or update a network connection profile.
+        '''
+        Add or update a network connection profile.
 
         Parameters:
-        @param[in] id
+        @param id
             A unique ID for this connection, e.g. "Wired Connection" or a
             wireless SSID. Any existing connection with this ID is replaced.
 
-        @param[in] data
+        @param data
            Either a `WiredConnectionData` or `WirelessConnectionData`
            instance, containing media-specific settings.
 
-        @param[in] interface
+        @param interface
            The network interface name to which this connection applies, e.g.,
            "eth0" "wlan0". If omitted, it is deduced from available Ethernet or
            WiFi interfaces based on the type of the `data` parameter.
 
-        @param[in] ip4config
+        @param ip4config
            IPv4 settings. If omitted, automatic IPv4 configuration is assuemd.
 
-        @param[in] ip6config
+        @param ip6config
            IPv6 settings. If omitted, automatic IPv6 configuration is assuemd.
-
         '''
 
         if not interface and not data:
@@ -132,7 +142,7 @@ class NetConfigClient (SignalClient):
         '''
         Remove a network connection profile.
 
-        @param[in] key
+        @param key
             The ID (name) of the connection to be removed.
 
         Returns a boolen indicating whether any connection(s) were removed.
@@ -145,7 +155,7 @@ class NetConfigClient (SignalClient):
         '''
         Activate a previously-defined connection profile.
 
-        @param[in] key
+        @param key
             The ID (name) of the connection to be activated.
         '''
 
@@ -156,7 +166,7 @@ class NetConfigClient (SignalClient):
         '''
         Deactivate an existing active connection.
 
-        @param[in] key
+        @param key
             The ID (name) of the connection to be deactivated.
         '''
 
@@ -164,12 +174,10 @@ class NetConfigClient (SignalClient):
         return self.stub.deactivate_connection(request)
 
     def get_active_connections(self) -> dict[str, ActiveConnectionData]:
-        '''Return a dictionary mapping connection IDs to active connection data for
-        currently active connections.
         '''
-        # try:
-        #     return self.signal_store.get_cached(self.SIGNAL_AC)
-        # except KeyError:
+        Return a dictionary mapping connection IDs to active connection data
+        for currently active connections.
+        '''
         return dict(self.stub.get_active_connections(empty).map)
 
     def request_scan(self):
@@ -181,17 +189,18 @@ class NetConfigClient (SignalClient):
         return self.stub.request_scan(empty)
 
     def get_aps(self) -> dict[str, AccessPointData]:
-        '''Return a dictionary mapping access point BSSIDs (MAC addresses)
-        to corresponding data'''
+        '''
+        Return a dictionary mapping access point BSSIDs (MAC addresses) to
+        corresponding data
+        '''
 
-        # try:
-        #     return self.signal_store.get_cached(self.SIGNAL_AP)
-        # except KeyError:
         return dict(self.stub.get_aps(empty).map)
 
     def get_aps_by_ssid(self) -> dict[bytes, AccessPointData]:
-        '''Return a dictionary mapping SSIDs to the strongest corresponding
-        access point.'''
+        '''
+        Return a dictionary mapping SSIDs to the strongest corresponding
+        access point.
+        '''
 
         aps = {}
         for ap in self.get_aps().values():
@@ -206,43 +215,43 @@ class NetConfigClient (SignalClient):
         Define and activate a new connection based on information obtained
         from the specified access point.
 
-        Parameters:
-
-         - `ap`: An available Access Point, specified by either
+        @param ap
+            An available Access Point, specified by either
             - a string of the form "XX:XX:XX:XX:XX:XX" denoting its BSSID, or
             - a bytes instance containing its SSID ("Network Name")
 
-         - `connection`: A `ConnectionData()` instance.
+        @param connection
+            A `ConnectionData()` instance.
 
-        Example:
+        ### Example
 
-        ```python
-           network = cc.protobuf.netconfig.NetworkClient()
+          ```python
+          network = cc.protobuf.netconfig.NetworkClient()
 
-           my_wpa = cc.protobuf.netconfig.WPA(psk='My password')
+          my_wpa = cc.protobuf.netconfig.WPA(psk='My password')
 
-           my_wifi = cc.protobuf.netconfig.WirelessConnectionData(wpa=my_wpa)
+          my_wifi = cc.protobuf.netconfig.WirelessConnectionData(wpa=my_wpa)
 
-           my_ip4_address = cc.protobuf.netconfig.AddressData(
-                                address='192.168.1.100',
-                                prefixlength=24)
+          my_ip4_address = cc.protobuf.netconfig.AddressData(
+               address='192.168.1.100',
+               prefixlength=24)
 
-           my_ip4 = cc.protobuf.netconfig.IPConfigData(
-                        method=IPConfigMethod.METHOD_MANUAL,
-                        address_data=[my_ip4_address],
-                        gateway='192.168.1.1')
+          my_ip4 = cc.protobuf.netconfig.IPConfigData(
+               method=IPConfigMethod.METHOD_MANUAL,
+               address_data=[my_ip4_address],
+               gateway='192.168.1.1')
 
-           my_ip6 = cc.protobuf.netconfig.IPConfigData(
-                        method=IPConfigMethod.METHOD_AUTO)
+          my_ip6 = cc.protobuf.netconfig.IPConfigData(
+               method=IPConfigMethod.METHOD_AUTO)
 
-           my_data = cc.protobuf.netconfig.ConnectionData(
-                        id='My Connection Name',
-                        wireles_data=my_wifi,
-                        ip4config=my_ip4,
-                        ip6config=my_ip6)
+          my_data = cc.protobuf.netconfig.ConnectionData(
+               id='My Connection Name',
+               wireles_data=my_wifi,
+               ip4config=my_ip4,
+               ip6config=my_ip6)
 
-           netconfig.connect_ap(b'My SSID', my_data)
-        ```
+          netconfig.connect_ap(b'My SSID', my_data)
+          ```
         '''
 
         if isinstance(ap, str):
@@ -273,22 +282,21 @@ class NetConfigClient (SignalClient):
                 ip4config: IPConfigData = IPConfigData(method=IPConfigMethod.METHOD_AUTO),
                 ip6config: IPConfigData = IPConfigData(method=IPConfigMethod.METHOD_AUTO)):
         '''
-        Convenience wrapper around `connect_ap()`, to define and activate a new
-        connection based on information obtained from the specified access
+        Convenience wrapper around `connect_ap()`, to define and activate a
+        new connection based on information obtained from the specified access
         point.
 
-        Parameters:
-        @param[in] id
+        @param id
             A unique ID for this connection, e.g. "Wired Connection" or a
             wireless SSID. Any existing connection with this ID is replaced.
 
-        @param[in] ap
+        @param ap
             An available Access Point, specified by either
             - a string of the form "XX:XX:XX:XX:XX:XX" denoting its BSSID, or
             - a bytes instance containing its SSID (b'Network Name')
             If not provided, the `id.encode()` is used.
 
-        @param[in] auth
+        @param auth
             Authentication data. The following data types are supported:
             - `cc.protobuf.netconfig.WEP_Data`
               Wireless Encryption Protocol, with up to 4 static keys
@@ -302,33 +310,36 @@ class NetConfigClient (SignalClient):
 
             Use `help(PROTOCOL)` for more information on each.
 
-        @param[in] key_mgmt
+        @param key_mgmt
             WiFi Key Management, use `KeyManagement.values()` for choices.
             Automatically deduced for WEP and WPA authentication schemes; required
             for EAP encyption.  See `KeyManagement.values()` for choices.
 
-        @param[in] hidden
+        @param hidden
             Whether this network's SSID is hidden, i.e. requires explicit connection attemtps.
 
-        @param[in] mode
+        @param mode
             Wireless network type; normally WirelessMode.MODE_INFRASTRUCTURE.
             See `WirelessMode.values()` for choices.
 
-        @param[in] interface
+        @param interface
             The network interface name to which this connection applies, e.g., "wlan0".
             This may be omitted, in which case the first active WiFi device is used.
 
-        @param[in] ip4config
+        @param ip4config
             IPv4 settings. If omitted, automatic IPv4 configuration is assumed.
 
-        @param[in] ip6config
+        @param ip6config
             IPv6 settings. If omitted, automatic IPv6 configuration is assumed.
 
-        Example:
-         >>> netconfig = NetConfigClient()
-         >>> netconfig.connect(id = 'My Network',
-                               auth = cc.protobuf.netconfig.WPA_Data(psk='My password'))
+        ### Example:
 
+          ```python
+          >>> netconfig = NetConfigClient()
+          >>> netconfig.connect(
+                  id = 'My Network',
+                  auth = cc.protobuf.netconfig.WPA_Data(psk='My password'))
+          ```
         '''
 
         if ap is None:
@@ -356,8 +367,9 @@ class NetConfigClient (SignalClient):
                                     ignoreMissing: bool = False) -> ActiveConnectionState:
 
         '''
-        Return named tuple with information about the state of an active connection,
-        specified by either its human-readable ID or universally unique ID (UUID):
+        Return named tuple with information about the state of an active
+        connection, specified by either its human-readable ID or universally
+        unique ID (UUID):
 
                (state, flags, reason)
 
@@ -368,15 +380,16 @@ class NetConfigClient (SignalClient):
 
         Otherwise, a KeyError is raised.
 
-        Example:
-        @code
-            >>> nc = NetConfigClient()
-            >>> nc.get_active_connection_state('84b75e14-a3ed-4134-a2f8-a2f4c390de6a').state
-            CONNECTION_STATE_DEACTIVATED
+        ### Example
 
-            >>> nc.get_active_connection_state('My Connection').reason
-            CONNECTION_STATE_REASON_LOGIN_FAILED
-        @endcode
+          ```python
+          >>> nc = NetConfigClient()
+          >>> nc.get_active_connection_state('84b75e14-a3ed-4134-a2f8-a2f4c390de6a').state
+          CONNECTION_STATE_DEACTIVATED
+
+          >>> nc.get_active_connection_state('My Connection').reason
+          CONNECTION_STATE_REASON_LOGIN_FAILED
+          ```
         '''
 
         acs = self.get_active_connections()
@@ -410,12 +423,13 @@ class NetConfigClient (SignalClient):
 
     def get_devices(self) -> dict[str, DeviceData]:
         '''
-        Return a dictionary network interface names to corresponding data.
+        Get information about available network devices.
+
+        @return
+            Key/Value pairs mapping device names to associated device information.
         '''
-        # try:
-        #     return self.signal_store.get_cached(self.SIGNAL_DEVICE)
-        # except KeyError:
         return dict(self.stub.get_devices(empty).map)
+
 
     def set_wireless_enabled(self, enabled: bool):
         '''
@@ -423,6 +437,7 @@ class NetConfigClient (SignalClient):
         '''
         req = RadioState(wireless_enabled=enabled)
         return self.stub.set_wireless_enabled(req)
+
 
     def set_wireless_allowed(self, allowed: bool):
         '''

@@ -26,13 +26,17 @@ def programName() -> str:
     return os.path.splitext(os.path.basename(sys.argv[0]))[0]
 
 def installRoot() -> FilePath:
-    '''Obtain installation root folder'''
+    '''
+    Obtain installation root folder
+    '''
 
     installRoot, _ = locateDominatingPath('share')
     return installRoot
 
 def pythonRoot() -> FilePath:
-    '''Obtain installation folder for Python modules'''
+    '''
+    Obtain installation folder for Python modules
+    '''
 
     package_path = importlib.resources.files(__package__)
     package_parts = __package__.split('.')
@@ -46,7 +50,8 @@ def settingsPath() -> SearchPath:
     try:
         searchpath = os.getenv('CONFIGPATH').split(os.pathsep)
     except AttributeError:
-        local_dir = ('/etc/common-core', 'c:\\common-core\\config')[platform.system() == 'Windows']
+        local_dir = ('c:\\common-core\\config' if platform.system() == 'Windows'
+                     else '/etc/common-core')
         searchpath = [
             local_dir,          # Local overrides
             SETTINGS_DIR,       # Package defaults

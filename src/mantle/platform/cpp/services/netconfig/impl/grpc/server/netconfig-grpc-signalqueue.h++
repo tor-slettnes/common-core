@@ -1,8 +1,8 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file nework-grpc-signalqueue.h++
+/// @file netconfig-grpc-signalqueue.h++
 /// @brief Connect server-side signals to gRPC stream initiated by clients
-/// @author Tor Slettnes <tslettnes@picarro.com>
+/// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
 #pragma once

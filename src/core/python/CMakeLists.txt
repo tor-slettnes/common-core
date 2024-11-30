@@ -61,3 +61,6 @@ if(INSTALL_COMPONENT)
     DESCRIPTION "Python shared components"
   )
 endif()
+
+cc_add_doxygen(python-docs
+  FILE_PATTERNS *.py *.md)

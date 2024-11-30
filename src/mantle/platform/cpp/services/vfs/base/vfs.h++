@@ -93,7 +93,8 @@ namespace platform::vfs
         bool dereference = true,
         bool include_hidden = false);
 
-    /// Recursively locate files matching specific patterns and/or attributes.
+    /// @brief
+    ///    Recursively locate files matching specific patterns and/or attributes.
     /// @param[in] root
     ///    Top-level folder in which to start the search
     /// @param[in] filename_masks
@@ -101,6 +102,13 @@ namespace platform::vfs
     /// @param[in] attribute_filters
     ///    Zero or more tag/value pairs that must be present.
     ///    Tags may be repeated for multiple cumulative value matches.
+    /// @param[in] with_attributes
+    ///    Include custom attributes in response
+    /// @param[in] include_hidden
+    ///     Also match leading "." in filename expansion patterns like "*".
+    ///     (Normally such filenames need to be matched specifically, i.e. ".*").
+    /// @param[in] ignore_case
+    ///     Case insensitive filename matching
 
     Directory locate(
         const Path &root,
@@ -110,7 +118,6 @@ namespace platform::vfs
         bool include_hidden = false,
         bool ignore_case = false);
 
-    /// @fn copy
     /// @brief Copy `source` file or folder.
     /// @param[in] source
     ///     source path
@@ -145,7 +152,6 @@ namespace platform::vfs
         bool with_attributes = true,
         bool inside_target = false);
 
-    /// @fn copy
     /// @brief Copy zero or more path(s) inside a target folder
     /// @param[in] sources
     ///     source paths
@@ -176,9 +182,8 @@ namespace platform::vfs
         bool update = false,
         bool with_attributes = true);
 
-    /// @fn move
     /// @brief Move `source` path to `target.
-    /// @param[in] sources
+    /// @param[in] source
     ///     source path
     /// @param[in] target
     ///      target path. Will be created/replaed unless `inside_target` is specified.
@@ -190,9 +195,6 @@ namespace platform::vfs
     ///       - Creates missing parent folder(s) on target
     /// @param[in] with_attributes
     ///     Copy/replace attributes on target from source
-    /// @param[in]
-    ///     Merge rather than replace an existing target folder.
-    ///     Effective only if both `source` and `target` are folders.
     /// @param[in] inside_target
     ///     Indicates that `target` is not the final target path, but an
     ///     existing folder into which the source path will be copied.
@@ -203,9 +205,8 @@ namespace platform::vfs
         bool with_attributes = true,
         bool inside_target = false);
 
-    /// @fn move
     /// @brief Move zero or more source path(s) inside specified target folder.
-    /// @param[in] source
+    /// @param[in] sources
     ///     source path
     /// @param[in] target
     ///     target folder into which the source(s) will be moved
@@ -217,16 +218,12 @@ namespace platform::vfs
     ///       - Creates missing parent folder(s) on target
     /// @param[in] with_attributes
     ///     Copy/replace attributes on target from source
-    /// @param[in]
-    ///     Merge rather than replace an existing target folder.
-    ///     Effective only if both `source` and `target` are folders.
     void move(
         const Paths &sources,
         const Path &target,
         bool force = false,
         bool with_attributes = true);
 
-    /// @fn remove
     /// @brief Remove file or folder
     /// @param[in] path
     ///     File location to be removed
@@ -234,12 +231,13 @@ namespace platform::vfs
     ///     Attempts to remove the target even if
     ///       - It is a non-empty folder
     ///       - It is not writable (and in the case of folders, executable)
+    /// @param[in] with_attributes
+    ///     Also remove attributes associated with file.
     void remove(
         const Path &path,
         bool force = false,
         bool with_attributes = true);
 
-    /// @fn remove
     /// @brief Remove file or folder
     /// @param[in] paths
     ///     File location to be removed
@@ -247,14 +245,15 @@ namespace platform::vfs
     ///     Attempts to remove the target even if
     ///       - It is a non-empty folder
     ///       - It is not writable (and in the case of folders, executable)
+    /// @param[in] with_attributes
+    ///     Also remove attributes associated with each file.
     void remove(
         const Paths &paths,
         bool force = false,
         bool with_attributes = true);
 
-    /// @fn create_folder
     /// @brief Create a new folder
-    /// @param[in] loc
+    /// @param[in] vpath
     ///     VFS location of the new folder
     /// @param[in] force
     ///     Enables the following behaviors
@@ -264,7 +263,6 @@ namespace platform::vfs
         const Path &vpath,
         bool force = false);
 
-    /// @fn read_file
     /// @brief Read the contents of file from the server
     /// @param[in] vpath
     ///     Path to new folder

@@ -22,7 +22,9 @@ import logging
 
 
 class Server (Responder):
-    '''ZMQ RPC server using ProtoBuf messages'''
+    '''
+    ZMQ RPC server using ProtoBuf messages
+    '''
 
     def __init__(self,
                  bind_address    : str,

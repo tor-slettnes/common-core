@@ -1,6 +1,6 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file upgrade-api.h++
+/// @file upgrade.h++
 /// @brief Upgrade service - complete interface
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
