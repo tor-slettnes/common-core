@@ -15,8 +15,8 @@ namespace core::signal
     define_log_scope("signal");
 
     //==========================================================================
-    /// \class BaseSignal
-    /// \brief Abstract base for VoidSignal, DataSignal<T> and MappingSignal<T>
+    /// @class BaseSignal
+    /// @brief Abstract base for VoidSignal, DataSignal<T> and MappingSignal<T>
 
     BaseSignal::BaseSignal(const std::string &name, bool caching)
         : name_(name),
@@ -72,8 +72,8 @@ namespace core::signal
     }
 
     //==========================================================================
-    /// \class VoidSignal
-    /// \brief Signal without data
+    /// @class VoidSignal
+    /// @brief Signal without data
 
     VoidSignal::VoidSignal(const std::string &id)
         : Super(id, false)

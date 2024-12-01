@@ -1,12 +1,14 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build static/shared library
+## @brief CMake rules to build static/shared library
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
 add_subdirectory(inner-core)
 add_subdirectory(outer-core)
 
-cc_add_doxygen(c++-doc
-  FILE_PATTERNS *.c++ *.h++ *.i++ *.md)
+cc_add_doxygen(c++-reference
+  FILE_PATTERNS "*.h++;*.md"
+  EXTRACT_LOCAL_CLASSES NO)
+

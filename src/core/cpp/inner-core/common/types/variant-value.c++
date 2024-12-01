@@ -817,10 +817,10 @@ namespace core::types
         switch (this->type())
         {
         case ValueType::KVMAP:
-            return std::get<KeyValueMapPtr>(*this)->operator[](key);
+            return (*std::get<KeyValueMapPtr>(*this))[key];
 
         case ValueType::TVLIST:
-            return std::get<TaggedValueListPtr>(*this)->operator[](key);
+            return (*std::get<TaggedValueListPtr>(*this))[key];
 
         default:
             throw std::invalid_argument("Value instance is not mappable");

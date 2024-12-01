@@ -86,6 +86,15 @@ local/strip: build
 uninstall:
 	@rm -rfv "$(INSTALL_DIR)"
 
+.PHONY: doc
+doc: cmake
+	@echo
+	@echo "#############################################################"
+	@echo "Generating documentation"
+	@echo "#############################################################"
+	@echo
+	@cmake --build "$(BUILD_DIR)" --target doxygen
+
 .PHONY: test
 test: build
 	@echo

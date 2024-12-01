@@ -137,7 +137,7 @@ class SignalClient (Client):
     `cc.protobuf.signal.Filter` input based on which signal slots were
     previously connected to one or more handlers.
 
-    \example demo/grpc/client.py
+    @example demo/grpc/client.py
     '''
 
     ### Subclasses should override this to the appropriate signal type.

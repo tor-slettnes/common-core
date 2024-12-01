@@ -15,7 +15,6 @@
 #include <list>
 #include <variant>
 
-/// Argument parser utility, loosely modeled after Python's "argparse" module.
 namespace core::argparse
 {
     /// A (min,max) pair indicating number of times the option must/can be repeated.
@@ -82,7 +81,7 @@ namespace core::argparse
     /// Multiple constructors are provided, depending on whether the result is to be stored in
     ///     an atomic variable, appended to a vector, or passed via a callback function.
     ///
-    /// \param[in] keys
+    /// @param[in] keys
     ///     Zero or more option keys, each conforming to one of the following:
     ///       - Short format, comprising a single dash followed by a single
     ///         letter (e.g. "-s").
@@ -90,36 +89,36 @@ namespace core::argparse
     ///         hyphen-delimited words ("--some-long-option").
     ///     With no option keys, this becomes a positional argument.
     ///
-    /// \param[in] argname
+    /// @param[in] argname
     ///     Argument name. If provided, the option will take an argument. This
     ///     is required for options with no keys, i.e. positional arguments.
     ///
-    /// \param[in] helptext
+    /// @param[in] helptext
     ///     Human readable text explaining this option. The following
     ///     substitutions take place within this text:
     ///        %command is replaced with the command name (e.g., argv[0])
     ///        %default is replaced with the default value, if any.
     ///
-    /// \param[in] target
+    /// @param[in] target
     ///     Pointer to a variable in which the parsed value will be stored.
     ///
-    /// \param[in] targetVector
+    /// @param[in] targetVector
     ///     Pointer to a vector to which the parsed value will be appended.
     ///
-    /// \param[in] callback
+    /// @param[in] callback
     ///     Pointer to function that will receive the parsed value.
     ///
-    /// \param[in] constValue
+    /// @param[in] constValue
     ///     Optional fixed value to store in \p *target if this option is
     ///     found during parsing. If not provided here, an option argument
     ///     is expected.
     ///
-    /// \param[in] defaultValue
+    /// @param[in] defaultValue
     ///     Optional value to store in \p *target if this option is absent
     ///     among input arguments. If not provided, such an absence will
     ///     leave \p *target untouched.
     ///
-    /// \param[in] repeats
+    /// @param[in] repeats
     ///     Pair of (min, max) values indicating how many times this
     ///     option is required/allowed.
 

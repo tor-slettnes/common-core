@@ -18,8 +18,8 @@ namespace core::logging
     const bool DEFAULT_INCLUDE_CONTEXT = false;
 
     //==========================================================================
-    /// \class MessageFormatter
-    /// \brief Mix-in class for traits specific to text-based log sinks
+    /// @class MessageFormatter
+    /// @brief Mix-in class for traits specific to text-based log sinks
 
     class MessageFormatter
     {

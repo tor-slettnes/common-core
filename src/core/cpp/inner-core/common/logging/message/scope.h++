@@ -16,8 +16,8 @@
 //==============================================================================
 /// Define a log scope for a specifc programming scope (namespace, class).
 ///
-/// \b Example:
-/// \code
+/// @b Example:
+/// @code
 ///    nameapace mynamespace
 ///    {
 ///        // Default logging scope for mynamespace
@@ -48,23 +48,23 @@
 ///    {
 ///        log_debug("This messasge is generated in the global scope.");
 ///    }
-/// \endcode
+/// @endcode
 ///
 /// The logging threshold for a given scope may be specified in the application settings
 /// file with the option `log-threshold-SCOPE`, e.g.:
-/// \code
+/// @code
 ///     {
 ///          "log-MyNamespaceScope" : "debug",
 ///          "log-MyClassScope" : "info",
 ///          "log-global" : "debug",
 ///          "log-shared" : "info",
 ///     }
-/// \endcode
+/// @endcode
 ///
 /// It may also be overridden at run-time with corresponding command line option, e.g.:
-/// \code
+/// @code
 ///    myapplication --log-threshold-MyNamespaceScope=DEBUG --log-threshold-MyClassScope=INFO
-/// \endcode
+/// @endcode
 
 #define define_log_scope(...)                             \
     inline static ::core::logging::Scope::ptr log_scope = \
@@ -80,8 +80,8 @@ namespace core::logging
 {
 
     //==========================================================================
-    /// \class Scope
-    /// \brief Log scope for messages.
+    /// @class Scope
+    /// @brief Log scope for messages.
     ///
     /// A logging scope serves as a scope for log messages. Each scope has its
     /// own logging threshold, and its name is optionally included in the log
@@ -96,10 +96,10 @@ namespace core::logging
         using ptr = std::shared_ptr<Scope>;
 
     public:
-        /// \param[in] name
+        /// @param[in] name
         ///     Log scope name, used in log output, as well as to construct
         ///     corresponding settings and command line options.
-        /// \param[in] threshold
+        /// @param[in] threshold
         ///     Default logging threshold for this scope. If not specified, and
         ///     not overridden in application settings or on the command line,
         ///     `default_threshold` is used.

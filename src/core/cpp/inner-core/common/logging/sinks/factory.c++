@@ -11,7 +11,7 @@
 namespace core::logging
 {
     //--------------------------------------------------------------------------
-    /// \class SinkFactory
+    /// @class SinkFactory
 
     SinkFactory::SinkFactory(const SinkType &sink_type,
                              const std::string &description,

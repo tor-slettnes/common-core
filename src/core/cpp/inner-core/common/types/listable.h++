@@ -12,7 +12,7 @@
 namespace core::types
 {
     //--------------------------------------------------------------------------
-    /// \brief
+    /// @brief
     ///    Mix-in class to convert object to a TaggedValueList (e.g. for
     ///    logging, JSON representation)
 

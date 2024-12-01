@@ -13,8 +13,9 @@ void Options::add_commands()
     this->add_command(
         "submit",
         {"TEXT", "[LEVEL]"},
-        "Log a message at the specified level. [%default]If no level is provided, use the "
-        "default log level (as set with `--log-default` or its aliases)",
+        "Log a message at the specified level. [%default]. "
+        "If no level is provided, use the default log level "
+        "(as set with `--log-default` or its aliases)",
         std::bind(&Options::submit, this));
 
     this->add_command(

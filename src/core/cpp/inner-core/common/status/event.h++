@@ -36,7 +36,7 @@ namespace core::status
     constexpr auto EVENT_FIELD_HOST = "host";
 
     //==========================================================================
-    // \class Event
+    // @class Event
 
     class Event : public types::Listable,
                   public types::Loggable

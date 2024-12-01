@@ -44,8 +44,8 @@ namespace core::logging
                                  const ColumnSpecs &specs);
 
     //--------------------------------------------------------------------------
-    /// \class TabularData
-    /// \brief Abstract base for sinks that log a fixed set of fields
+    /// @class TabularData
+    /// @brief Abstract base for sinks that log a fixed set of fields
 
     class TabularData
     {

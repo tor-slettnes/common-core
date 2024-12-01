@@ -26,12 +26,12 @@ using namespace std::literals::string_literals;  // ""s
 
 namespace core::str
 {
-    /// \class Formatter
-    /// \brief
+    /// @class Formatter
+    /// @brief
     ///   Helper class for printf-style string formatting from template string,
     ///   using C++ output streams.
     ///
-    /// \sa str::format(), below.
+    /// @sa str::format(), below.
 
     class Formatter
     {
@@ -224,13 +224,13 @@ namespace core::str
         std::optional<uint> varwidth;
     };
 
-    /// \fn format
-    /// \brief
+    /// @fn format
+    /// @brief
     ///     Generate printf()-style formatted string, using C++ output stream.
-    /// \param[in] format
+    /// @param[in] format
     ///     String with zero or more format specifiers corresponding to
     ///     subsequent arguments.
-    /// \param[in] args
+    /// @param[in] args
     ///     Argument corresponding to the placeholders in the format string.
     ///
     /// Each format specifier contains the following components, in order:

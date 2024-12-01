@@ -29,8 +29,8 @@ namespace platform::netconfig::dbus
     extern core::dbus::ProxyContainer container;
 
     //==========================================================================
-    /// \class DataWrapper<T>
-    /// \brief DBus Proxy wrapper with abstraction for data storage
+    /// @class DataWrapper<T>
+    /// @brief DBus Proxy wrapper with abstraction for data storage
 
     template <class DataType>
     class DataWrapper : public core::dbus::ProxyWrapper, public DataType
@@ -40,8 +40,8 @@ namespace platform::netconfig::dbus
     };
 
     //==========================================================================
-    /// \class MappedDataWrapper<T>
-    /// \brief DBus Proxy wrapper with abstraction for mapped data storage
+    /// @class MappedDataWrapper<T>
+    /// @brief DBus Proxy wrapper with abstraction for mapped data storage
 
     template <class MappedDataType>
     class MappedDataWrapper : public DataWrapper<MappedDataType>
@@ -59,13 +59,13 @@ namespace platform::netconfig::dbus
     };
 
     //==========================================================================
-    /// \fn lookup<T>
-    /// \brief Search for a specific NetConfig proxy object by key
-    /// \param[in] key
+    /// @fn lookup<T>
+    /// @brief Search for a specific NetConfig proxy object by key
+    /// @param[in] key
     ///    Lookup key, as designated in data types in netconfig-structs.h
-    /// \parma[in] required
+    /// @parma[in] required
     ///    Raise an exception if true and the object does not exist
-    /// \return
+    /// @return
     ///    Reference to object proxy for the specified type/key.
 
     template <class WrapperType>
@@ -90,9 +90,9 @@ namespace platform::netconfig::dbus
     }
 
     //==========================================================================
-    /// \fn datamap<T>
-    /// \brief Return a map of all available data structures of the specified type
-    /// \param
+    /// @fn datamap<T>
+    /// @brief Return a map of all available data structures of the specified type
+    /// @param
     ///    Reference to data objects for the specified type
 
     template <class WrapperType, class DataType>

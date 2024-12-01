@@ -24,8 +24,8 @@ namespace core::logging
     constexpr auto SETTING_LOG_SINKS = "log sinks";
 
     //--------------------------------------------------------------------------
-    /// \class Sink
-    /// \brief Abstract data receiver
+    /// @class Sink
+    /// @brief Abstract data receiver
 
     class Sink
     {

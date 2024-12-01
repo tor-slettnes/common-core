@@ -14,8 +14,8 @@
 namespace platform::vfs
 {
     //==========================================================================
-    /// \class Context
-    /// \brief VFS location context.
+    /// @class Context
+    /// @brief VFS location context.
 
     class Context : public core::types::Streamable
     {

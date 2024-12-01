@@ -16,13 +16,11 @@
 #include <map>
 
 /// Argument parser utility, loosely modeled after Python's "argparse" module.
+
 namespace core::argparse
 {
     //==========================================================================
-    /// \brief Argument parser, loosely modeled after Python's argparse module.
-    ///
-    /// See source/helloworld/cpp/server/options.shared
-    ///
+    /// Argument parser, loosely modeled after Python's argparse module.
     class Parser
     {
         class ParseState
@@ -45,26 +43,26 @@ namespace core::argparse
         const RepeatSpec OneOrMore = {1, 0};
 
     public:
-        /// \brief Constructor.
-        /// \param[in] align_column
+        /// @brief Constructor.
+        /// @param[in] align_column
         ///     Left-align overflowing help texts at this column
-        /// \param[in] wrap_column
+        /// @param[in] wrap_column
         ///     Wrap overflowing help texts before this column
 
         Parser(size_t align_column = 24,
                size_t wrap_column = 80);
 
-        /// \brief Add description to explain the program's function
-        /// \param[in] description
+        /// @brief Add description to explain the program's function
+        /// @param[in] description
         ///     Optional text explaining the program's function.
 
         void describe(const std::string &description);
 
-        /// \brief Add an already-constructed option.
-        /// \param[in] option
+        /// @brief Add an already-constructed option.
+        /// @param[in] option
         ///     Option instance
         ///
-        /// \note The option is referenced via pointer, so must remain in scope during parsing.
+        /// @note The option is referenced via pointer, so must remain in scope during parsing.
         void add(const OptionPtr &option);
 
     private:
@@ -187,43 +185,43 @@ namespace core::argparse
         virtual void help(const std::string &section = "all",
                           std::ostream &out = std::cout);
 
-        /// \brief Parse a vector of strings
-        /// \param args
+        /// @brief Parse a vector of strings
+        /// @param args
         ///     Input arguments to parse
-        /// \exception exception::NotFound
+        /// @exception exception::NotFound
         ///     Unknown option name, required option/argument not found
-        /// \exception exception::InvalidArgument
+        /// @exception exception::InvalidArgument
         ///     Missing argument
-        /// \exception exception::Extraneous
+        /// @exception exception::Extraneous
         ///     Too many arguments
-        /// \exception std::invalid_argument
+        /// @exception std::invalid_argument
         ///     Argument could not be converted to the desired type
-        /// \exception std::out_of_range
+        /// @exception std::out_of_range
         ///     Argument is not within supported range for the desired value type
         void parse_args(const ArgList &args);
 
     private:
-        /// \fn parse_short
+        /// @fn parse_short
         ///
-        /// \brief
+        /// @brief
         ///     Parse a short option string starting with a single dash
         ///     (\e -O[...][ARGUMENT]).
         ///
-        /// \param[in,out] args_iter
+        /// @param[in,out] args_iter
         ///     Iterator to next argument to be parsed. If this is a short
         ///     option string, it is incremented once or twice (depending on
         ///     whether the an additional option argument was consumed).
         ///
-        /// \param[in] args_end
+        /// @param[in] args_end
         ///     Iterator to the end of the argument list, needed to check bounds.
         ///
-        /// \param[in,out] state
+        /// @param[in,out] state
         ///     Internal state to track progress
         ///
-        /// \return
+        /// @return
         ///     Whether or not a short argument string was parsed.
         ///
-        /// \exception
+        /// @exception
         ///     exception::InvalidArgument Invalid short option
         ///     std::invalid_argument Argument could not be converted to the desired type
         ///     std::out_of_range Argument is out of range for the desired type
@@ -244,26 +242,26 @@ namespace core::argparse
                          const ArgList::const_iterator &args_end,
                          ParseState *state);
 
-        /// \fn parse_long
-        /// \brief
+        /// @fn parse_long
+        /// @brief
         ///     Parse a long option string starting with two dashes
         ///     (\e --OPTION[=ARGUMENT]).
         ///
-        /// \param[in,out] args_iter
+        /// @param[in,out] args_iter
         ///     Iterator to next argument to be parsed. If this is a long
         ///     option string, it is incremented once or twice (depending on
         ///     whether the an additional option argument was consumed).
         ///
-        /// \param[in] args_end
+        /// @param[in] args_end
         ///     Iterator to the end of the argument list, needed to check bounds.
         ///
-        /// \param[in,out] state
+        /// @param[in,out] state
         ///     Internal state to track progress
         ///
-        /// \return
+        /// @return
         ///     Whether or not a long argument string was parsed.
         ///
-        /// \exception
+        /// @exception
         ///     exception::InvalidArgument Invalid short option
         ///     std::invalid_argument Argument could not be converted to the desired type
         ///     std::out_of_range Argument is out of range for the desired type
@@ -284,26 +282,26 @@ namespace core::argparse
                         const ArgList::const_iterator &args_end,
                         ParseState *state);
 
-        /// \fn parse_arg
+        /// @fn parse_arg
         ///
-        /// \brief
+        /// @brief
         ///     Parse a unnamed (positional) argument string.
         ///
-        /// \param[in,out] args_iter
+        /// @param[in,out] args_iter
         ///     Iterator to next argument to be parsed. If this is a long
         ///     option string, it is incremented once or twice (depending on
         ///     whether the an additional option argument was consumed).
         ///
-        /// \param[in] args_end
+        /// @param[in] args_end
         ///     Iterator to the end of the argument list, needed to check bounds.
         ///
-        /// \param[in,out] state
+        /// @param[in,out] state
         ///     Internal state to track progress
         ///
-        /// \return
+        /// @return
         ///     Always true (for consistency with parse_short() and parse_long()).
         ///
-        /// \exception
+        /// @exception
         ///     exception::InvalidArgument Invalid short option
         ///     std::invalid_argument Argument could not be converted to the desired type
         ///     std::out_of_range Argument is out of range for the desired type

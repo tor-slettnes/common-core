@@ -58,22 +58,22 @@ namespace protobuf
     //==========================================================================
     // TaggedValueList encoding/decoding
 
-    /// \brief
+    /// @brief
     ///    Encodecore::types::TaggedValueList to cc::variant::ValueList protobuf message
     void encode(const core::types::TaggedValueList &tvlist,
                 cc::variant::ValueList *msg) noexcept;
 
-    /// \brief
+    /// @brief
     ///    Decode a cc::variant::Value vector intocore::types::TaggeValueList.
     void decode(const cc::variant::ValueList &msg,
                 core::types::TaggedValueList *tvlist) noexcept;
 
-    /// \brief
+    /// @brief
     ///    Encodecore::types::TaggedValueList to a repeated cc::variant::Valuef field.
     void encode(const core::types::TaggedValueList &tvlist,
                 RepeatedValue *msg) noexcept;
 
-    /// \brief
+    /// @brief
     ///    Decode a repeated cc::variant::Valuef field to TaggedValueList
     void decode(const RepeatedValue &msgs,
                 core::types::TaggedValueList *tvlist) noexcept;

@@ -50,10 +50,10 @@ namespace core::types
         // a specific tag, inserting a new element if necessary.
         Value &operator[](const Tag &tag) noexcept;
 
-        /// \brief Indicate whether any tags are present.
+        /// @brief Indicate whether any tags are present.
         bool tagged() const noexcept;
 
-        /// \brief Indicate whether every item in this list contains a unique tag
+        /// @brief Indicate whether every item in this list contains a unique tag
         bool mappable() const noexcept;
 
         /// Get the first value
@@ -86,39 +86,39 @@ namespace core::types
         /// Return a copy where items with empty values are filtered out
         TaggedValueList filtered_values() const noexcept;
 
-        /// \brief
+        /// @brief
         ///    Add tagged values from an existing TaggedValueList instance
-        /// \param[in] other
+        /// @param[in] other
         ///    TaggedValueList instance from which to import
-        /// \return
+        /// @return
         ///     A reference to this updated instance.
         TaggedValueList &extend(const TaggedValueList &other) noexcept;
         TaggedValueList &extend(TaggedValueList &&other) noexcept;
 
-        /// \brief
+        /// @brief
         ///    Replace tagged values in this list with ones from another
-        /// \param[in] other
+        /// @param[in] other
         ///    TaggedValueList instance from which to import
-        /// \return
+        /// @return
         ///     A reference to this updated instance.
         TaggedValueList &update(const TaggedValueList &other) noexcept;
         TaggedValueList &update(TaggedValueList &&other) noexcept;
 
-        /// \brief
+        /// @brief
         ///    Extract items from an existing TaggedValueList and insert here.
-        /// \param[in] other
+        /// @param[in] other
         ///    TaggedValueList instance from which to extract items.
-        /// \return
+        /// @return
         ///    A reference to this instance.
-        /// \note
+        /// @note
         ///    TaggedValue instances are extracted from `other` and
         ///    appended to this list only if not already present.
         TaggedValueList &merge(TaggedValueList &other) noexcept;
         TaggedValueList &merge(TaggedValueList &&other) noexcept;
 
-        /// \brief
+        /// @brief
         ///    Push an element at the end of the list if a boolean condition is satisfied
-        /// \param[in] tv
+        /// @param[in] tv
         ///    Tagged Value to push
 
         TaggedValueList::iterator append(const TaggedValue &tv);

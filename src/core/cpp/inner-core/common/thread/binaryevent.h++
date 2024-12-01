@@ -13,8 +13,8 @@
 
 namespace core::types
 {
-    /// \class Event
-    /// \brief Wait for / manage binary event
+    /// @class Event
+    /// @brief Wait for / manage binary event
     ///
     /// This is one of the simplest mechanisms for communicating between threads:
     /// One thread signals an event and others wait for it. MOdeled after:
@@ -23,43 +23,43 @@ namespace core::types
     class BinaryEvent
     {
     public:
-        /// \brief Constructor
-        /// \param[in] initial_value
+        /// @brief Constructor
+        /// @param[in] initial_value
         ///     Whether the switch is intially set. Until explicitly cleared,
         ///     any `wait()` calls will then return immediately.
         BinaryEvent(bool initial_value = false);
 
-        /// \brief
+        /// @brief
         ///     Set the internal flag. If the specified value is `true` (default),
         ///     unblock anyone waiting for this event.
-        /// \param[in] value
+        /// @param[in] value
         ///     Flag value
         void set(bool value = true);
 
-        /// \brief
+        /// @brief
         ///     Clear the internal flag. Identical to `set(false)`.
         void clear();
 
-        /// \brief
+        /// @brief
         ///     Unblock anyone waiting for this event, but do not modify the
         ///     internal flag.
         void cancel();
 
-        /// \brief
+        /// @brief
         ///     Nonblocking query of whether the event is set.
-        /// \return
+        /// @return
         ///     Internal flag.
         bool is_set() const;
 
-        /// \brief
+        /// @brief
         ///     Wait indefinitely for the event to be set.
         void wait();
 
-        /// \brief
+        /// @brief
         ///     Wait for the event to be set or until the specified deadline has expired.
-        /// \param[in] deadline
+        /// @param[in] deadline
         ///     Timepoint after which to return, even if the event has not yet been set.
-        /// \return
+        /// @return
         ///     `true` if the flag was set before the deadline expired, `false` otherwise.
         template <class Clock, class Duration>
         bool wait_until(const std::chrono::time_point<Clock, Duration> &deadline)
@@ -68,11 +68,11 @@ namespace core::types
             return this->cv_.wait_until(lock, deadline, std::bind(&BinaryEvent::is_set, this));
         }
 
-        /// \brief
+        /// @brief
         ///     Wait for the event to be set or until the specified time has elapsed
-        /// \param[in] timeout
+        /// @param[in] timeout
         ///     Duration after which to return, even if the event has not yet been set
-        /// \return
+        /// @return
         ///     `true` if the flag was set before the timeout elapsed, `false` otherwise.
         template <class Rep, class Period = std::ratio<1>>
         bool wait_for(const std::chrono::duration<Rep, Period> &timeout)

@@ -21,7 +21,7 @@ namespace core::grpc
 {
 
     //==========================================================================
-    // \class Status
+    // @class Status
 
     Status::Status()
     {

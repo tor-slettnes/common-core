@@ -109,7 +109,7 @@ namespace protobuf
     //==========================================================================
     // Timestamp encoding/decoding
 
-    /// \brief
+    /// @brief
     ///     Encodecore::dt::TimePoint (a.k.a. std::chrono::system_clock::time_point)
     ///     to Google Protobuf Timestamp message.
 

@@ -16,7 +16,7 @@
 namespace core::platform
 {
     //--------------------------------------------------------------------------
-    // \class LogSinkProvider
+    // @class LogSinkProvider
 
     class LogSinkProvider : public logging::LogSink,
                             public logging::MessageFormatter,

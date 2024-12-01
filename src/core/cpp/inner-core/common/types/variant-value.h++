@@ -15,8 +15,8 @@
 namespace core::types
 {
     //==========================================================================
-    /// \class Value
-    /// \brief A general purpose variant value.
+    /// @class Value
+    /// @brief A general purpose variant value.
     ///
     class Value : public ValueBase, public Streamable
     {

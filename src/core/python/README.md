@@ -4,7 +4,7 @@ Shared Python modules
 Directory stsructure
 --------------------
 
-* [core](core) - General-purpose modules:
+* [core](core/) - General-purpose modules:
   - [invocation.py](core/invocation.py) - Invoke routines with exception handling & diagnostics
   - [jsonreader.py](core/jsonreader.py) - JSON file parser with support for C-style comments (`//`)
   - [paths.py](core/paths.py) - various convenience methods to find system/install/settings paths
@@ -14,9 +14,9 @@ Directory stsructure
   - [signal_slot.py](core/signal_slot.py) - Event notifications using [Signal/Slot pattern](https://en.wikipedia.org/wiki/Signals_and_slots)
   - [stringexpander.py](core/stringexpander.py) - parse string using shell-style `${}`/`$()`/`$[]` expansions
 
-* [protobuf](protobuf) - Containers and methods for various [ProtoBuf](https://protobuf.dev/) types
+* [protobuf](protobuf/) - Containers and methods for various [ProtoBuf](https://protobuf.dev/) types
 
-* [messaging](messaging) - Modules for inter-process communication (messaging):
+* [messaging](messaging/) - Modules for inter-process communication (messaging):
  - [base](messaging/base) - Base modules/classes for all messaging platforms
  - [grpc](messaging/grpc) - Communication modules for [gRPC](https://grpc.io/)
  - [http](messaging/http) - Wrapper for HTTP client, URL parser...

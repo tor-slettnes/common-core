@@ -14,9 +14,9 @@ from ...core.settingsstore import SettingsStore
 # Base class
 
 class Endpoint (object):
-    # `product_name` is used to lookup product-specific information,
+    # `project_name` is used to lookup project-specific information,
     # and might be overridden in subclasses.
-    product_name = PROJECT_NAME
+    project_name = PROJECT_NAME
 
     # `messaging_flavor` should be overwritten by direct subclasses to indicate
     # message platform, e.g., `gRPC`, `DDS`, `ZMQ`, ...
@@ -35,11 +35,11 @@ class Endpoint (object):
             self.channel_name = channel_name
         else:
             assert self.channel_name is not None, \
-                "Subclass %r should set 'channel_name' -- see %s"%\
+                "Messaging Endpoint subclass %r should set 'channel_name' -- see %s"%\
                 (type(self).__name__, __file__)
 
         settings_files = [
-            self.settings_file(self.product_name),
+            self.settings_file(self.project_name),
             self.settings_file("common")
         ]
 
@@ -56,8 +56,8 @@ class Endpoint (object):
     def deinitialize(self):
         pass
 
-    def settings_file(self, product_name):
-        return "%s-endpoints-%s"%(self.messaging_flavor.lower(), product_name.lower())
+    def settings_file(self, project_name):
+        return "%s-endpoints-%s"%(self.messaging_flavor.lower(), project_name.lower())
 
     def setting(self,
                 key     : str,

@@ -153,11 +153,11 @@ namespace core::str
 
     //==========================================================================
     /// Convert string to the speciefied template type.
-    /// \param[in] s
+    /// @param[in] s
     ///     Input string
-    /// \return
+    /// @return
     ///     Converted value.
-    /// \exception std::exception
+    /// @exception std::exception
     ///     Any exception from underlying conversion routines.
 
     template <class T>
@@ -166,15 +166,15 @@ namespace core::str
         return StringConvert<T>::from_string(s);
     }
 
-    /// \brief Convert string to the specified template type.
-    /// \param[in] s
+    /// @brief Convert string to the specified template type.
+    /// @param[in] s
     ///     Input string
-    /// \param[in] fallback
+    /// @param[in] fallback
     ///     Value to return if conversion cannot take place
-    /// \param[out] eptr
+    /// @param[out] eptr
     ///     Any exception that occurred ducring conversion. Pass in a `nullptr`
     ///     to completely disable exception handling.
-    /// \return
+    /// @return
     ///     Converted value.
     ///
     /// This variant does not throw exceptions. Instead, any exceptions thrown
@@ -200,15 +200,15 @@ namespace core::str
         }
     }
 
-    /// \brief Convert string to the specified template type.
-    /// \param[in] s
+    /// @brief Convert string to the specified template type.
+    /// @param[in] s
     ///     Optional input string. If not provided, fallback value is returned.
-    /// \param[in] fallback
+    /// @param[in] fallback
     ///     Value to return if conversion cannot take place
-    /// \param[out] eptr
+    /// @param[out] eptr
     ///     Any exception that occurred ducring conversion. Pass in a `nullptr`
     ///     to completely disable exception handling.
-    /// \return
+    /// @return
     ///     Converted value.
     ///
     /// This variant does not throw exceptions. Instead, any exceptions thrown
@@ -238,10 +238,10 @@ namespace core::str
         return fallback;
     }
 
-    /// \brief Try converting string to the specified template type.
-    /// \param[in] s
+    /// @brief Try converting string to the specified template type.
+    /// @param[in] s
     ///     Input string
-    /// \return
+    /// @return
     ///     Optional container containing converted value iff successful.
 
     template <class T>
@@ -258,9 +258,9 @@ namespace core::str
     }
 
     /// Convert an arbitrary type to string
-    /// \param[in] value
+    /// @param[in] value
     ///     Value to be converted to string
-    /// \return
+    /// @return
     ///     String representation of value.
     template <class T>
     std::string convert_from(const T &value) noexcept

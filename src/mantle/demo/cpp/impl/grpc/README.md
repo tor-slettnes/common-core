@@ -3,8 +3,8 @@ Demo Application - gRPC adapter
 
 This implementation of the [C++ API](../../api/README.md) comprises two modules:
 
-* A [gRPC client module](client) which implements the virtual methods from the API by forwarding to corresponding invocation requests over gRPC
-* A [gRPC service module](server), which handles incoming client requests by invoking the corresponding method within the server's process space. There, this would normally be handled by the [native](../native/README.md) implementation; however, since the native API is interchangable it is technically possble that the request is further forwarded to another implementation.  This approach allows for some flexibility; for instance the gRPC server module could be used within a proxy daemon to forward requests, possibly via a different message bus.
+* A [gRPC client module](client/) which implements the virtual methods from the API by forwarding to corresponding invocation requests over gRPC
+* A [gRPC service module](server/), which handles incoming client requests by invoking the corresponding method within the server's process space. There, this would normally be handled by the [native](../native/README.md) implementation; however, since the native API is interchangable it is technically possble that the request is further forwarded to another implementation.  This approach allows for some flexibility; for instance the gRPC server module could be used within a proxy daemon to forward requests, possibly via a different message bus.
 
 Event propagation
 -----------------

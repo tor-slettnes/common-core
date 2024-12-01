@@ -12,8 +12,8 @@
 namespace core::logging
 {
     //==========================================================================
-    /// \class AsyncLogSink
-    /// \brief Base for logging text
+    /// @class AsyncLogSink
+    /// @brief Base for logging text
 
     class AsyncLogSink : public LogSink
     {

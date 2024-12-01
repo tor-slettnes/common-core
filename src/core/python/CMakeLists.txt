@@ -62,5 +62,6 @@ if(INSTALL_COMPONENT)
   )
 endif()
 
-cc_add_doxygen(python-docs
-  FILE_PATTERNS *.py *.md)
+cc_add_doxygen(python-reference
+  FILE_PATTERNS "*.py;*.md"
+)

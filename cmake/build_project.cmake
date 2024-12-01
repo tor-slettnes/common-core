@@ -37,7 +37,7 @@ if(NOT PROJECT_INCLUDED)
   include(build_settings)
   include(build_package)
   include(build_debian_service)
-  include(build_docs)
+  include(doxygen)
 
   #=============================================================================
   ### CPack configuration

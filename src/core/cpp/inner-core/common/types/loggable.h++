@@ -11,8 +11,8 @@
 namespace core::types
 {
     //==========================================================================
-    /// \class Loggable
-    /// \brief Abstract loggable item.
+    /// @class Loggable
+    /// @brief Abstract loggable item.
     ///
     /// Specializations include:
     ///   - `status::Event`, and in turn `logging:Message`

@@ -80,7 +80,7 @@ specifically as it is defined in [demo-api.h++](cpp/api/demo-api.h++):
 
    The gRPC service definition as well as the required ProtoBuf message
    structures can be found in the [demo.proto](proto/demo.proto) within the
-   [proto](proto) folder.
+   [proto](proto/) folder.
 
    For more information about using gRPC and Protocol Buffers, see
    [grpc.io](https://grpc.io) and [protobuf.dev](https://protobuf.dev),
@@ -98,7 +98,7 @@ specifically as it is defined in [demo-api.h++](cpp/api/demo-api.h++):
    client process.
 
    Interface Definition Language files containing the DDS service defintions
-   along with associated data types can be found in the [idl](idl) folder. DDS
+   along with associated data types can be found in the [idl](idl/) folder. DDS
    and IDL are documented in more detail at
    [OMG](https://www.omg.org/omg-dds-portal/). (If you use a search engine,
    please specify `OMG IDL`, as simply searching for `IDL` will yield a lot of
@@ -165,7 +165,7 @@ As implemented here, `demoserver` and its peers communicate over a [Data
 Distribution Service](https://en.wikipedia.org/wiki/Data_Distribution_Service)
 (DDS) bus. Data types used on this bus are described the [Interface Definition
 Language](https://en.wikipedia.org/wiki/Interface_description_language) (IDL),
-located in the [`idl` folder](idl).
+located in the [`idl` folder](idl/).
 
 
 Executables
@@ -195,16 +195,16 @@ Our demo application is organized into the following parts:
      messaging interfaces
    * [Command Line Tools](cpp/utils), one for each messaging platform
 
-2. [Python Client Modules](python). These can be used interactively, or used
+2. [Python Client Modules](python/). These can be used interactively, or used
    as modules into client applications.
 
-3. [ProtoBuf/gRPC modules](proto), describing the message types we use to
+3. [ProtoBuf/gRPC modules](proto/), describing the message types we use to
    communicate over either gRPC or ZeroMQ, as well as the gRPC service
    definition. These are converted to C++ and Python source code via the CMake
    recipe [BuildProtodefs.cmake](../../../cmake/BuildProtodefs.cmake), and can
    just as easily be converted into source code for other languages such as C#.
 
-4. [IDL](idl), containing Interface Defintion Language files that describe the
+4. [IDL](idl/), containing Interface Defintion Language files that describe the
    data types and RPC interfaces used for communicating over DDS. These are
    converted to C++ source code via the CMake recipe
    [BuildIDL.cmake](../../../cmake/BuildIDL.cmake), and can similarly be
@@ -212,7 +212,7 @@ Our demo application is organized into the following parts:
    optionally converted to an XML file, which can be loaded into RTI's Python
    support library.
 
-5. [Settings files](settings) in `.json` format. These match the name of the
+5. [Settings files](settings/) in `.json` format. These match the name of the
    executables (i.e., `demoserver.json`, `demo-grpc-tool.json`), and are thus
    loaded automatically into a global `settings` object within the corresponding
    processes when launched.

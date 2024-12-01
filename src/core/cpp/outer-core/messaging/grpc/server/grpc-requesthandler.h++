@@ -63,11 +63,12 @@ namespace core::grpc
     };
 
     //==========================================================================
-    /// @brief Class template for gRPC services
+    /// Class template for gRPC services
     ///
-    /// @b Examples
+    /// ### Examples
+    ///
     ///  * Include a "RequestHandler" as a base for your service class:
-    ///    \code
+    ///    ```cxx
     ///      #include "servicewrapper.h"
     ///      class YourService : public RequestHandler<core::yourapp::YourService>
     ///      {
@@ -76,10 +77,10 @@ namespace core::grpc
     ///             : RequestHandler<core::yourapp::YourService>(interface) {}
     ///          ...
     ///      };
-    ///    \endcode
+    ///    ```
     ///
     ///  * Create service instance & launch
-    ///    \code
+    ///    ```cxx
     ///      #include <grpc++/grpc.h>
     ///      int main (int argc, char **argv)
     ///      {
@@ -90,10 +91,10 @@ namespace core::grpc
     ///        auto server = builder.BuildAndStart();
     ///        ...
     ///        server->Wait();
-    ///    \endcode
+    ///    ```
     ///
     ///  * Catch internal exceptions and return appropriate gRPC status
-    ///    \code
+    ///    ```cxx
     ///      ::grpc::Status YourService:yourmethod (::grpc::ServerContext* cxt,
     ///                                           const core::yourapp::SomeRequest *request,
     ///                                           core::yourapp::SomeResponse *reply)
@@ -107,10 +108,11 @@ namespace core::grpc
     ///          return this->failure(e, *request, cxt->peer());
     ///        }
     ///      }
-    ///    \endcode
+    ///    ```
 
     template <class T>
-    class RequestHandler : public RequestHandlerBase, public T::Service
+    class RequestHandler : public RequestHandlerBase,
+                           public T::Service
     {
     public:
         using ServiceClass = T;

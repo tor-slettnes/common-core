@@ -22,8 +22,8 @@
 namespace core::logging
 {
     //--------------------------------------------------------------------------
-    /// \class StreamSink
-    /// \brief Abstract base for logging to output streams (stdout, stderr, file)
+    /// @class StreamSink
+    /// @brief Abstract base for logging to output streams (stdout, stderr, file)
 
     class StreamSink : public LogSink,
                        public MessageFormatter,
@@ -40,10 +40,10 @@ namespace core::logging
         using Super = LogSink;
 
     protected:
-        /// \brief Constructor
-        /// \param[in] sink_id
+        /// @brief Constructor
+        /// @param[in] sink_id
         ///     Identity of this log sink
-        /// \param[in] stream
+        /// @param[in] stream
         ///     Stream to log the messages to
         StreamSink(const std::string &sink_id,
                    std::ostream &stream);

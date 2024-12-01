@@ -13,7 +13,7 @@
 namespace core::logging
 {
     //--------------------------------------------------------------------------
-    /// \class Sink
+    /// @class Sink
 
     Sink::Sink(const SinkID &sink_id,
                const SinkType &sink_type)

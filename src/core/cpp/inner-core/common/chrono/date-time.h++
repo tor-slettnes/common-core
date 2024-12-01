@@ -90,15 +90,15 @@ namespace core
         std::istream &operator>>(std::istream &stream, DateTimeInterval &interval);
 
         /// Write out provided timepoint as a string representing UTC or local time.
-        /// \param[in] stream
+        /// @param[in] stream
         ///     Output stream
-        /// \param[in] tp
+        /// @param[in] tp
         ///     A time point
-        /// \param[in] local
+        /// @param[in] local
         ///     Represent in the local timezone; otherwise UTC
-        /// \param[in] decimals
+        /// @param[in] decimals
         ///     Sub-second resolution. The default is 3 (i.e., milliseconds)
-        /// \param[in] format
+        /// @param[in] format
         ///     Output format for std::put_time(). The default is `%F@%T`,
         ///     yielding an ISO 8601 string (`YYYY-MM-DD@HH:MM:SS`)
         void tp_to_stream(std::ostream &stream,
@@ -108,13 +108,13 @@ namespace core
                           const std::string &format = DEFAULT_FORMAT);
 
         /// Write out formatted string representation of the provided duration.
-        /// \param[in] stream
+        /// @param[in] stream
         ///     Output stream
-        /// \param[in] dur
+        /// @param[in] dur
         ///     A duration
-        /// \param[in] decimals
+        /// @param[in] decimals
         ///     Sub-second resolution. The default is 3 (i.e., milliseconds)
-        /// \param[in] format
+        /// @param[in] format
         ///     Output format for std::put_time().
         void dur_to_stream(std::ostream &stream,
                            const Duration &dur,
@@ -123,25 +123,25 @@ namespace core
 
         /// Write out a human readable string representation of the provided
         /// duration, e.g., `42 hours, 12 minutes, 2.322 seconds`.
-        /// \param[in] stream
+        /// @param[in] stream
         ///     Output stream
-        /// \param[in] dur
+        /// @param[in] dur
         ///     A duration
-        /// \param[in] secondsformat
+        /// @param[in] secondsformat
         ///     Seconds representation. Always presente (unless empty).
-        /// \param[in] minutesformat
+        /// @param[in] minutesformat
         ///     Minutes representation for durations at least one minute.
-        /// \param[in] hoursformat
+        /// @param[in] hoursformat
         ///     Hours representation for durations at least one hour.
-        /// \param[in] daysformat
+        /// @param[in] daysformat
         ///     Days representation for durations at least one day.
-        /// \param[in] monthsformat
+        /// @param[in] monthsformat
         ///     Representation for number of 30-day cycles in duration.
-        /// \param[in] yearsformat
+        /// @param[in] yearsformat
         ///     Representation for number of 365-day cycles in duration.
-        /// \param[in] max_divisions
+        /// @param[in] max_divisions
         ///     Maximum number of time units to include
-        /// \param[in] delimiter
+        /// @param[in] delimiter
         ///     Delimiter between time units
         ///
         /// Format strings are printf() style, interpreted by `str::format()`.
@@ -163,23 +163,23 @@ namespace core
                            const std::string delimiter = " ");
 
         /// Return the provided timepoint as a JavaScript time string
-        /// \param[in] tp
+        /// @param[in] tp
         ///     A timepoint
-        /// \return
+        /// @return
         ///     Timepoint represented as a JavaScript time string
         std::string to_js_string(const TimePoint &tp);
 
         /// Return the provided timepoint as a string representing UTC or local time.
-        /// \param[in] tp
+        /// @param[in] tp
         ///     A timepoint
-        /// \param[in] local
+        /// @param[in] local
         ///     Represent in the local timezone; otherwise UTC
-        /// \param[in] decimals
+        /// @param[in] decimals
         ///     Sub-second resolution. The default is 3 (i.e., milliseconds)
-        /// \param[in] format
+        /// @param[in] format
         ///     Output format for std::put_time(). The default is `%F@%T`,
         ///     yielding an ISO 8601 string (`YYYY-MM-DD@HH:MM:SS`)
-        /// \return
+        /// @return
         ///     String representing the provided timeppoint as UTC or local time.
         std::string to_string(const TimePoint &tp,
                               bool local,
@@ -188,54 +188,54 @@ namespace core
 
         /// Return the provided timepoint as a string.
         /// representing local time.
-        /// \param[in] tp
+        /// @param[in] tp
         ///     A timepoint
-        /// \param[in] decimals
+        /// @param[in] decimals
         ///     Sub-second resolution. The default is 3 (i.e., milliseconds)
-        /// \param[in] format
+        /// @param[in] format
         ///     Output format for std::put_time(). The default is `%F@%T`,
         ///     yielding an ISO 8601 string (`YYYY-MM-DD@HH:MM:SS`)
-        /// \return
+        /// @return
         ///     String representing the provided timeppoint as local time.
         std::string to_string(const TimePoint &tp,
                               uint decimals = 3,
                               const std::string &format = DEFAULT_FORMAT);
 
         /// Return a formatted string representation of the provided duration.
-        /// \param[in] duration
+        /// @param[in] duration
         ///    A duration
-        /// \param[in] decimals
+        /// @param[in] decimals
         ///     Sub-second resolution.
-        /// \param[in] format
+        /// @param[in] format
         ///     Output format for std::put_time().
-        /// \return
+        /// @return
         ///     String representing the provided duration
         std::string to_string(const Duration &duration,
                               uint decimals,
                               const std::string &format);
 
-        /// \brief
+        /// @brief
         ///     Return a human readable string representation of the provided duration,
         ///     e.g., `42 hours, 12 minutes, 2.322 seconds`.
-        /// \param[in] duration
+        /// @param[in] duration
         ///     A duration
-        /// \param[in] secondsformat
+        /// @param[in] secondsformat
         ///     Seconds representation. Always presente (unless empty).
-        /// \param[in] minutesformat
+        /// @param[in] minutesformat
         ///     Minutes representation for durations at least one minute.
-        /// \param[in] hoursformat
+        /// @param[in] hoursformat
         ///     Hours representation for durations at least one hour.
-        /// \param[in] daysformat
+        /// @param[in] daysformat
         ///     Days representation for durations at least one day.
-        /// \param[in] monthsformat
+        /// @param[in] monthsformat
         ///     Representation for number of 30-day cycles in duration.
-        /// \param[in] yearsformat
+        /// @param[in] yearsformat
         ///     Representation for number of 365-day cycles in duration.
-        /// \param[in] max_divisions
+        /// @param[in] max_divisions
         ///     Maximum number of time units to include
-        /// \param[in] delimiter
+        /// @param[in] delimiter
         ///     Delimiter between time units
-        /// \return
+        /// @return
         ///     String representing the provided duration
         ///
         /// Format strings are printf() style, interpreted by `str::format()`.
@@ -341,23 +341,23 @@ namespace core
             time_t seconds,
             long nanoseconds = 0);
 
-        /// \brief
+        /// @brief
         ///    Convert from year/month/day/hour/minute/second/fraction to timepoint.
-        /// \param[in] year
+        /// @param[in] year
         ///    Year
-        /// \param[in] month
+        /// @param[in] month
         ///    Month within the year
-        /// \param[in] day
+        /// @param[in] day
         ///    Day within the month
-        /// \param[in] hour
+        /// @param[in] hour
         ///    Hour within the day
-        /// \param[in] minute
+        /// @param[in] minute
         ///    Minute within the hour
-        /// \param[in] second
+        /// @param[in] second
         ///    Seconds within the minue
-        /// \param[in] fraction
+        /// @param[in] fraction
         ///    Additional (presumably sub-second) time.
-        /// \param[in] tz_offset
+        /// @param[in] tz_offset
         ///    Timezone offset if any.  If not provided use current local timezone offset.
         ///    Use 0 for UTC.
         TimePoint to_timepoint(std::int32_t year,

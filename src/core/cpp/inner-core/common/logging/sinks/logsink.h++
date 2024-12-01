@@ -19,8 +19,8 @@ namespace core::logging
     const status::Level DEFAULT_THRESHOLD = status::Level::NONE;
 
     //==========================================================================
-    /// \class LogSink
-    /// \brief Base for logging text
+    /// @class LogSink
+    /// @brief Base for logging text
 
     class LogSink : public Sink
     {

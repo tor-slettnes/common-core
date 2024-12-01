@@ -11,8 +11,8 @@
 namespace platform::vfs
 {
     //==========================================================================
-    /// \class ContextProxy
-    /// \brief Proxy to use as local reference for LocalContext.
+    /// @class ContextProxy
+    /// @brief Proxy to use as local reference for LocalContext.
     ///     Adds reference on creation, removes when out of scope. The
     ///     contexts's pre-exec hook is executed when the first reference
     ///     is added, and the post-exec hook is executed when no remaining
@@ -48,8 +48,8 @@ namespace platform::vfs
     };
 
     //==========================================================================
-    /// \class Location
-    /// \brief Reference to a specifc file/location within a VFS context.
+    /// @class Location
+    /// @brief Reference to a specifc file/location within a VFS context.
 
     class Location : public ContextProxy
     {

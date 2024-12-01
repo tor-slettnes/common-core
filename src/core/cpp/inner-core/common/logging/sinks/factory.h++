@@ -19,7 +19,7 @@ namespace core::logging
     };
 
     //--------------------------------------------------------------------------
-    /// \class SinkFactory
+    /// @class SinkFactory
 
     class SinkFactory
     {
