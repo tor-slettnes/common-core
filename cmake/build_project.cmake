@@ -17,6 +17,9 @@ if(NOT PROJECT_INCLUDED)
   cmake_path(APPEND COMMON_CORE_DIR "scripts"
     OUTPUT_VARIABLE BUILD_SCRIPTS_DIR)
 
+  cmake_path(APPEND COMMON_CORE_DIR "src"
+    OUTPUT_VARIABLE SHARED_SOURCE_DIR)
+
   # Set build version, date and time
   string(TIMESTAMP BUILD_TIME "%s")
 

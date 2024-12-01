@@ -68,7 +68,7 @@ function(cc_add_doxygen TARGET)
   endif()
 
   if(NOT DOXYGEN_EXAMPLE_PATH)
-    set(DOXYGEN_EXAMPLE_PATH "${CMAKE_SOURCE_DIR}/src")
+    set(DOXYGEN_EXAMPLE_PATH "${SHARED_SOURCE_DIR}")
   endif()
 
   if(DOXYGEN_FOUND)
