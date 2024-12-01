@@ -104,8 +104,8 @@ namespace core::types
         std::int32_t as_sint32(std::int32_t fallback = 0) const noexcept;
         std::int64_t as_sint64(std::int64_t fallback = 0) const noexcept;
         largest_sint as_largest_sint(largest_sint fallback = 0) const noexcept;
-        double as_real(double fallback = 0.0) const noexcept;
-        double as_imag(double fallback = 0.0) const noexcept;
+        largest_real as_real(largest_real fallback = 0.0) const noexcept;
+        largest_real as_imag(largest_real fallback = 0.0) const noexcept;
         float as_float(float fallback = 0.0) const noexcept;
         double as_double(double fallback = 0.0) const noexcept;
         std::optional<complex> try_as_complex() const noexcept;
@@ -160,7 +160,7 @@ namespace core::types
 
     protected:
         /// Determine value type from a literal representation
-        static ValueType literal_type(const std::string_view &literal);
+        static std::optional<ValueType> literal_type(const std::string_view &literal);
 
     public:
         // Convencience wrapper around std::get<T>(*this)

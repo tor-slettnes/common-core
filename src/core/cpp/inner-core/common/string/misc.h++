@@ -271,10 +271,8 @@ namespace core::str
 
     /// Remove any surrounding quotation marks
     [[nodiscard]] std::string unquoted(
-        const std::string_view &input);
-
-    [[nodiscard]] std::string unquoted(
-        const std::string &input);
+        const std::string_view &input,
+        const std::unordered_set<char> &quote_chars = {'"', '\''});
 
     /// Translate embedded escape sequences
     [[nodiscard]] std::string escaped(

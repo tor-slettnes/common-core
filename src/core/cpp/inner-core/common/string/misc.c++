@@ -12,7 +12,7 @@
 #include <string>
 #include <codecvt>
 #include <cwchar>
-#include <utility>  // std::move()
+#include <utility> // std::move()
 
 std::string operator""_u(const char *str, std::size_t len)
 {
@@ -76,13 +76,13 @@ namespace core::str
         char *to_next = to.data();
 
         std::codecvt_base::result result = f.out(
-            mb,                     // state
-            from,                   // from
-            from + size,            // from_end
-            from_next,              // from_next
-            to.data(),              // to
-            to.data() + to.size(),  // to_end
-            to_next);               // to_next
+            mb,                    // state
+            from,                  // from
+            from + size,           // from_end
+            from_next,             // from_next
+            to.data(),             // to
+            to.data() + to.size(), // to_end
+            to_next);              // to_next
 
         if (result == std::codecvt_base::result::error)
         {
@@ -115,13 +115,13 @@ namespace core::str
         wchar_t *to_next = to.data();
 
         std::codecvt_base::result result = f.in(
-            mb,                     // state
-            from,                   // from
-            from + size,            // from_end
-            from_next,              // from_next
-            to.data(),              // to
-            to.data() + to.size(),  // to_end
-            to_next);               // to_next
+            mb,                    // state
+            from,                  // from
+            from + size,           // from_end
+            from_next,             // from_next
+            to.data(),             // to
+            to.data() + to.size(), // to_end
+            to_next);              // to_next
 
         if (result == std::codecvt_base::result::ok)
         {
@@ -285,29 +285,33 @@ namespace core::str
         return out.str();
     }
 
-    std::string unquoted(const std::string_view &input)
+    std::string unquoted(const std::string_view &input,
+                         const std::unordered_set<char> &quote_chars)
     {
-        if ((input.size() >= 2) && (input.front() == '"') && (input.back() == '"'))
+        if ((input.size() >= 2) &&
+            quote_chars.count(input.front()) &&
+            quote_chars.count(input.back()))
         {
             std::string out;
-            char escape = '\0';
+            std::optional<char> escape;
+            char quote = input.front();
             out.reserve(input.size() - 2);
-            for (char c: input)
+            for (char c : input)
             {
-                if ((escape != '\0') && (c != '"'))
+                if (escape && (c != quote))
                 {
-                    escape = '\0';
-                    out.push_back(escape);
+                    escape.reset();
+                    out.push_back(*escape);
                     out.push_back(c);
                 }
-                else if (c == '\\')
+                else if (c == '\\') // implied from above: !escape
                 {
                     escape = c;
                 }
                 else
                 {
+                    escape.reset();
                     out.push_back(c);
-                    escape = '\0';
                 }
             }
             out.shrink_to_fit();
@@ -317,13 +321,6 @@ namespace core::str
         {
             return std::string(input);
         }
-    }
-
-    std::string unquoted(const std::string &input)
-    {
-        std::string out;
-        std::stringstream(input) >> std::quoted(out);
-        return out;
     }
 
     std::string escaped(
@@ -619,7 +616,8 @@ namespace core::str
             std::all_of(
                 input.begin(),
                 input.end(),
-                [](char c) -> bool {
+                [](char c) -> bool
+                {
                     return std::isalnum(static_cast<unsigned char>(c)) || (c == '_');
                 }));
     }
@@ -692,4 +690,4 @@ namespace core::str
         return "";
     }
 
-}  // namespace core::str
+} // namespace core::str

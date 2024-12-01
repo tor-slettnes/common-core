@@ -159,7 +159,7 @@ namespace core::types
             return this->get<largest_sint>() != 0;
 
         case ValueType::REAL:
-            return this->get<double>() != 0.0;
+            return this->get<largest_real>() != 0.0;
 
         case ValueType::COMPLEX:
             return this->get<complex>() != complex(0.0, 0.0);
@@ -207,7 +207,7 @@ namespace core::types
 
     bool Value::is_numeric() const noexcept
     {
-        return this->holdsAnyOf<largest_uint, largest_sint, double, complex>();
+        return this->holdsAnyOf<largest_uint, largest_sint, largest_real, complex>();
     }
 
     bool Value::is_integral() const noexcept
@@ -227,12 +227,12 @@ namespace core::types
 
     bool Value::is_real() const noexcept
     {
-        return this->holdsAnyOf<largest_uint, largest_sint, double>();
+        return this->holdsAnyOf<largest_uint, largest_sint, largest_real>();
     }
 
     bool Value::is_float() const noexcept
     {
-        return this->holdsAnyOf<double>();
+        return this->holdsAnyOf<largest_real>();
     }
 
     bool Value::is_complex() const noexcept
@@ -471,23 +471,13 @@ namespace core::types
         return this->numeric_cast<largest_sint>(fallback);
     }
 
-    float Value::as_float(float fallback) const noexcept
-    {
-        return this->numeric_cast<float>(fallback);
-    }
-
-    double Value::as_double(double fallback) const noexcept
-    {
-        return this->numeric_cast<double>(fallback);
-    }
-
     /// Return value as a floating point number
-    double Value::as_real(double fallback) const noexcept
+    largest_real Value::as_real(largest_real fallback) const noexcept
     {
-        return this->numeric_cast<double>(fallback);
+        return this->numeric_cast<largest_real>(fallback);
     }
 
-    double Value::as_imag(double fallback) const noexcept
+    largest_real Value::as_imag(largest_real fallback) const noexcept
     {
         switch (this->type())
         {
@@ -502,6 +492,16 @@ namespace core::types
         default:
             return fallback;
         }
+    }
+
+    float Value::as_float(float fallback) const noexcept
+    {
+        return this->numeric_cast<float>(fallback);
+    }
+
+    double Value::as_double(double fallback) const noexcept
+    {
+        return this->numeric_cast<double>(fallback);
     }
 
     std::optional<complex> Value::try_as_complex() const noexcept
@@ -552,7 +552,7 @@ namespace core::types
         case ValueType::UINT:
         case ValueType::SINT:
         case ValueType::REAL:
-            return complex(this->numeric_cast<double>(), 0.0);
+            return complex(this->numeric_cast<largest_real>(), 0.0);
 
         default:
             break;
@@ -600,7 +600,7 @@ namespace core::types
             return ByteVector::pack(this->get<largest_sint>());
 
         case ValueType::REAL:
-            return ByteVector::pack(this->get<double>());
+            return ByteVector::pack(this->get<largest_real>());
 
         case ValueType::COMPLEX:
             return ByteVector::pack(this->get<complex>());
@@ -1037,58 +1037,109 @@ namespace core::types
 
     Value Value::from_literal(const std::string_view &literal)
     {
-        switch (Value::literal_type(literal))
+        // if (literal.empty())
+        // {
+        //     return nullvalue;
+        // }
+
+        // switch (char c = literal.front())
+        // {
+        // case '"':
+        // case '\'':
+        //     return str::unquoted(literal, c);
+
+        // case '0' ... '9':
+        //     if (auto opt_uint = str::try_convert_to<largest_uint>(literal))
+        //     {
+        //         return *opt_uint;
+        //     }
+        //     else if (auto opt_real = str::try_convert_to<largest_real>(literal))
+        //     {
+        //         return *opt_real;
+        //     }
+        //     break;
+
+        // case '+':
+        // case '-':
+        //     if (auto opt_sint = str::try_convert_to<largest_sint>(literal))
+        //     {
+        //         return *opt_sint;
+        //     }
+        //     else if (auto opt_real = str::try_convert_to<largest_real>(literal))
+        //     {
+        //         return *opt_real;
+        //     }
+        //     break;
+
+        // case '.':
+        //     if (auto opt_real = str::try_convert_to<largest_real>(literal))
+        //     {
+        //         return *opt_real;
+        //     }
+        //     break;
+        // }
+
+        // else if ((literal.front() == '"') || (literal.front() == '\''))
+        // {
+        //     return str::unquoted(literal, literal.front());
+        // }
+
+        if (auto opt_type = Value::literal_type(literal))
         {
-        case ValueType::NONE:
-            return nullvalue;
+            switch (*opt_type)
+            {
+            case ValueType::NONE:
+                return nullvalue;
 
-        case ValueType::BOOL:
-            return str::convert_to<bool>(literal, false);
+            case ValueType::BOOL:
+                return str::convert_to<bool>(literal, false);
 
-        case ValueType::CHAR:
-            return literal[1];
+            case ValueType::UINT:
+                return str::convert_to<largest_uint>(literal, 0);
 
-        case ValueType::UINT:
-            return str::convert_to<largest_uint>(literal, 0);
+            case ValueType::SINT:
+                return str::convert_to<largest_sint>(literal, 0);
 
-        case ValueType::SINT:
-            return str::convert_to<largest_sint>(literal, 0);
+            case ValueType::REAL:
+                return str::convert_to<largest_real>(literal, 0.0);
 
-        case ValueType::REAL:
-            return str::convert_to<double>(literal, 0.0);
+            case ValueType::COMPLEX:
+                return str::convert_to<complex>(literal, 0.0);
 
-        case ValueType::COMPLEX:
-            return str::convert_to<double>(literal, 0.0);
+            case ValueType::STRING:
+                return str::unquoted(literal);
 
-        case ValueType::STRING:
-            return str::unquoted(literal);
+            case ValueType::BYTEVECTOR:
+                return ByteVector::from_base64(str::unquoted(literal).substr(1));
 
-        case ValueType::BYTEVECTOR:
-            return ByteVector::from_base64(str::unquoted(literal).substr(1));
+            case ValueType::TIMEPOINT:
+                return dt::to_timepoint(literal);
 
-        case ValueType::TIMEPOINT:
-            return dt::to_timepoint(literal);
+            case ValueType::DURATION:
+                return dt::to_duration(literal);
 
-        case ValueType::DURATION:
-            return dt::to_duration(literal);
-
-        default:
-            return nullvalue;
+            default:
+                break;
+            }
         }
+
+        return literal.empty() ? nullvalue : Value(literal);
     }
 
-    ValueType Value::literal_type(const std::string_view &literal)
+    std::optional<ValueType> Value::literal_type(const std::string_view &literal)
     {
+        static const std::string REAL_X =
+            "[+-]?[[:digit:]]+(?:\\.[[:digit:]]*)?(?:[eE][+-]?[[:digit:]]+)?";
+
         static const std::vector<std::pair<ValueType, std::regex>> rxlist = {
-            {ValueType::NONE, std::regex("^(null|NULL|nullptr)?$")},
-            {ValueType::BOOL, std::regex("^(false|true|yes|no)$", std::regex::icase)},
-            {ValueType::CHAR, std::regex("^'.'$")},
+            {ValueType::NONE, std::regex("^(null|NULL|None)?$")},
+            {ValueType::BOOL, std::regex("^(true|false|on|off|yes|no)$", std::regex::icase)},
             {ValueType::SINT, std::regex("^[+-][[:digit:]]+$")},
             {ValueType::UINT, std::regex("^([[:digit:]]+|0x[[:xdigit:]]+)$", std::regex::icase)},
-            {ValueType::REAL,
-             std::regex("^[+-]?[[:digit:]]+(\\.[[:digit:]]*)?([eE][+-]?[[:digit:]]+)?$")},
+            {ValueType::REAL, std::regex("^" + REAL_X + "$")},
+            {ValueType::COMPLEX, std::regex("^\\(\\s*" + REAL_X + ",\\s*" + REAL_X + "\\s*\\)")},
             {ValueType::BYTEVECTOR, std::regex("^\"?%[[:alnum:]\\+/]+={0,2}%?\"?$")},
-            {ValueType::STRING, std::regex("\"((?:\\\\.|[^\"\\\\\\r\\n])*)\"")},
+            {ValueType::STRING, std::regex("(['\"])((?:\\\\.|[^\\\\\\r\\n])*)\\1")},
             {ValueType::TIMEPOINT,
              std::regex("^(\\d{4}-\\d{2}-\\d{2})([@T\\s])"
                         "(\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d+))?"
@@ -1104,7 +1155,7 @@ namespace core::types
             }
         }
 
-        return ValueType::STRING;
+        return {};
     }
 
     const Value emptyvalue;

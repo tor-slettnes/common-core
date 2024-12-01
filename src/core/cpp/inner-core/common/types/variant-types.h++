@@ -42,8 +42,9 @@ namespace core::types
     /// Type aliases
     using largest_uint = std::uintmax_t;
     using largest_sint = std::intmax_t;
+    using largest_real = double;
     using ushort = unsigned short;
-    using complex = std::complex<double>;
+    using complex = std::complex<largest_real>;
     using string = std::string;
 
     using ValueBase = std::variant<
@@ -52,7 +53,7 @@ namespace core::types
         char,
         largest_uint,
         largest_sint,
-        double,
+        largest_real,
         complex,
         string,
         ByteVector,

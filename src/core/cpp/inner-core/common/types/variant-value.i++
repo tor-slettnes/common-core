@@ -57,7 +57,7 @@ namespace core::types
             return static_cast<T>(this->get<largest_sint>());
 
         case ValueType::REAL:
-            return static_cast<T>(this->get<double>());
+            return static_cast<T>(this->get<largest_real>());
 
         case ValueType::COMPLEX:
             return static_cast<T>(this->get<complex>().real());
