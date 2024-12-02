@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <ostream>
+#include <optional>
 #include <vector>
 #include <iomanip>
 
@@ -94,6 +95,15 @@ namespace core::types
         /// @exception exception::InvalidArgument
         ///     Invalid Base64 data encountered
         static ByteVector from_base64(const std::string_view &string);
+
+        /// @brief
+        ///     Try to create a new ByteVector instance from a Base64-encoded string.
+        /// @param[in] string
+        ///     A Base64-encoded string
+        /// @return
+        ///     A new ByteVector instance if successful, emtpy otherwise.
+
+        static std::optional<ByteVector> try_from_base64(const std::string_view &string);
 
         /// @brief
         ///     Encode data in this ByteVector instance as a hexacecimal string.

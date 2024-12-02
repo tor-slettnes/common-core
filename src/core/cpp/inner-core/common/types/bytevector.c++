@@ -186,6 +186,18 @@ namespace core::types
         return decoded;
     }
 
+    std::optional<ByteVector> ByteVector::try_from_base64(const std::string_view &input)
+    {
+        try
+        {
+            return ByteVector::from_base64(input);
+        }
+        catch (const std::invalid_argument &)
+        {
+            return {};
+        }
+    }
+
     std::string ByteVector::to_hex(bool uppercase,
                                    std::size_t groupsize) const
     {

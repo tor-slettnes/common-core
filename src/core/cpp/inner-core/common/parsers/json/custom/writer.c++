@@ -43,15 +43,21 @@ namespace core::json
         switch (value.type())
         {
         case types::ValueType::COMPLEX:
+            // Encode complex value as object with "real" and "imag" keys.
             This::to_stream(stream, value.as_kvmap(), pretty, indent);
             break;
 
         case types::ValueType::BYTEVECTOR:
+            // Encode binary data as a base64 string
             This::to_stream(stream,
-                            types::ValueList(value.get<types::ByteVector>().begin(),
-                                             value.get<types::ByteVector>().end()),
+                            value.get<types::ByteVector>().to_base64(),
                             pretty,
                             indent);
+            break;
+
+        case types::ValueType::DURATION:
+            // Encode duration as seconds
+            This::to_stream(stream, value.as_real(), pretty, indent);
             break;
 
         case types::ValueType::KVMAP:

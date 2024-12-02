@@ -1013,6 +1013,10 @@ namespace core::types
             stream << std::quoted(dt::to_js_string(this->get<dt::TimePoint>()));
             break;
 
+        case ValueType::DURATION:
+            stream << std::quoted(dt::to_string(this->get<dt::Duration>()));
+            break;
+
         case ValueType::STRING:
             str::to_literal(stream, this->get<std::string>());
             break;
@@ -1037,53 +1041,6 @@ namespace core::types
 
     Value Value::from_literal(const std::string_view &literal)
     {
-        // if (literal.empty())
-        // {
-        //     return nullvalue;
-        // }
-
-        // switch (char c = literal.front())
-        // {
-        // case '"':
-        // case '\'':
-        //     return str::unquoted(literal, c);
-
-        // case '0' ... '9':
-        //     if (auto opt_uint = str::try_convert_to<largest_uint>(literal))
-        //     {
-        //         return *opt_uint;
-        //     }
-        //     else if (auto opt_real = str::try_convert_to<largest_real>(literal))
-        //     {
-        //         return *opt_real;
-        //     }
-        //     break;
-
-        // case '+':
-        // case '-':
-        //     if (auto opt_sint = str::try_convert_to<largest_sint>(literal))
-        //     {
-        //         return *opt_sint;
-        //     }
-        //     else if (auto opt_real = str::try_convert_to<largest_real>(literal))
-        //     {
-        //         return *opt_real;
-        //     }
-        //     break;
-
-        // case '.':
-        //     if (auto opt_real = str::try_convert_to<largest_real>(literal))
-        //     {
-        //         return *opt_real;
-        //     }
-        //     break;
-        // }
-
-        // else if ((literal.front() == '"') || (literal.front() == '\''))
-        // {
-        //     return str::unquoted(literal, literal.front());
-        // }
-
         if (auto opt_type = Value::literal_type(literal))
         {
             switch (*opt_type)
@@ -1128,22 +1085,21 @@ namespace core::types
 
     std::optional<ValueType> Value::literal_type(const std::string_view &literal)
     {
-        static const std::string REAL_X =
-            "[+-]?[[:digit:]]+(?:\\.[[:digit:]]*)?(?:[eE][+-]?[[:digit:]]+)?";
+        constexpr auto REAL_X = "[+-]?[[:digit:]]+(?:\\.[[:digit:]]*)?(?:[eE][+-]?[[:digit:]]+)?";
+        constexpr auto DATE_X = "\\d{4}-\\d{2}-\\d{2}";
+        constexpr auto TIME_X = "\\d{2}:\\d{2}:\\d{2}(?:\\.(\\d+))?";
+        constexpr auto TZ_X = "\\s*(?:\\w+|[+-]\\d{2,4})?";
 
         static const std::vector<std::pair<ValueType, std::regex>> rxlist = {
             {ValueType::NONE, std::regex("^(null|NULL|None)?$")},
             {ValueType::BOOL, std::regex("^(true|false|on|off|yes|no)$", std::regex::icase)},
             {ValueType::SINT, std::regex("^[+-][[:digit:]]+$")},
             {ValueType::UINT, std::regex("^([[:digit:]]+|0x[[:xdigit:]]+)$", std::regex::icase)},
-            {ValueType::REAL, std::regex("^" + REAL_X + "$")},
-            {ValueType::COMPLEX, std::regex("^\\(\\s*" + REAL_X + ",\\s*" + REAL_X + "\\s*\\)")},
-            {ValueType::BYTEVECTOR, std::regex("^\"?%[[:alnum:]\\+/]+={0,2}%?\"?$")},
+            {ValueType::REAL, std::regex("^"s + REAL_X + "$")},
+            {ValueType::COMPLEX, std::regex("^\\(\\s*"s + REAL_X + ",\\s*" + REAL_X + "\\s*\\)")},
+            {ValueType::BYTEVECTOR, std::regex("^(['\"]?)%[[:alnum:]\\+/]+={0,2}%?\\1$")},
             {ValueType::STRING, std::regex("(['\"])((?:\\\\.|[^\\\\\\r\\n])*)\\1")},
-            {ValueType::TIMEPOINT,
-             std::regex("^(\\d{4}-\\d{2}-\\d{2})([@T\\s])"
-                        "(\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d+))?"
-                        "(?:\\s?(\\w+|[+-]\\d{2,4}))?$")},
+            {ValueType::TIMEPOINT, std::regex("^"s + DATE_X + "[@Tt\\s]" + TIME_X + TZ_X + "$")},
             {ValueType::DURATION, std::regex("(\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d+))?$")},
         };
 

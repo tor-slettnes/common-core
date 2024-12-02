@@ -359,7 +359,7 @@ namespace core
             return stream.str();
         }
 
-        std::string to_string(const Duration &dur,
+        std::string to_string(const Duration &duration,
                               const std::optional<std::string> &secondsformat,
                               const std::optional<std::string> &minutesformat,
                               const std::optional<std::string> &hoursformat,
@@ -371,7 +371,7 @@ namespace core
         {
             std::ostringstream stream;
             dur_to_stream(stream,
-                          dur,
+                          duration,
                           secondsformat,
                           minutesformat,
                           hoursformat,
@@ -457,9 +457,40 @@ namespace core
         }
 
         Duration to_duration(const std::string_view &input,
-                             const std::string &format)
+                             const std::optional<std::string> &format,
+                             const Duration fallback)
         {
-            return try_to_duration(input, format).value_or(dt::Duration::zero());
+            return format
+                ? try_to_duration(input, format.value()).value_or(dt::Duration::zero())
+                : try_to_duration(input).value_or(dt::Duration::zero());
+        }
+
+        std::optional<Duration> try_to_duration(const std::string_view &input)
+        {
+            static const std::regex rx(
+                "(\\d{2}):(\\d{2}):(\\d{2})(\\.\\d+)?");
+
+            std::match_results<std::string_view::iterator> match;
+            if (std::regex_match(input.begin(), input.end(), match, rx))
+            {
+                double seconds =
+                    (str::convert_to<std::uint32_t>(match.str(1)) * 3600) +
+                    (str::convert_to<std::uint32_t>(match.str(2)) * 60) +
+                    (str::convert_to<std::uint32_t>(match.str(3))) +
+                    (match.length(4)
+                         ? str::convert_to<double>(match.str(4))
+                         : 0.0);
+                return to_duration(seconds);
+            }
+
+            else if (auto opt_seconds = str::try_convert_to<double>(input))
+            {
+                return to_duration(opt_seconds.value());
+            }
+            else
+            {
+                return {};
+            }
         }
 
         std::optional<Duration> try_to_duration(const std::string_view &input,

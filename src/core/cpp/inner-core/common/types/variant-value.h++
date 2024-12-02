@@ -148,7 +148,6 @@ namespace core::types
         /// Some examples:
         ///  - ``                 becomes an "empty" value (std::monostate)
         ///  - `false` or `true`  becomes a boolean
-        ///  - `'c'`              becomes a character
         ///  - `"some string"`    becomes a string
         ///  - `1234` or `0x1234` becomes an unsigned integer
         ///  - `+1234` or `-1234` becomes a signed interger

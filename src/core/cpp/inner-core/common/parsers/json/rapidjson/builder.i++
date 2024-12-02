@@ -48,14 +48,17 @@ namespace core::json
             return this->writer.Int64(value.as_sint());
 
         case types::ValueType::REAL:
-        case types::ValueType::TIMEPOINT:
-        case types::ValueType::DURATION:
-            return this->writer.Double(value.as_real());
+            // Encode duration as seconds
+            return this->writer.Double(value.as_double());
 
         case types::ValueType::COMPLEX:
             return this->encode_object(value.as_kvmap());
 
+        case types::ValueType::TIMEPOINT:
+            return this->writer.String(dt::to_js_string(value.as_timepoint()));
+
         case types::ValueType::BYTEVECTOR:
+            // Encode binary data as a base64 string
             return this->writer.String(value.get<types::ByteVector>().to_base64());
 
         case types::ValueType::VALUELIST:

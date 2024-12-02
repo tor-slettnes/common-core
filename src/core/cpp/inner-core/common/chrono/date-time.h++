@@ -28,7 +28,7 @@ namespace core
         // constexpr auto ISO_FORMAT = "%F %T";
         constexpr auto DEFAULT_FORMAT = "%F %T";
         constexpr auto DEFAULT_TIME_FORMAT = "%T";
-        constexpr auto DEFAULT_DURATION_FORMAT = "%S";
+        constexpr auto DEFAULT_DURATION_FORMAT = "%H:%M:%S";
         constexpr auto JS_FORMAT = "%FT%T";
 
         // typedef std::chrono::system_clock Clock;
@@ -119,7 +119,7 @@ namespace core
         void dur_to_stream(std::ostream &stream,
                            const Duration &dur,
                            uint decimals,
-                           const std::string &format = DEFAULT_FORMAT);
+                           const std::string &format = DEFAULT_DURATION_FORMAT);
 
         /// Write out a human readable string representation of the provided
         /// duration, e.g., `42 hours, 12 minutes, 2.322 seconds`.
@@ -212,7 +212,7 @@ namespace core
         ///     String representing the provided duration
         std::string to_string(const Duration &duration,
                               uint decimals,
-                              const std::string &format);
+                              const std::string &format = DEFAULT_DURATION_FORMAT);
 
         /// @brief
         ///     Return a human readable string representation of the provided duration,
@@ -253,7 +253,7 @@ namespace core
                               const std::optional<std::string> &monthsformat = {},
                               const std::optional<std::string> &yearsformat = "%z years, ",
                               uint max_divisions = 6,
-                              const std::string delimiter = " ");
+                              const std::string &delimiter = " ");
 
         /// Return a human readable string representation of the provided `std::tm` structure.
         std::string to_string(const std::tm &tm,
@@ -292,12 +292,16 @@ namespace core
         /// Convert from string representation (`HH:MM:SS.sss`) to Duration
         Duration to_duration(
             const std::string_view &text,
-            const std::string &format = DEFAULT_DURATION_FORMAT);
+            const std::optional<std::string> &format = {},
+            const Duration fallback = Duration::zero());
+
+        std::optional<Duration> try_to_duration(
+            const std::string_view &text);
 
         // Try to convert from a string to a duration
         std::optional<Duration> try_to_duration(
             const std::string_view &text,
-            const std::string &format = DEFAULT_DURATION_FORMAT);
+            const std::string &format);
 
         std::optional<TimePoint> try_to_timepoint(
             const std::string_view &input,
