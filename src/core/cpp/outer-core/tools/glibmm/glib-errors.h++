@@ -49,7 +49,6 @@ namespace core::glib
     };
 
     //==========================================================================
-    // @fn log_exception()
     // @brief Log information from an std::exception_ptr capture
 
     void log_exception(std::exception_ptr eptr,

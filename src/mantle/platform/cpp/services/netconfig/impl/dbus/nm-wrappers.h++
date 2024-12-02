@@ -59,11 +59,10 @@ namespace platform::netconfig::dbus
     };
 
     //==========================================================================
-    /// @fn lookup<T>
     /// @brief Search for a specific NetConfig proxy object by key
     /// @param[in] key
     ///    Lookup key, as designated in data types in netconfig-structs.h
-    /// @parma[in] required
+    /// @param[in] required
     ///    Raise an exception if true and the object does not exist
     /// @return
     ///    Reference to object proxy for the specified type/key.
@@ -90,7 +89,6 @@ namespace platform::netconfig::dbus
     }
 
     //==========================================================================
-    /// @fn datamap<T>
     /// @brief Return a map of all available data structures of the specified type
     /// @param
     ///    Reference to data objects for the specified type

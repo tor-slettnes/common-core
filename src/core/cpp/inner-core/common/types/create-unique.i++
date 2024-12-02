@@ -11,7 +11,6 @@
 namespace core::types
 {
     //==========================================================================
-    // @fn create_unique
 
     template <class UniqueClass, class... Args>
     [[nodiscard]] std::unique_ptr<UniqueClass> create_unique(Args &&...args)
@@ -36,7 +35,6 @@ namespace core::types
     }
 
     //==========================================================================
-    // @fn equivalent
 
     template <class T>
     bool equivalent(const std::unique_ptr<T> &lhs, const std::unique_ptr<T> &rhs)

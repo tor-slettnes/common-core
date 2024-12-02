@@ -21,7 +21,6 @@ namespace core::glib
     using SettingsContainer = Glib::Variant<SettingsMap>;
 
     //==========================================================================
-    /// @fn variant_cast
     /// @brief convert from Glib::Variant to specific scalar, non-enumerated data type
 
     /// convert from Glib::Variant to specific scalar, non-enumerated data type
@@ -106,7 +105,6 @@ namespace core::glib
     }
 
     //==========================================================================
-    /// @fn extract_value
     /// @brief Extract values from VariantBase maps
 
     template <class T>

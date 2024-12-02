@@ -11,7 +11,6 @@
 namespace core::types
 {
     //==========================================================================
-    // @fn create_shared
 
     template <class SharedClass, class... Args>
     [[nodiscard]] std::shared_ptr<SharedClass> create_shared(Args &&...args)
@@ -36,7 +35,6 @@ namespace core::types
     }
 
     //==========================================================================
-    // @fn equivalent
 
     template <class T>
     bool equivalent(const std::shared_ptr<T> &lhs, const std::shared_ptr<T> &rhs)

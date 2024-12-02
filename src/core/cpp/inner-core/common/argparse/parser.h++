@@ -201,7 +201,6 @@ namespace core::argparse
         void parse_args(const ArgList &args);
 
     private:
-        /// @fn parse_short
         ///
         /// @brief
         ///     Parse a short option string starting with a single dash
@@ -242,7 +241,6 @@ namespace core::argparse
                          const ArgList::const_iterator &args_end,
                          ParseState *state);
 
-        /// @fn parse_long
         /// @brief
         ///     Parse a long option string starting with two dashes
         ///     (\e --OPTION[=ARGUMENT]).
@@ -282,7 +280,6 @@ namespace core::argparse
                         const ArgList::const_iterator &args_end,
                         ParseState *state);
 
-        /// @fn parse_arg
         ///
         /// @brief
         ///     Parse a unnamed (positional) argument string.

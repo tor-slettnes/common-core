@@ -224,9 +224,8 @@ namespace core::str
         std::optional<uint> varwidth;
     };
 
-    /// @fn format
     /// @brief
-    ///     Generate printf()-style formatted string, using C++ output stream.
+    ///     Generate `printf()`-style formatted string, using C++ output stream.
     /// @param[in] format
     ///     String with zero or more format specifiers corresponding to
     ///     subsequent arguments.
@@ -252,17 +251,20 @@ namespace core::str
     /// or other formatting modifications (like std::quoted(), std::tolower()).
     ///
     /// These are the supported flag characters:
-    ///   * `#` (hash) alternate form; mainly sets `std::showbase`
-    ///   * `0` (zero) sets `std::setfill('0')` and `std::internal`
-    ///   * `-` (minus) sets `std::left`
-    ///   * '+' (plus) sets `std::showpos`
-    ///   * ` ` (space) inserts a space if the argument is a nonnegative integer
-    ///   * `'` (single quote) sets locale in order to apply thousands separator
-    ///   * `^` (caret) converts a string or character argument to uppercase
-    ///   * `,` (comma) converts a string or character argument to lowercase
+    ///
+    /// | flag char   | description
+    /// | ----------- | -----------------------------------------------------------
+    /// | `#` (hash)  | alternate form; mainly sets `std::showbase`
+    /// | `0` (zero)  | zero-pads numbers via ``std::setfill('0')`` and `std::internal`
+    /// | `-` (minus) | sets `std::left`
+    /// | `+` (plus)  | sets `std::showpos`
+    /// | ``&nbsp;``  (space)  | inserts a space if the argument is a nonnegative integer
+    /// | ``'`` (single quote) | sets locale in order to apply thousands separator
+    /// | `^` (caret) | converts a string or character argument to uppercase
+    /// | `,` (comma) | converts a string or character argument to lowercase
     ///
     /// If present, the field width specifier is either one or more digits or
-    /// the character `*`, and specifies the minimum length of the formatted
+    /// the character @c '*', and specifies the minimum length of the formatted
     /// output value.  In the latter case, the field with should be specified in
     /// an additional argument prior to the actual value, e.g., (`"%*s", 10,
     /// "Hello"`).  In either case, the resulting value is applied via
@@ -277,31 +279,34 @@ namespace core::str
     ///
     /// The following conversion types are supported; those that are additions
     /// or modifications from `printf()` are marked with [*]:
-    ///  `d`, `i`, `u`  sets std::dec to apply decimal integer representation.
-    ///                 with alternate flag apply locale-specific grouping.
-    ///  `z` [*]        truncates a floating point value and represents as integer;
-    ///                 with alternate flag, apply locale-specific grouping.
-    ///  `n` [*]        apply locale-specific grouping (e.g. thousands separator) to numbers
-    ///  `o`            sets std::oct to apply octal integer representation.
-    ///                 With alternate flag, include leading `0`.
-    ///  `x`, `X`       sets std::hex to apply hexadecimal representation
-    ///                 With alternate flag, include leading `0x` or `0X`.
-    ///  `f`            sets std::fixed floating point representation
-    ///  `F` [*]        sets std::fixed while eliminating "negative zero" values
-    ///  `e`, `E`       sets std::scientific floating point representation
-    ///  `g`, `G`       sets std::defaultfloat floating point representation
-    ///  `a`, `A`       sets std::hexfloat floating point representation
-    ///  `c`, `s`       no modifications; intended for char and std::string
-    ///  `O` [*]        no modifications; intended for arbitrary C++ objects
-    ///  `h` [*]        hide characters in string by replacing each with `*`
-    ///  `r` [*]        applies `literal` format, e.g., std::quoted() around string arg.
-    ///  `b` [*]        sets std::boolalpha to show boolean values as "false"/"true"
-    ///  `T` [*]        timepoint as a ISO 8601 string with `T` as date/time separator,
-    ///                 representing local date/time.
-    ///  `Z` [*]        timepoint as a JavaScript time string (UTC/Zulu with `Z` suffix),
-    ///                 representing UTC date/time.
-    ///  `p`            pointer format: std::hex, std::showbase, std::internal,
-    ///                 std::setw(2+sizeof(void*)*2), std::setfill(`0`)
+    ///
+    /// | format char    | description
+    /// | :------------: | :------------------------------------------------------
+    /// | `d`, `i`, `u`  | sets std::dec to apply decimal integer representation.
+    /// | ^              | with alternate flag apply locale-specific grouping.
+    /// | `z` [*]        | truncates a floating point value and represents as integer;
+    /// | ^              | with alternate flag, apply locale-specific grouping.
+    /// | `n` [*]        | apply locale-specific grouping (e.g. thousands separator) to numbers
+    /// | `o`            | sets std::oct to apply octal integer representation.
+    /// | ^              | With alternate flag, include leading `0`.
+    /// | `x`, `X`       | sets std::hex to apply hexadecimal representation
+    /// | ^              | With alternate flag, include leading `0x` or `0X`.
+    /// | `f`            | sets std::fixed floating point representation
+    /// | `F` [*]        | sets std::fixed while eliminating "negative zero" values
+    /// | `e`, `E`       | sets std::scientific floating point representation
+    /// | `g`, `G`       | sets std::defaultfloat floating point representation
+    /// | `a`, `A`       | sets std::hexfloat floating point representation
+    /// | `c`, `s`       | no modifications; intended for char and std::string
+    /// | `O` [*]        | no modifications; intended for arbitrary C++ objects
+    /// | `h` [*]        | hide characters in string by replacing each with `*`
+    /// | `r` [*]        | applies `literal` format, e.g., std::quoted() around string arg.
+    /// | `b` [*]        | sets std::boolalpha to show boolean values as "false"/"true"
+    /// | `T` [*]        | timepoint as a ISO 8601 string with `T` as date/time separator,
+    /// | ^              | representing local date/time.
+    /// | `Z` [*]        | timepoint as a JavaScript time string (UTC/Zulu with `Z` suffix),
+    /// | ^              | representing UTC date/time.
+    /// | `p`            | pointer format: std::hex, std::showbase, std::internal,
+    /// | ^              | std::setw(2+sizeof(void*)*2), std::setfill(`0`)
     ///
     /// Additionally, the uppercase variants `X`, `E`, `G`, and `A` applies
     /// `std::uppercase`.
@@ -320,6 +325,20 @@ namespace core::str
         Formatter(stream, format).add(args...).add_tail();
         return stream.str();
     }
+
+    /// @overload
+    /// @brief
+    ///     Generate printf()-style formatted string, appending the output to an existing stream
+    /// @param[in] stream
+    ///     Output stream to which the formatted output is sent
+    /// @param[in] format
+    ///     String with zero or more format specifiers corresponding to
+    ///     subsequent arguments.
+    /// @param[in] args
+    ///     Argument corresponding to the placeholders in the format string.
+    /// @return
+    ///     Reference to the provivded output stream
+    /// @sa std::string format(const std::string &format, const Args &...args) noexcept
 
     template <class... Args>
     inline std::ostream &format(std::ostream &stream,
