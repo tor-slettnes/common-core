@@ -36,6 +36,7 @@ namespace core::types
         Value(std::int64_t value);
         Value(char *cstring);
         Value(const std::vector<Byte> &bytes);
+        Value(const std::string_view &view);
 
         Value(const ValueList &list);
         Value(ValueList &&list);

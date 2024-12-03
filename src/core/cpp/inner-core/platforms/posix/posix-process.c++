@@ -9,6 +9,7 @@
 #include "platform/symbols.h++"
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
+#include "io/cutils.h++"
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -121,24 +122,24 @@ namespace core::platform
             throw std::invalid_argument("Missing command");
         }
 
-        PID pid = this->checkstatus(fork());
+        PID pid = io::checkstatus(fork());
 
         if (pid == 0)
         {
             // Child closes stdin, stdout, stderr, then invokes command
             if (!infile.empty())
             {
-                this->checkstatus(freopen(infile.c_str(), "r", stdin));
+                io::checkstatus(freopen(infile.c_str(), "r", stdin));
             }
 
             if (!outfile.empty())
             {
-                this->checkstatus(freopen(outfile.c_str(), "w", stdout));
+                io::checkstatus(freopen(outfile.c_str(), "w", stdout));
             }
 
             if (!errfile.empty())
             {
-                this->checkstatus(freopen(errfile.c_str(), "w", stderr));
+                io::checkstatus(freopen(errfile.c_str(), "w", stderr));
             }
 
             this->execute(argv, cwd);
@@ -211,7 +212,7 @@ namespace core::platform
 
         while ((::waitpid(pid, &wstatus, WNOHANG) == 0) && !open_fds.empty())
         {
-            this->checkstatus(::poll(pfds.data(), pfds.size(), -1));
+            io::checkstatus(::poll(pfds.data(), pfds.size(), -1));
 
             if (int stdin_event = pfds[STDIN_FILENO].revents)
             {
@@ -295,7 +296,7 @@ namespace core::platform
     Pipe PosixProcessProvider::create_pipe() const
     {
         Pipe pipe;
-        this->checkstatus(::pipe(pipe.data()));
+        io::checkstatus(::pipe(pipe.data()));
         This::open_fds.insert(pipe[INPUT]);
         This::open_fds.insert(pipe[OUTPUT]);
         return pipe;
@@ -362,14 +363,14 @@ namespace core::platform
             }
         }
 
-        return this->checkstatus(pid);
+        return io::checkstatus(pid);
     }
 
     void PosixProcessProvider::execute(ArgVector argv, const fs::path &cwd) const
     {
         if (!cwd.empty())
         {
-            this->checkstatus(::chdir(cwd.string().data()));
+            io::checkstatus(::chdir(cwd.string().data()));
         }
 
         // Convert our argument vector into a plain old
@@ -418,7 +419,7 @@ namespace core::platform
     FileDescriptor PosixProcessProvider::open_read(
         const fs::path &filename) const
     {
-        FileDescriptor fd = this->checkstatus(
+        FileDescriptor fd = io::checkstatus(
             ::open(filename.c_str(), O_RDONLY));
 
         This::open_fds.insert(fd);
@@ -429,7 +430,7 @@ namespace core::platform
         const fs::path &filename,
         int create_mode) const
     {
-        FileDescriptor fd = this->checkstatus(
+        FileDescriptor fd = io::checkstatus(
             ::open(filename.c_str(), O_WRONLY | O_CREAT, create_mode));
 
         This::open_fds.insert(fd);
@@ -451,7 +452,7 @@ namespace core::platform
         void *buffer,
         std::size_t bufsize) const
     {
-        return this->checkstatus(::read(fd, buffer, bufsize));
+        return io::checkstatus(::read(fd, buffer, bufsize));
     }
 
     std::size_t PosixProcessProvider::write_fd(
@@ -459,7 +460,7 @@ namespace core::platform
         const void *buffer,
         std::size_t size) const
     {
-        return this->checkstatus(::write(fd, buffer, size));
+        return io::checkstatus(::write(fd, buffer, size));
     }
 
     void PosixProcessProvider::reassign_fd(FileDescriptor from,
@@ -471,7 +472,7 @@ namespace core::platform
         }
         else if (from != to)
         {
-            this->checkstatus(::dup2(from, to));
+            io::checkstatus(::dup2(from, to));
             this->close_fd(from);
         }
     }
@@ -531,7 +532,7 @@ namespace core::platform
         while (!open_fds.empty())
         {
             logf_trace("Polling %d FDs", pfds.size());
-            this->checkstatus(
+            io::checkstatus(
                 ::poll(const_cast<struct pollfd *>(pfds.data()), pfds.size(), -1));
 
             for (uint c = 0; c < states.size(); c++)

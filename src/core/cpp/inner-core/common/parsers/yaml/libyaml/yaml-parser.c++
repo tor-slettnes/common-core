@@ -9,6 +9,7 @@
 #include "platform/process.h++"
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
+#include "io/cutils.h++"
 
 #include <stdio.h>
 #include <cerrno>
@@ -37,7 +38,7 @@ namespace core::yaml
 
     types::Value YamlParser::parse_file(const fs::path &path)
     {
-        if (FILE *fp = platform::process->checkstatus(::fopen(path.c_str(), "r")))
+        if (FILE *fp = io::checkstatus(::fopen(path.c_str(), "r")))
         {
             yaml_parser_set_input_file(&this->parser, fp);
             types::Value result = this->read_all().front();

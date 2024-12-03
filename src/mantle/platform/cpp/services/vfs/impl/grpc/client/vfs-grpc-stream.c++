@@ -16,13 +16,19 @@ namespace platform::vfs::grpc
 
     int ClientBuffer::sync()
     {
-        return this->status.ok() ? 0 : -1;
+        return this->status().ok() ? 0 : -1;
     }
 
     void ClientBuffer::set_status(const core::grpc::Status &status)
     {
-        this->status = status;
+        this->status_ = status;
     }
+
+    core::grpc::Status ClientBuffer::status() const
+    {
+        return this->status_;
+    }
+
 
     //==========================================================================
     /// @class ClientInputBuffer
@@ -104,7 +110,14 @@ namespace platform::vfs::grpc
         this->rdbuf(&this->input_buffer);
     }
 
+    core::grpc::Status ClientInputStream::status() const
+    {
+        return this->input_buffer.status();
+    }
+
+
     //==========================================================================
+
     /// @class ClientOutputStream
 
     ClientOutputStream::ClientOutputStream(const std::unique_ptr<ClientStub> &stub,
@@ -114,4 +127,10 @@ namespace platform::vfs::grpc
     {
         this->rdbuf(&this->output_buffer);
     }
-}  // namespace platform::vfs::grpc
+
+    core::grpc::Status ClientOutputStream::status() const
+    {
+        return this->output_buffer.status();
+    }
+
+} // namespace platform::vfs::grpc

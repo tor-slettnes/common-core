@@ -72,6 +72,11 @@ namespace core::types
     {
     }
 
+    Value::Value(const std::string_view &view)
+        : Value(std::string(view.begin(), view.end()))
+    {
+    }
+
     Value::Value(const ValueList &list)
         : ValueBase(std::make_shared<ValueList>(list))
     {
@@ -1079,7 +1084,6 @@ namespace core::types
                 break;
             }
         }
-
         return literal.empty() ? nullvalue : Value(literal);
     }
 

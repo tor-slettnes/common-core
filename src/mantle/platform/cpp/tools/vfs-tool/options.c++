@@ -32,7 +32,7 @@ void Options::add_options()
 
 void Options::initialize()
 {
-    logf_info("Creating VFS configuration client: %s");
+    logf_info("Creating VFS client");
     if (this->local)
     {
         platform::vfs::local::register_providers();

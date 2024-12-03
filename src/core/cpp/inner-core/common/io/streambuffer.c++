@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "streambuffer.h++"
+#include "logging/logging.h++"
 
 #include <string.h>
 

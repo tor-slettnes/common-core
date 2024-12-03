@@ -302,6 +302,7 @@ namespace platform::vfs::grpc
         {
             Path vpath = protobuf::decoded<Path>(*request);
             UniqueReader reader = this->provider->read_file(vpath);
+
             reader->exceptions(std::ios::badbit);
 
             //char buf[protobuf::chunksize];
@@ -309,6 +310,9 @@ namespace platform::vfs::grpc
             chunk.mutable_path()->CopyFrom(*request);
             uint chunks = 0;
             std::streamsize total = 0;
+
+            logf_info("reading chunk");
+
             while (auto bytes = this->provider->read_chunk(*reader))
             {
                 chunks++;

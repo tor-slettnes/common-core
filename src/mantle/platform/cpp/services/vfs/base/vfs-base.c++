@@ -65,7 +65,7 @@ namespace platform::vfs
         std::istream &stream)
     {
         stream.peek();  // Trigger underflow() if buffer is empty
-        if (!stream.eof())
+        if (stream.good())
         {
             std::streamsize chunksize = stream.rdbuf()->in_avail();
             std::string buf(chunksize, '\0');

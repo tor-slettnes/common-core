@@ -6,7 +6,11 @@
 #===============================================================================
 
 target_sources(${TARGET} PRIVATE
-  streambuffer.c++
+  base.c++
+  reader.c++
+  writer.c++
 )
 
-add_subdirectory(gzip)
+cc_add_package_dependencies(${TARGET}
+  DEPENDS zlib
+)

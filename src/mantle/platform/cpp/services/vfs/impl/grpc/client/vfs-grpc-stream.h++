@@ -23,8 +23,11 @@ namespace platform::vfs::grpc
         int sync() override;
         void set_status(const core::grpc::Status &status);
 
+    public:
+        core::grpc::Status status() const;
+
     protected:
-        core::grpc::Status status;
+        core::grpc::Status status_;
     };
 
     //==========================================================================
@@ -66,6 +69,7 @@ namespace platform::vfs::grpc
         std::uint64_t total_written;
     };
 
+
     //==========================================================================
     /// @class ClientInputStream
 
@@ -76,6 +80,8 @@ namespace platform::vfs::grpc
     public:
         ClientInputStream(const std::unique_ptr<ClientStub> &stub,
                           const Path &vpath);
+
+        core::grpc::Status status() const;
 
     private:
         std::unique_ptr<::grpc::ClientContext> cxt;
@@ -92,6 +98,8 @@ namespace platform::vfs::grpc
     public:
         ClientOutputStream(const std::unique_ptr<ClientStub> &stub,
                            const Path &vpath);
+
+        core::grpc::Status status() const;
 
     private:
         google::protobuf::Empty empty;

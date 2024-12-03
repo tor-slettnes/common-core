@@ -483,27 +483,6 @@ namespace core::platform
         virtual ExitStatus::ptr waitpid(
             PID pid,
             bool checkstatus = false) const = 0;
-
-    public:
-        template <class T, std::enable_if_t<std::is_integral_v<T>, bool> = true>
-        static T checkstatus(T status, const std::string &context = {})
-        {
-            if (status < 0)
-            {
-                throw std::system_error(errno, std::system_category(), context);
-            }
-            return status;
-        }
-
-        template <class PT>
-        static PT *checkstatus(PT *pointer, const std::string &context = {})
-        {
-            if (pointer == nullptr)
-            {
-                throw std::system_error(errno, std::system_category(), context);
-            }
-            return pointer;
-        }
     };
 
     /// Global instance, populated with the "best" provider for this system.

@@ -52,10 +52,16 @@ namespace core::str
             {
                 const Part &part = *this->parts_it++;
                 this->stream.imbue(std::locale::classic());
-                std::ios_base::fmtflags original_flags = this->stream.flags();
+                std::ios::fmtflags original_flags = this->stream.flags();
+                std::size_t original_precision = this->stream.precision();
+                std::size_t original_width = this->stream.width();
+                char original_fill = this->stream.fill();
                 const Modifiers &modifiers = this->apply_format(part, sizeof(T));
                 this->appendvalue(value, modifiers);
                 this->stream.flags(original_flags);
+                this->stream.precision(original_precision);
+                this->stream.width(original_width);
+                this->stream.fill(original_fill);
                 this->stream << part.tail;
             }
         }

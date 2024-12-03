@@ -22,10 +22,10 @@ namespace core::grpc
     std::string RequestHandlerBase::address_setting() const
     {
         return this->realaddress(
-            {},           // no provided address
-            BIND_OPTION,  // host option
-            PORT_OPTION,  // port option
-            "[::]",       // default host
+            {},          // no provided address
+            BIND_OPTION, // host option
+            PORT_OPTION, // port option
+            "[::]",      // default host
             8080);
     }
 
@@ -133,4 +133,4 @@ namespace core::grpc
         return ss.str();
     }
 
-}  // namespace core::grpc
+} // namespace core::grpc

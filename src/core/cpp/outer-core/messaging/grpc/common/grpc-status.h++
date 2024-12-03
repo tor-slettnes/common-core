@@ -57,7 +57,7 @@ namespace core::grpc
         Status(const Status &status);
 
         /// @brief
-        ///     Constructor from an Error instance
+        ///     Constructor from a `status::Event` instance
         /// @param[in] event
         ///     Event instance
         Status(const Event &event);

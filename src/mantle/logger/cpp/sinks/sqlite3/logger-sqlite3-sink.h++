@@ -68,7 +68,6 @@ namespace logger
 
         void create_table();
 
-
     private:
         std::string table_name_;
         std::size_t batch_size_;
@@ -87,7 +86,8 @@ namespace logger
     inline static core::logging::SinkFactory sqlite3_factory(
         "sqlite3",
         "Log to a Sqlite3 database, capturing specific event fields per column",
-        [](const core::logging::SinkID &sink_id) -> core::logging::Sink::ptr {
+        [](const core::logging::SinkID &sink_id) -> core::logging::Sink::ptr
+        {
             return SQLiteSink::create_shared(sink_id);
         });
-}  // namespace logger
+} // namespace logger

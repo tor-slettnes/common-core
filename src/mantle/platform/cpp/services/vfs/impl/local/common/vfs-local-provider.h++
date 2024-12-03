@@ -11,7 +11,7 @@
 
 namespace platform::vfs::local
 {
-    constexpr auto SETTINGS_STORE = "vfs.json";
+    constexpr auto SETTINGS_STORE = "vfs";
     constexpr auto SETTING_CONTEXTS = "contexts";
     constexpr auto SETTING_CXT_ROOT = "root";
     constexpr auto SETTING_CXT_PREEXEC = "preexec";

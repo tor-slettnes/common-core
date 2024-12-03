@@ -182,4 +182,4 @@ namespace logger
         this->pending_rows.clear();
     }
 
-}  // namespace logger
+} // namespace logger

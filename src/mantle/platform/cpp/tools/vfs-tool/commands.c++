@@ -10,6 +10,7 @@
 #include "protobuf-message.h++"
 #include "string/format.h++"
 #include "string/convert.h++"
+#include "vfs-grpc-stream.h++"
 
 #include <fstream>
 
@@ -284,7 +285,7 @@ void Options::download()
     std::ofstream local(localpath, std::ios::out | std::ios::binary);
     local.exceptions(std::ios::failbit);
     auto remote = platform::vfs::vfs->read_file(remotepath);
-    remote->exceptions(std::ios::badbit);
+    remote->exceptions(std::ios::badbit | std::ios::failbit);
 
     std::streamsize total = 0;
     uint chunks = 0;
@@ -295,6 +296,7 @@ void Options::download()
         total += chunk->size();
         platform::vfs::vfs->write_chunk(local, chunk.value());
     }
+
     core::str::format(std::cerr,
                       "Received %d bytes in in %d chunks\n",
                       total,
