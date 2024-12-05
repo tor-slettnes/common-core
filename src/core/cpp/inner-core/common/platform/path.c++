@@ -20,11 +20,85 @@
 /// Default filesystem paths.
 namespace core::platform
 {
+    //--------------------------------------------------------------------------
+    // FileStats
+
+    core::types::TaggedValueList &operator<<(
+        core::types::TaggedValueList &tvlist,
+        const FileStats &filestats)
+    {
+        tvlist.append("type", core::str::convert_from(filestats.type));
+        tvlist.append("size", filestats.size);
+        tvlist.append_if(!filestats.link.empty(), "link", filestats.link);
+        tvlist.append("mode", core::str::format("0%03o", filestats.mode));
+        tvlist.append("readable", filestats.readable);
+        tvlist.append("writable", filestats.writable);
+        tvlist.append("uid", filestats.uid);
+        tvlist.append("gid", filestats.gid);
+        tvlist.append("owner", filestats.owner);
+        tvlist.append("group", filestats.group);
+        tvlist.append("access_time", filestats.access_time);
+        tvlist.append("modify_time", filestats.modify_time);
+        tvlist.append("create_time", filestats.create_time);
+        tvlist.append("attributes", filestats.attributes);
+        return tvlist;
+    }
+
+    std::ostream &operator<<(
+        std::ostream &stream,
+        const FileStats &filestats)
+    {
+        return stream << core::types::TaggedValueList::create_from(filestats);
+    }
+
+    //--------------------------------------------------------------------------
+    // PathProvider
+
     PathProvider::PathProvider(const std::string &provider_name,
                                const std::string &exec_name)
         : Super(provider_name),
           exec_name_(exec_name)
     {
+    }
+
+    std::optional<FileStats> PathProvider::try_get_stats(const fs::path &path,
+                                                         bool dereference) const
+    {
+        try
+        {
+            return this->get_stats(path, dereference);
+        }
+        catch (const fs::filesystem_error &e)
+        {
+            return {};
+        }
+    }
+
+    FileStats PathProvider::get_stats(const fs::path &path,
+                                      bool dereference) const
+    {
+        fs::file_status status = dereference ? fs::symlink_status(path) : fs::status(path);
+        std::size_t size = fs::is_regular_file(status) ? fs::file_size(path) : 0;
+
+        // core::dt::TimePoint last_write_time =
+        //     std::chrono::file_clock::to_sys(fs::last_write_time(localpath));
+
+        return {
+            .type = status.type(),
+            .size = size,
+            .link = this->readlink(path),
+            .mode = static_cast<FileMode>(status.permissions()),
+            .readable = ::access(path.c_str(), R_OK) == 0,
+            .writable = ::access(path.c_str(), W_OK) == 0,
+            // .uid = 0,
+            // .gid = 0,
+            // .owner = "",
+            // .group = "",
+            // .accessTime = last_write_time,
+            // .modfiyTime = {},
+            // .createTime = {},
+            // .attributes = {}
+        };
     }
 
     fs::path PathProvider::default_config_folder() const noexcept
@@ -102,9 +176,9 @@ namespace core::platform
     fs::path PathProvider::install_folder() const noexcept
     {
         return this->locate_dominating_folder(
-            this->exec_folder_path(),  // start
-            SETTINGS_DIR,              // name
-            ".");                      // fallback
+            this->exec_folder_path(), // start
+            SETTINGS_DIR,             // name
+            ".");                     // fallback
     }
 
     types::PathList PathProvider::settings_paths() const noexcept
@@ -225,10 +299,68 @@ namespace core::platform
         return this->mktemp(this->tempfolder(), prefix, suffix);
     }
 
+    bool PathProvider::filename_match(
+        const types::PathList &masks,
+        const fs::path &path,
+        bool match_leading_period,
+        bool ignore_case) const
+    {
+        for (const std::string &mask : masks)
+        {
+            if (this->filename_match(mask, path, match_leading_period, ignore_case))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    std::vector<fs::directory_entry> PathProvider::locate(
+        const types::PathList &filename_masks,
+        const fs::path &directory,
+        bool match_leading_period,
+        bool ignore_case) const
+    {
+        std::vector<fs::directory_entry> hits;
+        this->locate_inside(directory,
+                            filename_masks,
+                            match_leading_period,
+                            ignore_case,
+                            &hits);
+        return hits;
+    }
+
+    void PathProvider::locate_inside(
+        const fs::path &directory,
+        const types::PathList &filename_masks,
+        bool match_leading_period,
+        bool ignore_case,
+        std::vector<fs::directory_entry> *dir) const
+    {
+        for (auto &pi : fs::directory_iterator(directory))
+        {
+            if (pi.status().type() == fs::file_type::directory)
+            {
+                this->locate_inside(pi.path(),
+                                    filename_masks,
+                                    match_leading_period,
+                                    ignore_case,
+                                    dir);
+            }
+            else if (this->filename_match(filename_masks,
+                                          pi.path(),
+                                          match_leading_period,
+                                          ignore_case))
+            {
+                dir->push_back(pi);
+            }
+        }
+    }
+
     /// Global instance, populated with the "best" provider for this system.
     ProviderProxy<PathProvider> path("path");
 
-};  // namespace core::platform
+}; // namespace core::platform
 
 namespace std::filesystem
 {
@@ -249,4 +381,4 @@ namespace std::filesystem
     {
         return typenames.to_stream(stream, type, typenames.at(file_type::unknown));
     }
-}  // namespace std::filesystem
+} // namespace std::filesystem

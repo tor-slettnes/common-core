@@ -41,6 +41,7 @@ namespace platform::vfs
     public:
         virtual fs::path localPath(const fs::path &relpath = {}) const;
         virtual Path virtualPath(const fs::path &relpath = {}) const;
+        fs::path localRoot() const;
 
     public:
         Context::ptr context;

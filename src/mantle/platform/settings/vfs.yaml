@@ -27,7 +27,7 @@ contexts:
     title    : "Temporary Files"
 
   logs:
-    root     : "/var/logs"
+    root     : "/var/log/common-core"
     # preexec  : "echo 'PRE-EXEC HOOK FOR LOGS CONTEXT'"
     # postexec : "echo 'POST-EXEC HOOK FOR LOGS CONTEXT'"
     writable : false

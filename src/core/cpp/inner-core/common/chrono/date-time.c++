@@ -143,6 +143,12 @@ namespace core
                    ((this->unit != TimeUnit::ZERO_TIME) && (this->count != 0));
         }
 
+        void DateTimeInterval::reset()
+        {
+            this->unit = TimeUnit::ZERO_TIME;
+            this->count = 0;
+        }
+
         //==========================================================================
         // Helper functions, used below.
 
@@ -634,14 +640,6 @@ namespace core
             return tp;
         }
 
-        TimePoint to_timepoint(steady::TimePoint stp)
-        {
-            return Clock::now() -
-                   std::chrono::duration_cast<Duration>(
-                       steady::Clock::now().time_since_epoch() +
-                       stp.time_since_epoch());
-        }
-
         TimePoint last_midnight(const TimePoint &tp, bool local)
         {
             return last_aligned(tp, std::chrono::hours(24), local);
@@ -687,6 +685,9 @@ namespace core
 
             case TimeUnit::YEAR:
                 return last_aligned_dt(tp, interval.count, 0, 0, 0, 0, 0, local);
+
+            case TimeUnit::ETERNITY:
+                return {};
 
             default:
                 break;

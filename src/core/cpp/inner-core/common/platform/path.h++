@@ -20,7 +20,39 @@
 /// Default filesystem paths.
 namespace core::platform
 {
-    //==========================================================================
+    //--------------------------------------------------------------------------
+    // FileStats
+
+    using FileMode = std::uint32_t;
+    struct FileStats
+    {
+        fs::file_type type = fs::file_type::none; // regular, directory, etc..
+        std::size_t size = 0;                     // Size in bytes
+        fs::path link;                            // Target for symbolic links
+        FileMode mode = 0;                        // UNIX mode mask
+        bool readable = false;                    // Readable file/listable directory
+        bool writable = false;                    // Writable file/modifiable directory
+        core::platform::UID uid = 0;              // Owner numeric ID
+        core::platform::GID gid = 0;              // Group numeric ID
+        std::string owner;                        // Owner name
+        std::string group;                        // Group name
+        core::dt::TimePoint access_time;          // Last access
+        core::dt::TimePoint modify_time;          // Last modification
+        core::dt::TimePoint create_time;          // Creation
+        core::types::KeyValueMap attributes;      // Custom file attributes
+    };
+
+    core::types::TaggedValueList &operator<<(
+        core::types::TaggedValueList &tvlist,
+        const FileStats &stats);
+
+    std::ostream &operator<<(
+        std::ostream &stream,
+        const FileStats &stats);
+
+    using DirectoryList = std::vector<fs::directory_entry>;
+
+    //--------------------------------------------------------------------------
     /// @class PathProvider
     /// @brief Abstract provider for path-related functions
 
@@ -38,6 +70,12 @@ namespace core::platform
                      const std::string &exec_name);
 
     public:
+        std::optional<FileStats> try_get_stats(const fs::path &path,
+                                               bool dereference = false) const;
+
+        virtual FileStats get_stats(const fs::path &path,
+                                    bool dereference = false) const;
+
         /// @brief Return the maximum length of a filesystem path.
         virtual uint path_max_size() const noexcept = 0;
 
@@ -200,6 +238,74 @@ namespace core::platform
                                    const std::string &prefix,
                                    const std::string &suffix) = 0;
 
+        /// @brief
+        ///     Check if a file name matches a shell-style file name mask (globbing pattern)
+        /// @param[in] masks
+        ///     A shell-style filename mask (e.g. `*.txt`, `????-??-??.log`)
+        /// @param[in] filename
+        ///     Filename to check
+        /// @param[in] match
+        ///     Filename to check
+        /// @param[in] match_leading_period
+        ///     Whether wildcards (`*` and `?`) match a leading period in
+        ///     a pathname component
+        /// @param[in] ignore_case
+        ///     Whether to use case-insensitive matching
+        /// @return
+        ///     `true` iff there were one or more hits.  `false` if no masks are provided.
+        virtual bool filename_match(
+            const fs::path &mask,
+            const fs::path &filename,
+            bool match_leading_period = false,
+            bool ignore_case = false) const = 0;
+
+        /// @brief
+        ///     Check if a file name matches one or more shell-style masks (globbing patterns)
+        /// @param[in] masks
+        ///     Zero or more shell-style filename masks
+        /// @param[in] filename
+        ///     Filename to check
+        /// @param[in] match_leading_period
+        ///     Whether wildcards (`*` and `?`) match a leading period in
+        ///     a pathname component
+        /// @param[in] ignore_case
+        ///     Whether to use case-insensitive matching
+        /// @return
+        ///     `true` iff there were one or more hits.  `false` if no masks are provided.
+        /// @sa filename_match(std::string &, fs::path &)
+        bool filename_match(
+            const types::PathList &masks,
+            const fs::path &filename,
+            bool match_leading_period = false,
+            bool ignore_case = false) const;
+
+        /// @brief
+        ///     Locate a relative path inside a folder
+        /// @param[in] root
+        ////    Parent folder inside which to search
+        /// @param[in] filename_masks
+        ///     Filename patterns for which to search
+        /// @param[in] match_leading_period
+        ///     Whether wildcards (`*` and `?`) match a leading period in
+        ///     a pathname component
+        /// @param[in] ignore_case
+        ///     Whether to use case-insensitive matching
+
+        std::vector<fs::directory_entry> locate(
+            const types::PathList &filename_masks,
+            const fs::path &root,
+            bool match_leading_period = false,
+            bool ignore_case = false) const;
+
+    private:
+        void locate_inside(
+            const fs::path &root,
+            const types::PathList &filename_masks,
+            bool match_leading_period,
+            bool ignore_case,
+            std::vector<fs::directory_entry> *dir) const;
+
+    protected:
     private:
         fs::path exec_name_;
         fs::path installfolder_;
@@ -207,7 +313,7 @@ namespace core::platform
 
     /// Global instance, populated with the "best" provider for this system.
     extern ProviderProxy<PathProvider> path;
-}  // namespace core::platform
+} // namespace core::platform
 
 namespace std::filesystem
 {

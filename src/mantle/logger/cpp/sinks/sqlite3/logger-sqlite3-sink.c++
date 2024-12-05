@@ -7,6 +7,7 @@
 
 #include "logger-sqlite3-sink.h++"
 #include "logging/message/message.h++"
+#include "string/misc.h++"
 
 namespace logger
 {
@@ -83,7 +84,12 @@ namespace logger
 
     void SQLiteSink::open()
     {
-        this->open_file(this->last_aligned(core::dt::Clock::now()));
+        core::dt::TimePoint last_aligned = core::dt::last_aligned(
+            core::dt::Clock::now(),
+            this->rotation_interval(),
+            this->use_local_time());
+
+        this->open_file(last_aligned);
         AsyncLogSink::open();
     }
 
@@ -108,40 +114,41 @@ namespace logger
 
     void SQLiteSink::create_table()
     {
-        std::stringstream header;
-        std::stringstream placeholders;
+        std::stringstream sql;
         std::string delimiter;
 
-        placeholders << "(";
+        sql << "CREATE TABLE IF NOT EXISTS "
+            << std::quoted(this->table_name())
+            << " (";
+
         for (const core::logging::ColumnSpec &spec : this->columns())
         {
-            header << delimiter
-                   << std::quoted(spec.column_name.value_or(spec.event_field));
+            sql << delimiter
+                << std::quoted(spec.column_name.value_or(spec.event_field));
 
             if (auto type_name = core::logging::column_type_names.to_string(spec.column_type))
             {
-                header << " " << type_name.value();
+                sql << " " << *type_name;
             }
-
-            placeholders << delimiter
-                         << "?";
 
             delimiter = ", ";
         }
-        placeholders << ")";
 
-        this->db.execute(core::str::format(
-            "CREATE TABLE IF NOT EXISTS %s (%s)",
-            this->table_name(),
-            header.rdbuf()));
+        sql << ")";
+        this->db.execute(sql.str());
+    }
 
-        this->placeholders = placeholders.str();
+    void SQLiteSink::create_placeholders()
+    {
+        std::vector<std::string> placeholders(this->columns().size(), "?");
+        this->placeholders = "(" + core::str::join(placeholders, ", ") + ")";
     }
 
     void SQLiteSink::worker()
     {
         std::size_t pending_count = 0;
         this->pending_rows.reserve(this->batch_size());
+        this->create_placeholders();
 
         while (!this->queue.closed())
         {
@@ -173,11 +180,19 @@ namespace logger
 
     void SQLiteSink::flush_events()
     {
-        this->db.execute_multi(
-            core::str::format("INSERT INTO %s VALUES %s",
-                              this->table_name(),
-                              this->placeholders),
-            this->pending_rows);
+        std::stringstream cmd;
+        cmd << "INSERT INTO "
+            << std::quoted(this->table_name())
+            << " VALUES "
+            << this->placeholders;
+
+        this->db.execute_multi(cmd.str(), this->pending_rows);
+
+        // this->db.execute_multi(
+        //     core::str::format("INSERT INTO %s VALUES %s",
+        //                       this->table_name(),
+        //                       this->placeholders),
+        //     this->pending_rows);
 
         this->pending_rows.clear();
     }

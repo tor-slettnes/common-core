@@ -10,6 +10,7 @@
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
 #include "status/exceptions.h++"
+#include "types/filesystem.h++"
 
 #include <unordered_map>
 
@@ -179,13 +180,20 @@ namespace protobuf
     // LocateRequest
 
     void encode(const ::platform::vfs::Path &root,
-                const std::vector<std::string> &filename_masks,
+                const core::types::PathList &filename_masks,
                 const core::types::TaggedValueList &attribute_filters,
                 const ::platform::vfs::OperationFlags &flags,
                 ::cc::platform::vfs::LocateRequest *msg)
     {
         encode(root, msg->mutable_root());
-        assign_repeated(filename_masks, msg->mutable_filename_masks());
+
+        auto encoded_masks =  msg->mutable_filename_masks();
+        encoded_masks->Reserve(filename_masks.size());
+        for (const fs::path &mask: filename_masks)
+        {
+            encoded_masks->Add(mask.string());
+        }
+
         encode(attribute_filters, msg->mutable_attribute_filter());
         msg->set_with_attributes(flags.with_attributes);
         msg->set_include_hidden(flags.include_hidden);
@@ -194,12 +202,15 @@ namespace protobuf
 
     void decode(const ::cc::platform::vfs::LocateRequest &msg,
                 ::platform::vfs::Path *root,
-                std::vector<std::string> *filename_masks,
+                core::types::PathList *filename_masks,
                 core::types::TaggedValueList *attribute_filters,
                 ::platform::vfs::OperationFlags *flags)
     {
         decode(msg.root(), root);
-        assign_to_vector(msg.filename_masks(), filename_masks);
+
+        filename_masks->assign(msg.filename_masks().begin(),
+                               msg.filename_masks().end());
+
         decode(msg.attribute_filter(), attribute_filters);
         flags->with_attributes = msg.with_attributes();
         flags->include_hidden = msg.include_hidden();
@@ -260,9 +271,9 @@ namespace protobuf
         msg->set_gid(stats.gid);
         msg->set_ownername(stats.owner);
         msg->set_groupname(stats.group);
-        protobuf::encode(stats.accessTime, msg->mutable_accesstime());
-        protobuf::encode(stats.modifyTime, msg->mutable_modifytime());
-        protobuf::encode(stats.createTime, msg->mutable_createtime());
+        protobuf::encode(stats.access_time, msg->mutable_accesstime());
+        protobuf::encode(stats.modify_time, msg->mutable_modifytime());
+        protobuf::encode(stats.create_time, msg->mutable_createtime());
 
         for (auto it = stats.attributes.begin(); it != stats.attributes.end(); it++)
         {
@@ -293,9 +304,9 @@ namespace protobuf
         stats->gid = msg.gid();
         stats->owner = msg.ownername();
         stats->group = msg.groupname();
-        stats->accessTime = decoded<core::dt::TimePoint>(msg.accesstime());
-        stats->modifyTime = decoded<core::dt::TimePoint>(msg.modifytime());
-        stats->createTime = decoded<core::dt::TimePoint>(msg.createtime());
+        stats->access_time = decoded<core::dt::TimePoint>(msg.accesstime());
+        stats->modify_time = decoded<core::dt::TimePoint>(msg.modifytime());
+        stats->create_time = decoded<core::dt::TimePoint>(msg.createtime());
         protobuf::decode(msg.attributes(), &stats->attributes);
     }
 

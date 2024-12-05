@@ -47,10 +47,7 @@ namespace core::types
 
         BlockingQueueBase(
             std::size_t maxsize,
-            OverflowDisposition overflow_disposition,
-            bool close_on_shutdown = true);
-
-        virtual ~BlockingQueueBase();
+            OverflowDisposition overflow_disposition);
 
     public:
         /// @brief
@@ -130,8 +127,10 @@ namespace core::types
 
         BlockingQueue(
             std::size_t maxsize = 0,
-            OverflowDisposition overflow_disposition = OverflowDisposition::DISCARD_OLDEST)
-            : BlockingQueueBase(maxsize, overflow_disposition)
+            OverflowDisposition overflow_disposition = OverflowDisposition::DISCARD_OLDEST,
+            std::chrono::system_clock::duration closewatch = std::chrono::seconds(5))
+            : BlockingQueueBase(maxsize, overflow_disposition),
+              closewatch(closewatch)
         {
         }
 
@@ -270,12 +269,12 @@ namespace core::types
         inline std::optional<T> get() override
         {
             std::optional<T> value;
-
             {
                 std::unique_lock<std::mutex> lock(this->mtx);
-                this->item_available.wait(lock, [&] {
-                    return this->queue.size() || this->closed_;
-                });
+                while (this->queue.empty() && !this->closed_)
+                {
+                    this->item_available.wait_for(lock, this->closewatch);
+                }
 
                 if (this->queue.size())
                 {
@@ -347,6 +346,7 @@ namespace core::types
 
     private:
         std::queue<T> queue;
+        std::chrono::system_clock::duration closewatch;
     };
 
 }  // namespace core::types

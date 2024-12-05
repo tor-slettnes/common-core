@@ -95,7 +95,7 @@ namespace platform::vfs
 
         virtual Directory locate(
             const Path &vpath,
-            const std::vector<std::string> &filename_masks,
+            const core::types::PathList &filename_masks,
             const core::types::TaggedValueList &attribute_filters,
             const OperationFlags &flags) const = 0;
 

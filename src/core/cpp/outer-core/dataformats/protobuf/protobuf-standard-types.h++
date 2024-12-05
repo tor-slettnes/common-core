@@ -50,8 +50,9 @@ namespace protobuf
     using RealValue = google::protobuf::DoubleValue;
     using RepeatedString = google::protobuf::RepeatedPtrField<std::string>;
 
+
     //==========================================================================
-    // Simple protobuf types
+    // Well-known ProtoBuf wrapper types
 
     void encode(const std::string &s,
                 google::protobuf::StringValue *msg) noexcept;

@@ -29,15 +29,8 @@ namespace core::grpc
     public:
         template <class... Args>
         ServerStreamer(Args &&...args)
-            : Super(args...),
-              shutdown_handle(core::platform::signal_shutdown.connect(
-                  std::bind(&This::close, this)))
+            : Super(args...)
         {
-        }
-
-        virtual ~ServerStreamer()
-        {
-            core::platform::signal_shutdown.disconnect(this->shutdown_handle);
         }
 
         virtual void stream(::grpc::ServerContext *cxt,
@@ -52,9 +45,6 @@ namespace core::grpc
                 writer->Write(std::move(*msg));
             }
         }
-
-    private:
-        const std::string shutdown_handle;
     };
 
     //==========================================================================

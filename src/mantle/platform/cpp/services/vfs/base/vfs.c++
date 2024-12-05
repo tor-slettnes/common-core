@@ -145,7 +145,7 @@ namespace platform::vfs
 
     Directory locate(
         const Path &root,
-        const std::vector<std::string> &filename_masks,
+        const std::vector<fs::path> &filename_masks,
         const core::types::TaggedValueList &attribute_filters,
         bool with_attributes,
         bool include_hidden,

@@ -80,8 +80,8 @@ namespace core::db
     protected:
         void check_status(
             int code,
-            const std::string &action = {},
-            const core::types::KeyValueMap &attributes = {}) const;
+            std::string &&action = {},
+            core::types::KeyValueMap &&attributes = {}) const;
 
     private:
         ::sqlite3 *connection_;

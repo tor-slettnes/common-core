@@ -67,6 +67,7 @@ namespace logger
         void flush_events();
 
         void create_table();
+        void create_placeholders();
 
     private:
         std::string table_name_;

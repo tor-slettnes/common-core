@@ -6,10 +6,13 @@
 //==============================================================================
 
 #pragma once
-#include "logging/logging.h++"
+//#include "logging/logging.h++"
 #include "platform/process.h++"
+#include "status/exceptions.h++"
 
 #include <thread>
+#include <functional>
+#include <iostream>
 
 namespace core::thread
 {
@@ -23,11 +26,16 @@ namespace core::thread
             }
             catch (...)
             {
-                logf_critical("Thread %d terminated: %s",
-                              platform::process->thread_id(),
-                              std::current_exception());
-                std::exit(-1);
+                std::cerr << "Thread "
+                          << platform::process->thread_id()
+                          << " terminated: "
+                          << std::current_exception()
+                          << std::endl;
+                // logf_error("Thread %d terminated: %s",
+                //            platform::process->thread_id(),
+                //            std::current_exception());
+                // std::exit(-1);
             }
         });
     }
-}  // namespace core::thread
+} // namespace core::thread

@@ -27,7 +27,7 @@ namespace core::io
         std::string message = ::gzerror(this->gzfile, &errnum);
         if (errnum == Z_ERRNO)
         {
-            throw std::system_error(errnum, std::generic_category());
+            throw std::system_error(errno, std::generic_category(), "GZipBuffer");
         }
         else
         {

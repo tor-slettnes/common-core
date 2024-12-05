@@ -69,7 +69,8 @@ log sinks:
   #   the default settings `rotation: 6 hours` and `local time: true`, the
   #   timestamps would be aligned at 00:00, 06:00, 12:00, and 18:00, local time.
   #
-  #   Rotation intervals may be specified in one or two words:
+  #   Rotation intervals may be specified via the option `rotation` in one or
+  #   two words:
   #   - An optional integer specifying the number of time units.
   #     Defaults to `1` if omitted.
   #   - One of the following time units:
@@ -81,6 +82,12 @@ log sinks:
   #     - `month`, `months`, `monthly`
   #     - `year`, `years`, `yearly`
   #     - `eternity` (never rotate)
+  #
+  #   By default, log files are compressed GZip once they are no longer active.
+  #   This can be controlled with the option "compress after use".
+  #
+  #   Lastly, `expire after` can be set to prune log files once they reach a
+  #   certain age, specified in the same way as `rotation` (e.g. `1 year`).
   #
   # * Log sinks that record specific fields from loggable events include
   #   "csvfile" and "sqlite3".  As, such these are suitable for recording not
@@ -117,6 +124,7 @@ log sinks:
   # Log to standard error
   stderr:
     include context: true
+    threshold: TRACE
 
   # UNIX SysLog settings
   syslog:
@@ -135,14 +143,20 @@ log sinks:
     threshold: TRACE
 
     # JSON filename template, expanded as described above.
-    name template: "{executable}-{isodate}-{hour}{minute}{zoneoffset}.jsonlog"
-
-    # How often do we want to switch to a new log file
-    # Default: 6 hours
-    rotation: 6 hours
+    name template: "{executable}-{isodate}-{hour}{minute}{zoneoffset}"
 
     # Derive JSON log file name from local time.
     local time: true
+
+    # How often do we want to switch to a new log file
+    # Default: 6 hours
+    rotate after: 6 hours
+
+    # Compress log files once they are no longer in active use (default: true)
+    #compress after use: true
+
+    # Prune log files once they reach a certain age.
+    expire after: 1 year
 
   # Log to plaintext `.log` files
   logfile:
@@ -156,14 +170,20 @@ log sinks:
     include context: false
 
     # Logfile name template, expanded as described above.
-    name template: "{executable}-{isodate}-{hour}{minute}{zoneoffset}.log"
-
-    # How often do we want to switch to a new log file, in seconds.
-    # Default: 6 hours = 21600 seconds
-    rotation: 6 hours
+    name template: "{executable}-{isodate}-{hour}{minute}{zoneoffset}"
 
     # Derive log file name from local time.
     local time : true
+
+    # How often do we want to switch to a new log file
+    # Default: 6 hours
+    rotate after: 6 hours
+
+    # Compress log files once they are no longer in active use (default: true)
+    #compress after use: true
+
+    # Prune log files once they reach a certain age.
+    expire after: 1 year
 
   # Log specific event fields to comma-separated value files (with suffix `.csv`)
   csvfile:
@@ -194,14 +214,20 @@ log sinks:
     #column separator: "\t"
 
     # Logfile name template, expanded as described above.
-    name template: "{executable}-{isodate}-{hour}{minute}{zoneoffset}.csv"
-
-    # How often do we want to switch to a new log file.
-    # Default is 6 hours.
-    rotation: 1 day
+    name template: "{executable}-{isodate}-{hour}{minute}{zoneoffset}"
 
     # Derive log file name from local time.
     local time: true
+
+    # How often do we want to switch to a new log file
+    # Default: 6 hours
+    rotate after: 1 day
+
+    # Compress log files once they are no longer in active use (default: true)
+    #compress after use: true
+
+    # Prune log files once they reach a certain age.
+    expire after: 1 year
 
   # Log to SQLite3 `.db` files
   sqlite3:
@@ -226,14 +252,20 @@ log sinks:
       - ["text", "text", TEXT]
 
     # Logfile name template, expanded as described above.
-    name template: "{executable}-{isodate}.db"
-
-    # How often do we want to switch to a new log file, in seconds.
-    # Default: 6 hours = 21600 seconds
-    rotation: 1 week
+    name template: "{executable}-{isodate}"
 
     # Derive log file name from local time.
     local time: true
+
+    # How often do we want to switch to a new log file
+    # Default: 6 hours
+    rotate after: 1 week
+
+    # Compress log files once they are no longer in active use (default: true)
+    #compress after use: true
+
+    # Prune log files once they reach a certain age.
+    expire after: 1 year
 
   # Log via RTI distributed logger (if built with option `USE_RTI_DISTRIBUTED_LOGGER`)
   rti-dl:

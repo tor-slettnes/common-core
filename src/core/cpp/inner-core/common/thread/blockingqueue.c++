@@ -6,32 +6,16 @@
 //==============================================================================
 
 #include "blockingqueue.h++"
-#include "platform/init.h++"
 
 namespace core::types
 {
     BlockingQueueBase::BlockingQueueBase(
         std::size_t maxsize,
-        OverflowDisposition overflow_disposition,
-        bool close_on_shutdown)
+        OverflowDisposition overflow_disposition)
         : maxsize_(maxsize),
           overflow_disposition_(overflow_disposition),
           closed_(false)
     {
-        if (close_on_shutdown)
-        {
-            this->shutdown_handle_ = platform::signal_shutdown.connect([&] {
-                this->close();
-            });
-        }
-    }
-
-    BlockingQueueBase::~BlockingQueueBase()
-    {
-        if (!this->shutdown_handle_.empty())
-        {
-            platform::signal_shutdown.disconnect(this->shutdown_handle_);
-        }
     }
 
     void BlockingQueueBase::close()

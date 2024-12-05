@@ -8,6 +8,9 @@
 #pragma once
 #include "platform/path.h++"
 
+#include <sys/stat.h>
+#include <unistd.h>
+
 namespace core::platform
 {
     class PosixPathProvider : public PathProvider
@@ -17,6 +20,9 @@ namespace core::platform
 
     public:
         using Super::Super;
+
+        FileStats get_stats(const fs::path &path,
+                            bool dereference) const override;
 
         uint path_max_size() const noexcept override;
         std::string path_separator() const noexcept override;
@@ -31,9 +37,23 @@ namespace core::platform
         fs::path mktemp(const fs::path &folder,
                         const std::string &prefix = "tmp.",
                         const std::string &suffix = {}) override;
+
         fs::path mktempdir(const fs::path &folder,
                            const std::string &prefix,
                            const std::string &suffix) override;
+
+        bool filename_match(
+            const fs::path &mask,
+            const fs::path &filename,
+            bool match_leading_period,
+            bool ignore_case) const override;
+
+    private:
+        fs::path readlink(const fs::path &path,
+                          const struct stat &statbuf) const noexcept;
+
+    protected:
+        fs::file_type path_type(mode_t mode) const;
     };
 
-}  // namespace core::platform
+} // namespace core::platform

@@ -191,7 +191,7 @@ namespace platform::vfs::grpc
         try
         {
             platform::vfs::Path root;
-            std::vector<std::string> filename_masks;
+            core::types::PathList filename_masks;
             core::types::TaggedValueList attribute_filters;
             platform::vfs::OperationFlags flags;
 

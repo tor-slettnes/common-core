@@ -78,14 +78,14 @@ namespace protobuf
     // LocateRequest
 
     void encode(const ::platform::vfs::Path &root,
-                const std::vector<std::string> &filename_masks,
+                const core::types::PathList &filename_masks,
                 const core::types::TaggedValueList &attribute_filters,
                 const ::platform::vfs::OperationFlags &flags,
                 ::cc::platform::vfs::LocateRequest *msg);
 
     void decode(const ::cc::platform::vfs::LocateRequest &msg,
                 ::platform::vfs::Path *root,
-                std::vector<std::string> *filename_masks,
+                core::types::PathList *filename_masks,
                 core::types::TaggedValueList *attribute_filters,
                 ::platform::vfs::OperationFlags *flags);
 

@@ -6,16 +6,16 @@
 //==============================================================================
 
 #pragma once
-#include "vfs-posix-provider.h++"
+#include "vfs-local-provider.h++"
 #include "vfs-linux-volmon.h++"
 #include "types/valuemap.h++"
 
 namespace platform::vfs::local
 {
-    class LinuxProvider : public PosixProvider
+    class LinuxProvider : public LocalProvider
     {
         using This = LinuxProvider;
-        using Super = PosixProvider;
+        using Super = LocalProvider;
 
         using SignalHandler = void (This::*)(const volume::Event &event);
         using ActionHandlerMap = core::types::ValueMap<volume::ActionType, SignalHandler>;

@@ -12,7 +12,7 @@ namespace core::logging
 {
     JsonFileSink::JsonFileSink(const std::string &sink_id)
         : AsyncLogSink(sink_id),
-          RotatingPath(sink_id, ".json")
+          RotatingPath(sink_id, ".jsonlog")
     {
     }
 

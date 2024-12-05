@@ -81,6 +81,7 @@ namespace core
         struct DateTimeInterval
         {
             operator bool() const noexcept;
+            void reset();
 
             TimeUnit unit = TimeUnit::ZERO_TIME;
             std::int64_t count = 0;
@@ -373,9 +374,6 @@ namespace core
                                double fraction,
                                std::optional<Duration> tz_offset);
 
-        /// Convert from Steady Clock to System Clock
-        TimePoint to_timepoint(std::chrono::steady_clock::time_point stp);
-
         /// Return the most recent midnight prior to a given timestamp,
         /// in either the local timezone or UTC.
         TimePoint last_midnight(const TimePoint &tp = Clock::now(), bool local = true);
@@ -473,6 +471,18 @@ namespace core
         // Convert from System Clock to Steady Clock
         TimePoint to_timepoint(dt::TimePoint tp);
     } // namespace steady
+
+    template <class TargetClock, class SourceClock>
+    typename TargetClock::time_point timepoint_cast(const typename SourceClock::time_point &source_tp)
+    {
+        typename SourceClock::duration relative_to_now =
+            source_tp.time_since_epoch() -
+            SourceClock::now().time_since_epoch();
+
+        return TargetClock::now() +
+               std::chrono::duration_cast<typename TargetClock::duration>(relative_to_now);
+    }
+
 } // namespace core
 
 namespace std::chrono

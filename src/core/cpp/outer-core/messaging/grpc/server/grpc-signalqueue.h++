@@ -73,15 +73,11 @@ namespace core::grpc
               filter_polarity(filter.polarity()),
               filter_indices(filter.indices().begin(), filter.indices().end())
         {
-            core::platform::signal_shutdown.connect(
-                this->id,
-                std::bind(&SignalQueue::close, this));
         }
 
         ~SignalQueue()
         {
             this->close();
-            core::platform::signal_shutdown.disconnect(this->id);
         }
 
     protected:

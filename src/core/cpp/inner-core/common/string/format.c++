@@ -12,8 +12,8 @@
 #include <string.h>
 
 #include <cstdint>
-#include <iomanip>  // output stream format manipulations
-#include <ios>      // left, right, internal
+#include <iomanip> // output stream format manipulations
+#include <ios>     // left, right, internal
 
 namespace core::str
 {
@@ -34,14 +34,14 @@ namespace core::str
     Formatter::Parts Formatter::split_parts(const std::string &fmt) const
     {
         static const std::regex rx(
-            //"(?:^|[^\\\\])(?:\\\\{2})*"      // 0 or even # of preceeding backslashes
-            "(%"                                 // (1) Entire expression starting with %
-            "([#0\\-\\ \\+\\'\\^,]*)"            // (2) 0 or more flags #|0|-| |+|'|^|,
-            "(?:(\\d*)|(\\*))"                   // (3) fixed or (4) variable field width
-            "(?:\\.(\\d*))?"                     // (5) precision
-            "(hh|h|ll|l|q|L|j|t)?"               // (6) length modifier (ignored)
-            "(?:([abcdefghinoprsuxzAEFGOXTZ])|"  // (7) argument conversion specifier, or
-            "([m%])))"                           // (8) non-argument specifier
+            "(?:^|[^\\\\])(?:\\\\{2})*"         // 0 or even # of preceeding backslashes
+            "(%"                                // (1) Entire expression starting with %
+            "([#0\\-\\ \\+\\'\\^,]*)"           // (2) 0 or more flags #|0|-| |+|'|^|,
+            "(?:(\\d*)|(\\*))"                  // (3) fixed or (4) variable field width
+            "(?:\\.(\\d*))?"                    // (5) precision
+            "(hh|h|ll|l|q|L|j|t)?"              // (6) length modifier (ignored)
+            "(?:([abcdefghinoprsuxzAEFGOXTZ])|" // (7) argument conversion specifier, or
+            "([m%])))"                          // (8) non-argument specifier
         );
         uint pos = 0, next = 0;
 
@@ -59,7 +59,7 @@ namespace core::str
             // specifier
             tail.append(fmt.substr(next, pos - next));
 
-            if (matchit->length(8))  // Non-argument format (e.g. %%).
+            if (matchit->length(8)) // Non-argument format (e.g. %%).
             {
                 // Absorb the corresponding non-argument conversion, and move on
                 tail.append(this->nonarg_conversion(matchit->str(8)[0]));
@@ -77,7 +77,7 @@ namespace core::str
                 precision = this->optional_size(matchit->str(5));
                 conversion = matchit->str(7)[0];
 
-                if (matchit->length(4))  // Variable field width specifier
+                if (matchit->length(4)) // Variable field width specifier
                 {
                     // Insert an "empty" part for a corresponding field width
                     // argument
@@ -401,15 +401,18 @@ namespace core::str
     {
         if (modifiers.hidden)
         {
-            for (auto &c : rvalue) c = '*';
+            for (auto &c : rvalue)
+                c = '*';
         }
         else if (modifiers.lower)
         {
-            for (auto &c : rvalue) c = std::tolower(c);
+            for (auto &c : rvalue)
+                c = std::tolower(c);
         }
         else if (modifiers.upper)
         {
-            for (auto &c : rvalue) c = std::toupper(c);
+            for (auto &c : rvalue)
+                c = std::toupper(c);
         }
 
         if (modifiers.quoted)
@@ -437,11 +440,11 @@ namespace core::str
             break;
 
         default:
-            dt::tp_to_stream(this->stream,                   // stream
-                             tp,                             // tp
-                             (modifiers.timeformat != 'Z'),  // local
-                             this->stream.precision(),       // decimals
-                             modifiers.timeformat            // format
+            dt::tp_to_stream(this->stream,                  // stream
+                             tp,                            // tp
+                             (modifiers.timeformat != 'Z'), // local
+                             this->stream.precision(),      // decimals
+                             modifiers.timeformat           // format
                                  ? dt::JS_FORMAT
                                  : dt::DEFAULT_FORMAT);
 
@@ -478,7 +481,7 @@ namespace core::str
     void Formatter::appendvalue(int *nargs,
                                 const Formatter::Modifiers &modifiers)
     {
-        if (modifiers.saveargs)  // %n format.
+        if (modifiers.saveargs) // %n format.
         {
             *nargs = static_cast<int>(std::distance(this->parts.begin(), this->parts_it));
         }
@@ -519,4 +522,4 @@ namespace core::str
         this->stream.imbue(this->locale);
     }
 
-}  // namespace core::str
+} // namespace core::str

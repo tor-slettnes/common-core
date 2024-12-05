@@ -82,26 +82,18 @@ namespace core::db
         const MultiRowData &parameter_rows,
         const QueryCallbackFunction &callback) const
     {
-        // str::format(std::cout,
-        //             "execute_multi: %s\n",
-        //             sql);
-
-        // for (const RowData &row: parameter_rows)
-        // {
-        //     str::format(std::cout,
-        //                 "          row: %s\n",
-        //                 row);
-        // }
-
+        logf_trace("Executing SQLite3 statement with %d parameter rows: %s",
+                   parameter_rows.size(),
+                   sql);
 
         sqlite3_stmt *statement = nullptr;
         this->check_status(
             sqlite3_prepare_v2(
-                this->connection(),  // db
-                sql.c_str(),         // zSql
-                sql.size() + 1,      // nBytes
-                &statement,          // ppStmt
-                nullptr),            // pzTail
+                this->connection(), // db
+                sql.c_str(),        // zSql
+                sql.size() + 1,     // nBytes
+                &statement,         // ppStmt
+                nullptr),           // pzTail
             "sqlite3_prepare",
             {{"sql", sql}});
 
@@ -127,8 +119,8 @@ namespace core::db
 
         this->check_status(sqlite3_finalize(statement), "sqlite3_finalize");
     }
-
-    std::shared_ptr<SQLite3::QueryResponseQueue> SQLite3::execute_async_query(
+ 
+   std::shared_ptr<SQLite3::QueryResponseQueue> SQLite3::execute_async_query(
         const std::string &sql,
         const RowData &parameters,
         std::size_t queue_size) const
@@ -139,12 +131,18 @@ namespace core::db
             queue_size,
             QueryResponseQueue::OverflowDisposition::BLOCK);
 
-        std::thread executor_thread([=] {
-            this->execute(sql, parameters, [=](core::types::TaggedValueList &&row) -> bool {
-                return queue->put(row);
+        std::thread executor_thread(
+            [=]
+            {
+                this->execute(
+                    sql,
+                    parameters,
+                    [=](core::types::TaggedValueList &&row) -> bool
+                    {
+                        return queue->put(row);
+                    });
+                queue->close();
             });
-            queue->close();
-        });
 
         executor_thread.detach();
         return queue;
@@ -376,25 +374,21 @@ namespace core::db
 
     void SQLite3::check_status(
         int code,
-        const std::string &action,
-        const core::types::KeyValueMap &attributes) const
+        std::string &&action,
+        core::types::KeyValueMap &&attributes) const
     {
         if (code != SQLITE_OK)
         {
-            core::types::KeyValueMap diag_info = attributes;
-            if (!action.empty())
-            {
-                diag_info["action"] = action;
-            }
+            attributes.insert_if_value("action", action);
 
             throw core::exception::ServiceError(
                 sqlite3_errstr(code) ? sqlite3_errstr(code) : "Unknown SQLite3 failure",
-                "SQLite3",                                     // service
-                static_cast<core::status::Event::Code>(code),  // code
-                "",                                            // id
-                core::status::Level::FAILED,                   // level
-                core::dt::Clock::now(),                        // timepoint
-                diag_info);                                    // attributes
+                "SQLite3",                                    // service
+                static_cast<core::status::Event::Code>(code), // code
+                "",                                           // id
+                core::status::Level::FAILED,                  // level
+                core::dt::Clock::now(),                       // timepoint
+                attributes);                                  // attributes
         }
     }
-}  // namespace core::db
+} // namespace core::db

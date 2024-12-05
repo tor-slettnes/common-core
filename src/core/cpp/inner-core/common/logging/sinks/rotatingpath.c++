@@ -8,19 +8,28 @@
 #include "rotatingpath.h++"
 #include "string/expand.h++"
 #include "chrono/date-time.h++"
+#include "status/exceptions.h++"
 #include "platform/path.h++"
 #include "platform/host.h++"
+#include "io/gzip/writer.h++"
+#include "logging/logging.h++"
+
+#include <fstream>
 
 namespace core::logging
 {
+    constexpr auto COMPRESSION_SUFFIX = ".gz";
+
     RotatingPath::RotatingPath(const std::string &sink_name,
-                               const std::string &default_suffix)
+                               const fs::path &default_suffix)
         : sink_name_(sink_name),
           default_suffix_(default_suffix),
           name_template_(DEFAULT_NAME_TEMPLATE),
-          rotation_interval_(DEFAULT_ROTATION),
-          use_local_time_(DEFAULT_LOCAL_TIME),
           log_folder_(platform::path->log_folder()),
+          use_local_time_(DEFAULT_LOCAL_TIME),
+          compress_inactive_(DEFAULT_COMPRESS_INACTIVE),
+          rotation_interval_(DEFAULT_ROTATION),
+          expiration_interval_(DEFAULT_EXPIRATION),
           expansions_({
               {"executable", platform::path->exec_name()},
               {"hostname", platform::host->get_host_name()},
@@ -43,6 +52,7 @@ namespace core::logging
     RotatingPath::~RotatingPath()
     {
         this->close_file();
+        this->compress_queue.close();
     }
 
     void RotatingPath::load_rotation(const types::KeyValueMap &settings)
@@ -52,15 +62,106 @@ namespace core::logging
             this->set_filename_template(value.as_string());
         }
 
-        if (auto interval = settings.try_get_as<dt::DateTimeInterval>(SETTING_ROTATION))
+        if (const types::Value &use_local_time = settings.get(SETTING_LOCAL_TIME))
         {
-            this->set_rotation_interval(interval.value());
+            this->set_use_local_time(use_local_time.as_bool());
         }
 
-        if (const types::Value &value = settings.get(SETTING_LOCAL_TIME))
+        if (const types::Value &compress_inactive = settings.get(SETTING_COMPRESS_INACTIVE))
         {
-            this->set_use_local_time(value.as_bool());
+            this->set_compress_inactive(compress_inactive.as_bool());
         }
+
+        if (auto rotation = settings.try_get_as<dt::DateTimeInterval>(SETTING_ROTATION))
+        {
+            this->set_rotation_interval(rotation.value());
+        }
+
+        if (auto expiration = settings.try_get_as<dt::DateTimeInterval>(SETTING_EXPIRATION))
+        {
+            this->set_expiration_interval(expiration.value());
+        }
+
+        if (!This::compress_thread.joinable())
+        {
+            This::compress_thread = std::thread(This::compress_worker);
+            this->compress_all();
+        }
+    }
+
+    std::string RotatingPath::sink_name() const
+    {
+        return this->sink_name_;
+    }
+
+    fs::path RotatingPath::default_suffix() const
+    {
+        return this->default_suffix_;
+    }
+
+    std::string RotatingPath::filename_template() const
+    {
+        return this->name_template_;
+    }
+
+    void RotatingPath::set_filename_template(const std::string &name_template)
+    {
+        this->name_template_ = name_template;
+    }
+
+    fs::path RotatingPath::current_path() const
+    {
+        return this->current_path_;
+    }
+
+    fs::path RotatingPath::log_folder() const
+    {
+        return this->log_folder_;
+    }
+
+    void RotatingPath::set_log_folder(const fs::path &path)
+    {
+        this->log_folder_ = path;
+    }
+
+    bool RotatingPath::use_local_time() const
+    {
+        return this->use_local_time_;
+    }
+
+    void RotatingPath::set_use_local_time(bool use_local_time)
+    {
+        this->use_local_time_ = use_local_time;
+    }
+
+    bool RotatingPath::compress_inactive() const
+    {
+        return this->compress_inactive_;
+    }
+
+    void RotatingPath::set_compress_inactive(bool compress_inactive)
+    {
+        this->compress_inactive_ = compress_inactive;
+    }
+
+    dt::DateTimeInterval RotatingPath::rotation_interval() const
+    {
+        return this->rotation_interval_;
+    }
+
+    void RotatingPath::set_rotation_interval(const dt::DateTimeInterval &interval)
+    {
+        this->rotation_interval_ = interval;
+    }
+
+    dt::DateTimeInterval RotatingPath::expiration_interval() const
+    {
+        return this->expiration_interval_;
+    }
+
+    void RotatingPath::set_expiration_interval(const dt::DateTimeInterval &interval)
+    {
+        this->expiration_interval_ = interval;
     }
 
     void RotatingPath::open_file(const dt::TimePoint &tp)
@@ -71,16 +172,30 @@ namespace core::logging
     void RotatingPath::rotate(const dt::TimePoint &tp)
     {
         this->close_file();
+        this->check_expiration(tp);
+        this->compress(this->current_path());
         this->open_file(tp);
     }
 
     void RotatingPath::check_rotation(const dt::TimePoint &tp)
     {
-        core::dt::TimePoint aligned = this->last_aligned(tp);
-        if (aligned > this->current_rotation())
+        if (this->rotation_interval())
         {
-            this->rotate(aligned);
+            core::dt::TimePoint last_aligned = dt::last_aligned(
+                tp,
+                this->rotation_interval(),
+                this->use_local_time());
+
+            if (last_aligned > this->current_rotation())
+            {
+                this->rotate(last_aligned);
+            }
         }
+    }
+
+    dt::TimePoint RotatingPath::current_rotation() const
+    {
+        return this->current_rotation_;
     }
 
     void RotatingPath::update_current_path(const dt::TimePoint &starttime,
@@ -98,68 +213,107 @@ namespace core::logging
     fs::path RotatingPath::construct_path(const dt::TimePoint &starttime) const
     {
         std::string log_name = dt::to_string(
-            starttime,                                                   // tp
-            0,                                                           // decimals
-            str::expand(this->filename_template(), this->expansions_));  // format
+            starttime,                                                  // tp
+            0,                                                          // decimals
+            str::expand(this->filename_template(), this->expansions_)); // format
 
         fs::path log_file = platform::path->extended_filename(
             log_name,
-            this->default_suffix_,
+            this->default_suffix(),
             true);
 
-        return fs::weakly_canonical(this->log_folder_ / log_file);
+        return fs::weakly_canonical(platform::path->log_folder() / log_file);
     }
 
-    std::string RotatingPath::sink_name() const
+    void RotatingPath::check_expiration(const dt::TimePoint &tp)
     {
-        return this->sink_name_;
+        if (this->expiration_interval())
+        {
+            core::dt::TimePoint expiration_time = dt::last_aligned(
+                tp,
+                this->expiration_interval(),
+                this->use_local_time());
+
+            fs::path pattern = fs::path("*") += this->default_suffix();
+
+            try
+            {
+                for (const fs::path &candidate_path : platform::path->locate(
+                         {pattern},
+                         platform::path->log_folder()))
+                {
+                    this->check_expiration(expiration_time, candidate_path);
+                }
+            }
+            catch (const fs::filesystem_error &e)
+            {
+                logf_warning("Failed to expire old logs: ", e);
+            }
+        }
     }
 
-    std::string RotatingPath::filename_template() const
+    void RotatingPath::check_expiration(const dt::TimePoint &expiration_time,
+                                        const fs::path &path)
     {
-        return this->name_template_;
+        if (auto stats = platform::path->try_get_stats(path))
+        {
+            if (stats->modify_time < expiration_time)
+            {
+                logf_info("Expiring log file %s", path);
+                fs::remove(path);
+            }
+        }
     }
 
-    void RotatingPath::set_filename_template(const std::string &name_template)
+    void RotatingPath::compress_all()
     {
-        this->name_template_ = name_template;
+        fs::path pattern = fs::path("*") += this->default_suffix();
+
+        for (const fs::path &candidate_path : platform::path->locate(
+                 {pattern},
+                 platform::path->log_folder()))
+        {
+            if (candidate_path != this->current_path())
+            {
+                logf_debug("Compressing log file: %s", candidate_path);
+                this->compress(candidate_path);
+            }
+        }
     }
 
-    bool RotatingPath::use_local_time() const
+    void RotatingPath::compress(const fs::path &logfile)
     {
-        return this->use_local_time_;
+        if ((logfile.extension() != COMPRESSION_SUFFIX) && fs::exists(logfile))
+        {
+            This::compress_queue.put(logfile);
+        }
     }
 
-    void RotatingPath::set_use_local_time(bool use_local_time)
+    void RotatingPath::compress_worker()
     {
-        this->use_local_time_ = use_local_time;
+        while (auto opt_logfile = This::compress_queue.get())
+        {
+            const fs::path &logfile = opt_logfile.value();
+            try
+            {
+                std::ifstream is(logfile);
+
+                fs::path outfile = logfile;
+                outfile += COMPRESSION_SUFFIX;
+                core::io::GZipOutputStream os(outfile);
+                os << is.rdbuf();
+                fs::remove(logfile);
+            }
+            catch (...)
+            {
+                logf_warning("Unable to compress log file %r: %s",
+                             logfile,
+                             std::current_exception());
+            }
+        }
     }
 
-    dt::DateTimeInterval RotatingPath::rotation_interval() const
-    {
-        return this->rotation_interval_;
-    }
+    types::BlockingQueue<fs::path> RotatingPath::compress_queue;
+    std::thread RotatingPath::compress_thread;
 
-    void RotatingPath::set_rotation_interval(const dt::DateTimeInterval &interval)
-    {
-        this->rotation_interval_ = interval;
-    }
-
-    dt::TimePoint RotatingPath::current_rotation() const
-    {
-        return this->current_rotation_;
-    }
-
-    dt::TimePoint RotatingPath::last_aligned(const dt::TimePoint &tp) const
-    {
-        return dt::last_aligned(
-            tp,
-            this->rotation_interval(),
-            this->use_local_time());
-    }
-
-    fs::path RotatingPath::current_path() const
-    {
-        return this->current_path_;
-    }
-}  // namespace core::logging
+} // namespace core::logging

@@ -10,7 +10,6 @@ add_subdirectory(common)
 
 ### Linux-specific VFS providers
 if(LINUX)
-  add_subdirectory(posix)
   add_subdirectory(linux)
 
   set(LIB_DEPS

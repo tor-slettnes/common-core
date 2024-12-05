@@ -10,6 +10,7 @@
 log sinks:
   csvfile:
     enabled      : true
+    compress after use: true
     name template: "{isodate}-{hour}{minute}{zoneoffset}.csv"
 
   lologger:
@@ -17,9 +18,11 @@ log sinks:
     type         : "sqlite3"
     #threshold    : DEBUG
     contract     : "text"
-    name template: "lologger/{hostname}-{year}-{month}.db"
-    rotation     : 1 month
+    name template: "lologger/{hostname}-{year}-{month}"
     local time   : true
+    rotate after : 1 month
+    compress after use: false
+    expire after : 1 year
     table name   : "Events"
     columns:
       # event_field, column_name, column_type[, extra_args]
@@ -29,6 +32,7 @@ log sinks:
       - ["text", "LogMessage", TEXT]
       - ["level", "Level", INTEGER]
       - ["host", "IP", TEXT]
+
 
     level map:
       NONE     : 0

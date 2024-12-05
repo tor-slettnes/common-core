@@ -203,7 +203,7 @@ namespace platform::vfs::grpc
 
     Directory ClientProvider::locate(
         const Path &root,
-        const std::vector<std::string> &filename_masks,
+        const core::types::PathList  &filename_masks,
         const core::types::TaggedValueList &attribute_filters,
         const OperationFlags &flags) const
     {

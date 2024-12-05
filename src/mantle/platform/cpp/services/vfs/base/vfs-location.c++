@@ -99,6 +99,11 @@ namespace platform::vfs
         return (*this)->virtualPath(relpath);
     }
 
+    fs::path ContextProxy::localRoot() const
+    {
+        return this->localPath();
+    }
+
     void ContextProxy::to_stream(std::ostream &stream) const
     {
         if (this->context)

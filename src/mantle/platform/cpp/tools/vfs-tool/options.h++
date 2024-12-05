@@ -45,6 +45,7 @@ private:
     void get_file_info();
     void get_dir();
     void list();
+    void locate();
     void copy();
     void move();
     void remove();

@@ -53,7 +53,7 @@ namespace platform::vfs::local
                                 const OperationFlags &flags) const override;
 
         Directory locate(const Path &vpath,
-                         const std::vector<std::string> &filename_masks,
+                         const core::types::PathList &filename_masks,
                          const core::types::TaggedValueList &attribute_filters,
                          const OperationFlags &flags) const override;
 
@@ -106,26 +106,6 @@ namespace platform::vfs::local
         virtual void remove(
             const Location &loc,
             const OperationFlags &flags) const;
-
-        virtual FileInfo read_stats(
-            const fs::path &localpath,
-            bool dereference = false) const;
-
-        virtual void locate_inside(
-            const fs::path &root,
-            const fs::path &relpath,
-            const std::vector<std::string> &filename_masks,
-            const core::types::TaggedValueList &attribute_filters,
-            bool with_attributes,
-            bool include_hidden,
-            bool ignore_case,
-            Directory *dir) const;
-
-        virtual bool filename_match(
-            const std::vector<std::string> &masks,
-            const fs::path &basename,
-            bool include_hidden,
-            bool ignore_case) const;
 
         virtual bool attribute_match(
             const core::types::TaggedValueList &attribute_filters,

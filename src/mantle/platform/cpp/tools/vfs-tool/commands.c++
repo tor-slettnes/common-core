@@ -65,6 +65,12 @@ void Options::add_commands()
         std::bind(&Options::list, this));
 
     this->add_command(
+        "locate",
+        {"CXT[:PATH]", "PATTERN", "..."},
+        "Locate files matching PATTERN within a folder",
+        std::bind(&Options::locate, this));
+
+    this->add_command(
         "copy",
         {"CXT:SRC", "CXT:TGT"},
         "Copy a file or folder",
@@ -202,6 +208,22 @@ void Options::list()
         std::cout << vpath / path << std::endl;
     }
 }
+
+void Options::locate()
+{
+    platform::vfs::Path vpath = this->get_vfspath_arg();
+    std::string mask = this->get_arg("PATTERN(s)");
+    core::types::PathList masks = {mask};
+    while (auto next_mask = this->next_arg())
+    {
+        masks.push_back(*next_mask);
+    }
+    for (const auto &[path, props]: platform::vfs::locate(vpath, masks))
+    {
+        std::cout << vpath / path << std::endl;
+    }
+}
+
 
 void Options::copy()
 {

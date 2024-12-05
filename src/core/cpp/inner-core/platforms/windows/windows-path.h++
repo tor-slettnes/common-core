@@ -18,6 +18,9 @@ namespace core::platform
     public:
         WindowsPathProvider(const std::string &programpath);
 
+        FileStats get_stats(const fs::path &path,
+                            bool dereference) const override;
+
         uint path_max_size() const noexcept override;
         std::string path_separator() const noexcept override;
         std::string dir_separator() const noexcept override;
@@ -33,9 +36,14 @@ namespace core::platform
         fs::path mktempdir(const fs::path &folder,
                            const std::string &prefix,
                            const std::string &suffix) override;
+        bool filename_match(
+            const fs::path &mask,
+            const fs::path &filename,
+            bool match_leading_period,
+            bool ignore_case) const override;
 
     protected:
         fs::path fs_root() const;
     };
 
-}  // namespace core::platform
+} // namespace core::platform

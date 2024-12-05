@@ -8,7 +8,7 @@
 set(TARGET cc_platform_vfs_local_linux)
 
 set(LIB_DEPS
-  cc_platform_vfs_local_posix
+  cc_platform_vfs_local_common
 )
 
 set(PKG_DEPS

@@ -6,11 +6,13 @@
 //==============================================================================
 
 #include "windows-path.h++"
+#include "string/misc.h++"
 
 #include <windows.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <io.h>
+#include <shlwapi.h>
 
 #ifdef _MSC_VER
 #include <BaseTsd.h>
@@ -23,6 +25,14 @@ namespace core::platform
     WindowsPathProvider::WindowsPathProvider(const std::string &programpath)
         : Super("WindowsPathProvider", programpath)
     {
+    }
+
+    FileStats PosixPathProvider::get_stats(
+        const fs::path &path,
+        bool dereference) const
+    {
+        // TODO: Implement better version for Windows
+        return Super::get_stats(path, dereference);
     }
 
     uint WindowsPathProvider::path_max_size() const noexcept
@@ -102,4 +112,12 @@ namespace core::platform
         return "C:";
     }
 
-}  // namespace core::platform
+    bool WindowsPathProvider::filename_match(
+        const fs::path &mask,
+        const fs::path &filename,
+        bool match_leading_period,
+        bool ignore_case) const
+    {
+        return PathMatchSpec(filename.c_str(), mask.c_str());
+    }
+} // namespace core::platform

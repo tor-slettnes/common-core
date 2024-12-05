@@ -40,33 +40,7 @@ namespace platform::vfs
     //==========================================================================
     // File information
 
-    using FileMode = std::uint32_t;
-    struct FileInfo
-    {
-        fs::file_type type = fs::file_type::none;  // regular, directory, etc..
-        std::size_t size = 0;                      // Size in bytes
-        fs::path link;                             // Target for symbolic links
-        FileMode mode = 0;                         // UNIX mode mask
-        bool readable = false;                     // Readable file/listable directory
-        bool writable = false;                     // Writable file/modifiable directory
-        core::platform::UID uid = 0;               // Owner numeric ID
-        core::platform::GID gid = 0;               // Group numeric ID
-        std::string owner;                         // Owner name
-        std::string group;                         // Group name
-        core::dt::TimePoint accessTime;            // Last access
-        core::dt::TimePoint modifyTime;            // Last modification
-        core::dt::TimePoint createTime;            // Creation
-        core::types::KeyValueMap attributes;       // Custom file attributes
-    };
-
-    core::types::TaggedValueList &operator<<(
-        core::types::TaggedValueList &tvlist,
-        const FileInfo &fileinfo);
-
-    std::ostream &operator<<(
-        std::ostream &stream,
-        const FileInfo &fileinfo);
-
+    using FileInfo = core::platform::FileStats;
 
     //==========================================================================
     // Volume information
@@ -77,7 +51,7 @@ namespace platform::vfs
     // Directory listing
 
     using Directory = std::map<fs::path, FileInfo>;
-    using DirectoryEntry = std::pair<fs::path, vfs::FileInfo>;
+    using DirectoryEntry = std::pair<fs::path, FileInfo>;
     using DirectoryList = std::vector<DirectoryEntry>;
 
     //==========================================================================
@@ -120,7 +94,7 @@ namespace platform::vfs
     using UniqueReader = std::unique_ptr<std::istream>;
     using UniqueWriter = std::unique_ptr<std::ostream>;
 
-}  // namespace platform::vfs
+} // namespace platform::vfs
 
 namespace std
 {
@@ -154,7 +128,7 @@ namespace std
             }
         }
     };
-}  // namespace std
+} // namespace std
 
 namespace std::filesystem
 {
@@ -166,4 +140,4 @@ namespace std::filesystem
         std::ostream &stream,
         const space_info &volinfo);
 
-}
+} // namespace std::filesystem

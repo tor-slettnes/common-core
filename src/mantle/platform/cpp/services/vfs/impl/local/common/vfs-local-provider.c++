@@ -21,7 +21,7 @@
 // #include <grp.h>          // getgruid(3)
 // #include <fnmatch.h>      // fnmatch(3)
 
-#include <cstring>  // std::memset()
+#include <cstring> // std::memset()
 
 namespace platform::vfs::local
 {
@@ -130,7 +130,7 @@ namespace platform::vfs::local
     {
         Location loc = this->location(vpath, false);
         fs::path lpath = loc.localPath();
-        FileInfo stats = this->read_stats(lpath, flags.dereference);
+        FileInfo stats = core::platform::path->get_stats(lpath, flags.dereference);
         if (flags.with_attributes)
         {
             stats.attributes = AttributeStore(lpath, stats.type).get_attributes();
@@ -151,8 +151,8 @@ namespace platform::vfs::local
             std::string basename = pi.path().filename();
             if (flags.include_hidden || (basename.substr(0, 1) != "."))
             {
-                dir[basename] = this->read_stats(lpath / basename,
-                                                 flags.dereference);
+                dir[basename] = core::platform::path->get_stats(lpath / basename,
+                                                                flags.dereference);
             }
         }
 
@@ -172,21 +172,38 @@ namespace platform::vfs::local
     }
 
     Directory LocalProvider::locate(
-        const Path &root,
-        const std::vector<std::string> &filename_masks,
-        const core::types::TaggedValueList &attributes,
+        const Path &virtual_dir,
+        const std::vector<fs::path> &filename_masks,
+        const core::types::TaggedValueList &attribute_filters,
         const OperationFlags &flags) const
     {
-        Location loc = this->location(root, false);
+        Location loc = this->location(virtual_dir, false);
+        fs::path local_dir = loc.localPath();
+
+        std::vector<fs::directory_entry> entries = core::platform::path->locate(
+            filename_masks,
+            local_dir,
+            flags.include_hidden,
+            flags.ignore_case);
+
         Directory dir;
-        LocalProvider::locate_inside(loc.localPath(),
-                                     "",
-                                     filename_masks,
-                                     attributes,
-                                     flags.with_attributes,
-                                     flags.include_hidden,
-                                     flags.ignore_case,
-                                     &dir);
+        for (const fs::directory_entry &entry : entries)
+        {
+            core::types::KeyValueMap attributes;
+            if (flags.with_attributes || !attribute_filters.empty())
+            {
+                attributes = this->get_attributes(entry.path(), entry.status().type());
+            }
+
+            if (attribute_filters.empty() ||
+                this->attribute_match(attribute_filters, attributes))
+            {
+                FileInfo stats = core::platform::path->get_stats(entry.path(), flags.dereference);
+                stats.attributes = std::move(attributes);
+                dir.insert_or_assign(fs::relative(entry.path(), local_dir),
+                                     std::move(stats));
+            }
+        }
         return dir;
     }
 
@@ -485,99 +502,6 @@ namespace platform::vfs::local
         }
     }
 
-    FileInfo LocalProvider::read_stats(
-        const fs::path &localpath,
-        bool dereference) const
-    {
-        std::error_code ec;
-        fs::file_status status =
-            dereference ? fs::symlink_status(localpath, ec)
-                        : fs::status(localpath, ec);
-
-        std::size_t size =
-            fs::is_regular_file(status) ? fs::file_size(localpath, ec)
-                                        : 0;
-
-        // core::dt::TimePoint last_write_time =
-        //     fs::to_sys(fs::last_write_time(localpath));
-
-        return {
-            .type = status.type(),
-            .size = size,
-            .link = core::platform::path->readlink(localpath),
-            .mode = 0,
-            .readable = ::access(localpath.c_str(), R_OK) == 0,
-            .writable = ::access(localpath.c_str(), W_OK) == 0,
-            // .uid = 0,
-            // .gid = 0,
-            // .owner = "",
-            // .group = "",
-            // .accessTime = {},
-            // .modfiyTime = {},
-            // .createTime = {},
-            // .attributes = {}
-        };
-    }
-
-    void LocalProvider::locate_inside(
-        const fs::path &root,
-        const fs::path &relpath,
-        const std::vector<std::string> &filename_masks,
-        const core::types::TaggedValueList &attribute_filters,
-        bool with_attributes,
-        bool include_hidden,
-        bool ignore_case,
-        Directory *dir) const
-    {
-        for (auto &pi : fs::directory_iterator(root / relpath))
-        {
-            fs::path basename = pi.path().filename();
-            if (pi.status().type() == fs::file_type::directory)
-            {
-                this->locate_inside(root,
-                                    relpath / basename,
-                                    filename_masks,
-                                    attribute_filters,
-                                    with_attributes,
-                                    include_hidden,
-                                    ignore_case,
-                                    dir);
-            }
-            else if (this->filename_match(filename_masks, basename, include_hidden, ignore_case))
-            {
-                core::types::KeyValueMap attributes;
-                if (with_attributes || attribute_filters.size())
-                {
-                    attributes = this->get_attributes(pi.path(), pi.status().type());
-                }
-
-                if (attribute_filters.empty() ||
-                    attribute_match(attribute_filters, attributes))
-                {
-                    FileInfo stats = read_stats(pi.path());
-                    stats.attributes = std::move(attributes);
-                    dir->insert_or_assign(relpath / basename, std::move(stats));
-                }
-            }
-        }
-    }
-
-    bool LocalProvider::filename_match(
-        const std::vector<std::string> &masks,
-        const fs::path &basename,
-        bool include_hidden,
-        bool ignore_case) const
-    {
-        for (const std::string &mask : masks)
-        {
-            if (mask == basename)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     bool LocalProvider::attribute_match(
         const core::types::TaggedValueList &attribute_filters,
         const core::types::KeyValueMap &attributes) const
@@ -615,4 +539,4 @@ namespace platform::vfs::local
     {
         AttributeStore(localpath, type_hint).clear_attributes();
     }
-}  // namespace platform::vfs::local
+} // namespace platform::vfs::local

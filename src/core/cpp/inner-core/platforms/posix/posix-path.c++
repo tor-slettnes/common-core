@@ -8,11 +8,11 @@
 #include "posix-path.h++"
 
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <string.h>
 #include <fcntl.h>
-#include <unistd.h>  // readlink()
-#include <limits.h>  // PATH_MAX
+#include <unistd.h> // readlink()
+#include <limits.h> // PATH_MAX
+#include <fnmatch.h>
 #include <pwd.h>
 #include <grp.h>
 
@@ -20,6 +20,40 @@
 
 namespace core::platform
 {
+    FileStats PosixPathProvider::get_stats(
+        const fs::path &path,
+        bool dereference) const
+    {
+        struct stat statbuf;
+        std::memset(&statbuf, 0, sizeof(statbuf));
+        // int (*statmethod)(const char *pathname, struct stat *statbuf);
+
+        auto statmethod = dereference ? ::stat : ::lstat;
+        if (statmethod(path.c_str(), &statbuf) == -1)
+        {
+            throw fs::filesystem_error(
+                strerror(errno),
+                path,
+                std::error_code(errno, std::generic_category()));
+        }
+
+        return {
+            .type = this->path_type(statbuf.st_mode),
+            .size = static_cast<std::size_t>(statbuf.st_size),
+            .link = this->readlink(path, statbuf),
+            .mode = statbuf.st_mode,
+            .readable = ::access(path.c_str(), R_OK) == 0,
+            .writable = ::access(path.c_str(), W_OK) == 0,
+            .uid = statbuf.st_uid,
+            .gid = statbuf.st_gid,
+            .owner = user->get_username(statbuf.st_uid),
+            .group = user->get_groupname(statbuf.st_gid),
+            .access_time = dt::to_timepoint(statbuf.st_atim),
+            .modify_time = dt::to_timepoint(statbuf.st_mtim),
+            .create_time = dt::to_timepoint(statbuf.st_ctim),
+        };
+    }
+
     uint PosixPathProvider::path_max_size() const noexcept
     {
         return PATH_MAX;
@@ -62,18 +96,15 @@ namespace core::platform
 
     fs::path PosixPathProvider::readlink(const fs::path &path) const noexcept
     {
-        fs::path linktarget;
         struct stat statbuf;
-        if ((lstat(path.c_str(), &statbuf) != -1) &&
-            ((statbuf.st_mode & S_IFMT) == S_IFLNK))
+        if (lstat(path.c_str(), &statbuf) != -1)
         {
-            ssize_t bufsiz = (statbuf.st_size != 0 ? statbuf.st_size + 1 : this->path_max_size());
-
-            std::vector<char> buf(bufsiz);
-            ssize_t nbytes = ::readlink(path.c_str(), buf.data(), bufsiz);
-            linktarget.assign(buf.data(), buf.data() + nbytes);
+            return this->readlink(path, statbuf);
         }
-        return linktarget;
+        else
+        {
+            return {};
+        }
     }
 
     fs::path PosixPathProvider::mktemp(const fs::path &folder,
@@ -108,7 +139,69 @@ namespace core::platform
             throw fs::filesystem_error(
                 strerror(errno),
                 path_template,
-                std::error_code(errno, std::system_category()));
+                std::error_code(errno, std::generic_category()));
         }
     }
-}  // namespace core::platform
+
+    bool PosixPathProvider::filename_match(
+        const fs::path &mask,
+        const fs::path &filename,
+        bool match_leading_period,
+        bool ignore_case) const
+    {
+        int flags = (match_leading_period ? 0 : FNM_PERIOD) |
+                    (ignore_case ? FNM_CASEFOLD : 0);
+
+        switch (int status = ::fnmatch(mask.c_str(), filename.c_str(), flags))
+        {
+        case 0:
+            return true;
+
+        case FNM_NOMATCH:
+            return false;
+
+        default:
+            throw fs::filesystem_error(
+                strerror(status),
+                filename,
+                fs::path(mask),
+                std::error_code(status, std::generic_category()));
+        }
+    }
+
+    fs::file_type PosixPathProvider::path_type(mode_t mode) const
+    {
+        static const std::unordered_map<mode_t, fs::file_type> modemap = {
+            {S_IFREG, fs::file_type::regular},
+            {S_IFDIR, fs::file_type::directory},
+            {S_IFLNK, fs::file_type::symlink},
+            {S_IFCHR, fs::file_type::character},
+            {S_IFBLK, fs::file_type::block},
+            {S_IFIFO, fs::file_type::fifo},
+            {S_IFSOCK, fs::file_type::socket}};
+
+        try
+        {
+            return modemap.at(mode & S_IFMT);
+        }
+        catch (const std::out_of_range &e)
+        {
+            return fs::file_type::none;
+        }
+    }
+
+    fs::path PosixPathProvider::readlink(const fs::path &path,
+                                         const struct stat &statbuf) const noexcept
+    {
+        fs::path linktarget;
+        if ((statbuf.st_mode & S_IFMT) == S_IFLNK)
+        {
+            ssize_t size = (statbuf.st_size != 0 ? statbuf.st_size + 1 : this->path_max_size());
+            std::vector<char> buf(size);
+            ssize_t nbytes = ::readlink(path.c_str(), buf.data(), size);
+            linktarget.assign(buf.data(), buf.data() + nbytes);
+        }
+        return linktarget;
+    }
+
+} // namespace core::platform
