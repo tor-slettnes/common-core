@@ -222,7 +222,7 @@ namespace core::logging
             this->default_suffix(),
             true);
 
-        return fs::weakly_canonical(platform::path->log_folder() / log_file);
+        return fs::weakly_canonical(this->log_folder() / log_file);
     }
 
     void RotatingPath::check_expiration(const dt::TimePoint &tp)
@@ -240,7 +240,7 @@ namespace core::logging
             {
                 for (const fs::path &candidate_path : platform::path->locate(
                          {pattern},
-                         platform::path->log_folder()))
+                         this->log_folder()))
                 {
                     this->check_expiration(expiration_time, candidate_path);
                 }
@@ -271,7 +271,7 @@ namespace core::logging
 
         for (const fs::path &candidate_path : platform::path->locate(
                  {pattern},
-                 platform::path->log_folder()))
+                 this->log_folder()))
         {
             if (candidate_path != this->current_path())
             {
