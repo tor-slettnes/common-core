@@ -13,8 +13,10 @@ if(BUILD_PROTOBUF)
   add_subdirectory(protobuf)
 endif()
 
+if(BUILD_AVRO)
+  add_subdirectory(avro)
+endif()
+
 if(BUILD_PYTHON_IO)
   add_subdirectory(python)
 endif()
-
-

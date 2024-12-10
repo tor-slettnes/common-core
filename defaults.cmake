@@ -122,6 +122,7 @@ option(BUILD_PYTHON_WHEELS     "Build and install Python distributions (`.whl`)"
 option(INSTALL_PYTHON_MODULES  "Install/package Python source modules" ON)
 
 ### Messaging frameworks
+option(BUILD_KAFKA       "Build support for Apache Kafka" ON)
 option(BUILD_GRPC        "Build support for gRPC Remote Procedure Calls" ON)
 option(BUILD_ZMQ         "Build support for ZeroMQ" ON)
 option(BUILD_HTTP        "Build support for HTTP requests, incl. REST API" ON)
@@ -130,6 +131,7 @@ option(BUILD_RTI_LOGGER  "Build support for RTI Distributed Logger" OFF)
 
 ### Object serialization
 option(BUILD_SQLITE3     "Build support for SQLite3 DB" ON)
+option(BUILD_AVRO        "Build support for Apache AVRO" ON)
 option(BUILD_PROTOBUF    "Build support for Google Protocol Buffers" ON)
 option(BUILD_DDS         "Build support for Distributed Data Service (DDS)" ${BUILD_RTI_DDS})
 option(BUILD_PYTHON_IO   "Build Python embedded environment for C++" ON)

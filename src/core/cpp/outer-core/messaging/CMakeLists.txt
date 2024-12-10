@@ -24,3 +24,7 @@ if(BUILD_HTTP)
   add_subdirectory(http)
 endif()
 
+if(BUILD_KAFKA)
+  add_subdirectory(kafka)
+endif()
+
