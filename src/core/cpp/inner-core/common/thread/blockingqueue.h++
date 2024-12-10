@@ -7,6 +7,7 @@
 
 #pragma once
 #include "types/getter.h++"
+#include "platform/init.h++"
 
 #include <chrono>
 #include <optional>
@@ -30,9 +31,9 @@ namespace core::types
         /// @brief How to handle `.put()` invocatinos into a full queue
         enum class OverflowDisposition
         {
-            BLOCK,           // Block the calling thread until space is available
-            DISCARD_ITEM,    // Discard the new item instead of placing into queue
-            DISCARD_OLDEST,  // Discard the oldest item in the queue to make space
+            BLOCK,          // Block the calling thread until space is available
+            DISCARD_ITEM,   // Discard the new item instead of placing into queue
+            DISCARD_OLDEST, // Discard the oldest item in the queue to make space
         };
 
     protected:
@@ -123,12 +124,14 @@ namespace core::types
         ///    Maximum queue size, after which the oldest element is removed
         ///    from the queue. Zero (the default) means unlimited size.
         /// @param[in] overflow_disposition
-        ///    How to handle `.put()` invocatinos into a full queue
+        ///    How to handle `.put()` invocations into a full queue
+        /// @param[in] closewatch
+        ///    How frequently to check for application shutdown while blocking for input
 
         BlockingQueue(
             std::size_t maxsize = 0,
             OverflowDisposition overflow_disposition = OverflowDisposition::DISCARD_OLDEST,
-            std::chrono::system_clock::duration closewatch = std::chrono::seconds(5))
+            std::chrono::system_clock::duration closewatch = std::chrono::seconds(2))
             : BlockingQueueBase(maxsize, overflow_disposition),
               closewatch(closewatch)
         {
@@ -271,12 +274,14 @@ namespace core::types
             std::optional<T> value;
             {
                 std::unique_lock<std::mutex> lock(this->mtx);
-                while (this->queue.empty() && !this->closed_)
+                while (this->queue.empty() &&
+                       !this->closed_ &&
+                       !platform::signal_shutdown.emitted())
                 {
                     this->item_available.wait_for(lock, this->closewatch);
                 }
 
-                if (this->queue.size())
+                if (!this->queue.empty())
                 {
                     value = std::move(this->queue.front());
                     this->discard_oldest();
@@ -349,4 +354,4 @@ namespace core::types
         std::chrono::system_clock::duration closewatch;
     };
 
-}  // namespace core::types
+} // namespace core::types

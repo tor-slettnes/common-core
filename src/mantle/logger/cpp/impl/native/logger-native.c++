@@ -29,19 +29,19 @@ namespace logger::native
     void Logger::submit(
         const core::status::Event::ptr &event)
     {
-        core::logging::message_dispatcher.submit(event);
+        core::logging::dispatcher.submit(event);
     }
 
     bool Logger::add_sink(
         const SinkSpec &spec)
     {
-        core::logging::Sink::ptr sink = core::logging::message_dispatcher.get_sink(spec.sink_id);
+        core::logging::Sink::ptr sink = core::logging::dispatcher.get_sink(spec.sink_id);
 
         if (!sink)
         {
             sink = this->new_sink(spec);
             sink->open();
-            return (core::logging::message_dispatcher.add_sink(sink) != nullptr);
+            return (core::logging::dispatcher.add_sink(sink) != nullptr);
         }
         return false;
     }
@@ -57,13 +57,13 @@ namespace logger::native
                 id);
         }
 
-        return core::logging::message_dispatcher.remove_sink(id);
+        return core::logging::dispatcher.remove_sink(id);
     }
 
     SinkSpec Logger::get_sink_spec(
         const SinkID &id) const
     {
-        if (core::logging::Sink::ptr sink = core::logging::message_dispatcher.get_sink(id))
+        if (core::logging::Sink::ptr sink = core::logging::dispatcher.get_sink(id))
         {
             return this->sink_spec(sink);
         }
@@ -76,9 +76,9 @@ namespace logger::native
     SinkSpecs Logger::get_all_sink_specs() const
     {
         SinkSpecs specs;
-        specs.reserve(core::logging::message_dispatcher.sinks().size());
+        specs.reserve(core::logging::dispatcher.sinks().size());
 
-        for (const auto &[sink_id, sink] : core::logging::message_dispatcher.sinks())
+        for (const auto &[sink_id, sink] : core::logging::dispatcher.sinks())
         {
             specs.push_back(this->sink_spec(sink));
         }
@@ -88,7 +88,7 @@ namespace logger::native
 
     SinkIDs Logger::list_sinks() const
     {
-        return core::logging::message_dispatcher.sinks().keys();
+        return core::logging::dispatcher.sinks().keys();
     }
 
     SinkTypes Logger::list_sink_types() const

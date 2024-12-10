@@ -51,6 +51,7 @@ namespace core::logging
         void set_log_folder(const fs::path &path);
 
         fs::path current_path() const;
+        fs::path current_suffix() const;
 
         bool use_local_time() const;
         void set_use_local_time(bool use_local_time);
@@ -79,7 +80,7 @@ namespace core::logging
         void check_expiration(const dt::TimePoint &expiration_time,
                               const fs::path &path);
 
-        void compress_all();
+        void compress_all_inactive();
         void compress(const fs::path &logfile);
         static void compress_worker();
 

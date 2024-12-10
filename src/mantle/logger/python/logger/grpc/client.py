@@ -11,7 +11,7 @@ from cc.messaging.grpc import Client as BaseClient
 from cc.protobuf.wellknown import empty
 from cc.protobuf.status import Event, Level, encodeLogLevel
 from cc.protobuf.datetime import Interval, encodeInterval
-from cc.protobuf.logger import ListenerSpec, SinkSpec, ListSinkRequest, \
+from cc.protobuf.logger import ListenerSpec, SinkSpec, \
     ColumnType, ColumnSpec
 from cc.protobuf.variant import PyTaggedValueList, encodeTaggedValueList
 
@@ -21,7 +21,7 @@ from typing import Optional
 #===============================================================================
 # Logger Client
 
-class Client (API, BaseClient):
+class LoggerClient (API, BaseClient):
     '''
     Client for Logger service.
     '''
@@ -173,7 +173,7 @@ class Client (API, BaseClient):
 
           ```python
 
-          logger = cc.logger.Client()
+          logger = cc.logger.LoggerClient()
           logger.add_sink(
               'my_data_logger',
               sink_type = 'csv',
@@ -226,14 +226,17 @@ class Client (API, BaseClient):
 
         return self.stub.get_sink(request)
 
-    def list_sinks(self, verbose=False) -> list[SinkSpec]:
+    def get_all_sinks(self) -> list[SinkSpec]:
+        '''
+        Retrieve specifications for all active log sinks
+        '''
+        return self.stub.get_all_sinks(empty).specs
+
+    def list_sinks(self) -> list[str]:
         '''
         List available log sinks.
-
-        If `verbose` is True, include detailed specifications for each sink.
         '''
-        request = ListSinkRequest(verbose = verbose)
-        return self.stub.list_sinks(request).specs
+        return self.stub.list_sinks(empty).sink_names
 
 
     def list_sink_types(self) -> list[str]:

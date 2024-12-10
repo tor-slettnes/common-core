@@ -7,6 +7,4 @@
 
 target_sources(${TARGET} PRIVATE
   dispatcher.c++
-  sync-dispatcher.c++
-  async-dispatcher.c++
 )

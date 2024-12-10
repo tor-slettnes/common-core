@@ -5,6 +5,7 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
+
 #pragma once
 #include "string/format.h++"
 
@@ -25,7 +26,7 @@ namespace core::signal
     using Handle = std::string;
     using Futures = std::vector<std::future<void>>;
 
-    // Synchronized to `cc.protobuf.signal.MappingAction` in `signal.proto`.
+    // Synchronized to `picarro.protobuf.signal.MappingAction` in `signal.proto`.
     // We do not use that here, since ProtoBuf support is optional, not part of
     // the "inner core".
 
@@ -55,6 +56,7 @@ namespace core::signal
 
         void set_caching(bool caching);
         std::string name() const;
+        virtual size_t connection_count() const = 0;
 
     protected:
         Handle unique_handle() const;
@@ -110,15 +112,22 @@ namespace core::signal
         size_t emit();
 
         /// @brief
+        ///     Check whether signal has been emitted since its creation
+        /// @return
+        ///     `true` if signal has been emitted.
+        bool emitted() const;
+
+        /// @brief
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
-        size_t connection_count();
+        size_t connection_count() const override;
 
     protected:
         void callback(const std::string &receiver, const Slot &method);
 
     private:
+        bool emitted_;
         std::unordered_map<std::string, Slot> slots_;
     };
 
@@ -211,7 +220,7 @@ namespace core::signal
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
-        size_t connection_count();
+        size_t connection_count() const override;
 
     protected:
         virtual void emit_cached_to(const std::string &handle,
@@ -379,7 +388,7 @@ namespace core::signal
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
-        size_t connection_count();
+        size_t connection_count() const override;
 
         /// @brief
         ///     Update cache, emit deltas as addition/update/removal signals
@@ -415,6 +424,6 @@ namespace core::signal
     // I/O stream support
 
     std::ostream &operator<<(std::ostream &stream, MappingAction change);
-}  // namespace core::signal
+} // namespace core::signal
 
 #include "signaltemplate.i++"

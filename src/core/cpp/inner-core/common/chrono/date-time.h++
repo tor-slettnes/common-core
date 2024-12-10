@@ -31,6 +31,11 @@ namespace core
         constexpr auto DEFAULT_DURATION_FORMAT = "%H:%M:%S";
         constexpr auto JS_FORMAT = "%FT%T";
 
+        // Lower limit for interpreting scalar timestamps as milliseconds since epoch.
+        // Values up to this limit are interpreted as seconds (ending on November 16, 5138).
+        // Higher values are interpreted as milliseconds (starting on March 3, 1973).
+        constexpr double EPOCH_MILLISECONDS_LOWER_LIMIT = 1e11;
+
         // typedef std::chrono::system_clock Clock;
         // typedef Clock::duration Duration;
         // typedef Clock::time_point TimePoint;
@@ -278,17 +283,27 @@ namespace core
         /// Convert from Duration (std::chrono::system_clock::duration) to double
         double to_double(const Duration &d);
 
-        /// Convert from `struct timespec` to Duration
-        Duration to_duration(const timespec &ts);
+        //--------------------------------------------------------------------------
+        // Duration conversions
 
-        /// Convert from seconds as a real number to Duration
-        Duration to_duration(double seconds);
-
-        /// Convert from milliseconds (Java style timestamp) to Duration
+        /// Convert from milliseconds (Java style) to Duration
         Duration ms_to_duration(std::int64_t milliseconds);
 
         /// Convert from seconds and nanoseconds as integers to Duration
-        Duration to_duration(time_t seconds, long nanoseconds = 0);
+        Duration to_duration(time_t seconds, long nanoseconds);
+
+        /// Convert from a scalar value to Duration
+        /// @param[in] scalar
+        ///     Input value
+        /// @param[in] multiplier
+        ///     Number of seconds per time unit, e.g., 0.001 to represent milliseconds.
+        Duration to_duration(double scalar, double multiplier);
+
+        // Convert from seconds to Duration
+        Duration to_duration(double seconds);
+
+        /// Convert from `struct timespec` to Duration
+        Duration to_duration(const timespec &ts);
 
         /// Convert from string representation (`HH:MM:SS.sss`) to Duration
         Duration to_duration(
@@ -304,47 +319,36 @@ namespace core
             const std::string_view &text,
             const std::string &format);
 
-        std::optional<TimePoint> try_to_timepoint(
-            const std::string_view &input,
-            const std::optional<bool> &local = {});
+        //--------------------------------------------------------------------------
+        // Timepoint conversions
 
-        std::optional<TimePoint> try_to_timepoint(
-            const std::string_view &s,
-            const std::string &format,
-            const std::optional<bool> &local = {});
-
-        TimePoint to_timepoint(
-            const std::string_view &s,
-            const std::optional<bool> &local = {},
-            const TimePoint &fallback = {});
-
-        TimePoint to_timepoint(
-            const std::string_view &s,
-            const std::string &format,
-            const std::optional<bool> &local = {},
-            const TimePoint &fallback = {});
-
-        /// Convert from "struct tm" to TimePoint, or fallback if the time is zero.
-        TimePoint to_timepoint(
-            const tm &dt,
-            bool local = true);
-
-        /// Convert from "struct timespec" to TimePoint, or fallback if the time is zero.
-        TimePoint to_timepoint(
-            const timespec &ts);
-
-        /// Convert from seconds as a real number to timepoint
-        TimePoint to_timepoint(
-            double seconds);
+        /// Convert a scalar timestampto a TimePoint.
+        ///
+        /// @param[in] timestamp
+        ///     Time units since UNIX Epoch
+        ///
+        /// @param[in] multiplier
+        ///     Number of seconds per time unit, e.g. 1.0 for seconds or 0.001
+        ///     for milliseconds.
+        ///
+        /// If `multiplier` is zero, the timestamp is interpreted as seconds if
+        /// it is less than 1e11 (100,000,000,000), corresponding to November 16
+        /// in the year 5138, or as as milliseconds if it is equal or higher to
+        /// this value, giving a lower bound of March 3, 1973.
+        TimePoint scalar_to_timepoint(double scalar,
+                                      double multiplier = 0.0);
 
         /// Convert from milliseconds (Java style timestamp) to TimePoint
-        TimePoint ms_to_timepoint(
-            std::int64_t milliseconds);
+        TimePoint ms_to_timepoint(std::int64_t milliseconds);
 
         /// Convert from seconds and nanoseconds to TimePoint, or fallback if the time is zero.
-        TimePoint to_timepoint(
-            time_t seconds,
-            long nanoseconds = 0);
+        TimePoint to_timepoint(time_t seconds, long nanoseconds);
+
+        /// Convert from "struct timespec" to TimePoint, or fallback if the time is zero.
+        TimePoint to_timepoint(const timespec &ts);
+
+        /// Convert from "struct tm" to TimePoint, or fallback if the time is zero.
+        TimePoint to_timepoint(const tm &dt, bool local = true);
 
         /// @brief
         ///    Convert from year/month/day/hour/minute/second/fraction to timepoint.
@@ -373,6 +377,29 @@ namespace core
                                std::uint32_t second,
                                double fraction,
                                std::optional<Duration> tz_offset);
+
+        TimePoint to_timepoint(
+            const std::string_view &s,
+            const std::optional<bool> &local = {},
+            const TimePoint &fallback = {});
+
+        TimePoint to_timepoint(
+            const std::string_view &s,
+            const std::string &format,
+            const std::optional<bool> &local = {},
+            const TimePoint &fallback = {});
+
+        std::optional<TimePoint> try_to_timepoint(
+            const std::string_view &input,
+            const std::optional<bool> &local = {});
+
+        std::optional<TimePoint> try_to_timepoint(
+            const std::string_view &s,
+            const std::string &format,
+            const std::optional<bool> &local = {});
+
+        //--------------------------------------------------------------------------
+        // Zone alignment and conversions
 
         /// Return the most recent midnight prior to a given timestamp,
         /// in either the local timezone or UTC.

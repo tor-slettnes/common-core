@@ -113,12 +113,13 @@ namespace core::http
                  bool fail_on_error = false,
                  ResponseCode *response_code = nullptr) const;
 
-    private:
+    protected:
         void check_content_type(
             const std::string &location,
             const std::string &received_content_type,
             const std::string &expected_content_type) const;
 
+    private:
         static bool perform_request(
             const std::string &url,
             CURL *handle,

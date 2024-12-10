@@ -66,7 +66,7 @@ namespace core::argparse
 
     void CommonOptions::enact()
     {
-        logging::message_dispatcher.initialize();
+        logging::dispatcher.initialize();
     }
 
     void CommonOptions::fail(const std::string &message,
@@ -277,7 +277,7 @@ namespace core::argparse
             {
                 if (enabled)
                 {
-                    logging::message_dispatcher.add_sink(
+                    logging::dispatcher.add_sink(
                         factory->create_sink(sink_id, sink_settings));
                 }
             },

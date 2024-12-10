@@ -16,13 +16,15 @@ RUN apt-get install -y \
     libavahi-client-dev     \
     libzmq3-dev             \
     libcurl4-gnutls-dev     \
-    libglibmm-2.4-dev       \
-    libgrpc++-dev           \
-    libgtest-dev            \
-    libnm-dev               \
-    libprotobuf-dev         \
-    libudev-dev             \
     libwebsocketpp-dev      \
+    libprotobuf-dev         \
+    libgrpc++-dev           \
+    libavro-dev             \
+    librdkafka-dev          \
+    libudev-dev             \
+    libglibmm-2.4-dev       \
+    libnm-dev               \
+    libgtest-dev            \
     locales-all             \
     pkgconf                 \
     protobuf-compiler       \
@@ -34,8 +36,10 @@ RUN apt-get install -y \
     python3-yaml            \
     python3-grpcio          \
     python3-protobuf        \
-    python3-dev             \
-    python3-zmq
+    python3-zmq             \
+    python3-avro            \
+    python3-kafka           \
+    python3-dev
 
 # Duplicate external account
 

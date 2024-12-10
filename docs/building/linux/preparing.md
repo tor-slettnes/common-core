@@ -63,10 +63,22 @@ to run the following commands to install the required dependencies.
   sudo apt install libgtest-dev
   ```
 
+* HTTP requests, including REST API (CMake option `BUILD_HTTP`)
+
+  ```bash
+  sudo apt install libcurl4-gnutls-dev
+  ```
+
+* ProtoBuf message format (CMake option `BUILD_PROTOBUF`)
+
+  ```bash
+  sudo apt install protobuf-compiler
+  ```
+
 * ZeroMQ communication, including ZeroMQ with Protocol Buffer payloads (CMake option `BUILD_ZMQ`)
 
   ```bash
-  sudo apt install cppzmq-dev protobuf-compiler
+  sudo apt install cppzmq-dev
   ```
 
 * gRPC communication (CMake option `BUILD_GRPC`)
@@ -75,10 +87,10 @@ to run the following commands to install the required dependencies.
   sudo apt install protobuf-compiler-grpc libgrpc++-dev
   ```
 
-* HTTP requests, including REST API (CMake option `BUILD_HTTP`)
+* Kafka communication (CMake options `BUILD_KAFKA`, `BUILD_AVRO`)
 
   ```bash
-  sudo apt install libcurl4-gnutls-dev
+  sudo apt install librdkafka-dev libavro-dev
   ```
 
 * Network Manager integration over D-Bus (CMake option `BUILD_DBUS`):
@@ -109,7 +121,7 @@ to run the following commands to install the required dependencies.
 ### Python runtime requirements
 
   ```bash
-  sudo apt install python3-protobuf python3-grpcio python3-zmq
+  sudo apt install python3-protobuf python3-grpcio python3-zmq python3-kafka python3-avro
   ```
 
 ### Dependencies used to generate developer/reference documentation:
@@ -121,7 +133,7 @@ to run the following commands to install the required dependencies.
 ### Third-party developer references:
 
    ```bash
-   sudo apt install devhelp libglibmm-2.4-doc
+   sudo apt install devhelp libglibmm-2.4-doc cppreference-doc-en-html
    ```
 
 ## Linux managed `chroot` environment{#schroot}

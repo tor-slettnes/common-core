@@ -65,7 +65,7 @@ namespace core::logging
                        << "|"
                        << msg->scopename_or("(no scope)")
                        << "|"
-                       << msg->path().filename().string()
+                       << msg->path().string()
                        << ":"
                        << msg->lineno()
                        << ":"

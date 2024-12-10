@@ -12,6 +12,7 @@
 
 #include <memory>
 #include <set>
+#include <mutex>
 
 namespace core::logging
 {
@@ -34,10 +35,14 @@ namespace core::logging
         virtual void deinitialize();
 
         virtual bool is_applicable(const types::Loggable &item) const;
-        virtual void submit(const types::Loggable::ptr &item) = 0;
+        virtual void submit(const types::Loggable::ptr &item);
 
     protected:
         SinkMap sinks_;
+
+    private:
+        std::mutex mtx_;
     };
 
+    extern Dispatcher dispatcher;
 }  // namespace core::logging

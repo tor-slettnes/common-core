@@ -19,7 +19,10 @@ namespace core::application
     {
         ::signal(SIGINT, SIG_IGN);
         ::signal(SIGTERM, SIG_IGN);
-        core::platform::signal_shutdown.emit();
+        if (!core::platform::signal_shutdown.emitted())
+        {
+            core::platform::signal_shutdown.emit();
+        }
     }
 
     void initialize(int argc, char **argv)
@@ -38,8 +41,13 @@ namespace core::application
 
     void deinitialize()
     {
+        if (!core::platform::signal_shutdown.emitted())
+        {
+            core::platform::signal_shutdown.emit();
+        }
+
         core::platform::exit_tasks.execute();
-        logging::message_dispatcher.deinitialize();
+        logging::dispatcher.deinitialize();
         core::platform::unregister_providers();
     }
 }  // namespace core::application

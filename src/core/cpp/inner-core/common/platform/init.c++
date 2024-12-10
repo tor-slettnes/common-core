@@ -68,6 +68,7 @@ namespace core::platform
     {
         for (const Task *task : *this)
         {
+           log_trace("Executing task: ", task->handle);
             (*task)();
         }
     }

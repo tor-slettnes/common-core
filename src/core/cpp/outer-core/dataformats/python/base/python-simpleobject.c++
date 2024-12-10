@@ -41,6 +41,7 @@ namespace core::python
 
     SimpleObject &SimpleObject::operator=(const SimpleObject &other) noexcept
     {
+        Py_XDECREF(this->cobj);
         this->cobj = other.cobj;
         Py_INCREF(this->cobj);
         return *this;

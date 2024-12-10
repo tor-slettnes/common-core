@@ -14,7 +14,7 @@
 #include <regex>
 #include <string>
 #include <typeinfo>
-#include <type_traits>  // std::is_same_v<T, U>
+#include <type_traits> // std::is_same_v<T, U>
 #include <unordered_map>
 #include <vector>
 #include <set>
@@ -38,7 +38,6 @@ namespace core::str
 #endif
 
     inline const std::string UNICODE_BOM = "\uFEFF";
-
 
     /// Convert string to uppercase in place, using the specified locale or current locale.
     /// @param[in,out] s String to convert.
@@ -415,8 +414,7 @@ namespace core::str
         size_t width = sizeof(T) * 2,
         std::string prefix = "0x");
 
-}  // namespace core::str
-
+} // namespace core::str
 
 // Inline definitions
 #include "misc.i++"

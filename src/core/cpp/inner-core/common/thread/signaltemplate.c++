@@ -76,7 +76,8 @@ namespace core::signal
     /// @brief Signal without data
 
     VoidSignal::VoidSignal(const std::string &id)
-        : Super(id, false)
+        : Super(id, false),
+          emitted_(false)
     {
     }
 
@@ -109,11 +110,17 @@ namespace core::signal
         {
             futures.push_back(std::async(&VoidSignal::callback, this, cb.first, cb.second));
         }
+        this->emitted_ = true;
         this->mtx_.unlock();
         return this->collect_futures(futures);
     }
 
-    size_t VoidSignal::connection_count()
+    bool VoidSignal::emitted() const
+    {
+        return this->emitted_;
+    }
+
+    size_t VoidSignal::connection_count() const
     {
         return this->slots_.size();
     }

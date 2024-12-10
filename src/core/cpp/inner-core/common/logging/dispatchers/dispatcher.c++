@@ -84,4 +84,18 @@ namespace core::logging
         }
         return false;
     }
-}  // namespace core::logging
+
+    void Dispatcher::submit(const types::Loggable::ptr &item)
+    {
+        std::lock_guard<std::mutex> lck(this->mtx_);
+        for (const auto &[sink_id, sink] : this->sinks())
+        {
+            if (sink->is_applicable(*item))
+            {
+                sink->capture(item);
+            }
+        }
+    }
+
+    Dispatcher dispatcher;
+} // namespace core::logging

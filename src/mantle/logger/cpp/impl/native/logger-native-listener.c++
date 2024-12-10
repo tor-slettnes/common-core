@@ -39,12 +39,12 @@ namespace logger::native
     void EventListener::open()
     {
         LogSink::open();
-        core::logging::message_dispatcher.add_sink(this->shared_from_this());
+        core::logging::dispatcher.add_sink(this->shared_from_this());
     }
 
     void EventListener::close()
     {
-        core::logging::message_dispatcher.remove_sink(this->shared_from_this());
+        core::logging::dispatcher.remove_sink(this->shared_from_this());
         BlockingQueue::close();
         LogSink::close();
     }

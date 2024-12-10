@@ -103,7 +103,7 @@ namespace core::signal
     }
 
     template <class DataType>
-    inline size_t DataSignal<DataType>::connection_count()
+    inline size_t DataSignal<DataType>::connection_count() const
     {
         return this->slots_.size();
     }
@@ -339,7 +339,7 @@ namespace core::signal
     }
 
     template <class DataType, class KeyType>
-    inline size_t MappingSignal<DataType, KeyType>::connection_count()
+    inline size_t MappingSignal<DataType, KeyType>::connection_count() const
     {
         return this->slots_.size();
     }

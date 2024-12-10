@@ -10,6 +10,7 @@
 #include "string/format.h++"
 #include "status/exceptions.h++"
 #include "platform/symbols.h++"
+#include "platform/init.h++"
 
 namespace core
 {

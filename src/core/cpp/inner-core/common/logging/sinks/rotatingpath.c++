@@ -85,7 +85,6 @@ namespace core::logging
         if (!This::compress_thread.joinable())
         {
             This::compress_thread = std::thread(This::compress_worker);
-            this->compress_all();
         }
     }
 
@@ -112,6 +111,11 @@ namespace core::logging
     fs::path RotatingPath::current_path() const
     {
         return this->current_path_;
+    }
+
+    fs::path RotatingPath::current_suffix() const
+    {
+        return this->current_path().extension();
     }
 
     fs::path RotatingPath::log_folder() const
@@ -167,13 +171,13 @@ namespace core::logging
     void RotatingPath::open_file(const dt::TimePoint &tp)
     {
         this->update_current_path(tp);
+        this->check_expiration(tp);
+        this->compress_all_inactive();
     }
 
     void RotatingPath::rotate(const dt::TimePoint &tp)
     {
         this->close_file();
-        this->check_expiration(tp);
-        this->compress(this->current_path());
         this->open_file(tp);
     }
 
@@ -234,7 +238,7 @@ namespace core::logging
                 this->expiration_interval(),
                 this->use_local_time());
 
-            fs::path pattern = fs::path("*") += this->default_suffix();
+            fs::path pattern = fs::path("*") += this->current_suffix();
 
             try
             {
@@ -265,9 +269,9 @@ namespace core::logging
         }
     }
 
-    void RotatingPath::compress_all()
+    void RotatingPath::compress_all_inactive()
     {
-        fs::path pattern = fs::path("*") += this->default_suffix();
+        fs::path pattern = fs::path("*") += this->current_suffix();
 
         for (const fs::path &candidate_path : platform::path->locate(
                  {pattern},

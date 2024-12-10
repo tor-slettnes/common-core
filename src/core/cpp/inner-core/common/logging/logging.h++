@@ -66,7 +66,7 @@
 
 #pragma once
 #include "message/builder.h++"
-#include "dispatchers/sync-dispatcher.h++"
+#include "dispatchers/dispatcher.h++"
 
 #include <cassert>
 
@@ -82,7 +82,7 @@
 
 #define CUSTOM_LOG_MESSAGE(level, scope, timepoint, path, lineno, function) \
     core::logging::MessageBuilder::create_shared(                           \
-        &core::logging::message_dispatcher,                                 \
+        &core::logging::dispatcher,                                         \
         level,                                                              \
         scope,                                                              \
         timepoint,                                                          \

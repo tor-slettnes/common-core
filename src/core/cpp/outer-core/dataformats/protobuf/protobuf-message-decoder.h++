@@ -11,15 +11,27 @@
 
 namespace protobuf
 {
-    //--------------------------------------------------------------------------
-    // MessageDecoder helper class
+    /// Helper class to convert arbitrary ProtoBuf messages to a
+    /// `core::types::Value` variant, e.g. for logging or printing.
 
     class MessageDecoder
     {
     public:
+        /// Constructor.
+        /// @param[in] msg
+        ///     ProtoBuf message to decode.
+        /// @param[in] enums_as_strings
+        ///     Whether to convert `enum` values to strings rather than unsigned
+        ///     integers.
         MessageDecoder(const google::protobuf::Message &msg,
                        bool enums_as_strings = true);
 
+        /// Convert the ProtoBuf message to a `core::types::Value` variant.
+        ///
+        /// Well-known message types from Google as well as our custom `Value`
+        /// and `ValueList` message types are fully decoded. Other message types
+        /// are converted to a `core::types::KeyValueMap` instance, where
+        /// individual fields are decomposed recursively.
         core::types::Value to_value() const;
 
     private:
@@ -46,8 +58,8 @@ namespace protobuf
 
     private:
         const google::protobuf::Message &msg;
-        const google::protobuf::Reflection &ref;
-        const google::protobuf::Descriptor &descriptor;
+        const google::protobuf::Reflection *reflection;
+        const google::protobuf::Descriptor *descriptor;
         bool enums_as_strings;
     };
 
@@ -57,7 +69,7 @@ namespace protobuf
     core::types::Value to_value(const google::protobuf::Message &msg,
                                 bool enums_as_strings = true);
 
-}  // namespace protobuf
+} // namespace protobuf
 
 /// Add C++ output stream support for ProtoBuf messages
 namespace google::protobuf

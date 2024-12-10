@@ -9,6 +9,7 @@
 #include "logging/logging.h++"
 #include "parsers/json/reader.h++"
 #include "parsers/json/writer.h++"
+#include "status/exceptions.h++"
 
 namespace core::http
 {
@@ -21,6 +22,52 @@ namespace core::http
           HTTPClient(this->real_url(base_url)),
           content_type(content_type)
     {
+    }
+
+    types::Value RESTClient::get_json(
+        const std::string &path,
+        const types::TaggedValueList &query,
+        bool fail_on_error,
+        uint max_attempts,
+        const core::dt::Duration &retry_interval,
+        ResponseCode *response_code) const
+    {
+        std::string location = join_path_query(path, query);
+        std::stringstream response_stream;
+        std::string content_type;
+        bool done = false;
+        uint attempt = 0;
+
+        for (uint attempt = 1; !done; attempt++)
+        {
+            try
+            {
+                this->get(location,         // location
+                          &content_type,    // content_type
+                          nullptr,          //  header_stream
+                          &response_stream, // content_stream
+                          fail_on_error,    // fail_on_error,
+                          response_code);   // response_code
+                done = true;
+            }
+            catch (const exception::FailedPrecondition &e)
+            {
+                logf_info("HTTP request failed %d times: %s: %s",
+                          attempt, this->url(location), e);
+                if (attempt == max_attempts)
+                {
+                    throw;
+                }
+                else
+                {
+                    logf_info("Trying again in %s", retry_interval);
+                    std::this_thread::sleep_for(retry_interval);
+                }
+            }
+        }
+
+        this->check_content_type(location, content_type, this->content_type);
+        return json::fast_reader.read_stream(response_stream);
     }
 
     types::Value RESTClient::get_json(
@@ -57,11 +104,11 @@ namespace core::http
 
         return json::fast_reader.read_stream(
             this->post(
-                path,                // location
-                this->content_type,  // content_type
-                request.str(),       // data
-                this->content_type,  // expected_content_type
-                fail_on_error,       // fail_on_error
-                response_code));     // response_code
+                path,               // location
+                this->content_type, // content_type
+                request.str(),      // data
+                this->content_type, // expected_content_type
+                fail_on_error,      // fail_on_error
+                response_code));    // response_code
     }
-}  // namespace core::http
+} // namespace core::http

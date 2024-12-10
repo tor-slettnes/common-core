@@ -192,7 +192,7 @@ namespace core
                 .tm_isdst = -1,
             };
 
-            return to_timepoint(mktime(aligned, local));
+            return to_timepoint(mktime(aligned, local), 0);
         }
 
         //==========================================================================
@@ -437,13 +437,9 @@ namespace core
             return std::chrono::duration<double>(d).count();
         }
 
-        Duration to_duration(double seconds)
-        {
-            return to_duration(static_cast<std::time_t>(seconds),
-                               static_cast<long>((seconds - (int)seconds) * 1e9));
-        }
+        //--------------------------------------------------------------------------
+        // Duration conversions
 
-        /// Convert from milliseconds (Java style timestamp) to Duration
         Duration ms_to_duration(std::int64_t milliseconds)
         {
             return std::chrono::duration_cast<Duration>(
@@ -454,7 +450,17 @@ namespace core
         {
             return std::chrono::duration_cast<Duration>(
                 std::chrono::seconds(seconds) + std::chrono::nanoseconds(nanoseconds));
-            // return std::chrono::seconds(seconds) + std::chrono::nanoseconds(nanoseconds);
+        }
+
+        Duration to_duration(double scalar, double multiplier)
+        {
+            return to_duration(scalar * multiplier);
+        }
+
+        Duration to_duration(double seconds)
+        {
+            return to_duration(static_cast<std::time_t>(seconds),
+                               static_cast<long>((seconds - (int)seconds) * 1e9));
         }
 
         Duration to_duration(const timespec &ts)
@@ -467,8 +473,8 @@ namespace core
                              const Duration fallback)
         {
             return format
-                ? try_to_duration(input, format.value()).value_or(dt::Duration::zero())
-                : try_to_duration(input).value_or(dt::Duration::zero());
+                       ? try_to_duration(input, format.value()).value_or(dt::Duration::zero())
+                       : try_to_duration(input).value_or(dt::Duration::zero());
         }
 
         std::optional<Duration> try_to_duration(const std::string_view &input)
@@ -512,6 +518,86 @@ namespace core
             }
         }
 
+        //--------------------------------------------------------------------------
+        // Timepoint conversions
+
+        TimePoint scalar_to_timepoint(double scalar,
+                                      double multiplier)
+        {
+            if (!multiplier)
+            {
+                multiplier =
+                    (scalar < EPOCH_MILLISECONDS_LOWER_LIMIT) ? 1.0
+                                                              : 0.001;
+            }
+
+            return TimePoint(to_duration(scalar, multiplier));
+        }
+
+        TimePoint ms_to_timepoint(std::int64_t milliseconds)
+        {
+            return TimePoint(ms_to_duration(milliseconds));
+        }
+
+        TimePoint to_timepoint(time_t seconds, long nanoseconds)
+        {
+            return TimePoint(to_duration(seconds, nanoseconds));
+        }
+
+        TimePoint to_timepoint(const timespec &ts)
+        {
+            return to_timepoint(ts.tv_sec, ts.tv_nsec);
+        }
+
+        TimePoint to_timepoint(const std::tm &dt, bool local)
+        {
+            return to_timepoint(dt::mktime(dt, local), 0);
+        }
+
+        TimePoint to_timepoint(std::int32_t year,
+                               std::uint32_t month,
+                               std::uint32_t day,
+                               std::uint32_t hour,
+                               std::uint32_t minute,
+                               std::uint32_t second,
+                               double fraction,
+                               std::optional<Duration> tz_offset)
+        {
+            std::tm tm_struct = {
+                .tm_sec = static_cast<int>(second),
+                .tm_min = static_cast<int>(minute),
+                .tm_hour = static_cast<int>(hour),
+                .tm_mday = static_cast<int>(day) - TM_DAY_OFFSET,
+                .tm_mon = static_cast<int>(month) - TM_MONTH_OFFSET,
+                .tm_year = static_cast<int>(year) - TM_YEAR_OFFSET,
+            };
+            bool local = !tz_offset.has_value();
+            double seconds = dt::mktime(tm_struct, local) + fraction;
+            TimePoint tp = scalar_to_timepoint(seconds, 1.0);
+            if (!local)
+            {
+                tp += tz_offset.value();
+            }
+            return tp;
+        }
+
+        TimePoint to_timepoint(
+            const std::string_view &input,
+            const std::optional<bool> &local,
+            const TimePoint &fallback)
+        {
+            return try_to_timepoint(input, local).value_or(fallback);
+        }
+
+        TimePoint to_timepoint(
+            const std::string_view &input,
+            const std::string &format,
+            const std::optional<bool> &local,
+            const TimePoint &fallback)
+        {
+            return try_to_timepoint(input, format, local).value_or(fallback);
+        }
+
         std::optional<TimePoint> try_to_timepoint(
             const std::string_view &input,
             const std::optional<bool> &local)
@@ -544,9 +630,9 @@ namespace core
                     opt_zone_offset);                             // tz_offset
             }
 
-            else if (auto opt_seconds = str::try_convert_to<double>(input))
+            else if (auto opt_scalar = str::try_convert_to<double>(input))
             {
-                return to_timepoint(opt_seconds.value());
+                return scalar_to_timepoint(opt_scalar.value());
             }
             else
             {
@@ -570,75 +656,8 @@ namespace core
             }
         }
 
-        TimePoint to_timepoint(
-            const std::string_view &input,
-            const std::optional<bool> &local,
-            const TimePoint &fallback)
-        {
-            return try_to_timepoint(input, local).value_or(fallback);
-        }
-
-        TimePoint to_timepoint(
-            const std::string_view &input,
-            const std::string &format,
-            const std::optional<bool> &local,
-            const TimePoint &fallback)
-        {
-            return try_to_timepoint(input, format, local).value_or(fallback);
-        }
-
-        TimePoint to_timepoint(const std::tm &dt, bool local)
-        {
-            return to_timepoint(dt::mktime(dt, local), 0);
-        }
-
-        TimePoint to_timepoint(const timespec &ts)
-        {
-            return to_timepoint(ts.tv_sec, ts.tv_nsec);
-        }
-
-        TimePoint to_timepoint(double seconds)
-        {
-            return TimePoint(to_duration(seconds));
-        }
-
-        /// Convert from milliseconds (Java style timestamp) to TimePoint
-        TimePoint ms_to_timepoint(std::int64_t milliseconds)
-        {
-            return TimePoint(ms_to_duration(milliseconds));
-        }
-
-        TimePoint to_timepoint(time_t seconds, long nanoseconds)
-        {
-            return TimePoint(to_duration(seconds, nanoseconds));
-        }
-
-        TimePoint to_timepoint(std::int32_t year,
-                               std::uint32_t month,
-                               std::uint32_t day,
-                               std::uint32_t hour,
-                               std::uint32_t minute,
-                               std::uint32_t second,
-                               double fraction,
-                               std::optional<Duration> tz_offset)
-        {
-            std::tm tm_struct = {
-                .tm_sec = static_cast<int>(second),
-                .tm_min = static_cast<int>(minute),
-                .tm_hour = static_cast<int>(hour),
-                .tm_mday = static_cast<int>(day) - TM_DAY_OFFSET,
-                .tm_mon = static_cast<int>(month) - TM_MONTH_OFFSET,
-                .tm_year = static_cast<int>(year) - TM_YEAR_OFFSET,
-            };
-            bool local = !tz_offset.has_value();
-            double seconds = dt::mktime(tm_struct, local) + fraction;
-            TimePoint tp = to_timepoint(seconds);
-            if (!local)
-            {
-                tp += tz_offset.value();
-            }
-            return tp;
-        }
+        //--------------------------------------------------------------------------
+        // Zone alignment and conversions
 
         TimePoint last_midnight(const TimePoint &tp, bool local)
         {
