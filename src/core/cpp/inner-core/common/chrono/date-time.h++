@@ -17,7 +17,6 @@
 #include <optional>
 #include <ostream>
 
-// using suseconds_t = std::int32_t;
 using namespace std::literals::chrono_literals;
 
 namespace core

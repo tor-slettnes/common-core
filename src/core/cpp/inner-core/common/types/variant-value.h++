@@ -38,12 +38,15 @@ namespace core::types
         Value(const std::vector<Byte> &bytes);
         Value(const std::string_view &view);
 
+        Value(const ValueListPtr &list);
         Value(const ValueList &list);
         Value(ValueList &&list);
 
+        Value(const KeyValueMapPtr &kvmap);
         Value(const KeyValueMap &kvmap);
         Value(KeyValueMap &&kvmap);
 
+        Value(const TaggedValueListPtr &tvlist);
         Value(const TaggedValueList &tvlist);
         Value(TaggedValueList &&tvlist);
 
@@ -51,6 +54,12 @@ namespace core::types
         template <class T>
         Value(const std::optional<T> &opt)
             : Value(opt.has_value() ? Value(opt.value()) : Value())
+        {
+        }
+
+        template <class T>
+        Value(std::optional<T> &&opt)
+            : Value(opt.has_value() ? Value(std::move(opt.value())) : Value())
         {
         }
 
@@ -196,7 +205,7 @@ namespace core::types
         T convert_to(const T &fallback = {}) const;
     };
 
-    extern const Value emptyvalue;
+    extern const ValueBase emptyvalue;
 
 }  // namespace core::types
 

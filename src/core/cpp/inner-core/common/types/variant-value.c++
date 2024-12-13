@@ -77,6 +77,11 @@ namespace core::types
     {
     }
 
+    Value::Value(const ValueListPtr &list)
+        : ValueBase(list ? ValueBase(list) : ValueBase())
+    {
+    }
+
     Value::Value(const ValueList &list)
         : ValueBase(std::make_shared<ValueList>(list))
     {
@@ -87,6 +92,11 @@ namespace core::types
     {
     }
 
+    Value::Value(const KeyValueMapPtr &kvmap)
+        : ValueBase(kvmap ? ValueBase(kvmap) : ValueBase())
+    {
+    }
+
     Value::Value(const KeyValueMap &kvmap)
         : ValueBase(std::make_shared<KeyValueMap>(kvmap))
     {
@@ -94,6 +104,11 @@ namespace core::types
 
     Value::Value(KeyValueMap &&kvmap)
         : ValueBase(std::make_shared<KeyValueMap>(std::move(kvmap)))
+    {
+    }
+
+    Value::Value(const TaggedValueListPtr &tvlist)
+        : ValueBase(tvlist ? ValueBase(tvlist) : ValueBase())
     {
     }
 
@@ -1118,6 +1133,6 @@ namespace core::types
         return {};
     }
 
-    const Value emptyvalue;
+    const ValueBase emptyvalue;
 
 } // namespace core::types

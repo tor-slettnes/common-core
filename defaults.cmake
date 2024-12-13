@@ -131,7 +131,7 @@ option(BUILD_RTI_LOGGER  "Build support for RTI Distributed Logger" OFF)
 
 ### Object serialization
 option(BUILD_SQLITE3     "Build support for SQLite3 DB" ON)
-option(BUILD_AVRO        "Build support for Apache AVRO" ON)
+option(BUILD_AVRO        "Build support for Apache AVRO" ${BUILD_KAFKA})
 option(BUILD_PROTOBUF    "Build support for Google Protocol Buffers" ON)
 option(BUILD_DDS         "Build support for Distributed Data Service (DDS)" ${BUILD_RTI_DDS})
 option(BUILD_PYTHON_IO   "Build Python embedded environment for C++" ON)

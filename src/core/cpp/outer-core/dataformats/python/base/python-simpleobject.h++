@@ -29,7 +29,7 @@ namespace core::python
         ///     RAII constructor for C PyObject* instances.
         /// @param[in] cobj
         ///     PyObject* instance
-        /// @param[in] add_reference
+        /// @param[in] borrowed
         ///     The object reference is borrowed, increment reference count
         SimpleObject(PyObject *cobj, bool borrowed = false);
 
