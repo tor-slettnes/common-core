@@ -275,7 +275,7 @@ namespace protobuf
             break;
         }
 
-        if (msg.optional_band_case())
+        if (msg.has_band())
         {
             data->band = decoded<::platform::netconfig::WirelessBandSelection>(msg.band());
         }

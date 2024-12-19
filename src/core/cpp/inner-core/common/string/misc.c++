@@ -11,8 +11,9 @@
 #include <locale>
 #include <string>
 #include <codecvt>
+#include <numeric>
 #include <cwchar>
-#include <utility> // std::move()
+#include <utility>  // std::move()
 
 std::string operator""_u(const char *str, std::size_t len)
 {
@@ -76,13 +77,13 @@ namespace core::str
         char *to_next = to.data();
 
         std::codecvt_base::result result = f.out(
-            mb,                    // state
-            from,                  // from
-            from + size,           // from_end
-            from_next,             // from_next
-            to.data(),             // to
-            to.data() + to.size(), // to_end
-            to_next);              // to_next
+            mb,                     // state
+            from,                   // from
+            from + size,            // from_end
+            from_next,              // from_next
+            to.data(),              // to
+            to.data() + to.size(),  // to_end
+            to_next);               // to_next
 
         if (result == std::codecvt_base::result::error)
         {
@@ -115,13 +116,13 @@ namespace core::str
         wchar_t *to_next = to.data();
 
         std::codecvt_base::result result = f.in(
-            mb,                    // state
-            from,                  // from
-            from + size,           // from_end
-            from_next,             // from_next
-            to.data(),             // to
-            to.data() + to.size(), // to_end
-            to_next);              // to_next
+            mb,                     // state
+            from,                   // from
+            from + size,            // from_end
+            from_next,              // from_next
+            to.data(),              // to
+            to.data() + to.size(),  // to_end
+            to_next);               // to_next
 
         if (result == std::codecvt_base::result::ok)
         {
@@ -206,24 +207,24 @@ namespace core::str
             parts.reserve(maxsplits + 1);
         }
 
-        size_t pos = 0;
-        size_t end = string.find(delimiter);
+        size_t part_start = 0;
+        size_t part_end = string.find(delimiter);
         uint splits = 0;
 
-        while ((end != std::string::npos) &&
+        while ((part_end != std::string::npos) &&
                (maxsplits == 0 || splits < maxsplits))
         {
-            if (keep_empties || end > pos)
+            if (keep_empties || part_end > part_start)
             {
-                parts.push_back(string.substr(pos, end - pos));
+                parts.push_back(string.substr(part_start, part_end - part_start));
                 splits++;
             }
-            pos = end + delimiter.length();
-            end = string.find(delimiter, pos);
+            part_start = part_end + delimiter.length();
+            part_end = string.find(delimiter, part_start);
         }
-        if (keep_empties || string.length() > pos)
+        if (keep_empties || part_start < string.length())
         {
-            parts.push_back(string.substr(pos));
+            parts.push_back(string.substr(part_start));
         }
         return parts;
     }
@@ -270,7 +271,6 @@ namespace core::str
     }
 
     std::string join(const std::vector<std::string> &vector,
-
                      const std::string &delimiter,
                      bool keep_empties,
                      bool quoted)
@@ -304,7 +304,7 @@ namespace core::str
                     out.push_back(*escape);
                     out.push_back(c);
                 }
-                else if (c == '\\') // implied from above: !escape
+                else if (c == '\\')  // implied from above: !escape
                 {
                     escape = c;
                 }
@@ -616,8 +616,7 @@ namespace core::str
             std::all_of(
                 input.begin(),
                 input.end(),
-                [](char c) -> bool
-                {
+                [](char c) -> bool {
                     return std::isalnum(static_cast<unsigned char>(c)) || (c == '_');
                 }));
     }
@@ -672,22 +671,95 @@ namespace core::str
     std::string common_prefix(
         const std::vector<std::string> &strings)
     {
-        for (uint pos = 0;; pos++)
+        if (std::size_t common_length = common_prefix_length(strings))
         {
-            char common_char = '\0';
-            for (const std::string &s : strings)
+            return strings.front().substr(0, common_length);
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::size_t common_prefix_length(
+        const std::vector<std::string> &strings)
+    {
+        if (!strings.empty())
+        {
+            char common_char = -1;
+            for (uint pos = 0; common_char != '\0'; pos++)
             {
-                if ((s.length() <= pos) || (common_char && (common_char != s.at(pos))))
+                char common_char = '\0';
+                for (const std::string &s : strings)
                 {
-                    return s.substr(0, pos);
-                }
-                else
-                {
-                    common_char = s.at(pos);
+                    if ((s.length() <= pos) || (common_char && (common_char != s.at(pos))))
+                    {
+                        return pos;
+                    }
+                    else
+                    {
+                        common_char = s.at(pos);
+                    }
                 }
             }
         }
-        return "";
+        return 0;
     }
 
-} // namespace core::str
+    [[nodiscard]] std::string common_prefix(
+        const std::vector<std::string> &strings,
+        const std::string &delimiter)
+    {
+        if (std::size_t common_length = common_prefix_length(strings, delimiter))
+        {
+            return strings.front().substr(0, common_length);
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    [[nodiscard]] std::size_t common_prefix_length(
+        const std::vector<std::string> &strings,
+        const std::string &delimiter)
+    {
+        std::vector<std::string> common_words;
+        bool first = true;
+
+        for (const std::string &string : strings)
+        {
+            auto words = split(string, delimiter, common_words.size());
+            if (first)
+            {
+                common_words = std::move(words);
+                first = false;
+            }
+            else
+            {
+                auto cit = common_words.begin();
+                auto wit = words.begin();
+
+                while ((cit != common_words.end()) && (wit != words.end()))
+                {
+                    if (*cit != *wit)
+                    {
+                        break;
+                    }
+
+                    cit++, wit++;
+                }
+                common_words.erase(cit, common_words.end());
+            }
+        }
+
+        return std::accumulate(
+            common_words.begin(),
+            common_words.end(),
+            0,
+            [&](std::size_t total_size, const std::string &word) -> std::size_t {
+                return total_size + word.size() + delimiter.size();
+            });
+    }
+
+}  // namespace core::str

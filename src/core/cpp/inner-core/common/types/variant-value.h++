@@ -26,6 +26,7 @@ namespace core::types
         using Super::Super;
 
         Value();
+        explicit Value(bool value);
         Value(std::uint8_t value);
         Value(std::uint16_t value);
         Value(std::uint32_t value);
@@ -34,19 +35,23 @@ namespace core::types
         Value(std::int16_t value);
         Value(std::int32_t value);
         Value(std::int64_t value);
-        Value(char *cstring);
+        Value(const char *cstring);
         Value(const std::vector<Byte> &bytes);
         Value(const std::string_view &view);
+        Value(const std::string &string);
 
-        Value(const ValueListPtr &list);
+        explicit Value(const ValueBase &value);
+        explicit Value(ValueBase &&value);
+
+        Value(ValueListPtr list);
         Value(const ValueList &list);
         Value(ValueList &&list);
 
-        Value(const KeyValueMapPtr &kvmap);
+        Value(KeyValueMapPtr kvmap);
         Value(const KeyValueMap &kvmap);
         Value(KeyValueMap &&kvmap);
 
-        Value(const TaggedValueListPtr &tvlist);
+        Value(TaggedValueListPtr tvlist);
         Value(const TaggedValueList &tvlist);
         Value(TaggedValueList &&tvlist);
 
@@ -62,6 +67,8 @@ namespace core::types
             : Value(opt.has_value() ? Value(std::move(opt.value())) : Value())
         {
         }
+
+        virtual bool operator==(const Value &other) const;
 
         void clear();
         void reset();
@@ -204,6 +211,9 @@ namespace core::types
         template <class T>
         T convert_to(const T &fallback = {}) const;
     };
+
+    //--------------------------------------------------------------------------
+    // Non-member contents
 
     extern const ValueBase emptyvalue;
 

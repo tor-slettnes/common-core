@@ -11,6 +11,7 @@ set(TARGET core-tests)
 add_executable(${TARGET}
   test-string-misc.c++
   test-string-expand.c++
+  test-variant.c++
 )
 
 target_link_libraries(${TARGET}

@@ -162,11 +162,12 @@ namespace core::json
     TokenParser::TokenPair TokenParser::parse_number()
     {
         int c = '\0';
+        int last_c = '\0';
         bool got_sign = (*this->input->token().begin() == '-');
         bool got_real = (*this->input->token().begin() == '.');
         bool got_hex = false;
 
-        for (bool is_numeric = true; is_numeric;)
+        for (bool is_numeric = true; is_numeric; last_c = c)
         {
             c = this->input->getc();
             switch (c)
@@ -186,6 +187,18 @@ namespace core::json
             case 'X':
                 got_hex = true;
                 this->input->append_to_token(c);
+                break;
+
+            case '-':
+            case '+':
+                if (std::toupper(last_c) == 'E')
+                {
+                    this->input->append_to_token(c);
+                }
+                else
+                {
+                    is_numeric = false;
+                }
                 break;
 
             default:

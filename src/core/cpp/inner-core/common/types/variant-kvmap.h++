@@ -13,11 +13,11 @@
 
 namespace core::types
 {
-    class KeyValueMap : public std::map<Key, Value>,
+    class KeyValueMap : public std::unordered_map<Key, Value>,
                         public Streamable,
                         public enable_create_shared<KeyValueMap>
     {
-        using Super = std::map<Key, Value>;
+        using Super = std::unordered_map<Key, Value>;
 
     protected:
         using Super::Super;

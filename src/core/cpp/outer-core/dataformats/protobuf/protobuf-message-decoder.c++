@@ -8,6 +8,7 @@
 #include "protobuf-message-decoder.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-standard-types.h++"
+#include "protobuf-enum.h++"
 #include "protobuf-inline.h++"
 #include "platform/symbols.h++"
 #include "logging/logging.h++"
@@ -133,8 +134,8 @@ namespace protobuf
         }
         else
         {
-            if (this->reflection->HasField(this->msg, &fd) || // Value is present
-                (fd.containing_oneof() == nullptr))           // Not optional
+            if (this->reflection->HasField(this->msg, &fd) ||  // Value is present
+                (fd.containing_oneof() == nullptr))            // Not optional
             {
                 result = this->single_field_to_value(fd);
             }
@@ -177,7 +178,9 @@ namespace protobuf
         case google::protobuf::FieldDescriptor::TYPE_ENUM:
             if (this->enums_as_strings)
             {
-                return this->reflection->GetEnum(this->msg, &fd)->name();
+                return enum_name(
+                    this->reflection->GetEnumValue(this->msg, &fd),
+                    fd.enum_type());
             }
             else
             {
@@ -237,7 +240,9 @@ namespace protobuf
         case google::protobuf::FieldDescriptor::TYPE_ENUM:
             if (this->enums_as_strings)
             {
-                return this->reflection->GetRepeatedEnum(this->msg, &fd, repeat_index)->name();
+                return enum_name(
+                    this->reflection->GetRepeatedEnumValue(this->msg, &fd, repeat_index),
+                    fd.enum_type());
             }
             else
             {
@@ -309,7 +314,7 @@ namespace protobuf
     {
         return MessageDecoder(msg, enums_as_strings).to_value();
     }
-} // namespace protobuf
+}  // namespace protobuf
 
 /// Additional convenience operators for ProtoBuf messages
 namespace google::protobuf
@@ -318,4 +323,4 @@ namespace google::protobuf
     {
         return stream << ::protobuf::to_value(msg);
     }
-} // namespace google::protobuf
+}  // namespace google::protobuf

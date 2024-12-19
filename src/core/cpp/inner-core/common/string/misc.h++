@@ -14,7 +14,7 @@
 #include <regex>
 #include <string>
 #include <typeinfo>
-#include <type_traits> // std::is_same_v<T, U>
+#include <type_traits>  // std::is_same_v<T, U>
 #include <unordered_map>
 #include <vector>
 #include <set>
@@ -394,6 +394,48 @@ namespace core::str
     [[nodiscard]] std::string common_prefix(
         const std::vector<std::string> &strings);
 
+    /// @brief Find length the largest common leading substring of several strings
+    /// @param[in] strings
+    ///     Strings that presumably begin with a common suffix
+    /// @return
+    ///     Length of largest common leading substring
+    [[nodiscard]] std::size_t common_prefix_length(
+        const std::vector<std::string> &strings);
+
+    /// @brief
+    ///     Find the largest string of common words up to and including
+    ///     the specified word separator
+    /// @param[in] strings
+    ///     Strings that presumably begin the same initial word(s)
+    /// @param[in] delimiter
+    ///     Word separator
+    /// @return
+    ///     Largest posisble leading substring of common words
+    ///
+    /// A particularly useful use case is to find the initial prefix amongst
+    /// enmerated symbol names (e.g. `LEVEL_DEBUG`, `LEVEL_INFO`, ...)
+
+    [[nodiscard]] std::string common_prefix(
+        const std::vector<std::string> &strings,
+        const std::string &delimiter);
+
+    /// @brief
+    ///     Find the lenghth of largest string of common words up to and
+    ///     including the specified word separator
+    /// @param[in] strings
+    ///     Strings that presumably begin the same initial word(s)
+    /// @param[in] delimiter
+    ///     Word separator
+    /// @return
+    ///     Length of largest posisble leading substring of common words
+    ///
+    /// A particularly useful use case is to find the initial prefix amongst
+    /// enmerated symbol names (e.g. `LEVEL_DEBUG`, `LEVEL_INFO`, ...)
+
+    [[nodiscard]] std::size_t common_prefix_length(
+        const std::vector<std::string> &strings,
+        const std::string &delimiter);
+
     /// @brief concatenate streamable objects into a string
     /// @param[in] args
     ///     Output stream compatible arguments
@@ -414,7 +456,7 @@ namespace core::str
         size_t width = sizeof(T) * 2,
         std::string prefix = "0x");
 
-} // namespace core::str
+}  // namespace core::str
 
 // Inline definitions
 #include "misc.i++"

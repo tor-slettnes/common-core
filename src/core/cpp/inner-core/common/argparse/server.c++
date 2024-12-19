@@ -21,7 +21,7 @@ namespace core::argparse
     // ServerOptions methods
 
     ServerOptions::ServerOptions()
-        : Super(true)
+        : Super()
     {
     }
 

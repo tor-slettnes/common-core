@@ -15,7 +15,7 @@ set(LIB_DEPS
 )
 
 set(SOURCES
-  avro-protobufvalue.c++
+  avro-protobufschema.c++
 )
 
 ### Recepies to build the library

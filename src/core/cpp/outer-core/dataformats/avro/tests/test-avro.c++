@@ -6,9 +6,11 @@
 //==============================================================================
 
 #include "avro-simplevalue.h++"
+#include "avro-protobufschema.h++"
+#include "status.pb.h"
 
 #include <gtest/gtest.h>
-
+#include <fstream>
 
 namespace core::avro
 {
@@ -29,4 +31,14 @@ namespace core::avro
         std::optional<double> new_double = sv.get_double();
         EXPECT_FALSE(new_double.has_value());
     }
-}
+
+    TEST(AvroTest, ProtoBufEventToJsonSchema)
+    {
+        SchemaWrapper wrapper = schema_from_proto(cc::status::Event::GetDescriptor());
+        std::string json = wrapper.as_json();
+        auto of1 = std::ofstream("event.json");
+        of1.write(json.data(), json.size());
+        EXPECT_TRUE(of1.tellp() > 0);
+        of1.close();
+    }
+} // namespace core::avro

@@ -5,6 +5,7 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
+#pragma once
 #include "demo-provider.h++"
 
 #include <gtest/gtest.h>

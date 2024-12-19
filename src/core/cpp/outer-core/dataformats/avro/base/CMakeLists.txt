@@ -18,6 +18,7 @@ set(LIB_DEPS
 )
 
 set(SOURCES
+  avro-schemabuilder.c++
   avro-basevalue.c++
   avro-compoundvalue.c++
   avro-simplevalue.c++

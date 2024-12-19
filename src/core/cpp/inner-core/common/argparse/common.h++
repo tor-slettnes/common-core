@@ -22,7 +22,7 @@ namespace core::argparse
     {
     public:
         /// Constructor that loads settings and builds options.
-        CommonOptions(bool is_server);
+        CommonOptions();
 
         /// @brief
         ///     Parse command line options from main() and invoke associated

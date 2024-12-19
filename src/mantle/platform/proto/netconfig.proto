@@ -131,10 +131,7 @@ message WirelessConnectionData
         WPA_Data wpa = 9;
         EAP_Data eap = 10;
     }
-    oneof optional_band
-    {
-        WirelessBandSelection band = 15;
-    }
+    optional WirelessBandSelection band = 15;
 }
 
 //==============================================================================

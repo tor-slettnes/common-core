@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "avro-basevalue.h++"
+#include "avro-status.h++"
 #include "string/misc.h++"
 
 #include <algorithm>
@@ -14,7 +15,7 @@ namespace core::avro
 {
     BaseValue::BaseValue(const avro_value_t &avro_value)
     {
-        This::checkstatus(avro_value_copy(&this->value, &avro_value));
+        checkstatus(avro_value_copy(&this->value, &avro_value));
     }
 
     BaseValue::BaseValue(avro_value_t &&avro_value)
@@ -24,7 +25,7 @@ namespace core::avro
 
     BaseValue::BaseValue(const BaseValue &other)
     {
-        This::checkstatus(avro_value_copy(&this->value, &other.value));
+        checkstatus(avro_value_copy(&this->value, &other.value));
     }
 
     BaseValue::BaseValue(BaseValue &&other)
@@ -40,7 +41,7 @@ namespace core::avro
     BaseValue &BaseValue::operator=(const BaseValue &other)
     {
         avro_value_decref(&this->value);
-        This::checkstatus(avro_value_copy(&this->value, &other.value));
+        checkstatus(avro_value_copy(&this->value, &other.value));
         return *this;
     }
 
@@ -304,7 +305,7 @@ namespace core::avro
             for (std::size_t index = 0; index < size; index++)
             {
                 avro_value_t avro_value;
-                This::checkstatus(
+                checkstatus(
                     avro_value_get_by_index(
                         &this->value,
                         index,
@@ -328,20 +329,5 @@ namespace core::avro
         {
             return {};
         }
-    }
-
-    std::runtime_error BaseValue::error(const std::string &context)
-    {
-        return std::runtime_error(
-            core::str::join({context, avro_strerror()}, ": "));
-    }
-
-    int BaseValue::checkstatus(int status, const std::string &context)
-    {
-        if (status != 0)
-        {
-            throw This::error(context);
-        }
-        return status;
     }
 } // namespace core::avro

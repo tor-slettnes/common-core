@@ -34,7 +34,6 @@ namespace core::http
                    const std::string &messaging_flavor = "REST",
                    const std::string &content_type = "application/json");
 
-
         /// @brief
         ///     Try multiple times to send a HTTP GET query until successful, then decode the JSON response
         /// @param[in] path
@@ -47,7 +46,7 @@ namespace core::http
         /// @param[in] max_attempts
         ///      Maximum number of attempts to make to contact server
         /// @param[in] retry_interval
-        ///      After each failed attempt, sleep for this duration before trying again. 
+        ///      After each failed attempt, sleep for this duration before trying again.
         /// @param[out] response_code
         ///     HTTP response code received from the server
         /// @return
@@ -91,8 +90,56 @@ namespace core::http
                               bool fail_on_error = true,
                               ResponseCode *response_code = nullptr) const;
 
-        types::Value del_json(const std::string &path,
-                              const types::TaggedValueList &query = {},
+        /// @brief
+        ///     Send a HTTP PUT request with JSON payload and decode the JSON response
+        /// @param[in] path
+        ///     Path relative to the `base_url` provided to the constructor
+        /// @param[in] query
+        ///     Input query.  For GET requests this is encoded in the URL.
+        /// @param[in] data
+        ///     Data to include in JSON payload
+        /// @param[in] fail_on_error
+        ///     Throws an error if the server returns a non-successful HTTP
+        ///     response (codes 3xx, 4xx, 5xx).
+        /// @param[out] response_code
+        ///     HTTP response code received from the server
+        /// @return
+        ///     Decoded JSON response from server.
+        /// @exception exception::FailedPrecondition
+        ///     Failed to contact server
+        /// @exception exception::FailedPostCondition
+        ///     Server returned an unexpected MIME type or an unsuccessful
+        ///     HTTP status code.  The latter is supressed if
+        ///    `fail_on_error` is `false`.
+
+        types::Value put_json(const std::string &path,
+                              const types::TaggedValueList &query,
+                              const types::KeyValueMap &data,
+                              bool fail_on_error = true,
+                              ResponseCode *response_code = nullptr) const;
+
+        /// @brief
+        ///     Send a HTTP PUT request with JSON payload and decode the JSON response
+        /// @param[in] path
+        ///     Path relative to the `base_url` provided to the constructor
+        /// @param[in] data
+        ///     Data to include in JSON payload
+        /// @param[in] fail_on_error
+        ///     Throws an error if the server returns a non-successful HTTP
+        ///     response (codes 3xx, 4xx, 5xx).
+        /// @param[out] response_code
+        ///     HTTP response code received from the server
+        /// @return
+        ///     Decoded JSON response from server.
+        /// @exception exception::FailedPrecondition
+        ///     Failed to contact server
+        /// @exception exception::FailedPostCondition
+        ///     Server returned an unexpected MIME type or an unsuccessful
+        ///     HTTP status code.  The latter is supressed if
+        ///    `fail_on_error` is `false`.
+
+        types::Value put_json(const std::string &path,
+                              const types::KeyValueMap &data,
                               bool fail_on_error = true,
                               ResponseCode *response_code = nullptr) const;
 
@@ -101,7 +148,12 @@ namespace core::http
                                bool fail_on_error = true,
                                ResponseCode *response_code = nullptr) const;
 
+        types::Value del_json(const std::string &path,
+                              const types::TaggedValueList &query = {},
+                              bool fail_on_error = true,
+                              ResponseCode *response_code = nullptr) const;
+
     private:
         const std::string content_type;
     };
-}  // namespace core::http
+} // namespace core::http

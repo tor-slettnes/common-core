@@ -34,7 +34,7 @@ namespace core::str
     Formatter::Parts Formatter::split_parts(const std::string &fmt) const
     {
         static const std::regex rx(
-            "(?:^|[^\\\\])(?:\\\\{2})*"         // 0 or even # of preceeding backslashes
+            //"(?:^|[^\\\\])(?:\\\\{2})*"         // 0 or even # of preceeding backslashes
             "(%"                                // (1) Entire expression starting with %
             "([#0\\-\\ \\+\\'\\^,]*)"           // (2) 0 or more flags #|0|-| |+|'|^|,
             "(?:(\\d*)|(\\*))"                  // (3) fixed or (4) variable field width

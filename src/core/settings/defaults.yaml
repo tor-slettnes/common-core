@@ -6,11 +6,11 @@
 #===============================================================================
 
 # Default logging threshold; may be overridden for specific scopes.
-log default: NOTICE
+log default: INFO
 
 # Override the default log level setting above for specific scopes.
 log thresholds:
-  shared: NOTICE
+  shared: INFO
 
 # ANSI coloring for specific log levels sent to console
 log styles:

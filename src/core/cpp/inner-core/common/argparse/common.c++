@@ -34,9 +34,8 @@ namespace core::argparse
     //--------------------------------------------------------------------------
     // CommonOptions
 
-    CommonOptions::CommonOptions(bool is_server)
-        : Parser(),
-          is_server(is_server)
+    CommonOptions::CommonOptions()
+        : Parser()
     {
         this->add_arg<std::string>(
             platform::path->exec_name(true),   // argname

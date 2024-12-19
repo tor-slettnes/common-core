@@ -13,7 +13,7 @@ add_executable(${TARGET}
 )
 
 target_link_libraries(${TARGET}
-  cc_core_io_avro_base
+  cc_core_io_avro_protobuf
   cc_core_test_main
 )
 

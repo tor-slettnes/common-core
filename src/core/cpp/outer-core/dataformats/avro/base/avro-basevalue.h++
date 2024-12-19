@@ -74,20 +74,6 @@ namespace core::avro
         }
 
     protected:
-        static std::runtime_error error(const std::string &context);
-        static int checkstatus(int status, const std::string &context = {});
-
-        template <class PT>
-        static PT *checkstatus(PT *pointer, const std::string &context = {})
-        {
-            if (pointer == nullptr)
-            {
-                throw This::error(context);
-            }
-            return pointer;
-        }
-
-    protected:
         avro_value_t value;
     };
 } // namespace core::avro

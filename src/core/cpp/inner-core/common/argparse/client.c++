@@ -13,7 +13,7 @@ namespace core::argparse
     // ClientOptions methods
 
     ClientOptions::ClientOptions()
-        : Super(false)
+        : Super()
     {
     }
 
@@ -30,7 +30,8 @@ namespace core::argparse
         this->add_opt<uint>(
             {"--timeout"},
             "SECONDS",
-            "Exit with an error if server is not available after the specified time (default: %default%)",
+            "Exit with an error if server is not available after the specified time "
+            "(default: %default%)",
             &this->timeout,
             30);
     }

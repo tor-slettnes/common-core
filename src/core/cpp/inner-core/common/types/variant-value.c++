@@ -9,16 +9,20 @@
 #include "variant-list.h++"
 #include "variant-kvmap.h++"
 #include "variant-tvlist.h++"
-
+#include "create-shared.h++"
 #include "string/convert.h++"
 
 #include <sstream>
 
 namespace core::types
 {
-
     Value::Value()
         : ValueBase(nullvalue)
+    {
+    }
+
+    Value::Value(bool value)
+        : ValueBase(value)
     {
     }
 
@@ -62,23 +66,38 @@ namespace core::types
     {
     }
 
-    Value::Value(char *cstring)
-        : Value(std::string(cstring))
+    Value::Value(const char *cstring)
+        : ValueBase(std::string(cstring))
     {
     }
 
     Value::Value(const std::vector<Byte> &bytes)
-        : Value(ByteVector(bytes.begin(), bytes.end()))
+        : ValueBase(ByteVector(bytes.begin(), bytes.end()))
     {
     }
 
     Value::Value(const std::string_view &view)
-        : Value(std::string(view.begin(), view.end()))
+        : ValueBase(std::string(view.begin(), view.end()))
     {
     }
 
-    Value::Value(const ValueListPtr &list)
-        : ValueBase(list ? ValueBase(list) : ValueBase())
+    Value::Value(const std::string &string)
+        : ValueBase(string)
+    {
+    }
+
+    Value::Value(const ValueBase &value)
+        : ValueBase(value)
+    {
+    }
+
+    Value::Value(ValueBase &&value)
+        : ValueBase(std::move(value))
+    {
+    }
+
+    Value::Value(ValueListPtr list)
+        : ValueBase(list ? list : emptyvalue)
     {
     }
 
@@ -92,8 +111,8 @@ namespace core::types
     {
     }
 
-    Value::Value(const KeyValueMapPtr &kvmap)
-        : ValueBase(kvmap ? ValueBase(kvmap) : ValueBase())
+    Value::Value(KeyValueMapPtr kvmap)
+        : ValueBase(kvmap ? kvmap : emptyvalue)
     {
     }
 
@@ -107,8 +126,8 @@ namespace core::types
     {
     }
 
-    Value::Value(const TaggedValueListPtr &tvlist)
-        : ValueBase(tvlist ? ValueBase(tvlist) : ValueBase())
+    Value::Value(TaggedValueListPtr tvlist)
+        : ValueBase(tvlist ? tvlist : emptyvalue)
     {
     }
 
@@ -120,6 +139,35 @@ namespace core::types
     Value::Value(TaggedValueList &&tvlist)
         : ValueBase(std::make_shared<TaggedValueList>(std::move(tvlist)))
     {
+    }
+
+    bool Value::operator==(const Value &other) const
+    {
+        if (static_cast<ValueBase>(*this) == static_cast<ValueBase>(other))
+        {
+            return true;
+        }
+        else if (this->type() == other.type())
+        {
+            switch (this->type())
+            {
+            case ValueType::VALUELIST:
+                return (*this->get_valuelist() == *other.get_valuelist());
+
+            case ValueType::TVLIST:
+                return (*this->get_tvlist() == *other.get_tvlist());
+
+            case ValueType::KVMAP:
+                return (*this->get_kvmap() == *other.get_kvmap());
+
+            default:
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
 
     void Value::clear()
@@ -1133,6 +1181,9 @@ namespace core::types
         return {};
     }
 
+    //--------------------------------------------------------------------------
+    // Non-member content
+
     const ValueBase emptyvalue;
 
-} // namespace core::types
+}  // namespace core::types

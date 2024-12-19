@@ -30,6 +30,42 @@ namespace core::avro
         return nullptr;
     }
 
+    // types::KeyValueMap ProtoBufValue::message_as_kvmap(
+    //     const google::protobuf::Descriptor *descriptor)
+    // {
+    //     int n_fields = descriptor->field_count();
+
+    //     for (int i = 0; i < n_fields; i++)
+    //     {
+    //         google::protobuf::FieldDescriptor *fd = descriptor->field(i);
+
+    //         if (const google::protobuf::OnefDescriptor *ood = fd->containing_oneof())
+    //         {
+    //         }
+    //     }
+
+    //     int n_oneofs = descriptor->oneof_decl_count();
+    //     for (i = 0; i < n_oneofs; i++)
+    //     {
+    //         const OneofDescriptor *ood = oneof_decl(i);
+    //     }
+    // }
+
+    // types::KeyValueMap ProtoBufValue::field_as_kvmap(
+    //     const google::protobuf::FieldDescriptor &fd)
+    // {
+    // }
+
+    // types::KeyValueMap ProtoBufValue::single_field_as_kvmap(
+    //     const google::protobuf::FieldDescriptor &fd)
+    // {
+    // }
+
+    // types::KeyValueMap ProtoBufValue::repeated_field_as_list(
+    //     const google::protobuf::FieldDescriptor &fd)
+    // {
+    // }
+
     const ProtoBufValue::SchemaMap ProtoBufValue::standard_schema_map = {
         {google::protobuf::Empty::GetDescriptor(), avro_schema_null},
         {google::protobuf::BoolValue::GetDescriptor(), avro_schema_boolean},

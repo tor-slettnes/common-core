@@ -23,6 +23,7 @@ message Complex
 // * The value is either of the following:
 //   - one of the following basic types: boolean, signed/unsigned integer, real number, string, byte sequence
 //   - one of the following well-known types: Timestamp, Duration
+//   - one of the following custom types: Complex
 //   - a ValueList instance, declared below, containing nested Value instances.
 //
 // * The tag is optional, and is typically used when the value is part of a

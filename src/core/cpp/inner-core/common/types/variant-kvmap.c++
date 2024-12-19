@@ -100,7 +100,7 @@ namespace core::types
 
         for (const auto &kv : *this)
         {
-            if (kv.second)
+            if (kv.second.has_nonempty_value())
             {
                 filtered.insert(kv);
             }

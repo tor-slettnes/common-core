@@ -53,7 +53,9 @@ namespace core::http
             catch (const exception::FailedPrecondition &e)
             {
                 logf_info("HTTP request failed %d times: %s: %s",
-                          attempt, this->url(location), e);
+                          attempt,
+                          this->url(location),
+                          e);
                 if (attempt == max_attempts)
                 {
                     throw;
@@ -81,15 +83,35 @@ namespace core::http
             this->get(location, this->content_type, fail_on_error, response_code));
     }
 
-    types::Value RESTClient::del_json(
+    types::Value RESTClient::put_json(
         const std::string &path,
         const types::TaggedValueList &query,
+        const types::KeyValueMap &data,
         bool fail_on_error,
         ResponseCode *response_code) const
     {
         std::string location = join_path_query(path, query);
+        return this->put_json(location, data, fail_on_error, response_code);
+    }
+
+    types::Value RESTClient::put_json(
+        const std::string &path,
+        const types::KeyValueMap &data,
+        bool fail_on_error,
+        ResponseCode *response_code) const
+    {
+        std::stringstream jsondata;
+        std::string received_content_type;
+        json::fast_writer.write_stream(jsondata, data);
         return json::fast_reader.read_stream(
-            this->del(location, this->content_type, fail_on_error, response_code));
+            this->put(
+                path,               // location
+                this->content_type, // content_type
+                jsondata,           // upload_stream
+                jsondata.tellp(),   // upload_size
+                this->content_type, // expected_content_type
+                fail_on_error,      // fail_on_error
+                response_code));    // response_code
     }
 
     types::Value RESTClient::post_json(
@@ -111,4 +133,16 @@ namespace core::http
                 fail_on_error,      // fail_on_error
                 response_code));    // response_code
     }
+
+    types::Value RESTClient::del_json(
+        const std::string &path,
+        const types::TaggedValueList &query,
+        bool fail_on_error,
+        ResponseCode *response_code) const
+    {
+        std::string location = join_path_query(path, query);
+        return json::fast_reader.read_stream(
+            this->del(location, this->content_type, fail_on_error, response_code));
+    }
+
 } // namespace core::http

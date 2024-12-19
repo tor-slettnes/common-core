@@ -30,6 +30,7 @@ namespace core::http
 
     public:
         using ReceiveFunction = std::function<void(const char *, std::size_t)>;
+        using SendFunction = std::function<std::size_t(char *, std::size_t)>;
 
     public:
         HTTPClient(const URL &base_url = {});
@@ -58,6 +59,37 @@ namespace core::http
 
         bool get(const std::string &location,
                  std::string *content_type,
+                 const ReceiveFunction &header_receiver,
+                 const ReceiveFunction &content_receiver,
+                 bool fail_on_error = false,
+                 ResponseCode *response_code = nullptr) const;
+
+        //======================================================================
+        // put()
+
+        std::stringstream put(const std::string &location,
+                              const std::string &content_type,
+                              std::istream &upload_data,
+                              const std::optional<std::size_t> &upload_size,
+                              const std::string &expected_content_type,
+                              bool fail_on_error = true,
+                              ResponseCode *response_code = nullptr) const;
+
+        bool put(const std::string &location,
+                 const std::string &content_type,
+                 std::istream &upload_stream,
+                 const std::optional<std::size_t> &upload_size,
+                 std::string *received_content_type,
+                 std::ostream *received_header_stream,
+                 std::ostream *received_content_stream,
+                 bool fail_on_error = false,
+                 ResponseCode *response_code = nullptr) const;
+
+        bool put(const std::string &location,
+                 const std::string &content_type,
+                 const SendFunction &sender,
+                 const std::optional<std::size_t> &upload_size,
+                 std::string *received_content_type,
                  const ReceiveFunction &header_receiver,
                  const ReceiveFunction &content_receiver,
                  bool fail_on_error = false,
@@ -131,8 +163,10 @@ namespace core::http
             ResponseCode *response_code);
 
         static ReceiveFunction stream_receiver(std::ostream *stream);
+        static SendFunction stream_sender(std::istream &stream);
 
-        static size_t receive(char *ptr, size_t item_size, size_t num_items, void *userdata);
+        static std::size_t receive(char *ptr, size_t item_size, size_t num_items, void *userdata);
+        static std::size_t send(char *ptr, size_t item_size, size_t num_items, void *userdata);
         CURL *handle() const;
 
     private:
