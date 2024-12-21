@@ -14,7 +14,7 @@
 #include <string>
 #include <stdexcept>
 
-namespace core::avro
+namespace avro
 {
     inline std::runtime_error error(const std::string &context)
     {
@@ -40,4 +40,4 @@ namespace core::avro
         }
         return pointer;
     }
-} // namespace core::avro
+} // namespace avro

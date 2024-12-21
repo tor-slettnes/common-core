@@ -20,7 +20,7 @@ int main (int argc, char **argv)
     options->apply(argc, argv);
 
     const google::protobuf::Descriptor *desc = cc::status::Event::GetDescriptor();
-    std::cout << core::avro::schema_from_proto(desc)
+    std::cout << avro::schema_from_proto(desc)
               << std::endl;
     return 0;
 }

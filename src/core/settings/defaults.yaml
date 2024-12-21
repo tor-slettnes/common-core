@@ -123,7 +123,7 @@ log sinks:
 
   # Log to standard error
   stderr:
-    include context: true
+    #include context: false
     threshold: TRACE
 
   # UNIX SysLog settings

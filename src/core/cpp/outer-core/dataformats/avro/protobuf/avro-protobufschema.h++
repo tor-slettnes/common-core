@@ -7,10 +7,13 @@
 
 #pragma once
 #include "avro-schemabuilder.h++"
+#include "types/valuemap.h++"
 
 #include <google/protobuf/descriptor.h>
 
-namespace core::avro
+#include <unordered_set>
+
+namespace avro
 {
     //--------------------------------------------------------------------------
     /// @class ProtoBufSchemaBuilder
@@ -21,6 +24,12 @@ namespace core::avro
         using This = ProtoBufSchemaBuilder;
         using Super = RecordSchema;
 
+        using DescriptorSet = std::unordered_set<const google::protobuf::Descriptor *>;
+        using SchemaMap = core::types::ValueMap<const google::protobuf::Descriptor *,
+                                                SchemaWrapper>;
+
+        friend SchemaWrapper schema_from_proto(const google::protobuf::Descriptor *);
+
     public:
         // @param[in] descriptor
         //     ProtoBuf message descriptor
@@ -29,23 +38,30 @@ namespace core::avro
             const google::protobuf::Descriptor *descriptor);
 
     private:
-        static types::ValueList fields(
-            const google::protobuf::Descriptor *descriptor);
+        static core::types::ValueList fields(
+            const google::protobuf::Descriptor *descriptor,
+            DescriptorSet *seen_types);
 
         static RecordField field(
             const google::protobuf::FieldDescriptor *fd,
-            bool is_optional);
+            bool is_optional,
+            DescriptorSet *seen_types);
 
-        static types::Value field_schema(
-            const google::protobuf::FieldDescriptor *fd);
+        static core::types::Value field_schema(
+            const google::protobuf::FieldDescriptor *fd,
+            DescriptorSet *seen_types);
 
         static EnumSchema enum_schema(
             const google::protobuf::EnumDescriptor *ed,
             const google::protobuf::EnumValueDescriptor *default_value);
 
         static MapSchema map_schema(
-            const google::protobuf::Descriptor *md);
+            const google::protobuf::Descriptor *md,
+            DescriptorSet *seen_types);
 
+        static SchemaWrapper schema_from_descriptor(
+            const google::protobuf::Descriptor *descriptor,
+            DescriptorSet *seen_types);
     };
 
     //--------------------------------------------------------------------------
@@ -62,4 +78,4 @@ namespace core::avro
 
     SchemaWrapper schema_from_proto(const google::protobuf::Descriptor *descriptor);
 
-} // namespace core::avro
+}  // namespace avro

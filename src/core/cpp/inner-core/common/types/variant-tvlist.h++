@@ -77,7 +77,7 @@ namespace core::types
         /// Return the value for each item
         ValueList values() const noexcept;
 
-        // // Convert this list into a Key/Value map
+        // Convert this list into a Key/Value map
         KeyValueMap as_kvmap() const noexcept;
 
         /// Return a copy where items with empty tags are filtered out

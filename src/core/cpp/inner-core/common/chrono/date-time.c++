@@ -422,6 +422,11 @@ namespace core
             return std::chrono::floor<std::chrono::seconds>(d).count();
         }
 
+        long long to_milliseconds(const TimePoint &tp)
+        {
+            return to_milliseconds(tp.time_since_epoch());
+        }
+
         long long to_milliseconds(const Duration &d)
         {
             return std::chrono::floor<std::chrono::milliseconds>(d).count();

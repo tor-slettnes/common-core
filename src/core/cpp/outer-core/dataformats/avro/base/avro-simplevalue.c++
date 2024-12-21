@@ -8,7 +8,7 @@
 #include "avro-simplevalue.h++"
 #include "avro-status.h++"
 
-namespace core::avro
+namespace avro
 {
     SimpleValue::SimpleValue(bool boolean)
         : BaseValue()
@@ -42,7 +42,7 @@ namespace core::avro
             input.size()));
     }
 
-    SimpleValue::SimpleValue(const types::Bytes &bytes)
+    SimpleValue::SimpleValue(const core::types::Bytes &bytes)
         : BaseValue()
     {
         checkstatus(avro_generic_bytes_new(
@@ -51,4 +51,4 @@ namespace core::avro
             bytes.size()));
     }
 
-} // namespace core::avro
+} // namespace avro

@@ -273,6 +273,9 @@ namespace core
         /// Convert a duration to seconds (truncated, not rounded)
         long long to_seconds(const Duration &d);
 
+        /// Convert a duration to milliseconds (truncated, not rounded) since UNIX epoch
+        long long to_milliseconds(const TimePoint &tp);
+
         /// Convert a duration to milliseconds (truncated, not rounded)
         long long to_milliseconds(const Duration &d);
 

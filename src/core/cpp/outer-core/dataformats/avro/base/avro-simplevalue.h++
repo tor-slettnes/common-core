@@ -11,7 +11,7 @@
 #include "types/bytevector.h++"
 #include "types/value.h++"
 
-namespace core::avro
+namespace avro
 {
     class SimpleValue : public BaseValue
     {
@@ -23,6 +23,6 @@ namespace core::avro
         SimpleValue(const char *input);
         SimpleValue(const std::string &input);
         SimpleValue(const std::string_view &input);
-        SimpleValue(const types::Bytes &bytes);
+        SimpleValue(const core::types::Bytes &bytes);
     };
 }

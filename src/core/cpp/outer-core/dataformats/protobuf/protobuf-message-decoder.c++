@@ -91,6 +91,10 @@ namespace protobuf
             {
                 return decoded<core::types::Value>(*vlist);
             }
+            else if (const auto *value = dynamic_cast<const cc::variant::Complex *>(&this->msg))
+            {
+                return decoded<core::types::complex>(*value);
+            }
             else
             {
                 return this->to_kvmap();

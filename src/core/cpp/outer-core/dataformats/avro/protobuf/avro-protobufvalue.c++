@@ -6,83 +6,375 @@
 //==============================================================================
 
 #include "avro-protobufvalue.h++"
-#include "protobuf-variant-types.h++"
+#include "avro-protobufschema.h++"
 #include "protobuf-standard-types.h++"
+#include "protobuf-variant-types.h++"
+#include "protobuf-inline.h++"
+#include "logging/logging.h++"
 
-namespace core::avro
+namespace avro
 {
-    avro_schema_t ProtoBufValue::schema(
-        const google::protobuf::Descriptor *descriptor)
+    ProtoBufValue::ProtoBufValue(const google::protobuf::Message &msg)
+        : CompoundValue(schema_from_proto(msg.GetDescriptor()))
     {
-        try
+        This::assign_from_message(&this->value, msg);
+    }
+
+    void ProtoBufValue::assign_from_message(
+        avro_value_t *value,
+        const google::protobuf::Message &msg)
+    {
+        assertf(avro_value_get_type(value) == AVRO_RECORD,
+                "Attempt to assign repepated ProtoBuf value to Avro non-record value type %s",
+                This::type_name(value));
+
+        if (msg.GetDescriptor()->well_known_type())
         {
-            return This::standard_schema_map.at(descriptor)();
+            This::assign_from_wellknown(value, msg);
         }
-        catch (const std::out_of_range &)
+        else if (auto *proto = dynamic_cast<const cc::variant::Value *>(&msg))
         {
-            return This::custom_schema(descriptor);
+            This::set_variant(
+                value,
+                protobuf::decoded<core::types::Value>(*proto));
+        }
+        else if (auto *proto = dynamic_cast<const cc::variant::ValueList *>(&msg))
+        {
+            This::set_variant_list(
+                value,
+                protobuf::decoded<core::types::ValueList>(*proto));
+        }
+        else if (auto *proto = dynamic_cast<const cc::variant::Complex *>(&msg))
+        {
+            This::set_complex(
+                value,
+                protobuf::decoded<core::types::complex>(*proto));
+        }
+        else
+        {
+            This::assign_from_custom(value, msg);
         }
     }
 
-    avro_schema_t ProtoBufValue::custom_schema(
-        const google::protobuf::Descriptor *descriptor)
+    void ProtoBufValue::assign_from_wellknown(
+        avro_value_t *value,
+        const google::protobuf::Message &msg)
     {
-        return nullptr;
+        if (auto *proto = dynamic_cast<const google::protobuf::Duration *>(&msg))
+        {
+            This::set_duration(value, protobuf::decoded<core::dt::Duration>(*proto));
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::Timestamp *>(&msg))
+        {
+            This::set_timestamp(value, protobuf::decoded<core::dt::TimePoint>(*proto));
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::Value *>(&msg))
+        {
+            This::set_variant(value, protobuf::decoded<core::types::Value>(*proto));
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::ListValue *>(&msg))
+        {
+            This::set_variant_list(value, protobuf::decoded<core::types::ValueList>(*proto));
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::Struct *>(&msg))
+        {
+            This::set_variant_map(value, protobuf::decoded<core::types::KeyValueMap>(*proto));
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::BoolValue *>(&msg))
+        {
+            This::set_boolean(value, proto->value());
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::DoubleValue *>(&msg))
+        {
+            This::set_double(value, proto->value());
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::FloatValue *>(&msg))
+        {
+            This::set_float(value, proto->value());
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::Int64Value *>(&msg))
+        {
+            This::set_long(value, proto->value());
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::UInt64Value *>(&msg))
+        {
+            This::set_long(value, proto->value());
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::Int32Value *>(&msg))
+        {
+            This::set_int(value, proto->value());
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::UInt32Value *>(&msg))
+        {
+            This::set_int(value, proto->value());
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::StringValue *>(&msg))
+        {
+            This::set_string(value, proto->value());
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::BytesValue *>(&msg))
+        {
+            This::set_bytes(value, proto->value());
+        }
+        else
+        {
+            logf_warning("No known conversion from well-known ProtoBuf type %s",
+                         msg.GetDescriptor()->full_name());
+            This::set_null(value);
+        }
     }
 
-    // types::KeyValueMap ProtoBufValue::message_as_kvmap(
-    //     const google::protobuf::Descriptor *descriptor)
-    // {
-    //     int n_fields = descriptor->field_count();
+    void ProtoBufValue::assign_from_custom(
+        avro_value_t *value,
+        const google::protobuf::Message &msg)
+    {
+        const google::protobuf::Descriptor *descriptor = msg.GetDescriptor();
+        int nfields = descriptor->field_count();
+        for (int i = 0; i < nfields; i++)
+        {
+            const google::protobuf::FieldDescriptor *fd = descriptor->field(i);
+            avro_value_t field_value = This::get_by_index(value, i, fd->name());
+            This::assign_from_field(&field_value, msg, fd);
+        }
+    }
 
-    //     for (int i = 0; i < n_fields; i++)
-    //     {
-    //         google::protobuf::FieldDescriptor *fd = descriptor->field(i);
+    void ProtoBufValue::assign_from_field(
+        avro_value_t *value,
+        const google::protobuf::Message &msg,
+        const google::protobuf::FieldDescriptor *fd)
+    {
+        if (fd->is_map())
+        {
+            This::assign_from_mapped_field(value, msg, fd);
+        }
+        else if (fd->is_repeated())
+        {
+            This::assign_from_repeated_field(value, msg, fd);
+        }
+        else if (fd->containing_oneof())
+        {
+            // This is an optional field, either because it is marked as
+            // `optional` or because it is part of a `oneof` block. In either
+            // case our Avro schema treats this as a union between a Null value
+            // (discriminator index 0) and the actual field type (index 1).
 
-    //         if (const google::protobuf::OnefDescriptor *ood = fd->containing_oneof())
-    //         {
-    //         }
-    //     }
+            bool has_value = msg.GetReflection()->HasField(msg, fd);
+            avro_value_t branch;
+            avro_value_set_branch(value,              // value
+                                  has_value ? 1 : 0,  // discriminant
+                                  &branch);           // branch
+            if (has_value)
+            {
+                This::assign_from_single_field(&branch, msg, fd);
+            }
+            else
+            {
+                This::set_null(&branch);
+            }
+        }
+        else
+        {
+            This::assign_from_single_field(value, msg, fd);
+        }
+    }
 
-    //     int n_oneofs = descriptor->oneof_decl_count();
-    //     for (i = 0; i < n_oneofs; i++)
-    //     {
-    //         const OneofDescriptor *ood = oneof_decl(i);
-    //     }
-    // }
+    void ProtoBufValue::assign_from_single_field(
+        avro_value_t *value,
+        const google::protobuf::Message &msg,
+        const google::protobuf::FieldDescriptor *fd)
+    {
+        const google::protobuf::Reflection *reflection = msg.GetReflection();
+        switch (fd->type())
+        {
+        case google::protobuf::FieldDescriptor::TYPE_INT32:
+        case google::protobuf::FieldDescriptor::TYPE_SINT32:
+        case google::protobuf::FieldDescriptor::TYPE_SFIXED32:
+            This::set_int(value, reflection->GetInt32(msg, fd));
+            break;
 
-    // types::KeyValueMap ProtoBufValue::field_as_kvmap(
-    //     const google::protobuf::FieldDescriptor &fd)
-    // {
-    // }
+        case google::protobuf::FieldDescriptor::TYPE_INT64:
+        case google::protobuf::FieldDescriptor::TYPE_SINT64:
+        case google::protobuf::FieldDescriptor::TYPE_SFIXED64:
+            This::set_long(value, reflection->GetInt64(msg, fd));
+            break;
 
-    // types::KeyValueMap ProtoBufValue::single_field_as_kvmap(
-    //     const google::protobuf::FieldDescriptor &fd)
-    // {
-    // }
+        case google::protobuf::FieldDescriptor::TYPE_UINT32:
+        case google::protobuf::FieldDescriptor::TYPE_FIXED32:
+            This::set_int(value, reflection->GetUInt32(msg, fd));
+            break;
 
-    // types::KeyValueMap ProtoBufValue::repeated_field_as_list(
-    //     const google::protobuf::FieldDescriptor &fd)
-    // {
-    // }
+        case google::protobuf::FieldDescriptor::TYPE_UINT64:
+        case google::protobuf::FieldDescriptor::TYPE_FIXED64:
+            This::set_long(value, reflection->GetUInt64(msg, fd));
+            break;
 
-    const ProtoBufValue::SchemaMap ProtoBufValue::standard_schema_map = {
-        {google::protobuf::Empty::GetDescriptor(), avro_schema_null},
-        {google::protobuf::BoolValue::GetDescriptor(), avro_schema_boolean},
-        {google::protobuf::Int32Value::GetDescriptor(), avro_schema_int},
-        {google::protobuf::UInt32Value::GetDescriptor(), avro_schema_int},
-        {google::protobuf::Int64Value::GetDescriptor(), avro_schema_long},
-        {google::protobuf::UInt64Value::GetDescriptor(), avro_schema_long},
-        {google::protobuf::FloatValue::GetDescriptor(), avro_schema_float},
-        {google::protobuf::DoubleValue::GetDescriptor(), avro_schema_double},
-        {google::protobuf::StringValue::GetDescriptor(), avro_schema_string},
-        {google::protobuf::BytesValue::GetDescriptor(), avro_schema_bytes},
-        {google::protobuf::Timestamp::GetDescriptor(), This::timestamp_schema},
-        {google::protobuf::Duration::GetDescriptor(), This::duration_schema},
-        {google::protobuf::Value::GetDescriptor(), This::variant_value_schema},
-        {google::protobuf::Struct::GetDescriptor(), This::variant_map_schema},
-        {google::protobuf::ListValue::GetDescriptor(), This::variant_list_schema},
-        {cc::variant::Value::GetDescriptor(), This::variant_value_schema},
-        {cc::variant::ValueList::GetDescriptor(), This::variant_list_schema},
-    };
-} // namespace core::avro
+        case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
+            This::set_double(value, reflection->GetDouble(msg, fd));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_FLOAT:
+            This::set_float(value, reflection->GetFloat(msg, fd));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_BOOL:
+            This::set_boolean(value, reflection->GetBool(msg, fd));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_ENUM:
+            This::set_enum(value, reflection->GetEnumValue(msg, fd));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_STRING:
+            This::set_string(value, reflection->GetString(msg, fd));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_BYTES:
+            This::set_bytes(value, reflection->GetString(msg, fd));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
+        case google::protobuf::FieldDescriptor::TYPE_GROUP:
+            This::assign_from_message(value,
+                                      reflection->GetMessage(msg, fd));
+            break;
+
+        default:
+            logf_warning("No known Avro conversion for ProtoBuf message %s field %s",
+                         msg.GetDescriptor()->full_name(),
+                         fd->name());
+            This::set_null(value);
+            break;
+        }
+    }
+
+    void ProtoBufValue::assign_from_indexed_field(
+        avro_value_t *value,
+        const google::protobuf::Message &msg,
+        const google::protobuf::FieldDescriptor *fd,
+        int index)
+    {
+        const google::protobuf::Reflection *reflection = msg.GetReflection();
+
+        switch (fd->type())
+        {
+        case google::protobuf::FieldDescriptor::TYPE_INT32:
+        case google::protobuf::FieldDescriptor::TYPE_SINT32:
+        case google::protobuf::FieldDescriptor::TYPE_SFIXED32:
+            This::set_int(value, reflection->GetRepeatedInt32(msg, fd, index));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_INT64:
+        case google::protobuf::FieldDescriptor::TYPE_SINT64:
+        case google::protobuf::FieldDescriptor::TYPE_SFIXED64:
+            This::set_long(value, reflection->GetRepeatedInt64(msg, fd, index));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_UINT32:
+        case google::protobuf::FieldDescriptor::TYPE_FIXED32:
+            This::set_int(value, reflection->GetRepeatedUInt32(msg, fd, index));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_UINT64:
+        case google::protobuf::FieldDescriptor::TYPE_FIXED64:
+            This::set_long(value, reflection->GetRepeatedUInt64(msg, fd, index));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_DOUBLE:
+            This::set_double(value, reflection->GetRepeatedDouble(msg, fd, index));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_FLOAT:
+            This::set_float(value, reflection->GetRepeatedFloat(msg, fd, index));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_BOOL:
+            This::set_boolean(value, reflection->GetRepeatedBool(msg, fd, index));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_ENUM:
+            This::set_enum(value, reflection->GetRepeatedEnumValue(msg, fd, index));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_STRING:
+            This::set_string(value, reflection->GetRepeatedString(msg, fd, index));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_BYTES:
+            This::set_bytes(value, reflection->GetRepeatedString(msg, fd, index));
+            break;
+
+        case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
+        case google::protobuf::FieldDescriptor::TYPE_GROUP:
+            This::assign_from_message(value,
+                                      reflection->GetRepeatedMessage(msg, fd, index));
+            break;
+
+        default:
+            logf_warning("No known Avro conversion for ProtoBuf message %s field %s",
+                         msg.GetDescriptor()->full_name(),
+                         fd->name());
+            This::set_null(value);
+            break;
+        }
+    }
+
+    void ProtoBufValue::assign_from_repeated_field(
+        avro_value_t *value,
+        const google::protobuf::Message &msg,
+        const google::protobuf::FieldDescriptor *fd)
+    {
+        assertf(avro_value_get_type(value) == AVRO_ARRAY,
+                "Attempt to assign repepated ProtoBuf value to Avro non-array value type %s",
+                This::type_name(value));
+
+        int size = msg.GetReflection()->FieldSize(msg, fd);
+        for (int n = 0; n < size; n++)
+        {
+            avro_value_t element;
+            avro_value_append(value,     // value
+                              &element,  // child
+                              nullptr);  // new_index
+            This::assign_from_indexed_field(&element, msg, fd, n);
+            // TRY THIS:
+            // avro_value_reset(&element);
+            // avro_value_decref(&element);
+        }
+    }
+
+    void ProtoBufValue::assign_from_mapped_field(
+        avro_value_t *value,
+        const google::protobuf::Message &msg,
+        const google::protobuf::FieldDescriptor *fd)
+    {
+        assertf(avro_value_get_type(value) == AVRO_MAP,
+                "Attempt to assign repepated ProtoBuf value to Avro non-map value type %s",
+                This::type_name(value));
+
+        const google::protobuf::Descriptor *map_descriptor = fd->message_type();
+        const google::protobuf::FieldDescriptor *fd_key = map_descriptor->map_key();
+        const google::protobuf::FieldDescriptor *fd_value = map_descriptor->map_value();
+
+        assertf(fd_key->type() == google::protobuf::FieldDescriptor::TYPE_STRING,
+                "Cannot convert ProtoBuf message %s map %s with non-string key type %s to Avro map",
+                msg->full_name(),
+                fd->name(),
+                fd_key->type_name());
+
+        const google::protobuf::Reflection *reflection = msg.GetReflection();
+        int size = reflection->FieldSize(msg, fd);
+        for (int n = 0; n < size; n++)
+        {
+            const google::protobuf::Message &item = reflection->GetRepeatedMessage(msg, fd, n);
+            std::string key = item.GetReflection()->GetString(item, fd_key);
+
+            avro_value_t element;
+            avro_value_add(value,        // value
+                           key.c_str(),  // key
+                           &element,     // child
+                           nullptr,      // index
+                           nullptr);     // is_new
+
+            This::assign_from_single_field(&element, item, fd_value);
+        }
+    }
+}  // namespace avro

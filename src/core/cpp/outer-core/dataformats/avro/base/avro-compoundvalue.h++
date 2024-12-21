@@ -10,7 +10,7 @@
 #include "avro-schemabuilder.h++"
 #include "types/value.h++"
 
-namespace core::avro
+namespace avro
 {
     class CompoundValue : public BaseValue
     {
@@ -20,18 +20,40 @@ namespace core::avro
     protected:
         CompoundValue(avro_schema_t schema);
         CompoundValue(const std::string &json_schema);
-        CompoundValue(const SchemaBuilder &builder);
+        CompoundValue(const SchemaWrapper &wrapper);
 
     public:
         ~CompoundValue();
-
-        void assign(const types::Value &value);
 
     private:
         static avro_schema_t schema_from_json(const std::string &json_schema);
 
     protected:
+        static avro_value_t get_by_index(
+            avro_value_t *value,
+            int index,
+            const std::optional<std::string> &expected_name = {});
+
+        static avro_value_t get_by_name(
+            avro_value_t *value,
+            const std::string &name,
+            const std::optional<std::size_t> &expected_index = {});
+
+        static void set_complex(avro_value_t *value,
+                                const core::types::complex &complexvalue);
+        static void set_timestamp(avro_value_t *value,
+                                  const core::dt::TimePoint &tp);
+        static void set_duration(avro_value_t *value,
+                                 const core::dt::Duration &dur);
+        static void set_variant(avro_value_t *value,
+                                const core::types::Value &variant);
+        static void set_variant_list(avro_value_t *value,
+                                     const core::types::ValueList &list);
+        static void set_variant_map(avro_value_t *value,
+                                    const core::types::KeyValueMap &kvmap);
+
+    protected:
         avro_schema_t schema;
         avro_value_iface_t *iface;
     };
-} // namespace core::avro
+}  // namespace avro

@@ -11,7 +11,7 @@
 
 #include <avro.h>
 
-namespace core::avro
+namespace avro
 {
     constexpr auto TypeName_String = "string";
     constexpr auto TypeName_Bytes = "bytes";
@@ -25,6 +25,8 @@ namespace core::avro
     constexpr auto TypeName_Enum = "enum";
     constexpr auto TypeName_Map = "map";
     constexpr auto TypeName_Array = "array";
+    constexpr auto TypeName_Fixed = "fixed";
+    constexpr auto TypeName_Complex = "Complex";
 
     constexpr auto TypeName_Variant = "Variant";
     constexpr auto TypeName_Timestamp = "Timestamp";
@@ -45,20 +47,25 @@ namespace core::avro
     constexpr auto SchemaField_EnumSymbols = "symbols";
     constexpr auto SchemaField_TimeSeconds = "seconds";
     constexpr auto SchemaField_TimeNanos = "nanoseconds";
+    constexpr auto SchemaField_Size = "size";
+    constexpr auto SchemaField_ComplexReal = "real";
+    constexpr auto SchemaField_ComplexImaginary = "imag";
+    constexpr auto SchemaField_VariantValue = "value";
 
     constexpr auto LogicalType_TimeStampMillis = "timestamp-millis";
     constexpr auto LogicalType_TimeOfDayMillis = "time-millis";
+    constexpr auto LogicalType_Duration = "duration";
+    constexpr auto LogicalType_Duration_Size = 12;
 
     //--------------------------------------------------------------------------
     // @class SchemaWrapper
     // @brief Represents an arbitrary Avro schema
 
-    class SchemaWrapper : public types::Value
+    class SchemaWrapper : public core::types::Value
     {
     public:
-        SchemaWrapper(const types::ValueBase &value);
-        SchemaWrapper(types::KeyValueMap &&kvmap);
-
+        SchemaWrapper(const core::types::Value &value);
+        SchemaWrapper(const core::types::KeyValueMap &kvmap);
 
     public:
         // @brief
@@ -77,9 +84,9 @@ namespace core::avro
     class SchemaBuilder : public SchemaWrapper
     {
     protected:
-        SchemaBuilder(types::KeyValueMap &&spec);
+        SchemaBuilder(const core::types::KeyValueMap &spec);
 
-        void set(const std::string &key, const types::Value &value);
+        void set(const std::string &key, const core::types::Value &value);
     };
 
     //--------------------------------------------------------------------------
@@ -89,16 +96,16 @@ namespace core::avro
     {
     public:
         RecordSchema(const std::string &name,
-                     const types::ValueList &fields);
+                     const core::types::ValueList &fields);
     };
 
     //--------------------------------------------------------------------------
     // RecordField
 
-    class RecordField : public types::KeyValueMap
+    class RecordField : public core::types::KeyValueMap
     {
     public:
-        RecordField(const types::Value &type,
+        RecordField(const core::types::Value &type,
                     const std::string &name);
     };
 
@@ -108,7 +115,7 @@ namespace core::avro
     class MapSchema : public SchemaBuilder
     {
     public:
-        MapSchema(const types::Value &valuetype);
+        MapSchema(const core::types::Value &valuetype);
     };
 
     //--------------------------------------------------------------------------
@@ -117,7 +124,7 @@ namespace core::avro
     class ArraySchema : public SchemaBuilder
     {
     public:
-        ArraySchema(const types::Value &itemtype);
+        ArraySchema(const core::types::Value &itemtype);
     };
 
     //--------------------------------------------------------------------------
@@ -134,19 +141,28 @@ namespace core::avro
     //--------------------------------------------------------------------------
     //DurationSchema
 
-    class DurationSchema : public RecordSchema
+    class DurationSchema : public SchemaBuilder
     {
     public:
-        DurationSchema(const std::string &name = TypeName_Duration);
+        DurationSchema();
     };
 
     //--------------------------------------------------------------------------
     // TimestampSchema
 
-    class TimestampSchema : public DurationSchema
+    class TimestampSchema : public SchemaBuilder
     {
     public:
         TimestampSchema();
+    };
+
+    //--------------------------------------------------------------------------
+    // ComplexSchema
+
+    class ComplexSchema : public RecordSchema
+    {
+    public:
+        ComplexSchema();
     };
 
     //--------------------------------------------------------------------------
@@ -176,4 +192,4 @@ namespace core::avro
         VariantListSchema();
     };
 
-} // namespace core::avro
+} // namespace avro

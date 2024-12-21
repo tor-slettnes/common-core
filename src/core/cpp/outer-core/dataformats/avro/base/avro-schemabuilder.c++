@@ -10,19 +10,23 @@
 #include "parsers/json/writer.h++"
 #include "logging/logging.h++"
 
-namespace core::avro
+namespace avro
 {
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // SchemaWrapper
 
-    SchemaWrapper::SchemaWrapper(const types::ValueBase &value)
+    SchemaWrapper::SchemaWrapper(const core::types::Value &value)
         : Value(value)
     {
     }
 
-    SchemaWrapper::SchemaWrapper(types::KeyValueMap &&kvmap)
-        : Value(kvmap)
+    SchemaWrapper::SchemaWrapper(const core::types::KeyValueMap &kvmap)
+        : Value(core::types::Value(kvmap))
     {
+        std::cerr << "SchemaWrapper(" << kvmap
+                  << ") -> "
+                  << *this
+                  << std::endl;
     }
 
     avro_schema_t SchemaWrapper::as_avro_schema() const
@@ -38,20 +42,19 @@ namespace core::avro
 
     std::string SchemaWrapper::as_json() const
     {
-        return json::writer.encoded(*this);
+        return core::json::writer.encoded(*this);
     }
 
     //--------------------------------------------------------------------------
     // SchemaBuilder
 
-    SchemaBuilder::SchemaBuilder(types::KeyValueMap &&spec)
-        : SchemaWrapper(std::move(spec))
-
+    SchemaBuilder::SchemaBuilder(const core::types::KeyValueMap &spec)
+        : SchemaWrapper(spec)
     {
     }
 
     void SchemaBuilder::set(const std::string &key,
-                            const types::Value &value)
+                            const core::types::Value &value)
     {
         this->get_kvmap()->insert_or_assign(key, value);
     }
@@ -60,7 +63,7 @@ namespace core::avro
     // RecordSchema
 
     RecordSchema::RecordSchema(const std::string &name,
-                               const types::ValueList &fields)
+                               const core::types::ValueList &fields)
         : SchemaBuilder({
               {SchemaField_Type, TypeName_Record},
               {SchemaField_Name, name},
@@ -72,9 +75,9 @@ namespace core::avro
     //--------------------------------------------------------------------------
     // RecordField
 
-    RecordField::RecordField(const types::Value &type,
+    RecordField::RecordField(const core::types::Value &type,
                              const std::string &name)
-        : types::KeyValueMap({
+        : core::types::KeyValueMap({
               {SchemaField_Type, type},
               {SchemaField_Name, name},
           })
@@ -84,7 +87,7 @@ namespace core::avro
     //--------------------------------------------------------------------------
     // MapSchema
 
-    MapSchema::MapSchema(const types::Value &valuetype)
+    MapSchema::MapSchema(const core::types::Value &valuetype)
         : SchemaBuilder({
               {SchemaField_Type, TypeName_Map},
               {SchemaField_MapValues, valuetype},
@@ -95,7 +98,7 @@ namespace core::avro
     //--------------------------------------------------------------------------
     // ArrayShema
 
-    ArraySchema::ArraySchema(const types::Value &itemtype)
+    ArraySchema::ArraySchema(const core::types::Value &itemtype)
         : SchemaBuilder({
               {SchemaField_Type, TypeName_Array},
               {SchemaField_ArrayItems, itemtype},
@@ -111,7 +114,8 @@ namespace core::avro
                            const std::optional<std::string> &default_symbol)
         : SchemaBuilder({
               {SchemaField_Type, TypeName_Enum},
-              {SchemaField_EnumSymbols, types::ValueList(symbols.begin(), symbols.end())},
+              {SchemaField_Name, name},
+              {SchemaField_EnumSymbols, core::types::ValueList(symbols.begin(), symbols.end())},
           })
     {
         if (default_symbol)
@@ -123,14 +127,11 @@ namespace core::avro
     //--------------------------------------------------------------------------
     // DurationSchema
 
-    DurationSchema::DurationSchema(const std::string &name)
-        : RecordSchema(name,
-                       {
-                           RecordField(TypeName_Long,
-                                       SchemaField_TimeSeconds),
-                           RecordField(types::ValueList({TypeName_Null, TypeName_Int}),
-                                       SchemaField_TimeNanos),
-                       })
+    DurationSchema::DurationSchema()
+        : SchemaBuilder({
+              {SchemaField_Type, TypeName_Long},
+              {SchemaField_LogicalType, LogicalType_TimeOfDayMillis},
+          })
     {
     }
 
@@ -138,7 +139,23 @@ namespace core::avro
     // TimestampSchema
 
     TimestampSchema::TimestampSchema()
-        : DurationSchema(TypeName_Timestamp)
+        : SchemaBuilder({
+              {SchemaField_Type, TypeName_Long},
+              {SchemaField_LogicalType, LogicalType_TimeStampMillis},
+          })
+    {
+    }
+
+    //--------------------------------------------------------------------------
+    // ComplexSchema
+
+    ComplexSchema::ComplexSchema()
+        : RecordSchema(
+              TypeName_Complex,
+              {
+                  RecordField(TypeName_Double, SchemaField_ComplexReal),
+                  RecordField(TypeName_Double, SchemaField_ComplexImaginary),
+              })
     {
     }
 
@@ -150,28 +167,44 @@ namespace core::avro
               TypeName_Variant,
               {
                   RecordField(
-                      types::ValueList({
+                      core::types::ValueList({
                           TypeName_Null,
                           TypeName_Boolean,
                           TypeName_Long,
                           TypeName_Double,
                           TypeName_String,
                           TypeName_Bytes,
-                          TimestampSchema(),
-                          DurationSchema(),
-                          VariantMapSchema(),
-                          VariantListSchema(),
+                          TimestampSchema().get_kvmap(),
+                          DurationSchema().get_kvmap(),
+                          MapSchema(TypeName_Variant).get_kvmap(),
+                          ArraySchema(TypeName_Variant).get_kvmap(),
                       }),
-                      "value"),
+                      SchemaField_VariantValue),
               })
     {
     }
+
+    // VariantSchema::TypeMap VariantSchema::type_map = {
+    //     {core::types::ValueType::NONE, TypeName_Null},
+    //     {core::types::ValueType::BYTEVECTOR, TypeName_Bytes},
+    //     {core::types::ValueType::STRING, TypeName_String},
+    //     {core::types::ValueType::CHAR, TypeName_String},
+    //     {core::types::ValueType::BOOL, TypeName_Boolean},
+    //     {core::types::ValueType::UINT, TypeName_Long},
+    //     {core::types::ValueType::SINT, TypeName_Long},
+    //     {core::types::ValueType::REAL, TypeName_Double},
+    //     {core::types::ValueType::COMPLEX, ComplexSchema().get_kvmap()},
+    //     {core::types::ValueType::TIMEPOINT, TimestampSchema().get_kvmap()},
+    //     {core::types::ValueType::DURATION, DurationSchema().get_kvmap()},
+    //     {core::types::ValueType::KVMAP, MapSchema().get_kvmap()},
+    //     {core::types::ValueType::VALUELIST, ArraySchema().get_kvmap()},
+    // };
 
     //--------------------------------------------------------------------------
     // VariantMapSchema
 
     VariantMapSchema::VariantMapSchema()
-        : MapSchema(TypeName_Variant)
+        : MapSchema(VariantSchema())
     {
     }
 
@@ -179,8 +212,8 @@ namespace core::avro
     // VariantListSchema
 
     VariantListSchema::VariantListSchema()
-        : ArraySchema(TypeName_Variant)
+        : ArraySchema(VariantSchema())
     {
     }
 
-}  // namespace core::avro
+}  // namespace avro

@@ -89,11 +89,21 @@ namespace core::types
     Value::Value(const ValueBase &value)
         : ValueBase(value)
     {
+        std::cerr << "Value(const type "
+                  << static_cast<ValueType>(value.index())
+                  << ") = "
+                  << *this
+                  << std::endl;
     }
 
     Value::Value(ValueBase &&value)
         : ValueBase(std::move(value))
     {
+        std::cerr << "Value(&& type "
+                  << static_cast<ValueType>(value.index())
+                  << ") = "
+                  << *this
+                  << std::endl;
     }
 
     Value::Value(ValueListPtr list)

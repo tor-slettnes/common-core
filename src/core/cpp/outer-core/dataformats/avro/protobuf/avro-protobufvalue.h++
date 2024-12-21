@@ -11,24 +11,53 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
 
-namespace core::avro
+namespace avro
 {
     class ProtoBufValue : public CompoundValue
     {
         using This = ProtoBufValue;
         using Super = CompoundValue;
 
-        using SchemaMap = std::unordered_map<const google::protobuf::Descriptor *,
-                                             std::function<avro_schema_t()>>;
+    public:
+        ProtoBufValue(const google::protobuf::Message &msg);
 
     private:
-        static avro_schema_t schema(
-            const google::protobuf::Descriptor *descriptor);
+        static void assign_from_message(
+            avro_value_t *value,
+            const google::protobuf::Message &msg);
 
-        static avro_schema_t custom_schema(
-            const google::protobuf::Descriptor *descriptor);
+        static void assign_from_wellknown(
+            avro_value_t *value,
+            const google::protobuf::Message &msg);
 
-    private:
-        static const SchemaMap standard_schema_map;
+        static void assign_from_custom(
+            avro_value_t *value,
+            const google::protobuf::Message &msg);
+
+        static void assign_from_field(
+            avro_value_t *value,
+            const google::protobuf::Message &msg,
+            const google::protobuf::FieldDescriptor *fd);
+
+        static void assign_from_single_field(
+            avro_value_t *value,
+            const google::protobuf::Message &msg,
+            const google::protobuf::FieldDescriptor *fd);
+
+        static void assign_from_indexed_field(
+            avro_value_t *value,
+            const google::protobuf::Message &msg,
+            const google::protobuf::FieldDescriptor *fd,
+            int index);
+
+        static void assign_from_repeated_field(
+            avro_value_t *value,
+            const google::protobuf::Message &msg,
+            const google::protobuf::FieldDescriptor *fd);
+
+        static void assign_from_mapped_field(
+            avro_value_t *value,
+            const google::protobuf::Message &msg,
+            const google::protobuf::FieldDescriptor *fd);
     };
-} // namespace core::avro
+}  // namespace avro

@@ -8,7 +8,7 @@
 #pragma once
 #include <gtest/gtest.h>
 
-namespace core::avro
+namespace avro
 {
     class AvroTest : public testing::Test
     {
@@ -19,4 +19,4 @@ namespace core::avro
         void test_convert_event_to_json_schema();
     };
 
-} // namespace core::avro
+} // namespace avro

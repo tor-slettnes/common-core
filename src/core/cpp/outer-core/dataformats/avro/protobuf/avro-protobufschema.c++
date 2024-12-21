@@ -11,7 +11,7 @@
 #include "protobuf-enum.h++"
 #include "logging/logging.h++"
 
-namespace core::avro
+namespace avro
 {
     //--------------------------------------------------------------------------
     // ProtoBufSchemaBuilder
@@ -19,17 +19,18 @@ namespace core::avro
     ProtoBufSchemaBuilder::ProtoBufSchemaBuilder(
         const google::protobuf::Descriptor *descriptor)
         : RecordSchema(descriptor->name(),
-                       This::fields(descriptor))
+                       This::fields(descriptor, nullptr))
     {
         logf_trace("ProtoBufSchemaBuilder constructor for %r: %s",
                    descriptor->name(),
                    *this);
     }
 
-    types::ValueList ProtoBufSchemaBuilder::fields(
-        const google::protobuf::Descriptor *descriptor)
+    core::types::ValueList ProtoBufSchemaBuilder::fields(
+        const google::protobuf::Descriptor *descriptor,
+        DescriptorSet *seen_types)
     {
-        types::ValueList fields;
+        core::types::ValueList fields;
         int n_fields = descriptor->field_count();
 
         for (int i = 0; i < n_fields; i++)
@@ -43,11 +44,11 @@ namespace core::avro
                 // names. Therefore, we include each field within the oneof
                 // block separately, but with `null` as an alternate value type.
 
-                fields.push_back(This::field(fd, true));
+                fields.push_back(This::field(fd, true, seen_types));
             }
             else
             {
-                fields.push_back(This::field(fd, false));
+                fields.push_back(This::field(fd, false, seen_types));
             }
         }
         return fields;
@@ -55,16 +56,17 @@ namespace core::avro
 
     RecordField ProtoBufSchemaBuilder::field(
         const google::protobuf::FieldDescriptor *fd,
-        bool is_optional)
+        bool is_optional,
+        DescriptorSet *seen_types)
     {
-        types::Value schema;
+        core::types::Value schema;
         if (fd->is_map())
         {
-            schema = This::map_schema(fd->message_type());
+            schema = This::map_schema(fd->message_type(), seen_types);
         }
         else
         {
-            schema = This::field_schema(fd);
+            schema = This::field_schema(fd, seen_types);
         }
 
         if (fd->is_repeated())
@@ -74,16 +76,17 @@ namespace core::avro
 
         if (is_optional)
         {
-            schema = types::ValueList({TypeName_Null, schema});
+            schema = core::types::ValueList({TypeName_Null, schema});
         }
 
         return {schema, fd->name()};
     }
 
-    types::Value ProtoBufSchemaBuilder::field_schema(
-        const google::protobuf::FieldDescriptor *fd)
+    core::types::Value ProtoBufSchemaBuilder::field_schema(
+        const google::protobuf::FieldDescriptor *fd,
+        DescriptorSet *seen_types)
     {
-        types::Value schema;
+        core::types::Value schema;
 
         switch (fd->type())
         {
@@ -129,7 +132,7 @@ namespace core::avro
 
         case google::protobuf::FieldDescriptor::TYPE_MESSAGE:
         case google::protobuf::FieldDescriptor::TYPE_GROUP:
-            schema = schema_from_proto(fd->message_type());
+            schema = This::schema_from_descriptor(fd->message_type(), seen_types);
             break;
 
         default:
@@ -150,20 +153,17 @@ namespace core::avro
     }
 
     MapSchema ProtoBufSchemaBuilder::map_schema(
-        const google::protobuf::Descriptor *md)
+        const google::protobuf::Descriptor *md,
+        DescriptorSet *seen_types)
     {
-        return This::field_schema(md->map_value());
+        return This::field_schema(md->map_value(), seen_types);
     }
 
-    //--------------------------------------------------------------------------
-    // schema_from_proto (Entry point)
-
-    SchemaWrapper schema_from_proto(const google::protobuf::Descriptor *descriptor)
+    SchemaWrapper ProtoBufSchemaBuilder::schema_from_descriptor(
+        const google::protobuf::Descriptor *descriptor,
+        DescriptorSet *seen_types)
     {
-        using SchemaMap = std::unordered_map<const google::protobuf::Descriptor *,
-                                             SchemaWrapper>;
-
-        static const SchemaMap standard_schema_map = {
+        static SchemaMap schema_map = {
             {google::protobuf::Empty::GetDescriptor(), SchemaWrapper(TypeName_Null)},
             {google::protobuf::BoolValue::GetDescriptor(), SchemaWrapper(TypeName_Boolean)},
             {google::protobuf::Int32Value::GetDescriptor(), SchemaWrapper(TypeName_Int)},
@@ -174,23 +174,48 @@ namespace core::avro
             {google::protobuf::DoubleValue::GetDescriptor(), SchemaWrapper(TypeName_Double)},
             {google::protobuf::StringValue::GetDescriptor(), SchemaWrapper(TypeName_String)},
             {google::protobuf::BytesValue::GetDescriptor(), SchemaWrapper(TypeName_String)},
-            {google::protobuf::Timestamp::GetDescriptor(), DurationSchema(TypeName_Timestamp)},
-            {google::protobuf::Duration::GetDescriptor(), DurationSchema(TypeName_Duration)},
+            {google::protobuf::Timestamp::GetDescriptor(), TimestampSchema()},
+            {google::protobuf::Duration::GetDescriptor(), DurationSchema()},
             {google::protobuf::Value::GetDescriptor(), VariantSchema()},
-            {google::protobuf::Struct::GetDescriptor(), MapSchema(TypeName_Variant)},
-            {google::protobuf::ListValue::GetDescriptor(), ArraySchema(TypeName_Variant)},
+            {google::protobuf::Struct::GetDescriptor(), VariantMapSchema()},
+            {google::protobuf::ListValue::GetDescriptor(), VariantListSchema()},
+            {cc::variant::Complex::GetDescriptor(), ComplexSchema()},
             {cc::variant::Value::GetDescriptor(), VariantSchema()},
-            {cc::variant::ValueList::GetDescriptor(), ArraySchema(TypeName_Variant)},
+            {cc::variant::ValueList::GetDescriptor(), VariantListSchema()},
         };
 
-        try
+        if (seen_types && seen_types->count(descriptor))
         {
-            return standard_schema_map.at(descriptor);
+            return SchemaWrapper(descriptor->name());
         }
-        catch (const std::out_of_range &)
+        else if (const SchemaWrapper *wrapper = schema_map.get_ptr(descriptor))
         {
-            return ProtoBufSchemaBuilder(descriptor);
+            return *wrapper;
+        }
+        else
+        {
+            DescriptorSet emptyset;
+            if (!seen_types)
+            {
+                seen_types = &emptyset;
+            }
+            seen_types->insert(descriptor);
+
+            auto [it, inserted] = schema_map.insert_or_assign(
+                descriptor,
+                RecordSchema(descriptor->name(),
+                             This::fields(descriptor, seen_types)));
+
+            return it->second;
         }
     }
 
-}  // namespace core::avro
+    //--------------------------------------------------------------------------
+    // schema_from_proto (Entry point)
+
+    SchemaWrapper schema_from_proto(const google::protobuf::Descriptor *descriptor)
+    {
+        return ProtoBufSchemaBuilder::schema_from_descriptor(descriptor, nullptr);
+    }
+
+}  // namespace avro

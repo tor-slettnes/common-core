@@ -8,7 +8,7 @@
 #include "test-avro-fixture.h++"
 #include "avro-protobufschema.h++"
 
-namespace core::avro
+namespace avro
 {
         void SetUp() override;
         void TearDown() override;
@@ -16,4 +16,4 @@ namespace core::avro
         void test_convert_event_to_json_schema();
     };
 
-} // namespace core::avro
+} // namespace avro

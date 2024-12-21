@@ -7,12 +7,15 @@
 
 #include "avro-simplevalue.h++"
 #include "avro-protobufschema.h++"
+#include "avro-protobufvalue.h++"
+#include "protobuf-event-types.h++"
 #include "status.pb.h"
+#include "parsers/json/writer.h++"
 
 #include <gtest/gtest.h>
 #include <fstream>
 
-namespace core::avro
+namespace avro
 {
     TEST(AvroTest, SimpleStringValue)
     {
@@ -35,10 +38,37 @@ namespace core::avro
     TEST(AvroTest, ProtoBufEventToJsonSchema)
     {
         SchemaWrapper wrapper = schema_from_proto(cc::status::Event::GetDescriptor());
-        std::string json = wrapper.as_json();
+        // std::string json = wrapper.as_json();
+        std::string json = core::json::writer.encoded(wrapper, true);
         auto of1 = std::ofstream("event.json");
         of1.write(json.data(), json.size());
         EXPECT_TRUE(of1.tellp() > 0);
         of1.close();
     }
-} // namespace core::avro
+
+    TEST(AvroTest, ProtoBufToAvro)
+    {
+        core::status::Event event(
+            "Arbitrary Event Text",             // text
+            core::status::Domain::APPLICATION,  // domain
+            "test case",                        // origin
+            42,                                 // code
+            "LifeUniverseEverything",           // symbol
+            core::status::Level::NOTICE,        // level
+            core::dt::Clock::now(),             // timepoint,
+            {
+                {"key1", true},
+                {"key2", "II"},
+                {"key3", 3.141592653589793238},
+            });
+
+        cc::status::Event msg;
+        protobuf::encode(event, &msg);
+        avro::ProtoBufValue avro_wrapper(msg);
+
+        std::string text = avro_wrapper.as_json();
+        std::ofstream of("avro-event.json");
+        of.write(text.data(), text.size());
+        EXPECT_FALSE(text.empty());
+    }
+}  // namespace avro
