@@ -23,10 +23,6 @@ namespace avro
     SchemaWrapper::SchemaWrapper(const core::types::KeyValueMap &kvmap)
         : Value(core::types::Value(kvmap))
     {
-        std::cerr << "SchemaWrapper(" << kvmap
-                  << ") -> "
-                  << *this
-                  << std::endl;
     }
 
     avro_schema_t SchemaWrapper::as_avro_schema() const
@@ -129,8 +125,10 @@ namespace avro
 
     DurationSchema::DurationSchema()
         : SchemaBuilder({
-              {SchemaField_Type, TypeName_Long},
-              {SchemaField_LogicalType, LogicalType_TimeOfDayMillis},
+              {SchemaField_Type, TypeName_Fixed},
+              {SchemaField_Name, TypeName_Duration},
+              {SchemaField_LogicalType, LogicalType_Duration},
+              {SchemaField_Size, LogicalType_Duration_Size},
           })
     {
     }
@@ -166,23 +164,23 @@ namespace avro
         : RecordSchema(
               TypeName_Variant,
               {
-                  RecordField(
-                      core::types::ValueList({
-                          TypeName_Null,
-                          TypeName_Boolean,
-                          TypeName_Long,
-                          TypeName_Double,
-                          TypeName_String,
-                          TypeName_Bytes,
-                          TimestampSchema().get_kvmap(),
-                          DurationSchema().get_kvmap(),
-                          MapSchema(TypeName_Variant).get_kvmap(),
-                          ArraySchema(TypeName_Variant).get_kvmap(),
-                      }),
-                      SchemaField_VariantValue),
+                  RecordField(VariantSchema::alternates, SchemaField_VariantValue),
               })
     {
     }
+
+    core::types::ValueList VariantSchema::alternates = {
+        TypeName_Null,                              // VT_NULL
+        TypeName_String,                            // VT_STRING
+        TypeName_Bytes,                             // VT_BYTES
+        TypeName_Boolean,                           // VT_BOOL
+        TypeName_Long,                              // VT_LONG
+        TypeName_Double,                            // VT_DOUBLE
+        TimestampSchema().get_kvmap(),              // VT_TIMESTAMP
+        DurationSchema().get_kvmap(),               // VT_DURATION
+        MapSchema(TypeName_Variant).get_kvmap(),    // VT_MAP
+        ArraySchema(TypeName_Variant).get_kvmap(),  // VT_ARRAY
+    };
 
     // VariantSchema::TypeMap VariantSchema::type_map = {
     //     {core::types::ValueType::NONE, TypeName_Null},

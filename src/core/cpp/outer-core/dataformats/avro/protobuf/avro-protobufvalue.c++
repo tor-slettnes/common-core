@@ -331,9 +331,10 @@ namespace avro
         for (int n = 0; n < size; n++)
         {
             avro_value_t element;
-            avro_value_append(value,     // value
-                              &element,  // child
-                              nullptr);  // new_index
+            checkstatus(avro_value_append(
+                value,      // value
+                &element,   // child
+                nullptr));  // new_index
             This::assign_from_indexed_field(&element, msg, fd, n);
             // TRY THIS:
             // avro_value_reset(&element);
@@ -368,11 +369,12 @@ namespace avro
             std::string key = item.GetReflection()->GetString(item, fd_key);
 
             avro_value_t element;
-            avro_value_add(value,        // value
-                           key.c_str(),  // key
-                           &element,     // child
-                           nullptr,      // index
-                           nullptr);     // is_new
+            checkstatus(avro_value_add(
+                value,        // value
+                key.c_str(),  // key
+                &element,     // child
+                nullptr,      // index
+                nullptr));    // is_new
 
             This::assign_from_single_field(&element, item, fd_value);
         }

@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "avro-simplevalue.h++"
+#include "avro-compoundvalue.h++"
 #include "avro-protobufschema.h++"
 #include "avro-protobufvalue.h++"
 #include "protobuf-event-types.h++"
@@ -44,6 +45,29 @@ namespace avro
         of1.write(json.data(), json.size());
         EXPECT_TRUE(of1.tellp() > 0);
         of1.close();
+    }
+
+    TEST(AvroTest, VariantToAvro)
+    {
+        CompoundValue compound{VariantSchema()};
+
+        core::types::KeyValueMap kvmap = {
+            {"my_bool", true},
+            {"my_int", 42},
+            {"my_real", 3.141592653589793238},
+            {"my_string", "Some text here"},
+            {"my_bytes", core::types::ByteVector::from_string("some bytes here")},
+            {"my_list", core::types::ValueList({true, 2, 3.141592653589793238, "IV"})},
+            {"my_timestamp", core::dt::Clock::now()},
+            {"my_5_seconds", std::chrono::seconds(5)},
+        };
+
+        compound.set_variant(compound.c_value(), kvmap);
+        auto of = std::ofstream("variant.json");
+        std::string json = compound.as_json(true);
+        of.write(json.data(), json.size());
+        EXPECT_TRUE(of.tellp() > 0);
+        of.close();
     }
 
     TEST(AvroTest, ProtoBufToAvro)

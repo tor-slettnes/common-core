@@ -54,6 +54,11 @@ namespace avro
         return *this;
     }
 
+    avro_value_t *BaseValue::c_value()
+    {
+        return &this->value;
+    }
+
     const avro_value_t *BaseValue::c_value() const
     {
         return &this->value;

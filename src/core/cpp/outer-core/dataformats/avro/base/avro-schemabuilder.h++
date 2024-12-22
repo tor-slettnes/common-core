@@ -171,7 +171,24 @@ namespace avro
     class VariantSchema : public RecordSchema
     {
     public:
+        enum Type
+        {
+            VT_NULL,            // 0
+            VT_STRING,          // 1
+            VT_BYTES,           // 2
+            VT_BOOL,            // 3
+            VT_LONG,            // 4
+            VT_DOUBLE,          // 5
+            VT_TIMESTAMP,       // 6
+            VT_DURATION,        // 7
+            VT_MAP,             // 8
+            VT_ARRAY            // 9
+        };
+
         VariantSchema();
+
+    private:
+        static core::types::ValueList alternates;
     };
 
     //--------------------------------------------------------------------------
@@ -192,4 +209,4 @@ namespace avro
         VariantListSchema();
     };
 
-} // namespace avro
+}  // namespace avro

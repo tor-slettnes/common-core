@@ -87,11 +87,11 @@ namespace core
 
         std::istream &operator>>(std::istream &stream, TimeUnit &unit)
         {
-            return time_unit_names.from_stream(stream, // stream
-                                               &unit,  // key
-                                               {},     // fallback
-                                               true,   // flag_unknown
-                                               true);  // allow_partial
+            return time_unit_names.from_stream(stream,  // stream
+                                               &unit,   // key
+                                               {},      // fallback
+                                               true,    // flag_unknown
+                                               true);   // allow_partial
         }
 
         std::ostream &operator<<(std::ostream &stream, const DateTimeInterval &interval)
@@ -417,17 +417,17 @@ namespace core
             // return dt::to_timespec(tp).tv_sec;
         }
 
-        long long to_seconds(const Duration &d)
+        std::uint64_t to_seconds(const Duration &d)
         {
             return std::chrono::floor<std::chrono::seconds>(d).count();
         }
 
-        long long to_milliseconds(const TimePoint &tp)
+        std::uint64_t to_milliseconds(const TimePoint &tp)
         {
             return to_milliseconds(tp.time_since_epoch());
         }
 
-        long long to_milliseconds(const Duration &d)
+        std::uint64_t to_milliseconds(const Duration &d)
         {
             return std::chrono::floor<std::chrono::milliseconds>(d).count();
         }
@@ -623,16 +623,16 @@ namespace core
                 }
 
                 return core::dt::to_timepoint(
-                    str::convert_to<std::int32_t>(match.str(1)),  // year
-                    str::convert_to<std::uint32_t>(match.str(2)), // month
-                    str::convert_to<std::uint32_t>(match.str(3)), // day
-                    str::convert_to<std::uint32_t>(match.str(4)), // hour
-                    str::convert_to<std::uint32_t>(match.str(5)), // minute
-                    str::convert_to<std::uint32_t>(match.str(6)), // second
-                    match.length(7)                               // |-
-                        ? str::convert_to<double>(match.str(7))   // |> fraction
-                        : 0.0,                                    // |-
-                    opt_zone_offset);                             // tz_offset
+                    str::convert_to<std::int32_t>(match.str(1)),   // year
+                    str::convert_to<std::uint32_t>(match.str(2)),  // month
+                    str::convert_to<std::uint32_t>(match.str(3)),  // day
+                    str::convert_to<std::uint32_t>(match.str(4)),  // hour
+                    str::convert_to<std::uint32_t>(match.str(5)),  // minute
+                    str::convert_to<std::uint32_t>(match.str(6)),  // second
+                    match.length(7)                                // |-
+                        ? str::convert_to<double>(match.str(7))    // |> fraction
+                        : 0.0,                                     // |-
+                    opt_zone_offset);                              // tz_offset
             }
 
             else if (auto opt_scalar = str::try_convert_to<double>(input))
@@ -861,7 +861,7 @@ namespace core
             return days;
         }
 
-    } // namespace dt
+    }  // namespace dt
 
     namespace steady
     {
@@ -880,8 +880,8 @@ namespace core
                               std::chrono::duration_cast<dt::Duration>(stp.time_since_epoch()),
                               decimals);
         }
-    } // namespace steady
-} // namespace core
+    }  // namespace steady
+}  // namespace core
 
 namespace std::chrono
 {
@@ -903,7 +903,7 @@ namespace std::chrono
         return stream;
     }
 
-} // namespace std::chrono
+}  // namespace std::chrono
 
 bool operator==(const std::tm &lhs, const std::tm &rhs)
 {

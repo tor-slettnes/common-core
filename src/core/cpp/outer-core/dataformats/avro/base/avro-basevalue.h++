@@ -43,6 +43,7 @@ namespace avro
         BaseValue &operator=(BaseValue &&other);
 
     public:
+        avro_value_t *c_value();
         const avro_value_t *c_value() const;
         avro_type_t avro_type() const;
         avro_schema_t avro_schema() const;

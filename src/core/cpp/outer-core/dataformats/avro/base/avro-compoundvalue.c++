@@ -114,73 +114,105 @@ namespace avro
         This::set_double(&imag, complexvalue.imag());
     }
 
+    void CompoundValue::set_duration(avro_value_t *value,
+                                     const core::dt::Duration &dur)
+    {
+        // The Avro `duration` logical type is a fixed array of 12 bytes, split
+        // into three groups of packed 4-byte (32-bit) unsigned integers with
+        // little endian byte ordering.
+
+        constexpr std::uint32_t ms_per_day = (1000 * 60 * 60 * 24);  // approximate
+        constexpr std::uint32_t days_per_month = 30;                 // approximate
+
+        std::uint64_t total_ms = core::dt::to_milliseconds(dur);
+        std::uint64_t total_days = total_ms / ms_per_day;
+        std::uint32_t months = total_days / days_per_month;
+
+        std::vector<std::uint32_t> counts = {
+            months,
+            static_cast<std::uint32_t>(total_days % days_per_month),
+            static_cast<std::uint32_t>(total_ms % ms_per_day),
+        };
+
+        core::types::ByteVector packed_duration;
+        packed_duration.reserve(LogicalType_Duration_Size);
+
+        for (std::uint32_t count : counts)
+        {
+            for (uint byte = 0; byte < sizeof(std::uint32_t); byte++)
+            {
+                packed_duration.push_back((count >> (8 * byte)) & 0xFF);
+            }
+        }
+        This::set_fixed(value, packed_duration);
+    }
+
     void CompoundValue::set_timestamp(avro_value_t *value,
                                       const core::dt::TimePoint &tp)
     {
         This::set_long(value, core::dt::to_milliseconds(tp));
     }
 
-    void CompoundValue::set_duration(avro_value_t *value,
-                                     const core::dt::Duration &dur)
-    {
-        This::set_long(value, core::dt::to_milliseconds(dur));
-    }
-
     void CompoundValue::set_variant(avro_value_t *value,
                                     const core::types::Value &variant)
     {
+        avro_value_t value_field = This::get_by_index(value, 0, SchemaField_VariantValue);
+        avro_value_t branch;
         switch (variant.type())
         {
         case core::types::ValueType::NONE:
-            This::set_null(value);
+            This::set_branch(&value_field, VariantSchema::VT_NULL, &branch);
+            This::set_null(&branch);
             break;
 
         case core::types::ValueType::BOOL:
-            This::set_boolean(value, variant.as_bool());
+            This::set_branch(&value_field, VariantSchema::VT_BOOL, &branch);
+            This::set_boolean(&branch, variant.as_bool());
             break;
 
         case core::types::ValueType::UINT:
-            This::set_long(value, variant.as_uint64());
-            break;
-
         case core::types::ValueType::SINT:
-            This::set_long(value, variant.as_sint64());
+            This::set_branch(&value_field, VariantSchema::VT_LONG, &branch);
+            This::set_long(&branch, variant.as_sint64());
             break;
 
         case core::types::ValueType::CHAR:
         case core::types::ValueType::STRING:
-            This::set_string(value, variant.as_string());
+            This::set_branch(&value_field, VariantSchema::VT_STRING, &branch);
+            This::set_string(&branch, variant.as_string());
             break;
 
         case core::types::ValueType::REAL:
-            This::set_double(value, variant.as_real());
-            break;
-
-        case core::types::ValueType::COMPLEX:
-            This::set_complex(value, variant.as_complex());
+            This::set_branch(&value_field, VariantSchema::VT_DOUBLE, &branch);
+            This::set_double(&branch, variant.as_real());
             break;
 
         case core::types::ValueType::BYTEVECTOR:
-            This::set_bytes(value, variant.get<core::types::ByteVector>());
+            This::set_branch(&value_field, VariantSchema::VT_BYTES, &branch);
+            This::set_bytes(&branch, variant.get<core::types::ByteVector>());
             break;
 
         case core::types::ValueType::TIMEPOINT:
-            This::set_timestamp(value, variant.as_timepoint());
+            This::set_branch(&value_field, VariantSchema::VT_TIMESTAMP, &branch);
+            This::set_timestamp(&branch, variant.as_timepoint());
             break;
 
         case core::types::ValueType::DURATION:
-            This::set_duration(value, variant.as_duration());
+            This::set_branch(&value_field, VariantSchema::VT_DURATION, &branch);
+            This::set_duration(&branch, variant.as_duration());
             break;
 
         case core::types::ValueType::VALUELIST:
-            This::set_variant_list(value, *variant.get_valuelist());
+            This::set_branch(&value_field, VariantSchema::VT_ARRAY, &branch);
+            This::set_variant_list(&branch, *variant.get_valuelist());
             break;
 
-        // case core::types::ValueType::TVLIST:
-        //     break;
+            // case core::types::ValueType::TVLIST:
+            //     break;
 
         case core::types::ValueType::KVMAP:
-            This::set_variant_map(value, *variant.get_kvmap());
+            This::set_branch(&value_field, VariantSchema::VT_MAP, &branch);
+            This::set_variant_map(&branch, *variant.get_kvmap());
             break;
 
         default:
@@ -191,14 +223,57 @@ namespace avro
         }
     }
 
-    void CompoundValue::set_variant_list(avro_value_t *value,
+    void CompoundValue::set_variant_list(avro_value_t *avro_value,
                                          const core::types::ValueList &list)
     {
+        assertf(avro_value_get_type(avro_value) == AVRO_ARRAY,
+                "Attempt to assign variant value list to Avro non-array value type %s",
+                This::type_name(avro_value));
+
+        for (const core::types::Value &value : list)
+        {
+            avro_value_t element;
+            checkstatus(avro_value_append(avro_value,  // value
+                                          &element,    // child
+                                          nullptr));   // new_index
+            This::set_variant(&element, value);
+        }
     }
 
-    void CompoundValue::set_variant_map(avro_value_t *value,
+    void CompoundValue::set_variant_map(avro_value_t *avro_value,
                                         const core::types::KeyValueMap &kvmap)
     {
+        assertf(avro_value_get_type(avro_value) == AVRO_MAP,
+                "Attempt to assign variant value list to Avro non-map value type %s",
+                This::type_name(avro_value));
+
+        for (const auto &[key, value] : kvmap)
+        {
+            avro_value_t element;
+            checkstatus(avro_value_add(
+                avro_value,   // value
+                key.c_str(),  // key
+                &element,     // child
+                nullptr,      // index
+                nullptr));    // is_new
+
+            This::set_variant(&element, value);
+        }
+    }
+
+    void CompoundValue::set_branch(avro_value_t *value,
+                                   VariantSchema::Type type,
+                                   avro_value_t *branch)
+    {
+        assertf(avro_value_get_type(avro_value) == AVRO_UNION,
+                "Attempt to set branch of Avro non-union value type %s",
+                This::type_name(avro_value));
+
+        checkstatus(avro_value_set_branch(
+                        value,
+                        static_cast<int>(type),
+                        branch),
+                    core::str::format("set_branch (%d)", type));
     }
 
 }  // namespace avro
