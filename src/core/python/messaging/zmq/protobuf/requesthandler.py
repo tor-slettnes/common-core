@@ -9,7 +9,7 @@
 from .error import Error
 from cc.protobuf.wellknown import Empty
 from cc.protobuf.status import Event
-from cc.protobuf.variant import valueList
+from cc.protobuf.variant import keyValueMap
 from cc.protobuf.rr import Request, Reply, StatusCode
 
 ### Third-party modules
@@ -88,7 +88,7 @@ class RequestHandler:
             Error(StatusCode.STATUS_INVALID,
                   Event(text = 'Requested method not found',
                         symbol = 'NotFound',
-                        attributes = valueList(
+                        attributes = keyValueMap(
                             interface_name = request.interface_name,
                             method_name = request.method_name)
                         )
@@ -118,7 +118,7 @@ class RequestHandler:
                       text = "Handler method does not have an input argument "
                       "with a ProtoBuf message annottation",
                       symbol = 'InvalidHandlerMethod',
-                      attributes = valueList(
+                      attributes = keyValueMap(
                           interface_name = self.interface_name,
                           method_name = handler.__name__
                       )
@@ -141,7 +141,7 @@ class RequestHandler:
             Error(StatusCode.STATUS_FAILED,
                   Event(text = str(e),
                         symbol = type(e).__name__,
-                        attributes = valueList(
+                        attributes = keyValueMap(
                             exception_args = e.args)
                         )
                   ).add_to_reply(reply)

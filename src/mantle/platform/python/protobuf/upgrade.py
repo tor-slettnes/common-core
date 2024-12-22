@@ -10,8 +10,6 @@ from cc.generated.upgrade_pb2 import *
 from cc.generated.upgrade_pb2 import PackageSource
 
 ### Modules within package
-from .wellknown import decodeTimestamp
-from .variant import decodeValueMap
 from .vfs import Path as VFSPath, VFSPathType, encodePath, decodePath
 
 ### Standard Python modules

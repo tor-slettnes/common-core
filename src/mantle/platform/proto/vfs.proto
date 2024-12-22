@@ -78,7 +78,7 @@ service VirtualFileSystem
     rpc write_file (stream FileChunk) returns (google.protobuf.Empty);
 
     // Return attributes associated with the specified path.
-    rpc get_attributes (Path) returns (cc.variant.ValueList);
+    rpc get_attributes (Path) returns (cc.variant.KeyValueMap);
 
     // Set/update attributes associated with the specified path.
     rpc set_attributes (AttributeRequest) returns (google.protobuf.Empty);
@@ -192,7 +192,7 @@ message LocateRequest
 
     // Zero or more tag/value pairs to match.
     // Tags may be repeated for cumulative value matches.
-    repeated cc.variant.Value attribute_filter = 5;
+    cc.variant.TaggedValueList attribute_filters = 5;
 
     // Include custom attributes in request
     bool with_attributes = 8;
@@ -220,7 +220,7 @@ message FileInfo
     google.protobuf.Timestamp accessTime = 12;  // Last access
     google.protobuf.Timestamp modifyTime = 13;  // Last modification
     google.protobuf.Timestamp createTime = 14;  // Creation
-    repeated cc.variant.Value attributes = 15; // Custom file attributes
+    cc.variant.KeyValueMap attributes = 15; // Custom file attributes
     // TBD: Access Control Lists, SELinux contexts
 }
 
@@ -232,7 +232,7 @@ message Directory
 message AttributeRequest
 {
     Path path = 1;
-    repeated cc.variant.Value attributes = 2;
+    cc.variant.KeyValueMap attributes = 2;
 }
 
 message VolumeInfo

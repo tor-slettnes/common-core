@@ -89,11 +89,15 @@ namespace protobuf
             }
             else if (const auto *vlist = dynamic_cast<const cc::variant::ValueList *>(&this->msg))
             {
-                return decoded<core::types::Value>(*vlist);
+                return decoded<core::types::ValueList>(*vlist);
             }
-            else if (const auto *value = dynamic_cast<const cc::variant::Complex *>(&this->msg))
+            else if (const auto *tvlist = dynamic_cast<const cc::variant::TaggedValueList *>(&this->msg))
             {
-                return decoded<core::types::complex>(*value);
+                return decoded<core::types::TaggedValueList>(*tvlist);
+            }
+            else if (const auto *kvmap = dynamic_cast<const cc::variant::KeyValueMap *>(&this->msg))
+            {
+                return decoded<core::types::KeyValueMap>(*kvmap);
             }
             else
             {

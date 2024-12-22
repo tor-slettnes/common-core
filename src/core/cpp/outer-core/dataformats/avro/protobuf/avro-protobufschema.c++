@@ -179,9 +179,9 @@ namespace avro
             {google::protobuf::Value::GetDescriptor(), VariantSchema()},
             {google::protobuf::Struct::GetDescriptor(), VariantMapSchema()},
             {google::protobuf::ListValue::GetDescriptor(), VariantListSchema()},
-            {cc::variant::Complex::GetDescriptor(), ComplexSchema()},
             {cc::variant::Value::GetDescriptor(), VariantSchema()},
             {cc::variant::ValueList::GetDescriptor(), VariantListSchema()},
+            {cc::variant::KeyValueMap::GetDescriptor(), VariantMapSchema()},
         };
 
         if (seen_types && seen_types->count(descriptor))

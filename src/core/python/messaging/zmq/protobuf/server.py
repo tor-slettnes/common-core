@@ -10,7 +10,7 @@ from .error import Error
 from .requesthandler import RequestHandler
 from ..basic.responder import Responder
 from cc.protobuf.rr import Request, Reply, StatusCode
-from cc.protobuf.variant import valueList
+from cc.protobuf.variant import keyValueMap
 
 ### Third-party modules
 import google.protobuf.message
@@ -48,7 +48,7 @@ class Server (Responder):
                   Event(
                       text = str(e),
                       symbol = type(e).__name__,
-                      attributes = valueList(
+                      attributes = keyValueMap(
                           data = binary_request
                       )
                   )
@@ -79,7 +79,7 @@ class Server (Responder):
                   Event(
                       text = "No such RPC interface",
                       symbol = 'KeyError',
-                      attributes = valueList(
+                      attributes = keyValueMap(
                           interface_name = request.interface_name,
                           available_interfaces = list(self.request_handlers.keys())
                       )

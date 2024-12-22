@@ -20,7 +20,8 @@ namespace avro
           schema(schema),
           iface(checkstatus(avro_generic_class_from_schema(schema)))
     {
-        checkstatus(avro_generic_value_new(this->iface, &this->value));
+        checkstatus(avro_generic_value_new(this->iface, &this->value),
+                    "avro_generic_value_new");
     }
 
     CompoundValue::CompoundValue(const std::string &json_schema)
@@ -44,9 +45,10 @@ namespace avro
     {
         avro_schema_t schema;
         checkstatus(avro_schema_from_json_length(
-            json.data(),
-            json.size(),
-            &schema));
+                        json.data(),
+                        json.size(),
+                        &schema),
+                    "avro_schema_from_json_length");
         return schema;
     }
 
@@ -58,10 +60,11 @@ namespace avro
         avro_value_t indexed_value;
         const char *field_name = nullptr;
         checkstatus(avro_value_get_by_index(
-            value,
-            index,
-            &indexed_value,
-            expected_name ? &field_name : nullptr));
+                        value,
+                        index,
+                        &indexed_value,
+                        expected_name ? &field_name : nullptr),
+                    "avro_value_get_by_index");
 
         if ((field_name != nullptr) && (field_name != expected_name.value()))
         {
@@ -85,10 +88,11 @@ namespace avro
         avro_value_t named_value;
         size_t field_index = 0;
         checkstatus(avro_value_get_by_name(
-            value,
-            name.c_str(),
-            &named_value,
-            expected_index ? &field_index : nullptr));
+                        value,
+                        name.c_str(),
+                        &named_value,
+                        expected_index ? &field_index : nullptr),
+                    "avro_value_get_by_name");
 
         if (expected_index.value_or(0) != field_index)
         {
@@ -235,7 +239,8 @@ namespace avro
             avro_value_t element;
             checkstatus(avro_value_append(avro_value,  // value
                                           &element,    // child
-                                          nullptr));   // new_index
+                                          nullptr),    // new_index
+                        "avro_value_append");
             This::set_variant(&element, value);
         }
     }
@@ -251,11 +256,12 @@ namespace avro
         {
             avro_value_t element;
             checkstatus(avro_value_add(
-                avro_value,   // value
-                key.c_str(),  // key
-                &element,     // child
-                nullptr,      // index
-                nullptr));    // is_new
+                            avro_value,   // value
+                            key.c_str(),  // key
+                            &element,     // child
+                            nullptr,      // index
+                            nullptr),     // is_new
+                        "avro_value_add");
 
             This::set_variant(&element, value);
         }

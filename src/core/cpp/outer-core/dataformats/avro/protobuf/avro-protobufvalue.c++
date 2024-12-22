@@ -44,11 +44,11 @@ namespace avro
                 value,
                 protobuf::decoded<core::types::ValueList>(*proto));
         }
-        else if (auto *proto = dynamic_cast<const cc::variant::Complex *>(&msg))
+        else if (auto *proto = dynamic_cast<const cc::variant::KeyValueMap *>(&msg))
         {
-            This::set_complex(
+            This::set_variant_map(
                 value,
-                protobuf::decoded<core::types::complex>(*proto));
+                protobuf::decoded<core::types::KeyValueMap>(*proto));
         }
         else
         {

@@ -13,7 +13,7 @@ from cc.generated.vfs_pb2 import \
 ### Modules within package
 from .utils import proto_enum
 from .wellknown import decodeTimestamp
-from .variant import PyValueDict, PyTaggedValueList, decodeValueMap
+from .variant import PyValueDict, PyTaggedValueList, decodeKeyValueMap
 from cc.core.scalar_types import OCT8
 
 ### Standard Python modules
@@ -88,7 +88,7 @@ def decodeStats(stats: FileInfo) -> FileStatus:
         decodeTimestamp(stats.accessTime),
         decodeTimestamp(stats.modifyTime),
         decodeTimestamp(stats.createTime),
-        decodeValueMap(stats.attributes))
+        decodeKeyValueMap(stats.attributes))
 
 def pathRequest(path: VFSPathType|None = None,
                 sources: VFSPathsType|None = None,

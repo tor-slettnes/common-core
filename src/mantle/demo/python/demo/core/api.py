@@ -8,7 +8,7 @@
 ### Modules relative to install dir
 from .signals import signal_store
 from cc.protobuf.wellknown import encodeTimestamp
-from cc.protobuf.variant import encodeValueList
+from cc.protobuf.variant import encodeKeyValueMap
 from cc.protobuf.demo import Greeting, TimeData, Signal
 
 ### Standard Python modules
@@ -52,7 +52,7 @@ class API:
             identity = self.identity,
             implementation = self.implementation,
             birth = encodeTimestamp(self.birth),
-            data = encodeValueList(kwargs))
+            data = encodeKeyValueMap(kwargs))
 
         return self.say_hello(greeting)
 

@@ -57,6 +57,7 @@ namespace avro
             {"my_real", 3.141592653589793238},
             {"my_string", "Some text here"},
             {"my_bytes", core::types::ByteVector::from_string("some bytes here")},
+            {"my_map", core::types::KeyValueMap({{"one", 1}, {"two", "II"}, {"three", 3.14}})},
             {"my_list", core::types::ValueList({true, 2, 3.141592653589793238, "IV"})},
             {"my_timestamp", core::dt::Clock::now()},
             {"my_5_seconds", std::chrono::seconds(5)},
@@ -84,11 +85,15 @@ namespace avro
                 {"key1", true},
                 {"key2", "II"},
                 {"key3", 3.141592653589793238},
+                {"now", core::dt::Clock::now()},
+                {"duration", std::chrono::seconds(5)},
             });
 
         cc::status::Event msg;
         protobuf::encode(event, &msg);
         avro::ProtoBufValue avro_wrapper(msg);
+
+        // EXPECT_EQ(avro_wrapper.as_value().get("attributes").get("duration").as_bytevector().size(), 12);
 
         std::string text = avro_wrapper.as_json();
         std::ofstream of("avro-event.json");

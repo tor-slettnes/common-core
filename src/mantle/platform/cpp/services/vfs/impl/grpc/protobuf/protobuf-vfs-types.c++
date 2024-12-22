@@ -194,7 +194,7 @@ namespace protobuf
             encoded_masks->Add(mask.string());
         }
 
-        encode(attribute_filters, msg->mutable_attribute_filter());
+        encode(attribute_filters, msg->mutable_attribute_filters());
         msg->set_with_attributes(flags.with_attributes);
         msg->set_include_hidden(flags.include_hidden);
         msg->set_ignore_case(flags.ignore_case);
@@ -211,7 +211,7 @@ namespace protobuf
         filename_masks->assign(msg.filename_masks().begin(),
                                msg.filename_masks().end());
 
-        decode(msg.attribute_filter(), attribute_filters);
+        decode(msg.attribute_filters(), attribute_filters);
         flags->with_attributes = msg.with_attributes();
         flags->include_hidden = msg.include_hidden();
         flags->ignore_case = msg.ignore_case();
@@ -274,13 +274,7 @@ namespace protobuf
         protobuf::encode(stats.access_time, msg->mutable_accesstime());
         protobuf::encode(stats.modify_time, msg->mutable_modifytime());
         protobuf::encode(stats.create_time, msg->mutable_createtime());
-
-        for (auto it = stats.attributes.begin(); it != stats.attributes.end(); it++)
-        {
-            cc::variant::Value *tv = msg->add_attributes();
-            tv->set_tag(it->first);
-            encode(it->second, tv);
-        }
+        protobuf::encode(stats.attributes, msg->mutable_attributes());
     }
 
     void encode(const std::string &name,

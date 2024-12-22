@@ -7,6 +7,7 @@
 
 ### Modules within package
 from cc.protobuf.wellknown import empty
+from cc.protobuf.variant import decodeKeyValueMap
 
 from cc.protobuf.vfs import Signal, \
     ContextSpec, Path as VFSPath, VFSPathType, VFSPathsType, \
@@ -544,7 +545,7 @@ class VirtualFileSystemClient (SignalClient):
 
         req = encodePath(vfspath)
         resp = self.stub.get_attributes(req)
-        return decodeValueMap(resp.items)
+        return decodeKeyValueMap(resp.items)
 
     def set_attributes(self, vfspath: VFSPathType, **attributes):
         '''

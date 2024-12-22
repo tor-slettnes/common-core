@@ -104,7 +104,7 @@ namespace platform::vfs::grpc
         ::grpc::Status get_attributes(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::Path* request,
-            ::cc::variant::ValueList* response) override;
+            ::cc::variant::KeyValueMap* response) override;
 
         ::grpc::Status set_attributes(
             ::grpc::ServerContext* context,

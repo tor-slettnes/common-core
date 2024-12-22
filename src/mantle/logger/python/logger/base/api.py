@@ -7,7 +7,7 @@
 
 ### Modules within package
 from cc.protobuf.wellknown import TimestampType, encodeTimestamp
-from cc.protobuf.variant import encodeValueList
+from cc.protobuf.variant import encodeKeyValueMap
 from cc.protobuf.status import Event, Domain, Level, encodeLogLevel
 
 import cc.core.paths
@@ -157,7 +157,7 @@ class API (logging.Handler):
             code          = code,
             symbol        = symbol,
             timestamp     = encodeTimestamp(timestamp or time.time()),
-            attributes    = encodeValueList(kwargs),
+            attributes    = encodeKeyValueMap(kwargs),
             contract_id   = contract_id,
             host          = host or socket.gethostname(),
             thread_id     = thread_id,

@@ -12,41 +12,13 @@ package cc.variant;
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
-message Complex
-{
-    double real = 1;
-    double imag = 2;
-}
 
-// Container for a generic value, and optionally a tag.
-//
-// * The value is either of the following:
+// Container for a generic ("variant") value:
 //   - one of the following basic types: boolean, signed/unsigned integer, real number, string, byte sequence
 //   - one of the following well-known types: Timestamp, Duration
-//   - one of the following custom types: Complex
-//   - a ValueList instance, declared below, containing nested Value instances.
-//
-// * The tag is optional, and is typically used when the value is part of a
-//   ValueList represeting an ordered tag/value sequence or a key/value map
-//   ("dictionary" in Python).
-//
-// Though outside the scope of this definition, when translating the value to
-// JSON, e.g. for logging, the following conventions are *recommended*:
-// * a timestamp should be represented as a string in JavaScript-compliant ISO format:
-//   `yyyy-mm-ddThh:mm:ssZ`. Note that the trailing `Z` implies "zero offset" from UTC.
-// * a duration should be represented as a real number, denoting seconds.
-// * a string should be represented with UTF-8 character encoding, particularly over the wire.
-// * a byte sequence should be represented as a base64-encoded string.
-// * a ValueList item must be either `untagged` or `mappable` (may be determined implicitly):
-//   - An `untagged` ValueList can be represented as a JSON *array*
-//   - A `mappable` ValueList can be represented as a JSON *object*
-//   - Any other ValueList cannot be represented unambiguously with JSON.
+//   - one of the nested value containers below: ValueList, TaggedValueList, ValueMap
 
 message Value {
-    // Data tag when used in TagValueList, or key for KeyValueMap.
-    // Not present for items in a ValueList.
-    string tag = 1;
-
     oneof value {
         // Scalar types
         bool value_bool  = 4;
@@ -57,24 +29,30 @@ message Value {
         bytes value_bytes = 9;
         google.protobuf.Timestamp value_timestamp = 10;
         google.protobuf.Duration value_duration = 11;
-        Complex value_complex = 12;
 
-        // Nested tag/value container
-        ValueList value_list = 15;
+        // Nested value containers
+        ValueList value_list = 16;
+        TaggedValueList tv_list = 17;
+        KeyValueMap kv_map = 18;
     }
 }
 
-// A sequence of Value items.  This can be used to represent:
-// * a plain list of (untagged) values, where there should be no tags present
-// * ordered tag/value pairs, where the tags need not exist for every item nor be unique
-// * key/value map ("dictionary" in Python) where every value has a unique key.
-
+// A sequence of values.
 message ValueList {
     repeated Value items = 1;
+}
 
-    oneof hints
-    {
-        bool untagged = 4;      // No tags are present (values can be stored in vector)
-        bool mappable = 5;      // Tags are present and unique (values are mappable)
-    }
+
+message TaggedValue {
+    string tag = 1;
+    Value value = 2;
+}
+
+message TaggedValueList {
+    repeated TaggedValue items = 1;
+}
+
+message KeyValueMap
+{
+    map<string, Value> map = 1;
 }

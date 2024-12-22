@@ -157,15 +157,6 @@ namespace avro
     };
 
     //--------------------------------------------------------------------------
-    // ComplexSchema
-
-    class ComplexSchema : public RecordSchema
-    {
-    public:
-        ComplexSchema();
-    };
-
-    //--------------------------------------------------------------------------
     // VariantSchema
 
     class VariantSchema : public RecordSchema

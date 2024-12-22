@@ -54,7 +54,7 @@ message Greeting
     google.protobuf.Timestamp birth = 4;
 
     // Arbitrary key/value pairs associated with the greeting
-    cc.variant.ValueList data = 5;
+    cc.variant.KeyValueMap data = 5;
 }
 
 

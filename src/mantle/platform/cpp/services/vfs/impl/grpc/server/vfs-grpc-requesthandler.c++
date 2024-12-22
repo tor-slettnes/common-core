@@ -377,7 +377,7 @@ namespace platform::vfs::grpc
     ::grpc::Status RequestHandler::get_attributes(
         ::grpc::ServerContext *cxt,
         const ::cc::platform::vfs::Path *request,
-        ::cc::variant::ValueList *response)
+        ::cc::variant::KeyValueMap *response)
     {
         try
         {

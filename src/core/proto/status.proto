@@ -39,8 +39,8 @@ message Event
     // Time of occurence
     google.protobuf.Timestamp timestamp = 7;
 
-    // Tag/value pairs indicating event attributes
-    cc.variant.ValueList attributes = 8;
+    // Event attributes
+    cc.variant.KeyValueMap attributes = 8;
 
     // Contract identifier, used to process event data accordingly.
     // Defaults to `"text"` if `text` field is present.

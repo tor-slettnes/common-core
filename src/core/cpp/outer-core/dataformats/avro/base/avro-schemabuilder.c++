@@ -144,18 +144,6 @@ namespace avro
     {
     }
 
-    //--------------------------------------------------------------------------
-    // ComplexSchema
-
-    ComplexSchema::ComplexSchema()
-        : RecordSchema(
-              TypeName_Complex,
-              {
-                  RecordField(TypeName_Double, SchemaField_ComplexReal),
-                  RecordField(TypeName_Double, SchemaField_ComplexImaginary),
-              })
-    {
-    }
 
     //--------------------------------------------------------------------------
     // VariantSchema
@@ -169,6 +157,7 @@ namespace avro
     {
     }
 
+
     core::types::ValueList VariantSchema::alternates = {
         TypeName_Null,                              // VT_NULL
         TypeName_String,                            // VT_STRING
@@ -181,22 +170,6 @@ namespace avro
         MapSchema(TypeName_Variant).get_kvmap(),    // VT_MAP
         ArraySchema(TypeName_Variant).get_kvmap(),  // VT_ARRAY
     };
-
-    // VariantSchema::TypeMap VariantSchema::type_map = {
-    //     {core::types::ValueType::NONE, TypeName_Null},
-    //     {core::types::ValueType::BYTEVECTOR, TypeName_Bytes},
-    //     {core::types::ValueType::STRING, TypeName_String},
-    //     {core::types::ValueType::CHAR, TypeName_String},
-    //     {core::types::ValueType::BOOL, TypeName_Boolean},
-    //     {core::types::ValueType::UINT, TypeName_Long},
-    //     {core::types::ValueType::SINT, TypeName_Long},
-    //     {core::types::ValueType::REAL, TypeName_Double},
-    //     {core::types::ValueType::COMPLEX, ComplexSchema().get_kvmap()},
-    //     {core::types::ValueType::TIMEPOINT, TimestampSchema().get_kvmap()},
-    //     {core::types::ValueType::DURATION, DurationSchema().get_kvmap()},
-    //     {core::types::ValueType::KVMAP, MapSchema().get_kvmap()},
-    //     {core::types::ValueType::VALUELIST, ArraySchema().get_kvmap()},
-    // };
 
     //--------------------------------------------------------------------------
     // VariantMapSchema
