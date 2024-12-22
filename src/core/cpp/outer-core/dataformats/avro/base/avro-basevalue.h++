@@ -49,31 +49,7 @@ namespace avro
         avro_schema_t avro_schema() const;
 
         core::types::ValueType value_type() const;
-        core::types::Value as_value(bool enums_as_strings = true) const;
         std::string as_json(bool pretty = false) const;
-
-    public:
-        std::optional<std::string> get_string() const;
-        std::optional<core::types::ByteVector> get_bytes() const;
-        std::optional<int> get_int() const;
-        std::optional<long> get_long() const;
-        std::optional<float> get_float() const;
-        std::optional<double> get_double() const;
-        std::optional<bool> get_boolean() const;
-        std::optional<int> get_enum_value() const;
-        std::optional<std::string> get_enum_symbol() const;
-        std::optional<core::types::ByteVector> get_fixed() const;
-        core::types::KeyValueMapPtr get_map(bool enums_as_strings) const;
-        core::types::ValueListPtr get_array(bool enums_as_strings) const;
-        std::optional<core::types::Value> get_union(bool enums_as_strings) const;
-
-        template <typename EnumType>
-        EnumType get_enum() const
-        {
-            int enumvalue = 0;
-            avro_value_get_enum(this->c_value(), &enumvalue);
-            return static_cast<EnumType>(enumvalue);
-        }
 
     protected:
         static avro_type_t type(avro_value_t *value);

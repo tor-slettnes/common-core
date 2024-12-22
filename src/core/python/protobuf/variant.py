@@ -224,7 +224,7 @@ def decodeKeyValueMap(kvmap: KeyValueMap) -> PyValueDict:
 
 def keyValueMap(**kwargs) -> KeyValueMap:
     '''
-    Build a `protobuf.variant.ValueList` instance from native key/value
+    Build a `protobuf.variant.KeyValueMap` instance from native key/value
     pairs.
     '''
     return encodeKeyValueMap(kwargs)
