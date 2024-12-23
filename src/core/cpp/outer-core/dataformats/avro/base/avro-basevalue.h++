@@ -47,8 +47,6 @@ namespace avro
         const avro_value_t *c_value() const;
         avro_type_t avro_type() const;
         avro_schema_t avro_schema() const;
-
-        core::types::ValueType value_type() const;
         std::string as_json(bool pretty = false) const;
 
     protected:
