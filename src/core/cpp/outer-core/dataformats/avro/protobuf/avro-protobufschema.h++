@@ -16,12 +16,12 @@
 namespace avro
 {
     //--------------------------------------------------------------------------
-    /// @class ProtoBufSchemaBuilder
+    /// @class ProtoBufSchema
     /// @brief Build Avro schema from ProtoBuf message type
 
-    class ProtoBufSchemaBuilder : public RecordSchema
+    class ProtoBufSchema : public RecordSchema
     {
-        using This = ProtoBufSchemaBuilder;
+        using This = ProtoBufSchema;
         using Super = RecordSchema;
 
         using DescriptorSet = std::unordered_set<const google::protobuf::Descriptor *>;
@@ -34,34 +34,32 @@ namespace avro
         // @param[in] descriptor
         //     ProtoBuf message descriptor
 
-        ProtoBufSchemaBuilder(
+        ProtoBufSchema(
+            const ContextRef &context,
             const google::protobuf::Descriptor *descriptor);
 
     private:
-        static core::types::ValueList fields(
-            const google::protobuf::Descriptor *descriptor,
-            DescriptorSet *seen_types);
+        void add_fields();
 
-        static RecordField field(
-            const google::protobuf::FieldDescriptor *fd,
-            bool is_optional,
-            DescriptorSet *seen_types);
+        core::types::Value field(
+            const google::protobuf::FieldDescriptor *fd) const;
 
-        static core::types::Value field_schema(
-            const google::protobuf::FieldDescriptor *fd,
-            DescriptorSet *seen_types);
+        core::types::Value field_schema(
+            const google::protobuf::FieldDescriptor *fd) const;
 
-        static EnumSchema enum_schema(
+        EnumSchema enum_schema(
             const google::protobuf::EnumDescriptor *ed,
-            const google::protobuf::EnumValueDescriptor *default_value);
+            const google::protobuf::EnumValueDescriptor *default_value) const;
 
-        static MapSchema map_schema(
-            const google::protobuf::Descriptor *md,
-            DescriptorSet *seen_types);
+        MapSchema map_schema(
+            const google::protobuf::Descriptor *md) const;
 
-        static SchemaWrapper schema_from_descriptor(
-            const google::protobuf::Descriptor *descriptor,
-            DescriptorSet *seen_types);
+        static SchemaWrapper from_descriptor(
+            const ContextRef &context,
+            const google::protobuf::Descriptor *descriptor);
+
+    private:
+        const google::protobuf::Descriptor *descriptor;
     };
 
     //--------------------------------------------------------------------------
@@ -73,7 +71,7 @@ namespace avro
     ///     A new or existing `SchemaWrapper` instance.
     ///
     /// Well-known ProtoBuf message types are mapped to predefined Avro schemas.
-    /// Custom types are mapped via a new or existing `ProtoBufSchemaBuilder`
+    /// Custom types are mapped via a new or existing `ProtoBufSchema`
     /// instance.  New instances are cached for future reuse.
 
     SchemaWrapper schema_from_proto(const google::protobuf::Descriptor *descriptor);

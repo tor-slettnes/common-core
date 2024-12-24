@@ -40,7 +40,7 @@ namespace core::types
         Value(const std::string_view &view);
         Value(const std::string &string);
 
-        // explicit Value(const ValueBase &value);
+        explicit Value(const Value &other);
         // explicit Value(ValueBase &&value);
 
         Value(ValueListPtr list);

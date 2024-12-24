@@ -28,14 +28,14 @@ namespace core::stream
     template <class Sequence>
     std::ostream &write_sequence(std::ostream &stream, const Sequence &seq)
     {
-        stream << "{";
+        stream << "[";
         std::string sep = "";
         for (const auto &item : seq)
         {
             core::str::format(stream, "%s%r", sep, item);
             sep = ", ";
         }
-        stream << "}";
+        stream << "]";
         return stream;
     }
 
@@ -58,7 +58,7 @@ namespace core::stream
     {
         if (value)
         {
-            core::str::format(stream, "{%r}", *value);
+            core::str::format(stream, "&%r", *value);
         }
         else
         {
@@ -73,7 +73,7 @@ namespace std
     template <class T1, class T2>
     std::ostream &operator<<(std::ostream &stream, const std::pair<T1, T2> &pair)
     {
-        core::str::format(stream, "{%r: %r}", pair.first, pair.second);
+        core::str::format(stream, "(%r, %r)", pair.first, pair.second);
         return stream;
     }
 

@@ -125,7 +125,7 @@ namespace core::types
 
     void ValueList::to_stream(std::ostream &stream) const
     {
-        stream << "{";
+        stream << "[";
         bool comma = false;
         for (const Value &element : *this)
         {
@@ -139,7 +139,7 @@ namespace core::types
             }
             element.to_literal_stream(stream);
         }
-        stream << "}";
+        stream << "]";
     }
 
 

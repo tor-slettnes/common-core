@@ -146,43 +146,35 @@ namespace core::json
                                           bool pretty,
                                           const std::string &indent)
     {
-        if (tvlist.mappable())
-        {
-            return This::to_stream(stream, tvlist.as_kvmap(), pretty, indent);
-        }
-        else if (!tvlist.tagged())
-        {
-            return This::to_stream(stream, tvlist.values(), pretty, indent);
-        }
-        else
-        {
-            std::string sub_indent;
-            std::string delimiter;
-            std::string tvseparator = ",";
-            std::string infix;
+        std::string sub_indent;
+        std::string delimiter;
+        std::string kvseparator = ":";
+        std::string infix;
 
-            if (pretty)
-            {
-                infix = "\n" + indent;
-                sub_indent = "  ";
-                tvseparator = ", ";
-            }
+        if (pretty)
+        {
+            infix = "\n" + indent;
+            sub_indent = "  ";
+            kvseparator = ": ";
+        }
 
-            stream << "[";
-            for (const auto &[tag, value] : tvlist)
+        stream << "{";
+        for (const auto &[tag, value] : tvlist)
+        {
+            if (tag)
             {
                 stream << delimiter
                        << infix
-                       << sub_indent;
+                       << sub_indent
+                       << std::quoted(*tag)
+                       << kvseparator;
 
-                This::to_stream(stream, types::Value(tag), pretty, indent);
-                stream << tvseparator;
                 This::to_stream(stream, value, pretty, indent + sub_indent);
                 delimiter = ",";
             }
-            stream << infix << "]";
-            return stream;
         }
+        stream << infix << "}";
+        return stream;
     }
 
 }  // namespace core::json

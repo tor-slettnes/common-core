@@ -108,35 +108,61 @@ namespace avro
         return named_value;
     }
 
-    void CompoundValue::set_complex(avro_value_t *value,
-                                    const core::types::complex &complexvalue)
-    {
-        avro_value_t real = This::get_by_index(value, 0, SchemaField_ComplexReal);
-        This::set_double(&real, complexvalue.real());
-
-        avro_value_t imag = This::get_by_index(value, 0, SchemaField_ComplexImaginary);
-        This::set_double(&imag, complexvalue.imag());
-    }
-
-    void CompoundValue::set_duration(avro_value_t *value,
-                                     const core::dt::Duration &dur)
+    void CompoundValue::set_datetime_interval(avro_value_t *value,
+                                              const core::dt::DateTimeInterval &interval)
     {
         // The Avro `duration` logical type is a fixed array of 12 bytes, split
         // into three groups of packed 4-byte (32-bit) unsigned integers with
         // little endian byte ordering.
 
-        constexpr std::uint32_t ms_per_day = (1000 * 60 * 60 * 24);  // approximate
-        constexpr std::uint32_t days_per_month = 30;                 // approximate
+        std::uint32_t months = 0;
+        std::uint32_t days = 0;
+        std::uint32_t ms = 0;
 
-        std::uint64_t total_ms = core::dt::to_milliseconds(dur);
-        std::uint64_t total_days = total_ms / ms_per_day;
-        std::uint32_t months = total_days / days_per_month;
+        switch (interval.unit)
+        {
+        case core::dt::TimeUnit::NANOSECOND:
+            ms = interval.count / 1000000;
+            break;
 
-        std::vector<std::uint32_t> counts = {
-            months,
-            static_cast<std::uint32_t>(total_days % days_per_month),
-            static_cast<std::uint32_t>(total_ms % ms_per_day),
-        };
+        case core::dt::TimeUnit::MICROSECOND:
+            ms = interval.count / 1000;
+            break;
+
+        case core::dt::TimeUnit::MILLISECOND:
+            ms = interval.count;
+            break;
+
+        case core::dt::TimeUnit::SECOND:
+            ms = interval.count * 1000;
+            break;
+
+        case core::dt::TimeUnit::MINUTE:
+            ms = interval.count * 1000 * 60;
+            break;
+
+        case core::dt::TimeUnit::HOUR:
+            ms = interval.count * 1000 * 60 * 60;
+            break;
+
+        case core::dt::TimeUnit::DAY:
+            days = interval.count;
+            break;
+
+        case core::dt::TimeUnit::WEEK:
+            days = interval.count * 7;
+            break;
+
+        case core::dt::TimeUnit::MONTH:
+            months = interval.count;
+            break;
+
+        case core::dt::TimeUnit::YEAR:
+            months = interval.count * 12;
+            break;
+        }
+
+        std::vector<std::uint32_t> counts = {months, days, ms};
 
         core::types::ByteVector packed_duration;
         packed_duration.reserve(LogicalType_Duration_Size);
@@ -151,10 +177,24 @@ namespace avro
         This::set_fixed(value, packed_duration);
     }
 
+    void CompoundValue::set_time_interval(avro_value_t *value,
+                                          const core::dt::Duration &dur)
+    {
+        auto seconds = std::chrono::duration_cast<std::chrono::seconds>(dur);
+        auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(dur) -
+                     std::chrono::duration_cast<std::chrono::nanoseconds>(seconds);
+
+        avro_value_t seconds_value = This::get_by_index(value, 0, SchemaField_TimeSeconds);
+        This::set_long(&seconds_value, seconds.count());
+
+        avro_value_t nanos_value = This::get_by_index(value, 1, SchemaField_TimeNanos);
+        This::set_int(&nanos_value, nanos.count());
+    }
+
     void CompoundValue::set_timestamp(avro_value_t *value,
                                       const core::dt::TimePoint &tp)
     {
-        This::set_long(value, core::dt::to_milliseconds(tp));
+        This::set_time_interval(value, tp.time_since_epoch());
     }
 
     void CompoundValue::set_variant(avro_value_t *value,
@@ -202,8 +242,8 @@ namespace avro
             break;
 
         case core::types::ValueType::DURATION:
-            This::set_branch(&value_field, VariantSchema::VT_DURATION, &branch);
-            This::set_duration(&branch, variant.as_duration());
+            This::set_branch(&value_field, VariantSchema::VT_INTERVAL, &branch);
+            This::set_time_interval(&branch, variant.as_duration());
             break;
 
         case core::types::ValueType::VALUELIST:

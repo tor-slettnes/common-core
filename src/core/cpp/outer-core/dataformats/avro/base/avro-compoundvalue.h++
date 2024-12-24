@@ -39,10 +39,10 @@ namespace avro
             const std::string &name,
             const std::optional<std::size_t> &expected_index = {});
 
-        static void set_duration(avro_value_t *value,
-                                 const core::dt::Duration &dur);
-        static void set_complex(avro_value_t *value,
-                                const core::types::complex &complexvalue);
+        static void set_datetime_interval(avro_value_t *value,
+                                          const core::dt::DateTimeInterval &interval);
+        static void set_time_interval(avro_value_t *value,
+                                      const core::dt::Duration &dur);
         static void set_timestamp(avro_value_t *value,
                                   const core::dt::TimePoint &tp);
         static void set_variant(avro_value_t *value,

@@ -62,7 +62,7 @@ namespace avro
     {
         if (auto *proto = dynamic_cast<const google::protobuf::Duration *>(&msg))
         {
-            This::set_duration(value, protobuf::decoded<core::dt::Duration>(*proto));
+            This::set_time_interval(value, protobuf::decoded<core::dt::Duration>(*proto));
         }
         else if (auto *proto = dynamic_cast<const google::protobuf::Timestamp *>(&msg))
         {

@@ -49,7 +49,8 @@ namespace avro
 
     TEST(AvroTest, VariantToAvro)
     {
-        CompoundValue compound{VariantSchema()};
+        auto context = std::make_shared<BuilderContext>();
+        CompoundValue compound{VariantSchema(context)};
 
         core::types::KeyValueMap kvmap = {
             {"my_bool", true},

@@ -265,7 +265,7 @@ namespace core::types
             {
                 comma = true;
             }
-            stream << key << "=";
+            stream << key << ": ";
             value.to_literal_stream(stream);
         }
         stream << "}";

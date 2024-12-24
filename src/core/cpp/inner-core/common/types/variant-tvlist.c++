@@ -407,7 +407,7 @@ namespace core::types
 
     void TaggedValueList::to_stream(std::ostream &stream) const
     {
-        this->to_stream(stream, "{", ", ", "}");
+        this->to_stream(stream, "[", ", ", "]");
     }
 
     void TaggedValueList::to_stream(std::ostream &stream,
@@ -431,10 +431,17 @@ namespace core::types
 
             if (tag.has_value())
             {
-                stream << tag.value() << "=";
+                stream << "("
+                       << tag.value()
+                       << ", ";
             }
 
             value.to_literal_stream(stream);
+
+            if (tag.has_value())
+            {
+                stream << ")";
+            }
         }
         stream << postfix;
     }

@@ -20,11 +20,6 @@ namespace avro
     {
     }
 
-    SchemaWrapper::SchemaWrapper(const core::types::KeyValueMap &kvmap)
-        : Value(core::types::Value(kvmap))
-    {
-    }
-
     avro_schema_t SchemaWrapper::as_avro_schema() const
     {
         std::string json = this->as_json();
@@ -41,53 +36,69 @@ namespace avro
         return core::json::writer.encoded(*this);
     }
 
-    //--------------------------------------------------------------------------
-    // SchemaBuilder
-
-    SchemaBuilder::SchemaBuilder(const core::types::KeyValueMap &spec)
-        : SchemaWrapper(spec)
-    {
-    }
-
-    void SchemaBuilder::set(const std::string &key,
+    void SchemaWrapper::set(const std::string &key,
                             const core::types::Value &value)
     {
-        this->get_kvmap()->insert_or_assign(key, value);
+        if (auto kvmap = this->get_kvmap())
+        {
+            kvmap->insert_or_assign(key, value);
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // BuilderContext
+
+    core::types::Value BuilderContext::build(const std::string &name,
+                                             core::types::TaggedValueList &&spec)
+    {
+        if (this->defined_schemas.count(name))
+        {
+            return name;
+        }
+        else
+        {
+            this->defined_schemas.insert(name);
+            spec.emplace(spec.begin(), SchemaField_Name, name);
+            return spec;
+        }
     }
 
     //--------------------------------------------------------------------------
     // RecordSchema
 
-    RecordSchema::RecordSchema(const std::string &name,
-                               const core::types::ValueList &fields)
-        : SchemaBuilder({
-              {SchemaField_Type, TypeName_Record},
-              {SchemaField_Name, name},
-              {SchemaField_RecordFields, fields},
-          })
+    RecordSchema::RecordSchema(const ContextRef &context,
+                               const std::string &name)
+        : SchemaWrapper(context->build(
+              name,
+              {
+                  {SchemaField_Type, TypeName_Record},
+                  {SchemaField_RecordFields, core::types::ValueList()},
+              })),
+          context(context)
     {
     }
 
-    //--------------------------------------------------------------------------
-    // RecordField
-
-    RecordField::RecordField(const core::types::Value &type,
-                             const std::string &name)
-        : core::types::KeyValueMap({
-              {SchemaField_Type, type},
-              {SchemaField_Name, name},
-          })
+    void RecordSchema::add_field(const std::string &name,
+                                 const core::types::Value &type)
     {
+        if (auto fields = this->get(std::string(SchemaField_RecordFields)).get_valuelist())
+        {
+            fields->push_back(core::types::TaggedValueList(
+                {
+                    {SchemaField_Name, name},
+                    {SchemaField_Type, type},
+                }));
+        }
     }
 
     //--------------------------------------------------------------------------
     // MapSchema
 
     MapSchema::MapSchema(const core::types::Value &valuetype)
-        : SchemaBuilder({
+        : SchemaWrapper(core::types::KeyValueMap({
               {SchemaField_Type, TypeName_Map},
               {SchemaField_MapValues, valuetype},
-          })
+          }))
     {
     }
 
@@ -95,24 +106,26 @@ namespace avro
     // ArrayShema
 
     ArraySchema::ArraySchema(const core::types::Value &itemtype)
-        : SchemaBuilder({
+        : SchemaWrapper(core::types::KeyValueMap({
               {SchemaField_Type, TypeName_Array},
               {SchemaField_ArrayItems, itemtype},
-          })
+          }))
     {
     }
 
     //--------------------------------------------------------------------------
     // EnumSchema
 
-    EnumSchema::EnumSchema(const std::string &name,
+    EnumSchema::EnumSchema(const ContextRef &context,
+                           const std::string &name,
                            const std::vector<std::string> &symbols,
                            const std::optional<std::string> &default_symbol)
-        : SchemaBuilder({
-              {SchemaField_Type, TypeName_Enum},
-              {SchemaField_Name, name},
-              {SchemaField_EnumSymbols, core::types::ValueList(symbols.begin(), symbols.end())},
-          })
+        : SchemaWrapper(context->build(
+              name,
+              {
+                  {SchemaField_Type, TypeName_Enum},
+                  {SchemaField_EnumSymbols, core::types::ValueList(symbols.begin(), symbols.end())},
+              }))
     {
         if (default_symbol)
         {
@@ -123,67 +136,95 @@ namespace avro
     //--------------------------------------------------------------------------
     // DurationSchema
 
-    DurationSchema::DurationSchema()
-        : SchemaBuilder({
-              {SchemaField_Type, TypeName_Fixed},
-              {SchemaField_Name, TypeName_Duration},
-              {SchemaField_LogicalType, LogicalType_Duration},
-              {SchemaField_Size, LogicalType_Duration_Size},
-          })
+    CalendarTimeIntervalSchema::CalendarTimeIntervalSchema(const ContextRef &context)
+        : SchemaWrapper(context->build(
+              TypeName_CalendarTimeInterval,
+              {
+                  {SchemaField_Type, TypeName_Fixed},
+                  {SchemaField_LogicalType, LogicalType_Duration},
+                  {SchemaField_Size, LogicalType_Duration_Size},
+              }))
     {
+    }
+
+    //--------------------------------------------------------------------------
+    // TimeIntervalSchema
+
+    TimeIntervalSchema::TimeIntervalSchema(const ContextRef &context)
+        : RecordSchema(context, TypeName_TimeInterval)
+    {
+        this->add_field(SchemaField_TimeSeconds, TypeName_Long);
+        this->add_field(SchemaField_TimeNanos, TypeName_Int);
+        core::str::format(std::cerr,
+                          "TimeIntervalSchema: %s\n",
+                          *this);
     }
 
     //--------------------------------------------------------------------------
     // TimestampSchema
 
-    TimestampSchema::TimestampSchema()
-        : SchemaBuilder({
-              {SchemaField_Type, TypeName_Long},
-              {SchemaField_LogicalType, LogicalType_TimeStampMillis},
-          })
+    TimestampSchema::TimestampSchema(const ContextRef &context)
+        : RecordSchema(context, TypeName_Timestamp)
     {
+        this->add_field(SchemaField_TimeSeconds, TypeName_Long);
+        this->add_field(SchemaField_TimeNanos, TypeName_Int);
+        core::str::format(std::cerr,
+                          "TimestampSchema: %s\n",
+                          *this);
     }
-
 
     //--------------------------------------------------------------------------
     // VariantSchema
 
-    VariantSchema::VariantSchema()
-        : RecordSchema(
-              TypeName_Variant,
-              {
-                  RecordField(VariantSchema::alternates, SchemaField_VariantValue),
-              })
+    VariantSchema::VariantSchema(const ContextRef &context)
+        : RecordSchema(context, TypeName_Variant)
     {
+        core::types::ValueList subtypes;
+        subtypes.push_back(TypeName_Null);                  // VT_NULL
+        subtypes.push_back(TypeName_String);                // VT_STRING
+        subtypes.push_back(TypeName_Bytes);                 // VT_BYTES
+        subtypes.push_back(TypeName_Boolean);               // VT_BOOL
+        subtypes.push_back(TypeName_Long);                  // VT_LONG
+        subtypes.push_back(TypeName_Double);                // VT_DOUBLE
+        subtypes.push_back(TimeIntervalSchema(context));    // VT_INTERVAL
+        subtypes.push_back(TimestampSchema(context));       // VT_TIMESTAMP
+        subtypes.push_back(MapSchema(TypeName_Variant));    // VT_MAP
+        subtypes.push_back(ArraySchema(TypeName_Variant));  // VT_ARRAY
+        this->add_field(SchemaField_VariantValue, subtypes);
+
+        // this->add_field(
+        //     SchemaField_VariantValue,
+        //     core::types::ValueList({
+        //         TypeName_Null,                  // VT_NULL
+        //         TypeName_String,                // VT_STRING
+        //         TypeName_Bytes,                 // VT_BYTES
+        //         TypeName_Boolean,               // VT_BOOL
+        //         TypeName_Long,                  // VT_LONG
+        //         TypeName_Double,                // VT_DOUBLE
+        //         TimeIntervalSchema(context),    // VT_INTERVAL
+        //         TimestampSchema(context),       // VT_TIMESTAMP
+        //         MapSchema(TypeName_Variant),    // VT_MAP
+        //         ArraySchema(TypeName_Variant),  // VT_ARRAY
+        //     }));
+
+        std::cerr << "VariantSchema() -> "
+                  << *this
+                  << std::endl;
     }
-
-
-    core::types::ValueList VariantSchema::alternates = {
-        TypeName_Null,                              // VT_NULL
-        TypeName_String,                            // VT_STRING
-        TypeName_Bytes,                             // VT_BYTES
-        TypeName_Boolean,                           // VT_BOOL
-        TypeName_Long,                              // VT_LONG
-        TypeName_Double,                            // VT_DOUBLE
-        TimestampSchema().get_kvmap(),              // VT_TIMESTAMP
-        DurationSchema().get_kvmap(),               // VT_DURATION
-        MapSchema(TypeName_Variant).get_kvmap(),    // VT_MAP
-        ArraySchema(TypeName_Variant).get_kvmap(),  // VT_ARRAY
-    };
 
     //--------------------------------------------------------------------------
     // VariantMapSchema
 
-    VariantMapSchema::VariantMapSchema()
-        : MapSchema(VariantSchema())
+    VariantMapSchema::VariantMapSchema(const ContextRef &context)
+        : MapSchema(VariantSchema(context))
     {
     }
 
     //--------------------------------------------------------------------------
     // VariantListSchema
 
-    VariantListSchema::VariantListSchema()
-        : ArraySchema(VariantSchema())
+    VariantListSchema::VariantListSchema(const ContextRef &context)
+        : ArraySchema(VariantSchema(context))
     {
     }
 

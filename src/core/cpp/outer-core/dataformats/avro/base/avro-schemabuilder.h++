@@ -29,8 +29,9 @@ namespace avro
     constexpr auto TypeName_Complex = "Complex";
 
     constexpr auto TypeName_Variant = "Variant";
+    constexpr auto TypeName_CalendarTimeInterval = "CalendarTimeInterval";
+    constexpr auto TypeName_TimeInterval = "TimeInterval";
     constexpr auto TypeName_Timestamp = "Timestamp";
-    constexpr auto TypeName_Duration = "Duration";
 
     constexpr auto SchemaField_Type = "type";
     constexpr auto SchemaField_Name = "name";
@@ -50,7 +51,7 @@ namespace avro
     constexpr auto SchemaField_Size = "size";
     constexpr auto SchemaField_ComplexReal = "real";
     constexpr auto SchemaField_ComplexImaginary = "imag";
-    constexpr auto SchemaField_VariantValue = "value";
+    constexpr auto SchemaField_VariantValue = "variant";
 
     constexpr auto LogicalType_TimeStampMillis = "timestamp-millis";
     constexpr auto LogicalType_TimeOfDayMillis = "time-millis";
@@ -65,7 +66,6 @@ namespace avro
     {
     public:
         SchemaWrapper(const core::types::Value &value);
-        SchemaWrapper(const core::types::KeyValueMap &kvmap);
 
     public:
         // @brief
@@ -75,44 +75,46 @@ namespace avro
         avro_schema_t as_avro_schema() const;
 
         std::string as_json() const;
-    };
 
-    //--------------------------------------------------------------------------
-    // @class SchemaBuilder
-    // @brief Construct a composite Avro schema
-
-    class SchemaBuilder : public SchemaWrapper
-    {
     protected:
-        SchemaBuilder(const core::types::KeyValueMap &spec);
-
         void set(const std::string &key, const core::types::Value &value);
     };
 
     //--------------------------------------------------------------------------
-    // RecordSchema
+    // @class BuilderContext
 
-    class RecordSchema : public SchemaBuilder
+    class BuilderContext
     {
     public:
-        RecordSchema(const std::string &name,
-                     const core::types::ValueList &fields);
+        core::types::Value build(const std::string &name,
+                                 core::types::TaggedValueList &&spec);
+
+    public:
+        std::unordered_set<std::string> defined_schemas;
     };
 
-    //--------------------------------------------------------------------------
-    // RecordField
+    using ContextRef = std::shared_ptr<BuilderContext>;
 
-    class RecordField : public core::types::KeyValueMap
+    //--------------------------------------------------------------------------
+    // RecordSchema
+
+    class RecordSchema : public SchemaWrapper
     {
     public:
-        RecordField(const core::types::Value &type,
-                    const std::string &name);
+        RecordSchema(const ContextRef &context,
+                     const std::string &name);
+
+        void add_field(const std::string &name,
+                       const core::types::Value &type);
+
+    protected:
+        ContextRef context;
     };
 
     //--------------------------------------------------------------------------
     // MapSchema
 
-    class MapSchema : public SchemaBuilder
+    class MapSchema : public SchemaWrapper
     {
     public:
         MapSchema(const core::types::Value &valuetype);
@@ -121,7 +123,7 @@ namespace avro
     //--------------------------------------------------------------------------
     // ArrayShema
 
-    class ArraySchema : public SchemaBuilder
+    class ArraySchema : public SchemaWrapper
     {
     public:
         ArraySchema(const core::types::Value &itemtype);
@@ -130,30 +132,53 @@ namespace avro
     //--------------------------------------------------------------------------
     // EnumShema
 
-    class EnumSchema : public SchemaBuilder
+    class EnumSchema : public SchemaWrapper
     {
     public:
-        EnumSchema(const std::string &name,
+        EnumSchema(const ContextRef &context,
+                   const std::string &name,
                    const std::vector<std::string> &symbols,
                    const std::optional<std::string> &default_symbol = {});
     };
 
     //--------------------------------------------------------------------------
-    //DurationSchema
+    /// @class CalendarTimeIntervalSchema
+    /// @brief
+    ///   Wrapper around Avro's `duration` logical schema, representing a
+    ///   date/time interval in terms of (milli)seconds, days, and months.
 
-    class DurationSchema : public SchemaBuilder
+    class CalendarTimeIntervalSchema : public SchemaWrapper
     {
     public:
-        DurationSchema();
+        CalendarTimeIntervalSchema(const ContextRef &context);
     };
 
     //--------------------------------------------------------------------------
-    // TimestampSchema
+    /// @class TimeIntervalSchema
+    /// @brief
+    ///    Represents a plain time interval in terms of seconds and
+    ///    nanoseconds.
+    /// @note
+    ///    We avoid the name `Duration` since it is easily confused with
+    ///    Avro's `duration` logical type, which in turn is best suited for
+    ///    representing calendar time intervals (years/months, days, seconds).
 
-    class TimestampSchema : public SchemaBuilder
+    class TimeIntervalSchema : public RecordSchema
     {
     public:
-        TimestampSchema();
+        TimeIntervalSchema(const ContextRef &context);
+    };
+
+    //--------------------------------------------------------------------------
+    /// @class TimestampSchema
+    /// @brief
+    ///     Represents an absolute timestamp as relative time since
+    ///     UNIX epoch.
+
+    class TimestampSchema : public RecordSchema
+    {
+    public:
+        TimestampSchema(const ContextRef &context);
     };
 
     //--------------------------------------------------------------------------
@@ -164,19 +189,19 @@ namespace avro
     public:
         enum Type
         {
-            VT_NULL,            // 0
-            VT_STRING,          // 1
-            VT_BYTES,           // 2
-            VT_BOOL,            // 3
-            VT_LONG,            // 4
-            VT_DOUBLE,          // 5
-            VT_TIMESTAMP,       // 6
-            VT_DURATION,        // 7
-            VT_MAP,             // 8
-            VT_ARRAY            // 9
+            VT_NULL,       // 0
+            VT_STRING,     // 1
+            VT_BYTES,      // 2
+            VT_BOOL,       // 3
+            VT_LONG,       // 4
+            VT_DOUBLE,     // 5
+            VT_INTERVAL,   // 6
+            VT_TIMESTAMP,  // 7
+            VT_MAP,        // 8
+            VT_ARRAY       // 9
         };
 
-        VariantSchema();
+        VariantSchema(const ContextRef &context);
 
     private:
         static core::types::ValueList alternates;
@@ -188,7 +213,7 @@ namespace avro
     class VariantMapSchema : public MapSchema
     {
     public:
-        VariantMapSchema();
+        VariantMapSchema(const ContextRef &context);
     };
 
     //--------------------------------------------------------------------------
@@ -197,7 +222,7 @@ namespace avro
     class VariantListSchema : public ArraySchema
     {
     public:
-        VariantListSchema();
+        VariantListSchema(const ContextRef &context);
     };
 
 }  // namespace avro
