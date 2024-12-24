@@ -86,32 +86,27 @@ namespace core::types
     {
     }
 
-    Value::Value(const Value &other)
-    {
-        switch (other.type())
-        {
-        case ValueType::VALUELIST:
-            this->emplace<ValueListPtr>(other.get_valuelist());
-            break;
+    // Value::Value(const Value &other)
+    // {
+    //     switch (other.type())
+    //     {
+    //     case ValueType::VALUELIST:
+    //         this->emplace<ValueListPtr>(other.get_valuelist());
+    //         break;
 
-        case ValueType::TVLIST:
-            this->emplace<TaggedValueListPtr>(other.get_tvlist());
-            break;
+    //     case ValueType::TVLIST:
+    //         this->emplace<TaggedValueListPtr>(other.get_tvlist());
+    //         break;
 
-        case ValueType::KVMAP:
-            this->emplace<KeyValueMapPtr>(other.get_kvmap());
-            break;
+    //     case ValueType::KVMAP:
+    //         this->emplace<KeyValueMapPtr>(other.get_kvmap());
+    //         break;
 
-        default:
-            *this = other;
-            break;
-        }
-        std::cerr << "Constructed: Value("
-                  << other
-                  << ") -> "
-                  << *this
-                  << std::endl;
-    }
+    //     default:
+    //         *this = other;
+    //         break;
+    //     }
+    // }
 
     // Value::Value(ValueBase &&value)
     //     : ValueBase(std::move(value))

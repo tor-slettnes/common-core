@@ -215,13 +215,7 @@ namespace avro
     SchemaWrapper schema_from_proto(const google::protobuf::Descriptor *descriptor)
     {
         auto context = std::make_shared<BuilderContext>();
-        SchemaWrapper wrapper = ProtoBufSchema::from_descriptor(context, descriptor);
-
-        core::str::format(std::cerr,
-                          "schema_from_proto(%s) -> %s\n",
-                          descriptor->full_name(),
-                          wrapper);
-        return wrapper;
+        return ProtoBufSchema::from_descriptor(context, descriptor);
     }
 
 }  // namespace avro

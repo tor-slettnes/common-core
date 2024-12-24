@@ -155,9 +155,6 @@ namespace avro
     {
         this->add_field(SchemaField_TimeSeconds, TypeName_Long);
         this->add_field(SchemaField_TimeNanos, TypeName_Int);
-        core::str::format(std::cerr,
-                          "TimeIntervalSchema: %s\n",
-                          *this);
     }
 
     //--------------------------------------------------------------------------
@@ -168,9 +165,6 @@ namespace avro
     {
         this->add_field(SchemaField_TimeSeconds, TypeName_Long);
         this->add_field(SchemaField_TimeNanos, TypeName_Int);
-        core::str::format(std::cerr,
-                          "TimestampSchema: %s\n",
-                          *this);
     }
 
     //--------------------------------------------------------------------------
@@ -191,25 +185,6 @@ namespace avro
         subtypes.push_back(MapSchema(TypeName_Variant));    // VT_MAP
         subtypes.push_back(ArraySchema(TypeName_Variant));  // VT_ARRAY
         this->add_field(SchemaField_VariantValue, subtypes);
-
-        // this->add_field(
-        //     SchemaField_VariantValue,
-        //     core::types::ValueList({
-        //         TypeName_Null,                  // VT_NULL
-        //         TypeName_String,                // VT_STRING
-        //         TypeName_Bytes,                 // VT_BYTES
-        //         TypeName_Boolean,               // VT_BOOL
-        //         TypeName_Long,                  // VT_LONG
-        //         TypeName_Double,                // VT_DOUBLE
-        //         TimeIntervalSchema(context),    // VT_INTERVAL
-        //         TimestampSchema(context),       // VT_TIMESTAMP
-        //         MapSchema(TypeName_Variant),    // VT_MAP
-        //         ArraySchema(TypeName_Variant),  // VT_ARRAY
-        //     }));
-
-        std::cerr << "VariantSchema() -> "
-                  << *this
-                  << std::endl;
     }
 
     //--------------------------------------------------------------------------

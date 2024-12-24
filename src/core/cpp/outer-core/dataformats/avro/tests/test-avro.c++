@@ -12,6 +12,7 @@
 #include "protobuf-event-types.h++"
 #include "status.pb.h"
 #include "parsers/json/writer.h++"
+#include "parsers/json/reader.h++"
 
 #include <gtest/gtest.h>
 #include <fstream>
@@ -65,8 +66,9 @@ namespace avro
         };
 
         compound.set_variant(compound.c_value(), kvmap);
-        auto of = std::ofstream("variant.json");
         std::string json = compound.as_json(true);
+
+        auto of = std::ofstream("variant.json");
         of.write(json.data(), json.size());
         EXPECT_TRUE(of.tellp() > 0);
         of.close();
@@ -74,20 +76,34 @@ namespace avro
 
     TEST(AvroTest, ProtoBufToAvro)
     {
+        core::dt::TimePoint tp = core::dt::Clock::now();
+        timespec ts = core::dt::to_timespec(tp);
+        double pi = 3.141592653589793238;
+        std::string text("Arbitrary Event Text");
+        std::string origin("test case");
+        uint code = 42;
+        std::string symbol = "LifeUniverseEverything";
+
+        core::dt::Duration dur_value = std::chrono::microseconds(1000001);
+        std::string string_value = "II";
+        bool bool_value = true;
+        core::dt::TimePoint tp_value = tp - std::chrono::hours(24);
+        double real_value = pi;
+
         core::status::Event event(
-            "Arbitrary Event Text",             // text
+            text,                               // text
             core::status::Domain::APPLICATION,  // domain
-            "test case",                        // origin
-            42,                                 // code
-            "LifeUniverseEverything",           // symbol
+            origin,                             // origin
+            code,                               // code
+            symbol,                             // symbol
             core::status::Level::NOTICE,        // level
-            core::dt::Clock::now(),             // timepoint,
+            tp,                                 // timepoint,
             {
-                {"key1", true},
-                {"key2", "II"},
-                {"key3", 3.141592653589793238},
-                {"now", core::dt::Clock::now()},
-                {"duration", std::chrono::seconds(5)},
+                {"my_bool", bool_value},
+                {"my_string", string_value},
+                {"my_real", real_value},
+                {"my_tp", tp_value},
+                {"my_duration", dur_value},
             });
 
         cc::status::Event msg;
@@ -96,9 +112,32 @@ namespace avro
 
         // EXPECT_EQ(avro_wrapper.as_value().get("attributes").get("duration").as_bytevector().size(), 12);
 
-        std::string text = avro_wrapper.as_json();
-        std::ofstream of("avro-event.json");
-        of.write(text.data(), text.size());
-        EXPECT_FALSE(text.empty());
+
+        std::string json_text = avro_wrapper.as_json();
+
+        // std::ofstream of("avro-event.json");
+        // of.write(json_text.data(), json_text.size());
+
+
+        core::types::Value readback = core::json::reader.decoded(json_text);
+
+        EXPECT_EQ(readback.get("text").as_string(), text);
+        EXPECT_EQ(readback.get("domain").as_string(), "APPLICATION");
+        EXPECT_EQ(readback.get("origin").as_string(), origin);
+        EXPECT_EQ(readback.get("code").as_uint(), code);
+        EXPECT_EQ(readback.get("symbol").as_string(), symbol);
+        EXPECT_EQ(readback.get("timestamp").get("seconds").as_sint(), ts.tv_sec);
+        EXPECT_EQ(readback.get("timestamp").get("nanoseconds").as_sint(), ts.tv_nsec);
+
+        core::types::KeyValueMap attributes = readback.get("attributes").as_kvmap();
+
+        EXPECT_EQ(attributes.get("my_bool").get("variant").get("boolean").as_bool(), bool_value);
+
+        core::types::KeyValueMap interval = attributes.get("my_duration").get("variant").get("TimeInterval").as_kvmap();
+        auto expected_seconds = std::chrono::duration_cast<std::chrono::seconds>(dur_value);
+        auto expected_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(dur_value) - expected_seconds;
+
+        EXPECT_EQ(interval.get("seconds").as_uint(), expected_seconds.count());
+        EXPECT_EQ(interval.get("nanoseconds").as_uint(), expected_nanos.count());
     }
 }  // namespace avro
