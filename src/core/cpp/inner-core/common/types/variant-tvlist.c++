@@ -431,17 +431,11 @@ namespace core::types
 
             if (tag.has_value())
             {
-                stream << "("
-                       << tag.value()
-                       << ", ";
+                stream << tag.value()
+                       << "=";
             }
 
             value.to_literal_stream(stream);
-
-            if (tag.has_value())
-            {
-                stream << ")";
-            }
         }
         stream << postfix;
     }

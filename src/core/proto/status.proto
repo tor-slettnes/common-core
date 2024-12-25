@@ -39,15 +39,15 @@ message Event
     // Time of occurence
     google.protobuf.Timestamp timestamp = 7;
 
-    // Event attributes
-    cc.variant.KeyValueMap attributes = 8;
-
     // Contract identifier, used to process event data accordingly.
     // Defaults to `"text"` if `text` field is present.
     string contract_id = 9;
 
     // Reporting hostname. Used for remote logging.
     string host = 10;
+
+    // Event attributes
+    cc.variant.KeyValueMap attributes = 14;
 
     // Description of error, possibly expanded with attribute values.
     string text = 15;

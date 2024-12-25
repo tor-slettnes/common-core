@@ -174,7 +174,7 @@ namespace platform::netconfig
 
     void WirelessConnectionData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        tvlist->append_if(!this->ssid.empty(), "ssid", this->ssid);
+        tvlist->append_if(!this->ssid.empty(), "ssid", this->ssid.as_string());
         tvlist->append_if(this->mode, "ap_mode", core::str::convert_from(this->mode));
         tvlist->append("hidden", this->hidden);
         tvlist->append("tx_power", this->tx_power);
@@ -364,7 +364,7 @@ namespace platform::netconfig
 
     void AccessPointData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        tvlist->append_if(!this->ssid.empty(), "ssid", this->ssid);
+        tvlist->append_if(!this->ssid.empty(), "ssid", this->ssid.as_string());
         tvlist->append_if(this->frequency != 0, "frequency", this->frequency);
         tvlist->append_if(this->flags != 0, "flags", this->flags);
         tvlist->append_if(this->rsn_flags != 0, "rsn_flags", this->rsn_flags);

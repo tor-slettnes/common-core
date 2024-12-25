@@ -58,11 +58,11 @@ namespace core::stream
     {
         if (value)
         {
-            core::str::format(stream, "&%r", *value);
+            core::str::format(stream, "%r", *value);
         }
         else
         {
-            stream << "{}";
+            stream << "null";
         }
         return stream;
     }
@@ -73,7 +73,7 @@ namespace std
     template <class T1, class T2>
     std::ostream &operator<<(std::ostream &stream, const std::pair<T1, T2> &pair)
     {
-        core::str::format(stream, "(%r, %r)", pair.first, pair.second);
+        core::str::format(stream, "%r=%r", pair.first, pair.second);
         return stream;
     }
 

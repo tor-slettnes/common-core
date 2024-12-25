@@ -8,7 +8,8 @@
 ### Modules wihtin package
 from cc.generated.variant_pb2 import Value, ValueList, \
     TaggedValue, TaggedValueList, KeyValueMap
-from .wellknown import decodeTimestamp, decodeDuration
+from .wellknown import TimestampType, \
+    encodeTimestamp, decodeTimestamp, decodeDuration
 
 ### Third-party modules
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -17,10 +18,10 @@ from google.protobuf.duration_pb2 import Duration
 ### Standard Python modules
 from typing import Sequence, Optional
 
-PyValue = object
-PyTaggedValue = tuple[str, object]
-PyValueList = list[object]
-PyValueDict = dict[str, object]
+PyValue = None|bool|int|float|str|bytes|Duration|TimestampType|list|tuple|dict
+PyTaggedValue = tuple[str, PyValue]
+PyValueList = list[PyValue]
+PyValueDict = dict[str, PyValue]
 PyTaggedValueList = list[PyTaggedValue]
 
 
@@ -60,11 +61,14 @@ def encodeValue(value : PyValue) -> Value:
     elif isinstance(value, bytes):
         return Value(value_bytes = value)
 
+    elif isinstance(value, Duration):
+        return Value(value_duration = value)
+
     elif isinstance(value, Timestamp):
         return Value(value_timestamp = value)
 
-    elif isinstance(value, Duration):
-        return Value(value_duration = value)
+    elif isinstance(value, TimestampType):
+        return Value(value_timestamp = encodeTimestamp(value))
 
     elif isinstance(value, (list, tuple)):
         if is_tagged_list(value):
