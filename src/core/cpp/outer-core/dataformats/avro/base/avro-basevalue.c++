@@ -74,6 +74,25 @@ namespace avro
         return avro_value_get_schema(&this->value);
     }
 
+    std::size_t BaseValue::serialized_size() const
+    {
+        std::size_t size = 0;
+        checkstatus(avro_value_sizeof(const_cast<avro_value_t *>(&this->value), &size));
+        return size;
+    }
+
+    core::types::ByteVector BaseValue::serialized() const
+    {
+        std::size_t nbytes = this->serialized_size();
+        core::types::ByteVector buffer(nbytes);
+        avro_writer_t writer = avro_writer_memory(
+            reinterpret_cast<char *>(buffer.data()),
+            buffer.size());
+
+        avro_value_write(writer, const_cast<avro_value_t *>(&this->value));
+        return buffer;
+    }
+
     std::string BaseValue::as_json(bool pretty) const
     {
         char *json_str = nullptr;

@@ -61,7 +61,7 @@ namespace platform::upgrade
     //==========================================================================
     // PackageInfo
 
-    struct PackageInfo : public core::types::Streamable
+    struct PackageInfo : public core::types::Listable
     {
     public:
         using ptr = std::shared_ptr<PackageInfo>;
@@ -84,7 +84,7 @@ namespace platform::upgrade
         virtual bool operator==(const PackageInfo &other) const;
 
     protected:
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     private:
         PackageSource source_;
@@ -100,12 +100,12 @@ namespace platform::upgrade
     //==========================================================================
     // ScanProgress
 
-    struct ScanProgress : public core::types::Streamable
+    struct ScanProgress : public core::types::Listable
     {
         using ptr = std::shared_ptr<ScanProgress>;
 
     public:
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
         PackageSource source;

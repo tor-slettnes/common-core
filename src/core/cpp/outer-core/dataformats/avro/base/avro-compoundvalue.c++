@@ -29,7 +29,7 @@ namespace avro
     {
     }
 
-    CompoundValue::CompoundValue(const SchemaWrapper &wrapper)
+    CompoundValue::CompoundValue(SchemaWrapper &&wrapper)
         : CompoundValue(wrapper.as_avro_schema())
     {
     }

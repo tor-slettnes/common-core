@@ -21,6 +21,9 @@ namespace avro
     public:
         ProtoBufValue(const google::protobuf::Message &msg);
 
+        ProtoBufValue &assign_from_message(
+            const google::protobuf::Message &msg);
+
     private:
         static void assign_from_message(
             avro_value_t *value,

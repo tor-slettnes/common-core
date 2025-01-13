@@ -22,7 +22,7 @@ function(cc_pkgconf PREFIX PACKAGE)
   else()
     message(WARNING
       "Unable to find 'pkg-config', which is needed to obtain information about "
-      "available packages. Please install the 'cc_pkgconf' system package.")
+      "available packages. Please install the 'pkgconf' system package.")
   endif()
 
   if (arg_REQUIRED AND NOT ${PREFIX}_FOUND)

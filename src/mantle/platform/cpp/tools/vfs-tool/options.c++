@@ -32,7 +32,7 @@ void Options::add_options()
 
 void Options::initialize()
 {
-    logf_info("Creating VFS client");
+    logf_debug("Creating VFS client");
     if (this->local)
     {
         platform::vfs::local::register_providers();
@@ -49,7 +49,7 @@ void Options::initialize()
 void Options::deinitialize()
 {
     core::platform::signal_shutdown.disconnect(this->signal_handle);
-    logf_info("Shutting down VFS configuration client");
+    logf_debug("Shutting down VFS configuration client");
     if (this->local)
     {
         platform::vfs::local::unregister_providers();

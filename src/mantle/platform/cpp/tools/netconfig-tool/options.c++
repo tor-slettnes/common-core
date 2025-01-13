@@ -32,7 +32,7 @@ void Options::add_options()
 
 void Options::initialize()
 {
-    logf_info("Creating NetConfig client: %s");
+    logf_debug("Creating NetConfig client: %s");
     if (this->local)
     {
         platform::netconfig::dbus::register_providers();
@@ -49,7 +49,7 @@ void Options::initialize()
 void Options::deinitialize()
 {
     core::platform::signal_shutdown.disconnect(this->signal_handle);
-    logf_info("Shutting down NetConfig client");
+    logf_debug("Shutting down NetConfig client");
     if (this->local)
     {
         platform::netconfig::dbus::unregister_providers();

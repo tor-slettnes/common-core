@@ -16,19 +16,31 @@ namespace avro
     // SchemaWrapper
 
     SchemaWrapper::SchemaWrapper(const core::types::Value &value)
-        : Value(value)
+        : Value(value),
+          avro_schema(nullptr)
     {
     }
 
-    avro_schema_t SchemaWrapper::as_avro_schema() const
+    SchemaWrapper::~SchemaWrapper()
     {
-        std::string json = this->as_json();
-        avro_schema_t schema;
-        checkstatus(avro_schema_from_json_length(
-            json.data(),
-            json.size(),
-            &schema));
-        return schema;
+        if (this->avro_schema)
+        {
+            avro_schema_decref(this->avro_schema);
+            this->avro_schema = nullptr;
+        }
+    }
+
+    avro_schema_t SchemaWrapper::as_avro_schema()
+    {
+        if (!this->avro_schema)
+        {
+            std::string json = this->as_json();
+            checkstatus(avro_schema_from_json_length(
+                json.data(),
+                json.size(),
+                &this->avro_schema));
+        }
+        return this->avro_schema;
     }
 
     std::string SchemaWrapper::as_json() const

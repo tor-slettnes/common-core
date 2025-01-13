@@ -1,0 +1,13 @@
+# -*- yaml -*-
+#==============================================================================
+## @file kafka-services-common.yaml
+## @brief Default settings for communicating with Kafka
+## @author Tor Slettnes <tor@slett.net>
+#==============================================================================
+
+# Default settings for any service
+_default_:
+  host      : "localhost"       # Connect to localhost by default
+
+  conf:
+    linger.ms: 100              # Max delay before sending message

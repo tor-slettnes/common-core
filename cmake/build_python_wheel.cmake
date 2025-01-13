@@ -198,6 +198,7 @@ function(cc_add_python_wheel TARGET)
       DIRECTORY "${wheel_dir}/"
       DESTINATION "${install_dir}"
       COMPONENT "${arg_INSTALL_COMPONENT}"
+      PATTERN "pyproject.toml" EXCLUDE
     )
   endif()
 endfunction()

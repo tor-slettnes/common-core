@@ -42,7 +42,7 @@ CONFIG_ARGS += $(if $(VERSION), -D VERSION="$(VERSION)")
 CONFIG_ARGS += $(if $(BUILD_NUMBER), -D BUILD_NUMBER="$(BUILD_NUMBER)")
 CONFIG_ARGS += $(if $(PACKAGE_NAME), -D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
 
-CMAKE_TAG = $(BUILD_DIR)/Makefile
+CMAKE_TAG = $(BUILD_DIR)/CMakeCache.txt
 
 ### Check for a target-specific toolchain and use that if available
 
@@ -85,6 +85,11 @@ local/strip: build
 .PHONY: uninstall
 uninstall:
 	@rm -rfv "$(INSTALL_DIR)"
+
+.PHONY: getversion
+getversion:
+	@cmake -L -P local.cmake -P defaults.cmake 2>&1 | \
+		sed -ne 's/^VERSION:STRING=\(.*\)$$/\1/ p'
 
 .PHONY: doc
 doc: cmake

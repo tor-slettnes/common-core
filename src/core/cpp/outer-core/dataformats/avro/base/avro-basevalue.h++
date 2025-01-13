@@ -47,7 +47,11 @@ namespace avro
         const avro_value_t *c_value() const;
         avro_type_t avro_type() const;
         avro_schema_t avro_schema() const;
+
+        std::size_t serialized_size() const;
+        core::types::ByteVector serialized() const;
         std::string as_json(bool pretty = false) const;
+
 
     protected:
         static avro_type_t type(avro_value_t *value);

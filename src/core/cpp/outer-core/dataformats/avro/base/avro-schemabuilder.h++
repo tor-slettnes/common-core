@@ -66,18 +66,22 @@ namespace avro
     {
     public:
         SchemaWrapper(const core::types::Value &value);
+        ~SchemaWrapper();
 
     public:
         // @brief
         //     Convert this wrapper into a Avro-C compatible schema.
         // @return
-        //     New `avro_schema_t` reference.  Use `avro_shema-decref()` the release.
-        avro_schema_t as_avro_schema() const;
+        //     New `avro_schema_t` reference.  Use `avro_shema-decref()` to release.
+        avro_schema_t as_avro_schema();
 
         std::string as_json() const;
 
     protected:
         void set(const std::string &key, const core::types::Value &value);
+
+    private:
+        avro_schema_t avro_schema;
     };
 
     //--------------------------------------------------------------------------

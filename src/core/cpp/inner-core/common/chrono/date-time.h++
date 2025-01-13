@@ -271,13 +271,13 @@ namespace core
         std::time_t to_time_t(const TimePoint &tp);
 
         /// Convert a duration to seconds (truncated, not rounded)
-        std::uint64_t to_seconds(const Duration &d);
+        std::int64_t to_seconds(const Duration &d);
 
         /// Convert a duration to milliseconds (truncated, not rounded) since UNIX epoch
-        std::uint64_t to_milliseconds(const TimePoint &tp);
+        std::int64_t to_milliseconds(const TimePoint &tp);
 
         /// Convert a duration to milliseconds (truncated, not rounded)
-        std::uint64_t to_milliseconds(const Duration &d);
+        std::int64_t to_milliseconds(const Duration &d);
 
         /// Convert from TimePoint (std::chrono::system_clock::time_point) to double
         double to_double(const TimePoint &tp);

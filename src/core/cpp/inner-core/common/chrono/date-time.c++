@@ -417,17 +417,17 @@ namespace core
             // return dt::to_timespec(tp).tv_sec;
         }
 
-        std::uint64_t to_seconds(const Duration &d)
+        std::int64_t to_seconds(const Duration &d)
         {
             return std::chrono::floor<std::chrono::seconds>(d).count();
         }
 
-        std::uint64_t to_milliseconds(const TimePoint &tp)
+        std::int64_t to_milliseconds(const TimePoint &tp)
         {
             return to_milliseconds(tp.time_since_epoch());
         }
 
-        std::uint64_t to_milliseconds(const Duration &d)
+        std::int64_t to_milliseconds(const Duration &d)
         {
             return std::chrono::floor<std::chrono::milliseconds>(d).count();
         }

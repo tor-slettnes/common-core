@@ -17,7 +17,15 @@ namespace avro
     ProtoBufValue::ProtoBufValue(const google::protobuf::Message &msg)
         : CompoundValue(schema_from_proto(msg.GetDescriptor()))
     {
+        this->assign_from_message(msg);
+    }
+
+    ProtoBufValue &ProtoBufValue::assign_from_message(
+        const google::protobuf::Message &msg)
+    {
+        avro_value_reset(&this->value);
         This::assign_from_message(&this->value, msg);
+        return *this;
     }
 
     void ProtoBufValue::assign_from_message(

@@ -162,35 +162,27 @@ namespace platform::upgrade
                (this->is_applicable() == other.is_applicable());
     }
 
-    void PackageInfo::to_stream(std::ostream &stream) const
+    void PackageInfo::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         if (this->source())
         {
-            core::str::format(stream,
-                              "{source=%s, product=%r, "
-                              "version=%r, description=%r, "
-                              "reboot_required=%b, is_applicable=%b}",
-                              this->source(),
-                              this->product(),
-                              this->version(),
-                              this->description(),
-                              this->reboot_required(),
-                              this->is_applicable());
-        }
-        else
-        {
-            stream << "{}";
+            tvlist->extend({
+                {"source", this->source().as_tvlist()},
+                {"product", this->product()},
+                {"version", this->version().as_tvlist()},
+                {"description", this->description()},
+                {"reboot_required", this->reboot_required()},
+                {"is_applicable", this->is_applicable()},
+            });
         }
     }
 
     //==========================================================================
     // ScanProgress
 
-    void ScanProgress::to_stream(std::ostream &stream) const
+    void ScanProgress::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::str::format(stream,
-                          "{source=%s}",
-                          this->source);
+        tvlist->append("source", this->source.as_tvlist());
     }
 
     //==========================================================================
@@ -207,7 +199,6 @@ namespace platform::upgrade
             tvlist->append("error", this->error->as_tvlist());
         }
     }
-
 
     UpgradeProgress::Fraction::Fraction(const core::types::Value &current,
                                         const core::types::Value &total)

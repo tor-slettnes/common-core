@@ -26,7 +26,7 @@ void Options::add_options()
 
 void Options::initialize()
 {
-    logf_info("Creating SysConfig client: %s");
+    logf_debug("Creating SysConfig client: %s");
     platform::sysconfig::grpc::register_providers(this->host);
     core::platform::signal_shutdown.connect(
         this->signal_handle,
@@ -36,7 +36,7 @@ void Options::initialize()
 void Options::deinitialize()
 {
     core::platform::signal_shutdown.disconnect(this->signal_handle);
-    logf_info("Shutting down SysConfig client");
+    logf_debug("Shutting down SysConfig client");
     platform::sysconfig::grpc::unregister_providers();
 }
 

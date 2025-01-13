@@ -38,9 +38,11 @@ namespace avro
             {
                 // Avro does not have an exact counterpart to ProtoBuf `oneof`
                 // fields. Specifically, an Avro Union is not suitable, since it
-                // contains only mutually exclusive value types and no field
-                // names. Therefore, we include each field within the oneof
-                // block separately, but with `null` as an alternate value type.
+                // contains only (mutually exclusive) value types and no field
+                // names. It would be impossible, for instance, to represents
+                // two alternate fields of the same type. Therefore, we include
+                // each field from the oneof block as separate Avro fields, but
+                // with `null` as an alternate value type.
                 field_schema = core::types::ValueList({TypeName_Null, field_schema});
             }
 
