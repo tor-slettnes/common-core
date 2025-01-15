@@ -67,6 +67,11 @@ namespace core::argparse
             logging::SinkFactory *factory,
             const types::KeyValueMap &sink_settings);
 
+        /// Add flags `--debug`, `--info`, etc to set `stderr` sink threshold.
+        void add_verbosity_options(
+            logging::SinkFactory *factory,
+            const types::KeyValueMap &sink_settings);
+
         /// Add options related to logging in a specific scope
         void add_log_scope_options();
 

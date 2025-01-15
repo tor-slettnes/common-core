@@ -1,0 +1,14 @@
+# -*- yaml -*-
+#===============================================================================
+## @file daemon-defaults.yaml
+## @brief Default settings shared across server applications
+## @author Tor Slettnes <tor@slett.net>
+#===============================================================================
+
+## These settings take precedence over those in `defaults.yaml` for
+## daemon applications.
+
+log sinks:
+  # Log to standard error (when running interactively)
+  stderr:
+    threshold: INFO

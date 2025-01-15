@@ -60,11 +60,11 @@ namespace protobuf
             break;
 
         case core::types::ValueType::TVLIST:
-            encode(value.as_tvlist(), msg->mutable_tv_list());
+            encode(value.as_tvlist(), msg->mutable_value_tvlist());
             break;
 
         case core::types::ValueType::KVMAP:
-            encode(value.as_kvmap(), msg->mutable_kv_map());
+            encode(value.as_kvmap(), msg->mutable_value_kvmap());
             break;
         }
     }
@@ -110,12 +110,12 @@ namespace protobuf
             *value = decode_shared<core::types::ValueList>(msg.value_list());
             break;
 
-        case cc::variant::Value::kTvList:
-            *value = decode_shared<core::types::TaggedValueList>(msg.tv_list());
+        case cc::variant::Value::kValueTvlist:
+            *value = decode_shared<core::types::TaggedValueList>(msg.value_tvlist());
             break;
 
-        case cc::variant::Value::kKvMap:
-            *value = decode_shared<core::types::KeyValueMap>(msg.kv_map());
+        case cc::variant::Value::kValueKvmap:
+            *value = decode_shared<core::types::KeyValueMap>(msg.value_kvmap());
             break;
 
         default:

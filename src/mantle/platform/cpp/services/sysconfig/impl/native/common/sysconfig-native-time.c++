@@ -21,7 +21,7 @@ namespace platform::sysconfig::native
     void TimeConfigProvider::initialize()
     {
         Super::initialize();
-        logf_info("Scheduling time updates each second");
+        logf_debug("Scheduling time updates each second");
         core::scheduler.add(
             this->name(),                        // handle
             [](const core::dt::TimePoint &tp) {  // |
@@ -36,7 +36,7 @@ namespace platform::sysconfig::native
 
     void TimeConfigProvider::deinitialize()
     {
-        logf_info("Unscheduling time updates");
+        logf_debug("Unscheduling time updates");
         core::scheduler.remove(this->name());
         Super::deinitialize();
     }

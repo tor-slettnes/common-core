@@ -15,5 +15,5 @@ namespace core
 {
     extern std::shared_ptr<core::SettingsStore> settings;
 
-    void init_settings();
+    void init_settings(const std::optional<std::string> &flavor = {});
 }  // namespace core

@@ -7,7 +7,7 @@
 
 #pragma once
 #include "date-time.h++"
-#include "logging/logging.h++"
+#include "status/level.h++"
 
 #include <variant>
 #include <condition_variable>

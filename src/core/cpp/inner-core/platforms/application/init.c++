@@ -25,7 +25,7 @@ namespace core::application
         }
     }
 
-    void initialize(int argc, char **argv)
+    void initialize(int argc, char **argv, const std::optional<std::string> &flavor)
     {
         ::signal(SIGINT, shutdown_handler);
         ::signal(SIGTERM, shutdown_handler);
@@ -36,7 +36,13 @@ namespace core::application
         //std::locale::global(std::locale("C"));
 
         core::platform::register_providers(argc ? argv[0] : "");
+        core::init_settings(flavor);
         core::platform::init_tasks.execute();
+    }
+
+    void initialize_daemon(int argc, char **argv)
+    {
+        initialize(argc, argv, "daemon");
     }
 
     void deinitialize()

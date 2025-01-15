@@ -11,6 +11,7 @@
 #include "status/exceptions.h++"
 #include "platform/symbols.h++"
 #include "platform/init.h++"
+#include "logging/logging.h++"
 
 namespace core
 {
@@ -168,7 +169,6 @@ namespace core
     void Scheduler::start_watcher()
     {
         this->activeWatcher = std::thread(&Scheduler::watcher, this);
-        logf_debug("Started watcher thread");
     }
 
     void Scheduler::stop_watcher()
@@ -180,7 +180,6 @@ namespace core
             this->stop_request.notify_all();
             watcher.join();
             this->mtx.lock();
-            logf_debug("Stopped watcher thread");
         }
     }
 
@@ -209,7 +208,7 @@ namespace core
                 it++;
             }
         }
-        logf_trace("remove_task: handle=%r, found=%r", handle, found);
+        // logf_trace("remove_task: handle=%r, found=%r", handle, found);
         return found;
     }
 
@@ -235,7 +234,7 @@ namespace core
 
             if (!this->activeWatcher.joinable())
             {
-                logf_debug(
+                logf_trace(
                     "Watcher thread was cancelled while waiting for task %r; exiting.",
                     handle);
                 break;

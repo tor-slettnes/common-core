@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "factory.h++"
+#include "logsink.h++"
 #include "platform/runtime.h++"
 
 namespace core::logging
@@ -31,11 +32,19 @@ namespace core::logging
     }
 
     Sink::ptr SinkFactory::create_sink(const SinkID &sink_id,
-                                       const types::KeyValueMap &settings)
+                                       const types::KeyValueMap &settings,
+                                       const status::Level threshold)
     {
         Sink::ptr sink = this->creator()(sink_id);
         sink->set_sink_type(this->sink_type());
         sink->load_settings(settings);
+        if (threshold != status::Level::NONE)
+        {
+            if (auto logsink = std::dynamic_pointer_cast<LogSink>(sink))
+            {
+                logsink->set_threshold(threshold);
+            }
+        }
         return sink;
     }
 
@@ -75,6 +84,14 @@ namespace core::logging
                 return false;
             }
         }
+    }
+
+    status::Level SinkFactory::default_threshold(
+        const types::KeyValueMap &settings) const
+    {
+        return settings
+            .try_get_as<status::Level>("threshold")
+            .value_or(status::Level::TRACE);
     }
 
     SinkFactory::CreatorFunction SinkFactory::creator() const

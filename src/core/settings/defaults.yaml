@@ -6,11 +6,13 @@
 #===============================================================================
 
 # Default logging threshold; may be overridden for specific scopes.
-log default: INFO
+log default: TRACE
 
 # Override the default log level setting above for specific scopes.
 log thresholds:
-  shared: INFO
+  shared: DEBUG
+  dbus: DEBUG
+  netconfig: DEBUG
 
 # ANSI coloring for specific log levels sent to console
 log styles:
@@ -124,7 +126,8 @@ log sinks:
   # Log to standard error
   stderr:
     #include context: false
-    threshold: TRACE
+    threshold: INFO
+    threshold: WARNING
 
   # UNIX SysLog settings
   syslog:

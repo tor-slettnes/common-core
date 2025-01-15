@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "dispatcher.h++"
+#include "logging/sinks/factory.h++"
 #include <iostream>
 
 namespace core::logging
@@ -27,6 +28,26 @@ namespace core::logging
     {
         auto [it, inserted] = this->sinks_.emplace(sink_id, sink);
         return it->second;
+    }
+
+    Sink::ptr Dispatcher::emplace_sink(const SinkID &sink_id,
+                                       SinkFactory *factory,
+                                       const types::KeyValueMap &settings,
+                                       status::Level threshold)
+    {
+        if (Sink::ptr sink = this->get_sink(sink_id))
+        {
+            return sink;
+        }
+        else if (factory && (threshold != status::Level::NONE))
+        {
+            return this->add_sink(sink_id,
+                                  factory->create_sink(sink_id, settings, threshold));
+        }
+        else
+        {
+            return {};
+        }
     }
 
     bool Dispatcher::remove_sink(const SinkID &sink_id)
@@ -98,4 +119,4 @@ namespace core::logging
     }
 
     Dispatcher dispatcher;
-} // namespace core::logging
+}  // namespace core::logging

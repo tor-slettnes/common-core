@@ -32,8 +32,8 @@ message Value {
 
         // Nested value containers
         ValueList value_list = 16;
-        TaggedValueList tv_list = 17;
-        KeyValueMap kv_map = 18;
+        TaggedValueList value_tvlist = 17;
+        KeyValueMap value_kvmap = 18;
     }
 }
 

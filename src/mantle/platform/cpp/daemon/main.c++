@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     try
     {
         // Initialize paths, load settings, set up shutdown signal handlers
-        core::application::initialize(argc, argv);
+        core::application::initialize_daemon(argc, argv);
         ::options = std::make_unique<Options>();
         ::options->apply(argc, argv);
 

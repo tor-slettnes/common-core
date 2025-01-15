@@ -38,10 +38,10 @@ namespace core::argparse
         : Parser()
     {
         this->add_arg<std::string>(
-            platform::path->exec_name(true),   // argname
-            "",                                // helptext
-            &this->command,                    // target
-            platform::path->exec_name(false)); // defaultValue
+            platform::path->exec_name(true),    // argname
+            "",                                 // helptext
+            &this->command,                     // target
+            platform::path->exec_name(false));  // defaultValue
     }
 
     void CommonOptions::apply(int argc, char **argv)
@@ -110,8 +110,7 @@ namespace core::argparse
             "SECTION",
             "Print help section SECTION (default: %default). "
             "Use \"--help=list\" to print a list of help sections.",
-            [&](const std::string &section)
-            {
+            [&](const std::string &section) {
                 this->show_help_and_exit(section);
             },
             "all",
@@ -120,8 +119,7 @@ namespace core::argparse
         this->add_void(
             {"-V", "--version"},
             "Print version number and exit",
-            [&]
-            {
+            [&] {
                 this->show_version_and_exit();
             });
 
@@ -181,30 +179,6 @@ namespace core::argparse
             "will then override the default setting for those sinks.",
             logging::MessageFormatter::set_all_include_context);
 
-        this->add_const(
-            {"--trace"},
-            "Shorthand for --log-default=TRACE.",
-            &logging::Scope::default_threshold,
-            status::Level::TRACE);
-
-        this->add_const(
-            {"--debug", "--verbose"},
-            "Shorthand for --log-default=DEBUG.",
-            &logging::Scope::default_threshold,
-            status::Level::DEBUG);
-
-        this->add_const(
-            {"--info"},
-            "Shorthand for --log-default=INFO.",
-            &logging::Scope::default_threshold,
-            status::Level::INFO);
-
-        this->add_const(
-            {"--notice", "--muted"},
-            "Shorthand for --log-default=NOTICE.",
-            &logging::Scope::default_threshold,
-            status::Level::NOTICE);
-
         this->add_log_sinks();
     }
 
@@ -232,6 +206,7 @@ namespace core::argparse
     void CommonOptions::add_log_sinks()
     {
         std::set<std::string> consumed_sink_types;
+        types::Value sink_settings = core::settings->get("log sinks");
 
         // First we add options to log to sinks with IDs corresponding to keys
         // from the "log sinks" section in settings. The settings for each sink
@@ -239,7 +214,7 @@ namespace core::argparse
         // factory is used.  Otherwise, the type is assumed to be the same as
         // the sink ID (e.g. "file").
 
-        if (auto sink_map = core::settings->get("log sinks").get_kvmap())
+        if (auto sink_map = sink_settings.get_kvmap())
         {
             for (const auto &[sink_id, sink_specs] : *sink_map)
             {
@@ -262,6 +237,14 @@ namespace core::argparse
                 this->add_log_sink_option(sink_type, factory, {});
             }
         }
+
+        if (logging::SinkFactory *factory =
+            logging::sink_registry.get(STDERR_SINK, nullptr))
+        {
+            this->add_verbosity_options(
+                factory,
+                sink_settings.get(factory->sink_type()).as_kvmap());
+        }
     }
 
     void CommonOptions::add_log_sink_option(
@@ -269,18 +252,39 @@ namespace core::argparse
         logging::SinkFactory *factory,
         const types::KeyValueMap &sink_settings)
     {
-        this->add_flag(
+        this->add_opt<status::Level>(
             {str::format("--log-to-%s", sink_id)},
+            "THRESHOLD",
             factory->description(),
-            [=](bool enabled)
-            {
-                if (enabled)
-                {
-                    logging::dispatcher.add_sink(
-                        factory->create_sink(sink_id, sink_settings));
-                }
+            [=](status::Level threshold) {
+                logging::dispatcher.emplace_sink(sink_id, factory, sink_settings, threshold);
             },
-            factory->default_enabled(sink_settings));
+            factory->default_enabled(sink_settings)
+            ? factory->default_threshold(sink_settings)
+                : status::Level::NONE);
+    }
+
+    void CommonOptions::add_verbosity_options(
+        logging::SinkFactory *factory,
+        const types::KeyValueMap &sink_settings)
+    {
+        for (status::Level level : {status::Level::TRACE,
+                                    status::Level::DEBUG,
+                                    status::Level::INFO,
+                                    status::Level::NOTICE,
+                                    status::Level::WARNING})
+
+        {
+            this->add_void(
+                {str::format("--%s", str::tolower(str::convert_from(level)))},
+                str::format("Shorthand for --log-to-%s=%s", factory->sink_type(), level),
+                [=] {
+                    logging::dispatcher.emplace_sink(factory->sink_type(),
+                                                     factory,
+                                                     sink_settings,
+                                                     level);
+                });
+        }
     }
 
     std::optional<status::Level> CommonOptions::get_optional_level(
@@ -300,4 +304,4 @@ namespace core::argparse
         return {};
     }
 
-} // namespace core::argparse
+}  // namespace core::argparse

@@ -7,6 +7,7 @@
 
 #pragma once
 #include "logging/sinks/sink.h++"
+#include "logging/sinks/factory.h++"
 #include "types/loggable.h++"
 #include "types/valuemap.h++"
 
@@ -24,6 +25,11 @@ namespace core::logging
         Sink::ptr add_sink(const Sink::ptr &sink);
         virtual Sink::ptr add_sink(const SinkID &sink_id,
                                    const Sink::ptr &sink);
+
+        Sink::ptr emplace_sink(const SinkID &sink_id,
+                               SinkFactory *factory,
+                               const types::KeyValueMap &settings,
+                               status::Level threshold);
 
         virtual bool remove_sink(const SinkID &sink_id);
         virtual bool remove_sink(const Sink::ptr &sink);

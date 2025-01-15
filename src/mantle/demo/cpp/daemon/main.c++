@@ -32,7 +32,7 @@ int main(int argc, char** argv)
     try
     {
         // Initialize paths, load settings, set up shutdown signal handlers
-        core::application::initialize(argc, argv);
+        core::application::initialize_daemon(argc, argv);
 
         demo::options = std::make_unique<demo::Options>();
         demo::options->apply(argc, argv);

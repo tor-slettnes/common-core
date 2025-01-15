@@ -16,16 +16,19 @@ namespace core
 {
     std::shared_ptr<core::SettingsStore> settings;
 
-    void init_settings()
+    void init_settings(const std::optional<std::string> &flavor)
     {
-        types::PathList files = {platform::path->exec_name(true), "defaults"};
-
         if (!settings)
         {
             settings = SettingsStore::create_shared();
             try
             {
-                settings->load(files);
+                settings->load(platform::path->exec_name(true));
+                if (flavor)
+                {
+                    settings->load(flavor.value() + "-defaults");
+                }
+                settings->load("defaults");
             }
             catch (const std::exception &e)
             {
@@ -34,6 +37,6 @@ namespace core
         }
     }
 
-    static platform::InitTask init_app_settings("init_settings", init_settings);
+    // static platform::InitTask init_app_settings("init_settings", init_settings);
 
 }  // namespace core
