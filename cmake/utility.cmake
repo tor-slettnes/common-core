@@ -19,7 +19,7 @@ endfunction()
 
 #===============================================================================
 ## @fn cc_get_optional_keyword
-## @brief Get the contents of the specified variable, or else a defaultvalue
+## @brief Set OUTPUT_VARIABLE to KEYWORD if (PRESENT != INVERSE)
 
 function(cc_get_optional_keyword KEYWORD PRESENT)
   set(_options INVERSE)

@@ -13,6 +13,12 @@ if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/local.cmake)
 endif()
 include(${CMAKE_CURRENT_LIST_DIR}/defaults.cmake)
 
+message(STATUS
+  "Building: project \"${PROJECT}\", "
+  "product \"${PRODUCT}\", "
+  "version ${VERSION}, "
+  "build #${BUILD_NUMBER}")
+
 project("${PROJECT}"
   VERSION "${VERSION}"
   DESCRIPTION "${DESCRIPTION}"
@@ -20,12 +26,8 @@ project("${PROJECT}"
   LANGUAGES CXX
 )
 
-message(STATUS
-  "Building project \"${PROJECT_NAME}\" version ${PROJECT_VERSION}, build #${BUILD_NUMBER}")
-
 ### Invoke common project settings
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/build_project.cmake)
-
 
 ### Pull in CMake files to build the actual sources
 add_subdirectory(thirdparty)

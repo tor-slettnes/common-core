@@ -104,7 +104,7 @@ set(CPACK_PACKAGE_VENDOR "Common Core Authors"
   CACHE STRING "Name of package vendor")
 
 set(CPACK_PACKAGE_CONTACT "Tor Slettnes <tor@slett.net>"
-  CACHE STRING "Package contact/maintianer")
+  CACHE STRING "Package contact/maintainer")
 
 #===============================================================================
 ## Miscellaneous build options

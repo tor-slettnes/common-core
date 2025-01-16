@@ -418,6 +418,19 @@ class SignalStore:
 
 
     def emit(self, msg: Message):
+        '''
+        Emit a preconstructed `Signal` message to connected slots, i.e.
+        invoke registered callback handlers with this message as their sole
+        argument.
+
+        See also:
+          - `emit_event()`, which wraps this by constructing the required
+             simple Signal message from the signal name and associated value, and
+
+          - `emit_mapping()` which constructs a mapping signal (with fields
+            `mapping_action` and `mapping_key` as described above).
+        '''
+
         action, key = self._mapping_controls(msg);
         name = self.signal_name(msg)
 
@@ -440,6 +453,11 @@ class SignalStore:
                    signal_name : str,
                    value       : Message):
 
+        '''
+        Construct and emit a `Signal` message as described above, with the
+        field indicated by `signal_name` set to `value`.
+        '''
+
         signal = self.signal_type(**{signal_name:value})
         self.emit(signal)
 
@@ -448,6 +466,12 @@ class SignalStore:
                      action      : MappingAction,
                      key         : str,
                      value       : Message):
+        '''
+        Construct and emit a `Signal` message as described above, with
+          - `mapping_key` set to `key`
+          - `mapping_action` set to `action`
+          - the field indicated by `signal_name` set to `value`.
+        '''
 
         if key and action:
             if value.ByteSize() == 0:
@@ -493,4 +517,3 @@ class SignalStore:
             key = None
 
         return (action, key)
-

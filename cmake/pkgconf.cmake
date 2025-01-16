@@ -3,11 +3,9 @@
 ## @file cc_pkgconf.cmake
 ## @brief Wrapper function for adding package dependencies
 ## @author Tor Slettnes <tor@slett.net>
-##
-## To use this file, copy, uncomment, and modify the following in your "CMakeLists.txt":
 #===============================================================================
 
-#===============================================================================
+#-------------------------------------------------------------------------------
 ## @fn cc_pkgconf
 
 function(cc_pkgconf PREFIX PACKAGE)
@@ -35,7 +33,7 @@ function(cc_pkgconf PREFIX PACKAGE)
 endfunction()
 
 
-#===============================================================================
+#-------------------------------------------------------------------------------
 ## @fn cc_add_package_dependencies
 
 function(cc_add_package_dependencies TARGET)
@@ -66,7 +64,7 @@ function(cc_add_package_dependencies TARGET)
   endforeach()
 endfunction()
 
-#===============================================================================
+#-------------------------------------------------------------------------------
 ## @fn cc_add_external_dependency
 ##
 ## THE CODE BELOW IS EXPERIMENTAL.
