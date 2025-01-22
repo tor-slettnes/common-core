@@ -30,6 +30,18 @@ namespace core::types
                          const Value &fallback = {},
                          bool ignoreCase = false) const noexcept;
 
+        ValueListPtr get_valuelist(
+            const std::string &key,
+            bool ignoreCase = false) const noexcept;
+
+        TaggedValueListPtr get_tvlist(
+            const std::string &key,
+            bool ignoreCase = false) const noexcept;
+
+        KeyValueMapPtr get_kvmap(
+            const std::string &key,
+            bool ignoreCase = false) const noexcept;
+
         Value extract_value(const std::string &key,
                             const Value &fallback = {}) noexcept;
 

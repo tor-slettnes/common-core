@@ -138,6 +138,9 @@ option(BUILD_PYTHON_IO   "Build Python embedded environment for C++" ON)
 option(BUILD_DBUS        "Build support for D-Bus" ${LINUX})
 option(BUILD_DNSSD_AVAHI "Build suport for DNS-SD via Avahi" ON)
 
+### Build all library dependencies even if not linked into the final product
+option(BUILD_ALL_LIBS    "Build all libraries even if not used (to validate syntax)" ON)
+
 ### Build tests
 option(BUILD_TESTING     "Build testing modules" ON)
 
@@ -146,6 +149,7 @@ option(INCLUDE_SHARED    "Install shared artifacts (e.g. common settings)" ON)
 option(INCLUDE_DEMO      "Build/install DEMO application example" ${INCLUDE_SHARED})
 option(INCLUDE_PLATFORM  "Build/install Platform services" ${INCLUDE_SHARED})
 option(INCLUDE_LOGGER    "Build/install Logger service" ${INCLUDE_SHARED})
+
 
 ### Enable SystemD service integration
 option(ENABLE_SERVICES   "Enable SystemD service units" ON)

@@ -7,6 +7,8 @@
 
 #pragma once
 #include <google/protobuf/message.h>
+
+#include <string>
 #include <vector>
 #include <optional>
 
