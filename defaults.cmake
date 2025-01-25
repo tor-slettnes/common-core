@@ -70,7 +70,7 @@ set(PYTHON_NAMESPACE "cc"
 set(PYTHON_VENV "${CMAKE_SOURCE_DIR}/venv"
   CACHE PATH "Python Virtual Environment (to create executables with PyInstaller)")
 
-set(PYTHON_DEPENDENCIES "gprcio;protobuf;zmq"
+set(PYTHON_DEPENDENCIES "grpcio;protobuf;zmq"
   CACHE STRING "Python wheel runtime dependencies")
 
 set(PYTHON_PIP_REQUIREMENTS_FILE

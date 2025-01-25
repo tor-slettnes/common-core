@@ -53,7 +53,15 @@ cc_add_python("${TARGET}"
   DIRECTORIES "${DIRECTORIES}"
 )
 
-if(INSTALL_COMPONENT)
+cc_add_python_wheel("common"
+  BUILD_DEPS "python_build"
+  PYTHON_DEPS "${TARGET}"
+  DATA_DEPS "cc_core_settings"
+  DESCRIPTION "Python common components"
+  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+)
+
+if (INSTALL_COMPONENT)
   ### Add a installation package component
   cpack_add_component("${INSTALL_COMPONENT}"
     GROUP "${INSTALL_GROUP}"

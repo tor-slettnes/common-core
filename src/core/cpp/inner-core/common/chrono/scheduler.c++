@@ -281,7 +281,7 @@ namespace core
                                  const dt::TimePoint &now)
     {
         logf_notice(
-            "Clock skew detected (expected to wake up at %s, but now it's %s). "
+            "Clock skew detected (expected to wake up at %.0s, but now it's %.0s). "
             "Shifting time reference for %d tasks by %s.",
             expected,
             now,

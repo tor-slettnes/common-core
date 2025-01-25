@@ -10,7 +10,6 @@ from .sysconfig.grpc.client import SysConfigClient
 from .netconfig.grpc.client import NetConfigClient
 from .vfs.grpc.client import VirtualFileSystemClient
 from .upgrade.grpc.client import UpgradeClient
-from ..logger.grpc.client import LoggerClient
 
 import cc.protobuf.wellknown
 import cc.protobuf.variant
@@ -19,7 +18,6 @@ import cc.protobuf.status
 import cc.protobuf.sysconfig
 import cc.protobuf.vfs
 import cc.protobuf.upgrade
-import cc.protobuf.logger
 
 ### Third-party modules
 import google.protobuf.message
@@ -69,7 +67,6 @@ def legend():
         netconfig - `NetConfig` gRPC service client
         vfs       - `VirtualFileSystem` gRPC service client
         upgrade   - `Upgrade` gRPC service client
-        logger    - `Logger` gRPC service client
 
     Generated ProtoBuf data types and associated wrapper methods are generally
     available in the `cc.protobuf` namespace, e.g.:
@@ -78,7 +75,6 @@ def legend():
       - cc.protobuf.netconfig - Data types for the NetConfig service
       - cc.protobuf.vfs       - Data types for the VirtualFileSystem service
       - cc.protobuf.upgrade   - Data types for the Upgrade service
-      - cc.protobuf.logger    - Data types for the Logger service
       - cc.protobuf.wellknown - Well-known types from Google
 
     Use 'help(subsystem)' to list available subcomponents or methods
@@ -105,11 +101,6 @@ if __name__ == "__main__":
 
     upgrade = UpgradeClient(
         args.host,
-        wait_for_ready = args.wait_for_ready)
-
-    logger = LoggerClient(
-        args.host,
-        identity = args.identity,
         wait_for_ready = args.wait_for_ready)
 
     sysconfig.initialize()

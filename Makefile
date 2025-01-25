@@ -42,7 +42,7 @@ CONFIG_ARGS += $(if $(VERSION), -D VERSION="$(VERSION)")
 CONFIG_ARGS += $(if $(BUILD_NUMBER), -D BUILD_NUMBER="$(BUILD_NUMBER)")
 CONFIG_ARGS += $(if $(PACKAGE_NAME), -D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
 
-CMAKE_TAG = $(BUILD_DIR)/CMakeCache.txt
+CMAKE_TAG = $(BUILD_DIR)/Makefile
 
 ### Check for a target-specific toolchain and use that if available
 

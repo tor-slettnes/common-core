@@ -16,7 +16,7 @@ set(PYTHON_WHEEL_DIR "share/python-wheels"
 function(cc_add_python_wheel TARGET)
   set(_options)
   set(_singleargs
-    PACKAGE_NAME DESCRIPTION VERSION CONTACT URL
+    PACKAGE_NAME PACKAGE_NAME_PREFIX DESCRIPTION VERSION CONTACT URL
     VENV PYTHON_INTERPRETER PYPROJECT_TEMPLATE INSTALL_COMPONENT INSTALL_DIR)
   set(_multiargs
     PROGRAMS BUILD_DEPS PYTHON_DEPS DATA_DEPS PACKAGE_DEPS)
@@ -62,9 +62,14 @@ function(cc_add_python_wheel TARGET)
     "${PYTHON_TEMPLATE_DIR}/pyproject.toml.in")
 
   cc_get_value_or_default(
+    PACKAGE_NAME_PREFIX
+    arg_PACKAGE_NAME_PREFIX
+    "${PACKAGE_NAME_PREFIX}")
+
+  cc_get_value_or_default(
     PACKAGE_NAME
     arg_PACKAGE_NAME
-    "${TARGET}")
+    "${PACKAGE_NAME_PREFIX}_${TARGET}")
 
   cc_get_value_or_default(
     DESCRIPTION

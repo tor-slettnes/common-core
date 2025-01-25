@@ -12,6 +12,9 @@ cpack_add_component_group(${INSTALL_GROUP}
   DESCRIPTION "Common core - common components"
 )
 
+### Install "settings/" folder as data
+add_subdirectory(settings)
+
 if(BUILD_DDS)
   add_subdirectory(idl)
 endif()
@@ -27,9 +30,6 @@ endif()
 if(BUILD_PYTHON)
   add_subdirectory(python)
 endif()
-
-### Install "settings/" folder as data
-add_subdirectory(settings)
 
 ### Create interface library to encapsulate the above
 set(TARGET cc_core)

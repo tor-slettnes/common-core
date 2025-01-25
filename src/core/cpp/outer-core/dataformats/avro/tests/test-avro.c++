@@ -77,7 +77,6 @@ namespace avro
     TEST(AvroTest, ProtoBufToAvro)
     {
         core::dt::TimePoint tp = core::dt::Clock::now();
-        timespec ts = core::dt::to_timespec(tp);
         double pi = 3.141592653589793238;
         std::string text("Arbitrary Event Text");
         std::string origin("test case");
@@ -126,8 +125,7 @@ namespace avro
         EXPECT_EQ(readback.get("origin").as_string(), origin);
         EXPECT_EQ(readback.get("code").as_uint(), code);
         EXPECT_EQ(readback.get("symbol").as_string(), symbol);
-        EXPECT_EQ(readback.get("timestamp").get("seconds").as_sint(), ts.tv_sec);
-        EXPECT_EQ(readback.get("timestamp").get("nanoseconds").as_sint(), ts.tv_nsec);
+        EXPECT_EQ(readback.get("timestamp").as_sint64(), core::dt::to_milliseconds(tp));
 
         core::types::KeyValueMap attributes = readback.get("attributes").as_kvmap();
 

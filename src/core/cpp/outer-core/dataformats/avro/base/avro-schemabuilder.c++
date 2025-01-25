@@ -172,11 +172,19 @@ namespace avro
     //--------------------------------------------------------------------------
     // TimestampSchema
 
+    // TimestampSchema::TimestampSchema(const ContextRef &context)
+    //     : RecordSchema(context, TypeName_Timestamp)
+    // {
+    //     this->add_field(SchemaField_TimeSeconds, TypeName_Long);
+    //     this->add_field(SchemaField_TimeNanos, TypeName_Int);
+    // }
+
     TimestampSchema::TimestampSchema(const ContextRef &context)
-        : RecordSchema(context, TypeName_Timestamp)
+        : SchemaWrapper(core::types::KeyValueMap({
+              {SchemaField_Type, TypeName_Long},
+              {SchemaField_LogicalType, LogicalType_TimeStampMillis},
+          }))
     {
-        this->add_field(SchemaField_TimeSeconds, TypeName_Long);
-        this->add_field(SchemaField_TimeNanos, TypeName_Int);
     }
 
     //--------------------------------------------------------------------------
