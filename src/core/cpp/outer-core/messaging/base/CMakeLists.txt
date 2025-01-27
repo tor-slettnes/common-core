@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
-set(TARGET cc_core_messaging_common)
+set(TARGET cc_core_messaging_base)
 
 ### Library dependencies.
 set(LIB_DEPS

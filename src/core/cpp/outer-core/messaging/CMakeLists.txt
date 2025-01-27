@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Abstract service interface, agnostic to communications bus
-add_subdirectory(common)
+add_subdirectory(base)
 
 if(BUILD_DDS)
   add_subdirectory(dds)

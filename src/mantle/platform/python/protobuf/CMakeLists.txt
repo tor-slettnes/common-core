@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Create a custom target for the Python Wheel
-set(TARGET "cc_platform_protobuf")
+set(TARGET "cc_platform_python_protobuf")
 
 set(FILES
   vfs.py

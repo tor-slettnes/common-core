@@ -14,7 +14,7 @@ find_package(Python3
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_core_messaging_common
+  cc_core_messaging_base
   cc_core_common
   Python3::Python
 )

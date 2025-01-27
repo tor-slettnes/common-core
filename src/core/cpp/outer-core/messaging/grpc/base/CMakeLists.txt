@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Name of this library. This can be used as a dependency for downstream libraries/executables.
-set(TARGET cc_core_messaging_grpc_common)
+set(TARGET cc_core_messaging_grpc_base)
 
 set(MOD_DEPS
    gRPC
@@ -14,7 +14,7 @@ set(MOD_DEPS
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_core_messaging_common
+  cc_core_messaging_base
   cc_core_io_protobuf
   gRPC::grpc++
   gRPC::grpc++_reflection

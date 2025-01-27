@@ -5,9 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Create a custom target for the Python Wheel
-set(TARGET "cc_platform_python")
-
 ### Package component
 if(INCLUDE_PLATFORM)
   set(INSTALL_COMPONENT "platform-python")

@@ -18,11 +18,11 @@
 #===============================================================================
 ## Build information
 
-set(VERSION "0.3.3"
-  CACHE STRING "Build version, in the format MAJOR.MINOR.PATCH")
-
 set(PRODUCT "platform"
   CACHE STRING "Product name. Used to select build configurations and components")
+
+set(VERSION "0.3.3"
+  CACHE STRING "Build version, in the format MAJOR.MINOR.PATCH")
 
 set(PROJECT "common-core"
   CACHE STRING "Top-level project name. Used to look up some run-time service settings")

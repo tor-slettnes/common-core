@@ -10,7 +10,6 @@
 #include "platform/symbols.h++"
 #include "platform/init.h++"
 #include "status/exceptions.h++"
-#include "buildinfo.h"  // PROJECT_NAME
 
 namespace core::zmq
 {

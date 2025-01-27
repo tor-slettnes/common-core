@@ -67,13 +67,14 @@ namespace core::messaging
     {
         if (!this->settings_->loaded())
         {
-            this->settings_->load({
-                this->settings_file(PROJECT_NAME),
-                this->settings_file("common"),
-            });
-            logf_debug("%s loaded settings from %s",
-                       *this,
-                       this->settings_->filenames());
+            for (const std::string &component: {PRODUCT_NAME, PROJECT_NAME, "common"})
+            {
+                if (const std::optional<fs::path> &path = this->settings_file(component))
+                {
+                    logf_debug("%s loading settings from %s", *this, path);
+                    this->settings_->load(path.value());
+                }
+            }
         }
         return this->settings_;
     }
@@ -95,11 +96,18 @@ namespace core::messaging
         }
     }
 
-    fs::path Endpoint::settings_file(const std::string &product) const
+    std::optional<fs::path> Endpoint::settings_file(const std::string &deployment_flavor) const
     {
-        return str::format("%,s-endpoints-%,s",
-                           this->messaging_flavor(),
-                           product);
+        if (!deployment_flavor.empty())
+        {
+            return str::format("%,s-endpoints-%,s",
+                               this->messaging_flavor(),
+                               deployment_flavor);
+        }
+        else
+        {
+            return {};
+        }
     }
 
     void Endpoint::to_stream(std::ostream &stream) const

@@ -16,7 +16,7 @@ set(PKG_DEPS
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_core_messaging_common
+  cc_core_messaging_base
   cc_core_common
 )
 

@@ -10,7 +10,7 @@ set(TARGET cc_core_messaging_dds_rti)
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_core_messaging_common
+  cc_core_messaging_base
   cc_core_io_idl
   cc_core_common
 )

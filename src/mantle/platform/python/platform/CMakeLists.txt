@@ -26,7 +26,7 @@ set(DIRECTORIES
 cc_add_python("${TARGET}"
   NAMESPACE_COMPONENT "platform"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  PYTHON_DEPS "cc_platform_protobuf"
+  PYTHON_DEPS "cc_platform_python_protobuf"
   PROGRAMS "${PROGRAMS}"
   FILES "${FILES}"
   DIRECTORIES "${DIRECTORIES}"
@@ -36,7 +36,7 @@ if(INCLUDE_PLATFORM)
   cc_add_python_wheel("platform-clients"
     BUILD_DEPS "python_build"
     PYTHON_DEPS ${TARGET}
-    DATA_DEPS cc_platform_settings
+    DATA_DEPS "cc_platform_settings"
     DESCRIPTION "Python client modules for Platform services"
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   )

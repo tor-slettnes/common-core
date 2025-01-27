@@ -55,7 +55,8 @@ namespace core::messaging
         types::Value setting(const std::string &key,
                              const types::Value &fallback = {}) const;
 
-        virtual fs::path settings_file(const std::string &product) const;
+        std::optional<fs::path> settings_file(
+            const std::string &deployment_flavor) const;
 
     protected:
         void to_stream(std::ostream &stream) const override;

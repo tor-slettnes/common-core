@@ -4,19 +4,21 @@
 /// @brief Version include template; translated to include file by CMake.
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
-/// clang-format off
+// clang-format off
 
 #pragma once
-#define PROJECT_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
-#define PROJECT_VERSION_MINOR @PROJECT_VERSION_MINOR@
-#define PROJECT_VERSION_PATCH @PROJECT_VERSION_PATCH@
-#define PROJECT_VERSION_TWEAK @PROJECT_VERSION_TWEAK@
-#define PROJECT_VERSION       "@PROJECT_VERSION@"
-#define PROJECT_NAME          "@PROJECT_NAME@"
-#define PROJECT_DESCRIPTION   "@PROJECT_DESCRIPTION@"
+#define PRODUCT_NAME                   "@PRODUCT@"
+#define PROJECT_NAME                   "@CMAKE_PROJECT_NAME@"
+#define PROJECT_DESCRIPTION            "@CMAKE_PROJECT_DESCRIPTION@"
+#define PROJECT_VERSION                "@CMAKE_PROJECT_VERSION@"
 
+#define PROJECT_VERSION_MAJOR          @CMAKE_PROJECT_VERSION_MAJOR@
+#define PROJECT_VERSION_MINOR          @CMAKE_PROJECT_VERSION_MINOR@
+#define PROJECT_VERSION_PATCH          @CMAKE_PROJECT_VERSION_PATCH@
+#define PROJECT_VERSION_TWEAK          @CMAKE_PROJECT_VERSION_TWEAK@
 #define BUILD_NUMBER                   @BUILD_NUMBER@
 #define BUILD_TIME                     @BUILD_TIME@
+
 #define BUILD_HOST                     "@BUILD_HOST@"
 #define BUILD_OS                       "@BUILD_OS@"
 #define BUILD_OS_RELEASE               "@BUILD_OS_RELEASE@"
@@ -27,6 +29,5 @@
 #define BUILD_DISTRIB_VERSION_ID       "@BUILD_DISTRIB_VERSION_ID@"
 #define BUILD_DISTRIB_VERSION_CODENAME "@BUILD_DISTRIB_VERSION_CODENAME@"
 #define BUILD_DISTRIB_PRETTY_NAME      "@BUILD_DISTRIB_PRETTY_NAME@"
-
-#define SOURCE_DIR   "@CMAKE_SOURCE_DIR@"
-#define SETTINGS_DIR "@SETTINGS_DIR@"
+#define SOURCE_DIR                     "@CMAKE_SOURCE_DIR@"
+#define SETTINGS_DIR                   "@SETTINGS_DIR@"

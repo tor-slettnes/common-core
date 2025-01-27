@@ -15,7 +15,7 @@ find_package(CURL
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_core_messaging_common
+  cc_core_messaging_base
   CURL::libcurl
 )
 

@@ -10,7 +10,6 @@
 #include "status/exceptions.h++"
 #include "settings/settingsstore.h++"
 #include "string/misc.h++"
-#include "buildinfo.h"  // PROJECT_NAME
 
 /// C stdlib
 #include <netdb.h>
