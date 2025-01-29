@@ -8,4 +8,8 @@
 add_subdirectory(base)
 add_subdirectory(protobuf)
 add_subdirectory(tools)
-add_subdirectory(tests)
+
+if (BUILD_TESTING)
+  add_subdirectory(tests)
+endif()
+

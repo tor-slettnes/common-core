@@ -43,4 +43,5 @@ if(INSTALL_GROUP)
     DISPLAY_NAME "DEMO Example"
     DESCRIPTION "DEMO application example"
   )
+  cc_cpack_add_group_dependencies("${INSTALL_GROUP}" "common")
 endif()

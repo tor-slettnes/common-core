@@ -126,7 +126,6 @@ log sinks:
   # Log to standard error
   stderr:
     #include context: false
-    threshold: INFO
     threshold: WARNING
 
   # UNIX SysLog settings

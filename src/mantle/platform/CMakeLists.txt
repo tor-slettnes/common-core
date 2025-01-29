@@ -33,4 +33,5 @@ if(INSTALL_GROUP)
     DISPLAY_NAME "Platform services"
     DESCRIPTION "Common platform services: System configuration, networking, file access, upgrade"
   )
+  cc_cpack_add_group_dependencies("${INSTALL_GROUP}" "common")
 endif()

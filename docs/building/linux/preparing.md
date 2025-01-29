@@ -60,7 +60,7 @@ to run the following commands to install the required dependencies.
 * Google Testing framework (CMake option `BUILD_TESTING`):
 
   ```bash
-  sudo apt install libgtest-dev
+  sudo apt install libgtest-dev locales-all
   ```
 
 * HTTP requests, including REST API (CMake option `BUILD_HTTP`)

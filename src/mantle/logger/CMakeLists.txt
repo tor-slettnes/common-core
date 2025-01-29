@@ -27,5 +27,6 @@ if(INSTALL_GROUP)
     DISPLAY_NAME "Logging service"
     DESCRIPTION "Record events such as diagnostic messages, errors, and telemetry."
   )
+  cc_cpack_add_group_dependencies("${INSTALL_GROUP}" "common")
 endif()
 

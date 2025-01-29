@@ -28,6 +28,34 @@ function(cc_cpack_config VARIABLE VALUE)
 endfunction()
 
 #===============================================================================
+## @fn cc_cpack_add_component
+
+function(cc_cpack_add_group_dependencies TARGET)
+  set(_singleargs RELATIONSHIP)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  foreach(group ${arg_UNPARSED_ARGUMENTS})
+    cc_get_cpack_debian_grouping(
+      PREFIX "${PACKAGE_NAME_PREFIX}"
+      GLUE "-"
+      GROUP "${group}"
+      OUTPUT_VARIABLE ancestor)
+
+    if(ancestor)
+      string(TOUPPER "${TARGET}" upcase_target)
+      cc_get_value_or_default(relationship arg_RELATIONSHIP DEPENDS)
+
+      cc_cpack_config(
+        "CPACK_DEBIAN_${upcase_target}_PACKAGE_${relationship}"
+        "${ancestor}"
+        APPEND
+      )
+    endif()
+  endforeach()
+endfunction()
+
+
+#===============================================================================
 ## @fn cc_cpack_debian_config
 ## @brief Set a `CPACK_DEBIAN[_GROUPING]_*` value
 ##    depending on whether component-based packaging is enabled.
