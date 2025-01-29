@@ -28,30 +28,45 @@ function(cc_cpack_config VARIABLE VALUE)
 endfunction()
 
 #===============================================================================
-## @fn cc_cpack_add_component
+## @fn cc_cpack_add_group
+## @brief Wrapper for `cmake_add_component_group()` but with DEPENDS option.
+##
+## DEPENDS arguments should be additional component groups on which this depends.
 
-function(cc_cpack_add_group_dependencies TARGET)
-  set(_singleargs RELATIONSHIP)
+function(cc_cpack_add_group GROUP)
+  set(_options)
+  set(_singleargs DISPLAY_NAME DESCRIPTION)
+  set(_multiargs DEPENDS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  foreach(group ${arg_UNPARSED_ARGUMENTS})
-    cc_get_cpack_debian_grouping(
-      PREFIX "${PACKAGE_NAME_PREFIX}"
-      GLUE "-"
-      GROUP "${group}"
-      OUTPUT_VARIABLE ancestor)
+  cpack_add_component_group("${GROUP}"
+    DISPLAY_NAME "${DISPLAY_NAME}"
+    DESCRIPTION "${DESCRIPTION}")
 
-    if(ancestor)
-      string(TOUPPER "${TARGET}" upcase_target)
-      cc_get_value_or_default(relationship arg_RELATIONSHIP DEPENDS)
+  cc_cpack_add_group_dependencies("${GROUP}" ${arg_DEPENDS})
+endfunction()
 
-      cc_cpack_config(
-        "CPACK_DEBIAN_${upcase_target}_PACKAGE_${relationship}"
-        "${ancestor}"
-        APPEND
-      )
-    endif()
-  endforeach()
+#===============================================================================
+## @fn cc_cpack_add_group_dependencies
+
+function(cc_cpack_add_group_dependencies TARGET)
+  set(_options)
+  set(_singleargs RELATIONSHIP)
+  set(_multiargs)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  string(TOUPPER "${TARGET}" upcase_target)
+  cc_get_value_or_default(relationship arg_RELATIONSHIP DEPENDS)
+
+  list(TRANSFORM arg_UNPARSED_ARGUMENTS
+    PREPEND "${PACKAGE_NAME_PREFIX}-"
+    OUTPUT_VARIABLE ancestors
+  )
+
+  cc_cpack_config(
+    "CPACK_DEBIAN_${upcase_target}_PACKAGE_${relationship}"
+    "${ancestors}"
+  )
 endfunction()
 
 

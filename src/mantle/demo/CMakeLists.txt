@@ -39,9 +39,9 @@ if (BUILD_PYTHON)
 endif()
 
 if(INSTALL_GROUP)
-  cpack_add_component_group(${INSTALL_GROUP}
+  cc_cpack_add_group(${INSTALL_GROUP}
     DISPLAY_NAME "DEMO Example"
     DESCRIPTION "DEMO application example"
+    DEPENDS "common"
   )
-  cc_cpack_add_group_dependencies("${INSTALL_GROUP}" "common")
 endif()

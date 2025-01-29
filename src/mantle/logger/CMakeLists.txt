@@ -23,10 +23,10 @@ endif()
 
 
 if(INSTALL_GROUP)
-  cpack_add_component_group(${INSTALL_GROUP}
+  cc_cpack_add_group(${INSTALL_GROUP}
     DISPLAY_NAME "Logging service"
     DESCRIPTION "Record events such as diagnostic messages, errors, and telemetry."
+    DEPENDS "common"
   )
-  cc_cpack_add_group_dependencies("${INSTALL_GROUP}" "common")
 endif()
 
