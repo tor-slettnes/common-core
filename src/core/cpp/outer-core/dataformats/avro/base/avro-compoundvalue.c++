@@ -309,7 +309,7 @@ namespace avro
         }
     }
 
-    void CompoundValue::set_branch(avro_value_t *value,
+    void CompoundValue::set_branch(avro_value_t *avro_value,
                                    VariantSchema::Type type,
                                    avro_value_t *branch)
     {
@@ -318,9 +318,9 @@ namespace avro
                 This::type_name(avro_value));
 
         checkstatus(avro_value_set_branch(
-                        value,
-                        static_cast<int>(type),
-                        branch),
+                        avro_value,              // value
+                        static_cast<int>(type),  // discriminant
+                        branch),                 // branch
                     core::str::format("set_branch (%d)", type));
     }
 

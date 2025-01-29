@@ -7,15 +7,19 @@
 
 import sys, re, socket, logging, argparse
 
-from ...buildinfo          import PROJECT_NAME
+from ...buildinfo          import PRODUCT_NAME, PROJECT_NAME
 from ...core.settingsstore import SettingsStore
 
 #===============================================================================
 # Base class
 
 class Endpoint (object):
-    # `project_name` is used to lookup project-specific information,
+    # `product_name` is used to lookup product-specific information,
     # and might be overridden in subclasses.
+    product_name = PRODUCT_NAME
+
+    # `project_name` is to lookup information specific to the top-level
+    # code project, and might be overridden in subclasses.
     project_name = PROJECT_NAME
 
     # `messaging_flavor` should be overwritten by direct subclasses to indicate
@@ -39,6 +43,7 @@ class Endpoint (object):
                 (type(self).__name__, __file__)
 
         settings_files = [
+            self.settings_file(self.product_name),
             self.settings_file(self.project_name),
             self.settings_file("common")
         ]

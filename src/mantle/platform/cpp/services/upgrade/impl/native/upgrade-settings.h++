@@ -10,7 +10,7 @@
 
 namespace platform::upgrade::native
 {
-    constexpr auto SETTINGS_FILE = "upgrade.json";
+    constexpr auto SETTINGS_FILE = "upgrade";
 
     constexpr auto SETTING_KEYRING_FILE = "keyring file";
 

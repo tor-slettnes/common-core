@@ -129,11 +129,12 @@
 
 #ifndef NDEBUG
 /// Evaluate a condition, exit with a fatal error if it fails.
-#define assertf(cond, ...)                                                             \
-    if (!(cond))                                                                       \
-    {                                                                                  \
-        LOGF_MESSAGE(core::status::Level::FATAL, "Assertion failed: "s + __VA_ARGS__); \
-        std::abort();                                                                  \
+#define assertf(cond, ...)                                                                \
+    if (!(cond))                                                                          \
+    {                                                                                     \
+        std::cerr << "Assertion failed: " << core::str::format(__VA_ARGS__) << std::endl; \
+        logf_fatal("Assertion failed: "s + __VA_ARGS__);                                  \
+        std::abort();                                                                     \
     }
 #else
 #define assertf(cond, ...)

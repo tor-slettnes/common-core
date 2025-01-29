@@ -114,8 +114,8 @@ namespace avro
 
         std::string json_text = avro_wrapper.as_json();
 
-        // std::ofstream of("avro-event.json");
-        // of.write(json_text.data(), json_text.size());
+        std::ofstream of("avro-event.json");
+        of.write(json_text.data(), json_text.size());
 
 
         core::types::Value readback = core::json::reader.decoded(json_text);
