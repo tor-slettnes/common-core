@@ -11,4 +11,3 @@ _default_:
 
   conf:
     linger.ms: 100              # Max delay before sending message
-    log.queue: true             # Allow Kafka logs to be captured
