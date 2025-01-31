@@ -17,7 +17,8 @@ namespace core::kafka
         using Super = Producer;
 
     protected:
-        AvroProducer(const std::string &service_name);
+        AvroProducer(const std::string &service_name,
+                     const std::string &server_address = {});
 
     public:
         using Super::produce;
@@ -26,6 +27,5 @@ namespace core::kafka
             const std::string_view &topic,
             const avro::BaseValue &avro_wrapper,
             const std::optional<std::string_view> &key = {});
-
     };
 }  // namespace core::kafka

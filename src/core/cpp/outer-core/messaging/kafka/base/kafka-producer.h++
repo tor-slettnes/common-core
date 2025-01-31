@@ -18,7 +18,8 @@ namespace core::kafka
         using Super = Endpoint;
 
     protected:
-        Producer(const std::string &service_name);
+        Producer(const std::string &service_name,
+                 const std::string &server_address = {});
         ~Producer();
 
     private:

@@ -12,11 +12,19 @@
 namespace core::kafka
 {
     Endpoint::Endpoint(const std::string &endpoint_type,
-                       const std::string &service_name)
+                       const std::string &service_name,
+                       const std::string &server_address)
+
         : Super("Kafka", endpoint_type, service_name),
           conf_(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL))
     {
         this->init_conf();
+
+        if (!server_address.empty())
+        {
+            this->set_server_address(server_address);
+        }
+
         this->init_logging();
     }
 
@@ -42,28 +50,22 @@ namespace core::kafka
     {
         if (auto kvmap = this->setting("conf").get_kvmap())
         {
-            std::string errstr;
             for (const auto &[key, value] : *kvmap)
             {
-                this->check(this->conf()->set(key, value.as_string(), errstr),
-                            key,
-                            value.as_string(),
-                            errstr);
+                this->set_config(key, value.as_string(), value.as_string());
             }
         }
     }
 
     void Endpoint::init_logging()
     {
-        std::string errstr;
-        this->check(this->conf()->set("event_cb",
-                                      static_cast<RdKafka::EventCb*>(&this->log_capture_),
-                                      errstr),
-                    "event_cb",
-                    "LogCapture()",
-                    errstr);
+        this->set_config("event_cb", &this->log_capture_, "LogCapture()");
     }
 
+    void Endpoint::set_server_address(const std::string &server_address)
+    {
+        this->set_config("bootstrap.servers", server_address, server_address);
+    }
 
     RdKafka::Conf *Endpoint::conf() const
     {

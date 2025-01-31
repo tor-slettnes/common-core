@@ -14,12 +14,13 @@ namespace core::kafka
     const auto SETTING_SHUTDOWN_TIMEOUT = "shutdown timeout";
     const auto DEFAULT_SHUTDOWN_TIMEOUT = 2.0;
 
-    Producer::Producer(const std::string &service_name)
-        : Super("Producer", service_name),
+    Producer::Producer(const std::string &service_name,
+                       const std::string &server_address)
+        : Super("Producer", service_name, server_address),
           producer_handle_(this->create_handle()),
           shutdown_timeout_(
               this->setting(SETTING_SHUTDOWN_TIMEOUT, DEFAULT_SHUTDOWN_TIMEOUT)
-              .as_duration()),
+                  .as_duration()),
           keep_polling_(false)
     {
     }

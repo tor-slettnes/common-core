@@ -23,7 +23,8 @@ namespace core::kafka
 
     protected:
         Endpoint(const std::string &endpoint_type,
-                 const std::string &service_name);
+                 const std::string &service_name,
+                 const std::string &server_address = {});
 
         ~Endpoint();
 
@@ -31,9 +32,10 @@ namespace core::kafka
         void initialize() override;
         void deinitialize() override;
 
-    private:
+    protected:
         void init_conf();
         void init_logging();
+        void set_server_address(const std::string &server_address);
 
     public:
         virtual RdKafka::Handle *handle() const = 0;
@@ -54,6 +56,19 @@ namespace core::kafka
                           const std::string &key,
                           const std::string &value,
                           const std::string &errstr);
+
+    private:
+        template <class T>
+        void set_config(const std::string &key,
+                        T &&value,
+                        const std::string &value_legend)
+        {
+            std::string errstr;
+            this->check(this->conf()->set(key, value, errstr),
+                        key,
+                        value_legend,
+                        errstr);
+        }
 
     private:
         LogCapture log_capture_;
