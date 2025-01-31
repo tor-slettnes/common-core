@@ -18,6 +18,7 @@ set(LIB_DEPS
 )
 
 set(SOURCES
+  kafka-callbacks.c++
   kafka-endpoint.c++
   kafka-producer.c++
 )

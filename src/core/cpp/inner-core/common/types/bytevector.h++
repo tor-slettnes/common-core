@@ -49,6 +49,16 @@ namespace core::types
         std::string as_string() const noexcept;
 
         /// @brief
+        ///     Create a new ByteVector instance from a pointer/length pair
+        /// @param[in] ptr
+        ///     Pointer to buffer
+        /// @param[in] size
+        ///     size of buffer
+        /// @return
+        ///     New ByteVector instance
+        static ByteVector from_pointer(const void *ptr, std::size_t size) noexcept;
+
+        /// @brief
         ///     Create a new ByteVector instance from a string
         /// @param[in] s
         ///     String containing bytes to load

@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "kafka-producer.h++"
+#include "logging/logging.h++"
 #include "status/exceptions.h++"
 
 namespace core::kafka
@@ -15,29 +16,17 @@ namespace core::kafka
 
     Producer::Producer(const std::string &service_name)
         : Super("Producer", service_name),
-          producer_handle_(This::create_handle()),
+          producer_handle_(this->create_handle()),
           shutdown_timeout_(
               this->setting(SETTING_SHUTDOWN_TIMEOUT, DEFAULT_SHUTDOWN_TIMEOUT)
-                  .as_duration())
+              .as_duration()),
+          keep_polling_(false)
     {
     }
 
     Producer::~Producer()
     {
         this->shutdown();
-    }
-
-    RdKafka::Producer *Producer::handle() const
-    {
-        return this->producer_handle_;
-    }
-
-    void Producer::shutdown()
-    {
-        if (this->handle())
-        {
-            this->handle()->flush(dt::to_milliseconds(this->shutdown_timeout_));
-        }
     }
 
     RdKafka::Producer *Producer::create_handle() const
@@ -52,6 +41,49 @@ namespace core::kafka
         else
         {
             throw exception::Unavailable(error_string);
+        }
+    }
+
+    RdKafka::Producer *Producer::handle() const
+    {
+        return this->producer_handle_;
+    }
+
+    void Producer::initialize()
+    {
+        Super::initialize();
+        this->start_poll();
+    }
+
+    void Producer::deinitialize()
+    {
+        this->stop_poll();
+        Super::deinitialize();
+    }
+
+    void Producer::start_poll()
+    {
+        if (!this->poll_thread_.joinable())
+        {
+            this->keep_polling_ = true;
+            this->poll_thread_ = std::thread(&This::poll_worker, this);
+        }
+    }
+
+    void Producer::stop_poll()
+    {
+        if (this->poll_thread_.joinable())
+        {
+            this->keep_polling_ = false;
+            this->poll_thread_.join();
+        }
+    }
+
+    void Producer::poll_worker()
+    {
+        while (this->keep_polling_)
+        {
+            this->handle()->poll(1000);
         }
     }
 
@@ -71,4 +103,11 @@ namespace core::kafka
             nullptr));                                        // msg_opaque
     }
 
+    void Producer::shutdown()
+    {
+        if (this->handle())
+        {
+            this->handle()->flush(dt::to_milliseconds(this->shutdown_timeout_));
+        }
+    }
 }  // namespace core::kafka

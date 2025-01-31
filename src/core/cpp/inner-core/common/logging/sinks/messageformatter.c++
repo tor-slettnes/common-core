@@ -64,13 +64,17 @@ namespace core::logging
                 stream << msg->thread_id()
                        << "|"
                        << msg->scopename_or("(no scope)")
-                       << "|"
-                       << msg->path().string()
-                       << ":"
-                       << msg->lineno()
-                       << ":"
-                       << msg->function()
-                       << "(): ";
+                       << "|";
+
+                if (!msg->path().empty())
+                {
+                    stream << msg->path().string()
+                           << ":"
+                           << msg->lineno()
+                           << ":"
+                           << msg->function()
+                           << "(): ";
+                }
             }
         }
     }

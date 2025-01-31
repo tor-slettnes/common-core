@@ -17,6 +17,7 @@ namespace core::kafka
           conf_(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL))
     {
         this->init_conf();
+        this->init_logging();
     }
 
     Endpoint::~Endpoint()
@@ -27,35 +28,42 @@ namespace core::kafka
         }
     }
 
+    void Endpoint::initialize()
+    {
+        Super::initialize();
+    }
+
+    void Endpoint::deinitialize()
+    {
+        Super::deinitialize();
+    }
+
     void Endpoint::init_conf()
     {
-        if (auto kvmap = this->settings()->get("conf").get_kvmap())
+        if (auto kvmap = this->setting("conf").get_kvmap())
         {
             std::string errstr;
             for (const auto &[key, value] : *kvmap)
             {
-                switch (this->conf()->set(key, value.as_string(), errstr))
-                {
-                case RdKafka::Conf::CONF_OK:
-                    break;
-
-                case RdKafka::Conf::CONF_INVALID:
-                    logf_error("Invalid Kakfa config setting: %s = %r: %s",
-                               key,
-                               value,
-                               errstr);
-                    break;
-
-                case RdKafka::Conf::CONF_UNKNOWN:
-                    logf_error("Unknown Kakfa config setting: %s = %r: %s",
-                               key,
-                               value,
-                               errstr);
-                    break;
-                }
+                this->check(this->conf()->set(key, value.as_string(), errstr),
+                            key,
+                            value.as_string(),
+                            errstr);
             }
         }
     }
+
+    void Endpoint::init_logging()
+    {
+        std::string errstr;
+        this->check(this->conf()->set("event_cb",
+                                      static_cast<RdKafka::EventCb*>(&this->log_capture_),
+                                      errstr),
+                    "event_cb",
+                    "LogCapture()",
+                    errstr);
+    }
+
 
     RdKafka::Conf *Endpoint::conf() const
     {
@@ -108,4 +116,34 @@ namespace core::kafka
                    RdKafka::err2str(code));
         }
     }
+
+    void Endpoint::check(RdKafka::Conf::ConfResult result,
+                         const std::string &key,
+                         const std::string &value,
+                         const std::string &errstr)
+    {
+        switch (result)
+        {
+        case RdKafka::Conf::CONF_OK:
+            logf_info("Applied Kafka config setting: %s = %r",
+                      key,
+                      value);
+            break;
+
+        case RdKafka::Conf::CONF_INVALID:
+            logf_error("Invalid Kakfa config setting: %s = %r: %s",
+                       key,
+                       value,
+                       errstr);
+            break;
+
+        case RdKafka::Conf::CONF_UNKNOWN:
+            logf_error("Unknown Kakfa config setting: %s = %r: %s",
+                       key,
+                       value,
+                       errstr);
+            break;
+        }
+    }
+
 }  // namespace core::kafka

@@ -6,10 +6,13 @@
 //==============================================================================
 
 #pragma once
+#include "kafka-callbacks.h++"
 #include "messaging-endpoint.h++"
 #include "types/value.h++"
 
 #include <librdkafka/rdkafkacpp.h>
+
+#include <thread>
 
 namespace core::kafka
 {
@@ -24,8 +27,13 @@ namespace core::kafka
 
         ~Endpoint();
 
+    protected:
+        void initialize() override;
+        void deinitialize() override;
+
     private:
         void init_conf();
+        void init_logging();
 
     public:
         virtual RdKafka::Handle *handle() const = 0;
@@ -42,8 +50,13 @@ namespace core::kafka
 
     protected:
         static void check(RdKafka::ErrorCode code);
+        static void check(RdKafka::Conf::ConfResult result,
+                          const std::string &key,
+                          const std::string &value,
+                          const std::string &errstr);
 
     private:
+        LogCapture log_capture_;
         RdKafka::Conf *conf_;
 
     protected:

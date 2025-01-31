@@ -63,6 +63,13 @@ namespace core::types
                            this->size());
     }
 
+    ByteVector ByteVector::from_pointer(const void *ptr, std::size_t size) noexcept
+    {
+        return ByteVector(
+            static_cast<const Byte *>(ptr),
+            static_cast<const Byte *>(ptr)+size);
+    }
+
     ByteVector ByteVector::from_string(const std::string &s) noexcept
     {
         return ByteVector(s.begin(), s.end());
