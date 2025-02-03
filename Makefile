@@ -11,7 +11,6 @@ OUT_DIR      ?= $(CURDIR)/out
 BUILD_DIR    ?= $(OUT_DIR)/build
 INSTALL_DIR  ?= $(OUT_DIR)/install
 PACKAGE_DIR  ?= $(OUT_DIR)/packages
-PYTHON_VENV  ?= $(CURDIR)/venv
 
 ifdef TARGET
     export CMAKE_TOOLCHAIN_FILE ?= $(SHARED_DIR)cmake/toolchain-$(TARGET).cmake
@@ -46,8 +45,8 @@ CMAKE_TAG = $(BUILD_DIR)/Makefile
 
 ### Check for a target-specific toolchain and use that if available
 
-.PHONY: install
-install: test local
+.PHONY: local
+local: test install
 
 .PHONY: release
 release: test package
@@ -64,11 +63,11 @@ deb: build
 	@echo
 	@cpack --config "${BUILD_DIR}/CPackConfig.cmake" -B "${PACKAGE_DIR}" -G DEB
 
-.PHONY: local
-local: build
+.PHONY: install
+install: build
 	@echo
 	@echo "#############################################################"
-	@echo "Installing locally in ${INSTALL_DIR}"
+	@echo "Installing in ${INSTALL_DIR}"
 	@echo "#############################################################"
 	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR)
@@ -131,7 +130,7 @@ $(CMAKE_TAG):
 	@echo "Generating build files in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cmake -B "$(BUILD_DIR)" $(CONFIG_ARGS) -D PYTHON_VENV=$(PYTHON_VENV)
+	@cmake -B "$(BUILD_DIR)" $(CONFIG_ARGS)
 
 .PHONY: cmake_clean
 cmake_clean:
@@ -158,16 +157,7 @@ distclean:
 	@rm -rf "$(OUT_DIR)"
 
 .PHONY: pristine
-pristine: distclean venv_clean
-
-# .PHONY: venv
-venv: cmake
-	@cmake --build "$(BUILD_DIR)" --target python_venv
-
-.PHONY: venv_clean
-venv_clean:
-	@echo "Removing Python Virtual Environment: $(PYTHON_VENV)"
-	@rm -rf "$(PYTHON_VENV)"
+pristine: distclean
 
 $(BUILD_DIR):
 	@mkdir -p "$(BUILD_DIR)"

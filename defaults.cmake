@@ -135,7 +135,7 @@ option(BUILD_AVRO        "Build support for Apache AVRO" ${BUILD_KAFKA})
 option(BUILD_PROTOBUF    "Build support for Google Protocol Buffers" ON)
 option(BUILD_DDS         "Build support for Distributed Data Service (DDS)" ${BUILD_RTI_DDS})
 option(BUILD_PYTHON_IO   "Build Python embedded environment for C++" ON)
-option(BUILD_DBUS        "Build support for D-Bus" ${LINUX})
+option(BUILD_DBUS        "Build support for D-Bus" ON)
 option(BUILD_DNSSD_AVAHI "Build suport for DNS-SD via Avahi" ON)
 
 ### Build all library dependencies even if not linked into the final product

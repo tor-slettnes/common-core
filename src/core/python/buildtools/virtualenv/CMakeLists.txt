@@ -25,6 +25,7 @@ set_target_properties(${TARGET}
 add_custom_command(
   OUTPUT "${VENV_TAG}" "${TAG_DIR}"
   COMMENT "Creating Python Virual Environment: ${PYTHON_VENV}"
+  BYPRODUCTS ${PYTHON_VENV}
 
   COMMAND ${Python3_EXECUTABLE}
   ARGS -m virtualenv -p "${Python3_EXECUTABLE}" "${PYTHON_VENV}"

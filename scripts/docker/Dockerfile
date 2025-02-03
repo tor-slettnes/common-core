@@ -1,6 +1,8 @@
 FROM debian:bookworm
+#FROM ubuntu:22.04
 
 ### Install runtime utilities
+RUN apt-get clean
 RUN apt-get update
 RUN apt-get install -y \
     sudo                    \
@@ -30,6 +32,7 @@ RUN apt-get install -y \
     protobuf-compiler       \
     protobuf-compiler-grpc  \
     python3-virtualenv      \
+    python3-venv            \
     python3-build           \
     python3-hatchling       \
     python3-cffi-backend    \

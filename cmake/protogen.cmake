@@ -24,8 +24,10 @@ function(cc_protogen_common)
     add_custom_target("${arg_TARGET}")
   endif()
 
+  set(_protoc_args "--experimental_allow_proto3_optional")
+
   if(arg_PLUGIN)
-    set(_plugin_arg "--plugin=${arg_PLUGIN}")
+    list(APPEND _protoc_args "--plugin=${arg_PLUGIN}")
   endif()
 
   ### Collect ProtoBuf source folders from this target and its dependencies in
@@ -98,7 +100,7 @@ function(cc_protogen_common)
     COMMAND ${_protoc}
     ARGS --${arg_GENERATOR}_out "${_outdir}"
        "-I$<JOIN:${include_dirs},;-I>"
-       ${_plugin_arg}
+       ${_protoc_args}
        ${_proto_src}
     COMMAND_EXPAND_LISTS
     COMMENT "${arg_COMMENT}"
