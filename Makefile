@@ -36,12 +36,11 @@ ifeq ($(shell uname), Linux)
    export CMAKE_BUILD_PARALLEL_LEVEL = $(shell nproc)
 endif
 
-CONFIG_ARGS = $(if $(PRODUCT),-D PRODUCT="$(PRODUCT)")
-CONFIG_ARGS += $(if $(VERSION), -D VERSION="$(VERSION)")
-CONFIG_ARGS += $(if $(BUILD_NUMBER), -D BUILD_NUMBER="$(BUILD_NUMBER)")
-CONFIG_ARGS += $(if $(PACKAGE_NAME), -D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
-CONFIG_ARGS += $(if $(PYTHON_VENV), -D PYTHON_VENV="$(PYTHON_VENV)")
+## Set CMake cache entries from variable overrides provided on command line.
+## E.g. `make PRODUCT=myproduct` -> `cmake -DPRODUCT=myproduct`.
+CMAKE_CONFIG_ARGS ?= $(foreach override,$(MAKEOVERRIDES),-D$(override))
 
+## Create CMake cache only if this file is absent.
 CMAKE_TAG = $(BUILD_DIR)/Makefile
 
 ### Check for a target-specific toolchain and use that if available
@@ -121,7 +120,7 @@ build: cmake
 .PHONY: cmake
 cmake: $(CMAKE_TAG)
 
-ifneq ($(strip $(CONFIG_ARGS)),)
+ifneq ($(strip $(CMAKE_CONFIG_ARGS)),)
 .PHONY: $(CMAKE_TAG)
 endif
 
@@ -131,7 +130,7 @@ $(CMAKE_TAG):
 	@echo "Generating build files in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cmake -B "$(BUILD_DIR)" $(CONFIG_ARGS)
+	@cmake -B "$(BUILD_DIR)" $(CMAKE_CONFIG_ARGS)
 
 .PHONY: cmake_clean
 cmake_clean:
@@ -164,6 +163,11 @@ distclean: cmake_clean
 .PHONY: pristine
 pristine: distclean
 
+.PHONY: foreach
+foreach:
+	@echo "Foreach: $(MAKECMDGOALS)"
+	@echo "Overrides: $(foreach override,$(MAKEOVERRIDES),-D$(override))"
+
 $(BUILD_DIR):
 	@mkdir -p "$(BUILD_DIR)"
 
@@ -173,6 +177,6 @@ docker_%:
 
 ### Delegate any other target to CMake
 %:
-	@[ -f "$(CMAKE_TAG)" ] || cmake -B "$(BUILD_DIR)" $(CONFIG_ARGS)
+	@[ -f "$(CMAKE_TAG)" ] || cmake -B "$(BUILD_DIR)" $(CMAKE_CONFIG_ARGS)
 	@cmake --build "$(BUILD_DIR)" --target $(patsubst cmake_%,%,$@)
 
