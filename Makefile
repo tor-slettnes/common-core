@@ -38,7 +38,7 @@ endif
 
 ## Set CMake cache entries from variable overrides provided on command line.
 ## E.g. `make PRODUCT=myproduct` -> `cmake -DPRODUCT=myproduct`.
-CMAKE_CONFIG_ARGS ?= $(foreach override,$(MAKEOVERRIDES),-D$(override))
+CMAKE_CONFIG_ARGS += $(foreach override,$(MAKEOVERRIDES),-D$(override))
 
 ## Create CMake cache only if this file is absent.
 CMAKE_TAG = $(BUILD_DIR)/Makefile
@@ -137,36 +137,27 @@ cmake_clean:
 	@if [ -f "$(CMAKE_TAG)" ]; \
 	then \
 		echo "Invoking CMake target 'clean'"; \
-		cmake --build "$(BUILD_DIR)" --target clean; \
+		cmake --build "$(BUILD_DIR)" --target clean || true; \
 	fi
+
+.PHONY: clean
+clean: cmake_clean
 
 .PHONY: pkg_clean package_clean
 pkg_clean package_clean:
 	@rm -rfv "$(PACKAGE_DIR)"
 
-.PHONY: clean
-clean: pkg_clean cmake_clean
-
 .PHONY: realclean
-realclean: clean
-	@rm -rfv "$(BUILD_DIR)" "$(INSTALL_DIR)" "$(PACKAGE_DIR)"
+realclean: pkg_clean uninstall
+	@rm -rfv "$(BUILD_DIR)"
 
-.PHONY: realclean_all
-realclean_all:
-	@rm -rfv "$(OUT_DIR)/build" "$(OUT_DIR)/install" "$(OUT_DIR)/packages"
-
-.PHONY: distclean
-distclean: cmake_clean
+.PHONY: cleanout
+cleanout:
 	@echo "Removing all build outputs: ${OUT_DIR}"
 	@rm -rf "$(OUT_DIR)"
 
-.PHONY: pristine
-pristine: distclean
-
-.PHONY: foreach
-foreach:
-	@echo "Foreach: $(MAKECMDGOALS)"
-	@echo "Overrides: $(foreach override,$(MAKEOVERRIDES),-D$(override))"
+.PHONY: pristine distclean
+pristine distclean: cleanout
 
 $(BUILD_DIR):
 	@mkdir -p "$(BUILD_DIR)"
