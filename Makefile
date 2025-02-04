@@ -40,6 +40,7 @@ CONFIG_ARGS = $(if $(PRODUCT),-D PRODUCT="$(PRODUCT)")
 CONFIG_ARGS += $(if $(VERSION), -D VERSION="$(VERSION)")
 CONFIG_ARGS += $(if $(BUILD_NUMBER), -D BUILD_NUMBER="$(BUILD_NUMBER)")
 CONFIG_ARGS += $(if $(PACKAGE_NAME), -D PACKAGE_NAME_PREFIX="$(PACKAGE_NAME)")
+CONFIG_ARGS += $(if $(PYTHON_VENV), -D PYTHON_VENV="$(PYTHON_VENV)")
 
 CMAKE_TAG = $(BUILD_DIR)/Makefile
 
@@ -134,7 +135,11 @@ $(CMAKE_TAG):
 
 .PHONY: cmake_clean
 cmake_clean:
-	@[ -d "$(BUILD_DIR)" ] && cmake --build "$(BUILD_DIR)" --target clean
+	@if [ -f "$(CMAKE_TAG)" ]; \
+	then \
+		echo "Invoking CMake target 'clean'"; \
+		cmake --build "$(BUILD_DIR)" --target clean; \
+	fi
 
 .PHONY: pkg_clean package_clean
 pkg_clean package_clean:
@@ -152,7 +157,7 @@ realclean_all:
 	@rm -rfv "$(OUT_DIR)/build" "$(OUT_DIR)/install" "$(OUT_DIR)/packages"
 
 .PHONY: distclean
-distclean:
+distclean: cmake_clean
 	@echo "Removing all build outputs: ${OUT_DIR}"
 	@rm -rf "$(OUT_DIR)"
 

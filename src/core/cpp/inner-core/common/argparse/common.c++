@@ -76,7 +76,7 @@ namespace core::argparse
         if (show_hint)
         {
             out << "Try '--help' for complete usage, "
-                << "or '--help=list' to list specific help sections."
+                << "or '--help=list' to list available help sections."
                 << std::endl;
         }
         std::exit(EINVAL);

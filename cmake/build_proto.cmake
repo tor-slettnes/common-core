@@ -141,7 +141,7 @@ function(cc_add_proto_python TARGET)
   if(arg_STAGING_DIR)
     set(staging_dir "${arg_STAGING_DIR}")
   else()
-    set(staging_dir "${PYTHON_STAGING_ROOT}/staging/${TARGET}")
+    set(staging_dir "${PYTHON_STAGING_ROOT}/${TARGET}")
   endif()
 
   ### Construct namespace for Python modules

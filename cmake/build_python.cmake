@@ -10,8 +10,22 @@ include(utility)
 set(PYTHON_TEMPLATE_DIR
   "${CMAKE_CURRENT_LIST_DIR}/python")
 
-set(PYTHON_STAGING_ROOT
+set(PYTHON_OUT_DIR
   "${CMAKE_BINARY_DIR}/python")
+
+set(PYTHON_STAGING_ROOT
+  "${PYTHON_OUT_DIR}/staging")
+
+set(PYTHON_VENV
+  "${PYTHON_OUT_DIR}/venv"
+  CACHE STRING "Python virtual environment for building wheels & executables")
+
+if(NOT IS_ABSOLUTE PYTHON_VENV)
+  cmake_path(ABSOLUTE_PATH PYTHON_VENV
+    BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    OUTPUT_VARIABLE PYTHON_VENV)
+endif()
+
 
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules")
@@ -20,7 +34,7 @@ set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
 set_property(
   DIRECTORY "${CMAKE_BINARY_DIR}"
   APPEND
-  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_STAGING_ROOT} ${PYTHON_INSTALL_DIR}
+  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_STAGING_ROOT}
 )
 
 
@@ -55,7 +69,7 @@ function(cc_add_python TARGET)
     cmake_path(APPEND "${CMAKE_CURRENT_BINARY_DIR}" "${arg_STAGING_DIR}"
       OUTPUT_VARIABLE staging_dir)
   else()
-     set(staging_dir "${PYTHON_STAGING_ROOT}/staging/${TARGET}")
+     set(staging_dir "${PYTHON_STAGING_ROOT}/${TARGET}")
   endif()
 
   ### Clean staging directory (this happens immediately when (re)configuring).
@@ -156,7 +170,7 @@ endfunction()
 
 
 #===============================================================================
-## @fn stage_python_moduls
+## @fn stage_python_modules
 ## @brief Populate a staging folder
 ##
 ## Instead of installing Python modules directly, we copy them to a
@@ -177,6 +191,7 @@ function(cc_stage_python_modules)
   add_custom_command(
     OUTPUT ${arg_OUTPUT}
     COMMENT "Staging Python modules for target ${arg_TARGET}"
+    BYPRODUCTS ${arg_MODULES_DIR}
     COMMAND ${CMAKE_COMMAND}
     ARGS -E make_directory ${arg_MODULES_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

@@ -8,6 +8,15 @@
 set(PYTHON_WHEEL_DIR "share/python-wheels"
   CACHE STRING "Installation directory for Python  wheels")
 
+cmake_path(APPEND PYTHON_OUT_DIR "wheels"
+  OUTPUT_VARIABLE PYTHON_WHEEL_STAGING_ROOT)
+
+set_property(
+  DIRECTORY "${CMAKE_BINARY_DIR}"
+  APPEND
+  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_WHEEL_STAGING_ROOT}
+)
+
 #===============================================================================
 ## @fn cc_add_python_wheel
 ## @brief
@@ -36,9 +45,6 @@ function(cc_add_python_wheel TARGET)
       OUTPUT_VARIABLE python)
   elseif(arg_VENV)
     cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin/python"
-      OUTPUT_VARIABLE python)
-  elseif(PYTHON_VENV)
-    cmake_path(APPEND CMAKE_SOURCE_DIR "${PYTHON_VENV}" "bin/python"
       OUTPUT_VARIABLE python)
   else()
     find_package(Python3
@@ -112,7 +118,7 @@ function(cc_add_python_wheel TARGET)
 
 
   ### Define output directories for `pyproject.toml` and the resulting wheel
-  set(gen_dir "${PYTHON_STAGING_ROOT}/wheels/${TARGET}")
+  set(gen_dir "${PYTHON_WHEEL_STAGING_ROOT}/${TARGET}")
   set(wheel_dir "${gen_dir}")
   set(wheel_path "${wheel_dir}/${wheel_name}")
 
@@ -184,6 +190,7 @@ function(cc_add_python_wheel TARGET)
   add_custom_command(
     OUTPUT "${wheel_path}"
     DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
+    BYPRODUCTS "${gen_dir}"
     COMMAND ${python}
     ARGS -m build --wheel --outdir "${wheel_dir}" "."
     COMMENT "Building Python Wheel: ${wheel_name}"

@@ -30,7 +30,7 @@ function(cc_add_python_executable TARGET)
     cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin/python"
       OUTPUT_VARIABLE python)
   elseif(PYTHON_VENV)
-    cmake_path(APPEND CMAKE_SOURCE_DIR "${PYTHON_VENV}" "bin/python"
+    cmake_path(APPEND PYTHON_VENV "bin/python"
       OUTPUT_VARIABLE python)
   else()
     message(FATAL_ERRROR "cc_add_python_executable(${TARGET}) requires PYTHON_INTERPRETER or VENV")
@@ -50,7 +50,7 @@ function(cc_add_python_executable TARGET)
     "${TARGET}")
 
   ### Specify a working directory for PyIntaller
-  set(out_dir "${PYTHON_STAGING_ROOT}/pyinstaller/${TARGET}")
+  set(out_dir "${PYTHON_OUT_DIR}/pyinstaller/${TARGET}")
   set(workdir "${out_dir}")
   set(staging_dir "${out_dir}/staging")
   set(distdir "${out_dir}/dist")

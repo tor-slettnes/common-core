@@ -67,9 +67,6 @@ set(UPGRADE_KEYRING "common-core-release.kbx"
 set(PYTHON_NAMESPACE "cc"
   CACHE STRING "Top-level package/namespace for Python modules")
 
-set(PYTHON_VENV "${CMAKE_SOURCE_DIR}/venv"
-  CACHE PATH "Python Virtual Environment (to create executables with PyInstaller)")
-
 set(PYTHON_DEPENDENCIES "grpcio;protobuf;zmq"
   CACHE STRING "Python wheel runtime dependencies")
 
