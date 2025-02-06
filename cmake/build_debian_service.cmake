@@ -23,7 +23,7 @@ set_property(
 
 function(cc_add_debian_service UNIT)
   set(_options USER ENABLE)
-  set(_singleargs PROGRAM DESCRIPTION
+  set(_singleargs PROGRAM DESCRIPTION USERNAME
     INSTALL_COMPONENT INSTALL_GROUP
     SERVICE_TEMPLATE PREINST_TEMPLATE POSTINST_TEMPLATE PRERM_TEMPLATE POSTRM_TEMPLATE
   )
@@ -53,14 +53,6 @@ function(cc_add_debian_service UNIT)
     message(SEND_ERROR "cc_add_debian_service(${UNIT}) needs INSTALL_GROUP")
   endif()
 
-  if(NOT arg_PROGRAM)
-    message(SEND_ERROR "cc_add_debian_service(${UNIT}) needs PROGRAM")
-  elseif(IS_ABSOLUTE "${arg_PROGRAM}")
-    set(_program "${arg_PROGRAM}")
-  else()
-    set(_program "${_install_root}/${arg_PROGRAM}")
-  endif()
-
   string(REGEX MATCH ".service$" SERVICE_SUFFIX "${UNIT}")
   if(SERVICE_SUFFIX)
     set(_service_unit "${UNIT}")
@@ -68,9 +60,16 @@ function(cc_add_debian_service UNIT)
     set(_service_unit "${UNIT}.service")
   endif()
 
-  set(SERVICE_PROGRAM "${_program}")
+  if(NOT arg_PROGRAM)
+    message(SEND_ERROR "cc_add_debian_service(${UNIT}) needs PROGRAM")
+  else()
+    cmake_path(APPEND _install_root "${arg_PROGRAM}"
+      OUTPUT_VARIABLE SERVICE_PROGRAM)
+  endif()
+
   set(SERVICE_ARGS "${arg_ARGS}")
   set(SERVICE_DESCRIPTION "${arg_DESCRIPTION}")
+  set(SERVICE_USER "${arg_USERNAME}")
 
   cc_add_debian_file_from_template(
     TEMPLATE_VARIABLE arg_SERVICE_TEMPLATE
