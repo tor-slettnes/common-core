@@ -118,8 +118,8 @@ function(cc_add_python TARGET)
     )
   endif()
 
-  ### Populate `SOURCES` property for downstream dependents
-  ### (It's marked `PRIVATE` because a custom target cannot have INTERFACE sources;
+  ### Populate `SOURCES` property for downstream dependents (It's marked
+  ### `PRIVATE` because a custom target cannot have INTERFACE or PUBLIC sources;
   ### however still available by looking up the `SOURCES` property explicitly).
   target_sources(${TARGET} PRIVATE ${staged_outputs})
   # target_sources(${TARGET} PRIVATE ${sources})
@@ -136,22 +136,22 @@ function(cc_add_python TARGET)
 
   if(arg_HIDDEN_IMPORTS)
     set_target_properties("${TARGET}"
-      PROPERTIES hidden_imports ${arg_HIDDEN_IMPORTS})
+      PROPERTIES hidden_imports "${arg_HIDDEN_IMPORTS}")
   endif()
 
   if(arg_COLLECT_SUBMODULES)
     set_target_properties("${TARGET}"
-      PROPERTIES collect_submodules ${arg_COLLECT_SUBMODULES})
+      PROPERTIES collect_submodules "${arg_COLLECT_SUBMODULES}")
   endif()
 
   if(arg_COLLECT_PACKAGES)
     set_target_properties("${TARGET}"
-      PROPERTIES collect_packages ${arg_COLLECT_PACKAGES})
+      PROPERTIES collect_packages "${arg_COLLECT_PACKAGES}")
   endif()
 
   if(arg_EXTRA_DATA_MODULES)
     set_target_properties("${TARGET}"
-      PROPERTIES extra_data_modules ${arg_EXTRA_DATA_MUDULES})
+      PROPERTIES extra_data_modules "${arg_EXTRA_DATA_MODULES}")
   endif()
 
   if(INSTALL_PYTHON_MODULES AND arg_INSTALL_COMPONENT)
@@ -199,38 +199,6 @@ function(cc_stage_python_modules)
     VERBATIM
   )
 
-  if(arg_PROGRAMS)
-    ### In order to set/retain executable permissions on PROGRAMS we use
-    ### the external `install` command if available.
-    ### Otherwise (i.e. if we're running on Windows) we simply treat PROGRAMS
-    ### as regular files, and use CMake's own `copy` command.
-
-    if(EXISTS "/usr/bin/install")
-      add_custom_command(
-        OUTPUT ${arg_OUTPUT} APPEND
-        DEPENDS ${arg_PROGRAMS}
-        COMMAND /usr/bin/install
-        ARGS --mode=755 --target-directory=${arg_MODULES_DIR} ${arg_PROGRAMS}
-      )
-    else()
-      add_custom_command(
-        OUTPUT ${arg_OUTPUT} APPEND
-        DEPENDS ${arg_PROGRAMS}
-        COMMAND ${CMAKE_COMMAND}
-        ARGS -E copy ${arg_PROGRAMS} ${arg_MODULES_DIR}
-      )
-    endif()
-  endif()
-
-  if(arg_FILES)
-    add_custom_command(
-      OUTPUT ${arg_OUTPUT} APPEND
-      DEPENDS ${arg_FILES}
-      COMMAND ${CMAKE_COMMAND}
-      ARGS -E copy ${arg_FILES} ${arg_MODULES_DIR}
-    )
-  endif()
-
   foreach(dir ${arg_DIRECTORIES})
     cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${dir}"
       OUTPUT_VARIABLE abs_dir)
@@ -257,6 +225,38 @@ function(cc_stage_python_modules)
       )
     endforeach()
   endforeach()
+
+  if(arg_FILES)
+    add_custom_command(
+      OUTPUT ${arg_OUTPUT} APPEND
+      DEPENDS ${arg_FILES}
+      COMMAND ${CMAKE_COMMAND}
+      ARGS -E copy ${arg_FILES} ${arg_MODULES_DIR}
+    )
+  endif()
+
+  if(arg_PROGRAMS)
+    ### In order to set/retain executable permissions on PROGRAMS we use
+    ### the external `install` command if available.
+    ### Otherwise (i.e. if we're running on Windows) we simply treat PROGRAMS
+    ### as regular files, and use CMake's own `copy` command.
+
+    if(EXISTS "/usr/bin/install")
+      add_custom_command(
+        OUTPUT ${arg_OUTPUT} APPEND
+        DEPENDS ${arg_PROGRAMS}
+        COMMAND /usr/bin/install
+        ARGS --mode=755 --target-directory=${arg_MODULES_DIR} ${arg_PROGRAMS}
+      )
+    else()
+      add_custom_command(
+        OUTPUT ${arg_OUTPUT} APPEND
+        DEPENDS ${arg_PROGRAMS}
+        COMMAND ${CMAKE_COMMAND}
+        ARGS -E copy ${arg_PROGRAMS} ${arg_MODULES_DIR}
+      )
+    endif()
+  endif()
 endfunction()
 
 

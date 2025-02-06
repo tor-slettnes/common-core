@@ -18,7 +18,7 @@ function(cc_add_python_executable TARGET)
 
   ### Do this only if the option `BUILD_PYTHON_EXECUTABLE` is enabled
   if(NOT BUILD_PYTHON_EXECUTABLE)
-    message(STATUS "Skipping target ${TARGET}, as BUILD_PYTHON_EXECUTABLE is disabled")
+    message(STATUS "Skipping PyInstaller target ${TARGET}, as BUILD_PYTHON_EXECUTABLE is disabled")
     return()
   endif()
 
@@ -244,7 +244,7 @@ function(cc_add_python_executable TARGET)
     list(APPEND pyinstall_args "${script}")
   endif()
 
-  list(APPEND pyinstall_args ${arg_PYINSTALL_EXTRA_ARGS})
+  list(APPEND pyinstall_args ${arg_PYINSTALLER_EXTRA_ARGS})
 
   message(DEBUG
     "Invoking PyInstall for target ${TARGET} with args: ${pyinstall_args}")

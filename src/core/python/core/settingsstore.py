@@ -125,8 +125,8 @@ class SettingsStore (dict):
 
         Consider a deployment where this module is located somewhere inside
         `/usr`, and default configurations are stored in YAML files within the
-        folder `/usr/share/common-core/settings/`.  Let's say you create a
-        SettingsStore instance as follows:
+        folder `/usr/share/common-core/settings/PROJECT_NAME`.
+        Let's say you create a `SettingsStore` instance as follows:
 
         ```python
         my_settings = SettingsStore()
@@ -140,8 +140,8 @@ class SettingsStore (dict):
 
         1. `/etc/common-core/my_settings.json`
         2. `/etc/common-core/my_settings.yaml`
-        3. `/usr/share/common-core/settings/my_settings.json`
-        4. `/usr/share/common-core/settings/my_settings.yaml`
+        3. `/usr/share/common-core/settings/PROJECT_NAME/my_settings.json`
+        4. `/usr/share/common-core/settings/PROJECT_NAME/my_settings.yaml`
         '''
 
         if searchpath:

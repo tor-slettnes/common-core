@@ -85,8 +85,8 @@ local/strip: build
 uninstall:
 	@rm -rfv "$(INSTALL_DIR)"
 
-.PHONY: getversion
-getversion:
+.PHONY: get_common_version
+get_common_vesion:
 	@cmake -L -P local.cmake -P defaults.cmake 2>&1 | \
 		sed -ne 's/^VERSION:STRING=\(.*\)$$/\1/ p'
 
@@ -151,8 +151,8 @@ pkg_clean package_clean:
 realclean: pkg_clean uninstall
 	@rm -rfv "$(BUILD_DIR)"
 
-.PHONY: cleanout
-cleanout:
+.PHONY: cleanout clean_out
+cleanout clean_out:
 	@echo "Removing all build outputs: ${OUT_DIR}"
 	@rm -rf "$(OUT_DIR)"
 
