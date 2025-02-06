@@ -4,9 +4,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-include(build_package)
 set(SERVICE_TEMPLATE_DIR ${CMAKE_CURRENT_LIST_DIR}/debian)
-
 set(SERVICE_STAGING_DIR "${CMAKE_BINARY_DIR}/deb")
 
 ### Add the above directory to the global `clean` target
@@ -67,7 +65,10 @@ function(cc_add_debian_service UNIT)
       OUTPUT_VARIABLE SERVICE_PROGRAM)
   endif()
 
-  set(SERVICE_ARGS "${arg_ARGS}")
+  cmake_path(APPEND _install_root ${SETTINGS_DIR}
+    OUTPUT_VARIABLE SETTINGS_DIR)
+
+  list(JOIN arg_ARGS " " SERVICE_ARGS)
   set(SERVICE_DESCRIPTION "${arg_DESCRIPTION}")
   set(SERVICE_USER "${arg_USERNAME}")
 
@@ -183,7 +184,8 @@ function(cc_add_debian_file_from_template)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if(${arg_TEMPLATE_VARIABLE})
-    set(template_file "${${arg_TEMPLATE_VARIABLE}}")
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${${arg_TEMPLATE_VARIABLE}}"
+      OUTPUT_VARIABLE template_file)
   elseif(arg_DEFAULT_TEMPLATE)
     set(template_file "${arg_DEFAULT_TEMPLATE}")
   else()

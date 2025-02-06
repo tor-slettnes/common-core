@@ -38,7 +38,7 @@ if(NOT PROJECT_INCLUDED)
   include(build_python_wheel)
   include(build_proto)
   include(build_settings)
-  include(build_package)
+  include(build_debian_package)
   include(build_debian_service)
   include(doxygen)
 
