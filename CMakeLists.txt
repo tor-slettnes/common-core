@@ -8,10 +8,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 ### Obtain build configuration
-if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/local.cmake)
-  include(${CMAKE_CURRENT_LIST_DIR}/local.cmake)
-endif()
-include(${CMAKE_CURRENT_LIST_DIR}/defaults.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/config/buildspec.cmake)
 
 message(STATUS
   "Building: project \"${PROJECT}\", "
@@ -30,6 +27,5 @@ project("${PROJECT}"
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/build_project.cmake)
 
 ### Pull in CMake files to build the actual sources
-add_subdirectory(thirdparty)
 add_subdirectory(src)
 #add_subdirectory(tests)

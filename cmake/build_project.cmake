@@ -28,6 +28,7 @@ if(NOT PROJECT_INCLUDED)
   include(pkgconf)
 
   ### Enable testing
+  include(ctest_python)
   include(CTest)
 
   ### Load targeted build functions

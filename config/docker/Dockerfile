@@ -35,6 +35,8 @@ RUN apt-get install -y \
     python3-venv            \
     python3-build           \
     python3-hatchling       \
+    python3-dev             \
+    python3-pytest          \
     python3-cffi-backend    \
     python3-yaml            \
     python3-grpcio          \
@@ -42,7 +44,6 @@ RUN apt-get install -y \
     python3-zmq             \
     python3-avro            \
     python3-kafka           \
-    python3-dev
 
 # Duplicate external account
 

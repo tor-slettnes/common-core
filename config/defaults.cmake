@@ -18,12 +18,6 @@
 #===============================================================================
 ## Build information
 
-set(PRODUCT "platform"
-  CACHE STRING "Product name. Used to select build configurations and components")
-
-set(VERSION "0.3.3"
-  CACHE STRING "Build version, in the format MAJOR.MINOR.PATCH")
-
 set(PROJECT "common-core"
   CACHE STRING "Top-level project name. Used to look up some run-time service settings")
 
@@ -71,7 +65,7 @@ set(PYTHON_DEPENDENCIES "grpcio;protobuf;zmq"
   CACHE STRING "Python wheel runtime dependencies")
 
 set(PYTHON_PIP_REQUIREMENTS_FILE
-  "${CMAKE_CURRENT_LIST_DIR}/src/core/python/buildtools/virtualenv/requirements.txt"
+  "${CMAKE_CURRENT_LIST_DIR}/pip-requirements.txt"
   CACHE FILEPATH
   "File containing required PIP-installable packages for virtual environment")
 
