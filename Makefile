@@ -117,6 +117,15 @@ test/report: build
 	@echo
 	@cmake --build "$(BUILD_DIR)" --target test ARGS=--output-on-failure
 
+.PHONY: retest
+retest: build
+	@echo
+	@echo "#############################################################"
+	@echo "Rerunning failed tests"
+	@echo "#############################################################"
+	@echo
+	@cmake --build "$(BUILD_DIR)" --target test ARGS="--rerun-failed --output-on-failure"
+
 .PHONY: build
 build: cmake
 	@echo
