@@ -48,7 +48,9 @@ function(cc_add_pytest)
   )
 
   foreach(test_script ${test_scripts})
-    cmake_path(GET test_script STEM test_name)
+    cmake_path(RELATIVE_PATH test_script
+      BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      OUTPUT_VARIABLE test_name)
 
     add_test(
       NAME "${test_name}"
