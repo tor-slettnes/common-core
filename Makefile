@@ -103,10 +103,19 @@ doc: cmake
 test: build
 	@echo
 	@echo "#############################################################"
-	@echo "Testing in ${BUILD_DIR}"
+	@echo "Testing"
 	@echo "#############################################################"
 	@echo
 	@cmake --build "$(BUILD_DIR)" --target test
+
+.PHONY: test/report
+test/report: build
+	@echo
+	@echo "#############################################################"
+	@echo "Testing & reporting failures"
+	@echo "#############################################################"
+	@echo
+	@cmake --build "$(BUILD_DIR)" --target test ARGS=--output-on-failure
 
 .PHONY: build
 build: cmake

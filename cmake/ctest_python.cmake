@@ -7,8 +7,8 @@
 
 function(cc_add_pytest)
   set(_options )
-  set(_singleargs PYTHON_INTERPRETRER VENV WORKING_DIRECTORY)
-  set(_multiargs ARGS)
+  set(_singleargs PYTHON_INTERPRETRER VENV WORKING_DIRECTORY FILENAME_PATTERN)
+  set(_multiargs FILES DIRECTORIES ARGS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if(arg_PYTHON_INTERPRETER)
@@ -29,22 +29,30 @@ function(cc_add_pytest)
     endif()
   endif()
 
-  cc_get_value_or_default(workdir
-    arg_WORKING_DIRECTORY
-    "${CMAKE_CURRENT_SOURCE_DIR}")
-
-  file(GLOB_RECURSE test_scripts
-    RELATIVE "${workdir}"
-    LIST_DIRECTORIES FALSE
-    CONFIGURE_DEPENDS         # Regenerate cache on new/deleted files
+  cc_get_value_or_default(
+    filename_pattern
+    arg_FILENAME_PATTERN
     "test_*.py")
+
+  cc_get_value_or_default(
+    workdir
+    arg_WORKING_DIRECTORY
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
+  cc_get_staging_list(
+    FILES ${arg_FILES}
+    DIRECTORIES ${arg_DIRECTORIES}
+    FILENAME_PATTERN ${filename_pattern}
+    SOURCES_VARIABLE test_scripts
+    CONFIGURE_DEPENDS
+  )
 
   foreach(test_script ${test_scripts})
     cmake_path(GET test_script STEM test_name)
 
     add_test(
       NAME "${test_name}"
-      COMMAND ${python} ${ARGS} "${test_script}"
+      COMMAND ${python} -m pytest ${ARGS} "${test_script}"
       WORKING_DIRECTORY "${workdir}")
   endforeach()
 
