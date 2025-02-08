@@ -5,29 +5,26 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-function(cc_add_pytest)
-  set(_options )
-  set(_singleargs PYTHON_INTERPRETRER VENV WORKING_DIRECTORY FILENAME_PATTERN)
-  set(_multiargs FILES DIRECTORIES ARGS)
+function(cc_add_pytests TARGET)
+  set(_options)
+  set(_singleargs
+    PYTHON_INTERPRETER          # Explicit Python interpreter path
+    VENV                        # Python `virtualenv` folder
+    WORKING_DIRECTORY)          # Directory from which to run `pytest`
+  set(_multiargs
+    FILES                       # Python modules containing pytest invocations
+    DIRECTORIES                 # Directories with Python modules
+    FILENAME_PATTERN            # File mask within directories; default: `test_*.py`
+    ARGS)                       # Additional arguments to `pytest`
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  if(arg_PYTHON_INTERPRETER)
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_PYTHON_INTERPRETER}"
-      OUTPUT_VARIABLE python)
-  elseif(arg_VENV)
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin/python"
-      OUTPUT_VARIABLE python)
-  else()
-    find_package(Python3
-      COMPONENTS Interpreter
-    )
-
-    if(Python3_Interpreter_FOUND)
-      set(python "${Python3_EXECUTABLE}")
-    else()
-      message(FATAL_ERRROR "cc_add_pytest() requires a Python interpreter")
-    endif()
-  endif()
+  cc_find_python(
+    ALLOW_SYSTEM
+    ACTION "cc_add_pytests(${TARGET})"
+    PYTHON_INTERPRETER "${arg_PYTHON_INTERPRETER}"
+    VENV "${arg_VENV}"
+    ALLOW_SYSTEM
+    OUTPUT_VARIABLE python)
 
   cc_get_value_or_default(
     filename_pattern
@@ -39,23 +36,51 @@ function(cc_add_pytest)
     arg_WORKING_DIRECTORY
     ${CMAKE_CURRENT_SOURCE_DIR})
 
-  cc_get_staging_list(
-    FILES ${arg_FILES}
-    DIRECTORIES ${arg_DIRECTORIES}
-    FILENAME_PATTERN ${filename_pattern}
-    SOURCES_VARIABLE test_scripts
-    CONFIGURE_DEPENDS
+  unset(paths)
+  foreach(path ${arg_FILES} ${arg_DIRECTORIES})
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR ${path}
+      OUTPUT_VARIABLE abs_path)
+    list(APPEND paths "${abs_path}")
+  endforeach()
+
+  execute_process(
+    COMMAND ${python} -m pytest --collect-only --quiet --disable-warnings --no-header --no-summary ${paths}
+    WORKING_DIRECTORY "${workdir}"
+    OUTPUT_VARIABLE test_summary
+    ERROR_QUIET
   )
 
-  foreach(test_script ${test_scripts})
-    cmake_path(RELATIVE_PATH test_script
-      BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      OUTPUT_VARIABLE test_name)
+  string(REPLACE "\n" ";" lines "${test_summary}")
+
+  unset(tests)
+  foreach(line ${lines})
+    if (line MATCHES "^([^:]*)::([^:]*).*$")
+      cmake_path(APPEND workdir ${CMAKE_MATCH_1}
+        OUTPUT_VARIABLE abs_path)
+      cmake_path(RELATIVE_PATH abs_path
+        OUTPUT_VARIABLE rel_path)
+
+      list(APPEND tests "${rel_path}:${CMAKE_MATCH_2}")
+    endif()
+  endforeach()
+
+  list(REMOVE_DUPLICATES tests)
+
+  foreach(test_id ${tests})
+    string(REPLACE ":" ";" fields "${test_id}")
+
+    list(GET fields 0 filename)
+    list(GET fields 1 testclass)
+
+    cmake_path(ABSOLUTE_PATH filename
+      OUTPUT_VARIABLE filepath)
 
     add_test(
-      NAME "${test_name}"
-      COMMAND ${python} -m pytest ${ARGS} "${test_script}"
-      WORKING_DIRECTORY "${workdir}")
+      NAME "${test_id}"
+      COMMAND ${python} -m pytest ${ARGS} -k "${testclass}" "${filepath}"
+      WORKING_DIRECTORY "${workdir}"
+      COMMAND_EXPAND_LISTS
+    )
   endforeach()
 
 endfunction()

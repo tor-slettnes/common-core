@@ -16,25 +16,27 @@ function(cc_get_value_or_default OUTPUT_VARIABLE VARIABLE DEFAULT)
   endif()
 endfunction()
 
+#===============================================================================
+## @fn cc_get_ternary
+## @brief Set `OUTPUT_VARIABLE` to ${ON_EXPR} or ${OFF_EXPR} depending on ${CONDITION_VARIABLE}
+
+function(cc_get_ternary OUTPUT_VARIABLE CONDITION_VARIABLE ON_EXPR OFF_EXPR)
+  if("${CONDITION_VARIABLE}")
+    set("${OUTPUT_VARIABLE}" "${ON_EXPR}" PARENT_SCOPE)
+  else()
+    set("${OUTPUT_VARIABLE}" "${OFF_EXPR}" PARENT_SCOPE)
+  endif()
+endfunction()
 
 #===============================================================================
 ## @fn cc_get_optional_keyword
-## @brief Set OUTPUT_VARIABLE to KEYWORD if (PRESENT != INVERSE)
+## @brief Set output variable KEYWORD to "KEYWORD" if PRESENT evaluates to true
 
 function(cc_get_optional_keyword KEYWORD PRESENT)
-  set(_options INVERSE)
-  set(_singleargs OUTPUT_VARIABLE)
-  set(_multiargs)
-  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  cc_get_value_or_default(output_variable
-    arg_OUTPUT_VARIABLE
-    "${KEYWORD}")
-
-  if((PRESENT AND NOT arg_INVERSE) OR (arg_INSVERSE AND NOT PRESENT))
-    set("${output_variable}" "${KEYWORD}" PARENT_SCOPE)
+  if(PRESENT)
+    set("${KEYWORD}" "${KEYWORD}" PARENT_SCOPE)
   else()
-    set("${output_variable}" "" PARENT_SCOPE)
+    set("${KEYWORD}" "" PARENT_SCOPE)
   endif()
 endfunction()
 

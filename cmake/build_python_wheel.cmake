@@ -38,26 +38,12 @@ function(cc_add_python_wheel TARGET)
     return()
   endif()
 
-
-  ### Determine Python interpreter from PYTHON_INTERPRETER, VENV, or host native
-  if(arg_PYTHON_INTERPRETER)
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_PYTHON_INTERPRETER}"
-      OUTPUT_VARIABLE python)
-  elseif(arg_VENV)
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin/python"
-      OUTPUT_VARIABLE python)
-  else()
-    find_package(Python3
-      COMPONENTS Interpreter
-    )
-
-    if(Python3_Interpreter_FOUND)
-      set(python "${Python3_EXECUTABLE}")
-    else()
-      message(FATAL_ERRROR "cc_add_python_wheel() requires a Python interpreter")
-    endif()
-  endif()
-
+  cc_find_python(
+    ACTION "cc_add_python_wheel(${TARGET})"
+    PYTHON_INTERPRETER "${arg_PYTHON_INTERPRETER}"
+    VENV "${arg_VENV}"
+    ALLOW_SYSTEM
+    OUTPUT_VARIABLE python)
 
   #-----------------------------------------------------------------------------
   ## Assign some variables based on provided inputs and project defaults

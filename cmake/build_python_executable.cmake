@@ -22,19 +22,12 @@ function(cc_add_python_executable TARGET)
     return()
   endif()
 
-  ### Determine Python interpreter based on PYTHON_INTERPRETER or VENV
-  if(arg_PYTHON_INTERPRETER)
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_PYTHON_INTERPRETER}"
-      OUTPUT_VARIABLE python)
-  elseif(arg_VENV)
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin/python"
-      OUTPUT_VARIABLE python)
-  elseif(PYTHON_VENV)
-    cmake_path(APPEND PYTHON_VENV "bin/python"
-      OUTPUT_VARIABLE python)
-  else()
-    message(FATAL_ERRROR "cc_add_python_executable(${TARGET}) requires PYTHON_INTERPRETER or VENV")
-  endif()
+  cc_find_python(
+    ACTION "cc_add_python_executable(${TARGET})"
+    PYTHON_INTERPRETER "${arg_PYTHON_INTERPRETER}"
+    VENV "${arg_VENV}"
+    ALLOW_DEFAULT_VENV
+    OUTPUT_VARIABLE python)
 
   if(NOT arg_SCRIPT)
     message(FATAL_ERROR "cc_add_python_executable{${TARGET}) requires SCRIPT")
@@ -80,7 +73,7 @@ function(cc_add_python_executable TARGET)
   ### Collect per-target staged modules from the specified target dependencies
   ### into a consolidated staging area.  This is needed because `PyInstaller`
   ### cannot handle multiple source paths with overlappiing
-  ### directoreis/namespaces.
+  ### directories/namespaces.
 
   cc_get_target_property_recursively(
     PROPERTY staging_dir
@@ -102,7 +95,7 @@ function(cc_add_python_executable TARGET)
     OUTPUT "${program_path}"
     DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
     COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_directory ${dep_staging_dirs} ${staging_dir}
+    ARGS -E copy_directory ${dep_staging_dirs} "${staging_dir}"
     COMMAND_EXPAND_LISTS
     VERBATIM
     COMMENT "Building PyInstaller executable: ${program}"
@@ -136,10 +129,9 @@ function(cc_add_python_executable TARGET)
 
 
   #-----------------------------------------------------------------------------
-  ## Collect various properties from our dependencies and set
-  ## corresponding options for PyInstaller
+  ## Collect various properties from our dependencies and prepare corresponding
+  ## arguments for PyInstaller.
 
-  ### Prepare substitutions for `pyinstaller.spec.in`
   ## Get hidden imports (modules/packages that PyInstaller does not detect)
   cc_get_target_property_recursively(
     PROPERTY hidden_imports
@@ -147,7 +139,7 @@ function(cc_add_python_executable TARGET)
     OUTPUT_VARIABLE hidden_imports
     REMOVE_DUPLICATES)
 
-  ## Get packages that must be collected explicitly
+  ## Get submodules that must be collected explicitly
   cc_get_target_property_recursively(
     PROPERTY collect_submodules
     TARGETS ${arg_PYTHON_DEPS}
@@ -161,7 +153,7 @@ function(cc_add_python_executable TARGET)
     OUTPUT_VARIABLE collect_packages
     REMOVE_DUPLICATES)
 
-  ## Get packages that must be collected explicitly
+  ## Get data modules that must be collected explicitly
   cc_get_target_property_recursively(
     PROPERTY extra_data_modules
     TARGETS ${arg_PYTHON_DEPS}
@@ -206,7 +198,7 @@ function(cc_add_python_executable TARGET)
   else()
     if(extra_data_modules)
       message(WARNING "One or more Python depenencies were defined with EXTRA_DATA_MODULES; "
-        "however, this can only be supported with a custom PyInstaller .spec file. "
+        "however, this can only be supported with custom logic in a PyInstaller .spec file. "
         "Consider adding `USE_SPEC` in invocation `cc_add_python_executable(${TARGET} ...)`."
       )
     endif()

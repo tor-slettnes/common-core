@@ -316,3 +316,51 @@ function(cc_get_namespace)
   set("${arg_OUTPUT_VARIABLE}" "${namespace}" PARENT_SCOPE)
 endfunction()
 
+#===============================================================================
+## @fn cc_get_python_interpreter
+## @brief Helper function to obtain Python interpreter, or die trying
+
+function(cc_find_python)
+  set(_options OPTIONAL ALLOW_SYSTEM ALLOW_DEFAULT_VENV)
+  set(_singleargs ACTION PYTHON_INTERPRETRER VENV OUTPUT_VARIABLE)
+  set(_multiargs)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  unset(python)
+  if(arg_PYTHON_INTERPRETER)
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_PYTHON_INTERPRETER}"
+      OUTPUT_VARIABLE python)
+
+  elseif(arg_VENV)
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin/python"
+      OUTPUT_VARIABLE python)
+
+  elseif(arg_ALLOW_DEFAULT_VENV and PYTHON_VENV)
+    cmake_path(APPEND PYTHON_VENV "bin/python"
+      OUTPUT_VARIABLE python)
+
+  elseif(arg_ALLOW_SYSTEM)
+    cc_get_ternary(REQUIRED arg_OPTIONAL "" "REQUIRED")
+    find_package(Python3
+      COMPONENTS Interpreter
+      ${REQUIRED}
+    )
+
+    if (Python3_Interpreter_FOUND)
+      set(python "${Python3_EXECUTABLE}")
+
+    else()
+      cc_get_ternary(level arg_OPTIONAL "DEBUG" "FATAL_ERROR")
+      message("${level}" "${arg_ACTION} requires a Python interpreter")
+    endif()
+
+  else()
+    cc_get_ternary(level arg_OPTIONAL "DEBUG" "FATAL_ERROR")
+    message("${level}" "${arg_ACTION} requires PYTHON_INTERPRETER or VENV")
+  endif()
+
+  if(arg_OUTPUT_VARIABLE)
+    set("${arg_OUTPUT_VARIABLE}" "${python}" PARENT_SCOPE)
+  endif()
+endfunction()
+

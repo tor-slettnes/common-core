@@ -25,7 +25,6 @@ function(cc_add_proto TARGET)
 
   cc_get_optional_keyword(ALL "${arg_ALL}")
 
-
   if(NOT BUILD_CPP)
     set(scope INTERFACE)
   elseif(arg_SCOPE)
