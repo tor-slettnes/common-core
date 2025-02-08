@@ -55,12 +55,17 @@ function(cc_add_pytests TARGET)
   unset(tests)
   foreach(line ${lines})
     if (line MATCHES "^([^:]*)::([^:]*).*$")
-      cmake_path(APPEND workdir ${CMAKE_MATCH_1}
+      ### 1st match is test file relative to ${workdir};
+      ### let's get it relative to ${CMAKE_CURRENT_SOURCE_DIR} instead.
+      cmake_path(APPEND workdir "${CMAKE_MATCH_1}"
         OUTPUT_VARIABLE abs_path)
       cmake_path(RELATIVE_PATH abs_path
         OUTPUT_VARIABLE rel_path)
 
-      list(APPEND tests "${rel_path}:${CMAKE_MATCH_2}")
+      ### 2nd match is `TestClass::test_function` or just `test_function`.
+      ### Lets split it by `.`, as expected for the `pytest -k` argument.
+      string(REPLACE "::" "." test_name "${CMAKE_MATCH_2}")
+      list(APPEND tests "${rel_path}:${test_name}")
     endif()
   endforeach()
 
@@ -70,14 +75,14 @@ function(cc_add_pytests TARGET)
     string(REPLACE ":" ";" fields "${test_id}")
 
     list(GET fields 0 filename)
-    list(GET fields 1 testclass)
+    list(GET fields 1 testname)
 
     cmake_path(ABSOLUTE_PATH filename
       OUTPUT_VARIABLE filepath)
 
     add_test(
       NAME "${test_id}"
-      COMMAND ${python} -m pytest ${ARGS} -k "${testclass}" "${filepath}"
+      COMMAND ${python} -m pytest ${ARGS} -k "${testname}" "${filepath}"
       WORKING_DIRECTORY "${workdir}"
       COMMAND_EXPAND_LISTS
     )

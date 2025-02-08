@@ -182,7 +182,7 @@ $(BUILD_DIR):
 
 ### Delegate docker_ targets to its own Makefile
 docker_%:
-	@$(MAKE) -C $(SHARED_DIR)/scripts/docker $(MAKECMDGOALS) HOST_DIR=$(CURDIR)
+	@$(MAKE) -C $(SHARED_DIR)/build/docker $(MAKECMDGOALS) HOST_DIR=$(CURDIR)
 
 ### Delegate any other target to CMake
 %:

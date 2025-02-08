@@ -50,7 +50,7 @@ cc_add_library("${TARGET}"
 )
 
 set(ERRNOFILE   ${CMAKE_CURRENT_BINARY_DIR}/errno-list.gen)
-set(ERRNOSCRIPT ${BUILD_SCRIPTS_DIR}/generate_errnos.py)
+set(ERRNOSCRIPT ${CC_BUILDSCRIPTS_DIR}/generate_errnos.py)
 
 cmake_path(RELATIVE_PATH ERRNOFILE
   BASE_DIRECTORY ${CMAKE_BINARY_DIR}

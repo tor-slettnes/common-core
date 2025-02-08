@@ -35,7 +35,7 @@ cc_add_library("${TARGET}"
 
 ### Generate "grpc-status-names.gen"
 set(GRPCSTATUSFILE   ${CMAKE_CURRENT_BINARY_DIR}/grpc-status-names.gen)
-set(GRPCSTATUSSCRIPT ${BUILD_SCRIPTS_DIR}/generate_grpcstatus.py)
+set(GRPCSTATUSSCRIPT ${CC_BUILDSCRIPTS_DIR}/generate_grpcstatus.py)
 
 cmake_path(RELATIVE_PATH GRPCSTATUSFILE
   BASE_DIRECTORY ${CMAKE_BINARY_DIR}

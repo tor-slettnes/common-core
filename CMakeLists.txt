@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 ### Obtain build configuration
-include(${CMAKE_CURRENT_LIST_DIR}/config/buildspec.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/build/buildspec.cmake)
 
 message(STATUS
   "Building: project \"${PROJECT}\", "
@@ -24,8 +24,7 @@ project("${PROJECT}"
 )
 
 ### Invoke common project settings
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/build_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/build/cmake/build_project.cmake)
 
 ### Pull in CMake files to build the actual sources
 add_subdirectory(src)
-#add_subdirectory(tests)

@@ -317,7 +317,7 @@ function(cc_get_namespace)
 endfunction()
 
 #===============================================================================
-## @fn cc_get_python_interpreter
+## @fn cc_find_python
 ## @brief Helper function to obtain Python interpreter, or die trying
 
 function(cc_find_python)
@@ -335,7 +335,7 @@ function(cc_find_python)
     cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin/python"
       OUTPUT_VARIABLE python)
 
-  elseif(arg_ALLOW_DEFAULT_VENV and PYTHON_VENV)
+  elseif(arg_ALLOW_DEFAULT_VENV AND PYTHON_VENV)
     cmake_path(APPEND PYTHON_VENV "bin/python"
       OUTPUT_VARIABLE python)
 
