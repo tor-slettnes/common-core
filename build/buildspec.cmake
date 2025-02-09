@@ -13,16 +13,5 @@
 ### Obtain local overides to build configuration
 include(${CMAKE_CURRENT_LIST_DIR}/local.cmake OPTIONAL)
 
-### Set default product name if not provided
-set(PRODUCT "platform"
-  CACHE STRING "Product name. Used to select build configurations")
-
-### Obtain product-specific defaults
-include(${CMAKE_CURRENT_LIST_DIR}/products/${PRODUCT}.cmake OPTIONAL)
-
-### Set default version number if not provided
-set(VERSION "0.7.0"
-  CACHE STRING "Build version, in the format MAJOR.MINOR.PATCH")
-
 ### Obtain common defaults
 include(${CMAKE_CURRENT_LIST_DIR}/defaults.cmake)

@@ -1,28 +1,25 @@
-## -*- Makefile -*-
+## -*- GNUMakefile -*-
 #===============================================================================
 ## @file Makefile
 ## @brief Build via CMake
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-MAKEFLAGS    += --no-print-directory
-SHARED_DIR   ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-OUT_DIR      ?= $(CURDIR)/out
-BUILD_DIR    ?= $(OUT_DIR)/build
-INSTALL_DIR  ?= $(OUT_DIR)/install
-PACKAGE_DIR  ?= $(OUT_DIR)/packages
+MAKEFLAGS     += --no-print-directory
+SHARED_DIR    ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+OUT_DIR       ?= $(CURDIR)/out
+BUILD_DIR     ?= $(OUT_DIR)/build
+INSTALL_DIR   ?= $(OUT_DIR)/install
+PACKAGE_DIR   ?= $(OUT_DIR)/packages
+TOOLCHAIN_FILE = $(SHARED_DIR)build/cmake/toolchain-$(TARGET).cmake
 
 ifdef TARGET
-    export CMAKE_TOOLCHAIN_FILE ?= $(SHARED_DIR)cmake/toolchain-$(TARGET).cmake
 	BUILD_DIR := $(BUILD_DIR)-$(TARGET)
-	INSTALL_DIR := $(BUILD_DIR)-$(TARGET)
-	PACKAGE_DIR := $(BUILD_DIR)-$(TARGET)
+	INSTALL_DIR := $(INSTALL_DIR)-$(TARGET)
+	PACKAGE_DIR := $(PACKAGE_DIR)-$(TARGET)
 else
 	TARGET := $(shell uname -s)-$(shell uname -m)
 
-    ifneq ("$(wildcard $(SHARED_DIR)cmake/toolchain-$(TARGET).cmake)","")
-        export CMAKE_TOOLCHAIN_FILE ?= $(SHARED_DIR)cmake/toolchain-$(TARGET).cmake
-    endif
 endif
 
 ifdef BUILD_TYPE
@@ -33,7 +30,11 @@ endif
 
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
 ifeq ($(shell uname), Linux)
-   export CMAKE_BUILD_PARALLEL_LEVEL = $(shell nproc)
+  export CMAKE_BUILD_PARALLEL_LEVEL = $(shell nproc)
+endif
+
+ifneq ("$(wildcard $(TOOLCHAIN_FILE))","")
+  export CMAKE_TOOLCHAIN_FILE ?= $(TOOLCHAIN_FILE)
 endif
 
 ## Set CMake cache entries from variable overrides provided on command line.
@@ -42,8 +43,6 @@ CMAKE_CONFIG_ARGS += $(foreach override,$(MAKEOVERRIDES),-D$(override))
 
 ## Create CMake cache only if this file is absent.
 CMAKE_TAG = $(BUILD_DIR)/Makefile
-
-### Check for a target-specific toolchain and use that if available
 
 .PHONY: local
 local: test install
@@ -72,8 +71,8 @@ install: build
 	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR)
 
-.PHONY: local/strip
-local/strip: build
+.PHONY: install/strip
+install/strip: build
 	@echo
 	@echo "#############################################################"
 	@echo "Installing and stripping in ${INSTALL_DIR}"
@@ -86,9 +85,9 @@ uninstall:
 	@rm -rfv "$(INSTALL_DIR)"
 
 .PHONY: get_common_version
-get_common_vesion:
-	@cmake -L -P local.cmake -P defaults.cmake 2>&1 | \
-		sed -ne 's/^VERSION:STRING=\(.*\)$$/\1/ p'
+get_common_version:
+	@cmake -L -P $(SHARED_DIR)/build/buildspec.cmake 2>&1 | \
+		sed -ne 's/^VERSION:[^=]*=\(.*\)$$/\1/ p'
 
 .PHONY: doc
 doc: cmake
