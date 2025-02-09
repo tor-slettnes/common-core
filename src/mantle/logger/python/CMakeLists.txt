@@ -10,7 +10,7 @@ set(TARGET "cc_logger_python")
 
 ### Package component
 if(INCLUDE_LOGGER)
-  set(INSTALL_COMPONENT "demo-python")
+  set(INSTALL_COMPONENT "logger-python")
 endif()
 
 add_subdirectory(protobuf)
@@ -21,6 +21,6 @@ if(INSTALL_COMPONENT)
     DEPENDS "core-python" "core-settings" "logger-proto" "logger-settings"
     GROUP "${INSTALL_GROUP}"
     DISPLAY_NAME "DEMO Example - Python modules"
-    DESCRIPTION "Python client and server moduules for demo application example"
+    DESCRIPTION "Python client and server moduules for logging service"
   )
 endif()
