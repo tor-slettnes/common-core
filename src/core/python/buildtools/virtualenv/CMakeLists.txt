@@ -40,7 +40,7 @@ add_custom_command(
   COMMENT "Installing Python packages from: ${PYTHON_PIP_REQUIREMENTS_FILE}"
 
   COMMAND "${PYTHON_VENV}/bin/python"
-  ARGS -m pip install -r "${PYTHON_PIP_REQUIREMENTS_FILE}"
+  ARGS -m pip install --no-warn-script-location -r "${PYTHON_PIP_REQUIREMENTS_FILE}"
 
   COMMAND ${CMAKE_COMMAND}
   ARGS -E touch ${REQUIREMENTS_TAG}

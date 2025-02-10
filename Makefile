@@ -19,7 +19,6 @@ ifdef TARGET
 	PACKAGE_DIR := $(PACKAGE_DIR)-$(TARGET)
 else
 	TARGET := $(shell uname -s)-$(shell uname -m)
-
 endif
 
 ifdef BUILD_TYPE
@@ -29,11 +28,11 @@ else
 endif
 
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
-ifeq ($(shell uname), Linux)
+ifeq ($(shell uname),Linux)
   export CMAKE_BUILD_PARALLEL_LEVEL = $(shell nproc)
 endif
 
-ifneq ("$(wildcard $(TOOLCHAIN_FILE))","")
+ifneq ($(wildcard $(TOOLCHAIN_FILE)),)
   export CMAKE_TOOLCHAIN_FILE ?= $(TOOLCHAIN_FILE)
 endif
 
@@ -43,6 +42,14 @@ CMAKE_CONFIG_ARGS += $(foreach override,$(MAKEOVERRIDES),-D$(override))
 
 ## Create CMake cache only if this file is absent.
 CMAKE_TAG = $(BUILD_DIR)/Makefile
+
+define clean_folder
+	if [ -d "$(1)" ]; then \
+		echo "Removing: $(1)"; \
+		rm -rf "$(1)"; \
+	fi
+endef
+
 
 .PHONY: local
 local: test install
@@ -79,10 +86,6 @@ install/strip: build
 	@echo "#############################################################"
 	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR) --strip
-
-.PHONY: uninstall
-uninstall:
-	@rm -rfv "$(INSTALL_DIR)"
 
 .PHONY: get_common_version
 get_common_version:
@@ -149,8 +152,32 @@ $(CMAKE_TAG):
 	@echo
 	@cmake -B "$(BUILD_DIR)" $(CMAKE_CONFIG_ARGS)
 
-.PHONY: cmake_clean
-cmake_clean:
+$(BUILD_DIR):
+	@mkdir -p "$(BUILD_DIR)"
+
+.PHONY: list
+list: cmake
+	@echo "Default target:"
+	@sed -n -e 's/^\([[:alnum:]][^:]*\):.*$$/    \1/p' $(MAKEFILE_LIST) | head -1
+	@echo
+	@echo "Makefile targets:"
+	@sed -n -e 's/^\([[:alnum:]][^:]*\):.*$$/... \1/p' $(MAKEFILE_LIST) | sort -u
+	@echo
+	@echo "Additional targets from CMake:"
+	@cmake --build "$(BUILD_DIR)" --target help | tail +3
+
+.PHONY: show_cache
+show_cache: cmake
+	@awk 'BEGIN{FS="="}                    \
+		/:INTERNAL=/ {next;}               \
+		/^[A-Z0-9_]*:[A-Z]*=/ {            \
+			sub(":.*","",$$1);             \
+			printf("%40s = %s\n",$$1,$$2); \
+		}'                                 \
+		out/build/CMakeCache.txt
+
+.PHONY: clean/cmake cmake_clean
+clean/cmake cmake_clean:
 	@if [ -f "$(CMAKE_TAG)" ]; \
 	then \
 		echo "Invoking CMake target 'clean'"; \
@@ -158,26 +185,26 @@ cmake_clean:
 	fi
 
 .PHONY: clean
-clean: cmake_clean
+clean: clean/cmake
 
-.PHONY: pkg_clean package_clean
-pkg_clean package_clean:
-	@rm -rfv "$(PACKAGE_DIR)"
+.PHONY: clean/build
+clean/build:
+	@$(call clean_folder,$(BUILD_DIR))
 
-.PHONY: realclean
-realclean: pkg_clean uninstall
-	@rm -rfv "$(BUILD_DIR)"
+.PHONY: clean/install uninstall
+clean/install uninstall:
+	@$(call clean_folder,$(INSTALL_DIR))
 
-.PHONY: cleanout clean_out
-cleanout clean_out:
-	@echo "Removing all build outputs: ${OUT_DIR}"
-	@rm -rf "$(OUT_DIR)"
+.PHONY: clean/package pkg_clean
+clean/package pkg_clean:
+	@$(call clean_folder,$(PACKAGE_DIR))
 
-.PHONY: pristine distclean
-pristine distclean: cleanout
+.PHONY: clean/out cleanout
+clean/out cleanout:
+	@$(call clean_folder,$(OUT_DIR))
 
-$(BUILD_DIR):
-	@mkdir -p "$(BUILD_DIR)"
+.PHONY: distclean pristine
+distclean pristine: clean/install clean/package clean/build clean/out
 
 ### Delegate docker_ targets to its own Makefile
 docker_%:
@@ -187,4 +214,3 @@ docker_%:
 %:
 	@[ -f "$(CMAKE_TAG)" ] || cmake -B "$(BUILD_DIR)" $(CMAKE_CONFIG_ARGS)
 	@cmake --build "$(BUILD_DIR)" --target $(patsubst cmake_%,%,$@)
-

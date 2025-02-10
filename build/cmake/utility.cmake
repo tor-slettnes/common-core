@@ -213,7 +213,7 @@ function(cc_get_staging_list)
   set(outputs)
 
   foreach(path ${arg_FILES})
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${path}"
+    cmake_path(ABSOLUTE_PATH path NORMALIZE
       OUTPUT_VARIABLE abs_source)
 
     cmake_path(GET path
@@ -231,7 +231,7 @@ function(cc_get_staging_list)
   cc_get_optional_keyword(CONFIGURE_DEPENDS "${arg_CONFIGURE_DEPENDS}")
 
   foreach(dir ${arg_DIRECTORIES})
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${dir}"
+    cmake_path(ABSOLUTE_PATH dir NORMALIZE
       OUTPUT_VARIABLE abs_dir)
 
     cmake_path(GET abs_dir

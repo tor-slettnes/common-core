@@ -5,12 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Merge in shared configuration in case this is a submodule within a parent project.
-if(NOT PROJECT_IS_TOP_LEVEL)
-  include("${CC_BUILDCONFIG_DIR}/local.cmake" OPTIONAL)
-  include("${CC_BUILDCONFIG_DIR}/defaults.cmake" OPTIONAL)
-endif()
-
 ### General CPack settings
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
 

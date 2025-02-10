@@ -19,7 +19,7 @@ add_custom_command(
   COMMENT "Installing Python `build` tool: ${PYTHON_VENV}/bin/pyproject-build"
 
   COMMAND "${PYTHON_VENV}/bin/python"
-  ARGS -m pip install build
+  ARGS -m pip install --no-warn-script-location build
 
   COMMAND ${CMAKE_COMMAND}
   ARGS -E touch ${BUILD_TAG}

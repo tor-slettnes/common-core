@@ -11,12 +11,14 @@ Directory Structure
 
 This repository is organized as follows:
 
-* [docs](docs/) -- Developer documentation
-* [cmake](cmake/) -- CMake build recipes & include files
-* [scripts](scripts/) -- Miscellaneious scripts used for configuration, building & testing.
+* [docs](docs/) -- General documentation including getting started guides
+* [build](build/) -- Build settings, recipes, environments
+  * [cmake](build/cmake/) -- CMake build recipes & include files
+  * [docker](build/docker/) -- Recipes to make Docker image
+  * [scripts](build/scripts/) -- Miscellaneious scripts used for configuration, building & testing.
 * [src](src/) -- top-level source directory; see [source](src/README.md) for details.
-  * [core](src/core/) - Shared modules and libraries providing the application framework
-  * [mantle](src/mantle/) - Common applications/services, deployed across product lines
+  * [core](src/core) - Shared modules and libraries providing the application framework
+  * [mantle](src/mantle) - Common applications/services, deployed across product lines
 
 In addition, an `out` directory is created as part of the build process:
 

@@ -23,6 +23,9 @@ if(NOT PROJECT_INCLUDED)
   # Set build version, date and time
   string(TIMESTAMP BUILD_TIME "%s")
 
+  ### Merge in shared configuration in case this is a submodule within a parent project.
+  include(${CC_BUILDCONFIG_DIR}/buildspec.cmake)
+
   ### Common utility functions
   include(utility)
   include(pkgconf)
@@ -48,4 +51,5 @@ if(NOT PROJECT_INCLUDED)
 
   include(cpack_init)
   include(CPack)
+
 endif()

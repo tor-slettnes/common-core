@@ -19,7 +19,7 @@ add_custom_command(
   COMMENT "Installing Python `PyInstaller` tool: ${PYTHON_VENV}/bin/pyinstaller"
 
   COMMAND "${PYTHON_VENV}/bin/python"
-  ARGS -m pip install PyInstaller
+  ARGS -m pip install --no-warn-script-location PyInstaller
 
   COMMAND ${CMAKE_COMMAND}
   ARGS -E touch ${INSTALLER_TAG}
