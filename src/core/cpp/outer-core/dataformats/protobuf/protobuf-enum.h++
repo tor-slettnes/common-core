@@ -14,6 +14,13 @@
 
 namespace protobuf
 {
+    std::string enum_legend(
+        const google::protobuf::EnumDescriptor *desc,
+        const std::string &enum_delimiter = "_",
+        const std::string &list_separator = "|",
+        const std::string &list_prefix = "{",
+        const std::string &list_suffix = "}");
+
     std::vector<std::string> enum_names(
         const google::protobuf::EnumDescriptor *desc,
         const std::optional<std::string> &delimiter = "_");
@@ -36,5 +43,6 @@ namespace protobuf
     std::size_t common_prefix_length(
         const google::protobuf::EnumDescriptor *desc,
         const std::string &delimiter = "_");
+
 
 }  // namespace protobuf
