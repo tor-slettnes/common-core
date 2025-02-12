@@ -24,7 +24,7 @@ set(SOURCES
   linux-symbols.c++
   linux-host.c++
   linux-path.c++
-  linux-time.c++
+  # linux-time.c++
 )
 
 if(BUILD_DNSSD_AVAHI)

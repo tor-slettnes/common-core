@@ -87,11 +87,6 @@ install/strip: build
 	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR) --strip
 
-.PHONY: get_common_version
-get_common_version:
-	@cmake -L -P $(SHARED_DIR)/build/buildspec.cmake 2>&1 | \
-		sed -ne 's/^VERSION:[^=]*=\(.*\)$$/\1/ p'
-
 .PHONY: doc
 doc: cmake
 	@echo
@@ -166,15 +161,20 @@ list: cmake
 	@echo "Additional targets from CMake:"
 	@cmake --build "$(BUILD_DIR)" --target help | tail +3
 
-.PHONY: show_cache
-show_cache: cmake
-	@awk 'BEGIN{FS="="}                    \
+.PHONY: get_config
+get_config:
+	@(cat out/build/CMakeCache.txt || \
+      cmake -L -P build/buildspec.cmake -P $(SHARED_DIR)/build/buildspec.cmake) 2>/dev/null | \
+      awk 'BEGIN{FS="="}            \
 		/:INTERNAL=/ {next;}               \
 		/^[A-Z0-9_]*:[A-Z]*=/ {            \
 			sub(":.*","",$$1);             \
-			printf("%40s = %s\n",$$1,$$2); \
-		}'                                 \
-		out/build/CMakeCache.txt
+			printf("%-40s = %s\n",$$1,$$2); \
+		}'
+
+.PHONY: get_version
+get_version:
+	@$(MAKE) get_config | awk '/^VERSION / { print $$3; }'
 
 .PHONY: clean/cmake cmake_clean
 clean/cmake cmake_clean:

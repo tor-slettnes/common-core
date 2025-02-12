@@ -1,19 +1,14 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file sysconfig-providers-native-linux.c++
-/// @brief SysConfig service - Native implementation wrapper
+/// @file sysconfig-providers-native-linux.h++
+/// @brief SysConfig service - SystemD implementation wrapper
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "sysconfig-providers-native-linux.h++"
+#pragma once
 
 namespace platform::sysconfig::native
 {
-    void register_linux_providers()
-    {
-    }
-
-    void unregister_linux_providers()
-    {
-    }
+    void register_systemd_providers();
+    void unregister_systemd_providers();
 }  // namespace platform::sysconfig::native

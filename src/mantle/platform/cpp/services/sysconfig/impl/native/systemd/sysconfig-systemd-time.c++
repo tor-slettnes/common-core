@@ -1,18 +1,18 @@
-/// -*- c++ -*-
+// -*- c++ -*-
 //==============================================================================
-/// @file linux-time.c++
-/// @brief Time related functions on Linux
+/// @file sysconfig-systemd-time.c++
+/// @brief SysConfig implementation via SystemD - Time Configuration
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "linux-time.h++"
-#include "platform/process.h++"
+#include "sysconfig-systemd-time.h++"
 #include "platform/symbols.h++"
+#include "platform/process.h++"
 #include "chrono/date-time.h++"
-#include "logging/logging.h++"
+#include "types/filesystem.h++"
 #include "status/exceptions.h++"
 
-namespace core::platform
+namespace platform::sysconfig::systemd
 {
     constexpr auto TIMEDATECTL_PATH = "/usr/bin/timedatectl";
     constexpr auto TIMEDATECTL_SHOW = "show";
@@ -22,53 +22,49 @@ namespace core::platform
     constexpr auto SETTING_NTP_ON = "yes";
     constexpr auto SETTING_NTP_OFF = "no";
 
-    LinuxTimeProvider::LinuxTimeProvider()
-        : Super("LinuxTimeProvider")
+    TimeConfigProvider::TimeConfigProvider()
+        : Super(TYPE_NAME_FULL(This))
     {
     }
 
-    bool LinuxTimeProvider::is_pertinent() const
+    bool TimeConfigProvider::is_pertinent() const
     {
         return fs::exists(TIMEDATECTL_PATH);
     }
 
-    void LinuxTimeProvider::set_time(const dt::TimePoint &tp)
+
+    void TimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
     {
-        process->invoke_check({
+        core::platform::process->invoke_check({
             TIMEDATECTL_PATH,
             TIMEDATECTL_SETTIME,
-            dt::to_string(tp, false, 0, "%F %T UTC"),
+            core::dt::to_string(tp, false, 0, "%F %T UTC"),
         });
     }
 
-    void LinuxTimeProvider::set_ntp(bool ntp)
+    void TimeConfigProvider::set_ntp(bool ntp)
     {
-        process->invoke_check({
+        core::platform::process->invoke_check({
             TIMEDATECTL_PATH,
             TIMEDATECTL_SETNTP,
             ntp ? SETTING_NTP_ON : SETTING_NTP_OFF,
         });
     }
 
-    bool LinuxTimeProvider::get_ntp() const
+    bool TimeConfigProvider::get_ntp() const
     {
         std::string setting = this->read_settings().get(SETTING_NTP);
         return core::str::convert_to<bool>(setting, false);
     }
 
-    void LinuxTimeProvider::set_ntp_servers(const std::vector<std::string> &servers)
-    {
-        throw std::invalid_argument("set_ntp_servers() is not implemented on this platform");
-    }
-
-    std::vector<std::string> LinuxTimeProvider::get_ntp_servers() const
+    std::vector<std::string> TimeConfigProvider::get_ntp_servers() const
     {
         return {};
     }
 
-    core::types::ValueMap<std::string, std::string> LinuxTimeProvider::read_settings() const
+    core::types::ValueMap<std::string, std::string> TimeConfigProvider::read_settings() const
     {
-        core::platform::InvocationResult result = process->invoke_capture(
+        core::platform::InvocationResult result = core::platform::process->invoke_capture(
             {TIMEDATECTL_PATH, TIMEDATECTL_SHOW});
 
         if (!result.status->success())
@@ -90,9 +86,9 @@ namespace core::platform
         }
 
         core::types::ValueMap<std::string, std::string> valuemap;
-        for (const std::string &line : str::splitlines(result.stdout->str()))
+        for (const std::string &line : core::str::splitlines(result.stdout->str()))
         {
-            std::vector<std::string> subparts = str::split(line, "=", 1);
+            std::vector<std::string> subparts = core::str::split(line, "=", 1);
             if (subparts.size() == 2)
             {
                 valuemap.insert_or_assign(subparts.front(), subparts.back());
@@ -101,4 +97,4 @@ namespace core::platform
         return valuemap;
     }
 
-}  // namespace core::platform
+}  // namespace platform::sysconfig::systemd

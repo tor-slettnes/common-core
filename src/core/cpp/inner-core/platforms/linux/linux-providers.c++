@@ -9,7 +9,6 @@
 #include "linux-path.h++"
 #include "linux-symbols.h++"
 #include "linux-host.h++"
-#include "linux-time.h++"
 #ifdef BUILD_DNSSD_AVAHI
 #include "linux-dns-sd-avahi.h++"
 #endif
@@ -21,7 +20,6 @@ namespace core::platform
         symbols.registerProvider<LinuxSymbolsProvider>();
         path.registerProvider<LinuxPathProvider>(exec_name);
         host.registerProvider<LinuxHostProvider>();
-        time.registerProvider<LinuxTimeProvider>();
 #ifdef BUILD_DNSSD_AVAHI
         dns_sd.registerProvider<AvahiServiceDiscoveryProvider>();
 #endif
@@ -32,7 +30,6 @@ namespace core::platform
 #ifdef BUILD_DNSSD_AVAHI
         dns_sd.unregisterProvider<AvahiServiceDiscoveryProvider>();
 #endif
-        time.unregisterProvider<LinuxTimeProvider>();
         host.unregisterProvider<LinuxHostProvider>();
         path.unregisterProvider<LinuxPathProvider>();
         symbols.unregisterProvider<LinuxSymbolsProvider>();

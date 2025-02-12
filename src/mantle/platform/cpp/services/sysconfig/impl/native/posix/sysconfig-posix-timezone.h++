@@ -28,7 +28,7 @@ namespace platform::sysconfig::native
         using Super = TimeZoneInterface;
 
     protected:
-        PosixTimeZoneProvider();
+        PosixTimeZoneProvider(const std::string &name = "PosixTimeZoneProvider");
 
     public:
         bool is_pertinent() const override;

@@ -21,8 +21,8 @@ namespace platform::sysconfig::native
     //==========================================================================
     // Time zone configuration
 
-    PosixTimeZoneProvider::PosixTimeZoneProvider()
-        : Super("PosixTimeZoneProvider"),
+    PosixTimeZoneProvider::PosixTimeZoneProvider(const std::string &name)
+        : Super(name),
           zone_settings(SETTINGS_FILE)
     {
     }

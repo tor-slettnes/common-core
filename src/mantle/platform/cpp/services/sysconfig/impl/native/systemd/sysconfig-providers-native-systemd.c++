@@ -1,0 +1,22 @@
+// -*- c++ -*-
+//==============================================================================
+/// @file sysconfig-providers-native-systemd.c++
+/// @brief SysConfig service - SystemD implementation wrapper
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#include "sysconfig-providers-native-systemd.h++"
+#include "sysconfig-systemd-time.h++"
+
+namespace platform::sysconfig::native
+{
+    void register_systemd_providers()
+    {
+        time.registerProvider<systemd::TimeConfigProvider>();
+    }
+
+    void unregister_systemd_providers()
+    {
+        time.unregisterProvider<systemd::TimeConfigProvider>();
+    }
+}  // namespace platform::sysconfig::native

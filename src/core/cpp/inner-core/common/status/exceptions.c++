@@ -197,7 +197,7 @@ namespace core::exception
 
     InvocationError::InvocationError(const status::Event &event)
         : Super(event,
-                std::runtime_error(event.text()),
+                std::invalid_argument(event.text()),
                 TYPE_NAME_BASE(This))
     {
     }
@@ -213,7 +213,7 @@ namespace core::exception
                     exit_code,
                     symbol,
                     status::Level::FAILED),
-                std::runtime_error(text),
+                std::invalid_argument(text),
                 TYPE_NAME_BASE(This))
     {
     }
@@ -235,6 +235,18 @@ namespace core::exception
               result.error_code(),
               result.error_symbol(),
               result.error_text())
+    {
+    }
+
+    //==========================================================================
+    // UnsupportedError
+
+    UnsupportedError::UnsupportedError(const std::string &msg,
+                                       const core::types::KeyValueMap &attributes)
+        : Super(std::errc::function_not_supported,
+                TYPE_NAME_BASE(This),
+                msg,
+                attributes)
     {
     }
 

@@ -238,10 +238,10 @@ namespace core::exception
     /// @class InvocationError
     /// @brief Error created from a process invocation
 
-    class InvocationError : public Exception<std::runtime_error>
+    class InvocationError : public Exception<std::invalid_argument>
     {
         using This = InvocationError;
-        using Super = Exception<std::runtime_error>;
+        using Super = Exception<std::invalid_argument>;
 
     public:
         InvocationError(const status::Event &event);
@@ -256,6 +256,22 @@ namespace core::exception
 
         InvocationError(const std::string &source,
                         const platform::InvocationResult &result);
+    };
+
+    //==========================================================================
+    /// @class UnsupportedError
+    /// @brief Operation is not supported
+
+    class UnsupportedError : public CustomException<std::logic_error, UnsupportedError>
+    {
+        using This = UnsupportedError;
+        using Super = CustomException<std::logic_error, UnsupportedError>;
+
+    public:
+        using Super::Super;
+
+        UnsupportedError(const std::string &msg = "Unsupported operation",
+                         const types::KeyValueMap &attributes = {});
     };
 
     //==========================================================================
@@ -283,8 +299,6 @@ namespace core::exception
                              const std::string &what);
     };
 
-
-
     //==========================================================================
     /// @class PermissionDenied
     /// @brief Indicates that an item could not be accessed due to missing permissions
@@ -300,7 +314,6 @@ namespace core::exception
 
         PermissionDenied(const status::Event &event);
     };
-
 
     //==========================================================================
     /// @class FilesystemError

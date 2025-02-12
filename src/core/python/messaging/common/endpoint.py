@@ -43,7 +43,7 @@ class Endpoint (object):
                 (type(self).__name__, __file__)
 
         settings_files = [
-            self.settings_file(self.product_name),
+            self.settings_file(self.channel_name),
             self.settings_file(self.project_name),
             self.settings_file("common")
         ]

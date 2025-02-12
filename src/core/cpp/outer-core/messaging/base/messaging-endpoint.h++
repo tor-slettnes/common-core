@@ -56,7 +56,7 @@ namespace core::messaging
                              const types::Value &fallback = {}) const;
 
         std::optional<fs::path> settings_file(
-            const std::string &deployment_flavor) const;
+            const std::string &flavor) const;
 
     protected:
         void to_stream(std::ostream &stream) const override;

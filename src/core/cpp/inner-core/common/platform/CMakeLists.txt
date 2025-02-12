@@ -16,7 +16,6 @@ target_sources(${TARGET} PRIVATE
   symbols.c++
   systemservice.c++
   timezone.c++
-  time.c++
   user.c++
   dns-sd.c++
 )

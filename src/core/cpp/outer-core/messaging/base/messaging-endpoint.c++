@@ -67,7 +67,11 @@ namespace core::messaging
     {
         if (!this->settings_->loaded())
         {
-            for (const std::string &component: {PRODUCT_NAME, PROJECT_NAME, "common"})
+            for (const std::string &component : {
+                     this->channel_name(),
+                     std::string(PROJECT_NAME),
+                     "common"s,
+                 })
             {
                 if (const std::optional<fs::path> &path = this->settings_file(component))
                 {
@@ -96,13 +100,13 @@ namespace core::messaging
         }
     }
 
-    std::optional<fs::path> Endpoint::settings_file(const std::string &deployment_flavor) const
+    std::optional<fs::path> Endpoint::settings_file(const std::string &flavor) const
     {
-        if (!deployment_flavor.empty())
+        if (!flavor.empty())
         {
             return str::format("%,s-endpoints-%,s",
                                this->messaging_flavor(),
-                               deployment_flavor);
+                               flavor);
         }
         else
         {

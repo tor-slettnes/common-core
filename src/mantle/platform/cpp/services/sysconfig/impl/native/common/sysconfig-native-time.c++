@@ -10,11 +10,12 @@
 #include "platform/symbols.h++"
 #include "chrono/scheduler.h++"
 #include "chrono/date-time.h++"
+#include "status/exceptions.h++"
 
 namespace platform::sysconfig::native
 {
-    TimeConfigProvider::TimeConfigProvider()
-        : Super(TYPE_NAME_FULL(This))
+    TimeConfigProvider::TimeConfigProvider(const std::string &name)
+        : Super(name)
     {
     }
 
@@ -31,7 +32,14 @@ namespace platform::sysconfig::native
             core::Scheduler::ALIGN_UTC,          // alignment
             core::status::Level::TRACE);         // loglevel
 
-        this->emit_time_config();
+        try
+        {
+            this->emit_time_config();
+        }
+        catch (const core::exception::UnsupportedError &e)
+        {
+            log_warning(this->name(), ": ", e);
+        }
     }
 
     void TimeConfigProvider::deinitialize()
@@ -41,36 +49,32 @@ namespace platform::sysconfig::native
         Super::deinitialize();
     }
 
-    void TimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
-    {
-        core::platform::time->set_time(tp);
-    }
-
     core::dt::TimePoint TimeConfigProvider::get_current_time() const
     {
         return core::dt::Clock::now();
     }
 
-    void TimeConfigProvider::set_time_config(const TimeConfig &config)
+    void TimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
     {
-        core::platform::time->set_ntp(config.synchronization == TSYNC_NTP);
-        if (!config.servers.empty())
-        {
-            core::platform::time->set_ntp_servers(config.servers);
-        }
+        throw core::exception::UnsupportedError(
+            "set_current_time() is not implemented on this platform");
     }
 
     TimeConfig TimeConfigProvider::get_time_config() const
     {
-        return {
-            .synchronization = (core::platform::time->get_ntp() ? TSYNC_NTP : TSYNC_NONE),
-            .servers = core::platform::time->get_ntp_servers(),
-        };
+        throw core::exception::UnsupportedError(
+            "get_time_config() is not implemented on this platform");
+    }
+
+    void TimeConfigProvider::set_time_config(const TimeConfig &config)
+    {
+        throw core::exception::UnsupportedError(
+            "set_time_config() is not implemented on this platform");
     }
 
     void TimeConfigProvider::emit_time_config() const
     {
-        signal_timeconfig.emit(this->get_time_config());
+        platform::sysconfig::signal_timeconfig.emit(this->get_time_config());
     }
 
 }  // namespace platform::sysconfig::native
