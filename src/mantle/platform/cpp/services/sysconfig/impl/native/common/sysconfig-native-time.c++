@@ -6,7 +6,6 @@
 //==============================================================================
 
 #include "sysconfig-native-time.h++"
-#include "platform/time.h++"
 #include "platform/symbols.h++"
 #include "chrono/scheduler.h++"
 #include "chrono/date-time.h++"
