@@ -12,7 +12,7 @@
 #include "types/filesystem.h++"
 #include "status/exceptions.h++"
 
-namespace platform::sysconfig::systemd
+namespace platform::sysconfig::native
 {
     constexpr auto TIMEDATECTL_PATH = "/usr/bin/timedatectl";
     constexpr auto TIMEDATECTL_SHOW = "show";
@@ -22,18 +22,17 @@ namespace platform::sysconfig::systemd
     constexpr auto SETTING_NTP_ON = "yes";
     constexpr auto SETTING_NTP_OFF = "no";
 
-    TimeConfigProvider::TimeConfigProvider()
+    SystemdTimeConfigProvider::SystemdTimeConfigProvider()
         : Super(TYPE_NAME_FULL(This))
     {
     }
 
-    bool TimeConfigProvider::is_pertinent() const
+    bool SystemdTimeConfigProvider::is_pertinent() const
     {
         return fs::exists(TIMEDATECTL_PATH);
     }
 
-
-    void TimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
+    void SystemdTimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
     {
         core::platform::process->invoke_check({
             TIMEDATECTL_PATH,
@@ -42,7 +41,7 @@ namespace platform::sysconfig::systemd
         });
     }
 
-    void TimeConfigProvider::set_ntp(bool ntp)
+    void SystemdTimeConfigProvider::set_ntp(bool ntp)
     {
         core::platform::process->invoke_check({
             TIMEDATECTL_PATH,
@@ -51,18 +50,18 @@ namespace platform::sysconfig::systemd
         });
     }
 
-    bool TimeConfigProvider::get_ntp() const
+    bool SystemdTimeConfigProvider::get_ntp() const
     {
         std::string setting = this->read_settings().get(SETTING_NTP);
         return core::str::convert_to<bool>(setting, false);
     }
 
-    std::vector<std::string> TimeConfigProvider::get_ntp_servers() const
+    std::vector<std::string> SystemdTimeConfigProvider::get_ntp_servers() const
     {
         return {};
     }
 
-    core::types::ValueMap<std::string, std::string> TimeConfigProvider::read_settings() const
+    core::types::ValueMap<std::string, std::string> SystemdTimeConfigProvider::read_settings() const
     {
         core::platform::InvocationResult result = core::platform::process->invoke_capture(
             {TIMEDATECTL_PATH, TIMEDATECTL_SHOW});

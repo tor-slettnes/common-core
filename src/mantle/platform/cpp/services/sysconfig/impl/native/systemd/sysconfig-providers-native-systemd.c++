@@ -12,11 +12,11 @@ namespace platform::sysconfig::native
 {
     void register_systemd_providers()
     {
-        time.registerProvider<systemd::TimeConfigProvider>();
+        time.registerProvider<SystemdTimeConfigProvider>();
     }
 
     void unregister_systemd_providers()
     {
-        time.unregisterProvider<systemd::TimeConfigProvider>();
+        time.unregisterProvider<SystemdTimeConfigProvider>();
     }
 }  // namespace platform::sysconfig::native

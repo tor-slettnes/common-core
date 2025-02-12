@@ -14,17 +14,17 @@ namespace platform::sysconfig::native
 {
     void register_providers()
     {
-        register_common_providers();
-        register_posix_providers();
-        register_linux_providers();
         register_systemd_providers();
+        register_linux_providers();
+        register_posix_providers();
+        register_common_providers();
     }
 
     void unregister_providers()
     {
-        unregister_systemd_providers();
-        unregister_linux_providers();
-        unregister_posix_providers();
         unregister_common_providers();
+        unregister_posix_providers();
+        unregister_linux_providers();
+        unregister_systemd_providers();
     }
 }  // namespace platform::sysconfig::native

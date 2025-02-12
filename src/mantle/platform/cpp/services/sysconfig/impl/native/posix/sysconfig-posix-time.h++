@@ -10,7 +10,7 @@
 
 namespace platform::sysconfig::native
 {
-    class PosixTimeConfigProvider : public native::TimeConfigProvider
+    class PosixTimeConfigProvider : public TimeConfigProvider
     {
         using This = PosixTimeConfigProvider;
         using Super = TimeConfigProvider;

@@ -12,12 +12,14 @@
 #include <yaml.h>
 
 #include <iostream>
+#include <unordered_set>
 
 namespace core::yaml
 {
     class YamlParser
     {
         using This = YamlParser;
+        using EventTypeSet = std::unordered_set<yaml_event_type_t>;
 
     public:
         YamlParser();
@@ -40,13 +42,13 @@ namespace core::yaml
         std::optional<types::Value> read_value();
 
         bool expect_next_event_type(
-            yaml_event_type_t expected_type,
-            yaml_event_type_t end_type = YAML_NO_EVENT);
+            const EventTypeSet &expected_types,
+            const EventTypeSet &end_types = {});
 
         bool expect_event_type(
             const yaml_event_t &event,
-            yaml_event_type_t expected_type,
-            yaml_event_type_t end_type = YAML_NO_EVENT);
+            const EventTypeSet &expected_types,
+            const EventTypeSet &end_types = {});
 
         std::optional<types::Value> process_event(yaml_event_t event);
         types::Value process_alias(const yaml_event_t &event);

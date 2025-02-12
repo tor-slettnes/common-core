@@ -6,17 +6,17 @@
 //==============================================================================
 
 #pragma once
-#include "sysconfig-native-time.h++"
+#include "sysconfig-posix-time.h++"
 
-namespace platform::sysconfig::systemd
+namespace platform::sysconfig::native
 {
-    class TimeConfigProvider : public native::TimeConfigProvider
+    class SystemdTimeConfigProvider : public PosixTimeConfigProvider
     {
-        using This = TimeConfigProvider;
-        using Super = native::TimeConfigProvider;
+        using This = SystemdTimeConfigProvider;
+        using Super = PosixTimeConfigProvider;
 
     public:
-        TimeConfigProvider();
+        SystemdTimeConfigProvider();
 
         bool is_pertinent() const override;
 

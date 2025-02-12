@@ -82,25 +82,30 @@ namespace core::yaml
                 this->parser.problem,
                 {
                     {"offset", this->parser.problem_offset},
-            });
+                });
         }
     }
 
     types::ValueList YamlParser::read_all()
     {
         types::ValueList docs;
-        this->expect_next_event_type(YAML_STREAM_START_EVENT);
-        while (auto doc = this->read_document())
+        if (this->expect_next_event_type(
+                {YAML_STREAM_START_EVENT},
+                {YAML_STREAM_END_EVENT}))
         {
-            docs.push_back(doc);
+            while (auto doc = this->read_document())
+            {
+                docs.push_back(doc);
+            }
         }
         return docs;
     }
 
     std::optional<types::Value> YamlParser::read_document()
     {
-        if (this->expect_next_event_type(YAML_DOCUMENT_START_EVENT,
-                                         YAML_DOCUMENT_END_EVENT))
+        if (this->expect_next_event_type(
+                {YAML_DOCUMENT_START_EVENT},
+                {YAML_DOCUMENT_END_EVENT, YAML_STREAM_END_EVENT}))
         {
             return this->read_value();
         }
@@ -114,9 +119,10 @@ namespace core::yaml
     {
         std::optional<std::string> key;
         yaml_event_t event = this->next_event();
-        if (this->expect_event_type(event,
-                                    YAML_SCALAR_EVENT,
-                                    YAML_MAPPING_END_EVENT))
+        if (this->expect_event_type(
+                event,
+                {YAML_SCALAR_EVENT},
+                {YAML_MAPPING_END_EVENT}))
         {
             key = {
                 reinterpret_cast<const char *>(event.data.scalar.value),
@@ -136,37 +142,37 @@ namespace core::yaml
     }
 
     bool YamlParser::expect_next_event_type(
-        yaml_event_type_t expected_type,
-        yaml_event_type_t end_type)
+        const EventTypeSet &expected_types,
+        const EventTypeSet &end_types)
     {
         yaml_event_t event = this->next_event();
-        bool expected = this->expect_event_type(event, expected_type, end_type);
+        bool expected = this->expect_event_type(event, expected_types, end_types);
         yaml_event_delete(&event);
         return expected;
     }
 
     bool YamlParser::expect_event_type(
         const yaml_event_t &event,
-        yaml_event_type_t expected_type,
-        yaml_event_type_t end_type)
+        const EventTypeSet &expected_types,
+        const EventTypeSet &end_types)
     {
         yaml_event_type_t event_type = event.type;
 
-        if (event_type == expected_type)
+        if (expected_types.count(event_type))
         {
             return true;
         }
-        else if ((event_type == end_type) || !end_type)
+        else if (end_types.empty() || end_types.count(event_type))
         {
             return false;
         }
         else
         {
             throwf(exception::RuntimeError,
-                   "YAML parser got unexpected event type %d at position %d (expected %d)",
+                   "YAML parser got unexpected event type %d at position %d (expected one of: %d)",
                    event_type,
                    this->input_position(),
-                   expected_type);
+                   expected_types);
         }
     }
 
@@ -279,4 +285,4 @@ namespace core::yaml
                              this->parser.buffer.pointer);
     }
 
-} // namespace core::yaml
+}  // namespace core::yaml
