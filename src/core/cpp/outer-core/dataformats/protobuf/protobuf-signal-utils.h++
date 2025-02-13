@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file protobuf-signalutils.h++
+/// @file protobuf-signal-utils.h++
 /// @brief Miscellaneous utilities for ProtoBuf `Signal` messages
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

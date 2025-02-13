@@ -11,7 +11,7 @@
 
 #pragma once
 #include "grpc-serverstreamer.h++"
-#include "protobuf-signalforwarder.h++"
+#include "protobuf-signal-forwarder.h++"
 #include "thread/blockingqueue.h++"
 #include "platform/init.h++"
 

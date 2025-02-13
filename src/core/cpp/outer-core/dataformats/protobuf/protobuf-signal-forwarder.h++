@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file protobuf-signalforwarder.h++
+/// @file protobuf-signal-forwarder.h++
 /// @brief Capture server-side signals and encode as ProtoBuf Signal() messages
 /// @author Tor Slettnes <tor@slett.net>
 ///

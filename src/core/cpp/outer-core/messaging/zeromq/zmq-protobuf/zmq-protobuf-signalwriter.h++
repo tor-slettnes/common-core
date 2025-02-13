@@ -8,7 +8,7 @@
 #pragma once
 #include "zmq-protobuf-messagewriter.h++"
 #include "zmq-publisher.h++"
-#include "protobuf-signalforwarder.h++"
+#include "protobuf-signal-forwarder.h++"
 #include "logging/logging.h++"
 #include "platform/symbols.h++"
 

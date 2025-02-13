@@ -22,7 +22,7 @@ Publish/Subscribe
 
 * [cc::zmq::ProtoBufSignalSubscriber<>()](zmq-protobuf-signalsubscriber.h++) is
   a template class that builds on the preceding as well as
-  [cc::protobuf::SignalReceiver()](../../../dataformats/protobuf/protobuf-signalreceiver.h++) to
+  [cc::protobuf::SignalReceiver()](../../../dataformats/protobuf/protobuf-signal-receiver.h++) to
   *implicitly* subscribe to specialized `Signal()` messages, as described in
   [signal_types.proto](../../../../../proto/signal_types.proto).
 

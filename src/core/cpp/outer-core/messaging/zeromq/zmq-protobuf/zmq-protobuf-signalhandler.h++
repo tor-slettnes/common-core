@@ -7,7 +7,7 @@
 
 #pragma once
 #include "zmq-protobuf-messagehandler.h++"
-#include "protobuf-signalreceiver.h++"
+#include "protobuf-signal-receiver.h++"
 #include "logging/logging.h++"
 
 namespace core::zmq

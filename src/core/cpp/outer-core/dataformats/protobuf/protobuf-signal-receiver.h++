@@ -1,6 +1,6 @@
 /// -*- c++ -*-
 //==============================================================================
-/// @file protobuf-signalreceiver.h++
+/// @file protobuf-signal-receiver.h++
 /// @brief Handle ProtoBuf Signal messages
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================

@@ -14,7 +14,7 @@
 #include "grpc-clientreceiver.h++"
 #include "signal.pb.h"
 #include "protobuf-message.h++"
-#include "protobuf-signalreceiver.h++"
+#include "protobuf-signal-receiver.h++"
 #include "thread/binaryevent.h++"
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
