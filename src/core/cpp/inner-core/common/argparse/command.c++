@@ -255,4 +255,10 @@ namespace core::argparse
         this->on_monitor_end();
     }
 
+    std::string CommandOptions::keywords_legend(
+        const std::vector<std::string> &alternatives)
+    {
+        return "[" + core::str::join(alternatives, "|") + "]";
+    }
+
 }  // namespace core::argparse

@@ -53,6 +53,9 @@ namespace core::argparse
         virtual void initialize() {}
         virtual void deinitialize() {}
 
+        static std::string keywords_legend(
+            const std::vector<std::string> &alternatives);
+
     protected:
         template <class T>
         std::optional<T> get_from_map(const core::types::SymbolMap<T> &map)
