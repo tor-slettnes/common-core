@@ -88,7 +88,9 @@ namespace core::logging
 
     void Dispatcher::deinitialize()
     {
-        for (const auto &[sink_id, sink] : this->sinks())
+        SinkMap old_sinks;
+        std::swap(old_sinks, this->sinks_);
+        for (const auto &[sink_id, sink] : old_sinks)
         {
             sink->close();
         }
@@ -118,5 +120,5 @@ namespace core::logging
         }
     }
 
-    Dispatcher::ptr dispatcher;
+    Dispatcher dispatcher;
 }  // namespace core::logging

@@ -62,7 +62,7 @@ namespace core::logging
         /// @param[in] thread_id
         ///     Identity of thread in which the message originated
 
-        MessageBuilder(const std::shared_ptr<Dispatcher> &dispatcher,
+        MessageBuilder(Dispatcher *dispatcher,
                        status::Level level,
                        Scope::ptr scope,
                        const dt::TimePoint &tp,
@@ -108,7 +108,7 @@ namespace core::logging
 
     private:
         std::error_code path_error;
-        std::shared_ptr<Dispatcher> dispatcher_;
+        Dispatcher *dispatcher_;
         bool is_applicable_;
     };
 

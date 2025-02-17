@@ -82,7 +82,7 @@
 
 #define CUSTOM_LOG_MESSAGE(level, scope, timepoint, path, lineno, function) \
     core::logging::MessageBuilder::create_shared(                           \
-        core::logging::dispatcher,                                          \
+        &core::logging::dispatcher,                                         \
         level,                                                              \
         scope,                                                              \
         timepoint,                                                          \

@@ -53,5 +53,5 @@ namespace core::logging
         std::mutex mtx_;
     };
 
-    extern Dispatcher::ptr dispatcher;
+    extern Dispatcher dispatcher;
 }  // namespace core::logging

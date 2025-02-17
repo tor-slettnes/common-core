@@ -35,7 +35,6 @@ namespace core::application
         // Apply system locale for `wstring` conversions
         //std::locale::global(std::locale("C"));
 
-        logging::dispatcher = std::make_shared<logging::Dispatcher>();
         core::platform::register_providers(argc ? argv[0] : "");
         core::init_settings(flavor);
         core::platform::init_tasks.execute();
@@ -55,9 +54,6 @@ namespace core::application
 
         core::platform::exit_tasks.execute();
         core::platform::unregister_providers();
-        if (logging::dispatcher)
-        {
-            logging::dispatcher->deinitialize();
-        }
+        logging::dispatcher.deinitialize();
     }
 }  // namespace core::application
