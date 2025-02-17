@@ -82,10 +82,6 @@ namespace core::db
         const MultiRowData &parameter_rows,
         const QueryCallbackFunction &callback) const
     {
-        logf_trace("Executing SQLite3 statement with %d parameter rows: %s",
-                   parameter_rows.size(),
-                   sql);
-
         sqlite3_stmt *statement = nullptr;
         this->check_status(
             sqlite3_prepare_v2(

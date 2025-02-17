@@ -37,8 +37,10 @@ namespace logger::grpc
         core::platform::signal_shutdown.connect(
             SHUTDOWN_SIGNAL_HANDLE,
             [&]() {
+                log_info("gRPC service is shutting down");
                 server->Shutdown(core::dt::Clock::now() +
                                  std::chrono::seconds(5));
+                log_info("gRPC service is down");
             });
 
         log_notice("gRPC server is ready on ", core::str::join(builder.listener_ports()));

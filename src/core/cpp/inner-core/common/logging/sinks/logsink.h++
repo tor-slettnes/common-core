@@ -37,7 +37,6 @@ namespace core::logging
     public:
         void load_settings(const types::KeyValueMap &settings) override;
         bool is_applicable(const types::Loggable &item) const override;
-        bool capture(const types::Loggable::ptr &item) override;
 
         virtual void set_threshold(status::Level threshold);
         status::Level threshold() const;
@@ -45,7 +44,10 @@ namespace core::logging
         virtual void set_contract_id(std::optional<status::Event::ContractID> contract_id);
         std::optional<status::Event::ContractID> contract_id() const;
 
+        bool capture(const types::Loggable::ptr &item) override;
+
     protected:
+        bool try_capture_event(const status::Event::ptr &event);
         virtual void capture_event(const status::Event::ptr &event) = 0;
 
     private:

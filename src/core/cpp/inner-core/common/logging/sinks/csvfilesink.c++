@@ -8,6 +8,7 @@
 #include "csvfilesink.h++"
 #include "factory.h++"
 #include "string/misc.h++"
+#include "status/exceptions.h++"
 
 namespace core::logging
 {
@@ -50,7 +51,9 @@ namespace core::logging
     void CSVFileSink::open_file(const dt::TimePoint &tp)
     {
         RotatingPath::open_file(tp);
+
         this->stream.open(this->current_path(), std::ios::ate);
+
         if (this->stream.tellp() == 0)
         {
             this->write_header();
@@ -59,11 +62,12 @@ namespace core::logging
 
     void CSVFileSink::close_file()
     {
+        RotatingPath::close_file();
+
         if (this->stream.is_open())
         {
             this->stream.close();
         }
-        RotatingPath::close_file();
     }
 
     void CSVFileSink::capture_event(const status::Event::ptr &event)

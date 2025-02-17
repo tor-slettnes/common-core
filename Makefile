@@ -27,7 +27,9 @@ else
 	BUILD_TYPE = Release
 endif
 
+### CMake customization
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
+
 ifeq ($(shell uname),Linux)
   export CMAKE_BUILD_PARALLEL_LEVEL = $(shell nproc)
 endif
@@ -43,6 +45,8 @@ CMAKE_CONFIG_ARGS += $(foreach override,$(MAKEOVERRIDES),-D$(override))
 ## Create CMake cache only if this file is absent.
 CMAKE_TAG = $(BUILD_DIR)/Makefile
 
+
+### Utility functions
 define clean_folder
 	if [ -d "$(1)" ]; then \
 		echo "Removing: $(1)"; \
@@ -50,7 +54,7 @@ define clean_folder
 	fi
 endef
 
-
+### Build targets
 .PHONY: local
 local: test install
 

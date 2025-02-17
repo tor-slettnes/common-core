@@ -18,6 +18,11 @@ namespace core::types
     {
     }
 
+    void BlockingQueueBase::clear()
+    {
+        this->space_available.notify_all();
+    }
+
     void BlockingQueueBase::close()
     {
         {

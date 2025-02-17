@@ -6,6 +6,8 @@
 //==============================================================================
 
 #include "logsink.h++"
+#include "logging/logging.h++"
+#include "status/exceptions.h++"
 
 namespace core::logging
 {
@@ -48,12 +50,31 @@ namespace core::logging
 
     bool LogSink::capture(const types::Loggable::ptr &item)
     {
-        if (auto event = std::dynamic_pointer_cast<status::Event>(item))
+        if (this->is_open())
+        {
+            if (auto event = std::dynamic_pointer_cast<status::Event>(item))
+            {
+                return this->try_capture_event(event);
+            }
+        }
+        return false;
+    }
+
+    bool LogSink::try_capture_event(const status::Event::ptr &event)
+    {
+        try
         {
             this->capture_event(event);
             return true;
         }
-        return false;
+        catch (...)
+        {
+            this->close();
+            logf_error("Log sink %r failed to capture event: %s",
+                       this->sink_id(),
+                       std::current_exception());
+            return false;
+        }
     }
 
     void LogSink::set_threshold(status::Level threshold)

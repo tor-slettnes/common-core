@@ -7,6 +7,8 @@
 
 #include "logger-sqlite3-sink.h++"
 #include "logging/message/message.h++"
+#include "logging/logging.h++"
+#include "status/exceptions.h++"
 #include "string/misc.h++"
 
 namespace logger
@@ -152,22 +154,31 @@ namespace logger
 
         while (!this->queue.closed())
         {
-            bool flush = false;
+            try
+            {
+                bool flush = false;
+                if (auto opt_event = this->queue.get(this->batch_timeout()))
+                {
+                    this->capture_event(opt_event.value());
+                    flush = (++pending_count >= this->batch_size());
+                }
+                else
+                {
+                    flush = (pending_count > 0);
+                }
 
-            if (auto opt_event = this->queue.get(this->batch_timeout()))
-            {
-                this->capture_event(opt_event.value());
-                flush = (++pending_count >= this->batch_size());
+                if (flush)
+                {
+                    this->flush_events();
+                    pending_count = 0;
+                }
             }
-            else
+            catch (...)
             {
-                flush = (pending_count > 0);
-            }
-
-            if (flush)
-            {
-                this->flush_events();
-                pending_count = 0;
+                this->queue.close();
+                logf_error("Log sink %r failed to capture event: %s",
+                           this->sink_id(),
+                           std::current_exception());
             }
         }
     }
@@ -197,4 +208,4 @@ namespace logger
         this->pending_rows.clear();
     }
 
-} // namespace logger
+}  // namespace logger

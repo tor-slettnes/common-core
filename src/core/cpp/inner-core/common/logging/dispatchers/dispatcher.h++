@@ -22,6 +22,9 @@ namespace core::logging
     class Dispatcher
     {
     public:
+        using ptr = std::shared_ptr<Dispatcher>;
+
+    public:
         Sink::ptr add_sink(const Sink::ptr &sink);
         virtual Sink::ptr add_sink(const SinkID &sink_id,
                                    const Sink::ptr &sink);
@@ -50,5 +53,5 @@ namespace core::logging
         std::mutex mtx_;
     };
 
-    extern Dispatcher dispatcher;
+    extern Dispatcher::ptr dispatcher;
 }  // namespace core::logging

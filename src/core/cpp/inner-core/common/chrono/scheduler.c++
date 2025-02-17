@@ -26,7 +26,9 @@ namespace core
 
     Scheduler::~Scheduler()
     {
-        this->stop();
+        auto lck = std::lock_guard(this->mtx);
+        this->tasks.clear();
+        this->stop_watcher();
     }
 
     Scheduler::Handle Scheduler::add(const Invocation &invocation,
@@ -149,7 +151,7 @@ namespace core
         // Add the new task to the schedule.
         auto it = this->tasks.emplace(tp, task);
         bool isfirst = (it == this->tasks.begin());
-        logf_debug("Added task: handle=%r, next=%r, first=%r", task.handle, tp, isfirst);
+        // logf_debug("Added task: handle=%r, next=%r, first=%r", task.handle, tp, isfirst);
 
         // Was this task inserted at the beginning?
         if (isfirst)
@@ -159,7 +161,7 @@ namespace core
             this->stop_watcher();
 
             // Start a new watcher thread.
-            logf_trace("Creating watcher thread with initial task %r", it->second.handle);
+            // logf_trace("Creating watcher thread with initial task %r", it->second.handle);
             this->start_watcher();
         }
 
@@ -192,10 +194,10 @@ namespace core
             if ((ptask == nullptr) ? (task.handle == handle) : (&task == ptask))
             {
                 bool isfirst = (&task == this->current);
-                logf_debug("Removing task: handle=%r, next=%s, first=%s",
-                           handle,
-                           it->first,
-                           isfirst);
+                // logf_debug("Removing task: handle=%r, next=%s, first=%s",
+                //            handle,
+                //            it->first,
+                //            isfirst);
                 if (isfirst)
                 {
                     this->current = nullptr;
@@ -216,7 +218,7 @@ namespace core
     {
         std::unique_lock lck(this->mtx);
         dt::TimePoint now = dt::Clock::now();
-        logf_trace("Starting watcher thread at %s", now);
+        // logf_trace("Starting watcher thread at %s", now);
         while (this->tasks.size())
         {
             auto it = this->tasks.begin();
@@ -234,9 +236,9 @@ namespace core
 
             if (!this->activeWatcher.joinable())
             {
-                logf_trace(
-                    "Watcher thread was cancelled while waiting for task %r; exiting.",
-                    handle);
+                // logf_trace(
+                //     "Watcher thread was cancelled while waiting for task %r; exiting.",
+                //     handle);
                 break;
             }
 
@@ -407,6 +409,7 @@ namespace core
         // (e.g. 4 hours) adjust for any change in the local timezone offset (i.e.,
         // entering/leaving DST).
         if ((this->align == ALIGN_LOCAL) &&
+            (this->interval > std::chrono::hours(1)) &&
             (std::chrono::hours(1) % this->interval != dt::Duration::zero()))
         {
             next += (dt::local_adjustment(next) - dt::local_adjustment(tp));

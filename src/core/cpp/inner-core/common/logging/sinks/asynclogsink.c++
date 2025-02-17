@@ -31,27 +31,22 @@ namespace core::logging
 
     bool AsyncLogSink::capture(const types::Loggable::ptr &item)
     {
-        if (!this->is_open())
-        {
-            this->open();
-        }
-
         if (auto event = std::dynamic_pointer_cast<status::Event>(item))
         {
-            this->queue.put(event);
-            return true;
+            if (!this->queue.closed())
+            {
+                this->queue.put(event);
+                return true;
+            }
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     void AsyncLogSink::worker()
     {
         while (const std::optional<status::Event::ptr> &opt_event = this->queue.get())
         {
-            this->capture_event(opt_event.value());
+            this->try_capture_event(opt_event.value());
         }
     }
 }  // namespace core::logging

@@ -12,6 +12,7 @@
 #include "thread/blockingqueue.h++"
 
 #include <thread>
+#include <memory>
 
 namespace core::logging
 {
@@ -39,6 +40,7 @@ namespace core::logging
 
     protected:
         void load_rotation(const types::KeyValueMap &settings);
+        std::unordered_map<std::string, std::string> expansions() const;
 
     public:
         std::string sink_name() const;
@@ -82,12 +84,8 @@ namespace core::logging
 
         void compress_all_inactive();
         void compress(const fs::path &logfile);
-        static void compress_worker();
-
 
     private:
-        static types::BlockingQueue<fs::path> compress_queue;
-        static std::thread compress_thread;
         std::string sink_name_;
         fs::path default_suffix_;
         std::string name_template_;
@@ -100,4 +98,4 @@ namespace core::logging
         dt::TimePoint current_rotation_;
         fs::path current_path_;
     };
-} // namespace core::logging
+}  // namespace core::logging

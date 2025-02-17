@@ -285,7 +285,8 @@ namespace core::exception
 
     public:
         SystemError(const status::Event &event);
-        SystemError(const std::system_error &e);
+        SystemError(const std::system_error &e,
+                    const std::optional<std::string> &preamble = {});
 
         explicit SystemError(int errcode, const std::string &what);
         explicit SystemError(int errcode = errno);

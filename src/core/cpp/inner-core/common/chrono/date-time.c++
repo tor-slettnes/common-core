@@ -149,6 +149,67 @@ namespace core
             this->count = 0;
         }
 
+        std::optional<Duration> DateTimeInterval::as_duration() const
+        {
+            switch (this->unit)
+            {
+            case TimeUnit::ZERO_TIME:
+                return Duration::zero();
+
+            case TimeUnit::NANOSECOND:
+                return std::chrono::nanoseconds(1);
+
+            case TimeUnit::MICROSECOND:
+                return std::chrono::microseconds(1);
+
+            case TimeUnit::MILLISECOND:
+                return std::chrono::milliseconds(1);
+
+            case TimeUnit::SECOND:
+                return std::chrono::seconds(1);
+
+            case TimeUnit::MINUTE:
+                return std::chrono::minutes(1);
+
+            case TimeUnit::HOUR:
+                return std::chrono::hours(1);
+
+            default:
+                return {};
+            }
+        }
+
+        Duration DateTimeInterval::as_approximate_duration() const
+        {
+            if (auto duration = this->as_duration())
+            {
+                return duration.value();
+            }
+            else
+            {
+                switch (this->unit)
+                {
+                case TimeUnit::DAY:
+                    return std::chrono::hours(24);
+
+                case TimeUnit::WEEK:
+                    return std::chrono::hours(24 * 7);
+
+                case TimeUnit::MONTH:
+                    return std::chrono::hours(24 * 30);
+
+                case TimeUnit::YEAR:
+                    return std::chrono::hours(24 * 365 + 8);
+
+                case TimeUnit::ETERNITY:
+                    return std::chrono::hours::max();
+
+                default:
+                    return Duration::zero();
+                }
+            }
+        }
+
         //==========================================================================
         // Helper functions, used below.
 

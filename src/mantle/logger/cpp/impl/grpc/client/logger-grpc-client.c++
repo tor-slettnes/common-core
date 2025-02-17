@@ -19,7 +19,7 @@ namespace logger::grpc
         if (this->add_local_sink)
         {
             this->open();
-            core::logging::dispatcher.add_sink(this->shared_from_this());
+            core::logging::dispatcher->add_sink(this->shared_from_this());
         }
     }
 
@@ -27,7 +27,7 @@ namespace logger::grpc
     {
         if (this->add_local_sink)
         {
-            core::logging::dispatcher.remove_sink(this->identity());
+            core::logging::dispatcher->remove_sink(this->identity());
             this->close();
         }
         LoggerClientBase::deinitialize();

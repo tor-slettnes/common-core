@@ -10,7 +10,7 @@
 
 namespace core::logging
 {
-    MessageBuilder::MessageBuilder(Dispatcher *dispatcher,
+    MessageBuilder::MessageBuilder(const std::shared_ptr<Dispatcher> &dispatcher,
                                    status::Level level,
                                    Scope::ptr scope,
                                    const dt::TimePoint &tp,
@@ -29,7 +29,9 @@ namespace core::logging
                   platform::host ? platform::host->get_host_name() : ""s,  // host
                   platform::path ? platform::path->exec_name() : ""s),     // origin
           dispatcher_(dispatcher),
-          is_applicable_(Message::is_applicable() && dispatcher->is_applicable(*this))
+          is_applicable_(Message::is_applicable() &&
+                         dispatcher &&
+                         dispatcher->is_applicable(*this))
     {
     }
 

@@ -81,7 +81,11 @@ namespace core::logging
 
     bool Message::is_applicable() const noexcept
     {
-        if (const Scope::ptr &scope = this->scope())
+        if (this->level() == status::Level::NONE)
+        {
+            return false;
+        }
+        else if (const Scope::ptr &scope = this->scope())
         {
             return scope->is_applicable(this->level());
         }

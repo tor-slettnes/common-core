@@ -65,7 +65,7 @@ namespace core::argparse
 
     void CommonOptions::enact()
     {
-        logging::dispatcher.initialize();
+        logging::dispatcher->initialize();
     }
 
     void CommonOptions::fail(const std::string &message,
@@ -239,7 +239,7 @@ namespace core::argparse
         }
 
         if (logging::SinkFactory *factory =
-            logging::sink_registry.get(STDERR_SINK, nullptr))
+                logging::sink_registry.get(STDERR_SINK, nullptr))
         {
             this->add_verbosity_options(
                 factory,
@@ -257,10 +257,10 @@ namespace core::argparse
             "THRESHOLD",
             factory->description(),
             [=](status::Level threshold) {
-                logging::dispatcher.emplace_sink(sink_id, factory, sink_settings, threshold);
+                logging::dispatcher->emplace_sink(sink_id, factory, sink_settings, threshold);
             },
             factory->default_enabled(sink_settings)
-            ? factory->default_threshold(sink_settings)
+                ? factory->default_threshold(sink_settings)
                 : status::Level::NONE);
     }
 
@@ -279,10 +279,10 @@ namespace core::argparse
                 {str::format("--%s", str::tolower(str::convert_from(level)))},
                 str::format("Shorthand for --log-to-%s=%s", factory->sink_type(), level),
                 [=] {
-                    logging::dispatcher.emplace_sink(factory->sink_type(),
-                                                     factory,
-                                                     sink_settings,
-                                                     level);
+                    logging::dispatcher->emplace_sink(factory->sink_type(),
+                                                      factory,
+                                                      sink_settings,
+                                                      level);
                 });
         }
     }

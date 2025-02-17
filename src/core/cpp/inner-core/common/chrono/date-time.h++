@@ -86,6 +86,8 @@ namespace core
         {
             operator bool() const noexcept;
             void reset();
+            std::optional<Duration> as_duration() const;
+            Duration as_approximate_duration() const;
 
             TimeUnit unit = TimeUnit::ZERO_TIME;
             std::int64_t count = 0;

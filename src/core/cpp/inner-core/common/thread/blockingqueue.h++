@@ -52,6 +52,11 @@ namespace core::types
 
     public:
         /// @brief
+        ///     Clear the queue.
+        virtual void clear();
+
+
+        /// @brief
         ///     Close the queue.
         ///
         /// Any pending `get()` calls will return immediately with an empty
@@ -135,6 +140,13 @@ namespace core::types
             : BlockingQueueBase(maxsize, overflow_disposition),
               closewatch(closewatch)
         {
+        }
+
+        void clear() override
+        {
+            std::unique_lock<std::mutex> lock(this->mtx);
+            std::queue<T> other;
+            std::swap(this->queue, other);
         }
 
         // Resolve base for multiply-inherited method `close()`

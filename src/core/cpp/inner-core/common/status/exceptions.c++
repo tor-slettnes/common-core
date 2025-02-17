@@ -262,9 +262,11 @@ namespace core::exception
     {
     }
 
-    SystemError::SystemError(const std::system_error &e)
+    SystemError::SystemError(const std::system_error &e,
+                             const std::optional<std::string> &preamble)
         : Super(status::Event(
-                    e.what(),                    // text
+                    preamble ? preamble.value() + ": " + e.what()
+                             : e.what(),         // text
                     status::Domain::SYSTEM,      // domain
                     e.code().category().name(),  // origin
                     e.code().value(),            // code

@@ -11,6 +11,7 @@
 #include "status/exceptions.h++"
 #include "platform/path.h++"
 #include "platform/host.h++"
+#include "platform/init.h++"
 #include "io/gzip/writer.h++"
 #include "logging/logging.h++"
 
@@ -52,7 +53,6 @@ namespace core::logging
     RotatingPath::~RotatingPath()
     {
         this->close_file();
-        this->compress_queue.close();
     }
 
     void RotatingPath::load_rotation(const types::KeyValueMap &settings)
@@ -81,11 +81,11 @@ namespace core::logging
         {
             this->set_expiration_interval(expiration.value());
         }
+    }
 
-        if (!This::compress_thread.joinable())
-        {
-            This::compress_thread = std::thread(This::compress_worker);
-        }
+    std::unordered_map<std::string, std::string> RotatingPath::expansions() const
+    {
+        return this->expansions_;
     }
 
     std::string RotatingPath::sink_name() const
@@ -171,8 +171,10 @@ namespace core::logging
     void RotatingPath::open_file(const dt::TimePoint &tp)
     {
         this->update_current_path(tp);
-        this->check_expiration(tp);
-        this->compress_all_inactive();
+        auto future = std::async([=] {
+            this->check_expiration(tp);
+            this->compress_all_inactive();
+        });
     }
 
     void RotatingPath::rotate(const dt::TimePoint &tp)
@@ -217,9 +219,9 @@ namespace core::logging
     fs::path RotatingPath::construct_path(const dt::TimePoint &starttime) const
     {
         std::string log_name = dt::to_string(
-            starttime,                                                  // tp
-            0,                                                          // decimals
-            str::expand(this->filename_template(), this->expansions_)); // format
+            starttime,                                                    // tp
+            0,                                                            // decimals
+            str::expand(this->filename_template(), this->expansions()));  // format
 
         fs::path log_file = platform::path->extended_filename(
             log_name,
@@ -289,15 +291,6 @@ namespace core::logging
     {
         if ((logfile.extension() != COMPRESSION_SUFFIX) && fs::exists(logfile))
         {
-            This::compress_queue.put(logfile);
-        }
-    }
-
-    void RotatingPath::compress_worker()
-    {
-        while (auto opt_logfile = This::compress_queue.get())
-        {
-            const fs::path &logfile = opt_logfile.value();
             try
             {
                 std::ifstream is(logfile);
@@ -316,8 +309,4 @@ namespace core::logging
             }
         }
     }
-
-    types::BlockingQueue<fs::path> RotatingPath::compress_queue;
-    std::thread RotatingPath::compress_thread;
-
-} // namespace core::logging
+}  // namespace core::logging

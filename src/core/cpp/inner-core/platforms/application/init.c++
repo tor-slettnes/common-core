@@ -7,7 +7,7 @@
 #include "init.h++"
 #include "providers.h++"
 #include "settings/settings.h++"
-#include "logging/logging.h++"
+#include "logging/dispatchers/dispatcher.h++"
 
 #include <locale>
 #include <csignal>
@@ -35,6 +35,7 @@ namespace core::application
         // Apply system locale for `wstring` conversions
         //std::locale::global(std::locale("C"));
 
+        logging::dispatcher = std::make_shared<logging::Dispatcher>();
         core::platform::register_providers(argc ? argv[0] : "");
         core::init_settings(flavor);
         core::platform::init_tasks.execute();
@@ -53,7 +54,10 @@ namespace core::application
         }
 
         core::platform::exit_tasks.execute();
-        logging::dispatcher.deinitialize();
         core::platform::unregister_providers();
+        if (logging::dispatcher)
+        {
+            logging::dispatcher->deinitialize();
+        }
     }
 }  // namespace core::application

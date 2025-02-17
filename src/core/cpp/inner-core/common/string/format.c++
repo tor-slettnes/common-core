@@ -19,6 +19,17 @@ namespace core::str
 {
     constexpr auto VARARG_CONVERSION = '*';
 
+    static const std::regex rx_split(
+        //"(?:^|[^\\\\])(?:\\\\{2})*"         // 0 or even # of preceeding backslashes
+        "(%"                                // (1) Entire expression starting with %
+        "([#0\\-\\ \\+\\'\\^,]*)"           // (2) 0 or more flags #|0|-| |+|'|^|,
+        "(?:(\\d*)|(\\*))"                  // (3) fixed or (4) variable field width
+        "(?:\\.(\\d*))?"                    // (5) precision
+        "(hh|h|ll|l|q|L|j|t)?"              // (6) length modifier (ignored)
+        "(?:([abcdefghinoprsuxzAEFGOXTZ])|" // (7) argument conversion specifier, or
+        "([m%])))"                          // (8) non-argument specifier
+        );
+
     Formatter::Formatter(std::ostream &stream, const std::string &format)
         : stream(stream),
           locale(stream.getloc()),
@@ -33,16 +44,6 @@ namespace core::str
 
     Formatter::Parts Formatter::split_parts(const std::string &fmt) const
     {
-        static const std::regex rx(
-            //"(?:^|[^\\\\])(?:\\\\{2})*"         // 0 or even # of preceeding backslashes
-            "(%"                                // (1) Entire expression starting with %
-            "([#0\\-\\ \\+\\'\\^,]*)"           // (2) 0 or more flags #|0|-| |+|'|^|,
-            "(?:(\\d*)|(\\*))"                  // (3) fixed or (4) variable field width
-            "(?:\\.(\\d*))?"                    // (5) precision
-            "(hh|h|ll|l|q|L|j|t)?"              // (6) length modifier (ignored)
-            "(?:([abcdefghinoprsuxzAEFGOXTZ])|" // (7) argument conversion specifier, or
-            "([m%])))"                          // (8) non-argument specifier
-        );
         uint pos = 0, next = 0;
 
         Parts parts;
@@ -51,7 +52,7 @@ namespace core::str
         char conversion = '\0';
         std::string tail;
 
-        auto matchit = std::sregex_iterator(fmt.begin(), fmt.end(), rx);
+        auto matchit = std::sregex_iterator(fmt.begin(), fmt.end(), rx_split);
         for (std::sregex_iterator endit; matchit != endit; matchit++)
         {
             pos = (uint)matchit->position(1);

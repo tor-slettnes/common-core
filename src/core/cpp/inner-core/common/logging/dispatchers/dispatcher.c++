@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "dispatcher.h++"
-#include "logging/sinks/factory.h++"
+#include "status/exceptions.h++"
 #include <iostream>
 
 namespace core::logging
@@ -108,7 +108,7 @@ namespace core::logging
 
     void Dispatcher::submit(const types::Loggable::ptr &item)
     {
-        std::lock_guard<std::mutex> lck(this->mtx_);
+        // std::lock_guard<std::mutex> lck(this->mtx_);
         for (const auto &[sink_id, sink] : this->sinks())
         {
             if (sink->is_applicable(*item))
@@ -118,5 +118,5 @@ namespace core::logging
         }
     }
 
-    Dispatcher dispatcher;
+    Dispatcher::ptr dispatcher;
 }  // namespace core::logging
