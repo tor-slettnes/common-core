@@ -31,3 +31,4 @@
 #define BUILD_DISTRIB_PRETTY_NAME      "@BUILD_DISTRIB_PRETTY_NAME@"
 #define SOURCE_DIR                     "@CMAKE_SOURCE_DIR@"
 #define SETTINGS_DIR                   "@SETTINGS_DIR@"
+#define ORGANIZATION                   "@ORGANIZATION@"

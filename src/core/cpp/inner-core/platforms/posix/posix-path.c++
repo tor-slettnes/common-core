@@ -6,12 +6,13 @@
 //==============================================================================
 
 #include "posix-path.h++"
+#include "buildinfo.h"
 
 #include <sys/types.h>
 #include <string.h>
 #include <fcntl.h>
-#include <unistd.h> // readlink()
-#include <limits.h> // PATH_MAX
+#include <unistd.h>  // readlink()
+#include <limits.h>  // PATH_MAX
 #include <fnmatch.h>
 #include <pwd.h>
 #include <grp.h>
@@ -54,6 +55,22 @@ namespace core::platform
         };
     }
 
+    bool PosixPathProvider::is_readable(
+        const fs::path &path,
+        bool real_uid) const
+    {
+        auto method = real_uid ? ::access : ::euidaccess;
+        return method(path.c_str(), R_OK) == 0;
+    }
+
+    bool PosixPathProvider::is_writable(
+        const fs::path &path,
+        bool real_uid) const
+    {
+        auto method = real_uid ? ::access : ::euidaccess;
+        return method(path.c_str(), W_OK) == 0;
+    }
+
     uint PosixPathProvider::path_max_size() const noexcept
     {
         return PATH_MAX;
@@ -79,19 +96,33 @@ namespace core::platform
         return "/tmp";
     }
 
+    std::optional<fs::path> PosixPathProvider::user_config_folder() const noexcept
+    {
+        const char *homedir = std::getenv("HOME");
+        if (homedir && *homedir)
+        {
+            auto config_folder = fs::path(homedir) / ".config";
+            if (fs::exists(config_folder))
+            {
+                return config_folder / ORGANIZATION;
+            }
+        }
+        return {};
+    }
+
     fs::path PosixPathProvider::default_config_folder() const noexcept
     {
-        return "/etc/common-core";
+        return fs::path("/etc") / ORGANIZATION;
     }
 
     fs::path PosixPathProvider::default_data_folder() const noexcept
     {
-        return "/data";
+        return fs::path("/data") / ORGANIZATION;
     }
 
     fs::path PosixPathProvider::default_log_folder() const noexcept
     {
-        return "/var/log/common-core";
+        return fs::path("/var/log") / ORGANIZATION;
     }
 
     fs::path PosixPathProvider::readlink(const fs::path &path) const noexcept
@@ -196,7 +227,9 @@ namespace core::platform
         fs::path linktarget;
         if ((statbuf.st_mode & S_IFMT) == S_IFLNK)
         {
-            ssize_t size = (statbuf.st_size != 0 ? statbuf.st_size + 1 : this->path_max_size());
+            ssize_t size = (statbuf.st_size != 0
+                            ? statbuf.st_size + 1
+                            : this->path_max_size());
             std::vector<char> buf(size);
             ssize_t nbytes = ::readlink(path.c_str(), buf.data(), size);
             linktarget.assign(buf.data(), buf.data() + nbytes);
@@ -204,4 +237,4 @@ namespace core::platform
         return linktarget;
     }
 
-} // namespace core::platform
+}  // namespace core::platform

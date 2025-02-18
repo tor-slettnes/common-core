@@ -105,6 +105,8 @@ class SettingsStore (dict):
            to contain folder names delimited by the OS-specific path separator
            (`:` on UNIX, `;` on Windows)
          - Otherwise, the default search path comprises:
+           * a user-specific configuration folder (`$HOME/.config/common-core`
+             if available, otherwise no default)
            * a machine-specific configuration folder (`/etc/common-core` on UNIX
              or `c:\\common-core\\config` on Windows)
            * an application-provided default settings folder
@@ -138,10 +140,12 @@ class SettingsStore (dict):
         are then loaded and merged in from whichever of the following paths
         exist, in turn:
 
-        1. `/etc/common-core/my_settings.json`
-        2. `/etc/common-core/my_settings.yaml`
-        3. `/usr/share/common-core/settings/PROJECT_NAME/my_settings.json`
-        4. `/usr/share/common-core/settings/PROJECT_NAME/my_settings.yaml`
+        1. `$HOME/.config/common-core/my_settings.json`
+        2. `$HOME/.config/common-core/my_settings.yaml`
+        3. `/etc/common-core/my_settings.json`
+        4. `/etc/common-core/my_settings.yaml`
+        5. `/usr/share/common-core/settings/PROJECT_NAME/my_settings.json`
+        6. `/usr/share/common-core/settings/PROJECT_NAME/my_settings.yaml`
         '''
 
         if searchpath:

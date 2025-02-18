@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Package modules
-from ..buildinfo import SETTINGS_DIR
+from ..buildinfo import SETTINGS_DIR, PROJECT_NAME, ORGANIZATION
 
 ### Standard python modules
 from importlib.resources.abc import Traversable
@@ -50,13 +50,19 @@ def settingsPath() -> SearchPath:
     try:
         searchpath = os.getenv('CONFIGPATH').split(os.pathsep)
     except AttributeError:
-        local_dir = ('c:\\common-core\\config' if platform.system() == 'Windows'
-                     else '/etc/common-core')
-        searchpath = [
-            local_dir,          # Local overrides
+        searchpath = []
+        if homedir := os.getenv("HOME"):
+            configdir = os.path.join(homedir, ".config")
+            if os.path.isdir(configdir):
+                searchpath.append(os.path.join(configdir, ORGANIZATION))
+
+        searchpath.append(f'c:\\{ORGANIZATION}\\config' if platform.system() == 'Windows'
+                          else f'/etc/{ORGANIZATION}')
+
+        searchpath.extend([
             SETTINGS_DIR,       # Package defaults
             'settings'          # Inside virtualenv/`.whl` container
-        ]
+        ])
 
     return normalizedSearchPath(searchpath)
 

@@ -39,6 +39,8 @@ set(DESCRIPTION "Cross-platform development framework for embedded microservice 
 set(HOME_PAGE "https://github.com/tor-slettnes/common-core/"
   CACHE STRING "Project home page.")
 
+set(ORGANIZATION "common-core"
+  CACHE STRING "Organization name, for use in various path names")
 
 if(NOT BUILD_NUMBER)
   ### No BUILD_NUMBER argument was provided. Let's check the BUILD_NUMBER

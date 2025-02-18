@@ -101,6 +101,11 @@ namespace core::platform
         };
     }
 
+    std::optional<fs::path> PathProvider::user_config_folder() const noexcept
+    {
+        return {};
+    }
+
     fs::path PathProvider::default_config_folder() const noexcept
     {
         return DEFAULT_CONFIG_FOLDER;
@@ -176,9 +181,9 @@ namespace core::platform
     fs::path PathProvider::install_folder() const noexcept
     {
         return this->locate_dominating_folder(
-            this->exec_folder_path(), // start
-            SETTINGS_DIR,             // name
-            ".");                     // fallback
+            this->exec_folder_path(),  // start
+            SETTINGS_DIR,              // name
+            ".");                      // fallback
     }
 
     types::PathList PathProvider::settings_paths() const noexcept
@@ -195,10 +200,20 @@ namespace core::platform
         }
         else
         {
-            return {
-                this->default_config_folder(),
-                this->install_folder() / SETTINGS_DIR,
-            };
+            types::PathList pathlist;
+
+            if (auto user_config_folder = this->user_config_folder())
+            {
+                pathlist.push_back(user_config_folder.value());
+            }
+
+            pathlist.insert(
+                pathlist.end(),
+                {
+                    this->default_config_folder(),
+                    this->install_folder() / SETTINGS_DIR,
+                });
+            return pathlist;
         }
     }
 
@@ -360,7 +375,7 @@ namespace core::platform
     /// Global instance, populated with the "best" provider for this system.
     ProviderProxy<PathProvider> path("path");
 
-}; // namespace core::platform
+};  // namespace core::platform
 
 namespace std::filesystem
 {
@@ -381,4 +396,4 @@ namespace std::filesystem
     {
         return typenames.to_stream(stream, type, typenames.at(file_type::unknown));
     }
-} // namespace std::filesystem
+}  // namespace std::filesystem

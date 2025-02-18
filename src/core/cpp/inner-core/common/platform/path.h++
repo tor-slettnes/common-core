@@ -24,22 +24,23 @@ namespace core::platform
     // FileStats
 
     using FileMode = std::uint32_t;
+
     struct FileStats
     {
-        fs::file_type type = fs::file_type::none; // regular, directory, etc..
-        std::size_t size = 0;                     // Size in bytes
-        fs::path link;                            // Target for symbolic links
-        FileMode mode = 0;                        // UNIX mode mask
-        bool readable = false;                    // Readable file/listable directory
-        bool writable = false;                    // Writable file/modifiable directory
-        core::platform::UID uid = 0;              // Owner numeric ID
-        core::platform::GID gid = 0;              // Group numeric ID
-        std::string owner;                        // Owner name
-        std::string group;                        // Group name
-        core::dt::TimePoint access_time;          // Last access
-        core::dt::TimePoint modify_time;          // Last modification
-        core::dt::TimePoint create_time;          // Creation
-        core::types::KeyValueMap attributes;      // Custom file attributes
+        fs::file_type type = fs::file_type::none;  // regular, directory, etc..
+        std::size_t size = 0;                      // Size in bytes
+        fs::path link;                             // Target for symbolic links
+        FileMode mode = 0;                         // UNIX mode mask
+        bool readable = false;                     // Readable file/listable directory
+        bool writable = false;                     // Writable file/modifiable directory
+        core::platform::UID uid = 0;               // Owner numeric ID
+        core::platform::GID gid = 0;               // Group numeric ID
+        std::string owner;                         // Owner name
+        std::string group;                         // Group name
+        core::dt::TimePoint access_time;           // Last access
+        core::dt::TimePoint modify_time;           // Last modification
+        core::dt::TimePoint create_time;           // Creation
+        core::types::KeyValueMap attributes;       // Custom file attributes
     };
 
     core::types::TaggedValueList &operator<<(
@@ -76,6 +77,9 @@ namespace core::platform
         virtual FileStats get_stats(const fs::path &path,
                                     bool dereference = false) const;
 
+        virtual bool is_readable(const fs::path &path, bool real_uid = false) const = 0;
+        virtual bool is_writable(const fs::path &path, bool real_uid = false) const = 0;
+
         /// @brief Return the maximum length of a filesystem path.
         virtual uint path_max_size() const noexcept = 0;
 
@@ -91,13 +95,16 @@ namespace core::platform
         /// @brief return OS-specific temp folder
         virtual fs::path tempfolder() const noexcept = 0;
 
-        /// @brief return OS-specific temp folder
+        /// @brief return user-specific settings folder
+        virtual std::optional<fs::path> user_config_folder() const noexcept;
+
+        /// @brief return OS-specific settings folder
         virtual fs::path default_config_folder() const noexcept;
 
-        /// @brief return OS-specific temp folder
+        /// @brief return OS-specific data folder
         virtual fs::path default_data_folder() const noexcept;
 
-        /// @brief return OS-specific temp folder
+        /// @brief return OS-specific log folder
         virtual fs::path default_log_folder() const noexcept;
 
         /// @brief Return the path to the running executable.
@@ -313,7 +320,7 @@ namespace core::platform
 
     /// Global instance, populated with the "best" provider for this system.
     extern ProviderProxy<PathProvider> path;
-} // namespace core::platform
+}  // namespace core::platform
 
 namespace std::filesystem
 {

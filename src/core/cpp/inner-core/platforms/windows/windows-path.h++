@@ -20,7 +20,10 @@ namespace core::platform
 
         FileStats get_stats(const fs::path &path,
                             bool dereference) const override;
-
+        bool is_readable(const fs::path &path,
+                         bool real_uid = false) const override;
+        bool is_writable(const fs::path &path,
+                         bool real_uid = false) const override;
         uint path_max_size() const noexcept override;
         std::string path_separator() const noexcept override;
         std::string dir_separator() const noexcept override;

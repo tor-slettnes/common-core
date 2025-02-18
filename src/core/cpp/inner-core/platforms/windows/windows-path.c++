@@ -18,6 +18,8 @@
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
 typedef unsigned int pid_t;
+#define R_OK 4
+#define W_OK 2
 #endif
 
 namespace core::platform
@@ -33,6 +35,20 @@ namespace core::platform
     {
         // TODO: Implement better version for Windows
         return Super::get_stats(path, dereference);
+    }
+
+    bool WindowsPathProvider::is_readable(
+        const fs::path &path,
+        bool real_uid) const
+    {
+        return _access(path.c_str(), R_OK) == 0;
+    }
+
+    bool WindowsPathProvider::is_writable(
+        const fs::path &path,
+        bool real_uid) const
+    {
+        return _access(path.c_str(), W_OK) == 0;
     }
 
     uint WindowsPathProvider::path_max_size() const noexcept

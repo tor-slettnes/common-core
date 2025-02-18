@@ -23,12 +23,16 @@ namespace core::platform
 
         FileStats get_stats(const fs::path &path,
                             bool dereference) const override;
-
+        bool is_readable(const fs::path &path,
+                         bool real_uid = false) const override;
+        bool is_writable(const fs::path &path,
+                         bool real_uid = false) const override;
         uint path_max_size() const noexcept override;
         std::string path_separator() const noexcept override;
         std::string dir_separator() const noexcept override;
         fs::path devnull() const noexcept override;
         fs::path tempfolder() const noexcept override;
+        std::optional<fs::path> user_config_folder() const noexcept override;
         fs::path default_config_folder() const noexcept override;
         fs::path default_data_folder() const noexcept override;
         fs::path default_log_folder() const noexcept override;
