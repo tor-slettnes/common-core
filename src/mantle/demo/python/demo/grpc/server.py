@@ -14,8 +14,8 @@ from cc.messaging.grpc.server import create_server
 import logging
 
 if __name__ == '__main__':
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
+    pylogger = logging.getLogger()
+    pylogger.setLevel(logging.INFO)
 
     demoservice = DemoService(NativeDemo())
     demoserver = create_server(demoservice)

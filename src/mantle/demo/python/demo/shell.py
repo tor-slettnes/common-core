@@ -79,8 +79,8 @@ def legend():
 if __name__ == '__main__':
     args   = ArgParser().parse_args()
 
-    logger = logging.getLogger()
-    logger.setLevel((logging.INFO, logging.DEBUG)[args.debug])
+    pylogger = logging.getLogger()
+    pylogger.setLevel((logging.INFO, logging.DEBUG)[args.debug])
 
     demo_grpc = gRPCDemoClient(
         args.host,

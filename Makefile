@@ -47,8 +47,8 @@ CMAKE_TAG = $(BUILD_DIR)/Makefile
 
 
 ### Utility functions
-define clean_folder
-	if [ -d "$(1)" ]; then \
+define remove
+	if [ -e "$(1)" ]; then \
 		echo "Removing: $(1)"; \
 		rm -rf "$(1)"; \
 	fi
@@ -188,24 +188,28 @@ clean/cmake cmake_clean:
 		cmake --build "$(BUILD_DIR)" --target clean || true; \
 	fi
 
-.PHONY: clean
+.PHONY: clean clean/core
 clean: clean/cmake
+
+.PHONY: clean/core
+clean/core:
+	@$(call remove,core)
 
 .PHONY: clean/build
 clean/build:
-	@$(call clean_folder,$(BUILD_DIR))
+	@$(call remove,$(BUILD_DIR))
 
 .PHONY: clean/install uninstall
 clean/install uninstall:
-	@$(call clean_folder,$(INSTALL_DIR))
+	@$(call remove,$(INSTALL_DIR))
 
 .PHONY: clean/package pkg_clean
 clean/package pkg_clean:
-	@$(call clean_folder,$(PACKAGE_DIR))
+	@$(call remove,$(PACKAGE_DIR))
 
 .PHONY: clean/out cleanout
 clean/out cleanout:
-	@$(call clean_folder,$(OUT_DIR))
+	@$(call remove,$(OUT_DIR))
 
 .PHONY: distclean pristine
 distclean pristine: clean/install clean/package clean/build clean/out

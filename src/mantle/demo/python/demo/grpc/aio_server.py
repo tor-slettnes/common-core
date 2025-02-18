@@ -15,8 +15,8 @@ import logging
 import asyncio
 
 async def main():
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
+    pylogger = logging.getLogger()
+    pylogger.setLevel(logging.INFO)
 
     service = DemoService(NativeDemo())
     server = create_async_server(service)

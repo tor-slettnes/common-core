@@ -46,8 +46,8 @@ if __name__ == '__main__':
     from cc.demo.native import NativeDemo
     import logging
 
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
+    pylogger = logging.getLogger()
+    pylogger.setLevel(logging.INFO)
 
     demoserver = Server(api_provider = NativeDemo())
     logging.info("Starting Python ZMQ Demo Server")
