@@ -17,6 +17,8 @@ from cc.protobuf.variant import PyTaggedValueList, encodeTaggedValueList
 
 ### Standard Python modules
 from typing import Optional
+import queue
+import threading
 
 #===============================================================================
 # MultiLogger Client
@@ -26,31 +28,89 @@ class LogClient (API, BaseClient):
     Client for MultiLogger service.
     '''
 
-    from cc.generated.multilogger_pb2_grpc import LogStub as Stub
+    from cc.generated.multilogger_pb2_grpc import LoggerStub as Stub
 
     def __init__(self,
                  host           : str = "",      # gRPC server
                  identity       : str = None,    # Greeter identity
-                 wait_for_ready : bool = False): # Keep trying to connect
+                 wait_for_ready : bool = False,  # Keep trying to connect
+                 queue_size     : int = 4096):   # Max. messages to cache locally
 
         API.__init__(self, identity)
         BaseClient.__init__(self,
                             host = host,
                             wait_for_ready = wait_for_ready)
-        self.writer = None
 
-    # def open(self):
-    #     self.writer = self.stub.writer()
-    #     API.open(self)
+        self.queue = None
+        self.queue_size = queue_size
+        self.writer_thread = None
 
-    # def close(self):
-    #     API.close(self)
+    def __del__(self):
+        self.close()
+
+    def open(self):
+        '''
+        Start streaming to the MultiLogger service.
+
+        This creates a local message queue into which subsequent log messages
+        are captured and then continuously streamed to the server.  This differs
+        from the default behavior, where individual messages are submitted to
+        the server via unary RPC calls.
+
+        See also `close()`.
+        '''
+
+        if not self.queue:
+            self.queue = queue.Queue(self.queue_size)
+            self.writer_thread = threading.Thread(
+                name = "LogStreamer",
+                target = self._stream_worker,
+                daemon = True)
+            self.writer_thread.start()
+            API.open(self)
+
+
+    def close(self):
+        '''
+        Close any active writer stream to the MultiLogger gRPC service.
+        Any subsequent log messages will be sent via unary RPC calls.
+        '''
+
+        if self.queue:
+            queue.put(None)     # Allow `_queue_iterator` to break free
+            self.queue = None   # Do not use queue for future messags
+            self.writer_thread.join()
+            self.writer_thread = None
+            API.close(self)
 
     def submit(self, event: Event):
         '''
         Send an log event to the gRPC MultiLogger server.
+
+        If we have previously invoked `open()` this message is queued for
+        streaming via the gRPC `writer()` method, otherwise it is sent
+        immediately via a unary RPC call.
         '''
-        self.stub.submit(event)
+        if queue := self.queue:
+            try:
+                queue.put_nowait(event)
+            except queue.Full:
+                print('Unable to log event, queue full: %s'%(event,))
+
+        else:
+            self.stub.submit(event)
+
+
+    def _stream_worker(self):
+        '''
+        Stream queued messages to MultiLogger service.
+        Runs in its own thread.
+        '''
+        if queue := self.queue:
+            try:
+                return self.stub.writer(iter(self.queue.get, None))
+            finally:
+                self.queue = None
 
     def listen(self,
                min_level: Level|int = Level.LEVEL_TRACE,

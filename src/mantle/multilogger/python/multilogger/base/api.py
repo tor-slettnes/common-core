@@ -41,6 +41,9 @@ class API (logging.Handler):
             pylogger.setLevel(1)
             pylogger.addHandler(self)
 
+    def close(self):
+        pylogger.removeHandler(self)
+
     def trace(self,
               text: str,
               stacklevel: int = 2,

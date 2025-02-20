@@ -13,7 +13,7 @@ import "status.proto";
 import "datetime.proto";
 import "google/protobuf/empty.proto";
 
-service Log
+service Logger
 {
     // Log a single message
     rpc submit (cc.status.Event) returns (google.protobuf.Empty);

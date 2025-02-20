@@ -522,14 +522,10 @@ class VirtualFileSystemClient (SignalClient):
         messages
         '''
 
-        eof = False
         path = encodePath(vfspath)
-        while not eof:
-            if data := fp.read1():
-                yield FileChunk(path=path, data=data)
-                path = None
-            else:
-                eof = True
+        while data := fp.read1():
+            yield FileChunk(path=path, data=data)
+            path = None
 
     def get_attributes(self, vfspath: VFSPathType) -> Mapping[str, object]:
         '''

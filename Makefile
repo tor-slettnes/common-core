@@ -107,7 +107,7 @@ test: build
 	@echo "Testing"
 	@echo "#############################################################"
 	@echo
-	@cmake --build "$(BUILD_DIR)" --target test
+	@cd "$(BUILD_DIR)" && ctest
 
 .PHONY: test/report
 test/report: build
@@ -116,7 +116,7 @@ test/report: build
 	@echo "Testing & reporting failures"
 	@echo "#############################################################"
 	@echo
-	@cmake --build "$(BUILD_DIR)" --target test ARGS=--output-on-failure
+	@cd "$(BUILD_DIR)" && ctest --output-on_failure
 
 .PHONY: retest
 retest: build
@@ -125,7 +125,7 @@ retest: build
 	@echo "Rerunning failed tests"
 	@echo "#############################################################"
 	@echo
-	@cmake --build "$(BUILD_DIR)" --target test ARGS="--rerun-failed --output-on-failure"
+	@cd "$(BUILD_DIR)" && ctest --rerun-failed --output-on_failure
 
 .PHONY: build
 build: cmake
