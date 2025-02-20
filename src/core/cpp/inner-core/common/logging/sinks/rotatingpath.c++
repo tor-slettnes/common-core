@@ -273,16 +273,19 @@ namespace core::logging
 
     void RotatingPath::compress_all_inactive()
     {
-        fs::path pattern = fs::path("*") += this->current_suffix();
-
-        for (const fs::path &candidate_path : platform::path->locate(
-                 {pattern},
-                 this->log_folder()))
+        if (this->compress_inactive())
         {
-            if (candidate_path != this->current_path())
+            fs::path pattern = fs::path("*") += this->current_suffix();
+
+            for (const fs::path &candidate_path : platform::path->locate(
+                     {pattern},
+                     this->log_folder()))
             {
-                logf_debug("Compressing log file: %s", candidate_path);
-                this->compress(candidate_path);
+                if (candidate_path != this->current_path())
+                {
+                    logf_debug("Compressing log file: %s", candidate_path);
+                    this->compress(candidate_path);
+                }
             }
         }
     }
