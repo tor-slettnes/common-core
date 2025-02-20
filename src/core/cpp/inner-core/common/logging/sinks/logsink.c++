@@ -23,6 +23,8 @@ namespace core::logging
 
     void LogSink::load_settings(const types::KeyValueMap &settings)
     {
+        Super::load_settings(settings);
+
         if (auto threshold = settings.try_get_as<status::Level>(SETTING_THRESHOLD))
         {
             this->set_threshold(threshold.value());

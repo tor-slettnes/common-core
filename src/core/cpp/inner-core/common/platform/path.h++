@@ -95,6 +95,9 @@ namespace core::platform
         /// @brief return OS-specific temp folder
         virtual fs::path tempfolder() const noexcept = 0;
 
+        /// @brief return OS-specific run state folder
+        virtual fs::path runstate_folder() const noexcept = 0;
+
         /// @brief return user-specific settings folder
         virtual std::optional<fs::path> user_config_folder() const noexcept;
 

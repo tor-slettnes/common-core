@@ -63,14 +63,12 @@ namespace core::argparse
     private:
         /// Add option to log to specific sink
         void add_log_sink_option(
-            const std::string &sink_id,
-            logging::SinkFactory *factory,
-            const types::KeyValueMap &sink_settings);
+            const logging::SinkID &sink_id,
+            const std::shared_ptr<logging::SinkCustomization> &customization);
 
         /// Add flags `--debug`, `--info`, etc to set `stderr` sink threshold.
         void add_verbosity_options(
-            logging::SinkFactory *factory,
-            const types::KeyValueMap &sink_settings);
+            const std::shared_ptr<logging::SinkCustomization> &customization);
 
         /// Add options related to logging in a specific scope
         void add_log_scope_options();

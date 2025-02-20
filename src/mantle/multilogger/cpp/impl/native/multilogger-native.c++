@@ -122,7 +122,7 @@ namespace multilogger::native
                 "Requested Sink ID is reserved for default log sink of the corresponding type.",
                 spec.sink_id);
         }
-        else if (auto *factory = core::logging::sink_registry.get(spec.sink_type))
+        else if (auto *factory = core::logging::sink_factories.get(spec.sink_type))
         {
             return this->create_sink(factory, spec);
         }
@@ -137,7 +137,7 @@ namespace multilogger::native
     core::logging::Sink::ptr Logger::create_sink(core::logging::SinkFactory *factory,
                                                  const SinkSpec &spec) const
     {
-        core::logging::Sink::ptr sink = factory->create_sink(spec.sink_id, {});
+        core::logging::Sink::ptr sink = factory->create_sink(spec.sink_id);
 
         if (auto logsink = std::dynamic_pointer_cast<core::logging::LogSink>(sink))
         {

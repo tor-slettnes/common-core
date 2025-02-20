@@ -7,7 +7,6 @@
 
 #pragma once
 #include "logging/sinks/sink.h++"
-#include "logging/sinks/factory.h++"
 #include "types/loggable.h++"
 #include "types/valuemap.h++"
 
@@ -25,25 +24,22 @@ namespace core::logging
         using ptr = std::shared_ptr<Dispatcher>;
 
     public:
+        void initialize();
+        void deinitialize();
+
+        void add_sinks(const SinkMap &sinks);
+
         Sink::ptr add_sink(const Sink::ptr &sink);
-        virtual Sink::ptr add_sink(const SinkID &sink_id,
+        Sink::ptr add_sink(const SinkID &sink_id,
                                    const Sink::ptr &sink);
 
-        Sink::ptr emplace_sink(const SinkID &sink_id,
-                               SinkFactory *factory,
-                               const types::KeyValueMap &settings,
-                               status::Level threshold);
-
-        virtual bool remove_sink(const SinkID &sink_id);
-        virtual bool remove_sink(const Sink::ptr &sink);
+        bool remove_sink(const SinkID &sink_id);
+        bool remove_sink(const Sink::ptr &sink);
 
         Sink::ptr get_sink(const SinkID &sink_id) const;
         const SinkMap &sinks() const;
 
-        virtual void initialize();
-        virtual void deinitialize();
-
-        virtual bool is_applicable(const types::Loggable &item) const;
+        bool is_applicable(const types::Loggable &item) const;
         virtual void submit(const types::Loggable::ptr &item);
 
     protected:

@@ -142,7 +142,6 @@ namespace core::argparse
 
     void CommonOptions::add_log_options()
     {
-        bool interactive = platform::runtime->isatty(0);
         if (auto level = this->get_optional_level("log default"))
         {
             logging::Scope::set_default_threshold(level.value());
@@ -167,7 +166,7 @@ namespace core::argparse
             this->get_optional_level("log all"));
 
         this->add_void(
-            {"--log-none", "--quiet"},
+            {"--log-none"},
             "Disable logging completely.  Identical to \"--log-all=NONE\"",
             std::bind(&logging::Scope::set_universal_threshold, status::Level::NONE));
 
@@ -205,84 +204,55 @@ namespace core::argparse
 
     void CommonOptions::add_log_sinks()
     {
-        std::set<std::string> consumed_sink_types;
-        types::Value sink_settings = core::settings->get("log sinks");
-
-        // First we add options to log to sinks with IDs corresponding to keys
-        // from the "log sinks" section in settings. The settings for each sink
-        // may include a "type" value, in which case the corresponding sink
-        // factory is used.  Otherwise, the type is assumed to be the same as
-        // the sink ID (e.g. "file").
-
-        if (auto sink_map = sink_settings.get_kvmap())
+        for (auto &[sink_id, customization] : logging::sink_registry)
         {
-            for (const auto &[sink_id, sink_specs] : *sink_map)
-            {
-                std::string sink_type = sink_specs.get("type", sink_id).as_string();
-                if (logging::SinkFactory *factory =
-                        logging::sink_registry.get(sink_type, nullptr))
-                {
-                    this->add_log_sink_option(sink_id, factory, sink_specs.as_kvmap());
-                    consumed_sink_types.insert(sink_type);
-                }
-            }
+            this->add_log_sink_option(sink_id, customization);
         }
 
-        // We now add sink factories that wasn't yet mentioned, with sink IDs
-        // matching the sink type name (e.g. "stderr").
-        for (const auto &[sink_type, factory] : logging::sink_registry)
+        if (auto customization = logging::sink_registry.get(STDERR_SINK))
         {
-            if (consumed_sink_types.count(sink_type) == 0)
-            {
-                this->add_log_sink_option(sink_type, factory, {});
-            }
-        }
-
-        if (logging::SinkFactory *factory =
-                logging::sink_registry.get(STDERR_SINK, nullptr))
-        {
-            this->add_verbosity_options(
-                factory,
-                sink_settings.get(factory->sink_type()).as_kvmap());
+            this->add_verbosity_options(customization);
         }
     }
 
     void CommonOptions::add_log_sink_option(
-        const std::string &sink_id,
-        logging::SinkFactory *factory,
-        const types::KeyValueMap &sink_settings)
+        const logging::SinkID &sink_id,
+        const std::shared_ptr<logging::SinkCustomization> &customization)
     {
         this->add_opt<status::Level>(
             {str::format("--log-to-%s", sink_id)},
             "THRESHOLD",
-            factory->description(),
+            customization->factory->description(),
             [=](status::Level threshold) {
-                logging::dispatcher.emplace_sink(sink_id, factory, sink_settings, threshold);
-            },
-            factory->default_enabled(sink_settings)
-                ? factory->default_threshold(sink_settings)
-                : status::Level::NONE);
+                customization->set_threshold(threshold);
+            });
     }
 
     void CommonOptions::add_verbosity_options(
-        logging::SinkFactory *factory,
-        const types::KeyValueMap &sink_settings)
+        const std::shared_ptr<logging::SinkCustomization> &customization)
     {
+        this->add_void(
+            {"--quiet"},
+            str::format("Shorthand for --log-to-%s=%s",
+                        customization->sink_id,
+                        str::tolower(str::convert_from(status::Level::NONE))),
+            [=] {
+                customization->set_threshold(status::Level::NONE);
+            });
+
         for (status::Level level : {status::Level::TRACE,
                                     status::Level::DEBUG,
                                     status::Level::INFO,
                                     status::Level::NOTICE,
                                     status::Level::WARNING})
-
         {
             this->add_void(
                 {str::format("--%s", str::tolower(str::convert_from(level)))},
-                str::format("Shorthand for --log-to-%s=%s", factory->sink_type(), level),
+                str::format("Shorthand for --log-to-%s=%s",
+                            customization->sink_id,
+                            level),
                 [=] {
-                    logging::dispatcher.emplace_sink(factory->sink_type(),
-                                                      factory,
-                                                      sink_settings,
-                                                      level);
+                    customization->set_threshold(level);
                 });
         }
     }

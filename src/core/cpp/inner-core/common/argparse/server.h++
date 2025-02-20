@@ -22,7 +22,7 @@ namespace core::argparse
     public:
         void add_options() override;
         void enact() override;
-        // void daemonize();
+        void daemonize();
 
     private:
         std::ofstream openpidfile(const fs::path &path);

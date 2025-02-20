@@ -110,6 +110,11 @@ namespace core::platform
         return {"/bin/sh", "-c", command_line};
     }
 
+    PID PosixProcessProvider::fork_process() const
+    {
+        return io::checkstatus(fork());
+    }
+
     PID PosixProcessProvider::invoke_async_fileio(
         const ArgVector &argv,
         const fs::path &cwd,
@@ -122,24 +127,24 @@ namespace core::platform
             throw std::invalid_argument("Missing command");
         }
 
-        PID pid = io::checkstatus(fork());
+        PID pid = this->fork_process();
 
         if (pid == 0)
         {
             // Child closes stdin, stdout, stderr, then invokes command
             if (!infile.empty())
             {
-                io::checkstatus(freopen(infile.c_str(), "r", stdin));
+                io::checkstatus(std::freopen(infile.c_str(), "r", stdin));
             }
 
             if (!outfile.empty())
             {
-                io::checkstatus(freopen(outfile.c_str(), "w", stdout));
+                io::checkstatus(std::freopen(outfile.c_str(), "w", stdout));
             }
 
             if (!errfile.empty())
             {
-                io::checkstatus(freopen(errfile.c_str(), "w", stderr));
+                io::checkstatus(std::freopen(errfile.c_str(), "w", stderr));
             }
 
             this->execute(argv, cwd);

@@ -95,26 +95,37 @@ namespace multilogger::grpc
 
     void LogClient::open()
     {
-        AsyncLogSink::open();
-        if (!this->writer)
+        if (!this->is_open())
         {
-            this->writer_context = std::make_unique<::grpc::ClientContext>();
-            this->writer_response = std::make_unique<::google::protobuf::Empty>();
-            this->writer = this->stub->writer(this->writer_context.get(),
-                                              this->writer_response.get());
+            if (!this->writer)
+            {
+                this->writer_context = std::make_unique<::grpc::ClientContext>();
+                this->writer_response = std::make_unique<::google::protobuf::Empty>();
+                this->writer = this->stub->writer(this->writer_context.get(),
+                                                  this->writer_response.get());
+            }
+
+            if (this->writer)
+            {
+                AsyncLogSink::open();
+            }
         }
     }
 
     void LogClient::close()
     {
-        if (this->writer)
+        if (this->is_open())
         {
-            this->writer->WritesDone();
-            this->writer_status = this->writer->Finish();
-            this->writer.reset();
-            this->writer_context.reset();
+            AsyncLogSink::close();
+
+            if (this->writer)
+            {
+                this->writer->WritesDone();
+                this->writer_status = this->writer->Finish();
+                this->writer.reset();
+                this->writer_context.reset();
+            }
         }
-        AsyncLogSink::close();
     }
 
     void LogClient::capture_event(const core::status::Event::ptr &event)

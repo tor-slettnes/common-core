@@ -42,10 +42,11 @@ namespace core::logging
     public:
         SinkID sink_id() const;
         SinkType sink_type() const;
-        //void load_settings();
 
     protected:
         void set_sink_type(const SinkType &sink_type);
+
+    public:
         virtual void load_settings(const types::KeyValueMap &settings) {}
 
     public:

@@ -32,6 +32,7 @@ namespace core::platform
         std::string dir_separator() const noexcept override;
         fs::path devnull() const noexcept override;
         fs::path tempfolder() const noexcept override;
+        fs::path runstate_folder() const noexcept override;
         std::optional<fs::path> user_config_folder() const noexcept override;
         fs::path default_config_folder() const noexcept override;
         fs::path default_data_folder() const noexcept override;

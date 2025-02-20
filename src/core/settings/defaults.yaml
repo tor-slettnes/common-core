@@ -128,6 +128,10 @@ log sinks:
     #include context: false
     threshold: WARNING
 
+    # Whether logging to `stderr` is enabled. Defaults to `true` if running in a terminal (tty),
+    # `false` otherwise.
+    # enabled: true
+
   # UNIX SysLog settings
   syslog:
     # Minimum log level to capture
@@ -135,6 +139,10 @@ log sinks:
 
     # Include source context in message
     include context: false
+
+    # Whether logging to the system log. Defaults to `false` if running in a terminal (tty),
+    # `true` otherwise.
+    # enabled: true
 
   # Log each event as a single-line JSON object
   jsonfile:

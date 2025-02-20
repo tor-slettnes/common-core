@@ -96,6 +96,11 @@ namespace core::platform
         return "/tmp";
     }
 
+    fs::path PosixPathProvider::runstate_folder() const noexcept
+    {
+        return fs::path("/var/run") / ORGANIZATION;
+    }
+
     std::optional<fs::path> PosixPathProvider::user_config_folder() const noexcept
     {
         const char *homedir = std::getenv("HOME");

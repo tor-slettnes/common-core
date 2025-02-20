@@ -11,22 +11,28 @@ namespace core::logging
 {
     void AsyncLogSink::open()
     {
-        Super::open();
-        if (!this->workerthread_.joinable())
+        if (!this->is_open())
         {
-            this->queue.reopen();
-            this->workerthread_ = std::thread(&This::worker, this);
+            if (!this->workerthread_.joinable())
+            {
+                this->queue.reopen();
+                this->workerthread_ = std::thread(&This::worker, this);
+            }
+            Super::open();
         }
     }
 
     void AsyncLogSink::close()
     {
-        if (this->workerthread_.joinable())
+        if (this->is_open())
         {
+            Super::close();
             this->queue.close();
-            this->workerthread_.join();
+            if (this->workerthread_.joinable())
+            {
+                this->workerthread_.join();
+            }
         }
-        Super::close();
     }
 
     bool AsyncLogSink::capture(const types::Loggable::ptr &item)

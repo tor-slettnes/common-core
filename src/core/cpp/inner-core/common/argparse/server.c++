@@ -8,12 +8,14 @@
 #include "server.h++"
 #include "platform/process.h++"
 #include "platform/systemservice.h++"
+#include "io/cutils.h++"
 
 #include <errno.h>   // errno
 #include <stdio.h>   // freopen(), stdin, stdout, stderr
 #include <string.h>  // strerror()
 #include <fcntl.h>   // O_RDONLY, O_WRONLY
 #include <fstream>
+#include <unistd.h>
 
 namespace core::argparse
 {
@@ -28,10 +30,10 @@ namespace core::argparse
     void ServerOptions::add_options()
     {
         Super::add_options();
-        // this->add_flag(
-        //     {"-D", "--daemon"},
-        //     "Detach from controlling terminal and run in background.",
-        //     &this->daemon);
+        this->add_flag(
+            {"-D", "--daemon"},
+            "Detach from controlling terminal and run in background.",
+            &this->daemon);
 
         this->add_opt<fs::path>(
             {"--pid-file", "--pidfile"},
@@ -56,13 +58,11 @@ namespace core::argparse
 
     void ServerOptions::enact()
     {
-        // if (this->daemon)
-        // {
-        //     this->daemonize();
-        //     this->log_syslog = true;
-        // }
-        // else
-        if (!this->pidfile.empty())
+        if (this->daemon)
+        {
+            this->daemonize();
+        }
+        else if (!this->pidfile.empty())
         {
             std::ofstream pidstream = this->openpidfile(this->pidfile);
             pidstream << platform::process->process_id() << std::endl;
@@ -70,32 +70,32 @@ namespace core::argparse
         CommonOptions::enact();
     }
 
-    // void ServerOptions::daemonize()
-    // {
-    //     std::ofstream pidstream = this->openpidfile(this->pidfile);
-    //     pid_t mychild = fork();
+    void ServerOptions::daemonize()
+    {
+        std::ofstream pidstream = this->openpidfile(this->pidfile);
+        platform::PID mychild = platform::process->fork_process();
 
-    //     if (mychild > 0)
-    //     {
-    //         /// Parent saves PID file and exits
-    //         if (pidstream.is_open())
-    //         {
-    //             pidstream << mychild << std::endl;
-    //         }
-    //         exit(0);
-    //     }
-    //     else if (mychild == 0)
-    //     {
-    //         // Child closes stdin, stdout, stderr
-    //         paths::reopen(DEVNULL, STDIN_FILENO, O_RDONLY);
-    //         paths::reopen(DEVNULL, STDOUT_FILENO, O_WRONLY);
-    //         paths::reopen(DEVNULL, STDERR_FILENO, O_WRONLY);
-    //     }
-    //     else
-    //     {
-    //         this->fail("Could not fork() child process: "s + strerror(errno));
-    //     }
-    // }
+        if (mychild > 0)
+        {
+            /// Parent saves PID file and exits
+            if (pidstream.is_open())
+            {
+                pidstream << mychild << std::endl;
+            }
+            exit(0);
+        }
+        else if (mychild == 0)
+        {
+            // Child closes stdin, stdout, stderr
+            io::checkstatus(std::freopen(platform::path->devnull().c_str(), "r", stdin));
+            io::checkstatus(std::freopen(platform::path->devnull().c_str(), "w", stdout));
+            io::checkstatus(std::freopen(platform::path->devnull().c_str(), "w", stderr));
+        }
+        else
+        {
+            this->fail("Could not fork() child process: "s + strerror(errno));
+        }
+    }
 
     std::ofstream ServerOptions::openpidfile(const fs::path &pidfile)
     {

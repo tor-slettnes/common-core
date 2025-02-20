@@ -20,9 +20,9 @@ namespace core::logging
     };
 
     //--------------------------------------------------------------------------
-    /// @class SinkFactory
+    /// SinkFactory
 
-    class SinkFactory : public std::enable_shared_from_this<SinkFactory>
+    class SinkFactory
     {
     public:
         using CreatorFunction = std::function<Sink::ptr(const SinkID &)>;
@@ -35,13 +35,10 @@ namespace core::logging
 
         virtual ~SinkFactory();
 
-        Sink::ptr create_sink(const SinkID &sink_id,
-                              const types::KeyValueMap &settings,
-                              status::Level threshold = status::Level::NONE);
-
+        Sink::ptr create_sink(const SinkID &sink_id);
         SinkType sink_type() const;
         std::string description() const;
-        bool default_enabled(const types::KeyValueMap &settings) const;
+        bool default_enabled() const;
         status::Level default_threshold(const types::KeyValueMap &settings) const;
 
     private:
@@ -54,6 +51,42 @@ namespace core::logging
         DefaultOption default_option_;
     };
 
-    inline types::ValueMap<SinkType, SinkFactory *> sink_registry;
+    inline types::ValueMap<SinkType, SinkFactory *> sink_factories;
+
+    //--------------------------------------------------------------------------
+    /// SinkCustomization
+
+    class SinkCustomization
+    {
+    public:
+        SinkCustomization(const SinkID &sink_id,
+                          SinkFactory *factory,
+                          const types::KeyValueMap &settings = {});
+
+        void set_threshold(status::Level threshold);
+        Sink::ptr activate();
+
+    private:
+        bool is_enabled() const;
+        bool default_enabled() const;
+
+    public:
+        SinkID sink_id;
+        SinkFactory *factory;
+        types::KeyValueMap settings;
+        std::optional<status::Level> explicit_threshold;
+    };
+
+    //--------------------------------------------------------------------------
+    /// SinkRegistry
+
+    class SinkRegistry : public types::ValueMap<SinkID, std::shared_ptr<SinkCustomization>>
+    {
+    public:
+        void populate();
+        types::ValueMap<SinkID, Sink::ptr> activate_sinks() const;
+    };
+
+    extern SinkRegistry sink_registry;
 
 }  // namespace core::logging

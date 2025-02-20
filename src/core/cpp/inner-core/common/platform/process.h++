@@ -136,6 +136,10 @@ namespace core::platform
         virtual ArgVector shell_command(
             const std::string &command_line) const;
 
+        /// @brief Clone this process
+        /// @return The process ID of the child if we are the parent, otherwise 0.
+        virtual PID fork_process() const = 0;
+
         /// @brief Invoke a command, and immediately return its PID
         /// @param[in] argv
         ///     Argument vector. The first element (index #0) is the full path

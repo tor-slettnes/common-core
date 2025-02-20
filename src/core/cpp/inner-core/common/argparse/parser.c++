@@ -420,17 +420,17 @@ namespace core::argparse
         for (const OptionPtr &opt : this->options)
         {
             uint &encounters = state->encounters[opt.get()];
-            uint required = opt->repeats.first;
+            auto [minrepeats, maxrepeats] = opt->repeats;
 
             if (opt->is_named() && opt->has_default())
             {
-                while (encounters < required)
+                while (encounters < minrepeats)
                 {
                     opt->assign_default();
                     encounters++;
                 }
             }
-            else if (encounters < required)
+            else if (encounters < minrepeats)
             {
                 std::stringstream ss;
                 if (opt->is_named())

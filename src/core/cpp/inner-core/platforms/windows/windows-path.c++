@@ -76,6 +76,12 @@ namespace core::platform
         return "C:\\TEMP";
     }
 
+    fs::path PosixPathProvider::runstate_folder() const noexcept
+    {
+        return fs::path("C:\\TEMP") / ORGANIZATION;
+    }
+
+
     fs::path WindowsPathProvider::default_config_folder() const noexcept
     {
         return (this->fs_root() / Super::default_config_folder());

@@ -43,6 +43,8 @@ namespace core::platform
 
         ArgVector shell_command(const std::string &command_line) const override;
 
+        PID fork_process() const override;
+
         PID invoke_async_fileio(
             const ArgVector &argv,
             const fs::path &cwd,
