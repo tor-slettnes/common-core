@@ -13,17 +13,18 @@ include(build_python)
 ## @fn cc_add_proto
 
 function(cc_add_proto TARGET)
-  set(_options)
+  set(_options INSTALL)
   set(_singleargs LIB_TYPE SCOPE INSTALL_COMPONENT PYTHON_INSTALL_DIR PYTHON_NAMESPACE)
   set(_multiargs SOURCES PROTO_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  cc_get_value_or_default(
-    install_component
-    arg_INSTALL_COMPONENT
-    "${arg_TARGET}")
-
-  cc_get_optional_keyword(ALL "${arg_ALL}")
+  if(arg_INSTALL_COMPONENT)
+    set(install_component "${arg_INSTALL_COMPONENT}")
+  elseif(arg_INSTALL)
+    set(install_component "${TARGET}")
+  else()
+    unset(install_component)
+  endif()
 
   if(NOT BUILD_CPP)
     set(scope INTERFACE)
@@ -70,7 +71,9 @@ function(cc_add_proto TARGET)
       endif()
     endif()
 
-    cc_add_proto_python("${TARGET}"
+    add_custom_target("${TARGET}_py")
+
+    cc_add_proto_python("${TARGET}_py"
       INSTALL_COMPONENT "${install_component}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       DEPENDS "${arg_PROTO_DEPS}"

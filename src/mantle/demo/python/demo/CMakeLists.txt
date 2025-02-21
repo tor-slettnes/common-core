@@ -33,7 +33,7 @@ cc_add_python("${TARGET}"
   DIRECTORIES "${DIRECTORIES}"
 )
 
-if(INCLUDE_DEMO)
+if(BUILD_DEMO)
   cc_add_python_wheel("demo-shell"
     BUILD_DEPS "python_build"
     PYTHON_DEPS ${TARGET}

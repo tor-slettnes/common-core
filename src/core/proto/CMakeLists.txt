@@ -9,7 +9,7 @@
 set(TARGET "cc_core_proto")
 
 ### Package component
-if(INCLUDE_SHARED)
+if(BUILD_SHARED)
   set(INSTALL_COMPONENT "core-proto")
 endif()
 
@@ -27,7 +27,6 @@ cc_add_proto("${TARGET}"
   LIB_TYPE STATIC
   SOURCES "${SOURCES}"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  INSTALL
 )
 
 if(INSTALL_COMPONENT)

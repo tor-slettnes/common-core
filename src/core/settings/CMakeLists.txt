@@ -7,7 +7,7 @@
 
 set(TARGET "cc_core_settings")
 
-if(INCLUDE_SHARED)
+if(BUILD_SHARED)
   set(INSTALL_COMPONENT "core-settings")
 endif()
 

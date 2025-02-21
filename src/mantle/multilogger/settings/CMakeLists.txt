@@ -7,7 +7,7 @@
 
 set(TARGET "cc_multilogger_settings")
 
-if(INCLUDE_LOGGER)
+if(BUILD_LOGGER)
   set(INSTALL_COMPONENT "multilogger-settings")
 
   cc_add_settings("${TARGET}"

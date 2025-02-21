@@ -67,7 +67,7 @@ macro(cc_idl_generate_sources sources example_modules)
           -d ${CMAKE_CURRENT_BINARY_DIR}
           ${include_flags}
           ${cpp_flags}
-        COMMENT "Generating C++ bindings from '${basename}.idl'"
+        COMMENT "Generating C++ DDS bindings from '${basename}.idl'"
       )
     endif()
 
@@ -93,7 +93,7 @@ macro(cc_idl_generate_sources sources example_modules)
           -d ${CMAKE_CURRENT_BINARY_DIR}
           ${include_flags}
           ${cs_flags}
-        COMMENT "Generating C# bindings from '${basename}.idl'")
+        COMMENT "Generating C# DDS bindings from '${basename}.idl'")
     endif()
 
     #===========================================================================
@@ -110,7 +110,7 @@ macro(cc_idl_generate_sources sources example_modules)
           -d ${CMAKE_CURRENT_BINARY_DIR}
           ${extra_flags}
           ${include_flags}
-        COMMENT "Generating XML from '${basename}.idl': ${xml_file}")
+        COMMENT "Generating DDS XML from '${basename}.idl': ${xml_file}")
     endif()
   endforeach()
 endmacro()
@@ -123,12 +123,6 @@ function(cc_add_idl TARGET)
   set(_singleargs LIB_TYPE SCOPE GENERATE_EXAMPLE)
   set(_multiargs RECIPES SERVICES IDL_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  if(arg_LIB_TYPE)
-    string(TOUPPER "${arg_LIB_TYPE}" _type)
-  else()
-    set(_type STATIC)
-  endif()
 
   if(arg_SCOPE)
     string(TOUPPER "${arg_SCOPE}" _scope)
@@ -164,7 +158,10 @@ function(cc_add_idl TARGET)
     cc_idl_generate_sources("${arg_SERVICES}" "client;service")
   endif()
 
-  add_library("${TARGET}" ${_type} ${GENERATED_SOURCES})
+  cc_add_library("${TARGET}"
+    LIB_TYPE "${arg_LIB_TYPE}"
+    SCOPE "${_scope}"
+    SOURCES ${GENERATED_SOURCES})
 
   target_include_directories("${TARGET}" ${_scope}
     ${CMAKE_CURRENT_SOURCE_DIR}

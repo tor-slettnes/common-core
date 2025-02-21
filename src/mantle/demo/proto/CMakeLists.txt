@@ -9,7 +9,7 @@
 set(TARGET "cc_demo_proto")
 
 ### Package component
-if (INCLUDE_DEMO)
+if (BUILD_DEMO)
   set(INSTALL_COMPONENT "demo-proto")
 endif()
 

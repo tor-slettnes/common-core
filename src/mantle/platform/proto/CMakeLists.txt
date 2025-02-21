@@ -9,7 +9,7 @@
 set(TARGET "cc_platform_proto")
 
 ### Package component
-if(INCLUDE_PLATFORM)
+if(BUILD_PLATFORM)
   set(INSTALL_COMPONENT "platform-proto")
 endif()
 

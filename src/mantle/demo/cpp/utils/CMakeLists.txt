@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-if(INCLUDE_DEMO)
+if(BUILD_DEMO)
   set(INSTALL_COMPONENT "demo-utils")
 endif()
 

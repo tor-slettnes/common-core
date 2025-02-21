@@ -12,7 +12,7 @@ project("demo"
   LANGUAGES CXX
 )
 
-if(INCLUDE_DEMO)
+if(BUILD_DEMO)
   set(INSTALL_GROUP "demo")
 endif()
 

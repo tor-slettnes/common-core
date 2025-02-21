@@ -7,7 +7,7 @@
 
 set(TARGET "cc_demo_settings")
 
-if(INCLUDE_DEMO)
+if(BUILD_DEMO)
   set(INSTALL_COMPONENT "demo-settings")
 
   cc_add_settings("${TARGET}"

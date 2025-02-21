@@ -7,7 +7,7 @@
 
 add_subdirectory(services)
 
-if(INCLUDE_PLATFORM)
+if(BUILD_PLATFORM)
   add_subdirectory(daemon)
   add_subdirectory(tools)
 endif()

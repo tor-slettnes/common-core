@@ -125,6 +125,7 @@ function(cc_add_python TARGET)
   # target_sources(${TARGET} PRIVATE ${sources})
 
   if(arg_PYTHON_DEPS OR arg_PROTO_DEPS)
+    list(TRANSFORM arg_PROTO_DEPS APPEND "_py")
     add_dependencies("${TARGET}" ${arg_PYTHON_DEPS} ${arg_PROTO_DEPS})
   endif()
 

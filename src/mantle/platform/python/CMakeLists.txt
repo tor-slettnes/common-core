@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Package component
-if(INCLUDE_PLATFORM)
+if(BUILD_PLATFORM)
   set(INSTALL_COMPONENT "platform-python")
 endif()
 

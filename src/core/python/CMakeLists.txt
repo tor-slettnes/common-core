@@ -11,7 +11,7 @@ add_subdirectory(buildtools)
 ### Create a library target to facilitate get_target_property()
 set(TARGET "cc_core_python")
 
-if(INCLUDE_SHARED)
+if(BUILD_SHARED)
   ### Package component
   set(INSTALL_COMPONENT "core-python")
 endif()

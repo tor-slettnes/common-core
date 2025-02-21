@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-if(INCLUDE_PLATFORM)
+if(BUILD_PLATFORM)
   set(INSTALL_COMPONENT "platform-scripts")
 
   add_subdirectory(bin)

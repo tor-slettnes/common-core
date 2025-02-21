@@ -144,17 +144,16 @@ option(BUILD_DBUS        "Build support for D-Bus" ON)
 option(BUILD_DNSSD_AVAHI "Build suport for DNS-SD via Avahi" ON)
 
 ### Build all library dependencies even if not linked into the final product
-option(BUILD_ALL_LIBS    "Build all libraries even if not used (to validate syntax)" ON)
+option(BUILD_ALL_LIBS    "Build all libraries even if not used (to validate syntax)" OFF)
 
 ### Build tests
 option(BUILD_TESTING     "Build testing modules" ON)
 
 ### What applications to build/install.
-option(INCLUDE_SHARED    "Install shared artifacts (e.g. common settings)" ON)
-option(INCLUDE_DEMO      "Build/install DEMO application example" ${INCLUDE_SHARED})
-option(INCLUDE_PLATFORM  "Build/install Platform services" ${INCLUDE_SHARED})
-option(INCLUDE_LOGGER    "Build/install Logger service" ${INCLUDE_SHARED})
-
+option(BUILD_SHARED    "Install shared artifacts (e.g. common settings)" ON)
+option(BUILD_DEMO      "Build/install DEMO application example" ${BUILD_SHARED})
+option(BUILD_PLATFORM  "Build/install Platform services" ${BUILD_SHARED})
+option(BUILD_LOGGER    "Build/install Logger service" ${BUILD_SHARED})
 
 ### Enable SystemD service integration
 option(ENABLE_SERVICES   "Enable SystemD service units" ON)

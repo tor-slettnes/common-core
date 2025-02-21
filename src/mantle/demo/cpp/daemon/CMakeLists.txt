@@ -9,7 +9,7 @@
 set(TARGET demoserver)
 
 ### Package component
-if(INCLUDE_DEMO)
+if(BUILD_DEMO)
   set(INSTALL_COMPONENT "demo-server")
 endif()
 

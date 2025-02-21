@@ -139,6 +139,8 @@ build: cmake
 .PHONY: cmake
 cmake: $(CMAKE_TAG)
 
+### If we have defined custom arguments to CMake (see above), we force
+### regeneration of the CMake cache by declaring any previous result as phony.
 ifneq ($(strip $(CMAKE_CONFIG_ARGS)),)
 .PHONY: $(CMAKE_TAG)
 endif
@@ -167,12 +169,12 @@ list: cmake
 
 .PHONY: get_config
 get_config:
-	@(cat out/build/CMakeCache.txt || \
+	@(cat $(BUILD_DIR)/CMakeCache.txt || \
       cmake -L -P build/buildspec.cmake -P $(SHARED_DIR)/build/buildspec.cmake) 2>/dev/null | \
-      awk 'BEGIN{FS="="}            \
-		/:INTERNAL=/ {next;}               \
-		/^[A-Z0-9_]*:[A-Z]*=/ {            \
-			sub(":.*","",$$1);             \
+      awk 'BEGIN{FS="="}                    \
+		/:INTERNAL=/ {next;}                \
+		/^[A-Z0-9_]*:[A-Z]*=/ {             \
+			sub(":.*","",$$1);              \
 			printf("%-40s = %s\n",$$1,$$2); \
 		}'
 

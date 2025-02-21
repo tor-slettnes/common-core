@@ -9,7 +9,7 @@
 set(TARGET "cc_multilogger_python")
 
 ### Package component
-if(INCLUDE_LOGGER)
+if(BUILD_LOGGER)
   set(INSTALL_COMPONENT "multilogger-python")
 endif()
 

@@ -9,7 +9,7 @@ add_subdirectory(sinks)
 add_subdirectory(base)
 add_subdirectory(impl)
 
-if(INCLUDE_LOGGER)
+if(BUILD_LOGGER)
   add_subdirectory(daemon)
   add_subdirectory(tools)
 endif()

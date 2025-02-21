@@ -7,7 +7,7 @@
 
 set(TARGET "cc_platform_settings")
 
-if(INCLUDE_PLATFORM)
+if(BUILD_PLATFORM)
   set(INSTALL_COMPONENT "platform-settings")
 
   configure_file(upgrade.yaml.in upgrade.yaml)

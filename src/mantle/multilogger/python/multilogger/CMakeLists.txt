@@ -28,7 +28,7 @@ cc_add_python("${TARGET}"
   DIRECTORIES "${DIRECTORIES}"
 )
 
-if(INCLUDE_LOGGER)
+if(BUILD_LOGGER)
   cc_add_python_wheel("multilogger-client"
     BUILD_DEPS "python_build"
     PYTHON_DEPS ${TARGET}

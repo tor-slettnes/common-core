@@ -41,11 +41,7 @@ function(cc_add_library TARGET)
     find_package("${_dep}" REQUIRED)
   endforeach()
 
-  ## Force build only if global option `BUILD_ALL_LIBS` is set
-  if(NOT BUILD_ALL_LIBS)
-    set(exclude_from_all EXCLUDE_FROM_ALL)
-  endif()
-
+  cc_get_ternary(exclude_from_all BUILD_ALL_LIBS "" "EXCLUDE_FROM_ALL")
   add_library("${TARGET}" ${_type} ${exclude_from_all} ${arg_SOURCES})
   target_include_directories(${TARGET} ${_scope} ${CMAKE_CURRENT_SOURCE_DIR})
   target_link_libraries(${TARGET} ${_scope} ${arg_LIB_DEPS} ${arg_OBJ_DEPS})

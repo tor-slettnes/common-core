@@ -8,7 +8,7 @@
 add_subdirectory(api EXCLUDE_FROM_ALL)
 add_subdirectory(impl EXCLUDE_FROM_ALL)
 
-if(INCLUDE_DEMO)
+if(BUILD_DEMO)
   add_subdirectory(daemon)
   add_subdirectory(utils)
 

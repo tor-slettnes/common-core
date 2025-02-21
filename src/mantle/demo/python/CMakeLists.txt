@@ -9,7 +9,7 @@
 set(TARGET "cc_demo_python")
 
 ### Package component
-if(INCLUDE_DEMO)
+if(BUILD_DEMO)
   set(INSTALL_COMPONENT "demo-python")
 endif()
 

@@ -32,7 +32,7 @@ cc_add_python("${TARGET}"
   DIRECTORIES "${DIRECTORIES}"
 )
 
-if(INCLUDE_PLATFORM)
+if(BUILD_PLATFORM)
   cc_add_python_wheel("platform-clients"
     BUILD_DEPS "python_build"
     PYTHON_DEPS ${TARGET}

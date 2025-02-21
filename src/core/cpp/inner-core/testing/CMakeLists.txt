@@ -6,4 +6,7 @@
 #===============================================================================
 
 add_subdirectory(main)
-add_subdirectory(suites)
+
+if(BUILD_SHARED)
+  add_subdirectory(suites)
+endif()
