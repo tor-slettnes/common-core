@@ -72,11 +72,14 @@ function(cc_add_proto TARGET)
     endif()
 
     add_custom_target("${TARGET}_py")
+    list(TRANSFORM arg_PROTO_DEPS
+      APPEND "_py"
+      OUTPUT_VARIABLE proto_py_deps)
 
     cc_add_proto_python("${TARGET}_py"
       INSTALL_COMPONENT "${install_component}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
-      DEPENDS "${arg_PROTO_DEPS}"
+      DEPENDS "${proto_py_deps}"
       PROTOS "${arg_SOURCES}"
     )
   endif()
