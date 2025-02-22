@@ -29,8 +29,10 @@ class API (logging.Handler):
 
     def __init__(self,
                  identity: str|None,
-                 capture_python_logs: bool = False):
+                 capture_python_logs: bool = False,
+                 log_level: bool = logging.NOTSET):
 
+        logging.Handler.__init__(self, level=log_level)
         self.identity = identity or cc.core.paths.programName()
         self.pathbase = cc.core.paths.pythonRoot().as_posix()
         self.capture_python_logs = capture_python_logs
@@ -38,34 +40,34 @@ class API (logging.Handler):
     def open(self):
         if self.capture_python_logs:
             pylogger = logging.getLogger()
-            pylogger.setLevel(1)
             pylogger.addHandler(self)
 
     def close(self):
+        pylogger = logging.getLogger()
         pylogger.removeHandler(self)
 
     def trace(self,
               text: str,
               stacklevel: int = 2,
               **kwargs):
-        self.log(Level.LEVEL_TRACE, text, stacklevel, **kwargs)
+        return self.log(Level.LEVEL_TRACE, text, stacklevel, **kwargs)
 
     def debug(self, text: str,
               stacklevel: int = 2,
               **kwargs):
-        self.log(Level.LEVEL_DEBUG, text, stacklevel, **kwargs)
+        return self.log(Level.LEVEL_DEBUG, text, stacklevel, **kwargs)
 
     def info(self,
              text: str,
              stacklevel: int = 2,
              **kwargs):
-        self.log(Level.LEVEL_INFO, text, stacklevel, **kwargs)
+        return self.log(Level.LEVEL_INFO, text, stacklevel, **kwargs)
 
     def notice(self,
                text: str,
                stacklevel: int = 2,
                **kwargs):
-        self.log(Level.LEVEL_NOTICE, text, stacklevel, **kwargs)
+        return self.log(Level.LEVEL_NOTICE, text, stacklevel, **kwargs)
 
     def warning(self,
                 text: str,
@@ -111,7 +113,7 @@ class API (logging.Handler):
             thread_id = threading.current_thread().native_id,
             **kwargs)
 
-        self.submit(message)
+        return self.submit(message)
 
 
     ## Overrides `logging.Handler.emit()` iff capturing Python logs
@@ -122,14 +124,16 @@ class API (logging.Handler):
 
         message = self.create_message(
             text = record.getMessage(),
-            level = record.level,
+            level = record.levelno,
+            timestamp = record.created,
             source_path = record.pathname,
             source_line = record.lineno,
-            function_name = record.func,
+            function_name = record.funcName,
             log_scope = record.name,
-            thread_id = threading.current_thread().native_id)
+            thread_id = record.thread)
+            # thread_id = threading.current_thread().native_id)
 
-        self.submit(message)
+        return self.submit(message)
 
 
     def create_message(self, /,

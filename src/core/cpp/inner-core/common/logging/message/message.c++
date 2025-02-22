@@ -157,7 +157,7 @@ namespace core::logging
         using LookupFunction = std::function<types::Value(const Message *message)>;
         static const std::unordered_map<std::string, LookupFunction> lookup = {
             {MESSAGE_FIELD_THREAD_ID, [=](const Message *message) {
-                 return message->thread_id();
+                return static_cast<types::largest_uint>(message->thread_id());
              }},
             {MESSAGE_FIELD_LOG_SCOPE, [=](const Message *message) {
                  return message->scopename();

@@ -18,6 +18,7 @@ from cc.protobuf.variant import PyTaggedValueList, encodeTaggedValueList
 ### Standard Python modules
 from typing import Optional
 import queue
+import asyncio
 import threading
 
 #===============================================================================
@@ -34,21 +35,24 @@ class LogClient (API, BaseClient):
                  host           : str = "",      # gRPC server
                  identity       : str = None,    # Greeter identity
                  wait_for_ready : bool = False,  # Keep trying to connect
-                 queue_size     : int = 4096):   # Max. messages to cache locally
+                 queue_size     : int = 4096,   # Max. messages to cache locally
+                 use_asyncio    : bool = False): # Use AsyncIO semantics
 
         API.__init__(self, identity)
         BaseClient.__init__(self,
                             host = host,
-                            wait_for_ready = wait_for_ready)
+                            wait_for_ready = wait_for_ready,
+                            use_asyncio = use_asyncio)
 
         self.queue = None
+        self.queue_factory = asyncio.Queue if use_asyncio else queue.Queue
         self.queue_size = queue_size
         self.writer_thread = None
 
     def __del__(self):
         self.close()
 
-    def open(self):
+    def open (self, wait_for_ready: bool = True):
         '''
         Start streaming to the MultiLogger service.
 
@@ -61,6 +65,9 @@ class LogClient (API, BaseClient):
         '''
 
         if not self.queue:
+            if wait_for_ready:
+                self.wait_for_ready = wait_for_ready
+
             self.queue = queue.Queue(self.queue_size)
             self.writer_thread = threading.Thread(
                 name = "LogStreamer",
@@ -77,10 +84,12 @@ class LogClient (API, BaseClient):
         '''
 
         if self.queue:
-            queue.put(None)     # Allow `_queue_iterator` to break free
-            self.queue = None   # Do not use queue for future messags
+            self.queue.put(None)   # Allow `_queue_iterator` to break free
+            self.queue = None      # Do not use queue for future messags
+
             self.writer_thread.join()
             self.writer_thread = None
+
             API.close(self)
 
     def submit(self, event: Event):
@@ -99,7 +108,6 @@ class LogClient (API, BaseClient):
 
         else:
             self.stub.submit(event)
-
 
     def _stream_worker(self):
         '''

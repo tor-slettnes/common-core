@@ -8,9 +8,12 @@
 # See `defaults.yaml` for default values and descriptions
 
 log sinks:
+  stderr:
+    include context: true
+
   csvfile:
     enabled      : true
-    rotate after : 5 minutes
+    rotate after : 1 day
     compress after use: true
     name template: "{isodate}-{hour}{minute}{zoneoffset}.csv"
 
