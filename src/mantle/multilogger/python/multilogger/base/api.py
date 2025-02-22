@@ -17,6 +17,7 @@ import logging
 import inspect
 import abc
 import os.path
+import pathlib
 import time
 import socket
 import threading
@@ -34,7 +35,7 @@ class API (logging.Handler):
 
         logging.Handler.__init__(self, level=log_level)
         self.identity = identity or cc.core.paths.programName()
-        self.pathbase = cc.core.paths.pythonRoot().as_posix()
+        self.pathbase = cc.core.paths.pythonRoot()
         self.capture_python_logs = capture_python_logs
 
     def open(self):
@@ -133,7 +134,10 @@ class API (logging.Handler):
             thread_id = record.thread)
             # thread_id = threading.current_thread().native_id)
 
-        return self.submit(message)
+        try:
+            return self.submit(message)
+        except Exception as e:
+            self.handleError(record)
 
 
     def create_message(self, /,
@@ -153,7 +157,7 @@ class API (logging.Handler):
                        log_scope: str|None = None,
                        **kwargs):
 
-        if source_path:
+        if source_path and (self.pathbase in pathlib.Path(source_path).parents):
             source_path = os.path.relpath(source_path, self.pathbase)
 
         return Event(

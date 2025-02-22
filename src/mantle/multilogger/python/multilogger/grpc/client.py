@@ -20,6 +20,7 @@ from typing import Optional
 import queue
 import asyncio
 import threading
+import grpc
 
 #===============================================================================
 # MultiLogger Client
@@ -114,11 +115,11 @@ class LogClient (API, BaseClient):
         Stream queued messages to MultiLogger service.
         Runs in its own thread.
         '''
-        if queue := self.queue:
+        while queue := self.queue:
             try:
-                return self.stub.writer(iter(self.queue.get, None))
-            finally:
-                self.queue = None
+                return self.stub.writer(iter(queue.get, None))
+            except grpc.RpcError:
+                pass
 
     def listen(self,
                min_level: Level|int = Level.LEVEL_TRACE,
