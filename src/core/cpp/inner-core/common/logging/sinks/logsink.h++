@@ -32,7 +32,8 @@ namespace core::logging
 
     protected:
         LogSink(const SinkID &sink_id,
-                const SinkType &sink_type = {});
+                const SinkType &sink_type = {},
+                const std::optional<status::Event::ContractID> contract_id = {});
 
     public:
         void load_settings(const types::KeyValueMap &settings) override;

@@ -21,7 +21,7 @@ log sinks:
     enabled      : true
     type         : "sqlite3"
     #threshold    : DEBUG
-    contract     : "text"
+    contract_id  : "text"
     name template: "lologger/{hostname}-{year}-{month}"
     local time   : true
     rotate after : 1 month

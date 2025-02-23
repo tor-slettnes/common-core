@@ -24,7 +24,7 @@ namespace core::logging
 
     StreamSink::StreamSink(const std::string &sink_id,
                            std::ostream &stream)
-        : LogSink(sink_id),
+        : LogSink(sink_id, {}, MESSAGE_CONTRACT),
           stream(stream)
     {
     }

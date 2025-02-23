@@ -11,7 +11,7 @@ namespace core::platform
 {
     LogSinkProvider::LogSinkProvider(const std::string &implementation,
                                      const std::string &sink_id)
-        : LogSink(sink_id),
+        : LogSink(sink_id, {}, core::logging::MESSAGE_CONTRACT),
           Provider(implementation)
     {
     }

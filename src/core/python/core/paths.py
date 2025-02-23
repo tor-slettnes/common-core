@@ -56,10 +56,8 @@ def settingsPath() -> SearchPath:
             if os.path.isdir(configdir):
                 searchpath.append(os.path.join(configdir, ORGANIZATION))
 
-        searchpath.append(f'c:\\{ORGANIZATION}\\config' if platform.system() == 'Windows'
-                          else f'/etc/{ORGANIZATION}')
-
         searchpath.extend([
+            ('/etc/%s', r'c:\%s\config')[platform.system() == 'Windows'] % (ORGANIZATION,),
             SETTINGS_DIR,       # Package defaults
             'settings'          # Inside virtualenv/`.whl` container
         ])

@@ -98,7 +98,10 @@ log sinks:
   #
   #   - `contract_id`:  If provided, only events with matching
   #    `contract_id` field will be captured by this sink.  Plaintext log
-  #    messages are logged with `contract_id` set to `"text"`.
+  #    messages are logged with `contract_id` set to `"text"`, which is
+  #    also the default contract ID filter for the following text-based
+  #    log sinks (meaning these will by default only accept text messages):
+  #    `stdout`, `stderr`, `syslog`, `rti-dl`, and `dds`.
   #
   #   - `columns`: This is a sequence of column specifications,
   #     each in turn a sequence comprising three values:
@@ -276,6 +279,9 @@ log sinks:
 
     # Prune log files once they reach a certain age.
     expire after: 1 year
+
+    # Contract ID to capture
+    contract_id: "text"
 
   # Log via RTI distributed logger (if built with option `USE_RTI_DISTRIBUTED_LOGGER`)
   rti-dl:

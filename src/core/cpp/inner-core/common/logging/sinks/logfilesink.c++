@@ -12,7 +12,7 @@
 namespace core::logging
 {
     LogFileSink::LogFileSink(const std::string &sink_id)
-        : Super(sink_id),
+        : Super(sink_id, {}, MESSAGE_CONTRACT),
           MessageFormatter(),
           RotatingPath(sink_id, ".log")
     {

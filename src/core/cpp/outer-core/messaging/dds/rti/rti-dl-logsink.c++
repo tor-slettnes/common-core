@@ -13,7 +13,7 @@ namespace core::dds
         const std::string &sink_id,
         const std::string &application_id,
         int domain_id)
-        : LogSink(sink_id),
+        : LogSink(sink_id, {}, core::logging::MESSAGE_CONTRACT),
           dist_logger_(nullptr)
     {
         this->dl_options_.setApplicationKind(application_id.c_str());

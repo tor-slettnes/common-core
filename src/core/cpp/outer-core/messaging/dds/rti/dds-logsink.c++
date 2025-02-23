@@ -15,7 +15,7 @@ namespace core::dds
     DDSLogger::DDSLogger(const std::string &sink_id,
                          const std::string &channel_name,
                          int domain_id)
-        : LogSink(sink_id),
+        : LogSink(sink_id, {}, core::logging::MESSAGE_CONTRACT),
           Publisher(channel_name, domain_id)
     {
     }
