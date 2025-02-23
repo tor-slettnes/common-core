@@ -15,12 +15,21 @@ from cc.protobuf.multilogger import ListenerSpec, SinkSpec, \
     ColumnType, ColumnSpec
 from cc.protobuf.variant import PyTaggedValueList, encodeTaggedValueList
 
+### Third-party modules
+import grpc
+
 ### Standard Python modules
 from typing import Optional
+import enum
+import logging
 import queue
-import asyncio
+import sys
 import threading
-import grpc
+
+class OverflowDisposition (enum.IntEnum):
+    BLOCK = 0
+    DISCARD_OLDEST = 1
+    DISCARD_NEWEST = 2
 
 #===============================================================================
 # MultiLogger Client
@@ -30,24 +39,61 @@ class LogClient (API, BaseClient):
     Client for MultiLogger service.
     '''
 
+    overflow_disposition_message = {
+        OverflowDisposition.BLOCK : "Blocking",
+        OverflowDisposition.DISCARD_OLDEST : "Discarding oldest message",
+        OverflowDisposition.DISCARD_NEWEST : "Discarding message"
+    }
+
     from cc.generated.multilogger_pb2_grpc import LoggerStub as Stub
 
-    def __init__(self,
-                 host           : str = "",      # gRPC server
-                 identity       : str = None,    # Greeter identity
-                 wait_for_ready : bool = False,  # Keep trying to connect
-                 queue_size     : int = 4096,   # Max. messages to cache locally
-                 use_asyncio    : bool = False): # Use AsyncIO semantics
+    def __init__(
+            self,
+            host           : str = "",
+            identity       : str = None,
+            capture_python_logs: bool = False,
+            log_level      : int = logging.NOTSET,
+            wait_for_ready : bool = False,
+            queue_size     : int = 4096,
+            overflow_disposition: OverflowDisposition = OverflowDisposition.DISCARD_OLDEST):
+        '''
+        Initializer.
 
-        API.__init__(self, identity)
+        Inputs:
+        :param host:
+            Host (resolvable name or IP address) of MultiLogger server
+
+        :param identity:
+            Identity of this client (e.g. process name)
+
+        :param capture_python_logs:
+            Register this instance as a Python log handler, which will
+            capture messages sent via the `logging` module.
+
+        :param log_level:
+            Capture threshold for the Python log handler, if any.
+
+        :param wait_for_ready:
+            If server is unavailable, keep waiting instead of failing.
+
+        :param queue_size:
+            Max. number of log messages to cache locally if server is
+            unavailable, before discarding.
+
+        ;param overflow_disposition:
+            How to handle additional log messages once local cache is full.
+        '''
+
+        API.__init__(self, identity,
+                     capture_python_logs = capture_python_logs,
+                     log_level = log_level)
         BaseClient.__init__(self,
                             host = host,
-                            wait_for_ready = wait_for_ready,
-                            use_asyncio = use_asyncio)
+                            wait_for_ready = wait_for_ready)
 
         self.queue = None
-        self.queue_factory = asyncio.Queue if use_asyncio else queue.Queue
         self.queue_size = queue_size
+        self.overflow_disposition = overflow_disposition
         self.writer_thread = None
 
     def __del__(self):
@@ -102,13 +148,34 @@ class LogClient (API, BaseClient):
         immediately via a unary RPC call.
         '''
         if queue := self.queue:
-            try:
-                queue.put_nowait(event)
-            except queue.Full:
-                print('Unable to log event, queue full: %s'%(event,))
+            self._enqueue(queue, event)
 
         else:
             self.stub.submit(event)
+
+    def _enqueue(self, queue: queue.Queue, event: Event):
+        retry = True
+
+        while retry:
+            try:
+                queue.put_nowait(event)
+                retry = False
+
+            except queue.Full:
+                if self.overflow_disposition == OverflowDisposition.BLOCK:
+                    queue.put(event)
+                    retry = False
+
+                elif self.overflow_disposition == OverflowDisposition.DISCARD_OLDEST:
+                    try:
+                        queue.get_nowait()
+                    except queue.Empty:
+                        pass
+                    retry = True
+
+                elif self.overflow_disposition == OverflowDisposition.DISCARD_NEWEST:
+                    retry = False
+
 
     def _stream_worker(self):
         '''

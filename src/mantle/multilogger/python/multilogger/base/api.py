@@ -31,7 +31,7 @@ class API (logging.Handler):
     def __init__(self,
                  identity: str|None,
                  capture_python_logs: bool = False,
-                 log_level: bool = logging.NOTSET):
+                 log_level: int = logging.NOTSET):
 
         logging.Handler.__init__(self, level=log_level)
         self.identity = identity or cc.core.paths.programName()
@@ -141,8 +141,8 @@ class API (logging.Handler):
 
 
     def create_message(self, /,
-                       text: str,
-                       level: Level | int,
+                       text: str|None = None,
+                       level: Level | int = Level.LEVEL_NONE,
                        domain: Domain = Domain.DOMAIN_APPLICATION,
                        origin: str|None = None,
                        code: int|None = None,
@@ -155,6 +155,7 @@ class API (logging.Handler):
                        source_line: int|None = None,
                        function_name: str|None = None,
                        log_scope: str|None = None,
+                       attributes: dict|None = None,
                        **kwargs):
 
         if source_path and (self.pathbase in pathlib.Path(source_path).parents):
@@ -168,11 +169,11 @@ class API (logging.Handler):
             code          = code,
             symbol        = symbol,
             timestamp     = encodeTimestamp(timestamp or time.time()),
-            attributes    = encodeKeyValueMap(kwargs),
+            attributes    = encodeKeyValueMap((attributes | kwargs) if attributes else kwargs),
             contract_id   = contract_id,
             host          = host or socket.gethostname(),
             thread_id     = thread_id,
-            log_scope     = log_scope or "python",
+            log_scope     = log_scope,
             source_path   = source_path,
             source_line   = source_line,
             function_name = function_name)

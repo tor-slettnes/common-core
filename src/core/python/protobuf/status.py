@@ -46,9 +46,6 @@ def encodeLogLevel(log_level: int) -> Level:
     if isinstance(log_level, Level):
         return log_level
 
-    elif log_level in Level:
-        return Level[log_level]
-
     else:
         current_event_level = Level.LEVEL_NONE
         for candidate_event_level, candidate_log_level in level_map.items():

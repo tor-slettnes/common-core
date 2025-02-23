@@ -68,29 +68,9 @@ namespace core::json
             return this->encode_object(*value.get_kvmap());
 
         case types::ValueType::TVLIST:
-            if (types::TaggedValueListPtr tvlist = value.get_tvlist())
-            {
-                if (tvlist->mappable())
-                {
-                    return this->encode_object(*tvlist);
-                }
-                else
-                {
-                    // if (!warned_tv && tvlist->tagged())
-                    // {
-                    //     logf_warning(
-                    //         "TaggedValueList contains tags, but they are not unique. "
-                    //         "Encoding as JSON array, losing tags: %s",
-                    //         value);
-                    //     warned_tv = true;
-                    // }
-                    return this->encode_array(tvlist->values());
-                }
-            }
-            else
-            {
-                return this->writer.Null();
-            }
+            return value.get_tvlist()->mappable()
+                       ? this->encode_object(*value.get_tvlist())
+                       : this->encode_array(value.get_tvlist()->values());
 
         default:
             // logf_warning("%s cannot be converted to JSON: %s",
