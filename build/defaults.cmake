@@ -75,9 +75,6 @@ set(UPGRADE_KEYRING "common-core-release.kbx"
 set(PYTHON_NAMESPACE "cc"
   CACHE STRING "Top-level package/namespace for Python modules")
 
-set(PYTHON_DEPENDENCIES "grpcio;protobuf;zmq"
-  CACHE STRING "Python wheel runtime dependencies")
-
 set(PYTHON_PIP_REQUIREMENTS_FILE
   "${CMAKE_CURRENT_LIST_DIR}/pip-requirements.txt"
   CACHE FILEPATH

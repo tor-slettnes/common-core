@@ -73,10 +73,11 @@ function(cc_add_python_wheel TARGET)
     arg_VERSION
     "${PROJECT_VERSION}")
 
-  cc_get_value_or_default(
-    wheel_dependencies
-    arg_PACKAGE_DEPS
-    "${PYTHON_DEPENDENCIES}")
+  if (arg_PACKAGE_DEPS)
+    set(wheel_dependencies "${arg_PACKAGE_DEPS}")
+  else()
+    file(STRINGS "${PYTHON_PIP_REQUIREMENTS_FILE}" wheel_dependencies)
+  endif()
 
   cc_join_quoted(wheel_dependencies
     OUTPUT_VARIABLE DEPENDENCIES)
