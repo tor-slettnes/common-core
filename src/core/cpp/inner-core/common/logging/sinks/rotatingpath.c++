@@ -26,7 +26,7 @@ namespace core::logging
         : sink_name_(sink_name),
           default_suffix_(default_suffix),
           name_template_(DEFAULT_NAME_TEMPLATE),
-          log_folder_(platform::path->log_folder()),
+          log_folder_(This::default_root_folder),
           use_local_time_(DEFAULT_LOCAL_TIME),
           compress_inactive_(DEFAULT_COMPRESS_INACTIVE),
           rotation_interval_(DEFAULT_ROTATION),
@@ -57,9 +57,14 @@ namespace core::logging
 
     void RotatingPath::load_rotation(const types::KeyValueMap &settings)
     {
-        if (const types::Value &value = settings.get(SETTING_NAME_TEMPLATE))
+        if (const types::Value &log_folder = settings.get(SETTING_LOG_FOLDER))
         {
-            this->set_filename_template(value.as_string());
+            this->set_log_folder(log_folder.as_string());
+        }
+
+        if (const types::Value &name_template = settings.get(SETTING_NAME_TEMPLATE))
+        {
+            this->set_filename_template(name_template.as_string());
         }
 
         if (const types::Value &use_local_time = settings.get(SETTING_LOCAL_TIME))
@@ -312,4 +317,7 @@ namespace core::logging
             }
         }
     }
+
+    fs::path RotatingPath::default_root_folder;
+
 }  // namespace core::logging

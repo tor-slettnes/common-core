@@ -155,16 +155,21 @@ namespace core::logging
 
         if (auto sink_map = sink_settings.get_kvmap())
         {
-            for (const auto &[sink_id, sink_specs] : *sink_map)
+            types::Value sink_defaults = sink_map->get("_default_");
+
+            for (const auto &[sink_id, sink_specs_value] : *sink_map)
             {
-                std::string sink_type = sink_specs.get("type", sink_id).as_string();
+                std::string sink_type = sink_specs_value.get("type", sink_id).as_string();
                 if (logging::SinkFactory *factory =
                         logging::sink_factories.get(sink_type, nullptr))
                 {
                     consumed_sink_types.insert(sink_type);
+                    auto specs = sink_specs_value.as_kvmap();
+                    specs.recursive_merge(sink_defaults.as_kvmap());
+
                     this->insert_or_assign(
                         sink_id,
-                        std::make_shared<SinkCustomization>(sink_id, factory, sink_specs.as_kvmap()));
+                        std::make_shared<SinkCustomization>(sink_id, factory, specs));
                 }
             }
         }

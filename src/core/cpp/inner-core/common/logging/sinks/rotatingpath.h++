@@ -21,6 +21,7 @@ namespace core::logging
     const std::string SETTING_COMPRESS_INACTIVE = "compress after use";
     const std::string SETTING_ROTATION = "rotate after";
     const std::string SETTING_EXPIRATION = "expire after";
+    const std::string SETTING_LOG_FOLDER = "log folder";
 
     const std::string DEFAULT_NAME_TEMPLATE = "{executable}-{isodate}-{hour}{minute}{zoneoffset}";
     const bool DEFAULT_LOCAL_TIME = true;
@@ -84,6 +85,9 @@ namespace core::logging
 
         void compress_all_inactive();
         void compress(const fs::path &logfile);
+
+    public:
+        static fs::path default_root_folder;
 
     private:
         std::string sink_name_;

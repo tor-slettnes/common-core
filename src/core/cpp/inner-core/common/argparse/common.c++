@@ -178,6 +178,13 @@ namespace core::argparse
             "will then override the default setting for those sinks.",
             logging::MessageFormatter::set_all_include_context);
 
+        this->add_opt<fs::path>(
+            {"--log-folder"},
+            {"FOLDER"},
+            "Set default log folder [%default]",
+            &logging::RotatingPath::default_root_folder,
+            core::settings->get("log folder", platform::path->log_folder()).as_string());
+
         this->add_log_sinks();
     }
 
