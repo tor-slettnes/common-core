@@ -67,7 +67,7 @@ function(cc_add_proto TARGET)
     cc_add_proto_python("${py_target}"
       NAMESPACE "${arg_PYTHON_NAMESPACE}"
       NAMESPACE_COMPONENT "${arg_PYTHON_NAMESPACE_COMPONENT}"
-      INSTALL_COMPONENT "${install_component}"
+      INSTALL_COMPONENT "${arg_INSTALL_COMPONENT}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       DEPENDS "${proto_py_deps}"
       PROTOS "${arg_SOURCES}"

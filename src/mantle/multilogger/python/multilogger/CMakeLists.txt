@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Create a custom target for the Python Wheel
-set(TARGET "cc_multilogger_python_modules")
+set(TARGET "cc_multilogger_python")
 
 set(PROGRAMS
 )
@@ -31,8 +31,8 @@ cc_add_python("${TARGET}"
 if(BUILD_LOGGER)
   cc_add_python_wheel("multilogger-client"
     BUILD_DEPS "python_build"
-    PYTHON_DEPS ${TARGET}
-    DATA_DEPS cc_multilogger_settings
+    PYTHON_DEPS "${TARGET}"
+    DATA_DEPS "cc_multilogger_settings"
     DESCRIPTION "Python client modules for MultiLogger service"
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
   )

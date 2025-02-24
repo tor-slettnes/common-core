@@ -5,9 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Create a custom target for the Python Wheel
-set(TARGET "cc_multilogger_python")
-
 ### Package component
 if(BUILD_LOGGER)
   set(INSTALL_COMPONENT "multilogger-python")

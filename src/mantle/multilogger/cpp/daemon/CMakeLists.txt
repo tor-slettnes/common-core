@@ -35,7 +35,7 @@ cc_add_executable("${TARGET}"
 )
 
 if(ENABLE_SERVICES)
-  cc_add_debian_service("logserver"
+  cc_add_debian_service("${TARGET}"
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "Record events such as diagnostic messages, errors, and telemetry."
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
