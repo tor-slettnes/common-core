@@ -25,7 +25,6 @@ set(SOURCES
 
 ### Generate language bindings
 cc_add_proto("${TARGET}"
-  LIB_TYPE STATIC
   PROTO_DEPS ${PROTO_DEPS}
   SOURCES ${SOURCES}
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"

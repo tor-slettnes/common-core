@@ -12,11 +12,15 @@ set(MOD_DEPS
   Protobuf
 )
 
-### Library dependencies.
+### Native library dependencies.
 set(LIB_DEPS
   cc_core_common
-  cc_core_proto
   protobuf::libprotobuf
+)
+
+### ProtoBuf dependencies
+set(PROTO_DEPS
+  cc_core_proto
 )
 
 set(SOURCES
@@ -34,6 +38,7 @@ set(SOURCES
 cc_add_library("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
+  PROTO_DEPS ${PROTO_DEPS}
   MOD_DEPS ${MOD_DEPS}
   SOURCES ${SOURCES}
 )

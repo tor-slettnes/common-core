@@ -13,70 +13,60 @@ include(build_python)
 ## @fn cc_add_proto
 
 function(cc_add_proto TARGET)
-  set(_options INSTALL)
-  set(_singleargs LIB_TYPE SCOPE INSTALL_COMPONENT PYTHON_INSTALL_DIR PYTHON_NAMESPACE)
-  set(_multiargs SOURCES PROTO_DEPS LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
+  set(_options
+    INSTALL # Install generated `.py` files even if INSTALL_COMPONENT is not set
+  )
+  set(_singleargs
+    CPP_TARGET_SUFFIX          # Appended to CMake target for generated C++ files
+    PYTHON_TARGET_SUFFIX       # Appended to CMake target for generated Python files
+    LIB_TYPE                   # C++ library type (Default: STATIC)
+    SCOPE                      # Target scope (Default: PUBLIC)
+    INSTALL_COMPONENT          # Install component for generated Python files
+    PYTHON_INSTALL_DIR         # Relative install folder for generated Python files
+    PYTHON_NAMESPACE           # Override Python namespace (Default: cc.generated)
+    PYTHON_NAMESPACE_COMPONENT # Override Python 2nd level namespace (Default: generated)
+  )
+  set(_multiargs
+    SOURCES        # Source `.proto` files
+    PROTO_DEPS     # Upstream CMake targets on which we depend
+    LIB_DEPS       # Upstream libraries
+    OBJ_DEPS       # Upstream CMake object libraries
+    PKG_DEPS       # 3rd party package dependencies described with `pkgconf`
+    MOD_DEPS       # 3rd party package dependencies described with CMake modules
+  )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  if(arg_INSTALL_COMPONENT)
-    set(install_component "${arg_INSTALL_COMPONENT}")
-  elseif(arg_INSTALL)
-    set(install_component "${TARGET}")
-  else()
-    unset(install_component)
-  endif()
-
-  if(NOT BUILD_CPP)
-    set(scope INTERFACE)
-  elseif(arg_SCOPE)
-    string(TOUPPER "${arg_SCOPE}" scope)
-  else()
-    set(scope PUBLIC)
-  endif()
-
-  if(arg_LIB_TYPE)
-    set(lib_type ${arg_LIB_TYPE})
-  elseif(scope STREQUAL INTERFACE)
-    set(lib_type INTERFACE)
-  else()
-    set(lib_type STATIC)
-  endif()
-
-
   if(BUILD_CPP)
-    cc_add_library("${TARGET}"
-      SCOPE    "${scope}"
-      LIB_TYPE "${lib_type}"
+    cc_get_value_or_default(cpp_suffix arg_CPP_TARGET_SUFFIX "_cpp")
+    set(cpp_target "${TARGET}${cpp_suffix}")
+
+    list(TRANSFORM arg_PROTO_DEPS
+      APPEND "${cpp_suffix}"
+      OUTPUT_VARIABLE proto_cpp_deps)
+
+    cc_add_proto_cpp("${cpp_target}"
+      LIB_TYPE "${arg_LIB_TYPE}"
+      SCOPE "${arg_SCOPE}"
+      PROTOS "${arg_SOURCES}"
+      PROTO_DEPS "${proto_cpp_deps}"
       LIB_DEPS "${arg_LIB_DEPS}"
-      OBJ_DEPS "${arg_OBJ_DEPS}" "${arg_PROTO_DEPS}"
+      OBJ_DEPS "${arg_OBJ_DEPS}"
       PKG_DEPS "${arg_PKG_DEPS}"
       MOD_DEPS "${arg_MOD_DEPS}"
-    )
-
-    cc_add_proto_cpp("${TARGET}"
-      LIB_TYPE "${lib_type}"
-      SCOPE "${scope}"
-      DEPENDS "${arg_PROTO_DEPS}"
-      PROTOS "${arg_SOURCES}"
     )
   endif()
 
   if(BUILD_PYTHON)
-    if(arg_PYTHON_NAMESPACE)
-      set(_namespace "${arg_PYTHON_NAMESPACE}")
-    else()
-      list(FIND arg_KEYWORDS_MISSING_VALUES PYTHON_NAMESPACE found)
-      if(${found} LESS 0 AND PYTHON_NAMESPACE)
-        set(_namespace "${PYTHON_NAMESPACE}")
-      endif()
-    endif()
+    cc_get_value_or_default(py_suffix arg_CPP_TARGET_SUFFIX "_py")
+    set(py_target "${TARGET}${py_suffix}")
 
-    add_custom_target("${TARGET}_py")
     list(TRANSFORM arg_PROTO_DEPS
-      APPEND "_py"
+      APPEND "${py_suffix}"
       OUTPUT_VARIABLE proto_py_deps)
 
-    cc_add_proto_python("${TARGET}_py"
+    cc_add_proto_python("${py_target}"
+      NAMESPACE "${arg_PYTHON_NAMESPACE}"
+      NAMESPACE_COMPONENT "${arg_PYTHON_NAMESPACE_COMPONENT}"
       INSTALL_COMPONENT "${install_component}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       DEPENDS "${proto_py_deps}"
@@ -91,20 +81,57 @@ endfunction()
 
 function(cc_add_proto_cpp TARGET)
   set(_options)
-  set(_singleargs LIB_TYPE SCOPE)
-  set(_multiargs  DEPENDS PROTOS)
+  set(_singleargs
+    LIB_TYPE
+    SCOPE
+  )
+  set(_multiargs
+    PROTOS         # Source `.proto` files
+    PROTO_DEPS     # Upstream CMake targets on which we depend
+    LIB_DEPS       # Upstream libraries
+    OBJ_DEPS       # Upstream CMake object libraries
+    PKG_DEPS       # 3rd party package dependencies described with `pkgconf`
+    MOD_DEPS       # 3rd party package dependencies described with CMake modules
+  )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  target_include_directories("${TARGET}" ${arg_SCOPE}
+  if(arg_SCOPE)
+    string(TOUPPER "${arg_SCOPE}" scope)
+  else()
+    set(scope PUBLIC)
+  endif()
+
+  if(arg_LIB_TYPE)
+    set(lib_type ${arg_LIB_TYPE})
+  elseif(scope STREQUAL INTERFACE)
+    set(lib_type INTERFACE)
+  else()
+    set(lib_type STATIC)
+  endif()
+
+  cc_add_library("${TARGET}"
+    SCOPE    "${scope}"
+    LIB_TYPE "${lib_type}"
+    LIB_DEPS "${arg_LIB_DEPS}" "${arg_PROTO_DEPS}"
+    OBJ_DEPS "${arg_OBJ_DEPS}"
+    PKG_DEPS "${arg_PKG_DEPS}"
+    MOD_DEPS "${arg_MOD_DEPS}"
+  )
+
+  target_include_directories("${TARGET}" ${scope}
     ${CMAKE_CURRENT_BINARY_DIR}
   )
+
+  if(arg_PROTO_DEPS)
+    add_dependencies("${TARGET}" ${arg_PROTO_DEPS})
+  endif()
 
   if(BUILD_PROTOBUF)
     find_package(Protobuf REQUIRED)
 
     cc_protogen_protobuf_cpp(PROTO_CPP_SRCS PROTO_CPP_HDRS
       TARGET "${TARGET}"
-      DEPENDS "${arg_DEPENDS}"
+      DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_PROTOS}"
     )
   endif()
@@ -116,12 +143,12 @@ function(cc_add_proto_cpp TARGET)
     # gRPC releases.  Let's obtain additional package dependencies from
     # `pkg-config`.
     cc_add_package_dependencies("${TARGET}"
-      LIB_TYPE "${arg_LIB_TYPE}"
+      LIB_TYPE "${lib_type}"
       DEPENDS gpr)
 
     cc_protogen_grpc_cpp(GRPC_CPP_SRCS GRPC_CPP_HDRS
       TARGET "${TARGET}"
-      DEPENDS "${arg_DEPENDS}"
+      DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_PROTOS}"
     )
   endif()
@@ -133,26 +160,41 @@ endfunction()
 
 function(cc_add_proto_python TARGET)
   set(_options)
-  set(_singleargs STAGING_DIR INSTALL_COMPONENT INSTALL_DIR NAMESPACE NAMESPACE_COMPONENT)
-  set(_multiargs DEPENDS PROTOS)
+  set(_singleargs
+    STAGING_DIR              # Override staging directory
+    INSTALL_COMPONENT        # Install component for generated Python files
+    INSTALL_DIR              # Relative install folder for generated files
+    NAMESPACE                # Override namespace (Default: cc.generated)
+    NAMESPACE_COMPONENT      # Override 2nd level namespace (Default: generated)
+  )
+  set(_multiargs
+    DEPENDS                  # Upstream CMake targets on which we depend
+    PROTOS                   # Source `.proto` files
+  )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  if(arg_NAMESPACE_COMPONENT)
-    set(_namespace_component "${arg_NAMESPACE_COMPONENT}")
-  else()
-    set(_namespace_component "generated")
-  endif()
+  cc_get_value_or_default(
+    namespace_component
+    arg_NAMESPACE_COMPONENT
+    "generated")
 
-  if(arg_STAGING_DIR)
-    set(staging_dir "${arg_STAGING_DIR}")
+  cc_get_value_or_default(
+    staging_dir
+    arg_STAGING_DIR
+    "${PYTHON_STAGING_ROOT}/${TARGET}")
+
+  if(arg_INSTALL_COMPONENT)
+    set(install_component "${arg_INSTALL_COMPONENT}")
+  elseif(arg_INSTALL)
+    set(install_component "${TARGET}")
   else()
-    set(staging_dir "${PYTHON_STAGING_ROOT}/${TARGET}")
+    unset(install_component)
   endif()
 
   ### Construct namespace for Python modules
   cc_get_namespace(
     NAMESPACE "${arg_NAMESPACE}"
-    NAMESPACE_COMPONENT "${_namespace_component}"
+    NAMESPACE_COMPONENT "${namespace_component}"
     MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
     OUTPUT_VARIABLE namespace)
 
@@ -161,8 +203,12 @@ function(cc_add_proto_python TARGET)
     ROOT_DIR "${staging_dir}"
     OUTPUT_VARIABLE gen_dir)
 
-  ### Generate Python bindings
-  file(MAKE_DIRECTORY "${gen_dir}")
+  if(BUILD_PROTOBUF OR BUILD_GRPC)
+    add_custom_target("${TARGET}")
+
+    ### Generate Python bindings
+    file(MAKE_DIRECTORY "${gen_dir}")
+  endif()
 
   if(BUILD_PROTOBUF)
     cc_protogen_protobuf_py(PROTO_PY
@@ -196,16 +242,15 @@ function(cc_add_proto_python TARGET)
   )
 
   ### Install generated Python modules if requested
-  if(INSTALL_PYTHON_MODULES AND arg_INSTALL_COMPONENT)
-    if(arg_INSTALL_DIR)
-      set(_install_dir "${arg_INSTALL_DIR}")
-    else()
-      set(_install_dir "${PYTHON_INSTALL_DIR}")
-    endif()
+  if(INSTALL_PYTHON_MODULES AND install_component)
+    cc_get_value_or_default(
+      install_dir
+      arg_INSTALL_DIR
+      "${PYTHON_INSTALL_DIR}")
 
     install(DIRECTORY "${staging_dir}/"
-      DESTINATION "${_install_dir}"
-      COMPONENT "${arg_INSTALL_COMPONENT}")
+      DESTINATION "${install_dir}"
+      COMPONENT "${install_component}")
   endif()
 endfunction()
 

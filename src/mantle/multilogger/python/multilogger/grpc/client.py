@@ -99,7 +99,7 @@ class LogClient (API, BaseClient):
     def __del__(self):
         self.close()
 
-    def open (self, wait_for_ready: bool = True):
+    def open(self, wait_for_ready: bool = True):
         '''
         Start streaming to the MultiLogger service.
 
@@ -118,7 +118,7 @@ class LogClient (API, BaseClient):
             self.queue = queue.Queue(self.queue_size)
             self.writer_thread = threading.Thread(
                 name = "LogStreamer",
-                target = self._stream_worker,
+                target = self.stream_worker,
                 daemon = True)
             self.writer_thread.start()
             API.open(self)
@@ -177,7 +177,7 @@ class LogClient (API, BaseClient):
                     retry = False
 
 
-    def _stream_worker(self):
+    def stream_worker(self):
         '''
         Stream queued messages to MultiLogger service.
         Runs in its own thread.
@@ -204,14 +204,13 @@ class LogClient (API, BaseClient):
     def add_sink(self,
                  sink_id: str,
                  sink_type: str,
-                 /,
                  permanent: bool = False,
                  filename_template: Optional[str] = None,
                  rotation_interval: Optional[Interval] = None,
                  use_local_time: Optional[bool] = None,
                  min_level: Level = Level.LEVEL_NONE,
                  contract_id: Optional[str] = None,
-                 fields: None|tuple|ColumnSpec = None) -> bool:
+                 columns: None|tuple|ColumnSpec = None) -> bool:
         '''
         Add a log sink of the specified type. This will capture log events
         with `min_level` or higher priority, optionally restrictecd to those
@@ -250,7 +249,7 @@ class LogClient (API, BaseClient):
              where matching log events are expected to contain a specific
              set of custom attributes.
 
-        @param fields
+        @param columns
              What fields to capture. Applicable only for *tabular data* (column
              oriented) sink types, currently these are "csvfile" and "sqlite3"`.
 
@@ -316,11 +315,11 @@ class LogClient (API, BaseClient):
               filename_template = '{hostname}-{year}-{month}.csv',
               rotation_interval = (1, cc.protobuf.datetime.TimeUnit.MONTH),
               contract_id = 'mydatalogger',
-              fields = [('timestamp', 'EpochTime', int),
-                        ('timestamp', 'LocalTime', str),
-                        ('level', 'SeverityLevel', str),
-                        ('text', 'Message', str),
-                        ('custom_field', 'CustomValue', float)]
+              columns = [('timestamp', 'EpochTime', int),
+                         ('timestamp', 'LocalTime', str),
+                         ('level', 'SeverityLevel', str),
+                         ('text', 'Message', str),
+                         ('custom_field', 'CustomValue', float)]
           ```
         '''
 
@@ -334,7 +333,7 @@ class LogClient (API, BaseClient):
             use_local_time = use_local_time,
             min_level = encodeLogLevel(min_level),
             contract_id = contract_id,
-            fields = [encodeColumnSpec(field) for field in fields or ()])
+            columns = [encodeColumnSpec(column) for column in columns or ()])
 
         return self.stub.add_sink(request).added
 

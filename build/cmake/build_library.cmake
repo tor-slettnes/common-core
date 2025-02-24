@@ -13,7 +13,7 @@
 function(cc_add_library TARGET)
   set(_options)
   set(_singleargs LIB_TYPE SCOPE)
-  set(_multiargs SOURCES LIB_DEPS OBJ_DEPS PKG_DEPS MOD_DEPS)
+  set(_multiargs SOURCES LIB_DEPS OBJ_DEPS PROTO_DEPS PKG_DEPS MOD_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if(arg_LIB_TYPE)
@@ -32,6 +32,11 @@ function(cc_add_library TARGET)
     set(_scope PUBLIC)
   endif()
 
+  list(TRANSFORM arg_PROTO_DEPS
+    APPEND "_cpp"
+    OUTPUT_VARIABLE proto_deps
+  )
+
   set(_sources ${arg_SOURCES})
   foreach(_dep ${arg_OBJ_DEPS})
     list(APPEND _sources $<TARGET_OBJECTS:${_dep}>)
@@ -44,7 +49,7 @@ function(cc_add_library TARGET)
   cc_get_ternary(exclude_from_all BUILD_ALL_LIBS "" "EXCLUDE_FROM_ALL")
   add_library("${TARGET}" ${_type} ${exclude_from_all} ${arg_SOURCES})
   target_include_directories(${TARGET} ${_scope} ${CMAKE_CURRENT_SOURCE_DIR})
-  target_link_libraries(${TARGET} ${_scope} ${arg_LIB_DEPS} ${arg_OBJ_DEPS})
+  target_link_libraries(${TARGET} ${_scope} ${arg_LIB_DEPS} ${arg_OBJ_DEPS} ${proto_deps})
 
   if(arg_PKG_DEPS)
     cc_add_package_dependencies("${TARGET}"

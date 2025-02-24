@@ -34,7 +34,7 @@ function(cc_add_python_wheel TARGET)
 
   ### Do this only if the option `BUILD_PYTHON_WHEELS` is enabled
   if(NOT BUILD_PYTHON_WHEELS)
-    message(STATUS "Skipping Python wheel ${TARGET}, as BUILD_PYTHON_WHEELS is disabled")
+    message(DEBUG "Skipping Python wheel ${TARGET}, as BUILD_PYTHON_WHEELS is disabled")
     return()
   endif()
 

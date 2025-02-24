@@ -12,8 +12,19 @@ include(utility)                # cascade_inherited_property()
 ## @brief Invoke `protoc` to generate bindings for a specified language/plugin
 
 function(cc_protogen_common)
-  set(_singleargs TARGET COMMENT GENERATOR PLUGIN OUT_DIR)
-  set(_multiargs PROTOS DEPENDS SUFFIXES OUT_VARS)
+  set(_singleargs
+    TARGET          # Build target (library)
+    COMMENT         # Printed when generating bindings
+    GENERATOR       # `protoc` generator (e.g. `cpp`, `python`, `grpc`)
+    PLUGIN          # Generator plugin (`grpc_cpp_plugin`, `grpc_python_plugin`)
+    OUT_DIR         # Target directory for generated files
+  )
+  set(_multiargs
+    PROTOS        # Source `.proto` files
+    DEPENDS       # Upstream ProtoBuf build targets on which we depend
+    SUFFIXES      # Generated suffixes (becomes build depencies)
+    OUT_VARS      # Variables populated with generated filenames for each suffix
+  )
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
   if(NOT arg_TARGET)
@@ -31,7 +42,7 @@ function(cc_protogen_common)
   endif()
 
   ### Collect ProtoBuf source folders from this target and its dependencies in
-  ### the target property `source_dirs`. The resulting list is then passed into
+  ### the target property `source_dir`. The resulting list is then passed into
   ### the ProtoBuf compiler as include directories.
 
   cc_get_target_properties_recursively(
@@ -121,8 +132,13 @@ endfunction()
 ## @brief Generate C++ ProtoBuf bindings
 
 function(cc_protogen_protobuf_cpp SRCS HDRS)
-  set(_singleargs TARGET)
-  set(_multiargs PROTOS DEPENDS)
+  set(_singleargs
+    TARGET                  # CMake build target
+  )
+  set(_multiargs
+    PROTOS                  # Source `.proto` files
+    DEPENDS                 # Upstream ProtoBuf build targets on which we depend
+  )
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
   cc_protogen_common(
@@ -151,8 +167,13 @@ endfunction()
 ## @brief Generate C++ gRPC bindings
 
 function(cc_protogen_grpc_cpp SRCS HDRS)
-  set(_singleargs TARGET)
-  set(_multiargs PROTOS DEPENDS)
+  set(_singleargs
+    TARGET                  # CMake build target
+  )
+  set(_multiargs
+    PROTOS                  # Source `.proto` files
+    DEPENDS                 # Upstream ProtoBuf build targets on which we depend
+  )
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
   if(TARGET grpc_cpp_plugin)
@@ -191,8 +212,14 @@ endfunction()
 ## @brief Generate Python ProtoBuf bindings
 
 function(cc_protogen_protobuf_py SRCS)
-  set(_singleargs TARGET OUT_DIR)
-  set(_multiargs PROTOS DEPENDS)
+  set(_singleargs
+    TARGET                  # CMake build target
+    OUT_DIR                 # Output directory for generated files
+  )
+  set(_multiargs
+    PROTOS                  # Source `.proto` files
+    DEPENDS                 # Upstream ProtoBuf build targets on which we depend
+  )
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
   cc_protogen_common(
@@ -213,8 +240,14 @@ endfunction()
 ## @brief Generate Python gRPC bindings
 
 function(cc_protogen_grpc_py SRCS)
-  set(_singleargs TARGET OUT_DIR)
-  set(_multiargs PROTOS DEPENDS)
+  set(_singleargs
+    TARGET                  # CMake build target
+    OUT_DIR                 # Output directory for generated files
+  )
+  set(_multiargs
+    PROTOS                  # Source `.proto` files
+    DEPENDS                 # Upstream ProtoBuf build targets on which we depend
+  )
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
   if(TARGET grpc_python_plugin)

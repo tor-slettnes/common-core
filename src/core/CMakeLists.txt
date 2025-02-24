@@ -34,6 +34,7 @@ endif()
 ### Create interface library to encapsulate the above
 set(TARGET cc_core)
 set(LIB_DEPS)
+set(PROTO_DEPS)
 
 if(BUILD_CPP)
   list(APPEND LIB_DEPS cc_core_inner)
@@ -44,11 +45,12 @@ if(BUILD_DDS)
 endif()
 
 if(BUILD_PROTOBUF)
-  list(APPEND LIB_DEPS cc_core_proto)
+  list(APPEND PROTO_DEPS cc_core_proto)
 endif()
 
 cc_add_library("${TARGET}" INTERFACE
   LIB_DEPS ${LIB_DEPS}
+  PROTO_DEPS ${PROTO_DEPS}
 )
 
 # cpack_add_component(core-common

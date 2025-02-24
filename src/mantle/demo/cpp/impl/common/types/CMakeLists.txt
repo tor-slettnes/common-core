@@ -10,8 +10,11 @@ set(TARGET cc_demo_protobuf_types)
 ### Library dependencies.
 set(LIB_DEPS
   cc_demo_api
-  cc_demo_proto
   cc_core_io_protobuf
+)
+
+set(PROTO_DEPS
+  cc_demo_proto
 )
 
 set(SOURCES
@@ -22,5 +25,6 @@ set(SOURCES
 cc_add_library("${TARGET}"
   LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
+  PROTO_DEPS ${PROTO_DEPS}
   SOURCES ${SOURCES}
 )

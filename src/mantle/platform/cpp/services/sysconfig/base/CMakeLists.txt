@@ -8,9 +8,12 @@
 set(TARGET cc_platform_sysconfig_base)
 
 set(LIB_DEPS
-  cc_platform_proto
   cc_core_common
   cc_core_io_protobuf
+)
+
+set(PROTO_DEPS
+  cc_platform_proto
 )
 
 set(SOURCES
@@ -23,5 +26,6 @@ set(SOURCES
 
 cc_add_library("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
+  PROTO_DEPS ${PROTO_DEPS}
   SOURCES ${SOURCES}
 )

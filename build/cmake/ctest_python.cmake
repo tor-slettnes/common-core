@@ -50,7 +50,7 @@ function(cc_add_pytests)
     CONFIGURE_DEPENDS)
 
   list(LENGTH paths num_paths)
-  message(STATUS "Adding ${num_paths} Python test modules")
+  message(DEBUG "Adding ${num_paths} Python test modules")
 
   foreach(path ${paths})
     cmake_path(RELATIVE_PATH path
