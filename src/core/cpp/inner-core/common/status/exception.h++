@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "event.h++"
+#include "error.h++"
 #include "string/format.h++"
 #include "types/value.h++"
 #include <iostream>
@@ -42,7 +42,7 @@ namespace core::exception
     /// @brief Event wrapper for local errors derived on std::exception
 
     template <class E>
-    class Exception : public status::Event,
+    class Exception : public status::Error,
                       public E
     {
         /// Override the otherwise ambiguous "<<" operator, which is defined for
@@ -54,10 +54,10 @@ namespace core::exception
             return stream;
         }
 
-        using Super = status::Event;
+        using Super = status::Error;
 
     public:
-        inline Exception(const status::Event &event,
+        inline Exception(const status::Error &event,
                          const std::string class_name = "Exception")
             : Super(event),
               E(event.text()),
@@ -65,7 +65,7 @@ namespace core::exception
         {
         }
 
-        inline Exception(const status::Event &event,
+        inline Exception(const status::Error &event,
                          const E &exc,
                          const std::string class_name = "Exception")
             : Super(event),

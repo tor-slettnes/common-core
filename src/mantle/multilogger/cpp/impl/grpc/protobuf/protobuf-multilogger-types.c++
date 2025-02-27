@@ -5,14 +5,129 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
+#include "logging/message/message.h++"
 #include "protobuf-multilogger-types.h++"
 #include "protobuf-event-types.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-datetime-types.h++"
+#include "protobuf-standard-types.h++"
 #include "protobuf-inline.h++"
 
 namespace protobuf
 {
+    //==========================================================================
+    // Loggable
+
+    void encode(const core::types::Loggable &native,
+                cc::multilogger::Loggable *proto) noexcept
+    {
+        if (auto *message = dynamic_cast<const core::logging::Message *>(&native))
+        {
+            encode(*message, proto->mutable_message());
+        }
+        else if (auto *data = dynamic_cast<const core::logging::Data *>(&native))
+        {
+            encode(*data, proto->mutable_data());
+        }
+        else if (auto *error = dynamic_cast<const core::status::Error *>(&native))
+        {
+            encode(*error, proto->mutable_error());
+        }
+    }
+
+    core::types::Loggable::ptr decode_loggable(
+        const cc::multilogger::Loggable &proto,
+        const std::string &default_host) noexcept
+    {
+        switch (proto.event_type_case())
+        {
+        case cc::multilogger::Loggable::EventTypeCase::kMessage:
+            return decode_shared<core::logging::Message>(proto.message(), default_host);
+
+        case cc::multilogger::Loggable::EventTypeCase::kData:
+            return decode_shared<core::logging::Data>(proto.data());
+
+        case cc::multilogger::Loggable::EventTypeCase::kError:
+            return decode_shared<core::status::Error>(proto.error());
+
+        default:
+            return nullptr;
+        }
+    }
+
+    //==========================================================================
+    // Data
+
+    void encode(const core::logging::Data &native,
+                cc::multilogger::Data *proto) noexcept
+    {
+        proto->set_contract_id(native.contract_id());
+        encode(native.timepoint(), proto->mutable_timestamp());
+        encode(native.attributes(), proto->mutable_attributes());
+    }
+
+    void decode(const cc::multilogger::Data &proto,
+                core::logging::Data *native) noexcept
+    {
+        *native = core::logging::Data(
+            proto.contract_id(),
+            decoded<core::dt::TimePoint>(proto.timestamp()),
+            decoded<core::types::KeyValueMap>(proto.attributes()));
+    }
+
+    //==========================================================================
+    // core::logging::Message encoding to/decoding from cc::status::Error
+
+    void encode(const core::logging::Message &native,
+                cc::multilogger::Message *proto) noexcept
+    {
+        proto->set_text(native.text());
+        encode(native.timepoint(), proto->mutable_timestamp());
+        proto->set_level(encoded(native.level()));
+        proto->set_host(native.host());
+        proto->set_application(native.origin());
+        proto->set_log_scope(native.scopename());
+        proto->set_thread_id(native.thread_id());
+        proto->set_thread_name(native.thread_name());
+        proto->set_task_name(native.task_name());
+        proto->set_source_path(native.path().string());
+        proto->set_source_line(native.lineno());
+        proto->set_function_name(native.function());
+        encode(native.attributes(), proto->mutable_attributes());
+    }
+
+    void decode(const cc::multilogger::Message &proto,
+                const std::string &default_host,
+                core::logging::Message *native) noexcept
+    {
+        core::status::Level level = decoded<core::status::Level>(proto.level());
+
+        core::logging::Scope::ptr scope =
+            !proto.log_scope().empty()
+                ? core::logging::Scope::create(proto.log_scope(), level)
+                : log_scope;
+
+        std::string host =
+            !proto.host().empty()
+                ? proto.host()
+                : default_host;
+
+        *native = core::logging::Message(
+            proto.text(),                                            // text
+            level,                                                   // level
+            scope,                                                   // scope
+            decoded<core::dt::TimePoint>(proto.timestamp()),         // tp
+            proto.source_path(),                                     // path
+            proto.source_line(),                                     // lineno
+            proto.function_name(),                                   // function
+            proto.thread_id(),                                       // thread_id
+            proto.thread_name(),                                     // thread_name
+            proto.task_name(),                                       // task_name
+            host,                                                    // host
+            proto.application(),                                     // origin
+            decoded<core::types::KeyValueMap>(proto.attributes()));  // attributes
+    }
+
     //==========================================================================
     // SinkID
 
@@ -33,7 +148,7 @@ namespace protobuf
     {
         proto->set_sink_id(native.sink_id);
         proto->set_sink_type(native.sink_type);
-        proto->set_permanent(native.permanent);
+        // proto->set_permanent(native.permanent);
         proto->set_filename_template(native.filename_template);
         encode(native.rotation_interval, proto->mutable_rotation_interval());
         proto->set_use_local_time(native.use_local_time);
@@ -54,7 +169,7 @@ namespace protobuf
     {
         native->sink_id = proto.sink_id();
         native->sink_type = proto.sink_type();
-        native->permanent = proto.permanent();
+        // native->permanent = proto.permanent();
         native->filename_template = proto.filename_template();
         decode(proto.rotation_interval(), &native->rotation_interval);
         native->use_local_time = proto.use_local_time();
@@ -86,7 +201,7 @@ namespace protobuf
 
     void encode(const core::logging::ColumnSpec &native, cc::multilogger::ColumnSpec *proto)
     {
-        proto->set_event_field(native.event_field);
+        proto->set_field_name(native.field_name);
         if (native.column_name)
         {
             proto->set_column_name(native.column_name.value());
@@ -96,7 +211,7 @@ namespace protobuf
 
     void decode(const cc::multilogger::ColumnSpec &proto, core::logging::ColumnSpec *native)
     {
-        native->event_field = proto.event_field();
+        native->field_name = proto.field_name();
         if (proto.has_column_name())
         {
             native->column_name = proto.column_name();

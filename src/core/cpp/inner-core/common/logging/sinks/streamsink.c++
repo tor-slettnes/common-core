@@ -24,7 +24,7 @@ namespace core::logging
 
     StreamSink::StreamSink(const std::string &sink_id,
                            std::ostream &stream)
-        : LogSink(sink_id, {}, MESSAGE_CONTRACT),
+        : MessageSink(sink_id, false),
           stream(stream)
     {
     }
@@ -38,21 +38,15 @@ namespace core::logging
     void StreamSink::load_settings(const types::KeyValueMap &settings)
     {
         Super::load_settings(settings);
-        this->load_message_format(settings);
 
 #ifndef _WIN32
         this->load_styles(core::settings->get(SETTING_LOG_STYLES).as_kvmap());
 #endif
     }
 
-    bool StreamSink::is_applicable(const types::Loggable &item) const
+    bool StreamSink::handle_message(const Message::ptr &message)
     {
-        return this->is_valid_message(item) && LogSink::is_applicable(item);
-    }
-
-    void StreamSink::capture_event(const status::Event::ptr &event)
-    {
-        const StyleMap *styles = this->styles.get_ptr(event->level());
+        const StyleMap *styles = this->styles.get_ptr(message->level());
 
         // auto lck = std::lock_guard(this->mtx);
 
@@ -61,21 +55,22 @@ namespace core::logging
             this->stream << styles->get(INTRO);
         }
 
-        this->send_preamble(this->stream, event);
+        this->send_preamble(this->stream, message);
 
         if (styles)
         {
             this->stream << styles->get(RESET)
                          << styles->get(TEXT)
-                         << event->text()
+                         << message->text()
                          << styles->get(RESET);
         }
         else
         {
-            this->stream << event->text();
+            this->stream << message->text();
         }
 
         this->stream << std::endl;
+        return true;
     }
 
     void StreamSink::load_styles(const types::KeyValueMap &stylemap)

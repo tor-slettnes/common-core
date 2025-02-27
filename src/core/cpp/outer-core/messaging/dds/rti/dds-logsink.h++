@@ -10,8 +10,7 @@
 #include "dds-publisher.h++"
 #include "platform/path.h++"
 #include "logging/sinks/factory.h++"
-#include "logging/sinks/logsink.h++"
-#include "logging/sinks/messageformatter.h++"
+#include "logging/sinks/messagesink.h++"
 #include "types/create-shared.h++"
 
 namespace core::dds
@@ -19,13 +18,12 @@ namespace core::dds
     //--------------------------------------------------------------------------
     // DDSLogger
 
-    class DDSLogger : public logging::LogSink,
-                      public logging::MessageFormatter,
+    class DDSLogger : public logging::MessageSink,
                       public Publisher,
                       public core::types::enable_create_shared<DDSLogger>
     {
         using This = DDSLogger;
-        using Super = logging::LogSink;
+        using Super = logging::MessageSink;
 
     protected:
         DDSLogger(const std::string &sink_id,
@@ -33,13 +31,12 @@ namespace core::dds
                   int domain_id = 0);
 
     protected:
-        void load_settings(const types::KeyValueMap &settings) override;
         void open() override;
         void close() override;
-        void capture_event(const status::Event::ptr &event) override;
+        bool handle_message(const logging::Message::ptr &message) override;
 
     private:
-        DataWriterPtr<CC::Status::Event> log_writer;
+        DataWriterPtr<CC::Status::LogMessage> log_writer;
     };
 
     //--------------------------------------------------------------------------

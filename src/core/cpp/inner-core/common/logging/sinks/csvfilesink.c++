@@ -16,7 +16,7 @@ namespace core::logging
     // CSVFileSink
 
     CSVFileSink::CSVFileSink(const std::string &sink_id)
-        : AsyncLogSink(sink_id),
+        : Sink(sink_id, true),
           TabularData(),
           RotatingPath(sink_id, ".csv"),
           separator_(DEFAULT_COL_SEP)
@@ -39,12 +39,12 @@ namespace core::logging
     void CSVFileSink::open()
     {
         this->open_file(dt::Clock::now());
-        AsyncLogSink::open();
+        Sink::open();
     }
 
     void CSVFileSink::close()
     {
-        AsyncLogSink::close();
+        Sink::close();
         this->close_file();
     }
 
@@ -70,14 +70,14 @@ namespace core::logging
         }
     }
 
-    void CSVFileSink::capture_event(const status::Event::ptr &event)
+    bool CSVFileSink::handle_item(const types::Loggable::ptr &loggable)
     {
         if (this->stream.good())
         {
-            this->check_rotation(event->timepoint());
+            this->check_rotation(loggable->timepoint());
             std::string separator;
 
-            for (types::Value value : this->row_data(event, this->use_local_time()))
+            for (types::Value value : this->row_data(loggable, this->use_local_time()))
             {
                 this->stream << separator;
                 separator = this->separator();
@@ -88,6 +88,11 @@ namespace core::logging
             }
 
             this->stream << std::endl;
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 

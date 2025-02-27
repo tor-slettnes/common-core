@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "factory.h++"
-#include "logsink.h++"
+#include "messagesink.h++"
 #include "settings/settings.h++"
 #include "platform/runtime.h++"
 #include "platform/init.h++"
@@ -109,7 +109,7 @@ namespace core::logging
             sink->load_settings(this->settings);
             if (this->explicit_threshold)
             {
-                if (auto logsink = std::dynamic_pointer_cast<LogSink>(sink))
+                if (auto logsink = std::dynamic_pointer_cast<MessageSink>(sink))
                 {
                     logsink->set_threshold(this->explicit_threshold.value());
                 }
@@ -205,6 +205,6 @@ namespace core::logging
     SinkRegistry sink_registry;
 
     platform::InitTask populate_task(
-        "PopulateLogSinkRegistry",
+        "PopulateMessageSinkRegistry",
         std::bind(&SinkRegistry::populate, &sink_registry));
 }  // namespace core::logging

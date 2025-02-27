@@ -27,7 +27,7 @@ namespace core::status
         INFO,      // Informational event only, no error
         NOTICE,    // Important event
         WARNING,   // Abnormal event, operation continues
-        FAILED,    // Operation failed, entity is still functional
+        ERROR,     // Operation failed, entity is still functional
         CRITICAL,  // Operation failed, entity is disabled
         FATAL      // Reporting entity is disabled and cannot recover
     };

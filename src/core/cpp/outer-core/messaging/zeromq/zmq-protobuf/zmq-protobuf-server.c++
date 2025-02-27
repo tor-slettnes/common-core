@@ -92,16 +92,14 @@ namespace core::zmq
         cc::rr::Status *status = reply->mutable_status();
         status->set_code(status_code);
 
-        status::Event event(text,                                           // text
+        status::Error event(text,                                           // text
                             core::status::Domain::APPLICATION,              // domain
                             platform::path->exec_name(),                    // origin
-                            static_cast<status::Event::Code>(status_code),  // code
+                            static_cast<status::Error::Code>(status_code),  // code
                             cc::rr::StatusCode_Name(status_code),           // symbol
-                            core::status::Level::FAILED,                    // level
+                            core::status::Level::ERROR,                    // level
                             {},                                             // timepoint
-                            attributes,                                     // attributes
-                            {},                                             // contract_id
-                            {});                                            // host
+                            attributes);                                    // attributes
 
         ::protobuf::encode(event, status->mutable_details());
     }

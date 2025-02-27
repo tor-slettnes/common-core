@@ -7,11 +7,12 @@
 
 #pragma once
 #include "sqlite3.h++"
-#include "logging/sinks/asynclogsink.h++"
+#include "logging/sinks/sink.h++"
 #include "logging/sinks/tabulardata.h++"
 #include "logging/sinks/rotatingpath.h++"
 #include "logging/sinks/factory.h++"
 #include "chrono/date-time.h++"
+#include "thread/blockingqueue.h++"
 #include "types/filesystem.h++"
 #include "types/create-shared.h++"
 
@@ -33,13 +34,13 @@ namespace multilogger
     //--------------------------------------------------------------------------
     // SQLiteSink
 
-    class SQLiteSink : public core::logging::AsyncLogSink,
+    class SQLiteSink : public core::logging::Sink,
                        public core::logging::TabularData,
                        public core::logging::RotatingPath,
                        public core::types::enable_create_shared<SQLiteSink>
     {
         using This = SQLiteSink;
-        using Super = core::logging::AsyncLogSink;
+        using Super = core::logging::Sink;
 
     protected:
         SQLiteSink(const std::string &sink_id);
@@ -62,9 +63,9 @@ namespace multilogger
         void open_file(const core::dt::TimePoint &tp) override;
         void close_file() override;
 
-        void worker() override;
-        void capture_event(const core::status::Event::ptr &event) override;
-        void flush_events();
+        void worker();
+        bool handle_item(const core::types::Loggable::ptr &item) override;
+        void flush();
 
         void create_table();
         void create_placeholders();
@@ -73,12 +74,11 @@ namespace multilogger
         std::string table_name_;
         std::size_t batch_size_;
         core::dt::Duration batch_timeout_;
-
-    protected:
         core::db::SQLite3 db;
         std::string placeholders;
-        std::thread worker_thread;
+        std::thread worker_thread_;
         core::db::SQLite3::MultiRowData pending_rows;
+        core::types::BlockingQueue<core::types::Loggable::ptr> queue;
     };
 
     //--------------------------------------------------------------------------
@@ -86,7 +86,7 @@ namespace multilogger
 
     inline static core::logging::SinkFactory sqlite3_factory(
         "sqlite3",
-        "Log to a Sqlite3 database, capturing specific event fields per column",
+        "Log to a Sqlite3 database, capturing specific fields per column",
         [](const core::logging::SinkID &sink_id) -> core::logging::Sink::ptr
         {
             return SQLiteSink::create_shared(sink_id);

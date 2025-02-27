@@ -89,5 +89,5 @@ message Status
     StatusCode code = 1;
 
     /// Additional details for invalid/cancelled/failed requests
-    cc.status.Event details = 2;
+    cc.status.Error details = 2;
 };

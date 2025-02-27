@@ -47,8 +47,8 @@ void Options::on_monitor_start()
         core::status::Level::NONE);
 
     using namespace std::placeholders;
-    multilogger::signal_log_event.connect(this->signal_handle,
-                                     std::bind(&Options::on_log_event, this, _1));
+    multilogger::signal_log_item.connect(this->signal_handle,
+                                         std::bind(&Options::on_log_item, this, _1));
 
     this->provider->start_listening({
         .min_level = min_level,
@@ -58,18 +58,14 @@ void Options::on_monitor_start()
 void Options::on_monitor_end()
 {
     this->provider->stop_listening();
-    multilogger::signal_log_event.disconnect(this->signal_handle);
+    multilogger::signal_log_item.disconnect(this->signal_handle);
 }
 
-void Options::on_log_event(core::status::Event::ptr event)
+void Options::on_log_item(core::types::Loggable::ptr item)
 {
-    if (event)
+    if (item)
     {
-        std::cout << *event << std::endl;
-        // core::str::format(std::cout,
-        //                   "[%.0s] signal_log_event(%s)\n",
-        //                   core::dt::Clock::now(),
-        //                   *event);
+        std::cout << *item << std::endl;
     }
 }
 

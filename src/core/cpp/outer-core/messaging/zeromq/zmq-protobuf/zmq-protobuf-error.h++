@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "status/event.h++"
+#include "status/error.h++"
 
 #include "request_reply.pb.h"
 
@@ -14,16 +14,16 @@ namespace core::zmq
 {
     constexpr auto STATUS_FIELD_CODE = "status";
 
-    class ProtoBufError : public status::Event
+    class ProtoBufError : public status::Error
     {
         using This = ProtoBufError;
-        using Super = status::Event;
+        using Super = status::Error;
 
     public:
-        using status::Event::Event;
+        using status::Error::Event;
 
         ProtoBufError(const cc::rr::StatusCode &code,
-                      const core::status::Event &event);
+                      const core::status::Error &event);
 
         cc::rr::StatusCode status_code() const;
         status::Domain domain() const noexcept override;

@@ -30,7 +30,7 @@ namespace core::exception
         using Super = CustomException<Exc, Class>;
 
     public:
-        inline CustomException(const status::Event &event)
+        inline CustomException(const status::Error &event)
             : Exception<Exc>(
                   event,
                   TYPE_NAME_BASE(Class))
@@ -38,16 +38,16 @@ namespace core::exception
         }
 
         inline CustomException(std::errc code,
-                               const status::Event::Symbol &symbol,
+                               const status::Error::Symbol &symbol,
                                const std::string &text,
                                const types::KeyValueMap &attributes = {},
-                               status::Level level = status::Level::FAILED)
+                               status::Level level = status::Level::ERROR)
             : Exception<Exc>(
                   {
                       text,                                    // text
                       status::Domain::APPLICATION,             // domain
                       platform::path->exec_name(),             // origin
-                      static_cast<status::Event::Code>(code),  // code
+                      static_cast<status::Error::Code>(code),  // code
                       symbol,                                  // symbol
                       level,                                   // level
                       {},                                      // timepoint
@@ -244,7 +244,7 @@ namespace core::exception
         using Super = Exception<std::invalid_argument>;
 
     public:
-        InvocationError(const status::Event &event);
+        InvocationError(const status::Error &event);
 
         InvocationError(const std::string &source,
                         int exit_code,
@@ -284,7 +284,7 @@ namespace core::exception
         using Super = Exception<std::system_error>;
 
     public:
-        SystemError(const status::Event &event);
+        SystemError(const status::Error &event);
         SystemError(const std::system_error &e,
                     const std::optional<std::string> &preamble = {});
 
@@ -313,7 +313,7 @@ namespace core::exception
         PermissionDenied(const std::string &msg = "Permission denied",
                          const std::string &operation = "");
 
-        PermissionDenied(const status::Event &event);
+        PermissionDenied(const status::Error &event);
     };
 
     //==========================================================================
@@ -326,7 +326,7 @@ namespace core::exception
         using Super = Exception<fs::filesystem_error>;
 
     public:
-        FilesystemError(const status::Event &event);
+        FilesystemError(const status::Error &event);
 
         FilesystemError(const fs::filesystem_error &e);
 
@@ -368,7 +368,7 @@ namespace core::exception
                     const std::string &device,
                     Code code,
                     const std::string &id,
-                    status::Level level = status::Level::FAILED,
+                    status::Level level = status::Level::ERROR,
                     const dt::TimePoint &timepoint = {},
                     const types::KeyValueMap &attributes = {});
     };
@@ -389,7 +389,7 @@ namespace core::exception
                      const std::string &service,
                      Code code,
                      const std::string &id,
-                     status::Level level = status::Level::FAILED,
+                     status::Level level = status::Level::ERROR,
                      const dt::TimePoint &timepoint = {},
                      const types::KeyValueMap &attributes = {});
     };
@@ -397,8 +397,8 @@ namespace core::exception
     //==========================================================================
     // Map various exceptions to appropriate Event objects
 
-    status::Event::ptr map_to_event(const std::exception &e) noexcept;
-    status::Event::ptr map_to_event(std::exception_ptr eptr) noexcept;
+    status::Error::ptr map_to_event(const std::exception &e) noexcept;
+    status::Error::ptr map_to_event(std::exception_ptr eptr) noexcept;
 
 };  // namespace core::exception
 

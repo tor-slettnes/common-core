@@ -9,7 +9,7 @@
 ///  * `MessageBuilder()`, derived from `Message()` to construct a log entry
 ///     from `std::ostream` compatible elements (i.e. objects that support the
 ///     `<<` operator), optionally with an initial format string.
-///  * `LogSink()`, an abstract backend for backends that send the message
+///  * `MessageSink()`, an abstract backend for backends that send the message
 ///    to specific destination (log file, json file, syslog, etc).
 ///  * `LogDispatcher()` to distribute a message to applicable sinks.
 ///  * Wrapper macros @b log_message(), @b log_trace(), @b log_debug(), ...,
@@ -107,7 +107,7 @@
 #define log_info(...)     LOG_MESSAGE(core::status::Level::INFO, __VA_ARGS__)
 #define log_notice(...)   LOG_MESSAGE(core::status::Level::NOTICE, __VA_ARGS__)
 #define log_warning(...)  LOG_MESSAGE(core::status::Level::WARNING, __VA_ARGS__)
-#define log_error(...)    LOG_MESSAGE(core::status::Level::FAILED, __VA_ARGS__)
+#define log_error(...)    LOG_MESSAGE(core::status::Level::ERROR, __VA_ARGS__)
 #define log_critical(...) LOG_MESSAGE(core::status::Level::CRITICAL, __VA_ARGS__)
 #define log_fatal(...)    LOG_MESSAGE(core::status::Level::FATAL, __VA_ARGS__)
 
@@ -123,7 +123,7 @@
 #define logf_info(...)     LOGF_MESSAGE(core::status::Level::INFO, __VA_ARGS__)
 #define logf_notice(...)   LOGF_MESSAGE(core::status::Level::NOTICE, __VA_ARGS__)
 #define logf_warning(...)  LOGF_MESSAGE(core::status::Level::WARNING, __VA_ARGS__)
-#define logf_error(...)    LOGF_MESSAGE(core::status::Level::FAILED, __VA_ARGS__)
+#define logf_error(...)    LOGF_MESSAGE(core::status::Level::ERROR, __VA_ARGS__)
 #define logf_critical(...) LOGF_MESSAGE(core::status::Level::CRITICAL, __VA_ARGS__)
 #define logf_fatal(...)    LOGF_MESSAGE(core::status::Level::FATAL, __VA_ARGS__)
 

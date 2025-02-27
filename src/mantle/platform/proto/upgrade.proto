@@ -172,7 +172,7 @@ message UpgradeProgress
     ProgressFraction task_progress = 5;
     ProgressFraction total_progress = 6;
 
-    optional cc.status.Event error = 15;
+    optional cc.status.Error error = 15;
 }
 
 

@@ -11,7 +11,7 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-inline.h++"
 #include "platform/symbols.h++"
-#include "status/event.h++"
+#include "status/error.h++"
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
 
@@ -40,13 +40,13 @@ namespace core::grpc
     {
     }
 
-    Status::Status(const Event &event)
-        : Status(Status::code_from_event(event), event)
+    Status::Status(const Error &error)
+        : Status(This::code_from_error(error), error)
     {
     }
 
-    Status::Status(const cc::status::Event &details)
-        : Event(
+    Status::Status(const cc::status::Error &details)
+        : Error(
               details.text(),
               ::protobuf::decoded<status::Domain>(details.domain()),
               details.origin(),
@@ -54,11 +54,9 @@ namespace core::grpc
               details.symbol(),
               ::protobuf::decoded<status::Level>(details.level()),
               ::protobuf::decoded<dt::TimePoint>(details.timestamp()),
-              ::protobuf::decoded<types::KeyValueMap>(details.attributes()),
-              details.contract_id(),
-              details.host()),
+              ::protobuf::decoded<types::KeyValueMap>(details.attributes())),
           ::grpc::Status(
-              Status::code_from_event(*this),
+              This::code_from_error(*this),
               details.text(),
               details.SerializeAsString())
     {
@@ -66,8 +64,8 @@ namespace core::grpc
 
     Status::Status(::grpc::StatusCode status_code,
                    const std::string &text,
-                   const cc::status::Event &details)
-        : Event(
+                   const cc::status::Error &details)
+        : Error(
               text,
               ::protobuf::decoded<status::Domain>(details.domain()),
               details.origin(),
@@ -75,9 +73,7 @@ namespace core::grpc
               details.symbol(),
               ::protobuf::decoded<status::Level>(details.level()),
               ::protobuf::decoded<dt::TimePoint>(details.timestamp()),
-              ::protobuf::decoded<types::KeyValueMap>(details.attributes()),
-              details.contract_id(),
-              details.host()),
+              ::protobuf::decoded<types::KeyValueMap>(details.attributes())),
           ::grpc::Status(
               status_code,
               text,
@@ -86,18 +82,16 @@ namespace core::grpc
     }
 
     Status::Status(::grpc::StatusCode status_code,
-                   const Event &event)
+                   const Error &error)
         : Status(status_code,
-                 event.text(),
-                 event.domain(),
-                 event.origin(),
-                 event.code(),
-                 event.symbol(),
-                 event.level(),
-                 event.timepoint(),
-                 event.attributes(),
-                 event.contract_id(),
-                 event.host())
+                 error.text(),
+                 error.domain(),
+                 error.origin(),
+                 error.code(),
+                 error.symbol(),
+                 error.level(),
+                 error.timepoint(),
+                 error.attributes())
     {
     }
 
@@ -109,15 +103,13 @@ namespace core::grpc
                    const Symbol &symbol,
                    status::Level level,
                    const dt::TimePoint &timepoint,
-                   const types::KeyValueMap &attributes,
-                   const std::string &contract_id,
-                   const std::string &host)
-        : Event({}, domain, origin, code, symbol, level, timepoint, attributes, contract_id, host),
+                   const types::KeyValueMap &attributes)
+        : Error({}, domain, origin, code, symbol, level, timepoint, attributes),
           ::grpc::Status(
               status_code,
               text,
-              ::protobuf::encoded<cc::status::Event>(
-                  *static_cast<Event *>(this))
+              ::protobuf::encoded<cc::status::Error>(
+                  *static_cast<Error *>(this))
                   .SerializeAsString())
     {
     }
@@ -149,9 +141,9 @@ namespace core::grpc
         return this->error_message();
     }
 
-    cc::status::Event Status::details() const noexcept
+    cc::status::Error Status::details() const noexcept
     {
-        cc::status::Event msg;
+        cc::status::Error msg;
         msg.ParseFromString(this->error_details());
         return msg;
     };
@@ -168,7 +160,7 @@ namespace core::grpc
 
     std::vector<std::string> Status::status_fields() noexcept
     {
-        std::vector<std::string> fields = Event::event_fields();
+        std::vector<std::string> fields = Error::error_fields();
         fields.insert(fields.begin(), STATUS_FIELD_CODE);
         return fields;
     }
@@ -182,22 +174,22 @@ namespace core::grpc
         }
         else
         {
-            return Event::get_field_as_value(field_name);
+            return Super::get_field_as_value(field_name);
         }
     }
 
-    ::grpc::StatusCode Status::code_from_event(const status::Event &event) noexcept
+    ::grpc::StatusCode Status::code_from_error(const status::Error &error) noexcept
     {
-        switch (event.domain())
+        switch (error.domain())
         {
         case status::Domain::NONE:
-            return event.empty()
+            return error.empty()
                        ? ::grpc::StatusCode::OK
                        : ::grpc::StatusCode::UNKNOWN;
 
         case status::Domain::SYSTEM:
         case status::Domain::APPLICATION:
-            return Status::code_from_errno(event.code());
+            return Status::code_from_errno(error.code());
 
         case status::Domain::SERVICE:
         case status::Domain::DEVICE:
@@ -269,7 +261,7 @@ namespace core::grpc
     {
         if (!this->ok())
         {
-            Event::throw_if_error();
+            Super::throw_if_error();
         }
     }
 
@@ -281,7 +273,7 @@ namespace core::grpc
         }
         else
         {
-            return Event::as_exception_ptr();
+            return Super::as_exception_ptr();
         }
     }
 

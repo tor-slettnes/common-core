@@ -39,12 +39,12 @@ namespace multilogger::grpc
         }
     }
 
-    std::optional<core::status::Event::ptr> ClientListener::get()
+    std::optional<core::types::Loggable::ptr> ClientListener::get()
     {
-        cc::status::Event msg;
+        cc::multilogger::Loggable msg;
         if (this->reader_->Read(&msg))
         {
-            return protobuf::decoded<core::status::Event::ptr>(msg);
+            return protobuf::decode_loggable(msg, this->context().peer());
         }
         else
         {

@@ -27,7 +27,7 @@ namespace core::platform
     public:
         void open() override;
         void close() override;
-        void capture_event(const status::Event::ptr &event) override;
+        bool handle_message(const logging::Message::ptr &message) override;
         std::string application_id() const;
 
     private:

@@ -22,7 +22,7 @@ elseif(WIN32)
   target_link_libraries(${TARGET} PRIVATE dbghelp)
 endif()
 
-### C++17 required for variant data type, parameter packs, std::filesystem
+### C++17 required for variant data type, parameter packs, std::filesystem, ...
 target_compile_features(${TARGET} PUBLIC cxx_std_17)
 
 # Pull in sources from subdirectories

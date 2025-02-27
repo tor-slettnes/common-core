@@ -16,169 +16,77 @@ namespace protobuf
     //==========================================================================
     // core::status::Domain encoding to/decoding from cc::status::Domain
 
-    void encode(core::status::Domain domain, cc::status::Domain *encoded) noexcept
+    cc::status::Domain encoded(core::status::Domain domain) noexcept
     {
-        *encoded = static_cast<cc::status::Domain>(domain);
+        return static_cast<cc::status::Domain>(domain);
     }
 
-    void decode(cc::status::Domain domain, core::status::Domain *decoded) noexcept
+    core::status::Domain decoded(cc::status::Domain domain) noexcept
     {
-        *decoded = static_cast<core::status::Domain>(domain);
+        return static_cast<core::status::Domain>(domain);
+    }
+
+    void encode(core::status::Domain native, cc::status::Domain *proto) noexcept
+    {
+        *proto = encoded(native);
+    }
+
+    void decode(cc::status::Domain proto, core::status::Domain *native) noexcept
+    {
+        *native = decoded(proto);
     }
 
     //==========================================================================
     // core::status::Level encoding to/decoding from cc::status::Level
 
-    void encode(core::status::Level level, cc::status::Level *encoded) noexcept
+    cc::status::Level encoded(core::status::Level level) noexcept
     {
-        *encoded = static_cast<cc::status::Level>(level);
+        return static_cast<cc::status::Level>(level);
     }
 
-    void decode(cc::status::Level level, core::status::Level *decoded) noexcept
+    core::status::Level decoded(cc::status::Level level) noexcept
     {
-        *decoded = static_cast<core::status::Level>(level);
+        return static_cast<core::status::Level>(level);
+    }
+
+    void encode(core::status::Level native, cc::status::Level *proto) noexcept
+    {
+        *proto = encoded(native);
+    }
+
+    void decode(cc::status::Level proto, core::status::Level *native) noexcept
+    {
+        *native = decoded(proto);
     }
 
     //==========================================================================
-    // core::status::Event encoding to/decoding from cc::status::Event
+    // core::status::Error encoding to/decoding from cc::status::Error
 
-    void encode(const core::status::Event &native,
-                cc::status::Event *proto) noexcept
+    void encode(const core::status::Error &native,
+                cc::status::Error *proto) noexcept
     {
-        proto->set_text(native.text());
-        proto->set_domain(encoded<cc::status::Domain>(native.domain()));
+        proto->set_domain(encoded(native.domain()));
         proto->set_origin(native.origin());
+        proto->set_level(encoded(native.level()));
         proto->set_code(native.code());
         proto->set_symbol(native.symbol());
-        proto->set_level(encoded<cc::status::Level>(native.level()));
         encode(native.timepoint(), proto->mutable_timestamp());
         encode(native.attributes(), proto->mutable_attributes());
-        proto->set_contract_id(native.contract_id());
-        proto->set_host(native.host());
+        proto->set_text(native.text());
     }
 
-    void decode(const cc::status::Event &proto,
-                core::status::Event *native) noexcept
+    void decode(const cc::status::Error &proto,
+                core::status::Error *native) noexcept
     {
-        decode(proto, {}, native);
-    }
-
-    void decode(const cc::status::Event &proto,
-                const std::string &default_host,
-                core::status::Event *native) noexcept
-    {
-        std::string host =
-            !proto.host().empty()
-                ? proto.host()
-                : default_host;
-
-        *native = core::status::Event(
+        *native = core::status::Error(
             proto.text(),
-            decoded<core::status::Domain>(proto.domain()),
+            decoded(proto.domain()),
             proto.origin(),
             proto.code(),
             proto.symbol(),
-            decoded<core::status::Level>(proto.level()),
+            decoded(proto.level()),
             decoded<core::dt::TimePoint>(proto.timestamp()),
-            decoded<core::types::KeyValueMap>(proto.attributes()),
-            proto.contract_id(),
-            host);
+            decoded<core::types::KeyValueMap>(proto.attributes()));
     }
 
-    //==========================================================================
-    // core::logging::Message encoding to/decoding from cc::status::Event
-
-    void encode(const core::logging::Message &native,
-                cc::status::Event *proto) noexcept
-    {
-        encode(static_cast<const core::status::Event>(native), proto);
-        proto->set_thread_id(native.thread_id());
-        proto->set_log_scope(native.scopename());
-        proto->set_source_path(native.path());
-        proto->set_source_line(native.lineno());
-        proto->set_function_name(native.function());
-    }
-
-    void decode(const cc::status::Event &proto,
-                core::logging::Message *native) noexcept
-    {
-        decode(proto, {}, native);
-    }
-
-    void decode(const cc::status::Event &proto,
-                const std::string &default_host,
-                core::logging::Message *native) noexcept
-    {
-        core::status::Level level = decoded<core::status::Level>(proto.level());
-
-        core::logging::Scope::ptr scope =
-            !proto.log_scope().empty()
-                ? core::logging::Scope::create(proto.log_scope(), level)
-                : log_scope;
-
-        std::string contract_id =
-            !proto.contract_id().empty()
-                ? proto.contract_id()
-                : core::logging::MESSAGE_CONTRACT;
-
-        std::string host =
-            !proto.host().empty()
-                ? proto.host()
-                : default_host;
-
-        *native = core::logging::Message(
-            proto.text(),                                           // text
-            level,                                                  // level
-            scope,                                                  // scope
-            decoded<core::dt::TimePoint>(proto.timestamp()),        // tp
-            proto.source_path(),                                    // path
-            proto.source_line(),                                    // lineno
-            proto.function_name(),                                  // function
-            proto.thread_id(),                                      // thread_id
-            host,                                                   // host
-            proto.origin(),                                         // origin
-            decoded<core::status::Domain>(proto.domain()),          // domain
-            proto.code(),                                           // code
-            proto.symbol(),                                         // symbol
-            decoded<core::types::KeyValueMap>(proto.attributes()),  // attributes
-            contract_id);                                           // contract_id
-    }
-
-    //==========================================================================
-    // core::logging::Event::ptr encoding to/decoding from cc::status::Event
-
-    void encode(core::status::Event::ptr native_ptr, cc::status::Event *proto) noexcept
-    {
-        if (native_ptr)
-        {
-            if (auto message_ptr = std::dynamic_pointer_cast<core::logging::Message>(native_ptr))
-            {
-                encode(*message_ptr, proto);
-            }
-            else
-            {
-                encode(*native_ptr, proto);
-            }
-        }
-    }
-
-    void decode(const cc::status::Event &proto,
-                core::status::Event::ptr *native_ptr) noexcept
-    {
-        decode(proto, {}, native_ptr);
-    }
-
-    void decode(const cc::status::Event &proto,
-                const std::string &default_host,
-                core::status::Event::ptr *native_ptr) noexcept
-    {
-        if (!proto.text().empty())
-        {
-            *native_ptr = decode_shared<core::logging::Message>(proto);
-        }
-        else
-        {
-            *native_ptr = decode_shared<core::status::Event>(proto);
-        }
-    }
 }  // namespace protobuf

@@ -18,8 +18,8 @@ namespace core::status
         {Level::INFO, "INFO"},
         {Level::NOTICE, "NOTICE"},
         {Level::WARNING, "WARNING"},
-        {Level::FAILED, "FAILED"},
-        {Level::FAILED, "ERROR"},
+        {Level::ERROR, "ERROR"},
+        {Level::ERROR, "FAILED"},
         {Level::CRITICAL, "CRITICAL"},
         {Level::FATAL, "FATAL"},
     };

@@ -8,8 +8,7 @@
 #pragma once
 #include "platform/path.h++"
 #include "logging/sinks/factory.h++"
-#include "logging/sinks/logsink.h++"
-#include "logging/sinks/messageformatter.h++"
+#include "logging/sinks/messagesink.h++"
 #include "types/valuemap.h++"
 #include "types/create-shared.h++"
 
@@ -19,20 +18,16 @@
 
 namespace core::dds
 {
-    class RTIDistributedLogger : public core::logging::LogSink,
-                                 public core::logging::MessageFormatter,
+    class RTIDistributedLogger : public core::logging::MessageSink,
                                  public core::types::enable_create_shared<RTIDistributedLogger>
     {
         using This = RTIDistributedLogger;
-        using Super = core::logging::LogSink;
+        using Super = core::logging::MessageSink;
 
     protected:
         RTIDistributedLogger(const std::string &sink_id,
                              const std::string &application_id = core::platform::path->exec_name(),
                              int domain_id = 0);
-
-    protected:
-        void load_settings(const types::KeyValueMap &settings) override;
 
     public:
         void set_threshold(core::status::Level threshold) override;
@@ -40,7 +35,7 @@ namespace core::dds
     protected:
         void open() override;
         void close() override;
-        void capture_event(const core::status::Event::ptr &event) override;
+        bool handle_message(const core::logging::Message::ptr &message) override;
 
     private:
         static const core::types::ValueMap<core::status::Level, DDS_Long> levelmap;

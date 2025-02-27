@@ -7,21 +7,13 @@
 
 #pragma once
 #include "scope.h++"
-#include "status/event.h++"
+#include "types/loggable.h++"
 #include "platform/host.h++"
 #include "types/platform.h++"  // pid_t, ssize_t
 #include "types/filesystem.h++"
 
 namespace core::logging
 {
-    constexpr auto MESSAGE_FIELD_LOG_SCOPE = "log_scope";
-    constexpr auto MESSAGE_FIELD_SOURCE_PATH = "source_path";
-    constexpr auto MESSAGE_FIELD_SOURCE_LINE = "source_line";
-    constexpr auto MESSAGE_FIELD_FUNCTION_NAME = "function_name";
-    constexpr auto MESSAGE_FIELD_THREAD_ID = "thread_id";
-
-    constexpr auto MESSAGE_CONTRACT = "text";
-
     //==========================================================================
     /// @class Message
     /// @brief Message data object, passed on to log sinks; see log().
@@ -39,16 +31,26 @@ namespace core::logging
     public:
         using ptr = std::shared_ptr<Message>;
 
+        inline static const std::string FIELD_HOST = "host";
+        inline static const std::string FIELD_LOG_SCOPE = "log_scope";
+        inline static const std::string FIELD_SOURCE_PATH = "source_path";
+        inline static const std::string FIELD_SOURCE_LINE = "source_line";
+        inline static const std::string FIELD_FUNCTION_NAME = "function_name";
+        inline static const std::string FIELD_THREAD_ID = "thread_id";
+        inline static const std::string FIELD_THREAD_NAME = "thread_name";
+        inline static const std::string FIELD_TASK_NAME = "task_name";
+        inline static const std::string CONTRACT = "text";
+
     public:
         /// @brief
         ///     Constructor.
         /// @param[in] text
         ///     Human readable text.
-        /// @param[in] scope
-        ///     Logging scope.
         /// @param[in] level
         ///     Severity level. Message will only be logged if its level is
         ///     equal to or higher than the threshold of the specified scope.
+        /// @param[in] scope
+        ///     Logging scope.
         /// @param[in] tp
         ///     Time point for the published message, if not now.
         /// @param[in] path
@@ -58,21 +60,17 @@ namespace core::logging
         /// @param[in] function
         ///     The function name in which the message originated.
         /// @param[in] thread_id
-        ///     Thread ID where where the message was generated
-        /// @param[in] origin
-        ///     Originator entity, e.g. executable name
-        /// @param[in] domain
-        ///     Event domain, normally `status::Domain::APPLICATION` for log messages.
-        /// @param[in] code
-        ///     Numeric event code, unique within origin
-        /// @param[in] symbol
-        ///     Symbolic event code, unique within origin
-        /// @param[in] attributes
-        ///     Key/value pairs associated with message
-        /// @param[in] contract_id
-        ///     Log contract
+        ///     Numeric ID of the originating thread
+        /// @param[in] thread_name
+        ///     Name of the originating thread, if any.
+        /// @param[in] task_name
+        ///     Name of the originating task, if any.
         /// @param[in] host
         ///     Reporting host
+        /// @param[in] origin
+        ///     Originator entity, e.g. executable name
+        /// @param[in] attributes
+        ///     Key/value pairs associated with message
 
         Message(const std::string &text = "",
                 status::Level level = status::Level::NONE,
@@ -82,33 +80,40 @@ namespace core::logging
                 uint lineno = 0,
                 const std::string &function = {},
                 pid_t thread_id = 0,
+                const std::string &thread_name = {},
+                const std::string &task_name = {},
                 const std::string &host = {},
                 const std::string &origin = {},
-                status::Domain domain = status::Domain::APPLICATION,
-                Code code = 0,
-                const Symbol &symbol = {},
-                const types::KeyValueMap &attributes = {},
-                const ContractID &contract_id = MESSAGE_CONTRACT);
+                const types::KeyValueMap &attributes = {});
 
         // Copy constructor to ensure we obtain values from derived classes
         Message(const Message &other);
 
         Message &operator=(Message &&other) noexcept;
         Message &operator=(const Message &other) noexcept;
-
-        std::string class_name() const noexcept override;
-        // void to_stream(std::ostream &stream) const override;
+        bool operator==(const Message &other) const noexcept;
 
         /// Will this message be accepted by at least one available sink?
         virtual bool is_applicable() const noexcept;
+
+        std::string contract_id() const noexcept override;
+
         virtual Scope::ptr scope() const noexcept;
         virtual std::string scopename_or(const std::string &fallback) const noexcept;
         virtual std::string scopename() const noexcept;
+
         virtual const fs::path &path() const noexcept;
         virtual uint lineno() const noexcept;
         virtual const std::string &function() const noexcept;
         virtual pid_t thread_id() const noexcept;
+        virtual std::string thread_name() const noexcept;
+        virtual std::string task_name() const noexcept;
+        virtual std::string host() const noexcept;
 
+    protected:
+        std::string class_name() const noexcept override;
+
+    public:
         static std::vector<std::string> message_fields() noexcept;
         std::vector<std::string> field_names() const noexcept override;
         types::Value get_field_as_value(const std::string &field_name) const override;
@@ -119,6 +124,9 @@ namespace core::logging
         uint lineno_ = 0;
         std::string function_;
         pid_t thread_id_ = 0;
+        std::string thread_name_;
+        std::string task_name_;
+        std::string host_;
     };
 
 }  // namespace core::logging

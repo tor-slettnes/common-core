@@ -6,11 +6,43 @@
 //==============================================================================
 
 #pragma once
-#include "multilogger-types.h++"
 #include "multilogger.pb.h"
+#include "multilogger-types.h++"
+#include "logging/telemetry/data.h++"
+#include "logging/message/message.h++"
+#include "protobuf-event-types.h++"
 
 namespace protobuf
 {
+    //==========================================================================
+    // Loggable
+
+    void encode(const core::types::Loggable &native,
+                cc::multilogger::Loggable *proto) noexcept;
+
+    core::types::Loggable::ptr decode_loggable(
+        const cc::multilogger::Loggable &proto,
+        const std::string &default_host) noexcept;
+
+    //==========================================================================
+    // Data
+
+    void encode(const core::logging::Data &native,
+                cc::multilogger::Data *proto) noexcept;
+
+    void decode(const cc::multilogger::Data &proto,
+                core::logging::Data *native) noexcept;
+
+    //==========================================================================
+    // Message
+
+    void encode(const core::logging::Message &native,
+                cc::multilogger::Message *proto) noexcept;
+
+    void decode(const cc::multilogger::Message &proto,
+                const std::string &default_host,
+                core::logging::Message *native) noexcept;
+
     //==========================================================================
     // SinkID
 
@@ -46,6 +78,5 @@ namespace protobuf
 
     void encode(const multilogger::ListenerSpec &native, cc::multilogger::ListenerSpec *proto);
     void decode(const cc::multilogger::ListenerSpec &proto, multilogger::ListenerSpec *native);
-
 
 }  // namespace protobuf

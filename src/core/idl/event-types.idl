@@ -25,8 +25,8 @@ module CC
             APPLICATION, // Event from application, name indicated in "origin"
             SYSTEM,      // OS errors, origin indicates code space
             PROCESS,     // Process signals (see "kill -l")
-            DEVICE,  // Event from a device, name indicated in "origin"
-            TELEMETRY    // Parseable data, identified by contract ID or tag.
+            DEVICE,      // Event from a device, name indicated in "origin"
+            SERVICE      // Event from a well-known service (e.g. HTTP)
         };
 
         enum Level
@@ -48,16 +48,50 @@ module CC
         //======================================================================
         // Details pertaining to an generic event
 
-        struct Event
+        struct Loggable
+        {
+            // Time of occurence
+            Common::Timestamp timestamp;
+
+            // Tag/value pairs indicating custom attributes
+            Variant::TaggedValueList attributes;
+        };
+
+        //======================================================================
+        // Details pertaining to telemetry
+
+        struct Telemetry : Loggable
+        {
+            // Contract ID if available, otherwise 0
+            int64 contract_id;
+
+            // Tag to identify telemetry type
+            string contract_name;
+        };
+
+
+        //======================================================================
+        // Details pertaining to events
+
+        struct Event : Loggable
         {
             // Event description
             Description text;
 
-            // One of the error domains listed below.
-            Domain domain;
+            // Log level
+            Level level;
 
             // Domain specific origin, e.g. OS type, application name, device, ...
             OriginName origin;
+        };
+
+        //======================================================================
+        // Details pertaining to Error events
+
+        struct Error : Event
+        {
+            // One of the error domains listed below.
+            Domain domain;
 
             // Origin specific code (e.g. UNIX errno, device specific, etc)
             int64 code;
@@ -65,30 +99,6 @@ module CC
             // Source specific symbol name.
             // This is normally unique within each domain, regardless of origin.
             string symbol;
-
-            // Log level
-            Level level;
-
-            // Time of occurence
-            Common::Timestamp timestamp;
-
-            // Tag/value pairs indicating custom attributes
-            Variant::TaggedValueList attributes;
-
-            // Reporting hostname. Used for remote loging.
-            string host;
-        };
-
-        //======================================================================
-        // Details pertaining to telemetry
-
-        struct Telemetry : Event
-        {
-            // Contract ID if available, otherwise 0
-            int64 id;
-
-            // Tag to identify telemetry type
-            string type;
         };
 
         //======================================================================
@@ -96,6 +106,9 @@ module CC
 
         struct LogMessage : Event
         {
+            // Reporting hostname. Used for remote loging.
+            string host;
+
             // Log scope, e.g. 'global', 'shared', 'switch', ...
             string log_scope;
 
@@ -110,7 +123,14 @@ module CC
 
             // Thread ID
             uint64 thread_id;
+
+            // Thread name
+            string thread_name;
+
+            // Task name
+            string task_name;
         };
+
     };
 };
 #endif

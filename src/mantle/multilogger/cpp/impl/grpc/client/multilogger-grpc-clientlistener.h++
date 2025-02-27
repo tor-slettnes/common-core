@@ -18,7 +18,7 @@ namespace multilogger::grpc
     //--------------------------------------------------------------------------
     // ClientListener
 
-    class ClientListener : public EventSource,
+    class ClientListener : public LogSource,
                            public core::types::enable_create_shared<ClientListener>
     {
     protected:
@@ -30,13 +30,13 @@ namespace multilogger::grpc
 
     public:
         void close() override;
-        std::optional<core::status::Event::ptr> get() override;
+        std::optional<core::types::Loggable::ptr> get() override;
 
     protected:
         ::grpc::ClientContext& context();
 
     private:
         ::grpc::ClientContext context_;
-        std::unique_ptr<::grpc::ClientReader<::cc::status::Event>> reader_;
+        std::unique_ptr<::grpc::ClientReader<::cc::multilogger::Loggable>> reader_;
     };
 }  // namespace multilogger::grpc

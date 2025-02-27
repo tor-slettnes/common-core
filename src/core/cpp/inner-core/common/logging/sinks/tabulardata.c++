@@ -7,7 +7,8 @@
 
 #include "tabulardata.h++"
 #include "types/symbolmap.h++"
-#include "../message/message.h++"
+#include "status/event.h++"
+#include "status/level.h++"
 
 namespace core::logging
 {
@@ -23,19 +24,19 @@ namespace core::logging
 
     std::ostream &operator<<(std::ostream &stream, const ColumnSpec &spec)
     {
-        if (spec.column_name && (spec.column_name.value() != spec.event_field))
+        if (spec.column_name && (spec.column_name.value() != spec.field_name))
         {
             stream << spec.column_name.value()
                    << "=";
         }
-        stream << spec.event_field;
+        stream << spec.field_name;
         return stream;
     }
 
     types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
                                        const ColumnSpec &spec)
     {
-        tvlist.append("event_field", spec.event_field);
+        tvlist.append("field_name", spec.field_name);
         tvlist.append_if_value("column_name", spec.column_name);
         tvlist.append("column_type", column_type_names.to_string(spec.column_type));
 
@@ -59,23 +60,6 @@ namespace core::logging
     TabularData::TabularData(const ColumnSpecs &columns)
         : columns_(columns)
     {
-    }
-
-    ColumnSpecs TabularData::default_columns()
-    {
-        std::vector<std::string> field_names = Message::message_fields();
-
-        ColumnSpecs specs;
-        specs.reserve(field_names.size());
-        for (const std::string &field_name : field_names)
-        {
-            specs.push_back({
-                .event_field = field_name,
-                .column_name = str::toupper(field_name),
-                .column_type = types::ValueType::STRING,
-            });
-        }
-        return specs;
     }
 
     void TabularData::load_level_map(const core::types::KeyValueMap &settings)
@@ -136,7 +120,7 @@ namespace core::logging
         names.reserve(this->columns().size());
         for (const ColumnSpec &spec : this->columns())
         {
-            names.push_back(spec.column_name.value_or(spec.event_field));
+            names.push_back(spec.column_name.value_or(spec.field_name));
         }
         return names;
     }
@@ -147,7 +131,7 @@ namespace core::logging
         if (const core::types::ValueListPtr colspec = column_data.get_valuelist())
         {
             return ColumnSpec({
-                .event_field = colspec->get(0).as_string(),
+                .field_name = colspec->get(0).as_string(),
                 .column_name = colspec->try_get_as<std::string>(1),
                 .column_type = column_type_names.from_string(
                     colspec->get(2).to_string(),
@@ -157,7 +141,7 @@ namespace core::logging
         else if (column_data.is_string())
         {
             return ColumnSpec({
-                .event_field = column_data.as_string(),
+                .field_name = column_data.as_string(),
                 .column_type = core::types::ValueType::STRING,
             });
         }
@@ -167,36 +151,38 @@ namespace core::logging
         }
     }
 
-    types::ValueList TabularData::row_data(status::Event::ptr event,
+    types::ValueList TabularData::row_data(types::Loggable::ptr item,
                                            bool use_local_time) const
     {
         types::ValueList row;
         for (const core::logging::ColumnSpec &spec : this->columns())
         {
-            row.push_back(this->column_data(spec, event, use_local_time));
+            row.push_back(this->column_data(spec, item, use_local_time));
         }
         return row;
     }
 
     types::Value TabularData::column_data(const logging::ColumnSpec &spec,
-                                          status::Event::ptr event,
+                                          types::Loggable::ptr item,
                                           bool use_local_time) const
     {
-        if (spec.event_field == status::EVENT_FIELD_TIME)
+        if (spec.field_name == types::Loggable::FIELD_TIME)
         {
-            return this->time_value(event->timepoint(),
+            return this->time_value(item->timepoint(),
                                     spec.column_type,
                                     use_local_time);
         }
-        else if (spec.event_field == status::EVENT_FIELD_LEVEL)
+
+        else if (spec.field_name == status::Event::FIELD_LEVEL)
         {
-            return this->level_value(event->level(),
-                                     spec.column_type);
+            if (auto event = std::dynamic_pointer_cast<status::Event>(item))
+            {
+                return this->level_value(event->level(),
+                                         spec.column_type);
+            }
         }
-        else
-        {
-            return event->get_field_as_value(spec.event_field);
-        }
+
+        return item->get_field_as_value(spec.field_name);
     }
 
     types::Value TabularData::time_value(const dt::TimePoint &tp,

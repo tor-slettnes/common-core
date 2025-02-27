@@ -27,18 +27,18 @@ namespace multilogger::grpc
     public:
         ::grpc::Status submit(
             ::grpc::ServerContext* context,
-            const ::cc::status::Event* request,
+            const ::cc::multilogger::Loggable* request,
             ::google::protobuf::Empty* response) override;
 
         ::grpc::Status writer(
             ::grpc::ServerContext* context,
-            ::grpc::ServerReader<::cc::status::Event>* reader,
+            ::grpc::ServerReader<::cc::multilogger::Loggable>* reader,
             ::google::protobuf::Empty* response) override;
 
         ::grpc::Status listen(
             ::grpc::ServerContext* context,
             const ::cc::multilogger::ListenerSpec* request,
-            ::grpc::ServerWriter<::cc::status::Event>* writer) override;
+            ::grpc::ServerWriter<::cc::multilogger::Loggable>* writer) override;
 
         ::grpc::Status add_sink(
             ::grpc::ServerContext* context,
@@ -70,7 +70,12 @@ namespace multilogger::grpc
             const ::google::protobuf::Empty* request,
             ::cc::multilogger::SinkTypes* response) override;
 
-        ::grpc::Status list_static_fields(
+        ::grpc::Status list_message_fields(
+            ::grpc::ServerContext* context,
+            const ::google::protobuf::Empty* request,
+            ::cc::multilogger::FieldNames* response) override;
+
+        ::grpc::Status list_error_fields(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::multilogger::FieldNames* response) override;

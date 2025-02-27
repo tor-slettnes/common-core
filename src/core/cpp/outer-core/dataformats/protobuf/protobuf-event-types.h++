@@ -7,8 +7,7 @@
 
 #pragma once
 #include "status.pb.h"  // generated from `status.proto`
-#include "status/event.h++"
-#include "logging/message/message.h++"
+#include "status/error.h++"
 
 /// ProtoBuf message conversions.
 ///
@@ -21,58 +20,28 @@ namespace protobuf
     //==========================================================================
     // status::Domain encoding to/decoding from cc::status::Domain
 
-    void encode(core::status::Domain domain,
-                cc::status::Domain *encoded) noexcept;
+    cc::status::Domain encoded(core::status::Domain domain) noexcept;
+    core::status::Domain decoded(cc::status::Domain domain) noexcept;
 
-    void decode(cc::status::Domain domain,
-                core::status::Domain *decoded) noexcept;
+    void encode(core::status::Domain native, cc::status::Domain *proto) noexcept;
+    void decode(cc::status::Domain proto, core::status::Domain *native) noexcept;
 
     //==========================================================================
     // core::status::Level encoding to/decoding from cc::status::Level
 
-    void encode(core::status::Level level,
-                cc::status::Level *encoded) noexcept;
+    cc::status::Level encoded(core::status::Level level) noexcept;
+    core::status::Level decoded(cc::status::Level level) noexcept;
 
-    void decode(cc::status::Level level,
-                core::status::Level *decoded) noexcept;
-
-    //==========================================================================
-    // core::status::Event encoding to/decoding from cc::status::Event
-
-    void encode(const core::status::Event &native,
-                cc::status::Event *proto) noexcept;
-
-    void decode(const cc::status::Event &proto,
-                core::status::Event *native) noexcept;
-
-    void decode(const cc::status::Event &proto,
-                const std::string &default_host,
-                core::status::Event *native) noexcept;
+    void encode(core::status::Level native, cc::status::Level *proto) noexcept;
+    void decode(cc::status::Level proto, core::status::Level *native) noexcept;
 
     //==========================================================================
-    // core::logging::Message encoding to/decoding from cc::status::Event
+    // core::status::Error encoding to/decoding from cc::status::Error
 
-    void encode(const core::logging::Message &native,
-                cc::status::Event *proto) noexcept;
+    void encode(const core::status::Error &native,
+                cc::status::Error *proto) noexcept;
 
-    void decode(const cc::status::Event &proto,
-                core::logging::Message *native) noexcept;
-
-    void decode(const cc::status::Event &proto,
-                const std::string &default_host,
-                core::logging::Message *native) noexcept;
-
-    //==========================================================================
-    // core::logging::Event::ptr encoding to/decoding from cc::status::Event
-
-    void encode(core::status::Event::ptr native_ptr,
-                cc::status::Event *proto) noexcept;
-
-    void decode(const cc::status::Event &proto,
-                core::status::Event::ptr *native_ptr) noexcept;
-
-    void decode(const cc::status::Event &proto,
-                const std::string &default_host,
-                core::status::Event::ptr *native_ptr) noexcept;
+    void decode(const cc::status::Error &proto,
+                core::status::Error *native) noexcept;
 
 }  // namespace protobuf

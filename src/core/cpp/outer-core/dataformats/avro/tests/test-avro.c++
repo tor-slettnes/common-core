@@ -39,7 +39,7 @@ namespace avro
 
     TEST(AvroTest, ProtoBufEventToJsonSchema)
     {
-        SchemaWrapper wrapper = schema_from_proto(cc::status::Event::GetDescriptor());
+        SchemaWrapper wrapper = schema_from_proto(cc::status::Error::GetDescriptor());
         // std::string json = wrapper.as_json();
         std::string json = core::json::writer.encoded(wrapper, true);
         auto of1 = std::ofstream("event.json");
@@ -89,7 +89,7 @@ namespace avro
         core::dt::TimePoint tp_value = tp - std::chrono::hours(24);
         double real_value = pi;
 
-        core::status::Event event(
+        core::status::Error event(
             text,                               // text
             core::status::Domain::APPLICATION,  // domain
             origin,                             // origin
@@ -105,7 +105,7 @@ namespace avro
                 {"my_duration", dur_value},
             });
 
-        cc::status::Event msg;
+        cc::status::Error msg;
         protobuf::encode(event, &msg);
         avro::ProtoBufValue avro_wrapper(msg);
 

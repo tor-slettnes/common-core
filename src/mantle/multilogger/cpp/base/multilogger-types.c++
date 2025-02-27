@@ -15,7 +15,15 @@ namespace multilogger
         core::types::TaggedValueList tvlist;
         tvlist.emplace_back("sink_id", spec.sink_id);
         tvlist.emplace_back("sink_type", spec.sink_type);
-        tvlist.emplace_back("permanent", spec.permanent);
+        // tvlist.emplace_back("permanent", spec.permanent);
+
+        tvlist.append_if(spec.contract_id.has_value(),
+                         "contract_id",
+                         spec.contract_id.value_or(""));
+
+        tvlist.append_if(spec.min_level != core::status::Level::NONE,
+                         "min_level",
+                         core::str::convert_from(spec.min_level));
 
         tvlist.append_if(!spec.filename_template.empty(),
                          "filename_template",
@@ -28,13 +36,12 @@ namespace multilogger
         tvlist.emplace_back("use_local_time",
                             spec.use_local_time);
 
-        tvlist.append_if(spec.min_level != core::status::Level::NONE,
-                         "min_level",
-                         core::str::convert_from(spec.min_level));
+        tvlist.emplace_back("compress_after_use",
+                            spec.compress_after_use);
 
-        tvlist.append_if(spec.contract_id.has_value(),
-                         "contract_id",
-                         spec.contract_id.value_or(""));
+        tvlist.append_if(spec.expiration_interval,
+                         "expiration_interval",
+                         spec.expiration_interval);
 
         if (!spec.columns.empty())
         {

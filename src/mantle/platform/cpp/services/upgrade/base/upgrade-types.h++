@@ -152,7 +152,7 @@ namespace platform::upgrade
         std::string task_description;
         Fraction task_progress;
         Fraction total_progress;
-        core::status::Event::ptr error;
+        core::status::Error::ptr error;
     };
 
     static std::ostream &operator<<(std::ostream &stream,

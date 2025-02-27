@@ -20,13 +20,14 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::submit(
         ::grpc::ServerContext* context,
-        const ::cc::status::Event* request,
+        const ::cc::multilogger::Loggable* request,
         ::google::protobuf::Empty* response)
     {
         try
         {
-            this->provider->submit(protobuf::decoded<core::status::Event::ptr>(
-                *request, context->peer()));
+            this->provider->submit(protobuf::decode_loggable(
+                *request,
+                context->peer()));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -37,16 +38,17 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::writer(
         ::grpc::ServerContext* context,
-        ::grpc::ServerReader<::cc::status::Event>* reader,
+        ::grpc::ServerReader<::cc::multilogger::Loggable>* reader,
         ::google::protobuf::Empty* response)
     {
         try
         {
-            ::cc::status::Event event;
-            while (reader->Read(&event))
+            ::cc::multilogger::Loggable loggable;
+            while (reader->Read(&loggable))
             {
-                this->provider->submit(protobuf::decoded<core::status::Event::ptr>(
-                    event, context->peer()));
+                this->provider->submit(protobuf::decode_loggable(
+                    loggable,
+                    context->peer()));
             }
             return ::grpc::Status::OK;
         }
@@ -59,7 +61,7 @@ namespace multilogger::grpc
     ::grpc::Status RequestHandler::listen(
         ::grpc::ServerContext* context,
         const ::cc::multilogger::ListenerSpec* request,
-        ::grpc::ServerWriter<::cc::status::Event>* writer)
+        ::grpc::ServerWriter<::cc::multilogger::Loggable>* writer)
     {
         try
         {
@@ -70,14 +72,14 @@ namespace multilogger::grpc
             }
 
             auto listener = this->provider->listen(spec);
-            while (std::optional<core::status::Event::ptr> event = listener->get())
+            while (std::optional<core::types::Loggable::ptr> loggable = listener->get())
             {
                 if (context->IsCancelled())
                 {
                     break;
                 }
 
-                writer->Write(protobuf::encoded<cc::status::Event>(event.value()));
+                writer->Write(protobuf::encode_shared<cc::multilogger::Loggable>(loggable.value()));
             }
 
             listener->close();
@@ -206,7 +208,7 @@ namespace multilogger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::list_static_fields(
+    ::grpc::Status RequestHandler::list_message_fields(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::multilogger::FieldNames* response)
@@ -214,7 +216,26 @@ namespace multilogger::grpc
         try
         {
             protobuf::assign_repeated(
-                this->provider->list_static_fields(),
+                this->provider->list_message_fields(),
+                response->mutable_field_names());
+
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
+    }
+
+    ::grpc::Status RequestHandler::list_error_fields(
+        ::grpc::ServerContext* context,
+        const ::google::protobuf::Empty* request,
+        ::cc::multilogger::FieldNames* response)
+    {
+        try
+        {
+            protobuf::assign_repeated(
+                this->provider->list_error_fields(),
                 response->mutable_field_names());
 
             return ::grpc::Status::OK;

@@ -195,7 +195,7 @@ namespace core::exception
     //==========================================================================
     // InvocationError
 
-    InvocationError::InvocationError(const status::Event &event)
+    InvocationError::InvocationError(const status::Error &event)
         : Super(event,
                 std::invalid_argument(event.text()),
                 TYPE_NAME_BASE(This))
@@ -206,13 +206,13 @@ namespace core::exception
                                      int exit_code,
                                      const std::string &symbol,
                                      const std::string &text)
-        : Super(status::Event(
+        : Super(status::Error(
                     text,
                     status::Domain::PROCESS,
                     source,
                     exit_code,
                     symbol,
-                    status::Level::FAILED),
+                    status::Level::ERROR),
                 std::invalid_argument(text),
                 TYPE_NAME_BASE(This))
     {
@@ -253,7 +253,7 @@ namespace core::exception
     //==========================================================================
     // SystemError
 
-    SystemError::SystemError(const status::Event &event)
+    SystemError::SystemError(const status::Error &event)
         : Super(event,
                 std::system_error(
                     std::error_code(event.code(), std::generic_category()),
@@ -264,14 +264,14 @@ namespace core::exception
 
     SystemError::SystemError(const std::system_error &e,
                              const std::optional<std::string> &preamble)
-        : Super(status::Event(
+        : Super(status::Error(
                     preamble ? preamble.value() + ": " + e.what()
                              : e.what(),         // text
                     status::Domain::SYSTEM,      // domain
                     e.code().category().name(),  // origin
                     e.code().value(),            // code
                     {},                          // id
-                    status::Level::FAILED,       // level
+                    status::Level::ERROR,       // level
                     {},                          // timepoint
                     {}),                         // attributes
                 std::system_error(e),
@@ -315,7 +315,7 @@ namespace core::exception
     //==========================================================================
     // PermissionDenied
 
-    PermissionDenied::PermissionDenied(const status::Event &event)
+    PermissionDenied::PermissionDenied(const status::Error &event)
         : Super(event,
                 std::make_error_code(std::errc::permission_denied),
                 TYPE_NAME_BASE(This))
@@ -324,13 +324,13 @@ namespace core::exception
 
     PermissionDenied::PermissionDenied(const std::string &msg,
                                        const std::string &operation)
-        : Super(status::Event(
+        : Super(status::Error(
                     msg,                          // text
                     status::Domain::SYSTEM,       // domain
                     platform::path->exec_name(),  // origin
                     EPERM,                        // code
                     TYPE_NAME_BASE(This),         // symbol
-                    status::Level::FAILED,        // level
+                    status::Level::ERROR,        // level
                     {},                           // timepoint
                     {{"operation", operation}}),  // attributes
                 std::make_error_code(std::errc::permission_denied),
@@ -341,7 +341,7 @@ namespace core::exception
     //==========================================================================
     // FileSystemError
 
-    FilesystemError::FilesystemError(const status::Event &event)
+    FilesystemError::FilesystemError(const status::Error &event)
         : Super(event,
                 fs::filesystem_error(
                     event.text(),
@@ -354,13 +354,13 @@ namespace core::exception
     }
 
     FilesystemError::FilesystemError(const fs::filesystem_error &e)
-        : Super(status::Event(
+        : Super(status::Error(
                     e.what(),                    // text
                     status::Domain::SYSTEM,      // domain
                     e.code().category().name(),  // origin
                     e.code().value(),            // code
                     TYPE_NAME_BASE(This),        // id
-                    status::Level::FAILED,       // level
+                    status::Level::ERROR,       // level
                     {},                          // timepoint
                     {
                         {"path1", types::Value(e.path1().string())},
@@ -425,7 +425,7 @@ namespace core::exception
                              status::Level level,
                              const dt::TimePoint &dt,
                              const types::KeyValueMap &attributes)
-        : Super(status::Event(
+        : Super(status::Error(
                     text,                    // text
                     status::Domain::DEVICE,  // domain
                     device,                  // origin
@@ -449,7 +449,7 @@ namespace core::exception
                                status::Level level,
                                const dt::TimePoint &dt,
                                const types::KeyValueMap &attributes)
-        : Super(status::Event(
+        : Super(status::Error(
                     text,                     // text
                     status::Domain::SERVICE,  // domain
                     service,                  // origin
@@ -466,11 +466,11 @@ namespace core::exception
     //==========================================================================
     // Error mapping methods
 
-    status::Event::ptr map_to_event(const std::exception &e) noexcept
+    status::Error::ptr map_to_event(const std::exception &e) noexcept
     {
-        if (auto *ep = dynamic_cast<const status::Event *>(&e))
+        if (auto *ep = dynamic_cast<const status::Error *>(&e))
         {
-            return std::make_shared<status::Event>(*ep);
+            return std::make_shared<status::Error>(*ep);
         }
         else if (auto *ep = dynamic_cast<const fs::filesystem_error *>(&e))
         {
@@ -502,7 +502,7 @@ namespace core::exception
         }
     }
 
-    status::Event::ptr map_to_event(std::exception_ptr eptr) noexcept
+    status::Error::ptr map_to_event(std::exception_ptr eptr) noexcept
     {
         if (eptr)
         {
@@ -516,13 +516,13 @@ namespace core::exception
             }
             catch (...)
             {
-                return std::make_shared<status::Event>(
+                return std::make_shared<status::Error>(
                     "Non-standard error",         // text
                     status::Domain::APPLICATION,  // domain
                     platform::path->exec_name(),  // origin
                     0,                            // code
                     "UNKNOWN",                    // symbol
-                    status::Level::FAILED);       // level
+                    status::Level::ERROR);       // level
             }
         }
         else
@@ -537,7 +537,7 @@ namespace std
     /// Define output stream operator "<<" on std::exception and derivatives.
     std::ostream &operator<<(std::ostream &stream, const exception &e)
     {
-        if (auto *ep = dynamic_cast<const core::status::Event *>(&e))
+        if (auto *ep = dynamic_cast<const core::status::Error *>(&e))
         {
             ep->to_stream(stream);
         }
@@ -556,7 +556,7 @@ namespace std
             {
                 std::rethrow_exception(eptr);
             }
-            catch (const core::status::Event &event)
+            catch (const core::status::Error &event)
             {
                 event.to_stream(stream);
             }

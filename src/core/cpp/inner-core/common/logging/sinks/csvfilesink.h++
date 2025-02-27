@@ -6,11 +6,10 @@
 //==============================================================================
 
 #pragma once
-#include "asynclogsink.h++"
+#include "sink.h++"
 #include "tabulardata.h++"
 #include "rotatingpath.h++"
 #include "factory.h++"
-#include "messageformatter.h++"
 #include "types/filesystem.h++"
 #include "types/create-shared.h++"
 
@@ -26,13 +25,13 @@ namespace core::logging
     //--------------------------------------------------------------------------
     // CSVFileSink
 
-    class CSVFileSink : public AsyncLogSink,
+    class CSVFileSink : public Sink,
                         public TabularData,
                         public RotatingPath,
                         public types::enable_create_shared<CSVFileSink>
     {
         using This = CSVFileSink;
-        using Super = AsyncLogSink;
+        using Super = Sink;
 
     protected:
         CSVFileSink(const std::string &sink_id);
@@ -43,7 +42,7 @@ namespace core::logging
         void close() override;
         void open_file(const dt::TimePoint &tp) override;
         void close_file() override;
-        void capture_event(const status::Event::ptr &event) override;
+        bool handle_item(const types::Loggable::ptr &loggable) override;
 
         void write_header();
 
@@ -61,7 +60,7 @@ namespace core::logging
 
     inline static SinkFactory csv_factory(
         "csvfile",
-        "Log to a CSV file, capturing specific event fields per column",
+        "Log to a CSV file, capturing specific message fields per column",
         [](const SinkID &sink_id) -> Sink::ptr {
             return CSVFileSink::create_shared(sink_id);
         });

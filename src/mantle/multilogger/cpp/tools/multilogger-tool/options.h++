@@ -25,7 +25,7 @@ private:
 
     void on_monitor_start() override;
     void on_monitor_end() override;
-    void on_log_event(core::status::Event::ptr event);
+    void on_log_item(core::types::Loggable::ptr item);
 
     void submit();
     void add_sink();
@@ -33,7 +33,8 @@ private:
     void get_sink();
     void get_all_sinks();
     void list_sinks();
-    void list_static_fields();
+    void list_message_fields();
+    void list_error_fields();
 
 public:
     std::shared_ptr<multilogger::API> provider;

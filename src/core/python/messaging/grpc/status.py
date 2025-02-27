@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules wihtin package
-from ...protobuf.status import Event
+from ...protobuf.status import Error
 
 ### Third-party modules
 import grpc
@@ -57,7 +57,7 @@ class DetailedError (grpc.RpcError):
     def custom_details (self):
         for (key, value) in self.trailing_metadata():
             if key == self._GRPC_DETAILS_METADATA_KEY:
-                return Event.FromString(value)
+                return Error.FromString(value)
         else:
             return ""
 

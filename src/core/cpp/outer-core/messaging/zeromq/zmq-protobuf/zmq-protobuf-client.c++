@@ -117,7 +117,7 @@ namespace core::zmq
             default:
                 ProtoBufError(
                     status.code(),
-                    ::protobuf::decoded<status::Event>(status.details()))
+                    ::protobuf::decoded<status::Error>(status.details()))
                     .throw_if_error();
                 break;
             }

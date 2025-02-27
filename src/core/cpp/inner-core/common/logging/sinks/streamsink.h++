@@ -6,13 +6,12 @@
 //==============================================================================
 
 #pragma once
-#include "logsink.h++"
+#include "messagesink.h++"
 #include "factory.h++"
-#include "messageformatter.h++"
-#include "types/create-shared.h++"
 #include "status/level.h++"
 #include "types/value.h++"
 #include "types/valuemap.h++"
+#include "types/create-shared.h++"
 
 #include <ostream>
 #include <string>
@@ -25,8 +24,7 @@ namespace core::logging
     /// @class StreamSink
     /// @brief Abstract base for logging to output streams (stdout, stderr, file)
 
-    class StreamSink : public LogSink,
-                       public MessageFormatter,
+    class StreamSink : public MessageSink,
                        public types::enable_create_shared<StreamSink>
     {
         enum MessagePart
@@ -37,7 +35,7 @@ namespace core::logging
         };
 
         using StyleMap = types::ValueMap<MessagePart, std::string>;
-        using Super = LogSink;
+        using Super = MessageSink;
 
     protected:
         /// @brief Constructor
@@ -53,8 +51,7 @@ namespace core::logging
 
     public:
         void load_settings(const types::KeyValueMap &settings) override;
-        bool is_applicable(const types::Loggable &item) const override;
-        void capture_event(const status::Event::ptr &event) override;
+        bool handle_message(const Message::ptr &message) override;
 
     private:
         void load_styles(const types::KeyValueMap &stylemap);

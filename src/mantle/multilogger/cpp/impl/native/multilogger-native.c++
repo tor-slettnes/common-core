@@ -11,12 +11,10 @@
 #include "multilogger-sqlite3-sink.h++"
 #endif
 #include "logging/logging.h++"
-#include "logging/sinks/streamsink.h++"
-#include "logging/sinks/logfilesink.h++"
-#include "logging/sinks/jsonfilesink.h++"
-#include "logging/sinks/csvfilesink.h++"
+#include "logging/sinks/core-sinks.h++"
 #include "platform/logsink.h++"
 #include "status/exceptions.h++"
+#include "status/error.h++"
 #include "settings/settings.h++"
 
 namespace multilogger::native
@@ -27,9 +25,9 @@ namespace multilogger::native
     }
 
     void Logger::submit(
-        const core::status::Event::ptr &event)
+        const core::types::Loggable::ptr &item)
     {
-        core::logging::dispatcher.submit(event);
+        core::logging::dispatcher.submit(item);
     }
 
     bool Logger::add_sink(
@@ -96,15 +94,20 @@ namespace multilogger::native
         return core::logging::sink_registry.keys();
     }
 
-    FieldNames Logger::list_static_fields() const
+    FieldNames Logger::list_message_fields() const
     {
         return core::logging::Message::message_fields();
     }
 
-    std::shared_ptr<EventSource> Logger::listen(
+    FieldNames Logger::list_error_fields() const
+    {
+        return core::status::Error::error_fields();
+    }
+
+    std::shared_ptr<LogSource> Logger::listen(
         const ListenerSpec &spec)
     {
-        auto sink = EventListener::create_shared(
+        auto sink = QueueListener::create_shared(
             spec.sink_id,
             spec.min_level,
             spec.contract_id,
@@ -139,17 +142,16 @@ namespace multilogger::native
     {
         core::logging::Sink::ptr sink = factory->create_sink(spec.sink_id);
 
-        if (auto logsink = std::dynamic_pointer_cast<core::logging::LogSink>(sink))
-        {
-            logsink->set_threshold(spec.min_level);
-            logsink->set_contract_id(spec.contract_id);
-        }
+        sink->set_threshold(spec.min_level);
+        sink->set_contract_id(spec.contract_id);
 
         if (auto rotating_path = std::dynamic_pointer_cast<core::logging::RotatingPath>(sink))
         {
             rotating_path->set_filename_template(spec.filename_template);
             rotating_path->set_rotation_interval(spec.rotation_interval);
             rotating_path->set_use_local_time(spec.use_local_time);
+            rotating_path->set_compress_after_use(spec.compress_after_use);
+            rotating_path->set_expiration_interval(spec.expiration_interval);
         }
 
         if (auto tabular_data = std::dynamic_pointer_cast<core::logging::TabularData>(sink))
@@ -164,19 +166,17 @@ namespace multilogger::native
         SinkSpec spec = {
             .sink_id = sink->sink_id(),
             .sink_type = sink->sink_type(),
+            .contract_id = sink->contract_id(),
+            .min_level = sink->threshold(),
         };
-
-        if (auto logsink = std::dynamic_pointer_cast<core::logging::LogSink>(sink))
-        {
-            spec.min_level = logsink->threshold();
-            spec.contract_id = logsink->contract_id();
-        }
 
         if (auto rpath = std::dynamic_pointer_cast<core::logging::RotatingPath>(sink))
         {
             spec.filename_template = rpath->filename_template();
             spec.rotation_interval = rpath->rotation_interval();
             spec.use_local_time = rpath->use_local_time();
+            spec.compress_after_use = rpath->compress_after_use();
+            spec.expiration_interval = rpath->expiration_interval();
         }
 
         if (auto tabdata = std::dynamic_pointer_cast<core::logging::TabularData>(sink))

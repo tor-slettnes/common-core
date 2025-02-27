@@ -6,52 +6,48 @@
 //==============================================================================
 
 #include "multilogger-native-listener.h++"
-#include "logging/logging.h++"
-#include "settings/settings.h++"
+#include "logging/dispatchers/dispatcher.h++"
 
 namespace multilogger::native
 {
-    EventListener::EventListener(
+    QueueListener::QueueListener(
         const SinkID &sink_id,
         core::status::Level threshold,
-        const std::optional<core::status::Event::ContractID> &contract_id,
+        const std::optional<Loggable::ContractID> &contract_id,
         unsigned int maxsize,
         OverflowDisposition overflow_disposition)
-        : LogSink(sink_id),
+        : Sink(sink_id, false),
           BlockingQueue(maxsize, overflow_disposition)
     {
-        logf_debug("Created native::EventListener(sink_id=%r, threshold=%s)",
-                   sink_id, threshold);
-
         this->set_threshold(threshold);
         this->set_contract_id(contract_id);
 
         core::platform::signal_shutdown.connect(
             this->sink_id(),
-            std::bind(&EventListener::close, this));
+            std::bind(&QueueListener::close, this));
     }
 
-    EventListener::~EventListener()
+    QueueListener::~QueueListener()
     {
         core::platform::signal_shutdown.disconnect(this->sink_id());
     }
 
-    void EventListener::open()
+    void QueueListener::open()
     {
-        LogSink::open();
+        Sink::open();
         core::logging::dispatcher.add_sink(this->shared_from_this());
     }
 
-    void EventListener::close()
+    void QueueListener::close()
     {
         core::logging::dispatcher.remove_sink(this->shared_from_this());
         BlockingQueue::close();
-        LogSink::close();
+        Sink::close();
     }
 
-    void EventListener::capture_event(const core::status::Event::ptr &event)
+    bool QueueListener::handle_item(const core::types::Loggable::ptr &item)
     {
-        this->put(event);
+        return this->put(item);
     }
 
-}  // namespace multilogger
+}  // namespace multilogger::native

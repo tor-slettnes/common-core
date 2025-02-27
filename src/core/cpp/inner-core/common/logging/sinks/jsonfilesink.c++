@@ -11,7 +11,7 @@
 namespace core::logging
 {
     JsonFileSink::JsonFileSink(const std::string &sink_id)
-        : AsyncLogSink(sink_id),
+        : Sink(sink_id, true),
           RotatingPath(sink_id, ".jsonlog")
     {
     }
@@ -25,12 +25,12 @@ namespace core::logging
     void JsonFileSink::open()
     {
         this->open_file(dt::Clock::now());
-        AsyncLogSink::open();
+        Sink::open();
     }
 
     void JsonFileSink::close()
     {
-        AsyncLogSink::close();
+        Sink::close();
         this->close_file();
     }
 
@@ -49,14 +49,19 @@ namespace core::logging
         RotatingPath::close_file();
     }
 
-    void JsonFileSink::capture_event(const status::Event::ptr &event)
+    bool JsonFileSink::handle_item(const types::Loggable::ptr &item)
     {
         if (this->writer_)
         {
-            this->check_rotation(event->timepoint());
-            this->writer_->write(event->as_tvlist(),  // value
-                                 false,               // pretty
-                                 true);               // newline
+            this->check_rotation(item->timepoint());
+            this->writer_->write(item->as_tvlist(),  // value
+                                 false,              // pretty
+                                 true);              // newline
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }  // namespace core::logging

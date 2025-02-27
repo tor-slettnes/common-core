@@ -7,9 +7,9 @@
 
 #pragma once
 #include "multilogger-types.h++"
-#include "status/event.h++"
+#include "logging/message/scope.h++"
 #include "thread/signaltemplate.h++"
-#include "logging/logging.h++"
+#include "types/loggable.h++"
 
 #include <optional>
 
@@ -33,7 +33,7 @@ namespace multilogger
         virtual void deinitialize() {}
 
         virtual void submit(
-            const core::status::Event::ptr &event) = 0;
+            const core::types::Loggable::ptr &item) = 0;
 
         virtual bool add_sink(
             const SinkSpec &spec) = 0;
@@ -50,9 +50,11 @@ namespace multilogger
 
         virtual SinkTypes list_sink_types() const = 0;
 
-        virtual FieldNames list_static_fields() const = 0;
+        virtual FieldNames list_message_fields() const = 0;
 
-        virtual std::shared_ptr<EventSource> listen(
+        virtual FieldNames list_error_fields() const = 0;
+
+        virtual std::shared_ptr<LogSource> listen(
             const ListenerSpec &spec) = 0;
 
     public:
@@ -66,10 +68,9 @@ namespace multilogger
         std::string identity_;
         bool keep_listening_;
         std::thread listener_thread_;
-        std::weak_ptr<EventSource> listener_;
+        std::weak_ptr<LogSource> listener_;
     };
 
-
-    extern core::signal::DataSignal<core::status::Event::ptr> signal_log_event;
+    extern core::signal::DataSignal<core::types::Loggable::ptr> signal_log_item;
 
 }  // namespace multilogger

@@ -49,10 +49,16 @@ void Options::add_commands()
         std::bind(&Options::list_sinks, this));
 
     this->add_command(
-        "list_static_fields",
+        "list_message_fields",
         {},
-        "List data fields/columns present in every log message.",
-        std::bind(&Options::list_static_fields, this));
+        "List data fields/columns present in log messages.",
+        std::bind(&Options::list_message_fields, this));
+
+    this->add_command(
+        "list_message_fields",
+        {},
+        "List data fields/columns present in logged errors.",
+        std::bind(&Options::list_error_fields, this));
 
     this->add_command(
         "listen",
@@ -86,8 +92,9 @@ void Options::add_sink()
     bool success = this->provider->add_sink({
         .sink_id = sink_id,
         .sink_type = sink_type,
-        .filename_template = fn_template,
+        .contract_id = {},
         .min_level = min_level,
+        .filename_template = fn_template,
     });
     this->report_status_and_exit(success);
 }
@@ -121,7 +128,12 @@ void Options::list_sinks()
     }
 }
 
-void Options::list_static_fields()
+void Options::list_message_fields()
 {
-    std::cout << this->provider->list_static_fields() << std::endl;
+    std::cout << this->provider->list_message_fields() << std::endl;
+}
+
+void Options::list_error_fields()
+{
+    std::cout << this->provider->list_error_fields() << std::endl;
 }

@@ -5,6 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+add_subdirectory(telemetry)
 add_subdirectory(message)
 add_subdirectory(sinks)
 add_subdirectory(dispatchers)

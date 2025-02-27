@@ -7,35 +7,35 @@
 
 #pragma once
 #include "multilogger-api.h++"
-#include "logging/sinks/logsink.h++"
+#include "logging/sinks/sink.h++"
 #include "thread/blockingqueue.h++"
 #include "types/create-shared.h++"
 
 namespace multilogger::native
 {
-    class EventListener
-        : public core::logging::LogSink,
-          public core::types::BlockingQueue<core::status::Event::ptr>,
-          public core::types::enable_create_shared_from_this<EventListener>
+    class QueueListener
+        : public core::logging::Sink,
+          public core::types::BlockingQueue<core::types::Loggable::ptr>,
+          public core::types::enable_create_shared_from_this<QueueListener>
     {
-        using This = EventListener;
-        using Super = core::logging::LogSink;
+        using This = QueueListener;
+        using Super = core::logging::Sink;
 
     protected:
-        EventListener(
+        QueueListener(
             const SinkID &sink_id,
             core::status::Level threshold,
-            const std::optional<ContractID> &contract_id = {},
+            const std::optional<Loggable::ContractID> &contract_id = {},
             unsigned int maxsize = 0,
             OverflowDisposition overflow_disposition = OverflowDisposition::DISCARD_OLDEST);
 
-        ~EventListener();
+        ~QueueListener();
 
     public:
         void open() override;
         void close() override;
 
     protected:
-        void capture_event(const core::status::Event::ptr &event) override;
+        bool handle_item(const core::types::Loggable::ptr &item) override;
     };
 }  // namespace multilogger::native

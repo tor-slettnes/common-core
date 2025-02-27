@@ -13,18 +13,12 @@ namespace core::dds
         const std::string &sink_id,
         const std::string &application_id,
         int domain_id)
-        : LogSink(sink_id, {}, core::logging::MESSAGE_CONTRACT),
+        : MessageSink(sink_id, false),
           dist_logger_(nullptr)
     {
         this->dl_options_.setApplicationKind(application_id.c_str());
         this->dl_options_.setDomainId(domain_id);
         this->dl_options_.setEchoToStdout(false);
-    }
-
-    void RTIDistributedLogger::load_settings(const types::KeyValueMap &settings)
-    {
-        Super::load_settings(settings);
-        this->load_message_format(settings);
     }
 
     void RTIDistributedLogger::set_threshold(core::status::Level threshold)
@@ -54,24 +48,25 @@ namespace core::dds
         Super::close();
     }
 
-    void RTIDistributedLogger::capture_event(const core::status::Event::ptr &event)
+    bool RTIDistributedLogger::handle_message(const core::logging::Message::ptr &message)
     {
         if (this->dist_logger_)
         {
-            if (const int *level = RTIDistributedLogger::levelmap.get_ptr(event->level()))
+            if (const int *level = RTIDistributedLogger::levelmap.get_ptr(message->level()))
             {
-                timespec ts = core::dt::to_timespec(event->timepoint());
-                std::string text = this->formatted(event);
-                std::string domain_name = core::status::DomainNames.to_string(event->domain(), "NONE");
+                timespec ts = core::dt::to_timespec(message->timepoint());
+                std::string text = this->formatted(message);
                 this->dist_logger_->logMessageWithParams({
                     *level,                             // log_level
                     text.c_str(),                       // message
-                    domain_name.c_str(),                // category
+                    message->scopename().c_str(),       // category
                     {static_cast<DDS_Long>(ts.tv_sec),  // timestamp
                      static_cast<DDS_UnsignedLong>(ts.tv_nsec)},
                 });
+                return true;
             }
         }
+        return false;
     }
 
     const types::ValueMap<status::Level, DDS_Long> RTIDistributedLogger::levelmap = {
@@ -80,7 +75,7 @@ namespace core::dds
         {core::status::Level::INFO, 600},
         {core::status::Level::NOTICE, 500},
         {core::status::Level::WARNING, 400},
-        {core::status::Level::FAILED, 300},
+        {core::status::Level::ERROR, 300},
         {core::status::Level::CRITICAL, 200},
         {core::status::Level::FATAL, 100},
     };

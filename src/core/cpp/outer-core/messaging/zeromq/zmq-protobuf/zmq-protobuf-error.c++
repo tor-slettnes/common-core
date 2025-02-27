@@ -17,8 +17,8 @@
 namespace core::zmq
 {
     ProtoBufError::ProtoBufError(const cc::rr::StatusCode &code,
-                                 const core::status::Event &event)
-        : Event(event),
+                                 const core::status::Error &event)
+        : Super(event),
           status_code_(code)
     {
     }

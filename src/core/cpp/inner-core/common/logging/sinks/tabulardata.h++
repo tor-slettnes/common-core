@@ -6,10 +6,11 @@
 //==============================================================================
 
 #pragma once
+#include "status/level.h++"
 #include "types/value.h++"
 #include "types/valuemap.h++"
 #include "types/symbolmap.h++"
-#include "status/event.h++"
+#include "types/loggable.h++"
 
 #include <string>
 #include <memory>
@@ -26,7 +27,7 @@ namespace core::logging
 
     struct ColumnSpec
     {
-        std::string event_field;
+        std::string field_name;
         std::optional<std::string> column_name;
         types::ValueType column_type = types::ValueType::NONE;
     };
@@ -53,10 +54,7 @@ namespace core::logging
         using LevelMap = types::ValueMap<status::Level, types::Value>;
 
     protected:
-        TabularData(const ColumnSpecs &columns = This::default_columns());
-
-    private:
-        static ColumnSpecs default_columns();
+        TabularData(const ColumnSpecs &columns = {});
 
     protected:
         void load_level_map(const types::KeyValueMap &settings);
@@ -75,13 +73,13 @@ namespace core::logging
         std::optional<ColumnSpec> column_spec(const types::Value &column_data) const;
 
     protected:
-        types::ValueList row_data(status::Event::ptr event,
+        types::ValueList row_data(types::Loggable::ptr loggable,
                                   bool use_local_time) const;
 
     private:
         types::Value column_data(
             const logging::ColumnSpec &spec,
-            status::Event::ptr event,
+            types::Loggable::ptr loggable,
             bool use_local_time) const;
 
         types::Value time_value(

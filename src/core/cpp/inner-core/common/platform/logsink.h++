@@ -8,8 +8,7 @@
 #pragma once
 #include "provider.h++"
 #include "logging/sinks/factory.h++"
-#include "logging/sinks/logsink.h++"
-#include "logging/sinks/messageformatter.h++"
+#include "logging/sinks/messagesink.h++"
 
 #include <string>
 
@@ -18,11 +17,10 @@ namespace core::platform
     //--------------------------------------------------------------------------
     // @class LogSinkProvider
 
-    class LogSinkProvider : public logging::LogSink,
-                            public logging::MessageFormatter,
+    class LogSinkProvider : public logging::MessageSink,
                             public Provider
     {
-        using Super = logging::LogSink;
+        using Super = logging::MessageSink;
 
     protected:
         /// @param[in] implementation
@@ -31,10 +29,6 @@ namespace core::platform
         ///     Sink identifier
         LogSinkProvider(const std::string &implementation,
                         const std::string &sink_id = "syslog");
-
-    protected:
-        void load_settings(const types::KeyValueMap &settings) override;
-        bool is_applicable(const types::Loggable &item) const override;
     };
 
     //--------------------------------------------------------------------------

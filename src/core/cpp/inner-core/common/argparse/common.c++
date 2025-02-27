@@ -176,7 +176,7 @@ namespace core::argparse
             "function name. Applicable only to message-based log sinks such as "
             "stdout/stderr, syslog, and plaintext .log files, and if specified, "
             "will then override the default setting for those sinks.",
-            logging::MessageFormatter::set_all_include_context);
+            logging::MessageSink::set_all_include_context);
 
         this->add_opt<fs::path>(
             {"--log-folder"},

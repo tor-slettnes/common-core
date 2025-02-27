@@ -32,11 +32,11 @@ namespace core::platform
         Super::close();
     }
 
-    void WindowsLogSinkProvider::capture_event(const status::Event::ptr &event)
+    bool WindowsLogSinkProvider::handle_message(const logging::Message::ptr &message)
     {
-        if (auto *eventType = this->levelmap.get_ptr(event->level()))
+        if (auto *eventType = this->levelmap.get_ptr(message->level()))
         {
-            const std::string &text = this->formatted(event);
+            const std::string &text = this->formatted(message);
             LPCSTR cstr = text.c_str();
             ReportEvent(this->event_log,  // hEventLog
                         *eventType,       // dwEventId
@@ -47,6 +47,11 @@ namespace core::platform
                         0,                // dwDataSize
                         &cstr,            // lpStrings
                         nullptr);         // lpRawData
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -59,7 +64,7 @@ namespace core::platform
         {status::Level::INFO, EVENTLOG_INFORMATION_TYPE},
         {status::Level::NOTICE, EVENTLOG_INFORMATION_TYPE},
         {status::Level::WARNING, EVENTLOG_WARNING_TYPE},
-        {status::Level::FAILED, EVENTLOG_ERROR_TYPE},
+        {status::Level::ERROR, EVENTLOG_ERROR_TYPE},
         {status::Level::CRITICAL, EVENTLOG_ERROR_TYPE},
         {status::Level::FATAL, EVENTLOG_ERROR_TYPE},
     };

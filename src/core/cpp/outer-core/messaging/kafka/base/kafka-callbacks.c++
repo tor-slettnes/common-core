@@ -36,7 +36,7 @@ namespace core::kafka
         {RdKafka::Event::EVENT_SEVERITY_EMERG, core::status::Level::FATAL},
         {RdKafka::Event::EVENT_SEVERITY_ALERT, core::status::Level::CRITICAL},
         {RdKafka::Event::EVENT_SEVERITY_CRITICAL, core::status::Level::CRITICAL},
-        {RdKafka::Event::EVENT_SEVERITY_ERROR, core::status::Level::FAILED},
+        {RdKafka::Event::EVENT_SEVERITY_ERROR, core::status::Level::ERROR},
         {RdKafka::Event::EVENT_SEVERITY_WARNING, core::status::Level::WARNING},
         {RdKafka::Event::EVENT_SEVERITY_NOTICE, core::status::Level::NOTICE},
         {RdKafka::Event::EVENT_SEVERITY_INFO, core::status::Level::INFO},

@@ -18,15 +18,15 @@ namespace core::logging
 {
     const std::string SETTING_NAME_TEMPLATE = "name template";
     const std::string SETTING_LOCAL_TIME = "local time";
-    const std::string SETTING_COMPRESS_INACTIVE = "compress after use";
+    const std::string SETTING_COMPRESS_AFTER_USE = "compress after use";
     const std::string SETTING_ROTATION = "rotate after";
     const std::string SETTING_EXPIRATION = "expire after";
     const std::string SETTING_LOG_FOLDER = "log folder";
 
     const std::string DEFAULT_NAME_TEMPLATE = "{executable}-{isodate}-{hour}{minute}{zoneoffset}";
     const bool DEFAULT_LOCAL_TIME = true;
-    const bool DEFAULT_COMPRESS_INACTIVE = true;
-    const dt::DateTimeInterval DEFAULT_ROTATION = {.unit = dt::TimeUnit::HOUR, .count = 6};
+    const bool DEFAULT_COMPRESS_AFTER_USE = true;
+    const dt::DateTimeInterval DEFAULT_ROTATION = {.unit = dt::TimeUnit::DAY, .count = 1};
     const dt::DateTimeInterval DEFAULT_EXPIRATION = {.unit = dt::TimeUnit::YEAR, .count = 1};
 
     class RotatingPath
@@ -59,8 +59,8 @@ namespace core::logging
         bool use_local_time() const;
         void set_use_local_time(bool use_local_time);
 
-        bool compress_inactive() const;
-        void set_compress_inactive(bool use_local_time);
+        bool compress_after_use() const;
+        void set_compress_after_use(bool use_local_time);
 
         dt::DateTimeInterval rotation_interval() const;
         void set_rotation_interval(const dt::DateTimeInterval &interval);
@@ -83,7 +83,7 @@ namespace core::logging
         void check_expiration(const dt::TimePoint &expiration_time,
                               const fs::path &path);
 
-        void compress_all_inactive();
+        void compress_all_after_use();
         void compress(const fs::path &logfile);
 
     public:
@@ -95,7 +95,7 @@ namespace core::logging
         std::string name_template_;
         fs::path log_folder_;
         bool use_local_time_;
-        bool compress_inactive_;
+        bool compress_after_use_;
         dt::DateTimeInterval rotation_interval_;
         dt::DateTimeInterval expiration_interval_;
         std::unordered_map<std::string, std::string> expansions_;

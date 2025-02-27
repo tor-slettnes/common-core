@@ -56,16 +56,16 @@ namespace multilogger
     {
         while (this->keep_listening_)
         {
-            std::shared_ptr<EventSource> listener = this->listen(spec);
+            std::shared_ptr<LogSource> listener = this->listen(spec);
             this->listener_ = listener;
 
-            while (std::optional<core::status::Event::ptr> event = listener->get())
+            while (std::optional<core::types::Loggable::ptr> item = listener->get())
             {
-                signal_log_event.emit(event.value());
+                signal_log_item.emit(item.value());
             }
         }
     }
 
-    core::signal::DataSignal<core::status::Event::ptr> signal_log_event("signal_log_event");
+    core::signal::DataSignal<core::types::Loggable::ptr> signal_log_item("signal_log_item");
 
 }  // namespace multilogger

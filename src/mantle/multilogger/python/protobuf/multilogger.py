@@ -39,16 +39,13 @@ def encodeColumnSpec(colspec : None|tuple|ColumnSpec) -> ColumnSpec:
         spec = ColumnSpec()
 
         if len(colspec) >= 1:
-            spec.event_field = colspec[0]
+            spec.field_name = colspec[0]
 
         if len(colspec) >= 2:
             spec.column_name = colspec[1]
 
         if len(colspec) >= 3:
             spec.column_type = encodeColumnType(colspec[2])
-
-        if len(colspec) >= 4:
-            spec.format_string = colspec[3]
 
         return spec
 

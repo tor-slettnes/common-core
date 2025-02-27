@@ -380,9 +380,9 @@ namespace core::db
             throw core::exception::ServiceError(
                 sqlite3_errstr(code) ? sqlite3_errstr(code) : "Unknown SQLite3 failure",
                 "SQLite3",                                    // service
-                static_cast<core::status::Event::Code>(code), // code
+                static_cast<core::status::Error::Code>(code), // code
                 "",                                           // id
-                core::status::Level::FAILED,                  // level
+                core::status::Level::ERROR,                  // level
                 core::dt::Clock::now(),                       // timepoint
                 attributes);                                  // attributes
         }

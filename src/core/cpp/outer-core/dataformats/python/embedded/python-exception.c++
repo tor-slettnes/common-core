@@ -14,13 +14,13 @@ namespace core::python
     // Exception::Exception(PyObject *exc, bool borrowed)
     //     : ContainerObject(exc, borrowed),
     //       Super(
-    //           status::Event(
+    //           status::Error(
     //               ContainerObject::to_string(),  // text
     //               status::Domain::APPLICATION,   // domain
     //               platform::path->exec_name(),   // origin
     //               0,                             // code
     //               this->type_name(),             // symbol
-    //               status::Level::FAILED,         // level
+    //               status::Level::ERROR,         // level
     //               status::Flow::CANCELLED,       // flow
     //               {}                             // timepoint
     //               // ContainerObject(exc, true).attributes_as_kvmap()))
@@ -32,13 +32,13 @@ namespace core::python
                          const std::string &symbol,
                          const types::KeyValueMap &attributes)
         : Super(
-              status::Event(
+              status::Error(
                   text,                         // text
                   status::Domain::APPLICATION,  // domain
                   platform::path->exec_name(),  // origin
                   0,                            // code
                   symbol,                       // symbol
-                  status::Level::FAILED,        // level
+                  status::Level::ERROR,        // level
                   {},                           // timepoint
                   attributes))                  // attributes
     {

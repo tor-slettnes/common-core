@@ -19,16 +19,26 @@ namespace core::idl
     void encode(const core::status::Domain &native, CC::Status::Domain *idl) noexcept;
     void decode(const CC::Status::Domain &idl, core::status::Domain *native) noexcept;
 
+    CC::Status::Domain encoded(const core::status::Domain &native) noexcept;
+    core::status::Domain decoded_domain(const CC::Status::Domain &idl) noexcept;
+
     //==========================================================================
     // Level
+
     void encode(const core::status::Level &native, CC::Status::Level *idl) noexcept;
     void decode(const CC::Status::Level &idl, core::status::Level *native) noexcept;
+
+    CC::Status::Level encoded(const core::status::Level &native) noexcept;
+    core::status::Level decoded_level(const CC::Status::Level &idl) noexcept;
 
     //==========================================================================
     // Event
     void encode(const core::status::Event &native, CC::Status::Event *idl) noexcept;
-    void decode(const CC::Status::Event &idl, core::status::Event *native) noexcept;
-    core::status::Event decoded_event(const CC::Status::Event &idl) noexcept;
+
+    //==========================================================================
+    // Error
+    void encode(const core::status::Error &native, CC::Status::Error *idl) noexcept;
+    core::status::Error decoded_error(const CC::Status::Error &idl) noexcept;
 
     //==========================================================================
     // LogMessage

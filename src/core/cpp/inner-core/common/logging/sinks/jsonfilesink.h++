@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "asynclogsink.h++"
+#include "sink.h++"
 #include "rotatingpath.h++"
 #include "factory.h++"
 #include "parsers/json/writer.h++"
@@ -22,12 +22,12 @@ namespace core::logging
     //--------------------------------------------------------------------------
     // JsonFileSink
 
-    class JsonFileSink : public AsyncLogSink,
+    class JsonFileSink : public Sink,
                          public RotatingPath,
                          public types::enable_create_shared<JsonFileSink>
     {
         using This = JsonFileSink;
-        using Super = AsyncLogSink;
+        using Super = Sink;
 
     protected:
         JsonFileSink(const std::string &sink_id);
@@ -37,7 +37,7 @@ namespace core::logging
         void close() override;
         void open_file(const dt::TimePoint &tp) override;
         void close_file() override;
-        void capture_event(const status::Event::ptr &event) override;
+        bool handle_item(const types::Loggable::ptr &loggable) override;
 
     private:
         std::shared_ptr<json::Writer> writer_;
@@ -48,7 +48,7 @@ namespace core::logging
 
     inline static SinkFactory json_factory(
         "jsonfile",
-        "Log each event as a single-line JSON object",
+        "Log each message as a single-line JSON object",
         [](const SinkID &sink_id) -> Sink::ptr {
             return JsonFileSink::create_shared(sink_id);
         });

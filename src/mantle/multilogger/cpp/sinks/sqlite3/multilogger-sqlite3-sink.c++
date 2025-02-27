@@ -6,7 +6,6 @@
 //==============================================================================
 
 #include "multilogger-sqlite3-sink.h++"
-#include "logging/message/message.h++"
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 #include "string/misc.h++"
@@ -18,7 +17,7 @@ namespace multilogger
     // SQLiteSink
 
     SQLiteSink::SQLiteSink(const std::string &sink_id)
-        : AsyncLogSink(sink_id),
+        : Sink(sink_id, true),
           TabularData(),
           RotatingPath(sink_id, ".db"),
           table_name_(DEFAULT_TABLE_NAME),
@@ -92,12 +91,23 @@ namespace multilogger
             this->use_local_time());
 
         this->open_file(last_aligned);
-        AsyncLogSink::open();
+        Sink::open();
+
+        if (!this->worker_thread_.joinable())
+        {
+            this->worker_thread_ = std::thread(&This::worker, this);
+        }
     }
 
     void SQLiteSink::close()
     {
-        AsyncLogSink::close();
+        this->queue.close();
+        if (this->worker_thread_.joinable())
+        {
+            this->worker_thread_.join();
+        }
+
+        Sink::close();
         this->close_file();
     }
 
@@ -126,7 +136,7 @@ namespace multilogger
         for (const core::logging::ColumnSpec &spec : this->columns())
         {
             sql << delimiter
-                << std::quoted(spec.column_name.value_or(spec.event_field));
+                << std::quoted(spec.column_name.value_or(spec.field_name));
 
             if (auto type_name = core::logging::column_type_names.to_string(spec.column_type))
             {
@@ -146,6 +156,13 @@ namespace multilogger
         this->placeholders = "(" + core::str::join(placeholders, ", ") + ")";
     }
 
+    bool SQLiteSink::handle_item(const core::types::Loggable::ptr &item)
+    {
+        this->check_rotation(item->timepoint());
+        this->pending_rows.push_back(this->row_data(item, this->use_local_time()));
+        return true;
+    }
+
     void SQLiteSink::worker()
     {
         std::size_t pending_count = 0;
@@ -157,9 +174,9 @@ namespace multilogger
             try
             {
                 bool flush = false;
-                if (auto opt_event = this->queue.get(this->batch_timeout()))
+                if (auto opt_item = this->queue.get(this->batch_timeout()))
                 {
-                    this->capture_event(opt_event.value());
+                    this->capture(opt_item.value());
                     flush = (++pending_count >= this->batch_size());
                 }
                 else
@@ -169,27 +186,21 @@ namespace multilogger
 
                 if (flush)
                 {
-                    this->flush_events();
+                    this->flush();
                     pending_count = 0;
                 }
             }
             catch (...)
             {
                 this->queue.close();
-                logf_error("Log sink %r failed to capture event: %s",
+                logf_error("Log sink %r failed to capture log item: %s",
                            this->sink_id(),
                            std::current_exception());
             }
         }
     }
 
-    void SQLiteSink::capture_event(const core::status::Event::ptr &event)
-    {
-        this->check_rotation(event->timepoint());
-        this->pending_rows.push_back(this->row_data(event, this->use_local_time()));
-    }
-
-    void SQLiteSink::flush_events()
+    void SQLiteSink::flush()
     {
         std::stringstream cmd;
         cmd << "INSERT INTO "

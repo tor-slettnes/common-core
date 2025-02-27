@@ -8,7 +8,6 @@
 #include "multilogger-grpc-client.h++"
 #include "multilogger-grpc-clientlistener.h++"
 #include "protobuf-multilogger-types.h++"
-#include "protobuf-event-types.h++"
 #include "protobuf-inline.h++"
 
 namespace multilogger::grpc
@@ -33,11 +32,11 @@ namespace multilogger::grpc
         LogClientBase::deinitialize();
     }
 
-    void LogClient::submit(const core::status::Event::ptr &event)
+    void LogClient::submit(const core::types::Loggable::ptr &item)
     {
         this->call_check(
             &Stub::submit,
-            ::protobuf::encoded<cc::status::Event>(event));
+            ::protobuf::encode_shared<cc::multilogger::Loggable>(item));
     }
 
     bool LogClient::add_sink(const SinkSpec &spec)
@@ -82,13 +81,19 @@ namespace multilogger::grpc
             this->call_check(&Stub::list_sink_types).sink_types());
     }
 
-    FieldNames LogClient::list_static_fields() const
+    FieldNames LogClient::list_message_fields() const
     {
         return protobuf::assign_to_vector<std::string>(
-            this->call_check(&Stub::list_static_fields).field_names());
+            this->call_check(&Stub::list_message_fields).field_names());
     }
 
-    std::shared_ptr<EventSource> LogClient::listen(const ListenerSpec &spec)
+    FieldNames LogClient::list_error_fields() const
+    {
+        return protobuf::assign_to_vector<std::string>(
+            this->call_check(&Stub::list_error_fields).field_names());
+    }
+
+    std::shared_ptr<LogSource> LogClient::listen(const ListenerSpec &spec)
     {
         return ClientListener::create_shared(this->stub, spec);
     }
@@ -107,7 +112,7 @@ namespace multilogger::grpc
 
             if (this->writer)
             {
-                AsyncLogSink::open();
+                Sink::open();
             }
         }
     }
@@ -116,7 +121,7 @@ namespace multilogger::grpc
     {
         if (this->is_open())
         {
-            AsyncLogSink::close();
+            Sink::close();
 
             if (this->writer)
             {
@@ -128,11 +133,16 @@ namespace multilogger::grpc
         }
     }
 
-    void LogClient::capture_event(const core::status::Event::ptr &event)
+    bool LogClient::handle_item(const core::types::Loggable::ptr &item)
     {
-        if (!this->writer->Write(protobuf::encoded<cc::status::Event>(event)))
+        if (this->writer->Write(protobuf::encode_shared<cc::multilogger::Loggable>(item)))
+        {
+            return true;
+        }
+        else
         {
             this->close();
+            return false;
         }
     }
 

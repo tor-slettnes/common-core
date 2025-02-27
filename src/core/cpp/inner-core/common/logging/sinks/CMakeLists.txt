@@ -6,15 +6,14 @@
 #===============================================================================
 
 target_sources(${TARGET} PRIVATE
+  capture.c++
   rotatingpath.c++
   tabulardata.c++
-  messageformatter.c++
   sink.c++
-  factory.c++
-  logsink.c++
-  asynclogsink.c++
-  streamsink.c++
-  logfilesink.c++
-  jsonfilesink.c++
+  messagesink.c++
   csvfilesink.c++
+  jsonfilesink.c++
+  logfilesink.c++
+  streamsink.c++
+  factory.c++
 )

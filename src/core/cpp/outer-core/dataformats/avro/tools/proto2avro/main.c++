@@ -19,7 +19,7 @@ int main (int argc, char **argv)
     auto options = std::make_unique<core::argparse::CommonOptions>();
     options->apply(argc, argv);
 
-    const google::protobuf::Descriptor *desc = cc::status::Event::GetDescriptor();
+    const google::protobuf::Descriptor *desc = cc::status::Error::GetDescriptor();
     std::cout << avro::schema_from_proto(desc)
               << std::endl;
     return 0;

@@ -26,6 +26,8 @@ namespace core::logging
                   lineno,                                                  // lineno
                   function,                                                // function
                   thread_id,                                               // thread_id
+                  {},                                                      // thread_name
+                  {},                                                      // task_name
                   platform::host ? platform::host->get_host_name() : ""s,  // host
                   platform::path ? platform::path->exec_name() : ""s),     // origin
           dispatcher_(dispatcher),

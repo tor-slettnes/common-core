@@ -12,13 +12,13 @@ package cc.status;
 import "variant.proto";
 import "google/protobuf/timestamp.proto";
 
-// Data pertaining to an status/event.
+// Data pertaining to errors
 // This message structure is
 //  - serialized by the server and included in the `error_details()` field of
 //    `::grpc::Status()` responses after a failure
-//  - used for asynchronous events
+//  - used for asynchronous error reporting
 
-message Event
+message Error
 {
     // One of the error domains listed below.
     Domain domain = 1;
@@ -39,37 +39,11 @@ message Event
     // Time of occurence
     google.protobuf.Timestamp timestamp = 7;
 
-    // Contract identifier, used to process event data accordingly.
-    // Defaults to `"text"` if `text` field is present.
-    string contract_id = 9;
-
-    // Reporting hostname. Used for remote logging.
-    string host = 10;
-
     // Event attributes
     cc.variant.KeyValueMap attributes = 14;
 
     // Description of error, possibly expanded with attribute values.
     string text = 15;
-
-
-    //--------------------------------------------------------------------------
-    // Fields specific to log messages
-
-    // Thread ID
-    uint64 thread_id = 128;
-
-    // Log scope, e,.g. `shared`, `vfs`, etc.
-    string log_scope = 132;
-
-    // Source file
-    string source_path = 136;
-
-    // Source line
-    uint64 source_line = 137;
-
-    // Function name
-    string function_name = 140;
 }
 
 enum Domain
@@ -90,7 +64,7 @@ enum Level
     LEVEL_INFO     = 3;       // Informational event only, no error
     LEVEL_NOTICE   = 4;       // Important event
     LEVEL_WARNING  = 5;       // Abnormal event, operation continues
-    LEVEL_FAILED   = 6;       // Operation failed, entity is still functional
+    LEVEL_ERROR    = 6;       // Operation failed, entity is still functional
     LEVEL_CRITICAL = 7;       // Operation failed, entity is disabled
     LEVEL_FATAL    = 8;       // Reporting entity is disabled and cannot recover
 }

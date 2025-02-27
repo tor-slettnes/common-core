@@ -8,6 +8,7 @@
 target_sources(${TARGET} PRIVATE
   streamable.c++
   listable.c++
+  loggable.c++
   bytevector.c++
   variant-types.c++
   variant-value.c++

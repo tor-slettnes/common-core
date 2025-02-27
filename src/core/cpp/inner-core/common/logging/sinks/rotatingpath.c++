@@ -28,7 +28,7 @@ namespace core::logging
           name_template_(DEFAULT_NAME_TEMPLATE),
           log_folder_(This::default_root_folder),
           use_local_time_(DEFAULT_LOCAL_TIME),
-          compress_inactive_(DEFAULT_COMPRESS_INACTIVE),
+          compress_after_use_(DEFAULT_COMPRESS_AFTER_USE),
           rotation_interval_(DEFAULT_ROTATION),
           expiration_interval_(DEFAULT_EXPIRATION),
           expansions_({
@@ -72,9 +72,9 @@ namespace core::logging
             this->set_use_local_time(use_local_time.as_bool());
         }
 
-        if (const types::Value &compress_inactive = settings.get(SETTING_COMPRESS_INACTIVE))
+        if (const types::Value &compress_after_use = settings.get(SETTING_COMPRESS_AFTER_USE))
         {
-            this->set_compress_inactive(compress_inactive.as_bool());
+            this->set_compress_after_use(compress_after_use.as_bool());
         }
 
         if (auto rotation = settings.try_get_as<dt::DateTimeInterval>(SETTING_ROTATION))
@@ -143,14 +143,14 @@ namespace core::logging
         this->use_local_time_ = use_local_time;
     }
 
-    bool RotatingPath::compress_inactive() const
+    bool RotatingPath::compress_after_use() const
     {
-        return this->compress_inactive_;
+        return this->compress_after_use_;
     }
 
-    void RotatingPath::set_compress_inactive(bool compress_inactive)
+    void RotatingPath::set_compress_after_use(bool compress_after_use)
     {
-        this->compress_inactive_ = compress_inactive;
+        this->compress_after_use_ = compress_after_use;
     }
 
     dt::DateTimeInterval RotatingPath::rotation_interval() const
@@ -178,7 +178,7 @@ namespace core::logging
         this->update_current_path(tp);
         auto future = std::async([=] {
             this->check_expiration(tp);
-            this->compress_all_inactive();
+            this->compress_all_after_use();
         });
     }
 
@@ -276,9 +276,9 @@ namespace core::logging
         }
     }
 
-    void RotatingPath::compress_all_inactive()
+    void RotatingPath::compress_all_after_use()
     {
-        if (this->compress_inactive())
+        if (this->compress_after_use())
         {
             fs::path pattern = fs::path("*") += this->current_suffix();
 

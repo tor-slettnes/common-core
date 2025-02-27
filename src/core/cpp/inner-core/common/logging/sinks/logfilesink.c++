@@ -12,8 +12,7 @@
 namespace core::logging
 {
     LogFileSink::LogFileSink(const std::string &sink_id)
-        : Super(sink_id, {}, MESSAGE_CONTRACT),
-          MessageFormatter(),
+        : MessageSink(sink_id, true),
           RotatingPath(sink_id, ".log")
     {
     }
@@ -21,7 +20,6 @@ namespace core::logging
     void LogFileSink::load_settings(const types::KeyValueMap &settings)
     {
         Super::load_settings(settings);
-        this->load_message_format(settings);
         this->load_rotation(settings);
     }
 
@@ -54,14 +52,19 @@ namespace core::logging
         RotatingPath::close_file();
     }
 
-    void LogFileSink::capture_event(const status::Event::ptr &event)
+    bool LogFileSink::handle_message(const Message::ptr &message)
     {
         if (this->stream_ && this->stream_->good())
         {
-            this->check_rotation(event->timepoint());
+            this->check_rotation(message->timepoint());
             auto &stream = *this->stream_;
-            this->send_preamble(stream, event);
-            stream << event->text() << std::endl;
+            this->send_preamble(stream, message);
+            stream << message->text() << std::endl;
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 

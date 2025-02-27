@@ -150,11 +150,11 @@ namespace protobuf
         decode(msg, ref->get());
     }
 
-    template <class NativeType, class ProtoType>
-    std::shared_ptr<NativeType> decode_shared(const ProtoType &msg)
+    template <class NativeType, class... Args>
+    std::shared_ptr<NativeType> decode_shared(Args &&...args)
     {
         auto ref = std::make_shared<NativeType>();
-        decode(msg, ref.get());
+        decode(args..., ref.get());
         return ref;
     }
 

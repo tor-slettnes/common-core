@@ -9,9 +9,9 @@
 from ..base.api import API
 from cc.messaging.grpc import Client as BaseClient
 from cc.protobuf.wellknown import empty
-from cc.protobuf.status import Event, Level, encodeLogLevel
+from cc.protobuf.status import Level, encodeLogLevel
 from cc.protobuf.datetime import Interval, encodeInterval
-from cc.protobuf.multilogger import ListenerSpec, SinkSpec, \
+from cc.protobuf.multilogger import Loggable, ListenerSpec, SinkSpec, \
     ColumnType, ColumnSpec
 from cc.protobuf.variant import PyTaggedValueList, encodeTaggedValueList
 
@@ -139,31 +139,31 @@ class LogClient (API, BaseClient):
 
             API.close(self)
 
-    def submit(self, event: Event):
+    def submit(self, loggable: Loggable):
         '''
-        Send an log event to the gRPC MultiLogger server.
+        Send an loggable item to the gRPC MultiLogger server.
 
         If we have previously invoked `open()` this message is queued for
         streaming via the gRPC `writer()` method, otherwise it is sent
         immediately via a unary RPC call.
         '''
         if queue := self.queue:
-            self._enqueue(queue, event)
+            self._enqueue(queue, loggable)
 
         else:
-            self.stub.submit(event)
+            self.stub.submit(loggable)
 
-    def _enqueue(self, queue: queue.Queue, event: Event):
+    def _enqueue(self, queue: queue.Queue, loggable: Loggable):
         retry = True
 
         while retry:
             try:
-                queue.put_nowait(event)
+                queue.put_nowait(loggable)
                 retry = False
 
             except queue.Full:
                 if self.overflow_disposition == OverflowDisposition.BLOCK:
-                    queue.put(event)
+                    queue.put(loggable)
                     retry = False
 
                 elif self.overflow_disposition == OverflowDisposition.DISCARD_OLDEST:

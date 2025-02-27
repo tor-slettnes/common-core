@@ -9,5 +9,6 @@ target_sources(${TARGET} PRIVATE
   level.c++
   domain.c++
   event.c++
+  error.c++
   exceptions.c++
 )

@@ -15,21 +15,15 @@ namespace core::dds
     DDSLogger::DDSLogger(const std::string &sink_id,
                          const std::string &channel_name,
                          int domain_id)
-        : LogSink(sink_id, {}, core::logging::MESSAGE_CONTRACT),
+        : MessageSink(sink_id, false),
           Publisher(channel_name, domain_id)
     {
-    }
-
-    void DDSLogger::load_settings(const types::KeyValueMap &settings)
-    {
-        Super::load_settings(settings);
-        this->load_message_format(settings);
     }
 
     void DDSLogger::open()
     {
         Super::open();
-        this->log_writer = this->create_writer<CC::Status::Event>(
+        this->log_writer = this->create_writer<CC::Status::LogMessage>(
             CC::Status::LOG_TOPIC,  // topic_name
             true,                   // reliable
             false);                 // sync_latest
@@ -41,11 +35,17 @@ namespace core::dds
         Super::close();
     }
 
-    void DDSLogger::capture_event(const status::Event::ptr &event)
+    bool DDSLogger::handle_message(const logging::Message::ptr &message)
     {
         if (this->log_writer)
         {
-            this->log_writer->write(core::idl::encoded_shared<CC::Status::Event>(event));
+            this->log_writer->write(
+                core::idl::encoded_shared<CC::Status::LogMessage>(message));
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }  // namespace core::dds

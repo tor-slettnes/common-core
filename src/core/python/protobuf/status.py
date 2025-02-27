@@ -6,7 +6,7 @@
 #===============================================================================
 
 from .utils import proto_enum
-from ..generated.status_pb2 import Event, Level, Domain
+from ..generated.status_pb2 import Error, Level, Domain
 
 import logging
 
@@ -20,7 +20,7 @@ level_map = {
     Level.LEVEL_INFO: logging.INFO,
     Level.LEVEL_NOTICE: (logging.INFO + logging.WARNING) // 2,
     Level.LEVEL_WARNING: logging.WARNING,
-    Level.LEVEL_FAILED: logging.ERROR,
+    Level.LEVEL_ERROR: logging.ERROR,
     Level.LEVEL_CRITICAL: logging.CRITICAL,
     Level.LEVEL_FATAL: logging.FATAL,
 }

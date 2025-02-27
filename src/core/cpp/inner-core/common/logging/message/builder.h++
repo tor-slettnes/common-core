@@ -25,7 +25,7 @@ namespace core::logging
     /// Elements are added to the stream if and only if it its severity level is
     /// equal to or higher than the logging threshold for the provided logs
     /// scope, _and_ if it is determined that the message will be accepted by at
-    /// least one available `LogSink()` instance.  As such, to avoid the penalty
+    /// least one available `MessageSink()` instance.  As such, to avoid the penalty
     /// of unneccessary string conversions, it is usually preferable to provide
     /// original objects rather than to preformat them as strings.  In this way,
     /// messages with low severity level (such as status::Level::TRACE) can be

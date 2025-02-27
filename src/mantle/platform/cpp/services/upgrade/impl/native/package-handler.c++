@@ -303,7 +303,7 @@ namespace platform::upgrade::native
         const std::optional<std::string> &task_description,
         const std::optional<UpgradeProgress::Fraction> &task_progress,
         const std::optional<UpgradeProgress::Fraction> &total_progress,
-        const std::optional<core::status::Event::ptr> error) const
+        const std::optional<core::status::Error::ptr> error) const
     {
         UpgradeProgress::ptr progress = signal_upgrade_progress.get_cached({});
 
