@@ -193,7 +193,7 @@ class API (logging.Handler):
                     /,
                     **kwargs):
 
-        attributes = (atttributes | kwargs) if attributes else kwargs
+        attributes = (attributes | kwargs) if attributes else kwargs
 
         return Loggable(
             data = Data(

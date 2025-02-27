@@ -204,12 +204,13 @@ class LogClient (API, BaseClient):
     def add_sink(self,
                  sink_id: str,
                  sink_type: str,
-                 permanent: bool = False,
+                 contract_id: Optional[str] = None,
+                 min_level: Level = Level.LEVEL_NONE,
                  filename_template: Optional[str] = None,
                  rotation_interval: Optional[Interval] = None,
                  use_local_time: Optional[bool] = None,
-                 min_level: Level = Level.LEVEL_NONE,
-                 contract_id: Optional[str] = None,
+                 compress_after_use: Optional[bool] = None,
+                 expiration_interval: Optional[Interval] = None,
                  columns: None|tuple|ColumnSpec = None) -> bool:
         '''
         Add a log sink of the specified type. This will capture log events
@@ -224,8 +225,14 @@ class LogClient (API, BaseClient):
         @param sink_type
             Log sink type, such as `csv` or `logfile`.
 
-        @param permanent
-            Recreate the sink after future restarts
+        @param contract_id
+             If specified, capture only log messages with a matching
+             `contract_id` field. This can be used to capture telemetry,
+             where matching log events are expected to contain a specific
+             set of custom attributes.
+
+        @param min_level
+            Severy threshold below which messages will be ignored.
 
         @param filename_template
             Output file template for log sinks that record events directly to
@@ -240,14 +247,13 @@ class LogClient (API, BaseClient):
             This also controls how timestamp are translated to strings within
             certain log sinks.
 
-        @param min_level
-            Severy threshold below which messages will be ignored.
+        @param compress_after_use
+            Compress log files once they are no longer being recorded to.
+            The compressed files will have a `.gz` suffix.
 
-        @param contract_id
-             If specified, capture only log messages with a matching
-             `contract_id` field. This can be used to capture telemetry,
-             where matching log events are expected to contain a specific
-             set of custom attributes.
+        @param expiration_interval
+            Remove log files after the specified time interval. The default is
+            one year.
 
         @param columns
              What fields to capture. Applicable only for *tabular data* (column
@@ -327,12 +333,13 @@ class LogClient (API, BaseClient):
         request = SinkSpec(
             sink_id = sink_id,
             sink_type = sink_type,
-            permanent = permanent,
+            contract_id = contract_id,
+            min_level = encodeLogLevel(min_level),
             filename_template = filename_template,
             rotation_interval = encodeInterval(rotation_interval),
             use_local_time = use_local_time,
-            min_level = encodeLogLevel(min_level),
-            contract_id = contract_id,
+            compress_after_use = compress_after_use,
+            expiration_interval = expiration_interval,
             columns = [encodeColumnSpec(column) for column in columns or ()])
 
         return self.stub.add_sink(request).added
