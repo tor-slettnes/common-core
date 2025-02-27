@@ -10,11 +10,15 @@ from ..common import Endpoint
 from ...core.settingsstore import SettingsStore
 
 ### Stanard Python modules
-import re, logging
+import re
+import logging
+import os
 from typing import Optional
 
 ### Third-party modules
 try:
+    ### Workaround for gRPC segfault with `"fork"` setting of `aiomultiprocess` module
+    os.environ["GRPC_ENABLE_FORK_SUPPORT"] = "false"
     import grpc
 except ImportError as e:
     logging.critical('Could not import module `grpc` - try installling `python3-grpcio`.')
