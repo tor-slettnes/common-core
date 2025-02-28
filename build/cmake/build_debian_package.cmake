@@ -36,14 +36,18 @@ endfunction()
 function(cc_cpack_add_group GROUP)
   set(_options)
   set(_singleargs DISPLAY_NAME DESCRIPTION)
-  set(_multiargs DEPENDS)
+  set(_multiargs GROUP_DEPS DEB_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   cpack_add_component_group("${GROUP}"
     DISPLAY_NAME "${DISPLAY_NAME}"
     DESCRIPTION "${DESCRIPTION}")
 
-  cc_cpack_add_group_dependencies("${GROUP}" ${arg_DEPENDS})
+  cc_cpack_add_group_dependencies("${GROUP}"
+    GROUP_DEPS ${arg_GROUP_DEPS}
+    DEB_DEPS ${arg_DEB_DEPS}
+  )
+
 endfunction()
 
 #===============================================================================
@@ -52,16 +56,18 @@ endfunction()
 function(cc_cpack_add_group_dependencies TARGET)
   set(_options)
   set(_singleargs RELATIONSHIP)
-  set(_multiargs)
+  set(_multiargs GROUP_DEPS DEB_DEPS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   string(TOUPPER "${TARGET}" upcase_target)
   cc_get_value_or_default(relationship arg_RELATIONSHIP DEPENDS)
 
-  list(TRANSFORM arg_UNPARSED_ARGUMENTS
+  list(TRANSFORM arg_GROUP_DEPS
     PREPEND "${PACKAGE_NAME_PREFIX}-"
     OUTPUT_VARIABLE ancestors
   )
+
+  list(APPEND ancestors ${arg_DEB_DEPS})
 
   cc_cpack_config(
     "CPACK_DEBIAN_${upcase_target}_PACKAGE_${relationship}"

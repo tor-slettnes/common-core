@@ -9,7 +9,7 @@
 #include "logging/logging.h++"
 #include "string/stream.h++"
 #include "platform/init.h++"
-#include "buildinfo.h"
+#include "buildinfo.h++"
 
 #include <iomanip>
 #include <sstream>

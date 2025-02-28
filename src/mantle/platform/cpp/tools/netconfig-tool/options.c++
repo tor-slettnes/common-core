@@ -9,7 +9,7 @@
 #include "netconfig-providers-dbus.h++"
 #include "netconfig-providers-grpc.h++"
 #include "platform/path.h++"
-#include "buildinfo.h"
+#include "buildinfo.h++"
 
 Options::Options()
     : Super(),

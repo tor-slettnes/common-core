@@ -63,8 +63,9 @@ class API (logging.Handler):
             source_line = record.lineno,
             function_name = record.funcName,
             log_scope = record.name,
-            thread_id = record.thread)
-            # thread_id = threading.current_thread().native_id)
+            thread_id = record.thread,
+            thread_name = record.threadName,
+            task_name = getattr(record, 'taskName', None)) # Introduced in Python 3.12
 
         try:
             return self.submit(message)
@@ -159,7 +160,7 @@ class API (logging.Handler):
         if source_path and (self.pathbase in pathlib.Path(source_path).parents):
             source_path = os.path.relpath(source_path, self.pathbase)
 
-        attributes = (atttributes | kwargs) if attributes else kwargs
+        attributes = (attributes | kwargs) if attributes else kwargs
 
         return Loggable(
             message = Message(

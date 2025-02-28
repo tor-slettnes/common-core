@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "posix-path.h++"
-#include "buildinfo.h"
+#include "buildinfo.h++"
 
 #include <sys/types.h>
 #include <string.h>

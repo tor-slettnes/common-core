@@ -9,7 +9,7 @@
 #include "vfs-providers-local.h++"
 #include "vfs-providers-grpc.h++"
 #include "platform/path.h++"
-#include "buildinfo.h"
+#include "buildinfo.h++"
 
 Options::Options()
     : Super(),

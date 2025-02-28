@@ -1,0 +1,35 @@
+// -*- c++ -*-
+//==============================================================================
+/// @file buildinfo.c++.in
+/// @brief Build information template, populated by CMake
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+// clang-format off
+
+#include "buildinfo.h++"
+
+const std::string PRODUCT_NAME               = "@PRODUCT@";
+const std::string PROJECT_NAME               = "@CMAKE_PROJECT_NAME@";
+const std::string PROJECT_DESCRIPTION        = "@CMAKE_PROJECT_DESCRIPTION@";
+const std::string PROJECT_VERSION            = "@CMAKE_PROJECT_VERSION@";
+
+const std::uint32_t PROJECT_VERSION_MAJOR    = @VERSION_MAJOR@;
+const std::uint32_t PROJECT_VERSION_MINOR    = @VERSION_MINOR@;
+const std::uint32_t PROJECT_VERSION_PATCH    = @VERSION_PATCH@;
+const std::uint32_t PROJECT_VERSION_TWEAK    = @VERSION_TWEAK@;
+const std::uint32_t BUILD_NUMBER             = @BUILD_NUMBER@;
+const std::uint32_t BUILD_TIME               = @BUILD_TIME@;
+
+const std::string BUILD_HOST                 = "@BUILD_HOST@";
+const std::string BUILD_OS                   = "@BUILD_OS@";
+const std::string BUILD_OS_RELEASE           = "@BUILD_OS_RELEASE@";
+const std::string BUILD_OS_VERSION           = "@BUILD_OS_VERSION@";
+const std::string BUILD_DISTRIB_ID           = "@BUILD_DISTRIB_ID@";
+const std::string BUILD_DISTRIB_NAME         = "@BUILD_DISTRIB_NAME@";
+const std::string BUILD_DISTRIB_VERSION      = "@BUILD_DISTRIB_VERSION@";
+const std::string BUILD_DISTRIB_VERSION_ID   = "@BUILD_DISTRIB_VERSION_ID@";
+const std::string BUILD_DISTRIB_VERSION_CODE = "@BUILD_DISTRIB_VERSION_CODE@";
+const std::string BUILD_DISTRIB_PRETTY_NAME  = "@BUILD_DISTRIB_PRETTY_NAME@";
+const std::string SOURCE_DIR                 = "@CMAKE_SOURCE_DIR@";
+const std::string SETTINGS_DIR               = "@SETTINGS_DIR@";
+const std::string ORGANIZATION               = "@ORGANIZATION@";

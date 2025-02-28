@@ -26,7 +26,7 @@ if(INSTALL_GROUP)
   cc_cpack_add_group(${INSTALL_GROUP}
     DISPLAY_NAME "MultiLogger service"
     DESCRIPTION "Record events such as diagnostic messages, errors, and telemetry."
-    DEPENDS "common"
+    GROUP_DEPS "common"
   )
 endif()
 

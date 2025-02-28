@@ -141,7 +141,7 @@ cmake: $(CMAKE_TAG)
 
 ### If we have defined custom arguments to CMake (see above), we force
 ### regeneration of the CMake cache by declaring any previous result as phony.
-ifneq ($(strip $(CMAKE_CONFIG_ARGS)),)
+ifneq ($(or $(CMAKE_FORCE_REGENERATE),$(CMAKE_CONFIG_ARGS)),)
 .PHONY: $(CMAKE_TAG)
 endif
 
@@ -151,6 +151,7 @@ $(CMAKE_TAG):
 	@echo "Generating build files in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
+	@echo -n "Invoking: "
 	@cmake -B "$(BUILD_DIR)" $(CMAKE_CONFIG_ARGS)
 
 $(BUILD_DIR):

@@ -42,6 +42,6 @@ if(INSTALL_GROUP)
   cc_cpack_add_group(${INSTALL_GROUP}
     DISPLAY_NAME "DEMO Example"
     DESCRIPTION "DEMO application example"
-    DEPENDS "common"
+    GROUP_DEPS "common"
   )
 endif()

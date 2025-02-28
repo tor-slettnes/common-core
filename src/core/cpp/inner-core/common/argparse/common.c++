@@ -12,7 +12,7 @@
 #include "logging/sinks/core-sinks.h++"
 #include "platform/path.h++"
 #include "platform/runtime.h++"
-#include "buildinfo.h"
+#include "buildinfo.h++"
 
 #include <functional>
 

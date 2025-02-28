@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "host.h++"
-#include "buildinfo.h"
+#include "buildinfo.h++"
 
 namespace core::platform
 {

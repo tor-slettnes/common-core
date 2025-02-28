@@ -11,9 +11,32 @@
 ##  Build a self-contained Python executable with PyInstaller
 
 function(cc_add_python_executable TARGET)
-  set(_options DEBUG INFO USE_SPEC DIRECTORY_BUNDLE)
-  set(_singleargs SCRIPT PROGRAM TYPE INSTALL_COMPONENT SPEC_TEMPLATE PYTHON_INTERPRETER VENV)
-  set(_multiargs BUILD_DEPS PYTHON_DEPS DATA_DEPS RUNTIME_HOOKS PYINSTALLER_EXTRA_ARGS)
+  set(_options
+    DEBUG                 # Set PyInstaller log level to DEBUG
+    USE_SPEC              # Use a Pyinstaller `.spec` file (see `SPEC_TEMPLATE`)
+    DIRECTORY_BUNDLE      # Create a directory bundle instead of single executable
+  )
+  set(_singleargs
+    SCRIPT              # Startup/main script (required)
+    PROGRAM             # Name of executable (default: ${TARGET})
+    TYPE                # CMake install type (`BIN` or `SBIN`)
+    INSTALL_COMPONENT   # CMake install component
+    SPEC_TEMPLATE       # Use custom PyInstaller `.spec` template
+    VENV                # Python virtual environment in which to run PyInstaller
+    PYTHON_INTERPRETER  # Python interpreter to use (overrides VENV)
+  )
+  set(_multiargs
+    BUILD_DEPS                  # CMake target dependencies for build environment
+    PYTHON_DEPS                 # CMake Python target dependencies to bundle
+    DATA_DEPS                   # Other CMake target depenencies to bundle (settings...)
+    RUNTIME_HOOKS               # Scripts to launch before main executable
+    HIDDEN_IMPORTS              # Add specific imports not discovered py PyInstaller
+    COLLECT_PACKAGES            # Additional Python packages (modules, data, binaries)
+    COLLECT_SUBMODULES          # Additional pure Python modules to import
+    EXTRA_DATA_MODULES          # Additional data-only modules to import
+    PYINSTALLER_EXTRA_ARGS      # Extra args passed on directly to PyInstaller
+  )
+
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### Do this only if the option `BUILD_PYTHON_EXECUTABLE` is enabled
@@ -107,11 +130,8 @@ function(cc_add_python_executable TARGET)
     "--clean"
     "--noconfirm")
 
-  if(arg_DEBUG)
-    list(APPEND pyinstall_args "--log-level" "DEBUG")
-  elseif(NOT arg_INFO)
-    list(APPEND pyinstall_args "--log-level" "WARN")
-  endif()
+  cc_get_ternary(loglevel arg_DEBUG "DEBUG" "WARN")
+  list(APPEND pyinstall_args "--log-level" ${loglevel})
 
   list(APPEND pyinstall_args
     "--workpath" "${workdir}"
@@ -136,27 +156,31 @@ function(cc_add_python_executable TARGET)
   cc_get_target_property_recursively(
     PROPERTY hidden_imports
     TARGETS ${arg_PYTHON_DEPS}
+    INITIAL_VALUE ${arg_HIDDEN_IMPORTS}
     OUTPUT_VARIABLE hidden_imports
-    REMOVE_DUPLICATES)
-
-  ## Get submodules that must be collected explicitly
-  cc_get_target_property_recursively(
-    PROPERTY collect_submodules
-    TARGETS ${arg_PYTHON_DEPS}
-    OUTPUT_VARIABLE collect_submodules
     REMOVE_DUPLICATES)
 
   ## Get packages that must be collected explicitly
   cc_get_target_property_recursively(
     PROPERTY collect_packages
     TARGETS ${arg_PYTHON_DEPS}
+    INITIAL_VALUE ${arg_COLLECT_PACKAGES}
     OUTPUT_VARIABLE collect_packages
+    REMOVE_DUPLICATES)
+
+  ## Get submodules that must be collected explicitly
+  cc_get_target_property_recursively(
+    PROPERTY collect_submodules
+    TARGETS ${arg_PYTHON_DEPS}
+    INITIAL_VALUE ${arg_COLLECT_SUBMODULES}
+    OUTPUT_VARIABLE collect_submodules
     REMOVE_DUPLICATES)
 
   ## Get data modules that must be collected explicitly
   cc_get_target_property_recursively(
     PROPERTY extra_data_modules
     TARGETS ${arg_PYTHON_DEPS}
+    INITIAL_VALUE ${arg_EXTRA_DATA_MODULES}
     OUTPUT_VARIABLE extra_data_modules
     REMOVE_DUPLICATES)
 
@@ -207,11 +231,8 @@ function(cc_add_python_executable TARGET)
       "--specpath" "${workdir}"
       "--name" "${program}")
 
-    if(arg_DIRECTORY_BUNDLE)
-      list(APPEND pyinstall_args "--onedir")
-    else()
-      list(APPEND pyinstall_args "--onefile")
-    endif()
+    cc_get_ternary(output_type arg_DIRECTORY_BUNDLE "onedir" "onefile")
+    list(APPEND pyinstall_args "--${output_type}")
 
     foreach(import ${hidden_imports})
       list(APPEND pyinstall_args "--hidden-import" "${import}")

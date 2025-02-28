@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "path.h++"
-#include "buildinfo.h"
+#include "buildinfo.h++"
 #include <fstream>
 
 #define LOCAL_FOLDER          "/cc"

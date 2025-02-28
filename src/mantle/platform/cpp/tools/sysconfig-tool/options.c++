@@ -9,7 +9,7 @@
 #include "sysconfig-providers-grpc.h++"
 #include "platform/path.h++"
 #include "protobuf-message.h++"
-#include "buildinfo.h"
+#include "buildinfo.h++"
 
 Options::Options()
     : Super(),
