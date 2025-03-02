@@ -5,9 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Build environment for PyInstaller
-add_subdirectory(buildtools)
-
 ### Create a library target to facilitate get_target_property()
 set(TARGET "cc_core_python")
 
@@ -54,7 +51,6 @@ cc_add_python("${TARGET}"
 )
 
 cc_add_python_wheel("common"
-  BUILD_DEPS "python_build"
   PYTHON_DEPS "${TARGET}"
   DATA_DEPS "cc_core_settings"
   DESCRIPTION "Python common components"

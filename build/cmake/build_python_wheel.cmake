@@ -73,6 +73,11 @@ function(cc_add_python_wheel TARGET)
     arg_VERSION
     "${PROJECT_VERSION}")
 
+  cc_get_value_or_default(
+    BUILD_DEPS
+    arg_BUILD_DEPS
+    "python_build")
+
   if (arg_PACKAGE_DEPS)
     set(wheel_dependencies "${arg_PACKAGE_DEPS}")
   else()
@@ -116,9 +121,8 @@ function(cc_add_python_wheel TARGET)
     DEPENDS "${wheel_path}"
   )
 
-  if(arg_BUILD_DEPS OR arg_PYTHON_DEPS OR arg_DATA_DEPS)
+  if(arg_PYTHON_DEPS OR arg_DATA_DEPS)
     add_dependencies("${TARGET}"
-      ${arg_BUILD_DEPS}
       ${arg_PYTHON_DEPS}
       ${arg_DATA_DEPS})
   endif()
@@ -176,7 +180,7 @@ function(cc_add_python_wheel TARGET)
 
   add_custom_command(
     OUTPUT "${wheel_path}"
-    DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
+    DEPENDS ${BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
     BYPRODUCTS "${gen_dir}"
     COMMAND ${python}
     ARGS -m build --wheel --outdir "${wheel_dir}" "."

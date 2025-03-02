@@ -35,7 +35,6 @@ cc_add_python("${TARGET}"
 
 if(BUILD_DEMO)
   cc_add_python_wheel("demo-shell"
-    BUILD_DEPS "python_build"
     PYTHON_DEPS ${TARGET}
     VENV "${PYTHON_VENV}"
     DATA_DEPS cc_demo_settings
@@ -44,7 +43,6 @@ if(BUILD_DEMO)
   )
 
   cc_add_python_executable("pydemo_grpc_server"
-    BUILD_DEPS "python_pyinstaller"
     PYTHON_DEPS ${TARGET}
     DATA_DEPS cc_demo_settings
     VENV "${PYTHON_VENV}"
@@ -57,7 +55,6 @@ if(BUILD_DEMO)
 
   cc_add_python_executable("pydemo_zmq_server"
     PYTHON_DEPS "${TARGET}"
-    BUILD_DEPS "python_pyinstaller"
     DATA_DEPS cc_demo_settings
     VENV "${PYTHON_VENV}"
     SCRIPT "zmq/server.py"

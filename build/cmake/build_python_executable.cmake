@@ -85,13 +85,16 @@ function(cc_add_python_executable TARGET)
   add_custom_target("${TARGET}" ALL
     DEPENDS "${program_path}")
 
-  if(arg_BUILD_DEPS OR arg_PYTHON_DEPS OR arg_DATA_DEPS)
+  if(arg_PYTHON_DEPS OR arg_DATA_DEPS)
     add_dependencies("${TARGET}"
-      ${arg_BUILD_DEPS}
       ${arg_PYTHON_DEPS}
       ${arg_DATA_DEPS})
   endif()
 
+  cc_get_value_or_default(
+    BUILD_DEPS
+    arg_BUILD_DEPS
+    "python_pyinstaller")
 
   ### Collect per-target staged modules from the specified target dependencies
   ### into a consolidated staging area.  This is needed because `PyInstaller`
@@ -116,7 +119,7 @@ function(cc_add_python_executable TARGET)
 
   add_custom_command(
     OUTPUT "${program_path}"
-    DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
+    DEPENDS ${BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_directory ${dep_staging_dirs} "${staging_dir}"
     COMMAND_EXPAND_LISTS
