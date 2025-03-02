@@ -52,6 +52,7 @@ if(BUILD_DEMO)
     RUNTIME_HOOKS "starthook.py"
     INSTALL_COMPONENT "${INSTALL_COMPONENT}"
     TYPE SBIN
+    USE_SPEC
   )
 
   cc_add_python_executable("pydemo_zmq_server"

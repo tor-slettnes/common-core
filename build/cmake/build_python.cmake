@@ -7,8 +7,8 @@
 
 include(utility)
 
-set(PYTHON_TEMPLATE_DIR
-  "${CMAKE_CURRENT_LIST_DIR}/python")
+file(REAL_PATH "../python" PYTHON_TEMPLATE_DIR
+  BASE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
 
 set(PYTHON_OUT_DIR
   "${CMAKE_BINARY_DIR}/python")

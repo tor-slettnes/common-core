@@ -4,8 +4,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(SERVICE_TEMPLATE_DIR ${CMAKE_CURRENT_LIST_DIR}/debian)
-set(SERVICE_STAGING_DIR "${CMAKE_BINARY_DIR}/deb")
+file(REAL_PATH "../debian" SERVICE_TEMPLATE_DIR
+  BASE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
+
+file(REAL_PATH "deb" SERVICE_STAGING_DIR
+  BASE_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 ### Add the above directory to the global `clean` target
 set_property(
