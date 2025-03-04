@@ -86,8 +86,19 @@ namespace core::logging
 
         if (this->include_context())
         {
-            stream << message->thread_id()
-                   << "|"
+            if (!message->task_name().empty())
+            {
+                stream << message->task_name();
+            }
+            else if (!message->thread_name().empty())
+            {
+                stream << message->thread_name();
+            }
+            else if (message->thread_id())
+            {
+                stream << message->thread_id();
+            }
+            stream << "|"
                    << message->scopename_or("(no scope)")
                    << "|";
 
