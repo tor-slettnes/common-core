@@ -26,10 +26,6 @@ if(NOT IS_ABSOLUTE PYTHON_VENV)
     OUTPUT_VARIABLE PYTHON_VENV)
 endif()
 
-
-set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
-  CACHE STRING "Top-level installation directory for Python modules")
-
 ### Add the above directories to the global `clean` target
 set_property(
   DIRECTORY "${CMAKE_BINARY_DIR}"

@@ -53,6 +53,17 @@ endif()
 
 set(LAST_BUILD "${BUILD_NUMBER}" CACHE INTERNAL "..." FORCE)
 
+#===============================================================================
+## Various target directories
+
+set(DATA_DIR "share/${ORGANIZATION}"
+  CACHE STRING "Target directory for shared data")
+
+set(SETTINGS_DIR "${DATA_DIR}/settings"
+  CACHE STRING "Top-level installation directory for settings files")
+
+set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
+  CACHE STRING "Top-level installation directory for Python modules")
 
 #===============================================================================
 ## Software upgrade settings (via `Upgrade` service)

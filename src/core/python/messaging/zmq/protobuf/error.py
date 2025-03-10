@@ -8,7 +8,7 @@
 ### Modules within package
 from cc.protobuf.utils import messageToDict
 from cc.protobuf.rr import Reply, StatusCode
-from cc.protobuf.status import Event
+from cc.protobuf.status import Error as CommonError
 
 class Error (RuntimeError):
     '''
@@ -17,7 +17,7 @@ class Error (RuntimeError):
 
     def __init__(self,
                  code    : StatusCode,
-                 details : Event):
+                 details : CommonError):
 
         RuntimeError.__init__(self, details.text)
         self.code    = code

@@ -10,6 +10,7 @@ from .sysconfig.grpc.client import SysConfigClient
 from .netconfig.grpc.client import NetConfigClient
 from .vfs.grpc.client import VirtualFileSystemClient
 from .upgrade.grpc.client import UpgradeClient
+from cc.multilogger.grpc.client import LogClient
 
 import cc.protobuf.wellknown
 import cc.protobuf.variant
@@ -63,6 +64,7 @@ def legend():
     '''
     Interactive Service Control.  Subsystems loaded:
 
+        logger    - `Logger` gRPC service client
         sysconfig - `SysConfig` gRPC service client
         netconfig - `NetConfig` gRPC service client
         vfs       - `VirtualFileSystem` gRPC service client
@@ -87,6 +89,11 @@ if __name__ == "__main__":
 
     logging.getLogger().setLevel(logging.DEBUG if args.debug else logging.INFO)
 
+    logger = LogClient(
+        args.host,
+        wait_for_ready = args.wait_for_ready,
+        capture_python_logs = True)
+
     sysconfig = SysConfigClient(
         args.host,
         wait_for_ready = args.wait_for_ready)
@@ -103,6 +110,7 @@ if __name__ == "__main__":
         args.host,
         wait_for_ready = args.wait_for_ready)
 
+    logger.initialize()
     sysconfig.initialize()
     netconfig.initialize()
     vfs.initialize()

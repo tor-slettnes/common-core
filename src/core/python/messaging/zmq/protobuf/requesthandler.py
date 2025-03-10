@@ -8,7 +8,7 @@
 ### Modules within package
 from .error import Error
 from cc.protobuf.wellknown import Empty
-from cc.protobuf.status import Event
+from cc.protobuf.status import Error as Event
 from cc.protobuf.variant import keyValueMap
 from cc.protobuf.rr import Request, Reply, StatusCode
 
@@ -116,7 +116,7 @@ class RequestHandler:
             Error(StatusCode.STATUS_FAILED,
                   Event(
                       text = "Handler method does not have an input argument "
-                      "with a ProtoBuf message annottation",
+                      "with a ProtoBuf message annotation",
                       symbol = 'InvalidHandlerMethod',
                       attributes = keyValueMap(
                           interface_name = self.interface_name,

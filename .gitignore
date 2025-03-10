@@ -6,6 +6,8 @@
 
 ### Build artifacts
 /out/
+/logs/
+/venv/
 
 ### CTest state
 /Testing

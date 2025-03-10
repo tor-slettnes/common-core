@@ -136,6 +136,10 @@ build: cmake
 	@echo
 	@cmake --build "$(BUILD_DIR)"
 
+.PHONY: cmake-gui
+cmake-gui: cmake
+	@cmake-gui $(BUILD_DIR)
+
 .PHONY: cmake
 cmake: $(CMAKE_TAG)
 

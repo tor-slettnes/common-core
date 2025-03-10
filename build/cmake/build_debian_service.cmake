@@ -140,7 +140,7 @@ function(cc_add_enable_hooks UNIT)
   set(_staging_dir "${SERVICE_STAGING_DIR}/${package}")
   file(MAKE_DIRECTORY "${_staging_dir}")
 
-  # Define `SERVICE_UNITS` and `SERVICE_UNIT_PATHS` for `config_file()` 
+  # Define `SERVICE_UNITS` and `SERVICE_UNIT_PATHS` for `config_file()`
   list(TRANSFORM _service_units
     PREPEND "${arg_INSTALL_DIRECTORY}/"
     OUTPUT_VARIABLE _service_unit_paths)
@@ -176,7 +176,8 @@ function(cc_add_enable_hooks UNIT)
   cc_cpack_debian_config(PACKAGE_CONTROL_EXTRA "${extra_control}"
     COMPONENT "${arg_INSTALL_COMPONENT}"
     GROUP "${arg_INSTALL_GROUP}"
-    APPEND)
+  )
+  #  APPEND)
 endfunction()
 
 
@@ -196,7 +197,7 @@ function(cc_add_debian_file_from_template)
   endif()
 
   if(arg_OUTPUT_FILE)
-    configure_file("${template_file}" "${arg_OUTPUT_FILE}")
+    configure_file("${template_file}" "${arg_OUTPUT_FILE}" @ONLY)
   endif()
 
   if(arg_EXTRA_CONTROL_VARIABLE)

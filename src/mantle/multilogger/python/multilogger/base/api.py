@@ -45,9 +45,9 @@ class API (logging.Handler):
             pylogger.addHandler(self)
 
     def close(self):
-        pylogger = logging.getLogger()
-        pylogger.removeHandler(self)
-
+        if self.capture_python_logs:
+            pylogger = logging.getLogger()
+            pylogger.removeHandler(self)
 
     ## Overrides `logging.Handler.emit()` iff capturing Python logs
     def emit(self, record: logging.LogRecord):

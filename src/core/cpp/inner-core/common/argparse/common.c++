@@ -21,13 +21,7 @@ namespace core::argparse
     //--------------------------------------------------------------------------
     // Constants
 
-    constexpr auto SYSLOG_SINK = "syslog";
-    constexpr auto STDOUT_SINK = "stdout";
     constexpr auto STDERR_SINK = "stderr";
-    constexpr auto FILE_SINK = "file";
-    constexpr auto JSON_SINK = "json";
-    constexpr auto CSV_SINK = "csv";
-
     constexpr auto SETTING_LOGSINK_ENABLED = "enabled";
     constexpr auto DEFAULT_LOGSINK_ENABLED = false;
 

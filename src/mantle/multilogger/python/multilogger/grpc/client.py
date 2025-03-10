@@ -20,16 +20,12 @@ import grpc
 
 ### Standard Python modules
 from typing import Optional
+from collections import deque
 import enum
 import logging
 import queue
 import sys
 import threading
-
-class OverflowDisposition (enum.IntEnum):
-    BLOCK = 0
-    DISCARD_OLDEST = 1
-    DISCARD_NEWEST = 2
 
 #===============================================================================
 # MultiLogger Client
@@ -38,12 +34,6 @@ class LogClient (API, BaseClient):
     '''
     Client for MultiLogger service.
     '''
-
-    overflow_disposition_message = {
-        OverflowDisposition.BLOCK : "Blocking",
-        OverflowDisposition.DISCARD_OLDEST : "Discarding oldest message",
-        OverflowDisposition.DISCARD_NEWEST : "Discarding message"
-    }
 
     from cc.generated.multilogger_pb2_grpc import LoggerStub as Stub
 
@@ -54,8 +44,7 @@ class LogClient (API, BaseClient):
             capture_python_logs: bool = False,
             log_level      : int = logging.NOTSET,
             wait_for_ready : bool = False,
-            queue_size     : int = 4096,
-            overflow_disposition: OverflowDisposition = OverflowDisposition.DISCARD_OLDEST):
+            queue_size     : int = 4096):
         '''
         Initializer.
 
@@ -79,9 +68,6 @@ class LogClient (API, BaseClient):
         :param queue_size:
             Max. number of log messages to cache locally if server is
             unavailable, before discarding.
-
-        ;param overflow_disposition:
-            How to handle additional log messages once local cache is full.
         '''
 
         API.__init__(self, identity,
@@ -93,10 +79,17 @@ class LogClient (API, BaseClient):
 
         self.queue = None
         self.queue_size = queue_size
-        self.overflow_disposition = overflow_disposition
         self.writer_thread = None
 
     def __del__(self):
+        self.close()
+
+    def initialize(self):
+        super().initialize()
+        self.open(self.wait_for_ready)
+
+    def deinitialize(self):
+        super().deinitialize()
         self.close()
 
     def open(self, wait_for_ready: bool = True):
@@ -115,7 +108,7 @@ class LogClient (API, BaseClient):
             if wait_for_ready:
                 self.wait_for_ready = wait_for_ready
 
-            self.queue = queue.Queue(self.queue_size)
+            self.queue = deque([], self.queue_size)
             self.writer_thread = threading.Thread(
                 name = "LogStreamer",
                 target = self.stream_worker,
@@ -130,9 +123,9 @@ class LogClient (API, BaseClient):
         Any subsequent log messages will be sent via unary RPC calls.
         '''
 
-        if self.queue:
-            self.queue.put(None)   # Allow `_queue_iterator` to break free
-            self.queue = None      # Do not use queue for future messags
+        if queue := self.queue:
+            queue.append(None)
+            self.queue = None  # Do not use queue for future messags
 
             self.writer_thread.join()
             self.writer_thread = None
@@ -148,44 +141,21 @@ class LogClient (API, BaseClient):
         immediately via a unary RPC call.
         '''
         if queue := self.queue:
-            self._enqueue(queue, loggable)
+            queue.append(loggable)
 
         else:
             self.stub.submit(loggable)
 
-    def _enqueue(self, queue: queue.Queue, loggable: Loggable):
-        retry = True
-
-        while retry:
-            try:
-                queue.put_nowait(loggable)
-                retry = False
-
-            except queue.Full:
-                if self.overflow_disposition == OverflowDisposition.BLOCK:
-                    queue.put(loggable)
-                    retry = False
-
-                elif self.overflow_disposition == OverflowDisposition.DISCARD_OLDEST:
-                    try:
-                        queue.get_nowait()
-                    except queue.Empty:
-                        pass
-                    retry = True
-
-                elif self.overflow_disposition == OverflowDisposition.DISCARD_NEWEST:
-                    retry = False
-
-
     def stream_worker(self):
         '''
         Stream queued messages to MultiLogger service.
-        Runs in its own thread.
+        Runs in its own thread until the queue is deleted (i.e., client is closed)
         '''
+
         while queue := self.queue:
             try:
-                return self.stub.writer(iter(queue.get, None))
-            except grpc.RpcError:
+                return self.stub.writer(iter(queue))
+            except grpc.RpcError as e:
                 pass
 
     def listen(self,
@@ -314,7 +284,7 @@ class LogClient (API, BaseClient):
 
           ```python
 
-          logger = cc.multilogger.LogClient()
+          logger = cc.multilogger.grpc.LogClient()
           logger.add_sink(
               'my_data_logger',
               sink_type = 'csv',

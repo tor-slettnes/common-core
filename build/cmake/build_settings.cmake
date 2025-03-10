@@ -5,9 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(SETTINGS_DIR "share/${ORGANIZATION}/settings"
-  CACHE STRING "Top-level installation directory for settings files" FORCE)
-
 set(SETTINGS_STAGING_ROOT
   "${CMAKE_BINARY_DIR}/settings")
 

@@ -160,7 +160,7 @@ function(cc_get_cpack_debian_grouping)
   set(_singleargs
     PREFIX         # CPackConfig variable prefix
     SUFFIX         # CPackConfig variable suffix
-    GLUE           # Delimiter beween prefix/selection/suffix
+    GLUE           # Delimiter beween prefix/package/suffix
     COMPONENT      # CPack component for when creating one package per component
     GROUP          # CPack group for when creating one package per group
     OUTPUT_VARIABLE # Variable in which to store the resulting CPackConfig variable name

@@ -83,9 +83,10 @@ class Client (Base):
             self.channel = grpc.aio.insecure_channel(
                 target = self.host,
                 interceptors = [AsyncClientInterceptor(self.wait_for_ready)])
-            # self.channel = grpc.aio.insecure_channel(self.host)
+            # self.channel = grpc.aio.insecure_channel(target = self.host)
 
         else:
+            # self.channel = grpc.insecure_channel(self.host)
             self.channel = grpc.intercept_channel(
                 grpc.insecure_channel(self.host),
                 ClientInterceptor(self.wait_for_ready))
@@ -98,7 +99,5 @@ class Client (Base):
         return service_name
 
     def _channelChange (self, *args, **kwargs):
-        logging.info("%s: Channel change callback: %s"%
-                     (__file__,
-                      invocation(self._channelChange, args, kwargs)))
+        logging.debug("Channel change: args=%s, kwargs=%s"%(args, kwargs))
 
