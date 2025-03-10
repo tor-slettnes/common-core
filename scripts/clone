@@ -1,0 +1,124 @@
+#!/bin/bash -e
+
+prog="${0}"
+
+usage()
+{
+    exec >&1
+    [ -n "${1}" ] && echo "${0}: ${@}"
+
+    echo "Usage: ${prog} [options] SOURCE DEST"
+    echo "Options:"
+    echo "   -h|--help             print this text"
+    echo "   -s|--short-name NAME  use NAME to replace 'CC'"
+    echo "   -l|--long-name NAME   use NAME to replace 'Common Core'"
+    echo "   -m|--email ADDRESS    use ADDRESS to replace 'tor@slett.net'"
+    echo "   -a|--all              full copy, without checking timestamps"
+
+    [ -z "${1}" ] && exit 0 || exit 1
+}
+
+copyfile()
+{
+    srcdir="${1}"
+    dstdir="${2}"
+    relpath="${3}"
+    shortname="${4}"
+    longname="${5}"
+    email="${6}"
+    all="${7}"
+    dashedname="${longname// /-}"
+
+    srcpath="${srcdir}/${relpath}"
+    dstpath="${dstdir}/${relpath//cc_/${shortname,,}_}"
+
+    if ${all} || [ "${srcpath}" -nt "${dstpath}" ]
+    then
+        echo "${relpath}"
+        tgtdir=$(dirname "${dstpath}")
+        [ -n "${tgtdir}" ] && mkdir -p "${tgtdir}"
+
+
+        sed -e "s,tor@slett.net,${email},g" \
+            -e "s,\([^[:alnum:]_.]\|^\)cc,\1${shortname,,},g" \
+            -e "s,\([^[:alnum:]_.]\|^\)CC_,\1${shortname^^}_,g" \
+            -e "s,\([^[:alnum:]_.]\|^\)CC\([^A-Z]\|$\),\1${shortname}\2,g" \
+            -e "s,Common Core,${longname},g" \
+            -e "s,common-core,${dashedname,,},g" \
+            "${srcpath}" > "${dstpath}"
+
+        touch --reference="${srcpath}" "${dstpath}"
+        chmod --reference="${srcpath}" "${dstpath}"
+    fi
+}
+
+
+SOURCE=
+DEST=
+SHORTNAME="OrgName"
+LONGNAME="Organization Name"
+EMAIL="tor.slettnes@orgname.com"
+ALL=false
+
+while [ "$1" ]
+do
+    case "$1" in
+        -h|--help)
+            usage
+            ;;
+
+        -s|--short-name)
+            [ -n "${2}" ] || usage "Missing SHORTNAME"
+            SHORTNAME=${2}
+            shift
+            ;;
+
+        -l|--long-name)
+            [ -n "${2}" ] || usage "Missing LONGNAME"
+            LONGNAME=${2}
+            shift
+            ;;
+
+        -m|--mail)
+            [ -n "${2}" ] || usage "Missing EMAIL"
+            EMAIL=${2}
+            shift
+            ;;
+
+        -a|--all)
+            ALL=true
+            ;;
+
+        *)
+            if [ -z "${SOURCE}" ]
+            then
+                SOURCE="${1}"
+            elif [ -z "${DEST}" ]
+            then
+                DEST="${1}"
+            else
+                usage "Too many arguments"
+            fi
+            ;;
+    esac
+    shift
+done
+
+[ -n "${SOURCE}" ] || usage "Missing SOURCE"
+[ -n "${DEST}"   ] || usage "Missing DEST"
+
+(cd "${SOURCE}"; find . -type f -name '*') | \
+    while read relpath; do
+        copyfile "${SOURCE}" "${DEST}" "${relpath}" "${SHORTNAME}" "${LONGNAME}" "${EMAIL}" "${ALL}"
+    done
+
+
+(cd "${DEST}"; find . -depth -type f -name '*') | \
+    while read relpath; do
+        [ -e "${SOURCE}/${relpath}" ] || (cd "${DEST}"; rm -v "${relpath}")
+    done
+
+(cd "${DEST}"; find . -depth -type d -name '*') | \
+    while read relpath; do
+        [ -e "${SOURCE}/${relpath}" ] || (cd "${DEST}"; rmdir -v "${relpath}")
+    done
