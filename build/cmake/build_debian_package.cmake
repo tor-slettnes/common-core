@@ -48,7 +48,7 @@ function(cc_cpack_add_group GROUP)
     DISPLAY_NAME "${DISPLAY_NAME}"
     DESCRIPTION "${DESCRIPTION}")
 
-  cc_cpack_set_group_dependencies("${GROUP}" DEPENDS
+  cc_cpack_set_debian_dependencies("${GROUP}" DEPENDS
     GROUPS ${arg_GROUP_DEPS}
     PACKAGES ${arg_PACKAGE_DEPS}
   )
@@ -58,10 +58,11 @@ endfunction()
 #===============================================================================
 ## @fn cc_cpack_add_group_dependencies
 
-function(cc_cpack_set_group_dependencies TARGET RELATIONSHIP)
+function(cc_cpack_set_debian_dependencies TARGET RELATIONSHIP)
   set(_options)
   set(_singleargs)
   set(_multiargs
+    COMPONENTS # CPack components on which TARGET will have a relationship
     GROUPS     # CPack component groups on which TARGET will have a relationship
     PACKAGES   # Full package names on which TARGET will have a relationship
   )
@@ -70,13 +71,15 @@ function(cc_cpack_set_group_dependencies TARGET RELATIONSHIP)
   string(TOUPPER "${TARGET}" upcase_target)
   cc_get_value_or_default(relationship RELATIONSHIP DEPENDS)
 
-  list(TRANSFORM arg_GROUPS
+  set(component_deps ${arg_COMPONENTS} ${arg_GROUPS})
+
+  list(TRANSFORM component_deps
     PREPEND "${PACKAGE_NAME_PREFIX}-"
-    OUTPUT_VARIABLE ancestors
+    OUTPUT_VARIABLE predecessors
   )
 
-  list(APPEND ancestors ${arg_PACKAGES})
-  list(JOIN ancestors ", " value)
+  list(APPEND predecessors ${arg_PACKAGES})
+  list(JOIN predecessors ", " value)
 
   cc_cpack_config(
     "CPACK_DEBIAN_${upcase_target}_PACKAGE_${relationship}"
