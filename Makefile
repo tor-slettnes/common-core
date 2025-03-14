@@ -44,15 +44,26 @@ CMAKE_CONFIG_ARGS += $(foreach override,$(MAKEOVERRIDES),-D$(override))
 
 ## Create CMake cache only if this file is absent.
 CMAKE_TAG = $(BUILD_DIR)/Makefile
-
+CMAKE_CACHE = $(BUILD_DIR)/CMakeCache.txt
 
 ### Utility functions
+define list_cache_or_default
+(\
+  cat $(BUILD_DIR)/CMakeCache.txt || \
+  cmake -L -P build/buildspec.cmake -P $(SHARED_DIR)/build/buildspec.cmake) 2>/dev/null
+endef
+
+define get_cached_or_default
+$(strip $(shell $(list_cache_or_default) | sed -n 's/^$(1):[^=]*=\(.*\)$$/\1/ p'))
+endef
+
 define remove
-	if [ -e "$(1)" ]; then \
-		echo "Removing: $(1)"; \
-		rm -rf "$(1)"; \
+	if [ -e "${1}" ]; then \
+		echo "Removing: ${1}"; \
+		rm -rf "${1}"; \
 	fi
 endef
+
 
 ### Build targets
 .PHONY: local
@@ -90,6 +101,15 @@ install/strip: build
 	@echo "#############################################################"
 	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR) --strip
+
+install/%: build
+	@echo
+	@echo "#############################################################"
+	@echo "Installing component '$*' in ${INSTALL_DIR}"
+	@echo "#############################################################"
+	@echo
+	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR) --component $*
+
 
 .PHONY: doc
 doc: cmake
@@ -174,8 +194,7 @@ list: cmake
 
 .PHONY: get_config
 get_config:
-	@(cat $(BUILD_DIR)/CMakeCache.txt || \
-      cmake -L -P build/buildspec.cmake -P $(SHARED_DIR)/build/buildspec.cmake) 2>/dev/null | \
+	@$(list_cache_or_default) | \
       awk 'BEGIN{FS="="}                    \
 		/:INTERNAL=/ {next;}                \
 		/^[A-Z0-9_]*:[A-Z]*=/ {             \
@@ -185,7 +204,11 @@ get_config:
 
 .PHONY: get_version
 get_version:
-	@$(MAKE) get_config | awk '/^VERSION / { print $$3; }'
+	@echo "$(call get_cached_or_default,VERSION)"
+
+.PHONY: get_product
+get_product:
+	@echo "$(call get_cached_or_default,PRODUCT)"
 
 .PHONY: clean/cmake cmake_clean
 clean/cmake cmake_clean:
@@ -228,4 +251,4 @@ docker_%:
 ### Delegate any other target to CMake
 %:
 	@[ -f "$(CMAKE_TAG)" ] || cmake -B "$(BUILD_DIR)" $(CMAKE_CONFIG_ARGS)
-	@cmake --build "$(BUILD_DIR)" --target $(patsubst cmake_%,%,$@)
+	@cmake --build "$(BUILD_DIR)" --target $*

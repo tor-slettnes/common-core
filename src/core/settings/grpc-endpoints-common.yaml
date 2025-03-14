@@ -58,3 +58,6 @@ Upgrade:
 
 Logger:
   port     : 5644               # L-O-G-G on T9 keypad
+
+Switchboard:
+  port     : 7948               # S-W-I-T on T9 keypad

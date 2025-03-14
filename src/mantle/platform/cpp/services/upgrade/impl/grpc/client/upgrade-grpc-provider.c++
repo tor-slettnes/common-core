@@ -49,7 +49,7 @@ namespace platform::upgrade::grpc
     PackageInfo::ptr ClientProvider::best_available(
         const PackageSource &source) const
     {
-        return protobuf::decode_shared<PackageInfo>(
+        return protobuf::decoded_shared<PackageInfo>(
             this->client->call_check(
                 &Client::Stub::best_available,
                 protobuf::encoded<cc::platform::upgrade::PackageSource>(source)));
@@ -61,7 +61,7 @@ namespace platform::upgrade::grpc
         cc::platform::upgrade::InstallRequest request;
         protobuf::encode(source, request.mutable_source());
 
-        return protobuf::decode_shared<PackageInfo>(
+        return protobuf::decoded_shared<PackageInfo>(
             this->client->call_check(&Client::Stub::install, request));
     }
 

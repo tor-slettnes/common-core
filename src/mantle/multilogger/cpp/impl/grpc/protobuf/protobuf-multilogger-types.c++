@@ -42,13 +42,13 @@ namespace protobuf
         switch (proto.event_type_case())
         {
         case cc::multilogger::Loggable::EventTypeCase::kMessage:
-            return decode_shared<core::logging::Message>(proto.message(), default_host);
+            return decoded_shared<core::logging::Message>(proto.message(), default_host);
 
         case cc::multilogger::Loggable::EventTypeCase::kData:
-            return decode_shared<core::logging::Data>(proto.data());
+            return decoded_shared<core::logging::Data>(proto.data());
 
         case cc::multilogger::Loggable::EventTypeCase::kError:
-            return decode_shared<core::status::Error>(proto.error());
+            return decoded_shared<core::status::Error>(proto.error());
 
         default:
             return nullptr;

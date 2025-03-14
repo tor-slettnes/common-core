@@ -207,5 +207,3 @@ namespace core::grpc
         std::unordered_set<uint> filter_indices;
     };
 }  // namespace core::grpc
-
-using core::grpc::SignalQueue;

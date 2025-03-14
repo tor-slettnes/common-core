@@ -49,7 +49,7 @@ namespace core::grpc
 
     //==========================================================================
     /// @class ServerSignalStreamer
-    /// @brief Connect signal to write stream
+    /// @brief Connect a signle signal to a write stream
 
     template <class MessageT>
     class ServerSignalStreamer : public ServerStreamer<MessageT>
@@ -71,14 +71,20 @@ namespace core::grpc
                     ::grpc::ServerWriter<MessageT> *writer) override
         {
             std::exception_ptr eptr;
-            std::string handle = signal->connect([=](const MessageT &msg) {
+            std::string handle = this->signal->connect([=](const MessageT &msg) {
                 this->put(msg);
             });
 
-            std::packaged_task stream_task(&Super::stream, this, cxt, writer);
-            auto future = stream_task.run();
-            signal->disconnect(handle);
-            future.wait();
+            try
+            {
+                Super::stream(cxt, writer);
+            }
+            catch (...)
+            {
+                this->signal->disconnect(handle);
+                throw;
+            }
+            this->signal->disconnect(handle);
         }
 
     private:

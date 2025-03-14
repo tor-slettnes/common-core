@@ -222,11 +222,11 @@ namespace protobuf
             break;
 
         case google::protobuf::Value::kStructValue:
-            *value = protobuf::decode_shared<core::types::KeyValueMap>(msg.struct_value());
+            *value = protobuf::decoded_shared<core::types::KeyValueMap>(msg.struct_value());
             break;
 
         case google::protobuf::Value::kListValue:
-            *value = protobuf::decode_shared<core::types::ValueList>(msg.list_value());
+            *value = protobuf::decoded_shared<core::types::ValueList>(msg.list_value());
             break;
 
         default:

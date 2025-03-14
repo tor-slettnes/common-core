@@ -20,7 +20,7 @@
 #pragma once
 #include <dds/core/types.hpp>
 
-namespace core::idl
+namespace idl
 {
     //==========================================================================
     // Template to support encode()/decode() semantics for identical types
@@ -119,4 +119,4 @@ namespace core::idl
         }
     }
 
-}  // namespace core::idl
+}  // namespace idl

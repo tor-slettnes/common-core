@@ -75,11 +75,11 @@ namespace protobuf
                 *dynamic_cast<const google::protobuf::Value *>(&this->msg));
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_LISTVALUE:
-            return decode_shared<core::types::ValueList>(
+            return decoded_shared<core::types::ValueList>(
                 *dynamic_cast<const google::protobuf::ListValue *>(&this->msg));
 
         case google::protobuf::Descriptor::WELLKNOWNTYPE_STRUCT:
-            return decode_shared<core::types::KeyValueMap>(
+            return decoded_shared<core::types::KeyValueMap>(
                 *dynamic_cast<const google::protobuf::Struct *>(&this->msg));
 
         default:

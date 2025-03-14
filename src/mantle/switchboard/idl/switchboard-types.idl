@@ -1,0 +1,578 @@
+// -*- idl -*-
+//==============================================================================
+/// @file switchboard-types.idl
+/// @brief Types definitions for Switchboard service
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#ifndef _switchboard_types_idl_
+#define _switchboard_types_idl_
+#include "common-types.idl"
+#include "variant-types.idl"
+#include "event-types.idl"
+
+
+module CC
+{
+    module Switchboard
+    {
+        //======================================================================
+        // Switchboard topics
+
+        // Namespace name, for use in constructing topics
+        const string NAMESPACE = CC::NAMESPACE + "Switchboard/";
+
+        // Pub/sub topics
+        const string SPEC_TOPIC = NAMESPACE + "Specification";
+        const string STATUS_TOPIC = NAMESPACE + "Status";
+
+        //======================================================================
+        // Data types
+
+        enum ExceptionHandling
+        {
+            // How to handle exceptions that occur within interceptors that are
+            // invoked after a switch state change. The previling
+            // ExceptionHandling value is determined as follows:
+            //  * If `set_active()` or `set_error()` is invoked with `on_error` set to
+            //    anything other than EH_DEFAULT, that value is used.
+            //  * Otherwise, the `on_cancel` or `on_error` attributes of the
+            //    intereceptors that threw exceptions are compared, with priority given
+            //    to the highest value as determiened by the enumeration order below.
+            //  * If the resulting value is still EH_DEFAULT, the prevailing action is
+            //    `EH_ABORT` or `EH_FAILED`, depending on whether the exception is
+            //    transient or stateful, respectively. ('Cancelled' is considered
+            //    a transient exception, resulting in EH_ABORT handling).
+
+            EH_DEFAULT,  // Default action for intercept
+            EH_IGNORE,   // Ignore exceptions, proceed with state change
+            EH_ABORT,    // Return immediately to previous/settled state, do not retain error
+            EH_FAIL,     // Transition to error state.
+            EH_REVERT    // Transition back to previous state, do not retain error
+        };
+
+        enum InterceptorPhase
+        {
+            PHASE_EARLY,   // Invoke before main interceptors
+            PHASE_NORMAL,  // Invoke as part of main control
+            PHASE_LATE     // Invoke after completing main interceptors
+        };
+
+        enum State
+        {
+            // Use powers of two, as values are used in bitmasks
+            UNSET = 0x00,
+            ACTIVATING = 0x01,
+            ACTIVE = 0x02,
+            DEACTIVATING = 0x04,
+            INACTIVE = 0x08,
+            FAILING = 0x10,
+            FAILED = 0x20
+        };
+
+
+        typedef uint32 StateMask;
+        const StateMask SETTLED_STATES = (State::ACTIVE | State::INACTIVE | State::FAILED);
+        const StateMask PENDING_STATES = (State::ACTIVATING | State::DEACTIVATING | State::FAILING);
+
+        // typedef string<64> SwitchName;
+        // typedef string<64> InterceptorName;
+        // typedef string<64> ParticipantName;
+        // typedef string<256> Explanation;
+        // typedef string<16> LanguageCode;
+
+        typedef string SwitchName;
+        typedef string InterceptorName;
+        typedef string ParticipantName;
+        typedef string Explanation;
+        typedef string LanguageCode;
+
+        // Various size limits
+        const uint32 MAX_SWITCHES = 256;
+        const uint32 MAX_DEPENDENCIES = 64;
+        const uint32 MAX_INTERCEPTORS = 64;
+        const uint32 MAX_LANGUAGES = 4;
+
+
+        //======================================================================
+        // Switch specification
+
+
+        /// @struct TargetText
+        ///
+        /// Text describing each intended action (activate, deactivate),
+        /// suitable to construct human readable status/error messages
+        //  of the form "Could not ACTION because CONDITION".
+        ///
+        /// Examples:
+        ///  - Switch "Door:Lock":
+        ///      false: "unlock the door"
+        ///      true: "lock the door"
+        ///  - Switch "Fluidics:Insufflation:Maintaining"
+        ///      false: "stop maintaining insufflation pressure"
+        ///      true: "start maintaining insufflation pressure"
+
+        struct TargetText
+        {
+            // For which intended action does this description apply
+            @key
+            boolean active;
+
+            Explanation text;
+        };
+
+
+        /// @struct StateText
+        ///
+        /// Text describing each possible state, suitable as the
+        /// CULPRIT placeholder in status/error messages of the
+        /// form "Could not ACTION becasue CULPRIT".
+        ///
+        /// Examples:
+        ///   - Switch "Door:Open"
+        ///       ACTIVE: "door is open"
+        ///       INACTIVE: "door is closed"
+        ///   - Switch "IDM:Initialized"
+        ///       ACTIVATING: "IDM is intiializing"
+        ///       ACTIVE: "IDM is initialized"
+        ///       INACTIVE: "IDM is not initialized"
+        ///       FAILED: "IDM failed to initialize"
+
+        struct StateText
+        {
+            // For which state does this description apply
+            @key
+            State switch_state;
+
+            Explanation text;
+        };
+
+
+
+        /// @struct Description
+        ///
+        /// Human readable texts pertaining to a switch, suitable for
+        /// constructing status/error messages in a specific language.
+
+        struct Description
+        {
+            // Language/country and optional encoding for which these strings
+            // are valid, e.g.
+            //  - `"en_US"`, `"en_UK"`, `"en"` -- variants of English
+            //  - `"nb_NO"`, `"nn_NO"` -- variants of Norwegian
+            //  - `"zh_TW.UTF8"` -- Chinese (Taiwan, Traditional), UTF-8 encoded
+            //  - `"zh_CN"`, `"zn_CHT"` -- Chinese (China, Simplified and Traditional)
+
+            @key
+            @default("en")
+            LanguageCode language_code;
+
+            // Human readable description of what the switch represents.
+            // Example:
+            //   - Switch "Fluidics:Insufflation:Maintaining":
+            //      "insufflation pressure control"
+            Explanation text;
+
+            // The next fields are used to construct status/error messages
+            // of the form
+            //    "Could not ACTION becuse CULPRIT"
+            //
+            // For example:
+            //    - "Could not lock the door because the door is open"
+            //    - "Could not deploy instrument because IDM failed to initialize"
+            //
+            // See @sa TargetText and @sa StateTexts for more details.
+
+            sequence<TargetText,2> target_texts;
+            sequence<StateText,10> state_texts;
+        };
+
+
+        struct DescriptionList
+        {
+            sequence<Description,MAX_LANGUAGES> list;
+        };
+
+        enum DependencyPolarity
+        {
+            POSITIVE, // Successor depends on predecessor being active
+            NEGATIVE, // Inverse; successor depends on predecessor being inactive
+            TOGGLE    // Successor toggles in response to predecessor change
+        };
+
+
+        struct Dependency
+        {
+            // Upstream/predecessor switch name
+            @key
+            SwitchName predecessor;
+
+            // A bitmask identifying which of the predecessor's state
+            // transitions will automatically update the successor's target
+            // state, based on this and its other dependencies. A value of zero
+            // means that the successor will not automatically trigger updates
+            // based on this dependency (though it will still be considered for
+            // any future updates from other events).
+            @default(SETTLED_STATES)
+            uint32 trigger_states;
+
+            // Whether this is a normal/positive dependency, a
+            // negative/conflicting dependency, or the success switch simply
+            // toggles state in response to the ancestor's change.
+            DependencyPolarity polarity;
+
+            // Do not allow descendent to be manually enabled in case of
+            // dependency conflict.
+            boolean hard;
+
+            // Whether or not this dependency alone is sufficient to activate
+            // the successor, irrespective of other dependencies. This implies a
+            // logical OR instead of AND conditition, and as a side effect, this
+            // dependency becomes unnecessary if the successor's other
+            // dependencies are satisfied.
+            boolean sufficient;
+        };
+
+
+        struct AddDependencyRequest
+        {
+            // Downstream switch, where dependency will be added/removed
+            @key
+            SwitchName switch_name;
+
+            // Dependency to add or remove
+            Dependency dependency;
+
+            // Allow existing dependency to be updated
+            @default(TRUE)
+            boolean allow_update;
+
+            // Reevaluate switch state after dependency has been added or removed.
+            @default(TRUE)
+            boolean reevaluate;
+        };
+
+        struct RemoveDependencyRequest
+        {
+            @key
+            SwitchName switch_name;
+
+            @key
+            SwitchName predecessor_name;
+
+            @default(TRUE)
+            boolean reevaluate;
+        };
+
+        struct DependencyQuery
+        {
+            // Switch whose dependencies to query
+            @key
+            SwitchName switch_name;
+
+            // Get descendents rather than ancestors
+            boolean descendents;
+
+            // Whether to also get indicrect dependencies
+            boolean recursive;
+        };
+
+        struct DependencyList
+        {
+            sequence<Dependency,MAX_DEPENDENCIES> list;
+        };
+
+
+        struct Interceptor
+        {
+            // A unique name for this interceptor
+            @key
+            InterceptorName name;
+
+            // Service that owns this interceptor.
+            // Once that service is no longer available the interceptor is implicitly removed.
+            ParticipantName owner;
+
+            // A bitmask represening states for which the inerceptor is invoked.
+            // Often just a single transitional state, i.e., `State::ACTIVATING`,
+            // `State::DEACTIVATING` or `State::FAILING`.  Required.
+            StateMask state_transitions;
+
+            // Whether to invoke this interceptor before, as part of, or after the main interceptors
+            @default(PHASE_NORMAL)
+            InterceptorPhase phase;
+
+            // Allow state to transition to the next state (normally `State::ACITVE,
+            // `State::INACTIVE` or `State::FAILED`) even if this interceptor continues
+            // to run in the background.
+            boolean asynchronous;
+
+            // Interceptor is invoked even if the switch is already in the target state.
+            boolean rerun;
+
+            // How to proceed if state change is cancelled. The default value
+            // `EH_DEFAULT` is equivalent to `EH_ABORT`.
+            ExceptionHandling on_cancel;
+
+            // How to proceed if the interceptor encounters an error. The default value
+            // `EH_DEFAULT` is equivalent to `EH_FAIL`.
+            ExceptionHandling on_error;
+        };
+
+        struct InterceptorList
+        {
+            sequence<Interceptor,MAX_INTERCEPTORS> list;
+        };
+
+
+        struct Specification
+        {
+            @key
+            SwitchName switch_name; // Switch name
+
+            // Primary switch: Do not descend further when looking for culprits.
+            // If not explcitly provided in an update request, current value prevails.
+            @optional
+            boolean is_primary;
+
+            // Human readable descriptions of what the switch represents, keyed
+            // by language code.. If not explicitly provided as part of an
+            // update, the current description is retained.
+            DescriptionList descriptions;
+
+            // Direct ancestors affecting this switch's state
+            DependencyList dependencies;
+
+            // Handlers to be invoked on state changes
+            InterceptorList interceptors;
+        };
+
+        struct SetSpecificationRequest
+        {
+            // Specification, including switch name to be added or updated
+            Specification spec;
+
+            // Initial value after creation/update.
+            @optional
+            boolean active;
+
+            // Clear existing descriptions when updating
+            boolean replace_descriptions;
+
+            // Clear existing depependencies when updating
+            boolean replace_dependencies;
+
+            // Clear installed interceptors when updating
+            boolean replace_interceptors;
+
+            // Reevaluate state after change
+            @default(TRUE)
+            boolean update_state;
+        };
+
+
+
+        //======================================================================
+        // General requests
+
+        struct AddSwitchRequest
+        {
+            // Switch name to be added or removed
+            @key
+            SwitchName switch_name;
+        };
+
+        struct RemoveSwitchRequest
+        {
+            // Switch name to be added or removed
+            @key
+            SwitchName switch_name;
+
+            // Re-evaluate descendents after removal
+            @default(TRUE)
+            boolean propagate;
+        };
+
+
+        //======================================================================
+        // Switch Status
+
+        struct Status
+        {
+            @key
+            SwitchName switch_name;  // Switch whose status is being updated;
+
+            State current_state;  // Current state
+            State settled_state;  // Last settled state
+            boolean active;       // Switch is currently in the "ON" position
+            boolean pending;      // Switch is currently running interceptors
+
+            @optional
+            Status::Error error;  // Error info directly pertaining to this switch
+
+            Variant::TaggedValueList attributes;    // Arbitrary key/value pairs
+        };
+
+        struct SetTargetRequest
+        {
+            @key
+            SwitchName switch_name;  // Switch whose stae we wish to change.
+
+            // Target state. Normally this is one of the "settled" states
+            // (State::ACTIVE, State::INACTIVE, or State::FAILED), in which case
+            // the switch will first change to the corresponding pending state
+            // (State::ACTIVATING, State::DEACTIVATING, State::FAILING), triggering
+            // any associated descendent updates and interceptor invocations.
+            // If not provided (State::UNSPECIFIED), then
+            //  * if error_data is provided the target is inferred as State::FAILED,
+            //  * otherwise, the target derived from the switch's dependencies.
+            State target_state;
+
+            // Error data. Ignored if target_state is provided but is not nne of
+            // State::FAILING or State::FAILED.
+            @optional
+            Status::Error error;
+
+            // Assign arbitrary tag/value pairs to this switch once the transition is
+            // complete. Also provided as optional inputs to any interceptors invoked
+            // as part of the transition.
+            Variant::TaggedValueList attributes;
+
+            // Clear existing attributes when setting new ones.
+            boolean clear_existing;
+
+            // Invoke interceptors for the relevant state transitions.
+            boolean invoke_interceptors;
+
+            // Update successors after each state transition.
+            boolean trigger_descendents;
+
+            // Make the state transition even if the switch is already in the
+            // desired target state.
+            boolean reevaluate;
+
+            // What to do if the state transition is cancelled, e.g. if
+            // pre-empted by another target setting while executing interceptrs.
+            // If omitted, the highest-numbered `on_cancel` attribute amongst
+            // the associated interceptors is used.
+            ExceptionHandling on_cancel;
+
+            // What to do if the interceptors associated with the state
+            // transition encounters errors.
+            // If omitted, the highest-numbered `on_error` attribute amongst
+            // the associated interceptors is used.
+            ExceptionHandling on_error;
+        };
+
+        struct StateChangeResponse
+        {
+            @key
+            SwitchName switch_name;
+
+            boolean completed;  // `true` if the switch was changed.
+
+            @optional
+            Status::Error error;
+        };
+
+
+        struct SetAttributesRequest
+        {
+            // Switch whose attributes we are changing
+            @key
+            SwitchName switch_name;
+
+            // Attributes to be changed
+            Variant::TaggedValueList attributes;
+
+            // Clear existing attributes when setting new ones
+            boolean clear_existing;
+        };
+
+        // Input parameters for ADD_INTERCEPTOR and REMOVE_INTERCEPTOR requests.
+        struct AddInterceptorRequest
+        {
+            // Switch name
+            SwitchName switch_name;
+
+            // Interceptor specification
+            Interceptor spec;
+
+            // If True, and if the `states` mask include the current state of this
+            // switch, invoke the interceptor immediately. In this case, unless
+            // the interceptor's `asynchronous` flag is also True, the call blocks
+            // until it has completed.
+            boolean immediate;
+        };
+
+        struct RemoveInterceptorRequest
+        {
+            @key
+            SwitchName switch_name;
+
+            @key
+            InterceptorName interceptor_name;
+        };
+
+        // Input parameters for INVOKE_INTERCEPTOR request issued by Switchboard servver
+        struct InterceptorInvocation
+        {
+            SwitchName switch_name;
+            InterceptorName interceptor_name;
+            State state;
+        };
+
+        // Returned to Switchboard server by interceptor owner after completing an
+        // INVOKE_INTERCEPTOR request.
+        struct InterceptorResult
+        {
+            SwitchName switch_name;
+            InterceptorName interceptor_name;
+
+            @optional
+            Status::Error error;
+        };
+
+        // Input parameter for GET_CULPRITS query
+        struct CulpritsQuery
+        {
+            // Switch for which we want to find culprits.
+            @key
+            SwitchName switch_name;
+
+            // Expected switch position; the response will contain the statuses
+            // of upstream switches that are _preventing_ the examined switch
+            // from being in this position.
+            @default(TRUE)
+            boolean expected_active;
+        };
+
+        // Response parameters from get_culprits() queries
+        struct StatusList
+        {
+            // A list of switch statuses.
+            sequence<Status,MAX_SWITCHES> list;
+        };
+
+        // Response parameters from get_dependencies()
+        struct SpecificationList
+        {
+            sequence<Specification,MAX_SWITCHES> list;
+        };
+
+        // A single container for both specification and status
+        struct Switch
+        {
+            Specification spec;
+            Status status;
+        };
+
+        // A single container for both specification and status
+        struct SwitchList
+        {
+            sequence<Switch,MAX_SWITCHES> list;
+        };
+    };
+};
+
+#endif

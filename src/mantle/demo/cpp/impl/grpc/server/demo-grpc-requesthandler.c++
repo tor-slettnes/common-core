@@ -8,8 +8,8 @@
 #include "demo-grpc-requesthandler.h++"
 #include "demo-grpc-signalqueue.h++"
 #include "protobuf-demo-types.h++"
-#include "protobuf-inline.h++"
 #include "protobuf-message.h++"
+#include "protobuf-inline.h++"
 #include "status/exceptions.h++"
 
 namespace demo::grpc

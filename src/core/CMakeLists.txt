@@ -15,7 +15,7 @@ cpack_add_component_group(${INSTALL_GROUP}
 ### Install "settings/" folder as data
 add_subdirectory(settings)
 
-if(BUILD_DDS)
+if(BUILD_IDL)
   add_subdirectory(idl)
 endif()
 
@@ -40,7 +40,7 @@ if(BUILD_CPP)
   list(APPEND LIB_DEPS cc_core_inner)
 endif()
 
-if(BUILD_DDS)
+if(BUILD_IDL)
   list(APPEND LIB_DEPS cc_core_idl)
 endif()
 

@@ -35,7 +35,7 @@ namespace core::grpc
                                        const int &lineno,
                                        const std::string &function)
     {
-        Status status(*core::exception::map_to_event(e));
+        Status status(*core::exception::map_to_error(e));
         this->log_status(status, operation, path, lineno, function);
         return status;
     }
@@ -100,7 +100,7 @@ namespace core::grpc
                                         const int &lineno,
                                         const std::string &function)
     {
-        auto msg = CUSTOM_LOG_MESSAGE(
+        auto msg = custom_log_message(
             status::Level::NOTICE,
             log_scope,
             dt::Clock::now(),

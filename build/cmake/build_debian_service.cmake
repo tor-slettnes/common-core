@@ -46,14 +46,6 @@ function(cc_add_debian_service UNIT)
     set(_dest "lib/systemd/system")
   endif()
 
-  if(NOT arg_INSTALL_COMPONENT)
-    message(SEND_ERROR "cc_add_debian_service(${UNIT}) needs INSTALL_COMPONENT")
-  endif()
-
-  if(NOT arg_INSTALL_GROUP)
-    message(SEND_ERROR "cc_add_debian_service(${UNIT}) needs INSTALL_GROUP")
-  endif()
-
   string(REGEX MATCH ".service$" SERVICE_SUFFIX "${UNIT}")
   if(SERVICE_SUFFIX)
     set(_service_unit "${UNIT}")

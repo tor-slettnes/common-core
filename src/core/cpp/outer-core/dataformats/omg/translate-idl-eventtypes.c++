@@ -9,7 +9,7 @@
 #include "translate-idl-inline.h++"
 #include "chrono/date-time.h++"
 
-namespace core::idl
+namespace idl
 {
     //==========================================================================
     // Domain
@@ -70,6 +70,7 @@ namespace core::idl
 
     //==========================================================================
     // Error
+
     void encode(const core::status::Error &native, CC::Status::Error *idl) noexcept
     {
         encode(native, static_cast<CC::Status::Event *>(idl));
@@ -116,7 +117,12 @@ namespace core::idl
         idl->task_name(native.task_name());
     }
 
-    core::logging::Message decoded_logmessage(CC::Status::LogMessage idl) noexcept
+    void decode(const CC::Status::LogMessage &idl, core::logging::Message *native) noexcept
+    {
+        *native = decoded_logmessage(idl);
+    }
+
+    core::logging::Message decoded_logmessage(const CC::Status::LogMessage &idl) noexcept
     {
         auto level = decoded_level(idl.level());
 
@@ -142,4 +148,4 @@ namespace core::idl
         };
     }
 
-}  // namespace core::idl
+}  // namespace idl

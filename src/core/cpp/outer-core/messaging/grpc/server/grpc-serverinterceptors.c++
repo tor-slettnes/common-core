@@ -88,7 +88,7 @@ namespace core::grpc
         }
         catch (...)
         {
-            Status status(*core::exception::map_to_event(std::current_exception()));
+            Status status(*core::exception::map_to_error(std::current_exception()));
             log_error("Request failed: ", status);
             methods->ModifySendStatus(status);
         }

@@ -5,7 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### This can be used as a downstream dependency.
+### Base name name of this target. A language speific suffix will be appended
+### to the target library names (e.g. `_cpp`, `_py`).
 set(TARGET "cc_platform_proto")
 
 ### Package component
@@ -13,7 +14,7 @@ if(BUILD_PLATFORM)
   set(INSTALL_COMPONENT "platform-proto")
 endif()
 
-### Static/shared library dependencies.
+### Upstream ProtoBuf library dependencies.
 set(PROTO_DEPS cc_core_proto)
 
 ### Source files
@@ -26,7 +27,6 @@ set(SOURCES
 
 ### Generate language bindings
 cc_add_proto("${TARGET}"
-  LIB_TYPE STATIC
   PROTO_DEPS ${PROTO_DEPS}
   SOURCES ${SOURCES}
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"

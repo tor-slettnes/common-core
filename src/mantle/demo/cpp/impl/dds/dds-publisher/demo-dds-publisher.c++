@@ -39,7 +39,7 @@ namespace demo::dds
         // This signal is based on the `core::signal::DataSignal<>` template,
         // so the callback function will receive one argument: the payload.
         signal_time.connect(
-            TYPE_NAME_FULL(This),
+            this->to_string(),
             std::bind(&Publisher::on_time_update, this, _1));
 
         // Invoke `on_greeting_update` whenever someone sends a greeting.
@@ -49,7 +49,7 @@ namespace demo::dds
         //   - The mapping key (in this case we use the greeter's identity)
         //   - The payload.
         signal_greeting.connect(
-            TYPE_NAME_FULL(This),
+            this->to_string(),
             std::bind(&Publisher::on_greeting_update, this, _1, _2, _3));
     }
 
@@ -64,7 +64,7 @@ namespace demo::dds
     void Publisher::on_time_update(const TimeData &time_data)
     {
         logf_trace("Received time update; publishing over DDS: %s", time_data);
-        auto encoded_time = core::idl::encoded<CC::Demo::TimeData>(time_data);
+        auto encoded_time = idl::encoded<CC::Demo::TimeData>(time_data);
         this->publish(this->time_writer, encoded_time);
     }
 
@@ -76,7 +76,7 @@ namespace demo::dds
                    mapping_action,
                    identity,
                    greeting);
-        auto encoded_greeting = core::idl::encoded<CC::Demo::Greeting>(greeting);
+        auto encoded_greeting = idl::encoded<CC::Demo::Greeting>(greeting);
         this->publish_change(this->greeting_writer, mapping_action, encoded_greeting);
     }
 

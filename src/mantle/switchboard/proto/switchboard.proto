@@ -1,0 +1,594 @@
+// -*- protocol-buffers -*-
+//==============================================================================
+/// @file switchboard.proto
+/// @brief Control State interface
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+syntax = "proto3";
+
+package cc.switchboard;
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+import "status.proto";
+import "variant.proto";
+import "signal.proto";
+
+
+
+//==============================================================================
+// gRPC service interface
+
+service Switchboard
+{
+    // List all switches including specifications and statuses
+    rpc get_switches (google.protobuf.Empty) returns (SwitchMap);
+
+    // Get information about a single switch
+    rpc get_switch (SwitchIdentifier) returns (SwitchInfo);
+
+    // Add a new switch.
+    // Returns true if the switch was added, false if it already existed.
+    rpc add_switch (AddSwitchRequest) returns (google.protobuf.BoolValue);
+
+    // Remove an existing switch.
+    // Returns true if the switch was removed, false if it did not exist.
+    rpc remove_switch (RemoveSwitchRequest) returns (google.protobuf.BoolValue);
+
+    // Update the specification of a switch.
+    rpc set_specification (SetSpecificationRequest) returns (google.protobuf.BoolValue);
+
+    // Get specifications for the specified switches.
+    // If no identifiers are provided, get specificaitons for all switches.
+    rpc get_specifications (SwitchIdentifiers) returns (SpecificationMap);
+
+    // Add a new upstream dependency (direct ancestor) to a given switch.
+    // Returns a boolean indicating that this is a newly added dependency.
+    rpc add_dependency (AddDependencyRequest) returns (google.protobuf.BoolValue);
+
+    // Remove an existing dependency (direct ancestor) from a given switch.
+    // Returns a boolean indicating that the dependency did exist and was removed.
+    rpc remove_dependency (RemoveDependencyRequest) returns (google.protobuf.BoolValue);
+
+    // Return a list of dependencies for a given switch.
+    rpc get_dependencies (SwitchIdentifier) returns (DependencyMap);
+
+    // Return a list of (direct and indirect) ancestors for a given switch,
+    // i.e. other switches on whose state it depends.
+    rpc get_ancestors (SwitchIdentifier) returns (SwitchIdentifiers);
+
+    // Return a list of (direct and indirect) descendents for a given switch,
+    // i.e. other switches whose states are affected by this switch.
+    rpc get_descendents (SwitchIdentifier) returns (SwitchIdentifiers);
+
+    // Add an interceptor, i.e., a callback handler in the client that will be
+    // invoked when the specified switch changes its current state. The client
+    // is expected to use the `intercept()` call to stream back such callback
+    // requests, and to respond back to the server once the callback has
+    // completed.
+    // After changing its state, a switch will normally wait for all associated
+    // interceptors to complete before undergoing any further state transitions.
+    // Returns a boolean indicating whether the interceptor was added.
+    rpc add_interceptor (AddInterceptorRequest) returns (google.protobuf.BoolValue);
+
+    // Remove an existing interceptor.
+    // Return a boolean indicating whether the interceptor existed and was removed.
+    rpc remove_interceptor (RemoveInterceptorRequest) returns (google.protobuf.BoolValue);
+
+    // Get a list of interceptors associated with the specified switch.
+    // Note that this also includes interceptors owned by other clients.
+    rpc get_interceptors (SwitchIdentifier) returns (InterceptorMap);
+
+    // Manually invoke a specific interceptor, as if it were triggered by
+    // a switch changing its current state.  Primarily a diagnostic tool.
+    rpc invoke_interceptor (InterceptorInvocation) returns (InterceptorResult);
+
+    // Register a handler for interceptor requests from the server.
+    // This is a prerequistie for the `add_interceptor()` call.
+    rpc intercept (stream InterceptorResult) returns (stream InterceptorInvocation);
+
+    // Change the state of a switch, either to an explicit target state
+    // or to a target state inferred based on its dependencies.
+    // Returns true if the a state change is triggered, false if not.
+    // In the latter case, use `get_culprits()` to determine the cause.
+    // The return value indicates whether the switch transition takes place
+    // (i.e. the target state changed, or the `reevaluate` flag is set).
+    rpc set_target (SetTargetRequest) returns (SetTargetResponse);
+
+    // Assign arbitrary key/value pairs on the specified switch, optionally
+    // clearing any existing attributes. The update takes place immediately
+    // even if a state change is in progress; however will be cleared again
+    // upon completion of such state change request if its
+    // `clear_existing_attributes` flag was set.
+    rpc set_attributes (SetAttributesRequest) returns (SetAttributesResponse);
+
+    // Get current status for the specified switches.
+    // If no identifiers are provided, get status of all switches.
+    rpc get_statuses (SwitchIdentifiers) returns (StatusMap);
+
+    // Obtain cuplrits indicating why a given switch is currently not set.
+    // Returns a map of upstream switches (direct or indirect ancestors)
+    // whose current values are in conflict with this switch.
+    rpc get_culprits (CulpritsQuery) returns (StatusMap);
+
+    // Obtain a map of any errors associated with the specified switch and its
+    // ancestors that cause its state to be STATE_FAILED.
+    rpc get_errors (SwitchIdentifier) returns (ErrorMap);
+
+    // Watch for signals from the server.  Upon invocation, a pair of signals is
+    // stremed back for each global switch, containing its current specification
+    // and status, respectively. Subsequent updates occur whenever there is a
+    // change, also if triggered from this client.
+    rpc watch (cc.signal.Filter) returns (stream Signal);
+}
+
+
+//==============================================================================
+// Input/Ouptut arguments
+
+message SwitchIdentifier
+{
+    string switch_name = 1;
+}
+
+message SwitchIdentifiers
+{
+    repeated string switch_names = 1;
+}
+
+
+message AddSwitchRequest
+{
+    // Switch name to add
+    string switch_name = 1;
+}
+
+message RemoveSwitchRequest
+{
+    // Switch to remove
+    string switch_name = 1;
+
+    // Re-evaluate descendents after removal (default: true).
+    optional bool propagate = 2;
+}
+
+
+//==============================================================================
+// Specification
+
+message SetSpecificationRequest
+{
+    // Switch name.
+    string switch_name = 1;
+
+    // Switch specification
+    Specification spec = 2;
+
+    // Set initial state to active. Default: Calculate from dependencies.
+    optional bool active = 3;
+
+    // Clear existing descriptions when updating
+    bool replace_descriptions = 4;
+
+    // Clear existing dependencies when updating
+    bool replace_dependencies = 5;
+
+    // Clear existing interceptors when updating
+    bool replace_interceptors = 6;
+
+    // Reevalulate state after change (default: true)
+    optional bool update_state = 7;
+}
+
+
+
+message SpecificationMap
+{
+    map<string, Specification> map = 1;  // Switch name -> specification
+}
+
+message Specification
+{
+    // Primary switch: Do not descend further when looking for culprits.
+    // If not explcitly provided in an update request, current value prevails.
+    optional bool is_primary = 3;
+
+    // Human readable descriptions of this switch, by language
+    DescriptionMap descriptions = 4;
+
+    // Direct ancestors affecting this switch's state
+    DependencyMap dependencies = 5;
+
+    // Handlers to be invoked on state changes
+    InterceptorMap interceptors = 6;
+
+}
+
+message DescriptionMap
+{
+    // Switch descriptions per locale.
+    // The key should be a language/country code, e.g.
+    //  - `"en_US"`, `"en_UK"`, `"en"` -- variants of English
+    //  - `"nb_NO"`, `"nn_NO"` -- variants of Norwegian
+    //  - `"zh_TW.UTF8"` -- Chinese (Taiwan, Traditional), UTF-8 encoded
+    //  - `"zh_CN"`, `"zn_CHT"` -- Chinese (China, Simplified and Traditional)
+
+    map<string, Description> map = 1;
+}
+
+message Description
+{
+    // Human readable description of what the switch represents.
+    // Example:
+    //   - Switch "Internet:Available":
+    //      "internet connectivity"
+    string text = 1;
+
+    // Text strings describing transitions to each target position: false, true
+    map<bool, string> target_texts = 2;
+
+    // Text strings describing each possible state.  (uint used as key because
+    // ProtoBuf does not support enumerated values as mapping keys)
+    map<uint32, string> state_texts = 3;
+}
+
+//==============================================================================
+// Dependencies
+
+message AddDependencyRequest
+{
+    /// Downstream/successor switch, to which the dependency will be added
+    string switch_name = 1;
+
+    /// Upstream/predecessor switch
+    string predecessor_name = 2;
+
+    /// Dependency that will be added/replaced.
+    DependencySpec dependency = 3;
+
+    // Allow existing dependency to be updated
+    optional bool allow_update = 4;
+
+    // Reevaluate switch state after dependency has been added (default: true).
+    optional bool reevaluate = 5;
+}
+
+message RemoveDependencyRequest
+{
+    /// Downstream/successor switch, from which the dependency will be removed
+    string switch_name = 1;
+
+    /// Upstream/predecessor switch
+    string predecessor_name = 2;
+
+    /// Reevaluate switch state after dependency has been removed (default: true).
+    optional bool reevaluate = 4;
+}
+
+
+message DependencySpec
+{
+    // A bitmask representing which of the predecessor's state transitions
+    // will automatically update the successor's target state, based on this
+    // and its other dependencies. A value of zero means that the successor
+    // will not automatically trigger updates based on this dependency
+    // (though it will still be considered for any future updates from other
+    // events).
+    uint32 trigger_states = 3;
+
+    // Whether this is a normal/positive dependency, a
+    // negative/conflicting dependency, or the success switch simply
+    // toggles state in response to the ancestor's change.
+    DependencyPolarity polarity = 8;
+
+    // Do not allow descendant to be manually enabled in case of dependency
+    // conflict.
+    bool hard = 9;
+
+    // Whether or not this dependency alone is sufficient to activate the
+    // successor, irrespective of other dependencies. This implies a logical OR
+    // instead of AND conditition, and as a side effect, this dependency becomes
+    // unnecessary if the successor's other dependencies are satisfied.
+    bool sufficient = 10;
+}
+
+message DependencyMap
+{
+    // Map (upstream) state names to corresponding dependency specifications.
+    map<string, DependencySpec> map = 1;
+
+    // Clear existing dependencies when updating
+    bool clear_existing = 2;
+}
+
+
+enum DependencyPolarity
+{
+    POSITIVE = 0;    // Successor depends on predecessor being active
+    NEGATIVE = 1;    // Inverse; successor depends on predecessor being inactive
+    TOGGLE = 2;      // Successor toggles in response to predecessor change
+};
+
+
+//==============================================================================
+// Interceptors
+
+message AddInterceptorRequest
+{
+    // Switch name
+    string switch_name = 1;
+
+    // Interceptor name
+    string interceptor_name = 2;
+
+    // Interceptor specification
+    InterceptorSpec spec  = 3;
+
+    // If True, and if the `states` mask include the current state of this
+    // switch, invoke the interceptor immediately. In this case, unless
+    // the interceptor's `asynchronous` flag is also True, the call blocks
+    // until it has completed.
+    bool immediate = 4;
+}
+
+
+message RemoveInterceptorRequest
+{
+    // Switch name
+    string switch_name = 1;
+
+    // Interceptor name
+    string interceptor_name = 2;
+}
+
+
+message InterceptorMap
+{
+    // Map of interceptor IDs and corresponding specifications
+    map<string, InterceptorSpec> map = 1;
+
+    // Clear existing dependencies when updating
+    bool clear_existing = 2;
+}
+
+message InterceptorSpec
+{
+    // Service that owns this interceptor.
+    // Once that service is no longer available the interceptor is implicitly removed.
+    string owner = 2;
+
+    // A bitmask represening states for which the inerceptor is invoked.
+    // Often just a single transitional state, i.e., `STATE_ACTIVATING`,
+    // `STATE_DEACTIVATING` or `STATE_FAILING`.  Required.
+    uint32 state_transitions = 4;
+
+    // Control whether this interceptor is invoked prior to, concurrent with, or after
+    // the main interceptors for this state transition.
+    InterceptorPhase phase = 5;
+
+    // Allow state to transition to the next state (normally `STATE_ACITVE,
+    // `STATE_INACTIVE` or `STATE_FAILED`) even if this interceptor continues
+    // to run in the background.
+    bool asynchronous = 6;
+
+    // Interceptor is invoked even if the switch is already in the target state.
+    bool rerun = 7;
+
+    // How to proceed if state change is cancelled. The default value
+    // `EH_DEFAULT` is equivalent to `EH_ABORT`.
+    ExceptionHandling on_cancel = 14;
+
+    // How to proceed if the interceptor encounters an error. The default value
+    // `EH_DEFAULT` is equivalent to `EH_FAIL`.
+    ExceptionHandling on_error = 15;
+}
+
+
+enum InterceptorPhase
+{
+    PHASE_EARLY  = 0;           // Invoke before main interceptors
+    PHASE_NORMAL = 1;           // Invoke as part of main control
+    PHASE_LATE   = 2;           // Invoke after completing main interceptors
+}
+
+
+enum ExceptionHandling
+{
+    // Ways to handle exceptions that occur when invoking interceptors after a
+    // switch changes state. The previling value is determined as follows:
+    //  * If `set_active()` or `set_error()` is invoked with `eh` set to
+    //    anything other than EH_DEFAULT, that value is used.
+    //  * Otherwise, the `on_cancel` or `on_error` attributes of the
+    //    intereceptors that threw exceptions are compared, with priority given
+    //    to the highest value as determiened by the enumeration order below.
+    //  * If the resulting value is still EH_DEFAULT, the prevailing action is
+    //    `EH_ABORT` or `EH_FAILED`, depending on whether the exception is
+    //    transient or stateful, respectively.
+
+    EH_DEFAULT         = 0;  // Default action for intercept
+    EH_IGNORE          = 1;  // Ignore exceptions, proceed with state change
+    EH_ABORT           = 2;  // Retain previous state, do not retain error
+    EH_FAIL            = 3;  // Transition to error state.
+    EH_REVERT          = 4;  // Transition back to previous state, do not retain error
+}
+
+
+message InterceptorInvocation
+{
+    string switch_name = 1;
+    string interceptor_name = 2;
+    State state = 3;
+}
+
+message InterceptorResult
+{
+    string switch_name = 1;
+    string interceptor_name = 2;
+    cc.status.Error error = 8;
+}
+
+
+//==============================================================================
+// Switch status
+
+message SetTargetRequest
+{
+    // Switch name. If it does not exist it is implicitly created.
+    string switch_name = 1;
+
+    // Target state. Normally this is one of the "settled" states
+    // (STATE_ACTIVE, STATE_INACTIVE, or STATE_FAILED), in which case
+    // the switch will first change to the corresponding pending state
+    // (STATE_ACTIVATING, STATE_DEACTIVATING, STATE_FAILING), triggering
+    // any associated descendant updates and interceptor invocations.
+    // If not provided (STATE_UNSPECIFIED), then
+    //  * if error_data is provided the target is inferred as STATE_FAILED,
+    //  * otherwise, the target derived from the switch's dependencies.
+    State target_state = 2;
+
+    // Error data. Ignored if target_state is provided but is not nne of
+    // STATE_FAILING or STATE_FAILED.
+    optional cc.status.Error error = 3;
+
+    // Assign arbitrary tag/value pairs to this switch once the transition is
+    // complete. Also provided as optional inputs to any interceptors invoked
+    // as part of the transition.
+    cc.variant.KeyValueMap attributes = 7;
+
+    // Clear existing attributes when setting new ones.
+    bool clear_existing = 8;
+
+    // Invoke interceptors for the relevant state transitions.
+    bool with_interceptors = 9;
+
+    // Update successors after each state transition.
+    bool trigger_descendents = 10;
+
+    // Make the state transition even if the switch is already in the
+    // ddesired target state.
+    bool reevaluate = 11;
+
+    // What to do if the state transition is cancelled, e.g. if
+    // pre-empted by another target setting while executing interceptrs.
+    // If omitted, the highest-numbered `on_cancel` attribute amongst
+    // the associated interceptors is used.
+    ExceptionHandling on_cancel = 14;
+
+    // What to do if the interceptors associated with the state
+    // transition encounters errors.
+    // If omitted, the highest-numbered `on_error` attribute amongst
+    // the associated interceptors is used.
+    ExceptionHandling on_error = 15;
+}
+
+message SetTargetResponse
+{
+    // Switch state was changed
+    bool updated = 2;
+}
+
+message SetAttributesRequest
+{
+    // Switch name. If it does not exist it is implicitly created.
+    string switch_name = 1;
+
+    // Assign arbitrary tag/value pairs to this switch once the transition is
+    // complete.
+    cc.variant.KeyValueMap attributes = 8;
+
+    // Clear existing attributes when setting new ones.
+    bool clear_existing = 9;
+}
+
+message SetAttributesResponse
+{
+    // Attributes were modified
+    bool updated = 2;
+}
+
+message CulpritsQuery
+{
+    string switch_name = 1;
+
+    // Expected switch value. If not explicitly provided, server assumes `true`.
+    optional bool expected = 2;
+}
+
+
+enum State
+{
+    // Use powers of two, as values are used in bitmasks
+    STATE_UNSET        = 0x00;
+    STATE_ACTIVATING   = 0x01;
+    STATE_ACTIVE       = 0x02;
+    STATE_DEACTIVATING = 0x04;
+    STATE_INACTIVE     = 0x08;
+    STATE_FAILING      = 0x10;
+    STATE_FAILED       = 0x20;
+
+    // Union of "settled" states
+    STATE_SETTLED      = 0x2A;
+    // Union of "pending" states
+    STATE_PENDING      = 0x15;
+}
+
+message Status
+{
+    State current_state = 2;    // Current state
+    State settled_state = 3;    // Last settled state
+    bool active = 4;            // Settled value
+    bool pending = 5;           // Switch is currently running interceptors
+    optional cc.status.Error error = 8; // Error code
+    cc.variant.KeyValueMap attributes = 9; // Arbitrary data associated with current state
+}
+
+message StatusMap
+{
+    map<string, Status> map = 1; // switch -> Status
+}
+
+message ErrorMap
+{
+    map<string, cc.status.Error> map = 1; // switch -> EventData
+}
+
+//==============================================================================
+// SwitchMap - map of all switch specficiations and statuses
+
+message SwitchInfo
+{
+    // Switch specification
+    Specification spec = 1;
+
+    // Swithc status
+    Status status = 2;
+}
+
+
+message SwitchMap
+{
+    // Switch names mapped to corresponding specification and status
+    map<string, SwitchInfo> map = 1;
+}
+
+
+//==============================================================================
+// Signal - streamed as events to listening clients.
+
+message Signal
+{
+    // Mapping type, one of: MAP_NONE, MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL.
+    // In the case of a MappingSignal (like `Greeting` below), indicates
+    // whether this instance is added, updated, or removed.
+    cc.signal.MappingAction mapping_action = 1;
+
+    // Mapping key for the item that was added/removed/updated.
+    string mapping_key = 2;
+
+    oneof signal {
+        Specification specification = 8;
+        Status status = 9;
+    };
+}
+

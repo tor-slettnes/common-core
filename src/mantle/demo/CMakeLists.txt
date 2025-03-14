@@ -26,7 +26,7 @@ if (BUILD_PROTOBUF)
   add_subdirectory(proto)
 endif()
 
-if (BUILD_DDS)
+if (BUILD_IDL)
   add_subdirectory(idl)
 endif()
 

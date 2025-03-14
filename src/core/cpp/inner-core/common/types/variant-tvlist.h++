@@ -17,8 +17,10 @@ namespace core::types
                             public enable_create_shared<TaggedValueList>
     {
         using Super = std::deque<TaggedValue>;
-
         using AppendResult = std::pair<TaggedValueList::iterator, bool>;
+
+    public:
+        using ptr = std::shared_ptr<TaggedValueList>;
 
     protected:
         // Inherit constructors from std::vector<>

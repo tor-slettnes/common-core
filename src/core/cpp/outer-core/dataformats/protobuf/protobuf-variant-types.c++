@@ -107,15 +107,15 @@ namespace protobuf
             break;
 
         case cc::variant::Value::kValueList:
-            *value = decode_shared<core::types::ValueList>(msg.value_list());
+            *value = decoded_shared<core::types::ValueList>(msg.value_list());
             break;
 
         case cc::variant::Value::kValueTvlist:
-            *value = decode_shared<core::types::TaggedValueList>(msg.value_tvlist());
+            *value = decoded_shared<core::types::TaggedValueList>(msg.value_tvlist());
             break;
 
         case cc::variant::Value::kValueKvmap:
-            *value = decode_shared<core::types::KeyValueMap>(msg.value_kvmap());
+            *value = decoded_shared<core::types::KeyValueMap>(msg.value_kvmap());
             break;
 
         default:

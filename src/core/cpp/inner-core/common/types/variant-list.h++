@@ -20,6 +20,9 @@ namespace core::types
         using Super = std::deque<Value>;
         using AppendResult = std::pair<ValueList::iterator, bool>;
 
+    public:
+        using ptr = std::shared_ptr<ValueList>;
+
     protected:
         using Super::Super;
 

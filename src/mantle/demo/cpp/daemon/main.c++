@@ -10,7 +10,7 @@
 #include "demo-native.h++"       // Native Demo API implementation
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
-#include "thread/supervised_thread.h++"
+#include "thread/supervised-thread.h++"
 
 #ifdef USE_DDS
 #include "demo-dds-run.h++"  // DDS server implementation

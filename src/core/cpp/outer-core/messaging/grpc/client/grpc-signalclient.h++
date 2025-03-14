@@ -74,7 +74,8 @@ namespace core::grpc
               receiver(std::bind(&SignalReceiver::process_signal,
                                  this,
                                  std::placeholders::_1)),
-              watching(false)
+              watching(false),
+              completion_event(std::make_unique<types::BinaryEvent>())
         {
         }
 
@@ -142,7 +143,7 @@ namespace core::grpc
                 logf_debug("Ending %s::watch()", this->servicename(true));
             }
             this->watching = false;
-            this->completion_event.cancel();
+            this->completion_event->cancel();
             this->receiver.stop();
         }
 
@@ -156,14 +157,21 @@ namespace core::grpc
         }
 
         /// @brief
+        ///    Indicate whether we have received all cached signals from server
+        inline bool is_complete() const
+        {
+            return this->completion_event->is_set();
+        }
+
+        /// @brief
         ///    Block until all cached signals have been received from the server
         /// @param[in] deadline
         ///    Exit if the server cache has not been received within this time.
         /// @return
         ///    `true` if and only if the signal cache was received from the server
-        inline bool wait_complete(const steady::TimePoint &deadline)
+        inline bool wait_complete(const steady::TimePoint &deadline) const
         {
-            return this->completion_event.wait_until(deadline);
+            return this->completion_event->wait_until(deadline);
         }
 
         /// @brief
@@ -173,7 +181,7 @@ namespace core::grpc
         ///    after the last `start_watching()` invocation.
         /// @return
         ///    `true` if and only if the signal cache was received from the server
-        inline bool wait_complete(const dt::Duration &timeout)
+        inline bool wait_complete(const dt::Duration &timeout) const
         {
             return this->wait_complete(
                 this->watch_start +
@@ -184,7 +192,7 @@ namespace core::grpc
         inline void on_init_complete() override
         {
             logf_trace("Got completion, setting completion_event();");
-            this->completion_event.set();
+            this->completion_event->set();
         }
 
     private:
@@ -193,9 +201,8 @@ namespace core::grpc
     protected:
         steady::TimePoint watch_start;
         std::thread watch_thread;
-        std::shared_ptr<::grpc::ClientContext> watcher_context;
         ClientReceiver<ServiceT, SignalT, cc::signal::Filter> receiver;
-        types::BinaryEvent completion_event;
+        std::unique_ptr<types::BinaryEvent> completion_event;
     };
 
 }  // namespace core::grpc

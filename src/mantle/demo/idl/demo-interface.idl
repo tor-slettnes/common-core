@@ -1,7 +1,7 @@
 // -*- idl -*-
 //==============================================================================
 /// @file demo-interface.idl
-/// @brief data types used in Demo application
+/// @brief DDS interface definition for Demo RPC service
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 

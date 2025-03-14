@@ -35,6 +35,7 @@ function(cc_protogen_common)
     add_custom_target("${arg_TARGET}")
   endif()
 
+  ## Required for ProtoBuf < 3.15
   set(_protoc_args "--experimental_allow_proto3_optional")
 
   if(arg_PLUGIN)

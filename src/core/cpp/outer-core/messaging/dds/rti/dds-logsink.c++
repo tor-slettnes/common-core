@@ -40,7 +40,7 @@ namespace core::dds
         if (this->log_writer)
         {
             this->log_writer->write(
-                core::idl::encoded_shared<CC::Status::LogMessage>(message));
+                idl::encoded_shared<CC::Status::LogMessage>(message));
             return true;
         }
         else

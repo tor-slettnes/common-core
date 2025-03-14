@@ -1,7 +1,7 @@
 // -*- idl -*-
 //==============================================================================
 /// @file demo-types.idl
-/// @brief DDS data types used for in Demo application
+/// @brief DDS data types used in Demo application
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 

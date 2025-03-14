@@ -17,36 +17,36 @@ namespace demo::dds
 {
     ClientImpl::ClientImpl(const std::string &identity, int domain_id)
         : API(identity, "DDS Client"),
-          Client_Wrapper(CC::Demo::SERVICE_ID, domain_id)
+          ClientWrapper(CC::Demo::SERVICE_ID, domain_id)
     {
     }
 
     void ClientImpl::initialize()
     {
         Super::initialize();
-        this->client().wait_for_service();
+        this->client()->wait_for_service();
     }
 
     void ClientImpl::say_hello(const Greeting &greeting)
     {
-        auto idl_greeting = core::idl::encoded<CC::Demo::Greeting>(greeting);
-        this->client().say_hello(idl_greeting);
+        auto idl_greeting = idl::encoded<CC::Demo::Greeting>(greeting);
+        this->client()->say_hello(idl_greeting);
     }
 
     TimeData ClientImpl::get_current_time()
     {
-        CC::Demo::TimeData idl_time_data = this->client().get_current_time();
-        return core::idl::decoded<TimeData>(idl_time_data);
+        CC::Demo::TimeData idl_time_data = this->client()->get_current_time();
+        return idl::decoded<TimeData>(idl_time_data);
     }
 
     void ClientImpl::start_ticking()
     {
-        this->client().start_ticking();
+        this->client()->start_ticking();
     }
 
     void ClientImpl::stop_ticking()
     {
-        this->client().stop_ticking();
+        this->client()->stop_ticking();
     }
 
     void ClientImpl::start_watching()
@@ -56,7 +56,7 @@ namespace demo::dds
             logf_debug("Creating DDS demo subscriber");
             this->subscriber = Subscriber::create_shared(
                 this->identity(),
-                this->client().domain_id());
+                this->client()->domain_id());
 
             this->subscriber->initialize();
         }

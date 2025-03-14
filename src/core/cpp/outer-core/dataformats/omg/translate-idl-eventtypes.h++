@@ -12,7 +12,7 @@
 #include "translate-idl-common.h++"
 #include "translate-idl-variant.h++"
 
-namespace core::idl
+namespace idl
 {
     //==========================================================================
     // Domain
@@ -38,11 +38,13 @@ namespace core::idl
     //==========================================================================
     // Error
     void encode(const core::status::Error &native, CC::Status::Error *idl) noexcept;
+    void decode(const CC::Status::Error &idl, core::status::Error *native) noexcept;
     core::status::Error decoded_error(const CC::Status::Error &idl) noexcept;
 
     //==========================================================================
     // LogMessage
     void encode(const core::logging::Message &native, CC::Status::LogMessage *idl) noexcept;
-    core::logging::Message decoded_logmessage(CC::Status::LogMessage idl) noexcept;
+    void decode(const CC::Status::LogMessage &idl, core::logging::Message *native) noexcept;
+    core::logging::Message decoded_logmessage(const CC::Status::LogMessage &idl) noexcept;
 
-}  // namespace core::idl
+}  // namespace idl

@@ -25,7 +25,7 @@ namespace demo::dds
         // We received a greeting from a client.  Emit a signal to registered
         // callbacks (slots). (This includes `Publisher::on_signal_greeting()`,
         // which then forwards the signals to clients as a published message.)
-        this->provider->say_hello(core::idl::decoded<Greeting>(greeting));
+        this->provider->say_hello(idl::decoded<Greeting>(greeting));
     }
 
     CC::Demo::TimeData RequestHandler::get_current_time()
@@ -40,7 +40,7 @@ namespace demo::dds
 
         // Encode the native TimeData structure to a CC::Demo TimeData structure
         // in the reply.
-        return core::idl::encoded<CC::Demo::TimeData>(time_data);
+        return idl::encoded<CC::Demo::TimeData>(time_data);
     }
 
     void RequestHandler::start_ticking()

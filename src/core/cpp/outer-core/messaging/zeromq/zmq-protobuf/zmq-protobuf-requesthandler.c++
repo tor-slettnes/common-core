@@ -56,7 +56,7 @@ namespace core::zmq
 
                 error = std::make_shared<ProtoBufError>(
                     cc::rr::STATUS_FAILED,
-                    *core::exception::map_to_event(std::current_exception()));
+                    *core::exception::map_to_error(std::current_exception()));
             }
         }
         else

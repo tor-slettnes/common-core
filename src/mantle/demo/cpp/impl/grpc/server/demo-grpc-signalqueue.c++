@@ -29,10 +29,13 @@ namespace demo::grpc
             [](const TimeData &timedata, Signal *msg) {
                 ::protobuf::encode(timedata, msg->mutable_signal_time());
             });
+
+        Super::initialize();
     }
 
     void SignalQueue::deinitialize()
     {
+        Super::initialize();
         this->disconnect(signal_time);
         this->disconnect(signal_greeting);
     }

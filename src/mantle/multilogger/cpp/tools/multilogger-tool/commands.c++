@@ -75,7 +75,7 @@ void Options::submit()
         core::logging::Scope::default_threshold);
 
     auto log_scope = core::logging::Scope::create("logtool", level);
-    auto message = DEFAULT_LOG_MESSAGE(level);
+    auto message = standard_log_message(level);
     message->add(text);
     this->provider->submit(message);
 }

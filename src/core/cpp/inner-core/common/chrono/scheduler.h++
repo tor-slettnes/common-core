@@ -108,11 +108,11 @@ namespace core
         ///     Interval between invocations
         /// @param[in] align
         ///     TimePoint alignment, i.e., when the first invocation takes place. Use
-        ///       - \p ALIGN_START to invoke the task as soon as it added to the scheduler,
-        ///       - \p ALIGN_NEXT to delay one cycle, until the specified interval has elapsed,
-        ///       - \p ALIGN_UTC to align invocations to `interval` multiples from midnight, UTC
+        ///       - @p ALIGN_START to invoke the task as soon as it added to the scheduler,
+        ///       - @p ALIGN_NEXT to delay one cycle, until the specified interval has elapsed,
+        ///       - @p ALIGN_UTC to align invocations to `interval` multiples from midnight, UTC
         ///         (technically, from midnight January 1, 1970, UTC, a.k.a. epoch).
-        ///       - \p ALIGN_LOCAL to align invocations to midnight, local time (technically,
+        ///       - @p ALIGN_LOCAL to align invocations to midnight, local time (technically,
         ///         epoch minus the current local timezone offset).
         /// @param[in] loglevel
         ///     Verbosity at which task invocations are logged
@@ -143,11 +143,11 @@ namespace core
         ///     Interval between invocations
         /// @param[in] align
         ///     TimePoint alignment, i.e., when the first invocation takes place. Use
-        ///       - \p ALIGN_START to invoke the task as soon as it added to the scheduler,
-        ///       - \p ALIGN_NEXT to delay one cycle, until the specified interval has elapsed,
-        ///       - \p ALIGN_UTC to align invocations to `interval` multiples from midnight, UTC
+        ///       - @p ALIGN_START to invoke the task as soon as it added to the scheduler,
+        ///       - @p ALIGN_NEXT to delay one cycle, until the specified interval has elapsed,
+        ///       - @p ALIGN_UTC to align invocations to `interval` multiples from midnight, UTC
         ///         (technically, from midnight January 1, 1970, UTC, a.k.a. epoch).
-        ///       - \p ALIGN_LOCAL to align invocations to midnight, local time (technically,
+        ///       - @p ALIGN_LOCAL to align invocations to midnight, local time (technically,
         ///         epoch minus the current local timezone offset).
         /// @param[in] loglevel
         ///     Verbosity at which task invocations are logged
@@ -170,7 +170,7 @@ namespace core
                   uint retries = 0,
                   bool catchup = false);
 
-        /// @brief Add a scheduled task if the specified ID does not already exist. \sa add
+        /// @brief Add a scheduled task if the specified ID does not already exist. @sa add
         Task &add_if_missing(const Handle &handle,
                              const Invocation &invocation,
                              const dt::Duration &interval,

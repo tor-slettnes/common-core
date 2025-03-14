@@ -43,19 +43,39 @@ namespace core::grpc
         ///     unless explicitly specified
         void set_wait_for_ready(bool wait_for_ready);
 
-        /// @brief Set gRPC call request timeout in ms.
+        /// @brief
+        ///     Set gRPC call request timeout.
         /// @param[in] request_timeout
-        ///     If set, the `request_timeout` will be set in future gRPC requests,
-        ///     unless explicitly specified.
+        ///     If set, the `request_timeout` will be used as default in future gRPC requests.
         void set_request_timeout(std::optional<dt::Duration> request_timeout);
 
-        /// @brief Determine whether the service is available
-        /// @param[in] timeout
-        ///      Timeout before giving up if client is currently connecting to
-        ///      server.  The call may block for up to this duration.
+        /// @brief
+        ///     Indicate whether we are connected to a service.
+        /// @param[in]
+        ///     Attempt to connect if the current connectivity state is IDLE.
+        bool connected(bool attempt = true) const;
+
+        /// @brief Wait for service to become available.
         /// @return
         ///      `true` if server is available, `false` otherwise.
-        bool available(const dt::Duration &timeout = std::chrono::seconds(10)) const;
+        void wait_for_connected() const;
+
+        /// @brief Wait up to a specified duration for service to become available.
+        /// @param[in] timeout
+        ///     Timeout before giving up if client is currently connecting to
+        ///     server. The call may block for up to this duration.
+        /// @return
+        ///      `true` if server is available, `false` otherwise.
+        bool wait_for_connected(const dt::Duration &timeout) const;
+
+        /// @brief Wait up to a specified duration for service to become available.
+        /// @param[in] deadline
+        ///     Deadline before giving up if client is currently connecting to
+        ///     server.  The call may block for up to this duration.
+        /// @return
+        ///      `true` if server is available, `false` otherwise.
+        bool wait_for_connected(const dt::TimePoint &deadline) const;
+
 
         /// @brief Check the provided gRPC status code, and throw an appropriate
         ///     exception if appropriate.

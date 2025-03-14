@@ -8,7 +8,7 @@
 add_subdirectory(common)
 add_subdirectory(native)
 
-if(BUILD_DDS)
+if(BUILD_IDL)
   add_subdirectory(dds)
 endif()
 

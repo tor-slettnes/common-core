@@ -30,6 +30,8 @@ namespace protobuf
     template <class ProtoT>
     class SignalForwarder
     {
+        using This = SignalForwarder;
+
     public:
         // Implementations should override this in order to connect specific
         // Signal<T> or MappingSignal<T> instances to corresponding handlers,
@@ -69,7 +71,7 @@ namespace protobuf
             core::signal::MappingAction mapping_action)
         {
             ProtoT msg;
-            msg.set_mapping_action(SignalForwarder::mapping_action(mapping_action));
+            msg.set_mapping_action(This::mapping_action(mapping_action));
             return msg;
         }
 
@@ -79,7 +81,7 @@ namespace protobuf
             core::signal::MappingAction mapping_action,
             const std::string &mapping_key)
         {
-            ProtoT msg = SignalForwarder::create_signal_message(mapping_action);
+            ProtoT msg = This::create_signal_message(mapping_action);
             msg.set_mapping_key(mapping_key);
             return msg;
         }

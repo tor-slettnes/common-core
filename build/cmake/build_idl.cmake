@@ -24,7 +24,7 @@ macro(cc_idl_generate_sources sources example_modules)
   ### Invoke RTI DDS Generator on each IDL input file.
   foreach(src ${sources})
     ### Determine basename and C++ sources
-    string(REGEX REPLACE "(.*)\\.idl$" "\\1" basename ${src})
+    cmake_path(GET src STEM basename)
 
     #===========================================================================
     ### C++ sources
@@ -37,7 +37,7 @@ macro(cc_idl_generate_sources sources example_modules)
       endif()
 
 
-      # ### Include C++ examples (either Publisher/Subscriber or Client/Server)
+      ### Include C++ examples (either Publisher/Subscriber or Client/Server)
       # if(GENERATE_EXAMPLE)
       #   foreach(example ${example_modules})
       #     set(gensrc "${basename}_${example}.cxx")

@@ -466,7 +466,7 @@ namespace core::exception
     //==========================================================================
     // Error mapping methods
 
-    status::Error::ptr map_to_event(const std::exception &e) noexcept
+    status::Error::ptr map_to_error(const std::exception &e) noexcept
     {
         if (auto *ep = dynamic_cast<const status::Error *>(&e))
         {
@@ -502,7 +502,7 @@ namespace core::exception
         }
     }
 
-    status::Error::ptr map_to_event(std::exception_ptr eptr) noexcept
+    status::Error::ptr map_to_error(std::exception_ptr eptr) noexcept
     {
         if (eptr)
         {
@@ -512,7 +512,7 @@ namespace core::exception
             }
             catch (const std::exception &e)
             {
-                return map_to_event(e);
+                return map_to_error(e);
             }
             catch (...)
             {

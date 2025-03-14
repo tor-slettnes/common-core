@@ -57,7 +57,7 @@ namespace platform::vfs::local
 
     void LocalContext::open()
     {
-        LOGF_MESSAGE(this->removable
+        logf_message(this->removable
                          ? core::status::Level::DEBUG
                          : core::status::Level::TRACE,
                      "Opening VFS context %r",
@@ -79,7 +79,7 @@ namespace platform::vfs::local
 
     void LocalContext::close()
     {
-        LOGF_MESSAGE(this->removable
+        logf_message(this->removable
                          ? core::status::Level::DEBUG
                          : core::status::Level::TRACE,
                      "Closing VFS context %r",

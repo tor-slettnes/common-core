@@ -1,0 +1,186 @@
+# -*- yaml -*-
+#==============================================================================
+## @file common-switches.yaml
+## @brief Switch configuraion
+## @author Tor Slettnes <tor@slett.net>
+#==============================================================================
+
+## Specifications for global, product-agnostic switches provided by the
+## switchboard application itself.  Additional switches maybe defined by
+## downstream/client applications, such as high-level instrument control
+## applications for each product.
+##
+## Switches are listed in the "switches" section by name, following a subset
+## of the following generic template (where applicable, defaults are indicated):
+##
+## @code{.yaml}
+## switches:
+##   - name: "Switch Name"
+##     active: false
+##     description:
+##       - en:
+##           text: "What this switch represents"
+##           action texts:
+##             ON: "turn this switch on"
+##             OFF: "turn this switch off"
+##           state texts:
+##             ACTIVATING  : "this switch is activating"
+##             ACTIVE      : "this switch is active"
+##             DEACTIVATING: "this switch is deactivating"
+##             INACTIVE    : "this switch is inactive"
+##             FAILING     : "this switch is handling an error"
+##             FAILED      : "this switch is encountered an error"
+##
+##     primary: false
+##     dependencies:
+##       - predecessor name: "Predecessor Switch Name"
+##         trigger states: [ ACTIVE, INACTIIVE, FAILED ]
+##         automatic: false
+##         polarity: POSITIVE
+##         hard: false
+##         sufficient: false
+##         attributes:
+##           key1: true
+##           key2: 2
+##           key3: 3.141592653589793238
+##           key4: "IV"
+## @endcode
+##
+## The various texts may be used to compose user-facing or log messages. For instance, given this:
+##
+## @code{.yaml}
+## switches:
+##   - name: "Door:Open"
+##     state texts:
+##       ACTIVE: "the door is open"
+##
+##   - name: "Door:Locked"
+##     action texts:
+##       ON: "lock the door"
+##     dependencies:
+##       - name: "Door:Open"
+##         polarity: NEGATIVE
+##         automatic: false
+##         hard: true
+## @endcode
+##
+## An attempt to activate "Door:Locked" will fail if "Door:Open" is currently
+## active.  By querying for the culprit (using e.g. `get_culprits()`) one might
+## use a template like
+##     "Cannot [state's target text] because [predecessor's state text]"
+## to construct a message, in this case
+##     "Cannot lock the door because the door is open".
+##
+## In addition to the above, a switch may have zero or more "interceptors"
+## which are execution hooks invoked whenever it changes its state. For
+## instance, a "Door:Lock" switch may have code to actually lock/unlock the door
+## in its ACTIVATING/DEACTIVATING states.  These are added by
+## applications at runtime.
+##
+## Generally, a switch's specification (like its status) may be updated at runtime; for 
+## instance it may add or remove dependencies based on various conditions.
+
+switches:
+  - name: "Switchboard:Ready"
+    description:
+      en:
+        text: "Switchboard service status"
+        state texts:
+          ACTIVATING  : "Switchboard is initializing"
+          ACTIVE      : "Switchboard is ready"
+          DEACTIVATING: "Switchboard is uninitializing"
+          INACTIVE    : "Switchboard it not ready"
+        action texts:
+          OFF: "bring down Switchboard"
+          ON : "bring up Switchboard"
+
+  - name: "Ethernet:Link"
+    description:
+      en:
+        text: "Ethernet status"
+        state texts:
+          ACTIVE   : "an Ethernet cable is plugged in"
+          INACTIVE : "no Ethernet cable is plugged in"
+
+  - name: "WiFi:Enabled"
+    description:
+      en:
+        text: "WiFi antenna"
+        state texts:
+          ACTIVE  : "WiFi is enabled"
+          INACTIVE: "WiFi is disabled"
+          FAILED  : "WiFi could not be enabled"
+
+  - name: "WiFi:Link"
+    description:
+      en:
+        text: "WiFi signal"
+        action texts:
+          ON: "connect to WiFi"
+          OFF: "disconnect from WiFi"
+        state texts:
+          ACTIVE: "a WiFi access point is available"
+          INACTIVE: "no WiFi access point is available"
+    dependencies:
+      - predecessor: "WiFi:Enabled"
+        automatic: true
+
+  - name: "Network:Link"
+    description:
+      en:
+        text: "Network connection"
+        state texts:
+          ACTIVE: "a network connection exists"
+          INACTIVE: "no network connection exists"
+    dependencies:
+      - predecessor: "Ethernet:Link"
+        automatic: true
+        sufficient: true
+      - predecessor: "WiFi:Link"
+        automatic: true
+        sufficient: true
+
+  - name: "Network:Active"
+    description:
+      en:
+        text: "Network status"
+        action texts:
+          ON: "activate network connection"
+          OFF: "deactivate network connection"
+        state texts:
+          ACTIVE: "a network connection is active"
+          INACTIVE: "no network connection is active"
+          FAILED: "network connection could not be activated"
+    dependencies:
+      - predecessor: "Network:Link"
+        automatic: true
+
+  - name: "Internet:Available"
+    description:
+      en:
+        text: "Internet access"
+        action texts:
+          ON: "connect to the Internet"
+          OFF: "disconnect from the Internet"
+        state texts:
+          ACTIVE: "an Internet connection is available"
+          INACTIVE: "no Internet connection is available"
+          FAILED: "the instrument could not connect to the internet"
+    dependencies:
+      - predecessor: "Network:Active"
+        automatic: true
+
+  - name: "Cloud:Available"
+    description:
+      en:
+        text: "Cloud connection"
+        action texts:
+          ON: "connect to the cloud"
+          OFF: "disconnect from the cloud"
+        state texts:
+          ACTIVE: "the instrument is connected to the cloud"
+          INACTIVE: "the instrument is not connected do the cloud"
+          FAILED: "the instrument could not connect to the cloud"
+    dependencies:
+      - predecessor: "Internet:Available"
+        automatic: true

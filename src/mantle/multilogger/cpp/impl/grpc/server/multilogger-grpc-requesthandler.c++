@@ -79,7 +79,7 @@ namespace multilogger::grpc
                     break;
                 }
 
-                writer->Write(protobuf::encode_shared<cc::multilogger::Loggable>(loggable.value()));
+                writer->Write(protobuf::encoded_shared<cc::multilogger::Loggable>(loggable.value()));
             }
 
             listener->close();

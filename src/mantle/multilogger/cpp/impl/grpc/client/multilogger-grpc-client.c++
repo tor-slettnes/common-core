@@ -36,7 +36,7 @@ namespace multilogger::grpc
     {
         this->call_check(
             &Stub::submit,
-            ::protobuf::encode_shared<cc::multilogger::Loggable>(item));
+            ::protobuf::encoded_shared<cc::multilogger::Loggable>(item));
     }
 
     bool LogClient::add_sink(const SinkSpec &spec)
@@ -135,7 +135,7 @@ namespace multilogger::grpc
 
     bool LogClient::handle_item(const core::types::Loggable::ptr &item)
     {
-        if (this->writer->Write(protobuf::encode_shared<cc::multilogger::Loggable>(item)))
+        if (this->writer->Write(protobuf::encoded_shared<cc::multilogger::Loggable>(item)))
         {
             return true;
         }

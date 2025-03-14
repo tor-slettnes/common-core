@@ -146,7 +146,7 @@ option(BUILD_RTI_LOGGER  "Build support for RTI Distributed Logger" ${BUILD_RTI_
 option(BUILD_SQLITE3     "Build support for SQLite3 DB" ON)
 option(BUILD_AVRO        "Build support for Apache AVRO" ${BUILD_KAFKA})
 option(BUILD_PROTOBUF    "Build support for Google Protocol Buffers" ON)
-option(BUILD_DDS         "Build support for Distributed Data Service (DDS)" ${BUILD_RTI_DDS})
+option(BUILD_IDL         "Build support for Distributed Data Service (DDS)" ${BUILD_RTI_DDS})
 option(BUILD_PYTHON_IO   "Build Python embedded environment for C++" ON)
 option(BUILD_DBUS        "Build support for D-Bus" ON)
 option(BUILD_DNSSD_AVAHI "Build suport for DNS-SD via Avahi" ON)
@@ -158,10 +158,11 @@ option(BUILD_ALL_LIBS    "Build all libraries even if not used (to validate synt
 option(BUILD_TESTING     "Build testing modules" ON)
 
 ### What applications to build/install.
-option(BUILD_SHARED    "Install shared artifacts (e.g. common settings)" ON)
-option(BUILD_DEMO      "Build/install DEMO application example" ${BUILD_SHARED})
-option(BUILD_PLATFORM  "Build/install Platform services" ${BUILD_SHARED})
-option(BUILD_LOGGER    "Build/install Logger service" ${BUILD_SHARED})
+option(BUILD_SHARED      "Install shared artifacts (e.g. common settings)" ON)
+option(BUILD_DEMO        "Build/install DEMO application example" ${BUILD_SHARED})
+option(BUILD_LOGGER      "Build/install Logger service" ${BUILD_SHARED})
+option(BUILD_PLATFORM    "Build/install Platform services" ${BUILD_SHARED})
+option(BUILD_SWITCHBOARD "Build/install Switchboard application" ${BUILD_SHARED})
 
 ### Enable SystemD service integration
 option(ENABLE_SERVICES   "Enable SystemD service units" ON)

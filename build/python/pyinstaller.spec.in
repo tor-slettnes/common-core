@@ -7,7 +7,7 @@
 ## iff the option `USE_SPEC` is provided. (Without this option, `PyInstaller`
 ## is invoked with additional arguments to create one).
 ##
-## To replace this with a custom spec template, `cc_add_python_executable()`
+## To replace this with a custom spec template, call `cc_add_python_executable()`
 ## with the argument `SPEC_TEMPLATE` pointing to that file.
 
 from PyInstaller.utils.hooks import collect_submodules, collect_all

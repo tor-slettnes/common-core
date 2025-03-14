@@ -21,7 +21,7 @@ endfunction()
 ## @brief Set `OUTPUT_VARIABLE` to ${ON_EXPR} or ${OFF_EXPR} depending on ${CONDITION_VARIABLE}
 
 function(cc_get_ternary OUTPUT_VARIABLE CONDITION_VARIABLE ON_EXPR OFF_EXPR)
-  if("${CONDITION_VARIABLE}")
+  if(${CONDITION_VARIABLE})
     set("${OUTPUT_VARIABLE}" "${ON_EXPR}" PARENT_SCOPE)
   else()
     set("${OUTPUT_VARIABLE}" "${OFF_EXPR}" PARENT_SCOPE)

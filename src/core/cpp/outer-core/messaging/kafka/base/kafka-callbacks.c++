@@ -20,7 +20,7 @@ namespace core::kafka
             event.severity(),
             status::Level::WARNING);
 
-        auto msg = CUSTOM_LOG_MESSAGE(
+        auto msg = custom_log_message(
             level,                   // level
             log_scope,               // scope
             core::dt::Clock::now(),  // timepoint

@@ -95,9 +95,25 @@ namespace core::grpc
         this->request_timeout = timeout;
     }
 
-    bool ClientBase::available(const dt::Duration &timeout) const
+    bool ClientBase::connected(bool attempt) const
     {
-        dt::TimePoint deadline = dt::Clock::now() + timeout;
+        return this->channel->GetState(attempt) == GRPC_CHANNEL_READY;
+    }
+
+    void ClientBase::wait_for_connected() const
+    {
+        while (!this->wait_for_connected(std::chrono::hours(1)))
+        {
+        }
+    }
+
+    bool ClientBase::wait_for_connected(const dt::Duration &timeout) const
+    {
+        return this->wait_for_connected(dt::Clock::now() + timeout);
+    }
+
+    bool ClientBase::wait_for_connected(const dt::TimePoint &deadline) const
+    {
         grpc_connectivity_state state = this->channel->GetState(true);
 
         while (((state == GRPC_CHANNEL_IDLE) || (state == GRPC_CHANNEL_CONNECTING)) &&
@@ -107,4 +123,5 @@ namespace core::grpc
         }
         return (state == GRPC_CHANNEL_READY);
     }
+
 }  // namespace core::grpc

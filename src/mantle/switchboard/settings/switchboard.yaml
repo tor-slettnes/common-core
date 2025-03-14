@@ -1,0 +1,9 @@
+# -*- yaml -*-
+#===============================================================================
+## @file switchboard.yaml
+## @brief Switchboard settings
+## @author Tor Slettnes <tor@slett.net>
+#===============================================================================
+
+switch config files:
+  - "common-switches.yaml"

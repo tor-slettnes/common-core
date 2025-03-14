@@ -1,0 +1,76 @@
+// -*- idl -*-
+//==============================================================================
+/// @file switchboard-interface.idl
+/// @brief Interface definition for Switchboard service
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+#ifndef _switchboard_interface_idl_
+#define _switchboard_interface_idl_
+#include "switchboard-types.idl"
+
+module CC
+{
+    module Switchboard
+    {
+        //======================================================================
+        // Switchboard topics
+
+        // Request/response IDs
+        const string SERVICE_INTERFACE_ID = NAMESPACE + "Service";
+        const string INTERCEPTOR_INTERFACE_ID = NAMESPACE + "Interceptor";
+
+        // @DDSService
+        // interface InterceptorInterface
+        // {
+        //     Shared::StatusResponse invoke_interceptor(InterceptorInvocation interceptor_id);
+        // };
+
+        @service
+        interface Switchboard
+        {
+            // List all switches including specifications and statuses
+            SwitchList get_switches();
+
+            // Get information about a single switch
+            Switch get_switch(SwitchName switch_name);
+
+            // Add a new switch, or update specifications for an existing one.
+            boolean add_switch(AddSwitchRequest req);
+
+            // Remove an existing switch
+            boolean remove_switch(RemoveSwitchRequest req);
+
+            /// Update specifications on a switch
+            boolean set_specification(SetSpecificationRequest req);
+
+            // Add a new dependency to a switch
+            boolean add_dependency(AddDependencyRequest req);
+
+            // Remove a dependency from a switch
+            boolean remove_dependency(RemoveDependencyRequest req);
+
+            // Add an interceptor to a given switch.
+            boolean add_interceptor(AddInterceptorRequest req);
+
+            // Remove an interceptor from a given switch.
+            boolean remove_interceptor(RemoveInterceptorRequest req);
+
+            // Invoke a specific interceptor. This request will get forwarded
+            // to the interceptor's owner.
+            InterceptorResult invoke_interceptor(InterceptorInvocation req);
+
+            // Set target state of a switch
+            boolean set_target(SetTargetRequest req);
+
+            // Set/update/clear optional attributes on a switch
+            boolean set_attributes(SetAttributesRequest req);
+
+            // Get statuses for upstream switches that are preventing a specific
+            // (downstream) switch from bing active (or inactive).
+            StatusList get_culprits(CulpritsQuery req);
+        };
+    };
+};
+
+#endif

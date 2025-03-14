@@ -101,6 +101,13 @@ namespace protobuf
         }
     }
 
+    template <class T>
+    std::optional<T> as_optional(bool has_value, const T &value)
+    {
+        return has_value ? value
+                         : std::optional<T>();
+    }
+
     //==========================================================================
     // Template to return converted value
 
@@ -133,7 +140,7 @@ namespace protobuf
     }
 
     template <class ProtoType, class NativeType>
-    ProtoType encode_shared(const std::shared_ptr<NativeType> &ref)
+    ProtoType encoded_shared(const std::shared_ptr<NativeType> &ref)
     {
         ProtoType msg;
         encode_shared<ProtoType, NativeType>(ref, &msg);
@@ -151,7 +158,7 @@ namespace protobuf
     }
 
     template <class NativeType, class... Args>
-    std::shared_ptr<NativeType> decode_shared(Args &&...args)
+    std::shared_ptr<NativeType> decoded_shared(Args &&...args)
     {
         auto ref = std::make_shared<NativeType>();
         decode(args..., ref.get());

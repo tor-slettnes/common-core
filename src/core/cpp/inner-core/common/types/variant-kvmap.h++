@@ -19,6 +19,9 @@ namespace core::types
     {
         using Super = std::unordered_map<Key, Value>;
 
+    public:
+        using ptr = std::shared_ptr<KeyValueMap>;
+
     protected:
         using Super::Super;
 

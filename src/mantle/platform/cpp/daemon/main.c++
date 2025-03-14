@@ -14,7 +14,7 @@
 #include "upgrade-providers-native.h++"    // Virtual Filesystem services
 #include "application/init.h++"            // Common init routines
 #include "status/exceptions.h++"
-#include "thread/supervised_thread.h++"
+#include "thread/supervised-thread.h++"
 
 int main(int argc, char** argv)
 {

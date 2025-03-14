@@ -10,7 +10,7 @@
 #include "chrono/date-time.h++"
 #include "types/value.h++"
 
-namespace core::idl
+namespace idl
 {
     //==========================================================================
     // Encode/decode Boolean value
@@ -84,4 +84,4 @@ namespace core::idl
     void decode(const CC::Common::StringValue &idl,
                 std::string *native) noexcept;
 
-}  // namespace core::idl
+}  // namespace idl

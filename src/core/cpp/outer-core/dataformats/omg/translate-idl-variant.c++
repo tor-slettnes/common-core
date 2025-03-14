@@ -8,7 +8,7 @@
 #include "translate-idl-variant.h++"
 #include "translate-idl-inline.h++"
 
-namespace core::idl
+namespace idl
 {
     //==========================================================================
     // Encode/decode Value
@@ -285,4 +285,4 @@ namespace core::idl
         }
     }
 
-}  // namespace core::idl
+}  // namespace idl

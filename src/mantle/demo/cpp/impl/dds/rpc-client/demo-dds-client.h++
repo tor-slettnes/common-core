@@ -26,7 +26,7 @@ namespace demo::dds
 
     class ClientImpl
         : public API,
-          public core::dds::Client_Wrapper<CC::Demo::DemoServiceClient>,
+          public core::dds::ClientWrapper<CC::Demo::DemoServiceClient>,
           public core::types::enable_create_shared<ClientImpl>
     {
         // Convencience alias

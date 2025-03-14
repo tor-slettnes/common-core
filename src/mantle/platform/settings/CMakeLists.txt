@@ -19,13 +19,6 @@ if(BUILD_PLATFORM)
     DIRECTORIES "."
   )
 
-  ### Install the settings file
-  install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/upgrade.yaml
-    DESTINATION "${SETTINGS_DIR}"
-    COMPONENT "${INSTALL_COMPONENT}"
-  )
-
   cpack_add_component(${INSTALL_COMPONENT}
     GROUP ${INSTALL_GROUP}
     DEPENDS core-settings

@@ -59,24 +59,24 @@ namespace core::dds
     // DDS service Implementation template
 
     template <class ClientT>
-    class Client_Wrapper
+    class ClientWrapper
     {
     protected:
-        Client_Wrapper(const std::string &service_name, int domain_id)
-            : client_(service_name, domain_id)
+        ClientWrapper(const std::string &service_name, int domain_id)
+            : client_(std::make_shared<Client<ClientT>>(service_name, domain_id))
         {
         }
 
     public:
-        inline Client<ClientT> client(
-            const steady::Duration &max_wait = std::chrono::seconds(10))
+        inline std::shared_ptr<Client<ClientT>> client(
+            const steady::Duration &max_wait = std::chrono::seconds(10)) const
         {
-            this->client_.wait_for_service(max_wait);
+            this->client_->wait_for_service(max_wait);
             return this->client_;
         }
 
     protected:
-        Client<ClientT> client_;
+        std::shared_ptr<Client<ClientT>> client_;
     };
 
 }  // namespace core::dds

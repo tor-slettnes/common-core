@@ -39,7 +39,7 @@ namespace platform::netconfig::grpc
                 platform::netconfig::signal_connection.emit(
                     action,
                     key,
-                    protobuf::decode_shared<ConnectionData>(signal.connection()));
+                    protobuf::decoded_shared<ConnectionData>(signal.connection()));
             });
 
         this->client->add_mapping_handler(
@@ -50,7 +50,7 @@ namespace platform::netconfig::grpc
                 platform::netconfig::signal_active_connection.emit(
                     action,
                     key,
-                    protobuf::decode_shared<ActiveConnectionData>(signal.active_connection()));
+                    protobuf::decoded_shared<ActiveConnectionData>(signal.active_connection()));
             });
 
         this->client->add_mapping_handler(
@@ -61,7 +61,7 @@ namespace platform::netconfig::grpc
                 platform::netconfig::signal_accesspoint.emit(
                     action,
                     key,
-                    protobuf::decode_shared<AccessPointData>(signal.accesspoint()));
+                    protobuf::decoded_shared<AccessPointData>(signal.accesspoint()));
             });
 
         this->client->add_mapping_handler(
@@ -72,14 +72,14 @@ namespace platform::netconfig::grpc
                 platform::netconfig::signal_device.emit(
                     action,
                     key,
-                    protobuf::decode_shared<DeviceData>(signal.device()));
+                    protobuf::decoded_shared<DeviceData>(signal.device()));
             });
 
         this->client->add_handler(
             cc::platform::netconfig::Signal::kGlobal,
             [](const cc::platform::netconfig::Signal &signal) {
                 platform::netconfig::signal_globaldata.emit(
-                    protobuf::decode_shared<GlobalData>(signal.global()));
+                    protobuf::decoded_shared<GlobalData>(signal.global()));
             });
     }
 
