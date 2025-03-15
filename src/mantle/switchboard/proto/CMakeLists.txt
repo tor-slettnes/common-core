@@ -11,7 +11,7 @@ set(TARGET cc_switchboard_proto)
 
 ### Package component
 if(BUILD_SWITCHBOARD)
-  set(INSTALL_COMPONENT "platform-proto")
+  set(INSTALL_COMPONENT "switchboard-proto")
 endif()
 
 ### Upstream ProtoBuf library dependencies.

@@ -57,7 +57,7 @@ function(cc_add_proto TARGET)
   endif()
 
   if(BUILD_PYTHON)
-    cc_get_value_or_default(py_suffix arg_CPP_TARGET_SUFFIX "_py")
+    cc_get_value_or_default(py_suffix arg_PYTHON_TARGET_SUFFIX "_py")
     set(py_target "${TARGET}${py_suffix}")
 
     list(TRANSFORM arg_PROTO_DEPS

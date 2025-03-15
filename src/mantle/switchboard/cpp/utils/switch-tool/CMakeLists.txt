@@ -1,19 +1,16 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build Common Core Demo application
+## @description CMake rules to build switch control tool
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(api)
-add_subdirectory(impl)
+add_subdirectory(common)
 
-if(BUILD_DEMO)
-  add_subdirectory(daemon)
-  add_subdirectory(utils)
-
-  if(BUILD_TESTING)
-    add_subdirectory(tests)
-  endif()
+if(BUILD_RTI_DDS)
+  add_subdirectory(dds-tool)
 endif()
 
+if(BUILD_GRPC)
+  add_subdirectory(grpc-tool)
+endif()

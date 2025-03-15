@@ -48,6 +48,8 @@ namespace core::grpc
                            *req);
                 SignalQueueT queue(platform::symbols->uuid(), *req);
                 queue.initialize();
+                // Append an empty message in the queue to signify the end of the cache.
+                queue.put(SignalT());
 
                 while (std::optional<SignalT> msg = queue.get())
                 {

@@ -47,7 +47,7 @@ namespace core::grpc
     /// in turn is created by the `SignalServiceWrapper::stream_signals()` in
     /// response to a gRPC `watch()` invocation by a client.
     ///
-    /// For sample SignalForwarder implementations, see `demo::SignalForwarder()`
+    /// For sample SignalQueue implementations, see `demo::grpc::SignalQueue()`
 
     template <class ProtoT>
     class SignalQueue : public protobuf::SignalForwarder<ProtoT>,

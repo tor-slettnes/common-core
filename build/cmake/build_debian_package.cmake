@@ -36,17 +36,27 @@ function(cc_cpack_add_group GROUP)
   set(_options)
   set(_singleargs
     DISPLAY_NAME               # One-line summary to describe this package group
-    DESCRIPTION                # Detailed description of this package group
   )
   set(_multiargs
     GROUP_DEPS                 # Other cpack component groups on which we depend
     PACKAGE_DEPS               # Other (full) package names on which we depend
+    DESCRIPTION                # Detailed description of this package group
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
+  list(JOIN arg_DESCRIPTION "\n" description)
+
   cpack_add_component_group("${GROUP}"
-    DISPLAY_NAME "${DISPLAY_NAME}"
-    DESCRIPTION "${DESCRIPTION}")
+    DISPLAY_NAME "${arg_DISPLAY_NAME}"
+    DESCRIPTION "${description}")
+
+  ### CMake bug: the `DESCRIPTION` argument sets `CPACK_COMPONENT_GROUP_${GROUP}_DESCRIPTION`,
+  ### however the `cpack` command uses `CPACK_COMPONENT_${GROUP}_DESCRIPTION` to populate
+  ### the `Description:` line of the Debian control file.
+  ### Let's set that latter one explicitly.
+  if(arg_DESCRIPTION)
+    cc_cpack_config(CPACK_COMPONENT_${GROUP}_DESCRIPTION "${description}")
+  endif()
 
   cc_cpack_set_debian_dependencies("${GROUP}" DEPENDS
     GROUPS ${arg_GROUP_DEPS}

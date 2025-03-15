@@ -36,7 +36,7 @@ namespace protobuf
         virtual void initialize()
         {
             this->register_handlers();
-            this->add_handler(static_cast<typename SignalT::SignalCase>(0),
+            this->add_handler(SignalT::SIGNAL_NOT_SET,
                               std::bind(&This::on_init_complete, this));
         }
 
@@ -99,7 +99,7 @@ namespace protobuf
         ///     protocol/messaging system.
         void add_generic_handler(const Callback &callback)
         {
-            this->add_handler(SignalT::SIGNAL_NOT_SET, callback);
+            this->geeneric_handler = callback;
         }
 
     protected:
@@ -144,7 +144,10 @@ namespace protobuf
             this->process_signal_case(msg.signal_case(), msg);
 
             // Invoke generic Signal handler
-            this->process_signal_case(SignalT::SIGNAL_NOT_SET, msg);
+            if (this->generic_handler)
+            {
+                (*this->generic_handler)(msg);
+            }
         }
 
     protected:
@@ -160,6 +163,7 @@ namespace protobuf
 
     protected:
         SignalMap slots;
+        std::optional<Callback> generic_handler;
         std::mutex slots_mtx;
     };
 

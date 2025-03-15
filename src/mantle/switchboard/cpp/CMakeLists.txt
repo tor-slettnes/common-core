@@ -8,4 +8,4 @@
 add_subdirectory(base)
 add_subdirectory(impl)
 add_subdirectory(daemon)
-#add_subdirectory(utils)
+add_subdirectory(utils)

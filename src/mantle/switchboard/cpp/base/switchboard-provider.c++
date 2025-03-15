@@ -12,13 +12,14 @@
 namespace switchboard
 {
     constexpr auto SETTINGS_SECTION_SWITCHES = "switches";
+    constexpr auto SETTING_SPEC_NAME = "name";
     constexpr auto SETTING_SPEC_DESCRIPTION = "description";
     constexpr auto SETTING_SPEC_PRIMARY = "primary";
     constexpr auto SETTING_SPEC_DEPENDENCIES = "dependencies";
     constexpr auto SETTING_SPEC_INTERCEPTORS = "interceptors";
     constexpr auto SETTING_SPEC_DESCRIPTION_TEXT = "text";
-    constexpr auto SETTING_SPEC_STATE_TEXTS = "state_texts";
-    constexpr auto SETTING_SPEC_TARGET_TEXTS = "target_texts";
+    constexpr auto SETTING_SPEC_STATE_TEXTS = "state texts";
+    constexpr auto SETTING_SPEC_TARGET_TEXTS = "target texts";
     constexpr auto SETTING_DEP_PREDECESSOR = "predecessor";
     constexpr auto SETTING_DEP_TRIGGERS = "trigger_states";
     constexpr auto SETTING_DEP_AUTOMATIC = "automatic";
@@ -45,40 +46,17 @@ namespace switchboard
     bool Provider::load(const fs::path &filename)
     {
         core::SettingsStore store(filename);
-        uint count = 0;
 
-        for (const auto &[name, v] : store)
+        if (auto switches = store.get(SETTINGS_SECTION_SWITCHES).get_valuelist())
         {
-            if (const core::types::KeyValueMap::ptr &kvmap = v.get_kvmap())
-            {
-                auto [sw, inserted] = this->add_switch(name);
-
-                sw->set_spec(this->import_spec(sw, kvmap));
-
-                auto attributes = kvmap->get(SETTING_SWITCH_ATTRIBUTES).as_kvmap();
-                if (auto active = kvmap->get(SETTING_SWITCH_ACTIVE))
-                {
-                    sw->set_active(active.as_bool(),  // active
-                                   attributes,        // attributes
-                                   false,             // clear_existing
-                                   false,             // invoke_interceptors
-                                   true,              // trigger_descendents
-                                   false);            // reevaluate
-                }
-                else
-                {
-                    sw->set_auto(attributes,  // attributes
-                                 false,       // clear_existing
-                                 false,       // invoke_interceptors
-                                 true,        // trigger_descendents
-                                 false);      // reevaluate
-                }
-
-                count++;
-            }
+            uint count = this->load_switches(*switches);
+            logf_info("Added %r switches from %r", count, filename);
+            return (count > 0);
         }
-        logf_debug("Added %r switches from %r", count, filename);
-        return count;
+        else
+        {
+            return false;
+        }
     }
 
     SwitchMap Provider::get_switches() const
@@ -148,14 +126,58 @@ namespace switchboard
         }
     }
 
+    uint Provider::load_switches(const core::types::ValueList &switches)
+    {
+        uint count = 0;
+        for (const core::types::Value &switch_info: switches)
+        {
+            if (auto kvmap = switch_info.get_kvmap())
+            {
+                if (const core::types::Value &name = kvmap->get(SETTING_SPEC_NAME))
+                {
+                    this->load_switch(name.as_string(), *kvmap);
+                    count += 1;
+                }
+            }
+        }
+        return count;
+    }
+
+    void Provider::load_switch(const std::string &name, core::types::KeyValueMap &spec)
+    {
+        auto [sw, inserted] = this->add_switch(name);
+        sw->set_spec(this->import_spec(sw, spec));
+
+        auto attributes = spec.get(SETTING_SWITCH_ATTRIBUTES).as_kvmap();
+        if (auto active = spec.get(SETTING_SWITCH_ACTIVE))
+        {
+            sw->set_active(active.as_bool(),  // active
+                           attributes,        // attributes
+                           false,             // clear_existing
+                           false,             // invoke_interceptors
+                           true,              // trigger_descendents
+                           false);            // reevaluate
+        }
+        else
+        {
+            sw->set_auto(attributes,  // attributes
+                         false,       // clear_existing
+                         false,       // invoke_interceptors
+                         true,        // trigger_descendents
+                         false);      // reevaluate
+        }
+
+        logf_debug("Loaded switch: %s", *sw);
+    }
+
     Specification Provider::import_spec(
         const SwitchRef &sw,
-        const core::types::KeyValueMap::ptr &spec_map)
+        const core::types::KeyValueMap &spec_map)
     {
         Specification spec;
-        spec.primary = spec_map->get(SETTING_SPEC_PRIMARY).as_bool();
+        spec.primary = spec_map.get(SETTING_SPEC_PRIMARY).as_bool();
 
-        if (const auto &kvmap = spec_map->get(SETTING_SPEC_DESCRIPTION).get_kvmap())
+        if (const auto &kvmap = spec_map.get(SETTING_SPEC_DESCRIPTION).get_kvmap())
         {
             for (const auto &[language, value] : *kvmap)
             {
@@ -163,12 +185,12 @@ namespace switchboard
                 {
                     spec.descriptions.emplace(
                         language,
-                        Provider::import_desc(localized_texts));
+                        Provider::import_desc(*localized_texts));
                 }
             }
         }
 
-        if (const auto &kvmap = spec_map->get(SETTING_SPEC_DEPENDENCIES).get_kvmap())
+        if (const auto &kvmap = spec_map.get(SETTING_SPEC_DEPENDENCIES).get_kvmap())
         {
             for (const auto &[key, value] : *kvmap)
             {
@@ -176,7 +198,7 @@ namespace switchboard
                 {
                     spec.dependencies.emplace(
                         key,
-                        Provider::import_dependency(sw, key, dep_specs));
+                        Provider::import_dependency(sw, key, *dep_specs));
                 }
             }
         }
@@ -184,12 +206,12 @@ namespace switchboard
         return spec;
     }
 
-    Description Provider::import_desc(const core::types::KeyValueMap::ptr &desc_map)
+    Description Provider::import_desc(const core::types::KeyValueMap &desc_map)
     {
         Description desc;
-        desc.text = desc_map->get(SETTING_SPEC_DESCRIPTION_TEXT).as_string();
+        desc.text = desc_map.get(SETTING_SPEC_DESCRIPTION_TEXT).as_string();
 
-        if (const auto &kvmap = desc_map->get(SETTING_SPEC_STATE_TEXTS).get_kvmap())
+        if (const auto &kvmap = desc_map.get(SETTING_SPEC_STATE_TEXTS).get_kvmap())
         {
             for (const auto &[key, value] : *kvmap)
             {
@@ -199,7 +221,7 @@ namespace switchboard
             }
         }
 
-        if (const auto &kvmap = desc_map->get(SETTING_SPEC_TARGET_TEXTS).get_kvmap())
+        if (const auto &kvmap = desc_map.get(SETTING_SPEC_TARGET_TEXTS).get_kvmap())
         {
             for (const auto &[key, value] : *kvmap)
             {
@@ -214,10 +236,10 @@ namespace switchboard
     DependencyRef Provider::import_dependency(
         const SwitchRef &sw,
         const std::string &predecessor_name,
-        const core::types::KeyValueMap::ptr &dep_map)
+        const core::types::KeyValueMap &dep_map)
     {
         StateMask mask = 0;
-        if (const auto &trigger_states = dep_map->get(SETTING_DEP_TRIGGERS).get_valuelist())
+        if (const auto &trigger_states = dep_map.get(SETTING_DEP_TRIGGERS).get_valuelist())
         {
             logf_trace("--- Switch %r trigger states: %s", sw->name(), *trigger_states);
             for (const core::types::Value &value : *trigger_states)
@@ -227,17 +249,17 @@ namespace switchboard
             }
             logf_trace("--- Switch %r trigger mask: %s", sw->name(), mask);
         }
-        else if (bool automatic = dep_map->get(SETTING_DEP_AUTOMATIC).as_bool())
+        else if (bool automatic = dep_map.get(SETTING_DEP_AUTOMATIC).as_bool())
         {
             mask = SETTLED_STATES;
         }
 
         DependencyPolarity dir = DependencyPolarity::POSITIVE;
-        if (const core::types::Value &polarity = dep_map->get(SETTING_DEP_DIRECTION))
+        if (const core::types::Value &polarity = dep_map.get(SETTING_DEP_DIRECTION))
         {
             dir = core::str::convert_to<DependencyPolarity>(polarity.as_string(), dir);
         }
-        else if (const core::types::Value &inverted = dep_map->get(SETTING_DEP_INVERTED))
+        else if (const core::types::Value &inverted = dep_map.get(SETTING_DEP_INVERTED))
         {
             if (inverted.as_bool())
             {
@@ -245,8 +267,8 @@ namespace switchboard
             }
         }
 
-        bool hard = dep_map->get(SETTING_DEP_HARD).as_bool();
-        bool sufficient = dep_map->get(SETTING_DEP_SUFFICIENT).as_bool();
+        bool hard = dep_map.get(SETTING_DEP_HARD).as_bool();
+        bool sufficient = dep_map.get(SETTING_DEP_SUFFICIENT).as_bool();
 
         return Dependency::create_shared(sw->provider(),
                                          predecessor_name,

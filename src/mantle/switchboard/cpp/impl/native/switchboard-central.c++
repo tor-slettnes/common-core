@@ -13,7 +13,7 @@
 
 namespace switchboard
 {
-    constexpr auto SETTINGS_MAIN_FILE = "switchboard.json";
+    constexpr auto SETTINGS_MAIN_FILE = "switchboard";
     constexpr auto SETTING_SWITCH_CONFIG_FILES = "switch config files";
 
     Central::Central()

@@ -14,7 +14,7 @@ namespace demo
         : Super(),
           implementation(implementation)
     {
-        this->describe("Example Tool.");
+        this->describe("Control DEMO service via " + implementation);
     }
 
     void Options::add_options()

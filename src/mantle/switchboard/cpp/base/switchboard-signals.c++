@@ -12,15 +12,15 @@ namespace switchboard
     constexpr auto Capture_Handle = "switchboard::SignalCapture";
 
     void log_spec_update(core::signal::MappingAction change,
-                             const SwitchName &sw_name,
-                             const Specification &spec)
+                         const SwitchName &sw_name,
+                         const Specification &spec)
     {
         logf_debug("%s: %s", sw_name, spec);
     }
 
     void log_status_update(core::signal::MappingAction change,
-                               const SwitchName &sw_name,
-                               const Status &status)
+                           const SwitchName &sw_name,
+                           const Status &status)
     {
         logf_info("%s: %s", sw_name, status);
     }

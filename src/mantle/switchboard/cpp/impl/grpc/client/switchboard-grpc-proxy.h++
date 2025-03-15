@@ -22,7 +22,7 @@ namespace switchboard::grpc
 
     protected:
         Proxy(const std::string &host,
-              bool wait_for_ready,
+              bool wait_for_ready = false,
               const core::dt::Duration &ready_timeout = std::chrono::seconds(10));
 
     public:

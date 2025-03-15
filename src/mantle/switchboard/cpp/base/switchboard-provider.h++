@@ -109,6 +109,7 @@ namespace switchboard
         bool remove_interceptor(const SwitchName &switch_name,
                                 const InterceptorName &interceptor_name);
 
+
     protected:
         /// @brief
         ///    Add or remove a switch based on a mapping signal
@@ -165,18 +166,22 @@ namespace switchboard
             }
         }
 
+
     private:
+        uint load_switches(const core::types::ValueList &switches);
+        void load_switch(const std::string &name, core::types::KeyValueMap &spec);
+
         static Specification import_spec(
             const SwitchRef &sw,
-            const core::types::KeyValueMap::ptr &kvmap);
+            const core::types::KeyValueMap &kvmap);
 
         static Description import_desc(
-            const core::types::KeyValueMap::ptr &kvmap);
+            const core::types::KeyValueMap &kvmap);
 
         static DependencyRef import_dependency(
             const SwitchRef &sw,
             const std::string &predecessor_name,
-            const core::types::KeyValueMap::ptr &dep_map);
+            const core::types::KeyValueMap &dep_map);
 
     private:
         std::string implementation_;
