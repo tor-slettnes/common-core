@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build Demo gRPC clients
+## @brief CMake rules to build Demo gRPC clients
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

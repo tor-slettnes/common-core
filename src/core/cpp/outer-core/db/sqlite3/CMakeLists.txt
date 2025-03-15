@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build a SQLite3 client wrapper
+## @brief CMake rules to build a SQLite3 client wrapper
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

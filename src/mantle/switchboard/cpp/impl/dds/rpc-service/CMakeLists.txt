@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build switchboard DDS service
+## @brief CMake rules to build switchboard DDS service
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

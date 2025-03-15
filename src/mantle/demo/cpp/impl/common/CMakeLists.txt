@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build Demo application - implementations
+## @brief CMake rules to build Demo application - implementations
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build switchboard DDS pubilsher
+## @brief CMake rules to build switchboard DDS pubilsher
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

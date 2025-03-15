@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Build service daemon for Platform Server
+## @brief Build service daemon for Platform Server
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

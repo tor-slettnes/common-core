@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Common Core Demo Application - DDS Subscriber module
+## @brief Common Core Demo Application - DDS Subscriber module
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

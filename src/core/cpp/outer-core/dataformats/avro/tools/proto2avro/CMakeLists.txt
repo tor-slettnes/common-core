@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build Proto2Avro tool
+## @brief CMake rules to build Proto2Avro tool
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build a SQLite3 log sink
+## @brief CMake rules to build a SQLite3 log sink
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Build native implementation of Common Core Demo
+## @brief Build native implementation of Common Core Demo
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

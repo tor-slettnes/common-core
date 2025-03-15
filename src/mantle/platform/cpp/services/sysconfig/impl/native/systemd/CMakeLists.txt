@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Build Common Core SysConfig service - SystemD implementation
+## @brief Build Common Core SysConfig service - SystemD implementation
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

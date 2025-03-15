@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build Common Core SysConfig service - abstract API
+## @brief CMake rules to build Common Core SysConfig service - abstract API
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

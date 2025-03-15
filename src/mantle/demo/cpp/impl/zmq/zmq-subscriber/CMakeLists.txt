@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Common Core Demo Application - ZeroMQ Subscriber module
+## @brief Common Core Demo Application - ZeroMQ Subscriber module
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

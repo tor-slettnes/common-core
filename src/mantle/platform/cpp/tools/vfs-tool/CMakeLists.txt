@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build VFS gRPC client tool
+## @brief CMake rules to build VFS gRPC client tool
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

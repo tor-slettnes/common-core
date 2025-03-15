@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build shared ZeroMQ wrappers
+## @brief CMake rules to build shared ZeroMQ wrappers
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

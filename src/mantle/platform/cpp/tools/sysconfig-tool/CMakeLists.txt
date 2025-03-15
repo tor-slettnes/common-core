@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build SysConfig gRPC client tool
+## @brief CMake rules to build SysConfig gRPC client tool
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

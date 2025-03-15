@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Switchboard application interface - gRPC implementation
+## @brief Switchboard application interface - gRPC implementation
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

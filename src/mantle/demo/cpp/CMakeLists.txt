@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build Common Core Demo application
+## @brief CMake rules to build Common Core Demo application
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

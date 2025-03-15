@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build multilogger gRPC client library
+## @brief CMake rules to build multilogger gRPC client library
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

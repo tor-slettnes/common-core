@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Demo application interface - DDS implementation
+## @brief Demo application interface - DDS implementation
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

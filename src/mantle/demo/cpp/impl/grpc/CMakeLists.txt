@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Demo application interface - gRPC implementation
+## @brief Demo application interface - gRPC implementation
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

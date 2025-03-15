@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Common Core Demo Application - DDS Publisher module
+## @brief Common Core Demo Application - DDS Publisher module
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

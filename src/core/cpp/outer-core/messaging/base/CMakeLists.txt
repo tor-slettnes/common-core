@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build service API library
+## @brief CMake rules to build service API library
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

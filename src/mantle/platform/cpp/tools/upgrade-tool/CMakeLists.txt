@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build upgrade client tool
+## @brief CMake rules to build upgrade client tool
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

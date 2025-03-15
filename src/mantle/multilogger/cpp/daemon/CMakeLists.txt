@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Build service daemon for MultiLogger Server
+## @brief Build service daemon for MultiLogger Server
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

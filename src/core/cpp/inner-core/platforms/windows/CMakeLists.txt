@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build platform-specific code - Windows version
+## @brief CMake rules to build platform-specific code - Windows version
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build switchboard abstract interface
+## @brief CMake rules to build switchboard abstract interface
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

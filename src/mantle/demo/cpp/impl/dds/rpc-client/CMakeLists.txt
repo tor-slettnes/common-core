@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build DDS RPC client library for demo application
+## @brief CMake rules to build DDS RPC client library for demo application
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

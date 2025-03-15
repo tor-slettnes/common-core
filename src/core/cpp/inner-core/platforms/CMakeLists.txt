@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build platform-specific code
+## @brief CMake rules to build platform-specific code
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

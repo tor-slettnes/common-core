@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build switchboard service
+## @brief CMake rules to build switchboard service
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

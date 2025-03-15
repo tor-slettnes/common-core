@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build language bindings from .idl files
+## @brief CMake rules to build language bindings from .idl files
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

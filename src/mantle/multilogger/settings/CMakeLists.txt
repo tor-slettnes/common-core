@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build settings for MultiLogger service
+## @brief CMake rules to build settings for MultiLogger service
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

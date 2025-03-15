@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build platform-specific code - POSIX version
+## @brief CMake rules to build platform-specific code - POSIX version
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

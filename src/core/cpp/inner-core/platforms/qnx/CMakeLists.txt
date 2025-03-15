@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build platform-specific code - QNX version
+## @brief CMake rules to build platform-specific code - QNX version
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Build Common Core SysConfig service - native implementation
+## @brief Build Common Core SysConfig service - native implementation
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

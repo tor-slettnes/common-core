@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Demo application interface - ZeroMQ implementation
+## @brief Demo application interface - ZeroMQ implementation
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Common Core Demo Application - ZeroMQ Publisher module
+## @brief Common Core Demo Application - ZeroMQ Publisher module
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

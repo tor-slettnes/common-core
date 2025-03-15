@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build gRPC Demo tool
+## @brief CMake rules to build gRPC Demo tool
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

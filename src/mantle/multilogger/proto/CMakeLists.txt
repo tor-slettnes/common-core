@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build protocol buffer bindings
+## @brief CMake rules to build protocol buffer bindings
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

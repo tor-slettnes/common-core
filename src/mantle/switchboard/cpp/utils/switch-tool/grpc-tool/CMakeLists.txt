@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build switch control tool
+## @brief CMake rules to build switch control tool
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description Build service daemon for Common Core Demo
+## @brief Build service daemon for Common Core Demo
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 

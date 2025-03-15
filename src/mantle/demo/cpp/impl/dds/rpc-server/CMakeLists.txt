@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @description CMake rules to build Demo DDS service
+## @brief CMake rules to build Demo DDS service
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
