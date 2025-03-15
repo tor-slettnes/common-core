@@ -15,7 +15,7 @@ cpack_add_component_group(${INSTALL_GROUP}
 ### Install "settings/" folder as data
 add_subdirectory(settings)
 
-if(BUILD_IDL)
+if(BUILD_DDS)
   add_subdirectory(idl)
 endif()
 

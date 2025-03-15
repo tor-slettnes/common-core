@@ -7,7 +7,7 @@
 
 add_subdirectory(common)
 
-if(BUILD_RTI_DDS)
+if(BUILD_DDS)
   add_subdirectory(dds-tool)
 endif()
 

@@ -6,5 +6,12 @@
 #===============================================================================
 
 add_subdirectory(native)
-add_subdirectory(dds)
-add_subdirectory(grpc)
+
+if(BUILD_DDS)
+  add_subdirectory(dds)
+endif()
+
+if(BUILD_GRPC)
+  add_subdirectory(grpc)
+endif()
+

@@ -22,7 +22,7 @@ set(SOURCES
   options.c++
   )
 
-if(BUILD_RTI_DDS)
+if(BUILD_DDS)
   list(APPEND LIB_DEPS
     cc_switchboard_dds_publisher
     cc_switchboard_dds_service

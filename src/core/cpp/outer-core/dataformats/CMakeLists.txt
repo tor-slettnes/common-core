@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-if(BUILD_IDL)
+if(BUILD_DDS)
   add_subdirectory(omg)
 endif()
 

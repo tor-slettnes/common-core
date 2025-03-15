@@ -139,14 +139,15 @@ option(BUILD_KAFKA       "Build support for Apache Kafka" ON)
 option(BUILD_GRPC        "Build support for gRPC Remote Procedure Calls" ON)
 option(BUILD_ZMQ         "Build support for ZeroMQ" ON)
 option(BUILD_HTTP        "Build support for HTTP requests, incl. REST API" ON)
-option(BUILD_RTI_DDS     "Build support for RTI ConnextDDS" OFF)
+option(BUILD_DDS         "Build support for Distributed Data Service (DDS)" ${BUILD_DDS})
+option(BUILD_RTI_DDS     "Build support for RTI ConnextDDS" ${BUILD_DDS})
 option(BUILD_RTI_LOGGER  "Build support for RTI Distributed Logger" ${BUILD_RTI_DDS})
+
 
 ### Object serialization
 option(BUILD_SQLITE3     "Build support for SQLite3 DB" ON)
 option(BUILD_AVRO        "Build support for Apache AVRO" ${BUILD_KAFKA})
 option(BUILD_PROTOBUF    "Build support for Google Protocol Buffers" ON)
-option(BUILD_IDL         "Build support for Distributed Data Service (DDS)" ${BUILD_RTI_DDS})
 option(BUILD_PYTHON_IO   "Build Python embedded environment for C++" ON)
 option(BUILD_DBUS        "Build support for D-Bus" ON)
 option(BUILD_DNSSD_AVAHI "Build suport for DNS-SD via Avahi" ON)

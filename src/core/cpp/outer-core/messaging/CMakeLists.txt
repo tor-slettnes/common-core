@@ -8,7 +8,7 @@
 ### Abstract service interface, agnostic to communications bus
 add_subdirectory(base)
 
-if(BUILD_IDL)
+if(BUILD_DDS)
   add_subdirectory(dds)
 endif()
 

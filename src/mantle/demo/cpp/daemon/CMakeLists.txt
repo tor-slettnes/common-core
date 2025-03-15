@@ -21,7 +21,7 @@ set(LIB_DEPS
   cc_demo_native
 )
 
-if(BUILD_RTI_DDS)
+if(BUILD_DDS)
   list(APPEND LIB_DEPS cc_demo_dds_service)
 endif()
 
