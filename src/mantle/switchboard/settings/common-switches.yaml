@@ -84,7 +84,7 @@ switches:
   - name: "Switchboard:Ready"
     localizations:
       en:
-        text: "Switchboard service status"
+        description: "Switchboard service status"
         state texts:
           ACTIVATING  : "Switchboard is initializing"
           ACTIVE      : "Switchboard is ready"
@@ -97,7 +97,7 @@ switches:
   - name: "Ethernet:Link"
     localizations:
       en:
-        text: "Ethernet status"
+        description: "Ethernet status"
         state texts:
           ACTIVE   : "an Ethernet cable is plugged in"
           INACTIVE : "no Ethernet cable is plugged in"
@@ -105,7 +105,7 @@ switches:
   - name: "WiFi:Enabled"
     localizations:
       en:
-        text: "WiFi antenna"
+        description: "WiFi antenna"
         state texts:
           ACTIVE  : "WiFi is enabled"
           INACTIVE: "WiFi is disabled"
@@ -114,7 +114,7 @@ switches:
   - name: "WiFi:Link"
     localizations:
       en:
-        text: "WiFi signal"
+        description: "WiFi signal"
         action texts:
           ON: "connect to WiFi"
           OFF: "disconnect from WiFi"
@@ -128,7 +128,7 @@ switches:
   - name: "Network:Link"
     localizations:
       en:
-        text: "Network connection"
+        description: "Network connection"
         state texts:
           ACTIVE: "a network connection exists"
           INACTIVE: "no network connection exists"
@@ -143,7 +143,7 @@ switches:
   - name: "Network:Active"
     localizations:
       en:
-        text: "Network status"
+        description: "Network status"
         action texts:
           ON: "activate network connection"
           OFF: "deactivate network connection"
@@ -158,7 +158,7 @@ switches:
   - name: "Internet:Available"
     localizations:
       en:
-        text: "Internet access"
+        description: "Internet access"
         action texts:
           ON: "connect to the Internet"
           OFF: "disconnect from the Internet"
@@ -173,7 +173,7 @@ switches:
   - name: "Cloud:Available"
     localizations:
       en:
-        text: "Cloud connection"
+        description: "Cloud connection"
         action texts:
           ON: "connect to the cloud"
           OFF: "disconnect from the cloud"

@@ -189,7 +189,7 @@ namespace protobuf
     void encode(const switchboard::Localization &localization,
                 cc::switchboard::Localization *msg)
     {
-        msg->set_text(localization.text);
+        msg->set_description(localization.description);
 
         auto &target_map = *msg->mutable_target_texts();
         for (const auto &[position, text] : localization.target_texts)
@@ -207,7 +207,7 @@ namespace protobuf
     void decode(const cc::switchboard::Localization &msg,
                 switchboard::Localization *localization)
     {
-        localization->text = msg.text();
+        localization->description = msg.description();
         for (const auto &item : msg.target_texts())
         {
             localization->target_texts.insert(item);

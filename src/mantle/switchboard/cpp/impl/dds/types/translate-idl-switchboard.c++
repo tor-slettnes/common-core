@@ -57,7 +57,7 @@ namespace idl
                 CC::Switchboard::Localization *idl)
     {
         idl->language_code(language_code);
-        idl->text(native.text);
+        idl->description(native.description);
 
         idl->target_texts().reserve(native.target_texts.size());
         for (const auto &[target, text] : native.target_texts)
@@ -88,7 +88,7 @@ namespace idl
         }
         if (localization)
         {
-            localization->text = idl.text();
+            localization->description = idl.description();
             for (const CC::Switchboard::TargetText &item : idl.target_texts())
             {
                 localization->target_texts[item.active()] = item.text();

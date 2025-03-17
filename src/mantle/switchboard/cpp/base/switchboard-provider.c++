@@ -17,7 +17,7 @@ namespace switchboard
     constexpr auto SETTING_SPEC_PRIMARY = "primary";
     constexpr auto SETTING_SPEC_DEPENDENCIES = "dependencies";
     constexpr auto SETTING_SPEC_INTERCEPTORS = "interceptors";
-    constexpr auto SETTING_SPEC_LOCALIZATION_TEXT = "text";
+    constexpr auto SETTING_SPEC_DESCRIPTION = "description";
     constexpr auto SETTING_SPEC_STATE_TEXTS = "state texts";
     constexpr auto SETTING_SPEC_TARGET_TEXTS = "target texts";
     constexpr auto SETTING_DEP_PREDECESSOR = "predecessor";
@@ -209,7 +209,7 @@ namespace switchboard
     Localization Provider::import_localizations(const core::types::KeyValueMap &localization_map)
     {
         Localization localization;
-        localization.text = localization_map.get(SETTING_SPEC_LOCALIZATION_TEXT).as_string();
+        localization.description = localization_map.get(SETTING_SPEC_DESCRIPTION).as_string();
 
         if (const auto &kvmap = localization_map.get(SETTING_SPEC_STATE_TEXTS).get_kvmap())
         {

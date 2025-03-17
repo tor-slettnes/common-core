@@ -223,7 +223,7 @@ message Localization
     // Example:
     //   - Switch "Internet:Available":
     //      "internet connectivity"
-    string text = 1;
+    string description = 1;
 
     // Text strings describing transitions to each target position: false, true
     map<bool, string> target_texts = 2;

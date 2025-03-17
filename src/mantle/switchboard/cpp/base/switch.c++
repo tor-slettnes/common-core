@@ -27,14 +27,14 @@ namespace switchboard
     void Switch::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
-                            "Switch(%r, primary=%b, dependencies=%s, interceptors=%s, "
-                            "state=%s, active=%b",
-                            this->name(),
-                            this->primary(),
-                            this->dependencies(),
-                            this->interceptors(),
-                            this->state(),
-                            this->active());
+                          "Switch(%r, primary=%b, dependencies=%s, interceptors=%s, "
+                          "state=%s, active=%b",
+                          this->name(),
+                          this->primary(),
+                          this->dependencies(),
+                          this->interceptors(),
+                          this->state(),
+                          this->active());
 
         if (core::status::Error::ptr error = this->error())
         {
@@ -172,14 +172,14 @@ namespace switchboard
     void Switch::set_primary(bool primary)
     {
         this->update_spec(
-            primary, // primary
-            {},      // localizations
-            false,   // replace_localizations
-            {},      // dependencies
-            false,   // replace_dependencies
-            {},      // interceptors
-            false,   // replace_interceptors
-            false);  // update_descendents
+            primary,  // primary
+            {},       // localizations
+            false,    // replace_localizations
+            {},       // dependencies
+            false,    // replace_dependencies
+            {},       // interceptors
+            false,    // replace_interceptors
+            false);   // update_descendents
     }
 
     bool Switch::primary() const noexcept
@@ -190,14 +190,14 @@ namespace switchboard
     void Switch::set_localizations(const LocalizationMap &localizations)
     {
         this->update_spec(
-            {},            // primary
+            {},             // primary
             localizations,  // localization
-            false,         // replace_localizations
-            {},            // dependencies
-            false,         // replace_dependencies
-            {},            // interceptors
-            false,         // replace_interceptors
-            false);        // propagate
+            false,          // replace_localizations
+            {},             // dependencies
+            false,          // replace_dependencies
+            {},             // interceptors
+            false,          // replace_interceptors
+            false);         // propagate
     }
 
     LocalizationMap Switch::localizations() const noexcept
@@ -205,11 +205,17 @@ namespace switchboard
         return this->spec()->localizations;
     }
 
-    std::optional<std::string> Switch::localization(const LanguageCode &language) const noexcept
+    std::optional<Localization> Switch::localization(
+        const LanguageCode &language) const noexcept
     {
-        if (const auto desc = this->spec()->localizations.get_opt(language))
+        return this->spec()->localizations.get_opt(language);
+    }
+
+    std::optional<std::string> Switch::description(const LanguageCode &language) const noexcept
+    {
+        if (const auto &localized = this->localization(language))
         {
-            return desc->text;
+            return localized->description;
         }
         else
         {
@@ -217,29 +223,31 @@ namespace switchboard
         }
     }
 
-    std::string Switch::target_text(bool target,
-                                    const std::string &lang) const noexcept
+    std::optional<std::string> Switch::target_text(
+        bool target,
+        const std::string &lang) const noexcept
     {
-        try
+        if (const auto &localized = this->localization(lang))
         {
-            return this->spec()->localizations.at(lang).target_texts.at(target);
+            return localized->target_texts.to_string(target);
         }
-        catch (const std::out_of_range &)
+        else
         {
-            return "";
+            return {};
         }
     }
 
-    std::string Switch::state_text(State state,
-                                   const std::string &lang) const noexcept
+    std::optional<std::string> Switch::state_text(
+        State state,
+        const std::string &lang) const noexcept
     {
-        try
+        if (const auto &localized = this->localization(lang))
         {
-            return this->spec()->localizations.at(lang).state_texts.at(state);
+            return localized->state_texts.to_string(state);
         }
-        catch (const std::out_of_range &)
+        else
         {
-            return "";
+            return {};
         }
     }
 

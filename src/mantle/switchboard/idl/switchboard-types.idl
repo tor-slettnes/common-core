@@ -171,7 +171,7 @@ module CC
             // Example:
             //   - Switch "Fluidics:Insufflation:Maintaining":
             //      "insufflation pressure control"
-            Text text;
+            Text description;
 
             // The next fields are used to construct status/error messages
             // of the form

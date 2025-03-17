@@ -449,36 +449,36 @@ namespace switchboard
     {
         switchboard::SwitchRef sw = this->get_switch(true);
         std::string language = this->get_arg("language");
-        switchboard::Localization desc;
+        switchboard::Localization localization;
 
         for (const auto &[key, value] : this->get_attributes(false))
         {
             std::string lowerkey = core::str::tolower(key);
             if (lowerkey == "text")
-                desc.text = value;
+                localization.description = value;
             else if (lowerkey == "on")
-                desc.target_texts[true] = value;
+                localization.target_texts[true] = value;
             else if (lowerkey == "off")
-                desc.target_texts[false] = value;
+                localization.target_texts[false] = value;
             else if (lowerkey == "activating")
-                desc.state_texts[switchboard::STATE_ACTIVATING] = value;
+                localization.state_texts[switchboard::STATE_ACTIVATING] = value;
             else if (lowerkey == "active")
-                desc.state_texts[switchboard::STATE_ACTIVE] = value;
+                localization.state_texts[switchboard::STATE_ACTIVE] = value;
             else if (lowerkey == "deactivating")
-                desc.state_texts[switchboard::STATE_DEACTIVATING] = value;
+                localization.state_texts[switchboard::STATE_DEACTIVATING] = value;
             else if (lowerkey == "inactive")
-                desc.state_texts[switchboard::STATE_INACTIVE] = value;
+                localization.state_texts[switchboard::STATE_INACTIVE] = value;
             else if (lowerkey == "failing")
-                desc.state_texts[switchboard::STATE_FAILING] = value;
+                localization.state_texts[switchboard::STATE_FAILING] = value;
             else if (lowerkey == "failed")
-                desc.state_texts[switchboard::STATE_FAILED] = value;
+                localization.state_texts[switchboard::STATE_FAILED] = value;
             else
                 throwf(core::exception::InvalidArgument,
                        ("Unknown specification field: %r", key),
                        key);
         }
         //    Switchboard::LocalizationMap({{language, localization}};
-        sw->set_localizations({{language, desc}});
+        sw->set_localizations({{language, localization}});
     }
 
     void Options::add_dependency()

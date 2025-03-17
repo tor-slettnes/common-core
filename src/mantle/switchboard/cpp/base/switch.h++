@@ -159,16 +159,20 @@ namespace switchboard
         /// Document the switch's purpose, actions, and states with localized texts
         void set_localizations(const LocalizationMap &localizations);
 
-        /// Return the switch's localized descriptions for all available languages
+        /// Return the switch's localized texts for all available languages
         LocalizationMap localizations() const noexcept;
 
+        /// Return the switch's localizaed texts for a specific language
+        std::optional<Localization> localization(
+            const LanguageCode &language_code = DEFAULT_LANGUAGE) const noexcept;
+
         /// Return the switch's localized descriptions for a specific language
-        std::optional<std::string> localization(
+        std::optional<std::string> description(
             const LanguageCode &language_code = DEFAULT_LANGUAGE) const noexcept;
 
         /// Return a textual explanation of an action, e.g.:
         /// get_switch("Cloud:Available").target_text(true) -> "connect to cloud"
-        std::string target_text(
+        std::optional<std::string> target_text(
             bool active,
             const LanguageCode &lanugage_code = DEFAULT_LANGUAGE) const noexcept;
 
@@ -177,8 +181,9 @@ namespace switchboard
         ///    get_switch("Network:Available").state_text(STATE_INACTIVE)
         ///         -> "no network is available"
         /// @endcode
-        std::string state_text(State state,
-                               const std::string &language_code = DEFAULT_LANGUAGE) const noexcept;
+        std::optional<std::string> state_text(
+            State state,
+            const std::string &language_code = DEFAULT_LANGUAGE) const noexcept;
 
         /// Get current status.
         /// @note

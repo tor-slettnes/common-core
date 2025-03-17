@@ -122,9 +122,9 @@ namespace switchboard
 
     struct Localization : public core::types::Listable
     {
-        std::string text;
-        std::unordered_map<bool, std::string> target_texts;
-        std::unordered_map<State, std::string> state_texts;
+        std::string description;
+        core::types::SymbolMap<bool> target_texts;
+        core::types::SymbolMap<State> state_texts;
 
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
