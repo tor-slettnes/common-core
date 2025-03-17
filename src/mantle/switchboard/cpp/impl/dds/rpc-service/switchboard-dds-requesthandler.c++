@@ -64,8 +64,8 @@ namespace switchboard::dds
         {
             sw->update_spec(
                 idl::decode_optional(spec.is_primary()),
-                idl::decoded<DescriptionMap>(spec.descriptions()),
-                req.replace_descriptions(),
+                idl::decoded<LocalizationMap>(spec.localizations()),
+                req.replace_localizations(),
                 idl::decoded<DependencyMap>(spec.dependencies(), this->provider),
                 req.replace_dependencies(),
                 idl::decoded<InterceptorMap>(spec.interceptors()),

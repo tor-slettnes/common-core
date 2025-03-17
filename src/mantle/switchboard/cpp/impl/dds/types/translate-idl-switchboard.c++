@@ -51,10 +51,10 @@ namespace idl
         *native = static_cast<switchboard::State>(idl);
     }
 
-    // CC::Switchboard::Description
+    // CC::Switchboard::Localization
     void encode(const switchboard::LanguageCode &language_code,
-                const switchboard::Description &native,
-                CC::Switchboard::Description *idl)
+                const switchboard::Localization &native,
+                CC::Switchboard::Localization *idl)
     {
         idl->language_code(language_code);
         idl->text(native.text);
@@ -78,44 +78,44 @@ namespace idl
         }
     }
 
-    void decode(const CC::Switchboard::Description &idl,
+    void decode(const CC::Switchboard::Localization &idl,
                 switchboard::LanguageCode *language_code,
-                switchboard::Description *description)
+                switchboard::Localization *localization)
     {
         if (language_code)
         {
             *language_code = idl.language_code();
         }
-        if (description)
+        if (localization)
         {
-            description->text = idl.text();
+            localization->text = idl.text();
             for (const CC::Switchboard::TargetText &item : idl.target_texts())
             {
-                description->target_texts[item.active()] = item.text();
+                localization->target_texts[item.active()] = item.text();
                 ;
             }
             for (const CC::Switchboard::StateText &item : idl.state_texts())
             {
                 auto state = decoded<switchboard::State>(item.switch_state());
-                description->state_texts[state] = item.text();
+                localization->state_texts[state] = item.text();
             }
         }
     }
 
-    // CC::Switchboard::DescriptionList
-    void encode(const switchboard::DescriptionMap &native,
-                CC::Switchboard::DescriptionList *idl)
+    // CC::Switchboard::LocalizationList
+    void encode(const switchboard::LocalizationMap &native,
+                CC::Switchboard::LocalizationList *idl)
     {
         idl->list().resize(native.size());
         auto it = idl->list().begin();
-        for (const auto &[language, description] : native)
+        for (const auto &[language, localization] : native)
         {
-            encode(language, description, &*it++);
+            encode(language, localization, &*it++);
         }
     }
 
-    void decode(const CC::Switchboard::DescriptionList &idl,
-                switchboard::DescriptionMap *native)
+    void decode(const CC::Switchboard::LocalizationList &idl,
+                switchboard::LocalizationMap *native)
     {
         for (const auto &desc : idl.list())
         {
@@ -263,7 +263,7 @@ namespace idl
     {
         idl->switch_name(name);
         idl->is_primary(native.primary);
-        encode(native.descriptions, &idl->descriptions());
+        encode(native.localizations, &idl->localizations());
         encode(native.dependencies, &idl->dependencies());
         encode(native.interceptors, &idl->interceptors());
     }
@@ -282,7 +282,7 @@ namespace idl
         {
             native->primary = idl.is_primary().value();
         }
-        decode(idl.descriptions(), &native->descriptions);
+        decode(idl.localizations(), &native->localizations);
         decode(idl.dependencies(), provider, &native->dependencies);
         decode(idl.interceptors(), &native->interceptors);
     }

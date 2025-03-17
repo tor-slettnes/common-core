@@ -175,7 +175,7 @@ namespace switchboard
             const SwitchRef &sw,
             const core::types::KeyValueMap &kvmap);
 
-        static Description import_desc(
+        static Localization import_localizations(
             const core::types::KeyValueMap &kvmap);
 
         static DependencyRef import_dependency(

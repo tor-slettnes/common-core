@@ -27,7 +27,7 @@ namespace switchboard
 
     class Provider;
     class Switch;
-    struct Description;
+    struct Localization;
     struct Specification;
     struct Status;
     class Dependency;
@@ -96,7 +96,7 @@ namespace switchboard
     using CulpritsMap = std::unordered_map<SwitchRef, State>;
     using ErrorMap = std::unordered_map<SwitchRef, core::status::Error::ptr>;
     using LanguageCode = std::string;
-    using DescriptionMap = core::types::ValueMap<LanguageCode, Description>;
+    using LocalizationMap = core::types::ValueMap<LanguageCode, Localization>;
 
     using SpecRef = std::shared_ptr<Specification>;
     using SpecMap = std::unordered_map<SwitchName, SpecRef>;
@@ -118,9 +118,9 @@ namespace switchboard
     constexpr StateMask ACTIVATION_STATES = {STATE_ACTIVATING | STATE_DEACTIVATING};
 
     //==========================================================================
-    // Description
+    // Localization
 
-    struct Description : public core::types::Listable
+    struct Localization : public core::types::Listable
     {
         std::string text;
         std::unordered_map<bool, std::string> target_texts;
@@ -128,8 +128,8 @@ namespace switchboard
 
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
-        friend bool operator==(const Description &lhs, const Description &rhs);
-        friend bool operator!=(const Description &lhs, const Description &rhs);
+        friend bool operator==(const Localization &lhs, const Localization &rhs);
+        friend bool operator!=(const Localization &lhs, const Localization &rhs);
     };
 
 
@@ -139,7 +139,7 @@ namespace switchboard
     struct Specification : public core::types::Listable
     {
         bool primary = false;
-        DescriptionMap descriptions;
+        LocalizationMap localizations;
         DependencyMap dependencies;
         InterceptorMap interceptors;
 

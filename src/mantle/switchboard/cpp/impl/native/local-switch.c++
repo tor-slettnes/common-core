@@ -100,8 +100,8 @@ namespace switchboard
 
     void LocalSwitch::update_spec(
         const std::optional<bool> &primary,
-        const DescriptionMap &descriptions,
-        bool replace_descriptions,
+        const LocalizationMap &localizations,
+        bool replace_localizations,
         const DependencyMap &dependencies,
         bool replace_dependencies,
         const InterceptorMap &interceptors,
@@ -113,13 +113,13 @@ namespace switchboard
             this->spec_ref->primary = primary.value();
         }
 
-        if (replace_descriptions)
+        if (replace_localizations)
         {
-            this->spec_ref->descriptions = descriptions;
+            this->spec_ref->localizations = localizations;
         }
         else
         {
-            this->spec_ref->descriptions.insert(descriptions.begin(), descriptions.end());
+            this->spec_ref->localizations.insert(localizations.begin(), localizations.end());
         }
 
         if (replace_dependencies)

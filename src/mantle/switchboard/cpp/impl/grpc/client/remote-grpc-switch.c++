@@ -80,8 +80,8 @@ namespace switchboard::grpc
 
     void RemoteSwitch::update_spec(
         const std::optional<bool> &primary,
-        const DescriptionMap &descriptions,
-        bool replace_descriptions,
+        const LocalizationMap &localizations,
+        bool replace_localizations,
         const DependencyMap &dependencies,
         bool replace_dependencies,
         const InterceptorMap &interceptors,
@@ -96,11 +96,11 @@ namespace switchboard::grpc
         {
             spec->set_is_primary(primary.value());
         }
-        protobuf::encode(descriptions, spec->mutable_descriptions());
+        protobuf::encode(localizations, spec->mutable_localizations());
         protobuf::encode(dependencies, spec->mutable_dependencies());
         protobuf::encode(interceptors, spec->mutable_interceptors());
 
-        req.set_replace_descriptions(replace_descriptions);
+        req.set_replace_localizations(replace_localizations);
         req.set_replace_dependencies(replace_dependencies);
         req.set_replace_interceptors(replace_interceptors);
         req.set_update_state(update_state);

@@ -120,11 +120,11 @@ namespace switchboard
         ///    If provided, updates `primary` flag to indicate whether a search
         ///    for culprits should stop with this switch rather than recurse
         ///    further into its ancestors.
-        /// @param[in] descriptions
+        /// @param[in] localizations
         ///    A map of languages and corresponding human readable texts
         ///    describing this switch and its activities.
-        /// @param[in] replace_descriptions
-        ///    Replace instead of merging into existing descriptions
+        /// @param[in] replace_localizations
+        ///    Replace instead of merging into existing localizations
         /// @param[in] dependencies
         ///    A map of predecessor switches and corresonding dependency
         ///    declarations.
@@ -140,8 +140,8 @@ namespace switchboard
 
         virtual void update_spec(
             const std::optional<bool> &primary,
-            const DescriptionMap &descriptions,
-            bool replace_descriptions,
+            const LocalizationMap &localizations,
+            bool replace_localizations,
             const DependencyMap &dependencies,
             bool replace_dependencies,
             const InterceptorMap &interceptors,
@@ -156,14 +156,14 @@ namespace switchboard
         /// into dependencies when looking for culprits.
         bool primary() const noexcept;
 
-        /// Describe the switch
-        void set_descriptions(const DescriptionMap &descriptions);
+        /// Document the switch's purpose, actions, and states with localized texts
+        void set_localizations(const LocalizationMap &localizations);
 
-        /// Return the switch's descriptions in all available languages
-        DescriptionMap descriptions() const noexcept;
+        /// Return the switch's localized descriptions for all available languages
+        LocalizationMap localizations() const noexcept;
 
-        /// Return the switch's description in a specific language
-        std::optional<std::string> description(
+        /// Return the switch's localized descriptions for a specific language
+        std::optional<std::string> localization(
             const LanguageCode &language_code = DEFAULT_LANGUAGE) const noexcept;
 
         /// Return a textual explanation of an action, e.g.:

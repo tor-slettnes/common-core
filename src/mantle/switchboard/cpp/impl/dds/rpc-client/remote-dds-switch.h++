@@ -53,8 +53,8 @@ namespace switchboard::dds
 
         void update_spec(
             const std::optional<bool> &primary,
-            const DescriptionMap &descriptions,
-            bool replace_descriptions,
+            const LocalizationMap &localizations,
+            bool replace_localizations,
             const DependencyMap &dependencies,
             bool replace_dependencies,
             const InterceptorMap &interceptors,

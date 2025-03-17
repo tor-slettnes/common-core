@@ -13,11 +13,11 @@ namespace switchboard
 {
     constexpr auto SETTINGS_SECTION_SWITCHES = "switches";
     constexpr auto SETTING_SPEC_NAME = "name";
-    constexpr auto SETTING_SPEC_DESCRIPTION = "description";
+    constexpr auto SETTING_SPEC_LOCALIZATIONS = "localizations";
     constexpr auto SETTING_SPEC_PRIMARY = "primary";
     constexpr auto SETTING_SPEC_DEPENDENCIES = "dependencies";
     constexpr auto SETTING_SPEC_INTERCEPTORS = "interceptors";
-    constexpr auto SETTING_SPEC_DESCRIPTION_TEXT = "text";
+    constexpr auto SETTING_SPEC_LOCALIZATION_TEXT = "text";
     constexpr auto SETTING_SPEC_STATE_TEXTS = "state texts";
     constexpr auto SETTING_SPEC_TARGET_TEXTS = "target texts";
     constexpr auto SETTING_DEP_PREDECESSOR = "predecessor";
@@ -177,15 +177,15 @@ namespace switchboard
         Specification spec;
         spec.primary = spec_map.get(SETTING_SPEC_PRIMARY).as_bool();
 
-        if (const auto &kvmap = spec_map.get(SETTING_SPEC_DESCRIPTION).get_kvmap())
+        if (const auto &kvmap = spec_map.get(SETTING_SPEC_LOCALIZATIONS).get_kvmap())
         {
             for (const auto &[language, value] : *kvmap)
             {
                 if (const auto &localized_texts = value.get_kvmap())
                 {
-                    spec.descriptions.emplace(
+                    spec.localizations.emplace(
                         language,
-                        Provider::import_desc(*localized_texts));
+                        Provider::import_localizations(*localized_texts));
                 }
             }
         }
@@ -206,31 +206,31 @@ namespace switchboard
         return spec;
     }
 
-    Description Provider::import_desc(const core::types::KeyValueMap &desc_map)
+    Localization Provider::import_localizations(const core::types::KeyValueMap &localization_map)
     {
-        Description desc;
-        desc.text = desc_map.get(SETTING_SPEC_DESCRIPTION_TEXT).as_string();
+        Localization localization;
+        localization.text = localization_map.get(SETTING_SPEC_LOCALIZATION_TEXT).as_string();
 
-        if (const auto &kvmap = desc_map.get(SETTING_SPEC_STATE_TEXTS).get_kvmap())
+        if (const auto &kvmap = localization_map.get(SETTING_SPEC_STATE_TEXTS).get_kvmap())
         {
             for (const auto &[key, value] : *kvmap)
             {
-                desc.state_texts.emplace(
+                localization.state_texts.emplace(
                     core::str::convert_to<State>(key, STATE_UNSET),
                     value.to_string());
             }
         }
 
-        if (const auto &kvmap = desc_map.get(SETTING_SPEC_TARGET_TEXTS).get_kvmap())
+        if (const auto &kvmap = localization_map.get(SETTING_SPEC_TARGET_TEXTS).get_kvmap())
         {
             for (const auto &[key, value] : *kvmap)
             {
-                desc.target_texts.emplace(
+                localization.target_texts.emplace(
                     core::str::convert_to<bool>(key, false),
                     value.to_string());
             }
         }
-        return desc;
+        return localization;
     }
 
     DependencyRef Provider::import_dependency(

@@ -75,9 +75,9 @@ namespace switchboard
     }
 
     //==========================================================================
-    /// @struct Description
+    /// @struct Localization
 
-    void Description::to_tvlist(core::types::TaggedValueList *tvlist) const
+    void Localization::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         tvlist->append_if_value("text", this->text);
 
@@ -102,14 +102,14 @@ namespace switchboard
         }
     }
 
-    bool operator==(const Description &lhs, const Description &rhs)
+    bool operator==(const Localization &lhs, const Localization &rhs)
     {
         return ((lhs.text == rhs.text) &&
                 (lhs.target_texts == rhs.target_texts) &&
                 (lhs.state_texts == rhs.state_texts));
     }
 
-    bool operator!=(const Description &lhs, const Description &rhs)
+    bool operator!=(const Localization &lhs, const Localization &rhs)
     {
         return !(lhs == rhs);
     }
@@ -122,7 +122,7 @@ namespace switchboard
         return ((lhs.primary == rhs.primary) &&
                 (lhs.dependencies == rhs.dependencies) &&
                 (lhs.interceptors == rhs.interceptors) &&
-                (lhs.descriptions == rhs.descriptions));
+                (lhs.localizations == rhs.localizations));
     }
 
     bool operator!=(const Specification &lhs, const Specification &rhs)
@@ -134,14 +134,14 @@ namespace switchboard
     {
         tvlist->append("primary", this->primary);
 
-        if (!this->descriptions.empty())
+        if (!this->localizations.empty())
         {
-            core::types::TaggedValueList descriptions;
-            for (const auto &[language, description] : this->descriptions)
+            core::types::TaggedValueList localizations;
+            for (const auto &[language, localization] : this->localizations)
             {
-                descriptions.append_if_value(language, description.as_tvlist());
+                localizations.append_if_value(language, localization.as_tvlist());
             }
-            tvlist->append("descriptions", descriptions);
+            tvlist->append("localizations", localizations);
         }
 
         if (!this->interceptors.empty())

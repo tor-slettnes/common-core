@@ -173,8 +173,8 @@ namespace switchboard
     {
         this->update_spec(
             primary, // primary
-            {},      // descriptions
-            false,   // replace_descriptions
+            {},      // localizations
+            false,   // replace_localizations
             {},      // dependencies
             false,   // replace_dependencies
             {},      // interceptors
@@ -187,12 +187,12 @@ namespace switchboard
         return this->spec()->primary;
     }
 
-    void Switch::set_descriptions(const DescriptionMap &descriptions)
+    void Switch::set_localizations(const LocalizationMap &localizations)
     {
         this->update_spec(
             {},            // primary
-            descriptions,  // description
-            false,         // replace_descriptions
+            localizations,  // localization
+            false,         // replace_localizations
             {},            // dependencies
             false,         // replace_dependencies
             {},            // interceptors
@@ -200,14 +200,14 @@ namespace switchboard
             false);        // propagate
     }
 
-    DescriptionMap Switch::descriptions() const noexcept
+    LocalizationMap Switch::localizations() const noexcept
     {
-        return this->spec()->descriptions;
+        return this->spec()->localizations;
     }
 
-    std::optional<std::string> Switch::description(const LanguageCode &language) const noexcept
+    std::optional<std::string> Switch::localization(const LanguageCode &language) const noexcept
     {
-        if (const auto desc = this->spec()->descriptions.get_opt(language))
+        if (const auto desc = this->spec()->localizations.get_opt(language))
         {
             return desc->text;
         }
@@ -222,7 +222,7 @@ namespace switchboard
     {
         try
         {
-            return this->spec()->descriptions.at(lang).target_texts.at(target);
+            return this->spec()->localizations.at(lang).target_texts.at(target);
         }
         catch (const std::out_of_range &)
         {
@@ -235,7 +235,7 @@ namespace switchboard
     {
         try
         {
-            return this->spec()->descriptions.at(lang).state_texts.at(state);
+            return this->spec()->localizations.at(lang).state_texts.at(state);
         }
         catch (const std::out_of_range &)
         {

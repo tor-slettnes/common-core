@@ -104,7 +104,7 @@ namespace protobuf
                 cc::switchboard::Specification *msg)
     {
         msg->set_is_primary(spec.primary);
-        encode(spec.descriptions, msg->mutable_descriptions());
+        encode(spec.localizations, msg->mutable_localizations());
         encode(spec.dependencies, msg->mutable_dependencies());
         encode(spec.interceptors, msg->mutable_interceptors());
     }
@@ -118,7 +118,7 @@ namespace protobuf
             spec->primary = msg.is_primary();
         }
 
-        decode(msg.descriptions(), &spec->descriptions);
+        decode(msg.localizations(), &spec->localizations);
         decode(msg.dependencies(), provider, &spec->dependencies);
         decode(msg.interceptors(), &spec->interceptors);
     }
@@ -184,63 +184,63 @@ namespace protobuf
     }
 
     //==========================================================================
-    // Description
+    // Localization
 
-    void encode(const switchboard::Description &description,
-                cc::switchboard::Description *msg)
+    void encode(const switchboard::Localization &localization,
+                cc::switchboard::Localization *msg)
     {
-        msg->set_text(description.text);
+        msg->set_text(localization.text);
 
         auto &target_map = *msg->mutable_target_texts();
-        for (const auto &[position, text] : description.target_texts)
+        for (const auto &[position, text] : localization.target_texts)
         {
             target_map[position] = text;
         }
 
         auto &state_map = *msg->mutable_state_texts();
-        for (const auto &[state, text] : description.state_texts)
+        for (const auto &[state, text] : localization.state_texts)
         {
             state_map[state] = text;
         }
     }
 
-    void decode(const cc::switchboard::Description &msg,
-                switchboard::Description *description)
+    void decode(const cc::switchboard::Localization &msg,
+                switchboard::Localization *localization)
     {
-        description->text = msg.text();
+        localization->text = msg.text();
         for (const auto &item : msg.target_texts())
         {
-            description->target_texts.insert(item);
+            localization->target_texts.insert(item);
         }
 
         for (const auto &[state, text] : msg.state_texts())
         {
-            description->state_texts.insert_or_assign(
+            localization->state_texts.insert_or_assign(
                 static_cast<switchboard::State>(state),
                 text);
         }
     }
 
     //==========================================================================
-    // DescriptionMap
+    // LocalizationMap
 
-    void encode(const switchboard::DescriptionMap &map,
-                cc::switchboard::DescriptionMap *msg)
+    void encode(const switchboard::LocalizationMap &map,
+                cc::switchboard::LocalizationMap *msg)
     {
         auto &protomap = *msg->mutable_map();
-        for (const auto &[language_code, description] : map)
+        for (const auto &[language_code, localization] : map)
         {
-            encode(description, &protomap[language_code]);
+            encode(localization, &protomap[language_code]);
         }
     }
 
-    void decode(const cc::switchboard::DescriptionMap &msg,
-                switchboard::DescriptionMap *map)
+    void decode(const cc::switchboard::LocalizationMap &msg,
+                switchboard::LocalizationMap *map)
     {
         map->clear();
-        for (const auto &[language, description] : msg.map())
+        for (const auto &[language, localization] : msg.map())
         {
-            decode(description, &(*map)[language]);
+            decode(localization, &(*map)[language]);
         }
     }
 

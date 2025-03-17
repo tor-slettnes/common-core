@@ -112,8 +112,8 @@ namespace switchboard::grpc
                 const cc::switchboard::Specification &spec = request->spec();
                 sw->update_spec(
                     spec.has_is_primary() ? spec.is_primary() : std::optional<bool>(),
-                    protobuf::decoded<DescriptionMap>(spec.descriptions()),
-                    request->replace_descriptions(),
+                    protobuf::decoded<LocalizationMap>(spec.localizations()),
+                    request->replace_localizations(),
                     protobuf::decoded<DependencyMap>(spec.dependencies(), this->provider),
                     request->replace_dependencies(),
                     protobuf::decoded<InterceptorMap>(spec.interceptors()),

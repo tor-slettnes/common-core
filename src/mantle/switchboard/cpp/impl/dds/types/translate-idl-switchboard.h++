@@ -34,21 +34,21 @@ namespace idl
     void decode(CC::Switchboard::State idl,
                 switchboard::State *native);
 
-    // CC::Switchboard::Description
+    // CC::Switchboard::Localization
     void encode(const switchboard::LanguageCode &language_code,
-                const switchboard::Description &native,
-                CC::Switchboard::Description *idl);
+                const switchboard::Localization &native,
+                CC::Switchboard::Localization *idl);
 
-    void decode(const CC::Switchboard::Description &idl,
+    void decode(const CC::Switchboard::Localization &idl,
                 switchboard::LanguageCode *language_code,
-                switchboard::Description *description);
+                switchboard::Localization *localization);
 
-    // CC::Switchboard::DescriptionList
-    void encode(const switchboard::DescriptionMap &native,
-                CC::Switchboard::DescriptionList *idl);
+    // CC::Switchboard::LocalizationList
+    void encode(const switchboard::LocalizationMap &native,
+                CC::Switchboard::LocalizationList *idl);
 
-    void decode(const CC::Switchboard::DescriptionList &idl,
-                switchboard::DescriptionMap *native);
+    void decode(const CC::Switchboard::LocalizationList &idl,
+                switchboard::LocalizationMap *native);
 
     // CC::Switchboard::DependencyPolarity
     void encode(const switchboard::DependencyPolarity &native,

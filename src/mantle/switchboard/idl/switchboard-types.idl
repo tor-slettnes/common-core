@@ -78,14 +78,14 @@ module CC
         // typedef string<64> SwitchName;
         // typedef string<64> InterceptorName;
         // typedef string<64> ParticipantName;
-        // typedef string<256> Explanation;
         // typedef string<16> LanguageCode;
+        // typedef string<256> Text;
 
         typedef string SwitchName;
         typedef string InterceptorName;
         typedef string ParticipantName;
-        typedef string Explanation;
         typedef string LanguageCode;
+        typedef string Text;
 
         // Various size limits
         const uint32 MAX_SWITCHES = 256;
@@ -118,7 +118,7 @@ module CC
             @key
             boolean active;
 
-            Explanation text;
+            Text text;
         };
 
 
@@ -144,17 +144,17 @@ module CC
             @key
             State switch_state;
 
-            Explanation text;
+            Text text;
         };
 
 
 
-        /// @struct Description
+        /// @struct Localization
         ///
         /// Human readable texts pertaining to a switch, suitable for
         /// constructing status/error messages in a specific language.
 
-        struct Description
+        struct Localization
         {
             // Language/country and optional encoding for which these strings
             // are valid, e.g.
@@ -171,7 +171,7 @@ module CC
             // Example:
             //   - Switch "Fluidics:Insufflation:Maintaining":
             //      "insufflation pressure control"
-            Explanation text;
+            Text text;
 
             // The next fields are used to construct status/error messages
             // of the form
@@ -188,9 +188,9 @@ module CC
         };
 
 
-        struct DescriptionList
+        struct LocalizationList
         {
-            sequence<Description,MAX_LANGUAGES> list;
+            sequence<Localization,MAX_LANGUAGES> list;
         };
 
         enum DependencyPolarity
@@ -337,8 +337,8 @@ module CC
 
             // Human readable descriptions of what the switch represents, keyed
             // by language code.. If not explicitly provided as part of an
-            // update, the current description is retained.
-            DescriptionList descriptions;
+            // update, the current localizations are retained.
+            LocalizationList localizations;
 
             // Direct ancestors affecting this switch's state
             DependencyList dependencies;
@@ -356,8 +356,8 @@ module CC
             @optional
             boolean active;
 
-            // Clear existing descriptions when updating
-            boolean replace_descriptions;
+            // Clear existing localizations when updating
+            boolean replace_localizations;
 
             // Clear existing depependencies when updating
             boolean replace_dependencies;

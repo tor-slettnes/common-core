@@ -82,15 +82,15 @@ namespace switchboard
             std::bind(&Options::get_status, this));
 
         this->add_command(
-            "description",
+            "localization",
             {"SWITCH"},
-            "Print SWITCH's description.",
-            std::bind(&Options::get_description, this));
+            "Print SWITCH's localization.",
+            std::bind(&Options::get_localization, this));
 
         this->add_command(
             "state_text",
             {"SWITCH", "STATE"},
-            "Print description of the specified STATE of SWITCH.",
+            "Print localization of the specified STATE of SWITCH.",
             std::bind(&Options::get_state_text, this));
 
         this->add_command(
@@ -147,10 +147,10 @@ namespace switchboard
             std::bind(&Options::remove_switch, this));
 
         this->add_command(
-            "set_description",
+            "set_localization",
             {"SWITCH", "LANGAUGE", "[{text|on|off|activating|active|deactivating|inactive|failing|failed} VALUE] ..."},
-            "Change the description of a switch in the specified language",
-            std::bind(&Options::set_description, this));
+            "Change the localization of a switch in the specified language",
+            std::bind(&Options::set_localization, this));
 
         this->add_command(
             "add_dependency",
@@ -359,9 +359,9 @@ namespace switchboard
         std::cout << *this->get_switch(true)->status() << std::endl;
     }
 
-    void Options::get_description()
+    void Options::get_localization()
     {
-        std::cout << this->get_switch(true)->description() << std::endl;
+        std::cout << this->get_switch(true)->localization() << std::endl;
     }
 
     void Options::get_state_text()
@@ -445,11 +445,11 @@ namespace switchboard
         std::cout << (removed ? "removed" : "no change") << std::endl;
     }
 
-    void Options::set_description()
+    void Options::set_localization()
     {
         switchboard::SwitchRef sw = this->get_switch(true);
         std::string language = this->get_arg("language");
-        switchboard::Description desc;
+        switchboard::Localization desc;
 
         for (const auto &[key, value] : this->get_attributes(false))
         {
@@ -477,8 +477,8 @@ namespace switchboard
                        ("Unknown specification field: %r", key),
                        key);
         }
-        //    Switchboard::DescriptionMap({{language, description}};
-        sw->set_descriptions({{language, desc}});
+        //    Switchboard::LocalizationMap({{language, localization}};
+        sw->set_localizations({{language, desc}});
     }
 
     void Options::add_dependency()

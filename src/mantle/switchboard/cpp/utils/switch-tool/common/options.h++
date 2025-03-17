@@ -34,7 +34,7 @@ namespace switchboard
         void get_error();
         void get_errors();
         void get_status();
-        void get_description();
+        void get_localization();
         void get_state_text();
         void get_target_text();
         void get_dependencies();
@@ -43,7 +43,7 @@ namespace switchboard
         void load_file();
         void add_switch();
         void remove_switch();
-        void set_description();
+        void set_localization();
         void add_dependency();
         void remove_dependency();
         void add_interceptor();

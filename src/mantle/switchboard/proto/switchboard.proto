@@ -168,8 +168,8 @@ message SetSpecificationRequest
     // Set initial state to active. Default: Calculate from dependencies.
     optional bool active = 3;
 
-    // Clear existing descriptions when updating
-    bool replace_descriptions = 4;
+    // Clear existing localizations when updating
+    bool replace_localizations = 4;
 
     // Clear existing dependencies when updating
     bool replace_dependencies = 5;
@@ -195,7 +195,7 @@ message Specification
     optional bool is_primary = 3;
 
     // Human readable descriptions of this switch, by language
-    DescriptionMap descriptions = 4;
+    LocalizationMap localizations = 4;
 
     // Direct ancestors affecting this switch's state
     DependencyMap dependencies = 5;
@@ -205,7 +205,7 @@ message Specification
 
 }
 
-message DescriptionMap
+message LocalizationMap
 {
     // Switch descriptions per locale.
     // The key should be a language/country code, e.g.
@@ -214,10 +214,10 @@ message DescriptionMap
     //  - `"zh_TW.UTF8"` -- Chinese (Taiwan, Traditional), UTF-8 encoded
     //  - `"zh_CN"`, `"zn_CHT"` -- Chinese (China, Simplified and Traditional)
 
-    map<string, Description> map = 1;
+    map<string, Localization> map = 1;
 }
 
-message Description
+message Localization
 {
     // Human readable description of what the switch represents.
     // Example:

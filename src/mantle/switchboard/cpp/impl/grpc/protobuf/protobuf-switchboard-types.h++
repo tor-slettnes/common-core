@@ -82,22 +82,22 @@ namespace protobuf
                 switchboard::StatusMap *statusmap);
 
     //==========================================================================
-    // Description
+    // Localization
 
-    void encode(const switchboard::Description &description,
-                cc::switchboard::Description *msg);
+    void encode(const switchboard::Localization &localization,
+                cc::switchboard::Localization *msg);
 
-    void decode(const cc::switchboard::Description &msg,
-                switchboard::Description *description);
+    void decode(const cc::switchboard::Localization &msg,
+                switchboard::Localization *localization);
 
     //==========================================================================
-    // DescriptionMap
+    // LocalizationMap
 
-    void encode(const switchboard::DescriptionMap &map,
-                cc::switchboard::DescriptionMap *msg);
+    void encode(const switchboard::LocalizationMap &map,
+                cc::switchboard::LocalizationMap *msg);
 
-    void decode(const cc::switchboard::DescriptionMap &msg,
-                switchboard::DescriptionMap *map);
+    void decode(const cc::switchboard::LocalizationMap &msg,
+                switchboard::LocalizationMap *map);
 
     //==========================================================================
     // DependencyPolarity

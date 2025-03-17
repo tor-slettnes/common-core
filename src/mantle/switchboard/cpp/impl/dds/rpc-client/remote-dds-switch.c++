@@ -75,8 +75,8 @@ namespace switchboard::dds
 
     void RemoteSwitch::update_spec(
         const std::optional<bool> &primary,
-        const DescriptionMap &descriptions,
-        bool replace_descriptions,
+        const LocalizationMap &localizations,
+        bool replace_localizations,
         const DependencyMap &dependencies,
         bool replace_dependencies,
         const InterceptorMap &interceptors,
@@ -90,11 +90,11 @@ namespace switchboard::dds
         {
             spec.is_primary(*primary);
         }
-        idl::encode(descriptions, &spec.descriptions());
+        idl::encode(localizations, &spec.localizations());
         idl::encode(dependencies, &spec.dependencies());
         idl::encode(interceptors, &spec.interceptors());
 
-        req.replace_descriptions(replace_descriptions);
+        req.replace_localizations(replace_localizations);
         req.replace_dependencies(replace_dependencies);
         req.replace_interceptors(replace_interceptors);
         req.update_state(update_state);
