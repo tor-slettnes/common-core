@@ -60,7 +60,7 @@ class VirtualFileSystemClient (SignalClient):
         @param open_only:
             include only contexts currently held open
 
-        @returns:
+        @returns
             List of `(name, cxt)` tuples.
         '''
         if open_only:
@@ -434,7 +434,7 @@ class VirtualFileSystemClient (SignalClient):
         @param vfspath:
             File path, specified in the format CONTEXT:RELPATH.
 
-        @returns:
+        @returns
              A gRPC ClientReader instance, which can be used to iterate over
              `cc.protobuf.vfs.FileChunk` instances.
 
@@ -452,7 +452,7 @@ class VirtualFileSystemClient (SignalClient):
         @param vfspath:
             File path, specified in the format CONTEXT:RELPATH.
 
-        @returns:
+        @returns
             An iterator over byte chunks from the requested file.
 
         See also `read_file()` if you want to iterate over the underlying
@@ -534,7 +534,7 @@ class VirtualFileSystemClient (SignalClient):
         @param vfspath:
             Virtual path on the server in the format CONTEXT:RELPATH.
 
-        @returns:
+        @returns
             Key/value pairs representing custom attributes associated with the
             specified path.
         '''

@@ -165,7 +165,7 @@ class SignalStore:
         '''
         Obtain the signal name associated with the specified field number.
 
-        @returns:
+        @returns
             Number associated with the field name of the Signal message.
 
         @exception KeyError
@@ -181,7 +181,7 @@ class SignalStore:
         '''
         Return the field number associated with the specified signal name.
 
-        @returns:
+        @returns
             Number associated with the field name of the Signal message.
 
         @exception KeyError
@@ -232,7 +232,7 @@ class SignalStore:
         @exception KeyError
             The specified `signalname` is not known
 
-        @returns:
+        @returns
             The cached value, or None if the specified signal has yet not been
             received.
         '''

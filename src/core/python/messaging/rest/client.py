@@ -34,7 +34,7 @@ class RESTClient (HTTPClient):
         @param headers:
             HTTP request headers
 
-        @returns:
+        @returns
             Decoded JSON object, e.g. a Python dict, list, or primitive.
         '''
         return await asyncio.to_thread(self.get_json, rel_url, kwargs, headers)
@@ -52,7 +52,7 @@ class RESTClient (HTTPClient):
         @param headers:
             HTTP request headers
 
-        @returns:
+        @returns
             Decoded JSON object, e.g. a Python dict, list, or primitive.
         '''
 

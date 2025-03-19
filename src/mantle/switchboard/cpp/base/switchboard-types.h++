@@ -98,17 +98,17 @@ namespace switchboard
     using LocalizationMap = core::types::ValueMap<LanguageCode, Localization>;
 
     using SpecRef = std::shared_ptr<Specification>;
-    using SpecMap = std::unordered_map<SwitchName, SpecRef>;
+    using SpecMap = core::types::ValueMap<SwitchName, SpecRef>;
 
     using StatusRef = std::shared_ptr<Status>;
-    using StatusMap = std::unordered_map<SwitchName, StatusRef>;
+    using StatusMap = core::types::ValueMap<SwitchName, StatusRef>;
 
     using DependencyRef = std::shared_ptr<Dependency>;
-    using DependencyMap = std::unordered_map<SwitchName, DependencyRef>;
+    using DependencyMap = core::types::ValueMap<SwitchName, DependencyRef>;
 
     using InterceptorName = std::string;
     using InterceptorRef = std::shared_ptr<Interceptor>;
-    using InterceptorMap = std::unordered_map<InterceptorName, InterceptorRef>;
+    using InterceptorMap = core::types::ValueMap<InterceptorName, InterceptorRef>;
 
     using StateMask = std::uint32_t;
 

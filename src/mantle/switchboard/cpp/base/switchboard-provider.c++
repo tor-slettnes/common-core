@@ -13,13 +13,14 @@ namespace switchboard
 {
     constexpr auto SETTINGS_SECTION_SWITCHES = "switches";
     constexpr auto SETTING_SPEC_NAME = "name";
-    constexpr auto SETTING_SPEC_LOCALIZATIONS = "localizations";
     constexpr auto SETTING_SPEC_PRIMARY = "primary";
     constexpr auto SETTING_SPEC_DEPENDENCIES = "dependencies";
     constexpr auto SETTING_SPEC_INTERCEPTORS = "interceptors";
-    constexpr auto SETTING_SPEC_DESCRIPTION = "description";
-    constexpr auto SETTING_SPEC_STATE_TEXTS = "state texts";
-    constexpr auto SETTING_SPEC_TARGET_TEXTS = "target texts";
+    constexpr auto SETTING_SPEC_LOCALIZATIONS = "localizations";
+    constexpr auto SETTING_LOC_LANGUAGE = "language";
+    constexpr auto SETTING_LOC_DESCRIPTION = "description";
+    constexpr auto SETTING_LOC_STATE_TEXTS = "state texts";
+    constexpr auto SETTING_LOC_TARGET_TEXTS = "target texts";
     constexpr auto SETTING_DEP_PREDECESSOR = "predecessor";
     constexpr auto SETTING_DEP_TRIGGERS = "trigger_states";
     constexpr auto SETTING_DEP_AUTOMATIC = "automatic";
@@ -129,7 +130,7 @@ namespace switchboard
     uint Provider::load_switches(const core::types::ValueList &switches)
     {
         uint count = 0;
-        for (const core::types::Value &switch_info: switches)
+        for (const core::types::Value &switch_info : switches)
         {
             if (auto kvmap = switch_info.get_kvmap())
             {
@@ -177,28 +178,41 @@ namespace switchboard
         Specification spec;
         spec.primary = spec_map.get(SETTING_SPEC_PRIMARY).as_bool();
 
-        if (const auto &kvmap = spec_map.get(SETTING_SPEC_LOCALIZATIONS).get_kvmap())
+        if (auto localizations = spec_map.get(SETTING_SPEC_LOCALIZATIONS).get_valuelist())
         {
-            for (const auto &[language, value] : *kvmap)
+            for (const auto &localization : *localizations)
             {
-                if (const auto &localized_texts = value.get_kvmap())
+                if (const auto &language_value = localization.get(SETTING_LOC_LANGUAGE))
                 {
                     spec.localizations.emplace(
-                        language,
-                        Provider::import_localizations(*localized_texts));
+                        language_value.as_string(),
+                        This::import_localization(*localization.get_kvmap()));
+                }
+                else
+                {
+                    logf_notice("Ignoring switch %r localization without \"language\" key: %s",
+                                sw->name(),
+                                localization);
                 }
             }
         }
 
-        if (const auto &kvmap = spec_map.get(SETTING_SPEC_DEPENDENCIES).get_kvmap())
+        if (auto dependencies = spec_map.get(SETTING_SPEC_DEPENDENCIES).get_valuelist())
         {
-            for (const auto &[key, value] : *kvmap)
+            for (const auto &dependency : *dependencies)
             {
-                if (const auto &dep_specs = value.get_kvmap())
+                if (const auto &predecessor_value = dependency.get(SETTING_DEP_PREDECESSOR))
                 {
+                    std::string predecessor = predecessor_value.as_string();
                     spec.dependencies.emplace(
-                        key,
-                        Provider::import_dependency(sw, key, *dep_specs));
+                        predecessor,
+                        This::import_dependency(sw, predecessor, *dependency.get_kvmap()));
+                }
+                else
+                {
+                    logf_notice("Ignoring switch %r dependency without \"predecessor\" key: %s",
+                                sw->name(),
+                                dependency);
                 }
             }
         }
@@ -206,12 +220,12 @@ namespace switchboard
         return spec;
     }
 
-    Localization Provider::import_localizations(const core::types::KeyValueMap &localization_map)
+    Localization Provider::import_localization(const core::types::KeyValueMap &localization_map)
     {
         Localization localization;
-        localization.description = localization_map.get(SETTING_SPEC_DESCRIPTION).as_string();
+        localization.description = localization_map.get(SETTING_LOC_DESCRIPTION).as_string();
 
-        if (const auto &kvmap = localization_map.get(SETTING_SPEC_STATE_TEXTS).get_kvmap())
+        if (const auto &kvmap = localization_map.get(SETTING_LOC_STATE_TEXTS).get_kvmap())
         {
             for (const auto &[key, value] : *kvmap)
             {
@@ -221,7 +235,7 @@ namespace switchboard
             }
         }
 
-        if (const auto &kvmap = localization_map.get(SETTING_SPEC_TARGET_TEXTS).get_kvmap())
+        if (const auto &kvmap = localization_map.get(SETTING_LOC_TARGET_TEXTS).get_kvmap())
         {
             for (const auto &[key, value] : *kvmap)
             {

@@ -78,7 +78,7 @@ class Switch:
         @param handle:
             Handle for the registered callback.
 
-        @returns:
+        @returns
             True if the specified handle was found and removed, False otherwise.
         '''
 
@@ -263,7 +263,7 @@ class Switch:
             which will be used in order to look up the target texts.
             For details, @see get_localization().
 
-        @returns:
+        @returns
             Each boolean target (False, True) mapped to explanation of the
             correponding operation; @see set_localization().
         '''
@@ -283,7 +283,7 @@ class Switch:
             which will be used in order to look up the target texts.
             For details, @see get_localization().
 
-        @returns:
+        @returns
             A human readable text describing the current target position
             iff the switch is currently in the ACTIVATING or DEACTIVATING
             state; None otherwise.
@@ -319,7 +319,7 @@ class Switch:
             which will be used in order to look up the target texts.
             See `get_localization()` for details.
 
-        @returns:
+        @returns
             Text description for each possible switch state, in a format
             that can be included as '{state_text}' in a statement such as
             'cannot {target_text} because {state_text}'.
@@ -334,7 +334,7 @@ class Switch:
         Obtain human readable text describing the current state. If no text is
         available, returns `None`.
 
-        @returns:
+        @returns
             Text string describing the current state, if defined.
         '''
 
@@ -507,7 +507,7 @@ class Switch:
             `asynchronous` flag is also True, the call blocks until the
             interceptor has completed.
 
-        @returns:
+        @returns
             True if the interceptor was added.
         '''
 
@@ -521,7 +521,7 @@ class Switch:
         @param interceptor_name:
             Name of interceptor to remove
 
-        @returns:
+        @returns
             True if the interceptor existed and was removed.
         '''
 
@@ -666,7 +666,7 @@ class Switch:
             encounters errors.  If omitted, the highest-numbered `on_error`
             attribute amongst the associated interceptors is used.
 
-        @returns:
+        @returns
             True iff the target state was modified
         '''
 
@@ -774,6 +774,6 @@ class Switch:
         '''
         Obtain root causes for a switch not being in the expected positiion.
 
-        @returns:
+        @returns
           Dictionary of conflicting upstream state names and their corresponding states.
         '''

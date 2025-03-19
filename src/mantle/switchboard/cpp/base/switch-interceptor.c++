@@ -34,7 +34,6 @@ namespace switchboard
         return interceptor_phase_names.from_stream(stream, &ep, PHASE_NORMAL);
     }
 
-
     //==========================================================================
     // Interceptor
 
@@ -107,19 +106,17 @@ namespace switchboard
         return this->on_error_;
     }
 
-    void Interceptor::to_stream(std::ostream &stream) const
+    void Interceptor::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::str::format(
-            stream,
-            "Interceptor(name=%r, owner=%r, state_transitions=%#0x, "
-            "asynchronous=%b, rerun=%b, on_cancel=%r, on_error=%r)",
-            this->name(),
-            this->owner(),
-            this->state_transitions(),
-            this->asynchronous(),
-            this->rerun(),
-            this->on_cancel(),
-            this->on_error());
+        tvlist->extend({
+            {"name", this->name()},
+            {"owner", this->owner()},
+            {"state_transitions", this->state_transitions()},
+            {"asynchronous", this->asynchronous()},
+            {"rerun", this->rerun()},
+            {"on_cancel", core::str::convert_from(this->on_cancel())},
+            {"on_error", core::str::convert_from(this->on_error())},
+        });
     }
 
     bool Interceptor::applicable(State state)

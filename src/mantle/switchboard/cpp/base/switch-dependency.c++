@@ -104,7 +104,6 @@ namespace switchboard
         }
     }
 
-
     std::optional<State> Dependency::expected_state() const
     {
         switch (this->polarity())
@@ -163,17 +162,15 @@ namespace switchboard
         }
     }
 
-    void Dependency::to_stream(std::ostream &stream) const
+    void Dependency::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::str::format(
-            stream,
-            "{board=%r, predecessor=%r, trigger_states=%s, "
-            "polarity=%b, hard=%b, sufficient=%b}",
-            this->provider()->implementation(),
-            this->predecessor_name(),
-            this->trigger_states(),
-            this->polarity(),
-            this->hard(),
-            this->sufficient());
+        tvlist->extend({
+            {"predecessor", this->predecessor_name()},
+            {"trigger_states", this->trigger_states()},
+            {"polarity", core::str::convert_from(this->polarity())},
+            {"hard", this->hard()},
+            {"sufficient", this->sufficient()},
+        });
     }
+
 }  // namespace switchboard

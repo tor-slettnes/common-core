@@ -76,7 +76,7 @@ class SwitchboardBase:
         '''
         Get the named switch.
 
-        @returns:
+        @returns
             The named `Switch` instance if it exists, otherwise `None`.
         '''
         return self.switches.get(switch_name)
@@ -94,7 +94,7 @@ class SwitchboardBase:
         @param switch_name:
             Name for the new switch.
 
-        @returns:
+        @returns
             True if this switch was added, False if it already existed.
         '''
 
@@ -113,6 +113,6 @@ class SwitchboardBase:
             Automatically update the state of successors (downstream dependents)
             once this switch has been removed.
 
-        @returns:
+        @returns
             True if the switch was removed, False if it did not exist.
         '''

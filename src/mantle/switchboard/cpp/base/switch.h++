@@ -9,7 +9,7 @@
 #include "switchboard-types.h++"
 #include "switch-dependency.h++"
 #include "switch-interceptor.h++"
-#include "types/streamable.h++"
+#include "types/listable.h++"
 #include <memory>
 
 namespace switchboard
@@ -17,7 +17,7 @@ namespace switchboard
     //==========================================================================
     // @class Switch
 
-    class Switch : public core::types::Streamable,
+    class Switch : public core::types::Listable,
                    public std::enable_shared_from_this<Switch>
     {
         friend class Switchboard;
@@ -26,7 +26,7 @@ namespace switchboard
         Switch(const SwitchName &name,
                const std::shared_ptr<switchboard::Provider> &provider);
 
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
         /// return the name of this switch

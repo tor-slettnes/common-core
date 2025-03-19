@@ -83,7 +83,7 @@
 switches:
   - name: "Switchboard:Ready"
     localizations:
-      en:
+      - language: "en"
         description: "Switchboard service status"
         state texts:
           ACTIVATING  : "Switchboard is initializing"
@@ -96,7 +96,7 @@ switches:
 
   - name: "Ethernet:Link"
     localizations:
-      en:
+      - language: "en"
         description: "Ethernet status"
         state texts:
           ACTIVE   : "an Ethernet cable is plugged in"
@@ -104,7 +104,7 @@ switches:
 
   - name: "WiFi:Enabled"
     localizations:
-      en:
+      - language: "en"
         description: "WiFi antenna"
         state texts:
           ACTIVE  : "WiFi is enabled"
@@ -113,7 +113,7 @@ switches:
 
   - name: "WiFi:Link"
     localizations:
-      en:
+      - language: "en"
         description: "WiFi signal"
         action texts:
           ON: "connect to WiFi"
@@ -127,7 +127,7 @@ switches:
 
   - name: "Network:Link"
     localizations:
-      en:
+      - language: "en"
         description: "Network connection"
         state texts:
           ACTIVE: "a network connection exists"
@@ -142,7 +142,7 @@ switches:
 
   - name: "Network:Active"
     localizations:
-      en:
+      - language: "en"
         description: "Network status"
         action texts:
           ON: "activate network connection"
@@ -157,7 +157,7 @@ switches:
 
   - name: "Internet:Available"
     localizations:
-      en:
+      - language: "en"
         description: "Internet access"
         action texts:
           ON: "connect to the Internet"
@@ -172,7 +172,7 @@ switches:
 
   - name: "Cloud:Available"
     localizations:
-      en:
+      - language: "en"
         description: "Cloud connection"
         action texts:
           ON: "connect to the cloud"

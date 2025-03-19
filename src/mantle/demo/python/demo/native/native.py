@@ -38,7 +38,7 @@ class NativeDemo (API):
         '''
         Get current time data.
 
-        @returns:
+        @returns
             Current time data provided by the specific implementation.
         '''
         t = time.time()

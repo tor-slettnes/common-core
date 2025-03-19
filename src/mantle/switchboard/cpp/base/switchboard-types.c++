@@ -139,7 +139,7 @@ namespace switchboard
             core::types::TaggedValueList localizations;
             for (const auto &[language, localization] : this->localizations)
             {
-                localizations.append_if_value(language, localization.as_tvlist());
+                localizations.append_if_value(language, localization.as_kvmap());
             }
             tvlist->append("localizations", localizations);
         }
@@ -149,7 +149,7 @@ namespace switchboard
             core::types::TaggedValueList interceptors;
             for (const auto &[name, spec] : this->interceptors)
             {
-                interceptors.append_if_value(name, spec->to_string());
+                interceptors.append_if_value(name, spec->as_kvmap());
             }
             tvlist->append("interceptors", interceptors);
         }
@@ -159,7 +159,7 @@ namespace switchboard
             core::types::TaggedValueList dependencies;
             for (const auto &[predecessor, spec] : this->dependencies)
             {
-                dependencies.append_if_value(predecessor, spec->to_string());
+                dependencies.append_if_value(predecessor, spec->as_kvmap());
             }
             tvlist->append("dependencies", dependencies);
         }

@@ -124,7 +124,7 @@ class SysConfigClient (SignalClient):
             Restrict listing to a specified global area, such as "Europe" or
             "Indian Ocean".
 
-        @returns:
+        @returns
             Country list, comprising
              - `code` - its 2-letter ISO 3166 code (e.g. "US" or "DE")
              - `name` - its name in English (e.g. "United States" or "Germany")
@@ -159,7 +159,7 @@ class SysConfigClient (SignalClient):
         @param country:
             Filter listing by a specific country, specified by its 2-letter ISO
             3166 code, e.g. "US", or by its English name, e.g. "United States".
-        @returns:
+        @returns
             Canonical time zones and their specifications.  Results are sorted
             reasonably for grouping and presentation to an end user:
              - first by area (continents or oceans), roughly west to east
@@ -183,7 +183,7 @@ class SysConfigClient (SignalClient):
 
         @param canonical_zone:
             Canonical zone name, e.g. 'America/Los_Angeles' (not `PST` or `PDT`)
-        @returns:
+        @returns
             Zone specification, including
             * The canonical name (reflecting the provided name if any)
             * Area name (continent, ocean, or "Etc')
@@ -214,7 +214,7 @@ class SysConfigClient (SignalClient):
             Optional timestamp for which the zone information is applicable
             (mainly to determine whether daylight savings time/summer time is in
             use).  If missing, the current system time is used.
-        @returns:
+        @returns
             A `TimeZoneInfo` instance, comprising
             - `shortname`: effective zone abbreviation, e.g. `PST`, `PDT`, `CET`, `CEST`...
             - `offset`: offset from UTC in seconds, e.g. -7 * 60 * 60
@@ -288,7 +288,7 @@ class SysConfigClient (SignalClient):
             Working directory for the command.
         @param stdin:
             Text to feed to the standard input of the command.
-        @returns:
+        @returns
             `CommandResponse` instance with the outputs from the command
             (`stdout` and `stderr`) as well as its exit code.
         '''
@@ -317,7 +317,7 @@ class SysConfigClient (SignalClient):
         @param stdin:
             Text to feed to the standard input of the command.
 
-        @returns:
+        @returns
             Integer representing the Process ID (PID) of the command.
             This can subsequently be passed to `invoke_finish()`.
         '''
@@ -342,7 +342,7 @@ class SysConfigClient (SignalClient):
         @param stdin:
             Text which will be piped to the command's standard input
 
-        @returns:
+        @returns
             Response from the completed process, including exit code
             and any text printed on `stdout`/`stderr`.
         '''

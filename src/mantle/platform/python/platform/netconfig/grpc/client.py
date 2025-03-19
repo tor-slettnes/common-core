@@ -425,7 +425,7 @@ class NetConfigClient (SignalClient):
         '''
         Get information about available network devices.
 
-        @returns:
+        @returns
             Key/Value pairs mapping device names to associated device information.
         '''
         return dict(self.stub.get_devices(empty).map)

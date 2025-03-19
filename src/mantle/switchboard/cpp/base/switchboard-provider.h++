@@ -17,6 +17,8 @@ namespace switchboard
 
     class Provider : public std::enable_shared_from_this<Provider>
     {
+        using This = Provider;
+
     protected:
         Provider(const std::string &implementation);
 
@@ -175,7 +177,7 @@ namespace switchboard
             const SwitchRef &sw,
             const core::types::KeyValueMap &kvmap);
 
-        static Localization import_localizations(
+        static Localization import_localization(
             const core::types::KeyValueMap &kvmap);
 
         static DependencyRef import_dependency(

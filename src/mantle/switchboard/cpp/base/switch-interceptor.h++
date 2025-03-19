@@ -9,7 +9,7 @@
 
 // Shared utilities
 #include "switchboard-types.h++"
-#include "types/streamable.h++"
+#include "types/listable.h++"
 #include "types/create-shared.h++"
 
 // STL
@@ -40,7 +40,7 @@ namespace switchboard
     /// @class Interceptor
     /// @brief Task that is invoked in response to a switch state change
 
-    class Interceptor : public core::types::Streamable,
+    class Interceptor : public core::types::Listable,
                         public core::types::enable_create_shared<Interceptor>
     {
         using This = Interceptor;
@@ -70,7 +70,7 @@ namespace switchboard
         ExceptionHandling on_error() const;
 
     public:
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
         void set_invocation(const Invocation &invocation);
 
     public:

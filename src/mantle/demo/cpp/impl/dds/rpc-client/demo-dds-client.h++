@@ -22,7 +22,7 @@ namespace demo::dds
 {
     //==========================================================================
     // @class ClientImpl
-    // @brief Handle requests from and publish updates to Switchboard clients
+    // @brief Handle requests from and publish updates to Demo clients
 
     class ClientImpl
         : public API,

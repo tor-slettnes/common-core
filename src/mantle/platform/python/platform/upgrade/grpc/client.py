@@ -78,7 +78,7 @@ class UpgradeClient (SignalClient):
         @param source:
             Restrict listing to packages discovered from the specified source.
 
-        @returns:
+        @returns
             Information about each package discovered.
         '''
 

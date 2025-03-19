@@ -95,7 +95,7 @@ class Endpoint (EndpointBase):
           Fallback if host name is not provided nor found in settings file
         @param defaultPort:
           Fallback if port number is not provided nor found in settings file
-        @returns:
+        @returns
           Sanitized address of the form SCHEME://HOST:PORT (where HOST
           may still be empty)
         '''

@@ -24,24 +24,30 @@ namespace switchboard
         logf_debug("Created switch %r", this->name());
     }
 
-    void Switch::to_stream(std::ostream &stream) const
+    void Switch::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        core::str::format(stream,
-                          "Switch(%r, primary=%b, dependencies=%s, interceptors=%s, "
-                          "state=%s, active=%b",
-                          this->name(),
-                          this->primary(),
-                          this->dependencies(),
-                          this->interceptors(),
-                          this->state(),
-                          this->active());
-
-        if (core::status::Error::ptr error = this->error())
+        auto deps = std::make_shared<core::types::ValueList>();
+        deps->reserve(this->dependencies().size());
+        for (const auto &[pred_name, dep]: this->dependencies())
         {
-            stream << ", error=" << *error;
+            deps->emplace_back(dep->as_kvmap());
         }
 
-        stream << ")";
+        auto icepts = std::make_shared<core::types::ValueList>();
+        icepts->reserve(this->interceptors().size());
+        for (const auto &[name, icept]: this->interceptors())
+        {
+            icepts->emplace_back(icept->as_kvmap());
+        }
+
+        tvlist->extend({
+            {"name", this->name()},
+            {"primary", this->primary()},
+            {"dependencies", deps},
+            {"interceptors", icepts},
+            {"state", this->state()},
+            {"active", this->active()},
+        });
     }
 
     const SwitchName &Switch::name() const noexcept

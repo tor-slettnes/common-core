@@ -8,7 +8,7 @@
 #pragma once
 #include "switchboard-types.h++"
 
-#include "types/streamable.h++"
+#include "types/listable.h++"
 #include "types/create-shared.h++"
 
 #include <memory>
@@ -18,7 +18,7 @@ namespace switchboard
     //==========================================================================
     // @class Dependency
 
-    class Dependency : public core::types::Streamable,
+    class Dependency : public core::types::Listable,
                        public core::types::enable_create_shared<Dependency>
     {
     public:
@@ -54,7 +54,7 @@ namespace switchboard
         static State inverted(State state);
 
     protected:
-        void to_stream(std::ostream &stream) const override;
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
         std::weak_ptr<Provider> provider_;

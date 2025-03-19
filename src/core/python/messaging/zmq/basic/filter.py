@@ -40,7 +40,7 @@ class Filter (bytes):
         @param size:
             Number of bytes needed to represent topic
 
-        @returns:
+        @returns
             Byte sequence containing variable-length encoding of `size`
         '''
         more = True
@@ -59,7 +59,7 @@ class Filter (bytes):
 
         @param size:
             Number of bytes needed to represent topic
-        @returns:
+        @returns
             Number of bytes needed to represent `size`
         '''
         encoding_size = 1
@@ -76,7 +76,7 @@ class Filter (bytes):
         @param data:
             Byte sequence from which size is extracted
 
-        @returns:
+        @returns
             A two-integer tuple `(preamble_size, topic_size)` containing
             the number of bytes needed to represent the topic length, and
             the actual length extracted from those initial bytes.
