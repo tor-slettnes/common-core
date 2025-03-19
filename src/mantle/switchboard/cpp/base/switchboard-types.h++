@@ -73,10 +73,9 @@ namespace switchboard
 
     enum class DependencyPolarity
     {
-        POSITIVE,  // Successor depends on predecessor being active
-        NEGATIVE,  // Inverse; successor depends on predecessor being inactive
-        TOGGLE     // Successor toggles in response to predecessor change
-
+        TOGGLE = 0,     // Successor toggles in response to predecessor change
+        POSITIVE = 1,   // Successor depends on predecessor being active
+        NEGATIVE = -1,  // Inverse; successor depends on predecessor being inactive
     };
 
     extern const core::types::SymbolMap<DependencyPolarity> depdir_names;
@@ -132,7 +131,6 @@ namespace switchboard
         friend bool operator!=(const Localization &lhs, const Localization &rhs);
     };
 
-
     //==========================================================================
     // Specification
 
@@ -148,7 +146,6 @@ namespace switchboard
         friend bool operator==(const Specification &lhs, const Specification &rhs);
         friend bool operator!=(const Specification &lhs, const Specification &rhs);
     };
-
 
     //==========================================================================
     // Status

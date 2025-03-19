@@ -11,6 +11,7 @@ OUT_DIR       ?= $(CURDIR)/out
 BUILD_DIR     ?= $(OUT_DIR)/build
 INSTALL_DIR   ?= $(OUT_DIR)/install
 PACKAGE_DIR   ?= $(OUT_DIR)/packages
+PYTHON        ?= /usr/bin/python3
 TOOLCHAIN_FILE = $(SHARED_DIR)build/cmake/toolchain-$(TARGET).cmake
 
 ifdef TARGET
@@ -180,6 +181,10 @@ $(CMAKE_TAG):
 
 $(BUILD_DIR):
 	@mkdir -p "$(BUILD_DIR)"
+
+.PHONY: python_shell
+python_shell:
+	@env PYTHONPATH=$(INSTALL_DIR)/$(call get_cached_or_default,PYTHON_INSTALL_DIR) $(PYTHON)
 
 .PHONY: list
 list: cmake

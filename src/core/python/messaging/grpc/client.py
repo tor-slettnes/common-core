@@ -54,11 +54,11 @@ class Client (Base):
             either address or host is missing, the default value is obtain from
             the service settings file (grpc-endpoints-PRODUCT.json).
 
-        @param wait_for_ready
+        @param wait_for_ready:
             If a connection attempt fails, keep retrying until successful.
             This value may be overriden per call.
 
-        @param use_asyncio
+        @param use_asyncio:
             Use Python AsyncIO.  Effectively this performs calls within a
             `grpc.aio.Channel` instance, rather than the default `grpc.Channel`.
             Additionally, the `call()` method uses AsyncIO semantics to capture

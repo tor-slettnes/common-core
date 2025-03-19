@@ -263,7 +263,7 @@ namespace protobuf
     // Dependency
 
     void encode(const switchboard::DependencyRef &native,
-                cc::switchboard::DependencySpec *proto)
+                cc::switchboard::Dependency *proto)
     {
         proto->set_trigger_states(native->trigger_states());
         proto->set_polarity(encoded<cc::switchboard::DependencyPolarity>(native->polarity()));
@@ -271,7 +271,7 @@ namespace protobuf
         proto->set_sufficient(native->sufficient());
     }
 
-    void decode(const cc::switchboard::DependencySpec &proto,
+    void decode(const cc::switchboard::Dependency &proto,
                 const switchboard::ProviderRef &provider,
                 const std::string &predecessor_name,
                 switchboard::DependencyRef *native)

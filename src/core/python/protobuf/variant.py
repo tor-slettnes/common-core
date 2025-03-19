@@ -16,7 +16,7 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.duration_pb2 import Duration
 
 ### Standard Python modules
-from typing import Sequence, Optional
+from typing import Sequence, Mapping, Optional
 
 PyValue = None|bool|int|float|str|bytes|Duration|TimestampType|list|tuple|dict
 PyTaggedValue = tuple[str, PyValue]

@@ -81,21 +81,21 @@ class Endpoint (EndpointBase):
         * Any attribute(s) that are still missing are populated from
           `defaultScheme`, `defaultHost` or `defaultPort`, respectively.
 
-        @param address
+        @param address:
           Address to sanitize, normally provided as a command-line option.
-        @param schemeOption
+        @param schemeOption:
           Key to locate the scheme in the settings file
-        @param hostOption
+        @param hostOption:
           Key to locate the host name in the settings file
-        @param portOption
+        @param portOption:
           Key to locate the port number in the settings file
-        @param defaultScheme
+        @param defaultScheme:
           Fallback if scheme name is not provided nor found in settings file
-        @param defaultHost
+        @param defaultHost:
           Fallback if host name is not provided nor found in settings file
-        @param defaultPort
+        @param defaultPort:
           Fallback if port number is not provided nor found in settings file
-        @return
+        @returns:
           Sanitized address of the form SCHEME://HOST:PORT (where HOST
           may still be empty)
         '''

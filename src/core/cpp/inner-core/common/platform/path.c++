@@ -9,10 +9,6 @@
 #include "buildinfo.h++"
 #include <fstream>
 
-#define LOCAL_FOLDER          "/cc"
-#define DEFAULT_CONFIG_FOLDER LOCAL_FOLDER "/config"
-#define DEFAULT_DATA_FOLDER   LOCAL_FOLDER "/data"
-#define DEFAULT_LOG_FOLDER    LOCAL_FOLDER "/logs"
 #define CONFIGPATH_VAR        "CONFIGPATH"
 #define DATADIR_VAR           "DATADIR"
 #define LOGDIR_VAR            "LOGDIR"
@@ -108,17 +104,17 @@ namespace core::platform
 
     fs::path PathProvider::default_config_folder() const noexcept
     {
-        return DEFAULT_CONFIG_FOLDER;
+        return LOCAL_SETTINGS_DIR;
     }
 
     fs::path PathProvider::default_data_folder() const noexcept
     {
-        return DEFAULT_DATA_FOLDER;
+        return LOCAL_DATA_DIR;
     }
 
     fs::path PathProvider::default_log_folder() const noexcept
     {
-        return DEFAULT_LOG_FOLDER;
+        return LOGS_DIR;
     }
 
     fs::path PathProvider::exec_path() const noexcept

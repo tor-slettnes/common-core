@@ -43,7 +43,7 @@ def encodePath(vfspath: VFSPathType) -> Path:
     '''
     Encode a VFS path
 
-    @param vfspath
+    @param vfspath:
         Either an existing `cc.protobuf.vfs.Path` instance (no conversion done)
         or a string in the format `CONTEXT:RELPATH`.
     '''

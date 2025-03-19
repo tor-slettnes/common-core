@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Package modules
-from ..buildinfo import SETTINGS_DIR, PROJECT_NAME, ORGANIZATION
+from ..buildinfo import SETTINGS_DIR, LOCAL_SETTINGS_DIR, ORGANIZATION
 
 ### Standard python modules
 from importlib.resources.abc import Traversable
@@ -57,9 +57,9 @@ def settingsPath() -> SearchPath:
                 searchpath.append(os.path.join(configdir, ORGANIZATION))
 
         searchpath.extend([
-            ('/etc/%s', r'c:\%s\config')[platform.system() == 'Windows'] % (ORGANIZATION,),
-            SETTINGS_DIR,       # Package defaults
-            'settings'          # Inside virtualenv/`.whl` container
+            LOCAL_SETTINGS_DIR, # Local (host specific) settings
+            SETTINGS_DIR,       # Supplied defaults
+            'settings'          # Inside virtualenv and/or `.whl` container
         ])
 
     return normalizedSearchPath(searchpath)
@@ -86,7 +86,6 @@ def normalizedSearchPath(searchpath: SearchPath) -> list[pathlib.Path]:
 
 def locateDominatingPath(name: FilePath):
     base = importlib.resources.files(__package__)
-    candidate = base.joinpath(name)
     previous = None
 
     while not base.joinpath(name).exists():
@@ -94,9 +93,8 @@ def locateDominatingPath(name: FilePath):
             return None, None
         previous = base
         base = parent_path(base)
-        candidate = base.joinpath(name)
 
-    return base, candidate
+    return base, base.joinpath(name)
 
 def parent_path(path: FilePath):
     try:

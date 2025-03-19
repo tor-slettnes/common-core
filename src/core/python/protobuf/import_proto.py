@@ -67,18 +67,18 @@ def import_proto(module_name: str,
     namespace containers that match the `package` declarations in their
     respective `.proto` files, which are created as class objects if missing.
 
-    @param module_name
+    @param module_name:
         Module name.  The base name portion (following any leading path) can be
         the stem of the original `.proto` file name (without the extension), or
         it can be the name of the corresponding generated Python module (with a
         `_pb2` suffix added).  If the name is unqualified (without any leading
         package name) it will be loaded from the `generated` namespace.
 
-    @param target_scope
+    @param target_scope:
         Where to create the target namespace. This could be a dictionary
         (e.g., `globals()`), class, class instance, or module.
 
-    @param namespace
+    @param namespace:
         What namespace to create or update.  By default, the ProtoBuf `package`
         name is used.  Leading elements of this namespace are reused/updated if
         they already exist as one of the above types, otherwise new empty

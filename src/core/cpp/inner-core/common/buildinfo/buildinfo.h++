@@ -32,4 +32,7 @@ extern const std::string BUILD_DISTRIB_VERSION_CODENAME;
 extern const std::string BUILD_DISTRIB_PRETTY_NAME;
 extern const std::string SOURCE_DIR;
 extern const std::string SETTINGS_DIR;
+extern const std::string LOCAL_SETTINGS_DIR;
+extern const std::string LOCAL_DATA_DIR;
+extern const std::string LOGS_DIR;
 extern const std::string ORGANIZATION;

@@ -32,4 +32,7 @@ const std::string BUILD_DISTRIB_VERSION_CODE = "@BUILD_DISTRIB_VERSION_CODE@";
 const std::string BUILD_DISTRIB_PRETTY_NAME  = "@BUILD_DISTRIB_PRETTY_NAME@";
 const std::string SOURCE_DIR                 = "@CMAKE_SOURCE_DIR@";
 const std::string SETTINGS_DIR               = "@SETTINGS_DIR@";
+const std::string LOCAL_SETTINGS_DIR         = "@LOCAL_SETTINGS_DIR@";
+const std::string LOCAL_DATA_DIR             = "@LOCAL_DATA_DIR@";
+const std::string LOGS_DIR                   = "@LOGS_DIR@";
 const std::string ORGANIZATION               = "@ORGANIZATION@";

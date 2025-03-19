@@ -44,7 +44,7 @@ class UpgradeClient (SignalClient):
         Explicit scan for available upgrade packages in the specified package
         source if provided, otherwise in the preconfigured/default locations.
 
-        @param source
+        @param source:
             Either a HTTP/HTTPS URL or a VFS path specified in the format
             `CONTEXT:PATH`. If no source is specified, perform scan in the
             preconfigured/default locations.
@@ -75,10 +75,10 @@ class UpgradeClient (SignalClient):
         Obtain information about available upgrade packages discovered
         during a prior (implicit or explicit) scan.
 
-        @param source
+        @param source:
             Restrict listing to packages discovered from the specified source.
 
-        @return
+        @returns:
             Information about each package discovered.
         '''
 
@@ -108,12 +108,12 @@ class UpgradeClient (SignalClient):
         otherwise the current "best" package source based on prior scans.  To
         perform an explicit scan, invoke `scan()` before `install()`.
 
-        @param source_file
+        @param source_file:
           An optional HTTP/HTTPS URL or a VFS path to the specified in the
           format `CONTEXT:PATH`, pointing to the exact release package to
           install.
 
-        @param force
+        @param force:
           whether to install the package even if its package_info declares a
           different product name than what is currently installed or its version
           number is older than the currently installed release.

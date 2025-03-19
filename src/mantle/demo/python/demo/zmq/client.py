@@ -7,7 +7,7 @@
 
 ### Modules relative to current dir
 from .common import DEMO_PUBLISHER_CHANNEL, DEMO_SERVICE_CHANNEL, DEMO_RPC_INTERFACE
-from ..core  import API, signal_store
+from ..base  import API, signal_store
 
 ### Modules relative to install dir
 from cc.messaging.zmq.basic.subscriber import Subscriber
@@ -67,7 +67,7 @@ class DemoClient (API, BaseClient):
         '''
         Send a greeting to the server.
 
-        @param greeting
+        @param greeting:
             A greeting object.
 
         See also `hello()` if you want to pass in just the text of the greeting

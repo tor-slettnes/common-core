@@ -92,23 +92,23 @@ class NetConfigClient (SignalClient):
         Add or update a network connection profile.
 
         Parameters:
-        @param id
+        @param id:
             A unique ID for this connection, e.g. "Wired Connection" or a
             wireless SSID. Any existing connection with this ID is replaced.
 
-        @param data
+        @param data:
            Either a `WiredConnectionData` or `WirelessConnectionData`
            instance, containing media-specific settings.
 
-        @param interface
+        @param interface:
            The network interface name to which this connection applies, e.g.,
            "eth0" "wlan0". If omitted, it is deduced from available Ethernet or
            WiFi interfaces based on the type of the `data` parameter.
 
-        @param ip4config
+        @param ip4config:
            IPv4 settings. If omitted, automatic IPv4 configuration is assuemd.
 
-        @param ip6config
+        @param ip6config:
            IPv6 settings. If omitted, automatic IPv6 configuration is assuemd.
         '''
 
@@ -142,7 +142,7 @@ class NetConfigClient (SignalClient):
         '''
         Remove a network connection profile.
 
-        @param key
+        @param key:
             The ID (name) of the connection to be removed.
 
         Returns a boolen indicating whether any connection(s) were removed.
@@ -155,7 +155,7 @@ class NetConfigClient (SignalClient):
         '''
         Activate a previously-defined connection profile.
 
-        @param key
+        @param key:
             The ID (name) of the connection to be activated.
         '''
 
@@ -166,7 +166,7 @@ class NetConfigClient (SignalClient):
         '''
         Deactivate an existing active connection.
 
-        @param key
+        @param key:
             The ID (name) of the connection to be deactivated.
         '''
 
@@ -215,12 +215,12 @@ class NetConfigClient (SignalClient):
         Define and activate a new connection based on information obtained
         from the specified access point.
 
-        @param ap
+        @param ap:
             An available Access Point, specified by either
             - a string of the form "XX:XX:XX:XX:XX:XX" denoting its BSSID, or
             - a bytes instance containing its SSID ("Network Name")
 
-        @param connection
+        @param connection:
             A `ConnectionData()` instance.
 
         ### Example
@@ -286,17 +286,17 @@ class NetConfigClient (SignalClient):
         new connection based on information obtained from the specified access
         point.
 
-        @param id
+        @param id:
             A unique ID for this connection, e.g. "Wired Connection" or a
             wireless SSID. Any existing connection with this ID is replaced.
 
-        @param ap
+        @param ap:
             An available Access Point, specified by either
             - a string of the form "XX:XX:XX:XX:XX:XX" denoting its BSSID, or
             - a bytes instance containing its SSID (b'Network Name')
             If not provided, the `id.encode()` is used.
 
-        @param auth
+        @param auth:
             Authentication data. The following data types are supported:
             - `cc.protobuf.netconfig.WEP_Data`
               Wireless Encryption Protocol, with up to 4 static keys
@@ -310,26 +310,26 @@ class NetConfigClient (SignalClient):
 
             Use `help(PROTOCOL)` for more information on each.
 
-        @param key_mgmt
+        @param key_mgmt:
             WiFi Key Management, use `KeyManagement.values()` for choices.
             Automatically deduced for WEP and WPA authentication schemes; required
             for EAP encyption.  See `KeyManagement.values()` for choices.
 
-        @param hidden
+        @param hidden:
             Whether this network's SSID is hidden, i.e. requires explicit connection attemtps.
 
-        @param mode
+        @param mode:
             Wireless network type; normally WirelessMode.MODE_INFRASTRUCTURE.
             See `WirelessMode.values()` for choices.
 
-        @param interface
+        @param interface:
             The network interface name to which this connection applies, e.g., "wlan0".
             This may be omitted, in which case the first active WiFi device is used.
 
-        @param ip4config
+        @param ip4config:
             IPv4 settings. If omitted, automatic IPv4 configuration is assumed.
 
-        @param ip6config
+        @param ip6config:
             IPv6 settings. If omitted, automatic IPv6 configuration is assumed.
 
         ### Example:
@@ -425,7 +425,7 @@ class NetConfigClient (SignalClient):
         '''
         Get information about available network devices.
 
-        @return
+        @returns:
             Key/Value pairs mapping device names to associated device information.
         '''
         return dict(self.stub.get_devices(empty).map)

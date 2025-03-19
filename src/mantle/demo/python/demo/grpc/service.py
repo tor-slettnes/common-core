@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within current package
-from ..core import API, signal_store
+from ..base import API, signal_store
 from cc.messaging.grpc.signal_service import SignalService
 from cc.protobuf.demo import Greeting, TimeData
 

@@ -23,9 +23,9 @@ if(BUILD_CPP)
   add_subdirectory(cpp)
 endif()
 
-# if(BUILD_PYTHON)
-#   add_subdirectory(python)
-# endif()
+if(BUILD_PYTHON)
+  add_subdirectory(python)
+endif()
 
 if(INSTALL_GROUP)
   cc_cpack_add_group(${INSTALL_GROUP}

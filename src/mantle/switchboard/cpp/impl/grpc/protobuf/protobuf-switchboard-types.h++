@@ -112,9 +112,9 @@ namespace protobuf
     // Dependency
 
     void encode(const switchboard::DependencyRef &native,
-                cc::switchboard::DependencySpec *proto);
+                cc::switchboard::Dependency *proto);
 
-    void decode(const cc::switchboard::DependencySpec &proto,
+    void decode(const cc::switchboard::Dependency &proto,
                 const switchboard::ProviderRef &provider,
                 const std::string &predecessor_name,
                 switchboard::DependencyRef *native);

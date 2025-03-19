@@ -24,19 +24,19 @@ def isotime(timestamp        : float = None,
     '''
     ISO 8601 string representation of a timestamp.
 
-    @param timestamp
+    @param timestamp:
         Python timestamp to represent, or `None` for current time.
 
-    @param time_delimiter
+    @param time_delimiter:
         Delimiter between date and time.  ISO 8601 allows space (' ') or 'T'.
 
-    @param decimals
+    @param decimals:
         Sub-second precision.  The default is 3 (milliseconds).
 
-    @param local
+    @param local:
         Return local time (default).  If `False`, return UTC instead.
 
-    @param zone_suffix
+    @param zone_suffix:
         Append timezone suffix. One of:
         - ZoneSuffix.NONE   - No suffix
         - ZoneSuffix.OFFSET - ISO zone indicator, e.g. '-0800' for local time
@@ -44,7 +44,7 @@ def isotime(timestamp        : float = None,
         - ZoneSuffix.NAME   - Abbreviated effective none name, e.g. `PST` or `PDT`.
                               (Not ISO 8601 compliant, nor globally unique).
 
-    @param zone_delimiter
+    @param zone_delimiter:
         Delimiter between time and zone name.
     '''
 

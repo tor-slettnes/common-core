@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from ..core import API, signal_store
+from ..base import API, signal_store
 from cc.core.scheduler import scheduler, TaskAlignment
 from cc.protobuf.wellknown import MessageToString, encodeTimestamp
 from cc.protobuf.datetime import encodeTimeStruct
@@ -38,7 +38,7 @@ class NativeDemo (API):
         '''
         Get current time data.
 
-        @return
+        @returns:
             Current time data provided by the specific implementation.
         '''
         t = time.time()

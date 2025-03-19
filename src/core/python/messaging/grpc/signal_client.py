@@ -137,7 +137,7 @@ class SignalClient (Client):
     `cc.protobuf.signal.Filter` input based on which signal slots were
     previously connected to one or more handlers.
 
-    @example demo/grpc/client.py
+    @example ../../../../src/mantle/demo/python/demo/grpc/client.py
     '''
 
     ### Subclasses should override this to the appropriate signal type.
@@ -156,51 +156,53 @@ class SignalClient (Client):
                  use_cache: bool = True,
                  **kwargs):
         '''
-        Start a new signal client instance.
+        Initialize this signal client instance.
 
-        @param host
+        @param host:
             IP address or resolvable host name of platform server
 
-        @param wait_for_ready
+        @param wait_for_ready:
             If a connection attempt fails, keep retrying until successful.
             This value may be overriden per call.
 
-        @param asyncio
+        @param asyncio:
             Use Python AsyncIO.  Effectively this performs calls within a
             `grpc.aio.Channel` instance, rather than the default `grpc.Channel`.
             Additionally, the `call()` method uses AsyncIO semantics to capture
             any exceptions.
 
-        @param signal_store
+        @param signal_store:
             Use an existing `SignalStore()` instance instead of creating a new
             one.  This can be useful if signals are (received and) emitted from
             both this client and other parts of your code, for instance other
             messaging endpoints.  If not provided, the `signal_type` class
             attribute must be overridden to a suitable ProtoBuf `Signal` type.
 
-        @param watch_all
+        @param watch_all:
             Watch all signals (specify an empty filter to server), even if
             not connected to slots. This is useful in order to populate the
             local signal cache, which can later be queried. A side effect
             is that the watching thread automatically starts once instantiated.
 
-        @param use_cache
+        @param use_cache:
             Retain the most recent data value of each signal received from the
             server.  If the signal includes a `key` field (i.e., if it is a
             `MappingSignal` instance), keep the most recent data value per key.
             These values can later be queried using `get_cached()`.
         '''
 
-        if not signal_store:
+        if signal_store:
+            self.signal_store = signal_store
+
+        elif not self.signal_store:
             assert self.signal_type is not None, \
                    ('SignalClient() subclass %s() must either pass in a '
                     '`SignalStore()` instance or set the `signal_type`'
                     'class variable to an appropriate ProtoBuf Signal() type'%
                     (type(self).__name__))
 
-            signal_store = SignalStore(signal_type=self.signal_type, use_cache=use_cache)
-
-        self.signal_store = signal_store
+            self.signal_store = SignalStore(signal_type = self.signal_type,
+                                            use_cache = use_cache)
 
         Client.__init__(self, host,
                         wait_for_ready = wait_for_ready,

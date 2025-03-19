@@ -37,10 +37,10 @@ class Filter (bytes):
         Encode topic size into a packed bytes sequence, using variable-length
         encoding
 
-        @param size
+        @param size:
             Number of bytes needed to represent topic
 
-        @return
+        @returns:
             Byte sequence containing variable-length encoding of `size`
         '''
         more = True
@@ -57,9 +57,9 @@ class Filter (bytes):
         Determine how many bytes will be needed to represent a given topic
         size
 
-        @param size
+        @param size:
             Number of bytes needed to represent topic
-        @return
+        @returns:
             Number of bytes needed to represent `size`
         '''
         encoding_size = 1
@@ -73,10 +73,10 @@ class Filter (bytes):
         '''
         Extract topic length from a byte sequence.
 
-        @param data
+        @param data:
             Byte sequence from which size is extracted
 
-        @return
+        @returns:
             A two-integer tuple `(preamble_size, topic_size)` containing
             the number of bytes needed to represent the topic length, and
             the actual length extracted from those initial bytes.

@@ -8,7 +8,7 @@
 ### Modules withn package
 from .utils import proto_enum
 from ..core.invocation import safe_invoke
-from ..generated.signal_pb2 import Filter, MappingAction
+from ..generated.signal_pb2 import Filter, MappingAction as _MappingAction
 
 ### Third-party modules
 from google.protobuf.message import Message
@@ -21,7 +21,7 @@ import asyncio
 #===============================================================================
 # Annotation types
 
-MappingAction = proto_enum(MappingAction)
+MappingAction = proto_enum(_MappingAction)
 Slot = Callable[[Message], None]
 
 #===============================================================================
@@ -165,7 +165,7 @@ class SignalStore:
         '''
         Obtain the signal name associated with the specified field number.
 
-        @return
+        @returns:
             Number associated with the field name of the Signal message.
 
         @exception KeyError
@@ -181,7 +181,7 @@ class SignalStore:
         '''
         Return the field number associated with the specified signal name.
 
-        @return
+        @returns:
             Number associated with the field name of the Signal message.
 
         @exception KeyError
@@ -213,18 +213,17 @@ class SignalStore:
         return msg.WhichOneof(selector) or ""
 
 
-
     def get_cached(self,
                    signalname: str,
                    timeout: float=3) -> Mapping[str, Message]:
         '''
         Get a specific signal map from the local cache.
 
-        @param signalname
+        @param signalname:
             Signal name, corresponding to a field of the Signal message
             streamed from the server's `watch()` method.
 
-        @param timeout
+        @param timeout:
             If the specified signal does not yet exist in the local cache, allow
             up to the specified timeout for it to be received from the server.
             Mainly applicable immediately after `start_watching()`, before the
@@ -233,7 +232,7 @@ class SignalStore:
         @exception KeyError
             The specified `signalname` is not known
 
-        @return
+        @returns:
             The cached value, or None if the specified signal has yet not been
             received.
         '''
@@ -280,11 +279,11 @@ class SignalStore:
         Connect a callback handler (slot) to receive emitted `Signal`
         messages.
 
-        @param name
+        @param name:
             Signal name, corresponding to a field within a `oneof`
             block of the signal message.
 
-        @param slot
+        @param slot:
             A callable handler (e.g. a function) that accepts the Signal
             instance as its first and only required argument.
 
@@ -311,10 +310,10 @@ class SignalStore:
         '''
         Disconnect a simple handler from the specified signal.
 
-        @param name
+        @param name:
            Signal name
 
-        @param slot
+        @param slot:
            Signal handler. If not provided, remove all handlers from the
            specified signal slot.
 
@@ -346,10 +345,10 @@ class SignalStore:
         needs the `mapping_action` and `mapping_key` fields from the original
         `Signal` container).
 
-        @param name
+        @param name:
             Signal name, corresponding to a field of the Signal message.
 
-        @param slot
+        @param slot:
             A callable handler (e.g. a function) that accepts the extracted
             signal data as its first and only required argument.
         '''
@@ -368,7 +367,7 @@ class SignalStore:
         @param name Signal name, corresponding to a field of the Signal
             message.
 
-        @param slot
+        @param slot:
             A callable handler (e.g. a function) that accepts the
             extracted signal data as its first and only required argument.
         '''
@@ -473,7 +472,7 @@ class SignalStore:
           - the field indicated by `signal_name` set to `value`.
         '''
 
-        if key and action:
+        if key and not action:
             if value.ByteSize() == 0:
                 action = MappingAction.MAP_REMOVAL
             elif key in self.get_cached(signal_name, {}):
@@ -485,6 +484,14 @@ class SignalStore:
                                   mapping_key = key,
                                   **{signal_name: value})
         self.emit(signal)
+
+
+    def is_addition_or_update(self, action: MappingAction):
+        return ((mapping_action == MappingAction.MAP_ADDITION) or
+                (mapping_action == MappingAction.MAP_UPDATE))
+
+    def is_removal(self, action: MappingAction):
+        return (mapping_action == MappingAction.MAP_MAP_REMOVAL)
 
 
     def _update_cache(self, signalname, action, key, data):

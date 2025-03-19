@@ -120,11 +120,11 @@ class SysConfigClient (SignalClient):
         '''
         Obtain a list of Time Zone countries, optionally within a specific area.
 
-        @param area
+        @param area:
             Restrict listing to a specified global area, such as "Europe" or
             "Indian Ocean".
 
-        @return
+        @returns:
             Country list, comprising
              - `code` - its 2-letter ISO 3166 code (e.g. "US" or "DE")
              - `name` - its name in English (e.g. "United States" or "Germany")
@@ -154,12 +154,12 @@ class SysConfigClient (SignalClient):
         Return a list of canonical time zones and their specifications.
         See `get_timezone_spec()` for details on what information is included.
 
-        @param area
+        @param area:
             Filter listing by a specific global area, such as "Americas"
-        @param country
+        @param country:
             Filter listing by a specific country, specified by its 2-letter ISO
             3166 code, e.g. "US", or by its English name, e.g. "United States".
-        @return
+        @returns:
             Canonical time zones and their specifications.  Results are sorted
             reasonably for grouping and presentation to an end user:
              - first by area (continents or oceans), roughly west to east
@@ -181,9 +181,9 @@ class SysConfigClient (SignalClient):
         Obtain specifications about a specifc canonical zone.  If no zone is
         provided, obtain information about the currently configured zone.
 
-        @param canonical_zone
+        @param canonical_zone:
             Canonical zone name, e.g. 'America/Los_Angeles' (not `PST` or `PDT`)
-        @return
+        @returns:
             Zone specification, including
             * The canonical name (reflecting the provided name if any)
             * Area name (continent, ocean, or "Etc')
@@ -207,14 +207,14 @@ class SysConfigClient (SignalClient):
         '''
         Get effecitve time zone information.
 
-        @param canonical_zone
+        @param canonical_zone:
             Optional zone name, e.g. "America/Los_Angeles" (not "PST` or "PDT").
             If missing, the currently configured zone is ued.
-        @param time
+        @param time:
             Optional timestamp for which the zone information is applicable
             (mainly to determine whether daylight savings time/summer time is in
             use).  If missing, the current system time is used.
-        @return
+        @returns:
             A `TimeZoneInfo` instance, comprising
             - `shortname`: effective zone abbreviation, e.g. `PST`, `PDT`, `CET`, `CEST`...
             - `offset`: offset from UTC in seconds, e.g. -7 * 60 * 60
@@ -250,11 +250,11 @@ class SysConfigClient (SignalClient):
         Set the system timezone based on country and, if appliicable, region
         within country.
 
-        @param country
+        @param country:
           may be specified by its 2-character ISO 3166 code (e.g. "US") or by
           its common English name (e.g. "United States").
 
-        @param region
+        @param region:
           should be present if *and only if* the country contains multiple
           timezones.
 
@@ -282,13 +282,13 @@ class SysConfigClient (SignalClient):
         '''
         Invoke a subprocess and wait for its completion.
 
-        @param argv
+        @param argv:
             Argument vector. The first element should be the full command path
-        @param working_directory
+        @param working_directory:
             Working directory for the command.
-        @param stdin
+        @param stdin:
             Text to feed to the standard input of the command.
-        @return
+        @returns:
             `CommandResponse` instance with the outputs from the command
             (`stdout` and `stderr`) as well as its exit code.
         '''
@@ -308,16 +308,16 @@ class SysConfigClient (SignalClient):
         '''
         Invoke a subprocess and wait for its completion.
 
-        @param argv
+        @param argv:
             Argument vector. The first element should be the full command path
 
-        @param working_directory
+        @param working_directory:
             Working directory for the command.
 
-        @param stdin
+        @param stdin:
             Text to feed to the standard input of the command.
 
-        @return
+        @returns:
             Integer representing the Process ID (PID) of the command.
             This can subsequently be passed to `invoke_finish()`.
         '''
@@ -336,13 +336,13 @@ class SysConfigClient (SignalClient):
         '''
         Wait for a asynchronous process to finish.
 
-        @param pid
+        @param pid:
             Process ID, as returned by `invoke_async()`
 
-        @param stdin
+        @param stdin:
             Text which will be piped to the command's standard input
 
-        @return
+        @returns:
             Response from the completed process, including exit code
             and any text printed on `stdout`/`stderr`.
         '''

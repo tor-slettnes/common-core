@@ -115,21 +115,6 @@ namespace core::platform
         return {};
     }
 
-    fs::path PosixPathProvider::default_config_folder() const noexcept
-    {
-        return fs::path("/etc") / ORGANIZATION;
-    }
-
-    fs::path PosixPathProvider::default_data_folder() const noexcept
-    {
-        return fs::path("/data") / ORGANIZATION;
-    }
-
-    fs::path PosixPathProvider::default_log_folder() const noexcept
-    {
-        return fs::path("/var/log") / ORGANIZATION;
-    }
-
     fs::path PosixPathProvider::readlink(const fs::path &path) const noexcept
     {
         struct stat statbuf;

@@ -74,22 +74,22 @@ class Base (Endpoint):
         * Any attribute(s) that are still missing are populated from
           `defaultHost` or `defaultPort`, respectively.
 
-        @param provided
+        @param provided:
           Address to sanitize, normally provided as a command-line option.
 
-        @param hostOption
+        @param hostOption:
           Key to locate the host name in the settings file
 
-        @param portOption
+        @param portOption:
           Key to locate the port number in the settings file
 
-        @param defaultHost
+        @param defaultHost:
           Fallback if host name is not provided nor found in settings file
 
-        @param defaultPort
+        @param defaultPort:
           Fallback if port number is not provided nor found in settings file
 
-        @return
+        @returns:
           Sanitized address of the form HOST:PORT (where HOST may still be
           empty)
         '''

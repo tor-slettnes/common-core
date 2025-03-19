@@ -54,13 +54,13 @@ class VirtualFileSystemClient (SignalClient):
         '''
         List available virtual filesystem contexts.
 
-        @param removable_only
+        @param removable_only:
             include only removable contexts in repsonse
 
-        @param open_only
+        @param open_only:
             include only contexts currently held open
 
-        @return
+        @returns:
             List of `(name, cxt)` tuples.
         '''
         if open_only:
@@ -199,10 +199,10 @@ class VirtualFileSystemClient (SignalClient):
         '''
         List contents of the specified virtual path.
 
-        @param vfspath
+        @param vfspath:
             Virtual path in the format CONTEXT:RELPATH.
 
-        @param dereference
+        @param dereference:
             Follow symlinks to include information about the underlying file.
 
         The returned value is a Python list containing the virtual path of each
@@ -226,23 +226,23 @@ class VirtualFileSystemClient (SignalClient):
         Recursively locate file(s) matching the specificed filename masks
         and attribute values.
 
-        @param vfspath
+        @param vfspath:
             Folder below which to search
 
-        @param filename_masks
+        @param filename_masks:
             A string or tuple of strings with glob-style pattners (like "*.txt")
 
-        @param attribute_filters
+        @param attribute_filters:
             A dictionary of attribute patterns to match
 
-        @param with_attributes
+        @param with_attributes:
             Include custom attributes in response
 
-        @param include_hidden
+        @param include_hidden:
             Also match leading "." in filename expansion patterns like "*".
             (Normally such filenames need to be matched specifically, i.e. ".*").
 
-        @param ignore_case
+        @param ignore_case:
             Case insensitive filename matching.
 
         @returns
@@ -271,38 +271,38 @@ class VirtualFileSystemClient (SignalClient):
         '''
         Copy the specified source path(s) to the specified target path.
 
-        @param sources
+        @param sources:
             A string containing a single path, or a tuple or list with multiple
             paths. In the latter case, the option 'inside_target' must also be
             set; as a precaution, this is not automatically assumed.  Each path
             is specified in the format `CONTEXT:RELPATH`.
 
-        @param target
+        @param target:
             The final target path to be created or replaced. However if
             'inside_target' is set, 'target' specifies a folder into which the
             source path(s) will be copied.
 
-        @param force
+        @param force:
             Replace any existing target path(s) by the same name. Additionally,
             any missing parent folders leading up to the target are implicitly
             created.
 
-        @param dereference
+        @param dereference:
             Follow any symbolic links on source or target. However, note that
             links are never followed outside of the context.  Be careful with
             this option in conjunction with 'force'.
 
-        @param merge
+        @param merge:
             Merge source folders onto corresponding folders on target, rather
             than entirely replacing the latter.
 
-        @param update
+        @param update:
             Only copy paths that are newer than the source than on the target.
 
-        @param with_attributes
+        @param with_attributes:
             Copy custom VFS attributes associated with the file(s).
 
-        @param inside_target
+        @param inside_target:
             Target specifies the parent directory rather than the target file.
         '''
 
@@ -327,35 +327,35 @@ class VirtualFileSystemClient (SignalClient):
         '''
         Move the specified source path(s) to the specified target path.
 
-        @param sources
+        @param sources:
             A string containing a single path, or a tuple or list with multiple
             paths. In the latter case, the option 'inside_target' must also be
             set; as a precaution, this is not automatically assumed.  Each path
             is specified in the format `CONTEXT:RELPATH`.
 
-        @param target
+        @param target:
             The final target path to be created or replaced. However if
             'inside_target' is set, 'target' specifies a folder into which the
             source path(s) will be moved.
 
-        @param force
+        @param force:
             Replace any existing target path(s) by the same name. Additionally,
             any missing parent folders leading up to the target are implicitly
             created.
 
-        @param dereference
+        @param dereference:
             Follow any symbolic links on source or target. However, note that
             links are never followed outside of the context.  Be careful with
             this option in conjunction with 'force'.
 
-        @param merge
+        @param merge:
             Merge source folders into corresponding folders on target, rather
             than entirely replacing the latter.
 
-        @param update
+        @param update:
             Only move paths that are newer than the source than on the target.
 
-        @param with_attributes
+        @param with_attributes:
             Move (remove on soure, add on target) any custom VFS attributes
             associated with the file(s).
         '''
@@ -377,14 +377,14 @@ class VirtualFileSystemClient (SignalClient):
         '''
         Create a folder
 
-        @param vfspath
+        @param vfspath:
             Target folder in the format CONTEXT:RELPATH.
 
-        @param force
+        @param force:
             Create any missing parent folders leading up to the target folder.
             Any non-directory components in the way are silently removed.
 
-        @param dereference
+        @param dereference:
             Follow any symbolic links within the target path. However, note that
             links are never followed outside of the context.  Be careful with
             this option in conjunction with 'force'.
@@ -403,20 +403,20 @@ class VirtualFileSystemClient (SignalClient):
         '''
         Remove one or more paths.
 
-        @param paths
+        @param paths:
             A string containing a single path, or a tuple or list with multiple
             paths, each in the format `CONTEXT:RELPATH`.
 
-        @param force
+        @param force:
             Recursively remove paths even if they are on-empty directories.
             Additionally, do not complain about any missing paths.
 
-        @param dereference
+        @param dereference:
             Follow any symbolic links within the target path. However, note that
             links are never followed outside of the context.  Be careful with
             this option in conjunction with 'force'.
 
-        @param with_attributes
+        @param with_attributes:
             Also remove any custom VFS attributes associated with the removed
             path(s).
         '''
@@ -431,10 +431,10 @@ class VirtualFileSystemClient (SignalClient):
         '''
         Read from a file on the server.
 
-        @param vfspath
+        @param vfspath:
             File path, specified in the format CONTEXT:RELPATH.
 
-        @return
+        @returns:
              A gRPC ClientReader instance, which can be used to iterate over
              `cc.protobuf.vfs.FileChunk` instances.
 
@@ -449,10 +449,10 @@ class VirtualFileSystemClient (SignalClient):
         '''
         Read from a file on the server.
 
-        @param vfspath
+        @param vfspath:
             File path, specified in the format CONTEXT:RELPATH.
 
-        @return
+        @returns:
             An iterator over byte chunks from the requested file.
 
         See also `read_file()` if you want to iterate over the underlying
@@ -469,10 +469,10 @@ class VirtualFileSystemClient (SignalClient):
         '''
         Download a file from the server onto the local filesystem.
 
-        @param vfspath
+        @param vfspath:
             File path, specified in the format CONTEXT:RELPATH.
 
-        @param localfile
+        @param localfile:
             Either a local (host native) file path, relative to the client's
             current working directory, or a writable file object (with a
             compatible `write()` method).
@@ -494,12 +494,12 @@ class VirtualFileSystemClient (SignalClient):
         '''
         Upload the contents of `localfile` onto the server.
 
-        @param localfile
+        @param localfile:
             Either an existing local (host native) file path, relative to the
             client's current working directory, or a readable file object (with
             a compatible `read1()` method).
 
-        @param vfspath
+        @param vfspath:
             Server file path to create or replace, specified in the format
             CONTEXT:RELPATH.
         '''
@@ -531,10 +531,10 @@ class VirtualFileSystemClient (SignalClient):
         '''
         Returns a dictionary of attributes associated with the specified path
 
-        @param vfspath
+        @param vfspath:
             Virtual path on the server in the format CONTEXT:RELPATH.
 
-        @return
+        @returns:
             Key/value pairs representing custom attributes associated with the
             specified path.
         '''
@@ -547,10 +547,10 @@ class VirtualFileSystemClient (SignalClient):
         '''
         Add/update custom attributes associated with the specified path.
 
-        @param vfspath
+        @param vfspath:
             Virtual path on the server in the format CONTEXT:RELPATH.
 
-        @param attributes
+        @param attributes:
             Arbitrary key/value pairs to add/replace as custom atrbutes on the
             specified path.
         '''
@@ -562,7 +562,7 @@ class VirtualFileSystemClient (SignalClient):
         '''
         Clear all custom attributes associated with a path on the server.
 
-        @param vfspath
+        @param vfspath:
             Virtual path on the server in the format CONTEXT:RELPATH.
         '''
 

@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within package
-from ..core import API, SignalSlot, signal_store
+from ..base import API, SignalSlot, signal_store
 from cc.messaging.grpc import SignalClient
 from cc.protobuf.wellknown import empty
 from cc.protobuf.utils import check_message_type
@@ -54,7 +54,7 @@ class DemoClient (API, SignalClient):
         '''
         Send a greeting to the server.
 
-        @param greeting
+        @param greeting:
             A greeting object.
 
         See also `hello()` if you want to pass in just the text of the greeting

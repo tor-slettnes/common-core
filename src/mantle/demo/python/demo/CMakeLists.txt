@@ -17,7 +17,7 @@ set(FILES
 )
 
 set(DIRECTORIES
-  core
+  base
   grpc
   native
   zmq

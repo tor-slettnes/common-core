@@ -25,16 +25,16 @@ class RESTClient (HTTPClient):
         '''
         AsyncIO coroutine wrapper for `get_json()`
 
-        @param rel_url
+        @param rel_url:
             REST endpoint URL relative to the `base_url` passed to `__init__()`.
 
-        @param kwargs
+        @param kwargs:
             Request arguments, used to construct the HTTP query
 
-        @param headers
+        @param headers:
             HTTP request headers
 
-        @return
+        @returns:
             Decoded JSON object, e.g. a Python dict, list, or primitive.
         '''
         return await asyncio.to_thread(self.get_json, rel_url, kwargs, headers)
@@ -43,16 +43,16 @@ class RESTClient (HTTPClient):
         '''
         Request a JSON object from a REST-enabled web service.
 
-        @param rel_url
+        @param rel_url:
             REST endpoint URL relative to the `base_url` passed to `__init__()`.
 
-        @param kwargs
+        @param kwargs:
             Request arguments, used to construct the HTTP query
 
-        @param headers
+        @param headers:
             HTTP request headers
 
-        @return
+        @returns:
             Decoded JSON object, e.g. a Python dict, list, or primitive.
         '''
 

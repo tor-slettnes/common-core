@@ -503,12 +503,12 @@ namespace switchboard
                         std::thread(&Switch::set_auto,
                                     sw,
                                     core::types::KeyValueMap(),  // attributes
-                                    false,                         // clear_existing
-                                    invoke_interceptors,           // invoke_interceptors
-                                    true,                          // trigger_descendents
-                                    false,                         // reevaluate
-                                    EH_DEFAULT,                    // on_cancel
-                                    EH_DEFAULT));                  // on_error
+                                    false,                       // clear_existing
+                                    invoke_interceptors,         // invoke_interceptors
+                                    true,                        // trigger_descendents
+                                    false,                       // reevaluate
+                                    EH_DEFAULT,                  // on_cancel
+                                    EH_DEFAULT));                // on_error
                 }
             }
         }

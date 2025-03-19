@@ -245,7 +245,7 @@ message AddDependencyRequest
     string predecessor_name = 2;
 
     /// Dependency that will be added/replaced.
-    DependencySpec dependency = 3;
+    Dependency dependency = 3;
 
     // Allow existing dependency to be updated
     optional bool allow_update = 4;
@@ -267,7 +267,7 @@ message RemoveDependencyRequest
 }
 
 
-message DependencySpec
+message Dependency
 {
     // A bitmask representing which of the predecessor's state transitions
     // will automatically update the successor's target state, based on this
@@ -296,7 +296,7 @@ message DependencySpec
 message DependencyMap
 {
     // Map (upstream) state names to corresponding dependency specifications.
-    map<string, DependencySpec> map = 1;
+    map<string, Dependency> map = 1;
 
     // Clear existing dependencies when updating
     bool clear_existing = 2;
@@ -305,9 +305,9 @@ message DependencyMap
 
 enum DependencyPolarity
 {
-    POSITIVE = 0;    // Successor depends on predecessor being active
-    NEGATIVE = 1;    // Inverse; successor depends on predecessor being inactive
-    TOGGLE = 2;      // Successor toggles in response to predecessor change
+    TOGGLE = 0;    // Successor toggles in response to predecessor change
+    POSITIVE = 1;  // Successor depends on predecessor being active
+    NEGATIVE = -1; // Inverse; successor depends on predecessor being inactive
 };
 
 
@@ -323,13 +323,13 @@ message AddInterceptorRequest
     string interceptor_name = 2;
 
     // Interceptor specification
-    InterceptorSpec spec  = 3;
+    InterceptorSpec spec  = 4;
 
     // If True, and if the `states` mask include the current state of this
     // switch, invoke the interceptor immediately. In this case, unless
     // the interceptor's `asynchronous` flag is also True, the call blocks
     // until it has completed.
-    bool immediate = 4;
+    bool immediate = 7;
 }
 
 
@@ -347,9 +347,6 @@ message InterceptorMap
 {
     // Map of interceptor IDs and corresponding specifications
     map<string, InterceptorSpec> map = 1;
-
-    // Clear existing dependencies when updating
-    bool clear_existing = 2;
 }
 
 message InterceptorSpec
@@ -358,7 +355,7 @@ message InterceptorSpec
     // Once that service is no longer available the interceptor is implicitly removed.
     string owner = 2;
 
-    // A bitmask represening states for which the inerceptor is invoked.
+    // A bitmask represening states for which the interceptor is invoked.
     // Often just a single transitional state, i.e., `STATE_ACTIVATING`,
     // `STATE_DEACTIVATING` or `STATE_FAILING`.  Required.
     uint32 state_transitions = 4;
@@ -372,7 +369,8 @@ message InterceptorSpec
     // to run in the background.
     bool asynchronous = 6;
 
-    // Interceptor is invoked even if the switch is already in the target state.
+    // Interceptor is invoked when (explicitly) re-entering the specified state,
+    // even if the switch is already in that state.
     bool rerun = 7;
 
     // How to proceed if state change is cancelled. The default value
@@ -425,7 +423,7 @@ message InterceptorResult
 {
     string switch_name = 1;
     string interceptor_name = 2;
-    cc.status.Error error = 8;
+    optional cc.status.Error error = 8;
 }
 
 
@@ -447,7 +445,7 @@ message SetTargetRequest
     //  * otherwise, the target derived from the switch's dependencies.
     State target_state = 2;
 
-    // Error data. Ignored if target_state is provided but is not nne of
+    // Error data. Ignored if target_state is provided but is not one of
     // STATE_FAILING or STATE_FAILED.
     optional cc.status.Error error = 3;
 
@@ -519,7 +517,7 @@ message CulpritsQuery
 enum State
 {
     // Use powers of two, as values are used in bitmasks
-    STATE_UNSET        = 0x00;
+    STATE_INITIAL      = 0x00;
     STATE_ACTIVATING   = 0x01;
     STATE_ACTIVE       = 0x02;
     STATE_DEACTIVATING = 0x04;

@@ -7,7 +7,7 @@
 
 ### Modules within package
 from .common import DEMO_RPC_INTERFACE
-from ..core import API
+from ..base import API
 from cc.messaging.zmq.protobuf.requesthandler import RequestHandler
 from cc.protobuf.demo import Greeting, TimeData
 

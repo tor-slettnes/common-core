@@ -187,45 +187,45 @@ class LogClient (API, BaseClient):
         with `min_level` or higher priority, optionally restrictecd to those
         with a specific `contract_id`.
 
-        @param sink_id
+        @param sink_id:
             Unique identity of this sink.  This cannot conflict with a sink type
             (see `list_sink_types()` for a list), as these are reserved for
             default log sinks.
 
-        @param sink_type
+        @param sink_type:
             Log sink type, such as `csv` or `logfile`.
 
-        @param contract_id
+        @param contract_id:
              If specified, capture only log messages with a matching
              `contract_id` field. This can be used to capture telemetry,
              where matching log events are expected to contain a specific
              set of custom attributes.
 
-        @param min_level
+        @param min_level:
             Severy threshold below which messages will be ignored.
 
-        @param filename_template
+        @param filename_template:
             Output file template for log sinks that record events directly to
             files. This template is expanded to an actual filename as as
             described below.
 
-        @param rotation_interval
+        @param rotation_interval:
             Specifies frequently a new log file is created. See below.
 
-        @param use_local_time
+        @param use_local_time:
             Whether to align rotation intervals to local time, as opposed to UTC.
             This also controls how timestamp are translated to strings within
             certain log sinks.
 
-        @param compress_after_use
+        @param compress_after_use:
             Compress log files once they are no longer being recorded to.
             The compressed files will have a `.gz` suffix.
 
-        @param expiration_interval
+        @param expiration_interval:
             Remove log files after the specified time interval. The default is
             one year.
 
-        @param columns
+        @param columns:
              What fields to capture. Applicable only for *tabular data* (column
              oriented) sink types, currently these are "csvfile" and "sqlite3"`.
 

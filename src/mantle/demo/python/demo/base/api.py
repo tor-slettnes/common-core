@@ -37,9 +37,9 @@ class API:
         '''
         Say hello to anyone who might be listening.
 
-        @param text
+        @param text:
             What we're telling our listeners
-        @param kwargs
+        @param kwargs:
             Arbitrary attributes included in greeting
 
         @note
@@ -62,7 +62,7 @@ class API:
         Issue a greeting to anyone who may be listening.  For interactive
         use, the `hello()` wrapper method may be more convenient.
 
-        @param greeting
+        @param greeting:
             A greeting for our listeners.
         '''
 
@@ -73,7 +73,7 @@ class API:
         '''
         Get current time data.
 
-        @return
+        @returns:
             Current time data provided by the specific implementation.
         '''
 
@@ -98,7 +98,7 @@ class API:
         '''
         Register a callback to be invoked whenever a greeting is received
 
-        @param callback
+        @param callback:
             Callback method, which will receive `cc.protobuf.demo.Signal()`
             messages containing the greeting as its sole argument.
         '''
@@ -117,7 +117,7 @@ class API:
         Register a callback to be invoked whenver the time updated
         (1x/second)
 
-        @param callback
+        @param callback:
             Callback method, which will receive the time data as argument.
         '''
         signal_store.connect_signal_data('signal_time', callback)

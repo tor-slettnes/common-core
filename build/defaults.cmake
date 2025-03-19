@@ -62,6 +62,15 @@ set(DATA_DIR "share/${ORGANIZATION}"
 set(SETTINGS_DIR "${DATA_DIR}/settings"
   CACHE STRING "Top-level installation directory for settings files")
 
+set(LOCAL_SETTINGS_DIR "/etc/${ORGANIZATION}"
+  CACHE STRING "Directory for local/host-specific settings files")
+
+set(LOCAL_DATA_DIR "/data/${ORGANIZATION}"
+  CACHE STRING "Directory for local/generated data files")
+
+set(LOGS_DIR "/var/log/${ORGANIZATION}"
+  CACHE STRING "Directory for generated log files")
+
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules")
 

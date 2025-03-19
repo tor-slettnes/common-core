@@ -216,9 +216,9 @@ module CC
             @default(SETTLED_STATES)
             uint32 trigger_states;
 
-            // Whether this is a normal/positive dependency, a
-            // negative/conflicting dependency, or the success switch simply
-            // toggles state in response to the ancestor's change.
+            // Whether this is a normal/positive dependency, a negative/conflicting
+            // dependency, or the successor switch simply toggles state in response
+            // to the ancestor's change.
             DependencyPolarity polarity;
 
             // Do not allow descendent to be manually enabled in case of

@@ -44,11 +44,11 @@ class DataSignal (object):
         '''
         Connect a callback handler (slot) to receive emitted signals.
 
-        @param slot
+        @param slot:
             A callable handler (e.g. a function) that accepts the payload
             as its first and only required argument.
 
-        @param handle
+        @param handle:
             A unique ID that can later be used to disconnect the handler from
             this signal.
 
@@ -72,7 +72,7 @@ class DataSignal (object):
         '''
         Disconnect a simple handler from this signal.
 
-        @param handle
+        @param handle:
            Signal handler
 
         Returns True if the handler was found and removed; False otherwise.
