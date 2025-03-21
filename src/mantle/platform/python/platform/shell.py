@@ -6,11 +6,12 @@
 #===============================================================================
 
 ### Modules within package
-from .sysconfig.grpc.client import SysConfigClient
-from .netconfig.grpc.client import NetConfigClient
-from .vfs.grpc.client import VirtualFileSystemClient
-from .upgrade.grpc.client import UpgradeClient
-from cc.multilogger.grpc.client import LogClient
+from .sysconfig.grpc.client import Client as SysConfigClient
+from .netconfig.grpc.client import Client as NetConfigClient
+from .vfs.grpc.client import Client as VirtualFileSystemClient
+from .upgrade.grpc.client import Client as UpgradeClient
+from cc.multilogger.grpc.client import Client as MultiLoggerClient
+from cc.switchboard.grpc.client import Client as SwitchboardClient
 
 import cc.protobuf.wellknown
 import cc.protobuf.variant
@@ -19,6 +20,8 @@ import cc.protobuf.status
 import cc.protobuf.sysconfig
 import cc.protobuf.vfs
 import cc.protobuf.upgrade
+import cc.protobuf.multilogger
+import cc.protobuf.switchboard
 
 ### Third-party modules
 import google.protobuf.message
@@ -64,20 +67,23 @@ def legend():
     '''
     Interactive Service Control.  Subsystems loaded:
 
-        logger    - `Logger` gRPC service client
         sysconfig - `SysConfig` gRPC service client
         netconfig - `NetConfig` gRPC service client
         vfs       - `VirtualFileSystem` gRPC service client
         upgrade   - `Upgrade` gRPC service client
+        ml        - `MultiLogger` gRPC service client
+        sboard    - `Switchboard` gRPC service client
 
     Generated ProtoBuf data types and associated wrapper methods are generally
     available in the `cc.protobuf` namespace, e.g.:
 
-      - cc.protobuf.sysconfig - Data types for the SysConfig service
-      - cc.protobuf.netconfig - Data types for the NetConfig service
-      - cc.protobuf.vfs       - Data types for the VirtualFileSystem service
-      - cc.protobuf.upgrade   - Data types for the Upgrade service
-      - cc.protobuf.wellknown - Well-known types from Google
+      - cc.protobuf.multilogger - Data types for the MultiLogger service
+      - cc.protobuf.switchboard - Data types for the Switchboard service
+      - cc.protobuf.sysconfig   - Data types for the SysConfig service
+      - cc.protobuf.netconfig   - Data types for the NetConfig service
+      - cc.protobuf.vfs         - Data types for the VirtualFileSystem service
+      - cc.protobuf.upgrade     - Data types for the Upgrade service
+      - cc.protobuf.wellknown   - Well-known types from Google
 
     Use 'help(subsystem)' to list available subcomponents or methods
     '''
@@ -89,10 +95,14 @@ if __name__ == "__main__":
 
     logging.getLogger().setLevel(logging.DEBUG if args.debug else logging.INFO)
 
-    logger = LogClient(
+    ml = MultiLoggerClient(
         args.host,
         wait_for_ready = args.wait_for_ready,
         capture_python_logs = True)
+
+    sboard = SwitchboardClient(
+        args.host,
+        wait_for_ready = args.wait_for_ready)
 
     sysconfig = SysConfigClient(
         args.host,
@@ -110,7 +120,8 @@ if __name__ == "__main__":
         args.host,
         wait_for_ready = args.wait_for_ready)
 
-    logger.initialize()
+    ml.initialize()
+    sboard.initialize()
     sysconfig.initialize()
     netconfig.initialize()
     vfs.initialize()

@@ -23,10 +23,17 @@ set(DIRECTORIES
   upgrade
 )
 
+set(PYTHON_DEPS
+  cc_platform_python_protobuf
+  cc_multilogger_python
+  cc_switchboard_python
+)
+
+
 cc_add_python("${TARGET}"
   NAMESPACE_COMPONENT "platform"
   INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-  PYTHON_DEPS "cc_platform_python_protobuf"
+  PYTHON_DEPS ${PYTHON_DEPS}
   PROGRAMS "${PROGRAMS}"
   FILES "${FILES}"
   DIRECTORIES "${DIRECTORIES}"
