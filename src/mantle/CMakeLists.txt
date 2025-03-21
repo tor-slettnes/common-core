@@ -11,12 +11,6 @@ else()
   add_subdirectory(demo EXCLUDE_FROM_ALL)
 endif()
 
-if(BUILD_PLATFORM)
-  add_subdirectory(platform)
-else()
-  add_subdirectory(platform EXCLUDE_FROM_ALL)
-endif()
-
 if(BUILD_LOGGER)
   add_subdirectory(multilogger)
 else()
@@ -28,3 +22,10 @@ if(BUILD_SWITCHBOARD)
 else()
   add_subdirectory(switchboard EXCLUDE_FROM_ALL)
 endif()
+
+if(BUILD_PLATFORM)
+  add_subdirectory(platform)
+else()
+  add_subdirectory(platform EXCLUDE_FROM_ALL)
+endif()
+
