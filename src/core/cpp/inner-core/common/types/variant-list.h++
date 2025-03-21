@@ -92,4 +92,19 @@ namespace core::types
         }
     };
 
+    //--------------------------------------------------------------------------
+    // Non-member functions
+
+    template <class T>
+    ValueList &operator<<(ValueList &vlist, const T &inputs)
+    {
+        vlist.reserve(vlist.size() + inputs.size());
+        for (const auto &input: inputs)
+        {
+            vlist.emplace_back() << input;
+        }
+        return vlist;
+    }
+
+
 }  // namespace core::types

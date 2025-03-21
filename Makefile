@@ -183,8 +183,17 @@ $(BUILD_DIR):
 	@mkdir -p "$(BUILD_DIR)"
 
 .PHONY: python_shell
-python_shell:
+python_shell: install
 	@env PYTHONPATH=$(INSTALL_DIR)/$(call get_cached_or_default,PYTHON_INSTALL_DIR) $(PYTHON)
+
+.PHONY: python_shell/%
+python_shell/%: install
+	@echo "Launching interactive Python prompt with module: $*"
+	@env PYTHONPATH=$(INSTALL_DIR)/$(call get_cached_or_default,PYTHON_INSTALL_DIR) $(PYTHON) -i -m $*
+
+.PHONY: list_make_vars
+list_make_vars:
+	@echo "$(.VARIABLES)" | tr ' ' '\n' | sort
 
 .PHONY: list
 list: cmake

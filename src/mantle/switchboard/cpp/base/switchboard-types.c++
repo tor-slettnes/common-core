@@ -34,6 +34,19 @@ namespace switchboard
         return state_names.from_stream(stream, &state, STATE_UNSET);
     }
 
+    StateSet state_set(StateMask mask)
+    {
+        StateSet result;
+        for (const auto &[state, _]: state_names)
+        {
+            if ((state & mask) != 0x00)
+            {
+                result.insert(state);
+            }
+        }
+        return result;
+    }
+
     //==========================================================================
     // Exception Handling
 

@@ -1,9 +1,10 @@
-#!/usr/bin/python3 -i
-#===============================================================================
-## @file client.py
-## @brief Python client for `Upgrade` gRPC service
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+Python client for `Upgrade` gRPC service
+'''
+
+__all__ = ['Client']
+__author__ = 'Tor Slettnes'
+__docformat__ = 'javadoc en'
 
 ### Modules within package
 from cc.protobuf.wellknown import empty
@@ -18,9 +19,9 @@ from typing import Mapping, Optional
 import io
 
 #===============================================================================
-## UpgradeClient
+## Client
 
-class UpgradeClient (SignalClient):
+class Client (SignalClient):
     '''
     Client for Upgrade service.
     '''
@@ -143,4 +144,4 @@ class UpgradeClient (SignalClient):
 
 
 if __name__ == '__main__':
-    upgrade = UpgradeClient()
+    upgrade = Client()

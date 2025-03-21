@@ -22,9 +22,9 @@ from cc.protobuf.sysconfig import Signal, ProductInfo, HostInfo, \
 from typing import Optional, Sequence, Iterator
 
 #===============================================================================
-# SysConfigClient class
+# Client class
 
-class SysConfigClient (SignalClient):
+class Client (SignalClient):
     '''
     Client for SysConfig service.
     '''

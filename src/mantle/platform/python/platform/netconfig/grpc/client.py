@@ -28,9 +28,9 @@ ActiveConnectionStateTuple = namedtuple("ActiveConnectionState",
 
 
 #===============================================================================
-# NetConfigClient class
+# Client class
 
-class NetConfigClient (SignalClient):
+class Client (SignalClient):
     '''
     Client for NetConfig service.
     '''

@@ -7,6 +7,50 @@
 
 namespace core::types
 {
+    // Partially specialized class template to create appropriate Value instances
+    // from arbitrary input types.
+
+    template <class T, class Enable = void>
+    class ValueBuilder
+    {
+    public:
+        static Value create_from(const T &input)
+        {
+            std::ostringstream ss;
+            ss << input;
+            return ss.str();
+        }
+    };
+
+    template <class T>
+    class ValueBuilder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>>
+    {
+    public:
+        static Value create_from(const T &value)
+        {
+            return value;
+        }
+    };
+
+    template <class T>
+    class ValueBuilder<T, typename std::enable_if_t<std::is_base_of_v<std::string, T>>>
+    {
+    public:
+        static Value create_from(const T &value)
+        {
+            return value;
+        }
+    };
+
+    template <class T>
+    Value operator<<(Value &value, const T &input)
+    {
+        value = ValueBuilder<T>::create_from(input);
+        return value;
+    }
+
+    //==========================================================================
+
     // Convencience wrapper around std::get<T>(*this)
     template <class T>
     const T &Value::get() const
@@ -118,6 +162,14 @@ namespace core::types
     T Value::convert_to(const T &fallback) const
     {
         return this->try_convert_to<T>().value_or(fallback);
+    }
+
+    template <class T>
+    Value Value::create_from(const T &input)
+    {
+        Value value;
+        value << input;
+        return value;
     }
 
 }  // namespace core::types

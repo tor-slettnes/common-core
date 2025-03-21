@@ -5,7 +5,7 @@ service over gRPC
 
 __all__ = ['Client']
 __docformat__ = 'javadoc en'
-__author__ = 'Tor Slettnes <tor@slett.net>'
+__author__ = 'Tor Slettnes'
 
 ### Modules within package
 from .remote_switch import RemoteSwitch
@@ -21,14 +21,16 @@ class Client (SwitchboardBase, SignalClient):
 
     from cc.generated.switchboard_pb2_grpc import SwitchboardStub as Stub
 
-    def __init__(self, host: str):
+    def __init__(self,
+                 host: str,
+                 wait_for_ready: bool = True):
         '''
         @param host:
             IP address or resolvable host name of platform server
         '''
 
         SwitchboardBase.__init__(self)
-        SignalClient.__init__(self, host = host)
+        SignalClient.__init__(self, host = host, wait_for_ready = wait_for_ready)
         self.start_watching()
 
     def _new_switch(self, switch_name: str) -> RemoteSwitch:

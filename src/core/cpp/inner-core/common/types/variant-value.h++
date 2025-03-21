@@ -210,7 +210,16 @@ namespace core::types
         /// Convert value to a desired value via istream `>>' operator
         template <class T>
         T convert_to(const T &fallback = {}) const;
+
+        template <class T>
+        static Value create_from(const T &input);
     };
+
+    //--------------------------------------------------------------------------
+    // Non-member functions
+
+    // template <class T>
+    // Value operator<<(Value &value, const T &input);
 
     //--------------------------------------------------------------------------
     // Non-member contents

@@ -29,9 +29,9 @@ LocalFile = LocalPath | io.IOBase
 
 
 #===============================================================================
-## VirtualFileSystemClient
+## Client
 
-class VirtualFileSystemClient (SignalClient):
+class Client (SignalClient):
     '''
     Client for VirtualFileSystem service.
     '''

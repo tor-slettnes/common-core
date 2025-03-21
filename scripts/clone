@@ -29,8 +29,11 @@ copyfile()
     all="${7}"
     dashedname="${longname// /-}"
 
+    dstfile="${relpath//cc_/${shortname,,}_}"
+    dstfile="${dstfile//cc-/${shortname,,}-}"
+
     srcpath="${srcdir}/${relpath}"
-    dstpath="${dstdir}/${relpath//cc_/${shortname,,}_}"
+    dstpath="${dstdir}/${dstfile}"
 
     if ${all} || [ "${srcpath}" -nt "${dstpath}" ]
     then

@@ -4,7 +4,7 @@ Switch controlled via a remote gRPC service
 
 __all__ = ['RemoteSwitch']
 __docformat__ = 'javadoc en'
-__author__ = 'Tor Slettnes <tor@slett.net>'
+__author__ = 'Tor Slettnes'
 
 
 from ..base.switch import Switch

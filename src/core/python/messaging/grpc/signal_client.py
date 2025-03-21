@@ -143,6 +143,9 @@ class SignalClient (Client):
     ### Subclasses should override this to the appropriate signal type.
     signal_type = None
 
+    ### Alternatively, subclasses can provide a pre-initialized signal store
+    ### either by overriding this class attrribute, or to `__init__()`
+    signal_store = None
 
     #===========================================================================
     # Instance methods

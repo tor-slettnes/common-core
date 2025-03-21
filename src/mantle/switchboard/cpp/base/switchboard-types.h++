@@ -52,6 +52,15 @@ namespace switchboard
     std::ostream &operator<<(std::ostream &stream, State state);
     std::istream &operator>>(std::istream &stream, State &state);
 
+    using StateMask = std::uint32_t;
+    constexpr StateMask SETTLED_STATES = (STATE_ACTIVE | STATE_INACTIVE | STATE_FAILED);
+    constexpr StateMask PENDING_STATES = (STATE_ACTIVATING | STATE_DEACTIVATING | STATE_FAILING);
+    constexpr StateMask ACTIVATION_STATES = {STATE_ACTIVATING | STATE_DEACTIVATING};
+
+    using StateSet = std::set<State>;
+    StateSet state_set(StateMask mask);
+
+
     //==========================================================================
     // Exception Handling
 
@@ -109,12 +118,6 @@ namespace switchboard
     using InterceptorName = std::string;
     using InterceptorRef = std::shared_ptr<Interceptor>;
     using InterceptorMap = core::types::ValueMap<InterceptorName, InterceptorRef>;
-
-    using StateMask = std::uint32_t;
-
-    constexpr StateMask SETTLED_STATES = (STATE_ACTIVE | STATE_INACTIVE | STATE_FAILED);
-    constexpr StateMask PENDING_STATES = (STATE_ACTIVATING | STATE_DEACTIVATING | STATE_FAILED);
-    constexpr StateMask ACTIVATION_STATES = {STATE_ACTIVATING | STATE_DEACTIVATING};
 
     //==========================================================================
     // Localization

@@ -205,10 +205,9 @@ namespace core::types
         {
             for (const auto &[t, v] : *tvlist)
             {
-                ss << delimiter;
                 if (t.has_value())
                 {
-                    ss << "[" << t.value() << "] ";
+                    ss << t.value() << "=";
                 }
                 ss << typetree(v);
                 delimiter = ", ";

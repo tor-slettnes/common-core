@@ -13,9 +13,9 @@ from cc.protobuf.utils import check_message_type
 from cc.protobuf.demo import Signal, Greeting, TimeData
 
 #===============================================================================
-# SignalClient class
+# Client class
 
-class DemoClient (API, SignalClient):
+class Client (API, SignalClient):
     '''
     Client for Demo service.
     '''

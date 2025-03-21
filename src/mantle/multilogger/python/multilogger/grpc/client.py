@@ -30,12 +30,12 @@ import threading
 #===============================================================================
 # MultiLogger Client
 
-class LogClient (API, BaseClient):
+class Client (API, BaseClient):
     '''
     Client for MultiLogger service.
     '''
 
-    from cc.generated.multilogger_pb2_grpc import LoggerStub as Stub
+    from cc.generated.multilogger_pb2_grpc import MultiLoggerStub as Stub
 
     def __init__(
             self,
@@ -284,7 +284,7 @@ class LogClient (API, BaseClient):
 
           ```python
 
-          logger = cc.multilogger.grpc.LogClient()
+          logger = cc.multilogger.grpc.Client()
           logger.add_sink(
               'my_data_logger',
               sink_type = 'csv',

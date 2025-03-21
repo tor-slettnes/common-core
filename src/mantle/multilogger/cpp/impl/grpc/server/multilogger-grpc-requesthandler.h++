@@ -15,11 +15,12 @@
 
 namespace multilogger::grpc
 {
-    class RequestHandler : public core::grpc::RequestHandler<cc::multilogger::Logger>,
-                           public core::types::enable_create_shared<RequestHandler>
+    class RequestHandler
+        : public core::grpc::RequestHandler<cc::multilogger::MultiLogger>,
+          public core::types::enable_create_shared<RequestHandler>
     {
         using This = RequestHandler;
-        using Super = core::grpc::RequestHandler<cc::multilogger::Logger>;
+        using Super = core::grpc::RequestHandler<cc::multilogger::MultiLogger>;
 
     protected:
         RequestHandler(const std::shared_ptr<API>& provider);

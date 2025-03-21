@@ -14,7 +14,7 @@
 
 namespace multilogger::grpc
 {
-    using LogClientBase = core::grpc::ClientWrapper<cc::multilogger::Logger>;
+    using LogClientBase = core::grpc::ClientWrapper<cc::multilogger::MultiLogger>;
 
     class LogClient
         : public API,

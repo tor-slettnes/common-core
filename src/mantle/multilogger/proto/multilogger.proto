@@ -15,7 +15,7 @@ import "variant.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-service Logger
+service MultiLogger
 {
     // Log a single message.
     rpc submit (Loggable) returns (google.protobuf.Empty);

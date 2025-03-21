@@ -4,7 +4,7 @@ Abstract switchboard implementation.
 
 __all__ = ['SwitchboardBase']
 __docformat__ = 'javadoc en'
-__author__ = 'Tor Slettnes <tor@slett.net>'
+__author__ = 'Tor Slettnes'
 
 
 ### Modules within package
