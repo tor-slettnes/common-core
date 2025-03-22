@@ -26,7 +26,7 @@ function(cc_add_library TARGET)
 
   if(arg_SCOPE)
     string(TOUPPER "${arg_SCOPE}" _scope)
-  elseif("${_type}" MATCHES "^(INTERFACE|OBJECT)$")
+  elseif(_type MATCHES "^(INTERFACE|OBJECT)$")
     set(_scope INTERFACE)
   else()
     set(_scope PUBLIC)

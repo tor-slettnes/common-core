@@ -6,12 +6,13 @@
 #===============================================================================
 
 ### Name of this executable. This also becomes the name of the project.
-set(TARGET log-tool)
+set(TARGET multilogger-tool)
 
 ### Libraries we depend on, either from this build or provided by the
 ### system.
 set(LIB_DEPS
   cc_multilogger_grpc_client
+  cc_core_platform
 )
 
 ### Source files
@@ -25,6 +26,6 @@ set(SOURCES
 cc_add_executable("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  INSTALL_COMPONENT "${TOOLS_INSTALL_COMPONENT}"
 )
 

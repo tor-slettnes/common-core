@@ -5,25 +5,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET "cc_platform_settings")
+configure_file(upgrade.yaml.in upgrade.yaml)
 
-if(BUILD_PLATFORM)
-  set(INSTALL_COMPONENT "platform-settings")
-
-  configure_file(upgrade.yaml.in upgrade.yaml)
-
-  cc_add_settings("${TARGET}"
-    SETTINGS_DEPS cc_core_settings
-    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
-    FILES "${CMAKE_CURRENT_BINARY_DIR}/upgrade.yaml"
-    DIRECTORIES "."
-  )
-
-  cpack_add_component(${INSTALL_COMPONENT}
-    GROUP ${INSTALL_GROUP}
-    DEPENDS core-settings
-    DISPLAY_NAME "Common Core - common service settings"
-    DESCRIPTION "Settings for common/platform applications"
-  )
-
-endif()
+cc_add_settings(cc_platform_settings
+  SETTINGS_DEPS cc_core_settings
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/upgrade.yaml"
+  DIRECTORIES "."
+  INSTALL_COMPONENT "${SETTINGS_INSTALL_COMPONENT}"
+)

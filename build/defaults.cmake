@@ -171,7 +171,7 @@ option(BUILD_TESTING     "Build testing modules" ON)
 option(BUILD_SHARED      "Install shared artifacts (e.g. common settings)" ON)
 option(BUILD_DEMO        "Build/install DEMO application example" ${BUILD_SHARED})
 option(BUILD_PLATFORM    "Build/install Platform services" ${BUILD_SHARED})
-option(BUILD_LOGGER      "Build/install Logger service" ${BUILD_SHARED})
+option(BUILD_MULTILOGGER "Build/install MultiLogger service" ${BUILD_SHARED})
 option(BUILD_SWITCHBOARD "Build/install Switchboard application" ${BUILD_SHARED})
 
 ### Enable SystemD service integration

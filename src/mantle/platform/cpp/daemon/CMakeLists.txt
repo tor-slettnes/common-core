@@ -8,8 +8,6 @@
 ### Name of this executable. This also becomes the name of the project.
 set(TARGET platformserver)
 
-set(INSTALL_COMPONENT "platform-server")
-
 ### Libraries we depend on, either from this build or provided by the
 ### sysconfig. Only direct dependencies are needed; e.g., do not list "cc_core"
 ### if you also list another library that depends on it.
@@ -37,22 +35,15 @@ cc_add_executable("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
   DESTINATION sbin
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
 )
 
 if(ENABLE_SERVICES)
   cc_add_debian_service("platformserver"
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "Platform server: System configuration, Networking, File access, Upgrade"
-    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
     INSTALL_GROUP "${INSTALL_GROUP}"
     ENABLE
   )
 endif()
-
-cpack_add_component(${INSTALL_COMPONENT}
-  DEPENDS platform-settings
-  GROUP ${INSTALL_GROUP}
-  DISPLAY_NAME "Platform server"
-  DESCRIPTION "Platform services: System configuration, networking, filesystem, upgrade, logging"
-)

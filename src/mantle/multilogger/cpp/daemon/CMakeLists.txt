@@ -31,22 +31,15 @@ cc_add_executable("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
   DESTINATION sbin
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
 )
 
 if(ENABLE_SERVICES)
   cc_add_debian_service("${TARGET}"
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "Record events such as diagnostic messages, errors, and telemetry."
-    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
     INSTALL_GROUP "${INSTALL_GROUP}"
     ENABLE
   )
 endif()
-
-cpack_add_component(${INSTALL_COMPONENT}
-  DEPENDS "multilogger-settings"
-  GROUP ${INSTALL_GROUP}
-  DISPLAY_NAME "Log server"
-  DESCRIPTION "Log server: Record events such as diagnostic messages, errors, and telemetry"
-)

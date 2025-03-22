@@ -67,12 +67,12 @@ def legend():
     '''
     Interactive Service Control.  Subsystems loaded:
 
-        sysconfig - `SysConfig` gRPC service client
-        netconfig - `NetConfig` gRPC service client
-        vfs       - `VirtualFileSystem` gRPC service client
-        upgrade   - `Upgrade` gRPC service client
-        ml        - `MultiLogger` gRPC service client
-        sboard    - `Switchboard` gRPC service client
+        multilogger - `MultiLogger` gRPC service client
+        switchboard - `Switchboard` gRPC service client
+        sysconfig   - `SysConfig` gRPC service client
+        netconfig   - `NetConfig` gRPC service client
+        vfs         - `VirtualFileSystem` gRPC service client
+        upgrade     - `Upgrade` gRPC service client
 
     Generated ProtoBuf data types and associated wrapper methods are generally
     available in the `cc.protobuf` namespace, e.g.:
@@ -95,12 +95,12 @@ if __name__ == "__main__":
 
     logging.getLogger().setLevel(logging.DEBUG if args.debug else logging.INFO)
 
-    ml = MultiLoggerClient(
+    multilogger = MultiLoggerClient(
         args.host,
         wait_for_ready = args.wait_for_ready,
         capture_python_logs = True)
 
-    sboard = SwitchboardClient(
+    switchboard = SwitchboardClient(
         args.host,
         wait_for_ready = args.wait_for_ready)
 
@@ -120,8 +120,8 @@ if __name__ == "__main__":
         args.host,
         wait_for_ready = args.wait_for_ready)
 
-    ml.initialize()
-    sboard.initialize()
+    multilogger.initialize()
+    switchboard.initialize()
     sysconfig.initialize()
     netconfig.initialize()
     vfs.initialize()

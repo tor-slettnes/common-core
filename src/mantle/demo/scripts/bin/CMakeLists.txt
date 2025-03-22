@@ -6,14 +6,14 @@
 #===============================================================================
 
 if (BUILD_PYTHON)
-  set(SOURCES
+  set(PROGRAMS
     demoshell
     demo_grpc_aio_client_py
   )
 
   install(
-    PROGRAMS ${SOURCES}
+    PROGRAMS ${PROGRAMS}
     TYPE BIN
-    COMPONENT "${INSTALL_COMPONENT}"
+    COMPONENT "${PYTHON_INSTALL_COMPONENT}"
   )
 endif()

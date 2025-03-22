@@ -5,12 +5,14 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(INSTALL_GROUP "common")
+if(BUILD_SHARED)
+  set(INSTALL_GROUP "core")
 
-cpack_add_component_group(${INSTALL_GROUP}
-  DISPLAY_NAME "Core components"
-  DESCRIPTION "Common core - common components"
-)
+  set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
+  if(BUILD_PYTHON)
+    set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
+  endif()
+endif()
 
 ### Install "settings/" folder as data
 add_subdirectory(settings)
@@ -31,30 +33,20 @@ if(BUILD_PYTHON)
   add_subdirectory(python)
 endif()
 
-### Create interface library to encapsulate the above
-set(TARGET cc_core)
-set(LIB_DEPS)
-set(PROTO_DEPS)
 
-if(BUILD_CPP)
-  list(APPEND LIB_DEPS cc_core_inner)
-endif()
-
-if(BUILD_IDL)
-  list(APPEND LIB_DEPS cc_core_idl)
-endif()
-
-if(BUILD_PROTOBUF)
-  list(APPEND PROTO_DEPS cc_core_proto)
-endif()
-
-cc_add_library("${TARGET}" INTERFACE
-  LIB_DEPS ${LIB_DEPS}
-  PROTO_DEPS ${PROTO_DEPS}
+cc_cpack_add_debian_component("${SETTINGS_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  SUMMARY "Common Core - Common settings"
+  DESCRIPTION "Shared settings files for Common Core application framework."
 )
 
-# cpack_add_component(core-common
-#   GROUP ${INSTALL_GROUP}
-#   DISPLAY_NAME "Common Core - common components"
-#   DESCRIPTION "Common components for Common Core application framework"
-# )
+cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  SUMMARY "Common Core - Shared Python modules"
+  DESCRIPTION "Common Core application framework for Python."
+  DEPENDS ${SETTINGS_INSTALL_COMPONENT}
+)
+
+cc_cpack_add_group("${INSTALL_GROUP}"
+  SUMMARY "Common Core - Shared components"
+)

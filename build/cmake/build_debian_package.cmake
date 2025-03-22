@@ -10,7 +10,9 @@
 ## @brief Append a setting to `cc_cpack_config.cmake`, to be consumed by `cpack`.
 
 function(cc_cpack_config VARIABLE VALUE)
-  set(_options APPEND)
+  set(_options
+    APPEND        # Add to existing value via `list(APPEND)` rather than `set()`
+  )
   set(_singleargs)
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -28,6 +30,61 @@ function(cc_cpack_config VARIABLE VALUE)
 endfunction()
 
 #===============================================================================
+## @fn cc_cpack_add_debian_component
+## @brief
+##   Wrapper for `cmake_add_component()` with added dependency options.
+
+function(cc_cpack_add_debian_component COMPONENT)
+  set(_options)
+  set(_singleargs
+    SUMMARY        # One-line summary (first line of package description)
+    GROUP          # Component group in which this component belongs
+  )
+  set(_multiargs
+    DESCRIPTION    # Detailed description. Multiple arguments are added as separate lines.
+    DEPENDS        # Other cpack components on which we depend.
+    DEB_PREDEPENDS # Debian "Pre-Depends:" control value
+    DEB_DEPENDS    # Debian "Depends:" control value
+    DEB_RECOMMENDS # Debian "Recommends:" control value
+    DEB_SUGGESTS   # Debian "Suggests:" control value
+    DEB_BREAKS     # Debian "Breaks:" control value
+    DEB_CONFLICTS  # Debian "Conflicts:" control value
+    DEB_REPLACES   # Debian "Replaces:" control value
+    DEB_PROVIDES   # Debian "Provides:" control value
+    DEB_ENHANCES   # Debian "Enhances:" control value
+  )
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  if(COMPONENT)
+    string(TOUPPER "${COMPONENT}" upcase_component)
+
+    set(description_lines ${arg_DESCRIPTION})
+    if(arg_SUMMARY)
+      list(PREPEND description_lines "${arg_SUMMARY}")
+    endif()
+    list(JOIN description_lines "\n" description_text)
+
+    cpack_add_component("${COMPONENT}"
+      DESCRIPTION "${description_text}"
+      GROUP ${arg_GROUP}
+      DEPENDS ${arg_DEPENDS}
+    )
+
+    foreach(option ${_multiargs})
+      if (option MATCHES "^DEB_(.*)$")
+        list(JOIN arg_${option} ", " predecessors)
+        if(predecessors)
+          cc_cpack_config(
+            "CPACK_DEBIAN_${upcase_component}_PACKAGE_${CMAKE_MATCH_1}"
+            "${predecessors}"
+          )
+        endif()
+      endif()
+    endforeach()
+  endif()
+endfunction()
+
+#===============================================================================
 ## @fn cc_cpack_add_group
 ## @brief
 ##   Wrapper for `cmake_add_component_group()` with added dependency options.
@@ -35,7 +92,7 @@ endfunction()
 function(cc_cpack_add_group GROUP)
   set(_options)
   set(_singleargs
-    DISPLAY_NAME               # One-line summary to describe this package group
+    SUMMARY                    # One-line summary to describe this package group
   )
   set(_multiargs
     GROUP_DEPS                 # Other cpack component groups on which we depend
@@ -44,29 +101,37 @@ function(cc_cpack_add_group GROUP)
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  list(JOIN arg_DESCRIPTION "\n" description)
+  if(GROUP)
+    set(description_lines ${arg_DESCRIPTION})
+    if(arg_SUMMARY)
+      list(PREPEND description_lines "${arg_SUMMARY}")
+    endif()
+    list(JOIN description_lines "\n" description_text)
 
-  cpack_add_component_group("${GROUP}"
-    DISPLAY_NAME "${arg_DISPLAY_NAME}"
-    DESCRIPTION "${description}")
+    cpack_add_component_group("${GROUP}"
+      DESCRIPTION "${description_text}"
+    )
 
-  ### CMake bug: the `DESCRIPTION` argument sets `CPACK_COMPONENT_GROUP_${GROUP}_DESCRIPTION`,
-  ### however the `cpack` command uses `CPACK_COMPONENT_${GROUP}_DESCRIPTION` to populate
-  ### the `Description:` line of the Debian control file.
-  ### Let's set that latter one explicitly.
-  if(arg_DESCRIPTION)
-    cc_cpack_config(CPACK_COMPONENT_${GROUP}_DESCRIPTION "${description}")
+    ### CMake bug/inconsistency: the above `DESCRIPTION` argument sets
+    ### `CPACK_COMPONENT_GROUP_${GROUP}_DESCRIPTION`, however the `cpack`
+    ### command uses `CPACK_COMPONENT_${GROUP}_DESCRIPTION` to populate the
+    ### `Description:` line of the Debian control file.  Let's set that latter
+    ### one explicitly.
+
+    if(description_text)
+      cc_cpack_config(CPACK_COMPONENT_${GROUP}_DESCRIPTION "${description_text}")
+    endif()
+
+    cc_cpack_set_debian_dependencies("${GROUP}" DEPENDS
+      GROUPS ${arg_GROUP_DEPS}
+      PACKAGES ${arg_PACKAGE_DEPS}
+    )
   endif()
-
-  cc_cpack_set_debian_dependencies("${GROUP}" DEPENDS
-    GROUPS ${arg_GROUP_DEPS}
-    PACKAGES ${arg_PACKAGE_DEPS}
-  )
 
 endfunction()
 
 #===============================================================================
-## @fn cc_cpack_add_group_dependencies
+## @fn cc_cpack_set_debian_dependencies
 
 function(cc_cpack_set_debian_dependencies TARGET RELATIONSHIP)
   set(_options)
@@ -91,10 +156,47 @@ function(cc_cpack_set_debian_dependencies TARGET RELATIONSHIP)
   list(APPEND predecessors ${arg_PACKAGES})
   list(JOIN predecessors ", " value)
 
-  cc_cpack_config(
-    "CPACK_DEBIAN_${upcase_target}_PACKAGE_${relationship}"
-    "${value}"
+  if(predecessors)
+    cc_cpack_config(
+      "CPACK_DEBIAN_${upcase_target}_PACKAGE_${relationship}"
+      "${value}"
+    )
+  endif()
+
+endfunction()
+
+#===============================================================================
+## @fn cc_install_license
+## @brief Install `LICENESE.txt` into `share/doc/PACKAGE_NAME`
+
+function(cc_install_doc)
+  set(_options)
+  set(_singleargs
+    COMPONENT  # CPack components to which we're adding the doc
+    GROUP      # CPack components group to which we're adding the doc
+    RENAME     # Rename file (only for single file install)
   )
+  set(_multiargs
+    FILES      # Files we're adding to doc folder
+    GROUPS     # CPack component groups on which TARGET will have a relationship
+    PACKAGES   # Full package names on which TARGET will have a relationship
+  )
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  cc_get_cpack_debian_grouping(
+    COMPONENT "${arg_COMPONENT}"
+    GROUP "${arg_GROUP}"
+    OUTPUT_VARIABLE deb_name
+  )
+
+  if(deb_name AND arg_FILES)
+    install(
+      FILES ${arg_FILES}
+      DESTINATION share/doc/${deb_name}
+      RENAME ${arg_RENAME}
+      COMPONENT ${arg_COMPONENT}
+    )
+  endif()
 endfunction()
 
 

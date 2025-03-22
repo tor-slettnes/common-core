@@ -14,6 +14,7 @@ set(LIB_DEPS
   cc_demo_dds_client
   cc_demo_native
   cc_demo_tool_common
+  cc_core_platform
 )
 
 ### Source files
@@ -25,5 +26,5 @@ set(SOURCES
 cc_add_executable(${TARGET}
   SOURCES ${SOURCES}
   LIB_DEPS ${LIB_DEPS}
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  INSTALL_COMPONENT "${TOOLS_INSTALL_COMPONENT}"
 )

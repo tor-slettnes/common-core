@@ -14,14 +14,14 @@ include(build_python)
 
 function(cc_add_proto TARGET)
   set(_options
-    INSTALL # Install generated `.py` files even if INSTALL_COMPONENT is not set
+    PYTHON_INSTALL # Install generated `.py` files even if INSTALL_COMPONENT is not set
   )
   set(_singleargs
     CPP_TARGET_SUFFIX          # Appended to CMake target for generated C++ files
     PYTHON_TARGET_SUFFIX       # Appended to CMake target for generated Python files
     LIB_TYPE                   # C++ library type (Default: STATIC)
     SCOPE                      # Target scope (Default: PUBLIC)
-    INSTALL_COMPONENT          # Install component for generated Python files
+    PYTHON_INSTALL_COMPONENT   # Install component for generated Python files
     PYTHON_INSTALL_DIR         # Relative install folder for generated Python files
     PYTHON_NAMESPACE           # Override Python namespace (Default: cc.generated)
     PYTHON_NAMESPACE_COMPONENT # Override Python 2nd level namespace (Default: generated)
@@ -64,10 +64,12 @@ function(cc_add_proto TARGET)
       APPEND "${py_suffix}"
       OUTPUT_VARIABLE proto_py_deps)
 
+    cc_get_optional_keyword(INSTALL "${arg_INSTALL}")
     cc_add_proto_python("${py_target}"
       NAMESPACE "${arg_PYTHON_NAMESPACE}"
       NAMESPACE_COMPONENT "${arg_PYTHON_NAMESPACE_COMPONENT}"
-      INSTALL_COMPONENT "${arg_INSTALL_COMPONENT}"
+      INSTALL ${INSTALL}
+      INSTALL_COMPONENT "${arg_PYTHON_INSTALL_COMPONENT}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       DEPENDS "${proto_py_deps}"
       PROTOS "${arg_SOURCES}"
@@ -159,7 +161,9 @@ endfunction()
 ## @fn cc_add_proto_python
 
 function(cc_add_proto_python TARGET)
-  set(_options)
+  set(_options
+    INSTALL # Install Python modules even if `INSTALL_COMPONENT` is not specified
+  )
   set(_singleargs
     STAGING_DIR              # Override staging directory
     INSTALL_COMPONENT        # Install component for generated Python files

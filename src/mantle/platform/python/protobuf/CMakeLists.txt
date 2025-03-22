@@ -17,7 +17,7 @@ set(FILES
 
 cc_add_python("${TARGET}"
   NAMESPACE_COMPONENT "protobuf"
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
   PYTHON_DEPS "cc_core_python"
   PROTO_DEPS "cc_platform_proto"
   FILES "${FILES}"

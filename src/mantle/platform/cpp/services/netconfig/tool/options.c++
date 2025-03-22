@@ -129,7 +129,7 @@ void Options::on_globaldata(
     const platform::netconfig::GlobalData::ptr &data)
 {
     core::str::format(std::cout,
-                      "[%.0s] signal_globaldata(%data)\n",
+                      "[%.0s] signal_globaldata(%s)\n",
                       core::dt::Clock::now(),
                       data);
 }

@@ -6,8 +6,8 @@
 #===============================================================================
 
 ### Modules within package
-from cc.demo.grpc.client import DemoClient as gRPCDemoClient
-from cc.demo.zmq.client import DemoClient as ZMQDemoClient
+from cc.demo.grpc.client import Client as gRPCDemoClient
+from cc.demo.zmq.client import Client as ZMQDemoClient
 
 import cc.protobuf.demo
 import cc.protobuf.wellknown

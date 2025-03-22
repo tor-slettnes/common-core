@@ -10,7 +10,7 @@ set(TARGET cc_demo_api)
 
 ### Static/shared library dependencies.
 set(LIB_DEPS
-  cc_core
+  cc_core_common
 )
 
 set(SOURCES

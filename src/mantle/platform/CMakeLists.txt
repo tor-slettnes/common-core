@@ -5,16 +5,23 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-project("platform"
-  VERSION "${VERSION}"
-  DESCRIPTION "Services to interact with the host platform"
-  HOMEPAGE_URL "${HOME_PAGE}"
-  LANGUAGES CXX)
+if(BUILD_PLATFORM)
+  set(INSTALL_GROUP "platform")
 
-set(INSTALL_GROUP "platform")
+  set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
 
-add_subdirectory(scripts)
+  if(BUILD_PYTHON)
+    set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
+  endif()
+
+  if(BUILD_CPP)
+    set(TOOLS_INSTALL_COMPONENT "${INSTALL_GROUP}-tools")
+    set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
+  endif()
+endif()
+
 add_subdirectory(settings)
+add_subdirectory(scripts)
 
 if (BUILD_PROTOBUF)
   add_subdirectory(proto)
@@ -28,10 +35,39 @@ if (BUILD_PYTHON)
   add_subdirectory(python)
 endif()
 
-if(INSTALL_GROUP)
-  cc_cpack_add_group(${INSTALL_GROUP}
-    DISPLAY_NAME "Platform services"
-    DESCRIPTION "Common platform services: System configuration, networking, file access, upgrade"
-    GROUP_DEPS "common"
-  )
-endif()
+
+cc_cpack_add_debian_component("${SETTINGS_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  DEPENDS "core-settings"
+  SUMMARY "Common Core - Platform service settings"
+  DESCRIPTION "Settings for Common Core Platform service."
+)
+
+cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  DEPENDS "${SETTINGS_INSTALL_COMPONENT}" "core-python"
+  SUMMARY "Common Core - Python clients for platform services"
+  DESCRIPTION "Python client moduules for platform services: SysConfig, NetConfig, VFS"
+)
+
+cc_cpack_add_debian_component("${TOOLS_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  DEPENDS "${SETTINGS_INSTALL_COMPONENT}"
+  SUMMARY "Common Core - Platform service command line tools"
+  DESCRIPTION "Command line tools to communiate with the Platform service via gRPC."
+)
+
+cc_cpack_add_debian_component("${SERVER_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  DEPENDS "${SETTINGS_INSTALL_COMPONENT}"
+  SUMMARY "Common Core - Platform server"
+  DESCRIPTION "Microservice application for generic system configuration, "
+  "network configuration, remote file access, and software upgrade."
+)
+
+cc_cpack_add_group("${INSTALL_GROUP}"
+  GROUP_DEPS "core"
+  SUMMARY "Platform services"
+  DESCRIPTION "Microservice application for generic system configuration, "
+  "network configuration, remote file access, and software upgrade."
+)

@@ -6,7 +6,8 @@
 #===============================================================================
 
 ### General CPack settings
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
+# Prevent PROJECT_DESCRIPTION to be used as SUMMARY for every package compoennt
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "")
 
 ### Installation folder
 #set(CPACK_PACKAGING_INSTALL_PREFIX "/opt")

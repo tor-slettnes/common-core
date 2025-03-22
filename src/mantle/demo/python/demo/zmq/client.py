@@ -21,9 +21,9 @@ import time, sys, os.path
 
 
 #===============================================================================
-# DemoClient class
+# Client class
 
-class DemoClient (API, BaseClient):
+class Client (API, BaseClient):
     '''
     Client for Demo service.
     '''

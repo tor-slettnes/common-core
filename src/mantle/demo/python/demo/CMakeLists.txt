@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Create a custom target for the Python Wheel
-set(TARGET "cc_demo_python_modules")
+set(TARGET "cc_demo_python")
 
 set(PROGRAMS
   shell.py
@@ -25,7 +25,7 @@ set(DIRECTORIES
 
 
 cc_add_python("${TARGET}"
-  INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+  INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
   NAMESPACE_COMPONENT "demo"
   PYTHON_DEPS "cc_demo_python_protobuf"
   PROGRAMS "${PROGRAMS}"
@@ -39,26 +39,26 @@ if(BUILD_DEMO)
     VENV "${PYTHON_VENV}"
     DATA_DEPS cc_demo_settings
     DESCRIPTION "Interactive shell to communicate with DEMO service over gRPC or ZMQ"
-    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
   )
 
-  cc_add_python_executable("pydemo_grpc_server"
+  cc_add_python_executable("demo_grpc_server_py"
     PYTHON_DEPS ${TARGET}
     DATA_DEPS cc_demo_settings
     VENV "${PYTHON_VENV}"
     SCRIPT "grpc/server.py"
     RUNTIME_HOOKS "starthook.py"
-    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
     TYPE SBIN
     USE_SPEC
   )
 
-  cc_add_python_executable("pydemo_zmq_server"
+  cc_add_python_executable("demo_zmq_server_py"
     PYTHON_DEPS "${TARGET}"
     DATA_DEPS cc_demo_settings
     VENV "${PYTHON_VENV}"
     SCRIPT "zmq/server.py"
-    INSTALL_COMPONENT "${INSTALL_COMPONENT}"
+    INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
     TYPE SBIN
   )
 endif()

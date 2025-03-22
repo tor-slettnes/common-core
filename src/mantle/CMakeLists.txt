@@ -11,7 +11,7 @@ else()
   add_subdirectory(demo EXCLUDE_FROM_ALL)
 endif()
 
-if(BUILD_LOGGER)
+if(BUILD_MULTILOGGER)
   add_subdirectory(multilogger)
 else()
   add_subdirectory(multilogger EXCLUDE_FROM_ALL)

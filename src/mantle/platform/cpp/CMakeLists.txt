@@ -9,6 +9,5 @@ add_subdirectory(services)
 
 if(BUILD_PLATFORM)
   add_subdirectory(daemon)
-  add_subdirectory(tools)
 endif()
 
