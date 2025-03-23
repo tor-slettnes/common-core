@@ -5,20 +5,94 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-if(BUILD_PLATFORM)
-  set(INSTALL_GROUP "platform")
+set(COMMON_DESRIPTION
+  "Microservice application for generic system configuration, "
+  "network configuration, remote file access, and software upgrade."
+)
 
-  set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
+set(INSTALL_GROUP "platform")
 
-  if(BUILD_PYTHON)
-    set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
-  endif()
+set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
 
-  if(BUILD_CPP)
-    set(TOOLS_INSTALL_COMPONENT "${INSTALL_GROUP}-tools")
-    set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
-  endif()
+if(BUILD_PYTHON)
+  set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
 endif()
+
+if(BUILD_CPP)
+  set(TOOLS_INSTALL_COMPONENT "${INSTALL_GROUP}-tools")
+  set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
+endif()
+
+set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}")
+set(COMPLETE_INSTALL_DEPENDENCIES
+  ${SETTINGS_INSTALL_COMPONENT}
+  ${PYTHON_INSTALL_COMPONENT}
+  ${TOOLS_INSTALL_COMPONENT}
+  ${SERVER_INSTALL_COMPONENT}
+)
+
+#-------------------------------------------------------------------------------
+
+cc_cpack_add_debian_component("${SETTINGS_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  DEPENDS "core-settings"
+  LICENSE ${LICENSE_FILE}
+  SUMMARY "Common Core Platform Service - settings"
+  DESCRIPTION ${COMMON_DESCRIPTION}
+  "."
+  "This package contains settings files."
+)
+
+cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  DEPENDS "${SETTINGS_INSTALL_COMPONENT}" "core-python"
+  LICENSE ${LICENSE_FILE}
+  SUMMARY "Common Core Platform Services - Python clients"
+  DESCRIPTION ${COMMON_DESCRIPTION}
+  "."
+  "This package contains Python client modules, as well as a"
+  "'platform-shell' utility to launch an interactive Python prompt"
+  "with these client modules preloaded."
+)
+
+cc_cpack_add_debian_component("${TOOLS_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  DEPENDS "${SETTINGS_INSTALL_COMPONENT}"
+  LICENSE ${LICENSE_FILE}
+  SUMMARY "Common Core Platform Services - command line tools"
+  DESCRIPTION ${COMMON_DESCRIPTION}
+  "."
+  "This package contains command-line client tools written in C++."
+)
+
+cc_cpack_add_debian_component("${SERVER_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  DEPENDS "${SETTINGS_INSTALL_COMPONENT}"
+  LICENSE ${LICENSE_FILE}
+  SUMMARY "Common Core Platform Services - server"
+  DESCRIPTION ${COMMON_DESCRIPTION}
+  "."
+  "This package contains the `platformserver` daemon, written in C++."
+)
+
+cc_cpack_add_debian_component("${COMPLETE_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  DEPENDS ${COMPLETE_INSTALL_DEPENDENCIES}
+  LICENSE ${LICENSE_FILE}
+  SUMMARY "Common Core Platform Services - complete"
+  DESCRIPTION ${COMMON_DESCRIPTION}
+  "."
+  "This meta-package depends on and will thus install all Switchboard packages."
+  "You may choose to select specific component packages instead."
+)
+
+cc_cpack_add_group("${INSTALL_GROUP}"
+  GROUP_DEPS "core"
+  SUMMARY "Platform services"
+  DESCRIPTION ${COMMON_DESRIPTION}
+)
+
+#-------------------------------------------------------------------------------
 
 add_subdirectory(settings)
 add_subdirectory(scripts)
@@ -34,40 +108,3 @@ endif()
 if (BUILD_PYTHON)
   add_subdirectory(python)
 endif()
-
-
-cc_cpack_add_debian_component("${SETTINGS_INSTALL_COMPONENT}"
-  GROUP "${INSTALL_GROUP}"
-  DEPENDS "core-settings"
-  SUMMARY "Common Core - Platform service settings"
-  DESCRIPTION "Settings for Common Core Platform service."
-)
-
-cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
-  GROUP "${INSTALL_GROUP}"
-  DEPENDS "${SETTINGS_INSTALL_COMPONENT}" "core-python"
-  SUMMARY "Common Core - Python clients for platform services"
-  DESCRIPTION "Python client moduules for platform services: SysConfig, NetConfig, VFS"
-)
-
-cc_cpack_add_debian_component("${TOOLS_INSTALL_COMPONENT}"
-  GROUP "${INSTALL_GROUP}"
-  DEPENDS "${SETTINGS_INSTALL_COMPONENT}"
-  SUMMARY "Common Core - Platform service command line tools"
-  DESCRIPTION "Command line tools to communiate with the Platform service via gRPC."
-)
-
-cc_cpack_add_debian_component("${SERVER_INSTALL_COMPONENT}"
-  GROUP "${INSTALL_GROUP}"
-  DEPENDS "${SETTINGS_INSTALL_COMPONENT}"
-  SUMMARY "Common Core - Platform server"
-  DESCRIPTION "Microservice application for generic system configuration, "
-  "network configuration, remote file access, and software upgrade."
-)
-
-cc_cpack_add_group("${INSTALL_GROUP}"
-  GROUP_DEPS "core"
-  SUMMARY "Platform services"
-  DESCRIPTION "Microservice application for generic system configuration, "
-  "network configuration, remote file access, and software upgrade."
-)

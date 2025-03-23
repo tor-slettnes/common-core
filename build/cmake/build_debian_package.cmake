@@ -39,6 +39,7 @@ function(cc_cpack_add_debian_component COMPONENT)
   set(_singleargs
     SUMMARY        # One-line summary (first line of package description)
     GROUP          # Component group in which this component belongs
+    LICENSE        # License file, installed as `copyright`.
   )
   set(_multiargs
     DESCRIPTION    # Detailed description. Multiple arguments are added as separate lines.
@@ -64,10 +65,14 @@ function(cc_cpack_add_debian_component COMPONENT)
     endif()
     list(JOIN description_lines "\n" description_text)
 
+    if(CPACK_COMPONENTS_GROUPING STREQUAL "IGNORE")
+      set(component_deps "${arg_DEPENDS}")
+    endif()
+
     cpack_add_component("${COMPONENT}"
       DESCRIPTION "${description_text}"
       GROUP ${arg_GROUP}
-      DEPENDS ${arg_DEPENDS}
+      DEPENDS ${component_deps}
     )
 
     foreach(option ${_multiargs})
@@ -81,6 +86,17 @@ function(cc_cpack_add_debian_component COMPONENT)
         endif()
       endif()
     endforeach()
+
+    cc_get_value_or_default(license_file
+      arg_LICENSE
+      "${CMAKE_SOURCE_DIR}/LICENSE.txt"
+    )
+
+    cc_install_license(
+      FILE "${license_file}"
+      COMPONENT ${COMPONENT}
+      GROUP ${arg_GROUP}
+    )
   endif()
 endfunction()
 
@@ -101,7 +117,7 @@ function(cc_cpack_add_group GROUP)
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  if(GROUP)
+  if(GROUP AND CPACK_COMPONENTS_GROUPING STREQUAL "ONE_PER_GROUP")
     set(description_lines ${arg_DESCRIPTION})
     if(arg_SUMMARY)
       list(PREPEND description_lines "${arg_SUMMARY}")
@@ -149,7 +165,7 @@ function(cc_cpack_set_debian_dependencies TARGET RELATIONSHIP)
   set(component_deps ${arg_COMPONENTS} ${arg_GROUPS})
 
   list(TRANSFORM component_deps
-    PREPEND "${PACKAGE_NAME_PREFIX}-"
+    PREPEND "${CPACK_PACKAGE_NAME}-"
     OUTPUT_VARIABLE predecessors
   )
 
@@ -166,7 +182,7 @@ function(cc_cpack_set_debian_dependencies TARGET RELATIONSHIP)
 endfunction()
 
 #===============================================================================
-## @fn cc_install_license
+## @fn cc_install_doc
 ## @brief Install `LICENESE.txt` into `share/doc/PACKAGE_NAME`
 
 function(cc_install_doc)
@@ -178,18 +194,16 @@ function(cc_install_doc)
   )
   set(_multiargs
     FILES      # Files we're adding to doc folder
-    GROUPS     # CPack component groups on which TARGET will have a relationship
-    PACKAGES   # Full package names on which TARGET will have a relationship
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  cc_get_cpack_debian_grouping(
-    COMPONENT "${arg_COMPONENT}"
-    GROUP "${arg_GROUP}"
-    OUTPUT_VARIABLE deb_name
-  )
+  if (arg_FILES)
+    cc_get_cpack_debian_package_name(
+      COMPONENT "${arg_COMPONENT}"
+      GROUP "${arg_GROUP}"
+      OUTPUT_VARIABLE deb_name
+    )
 
-  if(deb_name AND arg_FILES)
     install(
       FILES ${arg_FILES}
       DESTINATION share/doc/${deb_name}
@@ -199,6 +213,30 @@ function(cc_install_doc)
   endif()
 endfunction()
 
+#===============================================================================
+## @fn cc_install_license
+## @brief Install `LICENESE.txt` into `share/doc/PACKAGE_NAME`
+
+function(cc_install_license)
+  set(_singleargs
+    FILE       # Source license file to install
+    COMPONENT  # CPack components to which we're adding the doc
+    GROUP      # CPack components group to which we're adding the doc
+  )
+  cmake_parse_arguments(arg "" "${_singleargs}" "" ${ARGN})
+
+  cc_get_value_or_default(license_file
+    arg_FILE
+    ${CMAKE_SOURCE_DIR}/LICENSE.txt
+  )
+
+  cc_install_doc(
+    FILES ${license_file}
+    RENAME copyright
+    COMPONENT ${arg_COMPONENT}
+    GROUP ${arg_GROUP}
+  )
+endfunction()
 
 #===============================================================================
 ## @fn cc_cpack_debian_config
@@ -259,6 +297,31 @@ function(cc_get_cpack_debian_variable VARIABLE_SUFFIX)
   string(TOUPPER "${variable}" upcase_variable)
   set("${arg_OUTPUT_VARIABLE}" "${upcase_variable}" PARENT_SCOPE)
 endfunction()
+
+#===============================================================================
+## @fn cc_get_cpack_debian_pakage
+
+function(cc_get_cpack_debian_package_name)
+  set(_options)
+  set(_singleargs
+    COMPONENT      # CPack component for when creating one package per component
+    GROUP          # CPack group for when creating one package per group
+    OUTPUT_VARIABLE # Variable in which to store the resulting CPackConfig variable name
+  )
+  set(_multiargs)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  cc_get_cpack_debian_grouping(
+    COMPONENT "${arg_COMPONENT}"
+    GROUP "${arg_GROUP}"
+    PREFIX "${CPACK_PACKAGE_NAME}"
+    GLUE "-"
+    OUTPUT_VARIABLE name
+  )
+
+  set("${arg_OUTPUT_VARIABLE}" "${name}" PARENT_SCOPE)
+endfunction()
+
 
 
 #===============================================================================
