@@ -5,31 +5,33 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(COMMON_DESRIPTION
-  "Microservice application for generic system configuration, "
-  "network configuration, remote file access, and software upgrade."
-)
+if(BUILD_PLATFORM)
+  set(COMMON_DESRIPTION
+    "Microservice application for generic system configuration, "
+    "network configuration, remote file access, and software upgrade."
+  )
 
-set(INSTALL_GROUP "platform")
+  set(INSTALL_GROUP "platform")
 
-set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
+  set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
 
-if(BUILD_PYTHON)
-  set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
+  if(BUILD_PYTHON)
+    set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
+  endif()
+
+  if(BUILD_CPP)
+    set(TOOLS_INSTALL_COMPONENT "${INSTALL_GROUP}-tools")
+    set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
+  endif()
+
+  set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}")
+  set(COMPLETE_INSTALL_DEPENDENCIES
+    ${SETTINGS_INSTALL_COMPONENT}
+    ${PYTHON_INSTALL_COMPONENT}
+    ${TOOLS_INSTALL_COMPONENT}
+    ${SERVER_INSTALL_COMPONENT}
+  )
 endif()
-
-if(BUILD_CPP)
-  set(TOOLS_INSTALL_COMPONENT "${INSTALL_GROUP}-tools")
-  set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
-endif()
-
-set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}")
-set(COMPLETE_INSTALL_DEPENDENCIES
-  ${SETTINGS_INSTALL_COMPONENT}
-  ${PYTHON_INSTALL_COMPONENT}
-  ${TOOLS_INSTALL_COMPONENT}
-  ${SERVER_INSTALL_COMPONENT}
-)
 
 #-------------------------------------------------------------------------------
 

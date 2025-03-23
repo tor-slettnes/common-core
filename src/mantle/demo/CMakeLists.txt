@@ -5,33 +5,35 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(COMMON_DESCRIPTION
-  "This demo application is provided to illustrate the morphology of a typical"
-  "microservice applications based on the Common Core application framework."
-  "It may be used as a template for creating new applications, or as a reference"
-  "implementation of current best practices."
-)
+if(BUILD_DEMO)
+  set(COMMON_DESCRIPTION
+    "This demo application is provided to illustrate the morphology of a typical"
+    "microservice applications based on the Common Core application framework."
+    "It may be used as a template for creating new applications, or as a reference"
+    "implementation of current best practices."
+  )
 
-set(INSTALL_GROUP "demo")
+  set(INSTALL_GROUP "demo")
 
-set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
+  set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
 
-if(BUILD_PYTHON)
-  set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
+  if(BUILD_PYTHON)
+    set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
+  endif()
+
+  if(BUILD_CPP)
+    set(TOOLS_INSTALL_COMPONENT "${INSTALL_GROUP}-tools")
+    set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
+  endif()
+
+  set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}")
+  set(COMPLETE_INSTALL_DEPENDENCIES
+    ${SETTINGS_INSTALL_COMPONENT}
+    ${PYTHON_INSTALL_COMPONENT}
+    ${TOOLS_INSTALL_COMPONENT}
+    ${SERVER_INSTALL_COMPONENT}
+  )
 endif()
-
-if(BUILD_CPP)
-  set(TOOLS_INSTALL_COMPONENT "${INSTALL_GROUP}-tools")
-  set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
-endif()
-
-set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}")
-set(COMPLETE_INSTALL_DEPENDENCIES
-  ${SETTINGS_INSTALL_COMPONENT}
-  ${PYTHON_INSTALL_COMPONENT}
-  ${TOOLS_INSTALL_COMPONENT}
-  ${SERVER_INSTALL_COMPONENT}
-)
 
 
 #-------------------------------------------------------------------------------

@@ -5,38 +5,40 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(COMMON_DESCRIPTION
-  "MultiLogger provides consolidated recording of events such as diagnostic"
-  "messages, errors, and telemetry for Common Core applications."
-  "."
-  "Based on 'contract id' identifying specific log types, events are captured"
-  "in zero or more 'sinks'. This may include:"
-  "  - console output (stdout/stderr)"
-  "  - UNIX syslog or Windows Event log (unstructured text only)"
-  "  - various file formats (text logs, csv, JSON...)"
-  "  - database (currently SQLite3)"
-)
+if(BUILD_MULTILOGGER)
+  set(COMMON_DESCRIPTION
+    "MultiLogger provides consolidated recording of events such as diagnostic"
+    "messages, errors, and telemetry for Common Core applications."
+    "."
+    "Based on 'contract id' identifying specific log types, events are captured"
+    "in zero or more 'sinks'. This may include:"
+    "  - console output (stdout/stderr)"
+    "  - UNIX syslog or Windows Event log (unstructured text only)"
+    "  - various file formats (text logs, csv, JSON...)"
+    "  - database (currently SQLite3)"
+  )
 
-set(INSTALL_GROUP "multilogger")
+  set(INSTALL_GROUP "multilogger")
 
-set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
+  set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
 
-if(BUILD_PYTHON)
-  set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
+  if(BUILD_PYTHON)
+    set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
+  endif()
+
+  if(BUILD_CPP)
+    set(TOOLS_INSTALL_COMPONENT "${INSTALL_GROUP}-tools")
+    set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
+  endif()
+
+  set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}")
+  set(COMPLETE_INSTALL_DEPENDENCIES
+    ${SETTINGS_INSTALL_COMPONENT}
+    ${PYTHON_INSTALL_COMPONENT}
+    ${TOOLS_INSTALL_COMPONENT}
+    ${SERVER_INSTALL_COMPONENT}
+  )
 endif()
-
-if(BUILD_CPP)
-  set(TOOLS_INSTALL_COMPONENT "${INSTALL_GROUP}-tools")
-  set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
-endif()
-
-set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}")
-set(COMPLETE_INSTALL_DEPENDENCIES
-  ${SETTINGS_INSTALL_COMPONENT}
-  ${PYTHON_INSTALL_COMPONENT}
-  ${TOOLS_INSTALL_COMPONENT}
-  ${SERVER_INSTALL_COMPONENT}
-)
 
 #-------------------------------------------------------------------------------
 
