@@ -8,7 +8,7 @@
 #include "netconfig-signals.h++"
 #include "thread/signaltemplate.h++"
 
-namespace platform::netconfig
+namespace netconfig
 {
     core::signal::DataSignal<GlobalData::ptr> signal_globaldata(
         "GlobalData",
@@ -29,4 +29,4 @@ namespace platform::netconfig
     core::signal::MappingSignal<DeviceData::ptr> signal_device(
         "Device",
         true);
-}  // namespace platform::netconfig
+}  // namespace netconfig

@@ -35,11 +35,11 @@ void Options::initialize()
     logf_debug("Creating VFS client");
     if (this->local)
     {
-        platform::vfs::local::register_providers();
+        vfs::local::register_providers();
     }
     else
     {
-        platform::vfs::grpc::register_providers(this->host);
+        vfs::grpc::register_providers(this->host);
     }
     core::platform::signal_shutdown.connect(
         this->signal_handle,
@@ -52,11 +52,11 @@ void Options::deinitialize()
     logf_debug("Shutting down VFS configuration client");
     if (this->local)
     {
-        platform::vfs::local::unregister_providers();
+        vfs::local::unregister_providers();
     }
     else
     {
-        platform::vfs::grpc::unregister_providers();
+        vfs::grpc::unregister_providers();
     }
 }
 
@@ -77,14 +77,14 @@ void Options::on_monitor_start()
 
     if (show_context != except)
     {
-        platform::vfs::signal_context.connect(
+        vfs::signal_context.connect(
             this->signal_handle,
             std::bind(&Options::on_context, this, _1, _2, _3));
     }
 
     if (show_context_in_use != except)
     {
-        platform::vfs::signal_context_in_use.connect(
+        vfs::signal_context_in_use.connect(
             this->signal_handle,
             std::bind(&Options::on_context_in_use, this, _1, _2, _3));
     }
@@ -92,14 +92,14 @@ void Options::on_monitor_start()
 
 void Options::on_monitor_end()
 {
-    platform::vfs::signal_context_in_use.disconnect(this->signal_handle);
-    platform::vfs::signal_context.disconnect(this->signal_handle);
+    vfs::signal_context_in_use.disconnect(this->signal_handle);
+    vfs::signal_context.disconnect(this->signal_handle);
 }
 
 void Options::on_context(
     core::signal::MappingAction action,
     const std::string &key,
-    const platform::vfs::Context::ptr &cxt)
+    const vfs::Context::ptr &cxt)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_context(%s, %s, %s)\n",
@@ -112,7 +112,7 @@ void Options::on_context(
 void Options::on_context_in_use(
     core::signal::MappingAction action,
     const std::string &key,
-    const platform::vfs::Context::ptr &cxt)
+    const vfs::Context::ptr &cxt)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_context_in_use(%s, %s, %s)\n",

@@ -9,7 +9,7 @@
 #include "settings/settingsstore.h++"
 #include "status/exceptions.h++"
 
-namespace platform::upgrade::native
+namespace upgrade::native
 {
     constexpr auto SETTING_PRODUCT = "product";
     constexpr auto SETTING_PRODUCT_MATCH = "product match";
@@ -72,7 +72,7 @@ namespace platform::upgrade::native
 
     void NativePackageInfo::check_applicable() const
     {
-        platform::sysconfig::ProductInfo pi = platform::sysconfig::product->get_product_info();
+        sysconfig::ProductInfo pi = sysconfig::product->get_product_info();
         if (!this->is_applicable_product(pi.product_name))
         {
             throw core::exception::FailedPrecondition(
@@ -201,4 +201,4 @@ namespace platform::upgrade::native
 
         return false;
     }
-}  // namespace platform::upgrade::native
+}  // namespace upgrade::native

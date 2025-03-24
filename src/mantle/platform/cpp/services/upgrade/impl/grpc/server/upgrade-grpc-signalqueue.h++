@@ -9,7 +9,7 @@
 #include "upgrade.pb.h"  // generated from `upgrade.proto`
 #include "grpc-signalqueue.h++"
 
-namespace platform::upgrade::grpc
+namespace upgrade::grpc
 {
     //==========================================================================
     /// @class SignalQueue
@@ -24,13 +24,13 @@ namespace platform::upgrade::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<cc::platform::upgrade::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<::cc::upgrade::Signal>
     {
-        using Super = core::grpc::SignalQueue<cc::platform::upgrade::Signal>;
+        using Super = core::grpc::SignalQueue<::cc::upgrade::Signal>;
 
     public:
         using Super::Super;
         void initialize() override;
         void deinitialize() override;
     };
-}  // namespace platform::upgrade::grpc
+}  // namespace upgrade::grpc

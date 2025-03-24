@@ -8,7 +8,7 @@
 #include "vfs.h++"
 #include <fstream>
 
-namespace platform::vfs
+namespace vfs
 {
     //==========================================================================
     // Public API
@@ -334,4 +334,4 @@ namespace platform::vfs
     {
         return vfs->clear_attributes(vpath);
     }
-}  // namespace platform::vfs
+}  // namespace vfs

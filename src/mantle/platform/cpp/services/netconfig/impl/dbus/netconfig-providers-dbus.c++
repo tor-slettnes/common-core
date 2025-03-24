@@ -10,7 +10,7 @@
 
 #include "giomm/init.h"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     void register_providers()
     {
@@ -23,4 +23,4 @@ namespace platform::netconfig::dbus
     {
         network.unregisterProvider<DBusProvider>();
     }
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

@@ -11,7 +11,7 @@
 #include "types/value.h++"
 #include "status/exceptions.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     Connection::Connection(
         core::dbus::ProxyContainer *container,
@@ -199,4 +199,4 @@ namespace platform::netconfig::dbus
             }
         }
     }
-} // namespace platform::netconfig::dbus
+} // namespace netconfig::dbus

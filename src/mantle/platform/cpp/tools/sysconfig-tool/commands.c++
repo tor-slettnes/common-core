@@ -176,7 +176,7 @@ void Options::get_time()
     core::str::format(
         std::cout,
         format + "\n",
-        platform::sysconfig::time->get_current_time());
+        sysconfig::time->get_current_time());
 }
 
 void Options::set_time()
@@ -184,32 +184,32 @@ void Options::set_time()
     auto value = core::types::Value::from_literal(this->get_arg("timestamp"));
     core::dt::TimePoint tp = value.as_timepoint();
     core::str::format(std::cout, "Setting timepoint: %.3Z\n", tp);
-    platform::sysconfig::time->set_current_time(tp);
+    sysconfig::time->set_current_time(tp);
 }
 
 void Options::set_ntp()
 {
     bool enable = core::str::convert_to<bool>(this->get_arg("ON or OFF"));
-    platform::sysconfig::TimeConfig config = {
-        .synchronization = (enable ? platform::sysconfig::TSYNC_NTP
-                                   : platform::sysconfig::TSYNC_NONE),
+    sysconfig::TimeConfig config = {
+        .synchronization = (enable ? sysconfig::TSYNC_NTP
+                                   : sysconfig::TSYNC_NONE),
     };
 
-    platform::sysconfig::time->set_time_config(config);
+    sysconfig::time->set_time_config(config);
 }
 
 void Options::get_ntp()
 {
     this->report_status_and_exit(
-        platform::sysconfig::time->get_time_config().synchronization == platform::sysconfig::TSYNC_NTP);
+        sysconfig::time->get_time_config().synchronization == sysconfig::TSYNC_NTP);
 
-    // this->report_status_and_exit(platform::sysconfig::time->get_ntp());
+    // this->report_status_and_exit(sysconfig::time->get_ntp());
 }
 
 void Options::list_timezone_areas()
 {
-    for (const platform::sysconfig::TimeZoneArea &area :
-         platform::sysconfig::timezone->list_timezone_areas())
+    for (const sysconfig::TimeZoneArea &area :
+         sysconfig::timezone->list_timezone_areas())
     {
         std::cout << area << std::endl;
     }
@@ -218,8 +218,8 @@ void Options::list_timezone_areas()
 void Options::list_timezone_countries()
 {
     std::string area = this->next_arg().value_or("");
-    for (const platform::sysconfig::TimeZoneCountry &country :
-         platform::sysconfig::timezone->list_timezone_countries(area))
+    for (const sysconfig::TimeZoneCountry &country :
+         sysconfig::timezone->list_timezone_countries(area))
     {
         std::cout << country << std::endl;
     }
@@ -230,7 +230,7 @@ void Options::list_timezone_regions()
     std::string country = this->get_arg("country");
     std::string area = this->next_arg().value_or("");
 
-    platform::sysconfig::TimeZoneLocationFilter filter = {
+    sysconfig::TimeZoneLocationFilter filter = {
         .area = area,
         .country = {
             .code = (country.size() == 2) ? country : "",
@@ -238,8 +238,8 @@ void Options::list_timezone_regions()
         },
     };
 
-    for (const platform::sysconfig::TimeZoneRegion &region :
-         platform::sysconfig::timezone->list_timezone_regions(filter))
+    for (const sysconfig::TimeZoneRegion &region :
+         sysconfig::timezone->list_timezone_regions(filter))
     {
         std::cout << region << std::endl;
     }
@@ -250,7 +250,7 @@ void Options::list_timezone_specs()
     std::string area = this->next_arg().value_or("");
     std::string country = this->next_arg().value_or("");
 
-    platform::sysconfig::TimeZoneLocationFilter filter = {
+    sysconfig::TimeZoneLocationFilter filter = {
         .area = area,
         .country = {
             .code = (country.size() == 2) ? country : "",
@@ -258,8 +258,8 @@ void Options::list_timezone_specs()
         },
     };
 
-    for (const platform::sysconfig::TimeZoneCanonicalSpec &spec :
-         platform::sysconfig::timezone->list_timezone_specs(filter))
+    for (const sysconfig::TimeZoneCanonicalSpec &spec :
+         sysconfig::timezone->list_timezone_specs(filter))
     {
         std::cout << spec << std::endl;
     }
@@ -268,7 +268,7 @@ void Options::list_timezone_specs()
 void Options::get_timezone_spec()
 {
     std::string zonename = this->next_arg().value_or("");
-    std::cout << platform::sysconfig::timezone->get_timezone_spec(zonename)
+    std::cout << sysconfig::timezone->get_timezone_spec(zonename)
               << std::endl;
 }
 
@@ -276,8 +276,8 @@ void Options::set_timezone_by_name()
 {
     std::string zonename = this->get_arg("time zone");
 
-    platform::sysconfig::TimeZoneInfo result =
-        platform::sysconfig::timezone->set_timezone(zonename);
+    sysconfig::TimeZoneInfo result =
+        sysconfig::timezone->set_timezone(zonename);
 
     std::cout << result << std::endl;
 }
@@ -287,7 +287,7 @@ void Options::set_timezone_by_location()
     std::string country = this->get_arg("country");
     std::string region = this->next_arg().value_or("");
 
-    platform::sysconfig::TimeZoneLocation location = {
+    sysconfig::TimeZoneLocation location = {
         .country = {
             .code = country.size() == 2 ? country : "",
             .name = country.size() != 2 ? country : "",
@@ -295,8 +295,8 @@ void Options::set_timezone_by_location()
         .region = region,
     };
 
-    platform::sysconfig::TimeZoneInfo result =
-        platform::sysconfig::timezone->set_timezone(location);
+    sysconfig::TimeZoneInfo result =
+        sysconfig::timezone->set_timezone(location);
 
     std::cout << result << std::endl;
 }
@@ -312,44 +312,44 @@ void Options::get_timezone_info()
         tp = value.as_timepoint();
     }
 
-    std::cout << platform::sysconfig::timezone->get_timezone_info(zonename, tp)
+    std::cout << sysconfig::timezone->get_timezone_info(zonename, tp)
               << std::endl;
 }
 
 void Options::get_host_info()
 {
-    std::cout << platform::sysconfig::host->get_host_info()
+    std::cout << sysconfig::host->get_host_info()
               << std::endl;
 }
 
 void Options::set_host_name()
 {
     std::string hostname = this->get_arg("NAME");
-    platform::sysconfig::host->set_host_name(hostname);
+    sysconfig::host->set_host_name(hostname);
 }
 
 void Options::get_product_info()
 {
-    std::cout << platform::sysconfig::product->get_product_info()
+    std::cout << sysconfig::product->get_product_info()
               << std::endl;
 }
 void Options::set_serial_number()
 {
     std::string serial = this->get_arg("SERIAL_NUMBER");
-    platform::sysconfig::product->set_serial_number(serial);
+    sysconfig::product->set_serial_number(serial);
 }
 
 void Options::set_model_name()
 {
     std::string model = this->get_arg("MODEL_NAME");
-    platform::sysconfig::product->set_model_name(model);
+    sysconfig::product->set_model_name(model);
 }
 
 void Options::invoke_sync()
 {
     std::string command = this->get_arg("COMMAND");
 
-    core::platform::InvocationResult result = platform::sysconfig::process->invoke_sync(
+    core::platform::InvocationResult result = sysconfig::process->invoke_sync(
         {.argv = this->args},  // invocation
         {});                   // input
 
@@ -369,7 +369,7 @@ void Options::invoke_sync()
 void Options::invoke_async()
 {
     std::string command = this->get_arg("COMMAND");
-    core::platform::PID pid = platform::sysconfig::process->invoke_async(
+    core::platform::PID pid = sysconfig::process->invoke_async(
         {.argv = this->args},  // invocation
         {});                   // input
 
@@ -380,7 +380,7 @@ void Options::invoke_finish()
 {
     auto pid = core::str::convert_to<core::platform::PID>(this->get_arg("PID"));
 
-    core::platform::InvocationResult result = platform::sysconfig::process->invoke_finish(
+    core::platform::InvocationResult result = sysconfig::process->invoke_finish(
         pid,
         {});
 
@@ -399,5 +399,5 @@ void Options::invoke_finish()
 
 void Options::reboot()
 {
-    platform::sysconfig::host->reboot();
+    sysconfig::host->reboot();
 }

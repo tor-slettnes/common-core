@@ -11,7 +11,7 @@
 
 #include "http-client.h++"
 
-namespace platform::upgrade::native
+namespace upgrade::native
 {
     class URLPackageHandler : public PackageHandler,
                               public core::types::enable_create_shared<URLPackageHandler>
@@ -35,4 +35,4 @@ namespace platform::upgrade::native
         static core::http::HTTPClient::ReceiveFunction piper(
             core::platform::FileDescriptor fd);
     };
-}  // namespace platform::upgrade::native
+}  // namespace upgrade::native

@@ -7,7 +7,7 @@
 
 #include "upgrade-types.h++"
 
-namespace platform::upgrade
+namespace upgrade
 {
     //==========================================================================
     // PackageSource
@@ -227,18 +227,18 @@ namespace platform::upgrade
         {STATE_FAILED, "FAILED"},
         {STATE_FINALIZED, "FINALIZED"},
     };
-}  // namespace platform::upgrade
+}  // namespace upgrade
 
 namespace std
 {
     std::ostream &operator<<(std::ostream &stream,
-                             const platform::upgrade::Location &location)
+                             const upgrade::Location &location)
     {
-        if (auto *vpath = std::get_if<platform::vfs::Path>(&location))
+        if (auto *vpath = std::get_if<vfs::Path>(&location))
         {
             stream << "{vfs_path=" << *vpath << "}";
         }
-        else if (auto *url = std::get_if<platform::upgrade::URL>(&location))
+        else if (auto *url = std::get_if<upgrade::URL>(&location))
         {
             stream << "{url=" << *url << "}";
         }

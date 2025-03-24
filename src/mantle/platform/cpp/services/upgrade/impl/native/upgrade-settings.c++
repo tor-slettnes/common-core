@@ -9,7 +9,7 @@
 #include "platform/init.h++"
 #include "status/exceptions.h++"
 
-namespace platform::upgrade::native
+namespace upgrade::native
 {
     core::SettingsStore::ptr settings;
 
@@ -26,4 +26,4 @@ namespace platform::upgrade::native
         }
     }
 
-}  // namespace platform::upgrade::native
+}  // namespace upgrade::native

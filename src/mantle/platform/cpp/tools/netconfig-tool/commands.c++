@@ -82,12 +82,12 @@ void Options::add_commands()
 
 void Options::get_state()
 {
-    std::cout << platform::netconfig::network->get_global_data() << std::endl;
+    std::cout << netconfig::network->get_global_data() << std::endl;
 }
 
 void Options::get_devices()
 {
-    for (const auto &kv : platform::netconfig::network->get_devices())
+    for (const auto &kv : netconfig::network->get_devices())
     {
         core::str::format(std::cout, "%10s: %s\n", kv.first, kv.second);
     }
@@ -95,7 +95,7 @@ void Options::get_devices()
 
 void Options::get_connections()
 {
-    for (const auto &kv : platform::netconfig::network->get_connections())
+    for (const auto &kv : netconfig::network->get_connections())
     {
         core::str::format(std::cout, "%10s: %s\n", kv.first, kv.second);
     }
@@ -111,18 +111,18 @@ void Options::define_connection()
 void Options::remove_connection()
 {
     std::string name = this->get_arg("connection name");
-    platform::netconfig::network->remove_connection(name);
+    netconfig::network->remove_connection(name);
 }
 
 void Options::activate_connection()
 {
     std::string name = this->get_arg("connection name");
-    platform::netconfig::network->activate_connection(name);
+    netconfig::network->activate_connection(name);
 }
 
 void Options::get_active_connections()
 {
-    for (const auto &[name, conn] : platform::netconfig::network->get_active_connections())
+    for (const auto &[name, conn] : netconfig::network->get_active_connections())
     {
         core::str::format(std::cout, "%20s: %s\n", name, conn);
     }
@@ -130,12 +130,12 @@ void Options::get_active_connections()
 
 void Options::request_scan()
 {
-    platform::netconfig::network->request_scan();
+    netconfig::network->request_scan();
 }
 
 void Options::get_aps()
 {
-    for (const auto &[name, ap] : platform::netconfig::network->get_aps())
+    for (const auto &[name, ap] : netconfig::network->get_aps())
     {
         core::str::format(std::cout, "%16s: %s\n", name, ap);
     }
@@ -150,11 +150,11 @@ void Options::connect_ap()
 void Options::set_wireless_allowed()
 {
     std::string allowed = this->get_arg("boolean value");
-    platform::netconfig::network->set_wireless_allowed(core::str::convert_to<bool>(allowed));
+    netconfig::network->set_wireless_allowed(core::str::convert_to<bool>(allowed));
 }
 
 void Options::set_wireless_enabled()
 {
     std::string enabled = this->get_arg("boolean value");
-    platform::netconfig::network->set_wireless_enabled(core::str::convert_to<bool>(enabled));
+    netconfig::network->set_wireless_enabled(core::str::convert_to<bool>(enabled));
 }

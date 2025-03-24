@@ -12,7 +12,7 @@
 #include "io/streambuffer.h++"
 #include "grpc-status.h++"
 
-namespace platform::vfs::grpc
+namespace vfs::grpc
 {
     //==========================================================================
     /// @class ClientBuffer
@@ -37,7 +37,7 @@ namespace platform::vfs::grpc
     {
         using Super = ClientBuffer;
     public:
-        using Reader = std::unique_ptr<::grpc::ClientReader<cc::platform::vfs::FileChunk>>;
+        using Reader = std::unique_ptr<::grpc::ClientReader<::cc::vfs::FileChunk>>;
 
     public:
         ClientInputBuffer(Reader &&reader);
@@ -54,7 +54,7 @@ namespace platform::vfs::grpc
     {
         using Super = ClientBuffer;
     public:
-        using Writer = std::unique_ptr<::grpc::ClientWriter<cc::platform::vfs::FileChunk>>;
+        using Writer = std::unique_ptr<::grpc::ClientWriter<::cc::vfs::FileChunk>>;
 
     public:
         ClientOutputBuffer(Writer &&writer, const Path &vpath);
@@ -75,7 +75,7 @@ namespace platform::vfs::grpc
 
     class ClientInputStream : public std::istream
     {
-        using ClientStub = cc::platform::vfs::VirtualFileSystem::Stub;
+        using ClientStub = ::cc::vfs::VirtualFileSystem::Stub;
 
     public:
         ClientInputStream(const std::unique_ptr<ClientStub> &stub,
@@ -93,7 +93,7 @@ namespace platform::vfs::grpc
 
     class ClientOutputStream : public std::ostream
     {
-        using ClientStub = cc::platform::vfs::VirtualFileSystem::Stub;
+        using ClientStub = ::cc::vfs::VirtualFileSystem::Stub;
 
     public:
         ClientOutputStream(const std::unique_ptr<ClientStub> &stub,
@@ -106,4 +106,4 @@ namespace platform::vfs::grpc
         std::unique_ptr<::grpc::ClientContext> cxt;
         ClientOutputBuffer output_buffer;
     };
-}  // namespace platform::vfs::grpc
+}  // namespace vfs::grpc

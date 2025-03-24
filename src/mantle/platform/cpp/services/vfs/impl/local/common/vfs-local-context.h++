@@ -10,7 +10,7 @@
 
 #include <mutex>
 
-namespace platform::vfs::local
+namespace vfs::local
 {
     //==========================================================================
     // LocalContext
@@ -45,4 +45,4 @@ namespace platform::vfs::local
     private:
         std::mutex mtx;
     };
-}  // namespace platform::vfs::local
+}  // namespace vfs::local

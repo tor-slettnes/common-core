@@ -11,7 +11,7 @@
 #include "chrono/date-time.h++"
 #include "thread/signaltemplate.h++"
 
-namespace platform::sysconfig
+namespace sysconfig
 {
     //==========================================================================
     // TimeSync
@@ -71,4 +71,4 @@ namespace platform::sysconfig
     extern core::signal::DataSignal<core::dt::TimePoint> signal_time;
     extern core::signal::DataSignal<TimeConfig> signal_timeconfig;
 
-}  // namespace platform::sysconfig
+}  // namespace sysconfig

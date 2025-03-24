@@ -10,7 +10,7 @@
 #include "nm-structs.h++"
 #include "types/bytevector.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     //==========================================================================
     /// Network Manager Connection Settings
@@ -56,4 +56,4 @@ namespace platform::netconfig::dbus
         // Glib::VariantContainerBase secrets;
     };
 
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

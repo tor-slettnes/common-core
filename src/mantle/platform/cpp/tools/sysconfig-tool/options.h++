@@ -27,11 +27,11 @@ private:
     void on_monitor_end() override;
 
     void on_time(const core::dt::TimePoint &tp);
-    void on_time_config(const platform::sysconfig::TimeConfig &tc);
+    void on_time_config(const sysconfig::TimeConfig &tc);
     void on_tz_info(const core::dt::TimeZoneInfo &ti);
-    void on_tz_config(const platform::sysconfig::TimeZoneCanonicalName &zone);
-    void on_hostinfo(const platform::sysconfig::HostInfo &hi);
-    void on_productinfo(const platform::sysconfig::ProductInfo &pi);
+    void on_tz_config(const sysconfig::TimeZoneCanonicalName &zone);
+    void on_hostinfo(const sysconfig::HostInfo &hi);
+    void on_productinfo(const sysconfig::ProductInfo &pi);
 
     void get_time();
     void set_time();

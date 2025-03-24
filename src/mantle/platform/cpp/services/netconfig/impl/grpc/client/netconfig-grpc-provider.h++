@@ -9,7 +9,7 @@
 #include "netconfig.h++"
 #include "netconfig-grpc-client.h++"
 
-namespace platform::netconfig::grpc
+namespace netconfig::grpc
 {
     class ClientProvider : public ProviderInterface
     {
@@ -75,4 +75,4 @@ namespace platform::netconfig::grpc
         std::shared_ptr<Client> client;
         bool use_cached;
     };
-}  // namespace platform::netconfig::grpc
+}  // namespace netconfig::grpc

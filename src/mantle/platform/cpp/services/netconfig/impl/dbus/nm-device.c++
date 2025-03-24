@@ -11,7 +11,7 @@
 #include "netconfig.h++"
 #include "status/exceptions.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     //==========================================================================
     /// Network Manager device
@@ -258,4 +258,4 @@ namespace platform::netconfig::dbus
         logf_info("Disconnecting device %s (%s)", this->identifier(), this->key());
         this->call_sync("Disconnect");
     }
-} // namespace platform::netconfig::dbus
+} // namespace netconfig::dbus

@@ -11,7 +11,7 @@
 #include "chrono/date-time.h++"
 #include "thread/signaltemplate.h++"
 
-namespace platform::sysconfig
+namespace sysconfig
 {
     //======================================================================
     // Time Zone Area/Location aliases
@@ -150,4 +150,4 @@ namespace platform::sysconfig
     extern core::signal::DataSignal<TimeZoneInfo> signal_tzinfo;
     extern core::signal::DataSignal<TimeZoneCanonicalName> signal_tzconfig;
 
-}  // namespace platform::sysconfig
+}  // namespace sysconfig

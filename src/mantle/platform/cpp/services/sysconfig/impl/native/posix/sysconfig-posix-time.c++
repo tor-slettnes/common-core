@@ -8,7 +8,7 @@
 #include "sysconfig-posix-time.h++"
 #include "status/exceptions.h++"
 
-namespace platform::sysconfig::native
+namespace sysconfig::native
 {
     TimeConfig PosixTimeConfigProvider::get_time_config() const
     {
@@ -50,4 +50,4 @@ namespace platform::sysconfig::native
         throw core::exception::UnsupportedError(
             "get_ntp_servers() is not implemented on this platform");
     }
-}  // namespace platform::sysconfig::native
+}  // namespace sysconfig::native

@@ -8,7 +8,7 @@
 #pragma once
 #include "nm-wrappers.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     //==========================================================================
     /// Network Manager IP Configuration (Base for IPv4 and IPv6)
@@ -68,4 +68,4 @@ namespace platform::netconfig::dbus
             const Glib::VariantBase& change);
     };
 
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

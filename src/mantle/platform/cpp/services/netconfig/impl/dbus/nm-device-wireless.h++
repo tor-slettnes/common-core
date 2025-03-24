@@ -9,7 +9,7 @@
 #include "nm-wrappers.h++"
 #include "nm-accesspoint.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     //==========================================================================
     /// Network Manager WiFi device
@@ -65,4 +65,4 @@ namespace platform::netconfig::dbus
         std::set<core::dbus::ObjectPath> accesspoints;
     };
 
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

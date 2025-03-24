@@ -9,7 +9,7 @@
 #include "netconfig.pb.h"  // generated from `netconfig.proto`
 #include "grpc-signalqueue.h++"
 
-namespace platform::netconfig::grpc
+namespace netconfig::grpc
 {
     //==========================================================================
     /// @class SignalQueue
@@ -24,13 +24,13 @@ namespace platform::netconfig::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<cc::platform::netconfig::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<::cc::netconfig::Signal>
     {
-        using Super = core::grpc::SignalQueue<cc::platform::netconfig::Signal>;
+        using Super = core::grpc::SignalQueue<::cc::netconfig::Signal>;
 
     public:
         using Super::Super;
         void initialize() override;
         void deinitialize() override;
     };
-}  // namespace platform::netconfig::grpc
+}  // namespace netconfig::grpc

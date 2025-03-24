@@ -10,11 +10,11 @@
 #include "grpc-signalclient.h++"
 #include "types/create-shared.h++"
 
-namespace platform::vfs::grpc
+namespace vfs::grpc
 {
     using ClientBaseImpl = core::grpc::SignalClient<
-        ::cc::platform::vfs::VirtualFileSystem,
-        ::cc::platform::vfs::Signal>;
+        ::cc::vfs::VirtualFileSystem,
+        ::cc::vfs::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>
@@ -26,4 +26,4 @@ namespace platform::vfs::grpc
         using Super::Super;
     };
 
-}  // namespace platform::vfs::grpc
+}  // namespace vfs::grpc

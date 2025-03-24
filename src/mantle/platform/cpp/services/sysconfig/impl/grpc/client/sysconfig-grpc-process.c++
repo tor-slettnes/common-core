@@ -9,7 +9,7 @@
 #include "protobuf-sysconfig-types.h++"
 #include "protobuf-inline.h++"
 
-namespace platform::sysconfig::grpc
+namespace sysconfig::grpc
 {
     ProcessProvider::ProcessProvider(const std::shared_ptr<Client> &client)
         : Super(TYPE_NAME_FULL(This)),
@@ -28,7 +28,7 @@ namespace platform::sysconfig::grpc
         return protobuf::decoded<InvocationResult>(
             this->client->call_check(
                 &Client::Stub::invoke_sync,
-                protobuf::encoded<::cc::platform::sysconfig::CommandInvocation>(
+                protobuf::encoded<::cc::sysconfig::CommandInvocation>(
                     invocation,
                     input)));
     }
@@ -40,7 +40,7 @@ namespace platform::sysconfig::grpc
         return protobuf::decoded<core::platform::PID>(
             this->client->call_check(
                 &Client::Stub::invoke_async,
-                protobuf::encoded<::cc::platform::sysconfig::CommandInvocation>(
+                protobuf::encoded<::cc::sysconfig::CommandInvocation>(
                     invocation,
                     input)));
     }
@@ -52,9 +52,9 @@ namespace platform::sysconfig::grpc
         return protobuf::decoded<InvocationResult>(
             this->client->call_check(
                 &Client::Stub::invoke_finish,
-                protobuf::encoded<::cc::platform::sysconfig::CommandContinuation>(
+                protobuf::encoded<::cc::sysconfig::CommandContinuation>(
                     pid,
                     input)));
     }
 
-}  // namespace platform::sysconfig::grpc
+}  // namespace sysconfig::grpc

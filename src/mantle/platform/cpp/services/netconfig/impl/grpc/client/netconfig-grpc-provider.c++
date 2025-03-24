@@ -11,7 +11,7 @@
 #include "protobuf-inline.h++"
 #include "thread/signaltemplate.h++"
 
-namespace platform::netconfig::grpc
+namespace netconfig::grpc
 {
     ClientProvider::ClientProvider(const std::shared_ptr<Client> &client,
                                    bool use_cached)
@@ -32,53 +32,53 @@ namespace platform::netconfig::grpc
         using namespace std::placeholders;
 
         this->client->add_mapping_handler(
-            cc::platform::netconfig::Signal::kConnection,
+            ::cc::netconfig::Signal::kConnection,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::platform::netconfig::Signal &signal) {
-                platform::netconfig::signal_connection.emit(
+               const ::cc::netconfig::Signal &signal) {
+                netconfig::signal_connection.emit(
                     action,
                     key,
                     protobuf::decoded_shared<ConnectionData>(signal.connection()));
             });
 
         this->client->add_mapping_handler(
-            cc::platform::netconfig::Signal::kActiveConnection,
+            ::cc::netconfig::Signal::kActiveConnection,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::platform::netconfig::Signal &signal) {
-                platform::netconfig::signal_active_connection.emit(
+               const ::cc::netconfig::Signal &signal) {
+                netconfig::signal_active_connection.emit(
                     action,
                     key,
                     protobuf::decoded_shared<ActiveConnectionData>(signal.active_connection()));
             });
 
         this->client->add_mapping_handler(
-            cc::platform::netconfig::Signal::kAccesspoint,
+            ::cc::netconfig::Signal::kAccesspoint,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::platform::netconfig::Signal &signal) {
-                platform::netconfig::signal_accesspoint.emit(
+               const ::cc::netconfig::Signal &signal) {
+                netconfig::signal_accesspoint.emit(
                     action,
                     key,
                     protobuf::decoded_shared<AccessPointData>(signal.accesspoint()));
             });
 
         this->client->add_mapping_handler(
-            cc::platform::netconfig::Signal::kDevice,
+            ::cc::netconfig::Signal::kDevice,
             [](core::signal::MappingAction action,
                const std::string &key,
-               const cc::platform::netconfig::Signal &signal) {
-                platform::netconfig::signal_device.emit(
+               const ::cc::netconfig::Signal &signal) {
+                netconfig::signal_device.emit(
                     action,
                     key,
                     protobuf::decoded_shared<DeviceData>(signal.device()));
             });
 
         this->client->add_handler(
-            cc::platform::netconfig::Signal::kGlobal,
-            [](const cc::platform::netconfig::Signal &signal) {
-                platform::netconfig::signal_globaldata.emit(
+            ::cc::netconfig::Signal::kGlobal,
+            [](const ::cc::netconfig::Signal &signal) {
+                netconfig::signal_globaldata.emit(
                     protobuf::decoded_shared<GlobalData>(signal.global()));
             });
     }
@@ -129,7 +129,7 @@ namespace platform::netconfig::grpc
         const ConnectionData &connection,
         bool activate)
     {
-        cc::platform::netconfig::ConnectionRequest request;
+        ::cc::netconfig::ConnectionRequest request;
         protobuf::encode(connection, request.mutable_data());
         request.set_activate(activate);
         this->client->call_check(&Client::Stub::define_connection, request);
@@ -137,7 +137,7 @@ namespace platform::netconfig::grpc
 
     bool ClientProvider::remove_connection(const Key &key)
     {
-        cc::platform::netconfig::MappingKey req;
+        ::cc::netconfig::MappingKey req;
         req.set_key(key);
         return protobuf::decoded<bool>(
             this->client->call_check(
@@ -146,14 +146,14 @@ namespace platform::netconfig::grpc
 
     void ClientProvider::activate_connection(const Key &key)
     {
-        cc::platform::netconfig::MappingKey req;
+        ::cc::netconfig::MappingKey req;
         req.set_key(key);
         this->client->call_check(&Client::Stub::activate_connection, req);
     }
 
     void ClientProvider::deactivate_connection(const Key &key)
     {
-        cc::platform::netconfig::MappingKey req;
+        ::cc::netconfig::MappingKey req;
         req.set_key(key);
         this->client->call_check(&Client::Stub::deactivate_connection, req);
     }
@@ -198,7 +198,7 @@ namespace platform::netconfig::grpc
     void ClientProvider::connect_ap(const Key &bssid,
                                     const ConnectionData &connection)
     {
-        cc::platform::netconfig::AccessPointConnection req;
+        ::cc::netconfig::AccessPointConnection req;
         req.set_bssid(bssid);
         protobuf::encode(connection, req.mutable_connection());
         this->client->call_check(&Client::Stub::connect_ap, req);
@@ -207,7 +207,7 @@ namespace platform::netconfig::grpc
     void ClientProvider::connect_ap(const core::types::ByteVector &ssid,
                                     const ConnectionData &connection)
     {
-        cc::platform::netconfig::AccessPointConnection req;
+        ::cc::netconfig::AccessPointConnection req;
         req.set_ssid(ssid.data(), ssid.size());
         protobuf::encode(connection, req.mutable_connection());
         this->client->call_check(&Client::Stub::connect_ap, req);
@@ -250,7 +250,7 @@ namespace platform::netconfig::grpc
 
     void ClientProvider::set_wireless_enabled(bool enabled)
     {
-        cc::platform::netconfig::RadioState req;
+        ::cc::netconfig::RadioState req;
         req.set_wireless_enabled(enabled);
         logf_debug("Setting wireless radio switch: %b", enabled);
         this->client->call_check(&Client::Stub::set_wireless_enabled, req);
@@ -267,11 +267,11 @@ namespace platform::netconfig::grpc
     void ClientProvider::select_wireless_band(WirelessBandSelection band_selection)
     {
         logf_debug("Selecting wireless band: %s", band_selection);
-        cc::platform::netconfig::WirelessBandSetting req;
+        ::cc::netconfig::WirelessBandSetting req;
         req.set_band_selection(
-            protobuf::encoded<cc::platform::netconfig::WirelessBandSelection>(band_selection));
+            protobuf::encoded<::cc::netconfig::WirelessBandSelection>(band_selection));
 
         this->client->call_check(&Client::Stub::select_wireless_band, req);
     }
 
-}  // namespace platform::netconfig::grpc
+}  // namespace netconfig::grpc

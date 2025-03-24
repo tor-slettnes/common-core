@@ -11,7 +11,7 @@
 #include "vfs-location.h++"
 #include "vfs-signals.h++"
 
-namespace platform::vfs
+namespace vfs
 {
     //==========================================================================
     // Provider
@@ -139,4 +139,4 @@ namespace platform::vfs
 
     extern core::platform::ProviderProxy<ProviderInterface> vfs;
 
-}  // namespace platform::vfs
+}  // namespace vfs

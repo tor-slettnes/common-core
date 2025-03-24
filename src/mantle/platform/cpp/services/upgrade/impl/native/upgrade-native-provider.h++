@@ -17,7 +17,7 @@
 #include <mutex>
 #include <chrono>
 
-namespace platform::upgrade::native
+namespace upgrade::native
 {
     class NativeProvider : public ProviderInterface
     {
@@ -55,13 +55,13 @@ namespace platform::upgrade::native
 
         void on_vfs_context(
             core::signal::MappingAction action,
-            const platform::vfs::ContextName &name,
-            const platform::vfs::Context::ptr &context);
+            const vfs::ContextName &name,
+            const vfs::Context::ptr &context);
 
         void on_vfs_context_in_use(
             core::signal::MappingAction action,
-            const platform::vfs::ContextName &name,
-            const platform::vfs::Context::ptr &context);
+            const vfs::ContextName &name,
+            const vfs::Context::ptr &context);
 
     private:
         std::shared_ptr<core::SettingsStore> settings;
@@ -69,9 +69,9 @@ namespace platform::upgrade::native
         std::string default_url;
         std::chrono::system_clock::duration scan_interval;
         uint scan_retries;
-        core::types::shared_ptr_map<platform::vfs::Path, VFSPackageIndex> vfs_indices;
+        core::types::shared_ptr_map<vfs::Path, VFSPackageIndex> vfs_indices;
         core::types::shared_ptr_map<URL, URLPackageIndex> url_indices;
         core::types::UniqueLock install_lock;
         PackageInfo::ptr installed_package_info;
     };
-}  // namespace platform::upgrade::native
+}  // namespace upgrade::native

@@ -11,7 +11,7 @@
 #include "settings/settingsstore.h++"
 #include "types/filesystem.h++"
 
-namespace platform::vfs::local
+namespace vfs::local
 {
 
     //==========================================================================
@@ -54,4 +54,4 @@ namespace platform::vfs::local
         fs::path filepath;
         bool loaded;
     };
-}  // namespace platform::vfs::local
+}  // namespace vfs::local

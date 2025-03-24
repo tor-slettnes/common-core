@@ -9,7 +9,7 @@
 #include "sysconfig-product.h++"
 #include "settings/settingsstore.h++"
 
-namespace platform::sysconfig::native
+namespace sysconfig::native
 {
     class ProductProvider : public ProductInterface
     {
@@ -39,4 +39,4 @@ namespace platform::sysconfig::native
         core::SettingsStore::ptr release_settings;
         core::SettingsStore::ptr product_settings;
     };
-}  // namespace platform::sysconfig::native
+}  // namespace sysconfig::native

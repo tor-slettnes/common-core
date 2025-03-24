@@ -12,23 +12,23 @@
 namespace protobuf
 {
     //==========================================================================
-    // ::platform::netconfig::GlobalData
+    // ::netconfig::GlobalData
 
-    void encode(const ::platform::netconfig::GlobalData &data,
-                ::cc::platform::netconfig::GlobalData *msg) noexcept
+    void encode(const ::netconfig::GlobalData &data,
+                ::cc::netconfig::GlobalData *msg) noexcept
     {
-        msg->set_state(encoded<::cc::platform::netconfig::NetworkState>(data.state));
+        msg->set_state(encoded<::cc::netconfig::NetworkState>(data.state));
         msg->set_connectivity(
-            encoded<::cc::platform::netconfig::ConnectivityState>(data.connectivity));
+            encoded<::cc::netconfig::ConnectivityState>(data.connectivity));
         msg->set_wireless_hardware_enabled(data.wireless_hardware_enabled);
         msg->set_wireless_enabled(data.wireless_enabled);
         msg->set_wireless_allowed(data.wireless_allowed);
         msg->set_wireless_band_selection(
-            encoded<::cc::platform::netconfig::WirelessBandSelection>(data.wireless_band_selection));
+            encoded<::cc::netconfig::WirelessBandSelection>(data.wireless_band_selection));
     }
 
-    void decode(const ::cc::platform::netconfig::GlobalData &msg,
-                ::platform::netconfig::GlobalData *data) noexcept
+    void decode(const ::cc::netconfig::GlobalData &msg,
+                ::netconfig::GlobalData *data) noexcept
     {
         data->state = decoded<NMState>(msg.state());
         data->connectivity = decoded<NMConnectivityState>(msg.connectivity());
@@ -36,36 +36,36 @@ namespace protobuf
         data->wireless_enabled = msg.wireless_enabled();
         data->wireless_allowed = msg.wireless_allowed();
         data->wireless_band_selection =
-            decoded<::platform::netconfig::WirelessBandSelection>(msg.wireless_band_selection());
+            decoded<::netconfig::WirelessBandSelection>(msg.wireless_band_selection());
     }
 
     //==========================================================================
-    // ::platform::netconfig::IPConfig
+    // ::netconfig::IPConfig
 
-    void encode(const ::platform::netconfig::IPConfigData &config,
-                ::cc::platform::netconfig::IPConfigData *msg) noexcept
+    void encode(const ::netconfig::IPConfigData &config,
+                ::cc::netconfig::IPConfigData *msg) noexcept
     {
-        msg->set_method(encoded<::cc::platform::netconfig::IPConfigMethod>(config.method));
+        msg->set_method(encoded<::cc::netconfig::IPConfigMethod>(config.method));
 
-        for (const ::platform::netconfig::AddressData &data : config.address_data)
+        for (const ::netconfig::AddressData &data : config.address_data)
         {
             encode(data, msg->add_address_data());
         }
         msg->set_gateway(config.gateway);
-        for (const ::platform::netconfig::IPAddress &dns : config.dns)
+        for (const ::netconfig::IPAddress &dns : config.dns)
         {
             msg->add_dns(dns);
         }
-        for (const ::platform::netconfig::Domain &search : config.searches)
+        for (const ::netconfig::Domain &search : config.searches)
         {
             msg->add_searches(search);
         }
     }
 
-    void decode(const ::cc::platform::netconfig::IPConfigData &msg,
-                ::platform::netconfig::IPConfigData *config) noexcept
+    void decode(const ::cc::netconfig::IPConfigData &msg,
+                ::netconfig::IPConfigData *config) noexcept
     {
-        config->method = decoded<::platform::netconfig::IPConfigMethod>(msg.method());
+        config->method = decoded<::netconfig::IPConfigMethod>(msg.method());
         config->address_data.clear();
         config->gateway = msg.gateway();
         config->dns.clear();
@@ -86,42 +86,42 @@ namespace protobuf
     }
 
     //==========================================================================
-    // ::platform::netconfig::IPConfigMethod
+    // ::netconfig::IPConfigMethod
 
-    void encode(::platform::netconfig::IPConfigMethod method,
-                ::cc::platform::netconfig::IPConfigMethod *protomethod) noexcept
+    void encode(::netconfig::IPConfigMethod method,
+                ::cc::netconfig::IPConfigMethod *protomethod) noexcept
     {
-        *protomethod = static_cast<::cc::platform::netconfig::IPConfigMethod>(method);
+        *protomethod = static_cast<::cc::netconfig::IPConfigMethod>(method);
     }
 
-    void decode(::cc::platform::netconfig::IPConfigMethod protomethod,
-                ::platform::netconfig::IPConfigMethod *method) noexcept
+    void decode(::cc::netconfig::IPConfigMethod protomethod,
+                ::netconfig::IPConfigMethod *method) noexcept
     {
-        *method = static_cast<::platform::netconfig::IPConfigMethod>(protomethod);
+        *method = static_cast<::netconfig::IPConfigMethod>(protomethod);
     }
 
     //==========================================================================
-    // ::platform::netconfig::AddressData
+    // ::netconfig::AddressData
 
-    void encode(const ::platform::netconfig::AddressData &data,
-                ::cc::platform::netconfig::AddressData *msg) noexcept
+    void encode(const ::netconfig::AddressData &data,
+                ::cc::netconfig::AddressData *msg) noexcept
     {
         msg->set_address(data.address);
         msg->set_prefixlength(data.prefixlength);
     }
 
-    void decode(const ::cc::platform::netconfig::AddressData &msg,
-                ::platform::netconfig::AddressData *data) noexcept
+    void decode(const ::cc::netconfig::AddressData &msg,
+                ::netconfig::AddressData *data) noexcept
     {
         data->address = msg.address();
         data->prefixlength = msg.prefixlength();
     }
 
     //==========================================================================
-    // ::platform::netconfig::ConnectionMap
+    // ::netconfig::ConnectionMap
 
-    void encode(const ::platform::netconfig::ConnectionMap &map,
-                ::cc::platform::netconfig::ConnectionMap *msg) noexcept
+    void encode(const ::netconfig::ConnectionMap &map,
+                ::cc::netconfig::ConnectionMap *msg) noexcept
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[key, ref] : map)
@@ -130,21 +130,21 @@ namespace protobuf
         }
     }
 
-    void decode(const ::cc::platform::netconfig::ConnectionMap &msg,
-                ::platform::netconfig::ConnectionMap *map) noexcept
+    void decode(const ::cc::netconfig::ConnectionMap &msg,
+                ::netconfig::ConnectionMap *map) noexcept
     {
         for (const auto &[key, data] : msg.map())
         {
-            auto ref = (*map)[key] = std::make_shared<::platform::netconfig::ConnectionData>();
+            auto ref = (*map)[key] = std::make_shared<::netconfig::ConnectionData>();
             decode(data, ref.get());
         }
     }
 
     //==========================================================================
-    // ::platform::netconfig::ConnectionData
+    // ::netconfig::ConnectionData
 
-    void encode(const ::platform::netconfig::ConnectionData &data,
-                ::cc::platform::netconfig::ConnectionData *msg) noexcept
+    void encode(const ::netconfig::ConnectionData &data,
+                ::cc::netconfig::ConnectionData *msg) noexcept
     {
         msg->set_id(data.id);
         msg->set_interface(data.interface);
@@ -155,13 +155,13 @@ namespace protobuf
 
         switch (data.type())
         {
-        case ::platform::netconfig::CONN_TYPE_WIRED:
-            encode(std::get<::platform::netconfig::WiredConnectionData>(data.specific_data),
+        case ::netconfig::CONN_TYPE_WIRED:
+            encode(std::get<::netconfig::WiredConnectionData>(data.specific_data),
                    msg->mutable_wired_data());
             break;
 
-        case ::platform::netconfig::CONN_TYPE_WIRELESS:
-            encode(std::get<::platform::netconfig::WirelessConnectionData>(data.specific_data),
+        case ::netconfig::CONN_TYPE_WIRELESS:
+            encode(std::get<::netconfig::WirelessConnectionData>(data.specific_data),
                    msg->mutable_wireless_data());
             break;
 
@@ -170,8 +170,8 @@ namespace protobuf
         }
     }
 
-    void decode(const ::cc::platform::netconfig::ConnectionData &msg,
-                ::platform::netconfig::ConnectionData *data) noexcept
+    void decode(const ::cc::netconfig::ConnectionData &msg,
+                ::netconfig::ConnectionData *data) noexcept
     {
         data->id = msg.id();
         data->interface = msg.interface();
@@ -182,14 +182,14 @@ namespace protobuf
 
         switch (msg.data_case())
         {
-        case ::cc::platform::netconfig::ConnectionData::DataCase::kWiredData:
+        case ::cc::netconfig::ConnectionData::DataCase::kWiredData:
             data->specific_data =
-                decoded<::platform::netconfig::WiredConnectionData>(msg.wired_data());
+                decoded<::netconfig::WiredConnectionData>(msg.wired_data());
             break;
 
-        case ::cc::platform::netconfig::ConnectionData::DataCase::kWirelessData:
+        case ::cc::netconfig::ConnectionData::DataCase::kWirelessData:
             data->specific_data =
-                decoded<::platform::netconfig::WirelessConnectionData>(msg.wireless_data());
+                decoded<::netconfig::WirelessConnectionData>(msg.wireless_data());
             break;
 
         default:
@@ -199,75 +199,75 @@ namespace protobuf
     }
 
     //==========================================================================
-    // ::platform::netconfig::WiredConnectionData
+    // ::netconfig::WiredConnectionData
 
-    void encode(const ::platform::netconfig::WiredConnectionData &data,
-                ::cc::platform::netconfig::WiredConnectionData *msg) noexcept
+    void encode(const ::netconfig::WiredConnectionData &data,
+                ::cc::netconfig::WiredConnectionData *msg) noexcept
     {
         msg->set_auto_negotiate(data.auto_negotiate);
     }
 
-    void decode(const ::cc::platform::netconfig::WiredConnectionData &msg,
-                ::platform::netconfig::WiredConnectionData *data) noexcept
+    void decode(const ::cc::netconfig::WiredConnectionData &msg,
+                ::netconfig::WiredConnectionData *data) noexcept
     {
         data->auto_negotiate = msg.auto_negotiate();
     }
 
     //==========================================================================
-    // ::platform::netconfig::WirelessConnectionData
+    // ::netconfig::WirelessConnectionData
 
-    void encode(const ::platform::netconfig::WirelessConnectionData &data,
-                ::cc::platform::netconfig::WirelessConnectionData *msg) noexcept
+    void encode(const ::netconfig::WirelessConnectionData &data,
+                ::cc::netconfig::WirelessConnectionData *msg) noexcept
     {
         msg->set_ssid(data.ssid.data(), data.ssid.size());
-        msg->set_mode(encoded<::cc::platform::netconfig::WirelessMode>(data.mode));
+        msg->set_mode(encoded<::cc::netconfig::WirelessMode>(data.mode));
         msg->set_hidden(data.hidden);
         msg->set_tx_power(data.tx_power);
-        msg->set_key_mgmt(encoded<::cc::platform::netconfig::KeyManagement>(data.key_mgmt_type()));
+        msg->set_key_mgmt(encoded<::cc::netconfig::KeyManagement>(data.key_mgmt_type()));
         msg->set_auth_protos(data.auth_protos);
-        msg->set_auth_type(encoded<::cc::platform::netconfig::AuthenticationType>(data.auth_type()));
+        msg->set_auth_type(encoded<::cc::netconfig::AuthenticationType>(data.auth_type()));
 
-        if (auto *wep = std::get_if<::platform::netconfig::WEP_Data>(&data.auth))
+        if (auto *wep = std::get_if<::netconfig::WEP_Data>(&data.auth))
         {
             encode(*wep, msg->mutable_wep());
         }
-        else if (auto *wpa = std::get_if<::platform::netconfig::WPA_Data>(&data.auth))
+        else if (auto *wpa = std::get_if<::netconfig::WPA_Data>(&data.auth))
         {
             encode(*wpa, msg->mutable_wpa());
         }
-        else if (auto *eap = std::get_if<::platform::netconfig::EAP_Data>(&data.auth))
+        else if (auto *eap = std::get_if<::netconfig::EAP_Data>(&data.auth))
         {
             encode(*eap, msg->mutable_eap());
         }
 
         if (data.band)
         {
-            msg->set_band(encoded<::cc::platform::netconfig::WirelessBandSelection>(*data.band));
+            msg->set_band(encoded<::cc::netconfig::WirelessBandSelection>(*data.band));
         }
     }
 
-    void decode(const ::cc::platform::netconfig::WirelessConnectionData &msg,
-                ::platform::netconfig::WirelessConnectionData *data) noexcept
+    void decode(const ::cc::netconfig::WirelessConnectionData &msg,
+                ::netconfig::WirelessConnectionData *data) noexcept
     {
         data->ssid = msg.ssid();
         data->mode = decoded<NM80211Mode>(msg.mode());
         data->hidden = msg.hidden();
         data->tx_power = msg.tx_power();
-        data->key_mgmt = decoded<::platform::netconfig::KeyManagement>(msg.key_mgmt());
+        data->key_mgmt = decoded<::netconfig::KeyManagement>(msg.key_mgmt());
         data->auth_protos = msg.auth_protos();
 
         switch (msg.auth_case())
         {
-        case ::cc::platform::netconfig::WirelessConnectionData::AuthCase::kWep:
-            data->auth = decoded<::platform::netconfig::WEP_Data>(msg.wep());
+        case ::cc::netconfig::WirelessConnectionData::AuthCase::kWep:
+            data->auth = decoded<::netconfig::WEP_Data>(msg.wep());
             break;
 
-        case ::cc::platform::netconfig::WirelessConnectionData::AuthCase::kWpa:
-            data->auth = decoded<::platform::netconfig::WPA_Data>(msg.wpa());
+        case ::cc::netconfig::WirelessConnectionData::AuthCase::kWpa:
+            data->auth = decoded<::netconfig::WPA_Data>(msg.wpa());
             break;
 
-        case ::cc::platform::netconfig::WirelessConnectionData::AuthCase::kEap:
-            data->auth = decoded<::platform::netconfig::EAP_Data>(msg.eap());
+        case ::cc::netconfig::WirelessConnectionData::AuthCase::kEap:
+            data->auth = decoded<::netconfig::EAP_Data>(msg.eap());
             break;
 
         default:
@@ -277,15 +277,15 @@ namespace protobuf
 
         if (msg.has_band())
         {
-            data->band = decoded<::platform::netconfig::WirelessBandSelection>(msg.band());
+            data->band = decoded<::netconfig::WirelessBandSelection>(msg.band());
         }
     }
 
     //==========================================================================
-    // ::platform::netconfig::ActiveConnectionMap
+    // ::netconfig::ActiveConnectionMap
 
-    void encode(const ::platform::netconfig::ActiveConnectionMap &map,
-                ::cc::platform::netconfig::ActiveConnectionMap *msg) noexcept
+    void encode(const ::netconfig::ActiveConnectionMap &map,
+                ::cc::netconfig::ActiveConnectionMap *msg) noexcept
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[key, ref] : map)
@@ -294,27 +294,27 @@ namespace protobuf
         }
     }
 
-    void decode(const ::cc::platform::netconfig::ActiveConnectionMap &msg,
-                ::platform::netconfig::ActiveConnectionMap *map) noexcept
+    void decode(const ::cc::netconfig::ActiveConnectionMap &msg,
+                ::netconfig::ActiveConnectionMap *map) noexcept
     {
         for (const auto &[key, data] : msg.map())
         {
-            auto ref = (*map)[key] = std::make_shared<::platform::netconfig::ActiveConnectionData>();
+            auto ref = (*map)[key] = std::make_shared<::netconfig::ActiveConnectionData>();
             decode(data, ref.get());
         }
     }
 
     //==========================================================================
-    // ::platform::netconfig::ActiveConnectionData
+    // ::netconfig::ActiveConnectionData
 
-    void encode(const ::platform::netconfig::ActiveConnectionData &data,
-                ::cc::platform::netconfig::ActiveConnectionData *msg) noexcept
+    void encode(const ::netconfig::ActiveConnectionData &data,
+                ::cc::netconfig::ActiveConnectionData *msg) noexcept
     {
         msg->set_id(data.id);
-        msg->set_type(encoded<::cc::platform::netconfig::ConnectionType>(data.type));
-        msg->set_state(encoded<::cc::platform::netconfig::ActiveConnectionState>(data.state));
+        msg->set_type(encoded<::cc::netconfig::ConnectionType>(data.type));
+        msg->set_state(encoded<::cc::netconfig::ActiveConnectionState>(data.state));
         msg->set_state_reason(
-            encoded<::cc::platform::netconfig::ActiveConnectionStateReason>(data.state_reason));
+            encoded<::cc::netconfig::ActiveConnectionStateReason>(data.state_reason));
 
         msg->set_state_flags(data.state_flags);
         msg->set_default4(data.default4);
@@ -326,11 +326,11 @@ namespace protobuf
         encode(data.ip6config, msg->mutable_ip6config());
     }
 
-    void decode(const ::cc::platform::netconfig::ActiveConnectionData &msg,
-                ::platform::netconfig::ActiveConnectionData *data) noexcept
+    void decode(const ::cc::netconfig::ActiveConnectionData &msg,
+                ::netconfig::ActiveConnectionData *data) noexcept
     {
         data->id = msg.id();
-        data->type = decoded<::platform::netconfig::ConnectionType>(msg.type());
+        data->type = decoded<::netconfig::ConnectionType>(msg.type());
         data->state = decoded<NMActiveConnectionState>(msg.state());
         data->state_reason = decoded<NMActiveConnectionStateReason>(msg.state_reason());
         data->state_flags = msg.state_flags();
@@ -344,25 +344,25 @@ namespace protobuf
     }
 
     //==========================================================================
-    // ::platform::netconfig::WEP_Data
+    // ::netconfig::WEP_Data
 
-    void encode(const ::platform::netconfig::WEP_Data &auth,
-                ::cc::platform::netconfig::WEP_Data *msg) noexcept
+    void encode(const ::netconfig::WEP_Data &auth,
+                ::cc::netconfig::WEP_Data *msg) noexcept
     {
-        msg->set_auth_alg(encoded<::cc::platform::netconfig::AuthenticationAlgorithm>(auth.auth_alg));
+        msg->set_auth_alg(encoded<::cc::netconfig::AuthenticationAlgorithm>(auth.auth_alg));
         for (const core::types::ByteVector &key : auth.keys)
         {
             msg->add_key(key.data(), key.size());
         }
         msg->set_key_idx(auth.key_idx);
-        msg->set_key_type(encoded<::cc::platform::netconfig::WEP_KeyType>(auth.key_type));
+        msg->set_key_type(encoded<::cc::netconfig::WEP_KeyType>(auth.key_type));
     }
 
-    void decode(const ::cc::platform::netconfig::WEP_Data &msg,
-                ::platform::netconfig::WEP_Data *auth) noexcept
+    void decode(const ::cc::netconfig::WEP_Data &msg,
+                ::netconfig::WEP_Data *auth) noexcept
     {
         auth->auth_alg =
-            decoded<::platform::netconfig::AuthenticationAlgorithm>(msg.auth_alg());
+            decoded<::netconfig::AuthenticationAlgorithm>(msg.auth_alg());
 
         auth->keys.clear();
         auth->keys.reserve(msg.key_size());
@@ -384,32 +384,32 @@ namespace protobuf
     }
 
     //==========================================================================
-    // ::platform::netconfig::WPA_Data
+    // ::netconfig::WPA_Data
 
-    void encode(const ::platform::netconfig::WPA_Data &auth,
-                ::cc::platform::netconfig::WPA_Data *msg) noexcept
+    void encode(const ::netconfig::WPA_Data &auth,
+                ::cc::netconfig::WPA_Data *msg) noexcept
     {
         msg->set_psk(auth.psk);
     }
 
-    void decode(const ::cc::platform::netconfig::WPA_Data &msg,
-                ::platform::netconfig::WPA_Data *auth) noexcept
+    void decode(const ::cc::netconfig::WPA_Data &msg,
+                ::netconfig::WPA_Data *auth) noexcept
     {
         auth->psk = msg.psk();
     }
 
     //==========================================================================
-    // ::platform::netconfig::EAP_Data
+    // ::netconfig::EAP_Data
 
-    void encode(const ::platform::netconfig::EAP_Data &auth,
-                ::cc::platform::netconfig::EAP_Data *msg) noexcept
+    void encode(const ::netconfig::EAP_Data &auth,
+                ::cc::netconfig::EAP_Data *msg) noexcept
     {
         msg->set_auth_alg(
-            encoded<::cc::platform::netconfig::AuthenticationAlgorithm>(
+            encoded<::cc::netconfig::AuthenticationAlgorithm>(
                 auth.auth_alg));
 
-        msg->set_eap_type(encoded<::cc::platform::netconfig::EAP_Type>(auth.eap_type));
-        msg->set_eap_phase2(encoded<::cc::platform::netconfig::EAP_Phase2>(auth.eap_phase2));
+        msg->set_eap_type(encoded<::cc::netconfig::EAP_Type>(auth.eap_type));
+        msg->set_eap_phase2(encoded<::cc::netconfig::EAP_Phase2>(auth.eap_phase2));
         msg->set_anonymous_identity(auth.anonymous_identity);
         msg->set_domain(auth.domain);
         msg->set_identity(auth.identity);
@@ -421,17 +421,17 @@ namespace protobuf
         msg->set_client_cert_password(auth.client_cert_password);
         msg->set_pac_file(auth.pac_file.string());
         msg->set_fast_provisioning(
-            encoded<::cc::platform::netconfig::FAST_Provisioning>(auth.fast_provisioning));
+            encoded<::cc::netconfig::FAST_Provisioning>(auth.fast_provisioning));
     }
 
-    void decode(const ::cc::platform::netconfig::EAP_Data &msg,
-                ::platform::netconfig::EAP_Data *auth) noexcept
+    void decode(const ::cc::netconfig::EAP_Data &msg,
+                ::netconfig::EAP_Data *auth) noexcept
     {
         auth->auth_alg =
-            decoded<::platform::netconfig::AuthenticationAlgorithm>(msg.auth_alg());
+            decoded<::netconfig::AuthenticationAlgorithm>(msg.auth_alg());
 
-        auth->eap_type = decoded<::platform::netconfig::EAP_Type>(msg.eap_type());
-        auth->eap_phase2 = decoded<::platform::netconfig::EAP_Phase2>(msg.eap_phase2());
+        auth->eap_type = decoded<::netconfig::EAP_Type>(msg.eap_type());
+        auth->eap_phase2 = decoded<::netconfig::EAP_Phase2>(msg.eap_phase2());
         auth->anonymous_identity = msg.anonymous_identity();
         auth->domain = msg.domain();
         auth->identity = msg.identity();
@@ -443,19 +443,19 @@ namespace protobuf
         auth->client_cert_password = msg.client_cert_password();
         auth->pac_file = msg.pac_file();
         auth->fast_provisioning =
-            decoded<::platform::netconfig::FAST_Provisioning>(msg.fast_provisioning());
+            decoded<::netconfig::FAST_Provisioning>(msg.fast_provisioning());
     }
 
     //==========================================================================
-    // ::platform::netconfig::Device
+    // ::netconfig::Device
 
-    void encode(const ::platform::netconfig::DeviceData &device,
-                ::cc::platform::netconfig::DeviceData *msg) noexcept
+    void encode(const ::netconfig::DeviceData &device,
+                ::cc::netconfig::DeviceData *msg) noexcept
     {
-        msg->set_type(encoded<::cc::platform::netconfig::DeviceType>(device.type));
-        msg->set_state(encoded<::cc::platform::netconfig::DeviceState>(device.state));
+        msg->set_type(encoded<::cc::netconfig::DeviceType>(device.type));
+        msg->set_state(encoded<::cc::netconfig::DeviceState>(device.state));
         msg->set_state_reason(
-            encoded<::cc::platform::netconfig::DeviceStateReason>(device.state_reason));
+            encoded<::cc::netconfig::DeviceStateReason>(device.state_reason));
         msg->set_flags(device.flags);
         msg->set_interface(device.interface);
         msg->set_hwaddress(device.hwAddress);
@@ -465,22 +465,22 @@ namespace protobuf
         encode(device.ip6config, msg->mutable_ip6config());
 
         msg->set_ip4connectivity(
-            encoded<::cc::platform::netconfig::ConnectivityState>(device.ip4connectivity));
+            encoded<::cc::netconfig::ConnectivityState>(device.ip4connectivity));
         msg->set_ip6connectivity(
-            encoded<::cc::platform::netconfig::ConnectivityState>(device.ip6connectivity));
+            encoded<::cc::netconfig::ConnectivityState>(device.ip6connectivity));
 
-        if (auto *data = std::get_if<::platform::netconfig::WiredDeviceData>(&device.specific_data))
+        if (auto *data = std::get_if<::netconfig::WiredDeviceData>(&device.specific_data))
         {
             encode(*data, msg->mutable_wired_data());
         }
-        else if (auto *data = std::get_if<::platform::netconfig::WirelessDeviceData>(&device.specific_data))
+        else if (auto *data = std::get_if<::netconfig::WirelessDeviceData>(&device.specific_data))
         {
             encode(*data, msg->mutable_wireless_data());
         }
     }
 
-    void decode(const ::cc::platform::netconfig::DeviceData &msg,
-                ::platform::netconfig::DeviceData *device) noexcept
+    void decode(const ::cc::netconfig::DeviceData &msg,
+                ::netconfig::DeviceData *device) noexcept
     {
         device->type = decoded<NMDeviceType>(msg.type());
         device->state = decoded<NMDeviceState>(msg.state());
@@ -496,14 +496,14 @@ namespace protobuf
 
         switch (msg.devicedata_case())
         {
-        case ::cc::platform::netconfig::DeviceData::DevicedataCase::kWiredData:
+        case ::cc::netconfig::DeviceData::DevicedataCase::kWiredData:
             device->specific_data =
-                decoded<::platform::netconfig::WiredDeviceData>(msg.wired_data());
+                decoded<::netconfig::WiredDeviceData>(msg.wired_data());
             break;
 
-        case ::cc::platform::netconfig::DeviceData::DevicedataCase::kWirelessData:
+        case ::cc::netconfig::DeviceData::DevicedataCase::kWirelessData:
             device->specific_data =
-                decoded<::platform::netconfig::WirelessDeviceData>(msg.wireless_data());
+                decoded<::netconfig::WirelessDeviceData>(msg.wireless_data());
             break;
 
         default:
@@ -512,34 +512,34 @@ namespace protobuf
     }
 
     //==========================================================================
-    // ::platform::netconfig::WiredDeviceData
+    // ::netconfig::WiredDeviceData
 
-    void encode(const ::platform::netconfig::WiredDeviceData &data,
-                ::cc::platform::netconfig::WiredDeviceData *msg) noexcept
+    void encode(const ::netconfig::WiredDeviceData &data,
+                ::cc::netconfig::WiredDeviceData *msg) noexcept
     {
         msg->set_speed(data.speed);
     }
 
-    void decode(const ::cc::platform::netconfig::WiredDeviceData &msg,
-                ::platform::netconfig::WiredDeviceData *data) noexcept
+    void decode(const ::cc::netconfig::WiredDeviceData &msg,
+                ::netconfig::WiredDeviceData *data) noexcept
     {
         data->speed = msg.speed();
     }
 
     //==========================================================================
-    // ::platform::netconfig::WirelessDeviceData
+    // ::netconfig::WirelessDeviceData
 
-    void encode(const ::platform::netconfig::WirelessDeviceData &data,
-                ::cc::platform::netconfig::WirelessDeviceData *msg) noexcept
+    void encode(const ::netconfig::WirelessDeviceData &data,
+                ::cc::netconfig::WirelessDeviceData *msg) noexcept
     {
-        msg->set_mode(encoded<::cc::platform::netconfig::WirelessMode>(data.mode));
+        msg->set_mode(encoded<::cc::netconfig::WirelessMode>(data.mode));
         msg->set_bitrate(data.bitrate);
         msg->set_active_accesspoint(data.active_accesspoint);
         encode(data.lastScan, msg->mutable_last_scan());
     }
 
-    void decode(const ::cc::platform::netconfig::WirelessDeviceData &msg,
-                ::platform::netconfig::WirelessDeviceData *data) noexcept
+    void decode(const ::cc::netconfig::WirelessDeviceData &msg,
+                ::netconfig::WirelessDeviceData *data) noexcept
     {
         data->mode = decoded<NM80211Mode>(msg.mode());
         data->bitrate = msg.bitrate();
@@ -548,10 +548,10 @@ namespace protobuf
     }
 
     //==========================================================================
-    // ::platform::netconfig::DeviceMap
+    // ::netconfig::DeviceMap
 
-    void encode(const ::platform::netconfig::DeviceMap &map,
-                ::cc::platform::netconfig::DeviceMap *msg) noexcept
+    void encode(const ::netconfig::DeviceMap &map,
+                ::cc::netconfig::DeviceMap *msg) noexcept
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[key, ref] : map)
@@ -560,21 +560,21 @@ namespace protobuf
         }
     }
 
-    void decode(const ::cc::platform::netconfig::DeviceMap &msg,
-                ::platform::netconfig::DeviceMap *map) noexcept
+    void decode(const ::cc::netconfig::DeviceMap &msg,
+                ::netconfig::DeviceMap *map) noexcept
     {
         for (const auto &[key, data] : msg.map())
         {
-            auto ref = (*map)[key] = std::make_shared<::platform::netconfig::DeviceData>();
+            auto ref = (*map)[key] = std::make_shared<::netconfig::DeviceData>();
             decode(data, ref.get());
         }
     }
 
     //==========================================================================
-    // ::platform::netconfig::AccessPoint
+    // ::netconfig::AccessPoint
 
-    void encode(const ::platform::netconfig::AccessPointData &ap,
-                ::cc::platform::netconfig::AccessPointData *msg) noexcept
+    void encode(const ::netconfig::AccessPointData &ap,
+                ::cc::netconfig::AccessPointData *msg) noexcept
     {
         msg->set_ssid(ap.ssid.data(), ap.ssid.size());
         msg->set_frequency(ap.frequency);
@@ -582,15 +582,15 @@ namespace protobuf
         msg->set_rsn_flags(ap.rsn_flags);
         msg->set_wpa_flags(ap.wpa_flags);
         msg->set_hwaddress(ap.hwAddress);
-        msg->set_mode(encoded<::cc::platform::netconfig::WirelessMode>(ap.mode));
+        msg->set_mode(encoded<::cc::netconfig::WirelessMode>(ap.mode));
         msg->set_maxbitrate(ap.maxbitrate);
         msg->set_strength(ap.strength);
         encode(ap.lastSeen, msg->mutable_lastseen());
-        msg->set_auth_type(encoded<::cc::platform::netconfig::AuthenticationType>(ap.auth_type()));
+        msg->set_auth_type(encoded<::cc::netconfig::AuthenticationType>(ap.auth_type()));
     }
 
-    void decode(const ::cc::platform::netconfig::AccessPointData &msg,
-                ::platform::netconfig::AccessPointData *ap) noexcept
+    void decode(const ::cc::netconfig::AccessPointData &msg,
+                ::netconfig::AccessPointData *ap) noexcept
     {
         ap->ssid = msg.ssid();
         ap->frequency = msg.frequency();
@@ -605,10 +605,10 @@ namespace protobuf
     }
 
     //==========================================================================
-    // ::platform::netconfig::AccessPointMap
+    // ::netconfig::AccessPointMap
 
-    void encode(const ::platform::netconfig::AccessPointMap &map,
-                ::cc::platform::netconfig::AccessPointMap *msg) noexcept
+    void encode(const ::netconfig::AccessPointMap &map,
+                ::cc::netconfig::AccessPointMap *msg) noexcept
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[key, ref] : map)
@@ -617,21 +617,21 @@ namespace protobuf
         }
     }
 
-    void decode(const ::cc::platform::netconfig::AccessPointMap &msg,
-                ::platform::netconfig::AccessPointMap *map) noexcept
+    void decode(const ::cc::netconfig::AccessPointMap &msg,
+                ::netconfig::AccessPointMap *map) noexcept
     {
         for (const auto &[key, data] : msg.map())
         {
-            auto ref = (*map)[key] = std::make_shared<::platform::netconfig::AccessPointData>();
+            auto ref = (*map)[key] = std::make_shared<::netconfig::AccessPointData>();
             decode(data, ref.get());
         }
     }
 
     //==========================================================================
-    // ::platform::netconfig::SSIDMap
+    // ::netconfig::SSIDMap
 
-    void encode(const ::platform::netconfig::SSIDMap &map,
-                ::cc::platform::netconfig::AccessPointMap *msg) noexcept
+    void encode(const ::netconfig::SSIDMap &map,
+                ::cc::netconfig::AccessPointMap *msg) noexcept
     {
         auto *encoded = msg->mutable_map();
         for (const auto &[key, ref] : map)
@@ -640,144 +640,144 @@ namespace protobuf
         }
     }
 
-    void decode(const ::cc::platform::netconfig::AccessPointMap &msg,
-                ::platform::netconfig::SSIDMap *map) noexcept
+    void decode(const ::cc::netconfig::AccessPointMap &msg,
+                ::netconfig::SSIDMap *map) noexcept
     {
         for (const auto &[key, data] : msg.map())
         {
-            auto ref = (*map)[key] = std::make_shared<::platform::netconfig::AccessPointData>();
+            auto ref = (*map)[key] = std::make_shared<::netconfig::AccessPointData>();
             decode(data, ref.get());
         }
     }
 
     //==========================================================================
-    // ::platform::netconfig::WirelessBandSetting
+    // ::netconfig::WirelessBandSetting
 
-    void encode(::platform::netconfig::WirelessBandSelection band_selection,
-                ::cc::platform::netconfig::WirelessBandSelection *protoband) noexcept
+    void encode(::netconfig::WirelessBandSelection band_selection,
+                ::cc::netconfig::WirelessBandSelection *protoband) noexcept
     {
-        *protoband = static_cast<::cc::platform::netconfig::WirelessBandSelection>(band_selection);
+        *protoband = static_cast<::cc::netconfig::WirelessBandSelection>(band_selection);
     }
 
-    void decode(::cc::platform::netconfig::WirelessBandSelection proto_band,
-                ::platform::netconfig::WirelessBandSelection *band_selection) noexcept
+    void decode(::cc::netconfig::WirelessBandSelection proto_band,
+                ::netconfig::WirelessBandSelection *band_selection) noexcept
     {
-        *band_selection = static_cast<::platform::netconfig::WirelessBandSelection>(proto_band);
+        *band_selection = static_cast<::netconfig::WirelessBandSelection>(proto_band);
     }
 
     //==========================================================================
-    // ::platform::netconfig::NM80211Mode
+    // ::netconfig::NM80211Mode
 
-    void encode(NM80211Mode mode, ::cc::platform::netconfig::WirelessMode *protomode) noexcept
+    void encode(NM80211Mode mode, ::cc::netconfig::WirelessMode *protomode) noexcept
     {
-        *protomode = static_cast<::cc::platform::netconfig::WirelessMode>(mode);
+        *protomode = static_cast<::cc::netconfig::WirelessMode>(mode);
     }
 
-    void decode(::cc::platform::netconfig::WirelessMode protomode, NM80211Mode *mode) noexcept
+    void decode(::cc::netconfig::WirelessMode protomode, NM80211Mode *mode) noexcept
     {
         *mode = static_cast<NM80211Mode>(protomode);
     }
 
     //==========================================================================
-    // ::platform::netconfig::KeyManagement
+    // ::netconfig::KeyManagement
 
-    void encode(::platform::netconfig::KeyManagement key_mgmt,
-                ::cc::platform::netconfig::KeyManagement *proto_key_mgmt) noexcept
+    void encode(::netconfig::KeyManagement key_mgmt,
+                ::cc::netconfig::KeyManagement *proto_key_mgmt) noexcept
     {
-        *proto_key_mgmt = static_cast<::cc::platform::netconfig::KeyManagement>(key_mgmt);
+        *proto_key_mgmt = static_cast<::cc::netconfig::KeyManagement>(key_mgmt);
     }
 
-    void decode(::cc::platform::netconfig::KeyManagement proto_key_mgmt,
-                ::platform::netconfig::KeyManagement *key_mgmt) noexcept
+    void decode(::cc::netconfig::KeyManagement proto_key_mgmt,
+                ::netconfig::KeyManagement *key_mgmt) noexcept
     {
-        *key_mgmt = static_cast<::platform::netconfig::KeyManagement>(proto_key_mgmt);
-    }
-
-    //==========================================================================
-    // ::platform::netconfig::KeyManagement
-
-    void encode(::platform::netconfig::AuthenticationType key_mgmt,
-                ::cc::platform::netconfig::AuthenticationType *proto_key_mgmt) noexcept
-    {
-        *proto_key_mgmt = static_cast<::cc::platform::netconfig::AuthenticationType>(key_mgmt);
-    }
-
-    void decode(::cc::platform::netconfig::AuthenticationType proto_key_mgmt,
-                ::platform::netconfig::AuthenticationType *key_mgmt) noexcept
-    {
-        *key_mgmt = static_cast<::platform::netconfig::AuthenticationType>(proto_key_mgmt);
+        *key_mgmt = static_cast<::netconfig::KeyManagement>(proto_key_mgmt);
     }
 
     //==========================================================================
-    // ::platform::netconfig::AuthenticationAlgorithm
+    // ::netconfig::KeyManagement
 
-    void encode(::platform::netconfig::AuthenticationAlgorithm alg,
-                ::cc::platform::netconfig::AuthenticationAlgorithm *proto_alg) noexcept
+    void encode(::netconfig::AuthenticationType key_mgmt,
+                ::cc::netconfig::AuthenticationType *proto_key_mgmt) noexcept
     {
-        *proto_alg = static_cast<::cc::platform::netconfig::AuthenticationAlgorithm>(alg);
+        *proto_key_mgmt = static_cast<::cc::netconfig::AuthenticationType>(key_mgmt);
     }
 
-    void decode(::cc::platform::netconfig::AuthenticationAlgorithm proto_alg,
-                ::platform::netconfig::AuthenticationAlgorithm *alg) noexcept
+    void decode(::cc::netconfig::AuthenticationType proto_key_mgmt,
+                ::netconfig::AuthenticationType *key_mgmt) noexcept
     {
-        *alg = static_cast<::platform::netconfig::AuthenticationAlgorithm>(proto_alg);
-    }
-
-    //==========================================================================
-    // ::platform::netconfig::EAP_Type
-
-    void encode(::platform::netconfig::EAP_Type eap_type,
-                ::cc::platform::netconfig::EAP_Type *proto_eap_type) noexcept
-    {
-        *proto_eap_type = static_cast<::cc::platform::netconfig::EAP_Type>(eap_type);
-    }
-
-    void decode(::cc::platform::netconfig::EAP_Type proto_eap_type,
-                ::platform::netconfig::EAP_Type *eap_type) noexcept
-    {
-        *eap_type = static_cast<::platform::netconfig::EAP_Type>(proto_eap_type);
+        *key_mgmt = static_cast<::netconfig::AuthenticationType>(proto_key_mgmt);
     }
 
     //==========================================================================
-    // ::platform::netconfig::EAP_Phase2
+    // ::netconfig::AuthenticationAlgorithm
 
-    void encode(::platform::netconfig::EAP_Phase2 phase2,
-                ::cc::platform::netconfig::EAP_Phase2 *proto_phase2) noexcept
+    void encode(::netconfig::AuthenticationAlgorithm alg,
+                ::cc::netconfig::AuthenticationAlgorithm *proto_alg) noexcept
     {
-        *proto_phase2 = static_cast<::cc::platform::netconfig::EAP_Phase2>(phase2);
+        *proto_alg = static_cast<::cc::netconfig::AuthenticationAlgorithm>(alg);
     }
 
-    void decode(::cc::platform::netconfig::EAP_Phase2 proto_phase2,
-                ::platform::netconfig::EAP_Phase2 *phase2) noexcept
+    void decode(::cc::netconfig::AuthenticationAlgorithm proto_alg,
+                ::netconfig::AuthenticationAlgorithm *alg) noexcept
     {
-        *phase2 = static_cast<::platform::netconfig::EAP_Phase2>(proto_phase2);
+        *alg = static_cast<::netconfig::AuthenticationAlgorithm>(proto_alg);
     }
 
     //==========================================================================
-    // ::platform::netconfig::FAST_Provisioning
+    // ::netconfig::EAP_Type
 
-    void encode(::platform::netconfig::FAST_Provisioning provisioning,
-                ::cc::platform::netconfig::FAST_Provisioning *proto_provisioning) noexcept
+    void encode(::netconfig::EAP_Type eap_type,
+                ::cc::netconfig::EAP_Type *proto_eap_type) noexcept
     {
-        *proto_provisioning = static_cast<::cc::platform::netconfig::FAST_Provisioning>(provisioning);
+        *proto_eap_type = static_cast<::cc::netconfig::EAP_Type>(eap_type);
     }
 
-    void decode(::cc::platform::netconfig::FAST_Provisioning proto_provisioning,
-                ::platform::netconfig::FAST_Provisioning *provisioning) noexcept
+    void decode(::cc::netconfig::EAP_Type proto_eap_type,
+                ::netconfig::EAP_Type *eap_type) noexcept
     {
-        *provisioning = static_cast<::platform::netconfig::FAST_Provisioning>(proto_provisioning);
+        *eap_type = static_cast<::netconfig::EAP_Type>(proto_eap_type);
+    }
+
+    //==========================================================================
+    // ::netconfig::EAP_Phase2
+
+    void encode(::netconfig::EAP_Phase2 phase2,
+                ::cc::netconfig::EAP_Phase2 *proto_phase2) noexcept
+    {
+        *proto_phase2 = static_cast<::cc::netconfig::EAP_Phase2>(phase2);
+    }
+
+    void decode(::cc::netconfig::EAP_Phase2 proto_phase2,
+                ::netconfig::EAP_Phase2 *phase2) noexcept
+    {
+        *phase2 = static_cast<::netconfig::EAP_Phase2>(proto_phase2);
+    }
+
+    //==========================================================================
+    // ::netconfig::FAST_Provisioning
+
+    void encode(::netconfig::FAST_Provisioning provisioning,
+                ::cc::netconfig::FAST_Provisioning *proto_provisioning) noexcept
+    {
+        *proto_provisioning = static_cast<::cc::netconfig::FAST_Provisioning>(provisioning);
+    }
+
+    void decode(::cc::netconfig::FAST_Provisioning proto_provisioning,
+                ::netconfig::FAST_Provisioning *provisioning) noexcept
+    {
+        *provisioning = static_cast<::netconfig::FAST_Provisioning>(proto_provisioning);
     }
 
     //==========================================================================
     // NMWepKeyType
 
     void encode(NMWepKeyType type,
-                ::cc::platform::netconfig::WEP_KeyType *proto_type) noexcept
+                ::cc::netconfig::WEP_KeyType *proto_type) noexcept
     {
-        *proto_type = static_cast<::cc::platform::netconfig::WEP_KeyType>(type);
+        *proto_type = static_cast<::cc::netconfig::WEP_KeyType>(type);
     }
 
-    void decode(::cc::platform::netconfig::WEP_KeyType proto_type,
+    void decode(::cc::netconfig::WEP_KeyType proto_type,
                 NMWepKeyType *type) noexcept
     {
         *type = static_cast<NMWepKeyType>(proto_type);
@@ -786,12 +786,12 @@ namespace protobuf
     //==========================================================================
     // NMDeviceType
 
-    void encode(NMDeviceType type, ::cc::platform::netconfig::DeviceType *prototype) noexcept
+    void encode(NMDeviceType type, ::cc::netconfig::DeviceType *prototype) noexcept
     {
-        *prototype = static_cast<::cc::platform::netconfig::DeviceType>(type);
+        *prototype = static_cast<::cc::netconfig::DeviceType>(type);
     }
 
-    void decode(::cc::platform::netconfig::DeviceType prototype, NMDeviceType *type) noexcept
+    void decode(::cc::netconfig::DeviceType prototype, NMDeviceType *type) noexcept
     {
         *type = static_cast<NMDeviceType>(prototype);
     }
@@ -800,12 +800,12 @@ namespace protobuf
     // NMDeviceState
 
     void encode(NMDeviceState state,
-                ::cc::platform::netconfig::DeviceState *protostate) noexcept
+                ::cc::netconfig::DeviceState *protostate) noexcept
     {
-        *protostate = static_cast<::cc::platform::netconfig::DeviceState>(state);
+        *protostate = static_cast<::cc::netconfig::DeviceState>(state);
     }
 
-    void decode(::cc::platform::netconfig::DeviceState protostate,
+    void decode(::cc::netconfig::DeviceState protostate,
                 NMDeviceState *state) noexcept
     {
         *state = static_cast<NMDeviceState>(protostate);
@@ -815,42 +815,42 @@ namespace protobuf
     // NMDeviceReason
 
     void encode(NMDeviceStateReason reason,
-                ::cc::platform::netconfig::DeviceStateReason *proto) noexcept
+                ::cc::netconfig::DeviceStateReason *proto) noexcept
     {
-        *proto = static_cast<::cc::platform::netconfig::DeviceStateReason>(reason);
+        *proto = static_cast<::cc::netconfig::DeviceStateReason>(reason);
     }
 
-    void decode(::cc::platform::netconfig::DeviceStateReason proto,
+    void decode(::cc::netconfig::DeviceStateReason proto,
                 NMDeviceStateReason *reason) noexcept
     {
         *reason = static_cast<NMDeviceStateReason>(proto);
     }
 
     //==========================================================================
-    // ::platform::netconfig::ConnectionType
+    // ::netconfig::ConnectionType
 
-    void encode(::platform::netconfig::ConnectionType type,
-                ::cc::platform::netconfig::ConnectionType *prototype) noexcept
+    void encode(::netconfig::ConnectionType type,
+                ::cc::netconfig::ConnectionType *prototype) noexcept
     {
-        *prototype = static_cast<::cc::platform::netconfig::ConnectionType>(type);
+        *prototype = static_cast<::cc::netconfig::ConnectionType>(type);
     }
 
-    void decode(::cc::platform::netconfig::ConnectionType prototype,
-                ::platform::netconfig::ConnectionType *type) noexcept
+    void decode(::cc::netconfig::ConnectionType prototype,
+                ::netconfig::ConnectionType *type) noexcept
     {
-        *type = static_cast<::platform::netconfig::ConnectionType>(prototype);
+        *type = static_cast<::netconfig::ConnectionType>(prototype);
     }
 
     //==========================================================================
     // NMActiveConnectionState
 
     void encode(NMActiveConnectionState state,
-                ::cc::platform::netconfig::ActiveConnectionState *protostate) noexcept
+                ::cc::netconfig::ActiveConnectionState *protostate) noexcept
     {
-        *protostate = static_cast<::cc::platform::netconfig::ActiveConnectionState>(state);
+        *protostate = static_cast<::cc::netconfig::ActiveConnectionState>(state);
     }
 
-    void decode(::cc::platform::netconfig::ActiveConnectionState protostate,
+    void decode(::cc::netconfig::ActiveConnectionState protostate,
                 NMActiveConnectionState *state) noexcept
     {
         *state = static_cast<NMActiveConnectionState>(protostate);
@@ -860,12 +860,12 @@ namespace protobuf
     // NMActiveConnectionStateReason
 
     void encode(NMActiveConnectionStateReason reason,
-                ::cc::platform::netconfig::ActiveConnectionStateReason *proto) noexcept
+                ::cc::netconfig::ActiveConnectionStateReason *proto) noexcept
     {
-        *proto = static_cast<::cc::platform::netconfig::ActiveConnectionStateReason>(reason);
+        *proto = static_cast<::cc::netconfig::ActiveConnectionStateReason>(reason);
     }
 
-    void decode(::cc::platform::netconfig::ActiveConnectionStateReason proto,
+    void decode(::cc::netconfig::ActiveConnectionStateReason proto,
                 NMActiveConnectionStateReason *reason) noexcept
     {
         *reason = static_cast<NMActiveConnectionStateReason>(proto);
@@ -875,12 +875,12 @@ namespace protobuf
     // NMConnectivityState
 
     void encode(NMConnectivityState state,
-                ::cc::platform::netconfig::ConnectivityState *proto) noexcept
+                ::cc::netconfig::ConnectivityState *proto) noexcept
     {
-        *proto = static_cast<::cc::platform::netconfig::ConnectivityState>(state);
+        *proto = static_cast<::cc::netconfig::ConnectivityState>(state);
     }
 
-    void decode(::cc::platform::netconfig::ConnectivityState proto,
+    void decode(::cc::netconfig::ConnectivityState proto,
                 NMConnectivityState *state) noexcept
     {
         *state = static_cast<NMConnectivityState>(proto);
@@ -890,12 +890,12 @@ namespace protobuf
     // NMState
 
     void encode(NMState state,
-                ::cc::platform::netconfig::NetworkState *proto) noexcept
+                ::cc::netconfig::NetworkState *proto) noexcept
     {
-        *proto = static_cast<::cc::platform::netconfig::NetworkState>(state);
+        *proto = static_cast<::cc::netconfig::NetworkState>(state);
     }
 
-    void decode(::cc::platform::netconfig::NetworkState proto,
+    void decode(::cc::netconfig::NetworkState proto,
                 NMState *state) noexcept
     {
         *state = static_cast<NMState>(proto);

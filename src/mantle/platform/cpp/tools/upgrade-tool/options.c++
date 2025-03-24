@@ -38,16 +38,16 @@ void Options::initialize()
 {
     if (this->local)
     {
-        platform::upgrade::native::register_providers();
-        platform::vfs::local::register_providers();
-        platform::sysconfig::native::register_providers();
+        upgrade::native::register_providers();
+        vfs::local::register_providers();
+        sysconfig::native::register_providers();
 
     }
     else
     {
-        platform::vfs::grpc::register_providers(this->host);
-        platform::sysconfig::grpc::register_providers(this->host);
-        platform::upgrade::grpc::register_providers(this->host);
+        vfs::grpc::register_providers(this->host);
+        sysconfig::grpc::register_providers(this->host);
+        upgrade::grpc::register_providers(this->host);
     }
     core::platform::signal_shutdown.connect(
         this->signal_handle,
@@ -59,15 +59,15 @@ void Options::deinitialize()
     core::platform::signal_shutdown.disconnect(this->signal_handle);
     if (this->local)
     {
-        platform::sysconfig::native::unregister_providers();
-        platform::vfs::local::unregister_providers();
-        platform::upgrade::native::unregister_providers();
+        sysconfig::native::unregister_providers();
+        vfs::local::unregister_providers();
+        upgrade::native::unregister_providers();
     }
     else
     {
-        platform::sysconfig::grpc::unregister_providers();
-        platform::vfs::grpc::unregister_providers();
-        platform::upgrade::grpc::unregister_providers();
+        sysconfig::grpc::unregister_providers();
+        vfs::grpc::unregister_providers();
+        upgrade::grpc::unregister_providers();
     }
 }
 
@@ -91,28 +91,28 @@ void Options::on_monitor_start()
 
     if (show_scan_progress != except)
     {
-        platform::upgrade::signal_scan_progress.connect(
+        upgrade::signal_scan_progress.connect(
             this->signal_handle,
             std::bind(&Options::on_scan_progress, this, _1));
     }
 
     if (show_upgrade_available != except)
     {
-        platform::upgrade::signal_upgrade_available.connect(
+        upgrade::signal_upgrade_available.connect(
             this->signal_handle,
             std::bind(&Options::on_upgrade_available, this, _1));
     }
 
     if (show_upgrade_pending != except)
     {
-        platform::upgrade::signal_upgrade_pending.connect(
+        upgrade::signal_upgrade_pending.connect(
             this->signal_handle,
             std::bind(&Options::on_upgrade_pending, this, _1));
     }
 
     if (show_upgrade_progress != except)
     {
-        platform::upgrade::signal_upgrade_progress.connect(
+        upgrade::signal_upgrade_progress.connect(
             this->signal_handle,
             std::bind(&Options::on_upgrade_progress, this, _1));
     }
@@ -120,14 +120,14 @@ void Options::on_monitor_start()
 
 void Options::on_monitor_end()
 {
-    platform::upgrade::signal_upgrade_progress.disconnect(this->signal_handle);
-    platform::upgrade::signal_upgrade_pending.disconnect(this->signal_handle);
-    platform::upgrade::signal_upgrade_available.disconnect(this->signal_handle);
-    platform::upgrade::signal_scan_progress.disconnect(this->signal_handle);
+    upgrade::signal_upgrade_progress.disconnect(this->signal_handle);
+    upgrade::signal_upgrade_pending.disconnect(this->signal_handle);
+    upgrade::signal_upgrade_available.disconnect(this->signal_handle);
+    upgrade::signal_scan_progress.disconnect(this->signal_handle);
 }
 
 void Options::on_scan_progress(
-    const platform::upgrade::ScanProgress::ptr &progress)
+    const upgrade::ScanProgress::ptr &progress)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_scan_progress(%s)\n",
@@ -136,7 +136,7 @@ void Options::on_scan_progress(
 }
 
 void Options::on_upgrade_available(
-    const platform::upgrade::PackageInfo::ptr &package_info)
+    const upgrade::PackageInfo::ptr &package_info)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_upgrade_available(%s)\n",
@@ -145,7 +145,7 @@ void Options::on_upgrade_available(
 }
 
 void Options::on_upgrade_pending(
-    const platform::upgrade::PackageInfo::ptr &package_info)
+    const upgrade::PackageInfo::ptr &package_info)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_upgrade_pending(%s)\n",
@@ -154,7 +154,7 @@ void Options::on_upgrade_pending(
 }
 
 void Options::on_upgrade_progress(
-    const platform::upgrade::UpgradeProgress::ptr &progress)
+    const upgrade::UpgradeProgress::ptr &progress)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_upgrade_progress(%s)\n",

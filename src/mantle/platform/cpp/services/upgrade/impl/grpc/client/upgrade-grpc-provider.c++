@@ -9,7 +9,7 @@
 #include "protobuf-upgrade-types.h++"
 #include "protobuf-inline.h++"
 
-namespace platform::upgrade::grpc
+namespace upgrade::grpc
 {
     ClientProvider::ClientProvider(const std::shared_ptr<Client> &client)
         : Super("grpc"),
@@ -28,7 +28,7 @@ namespace platform::upgrade::grpc
         return protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
                 &Client::Stub::scan,
-                protobuf::encoded<cc::platform::upgrade::PackageSource>(source)));
+                protobuf::encoded<::cc::upgrade::PackageSource>(source)));
     }
 
     PackageSources ClientProvider::list_sources() const
@@ -43,7 +43,7 @@ namespace platform::upgrade::grpc
         return protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
                 &Client::Stub::list_available,
-                protobuf::encoded<cc::platform::upgrade::PackageSource>(source)));
+                protobuf::encoded<::cc::upgrade::PackageSource>(source)));
     }
 
     PackageInfo::ptr ClientProvider::best_available(
@@ -52,13 +52,13 @@ namespace platform::upgrade::grpc
         return protobuf::decoded_shared<PackageInfo>(
             this->client->call_check(
                 &Client::Stub::best_available,
-                protobuf::encoded<cc::platform::upgrade::PackageSource>(source)));
+                protobuf::encoded<::cc::upgrade::PackageSource>(source)));
     }
 
     PackageInfo::ptr ClientProvider::install(
         const PackageSource &source)
     {
-        cc::platform::upgrade::InstallRequest request;
+        ::cc::upgrade::InstallRequest request;
         protobuf::encode(source, request.mutable_source());
 
         return protobuf::decoded_shared<PackageInfo>(
@@ -70,4 +70,4 @@ namespace platform::upgrade::grpc
         this->client->call_check(&Client::Stub::finalize);
     }
 
-}  // namespace platform::upgrade::grpc
+}  // namespace upgrade::grpc

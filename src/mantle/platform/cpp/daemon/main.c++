@@ -25,10 +25,10 @@ int main(int argc, char** argv)
         ::options = std::make_unique<Options>();
         ::options->apply(argc, argv);
 
-        platform::sysconfig::native::register_providers();
-        platform::netconfig::dbus::register_providers();
-        platform::vfs::local::register_providers();
-        platform::upgrade::native::register_providers();
+        sysconfig::native::register_providers();
+        netconfig::dbus::register_providers();
+        vfs::local::register_providers();
+        upgrade::native::register_providers();
 
         std::vector<std::thread> server_threads;
 
@@ -48,10 +48,10 @@ int main(int argc, char** argv)
             t.join();
         }
 
-        platform::upgrade::native::unregister_providers();
-        platform::vfs::local::unregister_providers();
-        platform::netconfig::dbus::unregister_providers();
-        platform::sysconfig::native::unregister_providers();
+        upgrade::native::unregister_providers();
+        vfs::local::unregister_providers();
+        netconfig::dbus::unregister_providers();
+        sysconfig::native::unregister_providers();
 
         return 0;
     }

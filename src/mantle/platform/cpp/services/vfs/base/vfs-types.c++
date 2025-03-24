@@ -7,7 +7,7 @@
 
 #include "vfs-types.h++"
 
-namespace platform::vfs
+namespace vfs
 {
     //==========================================================================
     /// Operational flags for copy(), move(), remove(), create_folder()
@@ -173,7 +173,7 @@ namespace platform::vfs
         Path::check_relative(lhs.context, lhs.relpath / rhs);
         return {lhs.context, lhs.relpath / rhs};
     }
-}  // namespace platform::vfs
+}  // namespace vfs
 
 namespace std::filesystem
 {

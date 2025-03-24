@@ -11,43 +11,43 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-inline.h++"
 
-namespace platform::netconfig::grpc
+namespace netconfig::grpc
 {
     void SignalQueue::initialize()
     {
-        using cc::platform::netconfig::Signal;
+        using ::cc::netconfig::Signal;
 
         this->connect<ConnectionData::ptr>(
             Signal::kConnection,
-            platform::netconfig::signal_connection,
+            netconfig::signal_connection,
             [](ConnectionData::ptr ref, Signal *msg) {
                 protobuf::encode_shared(ref, msg->mutable_connection());
             });
 
         this->connect<ActiveConnectionData::ptr>(
             Signal::kActiveConnection,
-            platform::netconfig::signal_active_connection,
+            netconfig::signal_active_connection,
             [](ActiveConnectionData::ptr ref, Signal *msg) {
                 protobuf::encode_shared(ref, msg->mutable_active_connection());
             });
 
         this->connect<AccessPointData::ptr>(
             Signal::kAccesspoint,
-            platform::netconfig::signal_accesspoint,
+            netconfig::signal_accesspoint,
             [](AccessPointData::ptr ref, Signal *msg) {
                 protobuf::encode_shared(ref, msg->mutable_accesspoint());
             });
 
         this->connect<DeviceData::ptr>(
             Signal::kDevice,
-            platform::netconfig::signal_device,
+            netconfig::signal_device,
             [](DeviceData::ptr ref, Signal *msg) {
                 protobuf::encode_shared(ref, msg->mutable_device());
             });
 
         this->connect<GlobalData::ptr>(
             Signal::kGlobal,
-            platform::netconfig::signal_globaldata,
+            netconfig::signal_globaldata,
             [](GlobalData::ptr ref, Signal *msg) {
                 protobuf::encode_shared(ref, msg->mutable_global());
             });
@@ -56,11 +56,11 @@ namespace platform::netconfig::grpc
 
     void SignalQueue::deinitialize()
     {
-        this->disconnect(platform::netconfig::signal_connection);
-        this->disconnect(platform::netconfig::signal_active_connection);
-        this->disconnect(platform::netconfig::signal_accesspoint);
-        this->disconnect(platform::netconfig::signal_device);
-        this->disconnect(platform::netconfig::signal_globaldata);
+        this->disconnect(netconfig::signal_connection);
+        this->disconnect(netconfig::signal_active_connection);
+        this->disconnect(netconfig::signal_accesspoint);
+        this->disconnect(netconfig::signal_device);
+        this->disconnect(netconfig::signal_globaldata);
         Super::deinitialize();
     }
-}  // namespace platform::netconfig::grpc
+}  // namespace netconfig::grpc

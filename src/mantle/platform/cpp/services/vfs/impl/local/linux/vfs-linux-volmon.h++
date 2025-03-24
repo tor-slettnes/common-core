@@ -22,7 +22,7 @@
 #define BLOCK_SIZE      512
 #define PROPERTY_ACTION "ACTION"
 
-namespace platform::vfs::local::volume
+namespace vfs::local::volume
 {
     enum ActionType
     {
@@ -195,4 +195,4 @@ namespace platform::vfs::local::volume
     private:
         std::thread runthread;
     };
-}  // namespace platform::vfs::local::volume
+}  // namespace vfs::local::volume

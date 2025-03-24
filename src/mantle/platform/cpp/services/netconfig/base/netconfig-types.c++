@@ -7,7 +7,7 @@
 
 #include "netconfig-types.h++"
 
-namespace platform::netconfig
+namespace netconfig
 {
     void SystemData::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
@@ -901,7 +901,7 @@ namespace platform::netconfig
         {NM_CONNECTIVITY_FULL, "full"},
     };
 
-}  // namespace platform::netconfig
+}  // namespace netconfig
 
 std::ostream &operator<<(std::ostream &stream, NM80211Mode mode)
 {
@@ -909,7 +909,7 @@ std::ostream &operator<<(std::ostream &stream, NM80211Mode mode)
     {
         try
         {
-            stream << platform::netconfig::ap_mode_map.at(mode);
+            stream << netconfig::ap_mode_map.at(mode);
         }
         catch (std::out_of_range)
         {
@@ -925,7 +925,7 @@ std::ostream &operator<<(std::ostream &stream, NMState state)
     {
         try
         {
-            stream << platform::netconfig::state_map.at(state);
+            stream << netconfig::state_map.at(state);
         }
         catch (std::out_of_range)
         {
@@ -941,7 +941,7 @@ std::ostream &operator<<(std::ostream &stream, NMWepKeyType key_type)
     {
         try
         {
-            stream << platform::netconfig::wep_key_type_map.at(key_type);
+            stream << netconfig::wep_key_type_map.at(key_type);
         }
         catch (std::out_of_range)
         {
@@ -957,7 +957,7 @@ std::ostream &operator<<(std::ostream &stream, NMDeviceType dev_type)
     {
         try
         {
-            stream << platform::netconfig::device_type_map.at(dev_type);
+            stream << netconfig::device_type_map.at(dev_type);
         }
         catch (std::out_of_range)
         {
@@ -973,7 +973,7 @@ std::ostream &operator<<(std::ostream &stream, NMDeviceState dev_state)
     {
         try
         {
-            stream << platform::netconfig::device_state_map.at(dev_state);
+            stream << netconfig::device_state_map.at(dev_state);
         }
         catch (std::out_of_range)
         {
@@ -989,7 +989,7 @@ std::ostream &operator<<(std::ostream &stream, NMDeviceStateReason dev_state_rea
     {
         try
         {
-            stream << platform::netconfig::device_state_reason_map.at(dev_state_reason);
+            stream << netconfig::device_state_reason_map.at(dev_state_reason);
         }
         catch (std::out_of_range)
         {
@@ -1005,7 +1005,7 @@ std::ostream &operator<<(std::ostream &stream, NMActiveConnectionState state)
     {
         try
         {
-            stream << platform::netconfig::ac_state_map.at(state);
+            stream << netconfig::ac_state_map.at(state);
         }
         catch (std::out_of_range)
         {
@@ -1021,7 +1021,7 @@ std::ostream &operator<<(std::ostream &stream, NMActiveConnectionStateReason rea
     {
         try
         {
-            stream << platform::netconfig::ac_reason_map.at(reason);
+            stream << netconfig::ac_reason_map.at(reason);
         }
         catch (std::out_of_range)
         {
@@ -1037,7 +1037,7 @@ std::ostream &operator<<(std::ostream &stream, NMConnectivityState state)
     {
         try
         {
-            stream << platform::netconfig::connectivity_state_map.at(state);
+            stream << netconfig::connectivity_state_map.at(state);
         }
         catch (std::out_of_range)
         {

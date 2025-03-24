@@ -10,7 +10,7 @@
 #include "nm-device-wired.h++"
 #include "nm-device-wireless.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     //==========================================================================
     /// Network Manager device
@@ -74,4 +74,4 @@ namespace platform::netconfig::dbus
         void disconnect();
     };
 
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

@@ -12,7 +12,7 @@
 #include "types/filesystem.h++"
 #include "status/exceptions.h++"
 
-namespace platform::sysconfig::native
+namespace sysconfig::native
 {
     constexpr auto TIMEDATECTL_PATH = "/usr/bin/timedatectl";
     constexpr auto TIMEDATECTL_SHOW = "show";
@@ -96,4 +96,4 @@ namespace platform::sysconfig::native
         return valuemap;
     }
 
-}  // namespace platform::sysconfig::systemd
+}  // namespace sysconfig::systemd

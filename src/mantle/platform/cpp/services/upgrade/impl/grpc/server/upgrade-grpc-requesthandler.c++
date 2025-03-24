@@ -10,23 +10,23 @@
 #include "protobuf-upgrade-types.h++"
 #include "protobuf-inline.h++"
 
-namespace platform::upgrade::grpc
+namespace upgrade::grpc
 {
     RequestHandler::RequestHandler()
-        : provider(platform::upgrade::upgrade.get_shared())
+        : provider(upgrade::upgrade.get_shared())
     {
     }
 
     RequestHandler::RequestHandler(
-        const std::shared_ptr<platform::upgrade::ProviderInterface> &provider)
+        const std::shared_ptr<upgrade::ProviderInterface> &provider)
         : provider(provider)
     {
     }
 
     ::grpc::Status RequestHandler::scan(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::PackageSource *request,
-        ::cc::platform::upgrade::PackageCatalogue *response)
+        const ::cc::upgrade::PackageSource *request,
+        ::cc::upgrade::PackageCatalogue *response)
     {
         try
         {
@@ -45,7 +45,7 @@ namespace platform::upgrade::grpc
     ::grpc::Status RequestHandler::list_sources(
         ::grpc::ServerContext *context,
         const ::google::protobuf::Empty *request,
-        ::cc::platform::upgrade::PackageSources *response)
+        ::cc::upgrade::PackageSources *response)
     {
         try
         {
@@ -60,8 +60,8 @@ namespace platform::upgrade::grpc
 
     ::grpc::Status RequestHandler::list_available(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::PackageSource *request,
-        ::cc::platform::upgrade::PackageCatalogue *response)
+        const ::cc::upgrade::PackageSource *request,
+        ::cc::upgrade::PackageCatalogue *response)
     {
         try
         {
@@ -78,8 +78,8 @@ namespace platform::upgrade::grpc
 
     ::grpc::Status RequestHandler::best_available(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::PackageSource *request,
-        ::cc::platform::upgrade::PackageInfo *response)
+        const ::cc::upgrade::PackageSource *request,
+        ::cc::upgrade::PackageInfo *response)
     {
         try
         {
@@ -96,8 +96,8 @@ namespace platform::upgrade::grpc
 
     ::grpc::Status RequestHandler::install(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::InstallRequest *request,
-        ::cc::platform::upgrade::PackageInfo *response)
+        const ::cc::upgrade::InstallRequest *request,
+        ::cc::upgrade::PackageInfo *response)
     {
         try
         {
@@ -132,11 +132,11 @@ namespace platform::upgrade::grpc
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext *context,
         const ::cc::signal::Filter *filter,
-        ::grpc::ServerWriter<::cc::platform::upgrade::Signal> *writer)
+        ::grpc::ServerWriter<::cc::upgrade::Signal> *writer)
     {
         try
         {
-            return this->stream_signals<::cc::platform::upgrade::Signal, SignalQueue>(
+            return this->stream_signals<::cc::upgrade::Signal, SignalQueue>(
                 context,
                 filter,
                 writer);
@@ -147,4 +147,4 @@ namespace platform::upgrade::grpc
         }
     }
 
-} // namespace platform::upgrade::grpc
+} // namespace upgrade::grpc

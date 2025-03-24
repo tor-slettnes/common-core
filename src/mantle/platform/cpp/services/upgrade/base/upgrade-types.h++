@@ -13,7 +13,7 @@
 #include "types/symbolmap.h++"
 #include "types/listable.h++"
 
-namespace platform::upgrade
+namespace upgrade
 {
     define_log_scope("upgrade");
 
@@ -29,7 +29,7 @@ namespace platform::upgrade
 
     using Location = std::variant<
         std::monostate,
-        platform::vfs::Path,
+        vfs::Path,
         URL>;
 
     //==========================================================================
@@ -158,10 +158,10 @@ namespace platform::upgrade
     static std::ostream &operator<<(std::ostream &stream,
                                     UpgradeProgress::State state);
 
-}  // namespace platform::upgrade
+}  // namespace upgrade
 
 namespace std
 {
     std::ostream &operator<<(std::ostream &stream,
-                             const platform::upgrade::Location &location);
+                             const upgrade::Location &location);
 }

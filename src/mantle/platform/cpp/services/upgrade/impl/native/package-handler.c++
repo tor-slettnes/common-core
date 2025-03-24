@@ -16,7 +16,7 @@
 #include <functional>
 #include <fstream>
 
-namespace platform::upgrade::native
+namespace upgrade::native
 {
     PackageHandler::PackageHandler(const core::SettingsStore::ptr &settings)
         : settings(settings)
@@ -340,4 +340,4 @@ namespace platform::upgrade::native
         signal_upgrade_progress.emit(progress);
     }
 
-}  // namespace platform::upgrade::native
+}  // namespace upgrade::native

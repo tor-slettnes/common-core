@@ -17,7 +17,7 @@
 
 #include <nm-dbus-interface.h>
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     class Manager : public DataWrapper<GlobalData>
     {
@@ -67,4 +67,4 @@ namespace platform::netconfig::dbus
         std::shared_ptr<core::dbus::PropertiesProxy> properties_proxy;
         core::SettingsStore settings;
     };
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

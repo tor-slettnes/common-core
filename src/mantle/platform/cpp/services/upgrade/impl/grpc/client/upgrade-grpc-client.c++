@@ -10,67 +10,67 @@
 #include "protobuf-upgrade-types.h++"
 #include "protobuf-inline.h++"
 
-namespace platform::upgrade::grpc
+namespace upgrade::grpc
 {
     void Client::initialize()
     {
         Super::initialize();
 
         this->add_handler(
-            cc::platform::upgrade::Signal::kScanProgress,
+            ::cc::upgrade::Signal::kScanProgress,
             &This::on_scan_progress);
 
         this->add_handler(
-            cc::platform::upgrade::Signal::kUpgradeAvailable,
+            ::cc::upgrade::Signal::kUpgradeAvailable,
             &This::on_upgrade_available);
 
         this->add_handler(
-            cc::platform::upgrade::Signal::kUpgradePending,
+            ::cc::upgrade::Signal::kUpgradePending,
             &This::on_upgrade_pending);
 
         this->add_handler(
-            cc::platform::upgrade::Signal::kUpgradeProgress,
+            ::cc::upgrade::Signal::kUpgradeProgress,
             &This::on_upgrade_progress);
     }
 
-    void Client::on_scan_progress(const cc::platform::upgrade::Signal &signal)
+    void Client::on_scan_progress(const ::cc::upgrade::Signal &signal)
     {
-        platform::upgrade::ScanProgress::ptr progress;
+        upgrade::ScanProgress::ptr progress;
         if (This::is_mapped(signal.mapping_action()))
         {
             protobuf::decode_shared(signal.scan_progress(), &progress);
         }
-        platform::upgrade::signal_scan_progress.emit(progress);
+        upgrade::signal_scan_progress.emit(progress);
     }
 
-    void Client::on_upgrade_available(const cc::platform::upgrade::Signal &signal)
+    void Client::on_upgrade_available(const ::cc::upgrade::Signal &signal)
     {
-        platform::upgrade::PackageInfo::ptr available_info;
+        upgrade::PackageInfo::ptr available_info;
         if (This::is_mapped(signal.mapping_action()))
         {
             protobuf::decode_shared(signal.upgrade_available(), &available_info);
         }
-        platform::upgrade::signal_upgrade_available.emit(available_info);
+        upgrade::signal_upgrade_available.emit(available_info);
     }
 
-    void Client::on_upgrade_pending(const cc::platform::upgrade::Signal &signal)
+    void Client::on_upgrade_pending(const ::cc::upgrade::Signal &signal)
     {
-        platform::upgrade::PackageInfo::ptr pending_info;
+        upgrade::PackageInfo::ptr pending_info;
         if (This::is_mapped(signal.mapping_action()))
         {
             protobuf::decode_shared(signal.upgrade_pending(), &pending_info);
         }
-        platform::upgrade::signal_upgrade_pending.emit(pending_info);
+        upgrade::signal_upgrade_pending.emit(pending_info);
     }
 
-    void Client::on_upgrade_progress(const cc::platform::upgrade::Signal &signal)
+    void Client::on_upgrade_progress(const ::cc::upgrade::Signal &signal)
     {
-        platform::upgrade::UpgradeProgress::ptr progress;
+        upgrade::UpgradeProgress::ptr progress;
         if (This::is_mapped(signal.mapping_action()))
         {
             protobuf::decode_shared(signal.upgrade_progress(), &progress);
         }
-        platform::upgrade::signal_upgrade_progress.emit(progress);
+        upgrade::signal_upgrade_progress.emit(progress);
     }
 
-}  // namespace platform::upgrade::grpc
+}  // namespace upgrade::grpc

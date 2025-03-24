@@ -16,7 +16,7 @@
 #define SETTING_WIFI_BAND    "wifi band"
 #define DEFAULT_WIFI_BAND    "any"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     Manager::Manager(
         core::dbus::ProxyContainer* container,
@@ -255,4 +255,4 @@ namespace platform::netconfig::dbus
         }
     }
 
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

@@ -21,7 +21,7 @@
 #include <unordered_map>
 #include <set>
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     //==========================================================================
     // NetworkManager proxy container.instance
@@ -104,4 +104,4 @@ namespace platform::netconfig::dbus
         return map;
     }
 
-} // namespace platform::netconfig::dbus
+} // namespace netconfig::dbus

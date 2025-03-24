@@ -11,10 +11,10 @@
 #include "protobuf-inline.h++"
 #include "types/bytevector.h++"
 
-namespace platform::netconfig::grpc
+namespace netconfig::grpc
 {
     RequestHandler::RequestHandler()
-        : provider(platform::netconfig::network.get_shared())
+        : provider(netconfig::network.get_shared())
     {
     }
 
@@ -59,7 +59,7 @@ namespace platform::netconfig::grpc
     ::grpc::Status RequestHandler::get_connections(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::netconfig::ConnectionMap* response)
+        ::cc::netconfig::ConnectionMap* response)
     {
         try
         {
@@ -77,7 +77,7 @@ namespace platform::netconfig::grpc
 
     ::grpc::Status RequestHandler::define_connection(
         ::grpc::ServerContext* context,
-        const ::cc::platform::netconfig::ConnectionRequest* request,
+        const ::cc::netconfig::ConnectionRequest* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -96,7 +96,7 @@ namespace platform::netconfig::grpc
 
     ::grpc::Status RequestHandler::remove_connection(
         ::grpc::ServerContext* context,
-        const ::cc::platform::netconfig::MappingKey* request,
+        const ::cc::netconfig::MappingKey* request,
         ::google::protobuf::BoolValue* response)
     {
         try
@@ -113,7 +113,7 @@ namespace platform::netconfig::grpc
 
     ::grpc::Status RequestHandler::activate_connection(
         ::grpc::ServerContext* context,
-        const ::cc::platform::netconfig::MappingKey* request,
+        const ::cc::netconfig::MappingKey* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -129,7 +129,7 @@ namespace platform::netconfig::grpc
 
     ::grpc::Status RequestHandler::deactivate_connection(
         ::grpc::ServerContext* context,
-        const ::cc::platform::netconfig::MappingKey* request,
+        const ::cc::netconfig::MappingKey* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -146,7 +146,7 @@ namespace platform::netconfig::grpc
     ::grpc::Status RequestHandler::get_active_connections(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::netconfig::ActiveConnectionMap* response)
+        ::cc::netconfig::ActiveConnectionMap* response)
     {
         try
         {
@@ -180,7 +180,7 @@ namespace platform::netconfig::grpc
     ::grpc::Status RequestHandler::get_aps(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::netconfig::AccessPointMap* response)
+        ::cc::netconfig::AccessPointMap* response)
     {
         try
         {
@@ -197,7 +197,7 @@ namespace platform::netconfig::grpc
 
     ::grpc::Status RequestHandler::connect_ap(
         ::grpc::ServerContext* context,
-        const ::cc::platform::netconfig::AccessPointConnection* request,
+        const ::cc::netconfig::AccessPointConnection* request,
         ::google::protobuf::Empty* response)
     {
         ConnectionData data;
@@ -208,11 +208,11 @@ namespace platform::netconfig::grpc
         {
             switch (request->key_case())
             {
-            case cc::platform::netconfig::AccessPointConnection::KeyCase::kBssid:
+            case ::cc::netconfig::AccessPointConnection::KeyCase::kBssid:
                 this->provider->connect_ap(request->bssid(), data);
                 break;
 
-            case cc::platform::netconfig::AccessPointConnection::KeyCase::kSsid:
+            case ::cc::netconfig::AccessPointConnection::KeyCase::kSsid:
                 this->provider->connect_ap(core::types::ByteVector(request->ssid()), data);
                 break;
 
@@ -231,7 +231,7 @@ namespace platform::netconfig::grpc
     ::grpc::Status RequestHandler::get_devices(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::netconfig::DeviceMap* response)
+        ::cc::netconfig::DeviceMap* response)
     {
         try
         {
@@ -250,7 +250,7 @@ namespace platform::netconfig::grpc
     ::grpc::Status RequestHandler::get_global_data(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::platform::netconfig::GlobalData* response)
+        ::cc::netconfig::GlobalData* response)
     {
         try
         {
@@ -268,7 +268,7 @@ namespace platform::netconfig::grpc
 
     ::grpc::Status RequestHandler::set_wireless_enabled(
         ::grpc::ServerContext* context,
-        const ::cc::platform::netconfig::RadioState* request,
+        const ::cc::netconfig::RadioState* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -300,7 +300,7 @@ namespace platform::netconfig::grpc
 
     ::grpc::Status RequestHandler::select_wireless_band(
         ::grpc::ServerContext* context,
-        const ::cc::platform::netconfig::WirelessBandSetting* request,
+        const ::cc::netconfig::WirelessBandSetting* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -319,11 +319,11 @@ namespace platform::netconfig::grpc
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext* context,
         const ::cc::signal::Filter* filter,
-        ::grpc::ServerWriter<::cc::platform::netconfig::Signal>* writer)
+        ::grpc::ServerWriter<::cc::netconfig::Signal>* writer)
     {
-        return this->stream_signals<cc::platform::netconfig::Signal, SignalQueue>(
+        return this->stream_signals<::cc::netconfig::Signal, SignalQueue>(
             context,
             filter,
             writer);
     }
-}  // namespace platform::netconfig::grpc
+}  // namespace netconfig::grpc

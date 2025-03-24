@@ -8,7 +8,7 @@
 #pragma once
 #include "vfs.h++"
 
-namespace platform::vfs
+namespace vfs
 {
     class RemoteContext : public Context,
                           public core::types::enable_create_shared<RemoteContext>
@@ -26,4 +26,4 @@ namespace platform::vfs
         std::weak_ptr<ProviderInterface> provider;
     };
 
-}  // namespace platform::vfs
+}  // namespace vfs

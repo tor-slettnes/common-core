@@ -74,12 +74,12 @@ void Options::add_commands()
 
 void Options::get_current()
 {
-    std::cout << platform::sysconfig::product->get_product_info() << std::endl;
+    std::cout << sysconfig::product->get_product_info() << std::endl;
 }
 
 void Options::scan()
 {
-    platform::upgrade::PackageSource source;
+    upgrade::PackageSource source;
     std::string arg = this->get_arg("source type");
     if (core::str::tolower(arg) == "vfs")
     {
@@ -96,7 +96,7 @@ void Options::scan()
         std::exit(-1);
     }
 
-    for (const auto &src : platform::upgrade::upgrade->scan(source))
+    for (const auto &src : upgrade::upgrade->scan(source))
     {
         std::cout << src << std::endl;
     }
@@ -104,7 +104,7 @@ void Options::scan()
 
 void Options::list_sources()
 {
-    for (const auto &src : platform::upgrade::upgrade->list_sources())
+    for (const auto &src : upgrade::upgrade->list_sources())
     {
         std::cout << src << std::endl;
     }
@@ -112,7 +112,7 @@ void Options::list_sources()
 
 void Options::list_available()
 {
-    for (const auto &package_info : platform::upgrade::upgrade->list_available())
+    for (const auto &package_info : upgrade::upgrade->list_available())
     {
         std::cout << *package_info << std::endl;
     }
@@ -120,12 +120,12 @@ void Options::list_available()
 
 void Options::best_available()
 {
-    std::cout << *platform::upgrade::upgrade->best_available() << std::endl;
+    std::cout << *upgrade::upgrade->best_available() << std::endl;
 }
 
 void Options::install()
 {
-    platform::upgrade::PackageSource source;
+    upgrade::PackageSource source;
 
     if (std::optional<std::string> arg = this->next_arg())
     {
@@ -140,8 +140,8 @@ void Options::install()
         else if (core::str::tolower(arg.value()) == "file")
         {
             fs::path local_path(this->get_arg("filename"));
-            platform::vfs::Path remote_path("releases", local_path.filename());
-            platform::vfs::upload(local_path, remote_path);
+            vfs::Path remote_path("releases", local_path.filename());
+            vfs::upload(local_path, remote_path);
 
             source.location = remote_path;
         }
@@ -153,15 +153,15 @@ void Options::install()
         }
     }
 
-    std::cout << *platform::upgrade::upgrade->install(source) << std::endl;
+    std::cout << *upgrade::upgrade->install(source) << std::endl;
 }
 
 void Options::finalize()
 {
-    platform::upgrade::upgrade->finalize();
+    upgrade::upgrade->finalize();
 }
 
-platform::vfs::Path Options::vfspath(const std::string &path)
+vfs::Path Options::vfspath(const std::string &path)
 {
     std::vector<std::string> parts = core::str::split(path, ":", 1, true);
     return {parts.at(0),

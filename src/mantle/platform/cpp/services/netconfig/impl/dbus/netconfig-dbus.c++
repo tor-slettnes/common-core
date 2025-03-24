@@ -9,7 +9,7 @@
 #include "dbus-proxycontainer.h++"
 #include "logging/logging.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     //==========================================================================
     /// NetConfig provider
@@ -180,4 +180,4 @@ namespace platform::netconfig::dbus
         this->manager->select_wireless_band(band);
     }
 
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

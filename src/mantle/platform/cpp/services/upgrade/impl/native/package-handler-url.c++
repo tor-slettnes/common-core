@@ -10,7 +10,7 @@
 #include "status/exceptions.h++"
 #include "platform/process.h++"
 
-namespace platform::upgrade::native
+namespace upgrade::native
 {
     URLPackageHandler::URLPackageHandler(const core::SettingsStore::ptr &settings)
         : Super(settings)
@@ -82,4 +82,4 @@ namespace platform::upgrade::native
         };
     }
 
-}  // namespace platform::upgrade::native
+}  // namespace upgrade::native

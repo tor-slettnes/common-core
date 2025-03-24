@@ -10,7 +10,7 @@
 
 #include "grpc-signalqueue.h++"
 
-namespace platform::sysconfig::grpc
+namespace sysconfig::grpc
 {
     //==========================================================================
     /// @class SignalQueue
@@ -25,13 +25,13 @@ namespace platform::sysconfig::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<cc::platform::sysconfig::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<::cc::sysconfig::Signal>
     {
-        using Super = core::grpc::SignalQueue<cc::platform::sysconfig::Signal>;
+        using Super = core::grpc::SignalQueue<::cc::sysconfig::Signal>;
 
     public:
         using Super::Super;
         void initialize() override;
         void deinitialize() override;
     };
-}  // namespace platform::sysconfig::grpc
+}  // namespace sysconfig::grpc

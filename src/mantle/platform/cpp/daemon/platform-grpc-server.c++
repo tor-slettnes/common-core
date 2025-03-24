@@ -25,19 +25,19 @@ namespace platform
         core::grpc::ServerBuilder builder(listen_address);
 
         builder.add_service(
-            platform::sysconfig::grpc::RequestHandler::create_shared(),  // handler
+            sysconfig::grpc::RequestHandler::create_shared(),  // handler
             listen_address.empty());                                     // add_listener
 
         builder.add_service(
-            platform::netconfig::grpc::RequestHandler::create_shared(),  // handler
+            netconfig::grpc::RequestHandler::create_shared(),  // handler
             listen_address.empty());                                     // add_listener
 
         builder.add_service(
-            platform::vfs::grpc::RequestHandler::create_shared(),  // handler
+            vfs::grpc::RequestHandler::create_shared(),  // handler
             listen_address.empty());                               // add_listener
 
         builder.add_service(
-            platform::upgrade::grpc::RequestHandler::create_shared(),  // handler
+            upgrade::grpc::RequestHandler::create_shared(),  // handler
             listen_address.empty());                                   // add_listener
 
         logf_debug("Starting gRPC Server");

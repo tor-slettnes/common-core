@@ -8,7 +8,7 @@
 #include "vfs-context.h++"
 #include "status/exceptions.h++"
 
-namespace platform::vfs
+namespace vfs
 {
 
     //==========================================================================
@@ -78,4 +78,4 @@ namespace platform::vfs
         }
     }
 
-}  // namespace platform::vfs
+}  // namespace vfs

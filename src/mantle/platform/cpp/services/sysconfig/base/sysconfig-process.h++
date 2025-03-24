@@ -10,7 +10,7 @@
 #include "platform/provider.h++"
 #include "platform/process.h++"
 
-namespace platform::sysconfig
+namespace sysconfig
 {
     using core::platform::ArgVector;
     using core::platform::ExitStatus;
@@ -76,4 +76,4 @@ namespace platform::sysconfig
     // Process provider instance
 
     extern core::platform::ProviderProxy<ProcessInterface> process;
-}  // namespace platform::sysconfig
+}  // namespace sysconfig

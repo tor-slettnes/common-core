@@ -11,7 +11,7 @@
 #include "chrono/date-time.h++"
 #include "status/exceptions.h++"
 
-namespace platform::sysconfig::native
+namespace sysconfig::native
 {
     TimeConfigProvider::TimeConfigProvider(const std::string &name)
         : Super(name)
@@ -73,7 +73,7 @@ namespace platform::sysconfig::native
 
     void TimeConfigProvider::emit_time_config() const
     {
-        platform::sysconfig::signal_timeconfig.emit(this->get_time_config());
+        sysconfig::signal_timeconfig.emit(this->get_time_config());
     }
 
-}  // namespace platform::sysconfig::native
+}  // namespace sysconfig::native

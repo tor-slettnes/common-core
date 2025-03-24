@@ -7,7 +7,7 @@
 
 #include "vfs-local-fileio.h++"
 
-namespace platform::vfs::local
+namespace vfs::local
 {
     //==========================================================================
     // FileReader
@@ -30,4 +30,4 @@ namespace platform::vfs::local
     {
         logf_debug("FileWriter opened for location %s", loc);
     }
-}  // namespace platform::vfs::local
+}  // namespace vfs::local

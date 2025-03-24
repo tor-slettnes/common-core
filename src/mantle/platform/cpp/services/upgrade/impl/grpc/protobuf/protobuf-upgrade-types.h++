@@ -14,73 +14,73 @@ namespace protobuf
     //==========================================================================
     // Package Source
 
-    void encode(const ::platform::upgrade::PackageSource &native,
-                ::cc::platform::upgrade::PackageSource *msg);
+    void encode(const ::upgrade::PackageSource &native,
+                ::cc::upgrade::PackageSource *msg);
 
-    void decode(const ::cc::platform::upgrade::PackageSource &msg,
-                ::platform::upgrade::PackageSource *native);
+    void decode(const ::cc::upgrade::PackageSource &msg,
+                ::upgrade::PackageSource *native);
 
     //==========================================================================
     // Package Sources
 
-    void encode(const ::platform::upgrade::PackageSources &native,
-                ::cc::platform::upgrade::PackageSources *msg);
+    void encode(const ::upgrade::PackageSources &native,
+                ::cc::upgrade::PackageSources *msg);
 
-    void decode(const ::cc::platform::upgrade::PackageSources &msg,
-                ::platform::upgrade::PackageSources *native);
+    void decode(const ::cc::upgrade::PackageSources &msg,
+                ::upgrade::PackageSources *native);
 
     //==========================================================================
     // Package Information
 
-    void encode(const ::platform::upgrade::PackageInfo &native,
-                ::cc::platform::upgrade::PackageInfo *msg);
+    void encode(const ::upgrade::PackageInfo &native,
+                ::cc::upgrade::PackageInfo *msg);
 
-    void decode(const ::cc::platform::upgrade::PackageInfo &msg,
-                ::platform::upgrade::PackageInfo *native);
+    void decode(const ::cc::upgrade::PackageInfo &msg,
+                ::upgrade::PackageInfo *native);
 
     //==========================================================================
     // Package Catalogue
 
-    void encode(const ::platform::upgrade::PackageCatalogue &native,
-                ::cc::platform::upgrade::PackageCatalogue *msg);
+    void encode(const ::upgrade::PackageCatalogue &native,
+                ::cc::upgrade::PackageCatalogue *msg);
 
-    void decode(const ::cc::platform::upgrade::PackageCatalogue &msg,
-                ::platform::upgrade::PackageCatalogue *native);
+    void decode(const ::cc::upgrade::PackageCatalogue &msg,
+                ::upgrade::PackageCatalogue *native);
 
     //==========================================================================
     // Scan Progress
 
-    void encode(const ::platform::upgrade::ScanProgress &native,
-                ::cc::platform::upgrade::ScanProgress *msg);
+    void encode(const ::upgrade::ScanProgress &native,
+                ::cc::upgrade::ScanProgress *msg);
 
-    void decode(const ::cc::platform::upgrade::ScanProgress &msg,
-                ::platform::upgrade::ScanProgress *native);
+    void decode(const ::cc::upgrade::ScanProgress &msg,
+                ::upgrade::ScanProgress *native);
 
     //==========================================================================
     // Upgrade Progress
 
-    void encode(const ::platform::upgrade::UpgradeProgress &native,
-                ::cc::platform::upgrade::UpgradeProgress *msg);
+    void encode(const ::upgrade::UpgradeProgress &native,
+                ::cc::upgrade::UpgradeProgress *msg);
 
-    void decode(const ::cc::platform::upgrade::UpgradeProgress &msg,
-                ::platform::upgrade::UpgradeProgress *native);
+    void decode(const ::cc::upgrade::UpgradeProgress &msg,
+                ::upgrade::UpgradeProgress *native);
 
     //==========================================================================
     // Upgrade Progress: State
 
-    void encode(const ::platform::upgrade::UpgradeProgress::State &native,
-                ::cc::platform::upgrade::UpgradeProgress::UpgradeState *msg);
+    void encode(const ::upgrade::UpgradeProgress::State &native,
+                ::cc::upgrade::UpgradeProgress::UpgradeState *msg);
 
-    void decode(const ::cc::platform::upgrade::UpgradeProgress::UpgradeState &msg,
-                ::platform::upgrade::UpgradeProgress::State *native);
+    void decode(const ::cc::upgrade::UpgradeProgress::UpgradeState &msg,
+                ::upgrade::UpgradeProgress::State *native);
 
     //==========================================================================
     // Upgrade Progress: Fraction
 
-    void encode(const ::platform::upgrade::UpgradeProgress::Fraction &native,
-                ::cc::platform::upgrade::UpgradeProgress::ProgressFraction *msg);
+    void encode(const ::upgrade::UpgradeProgress::Fraction &native,
+                ::cc::upgrade::UpgradeProgress::ProgressFraction *msg);
 
-    void decode(const ::cc::platform::upgrade::UpgradeProgress::ProgressFraction &msg,
-                ::platform::upgrade::UpgradeProgress::Fraction *native);
+    void decode(const ::cc::upgrade::UpgradeProgress::ProgressFraction &msg,
+                ::upgrade::UpgradeProgress::Fraction *native);
 
 }  // namespace protobuf

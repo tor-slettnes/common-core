@@ -10,15 +10,15 @@
 #include "protobuf-upgrade-types.h++"
 #include "protobuf-inline.h++"
 
-namespace platform::upgrade::grpc
+namespace upgrade::grpc
 {
     void SignalQueue::initialize()
     {
-        using cc::platform::upgrade::Signal;
+        using ::cc::upgrade::Signal;
 
         this->connect<ScanProgress::ptr>(
             Signal::kScanProgress,
-            platform::upgrade::signal_scan_progress,
+            upgrade::signal_scan_progress,
             [=](ScanProgress::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 protobuf::encode_shared(ref, msg->mutable_scan_progress());
@@ -26,7 +26,7 @@ namespace platform::upgrade::grpc
 
         this->connect<PackageInfo::ptr>(
             Signal::kUpgradeAvailable,
-            platform::upgrade::signal_upgrade_available,
+            upgrade::signal_upgrade_available,
             [=](PackageInfo::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 protobuf::encode_shared(ref, msg->mutable_upgrade_available());
@@ -34,7 +34,7 @@ namespace platform::upgrade::grpc
 
         this->connect<PackageInfo::ptr>(
             Signal::kUpgradePending,
-            platform::upgrade::signal_upgrade_pending,
+            upgrade::signal_upgrade_pending,
             [=](PackageInfo::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 protobuf::encode_shared(ref, msg->mutable_upgrade_pending());
@@ -42,7 +42,7 @@ namespace platform::upgrade::grpc
 
         this->connect<UpgradeProgress::ptr>(
             Signal::kUpgradeProgress,
-            platform::upgrade::signal_upgrade_progress,
+            upgrade::signal_upgrade_progress,
             [=](UpgradeProgress::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
                 protobuf::encode_shared(ref, msg->mutable_upgrade_progress());
@@ -53,10 +53,10 @@ namespace platform::upgrade::grpc
 
     void SignalQueue::deinitialize()
     {
-        this->disconnect(platform::upgrade::signal_upgrade_progress);
-        this->disconnect(platform::upgrade::signal_upgrade_pending);
-        this->disconnect(platform::upgrade::signal_upgrade_available);
-        this->disconnect(platform::upgrade::signal_scan_progress);
+        this->disconnect(upgrade::signal_upgrade_progress);
+        this->disconnect(upgrade::signal_upgrade_pending);
+        this->disconnect(upgrade::signal_upgrade_available);
+        this->disconnect(upgrade::signal_scan_progress);
         Super::deinitialize();
     }
-}  // namespace platform::upgrade::grpc
+}  // namespace upgrade::grpc

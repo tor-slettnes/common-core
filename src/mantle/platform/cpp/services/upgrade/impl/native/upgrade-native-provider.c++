@@ -16,7 +16,7 @@
 #include "chrono/scheduler.h++"
 #include "types/create-shared.h++"
 
-namespace platform::upgrade::native
+namespace upgrade::native
 {
     NativeProvider::NativeProvider()
         : Super(TYPE_NAME_BASE(This)),
@@ -47,19 +47,19 @@ namespace platform::upgrade::native
         }
 
         using namespace std::placeholders;
-        platform::vfs::signal_context.connect(
+        vfs::signal_context.connect(
             this->name(),
             std::bind(&This::on_vfs_context, this, _1, _2, _3));
 
-        // platform::vfs::signal_context_in_use.connect(
+        // vfs::signal_context_in_use.connect(
         //     this->name(),
         //     std::bind(&This::on_vfs_context_in_use, this, _1, _2, _3));
     }
 
     void NativeProvider::deinitialize()
     {
-        // platform::vfs::signal_context_in_use.disconnect(this->name());
-        platform::vfs::signal_context.disconnect(this->name());
+        // vfs::signal_context_in_use.disconnect(this->name());
+        vfs::signal_context.disconnect(this->name());
         core::scheduler.remove(this->name());
         Super::deinitialize();
     }
@@ -191,7 +191,7 @@ namespace platform::upgrade::native
             if (this->installed_package_info && this->installed_package_info->reboot_required())
             {
                 logf_notice("Rebooting system");
-                platform::sysconfig::host->reboot();
+                sysconfig::host->reboot();
             }
 
             this->install_lock.unlock();
@@ -299,8 +299,8 @@ namespace platform::upgrade::native
 
     void NativeProvider::on_vfs_context(
         core::signal::MappingAction action,
-        const platform::vfs::ContextName &name,
-        const platform::vfs::Context::ptr &context)
+        const vfs::ContextName &name,
+        const vfs::Context::ptr &context)
     {
         if ((action == core::signal::MAP_ADDITION) && context->removable)
         {
@@ -310,8 +310,8 @@ namespace platform::upgrade::native
 
     void NativeProvider::on_vfs_context_in_use(
         core::signal::MappingAction action,
-        const platform::vfs::ContextName &name,
-        const platform::vfs::Context::ptr &context)
+        const vfs::ContextName &name,
+        const vfs::Context::ptr &context)
     {
         if ((action == core::signal::MAP_REMOVAL) &&
             (name == this->default_vfs_path.context))
@@ -320,4 +320,4 @@ namespace platform::upgrade::native
         }
     }
 
-}  // namespace platform::upgrade::native
+}  // namespace upgrade::native

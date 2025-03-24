@@ -9,7 +9,7 @@
 #include "protobuf-vfs-types.h++"
 #include "protobuf-inline.h++"
 
-namespace platform::vfs::grpc
+namespace vfs::grpc
 {
     //==========================================================================
     /// @class ClientBuffer
@@ -40,7 +40,7 @@ namespace platform::vfs::grpc
 
     bool ClientInputBuffer::read_some(BufferType *buffer)
     {
-        cc::platform::vfs::FileChunk msg;
+        ::cc::vfs::FileChunk msg;
         if (this->reader->Read(&msg))
         {
             buffer->assign(msg.data());
@@ -76,7 +76,7 @@ namespace platform::vfs::grpc
 
     bool ClientOutputBuffer::write_some(const BufferType &data)
     {
-        cc::platform::vfs::FileChunk msg;
+        ::cc::vfs::FileChunk msg;
         protobuf::encode(this->vpath, msg.mutable_path());
         msg.set_data(data);
 
@@ -105,7 +105,7 @@ namespace platform::vfs::grpc
     ClientInputStream::ClientInputStream(const std::unique_ptr<ClientStub> &stub,
                                          const Path &vpath)
         : cxt(std::make_unique<::grpc::ClientContext>()),
-          input_buffer(stub->read_file(cxt.get(), protobuf::encoded<cc::platform::vfs::Path>(vpath)))
+          input_buffer(stub->read_file(cxt.get(), protobuf::encoded<::cc::vfs::Path>(vpath)))
     {
         this->rdbuf(&this->input_buffer);
     }
@@ -133,4 +133,4 @@ namespace platform::vfs::grpc
         return this->output_buffer.status();
     }
 
-} // namespace platform::vfs::grpc
+} // namespace vfs::grpc

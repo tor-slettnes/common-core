@@ -8,7 +8,7 @@
 #pragma once
 #include "logging/logging.h++"
 
-namespace platform::sysconfig
+namespace sysconfig
 {
     define_log_scope("sysconfig");
-}  // namespace platform::sysconfig
+}  // namespace sysconfig

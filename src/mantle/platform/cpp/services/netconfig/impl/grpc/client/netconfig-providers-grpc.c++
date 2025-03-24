@@ -9,7 +9,7 @@
 #include "netconfig-grpc-provider.h++"
 #include "netconfig-grpc-client.h++"
 
-namespace platform::netconfig::grpc
+namespace netconfig::grpc
 {
     void register_providers(const std::string &host,
                             bool wait_for_ready,
@@ -29,4 +29,4 @@ namespace platform::netconfig::grpc
     {
         network.unregisterProvider<ClientProvider>();
     }
-}  // namespace platform::netconfig::grpc
+}  // namespace netconfig::grpc

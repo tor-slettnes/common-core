@@ -9,7 +9,7 @@ prog_path=$(realpath "$0")
 prog_dir=${prog_path%/*}
 base_dir=${prog_dir%/*}
 
-module_name="cc.platform.shell"
+module_name="cc.platform_shell"
 target_name="${module_name//.//}.py"
 
 for candidate_dir in lib/python3/dist-packages share/python python

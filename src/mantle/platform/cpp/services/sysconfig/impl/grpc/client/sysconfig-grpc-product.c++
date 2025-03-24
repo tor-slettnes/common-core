@@ -11,7 +11,7 @@
 #include "protobuf-inline.h++"
 #include "platform/symbols.h++"
 
-namespace platform::sysconfig::grpc
+namespace sysconfig::grpc
 {
     ProductProvider::ProductProvider(const std::shared_ptr<Client> &client)
         : Super(TYPE_NAME_FULL(This)),
@@ -23,9 +23,9 @@ namespace platform::sysconfig::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            cc::platform::sysconfig::Signal::kProductInfo,
-            [&](const cc::platform::sysconfig::Signal &signal) {
-                platform::sysconfig::signal_productinfo.emit(
+            ::cc::sysconfig::Signal::kProductInfo,
+            [&](const ::cc::sysconfig::Signal &signal) {
+                sysconfig::signal_productinfo.emit(
                     protobuf::decoded<ProductInfo>(signal.product_info()));
             });
     }
@@ -51,4 +51,4 @@ namespace platform::sysconfig::grpc
             protobuf::encoded<::google::protobuf::StringValue>(model));
     }
 
-}  // namespace platform::sysconfig::grpc
+}  // namespace sysconfig::grpc

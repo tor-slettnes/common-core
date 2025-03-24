@@ -10,7 +10,7 @@
 #include "netconfig.h++"
 #include "status/exceptions.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     ActiveConnection::ActiveConnection(
         core::dbus::ProxyContainer *container,
@@ -153,4 +153,4 @@ namespace platform::netconfig::dbus
         }
         return true; // Stay subscribed to updates
     }
-} // namespace platform::netconfig::dbus
+} // namespace netconfig::dbus

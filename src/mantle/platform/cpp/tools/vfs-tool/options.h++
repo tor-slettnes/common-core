@@ -29,12 +29,12 @@ private:
     void on_context(
         core::signal::MappingAction action,
         const std::string &key,
-        const platform::vfs::Context::ptr &cxt);
+        const vfs::Context::ptr &cxt);
 
     void on_context_in_use(
         core::signal::MappingAction action,
         const std::string &key,
-        const platform::vfs::Context::ptr &cxt);
+        const vfs::Context::ptr &cxt);
 
 private:
     void get_contexts();
@@ -58,8 +58,8 @@ private:
 
 private:
     std::string get_context_arg(const std::string &what = "context name");
-    platform::vfs::Path get_vfspath_arg(const std::string &what = "VFS path");
-    platform::vfs::Path vfspath(const std::string &path);
+    vfs::Path get_vfspath_arg(const std::string &what = "VFS path");
+    vfs::Path vfspath(const std::string &path);
 
 private:
     std::string signal_handle;

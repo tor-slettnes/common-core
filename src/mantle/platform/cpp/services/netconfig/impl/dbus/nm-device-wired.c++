@@ -8,7 +8,7 @@
 #include "nm-device.h++"
 #include "status/exceptions.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     WiredDevice::WiredDevice(
         core::dbus::ProxyContainer* container,
@@ -77,4 +77,4 @@ namespace platform::netconfig::dbus
             device->on_property_active_connection(change);
         }
     }
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

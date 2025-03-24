@@ -8,7 +8,7 @@
 #include "vfs-linux-provider.h++"
 #include "vfs-linux-removable-context.h++"
 
-namespace platform::vfs::local
+namespace vfs::local
 {
     constexpr auto SETTING_REMOVABLE = "removable";
     constexpr auto SETTING_PARTITION = "partition";
@@ -241,4 +241,4 @@ namespace platform::vfs::local
              {volume::ACTION_OFFLINE, &LinuxProvider::on_partition_offline},
          }},
     };
-}  // namespace platform::vfs::local
+}  // namespace vfs::local

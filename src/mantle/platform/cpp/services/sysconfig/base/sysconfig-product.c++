@@ -9,7 +9,7 @@
 #include "string/misc.h++"
 #include "string/convert.h++"
 
-namespace platform::sysconfig
+namespace sysconfig
 {
     //==========================================================================
     // Data types
@@ -162,4 +162,4 @@ namespace platform::sysconfig
     //==========================================================================
     // Signals
     core::signal::DataSignal<ProductInfo> signal_productinfo("signal_productinfo", true);
-}  // namespace platform::sysconfig
+}  // namespace sysconfig

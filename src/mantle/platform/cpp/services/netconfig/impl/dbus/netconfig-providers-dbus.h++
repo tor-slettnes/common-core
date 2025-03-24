@@ -7,8 +7,8 @@
 
 #pragma once
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     void register_providers();
     void unregister_providers();
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

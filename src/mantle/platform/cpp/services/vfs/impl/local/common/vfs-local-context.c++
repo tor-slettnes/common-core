@@ -10,7 +10,7 @@
 #include "vfs-signals.h++"
 #include "status/exceptions.h++"
 
-namespace platform::vfs::local
+namespace vfs::local
 {
     //==========================================================================
     // LocalContext
@@ -137,4 +137,4 @@ namespace platform::vfs::local
                    this->name);
         }
     }
-}  // namespace platform::vfs::local
+}  // namespace vfs::local

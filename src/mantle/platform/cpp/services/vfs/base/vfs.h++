@@ -8,7 +8,7 @@
 #pragma once
 #include "vfs-base.h++"
 
-namespace platform::vfs
+namespace vfs
 {
     /// Obtain local path to the specified virtual path.
     fs::path localPath(const Path &vpath);
@@ -289,4 +289,4 @@ namespace platform::vfs
                       const core::types::Value &value);
 
     void clear_attributes(const Path &vpath);
-}  // namespace platform::vfs
+}  // namespace vfs

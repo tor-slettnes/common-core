@@ -10,10 +10,10 @@
 #include "grpc-signalclient.h++"
 #include "types/create-shared.h++"
 
-namespace platform::netconfig::grpc
+namespace netconfig::grpc
 {
-    using ClientBaseImpl = core::grpc::SignalClient<cc::platform::netconfig::NetConfig,
-                                                    cc::platform::netconfig::Signal>;
+    using ClientBaseImpl = core::grpc::SignalClient<::cc::netconfig::NetConfig,
+                                                    ::cc::netconfig::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>
@@ -24,4 +24,4 @@ namespace platform::netconfig::grpc
         using Super::Super;
     };
 
-}  // namespace platform::netconfig::grpc
+}  // namespace netconfig::grpc

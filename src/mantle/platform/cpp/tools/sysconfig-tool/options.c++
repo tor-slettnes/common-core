@@ -27,7 +27,7 @@ void Options::add_options()
 void Options::initialize()
 {
     logf_debug("Creating SysConfig client: %s");
-    platform::sysconfig::grpc::register_providers(this->host);
+    sysconfig::grpc::register_providers(this->host);
     core::platform::signal_shutdown.connect(
         this->signal_handle,
         std::bind(&Options::deinitialize, this));
@@ -37,7 +37,7 @@ void Options::deinitialize()
 {
     core::platform::signal_shutdown.disconnect(this->signal_handle);
     logf_debug("Shutting down SysConfig client");
-    platform::sysconfig::grpc::unregister_providers();
+    sysconfig::grpc::unregister_providers();
 }
 
 void Options::on_monitor_start()
@@ -63,42 +63,42 @@ void Options::on_monitor_start()
 
     if (show_time != except)
     {
-        platform::sysconfig::signal_time.connect(
+        sysconfig::signal_time.connect(
             this->signal_handle,
             std::bind(&Options::on_time, this, _1));
     }
 
     if (show_time_config != except)
     {
-        platform::sysconfig::signal_timeconfig.connect(
+        sysconfig::signal_timeconfig.connect(
             this->signal_handle,
             std::bind(&Options::on_time_config, this, _1));
     }
 
     if (show_tz_info != except)
     {
-        platform::sysconfig::signal_tzinfo.connect(
+        sysconfig::signal_tzinfo.connect(
             this->signal_handle,
             std::bind(&Options::on_tz_info, this, _1));
     }
 
     if (show_tz_config != except)
     {
-        platform::sysconfig::signal_tzconfig.connect(
+        sysconfig::signal_tzconfig.connect(
             this->signal_handle,
             std::bind(&Options::on_tz_config, this, _1));
     }
 
     if (show_host_info != except)
     {
-        platform::sysconfig::signal_hostinfo.connect(
+        sysconfig::signal_hostinfo.connect(
             this->signal_handle,
             std::bind(&Options::on_hostinfo, this, _1));
     }
 
     if (show_product_info != except)
     {
-        platform::sysconfig::signal_productinfo.connect(
+        sysconfig::signal_productinfo.connect(
             this->signal_handle,
             std::bind(&Options::on_productinfo, this, _1));
     }
@@ -106,12 +106,12 @@ void Options::on_monitor_start()
 
 void Options::on_monitor_end()
 {
-    platform::sysconfig::signal_productinfo.disconnect(this->signal_handle);
-    platform::sysconfig::signal_hostinfo.disconnect(this->signal_handle);
-    platform::sysconfig::signal_tzconfig.disconnect(this->signal_handle);
-    platform::sysconfig::signal_tzinfo.disconnect(this->signal_handle);
-    platform::sysconfig::signal_timeconfig.disconnect(this->signal_handle);
-    platform::sysconfig::signal_time.disconnect(this->signal_handle);
+    sysconfig::signal_productinfo.disconnect(this->signal_handle);
+    sysconfig::signal_hostinfo.disconnect(this->signal_handle);
+    sysconfig::signal_tzconfig.disconnect(this->signal_handle);
+    sysconfig::signal_tzinfo.disconnect(this->signal_handle);
+    sysconfig::signal_timeconfig.disconnect(this->signal_handle);
+    sysconfig::signal_time.disconnect(this->signal_handle);
 }
 
 void Options::on_time(const core::dt::TimePoint &tp)
@@ -122,7 +122,7 @@ void Options::on_time(const core::dt::TimePoint &tp)
                       tp);
 }
 
-void Options::on_time_config(const platform::sysconfig::TimeConfig &tc)
+void Options::on_time_config(const sysconfig::TimeConfig &tc)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_time_config(%s)\n",
@@ -138,7 +138,7 @@ void Options::on_tz_info(const core::dt::TimeZoneInfo &ti)
                       ti);
 }
 
-void Options::on_tz_config(const platform::sysconfig::TimeZoneCanonicalName &zone)
+void Options::on_tz_config(const sysconfig::TimeZoneCanonicalName &zone)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_tz_config(%s)\n",
@@ -146,7 +146,7 @@ void Options::on_tz_config(const platform::sysconfig::TimeZoneCanonicalName &zon
                       zone);
 }
 
-void Options::on_hostinfo(const platform::sysconfig::HostInfo &hi)
+void Options::on_hostinfo(const sysconfig::HostInfo &hi)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_hostinfo(%s)\n",
@@ -154,7 +154,7 @@ void Options::on_hostinfo(const platform::sysconfig::HostInfo &hi)
                       hi);
 }
 
-void Options::on_productinfo(const platform::sysconfig::ProductInfo &pi)
+void Options::on_productinfo(const sysconfig::ProductInfo &pi)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_productinfo(%s)\n",

@@ -10,7 +10,7 @@
 #include "vfs.h++"
 #include "status/exceptions.h++"
 
-namespace platform::upgrade::native
+namespace upgrade::native
 {
     VFSPackageHandler::VFSPackageHandler(
         const core::SettingsStore::ptr &settings)
@@ -42,4 +42,4 @@ namespace platform::upgrade::native
             staging_folder);
     }
 
-}  // namespace platform::upgrade::native
+}  // namespace upgrade::native

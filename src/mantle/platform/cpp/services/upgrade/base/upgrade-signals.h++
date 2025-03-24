@@ -9,10 +9,10 @@
 #include "upgrade-types.h++"
 #include "thread/signaltemplate.h++"
 
-namespace platform::upgrade
+namespace upgrade
 {
     extern core::signal::DataSignal<ScanProgress::ptr> signal_scan_progress;
     extern core::signal::DataSignal<PackageInfo::ptr> signal_upgrade_available;
     extern core::signal::DataSignal<PackageInfo::ptr> signal_upgrade_pending;
     extern core::signal::DataSignal<UpgradeProgress::ptr> signal_upgrade_progress;
-}  // namespace platform::upgrade
+}  // namespace upgrade

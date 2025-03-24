@@ -8,7 +8,7 @@
 #pragma once
 #include "sysconfig-native-time.h++"
 
-namespace platform::sysconfig::native
+namespace sysconfig::native
 {
     class PosixTimeConfigProvider : public TimeConfigProvider
     {
@@ -28,4 +28,4 @@ namespace platform::sysconfig::native
         virtual void set_ntp_servers(const std::vector<std::string> &servers);
         virtual std::vector<std::string> get_ntp_servers() const;
     };
-}  // namespace platform::sysconfig::posix
+}  // namespace sysconfig::posix

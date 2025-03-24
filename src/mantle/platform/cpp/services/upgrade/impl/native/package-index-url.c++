@@ -10,7 +10,7 @@
 #include "http-client.h++"
 #include "parsers/json/reader.h++"
 
-namespace platform::upgrade::native
+namespace upgrade::native
 {
     URLPackageIndex::URLPackageIndex(const URL &url)
         : url(url)
@@ -52,4 +52,4 @@ namespace platform::upgrade::native
         return packages;
     }
 
-}  // namespace platform::upgrade::native
+}  // namespace upgrade::native

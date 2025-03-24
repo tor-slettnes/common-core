@@ -10,7 +10,7 @@
 #include "sysconfig-host.h++"
 #include "status/exceptions.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     Settings::Settings(
         core::dbus::ProxyContainer *container,
@@ -127,7 +127,7 @@ namespace platform::netconfig::dbus
     {
         auto hostname = core::glib::variant_cast<std::string>(change);
         logf_debug("signal_hostname: %s", hostname);
-        platform::sysconfig::signal_hostinfo.emit(platform::sysconfig::host->get_host_info());
+        sysconfig::signal_hostinfo.emit(sysconfig::host->get_host_info());
     }
 
-} // namespace platform::netconfig::dbus
+} // namespace netconfig::dbus

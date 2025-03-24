@@ -8,7 +8,7 @@
 #pragma once
 #include "nm-wrappers.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     //==========================================================================
     /// Network Manager Active Connection
@@ -45,4 +45,4 @@ namespace platform::netconfig::dbus
         bool update_ip6config(const core::dbus::ProxyWrapper* source, core::signal::MappingAction action);
     };
 
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

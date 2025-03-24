@@ -7,7 +7,7 @@
 
 #include "sysconfig-host.h++"
 
-namespace platform::sysconfig::native
+namespace sysconfig::native
 {
     class HostConfigProvider : public HostConfigInterface
     {
@@ -26,4 +26,4 @@ namespace platform::sysconfig::native
     private:
         void emit() const;
     };
-}  // namespace platform::sysconfig::native
+}  // namespace sysconfig::native

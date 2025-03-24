@@ -8,7 +8,7 @@
 #include "nm-device.h++"
 #include "status/exceptions.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     WirelessDevice::WirelessDevice(
         core::dbus::ProxyContainer *container,
@@ -204,4 +204,4 @@ namespace platform::netconfig::dbus
             }
         }
     }
-} // namespace platform::netconfig::dbus
+} // namespace netconfig::dbus

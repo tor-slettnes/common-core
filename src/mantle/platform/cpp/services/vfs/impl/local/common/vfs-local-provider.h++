@@ -9,7 +9,7 @@
 #include "vfs-base.h++"
 #include "settings/settingsstore.h++"
 
-namespace platform::vfs::local
+namespace vfs::local
 {
     constexpr auto SETTINGS_STORE = "vfs";
     constexpr auto SETTING_CONTEXTS = "contexts";
@@ -133,4 +133,4 @@ namespace platform::vfs::local
         core::SettingsStore settings;
     };
 
-}  // namespace platform::vfs::local
+}  // namespace vfs::local

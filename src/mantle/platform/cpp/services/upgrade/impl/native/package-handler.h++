@@ -12,7 +12,7 @@
 #include "platform/process.h++"
 #include "settings/settingsstore.h++"
 
-namespace platform::upgrade::native
+namespace upgrade::native
 {
     class PackageHandler
     {
@@ -74,4 +74,4 @@ namespace platform::upgrade::native
         core::SettingsStore::ptr settings;
         std::shared_ptr<std::stringstream> install_diagnostics;
     };
-}  // namespace platform::upgrade::native
+}  // namespace upgrade::native

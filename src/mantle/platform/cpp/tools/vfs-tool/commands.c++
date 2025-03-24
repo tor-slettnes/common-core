@@ -141,7 +141,7 @@ void Options::get_contexts()
     bool &verbose = flags["verbose"];
     this->get_flags(&flags);
 
-    for (const auto &[key, cxt] : platform::vfs::get_contexts(removable, open))
+    for (const auto &[key, cxt] : vfs::get_contexts(removable, open))
     {
         if (verbose)
         {
@@ -157,37 +157,37 @@ void Options::get_contexts()
 void Options::get_context()
 {
     std::string cxt_name = this->get_context_arg();
-    core::str::format(std::cout, "%s\n", platform::vfs::get_context(cxt_name));
+    core::str::format(std::cout, "%s\n", vfs::get_context(cxt_name));
 }
 
 void Options::open_context()
 {
     std::string cxt_name = this->get_context_arg();
-    platform::vfs::open_context(cxt_name);
+    vfs::open_context(cxt_name);
 }
 
 void Options::close_context()
 {
     std::string cxt_name = this->get_context_arg();
-    platform::vfs::close_context(cxt_name);
+    vfs::close_context(cxt_name);
 }
 
 void Options::get_volume_info()
 {
-    platform::vfs::Path vpath = this->get_vfspath_arg();
-    std::cout << platform::vfs::get_volume_info(vpath) << std::endl;
+    vfs::Path vpath = this->get_vfspath_arg();
+    std::cout << vfs::get_volume_info(vpath) << std::endl;
 }
 
 void Options::get_file_info()
 {
-    platform::vfs::Path vpath = this->get_vfspath_arg();
-    std::cout << platform::vfs::get_file_info(vpath) << std::endl;
+    vfs::Path vpath = this->get_vfspath_arg();
+    std::cout << vfs::get_file_info(vpath) << std::endl;
 }
 
 void Options::get_dir()
 {
-    platform::vfs::Path vpath = this->get_vfspath_arg();
-    for (const auto &[path, stats] : platform::vfs::get_directory(vpath))
+    vfs::Path vpath = this->get_vfspath_arg();
+    for (const auto &[path, stats] : vfs::get_directory(vpath))
     {
         std::stringstream ss;
         ss << stats;
@@ -201,9 +201,9 @@ void Options::get_dir()
 
 void Options::list()
 {
-    platform::vfs::Path vpath = this->get_vfspath_arg();
+    vfs::Path vpath = this->get_vfspath_arg();
 
-    for (const auto &[path, stats] : platform::vfs::get_directory(vpath))
+    for (const auto &[path, stats] : vfs::get_directory(vpath))
     {
         std::cout << vpath / path << std::endl;
     }
@@ -211,14 +211,14 @@ void Options::list()
 
 void Options::locate()
 {
-    platform::vfs::Path vpath = this->get_vfspath_arg();
+    vfs::Path vpath = this->get_vfspath_arg();
     std::string mask = this->get_arg("PATTERN(s)");
     core::types::PathList masks = {mask};
     while (auto next_mask = this->next_arg())
     {
         masks.push_back(*next_mask);
     }
-    for (const auto &[path, props]: platform::vfs::locate(vpath, masks))
+    for (const auto &[path, props]: vfs::locate(vpath, masks))
     {
         std::cout << vpath / path << std::endl;
     }
@@ -227,48 +227,48 @@ void Options::locate()
 
 void Options::copy()
 {
-    platform::vfs::Path src = this->get_vfspath_arg("source VFS path");
-    platform::vfs::Path tgt = this->get_vfspath_arg("target VFS path");
-    platform::vfs::copy(src, tgt);
+    vfs::Path src = this->get_vfspath_arg("source VFS path");
+    vfs::Path tgt = this->get_vfspath_arg("target VFS path");
+    vfs::copy(src, tgt);
 }
 
 void Options::move()
 {
-    platform::vfs::Path src = this->get_vfspath_arg("source VFS path");
-    platform::vfs::Path tgt = this->get_vfspath_arg("target VFS path");
-    platform::vfs::move(src, tgt);
+    vfs::Path src = this->get_vfspath_arg("source VFS path");
+    vfs::Path tgt = this->get_vfspath_arg("target VFS path");
+    vfs::move(src, tgt);
 }
 
 void Options::remove()
 {
-    platform::vfs::Path vpath = this->get_vfspath_arg();
+    vfs::Path vpath = this->get_vfspath_arg();
     FlagMap flags;
     bool &force = flags["force"];
     this->get_flags(&flags);
 
-    platform::vfs::remove(vpath, force = force);
+    vfs::remove(vpath, force = force);
 }
 
 void Options::mkdir()
 {
-    platform::vfs::Path vpath = this->get_vfspath_arg();
+    vfs::Path vpath = this->get_vfspath_arg();
     FlagMap flags;
     bool &force = flags["force"];
     this->get_flags(&flags);
-    platform::vfs::create_folder(vpath, force);
+    vfs::create_folder(vpath, force);
 }
 
 void Options::setattr()
 {
-    platform::vfs::Path vpath = this->get_vfspath_arg();
+    vfs::Path vpath = this->get_vfspath_arg();
     core::types::KeyValueMap attributes = this->get_attributes(true);
-    platform::vfs::set_attributes(vpath, attributes);
+    vfs::set_attributes(vpath, attributes);
 }
 
 void Options::getattrs()
 {
-    platform::vfs::Path vpath = this->get_vfspath_arg();
-    core::types::KeyValueMap attributes = platform::vfs::get_attributes(vpath);
+    vfs::Path vpath = this->get_vfspath_arg();
+    core::types::KeyValueMap attributes = vfs::get_attributes(vpath);
 
     if (this->args.size())
     {
@@ -295,28 +295,28 @@ void Options::getattrs()
 
 void Options::clearattr()
 {
-    platform::vfs::Path vpath = this->get_vfspath_arg();
-    platform::vfs::clear_attributes(vpath);
+    vfs::Path vpath = this->get_vfspath_arg();
+    vfs::clear_attributes(vpath);
 }
 
 void Options::download()
 {
-    platform::vfs::Path remotepath = this->get_vfspath_arg("remote source VFS path");
+    vfs::Path remotepath = this->get_vfspath_arg("remote source VFS path");
     fs::path localpath = this->get_arg("local target path");
 
     std::ofstream local(localpath, std::ios::out | std::ios::binary);
     local.exceptions(std::ios::failbit);
-    auto remote = platform::vfs::vfs->read_file(remotepath);
+    auto remote = vfs::vfs->read_file(remotepath);
     remote->exceptions(std::ios::badbit | std::ios::failbit);
 
     std::streamsize total = 0;
     uint chunks = 0;
 
-    while (auto chunk = platform::vfs::vfs->read_chunk(*remote))
+    while (auto chunk = vfs::vfs->read_chunk(*remote))
     {
         chunks++;
         total += chunk->size();
-        platform::vfs::vfs->write_chunk(local, chunk.value());
+        vfs::vfs->write_chunk(local, chunk.value());
     }
 
     core::str::format(std::cerr,
@@ -328,19 +328,19 @@ void Options::download()
 void Options::upload()
 {
     fs::path localpath = this->get_arg("local source path");
-    platform::vfs::Path remotepath = this->get_vfspath_arg("remote target VFS path");
+    vfs::Path remotepath = this->get_vfspath_arg("remote target VFS path");
 
     std::ifstream local(localpath, std::ios::in | std::ios::binary);
-    auto remote = platform::vfs::vfs->write_file(remotepath);
+    auto remote = vfs::vfs->write_file(remotepath);
     remote->exceptions(std::ios::failbit | std::ios::badbit);
 
     std::streamsize total = 0;
     uint chunks = 0;
-    while (auto chunk = platform::vfs::vfs->read_chunk(local))
+    while (auto chunk = vfs::vfs->read_chunk(local))
     {
         chunks++;
         total += chunk->size();
-        platform::vfs::vfs->write_chunk(*remote, chunk.value());
+        vfs::vfs->write_chunk(*remote, chunk.value());
     }
     core::str::format(std::cerr,
                       "Sent %d bytes in in %d chunks\n",
@@ -353,12 +353,12 @@ std::string Options::get_context_arg(const std::string &what)
     return this->get_arg(what);
 }
 
-platform::vfs::Path Options::get_vfspath_arg(const std::string &what)
+vfs::Path Options::get_vfspath_arg(const std::string &what)
 {
     return this->vfspath(this->get_arg(what));
 }
 
-platform::vfs::Path Options::vfspath(const std::string &path)
+vfs::Path Options::vfspath(const std::string &path)
 {
     std::vector<std::string> parts = core::str::split(path, ":", 1, true);
     return {parts.at(0),

@@ -10,7 +10,7 @@
 #include "package-handler-vfs.h++"
 #include "settings/settingsstore.h++"
 
-namespace platform::upgrade::native
+namespace upgrade::native
 {
     class VFSPackageIndex : public PackageIndex,
                             public VFSPackageHandler
@@ -34,4 +34,4 @@ namespace platform::upgrade::native
     private:
         vfs::Path vfs_path;
     };
-}  // namespace platform::upgrade::native
+}  // namespace upgrade::native

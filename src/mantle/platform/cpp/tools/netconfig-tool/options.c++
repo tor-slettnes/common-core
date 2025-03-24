@@ -35,11 +35,11 @@ void Options::initialize()
     logf_debug("Creating NetConfig client: %s");
     if (this->local)
     {
-        platform::netconfig::dbus::register_providers();
+        netconfig::dbus::register_providers();
     }
     else
     {
-        platform::netconfig::grpc::register_providers(this->host);
+        netconfig::grpc::register_providers(this->host);
     }
     core::platform::signal_shutdown.connect(
         this->signal_handle,
@@ -52,11 +52,11 @@ void Options::deinitialize()
     logf_debug("Shutting down NetConfig client");
     if (this->local)
     {
-        platform::netconfig::dbus::unregister_providers();
+        netconfig::dbus::unregister_providers();
     }
     else
     {
-        platform::netconfig::grpc::unregister_providers();
+        netconfig::grpc::unregister_providers();
     }
 }
 
@@ -82,35 +82,35 @@ void Options::on_monitor_start()
 
     if (show_global != except)
     {
-        platform::netconfig::signal_globaldata.connect(
+        netconfig::signal_globaldata.connect(
             this->signal_handle,
             std::bind(&Options::on_globaldata, this, _1));
     }
 
     if (show_connection != except)
     {
-        platform::netconfig::signal_connection.connect(
+        netconfig::signal_connection.connect(
             this->signal_handle,
             std::bind(&Options::on_connection, this, _1, _2, _3));
     }
 
     if (show_active != except)
     {
-        platform::netconfig::signal_active_connection.connect(
+        netconfig::signal_active_connection.connect(
             this->signal_handle,
             std::bind(&Options::on_active_connection, this, _1, _2, _3));
     }
 
     if (show_accesspoint != except)
     {
-        platform::netconfig::signal_accesspoint.connect(
+        netconfig::signal_accesspoint.connect(
             this->signal_handle,
             std::bind(&Options::on_accesspoint, this, _1, _2, _3));
     }
 
     if (show_device != except)
     {
-        platform::netconfig::signal_device.connect(
+        netconfig::signal_device.connect(
             this->signal_handle,
             std::bind(&Options::on_device, this, _1, _2, _3));
     }
@@ -118,15 +118,15 @@ void Options::on_monitor_start()
 
 void Options::on_monitor_end()
 {
-    platform::netconfig::signal_device.disconnect(this->signal_handle);
-    platform::netconfig::signal_accesspoint.disconnect(this->signal_handle);
-    platform::netconfig::signal_active_connection.disconnect(this->signal_handle);
-    platform::netconfig::signal_connection.disconnect(this->signal_handle);
-    platform::netconfig::signal_globaldata.disconnect(this->signal_handle);
+    netconfig::signal_device.disconnect(this->signal_handle);
+    netconfig::signal_accesspoint.disconnect(this->signal_handle);
+    netconfig::signal_active_connection.disconnect(this->signal_handle);
+    netconfig::signal_connection.disconnect(this->signal_handle);
+    netconfig::signal_globaldata.disconnect(this->signal_handle);
 }
 
 void Options::on_globaldata(
-    const platform::netconfig::GlobalData::ptr &data)
+    const netconfig::GlobalData::ptr &data)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_globaldata(%s)\n",
@@ -137,7 +137,7 @@ void Options::on_globaldata(
 void Options::on_connection(
     core::signal::MappingAction action,
     const std::string &key,
-    platform::netconfig::ConnectionData::ptr data)
+    netconfig::ConnectionData::ptr data)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_connection(%s, %r, %s)\n",
@@ -150,7 +150,7 @@ void Options::on_connection(
 void Options::on_active_connection(
     core::signal::MappingAction action,
     const std::string &key,
-    platform::netconfig::ActiveConnectionData::ptr data)
+    netconfig::ActiveConnectionData::ptr data)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_active_connection(%s, %r, %s)\n",
@@ -163,7 +163,7 @@ void Options::on_active_connection(
 void Options::on_accesspoint(
     core::signal::MappingAction action,
     const std::string &key,
-    platform::netconfig::AccessPointData::ptr data)
+    netconfig::AccessPointData::ptr data)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_accesspoint(%s, %r, %s)\n",
@@ -176,7 +176,7 @@ void Options::on_accesspoint(
 void Options::on_device(
     core::signal::MappingAction action,
     const std::string &key,
-    platform::netconfig::DeviceData::ptr data)
+    netconfig::DeviceData::ptr data)
 {
     core::str::format(std::cout,
                       "[%.0s] signal_device(%s, %r, %s)\n",

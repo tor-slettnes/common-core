@@ -8,7 +8,7 @@
 #include "nm-ipconfig.h++"
 #include "nm-structs.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     //==========================================================================
     /// Network Manager IP Configuration
@@ -88,4 +88,4 @@ namespace platform::netconfig::dbus
         core::glib::variant_cast(change, &this->dns);
     }
 
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

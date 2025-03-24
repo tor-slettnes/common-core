@@ -8,7 +8,7 @@
 #include "sysconfig-timezone.h++"
 #include "string/format.h++"
 
-namespace platform::sysconfig
+namespace sysconfig
 {
     //======================================================================
     // Time Zone Area/Location types
@@ -98,4 +98,4 @@ namespace platform::sysconfig
 
     core::signal::DataSignal<TimeZoneInfo> signal_tzinfo("TimeZoneInfo", true);
     core::signal::DataSignal<TimeZoneCanonicalName> signal_tzconfig("TimeZoneConfig", true);
-}  // namespace platform::sysconfig
+}  // namespace sysconfig

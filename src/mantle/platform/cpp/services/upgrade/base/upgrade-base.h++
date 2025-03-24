@@ -9,7 +9,7 @@
 #include "upgrade-types.h++"
 #include "platform/provider.h++"
 
-namespace platform::upgrade
+namespace upgrade
 {
     //==========================================================================
     // Provider
@@ -79,4 +79,4 @@ namespace platform::upgrade
 
     extern core::platform::ProviderProxy<ProviderInterface> upgrade;
 
-}  // namespace platform::upgrade
+}  // namespace upgrade

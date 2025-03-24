@@ -8,7 +8,7 @@
 #include "sysconfig-time.h++"
 #include "types/symbolmap.h++"
 
-namespace platform::sysconfig
+namespace sysconfig
 {
     //==========================================================================
     // TimeSync
@@ -52,4 +52,4 @@ namespace platform::sysconfig
 
     core::signal::DataSignal<core::dt::TimePoint> signal_time("TimePoint");
     core::signal::DataSignal<TimeConfig> signal_timeconfig("TimeConfig", true);
-}  // namespace platform::sysconfig
+}  // namespace sysconfig

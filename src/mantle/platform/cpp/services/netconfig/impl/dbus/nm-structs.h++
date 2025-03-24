@@ -11,7 +11,7 @@
 
 #include <unordered_map>
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     void extract_addressdata(
         const core::glib::VariantMaps &configs,
@@ -28,4 +28,4 @@ namespace platform::netconfig::dbus
         core::glib::SettingsContainer build_settings_container(
             const ConnectionData &data);
     }  // namespace connection
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

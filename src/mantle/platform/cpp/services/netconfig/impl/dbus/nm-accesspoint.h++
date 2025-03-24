@@ -8,7 +8,7 @@
 #pragma once
 #include "nm-wrappers.h++"
 
-namespace platform::netconfig::dbus
+namespace netconfig::dbus
 {
     //==========================================================================
     /// Network Manager WiFi access point
@@ -39,4 +39,4 @@ namespace platform::netconfig::dbus
             const Glib::VariantBase& change);
     };
 
-}  // namespace platform::netconfig::dbus
+}  // namespace netconfig::dbus

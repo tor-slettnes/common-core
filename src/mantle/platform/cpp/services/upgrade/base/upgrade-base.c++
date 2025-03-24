@@ -7,8 +7,8 @@
 
 #include "upgrade-base.h++"
 
-namespace platform::upgrade
+namespace upgrade
 {
     core::platform::ProviderProxy<ProviderInterface> upgrade("Upgrade");
 
-}  // namespace platform::upgrade
+}  // namespace upgrade

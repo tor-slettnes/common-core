@@ -10,7 +10,7 @@
 #include "vfs-linux-volmon.h++"
 #include "types/valuemap.h++"
 
-namespace platform::vfs::local
+namespace vfs::local
 {
     class LinuxProvider : public LocalProvider
     {
@@ -67,4 +67,4 @@ namespace platform::vfs::local
         core::types::ValueMap<SerialNumber, volume::DiskInfo> disks;
     };
 
-}  // namespace platform::vfs::local
+}  // namespace vfs::local

@@ -8,7 +8,7 @@
 #pragma once
 #include "vfs-context.h++"
 
-namespace platform::vfs
+namespace vfs
 {
     //==========================================================================
     /// @class ContextProxy
@@ -125,4 +125,4 @@ namespace platform::vfs
     };
 
     using LocationList = std::vector<Location>;
-}  // namespace platform::vfs
+}  // namespace vfs

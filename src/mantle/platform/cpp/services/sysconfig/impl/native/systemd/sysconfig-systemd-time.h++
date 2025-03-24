@@ -8,7 +8,7 @@
 #pragma once
 #include "sysconfig-posix-time.h++"
 
-namespace platform::sysconfig::native
+namespace sysconfig::native
 {
     class SystemdTimeConfigProvider : public PosixTimeConfigProvider
     {
@@ -30,4 +30,4 @@ namespace platform::sysconfig::native
         core::types::ValueMap<std::string, std::string> read_settings() const;
 
     };
-}  // namespace platform::sysconfig::systemd
+}  // namespace sysconfig::systemd

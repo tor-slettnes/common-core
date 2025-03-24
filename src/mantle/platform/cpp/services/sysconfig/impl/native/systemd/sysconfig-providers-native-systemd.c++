@@ -8,7 +8,7 @@
 #include "sysconfig-providers-native-systemd.h++"
 #include "sysconfig-systemd-time.h++"
 
-namespace platform::sysconfig::native
+namespace sysconfig::native
 {
     void register_systemd_providers()
     {
@@ -19,4 +19,4 @@ namespace platform::sysconfig::native
     {
         time.unregisterProvider<SystemdTimeConfigProvider>();
     }
-}  // namespace platform::sysconfig::native
+}  // namespace sysconfig::native

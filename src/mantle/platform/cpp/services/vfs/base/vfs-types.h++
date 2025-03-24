@@ -16,7 +16,7 @@
 
 #include <iostream>
 
-namespace platform::vfs
+namespace vfs
 {
     define_log_scope("vfs");
 
@@ -94,29 +94,29 @@ namespace platform::vfs
     using UniqueReader = std::unique_ptr<std::istream>;
     using UniqueWriter = std::unique_ptr<std::ostream>;
 
-} // namespace platform::vfs
+} // namespace vfs
 
 namespace std
 {
     /// Hashing support for vfs::Path, to allow instances to be used in unordered
     /// associative containers (like `std::unordered_map<vfs::Path, ...>`).
     template <>
-    struct hash<platform::vfs::Path>
+    struct hash<vfs::Path>
     {
-        inline std::size_t operator()(const platform::vfs::Path &vpath) const
+        inline std::size_t operator()(const vfs::Path &vpath) const
         {
             return std::hash<std::string>()(vpath.context) ^
                    std::hash<std::string>()(vpath.relpath);
         }
     };
 
-    /// Sorting support for platform::vfs::Path, to allow instances to be used in ordered
-    /// associative containers (like `std::map<platform::vfs::Path, ...>`).
+    /// Sorting support for vfs::Path, to allow instances to be used in ordered
+    /// associative containers (like `std::map<vfs::Path, ...>`).
     template <>
-    struct less<platform::vfs::Path>
+    struct less<vfs::Path>
     {
-        inline bool operator()(const platform::vfs::Path &lhs,
-                               const platform::vfs::Path &rhs) const
+        inline bool operator()(const vfs::Path &lhs,
+                               const vfs::Path &rhs) const
         {
             if (lhs.context != rhs.context)
             {

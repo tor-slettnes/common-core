@@ -27,27 +27,27 @@ private:
     void on_monitor_end() override;
 
     void on_globaldata(
-        const platform::netconfig::GlobalData::ptr &data);
+        const netconfig::GlobalData::ptr &data);
 
     void on_connection(
         core::signal::MappingAction action,
         const std::string &key,
-        platform::netconfig::ConnectionData::ptr data);
+        netconfig::ConnectionData::ptr data);
 
     void on_active_connection(
         core::signal::MappingAction action,
         const std::string &key,
-        platform::netconfig::ActiveConnectionData::ptr data);
+        netconfig::ActiveConnectionData::ptr data);
 
     void on_accesspoint(
         core::signal::MappingAction action,
         const std::string &key,
-        platform::netconfig::AccessPointData::ptr data);
+        netconfig::AccessPointData::ptr data);
 
     void on_device(
         core::signal::MappingAction action,
         const std::string &key,
-        platform::netconfig::DeviceData::ptr data);
+        netconfig::DeviceData::ptr data);
 
 private:
     void get_state();

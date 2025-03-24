@@ -11,7 +11,7 @@
 #include "protobuf-inline.h++"
 #include "platform/symbols.h++"
 
-namespace platform::sysconfig::grpc
+namespace sysconfig::grpc
 {
     HostConfigProvider::HostConfigProvider(const std::shared_ptr<Client> &client)
         : Super(TYPE_NAME_FULL(This)),
@@ -23,9 +23,9 @@ namespace platform::sysconfig::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            cc::platform::sysconfig::Signal::kHostInfo,
-            [&](const cc::platform::sysconfig::Signal &signal) {
-                platform::sysconfig::signal_hostinfo.emit(
+            ::cc::sysconfig::Signal::kHostInfo,
+            [&](const ::cc::sysconfig::Signal &signal) {
+                sysconfig::signal_hostinfo.emit(
                     protobuf::decoded<HostInfo>(signal.host_info()));
             });
     }
@@ -50,4 +50,4 @@ namespace platform::sysconfig::grpc
             &Client::Stub::reboot);
     }
 
-}  // namespace platform::sysconfig::grpc
+}  // namespace sysconfig::grpc

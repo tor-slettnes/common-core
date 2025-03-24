@@ -9,7 +9,7 @@
 #include "vfs.pb.h"  // generated from `vfs.proto`
 #include "grpc-signalqueue.h++"
 
-namespace platform::vfs::grpc
+namespace vfs::grpc
 {
     //==========================================================================
     /// @class SignalQueue
@@ -24,13 +24,13 @@ namespace platform::vfs::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<cc::platform::vfs::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<::cc::vfs::Signal>
     {
-        using Super = core::grpc::SignalQueue<cc::platform::vfs::Signal>;
+        using Super = core::grpc::SignalQueue<::cc::vfs::Signal>;
 
     public:
         using Super::Super;
         void initialize() override;
         void deinitialize() override;
     };
-}  // namespace platform::vfs::grpc
+}  // namespace vfs::grpc

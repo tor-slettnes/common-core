@@ -9,7 +9,7 @@
 #include "platform/symbols.h++"
 #include "status/exceptions.h++"
 
-namespace platform::sysconfig::native
+namespace sysconfig::native
 {
     //==========================================================================
     // NativeProcessProvider
@@ -69,4 +69,4 @@ namespace platform::sysconfig::native
             throw core::exception::NotFound("No such process ID exists", pid);
         }
     }
-}  // namespace platform::sysconfig::native
+}  // namespace sysconfig::native
