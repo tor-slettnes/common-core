@@ -103,11 +103,11 @@ set(PYTHON_PIP_REQUIREMENTS_FILE
 #-------------------------------------------------------------------------------
 # Package generation with CPack. For information about grouping, see
 
-option(PACKAGE_SPLIT_BY_COMPONENT
+option(DEB_SPLIT_BY_COMPONENT
   "Create one installation package per component"
   TRUE)
 
-option(PACKAGE_SPLIT_BY_GROUP
+option(DEB_SPLIT_BY_GROUP
   "Create one installation package per component group"
   FALSE)
 

@@ -8,8 +8,10 @@
 if (BUILD_PYTHON)
   set(SOURCES platform-shell)
 
-  install(PROGRAMS ${SOURCES}
-    TYPE BIN
-    COMPONENT "${PYTHON_INSTALL_COMPONENT}"
-  )
+  if(PYTHON_INSTALL_COMPONENT)
+    install(PROGRAMS ${SOURCES}
+      TYPE BIN
+      COMPONENT "${PYTHON_INSTALL_COMPONENT}"
+    )
+  endif()
 endif()

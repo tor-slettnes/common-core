@@ -11,9 +11,11 @@ if (BUILD_PYTHON)
     demo_grpc_aio_client_py
   )
 
-  install(
-    PROGRAMS ${PROGRAMS}
-    TYPE BIN
-    COMPONENT "${PYTHON_INSTALL_COMPONENT}"
-  )
+  if(PYTHON_INSTALL_COMPONENT)
+    install(
+      PROGRAMS ${PROGRAMS}
+      TYPE BIN
+      COMPONENT "${PYTHON_INSTALL_COMPONENT}"
+    )
+  endif()
 endif()

@@ -31,7 +31,7 @@ if(BUILD_MULTILOGGER)
     set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
   endif()
 
-  set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}")
+  set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}-complete")
   set(COMPLETE_INSTALL_DEPENDENCIES
     ${SETTINGS_INSTALL_COMPONENT}
     ${PYTHON_INSTALL_COMPONENT}
@@ -94,8 +94,8 @@ cc_cpack_add_debian_component("${COMPLETE_INSTALL_COMPONENT}"
 )
 
 cc_cpack_add_group("${INSTALL_GROUP}"
-  GROUP_DEPS "core"
-  SUMMARY "Common Core - MultiLogger"
+  GROUP_DEPENDS "core"
+  SUMMARY "Capture logs from Common Core microservice applications"
   DESCRIPTION ${COMMON_DESCRIPTION}
 )
 

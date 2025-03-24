@@ -57,6 +57,17 @@ function(cc_cpack_add_debian_component COMPONENT)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if(COMPONENT)
+    cc_get_value_or_default(license_file
+      arg_LICENSE
+      "${CMAKE_SOURCE_DIR}/LICENSE.txt"
+    )
+
+    cc_install_license(
+      FILE "${license_file}"
+      COMPONENT ${COMPONENT}
+      GROUP ${arg_GROUP}
+    )
+
     string(TOUPPER "${COMPONENT}" upcase_component)
 
     set(description_lines ${arg_DESCRIPTION})
@@ -86,17 +97,6 @@ function(cc_cpack_add_debian_component COMPONENT)
         endif()
       endif()
     endforeach()
-
-    cc_get_value_or_default(license_file
-      arg_LICENSE
-      "${CMAKE_SOURCE_DIR}/LICENSE.txt"
-    )
-
-    cc_install_license(
-      FILE "${license_file}"
-      COMPONENT ${COMPONENT}
-      GROUP ${arg_GROUP}
-    )
   endif()
 endfunction()
 
@@ -111,8 +111,8 @@ function(cc_cpack_add_group GROUP)
     SUMMARY                    # One-line summary to describe this package group
   )
   set(_multiargs
-    GROUP_DEPS                 # Other cpack component groups on which we depend
-    PACKAGE_DEPS               # Other (full) package names on which we depend
+    GROUP_DEPENDS              # Other cpack component groups on which we depend
+    DEB_DEPENDS                # Other (full) package names on which we depend
     DESCRIPTION                # Detailed description of this package group
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -139,8 +139,8 @@ function(cc_cpack_add_group GROUP)
     endif()
 
     cc_cpack_set_debian_dependencies("${GROUP}" DEPENDS
-      GROUPS ${arg_GROUP_DEPS}
-      PACKAGES ${arg_PACKAGE_DEPS}
+      GROUPS ${arg_GROUP_DEPENDS}
+      PACKAGES ${arg_DEB_DPEENDS}
     )
   endif()
 
@@ -260,7 +260,7 @@ function(cc_cpack_debian_config VARIABLE_SUFFIX VALUE)
     GROUP "${arg_GROUP}"
     OUTPUT_VARIABLE variable_name)
 
-  cc_get_optional_keyword(APPEND "${arg_APPEND}")
+  cc_get_optional_keyword(APPEND arg_APPEND)
   cc_cpack_config("${variable_name}" "${VALUE}" ${APPEND})
 endfunction()
 

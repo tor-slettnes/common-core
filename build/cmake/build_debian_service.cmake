@@ -73,11 +73,13 @@ function(cc_add_debian_service UNIT)
     OUTPUT_FILE "${_service_unit}"
   )
 
-  install(
-    FILES "${CMAKE_CURRENT_BINARY_DIR}/${_service_unit}"
-    DESTINATION "${_dest}"
-    COMPONENT "${arg_INSTALL_COMPONENT}"
-  )
+  if(arg_INSTALL_COMPONENT)
+    install(
+      FILES "${CMAKE_CURRENT_BINARY_DIR}/${_service_unit}"
+      DESTINATION "${_dest}"
+      COMPONENT "${arg_INSTALL_COMPONENT}"
+    )
+  endif()
 
   if(arg_ENABLE)
     cc_add_enable_hooks("${_service_unit}"

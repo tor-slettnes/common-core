@@ -12,8 +12,7 @@ if(BUILD_DEMO)
   add_subdirectory(daemon)
   add_subdirectory(utils)
 
-  if(BUILD_TESTING)
+  if(BUILD_DEMO AND BUILD_TESTING)
     add_subdirectory(tests)
   endif()
 endif()
-

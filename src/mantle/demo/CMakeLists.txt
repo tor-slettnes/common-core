@@ -26,7 +26,7 @@ if(BUILD_DEMO)
     set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
   endif()
 
-  set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}")
+  set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}-complete")
   set(COMPLETE_INSTALL_DEPENDENCIES
     ${SETTINGS_INSTALL_COMPONENT}
     ${PYTHON_INSTALL_COMPONENT}
@@ -34,7 +34,6 @@ if(BUILD_DEMO)
     ${SERVER_INSTALL_COMPONENT}
   )
 endif()
-
 
 #-------------------------------------------------------------------------------
 
@@ -90,7 +89,7 @@ cc_cpack_add_debian_component("${COMPLETE_INSTALL_COMPONENT}"
 )
 
 cc_cpack_add_group("${INSTALL_GROUP}"
-  GROUP_DEPS "core"
+  GROUP_DEPENDS "core"
   SUMMARY "DEMO Example"
   DESCRIPTION ${COMMON_DESCRIPTION}
 )
@@ -112,11 +111,10 @@ if (BUILD_DDS)
   add_subdirectory(idl)
 endif()
 
-if (BUILD_CPP)
-  add_subdirectory(cpp)
-endif()
-
 if (BUILD_PYTHON)
   add_subdirectory(python)
 endif()
 
+if (BUILD_CPP)
+  add_subdirectory(cpp)
+endif()

@@ -12,7 +12,7 @@ find_package(SQLite3 REQUIRED)
 
 ### Library dependencies.
 set(LIB_DEPS
-  cc_core_inner
+  cc_core_common
   SQLite::SQLite3
 )
 

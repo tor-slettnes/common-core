@@ -109,7 +109,12 @@ function(cc_add_python TARGET)
 
   ### Create a Custom CMake target plus staging folder
   if(NOT TARGET "${TARGET}")
-    add_custom_target("${TARGET}" ALL
+    ### We include this in the 'ALL` target iff we expect to install it.
+    ### In other cases (e.g. if including this target in a Python wheel), this
+    ### should be an explicit dependency for one or more downstream targets.
+    cc_get_optional_keyword(ALL arg_INSTALL_COMPONENT)
+
+    add_custom_target("${TARGET}" ${ALL}
       DEPENDS ${staged_outputs}
     )
   endif()

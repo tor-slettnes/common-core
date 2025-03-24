@@ -32,7 +32,7 @@ if(BUILD_SWITCHBOARD)
     set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-server")
   endif()
 
-  set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}")
+  set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}-complete")
   set(COMPLETE_INSTALL_DEPENDENCIES
     ${SETTINGS_INSTALL_COMPONENT}
     ${PYTHON_INSTALL_COMPONENT}
@@ -95,7 +95,7 @@ cc_cpack_add_debian_component("${COMPLETE_INSTALL_COMPONENT}"
 )
 
 cc_cpack_add_group("${INSTALL_GROUP}"
-  GROUP_DEPS "core"
+  GROUP_DEPENDS "core"
   SUMMARY "Unified observation, control, and dependency management. "
   DESCRIPTION ${COMMON_DESRIPTION}
 )

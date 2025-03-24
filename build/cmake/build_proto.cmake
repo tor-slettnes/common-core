@@ -64,7 +64,7 @@ function(cc_add_proto TARGET)
       APPEND "${py_suffix}"
       OUTPUT_VARIABLE proto_py_deps)
 
-    cc_get_optional_keyword(INSTALL "${arg_INSTALL}")
+    cc_get_optional_keyword(INSTALL arg_INSTALL)
     cc_add_proto_python("${py_target}"
       NAMESPACE "${arg_PYTHON_NAMESPACE}"
       NAMESPACE_COMPONENT "${arg_PYTHON_NAMESPACE_COMPONENT}"
@@ -187,14 +187,6 @@ function(cc_add_proto_python TARGET)
     arg_STAGING_DIR
     "${PYTHON_STAGING_ROOT}/${TARGET}")
 
-  if(arg_INSTALL_COMPONENT)
-    set(install_component "${arg_INSTALL_COMPONENT}")
-  elseif(arg_INSTALL)
-    set(install_component "${TARGET}")
-  else()
-    unset(install_component)
-  endif()
-
   ### Construct namespace for Python modules
   cc_get_namespace(
     NAMESPACE "${arg_NAMESPACE}"
@@ -208,7 +200,11 @@ function(cc_add_proto_python TARGET)
     OUTPUT_VARIABLE gen_dir)
 
   if(BUILD_PROTOBUF OR BUILD_GRPC)
-    add_custom_target("${TARGET}")
+    ### We include this in the 'ALL` target iff we expect to install it.
+    ### In other cases (e.g. if including this target in a Python wheel), this
+    ### should be an explicit dependency for one or more downstream targets.
+    cc_get_optional_keyword(ALL arg_INSTALL_COMPONENT)
+    add_custom_target("${TARGET}" ${ALL})
 
     ### Generate Python bindings
     file(MAKE_DIRECTORY "${gen_dir}")
@@ -246,7 +242,7 @@ function(cc_add_proto_python TARGET)
   )
 
   ### Install generated Python modules if requested
-  if(INSTALL_PYTHON_MODULES AND install_component)
+  if(INSTALL_PYTHON_MODULES AND arg_INSTALL_COMPONENT)
     cc_get_value_or_default(
       install_dir
       arg_INSTALL_DIR

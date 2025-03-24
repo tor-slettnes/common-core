@@ -32,8 +32,8 @@ endfunction()
 ## @fn cc_get_optional_keyword
 ## @brief Set output variable KEYWORD to "KEYWORD" if PRESENT evaluates to true
 
-function(cc_get_optional_keyword KEYWORD PRESENT)
-  if(PRESENT)
+function(cc_get_optional_keyword KEYWORD PRESENT_VAR)
+  if(${PRESENT_VAR})
     set("${KEYWORD}" "${KEYWORD}" PARENT_SCOPE)
   else()
     set("${KEYWORD}" "" PARENT_SCOPE)
@@ -125,7 +125,7 @@ function(cc_get_target_properties_recursively)
   set(_multiargs INITIAL_VALUE PROPERTIES TARGETS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  cc_get_optional_keyword(ALL_OR_NOTHING "${arg_ALL_OR_NOTHING}")
+  cc_get_optional_keyword(ALL_OR_NOTHING arg_ALL_OR_NOTHING)
   cc_get_value_or_default(separator arg_SEPARATOR ":")
 
   set(propslist ${arg_INITIAL_VALUE})
@@ -228,7 +228,7 @@ function(cc_get_staging_list)
   ### as relative to the parent folder of each directory (${anchor_dir}, which
   ### may or may not be identical to ${CMAKE_CURRENT_SOURCE_DIR}).
 
-  cc_get_optional_keyword(CONFIGURE_DEPENDS "${arg_CONFIGURE_DEPENDS}")
+  cc_get_optional_keyword(CONFIGURE_DEPENDS arg_CONFIGURE_DEPENDS)
 
   foreach(dir ${arg_DIRECTORIES})
     cmake_path(ABSOLUTE_PATH dir NORMALIZE

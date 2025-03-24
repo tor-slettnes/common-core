@@ -5,5 +5,5 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-add_subdirectory(core)     # Shared components (modules, libraries)
-add_subdirectory(mantle)   # Common applications/microservices
+add_subdirectory(core)
+add_subdirectory(mantle)
