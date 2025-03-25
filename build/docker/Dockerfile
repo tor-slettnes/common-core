@@ -43,6 +43,7 @@ RUN apt-get install -y \
     python3-zmq             \
     rapidjson-dev           \
     sudo                    \
+    twine                   \
     uuid-dev
 
 # Duplicate external account

@@ -36,10 +36,9 @@ cc_add_python("${TARGET}"
 if(BUILD_DEMO)
   cc_add_python_wheel("demo-shell"
     PYTHON_DEPS ${TARGET}
-    VENV "${PYTHON_VENV}"
     DATA_DEPS cc_demo_settings
     DESCRIPTION "Interactive shell to communicate with DEMO service over gRPC or ZMQ"
-    INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
+    #INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
   )
 
   cc_add_python_executable("demo_grpc_server_py"

@@ -1,8 +1,10 @@
-#!/bin/echo Do not invoke directly.
-#===============================================================================
-## @file client.py
-## @brief Python client for `MultiLogger` gRPC service
-## @author Tor Slettnes <tor@slett.net>
+'''
+Python client for `MultiLogger` gRPC service
+'''
+
+__docformat__ = 'javadoc en'
+__author__ = 'Tor Slettnes'
+
 #===============================================================================
 
 ### Modules within package
@@ -49,37 +51,39 @@ class Client (API, BaseClient):
         Initializer.
 
         Inputs:
-        :param host:
+        @param host
             Host (resolvable name or IP address) of MultiLogger server
 
-        :param identity:
+        @param identity
             Identity of this client (e.g. process name)
 
-        :param capture_python_logs:
+        @param capture_python_logs
             Register this instance as a Python log handler, which will
             capture messages sent via the `logging` module.
 
-        :param log_level:
+        @param log_level
             Capture threshold for the Python log handler, if any.
 
-        :param wait_for_ready:
+        @param wait_for_ready
             If server is unavailable, keep waiting instead of failing.
 
-        :param queue_size:
+        @param queue_size
             Max. number of log messages to cache locally if server is
             unavailable, before discarding.
         '''
 
+        self.queue = None
+        self.queue_size = queue_size
+        self.writer_thread = None
+
         API.__init__(self, identity,
                      capture_python_logs = capture_python_logs,
                      log_level = log_level)
+
         BaseClient.__init__(self,
                             host = host,
                             wait_for_ready = wait_for_ready)
 
-        self.queue = None
-        self.queue_size = queue_size
-        self.writer_thread = None
 
     def __del__(self):
         self.close()

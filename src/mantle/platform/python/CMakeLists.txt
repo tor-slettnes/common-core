@@ -46,6 +46,6 @@ if(BUILD_PLATFORM)
     PYTHON_DEPS ${TARGET}
     DATA_DEPS "cc_platform_settings"
     DESCRIPTION "Python client modules for Platform services"
-    INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
+    #INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
   )
 endif()

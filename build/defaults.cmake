@@ -129,7 +129,7 @@ option(USE_STATIC_LIBS   "Use static 3rd party libraries for linking" OFF)
 ### Python options
 option(BUILD_PYTHON            "Install Python clients/scripts" ON)
 option(BUILD_PYTHON_EXECUTABLE "Build and install Python executables with PyInstaller" OFF)
-option(BUILD_PYTHON_WHEELS     "Build and install Python distributions (`.whl`)" OFF)
+option(BUILD_PYTHON_WHEELS     "Build and install Python distributions (`.whl`); requires `hatchling`." ON)
 option(INSTALL_PYTHON_MODULES  "Install/package Python source modules" ON)
 
 ### Messaging frameworks

@@ -38,25 +38,18 @@ class Endpoint (object):
                  channel_name: str|None = None,
                  project_name: str|None = None):
 
-        if channel_name is not None:
-            self.channel_name = channel_name
-        else:
+        if channel_name is None:
             assert self.channel_name is not None, \
                 "Messaging Endpoint subclass %s.%s should set 'channel_name' -- see %s"%\
                 (type(self).__module__, type(self).__name__, __file__)
+            channel_name = type(self).channel_name
 
-        if project_name is not None:
-            self.project_name = project_name
-        else:
-            assert self.project_name is not None, \
-                "Messaging Endpoint subclass %s.%s should set 'project_name' -- see %s"%\
-                (type(self).__module__, type(self).__name__, __file__)
+        if project_name is None:
+            project_name = type(self).project_name
 
-        settings_files = [
-            self.settings_file(self.channel_name),
-            self.settings_file(self.project_name),
-            self.settings_file("common")
-        ]
+        settings_files = [self.settings_file(flavor)
+                          for flavor in (channel_name, project_name, "common")
+                          if flavor]
 
         self.settings = SettingsStore(settings_files)
         logging.debug("Loaded settings from %s: %s"%(settings_files, self.settings))

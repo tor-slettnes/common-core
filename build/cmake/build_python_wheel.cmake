@@ -73,11 +73,6 @@ function(cc_add_python_wheel TARGET)
     arg_VERSION
     "${PROJECT_VERSION}")
 
-  cc_get_value_or_default(
-    BUILD_DEPS
-    arg_BUILD_DEPS
-    "python_build")
-
   if (arg_PACKAGE_DEPS)
     set(wheel_dependencies "${arg_PACKAGE_DEPS}")
   else()
@@ -111,7 +106,7 @@ function(cc_add_python_wheel TARGET)
 
   ### Define output directories for `pyproject.toml` and the resulting wheel
   set(gen_dir "${PYTHON_WHEEL_STAGING_ROOT}/${TARGET}")
-  set(wheel_dir "${gen_dir}")
+  set(wheel_dir "${PYTHON_WHEEL_STAGING_ROOT}")
   set(wheel_path "${wheel_dir}/${wheel_name}")
 
   file(REMOVE_RECURSE "${gen_dir}")
@@ -164,7 +159,7 @@ function(cc_add_python_wheel TARGET)
 
   #-----------------------------------------------------------------------------
   ### Now create `pyproject.toml` based on the above contents
-  file(REMOVE_RECURSE "${wheel_dir}")
+  #file(REMOVE_RECURSE "${gen_dir}")
   file(MAKE_DIRECTORY "${wheel_dir}")
 
   configure_file(
@@ -180,10 +175,11 @@ function(cc_add_python_wheel TARGET)
 
   add_custom_command(
     OUTPUT "${wheel_path}"
-    DEPENDS ${BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
+    DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
     BYPRODUCTS "${gen_dir}"
-    COMMAND ${python}
-    ARGS -m build --wheel --outdir "${wheel_dir}" "."
+    COMMAND hatchling build -d "${wheel_dir}" > /dev/null
+    # COMMAND ${python}
+    # ARGS -m build --wheel --outdir "${wheel_dir}" "."
     COMMENT "Building Python Wheel: ${wheel_name}"
     COMMAND_EXPAND_LISTS
     VERBATIM
@@ -198,10 +194,9 @@ function(cc_add_python_wheel TARGET)
       "${PYTHON_WHEEL_DIR}")
 
     install(
-      DIRECTORY "${wheel_dir}/"
+      FILES "${wheel_path}"
       DESTINATION "${install_dir}"
       COMPONENT "${arg_INSTALL_COMPONENT}"
-      PATTERN "pyproject.toml" EXCLUDE
     )
   endif()
 endfunction()

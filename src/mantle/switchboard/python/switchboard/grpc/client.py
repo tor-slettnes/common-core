@@ -22,7 +22,7 @@ class Client (SwitchboardBase, SignalClient):
     from cc.generated.switchboard_pb2_grpc import SwitchboardStub as Stub
 
     def __init__(self,
-                 host: str,
+                 host: str = "",
                  wait_for_ready: bool = True):
         '''
         @param host:
