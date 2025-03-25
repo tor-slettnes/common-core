@@ -17,9 +17,15 @@ class Publisher (Host):
 
     def __init__(self,
                  bind_address: str,
-                 channel_name: str = None):
+                 channel_name: str|None = None,
+                 project_name: str|None = None,
+                 ):
 
-        Host.__init__(self, bind_address, channel_name, zmq.PUB)
+        Host.__init__(self,
+                      address = bind_address,
+                      channel_name = channel_name,
+                      project_name = project_name,
+                      socket_type = zmq.PUB)
 
     def publish(self,
                 message_filter : Filter,

@@ -23,9 +23,16 @@ class Subscriber (Satellite):
 
     def __init__(self,
                  host_address: str,
-                 channel_name: str = None):
+                 channel_name: str|None = None,
+                 project_name: str|None = None,
+                 ):
 
-        Satellite.__init__(self, host_address, channel_name, zmq.SUB)
+        Satellite.__init__(self,
+                           address = host_address,
+                           channel_name = channel_name,
+                           project_name = project_name,
+                           socket_type = zmq.SUB)
+
         self.subscriptions = set()
         self.receive_thread = None
         self.keep_receiving = False

@@ -42,10 +42,12 @@ class Client (Base):
     ## settings, such as target host/port.
     service_name = None
 
-    def __init__ (self,
-                  host: str,
-                  wait_for_ready: bool = False,
-                  use_asyncio: bool = False):
+    def __init__(self,
+                 host: str,
+                 wait_for_ready: bool = False,
+                 use_asyncio: bool = False,
+                 project_name: str|None = None,
+                 ):
         '''
         Initializer.  Parameters:
 
@@ -65,7 +67,9 @@ class Client (Base):
             any exceptions.
         '''
 
-        Base.__init__(self, self.service_name or self._default_service_name())
+        Base.__init__(self,
+                      service_name = self.service_name or self._default_service_name(),
+                      project_name = project_name)
 
         assert type(self).Stub, \
             "Subclass should set 'Stub' to appropriate gRPC service class"

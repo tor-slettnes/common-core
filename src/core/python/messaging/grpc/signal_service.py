@@ -26,10 +26,12 @@ class SignalService (Service):
     gRPC Servicer with `watch()` method to stream signals back to client.
     '''
 
-    def __init__ (self,
-                  signal_store   : SignalStore,
-                  bind_address   : str = "",
-                  max_queue_size : Optional[int] = 256):
+    def __init__(self,
+                 signal_store   : SignalStore,
+                 bind_address   : str = "",
+                 max_queue_size : Optional[int] = 256,
+                 project_name   : str|None = None,
+                 ):
         '''
         param[in] signal_store
            An instance of `protobuf.signal.SignalStore` from which
@@ -43,7 +45,10 @@ class SignalService (Service):
            they are streamed back to the client.  None means unlimited.
         '''
 
-        Service.__init__ (self, bind_address)
+        Service.__init__ (self,
+                          bind_address = bind_address,
+                          project_name = project_name)
+
         self.signal_store = signal_store
         self.max_queue_size = max_queue_size
 

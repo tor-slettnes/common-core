@@ -21,9 +21,14 @@ class Client (Requester):
 
     def __init__(self,
                  host_address  : str,
-                 channel_name  : str = None,
-                 interface_name: str = None):
-        Requester.__init__(self, host_address, channel_name)
+                 channel_name  : str|None = None,
+                 project_name  : str|None = None,
+                 interface_name: str|None = None,
+                 ):
+        Requester.__init__(self,
+                           host_address = host_address,
+                           channel_name = channel_name,
+                           project_name = project_name)
 
         if interface_name:
             self.interface_name = interface_name

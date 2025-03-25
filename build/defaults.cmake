@@ -42,17 +42,6 @@ set(HOME_PAGE "https://github.com/tor-slettnes/common-core/"
 set(ORGANIZATION "common-core"
   CACHE STRING "Organization name, for use in various path names")
 
-if(NOT BUILD_NUMBER)
-  ### No BUILD_NUMBER argument was provided. Let's check the BUILD_NUMBER
-  if(DEFINED ENV{BUILD_NUMBER})
-    set(BUILD_NUMBER $ENV{BUILD_NUMBER})
-  else()
-    math(EXPR BUILD_NUMBER "${LAST_BUILD}+1")
-  endif()
-endif()
-
-set(LAST_BUILD "${BUILD_NUMBER}" CACHE INTERNAL "..." FORCE)
-
 #-------------------------------------------------------------------------------
 # Various target directories
 

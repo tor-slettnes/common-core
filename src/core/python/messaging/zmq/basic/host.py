@@ -18,9 +18,13 @@ class Host (Endpoint):
     def __init__(self,
                  address     : str,
                  channel_name: str,
+                 project_name: str|None,
                  socket_type : zmq.SocketType):
 
-        Endpoint.__init__(self, channel_name, socket_type)
+        Endpoint.__init__(self,
+                          channel_name = channel_name,
+                          project_name = project_name,
+                          socket_type = socket_type)
         self.bound = False
         self.address = self._realaddress(
             address,

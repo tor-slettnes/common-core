@@ -1,27 +1,20 @@
-#!/usr/bin/echo Do not invoke directly.
-#===============================================================================
-## @file endpoint.py
-## @brief Generic communications endpoint
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+Generic communications endpoint
+'''
+
+__all__ = ['Endpoint']
+__docformat__ = 'javadoc en'
+__author__ = 'Tor Slettnes'
+
 
 import sys, re, socket, logging, argparse
 
-from ...buildinfo          import PRODUCT_NAME, PROJECT_NAME
 from ...core.settingsstore import SettingsStore
 
 #===============================================================================
 # Base class
 
 class Endpoint (object):
-    # `product_name` is used to lookup product-specific information,
-    # and might be overridden in subclasses.
-    product_name = PRODUCT_NAME
-
-    # `project_name` is to lookup information specific to the top-level
-    # code project, and might be overridden in subclasses.
-    project_name = PROJECT_NAME
-
     # `messaging_flavor` should be overwritten by direct subclasses to indicate
     # message platform, e.g., `gRPC`, `DDS`, `ZMQ`, ...
     messaging_flavor = None
@@ -34,13 +27,30 @@ class Endpoint (object):
     # for this communications channel (e.g., protocol/host/port, ...)
     channel_name = None
 
-    def __init__(self, channel_name: str = None):
+    # If `project_name` is provided as a class attribute or as an argument to
+    # `__init__()`, it will be used to look up service settings from
+    # project-specific settings files, e.g.
+    #`*messaging_flavor*-endpoints-*project_name*.yaml`
+    project_name = None
+
+
+    def __init__(self,
+                 channel_name: str|None = None,
+                 project_name: str|None = None):
+
         if channel_name is not None:
             self.channel_name = channel_name
         else:
             assert self.channel_name is not None, \
-                "Messaging Endpoint subclass %r should set 'channel_name' -- see %s"%\
-                (type(self).__name__, __file__)
+                "Messaging Endpoint subclass %s.%s should set 'channel_name' -- see %s"%\
+                (type(self).__module__, type(self).__name__, __file__)
+
+        if project_name is not None:
+            self.project_name = project_name
+        else:
+            assert self.project_name is not None, \
+                "Messaging Endpoint subclass %s.%s should set 'project_name' -- see %s"%\
+                (type(self).__module__, type(self).__name__, __file__)
 
         settings_files = [
             self.settings_file(self.channel_name),
@@ -61,8 +71,8 @@ class Endpoint (object):
     def deinitialize(self):
         pass
 
-    def settings_file(self, project_name):
-        return "%s-endpoints-%s"%(self.messaging_flavor.lower(), project_name.lower())
+    def settings_file(self, scope_name):
+        return "%s-endpoints-%s"%(self.messaging_flavor.lower(), scope_name.lower())
 
     def setting(self,
                 key     : str,

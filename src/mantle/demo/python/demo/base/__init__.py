@@ -5,5 +5,5 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from .api     import API, SignalSlot
+from .api     import API, SignalSlot, PROJECT_NAME
 from .signals import signal_store

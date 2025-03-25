@@ -15,3 +15,14 @@ include(${CMAKE_CURRENT_LIST_DIR}/local.cmake OPTIONAL)
 
 ### Obtain common defaults
 include(${CMAKE_CURRENT_LIST_DIR}/defaults.cmake)
+
+if(NOT BUILD_NUMBER)
+  ### No BUILD_NUMBER argument was provided. Let's check the BUILD_NUMBER
+  if(DEFINED ENV{BUILD_NUMBER})
+    set(BUILD_NUMBER $ENV{BUILD_NUMBER})
+  else()
+    math(EXPR BUILD_NUMBER "${LAST_BUILD}+1")
+  endif()
+endif()
+
+set(LAST_BUILD "${BUILD_NUMBER}" CACHE INTERNAL "..." FORCE)

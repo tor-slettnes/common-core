@@ -61,9 +61,14 @@ class Service (Base):
       ```
     """
 
-    def __init__ (self, bind_address=""):
-        Base.__init__ (self,
-                       service_name = self.service_name or self._service_name())
+    def __init__(self,
+                 bind_address: str ="",
+                 project_name: str|None = None,
+                 ):
+
+        Base.__init__(self,
+                      service_name = self.service_name or self._service_name(),
+                      project_name = project_name)
 
         self.bind_address = self.realaddress(bind_address, "interface", "port", "[::]", 8080)
 

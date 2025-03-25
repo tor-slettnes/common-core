@@ -7,7 +7,7 @@
 
 # Default endpoints for common applications. In addtiion to these, settings for
 # product-specific applications can be found in
-# `grpc-services-PRODUCT_NAME.yaml`, where PRODUCT_NAME is provided at build
+# `grpc-services-PROJECT_NAME.yaml`, where PROJECT_NAME is provided at build
 # time.
 #
 # The following attributes are used to construct host/interface addresses

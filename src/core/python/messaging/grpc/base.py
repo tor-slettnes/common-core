@@ -34,7 +34,11 @@ class Base (Endpoint):
     # for this endpoint (e.g., host/port, ...).
     service_name = None
 
-    def __init__ (self, service_name: str = None):
+    def __init__(self,
+                 service_name: str|None = None,
+                 project_name: str|None = None,
+                 ):
+
         if service_name is not None:
             self.service_name = service_name
         else:
@@ -42,7 +46,9 @@ class Base (Endpoint):
                 "Subclass %r should set `service_name` -- see %s"%\
                 (type(self).__name__, __file__)
 
-        Endpoint.__init__(self, self.service_name)
+        Endpoint.__init__(self,
+                          channel_name = self.service_name,
+                          project_name = project_name)
 
     def max_request_size(self) -> Optional[str]:
         return self.setting("max request size", None)

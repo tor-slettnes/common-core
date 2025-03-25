@@ -27,8 +27,15 @@ class HTTPClient (HTTPBase):
     StatusMap = dict([(status.value, status) for status in http.HTTPStatus])
 
 
-    def __init__(self, base_url, service_name=None):
-        HTTPBase.__init__(self, service_name)
+    def __init__(self,
+                 base_url: str,
+                 service_name: str|None = None,
+                 project_name: str|None = None,
+                 ):
+
+        HTTPBase.__init__(self,
+                          service_name = service_name,
+                          project_name = project_name)
         self.base_url = self.get_target_url(base_url)
 
     @property

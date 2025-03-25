@@ -157,6 +157,7 @@ class SignalClient (Client):
                  signal_store : SignalStore = None,
                  watch_all: bool = False,
                  use_cache: bool = True,
+                 project_name: str|None = None,
                  **kwargs):
         '''
         Initialize this signal client instance.
@@ -210,6 +211,7 @@ class SignalClient (Client):
         Client.__init__(self, host,
                         wait_for_ready = wait_for_ready,
                         use_asyncio = use_asyncio,
+                        project_name = project_name,
                         **kwargs)
 
         self.reader = (ThreadReader, AsyncReader)[self.use_asyncio]()

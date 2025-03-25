@@ -25,9 +25,13 @@ class Endpoint (EndpointBase):
 
     def __init__(self,
                  channel_name: str,
-                 socket_type : zmq.SocketType):
+                 project_name: str|None,
+                 socket_type : zmq.SocketType,
+                 ):
 
-        EndpointBase.__init__(self, channel_name)
+        EndpointBase.__init__(self,
+                              channel_name = channel_name,
+                              project_name = project_name)
         self.socket = self.context.socket(socket_type)
 
     def send_bytes(self,
@@ -71,7 +75,7 @@ class Endpoint (EndpointBase):
         follows:
 
         * If the product-specific settings file
-          `zmq-endpoints-PRODUCT_NAME.json` contains a map entry for this ZMQ
+          `zmq-endpoints-PROJECT_NAME.json` contains a map entry for this ZMQ
           channel name, the value is extracted from this map using the provided
           `schemeOption`, `hostOption` or `portOption` as key.
 

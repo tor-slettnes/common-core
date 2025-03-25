@@ -28,10 +28,15 @@ class Server (Responder):
 
     def __init__(self,
                  bind_address    : str,
-                 channel_name    : str,
+                 channel_name    : str|None,
+                 project_name    : str|None = None,
                  request_handlers: Sequence[RequestHandler] = []):
 
-        Responder.__init__(self, bind_address, channel_name)
+        Responder.__init__(self,
+                           bind_address = bind_address,
+                           channel_name = channel_name,
+                           project_name = project_name)
+
         self.request_handlers = dict([(handler.interface_name, handler)
                                       for handler in request_handlers])
 

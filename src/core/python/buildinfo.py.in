@@ -4,7 +4,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-PRODUCT_NAME            = "@PRODUCT@"
 PROJECT_NAME            = "@CMAKE_PROJECT_NAME@"
 PROJECT_DESCRIPTION     = "@CMAKE_PROJECT_DESCRIPTION@"
 PROJECT_VERSION         = "@CMAKE_PROJECT_VERSION@"

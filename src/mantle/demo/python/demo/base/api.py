@@ -15,6 +15,8 @@ from cc.protobuf.demo import Greeting, TimeData, Signal
 from typing import Callable
 import sys, os.path, time
 
+PROJECT_NAME = "demo"
+
 SignalSlot = Callable[[Signal], None]
 
 #===============================================================================

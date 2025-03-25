@@ -34,7 +34,10 @@ class HTTPBase (Endpoint):
     # for this endpoint (e.g., host/port, ...).
     service_name = None
 
-    def __init__ (self, service_name: str = None):
+    def __init__ (self,
+                  service_name: str|None = None,
+                  project_name: str|None = None,
+                  ):
         if service_name is not None:
             self.service_name = service_name
         else:
@@ -42,7 +45,9 @@ class HTTPBase (Endpoint):
                 "Subclass %r should set `service_name` -- see %s"%\
                 (type(self).__name__, __file__)
 
-        Endpoint.__init__(self, self.service_name)
+        Endpoint.__init__(self,
+                          channel_name = self.service_name,
+                          project_name = project_name)
 
     def get_target_url(self, provided: str = ''):
         return urllib.parse.urlunsplit(self.get_target(provided))

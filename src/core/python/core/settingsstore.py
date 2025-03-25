@@ -1,9 +1,11 @@
-#!/usr/bin/python3
-#===============================================================================
-## @file settingsstore.py
-## @brief Obtain settings from JSON file(s)
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+Obtain settings from `.yaml` and/or `.json` files
+'''
+
+__all__ = ['Endpoint']
+__docformat__ = 'javadoc en'
+__author__ = 'Tor Slettnes'
+
 
 ### Modules within package
 from .jsonreader import JsonReader
@@ -35,6 +37,7 @@ class SettingsStore (dict):
     by invoking `load_settings()`.
     '''
 
+
     ## Set this to override default search path
     search_path = settingsPath()
 
@@ -45,7 +48,7 @@ class SettingsStore (dict):
 
     def __init__(self,
                  filenames  : FilePath|FilePaths = [],
-                 searchpath : FilePaths = None):
+                 searchpath : FilePaths|None = None):
 
         '''
         Initialize a new SettingsStore instance from the specified JSON
@@ -127,7 +130,7 @@ class SettingsStore (dict):
 
         Consider a deployment where this module is located somewhere inside
         `/usr`, and default configurations are stored in YAML files within the
-        folder `/usr/share/common-core/settings/PROJECT_NAME`.
+        folder `/usr/share/common-core/settings`.
         Let's say you create a `SettingsStore` instance as follows:
 
         ```python
@@ -144,8 +147,8 @@ class SettingsStore (dict):
         2. `$HOME/.config/common-core/my_settings.yaml`
         3. `/etc/common-core/my_settings.json`
         4. `/etc/common-core/my_settings.yaml`
-        5. `/usr/share/common-core/settings/PROJECT_NAME/my_settings.json`
-        6. `/usr/share/common-core/settings/PROJECT_NAME/my_settings.yaml`
+        5. `/usr/share/common-core/settings/my_settings.json`
+        6. `/usr/share/common-core/settings/my_settings.yaml`
         '''
 
         if searchpath:

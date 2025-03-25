@@ -20,9 +20,16 @@ class Responder (Host):
 
     def __init__(self,
                  bind_address: str,
-                 channel_name: str = None):
+                 channel_name: str|None = None,
+                 project_name: str|None = None,
+                 ):
 
-        Host.__init__(self, bind_address, channel_name, zmq.REP)
+        Host.__init__(self,
+                      address = bind_address,
+                      channel_name = channel_name,
+                      project_name = project_name,
+                      socket_type = zmq.REP)
+
         self.listen_thread = None
         self.keep_listening = False
 
