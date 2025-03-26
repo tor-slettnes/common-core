@@ -6,13 +6,13 @@
 #===============================================================================
 
 MAKEFLAGS     += --no-print-directory
-SHARED_DIR    ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+THIS_DIR      ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 OUT_DIR       ?= $(CURDIR)/out
 BUILD_DIR     ?= $(OUT_DIR)/build
 INSTALL_DIR   ?= $(OUT_DIR)/install
 PACKAGE_DIR   ?= $(OUT_DIR)/packages
 PYTHON        ?= /usr/bin/python3
-TOOLCHAIN_FILE = $(SHARED_DIR)build/cmake/toolchain-$(TARGET).cmake
+TOOLCHAIN_FILE = $(THIS_DIR)build/cmake/toolchain-$(TARGET).cmake
 
 ifdef TARGET
 	BUILD_DIR := $(BUILD_DIR)-$(TARGET)
@@ -51,7 +51,7 @@ CMAKE_CACHE = $(BUILD_DIR)/CMakeCache.txt
 define list_cache_or_default
 (\
   cat $(BUILD_DIR)/CMakeCache.txt || \
-  cmake -L -P build/buildspec.cmake -P $(SHARED_DIR)/build/buildspec.cmake) 2>/dev/null
+  cmake -L -P build/buildspec.cmake -P $(THIS_DIR)/build/buildspec.cmake) 2>/dev/null
 endef
 
 define get_cached_or_default
@@ -84,6 +84,9 @@ deb: build
 	@echo "#############################################################"
 	@echo
 	@cpack --config "${BUILD_DIR}/CPackConfig.cmake" -B "${PACKAGE_DIR}" -G DEB
+
+.PHONY: wheels
+wheels: python_wheels
 
 .PHONY: install
 install: build
@@ -260,7 +263,7 @@ distclean pristine: clean/install clean/package clean/build clean/out
 
 ### Delegate docker_ targets to its own Makefile
 docker_%:
-	@$(MAKE) -C $(SHARED_DIR)/build/docker $(MAKECMDGOALS) HOST_DIR=$(CURDIR)
+	@$(MAKE) -C $(THIS_DIR)/build/docker $(MAKECMDGOALS) HOST_DIR=$(CURDIR)
 
 ### Delegate any other target to CMake
 %:

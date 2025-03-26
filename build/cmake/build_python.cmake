@@ -58,7 +58,7 @@ function(cc_add_python TARGET)
   ###  * Consolidated and staged to a common folder by `cc_add_python_executable()`
   ###    (because PyInstaller does not handle multiple source locations with
   ###    overlapping module namespaces / directory structures)
-  ###  * Installed, if the option `INSTALL_PYTHON_MODDULES` is enabled
+  ###  * Installed, if the option `WITH_PYTHON_MODDULES` is enabled
 
   ### Specify root folder for staging python modules for this target
   if(arg_STAGING_DIR)
@@ -107,12 +107,19 @@ function(cc_add_python TARGET)
     FILENAME_PATTERN ${filename_pattern}
   )
 
+  if(arg_INSTALL_COMPONENT AND WITH_PYTHON_MODULES)
+    set(install_component ${arg_INSTALL_COMPONENT})
+  else()
+    unset(install_component)
+  endif()
+
+
   ### Create a Custom CMake target plus staging folder
   if(NOT TARGET "${TARGET}")
     ### We include this in the 'ALL` target iff we expect to install it.
     ### In other cases (e.g. if including this target in a Python wheel), this
     ### should be an explicit dependency for one or more downstream targets.
-    cc_get_optional_keyword(ALL arg_INSTALL_COMPONENT)
+    cc_get_optional_keyword(ALL install_component)
 
     add_custom_target("${TARGET}" ${ALL}
       DEPENDS ${staged_outputs}
@@ -156,7 +163,7 @@ function(cc_add_python TARGET)
       PROPERTIES extra_data_modules "${arg_EXTRA_DATA_MODULES}")
   endif()
 
-  if(INSTALL_PYTHON_MODULES AND arg_INSTALL_COMPONENT)
+  if(install_component)
     cc_get_value_or_default(
       install_dir
       arg_INSTALL_DIR
@@ -180,7 +187,7 @@ endfunction()
 ##  - Added to dependent Python Wheel targets (via `cc_add_python_wheel()`)
 ##  - Merged alongside other dependencies into a single staging
 ##    folder for Pyinstaller (via `cc_add_python_executable()`)
-##  - Installed/packaged (if the option `INSTALL_PYTHON_MODULES` is enabled)
+##  - Installed/packaged (if the option `WITH_PYTHON_MODULES` is enabled)
 
 function(cc_stage_python_modules)
   set(_options)

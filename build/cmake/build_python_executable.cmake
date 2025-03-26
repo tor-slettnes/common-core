@@ -5,6 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+set(PYTHON_EXECUTABLES_TARGET "python_executables")
+add_custom_target(${PYTHON_EXECUTABLES_TARGET})
+
 #===============================================================================
 ## @fn cc_add_python_executable
 ## @brief
@@ -38,12 +41,6 @@ function(cc_add_python_executable TARGET)
   )
 
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  ### Do this only if the option `BUILD_PYTHON_EXECUTABLE` is enabled
-  if(NOT BUILD_PYTHON_EXECUTABLE)
-    message(DEBUG "Skipping PyInstaller target ${TARGET}, as BUILD_PYTHON_EXECUTABLE is disabled")
-    return()
-  endif()
 
   cc_find_python(
     ACTION "cc_add_python_executable(${TARGET})"
@@ -82,8 +79,11 @@ function(cc_add_python_executable TARGET)
   file(MAKE_DIRECTORY "${staging_dir}")
 
   ### Create a CMake target
-  add_custom_target("${TARGET}" ALL
+  cc_get_optional_keyword(ALL WITH_PYTHON_EXECUTABLES)
+  add_custom_target(${TARGET} ${ALL}
     DEPENDS "${program_path}")
+  add_dependencies(${PYTHON_EXECUTABLES_TARGET} ${TARGET})
+
 
   if(arg_PYTHON_DEPS OR arg_DATA_DEPS)
     add_dependencies("${TARGET}"
@@ -273,7 +273,7 @@ function(cc_add_python_executable TARGET)
   )
 
   ### Install/package resulting executable
-  if(arg_INSTALL_COMPONENT)
+  if(WITH_PYTHON_EXECUTABLES AND arg_INSTALL_COMPONENT)
     cc_get_value_or_default(type arg_TYPE "BIN")
 
     if(arg_DIRECTORY_BUNDLE)

@@ -5,7 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(PYTHON_WHEEL_DIR "share/python-wheels"
+#-------------------------------------------------------------------------------
+## Add global `python_wheels` target, into which wheels will be dependencies
+
+set(PYTHON_WHEELS_TARGET "python_wheels")
+add_custom_target(${PYTHON_WHEELS_TARGET})
+
+set(PYTHON_WHEEL_INSTALL_DIR "share/python-wheels"
   CACHE STRING "Installation directory for Python  wheels")
 
 cmake_path(APPEND PYTHON_OUT_DIR "wheels"
@@ -17,7 +23,7 @@ set_property(
   PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_WHEEL_STAGING_ROOT}
 )
 
-#===============================================================================
+#-------------------------------------------------------------------------------
 ## @fn cc_add_python_wheel
 ## @brief
 ##  Build a Python binary distribution package ("wheel", or `.whl` file)
@@ -25,18 +31,28 @@ set_property(
 function(cc_add_python_wheel TARGET)
   set(_options)
   set(_singleargs
-    PACKAGE_NAME PACKAGE_NAME_PREFIX DESCRIPTION VERSION CONTACT URL
-    VENV PYTHON_INTERPRETER PYPROJECT_TEMPLATE INSTALL_COMPONENT INSTALL_DIR)
+    PACKAGE_NAME        # Set explicit wheel name
+    PACKAGE_NAME_PREFIX # Alternatively, use this (or default prefix) plus TARGET
+    DESCRIPTION         # One-line description field
+    VERSION             # Explicit version, if not CMAKE_PROJECT_VERSION
+    CONTACT             # Package contact (Real Name <email@addr.ess>)
+    URL                 # Package publisher URL
+    VENV                # Use a Python VENV to generate package (optional)
+    PYTHON_INTERPRETER  # Use a specific Python interpreter
+    PYPROJECT_TEMPLATE  # `pyproject.toml` template file
+    PACKAGE_DEPS_FILE   # Python package requirements file (for `pip install`)
+    INSTALL_COMPONENT   # CPack component into which this wheel is added
+    INSTALL_DIR         # Override default installation folder
+  )
   set(_multiargs
-    PROGRAMS BUILD_DEPS PYTHON_DEPS DATA_DEPS PACKAGE_DEPS)
+    BUILD_DEPS          # CMake targets that must be built before this
+    PYTHON_DEPS         # Python target dependencies to include in wheel
+    DATA_DEPS           # Other target dependencies to include, e.g. settings
+    PACKAGE_DEPS        # Python package dependencies, overrides PACKAGE_DEPS_FILE
+    WHEEL_DEPS          # Additional Python wheel dependencies from this project
+  )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-
-  ### Do this only if the option `BUILD_PYTHON_WHEELS` is enabled
-  if(NOT BUILD_PYTHON_WHEELS)
-    message(DEBUG "Skipping Python wheel ${TARGET}, as BUILD_PYTHON_WHEELS is disabled")
-    return()
-  endif()
 
   cc_find_python(
     ACTION "cc_add_python_wheel(${TARGET})"
@@ -54,14 +70,14 @@ function(cc_add_python_wheel TARGET)
     "${PYTHON_TEMPLATE_DIR}/pyproject.toml.in")
 
   cc_get_value_or_default(
-    PACKAGE_NAME_PREFIX
+    package_name_prefix
     arg_PACKAGE_NAME_PREFIX
     "${PACKAGE_NAME_PREFIX}")
 
   cc_get_value_or_default(
     PACKAGE_NAME
     arg_PACKAGE_NAME
-    "${PACKAGE_NAME_PREFIX}_${TARGET}")
+    "${package_name_prefix}_${TARGET}")
 
   cc_get_value_or_default(
     DESCRIPTION
@@ -73,27 +89,18 @@ function(cc_add_python_wheel TARGET)
     arg_VERSION
     "${PROJECT_VERSION}")
 
-  if (arg_PACKAGE_DEPS)
-    set(wheel_dependencies "${arg_PACKAGE_DEPS}")
-  else()
-    file(STRINGS "${PYTHON_PIP_REQUIREMENTS_FILE}" wheel_dependencies)
-  endif()
-
-  cc_join_quoted(wheel_dependencies
-    OUTPUT_VARIABLE DEPENDENCIES)
-
-  cc_get_value_or_default(
-    CONTACT
-    arg_CONTACT
-    "${PACKAGE_CONTACT}")
-
   cc_get_value_or_default(
     URL
     arg_URL
     "${PROJECT_HOMEPAGE_URL}")
 
-  if(CPACK_PACKAGE_CONTACT)
-    string(REGEX MATCH "^([^<]+) ?(<(.*)>)?" _match "${CPACK_PACKAGE_CONTACT}")
+  cc_get_value_or_default(
+    CONTACT
+    arg_CONTACT
+    "${CPACK_PACKAGE_CONTACT}")
+
+  if(CONTACT)
+    string(REGEX MATCH "^([^<]+) ?(<(.*)>)?" _match "${CONTACT}")
     set(AUTHOR_NAME "${CMAKE_MATCH_1}")
     set(AUTHOR_EMAIL "${CMAKE_MATCH_3}")
   endif()
@@ -103,18 +110,45 @@ function(cc_add_python_wheel TARGET)
     VERSION "${VERSION}"
     OUTPUT_VARIABLE wheel_name)
 
+  #--------------------------------------------------------------------------
+  ## Determine and assign Python package dependencies to DEPENDENCIES
 
-  ### Define output directories for `pyproject.toml` and the resulting wheel
+  if(arg_PACKAGE_DEPS)
+    set(wheel_dependencies ${arg_PACKAGE_DEPS})
+  elseif(arg_PACKAGE_DEPS_FILE)
+    file(STRINGS "${arg_PACKAGE_DEPS_FILE}" wheel_dependencies)
+  elseif(PYTHON_PIP_REQUIREMENTS_FILE)
+    file(STRINGS "${PYTHON_PIP_REQUIREMENTS_FILE}" wheel_dependencies)
+  endif()
+
+  foreach(wheel_dep ${arg_WHEEL_DEPS})
+    if(package_name_prefix)
+      set(wheel_dep ${package_name_prefix}_${wheel_dep})
+    endif()
+
+    list(APPEND wheel_dependencies ${wheel_dep})
+  endforeach()
+
+  cc_join_quoted(wheel_dependencies
+    OUTPUT_VARIABLE DEPENDENCIES)
+
+  #--------------------------------------------------------------------------
+  ## Define output directories for `pyproject.toml` and the resulting wheel
+
   set(gen_dir "${PYTHON_WHEEL_STAGING_ROOT}/${TARGET}")
   set(wheel_dir "${PYTHON_WHEEL_STAGING_ROOT}")
   set(wheel_path "${wheel_dir}/${wheel_name}")
 
   file(REMOVE_RECURSE "${gen_dir}")
 
-  ### Create TARGET with dependencies
-  add_custom_target("${TARGET}" ALL
+  ### Create TARGET with dependencies.
+
+  ### We include this in the 'ALL` target iff we're asked to build wheels
+  cc_get_optional_keyword(ALL WITH_PYTHON_WHEELS)
+  add_custom_target("${TARGET}" ${ALL}
     DEPENDS "${wheel_path}"
   )
+  add_dependencies(${PYTHON_WHEELS_TARGET} ${TARGET})
 
   if(arg_PYTHON_DEPS OR arg_DATA_DEPS)
     add_dependencies("${TARGET}"
@@ -128,7 +162,7 @@ function(cc_add_python_wheel TARGET)
   ## and generate corresponding `"SOURCE_DIR" = "/"` statements for the
   ## `[...force-include]` section in `pyproject.toml`.
 
-  set(package_map)
+  unset(package_map)
 
   cc_get_target_properties_recursively(
     PROPERTIES staging_dir
@@ -141,7 +175,9 @@ function(cc_add_python_wheel TARGET)
 
   list(APPEND package_map ${dep_staging_dirs})
 
-  ## Likewise, collect staged source+destination folders listed in `DATA_DEPS`:
+  ## Likewise, collect staged source+destination folders listed in `DATA_DEPS`.
+  ## In this ase the destination folder is the second property collected for
+  ## each target dependency, `data_dir` (e.g. `settings`).
   cc_get_target_properties_recursively(
     PROPERTIES staging_dir data_dir
     TARGETS ${arg_DATA_DEPS}
@@ -177,9 +213,9 @@ function(cc_add_python_wheel TARGET)
     OUTPUT "${wheel_path}"
     DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
     BYPRODUCTS "${gen_dir}"
-    COMMAND hatchling build -d "${wheel_dir}" > /dev/null
-    # COMMAND ${python}
-    # ARGS -m build --wheel --outdir "${wheel_dir}" "."
+    #COMMAND hatchling build -d "${wheel_dir}" > /dev/null
+    COMMAND ${python}
+    ARGS -m build --wheel --outdir "${wheel_dir}" "."
     COMMENT "Building Python Wheel: ${wheel_name}"
     COMMAND_EXPAND_LISTS
     VERBATIM
@@ -187,11 +223,11 @@ function(cc_add_python_wheel TARGET)
   )
 
   ### Install/package resulting executable
-  if(arg_INSTALL_COMPONENT)
+  if(WITH_PYTHON_WHEELS AND arg_INSTALL_COMPONENT)
     cc_get_value_or_default(
       install_dir
       arg_INSTALL_DIR
-      "${PYTHON_WHEEL_DIR}")
+      "${PYTHON_WHEEL_INSTALL_DIR}")
 
     install(
       FILES "${wheel_path}"

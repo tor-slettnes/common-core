@@ -34,7 +34,7 @@ cc_add_python("${TARGET}"
 )
 
 if(BUILD_DEMO)
-  cc_add_python_wheel("demo-shell"
+  cc_add_python_wheel("demo_client"
     PYTHON_DEPS ${TARGET}
     DATA_DEPS cc_demo_settings
     DESCRIPTION "Interactive shell to communicate with DEMO service over gRPC or ZMQ"

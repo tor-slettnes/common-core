@@ -5,7 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+#-------------------------------------------------------------------------------
 ### General CPack settings
+
 # Prevent PROJECT_DESCRIPTION to be used as SUMMARY for every package compoennt
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Missing package component description")
@@ -33,7 +35,7 @@ else()
   set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
 endif()
 
-#===============================================================================
+#-------------------------------------------------------------------------------
 ### DEB generator settings
 
 ### Generate automatic package dependencies based on shared lib references
@@ -51,3 +53,14 @@ if(RELEASE_TAG)
 else()
   set(CPACK_DEBIAN_PACKAGE_RELEASE "${BUILD_NUMBER}")
 endif()
+
+#-------------------------------------------------------------------------------
+### External generator settings
+
+#set(CPACK_EXTERNAL_PACKAGE_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/cpack_wheel.cmake)
+set(CPACK_EXTERNAL_ENABLE_STAGING TRUE)
+set(CPACK_EXTERNAL_SETTINGS_DIR "${SETTINGS_DIR}")
+set(CPACK_EXTERNAL_PYTHON_DIR "${PYTHON_INSTALL_DIR}")
+set(CPACK_EXTERNAL_PYTHON_DEPENDENCIES_FILE ${PYTHON_PIP_REQUIREMENTS_FILE})
+set(CPACK_EXTERNAL_PYTHON_TOML_TEMPLATE_FILE "${PYTHON_TEMPLATE_DIR}/pyproject.toml.in")
+set(CPACK_EXTERNAL_BUILD_NUMBER ${BUILD_NUMBER})

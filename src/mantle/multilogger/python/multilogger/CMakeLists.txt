@@ -26,7 +26,7 @@ cc_add_python("${TARGET}"
 )
 
 if(BUILD_MULTILOGGER)
-  cc_add_python_wheel("multilogger-client"
+  cc_add_python_wheel("multilogger_client"
     PYTHON_DEPS "${TARGET}"
     DATA_DEPS "cc_multilogger_settings"
     DESCRIPTION "Python client modules for MultiLogger service"
