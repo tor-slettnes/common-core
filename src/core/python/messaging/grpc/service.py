@@ -61,6 +61,9 @@ class Service (Base):
       ```
     """
 
+    ### Messaging endpoint type
+    endpoint_type = 'request handler'
+
     def __init__(self,
                  bind_address: str ="",
                  project_name: str|None = None,

@@ -127,10 +127,10 @@ option(BUILD_YAML        "Build support for YAML parsing " ON)
 option(USE_STATIC_LIBS   "Use static 3rd party libraries for linking" OFF)
 
 ### Python options
-option(BUILD_PYTHON      "Install Python clients/scripts" ON)
-option(WITH_PYTHON_MODULES "Install Python source modules" ON)
-option(WITH_PYTHON_WHEELS  "Build/install Python distributions (`.whl`); by default requires `hatchling`." OFF)
-option(WITH_PYTHON_EXECUTABLES "Build/install Python executables with PyInstaller" OFF)
+option(BUILD_PYTHON            "Install Python clients/scripts" ON)
+option(WITH_PYTHON_MODULES     "Install/package Python source modules" ON)
+option(WITH_PYTHON_WHEELS      "Build and install Python distributions (`.whl`)" OFF)
+option(WITH_PYTHON_EXECUTABLES "Build and install Python executables with PyInstaller" OFF)
 
 ### Messaging frameworks
 option(BUILD_KAFKA       "Build support for Apache Kafka" ON)

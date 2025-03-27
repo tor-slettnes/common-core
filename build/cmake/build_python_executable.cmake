@@ -15,9 +15,10 @@ add_custom_target(${PYTHON_EXECUTABLES_TARGET})
 
 function(cc_add_python_executable TARGET)
   set(_options
-    DEBUG                 # Set PyInstaller log level to DEBUG
-    USE_SPEC              # Use a Pyinstaller `.spec` file (see `SPEC_TEMPLATE`)
-    DIRECTORY_BUNDLE      # Create a directory bundle instead of single executable
+    ALL                 # Add executable to default target
+    DEBUG               # Set PyInstaller log level to DEBUG
+    USE_SPEC            # Use a Pyinstaller `.spec` file (see `SPEC_TEMPLATE`)
+    DIRECTORY_BUNDLE    # Create a directory bundle instead of single executable
   )
   set(_singleargs
     SCRIPT              # Startup/main script (required)
@@ -79,11 +80,12 @@ function(cc_add_python_executable TARGET)
   file(MAKE_DIRECTORY "${staging_dir}")
 
   ### Create a CMake target
-  cc_get_optional_keyword(ALL WITH_PYTHON_EXECUTABLES)
-  add_custom_target(${TARGET} ${ALL}
+  if(arg_ALL OR WITH_PYTHON_EXECUTABLES)
+    set(include_in_all "ALL")
+  endif()
+  add_custom_target("${TARGET}" ${include_in_all}
     DEPENDS "${program_path}")
-  add_dependencies(${PYTHON_EXECUTABLES_TARGET} ${TARGET})
-
+  add_dependencies("${PYTHON_EXECUTABLES_TARGET}" "${TARGET}")
 
   if(arg_PYTHON_DEPS OR arg_DATA_DEPS)
     add_dependencies("${TARGET}"
@@ -188,9 +190,12 @@ function(cc_add_python_executable TARGET)
     REMOVE_DUPLICATES)
 
   ## Get settings files and other data that should also be included in output.
+  ## These may be direct target dependencies passed in via `DATA_DEPS` or
+  ## indirect dependencies from `PYTHON_DEPS`, as long as they have defined both
+  ## `staging_dir` and `data_dir` target properties (as in `cc_add_settings()`).
   cc_get_target_properties_recursively(
     PROPERTIES staging_dir data_dir
-    TARGETS ${arg_DATA_DEPS}
+    TARGETS ${arg_PYTHON_DEPS} ${arg_DATA_DEPS}
     SEPARATOR "/.:"
     OUTPUT_VARIABLE extra_data
     ALL_OR_NOTHING

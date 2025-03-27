@@ -29,7 +29,9 @@ set_property(
 ##  Build a Python binary distribution package ("wheel", or `.whl` file)
 
 function(cc_add_python_wheel TARGET)
-  set(_options)
+  set(_options
+    ALL                 # Add executable to default target
+  )
   set(_singleargs
     PACKAGE_NAME        # Set explicit wheel name
     PACKAGE_NAME_PREFIX # Alternatively, use this (or default prefix) plus TARGET
@@ -52,7 +54,6 @@ function(cc_add_python_wheel TARGET)
     WHEEL_DEPS          # Additional Python wheel dependencies from this project
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
 
   cc_find_python(
     ACTION "cc_add_python_wheel(${TARGET})"
@@ -141,14 +142,14 @@ function(cc_add_python_wheel TARGET)
 
   file(REMOVE_RECURSE "${gen_dir}")
 
-  ### Create TARGET with dependencies.
-
-  ### We include this in the 'ALL` target iff we're asked to build wheels
-  cc_get_optional_keyword(ALL WITH_PYTHON_WHEELS)
-  add_custom_target("${TARGET}" ${ALL}
+  ### Create TARGET with dependencies, possibly included in the `ALL` target.
+  if(arg_ALL OR WITH_PYTHON_WHEELS)
+    set(include_in_all "ALL")
+  endif()
+  add_custom_target("${TARGET}" ${include_in_all}
     DEPENDS "${wheel_path}"
   )
-  add_dependencies(${PYTHON_WHEELS_TARGET} ${TARGET})
+  add_dependencies("${PYTHON_WHEELS_TARGET}" "${TARGET}")
 
   if(arg_PYTHON_DEPS OR arg_DATA_DEPS)
     add_dependencies("${TARGET}"
@@ -158,37 +159,18 @@ function(cc_add_python_wheel TARGET)
 
 
   #-----------------------------------------------------------------------------
-  ## Collect Python staging directories from targets listed in `PYTHON_DEPS`,
-  ## and generate corresponding `"SOURCE_DIR" = "/"` statements for the
-  ## `[...force-include]` section in `pyproject.toml`.
+  ## Collect staging directories from targets listed in `PYTHON_DEPS` and
+  ## `DATA_DEPS`, and generate corresponding `"SOURCE_DIR" = "TARGET_DIR/"`
+  ## statements for the `[...force-include]` section in `pyproject.toml`.
 
-  unset(package_map)
-
-  cc_get_target_properties_recursively(
-    PROPERTIES staging_dir
-    TARGETS ${arg_PYTHON_DEPS}
-    PREFIX "\""
-    SUFFIX "\" = \"/\""
-    OUTPUT_VARIABLE dep_staging_dirs
-    REMOVE_DUPLICATES
-    REQUIRED)
-
-  list(APPEND package_map ${dep_staging_dirs})
-
-  ## Likewise, collect staged source+destination folders listed in `DATA_DEPS`.
-  ## In this ase the destination folder is the second property collected for
-  ## each target dependency, `data_dir` (e.g. `settings`).
   cc_get_target_properties_recursively(
     PROPERTIES staging_dir data_dir
-    TARGETS ${arg_DATA_DEPS}
+    TARGETS ${arg_PYTHON_DEPS} ${arg_DATA_DEPS}
     PREFIX "\""
     SEPARATOR "\" = \""
     SUFFIX "/\""
-    OUTPUT_VARIABLE extra_data
-    ALL_OR_NOTHING
+    OUTPUT_VARIABLE package_map
     REMOVE_DUPLICATES)
-
-  list(APPEND package_map ${extra_data})
 
   ### Create a multi-line string in PACKAGE_MAP holding these directory mappings.
   list(JOIN package_map "\n" PACKAGE_MAP)
@@ -213,9 +195,10 @@ function(cc_add_python_wheel TARGET)
     OUTPUT "${wheel_path}"
     DEPENDS ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
     BYPRODUCTS "${gen_dir}"
-    #COMMAND hatchling build -d "${wheel_dir}" > /dev/null
-    COMMAND ${python}
-    ARGS -m build --wheel --outdir "${wheel_dir}" "."
+    # COMMAND hatchling build -d "${wheel_dir}" > /dev/null
+    COMMAND ${python} -m hatchling build -d "${wheel_dir}" > /dev/null
+    # COMMAND ${python}
+    # ARGS -m build --wheel --outdir "${wheel_dir}" "."
     COMMENT "Building Python Wheel: ${wheel_name}"
     COMMAND_EXPAND_LISTS
     VERBATIM

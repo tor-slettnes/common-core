@@ -46,7 +46,7 @@ function(cc_add_python TARGET)
     STAGING_DIR
     INSTALL_COMPONENT INSTALL_DIR)
   set(_multiargs
-    PYTHON_DEPS PROTO_DEPS
+    PYTHON_DEPS PROTO_DEPS DATA_DEPS
     PROGRAMS FILES DIRECTORIES FILENAME_PATTERN
     HIDDEN_IMPORTS COLLECT_SUBMODULES COLLECT_PACKAGES EXTRA_DATA_MODULES
   )
@@ -130,18 +130,18 @@ function(cc_add_python TARGET)
   ### `PRIVATE` because a custom target cannot have INTERFACE or PUBLIC sources;
   ### however still available by looking up the `SOURCES` property explicitly).
   target_sources(${TARGET} PRIVATE ${staged_outputs})
-  # target_sources(${TARGET} PRIVATE ${sources})
 
-  if(arg_PYTHON_DEPS OR arg_PROTO_DEPS)
+  if(arg_PYTHON_DEPS OR arg_PROTO_DEPS OR arg_DATA_DEPS)
     list(TRANSFORM arg_PROTO_DEPS APPEND "_py")
-    add_dependencies("${TARGET}" ${arg_PYTHON_DEPS} ${arg_PROTO_DEPS})
+    add_dependencies("${TARGET}" ${arg_PYTHON_DEPS} ${arg_PROTO_DEPS} ${arg_DATA_DEPS})
   endif()
 
 
   ### Set target property `staging_dir` for downstream targets
   ### (e.g. via `cc_add_python_executable()`)
-  set_target_properties("${TARGET}"
-    PROPERTIES staging_dir "${staging_dir}")
+  set_target_properties("${TARGET}"  PROPERTIES
+    staging_dir "${staging_dir}"
+  )
 
   if(arg_HIDDEN_IMPORTS)
     set_target_properties("${TARGET}"
@@ -199,7 +199,7 @@ function(cc_stage_python_modules)
 
   add_custom_command(
     OUTPUT ${arg_OUTPUT}
-    COMMENT "Staging Python modules for target ${arg_TARGET}"
+    COMMENT ""
     BYPRODUCTS ${arg_MODULES_DIR}
     COMMAND ${CMAKE_COMMAND}
     ARGS -E make_directory ${arg_MODULES_DIR}

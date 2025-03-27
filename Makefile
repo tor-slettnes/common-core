@@ -80,13 +80,21 @@ package: deb
 deb: build
 	@echo
 	@echo "#############################################################"
-	@echo "Creating release packages in ${PACKAGE_DIR}"
+	@echo "Creating Debian release packages in ${PACKAGE_DIR}"
 	@echo "#############################################################"
 	@echo
 	@cpack --config "${BUILD_DIR}/CPackConfig.cmake" -B "${PACKAGE_DIR}" -G DEB
 
 .PHONY: wheels
-wheels: python_wheels
+wheels: cmake
+	@echo
+	@echo "#############################################################"
+	@echo "Creating PIP-installable Python distributions ('.whl')"
+	@echo "#############################################################"
+	@echo
+	@cmake --build "$(BUILD_DIR)" --target python_wheels
+	@echo
+	@echo "Wheels are created in '$(BUILD_DIR)/python/wheels'"
 
 .PHONY: install
 install: build
@@ -113,7 +121,6 @@ install/%: build
 	@echo "#############################################################"
 	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR) --component $*
-
 
 .PHONY: doc
 doc: cmake

@@ -38,11 +38,12 @@ class Endpoint (object):
                  channel_name: str|None = None,
                  project_name: str|None = None):
 
-        if channel_name is None:
+        if channel_name is not None:
+            self.channel_name = channel_name
+        else:
             assert self.channel_name is not None, \
                 "Messaging Endpoint subclass %s.%s should set 'channel_name' -- see %s"%\
                 (type(self).__module__, type(self).__name__, __file__)
-            channel_name = type(self).channel_name
 
         if project_name is None:
             project_name = type(self).project_name

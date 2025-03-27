@@ -39,7 +39,6 @@ function(cc_cpack_add_debian_component COMPONENT)
   set(_singleargs
     SUMMARY        # One-line summary (first line of package description)
     GROUP          # Component group in which this component is added, if any
-    PYTHON_WHEEL   # Python wheel for this component, if different from GROUP
     LICENSE        # License file, installed as `copyright`.
   )
   set(_multiargs
