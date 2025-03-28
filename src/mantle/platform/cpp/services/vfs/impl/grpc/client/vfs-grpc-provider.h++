@@ -104,18 +104,18 @@ namespace vfs::grpc
         void on_context(
             core::signal::MappingAction action,
             const std::string &key,
-            const ::cc::vfs::Signal &signal) const;
+            const ::cc::platform::vfs::Signal &signal) const;
 
         void on_context_in_use(
             core::signal::MappingAction action,
             const std::string &key,
-            const ::cc::vfs::Signal &signal) const;
+            const ::cc::platform::vfs::Signal &signal) const;
 
         ContextMap context_map(
-            const ::cc::vfs::ContextMap &msg) const;
+            const ::cc::platform::vfs::ContextMap &msg) const;
 
         std::shared_ptr<RemoteContext> decoded_context(
-            const ::cc::vfs::ContextSpec &spec) const;
+            const ::cc::platform::vfs::ContextSpec &spec) const;
 
     private:
         std::shared_ptr<Client> client;

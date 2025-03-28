@@ -28,7 +28,7 @@ namespace sysconfig::grpc
         return protobuf::decoded<InvocationResult>(
             this->client->call_check(
                 &Client::Stub::invoke_sync,
-                protobuf::encoded<::cc::sysconfig::CommandInvocation>(
+                protobuf::encoded<::cc::platform::sysconfig::CommandInvocation>(
                     invocation,
                     input)));
     }
@@ -40,7 +40,7 @@ namespace sysconfig::grpc
         return protobuf::decoded<core::platform::PID>(
             this->client->call_check(
                 &Client::Stub::invoke_async,
-                protobuf::encoded<::cc::sysconfig::CommandInvocation>(
+                protobuf::encoded<::cc::platform::sysconfig::CommandInvocation>(
                     invocation,
                     input)));
     }
@@ -52,7 +52,7 @@ namespace sysconfig::grpc
         return protobuf::decoded<InvocationResult>(
             this->client->call_check(
                 &Client::Stub::invoke_finish,
-                protobuf::encoded<::cc::sysconfig::CommandContinuation>(
+                protobuf::encoded<::cc::platform::sysconfig::CommandContinuation>(
                     pid,
                     input)));
     }

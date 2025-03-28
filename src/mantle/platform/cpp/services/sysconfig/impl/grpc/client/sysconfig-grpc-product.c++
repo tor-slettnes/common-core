@@ -23,8 +23,8 @@ namespace sysconfig::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            ::cc::sysconfig::Signal::kProductInfo,
-            [&](const ::cc::sysconfig::Signal &signal) {
+            ::cc::platform::sysconfig::Signal::kProductInfo,
+            [&](const ::cc::platform::sysconfig::Signal &signal) {
                 sysconfig::signal_productinfo.emit(
                     protobuf::decoded<ProductInfo>(signal.product_info()));
             });

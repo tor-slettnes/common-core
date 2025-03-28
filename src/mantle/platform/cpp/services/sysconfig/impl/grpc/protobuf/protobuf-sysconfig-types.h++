@@ -20,27 +20,27 @@ namespace protobuf
     // HostInfo
 
     void encode(const sysconfig::HostInfo &native,
-                ::cc::sysconfig::HostInfo *proto) noexcept;
+                ::cc::platform::sysconfig::HostInfo *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::HostInfo &proto,
+    void decode(const ::cc::platform::sysconfig::HostInfo &proto,
                 sysconfig::HostInfo *native) noexcept;
 
     //==========================================================================
     // ProductInfo
 
     void encode(const sysconfig::ProductInfo &native,
-                ::cc::sysconfig::ProductInfo *proto) noexcept;
+                ::cc::platform::sysconfig::ProductInfo *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::ProductInfo &proto,
+    void decode(const ::cc::platform::sysconfig::ProductInfo &proto,
                 sysconfig::ProductInfo *native) noexcept;
 
     //==========================================================================
     // SubsystemInfo
 
     void encode(const std::vector<sysconfig::ProductInfo> &native,
-                ::cc::sysconfig::SubsystemInfo *proto) noexcept;
+                ::cc::platform::sysconfig::SubsystemInfo *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::SubsystemInfo &proto,
+    void decode(const ::cc::platform::sysconfig::SubsystemInfo &proto,
                 std::vector<sysconfig::ProductInfo> *native) noexcept;
 
     //==========================================================================
@@ -65,63 +65,63 @@ namespace protobuf
     // TimeZoneCanonicalName
 
     void encode(const sysconfig::TimeZoneCanonicalName &native,
-                ::cc::sysconfig::TimeZoneCanonicalName *proto) noexcept;
+                ::cc::platform::sysconfig::TimeZoneCanonicalName *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::TimeZoneCanonicalName &proto,
+    void decode(const ::cc::platform::sysconfig::TimeZoneCanonicalName &proto,
                 sysconfig::TimeZoneCanonicalName *native) noexcept;
 
     //==========================================================================
     // TimeZoneCanonicalSpec
 
     void encode(const sysconfig::TimeZoneCanonicalSpec &native,
-                ::cc::sysconfig::TimeZoneCanonicalSpec *proto) noexcept;
+                ::cc::platform::sysconfig::TimeZoneCanonicalSpec *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::TimeZoneCanonicalSpec &proto,
+    void decode(const ::cc::platform::sysconfig::TimeZoneCanonicalSpec &proto,
                 sysconfig::TimeZoneCanonicalSpec *native) noexcept;
 
     //==========================================================================
     // TimeLocationFilter
 
     void encode(const sysconfig::TimeZoneLocationFilter &native,
-                ::cc::sysconfig::TimeZoneLocationFilter *proto) noexcept;
+                ::cc::platform::sysconfig::TimeZoneLocationFilter *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::TimeZoneLocationFilter &proto,
+    void decode(const ::cc::platform::sysconfig::TimeZoneLocationFilter &proto,
                 sysconfig::TimeZoneLocationFilter *native) noexcept;
 
     //==========================================================================
     // TimeZoneArea
 
     void encode(const sysconfig::TimeZoneArea &native,
-                ::cc::sysconfig::TimeZoneArea *proto) noexcept;
+                ::cc::platform::sysconfig::TimeZoneArea *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::TimeZoneArea &proto,
+    void decode(const ::cc::platform::sysconfig::TimeZoneArea &proto,
                 sysconfig::TimeZoneArea *native) noexcept;
 
     //==========================================================================
     // TimeZoneCountry
 
     void encode(const sysconfig::TimeZoneCountry &native,
-                ::cc::sysconfig::TimeZoneCountry *proto) noexcept;
+                ::cc::platform::sysconfig::TimeZoneCountry *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::TimeZoneCountry &proto,
+    void decode(const ::cc::platform::sysconfig::TimeZoneCountry &proto,
                 sysconfig::TimeZoneCountry *native) noexcept;
 
     //==========================================================================
     // TimeZoneLocation
 
     void encode(const sysconfig::TimeZoneLocation &native,
-                ::cc::sysconfig::TimeZoneLocation *proto) noexcept;
+                ::cc::platform::sysconfig::TimeZoneLocation *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::TimeZoneLocation &proto,
+    void decode(const ::cc::platform::sysconfig::TimeZoneLocation &proto,
                 sysconfig::TimeZoneLocation *native) noexcept;
 
     //==========================================================================
     // TimeZoneInfo
 
     void encode(const core::dt::TimeZoneInfo &native,
-                ::cc::sysconfig::TimeZoneInfo *proto) noexcept;
+                ::cc::platform::sysconfig::TimeZoneInfo *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::TimeZoneInfo &proto,
+    void decode(const ::cc::platform::sysconfig::TimeZoneInfo &proto,
                 core::dt::TimeZoneInfo *native) noexcept;
 
     //==========================================================================
@@ -129,9 +129,9 @@ namespace protobuf
 
     void encode(const sysconfig::TimeZoneCanonicalName &canonical_zone,
                 const core::dt::TimePoint &timepoint,
-                ::cc::sysconfig::TimeZoneInfoRequest *proto) noexcept;
+                ::cc::platform::sysconfig::TimeZoneInfoRequest *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::TimeZoneInfoRequest &proto,
+    void decode(const ::cc::platform::sysconfig::TimeZoneInfoRequest &proto,
                 sysconfig::TimeZoneCanonicalName *canonical_zone,
                 core::dt::TimePoint *timepoint) noexcept;
 
@@ -139,18 +139,18 @@ namespace protobuf
     // TimeSync
 
     void encode(sysconfig::TimeSync native,
-                ::cc::sysconfig::TimeSync *proto) noexcept;
+                ::cc::platform::sysconfig::TimeSync *proto) noexcept;
 
-    void decode(::cc::sysconfig::TimeSync proto,
+    void decode(::cc::platform::sysconfig::TimeSync proto,
                 sysconfig::TimeSync *native) noexcept;
 
     //==========================================================================
     // TimeConfig
 
     void encode(const sysconfig::TimeConfig &native,
-                ::cc::sysconfig::TimeConfig *proto) noexcept;
+                ::cc::platform::sysconfig::TimeConfig *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::TimeConfig &proto,
+    void decode(const ::cc::platform::sysconfig::TimeConfig &proto,
                 sysconfig::TimeConfig *native) noexcept;
 
     //==========================================================================
@@ -158,9 +158,9 @@ namespace protobuf
 
     void encode(const core::platform::Invocation &invocation,
                 const std::string &input,
-                ::cc::sysconfig::CommandInvocation *proto) noexcept;
+                ::cc::platform::sysconfig::CommandInvocation *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::CommandInvocation &proto,
+    void decode(const ::cc::platform::sysconfig::CommandInvocation &proto,
                 core::platform::Invocation *invocation,
                 std::string *input = nullptr) noexcept;
 
@@ -168,9 +168,9 @@ namespace protobuf
     // CommandInvocationResponse
 
     void encode(const core::platform::PID &native,
-                ::cc::sysconfig::CommandInvocationResponse *proto) noexcept;
+                ::cc::platform::sysconfig::CommandInvocationResponse *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::CommandInvocationResponse &proto,
+    void decode(const ::cc::platform::sysconfig::CommandInvocationResponse &proto,
                 core::platform::PID *native) noexcept;
 
     //==========================================================================
@@ -178,9 +178,9 @@ namespace protobuf
 
     void encode(const core::platform::PID &pid,
                 const std::string &input,
-                ::cc::sysconfig::CommandContinuation *proto) noexcept;
+                ::cc::platform::sysconfig::CommandContinuation *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::CommandContinuation &proto,
+    void decode(const ::cc::platform::sysconfig::CommandContinuation &proto,
                 core::platform::PID *pid,
                 std::string *input = nullptr) noexcept;
 
@@ -188,9 +188,9 @@ namespace protobuf
     // CommandResponse
 
     void encode(const core::platform::InvocationResult &native,
-                ::cc::sysconfig::CommandResponse *proto) noexcept;
+                ::cc::platform::sysconfig::CommandResponse *proto) noexcept;
 
-    void decode(const ::cc::sysconfig::CommandResponse &proto,
+    void decode(const ::cc::platform::sysconfig::CommandResponse &proto,
                 core::platform::InvocationResult *native) noexcept;
 
 }  // namespace protobuf

@@ -16,11 +16,11 @@
 namespace multilogger::grpc
 {
     class RequestHandler
-        : public core::grpc::RequestHandler<cc::multilogger::MultiLogger>,
+        : public core::grpc::RequestHandler<cc::platform::multilogger::MultiLogger>,
           public core::types::enable_create_shared<RequestHandler>
     {
         using This = RequestHandler;
-        using Super = core::grpc::RequestHandler<cc::multilogger::MultiLogger>;
+        using Super = core::grpc::RequestHandler<cc::platform::multilogger::MultiLogger>;
 
     protected:
         RequestHandler(const std::shared_ptr<API>& provider);
@@ -28,58 +28,58 @@ namespace multilogger::grpc
     public:
         ::grpc::Status submit(
             ::grpc::ServerContext* context,
-            const ::cc::multilogger::Loggable* request,
+            const ::cc::platform::multilogger::Loggable* request,
             ::google::protobuf::Empty* response) override;
 
         ::grpc::Status writer(
             ::grpc::ServerContext* context,
-            ::grpc::ServerReader<::cc::multilogger::Loggable>* reader,
+            ::grpc::ServerReader<::cc::platform::multilogger::Loggable>* reader,
             ::google::protobuf::Empty* response) override;
 
         ::grpc::Status listen(
             ::grpc::ServerContext* context,
-            const ::cc::multilogger::ListenerSpec* request,
-            ::grpc::ServerWriter<::cc::multilogger::Loggable>* writer) override;
+            const ::cc::platform::multilogger::ListenerSpec* request,
+            ::grpc::ServerWriter<::cc::platform::multilogger::Loggable>* writer) override;
 
         ::grpc::Status add_sink(
             ::grpc::ServerContext* context,
-            const ::cc::multilogger::SinkSpec* request,
-            ::cc::multilogger::AddSinkResult* response) override;
+            const ::cc::platform::multilogger::SinkSpec* request,
+            ::cc::platform::multilogger::AddSinkResult* response) override;
 
         ::grpc::Status remove_sink(
             ::grpc::ServerContext* context,
-            const ::cc::multilogger::SinkID* request,
-            ::cc::multilogger::RemoveSinkResult* response) override;
+            const ::cc::platform::multilogger::SinkID* request,
+            ::cc::platform::multilogger::RemoveSinkResult* response) override;
 
         ::grpc::Status get_sink(
             ::grpc::ServerContext* context,
-            const ::cc::multilogger::SinkID* request,
-            ::cc::multilogger::SinkSpec* response) override;
+            const ::cc::platform::multilogger::SinkID* request,
+            ::cc::platform::multilogger::SinkSpec* response) override;
 
         ::grpc::Status get_all_sinks(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::multilogger::SinkSpecs* response) override;
+            ::cc::platform::multilogger::SinkSpecs* response) override;
 
         ::grpc::Status list_sinks(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::multilogger::SinkNames* response) override;
+            ::cc::platform::multilogger::SinkNames* response) override;
 
         ::grpc::Status list_sink_types(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::multilogger::SinkTypes* response) override;
+            ::cc::platform::multilogger::SinkTypes* response) override;
 
         ::grpc::Status list_message_fields(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::multilogger::FieldNames* response) override;
+            ::cc::platform::multilogger::FieldNames* response) override;
 
         ::grpc::Status list_error_fields(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::multilogger::FieldNames* response) override;
+            ::cc::platform::multilogger::FieldNames* response) override;
 
     private:
         std::shared_ptr<API> provider;

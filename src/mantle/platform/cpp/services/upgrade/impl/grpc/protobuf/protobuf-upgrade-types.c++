@@ -18,7 +18,7 @@ namespace protobuf
     // Package Source
 
     void encode(const ::upgrade::PackageSource &native,
-                ::cc::upgrade::PackageSource *msg)
+                ::cc::platform::upgrade::PackageSource *msg)
     {
         switch (native.location_type())
         {
@@ -35,16 +35,16 @@ namespace protobuf
         }
     }
 
-    void decode(const ::cc::upgrade::PackageSource &msg,
+    void decode(const ::cc::platform::upgrade::PackageSource &msg,
                 ::upgrade::PackageSource *native)
     {
         switch (msg.location_case())
         {
-        case ::cc::upgrade::PackageSource::kVfsPath:
+        case ::cc::platform::upgrade::PackageSource::kVfsPath:
             native->location = decoded<::vfs::Path>(msg.vfs_path());
             break;
 
-        case ::cc::upgrade::PackageSource::kUrl:
+        case ::cc::platform::upgrade::PackageSource::kUrl:
             native->location = msg.url();
             break;
 
@@ -58,7 +58,7 @@ namespace protobuf
     // Package Sources
 
     void encode(const ::upgrade::PackageSources &native,
-                ::cc::upgrade::PackageSources *msg)
+                ::cc::platform::upgrade::PackageSources *msg)
     {
         auto sources = msg->mutable_sources();
         sources->Clear();
@@ -69,12 +69,12 @@ namespace protobuf
         }
     }
 
-    void decode(const ::cc::upgrade::PackageSources &msg,
+    void decode(const ::cc::platform::upgrade::PackageSources &msg,
                 ::upgrade::PackageSources *native)
     {
         native->clear();
         native->reserve(msg.sources().size());
-        for (const ::cc::upgrade::PackageSource &src : msg.sources())
+        for (const ::cc::platform::upgrade::PackageSource &src : msg.sources())
         {
             decode(src, &native->emplace_back());
         }
@@ -84,7 +84,7 @@ namespace protobuf
     // Package Information
 
     void encode(const ::upgrade::PackageInfo &native,
-                ::cc::upgrade::PackageInfo *msg)
+                ::cc::platform::upgrade::PackageInfo *msg)
     {
         encode(native.source(), msg->mutable_source());
         msg->set_product_name(native.product());
@@ -94,7 +94,7 @@ namespace protobuf
         msg->set_is_applicable(native.is_applicable());
     }
 
-    void decode(const ::cc::upgrade::PackageInfo &msg,
+    void decode(const ::cc::platform::upgrade::PackageInfo &msg,
                 ::upgrade::PackageInfo *native)
     {
         *native = ::upgrade::PackageInfo(
@@ -110,7 +110,7 @@ namespace protobuf
     // Package Catalogue
 
     void encode(const ::upgrade::PackageCatalogue &native,
-                ::cc::upgrade::PackageCatalogue *msg)
+                ::cc::platform::upgrade::PackageCatalogue *msg)
     {
         auto packages = msg->mutable_packages();
         packages->Clear();
@@ -121,12 +121,12 @@ namespace protobuf
         }
     }
 
-    void decode(const ::cc::upgrade::PackageCatalogue &msg,
+    void decode(const ::cc::platform::upgrade::PackageCatalogue &msg,
                 ::upgrade::PackageCatalogue *native)
     {
         native->clear();
         native->reserve(msg.packages().size());
-        for (const ::cc::upgrade::PackageInfo &package_info : msg.packages())
+        for (const ::cc::platform::upgrade::PackageInfo &package_info : msg.packages())
         {
             decode_shared(package_info, &native->emplace_back());
         }
@@ -136,12 +136,12 @@ namespace protobuf
     // Scan Progress
 
     void encode(const ::upgrade::ScanProgress &native,
-                ::cc::upgrade::ScanProgress *msg)
+                ::cc::platform::upgrade::ScanProgress *msg)
     {
         encode(native.source, msg->mutable_source());
     }
 
-    void decode(const ::cc::upgrade::ScanProgress &msg,
+    void decode(const ::cc::platform::upgrade::ScanProgress &msg,
                 ::upgrade::ScanProgress *native)
     {
         decode(msg.source(), &native->source);
@@ -151,9 +151,9 @@ namespace protobuf
     // Upgrade Progress
 
     void encode(const ::upgrade::UpgradeProgress &native,
-                ::cc::upgrade::UpgradeProgress *msg)
+                ::cc::platform::upgrade::UpgradeProgress *msg)
     {
-        msg->set_state(encoded<::cc::upgrade::UpgradeProgress::UpgradeState>(native.state));
+        msg->set_state(encoded<::cc::platform::upgrade::UpgradeProgress::UpgradeState>(native.state));
         msg->set_task_description(native.task_description);
         encode(native.task_progress, msg->mutable_task_progress());
         encode(native.total_progress, msg->mutable_total_progress());
@@ -163,7 +163,7 @@ namespace protobuf
         }
     }
 
-    void decode(const ::cc::upgrade::UpgradeProgress &msg,
+    void decode(const ::cc::platform::upgrade::UpgradeProgress &msg,
                 ::upgrade::UpgradeProgress *native)
     {
         decode(msg.state(), &native->state);
@@ -180,12 +180,12 @@ namespace protobuf
     // Upgrade Progress: State
 
     void encode(const ::upgrade::UpgradeProgress::State &native,
-                ::cc::upgrade::UpgradeProgress::UpgradeState *msg)
+                ::cc::platform::upgrade::UpgradeProgress::UpgradeState *msg)
     {
-        *msg = static_cast<::cc::upgrade::UpgradeProgress::UpgradeState>(native);
+        *msg = static_cast<::cc::platform::upgrade::UpgradeProgress::UpgradeState>(native);
     }
 
-    void decode(const ::cc::upgrade::UpgradeProgress::UpgradeState &msg,
+    void decode(const ::cc::platform::upgrade::UpgradeProgress::UpgradeState &msg,
                 ::upgrade::UpgradeProgress::State *native)
     {
         *native = static_cast<::upgrade::UpgradeProgress::State>(msg);
@@ -195,13 +195,13 @@ namespace protobuf
     // Upgrade Progress: Fraction
 
     void encode(const ::upgrade::UpgradeProgress::Fraction &native,
-                ::cc::upgrade::UpgradeProgress::ProgressFraction *msg)
+                ::cc::platform::upgrade::UpgradeProgress::ProgressFraction *msg)
     {
         msg->set_current(native.current);
         msg->set_total(native.total);
     }
 
-    void decode(const ::cc::upgrade::UpgradeProgress::ProgressFraction &msg,
+    void decode(const ::cc::platform::upgrade::UpgradeProgress::ProgressFraction &msg,
                 ::upgrade::UpgradeProgress::Fraction *native)
     {
         native->current = msg.current();

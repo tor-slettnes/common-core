@@ -13,8 +13,8 @@
 namespace sysconfig::grpc
 {
     using ClientBaseImpl = core::grpc::SignalClient<
-        ::cc::sysconfig::SysConfig,
-        ::cc::sysconfig::Signal>;
+        ::cc::platform::sysconfig::SysConfig,
+        ::cc::platform::sysconfig::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>

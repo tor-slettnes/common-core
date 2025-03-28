@@ -14,7 +14,7 @@
 
 namespace multilogger::grpc
 {
-    using LogClientBase = core::grpc::ClientWrapper<cc::multilogger::MultiLogger>;
+    using LogClientBase = core::grpc::ClientWrapper<cc::platform::multilogger::MultiLogger>;
 
     class LogClient
         : public API,
@@ -61,7 +61,7 @@ namespace multilogger::grpc
 
     private:
         bool add_local_sink;
-        std::unique_ptr<::grpc::ClientWriter<::cc::multilogger::Loggable>> writer;
+        std::unique_ptr<::grpc::ClientWriter<::cc::platform::multilogger::Loggable>> writer;
         std::unique_ptr<::grpc::ClientContext> writer_context;
         std::unique_ptr<::google::protobuf::Empty> writer_response;
         core::grpc::Status writer_status;

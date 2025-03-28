@@ -24,9 +24,9 @@ namespace vfs::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<::cc::vfs::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<::cc::platform::vfs::Signal>
     {
-        using Super = core::grpc::SignalQueue<::cc::vfs::Signal>;
+        using Super = core::grpc::SignalQueue<::cc::platform::vfs::Signal>;
 
     public:
         using Super::Super;

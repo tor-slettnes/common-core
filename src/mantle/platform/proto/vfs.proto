@@ -7,7 +7,7 @@
 
 syntax = "proto3";
 
-package cc.vfs;
+package cc.platform.vfs;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";

@@ -25,8 +25,8 @@ namespace upgrade::grpc
 
     ::grpc::Status RequestHandler::scan(
         ::grpc::ServerContext *context,
-        const ::cc::upgrade::PackageSource *request,
-        ::cc::upgrade::PackageCatalogue *response)
+        const ::cc::platform::upgrade::PackageSource *request,
+        ::cc::platform::upgrade::PackageCatalogue *response)
     {
         try
         {
@@ -45,7 +45,7 @@ namespace upgrade::grpc
     ::grpc::Status RequestHandler::list_sources(
         ::grpc::ServerContext *context,
         const ::google::protobuf::Empty *request,
-        ::cc::upgrade::PackageSources *response)
+        ::cc::platform::upgrade::PackageSources *response)
     {
         try
         {
@@ -60,8 +60,8 @@ namespace upgrade::grpc
 
     ::grpc::Status RequestHandler::list_available(
         ::grpc::ServerContext *context,
-        const ::cc::upgrade::PackageSource *request,
-        ::cc::upgrade::PackageCatalogue *response)
+        const ::cc::platform::upgrade::PackageSource *request,
+        ::cc::platform::upgrade::PackageCatalogue *response)
     {
         try
         {
@@ -78,8 +78,8 @@ namespace upgrade::grpc
 
     ::grpc::Status RequestHandler::best_available(
         ::grpc::ServerContext *context,
-        const ::cc::upgrade::PackageSource *request,
-        ::cc::upgrade::PackageInfo *response)
+        const ::cc::platform::upgrade::PackageSource *request,
+        ::cc::platform::upgrade::PackageInfo *response)
     {
         try
         {
@@ -96,8 +96,8 @@ namespace upgrade::grpc
 
     ::grpc::Status RequestHandler::install(
         ::grpc::ServerContext *context,
-        const ::cc::upgrade::InstallRequest *request,
-        ::cc::upgrade::PackageInfo *response)
+        const ::cc::platform::upgrade::InstallRequest *request,
+        ::cc::platform::upgrade::PackageInfo *response)
     {
         try
         {
@@ -132,11 +132,11 @@ namespace upgrade::grpc
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext *context,
         const ::cc::signal::Filter *filter,
-        ::grpc::ServerWriter<::cc::upgrade::Signal> *writer)
+        ::grpc::ServerWriter<::cc::platform::upgrade::Signal> *writer)
     {
         try
         {
-            return this->stream_signals<::cc::upgrade::Signal, SignalQueue>(
+            return this->stream_signals<::cc::platform::upgrade::Signal, SignalQueue>(
                 context,
                 filter,
                 writer);

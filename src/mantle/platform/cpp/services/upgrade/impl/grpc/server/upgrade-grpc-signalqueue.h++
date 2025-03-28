@@ -24,9 +24,9 @@ namespace upgrade::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<::cc::upgrade::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<::cc::platform::upgrade::Signal>
     {
-        using Super = core::grpc::SignalQueue<::cc::upgrade::Signal>;
+        using Super = core::grpc::SignalQueue<::cc::platform::upgrade::Signal>;
 
     public:
         using Super::Super;

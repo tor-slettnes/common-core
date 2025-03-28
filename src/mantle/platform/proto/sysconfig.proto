@@ -7,7 +7,7 @@
 
 syntax = "proto3";
 
-package cc.sysconfig;
+package cc.platform.sysconfig;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";

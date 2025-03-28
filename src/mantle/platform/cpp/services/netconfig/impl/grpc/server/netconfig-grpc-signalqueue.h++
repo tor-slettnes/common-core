@@ -24,9 +24,9 @@ namespace netconfig::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<::cc::netconfig::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<::cc::platform::netconfig::Signal>
     {
-        using Super = core::grpc::SignalQueue<::cc::netconfig::Signal>;
+        using Super = core::grpc::SignalQueue<::cc::platform::netconfig::Signal>;
 
     public:
         using Super::Super;

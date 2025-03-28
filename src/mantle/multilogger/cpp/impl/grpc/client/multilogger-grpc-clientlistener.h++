@@ -22,7 +22,7 @@ namespace multilogger::grpc
                            public core::types::enable_create_shared<ClientListener>
     {
     protected:
-        ClientListener(const std::unique_ptr<::cc::multilogger::MultiLogger::Stub> &stub,
+        ClientListener(const std::unique_ptr<::cc::platform::multilogger::MultiLogger::Stub> &stub,
                        const ListenerSpec& request);
 
     public:
@@ -37,6 +37,6 @@ namespace multilogger::grpc
 
     private:
         ::grpc::ClientContext context_;
-        std::unique_ptr<::grpc::ClientReader<::cc::multilogger::Loggable>> reader_;
+        std::unique_ptr<::grpc::ClientReader<::cc::platform::multilogger::Loggable>> reader_;
     };
 }  // namespace multilogger::grpc

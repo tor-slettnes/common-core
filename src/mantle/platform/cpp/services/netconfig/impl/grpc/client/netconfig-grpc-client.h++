@@ -12,8 +12,8 @@
 
 namespace netconfig::grpc
 {
-    using ClientBaseImpl = core::grpc::SignalClient<::cc::netconfig::NetConfig,
-                                                    ::cc::netconfig::Signal>;
+    using ClientBaseImpl = core::grpc::SignalClient<::cc::platform::netconfig::NetConfig,
+                                                    ::cc::platform::netconfig::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>

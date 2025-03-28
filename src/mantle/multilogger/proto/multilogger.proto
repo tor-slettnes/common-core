@@ -7,7 +7,7 @@
 
 syntax = "proto3";
 
-package cc.multilogger;
+package cc.platform.multilogger;
 
 import "status.proto";
 import "datetime.proto";

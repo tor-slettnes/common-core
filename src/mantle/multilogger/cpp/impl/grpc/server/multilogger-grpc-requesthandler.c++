@@ -20,7 +20,7 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::submit(
         ::grpc::ServerContext* context,
-        const ::cc::multilogger::Loggable* request,
+        const ::cc::platform::multilogger::Loggable* request,
         ::google::protobuf::Empty* response)
     {
         try
@@ -38,12 +38,12 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::writer(
         ::grpc::ServerContext* context,
-        ::grpc::ServerReader<::cc::multilogger::Loggable>* reader,
+        ::grpc::ServerReader<::cc::platform::multilogger::Loggable>* reader,
         ::google::protobuf::Empty* response)
     {
         try
         {
-            ::cc::multilogger::Loggable loggable;
+            ::cc::platform::multilogger::Loggable loggable;
             while (reader->Read(&loggable))
             {
                 this->provider->submit(protobuf::decode_loggable(
@@ -60,8 +60,8 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::listen(
         ::grpc::ServerContext* context,
-        const ::cc::multilogger::ListenerSpec* request,
-        ::grpc::ServerWriter<::cc::multilogger::Loggable>* writer)
+        const ::cc::platform::multilogger::ListenerSpec* request,
+        ::grpc::ServerWriter<::cc::platform::multilogger::Loggable>* writer)
     {
         try
         {
@@ -79,7 +79,7 @@ namespace multilogger::grpc
                     break;
                 }
 
-                writer->Write(protobuf::encoded_shared<cc::multilogger::Loggable>(loggable.value()));
+                writer->Write(protobuf::encoded_shared<cc::platform::multilogger::Loggable>(loggable.value()));
             }
 
             listener->close();
@@ -93,8 +93,8 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::add_sink(
         ::grpc::ServerContext* context,
-        const ::cc::multilogger::SinkSpec* request,
-        ::cc::multilogger::AddSinkResult* response)
+        const ::cc::platform::multilogger::SinkSpec* request,
+        ::cc::platform::multilogger::AddSinkResult* response)
     {
         try
         {
@@ -117,8 +117,8 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::remove_sink(
         ::grpc::ServerContext* context,
-        const ::cc::multilogger::SinkID* request,
-        ::cc::multilogger::RemoveSinkResult* response)
+        const ::cc::platform::multilogger::SinkID* request,
+        ::cc::platform::multilogger::RemoveSinkResult* response)
     {
         try
         {
@@ -135,8 +135,8 @@ namespace multilogger::grpc
 
     ::grpc::Status RequestHandler::get_sink(
         ::grpc::ServerContext* context,
-        const ::cc::multilogger::SinkID* request,
-        ::cc::multilogger::SinkSpec* response)
+        const ::cc::platform::multilogger::SinkID* request,
+        ::cc::platform::multilogger::SinkSpec* response)
     {
         try
         {
@@ -155,7 +155,7 @@ namespace multilogger::grpc
     ::grpc::Status RequestHandler::get_all_sinks(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::multilogger::SinkSpecs* response)
+        ::cc::platform::multilogger::SinkSpecs* response)
     {
         try
         {
@@ -173,7 +173,7 @@ namespace multilogger::grpc
     ::grpc::Status RequestHandler::list_sinks(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::multilogger::SinkNames* response)
+        ::cc::platform::multilogger::SinkNames* response)
     {
         try
         {
@@ -192,7 +192,7 @@ namespace multilogger::grpc
     ::grpc::Status RequestHandler::list_sink_types(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::multilogger::SinkTypes* response)
+        ::cc::platform::multilogger::SinkTypes* response)
     {
         try
         {
@@ -211,7 +211,7 @@ namespace multilogger::grpc
     ::grpc::Status RequestHandler::list_message_fields(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::multilogger::FieldNames* response)
+        ::cc::platform::multilogger::FieldNames* response)
     {
         try
         {
@@ -230,7 +230,7 @@ namespace multilogger::grpc
     ::grpc::Status RequestHandler::list_error_fields(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::multilogger::FieldNames* response)
+        ::cc::platform::multilogger::FieldNames* response)
     {
         try
         {

@@ -19,7 +19,7 @@ namespace protobuf
     // Loggable
 
     void encode(const core::types::Loggable &native,
-                cc::multilogger::Loggable *proto) noexcept
+                cc::platform::multilogger::Loggable *proto) noexcept
     {
         if (auto *message = dynamic_cast<const core::logging::Message *>(&native))
         {
@@ -36,18 +36,18 @@ namespace protobuf
     }
 
     core::types::Loggable::ptr decode_loggable(
-        const cc::multilogger::Loggable &proto,
+        const cc::platform::multilogger::Loggable &proto,
         const std::string &default_host) noexcept
     {
         switch (proto.event_type_case())
         {
-        case cc::multilogger::Loggable::EventTypeCase::kMessage:
+        case cc::platform::multilogger::Loggable::EventTypeCase::kMessage:
             return decoded_shared<core::logging::Message>(proto.message(), default_host);
 
-        case cc::multilogger::Loggable::EventTypeCase::kData:
+        case cc::platform::multilogger::Loggable::EventTypeCase::kData:
             return decoded_shared<core::logging::Data>(proto.data());
 
-        case cc::multilogger::Loggable::EventTypeCase::kError:
+        case cc::platform::multilogger::Loggable::EventTypeCase::kError:
             return decoded_shared<core::status::Error>(proto.error());
 
         default:
@@ -59,14 +59,14 @@ namespace protobuf
     // Data
 
     void encode(const core::logging::Data &native,
-                cc::multilogger::Data *proto) noexcept
+                cc::platform::multilogger::Data *proto) noexcept
     {
         proto->set_contract_id(native.contract_id());
         encode(native.timepoint(), proto->mutable_timestamp());
         encode(native.attributes(), proto->mutable_attributes());
     }
 
-    void decode(const cc::multilogger::Data &proto,
+    void decode(const cc::platform::multilogger::Data &proto,
                 core::logging::Data *native) noexcept
     {
         *native = core::logging::Data(
@@ -79,7 +79,7 @@ namespace protobuf
     // core::logging::Message encoding to/decoding from cc::status::Error
 
     void encode(const core::logging::Message &native,
-                cc::multilogger::Message *proto) noexcept
+                cc::platform::multilogger::Message *proto) noexcept
     {
         proto->set_text(native.text());
         encode(native.timepoint(), proto->mutable_timestamp());
@@ -96,7 +96,7 @@ namespace protobuf
         encode(native.attributes(), proto->mutable_attributes());
     }
 
-    void decode(const cc::multilogger::Message &proto,
+    void decode(const cc::platform::multilogger::Message &proto,
                 const std::string &default_host,
                 core::logging::Message *native) noexcept
     {
@@ -131,12 +131,12 @@ namespace protobuf
     //==========================================================================
     // SinkID
 
-    void encode(const multilogger::SinkID &native, cc::multilogger::SinkID *proto)
+    void encode(const multilogger::SinkID &native, cc::platform::multilogger::SinkID *proto)
     {
         proto->set_sink_id(native);
     }
 
-    void decode(const cc::multilogger::SinkID &proto, multilogger::SinkID *native)
+    void decode(const cc::platform::multilogger::SinkID &proto, multilogger::SinkID *native)
     {
         *native = proto.sink_id();
     }
@@ -144,7 +144,7 @@ namespace protobuf
     //==========================================================================
     // SinkSpec
 
-    void encode(const multilogger::SinkSpec &native, cc::multilogger::SinkSpec *proto)
+    void encode(const multilogger::SinkSpec &native, cc::platform::multilogger::SinkSpec *proto)
     {
         proto->set_sink_id(native.sink_id);
         proto->set_sink_type(native.sink_type);
@@ -165,7 +165,7 @@ namespace protobuf
         }
     }
 
-    void decode(const cc::multilogger::SinkSpec &proto, multilogger::SinkSpec *native)
+    void decode(const cc::platform::multilogger::SinkSpec &proto, multilogger::SinkSpec *native)
     {
         native->sink_id = proto.sink_id();
         native->sink_type = proto.sink_type();
@@ -184,14 +184,14 @@ namespace protobuf
     }
 
     //==========================================================================
-    // multilogger::SinkSpecs <-> cc::multilogger::SinkSpecs
+    // multilogger::SinkSpecs <-> cc::platform::multilogger::SinkSpecs
 
-    void encode(const multilogger::SinkSpecs &native, cc::multilogger::SinkSpecs *proto)
+    void encode(const multilogger::SinkSpecs &native, cc::platform::multilogger::SinkSpecs *proto)
     {
         encode_vector(native, proto->mutable_specs());
     }
 
-    void decode(const cc::multilogger::SinkSpecs &proto, multilogger::SinkSpecs *native)
+    void decode(const cc::platform::multilogger::SinkSpecs &proto, multilogger::SinkSpecs *native)
     {
         decode_to_vector(proto.specs(), native);
     }
@@ -199,17 +199,17 @@ namespace protobuf
     //==========================================================================
     // ColumnSpec
 
-    void encode(const core::logging::ColumnSpec &native, cc::multilogger::ColumnSpec *proto)
+    void encode(const core::logging::ColumnSpec &native, cc::platform::multilogger::ColumnSpec *proto)
     {
         proto->set_field_name(native.field_name);
         if (native.column_name)
         {
             proto->set_column_name(native.column_name.value());
         }
-        proto->set_column_type(encoded<cc::multilogger::ColumnType>(native.column_type));
+        proto->set_column_type(encoded<cc::platform::multilogger::ColumnType>(native.column_type));
     }
 
-    void decode(const cc::multilogger::ColumnSpec &proto, core::logging::ColumnSpec *native)
+    void decode(const cc::platform::multilogger::ColumnSpec &proto, core::logging::ColumnSpec *native)
     {
         native->field_name = proto.field_name();
         if (proto.has_column_name())
@@ -222,22 +222,22 @@ namespace protobuf
     //==========================================================================
     // ColumnType
 
-    static core::types::ValueMap<core::types::ValueType, cc::multilogger::ColumnType> coltype_map = {
-        {core::types::ValueType::NONE, cc::multilogger::COLTYPE_NONE},
-        {core::types::ValueType::BOOL, cc::multilogger::COLTYPE_BOOL},
-        {core::types::ValueType::SINT, cc::multilogger::COLTYPE_INT},
-        {core::types::ValueType::REAL, cc::multilogger::COLTYPE_REAL},
-        {core::types::ValueType::STRING, cc::multilogger::COLTYPE_TEXT},
-        {core::types::ValueType::BYTEVECTOR, cc::multilogger::COLTYPE_BLOB},
-        {core::types::ValueType::TIMEPOINT, cc::multilogger::COLTYPE_DATETIME},
+    static core::types::ValueMap<core::types::ValueType, cc::platform::multilogger::ColumnType> coltype_map = {
+        {core::types::ValueType::NONE, cc::platform::multilogger::COLTYPE_NONE},
+        {core::types::ValueType::BOOL, cc::platform::multilogger::COLTYPE_BOOL},
+        {core::types::ValueType::SINT, cc::platform::multilogger::COLTYPE_INT},
+        {core::types::ValueType::REAL, cc::platform::multilogger::COLTYPE_REAL},
+        {core::types::ValueType::STRING, cc::platform::multilogger::COLTYPE_TEXT},
+        {core::types::ValueType::BYTEVECTOR, cc::platform::multilogger::COLTYPE_BLOB},
+        {core::types::ValueType::TIMEPOINT, cc::platform::multilogger::COLTYPE_DATETIME},
     };
 
-    void encode(const core::types::ValueType &native, cc::multilogger::ColumnType *proto)
+    void encode(const core::types::ValueType &native, cc::platform::multilogger::ColumnType *proto)
     {
-        *proto = coltype_map.get(native, cc::multilogger::COLTYPE_NONE);
+        *proto = coltype_map.get(native, cc::platform::multilogger::COLTYPE_NONE);
     }
 
-    void decode(const cc::multilogger::ColumnType &proto, core::types::ValueType *native)
+    void decode(const cc::platform::multilogger::ColumnType &proto, core::types::ValueType *native)
     {
         *native = core::types::ValueType::NONE;
         for (const auto &[native_candidate, proto_candidate] : coltype_map)
@@ -252,7 +252,7 @@ namespace protobuf
     //==========================================================================
     // ListenerSpec
 
-    void encode(const multilogger::ListenerSpec &native, cc::multilogger::ListenerSpec *proto)
+    void encode(const multilogger::ListenerSpec &native, cc::platform::multilogger::ListenerSpec *proto)
     {
         proto->set_sink_id(native.sink_id);
         proto->set_min_level(encoded<cc::status::Level>(native.min_level));
@@ -263,7 +263,7 @@ namespace protobuf
         }
     }
 
-    void decode(const cc::multilogger::ListenerSpec &proto, multilogger::ListenerSpec *native)
+    void decode(const cc::platform::multilogger::ListenerSpec &proto, multilogger::ListenerSpec *native)
     {
         native->sink_id = proto.sink_id();
         decode(proto.min_level(), &native->min_level);
