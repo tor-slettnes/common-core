@@ -45,12 +45,14 @@ cc_add_python("${TARGET}"
   DIRECTORIES "${DIRECTORIES}"
 )
 
-cc_add_python_wheel("core"
-  PYTHON_DEPS "${TARGET}"
-  DATA_DEPS "cc_core_settings"
-  DESCRIPTION "Python common components"
-  INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
-)
+if(BUILD_SHARED)
+  cc_add_python_wheel("core"
+    PYTHON_DEPS "${TARGET}"
+    DATA_DEPS "cc_core_settings"
+    DESCRIPTION "Python common components"
+    INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
+  )
+endif()
 
 cc_add_doxygen(python-reference
   FILE_PATTERNS "*.py;*.md"

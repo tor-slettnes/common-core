@@ -30,11 +30,14 @@ if(NOT PROJECT_INCLUDED)
   include(utility)
   include(pkgconf)
 
-  ### Enable testing
+  #-----------------------------------------------------------------------------
+  ### CTest configuration
   include(ctest_python)
   include(CTest)
 
+  #-----------------------------------------------------------------------------
   ### Load targeted build functions
+
   include(build_library)
   include(build_executable)
   include(build_python)
@@ -46,7 +49,7 @@ if(NOT PROJECT_INCLUDED)
   include(build_debian_service)
   include(doxygen)
 
-  #=============================================================================
+  #-----------------------------------------------------------------------------
   ### CPack configuration
 
   include(cpack_init)

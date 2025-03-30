@@ -23,7 +23,7 @@ function(cc_add_proto TARGET)
     SCOPE                      # Target scope (Default: PUBLIC)
     PYTHON_INSTALL_COMPONENT   # Install component for generated Python files
     PYTHON_INSTALL_DIR         # Relative install folder for generated Python files
-    PYTHON_NAMESPACE           # Override Python namespace (Default: cc.generated)
+    PYTHON_NAMESPACE           # Override Python top-level namespace (Default: cc)
     PYTHON_NAMESPACE_COMPONENT # Override Python 2nd level namespace (Default: generated)
   )
   set(_multiargs
@@ -64,9 +64,15 @@ function(cc_add_proto TARGET)
       APPEND "${py_suffix}"
       OUTPUT_VARIABLE proto_py_deps)
 
-    cc_get_optional_keyword(INSTALL arg_INSTALL)
+    cc_get_optional_keyword(INSTALL arg_PYTHON_INSTALL)
+    cc_get_argument_or_default(namespace
+      arg_PYTHON_NAMESPACE
+      "${PYTHON_NAMESPACE}"
+      "${arg_KEYWORDS_MISSING_VALUES}"
+    )
+
     cc_add_proto_python("${py_target}"
-      NAMESPACE "${arg_PYTHON_NAMESPACE}"
+      NAMESPACE "${namespace}"
       NAMESPACE_COMPONENT "${arg_PYTHON_NAMESPACE_COMPONENT}"
       INSTALL ${INSTALL}
       INSTALL_COMPONENT "${arg_PYTHON_INSTALL_COMPONENT}"
@@ -168,7 +174,7 @@ function(cc_add_proto_python TARGET)
     STAGING_DIR              # Override staging directory
     INSTALL_COMPONENT        # Install component for generated Python files
     INSTALL_DIR              # Relative install folder for generated files
-    NAMESPACE                # Override namespace (Default: cc.generated)
+    NAMESPACE                # Override top-level namespace (Default: cc)
     NAMESPACE_COMPONENT      # Override 2nd level namespace (Default: generated)
   )
   set(_multiargs
@@ -188,11 +194,10 @@ function(cc_add_proto_python TARGET)
     "${PYTHON_STAGING_ROOT}/${TARGET}")
 
   ### Construct namespace for Python modules
-  cc_get_namespace(
-    NAMESPACE "${arg_NAMESPACE}"
-    NAMESPACE_COMPONENT "${namespace_component}"
-    MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
-    OUTPUT_VARIABLE namespace)
+  cc_get_namespace(namespace
+    "${arg_NAMESPACE}"
+    "${namespace_component}"
+    "${arg_KEYWORDS_MISSING_VALUES}")
 
   cc_get_namespace_dir(
     NAMESPACE "${namespace}"

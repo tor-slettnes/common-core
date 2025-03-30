@@ -131,14 +131,11 @@ function(cc_add_python_executable TARGET)
   )
 
   ### Construct arguments for PyInstaller
+  cc_get_ternary(loglevel arg_DEBUG "DEBUG" "WARN")
   set(pyinstall_args
     "--clean"
-    "--noconfirm")
-
-  cc_get_ternary(loglevel arg_DEBUG "DEBUG" "WARN")
-  list(APPEND pyinstall_args "--log-level" ${loglevel})
-
-  list(APPEND pyinstall_args
+    "--noconfirm"
+    "--log-level" "${loglevel}"
     "--workpath" "${workdir}"
     "--distpath" "${distdir}"
   )

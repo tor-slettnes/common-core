@@ -17,6 +17,23 @@ function(cc_get_value_or_default OUTPUT_VARIABLE VARIABLE DEFAULT)
 endfunction()
 
 #===============================================================================
+## @fn cc_get_argument_or_default
+## @brief
+##    Get a named argument (even if provided but empty), otherwise return default value
+
+function(cc_get_argument_or_default OUTPUT_VARIABLE VARIABLE DEFAULT MISSING_LIST)
+  if(${VARIABLE})
+    set("${OUTPUT_VARIABLE}" "${${VARIABLE}}" PARENT_SCOPE)
+  else()
+    list(FIND MISSING_LIST ${VARIABLE} _found)
+    if (${_found} LESS 0)
+      set("${OUTPUT_VARIABLE}" "${DEFAULT}" PARENT_SCOPE)
+    endif()
+  endif()
+endfunction()
+
+
+#===============================================================================
 ## @fn cc_get_ternary
 ## @brief Set `OUTPUT_VARIABLE` to ${ON_EXPR} or ${OFF_EXPR} depending on ${CONDITION_VARIABLE}
 

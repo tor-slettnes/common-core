@@ -42,13 +42,24 @@ set_property(
 function(cc_add_python TARGET)
   set(_options)
   set(_singleargs
-    NAMESPACE NAMESPACE_COMPONENT
-    STAGING_DIR
-    INSTALL_COMPONENT INSTALL_DIR)
+    NAMESPACE                   # Override top-level namespace (default: `cc`)
+    NAMESPACE_COMPONENT         # 2nd level namespace (following `cc.`)
+    STAGING_DIR                 # Where to stage Python modules for installation
+    INSTALL_COMPONENT           # CPack component (e.g. Debian package component)
+    INSTALL_DIR                 # Override installation folder on target
+  )
   set(_multiargs
-    PYTHON_DEPS PROTO_DEPS DATA_DEPS
-    PROGRAMS FILES DIRECTORIES FILENAME_PATTERN
-    HIDDEN_IMPORTS COLLECT_SUBMODULES COLLECT_PACKAGES EXTRA_DATA_MODULES
+    PYTHON_DEPS                 # Other Python targets on which this depends
+    PROTO_DEPS                  # Generated ProtoBuf targets on which this depends
+    DATA_DEPS                   # Data file (e.g. settings) targets on which this depends
+    PROGRAMS                    # Files installed with execute permissions
+    FILES                       # Files installed without execute permissions
+    DIRECTORIES                 # Subdirectories to install. Use trailing `/` to start within.
+    FILENAME_PATTERN            # Filename masks for DIRECTORIES option
+    HIDDEN_IMPORTS              # Passed on to any dependent PyInstaller/executable target
+    COLLECT_SUBMODULES          # Passed on to any dependent PyInstaller/executable target
+    COLLECT_PACKAGES            # Passed on to any dependent PyInstaller/executable target
+    EXTRA_DATA_MODULES          # Passed on to any dependent PyInstaller/executable target
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -72,10 +83,13 @@ function(cc_add_python TARGET)
   file(REMOVE_RECURSE "${staging_dir}")
 
   ### Construct namespace for Python modules
+  cc_get_namespace(namespace
+    "${arg_NAMESPACE}"
+    "${arg_NAMESPACE_COMPONENT}"
+    "${arg_KEYWORDS_MISSING_VALUES}")
+
   cc_get_namespace_dir(
-    NAMESPACE "${arg_NAMESPACE}"
-    NAMESPACE_COMPONENT "${arg_NAMESPACE_COMPONENT}"
-    MISSING_VALUES "${arg_KEYWORDS_MISSING_VALUES}"
+    NAMESPACE "${namespace}"
     ROOT_DIR "${staging_dir}"
     OUTPUT_VARIABLE namespace_dir)
 
@@ -271,23 +285,15 @@ endfunction()
 
 #===============================================================================
 ## @fn cc_get_namespace_dir
-## @brief Helper function to construct Python namespace folder
+## @brief Helper function map Python namespace to installation folder
 
 function(cc_get_namespace_dir)
   set(_options)
-  set(_singleargs ROOT_DIR NAMESPACE NAMESPACE_COMPONENT OUTPUT_VARIABLE)
-  set(_multiargs MISSING_VALUES)
+  set(_singleargs NAMESPACE ROOT_DIR OUTPUT_VARIABLE)
+  set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  cc_get_namespace(
-    OUTPUT_VARIABLE namespace
-    NAMESPACE "${arg_NAMESPACE}"
-    NAMESPACE_COMPONENT "${arg_NAMESPACE_COMPONENT}"
-    MISSING_VALUES ${arg_MISSING_VALUES}
-  )
-
-  string(REPLACE "." "/" namespace_dir "${namespace}")
-
+  string(REPLACE "." "/" namespace_dir "${arg_NAMESPACE}")
   if(arg_ROOT_DIR)
     cmake_path(APPEND arg_ROOT_DIR "${namespace_dir}"
       OUTPUT_VARIABLE namespace_dir)
@@ -298,31 +304,24 @@ endfunction()
 
 #===============================================================================
 ## @fn cc_get_namespace
-## @brief Helper function to construct Python namespace folder
+## @brief Helper function to construct Python namespace
 
-function(cc_get_namespace)
-  set(_options)
-  set(_singleargs NAMESPACE NAMESPACE_COMPONENT OUTPUT_VARIABLE)
-  set(_multiargs MISSING_VALUES)
-  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+function(cc_get_namespace
+    OUTPUT_VARIABLE             # Variable which will be populated with result
+    NAMESPACE                   # Complete namespace, replacing `cc` at root
+    NAMESPACE_COMPONENT         # Alternatively: 2nd level namespace (following `cc.`)
+    MISSING_VALUES              # Keyword arguments that were provided without value
+  )
 
-  ### Construct namespace for Python modules
-  if(arg_NAMESPACE)
-    set(namespace "${arg_NAMESPACE}")
+  cc_get_argument_or_default(namespace NAMESPACE "${PYTHON_NAMESPACE}" "${MISSING_VALUES}")
 
-  else()
-    list(FIND arg_MISSING_VALUES "NAMESPACE" _found)
-    if(${_found} LESS 0 AND PYTHON_NAMESPACE)
-      ### No 'NAMESPACE` keyword with missing/empty value.  Assign default.
-      set(namespace "${PYTHON_NAMESPACE}")
-    endif()
-
-    if(arg_NAMESPACE_COMPONENT)
-      string(JOIN "." namespace ${namespace} "${arg_NAMESPACE_COMPONENT}")
-    endif()
+  if(NAMESPACE_COMPONENT)
+    string(JOIN "." namespace ${namespace} "${NAMESPACE_COMPONENT}")
   endif()
 
-  set("${arg_OUTPUT_VARIABLE}" "${namespace}" PARENT_SCOPE)
+  if(OUTPUT_VARIABLE)
+    set("${OUTPUT_VARIABLE}" "${namespace}" PARENT_SCOPE)
+  endif()
 endfunction()
 
 #===============================================================================
