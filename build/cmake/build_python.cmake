@@ -42,8 +42,8 @@ set_property(
 function(cc_add_python TARGET)
   set(_options)
   set(_singleargs
-    NAMESPACE                   # Override top-level namespace (default: `cc`)
-    NAMESPACE_COMPONENT         # 2nd level namespace (following `cc.`)
+    NAMESPACE                   # Custom top-level namespace (default: `cc`)
+    NAMESPACE_COMPONENT         # 2nd level namespace (following `cc.`), if any
     STAGING_DIR                 # Where to stage Python modules for installation
     INSTALL_COMPONENT           # CPack component (e.g. Debian package component)
     INSTALL_DIR                 # Override installation folder on target

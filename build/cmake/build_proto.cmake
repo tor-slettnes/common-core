@@ -65,15 +65,22 @@ function(cc_add_proto TARGET)
       OUTPUT_VARIABLE proto_py_deps)
 
     cc_get_optional_keyword(INSTALL arg_PYTHON_INSTALL)
-    cc_get_argument_or_default(namespace
-      arg_PYTHON_NAMESPACE
-      "${PYTHON_NAMESPACE}"
+
+    cc_get_argument_or_default(
+      namespace_component             # OUTPUT_VARIABLE
+      arg_PYTHON_NAMESPACE_COMPONENT  # VARIABLE
+      "generated"                     # DEFAULT
+      "${arg_KEWORDS_MISSING_VALUES}" # MISSING_LIST
+    )
+
+    cc_get_namespace(namespae
+      "${arg_PYTHON_NAMESPACE}"
+      "${namespace_component}"
       "${arg_KEYWORDS_MISSING_VALUES}"
     )
 
     cc_add_proto_python("${py_target}"
       NAMESPACE "${namespace}"
-      NAMESPACE_COMPONENT "${arg_PYTHON_NAMESPACE_COMPONENT}"
       INSTALL ${INSTALL}
       INSTALL_COMPONENT "${arg_PYTHON_INSTALL_COMPONENT}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
@@ -174,8 +181,7 @@ function(cc_add_proto_python TARGET)
     STAGING_DIR              # Override staging directory
     INSTALL_COMPONENT        # Install component for generated Python files
     INSTALL_DIR              # Relative install folder for generated files
-    NAMESPACE                # Override top-level namespace (Default: cc)
-    NAMESPACE_COMPONENT      # Override 2nd level namespace (Default: generated)
+    NAMESPACE                # Namespace in which to install modules
   )
   set(_multiargs
     DEPENDS                  # Upstream CMake targets on which we depend
@@ -184,20 +190,9 @@ function(cc_add_proto_python TARGET)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   cc_get_value_or_default(
-    namespace_component
-    arg_NAMESPACE_COMPONENT
-    "generated")
-
-  cc_get_value_or_default(
     staging_dir
     arg_STAGING_DIR
     "${PYTHON_STAGING_ROOT}/${TARGET}")
-
-  ### Construct namespace for Python modules
-  cc_get_namespace(namespace
-    "${arg_NAMESPACE}"
-    "${namespace_component}"
-    "${arg_KEYWORDS_MISSING_VALUES}")
 
   cc_get_namespace_dir(
     NAMESPACE "${namespace}"
