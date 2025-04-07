@@ -96,3 +96,7 @@ class Client (API, SignalClient):
         '''
         API.start_notify_time(self, callback)
         return self.start_watching()
+
+
+def main():
+    print("Loaded DEMO main")

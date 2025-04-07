@@ -172,7 +172,7 @@ cmake-gui: cmake
 	@cmake-gui $(BUILD_DIR)
 
 .PHONY: cmake
-cmake: $(CMAKE_TAG)
+cmake: $(CMAKE_TAG) $(CMAKE_CACHE)
 
 ### If we have defined custom arguments to CMake (see above), we force
 ### regeneration of the CMake cache by declaring any previous result as phony.
@@ -180,7 +180,7 @@ ifneq ($(or $(CMAKE_FORCE_REGENERATE),$(CMAKE_CONFIG_ARGS)),)
 .PHONY: $(CMAKE_TAG)
 endif
 
-$(CMAKE_TAG):
+$(CMAKE_TAG) $(CMAKE_CACHE):
 	@echo
 	@echo "#############################################################"
 	@echo "Generating build files in ${BUILD_DIR}"
@@ -228,11 +228,11 @@ get_config:
 
 .PHONY: get_version
 get_version:
-	@echo "$(call get_cached_or_default,VERSION)"
+	@echo $(call get_cached_or_default,VERSION)
 
 .PHONY: get_product
 get_product:
-	@echo "$(call get_cached_or_default,PRODUCT)"
+	@echo $(call get_cached_or_default,PRODUCT)
 
 .PHONY: clean/cmake cmake_clean
 clean/cmake cmake_clean:
@@ -260,6 +260,10 @@ clean/install uninstall:
 .PHONY: clean/deb clean/package pkg_clean
 clean/deb clean/package pkg_clean:
 	@$(call remove,$(PACKAGE_DIR))
+
+.PHONY: clean/cache clean/config
+clean/cache clean/config:
+	@$(call remove,$(CMAKE_CACHE))
 
 .PHONY: clean/out cleanout
 clean/out cleanout:

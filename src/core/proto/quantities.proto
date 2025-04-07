@@ -1,0 +1,208 @@
+// -*- Protocol-Buffers -*-
+//==============================================================================
+/// @file quantity.proto
+/// @brief ProtoBuf message types for common physics quantities
+/// @author Tor Slettnes <tor@slett.net>
+//==============================================================================
+
+syntax = "proto3";
+
+package cc.variant;
+
+
+//------------------------------------------------------------------------------
+// Distance
+
+message Distance
+{
+    double value = 1;
+    DistanceUnit unit = 2;
+}
+
+
+enum DistanceUnit
+{
+    DISTANCE_UNDEFINED = 0;
+    DISTANCE_METERS    = 1;     // SI Base unit
+    DISTANCE_INCHES    = 20;    // Imperial, 0.0254m
+    DISTANCE_FEET      = 21;    // 12 inches
+    DISTANCE_YARDS     = 22;    // 3 feet
+    DISTANCE_MILES     = 23;    // 1760 yards
+    DISTANCE_LIGHTYEARS = 40;   // Approx. 9.4607e+15 meters
+}
+
+//------------------------------------------------------------------------------
+// Velocity
+
+message Velocity
+{
+    double value = 1;
+    VelocityUnit unit = 2;
+}
+
+enum VelocityUnit
+{
+    VELOCITY_UNDEFINED = 0;
+    VELOCITY_METERS_SECOND   = 1;  // SI unit
+    VELOCITY_KILOMETERS_HOUR = 2;  // SI derived, 1 m/s = 3.6 km/h
+    VELOCITY_MILES_PER_HOUR  = 20; // Imperial, 1 mph ≈ 1.609 km/h
+    VELOCITY_LIGHTSPEEDS     = 40; // Universal, 1c ≈ 299,792,458 m/s
+}
+
+
+//------------------------------------------------------------------------------
+// Angle
+
+message Angle
+{
+    double value = 1;
+    AngleUnit unit = 2;
+}
+
+enum AngleUnit
+{
+    ANGLE_RADIANS = 0;          // Full circle = 2*pi
+    ANGLE_DEGREES = 1;          // Full circle = 360°
+    ANGLE_GRADIANS = 2;         // Full circle = 400 grad.
+}
+
+
+//------------------------------------------------------------------------------
+// Area
+
+message Area
+{
+    double value = 1;
+    AreaUnit unit = 2;
+}
+
+enum AreaUnit
+{
+    AREA_UNDEFINED = 0;
+    AREA_M2        = 1;         // SI unit, square meters
+    AREA_SQFT      = 20;        // 0.09290304 m^2
+    AREA_SQIN      = 21;        // 1/144 square foot
+    AREA_SQYD      = 22;        // 9 square feet
+    AREA_SQMILES   = 23;        // 2.589 km^2
+}
+
+//------------------------------------------------------------------------------
+// Volume
+
+message Volume
+{
+    double value = 1;
+    VolumeUnit unit = 2;
+}
+
+enum VolumeUnit
+{
+    VOLUME_UNDEFINED        = 0;
+    VOLUME_LITRE            = 1;  // SI, 1 cubic decimeter
+    VOLUME_M3               = 2;  // SI derivative, 1 cubic meter = 1000 litres
+    VOLUME_MILLILITRES      = 3;  // SI derivative, 1 mL = 1 cm^3
+    VOLUME_MICROLITRES      = 4;  // SI derivative, 1 uL = 1 mm^3
+    VOLUME_IMP_FLUID_OUNCES = 20; // Approx. 28.41 mL
+    VOLUME_IMP_GALLON       = 21; // 160 imperial fl. oz. = 4.54609 litres
+    VOLUME_US_FLUID_OUNCES  = 30; // Approx. 29.57 mL
+    VOLUME_US_GALLON        = 31; // 128 US fl. oz. = 3.785 litres
+}
+
+//------------------------------------------------------------------------------
+// Mass
+
+message Mass
+{
+    double value = 1;
+    MassUnit unit = 2;
+}
+
+
+enum MassUnit
+{
+    MASS_UNDEFINED = 0;
+    MASS_GRAMS     = 10;        // 1/1000 kg
+    MASS_KILOGRAMS = 11;        // SI base unit
+    MASS_TONNE     = 12;        // 1000 kg
+    MASS_OUNCES    = 20;        // 28.349523125 g
+    MASS_LBS       = 21;        // 453.59237 g
+    MASS_SHORT_TON = 22;        // US, 2000 lbs, 907.18474 kg
+    MASS_LONG_TON  = 23;        // British, 2240 lbs, 1,016.0469088 kg
+}
+
+//------------------------------------------------------------------------------
+// Force
+
+message Force
+{
+    double value = 1;
+    ForceUnit unit = 2;
+}
+
+
+enum ForceUnit
+{
+    FORCE_UNDEFINED = 0;
+    FORCE_NEWTONS   = 10;       // SI unit, 1 kg * m/s^2
+    FORCE_OUNCES    = 20;       // 0.2780139 Newtons
+    FORCE_LBS       = 21;       // Pount-force = 16 ounce-force
+}
+
+//------------------------------------------------------------------------------
+// Temperature
+
+message Temperature
+{
+    double value = 1;
+    TemperatureUnit unit = 2;
+}
+
+enum TemperatureUnit
+{
+    TEMPERATURE_UNDEFINED         = 0;
+    TEMPERATURE_KELVIN            = 10; // Absolute scale, increments of 1°C
+    TEMPERATURE_DEGREES_CELSIUS   = 11; // 0°C = 273.15 K
+    TEMPERATURE_DEGREES_RANKINE   = 20; // Absolute scale, increments of 1°F
+    TEMPERATURE_DEGREES_FARENHEIT = 21; // 0°F = 459.67 °Ra
+}
+
+
+//------------------------------------------------------------------------------
+// Pressure
+
+message Pressure
+{
+    double value = 1;
+    PressureUnit unit = 2;
+}
+
+enum PressureUnit
+{
+    PRESSURE_UNDEFINED   = 0;
+    PRESSURE_PASCALS     = 10;  // Newton per square meter
+    PRESSURE_HPA         = 12;  // HectoPascals
+    PRESSURE_KPA         = 13;  // KiloPascals
+    PRESSURE_ATMOSPHERES = 20;  // 101325 Pa
+    PRESSURE_MMHG        = 30;  // Millimeters of Mercury, 133.32238 Pa
+    PRESSURE_TORR        = 40;  // 1/760 Atmosphere, 133.32236 Pa
+    PRESSURE_PSI         = 50;  // US lbs per Square Inch, 6.894757 kPa
+};
+
+
+//-------------------------------------------------------------------------------
+// Concentration
+
+message Concentration
+{
+    double value = 1;
+    ConcentrationUnit unit = 2;
+}
+
+enum ConcentrationUnit
+{
+    CONCENTRATION_UNDEFINED = 0;
+    CONCENTRATION_FRACTION  = 1;  // Fraction of 1.0
+    CONCENTRATION_PPM       = 10; // Parts per million (10^6)
+    CONCENTRATION_PPB       = 11; // Parts per billion (10^9)
+    CONCENTRATION_PPT       = 12; // Parts per trillion (10^12)
+}

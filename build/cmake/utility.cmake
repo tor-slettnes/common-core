@@ -62,7 +62,7 @@ endfunction()
 ## @brief
 ##   Tranform a list to a single string of quoted and comma-separated items.
 
-function(cc_join_quoted LIST)
+function(cc_join_quoted LISTVAR)
   set(_options)
   set(_singleargs QUOTE LEFTQUOTE RIGHTQUOTE GLUE OUTPUT_VARIABLE)
   set(_multiargs)
@@ -73,7 +73,7 @@ function(cc_join_quoted LIST)
   cc_get_value_or_default(rightquote arg_RIGHTQUOTE "${quote}")
   cc_get_value_or_default(glue arg_GLUE ", ")
 
-  list(TRANSFORM "${LIST}"
+  list(TRANSFORM "${LISTVAR}"
     REPLACE "^(.+)$" "${leftquote}\\1${rightquote}"
     OUTPUT_VARIABLE quoted_list)
 

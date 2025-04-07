@@ -60,8 +60,25 @@ set(LOCAL_DATA_DIR "/data/${ORGANIZATION}"
 set(LOGS_DIR "/var/log/${ORGANIZATION}"
   CACHE STRING "Directory for generated log files")
 
+#-------------------------------------------------------------------------------
+# Python code tweaks
+
+set(PYTHON_NAMESPACE "cc"
+  CACHE STRING "Top-level package/namespace for Python modules")
+
+set(PYTHON_PIP_CORE_REQUIREMENTS_FILE
+  "${CMAKE_CURRENT_LIST_DIR}/pip-requirements.txt"
+  CACHE FILEPATH
+  "File containing required PIP-installable packages for virtual environment")
+
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules")
+
+set(PYTHON_WHEELS_INSTALL_DIR "share/${ORGANIZATION}/python-wheels"
+  CACHE STRING "Folder on target in which to place Python wheels")
+
+set(PYTHON_VENV_ROOT "/var/lib/${ORGANIZATION}/venv"
+  CACHE STRING "Folder on target in which Python virtual environments are created")
 
 #-------------------------------------------------------------------------------
 # Software upgrade settings (via `Upgrade` service)
@@ -77,17 +94,6 @@ set(UPGRADE_VFS_CONTEXT "releases"
 
 set(UPGRADE_KEYRING "common-core-release.kbx"
   CACHE STRING "Filename containing public GnuPG key used to validate package signagture")
-
-#-------------------------------------------------------------------------------
-# Python code tweaks
-
-set(PYTHON_NAMESPACE "cc"
-  CACHE STRING "Top-level package/namespace for Python modules")
-
-set(PYTHON_PIP_REQUIREMENTS_FILE
-  "${CMAKE_CURRENT_LIST_DIR}/pip-requirements.txt"
-  CACHE FILEPATH
-  "File containing required PIP-installable packages for virtual environment")
 
 #-------------------------------------------------------------------------------
 # Package generation with CPack. For information about grouping, see
@@ -120,53 +126,54 @@ set(CPACK_PACKAGE_CONTACT "Tor Slettnes <tor@slett.net>"
 #-------------------------------------------------------------------------------
 # Miscellaneous build options
 
-### C++ options
-option(BUILD_CPP         "Build/Install C++ code" ON)
-option(BUILD_RAPIDJSON   "Build fast JSON parsing using RapidJSON" ON)
-option(BUILD_YAML        "Build support for YAML parsing " ON)
-option(USE_STATIC_LIBS   "Use static 3rd party libraries for linking" OFF)
-
-### Python options
-option(BUILD_PYTHON            "Install Python clients/scripts" ON)
-option(WITH_PYTHON_MODULES     "Install/package Python source modules" ON)
-option(WITH_PYTHON_WHEELS      "Build and install Python distributions (`.whl`)" OFF)
-option(WITH_PYTHON_EXECUTABLES "Build and install Python executables with PyInstaller" OFF)
-
-### Messaging frameworks
-option(BUILD_KAFKA       "Build support for Apache Kafka" ON)
-option(BUILD_GRPC        "Build support for gRPC Remote Procedure Calls" ON)
-option(BUILD_ZMQ         "Build support for ZeroMQ" ON)
-option(BUILD_HTTP        "Build support for HTTP requests, incl. REST API" ON)
-option(BUILD_DDS         "Build support for Distributed Data Service (DDS)" ${BUILD_DDS})
-option(BUILD_RTI_DDS     "Build support for RTI ConnextDDS" ${BUILD_DDS})
-option(BUILD_RTI_LOGGER  "Build support for RTI Distributed Logger" ${BUILD_RTI_DDS})
-
-
-### Object serialization
-option(BUILD_SQLITE3     "Build support for SQLite3 DB" ON)
-option(BUILD_AVRO        "Build support for Apache AVRO" ${BUILD_KAFKA})
-option(BUILD_PROTOBUF    "Build support for Google Protocol Buffers" ON)
-option(BUILD_PYTHON_IO   "Build Python embedded environment for C++" ON)
-option(BUILD_DBUS        "Build support for D-Bus" ON)
-option(BUILD_DNSSD_AVAHI "Build suport for DNS-SD via Avahi" ON)
-
-### Build all library dependencies even if not linked into the final product
-option(BUILD_ALL_LIBS    "Build all libraries even if not used (to validate syntax)" OFF)
-
-### Build tests
+# Build tests
 option(BUILD_TESTING     "Build testing modules" ON)
 
-### What applications to build/install.
+# Enable SystemD service integration
+option(ENABLE_SERVICES   "Enable SystemD service units" ON)
+
+# What applications to build/install.
 option(BUILD_SHARED      "Install shared artifacts (e.g. common settings)" ON)
 option(BUILD_DEMO        "Build/install DEMO application example" ${BUILD_SHARED})
 option(BUILD_PLATFORM    "Build/install Platform services" ${BUILD_SHARED})
 option(BUILD_MULTILOGGER "Build/install MultiLogger service" ${BUILD_SHARED})
 option(BUILD_SWITCHBOARD "Build/install Switchboard application" ${BUILD_SHARED})
 
-### Enable SystemD service integration
-option(ENABLE_SERVICES   "Enable SystemD service units" ON)
+#-------------------------------------------------------------------------------
+# C++ options
 
-### gRPC requires ProtoBuf
-if(BUILD_GRPC OR BUILD_ZMQ)
-  set(BUILD_PROTOBUF ON)
-endif()
+option(BUILD_CPP         "Build/Install C++ code"  ON)
+option(BUILD_ALL_LIBS    "Build all libraries even if not used (to validate syntax)" OFF)
+
+# Settings parsers
+option(BUILD_RAPIDJSON   "Build fast JSON parsing using RapidJSON" ON)
+option(BUILD_YAML        "Build support for YAML parsing" ON)
+
+# Messaging frameworks
+option(BUILD_KAFKA       "Build support for Apache Kafka" ON)
+option(BUILD_GRPC        "Build support for gRPC Remote Procedure Calls" ON)
+option(BUILD_ZMQ         "Build support for ZeroMQ" ON)
+option(BUILD_HTTP        "Build support for HTTP requests, incl. REST API" ON)
+option(BUILD_DDS         "Build support for Distributed Data Service (DDS)" OFF)
+option(BUILD_RTI_DDS     "Build support for RTI ConnextDDS" ${BUILD_DDS})
+option(BUILD_RTI_LOGGER  "Build support for RTI Distributed Logger" ${BUILD_RTI_DDS})
+
+# Object serialization
+option(BUILD_SQLITE3     "Build support for SQLite3 DB" ON)
+option(BUILD_AVRO        "Build support for Apache AVRO" ${BUILD_KAFKA})
+option(BUILD_PROTOBUF    "Build support for Google Protocol Buffers" ON)
+option(BUILD_PYTHON_IO   "Build Python embedded environment for C++" ON)
+
+# Platform integration
+option(BUILD_DBUS        "Build support for D-Bus" ON)
+option(BUILD_DNSSD_AVAHI "Build suport for DNS-SD via Avahi" ON)
+
+#-------------------------------------------------------------------------------
+# Python options
+
+option(BUILD_PYTHON             "Build and install Python components" ON)
+option(BUILD_PYTHON_VENV        "Build and install Python Virtual Environment (`venv`)" ON)
+option(WITH_PYTHON_MODULES      "Install Python source modules" ON)
+option(WITH_PYTHON_EXECUTABLES  "Build and add Python executables with PyInstaller" ON)
+option(WITH_PYTHON_WHEELS       "Build and add Python distribution files (`.whl`)" ON)
+option(WITH_PYTHON_REQUIREMENTS "Fetch and add required upstream distribution files" ${WITH_PYTHON_WHEELS})

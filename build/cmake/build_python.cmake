@@ -16,21 +16,11 @@ set(PYTHON_OUT_DIR
 set(PYTHON_STAGING_ROOT
   "${PYTHON_OUT_DIR}/staging")
 
-set(PYTHON_VENV
-  "${PYTHON_OUT_DIR}/venv"
-  CACHE STRING "Python virtual environment for building wheels & executables")
-
-if(NOT IS_ABSOLUTE PYTHON_VENV)
-  cmake_path(ABSOLUTE_PATH PYTHON_VENV
-    BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
-    OUTPUT_VARIABLE PYTHON_VENV)
-endif()
-
 ### Add the above directories to the global `clean` target
 set_property(
   DIRECTORY "${CMAKE_BINARY_DIR}"
   APPEND
-  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_STAGING_ROOT}
+  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_OUT_DIR}
 )
 
 
@@ -329,7 +319,7 @@ endfunction()
 ## @brief Helper function to obtain Python interpreter, or die trying
 
 function(cc_find_python)
-  set(_options OPTIONAL ALLOW_SYSTEM ALLOW_DEFAULT_VENV)
+  set(_options OPTIONAL ALLOW_SYSTEM)
   set(_singleargs ACTION PYTHON_INTERPRETRER VENV OUTPUT_VARIABLE)
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -340,11 +330,7 @@ function(cc_find_python)
       OUTPUT_VARIABLE python)
 
   elseif(arg_VENV)
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin/python"
-      OUTPUT_VARIABLE python)
-
-  elseif(arg_ALLOW_DEFAULT_VENV AND PYTHON_VENV)
-    cmake_path(APPEND PYTHON_VENV "bin/python"
+    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin" "python"
       OUTPUT_VARIABLE python)
 
   elseif(arg_ALLOW_SYSTEM)

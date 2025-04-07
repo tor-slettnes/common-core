@@ -30,5 +30,8 @@ classifiers = [
 [project.urls]
 Homepage = "@PROJECT_HOMEPAGE_URL@"
 
+[project.scripts]
+@SCRIPTS@
+
 [tool.hatch.build.targets.wheel.force-include]
 @PACKAGE_MAP@

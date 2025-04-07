@@ -4,8 +4,20 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+file(REAL_PATH "../debian" DEBIAN_TEMPLATE_DIR
+  BASE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
 
-#===============================================================================
+file(REAL_PATH "deb" DEBIAN_CONTROL_STAGING_DIR
+  BASE_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+### Add the above directory to the global `clean` target
+set_property(
+  DIRECTORY "${CMAKE_BINARY_DIR}"
+  APPEND
+  PROPERTY ADDITIONAL_CLEAN_FILES ${DEBIAN_CONTROL_STAGING_DIR}
+)
+
+#-------------------------------------------------------------------------------
 ## @fn cc_cpack_config
 ## @brief Append a setting to `cc_cpack_config.cmake`, to be consumed by `cpack`.
 
@@ -29,7 +41,39 @@ function(cc_cpack_config VARIABLE VALUE)
   file(APPEND "${CMAKE_BINARY_DIR}/CPackConfig.cmake" "${_command}\n")
 endfunction()
 
-#===============================================================================
+#-------------------------------------------------------------------------------
+## @fn cc_cpack_debian_config
+## @brief Set a `CPACK_DEBIAN[_GROUPING]_*` value
+##    depending on whether component-based packaging is enabled.
+##
+## For an overview of component-specific CPack Debian variables, see:
+## https://cmake.org/cmake/help/latest/cpack_gen/deb.html
+
+
+function(cc_cpack_debian_config VARIABLE_SUFFIX VALUE)
+  set(_options
+    APPEND                      # Append value to the resulting CPack variable
+  )
+  set(_singleargs
+    COMPONENT                   # CPack component name
+  )
+  set(_multiargs)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  cc_cpack_get_debian_grouping(
+    PREFIX "CPACK_DEBIAN"
+    COMPONENT "${arg_COMPONENT}"
+    SUFFIX "${VARIABLE_SUFFIX}"
+    GLUE "_"
+    OUTPUT_VARIABLE variable)
+
+  cc_get_optional_keyword(APPEND arg_APPEND)
+  cc_cpack_config("${variable}" "${VALUE}" ${APPEND})
+ endfunction()
+
+
+
+#-------------------------------------------------------------------------------
 ## @fn cc_cpack_add_debian_component
 ## @brief
 ##   Wrapper for `cmake_add_component()` with added dependency options.
@@ -57,6 +101,8 @@ function(cc_cpack_add_debian_component COMPONENT)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if(COMPONENT)
+    set(ENV{COMPONENT_${COMPONENT}_GROUP} "${arg_GROUP}")
+
     cc_get_value_or_default(license_file
       arg_LICENSE
       "${CMAKE_SOURCE_DIR}/LICENSE.txt"
@@ -65,10 +111,7 @@ function(cc_cpack_add_debian_component COMPONENT)
     cc_install_license(
       FILE "${license_file}"
       COMPONENT ${COMPONENT}
-      GROUP ${arg_GROUP}
     )
-
-    string(TOUPPER "${COMPONENT}" upcase_component)
 
     set(description_lines ${arg_DESCRIPTION})
     if(arg_SUMMARY)
@@ -76,22 +119,33 @@ function(cc_cpack_add_debian_component COMPONENT)
     endif()
     list(JOIN description_lines "\n" description_text)
 
-    if(CPACK_COMPONENTS_GROUPING STREQUAL "IGNORE")
+
+    if(arg_GROUP AND CPACK_COMPONENTS_GROUPING STREQUAL "ONE_PER_GROUP")
+      set(package ${arg_GROUP})
+    else()
+      set(package ${COMPONENT})
       set(component_deps "${arg_DEPENDS}")
     endif()
 
     cpack_add_component("${COMPONENT}"
       DESCRIPTION "${description_text}"
       GROUP ${arg_GROUP}
-      DEPENDS ${component_deps}
+      DEPENDS ${arg_DEPENDS}
     )
+
+    cc_cpack_get_debian_grouping(
+      PREFIX "CPACK_DEBIAN"
+      COMPONENT "${package}"
+      SUFFIX "PACKAGE"
+      GLUE "_"
+      OUTPUT_VARIABLE cpack_var_base)
 
     foreach(option ${_multiargs})
       if (option MATCHES "^DEB_(.*)$")
         list(JOIN arg_${option} ", " predecessors)
         if(predecessors)
           cc_cpack_config(
-            "CPACK_DEBIAN_${upcase_component}_PACKAGE_${CMAKE_MATCH_1}"
+            "${cpack_var_base}_${CMAKE_MATCH_1}"
             "${predecessors}"
           )
         endif()
@@ -100,7 +154,7 @@ function(cc_cpack_add_debian_component COMPONENT)
   endif()
 endfunction()
 
-#===============================================================================
+#-------------------------------------------------------------------------------
 ## @fn cc_cpack_add_group
 ## @brief
 ##   Wrapper for `cmake_add_component_group()` with added dependency options.
@@ -138,7 +192,7 @@ function(cc_cpack_add_group GROUP)
       cc_cpack_config(CPACK_COMPONENT_${GROUP}_DESCRIPTION "${description_text}")
     endif()
 
-    cc_cpack_set_debian_dependencies("${GROUP}" DEPENDS
+    cc_cpack_set_debian_predecessors("${GROUP}" DEPENDS
       GROUPS ${arg_GROUP_DEPENDS}
       PACKAGES ${arg_DEB_DPEENDS}
     )
@@ -146,10 +200,72 @@ function(cc_cpack_add_group GROUP)
 
 endfunction()
 
-#===============================================================================
-## @fn cc_cpack_set_debian_dependencies
 
-function(cc_cpack_set_debian_dependencies TARGET RELATIONSHIP)
+#-------------------------------------------------------------------------------
+## @fn cc_cpack_get_debian_grouping
+## @brief
+##    Obtain a string containing COMPONENT or its group if and only if the
+##    corresponding component-based packaging is used.
+##
+## For an overview of component-specific CPack Debian variables, see:
+## https://cmake.org/cmake/help/latest/cpack_gen/deb.html
+
+function(cc_cpack_get_debian_grouping)
+  set(_options)
+  set(_singleargs
+    PREFIX         # CPackConfig variable prefix
+    SUFFIX         # CPackConfig variable suffix
+    GLUE           # Delimiter beween prefix/package/suffix
+    COMPONENT      # CPack component for when creating one package per component
+    OUTPUT_VARIABLE # Variable in which to store the resulting CPackConfig variable name
+  )
+  set(_multiargs)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  set(parts ${arg_PREFIX})
+
+  if(CPACK_DEB_COMPONENT_INSTALL)
+    if((CPACK_COMPONENTS_GROUPING STREQUAL "ONE_PER_GROUP")
+        AND DEFINED ENV{COMPONENT_${arg_COMPONENT}_GROUP})
+      list(APPEND parts $ENV{COMPONENT_${arg_COMPONENT}_GROUP})
+    elseif(arg_COMPONENT)
+      list(APPEND parts ${arg_COMPONENT})
+    endif()
+  endif()
+
+  list(APPEND parts ${arg_SUFFIX})
+  list(JOIN parts "${arg_GLUE}" variable)
+  set("${arg_OUTPUT_VARIABLE}" "${variable}" PARENT_SCOPE)
+endfunction()
+
+
+#-------------------------------------------------------------------------------
+## @fn cc_get_debian_cpack_pakage_name
+
+function(cc_cpack_get_debian_package_name)
+  set(_options)
+  set(_singleargs
+    COMPONENT      # CPack component for when creating one package per component
+    OUTPUT_VARIABLE # Variable in which to store the resulting package name
+  )
+  set(_multiargs)
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  cc_cpack_get_debian_grouping(
+    PREFIX "${CPACK_PACKAGE_NAME}"
+    COMPONENT "${arg_COMPONENT}"
+    GLUE "-"
+    OUTPUT_VARIABLE name
+  )
+
+  set("${arg_OUTPUT_VARIABLE}" "${name}" PARENT_SCOPE)
+endfunction()
+
+
+#-------------------------------------------------------------------------------
+## @fn cc_cpack_set_debian_predecessors
+
+function(cc_cpack_set_debian_predecessors TARGET RELATIONSHIP)
   set(_options)
   set(_singleargs)
   set(_multiargs
@@ -181,7 +297,7 @@ function(cc_cpack_set_debian_dependencies TARGET RELATIONSHIP)
 
 endfunction()
 
-#===============================================================================
+#-------------------------------------------------------------------------------
 ## @fn cc_install_doc
 ## @brief Install `LICENESE.txt` into `share/doc/PACKAGE_NAME`
 
@@ -189,7 +305,6 @@ function(cc_install_doc)
   set(_options)
   set(_singleargs
     COMPONENT  # CPack components to which we're adding the doc
-    GROUP      # CPack components group to which we're adding the doc
     RENAME     # Rename file (only for single file install)
   )
   set(_multiargs
@@ -198,9 +313,8 @@ function(cc_install_doc)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if (arg_FILES)
-    cc_get_cpack_debian_package_name(
+    cc_cpack_get_debian_package_name(
       COMPONENT "${arg_COMPONENT}"
-      GROUP "${arg_GROUP}"
       OUTPUT_VARIABLE deb_name
     )
 
@@ -213,7 +327,7 @@ function(cc_install_doc)
   endif()
 endfunction()
 
-#===============================================================================
+#-------------------------------------------------------------------------------
 ## @fn cc_install_license
 ## @brief Install `LICENESE.txt` into `share/doc/PACKAGE_NAME`
 
@@ -221,7 +335,6 @@ function(cc_install_license)
   set(_singleargs
     FILE       # Source license file to install
     COMPONENT  # CPack components to which we're adding the doc
-    GROUP      # CPack components group to which we're adding the doc
   )
   cmake_parse_arguments(arg "" "${_singleargs}" "" ${ARGN})
 
@@ -234,129 +347,76 @@ function(cc_install_license)
     FILES ${license_file}
     RENAME copyright
     COMPONENT ${arg_COMPONENT}
-    GROUP ${arg_GROUP}
   )
 endfunction()
 
-#===============================================================================
-## @fn cc_cpack_debian_config
-## @brief Set a `CPACK_DEBIAN[_GROUPING]_*` value
-##    depending on whether component-based packaging is enabled.
-##
-## For an overview of component-specific CPack Debian variables, see:
-## https://cmake.org/cmake/help/latest/cpack_gen/deb.html
-
-function(cc_cpack_debian_config VARIABLE_SUFFIX VALUE)
-  set(_options APPEND)
-  set(_singleargs
-    COMPONENT # CPack component name, for when creating one package per component
-    GROUP     # CPack component group, for when creating one package per group
-  )
-  set(_multiargs)
-  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  cc_get_cpack_debian_variable("${VARIABLE_SUFFIX}"
-    COMPONENT "${arg_COMPONENT}"
-    GROUP "${arg_GROUP}"
-    OUTPUT_VARIABLE variable_name)
-
-  cc_get_optional_keyword(APPEND arg_APPEND)
-  cc_cpack_config("${variable_name}" "${VALUE}" ${APPEND})
-endfunction()
 
 
-#===============================================================================
-## @fn cc_get_cpack_debian_variable
-## @brief Obtain variable name corresponding to the provided suffix,
-##    with with COMPONENT or GROUP inserted if the corresponding component-based
-##    packaging is used.
-##
-## For an overview of component-specific CPack Debian variables, see:
-## https://cmake.org/cmake/help/latest/cpack_gen/deb.html
-
-function(cc_get_cpack_debian_variable VARIABLE_SUFFIX)
-  set(_options)
-  set(_singleargs
-    PREFIX         # CPackConfig variable prefix (normally `CPACK_DEBIAN`)
-    SUFFIX         # CPackConfig variable suffix
-    COMPONENT      # CPack component for when creating one package per component
-    GROUP          # CPack group for when creating one package per group
-    OUTPUT_VARIABLE # Variable in which to assign the resulting CPackConfig variable name
-  )
-  set(_multiargs)
-  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  cc_get_cpack_debian_grouping(
-    PREFIX "CPACK_DEBIAN"
-    SUFFIX "${VARIABLE_SUFFIX}"
-    GLUE "_"
-    COMPONENT "${arg_COMPONENT}"
-    GROUP "${arg_GROUP}"
-    OUTPUT_VARIABLE variable)
-
-  string(TOUPPER "${variable}" upcase_variable)
-  set("${arg_OUTPUT_VARIABLE}" "${upcase_variable}" PARENT_SCOPE)
-endfunction()
-
-#===============================================================================
-## @fn cc_get_cpack_debian_pakage
-
-function(cc_get_cpack_debian_package_name)
-  set(_options)
-  set(_singleargs
-    COMPONENT      # CPack component for when creating one package per component
-    GROUP          # CPack group for when creating one package per group
-    OUTPUT_VARIABLE # Variable in which to store the resulting CPackConfig variable name
-  )
-  set(_multiargs)
-  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  cc_get_cpack_debian_grouping(
-    COMPONENT "${arg_COMPONENT}"
-    GROUP "${arg_GROUP}"
-    PREFIX "${CPACK_PACKAGE_NAME}"
-    GLUE "-"
-    OUTPUT_VARIABLE name
-  )
-
-  set("${arg_OUTPUT_VARIABLE}" "${name}" PARENT_SCOPE)
-endfunction()
-
-
-
-#===============================================================================
-## @fn cc_get_cpack_debian_grouping
+#-------------------------------------------------------------------------------
+## @fn cc_add_debian_control_script
 ## @brief
-##    Obtain a string containing COMPONENT or GROUP if and only if
-##    the corresponding component-based packaging is used.
+##    Add a script to be invoked during Debian package installation or removal.
 ##
-## For an overview of component-specific CPack Debian variables, see:
-## https://cmake.org/cmake/help/latest/cpack_gen/deb.html
+## We install this script in `share/PACKAGE_NAME/PHASE.d`, along with a
+## main control script (e.g. `postinst`,`prerm` etc) to invoke `run-parts`
+## on that folder.  We do this because there may be more than one script
+## to invoke for a given package, for instance to install a Python wheel in
+## a virtual environment and also to add it as a `systemd` service.
 
-function(cc_get_cpack_debian_grouping)
+function(cc_add_debian_control_script)
   set(_options)
   set(_singleargs
-    PREFIX         # CPackConfig variable prefix
-    SUFFIX         # CPackConfig variable suffix
-    GLUE           # Delimiter beween prefix/package/suffix
-    COMPONENT      # CPack component for when creating one package per component
-    GROUP          # CPack group for when creating one package per group
-    OUTPUT_VARIABLE # Variable in which to store the resulting CPackConfig variable name
+    COMPONENT                 # CPack component to which this script belongs
+    PHASE                     # One of: `preinst`, `postinst`, `prerm`, `postrm`
+    TEMPLATE                  # Input template file (normally ending in `.in`)
+    OUTPUT_FILE               # Script name within parts folder
   )
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  set(parts ${arg_PREFIX})
+  if(arg_COMPONENT AND arg_PHASE AND arg_TEMPLATE)
+    cc_cpack_get_debian_package_name(
+      COMPONENT "${arg_COMPONENT}"
+      OUTPUT_VARIABLE PACKAGE_NAME)
 
-  if(CPACK_DEB_COMPONENT_INSTALL)
-    if(arg_COMPONENT AND CPACK_COMPONENTS_GROUPING STREQUAL "IGNORE")
-      list(APPEND parts ${arg_COMPONENT})
-    elseif(arg_GROUP AND CPACK_COMPONENTS_GROUPING STREQUAL "ONE_PER_GROUP")
-      list(APPEND parts ${arg_GROUP})
+    cmake_path(APPEND DEBIAN_CONTROL_STAGING_DIR ${PACKAGE_NAME}
+      OUTPUT_VARIABLE staging_dir)
+
+    if(arg_OUTPUT_FILE)
+      set(script_name "${arg_OUTPUT_FILE}")
+    else()
+      cmake_path(GET arg_TEMPLATE STEM LAST_ONLY script_name)
+    endif()
+
+    file(MAKE_DIRECTORY "${staging_dir}")
+
+    cmake_path(APPEND staging_dir "${script_name}" OUTPUT_VARIABLE script_path)
+    cmake_path(APPEND DEBIAN_TEMPLATE_DIR "${arg_TEMPLATE}" OUTPUT_VARIABLE template_path)
+    configure_file("${template_path}" "${script_path}" @ONLY)
+
+    set(destination "share/${PACKAGE_NAME}/${arg_PHASE}.d")
+
+    install(PROGRAMS "${staging_dir}/${arg_OUTPUT_FILE}"
+      COMPONENT "${arg_COMPONENT}"
+      DESTINATION "${destination}")
+
+    set(control_var "controls_${PACKAGE_NAME}")
+    set(controls "$ENV{${control_var}}")
+    list(FIND controls "${arg_PHASE}" found_index)
+    if(found_index LESS 0)
+      list(APPEND controls "${arg_PHASE}")
+      set(ENV{${control_var}} "${controls}")
+
+      set(PHASE "${arg_PHASE}")
+      cmake_path(APPEND INSTALL_ROOT ${destination}
+        OUTPUT_VARIABLE PARTS_DIRECTORY)
+
+      cmake_path(APPEND staging_dir "${arg_PHASE}" OUTPUT_VARIABLE control_script)
+      configure_file("${DEBIAN_TEMPLATE_DIR}/run-hooks.in" "${control_script}" @ONLY)
+      cc_cpack_debian_config(PACKAGE_CONTROL_EXTRA "${control_script}"
+        COMPONENT "${arg_COMPONENT}"
+        APPEND)
     endif()
   endif()
-
-  list(APPEND parts ${arg_SUFFIX})
-  list(JOIN parts "${arg_GLUE}" variable)
-  set("${arg_OUTPUT_VARIABLE}" "${variable}" PARENT_SCOPE)
 endfunction()
+

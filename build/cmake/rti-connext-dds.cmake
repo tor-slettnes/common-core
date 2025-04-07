@@ -15,7 +15,7 @@ set(CONNEXTDDS_VERSION 6.1.2)
 set(CONNEXTDDS_DIR_BASE rti_connext_dds-${CONNEXTDDS_VERSION})
 
 ### Determine search path in which to look for the RTI Connext DDS install folder
-if($ENV{NDDSHOME})
+if(DEFINED ENV{NDDSHOME})
   set(CONNEXTDDS_SEARCH_PATH
     "$ENV{NDDSHOME}"
   )

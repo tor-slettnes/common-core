@@ -7,20 +7,26 @@
 
 set(TARGET "python_pyinstaller")
 
-get_target_property(TAG_DIR "python_venv" tag_dir)
-set(INSTALLER_TAG "${TAG_DIR}/pyinstaller")
+find_package(Python3
+  COMPONENTS Interpreter
+  REQUIRED
+)
+
+get_target_property(STAMP_DIR python_venv stamp_dir)
+
+set(INSTALL_STAMP  "${STAMP_DIR}/pyinstaller")
 
 add_custom_target("${TARGET}"
-  DEPENDS ${INSTALLER_TAG})
+  DEPENDS ${INSTALL_STAMP})
 
 add_custom_command(
-  OUTPUT ${INSTALLER_TAG}
+  OUTPUT ${INSTALL_STAMP}
   DEPENDS "python_venv"
-  COMMENT "Installing Python `PyInstaller` tool: ${PYTHON_VENV}/bin/pyinstaller"
+  COMMENT "Installing Python `PyInstaller` tool"
 
   COMMAND "${PYTHON_VENV}/bin/python"
   ARGS -m pip install --no-warn-script-location PyInstaller
 
   COMMAND ${CMAKE_COMMAND}
-  ARGS -E touch ${INSTALLER_TAG}
+  ARGS -E touch ${INSTALL_STAMP}
 )

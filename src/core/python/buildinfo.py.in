@@ -1,8 +1,6 @@
-#===============================================================================
-## @file build_info.py.in
-## @brief Build information template, populated by CMake
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+Build information, populated by CMake at build time.
+'''
 
 PROJECT_NAME            = "@CMAKE_PROJECT_NAME@"
 PROJECT_DESCRIPTION     = "@CMAKE_PROJECT_DESCRIPTION@"

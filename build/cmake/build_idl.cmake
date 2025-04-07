@@ -64,6 +64,7 @@ macro(cc_idl_generate_sources sources example_modules)
           -inputIdl ${CMAKE_CURRENT_SOURCE_DIR}/${basename}.idl
           # -unboundedSupport
           # -optimization 2
+          -verbosity 1
           -d ${CMAKE_CURRENT_BINARY_DIR}
           ${include_flags}
           ${cpp_flags}
@@ -90,6 +91,7 @@ macro(cc_idl_generate_sources sources example_modules)
           -dotnet modern
           -language "c#"
           -inputIdl ${CMAKE_CURRENT_SOURCE_DIR}/${basename}.idl
+          -verbosity 1
           -d ${CMAKE_CURRENT_BINARY_DIR}
           ${include_flags}
           ${cs_flags}
@@ -107,6 +109,7 @@ macro(cc_idl_generate_sources sources example_modules)
         COMMAND ${RTICODEGEN}
           -convertToXml
           -inputIdl ${CMAKE_CURRENT_SOURCE_DIR}/${basename}.idl
+          -verbosity 1
           -d ${CMAKE_CURRENT_BINARY_DIR}
           ${extra_flags}
           ${include_flags}

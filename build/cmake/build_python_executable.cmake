@@ -26,37 +26,28 @@ function(cc_add_python_executable TARGET)
     TYPE                # CMake install type (`BIN` or `SBIN`)
     INSTALL_COMPONENT   # CMake install component
     SPEC_TEMPLATE       # Use custom PyInstaller `.spec` template
-    VENV                # Python virtual environment in which to run PyInstaller
-    PYTHON_INTERPRETER  # Python interpreter to use (overrides VENV)
+    VENV_PATH           # Use existing named Python virtual environment
+    VENV_DEPENDS        # Use Python venv created by `cc_add_python_venv()`
+    REQUIREMENTS_FILE   # Override default requirements if creating new VENV
   )
   set(_multiargs
-    BUILD_DEPS                  # CMake target dependencies for build environment
-    PYTHON_DEPS                 # CMake Python target dependencies to bundle
-    DATA_DEPS                   # Other CMake target depenencies to bundle (settings...)
-    RUNTIME_HOOKS               # Scripts to launch before main executable
-    HIDDEN_IMPORTS              # Add specific imports not discovered py PyInstaller
-    COLLECT_PACKAGES            # Additional Python packages (modules, data, binaries)
-    COLLECT_SUBMODULES          # Additional pure Python modules to import
-    EXTRA_DATA_MODULES          # Additional data-only modules to import
-    PYINSTALLER_EXTRA_ARGS      # Extra args passed on directly to PyInstaller
+    PYTHON_DEPS            # CMake Python target dependencies to bundle
+    DATA_DEPS              # Other CMake target depenencies to bundle
+    RUNTIME_HOOKS          # Scripts to launch before main executable
+    HIDDEN_IMPORTS         # Add imports not otherwise discovered py PyInstaller
+    COLLECT_PACKAGES       # Additional Python packages (modules, binaries, ...)
+    COLLECT_SUBMODULES     # Additional pure Python modules to import
+    EXTRA_DATA_MODULES     # Additional data-only modules to import
+    PYINSTALLER_EXTRA_ARGS # Extra args passed on directly to PyInstaller
   )
 
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
-  cc_find_python(
-    ACTION "cc_add_python_executable(${TARGET})"
-    PYTHON_INTERPRETER "${arg_PYTHON_INTERPRETER}"
-    VENV "${arg_VENV}"
-    ALLOW_DEFAULT_VENV
-    OUTPUT_VARIABLE python)
-
-  if(NOT arg_SCRIPT)
-    message(FATAL_ERROR "cc_add_python_executable{${TARGET}) requires SCRIPT")
-  endif()
-
-  if(NOT arg_PYTHON_DEPS)
-    message(FATAL_ERROR "cc_add_python_executable(${TARGET}) requires PYTHON_DEPS")
-  endif()
+  foreach(required_arg SCRIPT PYTHON_DEPS)
+    if(NOT arg_${required_arg})
+      message(FATAL_ERROR "cc_add_python_executable{${TARGET}) requires ${required_arg}")
+    endif()
+  endforeach()
 
   ### Determine name of executable from PROGRAM or else TARGET
   cc_get_value_or_default(program
@@ -83,25 +74,65 @@ function(cc_add_python_executable TARGET)
   if(arg_ALL OR WITH_PYTHON_EXECUTABLES)
     set(include_in_all "ALL")
   endif()
-  add_custom_target("${TARGET}" ${include_in_all}
+  add_custom_target(${TARGET} ${include_in_all}
     DEPENDS "${program_path}")
-  add_dependencies("${PYTHON_EXECUTABLES_TARGET}" "${TARGET}")
+  add_dependencies(${PYTHON_EXECUTABLES_TARGET} ${TARGET})
+
+  #-----------------------------------------------------------------------------
+  # PyInstaller needs a Python environment.  If we were given one, use that;
+  # otherwise, add a new virtual environment with specified requirements.
+
+  if(arg_VENV_PATH)
+    cmake_path(ABSOLUTE_PATH arg_VENV_PATH
+      BASE_DIRECTORY "${PYTHON_VENV}"
+      OUTPUT_VARIABLE venv)
+
+  elseif(arg_VENV_DEPENDS)
+    add_dependencies(${TARGET} ${arg_VENV_DEPENDS})
+    get_target_property(venv ${arg_VENV_DEPENDS} venv_path)
+
+    if(NOT venv)
+      message(SEND_ERROR "Target cc_add_python_executable(${TARGET}) "
+        "VENV dependency '${arg_VENV_DEPENDS}' does not look like a build "
+        "target added by `cc_add_python_venv()`, because it is missing "
+        "the `venv_path` property.")
+    endif()
+
+  else()
+    cmake_path(APPEND PYTHON_VENV "${TARGET}"
+      OUTPUT_VARIABLE venv)
+
+    cc_add_python_venv(${TARGET}_venv
+      VENV_PATH "${venv}"
+      REQUIREMENTS_FILE ${arg_REQUIREMENTS_FILE})
+
+    add_dependencies(${TARGET} ${TARGET}_venv)
+  endif()
+
+  cmake_path(APPEND venv "bin" "python"      OUTPUT_VARIABLE python)
+  cmake_path(APPEND venv "bin" "pyinstaller" OUTPUT_VARIABLE pyinstaller)
+
+  message(DEBUG
+    "cc_add_python_executable(${TARGET}): "
+    "venv=${venv}, python=${python}, pyinstaller=${pyinstaller}.")
+
+  add_custom_command(
+    OUTPUT "${pyinstaller}"
+    COMMAND "${python}" -m pip install --quiet --no-warn-script-location PyInstaller
+    COMMENT "Retrieving and installing PyInstaller tool for target ${TARGET}"
+  )
+
+  #-----------------------------------------------------------------------------
+  # Collect per-target staged modules from the specified target dependencies
+  # into a consolidated staging area.  This is needed because `PyInstaller`
+  # cannot handle multiple source paths with overlappiing directory paths
+  # (namespaces).
 
   if(arg_PYTHON_DEPS OR arg_DATA_DEPS)
     add_dependencies("${TARGET}"
       ${arg_PYTHON_DEPS}
       ${arg_DATA_DEPS})
   endif()
-
-  cc_get_value_or_default(
-    BUILD_DEPS
-    arg_BUILD_DEPS
-    "python_pyinstaller")
-
-  ### Collect per-target staged modules from the specified target dependencies
-  ### into a consolidated staging area.  This is needed because `PyInstaller`
-  ### cannot handle multiple source paths with overlappiing
-  ### directories/namespaces.
 
   cc_get_target_property_recursively(
     PROPERTY staging_dir
@@ -116,17 +147,18 @@ function(cc_add_python_executable TARGET)
     OUTPUT_VARIABLE sources
     REMOVE_DUPLICATES)
 
+
   message(DEBUG
     "Building target ${TARGET} executable ${program_path} with deps ${sources}")
 
   add_custom_command(
     OUTPUT "${program_path}"
-    DEPENDS ${BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
+    DEPENDS "${pyinstaller}" ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_directory ${dep_staging_dirs} "${staging_dir}"
     COMMAND_EXPAND_LISTS
     VERBATIM
-    COMMENT "Building PyInstaller executable: ${program}"
+    COMMENT "Building executable with PyInstaller: ${program}"
     WORKING_DIRECTORY "${staging_dir}"
   )
 

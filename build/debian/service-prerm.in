@@ -1,7 +1,5 @@
 #!/bin/sh -e
 
-echo "Running $0 $@"
-
 case "$1" in
     upgrade)
     ;;
@@ -9,9 +7,9 @@ case "$1" in
     remove)
         if type systemctl >/dev/null 2>&1
         then
-            echo "Removing system service: @SERVICE_UNITS@"
-            systemctl disable @SERVICE_UNITS@ || true
-            systemctl stop @SERVICE_UNITS@ || true
+            echo "Removing system service: @SERVICE_UNIT@"
+            systemctl disable @SERVICE_UNIT@ || true
+            systemctl stop @SERVICE_UNIT@ || true
         else
             echo "SystemD is not available; skipping service integration"
         fi

@@ -14,6 +14,7 @@ set(SOURCES
   status.proto
   signal.proto
   datetime.proto
+  quantities.proto
   request_reply.proto
   version.proto
 )

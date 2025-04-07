@@ -1,0 +1,39 @@
+#!/bin/sh -e
+
+venv_path="@VENV_PATH@"
+venv_root="${venv_path%/*}"
+symlinks="@SYMLINKS@"
+symlinks_source=${venv_path}/bin
+symlinks_target="@SYMLINKS_TARGET_DIR@"
+
+delete_venv()
+{
+    rm -rf "${venv_path}"
+    rmdir --ignore-fail-on-non-empty --parents "${venv_root}"
+}
+
+remove_symlinks()
+{
+    if [ -n "${symlinks_target}" ]
+    then
+        for symlink in ${symlinks}
+        do
+            if [ "$(readlink ${symlinks_target}/${symlink})" = "${symlinks_source}/${symlink}" ]
+            then
+                rm -f "${symlinks_target}/${symlink}"
+            fi
+        done
+    fi
+}
+
+
+case "$1" in
+    upgrade)
+        remove_symlinks
+        ;;
+
+    remove)
+        remove_symlinks
+        delete_venv
+        ;;
+esac

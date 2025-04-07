@@ -73,7 +73,7 @@ function(cc_add_proto TARGET)
       "${arg_KEWORDS_MISSING_VALUES}" # MISSING_LIST
     )
 
-    cc_get_namespace(namespae
+    cc_get_namespace(namespace
       "${arg_PYTHON_NAMESPACE}"
       "${namespace_component}"
       "${arg_KEYWORDS_MISSING_VALUES}"
@@ -195,7 +195,7 @@ function(cc_add_proto_python TARGET)
     "${PYTHON_STAGING_ROOT}/${TARGET}")
 
   cc_get_namespace_dir(
-    NAMESPACE "${namespace}"
+    NAMESPACE "${arg_NAMESPACE}"
     ROOT_DIR "${staging_dir}"
     OUTPUT_VARIABLE gen_dir)
 
@@ -238,7 +238,7 @@ function(cc_add_proto_python TARGET)
   ###     be explicitly imported by `cc_add_python_executable()`.
   set_target_properties("${TARGET}" PROPERTIES
     staging_dir "${staging_dir}"
-    collect_submodules "${namespace}"
+    collect_submodules "${arg_NAMESPACE}"
   )
 
   ### Install generated Python modules if requested

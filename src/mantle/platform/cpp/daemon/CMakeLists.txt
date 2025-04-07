@@ -43,7 +43,6 @@ if(ENABLE_SERVICES)
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "Platform server: System configuration, Networking, File access, Upgrade"
     INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
-    INSTALL_GROUP "${INSTALL_GROUP}"
     ENABLE
   )
 endif()

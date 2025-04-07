@@ -53,7 +53,6 @@ if(SERVER_INSTALL_COMPONENT)
       PROGRAM "sbin/${TARGET}"
       DESCRIPTION "Switchboard service"
       INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
-      INSTALL_GROUP "${INSTALL_GROUP}"
       ENABLE
     )
   endif()

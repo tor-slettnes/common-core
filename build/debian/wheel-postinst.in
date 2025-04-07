@@ -1,0 +1,44 @@
+#!/bin/sh -e
+
+venv_path="@VENV_PATH@"
+wheels_dir="@WHEELS_INSTALL_DIR@"
+wheel_name="@WHEEL_NAME@"
+symlinks="@SYMLINKS@"
+symlinks_source=${venv_path}/bin
+symlinks_target="@SYMLINKS_TARGET_DIR@"
+allow_downloads="@ALLOW_DOWNLOADS@"
+
+no_index=""
+if ! ${allow_downloads:-false}
+then
+   no_index="--no-index"
+fi
+
+create_venv()
+{
+    mkdir -p "${venv_path}"
+    virtualenv --quiet "${venv_path}"
+    "${venv_path}/bin/pip" install --quiet ${no_index} --find-links "${wheels_dir}" "${wheel_name}"
+}
+
+add_symlinks()
+{
+    if [ -n "${symlinks_target}" ]
+    then
+        for symlink in ${symlinks}
+        do
+            if [ -e "${symlinks_source}/${symlink}" ]
+            then
+                ln -nsft "${symlinks_target}" "${symlinks_source}/${symlink}"
+            fi
+        done
+    fi
+}
+
+
+case "$1" in
+    configure)
+        create_venv
+        add_symlinks
+        ;;
+esac

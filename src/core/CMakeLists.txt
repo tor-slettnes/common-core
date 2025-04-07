@@ -9,8 +9,12 @@ if(BUILD_SHARED)
   set(INSTALL_GROUP "core")
 
   set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
+
   if(BUILD_PYTHON)
     set(PYTHON_INSTALL_COMPONENT "${INSTALL_GROUP}-python")
+    if(WITH_PYTHON_REQUIREMENTS)
+      set(PYTHON_REQUIREMENTS_INSTALL_COMPONENT "${INSTALL_GROUP}-python-requirements")
+    endif()
   endif()
 endif()
 
@@ -45,6 +49,12 @@ cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
   SUMMARY "Common Core - Shared Python modules"
   DESCRIPTION "Common Core application framework for Python."
   DEPENDS ${SETTINGS_INSTALL_COMPONENT}
+)
+
+cc_cpack_add_debian_component("${PYTHON_REQUIREMENTS_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  SUMMARY "Common Core - Required 3rd party Python distributions"
+  DESCRIPTION "Required 3rd party Python distributions for shared Python modules."
 )
 
 cc_cpack_add_group("${INSTALL_GROUP}"

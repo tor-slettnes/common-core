@@ -1,14 +1,12 @@
 #!/bin/sh -e
 
-echo "Running $0 $@"
-
 case "$1" in
     configure)
         if type systemctl >/dev/null 2>&1
         then
-            echo "Adding system service: @SERVICE_UNITS@"
-            systemctl enable @SERVICE_UNIT_PATHS@
-            systemctl start @SERVICE_UNITS@
+            echo "Adding system service: @SERVICE_UNIT@"
+            systemctl enable @SERVICE_UNIT_PATH@
+            systemctl start @SERVICE_UNIT@
         else
             echo "SystemD is not available; skipping service integration"
         fi

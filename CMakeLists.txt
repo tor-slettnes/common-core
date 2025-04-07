@@ -27,5 +27,4 @@ project("${PROJECT}"
 include(${CMAKE_CURRENT_LIST_DIR}/build/cmake/build_project.cmake)
 
 ### Pull in CMake files to build the actual sources
-add_subdirectory(build/python)
 add_subdirectory(src)
