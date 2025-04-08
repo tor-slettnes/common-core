@@ -90,14 +90,15 @@ function(cc_add_python_venv TARGET)
     OUTPUT_VARIABLE cache_dirs
   )
 
-  if(cache_dirs)
+
+  foreach(cache_dir ${cache_dirs})
     add_custom_command(
       OUTPUT "${target_stamp}" APPEND
-      COMMAND find "${cache_dirs}"
+      COMMAND find "${cache_dir}"
       -name *.whl
       -exec "${venv_python}" -m pip install --quiet --no-index --no-warn-script-location {} +
     )
-  endif()
+  endforeach()
 
   add_custom_command(
     OUTPUT "${target_stamp}" APPEND
