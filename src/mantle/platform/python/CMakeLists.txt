@@ -18,7 +18,7 @@ cc_add_python("${TARGET}"
 )
 
 if(BUILD_PLATFORM)
-  cc_add_python_wheel("platform_clients"
+  cc_add_python_wheel("platform-clients"
     PYTHON_DEPS ${TARGET}
     DESCRIPTION "Python client modules for Platform services"
     INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"

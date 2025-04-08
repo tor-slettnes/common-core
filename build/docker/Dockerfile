@@ -35,6 +35,7 @@ RUN apt-get install -y \
     python3-grpcio          \
     python3-hatchling       \
     python3-kafka           \
+    python3-pip             \
     python3-protobuf        \
     python3-pytest          \
     python3-venv            \

@@ -76,7 +76,7 @@ function(cc_add_python_wheel TARGET)
   cc_get_value_or_default(
     PACKAGE_NAME
     arg_PACKAGE_NAME
-    "${package_name_prefix}_${TARGET}")
+    "${package_name_prefix}-${TARGET}")
 
   cc_get_value_or_default(
     DESCRIPTION
@@ -194,6 +194,9 @@ function(cc_add_python_wheel TARGET)
   add_dependencies(${TARGET}
     ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${arg_DISTCACHE_DEPS}
   )
+
+  ## Add this target as a dependency for `python_wheels`
+  add_dependencies(${PYTHON_WHEELS_TARGET} ${TARGET})
 
   #-----------------------------------------------------------------------------
   # Create Python wheel
