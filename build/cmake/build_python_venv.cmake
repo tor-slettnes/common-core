@@ -50,13 +50,8 @@ function(cc_add_python_venv TARGET)
   # Create the requested build/dependency target.
 
   cc_get_optional_keyword(ALL arg_ALL)
-
-  set(stamps ${venv_stamp})
-  if(arg_DISTCACHE_DEPS)
-    list(APPEND stamps ${target_stamp})
-  endif()
-
-  add_custom_target(${TARGET} ${ALL} DEPENDS ${stamps})
+  cc_get_ternary(main_dependency arg_DISTCACHE_DEPS "${target_stamp}" "${venv_stamp}")
+  add_custom_target(${TARGET} ${ALL} DEPENDS ${main_dependency})
   set_target_properties(${TARGET} PROPERTIES venv_path "${venv_path}")
 
   if(arg_DISTCACHE_DEPS)
@@ -75,7 +70,6 @@ function(cc_add_python_venv TARGET)
     COMMAND "${Python3_EXECUTABLE}" -m virtualenv --quiet "${venv_path}"
     COMMAND "${CMAKE_COMMAND}" -E make_directory "${stamp_dir}"
     COMMAND "${CMAKE_COMMAND}" -E touch "${venv_stamp}"
-
   )
 
   #-------------------------------------------------------------------------------
@@ -84,21 +78,30 @@ function(cc_add_python_venv TARGET)
 
   add_custom_command(
     OUTPUT "${target_stamp}"
+    DEPENDS "${venv_stamp}"
     COMMENT "Populating Python Virtual Environment: ${venv_path}"
-    VERBATIM)
+    VERBATIM
+    COMMAND_EXPAND_LISTS
+  )
 
-  foreach(dep ${arg_DISTCACHE_DEPENDS})
-    get_target_property(cache_dir "${dep}" python_distributions_cache_dir)
-    if(cache_dir)
-      add_custom_command(
-        OUTPUT "${target_stamp}" APPEND
-        COMMAND "${venv_python}" -m pip install --no-warn-script-location "${cache_dir}/"
-      )
-    endif()
-  endforeach()
+  cc_get_target_property_recursively(
+    TARGETS ${arg_DISTCACHE_DEPS}
+    PROPERTY python_distributions_cache_dir
+    OUTPUT_VARIABLE cache_dirs
+  )
+
+  if(cache_dirs)
+    add_custom_command(
+      OUTPUT "${target_stamp}" APPEND
+      COMMAND find "${cache_dirs}"
+      -name *.whl
+      -exec "${venv_python}" -m pip install --quiet --no-index --no-warn-script-location {} +
+    )
+  endif()
 
   add_custom_command(
     OUTPUT "${target_stamp}" APPEND
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "${stamp_dir}"
     COMMAND "${CMAKE_COMMAND}" -E touch "${target_stamp}"
   )
 
@@ -123,6 +126,7 @@ function(cc_add_python_distributions_cache TARGET)
   )
   set(_multiargs
     DISTRIBUTIONS                # Additional Python distribution names
+    DISTCACHE_DEPS               # Distribution cache targets on which we depend
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -136,7 +140,7 @@ function(cc_add_python_distributions_cache TARGET)
   cmake_path(ABSOLUTE_PATH staging_dir
     BASE_DIRECTORY "${PYTHON_STAGING_ROOT}")
 
-  cmake_path(APPEND staging_dir ".stamp"
+  cmake_path(APPEND staging_dir ".${TARGET}-stamp"
     OUTPUT_VARIABLE staging_stamp)
 
   cc_get_optional_keyword(ALL arg_ALL)
@@ -144,46 +148,58 @@ function(cc_add_python_distributions_cache TARGET)
     DEPENDS "${staging_stamp}"
   )
 
+  if(arg_DISTCACHE_DEPS)
+    add_dependencies(${TARGET} ${arg_DISTCACHE_DEPS})
+  endif()
+
+
   #-----------------------------------------------------------------------------
   # Build distributions list and invoke `pip wheel`.
 
-  cc_get_value_or_default(requirements_file
-    arg_REQUIREMENTS_FILE
-    "${PYTHON_PIP_REQUIREMENTS_FILE}")
-  file(STRINGS "${requirements_file}" distributions)
+  unset(distributions)
+  if(arg_REQUIREMENTS_FILE)
+    file(STRINGS "${arg_REQUIREMENTS_FILE}" distributions)
+  endif()
   list(APPEND distributions ${arg_DISTRIBUTIONS})
 
-  add_custom_command(
-    OUTPUT "${staging_stamp}"
-    DEPENDS ${requirements_file}
-    COMMENT "Creating Python distributions cache: ${TARGET}"
+  if(distributions)
+    add_custom_command(
+      OUTPUT "${staging_stamp}"
+      DEPENDS ${arg_REQUIREMENTS_FILE}
+      COMMENT "Creating Python distributions cache: ${TARGET}"
 
-    COMMAND "${CMAKE_COMMAND}" -E make_directory "${staging_dir}"
-    COMMAND "${python}" -m pip wheel --quiet --wheel-dir "${staging_dir}" ${distributions}
-    COMMAND "${CMAKE_COMMAND}" -E touch "${staging_stamp}"
-  )
-
-  #-----------------------------------------------------------------------------
-  # Set a couple of target properties used by downstream dependents
-
-  set_target_properties(${TARGET} PROPERTIES
-    python_distributions "${distributions}"
-    python_distributions_cache_dir "${staging_dir}"
-  )
-
-  if(WITH_PYTHON_REQUIREMENTS AND arg_INSTALL_COMPONENT)
-    cc_get_value_or_default(
-      wheels_install_dir
-      arg_INSTALL_DIR
-      "${PYTHON_WHEELS_INSTALL_DIR}")
-
-    install(
-      DIRECTORY "${staging_dir}/"
-      DESTINATION "${wheels_install_dir}"
-      COMPONENT "${arg_INSTALL_COMPONENT}"
-      FILES_MATCHING PATTERN "*.whl"
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${staging_dir}"
+      COMMAND "${python}" -m pip wheel --quiet --wheel-dir "${staging_dir}" ${distributions}
+      COMMAND "${CMAKE_COMMAND}" -E touch "${staging_stamp}"
     )
+
+    #-----------------------------------------------------------------------------
+    # Set a couple of target properties used by downstream dependents
+
+    set_target_properties(${TARGET} PROPERTIES
+      python_distributions "${distributions}"
+      python_distributions_cache_dir "${staging_dir}"
+    )
+
+    if(WITH_PYTHON_REQUIREMENTS AND arg_INSTALL_COMPONENT)
+      cc_get_value_or_default(
+        wheels_install_dir
+        arg_INSTALL_DIR
+        "${PYTHON_WHEELS_INSTALL_DIR}")
+
+      install(
+        DIRECTORY "${staging_dir}/"
+        DESTINATION "${wheels_install_dir}"
+        COMPONENT "${arg_INSTALL_COMPONENT}"
+        FILES_MATCHING PATTERN "*.whl"
+      )
+    endif()
+
+  else()
+    message(SEND_ERROR "cc_add_python_distribution_cache(${TARGET}) needs "
+      "REQUIREMENTS_FILE, DISTRIBUTIONS, or both")
   endif()
+
 endfunction()
 
 

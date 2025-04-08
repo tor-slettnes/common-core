@@ -211,7 +211,7 @@ function(cc_add_python_wheel TARGET)
     COMMAND ${python} -m hatchling build -d "${wheel_dir}" > /dev/null
     # COMMAND ${python}
     # ARGS -m build --wheel --outdir "${wheel_dir}" "."
-    COMMENT "Building Python Wheel: ${wheel_name}"
+    COMMENT "Building Python Wheel: ${wheel_file}"
     COMMAND_EXPAND_LISTS
     VERBATIM
     WORKING_DIRECTORY "${gen_dir}"

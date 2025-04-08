@@ -74,7 +74,7 @@ set(PYTHON_PIP_CORE_REQUIREMENTS_FILE
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules")
 
-set(PYTHON_WHEELS_INSTALL_DIR "share/${ORGANIZATION}/python-wheels"
+set(PYTHON_WHEELS_INSTALL_DIR "${DATA_DIR}/python-wheels"
   CACHE STRING "Folder on target in which to place Python wheels")
 
 set(PYTHON_VENV_ROOT "/var/lib/${ORGANIZATION}/venv"
@@ -126,18 +126,42 @@ set(CPACK_PACKAGE_CONTACT "Tor Slettnes <tor@slett.net>"
 #-------------------------------------------------------------------------------
 # Miscellaneous build options
 
+include(CMakeDependentOption)
+
 # Build tests
-option(BUILD_TESTING     "Build testing modules" ON)
+option(BUILD_TESTING
+  "Build testing modules"
+  ON)
 
 # Enable SystemD service integration
-option(ENABLE_SERVICES   "Enable SystemD service units" ON)
+option(ENABLE_SERVICES
+  "Enable SystemD service units"
+  ON)
 
 # What applications to build/install.
-option(BUILD_SHARED      "Install shared artifacts (e.g. common settings)" ON)
-option(BUILD_DEMO        "Build/install DEMO application example" ${BUILD_SHARED})
-option(BUILD_PLATFORM    "Build/install Platform services" ${BUILD_SHARED})
-option(BUILD_MULTILOGGER "Build/install MultiLogger service" ${BUILD_SHARED})
-option(BUILD_SWITCHBOARD "Build/install Switchboard application" ${BUILD_SHARED})
+option(BUILD_SHARED
+  "Install shared artifacts (e.g. common settings)"
+  ON)
+
+cmake_dependent_option(BUILD_DEMO
+  "Build/install DEMO application example"
+  ON "BUILD_SHARED"
+  OFF)
+
+cmake_dependent_option(BUILD_PLATFORM
+  "Build/install Platform services"
+  ON "BUILD_SHARED"
+  OFF)
+
+cmake_dependent_option(BUILD_MULTILOGGER
+  "Build/install MultiLogger service"
+  ON "BUILD_SHARED"
+  OFF)
+
+cmake_dependent_option(BUILD_SWITCHBOARD
+  "Build/install Switchboard application"
+  ON "BUILD_SHARED"
+  OFF)
 
 #-------------------------------------------------------------------------------
 # C++ options
@@ -155,8 +179,16 @@ option(BUILD_GRPC        "Build support for gRPC Remote Procedure Calls" ON)
 option(BUILD_ZMQ         "Build support for ZeroMQ" ON)
 option(BUILD_HTTP        "Build support for HTTP requests, incl. REST API" ON)
 option(BUILD_DDS         "Build support for Distributed Data Service (DDS)" OFF)
-option(BUILD_RTI_DDS     "Build support for RTI ConnextDDS" ${BUILD_DDS})
-option(BUILD_RTI_LOGGER  "Build support for RTI Distributed Logger" ${BUILD_RTI_DDS})
+
+cmake_dependent_option(BUILD_RTI_DDS
+  "Build support for RTI ConnextDDS"
+  ON "BUILD_DDS"
+  OFF)
+
+cmake_dependent_option(BUILD_RTI_LOGGER
+  "Build support for RTI Distributed Logger"
+  ON "BUILD_RTI_DDS"
+  OFF)
 
 # Object serialization
 option(BUILD_SQLITE3     "Build support for SQLite3 DB" ON)
