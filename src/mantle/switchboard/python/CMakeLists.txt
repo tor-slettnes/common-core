@@ -17,7 +17,7 @@ cc_add_python("${TARGET}"
 )
 
 if(BUILD_SWITCHBOARD)
-  cc_add_python_wheel("switchboard-client"
+  cc_add_python_wheel("switchboard_client"
     PYTHON_DEPS "${TARGET}"
     DESCRIPTION "Python client package for Switchboard service"
     INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"

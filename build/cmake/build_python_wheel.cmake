@@ -33,7 +33,7 @@ function(cc_add_python_wheel TARGET)
     PACKAGE_NAME        # Set explicit wheel name
     PACKAGE_NAME_PREFIX # Alternatively, use this (or default prefix) plus TARGET
     DESCRIPTION         # One-line description field
-    VERSION             # Explicit version, if not CMAKE_PROJECT_VERSION
+    VERSION             # Explicit version, if not "${PROJECT_VERSION}.${BUILD_NUMBER}"
     CONTACT             # Package contact (Real Name <email@addr.ess>)
     URL                 # Package publisher URL
     VENV                # Use a Python VENV to generate package (optional)
@@ -76,7 +76,7 @@ function(cc_add_python_wheel TARGET)
   cc_get_value_or_default(
     PACKAGE_NAME
     arg_PACKAGE_NAME
-    "${package_name_prefix}-${TARGET}")
+    "${package_name_prefix}_${TARGET}")
 
   cc_get_value_or_default(
     DESCRIPTION
@@ -86,7 +86,7 @@ function(cc_add_python_wheel TARGET)
   cc_get_value_or_default(
     VERSION
     arg_VERSION
-    "${PROJECT_VERSION}")
+    "${PROJECT_VERSION}.${BUILD_NUMBER}")
 
   cc_get_value_or_default(
     URL

@@ -208,4 +208,4 @@ option(BUILD_PYTHON_VENV        "Build and install Python Virtual Environment (`
 option(WITH_PYTHON_MODULES      "Install Python source modules" ON)
 option(WITH_PYTHON_EXECUTABLES  "Build and add Python executables with PyInstaller" ON)
 option(WITH_PYTHON_WHEELS       "Build and add Python distribution files (`.whl`)" ON)
-option(WITH_PYTHON_REQUIREMENTS "Fetch and add required upstream distribution files" ${WITH_PYTHON_WHEELS})
+option(WITH_PYTHON_REQUIREMENTS "Fetch and add required upstream distribution files" ON)

@@ -176,7 +176,7 @@ function(cc_add_python TARGET)
     install(
       DIRECTORY "${staging_dir}/"
       DESTINATION "${install_dir}"
-      COMPONENT "${arg_INSTALL_COMPONENT}"
+      COMPONENT "${install_component}"
     )
   endif()
 endfunction()
