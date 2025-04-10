@@ -59,7 +59,7 @@ function(cc_add_python TARGET)
   ###  * Consolidated and staged to a common folder by `cc_add_python_executable()`
   ###    (because PyInstaller does not handle multiple source locations with
   ###    overlapping module namespaces / directory structures)
-  ###  * Installed, if the option `WITH_PYTHON_MODDULES` is enabled
+  ###  * Installed, if the option `WITH_PYTHON_MODULES` is enabled
 
   ### Specify root folder for staging python modules for this target
   if(arg_STAGING_DIR)

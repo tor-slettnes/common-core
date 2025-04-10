@@ -30,8 +30,9 @@ function(cc_add_python_wheel TARGET)
     ALL                 # Add wheel to the default default build target
   )
   set(_singleargs
-    PACKAGE_NAME        # Set explicit wheel name
-    PACKAGE_NAME_PREFIX # Alternatively, use this (or default prefix) plus TARGET
+    PACKAGE_NAME_PREFIX # Override default prefix
+    PACKAGE_NAME_MAIN   # Set package name (following prefix), otherwise TARGET
+    PACKAGE_NAME        # Override entire package name, otherwise PREFIX_MAIN
     DESCRIPTION         # One-line description field
     VERSION             # Explicit version, if not "${PROJECT_VERSION}.${BUILD_NUMBER}"
     CONTACT             # Package contact (Real Name <email@addr.ess>)
@@ -71,12 +72,17 @@ function(cc_add_python_wheel TARGET)
   cc_get_value_or_default(
     package_name_prefix
     arg_PACKAGE_NAME_PREFIX
-    "${PACKAGE_NAME_PREFIX}")
+    "${CPACK_PACKAGE_NAME}")
+
+  cc_get_value_or_default(
+    package_name_main
+    arg_PACKAGE_NAME_MAIN
+    "${TARGET}")
 
   cc_get_value_or_default(
     PACKAGE_NAME
     arg_PACKAGE_NAME
-    "${package_name_prefix}_${TARGET}")
+    "${package_name_prefix}_${package_name_main}")
 
   cc_get_value_or_default(
     DESCRIPTION

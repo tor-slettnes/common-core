@@ -106,16 +106,8 @@ option(DEB_SPLIT_BY_GROUP
   "Create one installation package per component group"
   FALSE)
 
-if(PACKAGE_NAME_PREFIX)
-  set(force FORCE)
-else()
-  set(force)
-  set(PACKAGE_NAME_PREFIX "cc")
-endif()
-
-set(CPACK_PACKAGE_NAME ${PACKAGE_NAME_PREFIX}
-  CACHE STRING "Base name for installable packages. Component or group name may be appended to this"
-  ${force})
+set(CPACK_PACKAGE_NAME "cc"
+  CACHE STRING "Base name for installable packages. Component or group name may be appended to this")
 
 set(CPACK_PACKAGE_VENDOR "Common Core Authors"
   CACHE STRING "Name of package vendor")

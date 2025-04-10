@@ -27,7 +27,8 @@ if(BUILD_DEMO)
     SCRIPTS demo-client=${PYTHON_NAMESPACE}.demo.grpc.client:main
   )
 
-  cc_add_python_executable("demo_grpc_server_py"
+  cc_add_python_executable("demo-grpc-server"
+    PROGRAM "demo-grpc-server-py"
     PYTHON_DEPS ${TARGET}
     VENV_DEPENDS "core-venv"
     SCRIPT "demo/grpc/server.py"
@@ -37,7 +38,8 @@ if(BUILD_DEMO)
     USE_SPEC
   )
 
-  cc_add_python_executable("demo_zmq_server_py"
+  cc_add_python_executable("demo-zmq-server"
+    PROGRAM "demo-zmq-server-py"
     PYTHON_DEPS ${TARGET}
     VENV_DEPENDS "core-venv"
     SCRIPT "demo/zmq/server.py"
