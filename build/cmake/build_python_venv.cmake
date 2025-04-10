@@ -52,7 +52,11 @@ function(cc_add_python_venv TARGET)
   cc_get_optional_keyword(ALL arg_ALL)
   cc_get_ternary(main_dependency arg_DISTCACHE_DEPS "${target_stamp}" "${venv_stamp}")
   add_custom_target(${TARGET} ${ALL} DEPENDS ${main_dependency})
-  set_target_properties(${TARGET} PROPERTIES venv_path "${venv_path}")
+  set_target_properties(${TARGET} PROPERTIES
+    venv_path "${venv_path}"
+    venv_python "${venv_python}"
+    stamp_dir "${stamp_dir}"
+  )
 
   if(arg_DISTCACHE_DEPS)
     add_dependencies(${TARGET} ${arg_DISTCACHE_DEPS})

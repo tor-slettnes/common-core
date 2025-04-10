@@ -34,12 +34,13 @@ function(cc_add_python_wheel TARGET)
     PACKAGE_NAME_MAIN   # Set package name (following prefix), otherwise TARGET
     PACKAGE_NAME        # Override entire package name, otherwise PREFIX_MAIN
     DESCRIPTION         # One-line description field
+    PYPROJECT_TEMPLATE  # `pyproject.toml` template file
+    REQUIREMENTS_FILE   # Custom Python package requirements file (for `pip install`)
     VERSION             # Explicit version, if not "${PROJECT_VERSION}.${BUILD_NUMBER}"
     CONTACT             # Package contact (Real Name <email@addr.ess>)
     URL                 # Package publisher URL
-    VENV                # Use a Python VENV to generate package (optional)
-    PYPROJECT_TEMPLATE  # `pyproject.toml` template file
-    REQUIREMENTS_FILE   # Custom Python package requirements file (for `pip install`)
+    BUILD_VENV          # Use a Python VENV to generate package (optional)
+    LOCAL_VENV_TARGET   # Install wheel into a local Python VENV by build target
     INSTALL_COMPONENT   # CPack component into which this wheel is added
     INSTALL_DIR         # Override default installation folder
     INSTALL_VENV        # Add Debian post-install hook to install wheel into a `venv`
@@ -57,7 +58,7 @@ function(cc_add_python_wheel TARGET)
 
   cc_find_python(
     ACTION "cc_add_python_wheel(${TARGET})"
-    VENV "${arg_VENV}"
+    VENV "${arg_BUILD_VENV}"
     ALLOW_SYSTEM
     OUTPUT_VARIABLE python)
 
@@ -135,6 +136,7 @@ function(cc_add_python_wheel TARGET)
   cc_join_quoted(requirements_list
     OUTPUT_VARIABLE DEPENDENCIES)
 
+
   #--------------------------------------------------------------------------
   # Define output directories for `pyproject.toml` and the resulting wheel
 
@@ -184,6 +186,8 @@ function(cc_add_python_wheel TARGET)
     "${pyproject_template}"
     "${gen_dir}/pyproject.toml")
 
+
+
   #-----------------------------------------------------------------------------
   # Create TARGET with dependencies, possibly included in the `ALL` target.
 
@@ -191,14 +195,15 @@ function(cc_add_python_wheel TARGET)
     set(include_in_all "ALL")
   endif()
 
-  set(target_deps "${wheel_path}")
-
   add_custom_target(${TARGET} ${include_in_all}
-    DEPENDS ${target_deps}
+    DEPENDS ${wheel_path}
   )
 
   add_dependencies(${TARGET}
-    ${arg_BUILD_DEPS} ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${arg_DISTCACHE_DEPS}
+    ${arg_BUILD_DEPS}
+    ${arg_PYTHON_DEPS}
+    ${arg_DATA_DEPS}
+    ${arg_DISTCACHE_DEPS}
   )
 
   ## Add this target as a dependency for `python_wheels`
@@ -229,7 +234,6 @@ function(cc_add_python_wheel TARGET)
   #-----------------------------------------------------------------------------
   # Install/package resulting executable
 
-
   if(WITH_PYTHON_WHEELS AND arg_INSTALL_COMPONENT)
     cc_get_value_or_default(
       wheels_install_dir
@@ -253,6 +257,36 @@ function(cc_add_python_wheel TARGET)
       )
     endif()
   endif()
+
+
+  #-----------------------------------------------------------------------------
+  # Determine if we are deploying the resulting wheel into a local VENV.
+  # If so, add targets `${TARGET}-install` and `${TARGET}-uninstall`.
+
+  if(arg_LOCAL_VENV_TARGET)
+    get_target_property(venv_path   ${arg_LOCAL_VENV_TARGET} venv_path)
+    get_target_property(venv_python ${arg_LOCAL_VENV_TARGET} venv_python)
+    get_target_property(stamp_dir   ${arg_LOCAL_VENV_TARGET} stamp_dir)
+
+    cmake_path(RELATIVE_PATH venv_path
+      BASE_DIRECTORY ${CMAKE_SOURCE_DIR}
+      OUTPUT_VARIABLE venv_rel_path)
+
+    add_custom_target(${TARGET}-install
+      COMMAND ${venv_python} -m pip install --quiet "${wheel_path}"
+      DEPENDS "${arg_LOCAL_VENV_TARGET}" "${wheel_path}"
+      COMMENT "Installing wheel '${PACKAGE_NAME}' into '${venv_rel_path}'"
+      VERBATIM
+    )
+
+    add_custom_target(${TARGET}-uninstall
+      COMMAND ${venv_python} -m pip uninstall -qq --yes "${PACKAGE_NAME}"
+      DEPENDS "${arg_LOCAL_VENV_TARGET}"
+      COMMENT "Uninstalling wheel '${PACKAGE_NAME}' from '${venv_rel_path}'"
+      VERBATIM
+    )
+  endif()
+
 endfunction()
 
 

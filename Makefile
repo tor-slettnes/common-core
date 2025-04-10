@@ -186,7 +186,6 @@ $(CMAKE_TAG) $(CMAKE_CACHE):
 	@echo "Generating build files in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@echo -n "Invoking: "
 	@cmake -B "$(BUILD_DIR)" $(CMAKE_CONFIG_ARGS)
 
 $(BUILD_DIR):
