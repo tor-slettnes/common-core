@@ -61,26 +61,6 @@ set(LOGS_DIR "/var/log/${ORGANIZATION}"
   CACHE STRING "Directory for generated log files")
 
 #-------------------------------------------------------------------------------
-# Python code tweaks
-
-set(PYTHON_NAMESPACE "cc"
-  CACHE STRING "Top-level package/namespace for Python modules")
-
-set(PYTHON_PIP_CORE_REQUIREMENTS_FILE
-  "${CMAKE_CURRENT_LIST_DIR}/pip-requirements.txt"
-  CACHE FILEPATH
-  "File containing required PIP-installable packages for virtual environment")
-
-set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
-  CACHE STRING "Top-level installation directory for Python modules")
-
-set(PYTHON_WHEELS_INSTALL_DIR "${DATA_DIR}/python-wheels"
-  CACHE STRING "Folder on target in which to place Python wheels")
-
-set(PYTHON_VENV_ROOT "/var/lib/${ORGANIZATION}/venv"
-  CACHE STRING "Folder on target in which Python virtual environments are created")
-
-#-------------------------------------------------------------------------------
 # Software upgrade settings (via `Upgrade` service)
 
 set(UPGRADE_PACKAGE_SUFFIX ".ccpkg"
@@ -114,6 +94,30 @@ set(CPACK_PACKAGE_VENDOR "Common Core Authors"
 
 set(CPACK_PACKAGE_CONTACT "Tor Slettnes <tor@slett.net>"
   CACHE STRING "Package contact/maintainer")
+
+#-------------------------------------------------------------------------------
+# Python code tweaks
+
+set(PYTHON_NAMESPACE "cc"
+  CACHE STRING "Top-level package/namespace for Python modules")
+
+set(PYTHON_PIP_CORE_REQUIREMENTS_FILE
+  "${CMAKE_CURRENT_LIST_DIR}/pip-requirements.txt"
+  CACHE FILEPATH
+  "File containing required PIP-installable packages for virtual environment")
+
+set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
+  CACHE STRING "Top-level installation directory for Python modules")
+
+set(PYTHON_WHEEL_NAME_PREFIX "${CPACK_PACKAGE_NAME}_"
+  CACHE STRING "Default name prefix for generated Python distribution packages")
+
+set(PYTHON_WHEELS_INSTALL_DIR "${DATA_DIR}/python-wheels"
+  CACHE STRING "Folder on target in which to place Python wheels")
+
+set(PYTHON_VENV_ROOT "/var/lib/${ORGANIZATION}/venv"
+  CACHE STRING "Folder on target in which Python virtual environments are created")
+
 
 #-------------------------------------------------------------------------------
 # Miscellaneous build options

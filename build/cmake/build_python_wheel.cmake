@@ -73,7 +73,7 @@ function(cc_add_python_wheel TARGET)
   cc_get_value_or_default(
     package_name_prefix
     arg_PACKAGE_NAME_PREFIX
-    "${CPACK_PACKAGE_NAME}")
+    "${PYTHON_WHEEL_NAME_PREFIX}")
 
   cc_get_value_or_default(
     package_name_main

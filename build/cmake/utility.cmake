@@ -102,6 +102,7 @@ function(cc_get_target_property_recursively)
     if(values)
       list(APPEND propslist "${values}")
     endif()
+    unset(dependencies)
     get_target_property(dependencies "${target}" MANUALLY_ADDED_DEPENDENCIES)
     if (dependencies)
       cc_get_target_property_recursively(
@@ -157,6 +158,7 @@ function(cc_get_target_properties_recursively)
       list(APPEND propslist "${arg_PREFIX}${props}${arg_SUFFIX}")
     endif()
 
+    unset(dependencies)
     get_target_property(dependencies "${target}" MANUALLY_ADDED_DEPENDENCIES)
     if (dependencies)
       cc_get_target_properties_recursively(

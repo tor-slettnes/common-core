@@ -83,6 +83,13 @@ function(cc_add_python TARGET)
     ROOT_DIR "${staging_dir}"
     OUTPUT_VARIABLE namespace_dir)
 
+  ### Create a Custom CMake target plus staging folder
+  if(arg_INSTALL_COMPONENT AND WITH_PYTHON_MODULES)
+    set(install_component ${arg_INSTALL_COMPONENT})
+  else()
+    unset(install_component)
+  endif()
+
   ### Add commands to populate staging directory
   cc_get_value_or_default(
     filename_pattern
@@ -98,27 +105,14 @@ function(cc_add_python TARGET)
     OUTPUTS_VARIABLE staged_outputs
   )
 
+  if(NOT staged_outputs)
+    message(FATAL_ERROR "cc_add_python('${TARGET}') requires FILES, PROGRAMS, and/or DIRECTORIES")
+    return()
+  endif()
+
   # set(staged_outputs "${staging_dir}")
   # set_property(SOURCE "${staged_output}" PROPERTY SYMBOLIC)
 
-  cc_stage_python_modules(
-    TARGET "${TARGET}"
-    OUTPUT "${staged_outputs}"
-    MODULES_DIR "${namespace_dir}"
-    PROGRAMS ${arg_PROGRAMS}
-    FILES ${arg_FILES}
-    DIRECTORIES ${arg_DIRECTORIES}
-    FILENAME_PATTERN ${filename_pattern}
-  )
-
-  if(arg_INSTALL_COMPONENT AND WITH_PYTHON_MODULES)
-    set(install_component ${arg_INSTALL_COMPONENT})
-  else()
-    unset(install_component)
-  endif()
-
-
-  ### Create a Custom CMake target plus staging folder
   if(NOT TARGET "${TARGET}")
     ### We include this in the 'ALL` target iff we expect to install it.
     ### In other cases (e.g. if including this target in a Python wheel), this
@@ -129,6 +123,16 @@ function(cc_add_python TARGET)
       DEPENDS ${staged_outputs}
     )
   endif()
+
+  cc_stage_python_modules(
+    OUTPUT "${staged_outputs}"
+    MODULES_DIR "${namespace_dir}"
+    PROGRAMS ${arg_PROGRAMS}
+    FILES ${arg_FILES}
+    DIRECTORIES ${arg_DIRECTORIES}
+    FILENAME_PATTERN ${filename_pattern}
+  )
+
 
   ### Populate `SOURCES` property for downstream dependents (It's marked
   ### `PRIVATE` because a custom target cannot have INTERFACE or PUBLIC sources;
@@ -195,12 +199,11 @@ endfunction()
 
 function(cc_stage_python_modules)
   set(_options)
-  set(_singleargs TARGET MODULES_DIR)
+  set(_singleargs MODULES_DIR)
   set(_multiargs OUTPUT PROGRAMS FILES DIRECTORIES FILENAME_PATTERN)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### Now define the first of several commands that will populate the output folder.
-
   add_custom_command(
     OUTPUT ${arg_OUTPUT}
     COMMENT ""
