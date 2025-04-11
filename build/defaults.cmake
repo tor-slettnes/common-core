@@ -109,7 +109,7 @@ set(PYTHON_PIP_CORE_REQUIREMENTS_FILE
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules")
 
-set(PYTHON_WHEEL_NAME_PREFIX "${CPACK_PACKAGE_NAME}_"
+set(PYTHON_WHEEL_NAME_PREFIX "${CPACK_PACKAGE_NAME}"
   CACHE STRING "Default name prefix for generated Python distribution packages")
 
 set(PYTHON_WHEELS_INSTALL_DIR "${DATA_DIR}/python-wheels"

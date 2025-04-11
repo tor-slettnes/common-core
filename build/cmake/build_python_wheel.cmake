@@ -274,7 +274,7 @@ function(cc_add_python_wheel TARGET)
 
     add_custom_target(${TARGET}-install
       COMMAND ${venv_python} -m pip install --quiet "${wheel_path}"
-      DEPENDS "${arg_LOCAL_VENV_TARGET}" "${wheel_path}"
+      DEPENDS "${TARGET}" "${arg_LOCAL_VENV_TARGET}"
       COMMENT "Installing wheel '${PACKAGE_NAME}' into '${venv_rel_path}'"
       VERBATIM
     )
