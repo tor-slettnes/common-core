@@ -55,7 +55,7 @@ define list_cache_or_default
 endef
 
 define get_cached_or_default
-$(strip $(shell $(list_cache_or_default) | sed -n 's/^$(1):[^=]*=\(.*\)$$/\1/ p'))
+$(strip $(shell $(list_cache_or_default) | awk 'BEGIN {FS="="} /^$(1):/ {print $$2}'))
 endef
 
 define remove

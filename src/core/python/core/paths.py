@@ -1,9 +1,9 @@
-#!/usr/bin/python3
-#===============================================================================
-## @file paths.py
-## @brief Path related utilities
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+Utilities to access application file paths.
+'''
+
+__docformat__ = 'javadoc en'
+__author__ = 'Tor Slettnes'
 
 ### Package modules
 from ..buildinfo import SETTINGS_DIR, LOCAL_SETTINGS_DIR, ORGANIZATION
@@ -22,6 +22,8 @@ FilePath   = str | Traversable
 SearchPath = Sequence[FilePath]
 ModuleName = str
 
+_settingspath = None
+
 def programName() -> str:
     return os.path.splitext(os.path.basename(sys.argv[0]))[0]
 
@@ -33,36 +35,101 @@ def installRoot() -> FilePath:
     installRoot, _ = locateDominatingPath('share')
     return installRoot
 
-def pythonRoot() -> FilePath:
+def packageRoot(package: str):
     '''
-    Obtain installation folder for Python modules
+    Obtain root installation folder for a specific Python package
     '''
-
-    package_path = importlib.resources.files(__package__)
-    package_parts = __package__.split('.')
+    package_path = importlib.resources.files(package)
+    package_parts = package.split('.')
     while package_parts:
         package_path = parent_path(package_path)
         package_parts.pop()
     return package_path
 
 
-def settingsPath() -> SearchPath:
-    try:
-        searchpath = os.getenv('CONFIGPATH').split(os.pathsep)
-    except AttributeError:
-        searchpath = []
-        if homedir := os.getenv("HOME"):
-            configdir = os.path.join(homedir, ".config")
-            if os.path.isdir(configdir):
-                searchpath.append(os.path.join(configdir, ORGANIZATION))
+def pythonRoot() -> FilePath:
+    '''
+    Obtain root installation folder this Python package
+    '''
+    return packageRoot(__package__)
 
-        searchpath.extend([
-            LOCAL_SETTINGS_DIR, # Local (host specific) settings
-            SETTINGS_DIR,       # Supplied defaults
-            'settings'          # Inside virtualenv and/or `.whl` container
-        ])
+
+def addSettingsFolder(folder: FilePath,
+                      prepend: bool) -> bool:
+    '''
+    Add a folder to search path for settings files.
+
+    @param folder
+        Folder to add. If this is a relative path, it is determined relative to
+        the intallation root (e.g. `/usr`).
+
+    @param prepend
+        Insert the folder in the beginning rather than end of the search path.
+
+    @return
+        True if the search path was modified, False otherwise.
+    '''
+
+    if normfolder := normalizedFolder(folder):
+        path = settingsPath()
+        if normfolder in path:
+            return False
+        elif prepend:
+            path.insert(0, normfolder)
+            return True
+        else:
+            path.append(normfolder)
+            return True
+    else:
+        return False
+
+
+def defaultSettingsPath() -> SearchPath:
+    '''
+    Obtain the built-in default list of folders in which to look for
+    configuration files. This list comprises:
+
+    * `$HOME/.config/common-core` if `$HOME` is defined
+    * A machine-specific settings directory (`/etc/common-core` on UNIX
+      or `c:\\common-core\\config` on Windows)
+    * An application-provided settings folder (`share/common-core/settings`,
+      relative to installation root of this package)
+    * a `settings` folder directly within this distriution archive (`.whl`),
+      if any.
+    '''
+
+    searchpath = []
+    if homedir := os.getenv("HOME"):
+        configdir = os.path.join(homedir, ".config")
+        if os.path.isdir(configdir):
+            searchpath.append(os.path.join(configdir, ORGANIZATION))
+
+    searchpath.extend([
+        LOCAL_SETTINGS_DIR, # Local (host specific) settings
+        SETTINGS_DIR,       # Supplied defaults
+        'settings'          # Inside virtualenv and/or `.whl` container
+    ])
 
     return normalizedSearchPath(searchpath)
+
+
+def settingsPath() -> SearchPath:
+    '''
+    Return list of folders in which to look for configuration files.
+
+    This list may have been ameded via prior calls to `addSettingsFolder()`.
+    To obtain the original settings path, use `defaultSettingsPath()`.
+    '''
+
+    global _settingspath
+    if _settingspath is None:
+        if configpath := os.getenv('CONFIGPATH', ''):
+            _settingspath = normalizedSearchPath(configpath)
+        else:
+            _settingspath = defaultSettingsPath()
+
+    return _settingspath
+
 
 def normalizedSearchPath(searchpath: SearchPath) -> list[pathlib.Path]:
     if isinstance(searchpath, str):
@@ -70,19 +137,24 @@ def normalizedSearchPath(searchpath: SearchPath) -> list[pathlib.Path]:
 
     normpath = []
     for folder in searchpath:
-        if isinstance(folder, str):
-            if os.path.isabs(folder):
-                folder = pathlib.Path(folder)
-            else:
-                _, folder = locateDominatingPath(folder)
-
-        elif isinstance(folder, pathlib.Path):
-            folder = folder.absolute()
-
-        if folder:
-            normpath.append(folder)
+        if normfolder := normalizedFolder(folder):
+            normpath.append(normfolder)
 
     return normpath
+
+def normalizedFolder(folder: FilePath):
+    if isinstance(folder, str):
+        if os.path.isabs(folder):
+            return pathlib.Path(folder)
+        else:
+            _, normalized = locateDominatingPath(folder)
+            return normalized
+
+    elif isinstance(folder, pathlib.Path):
+        return folder.absolute()
+
+    else:
+        return None
 
 def locateDominatingPath(name: FilePath):
     base = importlib.resources.files(__package__)

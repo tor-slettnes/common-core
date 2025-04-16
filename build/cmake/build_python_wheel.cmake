@@ -251,6 +251,7 @@ function(cc_add_python_wheel TARGET)
         VENV_PATH "${arg_INSTALL_VENV}"
         WHEEL_NAME "${PACKAGE_NAME}"
         WHEELS_INSTALL_DIR "${wheels_install_dir}"
+        WHEEL_VERSION "${VERSION}"
         SYMLINKS ${executables}
         SYMLINKS_TARGET_DIR ${arg_INSTALL_SYMLINKS}
         COMPONENT "${arg_INSTALL_COMPONENT}"
@@ -273,14 +274,14 @@ function(cc_add_python_wheel TARGET)
       OUTPUT_VARIABLE venv_rel_path)
 
     add_custom_target(${TARGET}-install
-      COMMAND ${venv_python} -m pip install --quiet "${wheel_path}"
+      COMMAND ${venv_python} -m pip install ${PIP_QUIET} "${wheel_path}"
       DEPENDS "${TARGET}" "${arg_LOCAL_VENV_TARGET}"
       COMMENT "Installing wheel '${PACKAGE_NAME}' into '${venv_rel_path}'"
       VERBATIM
     )
 
     add_custom_target(${TARGET}-uninstall
-      COMMAND ${venv_python} -m pip uninstall -qq --yes "${PACKAGE_NAME}"
+      COMMAND ${venv_python} -m pip uninstall ${PIP_QUIET} ${PIP_QUIET} --yes "${PACKAGE_NAME}"
       DEPENDS "${arg_LOCAL_VENV_TARGET}"
       COMMENT "Uninstalling wheel '${PACKAGE_NAME}' from '${venv_rel_path}'"
       VERBATIM

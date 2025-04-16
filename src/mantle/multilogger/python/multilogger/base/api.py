@@ -36,8 +36,16 @@ class API (logging.Handler):
 
         logging.Handler.__init__(self, level=log_level)
         self.identity = identity or cc.core.paths.programName()
-        self.pathbase = cc.core.paths.pythonRoot()
+        self.pathbases = [cc.core.paths.pythonRoot()]
         self.capture_python_logs = capture_python_logs
+
+    def add_path_base(self, path:str):
+        '''
+        Add a folder to be considered as a base folder for converting the
+        `source_path` attribute of log messages into relative paths.
+        '''
+        self.pathbases.append(path)
+
 
     def open(self):
         if self.capture_python_logs:
@@ -157,8 +165,12 @@ class API (logging.Handler):
                        attributes: dict|None = None,
                        **kwargs):
 
-        if source_path and (self.pathbase in pathlib.Path(source_path).parents):
-            source_path = os.path.relpath(source_path, self.pathbase)
+        if source_path:
+            source_parents = pathlib.Path(source_path).parents
+            for pathbase in self.pathbases:
+                if pathbase in source_parents:
+                    source_path = os.path.relpath(source_path, pathbase)
+                    break
 
         attributes = (attributes | kwargs) if attributes else kwargs
 

@@ -16,10 +16,28 @@ if(NOT IS_ABSOLUTE PYTHON_VENV)
     OUTPUT_VARIABLE PYTHON_VENV)
 endif()
 
+
+cmake_language(GET_MESSAGE_LOG_LEVEL log_level)
+if(log_level MATCHES "^(TRACE|DEBUG|VERBOSE)$")
+  unset(PIP_QUIET)
+else()
+  set(PIP_QUIET "--quiet")
+endif()
+
 #-------------------------------------------------------------------------------
 # @fn cc_add_python_venv
 # @brief
 #     Create a Python virtual environment locally.
+#
+# This actually creates up to four build targets:
+#
+#  * An upstream `${TARGET}-create` is added to create the virtual environment
+#    (using `python3 -m virtualenv`)
+#  * If `DISTRIBUTIONS` or `REQUIREMENTS_FILE` are specified, an upstream target
+#   `${TARGET}-requirements` is added to download/cache the specified wheels
+#  * If either of those OR `DISTCACHE_DEPS` are specified, an upstream target
+#   `${TARGET}-populate` is added to install the downloaded wheels
+#  * The final build target `${TARGET}` simply depends on the above.
 
 function(cc_add_python_venv TARGET)
   set(_options
@@ -27,8 +45,12 @@ function(cc_add_python_venv TARGET)
   )
   set(_singleargs
     VENV_PATH         # Virtualenv folder on local (build) machine
+    REQUIREMENTS_FILE # Add upstream target to obtian wheels from this file
+    WHEELS_INSTALL_COMPONENT # CPack install component into which to add downloaded wheels
+    WHEELS_INSTALL_DIR       # Override default install folder on target
   )
   set(_multiargs
+    DISTRIBUTIONS     # Add upstream target to obtain specific whels
     DISTCACHE_DEPS    # Upstream targets from which we obtain `.whl` files to install
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -47,31 +69,26 @@ function(cc_add_python_venv TARGET)
   cmake_path(APPEND stamp_dir "${TARGET}"    OUTPUT_VARIABLE target_stamp)
 
   #-----------------------------------------------------------------------------
-  # Create the requested build/dependency target.
-
   cc_get_optional_keyword(ALL arg_ALL)
-  cc_get_ternary(main_dependency arg_DISTCACHE_DEPS "${target_stamp}" "${venv_stamp}")
-  add_custom_target(${TARGET} ${ALL} DEPENDS ${main_dependency})
+  add_custom_target(${TARGET} ${ALL})
+
   set_target_properties(${TARGET} PROPERTIES
     venv_path "${venv_path}"
     venv_python "${venv_python}"
     stamp_dir "${stamp_dir}"
   )
 
-  if(arg_DISTCACHE_DEPS)
-    add_dependencies(${TARGET} ${arg_DISTCACHE_DEPS})
-  endif()
+  #-----------------------------------------------------------------------------
+  # Create the virtual environment
 
-  #-------------------------------------------------------------------------------
-  # Create Python Virtual Environment, and tag it with a common ${venv_stamp}.
-  # This allows multiple build targets to share the same environment.
-
+  set(create_target ${TARGET}-create)
+  add_custom_target(${create_target} DEPENDS ${venv_stamp})
   add_custom_command(
     OUTPUT "${venv_stamp}"
     COMMENT "Creating Python Virtual Environment: ${venv_path}"
     VERBATIM
 
-    COMMAND "${Python3_EXECUTABLE}" -m virtualenv --quiet "${venv_path}"
+    COMMAND "${Python3_EXECUTABLE}" -m virtualenv ${PIP_QUIET} "${venv_path}"
     COMMAND "${CMAKE_COMMAND}" -E make_directory "${stamp_dir}"
     COMMAND "${CMAKE_COMMAND}" -E touch "${venv_stamp}"
   )
@@ -80,36 +97,61 @@ function(cc_add_python_venv TARGET)
   # Obtain locations of downloaded wheels from targets listed in `DEPENDS`.
   # Install any discovered wheels into this virtual environment.
 
-  add_custom_command(
-    OUTPUT "${target_stamp}"
-    DEPENDS "${venv_stamp}"
-    COMMENT "Populating Python Virtual Environment: ${venv_path}"
-    VERBATIM
-    COMMAND_EXPAND_LISTS
-  )
+  if(arg_DISTRIBUTIONS OR arg_REQUIREMENTS_FILE)
+    set(requirements_target ${TARGET}-requirements)
+    cc_add_python_distributions_cache(${requirements_target}
+      STAGING_DIR ${TARGET}
+      REQUIREMENTS_FILE ${arg_REQUIREMENTS_FILE}
+      DISTRIBUTIONS ${arg_DISTRIBUTIONS}
+      DISTCACHE_DEPS ${arg_DISTCACHE_DEPS}
+      INSTALL_COMPONENT ${arg_WHEELS_INSTALL_COMPONENT}
+      INSTALL_DIR ${arg_WHEELS_INSTALL_DIR}
+    )
+  elseif(arg_DISTCACHE_DEPS)
+    set(requirements_target ${arg_DISTCACHE_DEPS})
+  endif()
 
-  cc_get_target_property_recursively(
-    TARGETS ${arg_DISTCACHE_DEPS}
-    PROPERTY python_distributions_cache_dir
-    OUTPUT_VARIABLE cache_dirs
-  )
+  if(requirements_target)
+    set(populate_target ${TARGET}-populate)
+    add_custom_target(${populate_target} DEPENDS ${target_stamp})
+    add_dependencies(${TARGET} ${populate_target})
+    add_dependencies(${populate_target}
+      ${create_target}
+      ${requirements_target}
+    )
 
+    add_custom_command(
+      OUTPUT "${target_stamp}"
+      DEPENDS "${venv_stamp}"
+      COMMENT "Populating Python Virtual Environment: ${venv_path}"
+      VERBATIM
+      COMMAND_EXPAND_LISTS
+    )
 
-  foreach(cache_dir ${cache_dirs})
+    cc_get_target_property_recursively(
+      TARGETS ${requirements_target}
+      PROPERTY python_distributions_cache_dir
+      OUTPUT_VARIABLE cache_dirs
+    )
+
+    foreach(cache_dir ${cache_dirs})
+      add_custom_command(
+        OUTPUT "${target_stamp}" APPEND
+        COMMAND find "${cache_dir}"
+        -name *.whl
+        -exec "${venv_python}" -m pip ${PIP_QUIET} install --no-index --no-warn-script-location {} +
+      )
+    endforeach()
+
     add_custom_command(
       OUTPUT "${target_stamp}" APPEND
-      COMMAND find "${cache_dir}"
-      -name *.whl
-      -exec "${venv_python}" -m pip install --quiet --no-index --no-warn-script-location {} +
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${stamp_dir}"
+      COMMAND "${CMAKE_COMMAND}" -E touch "${target_stamp}"
     )
-  endforeach()
 
-  add_custom_command(
-    OUTPUT "${target_stamp}" APPEND
-    COMMAND "${CMAKE_COMMAND}" -E make_directory "${stamp_dir}"
-    COMMAND "${CMAKE_COMMAND}" -E touch "${target_stamp}"
-  )
-
+  else()
+    add_dependencies(${TARGET} ${create_target})
+  endif()
 endfunction()
 
 
@@ -171,10 +213,10 @@ function(cc_add_python_distributions_cache TARGET)
     add_custom_command(
       OUTPUT "${staging_stamp}"
       DEPENDS ${arg_REQUIREMENTS_FILE}
-      COMMENT "Creating Python distributions cache: ${TARGET}"
+      COMMENT "Retrieving Python distributions: ${TARGET}"
 
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${staging_dir}"
-      COMMAND "${python}" -m pip wheel --quiet --wheel-dir "${staging_dir}" ${distributions}
+      COMMAND "${python}" -m pip ${PIP_QUIET} wheel --wheel-dir "${staging_dir}" ${distributions}
       COMMAND "${CMAKE_COMMAND}" -E touch "${staging_stamp}"
     )
 
@@ -220,6 +262,7 @@ function(cc_add_venv_install_hook)
   )
   set(_singleargs
     WHEEL_NAME          # Base name of package/distribution to install
+    WHEEL_VERSION       # Version of package/distribution to install
     WHEELS_INSTALL_DIR  # Directory in which to find required Python distributions
     VENV_PATH           # Target `virtualenv` folder.
     COMPONENT           # CPack component to which hook is added
@@ -245,6 +288,9 @@ function(cc_add_venv_install_hook)
 
   # `WHEEL_NAME` is the base name of the wheel without version or suffix
   set(WHEEL_NAME "${arg_WHEEL_NAME}")
+
+  # `WHEEL_VERSION` is the wheel version
+  set(WHEEL_VERSION "${arg_WHEEL_VERSION}")
 
   # `ALLOW_DOWNLOADS` allows downloading Python required distributions when creating `venv`
   cc_get_ternary(ALLOW_DOWNLOADS arg_ALLOW_DOWNLOADS true false)
