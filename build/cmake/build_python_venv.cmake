@@ -16,6 +16,14 @@ if(NOT IS_ABSOLUTE PYTHON_VENV)
     OUTPUT_VARIABLE PYTHON_VENV)
 endif()
 
+cmake_path(APPEND PYTHON_OUT_DIR "distributions"
+  OUTPUT_VARIABLE PYTHON_DISTCACHE_DIR)
+
+set_property(
+  DIRECTORY "${CMAKE_BINARY_DIR}"
+  APPEND
+  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_VENV}
+)
 
 cmake_language(GET_MESSAGE_LOG_LEVEL log_level)
 if(log_level MATCHES "^(TRACE|DEBUG|VERBOSE)$")
@@ -185,7 +193,7 @@ function(cc_add_python_distributions_cache TARGET)
 
   cc_get_value_or_default(staging_dir arg_STAGING_DIR "${TARGET}")
   cmake_path(ABSOLUTE_PATH staging_dir
-    BASE_DIRECTORY "${PYTHON_STAGING_ROOT}")
+    BASE_DIRECTORY "${PYTHON_DISTCACHE_DIR}")
 
   cmake_path(APPEND staging_dir ".${TARGET}-stamp"
     OUTPUT_VARIABLE staging_stamp)

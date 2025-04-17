@@ -21,9 +21,20 @@ set_property(
 ##  Stage settings files/directories for output
 
 function(cc_add_settings TARGET)
-  set(_options)
-  set(_singleargs DESTINATION STAGING_DIR INSTALL_COMPONENT)
-  set(_multiargs FILES DIRECTORIES SETTINGS_DEPS FILENAME_PATTERN)
+  set(_options
+    RECURSE                     # Recursively descend into provided DIRECTORIES
+  )
+  set(_singleargs
+    DESTINATION                 # Override default target folder
+    STAGING_DIR                 # Override defualt staging folder
+    INSTALL_COMPONENT           # CPack install component
+  )
+  set(_multiargs
+    FILES                  # Explicit file paths
+    DIRECTORIES            # Directories from which to collect matching files
+    FILENAME_PATTERN       # Filename masks to collect from provided DIRECTORIES
+    SETTINGS_DEPS          # Add build dependency on additional settings targets
+  )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### We populate sources into a target-specific staging directory, from where
@@ -50,9 +61,10 @@ function(cc_add_settings TARGET)
     arg_FILENAME_PATTERN
     "*.json;*.yaml;*.ini")
 
+  cc_get_optional_keyword(RECURSE arg_RECURSE)
   cc_get_staging_list(
     FILES ${files}
-    DIRECTORIES ${directories}
+    DIRECTORIES ${directories} ${RECURSE}
     FILENAME_PATTERN "${filename_pattern}"
     OUTPUT_DIR ${staging_dir}
     SOURCES_VARIABLE sources
@@ -86,7 +98,7 @@ function(cc_add_settings TARGET)
   ### Add commands to perform the actual staging.
   add_custom_command(
     OUTPUT ${staged_outputs}
-    COMMENT "Staging settings files for target ${TARGET}"
+    COMMENT ""
     COMMAND ${CMAKE_COMMAND}
     ARGS -E make_directory ${staging_dir}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -103,6 +115,8 @@ function(cc_add_settings TARGET)
     )
   endif()
 
+  cc_get_ternary(glob_command arg_RECURSE "GLOB_RECURSE" "GLOB")
+
   foreach(dir ${directories})
     cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${dir}"
       OUTPUT_VARIABLE abs_dir)
@@ -114,7 +128,7 @@ function(cc_add_settings TARGET)
       PREPEND "${abs_dir}/"
       OUTPUT_VARIABLE path_mask)
 
-    file(GLOB_RECURSE rel_paths
+    file(${glob_command} rel_paths
       RELATIVE "${anchor_dir}"
       LIST_DIRECTORIES FALSE
       CONFIGURE_DEPENDS

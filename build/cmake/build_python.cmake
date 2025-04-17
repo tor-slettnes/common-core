@@ -7,8 +7,8 @@
 
 include(utility)
 
-file(REAL_PATH "../python" PYTHON_TEMPLATE_DIR
-  BASE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
+cmake_path(APPEND CMAKE_CURRENT_LIST_DIR "../python"
+  OUTPUT_VARIABLE PYTHON_TEMPLATE_DIR)
 
 set(PYTHON_OUT_DIR
   "${CMAKE_BINARY_DIR}/python")
@@ -20,7 +20,7 @@ set(PYTHON_STAGING_ROOT
 set_property(
   DIRECTORY "${CMAKE_BINARY_DIR}"
   APPEND
-  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_OUT_DIR}
+  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_STAGING_ROOT}
 )
 
 
@@ -98,7 +98,7 @@ function(cc_add_python TARGET)
 
   cc_get_staging_list(
     FILES ${arg_PROGRAMS} ${arg_FILES}
-    DIRECTORIES ${arg_DIRECTORIES}
+    DIRECTORIES ${arg_DIRECTORIES} RECURSE
     FILENAME_PATTERN ${filename_pattern}
     OUTPUT_DIR "${namespace_dir}"
     SOURCES_VARIABLE sources

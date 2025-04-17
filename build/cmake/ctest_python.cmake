@@ -44,7 +44,7 @@ function(cc_add_pytests)
 
   cc_get_staging_list(
     FILES ${arg_FILES}
-    DIRECTORIES ${arg_DIRECTORIES}
+    DIRECTORIES ${arg_DIRECTORIES} RECURSE
     FILENAME_PATTERN ${filename_pattern}
     SOURCES_VARIABLE paths
     CONFIGURE_DEPENDS)

@@ -56,7 +56,7 @@ class SettingsStore (dict):
         `searchpath`.  See `load_settings()` for details.
         '''
 
-        self.filepath   = None
+        self.filepaths = []
         if searchpath is not None:
             self.searchpath = normalizedSearchPath(searchpath)
         else:
@@ -156,8 +156,7 @@ class SettingsStore (dict):
         else:
             search = self.searchpath
 
-        filepaths = self._settingsFilePaths(filename, search)
-        for filepath in filepaths:
+        for filepath in self.find_file_paths(filename, search)
             self.merge_file(filepath)
 
 
@@ -188,6 +187,7 @@ class SettingsStore (dict):
         else:
             settings = parser(text)
             self.merge_settings(settings)
+            self.filepaths.append(filepath)
 
     def merge_settings(self, settings: dict):
         '''Merge in the specified settings'''
@@ -212,9 +212,9 @@ class SettingsStore (dict):
 
 
     @classmethod
-    def _settingsFilePaths(cls,
-                           basename : FilePath,
-                           searchpath: FilePaths):
+    def find_file_paths(cls,
+                        basename : FilePath,
+                        searchpath: FilePaths):
 
         if isinstance(basename, str):
             basename = pathlib.Path(basename)

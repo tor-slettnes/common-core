@@ -49,6 +49,7 @@ function(cc_add_python_wheel TARGET)
   set(_multiargs
     BUILD_DEPS          # CMake targets that must be built before this
     PYTHON_DEPS         # Python target dependencies to include in wheel
+    WHEEL_DEPS          # Other wheels that must also be built & installed
     DATA_DEPS           # Other target dependencies to include, e.g. settings
     DISTCACHE_DEPS      # Python package/distribution cache dependencies
     REQUIREMENTS        # Direct Python package dependencies
@@ -202,6 +203,7 @@ function(cc_add_python_wheel TARGET)
   add_dependencies(${TARGET}
     ${arg_BUILD_DEPS}
     ${arg_PYTHON_DEPS}
+    ${arg_WHEEL_DEPS}
     ${arg_DATA_DEPS}
     ${arg_DISTCACHE_DEPS}
   )
@@ -222,9 +224,8 @@ function(cc_add_python_wheel TARGET)
     OUTPUT "${wheel_path}"
     DEPENDS ${sources}
     BYPRODUCTS "${gen_dir}"
-    COMMAND ${python} -m hatchling build -d "${wheel_dir}" > /dev/null
-    # COMMAND ${python}
-    # ARGS -m build --wheel --outdir "${wheel_dir}" "."
+    COMMAND sh -c "'${python}' -m hatchling build -d '${wheel_dir}' > /dev/null"
+    #COMMAND ${python} -m build --wheel --outdir "${wheel_dir}" "."
     COMMENT "Building Python Wheel: ${wheel_file}"
     COMMAND_EXPAND_LISTS
     VERBATIM
@@ -286,6 +287,11 @@ function(cc_add_python_wheel TARGET)
       COMMENT "Uninstalling wheel '${PACKAGE_NAME}' from '${venv_rel_path}'"
       VERBATIM
     )
+
+    foreach(wheel_dep ${arg_WHEEL_DEPS})
+      add_dependencies(${TARGET}-install ${wheel_dep}-install)
+      add_dependencies(${wheel_dep}-uninstall ${TARGET}-uninstall)
+    endforeach()
   endif()
 
 endfunction()

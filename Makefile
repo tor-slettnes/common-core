@@ -68,10 +68,10 @@ endef
 
 ### Build targets
 .PHONY: local
-local: test install
+local: ctest install
 
 .PHONY: release
-release: test package
+release: ctest package
 
 .PHONY: package
 package: deb
@@ -131,8 +131,8 @@ doc: cmake
 	@echo
 	@cmake --build "$(BUILD_DIR)" --target doxygen
 
-.PHONY: test
-test: build
+.PHONY: ctest
+ctest: build
 	@echo
 	@echo "#############################################################"
 	@echo "Testing"
@@ -140,8 +140,8 @@ test: build
 	@echo
 	@cd "$(BUILD_DIR)" && ctest
 
-.PHONY: test/report
-test/report: build
+.PHONY: ctest/report
+ctest/report: build
 	@echo
 	@echo "#############################################################"
 	@echo "Testing & reporting failures"

@@ -8,6 +8,17 @@
 set(PYTHON_EXECUTABLES_TARGET "python_executables")
 add_custom_target(${PYTHON_EXECUTABLES_TARGET})
 
+
+cmake_path(APPEND PYTHON_OUT_DIR "pyinstaller"
+  OUTPUT_VARIABLE PYTHON_PYINSTALLER_STAGING_ROOT)
+
+set_property(
+  DIRECTORY "${CMAKE_BINARY_DIR}"
+  APPEND
+  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_PYINSTALLER_STAGING_ROOT}
+)
+
+
 #===============================================================================
 ## @fn cc_add_python_executable
 ## @brief
@@ -55,7 +66,7 @@ function(cc_add_python_executable TARGET)
     "${TARGET}")
 
   ### Specify a working directory for PyIntaller
-  set(out_dir "${PYTHON_OUT_DIR}/pyinstaller/${TARGET}")
+  set(out_dir "${PYTHON_PYINSTALLER_STAGING_ROOT}/${TARGET}")
   set(workdir "${out_dir}")
   set(staging_dir "${out_dir}/staging")
   set(distdir "${out_dir}/dist")

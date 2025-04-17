@@ -4,11 +4,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-file(REAL_PATH "../debian" DEBIAN_TEMPLATE_DIR
-  BASE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
+cmake_path(APPEND CMAKE_CURRENT_LIST_DIR "../debian"
+  OUTPUT_VARIABLE DEBIAN_TEMPLATE_DIR)
 
-file(REAL_PATH "deb" DEBIAN_CONTROL_STAGING_DIR
-  BASE_DIRECTORY "${CMAKE_BINARY_DIR}")
+cmake_path(APPEND CMAKE_BINARY_DIR "deb"
+  OUTPUT_VARIABLE DEBIAN_CONTROL_STAGING_DIR)
 
 ### Add the above directory to the global `clean` target
 set_property(

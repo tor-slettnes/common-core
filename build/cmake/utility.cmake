@@ -223,9 +223,20 @@ endfunction()
 ## @brief Get a recursive list of source + staged files
 
 function(cc_get_staging_list)
-  set(_options CONFIGURE_DEPENDS)
-  set(_singleargs OUTPUT_DIR SOURCES_VARIABLE OUTPUTS_VARIABLE)
-  set(_multiargs FILES DIRECTORIES FILENAME_PATTERN)
+  set(_options
+    CONFIGURE_DEPENDS    # Rerun globbing at build time, rerun cmake if changed.
+    RECURSE              # Recursively descend into DIRECTORIES, if any
+  )
+  set(_singleargs
+    OUTPUT_DIR        # Base directory for constructing output paths
+    SOURCES_VARIABLE  # Variable into which discovered source paths are saved
+    OUTPUTS_VARIABLE  # Variable into which corresponding output paths are saved
+  )
+  set(_multiargs
+    FILES                  # File paths, relative to ${CMAKE_CURRENT_SOURCE_DIR}
+    DIRECTORIES            # Directories in which to look for files
+    FILENAME_PATTERN       # Filename patterns for directory search
+  )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   set(sources)
@@ -260,7 +271,8 @@ function(cc_get_staging_list)
       PREPEND "${abs_dir}/"
       OUTPUT_VARIABLE filename_patterns)
 
-    file(GLOB_RECURSE rel_paths
+    cc_get_ternary(glob_command arg_RECURSE "GLOB_RECURSE" "GLOB")
+    file(${glob_command} rel_paths
       RELATIVE "${anchor_dir}"
       LIST_DIRECTORIES FALSE
       ${CONFIGURE_DEPENDS}
