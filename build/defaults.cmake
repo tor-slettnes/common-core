@@ -115,6 +115,9 @@ set(PYTHON_WHEEL_NAME_PREFIX "${CPACK_PACKAGE_NAME}_"
 set(PYTHON_WHEELS_INSTALL_DIR "${DATA_DIR}/python-wheels"
   CACHE STRING "Folder on target in which to place Python wheels")
 
+set(PYTHON_VENV "${CMAKE_BINARY_DIR}/python/venv"
+  CACHE PATH "Folder in which to create a local Python virtual environment")
+
 set(PYTHON_VENV_ROOT "/var/lib/${ORGANIZATION}/venv"
   CACHE STRING "Folder on target in which Python virtual environments are created")
 

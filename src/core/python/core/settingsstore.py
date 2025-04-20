@@ -156,7 +156,7 @@ class SettingsStore (dict):
         else:
             search = self.searchpath
 
-        for filepath in self.find_file_paths(filename, search)
+        for filepath in self.find_file_paths(filename, search):
             self.merge_file(filepath)
 
 

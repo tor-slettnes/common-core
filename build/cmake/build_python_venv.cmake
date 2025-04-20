@@ -6,10 +6,6 @@
 #===============================================================================
 
 
-set(PYTHON_VENV
-  "${PYTHON_OUT_DIR}/venv"
-  CACHE STRING "Python virtual environment for building wheels & executables")
-
 if(NOT IS_ABSOLUTE PYTHON_VENV)
   cmake_path(ABSOLUTE_PATH PYTHON_VENV
     BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
@@ -19,11 +15,11 @@ endif()
 cmake_path(APPEND PYTHON_OUT_DIR "distributions"
   OUTPUT_VARIABLE PYTHON_DISTCACHE_DIR)
 
-set_property(
-  DIRECTORY "${CMAKE_BINARY_DIR}"
-  APPEND
-  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_VENV}
-)
+# set_property(
+#   DIRECTORY "${CMAKE_BINARY_DIR}"
+#   APPEND
+#   PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_VENV}
+# )
 
 cmake_language(GET_MESSAGE_LOG_LEVEL log_level)
 if(log_level MATCHES "^(TRACE|DEBUG|VERBOSE)$")
