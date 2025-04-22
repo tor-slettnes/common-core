@@ -50,10 +50,6 @@ cc_add_python_distributions_cache("core-python-requirements"
   INSTALL_COMPONENT "${PYTHON_REQUIREMENTS_INSTALL_COMPONENT}"
 )
 
-cc_add_python_venv("core-venv"
-  DISTCACHE_DEPS "core-python-requirements"
-)
-
 if(BUILD_SHARED)
   cc_add_python_wheel("core"
     PYTHON_DEPS "${TARGET}"

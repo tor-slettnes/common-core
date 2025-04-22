@@ -268,6 +268,10 @@ clean/cache clean/config:
 clean/out cleanout:
 	@$(call remove,$(OUT_DIR))
 
+.PYONY: clean/python
+clean/python:
+	@$(call remove,$(OUT_DIR)/python)
+
 .PHONY: distclean pristine
 distclean pristine: clean/install clean/package clean/build clean/out
 

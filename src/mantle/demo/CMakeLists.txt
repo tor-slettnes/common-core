@@ -49,7 +49,7 @@ cc_cpack_add_debian_component("${SETTINGS_INSTALL_COMPONENT}"
 
 cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
   GROUP "${INSTALL_GROUP}"
-  DEPENDS "${SETTINGS_INSTALL_COMPONENT}" "core-python" "core-python-requirements"
+  DEPENDS "${SETTINGS_INSTALL_COMPONENT}" "core-python"
   LICENSE ${LICENSE_FILE}
   SUMMARY "Common Core DEMO - Python client package"
   DESCRIPTION ${COMMON_DESCRIPTION}

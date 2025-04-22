@@ -23,7 +23,9 @@ function(cc_add_debian_service UNIT)
     POSTRM_TEMPLATE             # Custom `postrm` script template
 
   )
-  set(_multiargs ARGS)
+  set(_multiargs
+    ARGS                        # Command arguments
+  )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   #-----------------------------------------------------------------------------
@@ -48,9 +50,11 @@ function(cc_add_debian_service UNIT)
   if(NOT arg_PROGRAM)
     message(SEND_ERROR "cc_add_debian_service(${UNIT}) needs PROGRAM")
   else()
-    cmake_path(APPEND INSTALL_ROOT "${arg_PROGRAM}"
+    cmake_path(ABSOLUTE_PATH arg_PROGRAM
+      BASE_DIRECTORY "${INSTALL_ROOT}"
       OUTPUT_VARIABLE SERVICE_PROGRAM)
   endif()
+
 
   cmake_path(APPEND INSTALL_ROOT ${SETTINGS_DIR}
     OUTPUT_VARIABLE SETTINGS_DIR)

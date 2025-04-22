@@ -7,14 +7,9 @@
 
 include(utility)
 
-cmake_path(APPEND CMAKE_CURRENT_LIST_DIR "../python"
-  OUTPUT_VARIABLE PYTHON_TEMPLATE_DIR)
-
-set(PYTHON_OUT_DIR
-  "${CMAKE_BINARY_DIR}/python")
-
-set(PYTHON_STAGING_ROOT
-  "${PYTHON_OUT_DIR}/staging")
+cmake_path(SET PYTHON_TEMPLATE_DIR NORMALIZE "${CMAKE_CURRENT_LIST_DIR}/../python")
+cmake_path(SET PYTHON_OUT_DIR      NORMALIZE "${OUTPUTS_DIR}/python")
+cmake_path(SET PYTHON_STAGING_ROOT "${PYTHON_OUT_DIR}/staging")
 
 ### Add the above directories to the global `clean` target
 set_property(

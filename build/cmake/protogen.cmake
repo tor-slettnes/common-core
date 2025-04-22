@@ -144,7 +144,7 @@ function(cc_protogen_protobuf_cpp SRCS HDRS)
 
   cc_protogen_common(
     TARGET "${arg_TARGET}"
-    COMMENT "Generating C++ ProtoBuf bindings for ${arg_TARGET}"
+    COMMENT "Generating C++ ProtoBuf bindings for target ${arg_TARGET}"
     GENERATOR cpp
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
@@ -185,7 +185,7 @@ function(cc_protogen_grpc_cpp SRCS HDRS)
 
   cc_protogen_common(
     TARGET "${arg_TARGET}"
-    COMMENT "Generating C++ gRPC bindings for ${arg_TARGET}"
+    COMMENT "Generating C++ gRPC bindings for target ${arg_TARGET}"
     GENERATOR grpc
     PLUGIN "protoc-gen-grpc=${GRPC_CPP_PLUGIN}"
     DEPENDS "${arg_DEPENDS}"
@@ -225,7 +225,7 @@ function(cc_protogen_protobuf_py SRCS)
 
   cc_protogen_common(
     TARGET "${arg_TARGET}"
-    COMMENT "Generating Python ProtoBuf bindings for ${arg_TARGET}"
+    COMMENT "Generating Python ProtoBuf bindings for target ${arg_TARGET}"
     GENERATOR python
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
@@ -259,7 +259,7 @@ function(cc_protogen_grpc_py SRCS)
 
   cc_protogen_common(
     TARGET "${arg_TARGET}"
-    COMMENT "Generating Python gRPC bindings for ${arg_TARGET}"
+    COMMENT "Generating Python gRPC bindings for target ${arg_TARGET}"
     GENERATOR grpc
     PLUGIN "protoc-gen-grpc=${GRPC_PYTHON_PLUGIN}"
     DEPENDS "${arg_DEPENDS}"

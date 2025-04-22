@@ -8,9 +8,8 @@
 set(PYTHON_EXECUTABLES_TARGET "python_executables")
 add_custom_target(${PYTHON_EXECUTABLES_TARGET})
 
-
-cmake_path(APPEND PYTHON_OUT_DIR "pyinstaller"
-  OUTPUT_VARIABLE PYTHON_PYINSTALLER_STAGING_ROOT)
+cmake_path(SET PYTHON_PYINSTALLER_STAGING_ROOT
+  "${PYTHON_OUT_DIR}/pyinstaller")
 
 set_property(
   DIRECTORY "${CMAKE_BINARY_DIR}"
@@ -44,6 +43,7 @@ function(cc_add_python_executable TARGET)
   set(_multiargs
     PYTHON_DEPS            # CMake Python target dependencies to bundle
     DATA_DEPS              # Other CMake target depenencies to bundle
+    DISTCACHE_DEPS         # Build targets for Python distribution cache.
     RUNTIME_HOOKS          # Scripts to launch before main executable
     HIDDEN_IMPORTS         # Add imports not otherwise discovered py PyInstaller
     COLLECT_PACKAGES       # Additional Python packages (modules, binaries, ...)
@@ -71,11 +71,8 @@ function(cc_add_python_executable TARGET)
   set(staging_dir "${out_dir}/staging")
   set(distdir "${out_dir}/dist")
 
-  cmake_path(APPEND distdir "${program}"
-    OUTPUT_VARIABLE program_path)
-
-  cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_SCRIPT}"
-    OUTPUT_VARIABLE script)
+  cmake_path(SET program_path "${distdir}/${program}")
+  cmake_path(SET script  NORMALIZE "${CMAKE_CURRENT_SOURCE_DIR}/${arg_SCRIPT}")
 
   ### Clean it
   file(REMOVE_RECURSE "${out_dir}")
@@ -90,38 +87,45 @@ function(cc_add_python_executable TARGET)
   add_dependencies(${PYTHON_EXECUTABLES_TARGET} ${TARGET})
 
   #-----------------------------------------------------------------------------
-  # PyInstaller needs a Python environment.  If we were given one, use that;
-  # otherwise, add a new virtual environment with specified requirements.
+  # PyInstaller needs a Python virtual environment.  If we were given one, use
+  # that; otherwise, add a new virtual environment with specified requirements.
+  # In either case, that environment becomes a dpendency for this build target.
 
-  if(arg_VENV_PATH)
-    cmake_path(ABSOLUTE_PATH arg_VENV_PATH
-      BASE_DIRECTORY "${PYTHON_VENV}"
-      OUTPUT_VARIABLE venv)
-
-  elseif(arg_VENV_DEPENDS)
-    add_dependencies(${TARGET} ${arg_VENV_DEPENDS})
-    get_target_property(venv ${arg_VENV_DEPENDS} venv_path)
-
-    if(NOT venv)
-      message(SEND_ERROR "Target cc_add_python_executable(${TARGET}) "
-        "VENV dependency '${arg_VENV_DEPENDS}' does not look like a build "
-        "target added by `cc_add_python_venv()`, because it is missing "
-        "the `venv_path` property.")
-    endif()
-
+  if(arg_VENV_DEPENDS)
+    set(venv_dep ${arg_VENV_DEPENDS})
   else()
-    cmake_path(APPEND PYTHON_VENV "${TARGET}"
-      OUTPUT_VARIABLE venv)
-
-    cc_add_python_venv(${TARGET}_venv
-      VENV_PATH "${venv}"
-      REQUIREMENTS_FILE ${arg_REQUIREMENTS_FILE})
-
-    add_dependencies(${TARGET} ${TARGET}_venv)
+    set(venv_dep ${TARGET}-venv)
+    cc_get_value_or_default(venv_path arg_VENV_PATH ${TARGET})
+    cc_add_python_venv(${venv_dep} VENV_PATH "${venv_path}")
   endif()
+
+  add_dependencies(${TARGET} ${venv_dep})
+
+  #-----------------------------------------------------------------------------
+  # Now add another prerequisite target to populate that virtual environment
+  # with required upstream distributions
+
+  if(arg_DISTCACHE_DEPS OR arg_REQUIREMENTS_FILE)
+    cc_populate_python_venv(${TARGET}-requirements
+      VENV_TARGET "${venv_dep}"
+      DISTCACHE_DEPS ${arg_DISTCACHE_DEPS}
+      REQUIREMENTS_FILE ${arg_REQUIREMENTS_FILE}
+    )
+    add_dependencies(${TARGET} ${TARGET}-requirements)
+  endif()
+
+
+
+  #-----------------------------------------------------------------------------
+  # Add multi-part command to build the main target, starting with obtaining the
+  # `PyInstaller` tool.
+
+  get_target_property(venv ${venv_dep} venv_path)
 
   cmake_path(APPEND venv "bin" "python"      OUTPUT_VARIABLE python)
   cmake_path(APPEND venv "bin" "pyinstaller" OUTPUT_VARIABLE pyinstaller)
+  cmake_path(APPEND venv "build-stamps"      OUTPUT_VARIABLE stamp_dir)
+  cmake_path(APPEND stamp_dir ${TARGET}      OUPTUT_VARIABLE target_stamp)
 
   message(DEBUG
     "cc_add_python_executable(${TARGET}): "
@@ -165,8 +169,7 @@ function(cc_add_python_executable TARGET)
   add_custom_command(
     OUTPUT "${program_path}"
     DEPENDS "${pyinstaller}" ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_directory ${dep_staging_dirs} "${staging_dir}"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${dep_staging_dirs} "${staging_dir}"
     COMMAND_EXPAND_LISTS
     VERBATIM
     COMMENT "Building executable with PyInstaller: ${program}"

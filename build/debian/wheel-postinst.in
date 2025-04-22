@@ -1,19 +1,32 @@
 #!/bin/sh -e
 
 venv_path="@VENV_PATH@"
-wheels_dir="@WHEELS_INSTALL_DIR@"
 wheel_name="@WHEEL_NAME@"
 wheel_version="@WHEEL_VERSION@"
 symlinks="@SYMLINKS@"
-symlinks_source=${venv_path}/bin
-symlinks_target="@SYMLINKS_TARGET_DIR@"
+symlinks_source_dir=${venv_path}/bin
+symlinks_target_dir="@SYMLINKS_TARGET_DIR@"
 allow_downloads="@ALLOW_DOWNLOADS@"
+verbose="@VERBOSE@"
 
-no_index=""
+venv_argss=
+install_args=
+
+if ! ${verbose:-false}
+then
+    venv_args="--quiet"
+    install_args="--quiet"
+fi
+
 if ! ${allow_downloads:-false}
 then
-   no_index="--no-index"
+    install_args="${install_args} --no-index"
 fi
+
+for dir in @WHEEL_INSTALL_DIRS@
+do
+    install_args="${install_args} --find-links=${dir}"
+done
 
 version_spec=
 if [ -n "${wheel_version}" ]
@@ -25,21 +38,19 @@ fi
 create_venv()
 {
     mkdir -p "${venv_path}"
-    virtualenv --quiet "${venv_path}"
-    "${venv_path}/bin/pip" install \
-        --quiet ${no_index} --find-links "${wheels_dir}" \
-        "${wheel_name}${version_spec}"
+    virtualenv ${venv_args} "${venv_path}"
+    "${venv_path}/bin/pip" install ${install_args} "${wheel_name}${version_spec}"
 }
 
 add_symlinks()
 {
-    if [ -n "${symlinks_target}" ]
+    if [ -n "${symlinks_target_dir}" ]
     then
         for symlink in ${symlinks}
         do
-            if [ -e "${symlinks_source}/${symlink}" ]
+            if [ -e "${symlinks_source_dir}/${symlink}" ]
             then
-                ln -nsft "${symlinks_target}" "${symlinks_source}/${symlink}"
+                ln -nsft "${symlinks_target_dir}" "${symlinks_source_dir}/${symlink}"
             fi
         done
     fi

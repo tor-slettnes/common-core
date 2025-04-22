@@ -4,11 +4,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-cmake_path(APPEND CMAKE_CURRENT_LIST_DIR "../debian"
-  OUTPUT_VARIABLE DEBIAN_TEMPLATE_DIR)
+cmake_path(SET DEBIAN_TEMPLATE_DIR
+  NORMALIZE "${CMAKE_CURRENT_LIST_DIR}/../debian")
 
-cmake_path(APPEND CMAKE_BINARY_DIR "deb"
-  OUTPUT_VARIABLE DEBIAN_CONTROL_STAGING_DIR)
+cmake_path(SET DEBIAN_CONTROL_STAGING_DIR
+  NORMALIZE "${OUTPUTS_DIR}/deb")
 
 ### Add the above directory to the global `clean` target
 set_property(
@@ -390,11 +390,13 @@ function(cc_add_debian_control_script)
 
     file(MAKE_DIRECTORY "${staging_dir}")
 
-    cmake_path(APPEND staging_dir "${script_name}" OUTPUT_VARIABLE script_path)
-    cmake_path(APPEND DEBIAN_TEMPLATE_DIR "${arg_TEMPLATE}" OUTPUT_VARIABLE template_path)
-    configure_file("${template_path}" "${script_path}" @ONLY)
+    cmake_path(ABSOLUTE_PATH arg_TEMPLATE
+      BASE_DIRECTORY "${DEBIAN_TEMPLATE_DIR}"
+      OUTPUT_VARIABLE template_path)
 
-    set(destination "share/${PACKAGE_NAME}/${arg_PHASE}.d")
+    configure_file("${template_path}" "${staging_dir}/${script_name}" @ONLY)
+
+    cmake_path(SET destination "share/${PACKAGE_NAME}/${arg_PHASE}.d")
 
     install(PROGRAMS "${staging_dir}/${arg_OUTPUT_FILE}"
       COMPONENT "${arg_COMPONENT}"
@@ -408,7 +410,8 @@ function(cc_add_debian_control_script)
       set(ENV{${control_var}} "${controls}")
 
       set(PHASE "${arg_PHASE}")
-      cmake_path(APPEND INSTALL_ROOT ${destination}
+      cmake_path(ABSOLUTE_PATH destination
+        BASE_DIRECTORY "${INSTALL_ROOT}"
         OUTPUT_VARIABLE PARTS_DIRECTORY)
 
       cmake_path(APPEND staging_dir "${arg_PHASE}" OUTPUT_VARIABLE control_script)

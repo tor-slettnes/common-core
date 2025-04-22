@@ -44,17 +44,17 @@ cc_cpack_add_debian_component("${SETTINGS_INSTALL_COMPONENT}"
   DESCRIPTION "Shared settings files for Common Core application framework."
 )
 
-cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
-  GROUP "${INSTALL_GROUP}"
-  SUMMARY "Common Core - Shared Python modules"
-  DESCRIPTION "Common Core application framework for Python."
-  DEPENDS ${SETTINGS_INSTALL_COMPONENT}
-)
-
 cc_cpack_add_debian_component("${PYTHON_REQUIREMENTS_INSTALL_COMPONENT}"
   GROUP "${INSTALL_GROUP}"
   SUMMARY "Common Core - Required 3rd party Python distributions"
   DESCRIPTION "Required 3rd party Python distributions for shared Python modules."
+)
+
+cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
+  GROUP "${INSTALL_GROUP}"
+  SUMMARY "Common Core - Shared Python modules"
+  DESCRIPTION "Common Core application framework for Python."
+  DEPENDS ${SETTINGS_INSTALL_COMPONENT} ${PYTHON_REQUIREMENTS_INSTALL_COMPONENT}
 )
 
 cc_cpack_add_group("${INSTALL_GROUP}"
