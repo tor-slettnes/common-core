@@ -26,7 +26,6 @@ set_property(
 function(cc_add_python_executable TARGET)
   set(_options
     ALL                 # Add executable to default target
-    DEBUG               # Set PyInstaller log level to DEBUG
     USE_SPEC            # Use a Pyinstaller `.spec` file (see `SPEC_TEMPLATE`)
     DIRECTORY_BUNDLE    # Create a directory bundle instead of single executable
   )
@@ -71,8 +70,13 @@ function(cc_add_python_executable TARGET)
   set(staging_dir "${out_dir}/staging")
   set(distdir "${out_dir}/dist")
 
-  cmake_path(SET program_path "${distdir}/${program}")
-  cmake_path(SET script  NORMALIZE "${CMAKE_CURRENT_SOURCE_DIR}/${arg_SCRIPT}")
+  cmake_path(ABSOLUTE_PATH program
+    BASE_DIRECTORY "${distdir}"
+    OUTPUT_VARIABLE program_path)
+
+  cmake_path(ABSOLUTE_PATH arg_SCRIPT
+    BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    OUTPUT_VARIABLE script)
 
   ### Clean it
   file(REMOVE_RECURSE "${out_dir}")
@@ -163,7 +167,7 @@ function(cc_add_python_executable TARGET)
     REMOVE_DUPLICATES)
 
 
-  message(DEBUG
+  message(VERBOSE
     "Building target ${TARGET} executable ${program_path} with deps ${sources}")
 
   add_custom_command(
@@ -177,7 +181,14 @@ function(cc_add_python_executable TARGET)
   )
 
   ### Construct arguments for PyInstaller
-  cc_get_ternary(loglevel arg_DEBUG "DEBUG" "WARN")
+  cmake_language(GET_MESSAGE_LOG_LEVEL message_level)
+  if(message_level STREQUAL "VERBOSE")
+    set(loglevel "INFO")
+  elseif(message_level MATCHES "^(TRACE|DEBUG)$")
+    set(loglevel "DEBUG")
+  else()
+    set(loglevel "WARN")
+
   set(pyinstall_args
     "--clean"
     "--noconfirm"
@@ -189,10 +200,10 @@ function(cc_add_python_executable TARGET)
   ## Expand paths of any provided runtime hooks
   set(runtime_hooks)
   foreach(hook ${arg_RUNTIME_HOOKS})
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${hook}"
-      OUTPUT_VARIABLE hook_path)
+    cmake_path(ABSOLUTE_PATH hook
+      BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
-    list(APPEND runtime_hooks "${hook_path}")
+    list(APPEND runtime_hooks "${hook}")
   endforeach()
 
 
@@ -310,7 +321,7 @@ function(cc_add_python_executable TARGET)
 
   list(APPEND pyinstall_args ${arg_PYINSTALLER_EXTRA_ARGS})
 
-  message(DEBUG
+  message(VERBOSE
     "Invoking PyInstall for target ${TARGET} with args: ${pyinstall_args}")
 
   ### Rule for running PyInstaller

@@ -276,9 +276,6 @@ function(cc_add_python_wheel TARGET)
         REMOVE_DUPLICATES
         OUTPUT_VARIABLE wheel_install_dirs)
 
-      message(STATUS
-        "Adding target ${TARGET} install hook, install_dirs=${wheel_install_dirs}, component=${arg_INSTALL_COMPONENT}")
-
       cc_add_python_wheel_install_hook(
         VENV_PATH "${arg_INSTALL_VENV}"
         WHEEL_NAME "${PACKAGE_NAME}"
@@ -314,7 +311,7 @@ function(cc_add_python_wheel TARGET)
       OUTPUT_VARIABLE venv_rel_path)
 
     cc_get_target_properties_recursively(
-      TARGETS ${arg_DISTCACHE_DEPS}
+      TARGETS ${arg_WHEEL_DEPS} ${arg_DISTCACHE_DEPS}
       PROPERTIES python_distributions_cache_dir
       PREFIX "--find-links="
       REMOVE_DUPLICATES

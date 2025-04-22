@@ -176,9 +176,9 @@ endfunction()
 
 
 #-------------------------------------------------------------------------------
-## @fn cc_populate_venv
+## @fn cc_populate_python_venv
 ## @brief
-##   Install required Python distributions into a virtual environment
+##   Install required Python distributions into a local virtual environment
 
 function(cc_populate_python_venv TARGET)
   set(_options
