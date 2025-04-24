@@ -20,6 +20,7 @@ cc_add_python("${TARGET}"
 if(BUILD_PLATFORM)
   cc_add_python_wheel("platform_clients"
     PYTHON_DEPS ${TARGET}
+    WHEEL_DEPS "core" "multilogger_client" "switchboard_client"
     DESCRIPTION "Python client modules for Platform services"
     INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
   )

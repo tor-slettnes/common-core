@@ -47,7 +47,7 @@ class SettingsStore (dict):
     }
 
     def __init__(self,
-                 filenames  : FilePath|FilePaths = [],
+                 filenames  : FilePath|FilePaths|None = [],
                  searchpath : FilePaths|None = None):
 
         '''
@@ -56,21 +56,24 @@ class SettingsStore (dict):
         `searchpath`.  See `load_settings()` for details.
         '''
 
+        self.filenames = []
         self.filepaths = []
         if searchpath is not None:
             self.searchpath = normalizedSearchPath(searchpath)
         else:
             self.searchpath = type(self).search_path
 
-        if isinstance(filenames, (str, Traversable)):
-            self.filenames = (filenames,)
-        elif isinstance(filenames, (list, tuple)):
-            self.filenames = filenames
-        else:
-            raise ValueError("One or more filename must be provided.")
+        if filenames is not None:
+            if isinstance(filenames, (str, Traversable)):
+                self.load_settings(filenames)
 
-        for filename in self.filenames:
-            self.load_settings(filename)
+            elif isinstance(filenames, (list, tuple)):
+                for filename in filenames:
+                    self.load_settings(filename)
+
+            else:
+                raise TypeError("Unsupported type for filenames argument: %s"%
+                                (type(filenames).__name__,))
 
 
     def load_settings(self,
@@ -159,6 +162,8 @@ class SettingsStore (dict):
         for filepath in self.find_file_paths(filename, search):
             self.merge_file(filepath)
 
+        self.filenames.append(filename)
+
 
     def merge_file(self, filepath: FilePath):
         '''
@@ -193,6 +198,51 @@ class SettingsStore (dict):
         '''Merge in the specified settings'''
 
         type(self)._recursive_merge(self, settings)
+
+
+    def get_value(self,
+                  key: str,
+                  expected_type: type,
+                  default: object|None,
+                  raise_invalid_type: bool = False,
+                  ) -> object:
+        '''
+        If the speified key exists and is of the expected type, return the corresponding value.
+
+        @param key
+            Settings key
+
+        @param expected_type
+            A type object or a tuple of type objects
+
+        @param default
+            Value to return if `key` does not exist, or if it an incorrect type
+            and `raise_invalid_type` is False.
+
+        @param raise_invalid_type
+            If the specified key is found but the corresponding value is not
+            a dictionary, raise a TypeError.
+
+        @return The value corresponding to `key` if it exists and is of the
+            expected type, otherwise `default`
+        '''
+
+        try:
+            value = self[key]
+            assert(isinstance(value, expected_type))
+
+        except KeyError:
+            return default
+
+        except AssertionError:
+            if raise_invalid_type:
+                raise TypeError(
+                    'Setting %r should be a %s, not %s'%
+                    (key, expected_type.__name__, type(value).__name__)) from None
+            else:
+                return default
+        else:
+            return value
 
 
     @classmethod

@@ -35,7 +35,6 @@ function(cc_add_python_wheel TARGET)
     PACKAGE_NAME        # Override entire package name, otherwise PREFIX_MAIN
     DESCRIPTION         # One-line description field
     PYPROJECT_TEMPLATE  # `pyproject.toml` template file
-    REQUIREMENTS_FILE   # Custom Python package requirements file (for `pip install`)
     VERSION             # Explicit version, if not "${PROJECT_VERSION}.${BUILD_NUMBER}"
     CONTACT             # Package contact (Real Name <email@addr.ess>)
     URL                 # Package publisher URL
@@ -51,9 +50,10 @@ function(cc_add_python_wheel TARGET)
     BUILD_DEPS          # CMake targets that must be built before this
     PYTHON_DEPS         # Python target dependencies to include in wheel
     WHEEL_DEPS          # Other wheels that must also be built & installed
-    DISTCACHE_DEPS      # Python package/distribution cache dependencies
     DATA_DEPS           # Other target dependencies to include, e.g. settings
     REQUIREMENTS        # Direct Python package dependencies
+    REQUIREMENTS_FILES  # Custom Python package requirements file (for `pip install`)
+    REQUIREMENTS_DEPS   # Python package/distribution cache dependencies
     SCRIPTS             # Executable script(s). Format: `SCRIPT:MODULE:METHOD`.
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -118,31 +118,26 @@ function(cc_add_python_wheel TARGET)
     VERSION "${VERSION}"
     OUTPUT_VARIABLE wheel_file)
 
-  #--------------------------------------------------------------------------
-  # Determine and assign Python package dependencies to DEPENDENCIES
+  #-----------------------------------------------------------------------------
+  # Determine and assign Python package dependencies to `DEPENDENCIES`, which is
+  # expanded in the input template `../python/pyproject.toml.in`.
 
-  if(arg_REQUIREMENTS_FILE)
-    set(requirements_file "${arg_REQUIREMENTS_FILE}")
-    file(STRINGS "${requirements_file}" requirements_list)
-  endif()
-
-  list(APPEND requirements_list ${arg_REQUIREMENTS})
+  cc_get_python_requirements_list(
+    REQUIREMENTS "${arg_REQUIREMENTS}"
+    REQUIREMENTS_FILES "${arg_REQUIREMENTS_FILES}"
+    REQUIREMENTS_DEPS "${arg_REQUIREMENTS_DEPS}"
+    OUTPUT_VARIABLE requirements_list
+  )
 
   foreach(wheel_dep ${arg_WHEEL_DEPS})
-    get_target_property(wheel_name ${wheel_dep} wheel_name)
+    get_target_property(wheel_name ${wheel_dep} "wheel_name")
     if(wheel_name)
       get_target_property(wheel_version ${wheel_dep} wheel_version)
       list(APPEND requirements_list ${wheel_name}==${wheel_version})
     endif()
   endforeach()
 
-  cc_get_target_property_recursively(
-    PROPERTY python_distributions
-    TARGETS ${arg_DISTCACHE_DEPS}
-    INITIAL_VALUE "${requirements_list}"
-    OUTPUT_VARIABLE requirements_list
-  )
-
+  list(REMOVE_DUPLICATES requirements_list)
   cc_join_quoted(requirements_list
     OUTPUT_VARIABLE DEPENDENCIES)
 
@@ -159,19 +154,40 @@ function(cc_add_python_wheel TARGET)
 
   #-----------------------------------------------------------------------------
   # Collect staging directories from targets listed in `PYTHON_DEPS` and
-  # `DATA_DEPS`, and generate corresponding `"SOURCE_DIR" = "TARGET_DIR/"`
-  # statements for the `[...force-include]` section in `pyproject.toml`.
+  # `DATA_DEPS`, and their dependencies. However, some of these build targets
+  # may also be indirect dependencies of other wheels listed in `WHEEL_DEPS`,
+  # and would those be installed multiple times on the target.  Thus, we first
+  # need to subtract those from our dependency list.
+
+  cc_get_target_property_recursively(
+    PROPERTY "NAME"
+    TARGETS ${arg_PYTHON_DEPS} ${arg_DATA_DEPS}
+    OUTPUT_VARIABLE deps)
+
+  cc_get_target_property_recursively(
+    PROPERTY "NAME"
+    TARGETS ${arg_WHEEL_DEPS}
+    OUTPUT_VARIABLE indirect_deps)
+
+  list(REMOVE_ITEM deps ${indirect_deps})
+
+
+  #-----------------------------------------------------------------------------
+  # Collect staging directories from the resulting direct dependencies, and
+  # generate corresponding `"SOURCE_DIR" = "TARGET_DIR/"` statements for the
+  # `[...force-include]` section in `pyproject.toml`.
 
   cc_get_target_properties_recursively(
-    PROPERTIES staging_dir data_dir
-    TARGETS ${arg_PYTHON_DEPS} ${arg_DATA_DEPS}
+    PROPERTIES "staging_dir" "data_dir"
+    TARGETS ${deps}
     PREFIX "\""
     SEPARATOR "\" = \""
     SUFFIX "/\""
     OUTPUT_VARIABLE package_map
     REMOVE_DUPLICATES)
 
-  ### Create a multi-line string in PACKAGE_MAP holding these directory mappings.
+
+  # Create a multi-line string in PACKAGE_MAP holding these directory mappings.
   list(JOIN package_map "\n" PACKAGE_MAP)
 
   #-----------------------------------------------------------------------------
@@ -213,7 +229,7 @@ function(cc_add_python_wheel TARGET)
     ${arg_BUILD_DEPS}
     ${arg_PYTHON_DEPS}
     ${arg_WHEEL_DEPS}
-    ${arg_DISTCACHE_DEPS}
+    ${arg_REQUIREMENTS_DEPS}
     ${arg_DATA_DEPS}
   )
 
@@ -232,7 +248,7 @@ function(cc_add_python_wheel TARGET)
   # Create Python wheel
 
   cc_get_target_property_recursively(
-    PROPERTY SOURCES
+    PROPERTY "SOURCES"
     TARGETS ${TARGET}
     OUTPUT_VARIABLE sources
     REMOVE_DUPLICATES)
@@ -271,7 +287,7 @@ function(cc_add_python_wheel TARGET)
 
     if(arg_INSTALL_VENV)
       cc_get_target_property_recursively(
-        PROPERTY python_distributions_install_dir
+        PROPERTY "python_distributions_install_dir"
         TARGETS ${TARGET}
         REMOVE_DUPLICATES
         OUTPUT_VARIABLE wheel_install_dirs)
@@ -311,7 +327,7 @@ function(cc_add_python_wheel TARGET)
       OUTPUT_VARIABLE venv_rel_path)
 
     cc_get_target_properties_recursively(
-      TARGETS ${arg_WHEEL_DEPS} ${arg_DISTCACHE_DEPS}
+      TARGETS ${arg_WHEEL_DEPS} ${arg_REQUIREMENTS_DEPS}
       PROPERTIES python_distributions_cache_dir
       PREFIX "--find-links="
       REMOVE_DUPLICATES

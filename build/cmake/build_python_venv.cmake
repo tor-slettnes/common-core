@@ -36,9 +36,14 @@ endif()
 function(cc_add_python_venv TARGET)
   set(_options ALL)
   set(_singleargs
-    VENV_PATH         # Virtualenv folder on local (build) machine
+    VENV_PATH            # Virtualenv folder on local (build) machine
+    POPULATE_TARGET      # Create dependent target to populate with requirements
   )
-  set(_multiargs)
+  set(_multiargs
+    REQUIREMENTS_FILES  # Files containing package names to install
+    REQUIREMENTS        # Add prerequisite target to obtain specific whels
+    REQUIREMENTS_DEPS   # Upstream distribution cache targets on which we depend
+  )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   find_package(Python3
@@ -65,40 +70,96 @@ function(cc_add_python_venv TARGET)
   #-----------------------------------------------------------------------------
   # Create the virtual environment
 
+  cmake_path(RELATIVE_PATH venv_path
+    BASE_DIRECTORY "${CMAKE_SOURCE_PATH}"
+    OUTPUT_VARIABLE venv_rel_path)
+
   add_custom_command(
     OUTPUT "${venv_python}"
-    COMMENT "Creating Python Virtual Environment: ${venv_path}"
+    COMMENT "Creating Python Virtual Environment: ${venv_rel_path}"
     VERBATIM
 
     COMMAND "${Python3_EXECUTABLE}" -m virtualenv ${PIP_QUIET} "${venv_path}"
   )
+
+  #-----------------------------------------------------------------------------
+  # Add dependent target (if given one) to populate the virtual environment with
+  # required distributions.
+
+  if(arg_POPULATE_TARGET)
+    cc_populate_python_venv("${arg_POPULATE_TARGET}" ${ALL}
+      VENV_TARGET "${TARGET}"
+      REQUIREMENTS_FILES "${arg_REQUIREMENTS_FILES}"
+      REQUIREMENTS "${arg_REQUIREMENTS}"
+      REQUIREMENTS_DEPS "${arg_REQUIREMENTS_DEPS}"
+    )
+    add_dependencies("${arg_POPULATE_TARGET}" "${TARGET}")
+  endif()
+
 endfunction()
 
 
 #-------------------------------------------------------------------------------
-## @fn cc_add_python_distributions_cache
+## @fn cc_get_python_requirements_list
+## @brief
+##   Get Consolidated list of Python distributions from multiple arguments
+
+function(cc_get_python_requirements_list)
+  set(_options
+  )
+  set(_singleargs
+    OUTPUT_VARIABLE     # Caller-scoped variable in which names are stored.
+  )
+  set(_multiargs
+    REQUIREMENTS        # Additional Python distribution (package) names
+    REQUIREMENTS_FILES  # File containing required distribution names
+    REQUIREMENTS_DEPS   # Upstream distribution cache targets on which we depend
+  )
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  set(distributions ${arg_REQUIREMENTS})
+  foreach(file ${arg_REQUIREMENTS_FILES})
+    file(STRINGS "${file}" dists_from_file)
+    list(APPEND distributions ${dists_from_file})
+  endforeach()
+
+  cc_get_target_property_recursively(
+    TARGETS ${arg_REQUIREMENTS_DEPS}
+    PROPERTY python_distributions
+    INITIAL_VALUE "${distributions}"
+    OUTPUT_VARIABLE distributions
+  )
+
+  if(arg_OUTPUT_VARIABLE)
+    set("${arg_OUTPUT_VARIABLE}" "${distributions}" PARENT_SCOPE)
+  endif()
+endfunction()
+
+
+#-------------------------------------------------------------------------------
+## @fn cc_add_python_requirements_cache
 ## @brief
 ##   Download distributions
 
-function(cc_add_python_distributions_cache TARGET)
+function(cc_add_python_requirements_cache TARGET)
   set(_options
     ALL                         # Add wheel to the default default build target
   )
   set(_singleargs
-    REQUIREMENTS_FILE           # File containing required distribution names
     STAGING_DIR                 # Override default staging directory
     VENV                        # Use Python interpreter from a VENV (optional)
     INSTALL_COMPONENT           # Install cache onto target
     INSTALL_DIR                 # Override default installation folder
   )
   set(_multiargs
-    DISTRIBUTIONS                # Additional Python distribution names
-    DISTCACHE_DEPS               # Distribution cache targets on which we depend
+    REQUIREMENTS_FILES  # File containing required distribution names
+    REQUIREMENTS        # Additional Python distribution (package) names
+    REQUIREMENTS_DEPS   # Upstream distribution cache targets on which we depend
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   cc_find_python(
-    ACTION "cc_add_python_distributions_cache(${TARGET})"
+    ACTION "cc_add_python_requirements_cache(${TARGET})"
     VENV "${arg_VENV}"
     ALLOW_SYSTEM
     OUTPUT_VARIABLE python)
@@ -107,7 +168,7 @@ function(cc_add_python_distributions_cache TARGET)
   cmake_path(ABSOLUTE_PATH staging_dir
     BASE_DIRECTORY "${PYTHON_DISTCACHE_DIR}")
 
-  cmake_path(APPEND staging_dir ".${TARGET}-stamp"
+  cmake_path(APPEND staging_dir ".${TARGET}"
     OUTPUT_VARIABLE staging_stamp)
 
   cc_get_optional_keyword(ALL arg_ALL)
@@ -115,24 +176,24 @@ function(cc_add_python_distributions_cache TARGET)
     DEPENDS "${staging_stamp}"
   )
 
-  if(arg_DISTCACHE_DEPS)
-    add_dependencies(${TARGET} ${arg_DISTCACHE_DEPS})
+  if(arg_REQUIREMENTS_DEPS)
+    add_dependencies(${TARGET} ${arg_REQUIREMENTS_DEPS})
   endif()
 
 
   #-----------------------------------------------------------------------------
   # Build distributions list and invoke `pip wheel`.
 
-  unset(distributions)
-  if(arg_REQUIREMENTS_FILE)
-    file(STRINGS "${arg_REQUIREMENTS_FILE}" distributions)
-  endif()
-  list(APPEND distributions ${arg_DISTRIBUTIONS})
+  cc_get_python_requirements_list(
+    REQUIREMENTS "${arg_REQUIREMENTS}"
+    REQUIREMENTS_FILES "${arg_REQUIREMENTS_FILES}"
+    OUTPUT_VARIABLE distributions
+  )
 
   if(distributions)
     add_custom_command(
       OUTPUT "${staging_stamp}"
-      DEPENDS ${arg_REQUIREMENTS_FILE}
+      DEPENDS ${arg_REQUIREMENTS_FILES}
       COMMENT "Retrieving Python distributions for target: ${TARGET}"
 
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${staging_dir}"
@@ -167,8 +228,8 @@ function(cc_add_python_distributions_cache TARGET)
     endif()
 
   else()
-    message(SEND_ERROR "cc_add_python_distributions_cache(${TARGET}) needs "
-      "REQUIREMENTS_FILE, DISTRIBUTIONS, or both")
+    message(SEND_ERROR "cc_add_python_requirements_cache(${TARGET}) needs "
+      "REQUIREMENTS, REQUIREMENTS_FILES, or both")
   endif()
 
 endfunction()
@@ -185,13 +246,13 @@ function(cc_populate_python_venv TARGET)
     ALL               # Make this target a dependency of `all`
   )
   set(_singleargs
-    VENV_TARGET       # Virtualenv specified by build target (preferred)
-    VENV_PATH         # Virtualenv path if VENV_TARGET is not specified
-    REQUIREMENTS_FILE # Add upstream target to obtian wheels from this file
+    VENV_TARGET        # Virtualenv specified by build target (preferred)
+    VENV_PATH          # Virtualenv path if VENV_TARGET is not specified
   )
   set(_multiargs
-    DISTRIBUTIONS     # Add prerequisite target to obtain specific whels
-    DISTCACHE_DEPS    # Upstream targets from which we obtain `.whl` files to install
+    REQUIREMENTS_FILES # Files containing package names to install
+    REQUIREMENTS      # Add prerequisite target to obtain specific whels
+    REQUIREMENTS_DEPS     # Upstream distribution cache targets on which we depend
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -225,28 +286,33 @@ function(cc_populate_python_venv TARGET)
   ### Creaate build target
 
   cc_get_optional_keyword(ALL arg_ALL)
-  add_custom_target(${TARGET} ${ALL}  DEPENDS ${target_stamp})
-  add_dependencies(${TARGET} ${arg_VENV_TARGET})
+  add_custom_target(${TARGET} ${ALL}
+    DEPENDS ${target_stamp}
+  )
+
+  if(arg_VENV_TARGET)
+    add_dependencies(${TARGET} ${arg_VENV_TARGET})
+  endif()
 
 
   #-------------------------------------------------------------------------------
-  # Obtain locations of downloaded wheels from targets listed in `DISTCACHE_DEPS`.
+  # Obtain locations of downloaded wheels from targets listed in `REQUIREMENTS_DEPS`.
   # Install any discovered wheels into this virtual environment.
 
-  if(arg_DISTRIBUTIONS OR arg_REQUIREMENTS_FILE)
-    set(requirements_target ${TARGET}-requirements)
-    cc_add_python_distributions_cache(${requirements_target}
+  if(arg_REQUIREMENTS OR arg_REQUIREMENTS_FILES)
+    set(requirements_target "${TARGET}-requirements")
+    cc_add_python_requirements_cache(${requirements_target}
       STAGING_DIR ${TARGET}
-      REQUIREMENTS_FILE ${arg_REQUIREMENTS_FILE}
-      DISTRIBUTIONS ${arg_DISTRIBUTIONS}
-      DISTCACHE_DEPS ${arg_DISTCACHE_DEPS}
+      REQUIREMENTS_FILES ${arg_REQUIREMENTS_FILES}
+      REQUIREMENTS ${arg_REQUIREMENTS}
+      REQUIREMENTS_DEPS ${arg_REQUIREMENTS_DEPS}
     )
-  elseif(arg_DISTCACHE_DEPS)
-    set(requirements_target ${arg_DISTCACHE_DEPS})
+  elseif(arg_REQUIREMENTS_DEPS)
+    set(requirements_target ${arg_REQUIREMENTS_DEPS})
 
   else()
     message(FATAL_ERROR "Target cc_populate_python_venv(${TARGET}) "
-      "requires DISTCACHE_DEPS, DISTRIBUTIONS, and/or REQUIIREMENTS_FILE")
+      "requires REQUIREMENTS, REQUIREMENTS_FILES, and/or REQUIIREMENTS_DEPS")
   endif()
 
   add_dependencies(${TARGET} ${requirements_target})

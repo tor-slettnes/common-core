@@ -37,12 +37,12 @@ function(cc_add_python_executable TARGET)
     SPEC_TEMPLATE       # Use custom PyInstaller `.spec` template
     VENV_PATH           # Use existing named Python virtual environment
     VENV_DEPENDS        # Use Python venv created by `cc_add_python_venv()`
-    REQUIREMENTS_FILE   # Override default requirements if creating new VENV
   )
   set(_multiargs
     PYTHON_DEPS            # CMake Python target dependencies to bundle
     DATA_DEPS              # Other CMake target depenencies to bundle
-    DISTCACHE_DEPS         # Build targets for Python distribution cache.
+    REQUIREMENTS_DEPS      # Build targets for Python distribution cache.
+    REQUIREMENTS_FILES     # Override default requirements if creating new VENV
     RUNTIME_HOOKS          # Scripts to launch before main executable
     HIDDEN_IMPORTS         # Add imports not otherwise discovered py PyInstaller
     COLLECT_PACKAGES       # Additional Python packages (modules, binaries, ...)
@@ -92,32 +92,46 @@ function(cc_add_python_executable TARGET)
 
   #-----------------------------------------------------------------------------
   # PyInstaller needs a Python virtual environment.  If we were given one, use
-  # that; otherwise, add a new virtual environment with specified requirements.
-  # In either case, that environment becomes a dpendency for this build target.
+  # that; otherwise, add a new one.
+  #
+  # If we were told to use an existing VENV, we need to ensure `PyInstaller` is
+  # installed into that environment. However, the same environment might be used
+  # for multiple build targets, possibly running in parallel. In order to
+  # prevent a race condition where multiple `pip` jobs are running
+  # simultaneously, we create a commoon `${venv_dep}-populate-pyinstaller`
+  # target here, which in turn becomes a shared build dependency for each of the
+  # final build targets.
+  #
+  # On the other hand, if we're going to create a new VENV for this job, we
+  # simply add depenent target `${TARGET}-populate` to install both PyInstaller
+  # and the required Python distributions.
 
   if(arg_VENV_DEPENDS)
-    set(venv_dep ${arg_VENV_DEPENDS})
+    set(venv_dep "${arg_VENV_DEPENDS}")
+    set(venv_populate "${venv_dep}-populate-pyinstaller")
+
+    if(NOT TARGET ${venv_populate})
+      cc_populate_python_venv("${venv_populate}"
+        VENV_TARGET "${venv_dep}"
+        REQUIREMENTS "PyInstaller"
+      )
+    endif()
+
   else()
-    set(venv_dep ${TARGET}-venv)
-    cc_get_value_or_default(venv_path arg_VENV_PATH ${TARGET})
-    cc_add_python_venv(${venv_dep} VENV_PATH "${venv_path}")
-  endif()
+    set(venv_dep "${TARGET}-venv")
+    set(venv_populate "${TARGET}-populate")
 
-  add_dependencies(${TARGET} ${venv_dep})
-
-  #-----------------------------------------------------------------------------
-  # Now add another prerequisite target to populate that virtual environment
-  # with required upstream distributions
-
-  if(arg_DISTCACHE_DEPS OR arg_REQUIREMENTS_FILE)
-    cc_populate_python_venv(${TARGET}-requirements
-      VENV_TARGET "${venv_dep}"
-      DISTCACHE_DEPS ${arg_DISTCACHE_DEPS}
-      REQUIREMENTS_FILE ${arg_REQUIREMENTS_FILE}
+    cc_get_value_or_default(venv_path arg_VENV_PATH "${TARGET}")
+    cc_add_python_venv(${venv_dep}
+      VENV_PATH "${venv_path}"
+      POPULATE_TARGET "${venv_populate}"
+      REQUIREMENTS "PyInstaller"
+      REQUIREMENTS_DEPS ${arg_REQUIREMENTS_DEPS}
+      REQUIREMENTS_FILES ${arg_REQUIREMENTS_FILES}
     )
-    add_dependencies(${TARGET} ${TARGET}-requirements)
   endif()
 
+  add_dependencies(${TARGET} ${venv_populate})
 
 
   #-----------------------------------------------------------------------------
@@ -127,19 +141,11 @@ function(cc_add_python_executable TARGET)
   get_target_property(venv ${venv_dep} venv_path)
 
   cmake_path(APPEND venv "bin" "python"      OUTPUT_VARIABLE python)
-  cmake_path(APPEND venv "bin" "pyinstaller" OUTPUT_VARIABLE pyinstaller)
   cmake_path(APPEND venv "build-stamps"      OUTPUT_VARIABLE stamp_dir)
   cmake_path(APPEND stamp_dir ${TARGET}      OUPTUT_VARIABLE target_stamp)
 
   message(DEBUG
-    "cc_add_python_executable(${TARGET}): "
-    "venv=${venv}, python=${python}, pyinstaller=${pyinstaller}.")
-
-  add_custom_command(
-    OUTPUT "${pyinstaller}"
-    COMMAND "${python}" -m pip install --quiet --no-warn-script-location PyInstaller
-    COMMENT "Retrieving and installing PyInstaller tool for target ${TARGET}"
-  )
+    "cc_add_python_executable(${TARGET}): venv=${venv}, python=${python}")
 
   #-----------------------------------------------------------------------------
   # Collect per-target staged modules from the specified target dependencies
@@ -172,7 +178,7 @@ function(cc_add_python_executable TARGET)
 
   add_custom_command(
     OUTPUT "${program_path}"
-    DEPENDS "${pyinstaller}" ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
+    DEPENDS ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${dep_staging_dirs} "${staging_dir}"
     COMMAND_EXPAND_LISTS
     VERBATIM
@@ -188,6 +194,7 @@ function(cc_add_python_executable TARGET)
     set(loglevel "DEBUG")
   else()
     set(loglevel "WARN")
+  endif()
 
   set(pyinstall_args
     "--clean"

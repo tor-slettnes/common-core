@@ -92,8 +92,8 @@ endfunction()
 
 function(cc_get_target_property_recursively)
   set(_options REMOVE_DUPLICATES REQUIRED)
-  set(_singleargs OUTPUT_VARIABLE)
-  set(_multiargs INITIAL_VALUE PROPERTY TARGETS)
+  set(_singleargs PROPERTY OUTPUT_VARIABLE)
+  set(_multiargs INITIAL_VALUE TARGETS)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   set(propslist ${arg_INITIAL_VALUE})

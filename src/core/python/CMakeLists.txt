@@ -45,8 +45,8 @@ cc_add_python("${TARGET}"
   DIRECTORIES "${DIRECTORIES}"
 )
 
-cc_add_python_distributions_cache("core-python-requirements"
-  REQUIREMENTS_FILE "${PYTHON_PIP_CORE_REQUIREMENTS_FILE}"
+cc_add_python_requirements_cache("core-python-requirements"
+  REQUIREMENTS_FILES "${PYTHON_PIP_CORE_REQUIREMENTS_FILE}"
   INSTALL_COMPONENT "${PYTHON_REQUIREMENTS_INSTALL_COMPONENT}"
 )
 
@@ -54,7 +54,7 @@ if(BUILD_SHARED)
   cc_add_python_wheel("core"
     PYTHON_DEPS "${TARGET}"
     DATA_DEPS "cc_core_settings"
-    DISTCACHE_DEPS "core-python-requirements"
+    REQUIREMENTS_DEPS "core-python-requirements"
     DESCRIPTION "Python common components"
     INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
   )

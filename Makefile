@@ -149,8 +149,8 @@ ctest/report: build
 	@echo
 	@cd "$(BUILD_DIR)" && ctest --output-on_failure
 
-.PHONY: retest
-retest: build
+.PHONY: ctest/rerun
+ctest/rerun: build
 	@echo
 	@echo "#############################################################"
 	@echo "Rerunning failed tests"
@@ -268,7 +268,7 @@ clean/cache clean/config:
 clean/out cleanout:
 	@$(call remove,$(OUT_DIR))
 
-.PYONY: clean/python
+.PHONY: clean/python
 clean/python:
 	@$(call remove,$(OUT_DIR)/python)
 
