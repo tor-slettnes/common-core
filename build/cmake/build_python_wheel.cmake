@@ -422,9 +422,22 @@ function(cc_add_python_wheel_install_hook)
   # `WHEEL_VERSION` is the wheel version
   set(WHEEL_VERSION "${arg_WHEEL_VERSION}")
 
+  # `WHEEL_SPEC` is the combined name and version if specified, otherwise just the name.
+  cc_get_ternary(WHEEL_SPEC
+    arg_WHEEL_VERSION
+    "${arg_WHEEL_NAME}==${arg_WHEEL_VERSION}"
+    "${arg_WHEEL_NAME}")
+
   # `ALLOW_DOWNLOADS` allows downloading Python required distributions when creating `venv`
-  cc_get_ternary(ALLOW_DOWNLOADS arg_ALLOW_DOWNLOADS true false)
-  cc_get_ternary(VERBOSE arg_VERBOSE true false)
+  cc_get_ternary(ALLOW_DOWNLOADS
+    arg_ALLOW_DOWNLOADS
+    true
+    false)
+
+  cc_get_ternary(VERBOSE
+    arg_VERBOSE
+    true
+    false)
 
   # `VENV_PATH` is the absolute path name to the environment we are populating
   # (This may be shared with additional wheels or it may be created new).
@@ -448,7 +461,13 @@ function(cc_add_python_wheel_install_hook)
 
   # `SYMLINKS` is a list of executable scripts for which we want to create
   # symbolic links, e.g. in `/usr/bin` or `/usr/sbin`.
-  list(JOIN arg_SYMLINKS " " SYMLINKS)
+  list(TRANSFORM arg_SYMLINKS
+    PREPEND "${VENV_PATH}/bin/"
+    OUTPUT_VARIABLE executables)
+
+  cc_join_quoted(executables
+    GLUE " "
+    OUTPUT_VARIABLE EXECUTABLES)
 
   # `SYMLINKS_TARGET_DIR` is where we want to install symlinks
   if(arg_SYMLINKS_TARGET_DIR)

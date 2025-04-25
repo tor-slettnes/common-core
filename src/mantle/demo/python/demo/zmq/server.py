@@ -6,12 +6,12 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from .requesthandler import DemoRequestHandler
-from .common import DEMO_SERVICE_CHANNEL, DEMO_PUBLISHER_CHANNEL
-from ..base import API, signal_store, PROJECT_NAME
 from cc.messaging.zmq.basic import Publisher
 from cc.messaging.zmq.protobuf.server import Server as ProtoServer
 from cc.messaging.zmq.protobuf.signalwriter import SignalWriter
+from cc.demo.base import API, signal_store, PROJECT_NAME
+from cc.demo.zmq.requesthandler import DemoRequestHandler
+from cc.demo.zmq.common import DEMO_SERVICE_CHANNEL, DEMO_PUBLISHER_CHANNEL
 
 class Server (ProtoServer):
     def __init__(self,
