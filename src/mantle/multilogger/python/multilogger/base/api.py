@@ -35,8 +35,8 @@ class API (logging.Handler):
                  log_level: int = logging.NOTSET):
 
         logging.Handler.__init__(self, level=log_level)
-        self.identity = identity or cc.core.paths.programName()
-        self.pathbases = [cc.core.paths.pythonRoot()]
+        self.identity = identity or cc.core.paths.program_name()
+        self.pathbases = [cc.core.paths.python_root()]
         self.capture_python_logs = capture_python_logs
 
     def add_path_base(self, path:str):

@@ -8,7 +8,7 @@
 #-------------------------------------------------------------------------------
 ### General CPack settings
 
-# Prevent PROJECT_DESCRIPTION to be used as SUMMARY for every package compoennt
+# Prevent PROJECT_DESCRIPTION to be used as SUMMARY for every package component
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Missing package component description")
 

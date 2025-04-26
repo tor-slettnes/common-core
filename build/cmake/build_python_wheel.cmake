@@ -95,7 +95,7 @@ function(cc_add_python_wheel TARGET)
   cc_get_value_or_default(
     VERSION
     arg_VERSION
-    "${PROJECT_VERSION}.${BUILD_NUMBER}")
+    "${CMAKE_PROJECT_VERSION}.${BUILD_NUMBER}")
 
   cc_get_value_or_default(
     URL

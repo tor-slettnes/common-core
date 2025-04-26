@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-include(utility)                # cascade_inherited_property()
+include(utility)
 
 #===============================================================================
 ## @fn cc_protogen_common

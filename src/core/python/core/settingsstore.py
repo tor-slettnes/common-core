@@ -9,7 +9,7 @@ __author__ = 'Tor Slettnes'
 
 ### Modules within package
 from .jsonreader import JsonReader
-from .paths import normalizedSearchPath, settingsPath, FilePath, SearchPath
+from .paths import normalized_search_path, settings_path, FilePath, SearchPath
 
 
 ### Standard Python modules
@@ -39,7 +39,7 @@ class SettingsStore (dict):
 
 
     ## Set this to override default search path
-    search_path = settingsPath()
+    search_path = settings_path()
 
     parser_map = {
         '.json': JsonReader.parse_text,
@@ -59,7 +59,7 @@ class SettingsStore (dict):
         self.filenames = []
         self.filepaths = []
         if searchpath is not None:
-            self.searchpath = normalizedSearchPath(searchpath)
+            self.searchpath = normalized_search_path(searchpath)
         else:
             self.searchpath = type(self).search_path
 
@@ -96,7 +96,7 @@ class SettingsStore (dict):
 
         The `filename` argument is resolved as follows:
         - If the file name is relative, it is resolved with respect to each
-          folder in `settingspath`, possibly resulting in multiple candidate
+          folder in `searchpath`, possibly resulting in multiple candidate
           paths.
         - If the file name ends in `.json` or `.yaml` the corresponding parser
           is used; otherwise each suffix is in turn appended to each candidate
@@ -155,7 +155,7 @@ class SettingsStore (dict):
         '''
 
         if searchpath:
-            search = normalizedSearchPath(searchpath)
+            search = normalized_search_path(searchpath)
         else:
             search = self.searchpath
 

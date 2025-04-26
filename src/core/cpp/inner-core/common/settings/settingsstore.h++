@@ -133,7 +133,7 @@ namespace core
         ///
         /// Save the settings object to the specified `filename`, which may be
         /// absolute or relative. If the name is relative, settings are
-        /// saved to the first folder returned by `paths::settingsPath()`,
+        /// saved to the first folder returned by `paths::settings_paths()`,
         /// i.e.  the first folder specified in the `"CONFIGPATH"`
         /// environment variable or otherwise the default system-specific
         /// configuration folder.

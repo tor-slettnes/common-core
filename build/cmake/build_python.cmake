@@ -318,7 +318,7 @@ endfunction()
 
 function(cc_find_python)
   set(_options OPTIONAL ALLOW_SYSTEM)
-  set(_singleargs ACTION PYTHON_INTERPRETRER VENV OUTPUT_VARIABLE)
+  set(_singleargs ACTION PYTHON_INTERPRETRER VENV VENV_TARGET OUTPUT_VARIABLE)
   set(_multiargs)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -330,6 +330,9 @@ function(cc_find_python)
   elseif(arg_VENV)
     cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${arg_VENV}" "bin" "python"
       OUTPUT_VARIABLE python)
+
+  elseif(arg_VENV_TARGET)
+    get_target_property(python "${arg_VENV_TARGET}" venv_python)
 
   elseif(arg_ALLOW_SYSTEM)
     cc_get_ternary(REQUIRED arg_OPTIONAL "" "REQUIRED")

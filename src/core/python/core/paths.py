@@ -24,18 +24,18 @@ ModuleName = str
 
 _settingspath = None
 
-def programName() -> str:
+def program_name() -> str:
     return os.path.splitext(os.path.basename(sys.argv[0]))[0]
 
-def installRoot() -> FilePath:
+def install_root() -> FilePath:
     '''
     Obtain installation root folder
     '''
 
-    installRoot, _ = locateDominatingPath('share')
-    return installRoot
+    root, _ = locate_dominating_path('share')
+    return root
 
-def packageRoot(package: str):
+def package_root(package: str):
     '''
     Obtain root installation folder for a specific Python package
     '''
@@ -47,15 +47,15 @@ def packageRoot(package: str):
     return package_path
 
 
-def pythonRoot() -> FilePath:
+def python_root() -> FilePath:
     '''
     Obtain root installation folder this Python package
     '''
-    return packageRoot(__package__)
+    return package_root(__package__)
 
 
-def addSettingsFolder(folder: FilePath,
-                      prepend: bool) -> bool:
+def add_to_settings_path(folder: FilePath,
+                         prepend: bool) -> bool:
     '''
     Add a folder to search path for settings files.
 
@@ -67,11 +67,11 @@ def addSettingsFolder(folder: FilePath,
         Insert the folder in the beginning rather than end of the search path.
 
     @return
-        True if the search path was modified, False otherwise.
+        `True` if the search path was modified, `False` otherwise.
     '''
 
-    if normfolder := normalizedFolder(folder):
-        path = settingsPath()
+    if normfolder := normalized_folder(folder):
+        path = settings_path()
         if normfolder in path:
             return False
         elif prepend:
@@ -84,7 +84,7 @@ def addSettingsFolder(folder: FilePath,
         return False
 
 
-def defaultSettingsPath() -> SearchPath:
+def default_settings_path() -> SearchPath:
     '''
     Obtain the built-in default list of folders in which to look for
     configuration files. This list comprises:
@@ -110,44 +110,44 @@ def defaultSettingsPath() -> SearchPath:
         'settings'          # Inside virtualenv and/or `.whl` container
     ])
 
-    return normalizedSearchPath(searchpath)
+    return normalized_search_path(searchpath)
 
 
-def settingsPath() -> SearchPath:
+def settings_path() -> SearchPath:
     '''
     Return list of folders in which to look for configuration files.
 
-    This list may have been ameded via prior calls to `addSettingsFolder()`.
-    To obtain the original settings path, use `defaultSettingsPath()`.
+    This list may have been ameded via prior calls to `add_to_settings_path()`.
+    To obtain the original settings path, use `default_settings_path()`.
     '''
 
     global _settingspath
     if _settingspath is None:
         if configpath := os.getenv('CONFIGPATH', ''):
-            _settingspath = normalizedSearchPath(configpath)
+            _settingspath = normalized_search_path(configpath)
         else:
-            _settingspath = defaultSettingsPath()
+            _settingspath = default_settings_path()
 
     return _settingspath
 
 
-def normalizedSearchPath(searchpath: SearchPath) -> list[pathlib.Path]:
+def normalized_search_path(searchpath: SearchPath) -> list[pathlib.Path]:
     if isinstance(searchpath, str):
         searchpath = searchpath.split(os.pathsep)
 
     normpath = []
     for folder in searchpath:
-        if normfolder := normalizedFolder(folder):
+        if normfolder := normalized_folder(folder):
             normpath.append(normfolder)
 
     return normpath
 
-def normalizedFolder(folder: FilePath):
+def normalized_folder(folder: FilePath):
     if isinstance(folder, str):
         if os.path.isabs(folder):
             return pathlib.Path(folder)
         else:
-            _, normalized = locateDominatingPath(folder)
+            _, normalized = locate_dominating_path(folder)
             return normalized
 
     elif isinstance(folder, pathlib.Path):
@@ -156,7 +156,7 @@ def normalizedFolder(folder: FilePath):
     else:
         return None
 
-def locateDominatingPath(name: FilePath):
+def locate_dominating_path(name: FilePath):
     base = importlib.resources.files(__package__)
     previous = None
 
