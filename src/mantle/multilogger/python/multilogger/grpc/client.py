@@ -58,6 +58,7 @@ class Client (API, BaseClient):
             capture_python_logs: bool = False,
             log_level      : int = logging.NOTSET,
             wait_for_ready : bool = True,
+            streaming      : bool = True,
             queue_size     : int = 64,
             overflow_disposition: OverflowDisposition = OverflowDisposition.DISCARD_OLDEST,
     ):
@@ -78,6 +79,10 @@ class Client (API, BaseClient):
         @param log_level
             Capture threshold for the Python log handler, if any.
 
+        @param streaming
+            Open a gRPC write stream rather than invoking individual RPC calls
+            per message.
+
         @param wait_for_ready
             If server is unavailable, keep waiting instead of failing.
 
@@ -89,10 +94,11 @@ class Client (API, BaseClient):
             Controls behavior when a new message is captured by the submit queue is full.
         '''
 
-        self.queue = queue.Queue(queue_size)
+        self.streaming = streaming
         self.overflow_disposition = overflow_disposition
         self.overflow_message = self.overflow_disposition_message[overflow_disposition]
         self.writer_thread = None
+        self.queue = queue.Queue(queue_size)
         self.full_queue_mutex = threading.Lock()
 
         API.__init__(self, identity,
@@ -219,9 +225,13 @@ class Client (API, BaseClient):
         Runs in its own thread until the queue is deleted (i.e., client is closed)
         '''
 
-        self.stub.writer(
-            self.queue_iterator(),
-            wait_for_ready=wait_for_ready)
+        if self.streaming:
+            self.stub.writer(self.queue_iterator(), wait_for_ready = wait_for_ready)
+
+        else:
+            for msg in self.queue_iterator():
+                self.stub.submit(msg, wait_for_ready = wait_for_ready)
+
 
     def queue_iterator(self):
         item = self.queue.get()
