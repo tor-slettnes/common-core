@@ -59,7 +59,7 @@ class Client (API, BaseClient):
             log_level      : int = logging.NOTSET,
             wait_for_ready : bool = True,
             streaming      : bool = True,
-            queue_size     : int = 64,
+            queue_size     : int = 4096,
             overflow_disposition: OverflowDisposition = OverflowDisposition.DISCARD_OLDEST,
     ):
         '''

@@ -322,6 +322,9 @@ function(cc_add_python_wheel TARGET)
     get_target_property(venv_path   ${venv_target} venv_path)
     get_target_property(venv_python ${venv_target} venv_python)
 
+    cmake_path(APPEND venv_path ".build-stamps" OUTPUT_VARIABLE stamp_dir)
+    cmake_path(APPEND stamp_dir "${TARGET}"     OUTPUT_VARIABLE target_stamp)
+
     cmake_path(RELATIVE_PATH venv_path
       BASE_DIRECTORY ${CMAKE_SOURCE_DIR}
       OUTPUT_VARIABLE venv_rel_path)
@@ -340,19 +343,33 @@ function(cc_add_python_wheel TARGET)
       OUTPUT_VARIABLE wheel_paths)
 
     add_custom_target(${TARGET}-install
-      COMMAND ${venv_python} -m pip install ${PIP_QUIET} ${distcache_args} "${wheel_paths}"
+      DEPENDS ${target_stamp})
+
+    add_custom_command(
+      OUTPUT ${target_stamp}
       DEPENDS "${TARGET}" "${venv_target}"
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${stamp_dir}"
+      COMMAND ${venv_python} -m pip install ${PIP_QUIET} ${distcache_args} "${wheel_paths}"
+      COMMAND "${CMAKE_COMMAND}" -E touch "${target_stamp}"
       COMMENT "Installing wheel '${PACKAGE_NAME}' into '${venv_rel_path}'"
+      COMMENT ""
       VERBATIM
       COMMAND_EXPAND_LISTS
     )
 
     add_custom_target(${TARGET}-uninstall
-      COMMAND ${venv_python} -m pip uninstall ${PIP_QUIET} ${PIP_QUIET} --yes "${PACKAGE_NAME}"
       DEPENDS "${venv_target}"
-      COMMENT "Uninstalling wheel '${PACKAGE_NAME}' from '${venv_rel_path}'"
+      COMMAND ${venv_python} -m pip uninstall ${PIP_QUIET} ${PIP_QUIET} --yes "${PACKAGE_NAME}"
+      COMMAND "${CMAKE_COMMAND}" -E rm -f "${target_stamp}"
       VERBATIM
     )
+
+    foreach(wheel_dep ${arg_WHEEL_DEPS})
+      if(TARGET ${wheel_dep}-uninstall)
+        add_dependencies(${wheel_dep}-uninstall ${TARGET}-uninstall)
+        add_dependencies(${wheel_dep}-install ${TARGET}-uninstall)
+      endif()
+    endforeach()
   endif()
 
 endfunction()
