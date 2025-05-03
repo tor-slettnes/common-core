@@ -352,7 +352,6 @@ function(cc_add_python_wheel TARGET)
       COMMAND ${venv_python} -m pip install ${PIP_QUIET} ${distcache_args} "${wheel_paths}"
       COMMAND "${CMAKE_COMMAND}" -E touch "${target_stamp}"
       COMMENT "Installing wheel '${PACKAGE_NAME}' into '${venv_rel_path}'"
-      COMMENT ""
       VERBATIM
       COMMAND_EXPAND_LISTS
     )
@@ -364,10 +363,10 @@ function(cc_add_python_wheel TARGET)
       VERBATIM
     )
 
+    add_dependencies(${TARGET}-install ${TARGET}-uninstall)
     foreach(wheel_dep ${arg_WHEEL_DEPS})
       if(TARGET ${wheel_dep}-uninstall)
         add_dependencies(${wheel_dep}-uninstall ${TARGET}-uninstall)
-        add_dependencies(${wheel_dep}-install ${TARGET}-uninstall)
       endif()
     endforeach()
   endif()

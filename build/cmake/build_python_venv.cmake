@@ -71,7 +71,7 @@ function(cc_add_python_venv TARGET)
   # Create the virtual environment
 
   cmake_path(RELATIVE_PATH venv_path
-    BASE_DIRECTORY "${CMAKE_SOURCE_PATH}"
+    BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
     OUTPUT_VARIABLE venv_rel_path)
 
   add_custom_command(
