@@ -123,6 +123,21 @@ set(PYTHON_VENV_ROOT "/var/lib/${ORGANIZATION}/venv"
 
 
 #-------------------------------------------------------------------------------
+# How detailed output do we want during the build?
+# For available levels, see https://cmake.org/cmake/help/latest/command/message.html.
+
+set(VERBOSITY ""
+  CACHE STRING "Message verbosity during build")
+set_property(CACHE VERBOSITY
+  PROPERTY STRINGS
+  "TRACE" "DEBUG" "VERBOSE" "STATUS" "NOTICE"
+  "DEPRECATION" "AUTHOR_WARNING" "WARNING" "SEND_ERROR" "FATAL_ERROR")
+
+if(VERBOSITY)
+  set(CMAKE_MESSAGE_LOG_LEVEL ${VERBOSITY})
+endif()
+
+#-------------------------------------------------------------------------------
 # Miscellaneous build options
 
 include(CMakeDependentOption)

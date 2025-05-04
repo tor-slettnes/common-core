@@ -191,13 +191,17 @@ function(cc_add_python_requirements_cache TARGET)
   )
 
   if(distributions)
+    message(VERBOSE
+      "Adding requirements target ${TARGET}, command: "
+      "pip ${PIP_QUIET} --wheel-dir '${staging_dir}' ${distributions}")
+
     add_custom_command(
       OUTPUT "${staging_stamp}"
       DEPENDS ${arg_REQUIREMENTS_FILES}
       COMMENT "Retrieving Python distributions for target: ${TARGET}"
 
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${staging_dir}"
-      COMMAND "${python}" -m pip ${PIP_QUIET} wheel --wheel-dir "${staging_dir}" ${distributions}
+      COMMAND "${python}" -m pip wheel ${PIP_QUIET} --wheel-dir "${staging_dir}" ${distributions}
       COMMAND "${CMAKE_COMMAND}" -E touch "${staging_stamp}"
     )
 

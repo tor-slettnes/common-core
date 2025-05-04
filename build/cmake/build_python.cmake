@@ -345,12 +345,12 @@ function(cc_find_python)
       set(python "${Python3_EXECUTABLE}")
 
     else()
-      cc_get_ternary(level arg_OPTIONAL "DEBUG" "FATAL_ERROR")
+      cc_get_ternary(level arg_OPTIONAL "VERBOSE" "FATAL_ERROR")
       message("${level}" "${arg_ACTION} requires a Python interpreter")
     endif()
 
   else()
-    cc_get_ternary(level arg_OPTIONAL "DEBUG" "FATAL_ERROR")
+    cc_get_ternary(level arg_OPTIONAL "VERBOSE" "FATAL_ERROR")
     message("${level}" "${arg_ACTION} requires PYTHON_INTERPRETER or VENV")
   endif()
 

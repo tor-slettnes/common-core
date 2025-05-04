@@ -173,8 +173,8 @@ function(cc_add_python_executable TARGET)
     REMOVE_DUPLICATES)
 
 
-  message(VERBOSE
-    "Building target ${TARGET} executable ${program_path} with deps ${sources}")
+  message(DEBUG
+    "Adding PyInstaller target ${TARGET} executable ${program_path} with deps ${sources}")
 
   add_custom_command(
     OUTPUT "${program_path}"

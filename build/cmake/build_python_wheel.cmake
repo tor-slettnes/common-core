@@ -208,6 +208,16 @@ function(cc_add_python_wheel TARGET)
 
   file(MAKE_DIRECTORY "${wheel_dir}")
 
+  message(VERBOSE
+    "Creating Python wheel: "
+    "PACKAGE_NAME=${PACKAGE_NAME}, "
+    "VERSION=${VERSION}, "
+    "DEPENDENCIES=${DEPENDENCIES}, "
+    "AUTHOR_NAME=${AUTHOR_NAME}, "
+    "AUTHOR_EMAIL=${AUTHOR_EMAIL}, "
+    "CONTENTS: ${PACKAGE_MAP}"
+  )
+
   configure_file(
     "${pyproject_template}"
     "${gen_dir}/pyproject.toml")
@@ -228,8 +238,6 @@ function(cc_add_python_wheel TARGET)
   add_dependencies(${TARGET}
     ${arg_BUILD_DEPS}
     ${arg_PYTHON_DEPS}
-    ${arg_WHEEL_DEPS}
-    ${arg_REQUIREMENTS_DEPS}
     ${arg_DATA_DEPS}
   )
 
@@ -288,7 +296,7 @@ function(cc_add_python_wheel TARGET)
     if(arg_INSTALL_VENV)
       cc_get_target_property_recursively(
         PROPERTY "python_distributions_install_dir"
-        TARGETS ${TARGET}
+        TARGETS ${arg_WHEEL_DEPS} ${arg_REQUIREMENTS_DEPS}
         REMOVE_DUPLICATES
         OUTPUT_VARIABLE wheel_install_dirs)
 
@@ -342,33 +350,49 @@ function(cc_add_python_wheel TARGET)
       INITIAL_VALUE "${wheel_path}"
       OUTPUT_VARIABLE wheel_paths)
 
-    add_custom_target(${TARGET}-install
-      DEPENDS ${target_stamp})
+    #---------------------------------------------------------------------------
+    # Add `-install` target to install wheel into virtualenv.
 
-    add_custom_command(
-      OUTPUT ${target_stamp}
-      DEPENDS "${TARGET}" "${venv_target}"
-      COMMAND "${CMAKE_COMMAND}" -E make_directory "${stamp_dir}"
-      COMMAND ${venv_python} -m pip install ${PIP_QUIET} ${distcache_args} "${wheel_paths}"
-      COMMAND "${CMAKE_COMMAND}" -E touch "${target_stamp}"
+    add_custom_target(${TARGET}-install
+      DEPENDS ${TARGET} ${TARGET}-uninstall ${venv_target} ${arg_REQUIREMENTS_DEPS}
       COMMENT "Installing wheel '${PACKAGE_NAME}' into '${venv_rel_path}'"
+      COMMAND ${venv_python} -m pip install ${PIP_QUIET} ${distcache_args} "${wheel_paths}"
       VERBATIM
       COMMAND_EXPAND_LISTS
     )
 
+    add_dependencies(${TARGET}-install
+      ${TARGET}
+      ${venv_target}
+      ${arg_REQUIREMENTS_DEPS}
+    )
+
+    #---------------------------------------------------------------------------
+    # Add `-uninstall` target to remove wheel/prepare for reinstall.
+
     add_custom_target(${TARGET}-uninstall
-      DEPENDS "${venv_target}"
-      COMMAND ${venv_python} -m pip uninstall ${PIP_QUIET} ${PIP_QUIET} --yes "${PACKAGE_NAME}"
-      COMMAND "${CMAKE_COMMAND}" -E rm -f "${target_stamp}"
+      COMMAND "${venv_python}" -m pip uninstall ${PIP_QUIET} ${PIP_QUIET} --yes "${PACKAGE_NAME}"
       VERBATIM
     )
 
-    add_dependencies(${TARGET}-install ${TARGET}-uninstall)
+    add_dependencies(${TARGET}-uninstall
+      ${venv_target})
+
+    #---------------------------------------------------------------------------
+    # Ensure dependencies get installed along with wheel.
+    # Also ensure wheel gets uninstalled along with any dependency.
+
     foreach(wheel_dep ${arg_WHEEL_DEPS})
-      if(TARGET ${wheel_dep}-uninstall)
+      if(TARGET ${wheel_dep}-install)
+        add_dependencies(${TARGET}-install ${wheel_dep}-install)
         add_dependencies(${wheel_dep}-uninstall ${TARGET}-uninstall)
       endif()
     endforeach()
+
+    # add_dependencies(${TARGET}-install
+    #   ${TARGET}-uninstall
+    #   ${arg_REQUIREMENTS_DEPS}
+    # )
   endif()
 
 endfunction()

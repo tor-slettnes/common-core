@@ -31,10 +31,6 @@ endif
 ### CMake customization
 export CMAKE_BUILD_TYPE ?= $(BUILD_TYPE)
 
-ifeq ($(shell uname),Linux)
-  export CMAKE_BUILD_PARALLEL_LEVEL = $(shell nproc)
-endif
-
 ifneq ($(wildcard $(TOOLCHAIN_FILE)),)
   export CMAKE_TOOLCHAIN_FILE ?= $(TOOLCHAIN_FILE)
 endif
@@ -42,6 +38,10 @@ endif
 ## Set CMake cache entries from variable overrides provided on command line.
 ## E.g. `make PRODUCT=myproduct` -> `cmake -DPRODUCT=myproduct`.
 CMAKE_CONFIG_ARGS += $(foreach override,$(MAKEOVERRIDES),-D$(override))
+
+ifeq ($(shell uname),Linux)
+  CMAKE_BUILD_ARGS += --parallel $(shell nproc)
+endif
 
 ## Create CMake cache only if this file is absent.
 CMAKE_TAG = $(BUILD_DIR)/Makefile
@@ -92,7 +92,7 @@ wheels: cmake
 	@echo "Creating PIP-installable Python distributions ('.whl')"
 	@echo "#############################################################"
 	@echo
-	@cmake --build "$(BUILD_DIR)" --target python_wheels
+	@cmake --build "$(BUILD_DIR)" --target python_wheels $(CMAKE_BUILD_ARGS)
 	@echo
 	@echo "Wheels are created in '$(BUILD_DIR)/python/wheels'"
 
@@ -129,7 +129,7 @@ doc: cmake
 	@echo "Generating documentation"
 	@echo "#############################################################"
 	@echo
-	@cmake --build "$(BUILD_DIR)" --target doxygen
+	@cmake --build "$(BUILD_DIR)" --target doxygen $(CMAKE_BUILD_ARGS)
 
 .PHONY: ctest
 ctest: build
@@ -165,7 +165,7 @@ build: cmake
 	@echo "Building in ${BUILD_DIR}"
 	@echo "#############################################################"
 	@echo
-	@cmake --build "$(BUILD_DIR)"
+	@cmake --build "$(BUILD_DIR)" $(CMAKE_BUILD_ARGS)
 
 .PHONY: cmake-gui
 cmake-gui: cmake
@@ -233,16 +233,16 @@ get_version:
 get_product:
 	@echo $(call get_cached_or_default,PRODUCT)
 
+.PHONY: clean
+clean: clean/cmake
+
 .PHONY: clean/cmake cmake_clean
 clean/cmake cmake_clean:
-	@if [ -f "$(CMAKE_TAG)" ]; \
+	@if [ -f "$(CMAKE_CACHE)" ]; \
 	then \
 		echo "Invoking CMake target 'clean'"; \
-		cmake --build "$(BUILD_DIR)" --target clean || true; \
+		cmake --build "$(BUILD_DIR)" --target clean $(CMAKE_BUILD_ARGS) || true; \
 	fi
-
-.PHONY: clean clean/core
-clean: clean/cmake
 
 .PHONY: clean/core
 clean/core:
@@ -272,8 +272,11 @@ clean/out cleanout:
 clean/python:
 	@$(call remove,$(OUT_DIR)/python)
 
+.PHONY: realclean
+realclean: clean/core clean/cmake clean/package clean/install clean/build
+
 .PHONY: distclean pristine
-distclean pristine: clean/install clean/package clean/build clean/out
+distclean pristine: clean/core clean/out
 
 ### Delegate docker_ targets to its own Makefile
 docker_%:
