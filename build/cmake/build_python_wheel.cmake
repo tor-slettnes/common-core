@@ -297,6 +297,7 @@ function(cc_add_python_wheel TARGET)
       cc_get_target_property_recursively(
         PROPERTY "python_distributions_install_dir"
         TARGETS ${arg_WHEEL_DEPS} ${arg_REQUIREMENTS_DEPS}
+        INITIAL_VALUE "${wheels_install_dir}"
         REMOVE_DUPLICATES
         OUTPUT_VARIABLE wheel_install_dirs)
 
