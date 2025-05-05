@@ -121,7 +121,7 @@ function(cc_add_python TARGET)
 
   cc_stage_python_modules(
     OUTPUT "${staged_outputs}"
-    MODULES_DIR "${namespace_dir}"
+    STAGING_DIR "${namespace_dir}"
     PROGRAMS ${arg_PROGRAMS}
     FILES ${arg_FILES}
     DIRECTORIES ${arg_DIRECTORIES}
@@ -194,24 +194,25 @@ endfunction()
 
 function(cc_stage_python_modules)
   set(_options)
-  set(_singleargs MODULES_DIR)
+  set(_singleargs STAGING_DIR)
   set(_multiargs OUTPUT PROGRAMS FILES DIRECTORIES FILENAME_PATTERN)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### Now define the first of several commands that will populate the output folder.
   add_custom_command(
     OUTPUT ${arg_OUTPUT}
-    COMMENT ""
-    BYPRODUCTS ${arg_MODULES_DIR}
+    COMMENT "Staging Python modules: ${TARGET}"
+    BYPRODUCTS ${arg_STAGING_DIR}
     COMMAND ${CMAKE_COMMAND}
-    ARGS -E make_directory ${arg_MODULES_DIR}
+    ARGS -E make_directory ${arg_STAGING_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMAND_EXPAND_LISTS
     VERBATIM
   )
 
   foreach(dir ${arg_DIRECTORIES})
-    cmake_path(APPEND CMAKE_CURRENT_SOURCE_DIR "${dir}"
+    cmake_path(ABSOLUTE_PATH dir
+      BASE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       OUTPUT_VARIABLE abs_dir)
 
     cmake_path(GET abs_dir
@@ -230,9 +231,9 @@ function(cc_stage_python_modules)
     foreach(rel_path ${rel_paths})
       add_custom_command(
         OUTPUT ${arg_OUTPUT} APPEND
-        DEPENDS ${anchor_dir}/${rel_path}
-        COMMAND ${CMAKE_COMMAND}
-        ARGS -E copy ${anchor_dir}/${rel_path} ${arg_MODULES_DIR}/${rel_path}
+        DEPENDS "${anchor_dir}/${rel_path}"
+        COMMAND "${CMAKE_COMMAND}"
+        ARGS -E copy "${anchor_dir}/${rel_path}" "${arg_STAGING_DIR}/${rel_path}"
       )
     endforeach()
   endforeach()
@@ -242,7 +243,7 @@ function(cc_stage_python_modules)
       OUTPUT ${arg_OUTPUT} APPEND
       DEPENDS ${arg_FILES}
       COMMAND ${CMAKE_COMMAND}
-      ARGS -E copy ${arg_FILES} ${arg_MODULES_DIR}
+      ARGS -E copy ${arg_FILES} ${arg_STAGING_DIR}
     )
   endif()
 
@@ -257,14 +258,14 @@ function(cc_stage_python_modules)
         OUTPUT ${arg_OUTPUT} APPEND
         DEPENDS ${arg_PROGRAMS}
         COMMAND /usr/bin/install
-        ARGS --mode=755 --target-directory=${arg_MODULES_DIR} ${arg_PROGRAMS}
+        ARGS --mode=755 --target-directory=${arg_STAGING_DIR} ${arg_PROGRAMS}
       )
     else()
       add_custom_command(
         OUTPUT ${arg_OUTPUT} APPEND
         DEPENDS ${arg_PROGRAMS}
         COMMAND ${CMAKE_COMMAND}
-        ARGS -E copy ${arg_PROGRAMS} ${arg_MODULES_DIR}
+        ARGS -E copy ${arg_PROGRAMS} ${arg_STAGING_DIR}
       )
     endif()
   endif()

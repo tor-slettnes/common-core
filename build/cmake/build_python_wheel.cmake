@@ -47,7 +47,6 @@ function(cc_add_python_wheel TARGET)
     INSTALL_SYMLINKS    # Create symbolic links to VENV scripts here (e.g., `bin` or `sbin`)
   )
   set(_multiargs
-    BUILD_DEPS          # CMake targets that must be built before this
     PYTHON_DEPS         # Python target dependencies to include in wheel
     WHEEL_DEPS          # Other wheels that must also be built & installed
     DATA_DEPS           # Other target dependencies to include, e.g. settings
@@ -162,6 +161,7 @@ function(cc_add_python_wheel TARGET)
   cc_get_target_property_recursively(
     PROPERTY "NAME"
     TARGETS ${arg_PYTHON_DEPS} ${arg_DATA_DEPS}
+    REMOVE_DUPLICATES
     OUTPUT_VARIABLE deps)
 
   cc_get_target_property_recursively(
@@ -170,12 +170,6 @@ function(cc_add_python_wheel TARGET)
     OUTPUT_VARIABLE indirect_deps)
 
   list(REMOVE_ITEM deps ${indirect_deps})
-
-
-  #-----------------------------------------------------------------------------
-  # Collect staging directories from the resulting direct dependencies, and
-  # generate corresponding `"SOURCE_DIR" = "TARGET_DIR/"` statements for the
-  # `[...force-include]` section in `pyproject.toml`.
 
   cc_get_target_properties_recursively(
     PROPERTIES "staging_dir" "data_dir"
@@ -186,6 +180,21 @@ function(cc_add_python_wheel TARGET)
     OUTPUT_VARIABLE package_map
     REMOVE_DUPLICATES)
 
+  #-----------------------------------------------------------------------------
+  # Collect staging directories from the resulting direct dependencies, and
+  # generate corresponding `"SOURCE_DIR" = "TARGET_DIR/"` statements for the
+  # `[...force-include]` section in `pyproject.toml`.
+
+  unset(package_map)
+  foreach(dep ${deps})
+    get_target_property(staging_dir ${dep} staging_dir)
+    get_target_property(target_dir ${dep} data_dir)
+    if(staging_dir AND target_dir)
+      list(APPEND package_map "\"${staging_dir}\" = \"${target_dir}/\"")
+    elseif(staging_dir)
+      list(APPEND package_map "\"${staging_dir}\" = \"/\"")
+    endif()
+  endforeach()
 
   # Create a multi-line string in PACKAGE_MAP holding these directory mappings.
   list(JOIN package_map "\n" PACKAGE_MAP)
@@ -236,7 +245,6 @@ function(cc_add_python_wheel TARGET)
   )
 
   add_dependencies(${TARGET}
-    ${arg_BUILD_DEPS}
     ${arg_PYTHON_DEPS}
     ${arg_DATA_DEPS}
   )
@@ -255,11 +263,12 @@ function(cc_add_python_wheel TARGET)
   #-----------------------------------------------------------------------------
   # Create Python wheel
 
-  cc_get_target_property_recursively(
-    PROPERTY "SOURCES"
-    TARGETS ${TARGET}
-    OUTPUT_VARIABLE sources
-    REMOVE_DUPLICATES)
+  unset(sources)
+  foreach(dep ${deps})
+    get_target_property(target_sources ${dep} "SOURCES")
+    list(APPEND sources ${target_sources})
+  endforeach()
+  list(REMOVE_DUPLICATES sources)
 
   add_custom_command(
     OUTPUT "${wheel_path}"
@@ -355,9 +364,16 @@ function(cc_add_python_wheel TARGET)
     # Add `-install` target to install wheel into virtualenv.
 
     add_custom_target(${TARGET}-install
-      DEPENDS ${TARGET} ${TARGET}-uninstall ${venv_target} ${arg_REQUIREMENTS_DEPS}
+      DEPENDS ${target_stamp})
+
+    add_custom_command(
+      OUTPUT ${target_stamp}
+      DEPENDS ${wheel_path}
       COMMENT "Installing wheel '${PACKAGE_NAME}' into '${venv_rel_path}'"
+      COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ${TARGET}-uninstall
       COMMAND ${venv_python} -m pip install ${PIP_QUIET} ${distcache_args} "${wheel_paths}"
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${stamp_dir}"
+      COMMAND ${CMAKE_COMMAND} -E touch "${target_stamp}"
       VERBATIM
       COMMAND_EXPAND_LISTS
     )
@@ -373,6 +389,7 @@ function(cc_add_python_wheel TARGET)
 
     add_custom_target(${TARGET}-uninstall
       COMMAND "${venv_python}" -m pip uninstall ${PIP_QUIET} ${PIP_QUIET} --yes "${PACKAGE_NAME}"
+      COMMAND ${CMAKE_COMMAND} -E rm -f "${target_stamp}"
       VERBATIM
     )
 
