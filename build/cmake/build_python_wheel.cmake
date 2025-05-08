@@ -372,10 +372,10 @@ function(cc_add_python_wheel TARGET)
       OUTPUT ${target_stamp}
       DEPENDS ${wheel_path}
       COMMENT "Installing wheel '${PACKAGE_NAME}' into '${venv_rel_path}'"
-      COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ${TARGET}-uninstall
-      COMMAND ${venv_python} -m pip install ${PIP_QUIET} ${distcache_args} "${wheel_paths}"
-      COMMAND ${CMAKE_COMMAND} -E make_directory "${stamp_dir}"
-      COMMAND ${CMAKE_COMMAND} -E touch "${target_stamp}"
+      COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${TARGET}-uninstall"
+      COMMAND "${venv_python}" -m pip install ${PIP_QUIET} ${distcache_args} "${wheel_paths}"
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${stamp_dir}"
+      COMMAND "${CMAKE_COMMAND}" -E touch "${target_stamp}"
       VERBATIM
       COMMAND_EXPAND_LISTS
     )

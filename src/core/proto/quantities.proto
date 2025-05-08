@@ -7,7 +7,36 @@
 
 syntax = "proto3";
 
-package cc.variant;
+package cc.quantities;
+
+
+//-------------------------------------------------------------------------------
+// Scalar value.
+//
+
+message Scalar
+{
+    // Reported value.
+    double value = 1;
+
+    // Decimal exponent (order of magnitude). Examples:
+    //  * 0   -> unscaled
+    //  * -1  -> per ten (deci)
+    //  * -2  -> per hundred (centi, percent)
+    //  * -3  -> per thousand (milli, permille)
+    //  * -4  -> per ten thousand (permyriad)
+    //  * -6  -> per million (micro)
+    //  * -9  -> per US/short form billion (nano, ppm)
+    //  * -12 -> per US/short form trillion (pico, ppb)
+    //  * 1   -> tens (deka)
+    //  * 2   -> hundreds (hecto)
+    //  * 3   -> thousands (kilo)
+    //  * 6   -> millions (mega)
+    //  * 9   -> US (short form) billions; intl (long form) milliards
+    //  * 12  -> US (short form) trillions; intl (long form) billons
+    optional int32 decimal_exponent = 3;
+}
+
 
 
 //------------------------------------------------------------------------------
@@ -17,18 +46,18 @@ message Distance
 {
     double value = 1;
     DistanceUnit unit = 2;
+    optional int32 decimal_exponent = 3;
 }
 
 
 enum DistanceUnit
 {
-    DISTANCE_UNDEFINED = 0;
-    DISTANCE_METERS    = 1;     // SI Base unit
-    DISTANCE_INCHES    = 20;    // Imperial, 0.0254m
-    DISTANCE_FEET      = 21;    // 12 inches
-    DISTANCE_YARDS     = 22;    // 3 feet
-    DISTANCE_MILES     = 23;    // 1760 yards
-    DISTANCE_LIGHTYEARS = 40;   // Approx. 9.4607e+15 meters
+    DISTANCE_METERS     = 0;    // SI Base unit
+    DISTANCE_INCHES     = 1;    // Imperial, 0.0254m
+    DISTANCE_FEET       = 2;    // 12 inches
+    DISTANCE_YARDS      = 3;    // 3 feet
+    DISTANCE_MILES      = 4;    // 1760 yards
+    DISTANCE_LIGHTYEARS = 5;    // Approx. 9.4607e+15 meters
 }
 
 //------------------------------------------------------------------------------
@@ -38,15 +67,16 @@ message Velocity
 {
     double value = 1;
     VelocityUnit unit = 2;
+    optional int32 decimal_exponent = 3;
 }
 
 enum VelocityUnit
 {
-    VELOCITY_UNDEFINED = 0;
-    VELOCITY_METERS_SECOND   = 1;  // SI unit
-    VELOCITY_KILOMETERS_HOUR = 2;  // SI derived, 1 m/s = 3.6 km/h
-    VELOCITY_MILES_PER_HOUR  = 20; // Imperial, 1 mph ≈ 1.609 km/h
-    VELOCITY_LIGHTSPEEDS     = 40; // Universal, 1c ≈ 299,792,458 m/s
+    VELOCITY_UNDEFINED           = 0;
+    VELOCITY_METERS_PER_SECOND   = 1; // SI unit
+    VELOCITY_KILOMETERS_PER_HOUR = 2; // SI derived, 1 m/s = 3.6 km/h
+    VELOCITY_MILES_PER_HOUR      = 3; // Imperial, 1 mph ≈ 1.609 km/h
+    VELOCITY_LIGHTSPEEDS         = 4; // Universal, 1c ≈ 299,792,458 m/s
 }
 
 
@@ -57,6 +87,7 @@ message Angle
 {
     double value = 1;
     AngleUnit unit = 2;
+    optional int32 decimal_exponent = 3;
 }
 
 enum AngleUnit
@@ -74,16 +105,17 @@ message Area
 {
     double value = 1;
     AreaUnit unit = 2;
+    optional int32 decimal_exponent = 3;
 }
 
 enum AreaUnit
 {
     AREA_UNDEFINED = 0;
     AREA_M2        = 1;         // SI unit, square meters
-    AREA_SQFT      = 20;        // 0.09290304 m^2
-    AREA_SQIN      = 21;        // 1/144 square foot
-    AREA_SQYD      = 22;        // 9 square feet
-    AREA_SQMILES   = 23;        // 2.589 km^2
+    AREA_SQFT      = 4;         // 0.09290304 m^2
+    AREA_SQIN      = 5;         // 1/144 square foot
+    AREA_SQYD      = 6;         // 9 square feet
+    AREA_SQMILES   = 7;         // 2.589 km^2
 }
 
 //------------------------------------------------------------------------------
@@ -93,19 +125,17 @@ message Volume
 {
     double value = 1;
     VolumeUnit unit = 2;
+    optional int32 decimal_exponent = 3;
 }
 
 enum VolumeUnit
 {
     VOLUME_UNDEFINED        = 0;
-    VOLUME_LITRE            = 1;  // SI, 1 cubic decimeter
-    VOLUME_M3               = 2;  // SI derivative, 1 cubic meter = 1000 litres
-    VOLUME_MILLILITRES      = 3;  // SI derivative, 1 mL = 1 cm^3
-    VOLUME_MICROLITRES      = 4;  // SI derivative, 1 uL = 1 mm^3
-    VOLUME_IMP_FLUID_OUNCES = 20; // Approx. 28.41 mL
-    VOLUME_IMP_GALLON       = 21; // 160 imperial fl. oz. = 4.54609 litres
-    VOLUME_US_FLUID_OUNCES  = 30; // Approx. 29.57 mL
-    VOLUME_US_GALLON        = 31; // 128 US fl. oz. = 3.785 litres
+    VOLUME_M3               = 1; // m^3 (1000 L)
+    VOLUME_IMP_FLUID_OUNCES = 4; // Approx. 28.41 mL
+    VOLUME_IMP_GALLON       = 5; // 160 imperial fl. oz. = 4.54609 litres
+    VOLUME_US_FLUID_OUNCES  = 6; // Approx. 29.57 mL
+    VOLUME_US_GALLON        = 7; // 128 US fl. oz. = 3.785 litres
 }
 
 //------------------------------------------------------------------------------
@@ -115,19 +145,18 @@ message Mass
 {
     double value = 1;
     MassUnit unit = 2;
+    optional int32 decimal_exponent = 3;
 }
 
 
 enum MassUnit
 {
     MASS_UNDEFINED = 0;
-    MASS_GRAMS     = 10;        // 1/1000 kg
-    MASS_KILOGRAMS = 11;        // SI base unit
-    MASS_TONNE     = 12;        // 1000 kg
-    MASS_OUNCES    = 20;        // 28.349523125 g
-    MASS_LBS       = 21;        // 453.59237 g
-    MASS_SHORT_TON = 22;        // US, 2000 lbs, 907.18474 kg
-    MASS_LONG_TON  = 23;        // British, 2240 lbs, 1,016.0469088 kg
+    MASS_GRAMS     = 1;         // grams (Note: SI base unit is `kg`)
+    MASS_OUNCES    = 4;         // 28.349523125 g
+    MASS_LBS       = 5;         // 453.59237 g
+    MASS_SHORT_TON = 6;         // US, 2000 lbs, 907.18474 kg
+    MASS_LONG_TON  = 7;         // British, 2240 lbs, 1,016.0469088 kg
 }
 
 //------------------------------------------------------------------------------
@@ -137,15 +166,16 @@ message Force
 {
     double value = 1;
     ForceUnit unit = 2;
+    optional int32 decimal_exponent = 3;
 }
 
 
 enum ForceUnit
 {
     FORCE_UNDEFINED = 0;
-    FORCE_NEWTONS   = 10;       // SI unit, 1 kg * m/s^2
-    FORCE_OUNCES    = 20;       // 0.2780139 Newtons
-    FORCE_LBS       = 21;       // Pount-force = 16 ounce-force
+    FORCE_NEWTONS   = 1;        // SI unit, 1 kg * m/s^2
+    FORCE_OUNCES    = 4;        // 0.2780139 Newtons
+    FORCE_LBS       = 5;        // Pount-force = 16 ounce-force
 }
 
 //------------------------------------------------------------------------------
@@ -155,15 +185,16 @@ message Temperature
 {
     double value = 1;
     TemperatureUnit unit = 2;
+    optional int32 decimal_exponent = 3;
 }
 
 enum TemperatureUnit
 {
     TEMPERATURE_UNDEFINED         = 0;
-    TEMPERATURE_KELVIN            = 10; // Absolute scale, increments of 1°C
-    TEMPERATURE_DEGREES_CELSIUS   = 11; // 0°C = 273.15 K
-    TEMPERATURE_DEGREES_RANKINE   = 20; // Absolute scale, increments of 1°F
-    TEMPERATURE_DEGREES_FARENHEIT = 21; // 0°F = 459.67 °Ra
+    TEMPERATURE_KELVIN            = 1; // Absolute scale, increments of 1°C
+    TEMPERATURE_DEGREES_CELSIUS   = 2; // 0°C = 273.15 K
+    TEMPERATURE_DEGREES_RANKINE   = 3; // Absolute scale, increments of 1°F
+    TEMPERATURE_DEGREES_FARENHEIT = 4; // 0°F = 459.67 °Ra
 }
 
 
@@ -174,35 +205,163 @@ message Pressure
 {
     double value = 1;
     PressureUnit unit = 2;
+    optional int32 decimal_exponent = 3;
 }
 
 enum PressureUnit
 {
     PRESSURE_UNDEFINED   = 0;
-    PRESSURE_PASCALS     = 10;  // Newton per square meter
-    PRESSURE_HPA         = 12;  // HectoPascals
-    PRESSURE_KPA         = 13;  // KiloPascals
-    PRESSURE_ATMOSPHERES = 20;  // 101325 Pa
-    PRESSURE_MMHG        = 30;  // Millimeters of Mercury, 133.32238 Pa
-    PRESSURE_TORR        = 40;  // 1/760 Atmosphere, 133.32236 Pa
-    PRESSURE_PSI         = 50;  // US lbs per Square Inch, 6.894757 kPa
+    PRESSURE_PASCALS     = 1;  // Newton per square meter
+    PRESSURE_ATMOSPHERES = 4;  // 101,325 bPa
+    PRESSURE_PSI         = 5;  // US lbs per Square Inch, 6,894.757 Pa
+    PRESSURE_MMHG        = 6;  // Millimeters of Mercury, 133.32238 Pa
+    PRESSURE_TORR        = 7;  // 1/760 Atmosphere, 133.32236 Pa
 };
 
 
-//-------------------------------------------------------------------------------
-// Concentration
+//------------------------------------------------------------------------------
+// Flow Rate
 
-message Concentration
+message MassFlowRate
 {
     double value = 1;
-    ConcentrationUnit unit = 2;
+    MassFlowRateUnit unit = 2;
+    optional int32 decimal_exponent = 3;
 }
 
-enum ConcentrationUnit
+enum MassFlowRateUnit
 {
-    CONCENTRATION_UNDEFINED = 0;
-    CONCENTRATION_FRACTION  = 1;  // Fraction of 1.0
-    CONCENTRATION_PPM       = 10; // Parts per million (10^6)
-    CONCENTRATION_PPB       = 11; // Parts per billion (10^9)
-    CONCENTRATION_PPT       = 12; // Parts per trillion (10^12)
+    MFR_UNDEFINED = 0;
+    MFR_NLPM      = 1;          // Normal liters per minute
+    MFR_SLPM      = 2;          // Standard liters per minute
+}
+
+message VolumetricFlowRate
+{
+    double value = 1;
+    VolumetricFlowRateUnit unit = 2;
+    optional int32 decimal_exponent = 3;
+}
+
+enum VolumetricFlowRateUnit
+{
+    VFR_UNDEFINED     = 0;
+    VFR_M3_PER_SECOND = 1;      // Cubic meter per second
+}
+
+//------------------------------------------------------------------------------
+// Flow
+
+message MassFlow
+{
+    double value = 1;
+    MassFlowUnit unit = 2;
+    optional int32 decimal_exponent = 3;
+}
+
+enum MassFlowUnit
+{
+    MASSFLOW_UNDEFINED = 0;
+    MASSFLOW_NL        = 1;     // Normal liters
+    MASSFLOW_SL        = 2;     // Standard liters
+}
+
+
+//-------------------------------------------------------------------------------
+// Density
+
+message Density
+{
+    double value = 1;
+    DensityUnit unit = 2;
+    optional int32 decimal_exponent = 3;
+}
+
+enum DensityUnit
+{
+    DENSITY_UNDEFINED       = 0;
+    DENSITY_GRAMS_PER_M3    = 1; // g/m^3
+}
+
+
+//-------------------------------------------------------------------------------
+// Frequency
+
+message Frequency
+{
+    double value = 1;
+    FrequencyUnit unit = 2;
+    optional int32 decimal_exponent = 3;
+}
+
+enum FrequencyUnit
+{
+    FREQUENCY_UNDEFINED = 0;
+    FREQUENCY_HERTZ     = 1;
+}
+
+
+//-------------------------------------------------------------------------------
+// Electric Voltage
+
+message Voltage
+{
+    double value = 1;
+    VoltageUnit unit = 2;
+    optional int32 decimal_exponent = 3;
+}
+
+enum VoltageUnit
+{
+    VOLTAGE_UNDEFINED  = 0;
+    VOLTAGE_VOLTS      = 1;
+}
+
+//-------------------------------------------------------------------------------
+// Electric Current
+
+message Current
+{
+    double value = 1;
+    CurrentUnit unit = 2;
+    optional int32 decimal_exponent = 3;
+}
+
+enum CurrentUnit
+{
+    CURRENT_UNDEFINED  = 0;
+    CURRENT_AMPERES    = 1;
+}
+
+//-------------------------------------------------------------------------------
+// Power
+
+message Power
+{
+    double value = 1;
+    PowerUnit unit = 2;
+    optional int32 decimal_exponent = 3;
+}
+
+enum PowerUnit
+{
+    POWER_UNDEFINED  = 0;
+    POWER_WATTS      = 1;
+}
+
+//-------------------------------------------------------------------------------
+// Energy
+
+message Energy
+{
+    double value = 1;
+    EnergyUnit unit = 2;
+    optional int32 decimal_exponent = 3;
+}
+
+enum EnergyUnit
+{
+    ENERGY_UNDEFINED  = 0;
+    ENERGY_JOULES     = 1;
+    ENERGY_CALORIES   = 2;
 }

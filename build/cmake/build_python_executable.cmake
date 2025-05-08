@@ -27,7 +27,7 @@ function(cc_add_python_executable TARGET)
   set(_options
     ALL                 # Add executable to default target
     USE_SPEC            # Use a Pyinstaller `.spec` file (see `SPEC_TEMPLATE`)
-    DIRECTORY_BUNDLE    # Create a directory bundle instead of single executable
+    DIRECTORY_BUNDLE    # Create a directory bundle instead of single binary
   )
   set(_singleargs
     SCRIPT              # Startup/main script (required)

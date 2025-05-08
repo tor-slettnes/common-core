@@ -30,6 +30,7 @@ set(SOURCES
   protobuf-enum.c++
   protobuf-datetime-types.c++
   protobuf-version.c++
+  protobuf-quantities.c++
   protobuf-message.c++
   protobuf-message-decoder.c++
 )
