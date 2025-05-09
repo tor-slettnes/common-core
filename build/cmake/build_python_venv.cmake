@@ -171,8 +171,10 @@ function(cc_add_python_requirements_cache TARGET)
   cmake_path(APPEND staging_dir ".${TARGET}"
     OUTPUT_VARIABLE staging_stamp)
 
-  cc_get_optional_keyword(ALL arg_ALL)
-  add_custom_target(${TARGET} ${ALL}
+  if(arg_ALL OR WITH_PYTHON_REQUIREMENTS)
+    set(include_in_all "ALL")
+  endif()
+  add_custom_target(${TARGET} ${include_in_all}
     DEPENDS "${staging_stamp}"
   )
 
@@ -199,9 +201,11 @@ function(cc_add_python_requirements_cache TARGET)
       OUTPUT "${staging_stamp}"
       DEPENDS ${arg_REQUIREMENTS_FILES}
       COMMENT "Retrieving Python distributions for target: ${TARGET}"
+      COMMAND_EXPAND_LISTS
+      VERBATIM
 
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${staging_dir}"
-      COMMAND "${python}" -m pip ${PIP_QUIET} wheel --wheel-dir "${staging_dir}" ${distributions}
+      COMMAND "${python}" -m pip wheel ${PIP_QUIET} --wheel-dir "${staging_dir}" ${distributions}
       COMMAND "${CMAKE_COMMAND}" -E touch "${staging_stamp}"
     )
 
@@ -325,7 +329,6 @@ function(cc_populate_python_venv TARGET)
     OUTPUT "${target_stamp}"
     COMMENT "Populating Python Virtual Environment: ${venv_path}"
     VERBATIM
-    COMMAND_EXPAND_LISTS
   )
 
   cc_get_target_property_recursively(
@@ -339,7 +342,7 @@ function(cc_populate_python_venv TARGET)
       OUTPUT "${target_stamp}" APPEND
       COMMAND find "${cache_dir}"
       -name *.whl
-      -exec "${venv_python}" -m pip ${PIP_QUIET} install --no-index --no-warn-script-location {} +
+      -exec "${venv_python}" -m pip install ${PIP_QUIET} --no-index --no-warn-script-location {} +
     )
   endforeach()
 
