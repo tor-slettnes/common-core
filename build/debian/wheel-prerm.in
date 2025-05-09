@@ -9,7 +9,11 @@ symlinks_target_dir="@SYMLINKS_TARGET_DIR@"
 delete_venv()
 {
     rm -rf "${venv_path}"
-    rmdir --ignore-fail-on-non-empty --parents "${venv_root}"
+
+    if [ -d "${venv_root}" ]
+    then
+        rmdir --ignore-fail-on-non-empty --parents "${venv_root}"
+    fi
 }
 
 remove_symlinks()
