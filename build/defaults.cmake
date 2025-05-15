@@ -77,6 +77,7 @@ set(UPGRADE_KEYRING "common-core-release.kbx"
 
 #-------------------------------------------------------------------------------
 # Package generation with CPack. For information about grouping, see
+# https://cmake.org/cmake/help/latest/module/CPackComponent.html#add-component-group
 
 option(DEB_SPLIT_BY_COMPONENT
   "Create one installation package per component"
@@ -86,13 +87,13 @@ option(DEB_SPLIT_BY_GROUP
   "Create one installation package per component group"
   FALSE)
 
-set(CPACK_PACKAGE_NAME "cc"
+set(PACKAGE_NAME_PREFIX "cc"
   CACHE STRING "Base name for installable packages. Component or group name may be appended to this")
 
-set(CPACK_PACKAGE_VENDOR "Common Core Authors"
-  CACHE STRING "Name of package vendor")
+set(PACKAGE_ORGANIZATION "Common Core Authors"
+  CACHE STRING "Name of issuing organization")
 
-set(CPACK_PACKAGE_CONTACT "Tor Slettnes <tor@slett.net>"
+set(PACKAGE_CONTACT "Tor Slettnes <tor@slett.net>"
   CACHE STRING "Package contact/maintainer")
 
 #-------------------------------------------------------------------------------
@@ -109,7 +110,7 @@ set(PYTHON_PIP_CORE_REQUIREMENTS_FILE
 set(PYTHON_INSTALL_DIR "lib/python3/dist-packages"
   CACHE STRING "Top-level installation directory for Python modules")
 
-set(PYTHON_WHEEL_NAME_PREFIX "${CPACK_PACKAGE_NAME}_"
+set(PYTHON_WHEEL_NAME_PREFIX "${PACKAGE_NAME_PREFIX}_"
   CACHE STRING "Default name prefix for generated Python distribution packages")
 
 set(PYTHON_WHEELS_INSTALL_DIR "${DATA_DIR}/python-wheels"

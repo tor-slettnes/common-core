@@ -45,10 +45,6 @@ function(cc_add_executable TARGET)
     set(install ON)
     list(APPEND install_args COMPONENT ${arg_INSTALL_COMPONENT})
 
-  elseif(CPACK_CURRENT_COMPONENT)
-    set(install ON)
-    list(APPEND install_args COMPONENT ${CPACK_CURRENT_COMPONENT})
-
   elseif(arg_INSTALL)
     set(install ON)
     list(APPEND install_args COMPONENT common)

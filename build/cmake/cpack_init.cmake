@@ -8,6 +8,15 @@
 #-------------------------------------------------------------------------------
 ### General CPack settings
 
+# Base name for installable packages. Component or group name may be added to this.
+set(CPACK_PACKAGE_NAME ${PACKAGE_NAME_PREFIX})
+
+# Name of issuing organization
+set(CPACK_PACKAGE_VENDOR ${PACKAGE_ORGANIZATION})
+
+# Package contact/maintainer
+set(CPACK_PACKAGE_CONTACT ${PACKAGE_CONTACT})
+
 # Prevent PROJECT_DESCRIPTION to be used as SUMMARY for every package component
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Missing package component description")
