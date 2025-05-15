@@ -98,7 +98,7 @@ function(cc_add_python_executable TARGET)
   # installed into that environment. However, the same environment might be used
   # for multiple build targets, possibly running in parallel. In order to
   # prevent a race condition where multiple `pip` jobs are running
-  # simultaneously, we create a commoon `${venv_dep}-populate-pyinstaller`
+  # simultaneously, we create a commoon `${venv_dep}-pyinstaller`
   # target here, which in turn becomes a shared build dependency for each of the
   # final build targets.
   #
@@ -108,7 +108,7 @@ function(cc_add_python_executable TARGET)
 
   if(arg_VENV_DEPENDS)
     set(venv_dep "${arg_VENV_DEPENDS}")
-    set(venv_populate "${venv_dep}-populate-pyinstaller")
+    set(venv_populate "${venv_dep}-pyinstaller")
 
     if(NOT TARGET ${venv_populate})
       cc_populate_python_venv("${venv_populate}"
@@ -141,7 +141,7 @@ function(cc_add_python_executable TARGET)
   get_target_property(venv ${venv_dep} venv_path)
 
   cmake_path(APPEND venv "bin" "python"      OUTPUT_VARIABLE python)
-  cmake_path(APPEND venv "build-stamps"      OUTPUT_VARIABLE stamp_dir)
+  cmake_path(APPEND venv ".build-stamps"     OUTPUT_VARIABLE stamp_dir)
   cmake_path(APPEND stamp_dir ${TARGET}      OUPTUT_VARIABLE target_stamp)
 
   message(DEBUG

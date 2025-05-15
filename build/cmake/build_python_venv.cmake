@@ -251,16 +251,16 @@ endfunction()
 
 function(cc_populate_python_venv TARGET)
   set(_options
-    ALL               # Make this target a dependency of `all`
+    ALL                 # Make this target a dependency of `all`
   )
   set(_singleargs
-    VENV_TARGET        # Virtualenv specified by build target (preferred)
-    VENV_PATH          # Virtualenv path if VENV_TARGET is not specified
+    VENV_TARGET         # Virtualenv specified by build target (preferred)
+    VENV_PATH           # Virtualenv path if VENV_TARGET is not specified
   )
   set(_multiargs
-    REQUIREMENTS_FILES # Files containing package names to install
-    REQUIREMENTS      # Add prerequisite target to obtain specific whels
-    REQUIREMENTS_DEPS     # Upstream distribution cache targets on which we depend
+    REQUIREMENTS_FILES  # Files containing package names to install
+    REQUIREMENTS        # Add prerequisite target to obtain specific whels
+    REQUIREMENTS_DEPS   # Upstream distribution cache targets on which we depend
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -295,62 +295,71 @@ function(cc_populate_python_venv TARGET)
 
   cc_get_optional_keyword(ALL arg_ALL)
   add_custom_target(${TARGET} ${ALL}
-    DEPENDS ${target_stamp}
+    DEPENDS ${target_stamp} ${arg_REQUIREMENTS_FILES}
   )
 
   if(arg_VENV_TARGET)
     add_dependencies(${TARGET} ${arg_VENV_TARGET})
   endif()
 
+  set_target_properties(${TARGET} PROPERTIES
+    venv_path ${venv_path}
+    target_stamp ${target_stamp}
+  )
+
 
   #-------------------------------------------------------------------------------
-  # Obtain locations of downloaded wheels from targets listed in `REQUIREMENTS_DEPS`.
-  # Install any discovered wheels into this virtual environment.
+  # Install any specified requirements:
+  #   - Download and install packages listed explicitly in the REQUIREMENTS argument,
+  #     or within files listed in the REQUIREMENTS_FILES argument
+  #   - Install previously-downloaded packages from build targets listed in
+  #     in the REQUIREMENTS_DEPS argument (each of which should have been
+  #     added using `cc_add_python_requirements_cache()`, above).
 
-  if(arg_REQUIREMENTS OR arg_REQUIREMENTS_FILES)
-    set(requirements_target "${TARGET}-requirements")
-    cc_add_python_requirements_cache(${requirements_target}
-      STAGING_DIR ${TARGET}
-      REQUIREMENTS_FILES ${arg_REQUIREMENTS_FILES}
-      REQUIREMENTS ${arg_REQUIREMENTS}
-      REQUIREMENTS_DEPS ${arg_REQUIREMENTS_DEPS}
-    )
-  elseif(arg_REQUIREMENTS_DEPS)
-    set(requirements_target ${arg_REQUIREMENTS_DEPS})
-
-  else()
-    message(FATAL_ERROR "Target cc_populate_python_venv(${TARGET}) "
-      "requires REQUIREMENTS, REQUIREMENTS_FILES, and/or REQUIIREMENTS_DEPS")
-  endif()
-
-  add_dependencies(${TARGET} ${requirements_target})
-
-  add_custom_command(
-    OUTPUT "${target_stamp}"
-    COMMENT "Populating Python Virtual Environment: ${venv_path}"
-    VERBATIM
-  )
-
-  cc_get_target_property_recursively(
-    TARGETS ${requirements_target}
-    PROPERTY python_distributions_cache_dir
-    OUTPUT_VARIABLE cache_dirs
-  )
-
-  foreach(cache_dir ${cache_dirs})
+  if (arg_REQUIREMENTS OR arg_REQUIREMENTS_FILES OR arg_REQUIREMENTS_DEPS)
     add_custom_command(
-      OUTPUT "${target_stamp}" APPEND
-      COMMAND find "${cache_dir}"
-      -name *.whl
-      -exec "${venv_python}" -m pip install ${PIP_QUIET} --no-index --no-warn-script-location {} +
+      OUTPUT "${target_stamp}"
+      COMMENT "Populating Python Virtual Environment: ${venv_path}"
+      VERBATIM
     )
-  endforeach()
 
-  add_custom_command(
-    OUTPUT "${target_stamp}" APPEND
-    COMMAND "${CMAKE_COMMAND}" -E make_directory "${stamp_dir}"
-    COMMAND "${CMAKE_COMMAND}" -E touch "${target_stamp}"
-  )
+    if(arg_REQUIREMENTS OR arg_REQUIREMENTS_FILES)
+      cc_get_python_requirements_list(
+        REQUIREMENTS "${arg_REQUIREMENTS}"
+        REQUIREMENTS_FILES "${arg_REQUIREMENTS_FILES}"
+        OUTPUT_VARIABLE requirements
+      )
+
+      add_custom_command(
+        OUTPUT "${target_stamp}" APPEND
+        COMMAND "${venv_python}" -m pip install ${PIP_QUIET} --no-warn-script-location ${requirements}
+      )
+    endif()
+
+
+    # Obtain locations of downloaded wheels from targets listed in `REQUIREMENTS_DEPS`.
+    # Install any discovered wheels into this virtual environment.
+
+    if(arg_REQUIREMENTS_DEPS)
+      set(requirements_target ${arg_REQUIREMENTS_DEPS})
+      add_dependencies(${TARGET} ${requirements_target})
+
+      cc_get_target_property_recursively(
+        TARGETS ${requirements_target}
+        PROPERTY python_distributions_cache_dir
+        OUTPUT_VARIABLE cache_dirs
+      )
+
+      foreach(cache_dir ${cache_dirs})
+        add_custom_command(
+          OUTPUT "${target_stamp}" APPEND
+          COMMAND find "${cache_dir}"
+          -name *.whl
+          -exec "${venv_python}" -m pip install ${PIP_QUIET} --no-index --no-warn-script-location {} +
+        )
+      endforeach()
+    endif()
+  endif()
 
 endfunction()
 
