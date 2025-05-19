@@ -58,6 +58,10 @@ namespace avro
             const ContextRef &context,
             const google::protobuf::Descriptor *descriptor);
 
+        static std::optional<std::string> field_comment(
+            const google::protobuf::FieldDescriptor *fd);
+
+
     private:
         const google::protobuf::Descriptor *descriptor;
     };

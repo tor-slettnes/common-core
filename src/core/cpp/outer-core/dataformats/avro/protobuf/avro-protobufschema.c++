@@ -46,7 +46,7 @@ namespace avro
                 field_schema = core::types::ValueList({TypeName_Null, field_schema});
             }
 
-            this->add_field(fd->name(), field_schema);
+            this->add_field(fd->name(), field_schema, This::field_comment(fd));
         }
     }
 
@@ -208,6 +208,20 @@ namespace avro
             {
                 return ProtoBufSchema(context, descriptor);
             }
+        }
+    }
+
+    std::optional<std::string> ProtoBufSchema::field_comment(
+        const google::protobuf::FieldDescriptor *fd)
+    {
+        google::protobuf::SourceLocation source;
+        if (fd->GetSourceLocation(&source))
+        {
+            return source.leading_comments;
+        }
+        else
+        {
+            return {};
         }
     }
 

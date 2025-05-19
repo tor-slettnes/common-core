@@ -34,7 +34,7 @@ message Scalar
     //  * 6   -> millions (mega)
     //  * 9   -> US (short form) billions; intl (long form) milliards
     //  * 12  -> US (short form) trillions; intl (long form) billons
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 
@@ -46,7 +46,7 @@ message Distance
 {
     double value = 1;
     DistanceUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 
@@ -67,7 +67,7 @@ message Velocity
 {
     double value = 1;
     VelocityUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum VelocityUnit
@@ -87,7 +87,7 @@ message Angle
 {
     double value = 1;
     AngleUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum AngleUnit
@@ -105,7 +105,7 @@ message Area
 {
     double value = 1;
     AreaUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum AreaUnit
@@ -125,7 +125,7 @@ message Volume
 {
     double value = 1;
     VolumeUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum VolumeUnit
@@ -145,7 +145,7 @@ message Mass
 {
     double value = 1;
     MassUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 
@@ -166,7 +166,7 @@ message Force
 {
     double value = 1;
     ForceUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 
@@ -185,7 +185,7 @@ message Temperature
 {
     double value = 1;
     TemperatureUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum TemperatureUnit
@@ -205,7 +205,7 @@ message Pressure
 {
     double value = 1;
     PressureUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum PressureUnit
@@ -226,7 +226,7 @@ message MassFlowRate
 {
     double value = 1;
     MassFlowRateUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum MassFlowRateUnit
@@ -240,7 +240,7 @@ message VolumetricFlowRate
 {
     double value = 1;
     VolumetricFlowRateUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum VolumetricFlowRateUnit
@@ -256,7 +256,7 @@ message MassFlow
 {
     double value = 1;
     MassFlowUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum MassFlowUnit
@@ -274,7 +274,7 @@ message Density
 {
     double value = 1;
     DensityUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum DensityUnit
@@ -291,7 +291,7 @@ message Frequency
 {
     double value = 1;
     FrequencyUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum FrequencyUnit
@@ -308,7 +308,7 @@ message Voltage
 {
     double value = 1;
     VoltageUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum VoltageUnit
@@ -324,7 +324,7 @@ message Current
 {
     double value = 1;
     CurrentUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum CurrentUnit
@@ -340,7 +340,7 @@ message Power
 {
     double value = 1;
     PowerUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum PowerUnit
@@ -356,7 +356,7 @@ message Energy
 {
     double value = 1;
     EnergyUnit unit = 2;
-    optional int32 decimal_exponent = 3;
+    int32 decimal_exponent = 3;
 }
 
 enum EnergyUnit

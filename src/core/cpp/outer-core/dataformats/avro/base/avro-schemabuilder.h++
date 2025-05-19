@@ -109,7 +109,8 @@ namespace avro
                      const std::string &name);
 
         void add_field(const std::string &name,
-                       const core::types::Value &type);
+                       const core::types::Value &type,
+                       const std::optional<std::string> &doc = {});
 
     protected:
         ContextRef context;
@@ -142,7 +143,8 @@ namespace avro
         EnumSchema(const ContextRef &context,
                    const std::string &name,
                    const std::vector<std::string> &symbols,
-                   const std::optional<std::string> &default_symbol = {});
+                   const std::optional<std::string> &default_symbol = {},
+                   const std::optional<std::string> &doc = {});
     };
 
     //--------------------------------------------------------------------------

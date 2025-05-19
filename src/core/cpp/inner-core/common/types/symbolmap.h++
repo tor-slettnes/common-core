@@ -49,11 +49,9 @@ namespace core::types
             std::string lower_symbol = str::tolower(symbol);
             for (const auto &[candidate_key, candidate_symbol] : *this)
             {
-                bool match = allow_partial
-                                 ? str::startswith(str::tolower(candidate_symbol), lower_symbol)
-                                 : str::tolower(candidate_symbol) == lower_symbol;
-
-                if (match)
+                if (allow_partial
+                        ? str::startswith(str::tolower(candidate_symbol), lower_symbol)
+                        : str::tolower(candidate_symbol) == lower_symbol)
                 {
                     return candidate_key;
                 }
@@ -129,6 +127,16 @@ namespace core::types
                 }
             }
             return stream;
+        }
+
+        template <class T>
+        inline std::optional<KeyType> try_convert_from(
+            const T &value,
+            bool allow_partial = false) const
+        {
+            std::stringstream ss;
+            ss << value;
+            return this->from_string(ss.str(), allow_partial);
         }
 
         inline void join_keys(

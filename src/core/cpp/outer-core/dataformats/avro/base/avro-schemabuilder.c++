@@ -91,15 +91,22 @@ namespace avro
     }
 
     void RecordSchema::add_field(const std::string &name,
-                                 const core::types::Value &type)
+                                 const core::types::Value &type,
+                                 const std::optional<std::string> &doc)
     {
         if (auto fields = this->get(std::string(SchemaField_RecordFields)).get_valuelist())
         {
-            fields->push_back(core::types::TaggedValueList(
-                {
+            core::types::TaggedValueList field({
                     {SchemaField_Name, name},
                     {SchemaField_Type, type},
-                }));
+                });
+
+            if (doc)
+            {
+                field.emplace_back(SchemaField_Doc, *doc);
+            }
+
+            fields->emplace_back(std::move(field));
         }
     }
 
@@ -131,7 +138,8 @@ namespace avro
     EnumSchema::EnumSchema(const ContextRef &context,
                            const std::string &name,
                            const std::vector<std::string> &symbols,
-                           const std::optional<std::string> &default_symbol)
+                           const std::optional<std::string> &default_symbol,
+                           const std::optional<std::string> &doc)
         : SchemaWrapper(context->build(
               name,
               {
@@ -142,6 +150,11 @@ namespace avro
         if (default_symbol)
         {
             this->set(SchemaField_Default, default_symbol.value());
+        }
+
+        if (doc)
+        {
+            this->set(SchemaField_Doc, *doc);
         }
     }
 
