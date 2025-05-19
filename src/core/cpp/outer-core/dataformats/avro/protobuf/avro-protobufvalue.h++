@@ -62,5 +62,9 @@ namespace avro
             avro_value_t *avro_value,
             const google::protobuf::Message &msg,
             const google::protobuf::FieldDescriptor *fd);
+
+        static void assign_from_enum_field(
+            avro_value_t *avro_value,
+            const google::protobuf::EnumValueDescriptor *enum_value);
     };
 }  // namespace avro

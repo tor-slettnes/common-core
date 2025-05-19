@@ -109,6 +109,17 @@ namespace avro
         return named_value;
     }
 
+    void CompoundValue::set_enum_value(avro_value_t *value,
+                                       std::uint64_t index,
+                                       std::int64_t number)
+    {
+        avro_value_t enum_index = This::get_by_index(value, 0, SchemaField_EnumIndex);
+        This::set_enum(&enum_index, index);
+
+        avro_value_t enum_value = This::get_by_index(value, 1, SchemaField_EnumValue);
+        This::set_long(&enum_index, number);
+    }
+
     void CompoundValue::set_datetime_interval(avro_value_t *value,
                                               const core::dt::DateTimeInterval &interval)
     {

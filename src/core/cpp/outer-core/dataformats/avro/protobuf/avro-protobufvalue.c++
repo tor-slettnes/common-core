@@ -230,7 +230,7 @@ namespace avro
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_ENUM:
-            This::set_enum(avro_value, reflection->GetEnumValue(msg, fd));
+            This::assign_from_enum_field(avro_value, reflection->GetEnum(msg, fd));
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_STRING:
@@ -301,7 +301,9 @@ namespace avro
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_ENUM:
-            This::set_enum(avro_value, reflection->GetRepeatedEnumValue(msg, fd, index));
+            This::assign_from_enum_field(
+                avro_value,
+                reflection->GetRepeatedEnum(msg, fd, index));
             break;
 
         case google::protobuf::FieldDescriptor::TYPE_STRING:
@@ -391,4 +393,15 @@ namespace avro
             This::assign_from_single_field(&element, item, fd_value);
         }
     }
+
+    void ProtoBufValue::assign_from_enum_field(
+            avro_value_t *avro_value,
+            const google::protobuf::EnumValueDescriptor *enum_value)
+    {
+        // This::set_enum_value(avro_value,
+        //                      enum_value->index(),
+        //                      enum_value->number());
+        This::set_enum(avro_value, enum_value->index());
+    }
+
 }  // namespace avro
