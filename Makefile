@@ -264,13 +264,13 @@ clean/deb clean/package pkg_clean:
 clean/cache clean/config:
 	@$(call remove,$(CMAKE_CACHE))
 
-.PHONY: clean/out cleanout
-clean/out cleanout:
-	@$(call remove,$(OUT_DIR))
-
 .PHONY: clean/python
 clean/python:
 	@$(call remove,$(OUT_DIR)/python)
+
+.PHONY: clean/out cleanout
+clean/out cleanout:
+	@$(call remove,$(OUT_DIR))
 
 .PHONY: realclean
 realclean: clean/core clean/cmake clean/package clean/install clean/build

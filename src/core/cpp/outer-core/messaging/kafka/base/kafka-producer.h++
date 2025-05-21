@@ -38,6 +38,9 @@ namespace core::kafka
         void poll_worker();
 
     protected:
+        void set_producer_key(const std::optional<std::string> &key);
+        const std::optional<std::string> &producer_key() const;
+
         void produce(const std::string_view &topic,
                      const types::Bytes &payload,
                      const std::optional<std::string_view> &key = {});
@@ -50,5 +53,6 @@ namespace core::kafka
         core::dt::Duration shutdown_timeout_;
         std::thread poll_thread_;
         bool keep_polling_;
+        std::optional<std::string> producer_key_;
     };
 }  // namespace core::kafka

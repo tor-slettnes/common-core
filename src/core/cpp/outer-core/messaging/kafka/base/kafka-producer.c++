@@ -88,20 +88,36 @@ namespace core::kafka
         }
     }
 
+    void Producer::set_producer_key(const std::optional<std::string> &key)
+    {
+        this->producer_key_ = key;
+    }
+
+    const std::optional<std::string> &Producer::producer_key() const
+    {
+        return this->producer_key_;
+    }
+
     void Producer::produce(const std::string_view &topic,
                            const types::Bytes &payload,
                            const std::optional<std::string_view> &key)
     {
+        std::optional<std::string_view> key_ = key;
+        if (!key_)
+        {
+            key_ = this->producer_key();
+        }
+
         this->check(this->handle()->produce(
-            std::string(topic, 0, topic.size()),              // topic_name
-            RdKafka::Topic::PARTITION_UA,                     // partition
-            RdKafka::Producer::RK_MSG_COPY,                   // msgflags
-            const_cast<types::Byte *>(payload.data()),        // payload
-            payload.size(),                                   // len
-            key ? const_cast<char *>(key->data()) : nullptr,  // key
-            key ? key->size() : 0,                            // key_len
-            dt::to_milliseconds(dt::Clock::now()),            // timestamp
-            nullptr));                                        // msg_opaque
+            std::string(topic, 0, topic.size()),                // topic_name
+            RdKafka::Topic::PARTITION_UA,                       // partition
+            RdKafka::Producer::RK_MSG_COPY,                     // msgflags
+            const_cast<types::Byte *>(payload.data()),          // payload
+            payload.size(),                                     // len
+            key_ ? const_cast<char *>(key_->data()) : nullptr,  // key
+            key_ ? key_->size() : 0,                            // key_len
+            dt::to_milliseconds(dt::Clock::now()),              // timestamp
+            nullptr));                                          // msg_opaque
     }
 
     void Producer::shutdown()
