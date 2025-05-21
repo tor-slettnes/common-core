@@ -72,12 +72,12 @@ def encodeValue(value : PyValue) -> Value:
 
     elif isinstance(value, (list, tuple)):
         if is_tagged_list(value):
-            return Value(tv_list = encodeTaggedValueList(value))
+            return Value(value_tvlist = encodeTaggedValueList(value))
         else:
             return Value(value_list = encodeValueList(value))
 
     elif isinstance(value, dict):
-        return Value(kv_map = encodeKeyValueMap(value))
+        return Value(value_kvmap = encodeKeyValueMap(value))
 
     elif value is None:
         return Value()
