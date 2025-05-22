@@ -19,28 +19,20 @@ namespace multilogger::grpc
     class LogClient
         : public API,
           public LogClientBase,
-          public core::logging::Sink,
           public core::types::enable_create_shared_from_this<LogClient>
     {
         using This = LogClient;
 
     protected:
         template <class... Args>
-        LogClient(const std::string &identity,
-                  const std::string &host = "",
-                  bool add_local_sink = true,
+        LogClient(const std::string &host = "",
                   Args &&...args)
-            : API(identity),
-              LogClientBase(host, std::forward<Args>(args)...),
-              Sink(this->host() + ":" + identity, true),
-              add_local_sink(add_local_sink)
+            : API(),
+              LogClientBase(host, std::forward<Args>(args)...)
         {
         }
 
     public:
-        void initialize() override;
-        void deinitialize() override;
-
         void submit(const core::types::Loggable::ptr &item) override;
         bool add_sink(const SinkSpec &spec) override;
         bool remove_sink(const SinkID &id) override;
@@ -51,13 +43,15 @@ namespace multilogger::grpc
         FieldNames list_message_fields() const override;
         FieldNames list_error_fields() const override;
 
+        // Create a listener to read loggable items from server.
         std::shared_ptr<LogSource> listen(
             const ListenerSpec &spec) override;
 
-    protected:
-        void open() override;
-        void close() override;
-        bool handle_item(const core::types::Loggable::ptr &item) override;
+        // Stream loggable items to server
+        bool is_writer_open() const;
+        void open_writer();
+        void close_writer();
+        bool write_item(const core::types::Loggable::ptr &item);
 
     private:
         bool add_local_sink;

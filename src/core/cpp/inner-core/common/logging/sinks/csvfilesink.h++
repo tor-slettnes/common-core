@@ -7,6 +7,7 @@
 
 #pragma once
 #include "sink.h++"
+#include "async-wrapper.h++"
 #include "tabulardata.h++"
 #include "rotatingpath.h++"
 #include "factory.h++"
@@ -25,18 +26,20 @@ namespace core::logging
     //--------------------------------------------------------------------------
     // CSVFileSink
 
-    class CSVFileSink : public Sink,
+    class CSVFileSink : public AsyncWrapper<Sink>,
                         public TabularData,
                         public RotatingPath,
                         public types::enable_create_shared<CSVFileSink>
     {
         using This = CSVFileSink;
-        using Super = Sink;
+        using Super = AsyncWrapper<Sink>;
 
     protected:
         CSVFileSink(const std::string &sink_id);
 
+    protected:
         void load_settings(const types::KeyValueMap &settings) override;
+        void load_csv_settings(const types::KeyValueMap &settings);
 
         void open() override;
         void close() override;

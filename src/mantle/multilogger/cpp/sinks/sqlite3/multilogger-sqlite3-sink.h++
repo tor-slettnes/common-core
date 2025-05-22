@@ -8,6 +8,7 @@
 #pragma once
 #include "sqlite3.h++"
 #include "logging/sinks/sink.h++"
+#include "logging/sinks/async-wrapper.h++"
 #include "logging/sinks/tabulardata.h++"
 #include "logging/sinks/rotatingpath.h++"
 #include "logging/sinks/factory.h++"
@@ -34,13 +35,13 @@ namespace multilogger
     //--------------------------------------------------------------------------
     // SQLiteSink
 
-    class SQLiteSink : public core::logging::Sink,
+    class SQLiteSink : public core::logging::AsyncWrapper<core::logging::Sink>,
                        public core::logging::TabularData,
                        public core::logging::RotatingPath,
                        public core::types::enable_create_shared<SQLiteSink>
     {
         using This = SQLiteSink;
-        using Super = core::logging::Sink;
+        using Super = core::logging::AsyncWrapper<core::logging::Sink>;
 
     protected:
         SQLiteSink(const std::string &sink_id);
@@ -62,9 +63,9 @@ namespace multilogger
         void close() override;
         void open_file(const core::dt::TimePoint &tp) override;
         void close_file() override;
+        bool handle_item(const core::types::Loggable::ptr &item) override;
 
         void worker();
-        bool handle_item(const core::types::Loggable::ptr &item) override;
         void flush();
 
         void create_table();
@@ -78,7 +79,6 @@ namespace multilogger
         std::string placeholders;
         std::thread worker_thread_;
         core::db::SQLite3::MultiRowData pending_rows;
-        core::types::BlockingQueue<core::types::Loggable::ptr> queue;
     };
 
     //--------------------------------------------------------------------------
@@ -91,4 +91,4 @@ namespace multilogger
         {
             return SQLiteSink::create_shared(sink_id);
         });
-} // namespace multilogger
+}  // namespace multilogger

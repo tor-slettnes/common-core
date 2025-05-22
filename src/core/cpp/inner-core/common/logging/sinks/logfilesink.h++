@@ -7,6 +7,7 @@
 
 #pragma once
 #include "messagesink.h++"
+#include "async-wrapper.h++"
 #include "rotatingpath.h++"
 #include "factory.h++"
 #include "types/create-shared.h++"
@@ -16,16 +17,17 @@
 
 namespace core::logging
 {
-    class LogFileSink : public MessageSink,
+    class LogFileSink : public AsyncWrapper<MessageSink>,
                         public RotatingPath,
                         public types::enable_create_shared<LogFileSink>
     {
         using This = LogFileSink;
-        using Super = MessageSink;
+        using Super = AsyncWrapper<MessageSink>;
 
     protected:
         LogFileSink(const std::string &sink_id);
 
+    protected:
         void load_settings(const types::KeyValueMap &settings) override;
         void open() override;
         void close() override;
@@ -43,9 +45,9 @@ namespace core::logging
     inline static SinkFactory file_factory(
         "logfile",
         "Log to a plain log file",
-        [](const SinkID &sink_id) -> Sink::ptr {
+        [](const SinkID &sink_id) -> Sink::ptr
+        {
             return LogFileSink::create_shared(sink_id);
         });
-
 
 }  // namespace core::logging

@@ -17,8 +17,8 @@ namespace core::logging
     //==========================================================================
     // MessageSink
 
-    MessageSink::MessageSink(const std::string &sink_id, bool asynchronous)
-        : Sink(sink_id, asynchronous, Message::CONTRACT),
+    MessageSink::MessageSink(const std::string &sink_id)
+        : Sink(sink_id, Message::CONTRACT),
           include_context_(DEFAULT_INCLUDE_CONTEXT)
     {
     }
@@ -26,7 +26,12 @@ namespace core::logging
     void MessageSink::load_settings(const types::KeyValueMap &settings)
     {
         Super::load_settings(settings);
+        this->load_message_settings(settings);
 
+    }
+
+    void MessageSink::load_message_settings(const types::KeyValueMap &settings)
+    {
         if (const types::Value &value = settings.get(SETTING_INCLUDE_CONTEXT))
         {
             this->set_include_context(value.as_bool());

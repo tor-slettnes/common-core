@@ -14,7 +14,7 @@ log sinks:
 
   csvfile:
     enabled      : true
-    rotate after : 1 day
+    rotate after : 5 minutes
     compress after use: true
     name template: "{isodate}-{hour}{minute}{zoneoffset}.csv"
 

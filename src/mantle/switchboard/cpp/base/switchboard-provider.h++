@@ -7,6 +7,7 @@
 
 #pragma once
 #include "switch.h++"
+#include "thread/signaltemplate.h++"
 
 #include <memory>
 

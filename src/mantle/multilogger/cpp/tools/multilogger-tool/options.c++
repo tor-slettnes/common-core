@@ -25,9 +25,7 @@ void Options::add_options()
 
 void Options::initialize()
 {
-    this->provider = multilogger::grpc::LogClient::create_shared(
-        ::options->identity,
-        ::options->host);
+    this->provider = multilogger::grpc::LogClient::create_shared(::options->host);
     this->provider->initialize();
 }
 

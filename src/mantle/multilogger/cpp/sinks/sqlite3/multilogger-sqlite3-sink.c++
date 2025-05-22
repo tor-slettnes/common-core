@@ -17,7 +17,7 @@ namespace multilogger
     // SQLiteSink
 
     SQLiteSink::SQLiteSink(const std::string &sink_id)
-        : Sink(sink_id, true),
+        : Super(sink_id),
           TabularData(),
           RotatingPath(sink_id, ".db"),
           table_name_(DEFAULT_TABLE_NAME),
@@ -91,31 +91,30 @@ namespace multilogger
             this->use_local_time());
 
         this->open_file(last_aligned);
-        Sink::open();
-
-        if (!this->worker_thread_.joinable())
-        {
-            this->worker_thread_ = std::thread(&This::worker, this);
-        }
+        Super::open();
     }
 
     void SQLiteSink::close()
     {
-        this->queue.close();
-        if (this->worker_thread_.joinable())
-        {
-            this->worker_thread_.join();
-        }
-
-        Sink::close();
+        Super::close();
         this->close_file();
     }
 
     void SQLiteSink::open_file(const core::dt::TimePoint &tp)
     {
         RotatingPath::open_file(tp);
-        this->db.open(this->current_path());
-        this->create_table();
+        try
+        {
+            this->db.open(this->current_path());
+            this->create_table();
+        }
+        catch (...)
+        {
+            logf_warning("Failed to open log sink %r output file %r: %r",
+                         this->sink_id(),
+                         this->current_path(),
+                         std::current_exception());
+        }
     }
 
     void SQLiteSink::close_file()
@@ -153,7 +152,9 @@ namespace multilogger
     void SQLiteSink::create_placeholders()
     {
         std::vector<std::string> placeholders(this->columns().size(), "?");
-        this->placeholders = "(" + core::str::join(placeholders, ", ") + ")";
+        this->placeholders = "("
+                           + core::str::join(placeholders, ", ")
+                           + ")";
     }
 
     bool SQLiteSink::handle_item(const core::types::Loggable::ptr &item)
@@ -169,33 +170,23 @@ namespace multilogger
         this->pending_rows.reserve(this->batch_size());
         this->create_placeholders();
 
-        while (!this->queue.closed())
+        while (this->is_open())
         {
-            try
+            bool flush = false;
+            if (auto opt_item = this->queue()->get(this->batch_timeout()))
             {
-                bool flush = false;
-                if (auto opt_item = this->queue.get(this->batch_timeout()))
-                {
-                    this->capture(opt_item.value());
-                    flush = (++pending_count >= this->batch_size());
-                }
-                else
-                {
-                    flush = (pending_count > 0);
-                }
-
-                if (flush)
-                {
-                    this->flush();
-                    pending_count = 0;
-                }
+                this->try_handle_item(opt_item.value());
+                flush = (++pending_count >= this->batch_size());
             }
-            catch (...)
+            else
             {
-                this->queue.close();
-                logf_error("Log sink %r failed to capture log item: %s",
-                           this->sink_id(),
-                           std::current_exception());
+                flush = (pending_count > 0);
+            }
+
+            if (flush)
+            {
+                this->flush();
+                pending_count = 0;
             }
         }
     }
@@ -208,14 +199,18 @@ namespace multilogger
             << " VALUES "
             << this->placeholders;
 
-        this->db.execute_multi(cmd.str(), this->pending_rows);
-
-        // this->db.execute_multi(
-        //     core::str::format("INSERT INTO %s VALUES %s",
-        //                       this->table_name(),
-        //                       this->placeholders),
-        //     this->pending_rows);
-
+        try
+        {
+            this->db.execute_multi(cmd.str(), this->pending_rows);
+        }
+        catch (...)
+        {
+            logf_warning("Log sink %r failed to flush %d messages to %r: %s",
+                         this->sink_id(),
+                         this->pending_rows.size(),
+                         this->current_path(),
+                         std::current_exception());
+        }
         this->pending_rows.clear();
     }
 

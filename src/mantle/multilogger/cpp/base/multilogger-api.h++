@@ -23,12 +23,10 @@ namespace multilogger
     class API
     {
     protected:
-        API(const std::string &identity);
+        API();
         virtual ~API();
 
     public:
-        const std::string &identity() const;
-
         virtual void initialize() {}
         virtual void deinitialize() {}
 

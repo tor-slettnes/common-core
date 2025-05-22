@@ -37,7 +37,7 @@ namespace core::logging
         using StyleMap = types::ValueMap<MessagePart, std::string>;
         using Super = MessageSink;
 
-    protected:
+    public:
         /// @brief Constructor
         /// @param[in] sink_id
         ///     Identity of this log sink
@@ -72,14 +72,14 @@ namespace core::logging
         "stdout",
         "Log to standard output.",
         [](const SinkID &sink_id) -> Sink::ptr {
-            return StreamSink::create_shared(sink_id, std::cout);
+            return std::make_shared<StreamSink>(sink_id, std::cout);
         });
 
     inline static SinkFactory stderr_factory(
         "stderr",
         "Log to standard error. Enabled by default if standard output is a terminal.",
         [](const SinkID &sink_id) -> Sink::ptr {
-            return StreamSink::create_shared(sink_id, std::cerr);
+            return std::make_shared<StreamSink>(sink_id, std::cerr);
         },
         DefaultOption::IF_INTERACTIVE);
 }  // namespace core::logging

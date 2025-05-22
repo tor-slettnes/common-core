@@ -6,7 +6,6 @@
 //==============================================================================
 
 #pragma once
-#include "capture.h++"
 #include "status/level.h++"
 #include "types/loggable.h++"
 #include "types/value.h++"
@@ -41,11 +40,6 @@ namespace core::logging
 
     protected:
         Sink(const SinkID &sink_id,
-             bool asynchronous = false,
-             const std::optional<Loggable::ContractID> &contract_id = {});
-
-        Sink(const SinkID &sink_id,
-             const Capture::ptr &capture,
              const std::optional<Loggable::ContractID> &contract_id = {});
 
         virtual ~Sink() {}
@@ -72,10 +66,9 @@ namespace core::logging
         virtual void open();
         virtual void close();
         virtual bool capture(const types::Loggable::ptr &loggable);
-        Capture::ptr create_capture(bool asynchronous);
 
     protected:
-        bool try_handle_item(const types::Loggable::ptr &loggable);
+        virtual bool try_handle_item(const types::Loggable::ptr &loggable);
         virtual bool handle_item(const types::Loggable::ptr &loggable) = 0;
 
     private:
@@ -84,6 +77,5 @@ namespace core::logging
         SinkType sink_type_;
         std::optional<Loggable::ContractID> contract_id_;
         status::Level threshold_;
-        std::shared_ptr<Capture> capture_;
     };
 }  // namespace core::logging

@@ -27,6 +27,7 @@ import enum
 import logging
 import queue
 import threading
+import time
 
 class OverflowDisposition (enum.Enum):
     BLOCK = 0
@@ -97,6 +98,7 @@ class Client (API, BaseClient):
         self.streaming = streaming
         self.overflow_disposition = overflow_disposition
         self.overflow_message = self.overflow_disposition_message[overflow_disposition]
+        self.keep_writing = False
         self.writer_thread = None
         self.queue = queue.Queue(queue_size)
         self.full_queue_mutex = threading.Lock()
@@ -199,13 +201,11 @@ class Client (API, BaseClient):
         See also `close_write_stream()`.
         '''
 
+        self.keep_writing = True
         if not self.is_writer_open():
             self.writer_thread = threading.Thread(
                 name = "LogStreamer",
                 target = self.stream_worker,
-                kwargs = dict(
-                    wait_for_ready = wait_for_ready,
-                ),
                 daemon = True)
             self.writer_thread.start()
 
@@ -215,6 +215,7 @@ class Client (API, BaseClient):
         Any subsequent log messages will be sent via unary RPC calls.
         '''
 
+        self.keep_writing = False
         if self.is_writer_open():
             self.submit(None)
             self.writer_thread = None
@@ -225,12 +226,21 @@ class Client (API, BaseClient):
         Runs in its own thread until the queue is deleted (i.e., client is closed)
         '''
 
-        if self.streaming:
-            self.stub.writer(self.queue_iterator(), wait_for_ready = wait_for_ready)
+        while self.keep_writing:
+            try:
+                if self.streaming:
+                    self.stub.writer(self.queue_iterator(),
+                                     wait_for_ready = wait_for_ready)
 
-        else:
-            for msg in self.queue_iterator():
-                self.stub.submit(msg, wait_for_ready = wait_for_ready)
+                else:
+                    for msg in self.queue_iterator():
+                        self.stub.submit(msg,
+                                         wait_for_ready = wait_for_ready)
+
+            except Exception as e:
+                logging.warning("Failed to stream message to MultiLogger service at %s: [%s] %s\n"%
+                      (self.host, type(e).__name__, e))
+                time.sleep(2.0)
 
 
     def queue_iterator(self):

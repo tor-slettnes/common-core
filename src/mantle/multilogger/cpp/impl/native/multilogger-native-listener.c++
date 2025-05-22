@@ -1,7 +1,7 @@
 /// -*- c++ -*-
 //==============================================================================
 /// @file multilogger-native-listener.c++
-/// @brief A log sink appending to a queue
+/// @brief A server-side log sink appending to a queue
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
@@ -16,7 +16,7 @@ namespace multilogger::native
         const std::optional<Loggable::ContractID> &contract_id,
         unsigned int maxsize,
         OverflowDisposition overflow_disposition)
-        : Sink(sink_id, false),
+        : Sink(sink_id),
           BlockingQueue(maxsize, overflow_disposition)
     {
         this->set_threshold(threshold);

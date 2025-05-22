@@ -16,7 +16,7 @@ namespace core::logging
     // CSVFileSink
 
     CSVFileSink::CSVFileSink(const std::string &sink_id)
-        : Sink(sink_id, true),
+        : Super(sink_id),
           TabularData(),
           RotatingPath(sink_id, ".csv"),
           separator_(DEFAULT_COL_SEP)
@@ -27,9 +27,13 @@ namespace core::logging
     void CSVFileSink::load_settings(const types::KeyValueMap &settings)
     {
         Super::load_settings(settings);
-        this->load_columns(settings);
         this->load_rotation(settings);
+        this->load_columns(settings);
+        this->load_csv_settings(settings);
+    }
 
+    void CSVFileSink::load_csv_settings(const types::KeyValueMap &settings)
+    {
         if (const core::types::Value &value = settings.get(SETTING_COL_SEP))
         {
             this->set_separator(value.as_string());
@@ -39,12 +43,12 @@ namespace core::logging
     void CSVFileSink::open()
     {
         this->open_file(dt::Clock::now());
-        Sink::open();
+        Super::open();
     }
 
     void CSVFileSink::close()
     {
-        Sink::close();
+        Super::close();
         this->close_file();
     }
 

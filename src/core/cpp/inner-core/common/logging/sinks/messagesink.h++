@@ -27,12 +27,14 @@ namespace core::logging
         using ptr = std::shared_ptr<MessageSink>;
 
     protected:
-        MessageSink(const SinkID &sink_id, bool asynchronous = false);
+        MessageSink(const SinkID &sink_id = {});
 
     public:
         void load_settings(const types::KeyValueMap &settings) override;
 
     protected:
+        void load_message_settings(const types::KeyValueMap &settings);
+
         virtual void set_include_context(bool include_context);
         bool include_context() const;
 

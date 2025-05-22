@@ -6,7 +6,6 @@
 #===============================================================================
 
 target_sources(${TARGET} PRIVATE
-  capture.c++
   rotatingpath.c++
   tabulardata.c++
   sink.c++

@@ -7,6 +7,7 @@
 
 #pragma once
 #include "sink.h++"
+#include "async-wrapper.h++"
 #include "rotatingpath.h++"
 #include "factory.h++"
 #include "parsers/json/writer.h++"
@@ -22,16 +23,17 @@ namespace core::logging
     //--------------------------------------------------------------------------
     // JsonFileSink
 
-    class JsonFileSink : public Sink,
+    class JsonFileSink : public AsyncWrapper<Sink>,
                          public RotatingPath,
                          public types::enable_create_shared<JsonFileSink>
     {
         using This = JsonFileSink;
-        using Super = Sink;
+        using Super = AsyncWrapper<Sink>;
 
     protected:
         JsonFileSink(const std::string &sink_id);
 
+    protected:
         void load_settings(const types::KeyValueMap &settings) override;
         void open() override;
         void close() override;

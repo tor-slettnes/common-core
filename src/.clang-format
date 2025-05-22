@@ -7,6 +7,8 @@ NamespaceIndentation: All
 IndentCaseLabels: false
 BinPackParameters: false
 BinPackArguments: false
+BreakBeforeBinaryOperators: All
+AlignOperands: AlignAfterOperator
 AllowAllConstructorInitializersOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortIfStatementsOnASingleLine: false
@@ -30,7 +32,7 @@ BraceWrapping:
   AfterEnum: true
   BeforeElse: true
   BeforeCatch: true
-  BeforeLambdaBody: false
+  BeforeLambdaBody: true
   BeforeWhile: true
   SplitEmptyNamespace: true
   SplitEmptyRecord: false

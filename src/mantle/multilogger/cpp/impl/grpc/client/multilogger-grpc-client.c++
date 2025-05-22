@@ -12,26 +12,6 @@
 
 namespace multilogger::grpc
 {
-    void LogClient::initialize()
-    {
-        LogClientBase::initialize();
-        if (this->add_local_sink)
-        {
-            this->open();
-            core::logging::dispatcher.add_sink(this->shared_from_this());
-        }
-    }
-
-    void LogClient::deinitialize()
-    {
-        if (this->add_local_sink)
-        {
-            core::logging::dispatcher.remove_sink(this->identity());
-            this->close();
-        }
-        LogClientBase::deinitialize();
-    }
-
     void LogClient::submit(const core::types::Loggable::ptr &item)
     {
         this->call_check(
@@ -98,42 +78,34 @@ namespace multilogger::grpc
         return ClientListener::create_shared(this->stub, spec);
     }
 
-    void LogClient::open()
+    bool LogClient::is_writer_open() const
     {
-        if (!this->is_open())
-        {
-            if (!this->writer)
-            {
-                this->writer_context = std::make_unique<::grpc::ClientContext>();
-                this->writer_response = std::make_unique<::google::protobuf::Empty>();
-                this->writer = this->stub->writer(this->writer_context.get(),
-                                                  this->writer_response.get());
-            }
+        return bool(this->writer);
+    }
 
-            if (this->writer)
-            {
-                Sink::open();
-            }
+    void LogClient::open_writer()
+    {
+        if (!this->writer)
+        {
+            this->writer_context = std::make_unique<::grpc::ClientContext>();
+            this->writer_response = std::make_unique<::google::protobuf::Empty>();
+            this->writer = this->stub->writer(this->writer_context.get(),
+                                              this->writer_response.get());
         }
     }
 
-    void LogClient::close()
+    void LogClient::close_writer()
     {
-        if (this->is_open())
+        if (this->writer)
         {
-            Sink::close();
-
-            if (this->writer)
-            {
-                this->writer->WritesDone();
-                this->writer_status = this->writer->Finish();
-                this->writer.reset();
-                this->writer_context.reset();
-            }
+            this->writer->WritesDone();
+            this->writer_status = this->writer->Finish();
+            this->writer.reset();
+            this->writer_context.reset();
         }
     }
 
-    bool LogClient::handle_item(const core::types::Loggable::ptr &item)
+    bool LogClient::write_item(const core::types::Loggable::ptr &item)
     {
         if (this->writer->Write(protobuf::encoded_shared<cc::platform::multilogger::Loggable>(item)))
         {
@@ -141,7 +113,7 @@ namespace multilogger::grpc
         }
         else
         {
-            this->close();
+            this->close_writer();
             return false;
         }
     }

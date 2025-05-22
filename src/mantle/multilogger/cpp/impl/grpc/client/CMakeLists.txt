@@ -16,6 +16,7 @@ set(LIB_DEPS
 set(SOURCES
   multilogger-grpc-client.c++
   multilogger-grpc-clientlistener.c++
+  multilogger-grpc-clientsink.c++
 )
 
 cc_add_library("${TARGET}"

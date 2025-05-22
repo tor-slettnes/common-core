@@ -20,21 +20,16 @@ namespace core::logging
     /// @class Sink
 
     Sink::Sink(const SinkID &sink_id,
-               bool asynchronous,
-               const std::optional<Loggable::ContractID> &contract_id)
-        : Sink(sink_id, This::create_capture(asynchronous), contract_id)
-    {
-    }
-
-    Sink::Sink(const SinkID &sink_id,
-               const Capture::ptr &capture,
                const std::optional<Loggable::ContractID> &contract_id)
         : is_open_(false),
           sink_id_(sink_id),
           contract_id_(contract_id),
-          threshold_(DEFAULT_THRESHOLD),
-          capture_(capture)
+          threshold_(DEFAULT_THRESHOLD)
     {
+        str::format(std::cout,
+                    "Sink constructor, sink_id=%r, contract_id=%r\n",
+                    sink_id,
+                    contract_id);
     }
 
     void Sink::load_settings(const types::KeyValueMap &settings)
@@ -110,41 +105,23 @@ namespace core::logging
 
     void Sink::open()
     {
-        this->capture_->start();
         this->is_open_ = true;
     }
 
     void Sink::close()
     {
         this->is_open_ = false;
-        this->capture_->stop();
     }
 
     bool Sink::capture(const types::Loggable::ptr &loggable)
     {
         if (this->is_open() && this->is_applicable(*loggable))
         {
-            return (*this->capture_)(loggable);
+            return this->try_handle_item(loggable);
         }
         else
         {
             return false;
-        }
-    }
-
-    Capture::ptr Sink::create_capture(bool asynchronous)
-    {
-        auto callback = [=](const types::Loggable::ptr &loggable) {
-            return this->try_handle_item(loggable);
-        };
-
-        if (asynchronous)
-        {
-            return AsyncCapture::create_shared(callback);
-        }
-        else
-        {
-            return PassthroughCapture::create_shared(callback);
         }
     }
 

@@ -205,6 +205,6 @@ namespace core::logging
     SinkRegistry sink_registry;
 
     platform::InitTask populate_task(
-        "PopulateMessageSinkRegistry",
+        "PopulateSinkRegistry",
         std::bind(&SinkRegistry::populate, &sink_registry));
 }  // namespace core::logging

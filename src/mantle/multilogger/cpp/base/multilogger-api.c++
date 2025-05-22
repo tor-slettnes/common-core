@@ -9,20 +9,14 @@
 
 namespace multilogger
 {
-    API::API(const std::string &identity)
-        : identity_(identity),
-          keep_listening_(false)
+    API::API()
+        : keep_listening_(false)
     {
     }
 
     API::~API()
     {
         this->stop_listening();
-    }
-
-    const std::string &API::identity() const
-    {
-        return this->identity_;
     }
 
     void API::start_listening(const ListenerSpec &spec)

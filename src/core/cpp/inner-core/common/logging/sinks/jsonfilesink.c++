@@ -11,7 +11,7 @@
 namespace core::logging
 {
     JsonFileSink::JsonFileSink(const std::string &sink_id)
-        : Sink(sink_id, true),
+        : Super(sink_id),
           RotatingPath(sink_id, ".jsonlog")
     {
     }
@@ -25,12 +25,12 @@ namespace core::logging
     void JsonFileSink::open()
     {
         this->open_file(dt::Clock::now());
-        Sink::open();
+        Super::open();
     }
 
     void JsonFileSink::close()
     {
-        Sink::close();
+        Super::close();
         this->close_file();
     }
 

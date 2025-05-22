@@ -24,14 +24,15 @@ namespace core::logging
 
     StreamSink::StreamSink(const std::string &sink_id,
                            std::ostream &stream)
-        : MessageSink(sink_id, false),
+        : Super(sink_id),
           stream(stream)
     {
     }
 
     StreamSink::StreamSink(const std::string &sink_id,
                            std::ostream &&stream)
-        : StreamSink(sink_id, stream)
+        : Super(sink_id),
+          stream(stream)
     {
     }
 

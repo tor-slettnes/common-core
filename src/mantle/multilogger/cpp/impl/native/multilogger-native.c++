@@ -19,11 +19,6 @@
 
 namespace multilogger::native
 {
-    Logger::Logger(const std::string &identity)
-        : Super(identity)
-    {
-    }
-
     void Logger::submit(
         const core::types::Loggable::ptr &item)
     {

@@ -12,7 +12,7 @@
 namespace core::logging
 {
     LogFileSink::LogFileSink(const std::string &sink_id)
-        : MessageSink(sink_id, true),
+        : Super(sink_id),
           RotatingPath(sink_id, ".log")
     {
     }
@@ -20,18 +20,22 @@ namespace core::logging
     void LogFileSink::load_settings(const types::KeyValueMap &settings)
     {
         Super::load_settings(settings);
+        this->load_message_settings(settings);
+        this->load_async_settings(settings);
         this->load_rotation(settings);
     }
 
     void LogFileSink::open()
     {
         this->open_file(dt::Clock::now());
+        this->open_async_queue();
         Super::open();
     }
 
     void LogFileSink::close()
     {
         Super::close();
+        this->close_async_queue();
         this->close_file();
     }
 

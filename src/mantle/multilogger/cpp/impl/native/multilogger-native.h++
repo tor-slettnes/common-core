@@ -18,9 +18,6 @@ namespace multilogger::native
         using This = Logger;
         using Super = API;
 
-    protected:
-        Logger(const std::string &identity);
-
     public:
         void submit(const core::types::Loggable::ptr &item) override;
         bool add_sink(const SinkSpec &spec) override;

@@ -39,7 +39,7 @@ namespace core::platform
     //--------------------------------------------------------------------------
     // Add sink to factory
 
-    inline static logging::SinkFactory syslog_factory(
+    inline static logging::SinkFactory system_logger_factory(
         "syslog",
         "Log via UNIX syslog.",
         [](const logging::SinkID &sink_id) -> logging::Sink::ptr {
