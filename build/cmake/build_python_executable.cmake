@@ -182,7 +182,7 @@ function(cc_add_python_executable TARGET)
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${dep_staging_dirs} "${staging_dir}"
     COMMAND_EXPAND_LISTS
     VERBATIM
-    COMMENT "Building executable with PyInstaller: ${program}"
+    COMMENT "${TARGET}: Building executable with PyInstaller: ${program}"
     WORKING_DIRECTORY "${staging_dir}"
   )
 

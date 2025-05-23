@@ -76,7 +76,7 @@ function(cc_add_doxygen TARGET)
 
     doxygen_add_docs("${TARGET}"
       "${DOXYGEN_SOURCE_DIRECTORY}"
-      COMMENT "Generating Doxygen documentation: ${relative_out}")
+      COMMENT "${TARGET}: Generating Doxygen documentation: ${relative_out}")
     add_dependencies(${DOC_TARGET} "${TARGET}")
   endif()
 endfunction()

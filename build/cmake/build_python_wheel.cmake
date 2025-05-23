@@ -278,7 +278,7 @@ function(cc_add_python_wheel TARGET)
     BYPRODUCTS "${gen_dir}"
     COMMAND sh -c "'${python}' -m hatchling build -d '${wheel_dir}' > /dev/null"
     #COMMAND ${python} -m build --wheel --outdir "${wheel_dir}" "."
-    COMMENT "Building Python Wheel: ${wheel_file}"
+    COMMENT "${TARGET}: Building Python Wheel: ${wheel_file}"
     COMMAND_EXPAND_LISTS
     VERBATIM
     WORKING_DIRECTORY "${gen_dir}"
@@ -371,7 +371,7 @@ function(cc_add_python_wheel TARGET)
     add_custom_command(
       OUTPUT ${target_stamp}
       DEPENDS ${wheel_path}
-      COMMENT "Installing wheel '${PACKAGE_NAME}' into '${venv_rel_path}'"
+      COMMENT "${TARGET}: Installing wheel '${PACKAGE_NAME}' into '${venv_rel_path}'"
       COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${TARGET}-uninstall"
       COMMAND "${venv_python}" -m pip install ${PIP_QUIET} ${distcache_args} "${wheel_paths}"
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${stamp_dir}"

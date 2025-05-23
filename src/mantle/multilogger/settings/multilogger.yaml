@@ -48,4 +48,4 @@ log sinks:
       WARNING  : 30
       FAILED   : 40
       CRITICAL : 50
-      FATAL    : 75
+      FATAL    : 60

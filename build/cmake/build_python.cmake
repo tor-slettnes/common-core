@@ -120,6 +120,7 @@ function(cc_add_python TARGET)
   endif()
 
   cc_stage_python_modules(
+    TARGET "${TARGET}"
     OUTPUT "${staged_outputs}"
     STAGING_DIR "${namespace_dir}"
     PROGRAMS ${arg_PROGRAMS}
@@ -194,14 +195,14 @@ endfunction()
 
 function(cc_stage_python_modules)
   set(_options)
-  set(_singleargs STAGING_DIR)
+  set(_singleargs TARGET STAGING_DIR)
   set(_multiargs OUTPUT PROGRAMS FILES DIRECTORIES FILENAME_PATTERN)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   ### Now define the first of several commands that will populate the output folder.
   add_custom_command(
     OUTPUT ${arg_OUTPUT}
-    COMMENT "Staging Python modules: ${TARGET}"
+    COMMENT "${arg_TARGET}: Staging Python modules"
     BYPRODUCTS ${arg_STAGING_DIR}
     COMMAND ${CMAKE_COMMAND}
     ARGS -E make_directory ${arg_STAGING_DIR}

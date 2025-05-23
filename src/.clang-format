@@ -32,7 +32,7 @@ BraceWrapping:
   AfterEnum: true
   BeforeElse: true
   BeforeCatch: true
-  BeforeLambdaBody: true
+  BeforeLambdaBody: false
   BeforeWhile: true
   SplitEmptyNamespace: true
   SplitEmptyRecord: false

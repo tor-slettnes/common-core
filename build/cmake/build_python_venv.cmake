@@ -76,7 +76,7 @@ function(cc_add_python_venv TARGET)
 
   add_custom_command(
     OUTPUT "${venv_python}"
-    COMMENT "Creating Python Virtual Environment: ${venv_rel_path}"
+    COMMENT "${TARGET}: Creating Python Virtual Environment: ${venv_rel_path}"
     VERBATIM
 
     COMMAND "${Python3_EXECUTABLE}" -m virtualenv ${PIP_QUIET} "${venv_path}"
@@ -200,7 +200,7 @@ function(cc_add_python_requirements_cache TARGET)
     add_custom_command(
       OUTPUT "${staging_stamp}"
       DEPENDS ${arg_REQUIREMENTS_FILES}
-      COMMENT "Retrieving Python distributions for target: ${TARGET}"
+      COMMENT "${TARGET}: Retrieving Python distributions for target"
       COMMAND_EXPAND_LISTS
       VERBATIM
 
@@ -317,9 +317,13 @@ function(cc_populate_python_venv TARGET)
   #     added using `cc_add_python_requirements_cache()`, above).
 
   if (arg_REQUIREMENTS OR arg_REQUIREMENTS_FILES OR arg_REQUIREMENTS_DEPS)
+    cmake_path(RELATIVE_PATH venv_path
+      BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
+      OUTPUT_VARIABLE venv_rel_path)
+
     add_custom_command(
       OUTPUT "${target_stamp}"
-      COMMENT "Populating Python Virtual Environment: ${venv_path}"
+      COMMENT "${TARGET}: Populating Python Virtual Environment: ${venv_rel_path}"
       VERBATIM
     )
 

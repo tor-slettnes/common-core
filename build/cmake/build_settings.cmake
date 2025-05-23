@@ -97,9 +97,9 @@ function(cc_add_settings TARGET)
   ### Add commands to perform the actual staging.
   add_custom_command(
     OUTPUT ${staged_outputs}
-    COMMENT ""
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E make_directory ${staging_dir}
+    COMMENT "${TARGET}: staging settings files"
+    COMMAND "${CMAKE_COMMAND}" -E rm -rf "${staging_dir}"
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "${staging_dir}"
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMAND_EXPAND_LISTS
     VERBATIM

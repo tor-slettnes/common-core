@@ -245,7 +245,8 @@ namespace core::logging
                 this->expiration_interval(),
                 this->use_local_time());
 
-            fs::path pattern = fs::path("*") += this->current_suffix();
+            fs::path pattern("*");
+            pattern += this->current_suffix();
 
             try
             {

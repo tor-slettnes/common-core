@@ -64,7 +64,7 @@ function(GRPC_GENERATE_CPP SRCS HDRS DEST)
       COMMAND protobuf::protoc
       ARGS --grpc_out ${DEST} ${_protobuf_include_path} --plugin=protoc-gen-grpc=${GRPC_CPP_PLUGIN} ${ABS_FIL}
       DEPENDS ${ABS_FIL} protobuf::protoc gRPC::grpc_cpp_plugin
-      COMMENT "Running C++ gRPC compiler on ${FIL}"
+      COMMENT ""
       VERBATIM )
   endforeach()
 
