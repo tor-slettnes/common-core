@@ -91,6 +91,12 @@ namespace core::logging
 
         if (this->include_context())
         {
+            if (!message->origin().empty())
+            {
+                stream << message->origin()
+                       << "|";
+            }
+
             if (!message->task_name().empty())
             {
                 stream << message->task_name();

@@ -26,6 +26,11 @@ namespace multilogger
     {
     }
 
+    SQLiteSink::~SQLiteSink()
+    {
+        this->flush();
+    }
+
     void SQLiteSink::load_settings(const core::types::KeyValueMap &settings)
     {
         Super::load_settings(settings);
@@ -119,8 +124,8 @@ namespace multilogger
 
     void SQLiteSink::close_file()
     {
-        this->db.close();
         RotatingPath::close_file();
+        this->db.close();
     }
 
     void SQLiteSink::create_table()
@@ -166,52 +171,51 @@ namespace multilogger
 
     void SQLiteSink::worker()
     {
-        std::size_t pending_count = 0;
         this->pending_rows.reserve(this->batch_size());
         this->create_placeholders();
 
         while (this->is_open())
         {
-            bool flush = false;
+            bool flush = true;
             if (auto opt_item = this->queue()->get(this->batch_timeout()))
             {
                 this->try_handle_item(opt_item.value());
-                flush = (++pending_count >= this->batch_size());
-            }
-            else
-            {
-                flush = (pending_count > 0);
+                flush = (this->pending_rows.size() >= this->batch_size());
             }
 
             if (flush)
             {
                 this->flush();
-                pending_count = 0;
             }
         }
     }
 
     void SQLiteSink::flush()
     {
-        std::stringstream cmd;
-        cmd << "INSERT INTO "
-            << std::quoted(this->table_name())
-            << " VALUES "
-            << this->placeholders;
+        std::lock_guard lck(this->rows_lock_);
 
-        try
+        if (this->pending_rows.size())
         {
-            this->db.execute_multi(cmd.str(), this->pending_rows);
+            std::stringstream cmd;
+            cmd << "INSERT INTO "
+                << std::quoted(this->table_name())
+                << " VALUES "
+                << this->placeholders;
+
+            try
+            {
+                this->db.execute_multi(cmd.str(), this->pending_rows);
+            }
+            catch (...)
+            {
+                logf_warning("Log sink %r failed to flush %d messages to %r: %s",
+                             this->sink_id(),
+                             this->pending_rows.size(),
+                             this->current_path(),
+                             std::current_exception());
+            }
+            this->pending_rows.clear();
         }
-        catch (...)
-        {
-            logf_warning("Log sink %r failed to flush %d messages to %r: %s",
-                         this->sink_id(),
-                         this->pending_rows.size(),
-                         this->current_path(),
-                         std::current_exception());
-        }
-        this->pending_rows.clear();
     }
 
 }  // namespace multilogger

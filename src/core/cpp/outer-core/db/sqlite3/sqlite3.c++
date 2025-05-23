@@ -23,7 +23,7 @@ namespace core::db
 
     SQLite3::~SQLite3()
     {
-        this->close();
+        this->close(false);
     }
 
     bool SQLite3::is_open() const
@@ -51,12 +51,18 @@ namespace core::db
         }
     }
 
-    void SQLite3::close()
+    void SQLite3::close(bool check_status)
     {
         if (this->is_open())
         {
-            this->check_status(
-                sqlite3_close(this->connection_));
+            std::lock_guard lck(this->db_lock_);
+            if (int status = sqlite3_close(this->connection_))
+            {
+                if (check_status)
+                {
+                    this->check_status(status);
+                }
+            }
             this->connection_ = nullptr;
             this->db_file_.clear();
         }
@@ -64,7 +70,7 @@ namespace core::db
 
     void SQLite3::execute(
         const std::string &sql,
-        const QueryCallbackFunction &callback) const
+        const QueryCallbackFunction &callback)
     {
         this->execute(sql, {}, callback);
     }
@@ -72,7 +78,7 @@ namespace core::db
     void SQLite3::execute(
         const std::string &sql,
         const RowData &parameters,
-        const QueryCallbackFunction &callback) const
+        const QueryCallbackFunction &callback)
     {
         this->execute_multi(sql, {parameters}, callback);
     }
@@ -80,8 +86,9 @@ namespace core::db
     void SQLite3::execute_multi(
         const std::string &sql,
         const MultiRowData &parameter_rows,
-        const QueryCallbackFunction &callback) const
+        const QueryCallbackFunction &callback)
     {
+        std::lock_guard lck(this->db_lock_);
         sqlite3_stmt *statement = nullptr;
         this->check_status(
             sqlite3_prepare_v2(
@@ -119,7 +126,7 @@ namespace core::db
    std::shared_ptr<SQLite3::QueryResponseQueue> SQLite3::execute_async_query(
         const std::string &sql,
         const RowData &parameters,
-        std::size_t queue_size) const
+        std::size_t queue_size)
     {
         using namespace std::placeholders;
 
@@ -253,7 +260,7 @@ namespace core::db
     }
 
     void SQLite3::execute_statement(::sqlite3_stmt *statement,
-                                    const QueryCallbackFunction &callback) const
+                                    const QueryCallbackFunction &callback)
     {
         bool done = false;
         ColumnNames column_names = this->column_names(statement);

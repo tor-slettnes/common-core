@@ -20,11 +20,12 @@ namespace core::logging
 
     void Dispatcher::deinitialize()
     {
-        for (const auto &[sink_id, sink] : this->sinks_)
+        std::lock_guard<std::mutex> lck(this->mtx_);
+        SinkMap sinks = std::move(this->sinks_);
+        for (const auto &[sink_id, sink] : sinks)
         {
             sink->close();
         }
-        this->sinks_.clear();
     }
 
     void Dispatcher::add_sinks(const SinkMap &sinks)

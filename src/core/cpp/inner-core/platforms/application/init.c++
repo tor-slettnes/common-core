@@ -53,7 +53,7 @@ namespace core::application
         }
 
         core::platform::exit_tasks.execute();
-        core::platform::unregister_providers();
         logging::dispatcher.deinitialize();
+        core::platform::unregister_providers();
     }
 }  // namespace core::application

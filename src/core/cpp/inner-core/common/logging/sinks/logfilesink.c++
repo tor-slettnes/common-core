@@ -28,14 +28,12 @@ namespace core::logging
     void LogFileSink::open()
     {
         this->open_file(dt::Clock::now());
-        this->open_async_queue();
         Super::open();
     }
 
     void LogFileSink::close()
     {
         Super::close();
-        this->close_async_queue();
         this->close_file();
     }
 

@@ -35,15 +35,7 @@ namespace core::logging
         using Super::Super;
         virtual ~AsyncWrapper()
         {
-            this->close_async_queue();
-            if (this->workerthread_.joinable())
-            {
-                str::format(std::cout,
-                            "Sink %r AsynWrapper destructor waiting for worker thread\n",
-                            this->sink_id());
-
-                this->workerthread_.join();
-            }
+            this->close_async_queue(true);
         }
 
     protected:
@@ -112,11 +104,15 @@ namespace core::logging
             }
         }
 
-        void close_async_queue()
+        void close_async_queue(bool wait_for_thread = false)
         {
             if (this->is_open())
             {
                 this->queue_->close();
+            }
+            if (wait_for_thread && this->workerthread_.joinable())
+            {
+                this->workerthread_.join();
             }
         }
 

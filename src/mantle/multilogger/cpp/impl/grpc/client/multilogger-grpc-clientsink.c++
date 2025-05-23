@@ -49,8 +49,6 @@ namespace multilogger::grpc
             this->client_ = grpc::LogClient::create_shared(
                 this->host(),   // host
                 true);          // wait_for_ready
-
-            this->client_->open_writer();
         }
         Super::open();
     }

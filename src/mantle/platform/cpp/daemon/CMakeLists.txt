@@ -21,6 +21,7 @@ set(LIB_DEPS
   cc_platform_netconfig_grpc_service
   cc_platform_vfs_grpc_service
   cc_platform_upgrade_grpc_service
+  cc_multilogger_grpc_client
 )
 
 ### Source files

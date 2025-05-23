@@ -26,10 +26,6 @@ namespace core::logging
           contract_id_(contract_id),
           threshold_(DEFAULT_THRESHOLD)
     {
-        str::format(std::cout,
-                    "Sink constructor, sink_id=%r, contract_id=%r\n",
-                    sink_id,
-                    contract_id);
     }
 
     void Sink::load_settings(const types::KeyValueMap &settings)

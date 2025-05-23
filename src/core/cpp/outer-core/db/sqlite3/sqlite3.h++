@@ -32,27 +32,27 @@ namespace core::db
         bool is_open() const;
         fs::path db_file() const;
         void open(const fs::path &db_file);
-        void close();
+        void close(bool check_status = false);
 
         void execute(
             const std::string &sql,
-            const QueryCallbackFunction &callback = {}) const;
+            const QueryCallbackFunction &callback = {});
 
         void execute(
             const std::string &sql,
             const RowData &parameters,
-            const QueryCallbackFunction &callback = {}) const;
+            const QueryCallbackFunction &callback = {});
 
         // Invoke SQL statement with multiple input rows
         void execute_multi(
             const std::string &sql,
             const MultiRowData &parameters,
-            const QueryCallbackFunction &callback = {}) const;
+            const QueryCallbackFunction &callback = {});
 
         std::shared_ptr<QueryResponseQueue> execute_async_query(
             const std::string &sql,
             const RowData &parameters = {},
-            std::size_t queue_size = 4096) const;
+            std::size_t queue_size = 4096);
 
     protected:
         ::sqlite3 *connection() const;
@@ -63,7 +63,7 @@ namespace core::db
 
         void execute_statement(
             ::sqlite3_stmt *statement,
-            const QueryCallbackFunction &callback) const;
+            const QueryCallbackFunction &callback);
 
         ColumnNames column_names(
             ::sqlite3_stmt *statement) const;
@@ -86,5 +86,6 @@ namespace core::db
     private:
         ::sqlite3 *connection_;
         fs::path db_file_;
+        std::mutex db_lock_;
     };
 }  // namespace core::db

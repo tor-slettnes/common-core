@@ -88,6 +88,7 @@ namespace multilogger::grpc
         if (!this->writer)
         {
             this->writer_context = std::make_unique<::grpc::ClientContext>();
+            this->writer_context->set_wait_for_ready(true);
             this->writer_response = std::make_unique<::google::protobuf::Empty>();
             this->writer = this->stub->writer(this->writer_context.get(),
                                               this->writer_response.get());
@@ -107,6 +108,11 @@ namespace multilogger::grpc
 
     bool LogClient::write_item(const core::types::Loggable::ptr &item)
     {
+        if (!this->writer)
+        {
+            this->open_writer();
+        }
+
         if (this->writer->Write(protobuf::encoded_shared<cc::platform::multilogger::Loggable>(item)))
         {
             return true;

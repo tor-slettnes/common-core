@@ -292,3 +292,12 @@ log sinks:
   dds:
     enabled: false
     threshold: TRACE
+
+
+  # Log via MultiLogger gRPC service
+  multilogger:
+    # MultiLogger sink enabled.  Default: false
+    enabled: true
+
+    # MultiLogger host. Default: localhost
+    host: localhost

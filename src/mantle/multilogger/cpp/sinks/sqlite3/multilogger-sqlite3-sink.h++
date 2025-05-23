@@ -45,6 +45,7 @@ namespace multilogger
 
     protected:
         SQLiteSink(const std::string &sink_id);
+        ~SQLiteSink();
 
     protected:
         void load_settings(const core::types::KeyValueMap &settings) override;
@@ -79,6 +80,7 @@ namespace multilogger
         std::string placeholders;
         std::thread worker_thread_;
         core::db::SQLite3::MultiRowData pending_rows;
+        std::mutex rows_lock_;
     };
 
     //--------------------------------------------------------------------------
