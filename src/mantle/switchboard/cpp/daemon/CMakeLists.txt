@@ -32,6 +32,7 @@ endif()
 if(BUILD_GRPC)
   list(APPEND LIB_DEPS
     cc_switchboard_grpc_service
+    cc_multilogger_grpc_client
   )
 
   list(APPEND SOURCES

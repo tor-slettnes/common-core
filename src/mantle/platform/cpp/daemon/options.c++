@@ -7,6 +7,7 @@
 
 #include "options.h++"
 #include "settings/settings.h++"
+#include "multilogger-grpc-clientsink.h++"
 
 Options::Options()
     : Super()
@@ -24,6 +25,7 @@ void Options::add_options()
         "Server address in the form [HOST][:PORT].",
         &this->host,
         core::settings->get("host").as_string());
+
 }
 
 std::unique_ptr<Options> options;

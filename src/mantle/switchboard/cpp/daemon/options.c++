@@ -7,6 +7,7 @@
 
 #include "options.h++"
 #include "settings/settings.h++"
+#include "multilogger-grpc-clientsink.h++"
 
 namespace switchboard
 {

@@ -7,7 +7,6 @@
 
 #pragma once
 #include "argparse/server.h++"
-#include "multilogger-grpc-clientsink.h++"
 
 class Options : public core::argparse::ServerOptions
 {

@@ -21,7 +21,10 @@ if(BUILD_DDS)
 endif()
 
 if(BUILD_GRPC)
-  list(APPEND LIB_DEPS cc_demo_grpc_service)
+  list(APPEND LIB_DEPS
+    cc_demo_grpc_service
+    cc_multilogger_grpc_client
+  )
 endif()
 
 if(BUILD_ZMQ)

@@ -27,9 +27,11 @@ namespace multilogger::grpc
         void load_settings(const core::types::KeyValueMap &settings) override;
         void load_client_settings(const core::types::KeyValueMap &settings);
 
+    public:
         std::string host() const;
         void set_host(const std::string &address);
 
+    protected:
         void open() override;
         void close() override;
         bool handle_item(const core::types::Loggable::ptr &loggable);

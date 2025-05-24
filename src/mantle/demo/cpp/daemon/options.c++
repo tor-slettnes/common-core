@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "options.h++"
+#include "multilogger-grpc-clientsink.h++"
 
 #if USE_DDS
 #include "dds-logsink.h++"

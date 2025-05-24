@@ -54,7 +54,7 @@ namespace core::logging
     public:
         virtual void load_settings(const types::KeyValueMap &settings);
 
-        void set_contract_id(const std::optional<Loggable::ContractID> &contrct_id);
+        void set_contract_id(const std::optional<Loggable::ContractID> &contract_id);
         std::optional<Loggable::ContractID> contract_id() const;
 
         virtual void set_threshold(status::Level threshold);
