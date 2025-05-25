@@ -51,7 +51,7 @@ namespace sysconfig::native
             const TimeZoneLocationFilter &filter) const override;
 
         TimeZoneCanonicalSpec get_timezone_spec(
-            const TimeZoneCanonicalName &zone) const override;
+            const TimeZoneCanonicalName &zone = {}) const override;
 
         TimeZoneInfo get_timezone_info(
             const TimeZoneCanonicalName &canonical_zone = {},
@@ -93,6 +93,7 @@ namespace sysconfig::native
         int to_scalar_coord(const std::string &coord) const;
 
     protected:
+        TimeZoneMap zone_map;
         core::SettingsStore zone_settings;
     };
 }  // namespace sysconfig::native

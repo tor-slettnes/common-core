@@ -9,9 +9,9 @@ __author__ = 'Tor Slettnes'
 
 ### Modules within package
 from .switch import Switch
-from .signals import signal_store
+from .signals import switchboard_signals
 from cc.protobuf.switchboard import Signal
-from cc.protobuf.signal import SignalStore, MappingAction
+from cc.protobuf.signalstore import SignalStore, MappingAction
 from abc import abstractmethod
 
 class SwitchboardBase:
@@ -20,7 +20,7 @@ class SwitchboardBase:
     '''
 
     def __init__(self,
-                 signal_store: SignalStore = signal_store):
+                 signal_store: SignalStore = switchboard_signals):
 
         self.switches = {}
         self.signal_store = signal_store

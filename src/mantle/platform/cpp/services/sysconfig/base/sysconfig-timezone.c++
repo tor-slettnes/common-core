@@ -15,9 +15,9 @@ namespace sysconfig
 
     bool operator<(const TimeZoneCountry &lhs, const TimeZoneCountry &rhs)
     {
-        return (lhs.code < rhs.code)   ? true
-               : (rhs.code > rhs.code) ? false
-                                       : rhs.name < rhs.name;
+        return (lhs.code < rhs.code) ? true
+             : (rhs.code > rhs.code) ? false
+                                     : rhs.name < rhs.name;
     }
 
     std::ostream &operator<<(std::ostream &stream, const TimeZoneCountry &country)
@@ -43,12 +43,12 @@ namespace sysconfig
         core::types::TaggedValueList tvlist;
 
         tvlist.append_if(!filter.area.empty(),
-                          "area",
-                          filter.area);
+                         "area",
+                         filter.area);
 
         tvlist.append_if(!filter.country.code.empty() || !filter.country.name.empty(),
-                          "country",
-                          core::str::convert_from(filter.country));
+                         "country",
+                         core::str::convert_from(filter.country));
 
         tvlist.to_stream(stream);
         return stream;
@@ -67,7 +67,6 @@ namespace sysconfig
             seconds > 0   ? positive_suffix
             : seconds < 0 ? negative_suffix
                           : ""s;
-
         return core::str::format("%d\u00b0%d'%d\"%s",
                                  abs_seconds / 3600,
                                  (abs_seconds / 60) % 60,
@@ -79,7 +78,7 @@ namespace sysconfig
     {
         core::str::format(stream,
                           "{name=%r, area=%r, locations=%r, "
-                          "latitude=%r, longitude=%r",
+                          "latitude=%s, longitude=%s}",
                           spec.name,
                           spec.area,
                           spec.locations,
@@ -97,5 +96,5 @@ namespace sysconfig
     // Signals
 
     core::signal::DataSignal<TimeZoneInfo> signal_tzinfo("TimeZoneInfo", true);
-    core::signal::DataSignal<TimeZoneCanonicalName> signal_tzconfig("TimeZoneConfig", true);
+    core::signal::DataSignal<TimeZoneCanonicalSpec> signal_tzspec("TimeZoneSpec", true);
 }  // namespace sysconfig

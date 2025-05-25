@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from .signals import signal_store
+from .signals import demo_signals
 from cc.protobuf.wellknown import encodeTimestamp
 from cc.protobuf.variant import encodeKeyValueMap
 from cc.protobuf.demo import Greeting, TimeData, Signal
@@ -104,14 +104,14 @@ class API:
             Callback method, which will receive `cc.protobuf.demo.Signal()`
             messages containing the greeting as its sole argument.
         '''
-        signal_store.connect_signal('signal_greeting', callback)
+        demo_signals.connect_signal('signal_greeting', callback)
 
 
     def stop_notify_greetings(self):
         '''
         Unregister any existing greeting callback
         '''
-        signal_store.disconnect_signal('signal_greeting')
+        demo_signals.disconnect_signal('signal_greeting')
 
 
     def start_notify_time(self, callback: SignalSlot):
@@ -122,7 +122,7 @@ class API:
         @param callback:
             Callback method, which will receive the time data as argument.
         '''
-        signal_store.connect_signal_data('signal_time', callback)
+        demo_signals.connect_signal_data('signal_time', callback)
 
 
     def stop_notify_time (self):
@@ -130,4 +130,4 @@ class API:
         Unregister any existing time callbacks
         '''
 
-        signal_store.disconnect_signal('signal_time')
+        demo_signals.disconnect_signal('signal_time')

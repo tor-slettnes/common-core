@@ -636,24 +636,66 @@ message WirelessBandSetting
     WirelessBandSelection band_selection = 1;
 }
 
-//==============================================================================
-// Signals
-
 message MappingKey
 {
     string key = 1;
 }
 
+//==============================================================================
+// A `Signal` message is a multiplexer for various event types from the server,
+// streamed back to the client in response to a `watch()` invocation, above.
+// The event stream continues indefinitely until the client cancels the call or
+// disconnects.
+//
+// To listen for only specific event types, apply a corresponding signal filter
+// as input parameter to the `watch()` call. The filter should contain a list of
+// field indices to include or exclude, based on their field numbers within the
+// `oneof` block below. The filter also contains a `polarity` field to indicate
+// whether the listed fields are to be included (1) or excluded (0).  As such,
+// an empty filter means that all events will be streamed back to the client.
+
 message Signal
 {
+    // Mapping type, one of: MAP_NONE, MAP_ADDITION, MAP_REMOVAL, MAP_UPDATE.
+    // In the case of a MappingSignal (all but `global` below), indicates
+    // whether this instance is added, updated, or removed.
     cc.signal.MappingAction mapping_action = 1;
+
+    // Mapping key for the item that was added/removed/updated.
     string mapping_key = 2;
 
     oneof signal {
+        // Network event not associated with a particular device, conneciton, etc.
+        // Emitted when there is a global change, e.g. wireless enabled/disabled.
+        // The fields `mapping_action` and `mapping_key` are not used for this.
         GlobalData global = 8;
+
+        // Network device (interface) event, e.g. state change.
+        //  * `mapping_action` indicates whether the device was added, removed,
+        //    or updated
+        //  * `mapping_key` is the network device/interface name.
         DeviceData device = 9;
+
+        // Network connection update, e.g. static IP configuration changed.
+        //  * `mapping_action` indicates whether the connection was added,
+        //    removed, or changed
+        //  * `mapping_key` contains the connection name (e.g. `Wired Connection 1`)
         ConnectionData connection = 10;
+
+        // Active network connection update, e.g. state change, IP address change, ...
+
+        //  * `mapping_action` denotes whether the connection was activated,
+        //    deactivated, or updated
+        //  * `mapping_key` contains the connection name (e.g. `Wired Connection 1`)
         ActiveConnectionData active_connection = 11;
+
+        // Wireless Access Point update.  Often emitted multiple times after
+        // each periodic scan.
+        //  * `mapping_action` denotes whether the AP was newly discovered, is
+        //    no longer visible, or there was a change (such as signal strength).
+        //  * `mapping_key` contains the unique BSSID (normally MAC address) of
+        //    the AP.  This is not the same as SSID (network name), which may be
+        //    shared by multiple APs.
         AccessPointData accesspoint = 12;
     }
 }

@@ -47,13 +47,13 @@ void Options::on_monitor_start()
     bool &show_time = flags["time"];
     bool &show_time_config = flags["time_config"];
     bool &show_tz_info = flags["tz_info"];
-    bool &show_tz_config = flags["tz_config"];
+    bool &show_tz_spec = flags["tz_spec"];
     bool &show_host_info = flags["host_info"];
     bool &show_product_info = flags["product_info"];
     this->get_flags(&flags, false);
 
     if (!show_time && !show_time_config &&
-        !show_tz_info && !show_tz_config &&
+        !show_tz_info && !show_tz_spec &&
         !show_host_info && !show_product_info)
     {
         except = true;
@@ -82,11 +82,11 @@ void Options::on_monitor_start()
             std::bind(&Options::on_tz_info, this, _1));
     }
 
-    if (show_tz_config != except)
+    if (show_tz_spec != except)
     {
-        sysconfig::signal_tzconfig.connect(
+        sysconfig::signal_tzspec.connect(
             this->signal_handle,
-            std::bind(&Options::on_tz_config, this, _1));
+            std::bind(&Options::on_tz_spec, this, _1));
     }
 
     if (show_host_info != except)
@@ -108,7 +108,7 @@ void Options::on_monitor_end()
 {
     sysconfig::signal_productinfo.disconnect(this->signal_handle);
     sysconfig::signal_hostinfo.disconnect(this->signal_handle);
-    sysconfig::signal_tzconfig.disconnect(this->signal_handle);
+    sysconfig::signal_tzspec.disconnect(this->signal_handle);
     sysconfig::signal_tzinfo.disconnect(this->signal_handle);
     sysconfig::signal_timeconfig.disconnect(this->signal_handle);
     sysconfig::signal_time.disconnect(this->signal_handle);
@@ -138,12 +138,12 @@ void Options::on_tz_info(const core::dt::TimeZoneInfo &ti)
                       ti);
 }
 
-void Options::on_tz_config(const sysconfig::TimeZoneCanonicalName &zone)
+void Options::on_tz_spec(const sysconfig::TimeZoneCanonicalSpec &spec)
 {
     core::str::format(std::cout,
-                      "[%.0s] signal_tz_config(%s)\n",
+                      "[%.0s] signal_tz_spec(%s)\n",
                       core::dt::Clock::now(),
-                      zone);
+                      spec);
 }
 
 void Options::on_hostinfo(const sysconfig::HostInfo &hi)

@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within current package
-from ..base import API, signal_store, PROJECT_NAME
+from ..base import API, demo_signals, PROJECT_NAME
 from cc.messaging.grpc.signal_service import SignalService
 from cc.protobuf.demo import Greeting, TimeData
 
@@ -44,7 +44,7 @@ class DemoService (SignalService, DemoServicer):
                   demo_provider : API,
                   bind_address : str = ""):
         SignalService.__init__(self,
-                               signal_store = signal_store,
+                               demo_signals = demo_signals,
                                bind_address = bind_address,
                                project_name = PROJECT_NAME)
         self.demo_provider = demo_provider

@@ -18,20 +18,20 @@ import "signal.proto";
 
 service SysConfig
 {
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Product information
 
     rpc get_product_info (google.protobuf.Empty) returns (ProductInfo);
     rpc set_serial_number (google.protobuf.StringValue) returns (google.protobuf.Empty);
     rpc set_model_name (google.protobuf.StringValue) returns (google.protobuf.Empty);
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Host Information
 
     rpc get_host_info (google.protobuf.Empty) returns (HostInfo);
     rpc set_host_name (google.protobuf.StringValue) returns (google.protobuf.Empty);
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Time configuration
 
     // Current timestamp
@@ -42,7 +42,7 @@ service SysConfig
     rpc set_time_config (TimeConfig) returns (google.protobuf.Empty);
     rpc get_time_config (google.protobuf.Empty) returns (TimeConfig);
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Time zone configuration
 
     // List time zone _areas_, which are continents or oceans. Results are
@@ -83,7 +83,7 @@ service SysConfig
     /// information.
     rpc set_timezone (TimeZoneConfig) returns (TimeZoneInfo);
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Spawn a new process, with or without capturing stdin/stdout/stderr.
 
     rpc invoke_sync (CommandInvocation) returns (CommandResponse);
@@ -93,13 +93,13 @@ service SysConfig
 
     rpc reboot (google.protobuf.Empty) returns (google.protobuf.Empty);
 
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Watch for changes from server
 
     rpc watch (cc.signal.Filter) returns (stream Signal);
 }
 
-//==============================================================================
+//------------------------------------------------------------------------------
 // Product Information
 
 message ProductInfo
@@ -121,7 +121,7 @@ message SubsystemInfo
 }
 
 
-//==============================================================================
+//------------------------------------------------------------------------------
 // Host Information
 
 message HostInfo
@@ -143,7 +143,7 @@ message HostInfo
     string machine_uid = 29;
 }
 
-//==============================================================================
+//------------------------------------------------------------------------------
 // Time Configuration
 
 enum TimeSync
@@ -165,7 +165,7 @@ message TimeConfig
 }
 
 
-//==============================================================================
+//------------------------------------------------------------------------------
 // Time Zone Configuration
 
 message TimeZoneAreas
@@ -314,7 +314,7 @@ message TimeZoneInfo
     bool dst = 5;
 }
 
-//==============================================================================
+//------------------------------------------------------------------------------
 // Process management
 
 message CommandInvocation
@@ -352,6 +352,20 @@ message CommandResponse
     string error_text = 7;
 }
 
+
+//------------------------------------------------------------------------------
+// A `Signal` message is a multiplexer for various event types from the server,
+// streamed back to the client in response to a `watch()` invocation, above.
+// The event stream continues indefinitely until the client cancels the call or
+// disconnects.
+//
+// To listen for only specific event types, apply a corresponding signal filter
+// as input parameter to the `watch()` call. The filter should contain a list of
+// field indices to include or exclude, based on their field numbers within the
+// `oneof` block below. The filter also contains a `polarity` field to indicate
+// whether the listed fields are to be included (1) or excluded (0).  As such,
+// an empty filter means that all events will be streamed back to the client.
+
 message Signal
 {
     oneof signal {
@@ -362,12 +376,12 @@ message Signal
         // Emitted when automatic time settings changes.
         TimeConfig time_config = 9;
 
-        // Emitted when canonical timezone configuration changes.
-        TimeZoneCanonicalName tz_config = 10;
-
         // Effective zone change. Emitted when the canonical zone is updated,
         // or when daylight savings time stars or ends.
         TimeZoneInfo tz_info = 12;
+
+        // Emitted when canonical timezone configuration changes.
+        TimeZoneCanonicalSpec tz_spec = 13;
 
         // Emitted when the server's primary host name changes
         HostInfo host_info = 14;

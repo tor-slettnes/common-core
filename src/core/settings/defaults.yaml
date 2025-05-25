@@ -301,3 +301,6 @@ log sinks:
 
     # MultiLogger host. Default: localhost
     host: localhost
+
+    # Maximum number of messages to cache locally if server is unavailable.
+    queue size: 65536

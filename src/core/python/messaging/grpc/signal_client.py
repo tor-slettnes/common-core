@@ -8,7 +8,7 @@
 ### Modules within package
 from .client  import Client
 from .client_reader import ThreadReader, AsyncReader
-from cc.protobuf.signal import SignalStore, Slot, Filter
+from cc.protobuf.signalstore import SignalStore, Slot, Filter
 
 from typing import Callable, Sequence, Optional
 
@@ -192,7 +192,7 @@ class SignalClient (Client):
             Retain the most recent data value of each signal received from the
             server.  If the signal includes a `key` field (i.e., if it is a
             `MappingSignal` instance), keep the most recent data value per key.
-            These values can later be queried using `get_cached()`.
+            These values can later be queried using `get_cached_map()`.
         '''
 
         if signal_store:

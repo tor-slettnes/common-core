@@ -7,7 +7,7 @@ NamespaceIndentation: All
 IndentCaseLabels: false
 BinPackParameters: false
 BinPackArguments: false
-BreakBeforeBinaryOperators: All
+BreakBeforeBinaryOperators: NonAssignment
 AlignOperands: AlignAfterOperator
 AllowAllConstructorInitializersOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false

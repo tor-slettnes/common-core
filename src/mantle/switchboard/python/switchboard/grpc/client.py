@@ -31,7 +31,7 @@ class Client (SwitchboardBase, SignalClient):
 
         SwitchboardBase.__init__(self)
         SignalClient.__init__(self, host = host, wait_for_ready = wait_for_ready)
-        self.start_watching()
+        self.start_watching(watch_all=True)
 
     def _new_switch(self, switch_name: str) -> RemoteSwitch:
         '''Overridden method to obtain a local Switch instance in response to update signals from server'''

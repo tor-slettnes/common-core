@@ -148,6 +148,6 @@ namespace sysconfig
     // Signals
 
     extern core::signal::DataSignal<TimeZoneInfo> signal_tzinfo;
-    extern core::signal::DataSignal<TimeZoneCanonicalName> signal_tzconfig;
+    extern core::signal::DataSignal<TimeZoneCanonicalSpec> signal_tzspec;
 
 }  // namespace sysconfig

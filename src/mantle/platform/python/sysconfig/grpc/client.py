@@ -1,12 +1,19 @@
-#!/bin/echo Do not invoke directly.
-#===============================================================================
-## @file client.py
-## @brief Python client for `SysConfig` gRPC service
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+Python client for `SysConfig` gRPC service
+'''
+
+__author__ = 'Tor Slettnes'
+__docformat__ = 'javadoc en'
+
+### Standard Python modules
+from typing import Optional, Sequence, Iterator
 
 ### Modules within package
-from cc.messaging.grpc import SignalClient
+from cc.core.doc_inherit import doc_inherit
+
+from cc.messaging.grpc import \
+    Client as BaseClient, \
+    SignalClient as BaseSignalClient
 
 from cc.protobuf.wellknown import empty, StringValue, \
     Timestamp, TimestampType, encodeTimestamp, decodeTimestamp
@@ -18,24 +25,24 @@ from cc.protobuf.sysconfig import Signal, ProductInfo, HostInfo, \
     CommandInvocation, CommandContinuation, CommandResponse, \
     encodeCountry
 
-### Standard Python modules
-from typing import Optional, Sequence, Iterator
-
 #===============================================================================
 # Client class
 
-class Client (SignalClient):
+class Client (BaseClient):
     '''
-    Client for SysConfig service.
+    SysConfig service client.
+
+    Methods in this module are wrappers around corresponding gRPC calls,
+    which are forwarded to the SysConfig gRPC service.
+
+    For a flavor that listens for update events (signals) from the server, and
+    then responds to queries from the local signal cache, see `SignalClient`.
     '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
     from cc.generated.sysconfig_pb2_grpc import SysConfigStub as Stub
 
-    ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
-    ## which serves as a clearing house for emitting and receiving messages.
-    signal_type = Signal
 
     def get_product_info(self) -> ProductInfo:
         '''
@@ -174,6 +181,12 @@ class Client (SignalClient):
         return self.stub.list_timezone_specs(request).specs
 
 
+    def get_configured_timezone(self) -> str:
+        '''
+        Obtain the currently configured timezone name, e.g. 'America/Los_Angeles'.
+        '''
+        return self.get_timezone_spec().name
+
     def get_timezone_spec(self,
                           canonical_zone: str|None = None
                           ) -> TimeZoneCanonicalSpec:
@@ -181,7 +194,7 @@ class Client (SignalClient):
         Obtain specifications about a specifc canonical zone.  If no zone is
         provided, obtain information about the currently configured zone.
 
-        @param canonical_zone:
+        @param canonical_zone
             Canonical zone name, e.g. 'America/Los_Angeles' (not `PST` or `PDT`)
         @returns
             Zone specification, including
@@ -199,6 +212,14 @@ class Client (SignalClient):
         return self.stub.get_timezone_spec(
             TimeZoneCanonicalName(
                 name = canonical_zone))
+
+
+    def get_current_timezone(self) -> str:
+        '''
+        Obtain the currently effective timezone, e.g. 'PST' or 'PDT'
+        '''
+        return self.get_timezone_info().shortname
+
 
     def get_timezone_info(self,
                           canonical_zone: str|None = None,
@@ -354,3 +375,64 @@ class Client (SignalClient):
         return self.stub.invoke_finish(request)
 
 
+#===============================================================================
+# SignalClient class
+
+class SignalClient (BaseSignalClient, Client):
+    '''
+    SysConfig service client.
+
+    This specializes `Client` by passively listening for update events (signals)
+    from the server.  Queries are handled locally by looking up the requested
+    information in the local signal cache.
+    '''
+
+    ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
+    ## which serves as a clearing house for emitting and receiving messages.
+    signal_type = Signal
+
+    def __init__(self, *args, **kwargs):
+        BaseSignalClient.__init__(self, *args, **kwargs)
+        self.start_watching(True)
+
+    @doc_inherit
+    def get_product_info(self) -> ProductInfo:
+        return self.signal_store.get_cached_signal('product_info')
+
+    @doc_inherit
+    def get_host_info(self) -> HostInfo:
+        return self.signal_store.get_cached_signal('host_info')
+
+    @doc_inherit
+    def get_current_timestamp(self) -> Timestamp:
+        return self.signal_store.get_cached_signal('time')
+
+    @doc_inherit
+    def get_time_config(self) -> TimeConfig:
+        return self.signal_store.get_cached_signal('time_config')
+
+    @doc_inherit
+    def get_timezone_info(self,
+                          canonical_zone: str|None = None,
+                          time: TimestampType|None = None
+                          ) -> TimeZoneInfo:
+
+        if canonical_name is None and time is None:
+            return self.signal_store.get_cached_signal('tz_info')
+        else:
+            return Client.get_timezone_info(self, canonical_name, time);
+
+
+    @doc_inherit
+    def get_timezone_spec(self,
+                          canonical_zone: str|None = None
+                          ) -> TimeZoneCanonicalSpec:
+
+        if canonical_zone is None:
+            return self.signal_store.get_cached_signal('tz_spec')
+        else:
+            return Client.get_timezone_spec(self, canonical_zone)
+
+
+if __name__ == '__main__':
+    sysconfig = SignalClient()

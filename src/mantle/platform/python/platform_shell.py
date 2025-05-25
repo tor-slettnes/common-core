@@ -6,16 +6,16 @@
 #===============================================================================
 
 ### Modules within package
-from .sysconfig.grpc.client import Client as SysConfigClient
-from .netconfig.grpc.client import Client as NetConfigClient
-from .vfs.grpc.client import Client as VirtualFileSystemClient
-from .upgrade.grpc.client import Client as UpgradeClient
+from .sysconfig.grpc.client import SignalClient as SysConfigClient
+from .netconfig.grpc.client import SignalClient as NetConfigClient
+from .vfs.grpc.client import SignalClient as VirtualFileSystemClient
+from .upgrade.grpc.client import SignalClient as UpgradeClient
 from .multilogger.grpc.client import Client as MultiLoggerClient
 from .switchboard.grpc.client import Client as SwitchboardClient
 
 import cc.protobuf.wellknown
 import cc.protobuf.variant
-import cc.protobuf.signal
+import cc.protobuf.signalstore
 import cc.protobuf.status
 import cc.protobuf.sysconfig
 import cc.protobuf.vfs

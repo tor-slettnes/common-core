@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from ..base import API, signal_store
+from ..base import API, demo_signals
 from cc.core.scheduler import scheduler, TaskAlignment
 from cc.protobuf.wellknown import MessageToString, encodeTimestamp
 from cc.protobuf.datetime import encodeTimeStruct
@@ -31,7 +31,7 @@ class NativeDemo (API):
     def say_hello(self, greeting: Greeting):
         print("Emitting greeting: say_hello(%s)"%
               (MessageToString(greeting, as_one_line=True),))
-        signal_store.emit_mapping('signal_greeting', None, greeting.identity, greeting)
+        demo_signals.emit_mapping('signal_greeting', None, greeting.identity, greeting)
 
 
     def get_current_time(self) -> TimeData:
@@ -67,4 +67,4 @@ class NativeDemo (API):
 
     def _emit_time(self):
         t = time.time()
-        signal_store.emit_event('signal_time', self.get_current_time())
+        demo_signals.emit_event('signal_time', self.get_current_time())

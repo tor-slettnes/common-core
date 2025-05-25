@@ -9,7 +9,7 @@
 from cc.messaging.zmq.basic import Publisher
 from cc.messaging.zmq.protobuf.server import Server as ProtoServer
 from cc.messaging.zmq.protobuf.signalwriter import SignalWriter
-from cc.demo.base import API, signal_store, PROJECT_NAME
+from cc.demo.base import API, demo_signals, PROJECT_NAME
 from cc.demo.zmq.requesthandler import DemoRequestHandler
 from cc.demo.zmq.common import DEMO_SERVICE_CHANNEL, DEMO_PUBLISHER_CHANNEL
 
@@ -32,7 +32,7 @@ class Server (ProtoServer):
             channel_name = DEMO_PUBLISHER_CHANNEL,
             project_name = PROJECT_NAME)
 
-        self.signalwriter = SignalWriter(self.publisher, signal_store)
+        self.signalwriter = SignalWriter(self.publisher, demo_signals)
 
     def initialize(self):
         ProtoServer.initialize(self)

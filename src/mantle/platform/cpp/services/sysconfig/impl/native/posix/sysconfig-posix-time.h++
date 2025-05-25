@@ -22,6 +22,8 @@ namespace sysconfig::native
         TimeConfig get_time_config() const override;
         void set_time_config(const TimeConfig &config) override;
 
+        void set_current_time(const core::dt::TimePoint &tp) override;
+
         virtual void set_ntp(bool ntp);
         virtual bool get_ntp() const;
 

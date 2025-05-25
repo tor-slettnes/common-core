@@ -2,11 +2,15 @@
 Python client for `Upgrade` gRPC service
 '''
 
-__all__ = ['Client']
+__all__ = ['Client', 'SignalClient']
 __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 ### Modules within package
+from cc.messaging.grpc import \
+    Client as BaseClient, \
+    SignalClient as BaseSignalClient
+
 from cc.protobuf.wellknown import empty
 from cc.protobuf.upgrade import Signal, \
     PackageSource, SourceType, encodeSource, decodeSource, \
@@ -21,7 +25,7 @@ import io
 #===============================================================================
 ## Client
 
-class Client (SignalClient):
+class Client (BaseClient):
     '''
     Client for Upgrade service.
     '''
@@ -29,15 +33,6 @@ class Client (SignalClient):
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
     from cc.generated.upgrade_pb2_grpc import UpgradeStub as Stub
-
-    ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
-    ## which serves as a clearing house for emitting and receiving messages.
-    signal_type = Signal
-
-    Signals = (SIGNAL_SCAN_PROGRESS, SIGNAL_UPGRADE_AVAILABLE,
-               SIGNAL_UPGRADE_PENDING, SIGNAL_UPGRADE_PROGRESS) \
-        = ('scan_progress', 'upgrade_available',
-           'upgrade_pending', 'upgrade_progress')
 
 
     def scan(self, source: Optional[SourceType] = None):
@@ -142,6 +137,26 @@ class Client (SignalClient):
         return self.stub.finalize(empty)
 
 
+#===============================================================================
+# SignalClient class
+
+class SignalClient (BaseSignalClient, Client):
+    '''
+    NetConfig service client.
+
+    This specializes `Client` by passively listening for update events (signals)
+    from the server.  Queries are handled locally by looking up the requested
+    information in the local signal cache.
+    '''
+
+    ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
+    ## which serves as a clearing house for emitting and receiving messages.
+    signal_type = Signal
+
+    def __init__(self, *args, **kwargs):
+        BaseSignalClient.__init__(self, *args, **kwargs)
+        self.start_watching(True)
+
 
 if __name__ == '__main__':
-    upgrade = Client()
+    upgrade = SignalClient()

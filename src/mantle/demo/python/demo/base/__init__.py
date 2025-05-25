@@ -6,4 +6,4 @@
 #===============================================================================
 
 from .api     import API, SignalSlot, PROJECT_NAME
-from .signals import signal_store
+from .signals import demo_signals

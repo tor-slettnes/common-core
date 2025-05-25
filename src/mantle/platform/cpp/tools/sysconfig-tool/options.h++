@@ -29,7 +29,7 @@ private:
     void on_time(const core::dt::TimePoint &tp);
     void on_time_config(const sysconfig::TimeConfig &tc);
     void on_tz_info(const core::dt::TimeZoneInfo &ti);
-    void on_tz_config(const sysconfig::TimeZoneCanonicalName &zone);
+    void on_tz_spec(const sysconfig::TimeZoneCanonicalSpec &spec);
     void on_hostinfo(const sysconfig::HostInfo &hi);
     void on_productinfo(const sysconfig::ProductInfo &pi);
 

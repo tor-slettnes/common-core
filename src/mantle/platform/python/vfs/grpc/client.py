@@ -1,11 +1,25 @@
-#!/usr/bin/python3 -i
-#===============================================================================
-## @file client.py
-## @brief Python client for `VirtualFileSystem` gRPC service
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+Python client for `VirtualFileSystem` gRPC service
+'''
+
+__all__ = ['Client', 'SignalClient']
+__author__ = 'Tor Slettnes'
+__docformat__ = 'javadoc en'
+
+
+### Standard Python modules
+from typing import Mapping, Sequence, Iterator
+import io
+import pathlib
+
 
 ### Modules within package
+from cc.core.doc_inherit import doc_inherit
+
+from cc.messaging.grpc import \
+    Client as BaseClient, \
+    SignalClient as BaseSignalClient
+
 from cc.protobuf.wellknown import empty
 from cc.protobuf.variant import decodeKeyValueMap
 
@@ -15,13 +29,6 @@ from cc.protobuf.vfs import Signal, \
     encodePath, decodePath, encodePaths, decodeStats, \
     pathRequest, locateRequest, attributeRequest
 
-from cc.messaging.grpc import SignalClient, DetailedError
-
-
-### Standard Python modules
-from typing import Mapping, Sequence, Iterator
-import io
-import pathlib
 
 LocalPath = pathlib.Path | str
 LocalFile = LocalPath | io.IOBase
@@ -31,22 +38,20 @@ LocalFile = LocalPath | io.IOBase
 #===============================================================================
 ## Client
 
-class Client (SignalClient):
+class Client (BaseClient):
     '''
-    Client for VirtualFileSystem service.
+    VirtualFileSystem service client.
+
+    Methods in this module are wrappers around corresponding gRPC calls,
+    which are forwarded to the SysConfig gRPC service.
+
+    For a flavor that listens for update events (signals) from the server, and
+    then responds to queries from the local signal cache, see `SignalClient`.
     '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
     from cc.generated.vfs_pb2_grpc import VirtualFileSystemStub as Stub
-
-    ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
-    ## which serves as a clearing house for emitting and receiving messages.
-    signal_type = Signal
-
-    Signals = (SIGNAL_CONTEXT, SIGNAL_CONTEXT_IN_USE) \
-        = ('context', 'context_in_use')
-
 
     def get_contexts(self,
                     removable_only: bool = False,
@@ -87,11 +92,11 @@ class Client (SignalClient):
         '''
         return self.stub.get_contexts(empty).map
 
-    def get_open_context (self) -> Mapping[str, ContextSpec]:
+    def get_open_contexts(self) -> Mapping[str, ContextSpec]:
         '''
         List VFS contexts that are currently being held open.
         '''
-        return self.stub.get_open_context(empty).map
+        return self.stub.get_open_contexts(empty).map
 
 
     def get_context(self, name: str) -> ContextSpec:
@@ -569,5 +574,34 @@ class Client (SignalClient):
         self.self.stub.clear_attributes(encodePath(vfspath))
 
 
+#===============================================================================
+# SignalClient class
+
+class SignalClient (BaseSignalClient, Client):
+    '''
+    VirtualFileSystem service client.
+
+    This specializes `Client` by passively listening for update events (signals)
+    from the server.  Queries are handled locally by looking up the requested
+    information in the local signal cache.
+    '''
+
+    ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
+    ## which serves as a clearing house for emitting and receiving messages.
+    signal_type = Signal
+
+    def __init__(self, *args, **kwargs):
+        BaseSignalClient.__init__(self, *args, **kwargs)
+        self.start_watching(True)
+
+    @doc_inherit
+    def get_all_contexts(self) -> Mapping[str, ContextSpec]:
+        return self.signal_store.get_cached_map('context')
+
+    @doc_inherit
+    def get_open_contexts(self) -> Mapping[str, ContextSpec]:
+        return self.signal_store.get_cached_map('context_in_use')
+
+
 if __name__ == '__main__':
-    vfs = VirtualFileSystemClient()
+    vfs = SignalClient()

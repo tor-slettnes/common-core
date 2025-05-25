@@ -191,13 +191,13 @@ namespace core::dbus
         this->ready = true;
         this->emit_change(action);
         this->propagate_update(action);
-        logf_debug("%s ready", this->identifier());
+        logf_trace("%s ready", this->identifier());
         this->container->set_wrapper_ready(this->shared_from_this());
     }
 
     void ProxyWrapper::on_remove()
     {
-        logf_debug("Removing %s", this->identifier());
+        logf_trace("Removing %s", this->identifier());
         if (!this->ready)
         {
             this->cancellable->cancel();

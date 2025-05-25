@@ -35,7 +35,8 @@ namespace sysconfig::native
     void PosixTimeZoneProvider::initialize()
     {
         Super::initialize();
-        signal_tzconfig.emit(this->get_configured_zonename());
+        this->zone_map = this->load_zone_map();
+        signal_tzspec.emit(this->get_timezone_spec());
         signal_tzinfo.emit(this->get_timezone_info());
     }
 
@@ -47,7 +48,7 @@ namespace sysconfig::native
     TimeZoneAreas PosixTimeZoneProvider::list_timezone_areas() const
     {
         std::set<TimeZoneArea> areas;
-        for (const auto &[name, spec] : this->load_zone_map())
+        for (const auto &[name, spec] : this->zone_map)
         {
             areas.insert(spec.area);
         }
@@ -79,7 +80,7 @@ namespace sysconfig::native
     {
         std::set<TimeZoneCountry> countries;
 
-        for (const auto &[name, spec] : this->load_zone_map())
+        for (const auto &[name, spec] : this->zone_map)
         {
             if (area.empty() || (spec.area == area))
             {
@@ -140,14 +141,13 @@ namespace sysconfig::native
         }
 
         // Populate regions (where they exist) from matching country lists.
-        for (const auto &[name, spec] : this->load_zone_map())
+        for (const auto &[name, spec] : this->zone_map)
         {
             if (filter.area.empty() || (filter.area == spec.area))
             {
                 for (const TimeZoneLocation &location : spec.locations)
                 {
-                    if ((location.country.name == country_name) &&
-                        !location.region.empty())
+                    if ((location.country.name == country_name) && !location.region.empty())
                     {
                         regions.insert(location.region);
                     }
@@ -197,14 +197,15 @@ namespace sysconfig::native
     TimeZoneCanonicalSpec PosixTimeZoneProvider::get_timezone_spec(
         const std::string &zonename) const
     {
-        TimeZoneMap tzmap = this->load_zone_map();
-        return tzmap.get(zonename.empty() ? this->get_configured_zonename() : zonename);
+        return this->zone_map.get(zonename.empty()
+                                      ? this->get_configured_zonename()
+                                      : zonename);
     }
 
     TimeZoneInfo PosixTimeZoneProvider::set_timezone(const TimeZoneCanonicalName &zonename)
     {
         this->set_configured_zonename(zonename);
-        signal_tzconfig.emit(zonename);
+        signal_tzspec.emit(this->get_timezone_spec(zonename));
 
         TimeZoneInfo zi = core::dt::tzinfo();
         signal_tzinfo.emit(zi);
@@ -221,8 +222,8 @@ namespace sysconfig::native
         {
             for (const TimeZoneLocation &candidate : spec.locations)
             {
-                if ((this->country_match(location.country, candidate.country)) &&
-                    (location.region == candidate.region))
+                if ((this->country_match(location.country, candidate.country))
+                    && (location.region == candidate.region))
                 {
                     return this->set_timezone(spec.name);
                 }
@@ -250,7 +251,9 @@ namespace sysconfig::native
 
     {
         core::dt::TimePoint effective_time =
-            (timepoint == core::dt::TimePoint()) ? core::dt::Clock::now() : timepoint;
+            (timepoint == core::dt::TimePoint())
+                ? core::dt::Clock::now()
+                : timepoint;
 
         if (canonical_zone.empty())
         {
@@ -264,21 +267,21 @@ namespace sysconfig::native
 
     std::string PosixTimeZoneProvider::get_configured_zonename() const
     {
+        std::string zonename;
+
         if (fs::is_symlink(TZLINK))
         {
-            return (fs::read_symlink(TZLINK).lexically_relative(TZROOT)).string();
+            fs::path zone_path = fs::path(TZLINK).parent_path() / fs::read_symlink(TZLINK);
+            zonename = zone_path.lexically_normal().lexically_relative(TZROOT).string();
         }
         else if (fs::is_regular_file(TZFILE))
         {
             std::ifstream zonefile(TZFILE);
             std::string zone;
-            zonefile >> zone;
-            return zone;
+            zonefile >> zonename;
         }
-        else
-        {
-            return {};
-        }
+
+        return zonename;
     }
 
     void PosixTimeZoneProvider::set_configured_zonename(const std::string &zonename)
@@ -300,11 +303,10 @@ namespace sysconfig::native
 
     TimeZoneCanonicalSpecs PosixTimeZoneProvider::load_zones(const fs::path &zonetab) const
     {
-        TimeZoneMap tzmap = this->load_zone_map();
         TimeZoneCanonicalSpecs tzlist;
-        tzlist.reserve(tzmap.size());
+        tzlist.reserve(this->zone_map.size());
 
-        for (auto &[name, spec] : tzmap)
+        for (auto &[name, spec] : this->zone_map)
         {
             tzlist.push_back(std::move(spec));
         }

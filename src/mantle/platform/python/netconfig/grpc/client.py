@@ -1,14 +1,25 @@
-#!/usr/bin/python3 -i
-#===============================================================================
-## @file client.py
-## @brief Python client for `NetConfig` gRPC service
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+Python client for `NetConfig` gRPC service
+'''
+
+__all__ = ['Client', 'SignalClient']
+__author__ = 'Tor Slettnes'
+__docformat__ = 'javadoc en'
+
+### Standard Python modules
+from typing import Optional, Sequence, Union, Iterator
+from enum import IntEnum
+from collections import namedtuple
 
 ### Modules within package
-from cc.messaging.grpc import SignalClient
-from cc.protobuf.wellknown import empty, StringValue
 from cc.core.scalar_types import HEX8
+from cc.core.doc_inherit import doc_inherit
+
+from cc.messaging.grpc import \
+    Client as BaseClient, \
+    SignalClient as BaseSignalClient
+
+from cc.protobuf.wellknown import empty, StringValue
 
 from cc.protobuf.netconfig import Signal, MappingKey, \
     GlobalData, RadioState, DeviceData, IPConfigData, ConnectionData, \
@@ -16,11 +27,6 @@ from cc.protobuf.netconfig import Signal, MappingKey, \
     AccessPointData, AccessPointConnection, WEP_Data, WPA_Data, EAP_Data, \
     IPConfigMethod, WirelessMode, KeyManagement, \
     ActiveConnectionState, ActiveConnectionStateReason
-
-### Standard Python modules
-from typing import Optional, Sequence, Union, Iterator
-from enum import IntEnum
-from collections import namedtuple
 
 ### Local types
 ActiveConnectionStateTuple = namedtuple("ActiveConnectionState",
@@ -30,21 +36,20 @@ ActiveConnectionStateTuple = namedtuple("ActiveConnectionState",
 #===============================================================================
 # Client class
 
-class Client (SignalClient):
+class Client (BaseClient):
     '''
-    Client for NetConfig service.
+    NetConfig service client.
+
+    Methods in this module are wrappers around corresponding gRPC calls,
+    which are forwarded to the SysConfig gRPC service.
+
+    For a flavor that listens for update events (signals) from the server, and
+    then responds to queries from the local signal cache, see `SignalClient`.
     '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
     from cc.generated.netconfig_pb2_grpc import NetConfigStub as Stub
-
-    ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
-    ## which serves as a clearing house for emitting and receiving messages.
-    signal_type = Signal
-
-    Signals = (SIGNAL_GLOBAL, SIGNAL_CONN, SIGNAL_AC, SIGNAL_AP, SIGNAL_DEVICE) \
-        = ('global', 'connection', 'active_connection', 'accesspoint', 'device')
 
     def get_hostname(self) -> str:
         '''
@@ -63,19 +68,12 @@ class Client (SignalClient):
         '''
         Get global network state information
         '''
-        # try:
-        #     return self.signal_store.get_cached(self.SIGNAL_GLOBAL)
-        # except KeyError:
-        return dict(self.stub.get_global_data(empty).map)
+        return self.stub.get_global_data(empty)
 
     def get_connections(self) -> dict[str, ConnectionData]:
         '''
         Get a map of available network connections
         '''
-
-        # try:
-        #     return self.signal_store.get_cached(self.SIGNAL_CONN)
-        # except KeyError:
         return dict(self.stub.get_connections(empty).map)
 
     def define_connection(
@@ -438,6 +436,18 @@ class Client (SignalClient):
         req = RadioState(wireless_enabled=enabled)
         return self.stub.set_wireless_enabled(req)
 
+    def get_wireless_enabled(self) -> bool:
+        '''
+        Indicate whether wireless networking is currently enabled.
+        '''
+        return self.get_global_data().wireless_enabled
+
+    def get_wireless_hardware_enabled(self) -> bool:
+        '''
+        Indicate whether wireless networking is supported on this system.
+        '''
+        return self.get_global_data().wireless_hardware_enabled
+
 
     def set_wireless_allowed(self, allowed: bool):
         '''
@@ -446,5 +456,53 @@ class Client (SignalClient):
         req = google.protobuf.BoolValue(value=allowed)
         return self.stub.set_wireless_allowed(req)
 
+    def get_wireless_allowed(self) -> bool:
+        '''
+        Indicate whether wireless networking is currently allowed.
+        '''
+        return self.get_global_data().wireless_allowed
+
+#===============================================================================
+# SignalClient class
+
+class SignalClient (BaseSignalClient, Client):
+    '''
+    NetConfig service client.
+
+    This specializes `Client` by passively listening for update events (signals)
+    from the server.  Queries are handled locally by looking up the requested
+    information in the local signal cache.
+    '''
+
+    ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
+    ## which serves as a clearing house for emitting and receiving messages.
+    signal_type = Signal
+
+    def __init__(self, *args, **kwargs):
+        BaseSignalClient.__init__(self, *args, **kwargs)
+        self.start_watching(True)
+
+
+    @doc_inherit
+    def get_global_data(self) -> GlobalData:
+        return self.signal_store.get_cached_signal('global')
+
+    @doc_inherit
+    def get_devices(self) -> dict[str, DeviceData]:
+        return self.signal_store.get_cached_map('device')
+
+    @doc_inherit
+    def get_connections(self) -> dict[str, ConnectionData]:
+        return self.signal_store.get_cached_map('connection')
+
+    @doc_inherit
+    def get_active_connections(self) -> dict[str, ActiveConnectionData]:
+        return self.signal_store.get_cached_map('active_connection')
+
+    @doc_inherit
+    def get_aps(self) -> dict[str, AccessPointData]:
+        return self.signal_store.get_cached_map('accesspoint')
+
+
 if __name__ == '__main__':
-    netconfig = NetConfigClient()
+    netconfig = SignalClient()

@@ -7,7 +7,7 @@
 
 ### Modules relative to current dir
 from .common import DEMO_PUBLISHER_CHANNEL, DEMO_SERVICE_CHANNEL, DEMO_RPC_INTERFACE
-from ..base  import API, signal_store, PROJECT_NAME
+from ..base  import API, demo_signals, PROJECT_NAME
 
 ### Modules relative to install dir
 from cc.messaging.zmq.basic.subscriber import Subscriber
@@ -45,7 +45,7 @@ class Client (API, BaseClient):
             channel_name = DEMO_PUBLISHER_CHANNEL,
             project_name = PROJECT_NAME)
 
-        self.signalhandler = SignalHandler(signal_store)
+        self.signalhandler = SignalHandler(demo_signals)
 
 
     def connect(self):

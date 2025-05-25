@@ -1,6 +1,6 @@
 #!/usr/bin/echo Do not invoke directly.
 #===============================================================================
-## @file signal.py
+## @file signalstore.py
 ## @brief Wrapper for ProtoBuf types in `signal.proto`
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
@@ -213,9 +213,9 @@ class SignalStore:
         return msg.WhichOneof(selector) or ""
 
 
-    def get_cached(self,
-                   signalname: str,
-                   timeout: float=3) -> Mapping[str, Message]:
+    def get_cached_map(self,
+                       signalname: str,
+                       timeout: float=3) -> Mapping[str, Message]:
         '''
         Get a specific signal map from the local cache.
 
@@ -233,8 +233,8 @@ class SignalStore:
             The specified `signalname` is not known
 
         @returns
-            The cached value, or None if the specified signal has yet not been
-            received.
+            The cached value map, or None if the specified mapping signal has
+            yet not been received.
         '''
 
         if self._cache is None:
@@ -247,6 +247,39 @@ class SignalStore:
 
         else:
             return self._cache[signalname]
+
+
+    def get_cached_signal(self,
+                          signalname: str,
+                          mapping_key: str|None = None,
+                          timeout: float=3) -> Message:
+        '''
+        Get a specific unmapped signal from the local cache.
+
+        @param signalname:
+            Signal name, corresponding to a field of the Signal message
+            streamed from the server's `watch()` method.
+
+        @param mapping_key:
+            Mapping key used to look up a specific event within the
+            signal cache.
+
+        @param timeout:
+            If the specified signal does not yet exist in the local cache, allow
+            up to the specified timeout for it to be received from the server.
+            Mainly applicable immediately after `start_watching()`, before the
+            server cache has been received.
+
+        @exception KeyError
+            The specified `signalname` is not known
+
+        @returns
+            The cached value, or None if the specified data signal has yet not
+            been received.
+        '''
+
+        return self.get_cached_map(signalname, timeout).get(mapping_key)
+
 
     def connect_all(self,
                     slot: Slot):
@@ -387,7 +420,7 @@ class SignalStore:
         is complete before proceeding.
 
         Note that it is not usually necessary to invoke this method in order to
-        obtain values from the local cache, because the `get_cached()` method
+        obtain values from the local cache, because the `get_cached_map()` method
         implicitly waits for the specified signal map to be completed before
         proceeding.
         '''
@@ -406,7 +439,7 @@ class SignalStore:
 
         if self._cache:
             mapped = False
-            for key, signal in self.get_cached(name).items():
+            for key, signal in self.get_cached_map(name).items():
                 self._emit_to(name, slot, signal)
                 mapped = bool(key)
 
@@ -431,19 +464,19 @@ class SignalStore:
         '''
 
         action, key = self._mapping_controls(msg);
-        name = self.signal_name(msg)
+        signal_name = self.signal_name(msg)
 
-        if name:
+        if signal_name:
             if isinstance(self._cache, dict):
-                self._update_cache(name, action, key, msg)
+                self._update_cache(signal_name, action, key, msg)
 
             ## Invoke each slot that was connected to this signal by name
-            for callback in self.slots.get(name, []):
-                self._emit_to(name, callback, msg)
+            for callback in self.slots.get(signal_name, []):
+                self._emit_to(signal_name, callback, msg)
 
             ## Invoke each slot that was connected to `all` signals
             for callback in self.slots.get(None, []):
-                self._emit_to(name, callback, msg)
+                self._emit_to(signal_name, callback, msg)
 
         if action == MappingAction.MAP_NONE:
             self._completion_event.set()
@@ -475,7 +508,7 @@ class SignalStore:
         if key and not action:
             if value.ByteSize() == 0:
                 action = MappingAction.MAP_REMOVAL
-            elif key in self.get_cached(signal_name, {}):
+            elif key in self.get_cached_map(signal_name, {}):
                 action = MappingAction.MAP_UPDATE
             else:
                 action = MappingAction.MAP_ADDITION
@@ -494,12 +527,12 @@ class SignalStore:
         return (mapping_action == MappingAction.MAP_MAP_REMOVAL)
 
 
-    def _update_cache(self, signalname, action, key, data):
+    def _update_cache(self, signalname, action, key, msg):
         datamap = self._cache.setdefault(signalname, {})
         if action == MappingAction.MAP_REMOVAL:
             datamap.pop(key, None)
         else:
-            datamap[key] = data
+            datamap[key] = getattr(msg, signalname)
 
     def _emit_to(self, name, slot, signal):
         action, key = self._mapping_controls(signal)
@@ -518,7 +551,7 @@ class SignalStore:
     def _mapping_controls(self, signal: Message) -> tuple[MappingAction, str]:
         try:
             action = MappingAction(signal.mapping_action)
-            key = signal.mapping_key
+            key = signal.mapping_key or None
         except (AttributeError, KeyError, ValueError):
             action = MappingAction.MAP_NONE
             key = None

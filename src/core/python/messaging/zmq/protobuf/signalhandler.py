@@ -7,7 +7,7 @@
 
 ### Modules within package
 from .messagehandler import MessageHandler
-from cc.protobuf.signal import SignalStore
+from cc.protobuf.signalstore import SignalStore
 from cc.protobuf.wellknown import Message
 
 

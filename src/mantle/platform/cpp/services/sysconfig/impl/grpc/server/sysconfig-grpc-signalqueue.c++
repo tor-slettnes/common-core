@@ -37,11 +37,11 @@ namespace sysconfig::grpc
                 protobuf::encode(zi, msg->mutable_tz_info());
             });
 
-        this->connect<TimeZoneCanonicalName>(
-            Signal::kTzConfig,
-            sysconfig::signal_tzconfig,
-            [](const TimeZoneCanonicalName &zonename, Signal *msg) {
-                protobuf::encode(zonename, msg->mutable_tz_config());
+        this->connect<TimeZoneCanonicalSpec>(
+            Signal::kTzSpec,
+            sysconfig::signal_tzspec,
+            [](const TimeZoneCanonicalSpec &zonespec, Signal *msg) {
+                protobuf::encode(zonespec, msg->mutable_tz_spec());
             });
 
         this->connect<HostInfo>(
@@ -65,7 +65,7 @@ namespace sysconfig::grpc
     {
         this->disconnect(sysconfig::signal_productinfo);
         this->disconnect(sysconfig::signal_hostinfo);
-        this->disconnect(sysconfig::signal_tzconfig);
+        this->disconnect(sysconfig::signal_tzspec);
         this->disconnect(sysconfig::signal_tzinfo);
         this->disconnect(sysconfig::signal_timeconfig);
         this->disconnect(sysconfig::signal_time);

@@ -248,13 +248,40 @@ message FileChunk
     bytes data = 2;
 }
 
+//==============================================================================
+// A `Signal` message is a multiplexer for various event types from the server,
+// streamed back to the client in response to a `watch()` invocation, above.
+// The event stream continues indefinitely until the client cancels the call or
+// disconnects.
+//
+// To listen for only specific event types, apply a corresponding signal filter
+// as input parameter to the `watch()` call. The filter should contain a list of
+// field indices to include or exclude, based on their field numbers within the
+// `oneof` block below. The filter also contains a `polarity` field to indicate
+// whether the listed fields are to be included (1) or excluded (0).  As such,
+// an empty filter means that all events will be streamed back to the client.
+
+
 message Signal
 {
+    // Mapping type, one of: MAP_NONE, MAP_ADDITION, MAP_REMOVAL, MAP_UPDATE.
+    // Indicates whether this instance is added, updated, or removed.
     cc.signal.MappingAction mapping_action = 1;
+
+    // Mapping key for the item that was added/removed/updated.
     string mapping_key = 2;
 
     oneof signal {
-        ContextSpec context = 8; // A filesystem context has been added/removed/modified
-        ContextSpec context_in_use = 9; // A context has been opened/closed
+        // Filesystem context event.
+        //  * `mapping_action` indicates whether the context was added,
+        //    removed, or updated.
+        //  * `mapping_key` is the name of the context
+        ContextSpec context = 8;
+
+        // Filesystem context is in use.
+        //  * `mapping_action` is MAP_ADDITION or MAP_REMOVAL, depending
+        //    on whether the indicated context was opened or closed.
+        //  * `mapping_key` is the name of the context
+        ContextSpec context_in_use = 9;
     };
 }

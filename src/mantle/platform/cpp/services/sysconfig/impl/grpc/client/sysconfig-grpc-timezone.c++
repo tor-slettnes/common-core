@@ -22,10 +22,10 @@ namespace sysconfig::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            ::cc::platform::sysconfig::Signal::kTzConfig,
+            ::cc::platform::sysconfig::Signal::kTzSpec,
             [&](const ::cc::platform::sysconfig::Signal &signal) {
-                sysconfig::signal_tzconfig.emit(
-                    protobuf::decoded<TimeZoneCanonicalName>(signal.tz_config()));
+                sysconfig::signal_tzspec.emit(
+                    protobuf::decoded<TimeZoneCanonicalSpec>(signal.tz_spec()));
             });
 
         this->client->add_handler(

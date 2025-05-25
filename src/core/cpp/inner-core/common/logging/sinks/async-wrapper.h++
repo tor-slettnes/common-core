@@ -15,7 +15,7 @@
 
 namespace core::logging
 {
-    constexpr const auto SETTING_QUEUE_SIZE = "queue_size";
+    constexpr const auto SETTING_QUEUE_SIZE = "queue size";
     constexpr const auto DEFAULT_QUEUE_SIZE = 0;
 
     //--------------------------------------------------------------------------
@@ -35,7 +35,11 @@ namespace core::logging
         using Super::Super;
         virtual ~AsyncWrapper()
         {
-            this->close_async_queue(true);
+            this->close_async_queue();
+            if (this->workerthread_.joinable())
+            {
+                this->workerthread_.detach();
+            }
         }
 
     protected:
@@ -104,15 +108,11 @@ namespace core::logging
             }
         }
 
-        void close_async_queue(bool wait_for_thread = false)
+        void close_async_queue()
         {
             if (this->is_open())
             {
                 this->queue_->close();
-            }
-            if (wait_for_thread && this->workerthread_.joinable())
-            {
-                this->workerthread_.join();
             }
         }
 

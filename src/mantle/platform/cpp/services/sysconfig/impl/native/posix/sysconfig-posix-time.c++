@@ -7,6 +7,7 @@
 
 #include "sysconfig-posix-time.h++"
 #include "status/exceptions.h++"
+#include "chrono/date-time.h++"
 
 namespace sysconfig::native
 {
@@ -25,6 +26,18 @@ namespace sysconfig::native
         {
             this->set_ntp_servers(config.servers);
         }
+    }
+
+    void PosixTimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
+    {
+        std::string datestring = core::dt::to_string(
+            tp,                // tp
+            false,             // local
+            0,                 // decimals
+            "%m%d%H%M%Y.%S");  // format
+
+        core::platform::process->invoke_check(
+            {"/bin/date", "--utc", datestring});
     }
 
     void PosixTimeConfigProvider::set_ntp(bool ntp)
