@@ -85,7 +85,9 @@ function(cc_cpack_add_debian_component COMPONENT)
     GROUP          # Component group in which this component is added, if any
     LICENSE        # License file, installed as `copyright`.
   )
-  set(_deb_control_args
+  set(_multiargs
+    DESCRIPTION    # Detailed description. Multiple arguments are added as separate lines.
+    DEPENDS        # Other cpack components on which we depend.
     DEB_PREDEPENDS # Debian "Pre-Depends:" control value
     DEB_DEPENDS    # Debian "Depends:" control value
     DEB_RECOMMENDS # Debian "Recommends:" control value
@@ -95,11 +97,6 @@ function(cc_cpack_add_debian_component COMPONENT)
     DEB_REPLACES   # Debian "Replaces:" control value
     DEB_PROVIDES   # Debian "Provides:" control value
     DEB_ENHANCES   # Debian "Enhances:" control value
-  )
-  set(_multiargs
-    DESCRIPTION    # Detailed description. Multiple arguments are added as separate lines.
-    DEPENDS        # Other cpack components on which we depend.
-    ${_deb_control_args}
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -143,13 +140,16 @@ function(cc_cpack_add_debian_component COMPONENT)
       GLUE "_"
       OUTPUT_VARIABLE cpack_var_base)
 
-    foreach(option ${_deb_control_args})
-      list(JOIN arg_${option} ", " predecessors)
-      if(predecessors)
-        cc_cpack_config(
-          "${cpack_var_base}_${CMAKE_MATCH_1}"
-          "${predecessors}"
-        )
+
+    foreach(option ${_multiargs})
+      if (option MATCHES "^DEB_(.*)$")
+        list(JOIN arg_${option} ", " predecessors)
+        if(predecessors)
+          cc_cpack_config(
+            "${cpack_var_base}_${CMAKE_MATCH_1}"
+            "${predecessors}"
+          )
+        endif()
       endif()
     endforeach()
   endif()
