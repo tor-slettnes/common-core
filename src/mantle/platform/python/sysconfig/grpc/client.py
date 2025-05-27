@@ -51,6 +51,27 @@ class Client (BaseClient):
         '''
         return self.stub.get_product_info(empty)
 
+    def get_printable_version(self, product_info: ProductInfo|None = None) -> str:
+        '''
+        Get version number as a printable string.
+
+        @param[in] product_info
+            Previously-obtained response from `get_product_info()`, if any.
+
+        '''
+        if not product_info:
+            product_info = self.get_product_info()
+
+        if product_info:
+            if version := product_info.release_version.printable_version:
+                return version
+            else:
+                return "%s.%s.%s"%(
+                    product_info.release_version.major,
+                    product_info.release_version.minor,
+                    product_info.release_version.patch,
+                )
+
     def set_serial_number(self, serial: str|int):
         '''
         Set the product serial number. For manufacturing use.
