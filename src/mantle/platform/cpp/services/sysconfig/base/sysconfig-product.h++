@@ -46,8 +46,8 @@ namespace sysconfig
     {
         std::string product_name;
         std::string product_description;
-        std::string product_serial;
-        std::string hardware_model;
+        std::string serial_number;
+        std::string model_name;
 
         Version release_version;
         ComponentVersions component_versions;

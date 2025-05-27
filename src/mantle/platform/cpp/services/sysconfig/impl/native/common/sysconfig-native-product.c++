@@ -38,8 +38,8 @@ namespace sysconfig::native
         this->release_settings->reload();
         pi.product_name = this->get_product_name();
         pi.product_description = this->get_product_description();
-        pi.product_serial = this->get_serial_number();
-        pi.hardware_model = this->get_model_name();
+        pi.serial_number = this->get_serial_number();
+        pi.model_name = this->get_model_name();
         pi.release_version = this->get_release_version();
         pi.component_versions = this->get_component_versions();
         pi.subsystem_info = this->get_subsystem_info();

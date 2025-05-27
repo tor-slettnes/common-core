@@ -126,8 +126,8 @@ namespace sysconfig
         tvlist->extend({
             {"product_name", this->product_name},
             {"product_description", this->product_description},
-            {"product_serial", this->product_serial},
-            {"hardware_model", this->hardware_model},
+            {"serial_number", this->serial_number},
+            {"model_name", this->model_name},
             {"release_version", this->release_version.as_tvlist()},
         });
 

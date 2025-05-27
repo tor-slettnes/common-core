@@ -59,8 +59,8 @@ namespace protobuf
     {
         proto->set_product_name(native.product_name);
         proto->set_product_description(native.product_description);
-        proto->set_product_serial(native.product_serial);
-        proto->set_hardware_model(native.hardware_model);
+        proto->set_serial_number(native.serial_number);
+        proto->set_model_name(native.model_name);
         encode(native.release_version, proto->mutable_release_version());
         encode(native.component_versions, proto->mutable_component_versions());
         encode(native.subsystem_info, proto->mutable_subsystem_info());
@@ -71,8 +71,8 @@ namespace protobuf
     {
         native->product_name = proto.product_name();
         native->product_description = proto.product_description();
-        native->product_serial = proto.product_serial();
-        native->hardware_model = proto.hardware_model();
+        native->serial_number = proto.serial_number();
+        native->model_name = proto.model_name();
         decode(proto.release_version(), &native->release_version);
         decode(proto.component_versions(), &native->component_versions);
         decode(proto.subsystem_info(), &native->subsystem_info);
