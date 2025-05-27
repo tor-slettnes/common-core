@@ -392,9 +392,6 @@ function(cc_add_python_wheel TARGET)
       REMOVE_DUPLICATES
       OUTPUT_VARIABLE wheel_install_dirs)
 
-    message(STATUS
-      "Target ${TARGET} wheel_install_dirs=${wheel_install_dirs}")
-
     set_target_properties(${TARGET} PROPERTIES
       wheel_install_dirs "${wheel_install_dirs}"
     )
@@ -413,13 +410,6 @@ function(cc_add_python_wheel TARGET)
         INITIAL_VALUE "${wheel_install_dirs}"
         REMOVE_DUPLICATES
         OUTPUT_VARIABLE wheel_install_dirs)
-
-      message(STATUS
-        "Python wheel target ${TARGET}")
-      message(STATUS
-        "WHEEL_DEPS=${arg_WHEEL_DEPS}, REQUIREMENTS_DEPS=${arg_REQUIREMENTS_DEPS}")
-      message(STATUS
-        "wheel_install_dirs=${wheel_install_dirs}")
 
       cc_add_python_wheel_install_hook(
         VENV_PATH "${arg_INSTALL_VENV}"
