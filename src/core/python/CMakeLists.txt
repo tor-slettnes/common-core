@@ -31,12 +31,6 @@ set(DIRECTORIES
 )
 
 ### Wheel dependencies
-set(PKG_DEPS
-  grpcio
-  protobuf
-  zmq
-)
-
 cc_add_python("${TARGET}"
   INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
   PROTO_DEPS "cc_core_proto"

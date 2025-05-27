@@ -284,63 +284,23 @@ function(cc_add_python_wheel TARGET)
     WORKING_DIRECTORY "${gen_dir}"
   )
 
-  #-----------------------------------------------------------------------------
-  # Install/package resulting executable
-
-  if(WITH_PYTHON_WHEELS AND arg_INSTALL_COMPONENT)
-    cc_get_value_or_default(
-      wheels_install_dir
-      arg_INSTALL_DIR
-      "${PYTHON_WHEELS_INSTALL_DIR}/${TARGET}")
-
-    set_target_properties(${TARGET} PROPERTIES
-      python_distributions_install_dir "${wheels_install_dir}"
-    )
-
-    install(
-      FILES "${wheel_path}"
-      DESTINATION "${wheels_install_dir}"
-      COMPONENT "${arg_INSTALL_COMPONENT}"
-    )
-
-
-    if(arg_INSTALL_VENV)
-      cc_get_target_property_recursively(
-        PROPERTY "python_distributions_install_dir"
-        TARGETS ${arg_WHEEL_DEPS} ${arg_REQUIREMENTS_DEPS}
-        INITIAL_VALUE "${wheels_install_dir}"
-        REMOVE_DUPLICATES
-        OUTPUT_VARIABLE wheel_install_dirs)
-
-      cc_add_python_wheel_install_hook(
-        VENV_PATH "${arg_INSTALL_VENV}"
-        WHEEL_NAME "${PACKAGE_NAME}"
-        WHEEL_INSTALL_DIRS "${wheel_install_dirs}"
-        WHEEL_VERSION "${VERSION}"
-        SYMLINKS ${executables}
-        SYMLINKS_TARGET_DIR ${arg_INSTALL_SYMLINKS}
-        COMPONENT "${arg_INSTALL_COMPONENT}"
-      )
-    endif()
-  endif()
-
 
   #-----------------------------------------------------------------------------
   # Determine if we are deploying the resulting wheel into a local VENV.
   # If so, add targets `${TARGET}-install` and `${TARGET}-uninstall`.
 
   if(arg_LOCAL_VENV_TARGET)
-    set(venv_target "${arg_LOCAL_VENV_TARGET}")
+    set(local_venv_target "${arg_LOCAL_VENV_TARGET}")
 
   elseif(arg_LOCAL_VENV)
-    set(venv_target "${TARGET}-venv")
-    cc_add_python_venv(${venv_target}
+    set(local_venv_target "${TARGET}-venv")
+    cc_add_python_venv(${local_venv_target}
       VENV_PATH "${arg_LOCAL_VENV}")
   endif()
 
-  if(venv_target)
-    get_target_property(venv_path   ${venv_target} venv_path)
-    get_target_property(venv_python ${venv_target} venv_python)
+  if(local_venv_target)
+    get_target_property(venv_path   ${local_venv_target} venv_path)
+    get_target_property(venv_python ${local_venv_target} venv_python)
 
     cmake_path(APPEND venv_path ".build-stamps" OUTPUT_VARIABLE stamp_dir)
     cmake_path(APPEND stamp_dir "${TARGET}"     OUTPUT_VARIABLE target_stamp)
@@ -382,7 +342,7 @@ function(cc_add_python_wheel TARGET)
 
     add_dependencies(${TARGET}-install
       ${TARGET}
-      ${venv_target}
+      ${local_venv_target}
       ${arg_REQUIREMENTS_DEPS}
     )
 
@@ -396,7 +356,7 @@ function(cc_add_python_wheel TARGET)
     )
 
     add_dependencies(${TARGET}-uninstall
-      ${venv_target})
+      ${local_venv_target})
 
     #---------------------------------------------------------------------------
     # Ensure dependencies get installed along with wheel.
@@ -414,6 +374,65 @@ function(cc_add_python_wheel TARGET)
     #   ${arg_REQUIREMENTS_DEPS}
     # )
   endif()
+
+
+  #-----------------------------------------------------------------------------
+  # Install wheel for distribution onto target
+
+  if(WITH_PYTHON_WHEELS AND arg_INSTALL_COMPONENT)
+    cc_get_value_or_default(
+      wheels_install_dir
+      arg_INSTALL_DIR
+      "${PYTHON_WHEELS_INSTALL_DIR}/${TARGET}")
+
+    cc_get_target_property_recursively(
+      PROPERTY "python_distributions_install_dir"
+      TARGETS ${arg_REQUIREMENTS_DEPS}
+      INITIAL_VALUE "${wheels_install_dir}"
+      REMOVE_DUPLICATES
+      OUTPUT_VARIABLE wheel_install_dirs)
+
+    message(STATUS
+      "Target ${TARGET} wheel_install_dirs=${wheel_install_dirs}")
+
+    set_target_properties(${TARGET} PROPERTIES
+      wheel_install_dirs "${wheel_install_dirs}"
+    )
+
+    install(
+      FILES "${wheel_path}"
+      DESTINATION "${wheels_install_dir}"
+      COMPONENT "${arg_INSTALL_COMPONENT}"
+    )
+
+
+    if(arg_INSTALL_VENV)
+      cc_get_target_property_recursively(
+        PROPERTY "wheel_install_dirs"
+        TARGETS ${arg_WHEEL_DEPS}
+        INITIAL_VALUE "${wheel_install_dirs}"
+        REMOVE_DUPLICATES
+        OUTPUT_VARIABLE wheel_install_dirs)
+
+      message(STATUS
+        "Python wheel target ${TARGET}")
+      message(STATUS
+        "WHEEL_DEPS=${arg_WHEEL_DEPS}, REQUIREMENTS_DEPS=${arg_REQUIREMENTS_DEPS}")
+      message(STATUS
+        "wheel_install_dirs=${wheel_install_dirs}")
+
+      cc_add_python_wheel_install_hook(
+        VENV_PATH "${arg_INSTALL_VENV}"
+        WHEEL_NAME "${PACKAGE_NAME}"
+        WHEEL_INSTALL_DIRS "${wheel_install_dirs}"
+        WHEEL_VERSION "${VERSION}"
+        SYMLINKS ${executables}
+        SYMLINKS_TARGET_DIR ${arg_INSTALL_SYMLINKS}
+        COMPONENT "${arg_INSTALL_COMPONENT}"
+      )
+    endif()
+  endif()
+
 
 endfunction()
 
