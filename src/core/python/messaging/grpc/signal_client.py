@@ -169,7 +169,7 @@ class SignalClient (Client):
             If a connection attempt fails, keep retrying until successful.
             This value may be overriden per call.
 
-        @param asyncio:
+        @param use_asyncio:
             Use Python AsyncIO.  Effectively this performs calls within a
             `grpc.aio.Channel` instance, rather than the default `grpc.Channel`.
             Additionally, the `call()` method uses AsyncIO semantics to capture
