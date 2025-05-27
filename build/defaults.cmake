@@ -220,6 +220,6 @@ option(BUILD_DNSSD_AVAHI "Build suport for DNS-SD via Avahi" ON)
 
 option(BUILD_PYTHON             "Build and install Python components" ON)
 option(WITH_PYTHON_MODULES      "Install Python source modules directly on target" OFF)
-option(WITH_PYTHON_EXECUTABLES  "Build and add Python executables with PyInstaller" ON)
+option(WITH_PYTHON_EXECUTABLES  "Build and add Python executables with PyInstaller" OFF)
 option(WITH_PYTHON_WHEELS       "Build and add Python distribution files (`.whl`)" ON)
 option(WITH_PYTHON_REQUIREMENTS "Fetch and add required upstream distribution files" ON)

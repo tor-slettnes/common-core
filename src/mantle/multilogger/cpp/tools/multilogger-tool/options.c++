@@ -8,6 +8,8 @@
 #include "options.h++"
 #include "multilogger-grpc-client.h++"
 #include "platform/path.h++"
+#include "logging/dispatchers/dispatcher.h++"
+#include "logging/sinks/factory.h++"
 #include "string/format.h++"
 
 Options::Options()
@@ -40,9 +42,12 @@ void Options::deinitialize()
 
 void Options::on_monitor_start()
 {
+
     auto min_level = core::str::convert_optional_to<core::status::Level>(
         this->next_arg(),
-        core::status::Level::NONE);
+        core::status::Level::TRACE);
+
+    this->open_stream_sink(min_level);
 
     using namespace std::placeholders;
     multilogger::signal_log_item.connect(this->signal_handle,
@@ -56,14 +61,36 @@ void Options::on_monitor_start()
 void Options::on_monitor_end()
 {
     this->provider->stop_listening();
+    this->close_stream_sink();
+
     multilogger::signal_log_item.disconnect(this->signal_handle);
 }
 
+void Options::open_stream_sink(core::status::Level threshold)
+{
+    if (auto customization = core::logging::sink_registry.get("stderr"))
+    {
+        customization->set_threshold(threshold);
+        if (auto sink = customization->activate())
+        {
+            core::logging::dispatcher.add_sink(sink);
+            this->stream_sink = sink;
+        }
+    }
+}
+
+void Options::close_stream_sink()
+{
+    core::logging::dispatcher.remove_sink(this->stream_sink);
+    this->stream_sink.reset();
+}
+
+
 void Options::on_log_item(core::types::Loggable::ptr item)
 {
-    if (item)
+    if (item && this->stream_sink)
     {
-        std::cout << *item << std::endl;
+        this->stream_sink->capture(item);
     }
 }
 

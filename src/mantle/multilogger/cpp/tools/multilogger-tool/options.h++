@@ -25,6 +25,9 @@ private:
 
     void on_monitor_start() override;
     void on_monitor_end() override;
+
+    void open_stream_sink(core::status::Level threshold);
+    void close_stream_sink();
     void on_log_item(core::types::Loggable::ptr item);
 
     void submit();
@@ -38,6 +41,7 @@ private:
 
 public:
     std::shared_ptr<multilogger::API> provider;
+    std::shared_ptr<core::logging::Sink> stream_sink;
 
 private:
     std::string signal_handle;
