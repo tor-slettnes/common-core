@@ -52,6 +52,7 @@ if(SERVER_INSTALL_COMPONENT)
       DESCRIPTION "DEMO service"
       INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"
       ENABLE
+      RESTART
     )
   endif()
 endif()

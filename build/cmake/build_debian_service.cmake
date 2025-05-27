@@ -10,7 +10,11 @@
 # @brief Create, install and optionally enable a SystemD service unit
 
 function(cc_add_debian_service UNIT)
-  set(_options USER ENABLE)
+  set(_options
+    USER                        # Install a user (not system) service
+    ENABLE                      # Enable service at system start
+    RESTART                     # Restart service after upgrade
+  )
   set(_singleargs
     PROGRAM                     # Path to executable to launch as service/daemon
     DESCRIPTION                 # Description field for service unit
@@ -77,6 +81,8 @@ function(cc_add_debian_service UNIT)
   endif()
 
   if(arg_ENABLE)
+    cc_get_optional_keyword(RESTART arg_RESTART)
+
     cc_add_service_enable_hooks("${_service_unit}"
       INSTALL_DIRECTORY "${_dest}"
       INSTALL_COMPONENT "${arg_INSTALL_COMPONENT}"
@@ -84,6 +90,7 @@ function(cc_add_debian_service UNIT)
       POSTINST_TEMPLATE "${arg_POSTINST_TEMPLATE}"
       PRERM_TEMPLATE "${arg_PRERM_TEMPLATE}"
       POSTRM_TEMPLATE "${arg_POSTRM_TEMPLATE}"
+      ${RESTART}
     )
   endif()
 endfunction()
@@ -94,7 +101,9 @@ endfunction()
 # @brief Add post-install and pre-removal hooks to enable/disable service unit
 
 function(cc_add_service_enable_hooks UNIT)
-  set(_options)
+  set(_options
+    RESTART                     # Restart service after upgrade
+  )
   set(_singleargs
     INSTALL_DIRECTORY           # Folder where service units are located
     INSTALL_COMPONENT           # CPack component containing service unit
@@ -122,6 +131,8 @@ function(cc_add_service_enable_hooks UNIT)
 
   cmake_path(GET UNIT STEM LAST_ONLY unitbase)
   set(script "${unitbase}-service")
+
+  cc_get_ternary(START_OR_RESTART arg_RESTART restart start)
 
   cc_add_debian_control_script(
     COMPONENT "${arg_INSTALL_COMPONENT}"

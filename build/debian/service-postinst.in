@@ -6,7 +6,7 @@ case "$1" in
         then
             echo "Adding system service: @SERVICE_UNIT@"
             systemctl enable @SERVICE_UNIT_PATH@
-            systemctl start @SERVICE_UNIT@
+            systemctl @START_OR_RESTART@ @SERVICE_UNIT@
         else
             echo "SystemD is not available; skipping service integration"
         fi
