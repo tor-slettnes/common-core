@@ -726,6 +726,11 @@ namespace core::types
         case ValueType::STRING:
             return dt::try_to_timepoint(this->get<std::string>()).value_or(fallback);
 
+        case ValueType::UINT:
+        case ValueType::SINT:
+        case ValueType::REAL:
+            return dt::scalar_to_timepoint(this->as_double());
+
         case ValueType::BYTEVECTOR:
             try
             {
