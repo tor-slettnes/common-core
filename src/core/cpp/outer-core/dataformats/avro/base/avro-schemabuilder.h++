@@ -219,8 +219,8 @@ namespace avro
             VT_DOUBLE,     // 5
             VT_INTERVAL,   // 6
             VT_TIMESTAMP,  // 7
-            VT_MAP,        // 8
-            VT_ARRAY       // 9
+            // VT_MAP,        // 8
+            // VT_ARRAY       // 9
         };
 
         VariantSchema(const ContextRef &context);

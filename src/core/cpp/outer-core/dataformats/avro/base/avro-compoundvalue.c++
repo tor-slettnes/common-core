@@ -259,18 +259,15 @@ namespace avro
             This::set_time_interval(&branch, variant.as_duration());
             break;
 
-        case core::types::ValueType::VALUELIST:
-            This::set_branch(&value_field, VariantSchema::VT_ARRAY, &branch);
-            This::set_variant_list(&branch, *variant.get_valuelist());
-            break;
+        // case core::types::ValueType::VALUELIST:
+        //     This::set_branch(&value_field, VariantSchema::VT_ARRAY, &branch);
+        //     This::set_variant_list(&branch, *variant.get_valuelist());
+        //     break;
 
-            // case core::types::ValueType::TVLIST:
-            //     break;
-
-        case core::types::ValueType::KVMAP:
-            This::set_branch(&value_field, VariantSchema::VT_MAP, &branch);
-            This::set_variant_map(&branch, *variant.get_kvmap());
-            break;
+        // case core::types::ValueType::KVMAP:
+        //     This::set_branch(&value_field, VariantSchema::VT_MAP, &branch);
+        //     This::set_variant_map(&branch, *variant.get_kvmap());
+        //     break;
 
         default:
             logf_notice("No known Avro conversions from value type %s (index %d)",
