@@ -215,7 +215,7 @@ class SignalStore:
 
     def get_cached_map(self,
                        signalname: str,
-                       timeout: float=3) -> Mapping[str, Message]:
+                       timeout: float=3) -> dict[str, Message]:
         '''
         Get a specific signal map from the local cache.
 
@@ -252,23 +252,31 @@ class SignalStore:
     def get_cached_signal(self,
                           signalname: str,
                           mapping_key: str|None = None,
-                          timeout: float=3) -> Message:
+                          timeout: float=3,
+                          fallback: Message|None = None,
+                          ) -> Message:
         '''
-        Get a specific unmapped signal from the local cache.
+        Get a specific signal from the local cache.
 
-        @param signalname:
+        @param signalname
             Signal name, corresponding to a field of the Signal message
             streamed from the server's `watch()` method.
 
-        @param mapping_key:
+        @param mapping_key
             Mapping key used to look up a specific event within the
-            signal cache.
+            signal cache.  Leave this as `None` for unmapped signals.
 
-        @param timeout:
+        @param timeout
             If the specified signal does not yet exist in the local cache, allow
             up to the specified timeout for it to be received from the server.
             Mainly applicable immediately after `start_watching()`, before the
             server cache has been received.
+
+        @param fallback
+            Value to return if the requested signal has not yet been received.
+            If provided, this will normally be the expected ProtoBuf message
+            type, or an instance thereof.  In the former case, a new empty
+            instance is returned.
 
         @exception KeyError
             The specified `signalname` is not known
@@ -278,7 +286,10 @@ class SignalStore:
             been received.
         '''
 
-        return self.get_cached_map(signalname, timeout).get(mapping_key)
+        try:
+            return self.get_cached_map(signalname, timeout)[mapping_key]
+        except KeyError:
+            return fallback() if isinstance(fallback, type) else fallback
 
 
     def connect_all(self,

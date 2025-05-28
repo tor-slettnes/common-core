@@ -485,7 +485,9 @@ class SignalClient (BaseSignalClient, Client):
 
     @doc_inherit
     def get_global_data(self) -> GlobalData:
-        return self.signal_store.get_cached_signal('global')
+        return self.signal_store.get_cached_signal(
+            'global',
+            fallback = GlobalData)
 
     @doc_inherit
     def get_devices(self) -> dict[str, DeviceData]:

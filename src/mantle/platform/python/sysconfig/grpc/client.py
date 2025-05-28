@@ -418,19 +418,27 @@ class SignalClient (BaseSignalClient, Client):
 
     @doc_inherit
     def get_product_info(self) -> ProductInfo:
-        return self.signal_store.get_cached_signal('product_info')
+        return self.signal_store.get_cached_signal(
+            'product_info',
+            fallback = ProductInfo)
 
     @doc_inherit
     def get_host_info(self) -> HostInfo:
-        return self.signal_store.get_cached_signal('host_info')
+        return self.signal_store.get_cached_signal(
+            'host_info',
+            fallback = HostInfo)
 
     @doc_inherit
     def get_current_timestamp(self) -> Timestamp:
-        return self.signal_store.get_cached_signal('time')
+        return self.signal_store.get_cached_signal(
+            'time',
+            fallback = Timestamp)
 
     @doc_inherit
     def get_time_config(self) -> TimeConfig:
-        return self.signal_store.get_cached_signal('time_config')
+        return self.signal_store.get_cached_signal(
+            'time_config',
+            fallback = TimeConfig)
 
     @doc_inherit
     def get_timezone_info(self,
@@ -439,9 +447,14 @@ class SignalClient (BaseSignalClient, Client):
                           ) -> TimeZoneInfo:
 
         if canonical_name is None and time is None:
-            return self.signal_store.get_cached_signal('tz_info')
+            return self.signal_store.get_cached_signal(
+                'tz_info',
+                fallback = TimeZoneInfo)
         else:
-            return Client.get_timezone_info(self, canonical_name, time);
+            return Client.get_timezone_info(
+                self,
+                canonical_name,
+                time);
 
 
     @doc_inherit
@@ -450,9 +463,13 @@ class SignalClient (BaseSignalClient, Client):
                           ) -> TimeZoneCanonicalSpec:
 
         if canonical_zone is None:
-            return self.signal_store.get_cached_signal('tz_spec')
+            return self.signal_store.get_cached_signal(
+                'tz_spec',
+                fallback = TimeZoneCanonicalSpec)
         else:
-            return Client.get_timezone_spec(self, canonical_zone)
+            return Client.get_timezone_spec(
+                self,
+                canonical_zone)
 
 
 if __name__ == '__main__':
