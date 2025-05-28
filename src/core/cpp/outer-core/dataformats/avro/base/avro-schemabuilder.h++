@@ -197,7 +197,7 @@ namespace avro
     ///     Represents an absolute timestamp as relative time since
     ///     UNIX epoch.
 
-    class TimestampSchema : public SchemaWrapper
+    class TimestampSchema : public RecordSchema
     {
     public:
         TimestampSchema(const ContextRef &context);

@@ -206,8 +206,8 @@ namespace avro
     void CompoundValue::set_timestamp(avro_value_t *value,
                                       const core::dt::TimePoint &tp)
     {
-        // This::set_time_interval(value, tp.time_since_epoch());
-        This::set_long(value, core::dt::to_milliseconds(tp));
+        This::set_time_interval(value, tp.time_since_epoch());
+        // This::set_long(value, core::dt::to_milliseconds(tp));
     }
 
     void CompoundValue::set_variant(avro_value_t *value,
