@@ -151,7 +151,7 @@ class SignalClient (Client):
     # Instance methods
 
     def __init__(self,
-                 host: str,
+                 host: Optional[str] = None,
                  wait_for_ready : bool = False,
                  use_asyncio : bool = False,
                  signal_store : SignalStore = None,
