@@ -43,7 +43,7 @@ class Client (Base):
     service_name = None
 
     def __init__(self,
-                 host: str,
+                 host: str|None = None,
                  wait_for_ready: bool = False,
                  use_asyncio: bool = False,
                  project_name: str|None = None,
