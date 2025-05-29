@@ -8,6 +8,7 @@ Type=exec
 ExecStart=@SERVICE_PROGRAM@ @SERVICE_ARGS@
 Restart=always
 User=@SERVICE_USER@
+TimeoutStopSec=15
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 
 [Install]
