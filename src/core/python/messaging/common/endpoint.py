@@ -53,7 +53,8 @@ class Endpoint (object):
                           if flavor]
 
         self.settings = SettingsStore(settings_files)
-        logging.debug("Loaded settings from %s: %s"%(settings_files, self.settings))
+        logging.debug("Loaded settings from %s with search path %s: %s"%
+                      (settings_files, self.settings.searchpath, self.settings))
 
 
     def __repr__ (self):

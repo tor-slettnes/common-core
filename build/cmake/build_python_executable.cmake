@@ -47,6 +47,7 @@ function(cc_add_python_executable TARGET)
     HIDDEN_IMPORTS         # Add imports not otherwise discovered py PyInstaller
     COLLECT_PACKAGES       # Additional Python packages (modules, binaries, ...)
     COLLECT_SUBMODULES     # Additional pure Python modules to import
+    EXTRA_DATA             # Additional data content, in the form `source:dest_dir`.
     EXTRA_DATA_MODULES     # Additional data-only modules to import
     PYINSTALLER_EXTRA_ARGS # Extra args passed on directly to PyInstaller
   )
@@ -258,6 +259,7 @@ function(cc_add_python_executable TARGET)
     PROPERTIES staging_dir data_dir
     TARGETS ${arg_PYTHON_DEPS} ${arg_DATA_DEPS}
     SEPARATOR "/.:"
+    INITIAL_VALUE ${arg_EXTRA_DATA}
     OUTPUT_VARIABLE extra_data
     ALL_OR_NOTHING
     REMOVE_DUPLICATES)

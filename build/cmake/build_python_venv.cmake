@@ -200,7 +200,7 @@ function(cc_add_python_requirements_cache TARGET)
     add_custom_command(
       OUTPUT "${staging_stamp}"
       DEPENDS ${arg_REQUIREMENTS_FILES}
-      COMMENT "${TARGET}: Retrieving Python distributions for target"
+      COMMENT "${TARGET}: Retrieving Python distributions"
       COMMAND_EXPAND_LISTS
       VERBATIM
 

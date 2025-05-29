@@ -27,6 +27,9 @@ _settingspath = None
 def program_name() -> str:
     return os.path.splitext(os.path.basename(sys.argv[0]))[0]
 
+def program_path() -> FilePath:
+    return pathlib.Path('.').absolute().joinpath(sys.argv[0])
+
 def install_root() -> FilePath:
     '''
     Obtain installation root folder
@@ -99,16 +102,21 @@ def default_settings_path() -> SearchPath:
     '''
 
     searchpath = []
+
+    ### User-specific settings
     if homedir := os.getenv("HOME"):
         configdir = os.path.join(homedir, ".config")
         if os.path.isdir(configdir):
             searchpath.append(os.path.join(configdir, ORGANIZATION))
 
-    searchpath.extend([
-        LOCAL_SETTINGS_DIR, # Local (host specific) settings
-        SETTINGS_DIR,       # Supplied defaults
-        'settings'          # Inside virtualenv and/or `.whl` container
-    ])
+    ### Locally managed (host specific) settings
+    searchpath.append(LOCAL_SETTINGS_DIR)
+
+    ### Default settings installed from release package
+    searchpath.append(SETTINGS_DIR)
+
+    ### Embedded `settings` folder inside distribution archive (wheel or executable)
+    searchpath.append(python_root().joinpath('settings'))
 
     return normalized_search_path(searchpath)
 
@@ -156,8 +164,12 @@ def normalized_folder(folder: FilePath):
     else:
         return None
 
-def locate_dominating_path(name: FilePath):
-    base = importlib.resources.files(__package__)
+def locate_dominating_path(name: FilePath,
+                           start: FilePath|None = None,
+                           ) -> tuple[FilePath, FilePath]:
+
+
+    base = start or program_path()
     previous = None
 
     while not base.joinpath(name).exists():

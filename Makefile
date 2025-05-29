@@ -94,7 +94,7 @@ wheels: cmake
 	@echo
 	@cmake --build "$(BUILD_DIR)" --target python_wheels $(CMAKE_BUILD_ARGS)
 	@echo
-	@echo "Wheels are created in '$(BUILD_DIR)/python/wheels'"
+	@echo "Wheels are created in '$(OUT_DIR)/python/wheels'"
 
 .PHONY: install
 install: build
