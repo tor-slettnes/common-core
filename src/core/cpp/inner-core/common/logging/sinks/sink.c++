@@ -78,7 +78,8 @@ namespace core::logging
 
     bool Sink::is_applicable(const types::Loggable &loggable) const
     {
-        if (this->contract_id() && (this->contract_id().value() != loggable.contract_id()))
+        if (this->contract_id() &&
+            (this->contract_id().value() != loggable.contract_id()))
         {
             return false;
         }

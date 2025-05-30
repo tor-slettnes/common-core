@@ -11,6 +11,7 @@
 
 class Options : public core::argparse::CommandOptions
 {
+    using This = Options;
     using Super = core::argparse::CommandOptions;
 
 public:
@@ -45,6 +46,8 @@ public:
 
 private:
     std::string signal_handle;
+    std::vector<std::string> hosts;
+    std::vector<std::string> apps;
 };
 
 extern std::unique_ptr<Options> options;

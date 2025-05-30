@@ -131,12 +131,14 @@ namespace protobuf
     //==========================================================================
     // SinkID
 
-    void encode(const multilogger::SinkID &native, cc::platform::multilogger::SinkID *proto)
+    void encode(const multilogger::SinkID &native,
+                cc::platform::multilogger::SinkID *proto)
     {
         proto->set_sink_id(native);
     }
 
-    void decode(const cc::platform::multilogger::SinkID &proto, multilogger::SinkID *native)
+    void decode(const cc::platform::multilogger::SinkID &proto,
+                multilogger::SinkID *native)
     {
         *native = proto.sink_id();
     }
@@ -144,7 +146,8 @@ namespace protobuf
     //==========================================================================
     // SinkSpec
 
-    void encode(const multilogger::SinkSpec &native, cc::platform::multilogger::SinkSpec *proto)
+    void encode(const multilogger::SinkSpec &native,
+                cc::platform::multilogger::SinkSpec *proto)
     {
         proto->set_sink_id(native.sink_id);
         proto->set_sink_type(native.sink_type);
@@ -165,7 +168,8 @@ namespace protobuf
         }
     }
 
-    void decode(const cc::platform::multilogger::SinkSpec &proto, multilogger::SinkSpec *native)
+    void decode(const cc::platform::multilogger::SinkSpec &proto,
+                multilogger::SinkSpec *native)
     {
         native->sink_id = proto.sink_id();
         native->sink_type = proto.sink_type();
@@ -186,12 +190,14 @@ namespace protobuf
     //==========================================================================
     // multilogger::SinkSpecs <-> cc::platform::multilogger::SinkSpecs
 
-    void encode(const multilogger::SinkSpecs &native, cc::platform::multilogger::SinkSpecs *proto)
+    void encode(const multilogger::SinkSpecs &native,
+                cc::platform::multilogger::SinkSpecs *proto)
     {
         encode_vector(native, proto->mutable_specs());
     }
 
-    void decode(const cc::platform::multilogger::SinkSpecs &proto, multilogger::SinkSpecs *native)
+    void decode(const cc::platform::multilogger::SinkSpecs &proto,
+                multilogger::SinkSpecs *native)
     {
         decode_to_vector(proto.specs(), native);
     }
@@ -199,7 +205,8 @@ namespace protobuf
     //==========================================================================
     // ColumnSpec
 
-    void encode(const core::logging::ColumnSpec &native, cc::platform::multilogger::ColumnSpec *proto)
+    void encode(const core::logging::ColumnSpec &native,
+                cc::platform::multilogger::ColumnSpec *proto)
     {
         proto->set_field_name(native.field_name);
         if (native.column_name)
@@ -209,7 +216,8 @@ namespace protobuf
         proto->set_column_type(encoded<cc::platform::multilogger::ColumnType>(native.column_type));
     }
 
-    void decode(const cc::platform::multilogger::ColumnSpec &proto, core::logging::ColumnSpec *native)
+    void decode(const cc::platform::multilogger::ColumnSpec &proto,
+                core::logging::ColumnSpec *native)
     {
         native->field_name = proto.field_name();
         if (proto.has_column_name())
@@ -232,12 +240,14 @@ namespace protobuf
         {core::types::ValueType::TIMEPOINT, cc::platform::multilogger::COLTYPE_DATETIME},
     };
 
-    void encode(const core::types::ValueType &native, cc::platform::multilogger::ColumnType *proto)
+    void encode(const core::types::ValueType &native,
+                cc::platform::multilogger::ColumnType *proto)
     {
         *proto = coltype_map.get(native, cc::platform::multilogger::COLTYPE_NONE);
     }
 
-    void decode(const cc::platform::multilogger::ColumnType &proto, core::types::ValueType *native)
+    void decode(const cc::platform::multilogger::ColumnType &proto,
+                core::types::ValueType *native)
     {
         *native = core::types::ValueType::NONE;
         for (const auto &[native_candidate, proto_candidate] : coltype_map)
@@ -252,7 +262,8 @@ namespace protobuf
     //==========================================================================
     // ListenerSpec
 
-    void encode(const multilogger::ListenerSpec &native, cc::platform::multilogger::ListenerSpec *proto)
+    void encode(const multilogger::ListenerSpec &native,
+                cc::platform::multilogger::ListenerSpec *proto)
     {
         proto->set_sink_id(native.sink_id);
         proto->set_min_level(encoded<cc::status::Level>(native.min_level));
@@ -261,9 +272,26 @@ namespace protobuf
         {
             proto->set_contract_id(native.contract_id.value());
         }
+
+        if (!native.hosts.empty())
+        {
+            auto proto_hosts = proto->mutable_hosts();
+            proto_hosts->Reserve(native.hosts.size());
+            proto_hosts->Add(native.hosts.begin(),
+                             native.hosts.end());
+        }
+
+        if (!native.applications.empty())
+        {
+            auto proto_apps = proto->mutable_applications();
+            proto_apps->Reserve(native.applications.size());
+            proto_apps->Add(native.applications.begin(),
+                            native.applications.end());
+        }
     }
 
-    void decode(const cc::platform::multilogger::ListenerSpec &proto, multilogger::ListenerSpec *native)
+    void decode(const cc::platform::multilogger::ListenerSpec &proto,
+                multilogger::ListenerSpec *native)
     {
         native->sink_id = proto.sink_id();
         decode(proto.min_level(), &native->min_level);
@@ -272,5 +300,16 @@ namespace protobuf
         {
             native->contract_id = proto.contract_id();
         }
+
+        for (const std::string &host: proto.hosts())
+        {
+            native->hosts.insert(host);
+        }
+
+        for (const std::string &app: proto.applications())
+        {
+            native->applications.insert(app);
+        }
+
     }
 }  // namespace protobuf

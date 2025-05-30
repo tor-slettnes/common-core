@@ -22,6 +22,23 @@ Options::Options()
 void Options::add_options()
 {
     Super::add_options();
+
+    this->add_opt(
+        {"--host"},
+        "HOST",
+        "Print only messages from matching host(s). "
+        "This option may be repeated.",
+        &this->hosts,
+        This::ZeroOrMore);
+
+    this->add_opt(
+        {"--application", "--app"},
+        "APPLICATION",
+        "Print only messages from matching application(s). "
+        "This option may be repeated.",
+        &this->apps,
+        This::ZeroOrMore);
+
     this->add_commands();
 }
 
@@ -55,6 +72,8 @@ void Options::on_monitor_start()
 
     this->provider->start_listening({
         .min_level = min_level,
+        .hosts = std::set(this->hosts.begin(), this->hosts.end()),
+        .applications = std::set(this->apps.begin(), this->apps.end()),
     });
 }
 

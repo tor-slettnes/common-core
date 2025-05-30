@@ -292,4 +292,11 @@ message ListenerSpec
 
     // Data stream: contract/schema ID
     optional string contract_id = 10;
+
+    // Match only messasges from specified hosts
+    repeated string hosts = 12;
+
+    // Match only messages from specified applications.
+    repeated string applications = 13;
+
 }

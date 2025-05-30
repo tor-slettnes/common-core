@@ -11,6 +11,8 @@
 #include "thread/blockingqueue.h++"
 #include "types/create-shared.h++"
 
+#include <set>
+
 namespace multilogger::native
 {
     class QueueListener
@@ -26,6 +28,8 @@ namespace multilogger::native
             const SinkID &sink_id,
             core::status::Level threshold,
             const std::optional<Loggable::ContractID> &contract_id = {},
+            const std::set<std::string> &hosts = {},
+            const std::set<std::string> &applications = {},
             unsigned int maxsize = 0,
             OverflowDisposition overflow_disposition = OverflowDisposition::DISCARD_OLDEST);
 
@@ -37,5 +41,9 @@ namespace multilogger::native
 
     protected:
         bool handle_item(const core::types::Loggable::ptr &item) override;
+
+    private:
+        std::set<std::string> hosts;
+        std::set<std::string> applications;
     };
 }  // namespace multilogger::native

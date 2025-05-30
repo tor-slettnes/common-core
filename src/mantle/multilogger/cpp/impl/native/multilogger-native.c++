@@ -102,11 +102,19 @@ namespace multilogger::native
     std::shared_ptr<LogSource> Logger::listen(
         const ListenerSpec &spec)
     {
+        std::size_t queue_size = core::settings
+                                     ->get("log sinks")
+                                     .get("multilogger")
+                                     .get("queue size", 4096)
+                                     .as_uint();
+
         auto sink = QueueListener::create_shared(
             spec.sink_id,
             spec.min_level,
             spec.contract_id,
-            core::settings->get("log sinks").get("multilogger").get("queue size", 4096).as_uint());
+            spec.hosts,
+            spec.applications,
+            queue_size);
 
         sink->open();
         return sink;

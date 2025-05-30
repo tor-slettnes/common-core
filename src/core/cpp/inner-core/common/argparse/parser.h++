@@ -40,6 +40,7 @@ namespace core::argparse
     public:
         const RepeatSpec AtMostOne = {0, 1};
         const RepeatSpec ExactlyOne = {1, 1};
+        const RepeatSpec ZeroOrMore = {0, 0};
         const RepeatSpec OneOrMore = {1, 0};
 
     public:
@@ -137,6 +138,19 @@ namespace core::argparse
             this->add<Type, Storage>(
                 keys, argname, helptext, target, {}, defaultValue, defaultValue ? ExactlyOne : AtMostOne);
         }
+
+        /// Named option with argument, default value if not encountered
+        template <class Type = std::string, class Storage = Target<Type>>
+        inline void add_opt(const KeyList &keys,
+                            const std::string &argname,
+                            const std::string &helptext,
+                            Storage target,
+                            const RepeatSpec &repeat_spec)
+        {
+            this->add<Type, Storage>(
+                keys, argname, helptext, target, {}, {}, repeat_spec);
+        }
+
 
         /// Named argument, no default
         template <class Type = std::string, class Storage = Target<Type>>

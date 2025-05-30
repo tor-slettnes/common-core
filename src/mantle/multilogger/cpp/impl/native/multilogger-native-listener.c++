@@ -7,6 +7,7 @@
 
 #include "multilogger-native-listener.h++"
 #include "logging/dispatchers/dispatcher.h++"
+#include "logging/message/message.h++"
 
 namespace multilogger::native
 {
@@ -14,10 +15,14 @@ namespace multilogger::native
         const SinkID &sink_id,
         core::status::Level threshold,
         const std::optional<Loggable::ContractID> &contract_id,
+        const std::set<std::string> &hosts,
+        const std::set<std::string> &applications,
         unsigned int maxsize,
         OverflowDisposition overflow_disposition)
         : Sink(sink_id),
-          BlockingQueue(maxsize, overflow_disposition)
+          BlockingQueue(maxsize, overflow_disposition),
+          hosts(hosts),
+          applications(applications)
     {
         this->set_threshold(threshold);
         this->set_contract_id(contract_id);
@@ -47,7 +52,22 @@ namespace multilogger::native
 
     bool QueueListener::handle_item(const core::types::Loggable::ptr &item)
     {
-        return this->put(item);
+        if (auto message = std::dynamic_pointer_cast<core::logging::Message>(item))
+        {
+            if ((this->hosts.empty() || this->hosts.count(message->host())) &&
+                (this->applications.empty() || this->applications.count(message->origin())))
+            {
+                return this->put(item);
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return this->put(item);
+        }
     }
 
 }  // namespace multilogger::native

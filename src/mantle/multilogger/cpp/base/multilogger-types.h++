@@ -48,6 +48,8 @@ namespace multilogger
         SinkID sink_id;
         core::status::Level min_level = core::status::Level::NONE;
         std::optional<Loggable::ContractID> contract_id;
+        std::set<std::string> hosts;
+        std::set<std::string> applications;
     };
 
     std::ostream &operator<<(std::ostream &stream, const ListenerSpec &spec);
