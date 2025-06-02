@@ -192,22 +192,28 @@ namespace avro
     void CompoundValue::set_time_interval(avro_value_t *value,
                                           const core::dt::Duration &dur)
     {
-        auto seconds = std::chrono::duration_cast<std::chrono::seconds>(dur);
-        auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(dur) -
-                     std::chrono::duration_cast<std::chrono::nanoseconds>(seconds);
-
-        avro_value_t seconds_value = This::get_by_index(value, 0, SchemaField_TimeSeconds);
-        This::set_long(&seconds_value, seconds.count());
-
-        avro_value_t nanos_value = This::get_by_index(value, 1, SchemaField_TimeNanos);
-        This::set_int(&nanos_value, nanos.count());
+        This::set_long(value, core::dt::to_milliseconds(dur));
     }
+
+    // void CompoundValue::set_time_interval(avro_value_t *value,
+    //                                       const core::dt::Duration &dur)
+    // {
+    //     auto seconds = std::chrono::duration_cast<std::chrono::seconds>(dur);
+    //     auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(dur) -
+    //                  std::chrono::duration_cast<std::chrono::nanoseconds>(seconds);
+
+    //     avro_value_t seconds_value = This::get_by_index(value, 0, SchemaField_TimeSeconds);
+    //     This::set_long(&seconds_value, seconds.count());
+
+    //     avro_value_t nanos_value = This::get_by_index(value, 1, SchemaField_TimeNanos);
+    //     This::set_int(&nanos_value, nanos.count());
+    // }
 
     void CompoundValue::set_timestamp(avro_value_t *value,
                                       const core::dt::TimePoint &tp)
     {
-        This::set_time_interval(value, tp.time_since_epoch());
-        // This::set_long(value, core::dt::to_milliseconds(tp));
+        // This::set_time_interval(value, tp.time_since_epoch());
+        This::set_long(value, core::dt::to_milliseconds(tp));
     }
 
     void CompoundValue::set_variant(avro_value_t *value,
@@ -250,24 +256,26 @@ namespace avro
             break;
 
         case core::types::ValueType::TIMEPOINT:
-            This::set_branch(&value_field, VariantSchema::VT_TIMESTAMP, &branch);
+            // This::set_branch(&value_field, VariantSchema::VT_TIMESTAMP, &branch);
+            This::set_branch(&value_field, VariantSchema::VT_LONG, &branch);
             This::set_timestamp(&branch, variant.as_timepoint());
             break;
 
         case core::types::ValueType::DURATION:
-            This::set_branch(&value_field, VariantSchema::VT_INTERVAL, &branch);
+            // This::set_branch(&value_field, VariantSchema::VT_INTERVAL, &branch);
+            This::set_branch(&value_field, VariantSchema::VT_LONG, &branch);
             This::set_time_interval(&branch, variant.as_duration());
             break;
 
-        // case core::types::ValueType::VALUELIST:
-        //     This::set_branch(&value_field, VariantSchema::VT_ARRAY, &branch);
-        //     This::set_variant_list(&branch, *variant.get_valuelist());
-        //     break;
+            // case core::types::ValueType::VALUELIST:
+            //     This::set_branch(&value_field, VariantSchema::VT_ARRAY, &branch);
+            //     This::set_variant_list(&branch, *variant.get_valuelist());
+            //     break;
 
-        // case core::types::ValueType::KVMAP:
-        //     This::set_branch(&value_field, VariantSchema::VT_MAP, &branch);
-        //     This::set_variant_map(&branch, *variant.get_kvmap());
-        //     break;
+            // case core::types::ValueType::KVMAP:
+            //     This::set_branch(&value_field, VariantSchema::VT_MAP, &branch);
+            //     This::set_variant_map(&branch, *variant.get_kvmap());
+            //     break;
 
         default:
             logf_notice("No known Avro conversions from value type %s (index %d)",

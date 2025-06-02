@@ -56,6 +56,7 @@ namespace core::signal
 
         void set_caching(bool caching);
         std::string name() const;
+        virtual void disconnect(const Handle &handle) = 0;
         virtual size_t connection_count() const = 0;
 
     protected:
@@ -103,7 +104,7 @@ namespace core::signal
         ///     Unregister a handler for signals of the provided template type.
         /// @param[in] handle
         ///     Identity of the handler to be removed.
-        void disconnect(const Handle &handle);
+        void disconnect(const Handle &handle) override;
 
         /// @brief
         ///     Emit a signal to registered receivers
@@ -176,7 +177,7 @@ namespace core::signal
         ///     Unregister a handler for signals of the provided template type.
         /// @param[in] handle
         ///     Identity of the handler to be removed.
-        void disconnect(const Handle &handle);
+        void disconnect(const Handle &handle) override;
 
         /// @brief
         ///     Emit a signal to registered receivers of the provided data type.
@@ -289,7 +290,7 @@ namespace core::signal
         /// @param[in] handle
         ///     Identity identity of the callback handler to be removed.
 
-        void disconnect(const Handle &handle);
+        void disconnect(const Handle &handle) override;
 
         /// @brief
         ///     Emit a signal to registered receivers of the provided data type.

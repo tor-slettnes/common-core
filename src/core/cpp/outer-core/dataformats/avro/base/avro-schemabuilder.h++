@@ -178,18 +178,24 @@ namespace avro
     //--------------------------------------------------------------------------
     /// @class TimeIntervalSchema
     /// @brief
-    ///    Represents a plain time interval in terms of seconds and
-    ///    nanoseconds.
+    ///    Represents a plain time interval (i.e. elapsed time).
     /// @note
     ///    We avoid the name `Duration` since it is easily confused with
     ///    Avro's `duration` logical type, which in turn is best suited for
     ///    representing calendar time intervals (years/months, days, seconds).
 
-    class TimeIntervalSchema : public RecordSchema
+    // class TimeIntervalSchema : public RecordSchema
+    // {
+    // public:
+    //     TimeIntervalSchema(const ContextRef &context);
+    // };
+
+    class TimeIntervalSchema : public SchemaWrapper
     {
     public:
         TimeIntervalSchema(const ContextRef &context);
     };
+
 
     //--------------------------------------------------------------------------
     /// @class TimestampSchema
@@ -197,7 +203,7 @@ namespace avro
     ///     Represents an absolute timestamp as relative time since
     ///     UNIX epoch.
 
-    class TimestampSchema : public RecordSchema
+    class TimestampSchema : public SchemaWrapper
     {
     public:
         TimestampSchema(const ContextRef &context);
@@ -217,8 +223,8 @@ namespace avro
             VT_BOOL,       // 3
             VT_LONG,       // 4
             VT_DOUBLE,     // 5
-            VT_INTERVAL,   // 6
-            VT_TIMESTAMP,  // 7
+            // VT_INTERVAL,   // 6
+            // VT_TIMESTAMP,  // 7
             // VT_MAP,        // 8
             // VT_ARRAY       // 9
         };

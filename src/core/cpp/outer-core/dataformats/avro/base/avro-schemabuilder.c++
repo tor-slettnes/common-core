@@ -189,30 +189,36 @@ namespace avro
     //--------------------------------------------------------------------------
     // TimeIntervalSchema
 
+    // TimeIntervalSchema::TimeIntervalSchema(const ContextRef &context)
+    //     : RecordSchema(context, TypeName_TimeInterval)
+    // {
+    //     this->add_field(SchemaField_TimeSeconds, TypeName_Long);
+    //     this->add_field(SchemaField_TimeNanos, TypeName_Int);
+    // }
+
     TimeIntervalSchema::TimeIntervalSchema(const ContextRef &context)
-        : RecordSchema(context, TypeName_TimeInterval)
+        : SchemaWrapper(TypeName_Long)
     {
-        this->add_field(SchemaField_TimeSeconds, TypeName_Long);
-        this->add_field(SchemaField_TimeNanos, TypeName_Int);
     }
+
 
     //--------------------------------------------------------------------------
     // TimestampSchema
 
-    TimestampSchema::TimestampSchema(const ContextRef &context)
-        : RecordSchema(context, TypeName_Timestamp)
-    {
-        this->add_field(SchemaField_TimeSeconds, TypeName_Long);
-        this->add_field(SchemaField_TimeNanos, TypeName_Int);
-    }
-
     // TimestampSchema::TimestampSchema(const ContextRef &context)
-    //     : SchemaWrapper(core::types::KeyValueMap({
-    //           {SchemaField_Type, TypeName_Long},
-    //           {SchemaField_LogicalType, LogicalType_TimeStampMillis},
-    //       }))
+    //     : RecordSchema(context, TypeName_Timestamp)
     // {
+    //     this->add_field(SchemaField_TimeSeconds, TypeName_Long);
+    //     this->add_field(SchemaField_TimeNanos, TypeName_Int);
     // }
+
+    TimestampSchema::TimestampSchema(const ContextRef &context)
+        : SchemaWrapper(core::types::KeyValueMap({
+              {SchemaField_Type, TypeName_Long},
+              {SchemaField_LogicalType, LogicalType_TimeStampMillis},
+          }))
+    {
+    }
 
     //--------------------------------------------------------------------------
     // VariantSchema
@@ -221,14 +227,14 @@ namespace avro
         : RecordSchema(context, TypeName_Variant)
     {
         core::types::ValueList subtypes;
-        subtypes.push_back(TypeName_Null);                  // VT_NULL
-        subtypes.push_back(TypeName_String);                // VT_STRING
-        subtypes.push_back(TypeName_Bytes);                 // VT_BYTES
-        subtypes.push_back(TypeName_Boolean);               // VT_BOOL
-        subtypes.push_back(TypeName_Long);                  // VT_LONG
-        subtypes.push_back(TypeName_Double);                // VT_DOUBLE
-        subtypes.push_back(TimeIntervalSchema(context));    // VT_INTERVAL
-        subtypes.push_back(TimestampSchema(context));       // VT_TIMESTAMP
+        subtypes.push_back(TypeName_Null);                // VT_NULL
+        subtypes.push_back(TypeName_String);              // VT_STRING
+        subtypes.push_back(TypeName_Bytes);               // VT_BYTES
+        subtypes.push_back(TypeName_Boolean);             // VT_BOOL
+        subtypes.push_back(TypeName_Long);                // VT_LONG
+        subtypes.push_back(TypeName_Double);              // VT_DOUBLE
+        // subtypes.push_back(TimeIntervalSchema(context));  // VT_INTERVAL
+        // subtypes.push_back(TimestampSchema(context));     // VT_TIMESTAMP
         // subtypes.push_back(MapSchema(TypeName_Variant));    // VT_MAP
         // subtypes.push_back(ArraySchema(TypeName_Variant));  // VT_ARRAY
         this->add_field(SchemaField_VariantValue, subtypes);
