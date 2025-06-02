@@ -446,14 +446,14 @@ class SignalClient (BaseSignalClient, Client):
                           time: TimestampType|None = None
                           ) -> TimeZoneInfo:
 
-        if canonical_name is None and time is None:
+        if canonical_zone is None and time is None:
             return self.signal_store.get_cached_signal(
                 'tz_info',
                 fallback = TimeZoneInfo)
         else:
             return Client.get_timezone_info(
                 self,
-                canonical_name,
+                canonical_zone,
                 time);
 
 
