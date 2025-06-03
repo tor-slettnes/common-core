@@ -87,36 +87,44 @@ def add_to_settings_path(folder: FilePath,
         return False
 
 
-def default_settings_path() -> SearchPath:
+def default_settings_path(
+        include_local: bool = True,
+        include_global: bool = True,
+        ) -> SearchPath:
     '''
     Obtain the built-in default list of folders in which to look for
-    configuration files. This list comprises:
+    configuration files.
 
-    * `$HOME/.config/common-core` if `$HOME` is defined
-    * A machine-specific settings directory (`/etc/common-core` on UNIX
-      or `c:\\common-core\\config` on Windows)
+    If `include_local` is set, this list comprises:
+    * `$HOME/.config/common-core`, only if `$HOME` is defined.
+    * A machine-specific settings directory (`/etc/common-core` on UNIX or
+      `c:\\common-core\\config` on Windows).
+
+    Additionally, if `include_global` is set, the following folders are added:
     * An application-provided settings folder (`share/common-core/settings`,
-      relative to installation root of this package)
-    * a `settings` folder directly within this distriution archive (`.whl`),
+      relative to installation root of this package).
+    * a `settings` folder directly within this distriution archive (`.whl`)
       if any.
     '''
 
     searchpath = []
 
-    ### User-specific settings
-    if homedir := os.getenv("HOME"):
-        configdir = os.path.join(homedir, ".config")
-        if os.path.isdir(configdir):
-            searchpath.append(os.path.join(configdir, ORGANIZATION))
+    if include_local:
+        ### User-specific settings
+        if homedir := os.getenv("HOME"):
+            configdir = os.path.join(homedir, ".config")
+            if os.path.isdir(configdir):
+                searchpath.append(os.path.join(configdir, ORGANIZATION))
 
-    ### Locally managed (host specific) settings
-    searchpath.append(LOCAL_SETTINGS_DIR)
+        ### Locally managed (host specific) settings
+        searchpath.append(LOCAL_SETTINGS_DIR)
 
-    ### Default settings installed from release package
-    searchpath.append(SETTINGS_DIR)
+    if include_global:
+        ### Default settings installed from release package
+        searchpath.append(SETTINGS_DIR)
 
-    ### Embedded `settings` folder inside distribution archive (wheel or executable)
-    searchpath.append(python_root().joinpath('settings'))
+        ### Embedded `settings` folder inside distribution archive (wheel or executable)
+        searchpath.append(python_root().joinpath('settings'))
 
     return normalized_search_path(searchpath)
 

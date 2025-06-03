@@ -2,20 +2,21 @@
 Obtain settings from `.yaml` and/or `.json` files
 '''
 
-__all__ = ['Endpoint']
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 
 ### Modules within package
 from .jsonreader import JsonReader
-from .paths import normalized_search_path, settings_path, FilePath, SearchPath
+from .paths import FilePath, SearchPath, \
+    normalized_search_path, settings_path, default_settings_path
 
 
 ### Standard Python modules
-from typing import Sequence, Optional, Union
+from typing import Sequence, Mapping, Optional, Union, Any
 from importlib.resources.abc import Traversable
 import yaml
+import json
 import os
 import os.path
 import sys
@@ -25,6 +26,7 @@ import pathlib
 
 FilePath  = str | Traversable
 FilePaths = Sequence[FilePath]
+Variant   = str | bool | int | float | dict[object] | list[object] | type(None)
 
 
 class SettingsStore (dict):
@@ -203,9 +205,9 @@ class SettingsStore (dict):
     def get_value(self,
                   key: str,
                   expected_type: type,
-                  default: object|None,
+                  default: Variant|None,
                   raise_invalid_type: bool = False,
-                  ) -> object:
+                  ) -> Variant:
         '''
         If the speified key exists and is of the expected type, return the corresponding value.
 
@@ -244,6 +246,115 @@ class SettingsStore (dict):
         else:
             return value
 
+    def set(self,
+            key: str|Sequence[str],
+            value: Variant,
+            save: bool = False):
+        '''
+        Set the specified `key` to `value`.
+
+        @param key
+            The hierarchical location of the setting to update, as either a
+            string or a sequence of strings. In the latter case, any leading
+            components of the settings key are created as needed.
+
+        @param value
+            The new or updated value associated with the specified key.
+
+        @param save
+            Automatically save the resulting settings store delta in the local
+            settings folder.
+        '''
+
+        if isinstance(key, Sequence) and len(key) > 1:
+            path = list(key)
+            key = path.pop()
+
+        elif isinstance(key, str):
+            path = []
+
+        else:
+            raise ValueError("Settings key must be a string or a non-empty sequence of strings")
+
+        obj = self
+        for element in path:
+            sub = obj.get(element)
+            if not isinstance(sub, dict):
+                sub = obj[element] = {}
+            obj = sub
+
+        obj[key] = value
+
+        if save and self.filenames:
+            self.save(only_delta=True)
+
+
+    def save(self,
+             filename: FilePath|None = None,
+             only_delta: bool = False,
+             skipkeys: bool = False,
+             ensure_ascii: bool = True,
+             check_circular: bool = True,
+             allow_nan: bool = True,
+             indent: int = 4,
+             ):
+        '''
+        Save settings to a JSON file.
+
+        @param filename
+            Absolute or relative filename in which to save settings. If it is
+            relative, the path is resolved in turn with respect to the local
+            settings folders `/etc/common-core` and `$HOME/.config/common-core`,
+            whichever is or can be made writable.  A `.json` suffix is appended
+            if missing.  If not specified, the first filename from which
+            settings were loaded (but with a .`json` suffix) is used.
+
+        @param delta
+            Save only the recursive difference between the current settings
+            hierarchy and the default settings, obtained from the software
+            distribution (i.e, corresponding filenames within
+            `/usr/share/common-core/settings`).
+
+        See `help(json.dump)` for information on the additional arguments
+        `skipkeys`, `ensure_ascii`, `check_circular`, `allow_nan` and `indent`.
+        '''
+
+        if only_delta:
+            defaults_load_path = default_settings_path(include_local = False)
+            defaults = SettingsStore(self.filenames, defaults_load_path)
+            update = type(self)._recursive_delta(self, defaults)
+
+        else:
+            update = self
+
+        if not filename:
+            if self.filenames:
+                filename = self.filenames[0]
+            else:
+                raise RuntimeError('No settings file specified, and none has been loaded')
+
+        save_path = default_settings_path(include_global = False)
+
+        for candidate_folder in reversed(save_path):
+            filepath = candidate_folder.joinpath(filename).with_suffix('.json')
+            try:
+                os.makedirs(candidate_folder, exist_ok=True)
+                fp = filepath.open('w')
+            except EnvironmentError as e:
+                failure = e
+            else:
+                json.dump(update,
+                          fp,
+                          skipkeys = skipkeys,
+                          ensure_ascii = ensure_ascii,
+                          check_circular = check_circular,
+                          allow_nan = allow_nan,
+                          indent = indent)
+                break
+        else:
+            if failure:
+                raise failure
+
 
     @classmethod
     def _recursive_merge(cls,
@@ -259,6 +370,23 @@ class SettingsStore (dict):
             #     base[key].extend(value)
             else:
                 base.setdefault(key, value)
+
+
+
+    @classmethod
+    def _recursive_delta(cls,
+                         complete: dict,
+                         base    : dict):
+
+        delta = {}
+        for (key, value) in complete.items():
+            basevalue = base.get(key)
+            if isinstance(value, dict) and isinstance(basevalue, dict):
+                if deltavalue := cls._recursive_delta(value, basevalue):
+                    delta[key] = deltavalue
+            elif value != basevalue:
+                delta[key] = value
+        return delta
 
 
     @classmethod

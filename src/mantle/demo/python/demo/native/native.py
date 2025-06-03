@@ -29,8 +29,6 @@ class NativeDemo (API):
         self.timer_task_handle = "Demo.ticker"
 
     def say_hello(self, greeting: Greeting):
-        print("Emitting greeting: say_hello(%s)"%
-              (MessageToString(greeting, as_one_line=True),))
         demo_signals.emit_mapping('signal_greeting', None, greeting.identity, greeting)
 
 

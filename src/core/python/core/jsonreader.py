@@ -53,13 +53,14 @@ class JsonReader:
 
     @classmethod
     def _remove_comments(cls, text: str):
-        return re.sub(cls._jsonComments, r"\3\4", text)
+        return re.sub(cls._jsonComments, r"\4\5", text)
 
     _jsonComments = re.compile(
         r'(//.*?$)|'               # (1) C++ style comments, throw away
         r'(/\*.*?\*/)|'            # (2) C-style comments, throw away
-        r'(\'(?:\\.|[^\\\'])*\')|' # (3) Single-quoted strings, retain
-        r'("(?:\\.|[^\\"])*")',    # (4) Double-quoted strings, retain
+        r'(#.*?$)|'                # (3) Script-style comments, throw away
+        r'(\'(?:\\.|[^\\\'])*\')|' # (4) Single-quoted strings, retain
+        r'("(?:\\.|[^\\"])*")',    # (5) Double-quoted strings, retain
         re.DOTALL | re.MULTILINE
         )
 

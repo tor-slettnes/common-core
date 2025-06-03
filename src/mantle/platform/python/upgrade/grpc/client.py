@@ -123,8 +123,6 @@ class Client (BaseClient):
             source = encodeSource(source_file, is_file=True),
             force = force)
 
-        print("Install request: %s"%(request,))
-
         return self.stub.install(request)
 
 

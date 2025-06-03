@@ -73,12 +73,14 @@ class Client (Base):
                       service_name = self.service_name or self._default_service_name(),
                       project_name = project_name)
 
-        assert type(self).Stub, \
-            "Subclass should set 'Stub' to appropriate gRPC service class"
+        assert type(self).Stub, (
+            "gRPC Client subclass %r should set 'Stub' to appropriate gRPC service class"%
+            (type(self).__name__,))
 
         self.wait_for_ready = wait_for_ready
         self.use_asyncio    = use_asyncio
         self.host           = self.realaddress(host, "host", "port", "localhost", 8080)
+        self._channel       = None
         self._stub          = None
         self._stub_owner    = None
 
@@ -94,60 +96,43 @@ class Client (Base):
             process that originally created this stub.
 
         '''
+
         pid = os.getpid()
-        if (self._stub == None) or (self._stub_owner != pid):
-            self.create_channel()
+        if (self._stub is None) or (self._stub_owner != pid):
+            self._close_channel()
+            self._init_channel()
+            self._stub = type(self).Stub(self.channel)
             self._stub_owner = pid
 
         return self._stub
 
-    @stub.deleter
-    def stub(self):
-        self._stub = None
-        self.channel = None
+    @property
+    def channel(self):
+        if self._channel is None:
+            self._init_channel()
+        return self._channel
 
+    def _close_channel(self):
+        if channel := self._channel:
+            channel.close()
 
-    def create_channel(self, host: str|None = None):
-        '''
-        Establish communication to the server.
-
-        @param host
-            Override the server host and/or port number previously provided to
-            `__init__()`, if any.
-        '''
-
-        if host is None:
-            host = self.host
-
-        self._init_channel(host)
-
-
-    def delete_channel(self):
-        '''
-        Disconnect from the server instance.
-        '''
-        self._stub = None
-        self.channel = None
-
-    def _init_channel(self, host: str):
-        logging.debug("Creating gRPC service channel %r to %s"%
-                      (self.channel_name, host))
+    def _init_channel(self):
+        # print("PID %s Creating gRPC service channel %r to %s"%
+        #       (os.getpid(), self.channel_name, self.host))
 
         if self.use_asyncio:
-            self.channel = grpc.aio.insecure_channel(
-                target = host,
+            self._channel = grpc.aio.insecure_channel(
+                target = self.host,
                 interceptors = [AsyncClientInterceptor(self.wait_for_ready)])
-            # self.channel = grpc.aio.insecure_channel(target = host)
+            # self._channel = grpc.aio.insecure_channel(target = self.host)
 
         else:
-            # self.channel = grpc.insecure_channel(host)
-            self.channel = grpc.intercept_channel(
-                grpc.insecure_channel(host),
+            # self._channel = grpc.insecure_channel(self.host)
+            self._channel = grpc.intercept_channel(
+                grpc.insecure_channel(self.host),
                 ClientInterceptor(self.wait_for_ready))
 
-        self._stub = type(self).Stub(self.channel)
-        self.host = host
-        # self.channel.subscribe(self._channelChange)
+        #self.channel.subscribe(self._channelChange)
 
     def _default_service_name(self):
         service_name, _ = type(self).Stub.__name__.rsplit('Stub')

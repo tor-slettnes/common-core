@@ -25,7 +25,9 @@ from typing import Optional
 from collections import deque
 import enum
 import logging
+import os
 import queue
+import sys
 import threading
 import time
 
@@ -59,7 +61,7 @@ class Client (API, BaseClient):
             capture_python_logs: bool = False,
             log_level      : int = logging.NOTSET,
             wait_for_ready : bool = True,
-            streaming      : bool = True,
+            streaming      : bool = False,
             queue_size     : int = 4096,
             overflow_disposition: OverflowDisposition = OverflowDisposition.DISCARD_OLDEST,
     ):
@@ -98,10 +100,9 @@ class Client (API, BaseClient):
         self.streaming = streaming
         self.overflow_disposition = overflow_disposition
         self.overflow_message = self.overflow_disposition_message[overflow_disposition]
-        self.keep_writing = False
-        self.writer_thread = None
-        self.queue = queue.Queue(queue_size)
         self.full_queue_mutex = threading.Lock()
+        self.queue_size = queue_size
+        self.reset()
 
         API.__init__(self, identity,
                      capture_python_logs = capture_python_logs,
@@ -115,6 +116,13 @@ class Client (API, BaseClient):
     def __del__(self):
         self.close()
 
+    def reset(self):
+        self.keep_writing = False
+        self.writer_thread = None
+        self._last_pid = None
+        self.queue = queue.Queue(self.queue_size)
+
+
     def initialize(self):
         super().initialize()
         self.open()
@@ -122,6 +130,7 @@ class Client (API, BaseClient):
     def deinitialize(self):
         super().deinitialize()
         self.close()
+
 
     def open(self, wait_for_ready: bool = True):
         '''
@@ -148,6 +157,7 @@ class Client (API, BaseClient):
         super().close()
         self.close_writer()
 
+
     def submit(self, loggable: Loggable|None):
         '''
         Send an loggable item to the gRPC MultiLogger server.
@@ -158,23 +168,32 @@ class Client (API, BaseClient):
         '''
 
         if self.is_writer_open():
+            pid = os.getpid()
+            if pid != self._last_pid:
+                if self._last_pid != None:
+                    self.queue.shutdown()
+                    self.reset()
+                self._last_pid = pid
+
             self.enqueue(loggable)
-        elif loggable is not None:
+        else:
             self.stub.submit(loggable)
 
-    def enqueue(self, loggable: Loggable|None):
-        try:
-            self.queue.put_nowait(loggable)
-        except queue.Full:
-            with self.full_queue_mutex:
-                if self.overflow_disposition == OverflowDisposition.DISCARD_OLDEST:
-                    try:
-                        self.queue.get_nowait()
-                    except queue.Empty:
-                        pass
 
-                if self.overflow_disposition != OverflowDisposition.DISCARD_NEWEST:
-                    self.queue.put(loggable)
+    def enqueue(self, loggable: Loggable|None):
+        if queue := self.queue:
+            with self.full_queue_mutex:
+                try:
+                    queue.put_nowait(loggable)
+                except queue.Full:
+                    if self.overflow_disposition == OverflowDisposition.DISCARD_OLDEST:
+                        try:
+                            queue.get_nowait()
+                        except queue.Empty:
+                            pass
+
+                    if self.overflow_disposition != OverflowDisposition.DISCARD_NEWEST:
+                        queue.put(loggable)
 
     def is_writer_open(self) -> bool:
         '''
@@ -204,7 +223,7 @@ class Client (API, BaseClient):
         self.keep_writing = True
         if not self.is_writer_open():
             self.writer_thread = threading.Thread(
-                name = "LogStreamer",
+                name = "MultiLogStreamer",
                 target = self.stream_worker,
                 daemon = True)
             self.writer_thread.start()
@@ -238,8 +257,8 @@ class Client (API, BaseClient):
                                          wait_for_ready = wait_for_ready)
 
             except Exception as e:
-                logging.warning("Failed to stream message to MultiLogger service at %s: [%s] %s\n"%
-                      (self.host, type(e).__name__, e))
+                print("PID %s failed to stream message to MultiLogger service at %s: [%s] %s"%
+                      (os.getpid(), self.host, type(e).__name__, e))
                 time.sleep(2.0)
 
 
@@ -248,6 +267,7 @@ class Client (API, BaseClient):
         while item is not None:
             yield item
             item = self.queue.get()
+
 
     def listen(self,
                min_level: Level|int = Level.LEVEL_TRACE,
@@ -261,6 +281,7 @@ class Client (API, BaseClient):
             spec.contract_id = contract_id
 
         return self.stub.listen(spec)
+
 
     def add_sink(self,
                  sink_id: str,
