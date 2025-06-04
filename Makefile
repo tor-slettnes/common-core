@@ -5,6 +5,57 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+define HELP_TEXT
+Available targets:
+  help              Show this help message
+  prepare_linux     Install all required dependencies for Linux builds
+  local             Build, test and install locally
+  release           Build, test and create release packages
+  package           Create packages (currently only deb)
+  deb               Create Debian packages
+  wheels            Create Python wheel packages
+  install           Install built components
+  install/strip     Install and strip debug symbols
+  install/<comp>    Install specific component
+  doc               Generate documentation
+  ctest             Run tests
+  ctest/report      Run tests and show detailed failure reports
+  ctest/rerun       Rerun failed tests
+  build             Build the project
+  cmake-gui         Launch CMake GUI
+  cmake             Generate build files
+  python_shell      Launch Python shell with project modules
+  python_shell/<m>  Launch Python shell with specific module
+  list              List all available targets
+  get_config        Show current CMake configuration
+  get_version       Show project version
+  get_product       Show product name
+  clean             Clean build artifacts
+  clean/cmake       Clean CMake build files
+  clean/core        Remove core dumps
+  clean/build       Remove build directory
+  clean/install     Remove installed files
+  clean/deb         Remove package files
+  clean/cache       Remove CMake cache
+  clean/python      Remove Python build artifacts
+  clean/out         Remove all output directories
+  realclean         Remove all build artifacts
+  distclean         Remove all generated files
+
+Variables:
+  TARGET            Target platform (e.g., Linux-x86_64)
+  BUILD_TYPE        Build type (Debug/Release)
+  CMAKE_BUILD_TYPE  CMake build type
+  OUT_DIR           Output directory
+  BUILD_DIR         Build directory
+  INSTALL_DIR       Installation directory
+  PACKAGE_DIR       Package output directory
+endef
+export HELP_TEXT
+
+# Default target
+.DEFAULT_GOAL := local
+
 MAKEFLAGS     += --no-print-directory
 THIS_DIR      ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 OUT_DIR       ?= $(CURDIR)/out
@@ -51,7 +102,8 @@ CMAKE_CACHE = $(BUILD_DIR)/CMakeCache.txt
 define list_cache_or_default
 (\
   cat $(BUILD_DIR)/CMakeCache.txt || \
-  cmake -L -P build/buildspec.cmake -P $(THIS_DIR)/build/buildspec.cmake) 2>/dev/null
+  cmake -L -P build/buildspec.cmake -P $(THIS_DIR)/build/buildspec.cmake\
+) 2>/dev/null
 endef
 
 define get_cached_or_default
@@ -65,6 +117,35 @@ define remove
 	fi
 endef
 
+
+
+.PHONY: help
+help:
+	@echo "$${HELP_TEXT}"
+
+.PHONY: prepare_linux
+prepare_linux:
+	@echo "Installing required dependencies for Linux builds..."
+	sudo apt install -y \
+		build-essential cmake pkgconf \
+		uuid-dev \
+		rapidjson-dev \
+		libsqlite3-dev \
+		libavahi-client-dev \
+		libgtest-dev locales-all \
+		libcurl4-gnutls-dev \
+		protobuf-compiler \
+		cppzmq-dev \
+		protobuf-compiler-grpc libgrpc++-dev \
+		librdkafka-dev libavro-dev \
+		libglibmm-2.4-dev libnm-dev \
+		libudev-dev \
+		python3-dev \
+		python3-build python3-venv python3-hatchling \
+		python3-protobuf python3-grpcio python3-zmq python3-kafka python3-avro \
+		doxygen \
+		devhelp libglibmm-2.4-doc cppreference-doc-en-html \
+		libyaml-dev
 
 ### Build targets
 .PHONY: local
