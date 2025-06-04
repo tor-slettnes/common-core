@@ -291,7 +291,7 @@ class SettingsStore (dict):
 
     def save(self,
              filename: FilePath|None = None,
-             only_delta: bool = False,
+             only_delta: bool = True,
              skipkeys: bool = False,
              ensure_ascii: bool = True,
              check_circular: bool = True,

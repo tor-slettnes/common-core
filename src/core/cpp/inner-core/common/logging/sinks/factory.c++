@@ -109,10 +109,7 @@ namespace core::logging
             sink->load_settings(this->settings);
             if (this->explicit_threshold)
             {
-                if (auto logsink = std::dynamic_pointer_cast<MessageSink>(sink))
-                {
-                    logsink->set_threshold(this->explicit_threshold.value());
-                }
+                sink->set_threshold(this->explicit_threshold.value());
             }
             sink->open();
             return sink;
