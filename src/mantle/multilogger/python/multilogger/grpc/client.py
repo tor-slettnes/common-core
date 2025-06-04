@@ -97,13 +97,6 @@ class Client (API, BaseClient):
             Controls behavior when a new message is captured by the submit queue is full.
         '''
 
-        self.streaming = streaming
-        self.overflow_disposition = overflow_disposition
-        self.overflow_message = self.overflow_disposition_message[overflow_disposition]
-        self.full_queue_mutex = threading.Lock()
-        self.queue_size = queue_size
-        self.reset()
-
         API.__init__(self, identity,
                      capture_python_logs = capture_python_logs,
                      log_level = log_level)
@@ -112,16 +105,20 @@ class Client (API, BaseClient):
                             host = host,
                             wait_for_ready = wait_for_ready)
 
+        self.streaming = streaming
+        self.overflow_disposition = overflow_disposition
+        self.overflow_message = self.overflow_disposition_message[overflow_disposition]
+        self.queue = None
+        self.queue_size = queue_size
+        self._writer_thread = None
+        self._full_queue_mutex = threading.Lock()
+        self._keep_writing = False
+        self._last_pid = None
+        self._writer_thread = None
+        self._last_pid = None
 
     def __del__(self):
         self.close()
-
-    def reset(self):
-        self.keep_writing = False
-        self.writer_thread = None
-        self._last_pid = None
-        self.queue = queue.Queue(self.queue_size)
-
 
     def initialize(self):
         super().initialize()
@@ -167,22 +164,21 @@ class Client (API, BaseClient):
         immediately via a unary RPC call.
         '''
 
-        if self.is_writer_open():
-            pid = os.getpid()
-            if pid != self._last_pid:
-                if self._last_pid != None:
-                    self.queue.shutdown()
-                    self.reset()
-                self._last_pid = pid
+        if not self.is_writer_open():
+            self.close_writer()
+            self.open_writer()
 
-            self.enqueue(loggable)
-        else:
-            self.stub.submit(loggable)
+        self.enqueue(loggable)
+
+        # if self.is_writer_open():
+        #     self.enqueue(loggable)
+        # else:
+        #     self.stub.submit(loggable, wait_for_ready=False)
 
 
     def enqueue(self, loggable: Loggable|None):
         if queue := self.queue:
-            with self.full_queue_mutex:
+            with self._full_queue_mutex:
                 try:
                     queue.put_nowait(loggable)
                 except queue.Full:
@@ -197,15 +193,18 @@ class Client (API, BaseClient):
 
     def is_writer_open(self) -> bool:
         '''
-        Indicate whether log messages are streamed to server via a
-        continuous data stream, or if each message is sent via a unary/blocking
-        RPC call.
+        Indicate whether the writer thread is active.
 
         @return
-            `True` if a write stream has been opened, `False` otherwise.
+            `True` if a the writer thread is running, `False` otherwise.
         '''
 
-        return (self.writer_thread is not None)
+        if not self.queue:
+            return False
+        elif t := self._writer_thread:
+            return t.is_alive()
+        else:
+            return False
 
 
     def open_writer(self, wait_for_ready: bool = True):
@@ -220,24 +219,28 @@ class Client (API, BaseClient):
         See also `close_write_stream()`.
         '''
 
-        self.keep_writing = True
         if not self.is_writer_open():
-            self.writer_thread = threading.Thread(
+            self.queue = queue.Queue(self.queue_size)
+            self._writer_thread = threading.Thread(
                 name = "MultiLogStreamer",
                 target = self.stream_worker,
-                daemon = True)
-            self.writer_thread.start()
+                daemon = True,
+            )
+            self._writer_thread.start()
 
-    def close_writer(self):
+    def close_writer(self, wait=False):
         '''
         Close any active writer stream to the MultiLogger gRPC service.
         Any subsequent log messages will be sent via unary RPC calls.
         '''
 
-        self.keep_writing = False
-        if self.is_writer_open():
-            self.submit(None)
-            self.writer_thread = None
+        if q := self.queue:
+            q.put(None)
+            self.queue = None
+
+        if t := self._writer_thread:
+            if wait and t.is_alive():
+                t.join()
 
     def stream_worker(self, wait_for_ready: bool = True):
         '''
@@ -245,7 +248,7 @@ class Client (API, BaseClient):
         Runs in its own thread until the queue is deleted (i.e., client is closed)
         '''
 
-        while self.keep_writing:
+        while self.queue:
             try:
                 if self.streaming:
                     self.stub.writer(self.queue_iterator(),
@@ -257,16 +260,19 @@ class Client (API, BaseClient):
                                          wait_for_ready = wait_for_ready)
 
             except Exception as e:
-                print("PID %s failed to stream message to MultiLogger service at %s: [%s] %s"%
-                      (os.getpid(), self.host, type(e).__name__, e))
-                time.sleep(2.0)
+                if self.queue:
+                    logging.debug(
+                        "Failed to stream message to MultiLogger service at %s: [%s]; retrying in 2s: %s"%
+                        (self.host, type(e).__name__, e))
+                    time.sleep(2.0)
 
 
     def queue_iterator(self):
-        item = self.queue.get()
-        while item is not None:
-            yield item
-            item = self.queue.get()
+        if q := self.queue:
+            item = q.get()
+            while item is not None:
+                yield item
+                item = q.get()
 
 
     def listen(self,

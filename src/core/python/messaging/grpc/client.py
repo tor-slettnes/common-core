@@ -115,16 +115,17 @@ class Client (Base):
     def _close_channel(self):
         if channel := self._channel:
             channel.close()
+            self._channel = None
 
     def _init_channel(self):
         # print("PID %s Creating gRPC service channel %r to %s"%
         #       (os.getpid(), self.channel_name, self.host))
 
         if self.use_asyncio:
+            # self._channel = grpc.aio.insecure_channel(target = self.host)
             self._channel = grpc.aio.insecure_channel(
                 target = self.host,
                 interceptors = [AsyncClientInterceptor(self.wait_for_ready)])
-            # self._channel = grpc.aio.insecure_channel(target = self.host)
 
         else:
             # self._channel = grpc.insecure_channel(self.host)
