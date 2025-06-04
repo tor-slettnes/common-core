@@ -55,16 +55,23 @@ def check_message_type(value: Message,
 
 def messageToDict(message : Message,
                   use_integers_for_enums : bool = True,
-                  including_default_value_fields : bool = False):
+                  always_print_fields_with_no_presence : bool = False):
     '''
     Convert a ProtoBuf message to a Python Dictionary.
     '''
 
+    ## Breaking change in ProtoBuf 26.x: argument
+    ## `including_default_value_fields` is replaced with
+    ## `always_print_fields_with_no_presence`.
+    ## However, it remains the 2nd positional argument,
+    ## so we pass it as such.
+
     return MessageToDict(
         message,
-        including_default_value_fields=including_default_value_fields,
-        use_integers_for_enums=use_integers_for_enums,
-        preserving_proto_field_name=True)
+        always_print_fields_with_no_presence,
+        preserving_proto_field_name = True,
+        use_integers_for_enums = use_integers_for_enums,
+    )
 
 
 def dictToMessage(value     : dict,
