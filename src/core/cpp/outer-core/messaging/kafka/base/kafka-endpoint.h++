@@ -8,7 +8,6 @@
 #pragma once
 #include "kafka-callbacks.h++"
 #include "messaging-endpoint.h++"
-#include "types/value.h++"
 
 #include <librdkafka/rdkafkacpp.h>
 

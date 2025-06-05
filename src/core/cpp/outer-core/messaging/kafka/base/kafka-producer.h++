@@ -8,6 +8,7 @@
 #pragma once
 #include "kafka-endpoint.h++"
 
+
 #include <thread>
 
 namespace core::kafka
@@ -16,6 +17,9 @@ namespace core::kafka
     {
         using This = Producer;
         using Super = Endpoint;
+
+    protected:
+        using HeaderMap = std::unordered_map<std::string, std::string>;
 
     protected:
         Producer(const std::string &service_name,
@@ -43,7 +47,8 @@ namespace core::kafka
 
         void produce(const std::string_view &topic,
                      const types::Bytes &payload,
-                     const std::optional<std::string_view> &key = {});
+                     const std::optional<std::string_view> &key = {},
+                     const HeaderMap &headers = {});
 
     private:
         void shutdown();

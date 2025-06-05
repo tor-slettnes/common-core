@@ -100,7 +100,8 @@ namespace core::kafka
 
     void Producer::produce(const std::string_view &topic,
                            const types::Bytes &payload,
-                           const std::optional<std::string_view> &key)
+                           const std::optional<std::string_view> &key,
+                           const HeaderMap &headers)
     {
         std::optional<std::string_view> key_ = key;
         if (!key_)
@@ -108,7 +109,13 @@ namespace core::kafka
             key_ = this->producer_key();
         }
 
-        this->check(this->handle()->produce(
+        RdKafka::Headers *headers_ = RdKafka::Headers::create();
+        for (const auto &[key, value]: headers)
+        {
+            headers_->add(key, value);
+        }
+
+        RdKafka::ErrorCode error_code = this->handle()->produce(
             std::string(topic, 0, topic.size()),                // topic_name
             RdKafka::Topic::PARTITION_UA,                       // partition
             RdKafka::Producer::RK_MSG_COPY,                     // msgflags
@@ -117,7 +124,17 @@ namespace core::kafka
             key_ ? const_cast<char *>(key_->data()) : nullptr,  // key
             key_ ? key_->size() : 0,                            // key_len
             dt::to_milliseconds(dt::Clock::now()),              // timestamp
-            nullptr));                                          // msg_opaque
+            headers_,                                           // headers
+            nullptr);                                           // msg_opaque
+
+
+        if (error_code != RdKafka::ERR_NO_ERROR)
+        {
+            // Per Kafka doc: The \p headers will be freed/deleted if the
+            // produce() call succeeds, or left untouched if produce() fails.
+            delete headers_;
+            this->check(error_code);
+        }
     }
 
     void Producer::shutdown()
