@@ -90,6 +90,7 @@ namespace avro
             buffer.size());
 
         avro_value_write(writer, const_cast<avro_value_t *>(&this->value));
+        avro_writer_free(writer);
         return buffer;
     }
 

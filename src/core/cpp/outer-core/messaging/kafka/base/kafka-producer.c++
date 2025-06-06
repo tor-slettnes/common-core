@@ -28,6 +28,7 @@ namespace core::kafka
     Producer::~Producer()
     {
         this->shutdown();
+        delete this->producer_handle_;
     }
 
     RdKafka::Producer *Producer::create_handle() const

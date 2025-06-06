@@ -34,6 +34,8 @@ namespace core::kafka
         {
             delete topic;
         }
+
+        delete this->conf_;
     }
 
     void Endpoint::initialize()

@@ -12,8 +12,24 @@
 
 namespace core::types
 {
-    const Value *KeyValueMap::get_ptr(const std::string &key,
-                                      bool ignoreCase) const noexcept
+    const Value &KeyValueMap::get(
+        const std::string &key,
+        const Value &fallback,
+        bool ignoreCase) const noexcept
+    {
+        if (const Value *value = this->get_ptr(key, ignoreCase))
+        {
+            return *value;
+        }
+        else
+        {
+            return fallback;
+        }
+    }
+
+    const Value *KeyValueMap::get_ptr(
+        const std::string &key,
+        bool ignoreCase) const noexcept
     {
         try
         {
@@ -36,20 +52,6 @@ namespace core::types
             }
             // Nope, nothing found.
             return nullptr;
-        }
-    }
-
-    const Value &KeyValueMap::get(const std::string &key,
-                                  const Value &fallback,
-                                  bool ignoreCase) const noexcept
-    {
-        if (const Value *value = this->get_ptr(key, ignoreCase))
-        {
-            return *value;
-        }
-        else
-        {
-            return fallback;
         }
     }
 
