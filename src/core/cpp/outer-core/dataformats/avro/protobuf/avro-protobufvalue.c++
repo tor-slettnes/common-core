@@ -169,15 +169,15 @@ namespace avro
 
             bool has_value = msg.GetReflection()->HasField(msg, fd);
             avro_value_t branch;
-            avro_value_set_branch(avro_value,         // value
-                                  has_value ? 1 : 0,  // discriminant
-                                  &branch);           // branch
+
             if (has_value)
             {
+                avro_value_set_branch(avro_value, 1, &branch);
                 This::assign_from_single_field(&branch, msg, fd);
             }
             else
             {
+                avro_value_set_branch(avro_value, 0, &branch);
                 This::set_null(&branch);
             }
         }

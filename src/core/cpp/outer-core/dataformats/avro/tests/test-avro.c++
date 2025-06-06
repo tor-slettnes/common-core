@@ -111,12 +111,10 @@ namespace avro
 
         // EXPECT_EQ(avro_wrapper.as_value().get("attributes").get("duration").as_bytevector().size(), 12);
 
-
         std::string json_text = avro_wrapper.as_json();
 
         std::ofstream of("avro-event.json");
         of.write(json_text.data(), json_text.size());
-
 
         core::types::Value readback = core::json::reader.decoded(json_text);
 
@@ -129,13 +127,12 @@ namespace avro
 
         core::types::KeyValueMap attributes = readback.get("attributes").as_kvmap();
 
-        EXPECT_EQ(attributes.get("my_bool").get("variant").get("boolean").as_bool(), bool_value);
+        EXPECT_EQ(attributes.get("my_bool").get("variant").get("boolean").as_bool(),
+                  bool_value);
 
-        core::types::KeyValueMap interval = attributes.get("my_duration").get("variant").get("TimeInterval").as_kvmap();
-        auto expected_seconds = std::chrono::duration_cast<std::chrono::seconds>(dur_value);
-        auto expected_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(dur_value) - expected_seconds;
+        core::types::Value observed_ms = attributes.get("my_duration").get("variant").get("long");
+        auto expected_ms = std::chrono::duration_cast<std::chrono::milliseconds>(dur_value);
 
-        EXPECT_EQ(interval.get("seconds").as_uint(), expected_seconds.count());
-        EXPECT_EQ(interval.get("nanoseconds").as_uint(), expected_nanos.count());
+        EXPECT_EQ(observed_ms.as_sint(), expected_ms.count());
     }
 }  // namespace avro

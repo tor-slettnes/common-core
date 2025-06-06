@@ -53,9 +53,6 @@ Variables:
 endef
 export HELP_TEXT
 
-# Default target
-.DEFAULT_GOAL := local
-
 MAKEFLAGS     += --no-print-directory
 THIS_DIR      ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 OUT_DIR       ?= $(CURDIR)/out
@@ -110,6 +107,14 @@ define get_cached_or_default
 $(strip $(shell $(list_cache_or_default) | awk 'BEGIN {FS="="} /^$(1):/ {print $$2}'))
 endef
 
+define list_debian_requirements
+(\
+  cat $(CURDIR)/build/debian-requirements.txt || \
+  cat $(THIS_DIR)/build/debian-requirements.txt\
+) 2>/dev/null
+endef
+
+
 define remove
 	if [ -e "${1}" ]; then \
 		echo "Removing: ${1}"; \
@@ -117,35 +122,6 @@ define remove
 	fi
 endef
 
-
-
-.PHONY: help
-help:
-	@echo "$${HELP_TEXT}"
-
-.PHONY: prepare_linux
-prepare_linux:
-	@echo "Installing required dependencies for Linux builds..."
-	sudo apt install -y \
-		build-essential cmake pkgconf \
-		uuid-dev \
-		rapidjson-dev \
-		libsqlite3-dev \
-		libavahi-client-dev \
-		libgtest-dev locales-all \
-		libcurl4-gnutls-dev \
-		protobuf-compiler \
-		cppzmq-dev \
-		protobuf-compiler-grpc libgrpc++-dev \
-		librdkafka-dev libavro-dev \
-		libglibmm-2.4-dev libnm-dev \
-		libudev-dev \
-		python3-dev \
-		python3-build python3-venv python3-hatchling \
-		python3-protobuf python3-grpcio python3-zmq python3-kafka python3-avro \
-		doxygen \
-		devhelp libglibmm-2.4-doc cppreference-doc-en-html \
-		libyaml-dev
 
 ### Build targets
 .PHONY: local
@@ -358,6 +334,15 @@ realclean: clean/core clean/cmake clean/package clean/install clean/build
 
 .PHONY: distclean pristine
 distclean pristine: clean/core clean/out
+
+.PHONY: help
+help:
+	@echo "$${HELP_TEXT}"
+
+.PHONY: prepare_linux
+prepare_linux:
+	@echo "Installing required dependencies for Linux builds..."
+	@$(call list_debian_requirements) | sudo xargs apt install -y
 
 ### Delegate docker_ targets to its own Makefile
 docker_%:

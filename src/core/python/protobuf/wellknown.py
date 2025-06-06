@@ -32,7 +32,7 @@ from datetime import datetime
 ### Type type hint for timestamps
 TimestampType = Timestamp|float|int|str|struct_time|datetime
 DurationType = Duration|float|int
-MessageType = type
+MessageType = type(Empty)
 
 ### Static values
 empty = Empty()

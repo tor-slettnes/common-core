@@ -16,7 +16,7 @@ namespace core::platform
 
     fs::path LinuxPathProvider::exec_path() const noexcept
     {
-        fs::path path = this->readlink("/proc/self/exe");
+        static fs::path path = this->readlink("/proc/self/exe");
         return path.empty() ? Super::exec_path() : path;
     }
 }  // namespace core::platform

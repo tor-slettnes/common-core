@@ -43,10 +43,14 @@ class Client (Base):
     ## settings, such as target host/port.
     service_name = None
 
+    ## To use Python AsyncIO semantics, subclasses should set `use_asyncio` flag.
+    use_asyncio = False
+
+
     def __init__(self,
                  host: str|None = None,
                  wait_for_ready: bool = False,
-                 use_asyncio: bool = False,
+                 use_asyncio: bool|None = None,
                  project_name: str|None = None,
                  ):
         '''
@@ -58,15 +62,16 @@ class Client (Base):
             either address or host is missing, the default value is obtain from
             the service settings file (grpc-endpoints-PRODUCT.json).
 
-        @param wait_for_ready:
+        @param wait_for_ready
             If a connection attempt fails, keep retrying until successful.
             This value may be overriden per call.
 
-        @param use_asyncio:
+        @param use_asyncio
             Use Python AsyncIO.  Effectively this performs calls within a
             `grpc.aio.Channel` instance, rather than the default `grpc.Channel`.
             Additionally, the `call()` method uses AsyncIO semantics to capture
-            any exceptions.
+            any exceptions.  If not specified, the default value is obtained
+            from the corresponding `use_asyncio` class variable.
         '''
 
         Base.__init__(self,
@@ -77,8 +82,10 @@ class Client (Base):
             "gRPC Client subclass %r should set 'Stub' to appropriate gRPC service class"%
             (type(self).__name__,))
 
+        if use_asyncio is not None:
+            self.use_asyncio = use_asyncio
+
         self.wait_for_ready = wait_for_ready
-        self.use_asyncio    = use_asyncio
         self.host           = self.realaddress(host, "host", "port", "localhost", 8080)
         self._channel       = None
         self._stub          = None

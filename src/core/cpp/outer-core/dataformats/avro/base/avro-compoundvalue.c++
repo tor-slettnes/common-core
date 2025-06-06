@@ -278,6 +278,8 @@ namespace avro
             //     break;
 
         default:
+            This::set_branch(&value_field, VariantSchema::VT_NULL, &branch);
+            This::set_null(&branch);
             logf_notice("No known Avro conversions from value type %s (index %d)",
                         variant.type(),
                         variant.index());

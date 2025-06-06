@@ -107,25 +107,25 @@ class API (logging.Handler):
                 text: str,
                 stacklevel: int = 2,
                 **kwargs):
-        self.log_message(Level.LEVEL_WARNING, text, stacklevel, **kwargs)
+        return self.log_message(Level.LEVEL_WARNING, text, stacklevel, **kwargs)
 
     def error(self,
               text: str,
               stacklevel: int = 2,
               **kwargs):
-        self.log_message(Level.LEVEL_ERROR, text, stacklevel, **kwargs)
+        return self.log_message(Level.LEVEL_ERROR, text, stacklevel, **kwargs)
 
     def critical(self,
                  text: str, stacklevel:
                  int = 2,
                  **kwargs):
-        self.log_message(Level.LEVEL_CRITICAL, text, stacklevel, **kwargs)
+        return self.log_message(Level.LEVEL_CRITICAL, text, stacklevel, **kwargs)
 
     def fatal(self,
               text: str,
               stacklevel: int = 2,
               **kwargs):
-        self.log_message(Level.LEVEL_FATAL, text, stacklevel, **kwargs)
+        return self.log_message(Level.LEVEL_FATAL, text, stacklevel, **kwargs)
 
     ## Log a message
     def log_message(self,
@@ -196,7 +196,7 @@ class API (logging.Handler):
                  timestamp: TimestampType|None = None,
                  **kwargs):
 
-        self.submit(self.create_data(contract_id, attributes, timestamp, **kwargs))
+        return self.submit(self.create_data(contract_id, attributes, timestamp, **kwargs))
 
 
     def create_data(self,

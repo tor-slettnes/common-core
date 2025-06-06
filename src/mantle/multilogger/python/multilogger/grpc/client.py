@@ -110,12 +110,7 @@ class Client (API, BaseClient):
         self.overflow_message = self.overflow_disposition_message[overflow_disposition]
         self.queue = None
         self.queue_size = queue_size
-        self._writer_thread = None
-        self._full_queue_mutex = threading.Lock()
-        self._keep_writing = False
-        self._last_pid = None
-        self._writer_thread = None
-        self._last_pid = None
+        self.reset()
 
     def __del__(self):
         self.close()
@@ -128,8 +123,16 @@ class Client (API, BaseClient):
         super().deinitialize()
         self.close()
 
+    def reset(self):
+        self._writer_thread = None
+        self._full_queue_mutex = threading.Lock()
+        self._keep_writing = False
+        self._last_pid = None
+        self._writer_thread = None
+        self._last_pid = None
 
-    def open(self, wait_for_ready: bool = True):
+
+    def open(self):
         '''
         Open the logger.
         Start streaming to the MultiLogger service.
@@ -221,12 +224,12 @@ class Client (API, BaseClient):
 
         if not self.is_writer_open():
             self.queue = queue.Queue(self.queue_size)
-            self._writer_thread = threading.Thread(
-                name = "MultiLogStreamer",
+            t = self._writer_thread = threading.Thread(
                 target = self.stream_worker,
+                args = (wait_for_ready,),
                 daemon = True,
             )
-            self._writer_thread.start()
+            t.start()
 
     def close_writer(self, wait=False):
         '''
@@ -235,8 +238,8 @@ class Client (API, BaseClient):
         '''
 
         if q := self.queue:
-            q.put(None)
             self.queue = None
+            q.put(None)
 
         if t := self._writer_thread:
             if wait and t.is_alive():
@@ -305,45 +308,45 @@ class Client (API, BaseClient):
         with `min_level` or higher priority, optionally restrictecd to those
         with a specific `contract_id`.
 
-        @param sink_id:
+        @param sink_id
             Unique identity of this sink.  This cannot conflict with a sink type
             (see `list_sink_types()` for a list), as these are reserved for
             default log sinks.
 
-        @param sink_type:
+        @param sink_type
             Log sink type, such as `csv` or `logfile`.
 
-        @param contract_id:
+        @param contract_id
              If specified, capture only log messages with a matching
              `contract_id` field. This can be used to capture telemetry,
              where matching log events are expected to contain a specific
              set of custom attributes.
 
-        @param min_level:
+        @param min_level
             Severy threshold below which messages will be ignored.
 
-        @param filename_template:
+        @param filename_template
             Output file template for log sinks that record events directly to
             files. This template is expanded to an actual filename as as
             described below.
 
-        @param rotation_interval:
+        @param rotation_interval
             Specifies frequently a new log file is created. See below.
 
-        @param use_local_time:
+        @param use_local_time
             Whether to align rotation intervals to local time, as opposed to UTC.
             This also controls how timestamp are translated to strings within
             certain log sinks.
 
-        @param compress_after_use:
+        @param compress_after_use
             Compress log files once they are no longer being recorded to.
             The compressed files will have a `.gz` suffix.
 
-        @param expiration_interval:
+        @param expiration_interval
             Remove log files after the specified time interval. The default is
             one year.
 
-        @param columns:
+        @param columns
              What fields to capture. Applicable only for *tabular data* (column
              oriented) sink types, currently these are "csvfile" and "sqlite3"`.
 
@@ -417,20 +420,23 @@ class Client (API, BaseClient):
           ```
         '''
 
+        response = type(self)._add_sink(**locals())
+        return response.added
 
-        request = SinkSpec(
-            sink_id = sink_id,
-            sink_type = sink_type,
-            contract_id = contract_id,
-            min_level = encodeLogLevel(min_level),
-            filename_template = filename_template,
-            rotation_interval = encodeInterval(rotation_interval),
-            use_local_time = use_local_time,
-            compress_after_use = compress_after_use,
-            expiration_interval = expiration_interval,
-            columns = [encodeColumnSpec(column) for column in columns or ()])
 
-        return self.stub.add_sink(request).added
+    def _add_sink(self, *,  min_level, rotation_interval, columns, **kwargs):
+        if min_level is not None:
+            kwargs.update(min_level = encodeLogLevel(min_level))
+
+        if rotation_interval is not None:
+            kwargs.update(rotation_interval = encodeInterval(rotation_interval))
+
+        if columns:
+            kwargs.update(columns = [encodeColumnSpec(column) for column in columns])
+
+        request = SinkSpec(**kwargs)
+        return self.stub.add_sink(request)
+
 
 
     def remove_sink(self, sink_id: str) -> bool:
