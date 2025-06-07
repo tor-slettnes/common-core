@@ -46,7 +46,6 @@ class API (logging.Handler):
         '''
         self.pathbases.append(path)
 
-
     def open(self):
         if self.capture_python_logs:
             pylogger = logging.getLogger()

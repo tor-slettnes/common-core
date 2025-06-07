@@ -31,7 +31,7 @@ import sys
 import threading
 import time
 
-class OverflowDisposition (enum.Enum):
+class OverflowDisposition (enum.IntEnum):
     BLOCK = 0
     DISCARD_OLDEST = 1
     DISCARD_NEWEST = 2
@@ -56,13 +56,13 @@ class Client (API, BaseClient):
 
     def __init__(
             self,
-            host           : str = "",
-            identity       : str = None,
-            capture_python_logs: bool = False,
-            log_level      : int = logging.NOTSET,
-            wait_for_ready : bool = True,
-            streaming      : bool = False,
-            queue_size     : int = 4096,
+            host                : str = "",
+            identity            : str = None,
+            capture_python_logs : bool = False,
+            log_level           : int = logging.NOTSET,
+            wait_for_ready      : bool = False,
+            streaming           : bool = True,
+            queue_size          : int = 4096,
             overflow_disposition: OverflowDisposition = OverflowDisposition.DISCARD_OLDEST,
     ):
         '''
@@ -124,13 +124,9 @@ class Client (API, BaseClient):
         self.close()
 
     def reset(self):
-        self._writer_thread = None
         self._full_queue_mutex = threading.Lock()
-        self._keep_writing = False
-        self._last_pid = None
         self._writer_thread = None
         self._last_pid = None
-
 
     def open(self):
         '''
@@ -145,7 +141,8 @@ class Client (API, BaseClient):
         See also `close()`.
         '''
 
-        self.open_writer()
+        if self.streaming:
+            self.open_writer()
         super().open()
 
 
@@ -167,16 +164,13 @@ class Client (API, BaseClient):
         immediately via a unary RPC call.
         '''
 
-        if not self.is_writer_open():
-            self.close_writer()
-            self.open_writer()
-
-        self.enqueue(loggable)
-
-        # if self.is_writer_open():
-        #     self.enqueue(loggable)
-        # else:
-        #     self.stub.submit(loggable, wait_for_ready=False)
+        if self.is_writer_open():
+            self.enqueue(loggable)
+        else:
+            try:
+                self.stub.submit(loggable, wait_for_ready=False)
+            except grpc.RpcError:
+                print("gRPC Server not available")
 
 
     def enqueue(self, loggable: Loggable|None):
@@ -194,6 +188,7 @@ class Client (API, BaseClient):
                     if self.overflow_disposition != OverflowDisposition.DISCARD_NEWEST:
                         queue.put(loggable)
 
+
     def is_writer_open(self) -> bool:
         '''
         Indicate whether the writer thread is active.
@@ -202,9 +197,7 @@ class Client (API, BaseClient):
             `True` if a the writer thread is running, `False` otherwise.
         '''
 
-        if not self.queue:
-            return False
-        elif t := self._writer_thread:
+        if t := self._writer_thread:
             return t.is_alive()
         else:
             return False
@@ -231,19 +224,23 @@ class Client (API, BaseClient):
             )
             t.start()
 
-    def close_writer(self, wait=False):
+    def close_writer(self, wait: bool = False):
         '''
         Close any active writer stream to the MultiLogger gRPC service.
         Any subsequent log messages will be sent via unary RPC calls.
         '''
 
-        if q := self.queue:
-            self.queue = None
+        q = self.queue
+        t = self._writer_thread
+
+        self.queue = None
+        self._writer_thread = None
+
+        if q:
             q.put(None)
 
-        if t := self._writer_thread:
-            if wait and t.is_alive():
-                t.join()
+        if wait and t and t.is_alive():
+            t.join()
 
     def stream_worker(self, wait_for_ready: bool = True):
         '''
@@ -251,19 +248,11 @@ class Client (API, BaseClient):
         Runs in its own thread until the queue is deleted (i.e., client is closed)
         '''
 
-        while self.queue:
+        while self.is_writer_open():
             try:
-                if self.streaming:
-                    self.stub.writer(self.queue_iterator(),
-                                     wait_for_ready = wait_for_ready)
-
-                else:
-                    for msg in self.queue_iterator():
-                        self.stub.submit(msg,
-                                         wait_for_ready = wait_for_ready)
-
+                self.stub.writer(self.queue_iterator(), wait_for_ready = wait_for_ready)
             except Exception as e:
-                if self.queue:
+                if self.is_writer_open():
                     logging.debug(
                         "Failed to stream message to MultiLogger service at %s: [%s]; retrying in 2s: %s"%
                         (self.host, type(e).__name__, e))
@@ -438,7 +427,6 @@ class Client (API, BaseClient):
         return self.stub.add_sink(request)
 
 
-
     def remove_sink(self, sink_id: str) -> bool:
         '''
         Remove an existing log sink.
@@ -487,3 +475,10 @@ class Client (API, BaseClient):
         List static fields for log messages
         '''
         return self.stub.list_static_fields(empty).field_names
+
+
+
+if __name__ == '__main__':
+    client = Client(capture_python_logs = True)
+    client.initialize()
+    logging.info(f"MultiLogger client {client.identity} is alive!")

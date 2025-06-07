@@ -10,13 +10,14 @@
 namespace core::platform
 {
     LinuxPathProvider::LinuxPathProvider(const std::string &exec_name)
-        : Super("LinuxPathProvider", exec_name)
+        : Super("LinuxPathProvider", exec_name),
+          exec_path_(this->readlink("/proc/self/exe"))
     {
     }
 
     fs::path LinuxPathProvider::exec_path() const noexcept
     {
-        static fs::path path = this->readlink("/proc/self/exe");
-        return path.empty() ? Super::exec_path() : path;
+        return !this->exec_path_.empty() ? this->exec_path_
+                                         : Super::exec_path();
     }
 }  // namespace core::platform

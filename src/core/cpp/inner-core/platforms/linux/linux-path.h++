@@ -20,6 +20,9 @@ namespace core::platform
 
     public:
         fs::path exec_path() const noexcept override;
+
+    private:
+        fs::path exec_path_;
     };
 
 }  // namespace core::platform
