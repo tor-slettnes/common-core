@@ -23,7 +23,7 @@ int main(int argc, char** argv)
         auto log_provider = multilogger::native::Logger::create_shared();
 
         log_provider->initialize();
-        multilogger::grpc::run_service(log_provider);
+        multilogger::grpc::run_service(log_provider, ::options->bind_address);
         log_provider->deinitialize();
         return 0;
     }
