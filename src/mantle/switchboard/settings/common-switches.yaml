@@ -94,93 +94,93 @@ switches:
           OFF: "bring down Switchboard"
           ON : "bring up Switchboard"
 
-  - name: "Ethernet:Link"
-    localizations:
-      - language: "en"
-        description: "Ethernet status"
-        state texts:
-          ACTIVE   : "an Ethernet cable is plugged in"
-          INACTIVE : "no Ethernet cable is plugged in"
+  # - name: "Ethernet:Link"
+  #   localizations:
+  #     - language: "en"
+  #       description: "Ethernet status"
+  #       state texts:
+  #         ACTIVE   : "an Ethernet cable is plugged in"
+  #         INACTIVE : "no Ethernet cable is plugged in"
 
-  - name: "WiFi:Enabled"
-    localizations:
-      - language: "en"
-        description: "WiFi antenna"
-        state texts:
-          ACTIVE  : "WiFi is enabled"
-          INACTIVE: "WiFi is disabled"
-          FAILED  : "WiFi could not be enabled"
+  # - name: "WiFi:Enabled"
+  #   localizations:
+  #     - language: "en"
+  #       description: "WiFi antenna"
+  #       state texts:
+  #         ACTIVE  : "WiFi is enabled"
+  #         INACTIVE: "WiFi is disabled"
+  #         FAILED  : "WiFi could not be enabled"
 
-  - name: "WiFi:Link"
-    localizations:
-      - language: "en"
-        description: "WiFi signal"
-        action texts:
-          ON: "connect to WiFi"
-          OFF: "disconnect from WiFi"
-        state texts:
-          ACTIVE: "a WiFi access point is available"
-          INACTIVE: "no WiFi access point is available"
-    dependencies:
-      - predecessor: "WiFi:Enabled"
-        automatic: true
+  # - name: "WiFi:Link"
+  #   localizations:
+  #     - language: "en"
+  #       description: "WiFi signal"
+  #       action texts:
+  #         ON: "connect to WiFi"
+  #         OFF: "disconnect from WiFi"
+  #       state texts:
+  #         ACTIVE: "a WiFi access point is available"
+  #         INACTIVE: "no WiFi access point is available"
+  #   dependencies:
+  #     - predecessor: "WiFi:Enabled"
+  #       automatic: true
 
-  - name: "Network:Link"
-    localizations:
-      - language: "en"
-        description: "Network connection"
-        state texts:
-          ACTIVE: "a network connection exists"
-          INACTIVE: "no network connection exists"
-    dependencies:
-      - predecessor: "Ethernet:Link"
-        automatic: true
-        sufficient: true
-      - predecessor: "WiFi:Link"
-        automatic: true
-        sufficient: true
+  # - name: "Network:Link"
+  #   localizations:
+  #     - language: "en"
+  #       description: "Network connection"
+  #       state texts:
+  #         ACTIVE: "a network connection exists"
+  #         INACTIVE: "no network connection exists"
+  #   dependencies:
+  #     - predecessor: "Ethernet:Link"
+  #       automatic: true
+  #       sufficient: true
+  #     - predecessor: "WiFi:Link"
+  #       automatic: true
+  #       sufficient: true
 
-  - name: "Network:Active"
-    localizations:
-      - language: "en"
-        description: "Network status"
-        action texts:
-          ON: "activate network connection"
-          OFF: "deactivate network connection"
-        state texts:
-          ACTIVE: "a network connection is active"
-          INACTIVE: "no network connection is active"
-          FAILED: "network connection could not be activated"
-    dependencies:
-      - predecessor: "Network:Link"
-        automatic: true
+  # - name: "Network:Active"
+  #   localizations:
+  #     - language: "en"
+  #       description: "Network status"
+  #       action texts:
+  #         ON: "activate network connection"
+  #         OFF: "deactivate network connection"
+  #       state texts:
+  #         ACTIVE: "a network connection is active"
+  #         INACTIVE: "no network connection is active"
+  #         FAILED: "network connection could not be activated"
+  #   dependencies:
+  #     - predecessor: "Network:Link"
+  #       automatic: true
 
-  - name: "Internet:Available"
-    localizations:
-      - language: "en"
-        description: "Internet access"
-        action texts:
-          ON: "connect to the Internet"
-          OFF: "disconnect from the Internet"
-        state texts:
-          ACTIVE: "an Internet connection is available"
-          INACTIVE: "no Internet connection is available"
-          FAILED: "the instrument could not connect to the internet"
-    dependencies:
-      - predecessor: "Network:Active"
-        automatic: true
+  # - name: "Internet:Available"
+  #   localizations:
+  #     - language: "en"
+  #       description: "Internet access"
+  #       action texts:
+  #         ON: "connect to the Internet"
+  #         OFF: "disconnect from the Internet"
+  #       state texts:
+  #         ACTIVE: "an Internet connection is available"
+  #         INACTIVE: "no Internet connection is available"
+  #         FAILED: "the instrument could not connect to the internet"
+  #   dependencies:
+  #     - predecessor: "Network:Active"
+  #       automatic: true
 
-  - name: "Cloud:Available"
-    localizations:
-      - language: "en"
-        description: "Cloud connection"
-        action texts:
-          ON: "connect to the cloud"
-          OFF: "disconnect from the cloud"
-        state texts:
-          ACTIVE: "the instrument is connected to the cloud"
-          INACTIVE: "the instrument is not connected do the cloud"
-          FAILED: "the instrument could not connect to the cloud"
-    dependencies:
-      - predecessor: "Internet:Available"
-        automatic: true
+  # - name: "Cloud:Available"
+  #   localizations:
+  #     - language: "en"
+  #       description: "Cloud connection"
+  #       action texts:
+  #         ON: "connect to the cloud"
+  #         OFF: "disconnect from the cloud"
+  #       state texts:
+  #         ACTIVE: "the instrument is connected to the cloud"
+  #         INACTIVE: "the instrument is not connected do the cloud"
+  #         FAILED: "the instrument could not connect to the cloud"
+  #   dependencies:
+  #     - predecessor: "Internet:Available"
+  #       automatic: true

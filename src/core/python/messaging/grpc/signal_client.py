@@ -8,7 +8,7 @@
 ### Modules within package
 from .client  import Client
 from .client_reader import ThreadReader, AsyncReader
-from cc.protobuf.signalstore import SignalStore, Slot, Filter
+from cc.protobuf.signal import SignalStore, Slot, Filter
 
 from typing import Callable, Sequence, Optional
 

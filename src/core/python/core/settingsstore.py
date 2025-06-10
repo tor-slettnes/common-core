@@ -266,7 +266,7 @@ class SettingsStore (dict):
             settings folder.
         '''
 
-        if isinstance(key, Sequence) and len(key) > 1:
+        if isinstance(key, Sequence) and len(key) > 0:
             path = list(key)
             key = path.pop()
 

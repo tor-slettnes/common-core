@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from cc.protobuf.signalstore import SignalStore
+from cc.protobuf.signal import SignalStore
 from cc.protobuf.demo import Signal
 
 #===============================================================================

@@ -193,4 +193,7 @@ namespace switchboard
         SwitchMap switches;
     };
 
+
+    extern std::shared_ptr<Provider> provider;
+
 }  // namespace switchboard

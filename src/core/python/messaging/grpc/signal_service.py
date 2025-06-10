@@ -7,7 +7,7 @@
 
 ### Modules within package
 from .service import Service
-from cc.protobuf.signalstore import SignalStore, Filter
+from cc.protobuf.signal import SignalStore, Filter
 
 ### Third-party modules
 import google.protobuf.message

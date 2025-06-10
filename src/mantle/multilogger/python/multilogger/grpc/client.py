@@ -10,6 +10,7 @@ __author__ = 'Tor Slettnes'
 ### Modules within package
 from ..base.api import API
 from cc.messaging.grpc import Client as BaseClient
+from cc.protobuf.builder import MessageBuilder
 from cc.protobuf.wellknown import empty
 from cc.protobuf.status import Level, encodeLogLevel
 from cc.protobuf.datetime import Interval, encodeInterval
@@ -40,7 +41,7 @@ class OverflowDisposition (enum.IntEnum):
 #===============================================================================
 # MultiLogger Client
 
-class Client (API, BaseClient):
+class Client (API, BaseClient, MessageBuilder):
     '''
     Client for MultiLogger service.
     '''
@@ -155,7 +156,10 @@ class Client (API, BaseClient):
         self.close_writer()
 
 
-    def submit(self, loggable: Loggable|None):
+    def submit(self,
+               loggable: Loggable|None,
+               wait_for_ready: bool = False,
+               ):
         '''
         Send an loggable item to the gRPC MultiLogger server.
 
@@ -168,7 +172,7 @@ class Client (API, BaseClient):
             self.enqueue(loggable)
         else:
             try:
-                self.stub.submit(loggable, wait_for_ready=False)
+                self.stub.submit(loggable, wait_for_ready = wait_for_ready)
             except grpc.RpcError:
                 print("gRPC Server not available")
 

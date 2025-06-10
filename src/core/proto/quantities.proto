@@ -197,6 +197,22 @@ enum TemperatureUnit
     TEMPERATURE_DEGREES_FARENHEIT = 4; // 0°F = 459.67 °Ra
 }
 
+//------------------------------------------------------------------------------
+// TemperatureRateChange
+
+message TemperatureRateChange
+{
+    double value = 1;
+    TemperatureRateChangeUnit unit = 2;
+    int32 decimal_exponent = 3;
+}
+
+enum TemperatureRateChangeUnit
+{
+    RAMPRATE_UNDEFINED                    = 0;
+    RAMPRATE_DEGREES_CELSIUS_PER_SECOND   = 1;
+    RAMPRATE_DEGREES_FARENHEIT_PER_SECOND = 2;
+}
 
 //------------------------------------------------------------------------------
 // Pressure

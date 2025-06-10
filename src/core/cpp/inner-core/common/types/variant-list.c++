@@ -87,6 +87,22 @@ namespace core::types
         return filtered;
     }
 
+    ValueList &ValueList::extend(const ValueList &other)
+    {
+        this->insert(this->end(), other.begin(), other.end());
+        return *this;
+    }
+
+    ValueList &ValueList::extend(ValueList &&other)
+    {
+        this->reserve(this->size() + other.size());
+        for (auto it = other.begin(); it != other.end(); it++)
+        {
+            this->push_back(std::move(*it));
+        }
+        return *this;
+    }
+
     ValueList::iterator ValueList::append(const Value &value)
     {
         return this->insert(this->end(), value);

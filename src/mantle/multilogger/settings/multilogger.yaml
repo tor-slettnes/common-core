@@ -19,7 +19,7 @@ log sinks:
     name template: "{isodate}-{hour}{minute}{zoneoffset}.csv"
 
   lologger:
-    enabled      : true
+    enabled      : false
     type         : "sqlite3"
     #threshold    : DEBUG
     contract_id  : "text"

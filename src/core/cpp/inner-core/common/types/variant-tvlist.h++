@@ -94,8 +94,8 @@ namespace core::types
         ///    TaggedValueList instance from which to import
         /// @return
         ///     A reference to this updated instance.
-        TaggedValueList &extend(const TaggedValueList &other) noexcept;
-        TaggedValueList &extend(TaggedValueList &&other) noexcept;
+        TaggedValueList &extend(const TaggedValueList &other);
+        TaggedValueList &extend(TaggedValueList &&other);
 
         /// @brief
         ///    Replace tagged values in this list with ones from another
@@ -103,8 +103,8 @@ namespace core::types
         ///    TaggedValueList instance from which to import
         /// @return
         ///     A reference to this updated instance.
-        TaggedValueList &update(const TaggedValueList &other) noexcept;
-        TaggedValueList &update(TaggedValueList &&other) noexcept;
+        TaggedValueList &update(const TaggedValueList &other);
+        TaggedValueList &update(TaggedValueList &&other);
 
         /// @brief
         ///    Extract items from an existing TaggedValueList and insert here.
@@ -115,8 +115,8 @@ namespace core::types
         /// @note
         ///    TaggedValue instances are extracted from `other` and
         ///    appended to this list only if not already present.
-        TaggedValueList &merge(TaggedValueList &other) noexcept;
-        TaggedValueList &merge(TaggedValueList &&other) noexcept;
+        TaggedValueList &merge(TaggedValueList &other);
+        TaggedValueList &merge(TaggedValueList &&other);
 
         /// @brief
         ///    Push an element at the end of the list if a boolean condition is satisfied

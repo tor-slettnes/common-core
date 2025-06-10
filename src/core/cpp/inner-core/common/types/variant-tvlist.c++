@@ -258,13 +258,13 @@ namespace core::types
         return kvmap;
     }
 
-    TaggedValueList &TaggedValueList::extend(const TaggedValueList &other) noexcept
+    TaggedValueList &TaggedValueList::extend(const TaggedValueList &other)
     {
         this->insert(this->end(), other.begin(), other.end());
         return *this;
     }
 
-    TaggedValueList &TaggedValueList::extend(TaggedValueList &&other) noexcept
+    TaggedValueList &TaggedValueList::extend(TaggedValueList &&other)
     {
         this->reserve(this->size() + other.size());
         for (auto it = other.begin(); it != other.end(); it++)
@@ -274,7 +274,7 @@ namespace core::types
         return *this;
     }
 
-    TaggedValueList &TaggedValueList::update(const TaggedValueList &other) noexcept
+    TaggedValueList &TaggedValueList::update(const TaggedValueList &other)
     {
         this->reserve(this->size() + other.size());
         for (auto input_it = other.begin(); input_it != other.end(); input_it++)
@@ -292,7 +292,7 @@ namespace core::types
         return *this;
     }
 
-    TaggedValueList &TaggedValueList::update(TaggedValueList &&other) noexcept
+    TaggedValueList &TaggedValueList::update(TaggedValueList &&other)
     {
         this->reserve(this->size() + other.size());
         for (auto input_it = other.begin(); input_it != other.end(); input_it++)
@@ -310,7 +310,7 @@ namespace core::types
         return *this;
     }
 
-    TaggedValueList &TaggedValueList::merge(TaggedValueList &other) noexcept
+    TaggedValueList &TaggedValueList::merge(TaggedValueList &other)
     {
         // auto lck = std::lock_guard(this->mtx);
         this->reserve(this->size() + other.size());
@@ -331,7 +331,7 @@ namespace core::types
         return *this;
     }
 
-    TaggedValueList &TaggedValueList::merge(TaggedValueList &&other) noexcept
+    TaggedValueList &TaggedValueList::merge(TaggedValueList &&other)
     {
         return this->merge(other);
     }

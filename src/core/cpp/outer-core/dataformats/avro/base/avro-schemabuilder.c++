@@ -197,10 +197,12 @@ namespace avro
     // }
 
     TimeIntervalSchema::TimeIntervalSchema(const ContextRef &context)
-        : SchemaWrapper(TypeName_Long)
+        : SchemaWrapper(core::types::KeyValueMap({
+              {SchemaField_Type, TypeName_Long},
+              {SchemaField_LogicalType, LogicalType_TimeOfDayMillis},
+          }))
     {
     }
-
 
     //--------------------------------------------------------------------------
     // TimestampSchema
@@ -227,12 +229,12 @@ namespace avro
         : RecordSchema(context, TypeName_Variant)
     {
         core::types::ValueList subtypes;
-        subtypes.push_back(TypeName_Null);                // VT_NULL
-        subtypes.push_back(TypeName_String);              // VT_STRING
-        subtypes.push_back(TypeName_Bytes);               // VT_BYTES
-        subtypes.push_back(TypeName_Boolean);             // VT_BOOL
-        subtypes.push_back(TypeName_Long);                // VT_LONG
-        subtypes.push_back(TypeName_Double);              // VT_DOUBLE
+        subtypes.push_back(TypeName_Null);     // VT_NULL
+        subtypes.push_back(TypeName_String);   // VT_STRING
+        subtypes.push_back(TypeName_Bytes);    // VT_BYTES
+        subtypes.push_back(TypeName_Boolean);  // VT_BOOL
+        subtypes.push_back(TypeName_Long);     // VT_LONG
+        subtypes.push_back(TypeName_Double);   // VT_DOUBLE
         // subtypes.push_back(TimeIntervalSchema(context));  // VT_INTERVAL
         // subtypes.push_back(TimestampSchema(context));     // VT_TIMESTAMP
         // subtypes.push_back(MapSchema(TypeName_Variant));    // VT_MAP

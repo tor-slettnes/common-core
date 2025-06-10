@@ -12,7 +12,7 @@ from cc.demo.zmq.client import Client as ZMQDemoClient
 import cc.protobuf.demo
 import cc.protobuf.wellknown
 import cc.protobuf.variant
-import cc.protobuf.signalstore
+import cc.protobuf.signal
 import cc.protobuf.status
 import cc.protobuf.rr
 

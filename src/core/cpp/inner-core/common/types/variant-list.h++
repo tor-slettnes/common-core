@@ -41,6 +41,16 @@ namespace core::types
         /// Return a copy where items with empty values are filtered out
         ValueList filtered_values() const noexcept;
 
+        /// @brief
+        ///    Add values from an existing ValueList instance
+        /// @param[in] other
+        ///    ValueList instance from which to import
+        /// @return
+        ///     A reference to this updated instance.
+        ValueList &extend(const ValueList &other);
+        ValueList &extend(ValueList &&other);
+
+
         iterator append(const Value &value);
         iterator append(Value &&value);
 
@@ -61,17 +71,23 @@ namespace core::types
         }
 
         template <class T>
-        std::vector<T> filter_by_type() const
+        void filter_into(std::vector<T> *vector) const
         {
-            std::vector<T> result;
-            result.reserve(this->size());
+            vector->reserve(vector->size() + this->size());
             for (const types::Value &value : *this)
             {
                 if (const T *ptr = value.get_if<T>())
                 {
-                    result.push_back(*ptr);
+                    vector->push_back(*ptr);
                 }
             }
+        }
+
+        template <class T>
+        std::vector<T> filter_by_type() const
+        {
+            std::vector<T> result;
+            this->filter_into<T>(&result);
             return result;
         }
 

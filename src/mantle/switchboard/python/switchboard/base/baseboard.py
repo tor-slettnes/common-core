@@ -11,7 +11,7 @@ __author__ = 'Tor Slettnes'
 from .switch import Switch
 from .signals import switchboard_signals
 from cc.protobuf.switchboard import Signal
-from cc.protobuf.signalstore import SignalStore, MappingAction
+from cc.protobuf.signal import SignalStore, MappingAction
 from abc import abstractmethod
 
 class SwitchboardBase:

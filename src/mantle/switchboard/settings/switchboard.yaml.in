@@ -7,3 +7,4 @@
 
 switch config files:
   - "common-switches.yaml"
+  - "@PRODUCT@-switches.yaml"

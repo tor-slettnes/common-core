@@ -292,4 +292,5 @@ namespace switchboard
                                          sufficient);
     }
 
+    std::shared_ptr<Provider> provider;
 }  // namespace switchboard

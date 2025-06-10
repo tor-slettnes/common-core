@@ -15,7 +15,7 @@ from .switchboard.grpc.client import Client as SwitchboardClient
 
 import cc.protobuf.wellknown
 import cc.protobuf.variant
-import cc.protobuf.signalstore
+import cc.protobuf.signal
 import cc.protobuf.status
 import cc.protobuf.sysconfig
 import cc.protobuf.vfs

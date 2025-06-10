@@ -39,10 +39,10 @@ namespace core::types
     template <class T>
     bool equivalent(const std::shared_ptr<T> &lhs, const std::shared_ptr<T> &rhs)
     {
-        return (!lhs && !rhs)             ? true   // both are empty
-               : (!lhs || !rhs)           ? false  // one is empty
-               : (lhs.get() == rhs.get()) ? true   // object pointers are equal
-               : *lhs == *rhs             ? true   // object contents are equal
-                                          : false;             // none of the above
+        return (!lhs && !rhs)           ? true   // both are empty
+             : (!lhs || !rhs)           ? false  // one is empty
+             : (lhs.get() == rhs.get()) ? true   // object pointers are equal
+             : *lhs == *rhs             ? true   // object contents are equal
+                                        : false;             // none of the above
     }
 }  // namespace core::types

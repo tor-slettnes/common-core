@@ -8,7 +8,7 @@
 ### Modules within package
 from .messagewriter import MessageWriter
 from ..basic import Publisher
-from cc.protobuf.signalstore import SignalStore
+from cc.protobuf.signal import SignalStore
 
 class SignalWriter (MessageWriter):
     '''
