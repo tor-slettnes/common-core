@@ -73,6 +73,11 @@ namespace core::types
         const Value &get(uint index, const Value &fallback = {}) const noexcept;
         const Value &get(int index, const Value &fallback = {}) const noexcept;
 
+        /// Get the value at the specified index, or a default value if not in range
+        std::optional<Value> try_get(const Tag &tag, bool ignoreCase) const noexcept;
+        std::optional<Value> try_get(uint index) const noexcept;
+        std::optional<Value> try_get(int index) const noexcept;
+
         /// Return the tag for each item
         TagList tags() const noexcept;
 
@@ -178,7 +183,7 @@ namespace core::types
     TaggedValueList &operator<<(TaggedValueList &tvlist, const T &inputs)
     {
         tvlist.reserve(tvlist.size() + inputs.size());
-        for (const auto &[tag, value]: inputs)
+        for (const auto &[tag, value] : inputs)
         {
             auto &tv = tvlist.emplace_back();
             tv.first = tag;
@@ -186,6 +191,5 @@ namespace core::types
         }
         return tvlist;
     }
-
 
 }  // namespace core::types

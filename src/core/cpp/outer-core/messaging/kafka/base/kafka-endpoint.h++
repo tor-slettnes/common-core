@@ -23,7 +23,8 @@ namespace core::kafka
     protected:
         Endpoint(const std::string &endpoint_type,
                  const std::string &service_name,
-                 const std::string &server_address = {});
+                 const std::string &profile_name,
+                 const core::types::KeyValueMap &settings);
 
         ~Endpoint();
 
@@ -32,7 +33,7 @@ namespace core::kafka
         void deinitialize() override;
 
     protected:
-        void init_conf();
+        void init_conf(const core::types::KeyValueMap &settings);
         void init_logging();
         void set_server_address(const std::string &server_address);
 
@@ -50,11 +51,11 @@ namespace core::kafka
             const std::string &name) const;
 
     protected:
-        static void check(RdKafka::ErrorCode code);
-        static void check(RdKafka::Conf::ConfResult result,
-                          const std::string &key,
-                          const std::string &value,
-                          const std::string &errstr);
+        void check(RdKafka::ErrorCode code) const;
+        void check(RdKafka::Conf::ConfResult result,
+                   const std::string &key,
+                   const std::string &value,
+                   const std::string &errstr) const;
 
     private:
         template <class T>

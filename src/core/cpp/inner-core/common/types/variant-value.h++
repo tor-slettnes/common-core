@@ -145,11 +145,34 @@ namespace core::types
         Value &operator[](const uint index);
         Value &operator[](const int index);
 
-        const Value &front(const Value &fallback = {}) const noexcept;
-        const Value &back(const Value &fallback = {}) const noexcept;
-        const Value &get(const std::string &key, const Value &fallback = {}) const noexcept;
-        const Value &get(const uint index, const Value &fallback = {}) const noexcept;
-        const Value &get(const int index, const Value &fallback = {}) const noexcept;
+        const Value &front(
+            const Value &fallback = {}) const noexcept;
+
+        const Value &back(
+            const Value &fallback = {}) const noexcept;
+
+        const Value &get(
+            const std::string &key,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
+
+        const Value &get(
+            const uint index,
+            const Value &fallback = {}) const noexcept;
+
+        const Value &get(
+            const int index,
+            const Value &fallback = {}) const noexcept;
+
+        std::optional<Value> try_get(
+            const std::string &key,
+            bool ignoreCase = false) const noexcept;
+
+        std::optional<Value> try_get(
+            const uint index) const noexcept;
+
+        std::optional<Value> try_get(
+            const int index) const noexcept;
 
         ValueListPtr get_valuelist() const noexcept;
         TaggedValueListPtr get_tvlist() const noexcept;

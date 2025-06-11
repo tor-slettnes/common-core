@@ -40,7 +40,8 @@ namespace core::messaging
         ///     e.g. look up communication parameters between peers.
         Endpoint(const std::string &messaging_flavor,
                  const std::string &endpoint_type,
-                 const std::string &channel_name);
+                 const std::string &channel_name,
+                 const std::string &profile_name = {});
         virtual ~Endpoint();
 
     public:
@@ -50,6 +51,7 @@ namespace core::messaging
         virtual std::string messaging_flavor() const;
         virtual std::string endpoint_type() const;
         virtual std::string channel_name() const;
+        virtual std::string profile_name() const;
 
         std::shared_ptr<SettingsStore> settings() const;
         types::Value setting(const std::string &key,
@@ -66,6 +68,7 @@ namespace core::messaging
         std::string endpoint_type_;
         std::string channel_name_;
         std::string signal_handle_;
+        std::string profile_name_;
         std::shared_ptr<SettingsStore> settings_;
     };
 }  // namespace core::messaging

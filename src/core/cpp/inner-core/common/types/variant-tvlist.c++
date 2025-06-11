@@ -149,7 +149,6 @@ namespace core::types
                                       const Value &fallback,
                                       bool ignoreCase) const noexcept
     {
-        // auto lck = std::lock_guard(this->mtx);
         if (auto it = this->find(tag, ignoreCase); it != this->end())
         {
             return it->second;
@@ -177,12 +176,50 @@ namespace core::types
         try
         {
             return index >= 0
-                       ? this->at(index).second
-                       : this->at(this->size() + index).second;
+                     ? this->at(index).second
+                     : this->at(this->size() + index).second;
         }
         catch (const std::out_of_range &)
         {
             return fallback;
+        }
+    }
+
+    std::optional<Value> TaggedValueList::try_get(const Tag &tag, bool ignoreCase) const noexcept
+    {
+        if (auto it = this->find(tag, ignoreCase); it != this->end())
+        {
+            return it->second;
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::optional<Value> TaggedValueList::try_get(uint index) const noexcept
+    {
+        try
+        {
+            return this->at(index).second;
+        }
+        catch (const std::out_of_range &)
+        {
+            return {};
+        }
+    }
+
+    std::optional<Value> TaggedValueList::try_get(int index) const noexcept
+    {
+        try
+        {
+            return index >= 0
+                     ? this->at(index).second
+                     : this->at(this->size() + index).second;
+        }
+        catch (const std::out_of_range &)
+        {
+            return {};
         }
     }
 

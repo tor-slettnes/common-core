@@ -13,18 +13,12 @@ namespace core::kafka
 {
     Endpoint::Endpoint(const std::string &endpoint_type,
                        const std::string &service_name,
-                       const std::string &server_address)
-
-        : Super("Kafka", endpoint_type, service_name),
+                       const std::string &profile_name,
+                       const core::types::KeyValueMap &settings)
+        : Super("Kafka", endpoint_type, service_name, profile_name),
           conf_(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL))
     {
-        this->init_conf();
-
-        if (!server_address.empty())
-        {
-            this->set_server_address(server_address);
-        }
-
+        this->init_conf(settings);
         this->init_logging();
     }
 
@@ -48,14 +42,11 @@ namespace core::kafka
         Super::deinitialize();
     }
 
-    void Endpoint::init_conf()
+    void Endpoint::init_conf(const core::types::KeyValueMap &settings)
     {
-        if (auto kvmap = this->setting("conf").get_kvmap())
+        for (const auto &[key, value] : settings)
         {
-            for (const auto &[key, value] : *kvmap)
-            {
-                this->set_config(key, value.as_string(), value.as_string());
-            }
+            this->set_config(key, value.as_string(), value.as_string());
         }
     }
 
@@ -110,7 +101,7 @@ namespace core::kafka
         return nullptr;
     }
 
-    void Endpoint::check(RdKafka::ErrorCode code)
+    void Endpoint::check(RdKafka::ErrorCode code) const
     {
         if (code != RdKafka::ERR_NO_ERROR)
         {
@@ -124,25 +115,28 @@ namespace core::kafka
     void Endpoint::check(RdKafka::Conf::ConfResult result,
                          const std::string &key,
                          const std::string &value,
-                         const std::string &errstr)
+                         const std::string &errstr) const
     {
         switch (result)
         {
         case RdKafka::Conf::CONF_OK:
-            logf_info("Applied Kafka config setting: %s = %r",
+            logf_info("Applied Kafka profile %r setting: %s = %r",
+                      this->profile_name(),
                       key,
                       value);
             break;
 
         case RdKafka::Conf::CONF_INVALID:
-            logf_error("Invalid Kakfa config setting: %s = %r: %s",
+            logf_error("Invalid Kakfa profile %r setting: %s = %r: %s",
+                       this->profile_name(),
                        key,
                        value,
                        errstr);
             break;
 
         case RdKafka::Conf::CONF_UNKNOWN:
-            logf_error("Unknown Kakfa config setting: %s = %r: %s",
+            logf_error("Unknown Kakfa profile %r setting: %s = %r: %s",
+                       this->profile_name(),
                        key,
                        value,
                        errstr);

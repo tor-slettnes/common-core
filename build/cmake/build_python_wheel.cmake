@@ -413,7 +413,7 @@ function(cc_add_python_wheel TARGET)
 
       cc_add_python_wheel_install_hook(
         VENV_PATH "${arg_INSTALL_VENV}"
-        WHEEL_NAME "${PACKAGE_NAME}"
+        WHEEL_NAME "${package_name_main}"
         WHEEL_INSTALL_DIRS "${wheel_install_dirs}"
         WHEEL_VERSION "${VERSION}"
         SYMLINKS ${executables}

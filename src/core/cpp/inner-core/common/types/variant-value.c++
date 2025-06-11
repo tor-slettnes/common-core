@@ -200,8 +200,8 @@ namespace core::types
     ValueType Value::type() const noexcept
     {
         return this->valueless_by_exception()
-                   ? ValueType::NONE
-                   : static_cast<ValueType>(this->index());
+                 ? ValueType::NONE
+                 : static_cast<ValueType>(this->index());
     }
 
     std::string Value::type_name() const
@@ -977,15 +977,18 @@ namespace core::types
         }
     }
 
-    const Value &Value::get(const std::string &key, const Value &fallback) const noexcept
+    const Value &Value::get(
+        const std::string &key,
+        const Value &fallback,
+        bool ignoreCase) const noexcept
     {
         switch (this->type())
         {
         case ValueType::KVMAP:
-            return std::get<KeyValueMapPtr>(*this)->get(key, fallback);
+            return std::get<KeyValueMapPtr>(*this)->get(key, fallback, ignoreCase);
 
         case ValueType::TVLIST:
-            return std::get<TaggedValueListPtr>(*this)->get(key, fallback);
+            return std::get<TaggedValueListPtr>(*this)->get(key, fallback, ignoreCase);
 
         default:
             return fallback;
@@ -1019,6 +1022,51 @@ namespace core::types
 
         default:
             return fallback;
+        }
+    }
+
+    std::optional<Value> Value::try_get(const std::string &key, bool ignoreCase) const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::KVMAP:
+            return std::get<KeyValueMapPtr>(*this)->try_get(key, ignoreCase);
+
+        case ValueType::TVLIST:
+            return std::get<TaggedValueListPtr>(*this)->try_get(key, ignoreCase);
+
+        default:
+            return {};
+        }
+    }
+
+    std::optional<Value> Value::try_get(const uint index) const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::VALUELIST:
+            return std::get<ValueListPtr>(*this)->try_get(index);
+
+        case ValueType::TVLIST:
+            return std::get<TaggedValueListPtr>(*this)->try_get(index);
+
+        default:
+            return {};
+        }
+    }
+
+    std::optional<Value> Value::try_get(const int index) const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::VALUELIST:
+            return std::get<ValueListPtr>(*this)->try_get(index);
+
+        case ValueType::TVLIST:
+            return std::get<TaggedValueListPtr>(*this)->try_get(index);
+
+        default:
+            return {};
         }
     }
 

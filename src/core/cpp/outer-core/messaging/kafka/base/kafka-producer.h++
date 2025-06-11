@@ -8,7 +8,6 @@
 #pragma once
 #include "kafka-endpoint.h++"
 
-
 #include <thread>
 
 namespace core::kafka
@@ -23,7 +22,8 @@ namespace core::kafka
 
     protected:
         Producer(const std::string &service_name,
-                 const std::string &server_address = {});
+                 const std::string &profile_name = {},
+                 const core::types::KeyValueMap &settings = {});
         ~Producer();
 
     private:

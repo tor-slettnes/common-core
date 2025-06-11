@@ -160,7 +160,10 @@ namespace core
 
     void SettingsStore::save(bool delta_only)
     {
-        this->save_to(this->filename(), delta_only);
+        if (this->loaded())
+        {
+            this->save_to(this->filename(), delta_only);
+        }
     }
 
     void SettingsStore::save_to(const fs::path &filename, bool delta_only) const
@@ -176,9 +179,9 @@ namespace core
         if (delta_only && this->composite_)
         {
             json::writer.write_file(
-                path,                                            // path
-                this->recursive_delta(this->default_settings()), // value
-                true);                                           // pretty
+                path,                                             // path
+                this->recursive_delta(this->default_settings()),  // value
+                true);                                            // pretty
         }
         else
         {
@@ -279,4 +282,4 @@ namespace core
         return result;
     }
 
-} // namespace core
+}  // namespace core

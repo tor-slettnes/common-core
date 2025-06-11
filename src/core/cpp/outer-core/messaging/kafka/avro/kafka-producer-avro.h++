@@ -18,7 +18,8 @@ namespace core::kafka
 
     protected:
         AvroProducer(const std::string &service_name,
-                     const std::string &server_address = {});
+                     const std::string &profile_name = {},
+                     const core::types::KeyValueMap settings = {});
 
     public:
         using Super::produce;

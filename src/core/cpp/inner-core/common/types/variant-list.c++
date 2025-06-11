@@ -43,6 +43,7 @@ namespace core::types
         {
             return fallback;
         }
+
     }
 
     const Value &ValueList::get(int index, const Value &fallback) const noexcept
@@ -56,6 +57,32 @@ namespace core::types
         catch (const std::out_of_range &)
         {
             return fallback;
+        }
+    }
+
+    std::optional<Value> ValueList::try_get(uint index) const noexcept
+    {
+        try
+        {
+            return this->at(index);
+        }
+        catch (const std::out_of_range &)
+        {
+            return {};
+        }
+    }
+
+    std::optional<Value> ValueList::try_get(int index) const noexcept
+    {
+        try
+        {
+            return index >= 0
+                       ? this->at(index)
+                       : this->at(this->size() + index);
+        }
+        catch (const std::out_of_range &)
+        {
+            return {};
         }
     }
 

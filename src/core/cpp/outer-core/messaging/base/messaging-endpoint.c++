@@ -21,10 +21,12 @@ namespace core::messaging
 
     Endpoint::Endpoint(const std::string &messaging_flavor,
                        const std::string &endpoint_type,
-                       const std::string &channel_name)
+                       const std::string &channel_name,
+                       const std::string &profile_name)
         : messaging_flavor_(messaging_flavor),
           endpoint_type_(endpoint_type),
           channel_name_(channel_name),
+          profile_name_(profile_name),
           signal_handle_(messaging_flavor + "/" + endpoint_type + "/" + channel_name),
           settings_(SettingsStore::create_shared())
     {
@@ -63,12 +65,18 @@ namespace core::messaging
         return this->channel_name_;
     }
 
+    std::string Endpoint::profile_name() const
+    {
+        return this->profile_name_;
+    }
+
     std::shared_ptr<SettingsStore> Endpoint::settings() const
     {
         if (!this->settings_->loaded())
         {
             for (const std::string &component : {
                      this->channel_name(),
+                     std::string(PRODUCT_NAME),
                      std::string(PROJECT_NAME),
                      "common"s,
                  })
@@ -86,18 +94,21 @@ namespace core::messaging
     types::Value Endpoint::setting(const std::string &key,
                                    const types::Value &fallback) const
     {
-        if (auto value = this->settings()->get(this->channel_name()).get(key))
+        std::string profile = !this->profile_name().empty()
+                                ? this->profile_name()
+                                : this->channel_name();
+
+        if (auto opt_value = this->settings()->get(profile).try_get(key))
         {
-            return value;
+            return opt_value.value();
         }
-        else if (auto value = this->settings()->get("_default_").get(key))
+
+        if (auto opt_value = this->settings()->get("_default_").try_get(key))
         {
-            return value;
+            return opt_value.value();
         }
-        else
-        {
-            return fallback;
-        }
+
+        return fallback;
     }
 
     std::optional<fs::path> Endpoint::settings_file(const std::string &flavor) const

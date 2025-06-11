@@ -10,8 +10,9 @@
 namespace core::kafka
 {
     AvroProducer::AvroProducer(const std::string &service_name,
-                               const std::string &server_address)
-        : Producer(service_name, server_address)
+                               const std::string &profile_name,
+                               const core::types::KeyValueMap settings)
+        : Producer(service_name, profile_name, settings)
     {
     }
 

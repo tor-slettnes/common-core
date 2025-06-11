@@ -27,6 +27,21 @@ namespace core::types
         }
     }
 
+    std::optional<Value> KeyValueMap::try_get(
+        const std::string &key,
+        bool ignoreCase) const noexcept
+    {
+        if (const Value *value = this->get_ptr(key, ignoreCase))
+        {
+            return *value;
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+
     const Value *KeyValueMap::get_ptr(
         const std::string &key,
         bool ignoreCase) const noexcept
