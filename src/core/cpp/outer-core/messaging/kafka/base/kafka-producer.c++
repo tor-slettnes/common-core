@@ -112,7 +112,7 @@ namespace core::kafka
         }
 
         RdKafka::Headers *headers_ = RdKafka::Headers::create();
-        for (const auto &[key, value]: headers)
+        for (const auto &[key, value] : headers)
         {
             headers_->add(key, value);
         }
@@ -129,13 +129,16 @@ namespace core::kafka
             headers_,                                           // headers
             nullptr);                                           // msg_opaque
 
-
         if (error_code != RdKafka::ERR_NO_ERROR)
         {
             // Per Kafka doc: The \p headers will be freed/deleted if the
             // produce() call succeeds, or left untouched if produce() fails.
             delete headers_;
-            this->check(error_code);
+            this->check(error_code,
+                        {
+                            {"profile", this->profile_name()},
+                            {"topic", topic},
+                        });
         }
     }
 

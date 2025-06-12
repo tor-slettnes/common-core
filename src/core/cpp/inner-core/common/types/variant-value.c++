@@ -712,6 +712,13 @@ namespace core::types
 
     dt::TimePoint Value::as_timepoint(const dt::TimePoint &fallback) const noexcept
     {
+        return this->as_timepoint(0.0, true, fallback);
+    }
+
+    dt::TimePoint Value::as_timepoint(double multiplier,
+                                      bool assume_local,
+                                      const dt::TimePoint &fallback) const noexcept
+    {
         switch (this->type())
         {
         case ValueType::NONE:
@@ -724,12 +731,12 @@ namespace core::types
             return this->get<dt::TimePoint>();
 
         case ValueType::STRING:
-            return dt::try_to_timepoint(this->get<std::string>()).value_or(fallback);
+            return dt::to_timepoint(this->get<std::string>(), assume_local, fallback);
 
         case ValueType::UINT:
         case ValueType::SINT:
         case ValueType::REAL:
-            return dt::scalar_to_timepoint(this->as_double());
+            return dt::scalar_to_timepoint(this->as_double(), multiplier);
 
         case ValueType::BYTEVECTOR:
             try
@@ -755,11 +762,9 @@ namespace core::types
 
         case ValueType::REAL:
         case ValueType::COMPLEX:
-            return dt::to_duration(this->as_real());
-
         case ValueType::UINT:
         case ValueType::SINT:
-            return dt::to_duration(this->numeric_cast<time_t>());
+            return dt::to_duration(this->as_real());
 
         case ValueType::STRING:
             return dt::to_duration(this->get<std::string>());
@@ -782,6 +787,22 @@ namespace core::types
 
         default:
             return fallback;
+        }
+    }
+
+    dt::Duration Value::as_duration(double multiplier,
+                                    const dt::Duration &fallback) const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::REAL:
+        case ValueType::COMPLEX:
+        case ValueType::UINT:
+        case ValueType::SINT:
+            return dt::to_duration(this->as_real(), multiplier);
+
+        default:
+            return this->as_duration(fallback);
         }
     }
 

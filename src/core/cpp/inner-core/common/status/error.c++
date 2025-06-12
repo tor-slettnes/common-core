@@ -64,12 +64,20 @@ namespace core::status
         return *this;
     }
 
-    bool Error::operator==(const Error &other) const noexcept
+    bool Error::equivalent(const Event &other) const noexcept
     {
-        return Super::operator==(other) &&
-               (this->domain() == other.domain()) &&
-               (this->code() == other.code()) &&
-               (this->symbol() == other.symbol());
+        if (auto *that = dynamic_cast<const Error*>(&other))
+        {
+            return Super::equivalent(other) &&
+                (this->domain() == that->domain()) &&
+                (this->code() == that->code()) &&
+                (this->symbol() == that->symbol()) &&
+                (this->contract_id() == that->contract_id());
+        }
+        else
+        {
+            return false;
+        }
     }
 
     std::string Error::contract_id() const noexcept

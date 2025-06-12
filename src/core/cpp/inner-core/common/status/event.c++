@@ -57,7 +57,12 @@ namespace core::status
     bool Event::operator==(const Event &other) const noexcept
     {
         return Super::operator==(other) &&
-               (this->text() == other.text()) &&
+               this->equivalent(other);
+    }
+
+    bool Event::equivalent(const Event &other) const noexcept
+    {
+        return (this->text() == other.text()) &&
                (this->level() == other.level()) &&
                (this->origin() == other.origin());
     }

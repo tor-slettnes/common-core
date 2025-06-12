@@ -20,11 +20,12 @@ namespace core::zmq
         using Super = status::Error;
 
     public:
-        using status::Error::Event;
+        using status::Error::Error;
 
         ProtoBufError(const cc::rr::StatusCode &code,
-                      const core::status::Error &event);
+                      const core::status::Error &error);
 
+        bool equivalent(const Event &other) const noexcept override;
         cc::rr::StatusCode status_code() const;
         status::Domain domain() const noexcept override;
         std::exception_ptr as_application_error() const override;

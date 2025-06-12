@@ -101,14 +101,14 @@ namespace core::kafka
         return nullptr;
     }
 
-    void Endpoint::check(RdKafka::ErrorCode code) const
+    void Endpoint::check(RdKafka::ErrorCode code,
+                         const core::types::KeyValueMap &attributes) const
     {
         if (code != RdKafka::ERR_NO_ERROR)
         {
-            throwf(exception::Unavailable,
-                   "Kafka error %d: %s",
-                   code,
-                   RdKafka::err2str(code));
+            throwf_args(exception::RuntimeError,
+                        ("Kafka error %d: %s", code, RdKafka::err2str(code)),
+                        attributes);
         }
     }
 

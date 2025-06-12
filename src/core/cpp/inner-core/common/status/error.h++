@@ -52,9 +52,17 @@ namespace core::status
 
         Error &operator=(Error &&other) noexcept;
         Error &operator=(const Error &other) noexcept;
-        bool operator==(const Error &other) const noexcept;
+        bool equivalent(const Event &other) const noexcept override;
 
-    public:
+        /// @brief
+        ///     Determine if this Status object is fundamentally equivalent to another.
+        /// @param[in]
+        ///     Other event/Status object with which this is to be compared
+        /// @description
+        ///     Equivalence is based on object attributes that are deemed
+        ///     sufficient to distinghish a repeated instance of this from
+        ///     another type of status.  For example, status codes and texts are
+        ///     compared, but not timestamps.
         std::string contract_id() const noexcept override;
         virtual Domain domain() const noexcept;
         virtual Code code() const noexcept;

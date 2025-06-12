@@ -130,7 +130,12 @@ namespace core::types
         std::string as_string() const noexcept;
         ByteVector as_bytevector(const ByteVector &fallback = {}) const noexcept;
         dt::TimePoint as_timepoint(const dt::TimePoint &fallback = {}) const noexcept;
+        dt::TimePoint as_timepoint(double multiplier,
+                                   bool assume_local = true,
+                                   const dt::TimePoint &fallback = {}) const noexcept;
         dt::Duration as_duration(const dt::Duration &fallback = {}) const noexcept;
+        dt::Duration as_duration(double multiplier,
+                                 const dt::Duration &fallback = {}) const noexcept;
 
         ValueList as_valuelist() const noexcept;
         ValueList as_valuelist(const ValueList &fallback) const noexcept;

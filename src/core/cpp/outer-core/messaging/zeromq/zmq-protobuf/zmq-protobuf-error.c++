@@ -17,10 +17,23 @@
 namespace core::zmq
 {
     ProtoBufError::ProtoBufError(const cc::rr::StatusCode &code,
-                                 const core::status::Error &event)
-        : Super(event),
+                                 const core::status::Error &error)
+        : Super(error),
           status_code_(code)
     {
+    }
+
+    bool ProtoBufError::equivalent(const Event &other) const noexcept
+    {
+        if (auto *that = dynamic_cast<const ProtoBufError*>(&other))
+        {
+            return Super::equivalent(other) &&
+                (this->status_code() == that->status_code());
+        }
+        else
+        {
+            return false;
+        }
     }
 
     cc::rr::StatusCode ProtoBufError::status_code() const

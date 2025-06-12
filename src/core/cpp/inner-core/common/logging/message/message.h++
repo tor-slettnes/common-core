@@ -89,9 +89,10 @@ namespace core::logging
         // Copy constructor to ensure we obtain values from derived classes
         Message(const Message &other);
 
+
         Message &operator=(Message &&other) noexcept;
         Message &operator=(const Message &other) noexcept;
-        bool operator==(const Message &other) const noexcept;
+        bool equivalent(const Event &other) const noexcept override;
 
         /// Will this message be accepted by at least one available sink?
         virtual bool is_applicable() const noexcept;

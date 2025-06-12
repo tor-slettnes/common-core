@@ -48,7 +48,9 @@ namespace core::status
         Event &operator=(const Event &other) noexcept;
         bool operator==(const Event &other) const noexcept;
 
+
     public:
+        virtual bool equivalent(const Event &other) const noexcept;
         virtual std::string text() const noexcept;
         virtual Level level() const noexcept;
         virtual std::string origin() const noexcept;

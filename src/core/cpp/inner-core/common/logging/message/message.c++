@@ -77,15 +77,22 @@ namespace core::logging
         return *this;
     }
 
-    bool Message::operator==(const Message &other) const noexcept
+    bool Message::equivalent(const Event &other) const noexcept
     {
-        return Super::operator==(other) &&
-               (this->scopename() == other.scopename()) &&
-               (this->path() == other.path()) &&
-               (this->lineno() == other.lineno()) &&
-               (this->function() == other.function()) &&
-               (this->thread_id() == other.thread_id()) &&
-               (this->host() == other.host());
+        if (auto *that = dynamic_cast<const Message*>(&other))
+        {
+            return Super::equivalent(other) &&
+               (this->scopename() == that->scopename()) &&
+               (this->path() == that->path()) &&
+               (this->lineno() == that->lineno()) &&
+               (this->function() == that->function()) &&
+               (this->thread_id() == that->thread_id()) &&
+               (this->host() == that->host());
+        }
+        else
+        {
+            return false;
+        }
     }
 
     std::string Message::class_name() const noexcept

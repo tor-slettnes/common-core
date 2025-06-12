@@ -114,6 +114,19 @@ namespace core::grpc
     {
     }
 
+    bool Status::equivalent(const Event &other) const noexcept
+    {
+        if (auto *that = dynamic_cast<const Status*>(&other))
+        {
+            return Super::equivalent(other) &&
+                (this->status_code() == that->status_code());
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     ::grpc::StatusCode Status::status_code() const noexcept
     {
         return this->error_code();

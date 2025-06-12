@@ -384,23 +384,39 @@ namespace core
 
         TimePoint to_timepoint(
             const std::string_view &s,
-            const std::optional<bool> &local = {},
+            bool assume_local = true,
             const TimePoint &fallback = {});
 
         TimePoint to_timepoint(
             const std::string_view &s,
             const std::string &format,
-            const std::optional<bool> &local = {},
+            bool assume_local = true,
             const TimePoint &fallback = {});
+
+        // @brief
+        //    Convert a ISO-formatted string (yyyy-mm-dd?hh:mm:ss[.fraction][Z]) to a timepoint.
+        // @param[in] input
+        //    ISO 10646 formatted input string.
+        // @param[in] assume_local
+        //    Assume local time if the trailing `Z'` is missing.
 
         std::optional<TimePoint> try_to_timepoint(
             const std::string_view &input,
-            const std::optional<bool> &local = {});
+            bool assume_local = true);
+
+        // @brief
+        //    Convert a string with custom formatting to a timepiont.
+        // @param[in] input
+        //    Time string formatted according to `format`
+        // @param[in] format
+        //    Conversion Format.  See `man strptime` for details.
+        // @param[in] assume_local
+        //    Assume local time unless the input string ends in `Z`.
 
         std::optional<TimePoint> try_to_timepoint(
-            const std::string_view &s,
+            const std::string_view &input,
             const std::string &format,
-            const std::optional<bool> &local = {});
+            bool assume_local = true);
 
         //--------------------------------------------------------------------------
         // Zone alignment and conversions

@@ -649,24 +649,24 @@ namespace core
 
         TimePoint to_timepoint(
             const std::string_view &input,
-            const std::optional<bool> &local,
+            bool assume_local,
             const TimePoint &fallback)
         {
-            return try_to_timepoint(input, local).value_or(fallback);
+            return try_to_timepoint(input, assume_local).value_or(fallback);
         }
 
         TimePoint to_timepoint(
             const std::string_view &input,
             const std::string &format,
-            const std::optional<bool> &local,
+            bool assume_local,
             const TimePoint &fallback)
         {
-            return try_to_timepoint(input, format, local).value_or(fallback);
+            return try_to_timepoint(input, format, assume_local).value_or(fallback);
         }
 
         std::optional<TimePoint> try_to_timepoint(
             const std::string_view &input,
-            const std::optional<bool> &local)
+            bool assume_local)
         {
             static const std::regex rx(
                 "(\\d{4})-(\\d{2})-(\\d{2}).(\\d{2}):(\\d{2}):(\\d{2})(\\.\\d+)?(Z)?");
@@ -675,11 +675,9 @@ namespace core
             if (std::regex_match(input.begin(), input.end(), match, rx))
             {
                 std::optional<Duration> opt_zone_offset;
-                bool utc = local.has_value() ? !local.value()
-                                             : match.length(8) > 0;
-                if (utc)
+                if ((match.length(8) > 0) || !assume_local)
                 {
-                    // Zulu suffix; let's specify "zero offset".
+                    // Time is provided in UTC -> zero offset.
                     opt_zone_offset = Duration::zero();
                 }
 
@@ -709,12 +707,12 @@ namespace core
         std::optional<TimePoint> try_to_timepoint(
             const std::string_view &input,
             const std::string &format,
-            const std::optional<bool> &local)
+            bool assume_local)
         {
             std::tm dt = {};
             if (const char *end = ::strptime(input.data(), format.c_str(), &dt))
             {
-                return to_timepoint(dt, local.value_or(*end != 'Z'));
+                return to_timepoint(dt, (*end != 'Z') && assume_local);
             }
             else
             {

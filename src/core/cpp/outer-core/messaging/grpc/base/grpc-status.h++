@@ -120,6 +120,17 @@ namespace core::grpc
                const types::KeyValueMap &attributes = {});
 
         /// @brief
+        ///     Determine if this Status object is fundamentally equivalent to another.
+        /// @param[in]
+        ///     Other event/Status object with which this is to be compared
+        /// @description
+        ///     Equivalence is based on object attributes that are deemed
+        ///     sufficient to distinghish a repeated instance of this from
+        ///     another type of status.  For example, status codes and texts are
+        ///     compared, but not timestamps.
+        bool equivalent(const Event &other) const noexcept override;
+
+        /// @brief
         ///     Get the gRPC status code that was provided in the constructor.
         /// @return
         ///     gRPC status code

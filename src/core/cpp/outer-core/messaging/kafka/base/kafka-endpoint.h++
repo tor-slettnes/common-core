@@ -51,7 +51,9 @@ namespace core::kafka
             const std::string &name) const;
 
     protected:
-        void check(RdKafka::ErrorCode code) const;
+        void check(RdKafka::ErrorCode code,
+                   const core::types::KeyValueMap &attributes = {}) const;
+
         void check(RdKafka::Conf::ConfResult result,
                    const std::string &key,
                    const std::string &value,
