@@ -77,6 +77,6 @@ namespace core::platform
     inline TaskSet init_tasks;
     inline TaskSet exit_tasks;
 
-    extern core::signal::VoidSignal signal_startup;
-    extern core::signal::VoidSignal signal_shutdown;
+    extern core::signal::AsyncVoidSignal signal_startup;
+    extern core::signal::AsyncVoidSignal signal_shutdown;
 }  // namespace core::platform

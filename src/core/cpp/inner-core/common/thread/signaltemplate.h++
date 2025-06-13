@@ -108,13 +108,7 @@ namespace core::signal
         ///     Emit a signal to registered receivers
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t emit();
-
-        /// @brief
-        ///     Emit a signal to registered receivers concurrently in separate threads
-        /// @return
-        ///     The number of connected slots to which the signal was emitted
-        std::size_t emit_async();
+        virtual std::size_t emit();
 
         /// @brief
         ///     Check whether signal has been emitted since its creation
@@ -131,10 +125,26 @@ namespace core::signal
     protected:
         bool callback(const std::string &receiver, const Slot &method);
 
-    private:
+    protected:
         bool emitted_;
         std::unordered_map<std::string, Slot> slots_;
     };
+
+
+    //==========================================================================
+    /// @class AsyncVoidSignal
+    /// @brief Signal without data, emitted in parallel to all slots
+
+    class AsyncVoidSignal : public VoidSignal
+    {
+        using Super = VoidSignal;
+
+    public:
+        using Super::Super;
+
+        std::size_t emit() override;
+    };
+
 
     //==========================================================================
     /// @class DataSignal

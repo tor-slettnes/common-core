@@ -115,21 +115,6 @@ namespace core::signal
         return count;
     }
 
-    std::size_t VoidSignal::emit_async()
-    {
-        Futures futures;
-
-        this->mtx_.lock();
-        futures.reserve(this->slots_.size());
-        for (const auto &[receiver, method] : this->slots_)
-        {
-            futures.push_back(std::async(&VoidSignal::callback, this, receiver, method));
-        }
-        this->emitted_ = true;
-        this->mtx_.unlock();
-        return this->collect_futures(futures);
-    }
-
     bool VoidSignal::emitted() const
     {
         return this->emitted_;
@@ -144,5 +129,27 @@ namespace core::signal
     {
         return this->safe_invoke(str::format("%s()", receiver), method);
     }
+
+
+    //==========================================================================
+    /// @class AsyncVoidSignal
+    /// @brief Signal without data, emitted in parallel to all slots
+
+
+    std::size_t AsyncVoidSignal::emit()
+    {
+        Futures futures;
+
+        this->mtx_.lock();
+        futures.reserve(this->slots_.size());
+        for (const auto &[receiver, method] : this->slots_)
+        {
+            futures.push_back(std::async(&AsyncVoidSignal::callback, this, receiver, method));
+        }
+        this->emitted_ = true;
+        this->mtx_.unlock();
+        return this->collect_futures(futures);
+    }
+
 
 }  // namespace core::signal
