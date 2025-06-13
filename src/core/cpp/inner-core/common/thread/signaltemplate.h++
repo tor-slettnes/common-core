@@ -5,13 +5,12 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-
 #pragma once
 #include "string/format.h++"
 
 #include <string>
-#include <functional>
 #include <future>
+#include <functional>
 #include <optional>
 #include <ostream>
 #include <unordered_map>
@@ -24,7 +23,7 @@ namespace core::signal
     // Types
 
     using Handle = std::string;
-    using Futures = std::vector<std::future<void>>;
+    using Futures = std::vector<std::future<bool>>;
 
     // Synchronized to `picarro.protobuf.signal.MappingAction` in `signal.proto`.
     // We do not use that here, since ProtoBuf support is optional, not part of
@@ -57,14 +56,13 @@ namespace core::signal
         void set_caching(bool caching);
         std::string name() const;
         virtual void disconnect(const Handle &handle) = 0;
-        virtual size_t connection_count() const = 0;
+        virtual std::size_t connection_count() const = 0;
 
     protected:
         Handle unique_handle() const;
-        void safe_invoke(const std::string &receiver,
+        bool safe_invoke(const std::string &receiver,
                          const std::function<void()> &f);
-
-        size_t collect_futures(Futures &futures);
+        std::size_t collect_futures(Futures &futures);
 
     protected:
         std::recursive_mutex mtx_;
@@ -110,7 +108,13 @@ namespace core::signal
         ///     Emit a signal to registered receivers
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        size_t emit();
+        std::size_t emit();
+
+        /// @brief
+        ///     Emit a signal to registered receivers concurrently in separate threads
+        /// @return
+        ///     The number of connected slots to which the signal was emitted
+        std::size_t emit_async();
 
         /// @brief
         ///     Check whether signal has been emitted since its creation
@@ -122,10 +126,10 @@ namespace core::signal
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
-        size_t connection_count() const override;
+        std::size_t connection_count() const override;
 
     protected:
-        void callback(const std::string &receiver, const Slot &method);
+        bool callback(const std::string &receiver, const Slot &method);
 
     private:
         bool emitted_;
@@ -185,7 +189,7 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        size_t emit(const DataType &value);
+        std::size_t emit(const DataType &value);
 
         /// @brief
         ///     Emit signal only if the current value differs from the previous one.
@@ -195,7 +199,7 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        size_t emit_if_changed(const DataType &value);
+        std::size_t emit_if_changed(const DataType &value);
 
         /// @brief
         ///    Get the current cached value, if any.
@@ -221,17 +225,17 @@ namespace core::signal
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
-        size_t connection_count() const override;
+        std::size_t connection_count() const override;
 
     protected:
         virtual void emit_cached_to(const std::string &handle,
                                     const Slot &slot);
 
-        Futures sendall(const DataType &value);
+        std::size_t sendall(const DataType &value);
 
         void update_cache(const DataType &value);
 
-        void callback(const std::string &receiver,
+        bool callback(const std::string &receiver,
                       const Slot &method,
                       const DataType &value);
 
@@ -302,7 +306,7 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        size_t emit(MappingAction change, const KeyType &key, const DataType &value);
+        std::size_t emit(MappingAction change, const KeyType &key, const DataType &value);
 
         /// @brief
         ///     Emit a signal to registered receivers of the provided data type.
@@ -312,7 +316,7 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        size_t emit(const KeyType &key, const DataType &value);
+        std::size_t emit(const KeyType &key, const DataType &value);
 
         /// @brief
         ///     Emit signal only if the current value differs from the previous one.
@@ -324,7 +328,7 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        size_t emit_if_changed(const KeyType &key, const DataType &value);
+        std::size_t emit_if_changed(const KeyType &key, const DataType &value);
 
         /// @brief
         ///     Emit a REMOVED signal.
@@ -334,17 +338,17 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        size_t clear(const KeyType &key, const DataType &value = {});
+        std::size_t clear(const KeyType &key, const DataType &value = {});
 
         /// @brief
         ///     Emit a REMOVED signal if \p key is still in in the signal cache
         /// @param[in] key
         ///     Mapping key.
-        size_t clear_if_cached(const KeyType &key);
+        std::size_t clear_if_cached(const KeyType &key);
 
         /// @brief
         ///     Clean the cache, emitting a REMOVED signal for every item in it.
-        size_t clear_all_cached();
+        std::size_t clear_all_cached();
 
         /// @brief
         ///    Get the current cached value, if any.
@@ -383,13 +387,13 @@ namespace core::signal
         ///    Obtain number cache size
         /// @return
         ///    Number of key/value pairs in cahe
-        size_t cache_size();
+        std::size_t cache_size();
 
         /// @brief
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
-        size_t connection_count() const override;
+        std::size_t connection_count() const override;
 
         /// @brief
         ///     Update cache, emit deltas as addition/update/removal signals
@@ -398,7 +402,7 @@ namespace core::signal
         /// @return
         ///     The number of signals emitted
         template <class MapType>
-        size_t synchronize(const MapType &update);
+        std::size_t synchronize(const MapType &update);
 
     protected:
         void update_cache(const KeyType &key, const DataType &value);
@@ -406,11 +410,11 @@ namespace core::signal
         void emit_cached_to(const std::string &handle,
                             const Slot &callback);
 
-        Futures sendall(MappingAction change,
-                        const KeyType &key,
-                        const DataType &value = {});
+        std::size_t sendall(MappingAction change,
+                            const KeyType &key,
+                            const DataType &value = {});
 
-        void callback(const std::string &receiver,
+        bool callback(const std::string &receiver,
                       const Slot &method,
                       MappingAction change,
                       const KeyType &key,
@@ -425,6 +429,6 @@ namespace core::signal
     // I/O stream support
 
     std::ostream &operator<<(std::ostream &stream, MappingAction change);
-} // namespace core::signal
+}  // namespace core::signal
 
 #include "signaltemplate.i++"

@@ -10,6 +10,8 @@
 #include "status/exceptions.h++"
 #include "platform/process.h++"
 
+#include <future>
+
 namespace upgrade::native
 {
     URLPackageHandler::URLPackageHandler(const core::SettingsStore::ptr &settings)

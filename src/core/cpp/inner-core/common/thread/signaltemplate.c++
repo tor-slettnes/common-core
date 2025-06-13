@@ -40,7 +40,7 @@ namespace core::signal
         return platform::symbols->uuid();
     }
 
-    void BaseSignal::safe_invoke(const std::string &receiver,
+    bool BaseSignal::safe_invoke(const std::string &receiver,
                                  const std::function<void()> &f)
     {
         try
@@ -52,6 +52,7 @@ namespace core::signal
             logf_trace("%s: Receiver %s completed",
                        this->name_,
                        receiver);
+            return true;
         }
         catch (...)
         {
@@ -59,16 +60,18 @@ namespace core::signal
                         this->name_,
                         receiver,
                         std::current_exception());
+            return false;
         }
     }
 
-    size_t BaseSignal::collect_futures(Futures &futures)
+    std::size_t BaseSignal::collect_futures(Futures &futures)
     {
-        for (std::future<void> &future : futures)
+        std::size_t count = 0;
+        for (std::future<bool> &future : futures)
         {
-            future.get();
+            count += future.get();
         }
-        return futures.size();
+        return count;
     }
 
     //==========================================================================
@@ -100,15 +103,27 @@ namespace core::signal
         this->slots_.erase(handle);
     }
 
-    size_t VoidSignal::emit()
+    std::size_t VoidSignal::emit()
+    {
+        std::scoped_lock lck(this->mtx_);
+        std::size_t count = 0;
+        for (const auto &[receiver, method] : this->slots_)
+        {
+            count += this->callback(receiver, method);
+        }
+        this->emitted_ = true;
+        return count;
+    }
+
+    std::size_t VoidSignal::emit_async()
     {
         Futures futures;
 
         this->mtx_.lock();
         futures.reserve(this->slots_.size());
-        for (const auto &cb : this->slots_)
+        for (const auto &[receiver, method] : this->slots_)
         {
-            futures.push_back(std::async(&VoidSignal::callback, this, cb.first, cb.second));
+            futures.push_back(std::async(&VoidSignal::callback, this, receiver, method));
         }
         this->emitted_ = true;
         this->mtx_.unlock();
@@ -120,14 +135,14 @@ namespace core::signal
         return this->emitted_;
     }
 
-    size_t VoidSignal::connection_count() const
+    std::size_t VoidSignal::connection_count() const
     {
         return this->slots_.size();
     }
 
-    void VoidSignal::callback(const std::string &receiver, const Slot &method)
+    bool VoidSignal::callback(const std::string &receiver, const Slot &method)
     {
-        this->safe_invoke(str::format("%s()", receiver), method);
+        return this->safe_invoke(str::format("%s()", receiver), method);
     }
 
 }  // namespace core::signal

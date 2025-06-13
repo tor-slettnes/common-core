@@ -46,37 +46,34 @@ namespace core::signal
     }
 
     template <class DataType>
-    inline size_t DataSignal<DataType>::emit(
+    inline std::size_t DataSignal<DataType>::emit(
         const DataType &value)
     {
-        this->mtx_.lock();
+        std::scoped_lock lck(this->mtx_);
         if (this->caching_)
         {
             this->update_cache(value);
         }
-        Futures futures = this->sendall(value);
-        this->mtx_.unlock();
-
-        return this->collect_futures(futures);
+        return this->sendall(value);
     }
 
     template <class DataType>
-    inline size_t DataSignal<DataType>::emit_if_changed(
+    inline std::size_t DataSignal<DataType>::emit_if_changed(
         const DataType &value)
     {
-        Futures futures;
-
-        this->mtx_.lock();
+        std::scoped_lock lck(this->mtx_);
         if (!this->caching_ || !this->cached_ || !(value == *this->cached_))
         {
             if (this->caching_)
             {
                 this->update_cache(value);
             }
-            futures = this->sendall(value);
+            return this->sendall(value);
         }
-        this->mtx_.unlock();
-        return this->collect_futures(futures);
+        else
+        {
+            return 0;
+        }
     }
 
     template <class DataType>
@@ -103,7 +100,7 @@ namespace core::signal
     }
 
     template <class DataType>
-    inline size_t DataSignal<DataType>::connection_count() const
+    inline std::size_t DataSignal<DataType>::connection_count() const
     {
         return this->slots_.size();
     }
@@ -120,21 +117,15 @@ namespace core::signal
     }
 
     template <class DataType>
-    inline Futures DataSignal<DataType>::sendall(
+    inline std::size_t DataSignal<DataType>::sendall(
         const DataType &value)
     {
-        Futures futures;
-        futures.reserve(this->slots_.size());
-
-        for (const auto &cb : this->slots_)
+        std::size_t count = 0;
+        for (const auto &[receiver, method] : this->slots_)
         {
-            futures.push_back(std::async(&DataSignal<DataType>::callback,
-                                         this,
-                                         cb.first,
-                                         cb.second,
-                                         value));
+            count += this->callback(receiver, method, value);
         }
-        return futures;
+        return count;
     }
 
     template <class DataType>
@@ -145,13 +136,13 @@ namespace core::signal
     }
 
     template <class DataType>
-    inline void DataSignal<DataType>::callback(
+    inline bool DataSignal<DataType>::callback(
         const std::string &receiver,
         const Slot &method,
         const DataType &value)
     {
-        this->safe_invoke(str::format("%s({...})", receiver),
-                          std::bind(method, value));
+        return this->safe_invoke(str::format("%s({...})", receiver),
+                                 std::bind(method, value));
     }
 
     //==========================================================================
@@ -193,12 +184,12 @@ namespace core::signal
     }
 
     template <class DataType, class KeyType>
-    inline size_t MappingSignal<DataType, KeyType>::emit(
+    inline std::size_t MappingSignal<DataType, KeyType>::emit(
         MappingAction mapping_action,
         const KeyType &mapping_key,
         const DataType &value)
     {
-        this->mtx_.lock();
+        std::scoped_lock lck(this->mtx_);
         if (this->caching_)
         {
             switch (mapping_action)
@@ -216,14 +207,11 @@ namespace core::signal
                 break;
             }
         }
-        Futures futures = this->sendall(mapping_action, mapping_key, value);
-        this->mtx_.unlock();
-
-        return this->collect_futures(futures);
+        return this->sendall(mapping_action, mapping_key, value);
     }
 
     template <class DataType, class KeyType>
-    inline size_t MappingSignal<DataType, KeyType>::emit(
+    inline std::size_t MappingSignal<DataType, KeyType>::emit(
         const KeyType &mapping_key,
         const DataType &value)
     {
@@ -236,28 +224,29 @@ namespace core::signal
     }
 
     template <class DataType, class KeyType>
-    inline size_t MappingSignal<DataType, KeyType>::emit_if_changed(
+    inline std::size_t MappingSignal<DataType, KeyType>::emit_if_changed(
         const KeyType &key,
         const DataType &value)
     {
-        this->mtx_.lock();
+        std::scoped_lock lck(this->mtx_);
         MappingAction action(
             !this->caching_                     ? MAP_NONE
             : (this->cached_.count(key) == 0)   ? MAP_ADDITION
             : !(this->cached_.at(key) == value) ? MAP_UPDATE
                                                 : MAP_NONE);
-        Futures futures;
         if (action != MAP_NONE)
         {
             this->update_cache(key, value);
-            futures = this->sendall(action, key, value);
+            return this->sendall(action, key, value);
         }
-        this->mtx_.unlock();
-        return this->collect_futures(futures);
+        else
+        {
+            return 0;
+        }
     }
 
     template <class DataType, class KeyType>
-    inline size_t MappingSignal<DataType, KeyType>::clear(
+    inline std::size_t MappingSignal<DataType, KeyType>::clear(
         const KeyType &key,
         const DataType &value)
     {
@@ -265,32 +254,31 @@ namespace core::signal
     }
 
     template <class DataType, class KeyType>
-    inline size_t MappingSignal<DataType, KeyType>::clear_if_cached(
+    inline std::size_t MappingSignal<DataType, KeyType>::clear_if_cached(
         const KeyType &key)
     {
-        Futures futures;
-        this->mtx_.lock();
+        std::scoped_lock lck(this->mtx_);
         if (auto nh = this->cached_.extract(key))
         {
-            futures = this->sendall(MAP_REMOVAL, key, nh.mapped());
+            return this->sendall(MAP_REMOVAL, key, nh.mapped());
         }
-        this->mtx_.unlock();
-
-        return this->collect_futures(futures);
+        else
+        {
+            return 0;
+        }
     }
 
     template <class DataType, class KeyType>
-    inline size_t MappingSignal<DataType, KeyType>::clear_all_cached()
+    inline std::size_t MappingSignal<DataType, KeyType>::clear_all_cached()
     {
-        Futures futures;
-        this->mtx_.lock();
+        std::scoped_lock lck(this->mtx_);
+        std::size_t count = 0;
         for (const auto &[key, value] : this->cached_)
         {
-            futures = this->sendall(MAP_REMOVAL, key, {});
+            count += this->sendall(MAP_REMOVAL, key, {});
         }
         this->cached_.clear();
-        this->mtx_.unlock();
-        return this->collect_futures(futures);
+        return count;
     }
 
     template <class DataType, class KeyType>
@@ -332,25 +320,25 @@ namespace core::signal
     }
 
     template <class DataType, class KeyType>
-    inline size_t MappingSignal<DataType, KeyType>::cache_size()
+    inline std::size_t MappingSignal<DataType, KeyType>::cache_size()
     {
         std::scoped_lock lck(this->mtx_);
         return this->cached_.size();
     }
 
     template <class DataType, class KeyType>
-    inline size_t MappingSignal<DataType, KeyType>::connection_count() const
+    inline std::size_t MappingSignal<DataType, KeyType>::connection_count() const
     {
         return this->slots_.size();
     }
 
     template <class DataType, class KeyType>
     template <class MapType>
-    inline size_t MappingSignal<DataType, KeyType>::synchronize(
+    inline std::size_t MappingSignal<DataType, KeyType>::synchronize(
         const MapType &update)
     {
         std::unordered_map<KeyType, DataType> previous = this->get_cached();
-        size_t count = 0;
+        std::size_t count = 0;
         for (const auto &[key, value] : update)
         {
             if (auto nh = previous.extract(key))
@@ -395,36 +383,28 @@ namespace core::signal
     }
 
     template <class DataType, class KeyType>
-    inline Futures MappingSignal<DataType, KeyType>::sendall(
+    inline std::size_t MappingSignal<DataType, KeyType>::sendall(
         MappingAction mapping_action,
         const KeyType &mapping_key,
         const DataType &value)
     {
-        Futures futures;
-        futures.reserve(this->slots_.size());
-
-        for (const auto &cb : this->slots_)
+        std::size_t count = 0;
+        for (const auto &[receiver, method] : this->slots_)
         {
-            futures.push_back(std::async(&MappingSignal<DataType, KeyType>::callback,
-                                         this,
-                                         cb.first,
-                                         cb.second,
-                                         mapping_action,
-                                         mapping_key,
-                                         value));
+            count += this->callback(receiver, method, mapping_action, mapping_key, value);
         }
-        return futures;
+        return count;
     }
 
     template <class DataType, class KeyType>
-    inline void MappingSignal<DataType, KeyType>::callback(
+    inline bool MappingSignal<DataType, KeyType>::callback(
         const std::string &receiver,
         const Slot &method,
         MappingAction mapping_action,
         const KeyType &mapping_key,
         const DataType &value)
     {
-        this->safe_invoke(
+        return this->safe_invoke(
             str::format("%r (%r, %r, {...})", receiver, mapping_action, mapping_key),
             std::bind(method, mapping_action, mapping_key, value));
     }

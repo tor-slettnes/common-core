@@ -16,6 +16,7 @@
 #include "logging/logging.h++"
 
 #include <fstream>
+#include <future>
 
 namespace core::logging
 {

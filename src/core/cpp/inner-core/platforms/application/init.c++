@@ -21,7 +21,7 @@ namespace core::application
         ::signal(SIGTERM, SIG_IGN);
         if (!core::platform::signal_shutdown.emitted())
         {
-            core::platform::signal_shutdown.emit();
+            core::platform::signal_shutdown.emit_async();
         }
     }
 
@@ -49,7 +49,7 @@ namespace core::application
     {
         if (!core::platform::signal_shutdown.emitted())
         {
-            core::platform::signal_shutdown.emit();
+            core::platform::signal_shutdown.emit_async();
         }
 
         core::platform::exit_tasks.execute();

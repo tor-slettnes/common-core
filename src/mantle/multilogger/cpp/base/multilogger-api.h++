@@ -12,6 +12,7 @@
 #include "types/loggable.h++"
 
 #include <optional>
+#include <thread>
 
 namespace multilogger
 {
