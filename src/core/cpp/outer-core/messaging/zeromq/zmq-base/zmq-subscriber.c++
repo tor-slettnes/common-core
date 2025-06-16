@@ -15,10 +15,7 @@ namespace core::zmq
 {
     Subscriber::Subscriber(const std::string &host_address,
                            const std::string &channel_name)
-        : Super(host_address,
-                "subscriber",
-                channel_name,
-                ZMQ_SUB),
+        : Super(host_address, "subscriber", channel_name, ZMQ_SUB),
           keep_receiving(false)
     {
     }

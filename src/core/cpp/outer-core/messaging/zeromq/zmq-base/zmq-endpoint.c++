@@ -13,9 +13,6 @@
 
 namespace core::zmq
 {
-    // Keys to look up settings in zmq-services-*.json
-    constexpr int IO_THREADS = 2;
-
     Endpoint::Endpoint(const std::string &endpoint_type,
                        const std::string &channel_name,
                        SocketType socket_type)

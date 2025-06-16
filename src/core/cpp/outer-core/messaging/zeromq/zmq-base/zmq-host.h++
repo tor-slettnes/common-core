@@ -24,6 +24,8 @@ namespace core::zmq
         void initialize() override;
         void deinitialize() override;
 
+        virtual void bind();
+        virtual void unbind();
         std::string bind_address() const;
 
     private:

@@ -22,6 +22,17 @@ namespace core::zmq
     void Host::initialize()
     {
         Super::initialize();
+        this->bind();
+    }
+
+    void Host::deinitialize()
+    {
+        this->unbind();
+        Super::deinitialize();
+    }
+
+    void Host::bind()
+    {
         logf_debug("%s binding to %s", *this, this->bind_address());
         try
         {
@@ -36,12 +47,12 @@ namespace core::zmq
         }
     }
 
-    void Host::deinitialize()
+    void Host::unbind()
     {
         logf_debug("%s unbinding from %s", *this, this->bind_address());
         ::zmq_unbind(this->socket(), this->bind_address().c_str());
-        Super::deinitialize();
     }
+
 
     std::string Host::bind_address() const
     {
