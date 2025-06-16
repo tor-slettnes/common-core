@@ -164,8 +164,8 @@ namespace avro
     {
         checkstatus(avro_value_set_string_len(
             value,
-            string.data(),
-            string.size()));
+            string.c_str(),
+            string.size() + 1)); // Length needs to include trailing null terminator
     }
 
     void BaseValue::set_bytes(avro_value_t *value,
