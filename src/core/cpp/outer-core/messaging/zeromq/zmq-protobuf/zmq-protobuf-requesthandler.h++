@@ -6,7 +6,6 @@
 //==============================================================================
 
 #pragma once
-#include "zmq-responder.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-message.h++"
 #include "types/valuemap.h++"

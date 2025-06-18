@@ -57,15 +57,36 @@ namespace core::zmq
         using Super = messaging::Endpoint;
 
     protected:
-        Endpoint(const std::string &endpoint_type,
+        enum class Role
+        {
+            UNSPECIFIED,
+            HOST,
+            SATELLITE
+        };
+
+    protected:
+        Endpoint(const std::string &address,
+                 const std::string &endpoint_type,
                  const std::string &channel_name,
-                 SocketType socket_type);
+                 SocketType socket_type,
+                 Role role);
 
         ~Endpoint();
 
     public:
         static Context *context();
-        Socket *socket();
+        Socket *socket() const;
+
+        Role role() const;
+        std::string address() const;
+
+        std::string bind_address(const std::string &provided) const;
+        void bind(const std::string &address);
+        void unbind();
+
+        std::string host_address(const std::string &provided) const;
+        void connect(const std::string &address);
+        void disconnect();
 
         void initialize() override;
         void deinitialize() override;
@@ -73,7 +94,8 @@ namespace core::zmq
     protected:
         static void *check_error(void *ptr);
         static int check_error(int rc);
-
+        std::optional<std::string> get_last_endpoint() const;
+        void try_or_log(int rc, const std::string &preamble);
         void log_zmq_error(const std::string &action, const Error &e);
 
     public:
@@ -154,8 +176,9 @@ namespace core::zmq
     private:
         static std::mutex context_mtx_;
         static Context *context_;
-
         Socket *socket_;
+        Role role_;
+        std::string address_;
     };
 
 }  // namespace core::zmq

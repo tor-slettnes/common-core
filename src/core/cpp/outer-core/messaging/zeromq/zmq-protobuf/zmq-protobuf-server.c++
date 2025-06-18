@@ -14,8 +14,9 @@ namespace core::zmq
 {
     ProtoBufServer::ProtoBufServer(const std::string &bind_address,
                                    const std::string &channel_name,
-                                   RequestHandlerMap &&handler_map)
-        : Super(bind_address, channel_name),
+                                   RequestHandlerMap &&handler_map,
+                                   Role role)
+        : Super(bind_address, channel_name, role),
           handler_map(std::move(handler_map))
     {
     }

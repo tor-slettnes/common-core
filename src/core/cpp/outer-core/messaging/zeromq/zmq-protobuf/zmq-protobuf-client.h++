@@ -20,9 +20,10 @@ namespace core::zmq
         using Super = Requester;
 
     protected:
-        ProtoBufClient(const std::string &host_address,
+        ProtoBufClient(const std::string &address,
                        const std::string &channel_name,
-                       const std::string &interface_name);
+                       const std::string &interface_name,
+                       Role role = Role::SATELLITE);
 
     public:
         std::string interface_name() const;

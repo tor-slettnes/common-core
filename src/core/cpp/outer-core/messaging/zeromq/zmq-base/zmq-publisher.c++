@@ -11,9 +11,10 @@
 
 namespace core::zmq
 {
-    Publisher::Publisher(const std::string &bind_address,
-                         const std::string &channel_name)
-        : Super(bind_address, "publisher", channel_name, ZMQ_PUB)
+    Publisher::Publisher(const std::string &address,
+                         const std::string &channel_name,
+                         Role role)
+        : Super(address, "publisher", channel_name, ZMQ_PUB, role)
     {
     }
 

@@ -12,9 +12,10 @@
 
 namespace core::zmq
 {
-    Responder::Responder(const std::string &bind_address,
-                         const std::string &channel_name)
-        : Super(bind_address, "responder", channel_name, ZMQ_REP),
+    Responder::Responder(const std::string &address,
+                         const std::string &channel_name,
+                         Role role)
+        : Super(address, "responder", channel_name, ZMQ_REP, role),
           keep_listening(false)
     {
     }

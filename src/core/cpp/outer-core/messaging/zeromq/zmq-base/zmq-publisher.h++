@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "zmq-host.h++"
+#include "zmq-endpoint.h++"
 #include "zmq-filter.h++"
 #include "types/bytevector.h++"
 
@@ -15,14 +15,15 @@
 
 namespace core::zmq
 {
-    class Publisher : public Host
+    class Publisher : public Endpoint
     {
         using This = Publisher;
-        using Super = Host;
+        using Super = Endpoint;
 
     protected:
-        Publisher(const std::string &bind_address,
-                  const std::string &channel_name);
+        Publisher(const std::string &address,
+                  const std::string &channel_name,
+                  Role role = Role::HOST);
 
     public:
         void publish(const Filter &filter,

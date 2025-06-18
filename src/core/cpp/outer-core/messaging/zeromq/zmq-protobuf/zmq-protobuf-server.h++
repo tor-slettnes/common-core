@@ -27,7 +27,8 @@ namespace core::zmq
     protected:
         ProtoBufServer(const std::string &bind_address,
                        const std::string &channel_name,
-                       RequestHandlerMap &&handler_map = {});
+                       RequestHandlerMap &&handler_map = {},
+                       Role role = Role::HOST);
 
     public:
         void initialize() override;

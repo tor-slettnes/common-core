@@ -13,11 +13,15 @@
 
 namespace core::zmq
 {
-    Endpoint::Endpoint(const std::string &endpoint_type,
+    Endpoint::Endpoint(const std::string &address,
+                       const std::string &endpoint_type,
                        const std::string &channel_name,
-                       SocketType socket_type)
+                       SocketType socket_type,
+                       Role role)
         : Super("ZMQ", endpoint_type, channel_name),
-          socket_(this->check_error(::zmq_socket(Endpoint::context(), socket_type)))
+          socket_(this->check_error(::zmq_socket(Endpoint::context(), socket_type))),
+          role_(role),
+          address_(address)
     {
     }
 
@@ -25,7 +29,7 @@ namespace core::zmq
     {
         if (this->socket_)
         {
-            logf_info("Closing %s socket", this->to_string());
+            logf_notice("Closing %s socket", this->to_string());
 
             ::zmq_close(this->socket_);
             this->socket_ = nullptr;
@@ -45,9 +49,122 @@ namespace core::zmq
         return This::context_;
     }
 
-    Socket *Endpoint::socket()
+    Socket *Endpoint::socket() const
     {
         return this->socket_;
+    }
+
+    Endpoint::Role Endpoint::role() const
+    {
+        return this->role_;
+    }
+
+    std::string Endpoint::address() const
+    {
+        return this->address_;
+    }
+
+    std::string Endpoint::bind_address(const std::string &provided) const
+    {
+        return this->realaddress(provided,
+                                 SCHEME_OPTION,
+                                 BIND_OPTION,
+                                 PORT_OPTION,
+                                 "tcp",
+                                 "*");
+    }
+
+    void Endpoint::bind(const std::string &address)
+    {
+        std::string bind_address = this->bind_address(address);
+        logf_debug("%s binding to %s", *this, bind_address);
+        this->check_error(
+            ::zmq_bind(this->socket(), bind_address.c_str()));
+        this->address_ = bind_address;
+    }
+
+    void Endpoint::unbind()
+    {
+        // Obtain real endpoint
+        if (auto endpoint = this->get_last_endpoint())
+        {
+            logf_debug("%s unbinding from %s", *this, endpoint.value());
+            this->try_or_log(
+                ::zmq_unbind(this->socket(), endpoint->c_str()),
+                "could not unbind from " + endpoint.value());
+        }
+    }
+
+    std::string Endpoint::host_address(const std::string &provided) const
+    {
+        return this->realaddress(provided,
+                                 SCHEME_OPTION,
+                                 CONNECT_OPTION,
+                                 PORT_OPTION,
+                                 "tcp",
+                                 "localhost");
+    }
+
+    void Endpoint::connect(const std::string &address)
+    {
+        std::string host_address = this->host_address(address);
+        logf_debug("%s connecting to %s", *this, host_address);
+        this->check_error(
+            ::zmq_connect(this->socket(), host_address.c_str()));
+        this->address_ = host_address;
+    }
+
+    void Endpoint::disconnect()
+    {
+        if (auto endpoint = this->get_last_endpoint())
+        {
+            logf_debug("%s disconnecting from %s", *this, endpoint.value());
+            this->try_or_log(
+                ::zmq_disconnect(this->socket(), endpoint->c_str()),
+                "could not disconnect from " + endpoint.value());
+        }
+    }
+
+    void Endpoint::initialize()
+    {
+        Super::initialize();
+        switch (this->role())
+        {
+        case Role::HOST:
+            this->bind(this->address());
+            break;
+
+        case Role::SATELLITE:
+            this->connect(this->address());
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    void Endpoint::deinitialize()
+    {
+        switch (this->role())
+        {
+        case Role::HOST:
+            this->unbind();
+            break;
+
+        case Role::SATELLITE:
+            this->disconnect();
+            break;
+
+        default:
+            break;
+        }
+
+        if (this->socket_)
+        {
+            ::zmq_close(this->socket_);
+            this->socket_ = nullptr;
+        }
+        Super::deinitialize();
     }
 
     void *Endpoint::check_error(void *ptr)
@@ -68,6 +185,33 @@ namespace core::zmq
         return rc;
     }
 
+    std::optional<std::string> Endpoint::get_last_endpoint() const
+    {
+        size_t buf_size = 256;
+        char buf[buf_size];
+        int rc = ::zmq_getsockopt(this->socket(), ZMQ_LAST_ENDPOINT, buf, &buf_size);
+        if (rc == 0)
+        {
+            return std::string(buf, buf_size);
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    void Endpoint::try_or_log(int rc, const std::string &preamble)
+    {
+        try
+        {
+            this->check_error(rc);
+        }
+        catch (const Error &e)
+        {
+            this->log_zmq_error(preamble, e);
+        }
+    }
+
     void Endpoint::log_zmq_error(const std::string &action, const Error &e)
     {
         switch (e.code().value())
@@ -79,21 +223,6 @@ namespace core::zmq
             logf_warning("%s %s: [%s] %s", *this, action, e.code().value(), e.what());
             break;
         }
-    }
-
-    void Endpoint::initialize()
-    {
-        Super::initialize();
-    }
-
-    void Endpoint::deinitialize()
-    {
-        if (this->socket_)
-        {
-            ::zmq_close(this->socket_);
-            this->socket_ = nullptr;
-        }
-        Super::deinitialize();
     }
 
     void Endpoint::send(const types::ByteVector &bytes, SendFlags flags)

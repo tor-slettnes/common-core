@@ -29,10 +29,10 @@ namespace demo::zmq
         // Initialize
 
         zmq_publisher->initialize();
-        log_notice("Demo ZeroMQ publisher is ready on ", zmq_publisher->bind_address());
+        log_notice("Demo ZeroMQ publisher is ready on ", zmq_publisher->address());
 
         zmq_server->initialize();
-        log_notice("Demo ZeroMQ command server is ready on ", zmq_server->bind_address());
+        log_notice("Demo ZeroMQ command server is ready on ", zmq_server->address());
 
         zmq_server->run();
 

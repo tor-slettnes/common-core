@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "zmq-satellite.h++"
+#include "zmq-endpoint.h++"
 #include "types/bytevector.h++"
 
 #include <optional>
@@ -14,14 +14,15 @@
 
 namespace core::zmq
 {
-    class Requester : public Satellite
+    class Requester : public Endpoint
     {
         using This = Requester;
-        using Super = Satellite;
+        using Super = Endpoint;
 
     protected:
-        Requester(const std::string &host_address,
-                  const std::string &channel_name);
+        Requester(const std::string &address,
+                  const std::string &channel_name,
+                  Role role = Role::SATELLITE);
 
     public:
         std::optional<types::ByteVector> send_receive(

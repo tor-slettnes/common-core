@@ -13,9 +13,10 @@
 
 namespace core::zmq
 {
-    Subscriber::Subscriber(const std::string &host_address,
-                           const std::string &channel_name)
-        : Super(host_address, "subscriber", channel_name, ZMQ_SUB),
+    Subscriber::Subscriber(const std::string &address,
+                           const std::string &channel_name,
+                           Role role)
+        : Super(address, "subscriber", channel_name, ZMQ_SUB, role),
           keep_receiving(false)
     {
     }
@@ -86,7 +87,7 @@ namespace core::zmq
         {
             logf_debug("%s listening for publications from %s",
                        *this,
-                       this->host_address());
+                       this->address());
             while (this->keep_receiving)
             {
                 if (auto bytes = this->receive())

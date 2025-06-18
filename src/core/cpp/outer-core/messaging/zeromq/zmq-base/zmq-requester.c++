@@ -9,9 +9,10 @@
 
 namespace core::zmq
 {
-    Requester::Requester(const std::string &host_address,
-                         const std::string &channel_name)
-        : Super(host_address, "requester", channel_name, ZMQ_REQ)
+    Requester::Requester(const std::string &address,
+                         const std::string &channel_name,
+                         Role role)
+        : Super(address, "requester", channel_name, ZMQ_REQ, role)
     {
     }
 

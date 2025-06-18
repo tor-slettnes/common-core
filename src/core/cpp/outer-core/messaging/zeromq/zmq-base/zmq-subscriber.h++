@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "zmq-satellite.h++"
+#include "zmq-endpoint.h++"
 #include "zmq-messagehandler.h++"
 #include "zmq-filter.h++"
 
@@ -16,14 +16,15 @@
 
 namespace core::zmq
 {
-    class Subscriber : public Satellite
+    class Subscriber : public Endpoint
     {
         using This = Subscriber;
-        using Super = Satellite;
+        using Super = Endpoint;
 
     protected:
-        Subscriber(const std::string &host_address,
-                   const std::string &channel_name);
+        Subscriber(const std::string &address,
+                   const std::string &channel_name,
+                   Role role = Role::SATELLITE);
 
         ~Subscriber();
 

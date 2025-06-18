@@ -14,10 +14,11 @@
 
 namespace core::zmq
 {
-    ProtoBufClient::ProtoBufClient(const std::string &host_address,
+    ProtoBufClient::ProtoBufClient(const std::string &address,
                                    const std::string &channel_name,
-                                   const std::string &interface_name)
-        : Super(host_address, channel_name),
+                                   const std::string &interface_name,
+                                   Role role)
+        : Super(address, channel_name, role),
           interface_name_(interface_name),
           client_id(++ProtoBufClient::last_client_id),
           last_request_id(0)

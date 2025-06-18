@@ -6,20 +6,21 @@
 //==============================================================================
 
 #pragma once
-#include "zmq-host.h++"
+#include "zmq-endpoint.h++"
 #include "types/bytevector.h++"
 #include <thread>
 
 namespace core::zmq
 {
-    class Responder : public Host
+    class Responder : public Endpoint
     {
         using This = Responder;
-        using Super = Host;
+        using Super = Endpoint;
 
     protected:
-        Responder(const std::string &bind_address,
-                  const std::string &channel_name);
+        Responder(const std::string &address,
+                  const std::string &channel_name,
+                  Role role = Role::HOST);
 
     public:
         void start();
