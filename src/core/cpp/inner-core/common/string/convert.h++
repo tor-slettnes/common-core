@@ -110,6 +110,12 @@ namespace core::str
             const char *start = &*s.begin();
             const char *end = &*s.end();
 
+            if ((start != end) && (*start == '+'))
+            {
+                // std::from_chars does not accept leading `+`, so skip it.
+                start++;
+            }
+
             T value = 0.0;
             auto [ptr, ec] = std::from_chars(start, end, value);
             if (ec != ok)
