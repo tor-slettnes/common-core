@@ -6,8 +6,11 @@
 //==============================================================================
 
 #pragma once
-#include "demo-zmq-requesthandler.h++"
+#include "demo-zmq-common.h++"
+#include "demo-api.h++"
 #include "zmq-protobuf-server.h++"
+#include "types/create-shared.h++"
+
 
 namespace demo::zmq
 {
@@ -18,12 +21,9 @@ namespace demo::zmq
         using Super = core::zmq::ProtoBufServer;
 
     protected:
-        Server(const std::shared_ptr<API> &api,
+        Server(const std::shared_ptr<API> &provider,
                const std::string &bind_address = "",
                const std::string &channel_name = SERVICE_CHANNEL);
-
-    private:
-        std::shared_ptr<API> api;
     };
 
 }  // namespace demo::zmq

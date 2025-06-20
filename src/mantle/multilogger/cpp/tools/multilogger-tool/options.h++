@@ -6,48 +6,55 @@
 //==============================================================================
 
 #pragma once
-#include "argparse/command.h++"
+#include "implementations.h++"
 #include "multilogger-api.h++"
+#include "argparse/command.h++"
 
-class Options : public core::argparse::CommandOptions
+namespace multilogger
 {
-    using This = Options;
-    using Super = core::argparse::CommandOptions;
+    class Options : public core::argparse::CommandOptions
+    {
+        using This = Options;
+        using Super = core::argparse::CommandOptions;
 
-public:
-    Options();
+    public:
+        Options();
 
-private:
-    void add_options() override;
-    void add_commands();
+    private:
+        void add_options() override;
+        void add_commands();
 
-    void initialize() override;
-    void deinitialize() override;
+        void initialize() override;
+        void deinitialize() override;
 
-    void on_monitor_start() override;
-    void on_monitor_end() override;
+        std::shared_ptr<API> create_provider() const;
 
-    void open_stream_sink(core::status::Level threshold);
-    void close_stream_sink();
-    void on_log_item(core::types::Loggable::ptr item);
+        void on_monitor_start() override;
+        void on_monitor_end() override;
 
-    void submit();
-    void add_sink();
-    void remove_sink();
-    void get_sink();
-    void get_all_sinks();
-    void list_sinks();
-    void list_message_fields();
-    void list_error_fields();
+        void open_stream_sink(core::status::Level threshold);
+        void close_stream_sink();
+        void on_log_item(core::types::Loggable::ptr item);
 
-public:
-    std::shared_ptr<multilogger::API> provider;
-    std::shared_ptr<core::logging::Sink> stream_sink;
+        void submit();
+        void add_sink();
+        void remove_sink();
+        void get_sink();
+        void get_all_sinks();
+        void list_sinks();
+        void list_message_fields();
+        void list_error_fields();
 
-private:
-    std::string signal_handle;
-    std::vector<std::string> hosts;
-    std::vector<std::string> apps;
-};
+    public:
+        Implementation implementation;
+        std::shared_ptr<API> provider;
+        std::shared_ptr<core::logging::Sink> stream_sink;
 
-extern std::unique_ptr<Options> options;
+    private:
+        std::string signal_handle;
+        std::vector<std::string> hosts;
+        std::vector<std::string> apps;
+    };
+
+    extern std::unique_ptr<Options> options;
+}  // namespace multilogger

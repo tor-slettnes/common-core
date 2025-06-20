@@ -12,7 +12,7 @@
 
 namespace core::signal
 {
-    define_log_scope("signal");
+    define_log_scope("signal", status::Level::DEBUG);
 
     //==========================================================================
     /// @class BaseSignal

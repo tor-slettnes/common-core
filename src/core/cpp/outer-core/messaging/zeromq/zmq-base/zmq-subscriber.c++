@@ -38,28 +38,51 @@ namespace core::zmq
         Super::deinitialize();
     }
 
-    void Subscriber::add(std::shared_ptr<MessageHandler> handler)
+    void Subscriber::add_handler(const std::shared_ptr<MessageHandler> &shared_handler)
     {
         std::lock_guard lock(this->mtx_);
-        this->init_handler(handler);
-        this->handlers_.insert(handler);
+        this->init_handler(shared_handler);
+        this->shared_handlers_.insert_or_assign(
+            shared_handler->id(),
+            shared_handler);
     }
 
-    void Subscriber::remove(std::shared_ptr<MessageHandler> handler)
+    void Subscriber::register_handler(const std::weak_ptr<MessageHandler> &weak_handler)
+    {
+        if (auto shared_handler = weak_handler.lock())
+        {
+            std::lock_guard lock(this->mtx_);
+            this->weak_handlers_.insert_or_assign(
+                shared_handler->id(),
+                weak_handler);
+        }
+    }
+
+    void Subscriber::remove_handler(const std::shared_ptr<MessageHandler> &shared_handler)
     {
         std::lock_guard lock(this->mtx_);
-        this->handlers_.erase(handler);
-        this->deinit_handler(handler);
+        this->shared_handlers_.erase(shared_handler->id());
+        this->deinit_handler(shared_handler);
+    }
+
+    void Subscriber::unregister_handler(const std::weak_ptr<MessageHandler> &weak_handler)
+    {
+        if (auto shared_handler = weak_handler.lock())
+        {
+            std::lock_guard lock(this->mtx_);
+            this->weak_handlers_.erase(shared_handler->id());
+        }
     }
 
     void Subscriber::clear()
     {
         std::lock_guard lock(this->mtx_);
-        for (std::shared_ptr<MessageHandler> handler : this->handlers_)
+        for (std::shared_ptr<MessageHandler> handler : this->handlers())
         {
             this->deinit_handler(handler);
         }
-        this->handlers_.clear();
+        this->shared_handlers_.clear();
+        this->weak_handlers_.clear();
     }
 
     void Subscriber::start_receiving()
@@ -107,7 +130,7 @@ namespace core::zmq
     {
         std::lock_guard lock(this->mtx_);
 
-        for (const std::shared_ptr<MessageHandler> &handler : this->handlers_)
+        for (const std::shared_ptr<MessageHandler> &handler : this->handlers())
         {
             const Filter &filter = handler->filter();
             if ((bytes.size() >= filter.size()) &&
@@ -174,6 +197,33 @@ namespace core::zmq
                          data,
                          std::current_exception());
         }
+    }
+
+    std::vector<std::shared_ptr<MessageHandler>> Subscriber::handlers()
+    {
+        std::vector<std::shared_ptr<MessageHandler>> handlers;
+        handlers.reserve(this->shared_handlers_.size() + this->weak_handlers_.size());
+
+        for (const auto &[id, shared_handler]: this->shared_handlers_)
+        {
+            handlers.push_back(shared_handler);
+        }
+
+        for (auto it = this->weak_handlers_.begin();
+             it != this->weak_handlers_.end();
+            )
+        {
+            if (std::shared_ptr<MessageHandler> shared_handler = it->second.lock())
+            {
+                handlers.push_back(shared_handler);
+                ++it;
+            }
+            else
+            {
+                it = this->weak_handlers_.erase(it);
+            }
+        }
+        return handlers;
     }
 
 }  // namespace core::zmq

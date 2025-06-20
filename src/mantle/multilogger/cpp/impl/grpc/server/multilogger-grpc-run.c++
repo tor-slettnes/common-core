@@ -5,9 +5,9 @@
 /// @author Tor Slettnes <tor@slett.net>
 //==============================================================================
 
-#include "grpc-service.h++"
-#include "grpc-serverbuilder.h++"
+#include "multilogger-grpc-run.h++"
 #include "multilogger-grpc-requesthandler.h++"
+#include "grpc-serverbuilder.h++"
 #include "platform/init.h++"
 #include "logging/logging.h++"
 
@@ -46,7 +46,6 @@ namespace multilogger::grpc
         log_notice("gRPC server is ready on ", core::str::join(builder.listener_ports()));
         server->Wait();
 
-        log_notice("gRPC server is shutting down");
         core::platform::signal_shutdown.disconnect(SHUTDOWN_SIGNAL_HANDLE);
         server.reset();
     }

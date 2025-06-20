@@ -37,7 +37,7 @@ namespace multilogger::grpc
         bool handle_item(const core::types::Loggable::ptr &loggable);
 
     private:
-        std::shared_ptr<LogClient> client_;
+        std::shared_ptr<ClientImpl> client_;
         std::string host_;
         std::size_t queue_size_;
     };

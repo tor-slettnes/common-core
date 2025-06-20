@@ -11,7 +11,7 @@
 #include "zmq-filter.h++"
 
 #include <thread>
-#include <unordered_set>
+#include <set>
 #include <mutex>
 
 namespace core::zmq
@@ -21,7 +21,7 @@ namespace core::zmq
         using This = Subscriber;
         using Super = Endpoint;
 
-    protected:
+    public:
         Subscriber(const std::string &address,
                    const std::string &channel_name,
                    Role role = Role::SATELLITE);
@@ -33,8 +33,11 @@ namespace core::zmq
         void deinitialize() override;
 
     public:
-        void add(std::shared_ptr<MessageHandler> handler);
-        void remove(std::shared_ptr<MessageHandler> handler);
+        void add_handler(const std::shared_ptr<MessageHandler> &handler);
+        void register_handler(const std::weak_ptr<MessageHandler> &handler);
+
+        void remove_handler(const std::shared_ptr<MessageHandler> &handler);
+        void unregister_handler(const std::weak_ptr<MessageHandler> &handler);
         void clear();
 
     private:
@@ -48,9 +51,12 @@ namespace core::zmq
         void invoke_handler(const std::shared_ptr<MessageHandler> &handler,
                             const types::ByteVector &data);
 
+        std::vector<std::shared_ptr<MessageHandler>> handlers();
+
     private:
         std::recursive_mutex mtx_;
-        std::unordered_set<std::shared_ptr<MessageHandler>> handlers_;
+        std::unordered_map<MessageHandler::Identity, std::shared_ptr<MessageHandler>> shared_handlers_;
+        std::unordered_map<MessageHandler::Identity, std::weak_ptr<MessageHandler>> weak_handlers_;
         std::thread receive_thread;
         bool keep_receiving;
     };

@@ -22,7 +22,7 @@ namespace protobuf
 
     core::types::Loggable::ptr decode_loggable(
         const cc::platform::multilogger::Loggable &proto,
-        const std::string &default_host) noexcept;
+        const std::string &default_host = {}) noexcept;
 
     //==========================================================================
     // Data

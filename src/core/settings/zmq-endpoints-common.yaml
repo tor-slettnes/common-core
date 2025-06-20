@@ -40,3 +40,13 @@ Demo Message:                   # Endpoint name
   # connect: "localhost"          # subscriber connects to localhost
   # listen : "*"                  # publisher listens on all interfaces
   port   : 3367                 # D-E-M-O-P on phone keypad
+
+
+Multilogger Submitter:
+  port: 6578
+
+Multilogger Monitor:
+  port: 6566
+
+Multilogger Service:
+  port: 6573

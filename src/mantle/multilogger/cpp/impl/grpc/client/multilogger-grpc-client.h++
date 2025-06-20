@@ -14,21 +14,20 @@
 
 namespace multilogger::grpc
 {
-    using LogClientBase = core::grpc::ClientWrapper<cc::platform::multilogger::MultiLogger>;
-
-    class LogClient
+    class ClientImpl
         : public API,
-          public LogClientBase,
-          public core::types::enable_create_shared_from_this<LogClient>
+          public core::grpc::ClientWrapper<cc::platform::multilogger::MultiLogger>,
+          public core::types::enable_create_shared_from_this<ClientImpl>
     {
-        using This = LogClient;
+        using This = ClientImpl;
+        using Super = core::grpc::ClientWrapper<cc::platform::multilogger::MultiLogger>;
 
     protected:
         template <class... Args>
-        LogClient(const std::string &host = "",
-                  Args &&...args)
+        ClientImpl(const std::string &host = "",
+                   Args &&...args)
             : API(),
-              LogClientBase(host, std::forward<Args>(args)...)
+              Super(host, std::forward<Args>(args)...)
         {
         }
 

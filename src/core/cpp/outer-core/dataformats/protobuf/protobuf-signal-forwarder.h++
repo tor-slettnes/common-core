@@ -11,6 +11,8 @@
 
 #pragma once
 #include "thread/signaltemplate.h++"
+#include "platform/symbols.h++"
+#include "platform/init.h++"
 #include "signal.pb.h"  // Generated from `signal.proto`
 
 #include <functional>
@@ -33,15 +35,29 @@ namespace protobuf
         using This = SignalForwarder;
 
     public:
+        SignalForwarder()
+            : signal_shutdown_handle(TYPE_NAME_FULL(This))
+        {
+        }
+
         // Implementations should override this in order to connect specific
         // Signal<T> or MappingSignal<T> instances to corresponding handlers,
         // which in turn will encode the payload and add the result to this
         // queue.
-        virtual void initialize() {}
+        virtual void initialize()
+        {
+            core::platform::signal_shutdown.connect(
+                this->signal_shutdown_handle,
+                std::bind(&This::deinitialize, this));
+        }
 
         // Implementations should override this in order to disconnect any
         // signal handlers that were connected in their `initialize()` method.
-        virtual void deinitialize() {}
+        virtual void deinitialize()
+        {
+            core::platform::signal_shutdown.disconnect(
+                this->signal_shutdown_handle);
+        }
 
         // Implementations shold override this to propagate the encoded message
         // to its peers.
@@ -85,5 +101,8 @@ namespace protobuf
             msg.set_mapping_key(mapping_key);
             return msg;
         }
+
+    private:
+        core::signal::Handle signal_shutdown_handle;
     };
 }  // namespace protobuf

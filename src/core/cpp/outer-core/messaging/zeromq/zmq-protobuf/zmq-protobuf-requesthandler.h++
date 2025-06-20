@@ -33,7 +33,7 @@ namespace core::zmq
     protected:
         template <class ReplyType, class RequestType, class Subclass>
         void add_handler(const std::string &method_name,
-                         ReplyType (Subclass::*method)(const RequestType &))
+                         void (Subclass::*method)(const RequestType &, ReplyType *))
         {
             this->handler_map.insert_or_assign(
                 method_name,
@@ -41,7 +41,8 @@ namespace core::zmq
                     RequestType req;
                     req.ParseFromString(req_param.serialized_proto());
 
-                    ReplyType rep = (static_cast<Subclass *>(this)->*method)(req);
+                    ReplyType rep;
+                    (static_cast<Subclass *>(this)->*method)(req, &rep);
                     rep.SerializeToString(rep_param->mutable_serialized_proto());
                 });
         }

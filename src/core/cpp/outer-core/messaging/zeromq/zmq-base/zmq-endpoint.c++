@@ -200,7 +200,7 @@ namespace core::zmq
         }
     }
 
-    void Endpoint::try_or_log(int rc, const std::string &preamble)
+    void Endpoint::try_or_log(int rc, const std::string &preamble) const
     {
         try
         {
@@ -212,7 +212,7 @@ namespace core::zmq
         }
     }
 
-    void Endpoint::log_zmq_error(const std::string &action, const Error &e)
+    void Endpoint::log_zmq_error(const std::string &action, const Error &e) const
     {
         switch (e.code().value())
         {
@@ -225,7 +225,7 @@ namespace core::zmq
         }
     }
 
-    void Endpoint::send(const types::ByteVector &bytes, SendFlags flags)
+    void Endpoint::send(const types::ByteVector &bytes, SendFlags flags) const
     {
         using SendFunction = int (*)(void *socket, const void *buf, size_t len, int flags);
         SendFunction send = (flags & ZMQ_DONTWAIT) ? ::zmq_send : ::zmq_send_const;
@@ -238,7 +238,7 @@ namespace core::zmq
             flags));         // flags
     }
 
-    std::optional<types::ByteVector> Endpoint::receive(RecvFlags flags)
+    std::optional<types::ByteVector> Endpoint::receive(RecvFlags flags) const
     {
         types::ByteVector bytes;
         if (this->receive(&bytes, flags))
@@ -251,7 +251,7 @@ namespace core::zmq
         }
     }
 
-    std::size_t Endpoint::receive(types::ByteVector *bytes, RecvFlags flags)
+    std::size_t Endpoint::receive(types::ByteVector *bytes, RecvFlags flags) const
     {
         zmq_msg_t msg;
         std::vector<std::string> counts;
@@ -281,7 +281,7 @@ namespace core::zmq
         return total;
     }
 
-    std::size_t Endpoint::receive(std::ostream &stream, RecvFlags flags)
+    std::size_t Endpoint::receive(std::ostream &stream, RecvFlags flags) const
     {
         zmq_msg_t msg;
         std::vector<std::string> counts;

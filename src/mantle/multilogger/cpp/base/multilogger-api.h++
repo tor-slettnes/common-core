@@ -58,7 +58,7 @@ namespace multilogger
 
     public:
         void start_listening(const ListenerSpec &spec);
-        void stop_listening();
+        void stop_listening(bool wait = true);
 
     private:
         void keep_listening(const ListenerSpec &spec);

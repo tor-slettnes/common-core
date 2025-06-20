@@ -46,7 +46,7 @@ namespace multilogger::grpc
     {
         if (!this->client_)
         {
-            this->client_ = grpc::LogClient::create_shared(
+            this->client_ = grpc::ClientImpl::create_shared(
                 this->host(),   // host
                 true);          // wait_for_ready
         }
@@ -56,7 +56,7 @@ namespace multilogger::grpc
     void ClientSink::close()
     {
         Super::close();
-        if (std::shared_ptr<LogClient> client = this->client_)
+        if (std::shared_ptr<ClientImpl> client = this->client_)
         {
             client->close_writer();
             this->client_.reset();
@@ -65,7 +65,7 @@ namespace multilogger::grpc
 
     bool ClientSink::handle_item(const core::types::Loggable::ptr &loggable)
     {
-        if (std::shared_ptr<LogClient> client = this->client_)
+        if (std::shared_ptr<ClientImpl> client = this->client_)
         {
             return client->write_item(loggable);
         }

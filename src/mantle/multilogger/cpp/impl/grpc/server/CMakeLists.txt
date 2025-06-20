@@ -7,7 +7,7 @@
 
 ### Name of this library. This can be used as a dependency for downstream
 ### libraries/executables.
-set(TARGET cc_multilogger_grpc_service)
+set(TARGET cc_multilogger_grpc_server)
 
 ### Static/shared library dependencies, either from this build or provided by the system.
 set(LIB_DEPS
@@ -18,6 +18,7 @@ set(LIB_DEPS
 
 ### Source files
 set(SOURCES
+  multilogger-grpc-run.c++
   multilogger-grpc-requesthandler.c++
 )
 

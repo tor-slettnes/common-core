@@ -20,7 +20,10 @@ namespace core::zmq
         using This = Publisher;
         using Super = Endpoint;
 
-    protected:
+    public:
+        using ptr = std::shared_ptr<This>;
+
+    public:
         Publisher(const std::string &address,
                   const std::string &channel_name,
                   Role role = Role::HOST);

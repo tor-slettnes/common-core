@@ -23,7 +23,7 @@
 
 namespace core::zmq
 {
-    define_log_scope("zmq");
+    define_log_scope("zmq", status::Level::NOTICE);
 
 #if CPPZMQ
     using Context = void;
@@ -56,7 +56,7 @@ namespace core::zmq
         using This = Endpoint;
         using Super = messaging::Endpoint;
 
-    protected:
+    public:
         enum class Role
         {
             UNSPECIFIED,
@@ -95,24 +95,24 @@ namespace core::zmq
         static void *check_error(void *ptr);
         static int check_error(int rc);
         std::optional<std::string> get_last_endpoint() const;
-        void try_or_log(int rc, const std::string &preamble);
-        void log_zmq_error(const std::string &action, const Error &e);
+        void try_or_log(int rc, const std::string &preamble) const;
+        void log_zmq_error(const std::string &action, const Error &e) const;
 
     public:
         void send(
             const types::ByteVector &bytes,
-            SendFlags flags = 0);
+            SendFlags flags = 0) const;
 
         std::optional<types::ByteVector> receive(
-            RecvFlags flags = 0);
+            RecvFlags flags = 0) const;
 
         std::size_t receive(
             types::ByteVector *bytes,
-            RecvFlags flags = 0);
+            RecvFlags flags = 0) const;
 
         std::size_t receive(
             std::ostream &stream,
-            RecvFlags flags = 0);
+            RecvFlags flags = 0) const;
 
     protected:
         /// @param[in] address

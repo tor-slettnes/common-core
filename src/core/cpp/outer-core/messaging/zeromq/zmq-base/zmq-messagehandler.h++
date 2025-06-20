@@ -14,11 +14,14 @@ namespace core::zmq
 {
     class MessageHandler
     {
+    public:
+        using Identity = std::string;
+
     protected:
         MessageHandler(const std::string &id, const Filter &filter);
 
     public:
-        const std::string &id() const noexcept;
+        const Identity &id() const noexcept;
         const Filter &filter() const noexcept;
 
         virtual void initialize() {}

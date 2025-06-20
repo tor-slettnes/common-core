@@ -16,12 +16,12 @@ set(INSTALL_COMPONENT "multilogger-server")
 set(LIB_DEPS
   cc_core_platform
   cc_multilogger_native
-  cc_multilogger_grpc_service
+  cc_multilogger_grpc_server
+  cc_multilogger_zmq_server
 )
 
 ### Source files
 set(SOURCES
-  grpc-service.c++
   options.c++
   main.c++
 )

@@ -30,7 +30,7 @@ namespace core::zmq
         }
     }
 
-    void Responder::stop()
+    void Responder::stop(bool wait)
     {
         this->keep_listening = false;
         if (std::thread t{std::move(this->listen_thread)}; t.joinable())
