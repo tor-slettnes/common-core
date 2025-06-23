@@ -11,10 +11,11 @@
 #include "platform/init.h++"
 #include "logging/logging.h++"
 
-constexpr auto SHUTDOWN_SIGNAL_HANDLE = "multilogger-grpc-service";
 
 namespace multilogger::grpc
 {
+    constexpr auto SHUTDOWN_SIGNAL_HANDLE = "multilogger-grpc-service";
+
     void run_service(
         std::shared_ptr<API> multilogger_provider,
         const std::string &listen_address)

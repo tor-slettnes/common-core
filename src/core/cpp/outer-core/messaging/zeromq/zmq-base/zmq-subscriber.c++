@@ -149,16 +149,12 @@ namespace core::zmq
                    *this,
                    handler->id(),
                    filter);
-        this->check_error(::zmq_setsockopt(
-            this->socket(),
-            ZMQ_SUBSCRIBE,
-            filter.data(),
-            filter.size()));
+        this->setsockopt(ZMQ_SUBSCRIBE, filter.data(), filter.size());
     }
 
     void Subscriber::deinit_handler(const std::shared_ptr<MessageHandler> &handler)
     {
-        logf_debug("%s Removing subscription for %r with filter %r",
+        logf_debug("%s removing subscription for %r with filter %r",
                    *this,
                    handler->id(),
                    handler->filter());

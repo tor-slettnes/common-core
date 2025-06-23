@@ -83,7 +83,7 @@ namespace core::messaging
             {
                 if (const std::optional<fs::path> &path = this->settings_file(component))
                 {
-                    logf_debug("%s loading settings from %s", *this, path);
+                    logf_trace("%s loading settings from %s", *this, path.value());
                     this->settings_->load(path.value());
                 }
             }

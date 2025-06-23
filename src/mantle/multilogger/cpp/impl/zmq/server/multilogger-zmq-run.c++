@@ -11,8 +11,11 @@
 #include "multilogger-zmq-submission-handler.h++"
 #include "status/exceptions.h++"
 
+
 namespace multilogger::zmq
 {
+    constexpr auto SHUTDOWN_SIGNAL_HANDLE = "multilogger-zmq-service";
+
     void run_service(
         std::shared_ptr<multilogger::API> api_provider,
         const std::string &bind_address)
@@ -60,23 +63,31 @@ namespace multilogger::zmq
         //======================================================================
         // Run
 
+        log_debug("Adding ZMQ shutdown handler");
+        core::platform::signal_shutdown.connect(
+            SHUTDOWN_SIGNAL_HANDLE,
+            [&]() {
+                log_info("ZMQ service is shutting down");
+                server->stop();
+            });
+
+
         server->run();
+
+        core::platform::signal_shutdown.disconnect(SHUTDOWN_SIGNAL_HANDLE);
 
         //======================================================================
         // Deinitialize
 
-        log_notice("Multilogger ZMQ RPC server is shutting down");
+        log_info("Multilogger ZMQ RPC server is shutting down");
         server->deinitialize();
 
-        log_notice("Multilogger ZMQ submission subscriber is shutting down");
+        log_info("Multilogger ZMQ submission subscriber is shutting down");
         submission_subscriber->deinitialize();
         submission_handler->deinitialize();
 
-        log_notice("Multilogger ZeroMQ message writer is shutting down");
+        log_info("Multilogger ZeroMQ publisher is shutting down");
         message_writer->deinitialize();
-
-        std::cout << "Multilogger ZeroMQ publisher is shutting down" << std::endl;
-        log_notice("Multilogger ZeroMQ publisher is shutting down");
         message_publisher->deinitialize();
 
         log_notice("Multilogger ZeroMQ service is down");

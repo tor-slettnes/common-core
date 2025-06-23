@@ -30,11 +30,17 @@ namespace multilogger::zmq
         void deinitialize() override;
 
     protected:
+        void start();
+        void stop();
+        void worker();
+
         void on_log_item(const core::types::Loggable::ptr &msg);
 
     private:
         std::shared_ptr<API> provider;
-        std::string signal_handle;
+        std::shared_ptr<LogSource> listener;
+        bool keep_writing;
+        std::thread worker_thread;
         ListenerSpec listener_spec;
     };
 }  // namespace multilogger::zmq

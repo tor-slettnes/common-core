@@ -145,12 +145,21 @@ namespace core::zmq
     {
         cc::rr::Parameter request_params;
         ::protobuf::encode(request, request_params.mutable_variant_value());
+
+        logf_trace("Invoking RPC with value: %s(%s)", method_name, request);
         this->send_invocation(method_name, request_params, send_flags);
 
         cc::rr::Parameter reply_params;
         if (this->read_result(&reply_params, recv_flags))
         {
-            return ::protobuf::decoded<types::Value>(reply_params.variant_value());
+            auto response = ::protobuf::decoded<types::Value>(
+                reply_params.variant_value());
+
+            logf_trace("Received RPC response: %s() -> %s",
+                       method_name,
+                       response);
+
+            return response;
         }
         else
         {
@@ -163,6 +172,8 @@ namespace core::zmq
                                                   SendFlags send_flags) const
     {
         cc::rr::Parameter request_param;
+
+        logf_trace("Invoking RPC with ProtoBuf input: %s(%s)", method_name, request);
         request.SerializeToString(request_param.mutable_serialized_proto());
         this->send_invocation(method_name, request_param, send_flags);
     }

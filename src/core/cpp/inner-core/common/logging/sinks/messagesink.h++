@@ -14,7 +14,7 @@
 
 namespace core::logging
 {
-    //==========================================================================
+    //--------------------------------------------------------------------------
     /// @class MessageSink
     /// @brief Base for logging text
 
@@ -38,8 +38,12 @@ namespace core::logging
         virtual void set_include_context(bool include_context);
         bool include_context() const;
 
+        virtual void set_include_source_location(bool include_source);
+        bool include_source_location() const;
+
     public:
         static void set_all_include_context(bool include_context);
+        static void set_all_include_source_location(bool include_source);
 
     protected:
         bool is_applicable(const types::Loggable &item) const override;
@@ -54,6 +58,8 @@ namespace core::logging
     private:
         status::Level threshold_;
         bool include_context_;
+        bool include_source_;
         static std::optional<bool> all_include_context_;
+        static std::optional<bool> all_include_source_;
     };
 }  // namespace core::logging

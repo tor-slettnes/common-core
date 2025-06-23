@@ -75,10 +75,15 @@ namespace core::zmq
 
     public:
         static Context *context();
-        Socket *socket() const;
+        static void terminate_context();
 
         Role role() const;
         std::string address() const;
+
+        Socket *socket() const;
+
+        void open_socket();
+        void close_socket();
 
         std::string bind_address(const std::string &provided) const;
         void bind(const std::string &address);
@@ -98,6 +103,9 @@ namespace core::zmq
         void try_or_log(int rc, const std::string &preamble) const;
         void log_zmq_error(const std::string &action, const Error &e) const;
 
+        void setsockopt(int option, int value);
+        void setsockopt(int option, const void *data, std::size_t data_size);
+
     public:
         void send(
             const types::ByteVector &bytes,
@@ -108,10 +116,6 @@ namespace core::zmq
 
         std::size_t receive(
             types::ByteVector *bytes,
-            RecvFlags flags = 0) const;
-
-        std::size_t receive(
-            std::ostream &stream,
             RecvFlags flags = 0) const;
 
     protected:
@@ -177,8 +181,10 @@ namespace core::zmq
         static std::mutex context_mtx_;
         static Context *context_;
         Socket *socket_;
+        SocketType socket_type_;
         Role role_;
         std::string address_;
     };
 
-}  // namespace core::zmq
+
+}  // Namespace core::zmq

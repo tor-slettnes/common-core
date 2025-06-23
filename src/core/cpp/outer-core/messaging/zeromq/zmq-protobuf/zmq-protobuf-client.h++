@@ -9,6 +9,7 @@
 #include "zmq-requester.h++"
 #include "protobuf-standard-types.h++"
 #include "protobuf-message.h++"
+#include "logging/logging.h++"
 
 #include "request_reply.pb.h"
 
@@ -45,7 +46,6 @@ namespace core::zmq
 
     private:
         uint next_request_id() const;
-
 
         //======================================================================
         // Invoke method with populated Input/Output parameter messages
@@ -91,14 +91,17 @@ namespace core::zmq
             this->send_protobuf_invocation(method_name, request, send_flags);
 
             types::ByteVector bytes;
+            ResponseType response;
             if (this->read_protobuf_result(&bytes, recv_flags))
             {
-                return protobuf::to_message<ResponseType>(bytes);
+                protobuf::to_message(bytes, &response);
+                logf_trace("Received RPC ProtoBuf response: %s() -> %s", method_name, response);
             }
             else
             {
-                return {};
+                logf_trace("Received no RPC ProtoBuf repsonse: %s()");
             }
+            return response;
         }
 
     private:

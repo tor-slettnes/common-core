@@ -10,7 +10,7 @@ add_subdirectory(impl)
 
 if(BUILD_DEMO)
   add_subdirectory(daemon)
-  add_subdirectory(utils)
+  add_subdirectory(tools)
 
   if(BUILD_DEMO AND BUILD_TESTING)
     add_subdirectory(tests)

@@ -18,18 +18,18 @@ namespace core::logging
                                    const uint &lineno,
                                    const std::string &function,
                                    pid_t thread_id)
-        : Message({},                                                      // text
-                  level,                                                   // level
-                  scope,                                                   // scope
-                  tp,                                                      // tp
-                  fs::relative(path, SOURCE_DIR, this->path_error),        // path
-                  lineno,                                                  // lineno
-                  function,                                                // function
-                  thread_id,                                               // thread_id
-                  {},                                                      // thread_name
-                  {},                                                      // task_name
-                  platform::host ? platform::host->get_host_name() : ""s,  // host
-                  platform::path ? platform::path->exec_name() : ""s),     // origin
+        : Message({},                                                       // text
+                  level,                                                    // level
+                  scope,                                                    // scope
+                  platform::path ? platform::path->exec_name() : ""s,       // origin
+                  tp,                                                       // tp
+                  fs::relative(path, SOURCE_DIR, this->path_error),         // path
+                  lineno,                                                   // lineno
+                  function,                                                 // function
+                  thread_id,                                                // thread_id
+                  {},                                                       // thread_name
+                  {},                                                       // task_name
+                  platform::host ? platform::host->get_host_name() : ""s),  // host
           dispatcher_(dispatcher),
           is_applicable_(Message::is_applicable() &&
                          dispatcher->is_applicable(*this))

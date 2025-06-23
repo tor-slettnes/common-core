@@ -165,6 +165,22 @@ namespace core::argparse
             std::bind(&logging::Scope::set_universal_threshold, status::Level::NONE));
 
         this->add_flag(
+            {"--log-context"},
+            "Prefix log messages with runtime context: origin, task/thread, scope. "
+            "Applicable only to message-based log sinks such as stdout/stderr, "
+            "syslog, and plaintext .log files. This option overrides the default "
+            "setting for those sinks.",
+            logging::MessageSink::set_all_include_context);
+
+        this->add_flag(
+            {"--log-source-location", "--log-source"},
+            "Prefix log messages with source context: file, line number, function. "
+            "Applicable only to message-based log sinks such as stdout/stderr, "
+            "syslog, and plaintext .log files. This option implies `--log-context`, "
+            "and overrides the default setting for those sinks.",
+            logging::MessageSink::set_all_include_source_location);
+
+        this->add_flag(
             {"--log-context", "--log-source-context"},
             "Prefix log messagees with source context: source file, line number, "
             "function name. Applicable only to message-based log sinks such as "

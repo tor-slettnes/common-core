@@ -19,21 +19,18 @@ namespace core::zmq
                        SocketType socket_type,
                        Role role)
         : Super("ZMQ", endpoint_type, channel_name),
-          socket_(this->check_error(::zmq_socket(Endpoint::context(), socket_type))),
+          socket_(nullptr),
+          socket_type_(socket_type),
           role_(role),
           address_(address)
     {
+        // this->setsockopt(ZMQ_LINGER, 1000);
+        // this->setsockopt(ZMQ_RCVTIMEO, 2000);
     }
 
     Endpoint::~Endpoint()
     {
-        if (this->socket_)
-        {
-            logf_notice("Closing %s socket", this->to_string());
-
-            ::zmq_close(this->socket_);
-            this->socket_ = nullptr;
-        }
+        this->close_socket();
     }
 
     Context *Endpoint::context()
@@ -43,15 +40,23 @@ namespace core::zmq
         {
             This::context_ = This::check_error(::zmq_ctx_new());
             core::platform::signal_shutdown.connect(
-                TYPE_NAME_FULL(Context),
-                std::bind(::zmq_ctx_destroy, This::context_));
+                "terminate_zmq_context",
+                This::terminate_context);
         }
         return This::context_;
     }
 
-    Socket *Endpoint::socket() const
+    void Endpoint::terminate_context()
     {
-        return this->socket_;
+        core::platform::signal_shutdown.disconnect(
+            "terminate_zmq_context");
+
+        if (This::context_)
+        {
+            logf_debug("Terminating ZMQ context");
+            ::zmq_ctx_term(This::context_);
+            logf_debug("Terminated ZMQ context");
+        }
     }
 
     Endpoint::Role Endpoint::role() const
@@ -62,6 +67,39 @@ namespace core::zmq
     std::string Endpoint::address() const
     {
         return this->address_;
+    }
+
+    Socket *Endpoint::socket() const
+    {
+        if (!this->socket_)
+        {
+            throwf(core::exception::FailedPrecondition,
+                   "%s socket is not open. Did you forget to initialize()?",
+                   *this);
+        }
+
+        return this->socket_;
+    }
+
+    void Endpoint::open_socket()
+    {
+        if (!this->socket_)
+        {
+            logf_trace("Opening %s socket", *this);
+            this->socket_ = this->check_error(::zmq_socket(
+                Endpoint::context(),
+                this->socket_type_));
+        }
+    }
+
+    void Endpoint::close_socket()
+    {
+        if (this->socket_)
+        {
+            logf_trace("Closing %s socket", *this);
+            ::zmq_close(this->socket_);
+            this->socket_ = nullptr;
+        }
     }
 
     std::string Endpoint::bind_address(const std::string &provided) const
@@ -85,13 +123,16 @@ namespace core::zmq
 
     void Endpoint::unbind()
     {
-        // Obtain real endpoint
-        if (auto endpoint = this->get_last_endpoint())
+        if (this->socket_)
         {
-            logf_debug("%s unbinding from %s", *this, endpoint.value());
-            this->try_or_log(
-                ::zmq_unbind(this->socket(), endpoint->c_str()),
-                "could not unbind from " + endpoint.value());
+            // Obtain real endpoint
+            if (auto endpoint = this->get_last_endpoint())
+            {
+                logf_debug("%s unbinding from %s", *this, endpoint.value());
+                this->try_or_log(
+                    ::zmq_unbind(this->socket(), endpoint->c_str()),
+                    "could not unbind from " + endpoint.value());
+            }
         }
     }
 
@@ -116,18 +157,23 @@ namespace core::zmq
 
     void Endpoint::disconnect()
     {
-        if (auto endpoint = this->get_last_endpoint())
+        if (this->socket_)
         {
-            logf_debug("%s disconnecting from %s", *this, endpoint.value());
-            this->try_or_log(
-                ::zmq_disconnect(this->socket(), endpoint->c_str()),
-                "could not disconnect from " + endpoint.value());
+            if (auto endpoint = this->get_last_endpoint())
+            {
+                logf_debug("%s disconnecting from %s", *this, endpoint.value());
+                this->try_or_log(
+                    ::zmq_disconnect(this->socket(), endpoint->c_str()),
+                    "could not disconnect from " + endpoint.value());
+            }
         }
     }
 
     void Endpoint::initialize()
     {
         Super::initialize();
+        this->open_socket();
+
         switch (this->role())
         {
         case Role::HOST:
@@ -159,11 +205,7 @@ namespace core::zmq
             break;
         }
 
-        if (this->socket_)
-        {
-            ::zmq_close(this->socket_);
-            this->socket_ = nullptr;
-        }
+        this->close_socket();
         Super::deinitialize();
     }
 
@@ -225,6 +267,21 @@ namespace core::zmq
         }
     }
 
+    void Endpoint::setsockopt(int option, int value)
+    {
+        this->setsockopt(option, &value, sizeof(value));
+    }
+
+    void Endpoint::setsockopt(int option, const void *data, std::size_t data_size)
+    {
+        this->open_socket();
+        this->check_error(::zmq_setsockopt(
+            this->socket(),
+            option,
+            &data,
+            data_size));
+    }
+
     void Endpoint::send(const types::ByteVector &bytes, SendFlags flags) const
     {
         using SendFunction = int (*)(void *socket, const void *buf, size_t len, int flags);
@@ -255,7 +312,7 @@ namespace core::zmq
     {
         zmq_msg_t msg;
         std::vector<std::string> counts;
-        std::size_t total;
+        std::size_t total = 0;
 
         do
         {
@@ -266,36 +323,6 @@ namespace core::zmq
             size_t size = ::zmq_msg_size(&msg);
 
             bytes->insert(bytes->end(), data, data + size);
-
-            counts.push_back(std::to_string(size));
-            total += size;
-
-            this->check_error(::zmq_msg_close(&msg));
-        }
-        while (::zmq_msg_more(&msg));
-
-        logf_trace("%s received %s = %d bytes",
-                   *this,
-                   str::join(counts, "+"),
-                   total);
-        return total;
-    }
-
-    std::size_t Endpoint::receive(std::ostream &stream, RecvFlags flags) const
-    {
-        zmq_msg_t msg;
-        std::vector<std::string> counts;
-        std::size_t total;
-
-        do
-        {
-            this->check_error(::zmq_msg_init(&msg));
-            this->check_error(::zmq_msg_recv(&msg, this->socket(), flags));
-
-            const char *data = static_cast<const char *>(::zmq_msg_data(&msg));
-            size_t size = ::zmq_msg_size(&msg);
-
-            stream.write(data, size);
 
             counts.push_back(std::to_string(size));
             total += size;
@@ -388,7 +415,6 @@ namespace core::zmq
     }
 
     std::mutex Endpoint::context_mtx_;
-
     Context *Endpoint::context_ = nullptr;
 
 }  // namespace core::zmq

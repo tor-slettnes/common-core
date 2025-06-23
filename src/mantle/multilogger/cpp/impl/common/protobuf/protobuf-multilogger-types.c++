@@ -116,6 +116,7 @@ namespace protobuf
             proto.text(),                                            // text
             level,                                                   // level
             scope,                                                   // scope
+            proto.application(),                                     // origin
             decoded<core::dt::TimePoint>(proto.timestamp()),         // tp
             proto.source_path(),                                     // path
             proto.source_line(),                                     // lineno
@@ -124,7 +125,6 @@ namespace protobuf
             proto.thread_name(),                                     // thread_name
             proto.task_name(),                                       // task_name
             host,                                                    // host
-            proto.application(),                                     // origin
             decoded<core::types::KeyValueMap>(proto.attributes()));  // attributes
     }
 

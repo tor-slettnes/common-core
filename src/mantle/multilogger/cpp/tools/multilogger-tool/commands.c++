@@ -78,8 +78,12 @@ namespace multilogger
             core::logging::Scope::default_threshold);
 
         auto log_scope = core::logging::Scope::create("logtool", level);
-        auto message = standard_log_message(level);
-        message->add(text);
+        auto message = std::make_shared<core::logging::Message>(
+            text,                               // text
+            level,                              // level
+            log_scope,                          // scope
+            core::platform::path->exec_name(),  // origin
+            core::dt::Clock::now());            // tp
         this->provider->submit(message);
     }
 
@@ -140,4 +144,4 @@ namespace multilogger
     {
         std::cout << this->provider->list_error_fields() << std::endl;
     }
-}  // namespace multiloggerm
+}  // namespace multilogger

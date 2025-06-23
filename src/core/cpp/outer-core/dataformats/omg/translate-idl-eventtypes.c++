@@ -135,6 +135,7 @@ namespace idl
             idl.text(),
             level,
             scope,
+            idl.origin(),
             decoded<core::dt::TimePoint>(idl.timestamp()),
             idl.filename(),
             idl.lineno(),
@@ -143,7 +144,6 @@ namespace idl
             idl.thread_name(),
             idl.task_name(),
             idl.host(),
-            idl.origin(),
             decoded<core::types::KeyValueMap>(idl.attributes()),
         };
     }

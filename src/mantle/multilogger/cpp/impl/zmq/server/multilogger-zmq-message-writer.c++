@@ -8,6 +8,7 @@
 #include "multilogger-zmq-message-writer.h++"
 #include "protobuf-multilogger-types.h++"
 #include "protobuf-inline.h++"
+#include "status/exceptions.h++"
 
 namespace multilogger::zmq
 {
@@ -16,7 +17,7 @@ namespace multilogger::zmq
         const std::shared_ptr<core::zmq::Publisher> &publisher)
         : Super(publisher),
           provider(provider),
-          signal_handle(TYPE_NAME_FULL(This)),
+          keep_writing(false),
           listener_spec({
               .sink_id = "zmq-publisher",
           })
@@ -26,38 +27,56 @@ namespace multilogger::zmq
     void MessageWriter::initialize()
     {
         Super::initialize();
-        using namespace std::placeholders;
-        multilogger::signal_log_item.connect(
-            this->signal_handle,
-            std::bind(&This::on_log_item, this, _1));
-
-        this->provider->start_listening(this->listener_spec);
+        this->start();
     }
 
     void MessageWriter::deinitialize()
     {
-        logf_debug("Stopping listener");
-        this->provider->stop_listening(false);
-
-        logf_debug("Disconnecting handler %r from signal", this->signal_handle);
-        multilogger::signal_log_item.disconnect(
-            this->signal_handle);
-
-        logf_debug("Super::deinitialize()");
-
+        this->stop();
         Super::deinitialize();
-        logf_debug("deinitialize() done");
     }
 
-    void MessageWriter::on_log_item(const core::types::Loggable::ptr &item)
+    void MessageWriter::start()
+    {
+        if (!this->keep_writing)
+        {
+            this->keep_writing = true;
+            this->listener = this->provider->listen(this->listener_spec);
+            this->worker_thread = std::thread(&This::worker, this);
+        }
+    }
+
+    void MessageWriter::stop()
+    {
+        if (this->keep_writing)
+        {
+            this->keep_writing = false;
+            this->listener->close();
+            if (this->worker_thread.joinable())
+            {
+                this->worker_thread.join();
+            }
+        }
+    }
+
+    void MessageWriter::worker()
     {
         try
         {
-            this->forward(
-                protobuf::encoded_shared<cc::platform::multilogger::Loggable>(item));
+            while (this->keep_writing)
+            {
+                if (const auto &item = this->listener->get())
+                {
+                    this->forward(
+                        protobuf::encoded_shared<cc::platform::multilogger::Loggable>(
+                            item.value()));
+                }
+            }
         }
         catch (...)
         {
+            logf_notice("ZMQ message writer failed to send log item; exiting: %s",
+                        std::current_exception());
         }
     }
 
