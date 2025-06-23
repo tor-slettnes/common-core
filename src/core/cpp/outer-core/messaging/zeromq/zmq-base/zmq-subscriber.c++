@@ -34,6 +34,7 @@ namespace core::zmq
 
     void Subscriber::deinitialize()
     {
+        this->stop_receiving();
         this->clear();
         Super::deinitialize();
     }
@@ -47,6 +48,13 @@ namespace core::zmq
             shared_handler);
     }
 
+    void Subscriber::remove_handler(const std::shared_ptr<MessageHandler> &shared_handler)
+    {
+        std::lock_guard lock(this->mtx_);
+        this->shared_handlers_.erase(shared_handler->id());
+        this->deinit_handler(shared_handler);
+    }
+
     void Subscriber::register_handler(const std::weak_ptr<MessageHandler> &weak_handler)
     {
         if (auto shared_handler = weak_handler.lock())
@@ -56,13 +64,6 @@ namespace core::zmq
                 shared_handler->id(),
                 weak_handler);
         }
-    }
-
-    void Subscriber::remove_handler(const std::shared_ptr<MessageHandler> &shared_handler)
-    {
-        std::lock_guard lock(this->mtx_);
-        this->shared_handlers_.erase(shared_handler->id());
-        this->deinit_handler(shared_handler);
     }
 
     void Subscriber::unregister_handler(const std::weak_ptr<MessageHandler> &weak_handler)
@@ -77,7 +78,7 @@ namespace core::zmq
     void Subscriber::clear()
     {
         std::lock_guard lock(this->mtx_);
-        for (std::shared_ptr<MessageHandler> handler : this->handlers())
+        for (const auto &[handler_id, handler] : this->shared_handlers_)
         {
             this->deinit_handler(handler);
         }

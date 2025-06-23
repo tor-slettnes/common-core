@@ -34,10 +34,11 @@ namespace core::zmq
 
     public:
         void add_handler(const std::shared_ptr<MessageHandler> &handler);
-        void register_handler(const std::weak_ptr<MessageHandler> &handler);
-
         void remove_handler(const std::shared_ptr<MessageHandler> &handler);
+
+        void register_handler(const std::weak_ptr<MessageHandler> &handler);
         void unregister_handler(const std::weak_ptr<MessageHandler> &handler);
+
         void clear();
 
     private:

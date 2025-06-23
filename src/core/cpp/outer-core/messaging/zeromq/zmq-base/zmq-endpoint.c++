@@ -24,8 +24,8 @@ namespace core::zmq
           role_(role),
           address_(address)
     {
-        // this->setsockopt(ZMQ_LINGER, 1000);
-        // this->setsockopt(ZMQ_RCVTIMEO, 2000);
+        // this->setsockopt(ZMQ_LINGER, 2000);
+        // this->setsockopt(ZMQ_RCVTIMEO, 1);
     }
 
     Endpoint::~Endpoint()
@@ -35,7 +35,6 @@ namespace core::zmq
 
     Context *Endpoint::context()
     {
-        std::lock_guard lck(This::context_mtx_);
         if (!This::context_)
         {
             This::context_ = This::check_error(::zmq_ctx_new());
@@ -115,7 +114,7 @@ namespace core::zmq
     void Endpoint::bind(const std::string &address)
     {
         std::string bind_address = this->bind_address(address);
-        logf_debug("%s binding to %s", *this, bind_address);
+        logf_info("%s binding to %s", *this, bind_address);
         this->check_error(
             ::zmq_bind(this->socket(), bind_address.c_str()));
         this->address_ = bind_address;
@@ -126,13 +125,11 @@ namespace core::zmq
         if (this->socket_)
         {
             // Obtain real endpoint
-            if (auto endpoint = this->get_last_endpoint())
-            {
-                logf_debug("%s unbinding from %s", *this, endpoint.value());
-                this->try_or_log(
-                    ::zmq_unbind(this->socket(), endpoint->c_str()),
-                    "could not unbind from " + endpoint.value());
-            }
+            std::string endpoint = this->get_last_address();
+            logf_info("%s unbinding from %s", *this, endpoint);
+            this->try_or_log(
+                ::zmq_unbind(this->socket(), endpoint.c_str()),
+                "could not unbind from " + endpoint);
         }
     }
 
@@ -149,7 +146,7 @@ namespace core::zmq
     void Endpoint::connect(const std::string &address)
     {
         std::string host_address = this->host_address(address);
-        logf_debug("%s connecting to %s", *this, host_address);
+        logf_info("%s connecting to %s", *this, host_address);
         this->check_error(
             ::zmq_connect(this->socket(), host_address.c_str()));
         this->address_ = host_address;
@@ -159,13 +156,11 @@ namespace core::zmq
     {
         if (this->socket_)
         {
-            if (auto endpoint = this->get_last_endpoint())
-            {
-                logf_debug("%s disconnecting from %s", *this, endpoint.value());
-                this->try_or_log(
-                    ::zmq_disconnect(this->socket(), endpoint->c_str()),
-                    "could not disconnect from " + endpoint.value());
-            }
+            std::string endpoint = this->get_last_address();
+            logf_info("%s disconnecting from %s", *this, endpoint);
+            this->try_or_log(
+                ::zmq_disconnect(this->socket(), endpoint.c_str()),
+                "could not disconnect from " + endpoint);
         }
     }
 
@@ -227,7 +222,7 @@ namespace core::zmq
         return rc;
     }
 
-    std::optional<std::string> Endpoint::get_last_endpoint() const
+    std::string Endpoint::get_last_address() const
     {
         size_t buf_size = 256;
         char buf[buf_size];
@@ -238,7 +233,7 @@ namespace core::zmq
         }
         else
         {
-            return {};
+            return this->address();
         }
     }
 
@@ -318,6 +313,7 @@ namespace core::zmq
         {
             this->check_error(::zmq_msg_init(&msg));
             this->check_error(::zmq_msg_recv(&msg, this->socket(), flags));
+            // this->check_error(this->receive_zmq_message(&msg, flags));
 
             const char *data = static_cast<const char *>(::zmq_msg_data(&msg));
             size_t size = ::zmq_msg_size(&msg);
@@ -336,6 +332,20 @@ namespace core::zmq
                    str::join(counts, "+"),
                    total);
         return total;
+    }
+
+    int Endpoint::receive_zmq_message(Message *message, RecvFlags flags) const
+    {
+        int rc = 0;
+        do
+        {
+            std::cout << "Receiving ZMQ message" << std::endl;
+            rc = ::zmq_msg_recv(message, this->socket(), flags);
+            std::cout << "Recieved ZMQ message, rc = " << rc << std::endl;
+        }
+        while ((rc != 0) && (errno == EAGAIN));
+
+        return rc;
     }
 
     std::string Endpoint::realaddress(const std::string &address,
@@ -414,7 +424,6 @@ namespace core::zmq
         return uri;
     }
 
-    std::mutex Endpoint::context_mtx_;
     Context *Endpoint::context_ = nullptr;
 
 }  // namespace core::zmq

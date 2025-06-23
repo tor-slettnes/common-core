@@ -23,7 +23,7 @@
 
 namespace core::zmq
 {
-    define_log_scope("zmq", status::Level::NOTICE);
+    define_log_scope("zmq");
 
 #if CPPZMQ
     using Context = void;
@@ -99,7 +99,7 @@ namespace core::zmq
     protected:
         static void *check_error(void *ptr);
         static int check_error(int rc);
-        std::optional<std::string> get_last_endpoint() const;
+        std::string get_last_address() const;
         void try_or_log(int rc, const std::string &preamble) const;
         void log_zmq_error(const std::string &action, const Error &e) const;
 
@@ -117,6 +117,9 @@ namespace core::zmq
         std::size_t receive(
             types::ByteVector *bytes,
             RecvFlags flags = 0) const;
+
+    private:
+        int receive_zmq_message(Message *message, RecvFlags flags) const;
 
     protected:
         /// @param[in] address
@@ -178,7 +181,6 @@ namespace core::zmq
                                 uint port) const;
 
     private:
-        static std::mutex context_mtx_;
         static Context *context_;
         Socket *socket_;
         SocketType socket_type_;

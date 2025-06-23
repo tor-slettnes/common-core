@@ -107,10 +107,11 @@ namespace core::logging
         dt::tp_to_stream(stream, message->timepoint(), true, 3, "%F|%T");
 
         stream << "|"
-               << std::left
+               << std::right
                << std::setfill(' ')
                << std::setw(8)
                << message->level()
+               << std::left
                << "|";
 
         if (this->include_context())

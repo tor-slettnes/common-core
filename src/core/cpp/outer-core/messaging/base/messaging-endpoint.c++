@@ -127,11 +127,11 @@ namespace core::messaging
 
     void Endpoint::to_stream(std::ostream &stream) const
     {
-        str::format(stream,
-                    "%s %r %s",
-                    this->messaging_flavor(),
-                    this->channel_name(),
-                    this->endpoint_type());
+        stream << this->messaging_flavor()
+               << " "
+               << this->channel_name()
+               << " "
+               << this->endpoint_type();
     }
 
 }  // namespace core::messaging

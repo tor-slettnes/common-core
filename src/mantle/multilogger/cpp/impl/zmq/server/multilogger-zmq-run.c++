@@ -39,7 +39,7 @@ namespace multilogger::zmq
             api_provider,
             message_publisher);
 
-        auto server = multilogger::zmq::Server::create_shared(
+        auto rpc_server = multilogger::zmq::Server::create_shared(
             api_provider,
             bind_address);
 
@@ -48,17 +48,11 @@ namespace multilogger::zmq
 
         message_publisher->initialize();
         message_writer->initialize();
-        log_notice("Multilogger ZMQ message publisher is ready on ",
-                   message_publisher->address());
 
         submission_handler->initialize();
         submission_subscriber->initialize();
-        log_notice("Multilogger ZMQ submission subscriber is ready on ",
-                   submission_subscriber->address());
 
-        server->initialize();
-        log_notice("Multilogger ZMQ RPC server is ready on ",
-                   server->address());
+        rpc_server->initialize();
 
         //======================================================================
         // Run
@@ -67,31 +61,35 @@ namespace multilogger::zmq
         core::platform::signal_shutdown.connect(
             SHUTDOWN_SIGNAL_HANDLE,
             [&]() {
-                log_info("ZMQ service is shutting down");
-                server->stop();
+                log_info("ZMQ RPC server is stopping");
+                rpc_server->stop();
+                log_info("ZMQ RPC server has stopped");
             });
 
 
-        server->run();
+        logf_notice("Multilogger ZMQ services are ready");
+        rpc_server->run();
+        logf_notice("Multilogger ZMQ services are shutting down");
 
         core::platform::signal_shutdown.disconnect(SHUTDOWN_SIGNAL_HANDLE);
 
         //======================================================================
         // Deinitialize
 
-        log_info("Multilogger ZMQ RPC server is shutting down");
-        server->deinitialize();
+        logf_debug("Deinitializing ZMQ RPC server");
+        rpc_server->deinitialize();
 
-        log_info("Multilogger ZMQ submission subscriber is shutting down");
+        logf_debug("Deinitializing ZMQ submission subscriber");
         submission_subscriber->deinitialize();
+
+        logf_debug("Deinitializing ZMQ submission handler");
         submission_handler->deinitialize();
 
-        log_info("Multilogger ZeroMQ publisher is shutting down");
+        logf_debug("Deinitializing ZMQ submission writer");
         message_writer->deinitialize();
+
+        logf_debug("Deinitializing ZMQ submission publisher");
         message_publisher->deinitialize();
-
-        log_notice("Multilogger ZeroMQ service is down");
-
     }
 
 }  // namespace multilogger::zmq
