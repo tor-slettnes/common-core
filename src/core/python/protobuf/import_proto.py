@@ -13,8 +13,8 @@ default_suffix = '_pb2'
 def import_common_protos(target_scope: object,
                          namespace: str|None = None):
     '''
-    Import well-known ProtoBuf defintions from Google as well as Common Core
-    shared defintions into `target_scope` (e.g., `globals()`).
+    Import well-known ProtoBuf types from Google as well as Common Core
+    shared types into `target_scope` (e.g., `globals()`).
 
     If `namespace` is provided all symbols will appear there, otherwise they
     will appear in namespaces corresponding to the `package` declaration from

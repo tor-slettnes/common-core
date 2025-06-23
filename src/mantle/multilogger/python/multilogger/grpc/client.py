@@ -413,22 +413,9 @@ class Client (API, BaseClient, MessageBuilder):
           ```
         '''
 
-        response = type(self)._add_sink(**locals())
+        request = self.build_from_dict(SinkSpec, locals())
+        response = self.stub.add_sink(request)
         return response.added
-
-
-    def _add_sink(self, *,  min_level, rotation_interval, columns, **kwargs):
-        if min_level is not None:
-            kwargs.update(min_level = encodeLogLevel(min_level))
-
-        if rotation_interval is not None:
-            kwargs.update(rotation_interval = encodeInterval(rotation_interval))
-
-        if columns:
-            kwargs.update(columns = [encodeColumnSpec(column) for column in columns])
-
-        request = SinkSpec(**kwargs)
-        return self.stub.add_sink(request)
 
 
     def remove_sink(self, sink_id: str) -> bool:

@@ -313,7 +313,6 @@ namespace core::zmq
         {
             this->check_error(::zmq_msg_init(&msg));
             this->check_error(::zmq_msg_recv(&msg, this->socket(), flags));
-            // this->check_error(this->receive_zmq_message(&msg, flags));
 
             const char *data = static_cast<const char *>(::zmq_msg_data(&msg));
             size_t size = ::zmq_msg_size(&msg);
@@ -332,20 +331,6 @@ namespace core::zmq
                    str::join(counts, "+"),
                    total);
         return total;
-    }
-
-    int Endpoint::receive_zmq_message(Message *message, RecvFlags flags) const
-    {
-        int rc = 0;
-        do
-        {
-            std::cout << "Receiving ZMQ message" << std::endl;
-            rc = ::zmq_msg_recv(message, this->socket(), flags);
-            std::cout << "Recieved ZMQ message, rc = " << rc << std::endl;
-        }
-        while ((rc != 0) && (errno == EAGAIN));
-
-        return rc;
     }
 
     std::string Endpoint::realaddress(const std::string &address,

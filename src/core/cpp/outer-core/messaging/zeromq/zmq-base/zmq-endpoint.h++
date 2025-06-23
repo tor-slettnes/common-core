@@ -118,9 +118,6 @@ namespace core::zmq
             types::ByteVector *bytes,
             RecvFlags flags = 0) const;
 
-    private:
-        int receive_zmq_message(Message *message, RecvFlags flags) const;
-
     protected:
         /// @param[in] address
         ///   Address to sanitize, normally provided as a command-line option.
