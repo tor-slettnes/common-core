@@ -18,34 +18,34 @@ log sinks:
     compress after use: true
     name template: "{isodate}-{hour}{minute}{zoneoffset}.csv"
 
-  lologger:
-    enabled      : false
-    type         : "sqlite3"
-    #threshold    : DEBUG
-    contract_id  : "text"
-    name template: "lologger/{hostname}-{year}-{month}"
-    local time   : true
-    rotate after : 1 month
-    compress after use: false
-    expire after : 1 year
-    table name   : "Events"
-    columns:
-      # event_field, column_name, column_type[, extra_args]
-      - ["timestamp", "ClientTimestamp", TEXT]
-      - ["origin", "ClientName", TEXT]
-      - ["timestamp", "EpochTime", INTEGER]
-      - ["text", "LogMessage", TEXT]
-      - ["level", "Level", INTEGER]
-      - ["host", "IP", TEXT]
+  # lologger:
+  #   enabled      : false
+  #   type         : "sqlite3"
+  #   #threshold    : DEBUG
+  #   contract_id  : "text"
+  #   name template: "lologger/{hostname}-{year}-{month}"
+  #   local time   : true
+  #   rotate after : 1 month
+  #   compress after use: false
+  #   expire after : 1 year
+  #   table name   : "Events"
+  #   columns:
+  #     # event_field, column_name, column_type[, extra_args]
+  #     - ["timestamp", "ClientTimestamp", TEXT]
+  #     - ["origin", "ClientName", TEXT]
+  #     - ["timestamp", "EpochTime", INTEGER]
+  #     - ["text", "LogMessage", TEXT]
+  #     - ["level", "Level", INTEGER]
+  #     - ["host", "IP", TEXT]
 
 
-    level map:
-      NONE     : 0
-      TRACE    : 5
-      DEBUG    : 10
-      INFO     : 20
-      NOTICE   : 25
-      WARNING  : 30
-      FAILED   : 40
-      CRITICAL : 50
-      FATAL    : 60
+  #   level map:
+  #     NONE     : 0
+  #     TRACE    : 5
+  #     DEBUG    : 10
+  #     INFO     : 20
+  #     NOTICE   : 25
+  #     WARNING  : 30
+  #     FAILED   : 40
+  #     CRITICAL : 50
+  #     FATAL    : 60

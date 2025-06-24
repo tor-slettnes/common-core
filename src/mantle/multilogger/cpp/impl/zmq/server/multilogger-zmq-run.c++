@@ -76,19 +76,10 @@ namespace multilogger::zmq
         //======================================================================
         // Deinitialize
 
-        logf_debug("Deinitializing ZMQ RPC server");
         rpc_server->deinitialize();
-
-        logf_debug("Deinitializing ZMQ submission subscriber");
         submission_subscriber->deinitialize();
-
-        logf_debug("Deinitializing ZMQ submission handler");
         submission_handler->deinitialize();
-
-        logf_debug("Deinitializing ZMQ submission writer");
         message_writer->deinitialize();
-
-        logf_debug("Deinitializing ZMQ submission publisher");
         message_publisher->deinitialize();
     }
 

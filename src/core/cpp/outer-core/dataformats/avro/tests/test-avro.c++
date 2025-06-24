@@ -127,10 +127,10 @@ namespace avro
 
         core::types::KeyValueMap attributes = readback.get("attributes").as_kvmap();
 
-        EXPECT_EQ(attributes.get("my_bool").get("variant").get("boolean").as_bool(),
+        EXPECT_EQ(attributes.get("my_bool").get("value").get("boolean").as_bool(),
                   bool_value);
 
-        core::types::Value observed_ms = attributes.get("my_duration").get("variant").get("long");
+        core::types::Value observed_ms = attributes.get("my_duration").get("value").get("long");
         auto expected_ms = std::chrono::duration_cast<std::chrono::milliseconds>(dur_value);
 
         EXPECT_EQ(observed_ms.as_sint(), expected_ms.count());

@@ -5,42 +5,128 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules within package
-from ...common.endpoint import Endpoint as EndpointBase
-
 ### Standard Python modules
-import re, sys, logging
+import enum
+import logging
+import re
+import sys
 
 ### Third-party modules
 try:
     import zmq
 except ImportError as e:
-    logging.critical('Could not import module `zmq` - try installing `python3-zmq`.')
+    logging.critical('Could not import module `zmq` - try installing `pyzmq`.')
     raise e from None
+
+### Modules within package
+from ...common.endpoint import Endpoint as EndpointBase
 
 
 class Endpoint (EndpointBase):
     messaging_flavor  = 'ZMQ'
     context = zmq.Context()
 
+    class Role (enum.IntEnum):
+        UNDEFINED = 0
+        HOST      = 1
+        SATELLITE = 2
+
     def __init__(self,
+                 address     : str,
                  channel_name: str,
                  project_name: str|None,
                  socket_type : zmq.SocketType,
+                 role        : Role = Role.UNDEFINED,
                  ):
+        '''
+        Initializer.
+
+        @param address
+            Depending on `role`, this should be a network interface address to
+            which to bind (use `*` to denote all network interfaces), or a host
+            address to which to connect.
+
+        @param channel_name
+            A name used to look up settings such as default host/interface
+            address and port number for this endpoint.  Think of it as a
+            generalized service name, adapted for RPC/Request/Response, Pub/Sub,
+            and other ZMQ socket types.
+
+        @param project_name
+            Name of the overall code project, used to locate corresponding
+            settings files (e.g. `zmq-endpoints-PROJECT.yaml`), in addition to
+            `"common"`.
+            (Since this is Python, it must be provided as a runtime argument
+            rather than a pre-built default. Correspondingly, the meaing of
+            "project" in this context is flexible; for instance, if your code
+            repository is shared amongst multiple products, it could denote
+            a specific one.)
+
+        @param socket_type
+            ZMQ socket type to use for this endpoint. Typically a hardcoded
+            value is passed in from direct descendants of this class, e.g.
+            `Publisher` would use `zmq.PUB`.
+
+        @param role
+            Default role of this endpoint vis a vis its peers.
+            `Endpoint.Role.HOST` means that this will bind to one or all local
+            network interfaces and listen for incoming connections, whereas
+            `Endpoint.Role.SATELLITE` means that this will connect to a (local
+            or remote) peer.  If not provided, an explicit call to `bind()` or
+            `connect()` will be required in order to communicate with peers.
+        '''
 
         EndpointBase.__init__(self,
                               channel_name = channel_name,
                               project_name = project_name)
-        self.socket = self.context.socket(socket_type)
+
+        self._provided_address = address
+        self.socket            = self.context.socket(socket_type)
+        self.role              = role
+        self.bound_address     = None
+        self.host_address      = None
+
+    def initialize(self):
+        '''
+        Initialize this endpoint.
+        '''
+        super().initialize()
+
+        if self.role == Endpoint.Role.HOST:
+            self.bind()
+        elif self.role == Endpoint.Role.SATELLITE:
+            self.connect()
+
+
+    def deinitialize(self):
+        '''
+        Deinitialize this endpoint.
+        '''
+
+        if self.role == Endpoint.Role.HOST:
+            self.unbind()
+        elif self.role == Endpoint.Role.SATELLITE:
+            self.disconnect()
+
+        super().deinitialize()
+
 
     def send_bytes(self,
                    data:  bytes,
                    flags: zmq.Flag = 0):
+        '''
+        Send raw bytes over this instance's ZMQ socket.
+        '''
+
         self.socket.send(data, flags=flags)
+
 
     def receive_bytes(self,
                       flags: zmq.Flag = 0) -> bytes:
+        '''
+        Read one ZMQ message from this instance's ZMQ socket.
+        '''
+
         data = b''
         more = True
 
@@ -49,20 +135,101 @@ class Endpoint (EndpointBase):
             data += msg.buffer
             more  = msg.more
 
-            logging.debug('Received size=%d bytes, total=%d bytes, more=%s: %r'%(
-                len(msg.buffer),
-                len(data),
-                msg.more,
-                msg.buffer))
-
         return data
+
+    def sanitized_host_address(self,
+                               provided: str|None = None) -> str:
+        '''
+        Sanitize the provided host address into a format as expected by ZMQ.
+
+        @param provided
+            Address to sanitize, if different from what was previously provided
+            to `__init__()`.  Missing components (`scheme`, `host`, `port`) are
+            populated with default values: `tcp`, `localhost`, `5555`.
+
+        @return
+            Sanitized address of the form `scheme://host:port`.
+        '''
+
+        return self._realaddress(provided,
+                                 "scheme", "host", "port",
+                                 "tcp", "localhost", 5555)
+
+    def connect(self, address: str|None = None):
+        '''
+        Connect to another ZMQ endpoint.
+
+        @param address
+            Address of ZMQ endpoint.  See `sanitized_host_address()` for details.
+        '''
+
+        if not self.host_address:
+            host_address = self.sanitized_host_address(address)
+            logging.info("%s connecting to %s"%(self, host_address))
+            self.socket.connect(host_address)
+            self.host_address = host_address
+
+    def disconnect(self):
+        '''
+        Disconnect from any connected ZMQ endpoint
+        '''
+
+        if host_address := self.host_address:
+            self.host_address = None
+            logging.info("%s disconnecting from %s"%(self, host_address))
+            self.socket.disconnect(host_address)
+
+    def sanitized_bind_address(self,
+                               provided: str|None = None) -> str:
+        '''
+        Sanitize the provided bind (interface) address into a format as expected by ZMQ.
+
+        @param provided
+            Address to sanitize, if different from what was previously provided
+            to `__init__()`.  Missing components (`scheme`, `host`, `port`) are
+            populated with default values: `tcp`, `*`, `5555`.
+
+        @return
+            Sanitized address of the form `scheme://host:port`.
+        '''
+
+        return self._realaddress(provided,
+                                 "scheme", "listen", "port",
+                                 "tcp", "*", 5555)
+
+    def bind(self, address: str|None = None):
+        '''
+        Bind this instance's ZMQ socket to one or all local network
+        interface(s) to listen for incoming connections.
+
+        @param address
+            Interface address, or `*` to bind to all interfaces.
+            See `sanitized_bind_address()` for details.
+        '''
+
+        if not self.bound_address:
+            bind_address = self.sanitized_bind_address(address)
+            logging.info("%s binding to %s"%(self, bind_address))
+            self.socket.bind(bind_address)
+            self.bound_address = bind_address
+
+
+    def unbind(self):
+        '''
+        Unbind this instance's ZMQ socket from any network interface.
+        '''
+
+        if bound_address := self.bound_address:
+            self.bound_address = None
+            logging.info("%s unbinding from %s"%(self, bound_address))
+            self.socket.unbind(bound_address)
 
 
     def _realaddress(self,
-                     provided      : str,
-                     schemeOption  : str,
-                     hostOption    : str,
-                     portOption    : int,
+                     provided      : str|None = None,
+                     schemeOption  : str = "scheme",
+                     hostOption    : str = "",
+                     portOption    : int = "port",
                      defaultScheme : str = "tcp",
                      defaultHost   : str = "",
                      defaultPort   : int = 5555):
@@ -104,7 +271,7 @@ class Endpoint (EndpointBase):
           may still be empty)
         '''
 
-        (scheme, host, port) = self._splitAddress(provided or "")
+        (scheme, host, port) = self._splitAddress(provided or self._provided_address or "")
 
         if schemeOption and not scheme:
             scheme = self.setting(schemeOption, defaultScheme)

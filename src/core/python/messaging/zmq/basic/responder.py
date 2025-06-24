@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within package
-from .host import Host
+from .endpoint import Endpoint
 from cc.core.invocation import safe_invoke
 
 ### Third-party modules
@@ -15,20 +15,23 @@ import zmq
 ### Standard Python modules
 import logging, threading
 
-class Responder (Host):
+class Responder (Endpoint):
     endpoint_type = 'responder'
 
     def __init__(self,
                  bind_address: str,
                  channel_name: str|None = None,
                  project_name: str|None = None,
+                 role: Endpoint.Role = Endpoint.Role.HOST,
                  ):
 
-        Host.__init__(self,
-                      address = bind_address,
-                      channel_name = channel_name,
-                      project_name = project_name,
-                      socket_type = zmq.REP)
+        Endpoint.__init__(
+            self,
+            address = bind_address,
+            channel_name = channel_name,
+            project_name = project_name,
+            socket_type = zmq.REP,
+            role = role)
 
         self.listen_thread = None
         self.keep_listening = False

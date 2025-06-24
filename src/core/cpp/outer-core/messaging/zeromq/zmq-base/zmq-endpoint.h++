@@ -44,7 +44,7 @@ namespace core::zmq
 #endif
 
     constexpr auto SCHEME_OPTION = "scheme";
-    constexpr auto CONNECT_OPTION = "connect";
+    constexpr auto HOST_OPTION = "host";
     constexpr auto BIND_OPTION = "listen";
     constexpr auto PORT_OPTION = "port";
 
@@ -85,12 +85,12 @@ namespace core::zmq
         void open_socket();
         void close_socket();
 
-        std::string bind_address(const std::string &provided) const;
-        void bind(const std::string &address);
+        std::string bind_address(const std::optional<std::string> &provided = {}) const;
+        void bind(const std::optional<std::string> &address = {});
         void unbind();
 
-        std::string host_address(const std::string &provided) const;
-        void connect(const std::string &address);
+        std::string host_address(const std::optional<std::string> &provided = {}) const;
+        void connect(const std::optional<std::string> &address = {});
         void disconnect();
 
         void initialize() override;

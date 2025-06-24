@@ -31,10 +31,7 @@ namespace demo::zmq
         // Initialize
 
         zmq_publisher->initialize();
-        log_notice("Demo ZeroMQ publisher is ready on ", zmq_publisher->address());
-
         zmq_server->initialize();
-        log_notice("Demo ZeroMQ command server is ready on ", zmq_server->address());
 
 
         //======================================================================
@@ -56,10 +53,7 @@ namespace demo::zmq
         //======================================================================
         // Deinitialize
 
-        log_notice("Demo ZeroMQ command server is shutting down");
         zmq_server->deinitialize();
-
-        log_notice("Demo ZeroMQ publisher is shutting down");
         zmq_publisher->deinitialize();
     }
 

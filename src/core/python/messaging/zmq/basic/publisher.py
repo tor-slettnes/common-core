@@ -6,26 +6,29 @@
 #===============================================================================
 
 ### Modules within package
-from .host   import Host
+from .endpoint import Endpoint
 from .filter import Filter, Topic
 
 ### Third-party modules
 import zmq
 
-class Publisher (Host):
+class Publisher (Endpoint):
     endpoint_type = 'publisher'
 
     def __init__(self,
                  bind_address: str,
                  channel_name: str|None = None,
                  project_name: str|None = None,
+                 role: Endpoint.Role = Endpoint.Role.HOST,
                  ):
 
-        Host.__init__(self,
-                      address = bind_address,
-                      channel_name = channel_name,
-                      project_name = project_name,
-                      socket_type = zmq.PUB)
+        Endpoint.__init__(
+            self,
+            address = bind_address,
+            channel_name = channel_name,
+            project_name = project_name,
+            socket_type = zmq.PUB,
+            role = role)
 
     def publish(self,
                 message_filter : Filter,

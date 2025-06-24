@@ -101,9 +101,9 @@ namespace core::zmq
         }
     }
 
-    std::string Endpoint::bind_address(const std::string &provided) const
+    std::string Endpoint::bind_address(const std::optional<std::string> &provided) const
     {
-        return this->realaddress(provided,
+        return this->realaddress(provided.value_or(this->address_),
                                  SCHEME_OPTION,
                                  BIND_OPTION,
                                  PORT_OPTION,
@@ -111,7 +111,7 @@ namespace core::zmq
                                  "*");
     }
 
-    void Endpoint::bind(const std::string &address)
+    void Endpoint::bind(const std::optional<std::string> &address)
     {
         std::string bind_address = this->bind_address(address);
         logf_info("%s binding to %s", *this, bind_address);
@@ -133,17 +133,17 @@ namespace core::zmq
         }
     }
 
-    std::string Endpoint::host_address(const std::string &provided) const
+    std::string Endpoint::host_address(const std::optional<std::string> &provided) const
     {
-        return this->realaddress(provided,
+        return this->realaddress(provided.value_or(this->address_),
                                  SCHEME_OPTION,
-                                 CONNECT_OPTION,
+                                 HOST_OPTION,
                                  PORT_OPTION,
                                  "tcp",
                                  "localhost");
     }
 
-    void Endpoint::connect(const std::string &address)
+    void Endpoint::connect(const std::optional<std::string> &address)
     {
         std::string host_address = this->host_address(address);
         logf_info("%s connecting to %s", *this, host_address);

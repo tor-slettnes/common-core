@@ -10,8 +10,9 @@ from .common import DEMO_PUBLISHER_CHANNEL, DEMO_SERVICE_CHANNEL, DEMO_RPC_INTER
 from ..base  import API, demo_signals, PROJECT_NAME
 
 ### Modules relative to install dir
+from cc.messaging.zmq.basic.satellite import Satellite
 from cc.messaging.zmq.basic.subscriber import Subscriber
-from cc.messaging.zmq.protobuf.client import Client as BaseClient
+from cc.messaging.zmq.protobuf.client import Client as ProtoBufClient
 from cc.messaging.zmq.protobuf.signalhandler import SignalHandler
 from cc.protobuf.demo import Greeting, TimeData
 from cc.protobuf.utils import check_message_type
@@ -23,7 +24,7 @@ import time, sys, os.path
 #===============================================================================
 # Client class
 
-class Client (API, BaseClient):
+class Client (API, ProtoBufClient):
     '''
     Client for Demo service.
     '''
@@ -34,11 +35,12 @@ class Client (API, BaseClient):
                  identity: str = None):
 
         API.__init__(self, 'Python ZMQ Client', identity);
-        BaseClient.__init__(self,
-                            host_address = service_host,
-                            channel_name = DEMO_SERVICE_CHANNEL,
-                            interface_name = DEMO_RPC_INTERFACE,
-                            project_name = PROJECT_NAME)
+        ProtoBufClient.__init__(
+            self,
+            host_address = service_host,
+            channel_name = DEMO_SERVICE_CHANNEL,
+            interface_name = DEMO_RPC_INTERFACE,
+            project_name = PROJECT_NAME)
 
         self.subscriber = Subscriber(
             host_address = publisher_host,
@@ -54,14 +56,14 @@ class Client (API, BaseClient):
         '''
         self.subscriber.connect()
         self.subscriber.add(self.signalhandler)
-        BaseClient.connect(self)
+        super().connect()
 
     def disconnect(self):
         '''
         Disconnect from the server. Unregister signal handler.
         '''
 
-        BaseClient.disconnect(self)
+        super().disconnect()
         self.subscriber.remove(self.signalhandler)
         self.subscriber.disconnect()
 

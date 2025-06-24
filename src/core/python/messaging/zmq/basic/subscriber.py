@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within package
-from .satellite import Satellite
+from .endpoint import Endpoint
 from .filter import Filter, Topic
 from .messagehandler import MessageHandler
 from cc.core.invocation import safe_invoke
@@ -18,20 +18,23 @@ import zmq
 from typing import Callable, Optional, Union
 import logging, threading
 
-class Subscriber (Satellite):
+class Subscriber (Endpoint):
     endpoint_type = 'subscriber'
 
     def __init__(self,
                  host_address: str,
                  channel_name: str|None = None,
                  project_name: str|None = None,
+                 role: Endpoint.Role = Endpoint.Role.SATELLITE,
                  ):
 
-        Satellite.__init__(self,
-                           address = host_address,
-                           channel_name = channel_name,
-                           project_name = project_name,
-                           socket_type = zmq.SUB)
+        Endpoint.__init__(
+            self,
+            address = host_address,
+            channel_name = channel_name,
+            project_name = project_name,
+            socket_type = zmq.SUB,
+            role = role)
 
         self.subscriptions = set()
         self.receive_thread = None

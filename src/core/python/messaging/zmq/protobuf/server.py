@@ -8,6 +8,7 @@
 ### Modules within package
 from .error import Error
 from .requesthandler import RequestHandler
+from ..basic.endpoint import Endpoint
 from ..basic.responder import Responder
 from cc.protobuf.rr import Request, Reply, StatusCode
 from cc.protobuf.variant import keyValueMap
@@ -30,12 +31,16 @@ class Server (Responder):
                  bind_address    : str,
                  channel_name    : str|None,
                  project_name    : str|None = None,
-                 request_handlers: Sequence[RequestHandler] = []):
+                 role            : Endpoint.Role = Endpoint.Role.HOST,
+                 request_handlers: Sequence[RequestHandler] = [],
+                 ):
 
-        Responder.__init__(self,
-                           bind_address = bind_address,
-                           channel_name = channel_name,
-                           project_name = project_name)
+        Responder.__init__(
+            self,
+            bind_address = bind_address,
+            channel_name = channel_name,
+            project_name = project_name,
+            role = role)
 
         self.request_handlers = dict([(handler.interface_name, handler)
                                       for handler in request_handlers])

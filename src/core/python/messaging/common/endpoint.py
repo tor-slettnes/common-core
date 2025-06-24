@@ -59,7 +59,7 @@ class Endpoint (object):
 
 
     def __repr__ (self):
-        return "%s %r %s"%(self.messaging_flavor, self.channel_name, self.endpoint_type)
+        return "%s %s %s"%(self.messaging_flavor, self.channel_name, self.endpoint_type)
 
     def initialize(self):
         pass
