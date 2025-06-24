@@ -44,7 +44,7 @@ namespace core::zmq
 #endif
 
     constexpr auto SCHEME_OPTION = "scheme";
-    constexpr auto CONNECT_OPTION = "connect";
+    constexpr auto HOST_OPTION = "host";
     constexpr auto BIND_OPTION = "listen";
     constexpr auto PORT_OPTION = "port";
 
@@ -56,7 +56,7 @@ namespace core::zmq
         using This = Endpoint;
         using Super = messaging::Endpoint;
 
-    protected:
+    public:
         enum class Role
         {
             UNSPECIFIED,
@@ -75,17 +75,22 @@ namespace core::zmq
 
     public:
         static Context *context();
-        Socket *socket() const;
+        static void terminate_context();
 
         Role role() const;
         std::string address() const;
 
-        std::string bind_address(const std::string &provided) const;
-        void bind(const std::string &address);
+        Socket *socket() const;
+
+        void open_socket();
+        void close_socket();
+
+        std::string bind_address(const std::optional<std::string> &provided = {}) const;
+        void bind(const std::optional<std::string> &address = {});
         void unbind();
 
-        std::string host_address(const std::string &provided) const;
-        void connect(const std::string &address);
+        std::string host_address(const std::optional<std::string> &provided = {}) const;
+        void connect(const std::optional<std::string> &address = {});
         void disconnect();
 
         void initialize() override;
@@ -94,25 +99,24 @@ namespace core::zmq
     protected:
         static void *check_error(void *ptr);
         static int check_error(int rc);
-        std::optional<std::string> get_last_endpoint() const;
-        void try_or_log(int rc, const std::string &preamble);
-        void log_zmq_error(const std::string &action, const Error &e);
+        std::string get_last_address() const;
+        void try_or_log(int rc, const std::string &preamble) const;
+        void log_zmq_error(const std::string &action, const Error &e) const;
+
+        void setsockopt(int option, int value);
+        void setsockopt(int option, const void *data, std::size_t data_size);
 
     public:
         void send(
             const types::ByteVector &bytes,
-            SendFlags flags = 0);
+            SendFlags flags = 0) const;
 
         std::optional<types::ByteVector> receive(
-            RecvFlags flags = 0);
+            RecvFlags flags = 0) const;
 
         std::size_t receive(
             types::ByteVector *bytes,
-            RecvFlags flags = 0);
-
-        std::size_t receive(
-            std::ostream &stream,
-            RecvFlags flags = 0);
+            RecvFlags flags = 0) const;
 
     protected:
         /// @param[in] address
@@ -174,11 +178,12 @@ namespace core::zmq
                                 uint port) const;
 
     private:
-        static std::mutex context_mtx_;
         static Context *context_;
         Socket *socket_;
+        SocketType socket_type_;
         Role role_;
         std::string address_;
     };
 
-}  // namespace core::zmq
+
+}  // Namespace core::zmq

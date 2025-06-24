@@ -24,7 +24,7 @@ namespace core::zmq
 
     public:
         void start();
-        void stop();
+        void stop(bool wait = true);
         void run();
 
     protected:
@@ -32,8 +32,8 @@ namespace core::zmq
                                             types::ByteVector *packed_reply) = 0;
 
     private:
-        std::thread listen_thread;
         bool keep_listening;
+        std::thread listen_thread;
     };
 
 }  // namespace core::zmq

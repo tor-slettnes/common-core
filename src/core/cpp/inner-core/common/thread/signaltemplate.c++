@@ -12,7 +12,7 @@
 
 namespace core::signal
 {
-    define_log_scope("signal");
+    define_log_scope("signal", status::Level::DEBUG);
 
     //==========================================================================
     /// @class BaseSignal
@@ -45,18 +45,18 @@ namespace core::signal
     {
         try
         {
-            logf_trace("%s: Invoking receiver %s",
+            logf_trace("%s: Invoking receiver: %s",
                        this->name_,
                        receiver);
             f();
-            logf_trace("%s: Receiver %s completed",
+            logf_trace("%s: Receiver completed: %s",
                        this->name_,
                        receiver);
             return true;
         }
         catch (...)
         {
-            logf_notice("%s: Receiver %s failed: %s",
+            logf_notice("%s: Receiver failed: %s: %s",
                         this->name_,
                         receiver,
                         std::current_exception());
@@ -127,7 +127,7 @@ namespace core::signal
 
     bool VoidSignal::callback(const std::string &receiver, const Slot &method)
     {
-        return this->safe_invoke(str::format("%s()", receiver), method);
+        return this->safe_invoke(receiver, method);
     }
 
 

@@ -7,6 +7,7 @@
 
 ### Modules within package
 from .error import Error
+from ..basic.endpoint import Endpoint
 from ..basic.requester import Requester
 from cc.protobuf.wellknown import Message, MessageType, Empty
 from cc.protobuf.rr import Parameter, Request, Reply, StatusCode
@@ -24,11 +25,16 @@ class Client (Requester):
                  channel_name  : str|None = None,
                  project_name  : str|None = None,
                  interface_name: str|None = None,
+                 role          : Endpoint.Role = Endpoint.Role.SATELLITE,
                  ):
-        Requester.__init__(self,
-                           host_address = host_address,
-                           channel_name = channel_name,
-                           project_name = project_name)
+
+        Requester.__init__(
+            self,
+            host_address = host_address,
+            channel_name = channel_name,
+            project_name = project_name,
+            role = role,
+        )
 
         if interface_name:
             self.interface_name = interface_name

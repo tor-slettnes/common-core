@@ -19,13 +19,14 @@ class Server (ProtoServer):
                  bind_service_address: str = "",
                  bind_publisher_address: str = ""):
 
-        ProtoServer.__init__(self,
-                             bind_address = bind_service_address,
-                             channel_name = DEMO_SERVICE_CHANNEL,
-                             project_name = PROJECT_NAME,
-                             request_handlers = [
-                                 DemoRequestHandler(api_provider),
-                             ])
+        ProtoServer.__init__(
+            self,
+            bind_address = bind_service_address,
+            channel_name = DEMO_SERVICE_CHANNEL,
+            project_name = PROJECT_NAME,
+            request_handlers = [
+                DemoRequestHandler(api_provider),
+            ])
 
         self.publisher = Publisher(
             bind_address = bind_publisher_address,

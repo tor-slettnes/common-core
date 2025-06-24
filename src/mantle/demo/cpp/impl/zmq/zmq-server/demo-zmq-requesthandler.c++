@@ -11,43 +11,48 @@
 
 namespace demo::zmq
 {
-    RequestHandler::RequestHandler(const std::shared_ptr<API> &api,
-                                   const std::string interface_name)
+    RequestHandler::RequestHandler(const std::shared_ptr<API> &provider,
+                                   const std::string &interface_name)
         : Super(interface_name),
-          api(api)
+          provider(provider)
     {
     }
 
     void RequestHandler::initialize()
     {
         Super::initialize();
-        this->add_handler(METHOD_SAY_HELLO, &RequestHandler::say_hello);
-        this->add_handler(METHOD_GET_CURRENT_TIME, &RequestHandler::get_current_time);
-        this->add_handler(METHOD_START_TICKING, &RequestHandler::start_ticking);
-        this->add_handler(METHOD_STOP_TICKING, &RequestHandler::stop_ticking);
+        this->add_handler(METHOD_SAY_HELLO, &This::say_hello);
+        this->add_handler(METHOD_GET_CURRENT_TIME, &This::get_current_time);
+        this->add_handler(METHOD_START_TICKING, &This::start_ticking);
+        this->add_handler(METHOD_STOP_TICKING, &This::stop_ticking);
     }
 
-    ::google::protobuf::Empty RequestHandler::say_hello(const cc::demo::Greeting &request)
+    void RequestHandler::say_hello(
+        const cc::demo::Greeting &request,
+        ::google::protobuf::Empty *)
     {
-        this->api->say_hello(::protobuf::decoded<Greeting>(request));
-        return {};
+        this->provider->say_hello(::protobuf::decoded<Greeting>(request));
     }
 
-    cc::demo::TimeData RequestHandler::get_current_time(const ::google::protobuf::Empty &request)
+    void RequestHandler::get_current_time(
+        const ::google::protobuf::Empty &,
+        cc::demo::TimeData *response)
     {
-        return ::protobuf::encoded<cc::demo::TimeData>(this->api->get_current_time());
+        protobuf::encode(this->provider->get_current_time(), response);
     }
 
-    ::google::protobuf::Empty RequestHandler::start_ticking(const ::google::protobuf::Empty &)
+    void RequestHandler::start_ticking(
+        const ::google::protobuf::Empty &,
+        ::google::protobuf::Empty *)
     {
-        this->api->start_ticking();
-        return {};
+        this->provider->start_ticking();
     }
 
-    ::google::protobuf::Empty RequestHandler::stop_ticking(const ::google::protobuf::Empty &)
+    void RequestHandler::stop_ticking(
+        const ::google::protobuf::Empty &,
+        ::google::protobuf::Empty *)
     {
-        this->api->stop_ticking();
-        return {};
+        this->provider->stop_ticking();
     }
 
 }  // namespace demo::zmq

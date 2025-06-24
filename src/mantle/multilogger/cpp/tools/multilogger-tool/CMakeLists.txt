@@ -12,12 +12,14 @@ set(TARGET multilogger-tool)
 ### system.
 set(LIB_DEPS
   cc_multilogger_grpc_client
+  cc_multilogger_zmq_client
   cc_core_platform
 )
 
 ### Source files
 set(SOURCES
   main.c++
+  implementations.c++
   options.c++
   commands.c++
   )

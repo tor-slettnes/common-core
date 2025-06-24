@@ -31,18 +31,18 @@ namespace multilogger
         }
     }
 
-    void API::stop_listening()
+    void API::stop_listening(bool wait)
     {
         this->keep_listening_ = false;
 
         if (auto listener = this->listener_.lock())
         {
             listener->close();
-        }
 
-        if (this->listener_thread_.joinable())
-        {
-            this->listener_thread_.join();
+            if (wait && this->listener_thread_.joinable())
+            {
+                this->listener_thread_.join();
+            }
         }
     }
 

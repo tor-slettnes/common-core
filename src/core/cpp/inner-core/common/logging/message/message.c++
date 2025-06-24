@@ -16,6 +16,7 @@ namespace core::logging
     Message::Message(const std::string &text,
                      status::Level level,
                      Scope::ptr scope,
+                     const std::string &origin,
                      const dt::TimePoint &tp,
                      const fs::path &path,
                      uint lineno,
@@ -24,7 +25,6 @@ namespace core::logging
                      const std::string &thread_name,
                      const std::string &task_name,
                      const std::string &host,
-                     const std::string &origin,
                      const types::KeyValueMap &attributes)
         : Super(text, level, origin, tp, attributes),
           scope_(scope),

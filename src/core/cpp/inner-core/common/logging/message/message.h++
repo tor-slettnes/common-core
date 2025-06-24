@@ -75,6 +75,7 @@ namespace core::logging
         Message(const std::string &text = "",
                 status::Level level = status::Level::NONE,
                 Scope::ptr scope = nullptr,
+                const std::string &origin = {},
                 const dt::TimePoint &tp = {},
                 const fs::path &path = {},
                 uint lineno = 0,
@@ -83,7 +84,6 @@ namespace core::logging
                 const std::string &thread_name = {},
                 const std::string &task_name = {},
                 const std::string &host = {},
-                const std::string &origin = {},
                 const types::KeyValueMap &attributes = {});
 
         // Copy constructor to ensure we obtain values from derived classes

@@ -10,6 +10,7 @@ __author__ = 'Tor Slettnes'
 import sys, re, socket, logging, argparse
 
 from ...core.settingsstore import SettingsStore
+from ...buildinfo import PROJECT_NAME
 
 #===============================================================================
 # Base class
@@ -31,7 +32,7 @@ class Endpoint (object):
     # `__init__()`, it will be used to look up service settings from
     # project-specific settings files, e.g.
     #`*messaging_flavor*-endpoints-*project_name*.yaml`
-    project_name = None
+    project_name = PROJECT_NAME
 
 
     def __init__(self,
@@ -58,7 +59,7 @@ class Endpoint (object):
 
 
     def __repr__ (self):
-        return "%s %r %s"%(self.messaging_flavor, self.channel_name, self.endpoint_type)
+        return "%s %s %s"%(self.messaging_flavor, self.channel_name, self.endpoint_type)
 
     def initialize(self):
         pass

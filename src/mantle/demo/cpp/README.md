@@ -9,4 +9,4 @@ Our Demo applications's C++ code is organized into these distinct compoonents:
 
 * [demoserver](daemon/), a server executable (daemon) that serves requests from/notifications to cilents (such as `demo-tool`)
 
-* [demo-tool](utils/tool), a command-line utility that incorporates each of the above implementation libraries to provide access to the above API. A command option selects which library to use.
+* [tools](tools/), command-line tools that incorporates each of the above implementation libraries to provide access to the above API.

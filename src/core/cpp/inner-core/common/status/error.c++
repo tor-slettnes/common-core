@@ -112,6 +112,21 @@ namespace core::status
         return "Error";
     }
 
+    void Error::to_stream(std::ostream &stream) const
+    {
+        stream << this->class_name()
+               << "("
+               << this->text();
+
+        if (!this->attributes().empty())
+        {
+            stream << ", attributes="
+                   << this->attributes();
+        }
+
+        stream << ")";
+    }
+
     std::vector<std::string> Error::error_fields() noexcept
     {
         std::vector<std::string> fields = Event::event_fields();

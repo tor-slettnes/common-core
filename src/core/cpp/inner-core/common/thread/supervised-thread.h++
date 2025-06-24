@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-//#include "logging/logging.h++"
+#include "logging/logging.h++"
 #include "platform/process.h++"
 #include "status/exceptions.h++"
 
@@ -26,14 +26,14 @@ namespace core::thread
             }
             catch (...)
             {
-                std::cerr << "Thread "
-                          << platform::process->thread_id()
-                          << " terminated: "
-                          << std::current_exception()
-                          << std::endl;
-                // logf_error("Thread %d terminated: %s",
-                //            platform::process->thread_id(),
-                //            std::current_exception());
+                // std::cerr << "Thread "
+                //           << platform::process->thread_id()
+                //           << " terminated: "
+                //           << std::current_exception()
+                //           << std::endl;
+                logf_error("Thread %d terminated: %s",
+                           platform::process->thread_id(),
+                           std::current_exception());
                 // std::exit(-1);
             }
         });

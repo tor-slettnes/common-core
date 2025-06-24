@@ -8,15 +8,7 @@
 // Application specific modules
 #include "demo-zmq-subscriber.h++"
 #include "demo-zmq-signalhandler.h++"
-#include "demo-signals.h++"
 #include "protobuf-demo-types.h++"
-
-// Shared modules
-#include "protobuf-message.h++"
-#include "protobuf-inline.h++"
-
-// C++ STL modules
-#include <functional>
 
 namespace demo::zmq
 {
@@ -28,7 +20,7 @@ namespace demo::zmq
 
     void Subscriber::initialize()
     {
-        this->add(SignalHandler::create_shared());
+        this->add_handler(SignalHandler::create_shared());
         Super::initialize();
     }
 

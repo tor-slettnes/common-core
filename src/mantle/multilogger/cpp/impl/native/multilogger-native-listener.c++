@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "multilogger-native-listener.h++"
+#include "platform/path.h++"
 #include "logging/dispatchers/dispatcher.h++"
 #include "logging/message/message.h++"
 
@@ -54,8 +55,8 @@ namespace multilogger::native
     {
         if (auto message = std::dynamic_pointer_cast<core::logging::Message>(item))
         {
-            if ((this->hosts.empty() || this->hosts.count(message->host())) &&
-                (this->applications.empty() || this->applications.count(message->origin())))
+            if (this->applicable_host(message->host()) &&
+                this->applicable_application(message->origin()))
             {
                 return this->put(item);
             }
@@ -68,6 +69,17 @@ namespace multilogger::native
         {
             return this->put(item);
         }
+    }
+
+    bool QueueListener::applicable_host(const std::string &host) const
+    {
+        return this->hosts.empty() || this->hosts.count(host);
+    }
+
+    bool QueueListener::applicable_application(const std::string &application) const
+    {
+        return (application != core::platform::path->exec_name()) &&
+               (this->applications.empty() || this->applications.count(application));
     }
 
 }  // namespace multilogger::native

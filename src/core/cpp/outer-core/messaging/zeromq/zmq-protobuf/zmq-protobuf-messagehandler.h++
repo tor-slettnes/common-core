@@ -28,8 +28,9 @@ namespace core::zmq
     private:
         void handle(const types::ByteVector &bytes) override
         {
-            log_trace("ProtoBufMessageHandler() handling message: ", bytes);
-            this->handle_message(::protobuf::to_message<ProtoT>(bytes));
+            ProtoT message = ::protobuf::to_message<ProtoT>(bytes);
+            log_trace("ProtoBufMessageHandler() handling message: ", message);
+            this->handle_message(message);
         }
 
     protected:

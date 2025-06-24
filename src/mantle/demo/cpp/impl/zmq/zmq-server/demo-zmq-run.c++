@@ -12,6 +12,8 @@
 
 namespace demo::zmq
 {
+    constexpr auto SHUTDOWN_SIGNAL_HANDLE = "demo-zmq-service";
+
     void run_zmq_service(
         std::shared_ptr<demo::API> api_provider,
         const std::string &bind_address)
@@ -29,17 +31,29 @@ namespace demo::zmq
         // Initialize
 
         zmq_publisher->initialize();
-        log_notice("Demo ZeroMQ publisher is ready on ", zmq_publisher->address());
-
         zmq_server->initialize();
-        log_notice("Demo ZeroMQ command server is ready on ", zmq_server->address());
+
+
+        //======================================================================
+        // Run
+
+        log_debug("Adding ZMQ shutdown handler");
+        core::platform::signal_shutdown.connect(
+            SHUTDOWN_SIGNAL_HANDLE,
+            [&]() {
+                log_info("ZMQ service is shutting down");
+                zmq_server->stop();
+            });
+
 
         zmq_server->run();
 
-        log_notice("Demo ZeroMQ command server is shutting down");
-        zmq_server->deinitialize();
+        core::platform::signal_shutdown.disconnect(SHUTDOWN_SIGNAL_HANDLE);
 
-        log_notice("Demo ZeroMQ publisher is shutting down");
+        //======================================================================
+        // Deinitialize
+
+        zmq_server->deinitialize();
         zmq_publisher->deinitialize();
     }
 

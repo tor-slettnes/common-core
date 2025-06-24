@@ -8,14 +8,21 @@
 #pragma once
 #include "argparse/server.h++"
 
-class Options : public core::argparse::ServerOptions
+namespace multilogger
 {
-    using Super = core::argparse::ServerOptions;
+    class Options : public core::argparse::ServerOptions
+    {
+        using Super = core::argparse::ServerOptions;
 
-public:
-    Options();
+    public:
+        Options();
 
-    void add_options() override;
-};
+        void add_options() override;
 
-extern std::unique_ptr<Options> options;
+    public:
+        bool enable_grpc;
+        bool enable_zmq;
+    };
+
+    extern std::unique_ptr<Options> options;
+}  // namespace multilogger

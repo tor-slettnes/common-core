@@ -42,6 +42,9 @@ namespace multilogger::native
     protected:
         bool handle_item(const core::types::Loggable::ptr &item) override;
 
+        bool applicable_host(const std::string &host) const;
+        bool applicable_application(const std::string &application) const;
+
     private:
         std::set<std::string> hosts;
         std::set<std::string> applications;

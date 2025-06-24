@@ -69,6 +69,8 @@ namespace core::status
         virtual Symbol symbol() const noexcept;
         virtual bool empty() const noexcept;
 
+        void to_stream(std::ostream &stream) const override;
+
     protected:
         std::string class_name() const noexcept override;
 

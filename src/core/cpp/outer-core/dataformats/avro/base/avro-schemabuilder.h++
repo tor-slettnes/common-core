@@ -52,7 +52,7 @@ namespace avro
     constexpr auto SchemaField_Size = "size";
     constexpr auto SchemaField_ComplexReal = "real";
     constexpr auto SchemaField_ComplexImaginary = "imag";
-    constexpr auto SchemaField_VariantValue = "variant";
+    constexpr auto SchemaField_VariantValue = "value";
     constexpr auto SchemaField_EnumIndex = "enumeration";
     constexpr auto SchemaField_EnumValue = "value";
 

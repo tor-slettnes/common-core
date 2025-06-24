@@ -30,7 +30,7 @@ namespace core::zmq
         }
     }
 
-    void Responder::stop()
+    void Responder::stop(bool wait)
     {
         this->keep_listening = false;
         if (std::thread t{std::move(this->listen_thread)}; t.joinable())
@@ -43,9 +43,9 @@ namespace core::zmq
     void Responder::run()
     {
         this->keep_listening = true;
-        try
+        while (this->keep_listening)
         {
-            while (this->keep_listening)
+            try
             {
                 if (auto request = this->receive())
                 {
@@ -54,10 +54,10 @@ namespace core::zmq
                     this->send(reply);
                 }
             }
-        }
-        catch (const Error &e)
-        {
-            this->log_zmq_error("could not continue receiving requests", e);
+            catch (const Error &e)
+            {
+                this->log_zmq_error("could not receive request", e);
+            }
         }
     }
 

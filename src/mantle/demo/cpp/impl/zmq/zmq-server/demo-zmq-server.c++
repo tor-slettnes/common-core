@@ -6,24 +6,19 @@
 //==============================================================================
 
 #include "demo-zmq-server.h++"
+#include "demo-zmq-requesthandler.h++"
 
 namespace demo::zmq
 {
-    Server::Server(const std::shared_ptr<API> &api,
+    Server::Server(const std::shared_ptr<API> &provider,
                    const std::string &bind_address,
                    const std::string &channel_name)
         : Super(bind_address,
                 channel_name,
                 {
-                    {DEMO_INTERFACE, RequestHandler::create_shared(api, DEMO_INTERFACE)},
+                    {DEMO_INTERFACE, RequestHandler::create_shared(provider)},
                 })
     {
-        // std::cerr <<  "Demo Server "
-        //           << TYPE_NAME_FULL(This)
-        //           << " for channel "
-        //           << channel_name
-        //           << " constructor."
-        //           << std::endl;
     }
 
 }  // namespace demo::zmq

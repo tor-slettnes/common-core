@@ -6,10 +6,13 @@
 //==============================================================================
 
 #include "options.h++"
-#include "grpc-service.h++"
 #include "multilogger-native.h++"
+#include "multilogger-grpc-run.h++"
+#include "multilogger-zmq-run.h++"
 #include "application/init.h++"
+#include "logging/logging.h++"
 #include "status/exceptions.h++"
+#include "thread/supervised-thread.h++"
 
 int main(int argc, char** argv)
 {
@@ -17,13 +20,41 @@ int main(int argc, char** argv)
     {
         // Initialize paths, load settings, set up shutdown signal handlers
         core::application::initialize_daemon(argc, argv);
-        ::options = std::make_unique<Options>();
-        ::options->apply(argc, argv);
+        multilogger::options = std::make_unique<multilogger::Options>();
+        multilogger::options->apply(argc, argv);
 
         auto log_provider = multilogger::native::Logger::create_shared();
-
         log_provider->initialize();
-        multilogger::grpc::run_service(log_provider, ::options->bind_address);
+
+        std::list<std::thread> server_threads;
+
+#ifdef USE_GRPC
+        if (multilogger::options->enable_grpc)
+        {
+            logf_debug("Spawning gRPC server");
+            server_threads.push_back(core::thread::supervised_thread(
+                multilogger::grpc::run_service,
+                log_provider,
+                multilogger::options->bind_address));
+        }
+#endif
+
+#ifdef USE_ZMQ
+        if (multilogger::options->enable_zmq)
+        {
+            logf_debug("Spawning ZeroMQ server");
+            server_threads.push_back(core::thread::supervised_thread(
+                multilogger::zmq::run_service,
+                log_provider,
+                multilogger::options->bind_address));
+        }
+#endif
+
+        for (std::thread& t : server_threads)
+        {
+            t.join();
+        }
+
         log_provider->deinitialize();
         return 0;
     }
