@@ -31,11 +31,10 @@ namespace core::thread
                 //           << " terminated: "
                 //           << std::current_exception()
                 //           << std::endl;
-                logf_error("Thread %d terminated: %s",
-                           platform::process->thread_id(),
-                           std::current_exception());
+                log_error("Thread terminated: ",
+                          std::current_exception());
                 // std::exit(-1);
             }
         });
     }
-} // namespace core::thread
+}  // namespace core::thread

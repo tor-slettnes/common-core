@@ -116,7 +116,7 @@ namespace core::status
     {
         stream << this->class_name()
                << "("
-               << this->text();
+               << std::quoted(this->text());
 
         if (!this->attributes().empty())
         {

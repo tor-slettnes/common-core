@@ -33,7 +33,10 @@ namespace core::zmq
     {
         if (auto publisher = this->publisher())
         {
-            publisher->publish(this->filter_, bytes);
+            if (publisher->initialized())
+            {
+                publisher->publish(this->filter_, bytes);
+            }
         }
     }
 

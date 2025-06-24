@@ -47,6 +47,7 @@ namespace core::messaging
     public:
         virtual void initialize();
         virtual void deinitialize();
+        virtual bool initialized() const;
 
         virtual std::string messaging_flavor() const;
         virtual std::string endpoint_type() const;
@@ -70,5 +71,6 @@ namespace core::messaging
         std::string signal_handle_;
         std::string profile_name_;
         std::shared_ptr<SettingsStore> settings_;
+        bool initialized_;
     };
 }  // namespace core::messaging

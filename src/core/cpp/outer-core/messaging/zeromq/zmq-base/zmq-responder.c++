@@ -51,7 +51,10 @@ namespace core::zmq
                 {
                     types::ByteVector reply;
                     this->process_binary_request(*request, &reply);
-                    this->send(reply);
+                    if (this->initialized())
+                    {
+                        this->send(reply);
+                    }
                 }
             }
             catch (const Error &e)

@@ -28,7 +28,8 @@ namespace core::messaging
           channel_name_(channel_name),
           profile_name_(profile_name),
           signal_handle_(messaging_flavor + "/" + endpoint_type + "/" + channel_name),
-          settings_(SettingsStore::create_shared())
+          settings_(SettingsStore::create_shared()),
+          initialized_(false)
     {
     }
 
@@ -42,12 +43,19 @@ namespace core::messaging
         core::platform::signal_shutdown.connect(
             this->signal_handle_,
             std::bind(&Endpoint::deinitialize, this));
+        this->initialized_ = true;
     }
 
     void Endpoint::deinitialize()
     {
         core::platform::signal_shutdown.disconnect(
             this->signal_handle_);
+        this->initialized_ = false;
+    }
+
+    bool Endpoint::initialized() const
+    {
+        return this->initialized_;
     }
 
     std::string Endpoint::messaging_flavor() const
