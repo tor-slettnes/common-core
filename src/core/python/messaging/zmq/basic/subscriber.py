@@ -107,13 +107,16 @@ class Subscriber (Endpoint):
                     "Subscriber(%r) handler %r"%(self.channel_name, handler.id))
 
     def _process_message (self, data):
+        found = False
         with self._mtx:
             for handler in self.subscriptions:
                 if data.startswith(handler.message_filter):
                     self._invoke_handler(handler, data)
-            else:
-                logging.warning("Subscriber %r received message with no matching filter: %s"%
-                                (self.channel_name, message))
+                    found = True
+
+        if not found:
+            logging.warning("Subscriber %r received message with no matching filter: %s"%
+                            (self.channel_name, data))
 
     def start_receiving (self):
         self.keep_receiving = True

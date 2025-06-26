@@ -32,7 +32,7 @@ class MessageHandler (object):
             self.message_filter = filter_or_topic
         elif isinstance(filter_or_topic, (bytes, bytearray)):
             self.message_filter = Filter(filter_or_topic)
-        elif isinstance(filter_or_topc, str):
+        elif isinstance(filter_or_topic, str):
             self.message_filter = Filter.create_from_topic(filter_or_topic)
         else:
             raise TypeError("`filter_or_topic' must be a bytes, bytearray, or string")

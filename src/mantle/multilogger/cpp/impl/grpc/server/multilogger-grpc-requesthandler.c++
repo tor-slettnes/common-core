@@ -27,7 +27,7 @@ namespace multilogger::grpc
         {
             this->provider->submit(protobuf::decode_loggable(
                 *request,
-                context->peer()));
+                core::str::url_decoded(context->peer())));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -48,7 +48,7 @@ namespace multilogger::grpc
             {
                 this->provider->submit(protobuf::decode_loggable(
                     loggable,
-                    context->peer()));
+                    core::str::url_decoded(context->peer())));
             }
             return ::grpc::Status::OK;
         }

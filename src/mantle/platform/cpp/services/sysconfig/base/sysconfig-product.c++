@@ -16,7 +16,7 @@ namespace sysconfig
 
     Version Version::from_string(const std::string &version_string)
     {
-        const std::regex rx{"(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:-(\\d+))?"};
+        const std::regex rx{"(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?(?:-(\\d+))?.*"};
 
         Version version;
         version.printable_version = version_string;

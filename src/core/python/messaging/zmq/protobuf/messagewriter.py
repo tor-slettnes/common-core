@@ -22,13 +22,16 @@ class MessageWriter (BaseWriter):
 
     def __init__ (self,
                   publisher: Publisher,
-                  message_type: MessageType|None = None):
+                  message_type: MessageType|None = None,
+                  filter_or_topic: str|bytes|None = None):
 
         self.message_type = message_type or type(self).message_type
         assert isinstance(self.message_type, MessageType)
 
-        topic = self.message_type.DESCRIPTOR.full_name
-        BaseWriter.__init__(self, publisher, Filter.create_from_topic(topic))
+        if filter_or_topic is None:
+            filter_or_topic = self.message_type.DESCRIPTOR.full_name
+
+        BaseWriter.__init__(self, publisher, filter_or_topic)
 
     def write_proto(self,
                     message : Message):
