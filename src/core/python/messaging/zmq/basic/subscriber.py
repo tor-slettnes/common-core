@@ -56,7 +56,6 @@ class Subscriber (Endpoint):
             self._init_handler(handler)
             self.subscriptions.add(handler)
 
-        self.start_receiving()
 
     def remove(self,
                handler: MessageHandler):
@@ -80,13 +79,21 @@ class Subscriber (Endpoint):
                 self._deinit_handler(handler)
             self.subscriptions.clear()
 
+    def initialize(self):
+        super().initialize()
+        self.start_receiving()
+
+    def deinitialize(self):
+        self.stop_receiving()
+        super().deinitialize()
+
     def _init_handler(self, handler: MessageHandler):
-        handler.initialize()
+        #handler.initialize()
         self.socket.setsockopt(zmq.SUBSCRIBE, handler.message_filter)
 
     def _deinit_handler(self, handler: MessageHandler):
-        self.socket.setsockopt(zmq.UNSUBCRIBE, handler.message_filter)
-        handler.deinitialize()
+        self.socket.setsockopt(zmq.UNSUBSCRIBE, handler.message_filter)
+        #handler.deinitialize()
 
     def _invoke_handler(self,
                         handler: MessageHandler,
@@ -104,10 +111,9 @@ class Subscriber (Endpoint):
             for handler in self.subscriptions:
                 if data.startswith(handler.message_filter):
                     self._invoke_handler(handler, data)
-                    break
             else:
-                logging.notice("Subscriber %r received message with no matching filter: %s"%
-                               (self.channel_name, message))
+                logging.warning("Subscriber %r received message with no matching filter: %s"%
+                                (self.channel_name, message))
 
     def start_receiving (self):
         self.keep_receiving = True
@@ -126,8 +132,7 @@ class Subscriber (Endpoint):
 
     def _receive_loop (self):
         while self.keep_receiving:
-            data = self.receive_bytes()
-            if len(data):
+            if data := self.receive_bytes():
                 self._process_message(data)
 
 

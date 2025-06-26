@@ -71,7 +71,7 @@ namespace protobuf
             typename SignalT::SignalCase signal_case,
             const Callback &callback)
         {
-            std::lock_guard lck(this->slots_mtx);
+            std::scoped_lock lck(this->slots_mtx);
             this->slots.emplace(signal_case, callback);
         }
 
@@ -79,7 +79,7 @@ namespace protobuf
             typename SignalT::SignalCase signal_case,
             const MappingCallback &callback)
         {
-            std::lock_guard lck(this->slots_mtx);
+            std::scoped_lock lck(this->slots_mtx);
             this->slots.emplace(
                 signal_case,
                 [=](const SignalT &signal) {
@@ -109,7 +109,7 @@ namespace protobuf
 
         cc::signal::Filter signal_filter()
         {
-            std::lock_guard lck(this->slots_mtx);
+            std::scoped_lock lck(this->slots_mtx);
             cc::signal::Filter filter;
             filter.set_polarity(true);
             for (const auto &[index, callback] : this->slots)
@@ -138,7 +138,7 @@ namespace protobuf
     public:
         void process_signal(const SignalT &msg)
         {
-            std::lock_guard lck(this->slots_mtx);
+            std::scoped_lock lck(this->slots_mtx);
 
             // Invoke handler for this specific signal case, if any.
             this->process_signal_case(msg.signal_case(), msg);

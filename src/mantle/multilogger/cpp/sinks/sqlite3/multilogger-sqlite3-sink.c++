@@ -192,7 +192,7 @@ namespace multilogger
 
     void SQLiteSink::flush()
     {
-        std::lock_guard lck(this->rows_lock_);
+        std::scoped_lock lck(this->rows_lock_);
 
         if (this->pending_rows.size())
         {

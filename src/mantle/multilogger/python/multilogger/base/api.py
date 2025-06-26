@@ -1,218 +1,239 @@
-#!/bin/echo Do not invoke directly.
-#===============================================================================
-## @file api.py
-## @brief Python interface for MultiLogger
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+Abstract control API for `MultiLogger` service
+'''
 
-### Modules within package
-from cc.protobuf.wellknown import TimestampType, encodeTimestamp
-from cc.protobuf.variant import encodeKeyValueMap
-from cc.protobuf.status import Domain, Level, encodeLogLevel
-from cc.protobuf.multilogger import Loggable, Message, Data
-
-import cc.core.paths
+__docformat__ = 'javadoc en'
+__author__ = 'Tor Slettnes'
 
 ### Standard Python modules
-import logging
-import inspect
+from collections.abc import Iterator
+from typing import Optional
 import abc
+import inspect
+import logging
 import os.path
 import pathlib
-import time
 import socket
 import threading
+import time
+
+### Modules within package
+from cc.protobuf.builder import MessageBuilder
+from cc.protobuf.wellknown import empty
+from cc.protobuf.status import Level
+from cc.protobuf.datetime import Interval
+from cc.protobuf.multilogger import Loggable, ListenerSpec, SinkSpec, \
+    ColumnType, ColumnSpec
 
 
-class API (logging.Handler):
+class API (MessageBuilder):
     '''
-    MultiLogger API
+    MultiLogger Control API
     '''
 
-    def __init__(self,
-                 identity: str|None,
-                 capture_python_logs: bool = False,
-                 log_level: int = logging.NOTSET):
-
-        logging.Handler.__init__(self, level=log_level)
-        self.identity = identity or cc.core.paths.program_name()
-        self.pathbases = [cc.core.paths.python_root()]
-        self.capture_python_logs = capture_python_logs
-
-    def add_path_base(self, path:str):
+    def __init__(self, rpc: object):
         '''
-        Add a folder to be considered as a base folder for converting the
-        `source_path` attribute of log messages into relative paths.
+        @param[in] rpc
+            RPC stub that invokes method invocations on the MultiLogger server,
+            waits, and returns the response from the server.  Each service
+            method is given exactly one ProtoBuf message as input, and is
+            expected to return exactly one ProtoBuf message as received from the
+            server.
         '''
-        self.pathbases.append(path)
+        self.rpc = rpc
 
-    def open(self):
-        if self.capture_python_logs:
-            pylogger = logging.getLogger()
-            pylogger.addHandler(self)
 
-    def close(self):
-        if self.capture_python_logs:
-            pylogger = logging.getLogger()
-            pylogger.removeHandler(self)
-
-    ## Overrides `logging.Handler.emit()` iff capturing Python logs
-    def emit(self, record: logging.LogRecord):
+    def listen(self,
+               min_level: Level|int = Level.LEVEL_TRACE,
+               contract_id: Optional[str] = None) -> Iterator[Loggable]:
         '''
-        Capture message from Python logger
+        Listen for logged events from the MultiLogger
         '''
 
-        message = self.create_message(
-            text = record.getMessage(),
-            level = record.levelno,
-            timestamp = record.created,
-            source_path = record.pathname,
-            source_line = record.lineno,
-            function_name = record.funcName,
-            log_scope = record.name,
-            thread_id = record.thread,
-            thread_name = record.threadName,
-            task_name = getattr(record, 'taskName', None)) # Introduced in Python 3.12
+        spec = self.build_from_dict(ListenerSpec, locals(),
+                                    sink_id = self.identity)
+        return self.rpc.listen(spec)
 
-        try:
-            return self.submit(message)
-        except Exception as e:
-            self.handleError(record)
 
-    def trace(self,
-              text: str,
-              stacklevel: int = 2,
-              **kwargs):
-        return self.log_message(Level.LEVEL_TRACE, text, stacklevel, **kwargs)
-
-    def debug(self, text: str,
-              stacklevel: int = 2,
-              **kwargs):
-        return self.log_message(Level.LEVEL_DEBUG, text, stacklevel, **kwargs)
-
-    def info(self,
-             text: str,
-             stacklevel: int = 2,
-             **kwargs):
-        return self.log_message(Level.LEVEL_INFO, text, stacklevel, **kwargs)
-
-    def notice(self,
-               text: str,
-               stacklevel: int = 2,
-               **kwargs):
-        return self.log_message(Level.LEVEL_NOTICE, text, stacklevel, **kwargs)
-
-    def warning(self,
-                text: str,
-                stacklevel: int = 2,
-                **kwargs):
-        return self.log_message(Level.LEVEL_WARNING, text, stacklevel, **kwargs)
-
-    def error(self,
-              text: str,
-              stacklevel: int = 2,
-              **kwargs):
-        return self.log_message(Level.LEVEL_ERROR, text, stacklevel, **kwargs)
-
-    def critical(self,
-                 text: str, stacklevel:
-                 int = 2,
-                 **kwargs):
-        return self.log_message(Level.LEVEL_CRITICAL, text, stacklevel, **kwargs)
-
-    def fatal(self,
-              text: str,
-              stacklevel: int = 2,
-              **kwargs):
-        return self.log_message(Level.LEVEL_FATAL, text, stacklevel, **kwargs)
-
-    ## Log a message
-    def log_message(self,
-                    level: Level | int,
-                    text: str,
-                    stacklevel: int = 1,
-                    **kwargs):
+    def add_sink(self,
+                 sink_id: str,
+                 sink_type: str,
+                 contract_id: Optional[str] = None,
+                 min_level: Level = Level.LEVEL_NONE,
+                 filename_template: Optional[str] = None,
+                 rotation_interval: Optional[Interval] = None,
+                 use_local_time: Optional[bool] = None,
+                 compress_after_use: Optional[bool] = None,
+                 expiration_interval: Optional[Interval] = None,
+                 columns: None|tuple|ColumnSpec = None) -> bool:
         '''
-        Log a message by direct invocation,.
+        Add a log sink of the specified type. This will capture log events
+        with `min_level` or higher priority, optionally restrictecd to those
+        with a specific `contract_id`.
+
+        @param sink_id
+            Unique identity of this sink.  This cannot conflict with a sink type
+            (see `list_sink_types()` for a list), as these are reserved for
+            default log sinks.
+
+        @param sink_type
+            Log sink type, such as `csv` or `logfile`.
+
+        @param contract_id
+             If specified, capture only log messages with a matching
+             `contract_id` field. This can be used to capture telemetry,
+             where matching log events are expected to contain a specific
+             set of custom attributes.
+
+        @param min_level
+            Severy threshold below which messages will be ignored.
+
+        @param filename_template
+            Output file template for log sinks that record events directly to
+            files. This template is expanded to an actual filename as as
+            described below.
+
+        @param rotation_interval
+            Specifies frequently a new log file is created. See below.
+
+        @param use_local_time
+            Whether to align rotation intervals to local time, as opposed to UTC.
+            This also controls how timestamp are translated to strings within
+            certain log sinks.
+
+        @param compress_after_use
+            Compress log files once they are no longer being recorded to.
+            The compressed files will have a `.gz` suffix.
+
+        @param expiration_interval
+            Remove log files after the specified time interval. The default is
+            one year.
+
+        @param columns
+             What fields to capture. Applicable only for *tabular data* (column
+             oriented) sink types, currently these are "csvfile" and "sqlite3"`.
+
+        The `filename_template` controls the naming of output files created by
+        the "logfile", "csvfile", "jsonfile", and "sqlite3" sinks. Within the
+        template name, the following holders are expanded:
+
+        - `{executable}`: the stem of the executable file (like "logserver")
+        - `{hostname}`  : the name of the host where the log file is created
+        - `{sink_id}`   : the unique identity of the log sink
+        - `{isodate}`   : date formatted as `YYYY-MM-DD`
+        - `{isotime}    : time of day formatted as `HH:MM:SS`
+        - `{year}`      : four-digit year
+        - `{month}`     : two-digit month (01 - 12)
+        - `{day}`       : two-digit day (01 - 31)
+        - `{hour}`      : two-digit hour (00 - 23)
+        - `{minute}`    : two-digit minute (00 - 59)
+        - `{second}`    : two-digit second (00 - 61)
+        - `{zonename}`  : time zone name or abbreviation (e.g., `PST`)
+        - `{zoneoffset}`: time zone offset (e.g. `-0700`)
+
+        The timestamp is the "last aligned" time point, i.e., the current time
+        truncated according to the specified rotation interval. For instance, given
+        the default settings `rotation: 6 hours` and `local time: true`, the
+        timestamps would be aligned at 00:00, 06:00, 12:00, and 18:00, local time.
+
+        The optional `rotation_interval` intervals may be specified in one of two ways:
+        1. a preconstructed `cc.protobuf.datetime.Interval` instance, or
+        2. a 2-element tuple of the form `(COUNT, UNIT)`, where `COUNT` is a
+           positive integer and `UNIT` is a `cc.protobuf.datetime.TimeUnit`
+           enumeration.
+
+        Finally, the `fields` parameter determines what specific event data is
+        captured by log sinks that organize event attributes into columns
+        (currently those are `"csv"` and `"sqlite3"`).  The argument should be
+        given as a list of 3-element tuples, each comprising:
+          - The event field to capture; use `list_static_fields()` to get a
+            list of standard fields (but messages may contain additional fields,
+            normally indicated with `contract_id`)
+          - The column name (i.e. CSV header or database field)
+          - The column type, as either a `cc.protobuf.logging.ColumnType`
+            enumeration, or alternatively as a Python type object (currently one
+            of: `None`, `bool`, `int`, `float`, str`, `bytes`)..
+
+        The column type argument is also used to interpret fields such as
+        `level` and `timestamp` in one way or another. (Note that if the type of
+        the `timestamp` field set to `TEXT`, the resulting string value is also
+        determined by the Sink's `local time` setting).
+
+        The return value indicates whether a new sink was created or not.
+
+        ### Example:
+
+        Log specific data fields per contract `"my_contract"` to a CSV file,
+        rotated (changed) every month.
+
+          ```python
+
+          logger = cc.multilogger.grpc.Client()
+          logger.add_sink(
+              'my_data_logger',
+              sink_type = 'csv',
+              filename_template = '{hostname}-{year}-{month}.csv',
+              rotation_interval = (1, cc.protobuf.datetime.TimeUnit.MONTH),
+              contract_id = 'mydatalogger',
+              columns = [('timestamp', 'EpochTime', int),
+                         ('timestamp', 'LocalTime', str),
+                         ('level', 'SeverityLevel', str),
+                         ('text', 'Message', str),
+                         ('custom_field', 'CustomValue', float)]
+          ```
         '''
 
-        frame = inspect.stack()[stacklevel]
-        message = self.create_message(
-            text = text,
-            level = level,
-            source_path = frame.filename,
-            source_line = frame.lineno,
-            function_name = frame.function,
-            thread_id = threading.current_thread().native_id,
-            **kwargs)
-
-        return self.submit(message)
-
-    def create_message(self, /,
-                       text: str|None = None,
-                       timestamp: TimestampType|None = None,
-                       level: Level | int = Level.LEVEL_NONE,
-                       host: str|None = None,
-                       application: str|None = None,
-                       log_scope: str|None = None,
-                       thread_id: int|None = None,
-                       thread_name: str|None = None,
-                       task_name: str|None = None,
-                       source_path: str|None = None,
-                       source_line: int|None = None,
-                       function_name: str|None = None,
-                       attributes: dict|None = None,
-                       **kwargs):
-
-        if source_path:
-            source_parents = pathlib.Path(source_path).parents
-            for pathbase in self.pathbases:
-                if pathbase in source_parents:
-                    source_path = os.path.relpath(source_path, pathbase)
-                    break
-
-        attributes = (attributes | kwargs) if attributes else kwargs
-
-        return Loggable(
-            message = Message(
-                text          = text,
-                timestamp     = encodeTimestamp(timestamp or time.time()),
-                level         = encodeLogLevel(level),
-                host          = host or socket.gethostname(),
-                application   = application or self.identity,
-                log_scope     = log_scope,
-                thread_id     = thread_id,
-                thread_name   = thread_name,
-                task_name     = task_name,
-                source_path   = source_path,
-                source_line   = source_line,
-                function_name = function_name,
-                attributes    = encodeKeyValueMap(attributes)))
-
-    def log_data(self, /,
-                 contract_id: str,
-                 attributes: dict,
-                 timestamp: TimestampType|None = None,
-                 **kwargs):
-
-        return self.submit(self.create_data(contract_id, attributes, timestamp, **kwargs))
+        request = self.build_from_dict(SinkSpec, locals())
+        response = self.rpc.add_sink(request)
+        return response.added
 
 
-    def create_data(self,
-                    contract_id: str,
-                    attributes: dict,
-                    timestamp: TimestampType|None = None,
-                    /,
-                    **kwargs):
+    def remove_sink(self, sink_id: str) -> bool:
+        '''
+        Remove an existing log sink.
 
-        attributes = (attributes | kwargs) if attributes else kwargs
+        The return value indicates whether a sink was actually removed.
+        '''
 
-        return Loggable(
-            data = Data(
-                contract_id = contract_id,
-                timestamp = encodeTimestamp(timestamp or time.time()),
-                attributes = encodeKeyValueMap(attributes)))
+        request = SinkID(
+            sink_id = sink_id)
 
-    @abc.abstractmethod
-    def submit(self, message: Loggable):
-        pass
+        return self.rpc.remove_sink(request).removed
+
+
+    def get_sink(self, sink_id: str) -> SinkSpec:
+        '''
+        Obtain specification for an existing sink.
+        '''
+
+        request = SinkID(
+            sink_id = sink_id)
+
+        return self.rpc.get_sink(request)
+
+    def get_all_sinks(self) -> list[SinkSpec]:
+        '''
+        Retrieve specifications for all active log sinks
+        '''
+        return self.rpc.get_all_sinks(empty).specs
+
+    def list_sinks(self) -> list[str]:
+        '''
+        List available log sinks.
+        '''
+        return self.rpc.list_sinks(empty).sink_names
+
+
+    def list_sink_types(self) -> list[str]:
+        '''
+        List available log sink types
+        '''
+        return self.rpc.list_sink_types(empty).sink_types
+
+
+    def list_static_fields(self) -> list[str]:
+        '''
+        List static fields for log messages
+        '''
+        return self.rpc.list_static_fields(empty).field_names
+

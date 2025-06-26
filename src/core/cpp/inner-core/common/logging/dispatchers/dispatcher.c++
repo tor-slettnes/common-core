@@ -20,7 +20,7 @@ namespace core::logging
 
     void Dispatcher::deinitialize()
     {
-        std::lock_guard<std::mutex> lck(this->mtx_);
+        std::scoped_lock<std::mutex> lck(this->mtx_);
         SinkMap sinks = std::move(this->sinks_);
         for (const auto &[sink_id, sink] : sinks)
         {
@@ -94,7 +94,7 @@ namespace core::logging
 
     void Dispatcher::submit(const types::Loggable::ptr &item)
     {
-        std::lock_guard<std::mutex> lck(this->mtx_);
+        std::scoped_lock<std::mutex> lck(this->mtx_);
         for (const auto &[sink_id, sink] : this->sinks())
         {
             if (sink->is_applicable(*item))

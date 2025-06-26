@@ -32,7 +32,7 @@ namespace core::platform
         const std::time_t &time,
         const std::string &timezone) const
     {
-        auto lck = std::lock_guard(const_cast<This *>(this)->mtx);
+        auto lck = std::scoped_lock(const_cast<This *>(this)->mtx);
         SavedValue saved = this->apply_zone(timezone);
         std::tm dt = this->localtime(time);
         this->restore_zone(saved);
@@ -50,7 +50,7 @@ namespace core::platform
         const std::string &timezone,
         const std::time_t &time) const
     {
-        auto lck = std::lock_guard(const_cast<This *>(this)->mtx);
+        auto lck = std::scoped_lock(const_cast<This *>(this)->mtx);
         SavedValue saved = this->apply_zone(timezone);
         dt::TimeZoneInfo zi = this->tzinfo(time);
         this->restore_zone(saved);

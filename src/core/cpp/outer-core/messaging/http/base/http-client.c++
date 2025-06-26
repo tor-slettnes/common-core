@@ -559,7 +559,7 @@ namespace core::http
     {
         auto mtx = const_cast<std::mutex *>(&this->mtx_);
 
-        std::lock_guard lck(*mtx);
+        std::scoped_lock lck(*mtx);
         std::thread::id thread_id = std::this_thread::get_id();
         try
         {

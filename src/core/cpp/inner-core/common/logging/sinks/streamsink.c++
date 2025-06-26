@@ -49,7 +49,7 @@ namespace core::logging
     {
         const StyleMap *styles = this->styles.get_ptr(message->level());
 
-        // auto lck = std::lock_guard(this->mtx);
+        // auto lck = std::scoped_lock(this->mtx);
 
         if (styles)
         {

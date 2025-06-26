@@ -41,7 +41,7 @@ namespace core::zmq
 
     void Subscriber::add_handler(const std::shared_ptr<MessageHandler> &shared_handler)
     {
-        std::lock_guard lock(this->mtx_);
+        std::scoped_lock lock(this->mtx_);
         this->init_handler(shared_handler);
         this->shared_handlers_.insert_or_assign(
             shared_handler->id(),
@@ -50,7 +50,7 @@ namespace core::zmq
 
     void Subscriber::remove_handler(const std::shared_ptr<MessageHandler> &shared_handler)
     {
-        std::lock_guard lock(this->mtx_);
+        std::scoped_lock lock(this->mtx_);
         this->shared_handlers_.erase(shared_handler->id());
         this->deinit_handler(shared_handler);
     }
@@ -59,7 +59,7 @@ namespace core::zmq
     {
         if (auto shared_handler = weak_handler.lock())
         {
-            std::lock_guard lock(this->mtx_);
+            std::scoped_lock lock(this->mtx_);
             this->weak_handlers_.insert_or_assign(
                 shared_handler->id(),
                 weak_handler);
@@ -70,14 +70,14 @@ namespace core::zmq
     {
         if (auto shared_handler = weak_handler.lock())
         {
-            std::lock_guard lock(this->mtx_);
+            std::scoped_lock lock(this->mtx_);
             this->weak_handlers_.erase(shared_handler->id());
         }
     }
 
     void Subscriber::clear()
     {
-        std::lock_guard lock(this->mtx_);
+        std::scoped_lock lock(this->mtx_);
         for (const auto &[handler_id, handler] : this->shared_handlers_)
         {
             this->deinit_handler(handler);
@@ -129,7 +129,7 @@ namespace core::zmq
 
     void Subscriber::process_message(const types::ByteVector &bytes)
     {
-        std::lock_guard lock(this->mtx_);
+        std::scoped_lock lock(this->mtx_);
 
         for (const std::shared_ptr<MessageHandler> &handler : this->handlers())
         {

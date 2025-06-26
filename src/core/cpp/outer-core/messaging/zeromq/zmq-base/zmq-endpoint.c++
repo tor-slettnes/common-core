@@ -82,6 +82,7 @@ namespace core::zmq
 
     void Endpoint::open_socket()
     {
+        std::scoped_lock lck(this->socket_mtx_);
         if (!this->socket_)
         {
             logf_trace("Opening %s socket", *this);
@@ -93,6 +94,7 @@ namespace core::zmq
 
     void Endpoint::close_socket()
     {
+        std::scoped_lock lck(this->socket_mtx_);
         if (this->socket_)
         {
             logf_trace("Closing %s socket", *this);

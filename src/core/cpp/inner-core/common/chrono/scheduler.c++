@@ -26,7 +26,7 @@ namespace core
 
     Scheduler::~Scheduler()
     {
-        auto lck = std::lock_guard(this->mtx);
+        auto lck = std::scoped_lock(this->mtx);
         this->tasks.clear();
         this->stop_watcher();
     }
@@ -58,7 +58,7 @@ namespace core
             throw exception::InvalidArgument("A positive interval is required", interval);
         }
 
-        auto lck = std::lock_guard(this->mtx);
+        auto lck = std::scoped_lock(this->mtx);
         dt::TimePoint now = dt::Clock::now();
         Task task(handle, invocation, interval, align, count, retries, catchup, loglevel);
         dt::TimePoint tp = task.aligned_time(now);
@@ -87,13 +87,13 @@ namespace core
 
     bool Scheduler::remove(const Scheduler::Task &task)
     {
-        auto lck = std::lock_guard(this->mtx);
+        auto lck = std::scoped_lock(this->mtx);
         return this->remove_task({}, &task);
     }
 
     bool Scheduler::remove(const Handle &handle)
     {
-        auto lck = std::lock_guard(this->mtx);
+        auto lck = std::scoped_lock(this->mtx);
         return this->remove_task(handle);
     }
 
@@ -104,7 +104,7 @@ namespace core
 
     Scheduler::TaskMap::iterator Scheduler::find(const Handle &handle) noexcept
     {
-        auto lck = std::lock_guard(this->mtx);
+        auto lck = std::scoped_lock(this->mtx);
         for (auto it = this->begin(); it != this->end(); it++)
         {
             if (it->second.handle == handle)
@@ -139,7 +139,7 @@ namespace core
 
     void Scheduler::stop()
     {
-        auto lck = std::lock_guard(this->mtx);
+        auto lck = std::scoped_lock(this->mtx);
         this->stop_watcher();
     }
 

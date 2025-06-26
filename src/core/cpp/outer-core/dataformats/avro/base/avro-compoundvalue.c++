@@ -280,9 +280,9 @@ namespace avro
         default:
             This::set_branch(&value_field, VariantSchema::VT_NULL, &branch);
             This::set_null(&branch);
-            logf_notice("No known Avro conversions from value type %s (index %d)",
+            logf_notice("No known Avro conversions from variant type %s: %r",
                         variant.type(),
-                        variant.index());
+                        variant);
             break;
         }
     }

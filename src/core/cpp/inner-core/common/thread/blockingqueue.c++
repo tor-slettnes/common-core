@@ -26,7 +26,7 @@ namespace core::types
     void BlockingQueueBase::close()
     {
         {
-            std::lock_guard lock(this->mtx);
+            std::scoped_lock lock(this->mtx);
             this->closed_ = true;
         }
         this->space_available.notify_all();
@@ -35,7 +35,7 @@ namespace core::types
 
     void BlockingQueueBase::reopen()
     {
-        std::lock_guard lock(this->mtx);
+        std::scoped_lock lock(this->mtx);
         this->closed_ = false;
     }
 

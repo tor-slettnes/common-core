@@ -5,11 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Standard Python modules
+from typing import Union, Optional
+import weakref
+
 ### Modules within package
 from .filter import Filter, Topic
 
-### Standard Python modules
-from typing import Union
 
 class MessageHandler (object):
     '''
@@ -17,10 +19,12 @@ class MessageHandler (object):
     '''
 
     def __init__(self,
-                 id : str,
-                 filter_or_topic : Union[Filter, Topic] = Filter(b'')):
+                 id : str|None = None,
+                 subscriber: Optional["Subscriber"] = None,
+                 filter_or_topic : Union[Filter,Topic,None] = None):
 
         self.id = id
+        self.subscriber_ref = weakref.ref(subscriber) if subscriber else None
 
         if filter_or_topic is None:
             self.message_filter = Filter(b'')
@@ -33,11 +37,21 @@ class MessageHandler (object):
         else:
             raise TypeError("`filter_or_topic' must be a bytes, bytearray, or string")
 
+        self.initialize()
+
+    def __del__(self):
+        self.deinitialize()
+
     def initialize(self):
-        pass
+        if self.subscriber_ref:
+            if subscriber := self.subscriber_ref():
+                subscriber.add(self)
 
     def deinitialize(self):
-        pass
+        if self.subscriber_ref:
+            if subscriber := self.subscriber_ref():
+                subscriber.remove(self)
+
 
     def handle (self, data:bytes):
         '''

@@ -21,7 +21,7 @@ namespace core::types
     void BinaryEvent::set(bool value)
     {
         {
-            std::lock_guard lock(this->mtx_);
+            std::scoped_lock lock(this->mtx_);
             this->value_ = this->ready_ = value;
         }
         this->cv_.notify_all();
@@ -35,7 +35,7 @@ namespace core::types
     void BinaryEvent::cancel()
     {
         {
-            std::lock_guard lock(this->mtx_);
+            std::scoped_lock lock(this->mtx_);
             this->ready_ = true;
         }
         this->cv_.notify_all();

@@ -30,6 +30,7 @@ class MessageWriter (object):
         else:
             raise TypeError("`filter_or_topic' must be a bytes, bytearray, or string")
 
+
     def write_bytes(self, data : bytes):
         '''
         Publish binary data with prepended message filter

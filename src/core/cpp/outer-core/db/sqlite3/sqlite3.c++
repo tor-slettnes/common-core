@@ -55,7 +55,7 @@ namespace core::db
     {
         if (this->is_open())
         {
-            std::lock_guard lck(this->db_lock_);
+            std::scoped_lock lck(this->db_lock_);
             if (int status = sqlite3_close(this->connection_))
             {
                 if (check_status)
@@ -88,7 +88,7 @@ namespace core::db
         const MultiRowData &parameter_rows,
         const QueryCallbackFunction &callback)
     {
-        std::lock_guard lck(this->db_lock_);
+        std::scoped_lock lck(this->db_lock_);
         sqlite3_stmt *statement = nullptr;
         this->check_status(
             sqlite3_prepare_v2(

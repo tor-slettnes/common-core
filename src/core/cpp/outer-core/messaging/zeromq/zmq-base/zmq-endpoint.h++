@@ -181,6 +181,7 @@ namespace core::zmq
         static Context *context_;
         Socket *socket_;
         SocketType socket_type_;
+        std::mutex socket_mtx_;
         Role role_;
         std::string address_;
     };

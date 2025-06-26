@@ -81,7 +81,7 @@ namespace core::types
         }
         catch (const std::out_of_range &)
         {
-            // auto lck = std::lock_guard(this->mtx);
+            // auto lck = std::scoped_lock(this->mtx);
             return this->emplace_back(tag, nullvalue).second;
         }
     }
@@ -349,7 +349,7 @@ namespace core::types
 
     TaggedValueList &TaggedValueList::merge(TaggedValueList &other)
     {
-        // auto lck = std::lock_guard(this->mtx);
+        // auto lck = std::scoped_lock(this->mtx);
         this->reserve(this->size() + other.size());
         auto it = other.begin();
         while (it != other.end())
@@ -452,7 +452,7 @@ namespace core::types
                                     const std::string &infix,
                                     const std::string &postfix) const
     {
-        // auto lck = std::lock_guard(this->mtx);
+        // auto lck = std::scoped_lock(this->mtx);
         stream << prefix;
         bool comma = false;
         for (const auto &[tag, value] : *this)
