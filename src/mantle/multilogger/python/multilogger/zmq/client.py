@@ -111,6 +111,10 @@ class Client (API, Writer):
             unavailable, before discarding.
         '''
 
+        API.__init__(
+            self,
+            rpc = Client.RPCStub(host_address = host))
+
         Writer.__init__(
             self,
             host = host,
@@ -119,20 +123,16 @@ class Client (API, Writer):
             log_level = log_level,
             queue_size = queue_size)
 
-        API.__init__(
-            self,
-            rpc = Client.RPCStub(host_address = host))
-
         self.subscriber = None
         self.host = host
 
 
     def initialize(self):
         self.rpc.initialize()
-        self.open()
+        Writer.initialize(self)
 
     def deinitialize(self):
-        self.close()
+        Writer.deinitialize(self)
         self.rpc.deinitialize()
 
     # @doc_inherit

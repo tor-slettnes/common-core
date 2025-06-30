@@ -12,28 +12,10 @@ namespace multilogger::zmq
 {
     SubmissionHandler::SubmissionHandler(
         const std::shared_ptr<API> &provider,
-        const std::shared_ptr<core::zmq::Subscriber> &subscriber)
-        : Super(),
-          provider(provider),
-          subscriber(subscriber)
+        const std::weak_ptr<core::zmq::Subscriber> &subscriber)
+        : Super({}, subscriber),
+          provider(provider)
     {
-    }
-
-    SubmissionHandler::~SubmissionHandler()
-    {
-        this->deinitialize();
-    }
-
-    void SubmissionHandler::initialize()
-    {
-        Super::initialize();
-        this->subscriber->register_handler(this->weak_from_this());
-    }
-
-    void SubmissionHandler::deinitialize()
-    {
-        this->subscriber->unregister_handler(this->weak_from_this());
-        Super::deinitialize();
     }
 
     void SubmissionHandler::handle_message(const cc::platform::multilogger::Loggable &msg)

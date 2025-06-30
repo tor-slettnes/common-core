@@ -33,13 +33,13 @@ namespace core::zmq
         void deinitialize() override;
 
     public:
-        void add_handler(const std::shared_ptr<MessageHandler> &handler);
-        void remove_handler(const std::shared_ptr<MessageHandler> &handler);
+        void add_handler(const std::shared_ptr<MessageHandler> &handler,
+                         bool initialize = false);
 
-        void register_handler(const std::weak_ptr<MessageHandler> &handler);
-        void unregister_handler(const std::weak_ptr<MessageHandler> &handler);
+        void remove_handler(const std::shared_ptr<MessageHandler> &handler,
+                            bool deinitialize = false);
 
-        void clear();
+        void clear(bool deinitialize = true);
 
     private:
         void start_receiving();
@@ -47,17 +47,14 @@ namespace core::zmq
         void receive_loop();
         void process_message(const types::ByteVector &bytes);
 
-        void init_handler(const std::shared_ptr<MessageHandler> &handler);
-        void deinit_handler(const std::shared_ptr<MessageHandler> &handler);
+        void add_handler_filter(const std::shared_ptr<MessageHandler> &handler);
+        void remove_handler_filter(const std::shared_ptr<MessageHandler> &handler);
         void invoke_handler(const std::shared_ptr<MessageHandler> &handler,
                             const types::ByteVector &data);
 
-        std::vector<std::shared_ptr<MessageHandler>> handlers();
-
     private:
         std::recursive_mutex mtx_;
-        std::unordered_map<MessageHandler::Identity, std::shared_ptr<MessageHandler>> shared_handlers_;
-        std::unordered_map<MessageHandler::Identity, std::weak_ptr<MessageHandler>> weak_handlers_;
+        std::set<std::shared_ptr<MessageHandler>> handlers_;
         std::thread receive_thread;
         bool keep_receiving;
     };

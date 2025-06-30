@@ -15,14 +15,19 @@
 
 namespace core::application
 {
-    void shutdown_handler(int signal)
+    void emit_shutdown_signal()
     {
-        ::signal(SIGINT, SIG_IGN);
-        ::signal(SIGTERM, SIG_IGN);
         if (!core::platform::signal_shutdown.emitted())
         {
             core::platform::signal_shutdown.emit();
         }
+    }
+
+    void shutdown_handler(int signal)
+    {
+        ::signal(SIGINT, SIG_IGN);
+        ::signal(SIGTERM, SIG_IGN);
+        emit_shutdown_signal();
     }
 
     void initialize(int argc, char **argv, const std::optional<std::string> &flavor)
@@ -47,15 +52,9 @@ namespace core::application
 
     void deinitialize()
     {
-        if (!core::platform::signal_shutdown.emitted())
-        {
-            core::platform::signal_shutdown.emit();
-        }
-
+        emit_shutdown_signal();
         core::platform::exit_tasks.execute();
-
         logging::dispatcher.deinitialize();
-
         core::platform::unregister_providers();
     }
 }  // namespace core::application

@@ -10,6 +10,7 @@ from .endpoint import Endpoint
 from .filter import Filter, Topic
 from .messagehandler import MessageHandler
 from cc.core.invocation import safe_invoke
+from cc.core.invocation import caller_frame
 
 ### Third-party modules
 import zmq
@@ -41,9 +42,6 @@ class Subscriber (Endpoint):
         self.keep_receiving = False
         self._mtx           = threading.Lock()
 
-    def __del__(self):
-        self.clear()
-
     def add(self,
             handler: MessageHandler):
         '''
@@ -53,7 +51,7 @@ class Subscriber (Endpoint):
         with self._mtx:
             logging.debug("Subscriber(%r) adding handler %r with filter %r"%
                          (self.channel_name, handler.id, handler.message_filter))
-            self._init_handler(handler)
+            self._add_handler_filter(handler)
             self.subscriptions.add(handler)
 
 
@@ -67,7 +65,7 @@ class Subscriber (Endpoint):
             logging.debug("Subscriber(%r) removing handler %r"%
                          (self.channel_name, handler.id, handler.message_filter))
             self.subscriptions.discard(handler)
-            self._deinit_handler(handler)
+            self._remove_handler_filter(handler)
 
     def clear(self):
         '''
@@ -76,7 +74,7 @@ class Subscriber (Endpoint):
 
         with self._mtx:
             for handler in self.subscriptions:
-                self._deinit_handler(handler)
+                self._remove_handler_filter(handler)
             self.subscriptions.clear()
 
     def initialize(self):
@@ -87,13 +85,16 @@ class Subscriber (Endpoint):
         self.stop_receiving()
         super().deinitialize()
 
-    def _init_handler(self, handler: MessageHandler):
-        #handler.initialize()
+    def _add_handler_filter(self, handler: MessageHandler):
+        print("Adding handler %r, message filter %r (size %d)"%(
+            handler,
+            handler.message_filter,
+            len(handler.message_filter)))
+
         self.socket.setsockopt(zmq.SUBSCRIBE, handler.message_filter)
 
-    def _deinit_handler(self, handler: MessageHandler):
+    def _remove_handler_filter(self, handler: MessageHandler):
         self.socket.setsockopt(zmq.UNSUBSCRIBE, handler.message_filter)
-        #handler.deinitialize()
 
     def _invoke_handler(self,
                         handler: MessageHandler,

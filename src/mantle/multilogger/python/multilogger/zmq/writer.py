@@ -9,6 +9,7 @@ __author__ = 'Tor Slettnes'
 ### Standard Python modules
 import logging
 import time
+import sys
 
 ### Modules within package
 from cc.core.doc_inherit import doc_inherit
@@ -76,7 +77,17 @@ class Writer (ThreadedSubmitter, MessageWriter):
             queue_size = queue_size)
 
 
-    #@doc_inherit
+    def initialize(self):
+        self.publisher.initialize()
+        MessageWriter.initialize(self)
+        ThreadedSubmitter.open(self)
+
+    def deinitialize(self):
+        ThreadedSubmitter.close(self)
+        MessageWriter.deinitialize(self)
+        self.publisher.deinitialize()
+
+
     def stream_worker(self):
         '''
         Stream queued messages to MultiLogger service.
@@ -85,8 +96,8 @@ class Writer (ThreadedSubmitter, MessageWriter):
 
         while q := self.queue:
             try:
-                loggable = q.get()
-                while loggable is not None:
+                while loggable := q.get():
+                    sys.stdout.write("Got item from write queue: %s"%(loggable,))
                     self.write_proto(loggable)
 
             except Exception as e:
@@ -99,5 +110,5 @@ class Writer (ThreadedSubmitter, MessageWriter):
 
 if __name__ == '__main__':
     submitter = Writer(capture_python_logs = True)
-    submitter.open()
+    submitter.initialize()
     logging.info(f"MultiLogger ZMQ submitter {client.identity} is alive!")

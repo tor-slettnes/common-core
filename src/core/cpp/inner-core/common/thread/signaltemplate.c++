@@ -80,7 +80,7 @@ namespace core::signal
 
     VoidSignal::VoidSignal(const std::string &id)
         : Super(id, false),
-          emitted_(false)
+          BinaryEvent(false)
     {
     }
 
@@ -93,31 +93,36 @@ namespace core::signal
 
     void VoidSignal::connect(const Handle &handle, const Slot &slot)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         this->slots_[handle] = slot;
     }
 
     void VoidSignal::disconnect(const Handle &handle)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         this->slots_.erase(handle);
+
+        this->cancel();
     }
 
     std::size_t VoidSignal::emit()
     {
-        std::scoped_lock lck(this->mtx_);
         std::size_t count = 0;
-        for (const auto &[receiver, method] : this->slots_)
         {
-            count += this->callback(receiver, method);
+            std::scoped_lock lck(this->signal_mtx_);
+            for (const auto &[receiver, method] : this->slots_)
+            {
+                count += this->callback(receiver, method);
+            }
         }
-        this->emitted_ = true;
+
+        this->set();
         return count;
     }
 
     bool VoidSignal::emitted() const
     {
-        return this->emitted_;
+        return this->is_set();
     }
 
     std::size_t VoidSignal::connection_count() const
@@ -130,26 +135,23 @@ namespace core::signal
         return this->safe_invoke(receiver, method);
     }
 
-
     //==========================================================================
     /// @class AsyncVoidSignal
     /// @brief Signal without data, emitted in parallel to all slots
-
 
     std::size_t AsyncVoidSignal::emit()
     {
         Futures futures;
 
-        this->mtx_.lock();
+        this->signal_mtx_.lock();
         futures.reserve(this->slots_.size());
         for (const auto &[receiver, method] : this->slots_)
         {
             futures.push_back(std::async(&AsyncVoidSignal::callback, this, receiver, method));
         }
-        this->emitted_ = true;
-        this->mtx_.unlock();
+        this->signal_mtx_.unlock();
+        this->set();
         return this->collect_futures(futures);
     }
-
 
 }  // namespace core::signal

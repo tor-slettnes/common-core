@@ -57,12 +57,4 @@ namespace demo::zmq
         this->call(METHOD_STOP_TICKING);
     }
 
-    void ClientImpl::start_watching()
-    {
-    }
-
-    void ClientImpl::stop_watching()
-    {
-    }
-
 }  // namespace demo::zmq

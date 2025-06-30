@@ -21,24 +21,19 @@ namespace multilogger::zmq
     class ClientReader
         : public core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::Loggable>,
           public core::types::BlockingQueue<core::types::Loggable::ptr>,
-          public core::types::enable_create_shared_from_this<ClientReader>
+          public core::types::enable_create_shared<ClientReader>
     {
         using This = ClientReader;
         using HandlerBase = core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::Loggable>;
         using QueueBase = core::types::BlockingQueue<core::types::Loggable::ptr>;
 
     protected:
-        ClientReader(const std::shared_ptr<core::zmq::Subscriber> &subscriber);
-        ~ClientReader();
+        ClientReader(const std::weak_ptr<core::zmq::Subscriber> &subscriber);
 
     public:
-        void initialize() override;
         void deinitialize() override;
 
     public:
         void handle_message(const cc::platform::multilogger::Loggable &msg) override;
-
-    private:
-        std::shared_ptr<core::zmq::Subscriber> subscriber;
     };
 }  // namespace multilogger::zmq

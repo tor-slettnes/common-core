@@ -6,9 +6,11 @@
 #===============================================================================
 
 ### Modules within package
-from .messagehandler import MessageHandler
 from cc.protobuf.signal import SignalStore
 from cc.protobuf.wellknown import Message
+
+from ..basic import Subscriber
+from .messagehandler import MessageHandler
 
 
 class SignalHandler (MessageHandler):
@@ -18,9 +20,12 @@ class SignalHandler (MessageHandler):
     '''
 
     def __init__(self,
-                 signal_store: SignalStore):
+                 signal_store: SignalStore,
+                 subscriber: Subscriber|None = None):
 
-        MessageHandler.__init__(self, signal_store.signal_type)
+        MessageHandler.__init__(self,
+                                subscriber = subscriber,
+                                message_type = signal_store.signal_type)
         self.signal_store = signal_store
 
     def handle_proto(self, message: Message):

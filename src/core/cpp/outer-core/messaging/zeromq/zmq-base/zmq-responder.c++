@@ -20,6 +20,15 @@ namespace core::zmq
     {
     }
 
+    Responder::~Responder()
+    {
+        this->stop();
+        if (std::thread t{std::move(this->listen_thread)}; t.joinable())
+        {
+            t.detach();
+        }
+    }
+
     void Responder::start()
     {
         this->keep_listening = true;
@@ -30,22 +39,19 @@ namespace core::zmq
         }
     }
 
-    void Responder::stop(bool wait)
+    void Responder::stop()
     {
         this->keep_listening = false;
-        if (std::thread t{std::move(this->listen_thread)}; t.joinable())
-        {
-            log_debug("Waiting for ZMQ listener thread");
-            t.join();
-        }
     }
 
     void Responder::run()
     {
         this->keep_listening = true;
-        while (this->keep_listening)
+        logf_trace("%s is listening for requests", *this);
+
+        try
         {
-            try
+            while (this->keep_listening)
             {
                 if (auto request = this->receive())
                 {
@@ -57,11 +63,16 @@ namespace core::zmq
                     }
                 }
             }
-            catch (const Error &e)
+        }
+        catch (const Error &e)
+        {
+            if (this->keep_listening)
             {
                 this->log_zmq_error("could not receive request", e);
             }
         }
+
+        logf_trace("%s is no longer listening for requests", *this);
     }
 
 }  // namespace core::zmq

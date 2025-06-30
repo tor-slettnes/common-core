@@ -100,3 +100,9 @@ class Client (API, SignalClient):
 
 def main():
     print("Loaded DEMO main")
+
+
+
+if __name__ == '__main__':
+    client = Client()
+    client.initialize()

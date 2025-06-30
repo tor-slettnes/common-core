@@ -12,20 +12,27 @@
 
 namespace core::zmq
 {
-    class MessageHandler
+    class Subscriber;
+
+    class MessageHandler : public std::enable_shared_from_this<MessageHandler>
     {
     public:
         using Identity = std::string;
 
     protected:
-        MessageHandler(const std::string &id, const Filter &filter);
+        MessageHandler(
+            const std::string &id,
+            const Filter &filter,
+            const std::weak_ptr<Subscriber> &subscriber = {});
+
+        ~MessageHandler();
 
     public:
         const Identity &id() const noexcept;
         const Filter &filter() const noexcept;
 
-        virtual void initialize() {}
-        virtual void deinitialize() {}
+        virtual void initialize();
+        virtual void deinitialize();
 
         // Subclasses should implement one of the following method two to
         // process incoming message publications.
@@ -41,6 +48,7 @@ namespace core::zmq
     private:
         const std::string id_;
         const Filter filter_;
+        std::weak_ptr<Subscriber> subscriber_;
     };
 
 }  // namespace core::zmq

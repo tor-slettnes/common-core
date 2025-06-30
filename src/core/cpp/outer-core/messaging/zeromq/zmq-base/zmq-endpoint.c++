@@ -24,8 +24,6 @@ namespace core::zmq
           role_(role),
           address_(address)
     {
-        // this->setsockopt(ZMQ_LINGER, 2000);
-        // this->setsockopt(ZMQ_RCVTIMEO, 1);
     }
 
     Endpoint::~Endpoint()
@@ -38,6 +36,8 @@ namespace core::zmq
         if (!This::context_)
         {
             This::context_ = This::check_error(::zmq_ctx_new());
+            This::check_error(::zmq_ctx_set(This::context_, ZMQ_IPV6, 1));
+
             core::platform::signal_shutdown.connect(
                 "terminate_zmq_context",
                 This::terminate_context);
@@ -89,6 +89,7 @@ namespace core::zmq
             this->socket_ = this->check_error(::zmq_socket(
                 Endpoint::context(),
                 this->socket_type_));
+            logf_trace("Opened %s socket", *this);
         }
     }
 
@@ -100,6 +101,7 @@ namespace core::zmq
             logf_trace("Closing %s socket", *this);
             ::zmq_close(this->socket_);
             this->socket_ = nullptr;
+            logf_trace("Closed %s socket", *this);
         }
     }
 
@@ -145,10 +147,16 @@ namespace core::zmq
                                  "localhost");
     }
 
-    void Endpoint::connect(const std::optional<std::string> &address)
+    void Endpoint::connect(const std::optional<std::string> &address,
+                           const std::optional<core::dt::Duration> &timeout)
     {
         std::string host_address = this->host_address(address);
         logf_info("%s connecting to %s", *this, host_address);
+        if (timeout)
+        {
+            this->setsockopt(ZMQ_CONNECT_TIMEOUT,
+                             core::dt::to_milliseconds(timeout.value()));
+        }
         this->check_error(
             ::zmq_connect(this->socket(), host_address.c_str()));
         this->address_ = host_address;
@@ -171,6 +179,9 @@ namespace core::zmq
         Super::initialize();
         this->open_socket();
 
+        // this->setsockopt(ZMQ_IPV6, 1);
+        // this->setsockopt(ZMQ_LINGER, 0);
+
         switch (this->role())
         {
         case Role::HOST:
@@ -184,6 +195,8 @@ namespace core::zmq
         default:
             break;
         }
+
+        //this->setsockopt(ZMQ_RCVTIMEO, 500);
     }
 
     void Endpoint::deinitialize()
@@ -271,18 +284,21 @@ namespace core::zmq
 
     void Endpoint::setsockopt(int option, const void *data, std::size_t data_size)
     {
-        this->open_socket();
+        // this->open_socket();
+        auto bytes = core::types::ByteVector::from_pointer(data, data_size);
+        logf_trace("%s applying socket option %s, bytes: %s", *this, option, bytes.to_hex());
         this->check_error(::zmq_setsockopt(
             this->socket(),
             option,
             &data,
             data_size));
+        logf_trace("%s applied socket option %s", *this, option);
     }
 
     void Endpoint::send(const types::ByteVector &bytes, SendFlags flags) const
     {
-        using SendFunction = int (*)(void *socket, const void *buf, size_t len, int flags);
-        SendFunction send = (flags & ZMQ_DONTWAIT) ? ::zmq_send : ::zmq_send_const;
+        // using SendFunction = int (*)(void *socket, const void *buf, size_t len, int flags);
+        // SendFunction send = (flags & ZMQ_DONTWAIT) ? ::zmq_send : ::zmq_send_const;
 
         logf_trace("%s sending %d bytes", *this, bytes.size());
         this->check_error(::zmq_send(
@@ -292,11 +308,18 @@ namespace core::zmq
             flags));         // flags
     }
 
-    std::optional<types::ByteVector> Endpoint::receive(RecvFlags flags) const
+    std::shared_ptr<types::ByteVector> Endpoint::receive(RecvFlags flags) const
     {
-        types::ByteVector bytes;
-        if (this->receive(&bytes, flags))
+        std::vector<types::ByteVector> parts;
+        if (std::size_t size = this->receive(&parts, flags))
         {
+            auto bytes = std::make_shared<types::ByteVector>();
+            bytes->reserve(size);
+
+            for (const types::ByteVector &part : parts)
+            {
+                bytes->insert(bytes->end(), part.begin(), part.end());
+            }
             return bytes;
         }
         else
@@ -305,7 +328,14 @@ namespace core::zmq
         }
     }
 
-    std::size_t Endpoint::receive(types::ByteVector *bytes, RecvFlags flags) const
+    std::vector<types::ByteVector> Endpoint::receive_parts(RecvFlags flags) const
+    {
+        std::vector<types::ByteVector> parts;
+        this->receive(&parts, flags);
+        return parts;
+    }
+
+    std::size_t Endpoint::receive(std::vector<types::ByteVector> *parts, RecvFlags flags) const
     {
         zmq_msg_t msg;
         std::vector<std::string> counts;
@@ -316,15 +346,14 @@ namespace core::zmq
             this->check_error(::zmq_msg_init(&msg));
             this->check_error(::zmq_msg_recv(&msg, this->socket(), flags));
 
-            const char *data = static_cast<const char *>(::zmq_msg_data(&msg));
+            const std::uint8_t *data = static_cast<const std::uint8_t *>(::zmq_msg_data(&msg));
             size_t size = ::zmq_msg_size(&msg);
-
-            bytes->insert(bytes->end(), data, data + size);
-
-            counts.push_back(std::to_string(size));
             total += size;
 
+            parts->emplace_back(data, data + size);
             this->check_error(::zmq_msg_close(&msg));
+
+            counts.push_back(std::to_string(size));
         }
         while (::zmq_msg_more(&msg));
 
@@ -332,6 +361,7 @@ namespace core::zmq
                    *this,
                    str::join(counts, "+"),
                    total);
+
         return total;
     }
 

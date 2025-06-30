@@ -68,7 +68,6 @@ namespace core::messaging
         std::string messaging_flavor_;
         std::string endpoint_type_;
         std::string channel_name_;
-        std::string signal_handle_;
         std::string profile_name_;
         std::shared_ptr<SettingsStore> settings_;
         bool initialized_;

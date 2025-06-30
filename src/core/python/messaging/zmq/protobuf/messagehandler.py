@@ -19,8 +19,8 @@ class MessageHandler (BaseHandler):
     message_type = None
 
     def __init__(self,
-                 subscriber: Subscriber|None = None,
                  message_type : MessageType|None = None,
+                 subscriber: Subscriber|None = None,
                  filter_or_topic: str|bytes|None = None):
 
         self.message_type = message_type or type(self).message_type

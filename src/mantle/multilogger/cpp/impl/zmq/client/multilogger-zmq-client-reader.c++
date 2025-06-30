@@ -11,32 +11,16 @@
 
 namespace multilogger::zmq
 {
-    ClientReader::ClientReader(const std::shared_ptr<core::zmq::Subscriber> &subscriber)
-        : HandlerBase(),
-          QueueBase(),
-          subscriber(subscriber)
+    ClientReader::ClientReader(const std::weak_ptr<core::zmq::Subscriber> &subscriber)
+        : HandlerBase({}, subscriber),
+          QueueBase()
     {
-    }
-
-    ClientReader::~ClientReader()
-    {
-        this->deinitialize();
-    }
-
-    void ClientReader::initialize()
-    {
-        HandlerBase::initialize();
-        this->subscriber->register_handler(this->weak_from_this());
     }
 
     void ClientReader::deinitialize()
     {
-        if (!this->closed())
-        {
-            this->subscriber->unregister_handler(this->weak_from_this());
-            HandlerBase::deinitialize();
-            QueueBase::close();
-        }
+        HandlerBase::deinitialize();
+        QueueBase::close();
     }
 
     void ClientReader::handle_message(const cc::platform::multilogger::Loggable &msg)

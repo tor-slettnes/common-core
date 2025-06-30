@@ -16,26 +16,20 @@ namespace multilogger::zmq
 {
     class SubmissionHandler
         : public core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::Loggable>,
-          public core::types::enable_create_shared_from_this<SubmissionHandler>
+          public core::types::enable_create_shared<SubmissionHandler>
     {
         using This = SubmissionHandler;
         using Super = core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::Loggable>;
 
     protected:
         SubmissionHandler(const std::shared_ptr<API> &provider,
-                          const std::shared_ptr<core::zmq::Subscriber> &subscriber);
-        ~SubmissionHandler();
-
-    public:
-        void initialize() override;
-        void deinitialize() override;
+                          const std::weak_ptr<core::zmq::Subscriber> &subscriber);
 
     protected:
         void handle_message(const cc::platform::multilogger::Loggable &msg) override;
 
     private:
         std::shared_ptr<API> provider;
-        std::shared_ptr<core::zmq::Subscriber> subscriber;
     };
 }
 

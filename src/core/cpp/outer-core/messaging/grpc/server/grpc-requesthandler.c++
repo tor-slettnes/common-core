@@ -15,7 +15,7 @@
 namespace core::grpc
 {
     RequestHandlerBase::RequestHandlerBase(const std::string &full_service_name)
-        : Base("gRPC Service", full_service_name)
+        : Base("service", full_service_name)
     {
     }
 

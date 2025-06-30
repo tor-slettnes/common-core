@@ -15,7 +15,7 @@ from typing import Union
 class MessageWriter (object):
     def __init__(self,
                  publisher : Publisher,
-                 filter_or_topic : Union[Filter, Topic] = Filter(b'')):
+                 filter_or_topic : Filter|Topic|None = None):
 
         self.publisher = publisher
 
@@ -29,6 +29,16 @@ class MessageWriter (object):
             self.message_filter = Filter.create_from_topic(filter_or_topic)
         else:
             raise TypeError("`filter_or_topic' must be a bytes, bytearray, or string")
+
+
+    def __del__(self):
+        self.deinitialize()
+
+    def initialize(self):
+        pass
+
+    def deinitialize(self):
+        pass
 
 
     def write_bytes(self, data : bytes):

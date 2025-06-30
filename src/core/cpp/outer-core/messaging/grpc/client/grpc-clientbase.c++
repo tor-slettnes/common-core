@@ -15,7 +15,7 @@ namespace core::grpc
         const std::string &host,
         bool wait_for_ready,
         const std::shared_ptr<::grpc::ChannelCredentials> &creds)
-        : Base("gRPC Client", full_service_name),
+        : Base("client", full_service_name),
           host_(this->realaddress(host,
                                   HOST_OPTION,
                                   PORT_OPTION,

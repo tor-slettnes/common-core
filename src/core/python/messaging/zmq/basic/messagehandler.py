@@ -37,10 +37,6 @@ class MessageHandler (object):
         else:
             raise TypeError("`filter_or_topic' must be a bytes, bytearray, or string")
 
-        self.initialize()
-
-    def __del__(self):
-        self.deinitialize()
 
     def initialize(self):
         if self.subscriber_ref:

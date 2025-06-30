@@ -43,9 +43,6 @@ namespace demo::zmq
         TimeData get_current_time() override;
         void start_ticking() override;
         void stop_ticking() override;
-
-        void start_watching() override;
-        void stop_watching() override;
     };
 
 }  // namespace demo::zmq

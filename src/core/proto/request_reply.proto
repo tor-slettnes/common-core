@@ -49,7 +49,7 @@ message Reply
     uint64 request_id = 2;
 
     // Request status
-    Status status = 3;
+    optional Status status = 3;
 
     // Response parameter(s).
     Parameter param = 7;

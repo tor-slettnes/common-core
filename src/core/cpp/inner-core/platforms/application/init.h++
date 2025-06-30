@@ -14,5 +14,7 @@ namespace core::application
                     char **argv,
                     const std::optional<std::string> &flavor = {});
     void initialize_daemon(int argc, char **argv);
+
+    void emit_shutdown_signal();
     void deinitialize();
 }  // namespace core::application

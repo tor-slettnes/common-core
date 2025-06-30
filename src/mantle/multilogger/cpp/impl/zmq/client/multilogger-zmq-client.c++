@@ -18,15 +18,7 @@ namespace multilogger::zmq
               SERVICE_CHANNEL,
               MULTILOGGER_INTERFACE,
               Role::SATELLITE),
-          subscriber(std::make_shared<core::zmq::Subscriber>(
-              host,
-              MONITOR_CHANNEL,
-              Role::SATELLITE)),
-          publisher(std::make_shared<core::zmq::Publisher>(
-              host,
-              SUBMIT_CHANNEL,
-              Role::SATELLITE)),
-          writer(ClientWriter::create_shared(publisher))
+          host_(host)
     {
     }
 
@@ -34,17 +26,24 @@ namespace multilogger::zmq
     {
         API::initialize();
         core::zmq::ProtoBufClient::initialize();
-
-        this->subscriber->initialize();
-        this->publisher->initialize();
-        this->writer->initialize();
     }
 
     void ClientImpl::deinitialize()
     {
-        this->writer->deinitialize();
-        this->publisher->deinitialize();
-        this->subscriber->deinitialize();
+        if (auto writer = this->writer_)
+        {
+            writer->deinitialize();
+        }
+
+        if (auto publisher = this->publisher_)
+        {
+            publisher->deinitialize();
+        }
+
+        if (auto subscriber = this->subscriber_)
+        {
+            subscriber->deinitialize();
+        }
 
         core::zmq::ProtoBufClient::deinitialize();
         API::deinitialize();
@@ -52,7 +51,7 @@ namespace multilogger::zmq
 
     void ClientImpl::submit(const core::types::Loggable::ptr &item)
     {
-        this->writer->write(item);
+        this->writer()->write(item);
     }
 
     bool ClientImpl::add_sink(const SinkSpec &spec)
@@ -123,6 +122,45 @@ namespace multilogger::zmq
     std::shared_ptr<LogSource> ClientImpl::listen(
         const ListenerSpec &spec)
     {
-        return ClientReader::create_shared(this->subscriber);
+        auto reader = ClientReader::create_shared(this->subscriber());
+        reader->initialize();
+        return reader;
+    }
+
+    std::shared_ptr<core::zmq::Subscriber> ClientImpl::subscriber()
+    {
+        if (!this->subscriber_)
+        {
+            this->subscriber_ = std::make_shared<core::zmq::Subscriber>(
+                this->host_,
+                MONITOR_CHANNEL,
+                Role::SATELLITE);
+            this->subscriber_->initialize();
+        }
+
+        return this->subscriber_;
+    }
+
+    std::shared_ptr<core::zmq::Publisher> ClientImpl::publisher()
+    {
+        if (!this->publisher_)
+        {
+            this->publisher_ = std::make_shared<core::zmq::Publisher>(
+                this->host_,
+                SUBMIT_CHANNEL,
+                Role::SATELLITE);
+            this->publisher_->initialize();
+        }
+        return this->publisher_;
+    }
+
+    std::shared_ptr<ClientWriter> ClientImpl::writer()
+    {
+        if (!this->writer_)
+        {
+            this->writer_ = ClientWriter::create_shared(this->publisher());
+            this->writer_->initialize();
+        }
+        return this->writer_;
     }
 }  // namespace multilogger::zmq

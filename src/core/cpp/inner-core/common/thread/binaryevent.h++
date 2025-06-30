@@ -64,7 +64,7 @@ namespace core::types
         template <class Clock, class Duration>
         bool wait_until(const std::chrono::time_point<Clock, Duration> &deadline)
         {
-            std::unique_lock<std::mutex> lock(this->mtx_);
+            std::unique_lock<std::mutex> lock(this->event_mtx_);
             return this->cv_.wait_until(lock, deadline, std::bind(&BinaryEvent::is_set, this));
         }
 
@@ -84,7 +84,7 @@ namespace core::types
 
     private:
         std::condition_variable cv_;
-        std::mutex mtx_;
+        std::mutex event_mtx_;
         bool value_;
         bool ready_;
     };

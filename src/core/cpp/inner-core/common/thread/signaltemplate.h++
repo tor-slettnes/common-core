@@ -6,6 +6,7 @@
 //==============================================================================
 
 #pragma once
+#include "binaryevent.h++"
 #include "string/format.h++"
 
 #include <string>
@@ -65,7 +66,7 @@ namespace core::signal
         std::size_t collect_futures(Futures &futures);
 
     protected:
-        std::recursive_mutex mtx_;
+        std::recursive_mutex signal_mtx_;
         std::string name_;
         bool caching_;
     };
@@ -74,7 +75,8 @@ namespace core::signal
     /// @class VoidSignal
     /// @brief Event notification without data
 
-    class VoidSignal : public BaseSignal
+    class VoidSignal : public BaseSignal,
+                       public core::types::BinaryEvent
     {
         using Super = BaseSignal;
 
@@ -126,7 +128,6 @@ namespace core::signal
         bool callback(const std::string &receiver, const Slot &method);
 
     protected:
-        bool emitted_;
         std::unordered_map<std::string, Slot> slots_;
     };
 

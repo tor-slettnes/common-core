@@ -10,7 +10,6 @@ from .common import DEMO_PUBLISHER_CHANNEL, DEMO_SERVICE_CHANNEL, DEMO_RPC_INTER
 from ..base  import API, demo_signals, PROJECT_NAME
 
 ### Modules relative to install dir
-from cc.messaging.zmq.basic.satellite import Satellite
 from cc.messaging.zmq.basic.subscriber import Subscriber
 from cc.messaging.zmq.protobuf.client import Client as ProtoBufClient
 from cc.messaging.zmq.protobuf.signalhandler import SignalHandler
@@ -47,25 +46,27 @@ class Client (API, ProtoBufClient):
             channel_name = DEMO_PUBLISHER_CHANNEL,
             project_name = PROJECT_NAME)
 
-        self.signalhandler = SignalHandler(demo_signals)
+        self.signalhandler = SignalHandler(
+            signal_store = demo_signals,
+            subscriber = self.subscriber
+        )
 
 
-    def connect(self):
+    def initialize(self):
         '''
-        Establish connection to the server, and start listening for signals.
+        Initialize client/server connection
         '''
-        self.subscriber.connect()
-        self.subscriber.add(self.signalhandler)
-        super().connect()
+        self.signalhandler.initialize()
+        self.subscriber.initialize()
+        super().initialize()
 
-    def disconnect(self):
+    def deinitialize(self):
         '''
-        Disconnect from the server. Unregister signal handler.
+        Deinitialize client/server connection
         '''
-
-        super().disconnect()
-        self.subscriber.remove(self.signalhandler)
-        self.subscriber.disconnect()
+        super().definitialize()
+        self.subscriber.deinitialize()
+        self.signalhandler.deinitialize()
 
     def say_hello(self, greeting: Greeting):
         '''
@@ -99,3 +100,8 @@ class Client (API, ProtoBufClient):
         Tell the server to stop emitting `singal_time`.
         '''
         return self.call('stop_ticking')
+
+
+if __name__ == '__main__':
+    client = Client()
+    client.initialize()

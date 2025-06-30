@@ -31,7 +31,11 @@ class MessageWriter (BaseWriter):
         if filter_or_topic is None:
             filter_or_topic = self.message_type.DESCRIPTOR.full_name
 
-        BaseWriter.__init__(self, publisher, filter_or_topic)
+        BaseWriter.__init__(
+            self,
+            publisher = publisher,
+            filter_or_topic = filter_or_topic)
+
 
     def write_proto(self,
                     message : Message):

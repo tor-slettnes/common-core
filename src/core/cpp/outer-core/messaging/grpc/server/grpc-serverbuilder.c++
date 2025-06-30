@@ -8,6 +8,7 @@
 #include "grpc-serverbuilder.h++"
 #include "grpc-serverinterceptors.h++"
 #include "platform/dns-sd.h++"
+#include "logging/logging.h++"
 #include "platform/host.h++"
 
 #include <grpc++/ext/proto_server_reflection_plugin.h>
@@ -52,6 +53,10 @@ namespace core::grpc
     {
         if (add_listener)
         {
+            logf_info("Adding listener for %s on %s",
+                      *handler,
+                      handler->address_setting());
+
             this->add_listener(handler->address_setting());
         }
 

@@ -45,11 +45,11 @@ namespace core::zmq
         cc::rr::Request request;
         cc::rr::Reply reply;
 
-        logf_debug("Received binary request: %s", packed_request);
-
         if (request.ParseFromArray(packed_request.data(), packed_request.size()))
         {
+            log_trace("Processing ProtoBuf RPC request: ", request);
             this->process_protobuf_request(request, &reply);
+            log_trace("Sending ProtoBuf RPC response: ", reply);
         }
         else
         {

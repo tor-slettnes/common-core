@@ -45,41 +45,48 @@ namespace multilogger::zmq
 
         //======================================================================
         // Initialize
-
+        log_debug("Initializing MultiLogger ZMQ message publisher");
         message_publisher->initialize();
+
+        log_debug("Initializing MultiLogger ZMQ message writer");
         message_writer->initialize();
 
-        submission_handler->initialize();
+        log_debug("Initializing MultiLogger ZMQ submission subscriber");
         submission_subscriber->initialize();
 
+        log_debug("Initializing MultiLogger ZMQ submission handler");
+        submission_handler->initialize();
+
+        log_debug("Initializing MultiLogger ZMQ RPC server");
         rpc_server->initialize();
 
         //======================================================================
         // Run
 
-        log_debug("Adding ZMQ shutdown handler");
-        core::platform::signal_shutdown.connect(
-            SHUTDOWN_SIGNAL_HANDLE,
-            [&]() {
-                log_info("ZMQ RPC server is stopping");
-                rpc_server->stop();
-                log_info("ZMQ RPC server has stopped");
-            });
 
-
+        rpc_server->start();
         logf_notice("Multilogger ZMQ services are ready");
-        rpc_server->run();
-        logf_notice("Multilogger ZMQ services are shutting down");
+        core::platform::signal_shutdown.wait();
 
-        core::platform::signal_shutdown.disconnect(SHUTDOWN_SIGNAL_HANDLE);
+        logf_notice("Stopping MultiLogger ZMQ RPC server");
+        rpc_server->stop();
 
         //======================================================================
         // Deinitialize
 
+        logf_debug("Deinitializing MultiLogger ZMQ server");
         rpc_server->deinitialize();
-        submission_subscriber->deinitialize();
+
+        logf_debug("Deinitializing MultiLogger ZMQ submission handler");
         submission_handler->deinitialize();
+
+        logf_debug("Deinitializing MultiLogger ZMQ submission subscriber");
+        submission_subscriber->deinitialize();
+
+        logf_debug("Deinitializing MultiLogger ZMQ message writer");
         message_writer->deinitialize();
+
+        logf_debug("Deinitializing MultiLogger ZMQ message publisher");
         message_publisher->deinitialize();
     }
 

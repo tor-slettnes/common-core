@@ -58,7 +58,7 @@ namespace multilogger
             std::bind(&Options::list_message_fields, this));
 
         this->add_command(
-            "list_message_fields",
+            "list_error_fields",
             {},
             "List data fields/columns present in logged errors.",
             std::bind(&Options::list_error_fields, this));
@@ -84,6 +84,7 @@ namespace multilogger
             log_scope,                          // scope
             core::platform::path->exec_name(),  // origin
             core::dt::Clock::now());            // tp
+
         this->provider->submit(message);
     }
 

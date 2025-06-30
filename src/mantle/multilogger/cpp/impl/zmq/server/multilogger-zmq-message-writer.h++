@@ -25,6 +25,8 @@ namespace multilogger::zmq
             const std::shared_ptr<API> &provider,
             const std::shared_ptr<core::zmq::Publisher> &publisher);
 
+        virtual ~MessageWriter();
+
     public:
         void initialize() override;
         void deinitialize() override;

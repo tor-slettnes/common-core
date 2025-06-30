@@ -16,7 +16,7 @@ namespace core::zmq
     {
     }
 
-    std::optional<types::ByteVector> Requester::send_receive(
+    std::shared_ptr<types::ByteVector> Requester::send_receive(
         const types::ByteVector &request,
         SendFlags send_flags,
         RecvFlags recv_flags)

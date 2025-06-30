@@ -287,9 +287,11 @@ class SignalStore:
         '''
 
         try:
-            return self.get_cached_map(signalname, timeout)[mapping_key]
+            signal = self.get_cached_map(signalname, timeout)[mapping_key]
         except KeyError:
             return fallback() if isinstance(fallback, type) else fallback
+        else:
+            return getattr(signal, signalname)
 
 
     def connect_all(self,
@@ -397,9 +399,25 @@ class SignalStore:
             signal data as its first and only required argument.
         '''
 
-        self.connect_signal(name,
-                            lambda signal: slot(getattr(signal, name)))
+        assert callable(slot), \
+            "Slot must be a callable object, like a function"
 
+        assert name in self.signal_names(), \
+            "Message type %s does not have a %r field"%(self.signal_type.__name__, name)
+
+        self.connect_signal(name,
+                            lambda signal: self._signal_data_callback(name, signal, slot))
+                            # lambda signal: slot(getattr(signal, name)))
+
+
+    def _signal_data_callback(self, name, signal, slot):
+        try:
+            value = getattr(signal, name)
+        except AttributeError:
+            print("Signal type %r does not have an %r field"%(signal, name))
+            raise
+        else:
+            slot(value)
 
 
     def disconnect_signal_data(self,
@@ -427,7 +445,7 @@ class SignalStore:
     def wait_complete(self) -> bool:
         '''
         Wait for all currently mapping signals to be received from the
-        server.  May be invoked after first connectint to ensure the local cache
+        server.  May be invoked after first connection to ensure the local cache
         is complete before proceeding.
 
         Note that it is not usually necessary to invoke this method in order to
@@ -435,12 +453,17 @@ class SignalStore:
         implicitly waits for the specified signal map to be completed before
         proceeding.
         '''
-        if self._completion_deadline and not self._deadline_expired:
-            remaining = self._completion_deadline - time.time()
-            if remaining > 0:
-                self._deadline_expired = not self._completion_event.wait(remaining)
 
-        return self._completion_event.is_set()
+        if self._completion_event.is_set():
+            return True
+
+        else:
+            if self._completion_deadline and not self._deadline_expired:
+                remaining = self._completion_deadline - time.time()
+                if remaining > 0:
+                    self._deadline_expired = not self._completion_event.wait(remaining)
+
+            return self._completion_event.is_set()
 
 
     def emit_cached_to(self, name: str, slot: Slot):
@@ -543,7 +566,8 @@ class SignalStore:
         if action == MappingAction.MAP_REMOVAL:
             datamap.pop(key, None)
         else:
-            datamap[key] = getattr(msg, signalname)
+            #datamap[key] = getattr(msg, signalname)
+            datamap[key] = msg
 
     def _emit_to(self, name, slot, signal):
         action, key = self._mapping_controls(signal)

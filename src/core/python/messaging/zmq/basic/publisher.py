@@ -36,4 +36,5 @@ class Publisher (Endpoint):
 
         if len(message_filter):
             self.send_bytes(message_filter, zmq.DONTWAIT | zmq.SNDMORE)
+
         self.send_bytes(data, zmq.DONTWAIT)

@@ -20,8 +20,8 @@ namespace demo::zmq
 
     void Subscriber::initialize()
     {
-        this->add_handler(SignalHandler::create_shared());
         Super::initialize();
+        this->add_handler(SignalHandler::create_shared(), true);
     }
 
 }  // namespace demo::zmq

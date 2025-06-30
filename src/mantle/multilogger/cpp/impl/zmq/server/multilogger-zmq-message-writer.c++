@@ -24,6 +24,15 @@ namespace multilogger::zmq
     {
     }
 
+    MessageWriter::~MessageWriter()
+    {
+        this->stop();
+        if (std::thread t = std::move(this->worker_thread); t.joinable())
+        {
+            t.detach();
+        }
+    }
+
     void MessageWriter::initialize()
     {
         Super::initialize();
@@ -52,10 +61,6 @@ namespace multilogger::zmq
         {
             this->keep_writing = false;
             this->listener->close();
-            if (this->worker_thread.joinable())
-            {
-                this->worker_thread.join();
-            }
         }
     }
 

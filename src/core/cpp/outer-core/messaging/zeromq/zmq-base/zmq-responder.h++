@@ -22,9 +22,11 @@ namespace core::zmq
                   const std::string &channel_name,
                   Role role = Role::HOST);
 
+        ~Responder();
+
     public:
         void start();
-        void stop(bool wait = true);
+        void stop();
         void run();
 
     protected:

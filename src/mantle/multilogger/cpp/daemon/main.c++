@@ -7,12 +7,18 @@
 
 #include "options.h++"
 #include "multilogger-native.h++"
-#include "multilogger-grpc-run.h++"
-#include "multilogger-zmq-run.h++"
 #include "application/init.h++"
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
 #include "thread/supervised-thread.h++"
+
+#ifdef USE_GRPC
+#include "multilogger-grpc-run.h++"
+#endif
+
+#ifdef USE_ZMQ
+#include "multilogger-zmq-run.h++"
+#endif
 
 int main(int argc, char** argv)
 {

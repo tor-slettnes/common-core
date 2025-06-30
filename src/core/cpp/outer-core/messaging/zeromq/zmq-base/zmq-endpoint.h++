@@ -82,15 +82,16 @@ namespace core::zmq
 
         Socket *socket() const;
 
-        void open_socket();
-        void close_socket();
+        virtual void open_socket();
+        virtual void close_socket();
 
         std::string bind_address(const std::optional<std::string> &provided = {}) const;
         void bind(const std::optional<std::string> &address = {});
         void unbind();
 
         std::string host_address(const std::optional<std::string> &provided = {}) const;
-        void connect(const std::optional<std::string> &address = {});
+        void connect(const std::optional<std::string> &address = {},
+                     const std::optional<core::dt::Duration> &timeout = {});
         void disconnect();
 
         void initialize() override;
@@ -111,11 +112,14 @@ namespace core::zmq
             const types::ByteVector &bytes,
             SendFlags flags = 0) const;
 
-        std::optional<types::ByteVector> receive(
+        std::shared_ptr<types::ByteVector> receive(
+            RecvFlags flags = 0) const;
+
+        std::vector<types::ByteVector> receive_parts(
             RecvFlags flags = 0) const;
 
         std::size_t receive(
-            types::ByteVector *bytes,
+            std::vector<types::ByteVector> *parts,
             RecvFlags flags = 0) const;
 
     protected:
@@ -185,6 +189,5 @@ namespace core::zmq
         Role role_;
         std::string address_;
     };
-
 
 }  // Namespace core::zmq

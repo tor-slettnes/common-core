@@ -35,19 +35,22 @@ int main(int argc, char** argv)
 
     bool success = demo::options->handle_command();
 
+    // // Invoke shutdown triggers
+    // logf_debug("Emitting shutdown signal");
+    // core::platform::signal_shutdown.emit();
+
+    logf_debug("Deinitializing ZeroMQ demo provider");
+    demo::provider->deinitialize();
+
+    logf_debug("Deinitializing ZeroMQ demo subscriber");
+    subscriber->deinitialize();
+
     // Invoke shutdown triggers
     logf_debug("Emitting shutdown signal");
     core::platform::signal_shutdown.emit();
 
-    logf_debug("Deinitializing ZeroMQ demo provider");
-    demo::provider->deinitialize();
-    demo::provider.reset();
+    logf_debug("Deinitialized ZeroMQ demo");
 
-    logf_debug("Deinitializing ZeroMQ demo subscriber");
-    subscriber->deinitialize();
-    subscriber.reset();
 
-    logf_debug("Deinitializing application");
-    core::application::deinitialize();
     return success ? 0 : -1;
 }

@@ -32,6 +32,7 @@ namespace demo::zmq
 
     public:
         void initialize() override;
+
     };
 
 }  // namespace demo::zmq

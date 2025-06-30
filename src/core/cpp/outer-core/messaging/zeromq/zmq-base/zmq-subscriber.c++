@@ -23,67 +23,85 @@ namespace core::zmq
 
     Subscriber::~Subscriber()
     {
-        this->stop_receiving();
+        this->keep_receiving = false;
+        if (std::thread t = std::move(this->receive_thread); t.joinable())
+        {
+            t.detach();
+        }
     }
 
     void Subscriber::initialize()
     {
         Super::initialize();
         this->start_receiving();
+
+        // Workaround for apparent `libzmq3` bug:
+        // Setting a non-empty filter (see `add_handler_filter()` below) seems
+        // to have no effect.  Instead, we must add an empty filter if we want
+        // to receive messages at all.
+        this->setsockopt(ZMQ_SUBSCRIBE, "", 0);
     }
 
     void Subscriber::deinitialize()
     {
+        // Workaround for apparent `libzmq3` bug:
+        // Remove our empty subscription filter.
+        this->setsockopt(ZMQ_UNSUBSCRIBE, "", 0);
+
+        //this->clear();
         this->stop_receiving();
-        this->clear();
+
         Super::deinitialize();
     }
 
-    void Subscriber::add_handler(const std::shared_ptr<MessageHandler> &shared_handler)
+    void Subscriber::add_handler(const std::shared_ptr<MessageHandler> &handler,
+                                 bool initialize)
     {
-        std::scoped_lock lock(this->mtx_);
-        this->init_handler(shared_handler);
-        this->shared_handlers_.insert_or_assign(
-            shared_handler->id(),
-            shared_handler);
-    }
+        if (initialize)
+        {
+            handler->initialize();
+        }
 
-    void Subscriber::remove_handler(const std::shared_ptr<MessageHandler> &shared_handler)
-    {
-        std::scoped_lock lock(this->mtx_);
-        this->shared_handlers_.erase(shared_handler->id());
-        this->deinit_handler(shared_handler);
-    }
+        // This has no effect (`libzmq3` bug?).  Instead, we use an empty filter above.
+        // this->add_handler_filter(handler);
 
-    void Subscriber::register_handler(const std::weak_ptr<MessageHandler> &weak_handler)
-    {
-        if (auto shared_handler = weak_handler.lock())
         {
             std::scoped_lock lock(this->mtx_);
-            this->weak_handlers_.insert_or_assign(
-                shared_handler->id(),
-                weak_handler);
+            this->handlers_.insert(handler);
         }
     }
 
-    void Subscriber::unregister_handler(const std::weak_ptr<MessageHandler> &weak_handler)
+    void Subscriber::remove_handler(const std::shared_ptr<MessageHandler> &handler,
+                                    bool deinitialize)
     {
-        if (auto shared_handler = weak_handler.lock())
         {
             std::scoped_lock lock(this->mtx_);
-            this->weak_handlers_.erase(shared_handler->id());
+            this->handlers_.erase(handler);
+        }
+
+        // This has no effect (`libzmq3` bug?).  Instead, we use an empty filter above.
+        // this->remove_handler_filter(handler);
+
+        if (deinitialize)
+        {
+            handler->deinitialize();
         }
     }
 
-    void Subscriber::clear()
+    void Subscriber::clear(bool deinitialize)
     {
         std::scoped_lock lock(this->mtx_);
-        for (const auto &[handler_id, handler] : this->shared_handlers_)
+        for (auto handler : this->handlers_)
         {
-            this->deinit_handler(handler);
+            // This has no effect (`libzmq3` bug?). Instead, we use an empty filter above.
+            // this->remove_handler_filter(handler);
+
+            if (deinitialize)
+            {
+                handler->deinitialize();
+            }
         }
-        this->shared_handlers_.clear();
-        this->weak_handlers_.clear();
+        this->handlers_.clear();
     }
 
     void Subscriber::start_receiving()
@@ -98,20 +116,16 @@ namespace core::zmq
     void Subscriber::stop_receiving()
     {
         this->keep_receiving = false;
-        if (std::thread t = std::move(this->receive_thread); t.joinable())
-        {
-            log_debug("Waiting for ZMQ subscriber thread");
-            t.join();
-        }
     }
 
     void Subscriber::receive_loop()
     {
+        logf_debug("%s listening for publications from %s",
+                   *this,
+                   this->address());
+
         try
         {
-            logf_debug("%s listening for publications from %s",
-                       *this,
-                       this->address());
             while (this->keep_receiving)
             {
                 if (auto bytes = this->receive())
@@ -119,6 +133,10 @@ namespace core::zmq
                     this->process_message(*bytes);
                 }
             }
+
+            logf_debug("%s is no longer listening for publications from %s",
+                       *this,
+                       this->address());
         }
         catch (const Error &e)
         {
@@ -131,7 +149,7 @@ namespace core::zmq
     {
         std::scoped_lock lock(this->mtx_);
 
-        for (const std::shared_ptr<MessageHandler> &handler : this->handlers())
+        for (const std::shared_ptr<MessageHandler> &handler : this->handlers_)
         {
             const Filter &filter = handler->filter();
             if ((bytes.size() >= filter.size()) &&
@@ -142,18 +160,19 @@ namespace core::zmq
         }
     }
 
-    void Subscriber::init_handler(const std::shared_ptr<MessageHandler> &handler)
+    void Subscriber::add_handler_filter(const std::shared_ptr<MessageHandler> &handler)
     {
-        handler->initialize();
         const Filter &filter = handler->filter();
-        logf_debug("%s adding subscription for %r with filter %r",
+        logf_debug("%s adding subscription for %r with filter %r (size %d)",
                    *this,
                    handler->id(),
-                   filter);
+                   filter,
+                   filter.size());
         this->setsockopt(ZMQ_SUBSCRIBE, filter.data(), filter.size());
+        // this->setsockopt(ZMQ_SUBSCRIBE, "", 0);
     }
 
-    void Subscriber::deinit_handler(const std::shared_ptr<MessageHandler> &handler)
+    void Subscriber::remove_handler_filter(const std::shared_ptr<MessageHandler> &handler)
     {
         logf_debug("%s removing subscription for %r with filter %r",
                    *this,
@@ -172,7 +191,6 @@ namespace core::zmq
         {
             this->log_zmq_error("could not unsubscribe", e);
         }
-        handler->deinitialize();
     }
 
     void Subscriber::invoke_handler(const std::shared_ptr<MessageHandler> &handler,
@@ -194,33 +212,6 @@ namespace core::zmq
                          data,
                          std::current_exception());
         }
-    }
-
-    std::vector<std::shared_ptr<MessageHandler>> Subscriber::handlers()
-    {
-        std::vector<std::shared_ptr<MessageHandler>> handlers;
-        handlers.reserve(this->shared_handlers_.size() + this->weak_handlers_.size());
-
-        for (const auto &[id, shared_handler]: this->shared_handlers_)
-        {
-            handlers.push_back(shared_handler);
-        }
-
-        for (auto it = this->weak_handlers_.begin();
-             it != this->weak_handlers_.end();
-            )
-        {
-            if (std::shared_ptr<MessageHandler> shared_handler = it->second.lock())
-            {
-                handlers.push_back(shared_handler);
-                ++it;
-            }
-            else
-            {
-                it = this->weak_handlers_.erase(it);
-            }
-        }
-        return handlers;
     }
 
 }  // namespace core::zmq

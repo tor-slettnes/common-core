@@ -25,7 +25,7 @@ namespace core::zmq
                   Role role = Role::SATELLITE);
 
     public:
-        std::optional<types::ByteVector> send_receive(
+        std::shared_ptr<types::ByteVector> send_receive(
             const types::ByteVector &request,
             SendFlags send_flags = 0,
             RecvFlags recv_flags = 0);

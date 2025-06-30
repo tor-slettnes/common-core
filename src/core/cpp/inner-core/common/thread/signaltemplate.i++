@@ -32,7 +32,7 @@ namespace core::signal
         const Handle &handle,
         const Slot &slot)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         this->slots_[handle] = slot;
         this->emit_cached_to(handle, slot);
     }
@@ -41,7 +41,7 @@ namespace core::signal
     inline void DataSignal<DataType>::disconnect(
         const Handle &handle)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         this->slots_.erase(handle);
     }
 
@@ -49,7 +49,7 @@ namespace core::signal
     inline std::size_t DataSignal<DataType>::emit(
         const DataType &value)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         if (this->caching_)
         {
             this->update_cache(value);
@@ -61,7 +61,7 @@ namespace core::signal
     inline std::size_t DataSignal<DataType>::emit_if_changed(
         const DataType &value)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         if (!this->caching_ || !this->cached_ || !(value == *this->cached_))
         {
             if (this->caching_)
@@ -79,7 +79,7 @@ namespace core::signal
     template <class DataType>
     inline std::optional<DataType> DataSignal<DataType>::get_cached()
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         return this->cached_;
     }
 
@@ -93,7 +93,7 @@ namespace core::signal
     template <class DataType>
     inline bool DataSignal<DataType>::clear_cached()
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         bool exists = this->cached_.has_value();
         this->cached_.reset();
         return exists;
@@ -170,7 +170,7 @@ namespace core::signal
         const Handle &handle,
         const Slot &slot)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         this->slots_[handle] = slot;
         this->emit_cached_to(handle, slot);
     }
@@ -179,7 +179,7 @@ namespace core::signal
     inline void MappingSignal<DataType, KeyType>::disconnect(
         const Handle &handle)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         this->slots_.erase(handle);
     }
 
@@ -189,7 +189,7 @@ namespace core::signal
         const KeyType &mapping_key,
         const DataType &value)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         if (this->caching_)
         {
             switch (mapping_action)
@@ -228,7 +228,7 @@ namespace core::signal
         const KeyType &key,
         const DataType &value)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         MappingAction action(
             !this->caching_                     ? MAP_NONE
             : (this->cached_.count(key) == 0)   ? MAP_ADDITION
@@ -257,7 +257,7 @@ namespace core::signal
     inline std::size_t MappingSignal<DataType, KeyType>::clear_if_cached(
         const KeyType &key)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         if (auto nh = this->cached_.extract(key))
         {
             return this->sendall(MAP_REMOVAL, key, nh.mapped());
@@ -271,7 +271,7 @@ namespace core::signal
     template <class DataType, class KeyType>
     inline std::size_t MappingSignal<DataType, KeyType>::clear_all_cached()
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         std::size_t count = 0;
         for (const auto &[key, value] : this->cached_)
         {
@@ -284,7 +284,7 @@ namespace core::signal
     template <class DataType, class KeyType>
     inline std::unordered_map<KeyType, DataType> MappingSignal<DataType, KeyType>::get_cached()
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         return this->cached_;
     }
 
@@ -292,7 +292,7 @@ namespace core::signal
     inline std::optional<DataType> MappingSignal<DataType, KeyType>::get_cached(
         const std::string &key)
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         try
         {
             return this->cached_.at(key);
@@ -315,14 +315,14 @@ namespace core::signal
     inline bool MappingSignal<DataType, KeyType>::is_cached(
         const std::string &key) noexcept
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         return this->cached_.count(key);
     }
 
     template <class DataType, class KeyType>
     inline std::size_t MappingSignal<DataType, KeyType>::cache_size()
     {
-        std::scoped_lock lck(this->mtx_);
+        std::scoped_lock lck(this->signal_mtx_);
         return this->cached_.size();
     }
 
