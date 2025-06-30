@@ -66,13 +66,13 @@ namespace core::status
 
     bool Error::equivalent(const Event &other) const noexcept
     {
-        if (auto *that = dynamic_cast<const Error*>(&other))
+        if (auto *that = dynamic_cast<const Error *>(&other))
         {
             return Super::equivalent(other) &&
-                (this->domain() == that->domain()) &&
-                (this->code() == that->code()) &&
-                (this->symbol() == that->symbol()) &&
-                (this->contract_id() == that->contract_id());
+                   (this->domain() == that->domain()) &&
+                   (this->code() == that->code()) &&
+                   (this->symbol() == that->symbol()) &&
+                   (this->contract_id() == that->contract_id());
         }
         else
         {
@@ -114,17 +114,16 @@ namespace core::status
 
     void Error::to_stream(std::ostream &stream) const
     {
-        stream << this->class_name()
-               << "("
-               << std::quoted(this->text());
+        stream << "["
+               << this->class_name()
+               << "] "
+               << this->text();
 
         if (!this->attributes().empty())
         {
             stream << ", attributes="
                    << this->attributes();
         }
-
-        stream << ")";
     }
 
     std::vector<std::string> Error::error_fields() noexcept

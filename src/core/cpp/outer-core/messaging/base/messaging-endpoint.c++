@@ -34,16 +34,24 @@ namespace core::messaging
 
     Endpoint::~Endpoint()
     {
-        this->deinitialize();
+        if (this->initialized_)
+        {
+            this->deinitialize();
+        }
     }
 
     void Endpoint::initialize()
     {
         this->initialized_ = true;
+        core::platform::signal_shutdown.connect(
+            this->to_string(),
+            std::bind(&Endpoint::deinitialize, this));
     }
 
     void Endpoint::deinitialize()
     {
+        core::platform::signal_shutdown.disconnect(
+            this->to_string());
         this->initialized_ = false;
     }
 
@@ -137,3 +145,4 @@ namespace core::messaging
     }
 
 }  // namespace core::messaging
+

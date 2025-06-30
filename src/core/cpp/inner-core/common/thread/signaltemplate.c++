@@ -108,6 +108,8 @@ namespace core::signal
     std::size_t VoidSignal::emit()
     {
         std::size_t count = 0;
+        this->set();
+
         {
             std::scoped_lock lck(this->signal_mtx_);
             for (const auto &[receiver, method] : this->slots_)
@@ -116,7 +118,6 @@ namespace core::signal
             }
         }
 
-        this->set();
         return count;
     }
 
@@ -141,8 +142,9 @@ namespace core::signal
 
     std::size_t AsyncVoidSignal::emit()
     {
-        Futures futures;
+        this->set();
 
+        Futures futures;
         this->signal_mtx_.lock();
         futures.reserve(this->slots_.size());
         for (const auto &[receiver, method] : this->slots_)
@@ -150,7 +152,6 @@ namespace core::signal
             futures.push_back(std::async(&AsyncVoidSignal::callback, this, receiver, method));
         }
         this->signal_mtx_.unlock();
-        this->set();
         return this->collect_futures(futures);
     }
 

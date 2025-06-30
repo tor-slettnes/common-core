@@ -73,7 +73,7 @@ namespace core::zmq
         if (!this->socket_)
         {
             throwf(core::exception::FailedPrecondition,
-                   "%s socket is not open. Did you forget to initialize()?",
+                   "%s socket is not open.",
                    *this);
         }
 
@@ -117,8 +117,10 @@ namespace core::zmq
 
     void Endpoint::bind(const std::optional<std::string> &address)
     {
+        std::scoped_lock lck(this->socket_mtx_);
         std::string bind_address = this->bind_address(address);
         logf_info("%s binding to %s", *this, bind_address);
+
         this->check_error(
             ::zmq_bind(this->socket(), bind_address.c_str()));
         this->address_ = bind_address;
@@ -126,13 +128,14 @@ namespace core::zmq
 
     void Endpoint::unbind()
     {
+        std::scoped_lock lck(this->socket_mtx_);
         if (this->socket_)
         {
             // Obtain real endpoint
             std::string endpoint = this->get_last_address();
             logf_info("%s unbinding from %s", *this, endpoint);
             this->try_or_log(
-                ::zmq_unbind(this->socket(), endpoint.c_str()),
+                ::zmq_unbind(this->socket_, endpoint.c_str()),
                 "could not unbind from " + endpoint);
         }
     }
@@ -157,6 +160,8 @@ namespace core::zmq
             this->setsockopt(ZMQ_CONNECT_TIMEOUT,
                              core::dt::to_milliseconds(timeout.value()));
         }
+
+        std::scoped_lock lck(this->socket_mtx_);
         this->check_error(
             ::zmq_connect(this->socket(), host_address.c_str()));
         this->address_ = host_address;
@@ -164,12 +169,13 @@ namespace core::zmq
 
     void Endpoint::disconnect()
     {
+        std::scoped_lock lck(this->socket_mtx_);
         if (this->socket_)
         {
             std::string endpoint = this->get_last_address();
             logf_info("%s disconnecting from %s", *this, endpoint);
             this->try_or_log(
-                ::zmq_disconnect(this->socket(), endpoint.c_str()),
+                ::zmq_disconnect(this->socket_, endpoint.c_str()),
                 "could not disconnect from " + endpoint);
         }
     }
@@ -284,15 +290,18 @@ namespace core::zmq
 
     void Endpoint::setsockopt(int option, const void *data, std::size_t data_size)
     {
-        // this->open_socket();
-        auto bytes = core::types::ByteVector::from_pointer(data, data_size);
-        logf_trace("%s applying socket option %s, bytes: %s", *this, option, bytes.to_hex());
-        this->check_error(::zmq_setsockopt(
-            this->socket(),
-            option,
-            &data,
-            data_size));
-        logf_trace("%s applied socket option %s", *this, option);
+        std::scoped_lock lck(this->socket_mtx_);
+        if (this->socket_)
+        {
+            auto bytes = core::types::ByteVector::from_pointer(data, data_size);
+            logf_trace("%s applying socket option %s, bytes: %s", *this, option, bytes.to_hex());
+            this->check_error(::zmq_setsockopt(
+                this->socket(),
+                option,
+                &data,
+                data_size));
+            logf_trace("%s applied socket option %s", *this, option);
+        }
     }
 
     void Endpoint::send(const types::ByteVector &bytes, SendFlags flags) const
