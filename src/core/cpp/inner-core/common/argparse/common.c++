@@ -180,14 +180,6 @@ namespace core::argparse
             "and overrides the default setting for those sinks.",
             logging::MessageSink::set_all_include_source_location);
 
-        this->add_flag(
-            {"--log-context", "--log-source-context"},
-            "Prefix log messagees with source context: source file, line number, "
-            "function name. Applicable only to message-based log sinks such as "
-            "stdout/stderr, syslog, and plaintext .log files, and if specified, "
-            "will then override the default setting for those sinks.",
-            logging::MessageSink::set_all_include_context);
-
         this->add_opt<fs::path>(
             {"--log-folder"},
             {"FOLDER"},
