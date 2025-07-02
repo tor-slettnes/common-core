@@ -60,14 +60,11 @@ namespace sysconfig::native
         // Determine if there is a matching "area order"  in "timezones.json".
         // If so, extract these areas in order from our initial set.
         core::types::Value area_order = this->zone_settings.get(SETTING_AREA_ORDER);
-        if (auto priority_list = area_order.get_valuelist())
+        for (const core::types::Value &priority_area : area_order.get_valuelist())
         {
-            for (const core::types::Value &priority_area : *priority_list)
+            if (auto nh = areas.extract(priority_area.as_string()))
             {
-                if (auto nh = areas.extract(priority_area.as_string()))
-                {
-                    area_list.push_back(nh.value());
-                }
+                area_list.push_back(nh.value());
             }
         }
 
@@ -100,20 +97,17 @@ namespace sysconfig::native
         // initial set.
 
         core::types::Value country_order = this->zone_settings.get(SETTING_COUNTRY_ORDER);
-        if (auto priority_list = country_order.get(area).get_valuelist())
+        for (const core::types::Value &priority_country : country_order.get(area).get_valuelist())
         {
-            for (const core::types::Value &priority_country : *priority_list)
-            {
-                std::string next_country = priority_country.as_string();
+            std::string next_country = priority_country.as_string();
 
-                for (auto it = countries.begin(); it != countries.end(); it++)
+            for (auto it = countries.begin(); it != countries.end(); it++)
+            {
+                if (it->name == next_country)
                 {
-                    if (it->name == next_country)
-                    {
-                        country_list.push_back(std::move(*it));
-                        countries.erase(it);
-                        break;
-                    }
+                    country_list.push_back(std::move(*it));
+                    countries.erase(it);
+                    break;
                 }
             }
         }
@@ -162,14 +156,11 @@ namespace sysconfig::native
         // Determine if there is a matching "region order" for this country in "timezones.json".
         // If so, extract these regions in order from our initial set.
         core::types::Value region_order = this->zone_settings.get(SETTING_REGION_ORDER);
-        if (auto priority_list = region_order.get(country_name).get_valuelist())
+        for (const core::types::Value &priority_region : region_order.get(country_name).get_valuelist())
         {
-            for (const core::types::Value &priority_region : *priority_list)
+            if (auto nh = regions.extract(priority_region.as_string()))
             {
-                if (auto nh = regions.extract(priority_region.as_string()))
-                {
-                    region_list.push_back(nh.value());
-                }
+                region_list.push_back(nh.value());
             }
         }
 
@@ -222,8 +213,7 @@ namespace sysconfig::native
         {
             for (const TimeZoneLocation &candidate : spec.locations)
             {
-                if ((this->country_match(location.country, candidate.country))
-                    && (location.region == candidate.region))
+                if ((this->country_match(location.country, candidate.country)) && (location.region == candidate.region))
                 {
                     return this->set_timezone(spec.name);
                 }

@@ -34,7 +34,7 @@ namespace sysconfig
 
     Version Version::from_value(const core::types::Value &value)
     {
-        if (core::types::ValueListPtr list = value.get_valuelist())
+        if (core::types::ValueListPtr list = value.get_valuelist_ptr())
         {
             Version version;
             version.major = list->get(0, 0);
@@ -43,7 +43,7 @@ namespace sysconfig
             version.build_number = list->get(3, 0);
             return version;
         }
-        else if (core::types::KeyValueMapPtr kvmap = value.get_kvmap())
+        else if (core::types::KeyValueMapPtr kvmap = value.get_kvmap_ptr())
         {
             Version version;
             version.major = kvmap->get("major", 0);

@@ -26,18 +26,15 @@ namespace switchboard
     {
         Super::initialize();
         logf_debug("Loading switches from: %s", this->settings_);
-        if (const auto &configfiles = this->settings_.get(SETTING_SWITCH_CONFIG_FILES).get_valuelist())
+        for (const auto &filename : this->settings_.get(SETTING_SWITCH_CONFIG_FILES).get_valuelist())
         {
-            for (const auto &filename : *configfiles)
+            try
             {
-                try
-                {
-                    this->load(filename.as_string());
-                }
-                catch (const std::exception &e)
-                {
-                    logf_warning("Failed to load switches from %r: %s", filename, e);
-                }
+                this->load(filename.as_string());
+            }
+            catch (const std::exception &e)
+            {
+                logf_warning("Failed to load switches from %r: %s", filename, e);
             }
         }
     }

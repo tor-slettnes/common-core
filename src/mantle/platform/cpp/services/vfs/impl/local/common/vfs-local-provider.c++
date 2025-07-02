@@ -21,7 +21,7 @@
 // #include <grp.h>          // getgruid(3)
 // #include <fnmatch.h>      // fnmatch(3)
 
-#include <cstring> // std::memset()
+#include <cstring>  // std::memset()
 
 namespace vfs::local
 {
@@ -326,13 +326,9 @@ namespace vfs::local
 
     void LocalProvider::loadContexts(void)
     {
-        if (core::types::KeyValueMapPtr cxts =
-                this->settings.get(SETTING_CONTEXTS).get_kvmap())
+        for (const auto &[key, value] : this->settings.get(SETTING_CONTEXTS).get_kvmap())
         {
-            for (const auto &[key, value] : *cxts)
-            {
-                this->addContext(key, this->newContext(key, value));
-            }
+            this->addContext(key, this->newContext(key, value));
         }
     }
 
@@ -539,4 +535,4 @@ namespace vfs::local
     {
         AttributeStore(localpath, type_hint).clear_attributes();
     }
-} // namespace vfs::local
+}  // namespace vfs::local

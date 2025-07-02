@@ -70,25 +70,25 @@ namespace core::types
         }
     }
 
-    ValueListPtr KeyValueMap::get_valuelist(
+    ValueListPtr KeyValueMap::get_valuelist_ptr(
         const std::string &key,
         bool ignoreCase) const noexcept
     {
-        return this->get(key, {}, ignoreCase).get_valuelist();
+        return this->get(key, {}, ignoreCase).get_valuelist_ptr();
     }
 
-    TaggedValueListPtr KeyValueMap::get_tvlist(
+    TaggedValueListPtr KeyValueMap::get_tvlist_ptr(
         const std::string &key,
         bool ignoreCase) const noexcept
     {
-        return this->get(key, {}, ignoreCase).get_tvlist();
+        return this->get(key, {}, ignoreCase).get_tvlist_ptr();
     }
 
-    KeyValueMapPtr KeyValueMap::get_kvmap(
+    KeyValueMapPtr KeyValueMap::get_kvmap_ptr(
         const std::string &key,
         bool ignoreCase) const noexcept
     {
-        return this->get(key, {}, ignoreCase).get_kvmap();
+        return this->get(key, {}, ignoreCase).get_kvmap_ptr();
     }
 
     Value KeyValueMap::extract_value(const std::string &key,

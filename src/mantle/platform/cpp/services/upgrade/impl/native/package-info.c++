@@ -130,7 +130,7 @@ namespace upgrade::native
         {
             return Version::from_string(*version_string);
         }
-        else if (core::types::ValueListPtr parts = value.get_valuelist())
+        else if (core::types::ValueListPtr parts = value.get_valuelist_ptr())
         {
             Version version;
             version.major = parts->get(0, 0).as_uint();
@@ -151,7 +151,7 @@ namespace upgrade::native
         {
             return *description;
         }
-        else if (core::types::ValueListPtr parts = value.get_valuelist())
+        else if (core::types::ValueListPtr parts = value.get_valuelist_ptr())
         {
             return core::str::join(parts->filter_by_type<std::string>(), "\n");
         }

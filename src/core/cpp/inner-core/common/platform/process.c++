@@ -208,7 +208,7 @@ namespace core::platform
 
     ArgVector ProcessProvider::arg_vector(const types::Value &command) const
     {
-        if (const types::ValueListPtr &list = command.get_valuelist())
+        if (const types::ValueListPtr &list = command.get_valuelist_ptr())
         {
             ArgVector argv;
             argv.reserve(list->size());

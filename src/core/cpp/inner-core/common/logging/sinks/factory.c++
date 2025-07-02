@@ -150,7 +150,7 @@ namespace core::logging
         // factory is used.  Otherwise, the type is assumed to be the same as
         // the sink ID (e.g. "file").
 
-        if (auto sink_map = sink_settings.get_kvmap())
+        if (auto sink_map = sink_settings.get_kvmap_ptr())
         {
             types::Value sink_defaults = sink_map->get("_default_");
 

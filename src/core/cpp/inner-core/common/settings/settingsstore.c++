@@ -147,7 +147,7 @@ namespace core
             return false;
         }
 
-        if (auto kvmap = value.get_kvmap())
+        if (auto kvmap = value.get_kvmap_ptr())
         {
             this->recursive_merge(*kvmap);
             return true;
@@ -236,11 +236,11 @@ namespace core
         {
             if (element.is_string() && value.is_kvmap())
             {
-                value = value.get_kvmap()->get(element.as_string());
+                value = value.get(element.as_string());
             }
             else if (element.is_integral() && value.is_valuelist())
             {
-                value = value.get_valuelist()->get(element.as_sint());
+                value = value.get(element.as_sint());
             }
             else
             {

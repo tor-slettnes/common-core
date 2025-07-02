@@ -64,21 +64,18 @@ namespace core::logging
 
     void TabularData::load_level_map(const core::types::KeyValueMap &settings)
     {
-        if (core::types::KeyValueMapPtr map = settings.get(SETTING_LEVEL_MAP).get_kvmap())
+        for (const auto &[key, value] : settings.get(SETTING_LEVEL_MAP).get_kvmap())
         {
-            for (const auto &[key, value] : *map)
+            if (auto level = core::str::try_convert_to<core::status::Level>(key))
             {
-                if (auto level = core::str::try_convert_to<core::status::Level>(key))
-                {
-                    this->level_map_.insert_or_assign(level.value(), value);
-                }
+                this->level_map_.insert_or_assign(level.value(), value);
             }
         }
     }
 
     void TabularData::load_columns(const types::KeyValueMap &settings)
     {
-        if (auto column_list = settings.get(SETTING_COLUMNS).get_valuelist())
+        if (auto column_list = settings.get(SETTING_COLUMNS).get_valuelist_ptr())
         {
             ColumnSpecs specs;
             specs.reserve(column_list->size());
@@ -128,7 +125,7 @@ namespace core::logging
     std::optional<ColumnSpec> TabularData::column_spec(
         const types::Value &column_data) const
     {
-        if (const core::types::ValueListPtr colspec = column_data.get_valuelist())
+        if (const core::types::ValueListPtr colspec = column_data.get_valuelist_ptr())
         {
             return ColumnSpec({
                 .field_name = colspec->get(0).as_string(),

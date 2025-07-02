@@ -48,7 +48,7 @@ namespace switchboard
     {
         core::SettingsStore store(filename);
 
-        if (auto switches = store.get(SETTINGS_SECTION_SWITCHES).get_valuelist())
+        if (auto switches = store.get(SETTINGS_SECTION_SWITCHES).get_valuelist_ptr())
         {
             uint count = this->load_switches(*switches);
             logf_info("Added %r switches from %r", count, filename);
@@ -132,19 +132,17 @@ namespace switchboard
         uint count = 0;
         for (const core::types::Value &switch_info : switches)
         {
-            if (auto kvmap = switch_info.get_kvmap())
+            if (const core::types::Value &name = switch_info.get(SETTING_SPEC_NAME))
             {
-                if (const core::types::Value &name = kvmap->get(SETTING_SPEC_NAME))
-                {
-                    this->load_switch(name.as_string(), *kvmap);
-                    count += 1;
-                }
+                this->load_switch(name.as_string(), switch_info.get_kvmap());
+                count += 1;
             }
         }
         return count;
     }
 
-    void Provider::load_switch(const std::string &name, core::types::KeyValueMap &spec)
+    void Provider::load_switch(const std::string &name,
+                               const core::types::KeyValueMap &spec)
     {
         auto [sw, inserted] = this->add_switch(name);
         sw->set_spec(this->import_spec(sw, spec));
@@ -178,42 +176,36 @@ namespace switchboard
         Specification spec;
         spec.primary = spec_map.get(SETTING_SPEC_PRIMARY).as_bool();
 
-        if (auto localizations = spec_map.get(SETTING_SPEC_LOCALIZATIONS).get_valuelist())
+        for (const auto &localization : spec_map.get(SETTING_SPEC_LOCALIZATIONS).get_valuelist())
         {
-            for (const auto &localization : *localizations)
+            if (const auto &language_value = localization.get(SETTING_LOC_LANGUAGE))
             {
-                if (const auto &language_value = localization.get(SETTING_LOC_LANGUAGE))
-                {
-                    spec.localizations.emplace(
-                        language_value.as_string(),
-                        This::import_localization(*localization.get_kvmap()));
-                }
-                else
-                {
-                    logf_notice("Ignoring switch %r localization without \"language\" key: %s",
-                                sw->name(),
-                                localization);
-                }
+                spec.localizations.emplace(
+                    language_value.as_string(),
+                    This::import_localization(localization.get_kvmap()));
+            }
+            else
+            {
+                logf_notice("Ignoring switch %r localization without \"language\" key: %s",
+                            sw->name(),
+                            localization);
             }
         }
 
-        if (auto dependencies = spec_map.get(SETTING_SPEC_DEPENDENCIES).get_valuelist())
+        for (const auto &dependency : spec_map.get(SETTING_SPEC_DEPENDENCIES).get_valuelist())
         {
-            for (const auto &dependency : *dependencies)
+            if (const auto &predecessor_value = dependency.get(SETTING_DEP_PREDECESSOR))
             {
-                if (const auto &predecessor_value = dependency.get(SETTING_DEP_PREDECESSOR))
-                {
-                    std::string predecessor = predecessor_value.as_string();
-                    spec.dependencies.emplace(
-                        predecessor,
-                        This::import_dependency(sw, predecessor, *dependency.get_kvmap()));
-                }
-                else
-                {
-                    logf_notice("Ignoring switch %r dependency without \"predecessor\" key: %s",
-                                sw->name(),
-                                dependency);
-                }
+                std::string predecessor = predecessor_value.as_string();
+                spec.dependencies.emplace(
+                    predecessor,
+                    This::import_dependency(sw, predecessor, dependency.get_kvmap()));
+            }
+            else
+            {
+                logf_notice("Ignoring switch %r dependency without \"predecessor\" key: %s",
+                            sw->name(),
+                            dependency);
             }
         }
 
@@ -225,24 +217,18 @@ namespace switchboard
         Localization localization;
         localization.description = localization_map.get(SETTING_LOC_DESCRIPTION).as_string();
 
-        if (const auto &kvmap = localization_map.get(SETTING_LOC_STATE_TEXTS).get_kvmap())
+        for (const auto &[key, value] : localization_map.get(SETTING_LOC_STATE_TEXTS).get_kvmap())
         {
-            for (const auto &[key, value] : *kvmap)
-            {
-                localization.state_texts.emplace(
-                    core::str::convert_to<State>(key, STATE_UNSET),
-                    value.to_string());
-            }
+            localization.state_texts.emplace(
+                core::str::convert_to<State>(key, STATE_UNSET),
+                value.to_string());
         }
 
-        if (const auto &kvmap = localization_map.get(SETTING_LOC_TARGET_TEXTS).get_kvmap())
+        for (const auto &[key, value] : localization_map.get(SETTING_LOC_TARGET_TEXTS).get_kvmap())
         {
-            for (const auto &[key, value] : *kvmap)
-            {
-                localization.target_texts.emplace(
-                    core::str::convert_to<bool>(key, false),
-                    value.to_string());
-            }
+            localization.target_texts.emplace(
+                core::str::convert_to<bool>(key, false),
+                value.to_string());
         }
         return localization;
     }
@@ -253,7 +239,7 @@ namespace switchboard
         const core::types::KeyValueMap &dep_map)
     {
         StateMask mask = 0;
-        if (const auto &trigger_states = dep_map.get(SETTING_DEP_TRIGGERS).get_valuelist())
+        if (const auto &trigger_states = dep_map.get(SETTING_DEP_TRIGGERS).get_valuelist_ptr())
         {
             logf_trace("--- Switch %r trigger states: %s", sw->name(), *trigger_states);
             for (const core::types::Value &value : *trigger_states)

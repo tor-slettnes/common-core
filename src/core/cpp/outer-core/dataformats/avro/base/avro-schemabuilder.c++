@@ -51,7 +51,7 @@ namespace avro
     void SchemaWrapper::set(const std::string &key,
                             const core::types::Value &value)
     {
-        if (auto kvmap = this->get_kvmap())
+        if (auto kvmap = this->get_kvmap_ptr())
         {
             kvmap->insert_or_assign(key, value);
         }
@@ -94,7 +94,7 @@ namespace avro
                                  const core::types::Value &type,
                                  const std::optional<std::string> &doc)
     {
-        if (auto fields = this->get(std::string(SchemaField_RecordFields)).get_valuelist())
+        if (auto fields = this->get(std::string(SchemaField_RecordFields)).get_valuelist_ptr())
         {
             core::types::TaggedValueList field({
                 {SchemaField_Name, name},

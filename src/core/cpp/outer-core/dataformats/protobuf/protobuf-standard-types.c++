@@ -184,15 +184,15 @@ namespace protobuf
             break;
 
         case core::types::ValueType::VALUELIST:
-            encode(*value.get_valuelist(), msg->mutable_list_value());
+            encode(value.get_valuelist(), msg->mutable_list_value());
             break;
 
         case core::types::ValueType::KVMAP:
-            encode(*value.get_kvmap(), msg->mutable_struct_value());
+            encode(value.get_kvmap(), msg->mutable_struct_value());
             break;
 
         case core::types::ValueType::TVLIST:
-            encode(*value.get_tvlist(), msg->mutable_struct_value());
+            encode(value.get_tvlist(), msg->mutable_struct_value());
             break;
 
         default:

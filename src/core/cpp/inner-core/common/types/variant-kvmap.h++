@@ -68,15 +68,15 @@ namespace core::types
             const std::string &key,
             bool ignoreCase = false) const noexcept;
 
-        ValueListPtr get_valuelist(
+        ValueListPtr get_valuelist_ptr(
             const std::string &key,
             bool ignoreCase = false) const noexcept;
 
-        TaggedValueListPtr get_tvlist(
+        TaggedValueListPtr get_tvlist_ptr(
             const std::string &key,
             bool ignoreCase = false) const noexcept;
 
-        KeyValueMapPtr get_kvmap(
+        KeyValueMapPtr get_kvmap_ptr(
             const std::string &key,
             bool ignoreCase = false) const noexcept;
 

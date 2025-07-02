@@ -26,7 +26,7 @@ namespace core::zmq
         {
             return {magic->begin(), magic->end()};
         }
-        else if (const types::ValueListPtr &list = value.get_valuelist())
+        else if (const types::ValueListPtr &list = value.get_valuelist_ptr())
         {
             auto numbers = list->filter_by_type<types::largest_uint>();
             return {numbers.begin(), numbers.end()};

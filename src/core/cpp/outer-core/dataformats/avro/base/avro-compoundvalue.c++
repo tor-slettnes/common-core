@@ -269,12 +269,12 @@ namespace avro
 
             // case core::types::ValueType::VALUELIST:
             //     This::set_branch(&value_field, VariantSchema::VT_ARRAY, &branch);
-            //     This::set_variant_list(&branch, *variant.get_valuelist());
+            //     This::set_variant_list(&branch, variant.get_valuelist());
             //     break;
 
             // case core::types::ValueType::KVMAP:
             //     This::set_branch(&value_field, VariantSchema::VT_MAP, &branch);
-            //     This::set_variant_map(&branch, *variant.get_kvmap());
+            //     This::set_variant_map(&branch, variant.get_kvmap());
             //     break;
 
         default:

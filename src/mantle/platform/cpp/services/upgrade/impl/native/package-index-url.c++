@@ -33,18 +33,15 @@ namespace upgrade::native
         std::stringstream ss = http.get({});
         core::types::Value response = core::json::reader.read_stream(ss);
 
-        if (core::types::KeyValueMapPtr package_map = response.get_kvmap())
+        for (const auto &[package_name, package_info_data] : response.get_kvmap())
         {
-            for (const auto &[package_name, package_info_data] : *package_map)
+            if (core::types::KeyValueMapPtr package_info_settings = package_info_data.get_kvmap_ptr())
             {
-                if (core::types::KeyValueMapPtr package_info_settings = package_info_data.get_kvmap())
-                {
-                    auto package_info = std::make_shared<NativePackageInfo>(
-                        *package_info_settings,
-                        this->package_source(package_name));
-                    packages.push_back(package_info);
-                    logf_debug("Added upgrade package: %s", package_info->source());
-                }
+                auto package_info = std::make_shared<NativePackageInfo>(
+                    *package_info_settings,
+                    this->package_source(package_name));
+                packages.push_back(package_info);
+                logf_debug("Added upgrade package: %s", package_info->source());
             }
         }
 

@@ -470,13 +470,13 @@ namespace core::python
             return SimpleObject::pybytes_from_bytes(value.get<types::ByteVector>());
 
         case types::ValueType::VALUELIST:
-            return SimpleObject::pylist_from_values(*value.get_valuelist());
+            return SimpleObject::pylist_from_values(value.get_valuelist());
 
         case types::ValueType::KVMAP:
-            return SimpleObject::pydict_from_kvmap(*value.get_kvmap());
+            return SimpleObject::pydict_from_kvmap(value.get_kvmap());
 
         case types::ValueType::TVLIST:
-            return SimpleObject::pylist_from_tagged_values(*value.get_tvlist());
+            return SimpleObject::pylist_from_tagged_values(value.get_tvlist());
 
         default:
             Py_RETURN_NONE;

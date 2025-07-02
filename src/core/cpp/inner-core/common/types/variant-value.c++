@@ -86,33 +86,6 @@ namespace core::types
     {
     }
 
-    // Value::Value(const Value &other)
-    // {
-    //     switch (other.type())
-    //     {
-    //     case ValueType::VALUELIST:
-    //         this->emplace<ValueListPtr>(other.get_valuelist());
-    //         break;
-
-    //     case ValueType::TVLIST:
-    //         this->emplace<TaggedValueListPtr>(other.get_tvlist());
-    //         break;
-
-    //     case ValueType::KVMAP:
-    //         this->emplace<KeyValueMapPtr>(other.get_kvmap());
-    //         break;
-
-    //     default:
-    //         *this = other;
-    //         break;
-    //     }
-    // }
-
-    // Value::Value(ValueBase &&value)
-    //     : ValueBase(std::move(value))
-    // {
-    // }
-
     Value::Value(ValueListPtr list)
         : ValueBase(list ? list : emptyvalue)
     {
@@ -169,13 +142,13 @@ namespace core::types
             switch (this->type())
             {
             case ValueType::VALUELIST:
-                return (*this->get_valuelist() == *other.get_valuelist());
+                return (this->get_valuelist() == other.get_valuelist());
 
             case ValueType::TVLIST:
-                return (*this->get_tvlist() == *other.get_tvlist());
+                return (this->get_tvlist() == other.get_tvlist());
 
             case ValueType::KVMAP:
-                return (*this->get_kvmap() == *other.get_kvmap());
+                return (this->get_kvmap() == other.get_kvmap());
 
             default:
                 return false;
@@ -597,7 +570,7 @@ namespace core::types
             return this->get<complex>();
 
         case ValueType::VALUELIST:
-            if (auto list = this->get_valuelist())
+            if (auto list = this->get_valuelist_ptr())
             {
                 if ((list->size() == 2) &&
                     list->front().is_numeric() &&
@@ -610,7 +583,7 @@ namespace core::types
             break;
 
         case ValueType::KVMAP:
-            if (auto kvmap = this->get_kvmap())
+            if (auto kvmap = this->get_kvmap_ptr())
             {
                 if (kvmap->count(REAL_PART) &&
                     kvmap->count(IMAG_PART))
@@ -622,7 +595,7 @@ namespace core::types
             break;
 
         case ValueType::TVLIST:
-            if (auto tvlist = this->get_tvlist())
+            if (auto tvlist = this->get_tvlist_ptr())
             {
                 if ((tvlist->size() == 2) &&
                     tvlist->get(0).is_numeric() &&
@@ -887,7 +860,59 @@ namespace core::types
         }
     }
 
-    ValueListPtr Value::get_valuelist() const noexcept
+    const std::string &Value::get_string() const
+    {
+        if (auto *str = this->get_if<std::string>())
+        {
+            return *str;
+        }
+        else
+        {
+            static const std::string fallback;
+            return fallback;
+        }
+    }
+
+    const ValueList &Value::get_valuelist() const
+    {
+        if (auto *ptr = this->get_if<ValueListPtr>())
+        {
+            return **ptr;
+        }
+        else
+        {
+            static const ValueList fallback;
+            return fallback;
+        }
+    }
+
+    const TaggedValueList &Value::get_tvlist() const
+    {
+        if (auto *ptr = this->get_if<TaggedValueListPtr>())
+        {
+            return **ptr;
+        }
+        else
+        {
+            static const TaggedValueList fallback;
+            return fallback;
+        }
+    }
+
+    const KeyValueMap &Value::get_kvmap() const
+    {
+        if (auto *ptr = this->get_if<KeyValueMapPtr>())
+        {
+            return **ptr;
+        }
+        else
+        {
+            static const KeyValueMap fallback;
+            return fallback;
+        }
+    }
+
+    ValueListPtr Value::get_valuelist_ptr() const noexcept
     {
         if (auto *ptr = this->get_if<ValueListPtr>())
         {
@@ -899,7 +924,7 @@ namespace core::types
         }
     }
 
-    TaggedValueListPtr Value::get_tvlist() const noexcept
+    TaggedValueListPtr Value::get_tvlist_ptr() const noexcept
     {
         if (auto *ptr = this->get_if<TaggedValueListPtr>())
         {
@@ -911,7 +936,7 @@ namespace core::types
         }
     }
 
-    KeyValueMapPtr Value::get_kvmap() const noexcept
+    KeyValueMapPtr Value::get_kvmap_ptr() const noexcept
     {
         if (auto *ptr = this->get_if<KeyValueMapPtr>())
         {
@@ -1139,15 +1164,15 @@ namespace core::types
             break;
 
         case ValueType::VALUELIST:
-            this->get_valuelist()->to_stream(stream);
+            this->get_valuelist().to_stream(stream);
             break;
 
         case ValueType::KVMAP:
-            this->get_kvmap()->to_stream(stream);
+            this->get_kvmap().to_stream(stream);
             break;
 
         case ValueType::TVLIST:
-            this->get_tvlist()->to_stream(stream);
+            this->get_tvlist().to_stream(stream);
             break;
 
         default:
@@ -1181,15 +1206,15 @@ namespace core::types
             break;
 
         case ValueType::VALUELIST:
-            this->get_valuelist()->to_literal_stream(stream);
+            this->get_valuelist().to_literal_stream(stream);
             break;
 
         case ValueType::KVMAP:
-            this->get_kvmap()->to_literal_stream(stream);
+            this->get_kvmap().to_literal_stream(stream);
             break;
 
         case ValueType::TVLIST:
-            this->get_tvlist()->to_literal_stream(stream);
+            this->get_tvlist().to_literal_stream(stream);
             break;
 
         default:

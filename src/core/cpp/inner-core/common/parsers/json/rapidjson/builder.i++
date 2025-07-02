@@ -62,15 +62,18 @@ namespace core::json
             return this->writer.String(value.get<types::ByteVector>().to_base64());
 
         case types::ValueType::VALUELIST:
-            return this->encode_array(*value.get_valuelist());
+            return this->encode_array(value.get_valuelist());
 
         case types::ValueType::KVMAP:
-            return this->encode_object(*value.get_kvmap());
+            return this->encode_object(value.get_kvmap());
 
         case types::ValueType::TVLIST:
-            return value.get_tvlist()->mappable()
-                       ? this->encode_object(*value.get_tvlist())
-                       : this->encode_array(value.get_tvlist()->values());
+            if (auto tvlist = value.get_tvlist_ptr())
+            {
+                return tvlist->mappable()
+                         ? this->encode_object(*tvlist)
+                         : this->encode_array(tvlist->values());
+            }
 
         default:
             // logf_warning("%s cannot be converted to JSON: %s",

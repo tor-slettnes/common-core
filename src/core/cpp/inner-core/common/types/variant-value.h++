@@ -40,9 +40,6 @@ namespace core::types
         Value(const std::string_view &view);
         Value(const std::string &string);
 
-        // explicit Value(const Value &other);
-        // explicit Value(ValueBase &&value);
-
         Value(ValueListPtr list);
         Value(const ValueList &list);
         Value(ValueList &&list);
@@ -146,9 +143,14 @@ namespace core::types
         KeyValueMap as_kvmap() const noexcept;
         KeyValueMap as_kvmap(const KeyValueMap &fallback) const noexcept;
 
-        Value &operator[](const std::string &key);
-        Value &operator[](const uint index);
-        Value &operator[](const int index);
+        const std::string &get_string() const;
+        const ValueList &get_valuelist() const;
+        const TaggedValueList &get_tvlist() const;
+        const KeyValueMap &get_kvmap() const;
+
+        ValueListPtr get_valuelist_ptr() const noexcept;
+        TaggedValueListPtr get_tvlist_ptr() const noexcept;
+        KeyValueMapPtr get_kvmap_ptr() const noexcept;
 
         const Value &front(
             const Value &fallback = {}) const noexcept;
@@ -179,9 +181,9 @@ namespace core::types
         std::optional<Value> try_get(
             const int index) const noexcept;
 
-        ValueListPtr get_valuelist() const noexcept;
-        TaggedValueListPtr get_tvlist() const noexcept;
-        KeyValueMapPtr get_kvmap() const noexcept;
+        Value &operator[](const std::string &key);
+        Value &operator[](const uint index);
+        Value &operator[](const int index);
 
     public:
         /// Send a readable representation of this value to an output stream

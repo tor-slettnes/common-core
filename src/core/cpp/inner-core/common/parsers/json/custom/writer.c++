@@ -61,15 +61,15 @@ namespace core::json
             break;
 
         case types::ValueType::KVMAP:
-            This::to_stream(stream, *value.get_kvmap(), pretty, indent);
+            This::to_stream(stream, value.get_kvmap(), pretty, indent);
             break;
 
         case types::ValueType::VALUELIST:
-            This::to_stream(stream, *value.get_valuelist(), pretty, indent);
+            This::to_stream(stream, value.get_valuelist(), pretty, indent);
             break;
 
         case types::ValueType::TVLIST:
-            This::to_stream(stream, *value.get_tvlist(), pretty, indent);
+            This::to_stream(stream, value.get_tvlist(), pretty, indent);
             break;
 
         default:
