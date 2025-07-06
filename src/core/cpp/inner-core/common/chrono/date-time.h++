@@ -281,6 +281,18 @@ namespace core
         /// Convert a duration to milliseconds (truncated, not rounded)
         std::int64_t to_milliseconds(const Duration &d);
 
+        template<class Scale>
+        std::int64_t to_scalar(const TimePoint &tp)
+        {
+            return to_scalar<Scale>(tp.time_since_epoch());
+        }
+
+        template<class Scale>
+        std::int64_t to_scalar(const Duration &dur)
+        {
+            return std::chrono::floor<Scale>(dur).count();
+        }
+
         /// Convert from TimePoint (std::chrono::system_clock::time_point) to double
         double to_double(const TimePoint &tp);
 

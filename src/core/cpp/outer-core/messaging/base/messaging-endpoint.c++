@@ -104,11 +104,12 @@ namespace core::messaging
     types::Value Endpoint::setting(const std::string &key,
                                    const types::Value &fallback) const
     {
-        std::string profile = !this->profile_name().empty()
-                                ? this->profile_name()
-                                : this->channel_name();
+        if (auto opt_value = this->settings()->get(this->profile_name()).try_get(key))
+        {
+            return opt_value.value();
+        }
 
-        if (auto opt_value = this->settings()->get(profile).try_get(key))
+        if (auto opt_value = this->settings()->get(this->channel_name()).try_get(key))
         {
             return opt_value.value();
         }

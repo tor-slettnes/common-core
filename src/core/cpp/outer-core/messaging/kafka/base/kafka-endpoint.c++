@@ -120,10 +120,10 @@ namespace core::kafka
         switch (result)
         {
         case RdKafka::Conf::CONF_OK:
-            logf_info("Applied Kafka profile %r setting: %s = %r",
-                      this->profile_name(),
-                      key,
-                      value);
+            logf_debug("Applied Kafka profile %r setting: %s = %r",
+                       this->profile_name(),
+                       key,
+                       value);
             break;
 
         case RdKafka::Conf::CONF_INVALID:
