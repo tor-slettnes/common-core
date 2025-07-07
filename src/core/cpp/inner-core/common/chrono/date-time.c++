@@ -636,6 +636,7 @@ namespace core
                 .tm_mday = static_cast<int>(day) - TM_DAY_OFFSET,
                 .tm_mon = static_cast<int>(month) - TM_MONTH_OFFSET,
                 .tm_year = static_cast<int>(year) - TM_YEAR_OFFSET,
+                .tm_isdst = -1,
             };
             bool local = !tz_offset.has_value();
             double seconds = dt::mktime(tm_struct, local) + fraction;

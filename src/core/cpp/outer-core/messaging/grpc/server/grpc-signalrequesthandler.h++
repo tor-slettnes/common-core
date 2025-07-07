@@ -53,14 +53,15 @@ namespace core::grpc
 
                 while (std::optional<SignalT> msg = queue.get())
                 {
-                    if (cxt->IsCancelled())
-                    {
-                        break;
-                    }
                     logf_trace("Sending signal to client %s: %s",
                                cxt->peer(),
                                msg.value());
                     writer->Write(msg.value());
+
+                    if (cxt->IsCancelled())
+                    {
+                        break;
+                    }
                 }
 
                 queue.deinitialize();

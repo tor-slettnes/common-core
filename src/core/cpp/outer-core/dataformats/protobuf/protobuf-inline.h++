@@ -128,6 +128,25 @@ namespace protobuf
     }
 
     //==========================================================================
+    // Template to return converted optional value
+
+    template <class NativeType, class ProtoType>
+    inline std::optional<NativeType> decoded_optional(
+        bool has_value,
+        ProtoType &proto) noexcept
+    {
+        if (has_value)
+        {
+            return decoded<NativeType, ProtoType>(proto);
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+
+    //==========================================================================
     // Encode/decode wrapper for std::shared_ptr<> references
 
     template <class ProtoType, class NativeType>
