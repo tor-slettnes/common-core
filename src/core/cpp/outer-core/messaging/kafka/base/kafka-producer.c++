@@ -24,6 +24,7 @@ namespace core::kafka
                   .as_duration()),
           keep_polling_(false)
     {
+        this->init_dr_capture();
     }
 
     Producer::~Producer()
@@ -62,6 +63,11 @@ namespace core::kafka
     {
         this->stop_poll();
         Super::deinitialize();
+    }
+
+    void Producer::init_dr_capture()
+    {
+        this->set_config("dr_cb", &this->dr_capture_, "DeliveryReportCapture()");
     }
 
     void Producer::start_poll()
@@ -103,7 +109,8 @@ namespace core::kafka
     void Producer::produce(const std::string_view &topic,
                            const types::Bytes &payload,
                            const std::optional<std::string_view> &key,
-                           const HeaderMap &headers)
+                           const HeaderMap &headers,
+                           DeliveryReportCapture::Callback callback)
     {
         std::optional<std::string_view> key_ = key;
         if (!key_)
@@ -127,7 +134,7 @@ namespace core::kafka
             key_ ? key_->size() : 0,                            // key_len
             dt::to_milliseconds(dt::Clock::now()),              // timestamp
             headers_,                                           // headers
-            nullptr);                                           // msg_opaque
+            callback ? &callback : nullptr);                    // msg_opaque
 
         if (error_code != RdKafka::ERR_NO_ERROR)
         {

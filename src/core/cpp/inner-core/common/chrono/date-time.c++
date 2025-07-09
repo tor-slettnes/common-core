@@ -590,14 +590,19 @@ namespace core
         TimePoint scalar_to_timepoint(double scalar,
                                       double multiplier)
         {
-            if (!multiplier)
+            if (multiplier)
             {
-                multiplier =
-                    (scalar < EPOCH_MILLISECONDS_LOWER_LIMIT) ? 1.0
-                                                              : 0.001;
+                scalar *= multiplier;
+            }
+            else
+            {
+                while (scalar >= EPOCH_SECONDS_UPPER_LIMIT)
+                {
+                    scalar /= 1000;
+                }
             }
 
-            return TimePoint(to_duration(scalar, multiplier));
+            return TimePoint(to_duration(scalar));
         }
 
         TimePoint ms_to_timepoint(std::int64_t milliseconds)

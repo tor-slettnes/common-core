@@ -131,7 +131,6 @@ namespace core::signal
         std::unordered_map<std::string, Slot> slots_;
     };
 
-
     //==========================================================================
     /// @class AsyncVoidSignal
     /// @brief Signal without data, emitted in parallel to all slots
@@ -145,7 +144,6 @@ namespace core::signal
 
         std::size_t emit() override;
     };
-
 
     //==========================================================================
     /// @class DataSignal
@@ -163,22 +161,34 @@ namespace core::signal
     ///      my_signal.emit(mydata);
     /// @endcode
 
-    template <class DataType>
+    template <class... DataType>
     class DataSignal : public BaseSignal
     {
         using Super = BaseSignal;
 
     public:
-        using Slot = std::function<void(const DataType &)>;
+        using Slot = std::function<void(const DataType &...)>;
+        using DataTuple = std::tuple<DataType...>;
 
-        DataSignal(const std::string &id, bool caching = false);
+        template <std::size_t Element = 0>
+        using DataElementType = typename std::tuple_element<Element, DataTuple>::type;
+
+        DataSignal(const std::string &id, bool caching = false)
+            : Super(id, caching)
+        {
+        }
 
         /// @brief Register a signal handler for signals of the provided template type.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
         /// @return
         ///     A unique handle, which can later be used to disconnect
-        Handle connect(const Slot &slot);
+        Handle connect(const Slot &slot)
+        {
+            Handle handle(this->unique_handle());
+            this->connect(handle, slot);
+            return handle;
+        }
 
         /// @brief Register a signal handler for signals of the provided template type.
         /// @param[in] handle
@@ -186,13 +196,22 @@ namespace core::signal
         ///     subsequent cancellation.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
-        void connect(const Handle &handle, const Slot &slot);
+        void connect(const Handle &handle, const Slot &slot)
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            this->slots_[handle] = slot;
+            this->emit_cached_to(handle, slot);
+        }
 
         /// @brief
         ///     Unregister a handler for signals of the provided template type.
         /// @param[in] handle
         ///     Identity of the handler to be removed.
-        void disconnect(const Handle &handle) override;
+        void disconnect(const Handle &handle) override
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            this->slots_.erase(handle);
+        }
 
         /// @brief
         ///     Emit a signal to registered receivers of the provided data type.
@@ -200,7 +219,17 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t emit(const DataType &value);
+        std::size_t emit(const DataType &...values)
+        {
+            DataTuple tuple{values...};
+
+            std::scoped_lock lck(this->signal_mtx_);
+            if (this->caching_)
+            {
+                this->update_cache(tuple);
+            }
+            return this->sendall(tuple);
+        }
 
         /// @brief
         ///     Emit signal only if the current value differs from the previous one.
@@ -210,13 +239,42 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t emit_if_changed(const DataType &value);
+        std::size_t emit_if_changed(DataType &&...values)
+        {
+            DataTuple tuple{values...};
+
+            std::scoped_lock lck(this->signal_mtx_);
+            if (!this->caching_ || !this->cached_ || !(tuple == *this->cached_))
+            {
+                if (this->caching_)
+                {
+                    this->update_cache(tuple);
+                }
+                return this->sendall(tuple);
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
         /// @brief
         ///    Get the current cached value, if any.
         /// @return
         ///    std::optional<DataType> object
-        std::optional<DataType> get_cached();
+        template <std::size_t Element = 0>
+        std::optional<DataElementType<Element>> get_cached()
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            if (this->cached_)
+            {
+                return std::get<Element>(*this->cached_);
+            }
+            else
+            {
+                return {};
+            }
+        }
 
         /// @brief
         ///    Get the current cached value if any, otherwise a fallback value.
@@ -224,34 +282,96 @@ namespace core::signal
         ///    Value to return if there's no cached value.
         /// @return
         ///    std::optional<DataType> object
-        DataType get_cached(const DataType &fallback);
+        template <std::size_t Element = 0>
+        DataElementType<Element> get_cached(const DataElementType<Element> &fallback)
+        {
+            return this->get_cached<Element>().value_or(fallback);
+        }
+
+        /// @brief
+        ///    Get the current cached value, if any.
+        /// @return
+        ///    std::optional<DataType> object
+        std::optional<DataTuple> get_tuple()
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            return this->cached_;
+        }
+
+        /// @brief
+        ///    Get the current cached value if any, otherwise a fallback value.
+        /// @param[in] fallback
+        ///    Value to return if there's no cached value.
+        /// @return
+        ///    std::optional<DataType> object
+        DataTuple get_tuple_or(const DataTuple &fallback)
+        {
+            return this->get_cached().value_or(fallback);
+        }
 
         /// @brief
         ///    Clear any cached signal
         /// @return
         ///    Boolean indicator of whether a signal were held in cache prior to clearing.
-        bool clear_cached();
+        bool clear_cached()
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            bool exists = this->cached_.has_value();
+            this->cached_.reset();
+            return exists;
+        }
 
         /// @brief
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
-        std::size_t connection_count() const override;
+        std::size_t connection_count() const override
+        {
+            return this->slots_.size();
+        }
 
     protected:
         virtual void emit_cached_to(const std::string &handle,
-                                    const Slot &slot);
+                                    const Slot &slot)
+        {
+            if (this->cached_.has_value())
+            {
+                this->callback(handle, slot, this->cached_.value());
+            }
+        }
 
-        std::size_t sendall(const DataType &value);
+        std::size_t sendall(const DataTuple &tuple)
+        {
+            std::size_t count = 0;
+            for (const auto &[receiver, method] : this->slots_)
+            {
+                count += this->callback(receiver, method, tuple);
+            }
+            return count;
+        }
 
-        void update_cache(const DataType &value);
+        void update_cache(const DataTuple &tuple)
+        {
+            this->cached_ = tuple;
+        }
 
         bool callback(const std::string &receiver,
                       const Slot &method,
-                      const DataType &value);
+                      const DataTuple &tuple)
+        {
+            try
+            {
+                std::apply(method, tuple);
+                return true;
+            }
+            catch (...)
+            {
+                return false;
+            }
+        }
 
     private:
-        std::optional<DataType> cached_;
+        std::optional<DataTuple> cached_;
         std::unordered_map<std::string, Slot> slots_;
     };
 
@@ -284,40 +404,78 @@ namespace core::signal
     public:
         using Slot = std::function<void(MappingAction, const KeyType &, const DataType &)>;
 
-        MappingSignal(const std::string &id, bool caching = false);
+        MappingSignal(const std::string &id, bool caching = false)
+            : Super(id, caching)
+        {
+        }
 
         /// @brief Register a signal handler for this signal.
         /// @param[in] slot
         ///     A function invoked whenever signal data is emitted
         /// @return
         ///     Unique handle which can later be used to disconnect
-        Handle connect(const Slot &slot);
+        Handle connect(const Slot &slot)
+        {
+            Handle handle(this->unique_handle());
+            this->connect(handle, slot);
+            return handle;
+        }
 
         /// @brief Register a signal handler for this signal.
         /// @param[in] handle
         ///     Unique handle which can later be used to disconnect
         /// @param[in] slot
         ///     A function invoked whenever signal data is emitted
-        void connect(const Handle &handle, const Slot &slot);
+        void connect(const Handle &handle, const Slot &slot)
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            this->slots_[handle] = slot;
+            this->emit_cached_to(handle, slot);
+        }
 
         /// @brief
         ///     Unregister a callback handler for signals of the provided template type.
         /// @param[in] handle
         ///     Identity identity of the callback handler to be removed.
 
-        void disconnect(const Handle &handle) override;
+        void disconnect(const Handle &handle) override
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            this->slots_.erase(handle);
+        }
 
         /// @brief
         ///     Emit a signal to registered receivers of the provided data type.
-        /// @param[in] change
-        ///     What change is being emitted: ADDITION, REMOVAL, UPDATE.
+        /// @param[in] action
+        ///     What mapping action is being emitted: ADDITION, REMOVAL, UPDATE.
         /// @param[in] key
         ///     Mapping key
         /// @param[in] value
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t emit(MappingAction change, const KeyType &key, const DataType &value);
+        std::size_t emit(MappingAction action, const KeyType &key, const DataType &value)
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            if (this->caching_)
+            {
+                switch (action)
+                {
+                case MAP_UPDATE:
+                case MAP_ADDITION:
+                    this->update_cache(key, value);
+                    break;
+
+                case MAP_REMOVAL:
+                    this->cached_.erase(key);
+                    break;
+
+                default:
+                    break;
+                }
+            }
+            return this->sendall(action, key, value);
+        }
 
         /// @brief
         ///     Emit a signal to registered receivers of the provided data type.
@@ -327,7 +485,15 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t emit(const KeyType &key, const DataType &value);
+        std::size_t emit(const KeyType &key, const DataType &value)
+        {
+            MappingAction action(
+                !this->caching_                ? MAP_UPDATE
+                : this->is_cached(key) ? MAP_UPDATE
+                                               : MAP_ADDITION);
+
+            return this->emit(action, key, value);
+        }
 
         /// @brief
         ///     Emit signal only if the current value differs from the previous one.
@@ -339,7 +505,24 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t emit_if_changed(const KeyType &key, const DataType &value);
+        std::size_t emit_if_changed(const KeyType &key, const DataType &value)
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            MappingAction action(
+                !this->caching_                     ? MAP_NONE
+                : (this->cached_.count(key) == 0)   ? MAP_ADDITION
+                : !(this->cached_.at(key) == value) ? MAP_UPDATE
+                                                    : MAP_NONE);
+            if (action != MAP_NONE)
+            {
+                this->update_cache(key, value);
+                return this->sendall(action, key, value);
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
         /// @brief
         ///     Emit a REMOVED signal.
@@ -349,23 +532,51 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t clear(const KeyType &key, const DataType &value = {});
+        std::size_t clear(const KeyType &key, const DataType &value = {})
+        {
+            return this->emit(MAP_REMOVAL, key, value);
+        }
 
         /// @brief
         ///     Emit a REMOVED signal if \p key is still in in the signal cache
         /// @param[in] key
         ///     Mapping key.
-        std::size_t clear_if_cached(const KeyType &key);
+        std::size_t clear_if_cached(const KeyType &key)
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            if (auto nh = this->cached_.extract(key))
+            {
+                return this->sendall(MAP_REMOVAL, key, nh.mapped());
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
         /// @brief
         ///     Clean the cache, emitting a REMOVED signal for every item in it.
-        std::size_t clear_all_cached();
+        std::size_t clear_all_cached()
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            std::size_t count = 0;
+            for (const auto &[key, value] : this->cached_)
+            {
+                count += this->sendall(MAP_REMOVAL, key, {});
+            }
+            this->cached_.clear();
+            return count;
+        }
 
         /// @brief
         ///    Get the current cached value, if any.
         /// @return
         ///    std::optional<DataType> object
-        std::unordered_map<KeyType, DataType> get_cached();
+        std::unordered_map<KeyType, DataType> get_cached()
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            return this->cached_;
+        }
 
         /// @brief
         ///    Get the most recent data value emitted for a given key
@@ -373,7 +584,18 @@ namespace core::signal
         ///    Mapping key
         /// @return
         ///    Most recent data value emitted for the specified key, if any
-        std::optional<DataType> get_cached(const std::string &key);
+        std::optional<DataType> get_cached(const std::string &key)
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            try
+            {
+                return this->cached_.at(key);
+            }
+            catch (const std::out_of_range &e)
+            {
+                return {};
+            }
+        }
 
         /// @brief
         ///    Get the most recent data value emitted for a given key
@@ -384,7 +606,10 @@ namespace core::signal
         /// @return
         ///    Most recent data value emitted for the specified key, otherwise
         ///    the provided fallback value.
-        DataType get_cached(const std::string &key, const DataType &fallback);
+        DataType get_cached(const std::string &key, const DataType &fallback)
+        {
+            return this->get_cached(key).value_or(fallback);
+        }
 
         /// @brief
         ///    Indicate whether the specified mapping currently exists in the cache
@@ -392,19 +617,30 @@ namespace core::signal
         ///    Mapping key
         /// @return
         ///    Boolean indicator of whether the specified key exists
-        bool is_cached(const std::string &key) noexcept;
+        bool is_cached(const std::string &key) noexcept
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            return this->cached_.count(key);
+        }
 
         /// @brief
         ///    Obtain number cache size
         /// @return
         ///    Number of key/value pairs in cahe
-        std::size_t cache_size();
+        std::size_t cache_size()
+        {
+            std::scoped_lock lck(this->signal_mtx_);
+            return this->cached_.size();
+        }
 
         /// @brief
         ///    Obtain number of current connections.
         /// @return
         ///    Number of connected slots
-        std::size_t connection_count() const override;
+        std::size_t connection_count() const override
+        {
+            return this->slots_.size();
+        }
 
         /// @brief
         ///     Update cache, emit deltas as addition/update/removal signals
@@ -413,23 +649,71 @@ namespace core::signal
         /// @return
         ///     The number of signals emitted
         template <class MapType>
-        std::size_t synchronize(const MapType &update);
+        std::size_t synchronize(const MapType &update)
+        {
+            std::unordered_map<KeyType, DataType> previous = this->get_cached();
+            std::size_t count = 0;
+            for (const auto &[key, value] : update)
+            {
+                if (auto nh = previous.extract(key))
+                {
+                    if (nh.mapped() != value)
+                    {
+                        this->emit(MAP_UPDATE, key, value);
+                        count++;
+                    }
+                }
+                else
+                {
+                    this->emit(MAP_ADDITION, key, value);
+                    count++;
+                }
+            }
+            for (const auto &[key, value] : previous)
+            {
+                this->emit(MAP_REMOVAL, key, value);
+                count++;
+            }
+            return count;
+        }
 
     protected:
-        void update_cache(const KeyType &key, const DataType &value);
+        void update_cache(const KeyType &key, const DataType &value)
+        {
+            this->cached_.insert_or_assign(key, value);
+        }
 
         void emit_cached_to(const std::string &handle,
-                            const Slot &callback);
+                            const Slot &callback)
+        {
+            for (const auto &pair : this->cached_)
+            {
+                this->callback(handle, callback, MAP_ADDITION, pair.first, pair.second);
+            }
+        }
 
-        std::size_t sendall(MappingAction change,
+        std::size_t sendall(MappingAction action,
                             const KeyType &key,
-                            const DataType &value = {});
+                            const DataType &value = {})
+        {
+            std::size_t count = 0;
+            for (const auto &[receiver, method] : this->slots_)
+            {
+                count += this->callback(receiver, method, action, key, value);
+            }
+            return count;
+        }
 
         bool callback(const std::string &receiver,
                       const Slot &method,
-                      MappingAction change,
+                      MappingAction action,
                       const KeyType &key,
-                      const DataType &value);
+                      const DataType &value)
+        {
+            return this->safe_invoke(
+                str::format("%r (%r, %r, {...})", receiver, action, key),
+                std::bind(method, action, key, value));
+        }
 
     private:
         std::unordered_map<KeyType, DataType> cached_;
@@ -439,7 +723,5 @@ namespace core::signal
     //==========================================================================
     // I/O stream support
 
-    std::ostream &operator<<(std::ostream &stream, MappingAction change);
+    std::ostream &operator<<(std::ostream &stream, MappingAction action);
 }  // namespace core::signal
-
-#include "signaltemplate.i++"

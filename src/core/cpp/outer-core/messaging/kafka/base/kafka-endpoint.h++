@@ -59,7 +59,7 @@ namespace core::kafka
                    const std::string &value,
                    const std::string &errstr) const;
 
-    private:
+    protected:
         template <class T>
         void set_config(const std::string &key,
                         T &&value,

@@ -36,6 +36,9 @@ namespace core::kafka
         void initialize() override;
         void deinitialize() override;
 
+    protected:
+        void init_dr_capture();
+
     private:
         void start_poll();
         void stop_poll();
@@ -48,12 +51,14 @@ namespace core::kafka
         void produce(const std::string_view &topic,
                      const types::Bytes &payload,
                      const std::optional<std::string_view> &key = {},
-                     const HeaderMap &headers = {});
+                     const HeaderMap &headers = {},
+                     DeliveryReportCapture::Callback callback = {});
 
     private:
         void shutdown();
 
     private:
+        DeliveryReportCapture dr_capture_;
         RdKafka::Producer *producer_handle_;
         core::dt::Duration shutdown_timeout_;
         std::thread poll_thread_;

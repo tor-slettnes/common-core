@@ -7,9 +7,13 @@
 
 #include "kafka-callbacks.h++"
 #include "logging/logging.h++"
+#include "status/exceptions.h++"
 
 namespace core::kafka
 {
+    //--------------------------------------------------------------------------
+    // LogCapture
+
     void LogCapture::event_cb(RdKafka::Event &event)
     {
         static auto log_scope = ::core::logging::Scope::create(
@@ -42,4 +46,40 @@ namespace core::kafka
         {RdKafka::Event::EVENT_SEVERITY_INFO, core::status::Level::INFO},
         {RdKafka::Event::EVENT_SEVERITY_DEBUG, core::status::Level::DEBUG},
     };
+
+    //--------------------------------------------------------------------------
+    // DeliveryReportCapture
+
+    void DeliveryReportCapture::dr_cb(RdKafka::Message &message)
+    {
+        if (const auto *callback = reinterpret_cast<const Callback *>(message.msg_opaque()))
+        {
+            core::status::Error::ptr error;
+
+            if (message.err() != RdKafka::ERR_NO_ERROR)
+            {
+                error = std::make_shared<core::status::Error>(
+                    message.errstr(),                                           // text
+                    core::status::Domain::SERVICE,                              // domain
+                    "RdKafka"s,                                                 // origin
+                    message.err(),                                              // code
+                    RdKafka::err2str(message.err()),                            // symbol
+                    core::status::Level::ERROR,                                 // level
+                    core::dt::ms_to_timepoint(message.timestamp().timestamp));  // timepoint,
+            }
+
+            try
+            {
+                logf_debug("Kafka delivery report callback, status=%s, error=%s",
+                           message.status(),
+                           error);
+                (*callback)(error);
+            }
+            catch (...)
+            {
+                log_error("Kafka callback failed: ", std::current_exception());
+            }
+        }
+    }
+
 }  // namespace core::kafka

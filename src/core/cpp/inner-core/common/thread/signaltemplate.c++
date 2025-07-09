@@ -155,4 +155,28 @@ namespace core::signal
         return this->collect_futures(futures);
     }
 
+    std::ostream &operator<<(std::ostream &stream, MappingAction action)
+    {
+        static const std::unordered_map<MappingAction, std::string> names = {
+            {MAP_NONE, "MAP_NONE"},
+            {MAP_ADDITION, "MAP_ADDITION"},
+            {MAP_REMOVAL, "MAP_REMOVAL"},
+            {MAP_UPDATE, "MAP_UPDATE"},
+        };
+
+        try
+        {
+            stream << names.at(action);
+        }
+        catch (const std::out_of_range &)
+        {
+            stream << str::format("(Invalid MappingAction %d)",
+                                  static_cast<uint>(action));
+        }
+
+        return stream;
+    }
+
+
+
 }  // namespace core::signal
