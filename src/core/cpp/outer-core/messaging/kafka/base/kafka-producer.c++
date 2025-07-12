@@ -18,13 +18,12 @@ namespace core::kafka
                        const std::string &profile_name,
                        const core::types::KeyValueMap &settings)
         : Super("Producer", service_name, profile_name, settings),
-          producer_handle_(this->create_handle()),
+          producer_handle_(nullptr),
           shutdown_timeout_(
               this->setting(SETTING_SHUTDOWN_TIMEOUT, DEFAULT_SHUTDOWN_TIMEOUT)
                   .as_duration()),
           keep_polling_(false)
     {
-        this->init_dr_capture();
     }
 
     Producer::~Producer()
@@ -33,29 +32,11 @@ namespace core::kafka
         delete this->producer_handle_;
     }
 
-    RdKafka::Producer *Producer::create_handle() const
-    {
-        std::string error_string;
-        if (RdKafka::Producer *producer = RdKafka::Producer::create(
-                this->conf(),
-                error_string))
-        {
-            return producer;
-        }
-        else
-        {
-            throw exception::Unavailable(error_string);
-        }
-    }
-
-    RdKafka::Producer *Producer::handle() const
-    {
-        return this->producer_handle_;
-    }
-
     void Producer::initialize()
     {
         Super::initialize();
+        this->init_dr_capture();
+        this->init_handle();
         this->start_poll();
     }
 
@@ -70,10 +51,36 @@ namespace core::kafka
         this->set_config("dr_cb", &this->dr_capture_, "DeliveryReportCapture()");
     }
 
+    void Producer::init_handle()
+    {
+        std::string error_string;
+        if (RdKafka::Producer *producer = RdKafka::Producer::create(
+                this->conf(),
+                error_string))
+        {
+            this->producer_handle_ = producer;
+        }
+        else
+        {
+            throw exception::Unavailable(error_string);
+        }
+    }
+
+    RdKafka::Producer *Producer::handle() const
+    {
+        return this->producer_handle_;
+    }
+
+    void Producer::set_dr_callback(const DeliveryReportCapture::Callback &callback)
+    {
+        this->dr_capture_.set_callback(callback);
+    }
+
     void Producer::start_poll()
     {
         if (!this->poll_thread_.joinable())
         {
+            logf_debug("Starting %s polling thread", *this);
             this->keep_polling_ = true;
             this->poll_thread_ = std::thread(&This::poll_worker, this);
         }
@@ -83,6 +90,7 @@ namespace core::kafka
     {
         if (this->poll_thread_.joinable())
         {
+            logf_debug("Stopping %s polling thread", *this);
             this->keep_polling_ = false;
             this->poll_thread_.join();
         }
@@ -106,11 +114,12 @@ namespace core::kafka
         return this->producer_key_;
     }
 
-    void Producer::produce(const std::string_view &topic,
-                           const types::Bytes &payload,
-                           const std::optional<std::string_view> &key,
-                           const HeaderMap &headers,
-                           DeliveryReportCapture::Callback callback)
+    void Producer::produce(
+        const std::string &topic,
+        const types::Bytes &payload,
+        const std::optional<std::string_view> &key,
+        const HeaderMap &headers,
+        const DeliveryReportCapture::CallbackData::ptr &cb_data)
     {
         std::optional<std::string_view> key_ = key;
         if (!key_)
@@ -125,7 +134,7 @@ namespace core::kafka
         }
 
         RdKafka::ErrorCode error_code = this->handle()->produce(
-            std::string(topic, 0, topic.size()),                // topic_name
+            topic,                                              // topic_name
             RdKafka::Topic::PARTITION_UA,                       // partition
             RdKafka::Producer::RK_MSG_COPY,                     // msgflags
             const_cast<types::Byte *>(payload.data()),          // payload
@@ -134,18 +143,19 @@ namespace core::kafka
             key_ ? key_->size() : 0,                            // key_len
             dt::to_milliseconds(dt::Clock::now()),              // timestamp
             headers_,                                           // headers
-            callback ? &callback : nullptr);                    // msg_opaque
+            this->dr_capture_.add_callback_data(cb_data));      // msg_opaque
 
         if (error_code != RdKafka::ERR_NO_ERROR)
         {
             // Per Kafka doc: The \p headers will be freed/deleted if the
             // produce() call succeeds, or left untouched if produce() fails.
             delete headers_;
-            this->check(error_code,
-                        {
-                            {"profile", this->profile_name()},
-                            {"topic", topic},
-                        });
+            this->check(
+                error_code,
+                {
+                    {"profile", this->profile_name()},
+                    {"topic", topic},
+                });
         }
     }
 

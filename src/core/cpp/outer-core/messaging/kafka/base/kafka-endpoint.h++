@@ -54,15 +54,21 @@ namespace core::kafka
         void check(RdKafka::ErrorCode code,
                    const core::types::KeyValueMap &attributes = {}) const;
 
+        void check(RdKafka::Error *error,
+                   const core::types::KeyValueMap &attributes = {}) const;
+
         void check(RdKafka::Conf::ConfResult result,
                    const std::string &key,
                    const std::string &value,
                    const std::string &errstr) const;
 
     protected:
+        void set_config(const std::string &key,
+                        const std::string &value);
+
         template <class T>
         void set_config(const std::string &key,
-                        T &&value,
+                        const T &value,
                         const std::string &value_legend)
         {
             std::string errstr;
@@ -73,8 +79,8 @@ namespace core::kafka
         }
 
     private:
-        LogCapture log_capture_;
         RdKafka::Conf *conf_;
+        LogCapture log_capture_;
 
     protected:
         std::unordered_set<RdKafka::Topic *> topics;

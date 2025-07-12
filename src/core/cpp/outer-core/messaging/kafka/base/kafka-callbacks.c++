@@ -8,6 +8,9 @@
 #include "kafka-callbacks.h++"
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
+#include "string/stream.h++"
+
+#include <functional>
 
 namespace core::kafka
 {
@@ -50,30 +53,49 @@ namespace core::kafka
     //--------------------------------------------------------------------------
     // DeliveryReportCapture
 
+    void DeliveryReportCapture::set_callback(const Callback &callback)
+    {
+        this->callback = callback;
+    }
+
+    void *DeliveryReportCapture::add_callback_data(const CallbackData::ptr &data)
+    {
+        void *key = data.get();
+        this->callback_map.insert_or_assign(key, data);
+        return key;
+    }
+
     void DeliveryReportCapture::dr_cb(RdKafka::Message &message)
     {
-        if (const auto *callback = reinterpret_cast<const Callback *>(message.msg_opaque()))
+        if (this->callback)
         {
-            core::status::Error::ptr error;
-
-            if (message.err() != RdKafka::ERR_NO_ERROR)
+            CallbackData::ptr callback_data;
+            if (auto nh = this->callback_map.extract(message.msg_opaque()))
             {
-                error = std::make_shared<core::status::Error>(
-                    message.errstr(),                                           // text
-                    core::status::Domain::SERVICE,                              // domain
-                    "RdKafka"s,                                                 // origin
-                    message.err(),                                              // code
-                    RdKafka::err2str(message.err()),                            // symbol
-                    core::status::Level::ERROR,                                 // level
-                    core::dt::ms_to_timepoint(message.timestamp().timestamp));  // timepoint,
+                callback_data = nh.mapped();
             }
+
+            core::status::Level level =
+                (message.err() == RdKafka::ERR_NO_ERROR)
+                    ? core::status::Level::TRACE
+                    : core::status::Level::ERROR;
+
+            core::status::Error::ptr error = std::make_shared<core::status::Error>(
+                message.errstr(),                                           // text
+                core::status::Domain::SERVICE,                              // domain
+                "RdKafka"s,                                                 // origin
+                message.err(),                                              // code
+                RdKafka::err2str(message.err()),                            // symbol
+                level,                                                      // level
+                core::dt::ms_to_timepoint(message.timestamp().timestamp));  // timepoint
 
             try
             {
-                logf_debug("Kafka delivery report callback, status=%s, error=%s",
+                logf_trace("Kafka delivery report callback, status=%s, error=%s",
                            message.status(),
                            error);
-                (*callback)(error);
+
+                this->callback(callback_data, error);
             }
             catch (...)
             {

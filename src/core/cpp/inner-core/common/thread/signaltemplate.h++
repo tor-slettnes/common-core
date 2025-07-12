@@ -234,12 +234,12 @@ namespace core::signal
         /// @brief
         ///     Emit signal only if the current value differs from the previous one.
         /// @note
-        ///     This only works if the `cache` option is used.
+        ///     This only works if the `cache` option is enabled in the constructor.
         /// @param[in] value
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t emit_if_changed(DataType &&...values)
+        std::size_t emit_if_changed(const DataType &...values)
         {
             DataTuple tuple{values...};
 
@@ -488,9 +488,9 @@ namespace core::signal
         std::size_t emit(const KeyType &key, const DataType &value)
         {
             MappingAction action(
-                !this->caching_                ? MAP_UPDATE
+                !this->caching_        ? MAP_UPDATE
                 : this->is_cached(key) ? MAP_UPDATE
-                                               : MAP_ADDITION);
+                                       : MAP_ADDITION);
 
             return this->emit(action, key, value);
         }

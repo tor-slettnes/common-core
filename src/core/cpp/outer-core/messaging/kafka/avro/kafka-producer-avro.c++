@@ -17,16 +17,18 @@ namespace core::kafka
     }
 
     void AvroProducer::produce(
-        const std::string_view &topic,
+        const std::string &topic,
         const avro::BaseValue &avro_wrapper,
         const std::optional<std::string_view> &key,
-        const HeaderMap &headers)
+        const HeaderMap &headers,
+        const DeliveryReportCapture::CallbackData::ptr &cb_data)
     {
         this->produce(
             topic,
             avro_wrapper.serialized(),
             key,
-            headers);
+            headers,
+            cb_data);
     }
 
 }  // namespace core::kafka

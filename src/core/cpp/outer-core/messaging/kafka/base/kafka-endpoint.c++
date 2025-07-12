@@ -18,8 +18,8 @@ namespace core::kafka
         : Super("Kafka", endpoint_type, service_name, profile_name),
           conf_(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL))
     {
-        this->init_conf(settings);
         this->init_logging();
+        this->init_conf(settings);
     }
 
     Endpoint::~Endpoint()
@@ -46,7 +46,7 @@ namespace core::kafka
     {
         for (const auto &[key, value] : settings)
         {
-            this->set_config(key, value.as_string(), value.as_string());
+            this->set_config(key, value.as_string());
         }
     }
 
@@ -57,7 +57,7 @@ namespace core::kafka
 
     void Endpoint::set_server_address(const std::string &server_address)
     {
-        this->set_config("bootstrap.servers", server_address, server_address);
+        this->set_config("bootstrap.servers", server_address);
     }
 
     RdKafka::Conf *Endpoint::conf() const
@@ -101,6 +101,12 @@ namespace core::kafka
         return nullptr;
     }
 
+    void Endpoint::set_config(const std::string &key,
+                              const std::string &value)
+    {
+        this->set_config<std::string>(key, value, value);
+    }
+
     void Endpoint::check(RdKafka::ErrorCode code,
                          const core::types::KeyValueMap &attributes) const
     {
@@ -109,6 +115,22 @@ namespace core::kafka
             throwf_args(exception::RuntimeError,
                         ("Kafka error %d: %s", code, RdKafka::err2str(code)),
                         attributes);
+        }
+    }
+
+    void Endpoint::check(RdKafka::Error *error,
+                         const core::types::KeyValueMap &attributes) const
+    {
+        if (error != nullptr)
+        {
+            std::string message = core::str::format(
+                "Kafka error %d: [%s] %s",
+                error->code(),
+                error->name(),
+                error->str());
+
+            delete error;
+            throw exception::RuntimeError(message, attributes);
         }
     }
 

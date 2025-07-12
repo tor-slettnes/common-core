@@ -140,10 +140,17 @@ namespace core::messaging
     {
         stream << this->messaging_flavor()
                << " "
-               << std::quoted(this->channel_name())
-               << " "
-               << this->endpoint_type();
+               << this->endpoint_type()
+               << " \""
+               << this->channel_name();
+
+        if (!this->profile_name().empty())
+        {
+            stream << ":"
+                   << this->profile_name();
+        }
+
+        stream << "\"";
     }
 
 }  // namespace core::messaging
-

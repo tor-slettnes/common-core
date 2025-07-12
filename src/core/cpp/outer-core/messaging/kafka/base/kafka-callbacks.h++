@@ -28,18 +28,43 @@ namespace core::kafka
         static const LevelMap level_map;
     };
 
-
     //--------------------------------------------------------------------------
-    // DeliveryReportCapture
+    /// @class DeliveryReportCapture
+    /// @brief
+    ///     Capture delivery reports from Kafka producer
 
     class DeliveryReportCapture : public RdKafka::DeliveryReportCb
     {
         using This = DeliveryReportCapture;
 
     public:
-        using Callback = std::function<void(const core::status::Error::ptr &error)>;
+        /// @brief
+        ///     Abstract/Overridable data container passed from produce() call
+        ///     back to callback handler.
+        struct CallbackData
+        {
+            using ptr = std::shared_ptr<CallbackData>;
+
+            virtual ~CallbackData() = default;
+        };
 
     public:
+        using Callback = std::function<void(
+            CallbackData::ptr callback_data,
+            core::status::Error::ptr error)>;
+
+    public:
+        void set_callback(const Callback &callback);
+
+        void *add_callback_data(const CallbackData::ptr &data);
+
+    protected:
         void dr_cb(RdKafka::Message &message) override;
+
+    private:
+        Callback callback;
+
+    private:
+        std::unordered_map<void *, CallbackData::ptr> callback_map;
     };
 }  // namespace core::kafka

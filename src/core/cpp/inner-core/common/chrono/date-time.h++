@@ -292,7 +292,7 @@ namespace core
         template<class Scale>
         std::int64_t to_scalar(const Duration &dur)
         {
-            return std::chrono::floor<Scale>(dur).count();
+            return std::chrono::duration_cast<Scale>(dur).count();
         }
 
         /// Convert from TimePoint (std::chrono::system_clock::time_point) to double
