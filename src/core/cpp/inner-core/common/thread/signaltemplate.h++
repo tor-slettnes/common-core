@@ -161,17 +161,13 @@ namespace core::signal
     ///      my_signal.emit(mydata);
     /// @endcode
 
-    template <class... DataType>
+    template <class DataType>
     class DataSignal : public BaseSignal
     {
         using Super = BaseSignal;
 
     public:
-        using Slot = std::function<void(const DataType &...)>;
-        using DataTuple = std::tuple<DataType...>;
-
-        template <std::size_t Element = 0>
-        using DataElementType = typename std::tuple_element<Element, DataTuple>::type;
+        using Slot = std::function<void(const DataType &)>;
 
         DataSignal(const std::string &id, bool caching = false)
             : Super(id, caching)
@@ -219,16 +215,14 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t emit(const DataType &...values)
+        std::size_t emit(const DataType &value)
         {
-            DataTuple tuple{values...};
-
             std::scoped_lock lck(this->signal_mtx_);
             if (this->caching_)
             {
-                this->update_cache(tuple);
+                this->update_cache(value);
             }
-            return this->sendall(tuple);
+            return this->sendall(value);
         }
 
         /// @brief
@@ -239,18 +233,16 @@ namespace core::signal
         ///     Signal value.
         /// @return
         ///     The number of connected slots to which the signal was emitted
-        std::size_t emit_if_changed(const DataType &...values)
+        std::size_t emit_if_changed(const DataType &value)
         {
-            DataTuple tuple{values...};
-
             std::scoped_lock lck(this->signal_mtx_);
-            if (!this->caching_ || !this->cached_ || !(tuple == *this->cached_))
+            if (!this->caching_ || !this->cached_ || !(value == *this->cached_))
             {
                 if (this->caching_)
                 {
-                    this->update_cache(tuple);
+                    this->update_cache(value);
                 }
-                return this->sendall(tuple);
+                return this->sendall(value);
             }
             else
             {
@@ -262,37 +254,7 @@ namespace core::signal
         ///    Get the current cached value, if any.
         /// @return
         ///    std::optional<DataType> object
-        template <std::size_t Element = 0>
-        std::optional<DataElementType<Element>> get_cached()
-        {
-            std::scoped_lock lck(this->signal_mtx_);
-            if (this->cached_)
-            {
-                return std::get<Element>(*this->cached_);
-            }
-            else
-            {
-                return {};
-            }
-        }
-
-        /// @brief
-        ///    Get the current cached value if any, otherwise a fallback value.
-        /// @param[in] fallback
-        ///    Value to return if there's no cached value.
-        /// @return
-        ///    std::optional<DataType> object
-        template <std::size_t Element = 0>
-        DataElementType<Element> get_cached(const DataElementType<Element> &fallback)
-        {
-            return this->get_cached<Element>().value_or(fallback);
-        }
-
-        /// @brief
-        ///    Get the current cached value, if any.
-        /// @return
-        ///    std::optional<DataType> object
-        std::optional<DataTuple> get_tuple()
+        std::optional<DataType> get_cached()
         {
             std::scoped_lock lck(this->signal_mtx_);
             return this->cached_;
@@ -304,9 +266,9 @@ namespace core::signal
         ///    Value to return if there's no cached value.
         /// @return
         ///    std::optional<DataType> object
-        DataTuple get_tuple_or(const DataTuple &fallback)
+        DataType get_cached(const DataType &fallback)
         {
-            return this->get_cached().value_or(fallback);
+            return this->cached_.value_or(fallback);
         }
 
         /// @brief
@@ -340,38 +302,32 @@ namespace core::signal
             }
         }
 
-        std::size_t sendall(const DataTuple &tuple)
+        std::size_t sendall(const DataType &value)
         {
             std::size_t count = 0;
             for (const auto &[receiver, method] : this->slots_)
             {
-                count += this->callback(receiver, method, tuple);
+                count += this->callback(receiver, method, value);
             }
             return count;
         }
 
-        void update_cache(const DataTuple &tuple)
+        void update_cache(const DataType &value)
         {
-            this->cached_ = tuple;
+            this->cached_ = value;
         }
 
         bool callback(const std::string &receiver,
                       const Slot &method,
-                      const DataTuple &tuple)
+                      const DataType &value)
         {
-            try
-            {
-                std::apply(method, tuple);
-                return true;
-            }
-            catch (...)
-            {
-                return false;
-            }
+            return this->safe_invoke(
+                str::format("%s({...})", receiver),
+                std::bind(method, value));
         }
 
     private:
-        std::optional<DataTuple> cached_;
+        std::optional<DataType> cached_;
         std::unordered_map<std::string, Slot> slots_;
     };
 
@@ -711,7 +667,7 @@ namespace core::signal
                       const DataType &value)
         {
             return this->safe_invoke(
-                str::format("%r (%r, %r, {...})", receiver, action, key),
+                str::format("%s(%r, %r, {...})", receiver, action, key),
                 std::bind(method, action, key, value));
         }
 
