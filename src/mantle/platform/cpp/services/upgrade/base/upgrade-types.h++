@@ -6,10 +6,10 @@
 //==============================================================================
 
 #pragma once
-#include "logging/logging.h++"
 #include "sysconfig-product.h++"
 #include "vfs-context.h++"
-#include "status/event.h++"
+#include "logging/logging.h++"
+#include "status/error.h++"
 #include "types/symbolmap.h++"
 #include "types/listable.h++"
 

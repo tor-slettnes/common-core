@@ -8,8 +8,6 @@
 #pragma once
 #include "types/create-shared.h++"
 #include "string/misc.h++"
-#include "string/format.h++"
-#include "status/exception.h++"
 
 #include <unordered_map>
 #include <memory>
@@ -132,11 +130,12 @@ namespace core::platform
             }
             else
             {
-                std::string message = str::format(
-                    "No suitable %s implementation is available for this system",
-                    this->typeName);
+                std::stringstream ss;
+                ss << "No suitable "
+                   << std::quoted(this->typeName)
+                   << " implementation is available for this system";
 
-                throw std::runtime_error(message);
+                throw std::runtime_error(ss.str());
             }
         }
 

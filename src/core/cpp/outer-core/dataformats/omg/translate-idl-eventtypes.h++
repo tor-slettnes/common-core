@@ -7,7 +7,7 @@
 
 #pragma once
 #include "event-types.hpp"  // Generated from `event-types.idl`
-#include "status/event.h++"
+#include "status/error.h++"
 #include "logging/message/message.h++"
 #include "translate-idl-common.h++"
 #include "translate-idl-variant.h++"

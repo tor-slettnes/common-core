@@ -75,19 +75,18 @@ namespace core::kafka
                 callback_data = nh.mapped();
             }
 
-            core::status::Level level =
-                (message.err() == RdKafka::ERR_NO_ERROR)
-                    ? core::status::Level::TRACE
-                    : core::status::Level::ERROR;
-
-            core::status::Error::ptr error = std::make_shared<core::status::Error>(
-                message.errstr(),                                           // text
-                core::status::Domain::SERVICE,                              // domain
-                "RdKafka"s,                                                 // origin
-                message.err(),                                              // code
-                RdKafka::err2str(message.err()),                            // symbol
-                level,                                                      // level
-                core::dt::ms_to_timepoint(message.timestamp().timestamp));  // timepoint
+            core::status::Error::ptr error;
+            if (message.err() != RdKafka::ERR_NO_ERROR)
+            {
+                error = std::make_shared<core::status::Error>(
+                    message.errstr(),                                           // text
+                    core::status::Domain::SERVICE,                              // domain
+                    "RdKafka"s,                                                 // origin
+                    message.err(),                                              // code
+                    RdKafka::err2str(message.err()),                            // symbol
+                    core::status::Level::ERROR,                                 // level
+                    core::dt::ms_to_timepoint(message.timestamp().timestamp));  // timepoint
+            }
 
             try
             {
@@ -103,5 +102,4 @@ namespace core::kafka
             }
         }
     }
-
 }  // namespace core::kafka

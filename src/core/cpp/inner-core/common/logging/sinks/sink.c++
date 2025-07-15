@@ -7,6 +7,7 @@
 
 #include "sink.h++"
 #include "settings/settings.h++"
+#include "status/event.h++"
 
 #include <iostream>
 

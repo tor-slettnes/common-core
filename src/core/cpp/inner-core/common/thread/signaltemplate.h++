@@ -167,7 +167,7 @@ namespace core::signal
         using Super = BaseSignal;
 
     public:
-        using Slot = std::function<void(const DataType &)>;
+        using Slot = std::function<void(DataType)>;
 
         DataSignal(const std::string &id, bool caching = false)
             : Super(id, caching)
@@ -358,7 +358,7 @@ namespace core::signal
         using Super = BaseSignal;
 
     public:
-        using Slot = std::function<void(MappingAction, const KeyType &, const DataType &)>;
+        using Slot = std::function<void(MappingAction, KeyType, DataType)>;
 
         MappingSignal(const std::string &id, bool caching = false)
             : Super(id, caching)

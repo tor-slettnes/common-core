@@ -959,7 +959,8 @@ namespace core::types
             return (*std::get<TaggedValueListPtr>(*this))[key];
 
         default:
-            throw std::invalid_argument("Value instance is not mappable");
+            *this = KeyValueMap::create_shared();
+            return (*std::get<KeyValueMapPtr>(*this))[key];
         }
     }
 

@@ -25,7 +25,7 @@ namespace core
     namespace dt
     {
         // constexpr auto ISO_FORMAT = "%F %T";
-        constexpr auto DEFAULT_FORMAT = "%F %T";
+        constexpr auto DEFAULT_FORMAT = "%F@%T";
         constexpr auto DEFAULT_TIME_FORMAT = "%T";
         constexpr auto DEFAULT_DURATION_FORMAT = "%H:%M:%S";
         constexpr auto JS_FORMAT = "%FT%T";

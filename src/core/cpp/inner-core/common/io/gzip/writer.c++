@@ -8,7 +8,7 @@
 #include "writer.h++"
 #include "io/cutils.h++"
 #include "string/format.h++"
-#include "logging/logging.h++"
+#include "status/exception.h++"
 
 namespace core::io
 {

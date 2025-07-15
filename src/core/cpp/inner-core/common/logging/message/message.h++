@@ -7,7 +7,7 @@
 
 #pragma once
 #include "scope.h++"
-#include "types/loggable.h++"
+#include "status/event.h++"
 #include "platform/host.h++"
 #include "types/platform.h++"  // pid_t, ssize_t
 #include "types/filesystem.h++"
