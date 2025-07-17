@@ -19,10 +19,6 @@ namespace core::kafka
 
     void LogCapture::event_cb(RdKafka::Event &event)
     {
-        static auto log_scope = ::core::logging::Scope::create(
-            "rdkafka",
-            status::Level::DEBUG);
-
         core::status::Level level = This::level_map.get(
             event.severity(),
             status::Level::WARNING);

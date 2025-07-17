@@ -41,7 +41,6 @@ namespace core::types
         }
     }
 
-
     const Value *KeyValueMap::get_ptr(
         const std::string &key,
         bool ignoreCase) const noexcept
@@ -89,6 +88,21 @@ namespace core::types
         bool ignoreCase) const noexcept
     {
         return this->get(key, {}, ignoreCase).get_kvmap_ptr();
+    }
+
+    const Value &KeyValueMap::get_any(
+        const std::vector<std::string> &candidates,
+        const Value &fallback,
+        bool ignoreCase) const noexcept
+    {
+        for (const std::string &candidate : candidates)
+        {
+            if (auto *value = this->get_ptr(candidate))
+            {
+                return *value;
+            }
+        }
+        return fallback;
     }
 
     Value KeyValueMap::extract_value(const std::string &key,

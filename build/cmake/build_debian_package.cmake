@@ -17,6 +17,23 @@ set_property(
   PROPERTY ADDITIONAL_CLEAN_FILES ${DEBIAN_CONTROL_STAGING_DIR}
 )
 
+
+#-------------------------------------------------------------------------------
+## @fn cc_get_debian_package_version
+## @brief Obtain Debian package version
+
+function(cc_cpack_get_debian_version OUTPUT_VARIABLE)
+  foreach(var CPACK_DEBIAN_PACKAGE_VERSION CPACK_PACKAGE_VERSION PROJECT_VERSION)
+    if(${var})
+      string(JOIN "-" package_version ${${var}} ${CPACK_DEBIAN_PACKAGE_RELEASE})
+      break()
+    endif()
+  endforeach()
+  set("${OUTPUT_VARIABLE}" "${package_version}" PARENT_SCOPE)
+endfunction()
+
+
+
 #-------------------------------------------------------------------------------
 ## @fn cc_cpack_config
 ## @brief Append a setting to `cc_cpack_config.cmake`, to be consumed by `cpack`.
@@ -87,7 +104,9 @@ function(cc_cpack_add_debian_component COMPONENT)
   )
   set(_multiargs
     DESCRIPTION    # Detailed description. Multiple arguments are added as separate lines.
-    DEPENDS        # Other cpack components on which we depend.
+    DEPENDS        # Other cpack components on which we depend
+    RECOMMENDS     # Other cpack components that are recommended
+    SUGGESTS       # Other cpack components that are suggested
     DEB_PREDEPENDS # Debian "Pre-Depends:" control value
     DEB_DEPENDS    # Debian "Depends:" control value
     DEB_RECOMMENDS # Debian "Recommends:" control value
@@ -140,15 +159,29 @@ function(cc_cpack_add_debian_component COMPONENT)
       GLUE "_"
       OUTPUT_VARIABLE cpack_var_base)
 
+    cc_cpack_get_debian_version(package_version)
+
+    foreach(option RECOMMENDS SUGGESTS)
+      if(arg_${option})
+        set(cpack_option "${cpack_var_base}_${option}")
+
+        list(TRANSFORM arg_${option}
+          PREPEND "${CPACK_PACKAGE_NAME}-"
+          OUTPUT_VARIABLE predecessor_list)
+
+        list(TRANSFORM predecessor_list
+          APPEND " (= ${package_version})")
+
+        list(PREPEND arg_DEB_${option} ${predecessor_list})
+      endif()
+    endforeach()
 
     foreach(option ${_multiargs})
       if (option MATCHES "^DEB_(.*)$")
-        list(JOIN arg_${option} ", " predecessors)
-        if(predecessors)
-          cc_cpack_config(
-            "${cpack_var_base}_${CMAKE_MATCH_1}"
-            "${predecessors}"
-          )
+        if (arg_${option})
+          set(cpack_option "${cpack_var_base}_${CMAKE_MATCH_1}")
+          list(JOIN arg_${option} ", " predecessors)
+          cc_cpack_config("${cpack_option}" "${predecessors}")
         endif()
       endif()
     endforeach()

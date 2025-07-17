@@ -80,6 +80,11 @@ namespace core::types
             const std::string &key,
             bool ignoreCase = false) const noexcept;
 
+        const Value &get_any(
+            const std::vector<std::string> &candidates,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
+
         Value extract_value(const std::string &key,
                             const Value &fallback = {}) noexcept;
 
