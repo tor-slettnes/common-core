@@ -30,7 +30,7 @@ namespace avro
     {
     }
 
-    CompoundValue::CompoundValue(SchemaWrapper &&wrapper)
+    CompoundValue::CompoundValue(const SchemaWrapper &wrapper)
         : CompoundValue(wrapper.as_avro_schema())
     {
     }
@@ -38,7 +38,7 @@ namespace avro
     CompoundValue::~CompoundValue()
     {
         avro_value_iface_decref(this->iface);
-        avro_schema_decref(schema);
+        // avro_schema_decref(schema);
     }
 
     avro_schema_t CompoundValue::schema_from_json(

@@ -20,7 +20,7 @@ namespace avro
     public:
         CompoundValue(avro_schema_t schema);
         CompoundValue(const std::string &json_schema);
-        CompoundValue(SchemaWrapper &&wrapper);
+        CompoundValue(const SchemaWrapper &wrapper);
 
     public:
         ~CompoundValue();

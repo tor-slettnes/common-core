@@ -39,7 +39,7 @@ namespace avro
 
     TEST(AvroTest, ProtoBufEventToJsonSchema)
     {
-        SchemaWrapper wrapper = schema_from_proto(cc::status::Error::GetDescriptor());
+        const SchemaWrapper &wrapper = schema_from_proto(cc::status::Error::GetDescriptor());
         // std::string json = wrapper.as_json();
         std::string json = core::json::writer.encoded(wrapper, true);
         auto of1 = std::ofstream("event.json");

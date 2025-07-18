@@ -9,7 +9,9 @@
 #include "types/valuemap.h++"
 #include "logging/logging.h++"
 #include "status/error.h++"
+
 #include <librdkafka/rdkafkacpp.h>
+#include <mutex>
 
 namespace core::kafka
 {
@@ -68,5 +70,6 @@ namespace core::kafka
 
     private:
         std::unordered_map<void *, CallbackData::ptr> callback_map;
+        std::mutex callback_mutex;
     };
 }  // namespace core::kafka

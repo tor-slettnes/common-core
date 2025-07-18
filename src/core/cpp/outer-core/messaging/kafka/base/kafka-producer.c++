@@ -80,7 +80,7 @@ namespace core::kafka
     {
         if (!this->poll_thread_.joinable())
         {
-            logf_debug("Starting %s polling thread", *this);
+            logf_info("Starting %s polling thread", *this);
             this->keep_polling_ = true;
             this->poll_thread_ = std::thread(&This::poll_worker, this);
         }
@@ -90,7 +90,7 @@ namespace core::kafka
     {
         if (this->poll_thread_.joinable())
         {
-            logf_debug("Stopping %s polling thread", *this);
+            logf_info("Stopping %s polling thread", *this);
             this->keep_polling_ = false;
             this->poll_thread_.join();
         }

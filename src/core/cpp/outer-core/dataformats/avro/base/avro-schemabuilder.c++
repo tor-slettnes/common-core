@@ -30,7 +30,7 @@ namespace avro
         }
     }
 
-    avro_schema_t SchemaWrapper::as_avro_schema()
+    avro_schema_t SchemaWrapper::as_avro_schema() const
     {
         if (!this->avro_schema)
         {
@@ -38,7 +38,7 @@ namespace avro
             checkstatus(avro_schema_from_json_length(
                 json.data(),
                 json.size(),
-                &this->avro_schema));
+                &const_cast<SchemaWrapper *>(this)->avro_schema));
         }
         return this->avro_schema;
     }
@@ -114,7 +114,7 @@ namespace avro
     // MapSchema
 
     MapSchema::MapSchema(const core::types::Value &valuetype)
-        : SchemaWrapper(core::types::KeyValueMap({
+        : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Map},
               {SchemaField_MapValues, valuetype},
           }))
@@ -125,7 +125,7 @@ namespace avro
     // ArrayShema
 
     ArraySchema::ArraySchema(const core::types::Value &itemtype)
-        : SchemaWrapper(core::types::KeyValueMap({
+        : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Array},
               {SchemaField_ArrayItems, itemtype},
           }))
@@ -197,7 +197,7 @@ namespace avro
     // }
 
     TimeIntervalSchema::TimeIntervalSchema(const ContextRef &context)
-        : SchemaWrapper(core::types::KeyValueMap({
+        : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Long},
               {SchemaField_LogicalType, LogicalType_TimeOfDayMillis},
           }))
@@ -215,7 +215,7 @@ namespace avro
     // }
 
     TimestampSchema::TimestampSchema(const ContextRef &context)
-        : SchemaWrapper(core::types::KeyValueMap({
+        : SchemaWrapper(core::types::TaggedValueList({
               {SchemaField_Type, TypeName_Long},
               {SchemaField_LogicalType, LogicalType_TimeStampMillis},
           }))

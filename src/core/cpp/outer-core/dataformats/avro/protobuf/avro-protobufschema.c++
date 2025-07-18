@@ -228,10 +228,27 @@ namespace avro
     //--------------------------------------------------------------------------
     // schema_from_proto (Entry point)
 
-    SchemaWrapper schema_from_proto(const google::protobuf::Descriptor *descriptor)
+    SchemaWrapper &schema_from_proto(const google::protobuf::Descriptor *descriptor)
     {
-        auto context = std::make_shared<BuilderContext>();
-        return ProtoBufSchema::from_descriptor(context, descriptor);
+        using SchemaMap = std::unordered_map<
+            const google::protobuf::Descriptor *,
+            SchemaWrapper>;
+
+        static SchemaMap schema_map;
+        static std::mutex mtx;
+
+
+        if (schema_map.count(descriptor) == 0)
+        {
+            logf_debug("schema_from_proto(%s) miss; creating", descriptor->full_name());
+            auto context = std::make_shared<BuilderContext>();
+            SchemaWrapper schema = ProtoBufSchema::from_descriptor(context, descriptor);
+
+            std::scoped_lock lock(mtx);
+            schema_map.insert_or_assign(descriptor, std::move(schema));
+        }
+
+        return schema_map.at(descriptor);
     }
 
 }  // namespace avro

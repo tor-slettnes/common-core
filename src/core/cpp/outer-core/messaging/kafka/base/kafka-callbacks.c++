@@ -56,6 +56,7 @@ namespace core::kafka
 
     void *DeliveryReportCapture::add_callback_data(const CallbackData::ptr &data)
     {
+        std::scoped_lock lock(this->callback_mutex);
         void *key = data.get();
         this->callback_map.insert_or_assign(key, data);
         return key;
@@ -66,9 +67,12 @@ namespace core::kafka
         if (this->callback)
         {
             CallbackData::ptr callback_data;
-            if (auto nh = this->callback_map.extract(message.msg_opaque()))
             {
-                callback_data = nh.mapped();
+                std::scoped_lock lock(this->callback_mutex);
+                if (auto nh = this->callback_map.extract(message.msg_opaque()))
+                {
+                    callback_data = nh.mapped();
+                }
             }
 
             core::status::Error::ptr error;

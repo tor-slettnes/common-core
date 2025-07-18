@@ -75,9 +75,8 @@ namespace avro
         // @brief
         //     Convert this wrapper into a Avro-C compatible schema.
         // @return
-        //     New `avro_schema_t` reference.  Use `avro_shema-decref()` to release.
-        avro_schema_t as_avro_schema();
-
+        //     New `avro_schema_t` reference.
+        avro_schema_t as_avro_schema() const;
         std::string as_json() const;
 
     protected:

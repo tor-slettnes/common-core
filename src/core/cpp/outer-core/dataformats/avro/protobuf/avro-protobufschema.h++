@@ -28,7 +28,7 @@ namespace avro
         using SchemaMap = core::types::ValueMap<const google::protobuf::Descriptor *,
                                                 SchemaWrapper>;
 
-        friend SchemaWrapper schema_from_proto(const google::protobuf::Descriptor *);
+        friend SchemaWrapper &schema_from_proto(const google::protobuf::Descriptor *);
 
     public:
         // @param[in] descriptor
@@ -78,6 +78,6 @@ namespace avro
     /// Custom types are mapped via a new or existing `ProtoBufSchema`
     /// instance.  New instances are cached for future reuse.
 
-    SchemaWrapper schema_from_proto(const google::protobuf::Descriptor *descriptor);
+    SchemaWrapper &schema_from_proto(const google::protobuf::Descriptor *descriptor);
 
 }  // namespace avro
