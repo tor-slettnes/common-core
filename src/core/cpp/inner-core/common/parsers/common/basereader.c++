@@ -20,6 +20,18 @@ namespace core::parsers
     {
     }
 
+    std::optional<types::Value> BaseReader::try_decode(const std::string_view &text) const
+    {
+        try
+        {
+            return this->decoded(text);
+        }
+        catch (...)
+        {
+            return {};
+        }
+    }
+
     types::Value BaseReader::read_file(const fs::path &path) const
     {
         if (std::ifstream is{path})
