@@ -202,6 +202,12 @@ namespace core::types
             const int index,
             const Value &fallback = {}) const noexcept;
 
+        const Value &get_any(
+            const std::vector<std::string> &candidates,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
+
+
         std::optional<Value> try_get(
             const std::string &key,
             bool ignoreCase = false) const noexcept;

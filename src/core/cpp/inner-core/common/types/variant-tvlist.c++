@@ -159,6 +159,20 @@ namespace core::types
         }
     }
 
+    const Value &TaggedValueList::get_any(const std::vector<std::string> &candidates,
+                                          const Value &fallback,
+                                          bool ignoreCase) const noexcept
+    {
+        for (const Tag &candidate : candidates)
+        {
+            if (auto value = this->try_get(candidate, ignoreCase))
+            {
+                return *value;
+            }
+        }
+        return fallback;
+    }
+
     const Value &TaggedValueList::get(uint index, const Value &fallback) const noexcept
     {
         try

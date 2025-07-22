@@ -30,6 +30,7 @@ namespace core::types
         TaggedValueList::const_iterator find(
             const Tag &tag,
             bool ignoreCase = false) const noexcept;
+
         TaggedValueList::iterator find(
             const Tag &tag,
             bool ignoreCase = false) noexcept;
@@ -65,9 +66,15 @@ namespace core::types
         const Value &back(const Value &fallback = {}) const noexcept;
 
         /// Get the first value with the specified tag, or a default value if not found.
-        const Value &get(const Tag &tag,
-                         const Value &fallback = {},
-                         bool ignoreCase = false) const noexcept;
+        const Value &get(
+            const Tag &tag,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
+
+        const Value &get_any(
+            const std::vector<std::string> &candidates,
+            const Value &fallback = {},
+            bool ignoreCase = false) const noexcept;
 
         /// Get the value at the specified index, or a default value if not in range
         const Value &get(uint index, const Value &fallback = {}) const noexcept;

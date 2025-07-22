@@ -1095,6 +1095,24 @@ namespace core::types
         }
     }
 
+    const Value &Value::get_any(
+        const std::vector<std::string> &candidates,
+        const Value &fallback,
+        bool ignoreCase) const noexcept
+    {
+        switch (this->type())
+        {
+        case ValueType::KVMAP:
+            return std::get<KeyValueMapPtr>(*this)->get_any(candidates, fallback, ignoreCase);
+
+        case ValueType::TVLIST:
+            return std::get<TaggedValueListPtr>(*this)->get_any(candidates, fallback, ignoreCase);
+
+        default:
+            return fallback;
+        }
+    }
+
     std::optional<Value> Value::try_get(const std::string &key, bool ignoreCase) const noexcept
     {
         switch (this->type())

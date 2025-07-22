@@ -35,7 +35,18 @@ function(cc_add_executable TARGET)
     find_package("${_dep}" REQUIRED)
   endforeach()
 
-  add_executable("${TARGET}" ${arg_SOURCES})
+  cc_get_argument_or_default(install
+    arg_INSTALL
+    "${arg_INSTALL_COMPONENT}"
+    "${arg_KEYWORDS_MISSING_VALUES}")
+
+  if (install OR BUILD_ALL_BINARIES)
+    set(exclude_from_all "")
+  else()
+    set(exclude_from_all "EXCLUDE_FROM_ALL")
+  endif()
+
+  add_executable("${TARGET}" ${exclude_from_all} ${arg_SOURCES})
   target_include_directories(${TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
   target_link_libraries(${TARGET} PRIVATE ${arg_LIB_DEPS} ${arg_OBJ_DEPS})
 
@@ -46,21 +57,16 @@ function(cc_add_executable TARGET)
     )
   endif()
 
-  set(install_args
-    TARGETS "${TARGET}"
-    RUNTIME
-  )
+  if(install)
+    set(install_args
+      TARGETS "${TARGET}"
+      RUNTIME
+    )
 
-  if(arg_DESTINATION)
-    list(APPEND install_args DESTINATION ${arg_DESTINATION})
-  endif()
+    if(arg_DESTINATION)
+      list(APPEND install_args DESTINATION ${arg_DESTINATION})
+    endif()
 
-  cc_get_argument_or_default(install
-    arg_INSTALL
-    ON
-    "${arg_KEYWORDS_MISSING_VALUES}")
-
-  if(install AND arg_INSTALL_COMPONENT)
     install(${install_args} COMPONENT "${arg_INSTALL_COMPONENT}")
   endif()
 endfunction()
