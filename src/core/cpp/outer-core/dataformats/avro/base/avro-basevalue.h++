@@ -7,6 +7,7 @@
 
 #pragma once
 #include "types/value.h++"
+#include "types/streamable.h++"
 
 #include <avro.h>
 
@@ -15,7 +16,7 @@
 
 namespace avro
 {
-    class BaseValue
+    class BaseValue : public core::types::Streamable
     {
         using This = BaseValue;
 
@@ -51,6 +52,9 @@ namespace avro
         std::size_t serialized_size() const;
         core::types::ByteVector serialized() const;
         std::string as_json(bool pretty = false) const;
+
+    protected:
+        void to_stream(std::ostream &stream) const override;
 
 
     protected:

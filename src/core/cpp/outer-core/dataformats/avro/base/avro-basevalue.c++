@@ -103,6 +103,11 @@ namespace avro
         return result;
     }
 
+    void BaseValue::to_stream(std::ostream &stream) const
+    {
+        stream << this->as_json();
+    }
+
     avro_type_t BaseValue::type(avro_value_t *value)
     {
         return avro_value_get_type(value);
