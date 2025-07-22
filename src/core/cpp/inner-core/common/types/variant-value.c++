@@ -685,10 +685,10 @@ namespace core::types
 
     dt::TimePoint Value::as_timepoint(const dt::TimePoint &fallback) const noexcept
     {
-        return this->as_timepoint(0.0, true, fallback);
+        return this->as_timepoint({}, true, fallback);
     }
 
-    dt::TimePoint Value::as_timepoint(double multiplier,
+    dt::TimePoint Value::as_timepoint(std::optional<int> multiplier_decimal_exponent,
                                       bool assume_local,
                                       const dt::TimePoint &fallback) const noexcept
     {
@@ -704,12 +704,22 @@ namespace core::types
             return this->get<dt::TimePoint>();
 
         case ValueType::STRING:
-            return dt::to_timepoint(this->get<std::string>(), assume_local, fallback);
+            return dt::to_timepoint(
+                this->get<std::string>(),
+                assume_local,
+                fallback,
+                multiplier_decimal_exponent);
 
         case ValueType::UINT:
         case ValueType::SINT:
+            return dt::int_to_timepoint(
+                this->as_sint64(),
+                multiplier_decimal_exponent);
+
         case ValueType::REAL:
-            return dt::scalar_to_timepoint(this->as_double(), multiplier);
+            return dt::double_to_timepoint(
+                this->as_double(),
+                multiplier_decimal_exponent);
 
         case ValueType::BYTEVECTOR:
             try
@@ -869,6 +879,19 @@ namespace core::types
         else
         {
             static const std::string fallback;
+            return fallback;
+        }
+    }
+
+    const ByteVector &Value::get_bytevector() const
+    {
+        if (auto *bv = this->get_if<ByteVector>())
+        {
+            return *bv;
+        }
+        else
+        {
+            static const ByteVector fallback;
             return fallback;
         }
     }

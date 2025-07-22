@@ -36,6 +36,7 @@ namespace core
         // (from milliseconds, microseconds, nanonseconds...) until they fall
         // below this threshold.
         constexpr double EPOCH_SECONDS_UPPER_LIMIT = 1e11;
+        constexpr long long EPOCH_NANOS_LOWER_LIMIT = 1e17;
 
         // typedef std::chrono::system_clock Clock;
         // typedef Clock::duration Duration;
@@ -51,10 +52,10 @@ namespace core
 
         struct TimeZoneInfo
         {
-            std::string shortname; // Abreviation, e.g. PST or PDT
-            Duration offset;       // Offset from UTC, e.g. -7*60*60
-            Duration stdoffset;    // Standard offset from UTC, e.g. -8*60*60
-            bool dst = false;      // Whether daylight savings time is in effect
+            std::string shortname;  // Abreviation, e.g. PST or PDT
+            Duration offset;        // Offset from UTC, e.g. -7*60*60
+            Duration stdoffset;     // Standard offset from UTC, e.g. -8*60*60
+            bool dst = false;       // Whether daylight savings time is in effect
         };
 
         std::ostream &operator<<(std::ostream &stream, const TimeZoneInfo &zi);
@@ -67,18 +68,18 @@ namespace core
 
         enum class TimeUnit
         {
-            ZERO_TIME,   // No/Unspecified time
-            NANOSECOND,  // 1e-9 second
-            MICROSECOND, // 1e-6 second
-            MILLISECOND, // 1e-3 second
-            SECOND,      // SI time unit
-            MINUTE,      // 60 seconds
-            HOUR,        // 60 minutes
-            DAY,         // 24 hours, approx 1 Earth rotation towards Sun
-            WEEK,        // 7 days
-            MONTH,       // 28-31 days (variable)
-            YEAR,        // 12 months (variable)
-            ETERNITY     // Inifinite time
+            ZERO_TIME,    // No/Unspecified time
+            NANOSECOND,   // 1e-9 second
+            MICROSECOND,  // 1e-6 second
+            MILLISECOND,  // 1e-3 second
+            SECOND,       // SI time unit
+            MINUTE,       // 60 seconds
+            HOUR,         // 60 minutes
+            DAY,          // 24 hours, approx 1 Earth rotation towards Sun
+            WEEK,         // 7 days
+            MONTH,        // 28-31 days (variable)
+            YEAR,         // 12 months (variable)
+            ETERNITY      // Inifinite time
         };
 
         std::ostream &operator<<(std::ostream &stream, const TimeUnit &unit);
@@ -283,13 +284,13 @@ namespace core
         /// Convert a duration to milliseconds (truncated, not rounded)
         std::int64_t to_milliseconds(const Duration &d);
 
-        template<class Scale>
+        template <class Scale>
         std::int64_t to_scalar(const TimePoint &tp)
         {
             return to_scalar<Scale>(tp.time_since_epoch());
         }
 
-        template<class Scale>
+        template <class Scale>
         std::int64_t to_scalar(const Duration &dur)
         {
             return std::chrono::duration_cast<Scale>(dur).count();
@@ -340,27 +341,74 @@ namespace core
         //--------------------------------------------------------------------------
         // Timepoint conversions
 
-        /// Convert a scalar timestampto a TimePoint.
+        /// Convert a scalar epoch-based timestamp a TimePoint.
         ///
-        /// @param[in] timestamp
+        /// @param[in] scalar
         ///     Time units since UNIX Epoch
         ///
-        /// @param[in] multiplier
-        ///     Number of seconds per time unit, e.g. 1.0 for seconds or 0.001
-        ///     for milliseconds.
+        /// @param[in] multiplier_decimal_expoent
+        ///     Decimal exponent yielding the number of seconds per time unit,
+        ///     e.g. -9 for nanoseconds, -3 for millseconds or 0 for seconds.
         ///
-        /// If `multiplier` is zero, the timestamp is interpreted as seconds if
-        /// it is less than 1e11 (100,000,000,000), corresponding to November 16
-        /// in the year 5138, or as as milliseconds if it is equal or higher to
-        /// this value, giving a lower bound of March 3, 1973.
-        TimePoint scalar_to_timepoint(double scalar,
-                                      double multiplier = 0.0);
+        /// If `multiplier_decimal_exponent` is absent, the scalar value is
+        /// repeatedly divided by 1000 until it falls below 1e11
+        /// (100,000,000,000), corresponding to November 16 in the year 5138
+        /// with a lower bound of March 3, 1973.
+
+        TimePoint double_to_timepoint(
+            double value,
+            const std::optional<int> &multiplier_decimal_exponent = {});
+
+        /// Convert a scalar epoch-based timestamp of specific precision
+        /// precision to a TimePoint.
+        ///
+        /// @param[in] scalar
+        ///     Time units since UNIX Epoch
+        ///
+        /// @param[in] multiplier_decimal_exponent
+        ///     Decimal exponent yielding the number of seconds per time unit,
+        ///     e.g., -3 for milliseconds or 0 for seconds.
+
+        TimePoint int_to_timepoint(
+            std::int64_t scalar,
+            int multiplier_decimal_exponent);
+
+        /// Convert a scalar epoch-based timestamp of arbitrary/unknown
+        /// precision to a TimePoint.
+        ///
+        /// @param[in] scalar
+        ///     Time units since UNIX Epoch
+        ///
+        /// The scalar value is first converted to nanoseconds since epoch by
+        /// repeatedly multiplied 1000 until it exceeds EPOCH_NANOS_LOWER_LIMIT
+        /// (1e17), then converted to a `TimePoint`. The resulting timepoint is
+        /// bounded between March 3, 1973, and November 16, 5138.
+
+        TimePoint int_to_timepoint(
+            std::int64_t scalar);
+
+        /// Convert a scalar epoch-based timestamp with optional precision
+        /// to a TimePoint.
+        ///
+        /// @param[in] scalar
+        ///     Time units since UNIX Epoch
+        ///
+        /// @param[in] multiplier_decimal_exponent
+        ///     Decimal exponent yielding the number of seconds per time unit,
+        ///     e.g., -3 for milliseconds or 0 for seconds.
+        ///
+        /// If `multiplier_decimal_exponent` contains no value, the precision
+        /// is dynamically determined as described above.
+
+        TimePoint int_to_timepoint(
+            std::int64_t scalar,
+            const std::optional<int> &multiplier_decimal_exponent);
 
         /// Convert from milliseconds (Java style timestamp) to TimePoint
         TimePoint ms_to_timepoint(std::int64_t milliseconds);
 
         /// Convert from seconds and nanoseconds to TimePoint, or fallback if the time is zero.
-        TimePoint to_timepoint(time_t seconds, long nanoseconds);
+        TimePoint to_timepoint(time_t seconds, long nanoseconds = 0);
 
         /// Convert from "struct timespec" to TimePoint, or fallback if the time is zero.
         TimePoint to_timepoint(const timespec &ts);
@@ -399,7 +447,8 @@ namespace core
         TimePoint to_timepoint(
             const std::string_view &s,
             bool assume_local = true,
-            const TimePoint &fallback = {});
+            const TimePoint &fallback = {},
+            const std::optional<int> multiplier_decimal_exponent = {});
 
         TimePoint to_timepoint(
             const std::string_view &s,
@@ -416,7 +465,8 @@ namespace core
 
         std::optional<TimePoint> try_to_timepoint(
             const std::string_view &input,
-            bool assume_local = true);
+            bool assume_local = true,
+            const std::optional<int> multiplier_decimal_exponent = {});
 
         // @brief
         //    Convert a string with custom formatting to a timepiont.
@@ -513,7 +563,7 @@ namespace core
         /// Helper function to calculate day number within a year
         std::uint32_t day_of_year(uint year, uint month, uint day, bool gregorian = true);
 
-    } // namespace dt
+    }  // namespace dt
 
     /// Steady Time
     namespace steady
@@ -531,7 +581,7 @@ namespace core
 
         // Convert from System Clock to Steady Clock
         TimePoint to_timepoint(dt::TimePoint tp);
-    } // namespace steady
+    }  // namespace steady
 
     template <class TargetClock, class SourceClock>
     typename TargetClock::time_point timepoint_cast(const typename SourceClock::time_point &source_tp)
@@ -544,14 +594,14 @@ namespace core
                std::chrono::duration_cast<typename TargetClock::duration>(relative_to_now);
     }
 
-} // namespace core
+}  // namespace core
 
 namespace std::chrono
 {
     std::ostream &operator<<(std::ostream &stream, const system_clock::time_point &tp);
     std::ostream &operator<<(std::ostream &stream, const system_clock::duration &dur);
     std::ostream &operator<<(std::ostream &stream, const steady_clock::time_point &stp);
-} // namespace std::chrono
+}  // namespace std::chrono
 
 // Compare `std::tm` structs.  This is actually an alias for `struct tm`,
 // so we need to define it in the global namespace.

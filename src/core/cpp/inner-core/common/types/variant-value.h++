@@ -127,7 +127,7 @@ namespace core::types
         std::string as_string() const noexcept;
         ByteVector as_bytevector(const ByteVector &fallback = {}) const noexcept;
         dt::TimePoint as_timepoint(const dt::TimePoint &fallback = {}) const noexcept;
-        dt::TimePoint as_timepoint(double multiplier,
+        dt::TimePoint as_timepoint(std::optional<int> multiplier_decimal_exponent,
                                    bool assume_local = true,
                                    const dt::TimePoint &fallback = {}) const noexcept;
         dt::Duration as_duration(const dt::Duration &fallback = {}) const noexcept;
@@ -143,13 +143,44 @@ namespace core::types
         KeyValueMap as_kvmap() const noexcept;
         KeyValueMap as_kvmap(const KeyValueMap &fallback) const noexcept;
 
+        /// @return
+        ///    Constant reference to the contained string if applicable,
+        ///    otherwise to a static empty string.
         const std::string &get_string() const;
+
+        /// @return
+        ///    Constant reference to the contained byte vector if applicable,
+        ///    otherwise to a static empty byte vector.
+        const ByteVector &get_bytevector() const;
+
+        /// @return
+        ///    Constant reference to the contained ValueList if applicable,
+        ///    otherwise to a static empty ValueList.
         const ValueList &get_valuelist() const;
+
+        /// @return
+        ///    Constant reference to the contained TaggedValueList if applicable,
+        ///    otherwise to a static empty TaggedValueList.
         const TaggedValueList &get_tvlist() const;
+
+        /// @return
+        ///    Constant reference to the contained KeyValueMap if applicable,
+        ///    otherwise to a static empty TaggedValueList.
         const KeyValueMap &get_kvmap() const;
 
+        /// @return
+        ///    `shared_ptr` reference to the contained ValueList if applicable,
+        ///    otherwise an empty `shared_ptr`.
         ValueListPtr get_valuelist_ptr() const noexcept;
+
+        /// @return
+        ///    `shared_ptr` reference to the contained TaggedValueList if
+        ///    applicable, otherwise an empty `shared_ptr`.
         TaggedValueListPtr get_tvlist_ptr() const noexcept;
+
+        /// @return
+        ///    `shared_ptr` reference to the contained KeyValueMap if
+        ///    applicable, otherwise an empty `shared_ptr`.
         KeyValueMapPtr get_kvmap_ptr() const noexcept;
 
         const Value &front(

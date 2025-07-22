@@ -539,8 +539,8 @@ namespace core
                              const Duration fallback)
         {
             return format
-                       ? try_to_duration(input, format.value()).value_or(dt::Duration::zero())
-                       : try_to_duration(input).value_or(dt::Duration::zero());
+                     ? try_to_duration(input, format.value()).value_or(dt::Duration::zero())
+                     : try_to_duration(input).value_or(dt::Duration::zero());
         }
 
         std::optional<Duration> try_to_duration(const std::string_view &input)
@@ -587,22 +587,57 @@ namespace core
         //--------------------------------------------------------------------------
         // Timepoint conversions
 
-        TimePoint scalar_to_timepoint(double scalar,
-                                      double multiplier)
+        TimePoint double_to_timepoint(
+            double scalar,
+            const std::optional<int> &multiplier_decimal_exponent)
         {
-            if (multiplier)
+            if (multiplier_decimal_exponent)
             {
-                scalar *= multiplier;
+                scalar *= pow(10.0, 9 + *multiplier_decimal_exponent);
             }
             else
             {
-                while (scalar >= EPOCH_SECONDS_UPPER_LIMIT)
+                while (scalar < EPOCH_NANOS_LOWER_LIMIT)
                 {
-                    scalar /= 1000;
+                    scalar *= 1000;
                 }
             }
+            return TimePoint(std::chrono::nanoseconds(static_cast<std::int64_t>(scalar)));
+        }
 
-            return TimePoint(to_duration(scalar));
+        TimePoint int_to_timepoint(
+            std::int64_t scalar,
+            int multiplier_decimal_exponent)
+        {
+            while (--multiplier_decimal_exponent >= -9)
+            {
+                scalar *= 10;
+            }
+            return TimePoint(std::chrono::nanoseconds(scalar));
+        }
+
+        TimePoint int_to_timepoint(
+            std::int64_t scalar)
+        {
+            while (scalar < EPOCH_NANOS_LOWER_LIMIT)
+            {
+                scalar *= 1000;
+            }
+            return TimePoint(std::chrono::nanoseconds(scalar));
+        }
+
+        TimePoint int_to_timepoint(
+            std::int64_t scalar,
+            const std::optional<int> &multiplier_decimal_exponent)
+        {
+            if (multiplier_decimal_exponent)
+            {
+                return int_to_timepoint(scalar, *multiplier_decimal_exponent);
+            }
+            else
+            {
+                return int_to_timepoint(scalar);
+            }
         }
 
         TimePoint ms_to_timepoint(std::int64_t milliseconds)
@@ -644,8 +679,11 @@ namespace core
                 .tm_isdst = -1,
             };
             bool local = !tz_offset.has_value();
-            double seconds = dt::mktime(tm_struct, local) + fraction;
-            TimePoint tp = scalar_to_timepoint(seconds, 1.0);
+
+            std::time_t seconds = dt::mktime(tm_struct, local);
+            std::int64_t nanos = (seconds + fraction) * 1e9;
+            TimePoint tp{std::chrono::nanoseconds(nanos)};
+
             if (!local)
             {
                 tp += tz_offset.value();
@@ -656,9 +694,14 @@ namespace core
         TimePoint to_timepoint(
             const std::string_view &input,
             bool assume_local,
-            const TimePoint &fallback)
+            const TimePoint &fallback,
+            const std::optional<int> multiplier_decimal_exponent)
         {
-            return try_to_timepoint(input, assume_local).value_or(fallback);
+            return try_to_timepoint(
+                       input,
+                       assume_local,
+                       multiplier_decimal_exponent)
+                .value_or(fallback);
         }
 
         TimePoint to_timepoint(
@@ -672,7 +715,8 @@ namespace core
 
         std::optional<TimePoint> try_to_timepoint(
             const std::string_view &input,
-            bool assume_local)
+            bool assume_local,
+            const std::optional<int> multiplier_decimal_exponent)
         {
             static const std::regex rx(
                 "(\\d{4})-(\\d{2})-(\\d{2}).(\\d{2}):(\\d{2}):(\\d{2})(\\.\\d+)?(Z)?");
@@ -700,9 +744,13 @@ namespace core
                     opt_zone_offset);                              // tz_offset
             }
 
+            else if (auto opt_scalar = str::try_convert_to<std::uint64_t>(input))
+            {
+                return int_to_timepoint(opt_scalar.value(), multiplier_decimal_exponent);
+            }
             else if (auto opt_scalar = str::try_convert_to<double>(input))
             {
-                return scalar_to_timepoint(opt_scalar.value());
+                return double_to_timepoint(opt_scalar.value(), multiplier_decimal_exponent);
             }
             else
             {
