@@ -126,6 +126,11 @@ namespace core::status
         }
     }
 
+    void Error::to_literal_stream(std::ostream &stream) const
+    {
+        return Super::to_stream(stream);
+    }
+
     std::vector<std::string> Error::error_fields() noexcept
     {
         std::vector<std::string> fields = Event::event_fields();
