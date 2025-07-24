@@ -97,7 +97,7 @@ namespace core::types
     {
         for (const std::string &candidate : candidates)
         {
-            if (auto *value = this->get_ptr(candidate))
+            if (const auto *value = this->get_ptr(candidate))
             {
                 return *value;
             }
