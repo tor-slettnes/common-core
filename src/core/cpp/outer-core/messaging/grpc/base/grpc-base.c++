@@ -78,8 +78,8 @@ namespace core::grpc
                             uint *port) const
     {
         static const std::regex rx(
-            "(\\[[\\w\\.:]*\\]|[\\w\\.]*)"  // host, either '[x[:x...]]' or 'n[.n]...'
-            "(?::(\\d+))?$"                 // port
+            "(\\[[\\w\\.:]*\\]|[\\w\\-\\.]*)"  // host, either '[x[:x...]]' or 'n[.n]...'
+            "(?::(\\d+))?$"                    // port
         );
 
         std::smatch match;
