@@ -165,9 +165,9 @@ namespace core::types
     {
         for (const Tag &candidate : candidates)
         {
-            if (auto value = this->try_get(candidate, ignoreCase))
+            if (const auto &value = this->try_get(candidate, ignoreCase))
             {
-                return *value;
+                return value.value();
             }
         }
         return fallback;
