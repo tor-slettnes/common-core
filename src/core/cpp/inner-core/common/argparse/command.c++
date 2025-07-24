@@ -221,18 +221,21 @@ namespace core::argparse
 
     bool CommandOptions::handle_command(const Handler &handler)
     {
+        bool success = false;
+        this->initialize();
+
         try
         {
-            this->initialize();
             handler();
-            this->deinitialize();
-            return true;
+            success = true;
         }
         catch (...)
         {
             std::cerr << std::current_exception() << std::endl;
-            return false;
         }
+
+        this->deinitialize();
+        return success;
     }
 
     void CommandOptions::monitor()

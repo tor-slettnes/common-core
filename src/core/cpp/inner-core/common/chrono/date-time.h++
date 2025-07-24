@@ -30,12 +30,9 @@ namespace core
         constexpr auto DEFAULT_DURATION_FORMAT = "%H:%M:%S";
         constexpr auto JS_FORMAT = "%FT%T";
 
-        // Upper limit for interpreting scalar timestamps as seconds since
-        // epoch.  Values up to this limit are interpreted as seconds (ending on
-        // November 16, 5138).  Higher values are repeatedly divided by 1000
-        // (from milliseconds, microseconds, nanonseconds...) until they fall
-        // below this threshold.
-        constexpr double EPOCH_SECONDS_UPPER_LIMIT = 1e11;
+        // Lower limit for interpreting scalar timestamps as nanoseconds since
+        // epoch.  Scalar inputs with unspecified precision are repeatedly
+        // multiplied by 1000 until they exceed this limit.
         constexpr long long EPOCH_NANOS_LOWER_LIMIT = 1e17;
 
         // typedef std::chrono::system_clock Clock;
