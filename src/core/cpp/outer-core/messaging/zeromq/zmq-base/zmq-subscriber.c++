@@ -206,11 +206,11 @@ namespace core::zmq
         }
         catch (...)
         {
-            logf_warning("%s handler %r failed to handle ZMQ message {data=%s}: %s",
-                         *this,
-                         handler->id(),
-                         data,
-                         std::current_exception());
+            logf_error("%s handler %r failed to handle ZMQ message {data=%s}: %s",
+                       *this,
+                       handler->id(),
+                       data,
+                       std::current_exception());
         }
     }
 

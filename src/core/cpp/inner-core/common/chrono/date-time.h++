@@ -253,12 +253,12 @@ namespace core
         /// is shown modulo 365.
 
         std::string to_string(const Duration &duration,
-                              const std::optional<std::string> &secondsformat = "%.3f sec",
-                              const std::optional<std::string> &minutesformat = "%z min, ",
-                              const std::optional<std::string> &hoursformat = "%z hours, ",
-                              const std::optional<std::string> &daysformat = "%z days, ",
+                              const std::optional<std::string> &secondsformat = "%.3gs",
+                              const std::optional<std::string> &minutesformat = "%zm",
+                              const std::optional<std::string> &hoursformat = "%zh",
+                              const std::optional<std::string> &daysformat = "%zd",
                               const std::optional<std::string> &monthsformat = {},
-                              const std::optional<std::string> &yearsformat = "%z years, ",
+                              const std::optional<std::string> &yearsformat = "%zy",
                               uint max_divisions = 6,
                               const std::string &delimiter = " ");
 
