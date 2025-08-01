@@ -42,7 +42,7 @@ namespace core::types
             return to_string(key).value_or(fallback);
         }
 
-        inline std::optional<KeyType> from_string(
+        inline std::optional<KeyType> try_from_string(
             const std::string &symbol,
             bool allow_partial = false) const noexcept
         {
@@ -64,7 +64,7 @@ namespace core::types
             const KeyType &fallback,
             bool allow_partial = false) const noexcept
         {
-            return from_string(symbol, allow_partial).value_or(fallback);
+            return this->try_from_string(symbol, allow_partial).value_or(fallback);
         }
 
         inline std::ostream &to_stream(
@@ -110,7 +110,7 @@ namespace core::types
             stream >> symbol;
             str::tolower(&symbol);
             if (const std::optional<KeyType> &opt_key =
-                    this->from_string(symbol, allow_partial))
+                    this->try_from_string(symbol, allow_partial))
             {
                 *key = *opt_key;
             }
@@ -136,7 +136,16 @@ namespace core::types
         {
             std::stringstream ss;
             ss << value;
-            return this->from_string(ss.str(), allow_partial);
+            return this->try_from_string(ss.str(), allow_partial);
+        }
+
+        template <class T>
+        inline KeyType convert_from(
+            const T &value,
+            const KeyType &fallback = {},
+            bool allow_partial = false) const
+        {
+            return this->try_convert_from(value, allow_partial).value_or(fallback);
         }
 
         inline void join_keys(

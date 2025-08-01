@@ -42,20 +42,22 @@ namespace core::http
         {
             try
             {
-                this->get(location,         // location
-                          &content_type,    // content_type
-                          nullptr,          //  header_stream
-                          &response_stream, // content_stream
-                          fail_on_error,    // fail_on_error,
-                          response_code);   // response_code
+                this->get(location,          // location
+                          &content_type,     // content_type
+                          nullptr,           //  header_stream
+                          &response_stream,  // content_stream
+                          fail_on_error,     // fail_on_error,
+                          response_code);    // response_code
                 done = true;
             }
             catch (const exception::FailedPrecondition &e)
             {
-                logf_info("HTTP request failed %d times: %s: %s",
+                logf_info("HTTP request failed %d times, %d attempts remaining: %s: %s",
                           attempt,
+                          max_attempts - attempt,
                           this->url(location),
                           e);
+
                 if (attempt == max_attempts)
                 {
                     throw;
@@ -105,13 +107,13 @@ namespace core::http
         json::fast_writer.write_stream(jsondata, data);
         return json::fast_reader.read_stream(
             this->put(
-                path,               // location
-                this->content_type, // content_type
-                jsondata,           // upload_stream
-                jsondata.tellp(),   // upload_size
-                this->content_type, // expected_content_type
-                fail_on_error,      // fail_on_error
-                response_code));    // response_code
+                path,                // location
+                this->content_type,  // content_type
+                jsondata,            // upload_stream
+                jsondata.tellp(),    // upload_size
+                this->content_type,  // expected_content_type
+                fail_on_error,       // fail_on_error
+                response_code));     // response_code
     }
 
     types::Value RESTClient::post_json(
@@ -126,12 +128,12 @@ namespace core::http
 
         return json::fast_reader.read_stream(
             this->post(
-                path,               // location
-                this->content_type, // content_type
-                request.str(),      // data
-                this->content_type, // expected_content_type
-                fail_on_error,      // fail_on_error
-                response_code));    // response_code
+                path,                // location
+                this->content_type,  // content_type
+                request.str(),       // data
+                this->content_type,  // expected_content_type
+                fail_on_error,       // fail_on_error
+                response_code));     // response_code
     }
 
     types::Value RESTClient::del_json(
@@ -145,4 +147,4 @@ namespace core::http
             this->del(location, this->content_type, fail_on_error, response_code));
     }
 
-} // namespace core::http
+}  // namespace core::http

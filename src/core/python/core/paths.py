@@ -124,7 +124,7 @@ def default_settings_path(
         searchpath.append(SETTINGS_DIR)
 
         ### Embedded `settings` folder inside distribution archive (wheel or executable)
-        searchpath.append(python_root().joinpath('settings'))
+        searchpath.append('settings')
 
     return normalized_search_path(searchpath)
 
@@ -177,7 +177,7 @@ def locate_dominating_path(name: FilePath,
                            ) -> tuple[FilePath, FilePath]:
 
 
-    base = start or program_path()
+    base = start or python_root()
     previous = None
 
     while not base.joinpath(name).exists():

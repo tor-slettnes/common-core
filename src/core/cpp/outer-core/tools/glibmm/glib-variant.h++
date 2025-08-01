@@ -125,7 +125,7 @@ namespace core::glib
         std::string s;
         if (extract_value(map, key, &s))
         {
-            if (const std::optional<T>& opt_value = lookup_map.from_string(s))
+            if (const std::optional<T>& opt_value = lookup_map.try_from_string(s))
             {
                 *value = *opt_value;
                 return true;

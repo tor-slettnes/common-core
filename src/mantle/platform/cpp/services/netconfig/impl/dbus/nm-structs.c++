@@ -203,7 +203,7 @@ namespace netconfig::dbus
             {
                 for (const std::string& proto : protos)
                 {
-                    if (auto mask = auth_proto_map.from_string(proto))
+                    if (auto mask = auth_proto_map.try_from_string(proto))
                     {
                         wireless->auth_protos |= mask.value();
                     }
