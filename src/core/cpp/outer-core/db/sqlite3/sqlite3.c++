@@ -68,6 +68,90 @@ namespace core::db
         }
     }
 
+    void SQLite3::create_table(
+        const std::string &table_name,
+        const std::vector<ColumnSpec> &columns)
+    {
+        std::stringstream sql;
+        std::string delimiter;
+
+        sql << "CREATE TABLE IF NOT EXISTS "
+            << std::quoted(table_name)
+            << " (";
+
+        for (const ColumnSpec &spec : columns)
+        {
+            sql << delimiter
+                << std::quoted(spec.name);
+
+            if (auto type_name = This::column_type_names.to_string(spec.type))
+            {
+                sql << " " << *type_name;
+            }
+
+            delimiter = ", ";
+        }
+
+        sql << ")";
+        this->execute(sql.str());
+    }
+
+    std::vector<SQLite3::ColumnSpec> SQLite3::table_columns(
+        const std::string &table_name) const
+    {
+        std::vector<std::string> column_names = this->table_column_names(table_name);
+        std::vector<ColumnSpec> columns;
+        columns.reserve(column_names.size());
+
+        for (const std::string &column_name : column_names)
+        {
+            const char *type = nullptr;
+            this->check_status(
+                sqlite3_table_column_metadata(
+                    this->connection(),       // db
+                    this->db_file().c_str(),  // zDbName
+                    table_name.c_str(),       // zTableName
+                    column_name.c_str(),      // zColumnName
+                    &type,                    // pzDataType
+                    nullptr,                  // pzCollSeq
+                    nullptr,                  // pNotNull
+                    nullptr,                  // pPrimaryKey
+                    nullptr));                // pAutoInc
+            columns.push_back({
+                .name = column_name,
+                .type = This::column_type_names.from_string(type, core::types::ValueType::NONE),
+            });
+        }
+        return columns;
+    }
+
+    std::vector<std::string> SQLite3::table_column_names(
+        const std::string &table_name) const
+    {
+        std::vector<std::string> names;
+        sqlite3_stmt *statement = this->select_all_from(table_name);
+        try
+        {
+            names = this->column_names(statement);
+        }
+        catch (...)
+        {
+            sqlite3_finalize(statement);
+            throw;
+        }
+        this->finalize(statement);
+        return names;
+    }
+
+    std::size_t SQLite3::table_column_count(
+        const std::string &table_name) const
+    {
+        sqlite3_stmt *statement = this->select_all_from(table_name);
+        std::size_t count = sqlite3_column_count(statement);
+        this->finalize(statement);
+        return count;
+    }
+
     void SQLite3::execute(
         const std::string &sql,
         const QueryCallbackFunction &callback)
@@ -89,16 +173,7 @@ namespace core::db
         const QueryCallbackFunction &callback)
     {
         std::scoped_lock lck(this->db_lock_);
-        sqlite3_stmt *statement = nullptr;
-        this->check_status(
-            sqlite3_prepare_v2(
-                this->connection(), // db
-                sql.c_str(),        // zSql
-                sql.size() + 1,     // nBytes
-                &statement,         // ppStmt
-                nullptr),           // pzTail
-            "sqlite3_prepare",
-            {{"sql", sql}});
+        sqlite3_stmt *statement = this->statement(sql);
 
         try
         {
@@ -119,11 +194,10 @@ namespace core::db
             sqlite3_finalize(statement);
             throw;
         }
-
-        this->check_status(sqlite3_finalize(statement), "sqlite3_finalize");
+        this->finalize(statement);
     }
- 
-   std::shared_ptr<SQLite3::QueryResponseQueue> SQLite3::execute_async_query(
+
+    std::shared_ptr<SQLite3::QueryResponseQueue> SQLite3::execute_async_query(
         const std::string &sql,
         const RowData &parameters,
         std::size_t queue_size)
@@ -135,13 +209,11 @@ namespace core::db
             QueryResponseQueue::OverflowDisposition::BLOCK);
 
         std::thread executor_thread(
-            [=]
-            {
+            [=] {
                 this->execute(
                     sql,
                     parameters,
-                    [=](core::types::TaggedValueList &&row) -> bool
-                    {
+                    [=](core::types::TaggedValueList &&row) -> bool {
                         return queue->put(row);
                     });
                 queue->close();
@@ -151,6 +223,27 @@ namespace core::db
         return queue;
     }
 
+    void SQLite3::insert_multi(
+        const std::string &table_name,
+        const MultiRowData &parameters,
+        const QueryCallbackFunction &callback)
+    {
+        std::stringstream sql;
+        sql << "INSERT INTO "
+            << std::quoted(table_name)
+            << " VALUES "
+            << this->get_placeholders(table_name);
+
+        this->execute_multi(sql.str(), parameters, callback);
+    }
+
+    std::string SQLite3::get_placeholders(
+        const std::string &table_name) const
+    {
+        std::vector<std::string> placeholders(this->table_column_count(table_name), "?");
+        return "(" + core::str::join(placeholders, ", ") + ")";
+    }
+
     ::sqlite3 *SQLite3::connection() const
     {
         if (!this->is_open())
@@ -158,6 +251,35 @@ namespace core::db
             throw core::exception::FailedPrecondition("No connection to SQLite3 database");
         }
         return this->connection_;
+    }
+
+    ::sqlite3_stmt *SQLite3::statement(const std::string &sql) const
+    {
+        sqlite3_stmt *result = nullptr;
+        this->check_status(
+            sqlite3_prepare_v2(
+                this->connection(),  // db
+                sql.c_str(),         // zSql
+                sql.size() + 1,      // nBytes
+                &result,             // ppStmt
+                nullptr),            // pzTail
+            "sqlite3_prepare",
+            {{"sql", sql}});
+
+        return result;
+    }
+
+    ::sqlite3_stmt *SQLite3::select_all_from(const std::string &table_name) const
+    {
+        std::stringstream sql;
+        sql << "SELECT * FROM "
+            << std::quoted(table_name);
+        return this->statement(sql.str());
+    }
+
+    void SQLite3::finalize(::sqlite3_stmt *statement) const
+    {
+        this->check_status(sqlite3_finalize(statement), "sqlite3_finalize");
     }
 
     void SQLite3::bind_input_parameters(::sqlite3_stmt *statement,
@@ -386,12 +508,31 @@ namespace core::db
 
             throw core::exception::ServiceError(
                 sqlite3_errstr(code) ? sqlite3_errstr(code) : "Unknown SQLite3 failure",
-                "SQLite3",                                    // service
-                static_cast<core::status::Error::Code>(code), // code
-                "",                                           // id
-                core::status::Level::ERROR,                  // level
-                core::dt::Clock::now(),                       // timepoint
-                attributes);                                  // attributes
+                "SQLite3",                                     // service
+                static_cast<core::status::Error::Code>(code),  // code
+                "",                                            // id
+                core::status::Level::ERROR,                    // level
+                core::dt::Clock::now(),                        // timepoint
+                attributes);                                   // attributes
         }
     }
-} // namespace core::db
+
+    // core::types::ValueMap<int, core::types::ValueType> SQLite3::column_type_mapping = {
+    //     {SQLITE_NULL, core::types::ValueType::NONE},
+    //     {SQLITE_INTEGER, core::types::ValueType::SINT},
+    //     {SQLITE_FLOAT, core::types::ValueType::REAL},
+    //     {SQLITE_TEXT, core::types::ValueType::STRING},
+    //     {SQLITE_BLOB, core::types::ValueType::BYTEVECTOR},
+    // };
+
+    core::types::SymbolMap<core::types::ValueType> SQLite3::column_type_names = {
+        {core::types::ValueType::NONE, "NULL"},
+        {core::types::ValueType::BOOL, "BOOLEAN"},
+        {core::types::ValueType::SINT, "INTEGER"},
+        {core::types::ValueType::REAL, "REAL"},
+        {core::types::ValueType::STRING, "TEXT"},
+        {core::types::ValueType::BYTEVECTOR, "BLOB"},
+        {core::types::ValueType::TIMEPOINT, "DATETIME"},
+    };
+
+}  // namespace core::db

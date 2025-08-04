@@ -16,10 +16,19 @@ namespace core::db
 {
     class SQLite3
     {
+        using This = SQLite3;
+
     public:
-        using ColumnNames = std::vector<std::string>;
+        using ColumnName = std::string;
+        using ColumnNames = std::vector<ColumnName>;
         using RowData = core::types::ValueList;
         using MultiRowData = std::vector<RowData>;
+
+        struct ColumnSpec
+        {
+            std::string name;
+            core::types::ValueType type = core::types::ValueType::NONE;
+        };
 
     protected:
         using QueryCallbackFunction = std::function<bool(core::types::TaggedValueList &&)>;
@@ -33,6 +42,19 @@ namespace core::db
         fs::path db_file() const;
         void open(const fs::path &db_file);
         void close(bool check_status = false);
+
+        void create_table(
+            const std::string &table_name,
+            const std::vector<ColumnSpec> &columns);
+
+        std::vector<ColumnSpec> table_columns(
+            const std::string &table_name) const;
+
+        std::vector<std::string> table_column_names(
+            const std::string &table_name) const;
+
+        std::size_t table_column_count(
+            const std::string &table_name) const;
 
         void execute(
             const std::string &sql,
@@ -54,8 +76,19 @@ namespace core::db
             const RowData &parameters = {},
             std::size_t queue_size = 4096);
 
+        void insert_multi(
+            const std::string &table_name,
+            const MultiRowData &parameters,
+            const QueryCallbackFunction &callback = {});
+
+        std::string get_placeholders(
+            const std::string &table_name) const;
+
     protected:
         ::sqlite3 *connection() const;
+        ::sqlite3_stmt *statement(const std::string &sql) const;
+        ::sqlite3_stmt *select_all_from(const std::string &table_name) const;
+        void finalize(::sqlite3_stmt *statement) const;
 
         void bind_input_parameters(
             ::sqlite3_stmt *statement,
@@ -82,6 +115,10 @@ namespace core::db
             int code,
             std::string &&action = {},
             core::types::KeyValueMap &&attributes = {}) const;
+
+    public:
+        // static core::types::ValueMap<std::string, core::types::ValueType> SQLite3::column_type_mapping;
+        static types::SymbolMap<core::types::ValueType> column_type_names;
 
     private:
         ::sqlite3 *connection_;

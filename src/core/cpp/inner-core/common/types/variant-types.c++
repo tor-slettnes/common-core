@@ -22,16 +22,23 @@ namespace core::types
     //==========================================================================
     // types::Value class methods
 
-    const SymbolMap<ValueType, std::multimap<ValueType, std::string>> TypeNames = {
+    const TypeNameMap TypeNames = {
         {ValueType::NONE, "null"},
+        {ValueType::NONE, "none"},
         {ValueType::BOOL, "bool"},
+        {ValueType::BOOL, "boolean"},
         {ValueType::CHAR, "char"},
         {ValueType::UINT, "uint"},
+        {ValueType::UINT, "unsigned integer"},
         {ValueType::SINT, "int"},
+        {ValueType::SINT, "integer"},
         {ValueType::REAL, "real"},
         {ValueType::COMPLEX, "complex"},
         {ValueType::STRING, "string"},
+        {ValueType::STRING, "text"},
         {ValueType::BYTEVECTOR, "ByteVector"},
+        {ValueType::BYTEVECTOR, "binary"},
+        {ValueType::BYTEVECTOR, "blob"},
         {ValueType::TIMEPOINT, "TimePoint"},
         {ValueType::DURATION, "Duration"},
         {ValueType::VALUELIST, "ValueList"},

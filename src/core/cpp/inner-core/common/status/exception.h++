@@ -11,6 +11,7 @@
 #include "types/value.h++"
 #include <iostream>
 #include <stdexcept>
+#include <future>
 
 /// Throw exception with formatted message
 ///

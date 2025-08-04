@@ -92,7 +92,8 @@ namespace core::types
     extern const std::string REAL_PART;
     extern const std::string IMAG_PART;
 
-    extern const SymbolMap<ValueType, std::multimap<ValueType, std::string>> TypeNames;
+    using TypeNameMap = SymbolMap<ValueType, std::multimap<ValueType, std::string>>;
+    extern const TypeNameMap TypeNames;
 
     std::ostream &operator<<(std::ostream &stream, ValueType type);
     std::istream &operator>>(std::istream &stream, ValueType &type);

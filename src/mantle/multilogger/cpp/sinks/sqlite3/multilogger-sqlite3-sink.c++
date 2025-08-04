@@ -130,36 +130,22 @@ namespace multilogger
 
     void SQLiteSink::create_table()
     {
-        std::stringstream sql;
-        std::string delimiter;
-
-        sql << "CREATE TABLE IF NOT EXISTS "
-            << std::quoted(this->table_name())
-            << " (";
-
-        for (const core::logging::ColumnSpec &spec : this->columns())
+        std::vector<core::db::SQLite3::ColumnSpec> db_columns;
+        db_columns.reserve(this->columns().size());
+        for (const auto &log_column : this->columns())
         {
-            sql << delimiter
-                << std::quoted(spec.column_name.value_or(spec.field_name));
-
-            if (auto type_name = core::logging::column_type_names.to_string(spec.column_type))
-            {
-                sql << " " << *type_name;
-            }
-
-            delimiter = ", ";
+            db_columns.push_back({
+                .name = log_column.column_name.value_or(log_column.field_name),
+                .type = log_column.column_type,
+            });
         }
 
-        sql << ")";
-        this->db.execute(sql.str());
+        this->db.create_table(this->table_name(), db_columns);
     }
 
     void SQLiteSink::create_placeholders()
     {
-        std::vector<std::string> placeholders(this->columns().size(), "?");
-        this->placeholders = "("
-                           + core::str::join(placeholders, ", ")
-                           + ")";
+        this->placeholders = this->db.get_placeholders(this->table_name());
     }
 
     bool SQLiteSink::handle_item(const core::types::Loggable::ptr &item)
@@ -196,15 +182,9 @@ namespace multilogger
 
         if (this->pending_rows.size())
         {
-            std::stringstream cmd;
-            cmd << "INSERT INTO "
-                << std::quoted(this->table_name())
-                << " VALUES "
-                << this->placeholders;
-
             try
             {
-                this->db.execute_multi(cmd.str(), this->pending_rows);
+                this->db.insert_multi(this->table_name(), this->pending_rows);
             }
             catch (...)
             {
@@ -217,5 +197,4 @@ namespace multilogger
             this->pending_rows.clear();
         }
     }
-
 }  // namespace multilogger

@@ -32,8 +32,6 @@ namespace core::logging
         types::ValueType column_type = types::ValueType::NONE;
     };
 
-    extern types::SymbolMap<core::types::ValueType> column_type_names;
-
     std::ostream &operator<<(std::ostream &stream, const ColumnSpec &spec);
     types::TaggedValueList &operator<<(types::TaggedValueList &tvlist,
                                        const ColumnSpec &spec);

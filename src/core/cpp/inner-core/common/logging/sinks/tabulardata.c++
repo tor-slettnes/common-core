@@ -12,16 +12,6 @@
 
 namespace core::logging
 {
-    types::SymbolMap<core::types::ValueType> column_type_names = {
-        {core::types::ValueType::NONE, "NULL"},
-        {core::types::ValueType::BOOL, "BOOLEAN"},
-        {core::types::ValueType::SINT, "INTEGER"},
-        {core::types::ValueType::REAL, "REAL"},
-        {core::types::ValueType::STRING, "TEXT"},
-        {core::types::ValueType::BYTEVECTOR, "BLOB"},
-        {core::types::ValueType::TIMEPOINT, "DATETIME"},
-    };
-
     std::ostream &operator<<(std::ostream &stream, const ColumnSpec &spec)
     {
         if (spec.column_name && (spec.column_name.value() != spec.field_name))
@@ -38,7 +28,7 @@ namespace core::logging
     {
         tvlist.append("field_name", spec.field_name);
         tvlist.append_if_value("column_name", spec.column_name);
-        tvlist.append("column_type", column_type_names.to_string(spec.column_type));
+        tvlist.append("column_type", core::types::TypeNames.to_string(spec.column_type));
 
         return tvlist;
     }
@@ -130,8 +120,8 @@ namespace core::logging
             return ColumnSpec({
                 .field_name = colspec->get(0).as_string(),
                 .column_name = colspec->try_get_as<std::string>(1),
-                .column_type = column_type_names.from_string(
-                    colspec->get(2).to_string(),
+                .column_type = core::types::TypeNames.from_string(
+                    colspec->get(2).as_string(),
                     core::types::ValueType::STRING),
             });
         }

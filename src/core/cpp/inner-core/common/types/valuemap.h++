@@ -43,6 +43,18 @@ namespace core::types
             }
         }
 
+        V *get_ptr(const K &key) noexcept
+        {
+            try
+            {
+                return &this->at(key);
+            }
+            catch (const std::out_of_range &)
+            {
+                return nullptr;
+            }
+        }
+
         std::optional<V> get_opt(const K &key) const noexcept
         {
             try
