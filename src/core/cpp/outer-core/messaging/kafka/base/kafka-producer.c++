@@ -117,10 +117,13 @@ namespace core::kafka
     void Producer::produce(
         const std::string &topic,
         const types::Bytes &payload,
+        const std::optional<core::dt::TimePoint> &timepoint,
         const std::optional<std::string_view> &key,
         const HeaderMap &headers,
         const DeliveryReportCapture::CallbackData::ptr &cb_data)
     {
+        core::dt::TimePoint tp_ = timepoint.value_or(core::dt::Clock::now());
+
         std::optional<std::string_view> key_ = key;
         if (!key_)
         {
@@ -141,7 +144,7 @@ namespace core::kafka
             payload.size(),                                     // len
             key_ ? const_cast<char *>(key_->data()) : nullptr,  // key
             key_ ? key_->size() : 0,                            // key_len
-            dt::to_milliseconds(dt::Clock::now()),              // timestamp
+            dt::to_milliseconds(tp_),                           // timestamp
             headers_,                                           // headers
             this->dr_capture_.add_callback_data(cb_data));      // msg_opaque
 

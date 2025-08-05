@@ -19,6 +19,7 @@ namespace core::kafka
     void AvroProducer::produce(
         const std::string &topic,
         const avro::BaseValue &avro_wrapper,
+        const std::optional<core::dt::TimePoint> &timepoint,
         const std::optional<std::string_view> &key,
         const HeaderMap &headers,
         const DeliveryReportCapture::CallbackData::ptr &cb_data)
@@ -26,6 +27,7 @@ namespace core::kafka
         this->produce(
             topic,
             avro_wrapper.serialized(),
+            timepoint,
             key,
             headers,
             cb_data);

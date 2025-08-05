@@ -50,6 +50,7 @@ namespace core::kafka
         void produce(
             const std::string &topic,
             const types::Bytes &payload,
+            const std::optional<core::dt::TimePoint> &timepoint = {},
             const std::optional<std::string_view> &key = {},
             const HeaderMap &headers = {},
             const DeliveryReportCapture::CallbackData::ptr &cb_data = {});
