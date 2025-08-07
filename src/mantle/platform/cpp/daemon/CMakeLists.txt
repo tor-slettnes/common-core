@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Name of this executable. This also becomes the name of the project.
-set(TARGET platformserver)
+set(TARGET "platformserver")
 
 ### Libraries we depend on, either from this build or provided by the
 ### sysconfig. Only direct dependencies are needed; e.g., do not list "cc_core"
@@ -46,7 +46,7 @@ cc_add_executable("${TARGET}"
 )
 
 if(ENABLE_SERVICES)
-  cc_add_debian_service("platformserver"
+  cc_add_debian_service("${TARGET}"
     PROGRAM "sbin/${TARGET}"
     DESCRIPTION "Platform server: System configuration, Networking, File access, Upgrade"
     INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"

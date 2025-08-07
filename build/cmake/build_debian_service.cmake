@@ -126,7 +126,11 @@ function(cc_add_service_enable_hooks UNIT)
     "${arg_KEYWORDS_MISSING_VALUES}")
 
   set(SERVICE_UNIT "${UNIT}")
-  cmake_path(APPEND INSTALL_ROOT "${arg_INSTALL_DIRECTORY}" "${UNIT}"
+
+  cmake_path(APPEND INSTALL_ROOT "${arg_INSTALL_DIRECTORY}"
+    OUTPUT_VARIABLE SERVICE_UNIT_DIR)
+
+  cmake_path(APPEND SERVICE_UNIT_DIR "${UNIT}"
     OUTPUT_VARIABLE SERVICE_UNIT_PATH)
 
   cmake_path(GET UNIT STEM LAST_ONLY unitbase)

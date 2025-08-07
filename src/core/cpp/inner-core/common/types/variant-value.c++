@@ -1047,7 +1047,7 @@ namespace core::types
         }
     }
 
-    const Value &Value::get(
+    Value Value::get(
         const std::string &key,
         const Value &fallback,
         bool ignoreCase) const noexcept
@@ -1065,7 +1065,7 @@ namespace core::types
         }
     }
 
-    const Value &Value::get(const uint index, const Value &fallback) const noexcept
+    Value Value::get(const uint index, const Value &fallback) const noexcept
     {
         switch (this->type())
         {
@@ -1080,7 +1080,7 @@ namespace core::types
         }
     }
 
-    const Value &Value::get(const int index, const Value &fallback) const noexcept
+    Value Value::get(const int index, const Value &fallback) const noexcept
     {
         switch (this->type())
         {
@@ -1095,7 +1095,7 @@ namespace core::types
         }
     }
 
-    const Value &Value::get_any(
+    Value Value::get_any(
         const std::vector<std::string> &candidates,
         const Value &fallback,
         bool ignoreCase) const noexcept

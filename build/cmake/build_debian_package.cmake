@@ -413,7 +413,7 @@ function(cc_add_debian_control_script)
       COMPONENT "${arg_COMPONENT}"
       OUTPUT_VARIABLE PACKAGE_NAME)
 
-    cmake_path(APPEND DEBIAN_CONTROL_STAGING_DIR ${PACKAGE_NAME}
+    cmake_path(APPEND DEBIAN_CONTROL_STAGING_DIR ${PACKAGE_NAME} ${arg_PHASE}.d
       OUTPUT_VARIABLE staging_dir)
 
     if(arg_OUTPUT_FILE)
@@ -432,7 +432,7 @@ function(cc_add_debian_control_script)
 
     cmake_path(SET destination "share/${PACKAGE_NAME}/${arg_PHASE}.d")
 
-    install(PROGRAMS "${staging_dir}/${arg_OUTPUT_FILE}"
+    install(PROGRAMS "${staging_dir}/${script_name}"
       COMPONENT "${arg_COMPONENT}"
       DESTINATION "${destination}")
 

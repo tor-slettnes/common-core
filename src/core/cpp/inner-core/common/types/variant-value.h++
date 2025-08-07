@@ -189,24 +189,23 @@ namespace core::types
         const Value &back(
             const Value &fallback = {}) const noexcept;
 
-        const Value &get(
+        Value get(
             const std::string &key,
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
 
-        const Value &get(
+        Value get(
             const uint index,
             const Value &fallback = {}) const noexcept;
 
-        const Value &get(
+        Value get(
             const int index,
             const Value &fallback = {}) const noexcept;
 
-        const Value &get_any(
+        Value get_any(
             const std::vector<std::string> &candidates,
             const Value &fallback = {},
             bool ignoreCase = false) const noexcept;
-
 
         std::optional<Value> try_get(
             const std::string &key,

@@ -145,9 +145,9 @@ namespace core::types
         }
     }
 
-    const Value &TaggedValueList::get(const Tag &tag,
-                                      const Value &fallback,
-                                      bool ignoreCase) const noexcept
+    Value TaggedValueList::get(const Tag &tag,
+                               const Value &fallback,
+                               bool ignoreCase) const noexcept
     {
         if (auto it = this->find(tag, ignoreCase); it != this->end())
         {
@@ -159,9 +159,9 @@ namespace core::types
         }
     }
 
-    const Value &TaggedValueList::get_any(const std::vector<std::string> &candidates,
-                                          const Value &fallback,
-                                          bool ignoreCase) const noexcept
+    Value TaggedValueList::get_any(const std::vector<std::string> &candidates,
+                                   const Value &fallback,
+                                   bool ignoreCase) const noexcept
     {
         for (const Tag &candidate : candidates)
         {
@@ -173,7 +173,7 @@ namespace core::types
         return fallback;
     }
 
-    const Value &TaggedValueList::get(uint index, const Value &fallback) const noexcept
+    Value TaggedValueList::get(uint index, const Value &fallback) const noexcept
     {
         try
         {
@@ -185,7 +185,7 @@ namespace core::types
         }
     }
 
-    const Value &TaggedValueList::get(int index, const Value &fallback) const noexcept
+    Value TaggedValueList::get(int index, const Value &fallback) const noexcept
     {
         try
         {
