@@ -8,6 +8,9 @@
 # See `defaults.yaml` for default values and descriptions
 
 log sinks:
+  syslog:
+    enabled: false
+
   stderr:
     include context: true
     threshold    : DEBUG
@@ -19,7 +22,7 @@ log sinks:
     name template: "{isodate}-{hour}{minute}{zoneoffset}.csv"
 
   lologger:
-    enabled      : true
+    enabled      : false
     type         : "lologger"
     threshold    : DEBUG
     contract_id  : "text"

@@ -146,6 +146,7 @@ log sinks:
     # Whether logging to the system log. Defaults to `false` if running in a terminal (tty),
     # `true` otherwise.
     # enabled: true
+    enabled: false
 
   # Log each event as a single-line JSON object
   jsonfile:
