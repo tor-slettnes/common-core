@@ -68,6 +68,62 @@ namespace core::db
         }
     }
 
+    std::vector<SQLite3::ColumnSpec> SQLite3::columns(
+        const std::string &table_name) const
+    {
+        std::vector<std::string> column_names = this->column_names(table_name);
+        std::vector<ColumnSpec> columns;
+        columns.reserve(column_names.size());
+
+        for (const std::string &column_name : column_names)
+        {
+            const char *type = nullptr;
+            this->check_status(
+                sqlite3_table_column_metadata(
+                    this->connection(),       // db
+                    this->db_file().c_str(),  // zDbName
+                    table_name.c_str(),       // zTableName
+                    column_name.c_str(),      // zColumnName
+                    &type,                    // pzDataType
+                    nullptr,                  // pzCollSeq
+                    nullptr,                  // pNotNull
+                    nullptr,                  // pPrimaryKey
+                    nullptr));                // pAutoInc
+            columns.push_back({
+                .name = column_name,
+                .type = This::column_type_names.from_string(type, core::types::ValueType::NONE),
+            });
+        }
+        return columns;
+    }
+
+    std::vector<std::string> SQLite3::column_names(
+        const std::string &table_name) const
+    {
+        std::vector<std::string> names;
+        sqlite3_stmt *statement = this->select_all_from(table_name);
+        try
+        {
+            names = this->column_names(statement);
+        }
+        catch (...)
+        {
+            sqlite3_finalize(statement);
+            throw;
+        }
+        this->finalize(statement);
+        return names;
+    }
+
+    std::size_t SQLite3::column_count(
+        const std::string &table_name) const
+    {
+        sqlite3_stmt *statement = this->select_all_from(table_name);
+        std::size_t count = sqlite3_column_count(statement);
+        this->finalize(statement);
+        return count;
+    }
+
     void SQLite3::create_table(
         const std::string &table_name,
         const std::vector<ColumnSpec> &columns)
@@ -96,60 +152,32 @@ namespace core::db
         this->execute(sql.str());
     }
 
-    std::vector<SQLite3::ColumnSpec> SQLite3::table_columns(
-        const std::string &table_name) const
+    void SQLite3::read(
+        const QueryCallbackFunction &callback,
+        const std::string &table_name,
+        const ColumnNames &columns,
+        const std::vector<std::string> &conditions,
+        const std::string &order_by,
+        SortDirection direction,
+        uint limit)
     {
-        std::vector<std::string> column_names = this->table_column_names(table_name);
-        std::vector<ColumnSpec> columns;
-        columns.reserve(column_names.size());
-
-        for (const std::string &column_name : column_names)
-        {
-            const char *type = nullptr;
-            this->check_status(
-                sqlite3_table_column_metadata(
-                    this->connection(),       // db
-                    this->db_file().c_str(),  // zDbName
-                    table_name.c_str(),       // zTableName
-                    column_name.c_str(),      // zColumnName
-                    &type,                    // pzDataType
-                    nullptr,                  // pzCollSeq
-                    nullptr,                  // pNotNull
-                    nullptr,                  // pPrimaryKey
-                    nullptr));                // pAutoInc
-            columns.push_back({
-                .name = column_name,
-                .type = This::column_type_names.from_string(type, core::types::ValueType::NONE),
-            });
-        }
-        return columns;
+        this->execute(
+            this->select_query(columns, table_name, conditions, order_by, direction, limit),
+            callback);
     }
 
-    std::vector<std::string> SQLite3::table_column_names(
-        const std::string &table_name) const
+    void SQLite3::insert_multi(
+        const std::string &table_name,
+        const MultiRowData &parameters,
+        const QueryCallbackFunction &callback)
     {
-        std::vector<std::string> names;
-        sqlite3_stmt *statement = this->select_all_from(table_name);
-        try
-        {
-            names = this->column_names(statement);
-        }
-        catch (...)
-        {
-            sqlite3_finalize(statement);
-            throw;
-        }
-        this->finalize(statement);
-        return names;
-    }
+        std::stringstream sql;
+        sql << "INSERT INTO "
+            << std::quoted(table_name)
+            << " VALUES "
+            << this->get_placeholders(table_name);
 
-    std::size_t SQLite3::table_column_count(
-        const std::string &table_name) const
-    {
-        sqlite3_stmt *statement = this->select_all_from(table_name);
-        std::size_t count = sqlite3_column_count(statement);
-        this->finalize(statement);
-        return count;
+        this->execute_multi(sql.str(), parameters, callback);
     }
 
     void SQLite3::execute(
@@ -223,24 +251,10 @@ namespace core::db
         return queue;
     }
 
-    void SQLite3::insert_multi(
-        const std::string &table_name,
-        const MultiRowData &parameters,
-        const QueryCallbackFunction &callback)
-    {
-        std::stringstream sql;
-        sql << "INSERT INTO "
-            << std::quoted(table_name)
-            << " VALUES "
-            << this->get_placeholders(table_name);
-
-        this->execute_multi(sql.str(), parameters, callback);
-    }
-
     std::string SQLite3::get_placeholders(
         const std::string &table_name) const
     {
-        std::vector<std::string> placeholders(this->table_column_count(table_name), "?");
+        std::vector<std::string> placeholders(this->column_count(table_name), "?");
         return "(" + core::str::join(placeholders, ", ") + ")";
     }
 
@@ -271,10 +285,9 @@ namespace core::db
 
     ::sqlite3_stmt *SQLite3::select_all_from(const std::string &table_name) const
     {
-        std::stringstream sql;
-        sql << "SELECT * FROM "
-            << std::quoted(table_name);
-        return this->statement(sql.str());
+        return this->statement(this->select_query(
+            ALL_COLUMNS,   // columns
+            table_name));  // table
     }
 
     void SQLite3::finalize(::sqlite3_stmt *statement) const

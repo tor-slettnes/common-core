@@ -6,6 +6,7 @@
 //==============================================================================
 
 #pragma once
+#include "sql-common.h++"
 #include "types/filesystem.h++"
 #include "types/value.h++"
 #include "thread/blockingqueue.h++"
@@ -14,7 +15,7 @@
 
 namespace core::db
 {
-    class SQLite3
+    class SQLite3 : public SQL
     {
         using This = SQLite3;
 
@@ -43,18 +44,32 @@ namespace core::db
         void open(const fs::path &db_file);
         void close(bool check_status = false);
 
+        std::vector<ColumnSpec> columns(
+            const std::string &table_name) const;
+
+        std::vector<std::string> column_names(
+            const std::string &table_name) const override;
+
+        std::size_t column_count(
+            const std::string &table_name) const override;
+
         void create_table(
             const std::string &table_name,
             const std::vector<ColumnSpec> &columns);
 
-        std::vector<ColumnSpec> table_columns(
-            const std::string &table_name) const;
+        void read(
+            const QueryCallbackFunction &callback,
+            const std::string &table_name,
+            const std::vector<std::string> &columns = ALL_COLUMNS,
+            const std::vector<std::string> &conditions = {},
+            const std::string &order_by = {},
+            SortDirection direction = SortDirection::ASCENDING,
+            uint limit = 0);
 
-        std::vector<std::string> table_column_names(
-            const std::string &table_name) const;
-
-        std::size_t table_column_count(
-            const std::string &table_name) const;
+        void insert_multi(
+            const std::string &table_name,
+            const MultiRowData &parameters,
+            const QueryCallbackFunction &callback = {});
 
         void execute(
             const std::string &sql,
@@ -75,11 +90,6 @@ namespace core::db
             const std::string &sql,
             const RowData &parameters = {},
             std::size_t queue_size = 4096);
-
-        void insert_multi(
-            const std::string &table_name,
-            const MultiRowData &parameters,
-            const QueryCallbackFunction &callback = {});
 
         std::string get_placeholders(
             const std::string &table_name) const;
