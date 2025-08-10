@@ -69,13 +69,13 @@ namespace avro
         avro_value_t *avro_value,
         const google::protobuf::Message &msg)
     {
-        if (auto *proto = dynamic_cast<const google::protobuf::Duration *>(&msg))
-        {
-            This::set_time_interval(avro_value, protobuf::decoded<core::dt::Duration>(*proto));
-        }
-        else if (auto *proto = dynamic_cast<const google::protobuf::Timestamp *>(&msg))
+        if (auto *proto = dynamic_cast<const google::protobuf::Timestamp *>(&msg))
         {
             This::set_timestamp(avro_value, protobuf::decoded<core::dt::TimePoint>(*proto));
+        }
+        else if (auto *proto = dynamic_cast<const google::protobuf::Duration *>(&msg))
+        {
+            This::set_time_interval(avro_value, protobuf::decoded<core::dt::Duration>(*proto));
         }
         else if (auto *proto = dynamic_cast<const google::protobuf::Value *>(&msg))
         {

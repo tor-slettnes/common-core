@@ -30,7 +30,7 @@ namespace avro
         checkstatus(avro_generic_string_new_length(
             &this->value,
             input.data(),
-            input.size()));
+            input.size() + 1));
     }
 
     SimpleValue::SimpleValue(const std::string_view &input)
@@ -39,7 +39,7 @@ namespace avro
         checkstatus(avro_generic_string_new_length(
             &this->value,
             input.data(),
-            input.size()));
+            input.size() + 1));
     }
 
     SimpleValue::SimpleValue(const core::types::Bytes &bytes)
@@ -111,16 +111,16 @@ namespace avro
     std::optional<std::string> SimpleValue::get_string() const
     {
         const char *c_string = nullptr;
-        std::size_t size;
+        std::size_t size = 0;
 
         if (avro_value_get_string(&this->value, &c_string, &size) == 0)
         {
-            return std::string(c_string, size);
+            if (size > 0)
+            {
+                return std::string(c_string, size - 1);
+            }
         }
-        else
-        {
-            return {};
-        }
+        return {};
     }
 
     std::optional<core::types::ByteVector> SimpleValue::get_bytes() const

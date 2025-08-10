@@ -98,7 +98,7 @@ namespace avro
         if (expected_index.value_or(0) != field_index)
         {
             throw core::exception::NotFound(
-                "Mismatched Avro field index for sepcified name",
+                "Mismatched Avro field index for specified name",
                 core::types::KeyValueMap({
                     {"name", name},
                     {"expected", expected_index.value()},
