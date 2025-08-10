@@ -20,8 +20,6 @@ namespace core::db
         using This = SQLite3;
 
     public:
-        using ColumnName = std::string;
-        using ColumnNames = std::vector<ColumnName>;
         using RowData = core::types::ValueList;
         using MultiRowData = std::vector<RowData>;
 

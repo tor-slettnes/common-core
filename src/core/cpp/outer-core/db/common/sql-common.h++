@@ -16,10 +16,6 @@ namespace core::db
     public:
         using ColumnName = std::string;
         using ColumnNames = std::vector<ColumnName>;
-        using RowData = core::types::ValueList;
-        using MultiRowData = std::vector<RowData>;
-        using QueryCallbackFunction = std::function<bool(core::types::TaggedValueList &&)>;
-        using QueryResponseQueue = core::types::BlockingQueue<core::types::TaggedValueList>;
 
         enum class SortDirection
         {
