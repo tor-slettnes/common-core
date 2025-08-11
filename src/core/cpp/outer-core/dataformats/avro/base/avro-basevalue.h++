@@ -51,6 +51,7 @@ namespace avro
 
         std::size_t serialized_size() const;
         core::types::ByteVector serialized() const;
+        std::shared_ptr<core::types::ByteVector> serialized_ptr() const;
         std::string as_json(bool pretty = false) const;
 
     protected:

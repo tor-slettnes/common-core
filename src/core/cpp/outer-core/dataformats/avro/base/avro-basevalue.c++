@@ -81,16 +81,24 @@ namespace avro
         return size;
     }
 
+    std::shared_ptr<core::types::ByteVector> BaseValue::serialized_ptr() const
+    {
+        auto buffer = std::make_shared<core::types::ByteVector>();
+        *buffer = this->serialized();
+        return buffer;
+    }
+
     core::types::ByteVector BaseValue::serialized() const
     {
         std::size_t nbytes = this->serialized_size();
         core::types::ByteVector buffer(nbytes);
+
         avro_writer_t writer = avro_writer_memory(
             reinterpret_cast<char *>(buffer.data()),
             buffer.size());
-
         avro_value_write(writer, const_cast<avro_value_t *>(&this->value));
         avro_writer_free(writer);
+
         return buffer;
     }
 
@@ -170,7 +178,7 @@ namespace avro
         checkstatus(avro_value_set_string_len(
             value,
             string.c_str(),
-            string.size() + 1)); // Length needs to include trailing null terminator
+            string.size() + 1));  // Length needs to include trailing null terminator
     }
 
     void BaseValue::set_bytes(avro_value_t *value,
