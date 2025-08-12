@@ -71,6 +71,21 @@ namespace core::kafka
     }
 
     RdKafka::Topic *Endpoint::add_topic(const std::string &name,
+                                        const core::types::KeyValueMap &topic_settings)
+    {
+        RdKafka::Conf *conf = this->topic_conf();
+        std::string errstr;
+        for (const auto &[key, value] : topic_settings)
+        {
+            this->check(conf->set(key, value.as_string(), errstr),
+                        key,
+                        value.as_string(),
+                        errstr);
+        }
+        return this->add_topic(name, conf);
+    }
+
+    RdKafka::Topic *Endpoint::add_topic(const std::string &name,
                                         const RdKafka::Conf *topic_conf)
     {
         std::string error_string;

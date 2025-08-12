@@ -45,6 +45,10 @@ namespace core::kafka
 
         RdKafka::Topic *add_topic(
             const std::string &name,
+            const core::types::KeyValueMap &topic_settings);
+
+        RdKafka::Topic *add_topic(
+            const std::string &name,
             const RdKafka::Conf *topic_conf);
 
         RdKafka::Topic *find_topic(
