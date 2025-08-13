@@ -68,6 +68,24 @@ namespace core::db
         }
     }
 
+    std::vector<std::string> SQLite3::tables() const
+    {
+        std::string query = this->select_query(
+            {"name"},         // columns
+            "sqlite_master",  // table
+            {"type='table'"});  // conditions
+
+        std::vector<std::string> names;
+        this->execute(
+            query,
+            [&](const core::types::TaggedValueList &row) -> bool {
+                names.push_back(row.front().as_string());
+                return true;
+            });
+
+        return names;
+    }
+
     std::vector<SQLite3::ColumnSpec> SQLite3::columns(
         const std::string &table_name) const
     {
@@ -126,7 +144,7 @@ namespace core::db
 
     void SQLite3::create_table(
         const std::string &table_name,
-        const std::vector<ColumnSpec> &columns)
+        const std::vector<ColumnSpec> &columns) const
     {
         std::stringstream sql;
         std::string delimiter;
@@ -159,7 +177,7 @@ namespace core::db
         const std::vector<std::string> &conditions,
         const std::string &order_by,
         SortDirection direction,
-        uint limit)
+        uint limit) const
     {
         this->execute(
             this->select_query(columns, table_name, conditions, order_by, direction, limit),
@@ -169,7 +187,7 @@ namespace core::db
     void SQLite3::insert_multi(
         const std::string &table_name,
         const MultiRowData &parameters,
-        const QueryCallbackFunction &callback)
+        const QueryCallbackFunction &callback) const
     {
         std::stringstream sql;
         sql << "INSERT INTO "
@@ -182,7 +200,7 @@ namespace core::db
 
     void SQLite3::execute(
         const std::string &sql,
-        const QueryCallbackFunction &callback)
+        const QueryCallbackFunction &callback) const
     {
         this->execute(sql, {}, callback);
     }
@@ -190,7 +208,7 @@ namespace core::db
     void SQLite3::execute(
         const std::string &sql,
         const RowData &parameters,
-        const QueryCallbackFunction &callback)
+        const QueryCallbackFunction &callback) const
     {
         this->execute_multi(sql, {parameters}, callback);
     }
@@ -198,9 +216,9 @@ namespace core::db
     void SQLite3::execute_multi(
         const std::string &sql,
         const MultiRowData &parameter_rows,
-        const QueryCallbackFunction &callback)
+        const QueryCallbackFunction &callback) const
     {
-        std::scoped_lock lck(this->db_lock_);
+        // std::scoped_lock lck(this->db_lock_);
         sqlite3_stmt *statement = this->statement(sql);
 
         try
@@ -395,7 +413,7 @@ namespace core::db
     }
 
     void SQLite3::execute_statement(::sqlite3_stmt *statement,
-                                    const QueryCallbackFunction &callback)
+                                    const QueryCallbackFunction &callback) const
     {
         bool done = false;
         ColumnNames column_names = this->column_names(statement);

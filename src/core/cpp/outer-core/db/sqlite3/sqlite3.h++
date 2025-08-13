@@ -42,6 +42,8 @@ namespace core::db
         void open(const fs::path &db_file);
         void close(bool check_status = false);
 
+        std::vector<std::string> tables() const;
+
         std::vector<ColumnSpec> columns(
             const std::string &table_name) const;
 
@@ -53,7 +55,7 @@ namespace core::db
 
         void create_table(
             const std::string &table_name,
-            const std::vector<ColumnSpec> &columns);
+            const std::vector<ColumnSpec> &columns) const;
 
         void read(
             const QueryCallbackFunction &callback,
@@ -62,27 +64,27 @@ namespace core::db
             const std::vector<std::string> &conditions = {},
             const std::string &order_by = {},
             SortDirection direction = SortDirection::ASCENDING,
-            uint limit = 0);
+            uint limit = 0) const;
 
         void insert_multi(
             const std::string &table_name,
             const MultiRowData &parameters,
-            const QueryCallbackFunction &callback = {});
+            const QueryCallbackFunction &callback = {}) const;
 
         void execute(
             const std::string &sql,
-            const QueryCallbackFunction &callback = {});
+            const QueryCallbackFunction &callback = {}) const;
 
         void execute(
             const std::string &sql,
             const RowData &parameters,
-            const QueryCallbackFunction &callback = {});
+            const QueryCallbackFunction &callback = {}) const;
 
         // Invoke SQL statement with multiple input rows
         void execute_multi(
             const std::string &sql,
             const MultiRowData &parameters,
-            const QueryCallbackFunction &callback = {});
+            const QueryCallbackFunction &callback = {}) const;
 
         std::shared_ptr<QueryResponseQueue> execute_async_query(
             const std::string &sql,
@@ -104,7 +106,7 @@ namespace core::db
 
         void execute_statement(
             ::sqlite3_stmt *statement,
-            const QueryCallbackFunction &callback);
+            const QueryCallbackFunction &callback) const;
 
         ColumnNames column_names(
             ::sqlite3_stmt *statement) const;
