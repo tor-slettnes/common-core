@@ -20,11 +20,12 @@ log sinks:
     rotate after : 1 day
     compress after use: true
     name template: "{isodate}-{hour}{minute}{zoneoffset}.csv"
+    threshold    : INFO
 
   lologger:
     enabled      : false
     type         : "lologger"
-    threshold    : DEBUG
+    threshold    : INFO
     contract_id  : "text"
     name template: "sqlite3/{hostname}-{year}-{month}"
     local time   : true

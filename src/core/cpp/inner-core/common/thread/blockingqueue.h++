@@ -14,6 +14,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <queue>
+#include <list>
 #include <thread>
 #include <algorithm>
 
@@ -145,8 +146,7 @@ namespace core::types
         void clear() override
         {
             std::unique_lock<std::mutex> lock(this->mtx);
-            std::queue<T> other;
-            std::swap(this->queue, other);
+            this->queue.clear();
         }
 
         // Resolve base for multiply-inherited method `close()`
@@ -168,7 +168,7 @@ namespace core::types
     protected:
         inline void discard_oldest() override
         {
-            this->queue.pop();
+            this->queue.pop_front();
         }
 
     public:
@@ -202,7 +202,7 @@ namespace core::types
                     this->closed_ = false;
                     if (this->pushable(&lock))
                     {
-                        this->queue.push(value);
+                        this->queue.push_back(value);
                     }
                 }
                 if (notify)
@@ -247,7 +247,7 @@ namespace core::types
                     this->closed_ = false;
                     if (this->pushable(&lock))
                     {
-                        this->queue.push(std::move(value));
+                        this->queue.push_back(std::move(value));
                     }
                 }
                 if (notify)
@@ -362,7 +362,7 @@ namespace core::types
         }
 
     private:
-        std::queue<T> queue;
+        std::list<T> queue;
         std::chrono::system_clock::duration closewatch;
     };
 

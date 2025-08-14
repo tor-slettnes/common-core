@@ -29,6 +29,8 @@ namespace core::db
         virtual std::size_t column_count(
             const std::string &table_name) const = 0;
 
+        static std::string quoted(const std::string &identifier);
+
         std::string select_query(
             const ColumnNames &columns,
             const std::string &table,

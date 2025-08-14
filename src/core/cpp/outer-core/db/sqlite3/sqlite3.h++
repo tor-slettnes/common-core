@@ -29,7 +29,7 @@ namespace core::db
             core::types::ValueType type = core::types::ValueType::NONE;
         };
 
-    protected:
+    public:
         using QueryCallbackFunction = std::function<bool(core::types::TaggedValueList &&)>;
         using QueryResponseQueue = core::types::BlockingQueue<core::types::TaggedValueList>;
 
@@ -71,17 +71,17 @@ namespace core::db
             const MultiRowData &parameters,
             const QueryCallbackFunction &callback = {}) const;
 
-        void execute(
+        bool execute(
             const std::string &sql,
             const QueryCallbackFunction &callback = {}) const;
 
-        void execute(
+        bool execute(
             const std::string &sql,
             const RowData &parameters,
             const QueryCallbackFunction &callback = {}) const;
 
         // Invoke SQL statement with multiple input rows
-        void execute_multi(
+        bool execute_multi(
             const std::string &sql,
             const MultiRowData &parameters,
             const QueryCallbackFunction &callback = {}) const;
@@ -104,7 +104,7 @@ namespace core::db
             ::sqlite3_stmt *statement,
             const RowData &parameters) const;
 
-        void execute_statement(
+        bool execute_statement(
             ::sqlite3_stmt *statement,
             const QueryCallbackFunction &callback) const;
 

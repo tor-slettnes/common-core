@@ -23,7 +23,7 @@ namespace core::db
         sql << "SELECT ";
         core::str::join(sql, columns.begin(), columns.end(), ", ");
 
-        sql << " FROM " << std::quoted(table);
+        sql << " FROM " << SQL::quoted(table);
 
         if (!conditions.empty())
         {
@@ -43,6 +43,12 @@ namespace core::db
         }
 
         return sql.str();
+    }
+
+
+    std::string SQL::quoted(const std::string &identifier)
+    {
+        return "'" + identifier + "'";
     }
 
     const SQL::ColumnNames SQL::ALL_COLUMNS = {"*"};

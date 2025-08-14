@@ -41,13 +41,13 @@ namespace core::db
         if (this->db_file_ != db_file)
         {
             this->close();
-            this->db_file_ = db_file;
-
             this->check_status(sqlite3_open_v2(
                 db_file.string().c_str(),
                 &this->connection_,
                 SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_EXRESCODE,
                 nullptr));
+
+            this->db_file_ = db_file;
         }
     }
 
@@ -150,13 +150,13 @@ namespace core::db
         std::string delimiter;
 
         sql << "CREATE TABLE IF NOT EXISTS "
-            << std::quoted(table_name)
+            << this->quoted(table_name)
             << " (";
 
         for (const ColumnSpec &spec : columns)
         {
             sql << delimiter
-                << std::quoted(spec.name);
+                << this->quoted(spec.name);
 
             if (auto type_name = This::column_type_names.to_string(spec.type))
             {
@@ -191,42 +191,43 @@ namespace core::db
     {
         std::stringstream sql;
         sql << "INSERT INTO "
-            << std::quoted(table_name)
+            << this->quoted(table_name)
             << " VALUES "
             << this->get_placeholders(table_name);
 
         this->execute_multi(sql.str(), parameters, callback);
     }
 
-    void SQLite3::execute(
+    bool SQLite3::execute(
         const std::string &sql,
         const QueryCallbackFunction &callback) const
     {
-        this->execute(sql, {}, callback);
+        return this->execute(sql, {}, callback);
     }
 
-    void SQLite3::execute(
+    bool SQLite3::execute(
         const std::string &sql,
         const RowData &parameters,
         const QueryCallbackFunction &callback) const
     {
-        this->execute_multi(sql, {parameters}, callback);
+        return this->execute_multi(sql, {parameters}, callback);
     }
 
-    void SQLite3::execute_multi(
+    bool SQLite3::execute_multi(
         const std::string &sql,
         const MultiRowData &parameter_rows,
         const QueryCallbackFunction &callback) const
     {
         // std::scoped_lock lck(this->db_lock_);
         sqlite3_stmt *statement = this->statement(sql);
+        bool done = false;
 
         try
         {
             for (const RowData &parameters : parameter_rows)
             {
                 this->bind_input_parameters(statement, parameters);
-                this->execute_statement(statement, callback);
+                done = this->execute_statement(statement, callback);
 
                 this->check_status(sqlite3_reset(statement),
                                    "sqlite3_reset");
@@ -241,6 +242,7 @@ namespace core::db
             throw;
         }
         this->finalize(statement);
+        return done;
     }
 
     std::shared_ptr<SQLite3::QueryResponseQueue> SQLite3::execute_async_query(
@@ -412,13 +414,14 @@ namespace core::db
         }
     }
 
-    void SQLite3::execute_statement(::sqlite3_stmt *statement,
+    bool SQLite3::execute_statement(::sqlite3_stmt *statement,
                                     const QueryCallbackFunction &callback) const
     {
         bool done = false;
+        bool accepted = true;
         ColumnNames column_names = this->column_names(statement);
 
-        while (!done)
+        while (accepted && !done)
         {
             switch (int statuscode = ::sqlite3_step(statement))
             {
@@ -428,7 +431,7 @@ namespace core::db
             case SQLITE_ROW:
                 if (callback)
                 {
-                    this->process_row(statement, column_names, callback);
+                    accepted = this->process_row(statement, column_names, callback);
                 }
                 break;
 
@@ -442,6 +445,7 @@ namespace core::db
                 break;
             }
         }
+        return done;
     }
 
     SQLite3::ColumnNames SQLite3::column_names(::sqlite3_stmt *statement) const
