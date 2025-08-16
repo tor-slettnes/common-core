@@ -469,14 +469,13 @@ namespace core::db
     {
         try
         {
-            return callback(this->extract_row(
-                statement,
-                column_names));
+            return callback(this->extract_row(statement, column_names));
         }
         catch (...)
         {
-            logf_error("SQLite3 query callback from DB row #%d failed: %s",
+            logf_error("SQLite3 query callback failed, db=%s, row=%s: %s",
                        this->db_file(),
+                       this->extract_row(statement, column_names),
                        std::current_exception());
             return false;
         }

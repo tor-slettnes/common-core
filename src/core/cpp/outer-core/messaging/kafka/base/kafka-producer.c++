@@ -98,7 +98,7 @@ namespace core::kafka
 
     void Producer::poll_worker()
     {
-        while (this->keep_polling_)
+        while (this->keep_polling_ || (this->handle()->outq_len() > 0))
         {
             this->handle()->poll(1000);
         }
