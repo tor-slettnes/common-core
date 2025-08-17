@@ -19,13 +19,16 @@ namespace core::kafka
 
     void LogCapture::event_cb(RdKafka::Event &event)
     {
+        static auto rdkafka_log_scope =
+            core::logging::Scope::create("rdKafka", core::status::Level::NOTICE);
+
         core::status::Level level = This::level_map.get(
             event.severity(),
             status::Level::WARNING);
 
         auto msg = custom_log_message(
             level,                   // level
-            log_scope,               // scope
+            rdkafka_log_scope,       // scope
             core::dt::Clock::now(),  // timepoint
             "",                      // path
             0,                       // lineno

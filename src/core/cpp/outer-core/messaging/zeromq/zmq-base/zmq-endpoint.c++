@@ -207,6 +207,7 @@ namespace core::zmq
 
     void Endpoint::deinitialize()
     {
+        Super::deinitialize();
         switch (this->role())
         {
         case Role::HOST:
@@ -222,7 +223,6 @@ namespace core::zmq
         }
 
         this->close_socket();
-        Super::deinitialize();
     }
 
     void *Endpoint::check_error(void *ptr)

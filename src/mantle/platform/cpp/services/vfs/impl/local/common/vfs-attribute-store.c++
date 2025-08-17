@@ -111,13 +111,13 @@ namespace vfs::local
         }
     }
 
-    void AttributeStore::save(bool delta)
+    void AttributeStore::save(bool delta, bool use_temp_file)
     {
         this->prune();
 
         if (!this->empty())
         {
-            Super::save(delta);
+            Super::save(delta, use_temp_file);
             this->loaded = true;
         }
         else if (this->loaded)

@@ -15,7 +15,7 @@
 
 namespace core::kafka
 {
-    define_log_scope("rdkafka", status::Level::NOTICE);
+    define_log_scope("kafka");
 
     //--------------------------------------------------------------------------
     // LogCapture

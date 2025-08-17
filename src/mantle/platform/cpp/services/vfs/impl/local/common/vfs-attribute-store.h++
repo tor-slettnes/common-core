@@ -46,7 +46,8 @@ namespace vfs::local
                               bool save = true);
 
     protected:
-        void save(bool delta = true) override;
+        void save(bool delta = true,
+                  bool use_temp_file = true) override;
         void prune();
 
     private:

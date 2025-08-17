@@ -46,7 +46,7 @@ namespace core::zmq
     {
         // Workaround for apparent `libzmq3` bug:
         // Remove our empty subscription filter.
-        this->setsockopt(ZMQ_UNSUBSCRIBE, "", 0);
+        // this->setsockopt(ZMQ_UNSUBSCRIBE, "", 0);
 
         //this->clear();
         this->stop_receiving();
@@ -98,9 +98,11 @@ namespace core::zmq
 
             if (deinitialize)
             {
+                logf_trace("%s deinitializing handler %r", *this, handler->id());
                 handler->deinitialize();
             }
         }
+        logf_trace("%s removing handlers", *this);
         this->handlers_.clear();
     }
 

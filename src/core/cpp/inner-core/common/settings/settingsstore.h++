@@ -104,10 +104,16 @@ namespace core
         /// @brief
         ///     Save current settings to the default .json file for this store,
         ///     relative to the first directory in CONFIGPATH.
+        ///
         /// @param[in] delta
         ///     Save only key/value pairs that are different from how they were
         ///     loaded from files in folders _other than_ the file to be saved.
         ///     @sa save_to()
+        ///
+        /// @param[in] use_temp_file
+        ///     First save to a temporary file in the same folder, then move it
+        ///     in place.  Doing so ensures integrity of the contents in case
+        ///     this process is shut down while writing to the file.
         ///
         /// The filename is the same as that from which settings were loaded, but
         /// located in the first directory of the settings path (normally a
@@ -116,7 +122,8 @@ namespace core
         /// settings were originally loaded from `my-settings.json` (in either
         /// of these folders or merged in from both), then the updated settings
         /// will be saved in `"/etc/local-settings/my-settings.json"`.
-        virtual void save(bool delta = true);
+        virtual void save(bool delta = true,
+                          bool use_temp_file = true);
 
         /// @brief
         ///     Save current settings to `filename[.json]`.
@@ -131,6 +138,11 @@ namespace core
         ///     other settings are kept at their default values, and subject to
         ///     update with new software releases.
         ///
+        /// @param[in] use_temp_file
+        ///     First save to a temporary file in the same folder, then move it
+        ///     in place.  Doing so ensures integrity of the contents in case
+        ///     this process is shut down while writing to the file.
+        ///
         /// Save the settings object to the specified `filename`, which may be
         /// absolute or relative. If the name is relative, settings are
         /// saved to the first folder returned by `paths::settings_paths()`,
@@ -140,7 +152,9 @@ namespace core
         ///
         /// If the name does not include a suffix, ".json" is appended.
         ///
-        void save_to(const fs::path &filename, bool delta = true) const;
+        void save_to(const fs::path &filename,
+                     bool delta = true,
+                     bool use_temp_file = true) const;
 
         fs::path filename() const;
         types::PathList filenames() const;
@@ -166,6 +180,9 @@ namespace core
                      bool save);
 
     private:
+        void write_to(const fs::path &path,
+                      bool delta_only) const;
+
         SettingsStore default_settings() const;
 
     private:

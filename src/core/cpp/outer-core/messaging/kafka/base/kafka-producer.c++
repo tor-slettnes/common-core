@@ -80,7 +80,7 @@ namespace core::kafka
     {
         if (!this->poll_thread_.joinable())
         {
-            logf_info("Starting %s polling thread", *this);
+            logf_info("%s: starting polling thread", *this);
             this->keep_polling_ = true;
             this->poll_thread_ = std::thread(&This::poll_worker, this);
         }
@@ -90,7 +90,7 @@ namespace core::kafka
     {
         if (this->poll_thread_.joinable())
         {
-            logf_info("Stopping %s polling thread", *this);
+            logf_info("%s: stopping polling thread", *this);
             this->keep_polling_ = false;
             this->poll_thread_.join();
         }
@@ -98,9 +98,8 @@ namespace core::kafka
 
     void Producer::poll_worker()
     {
-        while (this->keep_polling_ || (this->handle()->outq_len() > 0))
+        while (this->handle()->poll(1000) || this->keep_polling_)
         {
-            this->handle()->poll(1000);
         }
     }
 

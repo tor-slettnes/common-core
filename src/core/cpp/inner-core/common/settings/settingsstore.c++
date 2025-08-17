@@ -158,15 +158,18 @@ namespace core
         }
     }
 
-    void SettingsStore::save(bool delta_only)
+    void SettingsStore::save(bool delta_only,
+                             bool use_temp_file)
     {
         if (this->loaded())
         {
-            this->save_to(this->filename(), delta_only);
+            this->save_to(this->filename(), delta_only, use_temp_file);
         }
     }
 
-    void SettingsStore::save_to(const fs::path &filename, bool delta_only) const
+    void SettingsStore::save_to(const fs::path &filename,
+                                bool delta_only,
+                                bool use_temp_file) const
     {
         fs::path path = platform::path->config_folder() /
                         platform::path->extended_filename(filename, JSON_SUFFIX);
@@ -176,7 +179,24 @@ namespace core
 
         fs::create_directories(path.parent_path());
 
-        if (delta_only && this->composite_)
+        if (use_temp_file)
+        {
+            fs::path temp_path = path;
+            temp_path += ".tmp";
+
+            this->write_to(temp_path, delta_only);
+            fs::rename(temp_path, path);
+        }
+        else
+        {
+            this->write_to(path, delta_only);
+        }
+    }
+
+    void SettingsStore::write_to(const fs::path &path,
+                                 bool delta_only) const
+    {
+        if (delta_only)
         {
             json::writer.write_file(
                 path,                                             // path
