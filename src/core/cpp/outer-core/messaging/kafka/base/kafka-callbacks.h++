@@ -66,9 +66,8 @@ namespace core::kafka
         void dr_cb(RdKafka::Message &message) override;
 
     private:
+        static core::types::SymbolMap<RdKafka::Message::Status> status_name_map;
         Callback callback;
-
-    private:
         std::unordered_map<void *, CallbackData::ptr> callback_map;
         std::mutex callback_mutex;
     };

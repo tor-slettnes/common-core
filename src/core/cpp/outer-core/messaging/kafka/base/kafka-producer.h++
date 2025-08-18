@@ -18,9 +18,6 @@ namespace core::kafka
         using Super = Endpoint;
 
     protected:
-        using HeaderMap = std::unordered_map<std::string, std::string>;
-
-    protected:
         Producer(const std::string &service_name,
                  const std::string &profile_name = {},
                  const core::types::KeyValueMap &settings = {});

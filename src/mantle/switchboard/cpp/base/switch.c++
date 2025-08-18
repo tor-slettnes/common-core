@@ -235,7 +235,7 @@ namespace switchboard
     {
         if (const auto &localized = this->localization(lang))
         {
-            return localized->target_texts.to_string(target);
+            return localized->target_texts.try_to_string(target);
         }
         else
         {
@@ -249,7 +249,7 @@ namespace switchboard
     {
         if (const auto &localized = this->localization(lang))
         {
-            return localized->state_texts.to_string(state);
+            return localized->state_texts.try_to_string(state);
         }
         else
         {

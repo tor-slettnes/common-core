@@ -590,7 +590,7 @@ namespace netconfig::dbus
             const EAP_Data& data,
             core::glib::VariantMap* map)
         {
-            if (const auto& eap_scheme = eap_type_map.to_string(data.eap_type))
+            if (const auto& eap_scheme = eap_type_map.try_to_string(data.eap_type))
             {
                 core::glib::insert_value(
                     map,

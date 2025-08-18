@@ -15,7 +15,7 @@
 namespace core::kafka
 {
     auto rdkafka_log_scope =
-        core::logging::Scope::create("rdKafka", core::status::Level::NOTICE);
+        core::logging::Scope::create("rdkafka", core::status::Level::NOTICE);
 
     //--------------------------------------------------------------------------
     // LogCapture
@@ -90,6 +90,17 @@ namespace core::kafka
                     core::status::Level::ERROR,                                 // level
                     core::dt::ms_to_timepoint(message.timestamp().timestamp));  // timepoint
             }
+            else if (message.status() != RdKafka::Message::MSG_STATUS_PERSISTED)
+            {
+                error = std::make_shared<core::status::Error>(
+                    "Possible message delivery failure",                        // text
+                    core::status::Domain::SERVICE,                              // domain
+                    "RdKafka"s,                                                 // origin
+                    0,                                                          // code
+                    This::status_name_map.to_string(message.status(), {}),      // symbol
+                    core::status::Level::WARNING,                               // level
+                    core::dt::ms_to_timepoint(message.timestamp().timestamp));  // timepoint
+            }
 
             try
             {
@@ -105,4 +116,11 @@ namespace core::kafka
             }
         }
     }
+
+    core::types::SymbolMap<RdKafka::Message::Status> DeliveryReportCapture::status_name_map = {
+        {RdKafka::Message::MSG_STATUS_NOT_PERSISTED, "MSG_STATUS_NOT_PERSISTED"},
+        {RdKafka::Message::MSG_STATUS_POSSIBLY_PERSISTED, "MSG_STATUS_POSSIBLY_PERSISTED"},
+        {RdKafka::Message::MSG_STATUS_PERSISTED, "MSG_STATUS_PERSISTED"},
+    };
+
 }  // namespace core::kafka

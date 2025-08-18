@@ -28,7 +28,7 @@ namespace core::logging
     {
         tvlist.append("field_name", spec.field_name);
         tvlist.append_if_value("column_name", spec.column_name);
-        tvlist.append("column_type", core::types::TypeNames.to_string(spec.column_type));
+        tvlist.append("column_type", core::types::TypeNames.try_to_string(spec.column_type));
 
         return tvlist;
     }

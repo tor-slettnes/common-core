@@ -109,7 +109,7 @@ namespace switchboard
             core::types::TaggedValueList texts;
             for (const auto &[state, text] : this->state_texts)
             {
-                texts.append_if_value(state_names.to_string(state), text);
+                texts.append_if_value(state_names.try_to_string(state), text);
             }
             tvlist->append("state_texts", texts);
         }
@@ -183,8 +183,8 @@ namespace switchboard
 
     void Status::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
-        tvlist->append("current_state", state_names.to_string(this->current_state));
-        tvlist->append("settled_state", state_names.to_string(this->settled_state));
+        tvlist->append("current_state", state_names.try_to_string(this->current_state));
+        tvlist->append("settled_state", state_names.try_to_string(this->settled_state));
         tvlist->append("active", this->active);
         tvlist->append("pending", this->pending);
         if (this->error)

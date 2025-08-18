@@ -56,7 +56,7 @@ namespace core::str
                 std::size_t original_precision = this->stream.precision();
                 std::size_t original_width = this->stream.width();
                 char original_fill = this->stream.fill();
-                const Modifiers &modifiers = this->apply_format(part, sizeof(T));
+                Modifiers modifiers = this->apply_format(part, sizeof(T));
                 this->appendvalue(value, modifiers);
                 this->stream.flags(original_flags);
                 this->stream.precision(original_precision);

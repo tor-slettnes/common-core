@@ -158,7 +158,7 @@ namespace core::db
             sql << delimiter
                 << this->quoted(spec.name);
 
-            if (auto type_name = This::column_type_names.to_string(spec.type))
+            if (auto type_name = This::column_type_names.try_to_string(spec.type))
             {
                 sql << " " << *type_name;
             }

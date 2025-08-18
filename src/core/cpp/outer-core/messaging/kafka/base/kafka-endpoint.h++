@@ -21,6 +21,9 @@ namespace core::kafka
         using Super = messaging::Endpoint;
 
     protected:
+        using HeaderMap = std::unordered_map<std::string, std::string>;
+
+    protected:
         Endpoint(const std::string &endpoint_type,
                  const std::string &service_name,
                  const std::string &profile_name,

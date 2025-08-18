@@ -22,7 +22,7 @@ namespace core::types
     public:
         using MapType::MapType;
 
-        inline std::optional<std::string> to_string(
+        inline std::optional<std::string> try_to_string(
             const KeyType &key) const noexcept
         {
             if (auto it = this->find(key); it != this->end())
@@ -37,9 +37,9 @@ namespace core::types
 
         inline std::string to_string(
             const KeyType &key,
-            const std::string &fallback) const noexcept
+            const std::string &fallback = {}) const noexcept
         {
-            return to_string(key).value_or(fallback);
+            return this->try_to_string(key).value_or(fallback);
         }
 
         inline std::optional<KeyType> try_from_string(
@@ -71,7 +71,7 @@ namespace core::types
             std::ostream &stream,
             const KeyType &key) const
         {
-            if (const std::optional<std::string> &opt_symbol = this->to_string(key))
+            if (const auto &opt_symbol = this->try_to_string(key))
             {
                 stream << *opt_symbol;
             }
@@ -88,7 +88,7 @@ namespace core::types
             const KeyType &key,
             const ValueType &fallback) const
         {
-            if (const std::optional<std::string> &opt_symbol = this->to_string(key))
+            if (const std::optional<std::string> &opt_symbol = this->try_to_string(key))
             {
                 stream << *opt_symbol;
             }
