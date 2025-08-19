@@ -188,10 +188,9 @@ function(cc_add_python_executable TARGET)
   )
 
   ### Construct arguments for PyInstaller
-  cmake_language(GET_MESSAGE_LOG_LEVEL message_level)
-  if(message_level STREQUAL "VERBOSE")
+  if("${CMAKE_MESSAGE_LOG_LEVEL}" STREQUAL "VERBOSE")
     set(loglevel "INFO")
-  elseif(message_level MATCHES "^(TRACE|DEBUG)$")
+  elseif("${CMAKE_MESSAGE_LOG_LEVEL}" MATCHES "^(TRACE|DEBUG)$")
     set(loglevel "DEBUG")
   else()
     set(loglevel "WARN")

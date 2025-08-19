@@ -21,8 +21,7 @@ set_property(
   PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_VENV_LOCAL_ROOT}
 )
 
-cmake_language(GET_MESSAGE_LOG_LEVEL log_level)
-if(log_level MATCHES "^(TRACE|DEBUG|VERBOSE)$")
+if("${CMAKE_MESSAGE_LOG_LEVEL}" MATCHES "^(TRACE|DEBUG|VERBOSE)$")
   unset(PIP_QUIET)
 else()
   set(PIP_QUIET "--quiet")

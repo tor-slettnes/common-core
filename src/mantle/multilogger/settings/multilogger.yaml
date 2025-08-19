@@ -19,6 +19,7 @@ log sinks:
     enabled      : true
     rotate after : 1 day
     compress after use: true
+    expire after : 1 month
     name template: "{isodate}-{hour}{minute}{zoneoffset}.csv"
     threshold    : INFO
 

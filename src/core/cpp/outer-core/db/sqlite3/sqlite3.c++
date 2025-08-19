@@ -433,6 +433,10 @@ namespace core::db
                 {
                     accepted = this->process_row(statement, column_names, callback);
                 }
+                else
+                {
+                    accepted = false;
+                }
                 break;
 
             case SQLITE_OK:
