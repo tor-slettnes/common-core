@@ -6,6 +6,8 @@
 //==============================================================================
 
 #include "server.h++"
+#include "buildinfo/buildinfo.h++"
+#include "platform/path.h++"
 #include "platform/process.h++"
 #include "platform/systemservice.h++"
 #include "io/cutils.h++"
@@ -68,6 +70,9 @@ namespace core::argparse
             pidstream << platform::process->process_id() << std::endl;
         }
         CommonOptions::enact();
+        logf_notice("Started %s version %s",
+                    platform::path->exec_name(),
+                    PROJECT_VERSION);
     }
 
     void ServerOptions::daemonize()
