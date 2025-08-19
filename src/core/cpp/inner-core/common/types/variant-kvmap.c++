@@ -160,6 +160,35 @@ namespace core::types
         return filtered;
     }
 
+    KeyValueMap KeyValueMap::flattened() const noexcept
+    {
+        KeyValueMap flattened;
+        for (const auto &[key, value] : *this)
+        {
+            switch (value.type())
+            {
+            case ValueType::KVMAP:
+                flattened.merge(value.get_kvmap().flattened());
+
+            case ValueType::TVLIST:
+                flattened.merge(value.as_kvmap().flattened());
+                break;
+
+            case ValueType::VALUELIST:
+                if (value.get_valuelist().size() > 0)
+                {
+                    flattened.insert_or_assign(key, value.front());
+                }
+                break;
+
+            default:
+                flattened.insert_or_assign(key, value);
+                break;
+            }
+        }
+        return flattened;
+    }
+
     KeyValueMap &KeyValueMap::update(const KeyValueMap &other) noexcept
     {
         for (const auto &[key, value] : other)

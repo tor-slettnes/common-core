@@ -92,6 +92,7 @@ namespace core::types
         ValueList values() const noexcept;
         TaggedValueList as_tvlist() const;
         KeyValueMap filtered() const noexcept;
+        KeyValueMap flattened() const noexcept;
 
         /// @brief
         ///   Replace items in this list with those from another map
