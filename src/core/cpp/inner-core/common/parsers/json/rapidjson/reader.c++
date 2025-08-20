@@ -152,6 +152,7 @@ namespace core::json
     types::ValueListPtr RapidReader::decode_array(const ::rapidjson::Value &jarray)
     {
         auto list = types::ValueList::create_shared();
+        list->reserve(jarray.Size());
         for (auto it = jarray.Begin(); it != jarray.End(); it++)
         {
             list->push_back(This::decode_value(*it));

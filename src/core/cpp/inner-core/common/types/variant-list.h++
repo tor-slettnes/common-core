@@ -13,11 +13,11 @@
 
 namespace core::types
 {
-    class ValueList : public std::deque<Value>,
+    class ValueList : public std::vector<Value>,
                       public Streamable,
                       public enable_create_shared<ValueList>
     {
-        using Super = std::deque<Value>;
+        using Super = std::vector<Value>;
         using AppendResult = std::pair<ValueList::iterator, bool>;
 
     public:
@@ -28,8 +28,8 @@ namespace core::types
 
     public:
         // No-ops for compatibility with std::vector<>;
-        void reserve(std::size_t capacity) {}
-        void shrink_to_fit() {}
+        // void reserve(std::size_t capacity) {}
+        // void shrink_to_fit() {}
 
     public:
         const Value &front(const Value &fallback = {}) const noexcept;

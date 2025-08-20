@@ -12,11 +12,11 @@
 
 namespace core::types
 {
-    class TaggedValueList : public std::deque<TaggedValue>,
+    class TaggedValueList : public std::vector<TaggedValue>,
                             public Streamable,
                             public enable_create_shared<TaggedValueList>
     {
-        using Super = std::deque<TaggedValue>;
+        using Super = std::vector<TaggedValue>;
         using AppendResult = std::pair<TaggedValueList::iterator, bool>;
 
     public:
@@ -36,8 +36,8 @@ namespace core::types
             bool ignoreCase = false) noexcept;
 
         // No-ops for compatibility with std::vector<>;
-        void reserve(std::size_t capacity) {}
-        void shrink_to_fit() {}
+        // void reserve(std::size_t capacity) {}
+        // void shrink_to_fit() {}
 
         // Inherit .at(position) from std::deque
         using Super::at;
