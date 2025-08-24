@@ -112,4 +112,6 @@ namespace core::logging
         bool is_applicable_;
     };
 
+
+    using MessagePtr = std::shared_ptr<MessageBuilder>;
 }  // namespace core::logging
