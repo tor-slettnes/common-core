@@ -8,7 +8,7 @@
 #include "messaging-endpoint.h++"
 #include "logging/logging.h++"
 #include "string/stream.h++"
-#include "platform/init.h++"
+// #include "platform/init.h++"
 #include "buildinfo.h++"
 
 #include <iomanip>
@@ -43,15 +43,15 @@ namespace core::messaging
     void Endpoint::initialize()
     {
         this->initialized_ = true;
-        core::platform::signal_shutdown.connect(
-            this->to_string(),
-            std::bind(&Endpoint::deinitialize, this));
+        // core::platform::signal_shutdown.connect(
+        //     this->to_string(),
+        //     std::bind(&Endpoint::deinitialize, this));
     }
 
     void Endpoint::deinitialize()
     {
-        core::platform::signal_shutdown.disconnect(
-            this->to_string());
+        // core::platform::signal_shutdown.disconnect(
+        //     this->to_string());
         this->initialized_ = false;
     }
 
