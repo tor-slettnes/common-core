@@ -25,6 +25,35 @@ using namespace std::literals::string_literals;  // ""s
 
 namespace core::stream
 {
+    struct StreamState
+    {
+        std::ios::fmtflags flags;
+        std::streamsize precision;
+        std::streamsize width;
+        char fill;
+    };
+
+    inline std::shared_ptr<StreamState> get_stream_state(const std::ostream &stream)
+    {
+        return std::make_shared<StreamState>(StreamState{
+            .flags = stream.flags(),
+            .precision = stream.precision(),
+            .width = stream.width(),
+            .fill = stream.fill(),
+        });
+    }
+
+    inline void set_stream_state(std::ostream &stream, std::shared_ptr<StreamState> state)
+    {
+        if (state)
+        {
+            stream.flags(state->flags);
+            stream.precision(state->precision);
+            stream.width(state->width);
+            stream.fill(state->fill);
+        }
+    }
+
     template <class Sequence>
     std::ostream &write_sequence(std::ostream &stream, const Sequence &seq)
     {

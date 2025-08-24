@@ -1160,6 +1160,7 @@ namespace core::types
 
     void Value::to_stream(std::ostream &stream) const
     {
+        auto saved_state = stream::get_stream_state(stream);
         switch (this->type())
         {
         case ValueType::NONE:
@@ -1182,6 +1183,10 @@ namespace core::types
             break;
 
         case ValueType::REAL:
+            if (std::abs(this->as_real()) < 1e16)
+            {
+                stream << std::fixed;
+            }
             stream << this->as_real();
             break;
 
@@ -1221,6 +1226,7 @@ namespace core::types
             stream << "(Unknown value type " << this->type() << ")";
             break;
         }
+        stream::set_stream_state(stream, saved_state);
     }
 
     void Value::to_literal_stream(std::ostream &stream) const
