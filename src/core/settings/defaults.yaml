@@ -304,3 +304,6 @@ log sinks:
 
     # Maximum number of messages to cache locally if server is unavailable.
     queue size: 65536
+
+    # Log threshold
+    threshold: DEBUG

@@ -208,7 +208,7 @@ namespace idl
     void decode(const CC::Variant::ValueList &idl,
                 core::types::ValueList *native) noexcept
     {
-        native->clear();
+        native->reserve(native->size() + idl.list().size());
         for (const auto &idl_value : idl.list())
         {
             decode(idl_value, &native->emplace_back());
@@ -243,7 +243,7 @@ namespace idl
     void decode(const CC::Variant::TaggedValueList &idl,
                 core::types::TaggedValueList *native) noexcept
     {
-        native->clear();
+        native->reserve(native->size() + idl.list().size());
         for (const CC::Variant::TaggedValue &tv : idl.list())
         {
             decode(tv, &native->emplace_back());

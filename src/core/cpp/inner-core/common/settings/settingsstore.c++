@@ -12,6 +12,7 @@
 #include "parsers/yaml/reader.h++"
 #include "status/exceptions.h++"
 #include "logging/logging.h++"
+#include "platform/process.h++"
 
 #include <filesystem>
 #include <fstream>
@@ -182,7 +183,7 @@ namespace core
         if (use_temp_file)
         {
             fs::path temp_path = path;
-            temp_path += ".tmp";
+            temp_path += ".tmp." + std::to_string(platform::process->process_id());
 
             this->write_to(temp_path, delta_only);
             fs::rename(temp_path, path);

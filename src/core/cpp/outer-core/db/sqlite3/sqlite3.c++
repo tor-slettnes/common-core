@@ -150,13 +150,13 @@ namespace core::db
         std::string delimiter;
 
         sql << "CREATE TABLE IF NOT EXISTS "
-            << this->quoted(table_name)
+            << this->quote_ident(table_name)
             << " (";
 
         for (const ColumnSpec &spec : columns)
         {
             sql << delimiter
-                << this->quoted(spec.name);
+                << this->quote_ident(spec.name);
 
             if (auto type_name = This::column_type_names.try_to_string(spec.type))
             {
@@ -191,7 +191,7 @@ namespace core::db
     {
         std::stringstream sql;
         sql << "INSERT INTO "
-            << this->quoted(table_name)
+            << this->quote_ident(table_name)
             << " VALUES "
             << this->get_placeholders(table_name);
 
