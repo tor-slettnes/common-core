@@ -188,6 +188,7 @@ namespace core::zmq
         std::mutex socket_mtx_;
         Role role_;
         std::string address_;
+        std::string deinit_signal_handle_;
     };
 
 }  // Namespace core::zmq

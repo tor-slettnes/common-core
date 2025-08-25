@@ -22,7 +22,8 @@ namespace core::zmq
           socket_(nullptr),
           socket_type_(socket_type),
           role_(role),
-          address_(address)
+          address_(address),
+          deinit_signal_handle_(this->to_string() + ".deinitialize")
     {
     }
 
@@ -202,27 +203,37 @@ namespace core::zmq
             break;
         }
 
+        core::platform::signal_shutdown.connect(
+            this->deinit_signal_handle_,
+            std::bind(&This::deinitialize, this));
         //this->setsockopt(ZMQ_RCVTIMEO, 500);
     }
 
     void Endpoint::deinitialize()
     {
-        Super::deinitialize();
-        switch (this->role())
+        core::platform::signal_shutdown.disconnect(
+            this->deinit_signal_handle_);
+
+        if (this->initialized())
         {
-        case Role::HOST:
-            this->unbind();
-            break;
+            switch (this->role())
+            {
+            case Role::HOST:
+                this->unbind();
+                break;
 
-        case Role::SATELLITE:
-            this->disconnect();
-            break;
+            case Role::SATELLITE:
+                this->disconnect();
+                break;
 
-        default:
-            break;
+            default:
+                break;
+            }
+
+            this->close_socket();
         }
 
-        this->close_socket();
+        Super::deinitialize();
     }
 
     void *Endpoint::check_error(void *ptr)

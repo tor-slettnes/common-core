@@ -46,13 +46,16 @@ namespace core::types
         return this->value_;
     }
 
-    void BinaryEvent::wait()
+    bool BinaryEvent::wait()
     {
         std::unique_lock<std::mutex> lock(this->event_mtx_);
-        this->ready_ = this->value_;
-        this->cv_.wait(lock, [&] {
-            return this->ready_;
-        });
+        if (!this->ready_)
+        {
+            this->cv_.wait(lock, [&] {
+                return this->ready_;
+            });
+        }
+        return this->value_;
     }
 
 }  // namespace core::types

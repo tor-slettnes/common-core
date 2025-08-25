@@ -107,15 +107,13 @@ namespace core::signal
 
     std::size_t VoidSignal::emit()
     {
-        std::size_t count = 0;
         this->set();
+        std::size_t count = 0;
 
+        std::scoped_lock lck(this->signal_mtx_);
+        for (const auto &[receiver, method] : this->slots_)
         {
-            std::scoped_lock lck(this->signal_mtx_);
-            for (const auto &[receiver, method] : this->slots_)
-            {
-                count += this->callback(receiver, method);
-            }
+            count += this->callback(receiver, method);
         }
 
         return count;
@@ -176,7 +174,5 @@ namespace core::signal
 
         return stream;
     }
-
-
 
 }  // namespace core::signal

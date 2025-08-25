@@ -53,10 +53,10 @@ namespace core::types
 
         /// @brief
         ///     Wait indefinitely for the event to be set.
-        void wait();
+        bool wait();
 
         /// @brief
-        ///     Wait for the event to be set or until the specified deadline has expired.
+        ///     Wait for the event to be set, cancelled, or until the specified deadline has expired.
         /// @param[in] deadline
         ///     Timepoint after which to return, even if the event has not yet been set.
         /// @return
@@ -65,7 +65,13 @@ namespace core::types
         bool wait_until(const std::chrono::time_point<Clock, Duration> &deadline)
         {
             std::unique_lock<std::mutex> lock(this->event_mtx_);
-            return this->cv_.wait_until(lock, deadline, std::bind(&BinaryEvent::is_set, this));
+            this->cv_.wait_until(
+                lock,
+                deadline,
+                [&]() -> bool {
+                    return this->ready_;
+                });
+            return this->value_;
         }
 
         /// @brief
