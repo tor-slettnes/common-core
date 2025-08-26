@@ -81,7 +81,7 @@ namespace core::grpc
         }
 
     protected:
-        /// @brief Connect a signal of type Signal<T> for encoding/enqueung
+        /// @brief Connect a signal of type DataSignal<T> for encoding/enqueung
         /// @tparam SignalT
         ///    Signal data type
         /// @param[in] signal_index
@@ -105,6 +105,37 @@ namespace core::grpc
                                    encoder(value, &msg);
                                    this->forward(std::move(msg));
                                });
+            }
+        }
+
+        /// @brief Connect a signal of type SharedDataSignal<T> for encoding/enqueung
+        /// @tparam SignalT
+        ///    Signal data type
+        /// @param[in] signal_index
+        ///     Signal enumeration in `.proto` file, do decide whether to actually connect.
+        /// @param[in] signal
+        ///    Signal to which to connect
+        /// @param[in] encoder
+        ///    Routine to encode signal data to ProtoBuf Signal message
+
+        template <class SignalT>
+        void connect(uint signal_index,
+                     signal::SharedDataSignal<SignalT> &signal,
+                     const Encoder<SignalT> &encoder)
+        {
+            if (this->is_included(signal_index))
+            {
+                signal.connect(
+                    this->id,                                   // handle
+                    [=](const std::shared_ptr<SignalT> &value)  // slot
+                    {
+                        ProtoT msg;
+                        if (value)
+                        {
+                            encoder(*value, &msg);
+                        }
+                        this->forward(std::move(msg));
+                    });
             }
         }
 
