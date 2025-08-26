@@ -249,6 +249,7 @@ namespace core::str
 
         case 'r':
             modifiers->quoted = true;
+            modifiers->timeformat = 'Z';
             this->stream << std::boolalpha;
             break;
 

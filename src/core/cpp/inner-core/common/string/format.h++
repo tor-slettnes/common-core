@@ -164,6 +164,7 @@ namespace core::str
         void appendvalue(const types::Streamable &value,
                          const Modifiers &modifiers);
 
+
         // Output formatting for integral types: short, ushort, int, uint...
         // to support (a) variable field length and (b) sign space
         template <class T, std::enable_if_t<std::is_integral_v<T>, bool> = true>
@@ -219,6 +220,56 @@ namespace core::str
                                 const Modifiers &)
         {
             this->stream << value;
+        }
+
+
+        template <class T>
+        inline void appendvalue(const std::optional<T> &value,
+                                const Modifiers &modifiers)
+        {
+            this->append_if<std::optional<T>>(value, modifiers);
+        }
+
+        template <class T>
+        inline void appendvalue(const std::shared_ptr<T> &value,
+                                const Modifiers &modifiers)
+        {
+            this->append_if<std::shared_ptr<T>>(value, modifiers);
+        }
+
+        template <class T>
+        inline void appendvalue(const std::unique_ptr<T> &value,
+                                const Modifiers &modifiers)
+        {
+            this->append_if<std::unique_ptr<T>>(value, modifiers);
+        }
+
+        template <class T>
+        inline void appendvalue(const std::weak_ptr<T> &value,
+                                const Modifiers &modifiers)
+        {
+            this->append_if<std::shared_ptr<T>>(value.lock(), modifiers);
+        }
+
+
+        template <class ContainerT>
+        inline void append_if(const ContainerT &value,
+                              const Modifiers &modifiers)
+        {
+            if (modifiers.quoted)
+            {
+                stream << "{";
+            }
+
+            if (value)
+            {
+                this->appendvalue(*value, modifiers);
+            }
+
+            if (modifiers.quoted)
+            {
+                stream << "}";
+            }
         }
 
     private:
