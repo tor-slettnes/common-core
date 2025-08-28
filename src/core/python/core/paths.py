@@ -6,7 +6,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Package modules
-from ..buildinfo import SETTINGS_DIR, LOCAL_SETTINGS_DIR, ORGANIZATION
+from ..buildinfo import SETTINGS_DIR, LOCAL_SETTINGS_DIR, SHARED_DATA_DIR, ORGANIZATION
 
 ### Standard python modules
 from importlib.resources.abc import Traversable
@@ -55,6 +55,10 @@ def python_root() -> FilePath:
     Obtain root installation folder this Python package
     '''
     return package_root(__package__)
+
+
+def shared_data_dir() -> FilePath:
+    return normalized_folder(SHARED_DATA_DIR)
 
 
 def add_to_settings_path(folder: FilePath,
