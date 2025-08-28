@@ -154,8 +154,8 @@ namespace core::zmq
         ///   corresponding argument `schemeOption`, `hostOption` or
         ///   `portOption` as key.
         ///
-        /// * If still missing, the same lookup is performed in the file
-        ///   `*-endpoints-common.json`.
+        /// * If still missing, the same lookup is performed in the settings
+        ///   file `*-endpoints-common.{json,yaml}`.
         ///
         /// * Any attribute(s) that are still missing are populated from
         ///   `defaultScheme`, `defaultHost` or `defaultPort`, respectively.

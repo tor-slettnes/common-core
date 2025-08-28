@@ -180,10 +180,10 @@ namespace core::signal
         ///     A callback function, invoked whenever the signal is emitted
         /// @return
         ///     A unique handle, which can later be used to disconnect
-        Handle connect(const Slot &slot)
+        Handle connect(const Slot &slot, bool emit_cached = true)
         {
             Handle handle(this->unique_handle());
-            this->connect(handle, slot);
+            this->connect(handle, slot, emit_cached);
             return handle;
         }
 
@@ -193,11 +193,14 @@ namespace core::signal
         ///     subsequent cancellation.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
-        void connect(const Handle &handle, const Slot &slot)
+        void connect(const Handle &handle, const Slot &slot, bool emit_cached = true)
         {
             std::scoped_lock lck(this->signal_mtx_);
             this->slots_[handle] = slot;
-            this->emit_cached_to(handle, slot);
+            if (emit_cached)
+            {
+                this->emit_cached_to(handle, slot);
+            }
         }
 
         /// @brief
@@ -368,10 +371,10 @@ namespace core::signal
         ///     A callback function, invoked whenever the signal is emitted
         /// @return
         ///     A unique handle, which can later be used to disconnect
-        Handle connect(const Slot &slot)
+        Handle connect(const Slot &slot, bool emit_cached = true)
         {
             Handle handle(this->unique_handle());
-            this->connect(handle, slot);
+            this->connect(handle, slot, emit_cached);
             return handle;
         }
 
@@ -381,11 +384,14 @@ namespace core::signal
         ///     subsequent cancellation.
         /// @param[in] slot
         ///     A callback function, invoked whenever the signal is emitted
-        void connect(const Handle &handle, const Slot &slot)
+        void connect(const Handle &handle, const Slot &slot, bool emit_cached = true)
         {
             std::scoped_lock lck(this->signal_mtx_);
             this->slots_[handle] = slot;
-            this->emit_cached_to(handle, slot);
+            if (emit_cached)
+            {
+                this->emit_cached_to(handle, slot);
+            }
         }
 
         /// @brief
@@ -430,7 +436,6 @@ namespace core::signal
             }
             return this->sendall(value_ptr);
         }
-
 
         /// @brief
         ///     Emit signal only if the current value differs from the previous one.
@@ -568,10 +573,10 @@ namespace core::signal
         ///     A function invoked whenever signal data is emitted
         /// @return
         ///     Unique handle which can later be used to disconnect
-        Handle connect(const Slot &slot)
+        Handle connect(const Slot &slot, bool emit_cached = true)
         {
             Handle handle(this->unique_handle());
-            this->connect(handle, slot);
+            this->connect(handle, slot, emit_cached);
             return handle;
         }
 
@@ -580,11 +585,14 @@ namespace core::signal
         ///     Unique handle which can later be used to disconnect
         /// @param[in] slot
         ///     A function invoked whenever signal data is emitted
-        void connect(const Handle &handle, const Slot &slot)
+        void connect(const Handle &handle, const Slot &slot, bool emit_cached = true)
         {
             std::scoped_lock lck(this->signal_mtx_);
             this->slots_[handle] = slot;
-            this->emit_cached_to(handle, slot);
+            if (emit_cached)
+            {
+                this->emit_cached_to(handle, slot);
+            }
         }
 
         /// @brief
