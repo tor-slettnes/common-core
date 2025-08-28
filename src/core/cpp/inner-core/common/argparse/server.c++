@@ -70,9 +70,10 @@ namespace core::argparse
             pidstream << platform::process->process_id() << std::endl;
         }
         CommonOptions::enact();
-        logf_notice("Started %s version %s",
+        logf_notice("Started %s version %s build #%d",
                     platform::path->exec_name(),
-                    PROJECT_VERSION);
+                    PROJECT_VERSION,
+                    BUILD_NUMBER);
     }
 
     void ServerOptions::daemonize()
