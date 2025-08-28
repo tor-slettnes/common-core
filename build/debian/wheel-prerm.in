@@ -6,16 +6,6 @@ symlinks="@SYMLINKS@"
 symlinks_source_dir=${venv_path}/bin
 symlinks_target_dir="@SYMLINKS_TARGET_DIR@"
 
-delete_venv()
-{
-    rm -rf "${venv_path}"
-
-    if [ -d "${venv_root}" ]
-    then
-        rmdir --ignore-fail-on-non-empty --parents "${venv_root}"
-    fi
-}
-
 remove_symlinks()
 {
     if [ -n "${symlinks_target}" ]
@@ -32,12 +22,7 @@ remove_symlinks()
 
 
 case "$1" in
-    upgrade)
+    upgrade|remove)
         remove_symlinks
-        ;;
-
-    remove)
-        remove_symlinks
-        delete_venv
         ;;
 esac

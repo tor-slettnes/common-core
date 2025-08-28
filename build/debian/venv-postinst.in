@@ -1,0 +1,21 @@
+#!/bin/sh -e
+
+verbose=@VERBOSE@
+
+venv_args=
+if ! ${verbose:-false}
+then
+    venv_args="--quiet"
+fi
+
+create_venv()
+{
+    mkdir -p "@VENV_PATH@"
+    virtualenv ${venv_args} "@VENV_PATH@"
+}
+
+case "$1" in
+    configure)
+        create_venv
+        ;;
+esac

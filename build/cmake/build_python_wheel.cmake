@@ -299,7 +299,7 @@ function(cc_add_python_wheel TARGET)
   endif()
 
   if(local_venv_target)
-    get_target_property(venv_path   ${local_venv_target} venv_path)
+    get_target_property(venv_path   ${local_venv_target} local_path)
     get_target_property(venv_python ${local_venv_target} venv_python)
 
     cmake_path(APPEND venv_path ".build-stamps" OUTPUT_VARIABLE stamp_dir)
@@ -475,7 +475,7 @@ function(cc_add_python_wheel_install_hook)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   cc_cpack_get_debian_grouping(
-    COMPONENT "${arg_INSTALL_COMPONENT}"
+    COMPONENT "${arg_COMPONENT}"
     OUTPUT_VARIABLE package_name)
 
   cmake_path(APPEND DEBIAN_CONTROL_STAGING_DIR ${package_name}
@@ -565,11 +565,11 @@ function(cc_add_python_wheel_install_hook)
     COMPONENT "${arg_INSTALL_COMPONENT}"
     PHASE "postinst"
     TEMPLATE "${postinst_template}"
-    OUTPUT_FILE "20-${script_name}")
+    OUTPUT_FILE "30-${script_name}")
 
   cc_add_debian_control_script(
     COMPONENT "${arg_INSTALL_COMPONENT}"
     PHASE "prerm"
     TEMPLATE "${prerm_template}"
-    OUTPUT_FILE "80-${script_name}")
+    OUTPUT_FILE "70-${script_name}")
 endfunction()

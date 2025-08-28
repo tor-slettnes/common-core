@@ -142,24 +142,24 @@ function(cc_add_service_enable_hooks UNIT)
     COMPONENT "${arg_INSTALL_COMPONENT}"
     PHASE "preinst"
     TEMPLATE "${arg_PREINST_TEMPLATE}"
-    OUTPUT_FILE "70-${script}")
+    OUTPUT_FILE "90-${script}")
 
   cc_add_debian_control_script(
     COMPONENT "${arg_INSTALL_COMPONENT}"
     PHASE "postinst"
     TEMPLATE "${postinst_template}"
-    OUTPUT_FILE "70-${script}")
+    OUTPUT_FILE "90-${script}")
 
   cc_add_debian_control_script(
     COMPONENT "${arg_INSTALL_COMPONENT}"
     PHASE "prerm"
     TEMPLATE "${prerm_template}"
-    OUTPUT_FILE "30-${script}")
+    OUTPUT_FILE "10-${script}")
 
   cc_add_debian_control_script(
     COMPONENT "${arg_INSTALL_COMPONENT}"
     PHASE "postrm"
     TEMPLATE "${arg_POSTRM_TEMPLATE}"
-    OUTPUT_FILE "30-${script}")
+    OUTPUT_FILE "10-${script}")
 
 endfunction()

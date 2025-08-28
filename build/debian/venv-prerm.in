@@ -1,0 +1,20 @@
+#!/bin/sh -e
+
+venv_path="@VENV_PATH@"
+venv_root="${venv_path%/*}"
+
+delete_venv()
+{
+    rm -rf "${venv_path}"
+
+    if [ -d "${venv_root}" ]
+    then
+        rmdir --ignore-fail-on-non-empty --parents "${venv_root}"
+    fi
+}
+
+case "$1" in
+    remove)
+        delete_venv
+        ;;
+esac

@@ -35,8 +35,12 @@ endif()
 function(cc_add_python_venv TARGET)
   set(_options ALL)
   set(_singleargs
-    VENV_PATH            # Virtualenv folder on local (build) machine
-    POPULATE_TARGET      # Create dependent target to populate with requirements
+    LOCAL_PATH          # Virtualenv folder on local (build) machine
+    TARGET_PATH         # Add Debian post-install hook to create venv on target machine
+    POPULATE_TARGET     # Create dependent target to populate local venv with requirements
+    INSTALL_COMPONENT   # CPack component to which hook is added
+    POSTINST_TEMPLATE   # Use custom template for `postinst` script
+    PRERM_TEMPLATE      # Use custom template for `prerm` script
   )
   set(_multiargs
     REQUIREMENTS_FILES  # Files containing package names to install
@@ -49,11 +53,15 @@ function(cc_add_python_venv TARGET)
     COMPONENTS Interpreter
     REQUIRED)
 
-  cc_get_value_or_default(venv_path arg_VENV_PATH "${TARGET}")
-  cmake_path(ABSOLUTE_PATH venv_path
+  cc_get_value_or_default(local_path arg_LOCAL_PATH "${TARGET}")
+  cmake_path(ABSOLUTE_PATH local_path
     BASE_DIRECTORY "${PYTHON_VENV_LOCAL_ROOT}")
 
-  cmake_path(APPEND venv_path "bin" "python" OUTPUT_VARIABLE venv_python)
+  cmake_path(APPEND local_path "bin" "python" OUTPUT_VARIABLE venv_python)
+
+  cc_get_value_or_default(target_path arg_TARGET_PATH "${TARGET}")
+  cmake_path(ABSOLUTE_PATH target_path
+    BASE_DIRECTORY "${PYTHON_VENV_ROOT}")
 
   #-----------------------------------------------------------------------------
 
@@ -62,14 +70,15 @@ function(cc_add_python_venv TARGET)
     DEPENDS ${venv_python})
 
   set_target_properties(${TARGET} PROPERTIES
-    venv_path "${venv_path}"
+    local_path "${local_path}"
     venv_python "${venv_python}"
+    target_path "${target_path}"
   )
 
   #-----------------------------------------------------------------------------
   # Create the virtual environment
 
-  cmake_path(RELATIVE_PATH venv_path
+  cmake_path(RELATIVE_PATH local_path
     BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
     OUTPUT_VARIABLE venv_rel_path)
 
@@ -78,7 +87,7 @@ function(cc_add_python_venv TARGET)
     COMMENT "${TARGET}: Creating Python Virtual Environment: ${venv_rel_path}"
     VERBATIM
 
-    COMMAND "${Python3_EXECUTABLE}" -m virtualenv ${PIP_QUIET} "${venv_path}"
+    COMMAND "${Python3_EXECUTABLE}" -m virtualenv ${PIP_QUIET} "${local_path}"
   )
 
   #-----------------------------------------------------------------------------
@@ -93,6 +102,18 @@ function(cc_add_python_venv TARGET)
       REQUIREMENTS_DEPS "${arg_REQUIREMENTS_DEPS}"
     )
     add_dependencies("${arg_POPULATE_TARGET}" "${TARGET}")
+  endif()
+
+  #-----------------------------------------------------------------------------
+  # Add post-inst hooks to create venv on target
+
+  if(arg_INSTALL_COMPONENT)
+    cc_add_python_venv_install_hook(
+      VENV_PATH "${target_path}"
+      COMPONENT "${arg_INSTALL_COMPONENT}"
+      POSTINST_TEMPLATE "${arg_POSTINST_TEMPLATE}"
+      PRERM_TEMPLATE "${arg_PRERM_TEMPLATE}"
+    )
   endif()
 
 endfunction()
@@ -264,13 +285,13 @@ function(cc_populate_python_venv TARGET)
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   if(arg_VENV_TARGET)
-    get_target_property(venv_path ${arg_VENV_TARGET} venv_path)
+    get_target_property(venv_path ${arg_VENV_TARGET} local_path)
 
     if(NOT venv_path)
       message(FATAL_ERROR "Target cc_populate_python_venv(${TARGET}) "
-        "VENV dependency '${arg_VENV_DEPENDS}' does not look like a build "
+        "VENV dependency '${arg_VENV_TARGET}' does not look like a build "
         "target added by `cc_add_python_venv()`, because it is missing "
-        "the `venv_path` property.")
+        "the `local_path` property.")
     endif()
 
   elseif(arg_VENV_PATH)
@@ -302,7 +323,7 @@ function(cc_populate_python_venv TARGET)
   endif()
 
   set_target_properties(${TARGET} PROPERTIES
-    venv_path ${venv_path}
+    local_path ${venv_path}
     target_stamp ${target_stamp}
   )
 
@@ -366,4 +387,64 @@ function(cc_populate_python_venv TARGET)
 
 endfunction()
 
+
+
+
+function(cc_add_python_venv_install_hook)
+  set(_options
+    VERBOSE             # Create VENV without `--quiet` option
+  )
+  set(_singleargs
+    VENV_PATH           # Target `virtualenv` folder.
+    COMPONENT           # CPack component to which hook is added
+    POSTINST_TEMPLATE   # Use custom template for `postinst` script
+    PRERM_TEMPLATE      # Use custom template for `prerm` script
+  )
+  set(_multiargs
+  )
+  cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  #-----------------------------------------------------------------------------
+  # Assign variable values for control scripts.
+  # See `../debian/venv-postinst.in` and `../debian/venv-prerm.in`.
+
+  cc_get_ternary(VERBOSE
+    arg_VERBOSE
+    true
+    false)
+
+  # `VENV_PATH` is the absolute path name to the environment we are populating
+  # (This may be shared with additional wheels or it may be created new).
+  cmake_path(ABSOLUTE_PATH arg_VENV_PATH
+    BASE_DIRECTORY "${PYTHON_VENV_ROOT}"
+    OUTPUT_VARIABLE VENV_PATH)
+
+
+  #-----------------------------------------------------------------------------
+  # Generate `postinst` and `prerm` scripts
+
+  cc_get_argument_or_default(postinst_template
+    arg_POSTINST_TEMPLATE
+    "${DEBIAN_TEMPLATE_DIR}/venv-postinst.in"
+    "${arg_KEYWORDS_MISSING_VALUES}")
+
+  cc_get_argument_or_default(prerm_template
+    arg_PRERM_TEMPLATE
+    "${DEBIAN_TEMPLATE_DIR}/venv-prerm.in"
+    "${arg_KEYWORDS_MISSING_VALUES}")
+
+  set(script_name "venv")
+
+  cc_add_debian_control_script(
+    COMPONENT "${arg_INSTALL_COMPONENT}"
+    PHASE "postinst"
+    TEMPLATE "${postinst_template}"
+    OUTPUT_FILE "20-${script_name}")
+
+  cc_add_debian_control_script(
+    COMPONENT "${arg_INSTALL_COMPONENT}"
+    PHASE "prerm"
+    TEMPLATE "${prerm_template}"
+    OUTPUT_FILE "80-${script_name}")
+endfunction()
 

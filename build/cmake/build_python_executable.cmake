@@ -139,7 +139,7 @@ function(cc_add_python_executable TARGET)
   # Add multi-part command to build the main target, starting with obtaining the
   # `PyInstaller` tool.
 
-  get_target_property(venv ${venv_dep} venv_path)
+  get_target_property(venv ${venv_dep} local_path)
 
   cmake_path(APPEND venv "bin" "python"      OUTPUT_VARIABLE python)
   cmake_path(APPEND venv ".build-stamps"     OUTPUT_VARIABLE stamp_dir)
