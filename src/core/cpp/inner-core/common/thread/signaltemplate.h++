@@ -236,8 +236,8 @@ namespace core::signal
         /// @param[in] value
         ///     Signal value.
         /// @return
-        ///     The number of connected slots to which the signal was emitted
-        std::size_t emit_if_changed(const DataType &value)
+        ///     Whether or not the signal was emitted.
+        bool emit_if_changed(const DataType &value)
         {
             std::scoped_lock lck(this->signal_mtx_);
             if (!this->caching_ || !this->cached_ || !(value == *this->cached_))
@@ -246,11 +246,12 @@ namespace core::signal
                 {
                     this->update_cache(value);
                 }
-                return this->sendall(value);
+                this->sendall(value);
+                return true;
             }
             else
             {
-                return 0;
+                return false;
             }
         }
 
@@ -444,8 +445,8 @@ namespace core::signal
         /// @param[in] value
         ///     Signal value.
         /// @return
-        ///     The number of connected slots to which the signal was emitted
-        std::size_t emit_if_changed(const SharedDataPtr &value)
+        ///     Whether or not the signal was emitted.
+        bool emit_if_changed(const SharedDataPtr &value)
         {
             std::scoped_lock lck(this->signal_mtx_);
             if (!this->caching_ || !this->cached_ || !core::types::equivalent(value, this->cached_))
@@ -454,11 +455,12 @@ namespace core::signal
                 {
                     this->update_cache(value);
                 }
-                return this->sendall(value);
+                this->sendall(value);
+                return true;
             }
             else
             {
-                return 0;
+                return false;
             }
         }
 
@@ -666,8 +668,8 @@ namespace core::signal
         /// @param[in] value
         ///     Signal value.
         /// @return
-        ///     The number of connected slots to which the signal was emitted
-        std::size_t emit_if_changed(const KeyType &key, const DataType &value)
+        ///     Whether or not the signal was emitted.
+        bool emit_if_changed(const KeyType &key, const DataType &value)
         {
             std::scoped_lock lck(this->signal_mtx_);
             MappingAction action(
@@ -678,11 +680,12 @@ namespace core::signal
             if (action != MAP_NONE)
             {
                 this->update_cache(key, value);
-                return this->sendall(action, key, value);
+                this->sendall(action, key, value);
+                return true;
             }
             else
             {
-                return 0;
+                return false;
             }
         }
 
