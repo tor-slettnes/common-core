@@ -13,20 +13,29 @@ cc_add_python("${TARGET}"
   PYTHON_DEPS "cc_core_python"
   PROTO_DEPS "cc_demo_proto"
   DATA_DEPS "cc_demo_settings"
+  INSTALL_CONDITION WITH_PYTHON_MODULES
   INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
 )
 
 if(BUILD_DEMO)
+
+  #-----------------------------------------------------------------------------
+  ## Build Python wheel if `WITH_PYTHON_WHEELS` is set.}
+
   cc_add_python_wheel("demo"
     PYTHON_DEPS ${TARGET}
     WHEEL_DEPS "core"
     DESCRIPTION "Python DEMO package with gRPC and ZMQ communication examples"
     LOCAL_VENV "venv"
-    INSTALL_VENV "demo"
+    INSTALL_CONDITION WITH_PYTHON_WHEELS
     INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
+    INSTALL_VENV "demo"
     INSTALL_SYMLINKS "bin"
     SCRIPTS demo-client=${PYTHON_NAMESPACE}.demo.grpc.client:main
   )
+
+  #-----------------------------------------------------------------------------
+  ## Build Python binaries if `WITH_PYTHON_EXECUTABLES` is set.}
 
   cc_add_python_executable("demo-grpc-server"
     PROGRAM "demo-grpc-server-py"
@@ -34,6 +43,7 @@ if(BUILD_DEMO)
     REQUIREMENTS_DEPS "core-python-requirements"
     SCRIPT "demo/grpc/server.py"
     RUNTIME_HOOKS "demo/starthook.py"
+    INSTALL_CONDITION WITH_PYTHON_EXECUTABLES
     INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
     TYPE SBIN
     USE_SPEC
@@ -44,6 +54,7 @@ if(BUILD_DEMO)
     PYTHON_DEPS ${TARGET}
     REQUIREMENTS_DEPS "core-python-requirements"
     SCRIPT "demo/zmq/server.py"
+    INSTALL_CONDITION WITH_PYTHON_EXECUTABLES
     INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
     TYPE SBIN
   )

@@ -41,6 +41,7 @@ function(cc_add_python_wheel TARGET)
     BUILD_VENV          # Use a Python VENV to generate package (optional)
     LOCAL_VENV_TARGET   # Install wheel into a local Python VENV by build target
     LOCAL_VENV          # Install wheel into a local Python VENV by path
+    INSTALL_CONDITION   # Boolean variable which if present controls whether to include this target
     INSTALL_COMPONENT   # CPack component into which this wheel is added
     INSTALL_DIR         # Override default installation folder
     INSTALL_VENV        # Add Debian post-install hook to install wheel into a `venv`
@@ -236,11 +237,18 @@ function(cc_add_python_wheel TARGET)
   #-----------------------------------------------------------------------------
   # Create TARGET with dependencies, possibly included in the `ALL` target.
 
-  if(arg_ALL OR arg_INSTALL_COMPONENT)
-    set(include_in_all "ALL")
+  if (arg_ALL)
+    set(enable ON)
+  elseif (arg_INSTALL_CONDITION)
+    set(enable ${${arg_INSTALL_CONDITION}})
+  elseif(arg_INSTALL_COMPONENT)
+    set(enable ON)
+  else()
+    set(enable OFF)
   endif()
 
-  add_custom_target(${TARGET} ${include_in_all}
+  cc_get_optional_keyword(ALL enable)
+  add_custom_target(${TARGET} ${ALL}
     DEPENDS ${wheel_path}
   )
 
@@ -379,7 +387,7 @@ function(cc_add_python_wheel TARGET)
   #-----------------------------------------------------------------------------
   # Install wheel for distribution onto target
 
-  if(arg_INSTALL_COMPONENT)
+  if(enable AND arg_INSTALL_COMPONENT)
     cc_get_value_or_default(
       wheels_install_dir
       arg_INSTALL_DIR

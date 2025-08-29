@@ -33,10 +33,11 @@ function(cc_add_python_executable TARGET)
     SCRIPT              # Startup/main script (required)
     PROGRAM             # Name of executable (default: ${TARGET})
     TYPE                # CMake install type (`BIN` or `SBIN`)
-    INSTALL_COMPONENT   # CMake install component
     SPEC_TEMPLATE       # Use custom PyInstaller `.spec` template
     VENV_PATH           # Use existing named Python virtual environment
     VENV_DEPENDS        # Use Python venv created by `cc_add_python_venv()`
+    INSTALL_CONDITION   # Boolean variable which if present controls whether to include this target
+    INSTALL_COMPONENT   # CMake install component
   )
   set(_multiargs
     PYTHON_DEPS            # CMake Python target dependencies to bundle
@@ -84,10 +85,19 @@ function(cc_add_python_executable TARGET)
   file(MAKE_DIRECTORY "${staging_dir}")
 
   ### Create a CMake target
-  if(arg_ALL OR arg_INSTALL_COMPONENT)
-    set(include_in_all "ALL")
+  if (arg_ALL)
+    set(enable ON)
+  elseif (arg_INSTALL_CONDITION)
+    set(enable ${${arg_INSTALL_CONDITION}})
+  elseif(arg_INSTALL_COMPONENT)
+    set(enable ON)
+  else()
+    set(enable OFF)
   endif()
-  add_custom_target(${TARGET} ${include_in_all}
+
+  cc_get_optional_keyword(ALL enable)
+
+  add_custom_target(${TARGET} ${ALL}
     DEPENDS "${program_path}")
   add_dependencies(${PYTHON_EXECUTABLES_TARGET} ${TARGET})
 
@@ -340,7 +350,7 @@ function(cc_add_python_executable TARGET)
   )
 
   ### Install/package resulting executable
-  if(arg_INSTALL_COMPONENT)
+  if(enable AND arg_INSTALL_COMPONENT)
     cc_get_value_or_default(type arg_TYPE "BIN")
 
     if(arg_DIRECTORY_BUNDLE)

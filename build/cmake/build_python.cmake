@@ -27,24 +27,25 @@ set_property(
 function(cc_add_python TARGET)
   set(_options)
   set(_singleargs
-    NAMESPACE                   # Custom top-level namespace (default: `cc`)
-    NAMESPACE_COMPONENT         # 2nd level namespace (following `cc.`), if any
-    STAGING_DIR                 # Where to stage Python modules for installation
-    INSTALL_COMPONENT           # CPack component (e.g. Debian package component)
-    INSTALL_DIR                 # Override installation folder on target
+    NAMESPACE           # Custom top-level namespace (default: `cc`)
+    NAMESPACE_COMPONENT # 2nd level namespace (following `cc.`), if any
+    STAGING_DIR         # Where to stage Python modules for installation
+    INSTALL_CONDITION   # Boolean variable which if present controls whether to include this target
+    INSTALL_COMPONENT   # CPack component (e.g. Debian package component)
+    INSTALL_DIR         # Override installation folder on target
   )
   set(_multiargs
-    PYTHON_DEPS                 # Other Python targets on which this depends
-    PROTO_DEPS                  # Generated ProtoBuf targets on which this depends
-    DATA_DEPS                   # Data file (e.g. settings) targets on which this depends
-    PROGRAMS                    # Files installed with execute permissions
-    FILES                       # Files installed without execute permissions
-    DIRECTORIES                 # Subdirectories to install. Use trailing `/` to start within.
-    FILENAME_PATTERN            # Filename masks for DIRECTORIES option
-    HIDDEN_IMPORTS              # Passed on to any dependent PyInstaller/executable target
-    COLLECT_SUBMODULES          # Passed on to any dependent PyInstaller/executable target
-    COLLECT_PACKAGES            # Passed on to any dependent PyInstaller/executable target
-    EXTRA_DATA_MODULES          # Passed on to any dependent PyInstaller/executable target
+    PYTHON_DEPS         # Other Python targets on which this depends
+    PROTO_DEPS          # Generated ProtoBuf targets on which this depends
+    DATA_DEPS           # Data file (e.g. settings) targets on which this depends
+    PROGRAMS            # Files installed with execute permissions
+    FILES               # Files installed without execute permissions
+    DIRECTORIES         # Subdirectories to install. Use trailing `/` to start within.
+    FILENAME_PATTERN    # Filename masks for DIRECTORIES option
+    HIDDEN_IMPORTS      # Passed on to any dependent PyInstaller/executable target
+    COLLECT_SUBMODULES  # Passed on to any dependent PyInstaller/executable target
+    COLLECT_PACKAGES    # Passed on to any dependent PyInstaller/executable target
+    EXTRA_DATA_MODULES  # Passed on to any dependent PyInstaller/executable target
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -54,7 +55,7 @@ function(cc_add_python TARGET)
   ###  * Consolidated and staged to a common folder by `cc_add_python_executable()`
   ###    (because PyInstaller does not handle multiple source locations with
   ###    overlapping module namespaces / directory structures)
-  ###  * Installed, if the option `WITH_PYTHON_MODULES` is enabled
+  ###  * Installed, if the option `INSTALL_COMPONENT` is set
 
   ### Specify root folder for staging python modules for this target
   if(arg_STAGING_DIR)
@@ -77,13 +78,6 @@ function(cc_add_python TARGET)
     NAMESPACE "${namespace}"
     ROOT_DIR "${staging_dir}"
     OUTPUT_VARIABLE namespace_dir)
-
-  ### Create a Custom CMake target plus staging folder
-  if(arg_INSTALL_COMPONENT AND WITH_PYTHON_MODULES)
-    set(install_component ${arg_INSTALL_COMPONENT})
-  else()
-    unset(install_component)
-  endif()
 
   ### Add commands to populate staging directory
   cc_get_value_or_default(
@@ -108,11 +102,22 @@ function(cc_add_python TARGET)
   # set(staged_outputs "${staging_dir}")
   # set_property(SOURCE "${staged_output}" PROPERTY SYMBOLIC)
 
+  if (arg_ALL)
+    set(enable ON)
+  elseif (arg_INSTALL_CONDITION)
+    set(enable ${${arg_INSTALL_CONDITION}})
+  elseif(arg_INSTALL_COMPONENT)
+    set(enable ON)
+  else()
+    set(enable OFF)
+  endif()
+
+
   if(NOT TARGET "${TARGET}")
     ### We include this in the 'ALL` target iff we expect to install it.
     ### In other cases (e.g. if including this target in a Python wheel), this
     ### should be an explicit dependency for one or more downstream targets.
-    cc_get_optional_keyword(ALL install_component)
+    cc_get_optional_keyword(ALL enable)
 
     add_custom_target("${TARGET}" ${ALL}
       DEPENDS ${staged_outputs}
@@ -167,7 +172,7 @@ function(cc_add_python TARGET)
       PROPERTIES extra_data_modules "${arg_EXTRA_DATA_MODULES}")
   endif()
 
-  if(install_component)
+  if(enable AND arg_INSTALL_COMPONENT)
     cc_get_value_or_default(
       install_dir
       arg_INSTALL_DIR
@@ -176,7 +181,7 @@ function(cc_add_python TARGET)
     install(
       DIRECTORY "${staging_dir}/"
       DESTINATION "${install_dir}"
-      COMPONENT "${install_component}"
+      COMPONENT "${arg_INSTALL_COMPONENT}"
     )
   endif()
 endfunction()
@@ -191,7 +196,7 @@ endfunction()
 ##  - Added to dependent Python Wheel targets (via `cc_add_python_wheel()`)
 ##  - Merged alongside other dependencies into a single staging
 ##    folder for Pyinstaller (via `cc_add_python_executable()`)
-##  - Installed/packaged (if the option `WITH_PYTHON_MODULES` is enabled)
+##  - Installed/packaged (if the option `INSTALL_CONDITION` is enabled)
 
 function(cc_stage_python_modules)
   set(_options)

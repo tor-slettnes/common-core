@@ -32,11 +32,12 @@ set(DIRECTORIES
 
 ### Wheel dependencies
 cc_add_python("${TARGET}"
-  INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
   PROTO_DEPS "cc_core_proto"
   PROGRAMS "${PROGRAMS}"
   FILES "${FILES}"
   DIRECTORIES "${DIRECTORIES}"
+  INSTALL_CONDITION WITH_PYTHON_MODULES
+  INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
 )
 
 cc_add_python_requirements_cache("core-python-requirements"
@@ -50,6 +51,7 @@ if(BUILD_SHARED)
     DATA_DEPS "cc_core_settings"
     REQUIREMENTS_DEPS "core-python-requirements"
     DESCRIPTION "Python common components"
+    INSTALL_CONDITION WITH_PYTHON_WHEELS
     INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
   )
 endif()
