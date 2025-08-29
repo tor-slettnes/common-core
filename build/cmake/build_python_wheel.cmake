@@ -236,7 +236,7 @@ function(cc_add_python_wheel TARGET)
   #-----------------------------------------------------------------------------
   # Create TARGET with dependencies, possibly included in the `ALL` target.
 
-  if(arg_ALL OR WITH_PYTHON_WHEELS)
+  if(arg_ALL OR arg_INSTALL_COMPONENT)
     set(include_in_all "ALL")
   endif()
 
@@ -379,7 +379,7 @@ function(cc_add_python_wheel TARGET)
   #-----------------------------------------------------------------------------
   # Install wheel for distribution onto target
 
-  if(WITH_PYTHON_WHEELS AND arg_INSTALL_COMPONENT)
+  if(arg_INSTALL_COMPONENT)
     cc_get_value_or_default(
       wheels_install_dir
       arg_INSTALL_DIR

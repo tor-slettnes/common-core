@@ -84,7 +84,7 @@ function(cc_add_python_executable TARGET)
   file(MAKE_DIRECTORY "${staging_dir}")
 
   ### Create a CMake target
-  if(arg_ALL OR WITH_PYTHON_EXECUTABLES)
+  if(arg_ALL OR arg_INSTALL_COMPONENT)
     set(include_in_all "ALL")
   endif()
   add_custom_target(${TARGET} ${include_in_all}
@@ -340,7 +340,7 @@ function(cc_add_python_executable TARGET)
   )
 
   ### Install/package resulting executable
-  if(WITH_PYTHON_EXECUTABLES AND arg_INSTALL_COMPONENT)
+  if(arg_INSTALL_COMPONENT)
     cc_get_value_or_default(type arg_TYPE "BIN")
 
     if(arg_DIRECTORY_BUNDLE)
