@@ -15,13 +15,21 @@ log sinks:
     include context: true
     threshold    : DEBUG
 
-  csvfile:
+  logfile:
     enabled      : true
+    threshold    : INFO
     rotate after : 1 day
     compress after use: true
-    expire after : 1 month
-    name template: "{isodate}-{hour}{minute}{zoneoffset}.csv"
-    threshold    : INFO
+    expire after : 1 year
+    name template: "{isodate}-{hour}{minute}{zoneoffset}"
+
+  csvfile:
+    enabled      : true
+    threshold    : DEBUG
+    rotate after : 1 day
+    compress after use: true
+    expire after : 2 weeks
+    name template: "{isodate}-{hour}{minute}{zoneoffset}"
 
   lologger:
     enabled      : false
