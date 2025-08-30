@@ -171,7 +171,7 @@ install/strip: build
 	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR) --strip
 
-install/%: build
+install/%:
 	@echo
 	@echo "#############################################################"
 	@echo "Installing component '$*' in ${INSTALL_DIR}"

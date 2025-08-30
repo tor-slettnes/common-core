@@ -35,7 +35,7 @@ def install_root() -> FilePath:
     Obtain installation root folder
     '''
 
-    root, _ = locate_dominating_path('share')
+    root, _ = locate_dominating_path('lib', program_path())
     return root
 
 def package_root(package: str):
@@ -58,7 +58,7 @@ def python_root() -> FilePath:
 
 
 def shared_data_dir() -> FilePath:
-    return normalized_folder(SHARED_DATA_DIR)
+    return normalized_folder(SHARED_DATA_DIR, install_root())
 
 
 def add_to_settings_path(folder: FilePath,
@@ -77,7 +77,7 @@ def add_to_settings_path(folder: FilePath,
         `True` if the search path was modified, `False` otherwise.
     '''
 
-    if normfolder := normalized_folder(folder):
+    if normfolder := normalized_folder(folder, python_root()):
         path = settings_path()
         if normfolder in path:
             return False
@@ -157,17 +157,19 @@ def normalized_search_path(searchpath: SearchPath) -> list[pathlib.Path]:
 
     normpath = []
     for folder in searchpath:
-        if normfolder := normalized_folder(folder):
+        if normfolder := normalized_folder(folder, python_root()):
             normpath.append(normfolder)
 
     return normpath
 
-def normalized_folder(folder: FilePath):
+def normalized_folder(folder: FilePath,
+                      start: FilePath):
+
     if isinstance(folder, str):
         if os.path.isabs(folder):
             return pathlib.Path(folder)
         else:
-            _, normalized = locate_dominating_path(folder)
+            _, normalized = locate_dominating_path(folder, start)
             return normalized
 
     elif isinstance(folder, pathlib.Path):
@@ -177,11 +179,11 @@ def normalized_folder(folder: FilePath):
         return None
 
 def locate_dominating_path(name: FilePath,
-                           start: FilePath|None = None,
+                           start: FilePath,
                            ) -> tuple[FilePath, FilePath]:
 
 
-    base = start or python_root()
+    base = start
     previous = None
 
     while not base.joinpath(name).exists():
