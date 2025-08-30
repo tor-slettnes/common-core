@@ -246,13 +246,16 @@ namespace core::logging
                 this->expiration_interval(),
                 this->use_local_time());
 
-            fs::path pattern("*");
-            pattern += this->current_suffix();
+            fs::path plain_pattern("*");
+            plain_pattern += this->current_suffix();
+
+            fs::path compressed_pattern(plain_pattern);
+            compressed_pattern += COMPRESSION_SUFFIX;
 
             try
             {
                 for (const fs::path &candidate_path : platform::path->locate(
-                         {pattern},
+                         {plain_pattern, compressed_pattern},
                          this->log_folder()))
                 {
                     this->check_expiration(expiration_time, candidate_path);
