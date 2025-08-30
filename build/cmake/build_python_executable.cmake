@@ -86,16 +86,16 @@ function(cc_add_python_executable TARGET)
 
   ### Create a CMake target
   if (arg_ALL)
-    set(enable ON)
+    set(install ON)
   elseif (arg_INSTALL_CONDITION)
-    set(enable ${${arg_INSTALL_CONDITION}})
+    set(install ${${arg_INSTALL_CONDITION}})
   elseif(arg_INSTALL_COMPONENT)
-    set(enable ON)
+    set(install ON)
   else()
-    set(enable OFF)
+    set(install OFF)
   endif()
 
-  cc_get_optional_keyword(ALL enable)
+  cc_get_optional_keyword(ALL install)
 
   add_custom_target(${TARGET} ${ALL}
     DEPENDS "${program_path}")
@@ -350,7 +350,7 @@ function(cc_add_python_executable TARGET)
   )
 
   ### Install/package resulting executable
-  if(enable AND arg_INSTALL_COMPONENT)
+  if(install AND arg_INSTALL_COMPONENT)
     cc_get_value_or_default(type arg_TYPE "BIN")
 
     if(arg_DIRECTORY_BUNDLE)

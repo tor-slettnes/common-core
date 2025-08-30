@@ -103,13 +103,13 @@ function(cc_add_python TARGET)
   # set_property(SOURCE "${staged_output}" PROPERTY SYMBOLIC)
 
   if (arg_ALL)
-    set(enable ON)
+    set(install ON)
   elseif (arg_INSTALL_CONDITION)
-    set(enable ${${arg_INSTALL_CONDITION}})
+    set(install ${${arg_INSTALL_CONDITION}})
   elseif(arg_INSTALL_COMPONENT)
-    set(enable ON)
+    set(install ON)
   else()
-    set(enable OFF)
+    set(install OFF)
   endif()
 
 
@@ -117,7 +117,7 @@ function(cc_add_python TARGET)
     ### We include this in the 'ALL` target iff we expect to install it.
     ### In other cases (e.g. if including this target in a Python wheel), this
     ### should be an explicit dependency for one or more downstream targets.
-    cc_get_optional_keyword(ALL enable)
+    cc_get_optional_keyword(ALL install)
 
     add_custom_target("${TARGET}" ${ALL}
       DEPENDS ${staged_outputs}
@@ -172,7 +172,7 @@ function(cc_add_python TARGET)
       PROPERTIES extra_data_modules "${arg_EXTRA_DATA_MODULES}")
   endif()
 
-  if(enable AND arg_INSTALL_COMPONENT)
+  if(install AND arg_INSTALL_COMPONENT)
     cc_get_value_or_default(
       install_dir
       arg_INSTALL_DIR

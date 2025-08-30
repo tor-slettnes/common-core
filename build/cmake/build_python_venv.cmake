@@ -38,6 +38,7 @@ function(cc_add_python_venv TARGET)
     LOCAL_PATH          # Virtualenv folder on local (build) machine
     TARGET_PATH         # Add Debian post-install hook to create venv on target machine
     POPULATE_TARGET     # Create dependent target to populate local venv with requirements
+    INSTALL_CONDITION   # Boolean variable which if present controls whether to include this target
     INSTALL_COMPONENT   # CPack component to which hook is added
     POSTINST_TEMPLATE   # Use custom template for `postinst` script
     PRERM_TEMPLATE      # Use custom template for `prerm` script
@@ -65,7 +66,17 @@ function(cc_add_python_venv TARGET)
 
   #-----------------------------------------------------------------------------
 
-  cc_get_optional_keyword(ALL arg_ALL)
+  if (arg_ALL)
+    set(install ON)
+  elseif (arg_INSTALL_CONDITION)
+    set(install ${${arg_INSTALL_CONDITION}})
+  elseif(arg_INSTALL_COMPONENT)
+    set(install ON)
+  else()
+    set(install OFF)
+  endif()
+
+  cc_get_optional_keyword(ALL install)
   add_custom_target(${TARGET} ${ALL}
     DEPENDS ${venv_python})
 
@@ -107,7 +118,7 @@ function(cc_add_python_venv TARGET)
   #-----------------------------------------------------------------------------
   # Add post-inst hooks to create venv on target
 
-  if(arg_INSTALL_COMPONENT)
+  if(install AND arg_INSTALL_COMPONENT)
     cc_add_python_venv_install_hook(
       VENV_PATH "${target_path}"
       COMPONENT "${arg_INSTALL_COMPONENT}"
@@ -163,18 +174,19 @@ endfunction()
 
 function(cc_add_python_requirements_cache TARGET)
   set(_options
-    ALL                         # Add wheel to the default default build target
+    ALL                # Add wheel to the default default build target
   )
   set(_singleargs
-    STAGING_DIR                 # Override default staging directory
-    VENV                        # Use Python interpreter from a VENV (optional)
-    INSTALL_COMPONENT           # Install cache onto target
-    INSTALL_DIR                 # Override default installation folder
+    STAGING_DIR        # Override default staging directory
+    VENV               # Use Python interpreter from a VENV (optional)
+    INSTALL_CONDITION  # Boolean variable which if present controls whether to include this target
+    INSTALL_COMPONENT  # Install cache onto target
+    INSTALL_DIR        # Override default installation folder
   )
   set(_multiargs
-    REQUIREMENTS_FILES  # File containing required distribution names
-    REQUIREMENTS        # Additional Python distribution (package) names
-    REQUIREMENTS_DEPS   # Upstream distribution cache targets on which we depend
+    REQUIREMENTS_FILES # File containing required distribution names
+    REQUIREMENTS       # Additional Python distribution (package) names
+    REQUIREMENTS_DEPS  # Upstream distribution cache targets on which we depend
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -191,10 +203,18 @@ function(cc_add_python_requirements_cache TARGET)
   cmake_path(APPEND staging_dir ".${TARGET}"
     OUTPUT_VARIABLE staging_stamp)
 
-  if(arg_ALL OR WITH_PYTHON_REQUIREMENTS)
-    set(include_in_all "ALL")
+  if (arg_ALL)
+    set(install ON)
+  elseif (arg_INSTALL_CONDITION)
+    set(install ${${arg_INSTALL_CONDITION}})
+  elseif(arg_INSTALL_COMPONENT)
+    set(install ON)
+  else()
+    set(install OFF)
   endif()
-  add_custom_target(${TARGET} ${include_in_all}
+
+  cc_get_optional_keyword(ALL install)
+  add_custom_target(${TARGET} ${ALL}
     DEPENDS "${staging_stamp}"
   )
 
@@ -237,7 +257,7 @@ function(cc_add_python_requirements_cache TARGET)
       python_distributions_cache_dir "${staging_dir}"
     )
 
-    if(WITH_PYTHON_REQUIREMENTS AND arg_INSTALL_COMPONENT)
+    if(install AND arg_INSTALL_COMPONENT)
       cc_get_value_or_default(
         wheels_install_dir
         arg_INSTALL_DIR
