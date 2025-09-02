@@ -21,12 +21,13 @@ set_property(
 
 function(cc_add_settings TARGET)
   set(_options
-    RECURSE                     # Recursively descend into provided DIRECTORIES
+    RECURSE                # Recursively descend into provided DIRECTORIES
   )
   set(_singleargs
-    DESTINATION                 # Override default target folder
-    STAGING_DIR                 # Override defualt staging folder
-    INSTALL_COMPONENT           # CPack install component
+    DESTINATION            # Override default target folder
+    WHEEL_DESTINATION      # Override target folder inside `.whl` files
+    STAGING_DIR            # Override defualt staging folder
+    INSTALL_COMPONENT      # CPack install component
   )
   set(_multiargs
     FILES                  # Explicit file paths
@@ -89,9 +90,16 @@ function(cc_add_settings TARGET)
   ###   - `data_dir` to indicate where these files should be added
   ###     to the final target by cc_add_python_wheel()/cc_add_python_executable().
 
+  cc_get_argument_or_default(
+    data_dir
+    arg_WHEEL_DESTINATION
+    "settings"
+    "${arg_KEYWORDS_MISSING_VALUES}"
+  )
+
   set_target_properties("${TARGET}" PROPERTIES
     staging_dir "${staging_dir}"
-    data_dir "settings"
+    data_dir "${data_dir}"
   )
 
   ### Add commands to perform the actual staging.
@@ -100,7 +108,7 @@ function(cc_add_settings TARGET)
     COMMENT "${TARGET}: staging settings files"
     COMMAND "${CMAKE_COMMAND}" -E rm -rf "${staging_dir}"
     COMMAND "${CMAKE_COMMAND}" -E make_directory "${staging_dir}"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMAND_EXPAND_LISTS
     VERBATIM
   )
