@@ -6,7 +6,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Package modules
-from ..buildinfo import SETTINGS_DIR, LOCAL_SETTINGS_DIR, SHARED_DATA_DIR, ORGANIZATION
+from ..buildinfo import SETTINGS_DIR, LOCAL_SETTINGS_DIR, SHARED_DATA_DIR, INSTALL_ROOT, ORGANIZATION
 
 ### Standard python modules
 from importlib.resources.abc import Traversable
@@ -30,13 +30,21 @@ def program_name() -> str:
 def program_path() -> FilePath:
     return pathlib.Path('.').absolute().joinpath(sys.argv[0])
 
-def install_root() -> FilePath:
+def install_root(fallback: FilePath = INSTALL_ROOT) -> FilePath:
     '''
     Obtain installation root folder
     '''
 
-    root, _ = locate_dominating_path('lib', program_path())
-    return root
+    if dominating_parent := locate_dominating_parent(SHARED_DATA_DIR, python_root()):
+        return dominating_parent
+    else:
+        return pathlib.Path(INSTALL_ROOT)
+
+def python_root() -> FilePath:
+    '''
+    Obtain root installation folder this Python package
+    '''
+    return package_root(__package__)
 
 def package_root(package: str):
     '''
@@ -50,16 +58,8 @@ def package_root(package: str):
     return package_path
 
 
-def python_root() -> FilePath:
-    '''
-    Obtain root installation folder this Python package
-    '''
-    return package_root(__package__)
-
-
 def shared_data_dir() -> FilePath:
-    return normalized_folder(SHARED_DATA_DIR, install_root())
-
+    return install_root() / SHARED_DATA_DIR;
 
 def add_to_settings_path(folder: FilePath,
                          prepend: bool) -> bool:
@@ -168,9 +168,9 @@ def normalized_folder(folder: FilePath,
     if isinstance(folder, str):
         if os.path.isabs(folder):
             return pathlib.Path(folder)
-        else:
-            _, normalized = locate_dominating_path(folder, start)
-            return normalized
+
+        elif dominating_parent := locate_dominating_parent(folder, start):
+            return dominating_parent / folder
 
     elif isinstance(folder, pathlib.Path):
         return folder.absolute()
@@ -178,21 +178,28 @@ def normalized_folder(folder: FilePath,
     else:
         return None
 
-def locate_dominating_path(name: FilePath,
-                           start: FilePath,
-                           ) -> tuple[FilePath, FilePath]:
+def locate_dominating_parent(target: FilePath,
+                             start: FilePath,
+                             ) -> FilePath:
+    '''
+    Search upwards from the specified `start` directory until the relative
+    path `target` is found inside, or until the filesystem root has been reached
+    without any results.
 
+    Returns the parent directory in which `target` is found if any, or `None`.
+    '''
 
     base = start
     previous = None
 
-    while not base.joinpath(name).exists():
+    while not base.joinpath(target).exists():
         if base == previous:
-            return None, None
+            return None
         previous = base
         base = parent_path(base)
 
-    return base, base.joinpath(name)
+    return base
+
 
 def parent_path(path: FilePath):
     try:

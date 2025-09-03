@@ -26,7 +26,7 @@ function(cc_add_settings TARGET)
   set(_singleargs
     DESTINATION            # Override default target folder
     WHEEL_DESTINATION      # Override target folder inside `.whl` files
-    STAGING_DIR            # Override defualt staging folder
+    STAGING_DIR            # Override default staging folder
     INSTALL_COMPONENT      # CPack install component
   )
   set(_multiargs

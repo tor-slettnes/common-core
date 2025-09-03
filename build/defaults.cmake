@@ -60,6 +60,7 @@ set(LOCAL_DATA_DIR "/data/${ORGANIZATION}"
 set(LOGS_DIR "/var/log/${ORGANIZATION}"
   CACHE STRING "Directory for generated log files")
 
+
 #-------------------------------------------------------------------------------
 # Software upgrade settings (via `Upgrade` service)
 
