@@ -33,4 +33,3 @@ cc_add_library("${TARGET}"
 
 ### Define preprocessor symbol
 target_compile_definitions(${TARGET} PUBLIC USE_AVRO=1)
-

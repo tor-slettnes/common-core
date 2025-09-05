@@ -253,4 +253,3 @@ function(cc_add_proto_python TARGET)
       COMPONENT "${arg_INSTALL_COMPONENT}")
   endif()
 endfunction()
-

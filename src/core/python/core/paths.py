@@ -57,6 +57,15 @@ def package_root(package: str):
         package_parts.pop()
     return package_path
 
+def package_dir(package: str):
+    '''
+    Obtain installation folder for a specific Python package
+    '''
+
+    if package in ('', '.'):
+        return python_root()
+    else:
+        return importlib.resources.files(package)
 
 def shared_data_dir() -> FilePath:
     return install_root() / SHARED_DATA_DIR;
@@ -78,7 +87,7 @@ def add_to_settings_path(folder: FilePath,
     '''
 
     if normfolder := normalized_folder(folder, python_root()):
-        path = settings_path()
+        path = mutable_settings_path()
         if normfolder in path:
             return False
         elif prepend:
@@ -92,6 +101,7 @@ def add_to_settings_path(folder: FilePath,
 
 
 def default_settings_path(
+        package: str|None = None,
         include_local: bool = True,
         include_global: bool = True,
         ) -> SearchPath:
@@ -130,15 +140,21 @@ def default_settings_path(
         ### Embedded `settings` folder inside distribution archive (wheel or executable)
         searchpath.append('settings')
 
+        if package is not None:
+            searchpath.append(package_dir(package))
+
     return normalized_search_path(searchpath)
 
 
-def settings_path() -> SearchPath:
+def mutable_settings_path() -> SearchPath:
     '''
-    Return list of folders in which to look for configuration files.
+    Return a mutable list of folders in which to look for configuration files.
 
     This list may have been ameded via prior calls to `add_to_settings_path()`.
     To obtain the original settings path, use `default_settings_path()`.
+
+    To obtain a final settings path, optionally tailored for a specific Python
+    namespace/package, use `settings_path()`.
     '''
 
     global _settingspath
@@ -151,7 +167,23 @@ def settings_path() -> SearchPath:
     return _settingspath
 
 
-def normalized_search_path(searchpath: SearchPath) -> list[pathlib.Path]:
+def settings_path(
+        package: str|None = None) -> SearchPath:
+    '''
+    Return list of folders in which to look for configuration files.
+
+    If provided, the `package` argument is expanded to the folder in which the
+    corresponding Python package is installed, and appended to the result.
+    '''
+
+    settingspath = mutable_settings_path().copy()
+    if package is not None:
+        settingspath.append(package_dir(package))
+    return settingspath
+
+
+def normalized_search_path(searchpath: SearchPath,
+                           package: str|None = None) -> list[pathlib.Path]:
     if isinstance(searchpath, str):
         searchpath = searchpath.split(os.pathsep)
 

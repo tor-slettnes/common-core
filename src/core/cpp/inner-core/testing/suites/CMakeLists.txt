@@ -20,4 +20,3 @@ target_link_libraries(${TARGET}
 
 include(GoogleTest)
 gtest_discover_tests(${TARGET})
-

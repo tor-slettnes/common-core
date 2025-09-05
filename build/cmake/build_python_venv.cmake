@@ -93,9 +93,24 @@ function(cc_add_python_venv TARGET)
     BASE_DIRECTORY "${CMAKE_SOURCE_DIR}"
     OUTPUT_VARIABLE venv_rel_path)
 
+  # Check if virtualenv is available, fall back to venv if not
+  execute_process(
+    COMMAND "${Python3_EXECUTABLE}" -m virtualenv --version
+    OUTPUT_VARIABLE venv_version
+    ERROR_VARIABLE venv_error
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE
+  )
+
+  if(venv_version)
+    set(venv_command "${Python3_EXECUTABLE}" -m virtualenv ${PIP_QUIET} "${venv_path}")
+  else()
+    set(venv_command "${Python3_EXECUTABLE}" -m venv "${venv_path}")
+  endif()
+
   add_custom_command(
     OUTPUT "${venv_python}"
-    COMMENT "${TARGET}: Creating Python Virtual Environment: ${venv_rel_path}"
+    COMMENT "${TARGET}: Creating Python Virtual Environment, using '${venv_command}': ${venv_rel_path}"
     VERBATIM
 
     COMMAND "${Python3_EXECUTABLE}" -m virtualenv ${PIP_QUIET} "${local_path}"
@@ -408,8 +423,6 @@ function(cc_populate_python_venv TARGET)
 endfunction()
 
 
-
-
 function(cc_add_python_venv_install_hook)
   set(_options
     VERBOSE             # Create VENV without `--quiet` option
@@ -467,4 +480,3 @@ function(cc_add_python_venv_install_hook)
     TEMPLATE "${prerm_template}"
     OUTPUT_FILE "80-${script_name}")
 endfunction()
-
