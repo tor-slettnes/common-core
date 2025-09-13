@@ -103,9 +103,11 @@ function(cc_add_python_venv TARGET)
   )
 
   if(venv_version)
-    set(venv_command "${Python3_EXECUTABLE}" -m virtualenv ${PIP_QUIET} "${venv_path}")
+    set(venv_command virtualenv)
+    set(venv_args ${PIP_QUIET})
   else()
-    set(venv_command "${Python3_EXECUTABLE}" -m venv "${venv_path}")
+    set(venv_command venv)
+    unset(venv_args)
   endif()
 
   add_custom_command(
@@ -113,7 +115,7 @@ function(cc_add_python_venv TARGET)
     COMMENT "${TARGET}: Creating Python Virtual Environment, using '${venv_command}': ${venv_rel_path}"
     VERBATIM
 
-    COMMAND "${Python3_EXECUTABLE}" -m virtualenv ${PIP_QUIET} "${local_path}"
+    COMMAND "${Python3_EXECUTABLE}" -m ${venv_command} ${venv_args} "${local_path}"
   )
 
   #-----------------------------------------------------------------------------

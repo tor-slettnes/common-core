@@ -152,8 +152,7 @@ class SettingsStore (dict):
         Let's say you create a `SettingsStore` instance as follows:
 
         ```python
-        my_settings = SettingsStore()
-        my_setings.load('my_settings')
+        my_settings = SettingsStore('my_settings')
         ```
 
         Since `searchpath` is not explicitly provided, the default value
