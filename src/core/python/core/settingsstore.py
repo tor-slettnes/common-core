@@ -26,7 +26,7 @@ import pathlib
 
 FilePath  = str | Traversable
 FilePaths = Sequence[FilePath]
-Variant   = str | bool | int | float | dict[object] | list[object] | type(None)
+Variant   = type(None) | bool | int | float | str | dict[object] | list[object]
 
 
 class SettingsStore (dict):
@@ -110,9 +110,9 @@ class SettingsStore (dict):
         and/or `settings_file.json` file(s) found earlier in the search path.)
         '''
 
-        self.filenames = []
-        self.filepaths = []
-        self.package   = package
+        self._filenames = []
+        self._filepaths = []
+        self.package    = package
         if searchpath is not None:
             self.searchpath = normalized_search_path(searchpath)
         else:
@@ -168,10 +168,10 @@ class SettingsStore (dict):
         6. `/usr/share/common-core/settings/my_settings.yaml`
         '''
 
-        for filepath in self.find_file_paths(filename, self.searchpath):
+        for filepath in self.find_paths(filename):
             self.merge_file(filepath)
 
-        self.filenames.append(filename)
+        self._filenames.append(filename)
 
 
     def merge_file(self, filepath: FilePath):
@@ -201,7 +201,7 @@ class SettingsStore (dict):
         else:
             settings = parser(text)
             self.merge_settings(settings)
-            self.filepaths.append(filepath)
+            self._filepaths.append(filepath)
 
     def merge_settings(self, settings: dict):
         '''Merge in the specified settings'''
@@ -293,12 +293,57 @@ class SettingsStore (dict):
         obj[key] = value
 
         if save and self.filenames:
-            self.save(only_delta=True)
+            self.save_delta()
 
+
+    def defaults(self,
+                 filenames: FilePaths|None = None,
+                 ) -> dict:
+        '''
+        Return default settings as loaded from the specified filenames
+        within the software ditribution itself (located in folders such as
+        `/usr/share/common-core/settings`, or the `settings` folder within the
+        Python distribution itself), and not from site-specific folders such as
+        `/etc/common-core`.
+
+        If `filenames` is not provided, load the default file names
+        previously provided to `__init__()` and/or `load_settings()`.
+        '''
+
+        return SettingsStore(
+            filenames = filenames or self.filenames,
+            searchpath = default_settings_path(include_local = False))
+
+
+    def save_delta(self,
+                   filename: FilePath|None = None,
+                   skipkeys: bool = False,
+                   ensure_ascii: bool = True,
+                   check_circular: bool = True,
+                   allow_nan: bool = True,
+                   indent: int = 4,
+                   ):
+        '''
+        Save the recursive difference between the default settings, loaded from
+        the specified unqualified filenames as obtained from the software
+        distribution, and this instance.
+
+        @param filename
+            Filename in which to save the resulting delta, relative to the local
+            settings folder (`/etc/common-core`).
+
+        See `help(json.dump)` for information on the additional arguments
+        `skipkeys`, `ensure_ascii`, `check_circular`, `allow_nan` and `indent`.
+        '''
+
+
+        args = locals()
+        args.update(only_delta = True)
+        return type(self).save(**args)
 
     def save(self,
              filename: FilePath|None = None,
-             only_delta: bool = True,
+             only_delta: bool = False,
              skipkeys: bool = False,
              ensure_ascii: bool = True,
              check_circular: bool = True,
@@ -327,17 +372,15 @@ class SettingsStore (dict):
         '''
 
         if only_delta:
-            defaults_load_path = default_settings_path(include_local = False)
-            defaults = SettingsStore(self.filenames, defaults_load_path)
-            update = type(self)._recursive_delta(self, defaults)
-
+            settings = self.recursive_delta()
         else:
-            update = self
+            settings = self
+
 
         if not filename:
-            if self.filenames:
+            try:
                 filename = self.filenames[0]
-            else:
+            except IndexError:
                 raise RuntimeError('No settings file specified, and none has been loaded')
 
         save_path = default_settings_path(include_global = False)
@@ -350,7 +393,7 @@ class SettingsStore (dict):
             except EnvironmentError as e:
                 failure = e
             else:
-                json.dump(update,
+                json.dump(settings,
                           fp,
                           skipkeys = skipkeys,
                           ensure_ascii = ensure_ascii,
@@ -361,6 +404,90 @@ class SettingsStore (dict):
         else:
             if failure:
                 raise failure
+
+
+    @property
+    def filenames(self) -> FilePaths:
+        '''
+        Return the original filenames provided to this SettingsStore instance,
+        either to the `__init__()` method or subsequently to `load_settings()`.
+        These may be relative or absolute, and with or without a filename suffix.
+        '''
+        return self._filenames
+
+    @property
+    def filepaths(self) -> FilePaths:
+        '''
+        Return the full path names of each settings file that has been loaded
+        into this instance.  Only existing file paths are returned.
+
+        Note that this may or may not incluce the host-specific output file into
+        which the `save()` method would write these settings.
+        '''
+        return self._filepaths
+
+
+    def find_paths(self,
+                   basename: FilePath,
+                   searchpath: FilePaths | None = None):
+        '''
+        Find settings files with the specified base name within the
+        default search path for this SettingsStore instance.
+
+        @param basename
+            Stem (with or without a suffix) of the filename we are looking for.
+            If no suffix is provided, each of the supported settings suffixes
+            is tried in turn: `.json`, `.yaml`.
+        '''
+
+        return type(self).find_file_paths(basename, searchpath or self.searchpath)
+
+
+    def recursive_delta(self):
+        return type(self)._recursive_delta(self, self.defaults())
+
+
+    @classmethod
+    def find_file_paths(cls,
+                        basename : FilePath,
+                        searchpath: FilePaths):
+        '''
+        Find settings files with the specified base name within the provided
+        search path.
+
+        @param basename
+            Stem (with or without a suffix) of the filename we are looking for.
+            If no suffix is provided, each of the supported settings suffixes
+            is tried in turn: `.json`, `.yaml`.
+
+        @param searchpath
+            An iterable over folders in which to look for the specified file.
+        '''
+
+        if isinstance(basename, str):
+            basename = pathlib.Path(basename)
+
+        if basename.suffix:
+            basenames = [basename]
+        else:
+            basenames = [basename.with_suffix(suffix)
+                         for suffix in cls.parser_map]
+
+        filepaths = []
+
+        if basename.is_absolute():
+            filepaths.extend(basenames)
+        else:
+            for folder in searchpath:
+                if isinstance(folder, str):
+                    folder = pathlib.Path(folder)
+
+                for name in basenames:
+                    filepath = folder.joinpath(name)
+                    if filepath.is_file():
+                        filepaths.append(filepath)
+
+        return filepaths
 
 
     @classmethod
@@ -394,31 +521,3 @@ class SettingsStore (dict):
             elif value != basevalue:
                 delta[key] = value
         return delta
-
-
-    @classmethod
-    def find_file_paths(cls,
-                        basename : FilePath,
-                        searchpath: FilePaths):
-
-        if isinstance(basename, str):
-            basename = pathlib.Path(basename)
-
-        if basename.suffix in cls.parser_map:
-            basenames = [basename]
-        else:
-            basenames = [basename.with_suffix(suffix)
-                         for suffix in cls.parser_map]
-
-        filepaths = []
-
-        if basename.is_absolute():
-            filepaths.extend(basenames)
-        else:
-            for folder in searchpath:
-                for name in basenames:
-                    filepath = folder.joinpath(name)
-                    if filepath.is_file():
-                        filepaths.append(filepath)
-
-        return filepaths
