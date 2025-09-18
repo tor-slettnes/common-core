@@ -267,7 +267,7 @@ class Expander:
             return value
 
         elif isinstance(value, str):
-            if value.lower() in ('true','yes', 'on'):
+            if value.lower() in ('true', 'yes', 'on'):
                 return True
             elif value.lower() in ('false', 'no', 'off', ''):
                 return False
@@ -346,9 +346,20 @@ class Expander:
 
 
 
+    # Match variable expansions such as"
+    #   ${1}, ${@},
+    #   ${var-name}, ${map-name[index]}
+    #   ${var/text}, ${var//text}, ${var//text/replacement}
+    #   ${var:1}, ${var:1:3}, ${var:-1:-3}
+    #   ${var:-text_if_absent}, ${var:+text_if_present}
+    #   ${var?-text_if_false}, ${var?+text_if_true}
+    #   ${var?iftext}, ${var?iftext:elsetext}
+
     _rx_var = re.compile(r'^(#)?\s*(?:'
-                         r'(\d+|@)|(\w[\w-]*)\s*(?:\[(\w*)\])?)\s*'
-                         r'(?:/(/?)([^/]+)(?:/(.*))?|'
+                         r'(\d+|@)|'
+                         r'(\w[\w-]*)\s*(?:\[(\w*)\])?)\s*'
+                         r'(?:'
+                         r'/(/?)([^/]+)(?:/(.*))?|'
                          r':((?:\s+[\+\-]|\s*)?\d+)\s*:?\s*([+-]?\d*)\s*:?\s*([+-]?\d*)\s*|'
                          r':([+-])(.*)|'
                          r'\?([+-])(.*)?|'

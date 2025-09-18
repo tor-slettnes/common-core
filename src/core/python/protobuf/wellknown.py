@@ -155,24 +155,33 @@ def decodeValue (value: Value) -> object:
     '''
     Decode a `google.protobuf.Value` variant to a native Python value
     '''
-    kind = v.WhichOneof('kind')
-    if kind == 'null_value':
-        return None
-    elif kind == 'bool_value':
-        return value.bool_value
-    elif kind == 'number_value':
-        if value.number_value.is_integer():
-            return int(value.number_value)
-        else:
-            return value.number_value
-    elif kind == 'string_value':
-        return value.string_value
-    elif kind == 'struct_value':
-        return decodeStruct(value.struct_value)
-    elif kind == 'list_value':
-        return decodeListValue(value.list_value)
-    else:
-        return None
+
+    match(v.WhichOneof('kind')):
+        case 'null_value':
+            return None
+
+        case 'bool_value':
+            return value.bool_value
+
+        case 'number_value':
+            if value.number_value.is_integer():
+                return int(value.number_value)
+            else:
+                return value.number_value
+
+        case 'string_value':
+            return value.string_value
+
+        case 'struct_value':
+            return decodeStruct(value.struct_value)
+
+
+        case 'list_value':
+            return decodeListValue(value.list_value)
+
+        case _:
+            return None
+
 
 def decodeStruct(structvalue: Struct) -> dict:
     '''
