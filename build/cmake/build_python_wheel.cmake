@@ -283,7 +283,7 @@ function(cc_add_python_wheel TARGET)
     OUTPUT "${wheel_path}"
     DEPENDS ${sources}
     BYPRODUCTS "${gen_dir}"
-    COMMAND sh -c "'${python}' -m hatchling build -d '${wheel_dir}' > /dev/null"
+    COMMAND ${python} -m hatchling build -d ${wheel_dir}
     #COMMAND ${python} -m build --wheel --outdir "${wheel_dir}" "."
     COMMENT "${TARGET}: Building Python Wheel: ${wheel_file}"
     COMMAND_EXPAND_LISTS
