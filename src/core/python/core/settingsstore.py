@@ -1,5 +1,5 @@
 '''
-Obtain settings from `.yaml` and/or `.json` files
+Obtain settings from `.yaml`, '.json', and/or `.ini` files
 '''
 
 __docformat__ = 'javadoc en'
@@ -8,6 +8,7 @@ __author__ = 'Tor Slettnes'
 
 ### Modules within package
 from .jsonreader import JsonReader
+from .ini_reader import INIFileReader
 from .paths import FilePath, \
     normalized_search_path, settings_path, default_settings_path
 
@@ -32,7 +33,7 @@ Variant   = type(None) | bool | int | float | str | dict[object] | list[object]
 class SettingsStore (dict):
     '''
     A specialized dictionary containing configuration settings, loaded from
-    one or more JSON and/or YAML file(s) located within specific settings
+    one or more JSON, YAML and/or INI file(s) located within specific settings
     folders.
 
     Settings may be loaded on initialization or subsequently by invoking
@@ -43,24 +44,36 @@ class SettingsStore (dict):
       in the search path for this instance (see `__init__()`), possibly
       resulting in multiple candidate paths.
 
-    - If the file name ends in `.json` or `.yaml` the corresponding parser
-      is used; otherwise each suffix is in turn appended to each candidate
-      path.
+    - If the file name ends in '.json', `.yaml` or `.ini` the corresponding
+      parser is used. If the file name has no suffix, each of these supported
+      suffixes is in turn appended to each candidate path.  Any filename with a
+      different/unsupported suffix is ignored.
 
     - If one or more of the resulting candidate path(s) exist on the
       filesystem, they are consecutively parsed and merged in with the
       existing settings.
 
+    Comments are supported as follows:
 
-    Within each resulting JSON file, comments starting with `#` or `//`
-    until the end of the line are stripped away prior to parsing.  The YAML
-    parser natively supports embedded comments starting with `#`.
+    - In JSON files, comments starting with `#` or `//`
+      until the end of the line are stripped away prior to parsing.
+
+    - The YAML parser natively supports embedded comments starting with `#`. 
+
+    - INI files are parsed with Python's native RawConfigParser, which supports
+      comment following `; or `#'.
     '''
 
+    parser_suffixes \
+        =  (JSON_SUFFIX, YAML_SUFFIX, INI_SUFFIX) \
+        =  ('.json', '.yaml', '.ini')
+
     parser_map = {
-        '.json': JsonReader.parse_text,
-        '.yaml': yaml.safe_load
+        JSON_SUFFIX: JsonReader.parse_text,
+        YAML_SUFFIX: yaml.safe_load,
+        INI_SUFFIX: INIFileReader.parse_text
     }
+
 
     def __init__(self,
                  filenames  : FilePath|FilePaths|None = [],
@@ -68,9 +81,9 @@ class SettingsStore (dict):
                  package    : str|None = None):
 
         '''
-        Initialize a new SettingsStore instance from the specified JSON
-        and/or YAML file(s), located relative to one or more folders in
-        `searchpath` if provided, otherwise in the default search path.
+        Initialize a new SettingsStore instance from the specified file(s),
+        located relative to one or more folders in `searchpath` if provided,
+        otherwise in the default search path.
 
         See the `SettingsStore()` class description for details on the
         `filenames` argument.
@@ -80,7 +93,7 @@ class SettingsStore (dict):
         at the installation folder where this application module is located, and
         ends at the root of the filesystem.
 
-        If `searchpath` is not provided, a default search path is obtained as
+        If no `searchpath` is provided, a default search path is obtained as
         follows:
 
          - If the environment variable `CONFIGPATH` is defined, it is presumed
@@ -100,14 +113,16 @@ class SettingsStore (dict):
              installed.
 
         The `package` argument may be used to supply application-provided
-        defaults within the same folder as the calling Python module:
+        defaults within the same folder as code modules for a specific Python
+        package. To include the folder where the calling module is installed,
+        use
 
           ```python
-          my_settings = SettingsStore('settings_file', package=__package__)
+          my_settings = SettingsStore('my_settings', package=__package__)
           ```
 
-        (These settings may still be overriden from any `settings_file.yaml`
-        and/or `settings_file.json` file(s) found earlier in the search path.)
+        (This has lower precedence than any `my_settings.{json,yaml,ini}`
+        file(s) found earlier in the search path.)
         '''
 
         self._filenames = []
@@ -135,13 +150,13 @@ class SettingsStore (dict):
                       filename : FilePath):
 
         '''
-        Load values from the specified JSON and/or YAML file, if found.
-        Values are merged in recursively, with precedence given to those already
-        in the store.  To replace existing values, first invoke `.clear()`.
+        Load values from the specified settings file, if found.  Values are
+        merged in recursively, with precedence given to those already in the
+        store.  To replace existing values, first invoke `.clear()`.
 
         @param filename:
-            Absolute or relative path to a JSON or YAML file from which to load
-            additional settings.  See `__init__()` for details.
+            Absolute or relative path to a JSON, YAML or INI file from which to
+            load additional settings.  See `__init__()` for details.
 
 
         ### Example
@@ -162,10 +177,13 @@ class SettingsStore (dict):
 
         1. `$HOME/.config/common-core/my_settings.json`
         2. `$HOME/.config/common-core/my_settings.yaml`
-        3. `/etc/common-core/my_settings.json`
-        4. `/etc/common-core/my_settings.yaml`
-        5. `/usr/share/common-core/settings/my_settings.json`
-        6. `/usr/share/common-core/settings/my_settings.yaml`
+        3. `$HOME/.config/common-core/my_settings.ini`
+        4. `/etc/common-core/my_settings.json`
+        5. `/etc/common-core/my_settings.yaml`
+        6. `/etc/common-core/my_settings.ini`
+        7. `/usr/share/common-core/settings/my_settings.json`
+        8. `/usr/share/common-core/settings/my_settings.yaml`
+        9. `/usr/share/common-core/settings/my_settings.ini`
         '''
 
         for filepath in self.find_paths(filename):
@@ -288,7 +306,7 @@ class SettingsStore (dict):
             sub = obj.get(element)
             if not isinstance(sub, dict):
                 sub = obj[element] = {}
-            obj = sub
+                obj = sub
 
         obj[key] = value
 
@@ -437,7 +455,7 @@ class SettingsStore (dict):
         @param basename
             Stem (with or without a suffix) of the filename we are looking for.
             If no suffix is provided, each of the supported settings suffixes
-            is tried in turn: `.json`, `.yaml`.
+            is tried in turn: `.json`, `.yaml`, `.ini`'
         '''
 
         return type(self).find_file_paths(basename, searchpath or self.searchpath)
@@ -458,7 +476,7 @@ class SettingsStore (dict):
         @param basename
             Stem (with or without a suffix) of the filename we are looking for.
             If no suffix is provided, each of the supported settings suffixes
-            is tried in turn: `.json`, `.yaml`.
+            is tried in turn: `.json`, `.yaml`, '.ini`.
 
         @param searchpath
             An iterable over folders in which to look for the specified file.
@@ -471,7 +489,7 @@ class SettingsStore (dict):
             basenames = [basename]
         else:
             basenames = [basename.with_suffix(suffix)
-                         for suffix in cls.parser_map]
+                         for suffix in cls.parser_suffixes]
 
         filepaths = []
 
@@ -500,8 +518,8 @@ class SettingsStore (dict):
 
             if isinstance(value, dict) and isinstance(basevalue, dict):
                 cls._recursive_merge(basevalue, value)
-            # elif isinstance(value, (list, tuple)) and isinstance(basevalue, (list, tuple)):
-            #     base[key].extend(value)
+                # elif isinstance(value, (list, tuple)) and isinstance(basevalue, (list, tuple)):
+                #     base[key].extend(value)
             else:
                 base.setdefault(key, value)
 
