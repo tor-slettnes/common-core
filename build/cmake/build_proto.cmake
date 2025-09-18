@@ -242,7 +242,7 @@ function(cc_add_proto_python TARGET)
   )
 
   ### Install generated Python modules if requested
-  if(WITH_PYTHON_MODULES AND arg_INSTALL_COMPONENT)
+  if(INSTALL_PYTHON_MODULES AND arg_INSTALL_COMPONENT)
     cc_get_value_or_default(
       install_dir
       arg_INSTALL_DIR
