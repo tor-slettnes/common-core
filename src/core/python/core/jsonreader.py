@@ -15,14 +15,13 @@ FilePath  = str | Traversable
 FilePaths = Sequence[FilePath]
 
 class JsonReaderError (ValueError):
-    '''Failed to parse JSON file %(filename)r: %(error)s'''
+    '''Failed to parse JSON: %(error)s'''
 
-    def __init__(self, error, filename):
+    def __init__(self, error):
         self.error = error
-        self.filename = filename
 
     def __str__ (self):
-        return self.__doc__%dict(filename=self.filename, error=self.error)
+        return self.__doc__%dict(error=self.error)
 
 
 class JsonReader:
@@ -44,12 +43,13 @@ class JsonReader:
 
     @classmethod
     def parse_text(cls, text: str) -> dict:
-        text = cls._remove_comments(text)
-        try:
-            return json.loads(text)
-        except json.JSONDecodeError as e:
-            raise JsonReaderError(e, filepath) from None
-
+        if text := cls._remove_comments(text).strip():
+            try:
+                return json.loads(text)
+            except json.JSONDecodeError as e:
+                raise JsonReaderError(e) from None
+        else:
+             return None
 
     @classmethod
     def _remove_comments(cls, text: str):
@@ -63,5 +63,4 @@ class JsonReader:
         r'("(?:\\.|[^\\"])*")',    # (5) Double-quoted strings, retain
         re.DOTALL | re.MULTILINE
         )
-
 

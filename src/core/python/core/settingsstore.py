@@ -217,7 +217,7 @@ class SettingsStore (dict):
             pass
 
         else:
-            settings = parser(text)
+            settings = parser(text) or {}
             self.merge_settings(settings)
             self._filepaths.append(filepath)
 
@@ -291,12 +291,12 @@ class SettingsStore (dict):
             settings folder.
         '''
 
-        if isinstance(key, Sequence) and len(key) > 0:
+        if isinstance(key, str):
+            path = []
+
+        elif isinstance(key, Sequence) and len(key) > 0:
             path = list(key)
             key = path.pop()
-
-        elif isinstance(key, str):
-            path = []
 
         else:
             raise ValueError("Settings key must be a string or a non-empty sequence of strings")
