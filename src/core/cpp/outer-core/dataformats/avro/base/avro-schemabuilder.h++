@@ -6,7 +6,6 @@
 //==============================================================================
 
 #pragma once
-#include "avro-status.h++"
 #include "types/value.h++"
 
 #include <avro.h>
@@ -27,7 +26,6 @@ namespace avro
     constexpr auto TypeName_Array = "array";
     constexpr auto TypeName_Fixed = "fixed";
     constexpr auto TypeName_Complex = "Complex";
-    constexpr auto TypeName_EnumValue = "EnumValue";
 
     constexpr auto TypeName_Variant = "Variant";
     constexpr auto TypeName_CalendarTimeInterval = "CalendarTimeInterval";
@@ -53,8 +51,6 @@ namespace avro
     constexpr auto SchemaField_ComplexReal = "real";
     constexpr auto SchemaField_ComplexImaginary = "imag";
     constexpr auto SchemaField_VariantValue = "value";
-    constexpr auto SchemaField_EnumIndex = "enumeration";
-    constexpr auto SchemaField_EnumValue = "value";
 
     constexpr auto LogicalType_TimeStampMillis = "timestamp-millis";
     constexpr auto LogicalType_TimeOfDayMillis = "time-millis";
@@ -149,18 +145,6 @@ namespace avro
                    const std::optional<std::string> &doc = {});
     };
 
-    //--------------------------------------------------------------------------
-    // EnumValueShema - Enumeration of arbitrary integer values
-
-    class EnumValueSchema : public RecordSchema
-    {
-    public:
-        EnumValueSchema(const ContextRef &context,
-                        const std::string &name,
-                        const std::vector<std::string> &symbols,
-                        const std::optional<std::string> &default_symbol = {},
-                        const std::optional<std::string> &doc = {});
-    };
 
     //--------------------------------------------------------------------------
     /// @class CalendarTimeIntervalSchema

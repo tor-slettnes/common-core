@@ -6,6 +6,7 @@
 //==============================================================================
 
 #include "avro-basevalue.h++"
+#include "avro-valuemethods.h++"
 #include "avro-status.h++"
 #include "string/misc.h++"
 
@@ -54,6 +55,23 @@ namespace avro
         return *this;
     }
 
+    bool BaseValue::operator==(const BaseValue &other) const
+    {
+        return this->operator==(*other.c_value());
+    }
+
+    bool BaseValue::operator==(const avro_value_t &other) const
+    {
+        return avro_value_equal(
+                   const_cast<avro_value_t *>(this->c_value()),
+                   const_cast<avro_value_t *>(&other));
+    }
+
+    void BaseValue::to_stream(std::ostream &stream) const
+    {
+        stream << this->as_json();
+    }
+
     avro_value_t *BaseValue::c_value()
     {
         return &this->value;
@@ -64,14 +82,29 @@ namespace avro
         return &this->value;
     }
 
+    avro_value_t &BaseValue::avro_value()
+    {
+        return this->value;
+    }
+
+    const avro_value_t &BaseValue::avro_value() const
+    {
+        return this->value;
+    }
+
+    const avro_schema_t &BaseValue::avro_schema() const
+    {
+        return avro_value_get_schema(&this->value);
+    }
+
     avro_type_t BaseValue::avro_type() const
     {
         return avro_value_get_type(&this->value);
     }
 
-    avro_schema_t BaseValue::avro_schema() const
+    std::string BaseValue::avro_type_name() const
     {
-        return avro_value_get_schema(&this->value);
+        return avro_schema_type_name(this->avro_schema());
     }
 
     std::size_t BaseValue::serialized_size() const
@@ -79,13 +112,6 @@ namespace avro
         std::size_t size = 0;
         checkstatus(avro_value_sizeof(const_cast<avro_value_t *>(&this->value), &size));
         return size;
-    }
-
-    std::shared_ptr<core::types::ByteVector> BaseValue::serialized_ptr() const
-    {
-        auto buffer = std::make_shared<core::types::ByteVector>();
-        *buffer = this->serialized();
-        return buffer;
     }
 
     core::types::ByteVector BaseValue::serialized() const
@@ -102,6 +128,13 @@ namespace avro
         return buffer;
     }
 
+    std::shared_ptr<core::types::ByteVector> BaseValue::serialized_ptr() const
+    {
+        auto buffer = std::make_shared<core::types::ByteVector>();
+        *buffer = this->serialized();
+        return buffer;
+    }
+
     std::string BaseValue::as_json(bool pretty) const
     {
         char *json_str = nullptr;
@@ -111,102 +144,9 @@ namespace avro
         return result;
     }
 
-    void BaseValue::to_stream(std::ostream &stream) const
+    core::types::Value BaseValue::as_value(bool enums_as_strings) const
     {
-        stream << this->as_json();
-    }
-
-    avro_type_t BaseValue::type(avro_value_t *value)
-    {
-        return avro_value_get_type(value);
-    }
-
-    avro_schema_t BaseValue::schema(avro_value_t *value)
-    {
-        return avro_value_get_schema(value);
-    }
-
-    std::string BaseValue::type_name(avro_value_t *value)
-    {
-        return avro_schema_type_name(This::schema(value));
-    }
-
-    void BaseValue::set_null(avro_value_t *value)
-    {
-        checkstatus(avro_value_set_null(value));
-    }
-
-    void BaseValue::set_int(avro_value_t *value,
-                            int intvalue)
-    {
-        checkstatus(avro_value_set_int(value, intvalue));
-    }
-
-    void BaseValue::set_long(avro_value_t *value,
-                             long longvalue)
-    {
-        checkstatus(avro_value_set_long(value, longvalue));
-    }
-
-    void BaseValue::set_float(avro_value_t *value,
-                              float floatvalue)
-    {
-        checkstatus(avro_value_set_float(value, floatvalue));
-    }
-
-    void BaseValue::set_double(avro_value_t *value,
-                               double doublevalue)
-    {
-        checkstatus(avro_value_set_double(value, doublevalue));
-    }
-
-    void BaseValue::set_boolean(avro_value_t *value,
-                                bool boolvalue)
-    {
-        checkstatus(avro_value_set_boolean(value, boolvalue));
-    }
-
-    void BaseValue::set_enum(avro_value_t *value,
-                             int enumvalue)
-    {
-        checkstatus(avro_value_set_enum(value, enumvalue));
-    }
-
-    void BaseValue::set_string(avro_value_t *value,
-                               const std::string &string)
-    {
-        checkstatus(avro_value_set_string_len(
-            value,
-            string.c_str(),
-            string.size() + 1));  // Length needs to include trailing null terminator
-    }
-
-    void BaseValue::set_bytes(avro_value_t *value,
-                              const core::types::Bytes &bytes)
-    {
-        checkstatus(avro_value_set_bytes(
-            value,
-            const_cast<core::types::Byte *>(bytes.data()),
-            bytes.size()));
-    }
-
-    void BaseValue::set_bytes(avro_value_t *value,
-                              const std::string &bytes)
-    {
-        checkstatus(avro_value_set_bytes(
-            value,
-            const_cast<char *>(bytes.data()),
-            bytes.size()));
-    }
-
-    void BaseValue::set_fixed(avro_value_t *value,
-                              const core::types::Bytes &bytes,
-                              const std::optional<std::size_t> &nbytes)
-    {
-        checkstatus(avro_value_set_fixed(
-            value,
-            const_cast<core::types::Byte *>(bytes.data()),
-            nbytes.value_or(bytes.size())));
+        return avro::get_value(this->value, enums_as_strings);
     }
 
 }  // namespace avro

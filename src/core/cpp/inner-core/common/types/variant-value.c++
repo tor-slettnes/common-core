@@ -86,8 +86,8 @@ namespace core::types
     {
     }
 
-    Value::Value(ValueListPtr list)
-        : ValueBase(list ? list : emptyvalue)
+    Value::Value(const ValueListPtr &list)
+        : ValueBase(list ? list : std::make_shared<ValueList>())
     {
     }
 
@@ -101,8 +101,8 @@ namespace core::types
     {
     }
 
-    Value::Value(KeyValueMapPtr kvmap)
-        : ValueBase(kvmap ? kvmap : emptyvalue)
+    Value::Value(const KeyValueMapPtr &kvmap)
+        : ValueBase(kvmap ? kvmap : std::make_shared<KeyValueMap>())
     {
     }
 
@@ -116,8 +116,8 @@ namespace core::types
     {
     }
 
-    Value::Value(TaggedValueListPtr tvlist)
-        : ValueBase(tvlist ? tvlist : emptyvalue)
+    Value::Value(const TaggedValueListPtr &tvlist)
+        : ValueBase(tvlist ? tvlist : std::make_shared<TaggedValueList>())
     {
     }
 
@@ -351,6 +351,16 @@ namespace core::types
     bool Value::is_kvmap() const noexcept
     {
         return this->holdsAnyOf<KeyValueMapPtr>();
+    }
+
+    bool Value::is_mappable() const noexcept
+    {
+        return this->holdsAnyOf<KeyValueMapPtr, TaggedValueListPtr>();
+    }
+
+    bool Value::is_sequence() const noexcept
+    {
+        return this->holdsAnyOf<ValueListPtr, TaggedValueListPtr>();
     }
 
     bool Value::as_bool(bool fallback) const noexcept

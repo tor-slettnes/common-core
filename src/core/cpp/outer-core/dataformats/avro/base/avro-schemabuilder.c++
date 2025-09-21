@@ -158,19 +158,6 @@ namespace avro
         }
     }
 
-    EnumValueSchema::EnumValueSchema(const ContextRef &context,
-                                     const std::string &name,
-                                     const std::vector<std::string> &symbols,
-                                     const std::optional<std::string> &default_symbol,
-                                     const std::optional<std::string> &doc)
-        : RecordSchema(context, TypeName_EnumValue)
-    {
-        this->add_field(SchemaField_EnumIndex,
-                        EnumSchema(context, name, symbols, default_symbol, doc));
-
-        this->add_field(SchemaField_EnumValue,
-                        SchemaWrapper(TypeName_Long));
-    }
 
     //--------------------------------------------------------------------------
     // DurationSchema

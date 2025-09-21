@@ -40,15 +40,15 @@ namespace core::types
         Value(const std::string_view &view);
         Value(const std::string &string);
 
-        Value(ValueListPtr list);
+        Value(const ValueListPtr &list);
         Value(const ValueList &list);
         Value(ValueList &&list);
 
-        Value(KeyValueMapPtr kvmap);
+        Value(const KeyValueMapPtr &kvmap);
         Value(const KeyValueMap &kvmap);
         Value(KeyValueMap &&kvmap);
 
-        Value(TaggedValueListPtr tvlist);
+        Value(const TaggedValueListPtr &tvlist);
         Value(const TaggedValueList &tvlist);
         Value(TaggedValueList &&tvlist);
 
@@ -99,6 +99,8 @@ namespace core::types
         bool is_valuelist() const noexcept;
         bool is_kvmap() const noexcept;
         bool is_tvlist() const noexcept;
+        bool is_mappable() const noexcept;
+        bool is_sequence() const noexcept;
 
         bool as_bool(bool fallback = false) const noexcept;
         char as_char(char fallback = '\0') const noexcept;

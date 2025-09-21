@@ -25,40 +25,17 @@ namespace avro
     public:
         ~CompoundValue();
 
-    private:
-        static avro_schema_t schema_from_json(const std::string &json_schema);
-
     public:
-        static avro_value_t get_by_index(
-            avro_value_t *value,
+        avro_value_t get_field_by_index(
             int index,
-            const std::optional<std::string> &expected_name = {});
+            const std::optional<std::string> &expected_name = {}) const;
 
-        static avro_value_t get_by_name(
-            avro_value_t *value,
+        avro_value_t get_field_by_name(
             const std::string &name,
-            const std::optional<std::size_t> &expected_index = {});
+            const std::optional<std::size_t> &expected_index = {}) const;
 
-        static void set_enum_value(avro_value_t *value,
-                                   std::uint64_t index,
-                                   std::int64_t number);
-
-        static void set_datetime_interval(avro_value_t *value,
-                                          const core::dt::DateTimeInterval &interval);
-        static void set_time_interval(avro_value_t *value,
-                                      const core::dt::Duration &dur);
-        static void set_timestamp(avro_value_t *value,
-                                  const core::dt::TimePoint &tp);
-        static void set_variant(avro_value_t *value,
-                                const core::types::Value &variant);
-        static void set_variant_list(avro_value_t *value,
-                                     const core::types::ValueList &list);
-        static void set_variant_map(avro_value_t *value,
-                                    const core::types::KeyValueMap &kvmap);
-
-        static void set_branch(avro_value_t *value,
-                               VariantSchema::Type type,
-                               avro_value_t *branch);
+        void set_from_value(const core::types::Value &value);
+        void set_from_serialized(const core::types::Bytes &bytes);
 
     protected:
         avro_schema_t schema;

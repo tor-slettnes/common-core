@@ -14,10 +14,9 @@ FilePaths = Sequence[FilePath]
 
 class INIFileReader:
     '''
-    Read a `.ini`-style file and return 
-    Remove a JSON file that may have embedded script-style or C++-style
-    comments (prefixed with either `#` or `//`).  These are stripped away before
-    passing the remaining text to `json.loads()`.
+    Read an return the contents of an `.ini`-style file as a dictionary.
+    Top-level keys correspond to INI file sections, where each value is a flat
+    dictionary of options and values witin the corresponding section.
     '''
 
     @classmethod
