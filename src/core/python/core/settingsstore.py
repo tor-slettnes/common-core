@@ -394,7 +394,6 @@ class SettingsStore (dict):
         else:
             settings = self
 
-
         if not filename:
             try:
                 filename = self.filenames[0]
@@ -411,13 +410,14 @@ class SettingsStore (dict):
             except EnvironmentError as e:
                 failure = e
             else:
-                json.dump(settings,
-                          fp,
-                          skipkeys = skipkeys,
-                          ensure_ascii = ensure_ascii,
-                          check_circular = check_circular,
-                          allow_nan = allow_nan,
-                          indent = indent)
+                with fp:
+                    json.dump(settings,
+                              fp,
+                              skipkeys = skipkeys,
+                              ensure_ascii = ensure_ascii,
+                              check_circular = check_circular,
+                              allow_nan = allow_nan,
+                              indent = indent)
                 break
         else:
             if failure:
