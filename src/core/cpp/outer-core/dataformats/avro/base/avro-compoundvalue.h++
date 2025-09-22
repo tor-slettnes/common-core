@@ -18,7 +18,7 @@ namespace avro
         using Super = BaseValue;
 
     public:
-        CompoundValue(avro_schema_t schema);
+        CompoundValue(avro_schema_t schema, bool take_schema);
         CompoundValue(const std::string &json_schema);
         CompoundValue(const SchemaWrapper &wrapper);
 
@@ -39,6 +39,7 @@ namespace avro
 
     protected:
         avro_schema_t schema;
+        bool take_schema;
         avro_value_iface_t *iface;
     };
 }  // namespace avro

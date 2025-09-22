@@ -16,9 +16,10 @@
 
 namespace avro
 {
-    CompoundValue::CompoundValue(avro_schema_t schema)
+    CompoundValue::CompoundValue(avro_schema_t schema, bool take_schema)
         : Super(),
           schema(schema),
+          take_schema(take_schema),
           iface(checkstatus(avro_generic_class_from_schema(schema)))
     {
         checkstatus(avro_generic_value_new(this->iface, &this->value),
@@ -26,19 +27,22 @@ namespace avro
     }
 
     CompoundValue::CompoundValue(const std::string &json_schema)
-        : CompoundValue(avro::schema_from_json(json_schema))
+        : CompoundValue(avro::schema_from_json(json_schema), true)
     {
     }
 
     CompoundValue::CompoundValue(const SchemaWrapper &wrapper)
-        : CompoundValue(wrapper.as_avro_schema())
+        : CompoundValue(wrapper.as_avro_schema(), false)
     {
     }
 
     CompoundValue::~CompoundValue()
     {
         avro_value_iface_decref(this->iface);
-        // avro_schema_decref(schema);
+        if (this->take_schema)
+        {
+            avro_schema_decref(schema);
+        }
     }
 
     avro_value_t CompoundValue::get_field_by_index(
