@@ -518,10 +518,9 @@ class SettingsStore (dict):
 
             if isinstance(value, dict) and isinstance(basevalue, dict):
                 cls._recursive_merge(basevalue, value)
-                # elif isinstance(value, (list, tuple)) and isinstance(basevalue, (list, tuple)):
-                #     base[key].extend(value)
-            else:
-                base.setdefault(key, value)
+
+            elif basevalue is None:
+                base[key] = value
 
 
 
