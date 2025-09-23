@@ -22,6 +22,7 @@ import asyncio
 # Annotation types
 
 MappingAction = proto_enum(_MappingAction)
+Signal = Message
 Slot = Callable[[Message], None]
 
 #===============================================================================
@@ -212,10 +213,36 @@ class SignalStore:
         selector = msg.DESCRIPTOR.oneofs[0].name
         return msg.WhichOneof(selector) or ""
 
-
     def get_cached_map(self,
                        signalname: str,
                        timeout: float=3) -> dict[str, Message]:
+        '''
+        Get a specific signal map from the local cache.
+
+        @param signalname:
+            Signal name, corresponding to a field of the Signal message
+            streamed from the server's `watch()` method.
+
+        @param timeout:
+            If the specified signal does not yet exist in the local cache, allow
+            up to the specified timeout for it to be received from the server.
+            Mainly applicable immediately after `start_watching()`, before the
+            server cache has been received.
+
+        @exception KeyError
+            The specified `signalname` is not known
+
+        @returns
+            The cached value map, or None if the specified mapping signal has
+            yet not been received.
+        '''
+        return {key: getattr(value, signalname)
+                for (key, value) in self.get_cached_mapping_signals(signalname).items()}
+
+
+    def get_cached_mapping_signals(self,
+                       signalname: str,
+                       timeout: float=3) -> dict[str, Signal]:
         '''
         Get a specific signal map from the local cache.
 
@@ -246,7 +273,7 @@ class SignalStore:
             return self._cache.get(signalname, {})
 
         else:
-            return self._cache[signalname]
+            return  self._cache[signalname]
 
 
     def get_cached_signal(self,
@@ -287,7 +314,7 @@ class SignalStore:
         '''
 
         try:
-            signal = self.get_cached_map(signalname, timeout)[mapping_key]
+            signal = self.get_cached_mapping_signals(signalname, timeout)[mapping_key]
         except KeyError:
             return fallback() if isinstance(fallback, type) else fallback
         else:
@@ -466,21 +493,21 @@ class SignalStore:
             return self._completion_event.is_set()
 
 
-    def emit_cached_to(self, name: str, slot: Slot):
+    def emit_cached_to(self, signal_name: str, slot: Slot):
         '''
         Emit a cached (previously emitted) signal to a specific slot/receiver.
         '''
 
         if self._cache:
             mapped = False
-            for key, signal in self.get_cached_map(name).items():
-                self._emit_to(name, slot, signal)
+            for key, signal in self.get_cached_mapping_signals(signal_name).items():
+                self._emit_to(signal_name, slot, signal)
                 mapped = bool(key)
 
             ## Once the cache is exhausted, emit an empty signal
             ## to indicate that intialization is complete.
             if mapped:
-                self._emit_to(name, slot, self.signal_type())
+                self._emit_to(signal_name, slot, self.signal_type())
 
 
     def emit(self, msg: Message):
@@ -542,7 +569,7 @@ class SignalStore:
         if key and not action:
             if value.ByteSize() == 0:
                 action = MappingAction.MAP_REMOVAL
-            elif key in self.get_cached_map(signal_name, {}):
+            elif key in self.get_cached_mapping_signals(signal_name, {}):
                 action = MappingAction.MAP_UPDATE
             else:
                 action = MappingAction.MAP_ADDITION
@@ -569,14 +596,17 @@ class SignalStore:
             #datamap[key] = getattr(msg, signalname)
             datamap[key] = msg
 
-    def _emit_to(self, name, slot, signal):
+    def _emit_to(self,
+                 signal_name : str,
+                 slot: Slot,
+                 signal: Signal):
         action, key = self._mapping_controls(signal)
 
         result = safe_invoke(slot,
                              (signal,),
                              {},
                              "Signal %s slot %s(%s, %r, ...)"%(
-                                 name,
+                                 signal_name,
                                  slot.__name__,
                                  action.name,
                                  key))

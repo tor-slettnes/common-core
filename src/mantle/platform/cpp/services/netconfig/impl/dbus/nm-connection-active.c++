@@ -25,7 +25,7 @@ namespace netconfig::dbus
               NM_DBUS_INTERFACE_ACTIVE_CONNECTION,
               {
                   {"StateChanged", SLOT(Class::on_signal_state_changed)},
-    },
+              },
               {
                   {"Id", DATASLOT(&this->id)},
                   {"Uuid", DATASLOT(&this->uuid)},
@@ -139,7 +139,7 @@ namespace netconfig::dbus
             this->ip4config = *datasource;
             this->emit_change(core::signal::MAP_UPDATE);
         }
-        return true; // Stay subscribed to updates
+        return true;  // Stay subscribed to updates
     }
 
     bool ActiveConnection::update_ip6config(
@@ -151,6 +151,6 @@ namespace netconfig::dbus
             this->ip6config = *datasource;
             this->emit_change(core::signal::MAP_UPDATE);
         }
-        return true; // Stay subscribed to updates
+        return true;  // Stay subscribed to updates
     }
-} // namespace netconfig::dbus
+}  // namespace netconfig::dbus

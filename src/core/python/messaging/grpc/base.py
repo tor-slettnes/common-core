@@ -112,8 +112,8 @@ class Base (Endpoint):
 
 
     _rx_address = re.compile(
-        "(\\[[\\w\\.:]*\\]|[\\w\\.]*)"  # host, either '[x[:x...]]' or 'n[.n]...'
-        "(?::(\\d+))?$"                 # port
+        "(\\[[\\w\\.:]*\\]|[\\w\\-\\.]*)"  # host, either '[x[:x...]]' or 'n[.n]...'
+        "(?::(\\d+))?$"                    # port
     )
 
     def _splitAddress(self, target : str):

@@ -391,9 +391,6 @@ class Client (BaseClient):
         '''
 
         acs = self.get_active_connections()
-        state = ActiveConnectionState.CONNECTION_STATE_UNKNOWN
-        flags = HEX8(0)
-        reason = ActiveConnectionState.CONNECTION_STATE_REASON_UNKNOWN
 
         try:
             ac = acs[key]
@@ -407,15 +404,14 @@ class Client (BaseClient):
                     raise
 
         if ac:
-            state = ActiveConnectionState.get(
-                ac.state,
-                ac.state)
-
+            state = ActiveConnectionState(ac.state)
             flags = HEX8(ac.state_flags)
+            reason = ActiveConnectionStateReason(ac.state_reason)
 
-            reason = ActiveConnectionStateReason.get(
-                ac.state_reason,
-                ac.state_reason)
+        else:
+            state = ActiveConnectionState.CONNECTION_STATE_UNKNOWN
+            flags = HEX8(0)
+            reason = ActiveConnectionStateReason.CONNECTION_STATE_REASON_UNKNOWN
 
         return ActiveConnectionStateTuple(state, flags, reason)
 
