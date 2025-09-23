@@ -606,22 +606,24 @@ namespace core
             {
                 scalar = 0;
             }
-
             return TimePoint(std::chrono::nanoseconds(static_cast<std::int64_t>(scalar)));
         }
 
         TimePoint int_to_timepoint(
             std::int64_t scalar,
-            const std::optional<int> &multiplier_decimal_exponent)
+            int multiplier_decimal_exponent)
         {
-            if (multiplier_decimal_exponent)
+            while (--multiplier_decimal_exponent >= -9)
             {
-                while (--multiplier_decimal_exponent >= -9)
-                {
-                    scalar *= 10;
-                }
+                scalar *= 10;
             }
-            else if (scalar > 0)
+            return TimePoint(std::chrono::nanoseconds(scalar));
+        }
+
+        TimePoint int_to_timepoint(
+            std::int64_t scalar)
+        {
+            if (scalar > 0)
             {
                 while (scalar < EPOCH_NANOS_LOWER_LIMIT)
                 {
@@ -633,6 +635,20 @@ namespace core
                 scalar = 0;
             }
             return TimePoint(std::chrono::nanoseconds(scalar));
+        }
+
+        TimePoint int_to_timepoint(
+            std::int64_t scalar,
+            const std::optional<int> &multiplier_decimal_exponent)
+        {
+            if (multiplier_decimal_exponent)
+            {
+                return int_to_timepoint(scalar, *multiplier_decimal_exponent);
+            }
+            else
+            {
+                return int_to_timepoint(scalar);
+            }
         }
 
         TimePoint ms_to_timepoint(std::int64_t milliseconds)

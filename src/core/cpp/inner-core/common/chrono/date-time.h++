@@ -348,16 +348,15 @@ namespace core
         ///     e.g. -9 for nanoseconds, -3 for millseconds or 0 for seconds.
         ///
         /// If `multiplier_decimal_exponent` is absent, the scalar value is
-        /// first converted to nanoseconds since epoch by repeatedly multiplied
-        /// 1000 until it exceeds EPOCH_NANOS_LOWER_LIMIT (1e17), then converted
-        /// to a `TimePoint`. The resulting timepoint is bounded between March
-        /// 3, 1973, and November 16, 5138.
+        /// repeatedly divided by 1000 until it falls below 1e11
+        /// (100,000,000,000), corresponding to November 16 in the year 5138
+        /// with a lower bound of March 3, 1973.
 
         TimePoint double_to_timepoint(
             double value,
             const std::optional<int> &multiplier_decimal_exponent = {});
 
-        /// Convert a scalar epoch-based timestamp of arbitrary/unknown
+        /// Convert a scalar epoch-based timestamp of specific precision
         /// precision to a TimePoint.
         ///
         /// @param[in] scalar
@@ -366,12 +365,37 @@ namespace core
         /// @param[in] multiplier_decimal_exponent
         ///     Decimal exponent yielding the number of seconds per time unit,
         ///     e.g., -3 for milliseconds or 0 for seconds.
+
+        TimePoint int_to_timepoint(
+            std::int64_t scalar,
+            int multiplier_decimal_exponent);
+
+        /// Convert a scalar epoch-based timestamp of arbitrary/unknown
+        /// precision to a TimePoint.
         ///
-        /// If `multiplier_decimal_exponent` is absent, the scalar value is
-        /// first converted to nanoseconds since epoch by repeatedly multiplied
-        /// 1000 until it exceeds EPOCH_NANOS_LOWER_LIMIT (1e17), then converted
-        /// to a `TimePoint`. The resulting timepoint is bounded between March
-        /// 3, 1973, and November 16, 5138.
+        /// @param[in] scalar
+        ///     Time units since UNIX Epoch
+        ///
+        /// The scalar value is first converted to nanoseconds since epoch by
+        /// repeatedly multiplied 1000 until it exceeds EPOCH_NANOS_LOWER_LIMIT
+        /// (1e17), then converted to a `TimePoint`. The resulting timepoint is
+        /// bounded between March 3, 1973, and November 16, 5138.
+
+        TimePoint int_to_timepoint(
+            std::int64_t scalar);
+
+        /// Convert a scalar epoch-based timestamp with optional precision
+        /// to a TimePoint.
+        ///
+        /// @param[in] scalar
+        ///     Time units since UNIX Epoch
+        ///
+        /// @param[in] multiplier_decimal_exponent
+        ///     Decimal exponent yielding the number of seconds per time unit,
+        ///     e.g., -3 for milliseconds or 0 for seconds.
+        ///
+        /// If `multiplier_decimal_exponent` contains no value, the precision
+        /// is dynamically determined as described above.
 
         TimePoint int_to_timepoint(
             std::int64_t scalar,
