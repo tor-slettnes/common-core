@@ -16,10 +16,6 @@ import pathlib
 ### Modules within package
 from cc.core.doc_inherit import doc_inherit
 
-from cc.messaging.grpc import \
-    Client as BaseClient, \
-    SignalClient as BaseSignalClient
-
 from cc.protobuf.wellknown import empty
 from cc.protobuf.variant import decodeKeyValueMap
 
@@ -29,6 +25,7 @@ from cc.protobuf.vfs import Signal, \
     encodePath, decodePath, encodePaths, decodeStats, \
     pathRequest, locateRequest, attributeRequest
 
+import cc.messaging.grpc
 
 LocalPath = pathlib.Path | str
 LocalFile = LocalPath | io.IOBase
@@ -38,7 +35,7 @@ LocalFile = LocalPath | io.IOBase
 #===============================================================================
 ## Client
 
-class Client (BaseClient):
+class Client (cc.messaging.grpc.Client):
     '''
     VirtualFileSystem service client.
 
@@ -577,7 +574,7 @@ class Client (BaseClient):
 #===============================================================================
 # SignalClient class
 
-class SignalClient (BaseSignalClient, Client):
+class SignalClient (cc.messaging.grpc.SignalClient, Client):
     '''
     VirtualFileSystem service client.
 
@@ -591,7 +588,7 @@ class SignalClient (BaseSignalClient, Client):
     signal_type = Signal
 
     def __init__(self, *args, **kwargs):
-        BaseSignalClient.__init__(self, *args, **kwargs)
+        cc.messaging.grpc.SignalClient.__init__(self, *args, **kwargs)
         self.start_watching(True)
 
     @doc_inherit

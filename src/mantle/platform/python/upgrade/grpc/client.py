@@ -6,26 +6,23 @@ __all__ = ['Client', 'SignalClient']
 __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
-### Modules within package
-from cc.messaging.grpc import \
-    Client as BaseClient, \
-    SignalClient as BaseSignalClient
+### Standard Python modules
+from typing import Mapping, Optional
+import io
 
+### Modules within package
 from cc.protobuf.wellknown import empty
 from cc.protobuf.upgrade import Signal, \
     PackageSource, SourceType, encodeSource, decodeSource, \
     PackageCatalogue, PackageInfo, \
     InstallRequest
-from cc.messaging.grpc import SignalClient
 
-### Standard Python modules
-from typing import Mapping, Optional
-import io
+import cc.messaging.grpc
 
 #===============================================================================
 ## Client
 
-class Client (BaseClient):
+class Client (cc.messaging.grpc.Client):
     '''
     Client for Upgrade service.
     '''
@@ -138,7 +135,7 @@ class Client (BaseClient):
 #===============================================================================
 # SignalClient class
 
-class SignalClient (BaseSignalClient, Client):
+class SignalClient (cc.messaging.grpc.SignalClient, Client):
     '''
     NetConfig service client.
 
@@ -152,7 +149,7 @@ class SignalClient (BaseSignalClient, Client):
     signal_type = Signal
 
     def __init__(self, *args, **kwargs):
-        BaseSignalClient.__init__(self, *args, **kwargs)
+        cc.messaging.grpc.SignalClient.__init__(self, *args, **kwargs)
         self.start_watching(True)
 
 

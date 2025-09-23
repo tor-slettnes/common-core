@@ -15,10 +15,6 @@ from collections import namedtuple
 from cc.core.scalar_types import HEX8
 from cc.core.doc_inherit import doc_inherit
 
-from cc.messaging.grpc import \
-    Client as BaseClient, \
-    SignalClient as BaseSignalClient
-
 from cc.protobuf.wellknown import empty, StringValue
 
 from cc.protobuf.netconfig import Signal, MappingKey, \
@@ -28,6 +24,8 @@ from cc.protobuf.netconfig import Signal, MappingKey, \
     IPConfigMethod, WirelessMode, KeyManagement, \
     ActiveConnectionState, ActiveConnectionStateReason
 
+import cc.messaging.grpc
+
 ### Local types
 ActiveConnectionStateTuple = namedtuple("ActiveConnectionState",
                                         ("state", "flags", "reason"))
@@ -36,7 +34,7 @@ ActiveConnectionStateTuple = namedtuple("ActiveConnectionState",
 #===============================================================================
 # Client class
 
-class Client (BaseClient):
+class Client (cc.messaging.grpc.Client):
     '''
     NetConfig service client.
 
@@ -461,7 +459,7 @@ class Client (BaseClient):
 #===============================================================================
 # SignalClient class
 
-class SignalClient (BaseSignalClient, Client):
+class SignalClient (cc.messaging.grpc.SignalClient, Client):
     '''
     NetConfig service client.
 
@@ -475,7 +473,7 @@ class SignalClient (BaseSignalClient, Client):
     signal_type = Signal
 
     def __init__(self, *args, **kwargs):
-        BaseSignalClient.__init__(self, *args, **kwargs)
+        cc.messaging.grpc.SignalClient.__init__(self, *args, **kwargs)
         self.start_watching(True)
 
 

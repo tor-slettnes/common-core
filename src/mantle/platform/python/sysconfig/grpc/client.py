@@ -2,6 +2,7 @@
 Python client for `SysConfig` gRPC service
 '''
 
+__all__ = ['Client', 'SignalClient']
 __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
@@ -10,10 +11,6 @@ from typing import Optional, Sequence, Iterator
 
 ### Modules within package
 from cc.core.doc_inherit import doc_inherit
-
-from cc.messaging.grpc import \
-    Client as BaseClient, \
-    SignalClient as BaseSignalClient
 
 from cc.protobuf.wellknown import empty, StringValue, \
     Timestamp, TimestampType, encodeTimestamp, decodeTimestamp
@@ -25,10 +22,12 @@ from cc.protobuf.sysconfig import Signal, ProductInfo, HostInfo, \
     CommandInvocation, CommandContinuation, CommandResponse, \
     encodeCountry
 
+import cc.messaging.grpc
+
 #===============================================================================
 # Client class
 
-class Client (BaseClient):
+class Client (cc.messaging.grpc.Client):
     '''
     SysConfig service client.
 
@@ -399,7 +398,7 @@ class Client (BaseClient):
 #===============================================================================
 # SignalClient class
 
-class SignalClient (BaseSignalClient, Client):
+class SignalClient (cc.messaging.grpc.SignalClient, Client):
     '''
     SysConfig service client.
 
@@ -413,7 +412,7 @@ class SignalClient (BaseSignalClient, Client):
     signal_type = Signal
 
     def __init__(self, *args, **kwargs):
-        BaseSignalClient.__init__(self, *args, **kwargs)
+        cc.messaging.grpc.SignalClient.__init__(self, *args, **kwargs)
         self.start_watching(True)
 
     @doc_inherit
