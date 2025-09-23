@@ -597,7 +597,7 @@ namespace core
             }
             else
             {
-                while (scalar < EPOCH_NANOS_LOWER_LIMIT)
+                while ((scalar > 0) && (scalar < EPOCH_NANOS_LOWER_LIMIT))
                 {
                     scalar *= 1000;
                 }
@@ -619,7 +619,7 @@ namespace core
         TimePoint int_to_timepoint(
             std::int64_t scalar)
         {
-            while (scalar < EPOCH_NANOS_LOWER_LIMIT)
+            while ((scalar > 0) && (scalar < EPOCH_NANOS_LOWER_LIMIT))
             {
                 scalar *= 1000;
             }
