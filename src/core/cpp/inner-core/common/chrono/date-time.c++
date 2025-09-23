@@ -595,13 +595,18 @@ namespace core
             {
                 scalar *= pow(10.0, 9 + *multiplier_decimal_exponent);
             }
-            else
+            else if (scalar > 0)
             {
-                while ((scalar > 0) && (scalar < EPOCH_NANOS_LOWER_LIMIT))
+                while (scalar < EPOCH_NANOS_LOWER_LIMIT)
                 {
                     scalar *= 1000;
                 }
             }
+            else
+            {
+                scalar = 0;
+            }
+
             return TimePoint(std::chrono::nanoseconds(static_cast<std::int64_t>(scalar)));
         }
 
@@ -619,9 +624,16 @@ namespace core
         TimePoint int_to_timepoint(
             std::int64_t scalar)
         {
-            while ((scalar > 0) && (scalar < EPOCH_NANOS_LOWER_LIMIT))
+            if (scalar > 0)
             {
-                scalar *= 1000;
+                while (scalar < EPOCH_NANOS_LOWER_LIMIT)
+                {
+                    scalar *= 1000;
+                }
+            }
+            else
+            {
+                scalar = 0;
             }
             return TimePoint(std::chrono::nanoseconds(scalar));
         }
