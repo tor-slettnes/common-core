@@ -114,7 +114,11 @@ namespace netconfig::dbus
 
         if (relevant)
         {
-            logf_trace("signal_accesspoint: %s", *this);
+            logf_trace("signal_accesspoint(%s, %r, %s)",
+                       action,
+                       this->key(),
+                       *this);
+
             auto ref = std::static_pointer_cast<AccessPoint>(shared_from_this());
             netconfig::signal_accesspoint.emit(action, this->key(), ref);
         }

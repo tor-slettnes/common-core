@@ -86,7 +86,7 @@ namespace netconfig::dbus
     {
         if (this->key().size())
         {
-            logf_trace("signal_active_connection(%s, %r, %s)",
+            logf_debug("signal_active_connection(%s, %r, %s)",
                        action,
                        this->key(),
                        *this);

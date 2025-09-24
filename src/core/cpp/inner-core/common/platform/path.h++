@@ -166,11 +166,19 @@ namespace core::platform
         /// Obtain absolute folder names in which to look for configuration
         /// files.  This may be specified using the "CONFIGPATH" environment
         /// variable.  If that variable is unset, use `/etc/cc/settings` and
-        /// `share/cc/settings` in that order; the latter is relative to the
-        /// parent directory of the directory containing the program.  For
-        /// instance, if the if the executable is in /usr/local/bin, the search
-        /// path becomes `/etc/cc/settings:/usr/local/share/cc/settings`.
+        /// followed by the paths returned by `default_settings_path()`, below.
         types::PathList settings_paths() const noexcept;
+
+        /// @brief
+        ///     Return search path for application-provided/default settings.
+        ///
+        /// Obtain absolute folder names in which to look for
+        /// application-provided default. Typically this will be the single
+        /// folder `share/cc/settings` within the parent directory of the
+        /// directory containing the executable.  For example, if the executable
+        /// is located inside `/usr/local/bin`, the search path beomes
+        /// `{"/usr/local/share/cc/settings"}`.
+        types::PathList default_settings_paths() const noexcept;
 
         /// @brief
         ///     Obtain folder for host-specific configuration files.

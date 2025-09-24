@@ -212,19 +212,9 @@ namespace core
 
     SettingsStore SettingsStore::default_settings() const
     {
-        if (this->directories_.size() > 1)
-        {
-            types::PathList base_path(this->directories_);
-            base_path.erase(base_path.begin());
-
-            SettingsStore default_settings(base_path);
-            default_settings.load(this->filenames_);
-            return default_settings;
-        }
-        else
-        {
-            return {};
-        }
+        return SettingsStore(
+            this->filenames(),
+            platform::path->default_settings_paths());
     }
 
     fs::path SettingsStore::filename() const

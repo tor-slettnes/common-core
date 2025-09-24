@@ -26,7 +26,7 @@ namespace netconfig::dbus
               NM_DBUS_INTERFACE_SETTINGS_CONNECTION,
               {
                   {"Updated", SLOT(Connection::on_signal_updated)},
-    },
+              },
               {})
     {
     }
@@ -129,7 +129,7 @@ namespace netconfig::dbus
     {
         if (this->key().size())
         {
-            logf_trace("signal_connection(%s, %r, %s)",
+            logf_debug("signal_connection(%s, %r, %s)",
                        action,
                        this->key(),
                        *this);
@@ -199,4 +199,4 @@ namespace netconfig::dbus
             }
         }
     }
-} // namespace netconfig::dbus
+}  // namespace netconfig::dbus

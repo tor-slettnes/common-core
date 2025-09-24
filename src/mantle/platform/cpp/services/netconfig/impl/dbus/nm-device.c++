@@ -73,7 +73,11 @@ namespace netconfig::dbus
     {
         if (this->ready)
         {
-            logf_trace("signal_device: %s", *this);
+            logf_debug("signal_device(%s, %r, %s)",
+                       action,
+                       this->key(),
+                       *this);
+
             auto ref = std::static_pointer_cast<Device>(shared_from_this());
             signal_device.emit(action, this->key(), ref);
             Super::emit_change(action);

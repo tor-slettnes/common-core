@@ -9,9 +9,9 @@
 #include "buildinfo.h++"
 #include <fstream>
 
-#define CONFIGPATH_VAR        "CONFIGPATH"
-#define DATADIR_VAR           "DATADIR"
-#define LOGDIR_VAR            "LOGDIR"
+#define CONFIGPATH_VAR "CONFIGPATH"
+#define DATADIR_VAR    "DATADIR"
+#define LOGDIR_VAR     "LOGDIR"
 
 /// Default filesystem paths.
 namespace core::platform
@@ -184,33 +184,39 @@ namespace core::platform
 
     types::PathList PathProvider::settings_paths() const noexcept
     {
+        types::PathList directorylist;
+
         const char *configpath = std::getenv(CONFIGPATH_VAR);
         if (configpath && *configpath)
         {
-            types::PathList directorylist;
             for (fs::path path : str::split(configpath, this->path_separator()))
             {
                 directorylist.push_back(fs::weakly_canonical(install_folder() / path));
             }
-            return directorylist;
         }
         else
         {
-            types::PathList pathlist;
-
             if (auto user_config_folder = this->user_config_folder())
             {
-                pathlist.push_back(user_config_folder.value());
+                directorylist.push_back(user_config_folder.value());
             }
 
-            pathlist.insert(
-                pathlist.end(),
-                {
-                    this->default_config_folder(),
-                    this->install_folder() / SETTINGS_DIR,
-                });
-            return pathlist;
+            directorylist.push_back(this->default_config_folder());
+
+            types::PathList default_paths = this->default_settings_paths();
+            directorylist.insert(
+                directorylist.end(),
+                default_paths.begin(),
+                default_paths.end());
         }
+        return directorylist;
+    }
+
+    types::PathList PathProvider::default_settings_paths() const noexcept
+    {
+        return {
+            this->install_folder() / SETTINGS_DIR,
+        };
     }
 
     fs::path PathProvider::config_folder() const noexcept

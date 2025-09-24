@@ -105,10 +105,10 @@ namespace core
         ///     Save current settings to the default .json file for this store,
         ///     relative to the first directory in CONFIGPATH.
         ///
-        /// @param[in] delta
-        ///     Save only key/value pairs that are different from how they were
-        ///     loaded from files in folders _other than_ the file to be saved.
-        ///     @sa save_to()
+        /// @param[in] delta_only
+        ///     Save only key/value pairs that are different from application
+        ///     defaults, as loaded from settings files in
+        ///     `core::platform::PathProvider::default_settings_paths()`.
         ///
         /// @param[in] use_temp_file
         ///     First save to a temporary file in the same folder, then move it
@@ -122,8 +122,9 @@ namespace core
         /// settings were originally loaded from `my-settings.json` (in either
         /// of these folders or merged in from both), then the updated settings
         /// will be saved in `"/etc/local-settings/my-settings.json"`.
-        virtual void save(bool delta = true,
+        virtual void save(bool delta_only = true,
                           bool use_temp_file = true);
+
 
         /// @brief
         ///     Save current settings to `filename[.json]`.
@@ -131,7 +132,7 @@ namespace core
         /// @param[in] filename
         ///     Filename in which settings are saved.
         ///
-        /// @param[in] delta
+        /// @param[in] delta_only
         ///     Save only key/value pairs that are different from how they were
         ///     loaded from files in folders _other than_ the specified file.
         ///     The idea is that this file contains only unit-specific settings;
@@ -153,7 +154,7 @@ namespace core
         /// If the name does not include a suffix, ".json" is appended.
         ///
         void save_to(const fs::path &filename,
-                     bool delta = true,
+                     bool delta_only = true,
                      bool use_temp_file = true) const;
 
         fs::path filename() const;

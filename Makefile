@@ -12,7 +12,7 @@ Available targets:
   local             Build, test and install locally
   release           Build, test and create release packages
   package           Create packages (currently only deb)
-  deb               Create Debian packages
+  debs, deb         Create Debian packages
   wheels            Create Python wheel packages
   install           Install built components
   install/strip     Install and strip debug symbols
@@ -131,10 +131,10 @@ local: ctest install
 release: ctest package
 
 .PHONY: package
-package: deb
+package: debs
 
-.PHONY: deb
-deb: build
+.PHONY: debs deb
+debs deb: build
 	@echo
 	@echo "#############################################################"
 	@echo "Creating Debian release packages in ${PACKAGE_DIR}"
