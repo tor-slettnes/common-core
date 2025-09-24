@@ -591,64 +591,47 @@ namespace core
             double scalar,
             const std::optional<int> &multiplier_decimal_exponent)
         {
-            if (multiplier_decimal_exponent)
+            if (scalar <= 0)
+            {
+                scalar = 0;
+            }
+            else if (multiplier_decimal_exponent)
             {
                 scalar *= pow(10.0, 9 + *multiplier_decimal_exponent);
             }
-            else if (scalar > 0)
+            else
             {
                 while (scalar < EPOCH_NANOS_LOWER_LIMIT)
                 {
                     scalar *= 1000;
                 }
-            }
-            else
-            {
-                scalar = 0;
             }
             return TimePoint(std::chrono::nanoseconds(static_cast<std::int64_t>(scalar)));
         }
 
         TimePoint int_to_timepoint(
             std::int64_t scalar,
-            int multiplier_decimal_exponent)
+            const std::optional<int> &multiplier_decimal_exponent)
         {
-            while (--multiplier_decimal_exponent >= -9)
+            if (scalar <= 0)
             {
-                scalar *= 10;
+                scalar = 0;
             }
-            return TimePoint(std::chrono::nanoseconds(scalar));
-        }
-
-        TimePoint int_to_timepoint(
-            std::int64_t scalar)
-        {
-            if (scalar > 0)
+            else if (multiplier_decimal_exponent)
+            {
+                for (int exp = *multiplier_decimal_exponent; exp >= -9; --exp)
+                {
+                    scalar *= 10;
+                }
+            }
+            else
             {
                 while (scalar < EPOCH_NANOS_LOWER_LIMIT)
                 {
                     scalar *= 1000;
                 }
             }
-            else
-            {
-                scalar = 0;
-            }
             return TimePoint(std::chrono::nanoseconds(scalar));
-        }
-
-        TimePoint int_to_timepoint(
-            std::int64_t scalar,
-            const std::optional<int> &multiplier_decimal_exponent)
-        {
-            if (multiplier_decimal_exponent)
-            {
-                return int_to_timepoint(scalar, *multiplier_decimal_exponent);
-            }
-            else
-            {
-                return int_to_timepoint(scalar);
-            }
         }
 
         TimePoint ms_to_timepoint(std::int64_t milliseconds)
