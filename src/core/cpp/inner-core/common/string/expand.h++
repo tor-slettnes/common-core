@@ -33,10 +33,10 @@ namespace core::str
     /// @note
     ///     Keys that do not exist in the map are replaced by an empty string.
 
-    template <class V>
-    inline std::string expand(const std::string &format,
-                              const std::unordered_map<std::string, V> &kvmap,
-                              const std::optional<V> &fallback = "")
+    template <class V = std::string, class MapType = std::unordered_map<std::string, V>>
+    std::string expand(const std::string &format,
+                       const MapType &kvmap,
+                       const std::optional<V> &fallback = "")
     {
         static const std::regex rx("\\{(\\w+)\\}");
 
