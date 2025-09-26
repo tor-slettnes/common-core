@@ -447,7 +447,7 @@ class SettingsStore (dict):
 
     def find_paths(self,
                    basename: FilePath,
-                   searchpath: FilePaths | None = None):
+                   searchpath: FilePaths | None = None) -> FilePaths:
         '''
         Find settings files with the specified base name within the
         default search path for this SettingsStore instance.
@@ -456,6 +456,9 @@ class SettingsStore (dict):
             Stem (with or without a suffix) of the filename we are looking for.
             If no suffix is provided, each of the supported settings suffixes
             is tried in turn: `.json`, `.yaml`, `.ini`'
+
+        @return
+            A list of absolute pathnames to matching settings files.
         '''
 
         return type(self).find_file_paths(basename, searchpath or self.searchpath)
@@ -468,7 +471,7 @@ class SettingsStore (dict):
     @classmethod
     def find_file_paths(cls,
                         basename : FilePath,
-                        searchpath: FilePaths):
+                        searchpath: FilePaths) -> FilePaths:
         '''
         Find settings files with the specified base name within the provided
         search path.
@@ -480,6 +483,9 @@ class SettingsStore (dict):
 
         @param searchpath
             An iterable over folders in which to look for the specified file.
+
+        @return
+            A list of absolute pathnames to matching settings files.
         '''
 
         if isinstance(basename, str):

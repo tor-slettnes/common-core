@@ -101,25 +101,32 @@ namespace protobuf
             }
             else
             {
-                return this->to_kvmap();
+                return this->to_tvlist();
             }
         };
     }
 
     core::types::KeyValueMapPtr MessageDecoder::to_kvmap() const
     {
-        auto kvmap = std::make_shared<core::types::KeyValueMap>();
+        return this->to_tvlist()->as_kvmap_ptr();
+    }
+
+    core::types::TaggedValueListPtr MessageDecoder::to_tvlist() const
+    {
         int nfields = this->descriptor->field_count();
+        auto tvlist = std::make_shared<core::types::TaggedValueList>();
+        tvlist->reserve(nfields);
+
         for (int i = 0; i < nfields; i++)
         {
             const google::protobuf::FieldDescriptor *fd = this->descriptor->field(i);
 
             if (core::types::Value value = this->field_to_value(*fd))
             {
-                kvmap->insert_or_assign(fd->name(), std::move(value));
+                tvlist->emplace_back(fd->name(), std::move(value));
             }
         }
-        return kvmap;
+        return tvlist;
     }
 
     core::types::Value MessageDecoder::field_to_value(
@@ -130,7 +137,7 @@ namespace protobuf
         {
             if (this->reflection->FieldSize(this->msg, &fd) > 0)
             {
-                result = this->mapped_field_to_kvmap(fd);
+                result = this->mapped_field_to_tvlist(fd);
             }
         }
         else if (fd.is_repeated())
@@ -288,24 +295,39 @@ namespace protobuf
         return vlist;
     }
 
-    core::types::KeyValueMapPtr MessageDecoder::mapped_field_to_kvmap(
+    core::types::TaggedValueListPtr MessageDecoder::mapped_field_to_tvlist(
         const google::protobuf::FieldDescriptor &fd) const
     {
-        auto kvmap = std::make_shared<core::types::KeyValueMap>();
+        auto tvlist = std::make_shared<core::types::TaggedValueList>();
         int size = this->reflection->FieldSize(this->msg, &fd);
+        tvlist->reserve(size);
+
+        // A ProtoBuf map is really a nested message comprising repeated
+        // entries of the form
+        //
+        //   ```protobuf
+        //   message map_Entry
+        //   {
+        //       KeyType key = 1;
+        //       ValueType value = 2;
+        //   }
+        //  ```
+        //
+        // We create a nested `MessageDecoder()` instance to access these as
+        // a TaggedValueList.
 
         for (int n = 0; n < size; n++)
         {
-            auto field_map = MessageDecoder(
-                                 this->reflection->GetRepeatedMessage(this->msg, &fd, n),
-                                 this->enums_as_strings)
-                                 .to_kvmap();
+            auto field_data = MessageDecoder(
+                                  this->reflection->GetRepeatedMessage(this->msg, &fd, n),
+                                  this->enums_as_strings)
+                                  .to_tvlist();
 
-            kvmap->insert_or_assign(
-                field_map->get("key").as_string(),
-                field_map->get("value"));
+            tvlist->emplace_back(
+                field_data->front().as_string(),  // key
+                field_data->back());              // value
         }
-        return kvmap;
+        return tvlist;
     }
 
     core::types::Value MessageDecoder::message_to_value(

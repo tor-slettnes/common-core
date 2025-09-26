@@ -297,17 +297,22 @@ namespace core::types
 
     KeyValueMap TaggedValueList::as_kvmap() const noexcept
     {
-        KeyValueMap kvmap;
+        return *this->as_kvmap_ptr();
+    }
 
+    KeyValueMapPtr TaggedValueList::as_kvmap_ptr() const noexcept
+    {
+        auto kvmap = std::make_shared<KeyValueMap>();
         for (const auto &[tag, value] : *this)
         {
             if (tag.has_value())
             {
-                kvmap.emplace(tag.value(), value);
+                kvmap->emplace(tag.value(), value);
             }
         }
         return kvmap;
     }
+
 
     TaggedValueList &TaggedValueList::extend(const TaggedValueList &other)
     {

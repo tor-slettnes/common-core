@@ -36,6 +36,7 @@ namespace protobuf
 
     private:
         core::types::KeyValueMapPtr to_kvmap() const;
+        core::types::TaggedValueListPtr to_tvlist() const;
 
         core::types::Value field_to_value(
             const google::protobuf::FieldDescriptor &fd) const;
@@ -50,7 +51,7 @@ namespace protobuf
         core::types::ValueListPtr repeated_field_to_valuelist(
             const google::protobuf::FieldDescriptor &fd) const;
 
-        core::types::KeyValueMapPtr mapped_field_to_kvmap(
+        core::types::TaggedValueListPtr mapped_field_to_tvlist(
             const google::protobuf::FieldDescriptor &fd) const;
 
         core::types::Value message_to_value(

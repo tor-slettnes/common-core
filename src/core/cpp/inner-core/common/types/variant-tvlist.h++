@@ -94,6 +94,9 @@ namespace core::types
         // Convert this list into a Key/Value map
         KeyValueMap as_kvmap() const noexcept;
 
+        // Convert this list into a Key/Value map
+        KeyValueMapPtr as_kvmap_ptr() const noexcept;
+
         /// Return a copy where items with empty tags are filtered out
         TaggedValueList filtered_tags() const noexcept;
 
