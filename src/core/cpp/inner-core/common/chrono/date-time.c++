@@ -619,7 +619,7 @@ namespace core
             }
             else if (multiplier_decimal_exponent)
             {
-                for (int exp = *multiplier_decimal_exponent; exp >= -9; --exp)
+                for (int exp = *multiplier_decimal_exponent; exp > -9; --exp)
                 {
                     scalar *= 10;
                 }
