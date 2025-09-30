@@ -1,5 +1,103 @@
 '''
 Timestamp representation extending Python-native `float`.
+
+Its primary purpose is to provide a dedicated, uniform, unambiguous timestamp
+representation compatible with native Python types (e.g. `time`) - but also with
+conversion methods to support additional common representations such as:
+
+ - `datetime.datetime`
+ - `time.struct_time`
+ - ISO 8601 compliant date/time strings
+ - `google.protobuf.Timestamp`
+ - Scaled integer timestamps (milliseconds/microseconds/nanoseconds)
+
+Note that the first three of these types are indented for a slightly different
+use case: to represent calendar time, frequently in the local time zone, but
+also frequently with some ambiguity around this. (For example, these may all be
+"naive" with regards to timezone information).
+
+This class, in contrast, is a straightforward specialization of the native
+`float` type, and is as such primarily intended for representing linear/system
+time.
+
+  ```python
+  >>> from cc.core.timestamp import Timestamp
+
+  ### Create a new `Timestamp` instance from the current time.
+  >>> ts = Timestamp.now()
+  >>> isinstance(ts, float)
+  True
+
+  ### This type has overriden `__str__()` and `__repr__()` methods
+  >>> ts
+  '2025-09-30T08:01:39.785Z'
+
+  ### Also the type persists when adding/subtracting time deltas
+  >>> ts += 86400
+  >>> ts
+  '2025-10-01T08:01:39.785Z'
+
+  ### Various import methods:
+  >>> ts1 = Timestamp(time.time())
+  >>> ts2 = Timestamp.from_milliseconds(time.time() * 1000)
+
+  ### Also an `autoscaled_from()` method to automatically determine the scaling
+  ### factor/resolution of an input
+  >>> ts3 = Timestamp.autoscaled_from(some_value_maybe_seconds_maybe_millis_maybe_nanos)
+
+  ### Even a `from_value()` method to create a Timestamp from a
+  ### variant/uncontrolled input value, such as a JSON or YAML settings value.
+  >>> ts4 = Timestamp.from_value("2025-10-01 00:00:00")
+  >>> ts5 = Timestamp.from_value(1759302000000000, decimal_exponent=-6)
+
+  ### Convert from `datetime` instances, assuming local time if naive
+  >>> dt6 = datetime.datetime.now()
+
+  ### Convert from `datetime` instances, with explicit zone information
+  >>> dt7 = datetime.datetime.now(tz = datetime.timezone.utc)
+
+  >>> Timestamp.from_datetime(dt6)
+  '2025-09-30T08:49:36.666Z'
+
+  >>> Timestamp.from_datetime(dt7)
+  '2025-09-30T08:49:39.186Z'
+
+  ### Convert from an ISO string, again assuming local time by default
+  >>> Timestamp.from_string('2025-10-01 00:00:00')
+  '2025-10-01T07:00:00.000Z'
+
+  ### ...unless it ends in `Z`
+  >>> Timestamp.from_string('2025-10-01 00:00:00Z')
+  '2025-10-01T00:00:00.000Z'
+
+  ### or the argument `assume_utc` is set
+  >>> Timestamp.from_string('2025-10-01 00:00:00', assume_utc=True)
+  '2025-10-01T00:00:00.000Z'
+
+  ### Return timestamp as milliseconds, microseconds, nanoseconds
+  >>> ts = Timestamp.from_string('2025-10-01 00:00:00')
+  >>> ts.to_seconds()
+  1759302000
+  >>> ts.to_milliseconds()
+  1759302000000
+  >>> ts.to_microseconds()
+  1759302000000000
+  >>> ts.to_nanoseconds()
+  1759302000000000000
+
+  ### Convert from Epoch-based timestamp with automatic scaling
+  >>> import time
+  >>> t = time.time()
+  >>> Timestamp.autoscaled_from(t)
+  '2025-09-30T08:58:26.761Z'
+  >>> Timestamp.autoscaled_from(t * 1000)
+  '2025-09-30T08:58:26.761Z'
+  >>> Timestamp.autoscaled_from(t * 1000000)
+  '2025-09-30T08:58:26.761Z'
+  >>> Timestamp.autoscaled_from(t * 1000000000)
+  '2025-09-30T08:58:26.761Z'
+
+  ```
 '''
 
 __docformat__ = 'javadoc en'
