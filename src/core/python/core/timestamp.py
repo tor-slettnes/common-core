@@ -8,6 +8,7 @@ __author__ = 'Tor Slettnes'
 from enum import IntEnum
 import time
 import datetime
+import re
 
 TimestampType = float|int
 DateTimeType  = str|time.struct_time|datetime.datetime
@@ -115,12 +116,91 @@ class Timestamp (float):
         return Timestamp(time.time())
 
 
+    @classmethod
+    def from_value(cls,
+                   input: str|int|float,
+                   *fallback,
+                   assume_utc: bool = False,
+                   decimal_exponent: int|None = None,
+                   ) -> 'Timestamp':
+        '''
+        Create a new Timestamp from a variant/undetermined type, such as an
+        uncontrolled JSON or YAML settings value.
+
+        * If the input is an `int`, `float`, or a string representation of a
+          plain number, it is assumed to be an Epoch-based timestamp. In this
+          case:
+
+           - If `decimal_exponent` is specified, the number is scaled to seconds
+             by multiplying by ten to the specified power.  For instance, if
+             `decimal_exponent` is `-3` the number is assumed to represent
+             milliseconds since Epoch, and multiplied by 0.001.
+
+           - Otherwise, the number is passed on to `autoscaled_from()` to
+             dynamically determine the resolution.
+
+        * If the input is a ISO 8601 formatted string, with an arbitrary
+          date/time separator and with or without fractional seconds or a
+          trailing `Z`, it is passed to `from_string()`.
+
+        * Otherwise,  if a `fallback` value is provided:
+
+           - If `fallback` is a number or a string, it is processed
+             similar to `input`.
+
+           - Otherwise, `fallback` is returned unmodified
+
+        * If all of the above fails, a `TypeError` or `ValueError` is raised,
+          depending on the type of `input`.
+        '''
+
+        if isinstance(input, str):
+            try:
+                input = float(input)
+            except ValueError:
+                pass
+
+        if isinstance(input, int|float):
+            if isinstance(decimal_exponent, int):
+                return input * (10**decimal_exponent)
+            else:
+                return cls.autoscaled_from(input)
+
+        if isinstance(input, str):
+            try:
+                return cls.from_string(input, assume_utc)
+            except ValueError:
+                pass
+
+        if fallback:
+            fallback = fallback[0]
+            if isinstance(fallback, Timestamp):
+                return fallback
+
+            elif isinstance(fallback, str|int|float):
+                return Timestamp.from_value(
+                    fallback,
+                    assume_utc = assume_utc,
+                    decimal_exponent = decimal_exponent)
+
+            else:
+                return fallback
+
+        elif isinstance(input, str):
+            raise ValueError("Could not convert string to Timestamp: %r"%
+                             (input,))
+
+        else:
+            raise TypeError("Could not convert %s object to Timestamp"%
+                            (type(input).__name__,))
+
+
     AUTOSCALE_SECONDS_UPPER_LIMIT = 1e11
 
     @classmethod
     def autoscaled_from(cls, input: int|float) -> 'Timestamp':
         '''
-        Return a new Timestamp from an Epoch-based input with automatic
+        Create a new Timestamp from an Epoch-based input with automatic
         scaling/resolution.
 
         The scaling factor is determined as follows:
