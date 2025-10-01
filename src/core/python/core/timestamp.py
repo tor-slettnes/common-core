@@ -20,7 +20,7 @@ This class, in contrast, is a straightforward specialization of the native
 `float` type, and is as such primarily intended for representing linear/system
 time.
 
-  ```python
+  ```
   >>> from cc.core.timestamp import Timestamp
 
   ### Create a new `Timestamp` instance from the current time.
@@ -133,6 +133,13 @@ class ZoneSuffix(IntEnum):
     ZULU   = 3  # 'Z' for UTC, otherwise nothing
 
 
+class Missing:
+    '''
+    Dummy type to indicate missing argument value.
+    '''
+    pass
+
+
 class Timestamp (float):
     '''
     Timestamp representation extending Python-native `float`.
@@ -217,7 +224,7 @@ class Timestamp (float):
     @classmethod
     def from_value(cls,
                    input: str|int|float,
-                   *fallback,
+                   fallback: object|None|Missing = Missing,
                    assume_utc: bool = False,
                    decimal_exponent: int|None = None,
                    ) -> 'Timestamp':
@@ -232,7 +239,7 @@ class Timestamp (float):
            - If `decimal_exponent` is specified, the number is scaled to seconds
              by multiplying by ten to the specified power.  For instance, if
              `decimal_exponent` is `-3` the number is assumed to represent
-             milliseconds since Epoch, and multiplied by 0.001.
+             milliseconds since Epoch, and multiplied by 0.001 to yield seconds.
 
            - Otherwise, the number is passed on to `autoscaled_from()` to
              dynamically determine the resolution.
@@ -270,8 +277,7 @@ class Timestamp (float):
             except ValueError:
                 pass
 
-        if fallback:
-            fallback = fallback[0]
+        if fallback is not Missing:
             if isinstance(fallback, Timestamp):
                 return fallback
 
