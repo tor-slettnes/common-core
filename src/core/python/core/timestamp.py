@@ -1,7 +1,7 @@
 '''
 Timestamp representation extending Python-native `float`.
 
-Its primary purpose is to provide a dedicated, uniform, unambiguous timestamp
+Its purpose is to provide a dedicated, uniform, unambiguous timestamp
 representation compatible with native Python types (e.g. `time`) - but also with
 conversion methods to support additional common representations such as:
 
@@ -11,14 +11,7 @@ conversion methods to support additional common representations such as:
  - `google.protobuf.Timestamp`
  - Scaled integer timestamps (milliseconds/microseconds/nanoseconds)
 
-Note that the first three of these types are indented for a slightly different
-use case: to represent calendar time, frequently in the local time zone, but
-also frequently with some ambiguity around this. (For example, these may all be
-"naive" with regards to timezone information).
-
-This class, in contrast, is a straightforward specialization of the native
-`float` type, and is as such primarily intended for representing linear/system
-time.
+## Usage Examples:
 
   ```
   >>> from cc.core.timestamp import Timestamp
@@ -32,34 +25,42 @@ time.
   >>> ts
   '2025-09-30T08:01:39.785Z'
 
+  >>> print("%s" % ts)
+  2025-09-30T08:01:39.785Z
+
+  >>> print("%d" % ts)
+  1759219299
+
+  >>> print("%f" % ts)
+  1759219299.785000
+
+
   ### Also the type persists when adding/subtracting time deltas
   >>> ts += 86400
   >>> ts
   '2025-10-01T08:01:39.785Z'
 
   ### Various import methods:
-  >>> ts1 = Timestamp(time.time())
-  >>> ts2 = Timestamp.from_milliseconds(time.time() * 1000)
+  >>> ts = Timestamp(time.time())
+  >>> ts = Timestamp.from_milliseconds(time.time() * 1000)
 
   ### Also an `autoscaled_from()` method to automatically determine the scaling
   ### factor/resolution of an input
-  >>> ts3 = Timestamp.autoscaled_from(some_value_maybe_seconds_maybe_millis_maybe_nanos)
+  >>> ts = Timestamp.autoscaled_from(epoch_time_with_unknown_scale)
 
   ### Even a `from_value()` method to create a Timestamp from a
   ### variant/uncontrolled input value, such as a JSON or YAML settings value.
-  >>> ts4 = Timestamp.from_value("2025-10-01 00:00:00")
-  >>> ts5 = Timestamp.from_value(1759302000000000, decimal_exponent=-6)
+  >>> ts = Timestamp.from_value("2025-10-01 00:00:00")
+  >>> ts = Timestamp.from_value(1759302000000000, decimal_exponent=-6)
 
   ### Convert from `datetime` instances, assuming local time if naive
-  >>> dt6 = datetime.datetime.now()
-
-  ### Convert from `datetime` instances, with explicit zone information
-  >>> dt7 = datetime.datetime.now(tz = datetime.timezone.utc)
-
-  >>> Timestamp.from_datetime(dt6)
+  >>> dt = datetime.datetime.now()
+  >>> Timestamp.from_datetime(dt)
   '2025-09-30T08:49:36.666Z'
 
-  >>> Timestamp.from_datetime(dt7)
+  ### Convert from `datetime` instances, with explicit zone information
+  >>> dt = datetime.datetime.now(tz = datetime.timezone.utc)
+  >>> Timestamp.from_datetime(dt)
   '2025-09-30T08:49:39.186Z'
 
   ### Convert from an ISO string, again assuming local time by default
@@ -74,7 +75,7 @@ time.
   >>> Timestamp.from_string('2025-10-01 00:00:00', assume_utc=True)
   '2025-10-01T00:00:00.000Z'
 
-  ### Return timestamp as milliseconds, microseconds, nanoseconds
+  ### Return timestamp as scaled integers
   >>> ts = Timestamp.from_string('2025-10-01 00:00:00')
   >>> ts.to_seconds()
   1759302000
@@ -86,16 +87,14 @@ time.
   1759302000000000000
 
   ### Convert from Epoch-based timestamp with automatic scaling
-  >>> import time
-  >>> t = time.time()
-  >>> Timestamp.autoscaled_from(t)
-  '2025-09-30T08:58:26.761Z'
-  >>> Timestamp.autoscaled_from(t * 1000)
-  '2025-09-30T08:58:26.761Z'
-  >>> Timestamp.autoscaled_from(t * 1000000)
-  '2025-09-30T08:58:26.761Z'
-  >>> Timestamp.autoscaled_from(t * 1000000000)
-  '2025-09-30T08:58:26.761Z'
+  >>> Timestamp.autoscaled_from(1759276800)
+  '2025-10-01T00:00:00.000Z'
+  >>> Timestamp.autoscaled_from(1759276800000)
+  '2025-10-01T00:00:00.000Z'
+  >>> Timestamp.autoscaled_from(1759276800000000)
+  '2025-10-01T00:00:00.000Z'
+  >>> Timestamp.autoscaled_from(1759276800000000000)
+  '2025-10-01T00:00:00.000Z'
 
   ```
 '''
@@ -103,27 +102,23 @@ time.
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
-from enum import IntEnum
+import enum
 import time
 import datetime
-import re
+from .duration import Duration, DurationType
 
 TimestampType = float|int
 DateTimeType  = str|time.struct_time|datetime.datetime
-DurationType  = float|int
 
 try:
     from google.protobuf.timestamp_pb2 import Timestamp as ProtoBufTimestamp
-    from google.protobuf.duration_pb2 import Duration as ProtoBufDuration
 except ImportError:
     ProtoBufTimestamp = None
-    ProtoBufDuration = None
 else:
     TimestampType |= ProtoBufTimestamp
-    DurationType |= ProtoBufDuration
 
 
-class ZoneSuffix(IntEnum):
+class ZoneSuffix(enum.IntEnum):
     '''
     Time zone indicator.
     '''
@@ -133,22 +128,14 @@ class ZoneSuffix(IntEnum):
     ZULU   = 3  # 'Z' for UTC, otherwise nothing
 
 
-class Missing:
-    '''
-    Dummy type to indicate missing argument value.
-    '''
-    pass
-
 
 class Timestamp (float):
     '''
     Timestamp representation extending Python-native `float`.
 
     This is a drop-in replacement/wrapper for Python-native timestamps as
-    returned by `time.time()` and friends.  Its primary purpose is to provide
-    dedicated, uniform, unambiguous time representation, compatible with native
-    Python modules (e.g. `time`).  At the same time this class provides accessor
-    methods to convert to/from various other time/date representations, including:
+    returned by `time.time()` and friends, with conversion methods to/from
+    various other time/date representations, including:
 
       - `datetime.datetime`
       - `time.struct_time`
@@ -159,7 +146,8 @@ class Timestamp (float):
     Note that the first three of these types are indented for a slightly
     different use case: to represent calendar time, frequently in the local time
     zone, but also frequently with some ambiguity around this.  This class, in
-    contrast, is primarily intended for linear/system time.
+    contrast, is a straightforward specialization of the native `float` type,
+    and is as such intended primarily for representing linear/system time.
     '''
 
     # def __new__(cls, input: TimestampType):
@@ -178,39 +166,26 @@ class Timestamp (float):
         '''
         return self.to_utc_string()
 
+
     def __repr__(self):
         '''
         Return a formal string represenation of this timestamp
         '''
         return f"'{self}'"
 
+
     def __add__ (self, duration: DurationType):
         '''
         Add a duration (relative offset) to this timestamp
         '''
+        return Timestamp(float(self) + Duration.from_value(duration))
 
-        if isinstance(duration, (int, float)):
-            return Timestamp(float(self) + duration)
-
-        elif ProtoBufDuration and isinstance(duration, ProtoBufDuration):
-            return Timestamp(float(self) + (duration.ToNanoseconds() / 1e9))
-
-        else:
-            raise TypeError("Cannot add %s object to Timestamp"%(type(duration).__name__,))
 
     def __sub__(self, duration: DurationType):
         '''
         Subtract a duration (relative offset) from this timestamp
         '''
-
-        if isinstance(duration, (int, float)):
-            return Timestamp(float(self) - duration)
-
-        elif ProtoBufDuration and isinstance(duration, ProtoBufDuration):
-            return Timestamp(float(self) - (duration.ToNanoseconds() / 1e9))
-
-        else:
-            raise TypeError("Cannot subtract %s object from Timestamp"%(type(duration).__name__,))
+        return Timestamp(float(self) - Duration.from_value(duration))
 
 
     @classmethod
@@ -222,42 +197,95 @@ class Timestamp (float):
 
 
     @classmethod
+    def try_from(cls,
+                 input: TimestampType|DateTimeType,
+                 fallback: object = None,
+                 decimal_exponent: int|None = None,
+                 assume_utc: bool = False,
+                 ) -> 'Timestamp':
+        '''
+        Try creating a new Timestamp from a variant/undetermined type, such
+        as an uncontrolled JSON or YAML settings value.
+
+        If this fails, try again with the fallback value if provided. If the
+        fallback is None or otherwise could not be converted to a Timestamp, it
+        is returned unmodified.  In any case, no exception is raised.
+
+        See `from_value()` for a description of the remaining input
+        arguments and other details.
+        '''
+
+        try:
+            return cls.from_value(input, decimal_exponent, assume_utc)
+        except (ValueError, TypeError):
+            pass
+
+        if fallback is not None:
+            try:
+                return cls.from_value(fallback, decimal_exponent, assume_utc)
+            except (ValueError, TypeError):
+                pass
+
+        return fallback
+
+
+    @classmethod
     def from_value(cls,
-                   input: str|int|float,
-                   fallback: object|None|Missing = Missing,
-                   assume_utc: bool = False,
+                   input: TimestampType|DateTimeType,
                    decimal_exponent: int|None = None,
-                   ) -> 'Timestamp':
+                   assume_utc: bool = False,
+                   ) -> 'Timestamp|None':
+
         '''
-        Create a new Timestamp from a variant/undetermined type, such as an
-        uncontrolled JSON or YAML settings value.
+        Create a new Timestamp value from any supported time representation.
 
-        * If the input is an `int`, `float`, or a string representation of a
-          plain number, it is assumed to be an Epoch-based timestamp. In this
-          case:
+        * If the input is an existing `Timestamp` value, it is returned intact.
 
-           - If `decimal_exponent` is specified, the number is scaled to seconds
-             by multiplying by ten to the specified power.  For instance, if
-             `decimal_exponent` is `-3` the number is assumed to represent
-             milliseconds since Epoch, and multiplied by 0.001 to yield seconds.
+        * Any other `int`, `float`, or string representation of a plain number
+          is assumed to be an Epoch-based timestamp. Use the `decimal_exponent`
+          input argument to specify explicit scaling if desired.
 
-           - Otherwise, the number is passed on to `autoscaled_from()` to
-             dynamically determine the resolution.
+        * Any other string is passed to `from_datetime()`.  This may raise a
+          ValueError if the string contents is not ISO 8601 compliant.
 
-        * If the input is a ISO 8601 formatted string, with an arbitrary
-          date/time separator and with or without fractional seconds or a
-          trailing `Z`, it is passed to `from_string()`.
+        * Any `datetime.datetime` input is passed on to `from_datetime()`.
 
-        * Otherwise,  if a `fallback` value is provided:
+        * Any `time.struct_time` value is passed on to `from_struct_time()`.
 
-           - If `fallback` is a number or a string, it is processed
-             similar to `input`.
+        * Any `google.protobuf.Timestamp` object is passed on to `from_protobuf()`.
 
-           - Otherwise, `fallback` is returned unmodified
+        * Any other input type raises a TypeError.
 
-        * If all of the above fails, a `TypeError` or `ValueError` is raised,
-          depending on the type of `input`.
+
+        Input Arguments:
+
+        @param input
+            A supported timestamp representation
+
+        @param decimal_exponent
+            If provided, any numeric input is multiplied by ten to the specified
+            power to yield seconds since Epoch. For instance, `0` means no
+            scaling, `-3` means convert from milliseconcds. If not provided,
+            numeric input values are passed on to `autoscaled_from()`.
+
+        @param assume_utc
+            Interpret "naive" time/date values as UTC and not local time
+            representations.  This includes: an ISO 8601 string without a
+            trailing `Z`, a `datetime.datetime` object without a `tzinfo`
+            attribute, or a `time.struct_time` object.
+
+        @returns
+            A new `Timestamp` value.
+
+        @exception ValueError
+            The input is a string but could not be converted to `Timestamp`.
+
+        @exception TypeError
+            The input type is not supported for Timestamp conversion.
         '''
+
+        if isinstance(input, Timestamp):
+            return input
 
         if isinstance(input, str):
             try:
@@ -267,39 +295,29 @@ class Timestamp (float):
 
         if isinstance(input, int|float):
             if isinstance(decimal_exponent, int):
-                return input * (10**decimal_exponent)
+                return cls(input * (10**decimal_exponent))
             else:
                 return cls.autoscaled_from(input)
 
-        if isinstance(input, str):
-            try:
-                return cls.from_string(input, assume_utc)
-            except ValueError:
-                pass
-
-        if fallback is not Missing:
-            if isinstance(fallback, Timestamp):
-                return fallback
-
-            elif isinstance(fallback, str|int|float):
-                return Timestamp.from_value(
-                    fallback,
-                    assume_utc = assume_utc,
-                    decimal_exponent = decimal_exponent)
-
-            else:
-                return fallback
-
         elif isinstance(input, str):
-            raise ValueError("Could not convert string to Timestamp: %r"%
-                             (input,))
+            return cls.from_string(input, assume_utc)
+
+        elif isinstance(input, datetime.datetime):
+            return cls.from_datetime(input, assume_utc)
+
+        elif isinstance(input, time.struct_time):
+            return cls.from_struct_time(input, assume_utc)
+
+        elif ProtoBufTimestamp and isinstance(input, ProtoBufTimestamp):
+            return cls.from_protobuf(input)
 
         else:
             raise TypeError("Could not convert %s object to Timestamp"%
                             (type(input).__name__,))
 
 
-    AUTOSCALE_SECONDS_UPPER_LIMIT = 1e11
+
+    AUTOSCALE_SECONDS_UPPER_LIMIT = 31536000000
 
     @classmethod
     def autoscaled_from(cls, input: int|float) -> 'Timestamp':
@@ -315,8 +333,8 @@ class Timestamp (float):
            repeatedly dividing by 1000, until it falls below
            `AUTOSCALE_SECONDS_UPPER_LIMIT`.
 
-         - The resulting timestamp is bounded between March 3, 1973 and
-           November 16, 5138.
+         - The resulting timestamp is bounded between January 1st 1971
+           and May 3rd 2969.
         '''
 
         if isinstance(input, int|float):
