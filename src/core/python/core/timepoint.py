@@ -109,8 +109,7 @@ import time
 import datetime
 from .timeinterval import TimeInterval, TimeIntervalType
 
-TimePointType = float|int
-DateTimeType  = str|time.struct_time|datetime.datetime
+TimePointType = time.struct_time|datetime.datetime
 
 try:
     from google.protobuf.timestamp_pb2 import Timestamp as ProtoBufTimestamp
@@ -166,14 +165,17 @@ class TimePoint (float):
         return f"'{self}'"
 
 
-    def __add__ (self, duration: TimeIntervalType):
+    def __add__ (self, input: TimeIntervalType):
         '''
-        Add a duration (relative offset) to this timestamp
+        Add a time interval/delta value to this timestamp
         '''
-        return TimePoint(float(self) + TimeInterval.from_value(duration))
+        if isinstance(input, TimePointType):
+            raise TypeError('Cannot add two time points. Did you intend to add a time interval instead?')
+
+        return TimePoint(float(self) + TimeInterval.from_value(input))
 
 
-    def __sub__(self, input: TimePointType|TimeIntervalType):
+    def __sub__(self, input: TimePointType|str|float|int):
         '''
         Subtract a time interval or other timepoint from this one.
 
@@ -212,7 +214,7 @@ class TimePoint (float):
                     raise ValueError(
                         "not a valid 8601 time string nor duration: " + input)
 
-        elif isinstance(input, TimeIntervalType):
+        elif isinstance(input, TimeIntervalType|float|int):
             return TimePoint(float(self) - TimeInterval.from_value(input))
 
         elif isinstance(input, TimePointType):
@@ -233,7 +235,7 @@ class TimePoint (float):
 
     @classmethod
     def try_from(cls,
-                 input: TimePointType|DateTimeType,
+                 input: TimePointType|str|float|int,
                  fallback: object = None,
                  decimal_exponent: int|None = None,
                  assume_utc: bool = False,
@@ -266,7 +268,7 @@ class TimePoint (float):
 
     @classmethod
     def from_value(cls,
-                   input: TimePointType|DateTimeType,
+                   input: TimePointType|str|float|int,
                    decimal_exponent: int|None = None,
                    assume_utc: bool = False,
                    ) -> 'TimePoint|None':

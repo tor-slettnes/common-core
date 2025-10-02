@@ -69,7 +69,7 @@ __author__ = 'Tor Slettnes'
 import datetime
 import re
 
-TimeIntervalType = float|int|str|datetime.timedelta
+TimeIntervalType = datetime.timedelta
 
 NANOSECOND   = 1e-9
 MICROSECOND  = 1e-6
@@ -153,7 +153,7 @@ class TimeInterval (float):
         '''
         return f"'{self}'"
 
-    def __add__ (self, other: TimeIntervalType):
+    def __add__ (self, other: TimeIntervalType|str|float|int):
         '''
         Add another relative time interval to this one
         '''
@@ -161,7 +161,7 @@ class TimeInterval (float):
         return TimeInterval(float(self) + TimeInterval.from_value(other))
 
 
-    def __sub__(self, other: TimeIntervalType):
+    def __sub__(self, other: TimeIntervalType|str|float|int):
         '''
         Subtract another relative time interval from this one
         '''
@@ -203,7 +203,7 @@ class TimeInterval (float):
 
     @classmethod
     def from_value(cls,
-                   input: TimeIntervalType,
+                   input: TimeIntervalType|float|str|int,
                    decimal_exponent: int = 0,
                    ) -> 'TimeInterval':
         '''
