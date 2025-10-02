@@ -154,7 +154,7 @@ class Timestamp (float):
         '''
         Return an informal string respresentation of this timestamp
         '''
-        return self.to_utc_string()
+        return self.to_string()
 
 
     def __repr__(self):
@@ -563,10 +563,11 @@ class Timestamp (float):
             time.localtime(self) if local else time.gmtime(self))
 
 
-    def to_utc_string(self, *,
+    def to_json_string(self, *,
                       decimals = 3) -> str:
         '''
-        Return this timestamp as an ISO 8601 formatted string representing UTC.
+        Return this timestamp as an ISO 8601 string representing UTC,
+        suitable for unambiguous represention in containers such as JSON.
 
         @param decimals
             Sub-second precision, e.g., 3 for millseconds, 9 for nanoseconds.
@@ -579,32 +580,17 @@ class Timestamp (float):
         For additional output format controls, see `to_string()`.
         '''
 
-        return self.to_string(utc = True, decimals = decimals)
-
-
-    def to_local_string(self, *,
-                        decimals = 3) -> str:
-        '''
-        Return this timestamp as an ISO 8601 formatted string representing local time.
-
-        @param decimals
-            Sub-second precision, e.g., 3 for millseconds, 9 for nanoseconds.
-
-        @returns
-             Local calendar time representation of this timestamp, formatted as
-             `{year}-{month}-{day}T{hours}:{minutes}:{seconds}`, where
-             `{seconds}` may contain a `.` for the fractional component.
-
-        For additional output format controls, see `to_string()`.
-        '''
-
-        return self.to_string(utc = False, decimals = decimals)
+        return self.to_string(utc = True,
+                              time_delimiter = "T",
+                              zone_delimiter = "",
+                              zone_suffix = ZoneSuffix.ZULU,
+                              decimals = decimals)
 
 
     def to_string(self, *,
-                  utc           : bool,
-                  time_delimiter: str  = "T",
-                  decimals      : int  = 3,
+                  utc           : bool = False,
+                  time_delimiter: str  = " ",
+                  decimals      : int  = 0,
                   zone_suffix   : ZoneSuffix = ZoneSuffix.ZULU,
                   zone_delimiter: str = "") -> str:
         '''
@@ -656,9 +642,7 @@ class Timestamp (float):
 
                 ### On Windows we get the full name, e.g. "Pacific Daylight Time"
                 ### or "Central European Summer Time".   Extract only caps.
-                abbrev = filter(lambda c: c.isupper(), name)
-
-                parts.append(abbrev)
+                parts.extend([c for c in name if c.isupper()])
 
             case ZoneSuffix.ZULU if utc:
                 parts.append(zone_delimiter)
