@@ -22,9 +22,6 @@ conversion methods to support additional common representations such as:
   True
 
   ### This type has overriden `__str__()` and `__repr__()` methods
-  >>> ts
-  '2025-09-30T08:01:39.785Z'
-
   >>> print("%s" % ts)
   2025-09-30T08:01:39.785Z
 
@@ -33,12 +30,6 @@ conversion methods to support additional common representations such as:
 
   >>> print("%f" % ts)
   1759219299.785000
-
-
-  ### Also the type persists when adding/subtracting time deltas
-  >>> ts += 86400
-  >>> ts
-  '2025-10-01T08:01:39.785Z'
 
   ### Various import methods:
   >>> ts = Timestamp(time.time())
@@ -96,6 +87,17 @@ conversion methods to support additional common representations such as:
   >>> Timestamp.autoscaled_from(1759276800000000000)
   '2025-10-01T00:00:00.000Z'
 
+  ### Add/subtract time deltas (Durations)
+  >>> ts += 86400
+  >>> ts
+  '2025-10-01T08:01:39.785Z'
+
+  ### Subtracting another timestamp yields a new Duration, and vice versa
+  >>> ts - '2025-10-01 00:00:00'
+  '1h 1m 39.785s'
+
+  >>> ts - '1y'
+  '2024-10-01 01:01:39'
   ```
 '''
 
@@ -171,12 +173,57 @@ class Timestamp (float):
         return Timestamp(float(self) + Duration.from_value(duration))
 
 
-    def __sub__(self, duration: DurationType):
+    def __sub__(self, input: TimestampType|DurationType):
         '''
-        Subtract a duration (relative offset) from this timestamp
-        '''
-        return Timestamp(float(self) - Duration.from_value(duration))
+        Subtract a duration (relative offset) or other timestamp from this
+        timestamp.
 
+        The input must be either one of:
+
+         - a valid `Duration` input type supported by `Duration.from_value()`,
+           including a string generated from `Duration().to_string()`, or
+
+         - a valid `Timestamp` input type supported by `Timestamp.from_value()`,
+           including an ISO 8601 string such as that generated from
+           `Timestamp().to_string()`.
+
+        A plain number (`int`, `float`, or a numeric string), will be
+        interpreted as a Duration.
+
+        If the input is interpreted as a `Duration` the delta is returned as a
+        new `Timestamp` value, and vice versa.
+        '''
+
+        if isinstance(input, str):
+            try:
+                ### Handle numeric strings as a number
+                input = float(input)
+            except ValueError:
+                pass
+
+        if isinstance(input, str):
+            try:
+                ### Let's see if the input is a ISO 8601 time string
+                return Duration(float(self) - Timestamp.from_string(input))
+            except ValueError:
+                ### Nope. Perhaps a Duration string, as generated from e.g.
+                ### `Duration.to_string()`?
+                try:
+                    return Timestamp(float(self) - Duration.from_value(input))
+                except ValueError:
+                    raise ValueError(
+                        "not a valid 8601 time string nor duration: " + input)
+
+        elif isinstance(input, DurationType):
+            return Timestamp(float(self) - Duration.from_value(input))
+
+        elif isinstance(input, TimestampType):
+            return Duration(float(self) - Timestamp.from_value(input))
+
+        else:
+            return TypeError(
+                "not a supported Duration or Timestamp input type: "
+                + type(input).__name__)
 
     @classmethod
     def now(cls) -> 'Timestamp':

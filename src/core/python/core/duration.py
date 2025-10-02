@@ -69,19 +69,19 @@ __author__ = 'Tor Slettnes'
 import datetime
 import re
 
-DurationType  = float|int|datetime.timedelta
+DurationType = float|int|str|datetime.timedelta
 
-NANOSECOND  = 1e-9
-MICROSECOND = 1e-6
-MILLISECOND = 1e-3
-SECOND      = 1
-MINUTE      = 60
-HOUR        = 60 * MINUTE
-DAY         = 24 * HOUR
-WEEK        = DAY * 7
-MONTH       = 30 * DAY
-YEAR        = 365 * DAY
-LEAP        = 4 * YEAR
+NANOSECOND   = 1e-9
+MICROSECOND  = 1e-6
+MILLISECOND  = 1e-3
+SECOND       = 1
+MINUTE       = 60
+HOUR         = 60 * MINUTE
+DAY          = 24 * HOUR
+WEEK         = DAY * 7
+MONTH        = 30 * DAY
+YEAR         = 365 * DAY
+LEAP         = 4 * YEAR
 
 
 try:
@@ -300,7 +300,7 @@ class Duration (float):
         return Duration(nanoseconds / 1e9)
 
 
-    _rx_components = re.compile(r'([+-])?([0-9\.]+)([a-z]*)')
+    _rx_component = re.compile(r'^([+-]?)([0-9\.]+)([a-z]+)$')
 
     @classmethod
     def from_string(cls,
@@ -315,6 +315,7 @@ class Duration (float):
                     milliseconds_suffix: str|None = "ms",
                     microseconds_suffix: str|None = "us",
                     nanoseconds_suffix : str|None = "ns",
+                    component_separator: str|None = None,
                     ) -> 'Duration':
 
         components = {
@@ -332,18 +333,21 @@ class Duration (float):
 
         negative = None
         total    = 0
-        for (sign, number, suffix) in cls._rx_components.findall(input):
-            if negative is None:
-                negative = (sign == '-')
 
-            if scale := components.get(suffix):
-                total += scale * float(number)
+        for component in input.split(component_separator):
+            if m := cls._rx_component.match(component.strip()):
+                sign, number, suffix = m.groups()
+                if negative is None:
+                    negative = (sign == '-')
 
-            elif not suffix:    # No suffix means seconds
-                total += float(number)
+                if scale := components.get(suffix):
+                    total += scale * float(number)
+
+                else:
+                    raise ValueError("Invalid unit suffix following %s%s: %r"%(sign, number, suffix))
 
             else:
-                raise ValueError("Invalid unit suffix following %s%s: %r"%(sign, number, suffix))
+                raise ValueError('Invalid duration component: ' + component)
 
 
         if total > LEAP:
