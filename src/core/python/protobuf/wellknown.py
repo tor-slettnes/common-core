@@ -41,9 +41,8 @@ empty = Empty()
 
 def decodeTimestamp(prototime: Timestamp) -> NativeTimestamp:
     '''
-    Convert a ProtoBuf Timestamp input to `cc.core.timestamp.Timestamp`,
-    which is in turn an extension of `float` and thus compatible with Python
-    native timestamps (seconds since UNIX Epoch).
+    Decode a ProtoBuf Timestamp input into a Python-compatible timestamp
+    (`float` representing seconds since Epoch).
     '''
     return NativeTimestamp.from_protobuf(prototime)
 
@@ -69,9 +68,8 @@ def encodeTimestamp(timestamp: TimestampType) -> Timestamp:
 
 def decodeDuration(duration: Duration) -> NativeDuration:
     '''
-    Decode a ProtoBuf `Duration` input to `cc.core.duration.Duration`, which
-    is in turn an extension of `float` and thus compatible with Python standard
-    duration values.
+    Decode a ProtoBuf Timestamp input into a Python-compatible time interval
+    (`float` representing seconds).
     '''
     return NativeDuration.from_protobuf(duration)
 
