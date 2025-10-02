@@ -173,7 +173,7 @@ class Duration (float):
     def try_from(cls,
                  input: DurationType,
                  fallback: object|None = None,
-                 decimal_exponent: int|None = None,
+                 decimal_exponent: int = 0,
                  ) -> 'Duration':
         '''
         Create a new Duration from a variant/undetermined type, such as an
