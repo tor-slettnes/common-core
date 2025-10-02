@@ -218,6 +218,8 @@ class Duration (float):
 
         * Any `google.protobuf.Duration` object is passed on to `from_protobuf()`.
 
+        * An annotated string, as returned by `to_string()` or `to_iso_string()`.
+
         * Any other input type raises a TypeError.
 
 
@@ -257,8 +259,7 @@ class Duration (float):
             return Duration(input.ToNanoseconds() / 1e9)
 
         elif isinstance(input, str):
-            raise ValueError("Could not convert string to Duration: %r"%
-                             (input,))
+            return Duration.from_string(input)
 
         else:
             raise TypeError("Could not convert %s object to Duration"%
@@ -544,3 +545,6 @@ class Duration (float):
         return ProtoBufDuration(
             seconds = int(self),
             nanos = int((self - int(self)) * 1e9))
+
+
+DurationType |= Duration

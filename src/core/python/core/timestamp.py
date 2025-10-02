@@ -229,6 +229,8 @@ class Timestamp (float):
         '''
         Create a new Timestamp value from any supported time representation.
 
+        * If the inputs is None, the current system time is returned.
+
         * If the input is an existing `Timestamp` value, it is returned intact.
 
         * Any other `int`, `float`, or string representation of a plain number
@@ -274,7 +276,10 @@ class Timestamp (float):
             The input type is not supported for Timestamp conversion.
         '''
 
-        if isinstance(input, Timestamp):
+        if input is None:
+            return Timestamp.now()
+
+        elif isinstance(input, Timestamp):
             return input
 
         if isinstance(input, str):
@@ -703,3 +708,7 @@ class Timestamp (float):
         from google.protobuf.timestamp_pb2 import Timestamp as ProtoBufTime
         return ProtoBufTime(seconds = int(self),
                             nanos = int((self - int(self)) * 1e9))
+
+
+TimestampType |= Timestamp
+

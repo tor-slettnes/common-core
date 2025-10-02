@@ -17,8 +17,8 @@ from google.protobuf.internal.enum_type_wrapper \
     import EnumTypeWrapper
 
 from google.protobuf.empty_pb2 import Empty
-from google.protobuf.duration_pb2 import Duration
-from google.protobuf.timestamp_pb2 import Timestamp
+from google.protobuf.duration_pb2 import Duration as Duration
+from google.protobuf.timestamp_pb2 import Timestamp as Timestamp
 from google.protobuf.wrappers_pb2 \
     import BoolValue, StringValue, DoubleValue, FloatValue, \
     Int64Value, UInt64Value, Int32Value, UInt32Value, \
@@ -29,81 +29,70 @@ from google.protobuf.struct_pb2 import Value, ListValue, Struct
 from time import struct_time, mktime
 from datetime import datetime
 
+### Modules within this package
+from cc.core.duration import DurationType, Duration as NativeDuration
+from cc.core.timestamp import TimestampType, Timestamp as NativeTimestamp
+
 ### Type type hint for timestamps
-TimestampType = Timestamp|float|int|str|struct_time|datetime
-DurationType = Duration|float|int
 MessageType = type(Empty)
 
 ### Static values
 empty = Empty()
 
-def decodeTimestamp(prototime: Timestamp) -> float:
+def decodeTimestamp(prototime: Timestamp) -> NativeTimestamp:
     '''
-    Convert a ProtoBuf `Timestamp` value as an Python timestamp (seconds
-    since UNIX epoch).
+    Convert a ProtoBuf Timestamp input to `cc.core.timestamp.Timestamp`,
+    which is in turn an extension of `float` and thus compatible with Python
+    native timestamps (seconds since UNIX Epoch).
     '''
-    return prototime.seconds + prototime.nanos*1e-9
+    return NativeTimestamp.from_protobuf(prototime)
+
 
 def encodeTimestamp(timestamp: TimestampType) -> Timestamp:
     '''
-    Convert the specified time to a ProtoBuf `Timestamp` value.
+    Convert an existing timestamp to a new ProtoBuf `Timestamp` value.
 
-    The input may be one of the following:
-      - None, in which case the current system time is used
-      - An integer or floating point instance representing seconds since UNIX epoch
-      - A JavaScript time string: "_yyyy_`-`_mm_`-`_dd_`T`_hh_`:`_mm_`:`_ss_`Z`"
-        (note that the trailing `Z` implies zero offset from UTC).
+    The input may be any value accepted by
+    `cc.core.timestamp.Timestamp.from_value()`, including:
+
+      - An existing `google.protobuf.Timestamp` value
+      - An existing `cc.core.timestamp.Timestamp` value
+      - An `int`, `float`, or numeric string representing seconds since UNIX epoch
+      - An ISO 8601 formatted string, preferably with a `Z` suffix to indicate UTC
       - A `time.struct_time` instance, as returned from `time.localtime()`
       - A `datetime.datetime` instance, as returned from `datetime.datetime.now()`
-      - A ProtoBuf `Timestamp` value (no conversion done)
 
-    The return value is a new Timestamp() instance.
+    The return value is a new `google.protobuf.Timestamp()` instance.
     '''
-
-    ts = Timestamp()
-
-    if isinstance(timestamp, Timestamp):
-        ts.CopyFrom(timestamp)
-
-    elif isinstance(timestamp, int):
-        ts.seconds = timestamp
-
-    elif isinstance(timestamp, float):
-        ts.seconds = int(timestamp)
-        ts.nanos = int((timestamp-int(timestamp))*1e9)
-
-    elif isinstance(timestamp, str):
-        ts.FromJsonString(timestamp)
-
-    elif isinstance(timestamp, struct_time):
-        ts.seconds = int(mktime(timestamp))
-
-    elif isinstance(timestamp, datetime):
-        ts.FromDatetime(timestamp)
-
-    elif timestamp is not None:
-        raise TypeError("Cannot encode ProtoBuf timestamp from %s"%(type(timestamp).__name__,))
-
-    return ts
+    return NativeTimestamp.from_value(timestamp).to_protobuf()
 
 
-def decodeDuration(duration: Duration) -> float:
+def decodeDuration(duration: Duration) -> NativeDuration:
     '''
-    Decode a ProtoBuf `Duration` value to number of seconds
+    Decode a ProtoBuf `Duration` input to `cc.core.duration.Duration`, which
+    is in turn an extension of `float` and thus compatible with Python standard
+    duration values.
     '''
-    return duration.seconds + duration.nanos*1e-9
+    return NativeDuration.from_protobuf(duration)
 
 
-def encodeDuration(duration: int|float) -> Duration:
+def encodeDuration(duration: DurationType) -> Duration:
     '''
-    Encode a number of seconds as `Duration` value
+    Encode an existing duration to a new `Duration` value.
+
+    The input may be any value accepted by
+    `cc.core.duration.Duration.from_value()`, including:
+
+     - An existing `google.protobuf.Duration` value
+     - An existing `cc.core.duration.Duration` value
+     - An `int`, `float`, or numeric string representing seconds
+     - An existing `datetime.timedelta` instance
+     - An annotated string, e.g, as returned by
+        * `google.protobuf.Duration().ToJsonString()`
+        * `cc.core.duration.Duration().to_json_string()`
+        * `cc.core.duration.Duration().to_string()`
     '''
-
-    if not duration:
-        duration = 0
-
-    return Duration(seconds=int(duration),
-                    nanos=int((duration-int(duration))*1e9))
+    return NativeDuration.from_value(duration or 0).to_protobuf()
 
 
 def encodeValue (value) -> Value:
@@ -142,6 +131,7 @@ def encodeStruct (dictionary: dict) -> Struct:
     items = [(key, encodeProtoValue(value))
              for (key, value) in dictionary.items() ]
     return Struct(fields=dict(items))
+
 
 def encodeListValue (listvalue: list) -> ListValue:
     '''
