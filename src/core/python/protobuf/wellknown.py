@@ -30,8 +30,8 @@ from time import struct_time, mktime
 from datetime import datetime
 
 ### Modules within this package
-from cc.core.duration import DurationType, Duration as NativeDuration
-from cc.core.timestamp import TimestampType, Timestamp as NativeTimestamp
+from cc.core.timeinterval import TimeIntervalType, TimeInterval
+from cc.core.timepoint import TimePointType, TimePoint
 
 ### Type type hint for timestamps
 MessageType = type(Empty)
@@ -39,23 +39,23 @@ MessageType = type(Empty)
 ### Static values
 empty = Empty()
 
-def decodeTimestamp(prototime: Timestamp) -> NativeTimestamp:
+def decodeTimestamp(prototime: Timestamp) -> TimePoint:
     '''
     Decode a ProtoBuf Timestamp input into a Python-compatible timestamp
     (`float` representing seconds since Epoch).
     '''
-    return NativeTimestamp.from_protobuf(prototime)
+    return TimePoint.from_protobuf(prototime)
 
 
-def encodeTimestamp(timestamp: TimestampType) -> Timestamp:
+def encodeTimestamp(timestamp: TimePointType) -> Timestamp:
     '''
     Convert an existing timestamp to a new ProtoBuf `Timestamp` value.
 
     The input may be any value accepted by
-    `cc.core.timestamp.Timestamp.from_value()`, including:
+    `cc.core.timepoint.TimePoint.from_value()`, including:
 
       - An existing `google.protobuf.Timestamp` value
-      - An existing `cc.core.timestamp.Timestamp` value
+      - An existing `cc.core.timepoint.TimePoint` value
       - An `int`, `float`, or numeric string representing seconds since UNIX epoch
       - An ISO 8601 formatted string, preferably with a `Z` suffix to indicate UTC
       - A `time.struct_time` instance, as returned from `time.localtime()`
@@ -63,34 +63,34 @@ def encodeTimestamp(timestamp: TimestampType) -> Timestamp:
 
     The return value is a new `google.protobuf.Timestamp()` instance.
     '''
-    return NativeTimestamp.from_value(timestamp).to_protobuf()
+    return TimePoint.from_value(timestamp).to_protobuf()
 
 
-def decodeDuration(duration: Duration) -> NativeDuration:
+def decodeDuration(duration: Duration) -> TimeInterval:
     '''
     Decode a ProtoBuf Timestamp input into a Python-compatible time interval
     (`float` representing seconds).
     '''
-    return NativeDuration.from_protobuf(duration)
+    return TimeInterval.from_protobuf(duration)
 
 
-def encodeDuration(duration: DurationType) -> Duration:
+def encodeDuration(duration: TimeIntervalType) -> Duration:
     '''
     Encode an existing duration to a new `Duration` value.
 
     The input may be any value accepted by
-    `cc.core.duration.Duration.from_value()`, including:
+    `cc.core.timeinterval.TimeInterval.from_value()`, including:
 
      - An existing `google.protobuf.Duration` value
-     - An existing `cc.core.duration.Duration` value
+     - An existing `cc.core.timeinterval.TimeInterval` value
      - An `int`, `float`, or numeric string representing seconds
      - An existing `datetime.timedelta` instance
      - An annotated string, e.g, as returned by
         * `google.protobuf.Duration().ToJsonString()`
-        * `cc.core.duration.Duration().to_json_string()`
-        * `cc.core.duration.Duration().to_string()`
+        * `cc.core.timeinterval.TimeInterval().to_json_string()`
+        * `cc.core.timeinterval.TimeInterval().to_string()`
     '''
-    return NativeDuration.from_value(duration or 0).to_protobuf()
+    return TimeInterval.from_value(duration or 0).to_protobuf()
 
 
 def encodeValue (value) -> Value:

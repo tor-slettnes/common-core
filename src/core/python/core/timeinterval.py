@@ -13,52 +13,52 @@ representations such as:
 ### Usage Examples:
 
   ```
-  >>> from cc.core.duration import Duration
+  >>> from cc.core.timeinterval import TimeInterval
 
-  ### Create a new Duration value from scalar components
-  >>> dur = Duration(seconds = 5, milliseconds = 500)
+  ### Create a new TimeInterval value from scalar components
+  >>> ti = TimeInterval(seconds = 5, milliseconds = 500)
 
   ### This type extends `float`
-  >>> isinstance(dur, float)
+  >>> isinstance(ti, float)
   True
 
   ### This type overrides the `__str__()` and `__repr__()` methods
-  >>> dur
+  >>> ti
   '5.500s'
-  >>> print("%s" % dur)
+  >>> print("%s" % ti)
   5s
-  >>> print("%d" % dur)
+  >>> print("%d" % ti)
   5
-  >>> print("%f" % dur)
+  >>> print("%f" % ti)
   5.000000
 
   ### Also the type persists when adding/subtracting other time deltas
-  >>> dur += 60
-  >>> dur
+  >>> ti += 60
+  >>> ti
   '1m 5s'
-  >>> dur -= Duration.from_milliseconds(500)
-  >>> dur
+  >>> ti -= TimeInterval.from_milliseconds(500)
+  >>> ti
   '1m 4.5s'
 
   ### Convert from `timedelta` instances
-  >>> dur += Duration.from_timedelta(datetime.timedelta(minutes=5))
-  >>> dur
+  >>> ti += TimeInterval.from_timedelta(datetime.timedelta(minutes=5))
+  >>> ti
   `6m 5s`
 
   ### Convert from `google.protobuf.Duration` objects
-  >>> from google.protobuf.duration_pb2 import Duration as ProtoDuration
-  >>> dur += Duration.from_protobuf(ProtoDuration(seconds=25))
-  >>> dur
+  >>> from google.protobuf.duration_pb2 import Duration
+  >>> ti += TimeInterval.from_protobuf(Duration(seconds=25))
+  >>> ti
   `6m 30s`
 
   ### Return duration as scaled integers
-  >>> dur.to_seconds()
+  >>> ti.to_seconds()
   5
-  >>> dur.to_milliseconds()
+  >>> ti.to_milliseconds()
   5000
-  >>> dur.to_microseconds()
+  >>> ti.to_microseconds()
   5000000
-  >>> dur.to_nanoseconds()
+  >>> ti.to_nanoseconds()
   5000000000
   ```
 '''
@@ -69,7 +69,7 @@ __author__ = 'Tor Slettnes'
 import datetime
 import re
 
-DurationType = float|int|str|datetime.timedelta
+TimeIntervalType = float|int|str|datetime.timedelta
 
 NANOSECOND   = 1e-9
 MICROSECOND  = 1e-6
@@ -89,10 +89,10 @@ try:
 except ImportError:
     ProtoBufDuration = None
 else:
-    DurationType |= ProtoBufDuration
+    TimeIntervalType |= ProtoBufDuration
 
 
-class Duration (float):
+class TimeInterval (float):
     '''
     Dedicated representation of relative time intervals.
 
@@ -153,34 +153,34 @@ class Duration (float):
         '''
         return f"'{self}'"
 
-    def __add__ (self, other: DurationType):
+    def __add__ (self, other: TimeIntervalType):
         '''
         Add another relative time interval to this one
         '''
 
-        return Duration(float(self) + Duration.from_value(other))
+        return TimeInterval(float(self) + TimeInterval.from_value(other))
 
 
-    def __sub__(self, other: DurationType):
+    def __sub__(self, other: TimeIntervalType):
         '''
         Subtract another relative time interval from this one
         '''
 
-        return Duration(float(self) - Duration.from_value(other))
+        return TimeInterval(float(self) - TimeInterval.from_value(other))
 
 
     @classmethod
     def try_from(cls,
-                 input: DurationType,
+                 input: TimeIntervalType,
                  fallback: object|None = None,
                  decimal_exponent: int = 0,
-                 ) -> 'Duration':
+                 ) -> 'TimeInterval':
         '''
-        Create a new Duration from a variant/undetermined type, such as an
+        Create a new TimeInterval from a variant/undetermined type, such as an
         uncontrolled JSON or YAML settings value.
 
         If this fails, try again with the fallback value if provided. If the
-        fallback is None or otherwise could not be converted to a Duration, it
+        fallback is None or otherwise could not be converted to a TimeInterval, it
         is returned unmodified.  In any case, no exception is raised.
 
         See `from_value()` for a description of the remaining input
@@ -203,20 +203,20 @@ class Duration (float):
 
     @classmethod
     def from_value(cls,
-                   input: DurationType,
+                   input: TimeIntervalType,
                    decimal_exponent: int = 0,
-                   ) -> 'Duration':
+                   ) -> 'TimeInterval':
         '''
-        Create a new Duration value from any supported time interval representation.
+        Create a new TimeInterval value from any supported time interval representation.
 
-        * If the input is an existing `Duration` value, it is returned intact.
+        * If the input is an existing `TimeInterval` value, it is returned intact.
 
         * Any other `int`, `float`, or string representation of a plain number
           is scaled to seconds according to the `decimal_exponent` input argument.
 
         * Any `datetime.timedelta` input is passed on to `from_timedelta()`.
 
-        * Any `google.protobuf.Duration` object is passed on to `from_protobuf()`.
+        * Any `google.protobuf.TimeInterval` object is passed on to `from_protobuf()`.
 
         * An annotated string, as returned by `to_string()` or `to_iso_string()`.
 
@@ -234,10 +234,10 @@ class Duration (float):
             convert from milliseconcds.
 
         @returns
-            A new `Duration` value.
+            A new `TimeInterval` value.
 
         @exception ValueError
-            The input is a string but could not be converted to `Duration`.
+            The input is a string but could not be converted to `TimeInterval`.
 
         @exception TypeError
             The input type is not a supported time interval representation.
@@ -250,54 +250,54 @@ class Duration (float):
                 pass
 
         if isinstance(input, int|float):
-            return Duration(input * (10**decimal_exponent))
+            return TimeInterval(input * (10**decimal_exponent))
 
         elif isinstance(input, datetime.timedelta):
-            return Duration(input.total_seconds())
+            return TimeInterval(input.total_seconds())
 
         elif ProtoBufDuration and isinstance(input, ProtoBufDuration):
-            return Duration(input.ToNanoseconds() / 1e9)
+            return TimeInterval(input.ToNanoseconds() / 1e9)
 
         elif isinstance(input, str):
-            return Duration.from_string(input)
+            return TimeInterval.from_string(input)
 
         else:
-            raise TypeError("Could not convert %s object to Duration"%
+            raise TypeError("Could not convert %s object to TimeInterval"%
                             (type(input).__name__,))
 
 
     @classmethod
-    def from_seconds(cls, seconds: int|float) -> 'Duration':
+    def from_seconds(cls, seconds: int|float) -> 'TimeInterval':
         '''
-        Return a new Duration value given number of seconds.
+        Return a new TimeInterval value given number of seconds.
 
-        This is effectively the same as `Duration(seconds)`, provided for completeness.
+        This is effectively the same as `TimeInterval(seconds)`, provided for completeness.
         '''
-        return Duration(seconds)
-
-
-    @classmethod
-    def from_milliseconds(cls, milliseconds: int|float) -> 'Duration':
-        '''
-        Return a new Duration value given number of milliseconds.
-        '''
-        return Duration(milliseconds / 1e3)
+        return TimeInterval(seconds)
 
 
     @classmethod
-    def from_microseconds(cls, microseconds: int|float) -> 'Duration':
+    def from_milliseconds(cls, milliseconds: int|float) -> 'TimeInterval':
         '''
-        Return a new Duration value given number of microseconds
+        Return a new TimeInterval value given number of milliseconds.
         '''
-        return Duration(microseconds / 1e6)
+        return TimeInterval(milliseconds / 1e3)
 
 
     @classmethod
-    def from_nanoseconds(cls, nanoseconds: int|float) -> 'Duration':
+    def from_microseconds(cls, microseconds: int|float) -> 'TimeInterval':
         '''
-        Return a new Duration value given number of nanoseconds
+        Return a new TimeInterval value given number of microseconds
         '''
-        return Duration(nanoseconds / 1e9)
+        return TimeInterval(microseconds / 1e6)
+
+
+    @classmethod
+    def from_nanoseconds(cls, nanoseconds: int|float) -> 'TimeInterval':
+        '''
+        Return a new TimeInterval value given number of nanoseconds
+        '''
+        return TimeInterval(nanoseconds / 1e9)
 
 
     _rx_component = re.compile(r'^([+-]?)([0-9\.]+)([a-z]+)$')
@@ -316,7 +316,7 @@ class Duration (float):
                     microseconds_suffix: str|None = "us",
                     nanoseconds_suffix : str|None = "ns",
                     component_separator: str|None = None,
-                    ) -> 'Duration':
+                    ) -> 'TimeInterval':
 
         components = {
             years_suffix: YEAR,
@@ -354,34 +354,34 @@ class Duration (float):
             ### For durations > 4 years we add leap days
             total += DAY * (total//LEAP)
 
-        return Duration(-total if negative
+        return TimeInterval(-total if negative
                         else total)
 
 
     @classmethod
     def from_timedelta(cls,
-                       input: datetime.timedelta) -> 'Duration':
+                       input: datetime.timedelta) -> 'TimeInterval':
         '''
-        Create a new Duration object from a `datetime.timedelta` value.
+        Create a new TimeInterval object from a `datetime.timedelta` value.
 
         @param input
             An existing `datetime.timedelta` value.
         '''
 
-        return Duration(input.total_seconds())
+        return TimeInterval(input.total_seconds())
 
 
     @classmethod
     def from_protobuf(cls,
                       input: ProtoBufDuration):
         '''
-        Create a new Duration from a `google.protobuf.Duration` object.
+        Create a new TimeInterval from a `google.protobuf.Duration` object.
 
         @param input
             An existing instance of `google.protobuf.Duration`
         '''
 
-        return Duration(input.ToNanoseconds() / 1e9)
+        return TimeInterval(input.ToNanoseconds() / 1e9)
 
 
     def to_seconds(self) -> int:
@@ -545,10 +545,10 @@ class Duration (float):
         @return
              New `google.protobuf.Duration` instance.
         '''
-        from google.protobuf.duration_pb2 import Duration as ProtoBufDuration
-        return ProtoBufDuration(
+        from google.protobuf.duration_pb2 import Duration
+        return Duration(
             seconds = int(self),
             nanos = int((self - int(self)) * 1e9))
 
 
-DurationType |= Duration
+TimeIntervalType |= TimeInterval

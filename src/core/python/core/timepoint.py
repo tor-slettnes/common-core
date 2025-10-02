@@ -1,5 +1,5 @@
 '''
-Timestamp representation extending Python-native `float`.
+System time representation extending Python-native `float`.
 
 Its purpose is to provide a dedicated, uniform, unambiguous timestamp
 representation compatible with native Python types (e.g. `time`) - but also with
@@ -9,94 +9,94 @@ conversion methods to support additional common representations such as:
  - `time.struct_time`
  - ISO 8601 compliant date/time strings
  - `google.protobuf.Timestamp`
- - Scaled integer timestamps (milliseconds/microseconds/nanoseconds)
+ - Scaled integer values (milliseconds/microseconds/nanoseconds)
 
 ## Usage Examples:
 
   ```
-  >>> from cc.core.timestamp import Timestamp
+  >>> from cc.core.timepoint import TimePoint
 
-  ### Create a new `Timestamp` instance from the current time.
-  >>> ts = Timestamp.now()
-  >>> isinstance(ts, float)
+  ### Create a new `TimePoint` instance from the current time.
+  >>> tp = TimePoint.now()
+  >>> isinstance(tp, float)
   True
 
   ### This type has overriden `__str__()` and `__repr__()` methods
-  >>> print("%s" % ts)
+  >>> print("%s" % tp)
   2025-09-30T08:01:39.785Z
 
-  >>> print("%d" % ts)
+  >>> print("%d" % tp)
   1759219299
 
-  >>> print("%f" % ts)
+  >>> print("%f" % tp)
   1759219299.785000
 
   ### Various import methods:
-  >>> ts = Timestamp(time.time())
-  >>> ts = Timestamp.from_milliseconds(time.time() * 1000)
+  >>> tp = TimePoint(time.time())
+  >>> tp = TimePoint.from_milliseconds(time.time() * 1000)
 
   ### Also an `autoscaled_from()` method to automatically determine the scaling
   ### factor/resolution of an input
-  >>> ts = Timestamp.autoscaled_from(epoch_time_with_unknown_scale)
+  >>> tp = TimePoint.autoscaled_from(epoch_time_with_unknown_scale)
 
-  ### Even a `from_value()` method to create a Timestamp from a
+  ### Even a `from_value()` method to create a TimePoint from a
   ### variant/uncontrolled input value, such as a JSON or YAML settings value.
-  >>> ts = Timestamp.from_value("2025-10-01 00:00:00")
-  >>> ts = Timestamp.from_value(1759302000000000, decimal_exponent=-6)
+  >>> tp = TimePoint.from_value("2025-10-01 00:00:00")
+  >>> tp = TimePoint.from_value(1759302000000000, decimal_exponent=-6)
 
   ### Convert from `datetime` instances, assuming local time if naive
   >>> dt = datetime.datetime.now()
-  >>> Timestamp.from_datetime(dt)
+  >>> TimePoint.from_datetime(dt)
   '2025-09-30T08:49:36.666Z'
 
   ### Convert from `datetime` instances, with explicit zone information
   >>> dt = datetime.datetime.now(tz = datetime.timezone.utc)
-  >>> Timestamp.from_datetime(dt)
+  >>> TimePoint.from_datetime(dt)
   '2025-09-30T08:49:39.186Z'
 
   ### Convert from an ISO string, again assuming local time by default
-  >>> Timestamp.from_string('2025-10-01 00:00:00')
+  >>> TimePoint.from_string('2025-10-01 00:00:00')
   '2025-10-01T07:00:00.000Z'
 
   ### ...unless it ends in `Z`
-  >>> Timestamp.from_string('2025-10-01 00:00:00Z')
+  >>> TimePoint.from_string('2025-10-01 00:00:00Z')
   '2025-10-01T00:00:00.000Z'
 
   ### or the argument `assume_utc` is set
-  >>> Timestamp.from_string('2025-10-01 00:00:00', assume_utc=True)
+  >>> TimePoint.from_string('2025-10-01 00:00:00', assume_utc=True)
   '2025-10-01T00:00:00.000Z'
 
-  ### Return timestamp as scaled integers
-  >>> ts = Timestamp.from_string('2025-10-01 00:00:00')
-  >>> ts.to_seconds()
+  ### Return time point as scaled integers
+  >>> tp = TimePoint.from_string('2025-10-01 00:00:00')
+  >>> tp.to_seconds()
   1759302000
-  >>> ts.to_milliseconds()
+  >>> tp.to_milliseconds()
   1759302000000
-  >>> ts.to_microseconds()
+  >>> tp.to_microseconds()
   1759302000000000
-  >>> ts.to_nanoseconds()
+  >>> tp.to_nanoseconds()
   1759302000000000000
 
   ### Convert from Epoch-based timestamp with automatic scaling
-  >>> Timestamp.autoscaled_from(1759276800)
+  >>> TimePoint.autoscaled_from(1759276800)
   '2025-10-01T00:00:00.000Z'
-  >>> Timestamp.autoscaled_from(1759276800000)
+  >>> TimePoint.autoscaled_from(1759276800000)
   '2025-10-01T00:00:00.000Z'
-  >>> Timestamp.autoscaled_from(1759276800000000)
+  >>> TimePoint.autoscaled_from(1759276800000000)
   '2025-10-01T00:00:00.000Z'
-  >>> Timestamp.autoscaled_from(1759276800000000000)
+  >>> TimePoint.autoscaled_from(1759276800000000000)
   '2025-10-01T00:00:00.000Z'
 
-  ### Add/subtract time deltas (Durations)
-  >>> ts += 86400
-  >>> ts
+  ### Add/subtract time intervals (deltas)
+  >>> tp += 86400
+  >>> tp
   '2025-10-01T08:01:39.785Z'
 
-  ### Subtracting another timestamp yields a new Duration, and vice versa
-  >>> ts - '2025-10-01 00:00:00'
+  ### Subtracting another TimePoint yields a new TimeInterval, and vice versa
+  >>> tp - '2025-10-01 00:00:00'
   '1h 1m 39.785s'
 
-  >>> ts - '1y'
+  >>> tp - '1y'
   '2024-10-01 01:01:39'
   ```
 '''
@@ -107,9 +107,9 @@ __author__ = 'Tor Slettnes'
 import enum
 import time
 import datetime
-from .duration import Duration, DurationType
+from .timeinterval import TimeInterval, TimeIntervalType
 
-TimestampType = float|int
+TimePointType = float|int
 DateTimeType  = str|time.struct_time|datetime.datetime
 
 try:
@@ -117,7 +117,7 @@ try:
 except ImportError:
     ProtoBufTimestamp = None
 else:
-    TimestampType |= ProtoBufTimestamp
+    TimePointType |= ProtoBufTimestamp
 
 
 class ZoneSuffix(enum.IntEnum):
@@ -131,9 +131,9 @@ class ZoneSuffix(enum.IntEnum):
 
 
 
-class Timestamp (float):
+class TimePoint (float):
     '''
-    Timestamp representation extending Python-native `float`.
+    System time representation extending Python-native `float`.
 
     This is a drop-in replacement/wrapper for Python-native timestamps as
     returned by `time.time()` and friends, with conversion methods to/from
@@ -166,32 +166,31 @@ class Timestamp (float):
         return f"'{self}'"
 
 
-    def __add__ (self, duration: DurationType):
+    def __add__ (self, duration: TimeIntervalType):
         '''
         Add a duration (relative offset) to this timestamp
         '''
-        return Timestamp(float(self) + Duration.from_value(duration))
+        return TimePoint(float(self) + TimeInterval.from_value(duration))
 
 
-    def __sub__(self, input: TimestampType|DurationType):
+    def __sub__(self, input: TimePointType|TimeIntervalType):
         '''
         Subtract a duration (relative offset) or other timestamp from this
         timestamp.
 
         The input must be either one of:
 
-         - a valid `Duration` input type supported by `Duration.from_value()`,
-           including a string generated from `Duration().to_string()`, or
+         - a type supported by `TimeInterval.from_value()`, including a string
+           generated from `TimeInterval().to_string()`, or
 
-         - a valid `Timestamp` input type supported by `Timestamp.from_value()`,
-           including an ISO 8601 string such as that generated from
-           `Timestamp().to_string()`.
+         - a type supported by `TimePoint.from_value()`, including an ISO 8601
+           string such as that generated from `TimePoint().to_string()`.
 
         A plain number (`int`, `float`, or a numeric string), will be
-        interpreted as a Duration.
+        interpreted as a TimeInterval.
 
-        If the input is interpreted as a `Duration` the delta is returned as a
-        new `Timestamp` value, and vice versa.
+        If the input is interpreted as a `TimeInterval` the delta is returned as a
+        new `TimePoint` value, and vice versa.
         '''
 
         if isinstance(input, str):
@@ -204,48 +203,48 @@ class Timestamp (float):
         if isinstance(input, str):
             try:
                 ### Let's see if the input is a ISO 8601 time string
-                return Duration(float(self) - Timestamp.from_string(input))
+                return TimeInterval(float(self) - TimePoint.from_string(input))
             except ValueError:
-                ### Nope. Perhaps a Duration string, as generated from e.g.
-                ### `Duration.to_string()`?
+                ### Nope. Perhaps a TimeInterval string, as generated from e.g.
+                ### `TimeInterval.to_string()`?
                 try:
-                    return Timestamp(float(self) - Duration.from_value(input))
+                    return TimePoint(float(self) - TimeInterval.from_value(input))
                 except ValueError:
                     raise ValueError(
                         "not a valid 8601 time string nor duration: " + input)
 
-        elif isinstance(input, DurationType):
-            return Timestamp(float(self) - Duration.from_value(input))
+        elif isinstance(input, TimeIntervalType):
+            return TimePoint(float(self) - TimeInterval.from_value(input))
 
-        elif isinstance(input, TimestampType):
-            return Duration(float(self) - Timestamp.from_value(input))
+        elif isinstance(input, TimePointType):
+            return TimeInterval(float(self) - TimePoint.from_value(input))
 
         else:
             return TypeError(
-                "not a supported Duration or Timestamp input type: "
+                "not a supported TimeInterval or TimePoint input type: "
                 + type(input).__name__)
 
     @classmethod
-    def now(cls) -> 'Timestamp':
+    def now(cls) -> 'TimePoint':
         '''
-        Return a new Timestamp object representing the current system time.
+        Return a new TimePoint object representing the current system time.
         '''
-        return Timestamp(time.time())
+        return TimePoint(time.time())
 
 
     @classmethod
     def try_from(cls,
-                 input: TimestampType|DateTimeType,
+                 input: TimePointType|DateTimeType,
                  fallback: object = None,
                  decimal_exponent: int|None = None,
                  assume_utc: bool = False,
-                 ) -> 'Timestamp':
+                 ) -> 'TimePoint':
         '''
-        Try creating a new Timestamp from a variant/undetermined type, such
+        Try creating a new TimePoint from a variant/undetermined type, such
         as an uncontrolled JSON or YAML settings value.
 
         If this fails, try again with the fallback value if provided. If the
-        fallback is None or otherwise could not be converted to a Timestamp, it
+        fallback is None or otherwise could not be converted to a TimePoint, it
         is returned unmodified.  In any case, no exception is raised.
 
         See `from_value()` for a description of the remaining input
@@ -268,17 +267,17 @@ class Timestamp (float):
 
     @classmethod
     def from_value(cls,
-                   input: TimestampType|DateTimeType,
+                   input: TimePointType|DateTimeType,
                    decimal_exponent: int|None = None,
                    assume_utc: bool = False,
-                   ) -> 'Timestamp|None':
+                   ) -> 'TimePoint|None':
 
         '''
-        Create a new Timestamp value from any supported time representation.
+        Create a new TimePoint value from any supported time representation.
 
         * If the inputs is None, the current system time is returned.
 
-        * If the input is an existing `Timestamp` value, it is returned intact.
+        * If the input is an existing `TimePoint` value, it is returned intact.
 
         * Any other `int`, `float`, or string representation of a plain number
           is assumed to be an Epoch-based timestamp. Use the `decimal_exponent`
@@ -291,7 +290,7 @@ class Timestamp (float):
 
         * Any `time.struct_time` value is passed on to `from_struct_time()`.
 
-        * Any `google.protobuf.Timestamp` object is passed on to `from_protobuf()`.
+        * Any `google.protobuf.TimePoint` object is passed on to `from_protobuf()`.
 
         * Any other input type raises a TypeError.
 
@@ -314,19 +313,19 @@ class Timestamp (float):
             attribute, or a `time.struct_time` object.
 
         @returns
-            A new `Timestamp` value.
+            A new `TimePoint` value.
 
         @exception ValueError
-            The input is a string but could not be converted to `Timestamp`.
+            The input is a string but could not be converted to `TimePoint`.
 
         @exception TypeError
-            The input type is not supported for Timestamp conversion.
+            The input type is not supported for TimePoint conversion.
         '''
 
         if input is None:
-            return Timestamp.now()
+            return TimePoint.now()
 
-        elif isinstance(input, Timestamp):
+        elif isinstance(input, TimePoint):
             return input
 
         if isinstance(input, str):
@@ -354,7 +353,7 @@ class Timestamp (float):
             return cls.from_protobuf(input)
 
         else:
-            raise TypeError("Could not convert %s object to Timestamp"%
+            raise TypeError("Could not convert %s object to TimePoint"%
                             (type(input).__name__,))
 
 
@@ -362,9 +361,9 @@ class Timestamp (float):
     AUTOSCALE_SECONDS_UPPER_LIMIT = 31536000000
 
     @classmethod
-    def autoscaled_from(cls, input: int|float) -> 'Timestamp':
+    def autoscaled_from(cls, input: int|float) -> 'TimePoint':
         '''
-        Create a new Timestamp from an Epoch-based input with automatic
+        Create a new TimePoint from an Epoch-based input with automatic
         scaling/resolution.
 
         The scaling factor is determined as follows:
@@ -383,42 +382,42 @@ class Timestamp (float):
             while (input >= cls.AUTOSCALE_SECONDS_UPPER_LIMIT):
                 input /= 1000.0
 
-        return Timestamp(max(0, input))
+        return TimePoint(max(0, input))
 
 
 
     @classmethod
-    def from_seconds(cls, seconds: int|float) -> 'Timestamp':
+    def from_seconds(cls, seconds: int|float) -> 'TimePoint':
         '''
-        Return a new Timestamp given number of seconds since UNIX Epoch.
+        Return a new TimePoint given number of seconds since UNIX Epoch.
 
-        This is effectively the same as `Timestamp(seconds)`, provided for completeness.
+        This is effectively the same as `TimePoint(seconds)`, provided for completeness.
         '''
-        return Timestamp(seconds)
-
-
-    @classmethod
-    def from_milliseconds(cls, milliseconds: int|float) -> 'Timestamp':
-        '''
-        Return a new Timestamp given number of milliseconds since UNIX Epoch.
-        '''
-        return Timestamp(milliseconds / 1e3)
+        return TimePoint(seconds)
 
 
     @classmethod
-    def from_microseconds(cls, microseconds: int|float) -> 'Timestamp':
+    def from_milliseconds(cls, milliseconds: int|float) -> 'TimePoint':
         '''
-        Return a new Timestamp given number of microseconds since UNIX Epoch.
+        Return a new TimePoint given number of milliseconds since UNIX Epoch.
         '''
-        return Timestamp(microseconds / 1e6)
+        return TimePoint(milliseconds / 1e3)
 
 
     @classmethod
-    def from_nanoseconds(cls, nanoseconds: int|float) -> 'Timestamp':
+    def from_microseconds(cls, microseconds: int|float) -> 'TimePoint':
         '''
-        Return a new Timestamp given number of nanoseconds since UNIX Epoch.
+        Return a new TimePoint given number of microseconds since UNIX Epoch.
         '''
-        return Timestamp(nanoseconds / 1e9)
+        return TimePoint(microseconds / 1e6)
+
+
+    @classmethod
+    def from_nanoseconds(cls, nanoseconds: int|float) -> 'TimePoint':
+        '''
+        Return a new TimePoint given number of nanoseconds since UNIX Epoch.
+        '''
+        return TimePoint(nanoseconds / 1e9)
 
 
     @classmethod
@@ -426,12 +425,12 @@ class Timestamp (float):
                    seconds      : int|float|None = None,
                    milliseconds : int|float|None = None,
                    microseconds : int|float|None = None,
-                   nanoseconds  : int|float|None = None) -> 'Timestamp':
+                   nanoseconds  : int|float|None = None) -> 'TimePoint':
         '''
-        Return a new Timestamp from a combination of Epoch-based inputs.
+        Return a new TimePoint from a combination of Epoch-based inputs.
 
         Each input is scaled to the corresponding fraction of a second,
-        then added together to form a new Timestamp instance.
+        then added together to form a new TimePoint instance.
 
         @param seconds
             Added to the result.
@@ -446,10 +445,10 @@ class Timestamp (float):
             Divided by 1e9, then added to the result.
 
         @return
-            A new Timestamp instance
+            A new TimePoint instance
         '''
 
-        return Timestamp(
+        return TimePoint(
             seconds
             + (milliseconds or 0) / 1e3
             + (microseconds or 0) / 1e6
@@ -461,7 +460,7 @@ class Timestamp (float):
                          input: time.struct_time,
                          is_utc: bool = False):
         '''
-        Create a new Timestamp object from a `time.struct_time` value.
+        Create a new TimePoint object from a `time.struct_time` value.
 
         @param input
             An existing `time.struct_time` instance, as returned by
@@ -478,16 +477,16 @@ class Timestamp (float):
         if is_utc:
             timestamp -= cls.tz_offset(input)
 
-        return Timestamp(timestamp)
+        return TimePoint(timestamp)
 
 
     @classmethod
     def from_datetime(cls,
                       input: datetime.datetime,
                       assume_utc: bool = False,
-                      ) -> 'Timestamp':
+                      ) -> 'TimePoint':
         '''
-        Create a new Timestamp object from a `datetime.datetime` value.
+        Create a new TimePoint object from a `datetime.datetime` value.
 
         @param input
             An existing `datetime.datetime` value.
@@ -501,16 +500,16 @@ class Timestamp (float):
         if not input.tzinfo and assume_utc:
             input = input.replace(tzinfo = datetime.timezone.utc)
 
-        return Timestamp(input.timestamp())
+        return TimePoint(input.timestamp())
 
 
     @classmethod
     def from_string(cls,
                     input: str,
                     assume_utc: bool = False,
-                    ) -> 'Timestamp':
+                    ) -> 'TimePoint':
         '''
-        Create a new Timestamp from a ISO 8601 formatted date/time string.
+        Create a new TimePoint from a ISO 8601 formatted date/time string.
         See `datetime.datetime.fromisoformat()` for details on expected format.
 
         @param input
@@ -523,7 +522,7 @@ class Timestamp (float):
             if it does not end in `Z`.
         '''
 
-        return Timestamp.from_datetime(
+        return TimePoint.from_datetime(
             input = datetime.datetime.fromisoformat(input),
             assume_utc = assume_utc)
 
@@ -533,13 +532,13 @@ class Timestamp (float):
     def from_protobuf(cls,
                       input: ProtoBufTimestamp):
         '''
-        Create a new Timestamp from a `google.protobuf.Timestamp` instance.
+        Create a new TimePoint from a `google.protobuf.TimePoint` instance.
 
         @param input
-            An existing instance of `google.protobuf.Timestamp`
+            An existing instance of `google.protobuf.TimePoint`
         '''
 
-        return Timestamp(input.seconds + (input.nanos * 1e-9))
+        return TimePoint(input.seconds + (input.nanos * 1e-9))
 
 
     @classmethod
@@ -736,10 +735,11 @@ class Timestamp (float):
         @return
              New `google.protobuf.Timestamp` instance.
         '''
-        from google.protobuf.timestamp_pb2 import Timestamp as ProtoBufTime
-        return ProtoBufTime(seconds = int(self),
-                            nanos = int((self - int(self)) * 1e9))
+        from google.protobuf.timestamp_pb2 import Timestamp
+        return Timestamp(
+            seconds = int(self),
+            nanos = int((self - int(self)) * 1e9))
 
 
-TimestampType |= Timestamp
+TimePointType |= TimePoint
 
