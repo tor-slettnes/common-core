@@ -416,9 +416,9 @@ class Duration (float):
         sub-second portion of the value.  The smallest representable time
         interval is one nanosecond.
 
-        The name `to_json_string()` as well as the output format is modeled
-        after the similarly-named `google.protobuf.Duration()` method
-        `ToJsonString()`.
+        This method is a convenience wrapper for `to_string()`. The name
+        `to_json_string()` as well as the output format is modeled after the
+        similarly-named `google.protobuf.Duration()` method `ToJsonString()`.
         '''
 
         return self.to_string(
@@ -428,8 +428,7 @@ class Duration (float):
             days_suffix = None,
             hours_suffix = None,
             minutes_suffix = None,
-            seconds_suffix = "s",
-            decimals = 9)
+            seconds_suffix = "s")
 
         # string = "%.9f"%(self,)
         # while string.endswith('000'):
@@ -448,10 +447,10 @@ class Duration (float):
                   component_separator: str = " ",
                   positive_sign      : str = "",
                   negative_sign      : str = "-",
-                  decimals           : int = 9) -> str:
+                  decimals           : int|None = None) -> str:
         '''
         Convert this duration to a string broken up into one or more
-        components, representing common time units from largest to smallest.
+        components, representing date/time divisions from largest to smallest.
 
         Each component comprises a number followed by a time unit suffix,
         for instance, `"42d"` to represent 42 days. It is included only if
@@ -463,11 +462,11 @@ class Duration (float):
         respectively.
 
         The numeric values for all but the final component are integers. The
-        final component, seconds, may contain fractional digits in groups of 3,
-        up to and including `decimals` digits, depending on the sub-second
-        portion of the duration value.  The default `decimals` value is 9,
-        meaning that there may be 0, 3, 6, or 9 fractional digits, and that the
-        smallest representable time interval is one nanosecond.
+        final component, seconds, may contain fractional digits as follows:
+         - If `decimals` is specified, that many fractional digits is added.
+         - Otherwise, the string may have 0, 3, 6, or 9 fractional digits,
+           depending on the sub-second portion of the value.  The smallest
+           representable time interval in this case is one nanosecond.
 
         Components are separated by `component_separator` - by default, a single
         space character.
@@ -510,14 +509,14 @@ class Duration (float):
                 remainder %= division
 
         if seconds_suffix and (remainder or not parts):
-            string = "%.*f"%(decimals, remainder)
-            groupsize = ((decimals-1) % 3) + 1
+            if decimals:
+                parts.append("%.*f%s"%(decimals, remainder, seconds_suffix))
 
-            while string.endswith('0' * groupsize):
-                string = string[:-groupsize]
-                groupsize = 3
-
-            parts.append(string.rstrip(".,") + seconds_suffix)
+            else:
+                string = "%.9f"%(remainder,)
+                while string.endswith('000'):
+                    string = string[:-3]
+                parts.append(string.rstrip(".,") + seconds_suffix)
 
         return sign + component_separator.join(parts)
 
