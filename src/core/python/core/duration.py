@@ -451,7 +451,7 @@ class Duration (float):
                   decimals           : int = 9) -> str:
         '''
         Convert this duration to a string broken up into one or more
-        components.
+        components, representing common time units from largest to smallest.
 
         Each component comprises a number followed by a time unit suffix,
         for instance, `"42d"` to represent 42 days. It is included only if
