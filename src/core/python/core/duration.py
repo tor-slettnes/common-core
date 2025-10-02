@@ -1,5 +1,4 @@
 '''
-
 Relative time interval representation extending Python-native `float`.
 
 Its purpose is to provide a dedicated, uniform, unambiguous representation of
@@ -356,7 +355,7 @@ class Duration (float):
 
     @classmethod
     def from_timedelta(cls,
-                      input: datetime.timedelta) -> 'Duration':
+                       input: datetime.timedelta) -> 'Duration':
         '''
         Create a new Duration object from a `datetime.timedelta` value.
 
@@ -408,17 +407,14 @@ class Duration (float):
         return int(self * 1e9)
 
 
-    def to_json_string(self,
-                       decimals: int = 3) -> str:
+    def to_json_string(self, suffix = "s") -> str:
         '''
-        Return a string with this duration value followed by the letter `s`.
-
-        @param decimals
-            Specify number of digits following decimal point.
-            Use 0 to indicate whole seconds.
+        Return a string with this duration as seconds, followed by `suffix`.
         '''
-
-        return "%.*fs"%(decimals, self)
+        string = "%.9f"%(self,)
+        while string.endswith('000'):
+            string = string[:-3]
+        return string.rstrip(".,") + str(suffix)
 
 
     def to_string(self, *,
@@ -429,7 +425,6 @@ class Duration (float):
                   hours_suffix       : str|None = "h",
                   minutes_suffix     : str|None = "m",
                   seconds_suffix     : str|None = "s",
-                  decimals           : int = 3,
                   component_separator: str = " ",
                   positive_sign      : str = ""):
 
@@ -463,7 +458,11 @@ class Duration (float):
                 remainder %= division
 
         if seconds_suffix and (remainder or not parts):
-            parts.append("%.*f%s"%(decimals, remainder, seconds_suffix))
+            string = "%.9f"%(remainder,)
+            while string.endswith('000'):
+                string = string[:-3]
+
+            parts.append(string.rstrip(".,") + seconds_suffix)
 
         return sign + component_separator.join(parts)
 

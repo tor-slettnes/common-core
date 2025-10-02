@@ -150,16 +150,6 @@ class Timestamp (float):
     and is as such intended primarily for representing linear/system time.
     '''
 
-    # def __new__(cls, input: TimestampType):
-    #     if isinstance(input, int|float):
-    #         return super().__new__(cls, input)
-
-    #     elif ProtoBufTimestamp and isinstance(input, ProtoBufTimestamp):
-    #         return type(self).from_protobuf(input)
-
-    #     else:
-    #         raise TypeError("Cannot convert %r object to Timestamp"%(type(input).__name__,))
-
     def __str__(self):
         '''
         Return an informal string respresentation of this timestamp
