@@ -345,8 +345,8 @@ class Duration (float):
                 raise ValueError("Invalid unit suffix following %s%s: %r"%(sign, number, suffix))
 
 
-        if total >= LEAP:
-            ### For durations >= 4 years we add leap days
+        if total > LEAP:
+            ### For durations > 4 years we add leap days
             total += DAY * (total//LEAP)
 
         return Duration(-total if negative
@@ -407,14 +407,34 @@ class Duration (float):
         return int(self * 1e9)
 
 
-    def to_json_string(self, suffix = "s") -> str:
+    def to_json_string(self) -> str:
         '''
-        Return a string with this duration as seconds, followed by `suffix`.
+        Return a string representing this duration as seconds followed by a
+        literal "s".
+
+        The string may have 0, 3, 6 or 9 fractional digits, depending on the
+        sub-second portion of the value.  The smallest representable time
+        interval is one nanosecond.
+
+        The name `to_json_string()` as well as the output format is modeled
+        after the similarly-named `google.protobuf.Duration()` method
+        `ToJsonString()`.
         '''
-        string = "%.9f"%(self,)
-        while string.endswith('000'):
-            string = string[:-3]
-        return string.rstrip(".,") + str(suffix)
+
+        return self.to_string(
+            years_suffix = None,
+            months_suffix = None,
+            weeks_suffix = None,
+            days_suffix = None,
+            hours_suffix = None,
+            minutes_suffix = None,
+            seconds_suffix = "s",
+            decimals = 9)
+
+        # string = "%.9f"%(self,)
+        # while string.endswith('000'):
+        #     string = string[:-3]
+        # return string.rstrip(".,") + 's'
 
 
     def to_string(self, *,
@@ -426,8 +446,40 @@ class Duration (float):
                   minutes_suffix     : str|None = "m",
                   seconds_suffix     : str|None = "s",
                   component_separator: str = " ",
-                  positive_sign      : str = ""):
+                  positive_sign      : str = "",
+                  negative_sign      : str = "-",
+                  decimals           : int = 9) -> str:
+        '''
+        Convert this duration to a string broken up into one or more
+        components.
 
+        Each component comprises a number followed by a time unit suffix,
+        for instance, `"42d"` to represent 42 days. It is included only if
+         - the corresponding `TIMEUNIT_suffix` argument is a non-empty string,
+         - and the remainder after subtracting prior components is nonzero.
+
+        The leading component will be prefixed with `positive_sign` or
+        `negative_sign` if the duration is greater than or less than zero,
+        respectively.
+
+        The numeric values for all but the final component are integers. The
+        final component, seconds, may contain fractional digits in groups of 3,
+        up to and including `decimals` digits, depending on the sub-second
+        portion of the duration value.  The default `decimals` value is 9,
+        meaning that there may be 0, 3, 6, or 9 fractional digits, and that the
+        smallest representable time interval is one nanosecond.
+
+        Components are separated by `component_separator` - by default, a single
+        space character.
+
+        The default output format matches the default expected input format for
+        the `from_seconds()` method.  If you pass in alternate values for one or
+        more `_suffix` arguments, you should do the same if/when invoking that
+        method.
+
+        See also the simpler `to_json_string()`, which produces only a seconds
+        component.
+        '''
 
         components = [
             (years_suffix, YEAR),
@@ -439,14 +491,14 @@ class Duration (float):
         ]
 
         sign = (positive_sign if (self > 0)
-                else negative_sign if (self < 0)
+                else "-" if (self < 0)
                 else '')
 
         remainder = (self if (self >= 0)
                      else -self)
 
-        if remainder >= LEAP:
-            ### For durations >= 4 years we subtract leap days
+        if remainder > LEAP:
+            ### For durations > 4 years we subtract leap days
             remainder -= DAY * (remainder//LEAP)
 
         parts = []
@@ -458,9 +510,12 @@ class Duration (float):
                 remainder %= division
 
         if seconds_suffix and (remainder or not parts):
-            string = "%.9f"%(remainder,)
-            while string.endswith('000'):
-                string = string[:-3]
+            string = "%.*f"%(decimals, remainder)
+            groupsize = ((decimals-1) % 3) + 1
+
+            while string.endswith('0' * groupsize):
+                string = string[:-groupsize]
+                groupsize = 3
 
             parts.append(string.rstrip(".,") + seconds_suffix)
 
