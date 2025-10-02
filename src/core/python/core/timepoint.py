@@ -175,8 +175,7 @@ class TimePoint (float):
 
     def __sub__(self, input: TimePointType|TimeIntervalType):
         '''
-        Subtract a duration (relative offset) or other timestamp from this
-        timestamp.
+        Subtract a time interval or other timepoint from this one.
 
         The input must be either one of:
 
