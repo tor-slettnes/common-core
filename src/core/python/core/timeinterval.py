@@ -355,7 +355,7 @@ class TimeInterval (float):
             total += DAY * (total//LEAP)
 
         return TimeInterval(-total if negative
-                        else total)
+                            else total)
 
 
     @classmethod

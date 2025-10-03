@@ -35,6 +35,8 @@ from cc.core.timepoint import TimePointType, TimePoint
 
 ### Type type hint for timestamps
 MessageType = type(Empty)
+TimestampType = TimePointType|Timestamp|int|float
+DurationType = TimeIntervalType|Duration|int|float
 
 ### Static values
 empty = Empty()

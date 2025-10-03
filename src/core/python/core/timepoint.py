@@ -90,14 +90,14 @@ conversion methods to support additional common representations such as:
   ### Add/subtract time intervals (deltas)
   >>> tp += 86400
   >>> tp
-  '2025-10-01T08:01:39.785Z'
+  '2025-10-01 01:01:39'
+
+  >>> tp - '1y'
+  '2024-10-01 01:01:39'
 
   ### Subtracting another TimePoint yields a new TimeInterval, and vice versa
   >>> tp - '2025-10-01 00:00:00'
   '1h 1m 39.785s'
-
-  >>> tp - '1y'
-  '2024-10-01 01:01:39'
   ```
 '''
 
@@ -188,7 +188,8 @@ class TimePoint (float):
            string such as that generated from `TimePoint().to_string()`.
 
         A plain number (`int`, `float`, or a numeric string), will be
-        interpreted as a TimeInterval.
+        interpreted as a TimeInterval if its converted value is less than 10 years,
+        or a TimePoint if 10 years or longer.
 
         If the input is interpreted as a `TimeInterval` the delta is returned as a
         new `TimePoint` value, and vice versa.
