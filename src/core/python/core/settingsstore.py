@@ -58,10 +58,10 @@ class SettingsStore (dict):
     - In JSON files, comments starting with `#` or `//`
       until the end of the line are stripped away prior to parsing.
 
-    - The YAML parser natively supports embedded comments starting with `#`. 
+    - The YAML parser natively supports embedded comments starting with `#`.
 
     - INI files are parsed with Python's native RawConfigParser, which supports
-      comment following `; or `#'.
+      comment following `;` or `#`.
     '''
 
     parser_suffixes \

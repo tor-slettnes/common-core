@@ -18,6 +18,10 @@ conversion methods to support additional common representations such as:
 
   ### Create a new `TimePoint` instance from the current time.
   >>> tp = TimePoint.now()
+
+  >>> type(tp)
+  <class 'cc.core.timepoint.TimePoint'>
+
   >>> isinstance(tp, float)
   True
 
@@ -79,25 +83,34 @@ conversion methods to support additional common representations such as:
 
   ### Convert from Epoch-based timestamp with automatic scaling
   >>> TimePoint.autoscaled_from(1759276800)
-  '2025-10-01T00:00:00.000Z'
+  '2025-09-30 17:00:00'
   >>> TimePoint.autoscaled_from(1759276800000)
-  '2025-10-01T00:00:00.000Z'
+  '2025-09-30 17:00:00'
   >>> TimePoint.autoscaled_from(1759276800000000)
-  '2025-10-01T00:00:00.000Z'
+  '2025-09-30 17:00:00'
   >>> TimePoint.autoscaled_from(1759276800000000000)
-  '2025-10-01T00:00:00.000Z'
+  '2025-09-30 17:00:00'
 
   ### Add/subtract time intervals (deltas)
+  >>> tp = TimePoint.from_string('2025-10-01 00:00:00')
   >>> tp += 86400
   >>> tp
-  '2025-10-01 01:01:39'
+  '2025-10-02 00:00:00'
 
   >>> tp - '1y'
-  '2024-10-01 01:01:39'
+  '2024-10-01 00:00:00'
 
-  ### Subtracting another TimePoint yields a new TimeInterval, and vice versa
-  >>> tp - '2025-10-01 00:00:00'
-  '1h 1m 39.785s'
+  ### Subtracting another TimePoint yields a TimeInterval
+  >>> ti = tp - '2025-09-29 23:59:30'
+
+  >>> ti
+  '1d 30s'
+
+  >>> type(ti)
+  <class 'cc.core.timeinterval.TimeInterval'>
+
+  >>> isinstance(ti, float):
+  True
   ```
 '''
 

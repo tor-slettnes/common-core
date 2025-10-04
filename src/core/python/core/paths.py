@@ -24,11 +24,14 @@ ModuleName = str
 
 _settingspath = None
 
+
 def program_name() -> str:
     return os.path.splitext(os.path.basename(sys.argv[0]))[0]
 
+
 def program_path() -> FilePath:
     return pathlib.Path('.').absolute().joinpath(sys.argv[0])
+
 
 def install_root(fallback: FilePath = INSTALL_ROOT) -> FilePath:
     '''
@@ -38,7 +41,8 @@ def install_root(fallback: FilePath = INSTALL_ROOT) -> FilePath:
     if dominating_parent := locate_dominating_parent(SHARED_DATA_DIR, python_root()):
         return dominating_parent
     else:
-        return pathlib.Path(INSTALL_ROOT)
+        return pathlib.Path(fallback)
+
 
 def python_root() -> FilePath:
     '''
@@ -46,7 +50,8 @@ def python_root() -> FilePath:
     '''
     return package_root(__package__)
 
-def package_root(package: str):
+
+def package_root(package: str) -> FilePath:
     '''
     Obtain root installation folder for a specific Python package
     '''
@@ -57,7 +62,8 @@ def package_root(package: str):
         package_parts.pop()
     return package_path
 
-def package_dir(package: str):
+
+def package_dir(package: str) -> FilePath:
     '''
     Obtain installation folder for a specific Python package
     '''
@@ -67,8 +73,10 @@ def package_dir(package: str):
     else:
         return importlib.resources.files(package)
 
+
 def shared_data_dir() -> FilePath:
     return install_root() / SHARED_DATA_DIR;
+
 
 def add_to_settings_path(folder: FilePath,
                          prepend: bool) -> bool:
@@ -135,10 +143,10 @@ def default_settings_path(
 
     if include_global:
         ### Default settings installed from release package
-        searchpath.append(SETTINGS_DIR)
+        searchpath.append(install_root() / SETTINGS_DIR)
 
         ### Embedded `settings` folder inside distribution archive (wheel or executable)
-        searchpath.append('settings')
+        searchpath.append(python_root() / 'settings')
 
         if package is not None:
             searchpath.append(package_dir(package))
@@ -194,6 +202,7 @@ def normalized_search_path(searchpath: SearchPath,
 
     return normpath
 
+
 def normalized_folder(folder: FilePath,
                       start: FilePath):
 
@@ -209,6 +218,7 @@ def normalized_folder(folder: FilePath,
 
     else:
         return None
+
 
 def locate_dominating_parent(target: FilePath,
                              start: FilePath,
