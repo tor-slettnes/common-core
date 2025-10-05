@@ -10,7 +10,7 @@ __author__ = 'Tor Slettnes'
 from .jsonreader import JsonReader
 from .ini_reader import INIFileReader
 from .paths import FilePath, \
-    normalized_search_path, settings_path, default_settings_path
+    normalized_search_path, settings_path, local_settings_path, preinstalled_settings_path
 
 
 ### Standard Python modules
@@ -330,7 +330,7 @@ class SettingsStore (dict):
 
         return SettingsStore(
             filenames = filenames or self.filenames,
-            searchpath = default_settings_path(include_local = False))
+            searchpath = preinstalled_settings_path())
 
 
     def save_delta(self,
@@ -342,22 +342,23 @@ class SettingsStore (dict):
                    indent: int = 4,
                    ):
         '''
-        Save the recursive difference between the default settings, loaded from
-        the specified unqualified filenames as obtained from the software
-        distribution, and this instance.
+        Save the recursive difference between the default settings, loaded
+        from the corresponding unqualified filenames as preinstalled with the
+        application, and the current values within this instance.
 
         @param filename
             Filename in which to save the resulting delta, relative to the local
-            settings folder (`/etc/common-core`).
+            settings folder (`/etc/common-core` or `$HOME/.config/common-core`,
+            whichever is writable by the current user).
 
         See `help(json.dump)` for information on the additional arguments
         `skipkeys`, `ensure_ascii`, `check_circular`, `allow_nan` and `indent`.
         '''
 
-
         args = locals()
         args.update(only_delta = True)
         return type(self).save(**args)
+
 
     def save(self,
              filename: FilePath|None = None,
@@ -400,9 +401,7 @@ class SettingsStore (dict):
             except IndexError:
                 raise RuntimeError('No settings file specified, and none has been loaded')
 
-        save_path = default_settings_path(include_global = False)
-
-        for candidate_folder in reversed(save_path):
+        for candidate_folder in local_settings_path():
             filepath = candidate_folder.joinpath(filename).with_suffix('.json')
             try:
                 os.makedirs(candidate_folder, exist_ok=True)

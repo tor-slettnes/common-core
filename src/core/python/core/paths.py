@@ -10,6 +10,7 @@ from ..buildinfo import SETTINGS_DIR, LOCAL_SETTINGS_DIR, SHARED_DATA_DIR, INSTA
 
 ### Standard python modules
 from importlib.resources.abc import Traversable
+import enum
 import os
 import os.path
 import platform
@@ -22,7 +23,11 @@ FilePath   = str | Traversable
 SearchPath = Sequence[FilePath]
 ModuleName = str
 
-_settingspath = None
+class SearchPathSelector (enum.IntEnum):
+    LOCAL        = 1
+    PREINSTALLED = 2
+
+_settingspaths: dict[str, SearchPath] = {}
 
 
 def program_name() -> str:
@@ -78,8 +83,11 @@ def shared_data_dir() -> FilePath:
     return install_root() / SHARED_DATA_DIR;
 
 
-def add_to_settings_path(folder: FilePath,
-                         prepend: bool) -> bool:
+def add_to_settings_path(
+        folder: FilePath,
+        prepend: bool = False,
+        preinstalled: bool = False) -> bool:
+
     '''
     Add a folder to search path for settings files.
 
@@ -90,12 +98,22 @@ def add_to_settings_path(folder: FilePath,
     @param prepend
         Insert the folder in the beginning rather than end of the search path.
 
+    @param preinstalled
+        Add the folder to `preinstalled_settings_path()` rather than
+        `local_settings_path()`. Local settings are loaded before and thus take
+        precendence over preinstalled ones. See also
+        `cc.core.settingsstore.SettingsStore.save_delta()` for other
+        implications of choosing one over the other.
+
     @return
         `True` if the search path was modified, `False` otherwise.
     '''
 
-    if normfolder := normalized_folder(folder, python_root()):
-        path = mutable_settings_path()
+    normfolder = install_root() / folder
+    if normfolder.is_dir():
+        path = (preinstalled_settings_path() if preinstalled
+                else local_settings_path())
+
         if normfolder in path:
             return False
         elif prepend:
@@ -108,40 +126,34 @@ def add_to_settings_path(folder: FilePath,
         return False
 
 
-def default_settings_path(
-        package: str|None = None,
-        include_local: bool = True,
-        include_global: bool = True,
-        ) -> SearchPath:
+
+def preinstalled_settings_path(package: str|None = None) -> SearchPath:
     '''
-    Obtain the built-in default list of folders in which to look for
-    configuration files.
+    Obtain a list of folders in which to find settings files containing
+    preinstalled defaults.  See `cc.core.settingsstore.SettingsStore()` for
+    details on local overrides vs. preinstalled defaults.
 
-    If `include_local` is set, this list comprises:
-    * `$HOME/.config/common-core`, only if `$HOME` is defined.
-    * A machine-specific settings directory (`/etc/common-core` on UNIX or
-      `c:\\common-core\\config` on Windows).
+    The return value is a list of `pathlib.Path()` instances, comprising:
 
-    Additionally, if `include_global` is set, the following folders are added:
-    * An application-provided settings folder (`share/common-core/settings`,
-      relative to installation root of this package).
-    * a `settings` folder directly within this distriution archive (`.whl`)
-      if any.
+    * A shared settings folder (`share/common-core/settings`, relative to
+      `install_root()` of this package).
+
+    * a `settings` folder directly within `python_root()` (i.e. the top-level
+      Python modules folder in which this package exists, such as
+      `lib/pythonX.XX/site-packages`).
+
+    * The folder in which the Python `package` provided to `__init__`, if any,
+      is installed.
     '''
 
-    searchpath = []
 
-    if include_local:
-        ### User-specific settings
-        if homedir := os.getenv("HOME"):
-            configdir = os.path.join(homedir, ".config")
-            if os.path.isdir(configdir):
-                searchpath.append(os.path.join(configdir, ORGANIZATION))
+    PREINSTALLED_PATH_SELECTOR = "preinstalled"
 
-        ### Locally managed (host specific) settings
-        searchpath.append(LOCAL_SETTINGS_DIR)
+    try:
+        return _settingspaths[PREINSTALLED_PATH_SELECTOR]
+    except KeyError:
+        searchpath = []
 
-    if include_global:
         ### Default settings installed from release package
         searchpath.append(install_root() / SETTINGS_DIR)
 
@@ -151,28 +163,80 @@ def default_settings_path(
         if package is not None:
             searchpath.append(package_dir(package))
 
-    return normalized_search_path(searchpath)
+        _settingspaths[PREINSTALLED_PATH_SELECTOR] = searchpath
+        return searchpath
 
 
-def mutable_settings_path() -> SearchPath:
+
+def local_settings_path() -> SearchPath:
     '''
-    Return a mutable list of folders in which to look for configuration files.
+    Obtain a list of folders in which to look up host-specific configuration
+    files.  See `cc.core.settingsstore.SettingsStore()` for details on local
+    settings overrides vs. preinstalled defaults.
 
-    This list may have been ameded via prior calls to `add_to_settings_path()`.
-    To obtain the original settings path, use `default_settings_path()`.
+    The return value is a list of `pathlib.Path()` instances, as follows:
 
-    To obtain a final settings path, optionally tailored for a specific Python
-    namespace/package, use `settings_path()`.
+    * If the environment variable `CONFIGPATH` is set, it is presumed to contain
+      directory names delimited by the OS specific path separator (`:` on UNIX,
+      `;` on Windows). These are included, with relative names resolved with
+      respect to `install_root()`.
+
+    * Otherwise, the following directories are included:
+
+      - `$HOME/.config/common-core`, if and only if `$HOME` is defined,
+        and on UNIX, if not running as a `root` user.
+
+      - A machine-specific settings directory (`/etc/common-core` on UNIX or
+        `c:\\common-core\\config` on Windows).
     '''
 
-    global _settingspath
-    if _settingspath is None:
+    LOCAL_PATH_SELECTOR = "local"
+
+    try:
+        return _settingspaths[LOCAL_PATH_SELECTOR]
+
+    except KeyError:
         if configpath := os.getenv('CONFIGPATH', ''):
-            _settingspath = normalized_search_path(configpath)
+            searchpath = normalized_search_path(configpath)
         else:
-            _settingspath = default_settings_path()
+            searchpath = []
 
-    return _settingspath
+            ### User-specific settings
+            if userdir := user_settings_dir():
+                searchpath.append(userdir)
+
+            ### Locally managed (host specific) settings
+            if hostdir := host_settings_dir():
+                searchpath.append(hostdir)
+
+        _settingspaths[LOCAL_PATH_SELECTOR] = searchpath
+        return searchpath
+
+
+def user_settings_dir() -> FilePath:
+    '''
+    Return the user-specific settings folder, `$HOME/.config/common-core`.
+
+    Returns None if if the environment variable `$HOME` is not defined, or on
+    UNIX, if the effective user ID of this process is 0 (root).
+    '''
+
+    if not is_super_user():
+        if homedir := os.getenv("HOME"):
+            configdir = pathlib.Path(homedir) / ".config"
+            if configdir.is_dir():
+                return configdir / ORGANIZATION
+
+    return None
+
+
+def host_settings_dir() -> FilePath:
+    '''
+    Return the host-specific settings folder (`/etc/common-core` on UNIX or
+    `c:\\common-core\\config` on Windows).
+    '''
+
+    return install_root() / LOCAL_SETTINGS_DIR
 
 
 def settings_path(
@@ -183,41 +247,26 @@ def settings_path(
     If provided, the `package` argument is expanded to the folder in which the
     corresponding Python package is installed, and appended to the result.
     '''
-
-    settingspath = mutable_settings_path().copy()
-    if package is not None:
-        settingspath.append(package_dir(package))
-    return settingspath
+    return local_settings_path() + preinstalled_settings_path(package)
 
 
 def normalized_search_path(searchpath: SearchPath,
+                           base_directory: FilePath|None = None,
                            package: str|None = None) -> list[pathlib.Path]:
+
     if isinstance(searchpath, str):
         searchpath = searchpath.split(os.pathsep)
 
+    if base_directory is None:
+        base_directory = install_root()
+
     normpath = []
     for folder in searchpath:
-        if normfolder := normalized_folder(folder, python_root()):
-            normpath.append(normfolder)
+        candidate = base_directory / folder
+        if candidate.is_dir():
+            normpath.append(candidate)
 
     return normpath
-
-
-def normalized_folder(folder: FilePath,
-                      start: FilePath):
-
-    if isinstance(folder, str):
-        if os.path.isabs(folder):
-            return pathlib.Path(folder)
-
-        elif dominating_parent := locate_dominating_parent(folder, start):
-            return dominating_parent / folder
-
-    elif isinstance(folder, pathlib.Path):
-        return folder.absolute()
-
-    else:
-        return None
 
 
 def locate_dominating_parent(target: FilePath,
@@ -241,6 +290,18 @@ def locate_dominating_parent(target: FilePath,
         base = parent_path(base)
 
     return base
+
+
+def is_super_user() -> bool:
+    '''
+    Returns True iff this process is running with superuser (root) privileges on UNIX.
+    '''
+    try:
+        euid = os.geteuid()
+    except AttributeError:
+        return False
+    else:
+        return euid == 0
 
 
 def parent_path(path: FilePath):
