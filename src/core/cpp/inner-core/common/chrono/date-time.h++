@@ -32,8 +32,9 @@ namespace core
 
         // Lower limit for interpreting scalar timestamps as nanoseconds since
         // epoch.  Scalar inputs with unspecified precision are repeatedly
-        // multiplied by 1000 until they exceed this limit.
-        constexpr long long EPOCH_NANOS_LOWER_LIMIT = 1e17;
+        // multiplied by 1000 until they exceed this limit.  The resulting
+        // timepoint is bounded between January 1st 1971 and May 3rd 2969.
+        constexpr long long EPOCH_NANOS_LOWER_LIMIT = 31536000000000000ull;
 
         // typedef std::chrono::system_clock Clock;
         // typedef Clock::duration Duration;
@@ -352,10 +353,9 @@ namespace core
         ///  * If the scalar is negative or 0, UNIX epoch is assumed.
         ///  * If the scalar is positive, it is first converted to noanoseconds
         ///    by repeatedly multiplying by 1000 until it exceeds
-        ///    EPOCH_NANOS_LOWER_LIMIT (1e17), then it is converted to a
-        ///    `TimePoint`.  The resulting timepoint is bounded between March 3,
-        ///    1973, and November 16, 5138.
-
+        ///    EPOCH_NANOS_LOWER_LIMIT, then it is converted to a
+        ///    `TimePoint`. The result is bounded between January 1st 1971 and
+        ///    May 3rd 2969.
         TimePoint double_to_timepoint(
             double value,
             const std::optional<int> &multiplier_decimal_exponent = {});
@@ -375,10 +375,9 @@ namespace core
         ///  * If the scalar is negative or 0, UNIX epoch is assumed.
         ///  * If the scalar is positive, it is first converted to noanoseconds
         ///    by repeatedly multiplying by 1000 until it exceeds
-        ///    EPOCH_NANOS_LOWER_LIMIT (1e17), then it is converted to a
-        ///    `TimePoint`.  The resulting timepoint is bounded between March 3,
-        ///    1973, and November 16, 5138.
-
+        ///    EPOCH_NANOS_LOWER_LIMIT, then it is converted to a
+        ///    `TimePoint`. The result is bounded between January 1st 1971 and
+        ///    May 3rd 2969.
         TimePoint int_to_timepoint(
             std::int64_t scalar,
             const std::optional<int> &multiplier_decimal_exponent);

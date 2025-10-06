@@ -215,7 +215,19 @@ class TimePoint (float):
             except ValueError:
                 pass
 
-        if isinstance(input, str):
+        if isinstance(input, float|int):
+            if TimeInterval(abs(input)) < 10*YEAR:
+                input = TimeInterval(input)
+            else:
+                input = TimePoint.autosaled_from(input)
+
+        if isinstance(input, TimeIntervalType):
+            return TimePoint(float(self) - TimeInterval.from_value(input))
+
+        elif isinstance(input, TimePointType):
+            return TimeInterval(float(self) - TimePoint.from_value(input))
+
+        elif isinstance(input, str):
             try:
                 ### Let's see if the input is a ISO 8601 time string
                 return TimeInterval(float(self) - TimePoint.from_string(input))
@@ -227,12 +239,6 @@ class TimePoint (float):
                 except ValueError:
                     raise ValueError(
                         "not a valid 8601 time string nor duration: " + input)
-
-        elif isinstance(input, TimeIntervalType|float|int):
-            return TimePoint(float(self) - TimeInterval.from_value(input))
-
-        elif isinstance(input, TimePointType):
-            return TimeInterval(float(self) - TimePoint.from_value(input))
 
         else:
             return TypeError(

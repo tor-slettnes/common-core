@@ -23,10 +23,6 @@ FilePath   = str | Traversable
 SearchPath = Sequence[FilePath]
 ModuleName = str
 
-class SearchPathSelector (enum.IntEnum):
-    LOCAL        = 1
-    PREINSTALLED = 2
-
 _settingspaths: dict[str, SearchPath] = {}
 
 
@@ -126,6 +122,16 @@ def add_to_settings_path(
         return False
 
 
+def settings_path(
+        package: str|None = None) -> SearchPath:
+    '''
+    Return list of folders in which to look for configuration files.
+
+    If provided, the `package` argument is expanded to the folder in which the
+    corresponding Python package is installed, and appended to the result.
+    '''
+    return local_settings_path() + preinstalled_settings_path(package)
+
 
 def preinstalled_settings_path(package: str|None = None) -> SearchPath:
     '''
@@ -145,7 +151,6 @@ def preinstalled_settings_path(package: str|None = None) -> SearchPath:
     * The folder in which the Python `package` provided to `__init__`, if any,
       is installed.
     '''
-
 
     PREINSTALLED_PATH_SELECTOR = "preinstalled"
 
@@ -237,17 +242,6 @@ def host_settings_dir() -> FilePath:
     '''
 
     return install_root() / LOCAL_SETTINGS_DIR
-
-
-def settings_path(
-        package: str|None = None) -> SearchPath:
-    '''
-    Return list of folders in which to look for configuration files.
-
-    If provided, the `package` argument is expanded to the folder in which the
-    corresponding Python package is installed, and appended to the result.
-    '''
-    return local_settings_path() + preinstalled_settings_path(package)
 
 
 def normalized_search_path(searchpath: SearchPath,
