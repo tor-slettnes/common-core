@@ -89,7 +89,6 @@ class Client (BaseClient, API, ThreadedSubmitter):
         BaseClient.deinitialize(self)
 
 
-    @doc_inherit
     def stream_worker(self, wait_for_ready: bool = True):
         '''
         Stream queued messages to MultiLogger service.
