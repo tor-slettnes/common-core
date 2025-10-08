@@ -120,7 +120,7 @@ __author__ = 'Tor Slettnes'
 import enum
 import time
 import datetime
-from .timeinterval import TimeInterval, TimeIntervalType
+from .timeinterval import TimeInterval, TimeIntervalType, YEAR
 
 TimePointType = time.struct_time|datetime.datetime
 
@@ -219,7 +219,7 @@ class TimePoint (float):
             if TimeInterval(abs(input)) < 10*YEAR:
                 input = TimeInterval(input)
             else:
-                input = TimePoint.autosaled_from(input)
+                input = TimePoint.autoscaled_from(input)
 
         if isinstance(input, TimeIntervalType):
             return TimePoint(float(self) - TimeInterval.from_value(input))

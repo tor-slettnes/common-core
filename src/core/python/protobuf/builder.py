@@ -198,7 +198,7 @@ class MessageBuilder:
     '''
 
     def __init__ (self):
-        self.encoders = type(self).message_encoders.copy()
+        self.encoders: dict[str, Encoder] = type(self).message_encoders.copy()
 
 
     def register_encoder(self,
@@ -219,11 +219,11 @@ class MessageBuilder:
             new instance of `message_type`.
         '''
 
-        self.encoders[type] = encoder
+        self.encoders[type.DESCRIPTOR.full_name] = encoder
 
 
     def build_from_value(self,
-                         message_type: MessageType,
+                         message_descriptor: Descriptor,
                          value: object|None = None) -> Message:
         '''
         Create a new ProtoBuf message from the provided input value.
@@ -238,16 +238,18 @@ class MessageBuilder:
             field names of the desired ProtoBuf message.
         '''
 
-        if not isinstance(message_type, MessageType):
-            raise TypeError("'message_type' argument must be a valid ProtoBuf message type")
+        if not isinstance(message_descriptor, Descriptor):
+            raise TypeError(
+                "got invalid 'message_descriptor' argument %r"%
+                (message_descriptor,))
 
         try:
-            encoder = self.encoders[message_type]
+            encoder = self.encoders[message_descriptor.full_name]
         except KeyError:
             if isinstance(value, dict):
-                return self.build_from_dict(message_type, value)
+                return self.build_from_dict(message_descriptor, value)
             else:
-                raise TypeError(f"{message_type.__name__} encoder input must be a dictionary")
+                raise TypeError(f"{message_descriptor.name} encoder input must be a dictionary: {value}")
 
         else:
             return encoder(value)
@@ -293,9 +295,7 @@ class MessageBuilder:
         for (field_name, field_descriptor) in message.DESCRIPTOR.fields_by_name.items():
             input_value = inputs.pop(field_name, None)
             if input_value is not None:
-                setattr(message,
-                        field_name,
-                        self.encode_field(field_descriptor, input_value))
+                self.encode_field(message, field_name, field_descriptor, input_value)
 
         if extra_inputs := set(inputs) - set(ignore_inputs):
             logging.warning(
@@ -306,26 +306,35 @@ class MessageBuilder:
 
 
     def encode_field(self,
+                     message: Message,
+                     name: str,
                      fd: FieldDescriptor,
-                     value: object) -> object:
+                     value: object):
 
-        if enum_type := fd.enum_type:
-            encoder = lambda value: self.encode_enum(enum_type, value)
-
-        elif message_type := fd.message_type:
-            encoder = lambda value: self.build_from_value(message_type, value)
-
-        else:
-            encoder = lambda value: value
+        encoder = self.value_encoder(fd)
 
         if fd.label == fd.LABEL_REPEATED:
-            if isinstance(value, (list, tuple)):
-                return [ encoder(item) for item in value ]
-            else:
-                return [ encoder(value) ]
+            items = value if isinstance(value, (list,tuple)) else [value]
+            field = getattr(message, name)
+            field.extend([encoder(item) for item in items])
+
+        elif fd.message_type:
+            field = getattr(message, name)
+            field.CopyFrom(encoder(value))
 
         else:
-            return encoder(value)
+            setattr(message, name, encoder(value))
+
+
+    def value_encoder(self, fd: FieldDescriptor) -> Encoder:
+        if enum_type := fd.enum_type:
+            return lambda value: self.encode_enum(enum_type, value)
+
+        elif message_descriptor := fd.message_type:
+            return lambda value: self.build_from_value(message_descriptor, value)
+
+        else:
+            return lambda value: value
 
 
     def encode_enum(self,
@@ -403,28 +412,28 @@ class MessageBuilder:
 
 
     message_encoders = {
-        wellknown.Empty: lambda v: wellknown.Empty(),
-        wellknown.BoolValue: lambda v: wellknown.BoolValue(value=v),
-        wellknown.StringValue: lambda v: wellknown.StringValue(value=v),
-        wellknown.DoubleValue: lambda v: wellknown.DoubleValue(value=v),
-        wellknown.FloatValue: lambda v: wellknown.FloatValue(value=v),
-        wellknown.Int64Value: lambda v: wellknown.Int64Value(value=v),
-        wellknown.Int32Value: lambda v: wellknown.Int32Value(value=v),
-        wellknown.UInt64Value: lambda v: wellknown.UInt64Value(value=v),
-        wellknown.UInt32Value: lambda v: wellknown.UInt32Value(value=v),
-        wellknown.BytesValue: lambda v: wellknown.BytesValue(value=v),
-        wellknown.Timestamp: wellknown.encodeTimestamp,
-        wellknown.Duration: wellknown.encodeDuration,
-        wellknown.Value: wellknown.encodeValue,
-        wellknown.Struct: wellknown.encodeStruct,
-        wellknown.ListValue: wellknown.encodeListValue,
-        datetime.TimeStruct: datetime.encodeTimeStruct,
-        datetime.Interval: datetime.encodeInterval,
-        variant.Value: variant.encodeValue,
-        variant.ValueList: variant.encodeValueList,
-        variant.TaggedValue: variant.encodeTaggedValue,
-        variant.TaggedValueList: variant.encodeTaggedValueList,
-        variant.KeyValueMap: variant.encodeKeyValueMap,
+        'google.protobuf.Empty': lambda v: wellknown.Empty(),
+        'google.protobuf.BoolValue': lambda v: wellknown.BoolValue(value=v),
+        'google.protobuf.StringValue': lambda v: wellknown.StringValue(value=v),
+        'google.protobuf.DoubleValue': lambda v: wellknown.DoubleValue(value=v),
+        'google.protobuf.FloatValue': lambda v: wellknown.FloatValue(value=v),
+        'google.protobuf.Int64Value': lambda v: wellknown.Int64Value(value=v),
+        'google.protobuf.Int32Value': lambda v: wellknown.Int32Value(value=v),
+        'google.protobuf.UInt64Value': lambda v: wellknown.UInt64Value(value=v),
+        'google.protobuf.UInt32Value': lambda v: wellknown.UInt32Value(value=v),
+        'google.protobuf.BytesValue': lambda v: wellknown.BytesValue(value=v),
+        'google.protobuf.Timestamp': wellknown.encodeTimestamp,
+        'google.protobuf.Duration': wellknown.encodeDuration,
+        'google.protobuf.Value': wellknown.encodeValue,
+        'google.protobuf.Struct': wellknown.encodeStruct,
+        'google.protobuf.ListValue': wellknown.encodeListValue,
+        'cc.datetime.TimeStruct': datetime.encodeTimeStruct,
+        'cc.datetime.Interval': datetime.encodeInterval,
+        'cc.variant.Value': variant.encodeValue,
+        'cc.variant.ValueList': variant.encodeValueList,
+        'cc.variant.TaggedValue': variant.encodeTaggedValue,
+        'cc.variant.TaggedValueList': variant.encodeTaggedValueList,
+        'cc.variant.KeyValueMap': variant.encodeKeyValueMap,
     }
 
     enum_encoders = {

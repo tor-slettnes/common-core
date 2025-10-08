@@ -40,6 +40,7 @@ class API (MessageBuilder):
             expected to return exactly one ProtoBuf message as received from the
             server.
         '''
+        MessageBuilder.__init__(self)
         self.rpc = rpc
 
 
