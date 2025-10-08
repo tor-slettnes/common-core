@@ -223,7 +223,7 @@ class MessageBuilder:
 
 
     def build_from_value(self,
-                         message_descriptor: Descriptor,
+                         descriptor: Descriptor,
                          value: object|None = None) -> Message:
         '''
         Create a new ProtoBuf message from the provided input value.
@@ -238,18 +238,18 @@ class MessageBuilder:
             field names of the desired ProtoBuf message.
         '''
 
-        if not isinstance(message_descriptor, Descriptor):
+        if not isinstance(descriptor, Descriptor):
             raise TypeError(
-                "got invalid 'message_descriptor' argument %r"%
-                (message_descriptor,))
+                "got invalid 'descriptor' argument %r"%
+                (descriptor,))
 
         try:
-            encoder = self.encoders[message_descriptor.full_name]
+            encoder = self.encoders[descriptor.full_name]
         except KeyError:
             if isinstance(value, dict):
-                return self.build_from_dict(message_descriptor, value)
+                return self.build_from_dict(descriptor, value)
             else:
-                raise TypeError(f"{message_descriptor.name} encoder input must be a dictionary: {value}")
+                raise TypeError(f"{descriptor.name} encoder input must be a dictionary: {value}")
 
         else:
             return encoder(value)
@@ -330,8 +330,8 @@ class MessageBuilder:
         if enum_type := fd.enum_type:
             return lambda value: self.encode_enum(enum_type, value)
 
-        elif message_descriptor := fd.message_type:
-            return lambda value: self.build_from_value(message_descriptor, value)
+        elif descriptor := fd.message_type:
+            return lambda value: self.build_from_value(descriptor, value)
 
         else:
             return lambda value: value
