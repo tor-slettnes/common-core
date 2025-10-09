@@ -7,7 +7,6 @@
 
 ### Modules within package
 from .endpoint import Endpoint
-from .filter import Filter, Topic
 from .messagehandler import MessageHandler
 from cc.core.invocation import safe_invoke
 from cc.core.invocation import caller_frame
@@ -96,29 +95,6 @@ class Subscriber (Endpoint):
     def _remove_handler_filter(self, handler: MessageHandler):
         self.socket.setsockopt(zmq.UNSUBSCRIBE, handler.message_filter)
 
-    def _invoke_handler(self,
-                        handler: MessageHandler,
-                        data: bytes):
-
-        payload = data[len(handler.message_filter):]
-
-        safe_invoke(handler.handle,
-                    (payload,),
-                    {},
-                    "Subscriber(%r) handler %r"%(self.channel_name, handler.id))
-
-    def _process_message (self, data):
-        found = False
-        with self._mtx:
-            for handler in self.subscriptions:
-                if data.startswith(handler.message_filter):
-                    self._invoke_handler(handler, data)
-                    found = True
-
-        if not found:
-            logging.warning("Subscriber %r received message with no matching filter: %s"%
-                            (self.channel_name, data))
-
     def start_receiving (self):
         self.keep_receiving = True
         t = self.receive_thread
@@ -136,7 +112,26 @@ class Subscriber (Endpoint):
 
     def _receive_loop (self):
         while self.keep_receiving:
-            if data := self.receive_bytes():
-                self._process_message(data)
+            if parts := self.receive_parts():
+                self._process_message(parts)
 
+    def _process_message (self, parts: list[bytes]):
+        found = False
+        with self._mtx:
+            for handler in self.subscriptions:
+                if (handler.message_filter is None) or (handler.message_filter == parts[0]):
+                    self._invoke_handler(handler, parts)
+                    found = True
 
+        if not found:
+            logging.warning("Subscriber %r received message with no matching filter: %s"%
+                            (self.channel_name, parts))
+
+    def _invoke_handler(self,
+                        handler: MessageHandler,
+                        parts: list[bytes]):
+
+        safe_invoke(handler.handle_parts,
+                    (parts,),
+                    {},
+                    "Subscriber(%r) handler %r"%(self.channel_name, handler.id))

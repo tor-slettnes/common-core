@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within package
-from ..basic import Filter, Topic, Subscriber, MessageHandler as BaseHandler
+from ..basic import Subscriber, MessageHandler as BaseHandler
 from cc.protobuf.wellknown import Message, MessageType
 
 class MessageHandler (BaseHandler):
@@ -21,18 +21,18 @@ class MessageHandler (BaseHandler):
     def __init__(self,
                  message_type : MessageType|None = None,
                  subscriber: Subscriber|None = None,
-                 filter_or_topic: str|bytes|None = None):
+                 message_filter: str|bytes|None = None):
 
         self.message_type = message_type or type(self).message_type
         assert isinstance(self.message_type, MessageType)
 
-        if filter_or_topic is None:
-            filter_or_topic = self.message_type.DESCRIPTOR.full_name
+        if message_filter is None:
+            message_filter = self.message_type.DESCRIPTOR.full_name
 
         BaseHandler.__init__(self,
                              id = self.message_type.DESCRIPTOR.full_name,
                              subscriber = subscriber,
-                             filter_or_topic = filter_or_topic)
+                             message_filter = message_filter)
 
     def handle(self, data: bytes):
         '''

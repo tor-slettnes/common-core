@@ -7,12 +7,12 @@
 
 ### Modules within package
 from .endpoint import Endpoint
-from .filter import Filter, Topic
+from .messagebase import MessageBase
 
 ### Third-party modules
 import zmq
 
-class Publisher (Endpoint):
+class Publisher (Endpoint, MessageBase):
     endpoint_type = 'publisher'
 
     def __init__(self,
@@ -31,10 +31,14 @@ class Publisher (Endpoint):
             role = role)
 
     def publish(self,
-                message_filter : Filter,
+                topic: str|bytes|bytearray|None,
                 data : bytes):
+        '''
+        Publish a binary payload, with an optional header/topic.
+        '''
 
-        if len(message_filter):
-            self.send_bytes(message_filter, zmq.DONTWAIT | zmq.SNDMORE)
+        if topic is not None:
+            header = self.encode_topic(topic)
+            self.send_bytes(header, zmq.DONTWAIT | zmq.SNDMORE)
 
         self.send_bytes(data, zmq.DONTWAIT)

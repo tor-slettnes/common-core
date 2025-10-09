@@ -9,7 +9,6 @@ from .endpoint import Endpoint
 
 from .publisher import Publisher
 from .subscriber import Subscriber
-from .filter import Topic, Filter
 
 from .messagewriter import MessageWriter
 from .messagehandler import MessageHandler

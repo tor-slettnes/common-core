@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within package
-from ..basic import Publisher, Filter, MessageWriter as BaseWriter
+from ..basic import Publisher, MessageWriter as BaseWriter
 from cc.protobuf.wellknown import Message, MessageType
 from cc.protobuf.utils import dictToMessage
 
@@ -23,18 +23,18 @@ class MessageWriter (BaseWriter):
     def __init__ (self,
                   publisher: Publisher,
                   message_type: MessageType|None = None,
-                  filter_or_topic: str|bytes|None = None):
+                  topic: str|bytes|None = None):
 
         self.message_type = message_type or type(self).message_type
         assert isinstance(self.message_type, MessageType)
 
-        if filter_or_topic is None:
-            filter_or_topic = self.message_type.DESCRIPTOR.full_name
+        if topic is None:
+            topic = self.message_type.DESCRIPTOR.full_name
 
         BaseWriter.__init__(
             self,
             publisher = publisher,
-            filter_or_topic = filter_or_topic)
+            topic = topic)
 
 
     def write_proto(self,

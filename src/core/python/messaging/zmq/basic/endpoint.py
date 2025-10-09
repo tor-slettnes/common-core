@@ -121,21 +121,31 @@ am            or remote) peer.  If not provided, an explicit call to `bind()` or
         self.socket.send(data, flags=flags)
 
 
-    def receive_bytes(self,
-                      flags: zmq.Flag = 0) -> bytes:
+    def receive_parts(self,
+                      flags: zmq.Flag = 0) -> list[bytes]:
         '''
-        Read one ZMQ message from this instance's ZMQ socket.
+        Read one ZMQ message from this instance's ZMQ socket as individual
+        parts.
         '''
 
-        data = b''
+        data = []
         more = True
 
         while more:
-            msg   = self.socket.recv(flags, copy=False)
-            data += msg.buffer
-            more  = msg.more
+            msg  = self.socket.recv(flags, copy=False)
+            data.append(msg.buffer)
+            more = msg.more
 
         return data
+
+    def receive_bytes(self,
+                      flags: zmq.Flag = 0) -> bytes:
+        '''
+        Read one ZMQ message from this instance's ZMQ socket with parts
+        compbined into a single bytes object.
+        '''
+
+        return b''.join(self.receive_parts(flags))
 
     def sanitized_host_address(self,
                                provided: str|None = None) -> str:

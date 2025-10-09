@@ -6,30 +6,19 @@
 #===============================================================================
 
 ### Modules within package
-from .filter import Filter, Topic
-from .publisher import Publisher
+from .publisher   import Publisher
+from .messagebase import MessageBase
 
 ### Standard Python modules
 from typing import Union
 
-class MessageWriter (object):
+class MessageWriter:
     def __init__(self,
-                 publisher : Publisher,
-                 filter_or_topic : Filter|Topic|None = None):
+                 publisher: Publisher,
+                 topic    : bytes|str|None = None):
 
         self.publisher = publisher
-
-        if filter_or_topic is None:
-            self.message_filter = Filter(b'')
-        elif isinstance(filter_or_topic, Filter):
-            self.message_filter = filter_or_topic
-        elif isinstance(filter_or_topic, (bytes, bytearray)):
-            self.message_filter = Filter(filter_or_topic)
-        elif isinstance(filter_or_topic, str):
-            self.message_filter = Filter.create_from_topic(filter_or_topic)
-        else:
-            raise TypeError("`filter_or_topic' must be a bytes, bytearray, or string")
-
+        self.topic     = self.encode_topic(topic)
 
     def __del__(self):
         self.deinitialize()
@@ -40,9 +29,8 @@ class MessageWriter (object):
     def deinitialize(self):
         pass
 
-
     def write_bytes(self, data : bytes):
         '''
         Publish binary data with prepended message filter
         '''
-        self.publisher.publish(self.message_filter, data)
+        self.publisher.publish(self.topic, data)
