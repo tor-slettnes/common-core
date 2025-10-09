@@ -12,16 +12,13 @@ from .messagebase import MessageBase
 ### Standard Python modules
 from typing import Union
 
-class MessageWriter:
+class MessageWriter (MessageBase):
     def __init__(self,
                  publisher: Publisher,
                  topic    : bytes|str|None = None):
 
         self.publisher = publisher
         self.topic     = self.encode_topic(topic)
-
-    def __del__(self):
-        self.deinitialize()
 
     def initialize(self):
         pass

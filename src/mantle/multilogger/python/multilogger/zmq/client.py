@@ -133,7 +133,8 @@ class Client (API, Writer):
 
     def deinitialize(self):
         Writer.deinitialize(self)
-        self.rpc.deinitialize()
+        if rpc := self.rpc:
+            rpc.deinitialize()
 
     # @doc_inherit
     def listen(self,

@@ -28,11 +28,16 @@ namespace core::zmq
         }
 
     private:
-        void handle(const types::ByteVector &bytes) override
+        void handle(const MessageParts &parts) override
         {
-            ProtoT message = ::protobuf::to_message<ProtoT>(bytes);
-            log_trace("ProtoBufMessageHandler() handling message: ", message);
-            this->handle_message(message);
+            if (parts.size())
+            {
+                ProtoT message = ::protobuf::to_message<ProtoT>(this->combine_parts(parts));
+                log_trace("ProtoBufMessageHandler(), header=%s, message:=%s ",
+                          parts.front(),
+                          message);
+                this->handle_message(message);
+            }
         }
 
     protected:
