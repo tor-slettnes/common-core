@@ -6,21 +6,19 @@
 //==============================================================================
 
 #pragma once
-#include "zmq-pickle-messagebase.h++"
 #include "zmq-messagehandler.h++"
 #include "zmq-subscriber.h++"
 #include "python-containerobject.h++"
 
 namespace core::zmq
 {
-    class PyPickleMessageHandler : public PyPickleMessageBase,
-                                   public MessageHandler
+    class PyPickleMessageHandler : public MessageHandler
     {
         using This = PyPickleMessageHandler;
 
     protected:
-        PyPickleMessageHandler(const std::shared_ptr<Subscriber> &subscriber,
-                               const Filter &filter = {});
+        PyPickleMessageHandler(const std::weak_ptr<Subscriber> &subscriber,
+                               const std::optional<Filter> &filter = {});
 
     private:
         void handle(const types::ByteVector &bytes) override;

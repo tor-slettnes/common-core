@@ -12,11 +12,9 @@
 namespace core::zmq
 {
     PyPickleMessageHandler::PyPickleMessageHandler(
-        const std::shared_ptr<Subscriber> &subscriber,
-        const Filter &filter)
-        : PyPickleMessageBase(subscriber),
-          MessageHandler(TYPE_NAME_BASE(This),
-                         filter.empty() ? this->default_filter() : filter)
+        const std::weak_ptr<Subscriber> &subscriber,
+        const std::optional<Filter> &filter)
+        : MessageHandler(TYPE_NAME_BASE(This), filter, subscriber)
     {
     }
 

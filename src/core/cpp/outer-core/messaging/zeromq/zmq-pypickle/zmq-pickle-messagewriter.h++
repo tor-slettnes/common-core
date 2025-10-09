@@ -6,18 +6,17 @@
 //==============================================================================
 
 #pragma once
-#include "zmq-pickle-messagebase.h++"
 #include "zmq-messagewriter.h++"
 #include "python-simpleobject.h++"
 
 namespace core::zmq
 {
-    class PyPickleMessageWriter : public PyPickleMessageBase,
-                                  public MessageWriter
+    class PyPickleMessageWriter : public MessageWriter
     {
     protected:
-        PyPickleMessageWriter(const std::shared_ptr<Publisher> &publisher,
-                              const Filter &filter = {});
+        PyPickleMessageWriter(
+            const std::shared_ptr<Publisher> &publisher,
+            const std::optional<core::types::ByteVector> &header = {});
 
         void write(const python::SimpleObject &object);
         void write(const types::Value &value);

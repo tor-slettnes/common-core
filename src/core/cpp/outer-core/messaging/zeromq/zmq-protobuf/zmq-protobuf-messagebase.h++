@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "zmq-filter.h++"
+#include "types/bytevector.h++"
 
 namespace core::zmq
 {
@@ -21,9 +21,9 @@ namespace core::zmq
         {
         }
 
-        Filter default_filter()
+        core::types::ByteVector default_filter()
         {
-            return Filter::create_from_topic(this->type_name());
+            return this->type_name();
         }
 
         std::string type_name()

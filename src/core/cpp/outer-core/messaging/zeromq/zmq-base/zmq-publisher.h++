@@ -7,7 +7,6 @@
 
 #pragma once
 #include "zmq-endpoint.h++"
-#include "zmq-filter.h++"
 #include "types/bytevector.h++"
 
 #include <thread>
@@ -29,8 +28,9 @@ namespace core::zmq
                   Role role = Role::HOST);
 
     public:
-        void publish(const Filter &filter,
+        void publish(const std::optional<types::ByteVector> &header,
                      const types::ByteVector &bytes);
+
     };
 
 }  // namespace core::zmq

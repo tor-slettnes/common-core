@@ -18,10 +18,10 @@ namespace core::zmq
     {
     protected:
         ProtoBufMessageWriter(const std::shared_ptr<Publisher> &publisher,
-                              const Filter &filter = {})
+                              const std::optional<core::types::ByteVector> &header = {})
             : ProtoBufMessageBase<ProtoT>(),
               MessageWriter(publisher,
-                            filter.empty() ? this->default_filter() : filter)
+                            header.value_or(this->default_filter()))
         {
         }
 

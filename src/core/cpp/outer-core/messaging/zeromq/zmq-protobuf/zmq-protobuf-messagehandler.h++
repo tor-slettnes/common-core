@@ -18,11 +18,11 @@ namespace core::zmq
                                    public MessageHandler
     {
     protected:
-        ProtoBufMessageHandler(const std::optional<Filter> &filter = {},
+        ProtoBufMessageHandler(const std::optional<core::types::ByteVector> &filter = {},
                                const std::weak_ptr<Subscriber> &subscriber = {})
             : ProtoBufMessageBase<ProtoT>(),
               MessageHandler(this->type_name(),
-                             filter ? filter.value() : this->default_filter(),
+                             filter.value_or(this->default_filter()),
                              subscriber)
         {
         }

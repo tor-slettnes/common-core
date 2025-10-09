@@ -12,16 +12,16 @@
 namespace core::zmq
 {
     MessageWriter::MessageWriter(const std::shared_ptr<Publisher> &publisher,
-                                 const Filter &filter)
+                                 const std::optional<Header> &header)
         : publisher_(publisher),
-          filter_(filter)
+          header_(header)
     {
-        log_trace("Created ZMQ writer with filter: ", filter);
+        log_trace("Created ZMQ writer with header: ", header);
     }
 
-    const Filter &MessageWriter::filter() const noexcept
+    const std::optional<Header> &MessageWriter::header() const noexcept
     {
-        return this->filter_;
+        return this->header_;
     }
 
     std::shared_ptr<Publisher> MessageWriter::publisher() const
@@ -35,7 +35,7 @@ namespace core::zmq
         {
             if (publisher->initialized())
             {
-                publisher->publish(this->filter_, bytes);
+                publisher->publish(this->header(), bytes);
             }
         }
     }

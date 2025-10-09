@@ -130,10 +130,7 @@ namespace core::zmq
         {
             while (this->keep_receiving)
             {
-                if (auto bytes = this->receive())
-                {
-                    this->process_message(*bytes);
-                }
+                this->process_message(this->receive_parts());
             }
 
             logf_debug("%s is no longer listening for publications from %s",
@@ -147,71 +144,77 @@ namespace core::zmq
         }
     }
 
-    void Subscriber::process_message(const types::ByteVector &bytes)
+    void Subscriber::process_message(const MessageParts &parts)
     {
-        std::scoped_lock lock(this->mtx_);
-
-        for (const std::shared_ptr<MessageHandler> &handler : this->handlers_)
+        if (!parts.empty())
         {
-            const Filter &filter = handler->filter();
-            if ((bytes.size() >= filter.size()) &&
-                (memcmp(bytes.data(), filter.data(), filter.size()) == 0))
+            const core::types::ByteVector &header = parts.front();
+
+            std::scoped_lock lock(this->mtx_);
+
+            for (const std::shared_ptr<MessageHandler> &handler : this->handlers_)
             {
-                this->invoke_handler(handler, bytes);
+                if (!handler->filter() || (handler->filter().value() == header))
+                {
+                    this->invoke_handler(handler, parts);
+                }
             }
         }
     }
 
     void Subscriber::add_handler_filter(const std::shared_ptr<MessageHandler> &handler)
     {
-        const Filter &filter = handler->filter();
-        logf_debug("%s adding subscription for %r with filter %r (size %d)",
-                   *this,
-                   handler->id(),
-                   filter,
-                   filter.size());
-        this->setsockopt(ZMQ_SUBSCRIBE, filter.data(), filter.size());
+        if (const std::optional<Filter> &filter = handler->filter())
+        {
+            logf_debug("%s adding subscription for %r with filter %r",
+                       *this,
+                       handler->id(),
+                       *filter);
+            this->setsockopt(ZMQ_SUBSCRIBE, filter->data(), filter->size());
+        }
         // this->setsockopt(ZMQ_SUBSCRIBE, "", 0);
     }
 
     void Subscriber::remove_handler_filter(const std::shared_ptr<MessageHandler> &handler)
     {
-        logf_debug("%s removing subscription for %r with filter %r",
-                   *this,
-                   handler->id(),
-                   handler->filter());
-        try
+        if (const std::optional<Filter> &filter = handler->filter())
         {
-            const Filter &filter = handler->filter();
-            this->check_error(::zmq_setsockopt(
-                this->socket(),
-                ZMQ_UNSUBSCRIBE,
-                filter.data(),
-                filter.size()));
-        }
-        catch (const Error &e)
-        {
-            this->log_zmq_error("could not unsubscribe", e);
+            logf_debug("%s removing subscription for %r with filter %r",
+                       *this,
+                       handler->id(),
+                       *filter);
+            try
+            {
+                this->check_error(::zmq_setsockopt(
+                    this->socket(),
+                    ZMQ_UNSUBSCRIBE,
+                    filter->data(),
+                    filter->size()));
+            }
+            catch (const Error &e)
+            {
+                this->log_zmq_error("could not unsubscribe", e);
+            }
         }
     }
 
     void Subscriber::invoke_handler(const std::shared_ptr<MessageHandler> &handler,
-                                    const types::ByteVector &data)
+                                    const MessageParts &parts)
     {
-        logf_trace("%s invoking handler %r, data=%r",
+        logf_trace("%s invoking handler %r, parts=%r",
                    *this,
                    handler->id(),
-                   data);
+                   parts);
         try
         {
-            handler->handle_raw(data);
+            handler->handle(parts);
         }
         catch (...)
         {
-            logf_error("%s handler %r failed to handle ZMQ message {data=%s}: %s",
+            logf_error("%s handler %r failed to handle ZMQ message {parts=%s}: %s",
                        *this,
                        handler->id(),
-                       data,
+                       parts,
                        std::current_exception());
         }
     }

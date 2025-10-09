@@ -12,7 +12,7 @@ namespace core::zmq
 {
     MessageHandler::MessageHandler(
         const std::string &id,
-        const Filter &filter,
+        const std::optional<Filter> &filter,
         const std::weak_ptr<Subscriber> &subscriber)
         : id_(id),
           filter_(filter),
@@ -39,7 +39,7 @@ namespace core::zmq
         return this->id_;
     }
 
-    const Filter &MessageHandler::filter() const noexcept
+    const std::optional<Filter> &MessageHandler::filter() const noexcept
     {
         return this->filter_;
     }
@@ -60,10 +60,24 @@ namespace core::zmq
         }
     }
 
-    void MessageHandler::handle_raw(const core::types::ByteVector &rawdata)
+    void MessageHandler::handle(const MessageParts &parts)
     {
-        this->handle({rawdata.begin() + this->filter().size(),
-                      rawdata.end()});
+        this->handle(this->combine_parts(parts, this->filter().has_value()));
+    }
+
+    core::types::ByteVector MessageHandler::combine_parts(
+        const MessageParts &parts,
+        bool remove_header) const
+    {
+        core::types::ByteVector payload;
+        if (!parts.empty())
+        {
+            for (auto it = parts.begin() + remove_header; it != parts.end(); it++)
+            {
+                payload.insert(payload.end(), it->begin(), it->end());
+            }
+        }
+        return payload;
     }
 
 }  // namespace core::zmq

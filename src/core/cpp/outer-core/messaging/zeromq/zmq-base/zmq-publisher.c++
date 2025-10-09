@@ -6,7 +6,6 @@
 //==============================================================================
 
 #include "zmq-publisher.h++"
-#include "zmq-filter.h++"
 #include "logging/logging.h++"
 
 namespace core::zmq
@@ -18,13 +17,17 @@ namespace core::zmq
     {
     }
 
-    void Publisher::publish(const Filter &filter,
+    void Publisher::publish(const std::optional<types::ByteVector> &header,
                             const types::ByteVector &bytes)
     {
-        logf_trace("Publishing filter=%r, bytes=%r", filter, bytes);
-        if (!filter.empty())
+        if (header)
         {
-            this->send(filter, ZMQ_SNDMORE);
+            logf_trace("Publishing with header=%r, bytes=%r", header, bytes);
+            this->send(*header, ZMQ_SNDMORE);
+        }
+        else
+        {
+            logf_trace("Publishing without header, bytes=%r", bytes);
         }
         this->send(bytes);
     }

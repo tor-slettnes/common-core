@@ -12,10 +12,8 @@ namespace core::zmq
 {
     PyPickleMessageWriter::PyPickleMessageWriter(
         const std::shared_ptr<Publisher> &publisher,
-        const Filter &filter)
-        : PyPickleMessageBase(publisher),
-          MessageWriter(publisher,
-                        filter.empty() ? this->default_filter() : filter)
+        const std::optional<core::types::ByteVector> &header)
+        : MessageWriter(publisher, header)
     {
     }
 

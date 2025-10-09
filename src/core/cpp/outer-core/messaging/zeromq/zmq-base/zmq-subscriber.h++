@@ -8,7 +8,6 @@
 #pragma once
 #include "zmq-endpoint.h++"
 #include "zmq-messagehandler.h++"
-#include "zmq-filter.h++"
 
 #include <thread>
 #include <set>
@@ -45,12 +44,12 @@ namespace core::zmq
         void start_receiving();
         void stop_receiving();
         void receive_loop();
-        void process_message(const types::ByteVector &bytes);
+        void process_message(const MessageParts &parts);
 
         void add_handler_filter(const std::shared_ptr<MessageHandler> &handler);
         void remove_handler_filter(const std::shared_ptr<MessageHandler> &handler);
         void invoke_handler(const std::shared_ptr<MessageHandler> &handler,
-                            const types::ByteVector &data);
+                            const MessageParts &parts);
 
     private:
         std::recursive_mutex mtx_;

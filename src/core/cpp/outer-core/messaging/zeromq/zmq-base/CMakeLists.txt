@@ -23,7 +23,6 @@ set(LIB_DEPS
 ### Source files in this folder
 set(SOURCES
   zmq-endpoint.c++
-  zmq-filter.c++
   zmq-publisher.c++
   zmq-subscriber.c++
   zmq-messagehandler.c++
