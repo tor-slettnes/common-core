@@ -118,7 +118,6 @@ am            or remote) peer.  If not provided, an explicit call to `bind()` or
         Send raw bytes over this instance's ZMQ socket.
         '''
 
-        print("Sending ZMQ, host_address=%s, flags=%08x: %s"%(self.host_address, flags, data))
         self.socket.send(data, flags=flags)
 
 
