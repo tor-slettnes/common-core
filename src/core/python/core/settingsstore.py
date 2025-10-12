@@ -9,9 +9,8 @@ __author__ = 'Tor Slettnes'
 ### Modules within package
 from .jsonreader import JsonReader
 from .ini_reader import INIFileReader
-from .paths import FilePath, \
+from .paths import FilePath, FilePathInput, SearchPath, \
     normalized_search_path, settings_path, local_settings_path, preinstalled_settings_path
-
 
 ### Standard Python modules
 from typing import Sequence, Mapping, Optional, Union, Any
@@ -25,9 +24,10 @@ import platform
 import re
 import pathlib
 
-FilePath  = str | Traversable
-FilePaths = Sequence[FilePath]
-Variant   = type(None) | bool | int | float | str | dict[object] | list[object]
+#Type hints
+FilePaths      = Sequence[FilePath]
+FilePathInputs = Sequence[FilePathInput]
+Variant        = None | bool | int | float | str | list['Variant'] | dict[str, 'Variant']
 
 
 class SettingsStore (dict):
@@ -74,10 +74,9 @@ class SettingsStore (dict):
         INI_SUFFIX: INIFileReader.parse_text
     }
 
-
     def __init__(self,
-                 filenames  : FilePath|FilePaths|None = [],
-                 searchpath : FilePaths|None = None,
+                 filenames  : FilePathInput|FilePathInputs|None = [],
+                 searchpath : FilePathInputs|None = None,
                  package    : str|None = None):
 
         '''
@@ -147,7 +146,7 @@ class SettingsStore (dict):
 
 
     def load_settings(self,
-                      filename : FilePath):
+                      filename : FilePathInput):
 
         '''
         Load values from the specified settings file, if found.  Values are
@@ -192,7 +191,7 @@ class SettingsStore (dict):
         self._filenames.append(filename)
 
 
-    def merge_file(self, filepath: FilePath):
+    def merge_file(self, filepath: FilePathInput):
         '''
         Merge in settings from the specified file.
 
@@ -315,26 +314,24 @@ class SettingsStore (dict):
 
 
     def defaults(self,
-                 filenames: FilePaths|None = None,
-                 ) -> dict:
+                 filenames: FilePathInputs|None = None,
+                 ) -> 'SettingsStore':
         '''
-        Return default settings as loaded from the specified filenames
-        within the software ditribution itself (located in folders such as
-        `/usr/share/common-core/settings`, or the `settings` folder within the
-        Python distribution itself), and not from site-specific folders such as
-        `/etc/common-core`.
+        Return default settings as loaded from preinstalled settings files
+        (relative to folders such as `/usr/share/common-core/settings`, or the
+        `settings` folder within the Python distribution itself). In other
+        words, exclude any host-specific or user-specific overrides.
 
-        If `filenames` is not provided, load the default file names
-        previously provided to `__init__()` and/or `load_settings()`.
+        If `filenames` is not provided, use those that were previously loaded
+        into this instance via `__init__()` and/or `load_settings()`.
         '''
-
         return SettingsStore(
             filenames = filenames or self.filenames,
             searchpath = preinstalled_settings_path())
 
 
     def save_delta(self,
-                   filename: FilePath|None = None,
+                   filename: FilePathInput|None = None,
                    skipkeys: bool = False,
                    ensure_ascii: bool = True,
                    check_circular: bool = True,
@@ -361,7 +358,7 @@ class SettingsStore (dict):
 
 
     def save(self,
-             filename: FilePath|None = None,
+             filename: FilePathInput|None = None,
              only_delta: bool = False,
              skipkeys: bool = False,
              ensure_ascii: bool = True,
@@ -445,16 +442,21 @@ class SettingsStore (dict):
 
 
     def find_paths(self,
-                   basename: FilePath,
-                   searchpath: FilePaths | None = None) -> FilePaths:
+                   basename: FilePathInput,
+                   searchpath: FilePathInputs | None = None) -> FilePaths:
         '''
         Find settings files with the specified base name within the
-        default search path for this SettingsStore instance.
+        specified search path, or the default search path for this SettingsStore
+        instance.
 
         @param basename
             Stem (with or without a suffix) of the filename we are looking for.
             If no suffix is provided, each of the supported settings suffixes
             is tried in turn: `.json`, `.yaml`, `.ini`'
+
+        @param searchpath
+            A list of directories in which to search. If unspecified, use the
+            default search path for this instance.
 
         @return
             A list of absolute pathnames to matching settings files.
@@ -463,14 +465,20 @@ class SettingsStore (dict):
         return type(self).find_file_paths(basename, searchpath or self.searchpath)
 
 
-    def recursive_delta(self):
+    def recursive_delta(self) -> dict:
+        '''
+        Return the recursive difference between the default settings as
+        preinstalled with the application and this instance.
+
+        See also `defaults()`.
+        '''
         return type(self)._recursive_delta(self, self.defaults())
 
 
     @classmethod
     def find_file_paths(cls,
-                        basename : FilePath,
-                        searchpath: FilePaths) -> FilePaths:
+                        basename : FilePathInput,
+                        searchpath: FilePathInputs) -> FilePaths:
         '''
         Find settings files with the specified base name within the provided
         search path.

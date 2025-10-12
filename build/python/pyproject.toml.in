@@ -16,7 +16,11 @@ requires-python = ">=3.10"
 #readme = "@CMAKE_CURRENT_SOURCE_DIR@/README.md"
 dependencies = [@DEPENDENCIES@]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  # How mature is this project? Common values are
+  #   3 - Alpha
+  #   4 - Beta
+  #   5 - Production/Stable
+  "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
   "Topic :: Software Development :: Embedded Systems",
   "Topic :: Software Development :: Libraries :: Python Modules",

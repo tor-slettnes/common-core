@@ -44,7 +44,7 @@ class DemoService (SignalService, DemoServicer):
                   demo_provider : API,
                   bind_address : str = ""):
         SignalService.__init__(self,
-                               demo_signals = demo_signals,
+                               signal_store = demo_signals,
                                bind_address = bind_address,
                                project_name = PROJECT_NAME)
         self.demo_provider = demo_provider

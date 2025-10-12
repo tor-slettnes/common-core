@@ -9,19 +9,23 @@ __author__ = 'Tor Slettnes'
 from ..buildinfo import SETTINGS_DIR, LOCAL_SETTINGS_DIR, SHARED_DATA_DIR, INSTALL_ROOT, ORGANIZATION
 
 ### Standard python modules
-from importlib.resources.abc import Traversable
 import enum
 import os
 import os.path
 import platform
 import pathlib
+import zipfile
 import sys
 import importlib.resources
 from typing import Sequence, Optional
 
-FilePath   = str | Traversable
-SearchPath = Sequence[FilePath]
-ModuleName = str
+FilePath        = pathlib.PurePath | zipfile.Path
+SearchPath      = Sequence[FilePath]
+
+FilePathInput   = FilePath | str
+SearchPathInput = Sequence[FilePathInput]
+
+ModuleName      = str
 
 _settingspaths: dict[str, SearchPath] = {}
 
@@ -34,11 +38,10 @@ def program_path() -> FilePath:
     return pathlib.Path('.').absolute().joinpath(sys.argv[0])
 
 
-def install_root(fallback: FilePath = INSTALL_ROOT) -> FilePath:
+def install_root(fallback: FilePathInput = INSTALL_ROOT) -> FilePath:
     '''
     Obtain installation root folder
     '''
-
     if dominating_parent := locate_dominating_parent(SHARED_DATA_DIR, python_root()):
         return dominating_parent
     else:
@@ -59,7 +62,7 @@ def package_root(package: str) -> FilePath:
     package_path = importlib.resources.files(package)
     package_parts = package.split('.')
     while package_parts:
-        package_path = parent_path(package_path)
+        package_path = package_path.parent
         package_parts.pop()
     return package_path
 
@@ -80,7 +83,7 @@ def shared_data_dir() -> FilePath:
 
 
 def add_to_settings_path(
-        folder: FilePath,
+        folder: FilePathInput,
         prepend: bool = False,
         preinstalled: bool = False) -> bool:
 
@@ -105,7 +108,7 @@ def add_to_settings_path(
         `True` if the search path was modified, `False` otherwise.
     '''
 
-    normfolder = install_root() / folder
+    normfolder = combine_paths(install_root(), folder)
     if normfolder.is_dir():
         path = (preinstalled_settings_path() if preinstalled
                 else local_settings_path())
@@ -245,7 +248,7 @@ def host_settings_dir() -> FilePath:
 
 
 def normalized_search_path(searchpath: SearchPath,
-                           base_directory: FilePath|None = None,
+                           base_directory: FilePathInput|None = None,
                            package: str|None = None) -> list[pathlib.Path]:
 
     if isinstance(searchpath, str):
@@ -256,16 +259,16 @@ def normalized_search_path(searchpath: SearchPath,
 
     normpath = []
     for folder in searchpath:
-        candidate = base_directory / folder
+        candidate = combine_paths(base_directory, folder)
         if candidate.is_dir():
             normpath.append(candidate)
 
     return normpath
 
 
-def locate_dominating_parent(target: FilePath,
-                             start: FilePath,
-                             ) -> FilePath:
+def locate_dominating_parent(target: FilePathInput,
+                             start: FilePathInput,
+                             ) -> FilePath|None:
     '''
     Search upwards from the specified `start` directory until the relative
     path `target` is found inside, or until the filesystem root has been reached
@@ -274,17 +277,38 @@ def locate_dominating_parent(target: FilePath,
     Returns the parent directory in which `target` is found if any, or `None`.
     '''
 
-    base = start
+    base = (start
+            if isinstance(start, FilePath)
+            else pathlib.Path(start))
+
     previous = None
 
     while not base.joinpath(target).exists():
         if base == previous:
             return None
         previous = base
-        base = parent_path(base)
+        base = base.parent
 
     return base
 
+
+def combine_paths(first: FilePathInput, second: FilePathInput) -> FilePath:
+    combined = as_path(first)
+    if isinstance(second, zipfile.Path):
+        return second
+    else:
+        return first / second
+
+
+def as_path(input: FilePathInput):
+    if isinstance(input, FilePath):
+        return input
+
+    elif isinstance(input, str):
+         return pathlib.Path(input)
+
+    else:
+        raise TypeError(f"Input value cannot be converted to path: {input!r}")
 
 def is_super_user() -> bool:
     '''
@@ -297,9 +321,3 @@ def is_super_user() -> bool:
     else:
         return euid == 0
 
-
-def parent_path(path: FilePath):
-    try:
-        return path.parent
-    except AttributeError:
-        return path.joinpath("..").resolve()
