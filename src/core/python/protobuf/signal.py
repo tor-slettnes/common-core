@@ -580,11 +580,15 @@ class SignalStore:
         self.emit(signal)
 
 
-    def is_addition_or_update(self, action: MappingAction):
-        return ((mapping_action == MappingAction.MAP_ADDITION) or
-                (mapping_action == MappingAction.MAP_UPDATE))
+    @classmethod
+    def is_addition_or_update(cls, action: MappingAction):
+        return mapping_action in (
+            MappingAction.MAP_ADDITION,
+            MappingAction.MAP_UPDATE,
+        )
 
-    def is_removal(self, action: MappingAction):
+    @classmethod
+    def is_removal(cls, action: MappingAction):
         return (mapping_action == MappingAction.MAP_MAP_REMOVAL)
 
 
