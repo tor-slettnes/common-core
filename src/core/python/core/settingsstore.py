@@ -229,48 +229,106 @@ class SettingsStore (dict):
 
 
     def get_value(self,
-                  key: str,
-                  expected_type: type,
-                  default: Variant|None,
+                  key: str|Sequence[str|int],
+                  expected_type: Union[type]|None = None,
+                  default: Variant|None = None,
                   raise_invalid_type: bool = False,
+                  raise_missing: bool = False,
                   ) -> Variant:
         '''
-        If the speified key exists and is of the expected type, return the corresponding value.
+        Return the value corresponding to `key`, which may be either a
+        string or a sequence of strings and/or integers.  In the latter case,
+        `key` denotes a hierarchical path into which to recursively descend,
+        dereferenceing intermediate dictionaries and/or lists along the way.
 
         @param key
-            Settings key
+            The setting to retrieve, or a sequence of strings and/or integers
+            denoting hiearchical path into which to descend. The path may
+            comprise a mix of strings and integers, recursively dereferencing
+            dictionaries and lists, respectively.
 
         @param expected_type
-            A type object or a tuple of type objects
+            A type or a union of types (normally separated by `|`).
 
         @param default
-            Value to return if `key` does not exist, or if it an incorrect type
-            and `raise_invalid_type` is False.
+            Value to return if `key` does not exist or if its type is not of the
+            requested type(s).  If `key` is a hierarchical sequence, this might
+            also mean that any of its intermediate components is either missing,
+            or that it is not a dictionary or list from which the next component
+            (string or int, respectively) might be dereferenced.
 
         @param raise_invalid_type
-            If the specified key is found but the corresponding value is not
-            a dictionary, raise a TypeError.
+            Raise a TypeError if `key` is found but the corresponding value is
+            not of the requested type.  In the case where `key` is a sequence of
+            strings and/or ints, also raise a TypeError if any of its
+            intermediate components exists in the corresponding hierarchical
+            position, but is not a dictionary or a list from which that
+            component may be dereferenced.
+
+        @param raise_missing
+            Raise a KeyError if `key` is missing. In the case where `key` is a
+            sequence, also raise a KeyError or ValueError if any of it its
+            intermediate components is missing from the dictionary or list in
+            the corresponding hierarchical location.
 
         @return The value corresponding to `key` if it exists and is of the
             expected type, otherwise `default`
         '''
 
+        if isinstance(key, str):
+            path = [key]
+
+        elif isinstance(key, Sequence) and len(key) > 0:
+            path = list(key)
+
+        else:
+            raise ValueError(
+                "Settings key must be a string "
+                "or a non-empty sequence of strings and/or ints")
+
         try:
-            value = self[key]
-            assert(isinstance(value, expected_type))
+            value = self
+            for component in path:
+                if isinstance(component, int) and not isinstance(value, (tuple, list)):
+                    raise TypeError
+
+                value = value[component]
 
         except KeyError:
-            return default
-
-        except AssertionError:
-            if raise_invalid_type:
-                raise TypeError(
-                    'Setting %r should be a %s, not %s'%
-                    (key, expected_type.__name__, type(value).__name__)) from None
+            if raise_missing:
+                raise KeyError(
+                    f"Settings key {component!r} missing from value: {value}"
+                ) from None
             else:
                 return default
-        else:
+
+        except IndexError:
+            if raise_missing:
+                raise TypeError(
+                    f"Settings index {component} out of range for value: {value}"
+                ) from None
+            else:
+                return default
+
+        except TypeError:
+            if raise_invalid_type:
+                raise TypeError(
+                    f"Cannot get settings key/index {component!r} from value: {value!r}"
+                ) from None
+            else:
+                return default
+
+        if expected_type is None or isinstance(value, expected_type):
             return value
+
+        elif raise_invalid_type:
+            raise TypeError(
+                f"Expected setting {key!r} to be of type {expected_type.__name__}, "
+                f"got {type(value).__name__}: {value!r}"
+            ) from None
+        else:
+            return default
+
 
     def set(self,
             key: str|Sequence[str],
