@@ -30,12 +30,12 @@ class HTTPClient (HTTPBase):
     def __init__(self,
                  base_url: str,
                  service_name: str|None = None,
-                 project_name: str|None = None,
+                 product_name: str|None = None,
                  ):
 
         HTTPBase.__init__(self,
                           service_name = service_name,
-                          project_name = project_name)
+                          product_name = product_name)
         self.base_url = self.get_target_url(base_url)
 
     @property

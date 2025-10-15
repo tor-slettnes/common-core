@@ -34,7 +34,7 @@ class Endpoint (EndpointBase):
     def __init__(self,
                  address     : str,
                  channel_name: str,
-                 project_name: str|None,
+                 product_name: str|None,
                  socket_type : zmq.SocketType,
                  role        : Role = Role.UNDEFINED,
                  ):
@@ -52,7 +52,7 @@ class Endpoint (EndpointBase):
             generalized service name, adapted for RPC/Request/Response, Pub/Sub,
             and other ZMQ socket types.
 
-        @param project_name
+        @param product_name
             Name of the overall code project, used to locate corresponding
             settings files (e.g. `zmq-endpoints-PROJECT.yaml`), in addition to
             `"common"`.
@@ -78,7 +78,7 @@ am            or remote) peer.  If not provided, an explicit call to `bind()` or
 
         EndpointBase.__init__(self,
                               channel_name = channel_name,
-                              project_name = project_name)
+                              product_name = product_name)
 
         self._provided_address = address
         self.socket            = self.context.socket(socket_type)
@@ -252,7 +252,7 @@ am            or remote) peer.  If not provided, an explicit call to `bind()` or
         follows:
 
         * If the product-specific settings file
-          `zmq-endpoints-PROJECT_NAME.json` contains a map entry for this ZMQ
+          `zmq-endpoints-PRODUCT_NAME.json` contains a map entry for this ZMQ
           channel name, the value is extracted from this map using the provided
           `schemeOption`, `hostOption` or `portOption` as key.
 

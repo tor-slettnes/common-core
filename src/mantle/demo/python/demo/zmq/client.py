@@ -7,7 +7,7 @@
 
 ### Modules relative to current dir
 from .common import DEMO_PUBLISHER_CHANNEL, DEMO_SERVICE_CHANNEL, DEMO_RPC_INTERFACE
-from ..base  import API, demo_signals, PROJECT_NAME
+from ..base  import API, demo_signals
 
 ### Modules relative to install dir
 from cc.messaging.zmq.basic.subscriber import Subscriber
@@ -38,13 +38,12 @@ class Client (API, ProtoBufClient):
             self,
             host_address = service_host,
             channel_name = DEMO_SERVICE_CHANNEL,
-            interface_name = DEMO_RPC_INTERFACE,
-            project_name = PROJECT_NAME)
+            interface_name = DEMO_RPC_INTERFACE)
 
         self.subscriber = Subscriber(
             host_address = publisher_host,
             channel_name = DEMO_PUBLISHER_CHANNEL,
-            project_name = PROJECT_NAME)
+            product_name = self.product_name)
 
         self.signalhandler = SignalHandler(
             signal_store = demo_signals,

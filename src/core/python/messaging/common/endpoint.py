@@ -28,16 +28,20 @@ class Endpoint (object):
     # for this communications channel (e.g., protocol/host/port, ...)
     channel_name = None
 
-    # If `project_name` is provided as a class attribute or as an argument to
+    # If `product_name` is provided as a class attribute or as an argument to
     # `__init__()`, it will be used to look up service settings from
-    # project-specific settings files, e.g.
-    #`*messaging_flavor*-endpoints-*project_name*.yaml`
-    project_name = PROJECT_NAME
+    # product-specific settings files, e.g.
+    #`*messaging_flavor*-endpoints-*product_name*.yaml`
+    product_name = None
+
+    # `project_name` may be overwritten by subclasses to look up settings for a
+    # particular code project (e.g., a parent code repository).
+    project_name = None
 
 
     def __init__(self,
                  channel_name: str|None = None,
-                 project_name: str|None = None):
+                 product_name: str|None = None):
 
         if channel_name is not None:
             self.channel_name = channel_name
@@ -46,16 +50,22 @@ class Endpoint (object):
                 "Messaging Endpoint subclass %s.%s should set 'channel_name' -- see %s"%\
                 (type(self).__module__, type(self).__name__, __file__)
 
-        if project_name is None:
-            project_name = type(self).project_name
+        if product_name is not None:
+            self.product_name = product_name
 
-        settings_files = [self.settings_file(flavor)
-                          for flavor in (channel_name, project_name, "common")
-                          if flavor]
+        settings_scopes = (
+            self.channel_name,
+            self.product_name,
+            self.project_name,
+            "common")
 
-        self.settings = SettingsStore(settings_files)
-        logging.debug("Loaded settings from %s with search path %s: %s"%
-                      (settings_files, self.settings.searchpath, self.settings))
+        self.settings = SettingsStore([
+            self.settings_file(scope_name)
+            for scope_name in settings_scopes
+            if scope_name])
+
+        logging.debug("Loaded %s settings from %s: %s"%
+                      (self.channel_name, self.settings.filepaths, self.settings))
 
 
     def __repr__ (self):

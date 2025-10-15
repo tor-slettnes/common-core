@@ -14,7 +14,6 @@ from .paths import FilePath, FilePathInput, SearchPath, \
 
 ### Standard Python modules
 from typing import Sequence, Mapping, Optional, Union, Any
-from importlib.resources.abc import Traversable
 import yaml
 import json
 import os
@@ -27,7 +26,10 @@ import pathlib
 #Type hints
 FilePaths      = Sequence[FilePath]
 FilePathInputs = Sequence[FilePathInput]
-Variant        = None | bool | int | float | str | list['Variant'] | dict[str, 'Variant']
+
+VariantList    = list['Variant']
+VariantMap     = dict[str, 'Variant']
+Variant        = None | bool | int | float | str | VariantList | VariantMap
 
 
 class SettingsStore (dict):
@@ -133,7 +135,7 @@ class SettingsStore (dict):
             self.searchpath = settings_path(package)
 
         if filenames is not None:
-            if isinstance(filenames, (str, Traversable)):
+            if isinstance(filenames, FilePathInput):
                 self.load_settings(filenames)
 
             elif isinstance(filenames, (list, tuple)):

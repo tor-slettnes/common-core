@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within package
-from ..base import API, SignalSlot, demo_signals, PROJECT_NAME
+from ..base import API, SignalSlot, demo_signals
 from cc.messaging.grpc import SignalClient
 from cc.protobuf.wellknown import empty
 from cc.protobuf.utils import check_message_type
@@ -47,7 +47,6 @@ class Client (API, SignalClient):
                               wait_for_ready = wait_for_ready,
                               use_asyncio = use_asyncio,
                               signal_store = demo_signals,
-                              project_name = PROJECT_NAME,
                               watch_all = False)
 
 

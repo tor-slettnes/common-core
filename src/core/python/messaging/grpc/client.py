@@ -51,7 +51,7 @@ class Client (Base):
                  host: str|None = None,
                  wait_for_ready: bool = False,
                  use_asyncio: bool|None = None,
-                 project_name: str|None = None,
+                 product_name: str|None = None,
                  ):
         '''
         Initializer.  Parameters:
@@ -76,7 +76,7 @@ class Client (Base):
 
         Base.__init__(self,
                       service_name = self.service_name or self._default_service_name(),
-                      project_name = project_name)
+                      product_name = product_name)
 
         assert type(self).Stub, (
             "gRPC Client subclass %r should set 'Stub' to appropriate gRPC service class"%

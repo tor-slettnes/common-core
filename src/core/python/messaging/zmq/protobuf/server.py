@@ -30,7 +30,7 @@ class Server (Responder):
     def __init__(self,
                  bind_address    : str,
                  channel_name    : str|None,
-                 project_name    : str|None = None,
+                 product_name    : str|None = None,
                  role            : Endpoint.Role = Endpoint.Role.HOST,
                  request_handlers: Sequence[RequestHandler] = [],
                  ):
@@ -39,7 +39,7 @@ class Server (Responder):
             self,
             bind_address = bind_address,
             channel_name = channel_name,
-            project_name = project_name,
+            product_name = product_name,
             role = role)
 
         self.request_handlers = dict([(handler.interface_name, handler)

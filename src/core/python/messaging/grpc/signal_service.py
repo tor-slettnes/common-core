@@ -30,7 +30,7 @@ class SignalService (Service):
                  signal_store   : SignalStore,
                  bind_address   : str = "",
                  max_queue_size : Optional[int] = 256,
-                 project_name   : str|None = None,
+                 product_name   : str|None = None,
                  ):
         '''
         param[in] signal_store
@@ -47,7 +47,7 @@ class SignalService (Service):
 
         Service.__init__ (self,
                           bind_address = bind_address,
-                          project_name = project_name)
+                          product_name = product_name)
 
         self.signal_store = signal_store
         self.max_queue_size = max_queue_size

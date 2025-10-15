@@ -36,7 +36,7 @@ class Base (Endpoint):
 
     def __init__(self,
                  service_name: str|None = None,
-                 project_name: str|None = None,
+                 product_name: str|None = None,
                  ):
 
         if service_name is not None:
@@ -48,7 +48,7 @@ class Base (Endpoint):
 
         Endpoint.__init__(self,
                           channel_name = self.service_name,
-                          project_name = project_name)
+                          product_name = product_name)
 
     def max_request_size(self) -> Optional[str]:
         return self.setting("max request size", None)
@@ -70,12 +70,12 @@ class Base (Endpoint):
         If either HOST or PORT is missing, defaults are determined as follows:
 
         * If the product-specific settings file
-          `grpc-services-PRODUCT_NAME.json` contains a map entry for this gRPC
+          `grpc-endpoints-PRODUCT_NAME.json` contains a map entry for this gRPC
           service, the value is extracted from this map using the provided
           `hostOption` or `portOption` as key.
 
         * If still missing, the same lookup is performed in the file
-          `grpc-services-common.json`.
+          `grpc-endpoints-common.json`.
 
         * Any attribute(s) that are still missing are populated from
           `defaultHost` or `defaultPort`, respectively.
