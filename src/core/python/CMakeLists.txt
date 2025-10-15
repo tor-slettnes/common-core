@@ -46,14 +46,16 @@ cc_add_python_requirements_cache("core-python-requirements"
   INSTALL_COMPONENT "${PYTHON_REQUIREMENTS_INSTALL_COMPONENT}"
 )
 
-cc_add_python_wheel("core"
-  PYTHON_DEPS "${TARGET}"
-  DATA_DEPS "cc_core_settings"
-  REQUIREMENTS_DEPS "core-python-requirements"
-  DESCRIPTION "Python common components"
-  INSTALL_CONDITION INSTALL_PYTHON_WHEELS
-  INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
-)
+if(BUILD_SHARED)
+  cc_add_python_wheel("core"
+    PYTHON_DEPS "${TARGET}"
+    DATA_DEPS "cc_core_settings"
+    REQUIREMENTS_DEPS "core-python-requirements"
+    DESCRIPTION "Python common components"
+    INSTALL_CONDITION INSTALL_PYTHON_WHEELS
+    INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
+  )
+endif()
 
 cc_add_doxygen(python-reference
   FILE_PATTERNS "*.py;*.md"

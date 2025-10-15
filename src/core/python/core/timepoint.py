@@ -26,14 +26,24 @@ conversion methods to support additional common representations such as:
   True
 
   ### This type has overriden `__str__()` and `__repr__()` methods
+  >>> tp
+  '2025-09-30 01:01:39.785'
+
   >>> print("%s" % tp)
-  2025-09-30T08:01:39.785Z
+  2025-09-30 01:01:39.785
 
   >>> print("%d" % tp)
   1759219299
 
   >>> print("%f" % tp)
   1759219299.785000
+
+  ### ... as well as dedicated string conversions
+  >>> tp.to_json_string()
+  '2025-09-30T08:01:39.785Z'
+
+  >>> tp.to_string(zone_suffix = ZoneSuffix.NAME, zone_delimiter = " ")
+  '2025-09-30 01:01:39 PDT'
 
   ### Various import methods:
   >>> tp = TimePoint(time.time())

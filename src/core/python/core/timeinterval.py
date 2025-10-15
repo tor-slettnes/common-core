@@ -218,7 +218,7 @@ class TimeInterval (float):
 
         * Any `google.protobuf.TimeInterval` object is passed on to `from_protobuf()`.
 
-        * An annotated string, as returned by `to_string()` or `to_iso_string()`.
+        * An annotated string, as returned by `to_string()` or `to_json_string()`.
 
         * Any other input type raises a TypeError.
 
@@ -242,6 +242,9 @@ class TimeInterval (float):
         @exception TypeError
             The input type is not a supported time interval representation.
         '''
+
+        if isinstance(input, TimeInterval):
+            return input
 
         if isinstance(input, str):
             try:
