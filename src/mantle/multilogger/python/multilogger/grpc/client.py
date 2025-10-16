@@ -12,8 +12,8 @@ import time
 ### Modules within package
 from ..base.api import API
 from ..base.threaded_submitter import ThreadedSubmitter
-from cc.messaging.grpc import Client as BaseClient
 from cc.core.doc_inherit import doc_inherit
+from cc.messaging.grpc import Client as BaseClient
 
 
 #-------------------------------------------------------------------------------

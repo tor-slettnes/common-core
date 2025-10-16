@@ -515,3 +515,4 @@ class MessageBuilder:
         status.Level: status.encodeLogLevel,
     }
 
+message_builder = MessageBuilder()
