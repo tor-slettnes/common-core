@@ -229,61 +229,56 @@ class SettingsStore (dict):
 
 
     def get_value(self,
-                  key: str|Sequence[str|int],
+                  path: str|Sequence[str|int],
                   expected_type: Union[type]|None = None,
                   default: Variant|None = None,
                   raise_invalid_type: bool = False,
                   raise_missing: bool = False,
                   ) -> Variant:
         '''
-        Return the value corresponding to `key`, which may be either a
-        string or a sequence of strings and/or integers.  In the latter case,
-        `key` denotes a hierarchical path into which to recursively descend,
-        dereferenceing intermediate dictionaries and/or lists along the way.
+        Return the value referenced by `path`, which may be
 
-        @param key
-            The setting to retrieve, or a sequence of strings and/or integers
-            denoting hiearchical path into which to descend. The path may
-            comprise a mix of strings and integers, recursively dereferencing
-            dictionaries and lists, respectively.
+          - a single string, denoting a value at the root of this instance, or
+
+          - a sequence comprising a string followed by any number of strings
+            and/or integers, denoting a hierarchical path to the target value.
+            Within this sequence, a string (including the first path element)
+            descends into a corresopnding dictionary item along the way, whereas
+            an integer selects a list item.
+
+        @param path
+            Either a single string or a sequence of strings and/or integers,
+            denoting the hierarchical path to the desired target value.
 
         @param expected_type
             A type or a union of types (normally separated by `|`).
 
         @param default
-            Value to return if `key` does not exist or if its type is not of the
-            requested type(s).  If `key` is a hierarchical sequence, this might
-            also mean that any of its intermediate components is either missing,
-            or that it is not a dictionary or list from which the next component
-            (string or int, respectively) might be dereferenced.
+            Value to return if `path` does not reference an existing value, or
+            if the value is not of the requested type(s).
 
         @param raise_invalid_type
-            Raise a TypeError if `key` is found but the corresponding value is
-            not of the requested type.  In the case where `key` is a sequence of
-            strings and/or ints, also raise a TypeError if any of its
-            intermediate components exists in the corresponding hierarchical
-            position, but is not a dictionary or a list from which that
-            component may be dereferenced.
+            Raise a TypeError if `path` is found but the corresponding value is
+            not of the requested type. Also raise a TypeError after failing to
+            descend into an intermediate path element because the corresponding
+            value exists but is not a dictionary or list, as applicable.
 
         @param raise_missing
-            Raise a KeyError if `key` is missing. In the case where `key` is a
-            sequence, also raise a KeyError or ValueError if any of it its
-            intermediate components is missing from the dictionary or list in
-            the corresponding hierarchical location.
+            Raise a KeyError if the setting denoted by `path` is missing. In the
+            case where `path` is a sequence, also raise a KeyError or IndexError
+            if any of it its intermediate elements is missing from the preceding
+            dictionary or list.
 
         @return The value corresponding to `key` if it exists and is of the
             expected type, otherwise `default`
         '''
 
-        if isinstance(key, str):
-            path = [key]
+        if isinstance(path, str):
+            path = [path]
 
-        elif isinstance(key, Sequence) and len(key) > 0:
-            path = list(key)
-
-        else:
+        elif not isinstance(path, Sequence) or len(path) == 0:
             raise ValueError(
-                "Settings key must be a string "
+                "Settings path must be a string "
                 "or a non-empty sequence of strings and/or ints")
 
         try:
@@ -304,7 +299,7 @@ class SettingsStore (dict):
 
         except IndexError:
             if raise_missing:
-                raise TypeError(
+                raise IndexError(
                     f"Settings index {component} out of range for value: {value}"
                 ) from None
             else:
@@ -313,7 +308,8 @@ class SettingsStore (dict):
         except TypeError:
             if raise_invalid_type:
                 raise TypeError(
-                    f"Cannot get settings key/index {component!r} from value: {value!r}"
+                    f"Cannot obtain settings key/index {component!r} "
+                    f"from {type(value).__name__} value: {value!r}"
                 ) from None
             else:
                 return default
@@ -322,10 +318,13 @@ class SettingsStore (dict):
             return value
 
         elif raise_invalid_type:
+            pathstring = ' -> '.join([str(element) for element in path])
             raise TypeError(
-                f"Expected setting {key!r} to be of type {expected_type.__name__}, "
+                f"Expected settings value ({pathstring}) "
+                f"to be of type {expected_type.__name__}, "
                 f"got {type(value).__name__}: {value!r}"
             ) from None
+
         else:
             return default
 
