@@ -109,7 +109,7 @@ First, by using `MessageBuilder` as an additional base for your `DemoClient`
 implementation, you can pass in Python native arguments directly:
 
   ```python
-          request = self.build_from_dict(
+          request = self.build_from_value(
               Greeting,
               text = text,
               identity = self.identity,
@@ -127,7 +127,7 @@ variables, including `self`, but used carefully it will suffice for our
 purpose).  Taking advantage of this, we can now use:
 
   ```python
-          request = self.build_from_dict(
+          request = self.build_from_value(
               Greeting,
               locals(),
               identity = self.identity,
@@ -155,7 +155,7 @@ Putting this all together, we get:
                     text: str,
                     data: dict = {}):
 
-          request = self.build_from_dict(
+          request = self.build_from_alue(
               Greeting,
               locals(),
               identity = self.identity,
@@ -175,6 +175,7 @@ import enum
 import logging
 
 from google.protobuf.descriptor import Descriptor, FieldDescriptor, EnumDescriptor
+from google.protobuf.message_factory import MessageFactory
 
 from cc.protobuf.wellknown import Message, MessageType
 import cc.protobuf.wellknown as wellknown # Well-known types from Google
@@ -199,6 +200,7 @@ class MessageBuilder:
 
     def __init__ (self):
         self.encoders: dict[str, Encoder] = type(self).message_encoders.copy()
+        self.factory = MessageFactory()
 
 
     def register_encoder(self,
@@ -223,13 +225,45 @@ class MessageBuilder:
 
 
     def build_from_value(self,
-                         descriptor: Descriptor,
+                         message_type: MessageType,
                          value: object|None = None) -> Message:
         '''
-        Create a new ProtoBuf message from the provided input value.
+        Create a new ProtoBuf message of the specified type from the provided input value.
 
-        @param message_type
-            A ProtoBuf message type to create.
+        @param message
+            A ProtoBuf message to populate, or message type to create.
+
+        @param value
+            Input value. Depending on the registered encoder, this will normally
+            be a corresponding native Python object.  If no encoder is
+            registered, the input should be a dictionary with keys matching the
+            field names of the desired ProtoBuf message.
+        '''
+
+        if not isinstance(message_type, MessageType):
+            raise TypeError(f"got invalid 'message_type' argument: {message_type!r}")
+
+
+        try:
+            encoder = self.encoders[message_type.DESCRIPTOR.full_name]
+        except KeyError:
+            if isinstance(value, dict):
+                return self.build_from_dict(message_type, value)
+            else:
+                raise TypeError(f"{message_type.DESCRIPTOR.full_name} encoder input must be a dictionary: {value}")
+
+        else:
+            return encoder(value)
+
+
+    def build_from_descriptor(self,
+                              descriptor: Descriptor,
+                              value: object|None = None) -> Message:
+        '''
+        Create a new ProtoBuf from the provided input value.
+
+        @param descriptor
+            A ProtoBuf message descriptor
 
         @param value
             Input value. Depending on the registered encoder, this will normally
@@ -239,15 +273,14 @@ class MessageBuilder:
         '''
 
         if not isinstance(descriptor, Descriptor):
-            raise TypeError(
-                "got invalid 'descriptor' argument %r"%
-                (descriptor,))
+            raise TypeError(f"got invalid 'descriptor' argument {descriptor!r}")
 
         try:
             encoder = self.encoders[descriptor.full_name]
         except KeyError:
             if isinstance(value, dict):
-                return self.build_from_dict(descriptor, value)
+                message_type = self.factory.CreatePrototype(descriptor)
+                return self.build_from_dict(message_type, value)
             else:
                 raise TypeError(f"{descriptor.name} encoder input must be a dictionary: {value}")
 
@@ -256,18 +289,18 @@ class MessageBuilder:
 
 
     def build_from_dict(self,
-                        message: Message|MessageType,
+                        message_type: MessageType,
                         inputs: dict|None = None,
                         ignore_inputs: Sequence[str] = ('self', 'cls'),
+                        ignore_extras: bool = False,
                         /,
                         **kwargs) -> Message:
 
         '''
-        Build a new ProtoBuf message or populate an existing message with
-        provided input values.
+        Build a new ProtoBuf message with provided input values.
 
-        @param message
-            Either a messase type to create, or a message instance to populate.
+        @param message_type
+            ProtoBuf message type to create
 
         @param inputs
             A dictionary containing key/value pairs from which to populate each
@@ -284,11 +317,45 @@ class MessageBuilder:
         `self`).
         '''
 
-        if isinstance(message, type):
-            message = message()
+        return self.populate_from_dict(
+            message(),
+            inputs = inputs,
+            ignore_inputs = ignore_inputs,
+            ignore_extras = ignore_extras,
+            **kwargs)
+
+
+    def populate_from_dict(self,
+                           message: Message,
+                           inputs: dict|None = None,
+                           ignore_inputs: Sequence[str] = ('self', 'cls'),
+                           ignore_extras: bool = False,
+                           /,
+                           **kwargs) -> Message:
+
+        '''
+        Populate an existing message with provided input values.
+
+        @param message
+            ProtoBuf message to popualte
+
+        @param inputs
+            A dictionary containing key/value pairs from which to populate each
+            field of the message.
+
+        @param kwargs
+            Explicit field names and corresponding input values.
+
+        Fields whose name is not found in the `inputs` dictionary nor provided
+        as keyword arguments are left empty.  Conversely, keys and keyword
+        arguments that are not mapped to any field names are silently ignored.
+        (This allows `locals()` to be passed in as the `inputs` argument, even
+        though it contains extra local variables from the call site such as
+        `self`).
+        '''
 
         if not isinstance(message, Message):
-            raise TypeError("'message' argument must be a valid ProtoBuf message or message type")
+            raise TypeError("'message' argument must be a valid ProtoBuf message")
 
         inputs = (inputs or {}) | kwargs
 
@@ -297,10 +364,11 @@ class MessageBuilder:
             if input_value is not None:
                 self.encode_field(message, field_name, field_descriptor, input_value)
 
-        if extra_inputs := set(inputs) - set(ignore_inputs):
-            logging.warning(
-                '%s.build_from_dict() received extra inputs not applicable for message type %s: %s'%
-                (type(self).__name__, type(message).__name__, extra_inputs))
+        if not ignore_extras:
+            if extra_inputs := set(inputs) - set(ignore_inputs):
+                logging.warning(
+                    '%s.build_from_dict() received extra inputs not applicable for message type %s: %s'%
+                    (type(self).__name__, type(message).__name__, extra_inputs))
 
         return message
 
@@ -331,7 +399,7 @@ class MessageBuilder:
             return lambda value: self.encode_enum(enum_type, value)
 
         elif descriptor := fd.message_type:
-            return lambda value: self.build_from_value(descriptor, value)
+            return lambda value: self.build_from_descriptor(descriptor, value)
 
         else:
             return lambda value: value
