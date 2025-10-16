@@ -18,7 +18,7 @@ import threading
 import time
 
 ### Modules within package
-from cc.protobuf.builder import message_builder
+from cc.protobuf.builder import MessageBuilder
 from cc.protobuf.wellknown import empty
 from cc.protobuf.status import Level
 from cc.protobuf.datetime import Interval
@@ -26,7 +26,7 @@ from cc.protobuf.multilogger import Loggable, ListenerSpec, SinkSpec, \
     ColumnType, ColumnSpec
 
 
-class API:
+class API (MessageBuilder):
     '''
     MultiLogger Control API
     '''
@@ -50,7 +50,7 @@ class API:
         Listen for logged events from the MultiLogger
         '''
 
-        spec = message_builder.build_from_dict(
+        spec = self.build_from_dict(
             ListenerSpec,
             locals(),
             sink_id = self.identity)
@@ -186,7 +186,7 @@ class API:
           ```
         '''
 
-        request = message_builder.build_from_dict(SinkSpec, locals())
+        request = self.build_from_dict(SinkSpec, locals())
         response = self.rpc.add_sink(request)
         return response.added
 

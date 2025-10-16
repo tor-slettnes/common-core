@@ -183,8 +183,10 @@ import cc.protobuf.variant   as variant   # Common Core variant type
 import cc.protobuf.datetime  as datetime  # Calendar date/time types
 import cc.protobuf.status    as status    # Status types
 
-Encoder       = Callable[[object], Message]
-TEXT_ENCODING = 'utf-8'
+Encoder          = Callable[[object], Message]
+TEXT_ENCODING    = 'utf-8'
+
+_message_factory = MessageFactory()
 
 
 class MessageBuilder:
@@ -200,15 +202,6 @@ class MessageBuilder:
 
     def __init__ (self):
         self.encoders: dict[str, Encoder] = type(self).message_encoders.copy()
-        self._factory = None
-
-
-    @property
-    def factory(self):
-        if not self._factory:
-            self._factory = MessageFactory()
-        return self._factory
-
 
     def register_encoder(self,
                          message_type: MessageType,
@@ -286,7 +279,7 @@ class MessageBuilder:
             encoder = self.encoders[descriptor.full_name]
         except KeyError:
             if isinstance(value, dict):
-                message_type = self.factory.CreatePrototype(descriptor)
+                message_type = _message_factory.CreatePrototype(descriptor)
                 return self.build_from_dict(message_type, value)
             else:
                 raise TypeError(f"{descriptor.name} encoder input must be a dictionary: {value}")
@@ -515,4 +508,3 @@ class MessageBuilder:
         status.Level: status.encodeLogLevel,
     }
 
-message_builder = MessageBuilder()

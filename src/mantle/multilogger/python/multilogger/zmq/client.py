@@ -15,7 +15,6 @@ import time
 
 ### Modules within package
 from cc.core.doc_inherit import doc_inherit
-from cc.protobuf.builder import message_builder
 from cc.protobuf.wellknown import Empty
 from cc.protobuf.status import Level
 from cc.protobuf.multilogger import ListenerSpec, \
@@ -142,10 +141,8 @@ class Client (API, Writer):
                min_level: Level|int = Level.LEVEL_TRACE,
                contract_id: Optional[str] = None):
 
-        spec = message_builder.build_from_dict(
-            ListenerSpec,
-            locals(),
-            sink_id = self.identity)
+        spec = self.build_from_dict(ListenerSpec, locals(),
+                                    sink_id = self.identity)
 
         if self.subscriber is None:
             self.subscriber = Subscriber(self.host)
