@@ -200,7 +200,14 @@ class MessageBuilder:
 
     def __init__ (self):
         self.encoders: dict[str, Encoder] = type(self).message_encoders.copy()
-        self.factory = MessageFactory()
+        self._factory = None
+
+
+    @property
+    def factory(self):
+        if not self._factory:
+            self._factory = MessageFactory()
+        return self._factory
 
 
     def register_encoder(self,
@@ -318,10 +325,10 @@ class MessageBuilder:
         '''
 
         return self.populate_from_dict(
-            message(),
-            inputs = inputs,
-            ignore_inputs = ignore_inputs,
-            ignore_extras = ignore_extras,
+            message_type(),
+            inputs,
+            ignore_inputs,
+            ignore_extras,
             **kwargs)
 
 
