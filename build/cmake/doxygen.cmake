@@ -32,7 +32,9 @@ if (DOXYGEN_FOUND)
     "thirdparty"
     "*/tests/*")
 
-  add_custom_target(${DOC_TARGET})
+  if(NOT TARGET ${DOC_TARGET})
+    add_custom_target(${DOC_TARGET})
+  endif()
 endif()
 
 

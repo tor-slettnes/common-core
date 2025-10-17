@@ -6,7 +6,9 @@
 #===============================================================================
 
 set(PYTHON_EXECUTABLES_TARGET "python_executables")
-add_custom_target(${PYTHON_EXECUTABLES_TARGET})
+if(NOT TARGET ${PYTHON_EXECUTABLES_TARGET})
+  add_custom_target(${PYTHON_EXECUTABLES_TARGET})
+endif()
 
 cmake_path(SET PYTHON_PYINSTALLER_STAGING_ROOT
   "${PYTHON_OUT_DIR}/pyinstaller")

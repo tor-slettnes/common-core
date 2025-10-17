@@ -9,7 +9,10 @@
 ## Add global `python_wheels` target, into which wheels will be dependencies
 
 set(PYTHON_WHEELS_TARGET "python_wheels")
-add_custom_target(${PYTHON_WHEELS_TARGET})
+if(NOT TARGET ${PYTHON_WHEELS_TARGET})
+  add_custom_target(${PYTHON_WHEELS_TARGET})
+endif()
+
 
 cmake_path(SET PYTHON_WHEEL_OUT_DIR "${PYTHON_OUT_DIR}/wheels")
 cmake_path(SET PYTHON_WHEEL_BUILD_DIR "${PYTHON_WHEEL_OUT_DIR}/build")
