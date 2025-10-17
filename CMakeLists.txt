@@ -24,7 +24,9 @@ project("${PROJECT}"
 )
 
 ### Invoke common project settings
-include(${CMAKE_CURRENT_LIST_DIR}/build/cmake/build_project.cmake)
+if(PROJECT_IS_TOP_LEVEL)
+  include(${CMAKE_CURRENT_LIST_DIR}/build/cmake/build_project.cmake)
+endif()
 
 ### Pull in CMake files to build the actual sources
 add_subdirectory(src)
