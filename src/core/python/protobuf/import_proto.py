@@ -51,13 +51,13 @@ def import_core_protos(target_scope: object,
     the respective `.proto` files (starting with `cc.`).
     '''
 
-    import_proto('datetime', target_scope, namespace)
-    import_proto('quantities', target_scope, namespace)
-    import_proto('request_reply', target_scope, namespace)
-    import_proto('signal', target_scope, namespace)
-    import_proto('status', target_scope, namespace)
-    import_proto('variant', target_scope, namespace)
-    import_proto('version', target_scope, namespace)
+    import_proto('cc.protobuf.core.datetime', target_scope, namespace)
+    import_proto('cc.protobuf.core.quantities', target_scope, namespace)
+    import_proto('cc.protobuf.core.request_reply', target_scope, namespace)
+    import_proto('cc.protobuf.core.signal', target_scope, namespace)
+    import_proto('cc.protobuf.core.status', target_scope, namespace)
+    import_proto('cc.protobuf.core.variant', target_scope, namespace)
+    import_proto('cc.protobuf.core.version', target_scope, namespace)
 
 
 def import_proto(module_name: str,
@@ -73,8 +73,7 @@ def import_proto(module_name: str,
         Module name.  The base name portion (following any leading path) can be
         the stem of the original `.proto` file name (without the extension), or
         it can be the name of the corresponding generated Python module (with a
-        `_pb2` suffix added).  If the name is unqualified (without any leading
-        package name) it will be loaded from the `generated` namespace.
+        `_pb2` suffix added).
 
     @param target_scope:
         Where to create the target namespace. This could be a dictionary
@@ -108,19 +107,16 @@ def import_proto(module_name: str,
 
       ```python
       import math
-      import_proto('variant', globals())
+      import_proto('cc.protobuf.core.variant', globals())
 
       pi_value = cc.variant.Value(value_real = math.pi)
       ```
     '''
 
-    module_path = (module_name if "." in module_name
-                   else "...generated." + module_name)
+    if not module_name.endswith(default_suffix):
+        module_name += default_suffix
 
-    if not module_path.endswith(default_suffix):
-        module_path += default_suffix
-
-    module = importlib.import_module(module_path, __spec__.name)
+    module = importlib.import_module(module_name, __spec__.name)
     scope = target_scope
 
     if namespace is None:

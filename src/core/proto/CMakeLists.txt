@@ -19,7 +19,11 @@ set(SOURCES
   version.proto
 )
 
+list(TRANSFORM SOURCES
+  PREPEND "cc/protobuf/core/")
+
 cc_add_proto("${TARGET}"
-  SOURCES "${SOURCES}"
+  PROTOS "${SOURCES}"
+  BASE_DIR "${CC_PROTO_IMPORT_DIR}"
   PYTHON_INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
 )

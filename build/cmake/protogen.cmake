@@ -21,6 +21,7 @@ function(cc_protogen_common)
   )
   set(_multiargs
     PROTOS        # Source `.proto` files
+    IMPORT_DIRS   # Directories to include in search path
     DEPENDS       # Upstream ProtoBuf build targets on which we depend
     SUFFIXES      # Generated suffixes (becomes build depencies)
     OUT_VARS      # Variables populated with generated filenames for each suffix
@@ -53,6 +54,8 @@ function(cc_protogen_common)
     OUTPUT_VARIABLE include_dirs
     REMOVE_DUPLICATES
   )
+
+  list(APPEND include_dirs ${arg_IMPORT_DIRS})
 
   ## Append any directories supplied in the `Protobuf_IMPORT_DIRS` variable
   if(DEFINED Protobuf_IMPORT_DIRS)
@@ -134,11 +137,12 @@ endfunction()
 
 function(cc_protogen_protobuf_cpp SRCS HDRS)
   set(_singleargs
-    TARGET                  # CMake build target
+    TARGET          # CMake build target
   )
   set(_multiargs
-    PROTOS                  # Source `.proto` files
-    DEPENDS                 # Upstream ProtoBuf build targets on which we depend
+    PROTOS          # Source `.proto` files
+    DEPENDS         # Upstream ProtoBuf build targets on which we depend
+    IMPORT_DIRS     # Directories to include in search path
   )
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
@@ -148,6 +152,7 @@ function(cc_protogen_protobuf_cpp SRCS HDRS)
     GENERATOR cpp
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
+    IMPORT_DIRS "${arg_IMPORT_DIRS}"
     SUFFIXES ".pb.cc" ".pb.h"
     OUT_VARS ${SRCS} ${HDRS})
 
@@ -169,11 +174,12 @@ endfunction()
 
 function(cc_protogen_grpc_cpp SRCS HDRS)
   set(_singleargs
-    TARGET                  # CMake build target
+    TARGET          # CMake build target
   )
   set(_multiargs
-    PROTOS                  # Source `.proto` files
-    DEPENDS                 # Upstream ProtoBuf build targets on which we depend
+    PROTOS          # Source `.proto` files
+    DEPENDS         # Upstream ProtoBuf build targets on which we depend
+    IMPORT_DIRS     # Directories to include in search path
   )
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
@@ -190,6 +196,7 @@ function(cc_protogen_grpc_cpp SRCS HDRS)
     PLUGIN "protoc-gen-grpc=${GRPC_CPP_PLUGIN}"
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
+    IMPORT_DIRS "${arg_IMPORT_DIRS}"
     SUFFIXES ".grpc.pb.cc" ".grpc.pb.h"
     OUT_VARS ${SRCS} ${HDRS}
   )
@@ -214,12 +221,13 @@ endfunction()
 
 function(cc_protogen_protobuf_py SRCS)
   set(_singleargs
-    TARGET                  # CMake build target
-    OUT_DIR                 # Output directory for generated files
+    TARGET          # CMake build target
+    OUT_DIR         # Output directory for generated files
   )
   set(_multiargs
-    PROTOS                  # Source `.proto` files
-    DEPENDS                 # Upstream ProtoBuf build targets on which we depend
+    PROTOS          # Source `.proto` files
+    DEPENDS         # Upstream ProtoBuf build targets on which we depend
+    IMPORT_DIRS     # Directories to include in search path
   )
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
@@ -229,6 +237,7 @@ function(cc_protogen_protobuf_py SRCS)
     GENERATOR python
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
+    IMPORT_DIRS "${arg_IMPORT_DIRS}"
     SUFFIXES "_pb2.py"
     OUT_DIR "${arg_OUT_DIR}"
     OUT_VARS ${SRCS})
@@ -242,12 +251,13 @@ endfunction()
 
 function(cc_protogen_grpc_py SRCS)
   set(_singleargs
-    TARGET                  # CMake build target
-    OUT_DIR                 # Output directory for generated files
+    TARGET          # CMake build target
+    OUT_DIR         # Output directory for generated files
   )
   set(_multiargs
-    PROTOS                  # Source `.proto` files
-    DEPENDS                 # Upstream ProtoBuf build targets on which we depend
+    PROTOS          # Source `.proto` files
+    DEPENDS         # Upstream ProtoBuf build targets on which we depend
+    IMPORT_DIRS     # Directories to include in search path
   )
   cmake_parse_arguments(arg "" "${_singleargs}" "${_multiargs}" "${ARGN}")
 
@@ -264,6 +274,7 @@ function(cc_protogen_grpc_py SRCS)
     PLUGIN "protoc-gen-grpc=${GRPC_PYTHON_PLUGIN}"
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
+    IMPORT_DIRS "${arg_IMPORT_DIRS}"
     SUFFIXES "_pb2_grpc.py"
     OUT_DIR "${arg_OUT_DIR}"
     OUT_VARS ${SRCS}

@@ -5,8 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from cc.generated.netconfig_pb2 import *
-from .utils import proto_enum
+from .netconfig_pb2 import *
+from ..utils import proto_enum
 
 IPConfigMethod              = proto_enum(IPConfigMethod)
 WirelessMode                = proto_enum(WirelessMode)

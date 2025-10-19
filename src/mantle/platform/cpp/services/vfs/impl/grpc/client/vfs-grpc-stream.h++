@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "vfs.grpc.pb.h"  // Generated from `vfs.proto`
+#include "cc/protobuf/vfs/vfs.grpc.pb.h"  // Generated from `vfs.proto`
 
 #include "vfs-base.h++"
 #include "io/streambuffer.h++"

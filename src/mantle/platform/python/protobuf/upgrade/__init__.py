@@ -6,11 +6,11 @@
 #===============================================================================
 
 ### Generated modules
-from cc.generated.upgrade_pb2 import *
-from cc.generated.upgrade_pb2 import PackageSource
+from .upgrade_pb2 import *
+from .upgrade_pb2 import PackageSource
 
 ### Modules within package
-from .vfs import Path as VFSPath, VFSPathType, encodePath, decodePath
+from ..vfs import Path as VFSPath, VFSPathType, encodePath, decodePath
 
 ### Standard Python modules
 from typing import Sequence, Mapping, Tuple

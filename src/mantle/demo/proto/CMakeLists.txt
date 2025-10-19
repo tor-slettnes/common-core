@@ -15,12 +15,13 @@ set(PROTO_DEPS
 
 ### Source files
 set(SOURCES
-  demo.proto
+  cc/protobuf/demo/demo.proto
 )
 
 ### Generate language bindings
 cc_add_proto("${TARGET}"
+  PROTOS ${SOURCES}
+  BASE_DIR "${CC_PROTO_IMPORT_DIR}"
   PROTO_DEPS ${PROTO_DEPS}
-  SOURCES ${SOURCES}
   PYTHON_INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
 )

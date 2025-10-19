@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "upgrade.pb.h"  // generated from `upgrade.proto`
+#include "cc/protobuf/upgrade/upgrade.pb.h"  // generated from `upgrade.proto`
 #include "grpc-signalqueue.h++"
 
 namespace upgrade::grpc

@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "avro-protobufschema.h++"
-#include "status.pb.h"
+#include "cc/protobuf/core/status.pb.h"
 #include "application/init.h++"  // Common init routines
 #include "string/format.h++"
 #include "argparse/common.h++"

@@ -7,7 +7,7 @@
 
 #pragma once
 #include "demo-types.h++"
-#include "demo.pb.h"
+#include "cc/protobuf/demo/demo.pb.h"
 #include <ctime>
 
 namespace protobuf

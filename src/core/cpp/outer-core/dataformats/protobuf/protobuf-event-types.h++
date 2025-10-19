@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "status.pb.h"  // generated from `status.proto`
+#include "cc/protobuf/core/status.pb.h"  // generated from `status.proto`
 #include "status/error.h++"
 
 /// ProtoBuf message conversions.

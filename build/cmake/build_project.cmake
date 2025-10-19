@@ -30,12 +30,13 @@ if(NOT PROJECT_INCLUDED)
   include(pkgconf)
 
   #-----------------------------------------------------------------------------
-  ### CTest configuration
+  # CTest configuration
+
   include(ctest_python)
   include(CTest)
 
   #-----------------------------------------------------------------------------
-  ### Load targeted build functions
+  # Load targeted build functions
 
   include(build_library)
   include(build_executable)
@@ -50,7 +51,7 @@ if(NOT PROJECT_INCLUDED)
   include(doxygen)
 
   #-----------------------------------------------------------------------------
-  ### CPack configuration
+  # CPack configuration
 
   include(cpack_init)
   include(CPack)

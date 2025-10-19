@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "switchboard.grpc.pb.h"  // Generated from `switchboard.proto`
+#include "cc/protobuf/switchboard/switchboard.grpc.pb.h"  // Generated from `switchboard.proto`
 #include "switchboard.h++"
 #include "grpc-signalclient.h++"
 #include "string/misc.h++"

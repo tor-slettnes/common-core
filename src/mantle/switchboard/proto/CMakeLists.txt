@@ -14,12 +14,13 @@ set(PROTO_DEPS cc_core_proto)
 
 ### Source files
 set(SOURCES
-  switchboard.proto
-  )
+  cc/protobuf/switchboard/switchboard.proto
+)
 
 ### Generate language bindings
 cc_add_proto("${TARGET}"
+  PROTOS ${SOURCES}
+  BASE_DIR "${CC_PROTO_IMPORT_DIR}"
   PROTO_DEPS ${PROTO_DEPS}
-  SOURCES ${SOURCES}
   PYTHON_INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
 )

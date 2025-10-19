@@ -6,14 +6,14 @@
 #===============================================================================
 
 ### Generated modules
-from cc.generated.vfs_pb2 import *
-from cc.generated.vfs_pb2 import \
+from .vfs_pb2 import *
+from .vfs_pb2 import \
     PathType, Path, PathRequest, LocateRequest, AttributeRequest, FileInfo
 
 ### Modules within package
-from .utils import proto_enum
-from .wellknown import decodeTimestamp
-from .variant import PyValueDict, PyTaggedValueList, decodeKeyValueMap
+from ..utils import proto_enum
+from ..wellknown import decodeTimestamp
+from ..variant import PyValueDict, PyTaggedValueList, decodeKeyValueMap
 from cc.core.scalar_types import OCT8
 
 ### Standard Python modules

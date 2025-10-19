@@ -12,7 +12,7 @@
 #pragma once
 #include "grpc-clientwrapper.h++"
 #include "grpc-clientreceiver.h++"
-#include "signal.pb.h"
+#include "cc/protobuf/core/signal.pb.h"
 #include "protobuf-message.h++"
 #include "protobuf-signal-receiver.h++"
 #include "thread/binaryevent.h++"

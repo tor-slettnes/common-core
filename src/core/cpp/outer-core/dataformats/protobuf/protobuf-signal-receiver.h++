@@ -8,7 +8,7 @@
 #pragma once
 #include "protobuf-message.h++"
 #include "thread/signaltemplate.h++"
-#include "signal.pb.h"  // Generated from `signal.proto`
+#include "cc/protobuf/core/signal.pb.h"  // Generated from `signal.proto`
 
 #include <unordered_map>
 #include <functional>

@@ -10,7 +10,7 @@
 #include "protobuf-event-types.h++"
 #include "protobuf-inline.h++"
 
-#include "multilogger.grpc.pb.h"
+#include "cc/protobuf/multilogger/multilogger.grpc.pb.h"
 
 namespace multilogger::grpc
 {

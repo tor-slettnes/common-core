@@ -13,7 +13,7 @@
 #include "thread/signaltemplate.h++"
 #include "platform/symbols.h++"
 #include "platform/init.h++"
-#include "signal.pb.h"  // Generated from `signal.proto`
+#include "cc/protobuf/core/signal.pb.h"  // Generated from `signal.proto`
 
 #include <functional>
 #include <unordered_set>

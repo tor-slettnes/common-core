@@ -11,7 +11,7 @@ from cc.messaging.grpc.signal_service import SignalService
 from cc.protobuf.demo import Greeting, TimeData
 
 ### Generated modules
-from cc.generated.demo_pb2_grpc import DemoServicer
+from cc.protobuf.demo.demo_pb2_grpc import DemoServicer
 
 ### Third-party modules
 from google.protobuf.empty_pb2 import Empty

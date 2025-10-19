@@ -10,8 +10,8 @@
 #include "grpc-clientwrapper.h++"
 #include "types/create-shared.h++"
 
-#include "multilogger.grpc.pb.h"
-#include "status.pb.h"
+#include "cc/protobuf/multilogger/multilogger.grpc.pb.h"
+#include "cc/protobuf/core/status.pb.h"
 
 namespace multilogger::grpc
 {

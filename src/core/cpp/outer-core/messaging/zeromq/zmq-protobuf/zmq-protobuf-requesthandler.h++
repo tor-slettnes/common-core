@@ -10,7 +10,7 @@
 #include "protobuf-message.h++"
 #include "types/valuemap.h++"
 
-#include "request_reply.pb.h"
+#include "cc/protobuf/core/request_reply.pb.h"
 
 namespace core::zmq
 {

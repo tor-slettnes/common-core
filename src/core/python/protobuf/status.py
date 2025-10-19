@@ -6,7 +6,7 @@
 #===============================================================================
 
 from .utils import proto_enum
-from ..generated.status_pb2 import Error, Level, Domain
+from cc.protobuf.core.status_pb2 import Error, Level, Domain
 
 import logging
 

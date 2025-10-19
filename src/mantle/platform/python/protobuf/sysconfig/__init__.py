@@ -5,8 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from cc.generated.sysconfig_pb2 import *
-from cc.generated.sysconfig_pb2 import TimeZoneCountry
+from .sysconfig_pb2 import *
+from .sysconfig_pb2 import TimeZoneCountry
 
 def encodeCountry(country: str|None, required=False):
     result = TimeZoneCountry()

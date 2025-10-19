@@ -11,7 +11,7 @@
 #include "types/value.h++"
 #include "string/misc.h++"
 
-#include "status.pb.h"
+#include "cc/protobuf/core/status.pb.h"
 
 // System headers
 #include <grpc++/grpc++.h>

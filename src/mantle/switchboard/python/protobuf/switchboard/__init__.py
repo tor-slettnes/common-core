@@ -6,9 +6,9 @@
 #===============================================================================
 
 ### Generated from `switchboard.proto`
-from ..generated.switchboard_pb2 import *
-from ..generated.switchboard_pb2 import Localization
-from .utils import proto_enum
+from .switchboard_pb2 import *
+from .switchboard_pb2 import Localization
+from ..utils import proto_enum
 
 from typing import Optional
 from collections.abc import Mapping, Sequence

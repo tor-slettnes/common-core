@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "netconfig.pb.h"  // generated from `netconfig.proto`
+#include "cc/protobuf/netconfig/netconfig.pb.h"  // generated from `netconfig.proto`
 #include "grpc-signalqueue.h++"
 
 namespace netconfig::grpc

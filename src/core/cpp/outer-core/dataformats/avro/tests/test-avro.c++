@@ -11,7 +11,7 @@
 #include "avro-protobufvalue.h++"
 #include "avro-valuemethods.h++"
 #include "protobuf-event-types.h++"
-#include "status.pb.h"
+#include "cc/protobuf/core/status.pb.h"
 #include "parsers/json/writer.h++"
 #include "parsers/json/reader.h++"
 

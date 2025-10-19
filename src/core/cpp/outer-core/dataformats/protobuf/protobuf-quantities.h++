@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "quantities.pb.h" // generated from `variant.proto`
+#include "cc/protobuf/core/quantities.pb.h" // generated from `variant.proto`
 
 namespace protobuf
 {

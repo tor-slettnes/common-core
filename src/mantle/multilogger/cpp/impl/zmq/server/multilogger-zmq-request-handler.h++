@@ -10,7 +10,7 @@
 #include "multilogger-zmq-common.h++"
 #include "zmq-protobuf-requesthandler.h++"
 
-#include "multilogger.pb.h"
+#include "cc/protobuf/multilogger/multilogger.pb.h"
 
 #include <memory>
 

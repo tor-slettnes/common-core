@@ -20,7 +20,7 @@ from cc.protobuf.switchboard import \
 from cc.protobuf.status import Error
 from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
 
-from cc.generated.switchboard_pb2_grpc import SwitchboardStub
+from cc.protobuf.switchboard.switchboard_pb2_grpc import SwitchboardStub
 from cc.core.doc_inherit import doc_inherit
 
 from typing import Optional

@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "multilogger.grpc.pb.h"  // Generated from `multilogger.proto`
+#include "cc/protobuf/multilogger/multilogger.grpc.pb.h"  // Generated from `multilogger.proto`
 #include "multilogger-api.h++"
 #include "grpc-clientwrapper.h++"
 #include "types/create-shared.h++"

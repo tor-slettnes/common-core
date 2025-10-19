@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "variant.pb.h" // generated from `variant.proto`
+#include "cc/protobuf/core/variant.pb.h" // generated from `variant.proto`
 #include "chrono/date-time.h++"
 #include "types/value.h++"
 

@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules wihtin package
-from cc.generated.variant_pb2 import Value, ValueList, \
+from cc.protobuf.core.variant_pb2 import Value, ValueList, \
     TaggedValue, TaggedValueList, KeyValueMap
 from .wellknown import TimestampType, \
     encodeTimestamp, decodeTimestamp, decodeDuration

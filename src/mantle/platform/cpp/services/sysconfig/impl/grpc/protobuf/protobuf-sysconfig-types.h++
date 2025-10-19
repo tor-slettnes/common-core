@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "sysconfig.pb.h"  // generated from `sysconfig.proto`
+#include "cc/protobuf/sysconfig/sysconfig.pb.h"  // generated from `sysconfig.proto`
 #include "sysconfig-host.h++"
 #include "sysconfig-process.h++"
 #include "sysconfig-product.h++"

@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "datetime.pb.h"  // generated from `datetime.proto`
+#include "cc/protobuf/core/datetime.pb.h"  // generated from `datetime.proto`
 #include "chrono/date-time.h++"
 
 namespace protobuf
