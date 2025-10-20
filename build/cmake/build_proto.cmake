@@ -5,7 +5,6 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-include(protogen)
 include(pkgconf)
 include(build_python)
 
@@ -17,24 +16,37 @@ function(cc_add_proto TARGET)
     PYTHON_INSTALL # Install generated `.py` files even if INSTALL_COMPONENT is not set
   )
   set(_singleargs
+    BASE_DIR                   # Base directory for .proto files, if not current source dir.
     CPP_TARGET_SUFFIX          # Appended to CMake target for generated C++ files
     PYTHON_TARGET_SUFFIX       # Appended to CMake target for generated Python files
     LIB_TYPE                   # C++ library type (Default: STATIC)
     SCOPE                      # Target scope (Default: PUBLIC)
     PYTHON_INSTALL_COMPONENT   # Install component for generated Python files
     PYTHON_INSTALL_DIR         # Relative install folder for generated Python files
-    PYTHON_NAMESPACE           # Override Python top-level namespace (Default: cc)
-    PYTHON_NAMESPACE_COMPONENT # Override Python 2nd level namespace (Default: generated)
+    PYTHON_NAMESPACE           # Install Python modules within a specified namespace
   )
   set(_multiargs
-    SOURCES        # Source `.proto` files
+    PROTOS         # Source `.proto` files
     PROTO_DEPS     # Upstream CMake targets on which we depend
+    IMPORT_DIRS    # Additional directories to include in search path
     LIB_DEPS       # Upstream libraries
     OBJ_DEPS       # Upstream CMake object libraries
     PKG_DEPS       # 3rd party package dependencies described with `pkgconf`
     MOD_DEPS       # 3rd party package dependencies described with CMake modules
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
+
+  if(arg_BASE_DIR)
+    list(TRANSFORM arg_PROTOS
+      PREPEND "${arg_BASE_DIR}/"
+    )
+
+    set(import_dirs "${arg_BASE_DIR}")
+  else()
+    set(import_dirs "${CMAKE_CURRENT_SOURCE_DIR}")
+  endif()
+
+  list(APPEND import_dirs ${arg_IMPORT_DIRS})
 
   if(BUILD_CPP)
     cc_get_value_or_default(cpp_suffix arg_CPP_TARGET_SUFFIX "_cpp")
@@ -47,7 +59,8 @@ function(cc_add_proto TARGET)
     cc_add_proto_cpp("${cpp_target}"
       LIB_TYPE "${arg_LIB_TYPE}"
       SCOPE "${arg_SCOPE}"
-      PROTOS "${arg_SOURCES}"
+      PROTOS "${arg_PROTOS}"
+      IMPORT_DIRS "${import_dirs}"
       PROTO_DEPS "${proto_cpp_deps}"
       LIB_DEPS "${arg_LIB_DEPS}"
       OBJ_DEPS "${arg_OBJ_DEPS}"
@@ -66,26 +79,14 @@ function(cc_add_proto TARGET)
 
     cc_get_optional_keyword(INSTALL arg_PYTHON_INSTALL)
 
-    cc_get_argument_or_default(
-      namespace_component             # OUTPUT_VARIABLE
-      arg_PYTHON_NAMESPACE_COMPONENT  # VARIABLE
-      "generated"                     # DEFAULT
-      "${arg_KEWORDS_MISSING_VALUES}" # MISSING_LIST
-    )
-
-    cc_get_namespace(namespace
-      "${arg_PYTHON_NAMESPACE}"
-      "${namespace_component}"
-      "${arg_KEYWORDS_MISSING_VALUES}"
-    )
-
     cc_add_proto_python("${py_target}"
-      NAMESPACE "${namespace}"
+      NAMESPACE "${arg_NAMESPACE}"
       INSTALL ${INSTALL}
       INSTALL_COMPONENT "${arg_PYTHON_INSTALL_COMPONENT}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       DEPENDS "${proto_py_deps}"
-      PROTOS "${arg_SOURCES}"
+      PROTOS "${arg_PROTOS}"
+      IMPORT_DIRS "${import_dirs}"
     )
   endif()
 endfunction()
@@ -102,6 +103,7 @@ function(cc_add_proto_cpp TARGET)
   )
   set(_multiargs
     PROTOS         # Source `.proto` files
+    IMPORT_DIRS    # Additional directories to include in search path
     PROTO_DEPS     # Upstream CMake targets on which we depend
     LIB_DEPS       # Upstream libraries
     OBJ_DEPS       # Upstream CMake object libraries
@@ -137,22 +139,39 @@ function(cc_add_proto_cpp TARGET)
     ${CMAKE_CURRENT_BINARY_DIR}
   )
 
-  if(arg_PROTO_DEPS)
-    add_dependencies("${TARGET}" ${arg_PROTO_DEPS})
+  if (arg_PROTO_DEPS)
+    # We manually add `PROTO_DEPS` to to make this target visible to downstream
+    # targets via `cc_get_target_properties_recursively()`, which in turn uses
+    # the `MANUALLY_ADDED_DEPENDENCIES` property to find this and other upstream
+    # protobuf targets.
+    add_dependencies(${TARGET} ${arg_PROTO_DEPS})
   endif()
+
+  set_target_properties("${TARGET}" PROPERTIES
+    import_dirs "${arg_IMPORT_DIRS}")
+
+  cc_get_target_property_recursively(
+    TARGETS "${TARGET}"
+    PROPERTY import_dirs
+    REMOVE_DUPLICATES
+    OUTPUT_VARIABLE import_dirs
+  )
 
   if(BUILD_PROTOBUF)
     find_package(Protobuf REQUIRED)
 
-    cc_protogen_protobuf_cpp(PROTO_CPP_SRCS PROTO_CPP_HDRS
+    protobuf_generate(
       TARGET "${TARGET}"
-      DEPENDS "${arg_PROTO_DEPS}"
+      LANGUAGE cpp
       PROTOS "${arg_PROTOS}"
+      IMPORT_DIRS ${import_dirs}
     )
+
   endif()
 
   if(BUILD_GRPC)
     find_package(gRPC REQUIRED)
+    find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin)
 
     # The above fails to capture all required library dependencies from recent
     # gRPC releases.  Let's obtain additional package dependencies from
@@ -161,10 +180,15 @@ function(cc_add_proto_cpp TARGET)
       LIB_TYPE "${lib_type}"
       DEPENDS gpr)
 
-    cc_protogen_grpc_cpp(GRPC_CPP_SRCS GRPC_CPP_HDRS
+
+    protobuf_generate(
       TARGET "${TARGET}"
-      DEPENDS "${arg_PROTO_DEPS}"
+      LANGUAGE grpc
       PROTOS "${arg_PROTOS}"
+      IMPORT_DIRS ${import_dirs}
+      PLUGIN protoc-gen-grpc=${GRPC_CPP_PLUGIN}
+      PLUGIN_OPTIONS generate_mock_code=true
+      GENERATE_EXTENSIONS .grpc.pb.h .grpc.pb.cc
     )
   endif()
 
@@ -178,26 +202,29 @@ function(cc_add_proto_python TARGET)
     INSTALL # Install Python modules even if `INSTALL_COMPONENT` is not specified
   )
   set(_singleargs
-    STAGING_DIR              # Override staging directory
-    INSTALL_COMPONENT        # Install component for generated Python files
-    INSTALL_DIR              # Relative install folder for generated files
-    NAMESPACE                # Namespace in which to install modules
+    STAGING_DIR        # Override staging directory
+    INSTALL_COMPONENT  # Install component for generated Python files
+    INSTALL_DIR        # Relative install folder for generated files
+    NAMESPACE          # Namespace in which to install modules
   )
   set(_multiargs
-    DEPENDS                  # Upstream CMake targets on which we depend
-    PROTOS                   # Source `.proto` files
+    DEPENDS            # Upstream CMake targets on which we depend
+    PROTOS             # Source `.proto` files
+    IMPORT_DIRS        # Additional directories to include in search path
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
   cc_get_value_or_default(
     staging_dir
     arg_STAGING_DIR
-    "${PYTHON_STAGING_ROOT}/${TARGET}")
+    "${PYTHON_STAGING_ROOT}/${TARGET}"
+  )
 
   cc_get_namespace_dir(
     NAMESPACE "${arg_NAMESPACE}"
     ROOT_DIR "${staging_dir}"
-    OUTPUT_VARIABLE gen_dir)
+    OUTPUT_VARIABLE gen_dir
+  )
 
   if(BUILD_PROTOBUF OR BUILD_GRPC)
     ### We include this in the 'ALL` target iff we expect to install it.
@@ -206,30 +233,46 @@ function(cc_add_proto_python TARGET)
     cc_get_optional_keyword(ALL arg_INSTALL_COMPONENT)
     add_custom_target("${TARGET}" ${ALL})
 
+    if(arg_DEPENDS)
+      add_dependencies("${TARGET}" ${arg_DEPENDS})
+    endif()
+
+    set_target_properties("${TARGET}" PROPERTIES
+      import_dirs "${arg_IMPORT_DIRS}")
+
+    cc_get_target_property_recursively(
+      TARGETS "${TARGET}"
+      PROPERTY import_dirs
+      REMOVE_DUPLICATES
+      OUTPUT_VARIABLE import_dirs
+    )
+
     ### Generate Python bindings
     file(MAKE_DIRECTORY "${gen_dir}")
   endif()
 
   if(BUILD_PROTOBUF)
-    cc_protogen_protobuf_py(PROTO_PY
+    protobuf_generate(
       TARGET "${TARGET}"
-      DEPENDS "${arg_DEPENDS}"
+      LANGUAGE python
       PROTOS "${arg_PROTOS}"
-      OUT_DIR "${gen_dir}"
+      IMPORT_DIRS "${import_dirs}"
+      PROTOC_OUT_DIR "${gen_dir}"
     )
   endif()
 
   if(BUILD_GRPC)
-    cc_protogen_grpc_py(GRPC_PY
-      TARGET "${TARGET}"
-      DEPENDS "${arg_DEPENDS}"
-      PROTOS "${arg_PROTOS}"
-      OUT_DIR "${gen_dir}"
-    )
-  endif()
+    find_program(GRPC_PYTHON_PLUGIN grpc_python_plugin)
 
-  if(arg_DEPENDS)
-    add_dependencies("${TARGET}" ${arg_DEPENDS})
+    protobuf_generate(
+      TARGET "${TARGET}"
+      LANGUAGE grpc
+      PROTOS "${arg_PROTOS}"
+      IMPORT_DIRS "${import_dirs}"
+      PLUGIN protoc-gen-grpc=${GRPC_PYTHON_PLUGIN}
+      GENERATE_EXTENSIONS _pb2_grpc.py
+      PROTOC_OUT_DIR "${gen_dir}"
+    )
   endif()
 
   ### Set target properties for downstream targets

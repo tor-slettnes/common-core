@@ -23,6 +23,6 @@ set(SOURCES
 ### Generate language bindings
 cc_add_proto("${TARGET}"
   PROTO_DEPS ${PROTO_DEPS}
-  SOURCES ${SOURCES}
+  PROTOS ${SOURCES}
   PYTHON_INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
 )
