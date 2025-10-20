@@ -106,6 +106,9 @@ set(PACKAGE_CONTACT "Tor Slettnes <tor@slett.net>"
 set(PYTHON_NAMESPACE "cc"
   CACHE STRING "Top-level package/namespace for Python modules")
 
+set(PYTHON_GENERATED_NAMESPACE "${PYTHON_NAMESPACE}.generated"
+  CACHE STRING "Namespace for generated Python modules (e.g. ProtoBuf)")
+
 set(PYTHON_PIP_CORE_REQUIREMENTS_FILE
   "${CMAKE_CURRENT_LIST_DIR}/pip-requirements.txt"
   CACHE FILEPATH

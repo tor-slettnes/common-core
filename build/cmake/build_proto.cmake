@@ -41,10 +41,12 @@ function(cc_add_proto TARGET)
       PREPEND "${arg_BASE_DIR}/"
     )
 
-    list(PREPEND arg_IMPORT_DIRS "${arg_BASE_DIR}")
+    set(import_dirs "${arg_BASE_DIR}")
+  else()
+    set(import_dirs "${CMAKE_CURRENT_SOURCE_DIR}")
   endif()
 
-
+  list(APPEND import_dirs ${arg_IMPORT_DIRS})
 
   if(BUILD_CPP)
     cc_get_value_or_default(cpp_suffix arg_CPP_TARGET_SUFFIX "_cpp")
@@ -58,7 +60,7 @@ function(cc_add_proto TARGET)
       LIB_TYPE "${arg_LIB_TYPE}"
       SCOPE "${arg_SCOPE}"
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS "${arg_IMPORT_DIRS}"
+      IMPORT_DIRS "${import_dirs}"
       PROTO_DEPS "${proto_cpp_deps}"
       LIB_DEPS "${arg_LIB_DEPS}"
       OBJ_DEPS "${arg_OBJ_DEPS}"
@@ -77,6 +79,13 @@ function(cc_add_proto TARGET)
 
     cc_get_optional_keyword(INSTALL arg_PYTHON_INSTALL)
 
+    cc_get_argument_or_default(
+      namespace                       # OUTPUT_VARIABLE
+      arg_PYTHON_NAMESPACE            # VARIABLE
+      "${PYTHON_GENERATED_NAMESPACE}" # DEFAULT
+      "${arg_KEWORDS_MISSING_VALUES}" # MISSING_LIST
+    )
+
     cc_add_proto_python("${py_target}"
       NAMESPACE "${arg_NAMESPACE}"
       INSTALL ${INSTALL}
@@ -84,7 +93,7 @@ function(cc_add_proto TARGET)
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       DEPENDS "${proto_py_deps}"
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS "${arg_IMPORT_DIRS}"
+      IMPORT_DIRS "${import_dirs}"
     )
   endif()
 endfunction()
@@ -137,6 +146,24 @@ function(cc_add_proto_cpp TARGET)
     ${CMAKE_CURRENT_BINARY_DIR}
   )
 
+  if (arg_PROTO_DEPS)
+    # We manually add `PROTO_DEPS` to to make this target visible to downstream
+    # targets via `cc_get_target_properties_recursively()`, which in turn uses
+    # the `MANUALLY_ADDED_DEPENDENCIES` property to find this and other upstream
+    # protobuf targets.
+    add_dependencies(${TARGET} ${arg_PROTO_DEPS})
+  endif()
+
+  set_target_properties("${TARGET}" PROPERTIES
+    import_dirs "${arg_IMPORT_DIRS}")
+
+  cc_get_target_property_recursively(
+    TARGETS "${TARGET}"
+    PROPERTY import_dirs
+    REMOVE_DUPLICATES
+    OUTPUT_VARIABLE import_dirs
+  )
+
   if(BUILD_PROTOBUF)
     find_package(Protobuf REQUIRED)
 
@@ -144,7 +171,7 @@ function(cc_add_proto_cpp TARGET)
       TARGET "${TARGET}"
       LANGUAGE cpp
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS ${arg_IMPORT_DIRS}
+      IMPORT_DIRS ${import_dirs}
     )
 
   endif()
@@ -165,7 +192,7 @@ function(cc_add_proto_cpp TARGET)
       TARGET "${TARGET}"
       LANGUAGE grpc
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS ${arg_IMPORT_DIRS}
+      IMPORT_DIRS ${import_dirs}
       PLUGIN protoc-gen-grpc=${GRPC_CPP_PLUGIN}
       PLUGIN_OPTIONS generate_mock_code=true
       GENERATE_EXTENSIONS .grpc.pb.h .grpc.pb.cc
@@ -213,6 +240,20 @@ function(cc_add_proto_python TARGET)
     cc_get_optional_keyword(ALL arg_INSTALL_COMPONENT)
     add_custom_target("${TARGET}" ${ALL})
 
+    if(arg_DEPENDS)
+      add_dependencies("${TARGET}" ${arg_DEPENDS})
+    endif()
+
+    set_target_properties("${TARGET}" PROPERTIES
+      import_dirs "${arg_IMPORT_DIRS}")
+
+    cc_get_target_property_recursively(
+      TARGETS "${TARGET}"
+      PROPERTY import_dirs
+      REMOVE_DUPLICATES
+      OUTPUT_VARIABLE import_dirs
+    )
+
     ### Generate Python bindings
     file(MAKE_DIRECTORY "${gen_dir}")
   endif()
@@ -222,7 +263,7 @@ function(cc_add_proto_python TARGET)
       TARGET "${TARGET}"
       LANGUAGE python
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS "${arg_IMPORT_DIRS}"
+      IMPORT_DIRS "${import_dirs}"
       PROTOC_OUT_DIR "${gen_dir}"
     )
   endif()
@@ -234,15 +275,11 @@ function(cc_add_proto_python TARGET)
       TARGET "${TARGET}"
       LANGUAGE grpc
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS "${arg_IMPORT_DIRS}"
+      IMPORT_DIRS "${import_dirs}"
       PLUGIN protoc-gen-grpc=${GRPC_PYTHON_PLUGIN}
       GENERATE_EXTENSIONS _pb2_grpc.py
       PROTOC_OUT_DIR "${gen_dir}"
     )
-  endif()
-
-  if(arg_DEPENDS)
-    add_dependencies("${TARGET}" ${arg_DEPENDS})
   endif()
 
   ### Set target properties for downstream targets
