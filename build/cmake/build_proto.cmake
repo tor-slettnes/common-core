@@ -79,8 +79,15 @@ function(cc_add_proto TARGET)
 
     cc_get_optional_keyword(INSTALL arg_PYTHON_INSTALL)
 
+    cc_get_argument_or_default(
+      namespace                       # OUTPUT_VARIABLE
+      arg_PYTHON_NAMESPACE            # VARIABLE
+      "${PYTHON_GENERATED_NAMESPACE}" # DEFAULT
+      "${arg_KEWORDS_MISSING_VALUES}" # MISSING_LIST
+    )
+
     cc_add_proto_python("${py_target}"
-      NAMESPACE "${arg_NAMESPACE}"
+      NAMESPACE "${namespace}"
       INSTALL ${INSTALL}
       INSTALL_COMPONENT "${arg_PYTHON_INSTALL_COMPONENT}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
