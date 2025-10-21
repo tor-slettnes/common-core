@@ -6,4 +6,4 @@
 #===============================================================================
 
 ### Generated from `demo.proto`
-from .demo_pb2 import Greeting, TimeData, Signal
+from cc.demo.demo_pb2 import Greeting, TimeData, Signal

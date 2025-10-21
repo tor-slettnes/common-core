@@ -43,19 +43,19 @@ namespace avro
         {
             This::assign_from_wellknown(avro_value, msg);
         }
-        else if (auto *proto = dynamic_cast<const cc::variant::Value *>(&msg))
+        else if (auto *proto = dynamic_cast<const cc::protobuf::variant::Value *>(&msg))
         {
             avro::set_variant(
                 avro_value,
                 protobuf::decoded<core::types::Value>(*proto));
         }
-        else if (auto *proto = dynamic_cast<const cc::variant::ValueList *>(&msg))
+        else if (auto *proto = dynamic_cast<const cc::protobuf::variant::ValueList *>(&msg))
         {
             avro::set_variant_list(
                 avro_value,
                 protobuf::decoded<core::types::ValueList>(*proto));
         }
-        else if (auto *proto = dynamic_cast<const cc::variant::KeyValueMap *>(&msg))
+        else if (auto *proto = dynamic_cast<const cc::protobuf::variant::KeyValueMap *>(&msg))
         {
             avro::set_variant_map(
                 avro_value,

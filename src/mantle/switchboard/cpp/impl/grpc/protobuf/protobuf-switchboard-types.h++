@@ -7,7 +7,7 @@
 
 #pragma once
 #include "switchboard.h++"
-#include "cc/protobuf/switchboard/switchboard.pb.h"     // generated from `switchboard.proto`
+#include "cc/switchboard/switchboard.pb.h"     // generated from `switchboard.proto`
 
 namespace protobuf
 {

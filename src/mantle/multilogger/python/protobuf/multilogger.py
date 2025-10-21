@@ -6,8 +6,8 @@
 #===============================================================================
 
 ### Generated from `logger.proto`
-from .multilogger_pb2 import ColumnType as _ColumnType, ColumnSpec
-from .multilogger_pb2 import *
+from cc.platform.multilogger.multilogger_pb2 import ColumnType as _ColumnType, ColumnSpec
+from cc.platform.multilogger.multilogger_pb2 import *
 
 ### Standard Python modules
 import enum

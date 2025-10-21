@@ -45,7 +45,7 @@ namespace core::grpc
     {
     }
 
-    Status::Status(const cc::status::Error &details)
+    Status::Status(const cc::protobuf::status::Error &details)
         : Error(
               details.text(),
               ::protobuf::decoded<status::Domain>(details.domain()),
@@ -64,7 +64,7 @@ namespace core::grpc
 
     Status::Status(::grpc::StatusCode status_code,
                    const std::string &text,
-                   const cc::status::Error &details)
+                   const cc::protobuf::status::Error &details)
         : Error(
               text,
               ::protobuf::decoded<status::Domain>(details.domain()),
@@ -108,7 +108,7 @@ namespace core::grpc
           ::grpc::Status(
               status_code,
               text,
-              ::protobuf::encoded<cc::status::Error>(
+              ::protobuf::encoded<cc::protobuf::status::Error>(
                   *static_cast<Error *>(this))
                   .SerializeAsString())
     {
@@ -154,9 +154,9 @@ namespace core::grpc
         return this->error_message();
     }
 
-    cc::status::Error Status::details() const noexcept
+    cc::protobuf::status::Error Status::details() const noexcept
     {
-        cc::status::Error msg;
+        cc::protobuf::status::Error msg;
         msg.ParseFromString(this->error_details());
         return msg;
     };

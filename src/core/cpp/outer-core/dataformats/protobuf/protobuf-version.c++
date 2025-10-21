@@ -49,11 +49,11 @@ namespace protobuf
     }
 }  // namespace protobuf
 
-namespace cc::version
+namespace cc::protobuf::version
 {
     std::ostream &operator<<(std::ostream &stream, const Version &version)
     {
-        stream << protobuf::to_string(version);
+        stream << ::protobuf::to_string(version);
         return stream;
     }
-}  // namespace cc::version
+}  // namespace cc::protobuf::version

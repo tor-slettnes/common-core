@@ -9,7 +9,7 @@
 #include "demo-api.h++"
 #include "grpc-signalrequesthandler.h++"
 
-#include "cc/protobuf/demo/demo.grpc.pb.h"  // generated from `demo.proto`
+#include "cc/demo/demo.grpc.pb.h"  // generated from `demo.proto`
 
 #include "types/create-shared.h++"
 
@@ -52,7 +52,7 @@ namespace demo::grpc
 
         ::grpc::Status watch(
             ::grpc::ServerContext* context,
-            const cc::signal::Filter* request,
+            const cc::protobuf::signal::Filter* request,
             ::grpc::ServerWriter<cc::demo::Signal>* writer) override;
 
     private:

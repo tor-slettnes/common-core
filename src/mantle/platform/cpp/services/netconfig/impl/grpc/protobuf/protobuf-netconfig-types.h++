@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/protobuf/netconfig/netconfig.pb.h"  // generated from `variant.proto`
+#include "cc/platform/netconfig/netconfig.pb.h"  // generated from `variant.proto`
 #include "netconfig.h++"
 
 namespace protobuf

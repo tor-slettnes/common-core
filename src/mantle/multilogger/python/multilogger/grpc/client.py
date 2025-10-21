@@ -24,7 +24,7 @@ class Client (BaseClient, API, ThreadedSubmitter):
     Client for MultiLogger service.
     '''
 
-    from cc.protobuf.multilogger.multilogger_pb2_grpc import MultiLoggerStub as Stub
+    from cc.platform.multilogger.multilogger_pb2_grpc import MultiLoggerStub as Stub
 
     def __init__(
             self,

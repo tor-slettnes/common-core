@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/protobuf/sysconfig/sysconfig.pb.h"  // generated from `sysconfig.proto`
+#include "cc/platform/sysconfig/sysconfig.pb.h"  // generated from `sysconfig.proto`
 #include "sysconfig-host.h++"
 #include "sysconfig-process.h++"
 #include "sysconfig-product.h++"
@@ -47,18 +47,18 @@ namespace protobuf
     // Version
 
     void encode(const sysconfig::Version &native,
-                cc::version::Version *proto) noexcept;
+                cc::protobuf::version::Version *proto) noexcept;
 
-    void decode(const cc::version::Version &proto,
+    void decode(const cc::protobuf::version::Version &proto,
                 sysconfig::Version *native) noexcept;
 
     //==========================================================================
     // ComponentVersions
 
     void encode(const sysconfig::ComponentVersions &native,
-                cc::version::ComponentVersions *proto) noexcept;
+                cc::protobuf::version::ComponentVersions *proto) noexcept;
 
-    void decode(const cc::version::ComponentVersions &proto,
+    void decode(const cc::protobuf::version::ComponentVersions &proto,
                 sysconfig::ComponentVersions *native) noexcept;
 
     //==========================================================================

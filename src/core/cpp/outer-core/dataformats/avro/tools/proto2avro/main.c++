@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "avro-protobufschema.h++"
-#include "cc/protobuf/core/status.pb.h"
+#include "cc/protobuf/status/status.pb.h"
 #include "application/init.h++"  // Common init routines
 #include "string/format.h++"
 #include "argparse/common.h++"
@@ -19,7 +19,7 @@ int main (int argc, char **argv)
     auto options = std::make_unique<core::argparse::CommonOptions>();
     options->apply(argc, argv);
 
-    const google::protobuf::Descriptor *desc = cc::status::Error::GetDescriptor();
+    const google::protobuf::Descriptor *desc = cc::protobuf::status::Error::GetDescriptor();
     std::cout << avro::schema_from_proto(desc)
               << std::endl;
     return 0;

@@ -12,7 +12,7 @@
 #pragma once
 #include "grpc-clientwrapper.h++"
 #include "grpc-clientreceiver.h++"
-#include "cc/protobuf/core/signal.pb.h"
+#include "cc/protobuf/signal/signal.pb.h"
 #include "protobuf-message.h++"
 #include "protobuf-signal-receiver.h++"
 #include "thread/binaryevent.h++"
@@ -124,7 +124,7 @@ namespace core::grpc
             {
                 this->watching = true;
                 this->watch_start = steady::Clock::now();
-                cc::signal::Filter filter = this->signal_filter();
+                cc::protobuf::signal::Filter filter = this->signal_filter();
                 logf_debug("Invoking %s::watch(filter=%s)",
                            this->servicename(true),
                            filter);
@@ -201,7 +201,7 @@ namespace core::grpc
     protected:
         steady::TimePoint watch_start;
         std::thread watch_thread;
-        ClientReceiver<ServiceT, SignalT, cc::signal::Filter> receiver;
+        ClientReceiver<ServiceT, SignalT, cc::protobuf::signal::Filter> receiver;
         std::unique_ptr<types::BinaryEvent> completion_event;
     };
 

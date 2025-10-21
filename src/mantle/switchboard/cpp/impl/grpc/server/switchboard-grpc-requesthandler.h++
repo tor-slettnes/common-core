@@ -8,7 +8,7 @@
 #pragma once
 #include "switchboard.h++"
 #include "grpc-signalrequesthandler.h++"
-#include "cc/protobuf/switchboard/switchboard.grpc.pb.h"  // generated from `switchboard.proto`
+#include "cc/switchboard/switchboard.grpc.pb.h"  // generated from `switchboard.proto`
 #include "types/create-shared.h++"
 
 namespace switchboard::grpc
@@ -139,7 +139,7 @@ namespace switchboard::grpc
 
         ::grpc::Status watch(
             ::grpc::ServerContext *context,
-            const cc::signal::Filter *request,
+            const cc::protobuf::signal::Filter *request,
             ::grpc::ServerWriter<cc::switchboard::Signal> *writer) override;
 
     private:

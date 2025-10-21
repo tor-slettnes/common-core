@@ -14,7 +14,7 @@ set(PROTO_DEPS cc_core_proto)
 
 ### Source files
 set(SOURCES
-  cc/protobuf/switchboard/switchboard.proto
+  cc/switchboard/switchboard.proto
 )
 
 ### Generate language bindings

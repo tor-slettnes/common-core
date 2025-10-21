@@ -9,7 +9,7 @@
 #include "multilogger-api.h++"
 #include "grpc-requesthandler.h++"
 
-#include "cc/protobuf/multilogger/multilogger.grpc.pb.h"  // generated from `multilogger.proto`
+#include "cc/platform/multilogger/multilogger.grpc.pb.h"  // generated from `multilogger.proto`
 
 #include "types/create-shared.h++"
 

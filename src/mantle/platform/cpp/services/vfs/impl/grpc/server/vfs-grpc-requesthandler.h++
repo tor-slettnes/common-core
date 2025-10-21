@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/protobuf/vfs/vfs.grpc.pb.h"  // Generated from `vfs.proto`
+#include "cc/platform/vfs/vfs.grpc.pb.h"  // Generated from `vfs.proto`
 #include "vfs-base.h++"
 
 #include "grpc-signalrequesthandler.h++"
@@ -104,7 +104,7 @@ namespace vfs::grpc
         ::grpc::Status get_attributes(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::Path* request,
-            ::cc::variant::KeyValueMap* response) override;
+            ::cc::protobuf::variant::KeyValueMap* response) override;
 
         ::grpc::Status set_attributes(
             ::grpc::ServerContext* context,
@@ -118,7 +118,7 @@ namespace vfs::grpc
 
         ::grpc::Status watch(
             ::grpc::ServerContext* context,
-            const ::cc::signal::Filter* filter,
+            const ::cc::protobuf::signal::Filter* filter,
             ::grpc::ServerWriter< ::cc::platform::vfs::Signal>* writer) override;
 
     protected:

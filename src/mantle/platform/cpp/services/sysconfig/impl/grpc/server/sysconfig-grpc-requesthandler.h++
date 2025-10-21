@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/protobuf/sysconfig/sysconfig.grpc.pb.h"  // Generated from `sysconfig.proto`
+#include "cc/platform/sysconfig/sysconfig.grpc.pb.h"  // Generated from `sysconfig.proto`
 #include "sysconfig.h++"
 
 #include "grpc-signalrequesthandler.h++"
@@ -146,7 +146,7 @@ namespace sysconfig::grpc
 
         ::grpc::Status watch(
             ::grpc::ServerContext* context,
-            const ::cc::signal::Filter* filter,
+            const ::cc::protobuf::signal::Filter* filter,
             ::grpc::ServerWriter<::cc::platform::sysconfig::Signal>* writer) override;
     };
 }  // namespace sysconfig::grpc

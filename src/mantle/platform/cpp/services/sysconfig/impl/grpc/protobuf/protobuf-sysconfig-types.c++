@@ -97,7 +97,7 @@ namespace protobuf
     // Version
 
     void encode(const sysconfig::Version &native,
-                cc::version::Version *proto) noexcept
+                cc::protobuf::version::Version *proto) noexcept
     {
         proto->set_major(native.major);
         proto->set_minor(native.minor);
@@ -106,7 +106,7 @@ namespace protobuf
         proto->set_build_number(native.build_number);
     }
 
-    void decode(const cc::version::Version &proto,
+    void decode(const cc::protobuf::version::Version &proto,
                 sysconfig::Version *native) noexcept
     {
         native->major = proto.major();
@@ -120,9 +120,9 @@ namespace protobuf
     // ComponentVersions
 
     void encode(const sysconfig::ComponentVersions &native,
-                cc::version::ComponentVersions *proto) noexcept
+                cc::protobuf::version::ComponentVersions *proto) noexcept
     {
-        google::protobuf::Map<std::string, cc::version::Version> *cv = proto->mutable_components();
+        google::protobuf::Map<std::string, cc::protobuf::version::Version> *cv = proto->mutable_components();
 
         for (const auto &[component, version] : native)
         {
@@ -130,7 +130,7 @@ namespace protobuf
         }
     }
 
-    void decode(const cc::version::ComponentVersions &proto,
+    void decode(const cc::protobuf::version::ComponentVersions &proto,
                 sysconfig::ComponentVersions *native) noexcept
     {
         for (const auto &[component, version] : proto.components())

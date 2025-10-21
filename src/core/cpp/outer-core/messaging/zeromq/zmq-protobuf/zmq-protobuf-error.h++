@@ -8,7 +8,7 @@
 #pragma once
 #include "status/error.h++"
 
-#include "cc/protobuf/core/request_reply.pb.h"
+#include "cc/protobuf/request_reply/request_reply.pb.h"
 
 namespace core::zmq
 {
@@ -22,11 +22,11 @@ namespace core::zmq
     public:
         using status::Error::Error;
 
-        ProtoBufError(const cc::rr::StatusCode &code,
+        ProtoBufError(const cc::protobuf::request_reply::StatusCode &code,
                       const core::status::Error &error);
 
         bool equivalent(const Event &other) const noexcept override;
-        cc::rr::StatusCode status_code() const;
+        cc::protobuf::request_reply::StatusCode status_code() const;
         status::Domain domain() const noexcept override;
         std::exception_ptr as_application_error() const override;
 
@@ -37,6 +37,6 @@ namespace core::zmq
         types::Value get_field_as_value(const std::string &field_name) const override;
 
     private:
-        cc::rr::StatusCode status_code_;
+        cc::protobuf::request_reply::StatusCode status_code_;
     };
 }  // namespace core::zmq

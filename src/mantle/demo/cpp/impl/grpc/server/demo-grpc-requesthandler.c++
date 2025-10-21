@@ -94,7 +94,7 @@ namespace demo::grpc
 
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext* context,
-        const cc::signal::Filter* request,
+        const cc::protobuf::signal::Filter* request,
         ::grpc::ServerWriter<cc::demo::Signal>* writer)
     {
         return this->stream_signals<cc::demo::Signal, SignalQueue>(context, request, writer);

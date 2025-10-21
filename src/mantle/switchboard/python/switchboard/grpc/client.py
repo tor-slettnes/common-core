@@ -19,7 +19,7 @@ class Client (SwitchboardBase, SignalClient):
     Switchboard abstract base
     '''
 
-    from cc.protobuf.switchboard.switchboard_pb2_grpc import SwitchboardStub as Stub
+    from cc.switchboard.switchboard_pb2_grpc import SwitchboardStub as Stub
 
     def __init__(self,
                  host: str = "",

@@ -131,7 +131,7 @@ namespace upgrade::grpc
 
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext *context,
-        const ::cc::signal::Filter *filter,
+        const ::cc::protobuf::signal::Filter *filter,
         ::grpc::ServerWriter<::cc::platform::upgrade::Signal> *writer)
     {
         try

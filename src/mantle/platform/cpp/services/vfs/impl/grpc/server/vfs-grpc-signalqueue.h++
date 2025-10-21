@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/protobuf/vfs/vfs.pb.h"  // generated from `vfs.proto`
+#include "cc/platform/vfs/vfs.pb.h"  // generated from `vfs.proto`
 #include "grpc-signalqueue.h++"
 
 namespace vfs::grpc

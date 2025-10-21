@@ -11,14 +11,14 @@ namespace protobuf
 {
     void encode_quantity(double value,
                          int decimal_exponent,
-                         cc::quantities::Scalar *scalar)
+                         cc::protobuf::quantities::Scalar *scalar)
     {
         scalar->set_value(value);
         scalar->set_decimal_exponent(decimal_exponent);
     }
 
     void encode_quantity(double value,
-                         cc::quantities::Scalar *scalar)
+                         cc::protobuf::quantities::Scalar *scalar)
     {
         scalar->set_value(value);
     }

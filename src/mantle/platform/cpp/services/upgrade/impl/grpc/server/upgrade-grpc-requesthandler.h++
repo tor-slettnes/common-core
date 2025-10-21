@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/protobuf/upgrade/upgrade.grpc.pb.h"  // Generated from `upgrade.proto`
+#include "cc/platform/upgrade/upgrade.grpc.pb.h"  // Generated from `upgrade.proto`
 #include "upgrade-base.h++"
 
 #include "grpc-signalrequesthandler.h++"
@@ -59,7 +59,7 @@ namespace upgrade::grpc
 
         ::grpc::Status watch(
             ::grpc::ServerContext* context,
-            const ::cc::signal::Filter* filter,
+            const ::cc::protobuf::signal::Filter* filter,
             ::grpc::ServerWriter<::cc::platform::upgrade::Signal>* writer) override;
 
     protected:

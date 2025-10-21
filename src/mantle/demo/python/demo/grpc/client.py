@@ -22,7 +22,7 @@ class Client (API, SignalClient):
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
-    from cc.protobuf.demo.demo_pb2_grpc import DemoStub as Stub
+    from cc.demo.demo_pb2_grpc import DemoStub as Stub
 
     ## `service_name` is optional. If not provided here it is determined
     ## from the above stub.  It is used to look up service specific settings,

@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/protobuf/netconfig/netconfig.grpc.pb.h"  // Generated from `netconfig.proto`
+#include "cc/platform/netconfig/netconfig.grpc.pb.h"  // Generated from `netconfig.proto`
 #include "netconfig.h++"
 
 #include "grpc-signalrequesthandler.h++"
@@ -108,7 +108,7 @@ namespace netconfig::grpc
 
         ::grpc::Status watch(
             ::grpc::ServerContext* context,
-            const ::cc::signal::Filter* filter,
+            const ::cc::protobuf::signal::Filter* filter,
             ::grpc::ServerWriter<::cc::platform::netconfig::Signal>* writer) override;
 
     private:

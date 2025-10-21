@@ -34,8 +34,8 @@ namespace core::zmq
         this->clear_handlers();
     }
 
-    void ProtoBufRequestHandler::process_method_request(const cc::rr::Request &request,
-                                                        cc::rr::Reply *reply)
+    void ProtoBufRequestHandler::process_method_request(const cc::protobuf::request_reply::Request &request,
+                                                        cc::protobuf::request_reply::Reply *reply)
     {
         std::shared_ptr<ProtoBufError> error;
 
@@ -55,7 +55,7 @@ namespace core::zmq
                     std::current_exception());
 
                 error = std::make_shared<ProtoBufError>(
-                    cc::rr::STATUS_FAILED,
+                    cc::protobuf::request_reply::STATUS_FAILED,
                     *core::exception::map_to_error(std::current_exception()));
             }
         }
@@ -78,7 +78,7 @@ namespace core::zmq
                 method_names);
 
             error = std::make_shared<ProtoBufError>(
-                cc::rr::STATUS_CANCELLED,
+                cc::protobuf::request_reply::STATUS_CANCELLED,
                 exception::NotFound(
                     "Method not found",
                     this->full_method_name(request.method_name())));
@@ -86,7 +86,7 @@ namespace core::zmq
 
         if (error)
         {
-            cc::rr::Status *status = reply->mutable_status();
+            cc::protobuf::request_reply::Status *status = reply->mutable_status();
             status->set_code(error->status_code());
             ::protobuf::encode(*error, status->mutable_details());
         }

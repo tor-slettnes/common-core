@@ -5,8 +5,8 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from .utils import proto_enum
-from cc.protobuf.core.status_pb2 import Error, Level, Domain
+from ..utils import proto_enum
+from .status_pb2 import Error, Level, Domain
 
 import logging
 
@@ -27,11 +27,11 @@ level_map = {
 
 def decodeLogLevel(event_level: Level) -> int:
     '''
-    Decode a `cc.status.Level` enumeration from `status.proto` to a log level
-    as established in the Python `logging` module.
+    Decode a `cc.protobuf.status.Level` enumeration from `status.proto` to a
+    log level as established in the Python `logging` module.
 
-    If the input is not a valid `cc.status.Level` enumeration,
-    `None` is returned.
+    If the input is not a valid `cc.protobuf.status.Level` enumeration, `None`
+    is returned.
     '''
 
     return level_map.get(event_level)
@@ -40,7 +40,7 @@ def decodeLogLevel(event_level: Level) -> int:
 def encodeLogLevel(log_level: int) -> Level:
     '''
     Encode a log level as established in the Python `logging` module to an
-    enumerated `cc.status.Level` value from `status.proto`.
+    enumerated `cc.protobuf.status.Level` value from `status.proto`.
     '''
 
     if isinstance(log_level, Level):

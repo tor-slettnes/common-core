@@ -6,10 +6,10 @@
 #===============================================================================
 
 ### Modules wihtin package
-from cc.protobuf.core.variant_pb2 import Value, ValueList, \
-    TaggedValue, TaggedValueList, KeyValueMap
-from .wellknown import TimestampType, \
+from ..wellknown import TimestampType, \
     encodeTimestamp, decodeTimestamp, decodeDuration
+from .variant_pb2 import Value, ValueList, \
+    TaggedValue, TaggedValueList, KeyValueMap
 
 ### Third-party modules
 from google.protobuf.timestamp_pb2 import Timestamp

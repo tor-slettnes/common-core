@@ -377,7 +377,7 @@ namespace vfs::grpc
     ::grpc::Status RequestHandler::get_attributes(
         ::grpc::ServerContext *cxt,
         const ::cc::platform::vfs::Path *request,
-        ::cc::variant::KeyValueMap *response)
+        ::cc::protobuf::variant::KeyValueMap *response)
     {
         try
         {
@@ -430,7 +430,7 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext *context,
-        const ::cc::signal::Filter *filter,
+        const ::cc::protobuf::signal::Filter *filter,
         ::grpc::ServerWriter<::cc::platform::vfs::Signal> *writer)
     {
         return this->stream_signals<::cc::platform::vfs::Signal, SignalQueue>(

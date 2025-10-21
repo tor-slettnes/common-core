@@ -14,10 +14,10 @@ set(PROTO_DEPS cc_core_proto)
 
 ### Source files
 set(SOURCES
-  cc/protobuf/sysconfig/sysconfig.proto
-  cc/protobuf/netconfig/netconfig.proto
-  cc/protobuf/vfs/vfs.proto
-  cc/protobuf/upgrade/upgrade.proto
+  cc/platform/sysconfig/sysconfig.proto
+  cc/platform/netconfig/netconfig.proto
+  cc/platform/vfs/vfs.proto
+  cc/platform/upgrade/upgrade.proto
 )
 
 ### Generate language bindings

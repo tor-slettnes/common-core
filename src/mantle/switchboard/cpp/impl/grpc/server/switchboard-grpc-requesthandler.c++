@@ -462,7 +462,7 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext *context,
-        const cc::signal::Filter *request,
+        const cc::protobuf::signal::Filter *request,
         ::grpc::ServerWriter<cc::switchboard::Signal> *writer)
     {
         return this->stream_signals<cc::switchboard::Signal, SignalQueue>(context, request, writer);

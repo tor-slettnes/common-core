@@ -13,7 +13,7 @@
 #include "thread/signaltemplate.h++"
 #include "platform/symbols.h++"
 #include "platform/init.h++"
-#include "cc/protobuf/core/signal.pb.h"  // Generated from `signal.proto`
+#include "cc/protobuf/signal/signal.pb.h"  // Generated from `signal.proto`
 
 #include <functional>
 #include <unordered_set>
@@ -64,14 +64,14 @@ namespace protobuf
         virtual void forward(ProtoT &&message) = 0;
 
     protected:
-        static cc::signal::MappingAction boolean_mapping(bool present)
+        static cc::protobuf::signal::MappingAction boolean_mapping(bool present)
         {
-            return present ? cc::signal::MAP_UPDATE : cc::signal::MAP_REMOVAL;
+            return present ? cc::protobuf::signal::MAP_UPDATE : cc::protobuf::signal::MAP_REMOVAL;
         }
 
-        static cc::signal::MappingAction mapping_action(core::signal::MappingAction action)
+        static cc::protobuf::signal::MappingAction mapping_action(core::signal::MappingAction action)
         {
-            return static_cast<cc::signal::MappingAction>(action);
+            return static_cast<cc::protobuf::signal::MappingAction>(action);
         }
 
         /// @brief

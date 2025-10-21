@@ -407,7 +407,7 @@ namespace sysconfig::grpc
 
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext* context,
-        const ::cc::signal::Filter* filter,
+        const ::cc::protobuf::signal::Filter* filter,
         ::grpc::ServerWriter<::cc::platform::sysconfig::Signal>* writer)
     {
         return this->stream_signals<::cc::platform::sysconfig::Signal, SignalQueue>(

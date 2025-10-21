@@ -13,7 +13,7 @@ set(PROTO_DEPS cc_core_proto)
 
 ### Source files
 set(SOURCES
-  cc/protobuf/multilogger/multilogger.proto
+  cc/platform/multilogger/multilogger.proto
 )
 
 ### Generate language bindings

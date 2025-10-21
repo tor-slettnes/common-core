@@ -11,7 +11,7 @@
 #include "protobuf-message.h++"
 #include "logging/logging.h++"
 
-#include "cc/protobuf/core/request_reply.pb.h"
+#include "cc/protobuf/request_reply/request_reply.pb.h"
 
 namespace core::zmq
 {
@@ -33,14 +33,14 @@ namespace core::zmq
         //======================================================================
         // Methods to send/receive populated ProboBuf Request/Reply structures
 
-        void send_request(const cc::rr::Request &request,
+        void send_request(const cc::protobuf::request_reply::Request &request,
                           SendFlags flags = 0) const;
 
-        bool receive_reply(cc::rr::Reply *reply,
+        bool receive_reply(cc::protobuf::request_reply::Reply *reply,
                            RecvFlags flags = 0) const;
 
-        bool send_receive(const cc::rr::Request &request,
-                          cc::rr::Reply *reply,
+        bool send_receive(const cc::protobuf::request_reply::Request &request,
+                          cc::protobuf::request_reply::Reply *reply,
                           SendFlags send_flags = 0,
                           RecvFlags recv_flags = 0) const;
 
@@ -51,14 +51,14 @@ namespace core::zmq
         // Invoke method with populated Input/Output parameter messages
 
         void send_invocation(const std::string &method_name,
-                             const cc::rr::Parameter &param,
+                             const cc::protobuf::request_reply::Parameter &param,
                              SendFlags send_flags = 0) const;
 
-        bool read_result(cc::rr::Parameter *param,
-                         cc::rr::Status *status,
+        bool read_result(cc::protobuf::request_reply::Parameter *param,
+                         cc::protobuf::request_reply::Status *status,
                          RecvFlags flags = 0) const;
 
-        bool read_result(cc::rr::Parameter *param,
+        bool read_result(cc::protobuf::request_reply::Parameter *param,
                          RecvFlags recv_flags = 0) const;
 
         //======================================================================

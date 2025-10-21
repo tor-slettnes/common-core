@@ -87,7 +87,7 @@ function(cc_add_proto TARGET)
     )
 
     cc_add_proto_python("${py_target}"
-      NAMESPACE "${arg_NAMESPACE}"
+      NAMESPACE "${namespace}"
       INSTALL ${INSTALL}
       INSTALL_COMPONENT "${arg_PYTHON_INSTALL_COMPONENT}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"

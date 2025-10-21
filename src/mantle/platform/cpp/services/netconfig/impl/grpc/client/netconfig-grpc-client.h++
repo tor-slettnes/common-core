@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/protobuf/netconfig/netconfig.grpc.pb.h"  // Generated from `netconfig.proto`
+#include "cc/platform/netconfig/netconfig.grpc.pb.h"  // Generated from `netconfig.proto`
 #include "grpc-signalclient.h++"
 #include "types/create-shared.h++"
 

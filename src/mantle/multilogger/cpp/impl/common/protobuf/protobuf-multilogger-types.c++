@@ -76,7 +76,7 @@ namespace protobuf
     }
 
     //==========================================================================
-    // core::logging::Message encoding to/decoding from cc::status::Error
+    // core::logging::Message encoding to/decoding from cc::protobuf::status::Error
 
     void encode(const core::logging::Message &native,
                 cc::platform::multilogger::Message *proto) noexcept
@@ -155,7 +155,7 @@ namespace protobuf
         proto->set_filename_template(native.filename_template);
         encode(native.rotation_interval, proto->mutable_rotation_interval());
         proto->set_use_local_time(native.use_local_time);
-        proto->set_min_level(encoded<cc::status::Level>(native.min_level));
+        proto->set_min_level(encoded<cc::protobuf::status::Level>(native.min_level));
 
         if (native.contract_id.has_value())
         {
@@ -266,7 +266,7 @@ namespace protobuf
                 cc::platform::multilogger::ListenerSpec *proto)
     {
         proto->set_sink_id(native.sink_id);
-        proto->set_min_level(encoded<cc::status::Level>(native.min_level));
+        proto->set_min_level(encoded<cc::protobuf::status::Level>(native.min_level));
 
         if (native.contract_id.has_value())
         {

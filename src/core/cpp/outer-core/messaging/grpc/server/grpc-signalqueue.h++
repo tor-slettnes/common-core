@@ -54,7 +54,7 @@ namespace core::grpc
                         public types::BlockingQueue<ProtoT>
     {
     protected:
-        using SignalFilter = cc::signal::Filter;
+        using SignalFilter = cc::protobuf::signal::Filter;
 
         template <class T>
         using Encoder = std::function<void(T, ProtoT *)>;

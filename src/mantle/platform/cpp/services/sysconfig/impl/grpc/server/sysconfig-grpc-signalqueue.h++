@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/protobuf/sysconfig/sysconfig.pb.h"  // generated from `sysconfig.proto`
+#include "cc/platform/sysconfig/sysconfig.pb.h"  // generated from `sysconfig.proto`
 
 #include "grpc-signalqueue.h++"
 

@@ -8,7 +8,7 @@
 #pragma once
 #include "protobuf-message.h++"
 #include "thread/signaltemplate.h++"
-#include "cc/protobuf/core/signal.pb.h"  // Generated from `signal.proto`
+#include "cc/protobuf/signal/signal.pb.h"  // Generated from `signal.proto`
 
 #include <unordered_map>
 #include <functional>
@@ -107,10 +107,10 @@ namespace protobuf
         {
         }
 
-        cc::signal::Filter signal_filter()
+        cc::protobuf::signal::Filter signal_filter()
         {
             std::scoped_lock lck(this->slots_mtx);
-            cc::signal::Filter filter;
+            cc::protobuf::signal::Filter filter;
             filter.set_polarity(true);
             for (const auto &[index, callback] : this->slots)
             {
@@ -119,15 +119,15 @@ namespace protobuf
             return filter;
         }
 
-        static std::optional<bool> is_mapped(cc::signal::MappingAction action)
+        static std::optional<bool> is_mapped(cc::protobuf::signal::MappingAction action)
         {
             switch (action)
             {
-            case cc::signal::MAP_ADDITION:
-            case cc::signal::MAP_UPDATE:
+            case cc::protobuf::signal::MAP_ADDITION:
+            case cc::protobuf::signal::MAP_UPDATE:
                 return true;
 
-            case cc::signal::MAP_REMOVAL:
+            case cc::protobuf::signal::MAP_REMOVAL:
                 return false;
 
             default:

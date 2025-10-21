@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within package
-from cc.protobuf.core.version_pb2 import Version, ComponentVersions
+from .version_pb2 import Version, ComponentVersions
 
 def version(major: int,
             minor: int = 0,

@@ -47,7 +47,7 @@ class Client (cc.messaging.grpc.Client):
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
-    from cc.protobuf.netconfig.netconfig_pb2_grpc import NetConfigStub as Stub
+    from cc.platform.netconfig.netconfig_pb2_grpc import NetConfigStub as Stub
 
     def get_hostname(self) -> str:
         '''

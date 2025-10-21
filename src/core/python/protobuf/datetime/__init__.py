@@ -6,8 +6,8 @@
 #===============================================================================
 
 ### Generated from `datetime.proto`
-from .utils import proto_enum
-from cc.protobuf.core.datetime_pb2 import TimeStruct, Weekday, Interval, TimeUnit
+from ..utils import proto_enum
+from .datetime_pb2 import TimeStruct, Weekday, Interval, TimeUnit
 
 ### Standard Python modules
 import time

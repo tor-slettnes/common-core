@@ -11,7 +11,7 @@
 #include "avro-protobufvalue.h++"
 #include "avro-valuemethods.h++"
 #include "protobuf-event-types.h++"
-#include "cc/protobuf/core/status.pb.h"
+#include "cc/protobuf/status/status.pb.h"
 #include "parsers/json/writer.h++"
 #include "parsers/json/reader.h++"
 
@@ -40,7 +40,7 @@ namespace avro
 
     TEST(AvroTest, ProtoBufEventToJsonSchema)
     {
-        const SchemaWrapper &wrapper = schema_from_proto(cc::status::Error::GetDescriptor());
+        const SchemaWrapper &wrapper = schema_from_proto(cc::protobuf::status::Error::GetDescriptor());
         // std::string json = wrapper.as_json();
         std::string json = core::json::writer.encoded(wrapper, true);
         auto of1 = std::ofstream("event.json");
@@ -107,7 +107,7 @@ namespace avro
                 {"my_duration", dur_value},
             });
 
-        cc::status::Error msg;
+        cc::protobuf::status::Error msg;
         protobuf::encode(event, &msg);
         avro::ProtoBufValue avro_wrapper(msg);
 

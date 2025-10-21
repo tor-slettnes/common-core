@@ -15,7 +15,7 @@ set(PROTO_DEPS
 
 ### Source files
 set(SOURCES
-  cc/protobuf/demo/demo.proto
+  cc/demo/demo.proto
 )
 
 ### Generate language bindings

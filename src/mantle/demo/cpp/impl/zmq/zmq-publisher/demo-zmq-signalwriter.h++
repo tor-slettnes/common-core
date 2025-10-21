@@ -11,7 +11,7 @@
 
 #include "types/create-shared.h++"
 
-#include "cc/protobuf/demo/demo.pb.h"
+#include "cc/demo/demo.pb.h"
 
 namespace demo::zmq
 {

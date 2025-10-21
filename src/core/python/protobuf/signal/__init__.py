@@ -6,9 +6,9 @@
 #===============================================================================
 
 ### Modules withn package
-from .utils import proto_enum
-from ..core.invocation import safe_invoke
-from cc.protobuf.core.signal_pb2 import Filter, MappingAction as _MappingAction
+from ...core.invocation import safe_invoke
+from ..utils import proto_enum
+from .signal_pb2 import Filter, MappingAction as _MappingAction
 
 ### Third-party modules
 from google.protobuf.message import Message

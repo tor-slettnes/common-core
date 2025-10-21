@@ -34,7 +34,7 @@ namespace core::grpc
         // Serve requests to watch for signals
         template <class SignalT,
                   class SignalQueueT,
-                  class SignalFilterT = cc::signal::Filter>
+                  class SignalFilterT = cc::protobuf::signal::Filter>
         inline ::grpc::Status stream_signals(::grpc::ServerContext *cxt,
                                              const SignalFilterT *req,
                                              ::grpc::ServerWriter<SignalT> *writer)

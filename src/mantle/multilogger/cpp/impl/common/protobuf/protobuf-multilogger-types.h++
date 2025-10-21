@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/protobuf/multilogger/multilogger.pb.h"
+#include "cc/platform/multilogger/multilogger.pb.h"
 #include "multilogger-types.h++"
 #include "logging/telemetry/data.h++"
 #include "logging/message/message.h++"

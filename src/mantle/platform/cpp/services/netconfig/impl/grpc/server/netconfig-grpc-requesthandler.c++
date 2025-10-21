@@ -318,7 +318,7 @@ namespace netconfig::grpc
 
     ::grpc::Status RequestHandler::watch(
         ::grpc::ServerContext* context,
-        const ::cc::signal::Filter* filter,
+        const ::cc::protobuf::signal::Filter* filter,
         ::grpc::ServerWriter<::cc::platform::netconfig::Signal>* writer)
     {
         return this->stream_signals<::cc::platform::netconfig::Signal, SignalQueue>(

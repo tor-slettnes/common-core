@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/protobuf/upgrade/upgrade.pb.h"  // generated from `variant.proto`
+#include "cc/platform/upgrade/upgrade.pb.h"  // generated from `variant.proto`
 #include "upgrade-base.h++"
 
 namespace protobuf
