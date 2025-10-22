@@ -246,14 +246,6 @@ function(cc_add_proto_python TARGET)
       BASE_DIR "${arg_BASE_DIR}"
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
-
-    # protobuf_generate(
-    #   TARGET "${TARGET}"
-    #   LANGUAGE python
-    #   PROTOS "${arg_PROTOS}"
-    #   IMPORT_DIRS "${arg_IMPORT_DIRS}"
-    #   PROTOC_OUT_DIR "${gen_dir}"
-    # )
   endif()
 
   if(BUILD_GRPC)
@@ -267,16 +259,6 @@ function(cc_add_proto_python TARGET)
       BASE_DIR "${arg_BASE_DIR}"
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
-
-    # protobuf_generate(
-    #   TARGET "${TARGET}"
-    #   LANGUAGE grpc
-    #   PROTOS "${arg_PROTOS}"
-    #   IMPORT_DIRS "${arg_IMPORT_DIRS}"
-    #   PLUGIN protoc-gen-grpc=${GRPC_PYTHON_PLUGIN}
-    #   GENERATE_EXTENSIONS _pb2_grpc.py
-    #   PROTOC_OUT_DIR "${gen_dir}"
-    # )
   endif()
 
   ### Set target properties for downstream targets
