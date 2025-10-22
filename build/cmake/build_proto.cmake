@@ -37,6 +37,15 @@ function(cc_add_proto TARGET)
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
+  if(BUILD_PROTOBUF)
+    find_package(Protobuf REQUIRED)
+  endif()
+
+  if(BUILD_GRPC)
+    find_package(gRPC REQUIRED)
+  endif()
+
+
   if(BUILD_CPP)
     cc_get_value_or_default(cpp_suffix arg_CPP_TARGET_SUFFIX "_cpp")
     set(cpp_target "${TARGET}${cpp_suffix}")
@@ -147,8 +156,6 @@ function(cc_add_proto_cpp TARGET)
   endif()
 
   if(BUILD_PROTOBUF)
-    find_package(Protobuf REQUIRED)
-
     cc_protogen_protobuf_cpp(PROTO_CPP_SRCS PROTO_CPP_HDRS
       TARGET "${TARGET}"
       DEPENDS "${arg_PROTO_DEPS}"
@@ -157,17 +164,9 @@ function(cc_add_proto_cpp TARGET)
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
 
-    # protobuf_generate(
-    #   TARGET "${TARGET}"
-    #   LANGUAGE cpp
-    #   PROTOS "${arg_PROTOS}"
-    #   IMPORT_DIRS ${arg_IMPORT_DIRS}
-    # )
-
   endif()
 
   if(BUILD_GRPC)
-    find_package(gRPC REQUIRED)
     find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin)
 
     # The above fails to capture all required library dependencies from recent
@@ -184,16 +183,6 @@ function(cc_add_proto_cpp TARGET)
       BASE_DIR "${arg_BASE_DIR}"
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
-
-    # protobuf_generate(
-    #   TARGET "${TARGET}"
-    #   LANGUAGE grpc
-    #   PROTOS "${arg_PROTOS}"
-    #   IMPORT_DIRS ${arg_IMPORT_DIRS}
-    #   PLUGIN protoc-gen-grpc=${GRPC_CPP_PLUGIN}
-    #   PLUGIN_OPTIONS generate_mock_code=true
-    #   GENERATE_EXTENSIONS .grpc.pb.h .grpc.pb.cc
-    # )
   endif()
 
 endfunction()
@@ -247,6 +236,8 @@ function(cc_add_proto_python TARGET)
   endif()
 
   if(BUILD_PROTOBUF)
+    find_package(Protobuf REQUIRED)
+
     cc_protogen_protobuf_py(PROTO_PY
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"

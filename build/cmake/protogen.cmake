@@ -37,28 +37,50 @@ function(cc_protogen_common)
     add_custom_target("${arg_TARGET}")
   endif()
 
-  ## Required for ProtoBuf < 3.15
-  set(_protoc_args "--experimental_allow_proto3_optional")
-
-  if(arg_PLUGIN)
-    list(APPEND _protoc_args "--plugin=${arg_PLUGIN}")
-  endif()
-
   ### Collect ProtoBuf source folders from this target and its dependencies in
   ### the target property `source_dir`. The resulting list is then passed into
   ### the ProtoBuf compiler as include directories.
-  cc_get_target_properties_recursively(
-    PROPERTIES SOURCE_DIR
-    TARGETS ${arg_DEPENDS}
-    INITIAL_VALUE "${arg_BASE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}"
-    OUTPUT_VARIABLE _include_dirs
+
+  set(_import_dirs
+    "${arg_BASE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${arg_IMPORT_DIRS}"
+  )
+
+  set_target_properties("${arg_TARGET}"  PROPERTIES
+    import_dirs "${_import_dirs}"
+  )
+
+  cc_get_target_property_recursively(
+    PROPERTY import_dirs
+    TARGETS ${arg_TARGET}
+    INITIAL_VALUE "${_import_dirs}"
+    OUTPUT_VARIABLE _import_dirs
     REMOVE_DUPLICATES
   )
 
-  list(APPEND _include_dirs
-    ${arg_IMPORT_DIRS}
+  list(APPEND _import_dirs
     ${Protobuf_IMPORT_DIRS}
   )
+
+  list(
+    TRANSFORM _import_dirs
+    PREPEND "-I"
+    REGEX .+
+    OUTPUT_VARIABLE _args
+  )
+
+  if(Protobuf_VERSION VERSION_LESS 3.15)
+    ## Required for ProtoBuf < 3.15
+    list(APPEND _args "--experimental_allow_proto3_optional")
+  endif()
+
+  if(arg_PLUGIN)
+    list(APPEND _args "--plugin=${arg_PLUGIN}")
+  endif()
+
+  list(FILTER _args INCLUDE REGEX .+)
+
 
   ### Add `.proto` files supplied in the PROTOS argument
   set(_proto_files "${arg_PROTOS}")
@@ -128,10 +150,7 @@ function(cc_protogen_common)
     OUTPUT ${_outputs}
     DEPENDS ${_proto_paths} ${arg_DEPENDS}
     COMMAND ${_protoc}
-    ARGS --${arg_GENERATOR}_out "${_outdir}"
-       "-I$<JOIN:${_include_dirs},;-I>"
-       ${_protoc_args}
-       ${_proto_files}
+    ARGS --${arg_GENERATOR}_out "${_outdir}" "${_args}" "${_proto_files}"
     COMMAND_EXPAND_LISTS
     COMMENT "${arg_COMMENT}"
     VERBATIM
