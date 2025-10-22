@@ -5,6 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+include(protogen)
 include(pkgconf)
 include(build_python)
 
@@ -23,7 +24,7 @@ function(cc_add_proto TARGET)
     SCOPE                      # Target scope (Default: PUBLIC)
     PYTHON_INSTALL_COMPONENT   # Install component for generated Python files
     PYTHON_INSTALL_DIR         # Relative install folder for generated Python files
-    PYTHON_NAMESPACE           # Install Python modules within a specified namespace
+    PYTHON_NAMESPACE           # Override default Python installation namespace
   )
   set(_multiargs
     PROTOS         # Source `.proto` files
@@ -35,18 +36,6 @@ function(cc_add_proto TARGET)
     MOD_DEPS       # 3rd party package dependencies described with CMake modules
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
-
-  if(arg_BASE_DIR)
-    list(TRANSFORM arg_PROTOS
-      PREPEND "${arg_BASE_DIR}/"
-    )
-
-    set(import_dirs "${arg_BASE_DIR}")
-  else()
-    set(import_dirs "${CMAKE_CURRENT_SOURCE_DIR}")
-  endif()
-
-  list(APPEND import_dirs ${arg_IMPORT_DIRS})
 
   if(BUILD_CPP)
     cc_get_value_or_default(cpp_suffix arg_CPP_TARGET_SUFFIX "_cpp")
@@ -60,7 +49,8 @@ function(cc_add_proto TARGET)
       LIB_TYPE "${arg_LIB_TYPE}"
       SCOPE "${arg_SCOPE}"
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS "${import_dirs}"
+      BASE_DIR "${arg_BASE_DIR}"
+      IMPORT_DIRS "${arg_IMPORT_DIRS}"
       PROTO_DEPS "${proto_cpp_deps}"
       LIB_DEPS "${arg_LIB_DEPS}"
       OBJ_DEPS "${arg_OBJ_DEPS}"
@@ -93,7 +83,8 @@ function(cc_add_proto TARGET)
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       DEPENDS "${proto_py_deps}"
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS "${import_dirs}"
+      BASE_DIR "${arg_BASE_DIR}"
+      IMPORT_DIRS "${arg_IMPORT_DIRS}"
     )
   endif()
 endfunction()
@@ -105,8 +96,9 @@ endfunction()
 function(cc_add_proto_cpp TARGET)
   set(_options)
   set(_singleargs
-    LIB_TYPE
-    SCOPE
+    LIB_TYPE       # C++ library type (Default: STATIC)
+    SCOPE          # Target scope (Default: PUBLIC)
+    BASE_DIR       # Base directory for .proto files, if not current source dir.
   )
   set(_multiargs
     PROTOS         # Source `.proto` files
@@ -154,25 +146,23 @@ function(cc_add_proto_cpp TARGET)
     add_dependencies(${TARGET} ${arg_PROTO_DEPS})
   endif()
 
-  set_target_properties("${TARGET}" PROPERTIES
-    import_dirs "${arg_IMPORT_DIRS}")
-
-  cc_get_target_property_recursively(
-    TARGETS "${TARGET}"
-    PROPERTY import_dirs
-    REMOVE_DUPLICATES
-    OUTPUT_VARIABLE import_dirs
-  )
-
   if(BUILD_PROTOBUF)
     find_package(Protobuf REQUIRED)
 
-    protobuf_generate(
+    cc_protogen_protobuf_cpp(PROTO_CPP_SRCS PROTO_CPP_HDRS
       TARGET "${TARGET}"
-      LANGUAGE cpp
+      DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS ${import_dirs}
+      BASE_DIR "${arg_BASE_DIR}"
+      IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
+
+    # protobuf_generate(
+    #   TARGET "${TARGET}"
+    #   LANGUAGE cpp
+    #   PROTOS "${arg_PROTOS}"
+    #   IMPORT_DIRS ${arg_IMPORT_DIRS}
+    # )
 
   endif()
 
@@ -187,16 +177,23 @@ function(cc_add_proto_cpp TARGET)
       LIB_TYPE "${lib_type}"
       DEPENDS gpr)
 
-
-    protobuf_generate(
+    cc_protogen_grpc_cpp(GRPC_CPP_SRCS GRPC_CPP_HDRS
       TARGET "${TARGET}"
-      LANGUAGE grpc
+      DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS ${import_dirs}
-      PLUGIN protoc-gen-grpc=${GRPC_CPP_PLUGIN}
-      PLUGIN_OPTIONS generate_mock_code=true
-      GENERATE_EXTENSIONS .grpc.pb.h .grpc.pb.cc
+      BASE_DIR "${arg_BASE_DIR}"
+      IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
+
+    # protobuf_generate(
+    #   TARGET "${TARGET}"
+    #   LANGUAGE grpc
+    #   PROTOS "${arg_PROTOS}"
+    #   IMPORT_DIRS ${arg_IMPORT_DIRS}
+    #   PLUGIN protoc-gen-grpc=${GRPC_CPP_PLUGIN}
+    #   PLUGIN_OPTIONS generate_mock_code=true
+    #   GENERATE_EXTENSIONS .grpc.pb.h .grpc.pb.cc
+    # )
   endif()
 
 endfunction()
@@ -209,6 +206,7 @@ function(cc_add_proto_python TARGET)
     INSTALL # Install Python modules even if `INSTALL_COMPONENT` is not specified
   )
   set(_singleargs
+    BASE_DIR           # Base directory for .proto files, if not current source dir.
     STAGING_DIR        # Override staging directory
     INSTALL_COMPONENT  # Install component for generated Python files
     INSTALL_DIR        # Relative install folder for generated files
@@ -244,42 +242,50 @@ function(cc_add_proto_python TARGET)
       add_dependencies("${TARGET}" ${arg_DEPENDS})
     endif()
 
-    set_target_properties("${TARGET}" PROPERTIES
-      import_dirs "${arg_IMPORT_DIRS}")
-
-    cc_get_target_property_recursively(
-      TARGETS "${TARGET}"
-      PROPERTY import_dirs
-      REMOVE_DUPLICATES
-      OUTPUT_VARIABLE import_dirs
-    )
-
     ### Generate Python bindings
     file(MAKE_DIRECTORY "${gen_dir}")
   endif()
 
   if(BUILD_PROTOBUF)
-    protobuf_generate(
+    cc_protogen_protobuf_py(PROTO_PY
       TARGET "${TARGET}"
-      LANGUAGE python
+      DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS "${import_dirs}"
-      PROTOC_OUT_DIR "${gen_dir}"
+      OUT_DIR "${gen_dir}"
+      BASE_DIR "${arg_BASE_DIR}"
+      IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
+
+    # protobuf_generate(
+    #   TARGET "${TARGET}"
+    #   LANGUAGE python
+    #   PROTOS "${arg_PROTOS}"
+    #   IMPORT_DIRS "${arg_IMPORT_DIRS}"
+    #   PROTOC_OUT_DIR "${gen_dir}"
+    # )
   endif()
 
   if(BUILD_GRPC)
     find_program(GRPC_PYTHON_PLUGIN grpc_python_plugin)
 
-    protobuf_generate(
+    cc_protogen_grpc_py(GRPC_PY
       TARGET "${TARGET}"
-      LANGUAGE grpc
+      DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
-      IMPORT_DIRS "${import_dirs}"
-      PLUGIN protoc-gen-grpc=${GRPC_PYTHON_PLUGIN}
-      GENERATE_EXTENSIONS _pb2_grpc.py
-      PROTOC_OUT_DIR "${gen_dir}"
+      OUT_DIR "${gen_dir}"
+      BASE_DIR "${arg_BASE_DIR}"
+      IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
+
+    # protobuf_generate(
+    #   TARGET "${TARGET}"
+    #   LANGUAGE grpc
+    #   PROTOS "${arg_PROTOS}"
+    #   IMPORT_DIRS "${arg_IMPORT_DIRS}"
+    #   PLUGIN protoc-gen-grpc=${GRPC_PYTHON_PLUGIN}
+    #   GENERATE_EXTENSIONS _pb2_grpc.py
+    #   PROTOC_OUT_DIR "${gen_dir}"
+    # )
   endif()
 
   ### Set target properties for downstream targets
