@@ -17,7 +17,6 @@ function(cc_add_proto TARGET)
     PYTHON_INSTALL # Install generated `.py` files even if INSTALL_COMPONENT is not set
   )
   set(_singleargs
-    BASE_DIR                   # Base directory for .proto files, if not current source dir.
     CPP_TARGET_SUFFIX          # Appended to CMake target for generated C++ files
     PYTHON_TARGET_SUFFIX       # Appended to CMake target for generated Python files
     LIB_TYPE                   # C++ library type (Default: STATIC)
@@ -45,7 +44,6 @@ function(cc_add_proto TARGET)
     find_package(gRPC REQUIRED)
   endif()
 
-
   if(BUILD_CPP)
     cc_get_value_or_default(cpp_suffix arg_CPP_TARGET_SUFFIX "_cpp")
     set(cpp_target "${TARGET}${cpp_suffix}")
@@ -58,7 +56,6 @@ function(cc_add_proto TARGET)
       LIB_TYPE "${arg_LIB_TYPE}"
       SCOPE "${arg_SCOPE}"
       PROTOS "${arg_PROTOS}"
-      BASE_DIR "${arg_BASE_DIR}"
       IMPORT_DIRS "${arg_IMPORT_DIRS}"
       PROTO_DEPS "${proto_cpp_deps}"
       LIB_DEPS "${arg_LIB_DEPS}"
@@ -92,7 +89,6 @@ function(cc_add_proto TARGET)
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       DEPENDS "${proto_py_deps}"
       PROTOS "${arg_PROTOS}"
-      BASE_DIR "${arg_BASE_DIR}"
       IMPORT_DIRS "${arg_IMPORT_DIRS}"
     )
   endif()
@@ -107,7 +103,6 @@ function(cc_add_proto_cpp TARGET)
   set(_singleargs
     LIB_TYPE       # C++ library type (Default: STATIC)
     SCOPE          # Target scope (Default: PUBLIC)
-    BASE_DIR       # Base directory for .proto files, if not current source dir.
   )
   set(_multiargs
     PROTOS         # Source `.proto` files
@@ -160,7 +155,6 @@ function(cc_add_proto_cpp TARGET)
       TARGET "${TARGET}"
       DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_PROTOS}"
-      BASE_DIR "${arg_BASE_DIR}"
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
 
@@ -180,7 +174,6 @@ function(cc_add_proto_cpp TARGET)
       TARGET "${TARGET}"
       DEPENDS "${arg_PROTO_DEPS}"
       PROTOS "${arg_PROTOS}"
-      BASE_DIR "${arg_BASE_DIR}"
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
   endif()
@@ -195,7 +188,6 @@ function(cc_add_proto_python TARGET)
     INSTALL # Install Python modules even if `INSTALL_COMPONENT` is not specified
   )
   set(_singleargs
-    BASE_DIR           # Base directory for .proto files, if not current source dir.
     STAGING_DIR        # Override staging directory
     INSTALL_COMPONENT  # Install component for generated Python files
     INSTALL_DIR        # Relative install folder for generated files
@@ -243,7 +235,6 @@ function(cc_add_proto_python TARGET)
       DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
       OUT_DIR "${gen_dir}"
-      BASE_DIR "${arg_BASE_DIR}"
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
   endif()
@@ -256,7 +247,6 @@ function(cc_add_proto_python TARGET)
       DEPENDS "${arg_DEPENDS}"
       PROTOS "${arg_PROTOS}"
       OUT_DIR "${gen_dir}"
-      BASE_DIR "${arg_BASE_DIR}"
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
   endif()

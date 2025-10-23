@@ -45,8 +45,8 @@ set(ORGANIZATION "common-core"
 #-------------------------------------------------------------------------------
 # Various directories
 
-set(CC_PROTO_IMPORT_DIR "${CMAKE_SOURCE_DIR}/protos"
-  CACHE STRING "Source directories containing `.proto` files")
+set(CC_PROTO_BASE_DIR "${CMAKE_SOURCE_DIR}/protos"
+  CACHE STRING "Root directory for common `.proto` files")
 
 set(DATA_DIR "share/${ORGANIZATION}"
   CACHE STRING "Target directory for shared data")

@@ -17,7 +17,6 @@ function(cc_protogen_common)
     COMMENT         # Printed when generating bindings
     GENERATOR       # `protoc` generator (e.g. `cpp`, `python`, `grpc`)
     PLUGIN          # Generator plugin (`grpc_cpp_plugin`, `grpc_python_plugin`)
-    BASE_DIR        # Base directory for .proto files, if not current source dir.
     OUT_DIR         # Target directory for generated files
   )
   set(_multiargs
@@ -41,20 +40,10 @@ function(cc_protogen_common)
   ### the target property `source_dir`. The resulting list is then passed into
   ### the ProtoBuf compiler as include directories.
 
-  set(_import_dirs
-    "${arg_BASE_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${arg_IMPORT_DIRS}"
-  )
-
-  set_target_properties("${arg_TARGET}"  PROPERTIES
-    import_dirs "${_import_dirs}"
-  )
-
   cc_get_target_property_recursively(
     PROPERTY import_dirs
     TARGETS ${arg_TARGET}
-    INITIAL_VALUE "${_import_dirs}"
+    INITIAL_VALUE ${CMAKE_CURRENT_SOURCE_DIR} ${arg_IMPORT_DIRS}
     OUTPUT_VARIABLE _import_dirs
     REMOVE_DUPLICATES
   )
@@ -95,9 +84,11 @@ function(cc_protogen_common)
 
   ## Determine output directory
   if(arg_OUT_DIR)
-    file(REAL_PATH "${arg_OUT_DIR}" _outdir
+    cmake_path(
+      ABSOLUTE_PATH arg_OUT_DIR
       BASE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-    )
+      OUTPUT_VARIABLE _outdir)
+
     file(MAKE_DIRECTORY "${_outdir}")
   else()
     set(_outdir "${CMAKE_CURRENT_BINARY_DIR}")
@@ -108,32 +99,18 @@ function(cc_protogen_common)
   set(_outputs)
   foreach(_src ${_proto_files})
     cmake_path(
-      ABSOLUTE_PATH _src
-      BASE_DIRECTORY "${arg_BASE_DIR}"
-      OUTPUT_VARIABLE _abs)
-
-    cmake_path(
-      RELATIVE_PATH _abs
-      BASE_DIRECTORY "${arg_BASE_DIR}"
-      OUTPUT_VARIABLE _rel)
-
-    cmake_path(
-      REMOVE_EXTENSION _rel
+      REMOVE_EXTENSION _src
       LAST_ONLY
-      OUTPUT_VARIABLE _stem)
-
-    cmake_path(
-      ABSOLUTE_PATH _stem
-      BASE_DIRECTORY "${_outdir}"
-      NORMALIZE)
+      OUTPUT_VARIABLE _stem
+    )
 
     set(_out_vars ${arg_OUT_VARS})
     foreach(_suffix ${arg_SUFFIXES})
       cmake_path(
-        APPEND_STRING _stem ${_suffix}
+        APPEND CMAKE_CURRENT_BINARY_DIR "${_stem}${_suffix}"
         OUTPUT_VARIABLE _out_path)
 
-      list(APPEND _outputs ${_out_path})
+      list(APPEND _outputs "${_out_path}")
       list(POP_FRONT _out_vars _out_var)
       list(APPEND ${_out_var} ${_out_path})
     endforeach()
@@ -152,7 +129,7 @@ function(cc_protogen_common)
     COMMAND ${_protoc}
     ARGS --${arg_GENERATOR}_out "${_outdir}" "${_args}" "${_proto_files}"
     COMMAND_EXPAND_LISTS
-    COMMENT "${arg_COMMENT}"
+    COMMENT "${arg_COMMENT}: --${arg_GENERATOR}_out [${_outdir}] [${_args}] [${_proto_files}]"
     VERBATIM
   )
 
@@ -172,7 +149,6 @@ endfunction()
 function(cc_protogen_protobuf_cpp SRCS HDRS)
   set(_singleargs
     TARGET        # CMake build target
-    BASE_DIR      # Base directory for .proto files, if not current source dir.
   )
   set(_multiargs
     PROTOS        # Source `.proto` files
@@ -187,7 +163,6 @@ function(cc_protogen_protobuf_cpp SRCS HDRS)
     GENERATOR cpp
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
-    BASE_DIR "${arg_BASE_DIR}"
     IMPORT_DIRS "${arg_IMPORT_DIRS}"
     SUFFIXES ".pb.cc" ".pb.h"
     OUT_VARS ${SRCS} ${HDRS})
@@ -211,7 +186,6 @@ endfunction()
 function(cc_protogen_grpc_cpp SRCS HDRS)
   set(_singleargs
     TARGET        # CMake build target
-    BASE_DIR      # Base directory for .proto files, if not current source dir.
   )
   set(_multiargs
     PROTOS        # Source `.proto` files
@@ -233,7 +207,6 @@ function(cc_protogen_grpc_cpp SRCS HDRS)
     PLUGIN "protoc-gen-grpc=${GRPC_CPP_PLUGIN}"
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
-    BASE_DIR "${arg_BASE_DIR}"
     IMPORT_DIRS "${arg_IMPORT_DIRS}"
     SUFFIXES ".grpc.pb.cc" ".grpc.pb.h"
     OUT_VARS ${SRCS} ${HDRS}
@@ -260,7 +233,6 @@ endfunction()
 function(cc_protogen_protobuf_py SRCS)
   set(_singleargs
     TARGET        # CMake build target
-    BASE_DIR      # Base directory for .proto files, if not current source dir.
     OUT_DIR       # Output directory for generated files
   )
   set(_multiargs
@@ -276,7 +248,6 @@ function(cc_protogen_protobuf_py SRCS)
     GENERATOR python
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
-    BASE_DIR "${arg_BASE_DIR}"
     IMPORT_DIRS "${arg_IMPORT_DIRS}"
     SUFFIXES "_pb2.py"
     OUT_DIR "${arg_OUT_DIR}"
@@ -292,7 +263,6 @@ endfunction()
 function(cc_protogen_grpc_py SRCS)
   set(_singleargs
     TARGET        # CMake build target
-    BASE_DIR      # Base directory for .proto files, if not current source dir.
     OUT_DIR       # Output directory for generated files
   )
   set(_multiargs
@@ -315,7 +285,6 @@ function(cc_protogen_grpc_py SRCS)
     PLUGIN "protoc-gen-grpc=${GRPC_PYTHON_PLUGIN}"
     DEPENDS "${arg_DEPENDS}"
     PROTOS "${arg_PROTOS}"
-    BASE_DIR "${arg_BASE_DIR}"
     IMPORT_DIRS "${arg_IMPORT_DIRS}"
     SUFFIXES "_pb2_grpc.py"
     OUT_DIR "${arg_OUT_DIR}"
