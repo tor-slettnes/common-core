@@ -103,8 +103,8 @@ function(cc_protogen_common)
   endif()
 
   ## Constuct a list of language-specific files to be generated
-  set(_proto_src)
-  set(_outputs)
+  unset(_proto_paths)
+  unset(_outputs)
   foreach(_src ${_proto_files})
     cmake_path(
       REMOVE_EXTENSION _src
@@ -115,8 +115,9 @@ function(cc_protogen_common)
     set(_out_vars ${arg_OUT_VARS})
     foreach(_suffix ${arg_SUFFIXES})
       cmake_path(
-        APPEND CMAKE_CURRENT_BINARY_DIR "${_stem}${_suffix}"
-        OUTPUT_VARIABLE _out_path)
+        APPEND _outdir "${_stem}${_suffix}"
+        OUTPUT_VARIABLE _out_path
+      )
 
       list(APPEND _outputs "${_out_path}")
       list(POP_FRONT _out_vars _out_var)
