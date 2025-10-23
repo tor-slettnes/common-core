@@ -40,10 +40,18 @@ function(cc_protogen_common)
   ### the target property `source_dir`. The resulting list is then passed into
   ### the ProtoBuf compiler as include directories.
 
+  set(_import_dirs
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    ${arg_IMPORT_DIRS}
+  )
+
+  set_target_properties(${arg_TARGET} PROPERTIES
+    import_dirs "${_import_dirs}"
+  )
+
   cc_get_target_property_recursively(
     PROPERTY import_dirs
     TARGETS ${arg_TARGET}
-    INITIAL_VALUE ${CMAKE_CURRENT_SOURCE_DIR} ${arg_IMPORT_DIRS}
     OUTPUT_VARIABLE _import_dirs
     REMOVE_DUPLICATES
   )
