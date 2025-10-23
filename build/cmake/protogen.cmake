@@ -129,7 +129,7 @@ function(cc_protogen_common)
     COMMAND ${_protoc}
     ARGS --${arg_GENERATOR}_out "${_outdir}" "${_args}" "${_proto_files}"
     COMMAND_EXPAND_LISTS
-    COMMENT "${arg_COMMENT}: --${arg_GENERATOR}_out [${_outdir}] [${_args}] [${_proto_files}]"
+    COMMENT "${arg_COMMENT}"
     VERBATIM
   )
 
