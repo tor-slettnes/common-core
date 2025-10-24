@@ -148,21 +148,21 @@ class Client (cc.messaging.grpc.Client):
 
         The returned value is a 'FileInfo()` named tuple, and includes the
         following attributes:
-         - `name`       : Base name, without leading directory
-         - `type`       : TYPE_FILE, TYPE_DIRECTORY, etc
-         - `size`       : Size in bytes
-         - `link`       : Target for symbolic links
-         - `mode`       : UNIX mode mask
-         - `readable`   : Boolean indicating readable file/listable directory
-         - `writable`   : Boolean indicating writable file/modifiable directory
-         - `uid`        : Owner numeric ID
-         - `gid`        : Group numeric ID
-         - `ownername`  : Owner name
-         - `groupname`  : Group name
-         - `accessTime` : Last access
-         - `modifyTime` : Last modification
-         - `createTime` : Creation time
-         - `attributes` : Dictionary of custom attributes
+         - `name`        : Base name, without leading directory
+         - `type`        : TYPE_FILE, TYPE_DIRECTORY, etc
+         - `size`        : Size in bytes
+         - `link`        : Target for symbolic links
+         - `mode`        : UNIX mode mask
+         - `readable`    : Boolean indicating readable file/listable directory
+         - `writable`    : Boolean indicating writable file/modifiable directory
+         - `uid`         : Owner numeric ID
+         - `gid`         : Group numeric ID
+         - `ownername`   : Owner name
+         - `groupname`   : Group name
+         - `access_time` : Last access
+         - `modify_time` : Last modification
+         - `create_time` : Creation time
+         - `attributes`  : Dictionary of custom attributes
         '''
 
         request = pathRequest(path=vfspath,

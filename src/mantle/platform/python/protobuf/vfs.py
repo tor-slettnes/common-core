@@ -27,7 +27,7 @@ FileStatus = namedtuple("FileStatus",
                         ("type", "size", "link",
                          "mode", "readable", "writable",
                          "uid", "gid", "ownername", "groupname",
-                         "accessTime", "modifyTime", "createTime",
+                         "access_time", "modify_time", "create_time",
                          "attributes"))
 
 #===============================================================================
@@ -85,9 +85,9 @@ def decodeStats(stats: FileInfo) -> FileStatus:
         stats.size, stats.link,
         OCT8(stats.mode), stats.readable, stats.writable,
         stats.uid, stats.gid, stats.ownername, stats.groupname,
-        decodeTimestamp(stats.accessTime),
-        decodeTimestamp(stats.modifyTime),
-        decodeTimestamp(stats.createTime),
+        decodeTimestamp(stats.access_time),
+        decodeTimestamp(stats.modify_time),
+        decodeTimestamp(stats.create_time),
         decodeKeyValueMap(stats.attributes))
 
 def pathRequest(path: VFSPathType|None = None,

@@ -271,9 +271,9 @@ namespace protobuf
         msg->set_gid(stats.gid);
         msg->set_ownername(stats.owner);
         msg->set_groupname(stats.group);
-        protobuf::encode(stats.access_time, msg->mutable_accesstime());
-        protobuf::encode(stats.modify_time, msg->mutable_modifytime());
-        protobuf::encode(stats.create_time, msg->mutable_createtime());
+        protobuf::encode(stats.access_time, msg->mutable_access_time());
+        protobuf::encode(stats.modify_time, msg->mutable_modify_time());
+        protobuf::encode(stats.create_time, msg->mutable_create_time());
         protobuf::encode(stats.attributes, msg->mutable_attributes());
     }
 
@@ -298,9 +298,9 @@ namespace protobuf
         stats->gid = msg.gid();
         stats->owner = msg.ownername();
         stats->group = msg.groupname();
-        stats->access_time = decoded<core::dt::TimePoint>(msg.accesstime());
-        stats->modify_time = decoded<core::dt::TimePoint>(msg.modifytime());
-        stats->create_time = decoded<core::dt::TimePoint>(msg.createtime());
+        stats->access_time = decoded<core::dt::TimePoint>(msg.access_time());
+        stats->modify_time = decoded<core::dt::TimePoint>(msg.modify_time());
+        stats->create_time = decoded<core::dt::TimePoint>(msg.create_time());
         protobuf::decode(msg.attributes(), &stats->attributes);
     }
 

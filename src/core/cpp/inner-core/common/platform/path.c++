@@ -90,9 +90,9 @@ namespace core::platform
             // .gid = 0,
             // .owner = "",
             // .group = "",
-            // .accessTime = last_write_time,
-            // .modfiyTime = {},
-            // .createTime = {},
+            // .access_time = last_write_time,
+            // .modfiy_time = {},
+            // .create_time = {},
             // .attributes = {}
         };
     }

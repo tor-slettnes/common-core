@@ -76,9 +76,9 @@ namespace vfs
         tvlist.append("gid", fileinfo.gid);
         tvlist.append("owner", fileinfo.owner);
         tvlist.append("group", fileinfo.group);
-        tvlist.append("accessTime", fileinfo.access_time);
-        tvlist.append("modifyTime", fileinfo.modify_time);
-        tvlist.append("createTime", fileinfo.create_time);
+        tvlist.append("access_time", fileinfo.access_time);
+        tvlist.append("modify_time", fileinfo.modify_time);
+        tvlist.append("create_time", fileinfo.create_time);
         tvlist.append("attributes", fileinfo.attributes);
         return tvlist;
     }

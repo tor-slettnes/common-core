@@ -106,6 +106,28 @@ function(cc_protogen_common)
   unset(_proto_paths)
   unset(_outputs)
   foreach(_src ${_proto_files})
+    set(_found FALSE)
+    foreach(_dir ${_import_dirs})
+      cmake_path(
+        ABSOLUTE_PATH _src
+        BASE_DIRECTORY "${_dir}"
+        NORMALIZE
+        OUTPUT_VARIABLE _abs
+      )
+      if(EXISTS "${_abs}")
+        set(_found TRUE)
+        list(APPEND _proto_paths "${_abs}")
+        break()
+      endif()
+    endforeach()
+
+    if(NOT _found)
+      list(JOIN _import_dirs " " _path)
+      message(SEND_ERROR
+        "${arg_TARGET}: Could not locate '${_src}' given search path: ${_path}\n"
+      )
+    endif()
+
     cmake_path(
       REMOVE_EXTENSION _src
       LAST_ONLY
