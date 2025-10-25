@@ -26,97 +26,97 @@ namespace vfs::grpc
         RequestHandler();
         RequestHandler(const std::shared_ptr<vfs::ProviderInterface>& provider);
 
-        ::grpc::Status get_contexts(
+        ::grpc::Status GetContexts(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::platform::vfs::ContextMap* response) override;
 
-        ::grpc::Status get_open_contexts(
+        ::grpc::Status GetOpenContexts(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::platform::vfs::ContextMap* response) override;
 
-        ::grpc::Status get_context_spec(
+        ::grpc::Status GetContextSpec(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::Path* request,
             ::cc::platform::vfs::ContextSpec* response) override;
 
-        ::grpc::Status open_context(
+        ::grpc::Status OpenContext(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::Path* request,
             ::cc::platform::vfs::ContextSpec* response) override;
 
-        ::grpc::Status close_context(
+        ::grpc::Status CloseContext(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::Path* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status get_volume_info(
+        ::grpc::Status GetVolumeInfo(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::PathRequest* request,
             ::cc::platform::vfs::VolumeInfo* response) override;
 
-        ::grpc::Status get_file_info(
+        ::grpc::Status GetFileInfo(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::PathRequest* request,
             ::cc::platform::vfs::FileInfo* response) override;
 
-        ::grpc::Status get_directory(
+        ::grpc::Status GetDirectory(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::PathRequest* request,
             ::cc::platform::vfs::Directory* response) override;
 
-        ::grpc::Status locate(
+        ::grpc::Status Locate(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::LocateRequest* request,
             ::cc::platform::vfs::Directory* response) override;
 
-        ::grpc::Status copy(
+        ::grpc::Status Copy(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::PathRequest* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status move(
+        ::grpc::Status Move(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::PathRequest* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status create_folder(
+        ::grpc::Status CreateFolder(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::PathRequest* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status remove(
+        ::grpc::Status Remove(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::PathRequest* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status read_file(
+        ::grpc::Status ReadFile(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::Path* request,
             ::grpc::ServerWriter< ::cc::platform::vfs::FileChunk>* writer) override;
 
-        ::grpc::Status write_file(
+        ::grpc::Status WriteFile(
             ::grpc::ServerContext* context,
             ::grpc::ServerReader< ::cc::platform::vfs::FileChunk>* reader,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status get_attributes(
+        ::grpc::Status GetAttributes(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::Path* request,
             ::cc::protobuf::variant::KeyValueMap* response) override;
 
-        ::grpc::Status set_attributes(
+        ::grpc::Status SetAttributes(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::AttributeRequest* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status clear_attributes(
+        ::grpc::Status ClearAttributes(
             ::grpc::ServerContext* context,
             const ::cc::platform::vfs::Path* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status watch(
+        ::grpc::Status Watch(
             ::grpc::ServerContext* context,
             const ::cc::protobuf::signal::Filter* filter,
             ::grpc::ServerWriter< ::cc::platform::vfs::Signal>* writer) override;

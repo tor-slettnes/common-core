@@ -43,7 +43,7 @@ namespace switchboard::grpc
         protobuf::encode(dependency, req.mutable_dependency());
         req.set_allow_update(allow_update);
         req.set_reevaluate(reevaluate);
-        return this->client()->call_check(&Client::Stub::add_dependency, req).value();
+        return this->client()->call_check(&Client::Stub::AddDependency, req).value();
     }
 
     bool RemoteSwitch::remove_dependency(
@@ -54,7 +54,7 @@ namespace switchboard::grpc
         req.set_switch_name(this->name());
         req.set_predecessor_name(predecessor_name);
         req.set_reevaluate(reevaluate);
-        return this->client()->call_check(&Client::Stub::remove_dependency, req).value();
+        return this->client()->call_check(&Client::Stub::RemoveDependency, req).value();
     }
 
     bool RemoteSwitch::add_interceptor(
@@ -66,7 +66,7 @@ namespace switchboard::grpc
         req.set_interceptor_name(interceptor->name());
         protobuf::encode(interceptor, req.mutable_spec());
         req.set_immediate(immediate);
-        return this->client()->call_check(&Client::Stub::add_interceptor, req).value();
+        return this->client()->call_check(&Client::Stub::AddInterceptor, req).value();
     }
 
     bool RemoteSwitch::remove_interceptor(
@@ -75,7 +75,7 @@ namespace switchboard::grpc
         cc::switchboard::RemoveInterceptorRequest req;
         req.set_switch_name(this->name());
         req.set_interceptor_name(id);
-        return this->client()->call_check(&Client::Stub::remove_interceptor, req).value();
+        return this->client()->call_check(&Client::Stub::RemoveInterceptor, req).value();
     }
 
     void RemoteSwitch::update_spec(
@@ -105,7 +105,7 @@ namespace switchboard::grpc
         req.set_replace_interceptors(replace_interceptors);
         req.set_update_state(update_state);
 
-        this->client()->call_check(&Client::Stub::set_specification, req);
+        this->client()->call_check(&Client::Stub::SetSpecification, req);
     }
 
     bool RemoteSwitch::set_target(
@@ -136,7 +136,7 @@ namespace switchboard::grpc
         req.set_reevaluate(reevaluate);
         req.set_on_cancel(protobuf::encoded<cc::switchboard::ExceptionHandling>(on_cancel));
         req.set_on_error(protobuf::encoded<cc::switchboard::ExceptionHandling>(on_error));
-        return this->client()->call_check(&Client::Stub::set_target, req).updated();
+        return this->client()->call_check(&Client::Stub::SetTarget, req).updated();
     }
 
     bool RemoteSwitch::set_attributes(
@@ -147,7 +147,7 @@ namespace switchboard::grpc
         req.set_switch_name(this->name());
         protobuf::encode(attributes, req.mutable_attributes());
         req.set_clear_existing(clear_existing);
-        return this->client()->call_check(&Client::Stub::set_attributes, req).updated();
+        return this->client()->call_check(&Client::Stub::SetAttributes, req).updated();
     }
 
 }  // namespace switchboard::grpc

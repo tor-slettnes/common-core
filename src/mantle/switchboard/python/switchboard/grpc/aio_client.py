@@ -44,12 +44,12 @@ class AsyncClient (SwitchboardBase, SignalClient):
     @doc_inherit
     async def add_switch(self, switch_name: str) -> bool:
         req = AddSwitchRequest(switch_name = switch_name)
-        return (await self.stub.add_switch(req)).value
+        return (await self.stub.AddSwitch(req)).value
 
     @doc_inherit
     async def remove_switch(self, switch_name: str, propagate: bool = True) -> bool:
         req = RemoveSwitchRequest(switch_name = switch_name,
                                   propagate = propagate)
-        return (await self.stub.remove_switch(req)).value
+        return (await self.stub.RemoveSwitch(req)).value
 
 

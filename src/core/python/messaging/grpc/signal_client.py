@@ -287,4 +287,9 @@ class SignalClient (Client):
 
 
     def watch(self, signal_filter : Filter = Filter()):
-        return self.stub.watch(signal_filter, wait_for_ready=True)
+        try:
+            watch_method = self.stub.Watch
+        except AttributeError:
+            watch_method = self.stub.watch
+
+        return watch_method(signal_filter, wait_for_ready=True)

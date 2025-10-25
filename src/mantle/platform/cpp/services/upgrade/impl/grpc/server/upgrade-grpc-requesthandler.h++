@@ -27,37 +27,37 @@ namespace upgrade::grpc
         RequestHandler();
         RequestHandler(const std::shared_ptr<upgrade::ProviderInterface>& provider);
 
-        ::grpc::Status scan(
+        ::grpc::Status Scan(
             ::grpc::ServerContext* context,
             const ::cc::platform::upgrade::PackageSource* request,
             ::cc::platform::upgrade::PackageCatalogue* response) override;
 
-        ::grpc::Status list_sources(
+        ::grpc::Status ListSources(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::platform::upgrade::PackageSources* response) override;
 
-        ::grpc::Status list_available(
+        ::grpc::Status ListAvailable(
             ::grpc::ServerContext* context,
             const ::cc::platform::upgrade::PackageSource* request,
             ::cc::platform::upgrade::PackageCatalogue* response) override;
 
-        ::grpc::Status best_available(
+        ::grpc::Status BestAvailable(
             ::grpc::ServerContext* context,
             const ::cc::platform::upgrade::PackageSource* request,
             ::cc::platform::upgrade::PackageInfo* response) override;
 
-        ::grpc::Status install(
+        ::grpc::Status Install(
             ::grpc::ServerContext* context,
             const ::cc::platform::upgrade::InstallRequest* request,
             ::cc::platform::upgrade::PackageInfo* response) override;
 
-        ::grpc::Status finalize(
+        ::grpc::Status Finalize(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status watch(
+        ::grpc::Status Watch(
             ::grpc::ServerContext* context,
             const ::cc::protobuf::signal::Filter* filter,
             ::grpc::ServerWriter<::cc::platform::upgrade::Signal>* writer) override;

@@ -129,7 +129,7 @@ namespace core::grpc
                            this->servicename(true),
                            filter);
                 this->receiver.start(
-                    &ServiceT::Stub::watch,
+                    &ServiceT::Stub::Watch,
                     this->stub.get(),
                     filter);
             }

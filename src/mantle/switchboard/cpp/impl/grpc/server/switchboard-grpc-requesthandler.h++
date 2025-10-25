@@ -33,111 +33,111 @@ namespace switchboard::grpc
             const std::shared_ptr<switchboard::Provider> &api_provider);
 
     public:
-        ::grpc::Status get_switches(
+        ::grpc::Status GetSwitches(
             ::grpc::ServerContext *context,
             const ::google::protobuf::Empty *request,
             cc::switchboard::SwitchMap *reply) override;
 
-        ::grpc::Status get_switch(
+        ::grpc::Status GetSwitch(
             ::grpc::ServerContext *context,
             const cc::switchboard::SwitchIdentifier *request,
             cc::switchboard::SwitchInfo *reply) override;
 
-        ::grpc::Status add_switch(
+        ::grpc::Status AddSwitch(
             ::grpc::ServerContext *context,
             const cc::switchboard::AddSwitchRequest *request,
             ::google::protobuf::BoolValue *reply) override;
 
-        ::grpc::Status remove_switch(
+        ::grpc::Status RemoveSwitch(
             ::grpc::ServerContext *context,
             const cc::switchboard::RemoveSwitchRequest *request,
             ::google::protobuf::BoolValue *reply) override;
 
-        ::grpc::Status set_specification(
+        ::grpc::Status SetSpecification(
             ::grpc::ServerContext *context,
             const cc::switchboard::SetSpecificationRequest *request,
             ::google::protobuf::BoolValue *reply) override;
 
-        ::grpc::Status get_specifications(
+        ::grpc::Status GetSpecifications(
             ::grpc::ServerContext *context,
             const cc::switchboard::SwitchIdentifiers *request,
             cc::switchboard::SpecificationMap *reply) override;
 
-        ::grpc::Status add_dependency(
+        ::grpc::Status AddDependency(
             ::grpc::ServerContext *context,
             const cc::switchboard::AddDependencyRequest *request,
             ::google::protobuf::BoolValue *reply) override;
 
-        ::grpc::Status remove_dependency(
+        ::grpc::Status RemoveDependency(
             ::grpc::ServerContext *context,
             const cc::switchboard::RemoveDependencyRequest *request,
             ::google::protobuf::BoolValue *reply) override;
 
-        ::grpc::Status get_dependencies(
+        ::grpc::Status GetDependencies(
             ::grpc::ServerContext *context,
             const cc::switchboard::SwitchIdentifier *request,
             cc::switchboard::DependencyMap *reply) override;
 
-        ::grpc::Status get_ancestors(
+        ::grpc::Status GetAncestors(
             ::grpc::ServerContext *context,
             const cc::switchboard::SwitchIdentifier *request,
             cc::switchboard::SwitchIdentifiers *reply) override;
 
-        ::grpc::Status get_descendents(
+        ::grpc::Status GetDescendents(
             ::grpc::ServerContext *context,
             const cc::switchboard::SwitchIdentifier *request,
             cc::switchboard::SwitchIdentifiers *reply) override;
 
-        ::grpc::Status add_interceptor(
+        ::grpc::Status AddInterceptor(
             ::grpc::ServerContext *context,
             const cc::switchboard::AddInterceptorRequest *request,
             ::google::protobuf::BoolValue *reply) override;
 
-        ::grpc::Status remove_interceptor(
+        ::grpc::Status RemoveInterceptor(
             ::grpc::ServerContext *context,
             const cc::switchboard::RemoveInterceptorRequest *request,
             ::google::protobuf::BoolValue *reply) override;
 
-        ::grpc::Status get_interceptors(
+        ::grpc::Status GetInterceptors(
             ::grpc::ServerContext *context,
             const cc::switchboard::SwitchIdentifier *request,
             cc::switchboard::InterceptorMap *reply) override;
 
-        ::grpc::Status invoke_interceptor(
+        ::grpc::Status InvokeInterceptor(
             ::grpc::ServerContext *context,
             const cc::switchboard::InterceptorInvocation *request,
             cc::switchboard::InterceptorResult *reply) override;
 
-        ::grpc::Status intercept(
+        ::grpc::Status Intercept(
             ::grpc::ServerContext *context,
             InterceptorStream *stream) override;
 
-        ::grpc::Status set_target(
+        ::grpc::Status SetTarget(
             ::grpc::ServerContext *context,
             const cc::switchboard::SetTargetRequest *request,
             cc::switchboard::SetTargetResponse *reply) override;
 
-        ::grpc::Status set_attributes(
+        ::grpc::Status SetAttributes(
             ::grpc::ServerContext *context,
             const cc::switchboard::SetAttributesRequest *request,
             cc::switchboard::SetAttributesResponse *reply) override;
 
-        ::grpc::Status get_statuses(
+        ::grpc::Status GetStatuses(
             ::grpc::ServerContext *context,
             const cc::switchboard::SwitchIdentifiers *request,
             cc::switchboard::StatusMap *reply) override;
 
-        ::grpc::Status get_culprits(
+        ::grpc::Status GetCulprits(
             ::grpc::ServerContext *context,
             const cc::switchboard::CulpritsQuery *request,
             cc::switchboard::StatusMap *reply) override;
 
-        ::grpc::Status get_errors(
+        ::grpc::Status GetErrors(
             ::grpc::ServerContext *context,
             const cc::switchboard::SwitchIdentifier *request,
             cc::switchboard::ErrorMap *reply) override;
 
-        ::grpc::Status watch(
+        ::grpc::Status Watch(
             ::grpc::ServerContext *context,
             const cc::protobuf::signal::Filter *request,
             ::grpc::ServerWriter<cc::switchboard::Signal> *writer) override;

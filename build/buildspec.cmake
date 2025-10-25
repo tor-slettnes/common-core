@@ -13,6 +13,11 @@
 ### Obtain local overides to build configuration
 include(${CMAKE_CURRENT_LIST_DIR}/local.cmake OPTIONAL)
 
+### Set default version number from `version` file if not provided
+file(STRINGS ${CMAKE_CURRENT_LIST_DIR}/default_version default_version)
+set(VERSION "${default_version}"
+  CACHE STRING "Build version, in the format MAJOR.MINOR.PATCH")
+
 ### Obtain common defaults
 include(${CMAKE_CURRENT_LIST_DIR}/defaults.cmake)
 

@@ -62,25 +62,25 @@ class Client (API, SignalClient):
         '''
 
         check_message_type(greeting, Greeting)
-        self.stub.say_hello(greeting)
+        self.stub.SayHello(greeting)
 
     def get_current_time(self) -> TimeData:
         '''
         Ask for the current time (local, utc, epoch) from the server.
         '''
-        return self.stub.get_current_time(empty)
+        return self.stub.GetCurrentTime(empty)
 
     def start_ticking(self) -> None:
         '''
         Tell the server to start emitting `signal_time` once per second.
         '''
-        return self.stub.start_ticking(empty)
+        return self.stub.StartTicking(empty)
 
     def stop_ticking(self) -> None:
         '''
         Tell the server to stop emitting `singal_time`.
         '''
-        return self.stub.stop_ticking(empty)
+        return self.stub.StopTicking(empty)
 
     def start_notify_greetings(self, callback: SignalSlot):
         '''

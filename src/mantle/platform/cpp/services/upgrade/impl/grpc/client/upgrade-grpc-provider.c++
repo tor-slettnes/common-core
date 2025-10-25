@@ -27,14 +27,14 @@ namespace upgrade::grpc
     {
         return protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
-                &Client::Stub::scan,
+                &Client::Stub::Scan,
                 protobuf::encoded<::cc::platform::upgrade::PackageSource>(source)));
     }
 
     PackageSources ClientProvider::list_sources() const
     {
         return protobuf::decoded<PackageSources>(
-            this->client->call_check(&Client::Stub::list_sources));
+            this->client->call_check(&Client::Stub::ListSources));
     }
 
     PackageCatalogue ClientProvider::list_available(
@@ -42,7 +42,7 @@ namespace upgrade::grpc
     {
         return protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
-                &Client::Stub::list_available,
+                &Client::Stub::ListAvailable,
                 protobuf::encoded<::cc::platform::upgrade::PackageSource>(source)));
     }
 
@@ -51,7 +51,7 @@ namespace upgrade::grpc
     {
         return protobuf::decoded_shared<PackageInfo>(
             this->client->call_check(
-                &Client::Stub::best_available,
+                &Client::Stub::BestAvailable,
                 protobuf::encoded<::cc::platform::upgrade::PackageSource>(source)));
     }
 
@@ -62,12 +62,12 @@ namespace upgrade::grpc
         protobuf::encode(source, request.mutable_source());
 
         return protobuf::decoded_shared<PackageInfo>(
-            this->client->call_check(&Client::Stub::install, request));
+            this->client->call_check(&Client::Stub::Install, request));
     }
 
     void ClientProvider::finalize()
     {
-        this->client->call_check(&Client::Stub::finalize);
+        this->client->call_check(&Client::Stub::Finalize);
     }
 
 }  // namespace upgrade::grpc

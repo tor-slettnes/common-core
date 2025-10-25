@@ -20,8 +20,10 @@ namespace multilogger::grpc
     ClientListener::ClientListener(
         const std::unique_ptr<::cc::platform::multilogger::MultiLogger::Stub> &stub,
         const ListenerSpec &request)
-        : reader_(stub->listen(&this->context_,
-                               protobuf::encoded<::cc::platform::multilogger::ListenerSpec>(request)))
+        : reader_(
+            stub->Listen(
+                &this->context_,
+                protobuf::encoded<::cc::platform::multilogger::ListenerSpec>(request)))
     {
         logf_debug("Created grpc::ClientListener(%s)", request);
     }

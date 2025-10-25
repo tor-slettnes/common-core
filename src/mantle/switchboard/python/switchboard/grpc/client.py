@@ -40,10 +40,10 @@ class Client (SwitchboardBase, SignalClient):
     @doc_inherit
     def add_switch(self, switch_name: str) -> bool:
         req = AddSwitchRequest(switch_name = switch_name)
-        return self.stub.add_switch(req).value
+        return self.stub.AddSwitch(req).value
 
     @doc_inherit
     def remove_switch(self, switch_name: str, propagate: bool = True) -> bool:
         req = RemoveSwitchRequest(switch_name = switch_name,
                                   propagate = propagate)
-        return self.stub.remove_switch(req).value
+        return self.stub.RemoveSwitch(req).value

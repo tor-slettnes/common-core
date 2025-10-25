@@ -15,14 +15,14 @@ namespace multilogger::grpc
     void ClientImpl::submit(const core::types::Loggable::ptr &item)
     {
         this->call_check(
-            &Stub::submit,
+            &Stub::Submit,
             ::protobuf::encoded_shared<cc::platform::multilogger::Loggable>(item));
     }
 
     bool ClientImpl::add_sink(const SinkSpec &spec)
     {
         return this->call_check(
-                       &Stub::add_sink,
+                       &Stub::AddSink,
                        ::protobuf::encoded<cc::platform::multilogger::SinkSpec>(spec))
             .added();
     }
@@ -30,7 +30,7 @@ namespace multilogger::grpc
     bool ClientImpl::remove_sink(const SinkID &id)
     {
         return this->call_check(
-                       &Stub::remove_sink,
+                       &Stub::RemoveSink,
                        ::protobuf::encoded<cc::platform::multilogger::SinkID>(id))
             .removed();
     }
@@ -39,38 +39,38 @@ namespace multilogger::grpc
     {
         return protobuf::decoded<SinkSpec>(
             this->call_check(
-                &Stub::get_sink,
+                &Stub::GetSink,
                 ::protobuf::encoded<cc::platform::multilogger::SinkID>(id)));
     }
 
     SinkSpecs ClientImpl::get_all_sink_specs() const
     {
         return protobuf::decoded<SinkSpecs>(
-            this->call_check(&Stub::get_all_sinks));
+            this->call_check(&Stub::GetAllSinks));
     }
 
     SinkIDs ClientImpl::list_sinks() const
     {
         return protobuf::assign_to_vector<SinkID>(
-            this->call_check(&Stub::list_sinks).sink_names());
+            this->call_check(&Stub::ListSinks).sink_names());
     }
 
     SinkTypes ClientImpl::list_sink_types() const
     {
         return protobuf::assign_to_vector<SinkType>(
-            this->call_check(&Stub::list_sink_types).sink_types());
+            this->call_check(&Stub::ListSinkTypes).sink_types());
     }
 
     FieldNames ClientImpl::list_message_fields() const
     {
         return protobuf::assign_to_vector<std::string>(
-            this->call_check(&Stub::list_message_fields).field_names());
+            this->call_check(&Stub::ListMessageFields).field_names());
     }
 
     FieldNames ClientImpl::list_error_fields() const
     {
         return protobuf::assign_to_vector<std::string>(
-            this->call_check(&Stub::list_error_fields).field_names());
+            this->call_check(&Stub::ListErrorFields).field_names());
     }
 
     std::shared_ptr<LogSource> ClientImpl::listen(const ListenerSpec &spec)
@@ -90,8 +90,9 @@ namespace multilogger::grpc
             this->writer_context = std::make_unique<::grpc::ClientContext>();
             this->writer_context->set_wait_for_ready(true);
             this->writer_response = std::make_unique<::google::protobuf::Empty>();
-            this->writer = this->stub->writer(this->writer_context.get(),
-                                              this->writer_response.get());
+            this->writer = this->stub->Writer(
+                this->writer_context.get(),
+                this->writer_response.get());
         }
     }
 

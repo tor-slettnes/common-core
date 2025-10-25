@@ -40,7 +40,7 @@ namespace sysconfig::grpc
     void TimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
     {
         this->client->call_check(
-            &Client::Stub::set_current_time,
+            &Client::Stub::SetCurrentTime,
             protobuf::encoded<google::protobuf::Timestamp>(tp));
     }
 
@@ -48,13 +48,13 @@ namespace sysconfig::grpc
     {
         return protobuf::decoded<core::dt::TimePoint>(
             this->client->call_check(
-                &Client::Stub::get_current_time));
+                &Client::Stub::GetCurrentTime));
     }
 
     void TimeConfigProvider::set_time_config(const TimeConfig &config)
     {
         this->client->call_check(
-            &Client::Stub::set_time_config,
+            &Client::Stub::SetTimeConfig,
             protobuf::encoded<::cc::platform::sysconfig::TimeConfig>(config));
     }
 
@@ -62,7 +62,7 @@ namespace sysconfig::grpc
     {
         return protobuf::decoded<TimeConfig>(
             this->client->call_check(
-                &Client::Stub::get_time_config));
+                &Client::Stub::GetTimeConfig));
     }
 
 }  // namespace sysconfig::grpc

@@ -7,8 +7,6 @@ __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 ### Standard Python modules
-from typing import Optional, Sequence, Union, Iterator
-from enum import IntEnum
 from collections import namedtuple
 
 ### Modules within package
@@ -20,7 +18,7 @@ from cc.protobuf.wellknown import empty, StringValue
 from cc.protobuf.netconfig import Signal, MappingKey, \
     GlobalData, RadioState, DeviceData, IPConfigData, ConnectionData, \
     ActiveConnectionData, WiredConnectionData, WirelessConnectionData, \
-    AccessPointData, AccessPointConnection, WEP_Data, WPA_Data, EAP_Data, \
+    AccessPointData, WirelessConnectionData, WEPData, WPAData, EAPData, \
     IPConfigMethod, WirelessMode, KeyManagement, \
     ActiveConnectionState, ActiveConnectionStateReason
 
@@ -53,34 +51,32 @@ class Client (cc.messaging.grpc.Client):
         '''
         Return the primary hostname
         '''
-        return self.stub.get_hostname(empty).value
+        return self.stub.GetHostname(empty).value
 
     def set_hostname(self, hostname: str):
         '''
         Set the primary hostname
         '''
         request = StringValue(value=hostname)
-        self.stub.set_hostname(request)
+        self.stub.SetHostname(request)
 
     def get_global_data(self) -> GlobalData:
         '''
         Get global network state information
         '''
-        return self.stub.get_global_data(empty)
+        return self.stub.GetGlobalData(empty)
 
     def get_connections(self) -> dict[str, ConnectionData]:
         '''
         Get a map of available network connections
         '''
-        return dict(self.stub.get_connections(empty).map)
+        return dict(self.stub.GetConnections(empty).map)
 
     def define_connection(
             self,
             id: str,
-            data: Union[WiredConnectionData,
-                        WirelessConnectionData,
-                        None] = None,
-            interface: Optional[str] = None,
+            data: WiredConnectionData|WirelessConnectionData|None = None,
+            interface: str|None = None,
             ip4config: IPConfigData = IPConfigData(method = IPConfigMethod.METHOD_AUTO),
             ip6config: IPConfigData = IPConfigData(method = IPConfigMethod.METHOD_AUTO)):
 
@@ -131,7 +127,7 @@ class Client (cc.messaging.grpc.Client):
                 ip4config=ip4config,
                 ip6config=ip6config)
 
-        return self.stub.define_connection(request)
+        return self.stub.DefineConnection(request)
 
 
     def remove_connection(self, key: str):
@@ -145,7 +141,7 @@ class Client (cc.messaging.grpc.Client):
         '''
 
         request = MappingKey(key=key)
-        return self.stub.remove_connection(request).value
+        return self.stub.RemoveConnection(request).value
 
     def activate_connection(self, key: str):
         '''
@@ -156,7 +152,7 @@ class Client (cc.messaging.grpc.Client):
         '''
 
         request = MappingKey(key=key)
-        return self.stub.activate_connection(request)
+        return self.stub.ActivateConnection(request)
 
     def deactivate_connection(self, key: str):
         '''
@@ -167,14 +163,14 @@ class Client (cc.messaging.grpc.Client):
         '''
 
         request = MappingKey(key=key)
-        return self.stub.deactivate_connection(request)
+        return self.stub.DeactivateConnection(request)
 
     def get_active_connections(self) -> dict[str, ActiveConnectionData]:
         '''
         Return a dictionary mapping connection IDs to active connection data
         for currently active connections.
         '''
-        return dict(self.stub.get_active_connections(empty).map)
+        return dict(self.stub.GetActiveConnections(empty).map)
 
     def request_scan(self):
         '''
@@ -182,7 +178,7 @@ class Client (cc.messaging.grpc.Client):
         place asynchronously, and any access point changes are emitted as
         signals.
         '''
-        return self.stub.request_scan(empty)
+        return self.stub.RequestScan(empty)
 
     def get_aps(self) -> dict[str, AccessPointData]:
         '''
@@ -190,7 +186,7 @@ class Client (cc.messaging.grpc.Client):
         corresponding data
         '''
 
-        return dict(self.stub.get_aps(empty).map)
+        return dict(self.stub.GetAccessPoints(empty).map)
 
     def get_aps_by_ssid(self) -> dict[bytes, AccessPointData]:
         '''
@@ -205,7 +201,7 @@ class Client (cc.messaging.grpc.Client):
         return aps
 
     def connect_ap(self,
-                   ap: Union[str, bytes, bytearray],
+                   ap: str|bytes|bytearray,
                    connection: ConnectionData):
         '''
         Define and activate a new connection based on information obtained
@@ -259,22 +255,22 @@ class Client (cc.messaging.grpc.Client):
         else:
             raise TypeError("'ap' must be a string (BSSID) or a bytearray (SSID)")
 
-        request = AccessPointConnection(
+        request = WirelessConnectionData(
             ssid=ssid,
             bssid=bssid,
             connection=connection)
 
-        return self.stub.connect_ap(request)
+        return self.stub.ConnectAccessPoint(request)
 
 
     def connect(self,
                 id: str,
                 ap: str|bytes|bytearray|None = None,
-                auth : Union[WEP_Data, WPA_Data, EAP_Data, None] = None,
+                auth : WEPData|WPAData|EAPData|None = None,
                 key_mgmt: KeyManagement = KeyManagement.KEY_EMPTY,
                 hidden: bool = False,
                 mode: WirelessMode = WirelessMode.MODE_INFRASTRUCTURE,
-                interface: Optional[str] = None,
+                interface: str|None = None,
                 ip4config: IPConfigData = IPConfigData(method=IPConfigMethod.METHOD_AUTO),
                 ip6config: IPConfigData = IPConfigData(method=IPConfigMethod.METHOD_AUTO)):
         '''
@@ -294,14 +290,14 @@ class Client (cc.messaging.grpc.Client):
 
         @param auth:
             Authentication data. The following data types are supported:
-            - `cc.protobuf.netconfig.WEP_Data`
+            - `cc.protobuf.netconfig.WEPData`
               Wireless Encryption Protocol, with up to 4 static keys
               each comprising 5 or 13 characters (or 10 or 26 hexadecimal digits)
 
-            - `cc.protobuf.netconfig.WPA_Data`
-              WiFi Protected Access, in the form `WPA_Data(psk='password')`
+            - `cc.protobuf.netconfig.WPAData`
+              WiFi Protected Access, in the form `WPAData(psk='password')`
 
-            - `cc.protobuf.netconfig.EAP_Data`
+            - `cc.protobuf.netconfig.EAPData`
               802.1x/EAP settings for enterprise networks.
 
             Use `help(PROTOCOL)` for more information on each.
@@ -334,7 +330,7 @@ class Client (cc.messaging.grpc.Client):
           >>> netconfig = NetConfigClient()
           >>> netconfig.connect(
                   id = 'My Network',
-                  auth = cc.protobuf.netconfig.WPA_Data(psk='My password'))
+                  auth = cc.protobuf.netconfig.WPAData(psk='My password'))
           ```
         '''
 
@@ -342,11 +338,11 @@ class Client (cc.messaging.grpc.Client):
             ap = id.encode()
 
         kwargs = dict(mode=mode, hidden=hidden, key_mgmt=key_mgmt)
-        if isinstance(auth, WEP_Data):
+        if isinstance(auth, WEPData):
             kwargs.update(wep = auth)
-        elif isinstance(auth, WPA_Data):
+        elif isinstance(auth, WPAData):
             kwargs.update(wpa = auth)
-        elif isinstance(auth, EAP_Data):
+        elif isinstance(auth, EAPData):
             kwargs.update(eap = auth)
 
         conn = ConnectionData(
@@ -420,7 +416,7 @@ class Client (cc.messaging.grpc.Client):
         @returns
             Key/Value pairs mapping device names to associated device information.
         '''
-        return dict(self.stub.get_devices(empty).map)
+        return dict(self.stub.GetDevices(empty).map)
 
 
     def set_wireless_enabled(self, enabled: bool):
@@ -428,7 +424,7 @@ class Client (cc.messaging.grpc.Client):
         Enable or disable the WiFi radio.
         '''
         req = RadioState(wireless_enabled=enabled)
-        return self.stub.set_wireless_enabled(req)
+        return self.stub.SetWirelessEnabled(req)
 
     def get_wireless_enabled(self) -> bool:
         '''
@@ -448,7 +444,7 @@ class Client (cc.messaging.grpc.Client):
         Specify whether WiFi can be enabled.
         '''
         req = google.protobuf.BoolValue(value=allowed)
-        return self.stub.set_wireless_allowed(req)
+        return self.stub.SetWirelessAllowed(req)
 
     def get_wireless_allowed(self) -> bool:
         '''

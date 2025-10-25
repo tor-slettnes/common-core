@@ -29,7 +29,6 @@ namespace vfs::grpc
         return this->status_;
     }
 
-
     //==========================================================================
     /// @class ClientInputBuffer
 
@@ -105,7 +104,10 @@ namespace vfs::grpc
     ClientInputStream::ClientInputStream(const std::unique_ptr<ClientStub> &stub,
                                          const Path &vpath)
         : cxt(std::make_unique<::grpc::ClientContext>()),
-          input_buffer(stub->read_file(cxt.get(), protobuf::encoded<::cc::platform::vfs::Path>(vpath)))
+          input_buffer(
+              stub->ReadFile(
+                  cxt.get(),
+                  protobuf::encoded<::cc::platform::vfs::Path>(vpath)))
     {
         this->rdbuf(&this->input_buffer);
     }
@@ -115,7 +117,6 @@ namespace vfs::grpc
         return this->input_buffer.status();
     }
 
-
     //==========================================================================
 
     /// @class ClientOutputStream
@@ -123,7 +124,9 @@ namespace vfs::grpc
     ClientOutputStream::ClientOutputStream(const std::unique_ptr<ClientStub> &stub,
                                            const Path &vpath)
         : cxt(std::make_unique<::grpc::ClientContext>()),
-          output_buffer(stub->write_file(cxt.get(), &empty), vpath)
+          output_buffer(
+              stub->WriteFile(cxt.get(), &empty),
+              vpath)
     {
         this->rdbuf(&this->output_buffer);
     }
@@ -133,4 +136,4 @@ namespace vfs::grpc
         return this->output_buffer.status();
     }
 
-} // namespace vfs::grpc
+}  // namespace vfs::grpc

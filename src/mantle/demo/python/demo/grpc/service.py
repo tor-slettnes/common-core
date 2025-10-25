@@ -48,22 +48,22 @@ class DemoService (SignalService, DemoServicer):
                                bind_address = bind_address)
         self.demo_provider = demo_provider
 
-    def say_hello(self,
-                  request: Greeting,
-                  context: grpc.ServicerContext):
+    def SayHello(self,
+                 request: Greeting,
+                 context: grpc.ServicerContext):
         return self._wrap(self.demo_provider.say_hello, request)
 
-    def get_current_time(self,
-                         request: Empty,
-                         context: grpc.ServicerContext) -> TimeData:
+    def GetCurrentTime(self,
+                       request: Empty,
+                       context: grpc.ServicerContext) -> TimeData:
         return self._wrap(self.demo_provider.get_current_time)
 
-    def start_ticking(self,
-                      request: Empty,
-                      context: grpc.ServicerContext):
-        return self._wrap(self.demo_provider.start_ticking)
-
-    def stop_ticking(self,
+    def StartTicking(self,
                      request: Empty,
                      context: grpc.ServicerContext):
+        return self._wrap(self.demo_provider.start_ticking)
+
+    def StopTicking(self,
+                    request: Empty,
+                    context: grpc.ServicerContext):
         return self._wrap(self.demo_provider.stop_ticking)

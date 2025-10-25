@@ -347,7 +347,7 @@ namespace protobuf
     // ::netconfig::WEP_Data
 
     void encode(const ::netconfig::WEP_Data &auth,
-                ::cc::platform::netconfig::WEP_Data *msg) noexcept
+                ::cc::platform::netconfig::WEPData *msg) noexcept
     {
         msg->set_auth_alg(encoded<::cc::platform::netconfig::AuthenticationAlgorithm>(auth.auth_alg));
         for (const core::types::ByteVector &key : auth.keys)
@@ -355,10 +355,10 @@ namespace protobuf
             msg->add_key(key.data(), key.size());
         }
         msg->set_key_idx(auth.key_idx);
-        msg->set_key_type(encoded<::cc::platform::netconfig::WEP_KeyType>(auth.key_type));
+        msg->set_key_type(encoded<::cc::platform::netconfig::WEPKeyType>(auth.key_type));
     }
 
-    void decode(const ::cc::platform::netconfig::WEP_Data &msg,
+    void decode(const ::cc::platform::netconfig::WEPData &msg,
                 ::netconfig::WEP_Data *auth) noexcept
     {
         auth->auth_alg =
@@ -387,12 +387,12 @@ namespace protobuf
     // ::netconfig::WPA_Data
 
     void encode(const ::netconfig::WPA_Data &auth,
-                ::cc::platform::netconfig::WPA_Data *msg) noexcept
+                ::cc::platform::netconfig::WPAData *msg) noexcept
     {
         msg->set_psk(auth.psk);
     }
 
-    void decode(const ::cc::platform::netconfig::WPA_Data &msg,
+    void decode(const ::cc::platform::netconfig::WPAData &msg,
                 ::netconfig::WPA_Data *auth) noexcept
     {
         auth->psk = msg.psk();
@@ -402,14 +402,14 @@ namespace protobuf
     // ::netconfig::EAP_Data
 
     void encode(const ::netconfig::EAP_Data &auth,
-                ::cc::platform::netconfig::EAP_Data *msg) noexcept
+                ::cc::platform::netconfig::EAPData *msg) noexcept
     {
         msg->set_auth_alg(
             encoded<::cc::platform::netconfig::AuthenticationAlgorithm>(
                 auth.auth_alg));
 
-        msg->set_eap_type(encoded<::cc::platform::netconfig::EAP_Type>(auth.eap_type));
-        msg->set_eap_phase2(encoded<::cc::platform::netconfig::EAP_Phase2>(auth.eap_phase2));
+        msg->set_eap_type(encoded<::cc::platform::netconfig::EAPType>(auth.eap_type));
+        msg->set_eap_phase2(encoded<::cc::platform::netconfig::EAPPhase2>(auth.eap_phase2));
         msg->set_anonymous_identity(auth.anonymous_identity);
         msg->set_domain(auth.domain);
         msg->set_identity(auth.identity);
@@ -421,10 +421,10 @@ namespace protobuf
         msg->set_client_cert_password(auth.client_cert_password);
         msg->set_pac_file(auth.pac_file.string());
         msg->set_fast_provisioning(
-            encoded<::cc::platform::netconfig::FAST_Provisioning>(auth.fast_provisioning));
+            encoded<::cc::platform::netconfig::FASTProvisioning>(auth.fast_provisioning));
     }
 
-    void decode(const ::cc::platform::netconfig::EAP_Data &msg,
+    void decode(const ::cc::platform::netconfig::EAPData &msg,
                 ::netconfig::EAP_Data *auth) noexcept
     {
         auth->auth_alg =
@@ -727,12 +727,12 @@ namespace protobuf
     // ::netconfig::EAP_Type
 
     void encode(::netconfig::EAP_Type eap_type,
-                ::cc::platform::netconfig::EAP_Type *proto_eap_type) noexcept
+                ::cc::platform::netconfig::EAPType *proto_eap_type) noexcept
     {
-        *proto_eap_type = static_cast<::cc::platform::netconfig::EAP_Type>(eap_type);
+        *proto_eap_type = static_cast<::cc::platform::netconfig::EAPType>(eap_type);
     }
 
-    void decode(::cc::platform::netconfig::EAP_Type proto_eap_type,
+    void decode(::cc::platform::netconfig::EAPType proto_eap_type,
                 ::netconfig::EAP_Type *eap_type) noexcept
     {
         *eap_type = static_cast<::netconfig::EAP_Type>(proto_eap_type);
@@ -742,12 +742,12 @@ namespace protobuf
     // ::netconfig::EAP_Phase2
 
     void encode(::netconfig::EAP_Phase2 phase2,
-                ::cc::platform::netconfig::EAP_Phase2 *proto_phase2) noexcept
+                ::cc::platform::netconfig::EAPPhase2 *proto_phase2) noexcept
     {
-        *proto_phase2 = static_cast<::cc::platform::netconfig::EAP_Phase2>(phase2);
+        *proto_phase2 = static_cast<::cc::platform::netconfig::EAPPhase2>(phase2);
     }
 
-    void decode(::cc::platform::netconfig::EAP_Phase2 proto_phase2,
+    void decode(::cc::platform::netconfig::EAPPhase2 proto_phase2,
                 ::netconfig::EAP_Phase2 *phase2) noexcept
     {
         *phase2 = static_cast<::netconfig::EAP_Phase2>(proto_phase2);
@@ -757,12 +757,12 @@ namespace protobuf
     // ::netconfig::FAST_Provisioning
 
     void encode(::netconfig::FAST_Provisioning provisioning,
-                ::cc::platform::netconfig::FAST_Provisioning *proto_provisioning) noexcept
+                ::cc::platform::netconfig::FASTProvisioning *proto_provisioning) noexcept
     {
-        *proto_provisioning = static_cast<::cc::platform::netconfig::FAST_Provisioning>(provisioning);
+        *proto_provisioning = static_cast<::cc::platform::netconfig::FASTProvisioning>(provisioning);
     }
 
-    void decode(::cc::platform::netconfig::FAST_Provisioning proto_provisioning,
+    void decode(::cc::platform::netconfig::FASTProvisioning proto_provisioning,
                 ::netconfig::FAST_Provisioning *provisioning) noexcept
     {
         *provisioning = static_cast<::netconfig::FAST_Provisioning>(proto_provisioning);
@@ -772,12 +772,12 @@ namespace protobuf
     // NMWepKeyType
 
     void encode(NMWepKeyType type,
-                ::cc::platform::netconfig::WEP_KeyType *proto_type) noexcept
+                ::cc::platform::netconfig::WEPKeyType *proto_type) noexcept
     {
-        *proto_type = static_cast<::cc::platform::netconfig::WEP_KeyType>(type);
+        *proto_type = static_cast<::cc::platform::netconfig::WEPKeyType>(type);
     }
 
-    void decode(::cc::platform::netconfig::WEP_KeyType proto_type,
+    void decode(::cc::platform::netconfig::WEPKeyType proto_type,
                 NMWepKeyType *type) noexcept
     {
         *type = static_cast<NMWepKeyType>(proto_type);

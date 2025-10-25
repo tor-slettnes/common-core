@@ -23,7 +23,7 @@ namespace netconfig::grpc
     {
     }
 
-    ::grpc::Status RequestHandler::get_hostname(
+    ::grpc::Status RequestHandler::GetHostName(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::google::protobuf::StringValue* response)
@@ -40,7 +40,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::set_hostname(
+    ::grpc::Status RequestHandler::SetHostName(
         ::grpc::ServerContext* context,
         const ::google::protobuf::StringValue* request,
         ::google::protobuf::Empty* response)
@@ -56,7 +56,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_connections(
+    ::grpc::Status RequestHandler::GetConnections(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::netconfig::ConnectionMap* response)
@@ -75,7 +75,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::define_connection(
+    ::grpc::Status RequestHandler::DefineConnection(
         ::grpc::ServerContext* context,
         const ::cc::platform::netconfig::ConnectionRequest* request,
         ::google::protobuf::Empty* response)
@@ -94,7 +94,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::remove_connection(
+    ::grpc::Status RequestHandler::RemoveConnection(
         ::grpc::ServerContext* context,
         const ::cc::platform::netconfig::MappingKey* request,
         ::google::protobuf::BoolValue* response)
@@ -111,7 +111,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::activate_connection(
+    ::grpc::Status RequestHandler::ActivateConnection(
         ::grpc::ServerContext* context,
         const ::cc::platform::netconfig::MappingKey* request,
         ::google::protobuf::Empty* response)
@@ -127,7 +127,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::deactivate_connection(
+    ::grpc::Status RequestHandler::DeactivateConnection(
         ::grpc::ServerContext* context,
         const ::cc::platform::netconfig::MappingKey* request,
         ::google::protobuf::Empty* response)
@@ -143,7 +143,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_active_connections(
+    ::grpc::Status RequestHandler::GetActiveConnections(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::netconfig::ActiveConnectionMap* response)
@@ -161,7 +161,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::request_scan(
+    ::grpc::Status RequestHandler::RequestScan(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::google::protobuf::Empty* response)
@@ -177,7 +177,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_aps(
+    ::grpc::Status RequestHandler::GetAccessPoints(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::netconfig::AccessPointMap* response)
@@ -195,9 +195,9 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::connect_ap(
+    ::grpc::Status RequestHandler::ConnectAccessPoint(
         ::grpc::ServerContext* context,
-        const ::cc::platform::netconfig::AccessPointConnection* request,
+        const ::cc::platform::netconfig::WirelessConnectionRequest* request,
         ::google::protobuf::Empty* response)
     {
         ConnectionData data;
@@ -208,11 +208,11 @@ namespace netconfig::grpc
         {
             switch (request->key_case())
             {
-            case ::cc::platform::netconfig::AccessPointConnection::KeyCase::kBssid:
+            case ::cc::platform::netconfig::WirelessConnectionRequest::KeyCase::kBssid:
                 this->provider->connect_ap(request->bssid(), data);
                 break;
 
-            case ::cc::platform::netconfig::AccessPointConnection::KeyCase::kSsid:
+            case ::cc::platform::netconfig::WirelessConnectionRequest::KeyCase::kSsid:
                 this->provider->connect_ap(core::types::ByteVector(request->ssid()), data);
                 break;
 
@@ -228,7 +228,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_devices(
+    ::grpc::Status RequestHandler::GetDevices(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::netconfig::DeviceMap* response)
@@ -247,7 +247,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_global_data(
+    ::grpc::Status RequestHandler::GetGlobalData(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::netconfig::GlobalData* response)
@@ -266,7 +266,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::set_wireless_enabled(
+    ::grpc::Status RequestHandler::SetWirelessEnabled(
         ::grpc::ServerContext* context,
         const ::cc::platform::netconfig::RadioState* request,
         ::google::protobuf::Empty* response)
@@ -282,7 +282,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::set_wireless_allowed(
+    ::grpc::Status RequestHandler::SetWirelessAllowed(
         ::grpc::ServerContext* context,
         const ::google::protobuf::BoolValue* request,
         ::google::protobuf::Empty* response)
@@ -298,7 +298,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::select_wireless_band(
+    ::grpc::Status RequestHandler::SelectWirelessBand(
         ::grpc::ServerContext* context,
         const ::cc::platform::netconfig::WirelessBandSetting* request,
         ::google::protobuf::Empty* response)
@@ -316,7 +316,7 @@ namespace netconfig::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::watch(
+    ::grpc::Status RequestHandler::Watch(
         ::grpc::ServerContext* context,
         const ::cc::protobuf::signal::Filter* filter,
         ::grpc::ServerWriter<::cc::platform::netconfig::Signal>* writer)

@@ -21,7 +21,7 @@ namespace demo::grpc
         logf_debug("Demo gRPC RequestHandler Constructor");
     }
 
-    ::grpc::Status RequestHandler::say_hello(
+    ::grpc::Status RequestHandler::SayHello(
         ::grpc::ServerContext* context,
         const ::cc::demo::Greeting* request,
         ::google::protobuf::Empty* response)
@@ -44,7 +44,7 @@ namespace demo::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_current_time(
+    ::grpc::Status RequestHandler::GetCurrentTime(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::demo::TimeData* response)
@@ -60,7 +60,7 @@ namespace demo::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::start_ticking(
+    ::grpc::Status RequestHandler::StartTicking(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::google::protobuf::Empty* response)
@@ -76,7 +76,7 @@ namespace demo::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::stop_ticking(
+    ::grpc::Status RequestHandler::StopTicking(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::google::protobuf::Empty* response)
@@ -92,7 +92,7 @@ namespace demo::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::watch(
+    ::grpc::Status RequestHandler::Watch(
         ::grpc::ServerContext* context,
         const cc::protobuf::signal::Filter* request,
         ::grpc::ServerWriter<cc::demo::Signal>* writer)

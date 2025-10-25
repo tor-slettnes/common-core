@@ -83,7 +83,7 @@ namespace switchboard::grpc
         {
             cc::switchboard::AddSwitchRequest req;
             req.set_switch_name(switch_name);
-            this->call_check(&Stub::add_switch, req);
+            this->call_check(&Stub::AddSwitch, req);
         }
 
         return {sw, inserted};
@@ -96,7 +96,7 @@ namespace switchboard::grpc
         cc::switchboard::RemoveSwitchRequest req;
         req.set_switch_name(switch_name);
         req.set_propagate(propagate);
-        return this->call_check(&Stub::remove_switch, req).value();
+        return this->call_check(&Stub::RemoveSwitch, req).value();
     }
 
     void Proxy::on_spec_update(

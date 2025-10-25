@@ -56,28 +56,28 @@ class Client (API, Writer):
         channel_name = MULTILOGGER_SERVICE_CHANNEL
         interface_name = MULTILOGGER_RPC_INTERFACE
 
-        def add_sink(self, request: SinkSpec) -> AddSinkResult:
+        def AddSink(self, request: SinkSpec) -> AddSinkResult:
             return self.call("add_sink", request, AddSinkResult)
 
-        def remove_sink(self, request: SinkID) -> RemoveSinkResult:
+        def RemoveSink(self, request: SinkID) -> RemoveSinkResult:
             return self.call("remove_sink", request, RemoveSinkResult)
 
-        def get_sink(self, request: SinkID) -> SinkSpec:
+        def GetSink(self, request: SinkID) -> SinkSpec:
             return self.call("get_sink", request, SinkSpec)
 
-        def get_all_sinks(self, request: Empty) -> SinkSpecs:
+        def GetAllSinks(self, request: Empty) -> SinkSpecs:
             return self.call("get_all_sinks", request, SinkSpecs)
 
-        def list_sinks(self, request: Empty) -> SinkNames:
+        def ListSinks(self, request: Empty) -> SinkNames:
             return self.call("list_sinks", request, SinkNames)
 
-        def list_sink_types(self, request: Empty) -> SinkTypes:
+        def ListSinkTypes(self, request: Empty) -> SinkTypes:
             return self.call("list_sink_types", request, SinkTypes)
 
-        def list_message_fields(self, request: Empty) -> FieldNames:
+        def ListMessageFields(self, request: Empty) -> FieldNames:
             return self.call("list_message_fields", request, FieldNames)
 
-        def list_error_fields(self, request: Empty) -> FieldNames:
+        def ListErrorFields(self, request: Empty) -> FieldNames:
             return self.call("list_error_fields", request, FieldNames)
 
 

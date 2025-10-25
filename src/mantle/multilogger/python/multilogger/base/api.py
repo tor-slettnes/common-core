@@ -56,7 +56,7 @@ class API (MessageBuilder):
             locals(),
             sink_id = self.identity)
 
-        return self.rpc.listen(spec)
+        return self.rpc.Listen(spec)
 
 
     def add_sink(self,
@@ -188,7 +188,7 @@ class API (MessageBuilder):
         '''
 
         request = self.build_from_dict(SinkSpec, locals())
-        response = self.rpc.add_sink(request)
+        response = self.rpc.AddSink(request)
         return response.added
 
 
@@ -202,7 +202,7 @@ class API (MessageBuilder):
         request = SinkID(
             sink_id = sink_id)
 
-        return self.rpc.remove_sink(request).removed
+        return self.rpc.RemoveSink(request).removed
 
 
     def get_sink(self, sink_id: str) -> SinkSpec:
@@ -213,31 +213,31 @@ class API (MessageBuilder):
         request = SinkID(
             sink_id = sink_id)
 
-        return self.rpc.get_sink(request)
+        return self.rpc.GetSink(request)
 
     def get_all_sinks(self) -> list[SinkSpec]:
         '''
         Retrieve specifications for all active log sinks
         '''
-        return self.rpc.get_all_sinks(empty).specs
+        return self.rpc.GetAllSinks(empty).specs
 
     def list_sinks(self) -> list[str]:
         '''
         List available log sinks.
         '''
-        return self.rpc.list_sinks(empty).sink_names
+        return self.rpc.ListSinks(empty).sink_names
 
 
     def list_sink_types(self) -> list[str]:
         '''
         List available log sink types
         '''
-        return self.rpc.list_sink_types(empty).sink_types
+        return self.rpc.ListSinkTypes(empty).sink_types
 
 
     def list_static_fields(self) -> list[str]:
         '''
         List static fields for log messages
         '''
-        return self.rpc.list_static_fields(empty).field_names
+        return self.rpc.ListStaticFields(empty).field_names
 

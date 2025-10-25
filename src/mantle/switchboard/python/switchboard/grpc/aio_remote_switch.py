@@ -55,7 +55,7 @@ class AsyncRemoteSwitch (Switch):
             replace_interceptors = replace_interceptors,
             update_state = update_state)
 
-        return (await self.stub.set_specification(req)).value
+        return (await self.stub.SetSpecification(req)).value
 
 
     @doc_inherit
@@ -80,7 +80,7 @@ class AsyncRemoteSwitch (Switch):
             allow_update = allow_update,
             reevaluate = reevaluate)
 
-        return (await self.stub.add_dependency(req)).value
+        return (await self.stub.AddDependency(req)).value
 
 
     @doc_inherit
@@ -94,7 +94,7 @@ class AsyncRemoteSwitch (Switch):
             predecessor_name = predecessor_name,
             reevaluate = reevaluate)
 
-        return (await self.stub.remove_dependency(req)).value
+        return (await self.stub.RemoveDependency(req)).value
 
 
     @doc_inherit
@@ -119,7 +119,7 @@ class AsyncRemoteSwitch (Switch):
                 on_error = on_error),
             immediate = immediate)
 
-        return (await self.stub.add_interceptor(req)).value
+        return (await self.stub.AddInterceptor(req)).value
 
 
     @doc_inherit
@@ -131,7 +131,7 @@ class AsyncRemoteSwitch (Switch):
             switch_name = self.name,
             interceptor_name = interceptor_name)
 
-        return (await self.stub.remove_interceptor(req)).value
+        return (await self.stub.RemoveInterceptor(req)).value
 
 
     @doc_inherit
@@ -145,7 +145,7 @@ class AsyncRemoteSwitch (Switch):
             interceptor_name = interceptor_name,
             state = state)
 
-        result = await self.stub.invoke_intereptor(req)
+        result = await self.stub.InvokeIntereptor(req)
         return result.error
 
     @doc_inherit
@@ -172,7 +172,7 @@ class AsyncRemoteSwitch (Switch):
             on_cancel = on_cancel,
             on_error = on_error)
 
-        return (await self.stub.set_target(req)).updated
+        return (await self.stub.SetTarget(req)).updated
 
 
     @doc_inherit
@@ -185,7 +185,7 @@ class AsyncRemoteSwitch (Switch):
             attributes = encodeKeyValueMap(attributes),
             clear_existing = clear_existing)
 
-        return await (self.stub.set_attributes(req)).updated
+        return await (self.stub.SetAttributes(req)).updated
 
 
     @doc_inherit
@@ -195,4 +195,4 @@ class AsyncRemoteSwitch (Switch):
         req = CulpritsQuery(switch_name = self.name,
                             expected = expected_position)
 
-        return (await self.stub.get_culprits(req)).map
+        return (await self.stub.GetCulprits(req)).map

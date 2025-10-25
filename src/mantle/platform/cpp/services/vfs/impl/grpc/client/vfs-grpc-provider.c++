@@ -63,7 +63,7 @@ namespace vfs::grpc
         {
             return this->context_map(
                 this->client->call_check(
-                    &Client::Stub::get_contexts));
+                    &Client::Stub::GetContexts));
         }
     }
 
@@ -77,7 +77,7 @@ namespace vfs::grpc
         {
             return this->context_map(
                 this->client->call_check(
-                    &Client::Stub::get_open_contexts));
+                    &Client::Stub::GetOpenContexts));
         }
     }
 
@@ -105,7 +105,7 @@ namespace vfs::grpc
             {
                 cxt = this->decoded_context(
                     this->client->call_check(
-                        &Client::Stub::get_context_spec,
+                        &Client::Stub::GetContextSpec,
                         request));
             }
             catch (...)
@@ -129,7 +129,7 @@ namespace vfs::grpc
         {
             return this->decoded_context(
                 this->client->call_check(
-                    &Client::Stub::open_context,
+                    &Client::Stub::OpenContext,
                     request));
         }
         catch (...)
@@ -153,7 +153,7 @@ namespace vfs::grpc
         request.set_context(name);
         try
         {
-            this->client->call_check(&Client::Stub::close_context, request);
+            this->client->call_check(&Client::Stub::CloseContext, request);
         }
         catch (...)
         {
@@ -177,7 +177,7 @@ namespace vfs::grpc
     {
         return protobuf::decoded<VolumeInfo>(
             this->client->call_check(
-                &Client::Stub::get_volume_info,
+                &Client::Stub::GetVolumeInfo,
                 protobuf::encoded<::cc::platform::vfs::PathRequest>(vpath, flags)));
     }
 
@@ -187,7 +187,7 @@ namespace vfs::grpc
     {
         return protobuf::decoded<FileInfo>(
             this->client->call_check(
-                &Client::Stub::get_file_info,
+                &Client::Stub::GetFileInfo,
                 protobuf::encoded<::cc::platform::vfs::PathRequest>(vpath, flags)));
     }
 
@@ -197,7 +197,7 @@ namespace vfs::grpc
     {
         return protobuf::decoded<Directory>(
             this->client->call_check(
-                &Client::Stub::get_directory,
+                &Client::Stub::GetDirectory,
                 protobuf::encoded<::cc::platform::vfs::PathRequest>(vpath, flags)));
     }
 
@@ -209,7 +209,7 @@ namespace vfs::grpc
     {
         return protobuf::decoded<Directory>(
             this->client->call_check(
-                &Client::Stub::locate,
+                &Client::Stub::Locate,
                 protobuf::encoded<::cc::platform::vfs::LocateRequest>(
                     root, filename_masks, attribute_filters, flags)));
     }
@@ -220,7 +220,7 @@ namespace vfs::grpc
         const OperationFlags &flags) const
     {
         this->client->call_check(
-            &Client::Stub::copy,
+            &Client::Stub::Copy,
             protobuf::encoded<::cc::platform::vfs::PathRequest>(sources, target, flags));
     }
 
@@ -230,7 +230,7 @@ namespace vfs::grpc
         const OperationFlags &flags) const
     {
         this->client->call_check(
-            &Client::Stub::move,
+            &Client::Stub::Move,
             protobuf::encoded<::cc::platform::vfs::PathRequest>(sources, target, flags));
     }
 
@@ -239,7 +239,7 @@ namespace vfs::grpc
         const OperationFlags &flags) const
     {
         this->client->call_check(
-            &Client::Stub::remove,
+            &Client::Stub::Remove,
             protobuf::encoded<::cc::platform::vfs::PathRequest>(vpaths, Path(), flags));
     }
 
@@ -248,7 +248,7 @@ namespace vfs::grpc
         const OperationFlags &flags) const
     {
         this->client->call_check(
-            &Client::Stub::create_folder,
+            &Client::Stub::CreateFolder,
             protobuf::encoded<::cc::platform::vfs::PathRequest>(vpath, flags));
     }
 
@@ -269,7 +269,7 @@ namespace vfs::grpc
     {
         return protobuf::decoded<core::types::KeyValueMap>(
             this->client->call_check(
-                &Client::Stub::get_attributes,
+                &Client::Stub::GetAttributes,
                 protobuf::encoded<::cc::platform::vfs::Path>(vpath)));
     }
 
@@ -278,7 +278,7 @@ namespace vfs::grpc
         const core::types::KeyValueMap &attributes) const
     {
         this->client->call_check(
-            &Client::Stub::set_attributes,
+            &Client::Stub::SetAttributes,
             protobuf::encoded<::cc::platform::vfs::AttributeRequest>(vpath, attributes));
     }
 
@@ -286,7 +286,7 @@ namespace vfs::grpc
         const Path &vpath) const
     {
         this->client->call_check(
-            &Client::Stub::clear_attributes,
+            &Client::Stub::ClearAttributes,
             protobuf::encoded<::cc::platform::vfs::Path>(vpath));
     }
 

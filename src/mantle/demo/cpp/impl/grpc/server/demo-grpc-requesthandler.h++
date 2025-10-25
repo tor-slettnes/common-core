@@ -30,27 +30,27 @@ namespace demo::grpc
         RequestHandler(const std::shared_ptr<API>& api_provider);
 
     public:
-        ::grpc::Status say_hello(
+        ::grpc::Status SayHello(
             ::grpc::ServerContext* context,
             const ::cc::demo::Greeting* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status get_current_time(
+        ::grpc::Status GetCurrentTime(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::demo::TimeData* response) override;
 
-        ::grpc::Status start_ticking(
+        ::grpc::Status StartTicking(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status stop_ticking(
+        ::grpc::Status StopTicking(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status watch(
+        ::grpc::Status Watch(
             ::grpc::ServerContext* context,
             const cc::protobuf::signal::Filter* request,
             ::grpc::ServerWriter<cc::demo::Signal>* writer) override;

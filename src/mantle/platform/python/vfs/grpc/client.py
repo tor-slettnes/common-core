@@ -87,20 +87,20 @@ class Client (cc.messaging.grpc.Client):
         '''
         List all available VFS contexts.
         '''
-        return self.stub.get_contexts(empty).map
+        return self.stub.GetContexts(empty).map
 
     def get_open_contexts(self) -> Mapping[str, ContextSpec]:
         '''
         List VFS contexts that are currently being held open.
         '''
-        return self.stub.get_open_contexts(empty).map
+        return self.stub.GetOpenContexts(empty).map
 
 
     def get_context(self, name: str) -> ContextSpec:
         '''
         List available virtual filesystem contexts.
         '''
-        return self.stub.get_context_spec(VFSPath(context=name))
+        return self.stub.GetContextSpec(VFSPath(context=name))
 
 
     def open_context(self, name: str) -> ContextSpec:
@@ -115,7 +115,7 @@ class Client (cc.messaging.grpc.Client):
         'close_context()', thereby allowing the context to be closed.
         '''
 
-        return self.stub.open_context(VFSPath(context=name))
+        return self.stub.OpenContext(VFSPath(context=name))
 
 
     def close_context(self, name: str):
@@ -125,7 +125,7 @@ class Client (cc.messaging.grpc.Client):
         and closes the context (e.g. unmounts) if it reaches zero.
         '''
 
-        return self.stub.close_context(VFSPath(context=name))
+        return self.stub.CloseContext(VFSPath(context=name))
 
 
     def get_volume_info(self,
@@ -134,7 +134,7 @@ class Client (cc.messaging.grpc.Client):
         '''
         Return information about mounted filesystem containing path.
         '''
-        return self.stub.get_volume_info(
+        return self.stub.GetVolumeInfo(
             pathRequest(vfspath, dereference=dereference))
 
 
@@ -168,7 +168,7 @@ class Client (cc.messaging.grpc.Client):
         request = pathRequest(path=vfspath,
                               dereference=dereference,
                               with_attributes=with_attributes)
-        reply = self.stub.get_file_info(request)
+        reply = self.stub.GetFileInfo(request)
         return decodeStats(reply)
 
 
@@ -186,7 +186,7 @@ class Client (cc.messaging.grpc.Client):
         for more info.
         '''
 
-        reply = self.stub.get_directory(
+        reply = self.stub.GetDirectory(
             pathRequest(path=vfspath,
                         dereference=dereference,
                         with_attributes=with_attributes))
@@ -211,7 +211,7 @@ class Client (cc.messaging.grpc.Client):
         item in the specified folder.
         '''
 
-        reply = self.stub.get_directory(
+        reply = self.stub.GetDirectory(
             pathRequest(path=vfspath, dereference=dereference))
 
         return [key for key in reply.map.keys()]
@@ -251,7 +251,7 @@ class Client (cc.messaging.grpc.Client):
             Discovered file paths mapped to corresponding file information.
         '''
 
-        reply = self.stub.locate(
+        reply = self.stub.Locate(
             locateRequest(vfspath, filename_masks, attribute_filters,
                           with_attributes, include_hidden, ignore_case))
 
@@ -308,7 +308,7 @@ class Client (cc.messaging.grpc.Client):
             Target specifies the parent directory rather than the target file.
         '''
 
-        return self.stub.copy(
+        return self.stub.Copy(
             pathRequest(path=target,
                         sources=sources,
                         force=force,
@@ -361,7 +361,7 @@ class Client (cc.messaging.grpc.Client):
             Move (remove on soure, add on target) any custom VFS attributes
             associated with the file(s).
         '''
-        return self.stub.move(
+        return self.stub.Move(
             pathRequest(path=target,
                         source=source,
                         force=force,
@@ -391,7 +391,7 @@ class Client (cc.messaging.grpc.Client):
             links are never followed outside of the context.  Be careful with
             this option in conjunction with 'force'.
         '''
-        return self.stub.create_folder(
+        return self.stub.CreateFolder(
             pathRequest(path=vfspath,
                         force=force,
                         dereference=dereference))
@@ -422,7 +422,7 @@ class Client (cc.messaging.grpc.Client):
             Also remove any custom VFS attributes associated with the removed
             path(s).
         '''
-        return self.stub.remove(
+        return self.stub.Remove(
             pathRequest(sources=paths,
                         force=force,
                         dereference=dereference,
@@ -444,7 +444,7 @@ class Client (cc.messaging.grpc.Client):
         `download()` if you want to download and save a file from the server to
         a local file.
         '''
-        return self.stub.read_file(encodePath(vfspath))
+        return self.stub.ReadFile(encodePath(vfspath))
 
 
     def read(self, vfspath: VFSPathType) -> Iterator[bytes]:
@@ -514,7 +514,7 @@ class Client (cc.messaging.grpc.Client):
         elif isinstance(localfile, str):
             localfile = open(localfile, "rb")
 
-        return self.stub.write_file(
+        return self.stub.WriteFile(
             self._uploadIterator(localfile, vfspath))
 
 
@@ -542,7 +542,7 @@ class Client (cc.messaging.grpc.Client):
         '''
 
         req = encodePath(vfspath)
-        resp = self.stub.get_attributes(req)
+        resp = self.stub.GetAttributes(req)
         return decodeKeyValueMap(resp.items)
 
     def set_attributes(self, vfspath: VFSPathType, **attributes):
@@ -558,7 +558,7 @@ class Client (cc.messaging.grpc.Client):
         '''
 
 
-        self.stub.set_attributes(attributeRequest(vfspath, attributes))
+        self.stub.SetAttributes(attributeRequest(vfspath, attributes))
 
     def clear_attributes(self, vfspath: VFSPathType):
         '''
@@ -568,7 +568,7 @@ class Client (cc.messaging.grpc.Client):
             Virtual path on the server in the format CONTEXT:RELPATH.
         '''
 
-        self.self.stub.clear_attributes(encodePath(vfspath))
+        self.self.stub.ClearAttributes(encodePath(vfspath))
 
 
 #===============================================================================

@@ -29,10 +29,6 @@ set(PRODUCT "platform"
 set(PROJECT "common-core"
   CACHE STRING "Top-level project name. Used to look up some run-time service settings")
 
-### Set default version number if not provided
-set(VERSION "0.8.0"
-  CACHE STRING "Build version, in the format MAJOR.MINOR.PATCH")
-
 set(DESCRIPTION "Cross-platform development framework for embedded microservice applications"
   CACHE STRING "Project description")
 
@@ -45,7 +41,7 @@ set(ORGANIZATION "common-core"
 #-------------------------------------------------------------------------------
 # Various directories
 
-set(CC_PROTO_BASE_DIR "${CMAKE_SOURCE_DIR}/protos"
+set(CC_PROTOS_BASE_DIR "${CMAKE_SOURCE_DIR}/protos"
   CACHE STRING "Root directory for common `.proto` files")
 
 set(DATA_DIR "share/${ORGANIZATION}"

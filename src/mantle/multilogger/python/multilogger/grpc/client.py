@@ -97,7 +97,7 @@ class Client (BaseClient, API, ThreadedSubmitter):
 
         while self.is_writer_open():
             try:
-                self.stub.writer(self.queue_iterator(), wait_for_ready = wait_for_ready)
+                self.stub.Writer(self.queue_iterator(), wait_for_ready = wait_for_ready)
             except Exception as e:
                 if self.is_writer_open():
                     logging.debug(

@@ -45,26 +45,26 @@ namespace demo::grpc
     void ClientImpl::say_hello(const Greeting &greeting)
     {
         this->call_check(
-            &Stub::say_hello,
+            &Stub::SayHello,
             ::protobuf::encoded<cc::demo::Greeting>(greeting));
     }
 
     TimeData ClientImpl::get_current_time()
     {
         return ::protobuf::decoded<TimeData>(
-            this->call_check(&Stub::get_current_time));
+            this->call_check(&Stub::GetCurrentTime));
     }
 
     void ClientImpl::start_ticking()
     {
         this->call_check(
-            &Stub::start_ticking);
+            &Stub::StartTicking);
     }
 
     void ClientImpl::stop_ticking()
     {
         this->call_check(
-            &Stub::stop_ticking);
+            &Stub::StopTicking);
     }
 
     void ClientImpl::start_watching()

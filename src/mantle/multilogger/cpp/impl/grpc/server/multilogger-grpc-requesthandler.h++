@@ -26,57 +26,57 @@ namespace multilogger::grpc
         RequestHandler(const std::shared_ptr<API>& provider);
 
     public:
-        ::grpc::Status submit(
+        ::grpc::Status Submit(
             ::grpc::ServerContext* context,
             const ::cc::platform::multilogger::Loggable* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status writer(
+        ::grpc::Status Writer(
             ::grpc::ServerContext* context,
             ::grpc::ServerReader<::cc::platform::multilogger::Loggable>* reader,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status listen(
+        ::grpc::Status Listen(
             ::grpc::ServerContext* context,
             const ::cc::platform::multilogger::ListenerSpec* request,
             ::grpc::ServerWriter<::cc::platform::multilogger::Loggable>* writer) override;
 
-        ::grpc::Status add_sink(
+        ::grpc::Status AddSink(
             ::grpc::ServerContext* context,
             const ::cc::platform::multilogger::SinkSpec* request,
             ::cc::platform::multilogger::AddSinkResult* response) override;
 
-        ::grpc::Status remove_sink(
+        ::grpc::Status RemoveSink(
             ::grpc::ServerContext* context,
             const ::cc::platform::multilogger::SinkID* request,
             ::cc::platform::multilogger::RemoveSinkResult* response) override;
 
-        ::grpc::Status get_sink(
+        ::grpc::Status GetSink(
             ::grpc::ServerContext* context,
             const ::cc::platform::multilogger::SinkID* request,
             ::cc::platform::multilogger::SinkSpec* response) override;
 
-        ::grpc::Status get_all_sinks(
+        ::grpc::Status GetAllSinks(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::platform::multilogger::SinkSpecs* response) override;
 
-        ::grpc::Status list_sinks(
+        ::grpc::Status ListSinks(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::platform::multilogger::SinkNames* response) override;
 
-        ::grpc::Status list_sink_types(
+        ::grpc::Status ListSinkTypes(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::platform::multilogger::SinkTypes* response) override;
 
-        ::grpc::Status list_message_fields(
+        ::grpc::Status ListMessageFields(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::platform::multilogger::FieldNames* response) override;
 
-        ::grpc::Status list_error_fields(
+        ::grpc::Status ListErrorFields(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::cc::platform::multilogger::FieldNames* response) override;

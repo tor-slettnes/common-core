@@ -48,7 +48,7 @@ class Client (cc.messaging.grpc.Client):
         Get information about this product:
         model, serial number, versions, subsystems
         '''
-        return self.stub.get_product_info(empty)
+        return self.stub.GetProductInfo(empty)
 
     def get_printable_version(self, product_info: ProductInfo|None = None) -> str:
         '''
@@ -75,38 +75,38 @@ class Client (cc.messaging.grpc.Client):
         '''
         Set the product serial number. For manufacturing use.
         '''
-        self.stub.set_serial_number(StringValue(value=str(serial)))
+        self.stub.SetSerialNumber(StringValue(value=str(serial)))
 
     def set_model_name(self, model: str):
         '''
         Set the product model. For manufacturing use.
         '''
-        self.stub.set_model_name(StringValue(value=model))
+        self.stub.SetModelName(StringValue(value=model))
 
     def get_host_info(self) -> HostInfo:
         '''
         Get information about this host: hostname, OS, hardware.
         '''
-        return self.stub.get_host_info(empty)
+        return self.stub.GetHostInfo(empty)
 
     def set_host_name(self, name: str):
         '''
         Set the host name.
         '''
-        self.stub.set_host_name(StringValue(value=name))
+        self.stub.SetHostName(StringValue(value=name))
 
     def set_current_time(self, timestamp: TimestampType):
         '''
         Set the current time. Not available with automatic time
         configuration.
         '''
-        self.stub.set_current_time(encodeTimestamp(timestamp))
+        self.stub.SetCurrentTime(encodeTimestamp(timestamp))
 
     def get_current_timestamp(self) -> Timestamp:
         '''
         Get the current time as a `google.protobuf.Timestamp` instance
         '''
-        return self.stub.get_current_time(empty)
+        return self.stub.GetCurrentTime(empty)
 
     def get_current_time(self) -> float:
         '''
@@ -124,14 +124,14 @@ class Client (cc.messaging.grpc.Client):
         request = TimeConfig(synchronization=synchronization)
         if servers is not None:
             request.servers.extend(servers)
-        self.stub.set_time_config(request)
+        self.stub.SetTimeConfig(request)
 
     def get_time_config(self) -> TimeConfig:
         '''
         Get the current time in native Python semantics: a double floating
         point representing seconds since UNIX epoch
         '''
-        return self.stub.get_time_config(empty)
+        return self.stub.GetTimeConfig(empty)
 
     def list_timezone_areas(self) -> list[str]:
         '''
@@ -139,7 +139,7 @@ class Client (cc.messaging.grpc.Client):
         literal "Etc".  These are the top-level grouping and first part of
         canonical zone names such as "America/Los_Angeles".
         '''
-        return self.stub.list_timezone_areas(empty).areas
+        return self.stub.ListTimezoneAreas(empty).areas
 
     def list_timezone_countries(self,
                                 area: str|None = None
@@ -157,7 +157,7 @@ class Client (cc.messaging.grpc.Client):
              - `name` - its name in English (e.g. "United States" or "Germany")
         '''
         request = TimeZoneArea(name = area)
-        return list(self.stub.list_timezone_countries(request).countries)
+        return list(self.stub.ListTimezoneCountries(request).countries)
 
     def list_timezone_regions(self,
                               country: str,
@@ -171,7 +171,7 @@ class Client (cc.messaging.grpc.Client):
             area = TimeZoneArea(name=area),
             country = encodeCountry(country))
 
-        return list(self.stub.list_timezone_regions(request).regions)
+        return list(self.stub.ListTimezoneRegions(request).regions)
 
     def list_timezone_specs(self,
                             area: str|None = None,
@@ -198,7 +198,7 @@ class Client (cc.messaging.grpc.Client):
             area = TimeZoneArea(name=area),
             country = encodeCountry(country))
 
-        return self.stub.list_timezone_specs(request).specs
+        return self.stub.ListTimezoneSpecs(request).specs
 
 
     def get_configured_timezone(self) -> str:
@@ -229,7 +229,7 @@ class Client (cc.messaging.grpc.Client):
               - Longitude represented as seconds east of the Prime Meridian
         '''
 
-        return self.stub.get_timezone_spec(
+        return self.stub.GetTimezoneSpec(
             TimeZoneCanonicalName(
                 name = canonical_zone))
 
@@ -267,7 +267,7 @@ class Client (cc.messaging.grpc.Client):
             canonical_zone = canonical_zone,
             time = time)
 
-        return self.stub.get_timezone_info(request)
+        return self.stub.GetTimezoneInfo(request)
 
 
     def set_timezone_by_name(self,
@@ -281,7 +281,7 @@ class Client (cc.messaging.grpc.Client):
         request = TimeZoneConfig(
             canonical_zone = zonename)
 
-        return self.stub.set_timezone(request)
+        return self.stub.SetTimezone(request)
 
     def set_timezone_by_location(self,
                                  country: str,
@@ -312,7 +312,7 @@ class Client (cc.messaging.grpc.Client):
 
         request = TimeZoneConfig(location = location)
 
-        return self.stub.set_timezone(request)
+        return self.stub.SetTimezone(request)
 
 
 
@@ -339,7 +339,7 @@ class Client (cc.messaging.grpc.Client):
             working_directory = working_directory,
             stdin = stdin)
 
-        return self.stub.invoke_sync(request)
+        return self.stub.InvokeSync(request)
 
 
     def invoke_async(self,
@@ -368,7 +368,7 @@ class Client (cc.messaging.grpc.Client):
             working_directory = working_directory,
             stdin = stdin)
 
-        return self.stub.invoke_async(request).pid
+        return self.stub.InvokeAsync(request).pid
 
 
     def invoke_finish(self,
@@ -392,7 +392,7 @@ class Client (cc.messaging.grpc.Client):
             pid = pid,
             stdin = stdin)
 
-        return self.stub.invoke_finish(request)
+        return self.stub.InvokeFinish(request)
 
 
 #===============================================================================

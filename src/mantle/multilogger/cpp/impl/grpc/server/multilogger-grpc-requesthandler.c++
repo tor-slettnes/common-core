@@ -18,7 +18,7 @@ namespace multilogger::grpc
     {
     }
 
-    ::grpc::Status RequestHandler::submit(
+    ::grpc::Status RequestHandler::Submit(
         ::grpc::ServerContext* context,
         const ::cc::platform::multilogger::Loggable* request,
         ::google::protobuf::Empty* response)
@@ -36,7 +36,7 @@ namespace multilogger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::writer(
+    ::grpc::Status RequestHandler::Writer(
         ::grpc::ServerContext* context,
         ::grpc::ServerReader<::cc::platform::multilogger::Loggable>* reader,
         ::google::protobuf::Empty* response)
@@ -58,7 +58,7 @@ namespace multilogger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::listen(
+    ::grpc::Status RequestHandler::Listen(
         ::grpc::ServerContext* context,
         const ::cc::platform::multilogger::ListenerSpec* request,
         ::grpc::ServerWriter<::cc::platform::multilogger::Loggable>* writer)
@@ -91,7 +91,7 @@ namespace multilogger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::add_sink(
+    ::grpc::Status RequestHandler::AddSink(
         ::grpc::ServerContext* context,
         const ::cc::platform::multilogger::SinkSpec* request,
         ::cc::platform::multilogger::AddSinkResult* response)
@@ -115,7 +115,7 @@ namespace multilogger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::remove_sink(
+    ::grpc::Status RequestHandler::RemoveSink(
         ::grpc::ServerContext* context,
         const ::cc::platform::multilogger::SinkID* request,
         ::cc::platform::multilogger::RemoveSinkResult* response)
@@ -133,7 +133,7 @@ namespace multilogger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_sink(
+    ::grpc::Status RequestHandler::GetSink(
         ::grpc::ServerContext* context,
         const ::cc::platform::multilogger::SinkID* request,
         ::cc::platform::multilogger::SinkSpec* response)
@@ -152,7 +152,7 @@ namespace multilogger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_all_sinks(
+    ::grpc::Status RequestHandler::GetAllSinks(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::multilogger::SinkSpecs* response)
@@ -170,7 +170,7 @@ namespace multilogger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::list_sinks(
+    ::grpc::Status RequestHandler::ListSinks(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::multilogger::SinkNames* response)
@@ -189,7 +189,7 @@ namespace multilogger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::list_sink_types(
+    ::grpc::Status RequestHandler::ListSinkTypes(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::multilogger::SinkTypes* response)
@@ -208,7 +208,7 @@ namespace multilogger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::list_message_fields(
+    ::grpc::Status RequestHandler::ListMessageFields(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::multilogger::FieldNames* response)
@@ -227,7 +227,7 @@ namespace multilogger::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::list_error_fields(
+    ::grpc::Status RequestHandler::ListErrorFields(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
         ::cc::platform::multilogger::FieldNames* response)

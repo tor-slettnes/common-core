@@ -25,7 +25,7 @@ namespace switchboard::grpc
     {
     }
 
-    ::grpc::Status RequestHandler::get_switches(
+    ::grpc::Status RequestHandler::GetSwitches(
         ::grpc::ServerContext *context,
         const ::google::protobuf::Empty *request,
         cc::switchboard::SwitchMap *reply)
@@ -41,7 +41,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_switch(
+    ::grpc::Status RequestHandler::GetSwitch(
         ::grpc::ServerContext *context,
         const cc::switchboard::SwitchIdentifier *request,
         cc::switchboard::SwitchInfo *reply)
@@ -64,7 +64,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::add_switch(
+    ::grpc::Status RequestHandler::AddSwitch(
         ::grpc::ServerContext *context,
         const cc::switchboard::AddSwitchRequest *request,
         ::google::protobuf::BoolValue *reply)
@@ -81,7 +81,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::remove_switch(
+    ::grpc::Status RequestHandler::RemoveSwitch(
         ::grpc::ServerContext *context,
         const cc::switchboard::RemoveSwitchRequest *request,
         ::google::protobuf::BoolValue *reply)
@@ -100,7 +100,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::set_specification(
+    ::grpc::Status RequestHandler::SetSpecification(
         ::grpc::ServerContext *context,
         const cc::switchboard::SetSpecificationRequest *request,
         ::google::protobuf::BoolValue *reply)
@@ -130,7 +130,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_specifications(
+    ::grpc::Status RequestHandler::GetSpecifications(
         ::grpc::ServerContext *context,
         const cc::switchboard::SwitchIdentifiers *request,
         cc::switchboard::SpecificationMap *reply)
@@ -150,7 +150,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::add_dependency(
+    ::grpc::Status RequestHandler::AddDependency(
         ::grpc::ServerContext *context,
         const cc::switchboard::AddDependencyRequest *request,
         ::google::protobuf::BoolValue *reply)
@@ -177,7 +177,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::remove_dependency(
+    ::grpc::Status RequestHandler::RemoveDependency(
         ::grpc::ServerContext *context,
         const cc::switchboard::RemoveDependencyRequest *request,
         ::google::protobuf::BoolValue *reply)
@@ -198,7 +198,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_dependencies(
+    ::grpc::Status RequestHandler::GetDependencies(
         ::grpc::ServerContext *context,
         const cc::switchboard::SwitchIdentifier *request,
         cc::switchboard::DependencyMap *reply)
@@ -215,7 +215,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_ancestors(
+    ::grpc::Status RequestHandler::GetAncestors(
         ::grpc::ServerContext *context,
         const cc::switchboard::SwitchIdentifier *request,
         cc::switchboard::SwitchIdentifiers *reply)
@@ -232,7 +232,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_descendents(
+    ::grpc::Status RequestHandler::GetDescendents(
         ::grpc::ServerContext *context,
         const cc::switchboard::SwitchIdentifier *request,
         cc::switchboard::SwitchIdentifiers *reply)
@@ -249,7 +249,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::add_interceptor(
+    ::grpc::Status RequestHandler::AddInterceptor(
         ::grpc::ServerContext *context,
         const cc::switchboard::AddInterceptorRequest *request,
         ::google::protobuf::BoolValue *reply)
@@ -274,7 +274,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::remove_interceptor(
+    ::grpc::Status RequestHandler::RemoveInterceptor(
         ::grpc::ServerContext *context,
         const cc::switchboard::RemoveInterceptorRequest *request,
         ::google::protobuf::BoolValue *reply)
@@ -292,7 +292,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_interceptors(
+    ::grpc::Status RequestHandler::GetInterceptors(
         ::grpc::ServerContext *context,
         const cc::switchboard::SwitchIdentifier *request,
         cc::switchboard::InterceptorMap *reply)
@@ -309,7 +309,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::invoke_interceptor(
+    ::grpc::Status RequestHandler::InvokeInterceptor(
         ::grpc::ServerContext *context,
         const cc::switchboard::InterceptorInvocation *request,
         cc::switchboard::InterceptorResult *reply)
@@ -345,14 +345,14 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::intercept(
+    ::grpc::Status RequestHandler::Intercept(
         ::grpc::ServerContext *context,
         InterceptorStream *stream)
     {
         return ::grpc::Status::OK;
     }
 
-    ::grpc::Status RequestHandler::set_target(
+    ::grpc::Status RequestHandler::SetTarget(
         ::grpc::ServerContext *context,
         const cc::switchboard::SetTargetRequest *request,
         cc::switchboard::SetTargetResponse *reply)
@@ -380,7 +380,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::set_attributes(
+    ::grpc::Status RequestHandler::SetAttributes(
         ::grpc::ServerContext *context,
         const cc::switchboard::SetAttributesRequest *request,
         cc::switchboard::SetAttributesResponse *reply)
@@ -400,7 +400,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_statuses(
+    ::grpc::Status RequestHandler::GetStatuses(
         ::grpc::ServerContext *context,
         const cc::switchboard::SwitchIdentifiers *request,
         cc::switchboard::StatusMap *reply)
@@ -420,7 +420,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_culprits(
+    ::grpc::Status RequestHandler::GetCulprits(
         ::grpc::ServerContext *context,
         const cc::switchboard::CulpritsQuery *request,
         cc::switchboard::StatusMap *reply)
@@ -445,7 +445,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::get_errors(
+    ::grpc::Status RequestHandler::GetErrors(
         ::grpc::ServerContext *context,
         const cc::switchboard::SwitchIdentifier *request,
         cc::switchboard::ErrorMap *reply)
@@ -460,7 +460,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::watch(
+    ::grpc::Status RequestHandler::Watch(
         ::grpc::ServerContext *context,
         const cc::protobuf::signal::Filter *request,
         ::grpc::ServerWriter<cc::switchboard::Signal> *writer)
