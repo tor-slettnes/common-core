@@ -39,7 +39,7 @@ namespace vfs::grpc
 
     bool ClientInputBuffer::read_some(BufferType *buffer)
     {
-        ::cc::platform::vfs::FileChunk msg;
+        ::cc::platform::vfs::protobuf::FileChunk msg;
         if (this->reader->Read(&msg))
         {
             buffer->assign(msg.data());
@@ -75,7 +75,7 @@ namespace vfs::grpc
 
     bool ClientOutputBuffer::write_some(const BufferType &data)
     {
-        ::cc::platform::vfs::FileChunk msg;
+        ::cc::platform::vfs::protobuf::FileChunk msg;
         protobuf::encode(this->vpath, msg.mutable_path());
         msg.set_data(data);
 
@@ -107,7 +107,7 @@ namespace vfs::grpc
           input_buffer(
               stub->ReadFile(
                   cxt.get(),
-                  protobuf::encoded<::cc::platform::vfs::Path>(vpath)))
+                  protobuf::encoded<::cc::platform::vfs::protobuf::Path>(vpath)))
     {
         this->rdbuf(&this->input_buffer);
     }

@@ -14,11 +14,11 @@
 namespace multilogger::zmq
 {
     class MessageWriter
-        : public core::zmq::ProtoBufSignalWriter<cc::platform::multilogger::Loggable>,
+        : public core::zmq::ProtoBufSignalWriter<cc::platform::multilogger::protobuf::Loggable>,
           public core::types::enable_create_shared<MessageWriter>
     {
         using This = MessageWriter;
-        using Super = core::zmq::ProtoBufSignalWriter<cc::platform::multilogger::Loggable>;
+        using Super = core::zmq::ProtoBufSignalWriter<cc::platform::multilogger::protobuf::Loggable>;
 
     protected:
         MessageWriter(

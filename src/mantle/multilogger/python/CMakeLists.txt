@@ -9,7 +9,8 @@
 set(TARGET "cc_multilogger_python")
 
 cc_add_python("${TARGET}"
-  DIRECTORIES "protobuf" "multilogger"
+  DIRECTORIES .
+  NAMESPACE_COMPONENT "platform.multilogger"
   PYTHON_DEPS "cc_core_python"
   PROTO_DEPS "cc_multilogger_proto"
   DATA_DEPS "cc_multilogger_settings"

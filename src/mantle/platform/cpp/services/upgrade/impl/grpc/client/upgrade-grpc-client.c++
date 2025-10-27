@@ -17,23 +17,23 @@ namespace upgrade::grpc
         Super::initialize();
 
         this->add_handler(
-            ::cc::platform::upgrade::Signal::kScanProgress,
+            ::cc::platform::upgrade::protobuf::Signal::kScanProgress,
             &This::on_scan_progress);
 
         this->add_handler(
-            ::cc::platform::upgrade::Signal::kUpgradeAvailable,
+            ::cc::platform::upgrade::protobuf::Signal::kUpgradeAvailable,
             &This::on_upgrade_available);
 
         this->add_handler(
-            ::cc::platform::upgrade::Signal::kUpgradePending,
+            ::cc::platform::upgrade::protobuf::Signal::kUpgradePending,
             &This::on_upgrade_pending);
 
         this->add_handler(
-            ::cc::platform::upgrade::Signal::kUpgradeProgress,
+            ::cc::platform::upgrade::protobuf::Signal::kUpgradeProgress,
             &This::on_upgrade_progress);
     }
 
-    void Client::on_scan_progress(const ::cc::platform::upgrade::Signal &signal)
+    void Client::on_scan_progress(const ::cc::platform::upgrade::protobuf::Signal &signal)
     {
         upgrade::ScanProgress::ptr progress;
         if (This::is_mapped(signal.mapping_action()))
@@ -43,7 +43,7 @@ namespace upgrade::grpc
         upgrade::signal_scan_progress.emit(progress);
     }
 
-    void Client::on_upgrade_available(const ::cc::platform::upgrade::Signal &signal)
+    void Client::on_upgrade_available(const ::cc::platform::upgrade::protobuf::Signal &signal)
     {
         upgrade::PackageInfo::ptr available_info;
         if (This::is_mapped(signal.mapping_action()))
@@ -53,7 +53,7 @@ namespace upgrade::grpc
         upgrade::signal_upgrade_available.emit(available_info);
     }
 
-    void Client::on_upgrade_pending(const ::cc::platform::upgrade::Signal &signal)
+    void Client::on_upgrade_pending(const ::cc::platform::upgrade::protobuf::Signal &signal)
     {
         upgrade::PackageInfo::ptr pending_info;
         if (This::is_mapped(signal.mapping_action()))
@@ -63,7 +63,7 @@ namespace upgrade::grpc
         upgrade::signal_upgrade_pending.emit(pending_info);
     }
 
-    void Client::on_upgrade_progress(const ::cc::platform::upgrade::Signal &signal)
+    void Client::on_upgrade_progress(const ::cc::platform::upgrade::protobuf::Signal &signal)
     {
         upgrade::UpgradeProgress::ptr progress;
         if (This::is_mapped(signal.mapping_action()))

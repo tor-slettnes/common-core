@@ -28,7 +28,7 @@ namespace demo::zmq
     }
 
     void RequestHandler::say_hello(
-        const cc::demo::Greeting &request,
+        const cc::demo::protobuf::Greeting &request,
         ::google::protobuf::Empty *)
     {
         this->provider->say_hello(::protobuf::decoded<Greeting>(request));
@@ -36,7 +36,7 @@ namespace demo::zmq
 
     void RequestHandler::get_current_time(
         const ::google::protobuf::Empty &,
-        cc::demo::TimeData *response)
+        cc::demo::protobuf::TimeData *response)
     {
         protobuf::encode(this->provider->get_current_time(), response);
     }

@@ -37,7 +37,7 @@ namespace switchboard::grpc
     {
         assertf(dependency, "Cannot add empty dependency reference");
 
-        cc::switchboard::AddDependencyRequest req;
+        cc::platform::switchboard::protobuf::AddDependencyRequest req;
         req.set_switch_name(this->name());
         req.set_predecessor_name(dependency->predecessor_name());
         protobuf::encode(dependency, req.mutable_dependency());
@@ -50,7 +50,7 @@ namespace switchboard::grpc
         SwitchName predecessor_name,
         bool reevaluate)
     {
-        cc::switchboard::RemoveDependencyRequest req;
+        cc::platform::switchboard::protobuf::RemoveDependencyRequest req;
         req.set_switch_name(this->name());
         req.set_predecessor_name(predecessor_name);
         req.set_reevaluate(reevaluate);
@@ -61,7 +61,7 @@ namespace switchboard::grpc
         const InterceptorRef &interceptor,
         bool immediate)
     {
-        cc::switchboard::AddInterceptorRequest req;
+        cc::platform::switchboard::protobuf::AddInterceptorRequest req;
         req.set_switch_name(this->name());
         req.set_interceptor_name(interceptor->name());
         protobuf::encode(interceptor, req.mutable_spec());
@@ -72,7 +72,7 @@ namespace switchboard::grpc
     bool RemoteSwitch::remove_interceptor(
         const InterceptorName &id)
     {
-        cc::switchboard::RemoveInterceptorRequest req;
+        cc::platform::switchboard::protobuf::RemoveInterceptorRequest req;
         req.set_switch_name(this->name());
         req.set_interceptor_name(id);
         return this->client()->call_check(&Client::Stub::RemoveInterceptor, req).value();
@@ -88,10 +88,10 @@ namespace switchboard::grpc
         bool replace_interceptors,
         bool update_state)
     {
-        cc::switchboard::SetSpecificationRequest req;
+        cc::platform::switchboard::protobuf::SetSpecificationRequest req;
         req.set_switch_name(this->name());
 
-        cc::switchboard::Specification *spec = req.mutable_spec();
+        cc::platform::switchboard::protobuf::Specification *spec = req.mutable_spec();
         if (primary)
         {
             spec->set_is_primary(primary.value());
@@ -125,17 +125,17 @@ namespace switchboard::grpc
                    error,
                    attributes);
 
-        cc::switchboard::SetTargetRequest req;
+        cc::platform::switchboard::protobuf::SetTargetRequest req;
         req.set_switch_name(this->name());
-        req.set_target_state(protobuf::encoded<cc::switchboard::State>(target_state));
+        req.set_target_state(protobuf::encoded<cc::platform::switchboard::protobuf::State>(target_state));
         protobuf::encode_shared(error, req.mutable_error());
         protobuf::encode(attributes, req.mutable_attributes());
         req.set_clear_existing(clear_existing);
         req.set_with_interceptors(with_interceptors);
         req.set_trigger_descendents(trigger_descendents);
         req.set_reevaluate(reevaluate);
-        req.set_on_cancel(protobuf::encoded<cc::switchboard::ExceptionHandling>(on_cancel));
-        req.set_on_error(protobuf::encoded<cc::switchboard::ExceptionHandling>(on_error));
+        req.set_on_cancel(protobuf::encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(on_cancel));
+        req.set_on_error(protobuf::encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(on_error));
         return this->client()->call_check(&Client::Stub::SetTarget, req).updated();
     }
 
@@ -143,7 +143,7 @@ namespace switchboard::grpc
         const core::types::KeyValueMap &attributes,
         bool clear_existing)
     {
-        cc::switchboard::SetAttributesRequest req;
+        cc::platform::switchboard::protobuf::SetAttributesRequest req;
         req.set_switch_name(this->name());
         protobuf::encode(attributes, req.mutable_attributes());
         req.set_clear_existing(clear_existing);

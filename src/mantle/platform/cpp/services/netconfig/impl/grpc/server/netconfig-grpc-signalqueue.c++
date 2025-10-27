@@ -15,7 +15,7 @@ namespace netconfig::grpc
 {
     void SignalQueue::initialize()
     {
-        using ::cc::platform::netconfig::Signal;
+        using ::cc::platform::netconfig::protobuf::Signal;
 
         this->connect<ConnectionData::ptr>(
             Signal::kConnection,

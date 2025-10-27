@@ -14,7 +14,7 @@ namespace upgrade::grpc
 {
     void SignalQueue::initialize()
     {
-        using ::cc::platform::upgrade::Signal;
+        using ::cc::platform::upgrade::protobuf::Signal;
 
         this->connect<ScanProgress::ptr>(
             Signal::kScanProgress,

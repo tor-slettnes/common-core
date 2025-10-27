@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/switchboard/switchboard.grpc.pb.h"  // Generated from `switchboard.proto`
+#include "cc/platform/switchboard/grpc/switchboard.grpc.pb.h"  // Generated from `switchboard.proto`
 #include "switchboard.h++"
 #include "grpc-signalclient.h++"
 #include "string/misc.h++"
@@ -14,7 +14,8 @@
 namespace switchboard::grpc
 {
     class Proxy : public switchboard::Provider,
-                  public core::grpc::SignalClient<cc::switchboard::Switchboard, cc::switchboard::Signal>,
+                  public core::grpc::SignalClient<cc::platform::switchboard::grpc::Switchboard,
+                                                  cc::platform::switchboard::protobuf::Signal>,
                   public core::types::enable_create_shared<Proxy>
     {
         using This = Proxy;
@@ -49,12 +50,12 @@ namespace switchboard::grpc
         void on_spec_update(
             core::signal::MappingAction action,
             const std::string &switch_name,
-            const cc::switchboard::Signal &signal);
+            const cc::platform::switchboard::protobuf::Signal &signal);
 
         void on_status_update(
             core::signal::MappingAction action,
             const std::string &switch_name,
-            const cc::switchboard::Signal &signal);
+            const cc::platform::switchboard::protobuf::Signal &signal);
 
     protected:
         core::dt::Duration ready_timeout;

@@ -14,7 +14,7 @@ namespace switchboard::grpc
 {
     void SignalQueue::initialize()
     {
-        using cc::switchboard::Signal;
+        using cc::platform::switchboard::protobuf::Signal;
 
         this->connect<switchboard::Specification>(
             Signal::kSpecification,

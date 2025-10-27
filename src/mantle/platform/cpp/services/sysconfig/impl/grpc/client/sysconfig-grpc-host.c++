@@ -23,8 +23,8 @@ namespace sysconfig::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            ::cc::platform::sysconfig::Signal::kHostInfo,
-            [&](const ::cc::platform::sysconfig::Signal &signal) {
+            ::cc::platform::sysconfig::protobuf::Signal::kHostInfo,
+            [&](const ::cc::platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_hostinfo.emit(
                     protobuf::decoded<HostInfo>(signal.host_info()));
             });

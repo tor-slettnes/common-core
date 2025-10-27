@@ -16,13 +16,13 @@ namespace protobuf
     // State
 
     void encode(switchboard::State native,
-                cc::switchboard::State *proto)
+                cc::platform::switchboard::protobuf::State *proto)
 
     {
-        *proto = static_cast<cc::switchboard::State>(native);
+        *proto = static_cast<cc::platform::switchboard::protobuf::State>(native);
     }
 
-    void decode(cc::switchboard::State proto,
+    void decode(cc::platform::switchboard::protobuf::State proto,
                 switchboard::State *native)
     {
         *native = static_cast<switchboard::State>(proto);
@@ -55,12 +55,12 @@ namespace protobuf
     //==========================================================================
     // SwitchIdentifier
 
-    void encode(const std::string &name, cc::switchboard::SwitchIdentifier *msg)
+    void encode(const std::string &name, cc::platform::switchboard::protobuf::SwitchIdentifier *msg)
     {
         msg->set_switch_name(name);
     }
 
-    void decode(const cc::switchboard::SwitchIdentifier &msg, std::string &name)
+    void decode(const cc::platform::switchboard::protobuf::SwitchIdentifier &msg, std::string &name)
     {
         name = msg.switch_name();
     }
@@ -69,7 +69,7 @@ namespace protobuf
     // SwitchIdentifiers
 
     void encode(const std::vector<std::string> &names,
-                cc::switchboard::SwitchIdentifiers *msg)
+                cc::platform::switchboard::protobuf::SwitchIdentifiers *msg)
     {
         msg->mutable_switch_names()->Reserve(names.size());
         for (const std::string &name : names)
@@ -78,7 +78,7 @@ namespace protobuf
         }
     }
 
-    void decode(const cc::switchboard::SwitchIdentifiers &msg,
+    void decode(const cc::platform::switchboard::protobuf::SwitchIdentifiers &msg,
                 std::vector<std::string> *names)
     {
         assign_to_vector(msg.switch_names(), names);
@@ -88,7 +88,7 @@ namespace protobuf
     // SwitchSet
 
     void encode(const switchboard::SwitchSet &set,
-                cc::switchboard::SwitchIdentifiers *msg)
+                cc::platform::switchboard::protobuf::SwitchIdentifiers *msg)
     {
         msg->mutable_switch_names()->Reserve(set.size());
         for (const auto &sw : set)
@@ -101,7 +101,7 @@ namespace protobuf
     // Specification
 
     void encode(const switchboard::Specification &spec,
-                cc::switchboard::Specification *msg)
+                cc::platform::switchboard::protobuf::Specification *msg)
     {
         msg->set_is_primary(spec.primary);
         encode(spec.localizations, msg->mutable_localizations());
@@ -109,7 +109,7 @@ namespace protobuf
         encode(spec.interceptors, msg->mutable_interceptors());
     }
 
-    void decode(const cc::switchboard::Specification &msg,
+    void decode(const cc::platform::switchboard::protobuf::Specification &msg,
                 const switchboard::ProviderRef &provider,
                 switchboard::Specification *spec)
     {
@@ -127,10 +127,10 @@ namespace protobuf
     // Status
 
     void encode(const switchboard::Status &status,
-                cc::switchboard::Status *msg)
+                cc::platform::switchboard::protobuf::Status *msg)
     {
-        msg->set_current_state(encoded<cc::switchboard::State>(status.current_state));
-        msg->set_settled_state(encoded<cc::switchboard::State>(status.settled_state));
+        msg->set_current_state(encoded<cc::platform::switchboard::protobuf::State>(status.current_state));
+        msg->set_settled_state(encoded<cc::platform::switchboard::protobuf::State>(status.settled_state));
         msg->set_active(status.active);
         msg->set_pending(status.pending);
 
@@ -145,7 +145,7 @@ namespace protobuf
         }
     }
 
-    void decode(const cc::switchboard::Status &msg,
+    void decode(const cc::platform::switchboard::protobuf::Status &msg,
                 switchboard::Status *status)
     {
         status->current_state = decoded<switchboard::State>(msg.current_state());
@@ -163,7 +163,7 @@ namespace protobuf
     // StatusMap
 
     void encode(const switchboard::StatusMap &statusmap,
-                cc::switchboard::StatusMap *msg)
+                cc::platform::switchboard::protobuf::StatusMap *msg)
     {
         msg->clear_map();
         auto *map = msg->mutable_map();
@@ -173,7 +173,7 @@ namespace protobuf
         }
     }
 
-    void decode(const cc::switchboard::StatusMap &msg,
+    void decode(const cc::platform::switchboard::protobuf::StatusMap &msg,
                 switchboard::StatusMap *statusmap)
     {
         statusmap->clear();
@@ -187,7 +187,7 @@ namespace protobuf
     // Localization
 
     void encode(const switchboard::Localization &localization,
-                cc::switchboard::Localization *msg)
+                cc::platform::switchboard::protobuf::Localization *msg)
     {
         msg->set_description(localization.description);
 
@@ -204,7 +204,7 @@ namespace protobuf
         }
     }
 
-    void decode(const cc::switchboard::Localization &msg,
+    void decode(const cc::platform::switchboard::protobuf::Localization &msg,
                 switchboard::Localization *localization)
     {
         localization->description = msg.description();
@@ -225,7 +225,7 @@ namespace protobuf
     // LocalizationMap
 
     void encode(const switchboard::LocalizationMap &map,
-                cc::switchboard::LocalizationMap *msg)
+                cc::platform::switchboard::protobuf::LocalizationMap *msg)
     {
         auto &protomap = *msg->mutable_map();
         for (const auto &[language_code, localization] : map)
@@ -234,7 +234,7 @@ namespace protobuf
         }
     }
 
-    void decode(const cc::switchboard::LocalizationMap &msg,
+    void decode(const cc::platform::switchboard::protobuf::LocalizationMap &msg,
                 switchboard::LocalizationMap *map)
     {
         map->clear();
@@ -248,12 +248,12 @@ namespace protobuf
     // DependencyPolarity
 
     void encode(switchboard::DependencyPolarity native,
-                cc::switchboard::DependencyPolarity *proto)
+                cc::platform::switchboard::protobuf::DependencyPolarity *proto)
     {
-        *proto = static_cast<cc::switchboard::DependencyPolarity>(native);
+        *proto = static_cast<cc::platform::switchboard::protobuf::DependencyPolarity>(native);
     }
 
-    void decode(cc::switchboard::DependencyPolarity proto,
+    void decode(cc::platform::switchboard::protobuf::DependencyPolarity proto,
                 switchboard::DependencyPolarity *native)
     {
         *native = static_cast<switchboard::DependencyPolarity>(proto);
@@ -263,15 +263,15 @@ namespace protobuf
     // Dependency
 
     void encode(const switchboard::DependencyRef &native,
-                cc::switchboard::Dependency *proto)
+                cc::platform::switchboard::protobuf::Dependency *proto)
     {
         proto->set_trigger_states(native->trigger_states());
-        proto->set_polarity(encoded<cc::switchboard::DependencyPolarity>(native->polarity()));
+        proto->set_polarity(encoded<cc::platform::switchboard::protobuf::DependencyPolarity>(native->polarity()));
         proto->set_hard(native->hard());
         proto->set_sufficient(native->sufficient());
     }
 
-    void decode(const cc::switchboard::Dependency &proto,
+    void decode(const cc::platform::switchboard::protobuf::Dependency &proto,
                 const switchboard::ProviderRef &provider,
                 const std::string &predecessor_name,
                 switchboard::DependencyRef *native)
@@ -289,7 +289,7 @@ namespace protobuf
     // DependencyMap
 
     void encode(const switchboard::DependencyMap &map,
-                cc::switchboard::DependencyMap *msg)
+                cc::platform::switchboard::protobuf::DependencyMap *msg)
     {
         auto &encoded_map = *msg->mutable_map();
         for (const auto &[name, dep] : map)
@@ -298,7 +298,7 @@ namespace protobuf
         }
     }
 
-    void decode(const cc::switchboard::DependencyMap &msg,
+    void decode(const cc::platform::switchboard::protobuf::DependencyMap &msg,
                 const switchboard::ProviderRef &provider,
                 switchboard::DependencyMap *map)
     {
@@ -312,18 +312,18 @@ namespace protobuf
     // Interceptor
 
     void encode(const switchboard::InterceptorRef &native,
-                cc::switchboard::InterceptorSpec *proto)
+                cc::platform::switchboard::protobuf::InterceptorSpec *proto)
     {
         proto->set_owner(native->owner());
         proto->set_state_transitions(native->state_transitions());
-        proto->set_phase(encoded<cc::switchboard::InterceptorPhase>(native->phase()));
+        proto->set_phase(encoded<cc::platform::switchboard::protobuf::InterceptorPhase>(native->phase()));
         proto->set_asynchronous(native->asynchronous());
         proto->set_rerun(native->rerun());
-        proto->set_on_cancel(encoded<cc::switchboard::ExceptionHandling>(native->on_cancel()));
-        proto->set_on_error(encoded<cc::switchboard::ExceptionHandling>(native->on_error()));
+        proto->set_on_cancel(encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(native->on_cancel()));
+        proto->set_on_error(encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(native->on_error()));
     }
 
-    void decode(const cc::switchboard::InterceptorSpec &proto,
+    void decode(const cc::platform::switchboard::protobuf::InterceptorSpec &proto,
                 const std::string &name,
                 const switchboard::Invocation &invocation,
                 switchboard::InterceptorRef *native)
@@ -344,7 +344,7 @@ namespace protobuf
     // InterceptorMap
 
     void encode(const switchboard::InterceptorMap &map,
-                cc::switchboard::InterceptorMap *msg)
+                cc::platform::switchboard::protobuf::InterceptorMap *msg)
     {
         auto &encoded_map = *msg->mutable_map();
         for (const auto &[name, ic] : map)
@@ -353,7 +353,7 @@ namespace protobuf
         }
     }
 
-    void decode(const cc::switchboard::InterceptorMap &proto,
+    void decode(const cc::platform::switchboard::protobuf::InterceptorMap &proto,
                 switchboard::InterceptorMap *native)
     {
         for (const auto &[name, spec] : proto.map())
@@ -366,12 +366,12 @@ namespace protobuf
     // InterceptorPhase
 
     void encode(switchboard::InterceptorPhase native,
-                cc::switchboard::InterceptorPhase *proto)
+                cc::platform::switchboard::protobuf::InterceptorPhase *proto)
     {
-        *proto = static_cast<cc::switchboard::InterceptorPhase>(native);
+        *proto = static_cast<cc::platform::switchboard::protobuf::InterceptorPhase>(native);
     }
 
-    void decode(cc::switchboard::InterceptorPhase proto,
+    void decode(cc::platform::switchboard::protobuf::InterceptorPhase proto,
                 switchboard::InterceptorPhase *native)
     {
         *native = static_cast<switchboard::InterceptorPhase>(proto);
@@ -381,12 +381,12 @@ namespace protobuf
     // ExceptionHandling
 
     void encode(switchboard::ExceptionHandling native,
-                cc::switchboard::ExceptionHandling *proto)
+                cc::platform::switchboard::protobuf::ExceptionHandling *proto)
     {
-        *proto = static_cast<cc::switchboard::ExceptionHandling>(native);
+        *proto = static_cast<cc::platform::switchboard::protobuf::ExceptionHandling>(native);
     }
 
-    void decode(cc::switchboard::ExceptionHandling proto,
+    void decode(cc::platform::switchboard::protobuf::ExceptionHandling proto,
                 switchboard::ExceptionHandling *native)
     {
         *native = static_cast<switchboard::ExceptionHandling>(proto);
@@ -396,7 +396,7 @@ namespace protobuf
     // SwitchInfo
 
     void encode(const switchboard::Switch &sw,
-                cc::switchboard::SwitchInfo *msg)
+                cc::platform::switchboard::protobuf::SwitchInfo *msg)
     {
         encode(*sw.spec(), msg->mutable_spec());
         encode(*sw.status(), msg->mutable_status());
@@ -406,7 +406,7 @@ namespace protobuf
     // SwitchMap
 
     void encode(const switchboard::SwitchMap &map,
-                cc::switchboard::SwitchMap *msg)
+                cc::platform::switchboard::protobuf::SwitchMap *msg)
     {
         auto &encoded_map = *msg->mutable_map();
         for (const auto &[name, sw] : map)

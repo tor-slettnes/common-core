@@ -7,7 +7,7 @@
 
 #pragma once
 #include "grpc-signalqueue.h++"
-#include "cc/switchboard/switchboard.grpc.pb.h"
+#include "cc/platform/switchboard/grpc/switchboard.grpc.pb.h"
 
 namespace switchboard::grpc
 {
@@ -24,10 +24,10 @@ namespace switchboard::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<cc::switchboard::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<cc::platform::switchboard::protobuf::Signal>
     {
         using This = SignalQueue;
-        using Super = core::grpc::SignalQueue<cc::switchboard::Signal>;
+        using Super = core::grpc::SignalQueue<cc::platform::switchboard::protobuf::Signal>;
 
     public:
         using Super::Super;

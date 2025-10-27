@@ -19,12 +19,12 @@ namespace multilogger::zmq
     // @brief Handle log events received over ZMQ
 
     class ClientReader
-        : public core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::Loggable>,
+        : public core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::protobuf::Loggable>,
           public core::types::BlockingQueue<core::types::Loggable::ptr>,
           public core::types::enable_create_shared<ClientReader>
     {
         using This = ClientReader;
-        using HandlerBase = core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::Loggable>;
+        using HandlerBase = core::zmq::ProtoBufMessageHandler<cc::platform::multilogger::protobuf::Loggable>;
         using QueueBase = core::types::BlockingQueue<core::types::Loggable::ptr>;
 
     protected:
@@ -34,6 +34,6 @@ namespace multilogger::zmq
         void deinitialize() override;
 
     public:
-        void handle_message(const cc::platform::multilogger::Loggable &msg) override;
+        void handle_message(const cc::platform::multilogger::protobuf::Loggable &msg) override;
     };
 }  // namespace multilogger::zmq

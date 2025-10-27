@@ -7,7 +7,7 @@
 
 #pragma once
 #include "switchboard.h++"
-#include "cc/switchboard/switchboard.pb.h"     // generated from `switchboard.proto`
+#include "cc/platform/switchboard/protobuf/switchboard_types.pb.h"     // generated from `switchboard.proto`
 
 namespace protobuf
 {
@@ -15,9 +15,9 @@ namespace protobuf
     // State
 
     void encode(switchboard::State native,
-                cc::switchboard::State *proto);
+                cc::platform::switchboard::protobuf::State *proto);
 
-    void decode(cc::switchboard::State proto,
+    void decode(cc::platform::switchboard::protobuf::State proto,
                 switchboard::State *native);
 
     //==========================================================================
@@ -33,33 +33,33 @@ namespace protobuf
     // SwitchIdentifier
 
     void encode(const std::string &name,
-                cc::switchboard::SwitchIdentifier *msg);
+                cc::platform::switchboard::protobuf::SwitchIdentifier *msg);
 
-    void decode(const cc::switchboard::SwitchIdentifier &msg,
+    void decode(const cc::platform::switchboard::protobuf::SwitchIdentifier &msg,
                 std::string &name);
 
     //==========================================================================
     // SwitchIdentifiers
 
     void encode(const std::vector<std::string> &names,
-                cc::switchboard::SwitchIdentifiers *msg);
+                cc::platform::switchboard::protobuf::SwitchIdentifiers *msg);
 
-    void decode(const cc::switchboard::SwitchIdentifiers &msg,
+    void decode(const cc::platform::switchboard::protobuf::SwitchIdentifiers &msg,
                 std::vector<std::string> *names);
 
     //==========================================================================
     // SwitchSet
 
     void encode(const switchboard::SwitchSet &set,
-                cc::switchboard::SwitchIdentifiers *msg);
+                cc::platform::switchboard::protobuf::SwitchIdentifiers *msg);
 
     //==========================================================================
     // Specification
 
     void encode(const switchboard::Specification &spec,
-                cc::switchboard::Specification *msg);
+                cc::platform::switchboard::protobuf::Specification *msg);
 
-    void decode(const cc::switchboard::Specification &msg,
+    void decode(const cc::platform::switchboard::protobuf::Specification &msg,
                 const switchboard::ProviderRef &provider,
                 switchboard::Specification *spec);
 
@@ -67,54 +67,54 @@ namespace protobuf
     // Status
 
     void encode(const switchboard::Status &status,
-                cc::switchboard::Status *msg);
+                cc::platform::switchboard::protobuf::Status *msg);
 
-    void decode(const cc::switchboard::Status &msg,
+    void decode(const cc::platform::switchboard::protobuf::Status &msg,
                 switchboard::Status *status);
 
     //==========================================================================
     // StatusMap
 
     void encode(const switchboard::StatusMap &statusmap,
-                cc::switchboard::StatusMap *msg);
+                cc::platform::switchboard::protobuf::StatusMap *msg);
 
-    void decode(const cc::switchboard::StatusMap &msg,
+    void decode(const cc::platform::switchboard::protobuf::StatusMap &msg,
                 switchboard::StatusMap *statusmap);
 
     //==========================================================================
     // Localization
 
     void encode(const switchboard::Localization &localization,
-                cc::switchboard::Localization *msg);
+                cc::platform::switchboard::protobuf::Localization *msg);
 
-    void decode(const cc::switchboard::Localization &msg,
+    void decode(const cc::platform::switchboard::protobuf::Localization &msg,
                 switchboard::Localization *localization);
 
     //==========================================================================
     // LocalizationMap
 
     void encode(const switchboard::LocalizationMap &map,
-                cc::switchboard::LocalizationMap *msg);
+                cc::platform::switchboard::protobuf::LocalizationMap *msg);
 
-    void decode(const cc::switchboard::LocalizationMap &msg,
+    void decode(const cc::platform::switchboard::protobuf::LocalizationMap &msg,
                 switchboard::LocalizationMap *map);
 
     //==========================================================================
     // DependencyPolarity
 
     void encode(switchboard::DependencyPolarity native,
-                cc::switchboard::DependencyPolarity *proto);
+                cc::platform::switchboard::protobuf::DependencyPolarity *proto);
 
-    void decode(cc::switchboard::DependencyPolarity proto,
+    void decode(cc::platform::switchboard::protobuf::DependencyPolarity proto,
                 switchboard::DependencyPolarity *native);
 
     //==========================================================================
     // Dependency
 
     void encode(const switchboard::DependencyRef &native,
-                cc::switchboard::Dependency *proto);
+                cc::platform::switchboard::protobuf::Dependency *proto);
 
-    void decode(const cc::switchboard::Dependency &proto,
+    void decode(const cc::platform::switchboard::protobuf::Dependency &proto,
                 const switchboard::ProviderRef &provider,
                 const std::string &predecessor_name,
                 switchboard::DependencyRef *native);
@@ -123,9 +123,9 @@ namespace protobuf
     // DependencyMap
 
     void encode(const switchboard::DependencyMap &map,
-                cc::switchboard::DependencyMap *msg);
+                cc::platform::switchboard::protobuf::DependencyMap *msg);
 
-    void decode(const cc::switchboard::DependencyMap &msg,
+    void decode(const cc::platform::switchboard::protobuf::DependencyMap &msg,
                 const switchboard::ProviderRef &provider,
                 switchboard::DependencyMap *map);
 
@@ -133,9 +133,9 @@ namespace protobuf
     // Interceptor
 
     void encode(const switchboard::InterceptorRef &native,
-                cc::switchboard::InterceptorSpec *proto);
+                cc::platform::switchboard::protobuf::InterceptorSpec *proto);
 
-    void decode(const cc::switchboard::InterceptorSpec &proto,
+    void decode(const cc::platform::switchboard::protobuf::InterceptorSpec &proto,
                 const std::string &name,
                 const switchboard::Invocation &invocation,
                 switchboard::InterceptorRef *native);
@@ -144,39 +144,39 @@ namespace protobuf
     // InterceptorMap
 
     void encode(const switchboard::InterceptorMap &map,
-                cc::switchboard::InterceptorMap *msg);
+                cc::platform::switchboard::protobuf::InterceptorMap *msg);
 
-    void decode(const cc::switchboard::InterceptorMap &msg,
+    void decode(const cc::platform::switchboard::protobuf::InterceptorMap &msg,
                 switchboard::InterceptorMap *map);
 
     //==========================================================================
     // InterceptorPhase
 
     void encode(switchboard::InterceptorPhase native,
-                cc::switchboard::InterceptorPhase *proto);
+                cc::platform::switchboard::protobuf::InterceptorPhase *proto);
 
-    void decode(cc::switchboard::InterceptorPhase proto,
+    void decode(cc::platform::switchboard::protobuf::InterceptorPhase proto,
                 switchboard::InterceptorPhase *native);
 
     //==========================================================================
     // ExceptionHandling
 
     void encode(switchboard::ExceptionHandling native,
-                cc::switchboard::ExceptionHandling *proto);
+                cc::platform::switchboard::protobuf::ExceptionHandling *proto);
 
-    void decode(cc::switchboard::ExceptionHandling proto,
+    void decode(cc::platform::switchboard::protobuf::ExceptionHandling proto,
                 switchboard::ExceptionHandling *native);
 
     //==========================================================================
     // SwitchInfo
 
     void encode(const switchboard::Switch &sw,
-                cc::switchboard::SwitchInfo *msg);
+                cc::platform::switchboard::protobuf::SwitchInfo *msg);
 
     //==========================================================================
     // SwitchMap
 
     void encode(const switchboard::SwitchMap &map,
-                cc::switchboard::SwitchMap *msg);
+                cc::platform::switchboard::protobuf::SwitchMap *msg);
 
 }  // namespace protobuf

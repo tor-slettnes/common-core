@@ -13,16 +13,17 @@ set(TARGET "cc_platform_proto")
 set(PROTO_DEPS cc_core_proto)
 
 ### Source files
-set(SOURCES
-  cc/platform/sysconfig/sysconfig.proto
-  cc/platform/netconfig/netconfig.proto
-  cc/platform/vfs/vfs.proto
-  cc/platform/upgrade/upgrade.proto
-)
+unset(pbuf_sources)
+unset(grpc_sources)
+foreach(service "sysconfig" "netconfig" "vfs" "upgrade")
+  list(APPEND pbuf_sources "cc/platform/${service}/protobuf/${service}_types.proto")
+  list(APPEND grpc_sources "cc/platform/${service}/grpc/${service}.proto")
+endforeach()
 
 ### Generate language bindings
 cc_add_proto("${TARGET}"
-  PROTOS ${SOURCES}
+  PROTOBUF_SOURCES "${pbuf_sources}"
+  GRPC_SOURCES "${grpc_sources}"
   IMPORT_DIRS "${CC_PROTOS_BASE_DIR}"
   PROTO_DEPS ${PROTO_DEPS}
   PYTHON_INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"

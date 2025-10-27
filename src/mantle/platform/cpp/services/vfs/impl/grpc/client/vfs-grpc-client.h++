@@ -6,15 +6,15 @@
 //==============================================================================
 
 #pragma once
-#include "cc/platform/vfs/vfs.grpc.pb.h"  // Generated from `vfs.proto`
+#include "cc/platform/vfs/grpc/vfs.grpc.pb.h"  // Generated from `vfs.proto`
 #include "grpc-signalclient.h++"
 #include "types/create-shared.h++"
 
 namespace vfs::grpc
 {
     using ClientBaseImpl = core::grpc::SignalClient<
-        ::cc::platform::vfs::VirtualFileSystem,
-        ::cc::platform::vfs::Signal>;
+        ::cc::platform::vfs::grpc::VirtualFileSystem,
+        ::cc::platform::vfs::protobuf::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>

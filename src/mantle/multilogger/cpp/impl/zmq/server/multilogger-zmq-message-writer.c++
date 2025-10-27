@@ -73,7 +73,7 @@ namespace multilogger::zmq
                 if (const auto &item = this->listener->get())
                 {
                     this->forward(
-                        protobuf::encoded_shared<cc::platform::multilogger::Loggable>(
+                        protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(
                             item.value()));
                 }
             }

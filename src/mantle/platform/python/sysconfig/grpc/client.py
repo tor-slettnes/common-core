@@ -15,7 +15,8 @@ from cc.core.doc_inherit import doc_inherit
 from cc.protobuf.wellknown import empty, StringValue, \
     Timestamp, TimestampType, encodeTimestamp, decodeTimestamp
 
-from cc.protobuf.sysconfig import Signal, ProductInfo, HostInfo, \
+from ..protobuf import \
+    Signal, ProductInfo, HostInfo, \
     TimeConfig, TimeZoneCanonicalSpec, TimeZoneCanonicalName, \
     TimeZoneConfig, TimeZoneInfo, TimeZoneInfoRequest, \
     TimeZoneArea, TimeZoneCountry, TimeZoneLocation, TimeZoneLocationFilter, \
@@ -40,7 +41,7 @@ class Client (cc.messaging.grpc.Client):
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
-    from cc.platform.sysconfig.sysconfig_pb2_grpc import SysConfigStub as Stub
+    from .sysconfig_pb2_grpc import SysConfigStub as Stub
 
 
     def get_product_info(self) -> ProductInfo:

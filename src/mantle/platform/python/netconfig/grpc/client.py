@@ -15,7 +15,7 @@ from cc.core.doc_inherit import doc_inherit
 
 from cc.protobuf.wellknown import empty, StringValue
 
-from cc.protobuf.netconfig import Signal, MappingKey, \
+from ..protobuf import Signal, MappingKey, \
     GlobalData, RadioState, DeviceData, IPConfigData, ConnectionData, \
     ActiveConnectionData, WiredConnectionData, WirelessConnectionData, \
     AccessPointData, WirelessConnectionData, WEPData, WPAData, EAPData, \
@@ -45,7 +45,7 @@ class Client (cc.messaging.grpc.Client):
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
-    from cc.platform.netconfig.netconfig_pb2_grpc import NetConfigStub as Stub
+    from .netconfig_pb2_grpc import NetConfigStub as Stub
 
     def get_hostname(self) -> str:
         '''

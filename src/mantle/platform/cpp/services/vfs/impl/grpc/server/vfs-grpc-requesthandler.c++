@@ -29,7 +29,7 @@ namespace vfs::grpc
     ::grpc::Status RequestHandler::GetContexts(
         ::grpc::ServerContext *cxt,
         const protobuf::Empty *,
-        ::cc::platform::vfs::ContextMap *response)
+        ::cc::platform::vfs::protobuf::ContextMap *response)
     {
         try
         {
@@ -48,7 +48,7 @@ namespace vfs::grpc
     ::grpc::Status RequestHandler::GetOpenContexts(
         ::grpc::ServerContext *cxt,
         const protobuf::Empty *,
-        ::cc::platform::vfs::ContextMap *response)
+        ::cc::platform::vfs::protobuf::ContextMap *response)
     {
         try
         {
@@ -67,8 +67,8 @@ namespace vfs::grpc
     // Get a single context's specification
     ::grpc::Status RequestHandler::GetContextSpec(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *request,
-        ::cc::platform::vfs::ContextSpec *response)
+        const ::cc::platform::vfs::protobuf::Path *request,
+        ::cc::platform::vfs::protobuf::ContextSpec *response)
     {
         try
         {
@@ -86,8 +86,8 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::OpenContext(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *request,
-        ::cc::platform::vfs::ContextSpec *response)
+        const ::cc::platform::vfs::protobuf::Path *request,
+        ::cc::platform::vfs::protobuf::ContextSpec *response)
     {
         try
         {
@@ -105,7 +105,7 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::CloseContext(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *request,
+        const ::cc::platform::vfs::protobuf::Path *request,
         protobuf::Empty *)
     {
         try
@@ -124,8 +124,8 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::GetVolumeInfo(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *request,
-        ::cc::platform::vfs::VolumeInfo *response)
+        const ::cc::platform::vfs::protobuf::PathRequest *request,
+        ::cc::platform::vfs::protobuf::VolumeInfo *response)
     {
         try
         {
@@ -144,8 +144,8 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::GetFileInfo(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *request,
-        ::cc::platform::vfs::FileInfo *response)
+        const ::cc::platform::vfs::protobuf::PathRequest *request,
+        ::cc::platform::vfs::protobuf::FileInfo *response)
     {
         try
         {
@@ -164,8 +164,8 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::GetDirectory(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *request,
-        ::cc::platform::vfs::Directory *response)
+        const ::cc::platform::vfs::protobuf::PathRequest *request,
+        ::cc::platform::vfs::protobuf::Directory *response)
     {
         try
         {
@@ -185,8 +185,8 @@ namespace vfs::grpc
     // Recursively locate files matching naming or attribute patterns
     ::grpc::Status RequestHandler::Locate(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::LocateRequest *request,
-        ::cc::platform::vfs::Directory *response)
+        const ::cc::platform::vfs::protobuf::LocateRequest *request,
+        ::cc::platform::vfs::protobuf::Directory *response)
     {
         try
         {
@@ -212,7 +212,7 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::Copy(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *request,
+        const ::cc::platform::vfs::protobuf::PathRequest *request,
         protobuf::Empty *)
     {
         try
@@ -232,7 +232,7 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::Move(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *request,
+        const ::cc::platform::vfs::protobuf::PathRequest *request,
         protobuf::Empty *)
     {
         try
@@ -252,7 +252,7 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::Remove(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *request,
+        const ::cc::platform::vfs::protobuf::PathRequest *request,
         protobuf::Empty *)
     {
         try
@@ -276,7 +276,7 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::CreateFolder(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::PathRequest *request,
+        const ::cc::platform::vfs::protobuf::PathRequest *request,
         protobuf::Empty *)
     {
         try
@@ -295,8 +295,8 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::ReadFile(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *request,
-        ::grpc::ServerWriter<::cc::platform::vfs::FileChunk> *writer)
+        const ::cc::platform::vfs::protobuf::Path *request,
+        ::grpc::ServerWriter<::cc::platform::vfs::protobuf::FileChunk> *writer)
     {
         try
         {
@@ -306,7 +306,7 @@ namespace vfs::grpc
             reader->exceptions(std::ios::badbit);
 
             //char buf[protobuf::chunksize];
-            ::cc::platform::vfs::FileChunk chunk;
+            ::cc::platform::vfs::protobuf::FileChunk chunk;
             chunk.mutable_path()->CopyFrom(*request);
             uint chunks = 0;
             std::streamsize total = 0;
@@ -337,12 +337,12 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::WriteFile(
         ::grpc::ServerContext *cxt,
-        ::grpc::ServerReader<::cc::platform::vfs::FileChunk> *reader,
+        ::grpc::ServerReader<::cc::platform::vfs::protobuf::FileChunk> *reader,
         protobuf::Empty *)
     {
         vfs::Path vpath;
         UniqueWriter writer;
-        ::cc::platform::vfs::FileChunk chunk;
+        ::cc::platform::vfs::protobuf::FileChunk chunk;
 
         std::streamsize total = 0;
         uint chunks = 0;
@@ -376,7 +376,7 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::GetAttributes(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *request,
+        const ::cc::platform::vfs::protobuf::Path *request,
         ::cc::protobuf::variant::KeyValueMap *response)
     {
         try
@@ -395,7 +395,7 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::SetAttributes(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::AttributeRequest *request,
+        const ::cc::platform::vfs::protobuf::AttributeRequest *request,
         protobuf::Empty *)
     {
         try
@@ -413,7 +413,7 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::ClearAttributes(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::Path *request,
+        const ::cc::platform::vfs::protobuf::Path *request,
         protobuf::Empty *)
     {
         try
@@ -431,9 +431,9 @@ namespace vfs::grpc
     ::grpc::Status RequestHandler::Watch(
         ::grpc::ServerContext *context,
         const ::cc::protobuf::signal::Filter *filter,
-        ::grpc::ServerWriter<::cc::platform::vfs::Signal> *writer)
+        ::grpc::ServerWriter<::cc::platform::vfs::protobuf::Signal> *writer)
     {
-        return this->stream_signals<::cc::platform::vfs::Signal, SignalQueue>(
+        return this->stream_signals<::cc::platform::vfs::protobuf::Signal, SignalQueue>(
             context,
             filter,
             writer);

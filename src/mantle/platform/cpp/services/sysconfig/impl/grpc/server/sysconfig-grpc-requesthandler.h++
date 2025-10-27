@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/platform/sysconfig/sysconfig.grpc.pb.h"  // Generated from `sysconfig.proto`
+#include "cc/platform/sysconfig/grpc/sysconfig.grpc.pb.h"  // Generated from `sysconfig.proto`
 #include "sysconfig.h++"
 
 #include "grpc-signalrequesthandler.h++"
@@ -15,12 +15,12 @@
 namespace sysconfig::grpc
 {
     class RequestHandler
-        : public core::grpc::SignalRequestHandler<::cc::platform::sysconfig::SysConfig>,
+        : public core::grpc::SignalRequestHandler<::cc::platform::sysconfig::grpc::SysConfig>,
           public core::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;
-        using Super = core::grpc::SignalRequestHandler<::cc::platform::sysconfig::SysConfig>;
+        using Super = core::grpc::SignalRequestHandler<::cc::platform::sysconfig::grpc::SysConfig>;
 
     protected:
         //======================================================================
@@ -29,7 +29,7 @@ namespace sysconfig::grpc
         ::grpc::Status GetProductInfo(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::platform::sysconfig::ProductInfo* response) override;
+            ::cc::platform::sysconfig::protobuf::ProductInfo* response) override;
 
         ::grpc::Status SetSerialNumber(
             ::grpc::ServerContext* context,
@@ -47,7 +47,7 @@ namespace sysconfig::grpc
         ::grpc::Status GetHostInfo(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::platform::sysconfig::HostInfo* response) override;
+            ::cc::platform::sysconfig::protobuf::HostInfo* response) override;
 
         ::grpc::Status SetHostName(
             ::grpc::ServerContext* context,
@@ -61,13 +61,13 @@ namespace sysconfig::grpc
 
         ::grpc::Status SetTimeConfig(
             ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::TimeConfig* request,
+            const ::cc::platform::sysconfig::protobuf::TimeConfig* request,
             ::google::protobuf::Empty* response) override;
 
         ::grpc::Status GetTimeConfig(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::platform::sysconfig::TimeConfig* response) override;
+            ::cc::platform::sysconfig::protobuf::TimeConfig* response) override;
 
         // Current timestamp
         ::grpc::Status SetCurrentTime(
@@ -86,55 +86,55 @@ namespace sysconfig::grpc
         ::grpc::Status ListTimezoneAreas(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::platform::sysconfig::TimeZoneAreas* response) override;
+            ::cc::platform::sysconfig::protobuf::TimeZoneAreas* response) override;
 
         ::grpc::Status ListTimezoneCountries(
             ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::TimeZoneArea* request,
-            ::cc::platform::sysconfig::TimeZoneCountries* response) override;
+            const ::cc::platform::sysconfig::protobuf::TimeZoneArea* request,
+            ::cc::platform::sysconfig::protobuf::TimeZoneCountries* response) override;
 
         ::grpc::Status ListTimezoneRegions(
             ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
-            ::cc::platform::sysconfig::TimeZoneRegions* response) override;
+            const ::cc::platform::sysconfig::protobuf::TimeZoneLocationFilter* request,
+            ::cc::platform::sysconfig::protobuf::TimeZoneRegions* response) override;
 
         ::grpc::Status ListTimezoneSpecs(
             ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::TimeZoneLocationFilter* request,
-            ::cc::platform::sysconfig::TimeZoneCanonicalSpecs* response) override;
+            const ::cc::platform::sysconfig::protobuf::TimeZoneLocationFilter* request,
+            ::cc::platform::sysconfig::protobuf::TimeZoneCanonicalSpecs* response) override;
 
         ::grpc::Status GetTimezoneSpec(
             ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::TimeZoneCanonicalName* request,
-            ::cc::platform::sysconfig::TimeZoneCanonicalSpec* response) override;
+            const ::cc::platform::sysconfig::protobuf::TimeZoneCanonicalName* request,
+            ::cc::platform::sysconfig::protobuf::TimeZoneCanonicalSpec* response) override;
 
         ::grpc::Status SetTimezone(
             ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::TimeZoneConfig* request,
-            ::cc::platform::sysconfig::TimeZoneInfo* response) override;
+            const ::cc::platform::sysconfig::protobuf::TimeZoneConfig* request,
+            ::cc::platform::sysconfig::protobuf::TimeZoneInfo* response) override;
 
         ::grpc::Status GetTimezoneInfo(
             ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::TimeZoneInfoRequest* request,
-            ::cc::platform::sysconfig::TimeZoneInfo* response) override;
+            const ::cc::platform::sysconfig::protobuf::TimeZoneInfoRequest* request,
+            ::cc::platform::sysconfig::protobuf::TimeZoneInfo* response) override;
 
         //======================================================================
         // Spawn a new process, with or without capturing stdin/stdout/stderr.
 
         ::grpc::Status InvokeSync(
             ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::CommandInvocation* request,
-            ::cc::platform::sysconfig::CommandResponse* response) override;
+            const ::cc::platform::sysconfig::protobuf::CommandInvocation* request,
+            ::cc::platform::sysconfig::protobuf::CommandResponse* response) override;
 
         ::grpc::Status InvokeAsync(
             ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::CommandInvocation* request,
-            ::cc::platform::sysconfig::CommandInvocationResponse* response) override;
+            const ::cc::platform::sysconfig::protobuf::CommandInvocation* request,
+            ::cc::platform::sysconfig::protobuf::CommandInvocationResponse* response) override;
 
         ::grpc::Status InvokeFinish(
             ::grpc::ServerContext* context,
-            const ::cc::platform::sysconfig::CommandContinuation* request,
-            ::cc::platform::sysconfig::CommandResponse* response) override;
+            const ::cc::platform::sysconfig::protobuf::CommandContinuation* request,
+            ::cc::platform::sysconfig::protobuf::CommandResponse* response) override;
 
         ::grpc::Status Reboot(
             ::grpc::ServerContext* context,
@@ -147,6 +147,6 @@ namespace sysconfig::grpc
         ::grpc::Status Watch(
             ::grpc::ServerContext* context,
             const ::cc::protobuf::signal::Filter* filter,
-            ::grpc::ServerWriter<::cc::platform::sysconfig::Signal>* writer) override;
+            ::grpc::ServerWriter<::cc::platform::sysconfig::protobuf::Signal>* writer) override;
     };
 }  // namespace sysconfig::grpc

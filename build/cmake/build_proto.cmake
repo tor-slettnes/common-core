@@ -26,13 +26,15 @@ function(cc_add_proto TARGET)
     PYTHON_NAMESPACE           # Override default Python installation namespace
   )
   set(_multiargs
-    PROTOS         # Source `.proto` files
-    PROTO_DEPS     # Upstream CMake targets on which we depend
-    IMPORT_DIRS    # Additional directories to include in search path
-    LIB_DEPS       # Upstream libraries
-    OBJ_DEPS       # Upstream CMake object libraries
-    PKG_DEPS       # 3rd party package dependencies described with `pkgconf`
-    MOD_DEPS       # 3rd party package dependencies described with CMake modules
+    SOURCES           # Source `.proto` files
+    PROTOBUF_SOURCES  # `.proto` files containing only ProtoBuf types
+    GRPC_SOURCES      # `.proto` files containing only gRPC service definitons
+    PROTO_DEPS        # Source  CMake targets on which we depend
+    IMPORT_DIRS       # Additional directories to include in search path
+    LIB_DEPS          # Upstream libraries
+    OBJ_DEPS          # Upstream CMake object libraries
+    PKG_DEPS          # 3rd party package dependencies described with `pkgconf`
+    MOD_DEPS          # 3rd party package dependencies described with CMake modules
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -42,6 +44,11 @@ function(cc_add_proto TARGET)
 
   if(BUILD_GRPC)
     find_package(gRPC REQUIRED)
+  endif()
+
+  if(arg_SOURCES)
+    list(APPEND arg_PROTOBUF_SOURCES "${SOURCES}")
+    list(APPEND arg_GRPC_SOURCES "${SOURCES}")
   endif()
 
   if(BUILD_CPP)
@@ -55,7 +62,8 @@ function(cc_add_proto TARGET)
     cc_add_proto_cpp("${cpp_target}"
       LIB_TYPE "${arg_LIB_TYPE}"
       SCOPE "${arg_SCOPE}"
-      PROTOS "${arg_PROTOS}"
+      PROTOBUF_SOURCES "${arg_PROTOBUF_SOURCES}"
+      GRPC_SOURCES "${arg_GRPC_SOURCES}"
       IMPORT_DIRS "${arg_IMPORT_DIRS}"
       PROTO_DEPS "${proto_cpp_deps}"
       LIB_DEPS "${arg_LIB_DEPS}"
@@ -88,7 +96,8 @@ function(cc_add_proto TARGET)
       INSTALL_COMPONENT "${arg_PYTHON_INSTALL_COMPONENT}"
       INSTALL_DIR "${arg_PYTHON_INSTALL_DIR}"
       DEPENDS "${proto_py_deps}"
-      PROTOS "${arg_PROTOS}"
+      PROTOBUF_SOURCES "${arg_PROTOBUF_SOURCES}"
+      GRPC_SOURCES "${arg_GRPC_SOURCES}"
       IMPORT_DIRS "${arg_IMPORT_DIRS}"
     )
   endif()
@@ -101,17 +110,18 @@ endfunction()
 function(cc_add_proto_cpp TARGET)
   set(_options)
   set(_singleargs
-    LIB_TYPE       # C++ library type (Default: STATIC)
-    SCOPE          # Target scope (Default: PUBLIC)
+    LIB_TYPE         # C++ library type (Default: STATIC)
+    SCOPE            # Target scope (Default: PUBLIC)
   )
   set(_multiargs
-    PROTOS         # Source `.proto` files
-    IMPORT_DIRS    # Additional directories to include in search path
-    PROTO_DEPS     # Upstream CMake targets on which we depend
-    LIB_DEPS       # Upstream libraries
-    OBJ_DEPS       # Upstream CMake object libraries
-    PKG_DEPS       # 3rd party package dependencies described with `pkgconf`
-    MOD_DEPS       # 3rd party package dependencies described with CMake modules
+    PROTOBUF_SOURCES # `.proto` files containing ProtoBuf types
+    GRPC_SOURCES     # `.proto` files containing gRPC service definitons
+    IMPORT_DIRS      # Additional directories to include in search path
+    PROTO_DEPS       # Upstream CMake targets on which we depend
+    LIB_DEPS         # Upstream libraries
+    OBJ_DEPS         # Upstream CMake object libraries
+    PKG_DEPS         # 3rd party package dependencies described with `pkgconf`
+    MOD_DEPS         # 3rd party package dependencies described with CMake modules
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
 
@@ -150,17 +160,22 @@ function(cc_add_proto_cpp TARGET)
     add_dependencies(${TARGET} ${arg_PROTO_DEPS})
   endif()
 
-  if(BUILD_PROTOBUF)
+  if(arg_GRPC_SOURCES)
+    list(APPEND arg_PROTOBUF_SOURCES "${arg_GRPC_SOURCES}")
+    list(REMOVE_DUPLICATES arg_PROTOBUF_SOURCES)
+  endif()
+
+  if(BUILD_PROTOBUF AND arg_PROTOBUF_SOURCES)
     cc_protogen_protobuf_cpp(PROTO_CPP_SRCS PROTO_CPP_HDRS
       TARGET "${TARGET}"
       DEPENDS "${arg_PROTO_DEPS}"
-      PROTOS "${arg_PROTOS}"
+      PROTOS ${arg_PROTOBUF_SOURCES}
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
 
   endif()
 
-  if(BUILD_GRPC)
+  if(BUILD_GRPC AND arg_GRPC_SOURCES)
     find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin)
 
     # The above fails to capture all required library dependencies from recent
@@ -173,7 +188,7 @@ function(cc_add_proto_cpp TARGET)
     cc_protogen_grpc_cpp(GRPC_CPP_SRCS GRPC_CPP_HDRS
       TARGET "${TARGET}"
       DEPENDS "${arg_PROTO_DEPS}"
-      PROTOS "${arg_PROTOS}"
+      PROTOS "${arg_GRPC_SOURCES}"
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
   endif()
@@ -195,7 +210,8 @@ function(cc_add_proto_python TARGET)
   )
   set(_multiargs
     DEPENDS            # Upstream CMake targets on which we depend
-    PROTOS             # Source `.proto` files
+    PROTOBUF_SOURCES   # `.proto` files containing ProtoBuf types
+    GRPC_SOURCES       # `.proto` files containing gRPC service definitons
     IMPORT_DIRS        # Additional directories to include in search path
   )
   cmake_parse_arguments(arg "${_options}" "${_singleargs}" "${_multiargs}" ${ARGN})
@@ -227,25 +243,25 @@ function(cc_add_proto_python TARGET)
     file(MAKE_DIRECTORY "${gen_dir}")
   endif()
 
-  if(BUILD_PROTOBUF)
+  if(BUILD_PROTOBUF AND arg_PROTOBUF_SOURCES)
     find_package(Protobuf REQUIRED)
 
     cc_protogen_protobuf_py(PROTO_PY
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"
-      PROTOS "${arg_PROTOS}"
+      PROTOS "${arg_PROTOBUF_SOURCES}"
       OUT_DIR "${gen_dir}"
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )
   endif()
 
-  if(BUILD_GRPC)
+  if(BUILD_GRPC AND arg_GRPC_SOURCES)
     find_program(GRPC_PYTHON_PLUGIN grpc_python_plugin)
 
     cc_protogen_grpc_py(GRPC_PY
       TARGET "${TARGET}"
       DEPENDS "${arg_DEPENDS}"
-      PROTOS "${arg_PROTOS}"
+      PROTOS "${arg_GRPC_SOURCES}"
       OUT_DIR "${gen_dir}"
       IMPORT_DIRS ${arg_IMPORT_DIRS}
     )

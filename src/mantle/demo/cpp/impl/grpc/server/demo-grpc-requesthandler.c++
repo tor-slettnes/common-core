@@ -23,7 +23,7 @@ namespace demo::grpc
 
     ::grpc::Status RequestHandler::SayHello(
         ::grpc::ServerContext* context,
-        const ::cc::demo::Greeting* request,
+        const ::cc::demo::protobuf::Greeting* request,
         ::google::protobuf::Empty* response)
     {
         // We received a greeting from a client.  We decode and pass this on to
@@ -47,7 +47,7 @@ namespace demo::grpc
     ::grpc::Status RequestHandler::GetCurrentTime(
         ::grpc::ServerContext* context,
         const ::google::protobuf::Empty* request,
-        ::cc::demo::TimeData* response)
+        ::cc::demo::protobuf::TimeData* response)
     {
         try
         {
@@ -95,9 +95,9 @@ namespace demo::grpc
     ::grpc::Status RequestHandler::Watch(
         ::grpc::ServerContext* context,
         const cc::protobuf::signal::Filter* request,
-        ::grpc::ServerWriter<cc::demo::Signal>* writer)
+        ::grpc::ServerWriter<cc::demo::protobuf::Signal>* writer)
     {
-        return this->stream_signals<cc::demo::Signal, SignalQueue>(context, request, writer);
+        return this->stream_signals<cc::demo::protobuf::Signal, SignalQueue>(context, request, writer);
     }
 
 }  // namespace demo::grpc

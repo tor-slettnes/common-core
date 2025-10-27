@@ -33,8 +33,8 @@ namespace multilogger::zmq
     }
 
     void RequestHandler::add_sink(
-        const cc::platform::multilogger::SinkSpec &request,
-        cc::platform::multilogger::AddSinkResult *response)
+        const cc::platform::multilogger::protobuf::SinkSpec &request,
+        cc::platform::multilogger::protobuf::AddSinkResult *response)
     {
         response->set_added(
             this->provider->add_sink(
@@ -42,8 +42,8 @@ namespace multilogger::zmq
     }
 
     void RequestHandler::remove_sink(
-        const cc::platform::multilogger::SinkID &request,
-        cc::platform::multilogger::RemoveSinkResult *response)
+        const cc::platform::multilogger::protobuf::SinkID &request,
+        cc::platform::multilogger::protobuf::RemoveSinkResult *response)
     {
         response->set_removed(
             this->provider->remove_sink(
@@ -51,8 +51,8 @@ namespace multilogger::zmq
     }
 
     void RequestHandler::get_sink(
-        const cc::platform::multilogger::SinkID &request,
-        cc::platform::multilogger::SinkSpec *response)
+        const cc::platform::multilogger::protobuf::SinkID &request,
+        cc::platform::multilogger::protobuf::SinkSpec *response)
     {
         protobuf::encode(
             this->provider->get_sink_spec(request.sink_id()),
@@ -61,7 +61,7 @@ namespace multilogger::zmq
 
     void RequestHandler::get_all_sinks(
         const google::protobuf::Empty &,
-        cc::platform::multilogger::SinkSpecs *response)
+        cc::platform::multilogger::protobuf::SinkSpecs *response)
     {
         protobuf::encode(
             this->provider->get_all_sink_specs(),
@@ -70,7 +70,7 @@ namespace multilogger::zmq
 
     void RequestHandler::list_sinks(
         const google::protobuf::Empty &,
-        cc::platform::multilogger::SinkNames *response)
+        cc::platform::multilogger::protobuf::SinkNames *response)
     {
         protobuf::assign_repeated(
             this->provider->list_sinks(),
@@ -79,7 +79,7 @@ namespace multilogger::zmq
 
     void RequestHandler::list_sink_types(
         const google::protobuf::Empty &,
-        cc::platform::multilogger::SinkTypes *response)
+        cc::platform::multilogger::protobuf::SinkTypes *response)
     {
         protobuf::assign_repeated(
             this->provider->list_sink_types(),
@@ -88,7 +88,7 @@ namespace multilogger::zmq
 
     void RequestHandler::list_message_fields(
         const google::protobuf::Empty &,
-        cc::platform::multilogger::FieldNames *response)
+        cc::platform::multilogger::protobuf::FieldNames *response)
     {
         protobuf::assign_repeated(
             this->provider->list_message_fields(),
@@ -97,7 +97,7 @@ namespace multilogger::zmq
 
     void RequestHandler::list_error_fields(
         const google::protobuf::Empty &,
-        cc::platform::multilogger::FieldNames *response)
+        cc::platform::multilogger::protobuf::FieldNames *response)
     {
         protobuf::assign_repeated(
             this->provider->list_error_fields(),

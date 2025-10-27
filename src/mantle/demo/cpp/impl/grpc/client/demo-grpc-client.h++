@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/demo/demo.grpc.pb.h"  // Generated from `demo.proto`
+#include "cc/demo/grpc/demo.grpc.pb.h"  // Generated from `demo.proto`
 #include "demo-api.h++"
 
 #include "grpc-signalclient.h++"
@@ -15,8 +15,8 @@
 
 namespace demo::grpc
 {
-    using ClientImplBase = core::grpc::SignalClient<cc::demo::Demo,
-                                                    cc::demo::Signal>;
+    using ClientImplBase = core::grpc::SignalClient<cc::demo::grpc::Demo,
+                                                    cc::demo::protobuf::Signal>;
 
     class ClientImpl : public demo::API,
                        public ClientImplBase,

@@ -10,7 +10,7 @@
 #include "demo-zmq-common.h++"
 #include "zmq-protobuf-requesthandler.h++"
 
-#include "cc/demo/demo.pb.h"
+#include "cc/demo/protobuf/demo_types.pb.h"
 
 #include <memory>
 
@@ -29,12 +29,12 @@ namespace demo::zmq
         void initialize() override;
 
         void say_hello(
-            const cc::demo::Greeting &request,
+            const cc::demo::protobuf::Greeting &request,
             ::google::protobuf::Empty *);
 
         void get_current_time(
             const ::google::protobuf::Empty &,
-            cc::demo::TimeData *response);
+            cc::demo::protobuf::TimeData *response);
 
         void start_ticking(
             const ::google::protobuf::Empty &,

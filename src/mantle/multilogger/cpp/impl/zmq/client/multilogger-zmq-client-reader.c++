@@ -23,7 +23,7 @@ namespace multilogger::zmq
         QueueBase::close();
     }
 
-    void ClientReader::handle_message(const cc::platform::multilogger::Loggable &msg)
+    void ClientReader::handle_message(const cc::platform::multilogger::protobuf::Loggable &msg)
     {
         this->put(protobuf::decode_loggable(msg));
     }

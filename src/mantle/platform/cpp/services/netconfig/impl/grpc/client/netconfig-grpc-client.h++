@@ -6,14 +6,14 @@
 //==============================================================================
 
 #pragma once
-#include "cc/platform/netconfig/netconfig.grpc.pb.h"  // Generated from `netconfig.proto`
+#include "cc/platform/netconfig/grpc/netconfig.grpc.pb.h"  // Generated from `netconfig.proto`
 #include "grpc-signalclient.h++"
 #include "types/create-shared.h++"
 
 namespace netconfig::grpc
 {
-    using ClientBaseImpl = core::grpc::SignalClient<::cc::platform::netconfig::NetConfig,
-                                                    ::cc::platform::netconfig::Signal>;
+    using ClientBaseImpl = core::grpc::SignalClient<::cc::platform::netconfig::grpc::NetConfig,
+                                                    ::cc::platform::netconfig::protobuf::Signal>;
 
     class Client : public ClientBaseImpl,
                    public core::types::enable_create_shared<Client>

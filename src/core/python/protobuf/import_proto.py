@@ -33,11 +33,16 @@ def import_wellknown_protos (target_scope: object,
     will appear in namespaces corresponding to the `package` declaration from
     the respective `.proto` files; in this case, `google.protobuf`
     '''
-    import_proto('google.protobuf.empty', target_scope, namespace)
-    import_proto('google.protobuf.wrappers', target_scope, namespace)
-    import_proto('google.protobuf.duration', target_scope, namespace)
-    import_proto('google.protobuf.timestamp', target_scope, namespace)
-    import_proto('google.protobuf.struct', target_scope, namespace)
+    import_wellknown_proto('empty', target_scope, namespace)
+    import_wellknown_proto('wrappers', target_scope, namespace)
+    import_wellknown_proto('duration', target_scope, namespace)
+    import_wellknown_proto('timestamp', target_scope, namespace)
+    import_wellknown_proto('struct', target_scope, namespace)
+
+def import_wellknown_proto(basename: str,
+                           target_scope: object,
+                           namespace: str|None = None):
+    import_proto(f'google.protobuf.{basename}', target_scope, namespace)
 
 
 def import_core_protos(target_scope: object,
@@ -51,13 +56,18 @@ def import_core_protos(target_scope: object,
     the respective `.proto` files (starting with `cc.`).
     '''
 
-    import_proto('cc.protobuf.core.datetime', target_scope, namespace)
-    import_proto('cc.protobuf.core.quantities', target_scope, namespace)
-    import_proto('cc.protobuf.core.request_reply', target_scope, namespace)
-    import_proto('cc.protobuf.core.signal', target_scope, namespace)
-    import_proto('cc.protobuf.core.status', target_scope, namespace)
-    import_proto('cc.protobuf.core.variant', target_scope, namespace)
-    import_proto('cc.protobuf.core.version', target_scope, namespace)
+    import_core_proto('datetime', target_scope, namespace)
+    import_core_proto('quantities', target_scope, namespace)
+    import_core_proto('request_reply', target_scope, namespace)
+    import_core_proto('signal', target_scope, namespace)
+    import_core_proto('status', target_scope, namespace)
+    import_core_proto('variant', target_scope, namespace)
+    import_core_proto('version', target_scope, namespace)
+
+def import_core_proto(basename: str,
+                           target_scope: object,
+                           namespace: str|None = None):
+    import_proto(f'cc.protobuf.{basename}.{basename}', target_scope, namespace)
 
 
 def import_proto(module_name: str,

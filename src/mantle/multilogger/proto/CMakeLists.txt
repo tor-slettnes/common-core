@@ -12,13 +12,18 @@ set(TARGET "cc_multilogger_proto")
 set(PROTO_DEPS cc_core_proto)
 
 ### Source files
-set(SOURCES
-  cc/platform/multilogger/multilogger.proto
+set(pbuf_sources
+  "cc/platform/multilogger/protobuf/multilogger_types.proto"
+)
+
+set(grpc_sources
+  "cc/platform/multilogger/grpc/multilogger.proto"
 )
 
 ### Generate language bindings
 cc_add_proto("${TARGET}"
-  PROTOS ${SOURCES}
+  PROTOBUF_SOURCES "${pbuf_sources}"
+  GRPC_SOURCES "${grpc_sources}"
   IMPORT_DIRS "${CC_PROTOS_BASE_DIR}"
   PROTO_DEPS ${PROTO_DEPS}
   PYTHON_INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"

@@ -19,7 +19,7 @@ namespace demo::zmq
 
         // Connect local signals from `api/demo-signals.h++` to this writer.
         // Signals are captured in lambda expressions below, where we encode
-        // them as 'cc::demo::Signal()` messages and then pass on to the
+        // them as 'cc::demo::protobuf::Signal()` messages and then pass on to the
         // publisher using `this->write()`.
 
         // `signal_time` is of type `core::signal::DataSignal<TimeData>`, so

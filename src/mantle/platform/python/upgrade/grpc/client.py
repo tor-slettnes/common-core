@@ -12,7 +12,8 @@ import io
 
 ### Modules within package
 from cc.protobuf.wellknown import empty
-from cc.protobuf.upgrade import Signal, \
+
+from ..protobuf import Signal, \
     PackageSource, SourceType, encodeSource, decodeSource, \
     PackageCatalogue, PackageInfo, \
     InstallRequest
@@ -29,7 +30,7 @@ class Client (cc.messaging.grpc.Client):
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
-    from cc.platform.upgrade.upgrade_pb2_grpc import UpgradeStub as Stub
+    from .upgrade_pb2_grpc import UpgradeStub as Stub
 
 
     def scan(self, source: Optional[SourceType] = None):

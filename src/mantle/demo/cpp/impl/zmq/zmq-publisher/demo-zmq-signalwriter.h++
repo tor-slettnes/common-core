@@ -11,7 +11,7 @@
 
 #include "types/create-shared.h++"
 
-#include "cc/demo/demo.pb.h"
+#include "cc/demo/protobuf/demo_types.pb.h"
 
 namespace demo::zmq
 {
@@ -19,12 +19,12 @@ namespace demo::zmq
     // @class SignalWriter
     // @brief Connect to local DEMO signals and write via ZMQ
 
-    class SignalWriter : public core::zmq::ProtoBufSignalWriter<cc::demo::Signal>,
+    class SignalWriter : public core::zmq::ProtoBufSignalWriter<cc::demo::protobuf::Signal>,
                          public core::types::enable_create_shared<SignalWriter>
     {
         // Convencience alias
         using This = SignalWriter;
-        using Super = core::zmq::ProtoBufSignalWriter<cc::demo::Signal>;
+        using Super = core::zmq::ProtoBufSignalWriter<cc::demo::protobuf::Signal>;
 
     protected:
         using Super::Super;

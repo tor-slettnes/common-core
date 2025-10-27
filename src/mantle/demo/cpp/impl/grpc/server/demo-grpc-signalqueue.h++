@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/demo/demo.pb.h"  // generated from `demo.proto`
+#include "cc/demo/protobuf/demo_types.pb.h"  // generated from `demo.proto`
 #include "demo-api.h++"
 
 #include "grpc-signalqueue.h++"
@@ -26,9 +26,9 @@ namespace demo::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<cc::demo::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<cc::demo::protobuf::Signal>
     {
-        using Super = core::grpc::SignalQueue<cc::demo::Signal>;
+        using Super = core::grpc::SignalQueue<cc::demo::protobuf::Signal>;
 
     public:
         using Super::Super;

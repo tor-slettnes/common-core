@@ -16,14 +16,14 @@ namespace multilogger::grpc
     {
         this->call_check(
             &Stub::Submit,
-            ::protobuf::encoded_shared<cc::platform::multilogger::Loggable>(item));
+            ::protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(item));
     }
 
     bool ClientImpl::add_sink(const SinkSpec &spec)
     {
         return this->call_check(
                        &Stub::AddSink,
-                       ::protobuf::encoded<cc::platform::multilogger::SinkSpec>(spec))
+                       ::protobuf::encoded<cc::platform::multilogger::protobuf::SinkSpec>(spec))
             .added();
     }
 
@@ -31,7 +31,7 @@ namespace multilogger::grpc
     {
         return this->call_check(
                        &Stub::RemoveSink,
-                       ::protobuf::encoded<cc::platform::multilogger::SinkID>(id))
+                       ::protobuf::encoded<cc::platform::multilogger::protobuf::SinkID>(id))
             .removed();
     }
 
@@ -40,7 +40,7 @@ namespace multilogger::grpc
         return protobuf::decoded<SinkSpec>(
             this->call_check(
                 &Stub::GetSink,
-                ::protobuf::encoded<cc::platform::multilogger::SinkID>(id)));
+                ::protobuf::encoded<cc::platform::multilogger::protobuf::SinkID>(id)));
     }
 
     SinkSpecs ClientImpl::get_all_sink_specs() const
@@ -114,7 +114,7 @@ namespace multilogger::grpc
             this->open_writer();
         }
 
-        if (this->writer->Write(protobuf::encoded_shared<cc::platform::multilogger::Loggable>(item)))
+        if (this->writer->Write(protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(item)))
         {
             return true;
         }

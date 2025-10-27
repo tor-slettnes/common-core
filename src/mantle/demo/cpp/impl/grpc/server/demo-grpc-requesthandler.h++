@@ -9,7 +9,7 @@
 #include "demo-api.h++"
 #include "grpc-signalrequesthandler.h++"
 
-#include "cc/demo/demo.grpc.pb.h"  // generated from `demo.proto`
+#include "cc/demo/grpc/demo.grpc.pb.h"  // generated from `demo.proto`
 
 #include "types/create-shared.h++"
 
@@ -19,12 +19,12 @@ namespace demo::grpc
     // @class RequestHandler
     // @brief Process requests from Demo clients
 
-    class RequestHandler : public core::grpc::SignalRequestHandler<cc::demo::Demo>,
+    class RequestHandler : public core::grpc::SignalRequestHandler<cc::demo::grpc::Demo>,
                            public core::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;
-        using Super = core::grpc::SignalRequestHandler<cc::demo::Demo>;
+        using Super = core::grpc::SignalRequestHandler<cc::demo::grpc::Demo>;
 
     protected:
         RequestHandler(const std::shared_ptr<API>& api_provider);
@@ -32,13 +32,13 @@ namespace demo::grpc
     public:
         ::grpc::Status SayHello(
             ::grpc::ServerContext* context,
-            const ::cc::demo::Greeting* request,
+            const ::cc::demo::protobuf::Greeting* request,
             ::google::protobuf::Empty* response) override;
 
         ::grpc::Status GetCurrentTime(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::demo::TimeData* response) override;
+            ::cc::demo::protobuf::TimeData* response) override;
 
         ::grpc::Status StartTicking(
             ::grpc::ServerContext* context,
@@ -53,7 +53,7 @@ namespace demo::grpc
         ::grpc::Status Watch(
             ::grpc::ServerContext* context,
             const cc::protobuf::signal::Filter* request,
-            ::grpc::ServerWriter<cc::demo::Signal>* writer) override;
+            ::grpc::ServerWriter<cc::demo::protobuf::Signal>* writer) override;
 
     private:
         std::shared_ptr<API> provider;

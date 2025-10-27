@@ -23,15 +23,15 @@ namespace sysconfig::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            ::cc::platform::sysconfig::Signal::kTime,
-            [&](const ::cc::platform::sysconfig::Signal &signal) {
+            ::cc::platform::sysconfig::protobuf::Signal::kTime,
+            [&](const ::cc::platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_time.emit(
                     protobuf::decoded<core::dt::TimePoint>(signal.time()));
             });
 
         this->client->add_handler(
-            ::cc::platform::sysconfig::Signal::kTimeConfig,
-            [&](const ::cc::platform::sysconfig::Signal &signal) {
+            ::cc::platform::sysconfig::protobuf::Signal::kTimeConfig,
+            [&](const ::cc::platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_timeconfig.emit(
                     protobuf::decoded<TimeConfig>(signal.time_config()));
             });
@@ -55,7 +55,7 @@ namespace sysconfig::grpc
     {
         this->client->call_check(
             &Client::Stub::SetTimeConfig,
-            protobuf::encoded<::cc::platform::sysconfig::TimeConfig>(config));
+            protobuf::encoded<::cc::platform::sysconfig::protobuf::TimeConfig>(config));
     }
 
     TimeConfig TimeConfigProvider::get_time_config() const

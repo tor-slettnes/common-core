@@ -90,7 +90,7 @@ namespace demo
 
     void DemoTest::test_encode_decode_greeting()
     {
-        auto encoded_greeting = ::protobuf::encoded<cc::demo::Greeting>(this->test_greeting);
+        auto encoded_greeting = ::protobuf::encoded<cc::demo::protobuf::Greeting>(this->test_greeting);
         auto decoded_greeting = ::protobuf::decoded<demo::Greeting>(encoded_greeting);
         EXPECT_EQ(this->test_greeting, decoded_greeting);
     }
@@ -98,7 +98,7 @@ namespace demo
     void DemoTest::test_encode_decode_timedata()
     {
         demo::TimeData td(core::dt::Clock::now());
-        auto encoded_td = ::protobuf::encoded<cc::demo::TimeData>(td);
+        auto encoded_td = ::protobuf::encoded<cc::demo::protobuf::TimeData>(td);
         auto decoded_td = ::protobuf::decoded<demo::TimeData>(encoded_td);
         EXPECT_EQ(td, decoded_td);
     }
