@@ -9,14 +9,14 @@
 from cc.demo.grpc.client import Client as gRPCDemoClient
 from cc.demo.zmq.client import Client as ZMQDemoClient
 
-import cc.protobuf.demo
+import cc.core.invocation
 import cc.protobuf.wellknown
 import cc.protobuf.variant
 import cc.protobuf.signal
 import cc.protobuf.status
-import cc.protobuf.rr
+import cc.protobuf.request_reply
 
-import cc.core.invocation
+import cc.demo.protobuf
 
 ### Third-party modules
 import google.protobuf.message

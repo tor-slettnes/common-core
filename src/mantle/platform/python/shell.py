@@ -30,7 +30,6 @@ import cc.platform.sysconfig.protobuf
 import cc.platform.upgrade.protobuf
 import cc.platform.vfs.protobuf
 
-
 ### Third-party modules
 import google.protobuf.message
 

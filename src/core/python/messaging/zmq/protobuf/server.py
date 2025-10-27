@@ -10,7 +10,7 @@ from .error import Error
 from .requesthandler import RequestHandler
 from ..basic.endpoint import Endpoint
 from ..basic.responder import Responder
-from cc.protobuf.rr import Request, Reply, StatusCode
+from cc.protobuf.request_reply import Request, Reply, StatusCode
 from cc.protobuf.variant import keyValueMap
 
 ### Third-party modules

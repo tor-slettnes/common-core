@@ -7,7 +7,7 @@
 
 ### Modules within package
 from cc.protobuf.utils import messageToDict
-from cc.protobuf.rr import Reply, StatusCode
+from cc.protobuf.request_reply import Reply, StatusCode
 from cc.protobuf.status import Error as CommonError
 
 class Error (RuntimeError):
