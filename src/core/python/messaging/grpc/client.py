@@ -51,6 +51,7 @@ class Client (Base):
                  host: str|None = None,
                  wait_for_ready: bool = False,
                  use_asyncio: bool|None = None,
+                 intercept_errors: bool = True,
                  product_name: str|None = None,
                  ):
         '''
@@ -85,11 +86,12 @@ class Client (Base):
         if use_asyncio is not None:
             self.use_asyncio = use_asyncio
 
-        self.wait_for_ready = wait_for_ready
-        self.host           = self.realaddress(host, "host", "port", "localhost", 8080)
-        self._channel       = None
-        self._stub          = None
-        self._stub_owner    = None
+        self.wait_for_ready   = wait_for_ready
+        self.intercept_errors = intercept_errors
+        self.host             = self.realaddress(host, "host", "port", "localhost", 8080)
+        self._channel         = None
+        self._stub            = None
+        self._stub_owner      = None
 
     @property
     def stub(self):
@@ -132,13 +134,17 @@ class Client (Base):
             # self._channel = grpc.aio.insecure_channel(target = self.host)
             self._channel = grpc.aio.insecure_channel(
                 target = self.host,
-                interceptors = [AsyncClientInterceptor(self.wait_for_ready)])
+                interceptors = [
+                    AsyncClientInterceptor(self.wait_for_ready,
+                                           self.intercept_errors)
+                ])
 
         else:
             # self._channel = grpc.insecure_channel(self.host)
             self._channel = grpc.intercept_channel(
                 grpc.insecure_channel(self.host),
-                ClientInterceptor(self.wait_for_ready))
+                ClientInterceptor(self.wait_for_ready,
+                                  self.intercept_errors))
 
         #self.channel.subscribe(self._channelChange)
 

@@ -345,12 +345,3 @@ namespace protobuf
         return MessageDecoder(msg, enums_as_strings).to_value();
     }
 }  // namespace protobuf
-
-/// Additional convenience operators for ProtoBuf messages
-namespace google::protobuf
-{
-    std::ostream &operator<<(std::ostream &stream, const Message &msg)
-    {
-        return stream << ::protobuf::to_value(msg);
-    }
-}  // namespace google::protobuf
