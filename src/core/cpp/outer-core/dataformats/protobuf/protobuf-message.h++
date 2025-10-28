@@ -83,7 +83,7 @@ namespace google::protobuf
     bool operator==(const Message &left, const Message &right);
     bool operator!=(const Message &left, const Message &right);
 
-    // std::ostream &operator<<(std::ostream &stream, const Message &msg);
+    std::ostream &operator<<(std::ostream &stream, const Message &msg);
 
     template <class T>
     std::ostream &operator<<(std::ostream &stream,

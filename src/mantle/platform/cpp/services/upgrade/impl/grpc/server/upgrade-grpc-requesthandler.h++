@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "upgrade.grpc.pb.h"  // Generated from `upgrade.proto`
+#include "cc/platform/upgrade/grpc/upgrade.grpc.pb.h"  // Generated from `upgrade.proto`
 #include "upgrade-base.h++"
 
 #include "grpc-signalrequesthandler.h++"
@@ -16,51 +16,51 @@ namespace upgrade::grpc
 {
     /// Process requests from Upgrade gRPC clients
     class RequestHandler
-        : public core::grpc::SignalRequestHandler<::cc::platform::upgrade::Upgrade>,
+        : public core::grpc::SignalRequestHandler<::cc::platform::upgrade::grpc::Upgrade>,
           public core::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;
-        using Super = core::grpc::SignalRequestHandler<::cc::platform::upgrade::Upgrade>;
+        using Super = core::grpc::SignalRequestHandler<::cc::platform::upgrade::grpc::Upgrade>;
 
     protected:
         RequestHandler();
         RequestHandler(const std::shared_ptr<upgrade::ProviderInterface>& provider);
 
-        ::grpc::Status scan(
+        ::grpc::Status Scan(
             ::grpc::ServerContext* context,
-            const ::cc::platform::upgrade::PackageSource* request,
-            ::cc::platform::upgrade::PackageCatalogue* response) override;
+            const ::cc::platform::upgrade::protobuf::PackageSource* request,
+            ::cc::platform::upgrade::protobuf::PackageCatalogue* response) override;
 
-        ::grpc::Status list_sources(
+        ::grpc::Status ListSources(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
-            ::cc::platform::upgrade::PackageSources* response) override;
+            ::cc::platform::upgrade::protobuf::PackageSources* response) override;
 
-        ::grpc::Status list_available(
+        ::grpc::Status ListAvailable(
             ::grpc::ServerContext* context,
-            const ::cc::platform::upgrade::PackageSource* request,
-            ::cc::platform::upgrade::PackageCatalogue* response) override;
+            const ::cc::platform::upgrade::protobuf::PackageSource* request,
+            ::cc::platform::upgrade::protobuf::PackageCatalogue* response) override;
 
-        ::grpc::Status best_available(
+        ::grpc::Status BestAvailable(
             ::grpc::ServerContext* context,
-            const ::cc::platform::upgrade::PackageSource* request,
-            ::cc::platform::upgrade::PackageInfo* response) override;
+            const ::cc::platform::upgrade::protobuf::PackageSource* request,
+            ::cc::platform::upgrade::protobuf::PackageInfo* response) override;
 
-        ::grpc::Status install(
+        ::grpc::Status Install(
             ::grpc::ServerContext* context,
-            const ::cc::platform::upgrade::InstallRequest* request,
-            ::cc::platform::upgrade::PackageInfo* response) override;
+            const ::cc::platform::upgrade::protobuf::InstallRequest* request,
+            ::cc::platform::upgrade::protobuf::PackageInfo* response) override;
 
-        ::grpc::Status finalize(
+        ::grpc::Status Finalize(
             ::grpc::ServerContext* context,
             const ::google::protobuf::Empty* request,
             ::google::protobuf::Empty* response) override;
 
-        ::grpc::Status watch(
+        ::grpc::Status Watch(
             ::grpc::ServerContext* context,
-            const ::cc::signal::Filter* filter,
-            ::grpc::ServerWriter<::cc::platform::upgrade::Signal>* writer) override;
+            const ::cc::protobuf::signal::Filter* filter,
+            ::grpc::ServerWriter<::cc::platform::upgrade::protobuf::Signal>* writer) override;
 
     protected:
         std::shared_ptr<upgrade::ProviderInterface> provider;

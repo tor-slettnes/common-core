@@ -10,7 +10,7 @@ from .error import Error
 from ..basic.endpoint import Endpoint
 from ..basic.requester import Requester
 from cc.protobuf.wellknown import Message, MessageType, Empty
-from cc.protobuf.rr import Parameter, Request, Reply, StatusCode
+from cc.protobuf.request_reply import Parameter, Request, Reply, StatusCode
 
 class Client (Requester):
     '''

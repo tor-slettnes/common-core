@@ -23,10 +23,10 @@ namespace upgrade::grpc
     {
     }
 
-    ::grpc::Status RequestHandler::scan(
+    ::grpc::Status RequestHandler::Scan(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::PackageSource *request,
-        ::cc::platform::upgrade::PackageCatalogue *response)
+        const ::cc::platform::upgrade::protobuf::PackageSource *request,
+        ::cc::platform::upgrade::protobuf::PackageCatalogue *response)
     {
         try
         {
@@ -42,10 +42,10 @@ namespace upgrade::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::list_sources(
+    ::grpc::Status RequestHandler::ListSources(
         ::grpc::ServerContext *context,
         const ::google::protobuf::Empty *request,
-        ::cc::platform::upgrade::PackageSources *response)
+        ::cc::platform::upgrade::protobuf::PackageSources *response)
     {
         try
         {
@@ -58,10 +58,10 @@ namespace upgrade::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::list_available(
+    ::grpc::Status RequestHandler::ListAvailable(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::PackageSource *request,
-        ::cc::platform::upgrade::PackageCatalogue *response)
+        const ::cc::platform::upgrade::protobuf::PackageSource *request,
+        ::cc::platform::upgrade::protobuf::PackageCatalogue *response)
     {
         try
         {
@@ -76,10 +76,10 @@ namespace upgrade::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::best_available(
+    ::grpc::Status RequestHandler::BestAvailable(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::PackageSource *request,
-        ::cc::platform::upgrade::PackageInfo *response)
+        const ::cc::platform::upgrade::protobuf::PackageSource *request,
+        ::cc::platform::upgrade::protobuf::PackageInfo *response)
     {
         try
         {
@@ -94,10 +94,10 @@ namespace upgrade::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::install(
+    ::grpc::Status RequestHandler::Install(
         ::grpc::ServerContext *context,
-        const ::cc::platform::upgrade::InstallRequest *request,
-        ::cc::platform::upgrade::PackageInfo *response)
+        const ::cc::platform::upgrade::protobuf::InstallRequest *request,
+        ::cc::platform::upgrade::protobuf::PackageInfo *response)
     {
         try
         {
@@ -113,7 +113,7 @@ namespace upgrade::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::finalize(
+    ::grpc::Status RequestHandler::Finalize(
         ::grpc::ServerContext *context,
         const ::google::protobuf::Empty *request,
         ::google::protobuf::Empty *response)
@@ -129,14 +129,14 @@ namespace upgrade::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::watch(
+    ::grpc::Status RequestHandler::Watch(
         ::grpc::ServerContext *context,
-        const ::cc::signal::Filter *filter,
-        ::grpc::ServerWriter<::cc::platform::upgrade::Signal> *writer)
+        const ::cc::protobuf::signal::Filter *filter,
+        ::grpc::ServerWriter<::cc::platform::upgrade::protobuf::Signal> *writer)
     {
         try
         {
-            return this->stream_signals<::cc::platform::upgrade::Signal, SignalQueue>(
+            return this->stream_signals<::cc::platform::upgrade::protobuf::Signal, SignalQueue>(
                 context,
                 filter,
                 writer);

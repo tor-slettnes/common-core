@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "datetime.pb.h"  // generated from `datetime.proto`
+#include "cc/protobuf/datetime/datetime.pb.h"  // generated from `datetime.proto`
 #include "chrono/date-time.h++"
 
 namespace protobuf
@@ -14,19 +14,19 @@ namespace protobuf
     //==========================================================================
     // TimeUnit
 
-    void encode(core::dt::TimeUnit native, cc::datetime::TimeUnit *proto);
-    void decode(cc::datetime::TimeUnit proto, core::dt::TimeUnit *native);
+    void encode(core::dt::TimeUnit native, cc::protobuf::datetime::TimeUnit *proto);
+    void decode(cc::protobuf::datetime::TimeUnit proto, core::dt::TimeUnit *native);
 
     //==========================================================================
     // DateTimeInterval
 
-    void encode(const core::dt::DateTimeInterval &native, cc::datetime::Interval *proto);
-    void decode(const cc::datetime::Interval &proto, core::dt::DateTimeInterval *native);
+    void encode(const core::dt::DateTimeInterval &native, cc::protobuf::datetime::Interval *proto);
+    void decode(const cc::protobuf::datetime::Interval &proto, core::dt::DateTimeInterval *native);
 
     //==========================================================================
     // TimeStruct
 
-    void encode(const std::tm &tm, cc::datetime::TimeStruct *msg);
-    void decode(const cc::datetime::TimeStruct &msg, std::tm *tm);
+    void encode(const std::tm &tm, cc::protobuf::datetime::TimeStruct *msg);
+    void decode(const cc::protobuf::datetime::TimeStruct &msg, std::tm *tm);
 
 }  // namespace protobuf

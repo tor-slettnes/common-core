@@ -10,7 +10,7 @@
 #include "protobuf-event-types.h++"
 #include "protobuf-inline.h++"
 
-#include "multilogger.grpc.pb.h"
+#include "cc/platform/multilogger/grpc/multilogger.grpc.pb.h"
 
 namespace multilogger::grpc
 {
@@ -18,10 +18,12 @@ namespace multilogger::grpc
     // ClientListener
 
     ClientListener::ClientListener(
-        const std::unique_ptr<::cc::platform::multilogger::MultiLogger::Stub> &stub,
+        const std::unique_ptr<::cc::platform::multilogger::grpc::MultiLogger::Stub> &stub,
         const ListenerSpec &request)
-        : reader_(stub->listen(&this->context_,
-                               protobuf::encoded<::cc::platform::multilogger::ListenerSpec>(request)))
+        : reader_(
+            stub->Listen(
+                &this->context_,
+                protobuf::encoded<::cc::platform::multilogger::protobuf::ListenerSpec>(request)))
     {
         logf_debug("Created grpc::ClientListener(%s)", request);
     }
@@ -41,7 +43,7 @@ namespace multilogger::grpc
 
     std::optional<core::types::Loggable::ptr> ClientListener::get()
     {
-        cc::platform::multilogger::Loggable msg;
+        cc::platform::multilogger::protobuf::Loggable msg;
         if (this->reader_->Read(&msg))
         {
             return protobuf::decode_loggable(msg, this->context().peer());

@@ -14,7 +14,7 @@ namespace sysconfig::grpc
 {
     void SignalQueue::initialize()
     {
-        using ::cc::platform::sysconfig::Signal;
+        using ::cc::platform::sysconfig::protobuf::Signal;
 
         this->connect<core::dt::TimePoint>(
             Signal::kTime,

@@ -6,12 +6,12 @@
 //==============================================================================
 
 #pragma once
-#include "version.pb.h"  // generated from `variant.proto`
+#include "cc/protobuf/version/version.pb.h"  // generated from `variant.proto`
 #include "string/format.h++"
 
 namespace protobuf
 {
-    using cc::version::Version;
+    using cc::protobuf::version::Version;
 
     Version version(std::uint64_t major,
                     std::uint64_t minor = 0,
@@ -25,7 +25,7 @@ namespace protobuf
                        bool strict = true);
 }  // namespace protobuf
 
-namespace cc::version
+namespace cc::protobuf::version
 {
     std::ostream &operator<<(std::ostream &stream, const Version &version);
-}  // namespace cc::version
+}  // namespace cc::protobuf::version

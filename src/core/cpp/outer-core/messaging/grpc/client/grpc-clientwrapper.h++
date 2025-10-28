@@ -53,7 +53,7 @@ namespace core::grpc
     ///          core::yourapp::SomeRequest request = ...;
     ///          core::yourapp::SomeResponse reply;
     ///          ...
-    ///          grpc::Status status = this->stub->yourcall(&cxt, request, &reply);
+    ///          grpc::Status Status = this->stub->YourCall(&cxt, request, &reply);
     ///          ...
     ///      ->  this->check(status);  /// Raises exceptions if status != grpc::StatusCode::OK
     ///      }
@@ -86,8 +86,8 @@ namespace core::grpc
 
         /// @brief Direct invocation of a gRPC method
         /// @param[in] method
-        ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::method`
-        ///     (or with an suitable `using Stub = ...` statement, just `&Stub::method`).
+        ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::Method`
+        ///     (or with an suitable `using Stub = ...` statement, just `&Stub::Method`).
         /// @param[in] request
         ///     ProtoBuf request message
         /// @param[out] response
@@ -126,8 +126,8 @@ namespace core::grpc
         /// @param[in] methodname
         ///     Method name, for debugging
         /// @param[in] method
-        ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::method`
-        ///     (or with an suitable `using Stub = ...` statement, just `&Stub::method`).
+        ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::Method`
+        ///     (or with an suitable `using Stub = ...` statement, just `&Stub::Method`).
         /// @param[in] request
         ///     ProtoBuf request message
         /// @param[out] response
@@ -176,8 +176,8 @@ namespace core::grpc
 
         /// @brief Direct invocation of a gRPC method, check for OK status code
         /// @param[in] method
-        ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::method`
-        ///     (or with an suitable `using Stub = ...` statement, just `&Stub::method`).
+        ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::Method`
+        ///     (or with an suitable `using Stub = ...` statement, just `&Stub::Method`).
         /// @param[in] request
         ///     ProtoBuf request message
         /// @param[in] wait_for_ready
@@ -205,8 +205,8 @@ namespace core::grpc
         /// @param[in] methodname
         ///     Method name, for debugging
         /// @param[in] method
-        ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::method`
-        ///     (or with an suitable `using Stub = ...` statement, just `&Stub::method`).
+        ///     gRPC stub method to inovke, in the form `&ClientClass::Stub::Method`
+        ///     (or with an suitable `using Stub = ...` statement, just `&Stub::Method`).
         /// @param[in] request
         ///     ProtoBuf request message
         /// @param[in] wait_for_ready

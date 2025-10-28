@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "sysconfig.pb.h"  // generated from `sysconfig.proto`
+#include "cc/platform/sysconfig/protobuf/sysconfig_types.pb.h"  // generated from `sysconfig.proto`
 
 #include "grpc-signalqueue.h++"
 
@@ -25,9 +25,9 @@ namespace sysconfig::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<::cc::platform::sysconfig::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<::cc::platform::sysconfig::protobuf::Signal>
     {
-        using Super = core::grpc::SignalQueue<::cc::platform::sysconfig::Signal>;
+        using Super = core::grpc::SignalQueue<::cc::platform::sysconfig::protobuf::Signal>;
 
     public:
         using Super::Super;

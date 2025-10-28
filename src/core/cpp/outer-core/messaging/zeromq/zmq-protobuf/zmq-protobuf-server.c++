@@ -42,8 +42,8 @@ namespace core::zmq
     void ProtoBufServer::process_binary_request(const types::ByteVector &packed_request,
                                                 types::ByteVector *packed_reply)
     {
-        cc::rr::Request request;
-        cc::rr::Reply reply;
+        cc::protobuf::request_reply::Request request;
+        cc::protobuf::request_reply::Reply reply;
 
         if (request.ParseFromArray(packed_request.data(), packed_request.size()))
         {
@@ -55,7 +55,7 @@ namespace core::zmq
         {
             this->insert_error_response(
                 &reply,
-                cc::rr::STATUS_INVALID,
+                cc::protobuf::request_reply::STATUS_INVALID,
                 "Failed to deserialize ProtoBuf request",
                 {{"channel", this->channel_name()},
                  {"payload", packed_request}});
@@ -64,8 +64,8 @@ namespace core::zmq
         protobuf::to_bytes(reply, packed_reply);
     }
 
-    void ProtoBufServer::process_protobuf_request(const cc::rr::Request &request,
-                                                  cc::rr::Reply *reply)
+    void ProtoBufServer::process_protobuf_request(const cc::protobuf::request_reply::Request &request,
+                                                  cc::protobuf::request_reply::Reply *reply)
     {
         reply->set_client_id(request.client_id());
         reply->set_request_id(request.request_id());
@@ -78,26 +78,26 @@ namespace core::zmq
         {
             this->insert_error_response(
                 reply,
-                cc::rr::STATUS_INVALID,
+                cc::protobuf::request_reply::STATUS_INVALID,
                 "No such interface",
                 {{"channel", this->channel_name()},
                  {"interface", request.interface_name()}});
         }
     }
 
-    void ProtoBufServer::insert_error_response(cc::rr::Reply *reply,
-                                               cc::rr::StatusCode status_code,
+    void ProtoBufServer::insert_error_response(cc::protobuf::request_reply::Reply *reply,
+                                               cc::protobuf::request_reply::StatusCode status_code,
                                                const std::string &text,
                                                const types::KeyValueMap &attributes)
     {
-        cc::rr::Status *status = reply->mutable_status();
+        cc::protobuf::request_reply::Status *status = reply->mutable_status();
         status->set_code(status_code);
 
         status::Error event(text,                                           // text
                             core::status::Domain::APPLICATION,              // domain
                             platform::path->exec_name(),                    // origin
                             static_cast<status::Error::Code>(status_code),  // code
-                            cc::rr::StatusCode_Name(status_code),           // symbol
+                            cc::protobuf::request_reply::StatusCode_Name(status_code),           // symbol
                             core::status::Level::ERROR,                    // level
                             {},                                             // timepoint
                             attributes);                                    // attributes

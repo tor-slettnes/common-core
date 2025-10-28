@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "upgrade.pb.h"  // generated from `upgrade.proto`
+#include "cc/platform/upgrade/protobuf/upgrade_types.pb.h"  // generated from `upgrade.proto`
 #include "grpc-signalqueue.h++"
 
 namespace upgrade::grpc
@@ -24,9 +24,9 @@ namespace upgrade::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<::cc::platform::upgrade::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<::cc::platform::upgrade::protobuf::Signal>
     {
-        using Super = core::grpc::SignalQueue<::cc::platform::upgrade::Signal>;
+        using Super = core::grpc::SignalQueue<::cc::platform::upgrade::protobuf::Signal>;
 
     public:
         using Super::Super;

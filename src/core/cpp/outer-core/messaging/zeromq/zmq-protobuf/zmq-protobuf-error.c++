@@ -16,7 +16,7 @@
 
 namespace core::zmq
 {
-    ProtoBufError::ProtoBufError(const cc::rr::StatusCode &code,
+    ProtoBufError::ProtoBufError(const cc::protobuf::request_reply::StatusCode &code,
                                  const core::status::Error &error)
         : Super(error),
           status_code_(code)
@@ -36,7 +36,7 @@ namespace core::zmq
         }
     }
 
-    cc::rr::StatusCode ProtoBufError::status_code() const
+    cc::protobuf::request_reply::StatusCode ProtoBufError::status_code() const
     {
         return this->status_code_;
     }
@@ -55,17 +55,17 @@ namespace core::zmq
     {
         switch (this->status_code())
         {
-        case cc::rr::StatusCode::STATUS_OK:
-        case cc::rr::StatusCode::STATUS_ACCEPTED:
+        case cc::protobuf::request_reply::StatusCode::STATUS_OK:
+        case cc::protobuf::request_reply::StatusCode::STATUS_ACCEPTED:
             return {};
 
-        case cc::rr::StatusCode::STATUS_INVALID:
+        case cc::protobuf::request_reply::StatusCode::STATUS_INVALID:
             return std::make_exception_ptr<exception::InvalidArgument>(*this);
 
-        case cc::rr::StatusCode::STATUS_CANCELLED:
+        case cc::protobuf::request_reply::StatusCode::STATUS_CANCELLED:
             return std::make_exception_ptr<exception::Cancelled>(*this);
 
-        case cc::rr::StatusCode::STATUS_FAILED:
+        case cc::protobuf::request_reply::StatusCode::STATUS_FAILED:
             return std::make_exception_ptr<exception::RuntimeError>(*this);
 
         default:
@@ -89,7 +89,7 @@ namespace core::zmq
     {
         if (field_name == STATUS_FIELD_CODE)
         {
-            return cc::rr::StatusCode_Name(this->status_code());
+            return cc::protobuf::request_reply::StatusCode_Name(this->status_code());
         }
         else
         {

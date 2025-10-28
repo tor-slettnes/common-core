@@ -11,7 +11,7 @@
 #include "protobuf-message.h++"
 #include "types/valuemap.h++"
 
-#include "request_reply.pb.h"
+#include "cc/protobuf/request_reply/request_reply.pb.h"
 
 namespace core::zmq
 {
@@ -38,12 +38,12 @@ namespace core::zmq
         void process_binary_request(const types::ByteVector &packed_request,
                                     types::ByteVector *packed_reply) override;
 
-        void process_protobuf_request(const cc::rr::Request &request,
-                                      cc::rr::Reply *reply);
+        void process_protobuf_request(const cc::protobuf::request_reply::Request &request,
+                                      cc::protobuf::request_reply::Reply *reply);
 
     private:
-        void insert_error_response(cc::rr::Reply *reply,
-                                   cc::rr::StatusCode status_code,
+        void insert_error_response(cc::protobuf::request_reply::Reply *reply,
+                                   cc::protobuf::request_reply::StatusCode status_code,
                                    const std::string &text,
                                    const types::KeyValueMap &attributes);
 

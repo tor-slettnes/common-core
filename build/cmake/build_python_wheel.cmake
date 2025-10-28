@@ -277,6 +277,8 @@ function(cc_add_python_wheel TARGET)
   foreach(dep ${deps})
     get_target_property(target_sources ${dep} "SOURCES")
     if(target_sources)
+      message(VERBOSE "cc_add_phython_wheel(${TARGET}, path ${wheel_path}, dependency ${dep} sources: ${target_sources})")
+
       list(APPEND sources ${target_sources})
     endif()
   endforeach()

@@ -23,8 +23,8 @@ namespace sysconfig::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            ::cc::platform::sysconfig::Signal::kProductInfo,
-            [&](const ::cc::platform::sysconfig::Signal &signal) {
+            ::cc::platform::sysconfig::protobuf::Signal::kProductInfo,
+            [&](const ::cc::platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_productinfo.emit(
                     protobuf::decoded<ProductInfo>(signal.product_info()));
             });
@@ -34,20 +34,20 @@ namespace sysconfig::grpc
     {
         return protobuf::decoded<ProductInfo>(
             this->client->call_check(
-                &Client::Stub::get_product_info));
+                &Client::Stub::GetProductInfo));
     }
 
     void ProductProvider::set_serial_number(const std::string &serial)
     {
         this->client->call_check(
-            &Client::Stub::set_serial_number,
+            &Client::Stub::SetSerialNumber,
             protobuf::encoded<::google::protobuf::StringValue>(serial));
     }
 
     void ProductProvider::set_model_name(const std::string &model)
     {
         this->client->call_check(
-            &Client::Stub::set_model_name,
+            &Client::Stub::SetModelName,
             protobuf::encoded<::google::protobuf::StringValue>(model));
     }
 

@@ -7,19 +7,19 @@
 
 #pragma once
 #include "demo-types.h++"
-#include "demo.pb.h"
+#include "cc/demo/protobuf/demo_types.pb.h"
 #include <ctime>
 
 namespace protobuf
 {
     //==========================================================================
     // Greeting
-    void encode(const demo::Greeting &greeting, cc::demo::Greeting *msg);
-    void decode(const cc::demo::Greeting &msg, demo::Greeting *greeting);
+    void encode(const demo::Greeting &greeting, cc::demo::protobuf::Greeting *msg);
+    void decode(const cc::demo::protobuf::Greeting &msg, demo::Greeting *greeting);
 
     //==========================================================================
     // TimeData
-    void encode(const demo::TimeData &timedata, cc::demo::TimeData *msg);
-    void decode(const cc::demo::TimeData &msg, demo::TimeData *timedata);
+    void encode(const demo::TimeData &timedata, cc::demo::protobuf::TimeData *msg);
+    void decode(const cc::demo::protobuf::TimeData &msg, demo::TimeData *timedata);
   // namespace protobuf
 }

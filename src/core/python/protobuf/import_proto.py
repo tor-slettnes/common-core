@@ -33,11 +33,16 @@ def import_wellknown_protos (target_scope: object,
     will appear in namespaces corresponding to the `package` declaration from
     the respective `.proto` files; in this case, `google.protobuf`
     '''
-    import_proto('google.protobuf.empty', target_scope, namespace)
-    import_proto('google.protobuf.wrappers', target_scope, namespace)
-    import_proto('google.protobuf.duration', target_scope, namespace)
-    import_proto('google.protobuf.timestamp', target_scope, namespace)
-    import_proto('google.protobuf.struct', target_scope, namespace)
+    import_wellknown_proto('empty', target_scope, namespace)
+    import_wellknown_proto('wrappers', target_scope, namespace)
+    import_wellknown_proto('duration', target_scope, namespace)
+    import_wellknown_proto('timestamp', target_scope, namespace)
+    import_wellknown_proto('struct', target_scope, namespace)
+
+def import_wellknown_proto(basename: str,
+                           target_scope: object,
+                           namespace: str|None = None):
+    import_proto(f'google.protobuf.{basename}', target_scope, namespace)
 
 
 def import_core_protos(target_scope: object,
@@ -51,13 +56,18 @@ def import_core_protos(target_scope: object,
     the respective `.proto` files (starting with `cc.`).
     '''
 
-    import_proto('datetime', target_scope, namespace)
-    import_proto('quantities', target_scope, namespace)
-    import_proto('request_reply', target_scope, namespace)
-    import_proto('signal', target_scope, namespace)
-    import_proto('status', target_scope, namespace)
-    import_proto('variant', target_scope, namespace)
-    import_proto('version', target_scope, namespace)
+    import_core_proto('datetime', target_scope, namespace)
+    import_core_proto('quantities', target_scope, namespace)
+    import_core_proto('request_reply', target_scope, namespace)
+    import_core_proto('signal', target_scope, namespace)
+    import_core_proto('status', target_scope, namespace)
+    import_core_proto('variant', target_scope, namespace)
+    import_core_proto('version', target_scope, namespace)
+
+def import_core_proto(basename: str,
+                           target_scope: object,
+                           namespace: str|None = None):
+    import_proto(f'cc.protobuf.{basename}.{basename}', target_scope, namespace)
 
 
 def import_proto(module_name: str,
@@ -73,8 +83,7 @@ def import_proto(module_name: str,
         Module name.  The base name portion (following any leading path) can be
         the stem of the original `.proto` file name (without the extension), or
         it can be the name of the corresponding generated Python module (with a
-        `_pb2` suffix added).  If the name is unqualified (without any leading
-        package name) it will be loaded from the `generated` namespace.
+        `_pb2` suffix added).
 
     @param target_scope:
         Where to create the target namespace. This could be a dictionary
@@ -108,19 +117,16 @@ def import_proto(module_name: str,
 
       ```python
       import math
-      import_proto('variant', globals())
+      import_proto('cc.protobuf.core.variant', globals())
 
       pi_value = cc.variant.Value(value_real = math.pi)
       ```
     '''
 
-    module_path = (module_name if "." in module_name
-                   else "...generated." + module_name)
+    if not module_name.endswith(default_suffix):
+        module_name += default_suffix
 
-    if not module_path.endswith(default_suffix):
-        module_path += default_suffix
-
-    module = importlib.import_module(module_path, __spec__.name)
+    module = importlib.import_module(module_name, __spec__.name)
     scope = target_scope
 
     if namespace is None:

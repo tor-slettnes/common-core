@@ -24,10 +24,10 @@ namespace demo::grpc
         // process.
 
         this->add_mapping_handler(
-            cc::demo::Signal::kSignalGreeting,
+            cc::demo::protobuf::Signal::kSignalGreeting,
             [&](core::signal::MappingAction action,
                 const std::string &key,
-                const cc::demo::Signal &signal) {
+                const cc::demo::protobuf::Signal &signal) {
                 signal_greeting.emit(
                     action,
                     key,
@@ -35,8 +35,8 @@ namespace demo::grpc
             });
 
         this->add_handler(
-            cc::demo::Signal::kSignalTime,
-            [](const cc::demo::Signal &signal) {
+            cc::demo::protobuf::Signal::kSignalTime,
+            [](const cc::demo::protobuf::Signal &signal) {
                 signal_time.emit(
                     ::protobuf::decoded<TimeData>(signal.signal_time()));
             });
@@ -45,26 +45,26 @@ namespace demo::grpc
     void ClientImpl::say_hello(const Greeting &greeting)
     {
         this->call_check(
-            &Stub::say_hello,
-            ::protobuf::encoded<cc::demo::Greeting>(greeting));
+            &Stub::SayHello,
+            ::protobuf::encoded<cc::demo::protobuf::Greeting>(greeting));
     }
 
     TimeData ClientImpl::get_current_time()
     {
         return ::protobuf::decoded<TimeData>(
-            this->call_check(&Stub::get_current_time));
+            this->call_check(&Stub::GetCurrentTime));
     }
 
     void ClientImpl::start_ticking()
     {
         this->call_check(
-            &Stub::start_ticking);
+            &Stub::StartTicking);
     }
 
     void ClientImpl::stop_ticking()
     {
         this->call_check(
-            &Stub::stop_ticking);
+            &Stub::StopTicking);
     }
 
     void ClientImpl::start_watching()

@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "multilogger.grpc.pb.h"  // Generated from `multilogger.proto`
+#include "cc/platform/multilogger/grpc/multilogger.grpc.pb.h"  // Generated from `multilogger.proto`
 #include "multilogger-api.h++"
 #include "grpc-clientwrapper.h++"
 #include "types/create-shared.h++"
@@ -16,11 +16,11 @@ namespace multilogger::grpc
 {
     class ClientImpl
         : public API,
-          public core::grpc::ClientWrapper<cc::platform::multilogger::MultiLogger>,
+          public core::grpc::ClientWrapper<cc::platform::multilogger::grpc::MultiLogger>,
           public core::types::enable_create_shared_from_this<ClientImpl>
     {
         using This = ClientImpl;
-        using Super = core::grpc::ClientWrapper<cc::platform::multilogger::MultiLogger>;
+        using Super = core::grpc::ClientWrapper<cc::platform::multilogger::grpc::MultiLogger>;
 
     protected:
         template <class... Args>
@@ -54,7 +54,7 @@ namespace multilogger::grpc
 
     private:
         bool add_local_sink;
-        std::unique_ptr<::grpc::ClientWriter<::cc::platform::multilogger::Loggable>> writer;
+        std::unique_ptr<::grpc::ClientWriter<::cc::platform::multilogger::protobuf::Loggable>> writer;
         std::unique_ptr<::grpc::ClientContext> writer_context;
         std::unique_ptr<::google::protobuf::Empty> writer_response;
         core::grpc::Status writer_status;

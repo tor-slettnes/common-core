@@ -71,9 +71,3 @@ namespace protobuf
                                 bool enums_as_strings = true);
 
 } // namespace protobuf
-
-/// Add C++ output stream support for ProtoBuf messages
-namespace google::protobuf
-{
-    std::ostream &operator<<(std::ostream &stream, const Message &msg);
-}

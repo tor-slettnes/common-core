@@ -23,8 +23,8 @@ namespace sysconfig::grpc
     {
         Super::initialize();
         this->client->add_handler(
-            ::cc::platform::sysconfig::Signal::kHostInfo,
-            [&](const ::cc::platform::sysconfig::Signal &signal) {
+            ::cc::platform::sysconfig::protobuf::Signal::kHostInfo,
+            [&](const ::cc::platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_hostinfo.emit(
                     protobuf::decoded<HostInfo>(signal.host_info()));
             });
@@ -34,20 +34,20 @@ namespace sysconfig::grpc
     {
         return protobuf::decoded<HostInfo>(
             this->client->call_check(
-                &Client::Stub::get_host_info));
+                &Client::Stub::GetHostInfo));
     }
 
     void HostConfigProvider::set_host_name(const std::string &hostname)
     {
         this->client->call_check(
-            &Client::Stub::set_host_name,
+            &Client::Stub::SetHostName,
             protobuf::encoded<google::protobuf::StringValue>(hostname));
     }
 
     void HostConfigProvider::reboot()
     {
         this->client->call_check(
-            &Client::Stub::reboot);
+            &Client::Stub::Reboot);
     }
 
 }  // namespace sysconfig::grpc

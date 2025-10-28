@@ -23,7 +23,6 @@ endif()
 if(BUILD_GRPC)
   list(APPEND LIB_DEPS
     cc_demo_grpc_service
-    cc_multilogger_grpc_client
   )
 endif()
 

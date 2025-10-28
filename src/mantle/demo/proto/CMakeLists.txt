@@ -14,13 +14,19 @@ set(PROTO_DEPS
 )
 
 ### Source files
-set(SOURCES
-  demo.proto
+set(pbuf_sources
+  "cc/demo/protobuf/demo_types.proto"
+)
+
+set(grpc_sources
+  "cc/demo/grpc/demo.proto"
 )
 
 ### Generate language bindings
 cc_add_proto("${TARGET}"
+  PROTOBUF_SOURCES ${pbuf_sources}
+  GRPC_SOURCES ${grpc_sources}
+  IMPORT_DIRS "${CC_PROTOS_BASE_DIR}"
   PROTO_DEPS ${PROTO_DEPS}
-  PROTOS ${SOURCES}
   PYTHON_INSTALL_COMPONENT "${PYTHON_INSTALL_COMPONENT}"
 )

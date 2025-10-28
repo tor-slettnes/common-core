@@ -9,7 +9,8 @@
 set(TARGET "cc_demo_python")
 
 cc_add_python("${TARGET}"
-  DIRECTORIES "protobuf" "demo"
+  DIRECTORIES .
+  NAMESPACE_COMPONENT "demo"
   PYTHON_DEPS "cc_core_python"
   PROTO_DEPS "cc_demo_proto"
   DATA_DEPS "cc_demo_settings"

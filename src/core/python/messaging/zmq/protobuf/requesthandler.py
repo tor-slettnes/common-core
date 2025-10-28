@@ -10,7 +10,7 @@ from .error import Error
 from cc.protobuf.wellknown import Empty
 from cc.protobuf.status import Error as Event
 from cc.protobuf.variant import keyValueMap
-from cc.protobuf.rr import Request, Reply, StatusCode
+from cc.protobuf.request_reply import Request, Reply, StatusCode
 
 ### Third-party modules
 from google.protobuf.message import Message
@@ -22,7 +22,8 @@ from inspect import getfullargspec
 
 class RequestHandler:
     '''
-    Handle RPC requests received as ProtoBuf `protobuf.rr.Request` messages.
+    Handle RPC requests received as ProtoBuf
+    `cc.protobuf.request_reply.Request` messages.
 
     The `Request` message is processed as follows:
 

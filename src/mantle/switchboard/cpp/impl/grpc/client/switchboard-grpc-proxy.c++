@@ -31,11 +31,11 @@ namespace switchboard::grpc
         using namespace std::placeholders;
 
         this->add_mapping_handler(
-            cc::switchboard::Signal::kSpecification,
+            cc::platform::switchboard::protobuf::Signal::kSpecification,
             std::bind(&This::on_spec_update, this, _1, _2, _3));
 
         this->add_mapping_handler(
-            cc::switchboard::Signal::kStatus,
+            cc::platform::switchboard::protobuf::Signal::kStatus,
             std::bind(&This::on_status_update, this, _1, _2, _3));
 
         this->start_watching();
@@ -81,9 +81,9 @@ namespace switchboard::grpc
 
         if (inserted)
         {
-            cc::switchboard::AddSwitchRequest req;
+            cc::platform::switchboard::protobuf::AddSwitchRequest req;
             req.set_switch_name(switch_name);
-            this->call_check(&Stub::add_switch, req);
+            this->call_check(&Stub::AddSwitch, req);
         }
 
         return {sw, inserted};
@@ -93,16 +93,16 @@ namespace switchboard::grpc
         const SwitchName &switch_name,
         bool propagate)
     {
-        cc::switchboard::RemoveSwitchRequest req;
+        cc::platform::switchboard::protobuf::RemoveSwitchRequest req;
         req.set_switch_name(switch_name);
         req.set_propagate(propagate);
-        return this->call_check(&Stub::remove_switch, req).value();
+        return this->call_check(&Stub::RemoveSwitch, req).value();
     }
 
     void Proxy::on_spec_update(
         core::signal::MappingAction action,
         const std::string &switch_name,
-        const cc::switchboard::Signal &signal)
+        const cc::platform::switchboard::protobuf::Signal &signal)
     {
         if (!switch_name.empty())
         {
@@ -124,7 +124,7 @@ namespace switchboard::grpc
     void Proxy::on_status_update(
         core::signal::MappingAction action,
         const std::string &switch_name,
-        const cc::switchboard::Signal &signal)
+        const cc::platform::switchboard::protobuf::Signal &signal)
     {
         if (!switch_name.empty())
         {

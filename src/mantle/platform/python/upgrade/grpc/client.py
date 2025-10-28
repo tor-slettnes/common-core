@@ -12,7 +12,8 @@ import io
 
 ### Modules within package
 from cc.protobuf.wellknown import empty
-from cc.protobuf.upgrade import Signal, \
+
+from ..protobuf import Signal, \
     PackageSource, SourceType, encodeSource, decodeSource, \
     PackageCatalogue, PackageInfo, \
     InstallRequest
@@ -29,7 +30,7 @@ class Client (cc.messaging.grpc.Client):
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
-    from cc.generated.upgrade_pb2_grpc import UpgradeStub as Stub
+    from .upgrade_pb2_grpc import UpgradeStub as Stub
 
 
     def scan(self, source: Optional[SourceType] = None):
@@ -51,7 +52,7 @@ class Client (cc.messaging.grpc.Client):
         intervals if an Internet connection is available.
         '''
 
-        return self.stub.scan(encodeSource(source))
+        return self.stub.Scan(encodeSource(source))
 
 
     def list_sources(self) -> list[PackageSource]:
@@ -59,7 +60,7 @@ class Client (cc.messaging.grpc.Client):
         List available package sources, whether or not they contain
         applicable packages.
         '''
-        return self.stub.list_sources()
+        return self.stub.ListSources()
 
     def list_available(self,
                         source: Optional[SourceType] = None) \
@@ -75,7 +76,7 @@ class Client (cc.messaging.grpc.Client):
             Information about each package discovered.
         '''
 
-        return self.stub.list_available(encodeSource(source)).packages
+        return self.stub.ListAvailable(encodeSource(source)).packages
 
     def best_available(self,
                         source: Optional[SourceType] = None) \
@@ -89,7 +90,7 @@ class Client (cc.messaging.grpc.Client):
         remote (URL).
         '''
 
-        return self.stub.best_available(encodeSource(source))
+        return self.stub.BestAvailable(encodeSource(source))
 
 
     def install(self,
@@ -120,7 +121,7 @@ class Client (cc.messaging.grpc.Client):
             source = encodeSource(source_file, is_file=True),
             force = force)
 
-        return self.stub.install(request)
+        return self.stub.Install(request)
 
 
     def finalize (self):
@@ -129,7 +130,7 @@ class Client (cc.messaging.grpc.Client):
         signal, and if the upgrade requires a system reboot, do so now.
         '''
 
-        return self.stub.finalize(empty)
+        return self.stub.Finalize(empty)
 
 
 #===============================================================================

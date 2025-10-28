@@ -19,7 +19,7 @@ namespace multilogger::zmq
     void ClientWriter::write(const core::types::Loggable::ptr &loggable)
     {
         Super::write(
-            protobuf::encoded_shared<cc::platform::multilogger::Loggable>(
+            protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(
                 loggable));
     }
 

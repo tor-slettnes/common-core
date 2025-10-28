@@ -85,10 +85,9 @@ class Subscriber (Endpoint):
         super().deinitialize()
 
     def _add_handler_filter(self, handler: MessageHandler):
-        print("Adding handler %r, message filter %r (size %d)"%(
-            handler,
-            handler.message_filter,
-            len(handler.message_filter)))
+        logging.debug(
+            "Adding handler %r, message filter %r (size %d)"%
+            (handler, handler.message_filter, len(handler.message_filter)))
 
         self.socket.setsockopt(zmq.SUBSCRIBE, handler.message_filter)
 

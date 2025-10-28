@@ -14,56 +14,56 @@
 namespace protobuf
 {
     //==========================================================================
-    // core::status::Domain encoding to/decoding from cc::status::Domain
+    // core::status::Domain encoding to/decoding from cc::protobuf::status::Domain
 
-    cc::status::Domain encoded(core::status::Domain domain) noexcept
+    cc::protobuf::status::Domain encoded(core::status::Domain domain) noexcept
     {
-        return static_cast<cc::status::Domain>(domain);
+        return static_cast<cc::protobuf::status::Domain>(domain);
     }
 
-    core::status::Domain decoded(cc::status::Domain domain) noexcept
+    core::status::Domain decoded(cc::protobuf::status::Domain domain) noexcept
     {
         return static_cast<core::status::Domain>(domain);
     }
 
-    void encode(core::status::Domain native, cc::status::Domain *proto) noexcept
+    void encode(core::status::Domain native, cc::protobuf::status::Domain *proto) noexcept
     {
         *proto = encoded(native);
     }
 
-    void decode(cc::status::Domain proto, core::status::Domain *native) noexcept
+    void decode(cc::protobuf::status::Domain proto, core::status::Domain *native) noexcept
     {
         *native = decoded(proto);
     }
 
     //==========================================================================
-    // core::status::Level encoding to/decoding from cc::status::Level
+    // core::status::Level encoding to/decoding from cc::protobuf::status::Level
 
-    cc::status::Level encoded(core::status::Level level) noexcept
+    cc::protobuf::status::Level encoded(core::status::Level level) noexcept
     {
-        return static_cast<cc::status::Level>(level);
+        return static_cast<cc::protobuf::status::Level>(level);
     }
 
-    core::status::Level decoded(cc::status::Level level) noexcept
+    core::status::Level decoded(cc::protobuf::status::Level level) noexcept
     {
         return static_cast<core::status::Level>(level);
     }
 
-    void encode(core::status::Level native, cc::status::Level *proto) noexcept
+    void encode(core::status::Level native, cc::protobuf::status::Level *proto) noexcept
     {
         *proto = encoded(native);
     }
 
-    void decode(cc::status::Level proto, core::status::Level *native) noexcept
+    void decode(cc::protobuf::status::Level proto, core::status::Level *native) noexcept
     {
         *native = decoded(proto);
     }
 
     //==========================================================================
-    // core::status::Error encoding to/decoding from cc::status::Error
+    // core::status::Error encoding to/decoding from cc::protobuf::status::Error
 
     void encode(const core::status::Error &native,
-                cc::status::Error *proto) noexcept
+                cc::protobuf::status::Error *proto) noexcept
     {
         proto->set_domain(encoded(native.domain()));
         proto->set_origin(native.origin());
@@ -75,7 +75,7 @@ namespace protobuf
         proto->set_text(native.text());
     }
 
-    void decode(const cc::status::Error &proto,
+    void decode(const cc::protobuf::status::Error &proto,
                 core::status::Error *native) noexcept
     {
         *native = core::status::Error(

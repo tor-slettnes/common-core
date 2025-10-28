@@ -12,12 +12,12 @@ namespace protobuf
     //==========================================================================
     // TimeUnit
 
-    void encode(core::dt::TimeUnit native, cc::datetime::TimeUnit *proto)
+    void encode(core::dt::TimeUnit native, cc::protobuf::datetime::TimeUnit *proto)
     {
-        *proto = static_cast<cc::datetime::TimeUnit>(native);
+        *proto = static_cast<cc::protobuf::datetime::TimeUnit>(native);
     }
 
-    void decode(cc::datetime::TimeUnit proto, core::dt::TimeUnit *native)
+    void decode(cc::protobuf::datetime::TimeUnit proto, core::dt::TimeUnit *native)
     {
         *native = static_cast<core::dt::TimeUnit>(proto);
     }
@@ -25,13 +25,13 @@ namespace protobuf
     //==========================================================================
     // DateTimeInterval
 
-    void encode(const core::dt::DateTimeInterval &native, cc::datetime::Interval *proto)
+    void encode(const core::dt::DateTimeInterval &native, cc::protobuf::datetime::Interval *proto)
     {
-        proto->set_unit(static_cast<cc::datetime::TimeUnit>(native.unit));
+        proto->set_unit(static_cast<cc::protobuf::datetime::TimeUnit>(native.unit));
         proto->set_count(native.count);
     }
 
-    void decode(const cc::datetime::Interval &proto, core::dt::DateTimeInterval *native)
+    void decode(const cc::protobuf::datetime::Interval &proto, core::dt::DateTimeInterval *native)
     {
         native->unit = static_cast<core::dt::TimeUnit>(proto.unit());
         native->count = proto.count();
@@ -40,7 +40,7 @@ namespace protobuf
     //==========================================================================
     // TimeStruct
 
-    void encode(const std::tm &tm, cc::datetime::TimeStruct *msg)
+    void encode(const std::tm &tm, cc::protobuf::datetime::TimeStruct *msg)
     {
         msg->set_year(tm.tm_year + core::dt::TM_YEAR_OFFSET);
         msg->set_month(tm.tm_mon + core::dt::TM_MONTH_OFFSET);
@@ -48,12 +48,12 @@ namespace protobuf
         msg->set_hour(tm.tm_hour);
         msg->set_minute(tm.tm_min);
         msg->set_second(tm.tm_sec);
-        msg->set_weekday(static_cast<cc::datetime::Weekday>(tm.tm_wday + core::dt::TM_WEEKDAY_OFFSET));
+        msg->set_weekday(static_cast<cc::protobuf::datetime::Weekday>(tm.tm_wday + core::dt::TM_WEEKDAY_OFFSET));
         msg->set_year_day(tm.tm_yday + core::dt::TM_YEARDAY_OFFSET);
         msg->set_is_dst(tm.tm_isdst > 0);
     }
 
-    void decode(const cc::datetime::TimeStruct &msg, std::tm *tm)
+    void decode(const cc::protobuf::datetime::TimeStruct &msg, std::tm *tm)
     {
         *tm = {
             .tm_sec = static_cast<int>(msg.second()),

@@ -16,8 +16,11 @@ class ClientInterceptorBase(object):
     Base for both standard and asyncio gRPC client interceptors
     '''
 
-    def __init__ (self, wait_for_ready: bool = False):
+    def __init__ (self,
+                  wait_for_ready: bool = False,
+                  intercept_errors: bool = True):
         self.wait_for_ready = wait_for_ready
+        self.intercept_errors = intercept_errors
 
     def intercept_unary_unary(self, continuation, client_call_details, request):
         return self._intercept_response(continuation, client_call_details, request)
@@ -110,8 +113,11 @@ class ClientInterceptor(ClientInterceptorBase,
             for response in continuation(call_details, request_or_iterator):
                 yield response
         except grpc.RpcError as e:
-            e_type, e_name, e_tb = sys.exc_info()
-            raise DetailedError(e).with_traceback(e_tb) from None
+            if self.intercept_errors:
+                e_type, e_name, e_tb = sys.exc_info()
+                raise DetailedError(e).with_traceback(e_tb) from None
+            else:
+                raise
 
 
 class AsyncClientInterceptor(ClientInterceptorBase,
@@ -162,6 +168,9 @@ class AsyncClientInterceptor(ClientInterceptorBase,
             async for response in continuation(call_details, request_or_iterator):
                 yield response
         except (grpc.RpcError, grpc.aio.AioRpcError) as e:
-            e_type, e_name, e_tb = sys.exc_info()
-            raise DetailedError(e).with_traceback(e_tb) from None
+            if self.intercept_errors:
+                e_type, e_name, e_tb = sys.exc_info()
+                raise DetailedError(e).with_traceback(e_tb) from None
+            else:
+                raise
 

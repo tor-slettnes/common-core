@@ -192,15 +192,15 @@ namespace avro
             return VariantMapSchema(context);
 
         default:
-            if (descriptor == cc::variant::Value::GetDescriptor())
+            if (descriptor == cc::protobuf::variant::Value::GetDescriptor())
             {
                 return VariantSchema(context);
             }
-            else if (descriptor == cc::variant::KeyValueMap::GetDescriptor())
+            else if (descriptor == cc::protobuf::variant::KeyValueMap::GetDescriptor())
             {
                 return VariantMapSchema(context);
             }
-            else if (descriptor == cc::variant::ValueList::GetDescriptor())
+            else if (descriptor == cc::protobuf::variant::ValueList::GetDescriptor())
             {
                 return VariantListSchema(context);
             }

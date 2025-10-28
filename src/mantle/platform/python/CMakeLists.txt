@@ -8,9 +8,21 @@
 ### Create a custom target for the Python Wheel
 set(TARGET "cc_platform_python")
 
+set(PROGRAMS
+  shell.py
+)
+
+set(DIRECTORIES
+  netconfig
+  sysconfig
+  upgrade
+  vfs
+)
+
 cc_add_python("${TARGET}"
-  PROGRAMS "platform_shell.py"
-  DIRECTORIES "protobuf" "sysconfig" "netconfig" "vfs" "upgrade"
+  PROGRAMS ${PROGRAMS}
+  DIRECTORIES ${DIRECTORIES}
+  NAMESPACE_COMPONENT "platform"
   PYTHON_DEPS "cc_multilogger_python" "cc_switchboard_python"
   PROTO_DEPS "cc_platform_proto"
   DATA_DEPS "cc_platform_settings"

@@ -175,7 +175,7 @@ am            or remote) peer.  If not provided, an explicit call to `bind()` or
 
         if not self.host_address:
             host_address = self.sanitized_host_address(address)
-            logging.info("%s connecting to %s"%(self, host_address))
+            logging.debug("%s connecting to %s"%(self, host_address))
             self.socket.connect(host_address)
             self.host_address = host_address
 

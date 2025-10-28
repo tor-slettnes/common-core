@@ -64,9 +64,10 @@ namespace google::protobuf
         return !MessageDifferencer::Equivalent(left, right);
     }
 
-    // std::ostream &operator<<(std::ostream &stream, const Message &msg)
-    // {
-    //     stream << ::protobuf::to_string(msg);
-    //     return stream;
-    // }
+    std::ostream &operator<<(std::ostream &stream, const Message &msg)
+    {
+        // return stream << ::protobuf::to_string(msg);
+        return stream << ::protobuf::to_value(msg);
+    }
+
 }  // namespace google::protobuf

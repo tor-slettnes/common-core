@@ -70,10 +70,10 @@ class SignalClient (Client):
 
        ```python
        from cc.messaging.grpc.signal_client import SignalClient
-       from cc.generated.my_service_pb2 import MySignal
+       from cc.protobuf.core.my_service_pb2 import MySignal
 
        class MyServiceClient (SignalClient):
-           from cc.generated.my_service_pb2_grpc import MyServiceStub as Stub
+           from cc.protobuf.core.my_service_pb2_grpc import MyServiceStub as Stub
 
            def __init__ (self, *args, **kwargs):
                SignalClient.__init__(self, *args, **kwargs)
@@ -88,10 +88,10 @@ class SignalClient (Client):
 
        ```python
        from cc.messaging.grpc.signal_client import SignalClient
-       from cc.generated.my_service_pb2 import MySignal
+       from cc.protobuf.core.my_service_pb2 import MySignal
 
        class MyServiceClient (SignalClient):
-           from cc.generated.my_service_pb2_grpc import MyServiceStub as Stub
+           from cc.protobuf.core.my_service_pb2_grpc import MyServiceStub as Stub
 
            signal_type = MySignal  ##< Used to create new SignalStore
 
@@ -101,7 +101,7 @@ class SignalClient (Client):
     Next, you'll need callback handlers to handle the received and re-emitted signals:
 
       ```python
-       from cc.generated.my_service_pb2 import Signal, MyDataType1
+       from cc.protobuf.core.my_service_pb2 import Signal, MyDataType1
 
         def my_data1_simple_handler(data1: MyDataType1):
             """Handle DataType1 data signals from server"""
@@ -287,4 +287,9 @@ class SignalClient (Client):
 
 
     def watch(self, signal_filter : Filter = Filter()):
-        return self.stub.watch(signal_filter, wait_for_ready=True)
+        try:
+            watch_method = self.stub.Watch
+        except AttributeError:
+            watch_method = self.stub.watch
+
+        return watch_method(signal_filter, wait_for_ready=True)

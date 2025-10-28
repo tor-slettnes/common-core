@@ -6,16 +6,16 @@
 //==============================================================================
 
 #pragma once
-#include "quantities.pb.h" // generated from `variant.proto`
+#include "cc/protobuf/quantities/quantities.pb.h" // generated from `variant.proto`
 
 namespace protobuf
 {
     void encode_quantity(double value,
                          int decimal_exponent,
-                         cc::quantities::Scalar *scalar);
+                         cc::protobuf::quantities::Scalar *scalar);
 
     void encode_quantity(double value,
-                         cc::quantities::Scalar *scalar);
+                         cc::protobuf::quantities::Scalar *scalar);
 
     template <class Quantity, class Unit>
     void encode_quantity(double value,

@@ -29,10 +29,6 @@ set(PRODUCT "platform"
 set(PROJECT "common-core"
   CACHE STRING "Top-level project name. Used to look up some run-time service settings")
 
-### Set default version number if not provided
-set(VERSION "0.8.0"
-  CACHE STRING "Build version, in the format MAJOR.MINOR.PATCH")
-
 set(DESCRIPTION "Cross-platform development framework for embedded microservice applications"
   CACHE STRING "Project description")
 
@@ -43,7 +39,10 @@ set(ORGANIZATION "common-core"
   CACHE STRING "Organization name, for use in various path names")
 
 #-------------------------------------------------------------------------------
-# Various target directories
+# Various directories
+
+set(CC_PROTOS_BASE_DIR "${CMAKE_SOURCE_DIR}/protos"
+  CACHE STRING "Root directory for common `.proto` files")
 
 set(DATA_DIR "share/${ORGANIZATION}"
   CACHE STRING "Target directory for shared data")
@@ -103,7 +102,7 @@ set(PACKAGE_CONTACT "Tor Slettnes <tor@slett.net>"
 set(PYTHON_NAMESPACE "cc"
   CACHE STRING "Top-level package/namespace for Python modules")
 
-set(PYTHON_GENERATED_NAMESPACE "${PYTHON_NAMESPACE}.generated"
+set(PYTHON_GENERATED_NAMESPACE ""
   CACHE STRING "Namespace for generated Python modules (e.g. ProtoBuf)")
 
 set(PYTHON_PIP_CORE_REQUIREMENTS_FILE
