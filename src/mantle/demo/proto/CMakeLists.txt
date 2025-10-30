@@ -19,7 +19,7 @@ set(pbuf_sources
 )
 
 set(grpc_sources
-  "cc/demo/grpc/demo.proto"
+  "cc/demo/grpc/demo_service.proto"
 )
 
 ### Generate language bindings

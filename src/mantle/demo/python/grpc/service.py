@@ -9,7 +9,7 @@
 from cc.messaging.grpc.signal_service import SignalService
 from ..base import API, demo_signals
 from ..protobuf import Greeting, TimeData
-from .demo_pb2_grpc import DemoServicer
+from .demo_service_pb2_grpc import DemoServicer
 
 ### Third-party modules
 from google.protobuf.empty_pb2 import Empty

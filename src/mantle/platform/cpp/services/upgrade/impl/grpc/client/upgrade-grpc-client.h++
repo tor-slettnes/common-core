@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/platform/upgrade/grpc/upgrade.grpc.pb.h"  // Generated from `upgrade.proto`
+#include "cc/platform/upgrade/grpc/upgrade_service.grpc.pb.h"
 #include "grpc-signalclient.h++"
 #include "types/create-shared.h++"
 

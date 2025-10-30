@@ -71,7 +71,7 @@ You'll probably start with scaffolding like the following:
 
   class DemoClient (cc.messaging.grpc.Client):
 
-      from cc.protobuf.demo.demo_pb2_grpc import DemoStub as Stub
+      from cc.protobuf.demo.demo_service_pb2_grpc import DemoStub as Stub
       ...
 
       def __init__(self, identity: str|None = None):
@@ -144,7 +144,7 @@ Putting this all together, we get:
 
   class DemoClient (cc.messaging.grpc.Client, cc.protobuf.builder.MessageBuilder):
 
-      from cc.protobuf.demo.demo_pb2_grpc import DemoStub as Stub
+      from cc.protobuf.demo.demo_service_pb2_grpc import DemoStub as Stub
       ...
 
       def __init__(self, identity: str|None = None):

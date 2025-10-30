@@ -17,7 +17,7 @@ set(pbuf_sources
 )
 
 set(grpc_sources
-  "cc/platform/multilogger/grpc/multilogger.proto"
+  "cc/platform/multilogger/grpc/multilogger_service.proto"
 )
 
 ### Generate language bindings

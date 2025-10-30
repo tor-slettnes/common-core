@@ -8,7 +8,7 @@
 #pragma once
 #include "switchboard.h++"
 #include "grpc-signalrequesthandler.h++"
-#include "cc/platform/switchboard/grpc/switchboard.grpc.pb.h"  // generated from `switchboard.proto`
+#include "cc/platform/switchboard/grpc/switchboard_service.grpc.pb.h"
 #include "types/create-shared.h++"
 
 namespace switchboard::grpc

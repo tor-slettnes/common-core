@@ -30,7 +30,7 @@ class Client (cc.messaging.grpc.Client):
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
     ## `messaging.grpc.Client` base to instantiate `self.stub`.
-    from .upgrade_pb2_grpc import UpgradeStub as Stub
+    from .upgrade_service_pb2_grpc import UpgradeStub as Stub
 
 
     def scan(self, source: Optional[SourceType] = None):

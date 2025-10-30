@@ -19,7 +19,7 @@ class AsyncClient (SwitchboardBase, SignalClient):
     Switchboard abstract base
     '''
 
-    from .switchboard_pb2_grpc import SwitchboardStub as Stub
+    from .switchboard_service_pb2_grpc import SwitchboardStub as Stub
 
     def __init__(self,
                  host: str = "",

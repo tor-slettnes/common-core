@@ -17,7 +17,7 @@ unset(pbuf_sources)
 unset(grpc_sources)
 foreach(service "sysconfig" "netconfig" "vfs" "upgrade")
   list(APPEND pbuf_sources "cc/platform/${service}/protobuf/${service}_types.proto")
-  list(APPEND grpc_sources "cc/platform/${service}/grpc/${service}.proto")
+  list(APPEND grpc_sources "cc/platform/${service}/grpc/${service}_service.proto")
 endforeach()
 
 ### Generate language bindings

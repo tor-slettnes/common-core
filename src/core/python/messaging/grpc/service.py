@@ -44,7 +44,7 @@ class Service (Base):
 
       ```python
       from cc.messaging.grpc.service import Service
-      from cc.protobuf.core.example_service_pb2_grpc import ExampleServicer
+      from example_service_service_pb2_grpc import ExampleServicer
       from google.protobuf.wrappers_pb2 import StringValue
       from grpc import ServicerContext
 

@@ -22,7 +22,7 @@ from ..protobuf import \
     InterceptorInvocation, InterceptorResult, \
     SetAttributesRequest, CulpritsQuery
 from ..base.switch import Switch
-from .switchboard_pb2_grpc import SwitchboardStub
+from .switchboard_service_pb2_grpc import SwitchboardStub
 
 
 class RemoteSwitch (Switch):

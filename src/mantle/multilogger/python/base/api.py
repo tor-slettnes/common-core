@@ -172,7 +172,7 @@ class API (MessageBuilder):
 
           ```python
 
-          logger = cc.multilogger.grpc.Client()
+          logger = cc.platform.multilogger.grpc.Client()
           logger.add_sink(
               'my_data_logger',
               sink_type = 'csv',

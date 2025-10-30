@@ -18,7 +18,7 @@ set(pbuf_sources
 )
 
 set(grpc_sources
-  "cc/platform/switchboard/grpc/switchboard.proto"
+  "cc/platform/switchboard/grpc/switchboard_service.proto"
 )
 
 ### Generate language bindings

@@ -9,7 +9,7 @@
 #include "demo-api.h++"
 #include "grpc-signalrequesthandler.h++"
 
-#include "cc/demo/grpc/demo.grpc.pb.h"  // generated from `demo.proto`
+#include "cc/demo/grpc/demo_service.grpc.pb.h"
 
 #include "types/create-shared.h++"
 
