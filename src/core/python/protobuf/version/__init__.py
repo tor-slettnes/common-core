@@ -5,8 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Standard Python modules
+import re
+
 ### Modules within package
 from .version_pb2 import Version, ComponentVersions
+
+_rx_version = re.compile(r"(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:-(\d+))?.*")
 
 def version(major: int,
             minor: int = 0,
@@ -22,7 +27,7 @@ def version(major: int,
                    printable_version=printable_version)
 
 
-def version_to_string(version: Version) -> str:
+def to_string(version: Version) -> str:
     '''
     Return a string representation of the provided ProtoBuf Version message
     '''
@@ -31,6 +36,18 @@ def version_to_string(version: Version) -> str:
         return version.printed_version
     else:
         return "%d.%d.%d"%(version.major, version.minor, version.patch)
+
+
+def from_string(string: str) -> Version:
+    '''
+    Parse version string
+    '''
+
+    version = Version(printable_version = string)
+    if m := _rx_version.match(string):
+        version.major, version.minor, version.patch, version.build_number = \
+            [int(group or 0) for group in m.groups()]
+    return version
 
 
 def is_compatible(client_version : Version,
@@ -44,3 +61,5 @@ def is_compatible(client_version : Version,
 
     return ((client_version.major == server_version.major) and
             ((client_version.minor <= server_version.minor) or not strict))
+
+
