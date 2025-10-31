@@ -5,18 +5,21 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules wihtin package
-from ..wellknown import TimestampType, \
-    encodeTimestamp, decodeTimestamp, decodeDuration
-from .variant_pb2 import Value, ValueList, \
-    TaggedValue, TaggedValueList, KeyValueMap
+### Standard Python modules
+from typing import Sequence, Mapping, Optional
 
 ### Third-party modules
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.duration_pb2 import Duration
 
-### Standard Python modules
-from typing import Sequence, Mapping, Optional
+### Modules wihtin package
+from cc.core.timeinterval import TimeIntervalType, TimeInterval
+from cc.core.timepoint import TimePointType, TimePoint
+
+from ..wellknown import TimestampType, \
+    encodeTimestamp, decodeTimestamp, encodeDuration, decodeDuration
+from .variant_pb2 import Value, ValueList, \
+    TaggedValue, TaggedValueList, KeyValueMap
 
 PyValue = None|bool|int|float|str|bytes|Duration|TimestampType|list|tuple|dict
 PyTaggedValue = tuple[str, PyValue]
@@ -46,6 +49,12 @@ def encodeValue(value : PyValue) -> Value:
     if isinstance(value, bool):
         return Value(value_bool = value)
 
+    elif isinstance(value, TimePointType):
+        return Value(value_timestamp = encodeTimestamp(value))
+
+    elif isinstance(value, TimeIntervalType):
+        return Value(value_duration = encodeDuration(value))
+
     elif isinstance(value, int) and (value >= 0):
         return Value(value_uint = value)
 
@@ -60,15 +69,6 @@ def encodeValue(value : PyValue) -> Value:
 
     elif isinstance(value, bytes):
         return Value(value_bytes = value)
-
-    elif isinstance(value, Duration):
-        return Value(value_duration = value)
-
-    elif isinstance(value, Timestamp):
-        return Value(value_timestamp = value)
-
-    elif isinstance(value, TimestampType):
-        return Value(value_timestamp = encodeTimestamp(value))
 
     elif isinstance(value, (list, tuple)):
         if is_tagged_list(value):
@@ -137,7 +137,7 @@ def encodeValueList(value: PyValueList) -> ValueList:
         return value
 
     else:
-        raise ValueError("encodeToValueList() expects a dictionary or list")
+        raise TypeError("encodeToValueList() expects a dictionary or list")
 
 def decodeValueList(valuelist: ValueList) -> PyValueList:
     '''
@@ -189,7 +189,7 @@ def encodeTaggedValueList(tvlist: PyTaggedValueList|PyValueDict) -> TaggedValueL
         return tvlist
 
     else:
-        raise ValueError("encodeTaggedValueList() expects a dictionary or list")
+        raise TypeError("encodeTaggedValueList() expects a dictionary or list")
 
 
 def decodeTaggedValueList(tvlist: TaggedValueList|Sequence[Value]) -> PyTaggedValueList:
@@ -203,7 +203,7 @@ def decodeTaggedValueList(tvlist: TaggedValueList|Sequence[Value]) -> PyTaggedVa
     elif isinstance(tvlist, Sequence):
         return [decodeTaggedValue(tv) for tv in tvlist]
     else:
-        raise ValueError(
+        raise TypeError(
             "Argument must be a protobuf.variant.ValueList() instance "
             "or a native list, not %s"%(type(valuelist),))
 
@@ -213,7 +213,8 @@ def decodeTaggedValueList(tvlist: TaggedValueList|Sequence[Value]) -> PyTaggedVa
 
 def encodeKeyValueMap(kvmap: PyValueDict) -> KeyValueMap:
     '''
-    Encode a `protobuf.variant.KeyValueMap` instance to a native Python dictionary.
+    Encode a `protobuf.variant.KeyValueMap` instance to a native Python
+    dictionary.
     '''
     return KeyValueMap(map = {key:encodeValue(value) for (key, value) in kvmap.items()})
 
@@ -222,7 +223,6 @@ def decodeKeyValueMap(kvmap: KeyValueMap) -> PyValueDict:
     '''
     Decode a `protobuf.variant.KeyValueMap` instance to a native Python dictionary.
     '''
-
     return {key:decodeValue(value) for (key, value) in kvmap.map.items()}
 
 

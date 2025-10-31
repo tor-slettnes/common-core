@@ -23,7 +23,7 @@ from google.protobuf.wrappers_pb2 \
     import BoolValue, StringValue, DoubleValue, FloatValue, \
     Int64Value, UInt64Value, Int32Value, UInt32Value, \
     BytesValue
-from google.protobuf.struct_pb2 import Value, ListValue, Struct
+from google.protobuf.struct_pb2 import Value, ListValue, Struct, NULL_VALUE
 
 ### Standard Python modules
 from time import struct_time, mktime
@@ -49,7 +49,7 @@ def decodeTimestamp(prototime: Timestamp) -> TimePoint:
     return TimePoint.from_protobuf(prototime)
 
 
-def encodeTimestamp(timestamp: TimePointType) -> Timestamp:
+def encodeTimestamp(timestamp: TimestampType) -> Timestamp:
     '''
     Convert an existing timestamp to a new ProtoBuf `Timestamp` value.
 
@@ -95,13 +95,13 @@ def encodeDuration(duration: TimeIntervalType) -> Duration:
     return TimeInterval.from_value(duration or 0).to_protobuf()
 
 
-def encodeValue (value) -> Value:
+def encodeValue(value: object) -> Value:
     '''
     Encode a simple Python value as a `google.protobuf.Value` variant
     '''
 
     if value is None:
-        return Value(null_value=protobuf.NullValue())
+        return Value(null_value=NULL_VALUE)
 
     elif isinstance(value, bool):
         return Value(bool_value=value)
@@ -113,40 +113,39 @@ def encodeValue (value) -> Value:
         return Value(string_value=value)
 
     elif isinstance(value, dict):
-        return Value(struct_value=encodeProtoStruct(value))
+        return Value(struct_value=encodeStruct(value))
 
     elif isinstance(value, list):
-        return Value(list_value=encodeProtoList(value))
+        return Value(list_value=encodeList(value))
 
     else:
-        raise ValueError("Unable to encode value type %r as protobuf.Value"%
+        raise TypeError("Unable to encode value type %r as protobuf.Value"%
                          (type(value).__name__))
 
 
-def encodeStruct (dictionary: dict) -> Struct:
+def encodeStruct(dictionary: dict) -> Struct:
     '''
     Encode a Python dictionary as a `google.protobuf.Struct` instance
     '''
 
-    items = [(key, encodeProtoValue(value))
-             for (key, value) in dictionary.items() ]
-    return Struct(fields=dict(items))
+    return Struct(
+        fields={key: encodeValue(value)
+                for (key, value) in dictionary.items()})
 
 
-def encodeListValue (listvalue: list) -> ListValue:
+def encodeListValue(listvalue: list) -> ListValue:
     '''
     Encode a Python list as a `google.protobuf.ListValue` instance
     '''
-    values = [encodeProtoValue(value) for value in listvalue]
-    return ListValue(values=values)
+    return ListValue(values=[encodeValue(value) for value in listvalue])
 
 
-def decodeValue (value: Value) -> object:
+def decodeValue(value: Value) -> object:
     '''
     Decode a `google.protobuf.Value` variant to a native Python value
     '''
 
-    match(v.WhichOneof('kind')):
+    match(value.WhichOneof('kind')):
         case 'null_value':
             return None
 
@@ -173,12 +172,12 @@ def decodeValue (value: Value) -> object:
             return None
 
 
-def decodeStruct(structvalue: Struct) -> dict:
+def decodeStruct(struct: Struct) -> dict:
     '''
     Decode a `google.protobuf.Struct` instance to a native Python dictionary
     '''
     return dict([(key, decodeValue(value))
-                 for (key, value) in structvalue.fields.items()])
+                 for (key, value) in struct.fields.items()])
 
 def decodeListValue(listvalue: ListValue) -> list:
     '''
