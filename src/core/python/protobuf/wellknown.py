@@ -5,6 +5,12 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Standard Python modules
+from typing import Sequence, Mapping, Optional
+from time import struct_time, mktime
+from datetime import datetime
+
+
 ### Symbols from `google.protobuf` package
 from google.protobuf.text_format import MessageToString
 from google.protobuf.json_format import MessageToDict
@@ -24,10 +30,6 @@ from google.protobuf.wrappers_pb2 \
     Int64Value, UInt64Value, Int32Value, UInt32Value, \
     BytesValue
 from google.protobuf.struct_pb2 import Value, ListValue, Struct, NULL_VALUE
-
-### Standard Python modules
-from time import struct_time, mktime
-from datetime import datetime
 
 ### Modules within this package
 from cc.core.timeinterval import TimeIntervalType, TimeInterval
@@ -49,9 +51,10 @@ def decodeTimestamp(prototime: Timestamp) -> TimePoint:
     return TimePoint.from_protobuf(prototime)
 
 
-def encodeTimestamp(timestamp: TimestampType) -> Timestamp:
+def encodeTimestamp(input: TimestampType,
+                    output: Timestamp|None = None) -> Timestamp:
     '''
-    Convert an existing timestamp to a new ProtoBuf `Timestamp` value.
+    Convert an existing timestamp to a ProtoBuf `Timestamp` value.
 
     The input may be any value accepted by
     `cc.core.timepoint.TimePoint.from_value()`, including:
@@ -63,9 +66,17 @@ def encodeTimestamp(timestamp: TimestampType) -> Timestamp:
       - A `time.struct_time` instance, as returned from `time.localtime()`
       - A `datetime.datetime` instance, as returned from `datetime.datetime.now()`
 
-    The return value is a new `google.protobuf.Timestamp()` instance.
+    If `output` is provided it is populated in place, otherwise a new instance
+    is created. In either case, the resulting value is returned.
     '''
-    return TimePoint.from_value(timestamp).to_protobuf()
+
+    if output is None:
+        output = Timestamp()
+
+    tp = TimePoint.from_value(input)
+    output.seconds = int(tp)
+    output.nanos   = int((tp - int(tp)) * 1e9)
+    return output
 
 
 def decodeDuration(duration: Duration) -> TimeInterval:
@@ -76,9 +87,10 @@ def decodeDuration(duration: Duration) -> TimeInterval:
     return TimeInterval.from_protobuf(duration)
 
 
-def encodeDuration(duration: TimeIntervalType) -> Duration:
+def encodeDuration(input: TimeIntervalType,
+                   output: Duration|None = None) -> Duration:
     '''
-    Encode an existing duration to a new `Duration` value.
+    Encode an existing duration to a ProtoBuf `Duration` value.
 
     The input may be any value accepted by
     `cc.core.timeinterval.TimeInterval.from_value()`, including:
@@ -91,53 +103,111 @@ def encodeDuration(duration: TimeIntervalType) -> Duration:
         * `google.protobuf.Duration().ToJsonString()`
         * `cc.core.timeinterval.TimeInterval().to_json_string()`
         * `cc.core.timeinterval.TimeInterval().to_string()`
+
+    If `output` is provided it is populated in place, otherwise a new instance
+    is created. In either case, the resulting value is returned.
     '''
-    return TimeInterval.from_value(duration or 0).to_protobuf()
+
+    if output is None:
+        output = Duration()
+
+    dur = TimeInterval.from_value(input or 0)
+    output.seconds = int(dur)
+    output.nanos   = int((dur - int(dur)) * 1e9)
+    return output
 
 
-def encodeValue(value: object) -> Value:
+def encodeValue(input: object,
+                output: Value|None = None) -> Value:
     '''
     Encode a simple Python value as a `google.protobuf.Value` variant
+
+    If `output` is provided it is populated in place, otherwise a new instance
+    is created. In either case, the resulting value is returned.
     '''
 
-    if value is None:
-        return Value(null_value=NULL_VALUE)
+    if output is None:
+        output = Value()
 
-    elif isinstance(value, bool):
-        return Value(bool_value=value)
+    if isinstance(input, Value):
+        output.CopyFrom(input)
 
-    elif isinstance(value, (int, float)):
-        return Value(number_value=value)
+    elif input is None:
+        output.null_value = NULL_VALUE
 
-    elif isinstance(value, str):
-        return Value(string_value=value)
+    elif isinstance(input, bool):
+        output.bool_value = input
 
-    elif isinstance(value, dict):
-        return Value(struct_value=encodeStruct(value))
+    elif isinstance(input, (int, float)):
+        output.number_value = input
 
-    elif isinstance(value, list):
-        return Value(list_value=encodeList(value))
+    elif isinstance(input, str):
+        output.string_value = input
+
+    elif isinstance(input, dict):
+        encodeStruct(input, output.struct_value)
+
+    elif isinstance(input, list):
+        encodeList(input, output.list_value)
 
     else:
         raise TypeError("Unable to encode value type %r as protobuf.Value"%
-                         (type(value).__name__))
+                         (type(input).__name__))
+    return output
 
 
-def encodeStruct(dictionary: dict) -> Struct:
+def encodeStruct(input: dict,
+                 output: Struct|None = None) -> Struct:
     '''
     Encode a Python dictionary as a `google.protobuf.Struct` instance
+
+    If `output` is provided it is populated in place, otherwise a new instance
+    is created. In either case, the resulting value is returned.
     '''
 
-    return Struct(
-        fields={key: encodeValue(value)
-                for (key, value) in dictionary.items()})
+    if output is None:
+        output = Struct()
+
+    if isinstance(input, Struct):
+        output.CopyFrom(input)
+
+    elif isinstance(input, Mapping):
+        for (key, value) in input.items():
+            encodeValue(value, output.fields[key])
+
+    elif input is not None:
+        raise TypeError(
+            f'encodeStruct() expects a mappable input, '
+            f'got {type(input).__name__}: {input}'
+        )
+
+    return output
 
 
-def encodeListValue(listvalue: list) -> ListValue:
+def encodeListValue(input: list,
+                    output: ListValue|None = None) -> ListValue:
     '''
     Encode a Python list as a `google.protobuf.ListValue` instance
+
+    If `output` is provided it is populated in place, otherwise a new instance
+    is created. In either case, the resulting value is returned.
     '''
-    return ListValue(values=[encodeValue(value) for value in listvalue])
+    if output is None:
+        output = ListValue()
+
+    if isinstance(input, ListValue):
+        output.CopyFrom(input)
+
+    elif isinstance(input, Sequence):
+        output.values.extend([encodeValue(value) for value in input])
+
+    elif input is not None:
+        raise TypeError(
+            f'encodeListValue() expects a sequence type as input, '
+            f'got {type(input).__name__}: {input}'
+        )
+
+    return output
 
 
 def decodeValue(value: Value) -> object:
