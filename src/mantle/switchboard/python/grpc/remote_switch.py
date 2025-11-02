@@ -60,7 +60,7 @@ class RemoteSwitch (Switch):
     @doc_inherit
     def add_dependency(self,
                        predecessor_name: str,
-                       trigger_states: int = State.STATE_SETTLED,
+                       trigger_states: int = State.SETTLED,
                        polarity: DependencyPolarity = DependencyPolarity.POSITIVE,
                        hard: bool = False,
                        sufficient: bool = False,
@@ -102,8 +102,8 @@ class RemoteSwitch (Switch):
                         state_transitions: int,
                         asynchronous: bool = False,
                         rerun: bool = False,
-                        on_cancel: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
-                        on_error: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
+                        on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
+                        on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
                         immediate: bool = False,
                         ) -> bool:
 
@@ -156,8 +156,8 @@ class RemoteSwitch (Switch):
                    with_interceptors: bool = True,
                    trigger_descendants: bool = True,
                    reevaluate: bool = False,
-                   on_cancel: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
-                   on_error: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
+                   on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
+                   on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
                    ) -> bool:
 
         req = SetTargetRequest(

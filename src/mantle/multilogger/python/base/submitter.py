@@ -83,48 +83,48 @@ class Submitter (logging.Handler):
               text: str,
               stacklevel: int = 2,
               **kwargs):
-        return self.log_message(Level.LEVEL_TRACE, text, stacklevel, **kwargs)
+        return self.log_message(Level.TRACE, text, stacklevel, **kwargs)
 
     def debug(self, text: str,
               stacklevel: int = 2,
               **kwargs):
-        return self.log_message(Level.LEVEL_DEBUG, text, stacklevel, **kwargs)
+        return self.log_message(Level.DEBUG, text, stacklevel, **kwargs)
 
     def info(self,
              text: str,
              stacklevel: int = 2,
              **kwargs):
-        return self.log_message(Level.LEVEL_INFO, text, stacklevel, **kwargs)
+        return self.log_message(Level.INFO, text, stacklevel, **kwargs)
 
     def notice(self,
                text: str,
                stacklevel: int = 2,
                **kwargs):
-        return self.log_message(Level.LEVEL_NOTICE, text, stacklevel, **kwargs)
+        return self.log_message(Level.NOTICE, text, stacklevel, **kwargs)
 
     def warning(self,
                 text: str,
                 stacklevel: int = 2,
                 **kwargs):
-        return self.log_message(Level.LEVEL_WARNING, text, stacklevel, **kwargs)
+        return self.log_message(Level.WARNING, text, stacklevel, **kwargs)
 
     def error(self,
               text: str,
               stacklevel: int = 2,
               **kwargs):
-        return self.log_message(Level.LEVEL_ERROR, text, stacklevel, **kwargs)
+        return self.log_message(Level.ERROR, text, stacklevel, **kwargs)
 
     def critical(self,
                  text: str, stacklevel:
                  int = 2,
                  **kwargs):
-        return self.log_message(Level.LEVEL_CRITICAL, text, stacklevel, **kwargs)
+        return self.log_message(Level.CRITICAL, text, stacklevel, **kwargs)
 
     def fatal(self,
               text: str,
               stacklevel: int = 2,
               **kwargs):
-        return self.log_message(Level.LEVEL_FATAL, text, stacklevel, **kwargs)
+        return self.log_message(Level.FATAL, text, stacklevel, **kwargs)
 
     ## Log a message
     def log_message(self,
@@ -151,7 +151,7 @@ class Submitter (logging.Handler):
     def create_message(self, /,
                        text: str|None = None,
                        timestamp: TimestampType|None = None,
-                       level: Level | int = Level.LEVEL_NONE,
+                       level: Level | int = Level.NONE,
                        host: str|None = None,
                        application: str|None = None,
                        log_scope: str|None = None,

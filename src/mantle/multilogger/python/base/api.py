@@ -45,7 +45,7 @@ class API (MessageBuilder):
 
 
     def listen(self,
-               min_level: Level|int = Level.LEVEL_TRACE,
+               min_level: Level|int = Level.TRACE,
                contract_id: Optional[str] = None) -> Iterator[Loggable]:
         '''
         Listen for logged events from the MultiLogger
@@ -63,7 +63,7 @@ class API (MessageBuilder):
                  sink_id: str,
                  sink_type: str,
                  contract_id: Optional[str] = None,
-                 min_level: Level = Level.LEVEL_NONE,
+                 min_level: Level = Level.NONE,
                  filename_template: Optional[str] = None,
                  rotation_interval: Optional[Interval] = None,
                  use_local_time: Optional[bool] = None,

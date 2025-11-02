@@ -52,14 +52,14 @@ class SwitchboardBase:
         switch = None
 
         if switch_name := msg.mapping_key:
-            if ((msg.mapping_action == MappingAction.MAP_ADDITION) or
-                (msg.mapping_action == MappingAction.MAP_UPDATE)):
+            if ((msg.mapping_action == MappingAction.ADDITION) or
+                (msg.mapping_action == MappingAction.UPDATE)):
                 try:
                     switch = self.switches[switch_name]
                 except KeyError:
                     switch = self.switches[switch_name] = self._new_switch(switch_name)
 
-            elif (msg.mapping_action == MappingAction.MAP_REMOVAL):
+            elif (msg.mapping_action == MappingAction.REMOVAL):
                 switch = self.switches.pop(switch_name, None)
 
         return switch

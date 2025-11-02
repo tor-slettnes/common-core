@@ -147,7 +147,7 @@ class Client (cc.messaging.grpc.Client):
         The returned value is a 'FileInfo()` named tuple, and includes the
         following attributes:
          - `name`        : Base name, without leading directory
-         - `type`        : TYPE_FILE, TYPE_DIRECTORY, etc
+         - `type`        : FILE, DIRECTORY, etc
          - `size`        : Size in bytes
          - `link`        : Target for symbolic links
          - `mode`        : UNIX mode mask

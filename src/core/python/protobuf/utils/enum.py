@@ -1,0 +1,78 @@
+#!/usr/bin/echo Do not invoke directly.
+#===============================================================================
+## @file enum.py
+## @brief Utility functions for enumerated ProtoBuf types
+## @author Tor Slettnes <tor@slett.net>
+#===============================================================================
+
+from google.protobuf.internal.enum_type_wrapper import EnumTypeWrapper
+
+from enum import IntEnum
+
+#===============================================================================
+# Methods
+
+def common_prefix(symbols: list[str],
+                  delimiter: str = '_') -> str:
+
+    if symbols:
+        split_symbols = [symbol.split(delimiter) for symbol in symbols]
+        prefix_parts = split_symbols.pop(0)
+        prefix_length = 0
+
+        for symbol_parts in split_symbols:
+            prefix_parts = [
+                prefix_part
+                for (prefix_part, symbol_part) in zip(prefix_parts, symbol_parts)
+                if prefix_part == symbol_part
+            ]
+
+
+        if prefix_parts:
+            prefix_length = sum([(len(part)+len(delimiter))
+                                 for part in prefix_parts])
+
+        return prefix_length, delimiter.join(prefix_parts)
+    else:
+        return 0, ""
+
+
+def proto_enum(proto_type: EnumTypeWrapper,
+               strip_common_prefix: bool = True) -> IntEnum:
+    '''
+    Convert a ProtoBuf `enum` type to Python `enum.IntEnum`.  These are
+    interchangable as both are derived from `int`, but the latter provides for
+    better documentation/introspective representation.
+
+    If `strip_common_prefix` is set, any leading underscore-separated subwords
+    that are common to all symbols in the ProtoBuf enumeration are stripped off
+    in the resulting Python enumeration. This is the default behavior.
+
+    For example, consider the ProtoBuf definition:
+
+    ```proto
+    enum MyEnum
+    {
+        MY_ENUM_UNSPECIFIED = 0;
+        MY_ENUM_FIRST       = 1;
+        MY_ENUM_SECOND      = 2;
+    }
+    ```
+
+    With the `strip_common_prefix` option set, this would result in a Python
+    enumeration equivalent to:
+
+    ```python
+    class MyEnum (IntEnum):
+        UNSPECIFIED = 0
+        FIRST       = 1
+        SECOND      = 2
+    ```
+    '''
+
+    prefix_length, prefix = common_prefix(proto_type.keys())
+    symbols = [key[prefix_length:] for key in proto_type.keys()]
+    items = zip(symbols, proto_type.values())
+    return IntEnum(proto_type.DESCRIPTOR.name, items)
+
+

@@ -41,7 +41,7 @@ class SignalClient (Client):
 
     message MySignal
     {
-        // Mapping action: one of MAP_ADITION, MAP_UPDATE, MAP_REMOVAL
+        // Mapping action: one of ADITION, UPDATE, REMOVAL
         cc.signal.MappingAction mapping_action = 1;
 
         // Mapping key

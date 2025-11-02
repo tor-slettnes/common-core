@@ -138,7 +138,7 @@ class Client (API, Writer):
 
     # @doc_inherit
     def listen(self,
-               min_level: Level|int = Level.LEVEL_TRACE,
+               min_level: Level|int = Level.TRACE,
                contract_id: Optional[str] = None):
 
         spec = self.build_from_dict(ListenerSpec, locals(),

@@ -77,8 +77,8 @@ class Client (cc.messaging.grpc.Client):
             id: str,
             data: WiredConnectionData|WirelessConnectionData|None = None,
             interface: str|None = None,
-            ip4config: IPConfigData = IPConfigData(method = IPConfigMethod.METHOD_AUTO),
-            ip6config: IPConfigData = IPConfigData(method = IPConfigMethod.METHOD_AUTO)):
+            ip4config: IPConfigData = IPConfigData(method = IPConfigMethod.AUTO),
+            ip6config: IPConfigData = IPConfigData(method = IPConfigMethod.AUTO)):
 
         '''
         Add or update a network connection profile.
@@ -229,12 +229,12 @@ class Client (cc.messaging.grpc.Client):
                prefixlength=24)
 
           my_ip4 = cc.protobuf.netconfig.IPConfigData(
-               method=IPConfigMethod.METHOD_MANUAL,
+               method=IPConfigMethod.MANUAL,
                address_data=[my_ip4_address],
                gateway='192.168.1.1')
 
           my_ip6 = cc.protobuf.netconfig.IPConfigData(
-               method=IPConfigMethod.METHOD_AUTO)
+               method=IPConfigMethod.AUTO)
 
           my_data = cc.protobuf.netconfig.ConnectionData(
                id='My Connection Name',
@@ -267,12 +267,12 @@ class Client (cc.messaging.grpc.Client):
                 id: str,
                 ap: str|bytes|bytearray|None = None,
                 auth : WEPData|WPAData|EAPData|None = None,
-                key_mgmt: KeyManagement = KeyManagement.KEY_EMPTY,
+                key_mgmt: KeyManagement = KeyManagement.EMPTY,
                 hidden: bool = False,
-                mode: WirelessMode = WirelessMode.MODE_INFRASTRUCTURE,
+                mode: WirelessMode = WirelessMode.INFRASTRUCTURE,
                 interface: str|None = None,
-                ip4config: IPConfigData = IPConfigData(method=IPConfigMethod.METHOD_AUTO),
-                ip6config: IPConfigData = IPConfigData(method=IPConfigMethod.METHOD_AUTO)):
+                ip4config: IPConfigData = IPConfigData(method=IPConfigMethod.AUTO),
+                ip6config: IPConfigData = IPConfigData(method=IPConfigMethod.AUTO)):
         '''
         Convenience wrapper around `connect_ap()`, to define and activate a
         new connection based on information obtained from the specified access
@@ -311,7 +311,7 @@ class Client (cc.messaging.grpc.Client):
             Whether this network's SSID is hidden, i.e. requires explicit connection attemtps.
 
         @param mode:
-            Wireless network type; normally WirelessMode.MODE_INFRASTRUCTURE.
+            Wireless network type; normally WirelessMode.INFRASTRUCTURE.
             See `WirelessMode.values()` for choices.
 
         @param interface:
@@ -368,7 +368,7 @@ class Client (cc.messaging.grpc.Client):
         The 'ignoreMissing' flag controls the behavior if the connection is not
         (yet) available. If True, the following triplet is then returned:
 
-               (CONNECTION_STATE_UNKNOWN, 0x00, CONNECTION_STATE_REASON_UNKNOWN)
+               (UNKNOWN, 0x00, UNKNOWN)
 
         Otherwise, a KeyError is raised.
 
@@ -377,10 +377,10 @@ class Client (cc.messaging.grpc.Client):
           ```python
           >>> nc = NetConfigClient()
           >>> nc.get_active_connection_state('84b75e14-a3ed-4134-a2f8-a2f4c390de6a').state
-          CONNECTION_STATE_DEACTIVATED
+          DEACTIVATED
 
           >>> nc.get_active_connection_state('My Connection').reason
-          CONNECTION_STATE_REASON_LOGIN_FAILED
+          LOGIN_FAILED
           ```
         '''
 
@@ -403,9 +403,9 @@ class Client (cc.messaging.grpc.Client):
             reason = ActiveConnectionStateReason(ac.state_reason)
 
         else:
-            state = ActiveConnectionState.CONNECTION_STATE_UNKNOWN
+            state = ActiveConnectionState.UNKNOWN
             flags = HEX8(0)
-            reason = ActiveConnectionStateReason.CONNECTION_STATE_REASON_UNKNOWN
+            reason = ActiveConnectionStateReason.UNKNOWN
 
         return ActiveConnectionStateTuple(state, flags, reason)
 

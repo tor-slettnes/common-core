@@ -686,19 +686,20 @@ namespace core::str
     {
         if (!strings.empty())
         {
-            char common_char = -1;
-            for (uint pos = 0; common_char != '\0'; pos++)
+            int common_char = -1;
+            for (uint pos = 0; common_char >= 0; pos++)
             {
-                char common_char = '\0';
+                common_char = -1;
                 for (const std::string &s : strings)
                 {
-                    if ((s.length() <= pos) || (common_char && (common_char != s.at(pos))))
+                    if ((pos < s.length()) &&
+                        ((common_char < 0) || (common_char == s.at(pos))))
                     {
-                        return pos;
+                        common_char = s.at(pos);
                     }
                     else
                     {
-                        common_char = s.at(pos);
+                        return pos;
                     }
                 }
             }

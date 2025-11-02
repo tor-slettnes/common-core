@@ -103,8 +103,8 @@ class AsyncRemoteSwitch (Switch):
                               state_transitions: int,
                               asynchronous: bool = False,
                               rerun: bool = False,
-                              on_cancel: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
-                              on_error: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
+                              on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
+                              on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
                               immediate: bool = False,
                               ) -> bool:
 
@@ -157,8 +157,8 @@ class AsyncRemoteSwitch (Switch):
                          with_interceptors: bool = True,
                          trigger_descendants: bool = True,
                          reevaluate: bool = False,
-                         on_cancel: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
-                         on_error: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
+                         on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
+                         on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
                          ) -> bool:
 
         req = SetTargetRequest(

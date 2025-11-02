@@ -103,9 +103,8 @@ class Switch:
         '''
         Return language codes mapped to text strings for this switch,
         including its description, texts explaining each target action
-        (True/False), and texts explaining each state (STATE_INITIAL,
-        STATE_DEACTICATING, STATE_INACTIVE, STATE_ACTIVATING, STATE_ACTIVE,
-        STATE_FAILING, STATE_FAILED).
+        (True/False), and texts explaining each state (INITIAL, DEACTICATING,
+        INACTIVE, ACTIVATING, ACTIVE, FAILING, FAILED).
         '''
         return self.specification.localizations
 
@@ -140,9 +139,8 @@ class Switch:
         '''
         Return language-specific text strings for this switch, including its
         description, texts explaining each target action (True/False), and texts
-        explaining each state (STATE_INITIAL, STATE_DEACTICATING,
-        STATE_INACTIVE, STATE_ACTIVATING, STATE_ACTIVE, STATE_FAILING,
-        STATE_FAILED).
+        explaining each state (INITIAL, DEACTICATING, INACTIVE, ACTIVATING,
+        ACTIVE, FAILING, _FAILED).
 
         @param language_choices:
             Either a single language code or a sequence of language codes, each
@@ -391,7 +389,7 @@ class Switch:
     @abstractmethod
     def add_dependency(self,
                        predecessor_name: str,
-                       trigger_states: int = State.STATE_SETTLED,
+                       trigger_states: int = State.SETTLED,
                        polarity: DependencyPolarity = DependencyPolarity.POSITIVE,
                        hard: bool = False,
                        sufficient: bool = False,
@@ -410,8 +408,8 @@ class Switch:
             state, based on this and its other dependencies. A value of zero
             means that this switch does not automatically update its state in
             response to a change in this predecessor. See also `set_auto()`.
-            The default value, `STATE_SETTLED`, is equivalent to `STATE_ACTIVE |
-            STATE_INACTIVE | STATE_FAILED`.
+            The default value, `State.SETTLED`, is equivalent to `State.ACTIVE |
+            State.INACTIVE | State.FAILED`.
 
         @param polarity:
             Whether this is a normal/positive dependency, a negative/conflicting
@@ -469,8 +467,8 @@ class Switch:
                         state_transitions: int,
                         asynchronous: bool = False,
                         rerun: bool = False,
-                        on_cancel: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
-                        on_error: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
+                        on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
+                        on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
                         immediate: bool = False,
                         ) -> bool:
         '''
@@ -482,13 +480,13 @@ class Switch:
 
         @param state_transitions:
             A bitmask representing states for which the inerceptor is invoked.
-            Often just a single transitional state, i.e., `STATE_ACTIVATING`,
-            `STATE_DEACTIVATING` or `STATE_FAILING`.
+            Often just a single transitional state, i.e., `ACTIVATING`,
+            `DEACTIVATING` or `FAILING`.
 
         @param asynchronous:
-            Allow state to transition to the next state (normally
-            `STATE_ACITVE`, `STATE_INACTIVE` or `STATE_FAILED`) even as this
-            interceptor continues to run in the background.
+            Allow state to transition to the next state (normally `ACITVE`,
+            `INACTIVE` or `FAILED`) even as this interceptor continues to run in
+            the background.
 
         @param rerun:
             Whether to invoke interceptor when (explicitly) re-entering one of
@@ -496,11 +494,11 @@ class Switch:
 
         @param on_cancel:
             How to proceed if state change is cancelled. The default value
-            `EH_DEFAULT` is equivalent to `EH_ABORT`.
+            `DEFAULT` is equivalent to `ABORT`.
 
         @param on_error:
             How to proceed if the interceptor encounters an error. The default
-            value `EH_DEFAULT` is equivalent to `EH_FAIL`.
+            value `DEFAULT` is equivalent to `FAIL`.
 
         @param immediate:
             If True, and if the `states` mask include the current state of this
@@ -554,7 +552,7 @@ class Switch:
     def pending(self) -> bool:
         '''
         Indicate whether the switch is currently in a "pending" state
-        (STATE_DEACTIVATING, STATE_ACTIVATING, STATE_FAILING).
+        (DEACTIVATING, ACTIVATING, FAILING).
         '''
         return self.status.pending
 
@@ -562,7 +560,7 @@ class Switch:
     def settled(self) -> bool:
         '''
         Indicate whether the switch is currently in a "settled" state
-        (STATE_INACTIVE, STATE_ACTIVE, STATE_FAILED).
+        (INACTIVE, ACTIVE, FAILED).
         '''
         return not self.status.pending
 
@@ -573,9 +571,9 @@ class Switch:
         in progress, otherwise None.
         '''
 
-        if self.current_state == State.STATE_ACTIVATING:
+        if self.current_state == State.ACTIVATING:
             return True
-        elif self.current_state == State.STATE_DEACTIVATING:
+        elif self.current_state == State.DEACTIVATING:
             return False
         else:
             return None
@@ -591,7 +589,7 @@ class Switch:
     def settled_state(self) -> State:
         '''
         Return the settled state of this switch. This will be one of
-        STATE_INITIAL, STATE_ACTIVE, STATE_INACTIVE, STATE_FAILED.
+        INITIAL, ACTIVE, INACTIVE, FAILED.
         '''
         return State(self.status.settled_state)
 
@@ -613,25 +611,25 @@ class Switch:
                    with_interceptors: bool = True,
                    trigger_descendants: bool = True,
                    reevaluate: bool = False,
-                   on_cancel: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
-                   on_error: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
+                   on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
+                   on_error: ExceptionHandling = ExceptionHandling.DEFAULT,
                    ) -> bool:
         '''
         Transition to the specified `target_state`.  If not provided, then
-          * if `error` is given, the target state is inferred as `State.STATE_FAILED`;
+          * if `error` is given, the target state is inferred as `State.FAILED`;
           * otherwise, the target state is inferred based on the current state of the
             switch's dependencies.
 
         @param target_state:
             Desired target state. Normally this is one of the "settled" states
-            (STATE_ACTIVE, STATE_INACTIVE, or STATE_FAILED), in which case the
-            switch will first change to the corresponding pending state
-            (STATE_ACTIVATING, STATE_DEACTIVATING, STATE_FAILING), triggering any
-            associated descendant updates and interceptor invocations on the way.
+            (ACTIVE, INACTIVE, or FAILED), in which case the switch will first
+            change to the corresponding pending state (ACTIVATING, DEACTIVATING,
+            FAILING), triggering any associated descendant updates and
+            interceptor invocations on the way.
 
         @param error:
-            Any error data associated with this switch. Ignored if the target
-            is specified but is not one of `STATE_FAILING` or `STATE_FAILED`.
+            Any error data associated with this switch. Ignored if the target is
+            specified but is not one of `FAILING` or `FAILED`.
 
         @param attributes:
             Arbitrary key/value pairs assigned to the switch. These may be
@@ -641,9 +639,9 @@ class Switch:
             Clear all existing attributes before setting those provided here.
 
         @param with_interceptors:
-            Run interceptors associated with each state transition (e.g.
-            if `target_state` is STATE_ACTIVE, first run interceptors for
-            STATE_ACTIVATING, and if successful, those for STATE_ACTIVE).
+            Run interceptors associated with each state transition (e.g.  if
+            `target_state` is ACTIVE, first run interceptors for ACTIVATING, and
+            if successful, those for ACTIVE).
 
         @param trigger_descendants:
             Propagate the update to the switch's descendants, starting with its
@@ -679,18 +677,18 @@ class Switch:
                    with_interceptors: bool = True,
                    trigger_descendants: bool = True,
                    reevaluate: bool = False,
-                   on_cancel: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
-                   on_error: ExceptionHandling = ExceptionHandling.EH_DEFAULT):
+                   on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
+                   on_error: ExceptionHandling = ExceptionHandling.DEFAULT):
         '''
         Turn the switch off or on.  Equivalent to `set_target()` with
-        `target_state` set to `STATE_ACTIVE` or `STATE_INACTIVE`.
+        `target_state` set to `ACTIVE` or `INACTIVE`.
         '''
 
         assert isinstance(active, bool), \
                "A boolean `active` flag is required"
 
         return self.set_target(
-            target_state = (State.STATE_INACTIVE, State.STATE_ACTIVE)[bool(active)],
+            target_state = (State.INACTIVE, State.ACTIVE)[bool(active)],
             attributes = attributes,
             clear_existing = clear_existing,
             with_interceptors = with_interceptors,
@@ -708,15 +706,15 @@ class Switch:
                   with_interceptors: bool = True,
                   trigger_descendants: bool = True,
                   reevaluate: bool = True,
-                  on_cancel: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
-                  on_error: ExceptionHandling = ExceptionHandling.EH_DEFAULT):
+                  on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
+                  on_error: ExceptionHandling = ExceptionHandling.DEFAULT):
         '''
         Set the switch to FAILED state, with the provided error data.
         Equivalent to `set_target()` with an `error` argument.
         '''
 
         return self.set_target(
-            State.STATE_FAILED,
+            State.FAILED,
             error = error,
             attributes = attributes,
             clear_existing = clear_existing,
@@ -732,8 +730,8 @@ class Switch:
                  with_interceptors: bool = True,
                  trigger_descendants: bool = True,
                  reevaluate: bool = False,
-                 on_cancel: ExceptionHandling = ExceptionHandling.EH_DEFAULT,
-                 on_error: ExceptionHandling = ExceptionHandling.EH_DEFAULT):
+                 on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
+                 on_error: ExceptionHandling = ExceptionHandling.DEFAULT):
         '''
         Set the switch state based on its dependencies, i.e. the value(s) of its
         immediate predecessors.  Equivalent to `set_target()` with the `target`

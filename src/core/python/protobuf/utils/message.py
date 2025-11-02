@@ -6,29 +6,13 @@
 #===============================================================================
 
 ### Modules within package
-from .wellknown import MessageType, MessageToString, MessageToDict, ParseDict
+from ..wellknown import MessageType, MessageToString, MessageToDict, ParseDict
 
 ### Third-party modules
-from google.protobuf.message \
-    import Message, Error, EncodeError, DecodeError
-
-from google.protobuf.internal.enum_type_wrapper \
-    import EnumTypeWrapper
-
-### Standard Python modules
-from typing import Optional, Callable, Mapping, Union
-from enum import IntEnum
+from google.protobuf.message import Message
 
 #===============================================================================
 # Methods
-
-def proto_enum(proto_type: EnumTypeWrapper) -> IntEnum:
-    '''
-    Convert a ProtoBuf `enum` type to Python `enum.IntEnum`.  These are
-    interchangable as both are derived from `int`, but the latter provides for
-    better documentation/introspective representation.
-    '''
-    return IntEnum(proto_type.DESCRIPTOR.name, proto_type.items())
 
 
 def check_message_type(value: Message,
