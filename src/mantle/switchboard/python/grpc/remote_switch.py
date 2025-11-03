@@ -9,7 +9,7 @@ __author__ = 'Tor Slettnes'
 from typing import Optional
 from collections.abc import Sequence, Mapping
 
-from cc.core.doc_inherit import doc_inherit
+from cc.core.decorators import doc_inherit
 from cc.protobuf.status import Error
 from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
 

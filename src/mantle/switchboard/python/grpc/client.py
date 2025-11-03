@@ -7,7 +7,7 @@ __all__ = ['Client']
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
-from cc.core.doc_inherit import doc_inherit
+from cc.core.decorators import doc_inherit
 from cc.messaging.grpc.signal_client import SignalClient
 from ..protobuf import AddSwitchRequest, RemoveSwitchRequest
 from ..base.baseboard import SwitchboardBase

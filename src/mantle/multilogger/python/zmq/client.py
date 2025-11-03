@@ -14,7 +14,7 @@ import time
 
 
 ### Modules within package
-from cc.core.doc_inherit import doc_inherit
+from cc.core.decorators import doc_inherit
 from cc.protobuf.wellknown import Empty
 from cc.protobuf.status import Level
 from cc.messaging.zmq.protobuf import Client as ProtoBufClient

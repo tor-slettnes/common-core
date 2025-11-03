@@ -12,7 +12,7 @@ import time
 import sys
 
 ### Modules within package
-from cc.core.doc_inherit import doc_inherit
+from cc.core.decorators import doc_inherit
 from cc.messaging.zmq.basic import Endpoint, Publisher
 from cc.messaging.zmq.protobuf import MessageWriter
 

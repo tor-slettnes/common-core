@@ -14,7 +14,7 @@ import pathlib
 
 
 ### Modules within package
-from cc.core.doc_inherit import doc_inherit
+from cc.core.decorators import doc_inherit
 from cc.protobuf.wellknown import empty
 from cc.protobuf.variant import decodeKeyValueMap
 

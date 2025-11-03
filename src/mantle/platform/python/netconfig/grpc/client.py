@@ -11,7 +11,7 @@ from collections import namedtuple
 
 ### Modules within package
 from cc.core.scalar_types import HEX8
-from cc.core.doc_inherit import doc_inherit
+from cc.core.decorators import doc_inherit
 
 from cc.protobuf.wellknown import empty, StringValue
 

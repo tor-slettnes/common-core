@@ -8,7 +8,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Modules within package
-from cc.core.doc_inherit import doc_inherit
+from cc.core.decorators import doc_inherit
 from cc.messaging.grpc.signal_client import SignalClient
 from ..base.baseboard import SwitchboardBase
 from ..protobuf import AddSwitchRequest, RemoveSwitchRequest

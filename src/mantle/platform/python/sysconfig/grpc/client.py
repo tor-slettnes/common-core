@@ -10,7 +10,7 @@ __docformat__ = 'javadoc en'
 from typing import Optional, Sequence, Iterator
 
 ### Modules within package
-from cc.core.doc_inherit import doc_inherit
+from cc.core.decorators import doc_inherit
 
 from cc.protobuf.wellknown import empty, StringValue, \
     Timestamp, TimestampType, encodeTimestamp, decodeTimestamp

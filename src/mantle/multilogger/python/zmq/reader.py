@@ -11,7 +11,7 @@ import logging
 
 ### Modules within this package
 from cc.core.roundrobin import Queue
-from cc.core.doc_inherit import doc_inherit
+from cc.core.decorators import doc_inherit
 from cc.protobuf.status import Level
 from cc.messaging.zmq.basic import Subscriber as BaseSubscriber
 from cc.messaging.zmq.protobuf import MessageHandler
