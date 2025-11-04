@@ -69,9 +69,9 @@ namespace protobuf
     // Upgrade Progress: State
 
     void encode(const ::upgrade::UpgradeProgress::State &native,
-                ::cc::platform::upgrade::protobuf::UpgradeProgress::UpgradeState *msg);
+                ::cc::platform::upgrade::protobuf::UpgradeState *msg);
 
-    void decode(const ::cc::platform::upgrade::protobuf::UpgradeProgress::UpgradeState &msg,
+    void decode(const ::cc::platform::upgrade::protobuf::UpgradeState &msg,
                 ::upgrade::UpgradeProgress::State *native);
 
     //==========================================================================

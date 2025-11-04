@@ -153,7 +153,7 @@ namespace protobuf
     void encode(const ::upgrade::UpgradeProgress &native,
                 ::cc::platform::upgrade::protobuf::UpgradeProgress *msg)
     {
-        msg->set_state(encoded<::cc::platform::upgrade::protobuf::UpgradeProgress::UpgradeState>(native.state));
+        msg->set_state(encoded<::cc::platform::upgrade::protobuf::UpgradeState>(native.state));
         msg->set_task_description(native.task_description);
         encode(native.task_progress, msg->mutable_task_progress());
         encode(native.total_progress, msg->mutable_total_progress());
@@ -180,12 +180,12 @@ namespace protobuf
     // Upgrade Progress: State
 
     void encode(const ::upgrade::UpgradeProgress::State &native,
-                ::cc::platform::upgrade::protobuf::UpgradeProgress::UpgradeState *msg)
+                ::cc::platform::upgrade::protobuf::UpgradeState *msg)
     {
-        *msg = static_cast<::cc::platform::upgrade::protobuf::UpgradeProgress::UpgradeState>(native);
+        *msg = static_cast<::cc::platform::upgrade::protobuf::UpgradeState>(native);
     }
 
-    void decode(const ::cc::platform::upgrade::protobuf::UpgradeProgress::UpgradeState &msg,
+    void decode(const ::cc::platform::upgrade::protobuf::UpgradeState &msg,
                 ::upgrade::UpgradeProgress::State *native)
     {
         *native = static_cast<::upgrade::UpgradeProgress::State>(msg);

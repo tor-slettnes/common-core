@@ -167,7 +167,7 @@ class TimePoint (float):
       - `google.protobuf.Timestamp`
       - Scaled integer timestamps (milliseconds/microseconds/nanoseconds)
 
-    Note that the first three of these types are indented for a slightly
+    Note that the first three of these types are intended for a slightly
     different use case: to represent calendar time, frequently in the local time
     zone, but also frequently with some ambiguity around this.  This class, in
     contrast, is a straightforward specialization of the native `float` type,

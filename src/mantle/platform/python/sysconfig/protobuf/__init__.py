@@ -5,8 +5,11 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+from cc.protobuf.utils import proto_enum
 from .sysconfig_types_pb2 import *
 from .sysconfig_types_pb2 import TimeZoneCountry
+
+TimeSync = proto_enum(TimeSync)
 
 def encodeCountry(country: str|None, required=False):
     result = TimeZoneCountry()

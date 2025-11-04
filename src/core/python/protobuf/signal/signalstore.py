@@ -10,8 +10,8 @@ author = 'Tor Slettnes'
 
 ### Modules withn package
 from ...core.invocation import safe_invoke
-from ..utils import proto_enum
-from .signal_pb2 import Filter, MappingAction as _MappingAction
+from .utils import proto_enum
+from .signal_pb2 import Filter, MappingAction
 
 ### Third-party modules
 from google.protobuf.message import Message
@@ -24,7 +24,7 @@ import asyncio
 #===============================================================================
 # Annotation types
 
-MappingAction = proto_enum(_MappingAction)
+MappingAction = proto_enum(MappingAction)
 Signal = Message
 Slot = Callable[[Message], None]
 
@@ -74,7 +74,7 @@ class SignalStore:
     ```proto
     message Signal
     {
-        // Mapping action: one of ADDITION, UPDATE, REMOVAL
+        // Mapping action: one of MAP_ADDITION, MAP_UPDATE, MAP_REMOVAL
         cc.signal.MappingAction mapping_action = 1;
 
         // Mapping key

@@ -70,9 +70,13 @@ def proto_enum(proto_type: EnumTypeWrapper,
     ```
     '''
 
-    prefix_length, prefix = common_prefix(proto_type.keys())
-    symbols = [key[prefix_length:] for key in proto_type.keys()]
-    items = zip(symbols, proto_type.values())
+    if strip_common_prefix:
+        prefix_length, prefix = common_prefix(proto_type.keys())
+        symbols = [key[prefix_length:] for key in proto_type.keys()]
+        items = zip(symbols, proto_type.values())
+    else:
+        items = proto_type.items()
+
     return IntEnum(proto_type.DESCRIPTOR.name, items)
 
 
