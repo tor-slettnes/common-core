@@ -1,9 +1,12 @@
-#!/usr/bin/echo Do not invoke directly.
-#===============================================================================
-## @file signalstore.py
-## @brief Wrapper for ProtoBuf types in `signal.proto`
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+Base implementation of signal/slot pattern using ProtoBuf messages as
+payload. Emitted signals can thus be serialized and propagated over transports
+such as gRPC, thereby emulating the pub/sub pattern.
+'''
+
+docformat = 'javadoc en'
+author = 'Tor Slettnes'
+
 
 ### Modules withn package
 from ...core.invocation import safe_invoke
@@ -215,7 +218,7 @@ class SignalStore:
 
     def get_cached_map(self,
                        signalname: str,
-                       timeout: float=3) -> dict[str, Message]:
+                       wait_complete: bool = True) -> dict[str, Message]:
         '''
         Get a specific signal map from the local cache.
 
@@ -223,11 +226,9 @@ class SignalStore:
             Signal name, corresponding to a field of the Signal message
             streamed from the server's `watch()` method.
 
-        @param timeout:
-            If the specified signal does not yet exist in the local cache, allow
-            up to the specified timeout for it to be received from the server.
-            Mainly applicable immediately after `start_watching()`, before the
-            server cache has been received.
+        @param wait_complete
+            If the specified signal does not yet exist in the local cache, wait
+            until a initial completion event has been received from the server.
 
         @exception KeyError
             The specified `signalname` is not known
@@ -236,25 +237,24 @@ class SignalStore:
             The cached value map, or None if the specified mapping signal has
             yet not been received.
         '''
-        return {key: getattr(value, signalname)
-                for (key, value) in self.get_cached_mapping_signals(signalname).items()}
+
+        signal_map = self.get_cached_mapping_signals(signalname, wait_complete)
+        return {key: getattr(value, signalname) for (key, value) in signal_map.items()}
 
 
     def get_cached_mapping_signals(self,
-                       signalname: str,
-                       timeout: float=3) -> dict[str, Signal]:
+                                   signalname: str,
+                                   wait_complete: bool = True) -> dict[str, Signal]:
         '''
         Get a specific signal map from the local cache.
 
-        @param signalname:
+        @param signalname
             Signal name, corresponding to a field of the Signal message
             streamed from the server's `watch()` method.
 
-        @param timeout:
-            If the specified signal does not yet exist in the local cache, allow
-            up to the specified timeout for it to be received from the server.
-            Mainly applicable immediately after `start_watching()`, before the
-            server cache has been received.
+        @param wait_complete
+            If the specified signal does not yet exist in the local cache, wait
+            until a initial completion event has been received from the server.
 
         @exception KeyError
             The specified `signalname` is not known
@@ -267,19 +267,22 @@ class SignalStore:
         if self._cache is None:
             raise RuntimeError("Signal cache is not enabled in %s instance"%
                                (type(self).__name__,))
-
-        elif signalname in self.signal_fields():
-            self.wait_complete()
-            return self._cache.get(signalname, {})
-
         else:
-            return  self._cache[signalname]
+            try:
+                return  self._cache[signalname]
+            except KeyError:
+                if signalname in self.signal_fields():
+                    if wait_complete:
+                        self.wait_complete()
+                    return self._cache.get(signalname, {})
+                else:
+                    raise
 
 
     def get_cached_signal(self,
                           signalname: str,
                           mapping_key: str|None = None,
-                          timeout: float=3,
+                          wait_complete: bool = True,
                           fallback: Message|None = None,
                           ) -> Message:
         '''
@@ -293,11 +296,9 @@ class SignalStore:
             Mapping key used to look up a specific event within the
             signal cache.  Leave this as `None` for unmapped signals.
 
-        @param timeout
-            If the specified signal does not yet exist in the local cache, allow
-            up to the specified timeout for it to be received from the server.
-            Mainly applicable immediately after `start_watching()`, before the
-            server cache has been received.
+        @param wait_complete
+            If the specified signal does not yet exist in the local cache, wait
+            until a initial completion event has been received from the server.
 
         @param fallback
             Value to return if the requested signal has not yet been received.
@@ -314,7 +315,7 @@ class SignalStore:
         '''
 
         try:
-            signal = self.get_cached_mapping_signals(signalname, timeout)[mapping_key]
+            signal = self.get_cached_mapping_signals(signalname, wait_complete)[mapping_key]
         except KeyError:
             return fallback() if isinstance(fallback, type) else fallback
         else:
@@ -471,9 +472,8 @@ class SignalStore:
 
     def wait_complete(self) -> bool:
         '''
-        Wait for all currently mapping signals to be received from the
-        server.  May be invoked after first connection to ensure the local cache
-        is complete before proceeding.
+        Wait until a initial completion event has been received from the
+        server to ensure the local cache is complete before proceeding.
 
         Note that it is not usually necessary to invoke this method in order to
         obtain values from the local cache, because the `get_cached_map()` method
@@ -555,10 +555,11 @@ class SignalStore:
         self.emit(signal)
 
     def emit_mapping(self,
-                     signal_name : str,
-                     action      : MappingAction,
-                     key         : str,
-                     value       : Message):
+                     signal_name  : str,
+                     action       : MappingAction,
+                     key          : str,
+                     value        : Message,
+                     unconditional: bool = False):
         '''
         Construct and emit a `Signal` message as described above, with
           - `mapping_key` set to `key`
@@ -567,17 +568,50 @@ class SignalStore:
         '''
 
         if key and not action:
-            if value.ByteSize() == 0:
-                action = MappingAction.REMOVAL
-            elif key in self.get_cached_mapping_signals(signal_name, {}):
-                action = MappingAction.UPDATE
-            else:
-                action = MappingAction.ADDITION
+            cached_value = self.get_cached_signal(signal_name, key, wait_complete=False)
+            action = (
+                MappingAction.REMOVAL if self.is_empty(value)
+                else MappingAction.ADDITION if self.is_empty(cached_value)
+                else MappingAction.UPDATE if value != cached_value
+                else MappingAction.NONE
+            )
 
-        signal = self.signal_type(mapping_action = action,
-                                  mapping_key = key,
-                                  **{signal_name: value})
-        self.emit(signal)
+        if action:
+            signal = self.signal_type(mapping_action = action,
+                                      mapping_key = key,
+                                      **{signal_name: value})
+            self.emit(signal)
+
+
+    def emit_map_update(self,
+                        signal_name : str,
+                        updated_map : dict[str, Message],
+                        empty_value: Message|None = None):
+        '''
+        Construct and emit multiple mapping signals as required to bring the
+        signal cache in sync with `updated_map`.
+
+        If `empty_value` is provided, this will be used instead of the
+        currently-cached value for REMOVAL signals.
+        '''
+
+        current_map = self.get_cached_map(signal_name, False)
+        for key, current_value in current_map.items():
+            if not key in updated_map:
+                self.emit_mapping(
+                    signal_name,
+                    action = MappingAction.REMOVAL,
+                    key = key,
+                    value = (current_value if empty_value is None
+                             else empty_value))
+
+        for key, updated_value in updated_map.items():
+            self.emit_mapping(
+                signal_name,
+                action = None,
+                key = key,
+                value = updated_value)
+
 
 
     @classmethod
@@ -590,6 +624,10 @@ class SignalStore:
     @classmethod
     def is_removal(cls, action: MappingAction):
         return (mapping_action == MappingAction.REMOVAL)
+
+    @classmethod
+    def is_empty(cls, value: Message|None):
+        return not value or (value.ByteSize() == 0)
 
 
     def _update_cache(self, signalname, action, key, msg):
