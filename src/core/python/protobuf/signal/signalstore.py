@@ -10,7 +10,7 @@ author = 'Tor Slettnes'
 
 ### Modules withn package
 from ...core.invocation import safe_invoke
-from .utils import proto_enum
+from ..utils import proto_enum
 from .signal_pb2 import Filter, MappingAction
 
 ### Third-party modules

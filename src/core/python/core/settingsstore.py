@@ -229,26 +229,34 @@ class SettingsStore (dict):
 
 
     def get_value(self,
-                  path: str|Sequence[str|int],
+                  key: str|None = None,
+                  path: Sequence[str|int]|None = None,
                   expected_type: Union[type]|None = None,
                   default: Variant|None = None,
                   raise_invalid_type: bool = False,
                   raise_missing: bool = False,
                   ) -> Variant:
         '''
-        Return the value referenced by `path`, which may be
+        Return the value referenced either by `key` or by `path`, where
 
-          - a single string, denoting a value at the root of this instance, or
+          - `key` is a single string, denoting a value at the root of this
+            instance,
 
-          - a sequence comprising a string followed by any number of strings
-            and/or integers, denoting a hierarchical path to the target value.
-            Within this sequence, a string (including the first path element)
-            descends into a corresopnding dictionary item along the way, whereas
-            an integer selects a list item.
+          - `path` is a sequence comprising a string followed by any number of
+            strings and/or integers, denoting a hierarchical path to the target
+            value.  Within this sequence, a string (including the first path
+            element) descends into a corresopnding dictionary item along the
+            way, whereas an integer selects a list item.
+
+        Only one of these may be provided:
+
+        @param key
+            A single settings key to retrieve a value directly within the
+            top-level settings object
 
         @param path
-            Either a single string or a sequence of strings and/or integers,
-            denoting the hierarchical path to the desired target value.
+            Either a sequence of strings and/or integers, denoting the
+            hierarchical path to the desired target value.
 
         @param expected_type
             A type or a union of types (normally separated by `|`).
@@ -273,13 +281,19 @@ class SettingsStore (dict):
             expected type, otherwise `default`
         '''
 
-        if isinstance(path, str):
+        if (key and path) or (not key and not path):
+            raise TypeError(
+                "Exactly one of `key` or `path` must be provided")
+
+        elif isinstance(key, str):
+            path = [key]
+
+        elif isinstance(path, str):
             path = [path]
 
         elif not isinstance(path, Sequence) or len(path) == 0:
             raise ValueError(
-                "Settings path must be a string "
-                "or a non-empty sequence of strings and/or ints")
+                "`path` must be a string or a non-empty sequence of strings and/or ints")
 
         try:
             value = self
