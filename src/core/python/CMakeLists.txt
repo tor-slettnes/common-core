@@ -46,7 +46,7 @@ cc_add_python_requirements_cache("core-python-requirements"
   INSTALL_COMPONENT "${PYTHON_REQUIREMENTS_INSTALL_COMPONENT}"
 )
 
-if(BUILD_SHARED)
+if(BUILD_SHARED_APPS)
   cc_add_python_wheel("core"
     PYTHON_DEPS "${TARGET}"
     DATA_DEPS "cc_core_settings"

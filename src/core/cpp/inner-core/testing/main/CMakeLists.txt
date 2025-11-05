@@ -20,7 +20,6 @@ set(SOURCES
 )
 
 cc_add_library("${TARGET}"
-  LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   PKG_DEPS ${PKG_DEPS}
   SOURCES ${SOURCES}

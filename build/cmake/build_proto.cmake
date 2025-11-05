@@ -19,7 +19,7 @@ function(cc_add_proto TARGET)
   set(_singleargs
     CPP_TARGET_SUFFIX          # Appended to CMake target for generated C++ files
     PYTHON_TARGET_SUFFIX       # Appended to CMake target for generated Python files
-    LIB_TYPE                   # C++ library type (Default: STATIC)
+    LIB_TYPE                   # C++ library type
     SCOPE                      # Target scope (Default: PUBLIC)
     PYTHON_INSTALL_COMPONENT   # Install component for generated Python files
     PYTHON_INSTALL_DIR         # Relative install folder for generated Python files
@@ -110,7 +110,7 @@ endfunction()
 function(cc_add_proto_cpp TARGET)
   set(_options)
   set(_singleargs
-    LIB_TYPE         # C++ library type (Default: STATIC)
+    LIB_TYPE         # C++ library type
     SCOPE            # Target scope (Default: PUBLIC)
   )
   set(_multiargs
@@ -136,7 +136,7 @@ function(cc_add_proto_cpp TARGET)
   elseif(scope STREQUAL INTERFACE)
     set(lib_type INTERFACE)
   else()
-    set(lib_type STATIC)
+    set(lib_type ${DEFAULT_LIB_TYPE})
   endif()
 
   cc_add_library("${TARGET}"

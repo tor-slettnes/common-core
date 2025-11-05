@@ -7,6 +7,9 @@
 ## To use this file, copy, uncomment, and modify the following in your "CMakeLists.txt":
 #===============================================================================
 
+cc_get_ternary(DEFAULT_LIB_TYPE
+  BUILD_CPP_STATIC_LIBS "STATIC" "SHARED")
+
 #===============================================================================
 ## @fn cc_add_library
 
@@ -19,7 +22,7 @@ function(cc_add_library TARGET)
   if(arg_LIB_TYPE)
     string(TOUPPER "${arg_LIB_TYPE}" _type)
   elseif(arg_SOURCES)
-    set(_type STATIC)
+    set(_type ${DEFAULT_LIB_TYPE})
   else()
     set(_type INTERFACE)
   endif()

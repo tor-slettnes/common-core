@@ -10,7 +10,7 @@ set(TARGET cc_core_common)
 
 ### Library type.  We use static linking for convenience.
 cc_add_library(${TARGET}
-  LIB_TYPE STATIC
+  LIB_TYPE ${DEFAULT_LIB_TYPE}
 )
 
 ## Include appropriate system libraries based on platform

@@ -27,7 +27,6 @@ set(SOURCES
 ### Build library
 include(cc_add_library)
 cc_add_library("${TARGET}"
-  LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
 )

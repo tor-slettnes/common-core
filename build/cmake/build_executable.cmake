@@ -52,7 +52,7 @@ function(cc_add_executable TARGET)
 
   if(arg_PKG_DEPS)
     cc_add_package_dependencies("${TARGET}"
-      LIB_TYPE STATIC
+      LIB_TYPE ${DEFAULT_LIB_TYPE}
       DEPENDS ${arg_PKG_DEPS}
     )
   endif()

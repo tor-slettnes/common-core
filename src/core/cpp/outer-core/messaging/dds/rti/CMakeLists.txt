@@ -34,7 +34,6 @@ endif()
 
 ### Recepies to build the library
 cc_add_library("${TARGET}"
-  LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
 )

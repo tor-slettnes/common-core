@@ -54,7 +54,7 @@ function(cc_add_package_dependencies TARGET)
     cc_pkgconf(PKG ${pkg} REQUIRED)
 
     target_include_directories("${TARGET}" SYSTEM ${_include_scope} ${PKG_INCLUDE_DIRS})
-    if(USE_STATIC_LIBS)
+    if(BUILD_CPP_STATIC_LIBS)
       link_directories(${PKG_STATIC_LIBRARY_DIRS})
       target_link_libraries("${TARGET}" ${_link_scope} ${PKG_STATIC_LIBRARIES})
     else()

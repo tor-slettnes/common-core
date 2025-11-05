@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-if(BUILD_SHARED)
+if(BUILD_SHARED_APPS)
   set(INSTALL_GROUP "core")
 
   set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")

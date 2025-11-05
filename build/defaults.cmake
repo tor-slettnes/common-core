@@ -157,34 +157,35 @@ option(ENABLE_SERVICES
   ON)
 
 # What applications to build/install.
-option(BUILD_SHARED
+option(BUILD_SHARED_APPS
   "Install shared artifacts (e.g. common settings)"
   ON)
 
 cmake_dependent_option(BUILD_DEMO
   "Build/install DEMO application example"
-  ON "BUILD_SHARED"
+  ON "BUILD_SHARED_APPS"
   OFF)
 
 cmake_dependent_option(BUILD_PLATFORM
   "Build/install Platform services"
-  ON "BUILD_SHARED"
+  ON "BUILD_SHARED_APPS"
   OFF)
 
 cmake_dependent_option(BUILD_MULTILOGGER
   "Build/install MultiLogger service"
-  ON "BUILD_SHARED"
+  ON "BUILD_SHARED_APPS"
   OFF)
 
 cmake_dependent_option(BUILD_SWITCHBOARD
   "Build/install Switchboard application"
-  ON "BUILD_SHARED"
+  ON "BUILD_SHARED_APPS"
   OFF)
 
 #-------------------------------------------------------------------------------
 # C++ options
 
 option(BUILD_CPP          "Build/Install C++ code"  ON)
+option(BUILD_CPP_STATIC_LIBS "Build static rather than shared libraries" ON)
 option(BUILD_ALL_LIBS     "Build all libraries even if not used (to validate syntax)" OFF)
 option(BUILD_ALL_BINARIES "Build all executables even if not used (to validate syntax)" OFF)
 

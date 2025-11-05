@@ -15,7 +15,7 @@ set(TARGET cc_core_platform)
 
 ### Create common platform library
 cc_add_library("${TARGET}"
-  LIB_TYPE STATIC
+  LIB_TYPE ${DEFAULT_LIB_TYPE}
   LIB_DEPS cc_core_common
 )
 

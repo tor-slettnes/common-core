@@ -9,7 +9,7 @@
 set(TARGET cc_core_messaging_grpc_base)
 
 set(MOD_DEPS
-   gRPC
+  gRPC
 )
 
 ### Library dependencies.
@@ -27,7 +27,6 @@ set(SOURCES
 
 ### Recepies to build the library
 cc_add_library("${TARGET}"
-  LIB_TYPE STATIC
   LIB_DEPS ${LIB_DEPS}
   MOD_DEPS ${MOD_DEPS}
   SOURCES ${SOURCES}

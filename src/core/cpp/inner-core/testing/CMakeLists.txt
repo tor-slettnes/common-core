@@ -7,6 +7,6 @@
 
 add_subdirectory(main)
 
-if(BUILD_SHARED)
+if(BUILD_SHARED_APPS)
   add_subdirectory(suites)
 endif()

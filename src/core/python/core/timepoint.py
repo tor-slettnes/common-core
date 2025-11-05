@@ -523,9 +523,9 @@ class TimePoint (float):
             An existing `datetime.datetime` value.
 
         @param assume_utc
-            Even if `input` is a naive `datetime.datetime` value without a
-            `tzinfo` attribute, assume it represents UTC rather than defaulting
-            to local time.
+            If `input` is a naive `datetime.datetime` value without a `tzinfo`
+            attribute, assume it represents UTC rather than defaulting to local
+            time.
         '''
 
         if not input.tzinfo and assume_utc:
@@ -569,7 +569,9 @@ class TimePoint (float):
             An existing instance of `google.protobuf.TimePoint`
         '''
 
-        return TimePoint(input.seconds + (input.nanos * 1e-9))
+        return TimePoint.from_epoch(
+            seconds = input.seconds,
+            nanoseconds  = input.nanos)
 
 
     @classmethod
