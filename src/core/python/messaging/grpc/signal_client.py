@@ -20,7 +20,7 @@ class SignalClient (Client):
     gRPC Signal Client.
 
     gRPC client with additional functionality to receive streamed Signal
-    messages from a gRPC server with a corresponding `watch()` method.
+    messages from a gRPC server with a corresponding `Watch()` method.
 
 
     ### Example
@@ -36,7 +36,7 @@ class SignalClient (Client):
     service MyService
     {
         /// ...
-        rpc watch (cc.signal.Filter) returns (stream MySignal);
+        rpc Watch (cc.signal.Filter) returns (stream MySignal);
     }
 
     message MySignal
@@ -133,7 +133,7 @@ class SignalClient (Client):
       client.start_watching()
       ```
 
-    This will invoke the gRPC `watch()` method in a new thread, with a
+    This will invoke the gRPC `Watch()` method in a new thread, with a
     `cc.protobuf.signal.Filter` input based on which signal slots were
     previously connected to one or more handlers.
 

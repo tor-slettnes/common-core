@@ -23,7 +23,7 @@ import queue, logging
 
 class SignalService (Service):
     '''
-    gRPC Servicer with `watch()` method to stream signals back to client.
+    gRPC Servicer with `Watch()` method to stream signals back to client.
     '''
 
     def __init__(self,
@@ -53,7 +53,7 @@ class SignalService (Service):
         self.max_queue_size = max_queue_size
 
 
-    def watch(self,
+    def Watch(self,
               request: Filter,
               context: grpc.ServicerContext
               ) -> Generator[None, google.protobuf.message.Message, None]:
