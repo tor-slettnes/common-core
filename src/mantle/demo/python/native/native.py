@@ -10,7 +10,7 @@ from ..base import API, demo_signals
 from cc.core.scheduler import scheduler, TaskAlignment
 from cc.protobuf.wellknown import MessageToString, encodeTimestamp
 from cc.protobuf.datetime import encodeTimeStruct
-from cc.protobuf.demo import Greeting, TimeData
+from cc.demo.protobuf import Greeting, TimeData
 
 ### Standard Python modules
 from typing import Callable

@@ -7,9 +7,8 @@
 
 ### Standard Python modules
 from threading   import Thread, Lock, Condition, Event, current_thread, ThreadError
-from logging     import debug, info, warning, error
 from typing      import Callable, Optional
-import time, os, sys, traceback, uuid, enum
+import time, os, sys, traceback, uuid, enum, logging
 
 try:
     # Python 3 has math.inf, but does not allow sorting between numeric types and strings
@@ -25,6 +24,8 @@ class TaskAlignment (enum.IntEnum):
 
 class Scheduler (object):
     def __init__(self, identity : str):
+        self.logger = logging.getLogger('.'.join((__package__, type(self).__name__)))
+
         ## Public data members
         self.speedFactor = 1.0
 
@@ -49,7 +50,7 @@ class Scheduler (object):
     def start(self):
         self._running = True
         if not self._timerThread:
-            info('Starting task scheduler')
+            self.logger.info('Starting task scheduler')
             self._timerThread = Thread(target = self._timerloop,
                                        name   = self._identity,
                                        daemon = True)
@@ -57,7 +58,7 @@ class Scheduler (object):
 
 
     def shutdown(self):
-        info('Shutting down task scheduler')
+        self.logger.info('Shutting down task scheduler')
         self._running = False
         if thread := self._timerThread:
             thread.join()
@@ -214,9 +215,10 @@ class Scheduler (object):
 
             self._locks.setdefault(nextslot, []).append(lock)
 
-            debug("Scheduling task %r to run every %s seconds, starting at %s (local time %s)"%
-                  (handle, interval, nexttime,
-                   time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(nexttime))))
+            self.logger.debug(
+                "Scheduling task %r to run every %s seconds, starting at %s (local time %s)" %
+                (handle, interval, nexttime,
+                 time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(nexttime))))
 
         finally:
             self._mutex.release()
@@ -236,7 +238,7 @@ class Scheduler (object):
 
             else:
                 try:
-                    debug("Invoking scheduled task %r"%(handle,))
+                    self.logger.debug("Invoking scheduled task %r"%(handle,))
                     method(*args, **kwargs)
                     failures = 0
                     count += 1
@@ -249,13 +251,15 @@ class Scheduler (object):
                         if pending:
                             self._pendingException[handle] = (e, e_tb)
                         else:
-                            warning("Scheduled task %r failed %d times, stopping: [%s]: %s"%
-                                    (handle, failures, type(e).__name__, e))
-                            debug(self._stack_trace(e_tb))
+                            self.logger.warning(
+                                "Scheduled task %r failed %d times, stopping: [%s]: %s"%
+                                (handle, failures, type(e).__name__, e))
+                            self.logger.debug(self._stack_trace(e_tb))
                         break
                     else:
-                        info("Scheduled task %r failed, %d retries remaining: [%s]"%
-                             (handle, maxretries-failures+1, type(e).__name__))
+                        self.logger.info(
+                            "Scheduled task %r failed, %d retries remaining: [%s]"%
+                            (handle, maxretries-failures+1, type(e).__name__))
                 finally:
                     if pending:
                         pending.set()
@@ -271,7 +275,7 @@ class Scheduler (object):
                 self._locks.setdefault(nextslot, []).append(lock)
 
 
-        debug("Unscheduling task %r"%(handle,))
+        self.logger.debug("Unscheduling task %r"%(handle,))
 
         if pending:
             pending.release()
@@ -305,9 +309,10 @@ class Scheduler (object):
 
                     if abs(now - nexttime) > self._timeshiftlimit:
                         shift = now - nexttime
-                        warning("Clock skew detected. "
-                                "Shifting time reference %.1f seconds (from %.1f to %.1f)"%
-                                (shift, self._starttime, self._starttime+shift))
+                        self.logger.warning(
+                            "Clock skew detected. "
+                            "Shifting time reference %.1f seconds (from %.1f to %.1f)"%
+                            (shift, self._starttime, self._starttime+shift))
                         self._starttime += shift
 
                     maxticks   = self._tickCount(now + self._maxsleep - self._starttime)
@@ -318,7 +323,7 @@ class Scheduler (object):
                     time.sleep(nexttime - now)
 
             except Exception as e:
-                error("Internal scheduler error: %s"%e)
+                self.logger.error("Internal scheduler error: %s"%e)
 
 
 scheduler = Scheduler('Main scheduler')

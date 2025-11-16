@@ -44,6 +44,9 @@ set(ORGANIZATION "common-core"
 set(CC_PROTOS_BASE_DIR "${CMAKE_SOURCE_DIR}/protos"
   CACHE STRING "Root directory for common `.proto` files")
 
+set(FETCHCONTENT_BASE_DIR "${CMAKE_SOURCE_DIR}/external"
+  CACHE STRING "Root directory in which to unpack external sources")
+
 set(DATA_DIR "share/${ORGANIZATION}"
   CACHE STRING "Target directory for shared data")
 

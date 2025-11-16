@@ -569,8 +569,10 @@ class SignalStore:
 
         if key and not action:
             cached_value = self.get_cached_signal(signal_name, key, wait_complete=False)
+
             action = (
-                MappingAction.REMOVAL if self.is_empty(value)
+                MappingAction.NONE if self.is_empty(value) and self.is_empty(cached_value)
+                else MappingAction.REMOVAL if self.is_empty(value)
                 else MappingAction.ADDITION if self.is_empty(cached_value)
                 else MappingAction.UPDATE if value != cached_value
                 else MappingAction.NONE
@@ -628,7 +630,6 @@ class SignalStore:
     @classmethod
     def is_empty(cls, value: Message|None):
         return not value or (value.ByteSize() == 0)
-
 
     def _update_cache(self, signalname, action, key, msg):
         datamap = self._cache.setdefault(signalname, {})

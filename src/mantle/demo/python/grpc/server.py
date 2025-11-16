@@ -15,7 +15,7 @@ import logging
 
 if __name__ == '__main__':
     pylogger = logging.getLogger()
-    pylogger.setLevel(logging.INFO)
+    pylogger.setLevel(logging.DEBUG)
 
     demoservice = DemoService(NativeDemo())
     demoserver = create_server(demoservice)

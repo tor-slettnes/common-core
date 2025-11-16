@@ -64,7 +64,7 @@ def encodeTimeStruct(input: time.struct_time,
     '''
 
     if output is None:
-        output = TimeStruct
+        output = TimeStruct()
 
     output.year = input.tm_year
     output.month = input.tm_mon
