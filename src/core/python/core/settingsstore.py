@@ -331,10 +331,11 @@ class SettingsStore (dict):
         if expected_type is None or isinstance(value, expected_type):
             return value
 
-        try:
-            return expected_type(value)
-        except ValueError:
-            pass
+        if isinstance(value, str):
+            try:
+                return expected_type(value)
+            except ValueError:
+                pass
 
         if raise_invalid_type:
             pathstring = ' -> '.join([str(element) for element in path])
