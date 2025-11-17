@@ -102,7 +102,7 @@ class Writer (ThreadedSubmitter, MessageWriter):
 
             except Exception as e:
                 if self.queue:
-                    logging.debug(
+                    self.logger.debug(
                         "Failed to stream message to MultiLogger service at %s: [%s]; retrying in 2s: %s"%
                         (self.host, type(e).__name__, e))
                     time.sleep(2.0)
@@ -111,4 +111,4 @@ class Writer (ThreadedSubmitter, MessageWriter):
 if __name__ == '__main__':
     submitter = Writer(capture_python_logs = True)
     submitter.initialize()
-    logging.info(f"MultiLogger ZMQ submitter {client.identity} is alive!")
+    self.logger.info(f"MultiLogger ZMQ submitter {client.identity} is alive!")

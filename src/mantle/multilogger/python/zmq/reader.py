@@ -81,7 +81,7 @@ if __name__ == '__main__':
     reader = Reader(subscriber = subscriber)
 
     subscriber.initialize()
-    logging.info(f"MultiLogger ZMQ reader {reader.id} is alive!")
+    self.logger.info(f"MultiLogger ZMQ reader {reader.id} is alive!")
 
     for loggable in reader:
         print(loggable)

@@ -7,15 +7,16 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 
-import sys, re, socket, logging, argparse
+import sys, re, socket, argparse
 
 from ...core.settingsstore import SettingsStore
+from ...core.logbase import LogBase
 from ...buildinfo import PROJECT_NAME
 
 #===============================================================================
 # Base class
 
-class Endpoint (object):
+class Endpoint (LogBase):
     # `messaging_flavor` should be overwritten by direct subclasses to indicate
     # message platform, e.g., `gRPC`, `DDS`, `ZMQ`, ...
     messaging_flavor = None
@@ -64,8 +65,8 @@ class Endpoint (object):
             for scope_name in settings_scopes
             if scope_name])
 
-        logging.debug("Loaded %s settings from %s: %s"%
-                      (self.channel_name, self.settings.filepaths, self.settings))
+        self.logger.debug("Loaded %s settings from %s: %s"%
+                          (self.channel_name, self.settings.filepaths, self.settings))
 
 
     def __repr__ (self):

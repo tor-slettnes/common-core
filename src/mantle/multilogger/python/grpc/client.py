@@ -100,7 +100,7 @@ class Client (BaseClient, API, ThreadedSubmitter):
                 self.stub.Writer(self.queue_iterator(), wait_for_ready = wait_for_ready)
             except Exception as e:
                 if self.is_writer_open():
-                    logging.debug(
+                    self.logger.debug(
                         "Failed to stream message to MultiLogger service at %s: [%s]; retrying in 2s: %s"%
                         (self.host, type(e).__name__, e))
                     time.sleep(2.0)
@@ -117,4 +117,4 @@ class Client (BaseClient, API, ThreadedSubmitter):
 if __name__ == '__main__':
     client = Client(capture_python_logs = True)
     client.initialize()
-    logging.info(f"MultiLogger client {client.identity} is alive!")
+    self.logger.info(f"MultiLogger client {client.identity} is alive!")

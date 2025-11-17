@@ -95,7 +95,7 @@ class Service (Base):
         add_method = getattr(servicer_module, 'add_%s_to_server'%(servicer_name,))
         add_method(self, server)
         if add_listener:
-            logging.info('Adding service %r listener: %s'%(
+            self.logger.info('Adding service %r listener: %s'%(
                 self.service_name,
                 self.bind_address))
             server.add_insecure_port(self.bind_address)

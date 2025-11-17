@@ -12,6 +12,7 @@ import sys, os.path, time
 ### Modules within package
 from cc.protobuf.wellknown import encodeTimestamp
 from cc.protobuf.variant import encodeKeyValueMap
+from cc.core.logbase import LogBase
 
 ### Modules relative to install dir
 from .signals import demo_signals
@@ -24,7 +25,7 @@ SignalSlot = Callable[[Signal], None]
 #===============================================================================
 # Native Demo implementation
 
-class API:
+class API (LogBase):
     '''Demo API'''
 
     def __init__(self,

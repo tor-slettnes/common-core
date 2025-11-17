@@ -153,5 +153,5 @@ class Client (Base):
         return service_name
 
     def _channelChange (self, *args, **kwargs):
-        logging.debug("Channel change: args=%s, kwargs=%s"%(args, kwargs))
+        self.logger.debug("Channel change: args=%s, kwargs=%s"%(args, kwargs))
 

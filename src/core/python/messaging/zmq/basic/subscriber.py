@@ -48,7 +48,7 @@ class Subscriber (Endpoint):
         '''
 
         with self._mtx:
-            logging.debug("Subscriber(%r) adding handler %r with filter %r"%
+            self.logger.debug("Subscriber(%r) adding handler %r with filter %r"%
                          (self.channel_name, handler.id, handler.message_filter))
             self._add_handler_filter(handler)
             self.subscriptions.add(handler)
@@ -61,7 +61,7 @@ class Subscriber (Endpoint):
         '''
 
         with self._mtx:
-            logging.debug("Subscriber(%r) removing handler %r"%
+            self.logger.debug("Subscriber(%r) removing handler %r"%
                          (self.channel_name, handler.id, handler.message_filter))
             self.subscriptions.discard(handler)
             self._remove_handler_filter(handler)
@@ -85,7 +85,7 @@ class Subscriber (Endpoint):
         super().deinitialize()
 
     def _add_handler_filter(self, handler: MessageHandler):
-        logging.debug(
+        self.logger.debug(
             "Adding handler %r, message filter %r (size %d)"%
             (handler, handler.message_filter, len(handler.message_filter)))
 
@@ -106,7 +106,7 @@ class Subscriber (Endpoint):
         self.keep_receiving = False
         t = self.receive_thread
         if t and t.is_alive():
-            logging.debug('Waiting for ZMQ subscriber thread')
+            self.logger.debug('Waiting for ZMQ subscriber thread')
             t.join()
 
     def _receive_loop (self):
@@ -123,7 +123,7 @@ class Subscriber (Endpoint):
                     found = True
 
         if not found:
-            logging.warning("Subscriber %r received message with no matching filter: %s"%
+            self.logger.warning("Subscriber %r received message with no matching filter: %s"%
                             (self.channel_name, parts))
 
     def _invoke_handler(self,

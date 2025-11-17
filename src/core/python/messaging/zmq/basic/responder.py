@@ -51,7 +51,7 @@ class Responder (Endpoint):
             self.keep_listening = False
             t = self.listen_thread
             if t and t.is_alive():
-                logging.debug('Waiting for ZMQ responder thread')
+                self.logger.debug('Waiting for ZMQ responder thread')
                 t.join()
         finally:
             self.unbind()
@@ -70,5 +70,5 @@ class Responder (Endpoint):
             self.deinitialize()
 
     def process_request(self, request : bytes):
-        logging.info("Received request: %r", request)
+        self.logger.info("Received request: %r", request)
         return b''

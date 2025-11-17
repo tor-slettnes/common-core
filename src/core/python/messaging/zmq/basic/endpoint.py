@@ -15,7 +15,7 @@ import sys
 try:
     import zmq
 except ImportError as e:
-    logging.critical('Could not import module `zmq` - try installing `pyzmq`.')
+    self.logger.critical('Could not import module `zmq` - try installing `pyzmq`.')
     raise e from None
 
 ### Modules within package
@@ -175,7 +175,7 @@ am            or remote) peer.  If not provided, an explicit call to `bind()` or
 
         if not self.host_address:
             host_address = self.sanitized_host_address(address)
-            logging.debug("%s connecting to %s"%(self, host_address))
+            self.logger.debug("%s connecting to %s"%(self, host_address))
             self.socket.connect(host_address)
             self.host_address = host_address
 
@@ -186,7 +186,7 @@ am            or remote) peer.  If not provided, an explicit call to `bind()` or
 
         if host_address := self.host_address:
             self.host_address = None
-            logging.info("%s disconnecting from %s"%(self, host_address))
+            self.logger.info("%s disconnecting from %s"%(self, host_address))
             self.socket.disconnect(host_address)
 
     def sanitized_bind_address(self,
@@ -219,7 +219,7 @@ am            or remote) peer.  If not provided, an explicit call to `bind()` or
 
         if not self.bound_address:
             bind_address = self.sanitized_bind_address(address)
-            logging.info("%s binding to %s"%(self, bind_address))
+            self.logger.info("%s binding to %s"%(self, bind_address))
             self.socket.bind(bind_address)
             self.bound_address = bind_address
 
@@ -231,7 +231,7 @@ am            or remote) peer.  If not provided, an explicit call to `bind()` or
 
         if bound_address := self.bound_address:
             self.bound_address = None
-            logging.info("%s unbinding from %s"%(self, bound_address))
+            self.logger.info("%s unbinding from %s"%(self, bound_address))
             self.socket.unbind(bound_address)
 
 

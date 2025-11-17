@@ -51,7 +51,7 @@ class Server (Responder):
         try:
             request = Request.FromString(binary_request)
         except google.protobuf.message.DecodeError as e:
-            logging.warning('ZMQ RPC server failed to decode ProtoBuf request: %s'%
+            self.logger.warning('ZMQ RPC server failed to decode ProtoBuf request: %s'%
                             (binary_request,))
 
             Error(StatusCode.STATUS_INVALID,
@@ -65,11 +65,11 @@ class Server (Responder):
             ).add_to_reply(reply)
 
         else:
-            logging.debug('ZMQ RPC server handling request: %s'%(
+            self.logger.debug('ZMQ RPC server handling request: %s'%(
                 google.protobuf.text_format.MessageToString(request, as_one_line=True),))
             self.process_protobuf_request(request, reply)
 
-        logging.debug('ZMQ RPC server sending reply: %s'%(
+        self.logger.debug('ZMQ RPC server sending reply: %s'%(
             google.protobuf.text_format.MessageToString(reply, as_one_line=True),))
 
         return reply.SerializeToString()

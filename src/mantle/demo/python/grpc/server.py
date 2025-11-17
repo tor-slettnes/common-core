@@ -6,16 +6,17 @@
 #===============================================================================
 
 ### Modules relative to install dir
+from cc.core.logbase import LogBase
+from cc.messaging.grpc.server import create_server
 from cc.demo.grpc.service import DemoService
 from cc.demo.native import NativeDemo
-from cc.messaging.grpc.server import create_server
 
 ### Standard Python modules
 import logging
 
+
 if __name__ == '__main__':
-    pylogger = logging.getLogger()
-    pylogger.setLevel(logging.DEBUG)
+    LogBase.init_logging(threshold = logging.DEBUG)
 
     demoservice = DemoService(NativeDemo())
     demoserver = create_server(demoservice)

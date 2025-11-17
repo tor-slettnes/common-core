@@ -10,6 +10,8 @@ from threading   import Thread, Lock, Condition, Event, current_thread, ThreadEr
 from typing      import Callable, Optional
 import time, os, sys, traceback, uuid, enum, logging
 
+from .logbase import LogBase
+
 try:
     # Python 3 has math.inf, but does not allow sorting between numeric types and strings
     from math import inf as INFINITY
@@ -22,9 +24,8 @@ class TaskAlignment (enum.IntEnum):
     LOCAL = 1
     UTC = 2
 
-class Scheduler (object):
+class Scheduler (LogBase):
     def __init__(self, identity : str):
-        self.logger = logging.getLogger('.'.join((__package__, type(self).__name__)))
 
         ## Public data members
         self.speedFactor = 1.0

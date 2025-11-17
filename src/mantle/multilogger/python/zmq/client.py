@@ -154,4 +154,4 @@ class Client (API, Writer):
 if __name__ == '__main__':
     client = Client(capture_python_logs = True)
     client.initialize()
-    logging.info(f"MultiLogger ZMQ client {client.identity} is alive!")
+    self.logger.info(f"MultiLogger ZMQ client {client.identity} is alive!")
