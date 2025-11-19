@@ -157,6 +157,7 @@ class SignalClient (Client):
                  signal_store : SignalStore = None,
                  watch_all: bool = False,
                  use_cache: bool = True,
+                 project_name: str|None = None,
                  product_name: str|None = None,
                  **kwargs):
         '''
@@ -193,6 +194,13 @@ class SignalClient (Client):
             server.  If the signal includes a `key` field (i.e., if it is a
             `MappingSignal` instance), keep the most recent data value per key.
             These values can later be queried using `get_cached_map()`.
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to look up
+            endpoint settings.
+
+        @param product_name
+            Name of overall product. Used to look up endpoint settings.
         '''
 
         if signal_store:
@@ -211,6 +219,7 @@ class SignalClient (Client):
         Client.__init__(self, host,
                         wait_for_ready = wait_for_ready,
                         use_asyncio = use_asyncio,
+                        project_name = project_name,
                         product_name = product_name,
                         **kwargs)
 

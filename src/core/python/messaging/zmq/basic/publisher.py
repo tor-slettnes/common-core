@@ -18,6 +18,7 @@ class Publisher (Endpoint, MessageBase):
     def __init__(self,
                  bind_address: str,
                  channel_name: str|None = None,
+                 project_name: str|None = None,
                  product_name: str|None = None,
                  role: Endpoint.Role = Endpoint.Role.HOST,
                  ):
@@ -26,6 +27,7 @@ class Publisher (Endpoint, MessageBase):
             self,
             address = bind_address,
             channel_name = channel_name,
+            project_name = project_name,
             product_name = product_name,
             socket_type = zmq.PUB,
             role = role)

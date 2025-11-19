@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules relative to install dir
-from cc.core.logbase import LogBase
+from cc.core.logbase import init_logging
 from cc.messaging.grpc.server import create_server
 from cc.demo.grpc.service import DemoService
 from cc.demo.native import NativeDemo
@@ -16,7 +16,7 @@ import logging
 
 
 if __name__ == '__main__':
-    LogBase.init_logging(threshold = logging.DEBUG)
+    init_logging(threshold = logging.DEBUG)
 
     demoservice = DemoService(NativeDemo())
     demoserver = create_server(demoservice)

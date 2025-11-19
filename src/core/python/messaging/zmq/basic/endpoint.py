@@ -34,9 +34,10 @@ class Endpoint (EndpointBase):
     def __init__(self,
                  address     : str,
                  channel_name: str,
-                 product_name: str|None,
                  socket_type : zmq.SocketType,
                  role        : Role = Role.UNDEFINED,
+                 project_name: str|None,
+                 product_name: str|None,
                  ):
         '''
         Initializer.
@@ -52,16 +53,6 @@ class Endpoint (EndpointBase):
             generalized service name, adapted for RPC/Request/Response, Pub/Sub,
             and other ZMQ socket types.
 
-        @param product_name
-            Name of the overall code project, used to locate corresponding
-            settings files (e.g. `zmq-endpoints-PROJECT.yaml`), in addition to
-            `"common"`.
-            (Since this is Python, it must be provided as a runtime argument
-            rather than a pre-built default. Correspondingly, the meaing of
-            "project" in this context is flexible; for instance, if your code
-            repository is shared amongst multiple products, it could denote
-            a specific one.)
-
         @param socket_type
             ZMQ socket type to use for this endpoint. Typically a hardcoded
             value is passed in from direct descendants of this class, e.g.
@@ -72,12 +63,22 @@ class Endpoint (EndpointBase):
             `Endpoint.Role.HOST` means that this will bind to one or all local
             network interfaces and listen for incoming connections, whereas
             `Endpoint.Role.SATELLITE` means that this will connect to a (local
-am            or remote) peer.  If not provided, an explicit call to `bind()` or
+            or remote) peer.  If not provided, an explicit call to `bind()` or
             `connect()` will be required in order to communicate with peers.
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to look up
+            endpoint settings.
+
+        @param product_name
+            Name of the overall code project, used to locate corresponding
+            settings files (e.g. `zmq-endpoints-PROJECT.yaml`), in addition to
+            `"common"`.
         '''
 
         EndpointBase.__init__(self,
                               channel_name = channel_name,
+                              project_name = project_name,
                               product_name = product_name)
 
         self._provided_address = address

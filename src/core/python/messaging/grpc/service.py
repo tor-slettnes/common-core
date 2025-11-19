@@ -66,11 +66,38 @@ class Service (Base):
 
     def __init__(self,
                  bind_address: str ="",
+                 project_name: str|None = None,
                  product_name: str|None = None,
                  ):
 
+        '''
+        @param bind_address
+            Network interface address and/or port number to which the service
+            will be bound, of the form `[HOST][:PORT]`.  If either HOST or PORT
+            is missing, default values are obtained from the settings files
+            (ending `.json`, `.yaml`, `.ini` in that order) with the following
+            base names:
+
+            - `grpc-endpoints-SERVICENAME` where `SERVICENAME` is the gRPC service
+            - `grpc-endpionts-PRODUCT` where `PRODUCT` is the `product_name` argument
+            - `grpc-endpionts-PROJECT` where `PROJECT` is the `project_name` argument
+            - `grpc-endpionts-common`
+
+           If still missing, the compile-time default is `"[::]:8080"`, meaning
+           the server will listen bind to port 8080 on all available network
+           interfaces.
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to look up
+            endpoint settings.
+
+        @param product_name
+            Name of overall product. Used to look up endpoint settings.
+        '''
+
         Base.__init__(self,
                       service_name = self.service_name or self._service_name(),
+                      project_name = project_name,
                       product_name = product_name)
 
         self.bind_address = self.realaddress(bind_address, "interface", "port", "[::]", 8080)

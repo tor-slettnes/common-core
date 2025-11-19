@@ -36,6 +36,7 @@ class HTTPBase (Endpoint):
 
     def __init__ (self,
                   service_name: str|None = None,
+                  project_name: str|None = None,
                   product_name: str|None = None,
                   ):
         if service_name is not None:
@@ -47,6 +48,7 @@ class HTTPBase (Endpoint):
 
         Endpoint.__init__(self,
                           channel_name = self.service_name,
+                          project_name = project_name,
                           product_name = product_name)
 
     def get_target_url(self, provided: str = ''):

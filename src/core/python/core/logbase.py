@@ -10,9 +10,15 @@ from .settingsstore import SettingsStore
 
 # if sys.hexversion >= 0x030c0000:
 #     # Python 3.12 and above have `taskName`
-#     DEFAULT_FORMAT = "%(asctime)s|%(levelname)8s|%(name)-24s|%(taskName)-8s|%(message)s"
+#     DEFAULT_FORMAT = "%(asctime)s|%(levelname)8s|%(taskName)-8s|%(name)-24s|%(message)s"
 # else:
-DEFAULT_FORMAT = "%(asctime)s|%(levelname)8s|%(name)-24s|%(threadName)-12s|%(message)s"
+DEFAULT_FORMAT = "%(asctime)s|%(levelname)8s|%(threadName)-12s|%(name)-24s|%(message)s"
+
+def init_logging(threshold: int = logging.INFO,
+                 format: str = DEFAULT_FORMAT,
+                 force: bool = True):
+    logging.basicConfig(level=threshold, format=format, force=force)
+
 
 
 class LogBase:
@@ -66,14 +72,6 @@ class LogBase:
             return inspect.stack()[hops+1].frame.f_globals['__name__']
         except (IndexError, KeyError):
             return self.__module__
-
-    @classmethod
-    def init_logging(cls,
-                     threshold: int = logging.INFO,
-                     format: str = DEFAULT_FORMAT,
-                     force: bool = True):
-        logging.basicConfig(level=threshold, format=format, force=force)
-
 
     @classmethod
     def threshold_setting(cls, log_name: str) -> int|None:

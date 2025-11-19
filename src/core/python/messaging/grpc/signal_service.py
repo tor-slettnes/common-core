@@ -30,6 +30,7 @@ class SignalService (Service):
                  signal_store   : SignalStore,
                  bind_address   : str = "",
                  max_queue_size : Optional[int] = 256,
+                 project_name: str|None = None,
                  product_name   : str|None = None,
                  ):
         '''
@@ -38,7 +39,8 @@ class SignalService (Service):
            we receive signals.
 
         param[in] bind_address
-           Listener address, which will be added to gRPC server.
+           Listener address, which will be added to gRPC server.  For additional
+           information, refer to `__init__()` in the `Service` parent class.
 
         param[in] max_queue_size
            Max size of queue that will hold locally-emitted signals until
@@ -47,6 +49,7 @@ class SignalService (Service):
 
         Service.__init__ (self,
                           bind_address = bind_address,
+                          project_name = project_name,
                           product_name = product_name)
 
         self.signal_store = signal_store

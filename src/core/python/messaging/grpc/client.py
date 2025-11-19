@@ -52,6 +52,7 @@ class Client (Base):
                  wait_for_ready: bool = False,
                  use_asyncio: bool|None = None,
                  intercept_errors: bool = True,
+                 project_name: str|None = None,
                  product_name: str|None = None,
                  ):
         '''
@@ -73,10 +74,21 @@ class Client (Base):
             Additionally, the `call()` method uses AsyncIO semantics to capture
             any exceptions.  If not specified, the default value is obtained
             from the corresponding `use_asyncio` class variable.
+
+        @param interceptor_errors
+            Raise any errors encountered in custom gRPC interceptors
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to look up
+            endpoint settings.
+
+        @param product_name
+            Name of overall product. Used to look up endpoint settings.
         '''
 
         Base.__init__(self,
                       service_name = self.service_name or self._default_service_name(),
+                      project_name = project_name,
                       product_name = product_name)
 
         assert type(self).Stub, (
