@@ -21,12 +21,10 @@ namespace core::messaging
 
     Endpoint::Endpoint(const std::string &messaging_flavor,
                        const std::string &endpoint_type,
-                       const std::string &channel_name,
-                       const std::string &profile_name)
+                       const std::string &channel_name)
         : messaging_flavor_(messaging_flavor),
           endpoint_type_(endpoint_type),
           channel_name_(channel_name),
-          profile_name_(profile_name),
           settings_(SettingsStore::create_shared()),
           initialized_(false)
     {
@@ -75,11 +73,6 @@ namespace core::messaging
         return this->channel_name_;
     }
 
-    std::string Endpoint::profile_name() const
-    {
-        return this->profile_name_;
-    }
-
     std::shared_ptr<SettingsStore> Endpoint::settings() const
     {
         if (!this->settings_->loaded())
@@ -104,11 +97,6 @@ namespace core::messaging
     types::Value Endpoint::setting(const std::string &key,
                                    const types::Value &fallback) const
     {
-        if (auto opt_value = this->settings()->get(this->profile_name()).try_get(key))
-        {
-            return opt_value.value();
-        }
-
         if (auto opt_value = this->settings()->get(this->channel_name()).try_get(key))
         {
             return opt_value.value();
@@ -141,16 +129,8 @@ namespace core::messaging
         stream << this->messaging_flavor()
                << " "
                << this->endpoint_type()
-               << " \""
-               << this->channel_name();
-
-        if (!this->profile_name().empty())
-        {
-            stream << ":"
-                   << this->profile_name();
-        }
-
-        stream << "\"";
+               << " "
+               << std::quoted(this->channel_name());
     }
 
 }  // namespace core::messaging

@@ -5,10 +5,26 @@
 ## @author Tor Slettnes <tor@slett.net>
 #==============================================================================
 
-# Default endpionts for common applications. In addtiion to these,
-# settings for product-specific applications can be found in
-# `zmq-endpoints-PRODUCT_NAME.yaml`, where PRODUCT_NAME is provided at build
-# time.
+# Default endpoint settings for ZeroMQ communication. Endpoint settings are
+# obtained and merged in from the following settings files, in order:
+#
+#  - `zmq-endpoints-*CHANNEL_NAME*.yaml` where *CHANNEL_NAME* is the name given
+#    to the language-specific endpoint constructor, converted to lowercase and
+#    with dashes replacing whitespace (e.g. `demo-service` or `demo-message`).
+#
+#  - `zmq-endpoints-*PRODUCT_NAME*.yaml` where *PRODUCT_NAME* is the name of
+#    the product flavor being built, converted to lowercase.
+#
+#  - `zmq-endpoints-*PROJECT_NAME*.yaml` where *PROJECT_NAME* is the name of
+#    the top-level code project being built, converted to lowercase
+#    (e.g. `common-core` or the parent project in which this is a submodule).
+#
+#  - `zmq-endpoints-common.yaml`, this file.
+#
+# Within the merged SettingsStore object, settings for a specific endpoint
+# channel are first obtained from within the corresponding *CHANNEL_NAME*
+# section, then additional defaults are merged in from the `_default_` section,
+# if any.
 #
 # The following attributes are used to construct ZeroMQ socket addresses
 # per ZeroMQ endpoint (command or message):

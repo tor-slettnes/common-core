@@ -12,10 +12,9 @@
 namespace core::kafka
 {
     Endpoint::Endpoint(const std::string &endpoint_type,
-                       const std::string &service_name,
                        const std::string &profile_name,
                        const core::types::KeyValueMap &settings)
-        : Super("Kafka", endpoint_type, service_name, profile_name),
+        : Super("Kafka", endpoint_type, profile_name),
           conf_(RdKafka::Conf::create(RdKafka::Conf::CONF_GLOBAL))
     {
         this->init_logging();
@@ -30,6 +29,11 @@ namespace core::kafka
         }
 
         delete this->conf_;
+    }
+
+    std::string Endpoint::profile_name() const
+    {
+        return this->channel_name();
     }
 
     void Endpoint::initialize()
@@ -157,23 +161,20 @@ namespace core::kafka
         switch (result)
         {
         case RdKafka::Conf::CONF_OK:
-            logf_debug("Applied Kafka profile %r setting: %s = %r",
-                       this->profile_name(),
+            logf_debug("Applied Kafka setting: %s = %r",
                        key,
                        value);
             break;
 
         case RdKafka::Conf::CONF_INVALID:
-            logf_error("Invalid Kakfa profile %r setting: %s = %r: %s",
-                       this->profile_name(),
+            logf_error("Invalid Kakfa setting: %s = %r: %s",
                        key,
                        value,
                        errstr);
             break;
 
         case RdKafka::Conf::CONF_UNKNOWN:
-            logf_error("Unknown Kakfa profile %r setting: %s = %r: %s",
-                       this->profile_name(),
+            logf_error("Unknown Kakfa setting: %s = %r: %s",
                        key,
                        value,
                        errstr);

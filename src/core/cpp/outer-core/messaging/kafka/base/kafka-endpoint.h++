@@ -25,11 +25,13 @@ namespace core::kafka
 
     protected:
         Endpoint(const std::string &endpoint_type,
-                 const std::string &service_name,
                  const std::string &profile_name,
                  const core::types::KeyValueMap &settings);
 
         ~Endpoint();
+
+    public:
+        std::string profile_name() const;
 
     protected:
         void initialize() override;

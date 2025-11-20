@@ -18,8 +18,7 @@ namespace core::kafka
         using Super = Endpoint;
 
     protected:
-        Producer(const std::string &service_name,
-                 const std::string &profile_name = {},
+        Producer(const std::string &profile_name,
                  const core::types::KeyValueMap &settings = {});
         ~Producer();
 

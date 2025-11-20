@@ -1,14 +1,29 @@
 # -*- yaml -*-
 #==============================================================================
-## @file rest-services-common.yaml
+## @file rest-endpoints-common.yaml
 ## @brief REST API service settings for core applications
 ## @author Tor Slettnes <tor@slett.net>
 #==============================================================================
 
-# Default endpoints for common applications. In addtiion to these, settings
-# for product-specific applications can be found in
-# `rest-services-PRODUCT_NAME.yaml`, where PRODUCT_NAME is provided at
-# build time.
+# Default endpoint settings for gRPC services. Endpoint settings are obtained
+# and merged in from the following settings files, in order:
+#
+#  - `rest-endpoints-*SERVICE_NAME*.yaml` where *SERVICE_NAME* is the name given
+#    to the language-specific endpoint constructor, converted to lowercase and
+#    with dashes replacing whitespace (e.g. `example-service`).
+#
+#  - `rest-endpoints-*PRODUCT_NAME*.yaml` where *PRODUCT_NAME* is the name of
+#    the product flavor being built, converted to lowercase.
+#
+#  - `rest-endpoints-*PROJECT_NAME*.yaml` where *PROJECT_NAME* is the name of
+#    the top-level code project being built, converted to lowercase
+#    (e.g. `common-core` or the parent project in which this is a submodule).
+#
+#  - `rest-endpoints-common.yaml`, this file.
+#
+# Within the merged SettingsStore object, settings for a specific service are
+# first obtained from within the corresponding *SERVICE_NAME* section, then
+# additional defaults are merged in from the `_default_` section, below.
 #
 # The syntax for the user-provided service address (URL) for both the C++
 # and Python gRPC wrappers is as follows:
