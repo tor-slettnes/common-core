@@ -55,8 +55,7 @@ class LogBase:
         this class.
         '''
         if self._log_name is None:
-            #self._log_name = self.module_name(hops=2)
-            self._log_name = self.__module__
+            self._log_name = self.package_name(hops=2)
 
         return self._log_name
 
@@ -67,11 +66,11 @@ class LogBase:
         '''
         self._log_name = log_name
 
-    def module_name(self, hops=1):
+    def package_name(self, hops=1):
         try:
-            return inspect.stack()[hops+1].frame.f_globals['__name__']
+            return inspect.stack()[hops+1].frame.f_globals['__package__']
         except (IndexError, KeyError):
-            return self.__module__
+            return '.'.join(self.__module__.split('.')[:-1])
 
     @classmethod
     def threshold_setting(cls, log_name: str) -> int|None:
