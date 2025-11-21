@@ -34,6 +34,8 @@ class Client (BaseClient, API, ThreadedSubmitter):
             log_level           : int = logging.NOTSET,
             wait_for_ready      : bool = False,
             queue_size          : int = 4096,
+            product_name        : str|None = None,
+            project_name        : str|None = None,
     ):
         '''
         Initializer.
@@ -61,12 +63,22 @@ class Client (BaseClient, API, ThreadedSubmitter):
 
         @param overflow_disposition
             Controls behavior when a new message is captured by the submit queue is full.
+
+        @param product_name
+            Name of the product, used to locate corresponding settings files
+            (e.g. `grpc-endpoints-PRODUCT.yaml`).
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to locate
+            corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
         '''
 
         BaseClient.__init__(
             self,
             host = host,
-            wait_for_ready = wait_for_ready)
+            wait_for_ready = wait_for_ready,
+            product_name = product_name,
+            project_name = project_name)
 
         API.__init__(
             self,

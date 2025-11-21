@@ -98,7 +98,7 @@ class Client (Requester):
 
     def receive_response_param(self) -> Parameter:
         reply = self.receive_reply()
-        if reply.status.code == StatusCode.STATUS_OK:
+        if reply.status.code == StatusCode.OK:
             return reply.param
         else:
             raise Error(reply.status.code, reply.status.details) from None

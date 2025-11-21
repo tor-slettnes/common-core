@@ -36,8 +36,8 @@ class Endpoint (EndpointBase):
                  channel_name: str,
                  socket_type : zmq.SocketType,
                  role        : Role = Role.UNDEFINED,
-                 project_name: str|None,
-                 product_name: str|None,
+                 product_name: str|None = None,
+                 project_name: str|None = None,
                  ):
         '''
         Initializer.
@@ -66,14 +66,13 @@ class Endpoint (EndpointBase):
             or remote) peer.  If not provided, an explicit call to `bind()` or
             `connect()` will be required in order to communicate with peers.
 
-        @param project_name
-            Name of code project (e.g. parent code repository). Used to look up
-            endpoint settings.
-
         @param product_name
-            Name of the overall code project, used to locate corresponding
-            settings files (e.g. `zmq-endpoints-PROJECT.yaml`), in addition to
-            `"common"`.
+            Name of the product, used to locate corresponding settings files
+            (e.g. `zmq-endpoints-PRODUCT.yaml`).
+
+        @param project_name
+            Name of code project (e.g. parent code repository), used to locate
+            corresponding settings files (e.g. `zmq-endpoints-PROJECT.yaml`)
         '''
 
         EndpointBase.__init__(self,

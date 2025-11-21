@@ -41,8 +41,8 @@ class Endpoint (LogBase):
 
     def __init__(self,
                  channel_name: str|None = None,
-                 project_name: str|None = None,
-                 product_name: str|None = None):
+                 product_name: str|None = None,
+                 project_name: str|None = None):
 
         '''
         Initializer.  Parameters:
@@ -51,14 +51,14 @@ class Endpoint (LogBase):
             Messaging channel name, e.g. gRPC service name. Use to look up
             endpoint settings.
 
-        @param project_name
-            Name of code project (e.g. parent code repository). Used to look up
-            endpoint settings.
-
         @param product_name
             Name of overall product. Used to look up endpoint settings.
             (Since this is Python, it must be provided as a runtime argument
             rather than a pre-built default).
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to look up
+            endpoint settings.
         '''
 
 
@@ -69,11 +69,11 @@ class Endpoint (LogBase):
                 "Messaging Endpoint subclass %s.%s should set 'channel_name' -- see %s"%\
                 (type(self).__module__, type(self).__name__, __file__)
 
-        if project_name is not None:
-            self.project_name = project_name
-
         if product_name is not None:
             self.product_name = product_name
+
+        if project_name is not None:
+            self.project_name = project_name
 
         settings_scopes = (
             self.channel_name,

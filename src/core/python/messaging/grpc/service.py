@@ -66,8 +66,8 @@ class Service (Base):
 
     def __init__(self,
                  bind_address: str ="",
-                 project_name: str|None = None,
                  product_name: str|None = None,
+                 project_name: str|None = None,
                  ):
 
         '''
@@ -87,18 +87,20 @@ class Service (Base):
            the server will listen bind to port 8080 on all available network
            interfaces.
 
-        @param project_name
-            Name of code project (e.g. parent code repository). Used to look up
-            endpoint settings.
 
         @param product_name
-            Name of overall product. Used to look up endpoint settings.
+            Name of the product, used to locate corresponding settings files
+            (e.g. `grpc-endpoints-PRODUCT.yaml`).
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to locate
+            corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
         '''
 
         Base.__init__(self,
                       service_name = self.service_name or self._service_name(),
-                      project_name = project_name,
-                      product_name = product_name)
+                      product_name = product_name,
+                      project_name = project_name)
 
         self.bind_address = self.realaddress(bind_address, "interface", "port", "[::]", 8080)
 

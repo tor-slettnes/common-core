@@ -22,14 +22,30 @@ class Client (SwitchboardBase, SignalClient):
 
     def __init__(self,
                  host: str = "",
-                 wait_for_ready: bool = True):
+                 wait_for_ready: bool = True,
+                 product_name: str|None = None,
+                 project_name: str|None = None,
+                 ):
         '''
-        @param host:
+        @param host
             IP address or resolvable host name of platform server
+
+        @param product_name
+            Name of the product, used to locate corresponding settings files
+            (e.g. `grpc-endpoints-PRODUCT.yaml`).
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to locate
+            corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
         '''
 
         SwitchboardBase.__init__(self)
-        SignalClient.__init__(self, host = host, wait_for_ready = wait_for_ready)
+        SignalClient.__init__(self,
+                              host = host,
+                              wait_for_ready = wait_for_ready,
+                              product_name = product_name,
+                              project_name = project_name)
+
         self.start_watching(watch_all=True)
 
     def _new_switch(self, switch_name: str) -> RemoteSwitch:

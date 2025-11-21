@@ -31,6 +31,7 @@ class Server (Responder):
                  bind_address    : str,
                  channel_name    : str|None,
                  product_name    : str|None = None,
+                 project_name    : str|None = None,
                  role            : Endpoint.Role = Endpoint.Role.HOST,
                  request_handlers: Sequence[RequestHandler] = [],
                  ):
@@ -40,6 +41,7 @@ class Server (Responder):
             bind_address = bind_address,
             channel_name = channel_name,
             product_name = product_name,
+            project_name = project_name,
             role = role)
 
         self.request_handlers = dict([(handler.interface_name, handler)
@@ -54,7 +56,7 @@ class Server (Responder):
             self.logger.warning('ZMQ RPC server failed to decode ProtoBuf request: %s'%
                             (binary_request,))
 
-            Error(StatusCode.STATUS_INVALID,
+            Error(StatusCode.INVALID,
                   Event(
                       text = str(e),
                       symbol = type(e).__name__,
@@ -85,7 +87,7 @@ class Server (Responder):
         try:
             handler = self.request_handlers[request.interface_name]
         except KeyError:
-            Error(StatusCode.STATUS_INVALID,
+            Error(StatusCode.INVALID,
                   Event(
                       text = "No such RPC interface",
                       symbol = 'KeyError',

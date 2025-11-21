@@ -157,50 +157,51 @@ class SignalClient (Client):
                  signal_store : SignalStore = None,
                  watch_all: bool = False,
                  use_cache: bool = True,
-                 project_name: str|None = None,
                  product_name: str|None = None,
+                 project_name: str|None = None,
                  **kwargs):
         '''
         Initialize this signal client instance.
 
-        @param host:
+        @param host
             IP address or resolvable host name of platform server
 
-        @param wait_for_ready:
+        @param wait_for_ready
             If a connection attempt fails, keep retrying until successful.
             This value may be overriden per call.
 
-        @param use_asyncio:
+        @param use_asyncio
             Use Python AsyncIO.  Effectively this performs calls within a
             `grpc.aio.Channel` instance, rather than the default `grpc.Channel`.
             Additionally, the `call()` method uses AsyncIO semantics to capture
             any exceptions.
 
-        @param signal_store:
+        @param signal_store
             Use an existing `SignalStore()` instance instead of creating a new
             one.  This can be useful if signals are (received and) emitted from
             both this client and other parts of your code, for instance other
             messaging endpoints.  If not provided, the `signal_type` class
             attribute must be overridden to a suitable ProtoBuf `Signal` type.
 
-        @param watch_all:
+        @param watch_all
             Watch all signals (specify an empty filter to server), even if
             not connected to slots. This is useful in order to populate the
             local signal cache, which can later be queried. A side effect
             is that the watching thread automatically starts once instantiated.
 
-        @param use_cache:
+        @param use_cache
             Retain the most recent data value of each signal received from the
             server.  If the signal includes a `key` field (i.e., if it is a
             `MappingSignal` instance), keep the most recent data value per key.
             These values can later be queried using `get_cached_map()`.
 
-        @param project_name
-            Name of code project (e.g. parent code repository). Used to look up
-            endpoint settings.
-
         @param product_name
-            Name of overall product. Used to look up endpoint settings.
+            Name of the product, used to locate corresponding settings files
+            (e.g. `grpc-endpoints-PRODUCT.yaml`).
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to locate
+            corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
         '''
 
         if signal_store:
@@ -219,8 +220,8 @@ class SignalClient (Client):
         Client.__init__(self, host,
                         wait_for_ready = wait_for_ready,
                         use_asyncio = use_asyncio,
-                        project_name = project_name,
                         product_name = product_name,
+                        project_name = project_name,
                         **kwargs)
 
         self.reader = (ThreadReader, AsyncReader)[self.use_asyncio]()

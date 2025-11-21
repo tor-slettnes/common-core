@@ -37,10 +37,47 @@ class Client (API, SignalClient):
     #signal_type = Signal
 
     def __init__(self,
-                 host           : str = "",      # gRPC server
-                 identity       : str = None,    # Greeter identity
-                 wait_for_ready : bool = False,  # Keep trying to connect
-                 use_asyncio    : bool = False): # Use Python AsyncIO semantics
+                 host           : str = "",        # gRPC server
+                 identity       : str|None = None, # Greeter identity
+                 wait_for_ready : bool = False,    # Keep trying to connect
+                 use_asyncio    : bool = False,    # Use Python AsyncIO semantics
+                 product_name   : str|None = None, # Short product name
+                 project_name   : str|None = None, # Top-level code project
+                 ):
+
+        '''
+        Initializer.  Parameters:
+
+        @param host
+            Server host and/or port number, in the form `address:port`.
+            `address` may be a hostname or an IPv4 or IPv6 address string.  If
+            either address or host is missing, the default value is obtain from
+            the service settings file (grpc-endpoints-PRODUCT.json).
+
+        @param identity
+            Unique identity of this client, used to construct greetings.
+
+        @param wait_for_ready
+            If a connection attempt fails, keep retrying until successful.
+            This value may be overriden per call.
+
+        @param use_asyncio
+            Use Python AsyncIO.  Effectively this performs calls within a
+            `grpc.aio.Channel` instance, rather than the default `grpc.Channel`.
+            Additionally, the `call()` method uses AsyncIO semantics to capture
+            any exceptions.  If not specified, the default value is obtained
+            from the corresponding `use_asyncio` class variable.
+
+        @param product_name
+            Name of the product, used to locate corresponding settings files
+            (e.g. `grpc-endpoints-PRODUCT.yaml`).
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to locate
+            corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
+        '''
+
+
 
         API.__init__(self, 'Python gRPC client', identity)
         SignalClient.__init__(self,

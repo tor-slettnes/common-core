@@ -86,7 +86,7 @@ class RequestHandler:
         try:
             handler = getattr(self, request.method_name)
         except AttributeError:
-            Error(StatusCode.STATUS_INVALID,
+            Error(StatusCode.INVALID,
                   Event(text = 'Requested method not found',
                         symbol = 'NotFound',
                         attributes = keyValueMap(
@@ -114,7 +114,7 @@ class RequestHandler:
             self._invoke_handler(handler, (), reply)
 
         except (KeyError, IndexError, AttributeError):
-            Error(StatusCode.STATUS_FAILED,
+            Error(StatusCode.FAILED,
                   Event(
                       text = "Handler method does not have an input argument "
                       "with a ProtoBuf message annotation",
@@ -139,7 +139,7 @@ class RequestHandler:
         try:
             result = handler(*args)
         except Exception as e:
-            Error(StatusCode.STATUS_FAILED,
+            Error(StatusCode.FAILED,
                   Event(text = str(e),
                         symbol = type(e).__name__,
                         attributes = keyValueMap(

@@ -24,10 +24,21 @@ class AsyncClient (SwitchboardBase, SignalClient):
     def __init__(self,
                  host: str = "",
                  wait_for_ready: bool = True,
-                 watch_all: bool = True):
+                 watch_all: bool = True,
+                 product_name: str|None = None,
+                 project_name: str|None = None,
+                 ):
         '''
         @param host:
             IP address or resolvable host name of platform server
+
+        @param product_name
+            Name of the product, used to locate corresponding settings files
+            (e.g. `grpc-endpoints-PRODUCT.yaml`).
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to locate
+            corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
         '''
 
         SwitchboardBase.__init__(self)

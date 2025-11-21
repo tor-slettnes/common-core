@@ -30,8 +30,8 @@ class SignalService (Service):
                  signal_store   : SignalStore,
                  bind_address   : str = "",
                  max_queue_size : Optional[int] = 256,
-                 project_name: str|None = None,
                  product_name   : str|None = None,
+                 project_name   : str|None = None,
                  ):
         '''
         param[in] signal_store
@@ -45,12 +45,20 @@ class SignalService (Service):
         param[in] max_queue_size
            Max size of queue that will hold locally-emitted signals until
            they are streamed back to the client.  None means unlimited.
+
+        @param product_name
+            Name of the product, used to locate corresponding settings files
+            (e.g. `grpc-endpoints-PRODUCT.yaml`).
+
+        @param project_name
+            Name of code project (e.g. parent code repository). Used to locate
+            corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
         '''
 
         Service.__init__ (self,
                           bind_address = bind_address,
-                          project_name = project_name,
-                          product_name = product_name)
+                          product_name = product_name,
+                          project_name = project_name)
 
         self.signal_store = signal_store
         self.max_queue_size = max_queue_size

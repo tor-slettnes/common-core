@@ -36,8 +36,8 @@ class Base (Endpoint):
 
     def __init__(self,
                  service_name: str|None = None,
-                 project_name: str|None = None,
                  product_name: str|None = None,
+                 project_name: str|None = None,
                  ):
 
         if service_name is not None:
@@ -49,8 +49,8 @@ class Base (Endpoint):
 
         Endpoint.__init__(self,
                           channel_name = self.service_name,
-                          project_name = project_name,
-                          product_name = product_name)
+                          product_name = product_name,
+                          project_name = project_name)
 
     def max_request_size(self) -> Optional[str]:
         return self.setting("max request size", None)
