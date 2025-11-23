@@ -8,7 +8,8 @@
 ### Modules within package
 from .client  import Client
 from .client_reader import ThreadReader, AsyncReader
-from cc.protobuf.signal import SignalStore, CachingSignalStore, Slot, Filter
+from cc.protobuf.signal import SignalStore, CachingSignalStore, \
+    SignalMessage, Slot, Filter
 
 from typing import Callable, Sequence, Optional
 
@@ -152,9 +153,10 @@ class SignalClient (Client):
 
     def __init__(self,
                  host: Optional[str] = None,
-                 wait_for_ready : bool = False,
-                 use_asyncio : bool = False,
-                 signal_store : SignalStore = None,
+                 wait_for_ready: bool = False,
+                 use_asyncio: bool = False,
+                 signal_store: SignalStore|None = None,
+                 signal_type: SignalMessage|None = None,
                  watch_all: bool = False,
                  use_cache: bool = True,
                  product_name: str|None = None,
@@ -180,20 +182,28 @@ class SignalClient (Client):
             Use an existing `SignalStore()` instance instead of creating a new
             one.  This can be useful if signals are (received and) emitted from
             both this client and other parts of your code, for instance other
-            messaging endpoints.  If not provided, the `signal_type` class
-            attribute must be overridden to a suitable ProtoBuf `Signal` type.
+            messaging endpoints.  This argument may also be provided as a class
+            attribute.  If both are missing, `signal_type` must be provided.
+
+        @param signal_type
+            If `signal_store` is not provided, create a new `SignalStore` or
+            `CachedSignalStore` instance (depending on the `use_cache` input)
+            using this ProtoBuf message type as its signal type.  This argument
+            may also be provided as a class attribute.
+
+        @param use_cache
+            If creating a new `SignalStore` instance (i.e. if `signal_store` is
+            not provided), use the derived `CachedSignalStore` type. This
+            retains the most recent data value of each signal received from the
+            server.  If the signal includes a `key` field (i.e., if it is a
+            `MappingSignal` instance), keep the most recent data value per key.
+            These values can later be queried using `get_cached_map()`.
 
         @param watch_all
             Watch all signals (specify an empty filter to server), even if
             not connected to slots. This is useful in order to populate the
             local signal cache, which can later be queried. A side effect
             is that the watching thread automatically starts once instantiated.
-
-        @param use_cache
-            Retain the most recent data value of each signal received from the
-            server.  If the signal includes a `key` field (i.e., if it is a
-            `MappingSignal` instance), keep the most recent data value per key.
-            These values can later be queried using `get_cached_map()`.
 
         @param product_name
             Name of the product, used to locate corresponding settings files
@@ -208,14 +218,16 @@ class SignalClient (Client):
             self.signal_store = signal_store
 
         elif not self.signal_store:
-            assert self.signal_type is not None, \
-                   ('SignalClient() subclass %s() must either pass in a '
-                    '`SignalStore()` instance or set the `signal_type`'
-                    'class variable to an appropriate ProtoBuf Signal() type'%
-                    (type(self).__name__))
+            if signal_type is None:
+                signal_type = self.signal_type
+
+            assert signal_type is not None, (
+                'SignalClient() subclass %s() must either pass in a '
+                '`SignalStore()` instance or specify `signal_type`.' %
+                (type(self).__name__,))
 
             store_type = CachingSignalStore if use_cache else SignalStore
-            self.signal_store = store_type(signal_type = self.signal_type)
+            self.signal_store = store_type(signal_type = signal_type)
 
         Client.__init__(self, host,
                         wait_for_ready = wait_for_ready,
