@@ -59,4 +59,5 @@ _topic_ in a pub/sub scheme).  An empty `Filter` means listen for all signal
 events.
 '''
 
-from .signalstore import MappingAction, Filter, Signal, Slot, SignalStore
+from .signalstore import MappingAction, Filter, SignalMessage, Slot, SignalStore
+from .cachingsignalstore import CachingSignalStore

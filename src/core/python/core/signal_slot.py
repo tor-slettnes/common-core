@@ -20,7 +20,7 @@ SignalSlot  = Callable[[Any], None]
 
 
 #===============================================================================
-# SignalStore class
+# DataSignal class
 
 class DataSignal (object):
 

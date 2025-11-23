@@ -581,8 +581,9 @@ class SignalClient (cc.messaging.grpc.SignalClient, Client):
     information in the local signal cache.
     '''
 
-    ## `signal_type` is used to construct a `cc.protobuf.SignalStore` instance,
-    ## which serves as a clearing house for emitting and receiving messages.
+    ## `signal_type` is used to construct a `cc.protobuf.signal.SignalStore`
+    ## instance, which serves as a clearing house for emitting and receiving
+    ## messages.
     signal_type = Signal
 
     def __init__(self, *args, **kwargs):

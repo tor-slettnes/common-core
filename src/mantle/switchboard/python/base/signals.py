@@ -5,10 +5,10 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from cc.protobuf.signal import SignalStore
+from cc.protobuf.signal import CachingSignalStore
 from ..protobuf import Signal
 
 #===============================================================================
 # Signal store to propagate `specification` and `status` signals
 
-switchboard_signals = SignalStore(use_cache=True, signal_type = Signal)
+switchboard_signals = CachingSignalStore(signal_type = Signal)

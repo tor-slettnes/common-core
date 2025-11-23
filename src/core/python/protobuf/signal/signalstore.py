@@ -25,7 +25,7 @@ import asyncio
 # Annotation types
 
 MappingAction = proto_enum(MappingAction)
-Signal = Message
+SignalMessage = Message
 Slot = Callable[[Message], None]
 
 #===============================================================================
@@ -95,15 +95,6 @@ class SignalStore:
     To emit a mapping signal, use the `emit_mapping()` method, below.  At
     present, only a single mapping key is supported, and it must be a string.
 
-    Finally, this implementation can optionally cache the latest emission of
-    each signal -- or in the case of mapping signals, the latest emission for
-    each key/value pair in the map.  This cache is subsequently replayed when
-    new consumer invokes one of the `connect*()` methods.  Effectively this
-    eliminates the "late subscriber" issue, where the consumer would otherwise
-    have to make explicit out-of-band queries to obtain the current state or
-    data set.  (This should however not be used for stateful controls, where the
-    consumer takes stateful actions based on received signals, because the
-    action would be repeated after any and all disconnect/reconnnect cycles).
     '''
 
     ## `signal_type` should be set in the final subclass, and is used to decode
@@ -111,19 +102,9 @@ class SignalStore:
     signal_type = None
 
 
-    def __init__(self,
-                 use_cache   : bool = False,
-                 signal_type : type = None):
-
+    def __init__(self, signal_type : type = None):
         '''
         Instance initialization.
-
-        If `use_cache` is set, cache the latest emitted instance of each signal.
-        These are then replayed in response to any future `connect_signal()` or
-        `connect_all()` invocations by invoking the corresponding callback
-        methods.  In the case of mapping signals (see the `SignalStore` class
-        description), the callback handler is invoked once for every key/value
-        pair currently in the cache.
 
         The `signal_type` argument specifies what ProtoBuf message type to use
         to store/propagate signals.  This type should at minium contain a
@@ -135,10 +116,9 @@ class SignalStore:
         if signal_type:
             self.signal_type = signal_type
 
-        self.init_signals(use_cache)
+        self.init_signals()
 
-    def init_signals(self,
-                     use_cache: bool):
+    def init_signals(self):
 
         assert self.signal_type,\
             ("%s instance must define `signal_type`, either by "
@@ -149,16 +129,7 @@ class SignalStore:
             'Signal type must be derived from %s, not %s'% \
             (Message.__name__, self.signal_type)
 
-        self.slots                = {}
-        self._completion_event    = threading.Event()
-        self._completion_mutex    = threading.Lock()
-        self._completion_deadline = None
-        self._deadline_expired    = False
-
-        if use_cache:
-            self._cache = {}
-        else:
-            self._cache = None
+        self.slots = {}
 
 
     def descriptor(self):
@@ -216,111 +187,6 @@ class SignalStore:
         selector = msg.DESCRIPTOR.oneofs[0].name
         return msg.WhichOneof(selector) or ""
 
-    def get_cached_map(self,
-                       signalname: str,
-                       wait_complete: bool = True) -> dict[str, Message]:
-        '''
-        Get a specific signal map from the local cache.
-
-        @param signalname:
-            Signal name, corresponding to a field of the Signal message
-            streamed from the server's `watch()` method.
-
-        @param wait_complete
-            If the specified signal does not yet exist in the local cache, wait
-            until a initial completion event has been received from the server.
-
-        @exception KeyError
-            The specified `signalname` is not known
-
-        @returns
-            The cached value map, or None if the specified mapping signal has
-            yet not been received.
-        '''
-
-        signal_map = self.get_cached_mapping_signals(signalname, wait_complete)
-        return {key: getattr(value, signalname) for (key, value) in signal_map.items()}
-
-
-    def get_cached_mapping_signals(self,
-                                   signalname: str,
-                                   wait_complete: bool = True) -> dict[str, Signal]:
-        '''
-        Get a specific signal map from the local cache.
-
-        @param signalname
-            Signal name, corresponding to a field of the Signal message
-            streamed from the server's `watch()` method.
-
-        @param wait_complete
-            If the specified signal does not yet exist in the local cache, wait
-            until a initial completion event has been received from the server.
-
-        @exception KeyError
-            The specified `signalname` is not known
-
-        @returns
-            The cached value map, or None if the specified mapping signal has
-            yet not been received.
-        '''
-
-        if self._cache is None:
-            raise RuntimeError("Signal cache is not enabled in %s instance"%
-                               (type(self).__name__,))
-        else:
-            try:
-                return  self._cache[signalname]
-            except KeyError:
-                if signalname in self.signal_fields():
-                    if wait_complete:
-                        self.wait_complete()
-                    return self._cache.get(signalname, {})
-                else:
-                    raise
-
-
-    def get_cached_signal(self,
-                          signalname: str,
-                          mapping_key: str|None = None,
-                          wait_complete: bool = True,
-                          fallback: Message|None = None,
-                          ) -> Message:
-        '''
-        Get a specific signal from the local cache.
-
-        @param signalname
-            Signal name, corresponding to a field of the Signal message
-            streamed from the server's `watch()` method.
-
-        @param mapping_key
-            Mapping key used to look up a specific event within the
-            signal cache.  Leave this as `None` for unmapped signals.
-
-        @param wait_complete
-            If the specified signal does not yet exist in the local cache, wait
-            until a initial completion event has been received from the server.
-
-        @param fallback
-            Value to return if the requested signal has not yet been received.
-            If provided, this will normally be the expected ProtoBuf message
-            type, or an instance thereof.  In the former case, a new empty
-            instance is returned.
-
-        @exception KeyError
-            The specified `signalname` is not known
-
-        @returns
-            The cached value, or None if the specified data signal has yet not
-            been received.
-        '''
-
-        try:
-            signal = self.get_cached_mapping_signals(signalname, wait_complete)[mapping_key]
-        except KeyError:
-            return fallback() if isinstance(fallback, type) else fallback
-        else:
-            return getattr(signal, signalname)
-
 
     def connect_all(self,
                     slot: Slot):
@@ -329,8 +195,6 @@ class SignalStore:
         '''
 
         self.slots.setdefault(None, []).append(slot)
-        for name in self.signal_names():
-            self.emit_cached_to(name, slot)
 
 
     def disconnect_all(self,
@@ -375,7 +239,6 @@ class SignalStore:
             "Message type %s does not have a %r field"%(self.signal_type.__name__, name)
 
         self.slots.setdefault(name, []).append(slot)
-        self.emit_cached_to(name, slot)
 
 
     def disconnect_signal(self,
@@ -470,46 +333,6 @@ class SignalStore:
         self.disconnect_signal(name, _slot)
 
 
-    def wait_complete(self) -> bool:
-        '''
-        Wait until a initial completion event has been received from the
-        server to ensure the local cache is complete before proceeding.
-
-        Note that it is not usually necessary to invoke this method in order to
-        obtain values from the local cache, because the `get_cached_map()` method
-        implicitly waits for the specified signal map to be completed before
-        proceeding.
-        '''
-
-        if self._completion_event.is_set():
-            return True
-
-        else:
-            if self._completion_deadline and not self._deadline_expired:
-                remaining = self._completion_deadline - time.time()
-                if remaining > 0:
-                    self._deadline_expired = not self._completion_event.wait(remaining)
-
-            return self._completion_event.is_set()
-
-
-    def emit_cached_to(self, signal_name: str, slot: Slot):
-        '''
-        Emit a cached (previously emitted) signal to a specific slot/receiver.
-        '''
-
-        if self._cache:
-            mapped = False
-            for key, signal in self.get_cached_mapping_signals(signal_name).items():
-                self._emit_to(signal_name, slot, signal)
-                mapped = bool(key)
-
-            ## Once the cache is exhausted, emit an empty signal
-            ## to indicate that intialization is complete.
-            if mapped:
-                self._emit_to(signal_name, slot, self.signal_type())
-
-
     def emit(self, msg: Message):
         '''
         Emit a preconstructed `Signal` message to connected slots, i.e.
@@ -524,12 +347,8 @@ class SignalStore:
             `mapping_action` and `mapping_key` as described above).
         '''
 
-        action, key = self._mapping_controls(msg);
-        signal_name = self.signal_name(msg)
-
-        if signal_name:
-            if isinstance(self._cache, dict):
-                self._update_cache(signal_name, action, key, msg)
+        if signal_name := self.signal_name(msg):
+            action, key = self._mapping_controls(msg);
 
             ## Invoke each slot that was connected to this signal by name
             for callback in self.slots.get(signal_name, []):
@@ -538,9 +357,6 @@ class SignalStore:
             ## Invoke each slot that was connected to `all` signals
             for callback in self.slots.get(None, []):
                 self._emit_to(signal_name, callback, msg)
-
-        if action == MappingAction.NONE:
-            self._completion_event.set()
 
     def emit_event(self,
                    signal_name : str,
@@ -558,62 +374,18 @@ class SignalStore:
                      signal_name  : str,
                      action       : MappingAction,
                      key          : str,
-                     value        : Message,
-                     unconditional: bool = False):
+                     value        : Message):
         '''
         Construct and emit a `Signal` message as described above, with
-          - `mapping_key` set to `key`
-          - `mapping_action` set to `action`
-          - the field indicated by `signal_name` set to `value`.
+         * `mapping_key` set to `key`
+         * `mapping_action` set to `action`
+         * the field indicated by `signal_name` set to `value`.
         '''
 
-        if key and not action:
-            cached_value = self.get_cached_signal(signal_name, key, wait_complete=False)
-
-            action = (
-                MappingAction.NONE if self.is_empty(value) and self.is_empty(cached_value)
-                else MappingAction.REMOVAL if self.is_empty(value)
-                else MappingAction.ADDITION if self.is_empty(cached_value)
-                else MappingAction.UPDATE if value != cached_value
-                else MappingAction.NONE
-            )
-
-        if action:
-            signal = self.signal_type(mapping_action = action,
-                                      mapping_key = key,
-                                      **{signal_name: value})
-            self.emit(signal)
-
-
-    def emit_map_update(self,
-                        signal_name : str,
-                        updated_map : dict[str, Message],
-                        empty_value: Message|None = None):
-        '''
-        Construct and emit multiple mapping signals as required to bring the
-        signal cache in sync with `updated_map`.
-
-        If `empty_value` is provided, this will be used instead of the
-        currently-cached value for REMOVAL signals.
-        '''
-
-        current_map = self.get_cached_map(signal_name, False)
-        for key, current_value in current_map.items():
-            if not key in updated_map:
-                self.emit_mapping(
-                    signal_name,
-                    action = MappingAction.REMOVAL,
-                    key = key,
-                    value = (current_value if empty_value is None
-                             else empty_value))
-
-        for key, updated_value in updated_map.items():
-            self.emit_mapping(
-                signal_name,
-                action = None,
-                key = key,
-                value = updated_value)
-
+        signal = self.signal_type(mapping_action = action,
+                                  mapping_key = key,
+                                  **{signal_name: value})
+        self.emit(signal)
 
 
     @classmethod
@@ -631,20 +403,12 @@ class SignalStore:
     def is_empty(cls, value: Message|None):
         return not value or (value.ByteSize() == 0)
 
-    def _update_cache(self, signalname, action, key, msg):
-        datamap = self._cache.setdefault(signalname, {})
-        if action == MappingAction.REMOVAL:
-            datamap.pop(key, None)
-        else:
-            #datamap[key] = getattr(msg, signalname)
-            datamap[key] = msg
-
     def _emit_to(self,
                  signal_name : str,
                  slot: Slot,
-                 signal: Signal):
-        action, key = self._mapping_controls(signal)
+                 signal: SignalMessage):
 
+        action, key = self._mapping_controls(signal)
         result = safe_invoke(slot,
                              (signal,),
                              {},
@@ -656,7 +420,7 @@ class SignalStore:
         if asyncio.iscoroutine(result):
             asyncio.create_task(result)
 
-    def _mapping_controls(self, signal: Message) -> tuple[MappingAction, str]:
+    def _mapping_controls(self, signal: SignalMessage) -> tuple[MappingAction, str]:
         try:
             action = MappingAction(signal.mapping_action)
             key = signal.mapping_key or None

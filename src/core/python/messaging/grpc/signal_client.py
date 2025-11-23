@@ -8,7 +8,7 @@
 ### Modules within package
 from .client  import Client
 from .client_reader import ThreadReader, AsyncReader
-from cc.protobuf.signal import SignalStore, Slot, Filter
+from cc.protobuf.signal import SignalStore, CachingSignalStore, Slot, Filter
 
 from typing import Callable, Sequence, Optional
 
@@ -78,7 +78,7 @@ class SignalClient (Client):
            def __init__ (self, *args, **kwargs):
                SignalClient.__init__(self, *args, **kwargs)
 
-       my_signal_store = cc.protobuf.signal.SignalStore(signal_type = MySignal)
+       my_signal_store = cc.protobuf.signal.CachingSignalStore(signal_type = MySignal)
        my_service_client = MyServiceClient(signal_store = my_signal_store)
        ```
 
@@ -214,8 +214,8 @@ class SignalClient (Client):
                     'class variable to an appropriate ProtoBuf Signal() type'%
                     (type(self).__name__))
 
-            self.signal_store = SignalStore(signal_type = self.signal_type,
-                                            use_cache = use_cache)
+            store_type = CachingSignalStore if use_cache else SignalStore
+            self.signal_store = store_type(signal_type = self.signal_type)
 
         Client.__init__(self, host,
                         wait_for_ready = wait_for_ready,
@@ -280,7 +280,7 @@ class SignalClient (Client):
         This spawns a new thread (or task if using AsyncIO) to stream signal
         messages from the service.  Specifically, it invokes the `watch()` RPC
         method to stream back Signal messages, which are then passed on to the
-        `messaging.base.SignalStore()` instance that was provided to this
+        `cc.protobuf.signal.SignalStore()` instance that was provided to this
         client.  From there they are emitted locally.
         '''
 
