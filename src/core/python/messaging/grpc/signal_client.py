@@ -241,15 +241,6 @@ class SignalClient (Client):
             self.start_watching(True)
 
 
-    def signal_filter(self, watch_all):
-        if watch_all:
-            return Filter()
-        else:
-            indexmap   = self.signal_store.signal_fields()
-            indices    = [indexmap.get(slot) for slot in self.signal_store.slots]
-            return Filter(polarity=True, index=filter(None, indices))
-
-
     def start_notify_signals(self,
                              callback: Slot,
                              signals: Sequence[str]|None = None):
@@ -297,7 +288,7 @@ class SignalClient (Client):
         '''
 
         if not self.reader.active():
-            stream = self.watch(self.signal_filter(watch_all))
+            stream = self.watch(self.signal_store.signal_filter(watch_all))
             return self.reader.start(stream, self.signal_store.emit)
 
     def stop_watching(self):

@@ -7,6 +7,10 @@ such as gRPC, thereby emulating the pub/sub pattern.
 docformat = 'javadoc en'
 author = 'Tor Slettnes'
 
+### Standard Python modules
+from typing import Optional, Callable, Mapping, Union, Sequence
+import threading
+import asyncio
 
 ### Modules withn package
 from ...core.invocation import safe_invoke
@@ -15,11 +19,8 @@ from .signal_pb2 import Filter, MappingAction
 
 ### Third-party modules
 from google.protobuf.message import Message
+from google.protobuf.descriptor import Descriptor, FieldDescriptor
 
-### Standard Python modules
-from typing import Optional, Callable, Mapping, Union
-import threading
-import asyncio
 
 #===============================================================================
 # Annotation types
@@ -101,6 +102,8 @@ class SignalStore:
     ##  ProtoBuf messages streamed back from the server's `watch()` method.
     signal_type = None
 
+    ## Wildcard used to connect to all signals
+    ALL_SIGNALS = '*'
 
     def __init__(self, signal_type : type = None):
         '''
@@ -132,9 +135,19 @@ class SignalStore:
         self.slots = {}
 
 
-    def descriptor(self):
+    def descriptor(self) -> Descriptor:
+        '''
+        Return the ProtoBuf message descriptor for the underlying Signal
+        message associated with this store instance.
+        '''
         return self.signal_type.DESCRIPTOR
 
+    def signal_fields(self) -> Sequence[FieldDescriptor]:
+        '''
+        Return the ProtoBuf field descriptors for each signal field within
+        the underlying Signal message associated with this store instance.
+        '''
+        return self.descriptor().oneofs[0].fields
 
     def field_name(self, fieldnumber: int) -> str:
         '''
@@ -165,28 +178,45 @@ class SignalStore:
 
         return self.descriptor().fields_by_name[signalname].number
 
-    def signal_fields(self) -> dict:
+    def signal_field_numbers(self, filter: Filter = Filter()) -> dict[str, int]:
         '''
         Return a dictionary of signal names to corresponding field numbers
         within the protobuf Signal message
+
+        @param filter
+            Optional field selection
         '''
 
-        items = [(f.name, f.number)
-                 for f in self.descriptor().oneofs[0].fields]
+        polarity = bool(filter.polarity)
+        indices  = set(filter.indices)
 
-        return dict(items)
+        return {f.name: f.number
+                for f in self.descriptor().oneofs[0].fields
+                if polarity == (f.number in indices)}
 
-    def signal_names(self) -> list:
+    def signal_names(self, filter: Filter = Filter()) -> list[str]:
         '''
-        Return a list of signal/slot names in the protobuf Signal message
-        for this service.
-        '''
-        return [f.name for f in self.descriptor().oneofs[0].fields]
+        Return a list of signal/slot names in the ProtoBuf Signal message
+        for this store.
 
-    def signal_name(self, msg):
+        @param filter
+            Optional field selection
+        '''
+        polarity = bool(filter.polarity)
+        indices  = set(filter.indices)
+
+        return [f.name
+                for f in self.descriptor().oneofs[0].fields
+                if polarity == (f.number in indices)]
+
+
+    def signal_name(self, msg: SignalMessage):
+        '''
+        Return the name of the signal currently selected within the provided
+        Protobuf Signal message.
+        '''
         selector = msg.DESCRIPTOR.oneofs[0].name
         return msg.WhichOneof(selector) or ""
-
 
     def connect_all(self,
                     slot: Slot):
@@ -194,7 +224,7 @@ class SignalStore:
         Connect a handler to _all_ signals in this store.
         '''
 
-        self.slots.setdefault(None, []).append(slot)
+        self.slots.setdefault(self.ALL_SIGNALS, []).append(slot)
 
 
     def disconnect_all(self,
@@ -206,7 +236,7 @@ class SignalStore:
         if slot:
             self.disconnect_signal(None, slot)
         else:
-            self.slots.pop(None, None)
+            self.slots.pop(self.ALL_SIGNALS, None)
 
 
     def connect_signal(self,
@@ -235,8 +265,10 @@ class SignalStore:
         assert callable(slot), \
             "Slot must be a callable object, like a function"
 
-        assert name in self.signal_names(), \
-            "Message type %s does not have a %r field"%(self.signal_type.__name__, name)
+        if not name in self.signal_names():
+            raise AttributeError(
+                "Message type %s does not have a %r field" %
+                (self.signal_type.__name__, name))
 
         self.slots.setdefault(name, []).append(slot)
 
@@ -301,6 +333,24 @@ class SignalStore:
                             # lambda signal: slot(getattr(signal, name)))
 
 
+    def signal_filter(self, match_all: bool = False) -> Filter:
+        '''
+        Return a ProtoBuf Filter message that may be provided to peer in
+        order to capture applicable Signal messages into this store.
+
+        The filter matches all available signals if `match_all` is True,
+        otherwise it matches signals that are currently connected.
+        '''
+        if match_all or self.ALL_SIGNALS in self.slots:
+            return Filter(polarity=False)
+        else:
+            return Filter(
+                polarity = True,
+                indices = [self.field_number(signal_name)
+                           for signal_name in self.slots
+                           if signal_name is not self.ALL_SIGNALS],
+            )
+
     def _signal_data_callback(self, name, signal, slot):
         try:
             value = getattr(signal, name)
@@ -355,7 +405,7 @@ class SignalStore:
                 self._emit_to(signal_name, callback, msg)
 
             ## Invoke each slot that was connected to `all` signals
-            for callback in self.slots.get(None, []):
+            for callback in self.slots.get(self.ALL_SIGNALS, []):
                 self._emit_to(signal_name, callback, msg)
 
     def emit_event(self,

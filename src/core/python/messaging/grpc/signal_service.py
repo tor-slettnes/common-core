@@ -80,8 +80,7 @@ class SignalService (Service):
         self.last_context = context
 
         try:
-            signals = self.signal_list(request)
-            for signal_name in self.signal_list(request):
+            for signal_name in self.signal_store.signal_names(request):
                 self.signal_store.connect_signal(signal_name, queue.put_nowait)
 
             while msg := queue.get():
@@ -89,12 +88,3 @@ class SignalService (Service):
 
         finally:
             self.signal_store.disconnect_signal(signal_name)
-
-
-    def signal_list(self, signal_filter: Filter):
-        polarity = bool(signal_filter.polarity)
-        requested = set(signal_filter.indices)
-
-        return [f_name
-                for f_name, f_number in self.signal_store.signal_fields().items()
-                if polarity == (f_number in requested)]

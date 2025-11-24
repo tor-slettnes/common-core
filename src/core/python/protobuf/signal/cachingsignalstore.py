@@ -165,7 +165,7 @@ class CachingSignalStore (SignalStore):
 
         if self._cache:
             mapped = False
-            for key, signal in self.get_cached_mapping_signals(signal_name).items():
+            for key, signal in self.get_cached_map(signal_name).items():
                 self._emit_to(signal_name, slot, signal)
                 mapped = bool(key)
 
@@ -175,13 +175,13 @@ class CachingSignalStore (SignalStore):
                 self._emit_to(signal_name, slot, self.signal_type())
 
     def get_cached_map(self,
-                       signalname: str,
+                       signal_name: str,
                        wait_complete: bool = True,
                        ) -> dict[str, Message]:
         '''
         Get a specific signal map from the local cache.
 
-        @param signalname:
+        @param signal_name:
             Signal name, corresponding to a field of the Signal message
             streamed from the server's `watch()` method.
 
@@ -190,19 +190,19 @@ class CachingSignalStore (SignalStore):
             until a initial completion event has been received from the server.
 
         @exception KeyError
-            The specified `signalname` is not known
+            The specified `signal_name` is not known
 
         @returns
             The cached value map, or None if the specified mapping signal has
             yet not been received.
         '''
 
-        signal_map = self.get_cached_signal_messages(signalname, wait_complete)
-        return {key: getattr(value, signalname) for (key, value) in signal_map.items()}
+        signal_map = self.get_cached_signal_messages(signal_name, wait_complete)
+        return {key: getattr(value, signal_name) for (key, value) in signal_map.items()}
 
 
     def get_cached_signal(self,
-                          signalname: str,
+                          signal_name: str,
                           mapping_key: str|None = None,
                           wait_complete: bool = True,
                           fallback: Message|None = None,
@@ -210,7 +210,7 @@ class CachingSignalStore (SignalStore):
         '''
         Get a specific signal from the local cache.
 
-        @param signalname
+        @param signal_name
             Signal name, corresponding to a field of the Signal message
             streamed from the server's `watch()` method.
 
@@ -229,7 +229,7 @@ class CachingSignalStore (SignalStore):
             instance is returned.
 
         @exception KeyError
-            The specified `signalname` is not known
+            The specified `signal_name` is not known
 
         @returns
             The cached value, or None if the specified data signal has yet not
@@ -237,21 +237,21 @@ class CachingSignalStore (SignalStore):
         '''
 
         try:
-            signal = self.get_cached_signal_messages(signalname, wait_complete)[mapping_key]
+            signal = self.get_cached_signal_messages(signal_name, wait_complete)[mapping_key]
         except KeyError:
             return fallback() if isinstance(fallback, type) else fallback
         else:
-            return getattr(signal, signalname)
+            return getattr(signal, signal_name)
 
 
     def get_cached_signal_messages(self,
-                                   signalname: str,
+                                   signal_name: str,
                                    wait_complete: bool = True,
                                    ) -> dict[str, SignalMessage]:
         '''
         Get a specific signal map from the local cache.
 
-        @param signalname
+        @param signal_name
             Signal name, corresponding to a field of the Signal message
             streamed from the server's `watch()` method.
 
@@ -260,7 +260,7 @@ class CachingSignalStore (SignalStore):
             until a initial completion event has been received from the server.
 
         @exception KeyError
-            The specified `signalname` is not known
+            The specified `signal_name` is not known
 
         @returns
             The cached value map, or None if the specified mapping signal has
@@ -268,22 +268,22 @@ class CachingSignalStore (SignalStore):
         '''
 
         try:
-            return  self._cache[signalname]
+            return  self._cache[signal_name]
         except KeyError:
-            if signalname in self.signal_fields():
+            if signal_name in self.descriptor().fields_by_name:
                 if wait_complete:
                     self.wait_complete()
-                return self._cache.get(signalname, {})
+                return self._cache.get(signal_name, {})
             else:
                 raise
 
 
-    def _update_cache(self, signalname, action, key, msg):
-        datamap = self._cache.setdefault(signalname, {})
+    def _update_cache(self, signal_name, action, key, msg):
+        datamap = self._cache.setdefault(signal_name, {})
         if action == MappingAction.REMOVAL:
             datamap.pop(key, None)
         else:
-            #datamap[key] = getattr(msg, signalname)
+            #datamap[key] = getattr(msg, signal_name)
             datamap[key] = msg
 
 
