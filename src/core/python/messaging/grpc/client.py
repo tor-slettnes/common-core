@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within package
-from .base import Base
+from .base import Base, AddressPair
 from .client_interceptor import ClientInterceptor, AsyncClientInterceptor
 from cc.core.invocation import invocation
 
@@ -31,6 +31,9 @@ class Client (Base):
     ## Messaging endpoint type
     endpoint_type = 'client'
 
+    ## Used to look up service address in settings
+    host_option = 'host'
+
     ## Subclasses should set `Stub` to the client stub class imported from
     ## the generated `_pb2_grpc.py` module, e.g.:
     ## ```
@@ -45,7 +48,6 @@ class Client (Base):
 
     ## To use Python AsyncIO semantics, subclasses should set `use_asyncio` flag.
     use_asyncio = False
-
 
     def __init__(self,
                  host: str|None = None,
@@ -101,7 +103,7 @@ class Client (Base):
 
         self.wait_for_ready   = wait_for_ready
         self.intercept_errors = intercept_errors
-        self.host             = self.realaddress(host, "host", "port", "localhost", 8080)
+        self.service_address  = self.realaddress(host, "host", "port", "localhost", 8080)
         self._channel         = None
         self._stub            = None
         self._stub_owner      = None
@@ -129,6 +131,10 @@ class Client (Base):
         return self._stub
 
     @property
+    def host(self) -> str:
+        return self._joinAddress(self.service_address)
+
+    @property
     def channel(self):
         if self._channel is None:
             self._init_channel()
@@ -140,9 +146,6 @@ class Client (Base):
             self._channel = None
 
     def _init_channel(self):
-        # print("PID %s Creating gRPC service channel %r to %s"%
-        #       (os.getpid(), self.channel_name, self.host))
-
         if self.use_asyncio:
             # self._channel = grpc.aio.insecure_channel(target = self.host)
             self._channel = grpc.aio.insecure_channel(

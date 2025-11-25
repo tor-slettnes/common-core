@@ -14,6 +14,7 @@ import re
 import logging
 import os
 import urllib.parse
+from collections import namedtuple
 from typing import Optional
 
 ### Third-party modules
@@ -25,7 +26,12 @@ except ImportError as e:
     logging.critical('Could not import module `grpc` - try installling `python3-grpcio`.')
     raise
 
-#===============================================================================
+#-------------------------------------------------------------------------------
+# Type declarations
+
+AddressPair = namedtuple('AddressPair', ('host', 'port'))
+
+#-------------------------------------------------------------------------------
 # Base class
 
 class Base (Endpoint):
@@ -53,6 +59,7 @@ class Base (Endpoint):
                           product_name = product_name,
                           project_name = project_name)
 
+
     def max_request_size(self) -> Optional[str]:
         return self.setting("max request size", None)
 
@@ -62,12 +69,13 @@ class Base (Endpoint):
     def peer(self, context: grpc.RpcContext) -> str:
         return urllib.parse.unquote(context.peer())
 
+
     def realaddress(self,
                      provided        : Optional[str],
                      hostOption      : str,
                      portOption      : int,
                      defaultHost     : str,
-                     defaultPort     : int = 8080):
+                     defaultPort     : int = 8080) -> AddressPair:
         '''
         Sanitize a service address of the form `[HOST][:PORT]` (where any or
         all components may be present) to the full form `HOST:PORT`.
@@ -113,7 +121,7 @@ class Base (Endpoint):
         if portOption and port is None:
             port = self.setting(portOption, defaultPort)
 
-        return self._joinAddress(host, port)
+        return AddressPair(host, port)
 
 
     _rx_address = re.compile(
@@ -133,12 +141,10 @@ class Base (Endpoint):
         else:
             return "", None
 
-    def _joinAddress(self,
-                     name: str,
-                     port: int):
+    def _joinAddress(self, pair: AddressPair):
 
-        if port is not None:
-            return "%s:%s"%(name, port)
+        if pair.port is not None:
+            return "%s:%s"%pair
         else:
             return None
 

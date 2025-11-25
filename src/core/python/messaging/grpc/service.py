@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules wihtin package
-from .base import Base
+from .base import Base, AddressPair
 
 ### Third-party modules
 from cc.protobuf.wellknown import Empty
@@ -61,7 +61,7 @@ class Service (Base):
       ```
     """
 
-    ### Messaging endpoint type
+    ## Messaging endpoint type
     endpoint_type = 'request handler'
 
     def __init__(self,
@@ -101,7 +101,16 @@ class Service (Base):
                       product_name = product_name,
                       project_name = project_name)
 
-        self.bind_address = self.realaddress(bind_address, "interface", "port", "[::]", 8080)
+        self.service_address = self.realaddress(
+            bind_address,
+            "interface",
+            "port",
+            "[::]",
+            8080)
+
+    @property
+    def bind_address(self) -> str:
+        return self._joinAddress(self.service_address)
 
     def add_to_server(self,
                       server       : Union[grpc.Server, grpc.aio.Server],
