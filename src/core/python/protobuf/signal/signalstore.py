@@ -1,7 +1,7 @@
 '''
-Base implementation of signal/slot pattern using ProtoBuf messages as
-payload. Emitted signals can thus be serialized and propagated over transports
-such as gRPC, thereby emulating the pub/sub pattern.
+Implementation of signal/slot pattern using ProtoBuf messages as payload.
+Emitted signals can be serialized and propagated over transports such as gRPC,
+thereby emulating the pub/sub pattern.
 '''
 
 docformat = 'javadoc en'
@@ -34,9 +34,9 @@ Slot = Callable[[Message], None]
 
 class SignalStore:
     '''
-    Base implementation of signal/slot pattern using ProtoBuf messages as
-    payload. Emitted signals can thus be serialized and propagated over
-    transports such as gRPC, thereby emulating the pub/sub pattern.
+    Implementation of signal/slot pattern using ProtoBuf messages as
+    payload. Emitted signals can be serialized and propagated over transports
+    such as gRPC, thereby emulating the pub/sub pattern.
 
     `SignalStore` works with a ProtoBuf wrapper message containing a `oneof`
     selector to discriminate between multiple message types, as illustrated in
@@ -63,7 +63,7 @@ class SignalStore:
     `connect_signal()` method below.  Alternatively you can use `connect_all()`
     to invoke the handler for any emitted signal.
 
-    Correspondingly, to emit a signal, use `emit()` or `emit_event()`. The
+    Correspondingly, to emit such a signal, use `emit()` or `emit_event()`. The
     former takes a preconstructed `Signal` message and passes it on directly to
     connected slots, whereas the latter wraps this by taking in the signal name
     (e.g. `signal_a` in the example above) and associated value (in this case, a
@@ -93,9 +93,16 @@ class SignalStore:
     This is mainly useful where a producer/emitter and its consumers need to
     maintain synchronized data sets. The producer indicates whether a particular
     object has been added to, updated in, or removed from a synchronized map.
-    To emit a mapping signal, use the `emit_mapping()` method, below.  At
-    present, only a single mapping key is supported, and it must be a string.
+    To emit a mapping signal, use either `emit()` or `emit_mapping()`, below.
+    At present, only a single mapping key is supported, and it must be a string.
 
+    Finally, a `CachingSignalStore()` class derived from this one is also
+    available; see `cachingsignalstore.py`. This flavor retains the latest
+    emitted signal (or in the case of a mapping signal, the latest emitted
+    update for each mapping key) in memory, and then replays this cache in
+    response to future `connect*()` calls. Effectively this eliminates the "late
+    observer" issue, where the consumer would otherwise have to make explicit
+    out-of-band queries to obtain the current state or data set.
     '''
 
     ## `signal_type` should be set in the final subclass, and is used to decode
@@ -325,12 +332,14 @@ class SignalStore:
         assert callable(slot), \
             "Slot must be a callable object, like a function"
 
-        assert name in self.signal_names(), \
-            "Message type %s does not have a %r field"%(self.signal_type.__name__, name)
+        if not name in self.signal_names():
+            raise AttributeError(
+                "Message type %s does not have a %r field"
+                %(self.signal_type.__name__, name))
 
-        self.connect_signal(name,
-                            lambda signal: self._signal_data_callback(name, signal, slot))
-                            # lambda signal: slot(getattr(signal, name)))
+        self.connect_signal(
+            name,
+            lambda signal: slot(getattr(signal, name)))
 
 
     def signal_filter(self, match_all: bool = False) -> Filter:
@@ -350,15 +359,6 @@ class SignalStore:
                            for signal_name in self.slots
                            if signal_name is not self.ALL_SIGNALS],
             )
-
-    def _signal_data_callback(self, name, signal, slot):
-        try:
-            value = getattr(signal, name)
-        except AttributeError:
-            print("Signal type %r does not have an %r field"%(signal, name))
-            raise
-        else:
-            slot(value)
 
 
     def disconnect_signal_data(self,
@@ -398,8 +398,6 @@ class SignalStore:
         '''
 
         if signal_name := self.signal_name(msg):
-            action, key = self._mapping_controls(msg);
-
             ## Invoke each slot that was connected to this signal by name
             for callback in self.slots.get(signal_name, []):
                 self._emit_to(signal_name, callback, msg)
@@ -417,7 +415,7 @@ class SignalStore:
         field indicated by `signal_name` set to `value`.
         '''
 
-        signal = self.signal_type(**{signal_name:value})
+        signal = self.signal_type(**{signal_name: value})
         self.emit(signal)
 
     def emit_mapping(self,

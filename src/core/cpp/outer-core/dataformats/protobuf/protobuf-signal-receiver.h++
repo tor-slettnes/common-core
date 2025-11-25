@@ -35,9 +35,9 @@ namespace protobuf
         ///     Override in derived classes to set up signal handlers.
         virtual void initialize()
         {
-            this->register_handlers();
             this->add_handler(SignalT::SIGNAL_NOT_SET,
                               std::bind(&This::on_init_complete, this));
+            this->register_handlers();
         }
 
         virtual void deinitialize()

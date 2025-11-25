@@ -34,6 +34,7 @@ class ClientInterceptorBase(object):
     def intercept_stream_stream(self, continuation, client_call_details, request_iterator):
         return self._intercept_stream(continuation, client_call_details, request_iterator)
 
+
 class ClientInterceptor(ClientInterceptorBase,
                         grpc.UnaryUnaryClientInterceptor,
                         grpc.UnaryStreamClientInterceptor,

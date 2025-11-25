@@ -8,7 +8,7 @@
 ### Standard Python modules
 import threading, asyncio
 
-class ThreadReader (object):
+class ThreadReader:
     '''
     Stream reader implementation using threads
     '''
@@ -49,7 +49,7 @@ class ThreadReader (object):
             pass
 
 
-class AsyncReader (object):
+class AsyncReader:
     '''
     Stream reader implementation using AsyncIO task.
     '''

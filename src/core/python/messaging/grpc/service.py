@@ -79,14 +79,13 @@ class Service (Base):
             base names:
 
             - `grpc-endpoints-SERVICENAME` where `SERVICENAME` is the gRPC service
-            - `grpc-endpionts-PRODUCT` where `PRODUCT` is the `product_name` argument
-            - `grpc-endpionts-PROJECT` where `PROJECT` is the `project_name` argument
-            - `grpc-endpionts-common`
+            - `grpc-endpoints-PRODUCT` where `PRODUCT` is the `product_name` argument
+            - `grpc-endpoints-PROJECT` where `PROJECT` is the `project_name` argument
+            - `grpc-endpoints-common`
 
            If still missing, the compile-time default is `"[::]:8080"`, meaning
            the server will listen bind to port 8080 on all available network
            interfaces.
-
 
         @param product_name
             Name of the product, used to locate corresponding settings files

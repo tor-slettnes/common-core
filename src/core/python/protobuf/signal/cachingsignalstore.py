@@ -164,15 +164,9 @@ class CachingSignalStore (SignalStore):
         '''
 
         if self._cache:
-            mapped = False
-            for key, signal in self.get_cached_map(signal_name).items():
+            for key, signal in self.get_cached_signal_messages(signal_name).items():
                 self._emit_to(signal_name, slot, signal)
-                mapped = bool(key)
 
-            ## Once the cache is exhausted, emit an empty signal
-            ## to indicate that intialization is complete.
-            if mapped:
-                self._emit_to(signal_name, slot, self.signal_type())
 
     def get_cached_map(self,
                        signal_name: str,

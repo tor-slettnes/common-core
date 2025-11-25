@@ -172,11 +172,11 @@ __docformat__ = 'javadoc en'
 
 from collections.abc import Callable, Sequence
 import enum
-import logging
 
 from google.protobuf.descriptor import Descriptor, FieldDescriptor, EnumDescriptor
 from google.protobuf.message_factory import MessageFactory
 
+from cc.core.logbase import LogBase
 from cc.protobuf.wellknown import Message, MessageType
 import cc.protobuf.wellknown as wellknown # Well-known types from Google
 import cc.protobuf.variant   as variant   # Common Core variant type
@@ -189,7 +189,7 @@ TEXT_ENCODING    = 'utf-8'
 _message_factory = MessageFactory()
 
 
-class MessageBuilder:
+class MessageBuilder (LogBase):
     '''
     Build ProtoBuf messages from native Python values.
 
@@ -337,7 +337,7 @@ class MessageBuilder:
         Populate an existing message with provided input values.
 
         @param message
-            ProtoBuf message to popualte
+            ProtoBuf message to populate
 
         @param inputs
             A dictionary containing key/value pairs from which to populate each
@@ -366,7 +366,7 @@ class MessageBuilder:
 
         if not ignore_extras:
             if extra_inputs := set(inputs) - set(ignore_inputs):
-                logging.warning(
+                self.logger.warning(
                     '%s.build_from_dict() received extra inputs not applicable for message type %s: %s'%
                     (type(self).__name__, type(message).__name__, extra_inputs))
 

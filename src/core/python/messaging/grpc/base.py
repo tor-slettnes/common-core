@@ -13,6 +13,7 @@ from ...core.settingsstore import SettingsStore
 import re
 import logging
 import os
+import urllib.parse
 from typing import Optional
 
 ### Third-party modules
@@ -58,6 +59,8 @@ class Base (Endpoint):
     def max_reply_size(self) -> Optional[str]:
         return self.setting("max reply size", None)
 
+    def peer(self, context: grpc.RpcContext) -> str:
+        return urllib.parse.unquote(context.peer())
 
     def realaddress(self,
                      provided        : Optional[str],

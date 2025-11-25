@@ -16,7 +16,7 @@ import logging
 
 
 if __name__ == '__main__':
-    init_logging(threshold = logging.DEBUG)
+    init_logging()
 
     demoservice = DemoService(NativeDemo())
     demoserver = create_server(demoservice)

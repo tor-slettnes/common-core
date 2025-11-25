@@ -7,7 +7,7 @@
 
 ### Modules within package
 from .service import Service
-from cc.protobuf.signal import SignalStore, Filter
+from cc.protobuf.signal import SignalStore, Filter, MappingAction
 
 ### Third-party modules
 import google.protobuf.message
@@ -82,6 +82,9 @@ class SignalService (Service):
         try:
             for signal_name in self.signal_store.signal_names(request):
                 self.signal_store.connect_signal(signal_name, queue.put_nowait)
+
+            ### Add an empty message to indicate the end of the initial cache
+            queue.put_nowait(self.signal_store.signal_type())
 
             while msg := queue.get():
                 yield msg

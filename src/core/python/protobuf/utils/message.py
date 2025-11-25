@@ -79,7 +79,7 @@ def print_message(message: Message, as_one_line=True):
     Convenience wrapper to print a protobuf message.
     '''
 
-    print(MessageToString(message, as_one_line=as_one_line))
+    print('%s\r'%(MessageToString(message, as_one_line=as_one_line),))
 
 
 def print_dict(message: Message):
@@ -87,4 +87,4 @@ def print_dict(message: Message):
     Convenience wrapper to print a protobuf message as a dictionary.
     '''
 
-    print(MessageToDict(message))
+    print('%s\r'%(MessageToDict(message),))
