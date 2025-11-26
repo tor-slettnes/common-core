@@ -22,7 +22,7 @@ def init_logging(threshold: int = logging.INFO,
 
 
 class LogBase:
-    _log_name = None
+    LOG_NAME  = None
     _logger   = None
     _settings = SettingsStore('logging')
 
@@ -54,17 +54,17 @@ class LogBase:
         been set, assign a new name based on the Python package name as well as
         this class.
         '''
-        if self._log_name is None:
-            self._log_name = self.package_name()
+        if self.LOG_NAME is None:
+            self.LOG_NAME = self.package_name()
 
-        return self._log_name
+        return self.LOG_NAME
 
     @log_name.setter
     def log_name(self, log_name: str):
         '''
         Assign a custom name to this logger.
         '''
-        self._log_name = log_name
+        self.LOG_NAME = log_name
 
     def package_name(self):
         return '.'.join(self.__module__.split('.')[:-1])
