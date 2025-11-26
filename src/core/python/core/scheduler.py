@@ -106,13 +106,19 @@ class Scheduler (LogBase):
     def scheduleList(self):
         return [name for name, lock, thread in self._tasks.values()]
 
-    def getTask(self, handle):
-        name, lock, thread = self._tasks[handle]
-        return thread._Thread__args
+    def getTask(self, handle) -> tuple|None:
+        if task := self._tasks.get(handle):
+            name, lock, thread = task
+            return thread._Thread__args
+        else:
+            return None
 
-    def isStarted(self, handle):
-        name, lock, thread = self._tasks[handle]
-        return thread._Thread__started
+    def isStarted(self, handle) -> bool:
+        if task := self._tasks.get(handle):
+            name, lock, thread = self._tasks[handle]
+            return thread._Thread__started
+        else:
+            return False
 
 
     def reschedule(self, handle, delay=0):

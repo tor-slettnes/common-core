@@ -33,9 +33,9 @@ class CachingSignalStore (SignalStore):
     action would be repeated after any and all disconnect/reconnnect cycles).
     '''
 
-    @doc_inherit
+    @override
     def init_signals(self):
-        super().init_signals()
+        SignalStore.init_signals(self)
 
         self._cache = {}
         self._completion_mutex    = threading.Lock()
@@ -43,34 +43,34 @@ class CachingSignalStore (SignalStore):
         self._deadline_expired    = False
         self._completion_event = threading.Event()
 
-    @doc_inherit
+    @override
     def connect_all(self,
                     slot: Slot):
         '''
         Connect a handler to _all_ signals in this store.
         '''
 
-        super().connect_all(slot)
+        SignalStore.connect_all(self, slot)
         for name in self.signal_names():
             self.emit_cached_to(name, slot)
 
-    @doc_inherit
+    @override
     def connect_signal(self,
                        name: str,
                        slot: Slot):
 
-        super().connect_signal(name, slot)
+        SignalStore.connect_signal(self, name, slot)
         self.emit_cached_to(name, slot)
 
 
-    @doc_inherit
+    @override
     def emit(self, msg: Message):
         action, key = self._mapping_controls(msg);
 
         if signal_name := self.signal_name(msg):
             self._update_cache(signal_name, action, key, msg)
 
-        super().emit(msg)
+        SignalStore.emit(self, msg)
 
         if action == MappingAction.NONE:
             self._completion_event.set()
@@ -121,11 +121,11 @@ class CachingSignalStore (SignalStore):
             )
 
         if action:
-            super().emit_mapping(
-                signal_name = signal_name,
-                action = action,
-                key = key,
-                value = value)
+            SignalStore.emit_mapping(self,
+                                     signal_name = signal_name,
+                                     action = action,
+                                     key = key,
+                                     value = value)
 
 
     def emit_map_update(self,

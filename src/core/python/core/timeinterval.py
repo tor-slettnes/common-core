@@ -171,7 +171,7 @@ class TimeInterval (float):
 
     @classmethod
     def try_from(cls,
-                 input: TimeIntervalType,
+                 input: TimeIntervalType|float|int|str,
                  fallback: object|None = None,
                  decimal_exponent: int = 0,
                  ) -> 'TimeInterval':
@@ -203,7 +203,7 @@ class TimeInterval (float):
 
     @classmethod
     def from_value(cls,
-                   input: TimeIntervalType|float|str|int,
+                   input: TimeIntervalType|float|int|str,
                    decimal_exponent: int = 0,
                    ) -> 'TimeInterval':
         '''
