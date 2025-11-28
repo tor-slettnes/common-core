@@ -254,11 +254,12 @@ class MessageBuilder (LogBase):
         try:
             encoder = self.encoders[message_type.DESCRIPTOR.full_name]
         except KeyError:
-            message = message_type()
-            if isinstance(value, Mapping):
-                return self.populate_from_dict(message, value)
+            if isinstance(value, message_type):
+                return value
+            elif isinstance(value, Mapping):
+                return self.populate_from_dict(message_type(), value)
             else:
-                return self.populate_from_container(message, value)
+                return self.populate_from_container(message_type(), value)
         else:
             return encoder(value)
 
