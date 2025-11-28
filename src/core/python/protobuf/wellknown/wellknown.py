@@ -1,34 +1,17 @@
-#!/usr/bin/echo Do not invoke directly.
-#===============================================================================
-## @file wellknown.py
-## @brief Conversions between native Python types and well-known ProtoBuf types
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+wellknown.py - Conversions between native Python types and well-known ProtoBuf types
+'''
+
+__author__ = 'Tor Slettnes'
+__docformat__ = 'javadoc en'
 
 ### Standard Python modules
 from typing import Sequence, Mapping, Optional
 from time import struct_time, mktime
 from datetime import datetime
 
-
-### Symbols from `google.protobuf` package
-from google.protobuf.text_format import MessageToString
-from google.protobuf.json_format import MessageToDict
-from google.protobuf.json_format import ParseDict
-
-from google.protobuf.message \
-    import Message, Error, EncodeError, DecodeError
-
-from google.protobuf.internal.enum_type_wrapper \
-    import EnumTypeWrapper
-
-from google.protobuf.empty_pb2 import Empty
-from google.protobuf.duration_pb2 import Duration as Duration
-from google.protobuf.timestamp_pb2 import Timestamp as Timestamp
-from google.protobuf.wrappers_pb2 \
-    import BoolValue, StringValue, DoubleValue, FloatValue, \
-    Int64Value, UInt64Value, Int32Value, UInt32Value, \
-    BytesValue
+from google.protobuf.duration_pb2 import Duration
+from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.struct_pb2 import Value, ListValue, Struct, NULL_VALUE
 
 ### Modules within this package
@@ -36,12 +19,8 @@ from cc.core.timeinterval import TimeIntervalType, TimeInterval
 from cc.core.timepoint import TimePointType, TimePoint
 
 ### Type type hint for timestamps
-MessageType = type(Empty)
 TimestampType = TimePointType|Timestamp|int|float
 DurationType = TimeIntervalType|Duration|int|float
-
-### Static values
-empty = Empty()
 
 def decodeTimestamp(prototime: Timestamp) -> TimePoint:
     '''

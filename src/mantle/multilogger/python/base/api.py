@@ -18,10 +18,10 @@ import threading
 import time
 
 ### Modules within package
-from cc.protobuf.builder import MessageBuilder
 from cc.protobuf.wellknown import empty
 from cc.protobuf.status import Level
 from cc.protobuf.datetime import Interval
+from cc.protobuf.utils.builder import MessageBuilder
 
 ### Modules relative to current module
 from ..protobuf import Loggable, ListenerSpec, SinkSpec, ColumnType, ColumnSpec

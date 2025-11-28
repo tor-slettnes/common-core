@@ -5,20 +5,25 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Generated from `datetime.proto`
+### Standard Python modules
+import time
+import datetime
+
+### Common Core modules
 from cc.core.timeinterval import TimeInterval
 from ..utils import proto_enum
 from ..wellknown import DurationType
+
+### Generated from `datetime.proto`
 from .datetime_pb2 import TimeStruct, Weekday, Interval, TimeUnit
-
-
-### Standard Python modules
-import time
 
 Weekday = proto_enum(Weekday)
 TimeUnit = proto_enum(TimeUnit)
 
-def encodeInterval(input: tuple[int, TimeUnit] | TimeUnit | Interval,
+TimeDeltaType = tuple[int, TimeUnit] | TimeUnit | Interval | datetime.timedelta
+
+
+def encodeInterval(input: TimeDeltaType,
                    output: Interval|None = None) -> Interval:
     '''
     Convert a (COUNT, UNIT) tuple to an `Interval` message
@@ -30,12 +35,12 @@ def encodeInterval(input: tuple[int, TimeUnit] | TimeUnit | Interval,
     if output is None:
         output = Interval()
 
-    if isinstance(input, Interval):
-        output.CopyFrom(input)
-
-    elif input is None:
+    if input is None:
         output.count = 0
         output.unit = TimeUnit.ZERO_TIME
+
+    elif isinstance(input, Interval):
+        output.CopyFrom(input)
 
     elif isinstance(input, TimeUnit):
         output.count = 1
@@ -47,11 +52,96 @@ def encodeInterval(input: tuple[int, TimeUnit] | TimeUnit | Interval,
 
         output.count, output.unit = interval
 
+    elif isinstance(input, datetime.timedelta):
+        if input == datetime.timedelta.max:
+            output.unit = TimeUnit.ETERNITY
+
+        elif microseconds := input.microseconds:
+            if microseconds % 1000:
+                output.unit = TimeUnit.MICROSECONDS
+                output.count = microseconds + (input.total_seconds() * 1000000)
+
+            else:
+                output.unit = TimeUnit.MILLISECONDS
+                output.count = (microseconds // 1000) + (input.total_seconds() * 1000)
+
+        elif input.seconds:
+            seconds = input.total_seconds()
+
+            if seconds % 60:
+                output.unit = TimeUnit.SECOND
+                output.count = seconds
+
+            elif seconds % 3600:
+                output.unit = TimeUnit.MINUTE
+                output.count = seconds // 60
+
+            else:
+                output.unit = TimeUnit.HOUR
+                output.count = seconds // 3600
+
+        elif input.days:
+            output.unit = TimeUnit.DAY
+            output.count = input.days
+
+        else:
+            output.unit = TimeUnit.ZERO_TIME
+
     else:
         raise TypeError(
             "`interval` type must be one of: `Interval`, `TimeUnit`, or `tuple[int, TimeUnit]`")
 
     return output
+
+
+def decodeInterval(input: Interval) -> datetime.timedelta:
+    '''
+    Convert a ProtoBuf `Interval` message to a `datetime.timedelta` value.
+    '''
+
+    match(input.unit):
+        case TimeUnit.ZERO_TIME:
+            return datetime.timedelta()
+
+        case TimeUnit.NANOSECOND:
+            return datetime.timedelta(microseconds = input.count / 1000)
+
+        case TimeUnit.MICROSECOND:
+            return datetime.timedelta(microseconds = input.count)
+
+        case TimeUnit.MILLISECOND:
+            return datetime.timedelta(milliseconds = input.count)
+
+        case TimeUnit.SECOND:
+            return datetime.timedelta(seconds = input.count)
+
+        case TimeUnit.MINUTE:
+            return datetime.timedelta(minutes = input.count)
+
+        case TimeUnit.HOUR:
+            return datetime.timedelta(hours = input.count)
+
+        case TimeUnit.DAY:
+            return datetime.timedelta(days = input.count)
+
+        case TimeUnit.WEEK:
+            return datetime.timedelta(weeks = input.count)
+
+        case TimeUnit.MONTH:
+            # Approximate
+            return datetime.timedelta(days = 30 * input.count)
+
+        case TimeUnit.YEAR:
+            # Approximate
+            return datetime.timedelta(days = 365.2425 * input.count)
+
+        case TimeUnit.ETERNITY:
+            return datetime.timedelta.max
+
+        case _:
+            raise ValueError(
+                "Invalid time unit enumeration %d in `%s` object: %s"
+                %(input.unit, input.DESCRIPTOR.full_name, input))
 
 
 def encodeTimeStruct(input: time.struct_time,

@@ -1,5 +1,5 @@
 '''
-Build ProtoBuf messages from native Python values.
+builder.py - Build ProtoBuf messages from native Python values.
 
 By default, ProtoBuf message fields are populated recursively from provided
 inputs, down to their primitive value types (bool, int, float, string, ...),
@@ -155,7 +155,7 @@ Putting this all together, we get:
                     text: str,
                     data: dict = {}):
 
-          request = self.build_from_alue(
+          request = self.build_from_value(
               Greeting,
               locals(),
               identity = self.identity,
@@ -170,12 +170,16 @@ __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 
-from collections.abc import Callable, Sequence
-import enum
+### Standard Python modules
+from collections.abc import Callable, Sequence, Mapping
+from enum import Enum, IntEnum
+from typing import Container
 
+### Third-party modules
 from google.protobuf.descriptor import Descriptor, FieldDescriptor, EnumDescriptor
 from google.protobuf.message_factory import MessageFactory
 
+### Common Core modules
 from cc.core.logbase import LogBase
 from cc.protobuf.wellknown import Message, MessageType
 import cc.protobuf.wellknown as wellknown # Well-known types from Google
@@ -183,7 +187,7 @@ import cc.protobuf.variant   as variant   # Common Core variant type
 import cc.protobuf.datetime  as datetime  # Calendar date/time types
 import cc.protobuf.status    as status    # Status types
 
-Encoder          = Callable[[object], Message]
+Encoder   = Callable[[object], Message]
 TEXT_ENCODING    = 'utf-8'
 
 _message_factory = MessageFactory()
@@ -193,10 +197,10 @@ class MessageBuilder (LogBase):
     '''
     Build ProtoBuf messages from native Python values.
 
-    This class will normally be inherited and specialized for specific
-    interfaces, e.g. gRPC service clients.
+    This class may be inherited and specialized for specific interfaces,
+    e.g. gRPC service clients.
 
-    See `help(cc.protobuf.builder)` for more detailed information, including
+    See `help(cc.protobuf.utils.builder)` for more detailed information, including
     usage examples.
     '''
 
@@ -216,12 +220,12 @@ class MessageBuilder (LogBase):
             use this encoder whenever it needs to create a message of this type.
 
         @param encoder
-            Encoder function, which will receive input value (normally a native
-            Python object) as its sole argument, and is expected to produce a
-            new instance of `message_type`.
+            Encoder function, which will receive the input value (normally a
+            native Python object) as its sole argument, and is expected to
+            produce a new instance of `message_type`.
         '''
 
-        self.encoders[type.DESCRIPTOR.full_name] = encoder
+        self.encoders[message_type.DESCRIPTOR.full_name] = encoder
 
 
     def build_from_value(self,
@@ -241,49 +245,20 @@ class MessageBuilder (LogBase):
         '''
 
         if not isinstance(message_type, MessageType):
-            raise TypeError(f"got invalid 'message_type' argument: {message_type!r}")
-
+            raise TypeError(
+                f"got invalid 'message_type' argument: %r"%(
+                    message_type,
+                )
+            ) from None
 
         try:
             encoder = self.encoders[message_type.DESCRIPTOR.full_name]
         except KeyError:
-            if isinstance(value, dict):
-                return self.build_from_dict(message_type, value)
+            message = message_type()
+            if isinstance(value, Mapping):
+                return self.populate_from_dict(message, value)
             else:
-                raise TypeError(f"{message_type.DESCRIPTOR.full_name} encoder input must be a dictionary: {value}")
-
-        else:
-            return encoder(value)
-
-
-    def build_from_descriptor(self,
-                              descriptor: Descriptor,
-                              value: object|None = None) -> Message:
-        '''
-        Create a new ProtoBuf from the provided input value.
-
-        @param descriptor
-            A ProtoBuf message descriptor
-
-        @param value
-            Input value. Depending on the registered encoder, this will normally
-            be a corresponding native Python object.  If no encoder is
-            registered, the input should be a dictionary with keys matching the
-            field names of the desired ProtoBuf message.
-        '''
-
-        if not isinstance(descriptor, Descriptor):
-            raise TypeError(f"got invalid 'descriptor' argument {descriptor!r}")
-
-        try:
-            encoder = self.encoders[descriptor.full_name]
-        except KeyError:
-            if isinstance(value, dict):
-                message_type = _message_factory.CreatePrototype(descriptor)
-                return self.build_from_dict(message_type, value)
-            else:
-                raise TypeError(f"{descriptor.name} encoder input must be a dictionary: {value}")
-
+                return self.populate_from_container(message, value)
         else:
             return encoder(value)
 
@@ -355,14 +330,17 @@ class MessageBuilder (LogBase):
         '''
 
         if not isinstance(message, Message):
-            raise TypeError("'message' argument must be a valid ProtoBuf message")
+            raise TypeError(
+                "'message' argument must be a valid ProtoBuf message"
+            ) from None
+
 
         inputs = (inputs or {}) | kwargs
 
         for (field_name, field_descriptor) in message.DESCRIPTOR.fields_by_name.items():
             input_value = inputs.pop(field_name, None)
             if input_value is not None:
-                self.encode_field(message, field_name, field_descriptor, input_value)
+                self.encode_field(message, field_descriptor, input_value)
 
         if not ignore_extras:
             if extra_inputs := set(inputs) - set(ignore_inputs):
@@ -373,25 +351,88 @@ class MessageBuilder (LogBase):
         return message
 
 
+    def populate_from_container(self,
+                                message: Message,
+                                container: Container,
+                                ignore_missing: bool = False,
+                                ) -> Message:
+
+        '''
+        Populate an existing message with provided input values.
+
+        @param message
+            ProtoBuf message to populate
+
+        @param container
+            A container object (like a data class instance) from which to
+            populate each field of the message.
+        '''
+
+        if not isinstance(message, Message):
+            raise TypeError(
+                "'message' argument must be a valid ProtoBuf message, got %s: %s"%(
+                    type(message).__name__,
+                    message,
+                )
+            ) from None
+
+        for (field_name, field_descriptor) in message.DESCRIPTOR.fields_by_name.items():
+            try:
+                input_value = getattr(container, field_name)
+            except AttributeError:
+                if not ignore_missing:
+                    raise AttributeError(
+                        "Message %s field %r not found in %s input value: %s"%(
+                            message.DESCRIPTOR.full_name,
+                            field_name,
+                            type(container).__name__,
+                            container,
+                        )
+                    ) from None
+            else:
+                if input_value is not None:
+                    self.encode_field(message, field_descriptor, input_value)
+
+        return message
+
+
     def encode_field(self,
                      message: Message,
-                     name: str,
                      fd: FieldDescriptor,
                      value: object):
 
-        encoder = self.value_encoder(fd)
+        field = getattr(message, fd.name)
 
-        if fd.label == fd.LABEL_REPEATED:
-            items = value if isinstance(value, (list,tuple)) else [value]
-            field = getattr(message, name)
-            field.extend([encoder(item) for item in items])
+        if fd.message_type and fd.message_type.GetOptions().map_entry:
+            ### This is a map field. Ensure the input is a valid map.
+            if not isinstance(value, Mapping):
+                raise TypeError(
+                    'ProtoBuf message %r field %r requires a dict-like mapping, got %s'%(
+                        message.full_name,
+                        fd.name,
+                        type(value).__name__,
+                    )
+                ) from None
 
-        elif fd.message_type:
-            field = getattr(message, name)
-            field.CopyFrom(encoder(value))
+            key_fd, value_fd = fd.message_type.fields
+            key_encoder = self.value_encoder(key_fd)
+            value_encoder = self.value_encoder(value_fd)
+
+            for k, v in value.items():
+                self.assign_map_entry(field, key_encoder(k), value_encoder(v))
 
         else:
-            setattr(message, name, encoder(value))
+            encoder = self.value_encoder(fd)
+
+            if fd.label == fd.LABEL_REPEATED:
+                items = (value if isinstance(value, (list, tuple)) else [value])
+                field.extend([encoder(item) for item in items])
+
+            elif fd.message_type:
+                field.CopyFrom(encoder(value))
+
+            else:
+                setattr(message, fd.name, encoder(value))
 
 
     def value_encoder(self, fd: FieldDescriptor) -> Encoder:
@@ -399,27 +440,73 @@ class MessageBuilder (LogBase):
             return lambda value: self.encode_enum(enum_type, value)
 
         elif descriptor := fd.message_type:
-            return lambda value: self.build_from_descriptor(descriptor, value)
+            return lambda value: self.encode_message(descriptor, value)
 
         else:
             return lambda value: value
 
 
+    def assign_map_entry(self, field, key, value):
+        try:
+            get_or_create = field.get_or_create
+        except AttributeError:
+            field[key] = value
+        else:
+            get_or_create(key).CopyFrom(value)
+
+
+    def encode_message(self,
+                       descriptor: Descriptor,
+                       value: object|None = None) -> Message:
+        '''
+        Create a new ProtoBuf from the provided input value.
+
+        @param descriptor
+            A ProtoBuf message descriptor
+
+        @param value
+            Input value. Depending on the registered encoder, this will normally
+            be a corresponding native Python object.  If no encoder is
+            registered, the input should be a dictionary with keys matching the
+            field names of the desired ProtoBuf message.
+        '''
+
+        if not isinstance(descriptor, Descriptor):
+            raise TypeError(
+                f"got invalid 'descriptor' argument %r"%(
+                    descriptor,
+                )
+            ) from None
+
+        try:
+            encoder = self.encoders[descriptor.full_name]
+        except KeyError:
+            message_type = _message_factory.CreatePrototype(descriptor)
+            return self.build_from_value(message_type, value)
+        else:
+            return encoder(value)
+
+
+
     def encode_enum(self,
                     descriptor: EnumDescriptor,
-                    value: object):
+                    value: Enum|int|None):
 
-        if encoder := self.enum_encoders.get(descriptor):
+        if encoder := self.enum_encoders.get(descriptor.full_name):
             return encoder(value)
-        elif isinstance(value, (int, enum.IntEnum)):
+        elif isinstance(value, (int, IntEnum)):
             return value
-        elif isinstance(value, enum.Enum):
+        elif isinstance(value, Enum):
             return self.encode_enum_name(descriptor, value.name)
         elif isinstance(value, str):
             return self.encode_enum_name(descriptor, value)
         else:
-            raise TypeError('Cannot convert %s to ProtoBuf enumeration: %s'%
-                            (type(value).__name__, value))
+            raise TypeError(
+                'Cannot convert %s to ProtoBuf enumeration: %s'%(
+                    type(value).__name__,
+                    value,
+                )
+            ) from None
 
 
     def encode_enum_name(self,
@@ -452,8 +539,12 @@ class MessageBuilder (LogBase):
             try:
                 return descriptor.values_by_name[common_base + symbol].number
             except KeyError:
-                raise ValueError('No such symbol in enumeration %s: %s'%
-                                 (descriptor.name, symbol))
+                raise ValueError(
+                    'No such symbol in enumeration %s: %s'%(
+                        descriptor.name,
+                        symbol,
+                    )
+                ) from None
 
     @classmethod
     def largest_common_base(cls, names):
@@ -495,16 +586,16 @@ class MessageBuilder (LogBase):
         'google.protobuf.Value': wellknown.encodeValue,
         'google.protobuf.Struct': wellknown.encodeStruct,
         'google.protobuf.ListValue': wellknown.encodeListValue,
-        'cc.datetime.TimeStruct': datetime.encodeTimeStruct,
-        'cc.datetime.Interval': datetime.encodeInterval,
-        'cc.variant.Value': variant.encodeValue,
-        'cc.variant.ValueList': variant.encodeValueList,
-        'cc.variant.TaggedValue': variant.encodeTaggedValue,
-        'cc.variant.TaggedValueList': variant.encodeTaggedValueList,
-        'cc.variant.KeyValueMap': variant.encodeKeyValueMap,
+        'cc.protobuf.datetime.TimeStruct': datetime.encodeTimeStruct,
+        'cc.protobuf.datetime.Interval': datetime.encodeInterval,
+        'cc.protobuf.variant.Value': variant.encodeValue,
+        'cc.protobuf.variant.ValueList': variant.encodeValueList,
+        'cc.protobuf.variant.TaggedValue': variant.encodeTaggedValue,
+        'cc.protobuf.variant.TaggedValueList': variant.encodeTaggedValueList,
+        'cc.protobuf.variant.KeyValueMap': variant.encodeKeyValueMap,
     }
 
     enum_encoders = {
-        status.Level: status.encodeLogLevel,
+        'cc.protobuf.status.Level': status.encodeLogLevel,
     }
 

@@ -1,41 +1,16 @@
-#!/usr/bin/echo Do not invoke directly.
-#===============================================================================
-## @file enum.py
-## @brief Utility functions for enumerated ProtoBuf types
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+enum.py - Utility functions for enumerated ProtoBuf types
+'''
+
+__author__ = 'Tor Slettnes'
+__docformat__ = 'javadoc en'
+
 
 from google.protobuf.internal.enum_type_wrapper import EnumTypeWrapper
-
 from enum import IntEnum
 
 #===============================================================================
 # Methods
-
-def common_prefix(symbols: list[str],
-                  delimiter: str = '_') -> str:
-
-    if symbols:
-        split_symbols = [symbol.split(delimiter) for symbol in symbols]
-        prefix_parts = split_symbols.pop(0)
-        prefix_length = 0
-
-        for symbol_parts in split_symbols:
-            prefix_parts = [
-                prefix_part
-                for (prefix_part, symbol_part) in zip(prefix_parts, symbol_parts)
-                if prefix_part == symbol_part
-            ]
-
-
-        if prefix_parts:
-            prefix_length = sum([(len(part)+len(delimiter))
-                                 for part in prefix_parts])
-
-        return prefix_length, delimiter.join(prefix_parts)
-    else:
-        return 0, ""
-
 
 def proto_enum(proto_type: EnumTypeWrapper,
                strip_common_prefix: bool = True) -> IntEnum:
@@ -79,4 +54,29 @@ def proto_enum(proto_type: EnumTypeWrapper,
 
     return IntEnum(proto_type.DESCRIPTOR.name, items)
 
+
+
+def common_prefix(symbols: list[str],
+                  delimiter: str = '_') -> str:
+
+    if symbols:
+        split_symbols = [symbol.split(delimiter) for symbol in symbols]
+        prefix_parts = split_symbols.pop(0)
+        prefix_length = 0
+
+        for symbol_parts in split_symbols:
+            prefix_parts = [
+                prefix_part
+                for (prefix_part, symbol_part) in zip(prefix_parts, symbol_parts)
+                if prefix_part == symbol_part
+            ]
+
+
+        if prefix_parts:
+            prefix_length = sum([(len(part)+len(delimiter))
+                                 for part in prefix_parts])
+
+        return prefix_length, delimiter.join(prefix_parts)
+    else:
+        return 0, ""
 

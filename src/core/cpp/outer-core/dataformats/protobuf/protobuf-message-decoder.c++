@@ -302,8 +302,8 @@ namespace protobuf
         int size = this->reflection->FieldSize(this->msg, &fd);
         tvlist->reserve(size);
 
-        // A ProtoBuf map is really a nested message comprising repeated
-        // entries of the form
+        // A ProtoBuf map is really a repeated field comprising nested messages
+        // of the form
         //
         //   ```protobuf
         //   message map_Entry
