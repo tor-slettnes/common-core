@@ -92,7 +92,10 @@ class MessageDissecter (LogBase):
             else:
                 datafields.append(fd.name)
 
-            values.append(self.dissect_field(message, fd))
+            if self.is_field_present(message, fd):
+                values.append(self.dissect_field(message, fd))
+            else:
+                values.append(None)
 
         dataclass = make_dataclass(
             cls_name = message.DESCRIPTOR.name,
@@ -132,6 +135,15 @@ class MessageDissecter (LogBase):
         return value
 
 
+    def is_field_present(self,
+                         message: Message,
+                         fd: FieldDescriptor) -> bool:
+        if fd.containing_oneof:
+            return message.WhichOneof(fd.containing_oneof.name) == fd.name
+        else:
+            return True
+
+
     def field_decoder(self,
                       fd: FieldDescriptor) -> Decoder:
 
@@ -139,7 +151,7 @@ class MessageDissecter (LogBase):
             return self.enum_decoder(enum_type)
 
         elif descriptor := fd.message_type:
-            return self.dissect_message
+            return self.decode
 
         else:
             return lambda value: value
