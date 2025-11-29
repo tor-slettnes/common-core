@@ -20,7 +20,6 @@ import cc.protobuf.signal
 import cc.protobuf.status
 import cc.protobuf.variant
 import cc.protobuf.version
-import cc.protobuf.import_proto
 import cc.protobuf.wellknown
 import cc.protobuf.utils
 import cc.protobuf.builder
