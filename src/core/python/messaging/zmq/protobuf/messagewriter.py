@@ -8,8 +8,6 @@
 ### Modules within package
 from ..basic import Publisher, MessageWriter as BaseWriter
 from cc.protobuf.wellknown import Message, MessageType
-from cc.protobuf.utils import dictToMessage
-
 
 class MessageWriter (BaseWriter):
     '''
@@ -44,15 +42,3 @@ class MessageWriter (BaseWriter):
         '''
 
         self.write_bytes(message.SerializeToString())
-
-    def write_dict_as_proto(self,
-                            prototype: MessageType,
-                            data : dict,
-                            ignore_unknown_fields: bool = False):
-        '''
-        Encode a ProtoBuf message from a corresponding parseable dictionary,
-        and publish over ZMQ
-        '''
-
-        self.write_proto(
-            dictToMessage(data, prototype, ignore_unknown_fields))

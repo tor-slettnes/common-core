@@ -5,6 +5,9 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
+### Standard Python modules
+from abc import abstractmethod
+
 ### Modules within package
 from ..basic import Subscriber, MessageHandler as BaseHandler
 from cc.protobuf.wellknown import Message, MessageType
@@ -43,28 +46,9 @@ class MessageHandler (BaseHandler):
         self.handle_proto(self.message_type.FromString(data))
 
 
-    ### Subclasses must override _one_ of the following two methods
-    ### to process incoming ProtoBuf payloads
-
+    @abstractmethod
     def handle_proto(self, message: Message):
         '''
         Process incoming ProtoBuf message.
-
-        Unless overridden in subclasses this further decodes the message to a
-        Python dictionary and passes the result to
-        `self.handle_proto_as_dict()`, which must in that case be overridden.
-
-        In other words, subclasses should override either this method or
-        `handle_proto_as_dict()` to process incoming messages.
+        Subclasses should override this method.
         '''
-
-        self.handle_proto_as_dict(
-            protobuf.utils.decodeToDict(message, use_integers_for_enums = True))
-
-
-    def handle_proto_as_dict(self, message : dict):
-        '''
-        Handle incoming ProtoBuf payload, decodeed as a Python dictionary
-        '''
-
-        raise NotImplementedError

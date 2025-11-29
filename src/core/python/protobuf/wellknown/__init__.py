@@ -11,8 +11,6 @@ from google.protobuf.json_format import ParseDict
 
 from google.protobuf.message import Message, Error, EncodeError, DecodeError
 
-#from google.protobuf.internal.enum_type_wrapper import EnumTypeWrapper
-
 from google.protobuf.empty_pb2 import Empty
 from google.protobuf.duration_pb2 import Duration
 from google.protobuf.timestamp_pb2 import Timestamp

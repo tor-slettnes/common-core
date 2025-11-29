@@ -183,9 +183,9 @@ from google.protobuf.message_factory import MessageFactory
 from cc.core.logbase import LogBase
 from cc.protobuf.wellknown import Message, MessageType
 import cc.protobuf.wellknown as wellknown # Well-known types from Google
-import cc.protobuf.variant   as variant   # Common Core variant type
-import cc.protobuf.datetime  as datetime  # Calendar date/time types
-import cc.protobuf.status    as status    # Status types
+import cc.protobuf.variant as variant     # Common Core variant type
+import cc.protobuf.datetime as datetime   # Calendar date/time types
+import cc.protobuf.status as status       # Status types
 
 Encoder   = Callable[[object], Message]
 TEXT_ENCODING    = 'utf-8'
@@ -200,7 +200,7 @@ class MessageBuilder (LogBase):
     This class may be inherited and specialized for specific interfaces,
     e.g. gRPC service clients.
 
-    See `help(cc.protobuf.utils.builder)` for more detailed information, including
+    See `help(cc.protobuf.builder)` for more detailed information, including
     usage examples.
     '''
 
@@ -600,3 +600,5 @@ class MessageBuilder (LogBase):
         'cc.protobuf.status.Level': status.encodeLogLevel,
     }
 
+### Generic / default instance
+message_builder = MessageBuilder()

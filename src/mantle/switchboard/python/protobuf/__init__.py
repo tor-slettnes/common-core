@@ -30,7 +30,6 @@ DEFAULT_LANGUAGES = (DEFAULT_LANGUAGE,)
 
 
 # Use Python enum wrappers for some enumerated types
-from cc.protobuf.utils import proto_enum
 State              = proto_enum(State)
 DependencyPolarity = proto_enum(DependencyPolarity)
 InterceptorPhase   = proto_enum(InterceptorPhase)

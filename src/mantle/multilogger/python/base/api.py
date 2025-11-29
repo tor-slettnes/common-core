@@ -21,7 +21,7 @@ import time
 from cc.protobuf.wellknown import empty
 from cc.protobuf.status import Level
 from cc.protobuf.datetime import Interval
-from cc.protobuf.utils.builder import MessageBuilder
+from cc.protobuf.builder import MessageBuilder
 
 ### Modules relative to current module
 from ..protobuf import Loggable, ListenerSpec, SinkSpec, ColumnType, ColumnSpec

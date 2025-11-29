@@ -6,9 +6,9 @@
 #===============================================================================
 
 ### Modules within package
-from cc.protobuf.utils import messageToDict
 from cc.protobuf.request_reply import Reply, StatusCode
 from cc.protobuf.status import Error as CommonError
+from cc.protobuf.dissecter import message_dissecter
 
 class Error (RuntimeError):
     '''
@@ -27,7 +27,7 @@ class Error (RuntimeError):
         return "%s(code=%d, details=%s)"%(
             type(self).__name__,
             self.code,
-            messageToDict(self.details, use_integers_for_enums=False))
+            message_dissecter.decode(self.details))
 
     def add_to_reply (self, reply: Reply):
         reply.status.code = self.code

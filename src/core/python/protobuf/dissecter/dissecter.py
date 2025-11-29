@@ -10,7 +10,7 @@ __docformat__ = 'javadoc en'
 from collections.abc import Callable, Sequence
 from dataclasses import make_dataclass
 from enum import IntEnum
-from typing import Container
+from typing import Container, Callable
 
 ### Third-party modules
 from google.protobuf.descriptor import Descriptor, FieldDescriptor, EnumDescriptor
@@ -34,9 +34,8 @@ class MessageDissecter (LogBase):
     e.g. gRPC service clients.
     '''
 
-    def __init__ (self):
+    def __init__(self):
         self.decoders: dict[str, Decoder] = type(self).message_decoders.copy()
-
 
     def register_decoder(self,
                          message_type: MessageType,
@@ -73,13 +72,13 @@ class MessageDissecter (LogBase):
                             %(type(self).__name__, type(message).__name__)) from None
 
         except KeyError:
-            return self.decode_message(message)
+            return self.dissect_message(message)
 
         else:
             return decoder(message)
 
 
-    def decode_message(self, message: Message) -> object:
+    def dissect_message(self, message: Message) -> object:
         '''
         Decompose a ProtoBuf message into a native Python data class.
         '''
@@ -93,7 +92,7 @@ class MessageDissecter (LogBase):
             else:
                 datafields.append(fd.name)
 
-            values.append(self.decode_field(message, fd))
+            values.append(self.dissect_field(message, fd))
 
         dataclass = make_dataclass(
             cls_name = message.DESCRIPTOR.name,
@@ -103,7 +102,7 @@ class MessageDissecter (LogBase):
         return dataclass(*values)
 
 
-    def decode_field(self,
+    def dissect_field(self,
                      message: Message,
                      fd: FieldDescriptor,
                      ) -> object:
@@ -140,7 +139,7 @@ class MessageDissecter (LogBase):
             return self.enum_decoder(enum_type)
 
         elif descriptor := fd.message_type:
-            return self.decode_message
+            return self.dissect_message
 
         else:
             return lambda value: value
@@ -221,3 +220,33 @@ class MessageDissecter (LogBase):
     enum_decoders = {
         'cc.protobuf.status.Level': status.decodeLogLevel,
     }
+
+
+
+### Generic instance
+message_dissecter = MessageDissecter()
+
+def dissecter_instance(function: Callable) -> MessageDissecter:
+    try:
+        instance = function.__self__
+    except AttributeError:
+        return message_dissecter
+    else:
+        if isinstance(instance, MessageDissecter):
+            return instance
+        else:
+            return message_dissecter
+
+
+def dissect_response(function: Callable) -> Callable:
+    '''
+    Function decorator that will dissect a ProtoBuf return value into a
+    native Python object.
+    '''
+
+    def wrapper(*args, **kwargs):
+        response = function(*args, **kwargs)
+        dissecter = dissecter_instance(function)
+        return dissecter.decode(response)
+
+    return wrapper
