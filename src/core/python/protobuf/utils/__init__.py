@@ -2,7 +2,7 @@
 Package `cc.protobuf.utils` - miscellaneous ProtoBuf utility methods
 '''
 
-from .enum import proto_enum
+from .enum import native_enum_from_proto
 
 from .message import (
     check_message_type,

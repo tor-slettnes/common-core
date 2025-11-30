@@ -12,7 +12,7 @@ import re
 import os.path
 
 ### Modules within package
-from cc.protobuf.utils import proto_enum
+from cc.protobuf.utils import native_enum_from_proto
 from ...vfs.protobuf import Path as VFSPath, VFSPathType, encodePath, decodePath
 from .upgrade_types_pb2 import *
 from .upgrade_types_pb2 import PackageSource
@@ -20,7 +20,7 @@ from .upgrade_types_pb2 import PackageSource
 #===============================================================================
 ## Annotation types
 
-UpgradeState = proto_enum(UpgradeState)
+UpgradeState = native_enum_from_proto(UpgradeState)
 SourceType = PackageSource | VFSPathType | str
 
 #===============================================================================

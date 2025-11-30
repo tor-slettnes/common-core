@@ -17,6 +17,7 @@ from google.protobuf.descriptor import Descriptor, FieldDescriptor, EnumDescript
 
 ### Common Core modules
 from cc.core.logbase import LogBase
+from cc.core.stringutils import common_prefix
 from cc.protobuf.wellknown import Message, MessageType
 import cc.protobuf.wellknown as wellknown # Well-known types from Google
 import cc.protobuf.variant   as variant   # Common Core variant type
@@ -163,9 +164,11 @@ class MessageDissecter (LogBase):
         try:
             return self.enum_decoders[descriptor.full_name]
         except KeyError:
+            pfx_size, pfx = common_prefix(descriptor.values_by_name)
+
             enum_class = IntEnum(
                 descriptor.name,
-                {v.name: v.number for v in descriptor.values},
+                {v.name[pfx_size:]: v.number for v in descriptor.values},
             )
             self.enum_decoders[descriptor.full_name] = enum_class
             return enum_class

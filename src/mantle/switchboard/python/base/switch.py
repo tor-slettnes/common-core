@@ -8,10 +8,12 @@ __author__ = 'Tor Slettnes'
 
 
 ### Modules within package
-from ..protobuf import Specification, Status, State, \
-    DependencyMap, DependencyPolarity, InterceptorPhase, ExceptionHandling, \
-    Localization, LocalizationMap, encodeLocalization, encodeLocalizationMap, \
-    LanguageCode, LanguageChoice, LocalizationsInput
+from ..protobuf import (
+    Specification, Status, State,
+    DependencyMap, DependencyPolarity, InterceptorPhase, ExceptionHandling,
+    Localization, LocalizationMap, encodeLocalization, encodeLocalizationMap,
+    LanguageCode, LanguageChoice, LocalizationsInput,
+)
 
 from cc.protobuf.status import Error
 from cc.protobuf.variant import PyValueDict, encodeKeyValueMap

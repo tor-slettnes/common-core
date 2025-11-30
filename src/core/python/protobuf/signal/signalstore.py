@@ -14,7 +14,7 @@ import asyncio
 
 ### Modules withn package
 from ...core.invocation import safe_invoke
-from ..utils import proto_enum
+from ..utils import native_enum_from_proto
 from .signal_pb2 import Filter, MappingAction
 
 ### Third-party modules
@@ -25,7 +25,7 @@ from google.protobuf.descriptor import Descriptor, FieldDescriptor
 #===============================================================================
 # Annotation types
 
-MappingAction = proto_enum(MappingAction)
+MappingAction = native_enum_from_proto(MappingAction)
 SignalMessage = Message
 Slot = Callable[[Message], None]
 

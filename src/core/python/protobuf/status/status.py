@@ -5,13 +5,13 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-from ..utils import proto_enum
+from ..utils import native_enum_from_proto
 from .status_pb2 import Error, Level, Domain
 
 import logging
 
-Level = proto_enum(Level)
-Domain = proto_enum(Domain)
+Level = native_enum_from_proto(Level)
+Domain = native_enum_from_proto(Domain)
 
 level_map = {
     Level.NONE: logging.NOTSET,

@@ -1,16 +1,16 @@
-#!/bin/echo Do not invoke directly.
-#===============================================================================
-## @file switchboard.py
-## @brief Support for ProtoBuf types from `switchboard.proto`.
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+__init__.py - Switchboard ProtoBuf type wrappers
+'''
+
+__author__ = 'Tor Slettnes'
+__docformat__ = 'javadoc en'
 
 ### Standard Python modules
 from typing import Optional
 from collections.abc import Mapping, Sequence
 
 ### Modules within package
-from cc.protobuf.utils import proto_enum
+from cc.protobuf.utils import native_enum_from_proto
 
 ### Types generated from `switchboard.proto`
 from .switchboard_types_pb2 import *
@@ -30,10 +30,10 @@ DEFAULT_LANGUAGES = (DEFAULT_LANGUAGE,)
 
 
 # Use Python enum wrappers for some enumerated types
-State              = proto_enum(State)
-DependencyPolarity = proto_enum(DependencyPolarity)
-InterceptorPhase   = proto_enum(InterceptorPhase)
-ExceptionHandling  = proto_enum(ExceptionHandling)
+State              = native_enum_from_proto(State)
+DependencyPolarity = native_enum_from_proto(DependencyPolarity)
+InterceptorPhase   = native_enum_from_proto(InterceptorPhase)
+ExceptionHandling  = native_enum_from_proto(ExceptionHandling)
 
 def encodeLocalization(localization : Optional[Localization],
                        description: Optional[str] = None,

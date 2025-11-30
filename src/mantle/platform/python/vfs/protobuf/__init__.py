@@ -11,7 +11,7 @@ from .vfs_types_pb2 import \
     PathType, Path, PathRequest, LocateRequest, AttributeRequest, FileInfo
 
 ### Modules within package
-from cc.protobuf.utils import proto_enum
+from cc.protobuf.utils import native_enum_from_proto
 from cc.protobuf.wellknown import decodeTimestamp
 from cc.protobuf.variant import PyValueDict, PyTaggedValueList, decodeKeyValueMap
 from cc.core.scalar_types import OCT8
@@ -21,7 +21,7 @@ from typing import Sequence, Mapping, Tuple
 from collections import namedtuple
 
 
-PathType = proto_enum(PathType)
+PathType = native_enum_from_proto(PathType)
 
 FileStatus = namedtuple("FileStatus",
                         ("type", "size", "link",

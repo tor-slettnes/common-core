@@ -11,14 +11,14 @@ import datetime
 
 ### Common Core modules
 from cc.core.timeinterval import TimeInterval
-from ..utils import proto_enum
+from ..utils import native_enum_from_proto
 from ..wellknown import DurationType
 
 ### Generated from `datetime.proto`
 from .datetime_pb2 import TimeStruct, Weekday, Interval, TimeUnit
 
-Weekday = proto_enum(Weekday)
-TimeUnit = proto_enum(TimeUnit)
+Weekday = native_enum_from_proto(Weekday)
+TimeUnit = native_enum_from_proto(TimeUnit)
 
 TimeDeltaType = tuple[int, TimeUnit] | TimeUnit | Interval | datetime.timedelta
 
