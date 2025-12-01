@@ -8,6 +8,7 @@ __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
 from abc import abstractmethod
+from threading import Lock
 
 ### Core modules
 from cc.protobuf.signal import SignalStore, MappingAction
@@ -27,6 +28,7 @@ class SwitchboardBase:
 
         self.switches = {}
         self.signal_store = signal_store
+        self._switch_lock = Lock()
         self._connect_signals()
 
     def __del__(self):
@@ -52,15 +54,16 @@ class SwitchboardBase:
         switch = None
 
         if switch_name := msg.mapping_key:
-            if ((msg.mapping_action == MappingAction.ADDITION) or
-                (msg.mapping_action == MappingAction.UPDATE)):
-                try:
-                    switch = self.switches[switch_name]
-                except KeyError:
-                    switch = self.switches[switch_name] = self._new_switch(switch_name)
+            with self._switch_lock:
+                if ((msg.mapping_action == MappingAction.ADDITION) or
+                    (msg.mapping_action == MappingAction.UPDATE)):
+                    try:
+                        switch = self.switches[switch_name]
+                    except KeyError:
+                        switch = self.switches[switch_name] = self._new_switch(switch_name)
 
-            elif (msg.mapping_action == MappingAction.REMOVAL):
-                switch = self.switches.pop(switch_name, None)
+                elif (msg.mapping_action == MappingAction.REMOVAL):
+                    switch = self.switches.pop(switch_name, None)
 
         return switch
 
@@ -83,6 +86,27 @@ class SwitchboardBase:
             The named `Switch` instance if it exists, otherwise `None`.
         '''
         return self.switches.get(switch_name)
+
+
+    def get_or_add_switch(self,
+                          switch_name: str,
+                          ) -> Switch:
+        '''
+        Get the named switch, or create it if missing.
+
+        @returns
+            An existing or new `Switch`
+        '''
+
+        with self._switch_lock:
+            try:
+                switch = self.switches[switch_name]
+            except KeyError:
+                self.add_switch(switch_name)
+                switch = self.switches[switch_name] = self._new_switch(switch_name)
+
+            return switch
+
 
     @abstractmethod
     def add_switch(self,
