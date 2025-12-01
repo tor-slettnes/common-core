@@ -17,8 +17,8 @@ from cc.core.stringutils import common_prefix
 #===============================================================================
 # Methods
 
-def enum_from_proto(proto_type: EnumTypeWrapper,
-                    strip_common_prefix: bool = True) -> IntEnum:
+def native_enum_from_proto(proto_type: EnumTypeWrapper,
+                           strip_common_prefix: bool = True) -> IntEnum:
     '''
     Convert a ProtoBuf `enum` type to Python `enum.IntEnum`.  These are
     interchangable as both are derived from `int`, but the latter provides for

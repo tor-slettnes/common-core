@@ -75,17 +75,6 @@ doc_inherit = DocInherit
 
 from inspect import getfullargspec, get_annotations
 
-
-def checktype(encountered: object, expected: type) -> bool:
-    if issubclass(complex, expected):
-        expected |= float
-
-    if issubclass(float, expected):
-        expected |= int
-
-    return isinstance(encountered, expected)
-
-
 def typecheck(function: Callable) -> Callable:
     '''
     Decorator to ensure input arguments and return value match provided type hints.
@@ -96,12 +85,13 @@ def typecheck(function: Callable) -> Callable:
 
       >>> @typecheck
       ... def my_func(key: str, target: float, tolerance: float) -> dict[str, tuple[float, float]]:
-          return {key: (target - abs(tolerance),  target + abs(tolerance))}
+              return {key: (target - abs(tolerance),  target + abs(tolerance))}
 
       >>> my_func("temperature_target", 60, 0.5)
       {"setpoint": (59.5, 60.5)}
 
-      >>> my_func("pressure_target", 400, )
+      >>> my_func("pressure_target", 400, None)
+      TypeError: Expected my_func() tolerance of type float, got NoneType
       ```
     '''
 
@@ -109,6 +99,17 @@ def typecheck(function: Callable) -> Callable:
     positionals     = [annotations.get(arg_name, object)
                        for arg_name in getfullargspec(function).args]
     expected_return = annotations.pop('return', object)
+
+
+    def checktype(encountered: object, expected: type) -> bool:
+        if issubclass(complex, expected):
+            expected |= float
+
+        if issubclass(float, expected):
+            expected |= int
+
+        return isinstance(encountered, expected)
+
 
     def verify(encountered: object, expected: type, arg: str|int):
         if not checktype(encountered, expected):

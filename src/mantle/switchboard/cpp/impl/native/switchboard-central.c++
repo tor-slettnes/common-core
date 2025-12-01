@@ -52,9 +52,16 @@ namespace switchboard
     std::pair<SwitchRef, bool> Central::add_switch(
         const SwitchName &switch_name)
     {
-        return this->find_or_insert<LocalSwitch>(
+        const auto &[sw, inserted] = this->find_or_insert<LocalSwitch>(
             switch_name,
             this->shared_from_this());
+
+        if (inserted)
+        {
+            sw->set_spec({});
+        }
+
+        return {sw, inserted};
     }
 
     bool Central::remove_switch(
