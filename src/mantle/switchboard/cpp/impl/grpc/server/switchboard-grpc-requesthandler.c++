@@ -232,7 +232,7 @@ namespace switchboard::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::GetDescendents(
+    ::grpc::Status RequestHandler::GetDescendants(
         ::grpc::ServerContext *context,
         const cc::platform::switchboard::protobuf::SwitchIdentifier *request,
         cc::platform::switchboard::protobuf::SwitchIdentifiers *reply)
@@ -240,7 +240,7 @@ namespace switchboard::grpc
         try
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
-            protobuf::encode(sw->get_descendents(), reply);
+            protobuf::encode(sw->get_descendants(), reply);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -366,7 +366,7 @@ namespace switchboard::grpc
                 protobuf::decoded<core::types::KeyValueMap>(request->attributes()),
                 request->clear_existing(),
                 request->with_interceptors(),
-                request->trigger_descendents(),
+                request->trigger_descendants(),
                 request->reevaluate(),
                 protobuf::decoded<switchboard::ExceptionHandling>(request->on_cancel()),
                 protobuf::decoded<switchboard::ExceptionHandling>(request->on_error()));

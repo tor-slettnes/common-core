@@ -64,7 +64,7 @@ namespace switchboard::grpc
             const core::types::KeyValueMap &attributes = {},
             bool clear_existing = false,
             bool with_interceptors = true,
-            bool trigger_descendents = true,
+            bool trigger_descendants = true,
             bool reevaluate = false,
             ExceptionHandling on_cancel = ExceptionHandling::EH_DEFAULT,
             ExceptionHandling on_error = ExceptionHandling::EH_DEFAULT) override;

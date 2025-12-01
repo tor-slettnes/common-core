@@ -69,7 +69,7 @@ namespace switchboard
         /// @param[in] name
         ///    Switch name
         /// @param[in] propagate
-        ///    Reevaluate descendents after removal
+        ///    Reevaluate descendants after removal
         /// @return
         ///    Boolean indicating whether switch existed or not
         virtual bool remove_switch(

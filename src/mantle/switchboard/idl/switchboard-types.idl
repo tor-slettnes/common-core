@@ -221,7 +221,7 @@ module CC
             // to the ancestor's change.
             DependencyPolarity polarity;
 
-            // Do not allow descendent to be manually enabled in case of
+            // Do not allow descendant to be manually enabled in case of
             // dependency conflict.
             boolean hard;
 
@@ -270,8 +270,8 @@ module CC
             @key
             SwitchName switch_name;
 
-            // Get descendents rather than ancestors
-            boolean descendents;
+            // Get descendants rather than ancestors
+            boolean descendants;
 
             // Whether to also get indicrect dependencies
             boolean recursive;
@@ -388,7 +388,7 @@ module CC
             @key
             SwitchName switch_name;
 
-            // Re-evaluate descendents after removal
+            // Re-evaluate descendants after removal
             @default(TRUE)
             boolean propagate;
         };
@@ -422,7 +422,7 @@ module CC
             // (State::ACTIVE, State::INACTIVE, or State::FAILED), in which case
             // the switch will first change to the corresponding pending state
             // (State::ACTIVATING, State::DEACTIVATING, State::FAILING), triggering
-            // any associated descendent updates and interceptor invocations.
+            // any associated descendant updates and interceptor invocations.
             // If not provided (State::UNSPECIFIED), then
             //  * if error_data is provided the target is inferred as State::FAILED,
             //  * otherwise, the target derived from the switch's dependencies.
@@ -445,7 +445,7 @@ module CC
             boolean invoke_interceptors;
 
             // Update successors after each state transition.
-            boolean trigger_descendents;
+            boolean trigger_descendants;
 
             // Make the state transition even if the switch is already in the
             // desired target state.

@@ -124,7 +124,7 @@ namespace switchboard
         return set;
     }
 
-    SwitchSet Switch::get_descendents() const noexcept
+    SwitchSet Switch::get_descendants() const noexcept
     {
         SwitchSet set;
         for (const SwitchRef &sw : this->get_successors())
@@ -132,7 +132,7 @@ namespace switchboard
             if (set.count(sw) == 0)
             {
                 set.insert(sw);
-                set.merge(sw->get_descendents());
+                set.merge(sw->get_descendants());
             }
         }
         return set;
@@ -185,7 +185,7 @@ namespace switchboard
             false,    // replace_dependencies
             {},       // interceptors
             false,    // replace_interceptors
-            false);   // update_descendents
+            false);   // update_descendants
     }
 
     bool Switch::primary() const noexcept
@@ -426,7 +426,7 @@ namespace switchboard
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
         bool invoke_interceptors,
-        bool trigger_descendents,
+        bool trigger_descendants,
         bool reevaluate,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -437,7 +437,7 @@ namespace switchboard
             attributes,
             clear_existing,
             invoke_interceptors,
-            trigger_descendents,
+            trigger_descendants,
             reevaluate,
             on_cancel,
             on_error);
@@ -448,7 +448,7 @@ namespace switchboard
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
         bool invoke_interceptors,
-        bool trigger_descendents,
+        bool trigger_descendants,
         bool reevaluate,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -459,7 +459,7 @@ namespace switchboard
             attributes,
             clear_existing,
             invoke_interceptors,
-            trigger_descendents,
+            trigger_descendants,
             reevaluate,
             on_cancel,
             on_error);
@@ -469,7 +469,7 @@ namespace switchboard
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
         bool invoke_interceptors,
-        bool trigger_descendents,
+        bool trigger_descendants,
         bool reevaluate,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -480,7 +480,7 @@ namespace switchboard
             attributes,
             clear_existing,
             invoke_interceptors,
-            trigger_descendents,
+            trigger_descendants,
             reevaluate,
             on_cancel,
             on_error);

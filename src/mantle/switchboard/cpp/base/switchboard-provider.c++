@@ -154,7 +154,7 @@ namespace switchboard
                            attributes,        // attributes
                            false,             // clear_existing
                            false,             // invoke_interceptors
-                           true,              // trigger_descendents
+                           true,              // trigger_descendants
                            false);            // reevaluate
         }
         else
@@ -162,7 +162,7 @@ namespace switchboard
             sw->set_auto(attributes,  // attributes
                          false,       // clear_existing
                          false,       // invoke_interceptors
-                         true,        // trigger_descendents
+                         true,        // trigger_descendants
                          false);      // reevaluate
         }
 

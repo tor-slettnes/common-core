@@ -62,7 +62,7 @@ namespace switchboard
         SwitchSet get_ancestors() const noexcept;
 
         /// Return references to all direct and indirect successors of this switch
-        SwitchSet get_descendents() const noexcept;
+        SwitchSet get_descendants() const noexcept;
 
         /// Return a map of this switch's interceptors
         const InterceptorMap &interceptors() const noexcept;
@@ -111,7 +111,7 @@ namespace switchboard
         /// @param[in] spec
         ///    Specification
         /// @note
-        ///    This does not propagate changes to descendents.
+        ///    This does not propagate changes to descendants.
         virtual void set_spec(
             const Specification &spec);
 
@@ -254,7 +254,7 @@ namespace switchboard
         ///    (STATE_ACTIVE, STATE_INACTIVE, or STATE_FAILED), in which case
         ///    the switch will first change to the corresponding pending state
         ///    (STATE_ACTIVATING, STATE_DEACTIVATING, STATE_FAILING), triggering
-        ///    any associated descendent updates and interceptor invocations.
+        ///    any associated descendant updates and interceptor invocations.
         ///    If not provided (STATE_UNSET), then
         ///    * if `error` is provided is inferred as STATE_FAILED,
         ///    * otherwise, is derived from the switch's dependencies.
@@ -275,8 +275,8 @@ namespace switchboard
         ///    Invoke any associated interceptors (handlers) after each
         ///    state transition.
         ///
-        /// @param[in] trigger_descendents
-        ///    Trigger any direct descendents to reevaluate their state based
+        /// @param[in] trigger_descendants
+        ///    Trigger any direct descendants to reevaluate their state based
         ///    on this and its other dependencies after each state transition.
         ///
         /// @param[in] reevaluate
@@ -309,7 +309,7 @@ namespace switchboard
         ///   (b) If `invoke_interceptors` is true, any corresponding interceptors
         ///       are invoked.
         ///
-        ///   (c) If `trigger_descendents` is true, any direct descendents with
+        ///   (c) If `trigger_descendants` is true, any direct descendants with
         ///       triggers for the corresponding state are reevaluated.
         ///
         ///   (d) Any interceptors that were invoked in step (b) whose
@@ -337,7 +337,7 @@ namespace switchboard
             const core::types::KeyValueMap &attributes = {},
             bool clear_existing = false,
             bool invoke_interceptors = true,
-            bool trigger_descendents = true,
+            bool trigger_descendants = true,
             bool reevaluate = false,
             ExceptionHandling on_cancel = EH_DEFAULT,
             ExceptionHandling on_error = EH_DEFAULT) = 0;
@@ -348,7 +348,7 @@ namespace switchboard
                         const core::types::KeyValueMap &attributes = {},
                         bool clear_existing = false,
                         bool invoke_interceptors = true,
-                        bool trigger_descendents = true,
+                        bool trigger_descendants = true,
                         bool reevaluate = false,
                         ExceptionHandling on_cancel = EH_DEFAULT,
                         ExceptionHandling on_error = EH_DEFAULT);
@@ -359,7 +359,7 @@ namespace switchboard
                        const core::types::KeyValueMap &attributes = {},
                        bool clear_existing = false,
                        bool invoke_interceptors = true,
-                       bool trigger_descendents = true,
+                       bool trigger_descendants = true,
                        bool reevaluate = false,
                        ExceptionHandling on_cancel = EH_DEFAULT,
                        ExceptionHandling on_error = EH_DEFAULT);
@@ -370,7 +370,7 @@ namespace switchboard
         bool set_auto(const core::types::KeyValueMap &attributes = {},
                       bool clear_existing = false,
                       bool invoke_interceptors = true,
-                      bool trigger_descendents = true,
+                      bool trigger_descendants = true,
                       bool reevaluate = false,
                       ExceptionHandling on_cancel = EH_DEFAULT,
                       ExceptionHandling on_error = EH_DEFAULT);

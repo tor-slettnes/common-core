@@ -154,7 +154,7 @@ namespace switchboard
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
         bool invoke_interceptors,
-        bool trigger_descendents,
+        bool trigger_descendants,
         bool reevaluate,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -185,7 +185,7 @@ namespace switchboard
                     proceed = this->set_current_state(
                         transition_state,
                         invoke_interceptors,
-                        trigger_descendents,
+                        trigger_descendants,
                         on_cancel,
                         on_error);
                 }
@@ -213,7 +213,7 @@ namespace switchboard
                 return this->set_current_state(
                     target_state,
                     invoke_interceptors,
-                    trigger_descendents,
+                    trigger_descendants,
                     EH_IGNORE,
                     EH_IGNORE);
             }
@@ -251,18 +251,18 @@ namespace switchboard
     bool LocalSwitch::set_current_state(
         State state,
         bool invoke_interceptors,
-        bool trigger_descendents,
+        bool trigger_descendants,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
     {
         bool success = true;
         Status &status = *this->status_ref;
 
-        logf_debug("Switch %r: state=%s, invoke_interceptors=%b, trigger_descendents=%b",
+        logf_debug("Switch %r: state=%s, invoke_interceptors=%b, trigger_descendants=%b",
                    this->name(),
                    state,
                    invoke_interceptors,
-                   trigger_descendents);
+                   trigger_descendants);
 
         status.current_state = state;
         if (Switch::is_settled(state))
@@ -277,9 +277,9 @@ namespace switchboard
             status.pending = false;
         }
 
-        if (trigger_descendents)
+        if (trigger_descendants)
         {
-            ThreadMap threads = this->update_descendents(invoke_interceptors);
+            ThreadMap threads = this->update_descendants(invoke_interceptors);
 
             // Ignore descendant resuls for now.
             for (auto &[sw, thread] : threads)
@@ -474,7 +474,7 @@ namespace switchboard
                 {},                     // attributes
                 false,                  // clear_existing
                 true,                   // invoke_interceptors
-                false);                 // trigger_descendents
+                false);                 // trigger_descendants
             return true;
 
         default:
@@ -482,7 +482,7 @@ namespace switchboard
         }
     }
 
-    ThreadMap LocalSwitch::update_descendents(bool invoke_interceptors)
+    ThreadMap LocalSwitch::update_descendants(bool invoke_interceptors)
     {
         ThreadMap threads;
 
@@ -492,7 +492,7 @@ namespace switchboard
             {
                 if (dep->auto_trigger(this->state()))
                 {
-                    logf_trace("Switch %r updating descendent %r, interceptors=%b",
+                    logf_trace("Switch %r updating descendant %r, interceptors=%b",
                                this->name(),
                                sw->name(),
                                invoke_interceptors);
@@ -505,7 +505,7 @@ namespace switchboard
                                     core::types::KeyValueMap(),  // attributes
                                     false,                       // clear_existing
                                     invoke_interceptors,         // invoke_interceptors
-                                    true,                        // trigger_descendents
+                                    true,                        // trigger_descendants
                                     false,                       // reevaluate
                                     EH_DEFAULT,                  // on_cancel
                                     EH_DEFAULT));                // on_error

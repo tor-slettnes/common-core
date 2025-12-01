@@ -108,7 +108,7 @@ namespace switchboard::dds
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
         bool invoke_interceptors,
-        bool trigger_descendents,
+        bool trigger_descendants,
         bool reevaluate,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -129,7 +129,7 @@ namespace switchboard::dds
         idl::encode(attributes, &req.attributes());
         req.clear_existing(clear_existing);
         req.invoke_interceptors(invoke_interceptors);
-        req.trigger_descendents(trigger_descendents);
+        req.trigger_descendants(trigger_descendants);
         req.reevaluate(reevaluate);
         idl::encode(on_cancel, &req.on_cancel());
         idl::encode(on_error, &req.on_error());

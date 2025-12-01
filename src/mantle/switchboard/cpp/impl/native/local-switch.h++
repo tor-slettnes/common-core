@@ -70,7 +70,7 @@ namespace switchboard
             const core::types::KeyValueMap &attributes = {},
             bool clear_existing = false,
             bool invoke_interceptors = true,
-            bool trigger_descendents = true,
+            bool trigger_descendants = true,
             bool reevaluate = false,
             ExceptionHandling on_cancel = EH_DEFAULT,
             ExceptionHandling on_error = EH_DEFAULT) override;
@@ -83,7 +83,7 @@ namespace switchboard
         bool set_current_state(
             State state,
             bool invoke_interceptors = false,
-            bool trigger_descendents = false,
+            bool trigger_descendants = false,
             ExceptionHandling on_cancel = EH_DEFAULT,
             ExceptionHandling on_error = EH_DEFAULT);
 
@@ -113,7 +113,7 @@ namespace switchboard
             ExceptionHandling eh,
             ExceptionHandling eh_default);
 
-        ThreadMap update_descendents(
+        ThreadMap update_descendants(
             bool invoke_interceptors = true);
 
         void notify_spec();

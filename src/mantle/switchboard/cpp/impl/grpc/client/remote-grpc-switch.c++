@@ -114,7 +114,7 @@ namespace switchboard::grpc
         const core::types::KeyValueMap &attributes,
         bool clear_existing,
         bool with_interceptors,
-        bool trigger_descendents,
+        bool trigger_descendants,
         bool reevaluate,
         ExceptionHandling on_cancel,
         ExceptionHandling on_error)
@@ -132,7 +132,7 @@ namespace switchboard::grpc
         protobuf::encode(attributes, req.mutable_attributes());
         req.set_clear_existing(clear_existing);
         req.set_with_interceptors(with_interceptors);
-        req.set_trigger_descendents(trigger_descendents);
+        req.set_trigger_descendants(trigger_descendants);
         req.set_reevaluate(reevaluate);
         req.set_on_cancel(protobuf::encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(on_cancel));
         req.set_on_error(protobuf::encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(on_error));

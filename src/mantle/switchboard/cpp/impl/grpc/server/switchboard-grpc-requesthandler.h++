@@ -83,7 +83,7 @@ namespace switchboard::grpc
             const cc::platform::switchboard::protobuf::SwitchIdentifier *request,
             cc::platform::switchboard::protobuf::SwitchIdentifiers *reply) override;
 
-        ::grpc::Status GetDescendents(
+        ::grpc::Status GetDescendants(
             ::grpc::ServerContext *context,
             const cc::platform::switchboard::protobuf::SwitchIdentifier *request,
             cc::platform::switchboard::protobuf::SwitchIdentifiers *reply) override;
