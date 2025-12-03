@@ -90,6 +90,7 @@ class SwitchboardBase:
 
     def get_or_add_switch(self,
                           switch_name: str,
+                          initial_value: bool|None = None,
                           ) -> Switch:
         '''
         Get the named switch, or create it if missing.
@@ -104,6 +105,8 @@ class SwitchboardBase:
             except KeyError:
                 self.add_switch(switch_name)
                 switch = self.switches[switch_name] = self._new_switch(switch_name)
+                if initial_value is not None:
+                    switch.set_active(initial_value)
 
             return switch
 
