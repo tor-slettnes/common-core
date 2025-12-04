@@ -26,7 +26,13 @@ class LogBase:
     _logger   = None
     _settings = SettingsStore('logging')
 
-    def __init__(self, logger: logging.Logger|None = None):
+    def __init__(self,
+                 logger: logging.Logger|None = None,
+                 log_name: str|None = None):
+
+        if log_name:
+            self.log_name = log_name
+
         self.logger = logger
 
     @property
