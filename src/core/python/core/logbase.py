@@ -22,7 +22,7 @@ def init_logging(threshold: int = logging.INFO,
 
 
 class LogBase:
-    LOG_NAME  = None
+    log_name  = None
     _logger   = None
     _settings = SettingsStore('logging')
 
@@ -35,8 +35,9 @@ class LogBase:
         Return an existing or new logger for this instance.
         '''
         if self._logger is None:
-            self._logger = logging.getLogger(self.log_name)
-            if level := self.threshold_setting(self.log_name):
+            log_name = self.log_name or self.package_name()
+            self._logger = logging.getLogger(log_name)
+            if level := self.threshold_setting(log_name):
                 self._logger.setLevel(level)
         return self._logger
 
@@ -46,25 +47,6 @@ class LogBase:
         Assign a logger to this instance.
         '''
         self._logger = logger
-
-    @property
-    def log_name(self) -> str:
-        '''
-        Return a log name for this object instance.  If this has not yet
-        been set, assign a new name based on the Python package name as well as
-        this class.
-        '''
-        if self.LOG_NAME is None:
-            self.LOG_NAME = self.package_name()
-
-        return self.LOG_NAME
-
-    @log_name.setter
-    def log_name(self, log_name: str):
-        '''
-        Assign a custom name to this logger.
-        '''
-        self.LOG_NAME = log_name
 
     def package_name(self):
         return '.'.join(self.__module__.split('.')[:-1])
