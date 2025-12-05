@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Modules within current package
-from cc.messaging.grpc.signal_service import SignalService
+from cc.messaging.grpc.signal_request_handler import SignalRequestHandler
 from ..base import API, demo_signals
 from ..protobuf import Greeting, TimeData
 from .demo_service_pb2_grpc import DemoServicer
@@ -21,7 +21,8 @@ import time
 
 ## We derive our service class from
 ##
-##  - `Service`, the common service base, e.g. to load service settings.
+##  - `SignalRequestHandler`, the common service base, to load service settings
+##    and to propagate signals.
 ##
 ##  - `DemoServicer`, generated from the `service Demo` block in `demo_service.proto`.
 ##    Strictly speaking it would not be necessary to derive from this class since
@@ -33,7 +34,7 @@ import time
 ##      (c) doing so is in accordance with the official guide at https://grpc.io/,
 ##          and as such more future proof.
 
-class DemoService (SignalService, DemoServicer):
+class DemoRequestHandler (SignalRequestHandler, DemoServicer):
     '''
     Handle "Demo" service requests
     '''
@@ -41,9 +42,9 @@ class DemoService (SignalService, DemoServicer):
     def __init__ (self,
                   demo_provider : API,
                   bind_address : str = ""):
-        SignalService.__init__(self,
-                               signal_store = demo_signals,
-                               bind_address = bind_address)
+        SignalRequestHandler.__init__(self,
+                                      signal_store = demo_signals,
+                                      bind_address = bind_address)
         self.demo_provider = demo_provider
 
     def SayHello(self,

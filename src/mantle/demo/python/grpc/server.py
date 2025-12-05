@@ -5,21 +5,21 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules relative to install dir
-from cc.core.logbase import init_logging
-from cc.messaging.grpc.server import create_server
-from cc.demo.grpc.service import DemoService
-from cc.demo.native import NativeDemo
-
 ### Standard Python modules
 import logging
+
+### Modules relative to install dir
+from cc.core.logbase import init_logging
+from cc.messaging.grpc.server import ServerWrapper
+from cc.demo.native import NativeDemo
+from cc.demo.grpc.request_handler import DemoRequestHandler
 
 
 if __name__ == '__main__':
     init_logging()
 
-    demoservice = DemoService(NativeDemo())
-    demoserver = create_server(demoservice)
+    demorequesthandler = DemoRequestHandler(NativeDemo())
+    demoserver = ServerWrapper(demorequesthandler)
     logging.info("Starting Python gRPC Demo Server")
     try:
         demoserver.start()

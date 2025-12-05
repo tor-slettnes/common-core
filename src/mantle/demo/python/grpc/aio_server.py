@@ -8,7 +8,7 @@
 ### Modules relative to install dir
 from cc.demo.grpc.service import DemoService
 from cc.demo.native import NativeDemo
-from cc.messaging.grpc.server import create_async_server
+from cc.messaging.grpc.server import AsyncServerWrapper
 
 ### Standard Python modules
 import logging
@@ -19,7 +19,7 @@ async def main():
     pylogger.setLevel(logging.INFO)
 
     service = DemoService(NativeDemo())
-    server = create_async_server(service)
+    server = AsyncServerWrapper(service)
 
     try:
         logging.info("Starting Python gRPC Demo Server")

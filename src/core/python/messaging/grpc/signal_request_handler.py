@@ -1,12 +1,12 @@
-#!/usr/bin/echo Do not invoke directly.
-#===============================================================================
-## @file signal_service.py
-## @brief gRPC service handler with `watch` method to feed back signals
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
+'''
+signal_request_handler.py - gRPC request handler with `watch` method to feed back signals
+'''
+
+__docformat__ = 'javadoc en'
+__author__= 'Tor Slettnes'
 
 ### Modules within package
-from .service import Service
+from .request_handler import RequestHandler
 from cc.protobuf.signal import SignalStore, Filter, MappingAction
 
 ### Third-party modules
@@ -19,15 +19,17 @@ from queue  import Queue
 import queue, logging
 
 #===============================================================================
-# @class SignalService
+# @class SignalRequestHandler
 
-class SignalService (Service):
+class SignalRequestHandler (RequestHandler):
     '''
-    gRPC Servicer with `Watch()` method to stream signals back to client.
+    gRPC request handler with `Watch()` method to stream signals back to client.
     '''
+
+    signal_store = None
 
     def __init__(self,
-                 signal_store   : SignalStore,
+                 signal_store   : SignalStore|None = None,
                  bind_address   : str = "",
                  max_queue_size : Optional[int] = 256,
                  product_name   : str|None = None,
@@ -40,7 +42,7 @@ class SignalService (Service):
 
         param[in] bind_address
            Listener address, which will be added to gRPC server.  For additional
-           information, refer to `__init__()` in the `Service` parent class.
+           information, refer to `__init__()` in the `RequestHandler` parent class.
 
         param[in] max_queue_size
            Max size of queue that will hold locally-emitted signals until
@@ -55,12 +57,21 @@ class SignalService (Service):
             corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
         '''
 
-        Service.__init__ (self,
-                          bind_address = bind_address,
-                          product_name = product_name,
-                          project_name = project_name)
+        if signal_store:
+            self.signal_store = signal_store
 
-        self.signal_store = signal_store
+        else:
+            assert self.signal_store, (
+                'SignalRequestHandler subclass %s must define or pass in `signal_store`' % (
+                    type(self).__name__,
+                ))
+
+
+        RequestHandler.__init__ (self,
+                                 bind_address = bind_address,
+                                 product_name = product_name,
+                                 project_name = project_name)
+
         self.max_queue_size = max_queue_size
 
 

@@ -97,7 +97,7 @@ class CachingSignalStore (SignalStore):
         * the field indicated by `signal_name` set to `value`.
 
         +------------------+-----------------------------+-------------------+
-        | `value` provided | previous value              | `mapping_action`  |
+        | provided `value` | previous value              | `mapping_action`  |
         +------------------+-----------------------------+-------------------+
         | No               | No                          | `None`            |
         | No               | Yes                         | `MAP_REMOVAL`     |

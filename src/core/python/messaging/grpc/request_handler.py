@@ -1,24 +1,25 @@
 #!/usr/bin/echo Do not invoke directly.
 #===============================================================================
-## @file service.py
+## @file servicer.py
 ## @brief Interactive wrapper for access to Instrument Services via gRPC
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-### Modules wihtin package
-from .base import Base, AddressPair
-
-### Third-party modules
-from cc.protobuf.wellknown import Empty
-import grpc
-
 ### Standard Python modules
-from typing import Union
+from typing import Union, Callable
 import importlib
 import logging
 
+### Third-party modules
+import grpc
 
-class Service (Base):
+### Common core modules
+from cc.protobuf.wellknown import Empty
+from cc.protobuf.builder import MessageBuilder
+from .base import Base, AddressPair
+
+
+class RequestHandler (Base, MessageBuilder):
     """
     Base for gRPC service request handlers.  It automates lookup of service
     address (interface adress and port number) from the settings file based on
@@ -43,12 +44,12 @@ class Service (Base):
     Then, your service handler might look something like this:
 
       ```python
-      from cc.messaging.grpc.service import Service
+      from cc.messaging.grpc.service import RequestHandler
       from example_service_service_pb2_grpc import ExampleServicer
       from google.protobuf.wrappers_pb2 import StringValue
       from grpc import ServicerContext
 
-      class ExampleService (Service, ExampleServicer):
+      class ExampleRequestHandler (RequestHandler, ExampleServicer):
 
           def echo(self,
                    request : StringValue,
@@ -112,6 +113,11 @@ class Service (Base):
     def bind_address(self) -> str:
         return self._joinAddress(self.service_address)
 
+    @property
+    def servicer_base(self) -> type:
+        name, base = self._servicer_name_and_base()
+        return base
+
     def add_to_server(self,
                       server       : Union[grpc.Server, grpc.aio.Server],
                       add_listener : bool = True):
@@ -137,7 +143,8 @@ class Service (Base):
                 self.bind_address))
             server.add_insecure_port(self.bind_address)
 
-    def _wrap (self, method, *args, **kwargs):
+
+    def _wrap (self, method: Callable, *args, **kwargs):
         if response := method(*args, **kwargs):
             return response
         else:

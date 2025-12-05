@@ -29,7 +29,10 @@ class NativeDemo (API):
         self.timer_task_handle = "Demo.ticker"
 
     def say_hello(self, greeting: Greeting):
-        demo_signals.emit_mapping('signal_greeting', None, greeting.identity, greeting)
+        demo_signals.emit_mapping(
+            signal_name = 'signal_greeting',
+            key = greeting.identity,
+            value = greeting)
 
 
     def get_current_time(self) -> TimeData:

@@ -12,7 +12,7 @@ from .client import Client
 from .client_reader import ThreadReader, AsyncReader
 from .signal_client import SignalClient
 
-from .service import Service
-from .signal_service import SignalService
+from .request_handler import RequestHandler
+from .signal_request_handler import SignalRequestHandler
 
-from .server import create_server
+from .server import ServerWrapper, AsyncServerWrapper
