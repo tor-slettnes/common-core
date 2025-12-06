@@ -104,51 +104,19 @@ class Client (Base):
         self.wait_for_ready   = wait_for_ready
         self.intercept_errors = intercept_errors
         self.service_address  = self.realaddress(host, "host", "port", "localhost", 8080)
-        self._channel         = None
-        self._stub            = None
-        self._stub_owner      = None
+        self.channel          = self.create_channel()
+        self.stub             = self.Stub(self.channel)
 
-    @property
-    def stub(self):
-        '''
-        Return the current gRPC client stub.
-
-        A new stub is created under one of these conditions:
-          - One has not yet been created
-          - Our PID has changed since we last obtained this reference,
-            meaning we have forked and are now a child of the parent
-            process that originally created this stub.
-
-        '''
-
-        pid = os.getpid()
-        if (self._stub is None) or (self._stub_owner != pid):
-            self._close_channel()
-            self._init_channel()
-            self._stub = type(self).Stub(self.channel)
-            self._stub_owner = pid
-
-        return self._stub
+        #self.channel.subscribe(self._channelChange)
 
     @property
     def host(self) -> str:
         return self._joinAddress(self.service_address)
 
-    @property
-    def channel(self):
-        if self._channel is None:
-            self._init_channel()
-        return self._channel
-
-    def _close_channel(self):
-        if channel := self._channel:
-            channel.close()
-            self._channel = None
-
-    def _init_channel(self):
+    def create_channel(self):
         if self.use_asyncio:
             # self._channel = grpc.aio.insecure_channel(target = self.host)
-            self._channel = grpc.aio.insecure_channel(
+            return grpc.aio.insecure_channel(
                 target = self.host,
                 interceptors = [
                     AsyncClientInterceptor(self.wait_for_ready,
@@ -157,12 +125,10 @@ class Client (Base):
 
         else:
             # self._channel = grpc.insecure_channel(self.host)
-            self._channel = grpc.intercept_channel(
+            return grpc.intercept_channel(
                 grpc.insecure_channel(self.host),
                 ClientInterceptor(self.wait_for_ready,
                                   self.intercept_errors))
-
-        #self.channel.subscribe(self._channelChange)
 
     def _default_service_name(self):
         service_name, _ = type(self).Stub.__name__.rsplit('Stub')

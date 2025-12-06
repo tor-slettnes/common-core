@@ -8,6 +8,7 @@
 ### Standard Python modules
 import concurrent
 from typing import Sequence
+from threading import Event
 
 ### Third-party modules
 import grpc
@@ -77,7 +78,7 @@ class ServerWrapper:
     def start(self):
         return self.server.start()
 
-    def stop(self, timeout: TimeInterval|float|int|None = TimeInterval(seconds=5)):
+    def stop(self, timeout: TimeInterval|float|int|None = TimeInterval(seconds=5)) -> Event:
         return self.server.stop(timeout)
 
     def wait_for_termination(self):
