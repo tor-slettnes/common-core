@@ -31,9 +31,6 @@ class SwitchboardBase:
         self._switch_lock = Lock()
         self._connect_signals()
 
-    def __del__(self):
-        self._disconnect_signals()
-
     def _connect_signals(self):
         switchboard_signals.connect_signal('specification', self._on_signal_spec)
         switchboard_signals.connect_signal('status', self._on_signal_status)
