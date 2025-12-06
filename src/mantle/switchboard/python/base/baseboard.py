@@ -23,11 +23,11 @@ class SwitchboardBase:
     Switchboard abstract base
     '''
 
-    def __init__(self,
-                 signal_store: SignalStore = switchboard_signals):
+    signal_store = switchboard_signals
+
+    def __init__(self):
 
         self.switches = {}
-        self.signal_store = signal_store
         self._switch_lock = Lock()
         self._connect_signals()
 
@@ -35,12 +35,12 @@ class SwitchboardBase:
         self._disconnect_signals()
 
     def _connect_signals(self):
-        self.signal_store.connect_signal('specification', self._on_signal_spec)
-        self.signal_store.connect_signal('status', self._on_signal_status)
+        switchboard_signals.connect_signal('specification', self._on_signal_spec)
+        switchboard_signals.connect_signal('status', self._on_signal_status)
 
     def _disconnect_signals(self):
-        self.signal_store.disconnect_signal('specification', self._on_signal_spec)
-        self.signal_store.disconnect_signal('status', self._on_signal_status)
+        switchboard_signals.disconnect_signal('specification', self._on_signal_spec)
+        switchboard_signals.disconnect_signal('status', self._on_signal_status)
 
     def _on_signal_spec(self, msg: Signal):
         if switch := self._get_mapped_switch(msg):

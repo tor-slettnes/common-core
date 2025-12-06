@@ -39,13 +39,13 @@ class Client (SwitchboardBase, SignalClient):
             corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
         '''
 
-        SwitchboardBase.__init__(self)
         SignalClient.__init__(self,
                               host = host,
                               wait_for_ready = wait_for_ready,
                               product_name = product_name,
                               project_name = project_name)
 
+        SwitchboardBase.__init__(self)
         self.start_watching(watch_all=True)
 
     def _new_switch(self, switch_name: str) -> RemoteSwitch:
