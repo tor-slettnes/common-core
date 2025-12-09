@@ -6,22 +6,24 @@ __all__ = ['Switch']
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
+### Standard ProtoBuf modules
+from typing import Optional, Mapping
+from collections.abc import Sequence, Mapping, Callable
+from abc import abstractmethod
 
-### Modules within package
+### Core modules
+from cc.core.invocation import safe_invoke
+from cc.protobuf.status import Error
+from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
+
+### Swithboard modules
 from ..protobuf import (
     Specification, Status, State,
-    DependencyMap, DependencyPolarity, InterceptorPhase, ExceptionHandling,
+    Dependency, DependencyMap, DependencyPolarity,
+    InterceptorSpec, InterceptorPhase, ExceptionHandling,
     Localization, LocalizationMap, encodeLocalization, encodeLocalizationMap,
     LanguageCode, LanguageChoice, LocalizationsInput,
 )
-
-from cc.protobuf.status import Error
-from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
-from cc.core.invocation import safe_invoke
-
-from typing import Optional
-from collections.abc import Sequence, Mapping, Callable
-from abc import abstractmethod
 
 class Switch:
     '''
@@ -101,14 +103,14 @@ class Switch:
         '''
 
     @property
-    def localizations(self) -> LocalizationMap:
+    def localizations(self) -> Mapping[str, Localization]:
         '''
         Return language codes mapped to text strings for this switch,
         including its description, texts explaining each target action
         (True/False), and texts explaining each state (INITIAL, DEACTICATING,
         INACTIVE, ACTIVATING, ACTIVE, FAILING, FAILED).
         '''
-        return self.specification.localizations
+        return self.specification.localizations.map
 
 
     def set_localizations(self,
@@ -381,11 +383,11 @@ class Switch:
 
 
     @property
-    def dependencies(self) -> DependencyMap:
+    def dependencies(self) -> Mapping[str, Dependency]:
         '''
-        Return a list of dependencies for this switch. @sa add_dependency().
+        Return a map of dependencies for this switch. @sa add_dependency().
         '''
-        return self.specification.dependencies
+        return self.specification.dependencies.map
 
 
     @abstractmethod
@@ -453,7 +455,7 @@ class Switch:
 
 
     @property
-    def interceptors(self) -> list:
+    def interceptors(self) -> Mapping[str, InterceptorSpec]:
         '''
         Return a list of interceptors associated with this switch.
 

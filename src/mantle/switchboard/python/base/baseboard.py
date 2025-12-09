@@ -44,14 +44,14 @@ class SwitchboardBase (LogBase):
         self.signal_store.disconnect_signal('status', self._on_signal_status)
 
     def _on_signal_spec(self, msg: Signal):
-        if switch := self._map_switch(msg):
+        if switch := self._get_mapped_switch(msg):
             switch._update_specification(msg.specification)
 
     def _on_signal_status(self, msg: Signal):
-        if switch := self._map_switch(msg):
+        if switch := self._get_mapped_switch(msg):
             switch._update_status(msg.status)
 
-    def _map_switch(self, msg: Signal) -> Switch|None:
+    def _get_mapped_switch(self, msg: Signal) -> Switch|None:
         switch = None
 
         if switch_name := msg.mapping_key:
