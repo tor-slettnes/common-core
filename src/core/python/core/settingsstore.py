@@ -47,23 +47,22 @@ class SettingsStore (dict):
       resulting in multiple candidate paths.
 
     - If the file name ends in '.json', `.yaml` or `.ini` the corresponding
-      parser is used. If the file name has no suffix, each of these supported
-      suffixes is in turn appended to each candidate path.  Any filename with a
-      different/unsupported suffix is ignored.
+      parser is used.  If the file name has no suffix, each of these supported
+      suffixes is in turn appended to each candidate path, in that order.  Any
+      filename with a different/unsupported suffix is ignored.
 
-    - If one or more of the resulting candidate path(s) exist on the
-      filesystem, they are consecutively parsed and merged in with the
-      existing settings.
+    - If one or more of the resulting candidate path(s) exist on the filesystem,
+      they are consecutively parsed and merged in with the existing settings.
 
     Comments are supported as follows:
 
-    - In JSON files, comments starting with `#` or `//`
-      until the end of the line are stripped away prior to parsing.
+    - In JSON files, comments starting with `#` or `//` until the end of the
+      line are stripped away prior to parsing.
 
     - The YAML parser natively supports embedded comments starting with `#`.
 
     - INI files are parsed with Python's native RawConfigParser, which supports
-      comment following `;` or `#`.
+      comments following `;` or `#`.
     '''
 
     parser_suffixes \
@@ -86,13 +85,12 @@ class SettingsStore (dict):
         located relative to one or more folders in `searchpath` if provided,
         otherwise in the default search path.
 
-        See the `SettingsStore()` class description for details on the
-        `filenames` argument.
+        Filenames may be relative or absolute paths; see the `SettingsStore()`
+        class description above for details.
 
-        Each directory name in `searchpath` may be absolute or relative. In the
-        latter case, an upward search for that (dominating) folder name starts
-        at the installation folder where this application module is located, and
-        ends at the root of the filesystem.
+        Each directory name in `searchpath` may also be relative or absolute.
+        In the latter case, names are resolved with respect to
+        `cc.core.paths.install_root()`, defined at build time (e.g. `/usr`).
 
         If no `searchpath` is provided, a default search path is obtained as
         follows:
@@ -104,26 +102,21 @@ class SettingsStore (dict):
          - Otherwise, the default search path comprises:
            * a user-specific configuration folder (`$HOME/.config/common-core`
              if available, otherwise no default),
+
            * a machine-specific configuration folder (`/etc/common-core` on UNIX
              or `c:\\common-core\\config` on Windows),
+
            * an application-provided default settings folder
-             (`share/common-core/settings`), relative to the top-level folder
-             where this application is installed,
-           * a `settings` folder directly within an archive (such as a Python Wheel),
-           * the folder in which the Python package `package` (if specified) is
-             installed.
+             (`share/common-core/settings`), located relative to
+             `cc.core.paths.install_root()`.
 
-        The `package` argument may be used to supply application-provided
-        defaults within the same folder as code modules for a specific Python
-        package. To include the folder where the calling module is installed,
-        use
+           * a `settings` folder directly within the Python root where this
+             module is located (e.g. `lib/python3.XX/site-packages/settings` or
+             `lib/python3/dist-packages/settings` within a VENV, or `settings`
+             directly within a Python wheel).
 
-          ```python
-          my_settings = SettingsStore('my_settings', package=__package__)
-          ```
-
-        (This has lower precedence than any `my_settings.{json,yaml,ini}`
-        file(s) found earlier in the search path.)
+           * the folder in which the Python package `package` (if provided) is
+             installed.  This is intended for submodule settings.
         '''
 
         self._filenames = []

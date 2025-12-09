@@ -96,7 +96,7 @@ def legend():
 if __name__ == "__main__":
     args   = ArgParser().parse_args()
 
-    logging.getLogger().setLevel(logging.DEBUG if args.debug else logging.INFO)
+    cc.core.logbase.init_logging(logging.DEBUG if args.debug else logging.INFO)
 
     multilogger = MultiLoggerClient(
         args.host,

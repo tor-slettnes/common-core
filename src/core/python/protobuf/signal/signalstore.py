@@ -11,7 +11,6 @@ author = 'Tor Slettnes'
 from typing import Optional, Callable, Mapping, Union, Sequence
 import threading
 import asyncio
-import weakref
 
 ### Modules withn package
 from ...core.invocation import safe_invoke
@@ -232,7 +231,7 @@ class SignalStore:
         Connect a handler to _all_ signals in this store.
         '''
 
-        self.slots.setdefault(self.ALL_SIGNALS, []).append(weakref.ref(slot))
+        self.slots.setdefault(self.ALL_SIGNALS, []).append(slot)
 
 
     def disconnect_all(self,
@@ -278,12 +277,12 @@ class SignalStore:
                 "Message type %s does not have a %r field" %
                 (self.signal_type.__name__, name))
 
-        self.slots.setdefault(name, []).append(weakref.ref(slot))
+        self.slots.setdefault(name, []).append(slot)
 
 
     def disconnect_signal(self,
                           name: str|None,
-                          slot: Optional[Slot] = None):
+                          slot: Optional[Slot] = None) -> bool:
         '''
         Disconnect a simple handler from the specified signal.
 
@@ -298,7 +297,13 @@ class SignalStore:
         '''
 
         if slot:
-            return self._prune_slots(name, [slot])
+            try:
+                slots = self.slots[name]
+                slots.remove(name)
+            except (KeyError, ValueError):
+                return False
+            else:
+                return True
         else:
             return bool(self.slots.pop(name, None))
 
@@ -392,14 +397,12 @@ class SignalStore:
 
         if signal_name := self.signal_name(msg):
             ## Invoke each slot that was connected to this signal by name
-            for callback_ref in self.slots.get(signal_name, []):
-                if callback := callback_ref():
-                    self._emit_to(signal_name, callback, msg)
+            for callback in self.slots.get(signal_name, []):
+                self._emit_to(signal_name, callback, msg)
 
             ## Invoke each slot that was connected to `all` signals
-            for callback_ref in self.slots.get(self.ALL_SIGNALS, []):
-                if callback := callback_ref():
-                    self._emit_to(signal_name, callback, msg)
+            for callback in self.slots.get(self.ALL_SIGNALS, []):
+                self._emit_to(signal_name, callback, msg)
 
     def emit_event(self,
                    signal_name : str,
@@ -445,31 +448,6 @@ class SignalStore:
     @classmethod
     def is_empty(cls, value: Message|None):
         return not value or (value.ByteSize() == 0)
-
-    def _prune_slots(self,
-                     signal_name: str,
-                     removals: Sequence[Slot] = []) -> bool:
-
-        pruned = False
-
-        if callback_refs := self.slots.get(signal_name):
-            new_refs = []
-
-            for ref in callback_refs:
-                callback = ref()
-                if callback and not callback in removals:
-                    new_refs.append(ref)
-                else:
-                    pruned = True
-
-            if not new_refs:
-                self.slots.pop(signal_name, None)
-
-            elif pruned:
-                self.slots[signal_name] = new_refs
-
-        return pruned
-
 
     def _emit_to(self,
                  signal_name : str,

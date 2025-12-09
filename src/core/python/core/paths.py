@@ -88,7 +88,7 @@ def add_to_settings_path(
         preinstalled: bool = False) -> bool:
 
     '''
-    Add a folder to search path for settings files.
+    Add a folder to the search path for settings files.
 
     @param folder
         Folder to add. If this is a relative path, it is determined relative to
@@ -142,16 +142,14 @@ def preinstalled_settings_path(package: str|None = None) -> SearchPath:
     preinstalled defaults.  See `cc.core.settingsstore.SettingsStore()` for
     details on local overrides vs. preinstalled defaults.
 
-    The return value is a list of `pathlib.Path()` instances, comprising:
+    The return value is a list of `pathlib.Path()` instances, comprising
 
-    * A shared settings folder (`share/common-core/settings`, relative to
-      `install_root()` of this package).
+    * a shared settings folder (`share/common-core/settings`, relative to
+      `install_root()` of this package),
 
-    * a `settings` folder directly within `python_root()` (i.e. the top-level
-      Python modules folder in which this package exists, such as
-      `lib/pythonX.XX/site-packages`).
+    * a `settings` folder directly within `python_root()`, and
 
-    * The folder in which the Python `package` provided to `__init__`, if any,
+    * the folder in which the Python `package` provided to `__init__`, if any,
       is installed.
     '''
 

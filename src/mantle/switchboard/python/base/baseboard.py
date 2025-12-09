@@ -9,8 +9,11 @@ __author__ = 'Tor Slettnes'
 ### Standard Python modules
 from abc import abstractmethod
 from threading import Lock
+from logging import Logger
 
 ### Core modules
+from cc.core.logbase import LogBase
+from cc.protobuf.dissecter import message_dissecter
 from cc.protobuf.signal import SignalStore, MappingAction
 
 ### Modules within package
@@ -18,49 +21,50 @@ from ..protobuf import Signal
 from .switch import Switch
 from .signals import switchboard_signals
 
-class SwitchboardBase:
+class SwitchboardBase (LogBase):
     '''
     Switchboard abstract base
     '''
 
     signal_store = switchboard_signals
 
-    def __init__(self):
+    def __init__(self, logger: Logger|None = None):
+        LogBase.__init__(self, logger = logger)
 
         self.switches = {}
         self._switch_lock = Lock()
         self._connect_signals()
 
     def _connect_signals(self):
-        switchboard_signals.connect_signal('specification', self._on_signal_spec)
-        switchboard_signals.connect_signal('status', self._on_signal_status)
+        self.signal_store.connect_signal('specification', self._on_signal_spec)
+        self.signal_store.connect_signal('status', self._on_signal_status)
 
     def _disconnect_signals(self):
-        switchboard_signals.disconnect_signal('specification', self._on_signal_spec)
-        switchboard_signals.disconnect_signal('status', self._on_signal_status)
+        self.signal_store.disconnect_signal('specification', self._on_signal_spec)
+        self.signal_store.disconnect_signal('status', self._on_signal_status)
 
     def _on_signal_spec(self, msg: Signal):
-        if switch := self._get_mapped_switch(msg):
+        if switch := self._map_switch(msg):
             switch._update_specification(msg.specification)
 
     def _on_signal_status(self, msg: Signal):
-        if switch := self._get_mapped_switch(msg):
+        if switch := self._map_switch(msg):
             switch._update_status(msg.status)
 
-    def _get_mapped_switch(self, msg: Signal) -> Switch|None:
+    def _map_switch(self, msg: Signal) -> Switch|None:
         switch = None
 
         if switch_name := msg.mapping_key:
             with self._switch_lock:
-                if ((msg.mapping_action == MappingAction.ADDITION) or
-                    (msg.mapping_action == MappingAction.UPDATE)):
-                    try:
-                        switch = self.switches[switch_name]
-                    except KeyError:
-                        switch = self.switches[switch_name] = self._new_switch(switch_name)
+                match msg.mapping_action:
+                    case MappingAction.ADDITION | MappingAction.UPDATE:
+                        try:
+                            switch = self.switches[switch_name]
+                        except KeyError:
+                            switch = self.switches[switch_name] = self._new_switch(switch_name)
 
-                elif (msg.mapping_action == MappingAction.REMOVAL):
-                    switch = self.switches.pop(switch_name, None)
+                    case MappingAction.REMOVAL:
+                        switch = self.switches.pop(switch_name, None)
 
         return switch
 
