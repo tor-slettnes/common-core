@@ -9,7 +9,7 @@ __author__ = 'Tor Slettnes'
 ### Modules within package
 from .jsonreader import JsonReader
 from .ini_reader import INIFileReader
-from .paths import FilePath, FilePathInput, SearchPath, \
+from ..paths import FilePath, FilePathInput, SearchPath, \
     normalized_search_path, settings_path, local_settings_path, preinstalled_settings_path
 
 ### Standard Python modules

@@ -14,13 +14,13 @@ conversion methods to support additional common representations such as:
 ## Usage Examples:
 
   ```
-  >>> from cc.core.timepoint import TimePoint
+  >>> from cc.core.timeutils import TimePoint
 
   ### Create a new `TimePoint` instance from the current time.
   >>> tp = TimePoint.now()
 
   >>> type(tp)
-  <class 'cc.core.timepoint.TimePoint'>
+  <class 'cc.core.timeutils.TimePoint'>
 
   >>> isinstance(tp, float)
   True
@@ -117,7 +117,7 @@ conversion methods to support additional common representations such as:
   '1d 30s'
 
   >>> type(ti)
-  <class 'cc.core.timeinterval.TimeInterval'>
+  <class 'cc.core.timeutils.TimeInterval'>
 
   >>> isinstance(ti, float):
   True

@@ -13,7 +13,7 @@ representations such as:
 ### Usage Examples:
 
   ```
-  >>> from cc.core.timeinterval import TimeInterval
+  >>> from cc.core.timeutils import TimeInterval
 
   ### Create a new TimeInterval value from scalar components
   >>> ti = TimeInterval(seconds = 5, milliseconds = 500)
@@ -153,7 +153,7 @@ class TimeInterval (float):
         '''
         return f"'{self}'"
 
-    def __add__ (self, other: TimeIntervalType|str|float|int):
+    def __add__ (self, other: TimeIntervalType|str|float|int) -> 'TimeInterval':
         '''
         Add another relative time interval to this one
         '''
@@ -161,13 +161,24 @@ class TimeInterval (float):
         return TimeInterval(float(self) + TimeInterval.from_value(other))
 
 
-    def __sub__(self, other: TimeIntervalType|str|float|int):
+    def __sub__(self, other: TimeIntervalType|str|float|int) -> 'TimeInterval':
         '''
         Subtract another relative time interval from this one
         '''
 
         return TimeInterval(float(self) - TimeInterval.from_value(other))
 
+    def __mul__ (self, scalar: float):
+        '''
+        Multiply this time inteval by a scalar value
+        '''
+        return TimeInterval(float(self) * scalar)
+
+    def __truediv__ (self, divisor: float):
+        '''
+        Divide this time inteval by a scalar value
+        '''
+        return TimeInterval(float(self) / divisor)
 
     @classmethod
     def try_from(cls,

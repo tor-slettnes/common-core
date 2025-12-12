@@ -10,7 +10,7 @@ import time
 import datetime
 
 ### Common Core modules
-from cc.core.timeinterval import TimeInterval
+from cc.core.timeutils import TimeInterval
 from ..utils import native_enum_from_proto
 from ..wellknown import DurationType
 

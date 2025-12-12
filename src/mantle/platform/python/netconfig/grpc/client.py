@@ -10,7 +10,7 @@ __docformat__ = 'javadoc en'
 from collections import namedtuple
 
 ### Modules within package
-from cc.core.scalar_types import HEX8
+from cc.core.types import HEX8
 from cc.core.decorators import doc_inherit
 
 from cc.protobuf.wellknown import empty, StringValue

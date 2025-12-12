@@ -15,7 +15,7 @@ import grpc
 
 ### Common Core modules
 from cc.core.decorators import override
-from cc.core.timeinterval import TimeInterval
+from cc.core.timeutils import TimeInterval
 from .base import AddressPair
 from .request_handler import RequestHandler
 

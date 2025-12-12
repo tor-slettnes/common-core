@@ -13,8 +13,8 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.duration_pb2 import Duration
 
 ### Modules wihtin package
-from cc.core.timeinterval import TimeIntervalType, TimeInterval
-from cc.core.timepoint import TimePointType, TimePoint
+from cc.core.timeutils import TimeIntervalType, TimeInterval
+from cc.core.timeutils import TimePointType, TimePoint
 
 from ..wellknown import TimestampType, \
     encodeTimestamp, decodeTimestamp, encodeDuration, decodeDuration

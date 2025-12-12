@@ -14,7 +14,7 @@ from .vfs_types_pb2 import \
 from cc.protobuf.utils import native_enum_from_proto
 from cc.protobuf.wellknown import decodeTimestamp
 from cc.protobuf.variant import PyValueDict, PyTaggedValueList, decodeKeyValueMap
-from cc.core.scalar_types import OCT8
+from cc.core.types import OCT8
 
 ### Standard Python modules
 from typing import Sequence, Mapping, Tuple

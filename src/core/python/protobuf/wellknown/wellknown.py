@@ -15,8 +15,8 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.struct_pb2 import Value, ListValue, Struct, NULL_VALUE
 
 ### Modules within this package
-from cc.core.timeinterval import TimeIntervalType, TimeInterval
-from cc.core.timepoint import TimePointType, TimePoint
+from cc.core.timeutils import TimeIntervalType, TimeInterval
+from cc.core.timeutils import TimePointType, TimePoint
 
 ### Type type hint for timestamps
 TimestampType = TimePointType|Timestamp|int|float
@@ -36,10 +36,10 @@ def encodeTimestamp(input: TimestampType,
     Convert an existing timestamp to a ProtoBuf `Timestamp` value.
 
     The input may be any value accepted by
-    `cc.core.timepoint.TimePoint.from_value()`, including:
+    `cc.core.timeutils.TimePoint.from_value()`, including:
 
       - An existing `google.protobuf.Timestamp` value
-      - An existing `cc.core.timepoint.TimePoint` value
+      - An existing `cc.core.timeutils.TimePoint` value
       - An `int`, `float`, or numeric string representing seconds since UNIX epoch
       - An ISO 8601 formatted string, preferably with a `Z` suffix to indicate UTC
       - A `time.struct_time` instance, as returned from `time.localtime()`
@@ -72,16 +72,16 @@ def encodeDuration(input: TimeIntervalType,
     Encode an existing duration to a ProtoBuf `Duration` value.
 
     The input may be any value accepted by
-    `cc.core.timeinterval.TimeInterval.from_value()`, including:
+    `cc.core.timeutils.TimeInterval.from_value()`, including:
 
      - An existing `google.protobuf.Duration` value
-     - An existing `cc.core.timeinterval.TimeInterval` value
+     - An existing `cc.core.timeutils.TimeInterval` value
      - An `int`, `float`, or numeric string representing seconds
      - An existing `datetime.timedelta` instance
      - An annotated string, e.g, as returned by
         * `google.protobuf.Duration().ToJsonString()`
-        * `cc.core.timeinterval.TimeInterval().to_json_string()`
-        * `cc.core.timeinterval.TimeInterval().to_string()`
+        * `cc.core.timeutils.TimeInterval().to_json_string()`
+        * `cc.core.timeutils.TimeInterval().to_string()`
 
     If `output` is provided it is populated in place, otherwise a new instance
     is created. In either case, the resulting value is returned.
