@@ -9,9 +9,12 @@ if (BUILD_PYTHON)
   set(SOURCES platform-shell)
 
   if(PYTHON_INSTALL_COMPONENT)
-    install(PROGRAMS ${SOURCES}
-      TYPE BIN
-      COMPONENT "${PYTHON_INSTALL_COMPONENT}"
-    )
+    foreach(source ${SOURCES})
+      install(PROGRAMS ${source}
+        TYPE BIN
+        RENAME "${ORGANIZATION}-${source}"
+        COMPONENT "${PYTHON_INSTALL_COMPONENT}"
+      )
+    endforeach()
   endif()
 endif()

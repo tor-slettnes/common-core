@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Name of this executable. This also becomes the name of the project.
-set(TARGET "switchboard")
+set(TARGET "cc-switchboard")
 
 set(LIB_DEPS
   cc_switchboard_native

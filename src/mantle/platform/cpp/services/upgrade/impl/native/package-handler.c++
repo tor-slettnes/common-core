@@ -78,11 +78,12 @@ namespace upgrade::native
 
         core::platform::FileDescriptor stdout_fd, stderr_fd;
         core::platform::PID pid = core::platform::process->invoke_async_pipe(
-            argv,
-            staging_folder,
-            nullptr,
-            &stdout_fd,
-            &stderr_fd);
+            argv,            // argv
+            staging_folder,  // cwd
+            nullptr,         // infile
+            &stdout_fd,      // outfile
+            &stderr_fd,      // errfile
+            true);           // detach
 
         std::future<void> stdout_future = std::async(
             &This::capture_install_progress,
@@ -96,29 +97,33 @@ namespace upgrade::native
             stderr_fd,
             package_info);
 
-        core::platform::ExitStatus::ptr err = core::platform::process->waitpid(pid);
+        stdout_future.wait();
+        stderr_future.wait();
 
         // Clear any pending upgrade information.
         signal_upgrade_pending.emit({});
 
-        if (err->success())
+        std::string diagnostic_text;
+        if (this->install_diagnostics)
         {
-            this->emit_upgrade_progress(UpgradeProgress::STATE_COMPLETED);
+            diagnostic_text = core::str::strip(this->install_diagnostics->str());
+        }
+
+        if (diagnostic_text.empty())
+        {
+            this->emit_upgrade_progress(
+                package_info->reboot_required()
+                    ? UpgradeProgress::STATE_COMPLETED
+                    : UpgradeProgress::STATE_FINALIZED);
             return package_info;
         }
         else
         {
-            std::string text;
-            if (this->install_diagnostics)
-            {
-                text = core::str::strip(this->install_diagnostics->str());
-            }
-
-            auto error = std::make_shared<core::exception::InvocationError>(
-                argv.front(),
-                err->combined_code(),
-                "",
-                text);
+            auto error = std::make_shared<core::exception::RuntimeError>(
+                diagnostic_text,
+                core::types::KeyValueMap({
+                    {"invocation", core::types::ValueList::create_from(argv)},
+                }));
 
             this->emit_upgrade_progress(
                 UpgradeProgress::STATE_FAILED,  // state

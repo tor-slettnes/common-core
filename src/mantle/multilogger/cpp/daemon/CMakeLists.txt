@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Name of this executable. This also becomes the name of the project.
-set(TARGET "multilogger")
+set(TARGET cc-multilogger-server)
 
 set(INSTALL_COMPONENT "multilogger-server")
 

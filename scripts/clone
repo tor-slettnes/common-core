@@ -37,7 +37,7 @@ copyfile()
 
     if ${all} || [ "${srcpath}" -nt "${dstpath}" ]
     then
-        echo "${relpath}"
+        echo "${dstfile}"
         tgtdir=$(dirname "${dstpath}")
         [ -n "${tgtdir}" ] && mkdir -p "${tgtdir}"
 

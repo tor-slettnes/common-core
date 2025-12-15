@@ -152,6 +152,8 @@ namespace core::platform
         ///     Redirect standard output to the specified file
         /// @param[in] errfile
         ///     Redirect standard error (diagnostic output) to the specified file
+        /// @param[in] detach
+        ///     Start a new detached process group, unlinking the process from its parent.
         /// @return
         ///     The process ID of the child. (Note that any subprocesses spawned
         ///     from the child itself are not captured).
@@ -168,7 +170,8 @@ namespace core::platform
             const fs::path &cwd = {},
             const fs::path &infile = path->devnull(),
             const fs::path &outfile = {},
-            const fs::path &errfile = {}) const;
+            const fs::path &errfile = {},
+            bool detach = false) const;
 
         /// @brief Invoke a command, and wait (block this thread) until it exits.
         /// @param[in] argv
@@ -180,8 +183,8 @@ namespace core::platform
         ///     Redirect standard input from the specified file
         /// @param[in] outfile
         ///     Redirect standard output to the specified file
-        /// @param[in] errfile
-        ///     Redirect standard error (diagnostic output) to the specified file
+        /// @param[in] detach
+        ///     Start a new detached process group, unlinking the process from its parent.
         /// @return
         ///     The exit code returned from the process, as returned from `waitpid(2)`.
         /// @exception std::system_error
@@ -209,6 +212,8 @@ namespace core::platform
         /// @param[out] fderr
         ///     Readable UNIX file descriptor of a pipe from the program's `stderr`.
         ///     Passing in `nullptr` closes the child's standard error.
+        /// @param[in] detach
+        ///     Start a new detached process group, unlinking the process from its parent.
         /// @return
         ///     The process ID of the child.
         /// @exception std::system_error
@@ -222,7 +227,8 @@ namespace core::platform
             const fs::path &cwd = {},
             FileDescriptor *fdin = nullptr,
             FileDescriptor *fdout = nullptr,
-            FileDescriptor *fderr = nullptr) const;
+            FileDescriptor *fderr = nullptr,
+            bool detach = false) const;
 
         /// @brief Communicate with a child process through an established pipe
         /// @param[in] pid

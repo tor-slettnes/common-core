@@ -7,15 +7,16 @@
 
 if (BUILD_PYTHON)
   set(PROGRAMS
-    demoshell
-    demo_grpc_aio_client_py
+    demo-shell
   )
 
   if(PYTHON_INSTALL_COMPONENT)
-    install(
-      PROGRAMS ${PROGRAMS}
-      TYPE BIN
-      COMPONENT "${PYTHON_INSTALL_COMPONENT}"
-    )
+    foreach(source ${SOURCES})
+      install(PROGRAMS ${source}
+        TYPE BIN
+        RENAME "${ORGANIZATION}-${source}"
+        COMPONENT "${PYTHON_INSTALL_COMPONENT}"
+      )
+    endforeach()
   endif()
 endif()

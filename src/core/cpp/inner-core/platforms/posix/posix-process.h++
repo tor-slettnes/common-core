@@ -50,7 +50,8 @@ namespace core::platform
             const fs::path &cwd,
             const fs::path &infile,
             const fs::path &outfile,
-            const fs::path &errfile) const override;
+            const fs::path &errfile,
+            bool detach) const override;
 
         ExitStatus::ptr invoke_sync_fileio(
             const ArgVector &argv,
@@ -64,7 +65,8 @@ namespace core::platform
             const fs::path &cwd,
             FileDescriptor *fdin,
             FileDescriptor *fdout,
-            FileDescriptor *fderr) const override;
+            FileDescriptor *fderr,
+            bool detach) const override;
 
         InvocationResult pipe_capture(
             PID pid,
@@ -113,7 +115,8 @@ namespace core::platform
             const fs::path &cwd,
             FileDescriptor from_fd,
             FileDescriptor *fdout,
-            FileDescriptor *fderr) const;
+            FileDescriptor *fderr,
+            bool detach = false) const;
 
         void trim_pipe(
             const Pipe &pipe,

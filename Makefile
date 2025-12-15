@@ -313,8 +313,8 @@ clean/build:
 clean/install uninstall:
 	@$(call remove,$(INSTALL_DIR))
 
-.PHONY: clean/deb clean/package pkg_clean
-clean/deb clean/package pkg_clean:
+.PHONY: clean/deb clean/package pkg-clean pkg_clean
+clean/deb clean/package pkg-clean pkg_clean:
 	@$(call remove,$(PACKAGE_DIR))
 
 .PHONY: clean/cache clean/config

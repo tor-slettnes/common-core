@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET sysconfig-tool)
+set(TARGET cc-sysconfig-tool)
 
 set(LIB_DEPS
   cc_core_platform

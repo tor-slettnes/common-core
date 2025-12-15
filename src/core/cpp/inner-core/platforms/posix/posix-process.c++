@@ -112,7 +112,7 @@ namespace core::platform
 
     PID PosixProcessProvider::fork_process() const
     {
-        return io::checkstatus(fork());
+        return io::checkstatus(::fork());
     }
 
     PID PosixProcessProvider::invoke_async_fileio(
@@ -120,7 +120,8 @@ namespace core::platform
         const fs::path &cwd,
         const fs::path &infile,
         const fs::path &outfile,
-        const fs::path &errfile) const
+        const fs::path &errfile,
+        bool detach) const
     {
         if (argv.empty())
         {
@@ -131,6 +132,11 @@ namespace core::platform
 
         if (pid == 0)
         {
+            if (detach)
+            {
+                io::checkstatus(::setsid());
+            }
+
             // Child closes stdin, stdout, stderr, then invokes command
             if (!infile.empty())
             {
@@ -160,7 +166,7 @@ namespace core::platform
         const fs::path &outfile,
         const fs::path &errfile) const
     {
-        PID pid = this->invoke_async_fileio(argv, cwd, infile, outfile, errfile);
+        PID pid = this->invoke_async_fileio(argv, cwd, infile, outfile, errfile, false);
         return this->waitpid(pid);
     }
 
@@ -169,7 +175,8 @@ namespace core::platform
         const fs::path &cwd,
         FileDescriptor *fdin,
         FileDescriptor *fdout,
-        FileDescriptor *fderr) const
+        FileDescriptor *fderr,
+        bool detach) const
     {
         Pipe inpipe = {-1, -1};
 
@@ -179,7 +186,7 @@ namespace core::platform
             *fdin = inpipe[OUTPUT];
         }
 
-        return this->invoke_async_from_fd(argv, cwd, inpipe[INPUT], fdout, fderr);
+        return this->invoke_async_from_fd(argv, cwd, inpipe[INPUT], fdout, fderr, detach);
     }
 
     InvocationResult PosixProcessProvider::pipe_capture(
@@ -329,7 +336,8 @@ namespace core::platform
         const fs::path &cwd,
         FileDescriptor fdin,
         FileDescriptor *fdout,
-        FileDescriptor *fderr) const
+        FileDescriptor *fderr,
+        bool detach) const
     {
         if (argv.empty())
         {
@@ -345,6 +353,11 @@ namespace core::platform
 
         if (pid == 0)
         {
+            if (detach)
+            {
+                io::checkstatus(::setsid());
+            }
+
             // Child uses inpipe as input and outpipe/errpipe as stdout/sderr.
             this->reassign_fd(fdin, STDIN_FILENO);
             this->reassign_fd(outpipe[OUTPUT], STDOUT_FILENO);

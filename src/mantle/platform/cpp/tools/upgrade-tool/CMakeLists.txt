@@ -5,7 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-set(TARGET upgrade-tool)
+set(TARGET cc-upgrade-tool)
 
 set(LIB_DEPS
   cc_core_platform

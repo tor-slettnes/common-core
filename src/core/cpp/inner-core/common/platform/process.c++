@@ -238,7 +238,8 @@ namespace core::platform
         const fs::path &,
         const fs::path &,
         const fs::path &,
-        const fs::path &) const
+        const fs::path &,
+        bool) const
     {
         throw std::invalid_argument("invoke_async() is not implemented on this platform");
     }
@@ -258,7 +259,8 @@ namespace core::platform
         const fs::path &,
         FileDescriptor *,
         FileDescriptor *,
-        FileDescriptor *) const
+        FileDescriptor *,
+        bool) const
     {
         throw std::invalid_argument("invoke_async_pipe() is not implemented on this platform");
     }
