@@ -10,5 +10,5 @@ add_subdirectory(impl)
 
 if(BUILD_SWITCHBOARD)
   add_subdirectory(daemon)
-  add_subdirectory(utils)
+  add_subdirectory(tools)
 endif()

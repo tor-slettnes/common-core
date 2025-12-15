@@ -6,12 +6,14 @@
 //==============================================================================
 
 #include "options.h++"
+#include "platform/path.h++"
 
 namespace switchboard
 {
     Options::Options(const std::string &implementation)
         : core::argparse::CommandOptions(),
-          implementation(implementation)
+          implementation(implementation),
+          signal_handle(core::platform::path->exec_name())
     {
         this->describe("Command line tool to access Switchboard service via " +
                        implementation);

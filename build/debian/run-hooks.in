@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-exec /usr/bin/run-parts --verbose --arg="$1" "@PARTS_DIRECTORY@"
+exec /usr/bin/run-parts --arg="$1" "@PARTS_DIRECTORY@"

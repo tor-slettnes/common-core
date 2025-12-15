@@ -9,6 +9,8 @@
 #include "switchboard.h++"
 #include "status/exceptions.h++"
 
+#include <algorithm>
+
 namespace switchboard
 {
     void Options::add_commands()
@@ -266,15 +268,15 @@ namespace switchboard
 
         this->add_command(
             "monitor",
-            {"[SWITCH ...]"},
+            {"[except]", "[spec|status]", "..."},
             "Stay alive and watch for any specification/status updates from "
-            "the server.  If one or more switches are listed, montior updates "
+            "the server.  If one or more switches are listed, monitor updates "
             "only from those switches.",
             std::bind(&Options::monitor, this));
 
         this->add_command(
             "watch",
-            {"[SWITCH ...]"},
+            {"[except]", "[spec|status]", "..."},
             "Alias for \"monitor\".",
             std::bind(&Options::monitor, this));
     }
@@ -604,29 +606,48 @@ namespace switchboard
 
     void Options::on_monitor_start()
     {
-        switchboard::signal_spec.connect("print_spec", on_signal_spec);
-        switchboard::signal_status.connect("print_status", on_signal_status);
+        FlagMap flags;
+        bool &except = flags["except"];
+        bool &show_spec = flags["spec"];
+        bool &show_status = flags["status"];
+        this->get_flags(&flags, false);
+
+        except |= std::none_of(
+            flags.begin(),
+            flags.end(),
+            [](auto kv) { return kv.second; });
+
+        if (show_spec != except)
+        {
+            switchboard::signal_spec.connect(this->signal_handle, on_signal_spec);
+        }
+
+        if (show_status != except)
+        {
+            switchboard::signal_status.connect(this->signal_handle, on_signal_status);
+        }
+
         this->provider->wait_ready();
     }
 
     void Options::on_monitor_end()
     {
-        switchboard::signal_spec.disconnect("print_spec");
-        switchboard::signal_status.disconnect("print_status");
+        switchboard::signal_spec.disconnect(this->signal_handle);
+        switchboard::signal_status.disconnect(this->signal_handle);
     }
 
     void Options::on_signal_spec(core::signal::MappingAction action,
                                  const switchboard::SwitchName &name,
                                  const switchboard::Specification &spec)
     {
-        core::str::format(std::cout, "signal_spec(%s, %r, %s)\n", action, name, spec);
+        core::str::format(std::cout, "spec(%s, %r, %s)\n", action, name, spec);
     }
 
     void Options::on_signal_status(core::signal::MappingAction action,
                                    const switchboard::SwitchName &name,
                                    const switchboard::Status &status)
     {
-        core::str::format(std::cout, "signal_status(%s, %r, %s)\n", action, name, status);
+        core::str::format(std::cout, "status(%s, %r, %s)\n", action, name, status);
     }
 
     switchboard::SwitchRef Options::get_switch(bool required)

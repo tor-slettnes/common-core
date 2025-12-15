@@ -76,6 +76,7 @@ namespace switchboard
 
     private:
         const std::string implementation;
+        std::string signal_handle;
     };
 
     extern std::unique_ptr<Options> options;
