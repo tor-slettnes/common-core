@@ -8,6 +8,7 @@
 #include "switch.h++"
 #include "switchboard-provider.h++"
 #include "status/exceptions.h++"
+#include "string/convert.h++"
 
 namespace switchboard
 {
@@ -45,7 +46,7 @@ namespace switchboard
             {"primary", this->primary()},
             {"dependencies", deps},
             {"interceptors", icepts},
-            {"state", this->state()},
+            {"state", core::str::convert_from(this->state())},
             {"active", this->active()},
         });
     }
