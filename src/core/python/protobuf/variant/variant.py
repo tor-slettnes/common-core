@@ -23,9 +23,9 @@ from .variant_pb2 import Value, ValueList, \
 
 PyValue = None|bool|int|float|str|bytes|Duration|TimestampType|list|tuple|dict
 PyTaggedValue = tuple[str, PyValue]
-PyValueList = list[PyValue]
-PyValueDict = dict[str, PyValue]
-PyTaggedValueList = list[PyTaggedValue]
+PyValueList = Sequence[PyValue]
+PyValueDict = Mapping[str, PyValue]
+PyTaggedValueList = Sequence[PyTaggedValue]
 
 
 def is_tagged_list(value_list: list|tuple) -> bool:
@@ -82,18 +82,21 @@ def encodeValue(input : PyValue,
     elif isinstance(input, bytes):
         ouptut.value_bytes = input
 
-    elif isinstance(input, (list, tuple)):
+    elif isinstance(input, Sequence):
         if is_tagged_list(input):
             encodeTaggedValueList(input, output.value_tvlist)
         else:
             encodeValueList(input, output.value_list)
 
-    elif isinstance(input, dict):
+    elif isinstance(input, Mapping):
         encodeKeyValueMap(input, output.value_kvmap)
 
     elif input is not None:
-        raise TypeError("Cannot convert type %s to protobuf value: %s"%
-                        (type(input), input))
+        raise TypeError(
+            "encodeValue() cannot convert %s to ProtoBuf Variant(): %s" % (
+                type(input).__name__,
+                input,
+            ))
 
     return output
 
@@ -147,11 +150,15 @@ def encodeValueList(input: PyValueList,
     if isinstance(input, ValueList):
         output.CopyFrom(input)
 
-    elif isinstance(input, list):
+    elif isinstance(input, Sequence):
         output.items.extend([encodeValue(v) for v in input])
 
     elif input is not None:
-        raise TypeError("encodeToValueList() expects a dictionary or list")
+        raise TypeError(
+            "encodeValueList() expects a dictionary or list, got %s: %s" % (
+                type(input).__name__,
+                input,
+            ))
 
     return output
 
@@ -220,14 +227,19 @@ def encodeTaggedValueList(input: PyTaggedValueList|PyValueDict,
     if isinstance(input, TaggedvalueList):
         output.CopyFrom(input)
 
-    elif isinstance(input, list):
+    elif isinstance(input, Sequence):
         output.items.extend([encodeTaggedValue(tv) for tv in input])
 
-    elif isinstance(input, dict):
+    elif isinstance(input, Mapping):
         output.items.extend([encodeTaggedValue(tv) for tv in input.items()])
 
     elif input is not None:
-        raise TypeError("encodeTaggedValueList() expects a dictionary or list")
+        raise TypeError(
+            "encodeTaggedValueList() expects a dictionary or list, got %s: %s" % (
+                type(input).__name__,
+                input,
+            ))
+
 
     return output
 
@@ -244,8 +256,11 @@ def decodeTaggedValueList(input: TaggedValueList|Sequence[Value]) -> PyTaggedVal
         return [decodeTaggedValue(tv) for tv in input]
     else:
         raise TypeError(
-            "Argument must be a protobuf.variant.ValueList() instance "
-            "or a native list, not %s"%(type(input),))
+            "decodeTaggedValueList() input must be a ValueList() instance "
+            "or a native list, got %s: %s" % (
+                type(input).__name__,
+                input,
+            ))
 
 
 #-------------------------------------------------------------------------------
@@ -273,9 +288,10 @@ def encodeKeyValueMap(input: PyValueDict,
 
     elif input is not None:
         raise TypeError(
-            f'encodeKeyValueMap() expects a mappable input, '
-            f'got {type(input).__name__}: {input}'
-        )
+            'encodeKeyValueMap() expects a mappable input, got %s: %s' % (
+                type(input).__name__,
+                input,
+            ))
 
     return output
 
