@@ -41,10 +41,6 @@ namespace switchboard
         std::pair<SwitchRef, bool> add_switch(
             const SwitchName &switch_name) override;
 
-        bool remove_switch(
-            const SwitchName &switch_name,
-            bool propagate) override;
-
     private:
         core::SettingsStore settings_;
 

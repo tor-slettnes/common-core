@@ -56,6 +56,11 @@ namespace switchboard
         return this->name_;
     }
 
+    const std::set<SwitchName> &Switch::aliases() const noexcept
+    {
+        return this->aliases_
+    }
+
     std::shared_ptr<Provider> Switch::provider() const
     {
         if (std::shared_ptr<Provider> ref = this->provider_.lock())

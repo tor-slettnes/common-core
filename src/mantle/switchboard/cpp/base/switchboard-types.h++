@@ -140,6 +140,7 @@ namespace switchboard
     struct Specification : public core::types::Listable
     {
         bool primary = false;
+        std::set<SwitchName> aliases;
         LocalizationMap localizations;
         DependencyMap dependencies;
         InterceptorMap interceptors;

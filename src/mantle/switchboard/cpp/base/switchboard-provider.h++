@@ -33,6 +33,13 @@ namespace switchboard
 
         bool load(const fs::path &filename);
 
+        /// @returns
+        ///    Iterator to beginning of Switch map.
+        virtual SwitchMap::const_iterator begin() const;
+
+        ///    Iterator to end of Switch map.
+        virtual SwitchMap::const_iterator end() const;
+
         /// @brief
         ///    Get a map of all switches
         /// @return
@@ -46,6 +53,17 @@ namespace switchboard
         /// @param[in] active
         ///    Initial position, if added
         virtual SwitchRef get_or_add_switch(const SwitchName &name);
+
+        /// @brief Find a switch
+        /// @param[in] name
+        ///    Switch name
+        /// @returns
+        ///    Iterator to the switch if found, or this->end() otherwise.
+        virtual SwitchMap::const_iterator find(
+            const SwitchName &name) const;
+
+        virtual SwitchMap::iterator find(
+            const SwitchName &name);
 
         /// @brief Find a switch
         /// @param[in] name

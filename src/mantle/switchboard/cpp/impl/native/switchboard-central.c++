@@ -64,20 +64,4 @@ namespace switchboard
         return {sw, inserted};
     }
 
-    bool Central::remove_switch(
-        const SwitchName &switch_name,
-        bool propagate)
-    {
-        bool erased = this->switches.erase(switch_name);
-        if (erased)
-        {
-            logf_info("Removed switch: %r", switch_name);
-            for (const auto &[candidate, sw] : this->switches)
-            {
-                sw->remove_dependency(switch_name, propagate);
-            }
-        }
-        return erased;
-    }
-
 }  // namespace switchboard

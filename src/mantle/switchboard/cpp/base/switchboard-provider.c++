@@ -60,6 +60,56 @@ namespace switchboard
         }
     }
 
+    SwitchMap::const_iterator Provider::begin() const
+    {
+        return this->switches.begin();
+    }
+
+    SwitchMap::const_iterator Provider::end() const
+    {
+        return this->switches.end();
+    }
+
+    SwitchMap::const_iterator Provider::find(
+        const SwitchName &name) const
+    {
+        if (auto it = this->switches.find(name);
+            it != this->end())
+        {
+            return it;
+        }
+
+        for (auto it = this->begin(); it != this->end(); it++)
+        {
+            if (it->second->aliases().count(name))
+            {
+                return it;
+            }
+        }
+
+        return this->end();
+    }
+
+    SwitchMap::iterator Provider::find(
+        const SwitchName &name)
+    {
+        if (auto it = this->switches.find(name);
+            it != this->switch_map.end())
+        {
+            return it;
+        }
+
+        for (auto it = this->begin(); it != this->end(); it++)
+        {
+            if (it->second->aliases().count(name))
+            {
+                return it;
+            }
+        }
+
+        return this->end();
+    }
+
     SwitchMap Provider::get_switches() const
     {
         return this->switches;
@@ -67,11 +117,11 @@ namespace switchboard
 
     SwitchRef Provider::get_or_add_switch(const SwitchName &name)
     {
-        try
+        if (SwitchRef sw = this->get_switch(name, false))
         {
-            return this->switches.at(name);
+            return sw;
         }
-        catch (const std::out_of_range &)
+        else
         {
             return this->add_switch(name).first;
         }
@@ -81,18 +131,18 @@ namespace switchboard
         const SwitchName &name,
         bool required) const
     {
-        try
+        if (auto it = this->find(name); it != this->end())
         {
-            return this->switches.at(name);
+            return it->second;
         }
-        catch (const std::out_of_range &)
+        else if (required)
         {
-            if (required)
-            {
-                throwf(core::exception::NotFound,
-                       ("Switch not found: %s", name),
-                       name);
-            }
+            throwf(core::exception::NotFound,
+                   ("Switch not found: %s", name),
+                   name);
+        }
+        else
+        {
             return {};
         }
     }
@@ -101,14 +151,19 @@ namespace switchboard
         const SwitchName &name,
         bool propagate)
     {
-        bool found = this->switches.erase(name);
+        auto it = this->find(name);
+        bool found = it != this->end();
+
         if (found)
         {
+            this->swiches.erase(it);
+            logf_info("Removed switch: %r", name);
             for (const auto &[candidate, sw] : this->switches)
             {
                 sw->remove_dependency(name, propagate);
             }
         }
+
         return found;
     }
 

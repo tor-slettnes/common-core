@@ -29,11 +29,14 @@ namespace switchboard
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
 
     public:
+        // return a reference to the Switchboard provider to which this switch belongs
+        std::shared_ptr<Provider> provider() const;
+
         /// return the name of this switch
         const SwitchName &name() const noexcept;
 
-        //return a reference to the Switchboard provider to which this switch belongs
-        std::shared_ptr<Provider> provider() const;
+        // Return a list of aliases for this switch
+        const std::set<SwitchName> &aliases() const noexcept;
 
         /// Return a map of direct dependencies for this switch
         const DependencyMap &dependencies() const noexcept;
@@ -120,6 +123,10 @@ namespace switchboard
         ///    If provided, updates `primary` flag to indicate whether a search
         ///    for culprits should stop with this switch rather than recurse
         ///    further into its ancestors.
+        /// @param[in] aliases
+        ///    A set of alternate names for this switch.
+        /// @param[in] replace_aliases
+        ///    Replace rather than adding to existing aliases.
         /// @param[in] localizations
         ///    A map of languages and corresponding human readable texts
         ///    describing this switch and its activities.
@@ -140,6 +147,8 @@ namespace switchboard
 
         virtual void update_spec(
             const std::optional<bool> &primary,
+            const std::set<SwitchName> &aliases,
+            bool replace_aliases,
             const LocalizationMap &localizations,
             bool replace_localizations,
             const DependencyMap &dependencies,
