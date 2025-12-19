@@ -6,5 +6,4 @@
 #===============================================================================
 
 switch config files:
-  - "switches.yaml"
-  - "common-switches.yaml"
+  - "switches"

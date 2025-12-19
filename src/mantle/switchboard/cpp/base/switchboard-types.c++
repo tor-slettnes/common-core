@@ -34,18 +34,28 @@ namespace switchboard
         return state_names.from_stream(stream, &state, STATE_UNSET);
     }
 
-    StateSet state_set(StateMask mask)
+    StateSet::StateSet(StateMask mask)
     {
-        StateSet result;
         for (const auto &[state, _]: state_names)
         {
             if ((state & mask) != 0x00)
             {
-                result.insert(state);
+                this->insert(state);
             }
         }
-        return result;
     }
+
+    void StateSet::to_tvlist(core::types::TaggedValueList *tvlist) const
+    {
+        for (const auto &[state, name]: state_names)
+        {
+            if (this->count(state))
+            {
+                tvlist->append({}, name);
+            }
+        }
+    }
+
 
     //==========================================================================
     // Exception Handling
@@ -133,6 +143,7 @@ namespace switchboard
     bool operator==(const Specification &lhs, const Specification &rhs)
     {
         return ((lhs.primary == rhs.primary) &&
+                (lhs.aliases == rhs.aliases) &&
                 (lhs.dependencies == rhs.dependencies) &&
                 (lhs.interceptors == rhs.interceptors) &&
                 (lhs.localizations == rhs.localizations));
@@ -145,6 +156,11 @@ namespace switchboard
 
     void Specification::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
+        if (!this->aliases.empty())
+        {
+            tvlist->append("aliases", core::types::ValueList::create_from(this->aliases));
+        }
+
         tvlist->append("primary", this->primary);
 
         if (!this->localizations.empty())

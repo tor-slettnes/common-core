@@ -299,8 +299,30 @@ namespace core::platform
             bool match_leading_period = false,
             bool ignore_case = false) const;
 
+
         /// @brief
         ///     Locate a relative path inside a folder
+        /// @param[in] root
+        ////    Parent folder inside which to search
+        /// @param[in] filename_masks
+        ///     Filename patterns for which to search
+        /// @param[in] match_leading_period
+        ///     Whether wildcards (`*` and `?`) match a leading period in
+        ///     a pathname component
+        /// @param[in] ignore_case
+        ///     Whether to use case-insensitive matching
+        /// @param[in] recursive
+        ///     Whether to descend into subdirectories
+
+        std::vector<fs::directory_entry> glob(
+            const types::PathList &filename_masks,
+            const fs::path &root,
+            bool match_leading_period = false,
+            bool ignore_case = false,
+            bool recursive = false) const;
+
+        /// @brief
+        ///     Recursively locate a relative path inside a folder
         /// @param[in] root
         ////    Parent folder inside which to search
         /// @param[in] filename_masks
@@ -323,6 +345,7 @@ namespace core::platform
             const types::PathList &filename_masks,
             bool match_leading_period,
             bool ignore_case,
+            bool recursive,
             std::vector<fs::directory_entry> *dir) const;
 
     protected:

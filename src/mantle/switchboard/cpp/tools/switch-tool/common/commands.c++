@@ -149,6 +149,18 @@ namespace switchboard
             std::bind(&Options::remove_switch, this));
 
         this->add_command(
+            "add_alias",
+            {"SWITCH", "ALIAS", "..."},
+            "Add one or more aliases for a switch",
+            std::bind(&Options::add_alias, this));
+
+        this->add_command(
+            "remove_alias",
+            {"SWITCH", "ALIAS", "..."},
+            "Remove one or more aliases for a switch",
+            std::bind(&Options::remove_alias, this));
+
+        this->add_command(
             "set_localization",
             {"SWITCH", "LANGAUGE", "[{text|on|off|activating|active|deactivating|inactive|failing|failed} VALUE] ..."},
             "Change the localization of a switch in the specified language",
@@ -429,22 +441,48 @@ namespace switchboard
 
     void Options::load_file()
     {
-        std::string filename = this->get_arg("file name");
+        std::string filename = this->get_arg("FILENAME");
         this->provider->load(filename);
     }
 
     void Options::add_switch()
     {
-        std::string name = this->get_arg("switch name");
+        std::string name = this->get_arg("SWITCH");
         auto [sw, added] = this->provider->add_switch(name);
         std::cout << (added ? "added" : "no change") << std::endl;
     }
 
     void Options::remove_switch()
     {
-        std::string name = this->get_arg("switch name");
+        std::string name = this->get_arg("SWITCH");
         bool removed = this->provider->remove_switch(name);
         std::cout << (removed ? "removed" : "no change") << std::endl;
+    }
+
+    void Options::add_alias()
+    {
+        switchboard::SwitchRef sw = this->get_switch(true);
+
+        switchboard::SwitchAliases aliases = {this->get_arg("ALIAS ...")};
+        while (auto arg = this->next_arg())
+        {
+            aliases.insert(*arg);
+        }
+
+        sw->add_aliases(aliases);
+    }
+
+    void Options::remove_alias()
+    {
+        switchboard::SwitchRef sw = this->get_switch(true);
+
+        switchboard::SwitchAliases aliases = {this->get_arg("ALIAS ...")};
+        while (auto arg = this->next_arg())
+        {
+            aliases.insert(*arg);
+        }
+
+        sw->remove_aliases(aliases);
     }
 
     void Options::set_localization()
@@ -456,6 +494,7 @@ namespace switchboard
         for (const auto &[key, value] : this->get_attributes(false))
         {
             std::string lowerkey = core::str::tolower(key);
+
             if (lowerkey == "text")
                 localization.description = value;
             else if (lowerkey == "on")
@@ -615,7 +654,9 @@ namespace switchboard
         except |= std::none_of(
             flags.begin(),
             flags.end(),
-            [](auto kv) { return kv.second; });
+            [](auto kv) {
+                return kv.second;
+            });
 
         if (show_spec != except)
         {
@@ -652,13 +693,13 @@ namespace switchboard
 
     switchboard::SwitchRef Options::get_switch(bool required)
     {
-        std::string switch_name = this->get_arg("switch name");
+        std::string switch_name = this->get_arg("SWITCH");
         return this->provider->get_switch(switch_name, required);
     }
 
     switchboard::StateMask Options::get_states()
     {
-        std::string arg = this->get_arg("list of states");
+        std::string arg = this->get_arg("LIST_OF_STATES");
         switchboard::StateMask mask = 0;
         for (const std::string &state_name : core::str::split(arg, ","))
         {

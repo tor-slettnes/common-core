@@ -25,7 +25,7 @@ namespace switchboard::grpc
 
     void Proxy::initialize()
     {
-        Provider::initialize();
+        Super::initialize();
         SignalClient::initialize();
 
         using namespace std::placeholders;
@@ -45,7 +45,7 @@ namespace switchboard::grpc
     {
         this->stop_watching();
         SignalClient::deinitialize();
-        Provider::deinitialize();
+        Super::deinitialize();
     }
 
     bool Proxy::available() const
@@ -61,7 +61,7 @@ namespace switchboard::grpc
     SwitchMap Proxy::get_switches() const
     {
         this->wait_ready();
-        return Provider::get_switches();
+        return Super::get_switches();
     }
 
     SwitchRef Proxy::get_switch(
@@ -69,7 +69,7 @@ namespace switchboard::grpc
         bool required) const
     {
         this->wait_ready();
-        return Provider::get_switch(name, required);
+        return Super::get_switch(name, required);
     }
 
     std::pair<SwitchRef, bool> Proxy::add_switch(

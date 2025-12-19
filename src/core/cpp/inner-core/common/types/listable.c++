@@ -9,10 +9,42 @@
 
 namespace core::types
 {
+    Value &operator<<(Value &value, const Listable &obj)
+    {
+        value = obj.as_tvlist();
+        return value;
+    }
+
+    Value &operator<<(Value &value, const std::shared_ptr<Listable> &ptr)
+    {
+        if (ptr)
+        {
+            value = ptr->as_tvlist();
+        }
+        else
+        {
+            value.clear();
+        }
+        return value;
+    }
+
+    ValueList &operator<<(ValueList &list, const Listable &obj)
+    {
+        list = obj.as_valuelist();
+        return list;
+    }
+
     TaggedValueList &operator<<(TaggedValueList &tvlist, const Listable &obj)
     {
         obj.to_tvlist(&tvlist);
         return tvlist;
+    }
+
+    KeyValueMap &operator<<(KeyValueMap &kvmap,
+                            const Listable &obj)
+    {
+        kvmap = obj.as_kvmap();
+        return kvmap;
     }
 
     void Listable::to_stream(std::ostream &stream) const

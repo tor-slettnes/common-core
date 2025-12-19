@@ -207,19 +207,28 @@ namespace core::types
             return result;
         }
 
-        template <class T>
-        static std::shared_ptr<KeyValueMap> create_shared_from(const T &obj)
+        template <class ContainerT>
+        void populate_from(const ContainerT &container)
+        {
+            for (const auto &[key, value] : container)
+            {
+                this->insert_or_assign(key, value);
+            }
+        }
+
+        template <class ContainerT>
+        static std::shared_ptr<KeyValueMap> create_shared_from(const ContainerT &container)
         {
             auto kvmap = std::make_shared<KeyValueMap>();
-            (*kvmap) << obj;
+            (*kvmap) << container;
             return kvmap;
         }
 
-        template <class T>
-        static KeyValueMap create_from(const T &obj)
+        template <class ContainerT>
+        static KeyValueMap create_from(const ContainerT &container)
         {
             KeyValueMap kvmap;
-            kvmap << obj;
+            kvmap << container;
             return kvmap;
         }
 

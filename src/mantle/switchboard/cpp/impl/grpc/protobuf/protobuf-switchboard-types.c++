@@ -104,6 +104,7 @@ namespace protobuf
                 cc::platform::switchboard::protobuf::Specification *msg)
     {
         msg->set_is_primary(spec.primary);
+        encode(spec.aliases, msg->mutable_aliases());
         encode(spec.localizations, msg->mutable_localizations());
         encode(spec.dependencies, msg->mutable_dependencies());
         encode(spec.interceptors, msg->mutable_interceptors());
@@ -118,6 +119,7 @@ namespace protobuf
             spec->primary = msg.is_primary();
         }
 
+        decode(msg.aliases(), &spec->aliases);
         decode(msg.localizations(), &spec->localizations);
         decode(msg.dependencies(), provider, &spec->dependencies);
         decode(msg.interceptors(), &spec->interceptors);
@@ -181,6 +183,27 @@ namespace protobuf
         {
             decode_shared(protostatus, &(*statusmap)[id]);
         }
+    }
+
+    //==========================================================================
+    // Aliases
+
+    void encode(const std::set<switchboard::SwitchName> &aliases,
+                google::protobuf::RepeatedPtrField<std::string> *items)
+    {
+        items->Clear();
+        items->Reserve(aliases.size());
+        for (const switchboard::SwitchName &alias: aliases)
+        {
+            items->Add()->assign(alias);
+        }
+    }
+
+    void decode(const google::protobuf::RepeatedPtrField<std::string> &items,
+                std::set<switchboard::SwitchName> *aliases)
+    {
+        aliases->clear();
+        aliases->insert(items.begin(), items.end());
     }
 
     //==========================================================================

@@ -43,6 +43,8 @@ namespace switchboard
         void load_file();
         void add_switch();
         void remove_switch();
+        void add_alias();
+        void remove_alias();
         void set_localization();
         void add_dependency();
         void remove_dependency();

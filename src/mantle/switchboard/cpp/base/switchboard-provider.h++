@@ -36,9 +36,11 @@ namespace switchboard
         /// @returns
         ///    Iterator to beginning of Switch map.
         virtual SwitchMap::const_iterator begin() const;
+        virtual SwitchMap::iterator begin();
 
         ///    Iterator to end of Switch map.
         virtual SwitchMap::const_iterator end() const;
+        virtual SwitchMap::iterator end();
 
         /// @brief
         ///    Get a map of all switches
@@ -92,7 +94,7 @@ namespace switchboard
         ///    Boolean indicating whether switch existed or not
         virtual bool remove_switch(
             const SwitchName &name,
-            bool propagate = true) = 0;
+            bool propagate = true);
 
     public:
         // Operations pertaining to indivdiual switches

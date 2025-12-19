@@ -14,6 +14,7 @@ namespace switchboard
     constexpr auto SETTINGS_SECTION_SWITCHES = "switches";
     constexpr auto SETTING_SPEC_NAME = "name";
     constexpr auto SETTING_SPEC_PRIMARY = "primary";
+    constexpr auto SETTING_SPEC_ALIASES = "aliases";
     constexpr auto SETTING_SPEC_DEPENDENCIES = "dependencies";
     constexpr auto SETTING_SPEC_INTERCEPTORS = "interceptors";
     constexpr auto SETTING_SPEC_LOCALIZATIONS = "localizations";
@@ -70,6 +71,16 @@ namespace switchboard
         return this->switches.end();
     }
 
+    SwitchMap::iterator Provider::begin()
+    {
+        return this->switches.begin();
+    }
+
+    SwitchMap::iterator Provider::end()
+    {
+        return this->switches.end();
+    }
+
     SwitchMap::const_iterator Provider::find(
         const SwitchName &name) const
     {
@@ -94,7 +105,7 @@ namespace switchboard
         const SwitchName &name)
     {
         if (auto it = this->switches.find(name);
-            it != this->switch_map.end())
+            it != this->switches.end())
         {
             return it;
         }
@@ -156,7 +167,7 @@ namespace switchboard
 
         if (found)
         {
-            this->swiches.erase(it);
+            this->switches.erase(it);
             logf_info("Removed switch: %r", name);
             for (const auto &[candidate, sw] : this->switches)
             {
@@ -230,6 +241,13 @@ namespace switchboard
     {
         Specification spec;
         spec.primary = spec_map.get(SETTING_SPEC_PRIMARY).as_bool();
+
+        std::vector<SwitchName> aliases = spec_map
+                                              .get(SETTING_SPEC_ALIASES)
+                                              .get_valuelist()
+                                              .filter_by_type<std::string>();
+
+        spec.aliases.insert(aliases.begin(), aliases.end());
 
         for (const auto &localization : spec_map.get(SETTING_SPEC_LOCALIZATIONS).get_valuelist())
         {

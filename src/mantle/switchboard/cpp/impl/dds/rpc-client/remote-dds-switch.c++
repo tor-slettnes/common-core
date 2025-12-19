@@ -75,6 +75,8 @@ namespace switchboard::dds
 
     void RemoteSwitch::update_spec(
         const std::optional<bool> &primary,
+        const SwitchAliases &aliases,
+        bool replace_aliases,
         const LocalizationMap &localizations,
         bool replace_localizations,
         const DependencyMap &dependencies,
@@ -90,10 +92,13 @@ namespace switchboard::dds
         {
             spec.is_primary(*primary);
         }
+        spec.aliases(aliases.begin(), aliases.end());
+        idl::encode(aliases, &spec.aliases());
         idl::encode(localizations, &spec.localizations());
         idl::encode(dependencies, &spec.dependencies());
         idl::encode(interceptors, &spec.interceptors());
 
+        req.replace_aliaess(replace_alises);
         req.replace_localizations(replace_localizations);
         req.replace_dependencies(replace_dependencies);
         req.replace_interceptors(replace_interceptors);
@@ -146,4 +151,4 @@ namespace switchboard::dds
         req.clear_existing(clear_existing);
         return this->client()->set_attributes(req);
     }
-}  // namespace switchboard
+}  // namespace switchboard::dds

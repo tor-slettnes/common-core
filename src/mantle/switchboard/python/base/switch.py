@@ -93,6 +93,7 @@ class Switch:
     @abstractmethod
     def set_specification(self,
                           specification: Specification,
+                          replace_aliases: bool = False,
                           replace_localizations: bool = False,
                           replace_dependencies: bool = False,
                           replace_interceptors: bool = False,
@@ -130,11 +131,10 @@ class Switch:
         '''
 
         spec = Specification(
-            switch_name = self.name,
-            localizations = encodeLocalizationMap(localizations),
-            replace_localizations = replace)
+            localizations = encodeLocalizationMap(localizations))
 
-        return self.set_specification(spec)
+        return self.set_specification(spec,
+                                      replace_localizations=replace)
 
 
     def get_localization(self,
@@ -366,6 +366,39 @@ class Switch:
         return self.specification.is_primary
 
 
+    @property
+    def aliases(self) -> set[str]:
+        '''
+        Return a list of aliaes for this string.
+        '''
+        return set(self.specification.aliases)
+
+
+    def set_aliases(self, *aliases: str):
+        '''
+        Set aliases for this switch. This erases any existing aliases.
+        '''
+        spec = Specification(aliases = aliases)
+        return self.set_specification(spec, replace_aliases = True)
+
+
+    def add_aliases(self, *aliases: str):
+        '''
+        Add one or more aliases for this swtich.
+        '''
+        spec = Specification(aliases = aliases)
+        return self.set_specification(spec)
+
+
+    def remove_aliases(self, *aliases: str):
+        '''
+        Remove one or more aliases for this swtich.
+        '''
+        new_aliases = self.aliases
+        new_aliases.difference_update(aliases)
+        return self.set_aliases(*new_aliases)
+
+
     def set_primary(self, primary: bool):
         '''
         Set the `is_primary` flag of this switch.
@@ -374,11 +407,7 @@ class Switch:
         culprits for its own or descendants' failure to activate. That is, do
         not descend further into this switch's ancestors; "the buck stops here".
         '''
-
-        spec = Specification(
-            switch_name = self.name,
-            is_parimary = primary)
-
+        spec = Specification(is_primary = primary)
         return self.set_specification(spec)
 
 

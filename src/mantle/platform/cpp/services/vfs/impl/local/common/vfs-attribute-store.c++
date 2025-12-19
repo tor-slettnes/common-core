@@ -18,7 +18,7 @@ namespace vfs::local
           filetype(this->file_type(path, type_hint)),
           filepath(path)
     {
-        this->loaded = this->load(this->path(path));
+        this->loaded = this->load_from_file(this->path(path));
     }
 
     fs::file_type AttributeStore::file_type(const fs::path &path,

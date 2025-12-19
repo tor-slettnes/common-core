@@ -9,6 +9,7 @@
 #include "switchboard-signals.h++"
 
 #include "protobuf-switchboard-types.h++"
+#include "protobuf-message.h++"
 
 namespace switchboard::grpc
 {

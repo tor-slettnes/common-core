@@ -100,6 +100,8 @@ namespace switchboard
 
     void LocalSwitch::update_spec(
         const std::optional<bool> &primary,
+        const SwitchAliases &aliases,
+        bool replace_aliases,
         const LocalizationMap &localizations,
         bool replace_localizations,
         const DependencyMap &dependencies,
@@ -111,6 +113,15 @@ namespace switchboard
         if (primary.has_value())
         {
             this->spec_ref->primary = primary.value();
+        }
+
+        if (replace_aliases)
+        {
+            this->spec_ref->aliases = aliases;
+        }
+        else
+        {
+            this->spec_ref->aliases.insert(aliases.begin(), aliases.end());
         }
 
         if (replace_localizations)

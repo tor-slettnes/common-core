@@ -40,6 +40,7 @@ class RemoteSwitch (Switch):
     @doc_inherit
     def set_specification(self,
                           specification: Specification,
+                          replace_aliases: bool = False,
                           replace_localizations: bool = False,
                           replace_dependencies: bool = False,
                           replace_interceptors: bool = False,
@@ -51,6 +52,7 @@ class RemoteSwitch (Switch):
             switch_name = self.name,
             spec = specification,
             active = active,
+            replace_aliases = replace_aliases,
             replace_localizations = replace_localizations,
             replace_dependencies = replace_dependencies,
             replace_interceptors = replace_interceptors,

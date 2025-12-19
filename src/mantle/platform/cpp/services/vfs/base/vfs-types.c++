@@ -59,37 +59,6 @@ namespace vfs
         return stream;
     }
 
-    //========================================================================
-    // Output stream representations
-
-    core::types::TaggedValueList &operator<<(
-        core::types::TaggedValueList &tvlist,
-        const FileInfo &fileinfo)
-    {
-        tvlist.append("type", core::str::convert_from(fileinfo.type));
-        tvlist.append("size", fileinfo.size);
-        tvlist.append_if(!fileinfo.link.empty(), "link", fileinfo.link);
-        tvlist.append("mode", core::str::format("0%03o", fileinfo.mode));
-        tvlist.append("readable", fileinfo.readable);
-        tvlist.append("writable", fileinfo.writable);
-        tvlist.append("uid", fileinfo.uid);
-        tvlist.append("gid", fileinfo.gid);
-        tvlist.append("owner", fileinfo.owner);
-        tvlist.append("group", fileinfo.group);
-        tvlist.append("access_time", fileinfo.access_time);
-        tvlist.append("modify_time", fileinfo.modify_time);
-        tvlist.append("create_time", fileinfo.create_time);
-        tvlist.append("attributes", fileinfo.attributes);
-        return tvlist;
-    }
-
-    std::ostream &operator<<(
-        std::ostream &stream,
-        const FileInfo &fileinfo)
-    {
-        return stream << core::types::TaggedValueList::create_from(fileinfo);
-    }
-
     //==========================================================================
     // VFS Path
 

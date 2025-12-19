@@ -82,6 +82,15 @@ namespace protobuf
                 switchboard::StatusMap *statusmap);
 
     //==========================================================================
+    // Aliases
+
+    void encode(const std::set<switchboard::SwitchName> &aliases,
+                google::protobuf::RepeatedPtrField<std::string> *items);
+
+    void decode(const google::protobuf::RepeatedPtrField<std::string> &items,
+                std::set<switchboard::SwitchName> *aliases);
+
+    //==========================================================================
     // Localization
 
     void encode(const switchboard::Localization &localization,

@@ -332,19 +332,34 @@ namespace core::platform
         return false;
     }
 
-    std::vector<fs::directory_entry> PathProvider::locate(
+    std::vector<fs::directory_entry> PathProvider::glob(
         const types::PathList &filename_masks,
         const fs::path &directory,
         bool match_leading_period,
-        bool ignore_case) const
+        bool ignore_case,
+        bool recursive) const
     {
         std::vector<fs::directory_entry> hits;
         this->locate_inside(directory,
                             filename_masks,
                             match_leading_period,
                             ignore_case,
+                            recursive,
                             &hits);
         return hits;
+    }
+
+    std::vector<fs::directory_entry> PathProvider::locate(
+        const types::PathList &filename_masks,
+        const fs::path &directory,
+        bool match_leading_period,
+        bool ignore_case) const
+    {
+        return this->glob(filename_masks,
+                          directory,
+                          match_leading_period,
+                          ignore_case,
+                          true);
     }
 
     void PathProvider::locate_inside(
@@ -352,24 +367,27 @@ namespace core::platform
         const types::PathList &filename_masks,
         bool match_leading_period,
         bool ignore_case,
+        bool recursive,
         std::vector<fs::directory_entry> *dir) const
     {
         for (auto &pi : fs::directory_iterator(directory))
         {
-            if (pi.status().type() == fs::file_type::directory)
+            if (this->filename_match(filename_masks,
+                                     pi.path(),
+                                     match_leading_period,
+                                     ignore_case))
+            {
+                dir->push_back(pi);
+            }
+
+            if (recursive && (pi.status().type() == fs::file_type::directory))
             {
                 this->locate_inside(pi.path(),
                                     filename_masks,
                                     match_leading_period,
                                     ignore_case,
+                                    true,
                                     dir);
-            }
-            else if (this->filename_match(filename_masks,
-                                          pi.path(),
-                                          match_leading_period,
-                                          ignore_case))
-            {
-                dir->push_back(pi);
             }
         }
     }

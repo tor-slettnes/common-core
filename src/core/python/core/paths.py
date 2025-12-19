@@ -291,11 +291,10 @@ def locate_dominating_parent(target: FilePathInput,
 
 
 def combine_paths(first: FilePathInput, second: FilePathInput) -> FilePath:
-    combined = as_path(first)
     if isinstance(second, zipfile.Path):
         return second
     else:
-        return first / second
+        return as_path(first) / second
 
 
 def as_path(input: FilePathInput):

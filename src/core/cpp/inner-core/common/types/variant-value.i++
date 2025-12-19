@@ -16,9 +16,50 @@ namespace core::types
     public:
         static Value create_from(const T &input)
         {
-            std::ostringstream ss;
-            ss << input;
-            return ss.str();
+            return input;
+            // std::ostringstream ss;
+            // ss << input;
+            // return ss.str();
+        }
+    };
+
+    template<>
+    class ValueBuilder<Value>
+    {
+    public:
+        static Value create_from(const Value &value)
+        {
+            return value;
+        }
+    };
+
+    template<>
+    class ValueBuilder<ValueList>
+    {
+    public:
+        static Value create_from(const ValueList &list)
+        {
+            return list;
+        }
+    };
+
+    template<>
+    class ValueBuilder<TaggedValueList>
+    {
+    public:
+        static Value create_from(const TaggedValueList &tvlist)
+        {
+            return tvlist;
+        }
+    };
+
+    template<>
+    class ValueBuilder<KeyValueMap>
+    {
+    public:
+        static Value create_from(const KeyValueMap &kvmap)
+        {
+            return kvmap;
         }
     };
 
@@ -43,11 +84,29 @@ namespace core::types
     };
 
     template <class T>
+    class ValueBuilder<std::shared_ptr<T>>
+    {
+    public:
+        static Value create_from(const std::shared_ptr<T> &ptr)
+        {
+            if (ptr)
+            {
+                return ValueBuilder<T>::create_from(*ptr);
+            }
+            else
+            {
+                return {};
+            }
+        }
+    };
+
+    template <class T>
     Value operator<<(Value &value, const T &input)
     {
         value = ValueBuilder<T>::create_from(input);
         return value;
     }
+
 
     //==========================================================================
 

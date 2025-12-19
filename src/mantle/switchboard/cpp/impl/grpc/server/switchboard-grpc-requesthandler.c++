@@ -112,6 +112,8 @@ namespace switchboard::grpc
                 const cc::platform::switchboard::protobuf::Specification &spec = request->spec();
                 sw->update_spec(
                     spec.has_is_primary() ? spec.is_primary() : std::optional<bool>(),
+                    protobuf::decoded<SwitchAliases>(spec.aliases()),
+                    request->replace_aliases(),
                     protobuf::decoded<LocalizationMap>(spec.localizations()),
                     request->replace_localizations(),
                     protobuf::decoded<DependencyMap>(spec.dependencies(), this->provider),
@@ -429,8 +431,8 @@ namespace switchboard::grpc
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
             bool expected_position = request->has_expected()
-                                         ? request->expected()
-                                         : true;
+                                       ? request->expected()
+                                       : true;
 
             auto &statusmap = *reply->mutable_map();
             for (const auto &[sw, state] : sw->culprits(expected_position))
@@ -465,7 +467,10 @@ namespace switchboard::grpc
         const cc::protobuf::signal::Filter *request,
         ::grpc::ServerWriter<cc::platform::switchboard::protobuf::Signal> *writer)
     {
-        return this->stream_signals<cc::platform::switchboard::protobuf::Signal, SignalQueue>(context, request, writer);
+        return this->stream_signals<cc::platform::switchboard::protobuf::Signal, SignalQueue>(
+            context,
+            request,
+            writer);
     }
 
     SwitchMap RequestHandler::get_switches(

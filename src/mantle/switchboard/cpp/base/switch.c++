@@ -29,20 +29,21 @@ namespace switchboard
     {
         auto deps = std::make_shared<core::types::ValueList>();
         deps->reserve(this->dependencies().size());
-        for (const auto &[pred_name, dep]: this->dependencies())
+        for (const auto &[pred_name, dep] : this->dependencies())
         {
-            deps->emplace_back(dep->as_kvmap());
+            deps->emplace_back(dep->as_tvlist());
         }
 
         auto icepts = std::make_shared<core::types::ValueList>();
         icepts->reserve(this->interceptors().size());
-        for (const auto &[name, icept]: this->interceptors())
+        for (const auto &[name, icept] : this->interceptors())
         {
-            icepts->emplace_back(icept->as_kvmap());
+            icepts->emplace_back(icept->as_tvlist());
         }
 
         tvlist->extend({
             {"name", this->name()},
+            {"aliases", core::types::ValueList::create_from(this->aliases())},
             {"primary", this->primary()},
             {"dependencies", deps},
             {"interceptors", icepts},
@@ -56,9 +57,64 @@ namespace switchboard
         return this->name_;
     }
 
-    const std::set<SwitchName> &Switch::aliases() const noexcept
+    const SwitchAliases &Switch::aliases() const noexcept
     {
-        return this->aliases_
+        return this->spec()->aliases;
+    }
+
+    // Add new aliases for this witch
+    void Switch::set_aliases(const SwitchAliases &aliases)
+    {
+        this->update_spec(
+            {},       // primary
+            aliases,  // aliases
+            true,     // replace_aliases
+            {},       // localizations
+            false,    // replace_localizations
+            {},       // dependencies
+            false,    // replace_dependencies
+            {},       // interceptors
+            false,    // replace_interceptors
+            false);   // update_state
+    }
+
+    // Add new aliases for this witch
+    void Switch::add_aliases(const SwitchAliases &aliases)
+    {
+        this->update_spec(
+            {},       // primary
+            aliases,  // aliases
+            false,    // replace_aliases
+            {},       // localizations
+            false,    // replace_localizations
+            {},       // dependencies
+            false,    // replace_dependencies
+            {},       // interceptors
+            false,    // replace_interceptors
+            false);   // update_state
+    }
+
+    // Remove one or more aliases for this switch
+    void Switch::remove_aliases(const SwitchAliases &aliases)
+    {
+        SwitchAliases updated_set = this->aliases();
+
+        for (const SwitchName &removal : aliases)
+        {
+            updated_set.erase(removal);
+        }
+
+        this->update_spec(
+            {},           // primary
+            updated_set,  // aliases
+            true,         // replace_aliases
+            {},           // localizations
+            false,        // replace_localizations
+            {},           // dependencies
+            false,        // replace_dependencies
+            {},           // interceptors
+            false,        // replace_interceptors
+            false);       // update_state
     }
 
     std::shared_ptr<Provider> Switch::provider() const
@@ -185,6 +241,8 @@ namespace switchboard
     {
         this->update_spec(
             primary,  // primary
+            {},       // aliases
+            false,    // replace_aliases
             {},       // localizations
             false,    // replace_localizations
             {},       // dependencies
@@ -203,6 +261,8 @@ namespace switchboard
     {
         this->update_spec(
             {},             // primary
+            {},             // aliases
+            false,          // replace_aliases
             localizations,  // localization
             false,          // replace_localizations
             {},             // dependencies
@@ -409,19 +469,19 @@ namespace switchboard
                         undetermined);
         }
 
-        State state = failed & STRONG         ? STATE_FAILED
-                      : satisfied & STRONG    ? STATE_ACTIVE
-                      : unsatisfied & STRONG  ? STATE_INACTIVE
-                      : undetermined & STRONG ? STATE_UNSET
-                      : failed & PENDING      ? STATE_FAILING
-                      : satisfied & PENDING   ? STATE_ACTIVATING
-                      : unsatisfied & PENDING ? STATE_DEACTIVATING
-                      : satisfied & WEAK      ? STATE_ACTIVE
-                      : unsatisfied & WEAK    ? STATE_INACTIVE
-                      : this->settled()       ? this->state()
-                      : undetermined & WEAK   ? STATE_UNSET
-                      : this->active()        ? STATE_ACTIVE
-                                              : STATE_INACTIVE;
+        State state = failed & STRONG       ? STATE_FAILED
+                    : satisfied & STRONG    ? STATE_ACTIVE
+                    : unsatisfied & STRONG  ? STATE_INACTIVE
+                    : undetermined & STRONG ? STATE_UNSET
+                    : failed & PENDING      ? STATE_FAILING
+                    : satisfied & PENDING   ? STATE_ACTIVATING
+                    : unsatisfied & PENDING ? STATE_DEACTIVATING
+                    : satisfied & WEAK      ? STATE_ACTIVE
+                    : unsatisfied & WEAK    ? STATE_INACTIVE
+                    : this->settled()       ? this->state()
+                    : undetermined & WEAK   ? STATE_UNSET
+                    : this->active()        ? STATE_ACTIVE
+                                            : STATE_INACTIVE;
         msg->format(" --> auto_state=%s", state);
         msg->dispatch();
         return state;

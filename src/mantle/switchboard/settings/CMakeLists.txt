@@ -7,6 +7,6 @@
 
 cc_add_settings(cc_switchboard_settings
   SETTINGS_DEPS cc_core_settings
-  DIRECTORIES "."
+  DIRECTORIES "." RECURSE
   INSTALL_COMPONENT "${SETTINGS_INSTALL_COMPONENT}"
 )

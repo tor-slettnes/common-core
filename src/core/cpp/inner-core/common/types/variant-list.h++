@@ -95,20 +95,30 @@ namespace core::types
             return result;
         }
 
-        template<class T>
-        static std::shared_ptr<ValueList> create_shared_from(const T &obj)
+        template <class ContainerT>
+        void populate_from(const ContainerT &container)
         {
-            auto vlist = std::make_shared<ValueList>();
-            (*vlist) << obj;
-            return vlist;
+            this->reserve(this->size() + container.size());
+            for (const auto &item : container)
+            {
+                this->emplace_back(item);
+            }
         }
 
-        template<class T>
-        static ValueList create_from(const T &obj)
+        template <class ContainerT>
+        static std::shared_ptr<ValueList> create_shared_from(const ContainerT &container)
         {
-            ValueList vlist;
-            vlist << obj;
-            return vlist;
+            auto list = std::make_shared<ValueList>();
+            (*list) << container;
+            return list;
+        }
+
+        template <class ContainerT>
+        static ValueList create_from(const ContainerT &container)
+        {
+            ValueList list;
+            list << container; 
+            return list;
         }
     };
 
@@ -125,6 +135,5 @@ namespace core::types
         }
         return vlist;
     }
-
 
 }  // namespace core::types

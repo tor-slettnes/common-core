@@ -11,7 +11,6 @@
 #include "parsers/json/writer.h++"
 #include "parsers/yaml/reader.h++"
 #include "status/exceptions.h++"
-#include "logging/logging.h++"
 #include "platform/process.h++"
 
 #include <filesystem>
@@ -25,8 +24,7 @@ namespace core
 
     SettingsStore::SettingsStore(const types::PathList &filenames,
                                  const types::PathList &directories)
-        : composite_(false),
-          directories_(directories)
+        : directories_(directories)
     {
         for (const auto &filename : filenames)
         {
@@ -36,8 +34,7 @@ namespace core
 
     SettingsStore::SettingsStore(const fs::path &filename,
                                  const types::PathList &directories)
-        : composite_(false),
-          directories_(directories)
+        : directories_(directories)
     {
         this->load(filename);
     }
@@ -50,55 +47,8 @@ namespace core
     bool SettingsStore::reload()
     {
         this->clear();
+        this->filepaths_.clear();
         return this->load(this->filenames_, false);
-    }
-
-    bool SettingsStore::load(const fs::path &filename,
-                             bool update_filenames)
-    {
-        bool success = false;
-        if (update_filenames)
-        {
-            this->filenames_.push_back(filename);
-        }
-
-        if (filename.is_absolute())
-        {
-            success = this->load_from(filename);
-        }
-        else
-        {
-            std::vector<fs::path> extended_names;
-            if (!filename.extension().empty())
-            {
-                extended_names = {filename};
-            }
-            else
-            {
-                extended_names = {
-                    platform::path->extended_filename(filename, JSON_SUFFIX),
-                    platform::path->extended_filename(filename, YAML_SUFFIX),
-                };
-            }
-
-            bool secondary = false;
-            // Iterate through directory list,
-            // giving preference to values from earlier file occurences
-            for (const fs::path &folder : this->directories_)
-            {
-                for (const fs::path &extendedname : extended_names)
-                {
-                    if (this->load_from(folder / extendedname))
-                    {
-                        this->composite_ |= secondary;
-                        success = true;
-                        secondary = true;
-                    }
-                }
-            }
-        }
-
-        return success;
     }
 
     bool SettingsStore::load(const std::vector<fs::path> &filenames,
@@ -112,23 +62,69 @@ namespace core
         return success;
     }
 
+    bool SettingsStore::load(const fs::path &filename,
+                             bool update_filenames)
+    {
+        bool success = false;
+        if (update_filenames)
+        {
+            This::append_path(filename, &this->filenames_);
+        }
+
+        if (filename.is_absolute())
+        {
+            success = this->load_from(filename);
+        }
+        else
+        {
+            // Iterate through directory list,
+            // giving preference to values from earlier file occurences
+            for (const fs::path &folder : this->directories_)
+            {
+                success |= this->load_from(folder / filename);
+            }
+        }
+
+        return success;
+    }
+
     bool SettingsStore::load_from(const fs::path &abspath)
+    {
+        bool success = false;
+        if (fs::is_directory(abspath))
+        {
+            for (auto &pi : fs::directory_iterator(abspath))
+            {
+                if (This::settings_suffixes().count(pi.path().extension()))
+                {
+                    success |= this->load_from_file(pi.path());
+                }
+            }
+        }
+        else
+        {
+            for (const fs::path &extendedname : This::extended_paths(abspath))
+            {
+                success |= this->load_from_file(extendedname);
+            }
+        }
+
+        return success;
+    }
+
+    bool SettingsStore::load_from_file(const fs::path &abspath)
     {
         types::Value value;
 
         try
         {
-            if (abspath.extension() == JSON_SUFFIX)
-            {
-                value = json::reader.read_file(abspath);
-            }
-            else if (abspath.extension() == YAML_SUFFIX)
+            if (abspath.extension() == YAML_SUFFIX)
             {
                 value = yaml::reader.read_file(abspath);
             }
             else
             {
-                return false;
+                value = json::reader.read_file(abspath);
             }
         }
         catch (const fs::filesystem_error &)
@@ -151,6 +147,7 @@ namespace core
         if (auto kvmap = value.get_kvmap_ptr())
         {
             this->recursive_merge(*kvmap);
+            This::append_path(abspath, &this->filepaths_);
             return true;
         }
         else
@@ -229,14 +226,19 @@ namespace core
         }
     }
 
+    types::PathList SettingsStore::directories() const
+    {
+        return this->directories_;
+    }
+
     types::PathList SettingsStore::filenames() const
     {
         return this->filenames_;
     }
 
-    types::PathList SettingsStore::directories() const
+    types::PathList SettingsStore::filepaths() const
     {
-        return this->directories_;
+        return this->filepaths_;
     }
 
     types::Value SettingsStore::extract_value(const types::ValueList &path,
@@ -291,6 +293,42 @@ namespace core
         }
 
         return result;
+    }
+
+    void SettingsStore::append_path(const fs::path &path,
+                                    types::PathList *list)
+    {
+        if (std::none_of(list->begin(),
+                         list->end(),
+                         [&](const fs::path &candidate) {
+                             return candidate == path;
+                         }))
+        {
+            list->push_back(path);
+        }
+    }
+
+    std::vector<fs::path> SettingsStore::extended_paths(const fs::path &path)
+    {
+        std::vector<fs::path> paths = {path};
+
+        if (!path.extension().empty())
+        {
+            return {path};
+        }
+        else
+        {
+            return {
+                path,
+                platform::path->extended_filename(path, JSON_SUFFIX),
+                platform::path->extended_filename(path, YAML_SUFFIX),
+            };
+        }
+    }
+
+    std::set<fs::path> SettingsStore::settings_suffixes()
+    {
+        return {JSON_SUFFIX, YAML_SUFFIX};
     }
 
 }  // namespace core

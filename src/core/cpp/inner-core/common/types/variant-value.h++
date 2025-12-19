@@ -55,13 +55,13 @@ namespace core::types
         // Additional constructor to allow std::optional values
         template <class T>
         Value(const std::optional<T> &opt)
-            : Value(opt.has_value() ? Value(opt.value()) : Value())
+            : Value(opt ? Value(*opt) : Value())
         {
         }
 
         template <class T>
         Value(std::optional<T> &&opt)
-            : Value(opt.has_value() ? Value(std::move(opt.value())) : Value())
+            : Value(opt ? Value(std::move(*opt)) : Value())
         {
         }
 

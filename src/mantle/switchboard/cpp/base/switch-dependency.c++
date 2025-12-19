@@ -166,7 +166,7 @@ namespace switchboard
     {
         tvlist->extend({
             {"predecessor", this->predecessor_name()},
-            {"trigger_states", core::types::ValueList::create_from(state_set(this->trigger_states()))},
+            {"trigger_states", StateSet(this->trigger_states()).as_valuelist()},
             {"polarity", core::str::convert_from(this->polarity())},
             {"hard", this->hard()},
             {"sufficient", this->sufficient()},

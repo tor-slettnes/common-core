@@ -79,14 +79,22 @@ class SwitchboardBase (LogBase):
 
     def get_switch(self,
                    switch_name: str,
-                   ) -> Switch:
+                   ) -> Switch|None:
         '''
         Get the named switch.
 
         @returns
             The named `Switch` instance if it exists, otherwise `None`.
         '''
-        return self.switches.get(switch_name)
+
+        if sw := self.switches.get(switch_name):
+            return sw
+
+        for name, sw in self.switches.items():
+            if switch_name in sw.aliases:
+                return sw
+
+        return None
 
 
     def get_or_add_switch(self,
@@ -101,9 +109,9 @@ class SwitchboardBase (LogBase):
         '''
 
         with self._switch_lock:
-            try:
-                switch = self.switches[switch_name]
-            except KeyError:
+            switch = self.get_switch(switch_name)
+
+            if sw is None:
                 self.add_switch(switch_name)
                 switch = self.switches[switch_name] = self._new_switch(switch_name)
                 if initial_value is not None:

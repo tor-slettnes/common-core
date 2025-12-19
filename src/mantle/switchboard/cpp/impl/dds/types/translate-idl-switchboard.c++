@@ -51,6 +51,7 @@ namespace idl
         *native = static_cast<switchboard::State>(idl);
     }
 
+
     // CC::Switchboard::Localization
     void encode(const switchboard::LanguageCode &language_code,
                 const switchboard::Localization &native,

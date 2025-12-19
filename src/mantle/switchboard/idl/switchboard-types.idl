@@ -88,7 +88,8 @@ module CC
         typedef string Text;
 
         // Various size limits
-        const uint32 MAX_SWITCHES = 256;
+        const uint32 MAX_SWITCHES = 1024;
+        const uint32 MAX_ALIASES = 32;
         const uint32 MAX_DEPENDENCIES = 64;
         const uint32 MAX_INTERCEPTORS = 64;
         const uint32 MAX_LANGUAGES = 4;
@@ -148,7 +149,6 @@ module CC
         };
 
 
-
         /// @struct Localization
         ///
         /// Human readable texts pertaining to a switch, suitable for
@@ -186,7 +186,6 @@ module CC
             sequence<TargetText,2> target_texts;
             sequence<StateText,10> state_texts;
         };
-
 
         struct LocalizationList
         {
@@ -334,6 +333,8 @@ module CC
             // If not explcitly provided in an update request, current value prevails.
             @optional
             boolean is_primary;
+
+            sequence<string,MAX_ALIASES> aliases;
 
             // Human readable descriptions of what the switch represents, keyed
             // by language code.. If not explicitly provided as part of an

@@ -12,6 +12,7 @@
 #include "types/valuemap.h++"
 #include "types/symbolmap.h++"
 #include "types/listable.h++"
+#include "types/value.h++"
 #include "status/error.h++"
 
 namespace switchboard
@@ -57,9 +58,18 @@ namespace switchboard
     constexpr StateMask PENDING_STATES = (STATE_ACTIVATING | STATE_DEACTIVATING | STATE_FAILING);
     constexpr StateMask ACTIVATION_STATES = {STATE_ACTIVATING | STATE_DEACTIVATING};
 
-    using StateSet = std::set<State>;
-    StateSet state_set(StateMask mask);
+    class StateSet : public std::set<State>,
+                     public core::types::Listable
+    {
+    public:
+        StateSet(StateMask mask);
 
+    protected:
+        void to_tvlist(core::types::TaggedValueList *tvlist) const override;
+    };
+
+
+    core::types::ValueList operator<<(core::types::ValueList &list, const StateSet StateSet);
 
     //==========================================================================
     // Exception Handling
@@ -98,7 +108,7 @@ namespace switchboard
 
     using SwitchRef = std::shared_ptr<Switch>;
     using SwitchName = std::string;
-    using SwitchNames = std::vector<SwitchName>;
+    using SwitchAliases = std::set<SwitchName>;
     using SwitchSet = std::set<SwitchRef>;
     using SwitchMap = core::types::ValueMap<SwitchName, SwitchRef>;
     using CulpritsMap = std::unordered_map<SwitchRef, State>;
@@ -140,7 +150,7 @@ namespace switchboard
     struct Specification : public core::types::Listable
     {
         bool primary = false;
-        std::set<SwitchName> aliases;
+        SwitchAliases aliases;
         LocalizationMap localizations;
         DependencyMap dependencies;
         InterceptorMap interceptors;

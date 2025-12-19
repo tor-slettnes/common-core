@@ -169,19 +169,29 @@ namespace core::types
             return this->get(index).try_convert_to<T>();
         }
 
-        template <class T>
-        static std::shared_ptr<TaggedValueList> create_shared_from(const T &obj)
+        template <class ContainerT>
+        void populate_from(const ContainerT &container)
+        {
+            this->reserve(this->size() + container.size());
+            for (const auto &[tag, value] : container)
+            {
+                this->emplace_back({tag, value});
+            }
+        }
+
+        template <class ContainerT>
+        static std::shared_ptr<TaggedValueList> create_shared_from(const ContainerT &container)
         {
             auto tvlist = std::make_shared<TaggedValueList>();
-            (*tvlist) << obj;
+            (*tvlist) << container;
             return tvlist;
         }
 
-        template <class T>
-        static TaggedValueList create_from(const T &obj)
+        template <class ContainerT>
+        static TaggedValueList create_from(const ContainerT &container)
         {
             TaggedValueList tvlist;
-            tvlist << obj;
+            tvlist << container;
             return tvlist;
         }
     };

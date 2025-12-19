@@ -7,7 +7,10 @@
 
 #pragma once
 #include "streamable.h++"
-#include "value.h++"
+#include "variant-value.h++"
+#include "variant-list.h++"
+#include "variant-tvlist.h++"
+#include "variant-kvmap.h++"
 
 namespace core::types
 {
@@ -18,8 +21,11 @@ namespace core::types
 
     class Listable : public Streamable
     {
-        friend TaggedValueList &operator<<(TaggedValueList &tvlist,
-                                           const Listable &obj);
+        // friend Value &operator<<(Value &value, const Listable &obj);
+        // friend Value &operator<<(Value &value, const std::shared_ptr<Listable> &ptr);
+        // friend ValueList &operator<<(ValueList &list, const Listable &obj);
+        // friend TaggedValueList &operator<<(TaggedValueList &tvlist, const Listable &obj);
+        // friend KeyValueMap &operator<<(KeyValueMap &kvmap, const Listable &obj);
 
     public:
         void to_stream(std::ostream &stream) const override;
@@ -27,7 +33,6 @@ namespace core::types
         [[nodiscard]] KeyValueMap as_kvmap() const;
         [[nodiscard]] ValueList as_valuelist() const;
 
-    protected:
         virtual void to_tvlist(TaggedValueList *tvlist) const = 0;
     };
 

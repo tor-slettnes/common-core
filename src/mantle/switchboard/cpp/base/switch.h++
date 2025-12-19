@@ -36,7 +36,16 @@ namespace switchboard
         const SwitchName &name() const noexcept;
 
         // Return a list of aliases for this switch
-        const std::set<SwitchName> &aliases() const noexcept;
+        const SwitchAliases &aliases() const noexcept;
+
+        // Update list of aliases for this witch
+        void set_aliases(const SwitchAliases &aliases);
+
+        // Add new aliases for this witch
+        void add_aliases(const SwitchAliases &aliases);
+
+        // Remove one or more aliases for this switch
+        void remove_aliases(const SwitchAliases &aliases);
 
         /// Return a map of direct dependencies for this switch
         const DependencyMap &dependencies() const noexcept;
@@ -147,7 +156,7 @@ namespace switchboard
 
         virtual void update_spec(
             const std::optional<bool> &primary,
-            const std::set<SwitchName> &aliases,
+            const SwitchAliases &aliases,
             bool replace_aliases,
             const LocalizationMap &localizations,
             bool replace_localizations,

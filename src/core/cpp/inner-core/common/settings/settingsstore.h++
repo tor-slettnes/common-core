@@ -32,6 +32,8 @@ namespace core
     class SettingsStore : public types::KeyValueMap,
                           public types::enable_create_shared<SettingsStore>
     {
+        using This = SettingsStore;
+
     public:
         using ptr = std::shared_ptr<SettingsStore>;
 
@@ -80,14 +82,26 @@ namespace core
         /// @param[in] filename
         ///     Settings file to load.
         /// @param[in] update_filenames
-        ///     Append this filenaem to files associated with this
+        ///     Append this filename to files associated with this
         ///     `SettingsStore` instance.  If this is the first file loaded,
         ///     it also becomes the default filename to which updates are saved.
+        /// @return
+        ///     `true` if any file was found and loaded, `false` otherwise.
         ///
-        /// The path name may be absolute or relative. If this does not include
-        /// a suffix, ".json" is appended.  If the name is relative, settings
-        /// are read and merged in from any and all matching files relative to
-        /// each folder from the `directories`, as passed into the constructor.
+        /// The path name may be absolute or relative. If the name is relative,
+        /// settings are read and merged in from any and all matching files
+        /// relative to each folder from the `directories`, as passed into the
+        /// constructor.
+        ///
+        /// Each candidate paths is the evaluated as follows:
+        ///  - If the path is a directory, all `.json` and `.yaml` files
+        ///    within are loaded in lexical order.
+        ///  - Otherwise, if `filename` does not have an extension, each of
+        ///    `.json` and `.yaml` is appended to form additional candidate
+        ///    paths.
+        ///
+        /// Each resulting path is loaded using the YAML parser if it ends in
+        /// `.yaml`, or the JSON parser otherwise.
 
         bool load(const fs::path &filename,
                   bool update_filenames = true);
@@ -96,10 +110,28 @@ namespace core
                   bool update_filenames = true);
 
         /// @brief
-        ///     Load and merge in settings from an absolute path.
+        ///     Load and merge in settings from an absolute file or directory
+        ///     path.
         /// @param[in] abspath
         ///     Settings file to load.
+        ///
+        /// If the path is a directory, all `.json` and `.yaml` files within
+        /// are loaded in lexical order.
+        ///
+        /// Otherwise, filename is presumed to be a plain file. If it exists, it
+        /// is loaded directly, using the JSON or YAML parser depending on the
+        /// filename suffix (`.json` or `.yaml`, respectively). If the file does
+        /// not exist, each of those suffixes is tried in order.
+
         bool load_from(const fs::path &abspath);
+
+
+        /// @brief
+        ///     Load and merge in settings from an absolute file path.
+        /// @param[in] abspath
+        ///     Settings file to load.
+        bool load_from_file(const fs::path &abspath);
+
 
         /// @brief
         ///     Save current settings to the default .json file for this store,
@@ -124,7 +156,6 @@ namespace core
         /// will be saved in `"/etc/local-settings/my-settings.json"`.
         virtual void save(bool delta_only = true,
                           bool use_temp_file = true);
-
 
         /// @brief
         ///     Save current settings to `filename[.json]`.
@@ -160,6 +191,7 @@ namespace core
         fs::path filename() const;
         types::PathList filenames() const;
         types::PathList directories() const;
+        types::PathList filepaths() const;
 
     private:
         types::Value extract_value(const types::ValueList &path,
@@ -186,9 +218,13 @@ namespace core
 
         SettingsStore default_settings() const;
 
+        static void append_path(const fs::path &path, types::PathList *list);
+        static std::vector<fs::path> extended_paths(const fs::path &path);
+        static std::set<fs::path> settings_suffixes();
+
     private:
-        bool composite_;
         types::PathList directories_;
-        std::vector<fs::path> filenames_;
+        types::PathList filenames_;
+        types::PathList filepaths_;
     };
 }  // namespace core

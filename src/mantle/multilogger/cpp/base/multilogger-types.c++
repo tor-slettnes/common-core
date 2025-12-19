@@ -45,10 +45,9 @@ namespace multilogger
 
         if (!spec.columns.empty())
         {
-            tvlist.append_if(
-                !spec.columns.empty(),
-                "columns",
-                core::types::ValueList::create_shared_from(spec.columns));
+            core::types::ValueList columns;
+            columns << spec.columns;
+            tvlist.append({"columns", columns});
         }
 
         return stream << tvlist;
