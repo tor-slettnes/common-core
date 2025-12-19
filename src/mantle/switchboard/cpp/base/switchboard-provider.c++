@@ -311,7 +311,7 @@ namespace switchboard
         const std::string &predecessor_name,
         const core::types::KeyValueMap &dep_map)
     {
-        StateMask mask = 0;
+        StateMask mask = SETTLED_STATES;
         if (const auto &trigger_states = dep_map.get(SETTING_DEP_TRIGGERS).get_valuelist_ptr())
         {
             logf_trace("--- Switch %r trigger states: %s", sw->name(), *trigger_states);
@@ -322,9 +322,9 @@ namespace switchboard
             }
             logf_trace("--- Switch %r trigger mask: %s", sw->name(), mask);
         }
-        else if (bool automatic = dep_map.get(SETTING_DEP_AUTOMATIC).as_bool())
+        else if (const auto &automatic = dep_map.get(SETTING_DEP_AUTOMATIC))
         {
-            mask = SETTLED_STATES;
+            mask = automatic.as_bool() ? SETTLED_STATES : 0;
         }
 
         DependencyPolarity dir = DependencyPolarity::POSITIVE;
