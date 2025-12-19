@@ -17,6 +17,7 @@ namespace upgrade::native
     constexpr auto SETTING_VERSION_MATCH = "version match";
     constexpr auto SETTING_DESCRIPTION = "description";
     constexpr auto SETTING_INSTALL_COMMAND = "install command";
+    constexpr auto SETTING_FINALIZE_COMMAND = "finalize command";
     constexpr auto SETTING_PROGRESS_CAPTURE = "progress capture";
     constexpr auto SETTING_CAPTURE_TOTAL_PROGRESS = "total progress";
     constexpr auto SETTING_CAPTURE_TASK_PROGRESS = "task progress";
@@ -26,20 +27,23 @@ namespace upgrade::native
     constexpr auto DEFAULT_INSTALL_COMMAND = "install.sh";
 
     NativePackageInfo::NativePackageInfo(const fs::path &settings_file,
-                                         const PackageSource &source)
-        : This(core::SettingsStore(settings_file), source)
+                                         const PackageSource &source,
+                                         const fs::path &staging_folder)
+        : This(core::SettingsStore(settings_file), source, staging_folder)
     {
     }
 
     NativePackageInfo::NativePackageInfo(const core::types::KeyValueMap &settings,
-                                         const PackageSource &source)
+                                         const PackageSource &source,
+                                         const fs::path &staging_folder)
         : Super(
               source,
               settings.get(SETTING_PRODUCT).as_string(),
               This::decode_version(settings.get(SETTING_VERSION).as_string()),
               This::decode_description(settings.get(SETTING_DESCRIPTION).as_string()),
               settings.get(SETTING_REBOOT, false).as_bool()),
-          settings(settings)
+          settings(settings),
+          staging_folder_(staging_folder)
     {
     }
 
@@ -93,11 +97,22 @@ namespace upgrade::native
         }
     }
 
+    fs::path NativePackageInfo::staging_folder() const
+    {
+        return this->staging_folder_;
+    }
+
     core::platform::ArgVector NativePackageInfo::install_command() const
     {
         return core::platform::process->arg_vector(
             this->settings.get(SETTING_INSTALL_COMMAND,
                                DEFAULT_INSTALL_COMMAND));
+    }
+
+    core::platform::ArgVector NativePackageInfo::finalize_command() const
+    {
+        return core::platform::process->arg_vector(
+            this->settings.get(SETTING_FINALIZE_COMMAND));
     }
 
     std::string NativePackageInfo::match_capture_total_progress() const

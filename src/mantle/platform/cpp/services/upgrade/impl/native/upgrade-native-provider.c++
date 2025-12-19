@@ -185,13 +185,12 @@ namespace upgrade::native
 
     void NativeProvider::finalize()
     {
-        if (this->install_lock.locked())
+        if (this->install_lock.locked() && this->installed_package_info)
         {
-            logf_notice("Finalizing upgrade");
-            if (this->installed_package_info && this->installed_package_info->reboot_required())
+            if (auto handler = this->get_handler(this->installed_package_info->source()))
             {
-                logf_notice("Rebooting system");
-                sysconfig::host->reboot();
+                logf_notice("Finalizing upgrade");
+                handler->finalize(this->installed_package_info);
             }
 
             this->install_lock.unlock();

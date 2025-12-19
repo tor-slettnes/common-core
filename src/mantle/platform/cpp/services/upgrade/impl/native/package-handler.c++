@@ -23,11 +23,11 @@ namespace upgrade::native
     {
     }
 
-    PackageInfo::ptr PackageHandler::install(const PackageSource &source)
+    NativePackageInfo::ptr PackageHandler::install(const PackageSource &source)
     {
         fs::path staging_folder = this->create_staging_folder();
         std::exception_ptr eptr;
-        PackageInfo::ptr package_info;
+        NativePackageInfo::ptr package_info;
         signal_upgrade_progress.clear_cached();
 
         logf_notice("Installing software update from %s", source);
@@ -54,16 +54,30 @@ namespace upgrade::native
         return package_info;
     }
 
-    void PackageHandler::finalize(const PackageInfo::ptr &package_info)
+    void PackageHandler::finalize(const NativePackageInfo::ptr &package_info)
     {
+        core::platform::ArgVector argv = package_info->finalize_command();
+        if (!argv.empty())
+        {
+            auto exit_status = core::platform::process->invoke_sync_fileio(
+                argv,                             // argv
+                package_info->staging_folder());  // cwd
+
+            if (!exit_status->success())
+            {
+                logf_error("Failed to finalize upgrade: %s", *exit_status);
+            }
+        }
+
+        this->emit_upgrade_progress(UpgradeProgress::STATE_FINALIZED);
+
         if (package_info->reboot_required())
         {
             sysconfig::host->reboot();
         }
-        this->emit_upgrade_progress(UpgradeProgress::STATE_FINALIZED);
     }
 
-    std::shared_ptr<NativePackageInfo> PackageHandler::install_unpacked(
+    NativePackageInfo::ptr PackageHandler::install_unpacked(
         const PackageSource &source,
         const fs::path &staging_folder)
     {
@@ -221,7 +235,7 @@ namespace upgrade::native
 
     void PackageHandler::capture_install_progress(
         core::platform::FileDescriptor fd,
-        std::shared_ptr<NativePackageInfo> package_info) const
+        NativePackageInfo::ptr package_info) const
     {
         std::vector<char> buf(core::platform::CHUNKSIZE);
         std::regex rx_total_progress(package_info->match_capture_total_progress());
@@ -281,7 +295,7 @@ namespace upgrade::native
 
     void PackageHandler::capture_install_diagnostics(
         core::platform::FileDescriptor fd,
-        std::shared_ptr<NativePackageInfo> package_info)
+        NativePackageInfo::ptr package_info)
     {
         this->install_diagnostics = std::make_shared<std::stringstream>();
         std::vector<char> buf(core::platform::CHUNKSIZE);
@@ -339,5 +353,4 @@ namespace upgrade::native
 
         signal_upgrade_progress.emit(progress);
     }
-
 }  // namespace upgrade::native

@@ -8,6 +8,7 @@
 #pragma once
 #include "package-index-vfs.h++"
 #include "package-index-url.h++"
+#include "package-info.h++"
 #include "upgrade-base.h++"
 #include "upgrade-signals.h++"
 #include "vfs-context.h++"
@@ -72,6 +73,6 @@ namespace upgrade::native
         core::types::shared_ptr_map<vfs::Path, VFSPackageIndex> vfs_indices;
         core::types::shared_ptr_map<URL, URLPackageIndex> url_indices;
         core::types::UniqueLock install_lock;
-        PackageInfo::ptr installed_package_info;
+        NativePackageInfo::ptr installed_package_info;
     };
 }  // namespace upgrade::native

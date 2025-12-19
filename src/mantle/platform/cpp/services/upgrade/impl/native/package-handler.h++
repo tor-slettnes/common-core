@@ -25,8 +25,8 @@ namespace upgrade::native
         PackageHandler(const core::SettingsStore::ptr &settings);
 
     public:
-        virtual PackageInfo::ptr install(const PackageSource &source);
-        virtual void finalize(const PackageInfo::ptr &package_info);
+        virtual NativePackageInfo::ptr install(const PackageSource &source);
+        virtual void finalize(const NativePackageInfo::ptr &package_info);
 
     protected:
         virtual void unpack(
@@ -34,7 +34,7 @@ namespace upgrade::native
             const fs::path &staging_folder) = 0;
 
     protected:
-        std::shared_ptr<NativePackageInfo> install_unpacked(
+        NativePackageInfo::ptr install_unpacked(
             const PackageSource &source,
             const fs::path &staging_folder);
 
@@ -56,11 +56,11 @@ namespace upgrade::native
 
         void capture_install_progress(
             core::platform::FileDescriptor fd,
-            std::shared_ptr<NativePackageInfo> package_info) const;
+            NativePackageInfo::ptr package_info) const;
 
         void capture_install_diagnostics(
             core::platform::FileDescriptor fd,
-            std::shared_ptr<NativePackageInfo> package_info);
+            NativePackageInfo::ptr package_info);
 
     protected:
         void emit_upgrade_progress(
