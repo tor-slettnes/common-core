@@ -87,12 +87,12 @@ class SwitchboardBase (LogBase):
             The named `Switch` instance if it exists, otherwise `None`.
         '''
 
-        if sw := self.switches.get(switch_name):
-            return sw
+        if switch := self.switches.get(switch_name):
+            return switch
 
-        for name, sw in self.switches.items():
-            if switch_name in sw.aliases:
-                return sw
+        for name, switch in self.switches.items():
+            if switch_name in switch.aliases:
+                return switch
 
         return None
 
@@ -111,7 +111,7 @@ class SwitchboardBase (LogBase):
         with self._switch_lock:
             switch = self.get_switch(switch_name)
 
-            if sw is None:
+            if switch is None:
                 self.add_switch(switch_name)
                 switch = self.switches[switch_name] = self._new_switch(switch_name)
                 if initial_value is not None:

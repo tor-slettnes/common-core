@@ -94,13 +94,13 @@ switches:
           OFF: "bring down Switchboard"
           ON : "bring up Switchboard"
 
-  - name: "Ethernet:Link"
-    localizations:
-      - language: "en"
-        description: "Ethernet status"
-        state texts:
-          ACTIVE   : "an Ethernet cable is plugged in"
-          INACTIVE : "no Ethernet cable is plugged in"
+  # - name: "Ethernet:Link"
+  #   localizations:
+  #     - language: "en"
+  #       description: "Ethernet status"
+  #       state texts:
+  #         ACTIVE   : "an Ethernet cable is plugged in"
+  #         INACTIVE : "no Ethernet cable is plugged in"
 
   # - name: "WiFi:Enabled"
   #   localizations:
@@ -111,20 +111,20 @@ switches:
   #         INACTIVE: "WiFi is disabled"
   #         FAILED  : "WiFi could not be enabled"
 
-  - name: "WiFi:Carrier"
-    aliases: ["WiFi:Link"]
-    localizations:
-      - language: "en"
-        description: "WiFi signal"
-        action texts:
-          ON: "connect to WiFi"
-          OFF: "disconnect from WiFi"
-        state texts:
-          ACTIVE: "a WiFi access point is available"
-          INACTIVE: "no WiFi access point is available"
-    dependencies:
-      - predecessor: "WiFi:Enabled"
-        automatic: true
+  # - name: "WiFi:Carrier"
+  #   aliases: ["WiFi:Link"]
+  #   localizations:
+  #     - language: "en"
+  #       description: "WiFi signal"
+  #       action texts:
+  #         ON: "connect to WiFi"
+  #         OFF: "disconnect from WiFi"
+  #       state texts:
+  #         ACTIVE: "a WiFi access point is available"
+  #         INACTIVE: "no WiFi access point is available"
+  #   dependencies:
+  #     - predecessor: "WiFi:Enabled"
+  #       automatic: true
 
   # - name: "Network:Link"
   #   localizations:
