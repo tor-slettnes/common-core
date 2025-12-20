@@ -2,7 +2,7 @@
 
 case "$1" in
     configure)
-        if type systemctl >/dev/null 2>&1
+        if pidof -q systemd
         then
             echo "Adding system service: @SERVICE_UNIT@"
             systemctl enable @SERVICE_UNIT_PATH@

@@ -5,7 +5,7 @@ case "$1" in
     ;;
 
     remove)
-        if type systemctl >/dev/null 2>&1
+        if pidof -q systemd
         then
             echo "Removing system service: @SERVICE_UNIT@"
             systemctl disable @SERVICE_UNIT@ || true
