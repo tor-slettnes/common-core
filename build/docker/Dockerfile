@@ -1,5 +1,5 @@
-FROM debian:bookworm
-#FROM ubuntu:22.04
+ARG DOCKERBASE=debian:bookworm
+FROM $DOCKERBASE
 
 ### Install runtime utilities
 RUN apt-get clean
@@ -52,15 +52,19 @@ RUN apt-get install -y \
 ARG USERNAME
 ARG UID
 ARG GID
+ARG LOG_DIR=/var/log/common-core
 
 RUN useradd --create-home --uid "$UID" --groups sudo,staff "$USERNAME"
 
 # Do not require password for users in the `sudo` group to invoke `sudo`
 RUN sed -e 's/\(%sudo\s\+.\+\)\s\+\(ALL\)$/\1 NOPASSWD:\2/g' -i /etc/sudoers
 
-RUN mkdir -p -m 2775 /var/log/common-core
-RUN chgrp staff /var/log/common-core
+# Create a log folder with write permissions
+RUN mkdir -p -m 2775 ${LOG_DIR}
+RUN chgrp staff ${LOG_DIR}
 
-USER $USERNAME
+EXPOSE 7528/tcp 7948/tcp 6564/tcp
+
+#USER $USERNAME
 
 CMD ["sleep", "infinity"]

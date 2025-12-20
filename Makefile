@@ -50,6 +50,7 @@ Variables:
   BUILD_DIR         Build directory
   INSTALL_DIR       Installation directory
   PACKAGE_DIR       Package output directory
+  PARALLEL_JOBS     Parallel build jobs
 endef
 export HELP_TEXT
 
@@ -83,13 +84,17 @@ ifneq ($(wildcard $(TOOLCHAIN_FILE)),)
   export CMAKE_TOOLCHAIN_FILE ?= $(TOOLCHAIN_FILE)
 endif
 
+ifeq ($(shell uname),Linux)
+  PARALLEL_JOBS ?= $(shell nproc)
+else
+  PARALLEL_JOBS ?= 8
+endif
+
+CMAKE_BUILD_ARGS += --parallel $(PARALLEL_JOBS)
+
 ## Set CMake cache entries from variable overrides provided on command line.
 ## E.g. `make PRODUCT=myproduct` -> `cmake -DPRODUCT=myproduct`.
 CMAKE_CONFIG_ARGS += $(foreach override,$(MAKEOVERRIDES),-D$(override))
-
-ifeq ($(shell uname),Linux)
-  CMAKE_BUILD_ARGS += --parallel $(shell nproc)
-endif
 
 ## Create CMake cache only if this file is absent.
 CMAKE_TAG = $(BUILD_DIR)/Makefile
