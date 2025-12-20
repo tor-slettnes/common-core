@@ -8,6 +8,7 @@
 #ifndef _switchboard_interface_idl_
 #define _switchboard_interface_idl_
 #include "switchboard-types.idl"
+#include "variant-types.idl"
 
 module CC
 {
@@ -40,6 +41,9 @@ module CC
 
             // Remove an existing switch
             boolean remove_switch(RemoveSwitchRequest req);
+
+            // Import switches from a key/value list
+            uint32 import_switches(Variant::ValueList req);
 
             /// Update specifications on a switch
             boolean set_specification(SetSpecificationRequest req);

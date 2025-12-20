@@ -7,6 +7,7 @@
 
 #include "switchboard-dds-requesthandler.h++"
 #include "translate-idl-switchboard.h++"
+#include "translate-idl-variant.h++"
 #include "translate-idl-inline.h++"
 #include "logging/logging.h++"
 #include "status/exceptions.h++"
@@ -56,6 +57,13 @@ namespace switchboard::dds
             req.propagate());
     }
 
+    std::uint32_t RequestHandler::import_switches(
+        const CC::Variant::ValueList &req)
+    {
+        return this->provider->import_switches(
+            idl::decoded<core::types::ValueList>(req));
+    }
+
     bool RequestHandler::set_specification(
         const CC::Switchboard::SetSpecificationRequest &req)
     {
@@ -64,6 +72,8 @@ namespace switchboard::dds
         {
             sw->update_spec(
                 idl::decode_optional(spec.is_primary()),
+                idl::decoded<switchboard::SwitchAliases>(spec.aliases()),
+                req.replace_aliases(),
                 idl::decoded<LocalizationMap>(spec.localizations()),
                 req.replace_localizations(),
                 idl::decoded<DependencyMap>(spec.dependencies(), this->provider),

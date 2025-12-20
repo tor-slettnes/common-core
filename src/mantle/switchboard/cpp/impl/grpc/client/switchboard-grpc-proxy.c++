@@ -7,6 +7,7 @@
 
 #include "switchboard-grpc-proxy.h++"
 #include "remote-grpc-switch.h++"
+#include "protobuf-variant-types.h++"
 #include "protobuf-switchboard-types.h++"
 #include "protobuf-inline.h++"
 #include "platform/symbols.h++"
@@ -98,6 +99,15 @@ namespace switchboard::grpc
         req.set_propagate(propagate);
         return this->call_check(&Stub::RemoveSwitch, req).value();
     }
+
+    uint Proxy::import_switches(
+        const core::types::ValueList &switches)
+    {
+        cc::platform::switchboard::protobuf::ImportRequest req;
+        protobuf::encode(switches, req.mutable_declarations());
+        return this->call_check(&Stub::ImportSwitches, req).import_count();
+    }
+
 
     void Proxy::on_spec_update(
         core::signal::MappingAction action,

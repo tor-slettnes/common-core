@@ -41,6 +41,27 @@ namespace switchboard
         std::pair<SwitchRef, bool> add_switch(
             const SwitchName &switch_name) override;
 
+        uint import_switches(
+            const core::types::ValueList &switches) override;
+
+    private:
+        void import_switch(
+            const std::string &name,
+            const core::types::KeyValueMap &spec);
+
+        static Specification import_spec(
+            const SwitchRef &sw,
+            const core::types::KeyValueMap &kvmap);
+
+        static Localization import_localization(
+            const core::types::KeyValueMap &kvmap);
+
+        static DependencyRef import_dependency(
+            const SwitchRef &sw,
+            const std::string &predecessor_name,
+            const core::types::KeyValueMap &dep_map);
+
+
     private:
         core::SettingsStore settings_;
 

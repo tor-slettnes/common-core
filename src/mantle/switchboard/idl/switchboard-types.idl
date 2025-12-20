@@ -75,6 +75,13 @@ module CC
         const StateMask SETTLED_STATES = (State::ACTIVE | State::INACTIVE | State::FAILED);
         const StateMask PENDING_STATES = (State::ACTIVATING | State::DEACTIVATING | State::FAILING);
 
+        // Various size limits
+        const uint32 MAX_SWITCHES = 1024;
+        const uint32 MAX_ALIASES = 32;
+        const uint32 MAX_DEPENDENCIES = 64;
+        const uint32 MAX_INTERCEPTORS = 64;
+        const uint32 MAX_LANGUAGES = 4;
+
         // typedef string<64> SwitchName;
         // typedef string<64> InterceptorName;
         // typedef string<64> ParticipantName;
@@ -86,13 +93,8 @@ module CC
         typedef string ParticipantName;
         typedef string LanguageCode;
         typedef string Text;
+        typedef sequence<SwitchName, MAX_ALIASES> AliasList;
 
-        // Various size limits
-        const uint32 MAX_SWITCHES = 1024;
-        const uint32 MAX_ALIASES = 32;
-        const uint32 MAX_DEPENDENCIES = 64;
-        const uint32 MAX_INTERCEPTORS = 64;
-        const uint32 MAX_LANGUAGES = 4;
 
 
         //======================================================================
@@ -334,7 +336,7 @@ module CC
             @optional
             boolean is_primary;
 
-            sequence<string,MAX_ALIASES> aliases;
+            AliasList aliases;
 
             // Human readable descriptions of what the switch represents, keyed
             // by language code.. If not explicitly provided as part of an
@@ -356,6 +358,9 @@ module CC
             // Initial value after creation/update.
             @optional
             boolean active;
+
+            // Clear existing aliases when updating
+            boolean replace_aliases;
 
             // Clear existing localizations when updating
             boolean replace_localizations;

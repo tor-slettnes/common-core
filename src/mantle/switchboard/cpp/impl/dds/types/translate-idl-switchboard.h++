@@ -34,6 +34,16 @@ namespace idl
     void decode(CC::Switchboard::State idl,
                 switchboard::State *native);
 
+
+    // CC::Switchboard::AliasList
+    void encode(switchboard::SwitchAliases native,
+                CC::Switchboard::AliasList *idl);
+
+    void decode(CC::Switchboard::AliasList idl,
+                switchboard::SwitchAliases *native);
+
+
+
     // CC::Switchboard::Localization
     void encode(const switchboard::LanguageCode &language_code,
                 const switchboard::Localization &native,

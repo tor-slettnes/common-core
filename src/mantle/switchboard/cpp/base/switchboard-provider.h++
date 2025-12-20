@@ -96,7 +96,16 @@ namespace switchboard
             const SwitchName &name,
             bool propagate = true);
 
-    public:
+
+        /// @brief Import switches from a list of key/value variants
+        /// @param[in] switches
+        ///     A variant list containing switch declarations in the form
+        ///     of key/value pairs matching those in a settings file.
+
+        virtual uint import_switches(
+            const core::types::ValueList &switches) = 0;
+
+
         // Operations pertaining to indivdiual switches
 
         /// @brief
@@ -188,25 +197,6 @@ namespace switchboard
             }
         }
 
-    private:
-        uint load_switches(
-            const core::types::ValueList &switches);
-
-        void load_switch(
-            const std::string &name,
-            const core::types::KeyValueMap &spec);
-
-        static Specification import_spec(
-            const SwitchRef &sw,
-            const core::types::KeyValueMap &kvmap);
-
-        static Localization import_localization(
-            const core::types::KeyValueMap &kvmap);
-
-        static DependencyRef import_dependency(
-            const SwitchRef &sw,
-            const std::string &predecessor_name,
-            const core::types::KeyValueMap &dep_map);
 
     private:
         std::string implementation_;

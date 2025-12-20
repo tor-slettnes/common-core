@@ -44,6 +44,9 @@ namespace switchboard::grpc
             const SwitchName &switch_name,
             bool propagate = true) override;
 
+        uint import_switches(
+            const core::types::ValueList &switches) override;
+
     private:
         void synchronize_switches();
 

@@ -53,6 +53,11 @@ namespace switchboard::grpc
             const cc::platform::switchboard::protobuf::RemoveSwitchRequest *request,
             ::google::protobuf::BoolValue *reply) override;
 
+        ::grpc::Status ImportSwitches(
+            ::grpc::ServerContext *context,
+            const cc::platform::switchboard::protobuf::ImportRequest *request,
+            cc::platform::switchboard::protobuf::ImportResponse *reply) override;
+
         ::grpc::Status SetSpecification(
             ::grpc::ServerContext *context,
             const cc::platform::switchboard::protobuf::SetSpecificationRequest *request,

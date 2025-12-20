@@ -44,6 +44,7 @@ namespace switchboard::dds
         SwitchRef get_switch(const SwitchName &name, bool required) const override;
         std::pair<SwitchRef, bool> add_switch(const SwitchName &switch_name) override;
         bool remove_switch(const SwitchName &switch_name, bool propagate = true) override;
+        uint import_switches(const core::types::ValueList &switches) override;
 
     private:
         bool wait_for_service(const core::dt::Duration &timeout) const;

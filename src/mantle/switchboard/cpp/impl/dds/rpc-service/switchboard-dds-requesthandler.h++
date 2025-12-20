@@ -32,6 +32,7 @@ namespace switchboard::dds
         CC::Switchboard::Switch get_switch(const SwitchName &switch_name) override;
         bool add_switch(const CC::Switchboard::AddSwitchRequest &req) override;
         bool remove_switch(const CC::Switchboard::RemoveSwitchRequest &req) override;
+        std::uint32_t import_switches(const CC::Variant::ValueList &req) override;
         bool set_specification(const CC::Switchboard::SetSpecificationRequest &req) override;
 
         bool add_dependency(const CC::Switchboard::AddDependencyRequest &req) override;

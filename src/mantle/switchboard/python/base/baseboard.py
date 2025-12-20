@@ -13,8 +13,11 @@ from logging import Logger
 
 ### Core modules
 from cc.core.logbase import LogBase
+from cc.core.paths import FilePathInput
+from cc.core.settingsstore import SettingsStore
 from cc.protobuf.dissecter import message_dissecter
 from cc.protobuf.signal import SignalStore, MappingAction
+from cc.protobuf.variant import PyValueList
 
 ### Modules within package
 from ..protobuf import Signal
@@ -155,3 +158,36 @@ class SwitchboardBase (LogBase):
         @returns
             True if the switch was removed, False if it did not exist.
         '''
+
+    @abstractmethod
+    def import_switches(self,
+                        declarations: PyValueList) -> int:
+        '''
+        Import switches from a list of key/value declarations, like those
+        found in settings files.
+
+        @param declarations
+            A list of key/value objects, like those read from a settings file.
+
+        @return
+            Number of switches that were added
+        '''
+
+    def load_switches(self,
+                      filename: FilePathInput):
+        '''
+        Load switches from a settings file.  Valid file formats are those
+        supported by `cc.core.settingsstore.SettingsStore`, including JSON,
+        YAML, and INI.
+
+        The settings schema is described in `common-swiches.yaml`, normally
+        installed under `/usr/share/common-core/settings/switches/`.
+        At the root of the settings tree, a `"switches"` key should map to a
+        list of declarations containing, at minimum, a `"name"` key.
+        '''
+
+        store = SettingsStore(filename)
+        if declarations := store.get_value('switches',
+                                           expected_type=list,
+                                           raise_invalid_type=True):
+            self.import_switches(declarations)

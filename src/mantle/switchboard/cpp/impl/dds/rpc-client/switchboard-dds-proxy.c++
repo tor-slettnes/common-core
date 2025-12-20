@@ -8,6 +8,7 @@
 #include "switchboard-dds-proxy.h++"
 #include "switchboard-dds-subscriber.h++"
 #include "remote-dds-switch.h++"
+#include "translate-idl-variant.h++"
 #include "translate-idl-inline.h++"
 #include "platform/symbols.h++"
 
@@ -99,7 +100,15 @@ namespace switchboard::dds
         return this->client()->remove_switch({name, propagate});
     }
 
-    bool Proxy::wait_for_service(const core::dt::Duration &timeout) const
+    uint Proxy::import_switches(
+        const core::types::ValueList &switches)
+    {
+        return this->client()->import_switches(
+            idl::encoded<CC::Variant::ValueList>(switches));
+    }
+
+    bool Proxy::wait_for_service(
+        const core::dt::Duration &timeout) const
     {
         try
         {

@@ -23,7 +23,6 @@ namespace idl
         *native = static_cast<switchboard::ExceptionHandling>(idl);
     }
 
-
     // CC::Switchboard::InterceptorPhase
     void encode(switchboard::InterceptorPhase native,
                 CC::Switchboard::InterceptorPhase *idl)
@@ -36,7 +35,6 @@ namespace idl
     {
         *native = static_cast<switchboard::InterceptorPhase>(idl);
     }
-
 
     // CC::Switchboard::State
     void encode(switchboard::State native,
@@ -51,6 +49,19 @@ namespace idl
         *native = static_cast<switchboard::State>(idl);
     }
 
+
+    // CC::Switchboard::AliasList
+    void encode(switchboard::SwitchAliases native,
+                CC::Switchboard::AliasList *idl)
+    {
+        idl->insert(idl->end(), native.begin(), native.end());
+    }
+
+    void decode(CC::Switchboard::AliasList idl,
+                switchboard::SwitchAliases *native)
+    {
+        native->insert(idl.begin(), idl.end());
+    }
 
     // CC::Switchboard::Localization
     void encode(const switchboard::LanguageCode &language_code,
@@ -264,6 +275,7 @@ namespace idl
     {
         idl->switch_name(name);
         idl->is_primary(native.primary);
+        encode(native.aliases, &idl->aliases());
         encode(native.localizations, &idl->localizations());
         encode(native.dependencies, &idl->dependencies());
         encode(native.interceptors, &idl->interceptors());
@@ -283,6 +295,8 @@ namespace idl
         {
             native->primary = idl.is_primary().value();
         }
+
+        decode(idl.aliases(), &native->aliases);
         decode(idl.localizations(), &native->localizations);
         decode(idl.dependencies(), provider, &native->dependencies);
         decode(idl.interceptors(), &native->interceptors);
@@ -333,7 +347,6 @@ namespace idl
         decode(idl.attributes(), &status->attributes);
     }
 
-
     // CC::Switchboard::Switch
     void encode(const switchboard::Switch &sw,
                 CC::Switchboard::Switch *idl)
@@ -341,7 +354,6 @@ namespace idl
         encode(sw.name(), *sw.spec(), &idl->spec());
         encode(sw.name(), *sw.status(), &idl->status());
     }
-
 
     // CC::Switchboard::SwitchList
     void encode(const switchboard::SwitchMap &native,

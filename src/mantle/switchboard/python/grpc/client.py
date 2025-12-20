@@ -8,8 +8,9 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 from cc.core.decorators import doc_inherit
+from cc.protobuf.variant import PyValueList, encodeValueList
 from cc.messaging.grpc.signal_client import SignalClient
-from ..protobuf import AddSwitchRequest, RemoveSwitchRequest
+from ..protobuf import AddSwitchRequest, RemoveSwitchRequest, ImportRequest
 from ..base.baseboard import SwitchboardBase
 from .remote_switch import RemoteSwitch
 
@@ -48,17 +49,33 @@ class Client (SwitchboardBase, SignalClient):
         SwitchboardBase.__init__(self)
         self.start_watching(watch_all=True)
 
-    def _new_switch(self, switch_name: str) -> RemoteSwitch:
+    def _new_switch(self,
+                    switch_name: str,
+                    ) -> RemoteSwitch:
         '''Overridden method to obtain a local Switch instance in response to update signals from server'''
         return RemoteSwitch(switch_name, self.stub)
 
     @doc_inherit
-    def add_switch(self, switch_name: str) -> bool:
+    def add_switch(self,
+                   switch_name: str,
+                   ) -> bool:
         req = AddSwitchRequest(switch_name = switch_name)
         return self.stub.AddSwitch(req).value
 
     @doc_inherit
-    def remove_switch(self, switch_name: str, propagate: bool = True) -> bool:
+    def remove_switch(self,
+                      switch_name: str,
+                      propagate: bool = True,
+                      ) -> bool:
         req = RemoveSwitchRequest(switch_name = switch_name,
                                   propagate = propagate)
         return self.stub.RemoveSwitch(req).value
+
+    @doc_inherit
+    def import_switches(self,
+                        declarations: PyValueList) -> int:
+        req = ImportRequest(
+            declarations = encodeValueList(declarations))
+        return self.stub.ImportSwitches(req).import_count
+
+

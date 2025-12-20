@@ -100,6 +100,24 @@ namespace switchboard::grpc
         }
     }
 
+    ::grpc::Status RequestHandler::ImportSwitches(
+            ::grpc::ServerContext *context,
+            const cc::platform::switchboard::protobuf::ImportRequest *request,
+            cc::platform::switchboard::protobuf::ImportResponse *reply)
+    {
+        try
+        {
+            uint count = this->provider->import_switches(
+                protobuf::decoded<core::types::ValueList>(request->declarations()));
+            reply->set_import_count(count);
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *request, context->peer());
+        }
+    }
+
     ::grpc::Status RequestHandler::SetSpecification(
         ::grpc::ServerContext *context,
         const cc::platform::switchboard::protobuf::SetSpecificationRequest *request,
