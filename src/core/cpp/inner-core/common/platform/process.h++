@@ -487,6 +487,12 @@ namespace core::platform
         virtual ExitStatus::ptr waitpid(
             PID pid,
             bool checkstatus = false) const = 0;
+
+
+        /// @brief
+        ///     Obtain a process name for a given PID
+        virtual std::string get_process_name_by_pid(PID pid) const;
+
     };
 
     /// Global instance, populated with the "best" provider for this system.

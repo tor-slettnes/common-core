@@ -87,6 +87,7 @@ docker_shell: docker_up
 		$(DOCKER_EXEC_OPTS) \
 		--user "$(CONTAINER_USER)" \
 		--workdir "$(CONTAINER_DIR)" \
+		--env OUT_DIR=$(CONTAINER_DIR)/$(OUT_DIR) \
 		"$(CONTAINERNAME)" \
 		/bin/bash || true
 	@echo '←←← Exited Docker shell: $(CONTAINERNAME)'

@@ -149,6 +149,13 @@ namespace core::platform
 
             this->execute(argv, cwd);
         }
+        else
+        {
+            logf_trace("Invoked command with stdio, cwd=%s, pid=%s: %s",
+                       cwd,
+                       pid,
+                       argv);
+        }
 
         return pid;
     }
@@ -339,8 +346,6 @@ namespace core::platform
         Pipe outpipe = this->create_pipe();
         Pipe errpipe = this->create_pipe();
 
-        logf_trace("Invoking command, cwd=%s: %s", cwd, argv);
-
         PID pid = ::fork();
 
         if (pid == 0)
@@ -353,6 +358,11 @@ namespace core::platform
         }
         else
         {
+            logf_trace("Invoked command with pipe, cwd=%s, pid=%s: %s",
+                       cwd,
+                       pid,
+                       argv);
+
             // Parent writes to inpipe and reads from outpipe and errpipe.
             this->close_fd(fdin);
 

@@ -29,7 +29,7 @@ namespace sysconfig::native
 
     bool SystemdTimeConfigProvider::is_pertinent() const
     {
-        return fs::exists(TIMEDATECTL_PATH);
+        return fs::exists(TIMEDATECTL_PATH) && this->is_systemd_init();
     }
 
     void SystemdTimeConfigProvider::set_current_time(const core::dt::TimePoint &tp)
@@ -96,4 +96,9 @@ namespace sysconfig::native
         return valuemap;
     }
 
-}  // namespace sysconfig::systemd
+    bool SystemdTimeConfigProvider::is_systemd_init() const
+    {
+        return core::platform::process->get_process_name_by_pid(1) == "systemd";
+    }
+
+}  // namespace sysconfig::native

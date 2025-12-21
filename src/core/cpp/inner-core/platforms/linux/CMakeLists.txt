@@ -24,6 +24,7 @@ set(SOURCES
   linux-symbols.c++
   linux-host.c++
   linux-path.c++
+  linux-process.c++
   # linux-time.c++
 )
 

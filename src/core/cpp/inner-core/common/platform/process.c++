@@ -356,6 +356,12 @@ namespace core::platform
         }
     }
 
+    std::string ProcessProvider::get_process_name_by_pid(PID pid) const
+    {
+        throw std::invalid_argument("get_process_name_by_pid() is not implemented on this platform");
+    }
+
+
     /// Global instance, populated with the "best" provider for this system.
     ProviderProxy<ProcessProvider> process("process");
 

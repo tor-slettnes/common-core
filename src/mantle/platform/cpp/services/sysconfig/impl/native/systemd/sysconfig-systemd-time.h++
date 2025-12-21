@@ -29,5 +29,8 @@ namespace sysconfig::native
         std::vector<std::string> get_ntp_servers() const;
         core::types::ValueMap<std::string, std::string> read_settings() const;
 
+    private:
+        bool is_systemd_init() const;
+
     };
 }  // namespace sysconfig::systemd
