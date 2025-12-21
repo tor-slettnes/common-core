@@ -6,8 +6,11 @@
 
 ### Build artifacts
 /out/
-/logs/
 /venv/
+
+### Local config cache
+/config/
+/logs/
 
 ### CTest state
 /Testing

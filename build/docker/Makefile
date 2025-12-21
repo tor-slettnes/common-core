@@ -9,11 +9,12 @@ HOST_MOUNT         = $(HOME)
 CONTAINER_MOUNT    = /home/$(CONTAINER_USER)
 HOST_DIR          ?= $(shell realpath $(DOCKERFILE_DIR)/../..)
 CONTAINER_DIR      = $(subst $(HOST_MOUNT),$(CONTAINER_MOUNT),$(HOST_DIR))
-OUT_DIR            ?= out/docker
-INSTALL_DIR        ?= $(OUT_DIR)/install
-DAEMON_DIR         ?= $(CONTAINER_DIR)/$(INSTALL_DIR)/sbin
-CONTAINER_LOG_DIR  ?= /var/log/common-core
-HOST_LOG_DIR       ?= $(HOST_DIR)/$(OUT_DIR)/logs
+HOST_CONFIG_DIR   ?= $(HOST_DIR)/config
+HOST_LOG_DIR      ?= $(HOST_DIR)/logs
+OUT_DIR           ?= out
+INSTALL_DIR       ?= $(OUT_DIR)/install
+DAEMON_DIR        ?= $(CONTAINER_DIR)/$(INSTALL_DIR)/sbin
+EXPOSE_TCP_PORTS   = 7528 7948 6564
 
 .PHONY: docker_build
 docker_build:
@@ -26,7 +27,6 @@ docker_build:
 			--build-arg UID=$(shell id -u) \
 			--build-arg GID=$(shell id -g) \
 			--build-arg USERNAME=$(shell id -un) \
-			--build-arg LOG_DIR=$(CONTAINER_LOG_DIR) \
 			.; \
 	fi
 
@@ -38,18 +38,19 @@ docker_clean: docker_down
 	fi
 
 .PHONY: docker_up
-docker_up: docker_build $(HOST_LOG_DIR)
+docker_up: docker_build $(HOST_CONFIG_DIR) $(HOST_LOG_DIR)
 	@if ! docker container inspect $(CONTAINERNAME) >/dev/null 2>&1; then \
 		echo '↑↑↑ Starting Docker container: $(CONTAINERTAG)'; \
 		docker run \
 			--detach --rm --init \
 			--name $(CONTAINERNAME) \
 			--hostname $(CONTAINERNAME) \
-			--publish-all \
+			$(foreach port,$(EXPOSE_TCP_PORTS),-p $(port):$(port)/tcp) \
 			-v $(HOST_MOUNT):$(CONTAINER_MOUNT) \
 			$(if $(WORKSPACE),-v $(WORKSPACE):$(WORKSPACE)) \
 			$(if $(PYPIRC_FILE),-v $(PYPIRC_FILE):$(CONTAINER_MOUNT)/.pypirc:ro) \
-			$(if $(CONTAINER_LOG_DIR),-v $(HOST_LOG_DIR):$(CONTAINER_LOG_DIR)) \
+			$(if $(HOST_CONFIG_DIR),-v $(HOST_CONFIG_DIR):/etc/common-core) \
+			$(if $(HOST_LOG_DIR),-v $(HOST_LOG_DIR):/var/log/common-core) \
 			$(CONTAINERTAG); \
 	fi
 
@@ -71,7 +72,6 @@ docker_exec_make_%: docker_up
 	@docker exec \
 		--user "$(CONTAINER_USER)" \
 		--workdir "$(CONTAINER_DIR)" \
-		--env OUT_DIR=$(CONTAINER_DIR)/$(OUT_DIR) \
 		"$(CONTAINERNAME)" \
 		make $* $(MAKEOVERRIDES)
 
@@ -87,10 +87,9 @@ docker_shell: docker_up
 		$(DOCKER_EXEC_OPTS) \
 		--user "$(CONTAINER_USER)" \
 		--workdir "$(CONTAINER_DIR)" \
-		--env OUT_DIR=$(CONTAINER_DIR)/$(OUT_DIR) \
 		"$(CONTAINERNAME)" \
 		/bin/bash || true
 	@echo '←←← Exited Docker shell: $(CONTAINERNAME)'
 
-$(HOST_LOG_DIR):
+$(HOST_CONFIG_DIR) $(HOST_LOG_DIR):
 	@mkdir -p "$@"

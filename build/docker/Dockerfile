@@ -52,19 +52,10 @@ RUN apt-get install -y \
 ARG USERNAME
 ARG UID
 ARG GID
-ARG LOG_DIR=/var/log/common-core
 
 RUN useradd --create-home --uid "$UID" --groups sudo,staff "$USERNAME"
 
 # Do not require password for users in the `sudo` group to invoke `sudo`
-RUN sed -e 's/\(%sudo\s\+.\+\)\s\+\(ALL\)$/\1 NOPASSWD:\2/g' -i /etc/sudoers
-
-# Create a log folder with write permissions
-RUN mkdir -p -m 2775 ${LOG_DIR}
-RUN chgrp staff ${LOG_DIR}
-
-EXPOSE 7528/tcp 7948/tcp 6564/tcp
-
-#USER $USERNAME
+RUN echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo-no-pw
 
 CMD ["sleep", "infinity"]
