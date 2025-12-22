@@ -40,7 +40,7 @@ class Switch:
         self.callbacks = {}
 
     def __repr__ (self):
-        return "Switch(%r)"%(self.name,)
+        return "Switch(%r, %s)"%(self.name, self.current_state.name)
 
     def _update_specification(self, specification: Specification):
         self.specification.CopyFrom(specification)
