@@ -32,7 +32,7 @@ docker_build:
 .PHONY: docker_clean
 docker_clean: docker_down
 	@$(COMPOSE_COMMAND) rm -f -s
-	@docker image rm -f $(DOCKER_IMAGE) >/dev/null 2>&1
+	@docker image rm -f $(DOCKER_IMAGE) >/dev/null 2>&1 || true
 
 .PHONY: docker_up
 docker_up:
@@ -55,8 +55,9 @@ docker_exec_daemons: \
 
 docker_exec_make_%: docker_up
 	@echo '→→→ Building with Docker: $* $(MAKEOVERRIDES)'
-	@$(EXEC_COMMAND) make $* $(MAKEOVERRIDES)
+	@$(EXEC_COMMAND) sh -c \
+		'[ -x "$(DAEMON_DIR)/$*" ] || make "$*" $(MAKEOVERRIDES)'
 
-docker_exec_daemon_%: docker_exec_make_install
-	@echo '→→→ Executing within Docker: $* --daemon'
-	@$(EXEC_COMMAND) sudo $(DAEMON_DIR)/$* --daemon
+docker_exec_daemon_%:
+	@$(EXEC_COMMAND) sh -c \
+	    'pidof -q $* || (echo "→→→ Executing within Docker: $* --daemon" && sudo $(DAEMON_DIR)/$* --daemon)'
