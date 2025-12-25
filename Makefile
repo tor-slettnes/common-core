@@ -7,50 +7,49 @@
 
 define HELP_TEXT
 Available targets:
-  help              Show this help message
-  prepare_linux     Install all required dependencies for Linux builds
-  local             Build, test and install locally
-  release           Build, test and create release packages
-  package           Create packages (currently only deb)
-  debs, deb         Create Debian packages
-  wheels            Create Python wheel packages
-  install           Install built components
-  install/strip     Install and strip debug symbols
-  install/<comp>    Install specific component
-  doc               Generate documentation
-  ctest             Run tests
-  ctest/report      Run tests and show detailed failure reports
-  ctest/rerun       Rerun failed tests
-  build             Build the project
-  cmake-gui         Launch CMake GUI
-  cmake             Generate build files
-  python_shell      Launch Python shell with project modules
-  python_shell/<m>  Launch Python shell with specific module
-  list              List all available targets
-  get_config        Show current CMake configuration
-  get_version       Show project version
-  get_product       Show product name
-  clean             Clean build artifacts
-  clean/cmake       Clean CMake build files
-  clean/core        Remove core dumps
-  clean/build       Remove build directory
-  clean/install     Remove installed files
-  clean/deb         Remove package files
-  clean/cache       Remove CMake cache
-  clean/python      Remove Python build artifacts
-  clean/out         Remove all output directories
-  realclean         Remove all build artifacts
-  distclean         Remove all generated files
+  help               Show this help message
+  build-requirements Install Debian packages required to build
+  local              Build, test and install locally
+  release            Build, test and create release packages
+  package            Create packages (currently only deb)
+  debs, deb          Create Debian packages
+  wheels             Create Python wheel packages
+  install            Install built components
+  install/strip      Install and strip debug symbols
+  install/<comp>     Install specific component
+  doc                Generate documentation
+  ctest              Run tests
+  ctest/report       Run tests and show detailed failure reports
+  ctest/rerun        Rerun failed tests
+  build              Build the project
+  cmake-gui          Launch CMake GUI
+  cmake              Generate build files
+  python_shell       Launch Python shell with project modules
+  python_shell/<m>   Launch Python shell with specific module
+  list               List all available targets
+  get_config         Show current CMake configuration
+  get_version        Show project version
+  get_product        Show product name
+  clean              Clean build artifacts
+  clean/cmake        Clean CMake build files
+  clean/core         Remove core dumps
+  clean/build        Remove build directory
+  clean/install      Remove installed files
+  clean/deb          Remove package files
+  clean/cache        Remove CMake cache
+  clean/python       Remove Python build artifacts
+  clean/out          Remove all output directories
+  realclean          Remove all build artifacts
+  distclean          Remove all generated files
 
 Variables:
-  TARGET            Target platform (e.g., Linux-x86_64)
-  BUILD_TYPE        Build type (Debug/Release)
-  CMAKE_BUILD_TYPE  CMake build type
-  OUT_DIR           Output directory
-  BUILD_DIR         Build directory
-  INSTALL_DIR       Installation directory
-  PACKAGE_DIR       Package output directory
-  PARALLEL_JOBS     Parallel build jobs
+  TARGET             Target platform (e.g., Linux-x86_64)
+  BUILD_TYPE         Build type (Debug/Release)
+  OUT_DIR            Output directory
+  BUILD_DIR          Build directory
+  INSTALL_DIR        Installation directory
+  PACKAGE_DIR        Package output directory
+  PARALLEL_JOBS      Parallel build jobs
 endef
 export HELP_TEXT
 
@@ -94,7 +93,8 @@ CMAKE_BUILD_ARGS += --parallel $(PARALLEL_JOBS)
 
 ## Set CMake cache entries from variable overrides provided on command line.
 ## E.g. `make PRODUCT=myproduct` -> `cmake -DPRODUCT=myproduct`.
-CMAKE_CONFIG_ARGS += $(foreach override,$(MAKEOVERRIDES),-D$(override))
+OVERRIDES = $(filter-out PARALLEL_JOBS=%,$(MAKEOVERRIDES))
+CMAKE_CONFIG_ARGS += $(foreach override,$(OVERRIDES),-D$(override))
 
 ## Create CMake cache only if this file is absent.
 CMAKE_TAG = $(BUILD_DIR)/Makefile
@@ -344,9 +344,9 @@ distclean pristine: clean/core clean/out
 help:
 	@echo "$${HELP_TEXT}"
 
-.PHONY: prepare_linux
-prepare_linux:
-	@echo "Installing required dependencies for Linux builds..."
+.PHONY: build-requirements prepare_linux
+build-requirements prepare_linux:
+	@echo "Installing required Debian build dependencies..."
 	@$(call list_debian_requirements) | sudo xargs apt install -y
 
 ### Delegate docker_ targets to its own Makefile

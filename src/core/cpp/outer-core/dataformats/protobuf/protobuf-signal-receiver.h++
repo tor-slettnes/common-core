@@ -99,7 +99,7 @@ namespace protobuf
         ///     protocol/messaging system.
         void add_generic_handler(const Callback &callback)
         {
-            this->geeneric_handler = callback;
+            this->generic_handler = callback;
         }
 
     protected:
