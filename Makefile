@@ -8,7 +8,8 @@
 define HELP_TEXT
 Available targets:
   help               Show this help message
-  build-requirements Install Debian packages required to build
+  install-build-requirements
+                     Install Debian packages required to build
   local              Build, test and install locally
   release            Build, test and create release packages
   package            Create packages (currently only deb)
@@ -42,13 +43,11 @@ Available targets:
   realclean          Remove all build artifacts
   distclean          Remove all generated files
 
-Variables:
-  TARGET             Target platform (e.g., Linux-x86_64)
-  OUT_DIR            Output directory
-  BUILD_DIR          Build directory
-  INSTALL_DIR        Installation directory
-  PACKAGE_DIR        Package output directory
-  PARALLEL_JOBS      Parallel build jobs
+Variables that control the build behavior:
+  CONFIG_PRESET      CMake Configuration Preset (e.g. toolchain selection)
+  BUILD_PRESET       CMake Build Preset
+  TEST_PRESET        CTest Preset
+  PACKAGE_PRESET     CPack Preset
 endef
 export HELP_TEXT
 
@@ -60,10 +59,10 @@ BUILD_PRESET    ?= default
 TEST_PRESET     ?= default
 PACKAGE_PRESET  ?= deb
 THIS_DIR        ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-OUT_DIR         ?= $(CURDIR)/out
-BUILD_DIR       ?= $(strip $(shell $(call get_build_dir)))
-INSTALL_DIR     ?= $(strip $(shell $(call get_cached,CMAKE_INSTALL_PREFIX)))
-PACKAGE_DIR     ?= $(strip $(shell $(call get_package_dir)))
+OUT_DIR          = $(CURDIR)/out
+BUILD_DIR        = $(strip $(shell $(call get_build_dir)))
+INSTALL_DIR      = $(strip $(shell $(call get_cached,CMAKE_INSTALL_PREFIX)))
+PACKAGE_DIR      = $(strip $(shell $(call get_package_dir)))
 PYTHON          ?= /usr/bin/python3
 
 ### CMake customization
@@ -75,29 +74,16 @@ CMAKE_CACHE = $(BUILD_DIR)/CMakeCache.txt
 CONFIG_ARGS += $(foreach override,$(MAKEOVERRIDES),-D$(override))
 
 
-# export CMAKE_BUILD_TYPE ?= $(or $(BUILD_TYPE),Release)
-
-# ifneq ($(wildcard $(TOOLCHAIN_FILE)),)
-#   export CMAKE_TOOLCHAIN_FILE ?= $(TOOLCHAIN_FILE)
-# endif
-
-# ifeq ($(shell uname),Linux)
-#   export CMAKE_BUILD_PARALLEL_LEVEL ?= $(shell nproc)
-# else
-#   export CMAKE_BUILD_PARALLEL_LEVEL ?= 8
-# endif
-
-
 ### Utility functions
 define get_build_dir
 jq -r '.configurePresets.[]|select(.name == "$(CONFIG_PRESET)")|.binaryDir' \
-    $(wildcard CMake*Presets.json) \
+    $(wildcard $(THIS_DIR)/CMake*Presets.json) \
     | sed -e 's|$${sourceDir}|$(CURDIR)|g'
 endef
 
 define get_package_dir
 jq -r '.packagePresets.[]|select(.name == "$(PACKAGE_PRESET)")|.packageDirectory' \
-    $(wildcard CMake*Presets.json) \
+    $(wildcard $(THIS_DIR)/CMake*Presets.json) \
     | sed -e 's|$${sourceDir}|$(CURDIR)|g'
 endef
 
@@ -130,17 +116,15 @@ local: ctest install
 .PHONY: release
 release: ctest package
 
-.PHONY: package
-package: debs
 
-.PHONY: debs deb
-debs deb:
+.PHONY: package debs deb
+package debs deb: build
 	@echo
 	@echo "#############################################################"
 	@echo "Creating Debian release packages in $(PACKAGE_DIR)"
 	@echo "#############################################################"
 	@echo
-	@cmake --workflow deb
+	@cpack --preset "$(PACKAGE_PRESET)"
 
 .PHONY: wheels
 wheels: cmake
@@ -219,7 +203,7 @@ ctest/rerun: build
 build: cmake
 	@echo
 	@echo "#############################################################"
-	@echo "Building in ${BUILD_DIR}"
+	@echo "Building in $(BUILD_DIR)"
 	@echo "#############################################################"
 	@echo
 	@cmake --build --preset "$(BUILD_PRESET)" $(CMAKE_BUILD_ARGS)
@@ -229,15 +213,7 @@ cmake-gui: cmake
 	@cmake-gui --preset "$(CONFIG_PRESET)"
 
 .PHONY: cmake
-cmake: $(CMAKE_TAG) $(CMAKE_CACHE)
-
-### If we have defined custom arguments to CMake (see above), we force
-### regeneration of the CMake cache by declaring any previous result as phony.
-ifneq ($(or $(CMAKE_FORCE_REGENERATE),$(CMAKE_CONFIG_ARGS)),)
-.PHONY: $(CMAKE_TAG)
-endif
-
-$(CMAKE_TAG) $(CMAKE_CACHE):
+cmake:
 	@echo
 	@echo "#############################################################"
 	@echo "Generating CMake preset: $(CONFIG_PRESET)"
@@ -261,13 +237,13 @@ list_make_vars:
 .PHONY: list
 list: cmake
 	@echo "Default target:"
-	@sed -n -e 's/^\([[:alnum:]][^:]*\):.*$$/    \1/p' $(MAKEFILE_LIST) | head -1
+	@echo "    $(.DEFAULT_GOAL)"
 	@echo
 	@echo "Makefile targets:"
 	@sed -n -e 's/^\([[:alnum:]][^:]*\):.*$$/... \1/p' $(MAKEFILE_LIST) | sort -u
 	@echo
 	@echo "Additional targets from CMake:"
-	@cmake --build --target "$(BUILD_PRESET)" --target help $(CMAKE_BUILD_ARGS) | tail +3
+	@cmake --build --preset "$(BUILD_PRESET)" --target help $(CMAKE_BUILD_ARGS) | tail +3
 
 .PHONY: get_config
 get_config: cmake
@@ -318,7 +294,6 @@ clean/cache clean/config:
 clean/out cleanout:
 	@$(call remove,$(OUT_DIR))
 
-
 .PHONY: realclean
 realclean: clean/core clean/python clean/cmake clean/package clean/install clean/build
 
@@ -335,8 +310,8 @@ install-build-requirements prepare_linux:
 	@$(call list_debian_requirements) | sudo xargs apt install -y
 
 ### Delegate docker_ targets to its own Makefile
-docker_%:
-	@$(MAKE) -C $(THIS_DIR)/build/docker $(MAKECMDGOALS) HOST_DIR=$(CURDIR)
+docker-% docker_%:
+	@$(MAKE) -C $(THIS_DIR)/build/docker docker_$* HOST_DIR=$(CURDIR)
 
 
 ### Delegate any other target to CMake

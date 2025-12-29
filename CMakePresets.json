@@ -11,7 +11,7 @@
             "description": "Default build using UNIX Makefiles",
             "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/out/build/default",
-            "installDir": "out/install",
+            "installDir": "${sourceDir}/out/install",
             "cacheVariables": {
             }
         },
