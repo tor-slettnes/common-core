@@ -21,7 +21,7 @@ CONTAINER_HOME    = /home/$(USER)
 CONTAINER_DIR     = $(subst $(HOST_HOME),$(CONTAINER_HOME),$(HOST_DIR))
 DAEMON_DIR       ?= $(CONTAINER_DIR)/out/install/sbin
 
-COMPOSE_COMMAND  ?= docker-compose
+COMPOSE_COMMAND  ?= docker compose
 EXEC_COMMAND     ?= $(COMPOSE_COMMAND) exec -u $(USER) -w $(CONTAINER_DIR) \
                     $(COMPOSER_SERVICE)
 

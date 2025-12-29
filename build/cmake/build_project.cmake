@@ -17,7 +17,7 @@ if(NOT PROJECT_INCLUDED)
   cmake_path(SET CC_PROJECT_DIR NORMALIZE "${CC_BUILDCONFIG_DIR}/..")
   cmake_path(SET CC_SOURCE_DIR "${CC_PROJECT_DIR}/src")
 
-  cmake_path(SET OUTPUTS_DIR NORMALIZE "${CMAKE_BINARY_DIR}/..")
+  cmake_path(SET OUTPUTS_DIR NORMALIZE "${CMAKE_SOURCE_DIR}/out")
 
   # Set build version, date and time
   string(TIMESTAMP BUILD_TIME "%s")

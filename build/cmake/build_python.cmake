@@ -18,6 +18,15 @@ set_property(
   PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_STAGING_ROOT}
 )
 
+if(NOT TARGET clean_python)
+add_custom_target("clean_python"
+  COMMENT "Cleaning Python outputs"
+  COMMAND "${CMAKE_COMMAND}" -E rm -rf "${PYTHON_OUT_DIR}"
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  VERBATIM
+)
+endif()
+
 
 #===============================================================================
 ## @fn cc_add_python
