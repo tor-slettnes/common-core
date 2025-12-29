@@ -1,7 +1,7 @@
 DOCKERFILE_DIR    ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 DOCKERFILE        ?= $(DOCKERFILE_DIR)/Dockerfile
 DOCKERBASE        ?= debian:bookworm
-CONTAINERNAME      = picarro-shared
+CONTAINERNAME      = common-core
 CONTAINERVERSION   = 1.0
 CONTAINERTAG       = $(CONTAINERNAME):$(CONTAINERVERSION)
 CONTAINER_USER     = $(shell id -un)

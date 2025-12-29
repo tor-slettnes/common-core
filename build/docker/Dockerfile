@@ -9,9 +9,10 @@ FROM $DOCKERBASE
 RUN apt-get clean
 RUN apt-get update
 
-RUN apt-get install -y sudo file apt-utils
-RUN apt-get install -y git build-essential cmake pkgconf doxygen
-RUN apt-get install -y locales-all libgtest-dev jq
+RUN apt-get install -y sudo file
+RUN apt-get install -y git build-essential cmake pkgconf
+RUN apt-get install -y jq gettext-base locales-all doxygen
+RUN apt-get install -y libgtest-dev
 RUN apt-get install -y rapidjson-dev libyaml-dev uuid-dev
 RUN apt-get install -y libudev-dev libnm-dev libglibmm-2.4-dev
 RUN apt-get install -y libavahi-client-dev libsqlite3-dev

@@ -2,6 +2,7 @@ build-essential
 cmake
 doxygen
 file
+gettext-base
 git
 jq
 libavahi-client-dev

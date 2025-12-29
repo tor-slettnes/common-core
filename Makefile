@@ -71,8 +71,8 @@ CMAKE_CACHE = $(BUILD_DIR)/CMakeCache.txt
 
 ## Set CMake cache entries from variable overrides provided on command line.
 ## E.g. `make PRODUCT=myproduct` -> `cmake -DPRODUCT=myproduct`.
-CONFIG_ARGS += $(foreach override,$(MAKEOVERRIDES),-D$(override))
-
+OVERRIDES = $(filter-out CONFIG_PRESET=% BUILD_PRESET=% TEST_PRESET=% PACKAGE_PRESET=%,$(MAKEOVERRIDES))
+CONFIG_ARGS += $(foreach override,$(OVERRIDES),-D$(override))
 
 ### Utility functions
 define get_build_dir
