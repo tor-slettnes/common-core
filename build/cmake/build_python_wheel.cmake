@@ -14,14 +14,8 @@ if(NOT TARGET ${PYTHON_WHEELS_TARGET})
 endif()
 
 
-cmake_path(SET PYTHON_WHEEL_OUT_DIR "${PYTHON_OUT_DIR}/wheels")
-cmake_path(SET PYTHON_WHEEL_BUILD_DIR "${PYTHON_WHEEL_OUT_DIR}/build")
-
-set_property(
-  DIRECTORY "${CMAKE_BINARY_DIR}"
-  APPEND
-  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_WHEEL_OUT_DIR}
-)
+cmake_path(SET PYTHON_WHEEL_OUT_DIR "${CC_PYTHON_OUT_DIR}/wheels")
+cmake_path(SET PYTHON_WHEEL_BUILD_DIR "${CC_STAGING_DIR}/wheels")
 
 #-------------------------------------------------------------------------------
 ## @fn cc_add_python_wheel
@@ -73,7 +67,7 @@ function(cc_add_python_wheel TARGET)
   cc_get_value_or_default(
     pyproject_template
     arg_PYPROJECT_TEMPLATE
-    "${PYTHON_TEMPLATE_DIR}/pyproject.toml.in")
+    "${CC_PYTHON_TEMPLATE_DIR}/pyproject.toml.in")
 
   cc_get_value_or_default(
     package_name_prefix
@@ -219,8 +213,6 @@ function(cc_add_python_wheel TARGET)
   #-----------------------------------------------------------------------------
   # Now create `pyproject.toml` based on the above contents
 
-  file(MAKE_DIRECTORY "${wheel_dir}")
-
   message(VERBOSE
     "Creating Python wheel: "
     "PACKAGE_NAME=${PACKAGE_NAME}, "
@@ -288,12 +280,13 @@ function(cc_add_python_wheel TARGET)
     OUTPUT "${wheel_path}"
     DEPENDS ${sources}
     BYPRODUCTS "${gen_dir}"
-    COMMAND ${python} -m hatchling build -d ${wheel_dir}
-    #COMMAND ${python} -m build --wheel --outdir "${wheel_dir}" "."
+    WORKING_DIRECTORY "${gen_dir}"
     COMMENT "${TARGET}: Building Python Wheel: ${wheel_file}"
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "${wheel_dir}"
+    COMMAND "${python}" -m hatchling build -d ${wheel_dir}
+    #COMMAND "${python}" -m build --wheel --outdir "${wheel_dir}" "."
     COMMAND_EXPAND_LISTS
     VERBATIM
-    WORKING_DIRECTORY "${gen_dir}"
   )
 
 

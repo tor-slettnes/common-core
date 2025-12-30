@@ -11,13 +11,7 @@ if(NOT TARGET ${PYTHON_EXECUTABLES_TARGET})
 endif()
 
 cmake_path(SET PYTHON_PYINSTALLER_STAGING_ROOT
-  "${PYTHON_OUT_DIR}/pyinstaller")
-
-set_property(
-  DIRECTORY "${CMAKE_BINARY_DIR}"
-  APPEND
-  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_PYINSTALLER_STAGING_ROOT}
-)
+  "${CC_STAGING_DIR}/pyinstaller")
 
 
 #===============================================================================
@@ -70,12 +64,12 @@ function(cc_add_python_executable TARGET)
 
   ### Specify a working directory for PyIntaller
   set(out_dir "${PYTHON_PYINSTALLER_STAGING_ROOT}/${TARGET}")
-  set(workdir "${out_dir}")
-  set(staging_dir "${out_dir}/staging")
-  set(distdir "${out_dir}/dist")
+  set(work_dir "${out_dir}")
+  set(contents_dir "${out_dir}/contents")
+  set(dist_dir "${out_dir}/dist")
 
   cmake_path(ABSOLUTE_PATH program
-    BASE_DIRECTORY "${distdir}"
+    BASE_DIRECTORY "${dist_dir}"
     OUTPUT_VARIABLE program_path)
 
   cmake_path(ABSOLUTE_PATH arg_SCRIPT
@@ -84,7 +78,7 @@ function(cc_add_python_executable TARGET)
 
   ### Clean it
   file(REMOVE_RECURSE "${out_dir}")
-  file(MAKE_DIRECTORY "${staging_dir}")
+  file(MAKE_DIRECTORY "${contents_dir}")
 
   ### Create a CMake target
   if (arg_ALL)
@@ -192,11 +186,11 @@ function(cc_add_python_executable TARGET)
   add_custom_command(
     OUTPUT "${program_path}"
     DEPENDS ${arg_PYTHON_DEPS} ${arg_DATA_DEPS} ${sources}
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${dep_staging_dirs} "${staging_dir}"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${dep_staging_dirs} "${contents_dir}"
     COMMAND_EXPAND_LISTS
     VERBATIM
     COMMENT "${TARGET}: Building executable with PyInstaller: ${program}"
-    WORKING_DIRECTORY "${staging_dir}"
+    WORKING_DIRECTORY "${contents_dir}"
   )
 
   ### Construct arguments for PyInstaller
@@ -212,8 +206,8 @@ function(cc_add_python_executable TARGET)
     "--clean"
     "--noconfirm"
     "--log-level" "${loglevel}"
-    "--workpath" "${workdir}"
-    "--distpath" "${distdir}"
+    "--workpath" "${work_dir}"
+    "--distpath" "${dist_dir}"
   )
 
   ## Expand paths of any provided runtime hooks
@@ -291,7 +285,7 @@ function(cc_add_python_executable TARGET)
     cc_get_value_or_default(
       spec_template
       arg_SPEC_TEMPLATE
-      ${PYTHON_TEMPLATE_DIR}/pyinstaller.spec.in)
+      ${CC_PYTHON_TEMPLATE_DIR}/pyinstaller.spec.in)
 
     set(spec_file "${out_dir}/${program}.spec")
 
@@ -310,7 +304,7 @@ function(cc_add_python_executable TARGET)
     endif()
 
     list(APPEND pyinstall_args
-      "--specpath" "${workdir}"
+      "--specpath" "${work_dir}"
       "--name" "${program}")
 
     cc_get_ternary(output_type arg_DIRECTORY_BUNDLE "onedir" "onefile")

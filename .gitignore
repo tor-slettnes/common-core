@@ -12,6 +12,9 @@
 /config/
 /logs/
 
+### CMake stuff
+CMakeUserPreset.json
+
 ### CTest state
 /Testing
 

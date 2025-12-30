@@ -15,7 +15,7 @@ services:
 
     build:
       args:
-        USERNAME: ${USER}
+        USERNAME: ${USER:-builder}
         UID: ${UID:-1000}
         GID: ${GID:-1000}
 

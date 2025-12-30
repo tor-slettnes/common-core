@@ -29,9 +29,9 @@ RUN apt-get install -y python3-pip python3-virtualenv python3-build python3-hatc
 # python3-kafka
 # python3-venv
 
-ARG USERNAME=${USERNAME}
-ARG UID=${UID}
-ARG GID=${GID}
+ARG USERNAME
+ARG UID
+ARG GID
 
 # Remove preinstalled `ubuntu` user (if we are using an Ubuntu base),
 # and replace with our own

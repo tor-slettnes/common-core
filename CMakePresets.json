@@ -1,0 +1,91 @@
+{
+    "version" : 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "default",
+            "description": "Default build using UNIX Makefiles",
+            "generator": "Unix Makefiles",
+            "binaryDir": "$env{BUILD_DIR}",
+            "installDir": "$env{INSTALL_DIR}",
+            "cacheVariables": {
+            },
+            "environment": {
+                "OUT_DIR": "${sourceDir}/out",
+                "BUILD_DIR": "$env{OUT_DIR}/build/${presetName}",
+                "INSTALL_DIR": "$env{OUT_DIR}/${presetName}",
+                "PACKAGE_DIR": "$env{OUT_DIR}/packages"
+            }
+        },
+        {
+            "name": "arm",
+            "inherits": "default",
+            "description": "Cross-compile for ARM CPU architectures",
+            "toolchainFile": "${fileDir}/build/cmake/toolchain-arm.cmake"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "description": "Build with Default Configuration",
+            "configurePreset": "default",
+            "jobs" : 16
+        },
+        {
+            "name": "jenkins",
+            "description": "Jenkins build with Default Configuration",
+            "inherits": ["default"],
+            "jobs" : 1
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "default",
+            "configurePreset": "default",
+            "output": {"outputOnFailure": true},
+            "execution": {"noTestsAction": "error", "stopOnFailure": true}
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "deb",
+            "configurePreset": "default",
+            "packageDirectory": "$env{PACKAGE_DIR}",
+            "generators": [
+                "DEB"
+            ]
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "local",
+            "steps": [
+                {"type": "configure", "name": "default"},
+                {"type": "build",     "name": "default"},
+                {"type": "test",      "name": "default"}
+            ]
+        },
+        {
+            "name": "deb",
+            "steps": [
+                {"type": "configure", "name": "default"},
+                {"type": "build",     "name": "default"},
+                {"type": "test",      "name": "default"},
+                {"type": "package",   "name": "deb"}
+            ]
+        },
+        {
+            "name": "jenkins",
+            "steps": [
+                {"type": "configure", "name": "default"},
+                {"type": "build",     "name": "jenkins"},
+                {"type": "test",      "name": "default"},
+                {"type": "package",   "name": "deb"}
+            ]
+        }
+    ]
+}

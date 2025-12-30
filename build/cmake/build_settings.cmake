@@ -5,14 +5,7 @@
 ## @author Tor Slettnes <tor@slett.net>
 #===============================================================================
 
-cmake_path(SET SETTINGS_STAGING_DIR "${OUTPUTS_DIR}/settings")
-
-### Add the above directories to the global `clean` target
-set_property(
-  DIRECTORY "${CMAKE_BINARY_DIR}"
-  APPEND
-  PROPERTY ADDITIONAL_CLEAN_FILES  ${SETTINGS_STAGING_DIR}
-)
+cmake_path(SET CC_SETTINGS_STAGING_DIR "${CC_STAGING_DIR}/settings")
 
 #===============================================================================
 ## @fn cc_add_settings
@@ -46,7 +39,7 @@ function(cc_add_settings TARGET)
   cc_get_value_or_default(
     staging_dir
     arg_STAGING_DIR
-    "${SETTINGS_STAGING_DIR}/${TARGET}")
+    "${CC_SETTINGS_STAGING_DIR}/${TARGET}")
 
   if(arg_FILES OR arg_DIRECTORIES)
     set(files "${arg_FILES}")

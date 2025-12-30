@@ -7,15 +7,13 @@
 
 include(utility)
 
-cmake_path(SET PYTHON_TEMPLATE_DIR NORMALIZE "${CMAKE_CURRENT_LIST_DIR}/../python")
-cmake_path(SET PYTHON_OUT_DIR      NORMALIZE "${OUTPUTS_DIR}/python")
-cmake_path(SET PYTHON_STAGING_ROOT "${PYTHON_OUT_DIR}/staging")
+cmake_path(SET CC_PYTHON_TEMPLATE_DIR NORMALIZE "${CMAKE_CURRENT_LIST_DIR}/../python")
+cmake_path(SET CC_PYTHON_OUT_DIR "${CC_OUTPUTS_DIR}/python")
+cmake_path(SET CC_PYTHON_STAGING_DIR "${CC_STAGING_DIR}/python")
 
-### Add the above directories to the global `clean` target
-set_property(
-  DIRECTORY "${CMAKE_BINARY_DIR}"
-  APPEND
-  PROPERTY ADDITIONAL_CLEAN_FILES ${PYTHON_STAGING_ROOT}
+add_custom_target("clean_python"
+  COMMENT "Cleaning Python outputs directory: ${CC_PYTHON_OUT_DIR}"
+  COMMAND "${CMAKE_COMMAND}" -E rm -rf "${CC_PYTHON_OUT_DIR}"
 )
 
 
@@ -62,7 +60,7 @@ function(cc_add_python TARGET)
     cmake_path(APPEND "${CMAKE_CURRENT_BINARY_DIR}" "${arg_STAGING_DIR}"
       OUTPUT_VARIABLE staging_dir)
   else()
-     set(staging_dir "${PYTHON_STAGING_ROOT}/${TARGET}")
+     set(staging_dir "${CC_PYTHON_STAGING_DIR}/${TARGET}")
   endif()
 
   ### Clean staging directory (this happens immediately when (re)configuring).

@@ -8,14 +8,7 @@ cmake_path(SET DEBIAN_TEMPLATE_DIR
   NORMALIZE "${CMAKE_CURRENT_LIST_DIR}/../debian")
 
 cmake_path(SET DEBIAN_CONTROL_STAGING_DIR
-  NORMALIZE "${OUTPUTS_DIR}/deb")
-
-### Add the above directory to the global `clean` target
-set_property(
-  DIRECTORY "${CMAKE_BINARY_DIR}"
-  APPEND
-  PROPERTY ADDITIONAL_CLEAN_FILES ${DEBIAN_CONTROL_STAGING_DIR}
-)
+  NORMALIZE "${CC_STAGING_DIR}/deb")
 
 
 #-------------------------------------------------------------------------------

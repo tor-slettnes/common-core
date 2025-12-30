@@ -17,7 +17,19 @@ if(NOT PROJECT_INCLUDED)
   cmake_path(SET CC_PROJECT_DIR NORMALIZE "${CC_BUILDCONFIG_DIR}/..")
   cmake_path(SET CC_SOURCE_DIR "${CC_PROJECT_DIR}/src")
 
-  cmake_path(SET OUTPUTS_DIR NORMALIZE "${CMAKE_BINARY_DIR}/..")
+  if(ENV{OUT_DIR})
+    cmake_path(SET CC_OUTPUTS_DIR NORMALIZE "$ENV{OUT_DIR}")
+  else()
+    cmake_path(SET CC_OUTPUTS_DIR NORMALIZE "${CMAKE_SOURCE_DIR}/out")
+  endif()
+
+  ### Staging directory for miscellaneous outputs
+  cmake_path(SET CC_STAGING_DIR NORMALIZE "${CMAKE_BINARY_DIR}/staging")
+  set_property(
+    DIRECTORY "${CMAKE_BINARY_DIR}"
+    APPEND
+    PROPERTY ADDITIONAL_CLEAN_FILES ${CC_STAGING_DIR}
+  )
 
   # Set build version, date and time
   string(TIMESTAMP BUILD_TIME "%s")

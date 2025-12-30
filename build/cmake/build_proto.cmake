@@ -7,7 +7,6 @@
 
 include(protogen)
 include(pkgconf)
-include(build_python)
 
 #===============================================================================
 ## @fn cc_add_proto
@@ -219,7 +218,7 @@ function(cc_add_proto_python TARGET)
   cc_get_value_or_default(
     staging_dir
     arg_STAGING_DIR
-    "${PYTHON_STAGING_ROOT}/${TARGET}"
+    "${CC_PYTHON_STAGING_DIR}/${TARGET}"
   )
 
   cc_get_namespace_dir(
