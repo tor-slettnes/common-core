@@ -4,6 +4,8 @@ git
 build-essential
 cmake
 pkgconf
+jq
+gettext-base
 doxygen
 locales-all
 libgtest-dev
@@ -18,12 +20,12 @@ libsqlite3-dev
 libzmq3-dev
 libwebsocketpp-dev
 libcurl4-openssl-dev
-libprotobuf-dev
-protobuf-compiler
-libgrpc++-dev
-protobuf-compiler-grpc
 libavro-dev
 librdkafka-dev
+libprotobuf-dev
+libgrpc++-dev
+protobuf-compiler
+protobuf-compiler-grpc
 python3-dev
 python3-yaml
 python3-zmq

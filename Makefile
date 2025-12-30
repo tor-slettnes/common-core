@@ -8,7 +8,8 @@
 define HELP_TEXT
 Available targets:
   help               Show this help message
-  build-requirements Install Debian packages required to build
+  install-build-requirements
+                     Install Debian packages required to build
   local              Build, test and install locally
   release            Build, test and create release packages
   package            Create packages (currently only deb)
@@ -344,14 +345,14 @@ distclean pristine: clean/core clean/out
 help:
 	@echo "$${HELP_TEXT}"
 
-.PHONY: build-requirements prepare_linux
-build-requirements prepare_linux:
+.PHONY: install-build-requirements prepare_linux
+install-build-requirements prepare_linux:
 	@echo "Installing required Debian build dependencies..."
 	@$(call list_debian_requirements) | sudo xargs apt install -y
 
 ### Delegate docker_ targets to its own Makefile
-docker_%:
-	@$(MAKE) -C $(THIS_DIR)/build/docker $(MAKECMDGOALS) HOST_DIR=$(CURDIR)
+docker-% docker_%:
+	@$(MAKE) -C $(THIS_DIR)/build/docker docker_$* $(MAKEOVERRIDES) HOST_DIR=$(CURDIR)
 
 ### Delegate any other target to CMake
 %:

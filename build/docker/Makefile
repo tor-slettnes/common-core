@@ -1,63 +1,67 @@
-## -*- GNUMakefile -*-
-#===============================================================================
-## @file Makefile
-## @brief Convenience targets for accessing Docker image via `docker-compose`.
-## @author Tor Slettnes <tor@slett.net>
-#===============================================================================
-
-export USER = $(shell id -un)
-export UID  = $(shell id -u)
-export GID  = $(shell id -g)
-
-COMPOSER_NAME    ?= common-core
-COMPOSER_SERVICE ?= runtime
-DOCKER_IMAGE     ?= $(COMPOSER_NAME)-$(COMPOSER_SERVICE):latest
-DOCKER_SHELL     ?= /bin/bash
-
-HOST_HOME         = $(HOME)
-HOST_DIR         ?= $(CURDIR)/../..
-
-CONTAINER_HOME    = /home/$(USER)
-CONTAINER_DIR     = $(subst $(HOST_HOME),$(CONTAINER_HOME),$(HOST_DIR))
-DAEMON_DIR       ?= $(CONTAINER_DIR)/out/install/sbin
-
-COMPOSE_COMMAND  ?= docker-compose
-EXEC_COMMAND     ?= $(COMPOSE_COMMAND) exec -u $(USER) -w $(CONTAINER_DIR) \
-                    $(COMPOSER_SERVICE)
+DOCKERFILE_DIR    ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+DOCKERFILE        ?= $(DOCKERFILE_DIR)/Dockerfile
+DOCKERBASE        ?= debian:bookworm
+CONTAINERNAME      = common-core
+CONTAINERVERSION   = 1.0
+CONTAINERTAG       = $(CONTAINERNAME):$(CONTAINERVERSION)
+CONTAINER_USER     = $(shell id -un)
+CONTAINER_UID      = $(shell id -u)
+CONTAINER_GID      = $(shell id -g)
+HOST_HOME          = $(HOME)
+CONTAINER_HOME     = /home/$(CONTAINER_USER)
+HOST_DIR           = $(shell realpath $(DOCKERFILE_DIR)/../..)
+CONTAINER_DIR      = $(subst $(HOST_HOME),$(CONTAINER_HOME),$(HOST_DIR))
 
 .PHONY: docker_build
 docker_build:
-	@$(COMPOSE_COMMAND) build
+	@if ! docker image inspect $(CONTAINERTAG) >/dev/null 2>&1; then \
+		echo '+++ Building Docker image: $(CONTAINERTAG)'; \
+		docker build \
+			--file $(DOCKERFILE) \
+			--tag '$(CONTAINERTAG)' \
+			--build-arg DOCKERBASE=$(DOCKERBASE) \
+			--build-arg USERNAME=$(CONTAINER_USER) \
+			--build-arg UID=$(CONTAINER_UID) \
+			--build-arg GID=$(CONTAINER_GID) \
+			.; \
+	fi
 
 .PHONY: docker_clean
 docker_clean: docker_down
-	@$(COMPOSE_COMMAND) rm -f -s
-	@docker image rm -f $(DOCKER_IMAGE) >/dev/null 2>&1 || true
+	@if docker image inspect $(CONTAINERTAG) >/dev/null 2>&1; then \
+		echo '--- Removing Docker image: $(CONTAINERTAG)'; \
+		docker image rm $(CONTAINERTAG); \
+	fi
 
 .PHONY: docker_up
-docker_up:
-	@$(COMPOSE_COMMAND) up -d
+docker_up: docker_build
+	@if ! docker container inspect $(CONTAINERNAME) >/dev/null 2>&1; then \
+		echo '↑↑↑ Starting Docker container: $(CONTAINERTAG)'; \
+		docker run \
+			--detach --rm --init \
+			--name $(CONTAINERNAME) \
+			--hostname $(CONTAINERNAME) \
+			$(foreach port,$(EXPOSE_TCP_PORTS),-p $(port):$(port)/tcp) \
+			-v $(HOST_HOME):$(CONTAINER_HOME) \
+			$(if $(WORKSPACE),-v $(WORKSPACE):$(WORKSPACE)) \
+			$(if $(PYPIRC_FILE),-v $(PYPIRC_FILE):$(CONTAINER_HOME)/.pypirc:ro) \
+			$(CONTAINERTAG); \
+	fi
 
 .PHONY: docker_down
 docker_down:
-	@$(COMPOSE_COMMAND) stop
+	@if docker container inspect $(CONTAINERNAME) >/dev/null 2>&1; then \
+		echo -n '↓↓↓ Stopping Docker instance: '; \
+		docker stop $(CONTAINERNAME); \
+	fi
 
 .PHONY: docker_shell
 docker_shell: docker_up
-	@$(EXEC_COMMAND) $(DOCKER_SHELL)
+	@echo '→→→ Entering interactive Docker shell: $(CONTAINERNAME)'
+	@docker exec --interactive --tty \
+		$(DOCKER_EXEC_OPTS) \
+		--workdir "$(CONTAINER_DIR)" \
+		"$(CONTAINERNAME)" \
+		/bin/bash || true
+	@echo '←←← Exited Docker shell: $(CONTAINERNAME)'
 
-.PHONY: docker_exec_daemons
-docker_exec_daemons: \
-	docker_exec_daemon_demoserver \
-	docker_exec_daemon_platformserver \
-	docker_exec_daemon_multilogger \
-	docker_exec_daemon_switchboard \
-
-docker_exec_make_%: docker_up
-	@echo '→→→ Building with Docker: $* $(MAKEOVERRIDES)'
-	@$(EXEC_COMMAND) sh -c \
-		'[ -x "$(DAEMON_DIR)/$*" ] || make "$*" $(MAKEOVERRIDES)'
-
-docker_exec_daemon_%:
-	@$(EXEC_COMMAND) sh -c \
-	    'pidof -q $* || (echo "→→→ Executing within Docker: $* --daemon" && sudo $(DAEMON_DIR)/$* --daemon)'
