@@ -1,1 +1,0 @@
-message(NOTICE ${CMAKE_BINARY_DIR})
