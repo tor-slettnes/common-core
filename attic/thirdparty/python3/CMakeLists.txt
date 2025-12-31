@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file CMakeLists.txt
 ## @description CMake rules to fetch and build embedded Python environment
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 include(FetchContent)

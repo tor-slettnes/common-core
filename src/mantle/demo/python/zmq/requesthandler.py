@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file requesthandler.py
 ## @brief Python request handler for `Demo` ZMQ RPC service
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

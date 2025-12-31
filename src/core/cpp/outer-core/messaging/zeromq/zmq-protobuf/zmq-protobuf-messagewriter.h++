@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-protobuf-messagewriter.h++
 /// @brief Send ProtoBuf messages with topic filter
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

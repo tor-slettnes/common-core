@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file systemservice.c++
 /// @brief System service related functions - abstract provider
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "systemservice.h++"

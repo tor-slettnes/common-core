@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-time.c++
 /// @brief SysConfig service - Abstract C++ interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-time.h++"

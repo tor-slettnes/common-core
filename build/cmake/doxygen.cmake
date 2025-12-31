@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @brief CMake recipes for generating docuemntation with Doxygen
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 find_package(Doxygen)

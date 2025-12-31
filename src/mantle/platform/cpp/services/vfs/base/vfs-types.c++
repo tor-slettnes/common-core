@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-types.c++
 /// @brief VFS service - data types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-types.h++"

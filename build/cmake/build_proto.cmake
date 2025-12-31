@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file cc_add_proto.cmake
 ## @brief Wrapper function for building libraries from `.proto` files
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 include(protogen)

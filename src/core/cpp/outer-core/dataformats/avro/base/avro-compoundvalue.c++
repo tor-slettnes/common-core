@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file avro-compoundvalue.c++
 /// @brief Wrapper for compound Avro value
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "avro-compoundvalue.h++"

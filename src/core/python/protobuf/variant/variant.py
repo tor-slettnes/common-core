@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file variant.py
 ## @brief Wrapper for ProtoBuf types in `variant.proto`
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

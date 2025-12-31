@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switch-dependency.h++
 /// @brief Upstream dependency between a switch and its predecessor
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

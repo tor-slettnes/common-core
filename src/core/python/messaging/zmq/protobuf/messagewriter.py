@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file messagewriter.py
 ## @brief ZeroMQ message writer - ProtoBuf flavor
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

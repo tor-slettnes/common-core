@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-symbols.h++
 /// @brief Internal symbols - POSIX specifics
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

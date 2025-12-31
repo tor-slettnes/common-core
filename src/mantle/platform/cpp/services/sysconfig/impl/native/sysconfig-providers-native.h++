@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-providers-native.h++
 /// @brief SysConfig service - Native implementation wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

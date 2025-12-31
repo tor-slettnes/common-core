@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-clientreceiver.h++
 /// @brief Client-side stream reader
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

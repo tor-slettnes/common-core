@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-context.c++
 /// @brief VFS service - abstract file context
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-context.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-base.h++
 /// @brief Common functionality wrappers for gRPC client and server modules
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 ///
 /// Class templates for gRPC services (client and server), including:
 ///  * Settings store in YourServiceName.json

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file parserinput-base.h++
 /// @brief Abstract source for text fed to parser
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

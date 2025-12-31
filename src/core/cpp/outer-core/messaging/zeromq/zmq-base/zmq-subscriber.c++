@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-subscriber.c++
 /// @brief Common functionality wrappers for ZeroMQ subscribers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "zmq-subscriber.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switch.c++
 /// @brief Switch Base class
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switch.h++"

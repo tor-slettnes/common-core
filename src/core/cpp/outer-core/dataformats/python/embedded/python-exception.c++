@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file python-exception.c++
 /// @brief Python error
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "python-exception.h++"

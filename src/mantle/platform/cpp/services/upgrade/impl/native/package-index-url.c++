@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-index-url.c++
 /// @brief Upgrade from local package
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "package-index-url.h++"

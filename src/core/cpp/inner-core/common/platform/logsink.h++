@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file logsink.h++
 /// @brief OS native logger backend - Abstract interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

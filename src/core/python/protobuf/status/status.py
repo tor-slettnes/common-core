@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file status.py
 ## @brief Wrapper module for `status.proto`
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from ..utils import native_enum_from_proto

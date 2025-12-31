@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file remote-grpc-switch.c++
 /// @brief Switch controlled via a remote gRPC service
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "remote-grpc-switch.h++"

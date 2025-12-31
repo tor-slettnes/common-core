@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file requesthandler.py
 ## @brief ZeroMQ RPC request handler using ProtoBuf payloads
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

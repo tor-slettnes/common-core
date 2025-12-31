@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file listable.h++
 /// @brief Base to represent object as a tagged value lsit
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

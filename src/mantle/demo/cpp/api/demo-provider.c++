@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-provider.c++
 /// @brief Example App - interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "demo-provider.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-grpc-signalqueue.h++
 /// @brief connect server-side signals to gRPC streams initiated by clients
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-local-fileio.h++
 /// @brief VFS service - reader/writer
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

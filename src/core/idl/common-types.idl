@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file common-types.idl
 /// @brief common value types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #ifndef _common_types_idl_

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-handler-url.c++
 /// @brief Upgrade from a HTTP source
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "package-handler-url.h++"

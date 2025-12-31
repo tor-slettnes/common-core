@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-dds-client.c++
 /// @brief Demo DDS client
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 // Application-specific modules

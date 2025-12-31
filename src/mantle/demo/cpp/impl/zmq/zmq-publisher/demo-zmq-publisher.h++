@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-zmq-publisher.h++
 /// @brief Publish demo signals over ZeroMQ
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file kafka-producer-avro.h++
 /// @brief Send Avro payloads over Kafka
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

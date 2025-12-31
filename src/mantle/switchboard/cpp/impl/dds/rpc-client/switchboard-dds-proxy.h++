@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-dds-proxy.h++
 /// @brief Switchboard provider supporting remote switches
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-service.h++
 /// @brief Mix-in base for DDS service implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

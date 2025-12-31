@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-process.h++
 /// @brief Process invocation - POSIX implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

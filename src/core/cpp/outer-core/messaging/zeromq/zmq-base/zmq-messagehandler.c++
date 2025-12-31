@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-messagehandler.c++
 /// @brief Process received message publications
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "zmq-messagehandler.h++"

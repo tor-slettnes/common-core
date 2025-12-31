@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file __init__.py
 ## @brief Wrapper for ZeroMQ-based applications
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from .endpoint import Endpoint

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-providers-grpc.h++
 /// @brief VFS service - Native implementation wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

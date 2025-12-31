@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-signal-utils.h++
 /// @brief Miscellaneous utilities for ProtoBuf `Signal` messages
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

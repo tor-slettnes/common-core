@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-grpc-requesthandler.c++
 /// @brief Base class for Switchboard servers (standalone or relay)
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switchboard-grpc-requesthandler.h++"

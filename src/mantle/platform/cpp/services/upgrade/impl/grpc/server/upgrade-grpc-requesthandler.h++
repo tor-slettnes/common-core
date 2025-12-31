@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-grpc-requesthandler.h++
 /// @brief Handle Upgrade gRPC service requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

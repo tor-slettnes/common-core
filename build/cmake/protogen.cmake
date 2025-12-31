@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file cc_protogen.cmake
 ## @brief CMake rules to generate/build ProtoBuf/gRPC bindings from ".proto" sources
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 include(utility)

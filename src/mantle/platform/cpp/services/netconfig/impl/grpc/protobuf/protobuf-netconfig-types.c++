@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-netconfig-types.c++
 /// @brief Encode/decode routines for network ProtoBuf types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "protobuf-netconfig-types.h++"

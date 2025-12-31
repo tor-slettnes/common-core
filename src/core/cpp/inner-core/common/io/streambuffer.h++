@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file streambuffer.h++
 /// @brief C++ stream buffer interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

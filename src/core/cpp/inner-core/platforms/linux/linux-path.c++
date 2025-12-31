@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file linux-path.c++
 /// @brief Path-related functions - Linux specifics
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "linux-path.h++"

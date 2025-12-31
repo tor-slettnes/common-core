@@ -1,7 +1,7 @@
 //==============================================================================
 /// @file event-types.idl
 /// @brief Diagnostic event types for logging and error reporting
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #ifndef _event_types_idl_

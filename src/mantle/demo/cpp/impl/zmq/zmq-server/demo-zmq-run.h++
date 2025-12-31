@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-zmq-run.h++
 /// @brief C++ demo - Launch ZeroMQ server implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-zmq-requesthandler.h++
 /// @brief C++ demo - Invoke handler methods based on ZeroMQ requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

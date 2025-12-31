@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file CMakeLists.txt
 ## @brief Common Core MultiLogger Application - ZeroMQ comon definitions
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Name of this library. This can be used as a dependency for downstream

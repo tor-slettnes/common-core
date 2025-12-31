@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file common.h++
 /// @brief Parse command line options
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

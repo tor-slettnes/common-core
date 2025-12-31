@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-grpc-requesthandler.h++
 /// @brief Handle VFS gRPC service requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-types.h++
 /// @brief VFS service - data types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

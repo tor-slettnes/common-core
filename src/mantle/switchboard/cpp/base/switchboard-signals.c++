@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-signals.c++
 /// @brief Switchboard signals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switchboard-signals.h++"

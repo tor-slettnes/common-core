@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file CMakeLists.txt
 ## @brief Demo application interface - gRPC implementation
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 add_subdirectory(server)

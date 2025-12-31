@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file CMakeLists.txt
 ## @brief CMake rules for Python modules
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Create a custom target for the Python Wheel

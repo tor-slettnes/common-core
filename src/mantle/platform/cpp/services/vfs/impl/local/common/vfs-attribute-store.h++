@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-attribute-store.h++
 /// @brief VFS service - attribute storage for local VFS contexts
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

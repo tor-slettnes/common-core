@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-timezone.h++
 /// @brief Timezone functions - WINDOWS implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

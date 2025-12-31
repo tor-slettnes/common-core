@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file import_proto.py
 ## @brief Import a generated ProtoBuf module into a namespace container
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-responder.h++
 /// @brief An server-issued response in a DDS environment
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

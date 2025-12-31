@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sink.h++
 /// @brief Data capture sink - abstract backend
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file variant-tvlist.c++
 /// @brief Tag/Value list
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "variant-tvlist.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file commands.c++
 /// @brief Nework service control tool - command implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "options.h++"

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file CMakeLists.txt
 ## @brief CMake rules to build upgrade client tool
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 set(TARGET upgrade-tool)

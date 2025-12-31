@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-serverinterceptors.h++
 /// @brief Server-side interceptor to handle C++ exceptions
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

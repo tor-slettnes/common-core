@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-zmq-client.c++
 /// @brief Demo ZeroMQ client
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 // Application-specific modules

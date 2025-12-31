@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file api.py
 ## @brief Demo - native Python implementation
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

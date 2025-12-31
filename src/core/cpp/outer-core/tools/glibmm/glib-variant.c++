@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file glib-variant.c++
 /// @brief Wrappers/containers for Glib::VariantBase
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "glib-variant.h++"

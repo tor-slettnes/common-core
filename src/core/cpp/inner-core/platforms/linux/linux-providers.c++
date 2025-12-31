@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file linux-providers.c++
 /// @brief Superset of Linux platform providers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "posix-providers.h++"

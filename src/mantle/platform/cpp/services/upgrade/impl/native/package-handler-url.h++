@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-handler-url.h++
 /// @brief Upgrade from a HTTP source
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

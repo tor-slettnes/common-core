@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-grpc-requesthandler.c++
 /// @brief Handle SysConfig gRPC requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-grpc-requesthandler.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file yaml-parser.c++
 /// @brief Wrapper for LibYaml `yaml_parser`
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "yaml-parser.h++"

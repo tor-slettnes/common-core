@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file remote-dds-switch.h++
 /// @brief Switch managed through remote DDS service
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

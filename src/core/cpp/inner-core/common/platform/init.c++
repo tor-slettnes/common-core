@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file init.c++
 /// @brief Application startup/shutdown
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "init.h++"

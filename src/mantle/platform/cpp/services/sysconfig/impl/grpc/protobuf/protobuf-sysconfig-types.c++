@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-sysconfig-types.c++
 /// @brief Encode/decode routines for types in `sysconfig.proto`
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "protobuf-sysconfig-types.h++"

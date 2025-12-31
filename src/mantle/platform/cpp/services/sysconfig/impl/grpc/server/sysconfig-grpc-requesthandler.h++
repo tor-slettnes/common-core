@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-grpc-requesthandler.h++
 /// @brief Handle SysConfig gRPC service requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

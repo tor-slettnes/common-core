@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dbus-proxies.h++
 /// @brief D-BUS proxy wrappers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

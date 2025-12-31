@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-grpc-requesthandler.h++
 /// @brief Handle DemoService RPC requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

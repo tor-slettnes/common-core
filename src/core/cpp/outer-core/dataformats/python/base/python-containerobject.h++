@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file python-containerobject.h++
 /// @brief Data access for Python objects with exposed attributes
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

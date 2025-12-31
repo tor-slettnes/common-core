@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file main.c++
 /// @brief Demo service control tool - RTI DDS flavor
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "argparse/common.h++"

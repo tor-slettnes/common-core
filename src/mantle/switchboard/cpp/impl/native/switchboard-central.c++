@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-central.c++
 /// @brief Switchboard provider supporting only local switches
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switchboard-central.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file variant-types.idl
 /// @brief Variant value types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #ifndef _variant_types_idl_

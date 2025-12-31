@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-remote-context.c++
 /// @brief VFS service - remote file context
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-remote-context.h++"

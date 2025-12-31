@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file linux-symbols.c++
 /// @brief Functions to produce symbols - Linux verison
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "linux-symbols.h++"

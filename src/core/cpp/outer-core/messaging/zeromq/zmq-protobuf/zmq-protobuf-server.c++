@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-protobuf-server.c++
 /// @brief RPC functionalty over ZeroMQ using ProtoBuf - server
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "zmq-protobuf-server.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-serverstreamer.h++
 /// @brief Server-side stream writer
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

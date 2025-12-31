@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-interface.idl
 /// @brief Interface definition for Switchboard service
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #ifndef _switchboard_interface_idl_

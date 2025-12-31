@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file variant-value.c++
 /// @brief Generic `Value` type
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "variant-value.h++"

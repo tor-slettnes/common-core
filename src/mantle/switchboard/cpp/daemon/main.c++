@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file main.c++
 /// @brief System Control Service main application
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "options.h++"

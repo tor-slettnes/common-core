@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file netconfig.py
 ## @brief Utility functions for data types from `neconfig.proto`
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from .netconfig_types_pb2 import *

@@ -8,38 +8,42 @@
     "configurePresets": [
         {
             "name": "default",
-            "description": "Default build using UNIX Makefiles",
+            "description": "Default configuration using UNIX Makefiles",
             "generator": "Unix Makefiles",
             "binaryDir": "$env{BUILD_DIR}",
             "installDir": "$env{INSTALL_DIR}",
-            "cacheVariables": {
-            },
             "environment": {
                 "OUT_DIR": "${sourceDir}/out",
                 "BUILD_DIR": "$env{OUT_DIR}/build/${presetName}",
                 "INSTALL_DIR": "$env{OUT_DIR}/${presetName}",
                 "PACKAGE_DIR": "$env{OUT_DIR}/packages"
+            },
+            "cacheVariables":
+            {
+                "BUILD_NUMBER": "$env{BUILD_NUMBER}",
+                "RELEASE_TAG": "$env{RELEASE_TAG}",
+                "DEBIAN_RELEASE": "$env{DEBIAN_RELEASE}"
             }
-        },
-        {
-            "name": "arm",
-            "inherits": "default",
-            "description": "Cross-compile for ARM CPU architectures",
-            "toolchainFile": "${fileDir}/build/cmake/toolchain-arm.cmake"
         }
     ],
     "buildPresets": [
         {
             "name": "default",
-            "description": "Build with Default Configuration",
+            "description": "Build with Default Configuration preset",
             "configurePreset": "default",
             "jobs" : 16
         },
         {
-            "name": "jenkins",
-            "description": "Jenkins build with Default Configuration",
-            "inherits": ["default"],
-            "jobs" : 1
+            "name": "install",
+            "inherits": "default",
+            "description": "Install artifacts locally",
+            "targets": ["install"]
+        },
+        {
+            "name": "wheels",
+            "inherits": "default",
+            "description": "Build Python Wheels",
+            "targets": ["python_wheels"]
         }
     ],
     "testPresets": [
@@ -52,7 +56,8 @@
     ],
     "packagePresets": [
         {
-            "name": "deb",
+            "name": "debs",
+            "description": "Build Debian packages",
             "configurePreset": "default",
             "packageDirectory": "$env{PACKAGE_DIR}",
             "generators": [
@@ -62,7 +67,14 @@
     ],
     "workflowPresets": [
         {
-            "name": "local",
+            "name": "default",
+            "steps": [
+                {"type": "configure", "name": "default"},
+                {"type": "build",     "name": "install"}
+            ]
+        },
+        {
+            "name": "test",
             "steps": [
                 {"type": "configure", "name": "default"},
                 {"type": "build",     "name": "default"},
@@ -70,21 +82,29 @@
             ]
         },
         {
-            "name": "deb",
+            "name": "debs",
             "steps": [
                 {"type": "configure", "name": "default"},
                 {"type": "build",     "name": "default"},
                 {"type": "test",      "name": "default"},
-                {"type": "package",   "name": "deb"}
+                {"type": "package",   "name": "debs"}
             ]
         },
         {
-            "name": "jenkins",
+            "name": "wheels",
             "steps": [
                 {"type": "configure", "name": "default"},
-                {"type": "build",     "name": "jenkins"},
+                {"type": "build",     "name": "wheels"}
+            ]
+        },
+        {
+            "name": "packages",
+            "steps": [
+                {"type": "configure", "name": "default"},
+                {"type": "build",     "name": "default"},
                 {"type": "test",      "name": "default"},
-                {"type": "package",   "name": "deb"}
+                {"type": "build",     "name": "wheels"},
+                {"type": "package",   "name": "debs"}
             ]
         }
     ]

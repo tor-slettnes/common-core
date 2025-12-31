@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file demo_grpc_aio_client_py
 ## @brief Locate and launch Python DEMO AsyncIO client
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 module_name="cc.demo.grpc.aio_client"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file rti-dl-logsink.c++
 /// @brief A logger backed using RTI Distributed Logger infrastructure
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "rti-dl-logsink.h++"

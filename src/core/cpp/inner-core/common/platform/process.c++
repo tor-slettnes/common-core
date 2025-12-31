@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file process.c++
 /// @brief Process invocation - Abstract interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "process.h++"

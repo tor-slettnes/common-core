@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-serialport.c++
 /// @brief Serial Port - POSIX implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "posix-serialport.h++"

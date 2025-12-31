@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-types.c++
 /// @brief Switchboard data types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switch.h++"

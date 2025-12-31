@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-dds-run.h++
 /// @brief C++ demo - Launch DDS server implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

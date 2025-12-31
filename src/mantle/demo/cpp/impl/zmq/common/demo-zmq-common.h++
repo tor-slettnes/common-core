@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-zmq-common.h++
 /// @brief Demo ZeroMQ implementation - common declarations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

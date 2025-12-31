@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file server.py
 ## @brief Python server for `Demo` ZMQ RPC service
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules relative to install dir

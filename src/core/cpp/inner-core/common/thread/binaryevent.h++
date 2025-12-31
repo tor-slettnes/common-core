@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file binaryevent.h++
 /// @brief Binary status
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

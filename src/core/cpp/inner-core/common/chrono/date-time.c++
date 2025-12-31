@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file date-time.c++
 /// @brief Time/clock utilities
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "date-time.h++"

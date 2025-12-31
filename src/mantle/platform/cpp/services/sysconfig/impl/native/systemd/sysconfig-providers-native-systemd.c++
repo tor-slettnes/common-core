@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-providers-native-systemd.c++
 /// @brief SysConfig service - SystemD implementation wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-providers-native-systemd.h++"

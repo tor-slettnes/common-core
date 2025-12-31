@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file yaml-reader.h++
 /// @brief Yaml Parser Interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

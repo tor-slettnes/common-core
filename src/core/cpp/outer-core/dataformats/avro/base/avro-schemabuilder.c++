@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file avro-schemabuilder.c++
 /// @brief Schema generator for compound value
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "avro-schemabuilder.h++"

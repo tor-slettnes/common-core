@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file nm-wrappers.h++
 /// @brief Network Manager object wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

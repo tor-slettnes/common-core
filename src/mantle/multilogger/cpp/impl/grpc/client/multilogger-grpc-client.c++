@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-grpc-client.c++
 /// @brief Log gRPC client
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "multilogger-grpc-client.h++"

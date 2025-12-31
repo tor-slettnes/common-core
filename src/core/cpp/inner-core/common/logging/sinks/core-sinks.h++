@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file core-sinks.h++
 /// @brief Wrapper to include all core log sinks
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "streamsink.h++"

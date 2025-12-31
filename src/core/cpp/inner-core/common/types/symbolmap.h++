@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file symbolmap.h++
 /// @brief Unordered string map with symbol lookup
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

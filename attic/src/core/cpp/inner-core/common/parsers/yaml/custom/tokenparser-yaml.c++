@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file tokenparser-yaml.c++
 /// @brief Iterate over interesting YAML tokens
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "tokenparser-yaml.h++"

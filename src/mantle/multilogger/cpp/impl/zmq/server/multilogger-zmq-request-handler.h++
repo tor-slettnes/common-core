@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-zmq-requesthandler.h++
 /// @brief Handle MultiLogger control requests received from clients over ZMQ
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

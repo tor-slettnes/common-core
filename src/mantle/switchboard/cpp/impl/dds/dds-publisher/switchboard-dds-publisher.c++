@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-dds-publisher.c++
 /// @brief Publish switchboard signals over DDS
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switchboard-dds-publisher.h++"

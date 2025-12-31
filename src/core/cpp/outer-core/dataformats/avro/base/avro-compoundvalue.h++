@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file avro-compoundvalue.h++
 /// @brief Wrapper for compound Avro value
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

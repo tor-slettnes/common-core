@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file netconfig-grpc-requesthandler.c++
 /// @brief Handle NetConfig gRPC service requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "netconfig-grpc-requesthandler.h++"

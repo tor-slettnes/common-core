@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file linux-process.h++
 /// @brief Process invocation - Linux implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

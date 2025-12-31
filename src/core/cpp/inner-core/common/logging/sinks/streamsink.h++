@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file streamsink.h++
 /// @brief Log sink for stream-based backend, (stdout/stderr, file, ...)
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

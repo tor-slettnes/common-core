@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file test-demo-fixture.h++
 /// @brief C++ demo - test routines
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

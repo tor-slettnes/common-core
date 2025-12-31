@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file settingsstore.c++
 /// @brief Read/write configuration from/to JSON file
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "settings/settingsstore.h++"

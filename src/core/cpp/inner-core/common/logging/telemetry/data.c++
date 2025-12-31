@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file data.c++
 /// @brief A loggable item comprising arbitrary key/value data
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "data.h++"

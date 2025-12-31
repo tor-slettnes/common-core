@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-posix-time.h++
 /// @brief SysConfig Posix implementation - Time Configuration
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

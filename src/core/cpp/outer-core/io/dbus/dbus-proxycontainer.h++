@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dbus-proxycontainer.h++
 /// @brief Abstract base for DBus Interface handlers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

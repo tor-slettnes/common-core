@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file host.h++
 /// @brief Host related functions - abstract provider
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

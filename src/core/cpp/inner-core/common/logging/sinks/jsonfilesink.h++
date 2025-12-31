@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file jsonfilesink.h++
 /// @brief Log to JSON file
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

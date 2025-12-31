@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file requester.py
 ## @brief ZeroMQ requester base
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

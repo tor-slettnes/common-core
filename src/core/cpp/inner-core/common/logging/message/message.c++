@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file message.c++
 /// @brief A log message
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "message.h++"

@@ -2,7 +2,7 @@
 #==============================================================================
 ## @file grpc-endpoints-common.yaml
 ## @brief gRPC service settings for core applications
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #==============================================================================
 
 # Default endpoint settings for gRPC services. Endpoint settings are obtained

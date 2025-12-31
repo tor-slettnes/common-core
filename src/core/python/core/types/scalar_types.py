@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file scalar_types.py
 ## @brief Convenience types for scalar values
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 class OCT8 (int):

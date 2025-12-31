@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file basewriter.c++
 /// @brief JSON writer - abstract interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "basewriter.h++"

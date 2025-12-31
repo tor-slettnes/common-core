@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sql-common.c++
 /// @brief Common functionality for SQL-based database wrappers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sql-common.h++"

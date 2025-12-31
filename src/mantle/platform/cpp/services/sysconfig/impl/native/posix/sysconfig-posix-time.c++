@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-posix-time.c++
 /// @brief SysConfig Posix implementation - Time Configuration
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-posix-time.h++"

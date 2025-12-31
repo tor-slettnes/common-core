@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-grpc-signalqueue.h++
 /// @brief Connect server-side signals to gRPC stream initiated by clients
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

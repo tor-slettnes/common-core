@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file avro-protobufvalue.h++
 /// @brief Create Avro values from ProtoBuf messages
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

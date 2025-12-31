@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file nm-settings-connection.h++
 /// @brief Specialized Gio::DBus::Proxy classes for NetConfig
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

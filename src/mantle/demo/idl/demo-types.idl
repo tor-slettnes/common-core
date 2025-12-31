@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-types.idl
 /// @brief DDS data types used in Demo application
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #ifndef _demo_types_idl_

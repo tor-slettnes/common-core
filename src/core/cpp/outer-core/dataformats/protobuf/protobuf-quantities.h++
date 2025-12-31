@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-quantities.h++
 /// @brief Encode/decode routines for ProtoBuf quantity types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

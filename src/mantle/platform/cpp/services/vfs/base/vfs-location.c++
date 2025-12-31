@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-location.c++
 /// @brief VFS service - abstract file context
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-location.h++"

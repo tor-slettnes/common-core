@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-host.h++
 /// @brief SysConfig service - Host Configuration API
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

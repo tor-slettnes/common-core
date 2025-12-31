@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file parserinput-string.c++
 /// @brief Read tokens from strings
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "parserinput-string.h++"

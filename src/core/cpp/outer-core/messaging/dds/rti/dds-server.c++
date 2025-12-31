@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-server.c++
 /// @brief DDS RPC Server
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "dds-server.h++"

@@ -2,7 +2,7 @@
 #==============================================================================
 ## @file rest-endpoints-common.yaml
 ## @brief REST API service settings for core applications
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #==============================================================================
 
 # Default endpoint settings for gRPC services. Endpoint settings are obtained

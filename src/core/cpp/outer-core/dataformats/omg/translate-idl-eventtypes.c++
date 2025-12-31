@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file translate-idl-eventtypes.c++
 /// @brief Encode/decode routines for common IDL error/status types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "translate-idl-eventtypes.h++"

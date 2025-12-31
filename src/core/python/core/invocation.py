@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file invocation.py
 ## @brief Process related utilities
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from typing import Callable, Sequence, Mapping, Optional, Any

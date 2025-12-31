@@ -4,8 +4,6 @@ git
 build-essential
 cmake
 pkgconf
-jq
-gettext-base
 doxygen
 locales-all
 libgtest-dev

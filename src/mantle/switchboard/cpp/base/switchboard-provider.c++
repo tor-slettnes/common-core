@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-provider.c++
 /// @brief Abstract switchboard provider API
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switchboard-provider.h++"

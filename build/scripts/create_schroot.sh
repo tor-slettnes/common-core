@@ -2,7 +2,7 @@
 ################################################################################
 ## @file create_schroot.sh
 ## @brief Create `schroot` environment in which to build & run
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 ################################################################################
 
 NAME="common-core"

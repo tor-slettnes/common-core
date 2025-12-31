@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-grpc-requesthandler.h++
 /// @brief Base class for Switchboard servers (standalone or relay)
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-grpc-requesthandler.c++
 /// @brief Handle MultiLogger RPC requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "multilogger-grpc-requesthandler.h++"

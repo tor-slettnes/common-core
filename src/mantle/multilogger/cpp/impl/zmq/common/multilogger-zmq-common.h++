@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-zmq-common.h++
 /// @brief Multilogger ZeroMQ implementation - common declarations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

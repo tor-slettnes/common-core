@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-dds-proxy.c++
 /// @brief Switchboard provider supporting remote switches
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switchboard-dds-proxy.h++"

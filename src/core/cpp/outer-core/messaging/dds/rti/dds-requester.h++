@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-requester.h++
 /// @brief An client-issued request in a DDS environment
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

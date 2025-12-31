@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file reader.c++
 /// @brief Parse YAML content
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "reader.h++"

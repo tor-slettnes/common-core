@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-clientbase.h++
 /// @brief Client-side client functionality for Common Core gRPC services
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

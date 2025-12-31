@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file multilogger.py
 ## @brief Support for ProtoBuf types from `multilogger.proto`.
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Generated from `logger.proto`

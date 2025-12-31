@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file nm-device-wireless.c++
 /// @brief DBus Proxy for Network Manager Device.WIreless objects
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "nm-device.h++"

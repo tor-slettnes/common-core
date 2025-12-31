@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-grpc-process.c++
 /// @brief SysConfig gRPC implementation - process invocaiton
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-grpc-process.h++"

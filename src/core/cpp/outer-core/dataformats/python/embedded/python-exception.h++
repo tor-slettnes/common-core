@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file python-exception.h++
 /// @brief Python error
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

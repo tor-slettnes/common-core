@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-logsink.h++
 /// @brief OS native logger backend - POSIX variant
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

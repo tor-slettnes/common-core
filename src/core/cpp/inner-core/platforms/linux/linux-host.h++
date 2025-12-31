@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file linux-host.h++
 /// @brief Host related functions on Linux
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

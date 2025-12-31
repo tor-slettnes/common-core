@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file valuemap.h++
 /// @brief Map with non-throwing access method optimized for immutable values
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

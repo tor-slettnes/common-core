@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file writer.h++
 /// @brief C++ stream wrapper for GZip file I/O - writer
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-dds-run.h++
 /// @brief C++ switchboard - Launch DDS server implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

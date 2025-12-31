@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file level.c++
 /// @brief Severity level for Event types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "level.h++"

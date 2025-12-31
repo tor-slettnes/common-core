@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-status.h++
 /// @brief gRPC status with detailed error data
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

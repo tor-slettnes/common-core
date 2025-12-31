@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-zmq-client.h++
 /// @brief Logging service - ZMQ client implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "multilogger-zmq-client.h++"

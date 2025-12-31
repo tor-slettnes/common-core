@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file qnx-path.h++
 /// @brief Path-related functions - QNX specifics
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

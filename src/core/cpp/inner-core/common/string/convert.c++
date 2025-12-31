@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file convert.c++
 /// @brief String conversions
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "string/convert.h++"

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file daemon-defaults.yaml
 ## @brief Default settings shared across server applications
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ## These settings take precedence over those in `defaults.yaml` for

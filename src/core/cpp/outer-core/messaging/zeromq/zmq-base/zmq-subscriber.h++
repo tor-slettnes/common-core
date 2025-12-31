@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-subscriber.h++
 /// @brief Common functionality wrappers for ZeroMQ subscribers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

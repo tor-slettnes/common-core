@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file variant-kvmap.h++
 /// @brief Key/value map of `Value` instances
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

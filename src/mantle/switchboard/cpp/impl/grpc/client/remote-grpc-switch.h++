@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file remote-grpc-switch.h++
 /// @brief Switch controlled via a remote gRPC service
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

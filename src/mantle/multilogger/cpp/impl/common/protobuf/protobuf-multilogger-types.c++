@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-multilogger-types.c++
 /// @brief conversions to/from Protocol Buffer messages for MultiLogger application
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "logging/message/message.h++"

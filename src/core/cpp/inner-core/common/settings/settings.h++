@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file settings.h++
 /// @brief Global settings instance
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

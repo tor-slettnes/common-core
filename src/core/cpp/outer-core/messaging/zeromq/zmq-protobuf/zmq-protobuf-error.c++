@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-protobuf-error.c++
 /// @brief Report and process ZMQ invocation status
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "zmq-protobuf-error.h++"

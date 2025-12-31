@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-messagewriter.h++
 /// @brief Publish messages with optional topic/header
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

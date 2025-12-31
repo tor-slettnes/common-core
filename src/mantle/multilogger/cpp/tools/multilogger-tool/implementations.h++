@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file implementations.h++
 /// @brief Enumerate available MultiLogger API implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

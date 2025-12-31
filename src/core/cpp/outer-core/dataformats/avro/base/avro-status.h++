@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file avro-status.c++
 /// @brief Check return status from Avro calls; throw if error
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file build_idl.cmake
 ## @brief CMake include file for building DDS intterfaces from IDL files
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Locate RTI tools

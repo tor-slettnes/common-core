@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file logfilesink.c++
 /// @brief Log to file
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "logfilesink.h++"

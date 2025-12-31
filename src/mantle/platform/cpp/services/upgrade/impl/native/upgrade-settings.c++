@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-settings.c++
 /// @brief Upgrade service settings
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "upgrade-settings.h++"

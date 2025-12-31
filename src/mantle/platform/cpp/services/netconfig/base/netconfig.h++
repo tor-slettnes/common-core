@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file netconfig.h++
 /// @brief NetConfig service - abstract interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

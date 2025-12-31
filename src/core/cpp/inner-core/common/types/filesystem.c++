@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file filesystem.c++
 /// @brief Path-related types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "filesystem.h++"

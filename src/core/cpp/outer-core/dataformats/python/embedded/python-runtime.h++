@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file python-runtime.h++
 /// @brief Python runtime environment
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

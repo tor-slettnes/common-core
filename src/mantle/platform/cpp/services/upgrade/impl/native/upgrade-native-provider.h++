@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-native-provider.h++
 /// @brief Upgrade implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

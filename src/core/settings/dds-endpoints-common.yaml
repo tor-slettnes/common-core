@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file dds-endpoints-common.yaml
 ## @brief Connectivity endpoints for DDS
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 Demo:         # Endpoint name

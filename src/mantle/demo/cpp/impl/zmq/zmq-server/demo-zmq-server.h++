@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-zmq-server.h++
 /// @brief C++ demo - Handle ZeroMQ service requests sent as ProtoBuf messages
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

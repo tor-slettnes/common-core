@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file implementations.c++
 /// @brief Enumerate available MultiLogger API implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "implementations.h++"

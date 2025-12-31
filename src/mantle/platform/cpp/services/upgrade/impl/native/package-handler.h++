@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-handler.h++
 /// @brief Generic upgrade package handler interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

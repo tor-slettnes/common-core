@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file netconfig-types.h++
 /// @brief NetConfig service - data types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

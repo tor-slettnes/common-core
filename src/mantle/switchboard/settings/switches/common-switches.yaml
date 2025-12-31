@@ -2,7 +2,7 @@
 #==============================================================================
 ## @file common-switches.yaml
 ## @brief Switch configuraion
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #==============================================================================
 
 ## Specifications for global, product-agnostic switches provided by the

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-subscriber.h++
 /// @brief A subscribing entity/consumer in a DDS environment
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

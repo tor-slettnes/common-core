@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-signals.h++
 /// @brief Upgrade service - signals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

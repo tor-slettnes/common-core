@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switch.h++
 /// @brief Switch Base class
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

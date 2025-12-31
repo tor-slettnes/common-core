@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file variant-tvlist.h++
 /// @brief Tag/Value list
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

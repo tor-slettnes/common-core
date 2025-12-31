@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file endpoint.py
 ## @brief Wrapper for ZeroMQ-based applications
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

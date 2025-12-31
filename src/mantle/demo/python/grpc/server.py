@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file server.py
 ## @brief Python flavor of 'Demo' gRPC server
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

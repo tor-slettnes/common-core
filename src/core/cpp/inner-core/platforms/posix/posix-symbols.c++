@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-symbols.c++
 /// @brief Internal symbols - POSIX specifics
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "posix-symbols.h++"

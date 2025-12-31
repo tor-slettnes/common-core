@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-handler-vfs.h++
 /// @brief Upgrade from local package
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

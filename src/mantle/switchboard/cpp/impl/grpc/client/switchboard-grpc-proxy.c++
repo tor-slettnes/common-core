@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-grpc-proxy.c++
 /// @brief Switchboard provider supporting local and remote switches
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switchboard-grpc-proxy.h++"

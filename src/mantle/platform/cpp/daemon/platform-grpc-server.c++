@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file platform-grpc-server.c++
 /// @brief Platform Server
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "platform-grpc-server.h++"

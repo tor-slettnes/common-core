@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file client.py
 ## @brief Python client for `Demo` ZMQ RPC service
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules relative to current dir

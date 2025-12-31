@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file cpack_pyinstall.cmake
 ## @brief Create executables Python virtual environments using PyInstall
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 

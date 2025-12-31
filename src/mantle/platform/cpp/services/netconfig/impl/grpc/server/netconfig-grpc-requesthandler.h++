@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file netconfig-grpc-requesthandler.h++
 /// @brief Handle NetConfig gRPC service requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file convert.h++
 /// @brief String conversions
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file jsonreader.py
 ## @brief Parse JavaScript Object Notation files with Comments
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from importlib.resources.abc import Traversable

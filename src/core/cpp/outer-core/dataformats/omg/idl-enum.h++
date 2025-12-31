@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file idl-enum.h++
 /// @brief Misc. utility functions for IDL enums
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

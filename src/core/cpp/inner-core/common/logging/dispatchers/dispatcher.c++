@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dispatcher.c++
 /// @brief Distribute a captured item to available sinks
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "dispatcher.h++"

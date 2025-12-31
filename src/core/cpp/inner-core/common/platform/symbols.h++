@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file symbols.h++
 /// @brief Internal symbols - abstract provider
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

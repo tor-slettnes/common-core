@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-grpc-run.c++
 /// @brief Run Switchboard gRPC server
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switchboard-grpc-run.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-dds-publisher.c++
 /// @brief Publish demo signals over DDS
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "demo-dds-publisher.h++"

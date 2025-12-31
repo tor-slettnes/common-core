@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file server.c++
 /// @brief Parse commmand line options for server applications
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "server.h++"

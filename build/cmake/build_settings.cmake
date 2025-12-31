@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file cc_add_settings.cmake
 ## @brief CMake include file to "build" (install) settings files
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 cmake_path(SET CC_SETTINGS_STAGING_DIR "${CC_STAGING_DIR}/settings")

@@ -2,7 +2,7 @@
 ##===============================================================================n
 ## @file __init__.py
 ## @brief HTTP functionality
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from .base import HTTPBase, HTTPError, HTTPClientError, HTTPServerError

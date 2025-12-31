@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file scheduler.h++
 /// @brief schedule tasks to be invoked at specified intervals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

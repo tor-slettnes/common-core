@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file provider.h++
 /// @brief Abstract provider/consumer interface for system configuration
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

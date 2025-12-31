@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-grpc-product.h++
 /// @brief SysConfig gRPC implementation - product information
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

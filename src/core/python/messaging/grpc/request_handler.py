@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file servicer.py
 ## @brief Interactive wrapper for access to Instrument Services via gRPC
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

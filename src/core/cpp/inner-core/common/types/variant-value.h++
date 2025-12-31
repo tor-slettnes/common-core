@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file variant-value.h++
 /// @brief Generic `Value` type
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

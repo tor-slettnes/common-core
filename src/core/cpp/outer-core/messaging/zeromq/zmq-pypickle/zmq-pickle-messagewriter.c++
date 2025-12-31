@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-pickle-messagewriter.c++
 /// @brief Message writer for Python Pickle payloads
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "zmq-pickle-messagewriter.h++"

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file CMakeLists.txt
 ## @brief Build IDL encoder/decoder methods for switchboard conversion routines
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 set(TARGET cc_switchboard_dds_types)

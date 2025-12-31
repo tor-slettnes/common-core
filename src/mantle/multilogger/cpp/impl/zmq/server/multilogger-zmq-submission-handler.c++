@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-zmq-submission-handler.c+
 /// @brief Handle log events received from clients over ZMQ
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "multilogger-zmq-submission-handler.h++"

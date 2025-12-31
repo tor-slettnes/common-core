@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file commands.c++
 /// @brief Options parser for log tool - commmand handlers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "options.h++"

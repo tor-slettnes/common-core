@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file python-builtin.h++
 /// @brief Data access for Python global scope
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

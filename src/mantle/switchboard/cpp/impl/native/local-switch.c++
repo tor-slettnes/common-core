@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file local-switch.c++
 /// @brief Switch managed locally
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "local-switch.h++"

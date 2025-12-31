@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-zmq-client-reader.h++
 /// @brief Read log events from server over ZMQ
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

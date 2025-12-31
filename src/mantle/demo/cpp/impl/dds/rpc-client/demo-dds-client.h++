@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-dds-client.h++
 /// @brief Demo DDS client
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

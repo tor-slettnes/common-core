@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file reader.h++
 /// @brief YAML generic parser instance
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file nm-ipconfig.c++
 /// @brief DBus Proxy for Network Manager IP settings
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "nm-ipconfig.h++"

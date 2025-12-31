@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file signals.py
 ## @brief Local signal store for Swithboard application
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from cc.protobuf.signal import CachingSignalStore

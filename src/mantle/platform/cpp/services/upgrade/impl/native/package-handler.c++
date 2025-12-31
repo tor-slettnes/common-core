@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-handler.c++
 /// @brief Generic upgrade package handler interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "package-handler.h++"

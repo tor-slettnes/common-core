@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-messagewriter.c++
 /// @brief Publish messages with optional topic filter
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "zmq-messagewriter.h++"

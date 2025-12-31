@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file reader.c++
 /// @brief YAML generic parser instance
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "reader.h++"

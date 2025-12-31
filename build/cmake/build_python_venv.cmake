@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file build_python_venv.cmake
 ## @brief Build a Python virtual environment (`virtualenv`)
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 

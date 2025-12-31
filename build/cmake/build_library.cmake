@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file cc_add_library.cmake
 ## @brief Wrapper function for building libraries
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 ##
 ## To use this file, copy, uncomment, and modify the following in your "CMakeLists.txt":
 #===============================================================================

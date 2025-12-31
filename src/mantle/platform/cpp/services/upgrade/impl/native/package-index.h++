@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-index.h++
 /// @brief Abstract package index
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

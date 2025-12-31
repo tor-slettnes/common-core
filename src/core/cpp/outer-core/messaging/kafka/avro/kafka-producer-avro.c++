@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file kafka-producer-avro.c++
 /// @brief Send Avro payloads over Kafka
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "kafka-producer-avro.h++"

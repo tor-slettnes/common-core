@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-enum.h++
 /// @brief Convenience templates for ProtoBuf enum encoding/decoding
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

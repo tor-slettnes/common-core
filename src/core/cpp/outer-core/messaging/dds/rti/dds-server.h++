@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-server.h++
 /// @brief DDS RPC Server
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

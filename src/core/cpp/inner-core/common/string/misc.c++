@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file misc.c++
 /// @brief Miscellaneous string manipulations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "string/misc.h++"

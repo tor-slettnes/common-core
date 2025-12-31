@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file client.py
 ## @brief ZeroMQ RPC client using ProtoBuf payloads
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file generate_grpcstatus.py
 ## @brief Create mapping of gRPC status codes to symbolic names
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 import re, sys, os, argparse

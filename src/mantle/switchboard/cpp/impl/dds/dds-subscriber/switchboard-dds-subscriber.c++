@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-dds-subscriber.c++
 /// @brief Subscribe to Switchboard signals and emit updates locally as signals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switchboard-dds-subscriber.h++"

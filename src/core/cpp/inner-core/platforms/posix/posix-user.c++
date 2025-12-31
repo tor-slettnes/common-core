@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-user.c++
 /// @brief User related functions on POSIX compatible systems
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "posix-user.h++"

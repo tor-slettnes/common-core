@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-base.c++
 /// @brief VFS service - abstract interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-base.h++"

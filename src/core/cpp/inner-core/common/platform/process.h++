@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file process.h++
 /// @brief Process invocation - Abstract interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

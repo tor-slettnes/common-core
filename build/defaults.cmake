@@ -96,7 +96,7 @@ set(PACKAGE_NAME_PREFIX "cc"
 set(PACKAGE_ORGANIZATION "Common Core Authors"
   CACHE STRING "Name of issuing organization")
 
-set(PACKAGE_CONTACT "Tor Slettnes <tor@slett.net>"
+set(PACKAGE_CONTACT "Tor Slettnes"
   CACHE STRING "Package contact/maintainer")
 
 #-------------------------------------------------------------------------------

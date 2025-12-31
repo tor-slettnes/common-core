@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file shell
 ## @brief Locate and launch product-specific instrument shell script
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 target_name="cc/demo/shell.py"

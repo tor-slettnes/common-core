@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-runtime.c++
 /// @brief Run-time environment related functions - WINDOWS systems
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "windows-runtime.h++"

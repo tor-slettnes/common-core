@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file tokenparser.c++
 /// @brief Iterate over interesting JSON tokens
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "tokenparser.h++"

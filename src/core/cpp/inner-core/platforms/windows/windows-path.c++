@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-path.c++
 /// @brief Path-related functions - Windows specifics
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "windows-path.h++"

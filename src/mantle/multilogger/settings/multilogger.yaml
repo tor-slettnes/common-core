@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file logserver.yaml
 ## @brief Settings for Logging servie
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 # See `defaults.yaml` for default values and descriptions

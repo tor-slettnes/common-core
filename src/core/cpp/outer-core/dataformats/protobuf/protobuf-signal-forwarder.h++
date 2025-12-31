@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-signal-forwarder.h++
 /// @brief Capture server-side signals and encode as ProtoBuf Signal() messages
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 ///
 /// Class templates for Common Core protobuf services (client and server), including:
 ///  * Settings store in YourServiceName.json, using JsonCpp as backend

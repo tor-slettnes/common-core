@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @brief Human Interface Device - abstract platform provider
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "hid.h++"

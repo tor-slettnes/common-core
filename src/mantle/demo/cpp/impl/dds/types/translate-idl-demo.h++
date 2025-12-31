@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file translate-idl-demo.h++
 /// @brief Encode/decode routines for Common Core Demo types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "demo-types.hpp"  // Generated from `demo-types.idl`

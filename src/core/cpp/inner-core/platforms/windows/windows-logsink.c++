@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-logsink.c++
 /// @brief OS native logger backend - WINDOWS variant
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "windows-logsink.h++"

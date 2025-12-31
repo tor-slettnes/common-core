@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-api.h++
 /// @brief Example app - Abstract C++ interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

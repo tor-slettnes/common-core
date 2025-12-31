@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-endpoint.c++
 /// @brief Mix-in base for DDS entities, to add QoS
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "dds-endpoint.h++"

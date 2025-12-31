@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file CMakeLists.txt
 ## @brief Build Common Core SysConfig service - native Linux implementation
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 set(TARGET cc_platform_sysconfig_native_linux)

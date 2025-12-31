@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file date-time.h++
 /// @brief Date/time utilities
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 ///
 /// Convenience defintions for time representations using std::chrono::system_clock.
 /// For instance, to convert a C "struct timespec" instance to a time_point object,

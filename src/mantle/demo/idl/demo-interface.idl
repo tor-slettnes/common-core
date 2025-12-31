@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-interface.idl
 /// @brief DDS interface definition for Demo RPC service
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #ifndef _demo_interface_idl_

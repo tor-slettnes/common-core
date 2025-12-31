@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-zmq-message-writer.h++
 /// @brief Server-side log reader that forwards log events to client over ZMQ
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file messagehandler.py
 ## @brief Process received message publications with ProtoBuf payload
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

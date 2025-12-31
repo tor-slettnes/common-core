@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file avro-base.h++
 /// @brief Common functionality wrappers for AVRO serialization
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

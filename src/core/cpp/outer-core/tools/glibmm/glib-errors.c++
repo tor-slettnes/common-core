@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file glib-errors.c++
 /// @brief GLib Error wrappers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "glib-errors.h++"

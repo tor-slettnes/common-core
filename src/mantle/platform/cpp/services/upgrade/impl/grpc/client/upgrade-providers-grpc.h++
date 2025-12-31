@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-providers-grpc.h++
 /// @brief UPGRADE service - Native implementation wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vectorutils.h++
 /// @brief Specialized container wrappers and operators
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

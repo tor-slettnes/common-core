@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file blockingqueue.c++
 /// @brief std::queue wrapper with blocking receiver
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "blockingqueue.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-dds-publisher.h++
 /// @brief Publish demo signals over DDS
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

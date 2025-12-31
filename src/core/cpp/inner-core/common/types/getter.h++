@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file getter.h++
 /// @brief Abstract base for classes with blocking `get()` method
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

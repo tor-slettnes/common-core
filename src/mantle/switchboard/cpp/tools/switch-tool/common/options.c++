@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file options.c++
 /// @brief Options parser for switch control tool
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "options.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-base.c++
 /// @brief Upgrade service - abstract API
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "upgrade-base.h++"

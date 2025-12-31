@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-context.h++
 /// @brief VFS service - abstract file context
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

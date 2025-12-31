@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-local-provider.h++
 /// @brief VFS service - native implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

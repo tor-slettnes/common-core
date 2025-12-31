@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file signal_client.py
 ## @brief Client base for gRPC services with a 'Signal' message type
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file parserinput-stream.c++
 /// @brief Read tokens from stream inputs
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "parserinput-stream.h++"

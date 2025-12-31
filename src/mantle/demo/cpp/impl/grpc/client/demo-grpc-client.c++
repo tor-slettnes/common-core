@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-grpc-client.c++
 /// @brief Demo gRPC client
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "demo-grpc-client.h++"

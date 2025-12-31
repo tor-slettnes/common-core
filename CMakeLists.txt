@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file CMakeLists.txt
 ## @brief CMake build recipe for Common Core components
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 cmake_minimum_required(VERSION 3.20)
@@ -29,4 +29,3 @@ include(${CMAKE_CURRENT_LIST_DIR}/build/cmake/build_project.cmake)
 ### Pull in CMake files to build the actual sources
 #add_subdirectory(external)
 add_subdirectory(src)
-

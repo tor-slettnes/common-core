@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file messagesink.c++
 /// @brief Log sink for text messages
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "messagesink.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file glib-variant.h++
 /// @brief Wrappers/containers for Glib::VariantBase
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

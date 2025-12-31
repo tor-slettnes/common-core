@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-grpc-clientlistener.h++
 /// @brief Listen to log events from server
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

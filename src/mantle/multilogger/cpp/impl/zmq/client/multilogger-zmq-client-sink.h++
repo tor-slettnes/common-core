@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-zmq-client-sink.h++
 /// @brief Log sink that forwards messages to MultiLogger over ZMQ
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

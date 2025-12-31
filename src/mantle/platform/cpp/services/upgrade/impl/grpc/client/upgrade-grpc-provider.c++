@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-grpc-provider.c++
 /// @brief Upgrade service - gRPC client implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "upgrade-grpc-provider.h++"

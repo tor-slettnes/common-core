@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-linux-volmon.c++
 /// @brief VFS service - Monitor filesystem evens via Linux udev
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-linux-volmon.h++"

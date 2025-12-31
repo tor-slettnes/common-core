@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-publisher.h++
 /// @brief A publishing entity/producer in a DDS environment
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

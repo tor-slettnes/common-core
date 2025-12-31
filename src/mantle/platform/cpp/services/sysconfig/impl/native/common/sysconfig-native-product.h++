@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-native-product.h++
 /// @brief SysConfig native implementation - Product information
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

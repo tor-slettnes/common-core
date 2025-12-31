@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-types.h++
 /// @brief Upgrade service - data types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

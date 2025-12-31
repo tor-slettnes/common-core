@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-timezone.c++
 /// @brief SysConfig service - Time Zone configuration API
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-timezone.h++"

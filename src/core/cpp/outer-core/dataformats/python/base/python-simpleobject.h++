@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file python-simpleobject.h++
 /// @brief Generic data access for Python objects
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

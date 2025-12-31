@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file translate-idl-variant.c++
 /// @brief Encode/decode routines for common IDL types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "translate-idl-variant.h++"

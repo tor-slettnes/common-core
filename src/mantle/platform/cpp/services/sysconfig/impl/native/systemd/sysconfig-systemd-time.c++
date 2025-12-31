@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-systemd-time.c++
 /// @brief SysConfig implementation via SystemD - Time Configuration
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-systemd-time.h++"

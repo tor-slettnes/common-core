@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file settings.c++
 /// @brief Global settings instance
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "settings.h++"

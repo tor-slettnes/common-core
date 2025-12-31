@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file rti-connext-dds.cmake
 ## @brief Build with RTI Connext DDS
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### CMake 3.15 or newer required for Connext DDS logging macros

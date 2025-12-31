@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-index-vfs.h++
 /// @brief Scan for local release packages
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

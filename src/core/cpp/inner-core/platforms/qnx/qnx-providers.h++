@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file qnx-providers.h++
 /// @brief Superset of QNX platform providers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

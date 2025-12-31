@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-grpc-process.h++
 /// @brief SysConfig gRPC implementation - process invocaiton
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-grpc-provider.h++
 /// @brief Upgrade service - gRPC client implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file basereader.h++
 /// @brief Generic parser interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

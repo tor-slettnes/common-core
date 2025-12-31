@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-posix-timezone.h++
 /// @brief SysConfig service - Time Zone Configuration POSIX Implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file format.h++
 /// @brief String formatting from template string, using C++ output streams
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

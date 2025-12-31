@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file main.c++
 /// @brief Switch control tool - DDS flavor
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "options.h++"

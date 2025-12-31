@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file translate-idl-inline.h++
 /// @brief Convenience templates for IDL encoding/decoding
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 ///
 /// The purpose of this file is to allow wrapper semantics like the following
 /// around the various overloaded encode()/decode() methods:

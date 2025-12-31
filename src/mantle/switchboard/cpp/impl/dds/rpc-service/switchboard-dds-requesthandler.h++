@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-dds-requesthandler.h++
 /// @brief Handle Switchboard RPC requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

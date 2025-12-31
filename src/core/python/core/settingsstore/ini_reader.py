@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file inifilereader.py
 ## @brief Parse .INI-style settings files
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from importlib.resources.abc import Traversable

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file loggable.h++
 /// @brief Abstract loggable item, base for telemetry, log entry, error, etc.
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

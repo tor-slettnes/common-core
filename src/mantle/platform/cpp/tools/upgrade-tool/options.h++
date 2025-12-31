@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file options.h++
 /// @brief Upgrade service tool - command line options
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

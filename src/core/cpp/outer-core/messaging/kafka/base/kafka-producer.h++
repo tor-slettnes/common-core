@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file kafka-producer.h++
 /// @brief Wrapper for Kafka producer
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

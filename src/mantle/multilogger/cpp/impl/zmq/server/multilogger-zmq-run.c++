@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-zmq-run.c++
 /// @brief C++ multilogger - Launch ZeroMQ server implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "multilogger-zmq-run.h++"

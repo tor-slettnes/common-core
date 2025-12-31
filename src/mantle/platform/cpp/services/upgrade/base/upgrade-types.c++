@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-types.c++
 /// @brief Upgrade service - data types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "upgrade-types.h++"

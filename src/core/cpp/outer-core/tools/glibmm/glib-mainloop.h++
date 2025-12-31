@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file glib-mainloop.h++
 /// @brief GLib main loop
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 namespace core::glib

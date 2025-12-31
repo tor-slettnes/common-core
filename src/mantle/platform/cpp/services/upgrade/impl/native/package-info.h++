@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-info.h++
 /// @brief Information aobut package contents
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

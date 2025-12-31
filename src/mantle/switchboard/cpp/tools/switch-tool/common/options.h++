@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file options.h++
 /// @brief Options parser for switch control tool
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

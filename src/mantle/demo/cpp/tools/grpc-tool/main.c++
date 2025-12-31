@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file main.c++
 /// @brief Demo service control tool - gRPC flavor
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "options.h++"

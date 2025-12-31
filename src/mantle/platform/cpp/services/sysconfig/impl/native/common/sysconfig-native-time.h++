@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-native-time.h++
 /// @brief SysConfig native implementation - Time Configuration
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

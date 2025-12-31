@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-handler-vfs.c++
 /// @brief Upgrade from local package
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "package-handler-vfs.h++"

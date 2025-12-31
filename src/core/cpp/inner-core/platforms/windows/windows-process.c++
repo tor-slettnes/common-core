@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-process.c++
 /// @brief Process invocation - WINDOWS implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "windows-process.h++"

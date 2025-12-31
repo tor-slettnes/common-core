@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file messagewriter.py
 ## @brief Publish messages with optional topic filter
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

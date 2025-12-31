@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dns-sd.c++
 /// @brief DNS service discovery interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "dns-sd.h++"

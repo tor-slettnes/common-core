@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file vfs.py
 ## @brief Utility functions for data types from `vfs.proto`
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Generated modules

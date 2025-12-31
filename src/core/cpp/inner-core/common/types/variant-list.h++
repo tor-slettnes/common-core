@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file variant-list.h++
 /// @brief Vector of `Value` instances
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

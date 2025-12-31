@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-path.h++
 /// @brief Path-related functions - POSIX specifics
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

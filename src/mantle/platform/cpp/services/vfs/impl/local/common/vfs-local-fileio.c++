@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-local-fileio.c++
 /// @brief VFS service - reader/writer
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-local-fileio.h++"

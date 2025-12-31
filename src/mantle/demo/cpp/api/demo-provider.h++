@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-provider.h++
 /// @brief Example App - interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

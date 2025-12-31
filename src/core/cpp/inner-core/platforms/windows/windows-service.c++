@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-service.c++
 /// @brief Windows service hooks
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "windows-service.h++"

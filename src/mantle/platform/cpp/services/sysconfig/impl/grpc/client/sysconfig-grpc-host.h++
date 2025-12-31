@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-grpc-host.h++
 /// @brief SysConfig gRPC implementation - host configuration
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

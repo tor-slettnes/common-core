@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file python-pickle.h++
 /// @brief Python pickle/unpickle environment
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

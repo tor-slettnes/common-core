@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file client_reader.py
 ## @brief Read streamed messages from server
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

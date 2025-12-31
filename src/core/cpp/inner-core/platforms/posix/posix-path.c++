@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-path.c++
 /// @brief Path-related functions - POSIX specifics
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "posix-path.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file main.c++
 /// @brief Upgrade service tool - main
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "options.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file uniquelock.h++
 /// @brief Convenience wrapper around std::unique_lock<std::mutex>;
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

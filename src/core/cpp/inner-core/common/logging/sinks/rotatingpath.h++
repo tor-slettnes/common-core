@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file rotatingpath.h++
 /// @brief Swap log files based on name template
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

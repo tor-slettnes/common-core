@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-service.h++
 /// @brief Windows service hooks
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

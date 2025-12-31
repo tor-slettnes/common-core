@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file filesystem.h++
 /// @brief Path-related types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

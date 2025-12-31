@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file main.c++
 /// @brief Platform Server
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "options.h++"                     // Command-line options

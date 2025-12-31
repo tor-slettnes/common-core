@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file avro-basevalue.h++
 /// @brief Avro value wrapper - base
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

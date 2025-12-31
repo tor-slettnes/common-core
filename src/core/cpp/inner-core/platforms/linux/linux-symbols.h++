@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file linux-symbols.h++
 /// @brief Functions to produce symbols - Linux verison
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

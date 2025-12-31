@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file submitter.py
 ## @brief Python log handler that submits messages to MultiLogger
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

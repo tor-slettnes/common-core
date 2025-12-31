@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file version.py
 ## @brief Utility functions for data types from `version.proto`
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

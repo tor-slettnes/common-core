@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file sysconfig.py
 ## @brief Utility functions for data types from `sysconfig.proto`
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from cc.protobuf.utils import native_enum_from_proto

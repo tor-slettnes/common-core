@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-zmq-publisher.c++
 /// @brief Publish demo signals over ZeroMQ
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "demo-zmq-publisher.h++"

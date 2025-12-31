@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file linux-host.c++
 /// @brief Host related functions on Linux
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "linux-host.h++"

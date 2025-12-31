@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-grpc-requesthandler.c++
 /// @brief Handle Upgrade gRPC service requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "upgrade-grpc-requesthandler.h++"

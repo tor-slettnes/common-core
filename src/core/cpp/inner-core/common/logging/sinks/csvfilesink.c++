@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file csvfilesink.c++
 /// @brief Log tabular data to file
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "csvfilesink.h++"

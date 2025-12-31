@@ -1,6 +1,6 @@
 #===============================================================================
 ## @file cpack_wheel.cmake
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 ## @brief CPack generator script for Python Wheel output
 #===============================================================================
 

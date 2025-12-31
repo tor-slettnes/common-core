@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-signalqueue.h++
 /// @brief A blocking queue to propagate signals from SignalServer<> to SignalClient<>
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 ///
 /// Class templates for Common Core gRPC services (client and server), including:
 ///  * Settings store in YourServiceName.json, using JsonCpp as backend

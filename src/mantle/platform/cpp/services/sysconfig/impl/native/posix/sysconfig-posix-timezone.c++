@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-posix-timezone.c++
 /// @brief SysConfig service - Time Zone Configuration POSIX Implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-posix-timezone.h++"

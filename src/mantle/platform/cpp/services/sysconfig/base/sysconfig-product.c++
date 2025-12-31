@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-product.c++
 /// @brief SysConfig service - Product Information API
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-product.h++"

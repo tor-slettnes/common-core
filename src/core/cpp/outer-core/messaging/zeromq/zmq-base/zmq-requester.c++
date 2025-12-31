@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-requester.c++
 /// @brief Implements ZeroMQ request/reply pattern - requester
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "zmq-requester.h++"

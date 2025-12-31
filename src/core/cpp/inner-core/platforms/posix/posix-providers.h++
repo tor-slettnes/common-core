@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-providers.h++
 /// @brief Superset of POSIX platform providers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-signals.h++
 /// @brief Demo App - Internal notification signals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

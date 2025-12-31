@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-dds-run.c++
 /// @brief C++ switchboard - Launch DDS server implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switchboard-dds-run.h++"

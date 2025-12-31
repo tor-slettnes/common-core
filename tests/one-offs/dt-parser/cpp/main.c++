@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file main.c++
 /// @brief Date/TIme parser test
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "application/init.h++"

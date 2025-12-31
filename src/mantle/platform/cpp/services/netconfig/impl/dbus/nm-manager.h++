@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file nm-manager.h++
 /// @brief NetConfig service - Network Manager 'Manager' object wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

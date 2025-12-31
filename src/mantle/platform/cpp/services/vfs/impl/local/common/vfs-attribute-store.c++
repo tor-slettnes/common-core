@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-attribute-store.c++
 /// @brief VFS service - attribute storage for local VFS contexts
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-attribute-store.h++"

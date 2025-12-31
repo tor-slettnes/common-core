@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file server.h++
 /// @brief Parse commmand line options for server applications
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

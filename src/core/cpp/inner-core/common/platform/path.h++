@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file path.h++
 /// @brief Path-related functions - abstract provider
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

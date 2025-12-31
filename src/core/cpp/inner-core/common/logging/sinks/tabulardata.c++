@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file tabulardata.c++
 /// @brief Generic log sink that receives well-known data fields per contract
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "tabulardata.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-process.c++
 /// @brief Process invocation - POSIX implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "posix-process.h++"

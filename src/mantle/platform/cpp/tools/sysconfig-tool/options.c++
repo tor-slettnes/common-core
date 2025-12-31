@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file options.c++
 /// @brief SysConfig service control tool - command line options
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "options.h++"

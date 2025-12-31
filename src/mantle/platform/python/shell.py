@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file shell.py
 ## @brief Interactive service control via collection of clients.
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file client.py
 ## @brief Python client for `Demo` gRPC service
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file signalwriter.py
 ## @brief Forward local signals to ZeroMQ publisher
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

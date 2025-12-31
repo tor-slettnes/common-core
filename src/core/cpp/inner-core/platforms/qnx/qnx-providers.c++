@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file qnx-providers.c++
 /// @brief Superset of QNX platform providers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "posix-providers.h++"

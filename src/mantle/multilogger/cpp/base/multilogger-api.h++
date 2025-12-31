@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-api.h++
 /// @brief Logging service - abstract base
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

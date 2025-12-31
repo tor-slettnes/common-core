@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file cutils.c++
 /// @brief Misc. utility functions for interacting with C/system calls
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include <string>

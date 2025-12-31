@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-timezone.c++
 /// @brief Timezone functions - POSIX implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "posix-timezone.h++"

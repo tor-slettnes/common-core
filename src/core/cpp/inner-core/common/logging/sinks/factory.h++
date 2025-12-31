@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file factory.h++
 /// @brief Registry to catalogue and create log sinks
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

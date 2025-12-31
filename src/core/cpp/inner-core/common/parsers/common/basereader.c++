@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file basereader.c++
 /// @brief Generic parser interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "basereader.h++"

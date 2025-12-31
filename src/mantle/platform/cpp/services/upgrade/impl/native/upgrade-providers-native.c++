@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-providers-native.c++
 /// @brief Upgrade service - Native implementation wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "upgrade-providers-native.h++"

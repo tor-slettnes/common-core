@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file http-utils.c++
 /// @brief Misc. HTTP utility functions
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "http-utils.h++"

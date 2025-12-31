@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file error.py
 ## @brief ZeroMQ RPC error
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

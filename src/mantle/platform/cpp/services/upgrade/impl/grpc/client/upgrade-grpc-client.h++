@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-grpc-client.h++
 /// @brief Upgrade gRPC client
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

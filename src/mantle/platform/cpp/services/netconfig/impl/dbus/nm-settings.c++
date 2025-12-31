@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file nm-settings.c++
 /// @brief DBus Proxy for Network Manager Settings object
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "nm-settings.h++"

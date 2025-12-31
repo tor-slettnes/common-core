@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-status.c++
 /// @brief gRPC status with detailed error data
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "grpc-status.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file rest-client.c++
 /// @brief Implements REST request/reply pattern - client
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "rest-client.h++"

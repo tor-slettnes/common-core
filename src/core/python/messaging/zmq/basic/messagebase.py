@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file messagebase.py
 ## @brief Base for MessageWriter and MessageHandler
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 class MessageBase:

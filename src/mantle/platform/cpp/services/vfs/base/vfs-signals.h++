@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-signals.h++
 /// @brief VFS service - signals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-grpc-provider.c++
 /// @brief Virtual File SysConfig service - gRPC client implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-grpc-provider.h++"

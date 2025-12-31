@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file linux-process.c++
 /// @brief Process invocation - Linux implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "linux-process.h++"

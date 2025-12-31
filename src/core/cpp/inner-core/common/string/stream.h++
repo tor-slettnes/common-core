@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file stream.h++
 /// @brief Output representation for miscellaneous STL types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-base.c++
 /// @brief Common wrapper functionality for gRPC services
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "grpc-base.h++"

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file server.py
 ## @brief ZeroMQ publisher - ProtoBuf flavor
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

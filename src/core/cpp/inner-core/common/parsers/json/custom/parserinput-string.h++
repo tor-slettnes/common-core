@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file parserinput-string.h++
 /// @brief Read tokens from strings
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

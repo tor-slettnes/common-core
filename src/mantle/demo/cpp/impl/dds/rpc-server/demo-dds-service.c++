@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-dds-service.c++
 /// @brief Demo DDS service
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "demo-dds-service.h++"

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file publisher.py
 ## @brief ZeroMQ publisher base
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

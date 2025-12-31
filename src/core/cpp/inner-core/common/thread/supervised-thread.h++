@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file supervised-thread.h++
 /// @brief Spawn a new thread with exception handler
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

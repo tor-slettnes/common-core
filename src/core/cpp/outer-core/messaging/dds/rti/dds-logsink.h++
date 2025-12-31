@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-logsink.h++
 /// @brief A logger backed using DDS
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

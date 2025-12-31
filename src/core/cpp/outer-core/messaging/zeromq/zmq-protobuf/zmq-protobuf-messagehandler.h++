@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-protobuf-messagehandler.h++
 /// @brief Handle received messages with a ProtoBuf payload
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

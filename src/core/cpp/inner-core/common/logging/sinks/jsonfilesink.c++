@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file jsonfilesink.c++
 /// @brief Log to JSON file
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "jsonfilesink.h++"

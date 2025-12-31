@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-process.c++
 /// @brief SysConfig service - Process invocation API
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-process.h++"

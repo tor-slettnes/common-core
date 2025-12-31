@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-info.c++
 /// @brief Information aobut package contents
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "package-info.h++"

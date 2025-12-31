@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file test-string-misc.c++
 /// @brief C++ core - test routines
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "types/value.h++"

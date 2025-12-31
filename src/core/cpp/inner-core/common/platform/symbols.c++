@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file symbols.c++
 /// @brief Internal symbols - abstract provider
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "symbols.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file linux-dns-sd-avahi.h++
 /// @brief DNS service discovery though Avahi daemon
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

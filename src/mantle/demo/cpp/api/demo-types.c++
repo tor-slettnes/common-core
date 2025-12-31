@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-types.c++
 /// @brief Example App - common data types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 // Application specific modules

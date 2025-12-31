@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file reader.h++
 /// @brief Read JSON file, possibly with comments
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

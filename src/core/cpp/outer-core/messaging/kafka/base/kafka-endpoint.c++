@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file kafka-endpoint.c++
 /// @brief Common functionality wrappers for KAFKA endpoints
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "kafka-endpoint.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-requester.h++
 /// @brief Implements ZeroMQ request/reply pattern - requester
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

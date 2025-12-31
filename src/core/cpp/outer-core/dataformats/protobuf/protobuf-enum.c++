@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-enum.c++
 /// @brief Convenience templates for ProtoBuf enum encoding/decoding
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "protobuf-enum.h++"

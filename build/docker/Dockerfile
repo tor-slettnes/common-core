@@ -29,7 +29,7 @@ RUN apt-get install -y python3-pip python3-virtualenv python3-build python3-hatc
 # python3-kafka
 # python3-venv
 
-ARG USERNAME
+ARG USER
 ARG UID
 ARG GID
 
@@ -38,11 +38,11 @@ ARG GID
 RUN userdel --force --remove ubuntu || true
 RUN groupdel --force --remove ubuntu || true
 
-RUN groupadd --force --gid "${GID}" "${USERNAME}"
-RUN useradd --create-home --non-unique --uid "${UID}" --gid "${USERNAME}" --groups sudo,staff "${USERNAME}"
+RUN groupadd --force --gid "${GID}" "${USER}"
+RUN useradd --create-home --non-unique --uid "${UID}" --gid "${USER}" --groups sudo,staff "${USER}"
 
 # Do not require password for users in the `sudo` group to invoke `sudo`
 RUN echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo-no-pw
 
-USER ${USERNAME}
+USER ${USER}
 CMD ["sleep", "infinity"]

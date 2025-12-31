@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-publisher.c++
 /// @brief Common functionality wrappers for ZeroMQ publishers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "zmq-publisher.h++"

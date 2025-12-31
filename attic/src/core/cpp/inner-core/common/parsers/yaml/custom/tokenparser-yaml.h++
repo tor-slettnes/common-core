@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file tokenparser-yaml.h++
 /// @brief Iterate over interesting YAML tokens
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

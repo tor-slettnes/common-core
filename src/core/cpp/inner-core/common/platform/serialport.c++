@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file serialport.c++
 /// @brief Serial Port - Abstract interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "serialport.h++"

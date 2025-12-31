@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file base.py
 ## @brief Wrapper for gRPC-based services, common to client & server
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

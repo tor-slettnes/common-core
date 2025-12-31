@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file create-shared.h++
 /// @brief Add static `create_shared()` method to create shared_ptr<> instance
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

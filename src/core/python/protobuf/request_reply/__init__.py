@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file rr.py
 ## @brief Wrapper module for `request_reply.proto`
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Populate symbols from `request_reply.proto`

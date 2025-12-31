@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-symbols.c++
 /// @brief Internal symbols - Windows specifics
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "windows-symbols.h++"

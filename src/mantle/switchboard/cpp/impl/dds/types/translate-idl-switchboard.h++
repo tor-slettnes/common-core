@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file translate-idl-switchboard.h++
 /// @brief Encode/decode routines for switchboard IDL types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switchboard-types.hpp"  // generated from `switchboard-types.idl`

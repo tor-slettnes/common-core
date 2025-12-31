@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-service.h++
 /// @brief Launch MultiLogger gRPC services
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

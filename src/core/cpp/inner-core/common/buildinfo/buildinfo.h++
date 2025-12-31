@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file buildinfo.h++
 /// @brief Build information
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include <string>

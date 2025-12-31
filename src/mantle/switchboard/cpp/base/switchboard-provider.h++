@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-provider.h++
 /// @brief Abstract switchboard provider API
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

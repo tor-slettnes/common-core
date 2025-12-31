@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-linux-removable-context.c++
 /// @brief VFS service - Removable context
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-linux-removable-context.h++"

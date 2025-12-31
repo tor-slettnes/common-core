@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file linux-dns-sd-avahi.c++
 /// @brief DNS service discovery though Avahi daemon
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "linux-dns-sd-avahi.h++"

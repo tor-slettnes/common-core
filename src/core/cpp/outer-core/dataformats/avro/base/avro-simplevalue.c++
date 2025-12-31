@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file avro-base.c++
 /// @brief Common functionality wrappers for SimpleValue endpoints
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "avro-simplevalue.h++"

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file upgrade.json
 ## @brief Upgrade service settings
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 # Keyring contining public key used to validate upgrade package

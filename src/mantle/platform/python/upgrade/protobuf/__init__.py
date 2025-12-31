@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file upgrade.py
 ## @brief Utility functions for data types from `upgrade.proto`
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

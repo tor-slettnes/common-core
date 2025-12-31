@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-zmq-server.c++
 /// @brief C++ multilogger - Handle ZeroMQ service requests sent as ProtoBuf messages
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "multilogger-zmq-server.h++"

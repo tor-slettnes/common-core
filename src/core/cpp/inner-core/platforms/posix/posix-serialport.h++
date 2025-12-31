@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-serialport.h++
 /// @brief Serial Port - POSIX implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

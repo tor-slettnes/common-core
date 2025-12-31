@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file exception.h++
 /// @brief Specializations of some standard C++ exception classes.
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

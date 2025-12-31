@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file common.c++
 /// @brief Parse command line options
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "argparse/common.h++"

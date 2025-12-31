@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @brief CMake recipes for building a project
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 if(NOT PROJECT_INCLUDED)

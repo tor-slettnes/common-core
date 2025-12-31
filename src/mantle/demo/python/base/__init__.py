@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file __init__.py
 ## @brief Demo - native Python implementation
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from .api     import API, SignalSlot, PROJECT_NAME

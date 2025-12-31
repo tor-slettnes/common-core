@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-client.h++
 /// @brief Mix-in base for DDS client implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

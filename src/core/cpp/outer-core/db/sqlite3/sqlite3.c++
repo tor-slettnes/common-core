@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sqlite3.c++
 /// @brief Wrapper for Sqlite3 C library
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sqlite3.h++"

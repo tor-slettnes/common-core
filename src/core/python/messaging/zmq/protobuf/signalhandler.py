@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file signalhandler.py
 ## @brief Subscribe to Signal messages and re-emit locally as signals
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

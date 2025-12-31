@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-linux-removable-context.h++
 /// @brief VFS service - Removable context
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

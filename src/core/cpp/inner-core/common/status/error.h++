@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file error.h++
 /// @brief General base for Error types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

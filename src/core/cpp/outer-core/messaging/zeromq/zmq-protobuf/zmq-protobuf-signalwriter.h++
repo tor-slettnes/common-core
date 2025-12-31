@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-protobuf-signalwriter.h++
 /// @brief Connect to local signals and forward as publications over ZMQ
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

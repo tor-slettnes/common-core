@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file nm-manager.c++
 /// @brief Specialized Gio::DBus::Proxy classes for NetConfig
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "nm-manager.h++"

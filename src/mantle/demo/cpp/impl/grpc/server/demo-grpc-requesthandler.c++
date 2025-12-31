@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-grpc-requesthandler.c++
 /// @brief Handle DemoService RPC requests
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "demo-grpc-requesthandler.h++"

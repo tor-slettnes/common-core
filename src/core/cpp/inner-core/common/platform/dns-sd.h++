@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dns-sd.h++
 /// @brief DNS service discovery interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

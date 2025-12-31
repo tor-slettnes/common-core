@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file toolchain-Linux-x86_64.cmake
 ## @brief CMake toolchain file for Linux x86_64 targets
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 set(LINUX YES)

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-zmq-signalwriter.h++
 /// @brief Forward local DEMO signals over ZMQ
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

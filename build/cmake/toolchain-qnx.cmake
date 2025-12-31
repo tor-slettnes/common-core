@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file toolchain-qnx.cmake
 ## @brief CMake toolchain file for QNX
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 set(PLATFORM_QNX ON)

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-demo-types.h++
 /// @brief conversions to/from Protocol Buffer messages for Demo application
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file builder.h++
 /// @brief Construct a log message using `std::ostream` interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

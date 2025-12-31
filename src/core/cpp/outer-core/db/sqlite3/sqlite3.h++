@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sqlite3.h++
 /// @brief Wrapper for Sqlite3 C library
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

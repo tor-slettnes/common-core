@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file client.c++
 /// @brief Parse commmand line options for client applications
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "client.h++"

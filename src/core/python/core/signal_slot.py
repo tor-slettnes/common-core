@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file signal_slot.py
 ## @brief Signal/Slot pattern implementation
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

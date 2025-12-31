@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file format.c++
 /// @brief String formatting from template string, using C++ output streams
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "format.h++"

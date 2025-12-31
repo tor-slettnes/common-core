@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-types.h++
 /// @brief SysConfig service - Common definitions
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

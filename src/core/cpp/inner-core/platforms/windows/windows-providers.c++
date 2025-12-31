@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-providers.c++
 /// @brief Superset of Windows platform providers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "windows-path.h++"

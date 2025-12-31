@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file writer.h++
 /// @brief JSON writer implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

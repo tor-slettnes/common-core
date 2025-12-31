@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file common.py
 ## @brief Common types and definitions for Python 'Demo' service
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Identifiers for ZMQ commands & messages

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file exceptions.c++
 /// @brief Generic exception types, derived from `Event`
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "exceptions.h++"

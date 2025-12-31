@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file yaml-reader.c++
 /// @brief Yaml Parser Interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "yaml-reader.h++"

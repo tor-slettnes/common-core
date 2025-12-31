@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file cc-shell
 ## @brief Interactive Python session with Common Core client modules
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 prog_path=$(realpath "$0")

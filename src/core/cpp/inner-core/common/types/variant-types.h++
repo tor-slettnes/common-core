@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file variant-types.h++
 /// @brief Misc type definitions for variant values
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

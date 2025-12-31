@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file responder.py
 ## @brief ZeroMQ responder base
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

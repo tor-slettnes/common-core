@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file builder.h++
 /// @brief Encode variant values as rapidjson objects
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

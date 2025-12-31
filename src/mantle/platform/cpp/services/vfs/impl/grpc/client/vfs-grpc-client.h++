@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-grpc-client.h++
 /// @brief Vfs gRPC client
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

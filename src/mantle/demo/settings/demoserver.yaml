@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file demoserver.yaml
 ## @brief Settings for `demoserver`
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 # Include source context in text logs

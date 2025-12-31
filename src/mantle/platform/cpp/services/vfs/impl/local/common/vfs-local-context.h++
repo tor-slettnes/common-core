@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-local-context.h++
 /// @brief VFS service - local filesystem context
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

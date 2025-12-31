@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file test-datetime.c++
 /// @brief C++ core - test routines
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "chrono/date-time.h++"

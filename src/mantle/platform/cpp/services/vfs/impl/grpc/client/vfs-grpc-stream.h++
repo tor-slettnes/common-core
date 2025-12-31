@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-grpc-stream.h++
 /// @brief Virtual File SysConfig service - I/O stream implementation over gRPC
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

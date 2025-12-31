@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file misc.h++
 /// @brief Miscellaneous string manipulations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

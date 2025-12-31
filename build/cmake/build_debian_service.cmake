@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @brief CMake recipes for adding SystemD service unit
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 

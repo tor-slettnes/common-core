@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-protobuf-messagebase.h++
 /// @brief Mix-in base for ProtoBuf message types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

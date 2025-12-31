@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file signals.py
 ## @brief Local signal store for DEMO application
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules relative to install dir

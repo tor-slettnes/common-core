@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-datetime-types.h++
 /// @brief Encode/decode routines for types from `datetime.proto`
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

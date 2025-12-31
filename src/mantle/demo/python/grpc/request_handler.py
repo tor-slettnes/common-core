@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file service.py
 ## @brief Handle `Demo` service requests
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within current package

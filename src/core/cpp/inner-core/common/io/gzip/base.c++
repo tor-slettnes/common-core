@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file base.c++
 /// @brief C++ stream wrapper for GZip file I/O - base
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "base.h++"

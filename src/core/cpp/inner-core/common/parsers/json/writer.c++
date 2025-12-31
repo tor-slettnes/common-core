@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file writer.c++
 /// @brief JSON writer implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "writer.h++"

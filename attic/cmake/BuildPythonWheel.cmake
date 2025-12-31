@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file BuildPythonWheel.cmake
 ## @brief CMake include file to create Python wheels
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 set(DEFAULT_TEMPLATE "${CMAKE_CURRENT_LIST_DIR}/python/default.toml.in")

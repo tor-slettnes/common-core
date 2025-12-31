@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-version.c++
 /// @brief Utility functions for `Version` message
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "protobuf-version.h++"

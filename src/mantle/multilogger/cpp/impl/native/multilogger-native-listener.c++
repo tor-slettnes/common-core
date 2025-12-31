@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-native-listener.c++
 /// @brief A server-side log sink appending to a queue
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "multilogger-native-listener.h++"

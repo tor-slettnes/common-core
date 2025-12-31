@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-vfs-types.h++
 /// @brief Encode/decode routines for vfs ProtoBuf types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

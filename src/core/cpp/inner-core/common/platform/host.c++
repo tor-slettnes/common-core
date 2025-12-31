@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file host.c++
 /// @brief Host related functions - abstract provider
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "host.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file error.c++
 /// @brief General base for Error types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "event.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file builder.c++
 /// @brief Construct a log message using `std::ostream` interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "builder.h++"

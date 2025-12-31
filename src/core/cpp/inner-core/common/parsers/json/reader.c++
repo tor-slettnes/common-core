@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file reader.c++
 /// @brief JSON parser implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "reader.h++"

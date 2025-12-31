@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-signals.c++
 /// @brief VFS service - signals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-signals.h++"

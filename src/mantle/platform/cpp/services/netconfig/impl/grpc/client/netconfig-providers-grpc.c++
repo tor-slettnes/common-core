@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file netconfig-providers-grpc.c++
 /// @brief NetConfig service - Native implementation wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "netconfig-providers-grpc.h++"

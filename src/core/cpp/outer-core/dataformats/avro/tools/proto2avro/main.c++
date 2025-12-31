@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file main.c++
 /// @brief Proto2Avro main
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "avro-protobufschema.h++"

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file defaults.yaml
 ## @brief Default settings shared across all applications
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 # Default logging threshold; may be overridden for specific scopes.

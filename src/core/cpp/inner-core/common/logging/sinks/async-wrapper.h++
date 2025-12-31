@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file async-sink.h++
 /// @brief Capture/process loggable items in an asynchronous queue
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

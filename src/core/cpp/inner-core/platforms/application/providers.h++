@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file providers.h++
 /// @brief Superset of platform providers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

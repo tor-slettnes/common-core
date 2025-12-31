@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file Makefile
 ## @brief Build via CMake
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 define HELP_TEXT
@@ -44,6 +44,7 @@ Available targets:
   distclean          Remove all generated files
 
 Variables that control the build behavior:
+  TARGET             Target platform (e.g., Linux-x86_64)
   CONFIG_PRESET      CMake Configuration Preset (e.g. toolchain selection)
   BUILD_PRESET       CMake Build Preset
   TEST_PRESET        CTest Preset
@@ -52,32 +53,9 @@ endef
 export HELP_TEXT
 
 
-MAKEFLAGS          += --no-print-directory
-
-CONFIG_PRESET      ?= default
-BUILD_PRESET       ?= default
-TEST_PRESET        ?= default
-PACKAGE_PRESET     ?= deb
-THIS_DIR           ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-OUT_DIR             = $(strip $(shell $(call get_preset_var,OUT_DIR)))
-BUILD_DIR           = $(strip $(shell $(call get_preset_var,BUILD_DIR)))
-PACKAGE_DIR         = $(strip $(shell $(call get_preset_var,PACKAGE_DIR)))
-INSTALL_DIR         = $(strip $(shell $(call get_cached,CMAKE_INSTALL_PREFIX)))
-PYTHON_INSTALL_DIR  = $(strip $(shell $(call get_cached,PYTHON_INSTALL_DIR)))
-PYTHON             ?= /usr/bin/python3
-
-### CMake customization
-CMAKE_TAG           = $(BUILD_DIR)/Makefile
-CMAKE_CACHE         = $(BUILD_DIR)/CMakeCache.txt
-
-## Set CMake cache entries from variable overrides provided on command line.
-## E.g. `make PRODUCT=myproduct` -> `cmake -DPRODUCT=myproduct`.
-OVERRIDES = $(filter-out CONFIG_PRESET=% BUILD_PRESET=% TEST_PRESET=% PACKAGE_PRESET=%,$(MAKEOVERRIDES))
-CONFIG_ARGS += $(foreach override,$(OVERRIDES),-D$(override))
-
 ### Utility functions
 define list_cache
-cmake -L -N --preset $(CONFIG_PRESET) 
+cmake -L -N --preset $(CONFIG_PRESET)
 endef
 
 define get_cached
@@ -102,6 +80,37 @@ define remove
 		rm -rf "${1}"; \
 	fi
 endef
+
+
+MAKEFLAGS          += --no-print-directory
+
+CONFIG_PRESET      ?= default
+BUILD_PRESET       ?= default
+TEST_PRESET        ?= default
+PACKAGE_PRESET     ?= deb
+THIS_DIR           ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+OUT_DIR             = $(strip $(shell $(call get_preset_var,OUT_DIR)))
+BUILD_DIR           = $(strip $(shell $(call get_preset_var,BUILD_DIR)))
+PACKAGE_DIR         = $(strip $(shell $(call get_preset_var,PACKAGE_DIR)))
+INSTALL_DIR         = $(strip $(shell $(call get_cached,CMAKE_INSTALL_PREFIX)))
+PYTHON_INSTALL_DIR  = $(strip $(shell $(call get_cached,PYTHON_INSTALL_DIR)))
+PYTHON             ?= /usr/bin/python3
+TARGET             ?= $(shell uname -s)-$(shell uname -m)
+TOOLCHAIN_FILE      = $(THIS_DIR)build/cmake/toolchain-$(TARGET).cmake
+
+ifneq ($(wildcard $(TOOLCHAIN_FILE)),)
+  export CMAKE_TOOLCHAIN_FILE ?= $(TOOLCHAIN_FILE)
+endif
+
+
+### CMake customization
+CMAKE_TAG           = $(BUILD_DIR)/Makefile
+CMAKE_CACHE         = $(BUILD_DIR)/CMakeCache.txt
+
+## Set CMake cache entries from variable overrides provided on command line.
+## E.g. `make PRODUCT=myproduct` -> `cmake -DPRODUCT=myproduct`.
+OVERRIDES = $(filter-out TARGET=% CONFIG_PRESET=% BUILD_PRESET=% TEST_PRESET=% PACKAGE_PRESET=%,$(MAKEOVERRIDES))
+CMAKE_CONFIG_ARGS += $(foreach override,$(OVERRIDES),-D$(override))
 
 ### Build targets
 .PHONY: local
@@ -221,7 +230,7 @@ $(CMAKE_TAG) $(CMAKE_CACHE):
 	@echo "Generating CMake preset: $(CONFIG_PRESET)"
 	@echo "#############################################################"
 	@echo
-	@cmake --preset "$(CONFIG_PRESET)" $(CONFIG_ARGS)
+	@cmake --preset "$(CONFIG_PRESET)" $(CMAKE_CONFIG_ARGS)
 
 .PHONY: python_shell
 python_shell:
@@ -300,6 +309,9 @@ clean/package clean/deb pkg_clean:
 clean/cache clean/config:
 	@$(call remove,$(CMAKE_CACHE))
 
+.PHONY: clean/python
+clean/python: clean_python
+
 .PHONY: clean/out cleanout
 clean/out cleanout:
 	@$(call remove,$(OUT_DIR))
@@ -325,6 +337,11 @@ docker-% docker_%:
 
 
 ### Delegate any other target to CMake
+clean_%:
+	@if [ -f "$(CMAKE_TAG)" ]; then \
+		cmake --build --preset "$(BUILD_PRESET)" --target $* $(CMAKE_BUILD_ARGS); \
+	fi
+
 %:
-	@[ -f "$(CMAKE_TAG)" ] || cmake --preset "$(CONFIG_PRESET)" $(CONFIG_ARGS)
+	@[ -f "$(CMAKE_TAG)" ] || cmake --preset "$(CONFIG_PRESET)" $(CMAKE_CONFIG_ARGS)
 	@cmake --build --preset "$(BUILD_PRESET)" --target $* $(CMAKE_BUILD_ARGS)

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file shared_ptr_map.h++
 /// @brief Convenience map for `shared_ptr<>` values
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-sqlite3-sink.c++
 /// @brief Log tabular data to SQLite3 database
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "multilogger-sqlite3-sink.h++"

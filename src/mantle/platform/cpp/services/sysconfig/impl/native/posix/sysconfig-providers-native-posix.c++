@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-providers-native-posix.c++
 /// @brief SysConfig service - Native implementation wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-providers-native-posix.h++"

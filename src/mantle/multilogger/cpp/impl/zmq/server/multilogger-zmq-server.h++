@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-zmq-server.h++
 /// @brief Handle MultiLogger ZeroMQ service requests sent as ProtoBuf messages
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

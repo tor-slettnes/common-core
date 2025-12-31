@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-settings.h++
 /// @brief Upgrade service settings
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

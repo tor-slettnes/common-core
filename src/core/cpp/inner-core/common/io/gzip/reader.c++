@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file reader.c++
 /// @brief C++ stream wrapper for GZip file I/O - reader
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "reader.h++"

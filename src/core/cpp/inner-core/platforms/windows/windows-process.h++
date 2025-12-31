@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-process.h++
 /// @brief Process invocation - WINDOWS implementations
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-upgrade-types.c++
 /// @brief Encode/decode routines for upgrade ProtoBuf types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "protobuf-upgrade-types.h++"

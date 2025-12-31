@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file linux-path.h++
 /// @brief Path-related functions - Linux specifics
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

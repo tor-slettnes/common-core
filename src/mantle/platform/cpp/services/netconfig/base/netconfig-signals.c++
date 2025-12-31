@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file netconfig-signals.c++
 /// @brief NetConfig service - signals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "netconfig-signals.h++"

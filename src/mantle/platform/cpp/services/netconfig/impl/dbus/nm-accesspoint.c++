@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file nm-accesspoint.c++
 /// @brief DBus Proxy for Network Manager AccessPoint objects
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "nm-accesspoint.h++"

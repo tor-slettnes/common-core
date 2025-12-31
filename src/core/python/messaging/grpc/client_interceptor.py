@@ -2,7 +2,7 @@
 ##===============================================================================n
 ## @file client_interceptor.py
 ## @brief gRPC client interceptor to decode custom error details
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from .status import DetailedError

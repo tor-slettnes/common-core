@@ -1,6 +1,7 @@
 DOCKERFILE_DIR    ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 DOCKERFILE        ?= $(DOCKERFILE_DIR)/Dockerfile
-CONTAINERNAME      = common-core
+DOCKERBASE        ?= debian:bookworm
+CONTAINERNAME      = picarro-shared
 CONTAINERVERSION   = 1.1
 CONTAINERTAG       = $(CONTAINERNAME):$(CONTAINERVERSION)
 CONTAINER_USER     = $(shell id -un)
@@ -18,8 +19,8 @@ docker_build:
 		docker build \
 			--file $(DOCKERFILE) \
 			--tag '$(CONTAINERTAG)' \
-			$(if $(DOCKERBASE),--build-arg DOCKERBASE=$(DOCKERBASE)) \
-			--build-arg USERNAME=$(CONTAINER_USER) \
+			--build-arg DOCKERBASE=$(DOCKERBASE) \
+			--build-arg USER=$(CONTAINER_USER) \
 			--build-arg UID=$(CONTAINER_UID) \
 			--build-arg GID=$(CONTAINER_GID) \
 			.; \

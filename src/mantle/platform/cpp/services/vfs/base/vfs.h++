@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs.h++
 /// @brief VFS service - common API
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

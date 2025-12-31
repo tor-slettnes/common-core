@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-types.c++
 /// @brief Logging service - data types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "multilogger-types.h++"

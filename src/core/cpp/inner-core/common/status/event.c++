@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file event.c++
 /// @brief General base for Event types: Error, logging::Message, ...
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "event.h++"

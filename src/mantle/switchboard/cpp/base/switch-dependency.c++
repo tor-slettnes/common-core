@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switch-dependency.c++
 /// @brief Upstream dependency between a switch and its predecessor
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switch-dependency.h++"

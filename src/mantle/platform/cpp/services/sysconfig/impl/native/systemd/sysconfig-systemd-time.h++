@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-systemd-time.h++
 /// @brief SysConfig implementation via SystemD - Time Configuration
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

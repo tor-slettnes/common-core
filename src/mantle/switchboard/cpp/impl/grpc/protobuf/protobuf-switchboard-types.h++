@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-switchboard-types.h++
 /// @brief conversions to/from Protocol Buffer messages in "switchboard.proto"
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

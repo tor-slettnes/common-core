@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-variant-types.c++
 /// @brief Encode/decode routines for common ProtoBuf types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "protobuf-variant-types.h++"

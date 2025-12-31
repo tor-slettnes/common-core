@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-providers-linux.c++
 /// @brief VFS service - Native implementation wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-providers-local.h++"

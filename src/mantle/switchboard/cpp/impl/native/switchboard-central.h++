@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-central.h++
 /// @brief Switchboard provider supporting only local switches
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sql-common.h++
 /// @brief Common functionality for SQL-based database wrappers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

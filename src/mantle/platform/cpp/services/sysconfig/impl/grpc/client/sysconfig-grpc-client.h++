@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-grpc-client.h++
 /// @brief SysConfig gRPC client
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file native.py
 ## @brief Demo - native Python implementation
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules relative to install dir

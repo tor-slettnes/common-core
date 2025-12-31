@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-message-decoder.c++
 /// @brief Encode/decode routines for ProtoBuf types provided by Google
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "protobuf-message-decoder.h++"

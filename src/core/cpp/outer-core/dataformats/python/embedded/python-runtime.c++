@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file python-runtime.c++
 /// @brief Python runtime environment
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "python-runtime.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file remote-dds-switch.c++
 /// @brief Switch managed through remote DDS service
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "remote-dds-switch.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file logging.h++
 /// @brief Logging interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 ///
 /// Logging framework, mainly comprising these classes
 ///  * `Message()`, representing a log entry

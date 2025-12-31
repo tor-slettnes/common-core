@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-signal-receiver.h++
 /// @brief Handle ProtoBuf Signal messages
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

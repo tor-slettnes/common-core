@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-runtime.h++
 /// @brief Run-time environment related functions - POSIX systems
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

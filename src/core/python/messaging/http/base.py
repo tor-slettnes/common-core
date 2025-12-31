@@ -2,7 +2,7 @@
 ##===============================================================================n
 ## @file base.py
 ## @brief Common functionality for HTTP clients and servers
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file netconfig.c++
 /// @brief NetConfig service - abstract interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "netconfig.h++"

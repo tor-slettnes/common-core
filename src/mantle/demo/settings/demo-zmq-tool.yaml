@@ -2,7 +2,7 @@
 #==============================================================================
 ## @file demo-zmq-tool.yaml
 ## @brief Settings for `demo-zmq-tool` utility
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #==============================================================================
 
 log default: INFO

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-native.c++
 /// @brief Logging service - host native implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "multilogger-native.h++"

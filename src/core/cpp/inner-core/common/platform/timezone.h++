@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file timezone.h++
 /// @brief Timezone functions - abstract interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

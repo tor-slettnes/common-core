@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-native.h++
 /// @brief Example app - Local/native implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

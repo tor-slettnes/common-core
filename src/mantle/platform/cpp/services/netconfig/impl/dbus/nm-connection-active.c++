@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file nm-connection-active.c++
 /// @brief DBus Proxy for Network Manager Connection.Active objects
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "nm-connection-active.h++"

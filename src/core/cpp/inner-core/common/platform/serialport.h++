@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file serialport.h++
 /// @brief Serial Port - Abstract interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

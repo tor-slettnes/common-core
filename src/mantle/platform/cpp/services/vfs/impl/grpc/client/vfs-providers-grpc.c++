@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file vfs-providers-grpc.c++
 /// @brief Vfs service - Native implementation wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "vfs-providers-grpc.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-grpc-run.h++
 /// @brief Run Switchboard gRPC server
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-native.h++
 /// @brief Logging service - host native interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

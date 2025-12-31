@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-zmq-client.h++
 /// @brief Demo ZeroMQ client
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file variant-list.c++
 /// @brief Vector of `Value` instances
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "variant-list.h++"

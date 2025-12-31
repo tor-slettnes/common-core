@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file cc_add_python.cmake
 ## @brief Build an executable file from a PIP deployment with PyInstaller
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 include(utility)

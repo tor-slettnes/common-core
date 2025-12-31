@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file netconfig-providers-grpc.h++
 /// @brief NetConfig service - Native implementation wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

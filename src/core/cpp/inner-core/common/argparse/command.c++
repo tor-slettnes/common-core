@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file command.c++
 /// @brief Parse options for command line utilities
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "command.h++"

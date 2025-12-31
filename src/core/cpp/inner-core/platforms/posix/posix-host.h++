@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-host.h++
 /// @brief Host related functions on POSIX compatible hosts
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

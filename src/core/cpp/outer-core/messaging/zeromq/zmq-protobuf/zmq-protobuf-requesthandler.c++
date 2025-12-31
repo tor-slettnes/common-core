@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-protobuf-requesthandler.c++
 /// @brief RPC functionalty over ZeroMQ using ProtoBuf - request handler
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "zmq-protobuf-requesthandler.h++"

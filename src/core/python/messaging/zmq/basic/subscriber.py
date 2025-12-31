@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file subscriber.py
 ## @brief ZeroMQ subscriber base
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

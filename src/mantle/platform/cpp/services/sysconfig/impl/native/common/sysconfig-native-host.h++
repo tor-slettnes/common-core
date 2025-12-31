@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-native-host.h++
 /// @brief SysConfig native implementation - Host Configuration
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-host.h++"

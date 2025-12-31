@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file glib-errors.h++
 /// @brief GLib Error wrappers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

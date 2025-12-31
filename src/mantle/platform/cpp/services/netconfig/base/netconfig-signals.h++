@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file netconfig-signals.h++
 /// @brief NetConfig service - signals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

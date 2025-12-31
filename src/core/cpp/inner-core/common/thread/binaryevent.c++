@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file binaryevent.c++
 /// @brief Binary status
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "binaryevent.h++"

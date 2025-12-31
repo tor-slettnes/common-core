@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file status.py
 ## @brief Wrapper for gRPC-based services, common to client & server
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules wihtin package

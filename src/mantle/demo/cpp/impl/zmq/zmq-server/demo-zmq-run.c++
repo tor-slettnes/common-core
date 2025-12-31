@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-zmq-run.c++
 /// @brief C++ demo - Launch ZeroMQ server implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "demo-zmq-run.h++"

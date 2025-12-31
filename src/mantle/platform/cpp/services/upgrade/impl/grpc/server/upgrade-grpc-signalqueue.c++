@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-grpc-signalqueue.c++
 /// @brief Connect server-side signals to gRPC stream initiated by clients
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "upgrade-grpc-signalqueue.h++"

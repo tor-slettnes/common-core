@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file value.h++
 /// @brief Generic/variant `Value` type & associated containers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

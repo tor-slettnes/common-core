@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file scheduler.py
 ## @brief Schedule callbacks at regular intervals
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

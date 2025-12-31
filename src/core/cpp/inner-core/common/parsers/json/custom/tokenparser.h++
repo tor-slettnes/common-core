@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file tokenparser.h++
 /// @brief Iterate over interesting JSON tokens
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

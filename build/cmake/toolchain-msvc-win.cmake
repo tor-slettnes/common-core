@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @brief CMake toolchain spec for cross-compiling for Windows with MinGW
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Target system

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file aio_server.py
 ## @brief Python flavor of 'Demo' gRPC server
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules relative to install dir

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file http-client.h++
 /// @brief HTTP requests using `libcurl`
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

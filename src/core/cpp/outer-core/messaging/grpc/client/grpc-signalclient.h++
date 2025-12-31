@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-signalclient.h++
 /// @brief Client-side wrapper functionality for Common Core gRPC services
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 ///
 /// Class templates for Common Core gRPC services (client and server), including:
 ///  * Settings store in YourServiceName.json, using JsonCpp as backend

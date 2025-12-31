@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file multilogger-zmq-client-writer.h++
 /// @brief Send log events to server over ZMQ
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

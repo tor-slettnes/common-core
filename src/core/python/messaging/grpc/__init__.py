@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file __init__.py
 ## @brief Wrapper for gRPC-based applications
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from .base import Base

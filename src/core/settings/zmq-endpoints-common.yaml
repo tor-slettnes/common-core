@@ -2,7 +2,7 @@
 #==============================================================================
 ## @file zmq-endpoints-common.yaml
 ## @brief Connectivity endpoints for ZeroMQ sockets
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #==============================================================================
 
 # Default endpoint settings for ZeroMQ communication. Endpoint settings are

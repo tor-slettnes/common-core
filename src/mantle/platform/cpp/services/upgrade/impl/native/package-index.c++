@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-index.c++
 /// @brief Abstract package index
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "package-index.h++"

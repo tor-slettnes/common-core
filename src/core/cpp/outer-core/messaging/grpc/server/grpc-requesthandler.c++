@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-requesthandler.c++
 /// @brief Server-side request handler gRPC services
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "grpc-requesthandler.h++"

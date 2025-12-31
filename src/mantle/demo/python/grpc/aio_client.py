@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file aio_client.py
 ## @brief Invoke a server method using Python AsyncIO semantics
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules relative to install folder

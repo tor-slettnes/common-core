@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-signals.c++
 /// @brief Demo App - Internal notification signals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 // Application specific modules

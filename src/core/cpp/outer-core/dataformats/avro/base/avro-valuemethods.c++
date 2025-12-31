@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file avro-valuemethods.c++
 /// @brief Avro value wrapper - base
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "avro-valuemethods.h++"

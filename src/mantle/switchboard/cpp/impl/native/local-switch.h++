@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file local-switch.h++
 /// @brief Switch managed locally
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file datetime.py
 ## @brief Support for ProtoBuf types from `datetime.proto`.
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Standard Python modules

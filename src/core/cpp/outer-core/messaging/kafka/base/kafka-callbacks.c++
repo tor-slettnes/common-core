@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file kafka-callbacks.c++
 /// @brief Miscellaneous callbacks to handle Kafka events
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "kafka-callbacks.h++"

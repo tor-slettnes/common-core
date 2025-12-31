@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file streamable.h++
 /// @brief Base to facilitate output sreaming to a data class
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

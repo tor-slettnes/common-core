@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file nm-wrappers.c++
 /// @brief Network Manager object wrapper
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "nm-wrappers.h++"

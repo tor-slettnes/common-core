@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file create-unique.h++
 /// @brief Add static `create_unique()` method to create unique_ptr<> instance
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

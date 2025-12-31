@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file upgrade-signals.c++
 /// @brief Upgrade service - signals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "upgrade-signals.h++"

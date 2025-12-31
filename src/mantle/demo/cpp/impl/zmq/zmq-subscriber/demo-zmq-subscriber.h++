@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-zmq-subscriber.h++
 /// @brief Subscribe to Demo topics and emit updates locally as signals
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-subscriber.c++
 /// @brief A subscribing entity/consumer in a DDS environment
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "dds-subscriber.h++"

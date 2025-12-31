@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-symbols.h++
 /// @brief Internal symbols - Windows specifics
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

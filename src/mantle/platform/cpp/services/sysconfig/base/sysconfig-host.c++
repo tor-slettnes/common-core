@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-host.c++
 /// @brief SysConfig service - Host Configuration API
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-host.h++"

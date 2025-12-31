@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file rotatingpath.c++
 /// @brief Swap log files based on name template
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "rotatingpath.h++"

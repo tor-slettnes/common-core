@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switch-interceptor.c++
 /// @brief Task that is invoked in response to a switch state change
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "switch-interceptor.h++"

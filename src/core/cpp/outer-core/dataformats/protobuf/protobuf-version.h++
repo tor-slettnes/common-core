@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file protobuf-version.h++
 /// @brief Utility functions for `Version` message
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

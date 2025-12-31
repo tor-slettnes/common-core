@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file qnx-path.c++
 /// @brief Path-related functions - QNX specifics
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "qnx-path.h++"

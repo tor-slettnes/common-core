@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file posix-timezone.h++
 /// @brief Timezone functions - POSIX implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

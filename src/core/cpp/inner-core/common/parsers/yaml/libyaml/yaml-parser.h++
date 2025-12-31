@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file yaml-parser.h++
 /// @brief Wrapper for LibYaml `yaml_parser`
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file glib-mainloop.c++
 /// @brief GLib main loop
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "glib-mainloop.h++"

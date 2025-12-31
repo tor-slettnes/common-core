@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dbus-types.h++
 /// @brief Type definitions used to wrap Glib's DBus interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

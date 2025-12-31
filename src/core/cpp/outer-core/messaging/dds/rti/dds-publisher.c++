@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-publisher.c++
 /// @brief A publishing entity/producer in a DDS environment
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "dds-publisher.h++"

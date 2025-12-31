@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard.h++
 /// @brief Switchboard interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

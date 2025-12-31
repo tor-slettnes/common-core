@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file commands.c++
 /// @brief Implements demo commmands
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "options.h++"

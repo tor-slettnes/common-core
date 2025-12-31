@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-product.h++
 /// @brief SysConfig service - Product Information API
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

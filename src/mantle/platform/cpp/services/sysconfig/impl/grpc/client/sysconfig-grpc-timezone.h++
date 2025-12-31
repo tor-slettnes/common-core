@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-grpc-timezone.h++
 /// @brief SysConfig gRPC implementation - time zone settings
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

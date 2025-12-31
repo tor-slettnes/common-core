@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file enumeration.py
 ## @brief Container for enumerated symbols
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 from collections import UserDict

@@ -1,7 +1,7 @@
 ﻿################################################################################
 ## @file .gitignore
 ## @brief Paths to ignore when committing to GIT
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 ################################################################################
 
 ### Build artifacts

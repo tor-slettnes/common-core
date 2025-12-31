@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-grpc-host.c++
 /// @brief SysConfig gRPC implementation - host configuration
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-grpc-host.h++"

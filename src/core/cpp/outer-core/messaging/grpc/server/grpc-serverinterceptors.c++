@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-serverinterceptors.c++
 /// @brief Server-side interceptor to handle C++ exceptions
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "grpc-serverinterceptors.h++"

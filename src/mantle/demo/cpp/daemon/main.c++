@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file main.c++
 /// @brief C++ demo - main application
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "application/init.h++"  // Common init routines

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file logsink.c++
 /// @brief OS native logger backend
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "logsink.h++"

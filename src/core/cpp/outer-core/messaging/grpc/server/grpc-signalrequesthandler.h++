@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file grpc-signalrequesthandler.h++
 /// @brief Common Core service provider with signal emitting capability
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

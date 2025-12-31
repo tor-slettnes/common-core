@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-types.idl
 /// @brief Types definitions for Switchboard service
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #ifndef _switchboard_types_idl_

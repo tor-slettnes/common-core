@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file package-index-vfs.c++
 /// @brief Scan for local release packages
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "package-index-vfs.h++"

@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file windows-timezone.c++
 /// @brief Timezone functions - WINDOWS implementation
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "windows-timezone.h++"

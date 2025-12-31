@@ -2,7 +2,7 @@
 #===============================================================================
 ## @file utils.py
 ## @brief Utility functions for ProtoBuf messages
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

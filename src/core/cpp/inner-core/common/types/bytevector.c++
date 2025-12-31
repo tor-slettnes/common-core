@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file bytevector.c++
 /// @brief Packed binary data
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "bytevector.h++"

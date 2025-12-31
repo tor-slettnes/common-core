@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file messaging-endpoint.c++
 /// @brief Abstact base for a single service
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "messaging-endpoint.h++"

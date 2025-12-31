@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file runtime.h++
 /// @brief Run-time environment related functions - abstract provider
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

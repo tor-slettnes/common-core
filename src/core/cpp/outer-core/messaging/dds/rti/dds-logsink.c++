@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file dds-logsink.c++
 /// @brief A logger backed using DDS
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "dds-logsink.h++"

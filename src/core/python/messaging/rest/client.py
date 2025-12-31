@@ -2,7 +2,7 @@
 ##===============================================================================n
 ## @file client.py
 ## @brief Client for REST API Services
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package

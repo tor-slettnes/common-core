@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-endpoint.h++
 /// @brief Common functionality wrappers for ZeroMQ participants
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

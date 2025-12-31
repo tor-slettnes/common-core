@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-grpc-time.h++
 /// @brief SysConfig gRPC implementation - time/date settings
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

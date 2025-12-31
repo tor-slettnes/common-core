@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-grpc-run.h++
 /// @brief Demo gRPC server
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

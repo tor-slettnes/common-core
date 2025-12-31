@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file zmq-publisher.h++
 /// @brief Common functionality wrappers for ZeroMQ publishers
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

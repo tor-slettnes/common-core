@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file translate-idl-demo.c++
 /// @brief Encode/decode routines for Demo IDL types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "translate-idl-demo.h++"  // IDL types, generated from `demo-types.idl`

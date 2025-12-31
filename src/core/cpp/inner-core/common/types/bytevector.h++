@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file bytevector.h++
 /// @brief Packed binary data
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

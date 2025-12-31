@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file qnx-symbols.c++
 /// @brief Functions to produce symbols - QNX verison
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

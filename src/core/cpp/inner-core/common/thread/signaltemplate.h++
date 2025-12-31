@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file signaltemplate.h++
 /// @brief Adaptation of Signal/Slot pattern - inline functions
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

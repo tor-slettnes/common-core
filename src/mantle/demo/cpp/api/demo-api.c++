@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file demo-api.c++
 /// @brief Demo app - Abstract C++ interface
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 // Application specific modules

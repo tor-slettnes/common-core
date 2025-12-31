@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file sysconfig-native-product.c++
 /// @brief SysConfig native implementation - Product information
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #include "sysconfig-native-product.h++"

@@ -2,7 +2,7 @@
 ##===============================================================================n
 ## @file client.py
 ## @brief HTTP Client boilerplate
-## @author Tor Slettnes <tor@slett.net>
+## @author Tor Slettnes
 #===============================================================================
 
 ### Modules relative to install folder

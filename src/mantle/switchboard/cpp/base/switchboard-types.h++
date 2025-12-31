@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file switchboard-types.h++
 /// @brief Switchboard data types
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once

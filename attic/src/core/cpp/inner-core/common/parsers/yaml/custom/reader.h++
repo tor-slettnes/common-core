@@ -2,7 +2,7 @@
 //==============================================================================
 /// @file reader.h++
 /// @brief Parse YAML content
-/// @author Tor Slettnes <tor@slett.net>
+/// @author Tor Slettnes
 //==============================================================================
 
 #pragma once
