@@ -1,9 +1,10 @@
 DOCKERFILE_DIR    ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 DOCKERFILE        ?= $(DOCKERFILE_DIR)/Dockerfile
 DOCKERBASE        ?= debian:bookworm
-CONTAINERNAME      = picarro-shared
+CONTAINERNAME      = common-core
 CONTAINERVERSION   = 1.1
 CONTAINERTAG       = $(CONTAINERNAME):$(CONTAINERVERSION)
+CONTAINER_HOST     = common-core-platform
 CONTAINER_USER     = $(shell id -un)
 CONTAINER_UID      = $(shell id -u)
 CONTAINER_GID      = $(shell id -g)
@@ -40,7 +41,7 @@ docker_up: docker_build
 		docker run \
 			--detach --rm --init \
 			--name $(CONTAINERNAME) \
-			--hostname $(CONTAINERNAME) \
+			--hostname $(CONTAINER_HOST) \
 			$(foreach port,$(EXPOSE_TCP_PORTS),-p $(port):$(port)/tcp) \
 			-v $(HOST_HOME):$(CONTAINER_HOME) \
 			$(if $(WORKSPACE),-v $(WORKSPACE):$(WORKSPACE)) \

@@ -87,7 +87,7 @@ MAKEFLAGS          += --no-print-directory
 CONFIG_PRESET      ?= default
 BUILD_PRESET       ?= default
 TEST_PRESET        ?= default
-PACKAGE_PRESET     ?= deb
+PACKAGE_PRESET     ?= debs
 THIS_DIR           ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 OUT_DIR             = $(strip $(shell $(call get_preset_var,OUT_DIR)))
 BUILD_DIR           = $(strip $(shell $(call get_preset_var,BUILD_DIR)))
@@ -278,11 +278,8 @@ get_install_dir:
 get_package_dir:
 	@$(call get_preset_var,PACKAGE_DIR)
 
-.PHONY: clean
-clean: clean/cmake
-
-.PHONY: clean/cmake cmake_clean
-clean/cmake cmake_clean:
+.PHONY: clean clean/cmake cmake_clean
+clean clean/cmake cmake_clean:
 	@if [ -f "$(CMAKE_CACHE)" ]; \
 	then \
 		echo "Invoking CMake target 'clean'"; \
