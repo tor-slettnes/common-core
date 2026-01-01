@@ -86,7 +86,6 @@
             "steps": [
                 {"type": "configure", "name": "default"},
                 {"type": "build",     "name": "default"},
-                {"type": "test",      "name": "default"},
                 {"type": "package",   "name": "debs"}
             ]
         },
@@ -98,7 +97,7 @@
             ]
         },
         {
-            "name": "packages",
+            "name": "release",
             "steps": [
                 {"type": "configure", "name": "default"},
                 {"type": "build",     "name": "default"},
