@@ -5,13 +5,15 @@
 ## @author Tor Slettnes
 #===============================================================================
 
+from typing import Callable, Sequence, Optional
+
 ### Modules within package
-from .client  import Client
-from .client_reader import ThreadReader, AsyncReader
+from cc.core.timeutils import TimeIntervalType
 from cc.protobuf.signal import SignalStore, CachingSignalStore, \
     SignalMessage, Slot, Filter
+from .client  import Client
+from .client_reader import ThreadReader, AsyncReader
 
-from typing import Callable, Sequence, Optional
 
 #===============================================================================
 # Client
@@ -297,6 +299,9 @@ class SignalClient (Client):
         '''
 
         self.reader.stop()
+
+    def wait_complete(self, timeout: TimeIntervalType|None = None):
+        return self.signal_store.wait_complete(timeout)
 
 
     def watch(self, signal_filter : Filter = Filter()):

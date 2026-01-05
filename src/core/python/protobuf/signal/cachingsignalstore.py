@@ -38,10 +38,6 @@ class CachingSignalStore (SignalStore):
         SignalStore.init_signals(self)
 
         self._cache = {}
-        self._completion_mutex    = threading.Lock()
-        self._completion_deadline = None
-        self._deadline_expired    = False
-        self._completion_event = threading.Event()
 
     @override
     def connect_all(self,
@@ -71,10 +67,6 @@ class CachingSignalStore (SignalStore):
             self._update_cache(signal_name, action, key, msg)
 
         SignalStore.emit(self, msg)
-
-        if action == MappingAction.NONE:
-            self._completion_event.set()
-
 
     @override
     def emit_mapping(self,
@@ -280,26 +272,4 @@ class CachingSignalStore (SignalStore):
             #datamap[key] = getattr(msg, signal_name)
             datamap[key] = msg
 
-
-    def wait_complete(self) -> bool:
-        '''
-        Wait until a initial completion event has been received from the
-        server to ensure the local cache is complete before proceeding.
-
-        Note that it is not usually necessary to invoke this method in order to
-        obtain values from the local cache, because the `get_cached_map()` method
-        implicitly waits for the specified signal map to be completed before
-        proceeding.
-        '''
-
-        if self._completion_event.is_set():
-            return True
-
-        else:
-            if self._completion_deadline and not self._deadline_expired:
-                remaining = self._completion_deadline - time.time()
-                if remaining > 0:
-                    self._deadline_expired = not self._completion_event.wait(remaining)
-
-            return self._completion_event.is_set()
 

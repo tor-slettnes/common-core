@@ -13,6 +13,7 @@ import threading
 import asyncio
 
 ### Modules withn package
+from ...core.timeutils import TimePointType, TimeIntervalType
 from ...core.invocation import safe_invoke
 from ..utils import native_enum_from_proto
 from .signal_pb2 import Filter, MappingAction
@@ -129,7 +130,6 @@ class SignalStore:
         self.init_signals()
 
     def init_signals(self):
-
         assert self.signal_type,\
             ("%s instance must define `signal_type`, either by "
              "declaring a static member or passing it as argument "
@@ -140,6 +140,8 @@ class SignalStore:
             (Message.__name__, self.signal_type)
 
         self.slots = {}
+        self._completion_deadline = None
+        self._completion_event = threading.Event()
 
 
     def descriptor(self) -> Descriptor:
@@ -404,6 +406,12 @@ class SignalStore:
             for callback in self.slots.get(self.ALL_SIGNALS, []):
                 self._emit_to(signal_name, callback, msg)
 
+        action, key = self._mapping_controls(msg)
+        if action == MappingAction.NONE:
+            self._completion_event.set()
+
+
+
     def emit_event(self,
                    signal_name : str,
                    value       : Message):
@@ -475,3 +483,41 @@ class SignalStore:
             key = None
 
         return (action, key)
+
+
+    def set_completion_deadline(self, deadline: TimePointType|None):
+        '''
+        Set deadline for subsequent `wait_complete()` invocations.  This
+        will normally be performed upon initial connection to a signal source.
+        The initial value `None` means that `wait_complete()` will indefinitely
+        until the inital signal cache has been received.
+        '''
+        self._completion_deadline = deadline
+
+
+    def wait_complete(self, timeout: TimeIntervalType|None = None) -> bool:
+        '''
+        Wait until a initial completion event has been received from the
+        server to ensure the local cache is complete before proceeding.
+
+        Note that it is not usually necessary to invoke this method in order to
+        obtain values from the local cache, because the `get_cached_map()` method
+        implicitly waits for the specified signal map to be completed before
+        proceeding.
+        '''
+
+        if self._completion_event.is_set():
+            return True
+
+        elif timeout is not None:
+            return self._completion_event.wait(timeout)
+
+        elif self._completion_deadline is None:
+            self._completion_event.wait()
+            return True
+
+        elif remaining := max(0, self._completion_deadline - time.time()):
+            return self._completion_event.wait(remaining)
+
+        else:
+            return False
