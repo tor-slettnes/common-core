@@ -30,30 +30,6 @@ namespace core::zmq
         }
     }
 
-    void Subscriber::initialize()
-    {
-        Super::initialize();
-        this->start_receiving();
-
-        // Workaround for apparent `libzmq3` bug:
-        // Setting a non-empty filter (see `add_handler_filter()` below) seems
-        // to have no effect.  Instead, we must add an empty filter if we want
-        // to receive messages at all.
-        this->setsockopt(ZMQ_SUBSCRIBE, "", 0);
-    }
-
-    void Subscriber::deinitialize()
-    {
-        // Workaround for apparent `libzmq3` bug:
-        // Remove our empty subscription filter.
-        // this->setsockopt(ZMQ_UNSUBSCRIBE, "", 0);
-
-        //this->clear();
-        this->stop_receiving();
-
-        Super::deinitialize();
-    }
-
     void Subscriber::add_handler(const std::shared_ptr<MessageHandler> &handler,
                                  bool initialize)
     {
@@ -106,25 +82,33 @@ namespace core::zmq
         this->handlers_.clear();
     }
 
-    void Subscriber::start_receiving()
+    void Subscriber::start()
     {
         this->keep_receiving = true;
         if (!this->receive_thread.joinable())
         {
-            this->receive_thread = std::thread(&Subscriber::receive_loop, this);
+            this->receive_thread = std::thread(&Subscriber::run, this);
         }
     }
 
-    void Subscriber::stop_receiving()
+    void Subscriber::stop()
     {
         this->keep_receiving = false;
     }
 
-    void Subscriber::receive_loop()
+    void Subscriber::run()
     {
         logf_debug("%s listening for publications from %s",
                    *this,
                    this->address());
+
+        // Workaround for apparent `libzmq3` bug:
+        // Setting a non-empty filter (see `add_handler_filter()` below) seems
+        // to have no effect.  Instead, we must add an empty filter if we want
+        // to receive messages at all.
+
+        this->setsockopt(ZMQ_SUBSCRIBE, "", 0);
+        this->keep_receiving = true;
 
         try
         {
@@ -136,6 +120,8 @@ namespace core::zmq
             logf_debug("%s is no longer listening for publications from %s",
                        *this,
                        this->address());
+
+            this->setsockopt(ZMQ_UNSUBSCRIBE, "", 0);
         }
         catch (const Error &e)
         {

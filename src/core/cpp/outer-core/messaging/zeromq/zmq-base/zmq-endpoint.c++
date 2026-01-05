@@ -120,7 +120,7 @@ namespace core::zmq
     {
         std::scoped_lock lck(this->socket_mtx_);
         std::string bind_address = this->bind_address(address);
-        logf_info("%s binding to %s", *this, bind_address);
+        logf_debug("%s binding to %s", *this, bind_address);
 
         this->check_error(
             ::zmq_bind(this->socket(), bind_address.c_str()));
@@ -134,7 +134,7 @@ namespace core::zmq
         {
             // Obtain real endpoint
             std::string endpoint = this->get_last_address();
-            logf_info("%s unbinding from %s", *this, endpoint);
+            logf_debug("%s unbinding from %s", *this, endpoint);
             this->try_or_log(
                 ::zmq_unbind(this->socket_, endpoint.c_str()),
                 "could not unbind from " + endpoint);
@@ -155,7 +155,7 @@ namespace core::zmq
                            const std::optional<core::dt::Duration> &timeout)
     {
         std::string host_address = this->host_address(address);
-        logf_info("%s connecting to %s", *this, host_address);
+        logf_debug("%s connecting to %s", *this, host_address);
         if (timeout)
         {
             this->setsockopt(ZMQ_CONNECT_TIMEOUT,
@@ -174,7 +174,7 @@ namespace core::zmq
         if (this->socket_)
         {
             std::string endpoint = this->get_last_address();
-            logf_info("%s disconnecting from %s", *this, endpoint);
+            logf_debug("%s disconnecting from %s", *this, endpoint);
             this->try_or_log(
                 ::zmq_disconnect(this->socket_, endpoint.c_str()),
                 "could not disconnect from " + endpoint);

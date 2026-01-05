@@ -5,7 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-set(TARGET netconfig-tool)
+set(TARGET ${EXEC_NAME_PREFIX}netconfig-tool)
 
 set(LIB_DEPS
   cc_core_platform

@@ -35,8 +35,8 @@ namespace demo::grpc
 
     void SignalQueue::deinitialize()
     {
-        Super::initialize();
         this->disconnect(signal_time);
         this->disconnect(signal_greeting);
+        Super::deinitialize();
     }
 }  // namespace demo::grpc

@@ -5,7 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-set(TARGET upgrade-tool)
+set(TARGET ${EXEC_NAME_PREFIX}upgrade-tool)
 
 set(LIB_DEPS
   cc_core_platform

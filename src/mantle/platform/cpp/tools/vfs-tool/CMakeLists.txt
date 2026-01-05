@@ -5,7 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-set(TARGET vfs-tool)
+set(TARGET ${EXEC_NAME_PREFIX}vfs-tool)
 
 set(LIB_DEPS
   cc_core_platform

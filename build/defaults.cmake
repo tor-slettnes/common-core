@@ -39,6 +39,15 @@ set(ORGANIZATION "common-core"
   CACHE STRING "Organization name, for use in various path names")
 
 #-------------------------------------------------------------------------------
+# Prefix for generated outputs
+
+set(ORG_PREFIX "cc"
+  CACHE STRING "Default prefix for some generated outputs, listed below")
+
+set(EXEC_NAME_PREFIX "${ORG_PREFIX}-"
+  CACHE STRING "Prefix for genererated executables")
+
+#-------------------------------------------------------------------------------
 # Various directories
 
 set(CC_PROTOS_BASE_DIR "${CMAKE_SOURCE_DIR}/protos"
@@ -61,7 +70,6 @@ set(LOCAL_DATA_DIR "/data/${ORGANIZATION}"
 
 set(LOGS_DIR "/var/log/${ORGANIZATION}"
   CACHE STRING "Directory for generated log files")
-
 
 #-------------------------------------------------------------------------------
 # Software upgrade settings (via `Upgrade` service)
@@ -90,7 +98,7 @@ option(DEB_SPLIT_BY_GROUP
   "Create one installation package per component group"
   FALSE)
 
-set(PACKAGE_NAME_PREFIX "cc"
+set(PACKAGE_NAME_PREFIX "${ORG_PREFIX}"
   CACHE STRING "Base name for installable packages. Component or group name may be appended to this")
 
 set(PACKAGE_ORGANIZATION "Common Core Authors"
@@ -99,10 +107,11 @@ set(PACKAGE_ORGANIZATION "Common Core Authors"
 set(PACKAGE_CONTACT "Tor Slettnes"
   CACHE STRING "Package contact/maintainer")
 
+
 #-------------------------------------------------------------------------------
 # Python code tweaks
 
-set(PYTHON_NAMESPACE "cc"
+set(PYTHON_NAMESPACE "${ORG_PREFIX}"
   CACHE STRING "Top-level package/namespace for Python modules")
 
 set(PYTHON_GENERATED_NAMESPACE ""
@@ -181,6 +190,11 @@ cmake_dependent_option(BUILD_MULTILOGGER
 
 cmake_dependent_option(BUILD_SWITCHBOARD
   "Build/install Switchboard application"
+  ON "BUILD_SHARED_APPS"
+  OFF)
+
+cmake_dependent_option(BUILD_RELAY
+  "Build/install Message Relay"
   ON "BUILD_SHARED_APPS"
   OFF)
 

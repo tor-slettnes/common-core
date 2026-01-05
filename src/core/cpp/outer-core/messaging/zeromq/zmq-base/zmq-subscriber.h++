@@ -28,10 +28,6 @@ namespace core::zmq
         ~Subscriber();
 
     public:
-        void initialize() override;
-        void deinitialize() override;
-
-    public:
         void add_handler(const std::shared_ptr<MessageHandler> &handler,
                          bool initialize = false);
 
@@ -40,10 +36,12 @@ namespace core::zmq
 
         void clear(bool deinitialize = true);
 
+    public:
+        void start();
+        void stop();
+        void run();
+
     private:
-        void start_receiving();
-        void stop_receiving();
-        void receive_loop();
         void process_message(const MessageParts &parts);
 
         void add_handler_filter(const std::shared_ptr<MessageHandler> &handler);

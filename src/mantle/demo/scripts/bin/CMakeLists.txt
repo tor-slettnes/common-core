@@ -7,8 +7,8 @@
 
 if (BUILD_PYTHON)
   set(PROGRAMS
-    demoshell
-    demo_grpc_aio_client_py
+    ${EXEC_NAME_PREFIX}demo-shell
+    ${EXEC_NAME_PREFIX}demo-grpc-aio-client-py
   )
 
   if(PYTHON_INSTALL_COMPONENT)

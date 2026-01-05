@@ -66,3 +66,9 @@ Multilogger Monitor:
 
 Multilogger Service:
   port: 6573
+
+Relay Consumer:
+  port: 5000
+
+Relay Producer:
+  port: 5001
