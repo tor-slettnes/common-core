@@ -217,15 +217,7 @@ cmake-gui: cmake
 	@cmake-gui --preset "$(CONFIG_PRESET)"
 
 .PHONY: cmake
-cmake: submodule/protos $(CMAKE_TAG) $(CMAKE_CACHE)
-
-### If we have defined custom arguments to CMake (see above), we force
-### regeneration of the CMake cache by declaring any previous result as phony.
-ifneq ($(or $(CMAKE_FORCE_REGENERATE),$(CMAKE_CONFIG_ARGS)),)
-.PHONY: $(CMAKE_TAG)
-endif
-
-$(CMAKE_TAG) $(CMAKE_CACHE):
+cmake: submodule/protos
 	@echo
 	@echo "#############################################################"
 	@echo "Generating CMake preset: $(CONFIG_PRESET)"
@@ -239,7 +231,6 @@ submodule/protos: protos/Makefile
 
 protos/Makefile:
 	@git submodule update --init protos
-
 
 .PHONY: python_shell
 python_shell:
