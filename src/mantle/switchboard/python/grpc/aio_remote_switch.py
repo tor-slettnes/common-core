@@ -7,24 +7,25 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 
-from ..base.switch import Switch
-from cc.protobuf.switchboard import \
-    Status, State, InterceptorPhase, ExceptionHandling, \
-    Specification, SetSpecificationRequest, \
-    Localization, LocalizationMap, Dependency, DependencyMap, \
-    AddDependencyRequest, RemoveDependencyRequest, DependencyPolarity, \
-    InterceptorSpec, AddInterceptorRequest, RemoveInterceptorRequest, \
-    InterceptorInvocation, InterceptorResult, \
-    SetAttributesRequest, CulpritsQuery
+from typing import Optional
+from collections.abc import Sequence, Mapping
 
+from cc.core.decorators import doc_inherit
 from cc.protobuf.status import Error
 from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
 
-from cc.protobuf.switchboard.switchboard_service_pb2_grpc import SwitchboardStub
-from cc.core.decorators import doc_inherit
+from ..protobuf import (
+    Status, State, InterceptorPhase, ExceptionHandling,
+    Specification, SetSpecificationRequest,
+    Localization, LocalizationMap, Dependency, DependencyMap,
+    AddDependencyRequest, RemoveDependencyRequest, DependencyPolarity,
+    InterceptorSpec, AddInterceptorRequest, RemoveInterceptorRequest,
+    InterceptorInvocation, InterceptorResult,
+    SetTargetRequest, SetAttributesRequest, CulpritsQuery,
+)
 
-from typing import Optional
-from collections.abc import Sequence, Mapping
+from ..base.switch import Switch
+from .switchboard_service_pb2_grpc import SwitchboardStub
 
 class AsyncRemoteSwitch (Switch):
 
