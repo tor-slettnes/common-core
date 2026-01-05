@@ -10,10 +10,11 @@
 #include "switch-dependency.h++"
 #include "platform/symbols.h++"
 #include "status/exceptions.h++"
+#include "settings/settings.h++"
+
 
 namespace switchboard
 {
-    constexpr auto SETTINGS_MAIN_FILE = "switchboard";
     constexpr auto SETTING_SWITCH_CONFIG_FILES = "switch config files";
 
     constexpr auto SETTING_SPEC_NAME = "name";
@@ -38,19 +39,18 @@ namespace switchboard
 
 
     Central::Central()
-        : Super(TYPE_NAME_FULL(This)),
-          settings_(SETTINGS_MAIN_FILE)
+        : Super(TYPE_NAME_FULL(This))
     {
     }
 
     void Central::initialize()
     {
         Super::initialize();
-        logf_debug("Loading switches from: %s", this->settings_);
-        for (const auto &filename : this->settings_.get(SETTING_SWITCH_CONFIG_FILES).get_valuelist())
+        for (const auto &filename : core::settings->get(SETTING_SWITCH_CONFIG_FILES).get_valuelist())
         {
             try
             {
+                logf_debug("Loading switches from: %s", filename);
                 this->load(filename.as_string());
             }
             catch (const std::exception &e)

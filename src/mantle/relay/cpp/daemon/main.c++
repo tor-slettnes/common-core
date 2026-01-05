@@ -27,7 +27,7 @@ int main(int argc, char** argv)
     try
     {
         // Initialize paths, load settings, set up shutdown signal handlers
-        core::application::initialize_daemon(argc, argv);
+        core::application::initialize_daemon(argc, argv, "relay");
 
         relay::options = std::make_unique<relay::Options>();
         relay::options->apply(argc, argv);

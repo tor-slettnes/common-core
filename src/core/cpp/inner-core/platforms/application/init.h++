@@ -10,10 +10,16 @@
 
 namespace core::application
 {
-    void initialize(int argc,
-                    char **argv,
-                    const std::optional<std::string> &flavor = {});
-    void initialize_daemon(int argc, char **argv);
+    void initialize(
+        int argc,
+        char **argv,
+        const std::optional<std::string> &application = {},
+        const std::optional<std::string> &flavor = {});
+
+    void initialize_daemon(
+        int argc,
+        char **argv,
+        const std::optional<std::string> &application = {});
 
     void emit_shutdown_signal();
     void deinitialize();
