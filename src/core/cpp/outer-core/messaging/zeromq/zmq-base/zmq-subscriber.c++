@@ -82,21 +82,21 @@ namespace core::zmq
         this->handlers_.clear();
     }
 
-    void Subscriber::start()
+    void Subscriber::start_listening()
     {
         this->keep_receiving = true;
         if (!this->receive_thread.joinable())
         {
-            this->receive_thread = std::thread(&Subscriber::run, this);
+            this->receive_thread = std::thread(&Subscriber::listen, this);
         }
     }
 
-    void Subscriber::stop()
+    void Subscriber::stop_listening()
     {
         this->keep_receiving = false;
     }
 
-    void Subscriber::run()
+    void Subscriber::listen()
     {
         logf_debug("%s listening for publications from %s",
                    *this,

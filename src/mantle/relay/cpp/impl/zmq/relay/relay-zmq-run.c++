@@ -42,10 +42,10 @@ namespace relay::zmq
             SHUTDOWN_SIGNAL_HANDLE,
             [&]() {
                 log_info("ZMQ receiver is shutting down");
-                subscriber->stop();
+                subscriber->stop_listening();
             });
 
-        subscriber->run();
+        subscriber->listen();
 
         core::platform::signal_shutdown.disconnect(SHUTDOWN_SIGNAL_HANDLE);
 

@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "relay-grpc-messagequeue.h++"
-#include "relay-common.h++"
+#include "relay-types.h++"
 #include "protobuf-variant-types.h++"
 #include "platform/symbols.h++"
 
@@ -26,7 +26,7 @@ namespace relay::grpc
 
         relay::signal_message.connect(
             TYPE_NAME_FULL(This),
-            std::bind(&This::enqueue_message, this, _1, _2, _3));
+            std::bind(&This::enqueue_message, this, _2, _3));
     }
 
     void MessageQueue::deinitialize()
@@ -36,7 +36,6 @@ namespace relay::grpc
     }
 
     void MessageQueue::enqueue_message(
-        core::signal::MappingAction action,
         const std::string &topic,
         const core::types::Value &payload)
     {

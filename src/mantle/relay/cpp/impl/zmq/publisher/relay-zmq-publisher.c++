@@ -6,20 +6,22 @@
 //==============================================================================
 
 #include "relay-zmq-publisher.h++"
-#include "relay-common.h++"
+#include "relay-types.h++"
+#include "parsers/json/writer.h++"
 
 namespace relay::zmq
 {
     Publisher::Publisher(const std::string &bind_address,
                          const std::string &channel_name,
                          Role role)
-        : Super(bind_address, channel_name, role)
+        : core::zmq::Publisher(bind_address, channel_name, role)
     {
     }
 
     void Publisher::initialize()
     {
-        Super::initialize();
+        core::zmq::Publisher::initialize();
+        relay::Publisher::initialize();
         this->signal_writer = SignalWriter::create_shared(this->shared_from_this());
         this->signal_writer->initialize();
     }
@@ -31,6 +33,17 @@ namespace relay::zmq
             this->signal_writer->deinitialize();
             this->signal_writer.reset();
         }
-        Super::deinitialize();
+        relay::Publisher::deinitialize();
+        core::zmq::Publisher::deinitialize();
     }
+
+    bool Publisher::publish(const std::string &topic,
+                            const core::types::Value &payload)
+    {
+        core::zmq::Publisher::publish(
+            core::types::ByteVector::from_string(topic),
+            core::json::fast_writer.encoded(payload));
+        return true;
+    }
+
 }  // namespace relay::zmq

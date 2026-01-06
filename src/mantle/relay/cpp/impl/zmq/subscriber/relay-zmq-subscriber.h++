@@ -6,8 +6,9 @@
 //==============================================================================
 
 #pragma once
-#include "relay-zmq-common.h++"
+#include "relay-subscriber.h++"
 #include "zmq-subscriber.h++"
+#include "relay-zmq-common.h++"
 #include "types/create-shared.h++"
 
 namespace relay::zmq
@@ -18,11 +19,11 @@ namespace relay::zmq
     ///
     /// Received messages are re-emitted locally via `relay::signal_message`.
 
-    class Subscriber : public core::zmq::Subscriber,
+    class Subscriber : public relay::Subscriber,
+                       public core::zmq::Subscriber,
                        public core::types::enable_create_shared<Subscriber>
     {
         using This = Subscriber;
-        using Super = core::zmq::Subscriber;
 
     protected:
         Subscriber(const std::string &host_address = "",
@@ -32,6 +33,9 @@ namespace relay::zmq
     public:
         void initialize() override;
         void deinitialize() override;
+
+        void start_reader() override;
+        void stop_reader() override;
     };
 
 }  // namespace relay::zmq

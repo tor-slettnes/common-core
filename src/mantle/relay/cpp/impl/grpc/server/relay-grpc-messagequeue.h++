@@ -8,7 +8,6 @@
 #pragma once
 #include "cc/platform/relay/protobuf/relay_types.pb.h"
 #include "grpc-serverstreamer.h++"
-#include "thread/signaltemplate.h++"
 
 #include <unordered_set>
 
@@ -33,7 +32,6 @@ namespace relay::grpc
         void deinitialize();
 
         void enqueue_message(
-            core::signal::MappingAction action,
             const std::string &topic,
             const core::types::Value &payload);
 

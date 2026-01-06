@@ -37,9 +37,9 @@ namespace core::zmq
         void clear(bool deinitialize = true);
 
     public:
-        void start();
-        void stop();
-        void run();
+        virtual void start_listening();
+        virtual void stop_listening();
+        virtual void listen();
 
     private:
         void process_message(const MessageParts &parts);

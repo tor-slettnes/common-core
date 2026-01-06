@@ -75,3 +75,6 @@ MultiLogger:
 
 Switchboard:
   port     : 7948               # S-W-I-T on T9 keypad
+
+Relay:
+  port     : 7529               # R-L-A-Y on T9 keypad

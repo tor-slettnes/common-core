@@ -1,25 +1,31 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @brief Common Core Demo Application - ZeroMQ proxy module
+## @brief CMake rules to build Relay gRPC clients
 ## @author Tor Slettnes
 #===============================================================================
 
 ### Name of this library. This can be used as a dependency for downstream
 ### libraries/executables.
-set(TARGET cc_pubsub_zmq_proxy)
+set(TARGET cc_relay_grpc_client)
 
 ### Static/shared library dependencies, either from this build or provided by the system.
 set(LIB_DEPS
-  cc_core_messaging_zmq_base
+  cc_relay_common
+  cc_core_messaging_grpc_client)
+
+set(PROTO_DEPS
+  cc_relay_proto
 )
 
 ### Source files
 set(SOURCES
-  pubsub-zmq-proxy.c++
+  relay-grpc-client.c++
+  relay-grpc-reader.c++
 )
 
 cc_add_library("${TARGET}"
   LIB_DEPS ${LIB_DEPS}
+  PROTO_DEPS ${PROTO_DEPS}
   SOURCES ${SOURCES}
 )

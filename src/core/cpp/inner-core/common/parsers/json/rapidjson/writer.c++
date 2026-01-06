@@ -28,11 +28,11 @@ namespace core::json
         std::shared_ptr<RapidBuilderBase> builder;
         if (pretty)
         {
-            builder = std::make_shared<DefaultBuilder>(stream);
+            builder = std::make_shared<PrettyBuilder>(stream);
         }
         else
         {
-            builder = std::make_shared<PrettyBuilder>(stream);
+            builder = std::make_shared<DefaultBuilder>(stream);
         }
 
         builder->write_stream(value);

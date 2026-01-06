@@ -9,7 +9,7 @@
 
 namespace relay::zmq
 {
-    constexpr auto PRODUCER_CHANNEL = "Relay Producer";
-    constexpr auto CONSUMER_CHANNEL = "Relay Consumer";
+    constexpr auto PRODUCER_CHANNEL = "Message Producer";
+    constexpr auto CONSUMER_CHANNEL = "Message Consumer";
 
 }  // namespace relay::zmq

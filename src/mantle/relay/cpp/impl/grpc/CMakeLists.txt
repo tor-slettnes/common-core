@@ -5,4 +5,5 @@
 ## @author Tor Slettnes
 #===============================================================================
 
+add_subdirectory(client)
 add_subdirectory(server)

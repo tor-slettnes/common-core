@@ -14,7 +14,8 @@ set(LIB_DEPS
 )
 
 set(SOURCES
-  relay-common.c++
+  relay-types.c++
+  relay-subscriber.c++
 )
 
 cc_add_library("${TARGET}"

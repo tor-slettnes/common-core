@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "relay-common.h++"
+#include "relay-types.h++"
 #include "zmq-messagewriter.h++"
 #include "types/create-shared.h++"
 

@@ -1,11 +1,8 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @brief Pub/Sub C++ modules
+## @brief CMake rules to build Common Core Relay - client utilities
 ## @author Tor Slettnes
 #===============================================================================
 
-add_subdirectory(base)
-add_subdirectory(impl)
-add_subdirectory(daemon)
-add_subdirectory(tools)
+add_subdirectory(message-tool)

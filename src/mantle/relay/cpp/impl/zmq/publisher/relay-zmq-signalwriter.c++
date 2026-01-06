@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "relay-zmq-signalwriter.h++"
-#include "relay-common.h++"
+#include "relay-types.h++"
 
 #include "platform/symbols.h++"
 #include "parsers/json/writer.h++"

@@ -6,7 +6,7 @@
 //==============================================================================
 
 #include "relay-zmq-handler.h++"
-#include "relay-common.h++"
+#include "relay-types.h++"
 #include "parsers/json/reader.h++"
 #include "logging/logging.h++"
 #include "platform/symbols.h++"

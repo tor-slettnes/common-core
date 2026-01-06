@@ -7,7 +7,7 @@
 
 #include "relay-grpc-requesthandler.h++"
 #include "relay-grpc-messagequeue.h++"
-#include "relay-common.h++"
+#include "relay-types.h++"
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
 

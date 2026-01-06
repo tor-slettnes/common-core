@@ -1,15 +1,15 @@
 // -*- c++ -*-
 //==============================================================================
-/// @file relay-common.c++
-/// @brief Message Relay - common definitions
+/// @file relay-types.h++
+/// @brief Relay common definitions
 /// @author Tor Slettnes
 //==============================================================================
 
-#include "relay-common.h++"
+#include "relay-types.h++"
 
 namespace relay
 {
-    //==========================================================================
+    //--------------------------------------------------------------------------
     // Signals
 
     core::signal::MappingSignal<core::types::Value> signal_message(
