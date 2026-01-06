@@ -48,7 +48,7 @@ namespace relay::grpc
         ::google::protobuf::Empty* reply)
     {
         ::cc::platform::relay::protobuf::Message message;
-        while(reader->Read(&message))
+        while (reader->Read(&message))
         {
             relay::signal_message.emit(
                 message.topic(),
@@ -57,4 +57,23 @@ namespace relay::grpc
 
         return ::grpc::Status::OK;
     }
+
+    ::grpc::Status RequestHandler::Publish(
+        ::grpc::ServerContext* context,
+        const ::cc::platform::relay::protobuf::Message* message,
+        ::google::protobuf::Empty* reply)
+    {
+        try
+        {
+            relay::signal_message.emit(
+                message->topic(),
+                protobuf::decoded<core::types::Value>(message->payload()));
+            return ::grpc::Status::OK;
+        }
+        catch (...)
+        {
+            return this->failure(std::current_exception(), *message, context->peer());
+        }
+    }
+
 }  // namespace relay::grpc

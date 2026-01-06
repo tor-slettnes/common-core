@@ -35,5 +35,10 @@ namespace relay::grpc
             ::grpc::ServerContext* context,
             ::grpc::ServerReader<::cc::platform::relay::protobuf::Message>* reader,
             ::google::protobuf::Empty *reply) override;
+
+        ::grpc::Status Publish(
+            ::grpc::ServerContext* context,
+            const ::cc::platform::relay::protobuf::Message* message,
+            ::google::protobuf::Empty *reply) override;
     };
 }  // namespace relay::grpc
