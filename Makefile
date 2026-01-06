@@ -166,6 +166,7 @@ install/%:
 	@echo
 	@cmake --install $(BUILD_DIR) --prefix $(INSTALL_DIR) --component $*
 
+
 .PHONY: doc
 doc: cmake
 	@echo
@@ -216,21 +217,20 @@ cmake-gui: cmake
 	@cmake-gui --preset "$(CONFIG_PRESET)"
 
 .PHONY: cmake
-cmake: $(CMAKE_TAG) $(CMAKE_CACHE)
-
-### If we have defined custom arguments to CMake (see above), we force
-### regeneration of the CMake cache by declaring any previous result as phony.
-ifneq ($(or $(CMAKE_FORCE_REGENERATE),$(CMAKE_CONFIG_ARGS)),)
-.PHONY: $(CMAKE_TAG)
-endif
-
-$(CMAKE_TAG) $(CMAKE_CACHE):
+cmake: submodule/protos
 	@echo
 	@echo "#############################################################"
 	@echo "Generating CMake preset: $(CONFIG_PRESET)"
 	@echo "#############################################################"
 	@echo
 	@cmake --preset "$(CONFIG_PRESET)" $(CMAKE_CONFIG_ARGS)
+
+
+.PHONY: submodule/protos
+submodule/protos: protos/Makefile
+
+protos/Makefile:
+	@git submodule update --init protos
 
 .PHONY: python_shell
 python_shell:
@@ -318,6 +318,7 @@ realclean: clean/core clean/python clean/cmake clean/package clean/install clean
 
 .PHONY: distclean pristine
 distclean pristine: clean/core clean/out
+
 
 .PHONY: help
 help:
