@@ -60,10 +60,5 @@ namespace switchboard
             const SwitchRef &sw,
             const std::string &predecessor_name,
             const core::types::KeyValueMap &dep_map);
-
-
-    private:
-        core::SettingsStore settings_;
-
     };
 };  // namespace switchboard

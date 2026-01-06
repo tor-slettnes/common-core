@@ -16,14 +16,15 @@ namespace core
 {
     std::shared_ptr<core::SettingsStore> settings;
 
-    void init_settings(const std::optional<std::string> &flavor)
+    void init_settings(const std::string &primary_settings_file,
+                       const std::optional<std::string> &flavor)
     {
         if (!settings)
         {
             settings = SettingsStore::create_shared();
             try
             {
-                settings->load(platform::path->exec_name(true));
+                settings->load(primary_settings_file);
                 if (flavor)
                 {
                     settings->load(flavor.value() + "-defaults");

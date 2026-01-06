@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     try
     {
         // Initialize paths, load settings, set up shutdown signal handlers
-        core::application::initialize_daemon(argc, argv);
+        core::application::initialize_daemon(argc, argv, "multilogger");
         multilogger::options = std::make_unique<multilogger::Options>();
         multilogger::options->apply(argc, argv);
 

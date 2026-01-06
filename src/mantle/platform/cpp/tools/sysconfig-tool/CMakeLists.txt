@@ -5,7 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-set(TARGET sysconfig-tool)
+set(TARGET ${EXEC_NAME_PREFIX}sysconfig-tool)
 
 set(LIB_DEPS
   cc_core_platform

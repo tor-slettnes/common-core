@@ -6,6 +6,7 @@
 
 #include "init.h++"
 #include "providers.h++"
+#include "platform/path.h++"
 #include "settings/settings.h++"
 #include "logging/dispatchers/dispatcher.h++"
 
@@ -30,7 +31,11 @@ namespace core::application
         emit_shutdown_signal();
     }
 
-    void initialize(int argc, char **argv, const std::optional<std::string> &flavor)
+    void initialize(
+        int argc,
+        char **argv,
+        const std::optional<std::string> &application,
+        const std::optional<std::string> &flavor)
     {
         ::signal(SIGINT, shutdown_handler);
         ::signal(SIGTERM, shutdown_handler);
@@ -41,13 +46,20 @@ namespace core::application
         //std::locale::global(std::locale("C"));
 
         core::platform::register_providers(argc ? argv[0] : "");
-        core::init_settings(flavor);
+
+        std::string primary_settings_file = application.value_or(
+            platform::path->exec_name(true));
+
+        core::init_settings(primary_settings_file, flavor);
         core::platform::init_tasks.execute();
     }
 
-    void initialize_daemon(int argc, char **argv)
+    void initialize_daemon(
+        int argc,
+        char **argv,
+        const std::optional<std::string> &application)
     {
-        initialize(argc, argv, "daemon");
+        initialize(argc, argv, application, "daemon");
     }
 
     void deinitialize()

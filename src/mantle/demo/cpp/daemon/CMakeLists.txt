@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Name of this executable. This also becomes the name of the project.
-set(TARGET "demoserver")
+set(TARGET "${EXEC_NAME_PREFIX}demo-server")
 
 ### Libraries we depend on, either from this build or provided by the
 ### system. Only direct dependencies are needed; e.g., do not list "cc_core"
@@ -46,7 +46,7 @@ if(SERVER_INSTALL_COMPONENT)
   )
 
   if(ENABLE_SERVICES)
-    cc_add_debian_service("${ORGANIZATION}-demo"
+    cc_add_debian_service("${TARGET}"
       PROGRAM "sbin/${TARGET}"
       DESCRIPTION "DEMO service"
       INSTALL_COMPONENT "${SERVER_INSTALL_COMPONENT}"

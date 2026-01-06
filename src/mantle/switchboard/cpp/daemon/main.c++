@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 {
     try
     {
-        core::application::initialize_daemon(argc, argv);
+        core::application::initialize_daemon(argc, argv, "switchboard");
 
         switchboard::options = std::make_unique<switchboard::Options>();
         switchboard::options->apply(argc, argv);

@@ -6,7 +6,7 @@
 #===============================================================================
 
 if (BUILD_PYTHON)
-  set(SOURCES platform-shell)
+  set(SOURCES ${EXEC_NAME_PREFIX}platform-shell)
 
   if(PYTHON_INSTALL_COMPONENT)
     install(PROGRAMS ${SOURCES}

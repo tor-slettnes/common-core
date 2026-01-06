@@ -66,3 +66,9 @@ Multilogger Monitor:
 
 Multilogger Service:
   port: 6573
+
+Message Consumer:
+  port: 5000
+
+Message Producer:
+  port: 5001

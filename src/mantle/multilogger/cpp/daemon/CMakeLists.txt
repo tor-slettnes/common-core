@@ -6,9 +6,7 @@
 #===============================================================================
 
 ### Name of this executable. This also becomes the name of the project.
-set(TARGET "multilogger")
-
-set(INSTALL_COMPONENT "multilogger-server")
+set(TARGET ${EXEC_NAME_PREFIX}multilogger)
 
 ### Libraries we depend on, either from this build or provided by the
 ### sysconfig. Only direct dependencies are needed; e.g., do not list "cc_core"

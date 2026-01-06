@@ -7,11 +7,6 @@
 
 #include "demo-zmq-publisher.h++"
 #include "demo-signals.h++"
-#include "protobuf-demo-types.h++"
-#include "protobuf-message.h++"
-#include "protobuf-inline.h++"
-#include "logging/logging.h++"
-#include "platform/symbols.h++"
 
 namespace demo::zmq
 {

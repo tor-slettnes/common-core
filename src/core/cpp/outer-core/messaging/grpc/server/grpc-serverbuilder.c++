@@ -53,9 +53,9 @@ namespace core::grpc
     {
         if (add_listener)
         {
-            logf_info("Adding listener for %s on %s",
-                      *handler,
-                      handler->address_setting());
+            logf_debug("Adding listener for %s on %s",
+                       *handler,
+                       handler->address_setting());
 
             this->add_listener(handler->address_setting());
         }

@@ -29,6 +29,7 @@ int main(int argc, char** argv)
 
     logf_debug("Initializing ZeroMQ demo subscriber");
     subscriber->initialize();
+    subscriber->start_listening();
 
     logf_debug("Initializing ZeroMQ demo provider");
     demo::provider->initialize();
@@ -43,6 +44,7 @@ int main(int argc, char** argv)
     demo::provider->deinitialize();
 
     logf_debug("Deinitializing ZeroMQ demo subscriber");
+    subscriber->stop_listening();
     subscriber->deinitialize();
 
     // Invoke shutdown triggers

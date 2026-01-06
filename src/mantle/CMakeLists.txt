@@ -9,5 +9,7 @@ set(LICENSE_FILE ${CC_PROJECT_DIR}/LICENSE.txt)
 
 add_subdirectory(demo)
 add_subdirectory(multilogger)
+add_subdirectory(relay)
 add_subdirectory(switchboard)
 add_subdirectory(platform)
+

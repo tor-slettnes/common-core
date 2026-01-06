@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Name of this executable. This also becomes the name of the project.
-set(TARGET demo-grpc-tool)
+set(TARGET ${EXEC_NAME_PREFIX}demo-grpc-tool)
 
 ### Libraries we depend on, either from this build or provided by the
 ### system.

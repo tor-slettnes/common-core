@@ -48,6 +48,8 @@ namespace core::types
     class enable_create_shared
     {
     public:
+        using ptr = std::shared_ptr<SharedBase>;
+
         template <class... Args>
         [[nodiscard]] static std::shared_ptr<SharedBase> create_shared(Args &&...args);
     };
