@@ -17,8 +17,8 @@ namespace relay::grpc
 {
     core::types::SymbolMap<Transport> transport_map =
         {
-            {Transport::ZMQ, "ZMQ"},
             {Transport::GRPC, "gRPC"},
+            {Transport::ZMQ, "ZMQ"},
     };
 
     std::ostream &operator<<(std::ostream &stream, Transport transport)
@@ -32,7 +32,7 @@ namespace relay::grpc
     }
 
     Options::Options()
-        : transport_(Transport::ZMQ),
+        : transport_(Transport::GRPC),
           signal_handle(TYPE_NAME_FULL(This))
     {
         this->describe("Send or receive messages via Relay");
@@ -43,16 +43,16 @@ namespace relay::grpc
         Super::add_options();
 
         this->add_const<Transport>(
-            {"--zmq"},
-            "Publish/Subscribe over ZMQ [default]",
-            &this->transport_,
-            Transport::ZMQ);
-
-        this->add_const<Transport>(
             {"--grpc"},
-            "Publish/Subscribe over gRPC",
+            "Publish/Subscribe over gRPC [default]",
             &this->transport_,
             Transport::GRPC);
+
+        this->add_const<Transport>(
+            {"--zmq"},
+            "Publish/Subscribe over ZMQ",
+            &this->transport_,
+            Transport::ZMQ);
 
         this->add_opt<fs::path>(
             {"--input"},
@@ -73,7 +73,7 @@ namespace relay::grpc
             std::bind(&Options::publish, this));
 
         this->add_command(
-            "subscribe",
+            "listen",
             {"[TOPIC] ..."},
             "Subscribe to and listen for messages on the specified topics. "
             "If no topics are given, subscribe to all messsages.",
@@ -85,6 +85,8 @@ namespace relay::grpc
         std::string topic = this->get_arg("topic");
         bool published = false;
         auto publisher = this->publisher();
+        this->publisher()->initialize();
+
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         while (auto payload = this->next_arg())
@@ -107,17 +109,19 @@ namespace relay::grpc
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        this->publisher()->deinitialize();
     }
 
     void Options::on_monitor_start()
     {
-        std::vector<std::string> topics;
+        relay::TopicSet topics;
 
         while (auto arg = this->next_arg())
         {
-            topics.push_back(*arg);
+            topics.insert(*arg);
         }
 
+        this->subscriber()->initialize();
         this->subscriber()->subscribe(
             this->signal_handle,
             topics,
@@ -127,6 +131,7 @@ namespace relay::grpc
     void Options::on_monitor_end()
     {
         this->subscriber()->unsubscribe(this->signal_handle);
+        this->subscriber()->deinitialize();
     }
 
     void Options::on_message(
@@ -154,8 +159,6 @@ namespace relay::grpc
                 }
                 break;
             }
-
-            this->subscriber_->initialize();
         }
 
         return this->subscriber_;
@@ -179,8 +182,6 @@ namespace relay::grpc
                 }
                 break;
             }
-
-            this->publisher_->initialize();
         }
 
         return this->publisher_;

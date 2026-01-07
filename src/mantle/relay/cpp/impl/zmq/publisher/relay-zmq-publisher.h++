@@ -34,9 +34,12 @@ namespace relay::zmq
     public:
         void initialize() override;
         void deinitialize() override;
-        bool publish(const std::string &topic,
-                     const core::types::Value &payload) override;
 
+    protected:
+        void start_writer() override;
+        void stop_writer() override;
+        bool write(const std::string &topic,
+                   const core::types::Value &payload) override;
 
     private:
         std::shared_ptr<SignalWriter> signal_writer;

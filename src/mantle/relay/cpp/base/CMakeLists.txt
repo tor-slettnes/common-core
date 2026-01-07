@@ -15,6 +15,7 @@ set(LIB_DEPS
 
 set(SOURCES
   relay-types.c++
+  relay-publisher.c++
   relay-subscriber.c++
 )
 

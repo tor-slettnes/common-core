@@ -23,14 +23,14 @@ namespace relay
 
     public:
         void subscribe(const std::string &handle,
-                       const std::vector<std::string> &topics,
+                       const TopicSet &topics,
                        const MessageReceiver &receiver);
 
         void unsubscribe(const std::string &handle);
 
     protected:
-        virtual void start_reader() = 0;
-        virtual void stop_reader() = 0;
+        virtual void start_reader() {}
+        virtual void stop_reader() {}
     };
 
 }  // namespace relay

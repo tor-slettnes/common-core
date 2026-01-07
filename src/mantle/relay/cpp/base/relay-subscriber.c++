@@ -18,8 +18,8 @@ namespace relay
     }
 
     void Subscriber::subscribe(const std::string &handle,
-                              const std::vector<std::string> &topics,
-                              const MessageReceiver &receiver)
+                               const TopicSet &topics,
+                               const MessageReceiver &receiver)
     {
         using namespace std::placeholders;
         signal_message.connect(
@@ -27,7 +27,10 @@ namespace relay
             [=](core::signal::MappingAction action,
                 const std::string &key,
                 const core::types::Value &value) {
-                receiver(key, value);
+                if (topics.empty() || topics.count(key))
+                {
+                    receiver(key, value);
+                }
             });
 
         this->start_reader();

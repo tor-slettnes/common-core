@@ -21,33 +21,22 @@ namespace relay::grpc
 
     void Client::deinitialize()
     {
-        this->close_writer();
         Subscriber::deinitialize();
         Publisher::deinitialize();
         ClientBase::deinitialize();
     }
 
-    bool Client::publish(const std::string &topic,
-                         const core::types::Value &payload)
+    bool Client::write(const std::string &topic,
+                       const core::types::Value &payload)
     {
-        this->open_writer();
-
         Message message;
         message.set_topic(topic);
         protobuf::encode(payload, message.mutable_payload());
 
-        if (this->writer_->Write(message))
-        {
-            return true;
-        }
-        else
-        {
-            this->close_writer();
-            return false;
-        }
+        return this->writer_->Write(message);
     }
 
-    void Client::open_writer()
+    void Client::start_writer()
     {
         if (!this->writer_)
         {
@@ -58,10 +47,13 @@ namespace relay::grpc
                 this->writer_context_.get(),
                 this->writer_response_.get());
         }
+        relay::Publisher::start_writer();
     }
 
-    void Client::close_writer()
+    void Client::stop_writer()
     {
+        relay::Publisher::stop_writer();
+
         if (this->writer_)
         {
             this->writer_->WritesDone();
@@ -78,10 +70,12 @@ namespace relay::grpc
             this->reader_ = this->create_reader({});
             this->reader_thread_ = std::thread(&This::read_worker, this);
         }
+        relay::Subscriber::start_reader();
     }
 
     void Client::stop_reader()
     {
+        relay::Subscriber::stop_reader();
         if (this->reader_thread_.joinable())
         {
             this->reader_->close();

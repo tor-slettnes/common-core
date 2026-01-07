@@ -39,12 +39,12 @@ namespace relay::grpc
     public:
         void initialize() override;
         void deinitialize() override;
-        bool publish(const std::string &topic,
-                     const core::types::Value &payload) override;
+        bool write(const std::string &topic,
+                   const core::types::Value &payload) override;
 
     private:
-        void open_writer();
-        void close_writer();
+        void start_writer() override;
+        void stop_writer() override;
 
         void start_reader() override;
         void stop_reader() override;

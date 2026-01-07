@@ -22,23 +22,33 @@ namespace relay::zmq
     {
         core::zmq::Publisher::initialize();
         relay::Publisher::initialize();
-        this->signal_writer = SignalWriter::create_shared(this->shared_from_this());
-        this->signal_writer->initialize();
     }
 
     void Publisher::deinitialize()
     {
+        relay::Publisher::deinitialize();
+        core::zmq::Publisher::deinitialize();
+    }
+
+    void Publisher::start_writer()
+    {
+        this->signal_writer = SignalWriter::create_shared(this->shared_from_this());
+        this->signal_writer->initialize();
+        relay::Publisher::start_writer();
+    }
+
+    void Publisher::stop_writer()
+    {
+        relay::Publisher::stop_writer();
         if (this->signal_writer)
         {
             this->signal_writer->deinitialize();
             this->signal_writer.reset();
         }
-        relay::Publisher::deinitialize();
-        core::zmq::Publisher::deinitialize();
     }
 
-    bool Publisher::publish(const std::string &topic,
-                            const core::types::Value &payload)
+    bool Publisher::write(const std::string &topic,
+                          const core::types::Value &payload)
     {
         core::zmq::Publisher::publish(
             core::types::ByteVector::from_string(topic),

@@ -14,6 +14,7 @@
 namespace relay
 {
     using Topic = std::string;
+    using TopicSet = std::unordered_set<Topic>;
     using Payload = core::types::Value;
     using MessageData = std::pair<Topic, Payload>;
     using MessageSource = core::types::Getter<MessageData>;

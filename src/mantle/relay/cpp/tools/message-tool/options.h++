@@ -15,8 +15,8 @@ namespace relay::grpc
 {
     enum class Transport
     {
-        ZMQ,
-        GRPC
+        GRPC,
+        ZMQ
     };
 
     std::ostream &operator<<(std::ostream &stream, Transport transport);

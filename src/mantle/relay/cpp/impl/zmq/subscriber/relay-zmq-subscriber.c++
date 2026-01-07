@@ -34,10 +34,12 @@ namespace relay::zmq
     void Subscriber::start_reader()
     {
         core::zmq::Subscriber::start_listening();
+        relay::Subscriber::start_reader();
     }
 
     void Subscriber::stop_reader()
     {
+        relay::Subscriber::stop_reader();
         core::zmq::Subscriber::stop_listening();
     }
 }  // namespace relay::zmq
