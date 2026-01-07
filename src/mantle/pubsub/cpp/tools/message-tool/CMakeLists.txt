@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### Name of this executable. This also becomes the name of the project.
-set(TARGET ${EXEC_NAME_PREFIX}message-tool)
+set(TARGET ${EXEC_NAME_PREFIX}pubsub-tool)
 
 ### Libraries we depend on, either from this build or provided by the
 ### system.

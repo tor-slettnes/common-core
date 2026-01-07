@@ -41,7 +41,7 @@ namespace relay::grpc
     {
         if (this->topics_.empty() || this->topics_.count(topic))
         {
-            cc::platform::relay::protobuf::Message msg;
+            cc::platform::pubsub::protobuf::Message msg;
             msg.set_topic(topic);
             protobuf::encode(payload, msg.mutable_payload());
             this->put(std::move(msg));

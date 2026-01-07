@@ -17,10 +17,10 @@ namespace relay::grpc
     // @class RequestHandler
     // @brief Process requests from Relay clients
 
-    ::grpc::Status RequestHandler::Reader(
+    ::grpc::Status RequestHandler::Subscriber(
         ::grpc::ServerContext* context,
-        const ::cc::platform::relay::protobuf::Filters* request,
-        ::grpc::ServerWriter<::cc::platform::relay::protobuf::Message>* writer)
+        const ::cc::platform::pubsub::protobuf::Filters* request,
+        ::grpc::ServerWriter<::cc::platform::pubsub::protobuf::Message>* writer)
     {
         std::unordered_set<std::string> topics(
             request->topics().begin(),
@@ -42,12 +42,12 @@ namespace relay::grpc
         }
     }
 
-    ::grpc::Status RequestHandler::Writer(
+    ::grpc::Status RequestHandler::Publisher(
         ::grpc::ServerContext* context,
-        ::grpc::ServerReader<::cc::platform::relay::protobuf::Message>* reader,
+        ::grpc::ServerReader<::cc::platform::pubsub::protobuf::Message>* reader,
         ::google::protobuf::Empty* reply)
     {
-        ::cc::platform::relay::protobuf::Message message;
+        ::cc::platform::pubsub::protobuf::Message message;
         while (reader->Read(&message))
         {
             relay::signal_message.emit(
@@ -60,7 +60,7 @@ namespace relay::grpc
 
     ::grpc::Status RequestHandler::Publish(
         ::grpc::ServerContext* context,
-        const ::cc::platform::relay::protobuf::Message* message,
+        const ::cc::platform::pubsub::protobuf::Message* message,
         ::google::protobuf::Empty* reply)
     {
         try

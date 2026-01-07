@@ -6,7 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/platform/relay/protobuf/relay_types.pb.h"
+#include "cc/platform/pubsub/protobuf/pubsub_types.pb.h"
 #include "grpc-serverstreamer.h++"
 
 #include <unordered_set>
@@ -18,10 +18,10 @@ namespace relay::grpc
     /// @brief Connect local signals to a single client over gRPC
 
     class MessageQueue
-        : public core::grpc::ServerStreamer<cc::platform::relay::protobuf::Message>
+        : public core::grpc::ServerStreamer<cc::platform::pubsub::protobuf::Message>
     {
         using This = MessageQueue;
-        using Super = core::grpc::ServerStreamer<cc::platform::relay::protobuf::Message>;
+        using Super = core::grpc::ServerStreamer<cc::platform::pubsub::protobuf::Message>;
 
     public:
         MessageQueue(

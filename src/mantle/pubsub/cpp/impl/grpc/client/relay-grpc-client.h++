@@ -6,8 +6,7 @@
 //==============================================================================
 
 #pragma once
-#include "cc/platform/relay/protobuf/relay_types.pb.h"
-#include "cc/platform/relay/grpc/relay_service.grpc.pb.h"
+#include "cc/platform/pubsub/grpc/relay_service.grpc.pb.h"
 
 #include "relay-grpc-reader.h++"
 #include "relay-publisher.h++"
@@ -21,12 +20,12 @@ namespace relay::grpc
     class Client
         : public relay::Publisher,
           public relay::Subscriber,
-          public core::grpc::ClientWrapper<cc::platform::relay::grpc::Relay>,
+          public core::grpc::ClientWrapper<cc::platform::pubsub::grpc::Relay>,
           public core::types::enable_create_shared<Client>
     {
         using This = Client;
-        using ClientBase = core::grpc::ClientWrapper<cc::platform::relay::grpc::Relay>;
-        using Message = cc::platform::relay::protobuf::Message;
+        using ClientBase = core::grpc::ClientWrapper<cc::platform::pubsub::grpc::Relay>;
+        using Message = cc::platform::pubsub::protobuf::Message;
         using MessageReceiver = std::function<void(std::string, core::types::Value)>;
 
     protected:

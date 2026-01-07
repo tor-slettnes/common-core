@@ -9,7 +9,7 @@
 #include "grpc-requesthandler.h++"
 #include "types/create-shared.h++"
 
-#include "cc/platform/relay/grpc/relay_service.grpc.pb.h"
+#include "cc/platform/pubsub/grpc/relay_service.grpc.pb.h"
 
 
 namespace relay::grpc
@@ -18,27 +18,27 @@ namespace relay::grpc
     // @class RequestHandler
     // @brief Process requests from Relay clients
 
-    class RequestHandler : public core::grpc::RequestHandler<cc::platform::relay::grpc::Relay>,
+    class RequestHandler : public core::grpc::RequestHandler<cc::platform::pubsub::grpc::Relay>,
                            public core::types::enable_create_shared<RequestHandler>
     {
         // Convencience aliases
         using This = RequestHandler;
-        using Super = core::grpc::RequestHandler<cc::platform::relay::grpc::Relay>;
+        using Super = core::grpc::RequestHandler<cc::platform::pubsub::grpc::Relay>;
 
     public:
-        ::grpc::Status Reader(
+        ::grpc::Status Subscriber(
             ::grpc::ServerContext* context,
-            const ::cc::platform::relay::protobuf::Filters* request,
-            ::grpc::ServerWriter<::cc::platform::relay::protobuf::Message>* writer) override;
+            const ::cc::platform::pubsub::protobuf::Filters* request,
+            ::grpc::ServerWriter<::cc::platform::pubsub::protobuf::Message>* writer) override;
 
-        ::grpc::Status Writer(
+        ::grpc::Status Publisher(
             ::grpc::ServerContext* context,
-            ::grpc::ServerReader<::cc::platform::relay::protobuf::Message>* reader,
+            ::grpc::ServerReader<::cc::platform::pubsub::protobuf::Message>* reader,
             ::google::protobuf::Empty *reply) override;
 
         ::grpc::Status Publish(
             ::grpc::ServerContext* context,
-            const ::cc::platform::relay::protobuf::Message* message,
+            const ::cc::platform::pubsub::protobuf::Message* message,
             ::google::protobuf::Empty *reply) override;
     };
 }  // namespace relay::grpc

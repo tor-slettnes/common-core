@@ -86,30 +86,50 @@ namespace relay::grpc
         bool published = false;
         auto publisher = this->publisher();
         this->publisher()->initialize();
+        std::exception_ptr eptr;
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-        while (auto payload = this->next_arg())
+        try
         {
-            core::types::Value value = core::json::reader.decoded(*payload);
-            publisher->publish(topic, value);
-            published = true;
+            while (auto payload = this->next_arg())
+            {
+                if (auto value = core::json::reader.try_decode(*payload))
+                {
+                    publisher->publish(topic, value);
+                }
+                else
+                {
+                    std::cout << "Invalid JSON; publishing input as plain string"
+                              << std::endl;
+
+                    publisher->publish(topic, *payload);
+                }
+
+                published = true;
+            }
+
+            if (!this->input_file_.empty())
+            {
+                core::types::Value value = core::json::reader.read_file(this->input_file_);
+                publisher->publish(topic, value);
+                published = true;
+            }
+
+            if (!published)
+            {
+                std::cout << "Nothing was published." << std::endl;
+            }
+        }
+        catch (...)
+        {
+            eptr = std::current_exception();
         }
 
-        if (!this->input_file_.empty())
-        {
-            core::types::Value value = core::json::reader.read_file(this->input_file_);
-            publisher->publish(topic, value);
-            published = true;
-        }
-
-        if (!published)
-        {
-            std::cout << "Nothing was published." << std::endl;
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         this->publisher()->deinitialize();
+
+        if (eptr)
+        {
+            std::rethrow_exception(eptr);
+        }
     }
 
     void Options::on_monitor_start()

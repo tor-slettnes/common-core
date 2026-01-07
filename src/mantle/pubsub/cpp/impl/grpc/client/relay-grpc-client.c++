@@ -43,7 +43,7 @@ namespace relay::grpc
             this->writer_context_ = std::make_unique<::grpc::ClientContext>();
             this->writer_context_->set_wait_for_ready(true);
             this->writer_response_ = std::make_unique<::google::protobuf::Empty>();
-            this->writer_ = this->stub->Writer(
+            this->writer_ = this->stub->Publisher(
                 this->writer_context_.get(),
                 this->writer_response_.get());
         }
@@ -86,7 +86,7 @@ namespace relay::grpc
     Reader::ptr Client::create_reader(
         const std::vector<std::string> &topics)
     {
-        cc::platform::relay::protobuf::Filters filters;
+        cc::platform::pubsub::protobuf::Filters filters;
         protobuf::assign_repeated(topics, filters.mutable_topics());
         return Reader::create_shared(this->stub, filters);
     }

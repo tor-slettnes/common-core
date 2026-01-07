@@ -13,11 +13,11 @@ set(PROTO_DEPS cc_core_proto)
 
 ### Source files
 set(pbuf_sources
-  "cc/platform/relay/protobuf/relay_types.proto"
+  "cc/platform/pubsub/protobuf/pubsub_types.proto"
 )
 
 set(grpc_sources
-  "cc/platform/relay/grpc/relay_service.proto"
+  "cc/platform/pubsub/grpc/relay_service.proto"
 )
 
 ### Generate language bindings

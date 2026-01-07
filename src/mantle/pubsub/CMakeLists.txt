@@ -21,7 +21,7 @@ if(BUILD_RELAY)
     "    these are: ProtoBuf over gRPC, JSON over ZMQ, JSON over WebSockets."
   )
 
-  set(INSTALL_GROUP "relay")
+  set(INSTALL_GROUP "pubsub")
 
   set(SETTINGS_INSTALL_COMPONENT "${INSTALL_GROUP}-settings")
 
@@ -31,7 +31,7 @@ if(BUILD_RELAY)
 
   if(BUILD_CPP)
     set(TOOLS_INSTALL_COMPONENT "${INSTALL_GROUP}-tools")
-    set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-broker")
+    set(SERVER_INSTALL_COMPONENT "${INSTALL_GROUP}-relay")
   endif()
 
   set(COMPLETE_INSTALL_COMPONENT "${INSTALL_GROUP}-complete")

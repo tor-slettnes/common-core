@@ -9,7 +9,7 @@
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
 
-#include "cc/platform/relay/grpc/relay_service.grpc.pb.h"
+#include "cc/platform/pubsub/grpc/relay_service.grpc.pb.h"
 
 namespace relay::grpc
 {
@@ -17,9 +17,9 @@ namespace relay::grpc
     // Reader
 
     Reader::Reader(
-        const std::unique_ptr<::cc::platform::relay::grpc::Relay::Stub> &stub,
-        const ::cc::platform::relay::protobuf::Filters &filters)
-        : reader(stub->Reader(&this->context, filters))
+        const std::unique_ptr<::cc::platform::pubsub::grpc::Relay::Stub> &stub,
+        const ::cc::platform::pubsub::protobuf::Filters &filters)
+        : reader(stub->Subscriber(&this->context, filters))
     {
     }
 
@@ -35,7 +35,7 @@ namespace relay::grpc
 
     std::optional<MessageData> Reader::get()
     {
-        cc::platform::relay::protobuf::Message msg;
+        cc::platform::pubsub::protobuf::Message msg;
         if (this->reader->Read(&msg))
         {
             return MessageData(
