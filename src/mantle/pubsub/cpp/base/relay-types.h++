@@ -11,23 +11,24 @@
 #include "types/value.h++"
 #include "types/getter.h++"
 
-namespace relay
+namespace pubsub
 {
     using Topic = std::string;
     using TopicSet = std::unordered_set<Topic>;
     using Payload = core::types::Value;
-    using MessageData = std::pair<Topic, Payload>;
-    using MessageSource = core::types::Getter<MessageData>;
-    using MessageReceiver = std::function<void(Topic, Payload)>;
+
+    using MessageItem = std::pair<Topic, Payload>;
+    using MessageSource = core::types::Getter<MessageItem>;
+    using MessageHandler = std::function<void(Topic, Payload)>;
 
     //--------------------------------------------------------------------------
     // Signals
 
-    extern core::signal::MappingSignal<core::types::Value> signal_message;
+    extern core::signal::MappingSignal<core::types::Value> signal_publication;
 
     //--------------------------------------------------------------------------
     // Log scope
     define_log_scope("relay");
 
-}  // namespace relay
+}  // namespace pubsub
 

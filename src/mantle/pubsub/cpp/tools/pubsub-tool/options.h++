@@ -11,7 +11,7 @@
 #include "argparse/command.h++"
 #include "types/filesystem.h++"
 
-namespace relay::grpc
+namespace pubsub::grpc
 {
     enum class Transport
     {
@@ -43,8 +43,8 @@ namespace relay::grpc
             const Payload &payload);
 
     protected:
-        std::shared_ptr<relay::Subscriber> subscriber();
-        std::shared_ptr<relay::Publisher> publisher();
+        std::shared_ptr<pubsub::Subscriber> subscriber();
+        std::shared_ptr<pubsub::Publisher> publisher();
 
     private:
         const std::string implementation;
@@ -52,7 +52,7 @@ namespace relay::grpc
         Transport transport_;
         fs::path input_file_;
         bool json_input_;
-        std::shared_ptr<relay::Subscriber> subscriber_;
-        std::shared_ptr<relay::Publisher> publisher_;
+        std::shared_ptr<pubsub::Subscriber> subscriber_;
+        std::shared_ptr<pubsub::Publisher> publisher_;
     };
-}  // namespace relay::grpc
+}  // namespace pubsub::grpc

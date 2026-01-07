@@ -11,17 +11,17 @@
 
 #include <unordered_set>
 
-namespace relay::grpc
+namespace pubsub::grpc
 {
     //==========================================================================
     /// @class MessageQueue
     /// @brief Connect local signals to a single client over gRPC
 
     class MessageQueue
-        : public core::grpc::ServerStreamer<cc::platform::pubsub::protobuf::Message>
+        : public core::grpc::ServerStreamer<cc::platform::pubsub::protobuf::Publication>
     {
         using This = MessageQueue;
-        using Super = core::grpc::ServerStreamer<cc::platform::pubsub::protobuf::Message>;
+        using Super = core::grpc::ServerStreamer<cc::platform::pubsub::protobuf::Publication>;
 
     public:
         MessageQueue(
@@ -39,4 +39,4 @@ namespace relay::grpc
         std::unordered_set<std::string> topics_;
 
     };
-}  // namespace relay::grpc
+}  // namespace pubsub::grpc

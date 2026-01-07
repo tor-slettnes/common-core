@@ -13,7 +13,7 @@
 int main(int argc, char **argv)
 {
     core::application::initialize(argc, argv);
-    auto options = std::make_unique<relay::grpc::Options>();
+    auto options = std::make_unique<pubsub::grpc::Options>();
     options->apply(argc, argv);
 
     try

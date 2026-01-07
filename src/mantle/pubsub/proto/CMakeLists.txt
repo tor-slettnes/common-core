@@ -6,7 +6,7 @@
 #===============================================================================
 
 ### This can be used as a downstream dependency.
-set(TARGET "cc_relay_proto")
+set(TARGET "cc_pubsub_proto")
 
 ### Static/shared library dependencies.
 set(PROTO_DEPS cc_core_proto)

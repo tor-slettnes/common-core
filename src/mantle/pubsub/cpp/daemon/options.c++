@@ -7,7 +7,7 @@
 
 #include "options.h++"
 
-namespace relay
+namespace pubsub
 {
     Options::Options()
         : Super(),
@@ -51,4 +51,4 @@ namespace relay
     }
 
     std::unique_ptr<Options> options;
-}  // namespace relay
+}  // namespace pubsub

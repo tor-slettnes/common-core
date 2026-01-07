@@ -17,7 +17,7 @@ set(LIB_DEPS
 )
 
 set(PROTO_DEPS
-  cc_relay_proto
+  cc_pubsub_proto
 )
 
 

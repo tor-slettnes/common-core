@@ -10,7 +10,7 @@
 #include "thread/blockingqueue.h++"
 #include "settings/settings.h++"
 
-namespace relay
+namespace pubsub
 {
     constexpr auto SETTING_QUEUE_SIZE = "publish queue size";
     constexpr auto DEFAULT_QUEUE_SIZE = 4096;
@@ -43,7 +43,7 @@ namespace relay
 
     private:
         std::thread writer_thread_;
-        core::types::BlockingQueue<MessageData> writer_queue_;
+        core::types::BlockingQueue<MessageItem> writer_queue_;
     };
 
-}  // namespace relay
+}  // namespace pubsub

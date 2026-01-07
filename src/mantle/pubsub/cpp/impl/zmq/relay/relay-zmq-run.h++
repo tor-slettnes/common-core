@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 
-namespace relay::zmq
+namespace pubsub::zmq
 {
     void run_zmq_listeners(
         const std::string &producer_interface,

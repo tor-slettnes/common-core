@@ -12,7 +12,7 @@
 #include "cc/platform/pubsub/grpc/relay_service.grpc.pb.h"
 #include "cc/protobuf/status/status.pb.h"
 
-namespace relay::grpc
+namespace pubsub::grpc
 {
     //--------------------------------------------------------------------------
     // Reader
@@ -29,10 +29,10 @@ namespace relay::grpc
 
     public:
         void close() override;
-        std::optional<MessageData> get() override;
+        std::optional<MessageItem> get() override;
 
     private:
         ::grpc::ClientContext context;
-        std::unique_ptr<::grpc::ClientReader<::cc::platform::pubsub::protobuf::Message>> reader;
+        std::unique_ptr<::grpc::ClientReader<::cc::platform::pubsub::protobuf::Publication>> reader;
     };
-}  // namespace relay::grpc
+}  // namespace pubsub::grpc

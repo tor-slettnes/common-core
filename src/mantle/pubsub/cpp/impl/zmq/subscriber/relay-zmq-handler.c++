@@ -11,7 +11,7 @@
 #include "logging/logging.h++"
 #include "platform/symbols.h++"
 
-namespace relay::zmq
+namespace pubsub::zmq
 {
     Handler::Handler()
         : Super(TYPE_NAME_FULL(This))
@@ -25,7 +25,7 @@ namespace relay::zmq
             std::string topic = parts.at(0).as_string();
             std::string_view payload = parts.at(1).stringview();
             core::types::Value value = core::json::reader.decoded(payload);
-            relay::signal_message.emit(topic, value);
+            pubsub::signal_publication.emit(topic, value);
         }
         else
         {
@@ -34,4 +34,4 @@ namespace relay::zmq
                         parts);
         }
     }
-}  // namespace relay::zmq
+}  // namespace pubsub::zmq

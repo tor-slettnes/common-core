@@ -11,15 +11,15 @@
 #include "relay-zmq-common.h++"
 #include "types/create-shared.h++"
 
-namespace relay::zmq
+namespace pubsub::zmq
 {
     //==========================================================================
     /// @class Subscriber
     /// @brief Subscribe to message publications
     ///
-    /// Received messages are re-emitted locally via `relay::signal_message`.
+    /// Received messages are re-emitted locally via `pubsub::signal_publication`.
 
-    class Subscriber : public relay::Subscriber,
+    class Subscriber : public pubsub::Subscriber,
                        public core::zmq::Subscriber,
                        public core::types::enable_create_shared<Subscriber>
     {
@@ -38,4 +38,4 @@ namespace relay::zmq
         void stop_reader() override;
     };
 
-}  // namespace relay::zmq
+}  // namespace pubsub::zmq

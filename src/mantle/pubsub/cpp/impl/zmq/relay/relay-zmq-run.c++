@@ -12,7 +12,7 @@
 #include "platform/init.h++"
 #include "logging/logging.h++"
 
-namespace relay::zmq
+namespace pubsub::zmq
 {
     constexpr auto SHUTDOWN_SIGNAL_HANDLE = "relay-zmq-listeners";
 

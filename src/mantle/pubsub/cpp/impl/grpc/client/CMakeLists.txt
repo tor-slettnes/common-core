@@ -15,7 +15,7 @@ set(LIB_DEPS
   cc_core_messaging_grpc_client)
 
 set(PROTO_DEPS
-  cc_relay_proto
+  cc_pubsub_proto
 )
 
 ### Source files

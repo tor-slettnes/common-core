@@ -8,7 +8,7 @@
 #pragma once
 #include "relay-types.h++"
 
-namespace relay
+namespace pubsub
 {
     //--------------------------------------------------------------------------
     // Abstract Interface
@@ -24,7 +24,7 @@ namespace relay
     public:
         void subscribe(const std::string &handle,
                        const TopicSet &topics,
-                       const MessageReceiver &receiver);
+                       const MessageHandler &handler);
 
         void unsubscribe(const std::string &handle);
 
@@ -33,4 +33,4 @@ namespace relay
         virtual void stop_reader() {}
     };
 
-}  // namespace relay
+}  // namespace pubsub

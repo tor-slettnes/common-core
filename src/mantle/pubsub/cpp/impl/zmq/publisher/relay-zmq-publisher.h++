@@ -12,13 +12,13 @@
 #include "zmq-publisher.h++"
 #include "types/create-shared.h++"
 
-namespace relay::zmq
+namespace pubsub::zmq
 {
     //==========================================================================
     // @class Publisher
     // @brief Publish locally-emitted relay signals over ZeroMQ
 
-    class Publisher : public relay::Publisher,
+    class Publisher : public pubsub::Publisher,
                       public core::zmq::Publisher,
                       public core::types::enable_create_shared_from_this<Publisher>
     {
@@ -44,4 +44,4 @@ namespace relay::zmq
     private:
         std::shared_ptr<SignalWriter> signal_writer;
     };
-}  // namespace relay::zmq
+}  // namespace pubsub::zmq

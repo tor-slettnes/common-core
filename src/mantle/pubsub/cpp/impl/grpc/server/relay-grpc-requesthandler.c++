@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file relay-grpc-requesthandler.c++
-/// @brief Message forwarding over gRPC streams
+/// @brief Forward message publications over gRPC streams
 /// @author Tor Slettnes
 //==============================================================================
 
@@ -11,7 +11,7 @@
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
 
-namespace relay::grpc
+namespace pubsub::grpc
 {
     //==========================================================================
     // @class RequestHandler
@@ -20,7 +20,7 @@ namespace relay::grpc
     ::grpc::Status RequestHandler::Subscriber(
         ::grpc::ServerContext* context,
         const ::cc::platform::pubsub::protobuf::Filters* request,
-        ::grpc::ServerWriter<::cc::platform::pubsub::protobuf::Message>* writer)
+        ::grpc::ServerWriter<::cc::platform::pubsub::protobuf::Publication>* writer)
     {
         std::unordered_set<std::string> topics(
             request->topics().begin(),
@@ -44,15 +44,15 @@ namespace relay::grpc
 
     ::grpc::Status RequestHandler::Publisher(
         ::grpc::ServerContext* context,
-        ::grpc::ServerReader<::cc::platform::pubsub::protobuf::Message>* reader,
+        ::grpc::ServerReader<::cc::platform::pubsub::protobuf::Publication>* reader,
         ::google::protobuf::Empty* reply)
     {
-        ::cc::platform::pubsub::protobuf::Message message;
-        while (reader->Read(&message))
+        ::cc::platform::pubsub::protobuf::Publication publication;
+        while (reader->Read(&publication))
         {
-            relay::signal_message.emit(
-                message.topic(),
-                protobuf::decoded<core::types::Value>(message.payload()));
+            pubsub::signal_publication.emit(
+                publication.topic(),
+                protobuf::decoded<core::types::Value>(publication.payload()));
         }
 
         return ::grpc::Status::OK;
@@ -60,12 +60,12 @@ namespace relay::grpc
 
     ::grpc::Status RequestHandler::Publish(
         ::grpc::ServerContext* context,
-        const ::cc::platform::pubsub::protobuf::Message* message,
+        const ::cc::platform::pubsub::protobuf::Publication *message,
         ::google::protobuf::Empty* reply)
     {
         try
         {
-            relay::signal_message.emit(
+            pubsub::signal_publication.emit(
                 message->topic(),
                 protobuf::decoded<core::types::Value>(message->payload()));
             return ::grpc::Status::OK;
@@ -76,4 +76,4 @@ namespace relay::grpc
         }
     }
 
-}  // namespace relay::grpc
+}  // namespace pubsub::grpc

@@ -7,7 +7,7 @@
 
 #include "relay-publisher.h++"
 
-namespace relay
+namespace pubsub
 {
     Publisher::Publisher(std::size_t queue_size)
         : writer_queue_(queue_size)
@@ -58,4 +58,4 @@ namespace relay
         }
     }
 
-}  // namespace relay
+}  // namespace pubsub

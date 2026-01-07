@@ -11,7 +11,7 @@
 #include "platform/symbols.h++"
 #include "parsers/json/writer.h++"
 
-namespace relay::zmq
+namespace pubsub::zmq
 {
     void SignalWriter::initialize()
     {
@@ -19,14 +19,14 @@ namespace relay::zmq
 
         // Connect local signals from `api/relay-common.h++` to this writer.
         using namespace std::placeholders;
-        relay::signal_message.connect(
+        pubsub::signal_publication.connect(
             TYPE_NAME_FULL(This),
             std::bind(&SignalWriter::write_message, this, _1, _2, _3));
     }
 
     void SignalWriter::deinitialize()
     {
-        relay::signal_message.disconnect(TYPE_NAME_FULL(This));
+        pubsub::signal_publication.disconnect(TYPE_NAME_FULL(This));
         Super::deinitialize();
     }
 
@@ -52,4 +52,4 @@ namespace relay::zmq
         }
     }
 
-}  // namespace relay::zmq
+}  // namespace pubsub::zmq

@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file relay-grpc-requesthandler.h++
-/// @brief Message forwarding over gRPC streams
+/// @brief Forward message publications over gRPC streams
 /// @author Tor Slettnes
 //==============================================================================
 
@@ -12,7 +12,7 @@
 #include "cc/platform/pubsub/grpc/relay_service.grpc.pb.h"
 
 
-namespace relay::grpc
+namespace pubsub::grpc
 {
     //==========================================================================
     // @class RequestHandler
@@ -29,16 +29,16 @@ namespace relay::grpc
         ::grpc::Status Subscriber(
             ::grpc::ServerContext* context,
             const ::cc::platform::pubsub::protobuf::Filters* request,
-            ::grpc::ServerWriter<::cc::platform::pubsub::protobuf::Message>* writer) override;
+            ::grpc::ServerWriter<::cc::platform::pubsub::protobuf::Publication>* writer) override;
 
         ::grpc::Status Publisher(
             ::grpc::ServerContext* context,
-            ::grpc::ServerReader<::cc::platform::pubsub::protobuf::Message>* reader,
+            ::grpc::ServerReader<::cc::platform::pubsub::protobuf::Publication>* reader,
             ::google::protobuf::Empty *reply) override;
 
         ::grpc::Status Publish(
             ::grpc::ServerContext* context,
-            const ::cc::platform::pubsub::protobuf::Message* message,
+            const ::cc::platform::pubsub::protobuf::Publication* message,
             ::google::protobuf::Empty *reply) override;
     };
-}  // namespace relay::grpc
+}  // namespace pubsub::grpc

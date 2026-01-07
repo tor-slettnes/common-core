@@ -11,7 +11,7 @@
 
 #include "cc/platform/pubsub/grpc/relay_service.grpc.pb.h"
 
-namespace relay::grpc
+namespace pubsub::grpc
 {
     //--------------------------------------------------------------------------
     // Reader
@@ -33,12 +33,13 @@ namespace relay::grpc
         this->context.TryCancel();
     }
 
-    std::optional<MessageData> Reader::get()
+    std::optional<pubsub::MessageItem> Reader::get()
     {
-        cc::platform::pubsub::protobuf::Message msg;
+        cc::platform::pubsub::protobuf::Publication msg;
+
         if (this->reader->Read(&msg))
         {
-            return MessageData(
+            return pubsub::MessageItem(
                 msg.topic(),
                 protobuf::decoded<core::types::Value>(msg.payload()));
         }
@@ -49,4 +50,4 @@ namespace relay::grpc
         }
     }
 
-}  // namespace relay::grpc
+}  // namespace pubsub::grpc

@@ -10,7 +10,7 @@
 #include "protobuf-message.h++"
 #include "protobuf-inline.h++"
 
-namespace relay::grpc
+namespace pubsub::grpc
 {
     void Client::initialize()
     {
@@ -29,11 +29,10 @@ namespace relay::grpc
     bool Client::write(const std::string &topic,
                        const core::types::Value &payload)
     {
-        Message message;
-        message.set_topic(topic);
-        protobuf::encode(payload, message.mutable_payload());
-
-        return this->writer_->Write(message);
+        cc::platform::pubsub::protobuf::Publication msg;
+        msg.set_topic(topic);
+        protobuf::encode(payload, msg.mutable_payload());
+        return this->writer_->Write(msg);
     }
 
     void Client::start_writer()
@@ -47,12 +46,12 @@ namespace relay::grpc
                 this->writer_context_.get(),
                 this->writer_response_.get());
         }
-        relay::Publisher::start_writer();
+        pubsub::Publisher::start_writer();
     }
 
     void Client::stop_writer()
     {
-        relay::Publisher::stop_writer();
+        pubsub::Publisher::stop_writer();
 
         if (this->writer_)
         {
@@ -70,12 +69,12 @@ namespace relay::grpc
             this->reader_ = this->create_reader({});
             this->reader_thread_ = std::thread(&This::read_worker, this);
         }
-        relay::Subscriber::start_reader();
+        pubsub::Subscriber::start_reader();
     }
 
     void Client::stop_reader()
     {
-        relay::Subscriber::stop_reader();
+        pubsub::Subscriber::stop_reader();
         if (this->reader_thread_.joinable())
         {
             this->reader_->close();
@@ -95,9 +94,9 @@ namespace relay::grpc
     {
         while (const auto &message_data = this->reader_->get())
         {
-            relay::signal_message.emit(
+            pubsub::signal_publication.emit(
                 message_data->first,
                 message_data->second);
         }
     }
-}  // namespace relay::grpc
+}  // namespace pubsub::grpc

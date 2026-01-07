@@ -7,9 +7,9 @@
 
 #pragma once
 
-namespace relay::zmq
+namespace pubsub::zmq
 {
     constexpr auto PRODUCER_CHANNEL = "Message Producer";
     constexpr auto CONSUMER_CHANNEL = "Message Consumer";
 
-}  // namespace relay::zmq
+}  // namespace pubsub::zmq

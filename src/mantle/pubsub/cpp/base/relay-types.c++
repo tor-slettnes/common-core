@@ -7,13 +7,13 @@
 
 #include "relay-types.h++"
 
-namespace relay
+namespace pubsub
 {
     //--------------------------------------------------------------------------
     // Signals
 
-    core::signal::MappingSignal<core::types::Value> signal_message(
-        "signal_message",
+    core::signal::MappingSignal<core::types::Value> signal_publication(
+        "signal_publication",
         false);
 
-}  // namespace relay
+}  // namespace pubsub

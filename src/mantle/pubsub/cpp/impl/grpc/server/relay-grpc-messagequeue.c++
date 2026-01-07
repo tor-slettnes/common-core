@@ -10,7 +10,7 @@
 #include "protobuf-variant-types.h++"
 #include "platform/symbols.h++"
 
-namespace relay::grpc
+namespace pubsub::grpc
 {
     MessageQueue::MessageQueue(
         const std::unordered_set<std::string> &topics,
@@ -24,14 +24,14 @@ namespace relay::grpc
     {
         using namespace std::placeholders;
 
-        relay::signal_message.connect(
+        pubsub::signal_publication.connect(
             TYPE_NAME_FULL(This),
             std::bind(&This::enqueue_message, this, _2, _3));
     }
 
     void MessageQueue::deinitialize()
     {
-        relay::signal_message.disconnect(
+        pubsub::signal_publication.disconnect(
             TYPE_NAME_FULL(This));
     }
 
@@ -41,10 +41,10 @@ namespace relay::grpc
     {
         if (this->topics_.empty() || this->topics_.count(topic))
         {
-            cc::platform::pubsub::protobuf::Message msg;
+            cc::platform::pubsub::protobuf::Publication msg;
             msg.set_topic(topic);
             protobuf::encode(payload, msg.mutable_payload());
             this->put(std::move(msg));
         }
     }
-}  // namespace relay::grpc
+}  // namespace pubsub::grpc

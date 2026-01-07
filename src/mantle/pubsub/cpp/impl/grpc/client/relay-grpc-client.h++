@@ -15,18 +15,17 @@
 #include "grpc-clientwrapper.h++"
 #include "types/create-shared.h++"
 
-namespace relay::grpc
+namespace pubsub::grpc
 {
     class Client
-        : public relay::Publisher,
-          public relay::Subscriber,
+        : public pubsub::Publisher,
+          public pubsub::Subscriber,
           public core::grpc::ClientWrapper<cc::platform::pubsub::grpc::Relay>,
           public core::types::enable_create_shared<Client>
     {
         using This = Client;
         using ClientBase = core::grpc::ClientWrapper<cc::platform::pubsub::grpc::Relay>;
-        using Message = cc::platform::pubsub::protobuf::Message;
-        using MessageReceiver = std::function<void(std::string, core::types::Value)>;
+        using ClientWriter = ::grpc::ClientWriter<cc::platform::pubsub::protobuf::Publication>;
 
     protected:
         template <class... Args>
@@ -57,9 +56,9 @@ namespace relay::grpc
         std::thread reader_thread_;
         std::shared_ptr<Reader> reader_;
 
-        std::unique_ptr<::grpc::ClientWriter<Message>> writer_;
+        std::unique_ptr<ClientWriter> writer_;
         std::unique_ptr<::grpc::ClientContext> writer_context_;
         std::unique_ptr<::google::protobuf::Empty> writer_response_;
         core::grpc::Status writer_status_;
     };
-}  // namespace relay::grpc
+}  // namespace pubsub::grpc

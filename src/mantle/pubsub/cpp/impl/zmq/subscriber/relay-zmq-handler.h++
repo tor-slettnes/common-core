@@ -9,7 +9,7 @@
 #include "zmq-subscriber.h++"
 #include "types/create-shared.h++"
 
-namespace relay::zmq
+namespace pubsub::zmq
 {
     class Handler : public core::zmq::MessageHandler,
                     public core::types::enable_create_shared<Handler>
@@ -21,4 +21,4 @@ namespace relay::zmq
         Handler();
         void handle(const core::zmq::MessageParts &parts) override;
     };
-}  // namespace relay::zmq
+}  // namespace pubsub::zmq

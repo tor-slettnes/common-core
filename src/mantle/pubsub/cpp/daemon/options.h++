@@ -8,7 +8,7 @@
 #pragma once
 #include "argparse/server.h++"
 
-namespace relay
+namespace pubsub
 {
     class Options : public core::argparse::ServerOptions
     {
@@ -29,4 +29,4 @@ namespace relay
     };
 
     extern std::unique_ptr<Options> options;
-}  // namespace relay
+}  // namespace pubsub

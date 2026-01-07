@@ -13,7 +13,7 @@
 #include "parsers/json/reader.h++"
 #include "types/symbolmap.h++"
 
-namespace relay::grpc
+namespace pubsub::grpc
 {
     core::types::SymbolMap<Transport> transport_map =
         {
@@ -145,7 +145,7 @@ namespace relay::grpc
 
     void Options::on_monitor_start()
     {
-        relay::TopicSet topics;
+        pubsub::TopicSet topics;
 
         while (auto arg = this->next_arg())
         {
@@ -172,18 +172,18 @@ namespace relay::grpc
         core::str::format(std::cout, "[%s] %s\n", topic, payload);
     }
 
-    std::shared_ptr<relay::Subscriber> Options::subscriber()
+    std::shared_ptr<pubsub::Subscriber> Options::subscriber()
     {
         if (!this->subscriber_)
         {
             switch (this->transport_)
             {
             case Transport::ZMQ:
-                this->subscriber_ = relay::zmq::Subscriber::create_shared(this->host);
+                this->subscriber_ = pubsub::zmq::Subscriber::create_shared(this->host);
                 break;
 
             case Transport::GRPC:
-                if (auto client = relay::grpc::Client::create_shared(this->host))
+                if (auto client = pubsub::grpc::Client::create_shared(this->host))
                 {
                     this->subscriber_ = client;
                     this->publisher_ = client;
@@ -195,18 +195,18 @@ namespace relay::grpc
         return this->subscriber_;
     }
 
-    std::shared_ptr<relay::Publisher> Options::publisher()
+    std::shared_ptr<pubsub::Publisher> Options::publisher()
     {
         if (!this->publisher_)
         {
             switch (this->transport_)
             {
             case Transport::ZMQ:
-                this->publisher_ = relay::zmq::Publisher::create_shared(this->host);
+                this->publisher_ = pubsub::zmq::Publisher::create_shared(this->host);
                 break;
 
             case Transport::GRPC:
-                if (auto client = relay::grpc::Client::create_shared(this->host))
+                if (auto client = pubsub::grpc::Client::create_shared(this->host))
                 {
                     this->subscriber_ = client;
                     this->publisher_ = client;
@@ -218,4 +218,4 @@ namespace relay::grpc
         return this->publisher_;
     }
 
-}  // namespace relay::grpc
+}  // namespace pubsub::grpc

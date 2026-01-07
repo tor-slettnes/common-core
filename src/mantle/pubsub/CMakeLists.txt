@@ -5,7 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-if(BUILD_RELAY)
+if(BUILD_PUBSUB)
   set(COMMON_SUMMARY
     "Pub/Sub broker supporting multiple payload formats and transports")
 

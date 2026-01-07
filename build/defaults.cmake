@@ -193,8 +193,8 @@ cmake_dependent_option(BUILD_SWITCHBOARD
   ON "BUILD_SHARED_APPS"
   OFF)
 
-cmake_dependent_option(BUILD_RELAY
-  "Build/install Message Relay"
+cmake_dependent_option(BUILD_PUBSUB
+  "Build/install Pub/Sub Relay"
   ON "BUILD_SHARED_APPS"
   OFF)
 

@@ -9,7 +9,7 @@
 #include "relay-types.h++"
 #include "parsers/json/writer.h++"
 
-namespace relay::zmq
+namespace pubsub::zmq
 {
     Publisher::Publisher(const std::string &bind_address,
                          const std::string &channel_name,
@@ -21,12 +21,12 @@ namespace relay::zmq
     void Publisher::initialize()
     {
         core::zmq::Publisher::initialize();
-        relay::Publisher::initialize();
+        pubsub::Publisher::initialize();
     }
 
     void Publisher::deinitialize()
     {
-        relay::Publisher::deinitialize();
+        pubsub::Publisher::deinitialize();
         core::zmq::Publisher::deinitialize();
     }
 
@@ -34,12 +34,12 @@ namespace relay::zmq
     {
         this->signal_writer = SignalWriter::create_shared(this->shared_from_this());
         this->signal_writer->initialize();
-        relay::Publisher::start_writer();
+        pubsub::Publisher::start_writer();
     }
 
     void Publisher::stop_writer()
     {
-        relay::Publisher::stop_writer();
+        pubsub::Publisher::stop_writer();
         if (this->signal_writer)
         {
             this->signal_writer->deinitialize();
@@ -56,4 +56,4 @@ namespace relay::zmq
         return true;
     }
 
-}  // namespace relay::zmq
+}  // namespace pubsub::zmq

@@ -10,7 +10,7 @@
 #include "zmq-messagewriter.h++"
 #include "types/create-shared.h++"
 
-namespace relay::zmq
+namespace pubsub::zmq
 {
     //==========================================================================
     // @class SignalWriter
@@ -36,4 +36,4 @@ namespace relay::zmq
             const std::string &topic,
             const core::types::Value &payload);
     };
-}  // namespace relay::zmq
+}  // namespace pubsub::zmq

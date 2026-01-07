@@ -13,7 +13,7 @@
 #include "chrono/date-time.h++"
 #include "string/misc.h++"
 
-namespace relay::grpc
+namespace pubsub::grpc
 {
     void run_grpc_service(
         const std::string &listen_address)
@@ -43,4 +43,4 @@ namespace relay::grpc
         core::platform::signal_shutdown.disconnect(signal_handle);
         server.reset();
     }
-}  // namespace relay::grpc
+}  // namespace pubsub::grpc

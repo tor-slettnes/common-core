@@ -7,7 +7,7 @@
 
 #include "relay-subscriber.h++"
 
-namespace relay
+namespace pubsub
 {
     //--------------------------------------------------------------------------
     // Abstract Base
@@ -19,17 +19,17 @@ namespace relay
 
     void Subscriber::subscribe(const std::string &handle,
                                const TopicSet &topics,
-                               const MessageReceiver &receiver)
+                               const MessageHandler &handler)
     {
         using namespace std::placeholders;
-        signal_message.connect(
+        signal_publication.connect(
             handle,
             [=](core::signal::MappingAction action,
                 const std::string &key,
                 const core::types::Value &value) {
                 if (topics.empty() || topics.count(key))
                 {
-                    receiver(key, value);
+                    handler(key, value);
                 }
             });
 
@@ -38,11 +38,11 @@ namespace relay
 
     void Subscriber::unsubscribe(const std::string &handle)
     {
-        signal_message.disconnect(handle);
-        if (relay::signal_message.connection_count() == 0)
+        signal_publication.disconnect(handle);
+        if (pubsub::signal_publication.connection_count() == 0)
         {
             this->stop_reader();
         }
     }
 
-}  // namespace relay
+}  // namespace pubsub
