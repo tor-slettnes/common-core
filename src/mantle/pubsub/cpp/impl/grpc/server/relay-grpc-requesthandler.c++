@@ -22,7 +22,7 @@ namespace pubsub::grpc
         const ::cc::platform::pubsub::protobuf::Filters* request,
         ::grpc::ServerWriter<::cc::platform::pubsub::protobuf::Publication>* writer)
     {
-        std::unordered_set<std::string> topics(
+        pubsub::TopicSet topics(
             request->topics().begin(),
             request->topics().end());
 

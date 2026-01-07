@@ -6,11 +6,16 @@
 //==============================================================================
 
 #include "relay-publisher.h++"
+#include "settings/settings.h++"
 
 namespace pubsub
 {
-    Publisher::Publisher(std::size_t queue_size)
-        : writer_queue_(queue_size)
+    constexpr auto SETTING_QUEUE_SIZE = "publish queue size";
+    constexpr auto DEFAULT_QUEUE_SIZE = 4096;
+
+    Publisher::Publisher()
+        : writer_queue_(
+            core::settings->get(SETTING_QUEUE_SIZE, DEFAULT_QUEUE_SIZE).as_uint())
     {
     }
 

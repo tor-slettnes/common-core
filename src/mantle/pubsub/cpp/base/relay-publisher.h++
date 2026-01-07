@@ -8,13 +8,9 @@
 #pragma once
 #include "relay-types.h++"
 #include "thread/blockingqueue.h++"
-#include "settings/settings.h++"
 
 namespace pubsub
 {
-    constexpr auto SETTING_QUEUE_SIZE = "publish queue size";
-    constexpr auto DEFAULT_QUEUE_SIZE = 4096;
-
     //--------------------------------------------------------------------------
     // Abstract Publisher Interface
 
@@ -23,8 +19,7 @@ namespace pubsub
         using This = Publisher;
 
     protected:
-        Publisher(
-            std::size_t queue_size = core::settings->get(SETTING_QUEUE_SIZE, DEFAULT_QUEUE_SIZE));
+        Publisher();
 
     public:
         virtual void initialize();

@@ -8,31 +8,34 @@
 #include "relay-grpc-messagequeue.h++"
 #include "relay-types.h++"
 #include "protobuf-variant-types.h++"
-#include "platform/symbols.h++"
 
 namespace pubsub::grpc
 {
     MessageQueue::MessageQueue(
-        const std::unordered_set<std::string> &topics,
+        const pubsub::TopicSet &topics,
         std::size_t maxsize)
         : Super(maxsize),
           topics_(topics)
     {
     }
 
+    MessageQueue::~MessageQueue()
+    {
+        this->deinitialize();
+    }
+
     void MessageQueue::initialize()
     {
         using namespace std::placeholders;
 
-        pubsub::signal_publication.connect(
-            TYPE_NAME_FULL(This),
+        this->signal_handle_ = pubsub::signal_publication.connect(
             std::bind(&This::enqueue_message, this, _2, _3));
     }
 
     void MessageQueue::deinitialize()
     {
         pubsub::signal_publication.disconnect(
-            TYPE_NAME_FULL(This));
+            this->signal_handle_);
     }
 
     void MessageQueue::enqueue_message(

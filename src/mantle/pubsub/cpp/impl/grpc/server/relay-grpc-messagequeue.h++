@@ -6,8 +6,10 @@
 //==============================================================================
 
 #pragma once
-#include "cc/platform/pubsub/protobuf/pubsub_types.pb.h"
+#include "relay-types.h++"
 #include "grpc-serverstreamer.h++"
+
+#include "cc/platform/pubsub/protobuf/pubsub_types.pb.h"
 
 #include <unordered_set>
 
@@ -25,8 +27,10 @@ namespace pubsub::grpc
 
     public:
         MessageQueue(
-            const std::unordered_set<std::string> &topics,
+            const pubsub::TopicSet &topics,
             std::size_t maxsize = 0);
+
+        ~MessageQueue();
 
         void initialize();
         void deinitialize();
@@ -36,6 +40,7 @@ namespace pubsub::grpc
             const core::types::Value &payload);
 
     private:
+        std::string signal_handle_;
         std::unordered_set<std::string> topics_;
 
     };
