@@ -161,14 +161,17 @@ namespace core
 
         void dur_to_stream(std::ostream &stream,
                            const Duration &dur,
-                           const std::optional<std::string> &secondsformat = "%.3gs",
+                           const std::optional<std::string> &secondsformat = "%.3fs",
                            const std::optional<std::string> &minutesformat = "%zm",
                            const std::optional<std::string> &hoursformat = "%zh",
                            const std::optional<std::string> &daysformat = "%zd",
                            const std::optional<std::string> &monthsformat = {},
                            const std::optional<std::string> &yearsformat = "%zy",
                            uint max_divisions = 3,
-                           const std::string delimiter = " ");
+                           const std::string delimiter = " ",
+                           const std::string &date_prefix = "",
+                           const std::string &time_prefix = "",
+                           double precision = 1e-9);
 
         /// Return the provided timepoint as a JavaScript time string
         /// @param[in] tp
@@ -209,18 +212,16 @@ namespace core
                               uint decimals = 3,
                               const std::string &format = DEFAULT_FORMAT);
 
-        /// Return a formatted string representation of the provided duration.
+
+        /// Return a formatted IS08601 string representation of the provided duration.
         /// @param[in] duration
         ///    A duration
         /// @param[in] decimals
         ///     Sub-second resolution.
-        /// @param[in] format
-        ///     Output format for std::put_time().
         /// @return
         ///     String representing the provided duration
-        std::string to_string(const Duration &duration,
-                              uint decimals,
-                              const std::string &format = DEFAULT_DURATION_FORMAT);
+        std::string to_js_string(const Duration &duration,
+                                 uint decimals = 3);
 
         /// @brief
         ///     Return a human readable string representation of the provided duration,
@@ -261,7 +262,22 @@ namespace core
                               const std::optional<std::string> &monthsformat = {},
                               const std::optional<std::string> &yearsformat = "%zy",
                               uint max_divisions = 6,
-                              const std::string &delimiter = " ");
+                              const std::string &delimiter = " ",
+                              const std::string &date_prefix = "",
+                              const std::string &time_prefix = "");
+
+        /// Return a formatted string representation of the provided duration.
+        /// @param[in] duration
+        ///    A duration
+        /// @param[in] decimals
+        ///     Sub-second resolution.
+        /// @param[in] format
+        ///     Output format for std::put_time().
+        /// @return
+        ///     String representing the provided duration
+        std::string to_string(const Duration &duration,
+                              uint decimals,
+                              const std::string &format = DEFAULT_DURATION_FORMAT);
 
         /// Return a human readable string representation of the provided `std::tm` structure.
         std::string to_string(const std::tm &tm,

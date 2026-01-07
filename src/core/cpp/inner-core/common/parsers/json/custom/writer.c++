@@ -55,9 +55,19 @@ namespace core::json
                             indent);
             break;
 
+        case types::ValueType::TIMEPOINT:
+            This::to_stream(stream,
+                            dt::to_js_string(value.as_timepoint()),
+                            pretty,
+                            indent);
+            break;
+
+
         case types::ValueType::DURATION:
-            // Encode duration as seconds
-            This::to_stream(stream, value.as_real(), pretty, indent);
+            This::to_stream(stream,
+                            dt::to_js_string(value.as_duration()),
+                            pretty,
+                            indent);
             break;
 
         case types::ValueType::KVMAP:

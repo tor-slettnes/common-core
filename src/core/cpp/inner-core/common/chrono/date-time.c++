@@ -303,16 +303,22 @@ namespace core
                            const std::optional<std::string> &daysformat,
                            const std::optional<std::string> &monthsformat,
                            const std::optional<std::string> &yearsformat,
-                           uint maxdivs,
-                           const std::string delimiter)
+                           uint max_divisions,
+                           const std::string delimiter,
+                           const std::string &date_prefix,
+                           const std::string &time_prefix,
+                           double precision)
         {
             if (dur < dt::Duration::zero())
             {
                 stream << "-";
             }
             double d = dt::to_double(std::chrono::abs(dur));
+
             std::string sep;
             uint divs = 0;
+
+            stream << date_prefix;
 
             if (d >= LEAP)
             {
@@ -332,7 +338,8 @@ namespace core
                 divs++;
             }
 
-            if (d >= MONTH && monthsformat.has_value() && divs < maxdivs)
+            if (d >= MONTH && monthsformat.has_value() &&
+                ((max_divisions == 0) || (divs < max_divisions)))
             {
                 stream << sep;
                 sep = delimiter;
@@ -346,7 +353,8 @@ namespace core
                 divs++;
             }
 
-            if (d >= DAY && daysformat.has_value() && divs < maxdivs)
+            if (d >= DAY && daysformat.has_value() &&
+                ((max_divisions == 0) || (divs < max_divisions)))
             {
                 stream << sep;
                 sep = delimiter;
@@ -360,7 +368,13 @@ namespace core
                 divs++;
             }
 
-            if (d >= HOUR && hoursformat.has_value() && divs < maxdivs)
+            if (d > 0)
+            {
+                stream << time_prefix;
+            }
+
+            if (d >= HOUR && hoursformat.has_value() &&
+                ((max_divisions == 0) || (divs < max_divisions)))
             {
                 stream << sep;
                 sep = delimiter;
@@ -374,7 +388,8 @@ namespace core
                 divs++;
             }
 
-            if (d >= MINUTE && minutesformat.has_value() && divs < maxdivs)
+            if (d >= MINUTE && minutesformat.has_value() &&
+                ((max_divisions == 0) || (divs < max_divisions)))
             {
                 stream << sep;
                 sep = delimiter;
@@ -388,7 +403,9 @@ namespace core
                 divs++;
             }
 
-            if ((d || sep.empty()) && secondsformat.has_value() && divs < maxdivs)
+            if ((d >= precision || (divs == 0)) &&
+                secondsformat.has_value() &&
+                ((max_divisions == 0) || (divs < max_divisions)))
             {
                 stream << sep;
                 str::format(stream, secondsformat.value(), d);
@@ -417,13 +434,21 @@ namespace core
             return dt::to_string(tp, true, decimals, format);
         }
 
-        std::string to_string(const Duration &duration,
-                              uint decimals,
-                              const std::string &format)
+        std::string to_js_string(const Duration &duration,
+                                 uint decimals)
         {
-            std::ostringstream stream;
-            dur_to_stream(stream, duration, decimals, format);
-            return stream.str();
+            return to_string(
+                duration,                                // duration
+                "%." + std::to_string(decimals) + "fS",  // secondsformat
+                "%zM",                                   // minutesformat
+                "%zH",                                   // hoursformat
+                "%zD",                                   // daysformat
+                {},                                      // monthsformat
+                {},                                      // yearsformat
+                0,                                       // max_divisions
+                "",                                      // delimiter
+                "P",                                     // date_prefix
+                "T");                                    // time_prefix
         }
 
         std::string to_string(const Duration &duration,
@@ -434,7 +459,9 @@ namespace core
                               const std::optional<std::string> &monthsformat,
                               const std::optional<std::string> &yearsformat,
                               uint max_divisions,
-                              const std::string &delimiter)
+                              const std::string &delimiter,
+                              const std::string &date_prefix,
+                              const std::string &time_prefix)
         {
             std::ostringstream stream;
             dur_to_stream(stream,
@@ -446,7 +473,18 @@ namespace core
                           monthsformat,
                           yearsformat,
                           max_divisions,
-                          delimiter);
+                          delimiter,
+                          date_prefix,
+                          time_prefix);
+            return stream.str();
+        }
+
+        std::string to_string(const Duration &duration,
+                              uint decimals,
+                              const std::string &format)
+        {
+            std::ostringstream stream;
+            dur_to_stream(stream, duration, decimals, format);
             return stream.str();
         }
 
