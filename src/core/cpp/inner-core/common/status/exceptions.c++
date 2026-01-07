@@ -52,7 +52,8 @@ namespace core::exception
         : Super(std::errc::invalid_argument,
                 TYPE_NAME_BASE(This),
                 msg,
-                {{"argument", argument}})
+                argument ? types::KeyValueMap({{"argument", argument}})
+                         : types::KeyValueMap())
     {
     }
 
@@ -271,7 +272,7 @@ namespace core::exception
                     e.code().category().name(),  // origin
                     e.code().value(),            // code
                     {},                          // id
-                    status::Level::ERROR,       // level
+                    status::Level::ERROR,        // level
                     {},                          // timepoint
                     {}),                         // attributes
                 std::system_error(e),
@@ -330,7 +331,7 @@ namespace core::exception
                     platform::path->exec_name(),  // origin
                     EPERM,                        // code
                     TYPE_NAME_BASE(This),         // symbol
-                    status::Level::ERROR,        // level
+                    status::Level::ERROR,         // level
                     {},                           // timepoint
                     {{"operation", operation}}),  // attributes
                 std::make_error_code(std::errc::permission_denied),
@@ -360,7 +361,7 @@ namespace core::exception
                     e.code().category().name(),  // origin
                     e.code().value(),            // code
                     TYPE_NAME_BASE(This),        // id
-                    status::Level::ERROR,       // level
+                    status::Level::ERROR,        // level
                     {},                          // timepoint
                     {
                         {"path1", types::Value(e.path1().string())},
@@ -522,7 +523,7 @@ namespace core::exception
                     platform::path->exec_name(),  // origin
                     0,                            // code
                     "UNKNOWN",                    // symbol
-                    status::Level::ERROR);       // level
+                    status::Level::ERROR);        // level
             }
         }
         else

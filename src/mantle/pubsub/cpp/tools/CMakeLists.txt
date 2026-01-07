@@ -5,4 +5,4 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-add_subdirectory(message-tool)
+add_subdirectory(pubsub-tool)

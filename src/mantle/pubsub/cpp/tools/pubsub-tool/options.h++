@@ -42,18 +42,17 @@ namespace relay::grpc
             const Topic &topic,
             const Payload &payload);
 
-    private:
-        const std::string implementation;
-        const std::string signal_handle;
-
     protected:
         std::shared_ptr<relay::Subscriber> subscriber();
         std::shared_ptr<relay::Publisher> publisher();
 
     private:
+        const std::string implementation;
+        const std::string signal_handle;
         Transport transport_;
+        fs::path input_file_;
+        bool json_input_;
         std::shared_ptr<relay::Subscriber> subscriber_;
         std::shared_ptr<relay::Publisher> publisher_;
-        fs::path input_file_;
     };
 }  // namespace relay::grpc

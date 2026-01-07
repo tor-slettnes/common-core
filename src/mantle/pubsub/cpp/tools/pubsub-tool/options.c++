@@ -32,8 +32,10 @@ namespace relay::grpc
     }
 
     Options::Options()
-        : transport_(Transport::GRPC),
-          signal_handle(TYPE_NAME_FULL(This))
+        : signal_handle(TYPE_NAME_FULL(This)),
+          transport_(Transport::GRPC),
+          json_input_(false)
+
     {
         this->describe("Send or receive messages via Relay");
     }
@@ -56,9 +58,23 @@ namespace relay::grpc
 
         this->add_opt<fs::path>(
             {"--input"},
-            "JSONFILE",
-            "Read input for \"publish\" command from a JSON file",
+            "FILENAME",
+            "Read input for \"publish\" command from a JSON file. "
+            "Unless the \"--json\" option is used, the file contents "
+            "are published as plain text.",
             &this->input_file_);
+
+        this->add_const<bool>(
+            {"--text"},
+            "Publish inputs as plain text [default]",
+            &this->json_input_,
+            false);
+
+        this->add_const<bool>(
+            {"--json"},
+            "Parse inputs as JSON text",
+            &this->json_input_,
+            true);
 
         this->add_commands();
     }
@@ -68,8 +84,10 @@ namespace relay::grpc
         this->add_command(
             "publish",
             {"TOPIC", "[PAYLOAD] ... "},
-            "Publish a message. Each optional PAYLOAD argument should be a JSON string. "
-            "Alternatively, use \"--input\" to read from a JSON file.",
+            "Publish a message. "
+            "Alternatively, use \"--input\" to read from a JSON file. "
+            "Unless the \"--json\" option is used, the input is "
+            "read and  published as plain text.",
             std::bind(&Options::publish, this));
 
         this->add_command(
@@ -92,18 +110,11 @@ namespace relay::grpc
         {
             while (auto payload = this->next_arg())
             {
-                if (auto value = core::json::reader.try_decode(*payload))
-                {
-                    publisher->publish(topic, value);
-                }
-                else
-                {
-                    std::cout << "Invalid JSON; publishing input as plain string"
-                              << std::endl;
+                core::types::Value value =
+                    this->json_input_ ? core::json::reader.decoded(*payload)
+                                      : core::types::Value(*payload);
 
-                    publisher->publish(topic, *payload);
-                }
-
+                publisher->publish(topic, value);
                 published = true;
             }
 

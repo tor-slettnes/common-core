@@ -40,19 +40,12 @@ namespace core::json
         else if (tp.first == TI_END)
         {
             throwf(exception::MissingArgument,
-                   "Missing token at end of input");
-        }
-        else if (tp.first == TI_INVALID)
-        {
-            throwf(exception::InvalidArgument,
-                   "Invalid input at position %d: %s",
-                   this->input->token_position(),
-                   this->input->token());
+                   "Missing token at end of JSON input");
         }
         else
         {
             throwf(exception::InvalidArgument,
-                   "Unexpected token at position %d: %s",
+                   "Invalid JSON input at position %d: %r",
                    this->input->token_position(),
                    this->input->token());
         }
