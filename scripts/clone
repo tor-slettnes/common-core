@@ -38,7 +38,7 @@ copyfile()
 
     if ${all} || [ "${srcpath}" -nt "${dstpath}" ]
     then
-        echo "${relpath}"
+        echo "${dstfile}"
         tgtdir=$(dirname "${dstpath}")
         [ -n "${tgtdir}" ] && mkdir -p "${tgtdir}"
 
@@ -117,20 +117,21 @@ done
 [ -n "${SOURCE}" ] || usage "Missing SOURCE"
 [ -n "${DEST}"   ] || usage "Missing DEST"
 
+if ! ${KEEP_EXTRA}
+then
+    (cd "${DEST}"; find . -depth -type f -name '*') | \
+        while read relpath; do
+            [ -e "${SOURCE}/${relpath}" ] || (cd "${DEST}"; rm "${relpath}")
+        done
+
+    (cd "${DEST}"; find . -depth -type d -name '*') | \
+        while read relpath; do
+            [ -e "${SOURCE}/${relpath}" ] || (cd "${DEST}"; rmdir "${relpath}")
+        done
+fi
+
 (cd "${SOURCE}"; find . -type f -name '*') | \
     while read relpath; do
         copyfile "${SOURCE}" "${DEST}" "${relpath}" "${SHORTNAME}" "${LONGNAME}" "${EMAIL}" "${ALL}"
     done
 
-if ! ${KEEP_EXTRA}
-then
-    (cd "${DEST}"; find . -depth -type f -name '*') | \
-        while read relpath; do
-            [ -e "${SOURCE}/${relpath}" ] || (cd "${DEST}"; rm -v "${relpath}")
-        done
-
-    (cd "${DEST}"; find . -depth -type d -name '*') | \
-        while read relpath; do
-            [ -e "${SOURCE}/${relpath}" ] || (cd "${DEST}"; rmdir -v "${relpath}")
-        done
-fi

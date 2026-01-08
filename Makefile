@@ -89,14 +89,16 @@ BUILD_PRESET       ?= default
 TEST_PRESET        ?= default
 PACKAGE_PRESET     ?= debs
 THIS_DIR           ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-OUT_DIR             = $(strip $(shell $(call get_preset_var,OUT_DIR)))
-BUILD_DIR           = $(strip $(shell $(call get_preset_var,BUILD_DIR)))
-PACKAGE_DIR         = $(strip $(shell $(call get_preset_var,PACKAGE_DIR)))
-INSTALL_DIR         = $(strip $(shell $(call get_cached,CMAKE_INSTALL_PREFIX)))
-PYTHON_INSTALL_DIR  = $(strip $(shell $(call get_cached,PYTHON_INSTALL_DIR)))
 PYTHON             ?= /usr/bin/python3
 TARGET             ?= $(shell uname -s)-$(shell uname -m)
 TOOLCHAIN_FILE      = $(THIS_DIR)build/cmake/toolchain-$(TARGET).cmake
+
+export OUT_DIR     ?= $(CURDIR)/out
+export BUILD_DIR   ?= $(OUT_DIR)/build/$(CONFIG_PRESET)
+export INSTALL_DIR ?= $(OUT_DIR)/$(CONFIG_PRESET)
+export PACKAGE_DIR ?= $(OUT_DIR)/packages
+PYTHON_INSTALL_DIR  = $(strip $(shell $(call get_cached,PYTHON_INSTALL_DIR)))
+
 
 ifneq ($(wildcard $(TOOLCHAIN_FILE)),)
   export CMAKE_TOOLCHAIN_FILE ?= $(TOOLCHAIN_FILE)
@@ -217,7 +219,15 @@ cmake-gui: cmake
 	@cmake-gui --preset "$(CONFIG_PRESET)"
 
 .PHONY: cmake
-cmake: submodule/protos
+cmake: submodule/protos $(CMAKE_CACHE) $(CMAKE_TAG)
+
+### If we have defined custom arguments to CMake (see above), we force
+### regeneration of the CMake cache by declaring any previous result as phony.
+ifneq ($(or $(CMAKE_FORCE_REGENERATE),$(CMAKE_CONFIG_ARGS)),)
+.PHONY: $(CMAKE_TAG)
+endif
+
+$(CMAKE_CACHE) $(CMAKE_TAG):
 	@echo
 	@echo "#############################################################"
 	@echo "Generating CMake preset: $(CONFIG_PRESET)"
@@ -257,7 +267,7 @@ list: cmake
 	@cmake --build --preset "$(BUILD_PRESET)" --target help $(CMAKE_BUILD_ARGS) | tail +3
 
 .PHONY: get_config
-get_config: cmake
+get_config:
 	@$(list_cache) | \
       awk 'BEGIN{FS="="}                    \
 		/:INTERNAL=/ {next;}                \
@@ -268,15 +278,15 @@ get_config: cmake
 
 .PHONY: get_build_dir
 get_build_dir:
-	@$(call get_preset_var,BUILD_DIR)
+	@echo $(BUILD_DIR)
 
 .PHONY: get_install_dir
 get_install_dir:
-	@$(call get_preset_var,INSTALL_DIR)
+	@echo $(INSTALL_DIR)
 
 .PHONY: get_package_dir
 get_package_dir:
-	@$(call get_preset_var,PACKAGE_DIR)
+	@echo $(PACKAGE_DIR)
 
 .PHONY: clean clean/cmake cmake_clean
 clean clean/cmake cmake_clean:
