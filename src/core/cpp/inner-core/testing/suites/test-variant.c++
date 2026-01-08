@@ -114,6 +114,22 @@ namespace core::types
                                  std::chrono::nanoseconds(567));
         EXPECT_EQ(casual_dur_parsed, casual_dur_control);
 
+        Value tp_parsed = Value::from_literal("1969-07-20T20:17:00Z");
+        EXPECT_EQ(tp_parsed.type(), ValueType::TIMEPOINT);
+
+        std::tm tm {
+            .tm_sec = 0,
+            .tm_min = 17,
+            .tm_hour = 20,
+            .tm_mday = 20,
+            .tm_mon = 7 - 1,
+            .tm_year = 69,
+            .tm_wday = 0,
+            .tm_isdst = -1,
+        };
+        Value tp_control(core::dt::to_timepoint(tm, false));
+        EXPECT_EQ(tp_parsed, tp_control);
+
     }
 
 

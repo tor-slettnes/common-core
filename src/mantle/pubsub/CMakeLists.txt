@@ -10,15 +10,15 @@ if(BUILD_PUBSUB)
     "Pub/Sub broker supporting multiple payload formats and transports")
 
   set(COMMON_DESCRIPTION
-    "Relay is an intermediary message broker between producers and consumers of"
-    "asynchronous events and data.  It serves two primary purposes:"
+    "Pub/Sub Relay is an intermediary message broker between producers and"
+    "consumers of asynchronous events and data. It serves two primary purposes:"
     "."
-    "  - To provide a well-known static point in the network to which message"
-    "    producers/publishers and consumers/subscribers can both connect"
-    "    without being coupled tightly to each other, and"
+    "- To provide a well-known static point in the network to which message"
+    "  producers/publishers and consumers/subscribers can both connect"
+    "  without being coupled tightly to each other, and"
     "."
-    "  - To relay messages across format and protocol boundaries. Currently"
-    "    these are: ProtoBuf over gRPC, JSON over ZMQ, JSON over WebSockets."
+    "- To relay messages across format and protocol boundaries. Currently these"
+    "  are: ProtoBuf Variants over gRPC, JSON over ZMQ, JSON over WebSockets."
   )
 
   set(INSTALL_GROUP "pubsub")
@@ -109,6 +109,10 @@ add_subdirectory(settings)
 
 if(BUILD_PROTOBUF)
   add_subdirectory(proto)
+endif()
+
+if(BUILD_PYTHON)
+  add_subdirectory(python)
 endif()
 
 if(BUILD_CPP)

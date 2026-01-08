@@ -290,6 +290,17 @@ namespace core
 
         void dur_to_stream(std::ostream &stream,
                            const Duration &dur,
+                           uint decimals)
+        {
+            std::size_t original_precision = stream.precision();
+            stream << std::setprecision(decimals)
+                   << std::chrono::duration<double>(dur).count()
+                   << std::setprecision(original_precision)
+                   << "s";
+        }
+
+        void dur_to_stream(std::ostream &stream,
+                           const Duration &dur,
                            uint decimals,
                            const std::string &format)
         {
@@ -439,8 +450,8 @@ namespace core
             return dt::to_string(tp, true, decimals, format);
         }
 
-        std::string to_js_string(const Duration &duration,
-                                 uint decimals)
+        std::string to_iso8601_string(const Duration &duration,
+                                      uint decimals)
         {
             return to_string(
                 duration,                                // duration
@@ -454,6 +465,16 @@ namespace core
                 "",                                      // delimiter
                 "P",                                     // date_prefix
                 "T");                                    // time_prefix
+        }
+
+        std::string to_js_string(const Duration &duration,
+                                 uint decimals)
+        {
+            std::ostringstream stream;
+            stream << std::setprecision(decimals)
+                   << std::chrono::duration<double>(duration).count()
+                   << "s";
+            return stream.str();
         }
 
         std::string to_string(const Duration &duration,
@@ -636,7 +657,7 @@ namespace core
             {
                 double duration = 0;
 
-                for (const auto &[index, unit]: unit_map)
+                for (const auto &[index, unit] : unit_map)
                 {
                     if (match.length(index))
                     {

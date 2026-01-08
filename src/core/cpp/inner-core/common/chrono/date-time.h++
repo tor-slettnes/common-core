@@ -115,6 +115,17 @@ namespace core
                           uint decimals = 3,
                           const std::string &format = DEFAULT_FORMAT);
 
+        /// Write out string representation of the provided duration as seconds.
+        /// @param[in] stream
+        ///     Output stream
+        /// @param[in] dur
+        ///     A duration
+        /// @param[in] decimals
+        ///     Sub-second resolution. The default is 3 (i.e., milliseconds)
+        void dur_to_stream(std::ostream &stream,
+                           const Duration &dur,
+                           uint decimals);
+
         /// Write out formatted string representation of the provided duration.
         /// @param[in] stream
         ///     Output stream
@@ -127,7 +138,7 @@ namespace core
         void dur_to_stream(std::ostream &stream,
                            const Duration &dur,
                            uint decimals,
-                           const std::string &format = DEFAULT_DURATION_FORMAT);
+                           const std::string &format);
 
         /// Write out a human readable string representation of the provided
         /// duration, e.g., `42 hours, 12 minutes, 2.322 seconds`.
@@ -213,7 +224,18 @@ namespace core
                               const std::string &format = DEFAULT_FORMAT);
 
 
-        /// Return a formatted IS08601 string representation of the provided duration.
+        /// @brief
+        ///     Return a formatted IS08601 string representation of the provided duration.
+        /// @param[in] duration
+        ///     A duration
+        /// @param[in] decimals
+        ///     Sub-second resolution.
+        /// @return
+        ///     String representing the provided duration
+        std::string to_iso8601_string(const Duration &duration,
+                                      uint decimals = 3);
+
+        /// Return a string representation of the provided duration suitable for JSON
         /// @param[in] duration
         ///    A duration
         /// @param[in] decimals
@@ -408,7 +430,7 @@ namespace core
         TimePoint to_timepoint(const timespec &ts);
 
         /// Convert from "struct tm" to TimePoint, or fallback if the time is zero.
-        TimePoint to_timepoint(const tm &dt, bool local = true);
+        TimePoint to_timepoint(const std::tm &dt, bool local = true);
 
         /// @brief
         ///    Convert from year/month/day/hour/minute/second/fraction to timepoint.
