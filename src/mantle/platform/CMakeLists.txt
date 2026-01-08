@@ -100,7 +100,7 @@ cc_cpack_add_debian_component("${COMPLETE_INSTALL_COMPONENT}"
   SUMMARY "Common Core Platform Services - complete"
   DESCRIPTION ${COMMON_DESCRIPTION}
   "."
-  "This meta-package depends on and will thus install all Switchboard packages."
+  "This meta-package depends on and will thus install all Platform packages."
   "You may choose to select specific component packages instead."
 )
 

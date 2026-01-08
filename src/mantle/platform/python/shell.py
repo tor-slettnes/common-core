@@ -12,6 +12,7 @@ from .vfs.grpc.client import SignalClient as VirtualFileSystemClient
 from .upgrade.grpc.client import SignalClient as UpgradeClient
 from .multilogger.grpc.client import Client as MultiLoggerClient
 from .switchboard.grpc.client import Client as SwitchboardClient
+from .pubsub.grpc.client import Client as PubSubClient
 
 import cc.core
 import cc.protobuf.datetime
@@ -25,6 +26,7 @@ import cc.protobuf.utils
 import cc.protobuf.builder
 import cc.protobuf.dissecter
 
+import cc.platform.pubsub.protobuf
 import cc.platform.multilogger.protobuf
 import cc.platform.switchboard.protobuf
 import cc.platform.sysconfig.protobuf
@@ -75,12 +77,13 @@ def legend():
     '''
     Interactive Service Control.  Subsystems loaded:
 
-        multilogger - `MultiLogger` gRPC service client
-        switchboard - `Switchboard` gRPC service client
-        sysconfig   - `SysConfig` gRPC service client
-        netconfig   - `NetConfig` gRPC service client
-        vfs         - `VirtualFileSystem` gRPC service client
-        upgrade     - `Upgrade` gRPC service client
+        pubsub       - Pub/Sub `Relay` gRPC service client
+        multilogger  - `MultiLogger` gRPC service client
+        switchboard  - `Switchboard` gRPC service client
+        sysconfig    - `SysConfig` gRPC service client
+        netconfig    - `NetConfig` gRPC service client
+        vfs          - `VirtualFileSystem` gRPC service client
+        upgrade      - `Upgrade` gRPC service client
 
     Generated ProtoBuf data types are generally available in various `protobuf`
     namespaces, e.g.:
@@ -97,6 +100,10 @@ if __name__ == "__main__":
     args   = ArgParser().parse_args()
 
     cc.core.logbase.init_logging(logging.DEBUG if args.debug else logging.INFO)
+
+    pubsub = relay = PubSubClient(
+        args.host,
+        wait_for_ready = args.wait_for_ready)
 
     multilogger = MultiLoggerClient(
         args.host,
@@ -123,6 +130,7 @@ if __name__ == "__main__":
         args.host,
         wait_for_ready = args.wait_for_ready)
 
+    pubsub.initialize()
     multilogger.initialize()
     switchboard.initialize()
     sysconfig.initialize()
