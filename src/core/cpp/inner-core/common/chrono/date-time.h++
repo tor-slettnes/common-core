@@ -344,13 +344,13 @@ namespace core
             const std::optional<std::string> &format = {},
             const Duration fallback = Duration::zero());
 
-        std::optional<Duration> try_to_duration(
-            const std::string_view &text);
-
         // Try to convert from a string to a duration
         std::optional<Duration> try_to_duration(
             const std::string_view &text,
             const std::string &format);
+
+        std::optional<Duration> try_to_duration(
+            const std::string_view &text);
 
         //--------------------------------------------------------------------------
         // Timepoint conversions

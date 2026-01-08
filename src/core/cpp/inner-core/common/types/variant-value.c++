@@ -1283,76 +1283,58 @@ namespace core::types
 
     Value Value::from_literal(const std::string_view &literal)
     {
-        if (auto opt_type = Value::literal_type(literal))
+        static const std::regex rx_null("^(null|NULL|None)?$");
+        static const std::regex rx_bytevector("^(['\"]?)%[[:alnum:]\\+/]+={0,2}%?\\1$");
+        static const std::regex rx_literal_string("(['\"])((?:\\\\.|[^\\\\\\r\\n])*)\\1");
+
+        if (literal.empty())
         {
-            switch (*opt_type)
-            {
-            case ValueType::NONE:
-                return nullvalue;
-
-            case ValueType::BOOL:
-                return str::convert_to<bool>(literal, false);
-
-            case ValueType::UINT:
-                return str::convert_to<largest_uint>(literal, 0);
-
-            case ValueType::SINT:
-                return str::convert_to<largest_sint>(literal, 0);
-
-            case ValueType::REAL:
-                return str::convert_to<largest_real>(literal, 0.0);
-
-            case ValueType::COMPLEX:
-                return str::convert_to<complex>(literal, 0.0);
-
-            case ValueType::STRING:
-                return str::unquoted(literal);
-
-            case ValueType::BYTEVECTOR:
-                return ByteVector::from_base64(str::unquoted(literal).substr(1));
-
-            case ValueType::TIMEPOINT:
-                return dt::to_timepoint(literal);
-
-            case ValueType::DURATION:
-                return dt::to_duration(literal);
-
-            default:
-                break;
-            }
+            return {};
         }
-        return literal.empty() ? nullvalue : Value(literal);
-    }
-
-    std::optional<ValueType> Value::literal_type(const std::string_view &literal)
-    {
-        constexpr auto REAL_X = "[+-]?[[:digit:]]+(?:\\.[[:digit:]]*)?(?:[eE][+-]?[[:digit:]]+)?";
-        constexpr auto DATE_X = "\\d{4}-\\d{2}-\\d{2}";
-        constexpr auto TIME_X = "\\d{2}:\\d{2}:\\d{2}(?:\\.(\\d+))?";
-        constexpr auto TZ_X = "\\s*(?:\\w+|[+-]\\d{2,4})?";
-
-        static const std::vector<std::pair<ValueType, std::regex>> rxlist = {
-            {ValueType::NONE, std::regex("^(null|NULL|None)?$")},
-            {ValueType::BOOL, std::regex("^(true|false|on|off|yes|no)$", std::regex::icase)},
-            {ValueType::SINT, std::regex("^[+-][[:digit:]]+$")},
-            {ValueType::UINT, std::regex("^([[:digit:]]+|0x[[:xdigit:]]+)$", std::regex::icase)},
-            {ValueType::REAL, std::regex("^"s + REAL_X + "$")},
-            {ValueType::COMPLEX, std::regex("^\\(\\s*"s + REAL_X + ",\\s*" + REAL_X + "\\s*\\)")},
-            {ValueType::BYTEVECTOR, std::regex("^(['\"]?)%[[:alnum:]\\+/]+={0,2}%?\\1$")},
-            {ValueType::STRING, std::regex("(['\"])((?:\\\\.|[^\\\\\\r\\n])*)\\1")},
-            {ValueType::TIMEPOINT, std::regex("^"s + DATE_X + "[@Tt\\s]" + TIME_X + TZ_X + "$")},
-            {ValueType::DURATION, std::regex("(\\d{2}:\\d{2}:\\d{2})(?:\\.(\\d+))?$")},
-        };
-
-        for (const auto &[candidate, rx] : rxlist)
+        else if (auto uint_value = str::try_convert_to<largest_uint>(literal))
         {
-            if (std::regex_match(literal.begin(), literal.end(), rx))
-            {
-                return candidate;
-            }
+            return uint_value;
         }
-
-        return {};
+        else if (auto sint_value = str::try_convert_to<largest_sint>(literal))
+        {
+            return sint_value;
+        }
+        else if (auto double_value = str::try_convert_to<double>(literal))
+        {
+            return double_value;
+        }
+        else if (auto bool_value = str::try_convert_to<bool>(literal))
+        {
+            return bool_value;
+        }
+        else if (auto complex_value = str::try_convert_to<complex>(literal))
+        {
+            return complex_value;
+        }
+        else if (auto duration_value = dt::try_to_duration(literal))
+        {
+            return duration_value;
+        }
+        else if (auto timepoint_value = dt::try_to_timepoint(literal))
+        {
+            return timepoint_value;
+        }
+        else if (std::regex_match(literal.begin(), literal.end(), rx_null))
+        {
+            return {};
+        }
+        else if (std::regex_match(literal.begin(), literal.end(), rx_bytevector))
+        {
+            return ByteVector::from_base64(str::unquoted(literal).substr(1));
+        }
+        else if (std::regex_match(literal.begin(), literal.end(), rx_literal_string))
+        {
+            return str::unquoted(literal);
+        }
+        else
+        {
+            return literal;
+        }
     }
 
     //--------------------------------------------------------------------------

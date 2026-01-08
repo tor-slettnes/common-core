@@ -242,10 +242,6 @@ namespace core::types
         ///  - `00:00:00.000`    becomes a dt::Duration instance
         static Value from_literal(const std::string_view &literal);
 
-    protected:
-        /// Determine value type from a literal representation
-        static std::optional<ValueType> literal_type(const std::string_view &literal);
-
     public:
         // Convencience wrapper around std::get<T>(*this)
         template <class T>

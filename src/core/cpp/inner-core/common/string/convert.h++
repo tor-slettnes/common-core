@@ -13,6 +13,9 @@
 #include <sstream>
 #include <optional>
 
+#include <iostream>  // temp
+#include <iomanip>   // temp
+
 using namespace std::literals::string_literals;  // ""s
 
 namespace core::str
@@ -59,33 +62,35 @@ namespace core::str
             static const std::errc ok{};
             const char *start = &*s.begin();
             const char *end = &*s.end();
+            int base = 10;
+
+            if ((start != end) && (*start == '+'))
+            {
+                start++;
+            }
+
+            if ((std::distance(start, end) > 2) &&
+                (*start == '0') &&
+                (std::tolower(*(start + 1)) == 'x'))
+            {
+                start += 2;
+                base = 16;
+            }
 
             T value = 0;
-            // First we try to parse the string as a decimal number
-            auto [ptr, ec] = std::from_chars(start, end, value);
+            auto [ptr, ec] = std::from_chars(start, end, value, base);
+
             if ((ec == ok) && (ptr == end))
             {
                 return value;
             }
+            else if (ec != ok)
+            {
+                throw std::invalid_argument(std::make_error_code(ec).message());
+            }
             else
             {
-                // Next, we try to parse it without an explicit base, allowing
-                // `0x` to indicate hexadecimal. (The reason we didn't do this
-                // in the first place is that a leading `0` would then be
-                // considered an octal indicator).
-                auto [ptr2, ec2] = std::from_chars(start, end, value, 0);
-                if ((ec2 == ok) && (ptr2 == end))
-                {
-                    return value;
-                }
-                else if (ec != ok)
-                {
-                    throw std::invalid_argument(std::make_error_code(ec).message());
-                }
-                else
-                {
-                    throw std::invalid_argument("Not all characters converted");
-                }
+                throw std::invalid_argument("Not all characters converted");
             }
         }
 

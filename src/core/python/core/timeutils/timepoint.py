@@ -643,7 +643,14 @@ class TimePoint (float):
 
 
     def to_json_string(self, *,
-                      decimals = 3) -> str:
+                       decimals = 3) -> str:
+        '''
+        Identical to `to_iso8601_string()`.
+        '''
+
+
+    def to_iso8601_string(self, *,
+                          decimals = 3) -> str:
         '''
         Return this timestamp as an ISO 8601 string representing UTC,
         suitable for unambiguous represention in containers such as JSON.

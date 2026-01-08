@@ -67,6 +67,56 @@ namespace core::types
         EXPECT_EQ(value2, value3);
     }
 
+    TEST(Variant, FromLiteral)
+    {
+        Value uint_parsed = Value::from_literal("42");
+        EXPECT_EQ(uint_parsed.type(), ValueType::UINT);
+
+        Value uint_control = std::uint64_t(42);
+        EXPECT_EQ(uint_parsed, uint_control);
+
+        Value sint_parsed = Value::from_literal("-42");
+        EXPECT_EQ(sint_parsed.type(), ValueType::SINT);
+
+        Value sint_control = std::int64_t(-42);
+        EXPECT_EQ(sint_parsed, sint_control);
+
+        Value double_parsed = Value::from_literal("3.141592653589793238");
+        EXPECT_EQ(double_parsed.type(), ValueType::REAL);
+
+        Value double_control = Value(3.141592653589793238);
+        EXPECT_EQ(double_parsed, double_control);
+
+        // Value complex_parsed = Value::from_literal("(3.141592653589793238,-2.0)");
+        // EXPECT_EQ(complex_parsed.type(), ValueType::COMPLEX);
+
+        // Value complex_control = Value(std::complex(3.141592653589793238, -2.0));
+        // EXPECT_EQ(complex_parsed, complex_control);
+
+        Value iso_dur_parsed = Value::from_literal("P54DT43H32M21.123S");
+        EXPECT_EQ(iso_dur_parsed.type(), ValueType::DURATION);
+
+        Value iso_dur_control(std::chrono::hours(54 * 24 + 43) +
+                              std::chrono::minutes(32) +
+                              std::chrono::seconds(21) +
+                              std::chrono::milliseconds(123));
+        EXPECT_EQ(iso_dur_parsed, iso_dur_control);
+
+
+        Value casual_dur_parsed = Value::from_literal("43h 32m 21s 123ms 345us 567ns");
+        EXPECT_EQ(casual_dur_parsed.type(), ValueType::DURATION);
+
+        Value casual_dur_control(std::chrono::hours(43) +
+                                 std::chrono::minutes(32) +
+                                 std::chrono::seconds(21) +
+                                 std::chrono::milliseconds(123) +
+                                 std::chrono::microseconds(345) +
+                                 std::chrono::nanoseconds(567));
+        EXPECT_EQ(casual_dur_parsed, casual_dur_control);
+
+    }
+
+
     // TEST(StringTest, WideString)
     // {
     //     std::string latin1_no("abcdefghijklmnopqrstuvwxyz\xe6\xf8\xe5");
@@ -98,4 +148,4 @@ namespace core::types
     //     EXPECT_EQ(wide_result.front(), wide_result.back());
     // }
 
-} // namespace core::types
+}  // namespace core::types

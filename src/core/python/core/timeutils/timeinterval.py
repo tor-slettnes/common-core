@@ -41,15 +41,23 @@ representations such as:
   '1m 4.5s'
 
   ### Convert from `timedelta` instances
-  >>> ti += TimeInterval.from_timedelta(datetime.timedelta(minutes=5))
+  >>> ti += TimeInterval.from_value(datetime.timedelta(minutes=5))
   >>> ti
   `6m 5s`
 
   ### Convert from `google.protobuf.Duration` objects
   >>> from google.protobuf.duration_pb2 import Duration
-  >>> ti += TimeInterval.from_protobuf(Duration(seconds=25))
+  >>> ti += TimeInterval.from_value(Duration(seconds=25))
   >>> ti
   `6m 30s`
+
+
+  ### Convert from ISO 8601 Duration strings
+  >>> TimeInterval.from_value("P3Y2M1DT23H59M59.5S")
+  '3y 61d 23h 59m 59.500s'
+
+  >>> TimeInterval.from_value("P
+
 
   ### Return duration as scaled integers
   >>> ti.to_seconds()
@@ -314,62 +322,62 @@ class TimeInterval (float):
         return TimeInterval(nanoseconds / 1e9)
 
 
-    _rx_component = re.compile(r'^([+-]?)([0-9\.]+)([a-z]+)$')
+    _rx_duration = re.compile(
+        "^([+-])?"                         # (1) +/-
+        "(?:P"                            # DATE:
+        "\\s*(?:(\\d+(?:\\.\\d*)?)[yY])?" # (2) Years
+        "\\s*(?:(\\d+(?:\\.\\d*)?)[mM])?" # (3) Months
+        "\\s*(?:(\\d+(?:\\.\\d*)?)[wW])?" # (4) Weeks
+        "\\s*(?:(\\d+(?:\\.\\d*)?)[dD])?" # (5) Days
+        ")?(?:\\s*T?"                     # TIME:
+        "\\s*(?:(\\d+(?:\\.\\d*)?)[hH])?" # (6) Hours
+        "\\s*(?:(\\d+(?:\\.\\d*)?)[mM])?" # (7) Minutes
+        "\\s*(?:(\\d+(?:\\.\\d*)?)[sS])?" # (8) Seconds
+        "\\s*(?:(\\d+(?:\\.\\d*)?)ms)?"   # (9) Milliseconds
+        "\\s*(?:(\\d+(?:\\.\\d*)?)us)?"   # (10) Microseconds
+        "\\s*(?:(\\d+(?:\\.\\d*)?)ns)?"   # (11) Nanoseconds
+        ")$")
+
+
+    _unit_map = {
+        2: YEAR,
+        3: MONTH,
+        4: WEEK,
+        5: DAY,
+        6: HOUR,
+        7: MINUTE,
+        8: SECOND,
+        9: MILLISECOND,
+        10: MICROSECOND,
+        11: NANOSECOND,
+    }
 
     @classmethod
-    def from_string(cls,
-                    input              : str,
-                    years_suffix       : str|None = "y",
-                    months_suffix      : str|None = None,
-                    weeks_suffix       : str|None = "w",
-                    days_suffix        : str|None = "d",
-                    hours_suffix       : str|None = "h",
-                    minutes_suffix     : str|None = "m",
-                    seconds_suffix     : str|None = "s",
-                    milliseconds_suffix: str|None = "ms",
-                    microseconds_suffix: str|None = "us",
-                    nanoseconds_suffix : str|None = "ns",
-                    component_separator: str|None = None,
-                    ) -> 'TimeInterval':
+    def from_string(cls, input: str) -> 'TimeInterval':
+        interval = 0.0
+        hit = False
 
-        components = {
-            years_suffix: YEAR,
-            months_suffix: MONTH,
-            weeks_suffix: WEEK,
-            days_suffix: DAY,
-            hours_suffix: HOUR,
-            minutes_suffix: MINUTE,
-            seconds_suffix: SECOND,
-            milliseconds_suffix: MILLISECOND,
-            microseconds_suffix: MICROSECOND,
-            nanoseconds_suffix: NANOSECOND,
-        }
+        if m := cls._rx_duration.match(input):
 
-        negative = None
-        total    = 0
+            for group_index, unit_factor in cls._unit_map.items():
+                if word := m.group(group_index):
+                    interval += unit_factor * float(word)
+                    hit = True
 
-        for component in input.split(component_separator):
-            if m := cls._rx_component.match(component.strip()):
-                sign, number, suffix = m.groups()
-                if negative is None:
-                    negative = (sign == '-')
+            # Approximate leap years by adding an extra day for every 4 years
+            if years := m.group(2):
+                interval += DAY * (float(years) // LEAP)
 
-                if scale := components.get(suffix):
-                    total += scale * float(number)
+            if m.group(1) == "-":
+                interval = -interval
 
-                else:
-                    raise ValueError("Invalid unit suffix following %s%s: %r"%(sign, number, suffix))
-
-            else:
-                raise ValueError('Invalid duration component: ' + component)
-
-
-        if total > LEAP:
-            ### For durations > 4 years we add leap days
-            total += DAY * (total//LEAP)
-
-        return TimeInterval(-total if negative
-                            else total)
+        if hit:
+            return TimeInterval(interval)
+        else:
+            raise ValueError(
+                "Invalid duration: %s"%(
+                    input,
+                ))
 
 
     @classmethod
@@ -426,6 +434,31 @@ class TimeInterval (float):
         return int(self * 1e9)
 
 
+    def to_iso8601_string(self) -> str:
+        '''
+        Return a ISO 8601 compliant string representing this duration.
+
+        The string may have 0, 3, 6 or 9 fractional digits, depending on the
+        sub-second portion of the value.  The smallest representable time
+        interval is one nanosecond.
+
+        This method is a convenience wrapper for `to_string()`.
+        '''
+
+        return self.to_string(
+            years_suffix = "Y",
+            months_suffix = None,
+            weeks_suffix = None,
+            days_suffix = "D",
+            hours_suffix = "H",
+            minutes_suffix = "M",
+            seconds_suffix = "S",
+            component_separator = "",
+            preamble = "P",
+            date_time_separator = "T"
+        )
+
+
     def to_json_string(self) -> str:
         '''
         Return a string representing this duration as seconds followed by a
@@ -447,7 +480,8 @@ class TimeInterval (float):
             days_suffix = None,
             hours_suffix = None,
             minutes_suffix = None,
-            seconds_suffix = "s")
+            seconds_suffix = "s",
+        )
 
         # string = "%.9f"%(self,)
         # while string.endswith('000'):
@@ -466,7 +500,9 @@ class TimeInterval (float):
                   component_separator: str = " ",
                   positive_sign      : str = "",
                   negative_sign      : str = "-",
-                  decimals           : int|None = None) -> str:
+                  decimals           : int|None = None,
+                  preamble           : str = "",
+                  date_time_separator: str = "") -> str:
         '''
         Convert this duration to a string broken up into one or more
         components, representing date/time divisions from largest to smallest.
@@ -499,11 +535,14 @@ class TimeInterval (float):
         component.
         '''
 
-        components = [
+        date_components = [
             (years_suffix, YEAR),
             (months_suffix, MONTH),
             (weeks_suffix, WEEK),
             (days_suffix, DAY),
+        ]
+
+        time_components = [
             (hours_suffix, HOUR),
             (minutes_suffix, MINUTE),
         ]
@@ -520,12 +559,17 @@ class TimeInterval (float):
             remainder -= DAY * (remainder//LEAP)
 
         parts = []
+        for (prefix, components) in [("", date_components),
+                                     (date_time_separator, time_components)]:
 
-        for (suffix, division) in components:
-            if suffix and (remainder >= division):
-                count = remainder // division
-                parts.append("%d%s"%(count, suffix))
-                remainder %= division
+            if prefix and (remainder or not parts):
+                parts.append(prefix)
+
+            for (suffix, division) in components:
+                if suffix and (remainder >= division):
+                    count = remainder // division
+                    parts.append("%d%s"%(count, suffix))
+                    remainder %= division
 
         if seconds_suffix and (remainder or not parts):
             if decimals:
@@ -537,7 +581,7 @@ class TimeInterval (float):
                     string = string[:-3]
                 parts.append(string.rstrip(".,") + seconds_suffix)
 
-        return sign + component_separator.join(parts)
+        return sign + preamble + component_separator.join(parts)
 
 
     def to_timedelta(self) -> datetime.timedelta:

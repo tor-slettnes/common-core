@@ -25,9 +25,14 @@ namespace core
     namespace dt
     {
         const TimePoint epoch;
-        const uint MINUTE = 60;
+        const double NANOSECOND = 1e-9;
+        const double MICROSECOND = 1e-6;
+        const double MILLISECOND = 1e-3;
+        const uint SECOND = 1;
+        const uint MINUTE = SECOND * 60;
         const uint HOUR = 60 * MINUTE;
         const uint DAY = 24 * HOUR;
+        const uint WEEK = 7 * DAY;
         const uint MONTH = 30 * DAY;
         const uint YEAR = 365 * DAY;
         const uint LEAP = 4 * YEAR;
@@ -581,27 +586,12 @@ namespace core
                      : try_to_duration(input).value_or(dt::Duration::zero());
         }
 
-        std::optional<Duration> try_to_duration(const std::string_view &input)
+        std::optional<Duration> try_to_duration(const std::string_view &input,
+                                                const std::string &format)
         {
-            static const std::regex rx(
-                "(\\d{2}):(\\d{2}):(\\d{2})(\\.\\d+)?");
-
-            std::match_results<std::string_view::iterator> match;
-            if (std::regex_match(input.begin(), input.end(), match, rx))
+            if (auto tp = try_to_timepoint(input, format, false))
             {
-                double seconds =
-                    (str::convert_to<std::uint32_t>(match.str(1)) * 3600) +
-                    (str::convert_to<std::uint32_t>(match.str(2)) * 60) +
-                    (str::convert_to<std::uint32_t>(match.str(3))) +
-                    (match.length(4)
-                         ? str::convert_to<double>(match.str(4))
-                         : 0.0);
-                return to_duration(seconds);
-            }
-
-            else if (auto opt_seconds = str::try_convert_to<double>(input))
-            {
-                return to_duration(opt_seconds.value());
+                return tp->time_since_epoch();
             }
             else
             {
@@ -609,12 +599,76 @@ namespace core
             }
         }
 
-        std::optional<Duration> try_to_duration(const std::string_view &input,
-                                                const std::string &format)
+        std::optional<Duration> try_to_duration(const std::string_view &input)
         {
-            if (auto tp = try_to_timepoint(input, format, false))
+            static const std::regex rx(
+                "([+-])?"                          // (1) +/-
+                "(?:P"                             // DATE:
+                "\\s*(?:(\\d+(?:\\.\\d*)?)[yY])?"  // (2) Years
+                "\\s*(?:(\\d+(?:\\.\\d*)?)[mM])?"  // (3) Months
+                "\\s*(?:(\\d+(?:\\.\\d*)?)[wW])?"  // (4) Weeks
+                "\\s*(?:(\\d+(?:\\.\\d*)?)[dD])?"  // (5) Days
+                ")?(?:\\s*T?"                      // TIME:
+                "\\s*(?:(\\d+(?:\\.\\d*)?)[hH])?"  // (6) Hours
+                "\\s*(?:(\\d+(?:\\.\\d*)?)[mM])?"  // (7) Minutes
+                "\\s*(?:(\\d+(?:\\.\\d*)?)[sS])?"  // (8) Seconds
+                "\\s*(?:(\\d+(?:\\.\\d*)?)ms)?"    // (9) Milliseconds
+                "\\s*(?:(\\d+(?:\\.\\d*)?)us)?"    // (10) Microseconds
+                "\\s*(?:(\\d+(?:\\.\\d*)?)ns)?"    // (11) Nanoseconds
+                ")");
+
+            static const std::map<std::size_t, double> unit_map = {
+                {2, YEAR},
+                {3, MONTH},
+                {4, WEEK},
+                {5, DAY},
+                {6, HOUR},
+                {7, MINUTE},
+                {8, SECOND},
+                {9, MILLISECOND},
+                {10, MICROSECOND},
+                {11, NANOSECOND},
+            };
+
+            std::match_results<std::string_view::iterator> match;
+            bool hit = false;
+            if (std::regex_match(input.begin(), input.end(), match, rx))
             {
-                return tp->time_since_epoch();
+                double duration = 0;
+
+                for (const auto &[index, unit]: unit_map)
+                {
+                    if (match.length(index))
+                    {
+                        duration += unit * std::stod(match.str(index));
+                        hit = true;
+                    }
+                }
+
+                // Approximate leap years by adding an extra day for every 4 years
+                if (match.length(2))
+                {
+                    double years = YEAR * std::stod(match.str(2));
+                    duration += DAY * std::trunc(duration / LEAP);
+                }
+
+                if (match.str(1) == "-")
+                {
+                    duration = -duration;
+                }
+
+                if (hit)
+                {
+                    return to_duration(duration);
+                }
+                else
+                {
+                    return {};
+                }
+            }
+            else if (auto seconds = str::try_convert_to<double>(input))
+            {
+                return to_duration(seconds.value());
             }
             else
             {
