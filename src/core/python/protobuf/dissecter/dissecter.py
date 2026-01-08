@@ -265,3 +265,9 @@ def dissect_response(function: Callable) -> Callable:
         return dissecter.decode(response)
 
     return wrapper
+
+def dissect_message(message: Message) -> object:
+    '''
+    Dissect a message using the generic 
+    '''
+    return message_dissecter.decode(message)

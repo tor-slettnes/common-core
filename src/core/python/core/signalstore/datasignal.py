@@ -1,12 +1,12 @@
 #!/usr/bin/echo Do not invoke directly.
 #===============================================================================
-## @file signal_slot.py
+## @file datasignal.py
 ## @brief Signal/Slot pattern implementation
 ## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within package
-from .invocation import safe_invoke, check_type
+from ..invocation import safe_invoke, check_type
 
 ### Standard Pyton modules
 from typing import Optional, Callable, Mapping, Any
@@ -24,9 +24,8 @@ SignalSlot  = Callable[[Any], None]
 
 class DataSignal (object):
 
-    def __init__(self, signal_name: str, signal_type : type, use_cache = False):
+    def __init__(self, signal_name: str, use_cache = False):
         self.signal_name = signal_name
-        self.signal_type = signal_type
         self.use_cache = use_cache
         self.slots = {}
         self._cached = None

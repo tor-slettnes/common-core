@@ -40,13 +40,13 @@ namespace pubsub::grpc
 
     void MessageQueue::enqueue_message(
         const std::string &topic,
-        const core::types::Value &payload)
+        const core::types::Value &value)
     {
         if (this->topics_.empty() || this->topics_.count(topic))
         {
             cc::platform::pubsub::protobuf::Publication msg;
             msg.set_topic(topic);
-            protobuf::encode(payload, msg.mutable_payload());
+            protobuf::encode(value, msg.mutable_value());
             this->put(std::move(msg));
         }
     }

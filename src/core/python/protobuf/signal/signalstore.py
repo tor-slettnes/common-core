@@ -16,6 +16,7 @@ import asyncio
 from ...core.timeutils import TimePointType, TimeIntervalType
 from ...core.invocation import safe_invoke
 from ..utils import native_enum_from_proto
+from ..dissecter import dissect_message
 from .signal_pb2 import Filter, MappingAction
 
 ### Third-party modules
@@ -237,15 +238,15 @@ class SignalStore:
 
 
     def disconnect_all(self,
-                       slot: Optional[Slot] = None):
+                       slot: Optional[Slot] = None) -> bool:
         '''
         Disconnect handlers that are connected to _all_ signals.
         '''
 
         if slot:
-            self.disconnect_signal(self.ALL_SIGNALS, slot)
+            return self.disconnect_signal(self.ALL_SIGNALS, slot)
         else:
-            self.slots.pop(self.ALL_SIGNALS, None)
+            return bool(self.slots.pop(self.ALL_SIGNALS, None))
 
 
     def connect_signal(self,
@@ -411,7 +412,6 @@ class SignalStore:
             self._completion_event.set()
 
 
-
     def emit_event(self,
                    signal_name : str,
                    value       : Message):
@@ -424,11 +424,13 @@ class SignalStore:
         signal = self.signal_type(**{signal_name: value})
         self.emit(signal)
 
+
     def emit_mapping(self,
                      signal_name  : str,
-                     action       : MappingAction,
                      key          : str,
-                     value        : Message):
+                     *,
+                     value        : Message|None = None,
+                     action       : MappingAction|None = None):
         '''
         Construct and emit a `Signal` message as described above, with
          * `mapping_key` set to `key`
@@ -436,10 +438,17 @@ class SignalStore:
          * the field indicated by `signal_name` set to `value`.
         '''
 
-        signal = self.signal_type(mapping_action = action,
-                                  mapping_key = key,
-                                  **{signal_name: value})
-        self.emit(signal)
+        kwargs = {}
+        if action:
+            kwargs.update(mapping_action = action)
+
+        if key:
+            kwargs.update(mapping_key = key)
+
+        if signal_name:
+            kwargs.update({signal_name: value})
+
+        self.emit(self.signal_type(**kwargs))
 
 
     @classmethod
@@ -462,15 +471,16 @@ class SignalStore:
                  slot: Slot,
                  signal: SignalMessage):
 
-        action, key = self._mapping_controls(signal)
-        result = safe_invoke(slot,
-                             (signal,),
-                             {},
-                             "Signal %s slot %s(%s, %r, ...)"%(
-                                 signal_name,
-                                 slot.__name__,
-                                 action.name,
-                                 key))
+        result = safe_invoke(
+            slot,
+            (signal,),
+            {},
+            "Signal %s slot %s(%s)"%(
+                signal_name,
+                slot.__name__,
+                dissect_message(signal),
+            ))
+
         if asyncio.iscoroutine(result):
             asyncio.create_task(result)
 

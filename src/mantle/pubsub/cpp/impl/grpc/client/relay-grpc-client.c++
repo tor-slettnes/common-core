@@ -27,11 +27,11 @@ namespace pubsub::grpc
     }
 
     bool Client::write(const std::string &topic,
-                       const core::types::Value &payload)
+                       const core::types::Value &value)
     {
         cc::platform::pubsub::protobuf::Publication msg;
         msg.set_topic(topic);
-        protobuf::encode(payload, msg.mutable_payload());
+        protobuf::encode(value, msg.mutable_value());
         return this->writer_->Write(msg);
     }
 

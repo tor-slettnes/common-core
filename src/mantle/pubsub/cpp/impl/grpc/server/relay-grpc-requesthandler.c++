@@ -52,7 +52,7 @@ namespace pubsub::grpc
         {
             pubsub::signal_publication.emit(
                 publication.topic(),
-                protobuf::decoded<core::types::Value>(publication.payload()));
+                protobuf::decoded<core::types::Value>(publication.value()));
         }
 
         return ::grpc::Status::OK;
@@ -67,7 +67,7 @@ namespace pubsub::grpc
         {
             pubsub::signal_publication.emit(
                 message->topic(),
-                protobuf::decoded<core::types::Value>(message->payload()));
+                protobuf::decoded<core::types::Value>(message->value()));
             return ::grpc::Status::OK;
         }
         catch (...)

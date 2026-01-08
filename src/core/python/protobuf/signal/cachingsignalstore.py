@@ -101,7 +101,7 @@ class CachingSignalStore (SignalStore):
         If after this `mapping_action` remains `None`, no signal is emitted.
         '''
 
-        if key and not action:
+        if key and (action is None):
             cached_value = self.get_cached_signal(signal_name, key, wait_complete=False)
 
             action = (
@@ -112,12 +112,12 @@ class CachingSignalStore (SignalStore):
                 else None
             )
 
-        if action:
+        if action is not None:
             SignalStore.emit_mapping(self,
                                      signal_name = signal_name,
-                                     action = action,
                                      key = key,
-                                     value = value)
+                                     value = value,
+                                     action = action)
 
 
     def emit_map_update(self,

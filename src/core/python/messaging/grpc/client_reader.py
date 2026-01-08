@@ -20,8 +20,8 @@ class ThreadReader:
 
     def start(self, stream, callback):
         if not self.thread:
-            self.thread = threading.Thread(target = self.watch,
-                                           name = 'Watcher thread',
+            self.thread = threading.Thread(target = self.worker,
+                                           name = 'gRPC Reader Thread',
                                            args = (stream, callback),
                                            daemon = True)
             self.thread.start()
@@ -32,7 +32,7 @@ class ThreadReader:
             if wait:
                 thread.join()
 
-    def watch(self, stream, callback):
+    def worker(self, stream, callback):
         try:
             for msg in stream:
                 callback(msg)
@@ -62,14 +62,14 @@ class AsyncReader:
     def start(self, stream, callback):
         if not self.active():
             self.task = asyncio.create_task(
-                self.watch(stream, callback))
+                self.worker(stream, callback))
 
     def stop(self, wait = False):
         if task := self.task:
             task.cancel()
             self.task = None
 
-    async def watch(self, stream, callback):
+    async def worker(self, stream, callback):
         try:
             async for msg in stream:
                 callback(msg)

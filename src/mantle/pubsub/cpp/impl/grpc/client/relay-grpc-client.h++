@@ -38,7 +38,7 @@ namespace pubsub::grpc
         void initialize() override;
         void deinitialize() override;
         bool write(const std::string &topic,
-                   const core::types::Value &payload) override;
+                   const core::types::Value &value) override;
 
     private:
         void start_writer() override;

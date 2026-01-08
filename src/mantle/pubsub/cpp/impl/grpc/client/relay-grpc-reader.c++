@@ -41,7 +41,7 @@ namespace pubsub::grpc
         {
             return pubsub::MessageItem(
                 msg.topic(),
-                protobuf::decoded<core::types::Value>(msg.payload()));
+                protobuf::decoded<core::types::Value>(msg.value()));
         }
         else
         {
