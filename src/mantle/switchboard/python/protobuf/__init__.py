@@ -12,7 +12,7 @@ from collections.abc import Mapping, Sequence
 ### Modules within package
 from cc.protobuf.utils import native_enum_from_proto
 
-### Types generated from `switchboard.proto`
+### Generated from `.../protos/cc/platform/switchboard/protobuf/switchboard_types.proto`
 from .switchboard_types_pb2 import *
 from .switchboard_types_pb2 import Localization
 

@@ -5,9 +5,11 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-from cc.protobuf.utils import native_enum_from_proto
+### Generated from `.../protos/cc/platform/sysconfig/protobuf/sysconfig_types.proto`
 from .sysconfig_types_pb2 import *
 from .sysconfig_types_pb2 import TimeZoneCountry
+
+from cc.protobuf.utils import native_enum_from_proto
 
 TimeSync = native_enum_from_proto(TimeSync)
 

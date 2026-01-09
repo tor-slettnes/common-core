@@ -45,7 +45,7 @@ class Client (cc.messaging.grpc.Client):
     '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
-    ## `messaging.grpc.Client` base to instantiate `self.stub`.
+    ## `cc.messaging.grpc.Client` base to instantiate `self.stub`.
     from .vfs_service_pb2_grpc import VirtualFileSystemStub as Stub
 
     def get_contexts(self,

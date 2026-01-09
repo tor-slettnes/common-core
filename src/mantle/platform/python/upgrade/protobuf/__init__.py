@@ -14,6 +14,8 @@ import os.path
 ### Modules within package
 from cc.protobuf.utils import native_enum_from_proto
 from ...vfs.protobuf import Path as VFSPath, VFSPathType, encodePath, decodePath
+
+### Generated from `.../protos/cc/platform/upgrade/protobuf/upgrade_types.proto`
 from .upgrade_types_pb2 import *
 from .upgrade_types_pb2 import PackageSource
 

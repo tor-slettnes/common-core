@@ -5,12 +5,12 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-### Generated from `logger.proto`
-from .multilogger_types_pb2 import ColumnType as _ColumnType, ColumnSpec
-from .multilogger_types_pb2 import *
-
 ### Standard Python modules
 import enum
+
+### Generated from `.../protos/cc/platform/multilogger/protobuf/multilogger_types.proto`
+from .multilogger_types_pb2 import ColumnType as _ColumnType, ColumnSpec
+from .multilogger_types_pb2 import *
 
 ColumnType = enum.IntEnum(_ColumnType.DESCRIPTOR.name, _ColumnType.items())
 

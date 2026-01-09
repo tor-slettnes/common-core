@@ -14,7 +14,7 @@ from cc.core.timeutils import TimeInterval
 from ..utils import native_enum_from_proto
 from ..wellknown import DurationType
 
-### Generated from `datetime.proto`
+### Generated from `.../protos/cc/protobuf/datetime/datetime.proto`
 from .datetime_pb2 import TimeStruct, Weekday, Interval, TimeUnit
 
 Weekday = native_enum_from_proto(Weekday)

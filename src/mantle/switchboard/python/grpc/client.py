@@ -19,6 +19,8 @@ class Client (SwitchboardBase, SignalClient):
     Switchboard abstract base
     '''
 
+    ## `Stub` is the generated gRPC client Stub, and is used by the
+    ## `cc.messaging.grpc.Client` base to instantiate `self.stub`.
     from .switchboard_service_pb2_grpc import SwitchboardStub as Stub
 
     def __init__(self,

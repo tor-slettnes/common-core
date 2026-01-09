@@ -185,7 +185,7 @@ class TimePoint (float):
         '''
         Return a formal string represenation of this timestamp
         '''
-        return f"'{self}'"
+        return f"TimePoint({self})"
 
 
     def __add__ (self, input: TimeIntervalType):

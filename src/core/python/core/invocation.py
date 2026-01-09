@@ -11,9 +11,10 @@ import sys
 import traceback
 import inspect
 import logging
+import asyncio
 
-def check_type (argument: object,
-                expected_type: type):
+def check_type(argument: object,
+               expected_type: type):
 
     if not isinstance(argument, expected_type):
         raise TypeError('Expected %s, not %s (%s)'%(

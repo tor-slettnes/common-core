@@ -24,13 +24,13 @@ representations such as:
 
   ### This type overrides the `__str__()` and `__repr__()` methods
   >>> ti
-  '5.500s'
+  TimeInterval(5.5s)
   >>> print("%s" % ti)
-  5s
+  5.5s
   >>> print("%d" % ti)
   5
   >>> print("%f" % ti)
-  5.000000
+  5.500000
 
   ### Also the type persists when adding/subtracting other time deltas
   >>> ti += 60
@@ -159,7 +159,9 @@ class TimeInterval (float):
         '''
         Return a formal string represenation of this duration
         '''
-        return f"'{self}'"
+        return "TimeInterval(%s)"%(
+            self.to_string(component_separator=", "),
+        )
 
     def __add__ (self, other: TimeIntervalType|str|float|int) -> 'TimeInterval':
         '''

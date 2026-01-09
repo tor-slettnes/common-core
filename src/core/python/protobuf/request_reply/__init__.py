@@ -5,7 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-### Populate symbols from `request_reply.proto`
+### Generated from `.../protos/cc/protobuf/request_reply/request_reply.proto`
 from ..utils import native_enum_from_proto
 from .request_reply_pb2 import Request, Reply, Parameter, \
     Status, StatusCode

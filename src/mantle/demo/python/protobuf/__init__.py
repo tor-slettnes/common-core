@@ -5,5 +5,5 @@
 ## @author Tor Slettnes <tslettnes@picarro.com>
 #===============================================================================
 
-### Import types generated from `demo.proto`
+### Generated from `.../protos/cc/demo/protobuf/demo_types.proto`
 from .demo_types_pb2 import *

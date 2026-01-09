@@ -5,7 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-### Generated modules
+### Generated from `.../protos/cc/platform/vfs/protobuf/vfs_types.proto`
 from .vfs_types_pb2 import *
 from .vfs_types_pb2 import \
     PathType, Path, PathRequest, LocateRequest, AttributeRequest, FileInfo

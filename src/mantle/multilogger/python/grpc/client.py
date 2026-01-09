@@ -24,6 +24,8 @@ class Client (BaseClient, API, ThreadedSubmitter):
     Client for MultiLogger service.
     '''
 
+    ## `Stub` is the generated gRPC client Stub, and is used by the
+    ## `cc.messaging.grpc.Client` base to instantiate `self.stub`.
     from .multilogger_service_pb2_grpc import MultiLoggerStub as Stub
 
     def __init__(

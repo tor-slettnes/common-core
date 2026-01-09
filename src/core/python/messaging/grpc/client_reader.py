@@ -1,9 +1,14 @@
-#!/usr/bin/python3 -i
-#===============================================================================
-## @file client_reader.py
-## @brief Read streamed messages from server
-## @author Tor Slettnes
-#===============================================================================
+'''
+client_reader - Stream messages from server in the background
+
+This module provides two flavors:
+  - `ThreadReader` spawns off a worker thread
+  - `AsyncReader` creates a Python AsyncIO task
+'''
+
+__author__ = 'Tor Slettnes'
+__docformat__ = 'javadoc en'
+__all__ = ['ThreadReader', 'AsyncReader']
 
 ### Standard Python modules
 import threading, asyncio

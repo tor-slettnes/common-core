@@ -17,6 +17,8 @@ from ...core.timeutils import TimePointType, TimeIntervalType
 from ...core.invocation import safe_invoke
 from ..utils import native_enum_from_proto
 from ..dissecter import dissect_message
+
+### Generated from `.../protos/cc/protobuf/signal/signal.proto`
 from .signal_pb2 import Filter, MappingAction
 
 ### Third-party modules

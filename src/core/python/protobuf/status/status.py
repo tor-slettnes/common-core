@@ -1,14 +1,15 @@
-#!/usr/bin/echo Do not invoke directly.
-#===============================================================================
-## @file status.py
-## @brief Wrapper module for `status.proto`
-## @author Tor Slettnes
-#===============================================================================
+'''
+status.py - ProtoBuf status type wrapper
+'''
 
-from ..utils import native_enum_from_proto
-from .status_pb2 import Error, Level, Domain
-
+### Standard Python modules
 import logging
+
+### Modules within package
+from ..utils import native_enum_from_proto
+
+### Generated from `.../protos/cc/protobuf/status/status.proto`
+from .status_pb2 import Error, Level, Domain
 
 Level = native_enum_from_proto(Level)
 Domain = native_enum_from_proto(Domain)

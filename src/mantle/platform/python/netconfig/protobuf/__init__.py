@@ -5,6 +5,7 @@
 ## @author Tor Slettnes
 #===============================================================================
 
+### Generated from `.../protos/cc/platform/netconfig/protobuf/netconfig_types.proto`
 from .netconfig_types_pb2 import *
 from cc.protobuf.utils import native_enum_from_proto
 

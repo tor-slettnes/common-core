@@ -12,12 +12,13 @@ from typing import Sequence, Mapping, Optional
 from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.duration_pb2 import Duration
 
-### Modules wihtin package
+### Common Core Modules
 from cc.core.timeutils import TimeIntervalType, TimeInterval
 from cc.core.timeutils import TimePointType, TimePoint
-
 from ..wellknown import TimestampType, \
     encodeTimestamp, decodeTimestamp, encodeDuration, decodeDuration
+
+### Generated from `.../protos/cc/protobuf/variant/variant.proto`
 from .variant_pb2 import Value, ValueList, \
     TaggedValue, TaggedValueList, KeyValueMap
 

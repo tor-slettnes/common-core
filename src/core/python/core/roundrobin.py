@@ -18,6 +18,12 @@ class RoundRobin:
     See the `enqueue()` method for more details.
     '''
 
+    def __iter__(self):
+        '''Support iterator protocol'''
+        return self
+
+    def next(self):
+        return self.get()
 
     def put_roundrobin (self, item: object):
         '''

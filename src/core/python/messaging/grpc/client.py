@@ -130,6 +130,9 @@ class Client (Base):
                 ClientInterceptor(self.wait_for_ready,
                                   self.intercept_errors))
 
+    def close(self):
+        return self.channel.close()
+
     def _default_service_name(self):
         service_name, _ = type(self).Stub.__name__.rsplit('Stub')
         return service_name

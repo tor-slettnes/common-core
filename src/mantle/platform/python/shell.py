@@ -12,7 +12,7 @@ from .vfs.grpc.client import SignalClient as VirtualFileSystemClient
 from .upgrade.grpc.client import SignalClient as UpgradeClient
 from .multilogger.grpc.client import Client as MultiLoggerClient
 from .switchboard.grpc.client import Client as SwitchboardClient
-from .pubsub.grpc.client import Client as PubSubClient
+from .pubsub.grpc import Client as PubSubClient
 
 import cc.core
 import cc.protobuf.datetime
