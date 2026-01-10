@@ -1,5 +1,5 @@
 '''
-AsyncIO Python client for Pub/Sub Relay gRPC service. Publications are added to a send queue and sent asynchronously to the relay in a separate AsyncIO task.
+AsyncIO Python client for Pub/Sub Relay gRPC service.
 '''
 
 __docformat__ = 'javadoc en'
@@ -10,18 +10,19 @@ from collections.abc import Iterator, Sequence
 import asyncio
 
 ### Common Core modules
-from cc.core.decorators import override
+from cc.core.decorators import override, doc_inherit
 from cc.core.types import Variant
 from cc.core.roundrobin import AsyncQueue
 from cc.protobuf.variant import encodeValue, decodeValue
 from cc.messaging.grpc.client import AsyncMixIn
 
 from ..protobuf import Publication, Filters
-from .simple_client import SimpleClient, MessageTuple
+from .client import Client, MessageTuple
 
-class AsyncClient (AsyncMixIn, SimpleClient):
-    __doc__ = SimpleClient.__doc__
+class AsyncClient (AsyncMixIn, Client):
+    __doc__ = Client.__doc__
 
+    _publish_task = None
 
     def __init__(
             self,
@@ -43,37 +44,63 @@ class AsyncClient (AsyncMixIn, SimpleClient):
             server is unavailable, before discarding.
         '''
 
-        SimpleClient.__init__(self,
-                              host = host,
-                              wait_for_ready = wait_for_ready)
-        self._publish_queue = AsyncQueue(queue_size)
-        self._publish_task = None
+        Client.__init__(self,
+                        host = host,
+                        wait_for_ready = wait_for_ready)
 
     def __del__(self):
         self._stop_publisher()
 
+    @doc_inherit
+    async def publish(self, topic: str, value: Variant):
+        ### This simply overrides the parent to provide a more descriptive
+        ### method signature.
+        await Client.publish(self, topic, value)
+
+    @override
+    async def listen(self,
+                     topics: str|Sequence[str]|None = None,
+                     wait_for_ready = True,
+                     ) -> Iterator[MessageTuple]:
+        '''
+        Subscribe and listen to message publications from the Pub/Sub Relay
+        service.
+
+        @param topics
+            Receive publications only on the specified topics.
+            If omitted, publications on any topic will be recieved.
+
+        @return
+            An iterator over messages published from the relay
+
+        ### Example usage:
+
+        ```
+        $ python3 -m asyncio
+        >>> from cc.platform.pubsub.grpc import AsyncClient
+        >>> client = AsyncClient(RELAY_HOST)
+        >>> async for topic, value_ in client.listen(('my_first_topic', 'my_second_topic')):
+        ...    print(f"{topic=}, {value=}")
+        ```
+        '''
+
+        if isinstance(topics, str):
+            topics = (topics,)
+
+        filters = Filters(topics = topics)
+        try:
+            async for msg in self.stub.Subscriber(filters, wait_for_ready = wait_for_ready):
+                yield MessageTuple(msg.topic, decodeValue(msg.value))
+        except KeyboardInterrupt:
+            print("Cancelling subscription")
+
+
     def active(self):
         return self._publish_task and not self._publish_task.done()
 
-    async def publish(self,
-                      topic: str,
-                      value: Variant,
-                      synchronous: bool = False):
-        __doc__ = SimpleClient.publish.__doc__
-
-        msg = Publication(
-            topic = topic,
-            value = encodeValue(value))
-
-        if synchronous:
-            await self.stub.Publish(msg)
-        else:
-            self._start_publisher()
-            await self._publish_queue.put(msg)
-
-
     def _start_publisher(self):
         if not self.active():
+            self._publish_queue = AsyncQueue(self.queue_size)
             self._publish_task = asyncio.create_task(
                 self._publish_worker())
 
@@ -87,19 +114,3 @@ class AsyncClient (AsyncMixIn, SimpleClient):
             while publication := await self._publish_queue.get():
                 await self.stub.Publish(publication)
 
-
-    async def subscribe(self,
-                        topics: str|Sequence[str]|None = None,
-                        wait_for_ready = True,
-                        ) -> Iterator[MessageTuple]:
-        __doc__ = SimpleClient.subscribe.__doc__
-
-        if isinstance(topics, str):
-            topics = (topics,)
-
-        filters = Filters(topics = topics)
-        try:
-            async for msg in self.stub.Subscriber(filters, wait_for_ready = wait_for_ready):
-                yield MessageTuple(msg.topic, decodeValue(msg.value))
-        except KeyboardInterrupt:
-            print("Cancelling subscription")

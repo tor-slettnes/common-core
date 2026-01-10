@@ -29,28 +29,24 @@ class RoundRobin:
         '''
         Put an item in the queue.
 
-        This behaves similar to `put()` / `put_nowait()`, until the queue is
-        full. At that point the oldest item already in the queue is discarded,
-        to make room for the new item.
-
-        @note
-            This method is not thread-safe. There is a chance that one thread
-            discards the oldest item just in time to make room for a second
-            thread to insert a new one. In this case, the first thread may
-            block.
+        This behaves similar to `put_nowait()`, until the queue is full.  At
+        that point the oldest item already in the queue is discarded, to make
+        room for the new item.
         '''
 
-        try:
-            return self.put_nowait(item)
-
-        except Exception: #(queue.Full, asyncio.QueueFull):
+        ### We may need to try multiple times in case there are other
+        ### threads/tasks waiting to put items in this queue.
+        sent = False
+        while not sent:
             try:
-                self.get_nowait()
-            except Exception: #(queue.Empty, asyncio.QueueEmpty):
-                pass
-
-            return self.put(item)
-
+                return self.put_nowait(item)
+            except Exception: #(queue.Full, asyncio.QueueFull):
+                try:
+                    self.get_nowait()
+                except Exception: #(queue.Empty, asyncio.QueueEmpty):
+                    pass
+            else:
+                sent = True
 
 
 class Queue (RoundRobin, queue.Queue):
