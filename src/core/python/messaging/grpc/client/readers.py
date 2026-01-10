@@ -1,28 +1,57 @@
 '''
-client_reader - Stream messages from server in the background
-
-This module provides two flavors:
-  - `ThreadReader` spawns off a worker thread
-  - `AsyncReader` creates a Python AsyncIO task
+thread_reader - Stream messages from server in a background thread
 '''
 
 __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
-__all__ = ['ThreadReader', 'AsyncReader']
 
 ### Standard Python modules
-import threading, asyncio
+from collections.abc import abstractmethod
+import threading
+import asyncio
 
-class ThreadReader:
+### Common Core modules
+from cc.core.decorators import override
+
+#-------------------------------------------------------------------------------
+# Reader
+
+class AbstractReader:
+    '''
+    Stream reader - abstract base.
+    '''
+
+    @abstractmethod
+    def active (self) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
+    def start(self, stream, callback):
+        raise NotImplementedError
+
+    @abstractmethod
+    def stop(self, wait=False):
+        raise NotImplementedError
+
+    @abstractmethod
+    def cancel(self, stream):
+        pass
+
+#-------------------------------------------------------------------------------
+# ThreadReader
+
+class ThreadReader (AbstractReader):
     '''
     Stream reader implementation using threads
     '''
 
     thread = None
 
-    def active (self):
+    @override
+    def active (self) -> bool:
         return (self.thread is not None)
 
+    @override
     def start(self, stream, callback):
         if not self.thread:
             self.thread = threading.Thread(target = self.worker,
@@ -31,6 +60,7 @@ class ThreadReader:
                                            daemon = True)
             self.thread.start()
 
+    @override
     def stop(self, wait=False):
         if thread := self.thread:
             self.thread = None
@@ -47,32 +77,38 @@ class ThreadReader:
             self.thread = None
             self.cancel(stream)
 
+    @override
     def cancel(self, stream):
         try:
             stream.cancel()
         except (TypeError, AttributeError):
             pass
 
+#-------------------------------------------------------------------------------
+# AsyncReader
 
-class AsyncReader:
+class AsyncReader (AbstractReader):
     '''
     Stream reader implementation using AsyncIO task.
     '''
 
     task = None
 
-    def active (self):
+    @override
+    def active (self) -> bool:
         return self.task and not self.task.done()
 
+    @override
     def start(self, stream, callback):
         if not self.active():
             self.task = asyncio.create_task(
                 self.worker(stream, callback))
 
+    @override
     def stop(self, wait = False):
         if task := self.task:
-            task.cancel()
             self.task = None
+            return task.cancel()
 
     async def worker(self, stream, callback):
         try:
@@ -84,6 +120,7 @@ class AsyncReader:
             self.task = None
             await self.cancel(stream)
 
+    @override
     async def cancel(self, stream):
         try:
             await stream.cancel()

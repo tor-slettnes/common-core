@@ -69,7 +69,7 @@ You'll probably start with scaffolding like the following:
 
   import cc.protobuf.demo
 
-  class DemoClient (cc.messaging.grpc.Client):
+  class DemoClient (cc.messaging.grpc.GenericClient):
 
       from cc.protobuf.demo.demo_service_pb2_grpc import DemoStub as Stub
       ...
@@ -142,7 +142,7 @@ Putting this all together, we get:
   import cc.protobuf.demo
   import cc.protobuf.builder
 
-  class DemoClient (cc.messaging.grpc.Client, cc.protobuf.builder.MessageBuilder):
+  class DemoClient (cc.messaging.grpc.GenericClient, cc.protobuf.builder.MessageBuilder):
 
       from cc.protobuf.demo.demo_service_pb2_grpc import DemoStub as Stub
       ...

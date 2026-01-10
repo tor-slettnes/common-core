@@ -8,7 +8,7 @@
 ### Modules relative to install dir
 from cc.demo.grpc.service import DemoService
 from cc.demo.native import NativeDemo
-from cc.messaging.grpc.server import AsyncServerWrapper
+from cc.messaging.grpc import AsyncServerWrapper
 
 ### Standard Python modules
 import logging

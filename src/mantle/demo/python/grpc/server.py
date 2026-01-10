@@ -10,7 +10,7 @@ import logging
 
 ### Modules relative to install dir
 from cc.core.logbase import init_logging
-from cc.messaging.grpc.server import ServerWrapper
+from cc.messaging.grpc import ServerWrapper
 from cc.demo.native import NativeDemo
 from cc.demo.grpc.request_handler import DemoRequestHandler
 

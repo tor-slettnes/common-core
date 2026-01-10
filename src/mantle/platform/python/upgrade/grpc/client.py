@@ -23,13 +23,13 @@ import cc.messaging.grpc
 #===============================================================================
 ## Client
 
-class Client (cc.messaging.grpc.Client):
+class Client (cc.messaging.grpc.GenericClient):
     '''
     Client for Upgrade service.
     '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
-    ## `cc.messaging.grpc.Client` base to instantiate `self.stub`.
+    ## `cc.messaging.grpc.GenericClient` base to instantiate `self.stub`.
     from .upgrade_service_pb2_grpc import UpgradeStub as Stub
 
 

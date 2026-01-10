@@ -1,26 +1,25 @@
-#!/usr/bin/echo Do not invoke directly.
-#===============================================================================
-## @file server.py
-## @brief Interactive wrapper for access to Instrument Services via gRPC
-## @author Tor Slettnes
-#===============================================================================
+'''
+base_wrapper.py - base for ServerWrapper and AsyncServerWrapper
+'''
+
+__author__ = "Tor Slettnes"
+__docformat__ = "javadoc en"
+
 
 ### Standard Python modules
 import concurrent
-from typing import Sequence
+from collections.abc import Sequence, abstractmethod
 from threading import Event
 
 ### Third-party modules
 import grpc
 
 ### Common Core modules
-from cc.core.decorators import override
 from cc.core.timeutils import TimeInterval
-from .base import AddressPair
-from .request_handler import RequestHandler
+from ..base import AddressPair
+from ..request_handler import RequestHandler
 
-
-class ServerWrapper:
+class ServerWrapperBase:
     '''
     gRPC server wrapper.
     '''
@@ -51,9 +50,9 @@ class ServerWrapper:
                     type(request_handlers).__name__,
                 ))
 
-
+    @abstractmethod
     def create_server(self, *args, **kwargs) -> grpc.Server:
-        return grpc.server(*args, **kwargs)
+        pass
 
     def add_listener(self,
                      address: str,
@@ -83,27 +82,3 @@ class ServerWrapper:
 
     def wait_for_termination(self):
         return self.server.wait_for_termination()
-
-
-class AsyncServerWrapper (ServerWrapper):
-    '''
-    AsyncIO gRPC server wrapper.
-    '''
-
-    @override
-    def create_server(self, *args, **kwargs) -> grpc.aio.Server:
-        return grpc.aio.server(*args, **kwargs)
-
-
-
-# def create_server(*request_handlers):
-#     server = grpc.server(concurrent.futures.ThreadPoolExecutor(max_workers=10))
-#     for servicer in request_handlers:
-#         servicer.add_to_server(server)
-#     return server
-
-# def create_async_server(*request_handlers):
-#     server = grpc.aio.server(concurrent.futures.ThreadPoolExecutor(max_workers=10))
-#     for servicer in request_handlers:
-#         servicer.add_to_server(server)
-#     return server

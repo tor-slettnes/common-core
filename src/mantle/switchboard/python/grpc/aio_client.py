@@ -9,12 +9,12 @@ __author__ = 'Tor Slettnes'
 
 ### Modules within package
 from cc.core.decorators import doc_inherit
-from cc.messaging.grpc.signal_client import SignalClient
+from cc.messaging.grpc import SignalClient, AsyncMixIn
 from ..base.baseboard import SwitchboardBase
 from ..protobuf import AddSwitchRequest, RemoveSwitchRequest
 from .aio_remote_switch import AsyncRemoteSwitch
 
-class AsyncClient (SwitchboardBase, SignalClient):
+class AsyncClient (SwitchboardBase, AsyncMixIn, SignalClient):
     '''
     Switchboard abstract base
     '''
@@ -44,7 +44,6 @@ class AsyncClient (SwitchboardBase, SignalClient):
         SwitchboardBase.__init__(self)
         SignalClient.__init__(self,
                               host = host,
-                              use_asyncio = True,
                               wait_for_ready = wait_for_ready,
                               watch_all = watch_all)
 

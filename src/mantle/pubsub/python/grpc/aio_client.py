@@ -14,16 +14,13 @@ from cc.core.decorators import override
 from cc.core.types import Variant
 from cc.core.roundrobin import AsyncQueue
 from cc.protobuf.variant import encodeValue, decodeValue
+from cc.messaging.grpc.client import AsyncMixIn
 
 from ..protobuf import Publication, Filters
 from .simple_client import SimpleClient, MessageTuple
 
-class AsyncClient (SimpleClient):
+class AsyncClient (AsyncMixIn, SimpleClient):
     __doc__ = SimpleClient.__doc__
-
-    ### `use_asyncio` tells the `cc.messaging.grpc.Client` base class to create
-    ### an AsyncIO gRPC channel.
-    use_asyncio = True
 
 
     def __init__(

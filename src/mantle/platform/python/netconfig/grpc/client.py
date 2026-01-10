@@ -32,7 +32,7 @@ ActiveConnectionStateTuple = namedtuple("ActiveConnectionState",
 #===============================================================================
 # Client class
 
-class Client (cc.messaging.grpc.Client):
+class Client (cc.messaging.grpc.GenericClient):
     '''
     NetConfig service client.
 
@@ -44,7 +44,7 @@ class Client (cc.messaging.grpc.Client):
     '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
-    ## `cc.messaging.grpc.Client` base to instantiate `self.stub`.
+    ## `cc.messaging.grpc.GenericClient` base to instantiate `self.stub`.
     from .netconfig_service_pb2_grpc import NetConfigStub as Stub
 
     def get_hostname(self) -> str:

@@ -1,12 +1,12 @@
 #!/bin/echo Do not invoke directly.
 #===============================================================================
-## @file service.py
+## @file request_handler.py
 ## @brief Handle `Demo` service requests
 ## @author Tor Slettnes
 #===============================================================================
 
 ### Modules within current package
-from cc.messaging.grpc.signal_request_handler import SignalRequestHandler
+from cc.messaging.grpc import SignalRequestHandler
 from ..base import API, demo_signals
 from ..protobuf import Greeting, TimeData
 from .demo_service_pb2_grpc import DemoServicer

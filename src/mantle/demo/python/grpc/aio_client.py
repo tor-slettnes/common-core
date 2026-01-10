@@ -5,15 +5,16 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-### Modules relative to install folder
-from cc.demo.grpc.client import DemoClient
-
 ### Standard Python modules
 import asyncio
 import argparse
 import os.path
 import sys
 import logging
+
+### Modules relative to install folder
+from .client import Client as DemoClient
+from cc.messaging.grpc.client import AsyncMixIn
 
 ### Add a few arguments to the base argparser
 class ArgParser (argparse.ArgumentParser):
@@ -50,10 +51,12 @@ class ArgParser (argparse.ArgumentParser):
                           help="Invoke a function with Python AsyncIO semantics")
 
 
+class AsyncDemoClient(AsyncMixIn, DemoClient):
+    pass
+
 async def main(args):
-    demo = DemoClient(args.host,
-                      identity = args.identity,
-                      use_asyncio = True)
+    demo = AsyncDemoClient(args.host,
+                           identity = args.identity)
     demo.initialize()
     # result = await demo.get_current_time()
 

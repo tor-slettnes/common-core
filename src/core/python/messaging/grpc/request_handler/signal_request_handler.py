@@ -5,18 +5,20 @@ signal_request_handler.py - gRPC request handler with `watch` method to feed bac
 __docformat__ = 'javadoc en'
 __author__= 'Tor Slettnes'
 
-### Modules within package
-from .request_handler import RequestHandler
-from cc.protobuf.signal import SignalStore, Filter, MappingAction
+### Standard Python modules
+from typing import Optional, Generator
+from queue  import Queue
+import queue, logging
 
 ### Third-party modules
 import google.protobuf.message
 import grpc
 
-### Standard Python modules
-from typing import Optional, Generator
-from queue  import Queue
-import queue, logging
+### Common Core modules
+from cc.protobuf.signal import SignalStore, Filter, MappingAction
+
+### Modules within package
+from .generic_request_handler import RequestHandler
 
 #===============================================================================
 # @class SignalRequestHandler

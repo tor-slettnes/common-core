@@ -12,7 +12,7 @@ from collections import namedtuple
 ### Common Core modules
 from cc.core.types import Variant
 from cc.protobuf.variant import encodeValue, decodeValue
-from cc.messaging.grpc import Client as BaseClient
+from cc.messaging.grpc import GenericClient
 
 ### Pub/Sub module
 from ..protobuf import Publication, Filters
@@ -22,7 +22,7 @@ MessageTuple = namedtuple('MessageTuple', ('topic', 'value'))
 #-------------------------------------------------------------------------------
 # Relay Client
 
-class SimpleClient (BaseClient):
+class SimpleClient (GenericClient):
     '''
     Python gRPC client for the Pub/Sub Relay.  This Relay is an intermediary
     message broker between producers and consumers of asynchronous events and
@@ -56,7 +56,7 @@ class SimpleClient (BaseClient):
     '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
-    ## `cc.messaging.grpc.Client` base to instantiate `self.stub`.
+    ## `cc.messaging.grpc.GenericClient` base to instantiate `self.stub`.
     from .relay_service_pb2_grpc import RelayStub as Stub
 
     def publish(self, topic: str,  value: Variant):

@@ -16,7 +16,7 @@ import grpc
 ### Common core modules
 from cc.protobuf.wellknown import Empty
 from cc.protobuf.builder import MessageBuilder
-from .base import Base, AddressPair
+from ..base import Base, AddressPair
 
 
 class RequestHandler (Base, MessageBuilder):
@@ -44,7 +44,7 @@ class RequestHandler (Base, MessageBuilder):
     Then, your service handler might look something like this:
 
       ```python
-      from cc.messaging.grpc.service import RequestHandler
+      from cc.messaging.grpc import RequestHandler
       from example_service_service_pb2_grpc import ExampleServicer
       from google.protobuf.wrappers_pb2 import StringValue
       from grpc import ServicerContext

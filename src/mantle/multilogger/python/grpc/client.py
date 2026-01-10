@@ -11,7 +11,7 @@ import time
 
 ### Modules within package
 from cc.core.decorators import doc_inherit
-from cc.messaging.grpc import Client as BaseClient
+from cc.messaging.grpc import GenericClient
 from ..base.api import API
 from ..base.threaded_submitter import ThreadedSubmitter
 
@@ -19,13 +19,13 @@ from ..base.threaded_submitter import ThreadedSubmitter
 #-------------------------------------------------------------------------------
 # MultiLogger Client
 
-class Client (BaseClient, API, ThreadedSubmitter):
+class Client (GenericClient, API, ThreadedSubmitter):
     '''
     Client for MultiLogger service.
     '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
-    ## `cc.messaging.grpc.Client` base to instantiate `self.stub`.
+    ## `cc.messaging.grpc.GenericClient` base to instantiate `self.stub`.
     from .multilogger_service_pb2_grpc import MultiLoggerStub as Stub
 
     def __init__(
@@ -75,7 +75,7 @@ class Client (BaseClient, API, ThreadedSubmitter):
             corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
         '''
 
-        BaseClient.__init__(
+        GenericClient.__init__(
             self,
             host = host,
             wait_for_ready = wait_for_ready,
@@ -95,12 +95,12 @@ class Client (BaseClient, API, ThreadedSubmitter):
 
 
     def initialize(self):
-        BaseClient.initialize(self)
+        GenericClient.initialize(self)
         self.open()
 
     def deinitialize(self):
         self.close()
-        BaseClient.deinitialize(self)
+        GenericClient.deinitialize(self)
 
 
     def stream_worker(self, wait_for_ready: bool = True):

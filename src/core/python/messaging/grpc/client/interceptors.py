@@ -1,15 +1,17 @@
-#!/usr/bin/echo Do not invoke directly.
-##===============================================================================n
-## @file client_interceptor.py
-## @brief gRPC client interceptor to decode custom error details
-## @author Tor Slettnes
-#===============================================================================
+'''
+generic_interceptor.py - Intercept calls over a standard gRPC client channel
+'''
 
-from .status import DetailedError
+__author__ = "Tor Slettnes"
+__docformat__ = "javadoc en"
 
-### Third-party modules
+### Standard Python modules
 import grpc
 import sys
+
+#### Modules within package
+from ..status import DetailedError
+from .base_interceptor import ClientInterceptorBase
 
 class ClientInterceptorBase(object):
     '''
@@ -35,11 +37,11 @@ class ClientInterceptorBase(object):
         return self._intercept_stream(continuation, client_call_details, request_iterator)
 
 
-class ClientInterceptor(ClientInterceptorBase,
-                        grpc.UnaryUnaryClientInterceptor,
-                        grpc.UnaryStreamClientInterceptor,
-                        grpc.StreamUnaryClientInterceptor,
-                        grpc.StreamStreamClientInterceptor):
+class GenericClientInterceptor(ClientInterceptorBase,
+                               grpc.UnaryUnaryClientInterceptor,
+                               grpc.UnaryStreamClientInterceptor,
+                               grpc.StreamUnaryClientInterceptor,
+                               grpc.StreamStreamClientInterceptor):
     '''
     gRPC client interceptor, performing these tasks:
 

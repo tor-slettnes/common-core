@@ -22,7 +22,7 @@ class Client (API, SignalClient):
     '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
-    ## `cc.messaging.grpc.Client` base to instantiate `self.stub`.
+    ## `cc.messaging.grpc.GenericClient` base to instantiate `self.stub`.
     from .demo_service_pb2_grpc import DemoStub as Stub
 
     ## `service_name` is optional. If not provided here it is determined
@@ -40,7 +40,6 @@ class Client (API, SignalClient):
                  host           : str = "",        # gRPC server
                  identity       : str|None = None, # Greeter identity
                  wait_for_ready : bool = False,    # Keep trying to connect
-                 use_asyncio    : bool = False,    # Use Python AsyncIO semantics
                  product_name   : str|None = None, # Short product name
                  project_name   : str|None = None, # Top-level code project
                  ):
@@ -61,13 +60,6 @@ class Client (API, SignalClient):
             If a connection attempt fails, keep retrying until successful.
             This value may be overriden per call.
 
-        @param use_asyncio
-            Use Python AsyncIO.  Effectively this performs calls within a
-            `grpc.aio.Channel` instance, rather than the default `grpc.Channel`.
-            Additionally, the `call()` method uses AsyncIO semantics to capture
-            any exceptions.  If not specified, the default value is obtained
-            from the corresponding `use_asyncio` class variable.
-
         @param product_name
             Name of the product, used to locate corresponding settings files
             (e.g. `grpc-endpoints-PRODUCT.yaml`).
@@ -83,7 +75,6 @@ class Client (API, SignalClient):
         SignalClient.__init__(self,
                               host = host,
                               wait_for_ready = wait_for_ready,
-                              use_asyncio = use_asyncio,
                               signal_store = demo_signals,
                               watch_all = False)
 

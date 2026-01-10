@@ -9,7 +9,7 @@ __author__ = 'Tor Slettnes'
 
 from cc.core.decorators import doc_inherit
 from cc.protobuf.variant import PyValueList, encodeValueList
-from cc.messaging.grpc.signal_client import SignalClient
+from cc.messaging.grpc import SignalClient
 from ..protobuf import AddSwitchRequest, RemoveSwitchRequest, ImportRequest
 from ..base.baseboard import SwitchboardBase
 from .remote_switch import RemoteSwitch
@@ -20,7 +20,7 @@ class Client (SwitchboardBase, SignalClient):
     '''
 
     ## `Stub` is the generated gRPC client Stub, and is used by the
-    ## `cc.messaging.grpc.Client` base to instantiate `self.stub`.
+    ## `cc.messaging.grpc.GenericClient` base to instantiate `self.stub`.
     from .switchboard_service_pb2_grpc import SwitchboardStub as Stub
 
     def __init__(self,

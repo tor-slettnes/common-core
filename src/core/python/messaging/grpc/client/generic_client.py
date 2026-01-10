@@ -1,34 +1,36 @@
-#!/usr/bin/echo Do not invoke directly.
-#===============================================================================
-## @file client.py
-## @brief gRPC client base
-## @author Tor Slettnes
-#===============================================================================
+'''
+generic_client.py - Generic gRPC client base, for making service calls through
+a standard gRPC channel.
+'''
 
-### Modules within package
-from .base import Base, AddressPair
-from .client_interceptor import ClientInterceptor, AsyncClientInterceptor
-from cc.core.invocation import invocation
+__author__ = "Tor Slettnes"
+__docformat__ = "javadoc en"
+
+### Standard Python modules
+from collections.abc import abstractmethod
 
 ### Third-party modules
 import grpc
 
-### Standard Python modules
-import sys
-import logging
-import os
+### Modules within package
+from ..base import Base
+from .interceptors import GenericClientInterceptor
+from .readers import AbstractReader, ThreadReader
 
-class Client (Base):
+class GenericClient (Base):
     '''
-    gRPC client wrapper with miscellaneous convenience features.
+    Abstract base class for gRPC service clients.
 
     By deriving from this class, dedicated service clients will automatically
     connect to the correct server address (host and port) as specified in the
     corresponding service settings.  Additionally, call wrappers are provided to
     extract custom error details in case of failures.
+
+    Final implementations should not derive from this class directly,
+    but rather from `Client` or `AsyncClient`.
     '''
 
-    ## Messaging endpoint type
+    ## Messaging endpoint type, used by Endpoint base class
     endpoint_type = 'client'
 
     ## Used to look up service address in settings
@@ -46,16 +48,12 @@ class Client (Base):
     ## settings, such as target host/port.
     service_name = None
 
-    ## To use Python AsyncIO semantics, subclasses should set `use_asyncio` flag.
-    use_asyncio = False
-
     def __init__(self,
                  host: str|None = None,
                  wait_for_ready: bool = False,
-                 use_asyncio: bool|None = None,
-                 intercept_errors: bool = True,
                  product_name: str|None = None,
                  project_name: str|None = None,
+                 intercept_errors: bool = True,
                  ):
         '''
         Initializer.  Parameters:
@@ -64,21 +62,16 @@ class Client (Base):
             Server host and/or port number, in the form `address:port`.
             `address` may be a hostname or an IPv4 or IPv6 address string.  If
             either address or host is missing, the default value is obtain from
-            the service settings file (grpc-endpoints-PRODUCT.json).
+            any of the following the settings file, in order:
+            - grpc-endpoints-SERVICE_NAME.json,
+            - grpc-endpoints-PRODUCT_NAME.json,
+            - grpc-endpoints-PROJECT_NAME.json,
+            - grpc-endpoints-common.json.
+           (The ALL CAPS portions are substituted as appropriate)
 
         @param wait_for_ready
             If a connection attempt fails, keep retrying until successful.
             This value may be overriden per call.
-
-        @param use_asyncio
-            Use Python AsyncIO.  Effectively this performs calls within a
-            `grpc.aio.Channel` instance, rather than the default `grpc.Channel`.
-            Additionally, the `call()` method uses AsyncIO semantics to capture
-            any exceptions.  If not specified, the default value is obtained
-            from the corresponding `use_asyncio` class variable.
-
-        @param interceptor_errors
-            Raise any errors encountered in custom gRPC interceptors
 
         @param product_name
             Name of the product, used to locate corresponding settings files
@@ -87,6 +80,10 @@ class Client (Base):
         @param project_name
             Name of code project (e.g. parent code repository). Used to locate
             corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
+
+        @param interceptor_errors
+            Raise any errors encountered in custom gRPC interceptors
+
         '''
 
         Base.__init__(self,
@@ -95,11 +92,9 @@ class Client (Base):
                       project_name = project_name)
 
         assert type(self).Stub, (
-            "gRPC Client subclass %r should set 'Stub' to appropriate gRPC service class"%
-            (type(self).__name__,))
-
-        if use_asyncio is not None:
-            self.use_asyncio = use_asyncio
+            "gRPC Client subclass %r should set 'Stub' to an appropriate gRPC client stub class" % (
+                type(self).__name__,
+            ))
 
         self.wait_for_ready   = wait_for_ready
         self.intercept_errors = intercept_errors
@@ -113,22 +108,15 @@ class Client (Base):
     def host(self) -> str:
         return self._joinAddress(self.service_address)
 
-    def create_channel(self):
-        if self.use_asyncio:
-            # self._channel = grpc.aio.insecure_channel(target = self.host)
-            return grpc.aio.insecure_channel(
-                target = self.host,
-                interceptors = [
-                    AsyncClientInterceptor(self.wait_for_ready,
-                                           self.intercept_errors)
-                ])
+    def create_channel(self) -> grpc.Channel:
+        # self._channel = grpc.insecure_channel(self.host)
+        return grpc.intercept_channel(
+            grpc.insecure_channel(self.host),
+            GenericClientInterceptor(self.wait_for_ready,
+                                     self.intercept_errors))
 
-        else:
-            # self._channel = grpc.insecure_channel(self.host)
-            return grpc.intercept_channel(
-                grpc.insecure_channel(self.host),
-                ClientInterceptor(self.wait_for_ready,
-                                  self.intercept_errors))
+    def create_reader(self) -> AbstractReader:
+        return ThreadReader()
 
     def close(self):
         return self.channel.close()
@@ -138,5 +126,8 @@ class Client (Base):
         return service_name
 
     def _channelChange (self, *args, **kwargs):
-        self.logger.debug("gRPC channel change: args=%s, kwargs=%s"%(args, kwargs))
+        self.logger.debug("gRPC channel change: args=%s, kwargs=%s"%(
+            args,
+            kwargs,
+        ))
 

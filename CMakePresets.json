@@ -24,6 +24,12 @@
                 "RELEASE_TAG": "$env{RELEASE_TAG}",
                 "DEBIAN_RELEASE": "$env{DEBIAN_RELEASE}"
             }
+        },
+        {
+            "name": "arm",
+            "description": "Cross-compilation for ARM",
+            "inherits": "default",
+            "toolchainFile": "build/cmake/toolchain-Linux-aarch64.cmake"
         }
     ],
     "buildPresets": [
