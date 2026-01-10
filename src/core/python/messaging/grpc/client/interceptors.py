@@ -11,7 +11,6 @@ import sys
 
 #### Modules within package
 from ..status import DetailedError
-from .base_interceptor import ClientInterceptorBase
 
 class ClientInterceptorBase(object):
     '''
