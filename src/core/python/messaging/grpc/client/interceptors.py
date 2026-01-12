@@ -52,8 +52,9 @@ class GenericClientInterceptor(ClientInterceptorBase,
     '''
 
     class FutureResponse (grpc.Future):
-        def __init__ (self, response):
+        def __init__ (self, response, intercept_errors):
             self._response = response
+            self._intercept_errors = intercept_errors
 
         def cancel(self):
             return self._response.cancel()
@@ -71,8 +72,11 @@ class GenericClientInterceptor(ClientInterceptorBase,
             try:
                 return self._response.result()
             except grpc.RpcError as e:
-                e_type, e_name, e_tb = sys.exc_info()
-                raise DetailedError(e).with_traceback(e_tb) from None
+                if self._intercept_errors:
+                    e_type, e_name, e_tb = sys.exc_info()
+                    raise DetailedError(e).with_traceback(e_tb) from None
+                else:
+                    raise
 
         def exception(self, timeout=None):
             return self._exception
@@ -104,7 +108,7 @@ class GenericClientInterceptor(ClientInterceptorBase,
                             request_or_iterator):
         call_details = self._call_details(client_call_details)
         response = continuation(call_details, request_or_iterator)
-        return self.FutureResponse(response)
+        return self.FutureResponse(response, self.intercept_errors)
 
     def _intercept_stream(self,
                           continuation,
@@ -157,8 +161,11 @@ class AsyncClientInterceptor(ClientInterceptorBase,
         try:
             return await continuation(call_details, request_or_iterator)
         except (grpc.RpcError, grpc.aio.AioRpcError) as e:
-            e_type, e_name, e_tb = sys.exc_info()
-            raise DetailedError(e).with_traceback(e_tb) from None
+            if self.intercept_errors:
+                e_type, e_name, e_tb = sys.exc_info()
+                raise DetailedError(e).with_traceback(e_tb) from None
+            else:
+                raise
 
     async def _intercept_stream(self,
                                 continuation,

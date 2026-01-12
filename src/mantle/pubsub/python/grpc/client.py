@@ -1,18 +1,87 @@
 '''
 Python client for Pub/Sub Relay gRPC service.
+
+Example usage:
+
+* Create a Pub/Sub AsyncClient instance:
+
+  ```
+  python3
+  >>> from cc.platform.pubsub.grpc.client import Client, MessageTuple
+  >>> pubsub = Client("localhost")
+  ```
+
+* Listen for specific topics in the foreground:
+
+  ```
+  >>> for msg in pubsub.listen(topics=("my topic",)):
+  ...     print(f"{msg=}\r")
+  ```
+
+  (This blocks until cancelled, e.g. via **[Ctrl]** + **[C]**)
+
+* Publish a message from a new terminal, e.g. using `cc-pubsub-tool`
+
+  ```
+  cc-pubsub-tool publish 'my topic' '{"one": true, "two": 2, "three": 3.141592653589793238, "four":"IV"}' --json
+  ```
+
+* Observe that the message appears in the first terminal
+
+  ```
+  msg=MessageTuple(topic='my topic', value={'four': 'IV', 'two': 2, 'three': 3.141592653589793, 'one': True})
+  ```
+
+* Add a subscription:
+
+  ```
+  >>> def my_subscriber(msg: MessageTuple):
+  ...     """callback handler, invoked asynchronously on matching message publications"""
+  ...     print(f"{msg=}\r")
+  ...
+  >>> handle = pubsub.subscribe(topics=["my topic"], callback=my_subscriber)
+  ```
+
+* Publish a message via the Relay.  The subscriber above will be invoked from an asynchronous worker thread:
+
+  ```
+  >>> pubsub.publish("my topic", {"one":True, "two":2, "three":3.141592653589793238, "four":"IV"})
+
+  msg=MessageTuple(topic='my topic', value={'three': 3.141592653589793, 'two': 2, 'one': True, 'four': 'IV'})
+  >>>
+  ```
+
+* Enqueue a message for asynchronous publication.  
+
+  ```
+  >>> pubsub.enqueue("my topic", {"five":False, "six":[1,2,3]})
+  >>> msg=MessageTuple(topic='my topic', value={'six': [1, 2, 3], 'five': False})
+  ```
+
+  **Note:** Upon first invocation, `enqueue()` creates a publication queue, as well as a and a worker thread to read from this queue and publish the messages in the background.  The preferred queue size can be provided int the `Client()` constructor, above.
+
+
+* Cancel the subscription
+
+  ```
+  >>> pubsub.unsubscribe(handle)
+  ```
+
 '''
 
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Standard Python modules
-from collections.abc import Iterator, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from collections import namedtuple
 from threading import Thread
+from uuid import uuid1
 
 ### Common Core modules
 from cc.core.types import Variant
 from cc.core.roundrobin import Queue
+from cc.core.signalstore import DataSignal
 from cc.protobuf.variant import encodeValue, decodeValue
 from cc.messaging.grpc import GenericClient
 
@@ -20,6 +89,7 @@ from cc.messaging.grpc import GenericClient
 from ..protobuf import Publication, Filters
 
 MessageTuple = namedtuple('MessageTuple', ('topic', 'value'))
+SubscriberCallback = Callable[[MessageTuple], None]
 
 #-------------------------------------------------------------------------------
 # Relay Client
@@ -61,7 +131,9 @@ class Client (GenericClient):
     ## `cc.messaging.grpc.GenericClient` base to instantiate `self.stub`.
     from .relay_service_pb2_grpc import RelayStub as Stub
 
-    _publish_thread = None
+    _writer_thread = None
+    _reader_thread = None
+    _message_signal = None
 
     def __init__(
             self,
@@ -90,13 +162,8 @@ class Client (GenericClient):
         self.queue_size = queue_size
 
     def __del__(self):
-        self._stop_publisher()
-
-    def active (self):
-        if t := self._publish_thread:
-            return t.is_alive()
-        else:
-            return False
+        self._stop_writer()
+        self._stop_reader()
 
 
     def publish(self, topic: str,  value: Variant):
@@ -120,11 +187,7 @@ class Client (GenericClient):
             - A mapping (e.g. dictionary) of string keys to nested Variant values
             - An ordered (tag, value) sequence, where tags need not be unique.
         '''
-        publication = Publication(
-            topic = topic,
-            value = encodeValue(value))
-
-        return self.stub.Publish(publication)
+        return self.stub.Publish(self.encode_publication(topic, value))
 
 
     def enqueue(self,
@@ -151,30 +214,43 @@ class Client (GenericClient):
             - An ordered (tag, value) sequence, where tags need not be unique.
         '''
 
-        msg = Publication(
-            topic = topic,
-            value = encodeValue(value))
+        self._start_writer()
+        return self._write_queue.put_roundrobin(
+            self.encode_publication(topic, value))
 
-        self._start_publisher()
-        return self._publish_queue.put_roundrobin(msg)
 
-    def _start_publisher(self):
-        if not self.active():
-            t = Thread(target = self._publish_worker,
+    def writer_active(self):
+        if t := self._writer_thread:
+            return t.is_alive()
+        else:
+            return False
+
+    def encode_publication(self,
+                           topic: str,
+                           value: Variant) -> Publication:
+        return Publication(topic = topic, value = encodeValue(value))
+
+    def decode_publication(self, msg):
+        return MessageTuple(topic = msg.topic, value = decodeValue(msg.value))
+
+
+    def _start_writer(self):
+        if not self.writer_active():
+            t = Thread(target = self._write_worker,
                        daemon = True)
-            self._publish_queue = Queue(self.queue_size)
-            self._publish_thread = t
+            self._write_queue = Queue(self.queue_size)
+            self._writer_thread = t
             t.start()
 
-    def _stop_publisher(self):
-        if t := self._publish_thread:
-            self._publish_thread = None
-            self._publish_queue.put(None)
+    def _stop_writer(self):
+        if t := self._writer_thread:
+            self._writer_thread = None
+            self._write_queue.put(None)
             t.join()
 
-    def _publish_worker(self):
-        while self._publish_thread:
-            while publication := self._publish_queue.get():
+    def _write_worker(self):
+        while self._writer_thread:
+            while publication := self._write_queue.get():
                 self.stub.Publish(publication, wait_for_ready=True)
 
     def listen(self,
@@ -209,6 +285,135 @@ class Client (GenericClient):
         filters = Filters(topics = topics)
         try:
             for msg in self.stub.Subscriber(filters, wait_for_ready = wait_for_ready):
-                yield MessageTuple(msg.topic, decodeValue(msg.value))
+                yield self.decode_publication(msg)
         except KeyboardInterrupt:
             print("Cancelling subscription")
+
+
+    def subscribe(self, *,
+                  callback: SubscriberCallback,
+                  topics: str|Sequence[str]|None = None,
+                  handle: str|None = None) -> str:
+        '''
+        Subscribe asynchronously to message publications from the Pub/Sub Relay.
+
+        @param handler
+            Callback handler to invoke when a matching publication is received
+            from the Relay.  This call will be made from a dedicated worker thread.
+
+        @param topics
+            Receive publications only on the specified topics.  If omitted,
+            publications on any topic will be received.
+
+        @param handle
+            Unique identifier for this subscription. If omitted, one is generated
+            using `uuid.uuid1()`.
+
+        @return
+            Unique identifier that was provided or assigned.  This may
+            subsequently be used to cancel the subscription via `unsubscribe()`.
+
+        @note
+            On first invocation, the `subscribe()` method spawns a worker thread
+            in which message publications are streamed from the Relay.
+        '''
+
+        if not handle:
+            handle = str(uuid1())
+
+        if isinstance(topics, str):
+            topics = (topics,)
+
+        self._start_reader()
+        self._message_signal.connect(
+            handle = handle,
+            callback = lambda msg: self._handle_message(msg, topics, callback),
+        )
+        return handle
+
+
+    def unsubscribe(self, handle: str) -> bool:
+        '''
+        Cancel an existing message subscription.
+
+        @param handle
+            Subscription handle returned from the original `subscribe()` request.
+
+        @return
+            True if the subscription was found and canceled
+
+        @note
+            If no more subscriptions are active, the worker thread that reads
+            message publications is closed.
+        '''
+
+        if (self._message_signal
+            and self._message_signal.disconnect(handle)
+            and (self._message_signal.connection_count() == 0)
+            ):
+            self._stop_reader()
+            return True
+
+        else:
+            return False
+
+    def unsubscribe_all(self) -> bool:
+        '''
+        Cancel all message subscriptions held by this client.
+
+        @return
+            True if any subscriptions were found and canceled
+        '''
+        if self._message_signal:
+            return self._message_signal.disconnect_all()
+        else:
+            return False
+
+
+    def reader_active(self):
+        if t := self._reader_thread:
+            return t.is_alive()
+        else:
+            return False
+
+    def _start_reader(self):
+        if not self.reader_active():
+            t = Thread(target = self._read_worker,
+                       daemon = True)
+
+            self._reader_thread = t
+            self._reader_stream = None
+            self._message_signal = DataSignal("publication")
+            t.start()
+
+    def _stop_reader(self):
+        if t := self._reader_thread:
+            self._reader_thread = None
+
+            if stream := self._reader_stream:
+                stream.close()
+
+            self._reader_stream = None
+            t.join()
+
+    def _read_worker(self):
+        filters = Filters()
+
+        while self.reader_active():
+            self._reader_stream = self.stub.Subscriber(filters, wait_for_ready=True)
+            for msg in self._reader_stream:
+                self._message_signal.emit(self.decode_publication(msg))
+
+
+    def _handle_message(self,
+                        msg: MessageTuple,
+                        subscriptions: Sequence[str]|None,
+                        callback: SubscriberCallback):
+
+        if not subscriptions or msg.topic in subscriptions:
+            callback(msg)
+
+
+if __name__ == "__main__":
+    client = Client()
+    handle = client.subscribe(callback = lambda publication: print(f"{publication=}\r"))

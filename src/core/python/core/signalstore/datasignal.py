@@ -1,17 +1,18 @@
-#!/usr/bin/echo Do not invoke directly.
-#===============================================================================
-## @file datasignal.py
-## @brief Signal/Slot pattern implementation
-## @author Tor Slettnes
-#===============================================================================
+'''
+datasignal.py - Simple signal/slot implementation
+'''
+
+__author__ = "Tor Slettnes"
+__docformat__ = "javadoc en"
+
+
+### Standard Python modules
+from typing import  Callable, Mapping, Any
+import uuid
 
 ### Modules within package
 from ..invocation import safe_invoke, check_type
 
-### Standard Pyton modules
-from typing import Optional, Callable, Mapping, Any
-import uuid
-import threading
 
 #===============================================================================
 # Annotation types
@@ -22,13 +23,15 @@ SignalSlot  = Callable[[Any], None]
 #===============================================================================
 # DataSignal class
 
-class DataSignal (object):
+class DataSignal:
+    '''
+    Simple signal/slot implementation with payload.
+    '''
 
-    def __init__(self, signal_name: str, use_cache = False):
+    def __init__(self,
+                 signal_name: str):
         self.signal_name = signal_name
-        self.use_cache = use_cache
         self.slots = {}
-        self._cached = None
 
     def connection_count(self) -> int:
         '''
@@ -36,34 +39,30 @@ class DataSignal (object):
         '''
         return len(self.slots)
 
-
     def connect(self,
-                slot: SignalSlot,
-                handle : Optional[str] = None) -> str:
+                callback: SignalSlot,
+                handle : str|None = None) -> str:
         '''
         Connect a callback handler (slot) to receive emitted signals.
 
-        @param slot:
+        @param callback
             A callable handler (e.g. a function) that accepts the payload
             as its first and only required argument.
 
-        @param handle:
+        @param handle
             A unique ID that can later be used to disconnect the handler from
             this signal.
 
         Returns the handle that was either provided or generated
         '''
 
-        assert callable(slot), \
-            "Slot must be a callable object, like a function"
+        assert callable(callback), \
+            "Callback must be a callable object, like a function"
 
         if not handle:
             handle = uuid.uuid1()
 
-        self.slots[handle] = slot
-        if self.use_cache:
-            self._emit_cached_to(handle, slot)
-
+        self.slots[handle] = callback
         return handle
 
 
@@ -83,18 +82,27 @@ class DataSignal (object):
         except KeyError:
             return False
 
+    def disconnect_all(self) -> bool:
+        if self.slots:
+            self.slots.clear()
+            return True
+        else:
+            return False
+
     def emit(self, data: Any):
+        '''
+        Emit signal data to connected slots.
+        '''
         for handle, callback in self.slots.items():
             self._emit_to(handle, callback, data)
 
-        if self.use_cache:
-            self._cached = data
-
-    def _emit_cached_to(self, handle: str, slot: SignalSlot):
-        if self._cached is not None:
-            self._emit_to(handle, slot, self._cached)
-
     def _emit_to(self, handle, slot, signal):
-        safe_invoke(slot, (signal,), {},
-                    "Signal %r handle %r: %s()"%(self.signal_name, handle, slot.__name__))
-
+        return safe_invoke(
+            slot,
+            (signal,),
+            {},
+            "Signal %r handle %r: %s()"%(
+                self.signal_name,
+                handle,
+                slot.__name__,
+            ))
