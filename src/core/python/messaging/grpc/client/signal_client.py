@@ -120,7 +120,7 @@ previously connected to one or more handlers.
 
 
 ### Standard Python modules
-from collections.abc import Callable, Sequence, abstractmethod
+from typing import Callable, Sequence, abstractmethod
 
 ### Common Core modules
 from cc.core.timeutils import TimeIntervalType

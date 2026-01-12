@@ -8,7 +8,7 @@ __docformat__ = "javadoc en"
 
 ### Standard Python modules
 import concurrent
-from collections.abc import Sequence, abstractmethod
+from typing import Sequence, abstractmethod
 from threading import Event
 
 ### Third-party modules

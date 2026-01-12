@@ -6,7 +6,7 @@ __author__ = 'Tor Slettnes'
 __docformat__ = 'javadoc en'
 
 ### Standard Python modules
-from collections.abc import abstractmethod
+from typing import abstractmethod
 import threading
 import asyncio
 

@@ -51,7 +51,7 @@ Example usage:
   >>>
   ```
 
-* Enqueue a message for asynchronous publication.  
+* Enqueue a message for asynchronous publication.
 
   ```
   >>> pubsub.enqueue("my topic", {"five":False, "six":[1,2,3]})
