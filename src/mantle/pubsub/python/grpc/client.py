@@ -77,11 +77,12 @@ from collections.abc import Callable, Iterator, Sequence
 from collections import namedtuple
 from threading import Thread
 from uuid import uuid1
+from dataclasses import dataclass
 
 ### Common Core modules
 from cc.core.types import Variant
 from cc.core.roundrobin import Queue
-from cc.core.signalstore import DataSignal
+from cc.core.invocation import safe_invoke
 from cc.protobuf.variant import encodeValue, decodeValue
 from cc.messaging.grpc import GenericClient
 
@@ -90,6 +91,11 @@ from ..protobuf import Publication, Filters
 
 MessageTuple = namedtuple('MessageTuple', ('topic', 'value'))
 SubscriberCallback = Callable[[MessageTuple], None]
+
+@dataclass
+class Subscription:
+    stream: object
+    callback: SubscriberCallback
 
 #-------------------------------------------------------------------------------
 # Relay Client
@@ -132,8 +138,6 @@ class Client (GenericClient):
     from .relay_service_pb2_grpc import RelayStub as Stub
 
     _writer_thread = None
-    _reader_thread = None
-    _message_signal = None
 
     def __init__(
             self,
@@ -160,10 +164,10 @@ class Client (GenericClient):
                                wait_for_ready = wait_for_ready)
 
         self.queue_size = queue_size
+        self.subscriptions = {}
 
     def __del__(self):
         self._stop_writer()
-        self._stop_reader()
 
 
     def publish(self, topic: str,  value: Variant):
@@ -299,7 +303,7 @@ class Client (GenericClient):
 
         @param handler
             Callback handler to invoke when a matching publication is received
-            from the Relay.  This call will be made from a dedicated worker thread.
+            from the Relay.
 
         @param topics
             Receive publications only on the specified topics.  If omitted,
@@ -312,10 +316,6 @@ class Client (GenericClient):
         @return
             Unique identifier that was provided or assigned.  This may
             subsequently be used to cancel the subscription via `unsubscribe()`.
-
-        @note
-            On first invocation, the `subscribe()` method spawns a worker thread
-            in which message publications are streamed from the Relay.
         '''
 
         if not handle:
@@ -324,11 +324,11 @@ class Client (GenericClient):
         if isinstance(topics, str):
             topics = (topics,)
 
-        self._start_reader()
-        self._message_signal.connect(
-            handle = handle,
-            callback = lambda msg: self._handle_message(msg, topics, callback),
-        )
+        filters = Filters(topics = topics)
+        reader  = self.stub.Subscriber(filters, wait_for_ready=True)
+        subscription = Subscription(stream = reader, callback = callback)
+        self.subscriptions[handle] = subscription
+        self._start_reader(subscription)
         return handle
 
 
@@ -347,15 +347,12 @@ class Client (GenericClient):
             message publications is closed.
         '''
 
-        if (self._message_signal
-            and self._message_signal.disconnect(handle)
-            and (self._message_signal.connection_count() == 0)
-            ):
-            self._stop_reader()
+        if subscription := self.subscriptions.pop(handle, None):
+            self._stop_reader(subscription)
             return True
-
         else:
             return False
+
 
     def unsubscribe_all(self) -> bool:
         '''
@@ -364,54 +361,41 @@ class Client (GenericClient):
         @return
             True if any subscriptions were found and canceled
         '''
-        if self._message_signal:
-            return self._message_signal.disconnect_all()
-        else:
-            return False
+
+        found = False
+        for subscription in self.subscriptions.values():
+            subscription.callback = None
+            found = True
+
+        self.subscriptions.clear()
+        return found
 
 
-    def reader_active(self):
-        if t := self._reader_thread:
-            return t.is_alive()
-        else:
-            return False
+    def _start_reader(self, subscription: Subscription):
+        thread  = Thread(target = self._read_worker, args=(subscription,), daemon = True)
+        thread.start()
 
-    def _start_reader(self):
-        if not self.reader_active():
-            t = Thread(target = self._read_worker,
-                       daemon = True)
+    def _stop_reader(self, subscription: Subscription):
+        ### The standard Python gRPC client stream does not have a
+        ### `cancel()` method.  There is a `stop()`, but attempt to invoke
+        ### this on an active stream raises a ValueError.  So instead of
+        ### cancelling the stream, we simply set the `callback` field to
+        ### None. The worker thread will then exit after reading the next
+        ### publication from the relay.
+        subscription.callback = None
 
-            self._reader_thread = t
-            self._reader_stream = None
-            self._message_signal = DataSignal("publication")
-            t.start()
-
-    def _stop_reader(self):
-        if t := self._reader_thread:
-            self._reader_thread = None
-
-            if stream := self._reader_stream:
-                stream.close()
-
-            self._reader_stream = None
-            t.join()
-
-    def _read_worker(self):
-        filters = Filters()
-
-        while self.reader_active():
-            self._reader_stream = self.stub.Subscriber(filters, wait_for_ready=True)
-            for msg in self._reader_stream:
-                self._message_signal.emit(self.decode_publication(msg))
-
-
-    def _handle_message(self,
-                        msg: MessageTuple,
-                        subscriptions: Sequence[str]|None,
-                        callback: SubscriberCallback):
-
-        if not subscriptions or msg.topic in subscriptions:
-            callback(msg)
+    def _read_worker(self, subscription: Subscription):
+        for msg in subscription.stream:
+            if callback := subscription.callback:
+                ### We are still subscribed.
+                safe_invoke(
+                    function = callback,
+                    args = (self.decode_publication(msg),),
+                )
+            else:
+                ### We the client unubscribed while we were waiting for the next message.
+                ### Exit the thread here.
+                break
 
 
 if __name__ == "__main__":

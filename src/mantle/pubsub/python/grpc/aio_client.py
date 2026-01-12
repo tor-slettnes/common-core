@@ -84,12 +84,11 @@ import asyncio
 from cc.core.decorators import override, doc_inherit
 from cc.core.types import Variant
 from cc.core.roundrobin import AsyncQueue
-from cc.core.signalstore import AsyncDataSignal
 from cc.protobuf.variant import encodeValue, decodeValue
 from cc.messaging.grpc.client import AsyncMixIn
 
 from ..protobuf import  Filters
-from .client import Client, MessageTuple, SubscriberCallback
+from .client import Client, MessageTuple, SubscriberCallback, Subscription
 
 class AsyncClient (AsyncMixIn, Client):
     __doc__ = Client.__doc__
@@ -130,37 +129,6 @@ class AsyncClient (AsyncMixIn, Client):
         ### method signature.
         await Client.publish(self, topic, value)
 
-    @override
-    def subscribe(self, *,
-                  callback: SubscriberCallback,
-                  topics: str|Sequence[str]|None = None,
-                  handle: str|None = None) -> str:
-        '''
-        Subscribe asynchronously to message publications from the Pub/Sub Relay.
-
-        @param handler
-            Callback handler to invoke when a matching publication is received
-            from the Relay.  This call will be made from an asynchrnous worker
-            task.  The callback itself may be optionally asynchronous function,
-            in which case it is awaited in the worker task.
-
-        @param topics
-            Receive publications only on the specified topics.  If omitted,
-            publications on any topic will be received.
-
-        @param handle
-            Unique identifier for this subscription. If omitted, one is generated
-            using `uuid.uuid1()`.
-
-        @return
-            Unique identifier that was provided or assigned.  This may
-            subsequently be used to cancel the subscription via `unsubscribe()`.
-
-        @note
-            On first invocation, the `subscribe()` method spawns a worker thread
-            in which message publications are streamed from the Relay.
-        '''
-        return Client.subscribe(**locals())
 
     @override
     async def listen(self,
@@ -194,7 +162,7 @@ class AsyncClient (AsyncMixIn, Client):
         filters = Filters(topics = topics)
         try:
             async for msg in self.stub.Subscriber(filters, wait_for_ready = wait_for_ready):
-                yield MessageTuple(msg.topic, decodeValue(msg.value))
+                yield self.decode_publication(msg)
         except KeyboardInterrupt:
             print("Cancelling subscription")
 
@@ -217,42 +185,17 @@ class AsyncClient (AsyncMixIn, Client):
             while publication := await self._write_queue.get():
                 await self.stub.Publish(publication)
 
-    def reader_active(self):
-        return self._reader_task and not self._reader_task.done()
+    def _start_reader(self, subscription: Subscription):
+        asyncio.create_task(self._read_worker(subscription))
 
-    def _start_reader(self):
-        if not self.reader_active():
-            self._message_signal = AsyncDataSignal('publication')
-            self._reader_stream = None
-            self._reader_task = asyncio.create_task(
-                self._read_worker())
+    def _stop_reader(self, subscription: Subscription):
+        subscription.callback = None
+        if stream := subscription.stream:
+            stream.cancel()
 
-    def _stop_reader(self):
-        if task := self._reader_task:
-            self._reader_task = None
-            # if stream := self._reader_stream:
-            #     await stream.close()
-            self._reader_stream = None
-            task.cancel()
-
-    async def _read_worker(self):
-        filters = Filters()
-
-        while self.reader_active():
-            self._reader_stream = self.stub.Subscriber(filters, wait_for_ready=True)
-            try:
-                async for msg in self._reader_stream:
-                    await self._message_signal.emit(self.decode_publication(msg))
-
-            except asyncio.CancelledError:
-                break
-
-    async def _handle_message(self,
-                              msg: MessageTuple,
-                              subscriptions: Sequence[str]|None,
-                              callback: SubscriberCallback):
-
-        if not subscriptions or msg.topic in subscriptions:
-            result = callback(msg)
-            if asyncio.iscoroutine(result):
-                await result
+    async def _read_worker(self, subscription: Subscription):
+        async for msg in subscription.stream:
+            if callback := subscription.callback:
+                result = callback(self.decode_publication(msg))
+                if asyncio.iscoroutine(result):
+                    await result
