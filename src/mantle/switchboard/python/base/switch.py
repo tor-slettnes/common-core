@@ -59,7 +59,7 @@ class Switch:
 
     def subscribe_updates(self,
                           handle   : str,
-                          callback : Callable):
+                          callback : Callable[["Switch"], None]):
         '''
         Register a callback to be invoked whenever this switch changes specification or status
 

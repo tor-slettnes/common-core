@@ -1,7 +1,7 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @brief Build service daemon for MultiLogger Server
+## @brief Build Pub/Sub Relay daemon
 ## @author Tor Slettnes
 #===============================================================================
 
