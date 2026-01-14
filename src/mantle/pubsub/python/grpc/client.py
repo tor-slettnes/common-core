@@ -78,7 +78,6 @@ from collections import namedtuple
 from threading import Thread
 from uuid import uuid1
 from dataclasses import dataclass
-from logging import info, warning
 
 ### Third party modules
 import grpc
@@ -380,16 +379,16 @@ class Client (GenericClient):
         thread.start()
 
     def _stop_reader(self, subscription: Subscription):
-
         try:
             subscription.stream.cancel()
         except AttributeError:
-            info(f"Failed to cancel subscriber stream (grpc version {grpc.__version__}). "
-                 "Thread will remain active until the next publication is received.")
+            self.logger.debug(
+                f"Failed to cancel subscriber stream (grpc version {grpc.__version__}). "
+                "Reader thread will remain blocked until the next publication is received.")
 
-        ### Older versions of the standard Python gRPC client stream may does
-        ### not have a `cancel()` method.  There is a `stop()`, but attempt to
-        ### invoke this on an active stream raises a ValueError.  So in lieu of
+        ### Older versions of the standard Python gRPC client stream do not have
+        ### a `cancel()` method.  There is a `stop()`, but attempt to invoke
+        ### this on an active stream raises a ValueError.  So in lieu of
         ### cancelling the stream, we simply set the `callback` field to
         ### None. The worker thread will then exit after reading the next
         ### publication from the relay.

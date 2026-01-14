@@ -34,9 +34,6 @@ namespace core::grpc
         // Keys to look up settings in grpc-endpoints-*.json
         static constexpr auto MAX_REQUEST_SIZE = "max request size";
         static constexpr auto MAX_REPLY_SIZE = "max reply size";
-        static constexpr auto PORT_OPTION = "port";
-        static constexpr auto HOST_OPTION = "host";
-        static constexpr auto BIND_OPTION = "interface";
         static constexpr auto DNSSD_TYPE_OPTION = "dnssd type";
 
     protected:

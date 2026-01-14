@@ -1,10 +1,10 @@
 ## -*- cmake -*-
 #===============================================================================
 ## @file CMakeLists.txt
-## @brief Pub/Sub Implementations
+## @brief CMake rules to build static/shared library
 ## @author Tor Slettnes
 #===============================================================================
 
-add_subdirectory(zmq)
-add_subdirectory(grpc)
-add_subdirectory(ws)
+add_subdirectory(base)
+add_subdirectory(server)
+

@@ -43,11 +43,6 @@ namespace core::zmq
     using Error = std::system_error;
 #endif
 
-    constexpr auto SCHEME_OPTION = "scheme";
-    constexpr auto HOST_OPTION = "host";
-    constexpr auto BIND_OPTION = "listen";
-    constexpr auto PORT_OPTION = "port";
-
     constexpr auto COMMAND_GROUP = "command";
     constexpr auto MESSAGE_GROUP = "message";
 

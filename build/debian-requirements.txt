@@ -16,8 +16,9 @@ libglibmm-2.4-dev
 libavahi-client-dev
 libsqlite3-dev
 libzmq3-dev
-libwebsocketpp-dev
 libcurl4-openssl-dev
+libwebsocketpp-dev
+libasio-dev
 libavro-dev
 librdkafka-dev
 libprotobuf-dev

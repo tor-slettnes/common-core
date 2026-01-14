@@ -25,6 +25,7 @@ namespace core::messaging
     {
     protected:
         // Keys to look up settings in grpc-endpoints-*.json
+        static constexpr auto SCHEME_OPTION = "scheme";
         static constexpr auto PORT_OPTION = "port";
         static constexpr auto HOST_OPTION = "host";
         static constexpr auto BIND_OPTION = "interface";

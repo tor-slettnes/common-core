@@ -9,22 +9,9 @@ FROM $DOCKERBASE
 RUN apt-get clean
 RUN apt-get update
 
-RUN apt-get install --assume-yes --no-install-recommends \
-    sudo \
-    git build-essential cmake pkgconf \
-    locales-all libgtest-dev \
-    rapidjson-dev libyaml-dev uuid-dev \
-    libudev-dev libnm-dev libglibmm-2.4-dev \
-    libavahi-client-dev libsqlite3-dev \
-    libzmq3-dev \
-    libcurl4-gnutls-dev \
-    libwebsocketpp-dev libasio-dev \
-    libprotobuf-dev protobuf-compiler libgrpc++-dev protobuf-compiler-grpc \
-    libavro-dev librdkafka-dev \
-    python3-dev python3-pytest \
-    python3-yaml \
-    python3-zmq python3-protobuf python3-grpcio \
-    python3-pip python3-virtualenv python3-build python3-hatchling twine
+RUN apt-get install -y sudo file
+RUN apt-get install -y git build-essential cmake pkgconf doxygen
+#RUN apt-get install -y crossbuild-essential-arm64 dpkg-cross
 
 # python3-cffi-backend
 # python3-avro
