@@ -2,7 +2,7 @@ DOCKERFILE_DIR    ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 DOCKERFILE        ?= $(DOCKERFILE_DIR)/Dockerfile
 DOCKERBASE        ?= debian:bookworm
 CONTAINERNAME      = common-core
-CONTAINERVERSION   = 1.1
+CONTAINERVERSION   = 1.2
 CONTAINERTAG       = $(CONTAINERNAME):$(CONTAINERVERSION)
 CONTAINER_HOST     = common-core-platform
 CONTAINER_USER     = $(shell id -un)
@@ -12,6 +12,7 @@ HOST_HOME          = $(HOME)
 CONTAINER_HOME     = /home/$(CONTAINER_USER)
 HOST_DIR           = $(shell realpath $(DOCKERFILE_DIR)/../..)
 CONTAINER_DIR      = $(subst $(HOST_HOME),$(CONTAINER_HOME),$(HOST_DIR))
+BUILD_REQUIREMENTS = $(filter-out #%,$(file <../debian/build-requirements.txt))
 
 .PHONY: docker_build
 docker_build:
@@ -24,6 +25,7 @@ docker_build:
 			--build-arg USER=$(CONTAINER_USER) \
 			--build-arg UID=$(CONTAINER_UID) \
 			--build-arg GID=$(CONTAINER_GID) \
+			--build-arg DEBS="$(BUILD_REQUIREMENTS)" \
 			.; \
 	fi
 
@@ -65,4 +67,3 @@ docker_shell: docker_up
 		"$(CONTAINERNAME)" \
 		/bin/bash || true
 	@echo '←←← Exited Docker shell: $(CONTAINERNAME)'
-

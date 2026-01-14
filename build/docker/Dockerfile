@@ -1,39 +1,14 @@
 ARG DOCKERBASE=debian:bookworm
 FROM $DOCKERBASE
 
-# Install required build & runtime libraries.
-#
-# Split `apt-get` commands into logical groups, so that Docker cache misses
-# after future changes don't trigger a full download.
-
 RUN apt-get clean
 RUN apt-get update
-
-RUN apt-get install --assume-yes --no-install-recommends \
-    sudo \
-    git build-essential cmake pkgconf \
-    locales-all libgtest-dev \
-    rapidjson-dev libyaml-dev uuid-dev \
-    libudev-dev libnm-dev libglibmm-2.4-dev \
-    libavahi-client-dev libsqlite3-dev \
-    libzmq3-dev \
-    libcurl4-gnutls-dev \
-    libwebsocketpp-dev libasio-dev \
-    libprotobuf-dev protobuf-compiler libgrpc++-dev protobuf-compiler-grpc \
-    libavro-dev librdkafka-dev \
-    python3-dev python3-pytest \
-    python3-yaml \
-    python3-zmq python3-protobuf python3-grpcio \
-    python3-pip python3-virtualenv python3-build python3-hatchling twine
-
-# python3-cffi-backend
-# python3-avro
-# python3-kafka
-# python3-venv
+RUN apt-get install --assume-yes sudo make
 
 ARG USER
 ARG UID
 ARG GID
+ARG DEBS
 
 # Remove preinstalled `ubuntu` user (if we are using an Ubuntu base),
 # and replace with our own
@@ -45,6 +20,8 @@ RUN useradd --create-home --non-unique --uid "${UID}" --gid "${USER}" --groups s
 
 # Do not require password for users in the `sudo` group to invoke `sudo`
 RUN echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo-no-pw
+
+RUN apt install --yes --no-install-recommends ${DEBS}
 
 USER ${USER}
 CMD ["sleep", "infinity"]

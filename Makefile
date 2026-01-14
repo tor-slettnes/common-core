@@ -69,8 +69,8 @@ endef
 
 define list_debian_requirements
 (\
-  cat $(CURDIR)/build/debian-requirements.txt || \
-  cat $(THIS_DIR)/build/debian-requirements.txt\
+  cat $(CURDIR)/build/debian/build-requirements.txt || \
+  cat $(THIS_DIR)/build/debian/build-requirements.txt \
 ) 2>/dev/null
 endef
 
@@ -336,7 +336,7 @@ help:
 
 .PHONY: install-build-requirements prepare_linux
 install-build-requirements prepare_linux:
-	@echo "Installing required Debian build dependencies..."
+	@echo "Installing required Debian build requirements..."
 	@$(call list_debian_requirements) | sudo xargs apt install --yes --no-install-recommends
 
 ### Delegate docker_ targets to its own Makefile

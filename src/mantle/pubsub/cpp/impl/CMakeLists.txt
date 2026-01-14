@@ -5,6 +5,14 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-add_subdirectory(zmq)
-add_subdirectory(grpc)
-add_subdirectory(ws)
+if(BUILD_ZMQ)
+  add_subdirectory(zmq)
+endif()
+
+if(BUILD_GRPC)
+  add_subdirectory(grpc)
+endif()
+
+if(BUILD_WEBSOCKETS)
+  add_subdirectory(ws)
+endif()

@@ -1,9 +1,9 @@
 sudo
-file
 git
 build-essential
 cmake
 pkgconf
+file
 doxygen
 locales-all
 libgtest-dev
