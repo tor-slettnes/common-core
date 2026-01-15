@@ -8,10 +8,6 @@
 ### Name of this library.
 set(TARGET cc_core_messaging_ws_server)
 
-set(PKG_DEPS
-  asio
-)
-
 ### Library dependencies.
 set(LIB_DEPS
   cc_core_messaging_ws_base
@@ -24,7 +20,6 @@ set(SOURCES
 
 ### Recepies to build the library
 cc_add_library("${TARGET}"
-  PKG_DEPS ${PKG_DEPS}
   LIB_DEPS ${LIB_DEPS}
   SOURCES ${SOURCES}
 )
