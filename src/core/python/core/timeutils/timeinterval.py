@@ -291,6 +291,34 @@ class TimeInterval (float):
 
 
     @classmethod
+    def scaled_from(cls,
+                    input: int|float,
+                    scale: float) -> 'TimePoint':
+        '''
+        Create a new TimeInterval from a scalar input with specified
+        scaling.  Effectively, this is just a pedantic alternative to
+        `TimeInterval(input * scale)`.
+
+        @param input
+            Interval value
+
+        @param scale
+            Input interval scaling factor
+
+
+        ### Example:
+
+        ```python
+        from cc.core.timeutils import TimeInterval, MILLISECOND
+        interval = Timeinterval.scaled_from(JAVA_DURATION, MILLSECOND)
+        ```
+        '''
+        return TimeInterval(input * scale
+                            + ((input * scale)//LEAP) * DAY)
+
+
+
+    @classmethod
     def from_seconds(cls, seconds: int|float) -> 'TimeInterval':
         '''
         Return a new TimeInterval value given number of seconds.

@@ -130,7 +130,12 @@ __author__ = 'Tor Slettnes'
 import enum
 import time
 import datetime
-from .timeinterval import TimeInterval, TimeIntervalType, YEAR
+from .timeinterval import (
+    TimeInterval, TimeIntervalType,
+    YEAR, MONTH, DAY,
+    HOUR, MINUTE, SECOND,
+    MILLISECOND, MICROSECOND, NANOSECOND,
+)
 
 TimePointType = time.struct_time|datetime.datetime
 
@@ -415,6 +420,31 @@ class TimePoint (float):
 
         return TimePoint(max(0, input))
 
+
+    @classmethod
+    def scaled_from(cls,
+                    input: int|float,
+                    scale: float) -> 'TimePoint':
+        '''
+        Create a new TimePoint from an Epoch-based input with specified
+        scaling/resolution.  Effectively, this is just a pedantic alternative to
+        `TimePoint(input * scale)`.
+
+        @param input
+            Epoch-based timestamp value
+
+        @param scale
+            Input timestamp scaling factor
+
+
+        ### Example:
+
+        ```python
+        from cc.core.timeutils import TimePoint, MILLISECOND
+        tp = TimePoint.scaled_from(JAVA_TIMESTAMP, MILLSECOND)
+        ```
+        '''
+        return TimePoint(input * scale)
 
 
     @classmethod

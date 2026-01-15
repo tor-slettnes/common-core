@@ -12,7 +12,7 @@ HOST_HOME          = $(HOME)
 CONTAINER_HOME     = /home/$(CONTAINER_USER)
 HOST_DIR           = $(shell realpath $(DOCKERFILE_DIR)/../..)
 CONTAINER_DIR      = $(subst $(HOST_HOME),$(CONTAINER_HOME),$(HOST_DIR))
-BUILD_REQUIREMENTS = $(filter-out #%,$(file <../debian/build-requirements.txt))
+BUILD_REQUIREMENTS = $(sort $(file <../debian/build-requirements.txt))
 
 .PHONY: docker_build
 docker_build:
