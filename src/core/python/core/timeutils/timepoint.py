@@ -27,7 +27,7 @@ conversion methods to support additional common representations such as:
 
   ### This type has overriden `__str__()` and `__repr__()` methods
   >>> tp
-  '2025-09-30 01:01:39.785'
+  TimePoint(2025-09-30 01:01:39.785)
 
   >>> print("%s" % tp)
   2025-09-30 01:01:39.785
@@ -105,16 +105,17 @@ conversion methods to support additional common representations such as:
   >>> tp = TimePoint.from_string('2025-10-01 00:00:00')
   >>> tp += 86400
   >>> tp
-  '2025-10-02 00:00:00'
+  '2025-10-01 00:00:00'
 
-  >>> tp - '1y'
+  ### Subtract an ISO 8601 formatted duration (1 year)
+  >>> tp - 'P1Y'
   '2024-10-01 00:00:00'
 
   ### Subtracting another TimePoint yields a TimeInterval
   >>> ti = tp - '2025-09-29 23:59:30'
 
   >>> ti
-  '1d 30s'
+  TimeInterval(1d 30s)
 
   >>> type(ti)
   <class 'cc.core.timeutils.TimeInterval'>
@@ -779,22 +780,34 @@ class TimePoint (float):
         return time.gmtime(self) if utc else time.localtime(self)
 
 
-    def to_datetime(self, *, utc = False) -> datetime.datetime:
+    def to_datetime(self, *,
+                    tzinfo: datetime.timezone|None = None,
+                    utc = False,
+                    ) -> datetime.datetime:
         '''
         Convert this timestamp to a `datetime.datetime` object.
 
+        @param tzinfo
+            A `datetime.timezone` object specifying zone information, if available.
+
         @param utc
-            Convert to UTC rather than local time, and populate the result with
-            a corresponding `tzinfo` attribute.
+            If `tzinfo` is not provided, convert to UTC rather than local time
+            and populate the result with a corresponding `tzinfo` attribute.
 
         @return
             A new `datetime.datetime` instance. This will be naive unless `utc`
             is set.
+
+        If neither `tzinfo` nor `utc` is supplied the converted `datetime`
+        object will be naïve, and will in most cases be correctly assumed to
+        represent local time.
         '''
 
-        return datetime.datetime.fromtimestamp(
-            self,
-            datetime.timezone.utc if utc else None)
+        tz = (tzinfo if tzinfo is not None
+              else datetime.timezone.utc if utc
+              else None)
+
+        return datetime.datetime.fromtimestamp(self, tz)
 
 
     def to_protobuf(self) -> ProtoBufTimestamp:
