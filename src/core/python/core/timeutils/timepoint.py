@@ -231,17 +231,17 @@ class TimePoint (float):
             except ValueError:
                 pass
 
-        if isinstance(input, float|int):
-            if TimeInterval(abs(input)) < 10*YEAR:
-                input = TimeInterval(input)
-            else:
-                input = TimePoint.autoscaled_from(input)
-
         if isinstance(input, TimeIntervalType):
             return TimePoint(float(self) - TimeInterval.from_value(input))
 
         elif isinstance(input, TimePointType):
             return TimeInterval(float(self) - TimePoint.from_value(input))
+
+        elif isinstance(input, float|int):
+            if TimeInterval(abs(input)) < 10*YEAR:
+                input = TimeInterval(input)
+            else:
+                input = TimePoint.autoscaled_from(input)
 
         elif isinstance(input, str):
             try:
