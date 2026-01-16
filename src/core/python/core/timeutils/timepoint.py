@@ -238,10 +238,14 @@ class TimePoint (float):
             return TimeInterval(float(self) - TimePoint.from_value(input))
 
         elif isinstance(input, float|int):
-            if TimeInterval(abs(input)) < 10*YEAR:
-                input = TimeInterval(input)
+            if abs(input) < 10*YEAR:
+                ## Interpret inputs smaller than 10 years as time intervals;
+                ## the delta is a TimePoint.
+                return TimePoint(float(self) - input)
             else:
-                input = TimePoint.autoscaled_from(input)
+                ## Interpret inputs greater than 10 years as epoch timestamps;
+                ## the delta is a TimeInterval.
+                return TimeInterval(float(self) - input)
 
         elif isinstance(input, str):
             try:
