@@ -784,8 +784,9 @@ class TimePoint (float):
         return time.gmtime(self) if utc else time.localtime(self)
 
 
-    def to_datetime(self, *,
+    def to_datetime(self,
                     tzinfo: datetime.timezone|None = None,
+                    *,
                     utc = False,
                     ) -> datetime.datetime:
         '''

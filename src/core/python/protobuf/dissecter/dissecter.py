@@ -127,7 +127,7 @@ class MessageDissecter (LogBase):
         else:
             decoder = self.field_decoder(fd)
 
-            if fd.label == fd.LABEL_REPEATED:
+            if self.is_field_repeated(fd):
                 value = [decoder(item) for item in field]
 
             else:
@@ -143,6 +143,14 @@ class MessageDissecter (LogBase):
             return message.WhichOneof(fd.containing_oneof.name) == fd.name
         else:
             return True
+
+
+    def is_field_repeated(self,
+                          fd: FieldDescriptor) -> bool:
+        try:
+            return fd.is_repeated
+        except AttributeError:
+            return fd.label == fd.LABEL_REPEATED
 
 
     def field_decoder(self,
