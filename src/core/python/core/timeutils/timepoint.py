@@ -373,7 +373,7 @@ class TimePoint (float):
 
         if isinstance(input, int|float):
             if isinstance(decimal_exponent, int):
-                return cls(input * (10**decimal_exponent))
+                return cls(input / (10**decimal_exponent))
             else:
                 return cls.autoscaled_from(input)
 
