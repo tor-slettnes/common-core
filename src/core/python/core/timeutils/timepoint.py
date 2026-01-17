@@ -197,6 +197,9 @@ class TimePoint (float):
     def __add__ (self, input: TimeIntervalType|float|int|str):
         '''
         Add a time interval/delta value to this timestamp
+
+        @exception TypeError
+            The input value could not be converted to a TimePoint
         '''
         if isinstance(input, TimePointType):
             raise TypeError('Cannot add two time points. Did you intend to add a time interval instead?')
@@ -222,6 +225,13 @@ class TimePoint (float):
 
         If the input is interpreted as a `TimeInterval` the delta is returned as a
         new `TimePoint` value, and vice versa.
+
+        @exception TypeError
+            The input value could not be converted to a TimePoint nor a TimeInterval
+
+        @xception ValueError
+            The provided string input is not a valid ISO 8601 date/time string,
+            nor a supported duration string.
         '''
 
         if isinstance(input, str):
@@ -822,6 +832,9 @@ class TimePoint (float):
 
         @return
              New `google.protobuf.Timestamp` instance.
+
+        @exception ImportError
+             The `protobuf` package is not installed
         '''
         from google.protobuf.timestamp_pb2 import Timestamp
         return Timestamp(
