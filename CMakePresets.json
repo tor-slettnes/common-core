@@ -26,7 +26,7 @@
             }
         },
         {
-            "name": "arm",
+            "name": "cross-arm",
             "description": "Cross-compilation for ARM",
             "inherits": "default",
             "toolchainFile": "build/cmake/toolchain-Linux-aarch64.cmake",
@@ -57,10 +57,10 @@
             "targets": ["python_wheels"]
         },
         {
-            "name": "arm",
+            "name": "cross-arm",
             "inherits": "default",
             "description": "Cross-compile for ARM",
-            "configurePreset": "arm"
+            "configurePreset": "cross-arm"
         }
     ],
     "testPresets": [
@@ -82,10 +82,10 @@
             ]
         },
         {
-            "name": "debs-arm",
+            "name": "cross-arm",
             "inherits": "debs",
             "description": "Build Debian packages for ARM architecture",
-            "configurePreset": "arm"
+            "configurePreset": "cross-arm"
         }
     ],
     "workflowPresets": [
@@ -115,9 +115,9 @@
         {
             "name": "debs-arm",
             "steps": [
-                {"type": "configure", "name": "arm"},
-                {"type": "build",     "name": "arm"},
-                {"type": "package",   "name": "debs-arm"}
+                {"type": "configure", "name": "cross-arm"},
+                {"type": "build",     "name": "cross-arm"},
+                {"type": "package",   "name": "cross-arm"}
             ]
         },
         {
