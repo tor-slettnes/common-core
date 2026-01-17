@@ -5,23 +5,14 @@
 ## @author Tor Slettnes
 #===============================================================================
 
-set(LINUX YES)
+set(CMAKE_SYSTEM_NAME "Linux")
+set(TOOLCHAIN_ARCH "aarch64-linux-gnu")
 
-string(TOLOWER "$<CONFIG>" buildconfig)
-if("${buildconfig}" STREQUAL "debug")
-  add_compile_options(-Wall -Wextra -Wno-unused -pedantic)
-endif()
+set(ENV{PKG_CONFIG_PATH} "/lib/${TOOLCHAIN_ARCH}/pkgconfig")
 
-#set(THREADS_PREFER_PTHREAD_FLAG ON)
+set(CMAKE_C_COMPILER ${TOOLCHAIN_ARCH}-gcc)
+set(CMAKE_CXX_COMPILER ${TOOLCHAIN_ARCH}-g++)
+set(CMAKE_AR ${TOOLCHAIN_ARCH}-ar)
+set(CMAKE_RANLIB ${TOOLCHAIN_ARCH}-ranlib)
 
-# Configure C++ filesystem library
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lstdc++fs")
-# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lstdc++fs")
-# set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lstdc++fs")
-
-set(TOOLCHAIN_PREFIX aarch64-linux-gnu)
-
-set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}-gcc)
-set(CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}-g++)
-set(CMAKE_AR ${TOOLCHAIN_PREFIX}-ar)
-set(CMAKE_RANLIB ${TOOLCHAIN_PREFIX}-ranlib)
+set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "arm64")

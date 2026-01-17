@@ -1,10 +1,11 @@
+MAKEFLAGS         += --no-print-directory
 DOCKERFILE_DIR    ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 DOCKERFILE        ?= $(DOCKERFILE_DIR)/Dockerfile
 DOCKERBASE        ?= debian:bookworm
-CONTAINERNAME      = common-core-arm
-CONTAINERVERSION   = 1.1
+CONTAINERNAME      = common-core-crossbuild-arm
+CONTAINERVERSION   = 1.2
 CONTAINERTAG       = $(CONTAINERNAME):$(CONTAINERVERSION)
-CONTAINER_HOST     = common-core-arm-platform
+CONTAINER_HOST     = common-core-platform
 CONTAINER_USER     = $(shell id -un)
 CONTAINER_UID      = $(shell id -u)
 CONTAINER_GID      = $(shell id -g)
@@ -13,10 +14,11 @@ CONTAINER_HOME     = /home/$(CONTAINER_USER)
 HOST_DIR           = $(shell realpath $(DOCKERFILE_DIR)/../../..)
 CONTAINER_DIR      = $(subst $(HOST_HOME),$(CONTAINER_HOME),$(HOST_DIR))
 
+
 .PHONY: docker_build
 docker_build:
 	@if ! docker image inspect $(CONTAINERTAG) >/dev/null 2>&1; then \
-		echo '+++ Building Docker image: $(CONTAINERTAG)'; \
+		echo '+++ Building Docker image: $(CONTAINERTAG); REQUIREMENTS:$(BUILD_REQUIREMENTS)'; \
 		docker build \
 			--file $(DOCKERFILE) \
 			--tag '$(CONTAINERTAG)' \
@@ -66,3 +68,11 @@ docker_shell: docker_up
 		/bin/bash || true
 	@echo '←←← Exited Docker shell: $(CONTAINERNAME)'
 
+.PHONY: docker_build_debs
+docker_build_debs: docker_up
+	@echo '→→→ Entering Docker runtime to build Debian packages: $(CONTAINERNAME)'
+	@docker exec $(DOCKER_EXEC_OPTS) \
+		--workdir "$(CONTAINER_DIR)" \
+		"$(CONTAINERNAME)" \
+		cmake --workflow --preset debs-arm
+	@echo '←←← Exited Docker runtime: $(CONTAINERNAME)'

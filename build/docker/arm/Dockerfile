@@ -1,31 +1,26 @@
 ARG DOCKERBASE=debian:bookworm
 FROM $DOCKERBASE
 
-# Install required build & runtime libraries.
-#
-# Split `apt-get` commands into logical groups, so that Docker cache misses
-# after future changes don't trigger a full download.
+# Include ARM64 package cataloge in APT updates
+RUN dpkg --add-architecture arm64
 
+# Install required build & runtime libraries.
 RUN apt-get clean
 RUN apt-get update
+RUN apt-get install --assume-yes --no-install-recommends \
+    crossbuild-essential-arm64 cmake pkgconf file \
+    protobuf-compiler protobuf-compiler-grpc \
+    rapidjson-dev:arm64 libyaml-dev:arm64 uuid-dev:arm64 \
+    libudev-dev:arm64 libnm-dev:arm64 libglibmm-2.4-dev:arm64 \
+    libavahi-client-dev:arm64 libsqlite3-dev:arm64 libzmq3-dev:arm64 \
+    libcurl4-openssl-dev:arm64 libwebsocketpp-dev:arm64 libasio-dev:arm64 \
+    libavro-dev:arm64 librdkafka-dev:arm64 \
+    libprotobuf-dev:arm64 libgrpc++-dev:arm64 \
+    sudo
 
-RUN apt-get install -y sudo file
-RUN apt-get install -y git build-essential cmake pkgconf doxygen
-#RUN apt-get install -y crossbuild-essential-arm64 dpkg-cross
-
-# python3-cffi-backend
-# python3-avro
-# python3-kafka
-# python3-venv
-
-ARG USER
-ARG UID
-ARG GID
-
-# Remove preinstalled `ubuntu` user (if we are using an Ubuntu base),
-# and replace with our own
-RUN userdel --force --remove ubuntu || true
-RUN groupdel --force --remove ubuntu || true
+ARG USER=builder
+ARG UID=1000
+ARG GID=1000
 
 RUN groupadd --force --gid "${GID}" "${USER}"
 RUN useradd --create-home --non-unique --uid "${UID}" --gid "${USER}" --groups sudo,staff "${USER}"

@@ -131,6 +131,15 @@ package debs deb: build
 	@echo
 	@cpack --preset "$(PACKAGE_PRESET)"
 
+.PHONY: debs-arm
+debs-arm:
+	@echo
+	@echo "#############################################################"
+	@echo "Launching Docker to build Debian packages for ARM architecture"
+	@echo "#############################################################"
+	@echo
+	@$(MAKE) -C $(THIS_DIR)/build/docker/arm docker_build_debs HOST_DIR=$(CURDIR)
+
 .PHONY: wheels
 wheels: cmake
 	@echo

@@ -29,7 +29,12 @@
             "name": "arm",
             "description": "Cross-compilation for ARM",
             "inherits": "default",
-            "toolchainFile": "build/cmake/toolchain-Linux-aarch64.cmake"
+            "toolchainFile": "build/cmake/toolchain-Linux-aarch64.cmake",
+            "cacheVariables":
+            {
+                "BUILD_TESTING": "OFF",
+                "BUILD_PYTHON_IO": "OFF"
+            }
         }
     ],
     "buildPresets": [
@@ -50,6 +55,12 @@
             "inherits": "default",
             "description": "Build Python Wheels",
             "targets": ["python_wheels"]
+        },
+        {
+            "name": "arm",
+            "inherits": "default",
+            "description": "Cross-compile for ARM",
+            "configurePreset": "arm"
         }
     ],
     "testPresets": [
@@ -63,12 +74,18 @@
     "packagePresets": [
         {
             "name": "debs",
-            "description": "Build Debian packages",
+            "description": "Build native Debian packages",
             "configurePreset": "default",
             "packageDirectory": "$env{PACKAGE_DIR}",
             "generators": [
                 "DEB"
             ]
+        },
+        {
+            "name": "debs-arm",
+            "inherits": "debs",
+            "description": "Build Debian packages for ARM architecture",
+            "configurePreset": "arm"
         }
     ],
     "workflowPresets": [
@@ -93,6 +110,14 @@
                 {"type": "configure", "name": "default"},
                 {"type": "build",     "name": "default"},
                 {"type": "package",   "name": "debs"}
+            ]
+        },
+        {
+            "name": "debs-arm",
+            "steps": [
+                {"type": "configure", "name": "arm"},
+                {"type": "build",     "name": "arm"},
+                {"type": "package",   "name": "debs-arm"}
             ]
         },
         {
