@@ -194,7 +194,7 @@ class TimePoint (float):
         return f"TimePoint({self})"
 
 
-    def __add__ (self, input: TimeIntervalType):
+    def __add__ (self, input: TimeIntervalType|float|int|str):
         '''
         Add a time interval/delta value to this timestamp
         '''
@@ -204,7 +204,7 @@ class TimePoint (float):
         return TimePoint(float(self) + TimeInterval.from_value(input))
 
 
-    def __sub__(self, input: TimePointType|str|float|int):
+    def __sub__(self, input: TimePointType|TimeIntervalType|float|int|str):
         '''
         Subtract a time interval or other timepoint from this one.
 
@@ -321,10 +321,10 @@ class TimePoint (float):
         * If the input is an existing `TimePoint` value, it is returned intact.
 
         * Any other `int`, `float`, or string representation of a plain number
-          is assumed to be an Epoch-based timestamp. Use the `decimal_exponent`
+          is assumed to be an Epoch-based timestamp.  Use the `decimal_exponent`
           input argument to specify explicit scaling if desired.
 
-        * Any other string is passed to `from_datetime()`.  This may raise a
+        * Any other string is passed to `from_string()`.  This may raise a
           ValueError if the string contents is not ISO 8601 compliant.
 
         * Any `datetime.datetime` input is passed on to `from_datetime()`.
