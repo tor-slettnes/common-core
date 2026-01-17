@@ -342,7 +342,7 @@ class TimePoint (float):
             A supported timestamp representation
 
         @param decimal_exponent
-            If provided, any numeric input is multiplied by ten to the specified
+            If provided, any numeric input is divided by ten to the specified
             power to yield seconds since Epoch. For instance, `0` means no
             scaling, `-3` means convert from milliseconcds. If not provided,
             numeric input values are passed on to `autoscaled_from()`.
