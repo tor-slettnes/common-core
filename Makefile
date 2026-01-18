@@ -138,7 +138,7 @@ debs-arm:
 	@echo "Launching Docker to build Debian packages for ARM architecture"
 	@echo "#############################################################"
 	@echo
-	@$(MAKE) -C $(THIS_DIR)/build/docker/arm docker_build_debs HOST_DIR=$(CURDIR)
+	@$(MAKE) -C $(THIS_DIR)/build/docker/cross-arm docker_build_debs HOST_DIR=$(CURDIR)
 
 .PHONY: wheels
 wheels: cmake
