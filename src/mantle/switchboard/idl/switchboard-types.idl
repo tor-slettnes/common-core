@@ -103,17 +103,6 @@ module CC
 
         /// @struct TargetText
         ///
-        /// Text describing each intended action (activate, deactivate),
-        /// suitable to construct human readable status/error messages
-        //  of the form "Could not ACTION because CONDITION".
-        ///
-        /// Examples:
-        ///  - Switch "Door:Lock":
-        ///      false: "unlock the door"
-        ///      true: "lock the door"
-        ///  - Switch "Fluidics:Insufflation:Maintaining"
-        ///      false: "stop maintaining insufflation pressure"
-        ///      true: "start maintaining insufflation pressure"
 
         struct TargetText
         {
@@ -175,17 +164,29 @@ module CC
             //      "insufflation pressure control"
             Text description;
 
+            // Text describing the activation/deactivation of a switch,
+            // suitable to construct human readable status/error messages of
+            // the form "Could not TEXT because CONDITION".
+            //
+            // Examples:
+            //  - Switch "Door:Lock":
+            //      activate_text: "unlock the door"
+            //      deactivate_text: "lock the door"
+            //  - Switch "Fluidics:Insufflation:Maintaining"
+            //      activate_text: "stop maintaining insufflation pressure"
+            //      deactivate_text: "start maintaining insufflation pressure"
+
+            Text activate_text;
+            Text deactivate_text;
+
             // The next fields are used to construct status/error messages
             // of the form
-            //    "Could not ACTION becuse CULPRIT"
+            //    "Could not ACTION because TEXT"
             //
             // For example:
             //    - "Could not lock the door because the door is open"
             //    - "Could not deploy instrument because IDM failed to initialize"
-            //
-            // See @sa TargetText and @sa StateTexts for more details.
 
-            sequence<TargetText,2> target_texts;
             sequence<StateText,10> state_texts;
         };
 

@@ -125,9 +125,9 @@ class Switch:
             Either of the following: a preconstructed ProtoBuf `LocalizationMap`
             message, or language codes mapped to ProtoBuf `Localization` types,
             or language codes mapped to dictionaries comprising `description`,
-            `target_texts`, and/or `state_texts` keys.  In the latter case,
-            `target_texts` is a mapping from boolean to string, and `state_texts`
-            a mapping from `cc.protobuf.switchboard.State` to string.
+            `activate_text`, `deactivate_text`, and/or `state_texts` keys.  In
+            the latter case, `state_texts` a mapping from
+            `cc.protobuf.switchboard.State` to string.
         '''
 
         spec = Specification(
@@ -176,32 +176,36 @@ class Switch:
                          localization: Optional[Localization] = None,
                          *,
                          description: Optional[str] = None,
-                         target_texts: Optional[Mapping[bool, str]] = None,
+                         activate_text: Optional[str] = None,
+                         deactivate_text: Optional[str] = None,
                          state_texts: Optional[Mapping[State, str]]  = None
                          ) -> bool:
         '''
         Change or add localization for this switch.
 
-        @param language_code:
+        @param language_code
             ISO language code, optionally followed by underscore and country code
             (e.g. "en" or "en_US")
 
-        @param localization:
+        @param localization
             Preconstructed ProtoBuf `Localization` message.
             Alternatively this can be constructed from the following arguments.
 
-        @param description:
+        @param description
             Description of this switch
 
-        @param target_texts:
-            Update texts describing each boolean target transition (False, True).
+        @param activate_text
+            Update texts describing the activation of this switch
 
-        @param state_texts:
+        @param deactivate_text
+            Update texts describing the deactivation of this switch
+
+        @param state_texts
             Description of each possible state.
 
-        Mapped strings for `target_texts` and `state_texts` should be suitable
-        for building error messages about dependency conflicts, such as
-        "cannot {target_text} because {state_text}".
+        The strings `activate_text`, `deactivate_text` and the mapped strings
+        for `state_texts` should be suitable for building error messages about
+        dependency conflicts: "cannot {activate_text} because {state_text}".
 
         Example:
 
@@ -221,9 +225,8 @@ class Switch:
           door_locked.set_localization(
               "en",
               description = "Door lock status",
-              target_text = {
-                  True: "lock the door",
-                  False: "unlock the door"}
+              activate_text = "lock the door",
+              deactivate_text = "unlock the door")
 
           door_locked.set_target(True)
           ```
@@ -236,7 +239,8 @@ class Switch:
 
         update = encodeLocalization(
             description = description,
-            target_texts = target_texts,
+            activate_text = activate_text,
+            deactivate_txt = deactivate_text,
             state_texts = state_texts)
 
         return self.set_localizations({language_code: update})
@@ -255,26 +259,39 @@ class Switch:
         return self.get_localization(language_choices).description
 
 
-    def get_target_texts(self,
-                         language_choices: LanguageChoice = DEFAULT_LANGUAGE,
-                         ) -> Mapping[bool, str]:
+    def get_activate_text(self,
+                          language_choices: LanguageChoice = DEFAULT_LANGUAGE,
+                          ) -> str:
         '''
-        Obtain human readable text describing each target position (False, True).
+        Obtain human readable text describing the trasition to ACTIVE.
 
         @param language_choices:
             Either a single language code or a sequence of language codes,
             which will be used in order to look up the target texts.
             For details, @see get_localization().
 
-        @returns
-            Each boolean target (False, True) mapped to explanation of the
-            correponding operation; @see set_localization().
         '''
 
-        return self.get_localization(language_choices).target_texts
+        return self.get_localization(language_choices).activate_text
+
+    def get_deactivate_text(self,
+                            language_choices: LanguageChoice = DEFAULT_LANGUAGE,
+                            ) -> str:
+        '''
+        Obtain human readable text describing the trasition to INACTIVE.
+
+        @param language_choices:
+            Either a single language code or a sequence of language codes,
+            which will be used in order to look up the target texts.
+            For details, @see get_localization().
+
+        '''
+
+        return self.get_localization(language_choices).deactivate_text
 
     def get_target_text(self,
                         language_choices: LanguageChoice = DEFAULT_LANGUAGE,
+                        target: Optional[bool] = None
                         ) -> str:
         '''
         If the switch is currently in the ACTIVATING or DEACTIVATING state,
@@ -294,22 +311,41 @@ class Switch:
         @see set_localization().
         '''
 
-        return self.get_localization(language_choices).target_texts
+        if target is None:
+            target = self.is_active()
 
-    def set_target_texts(self,
-                         texts: Mapping[bool, str],
-                         language_code: LanguageCode = DEFAULT_LANGUAGE,
-                         ) -> bool:
+        return (self.get_activate_text(language_choices) if target
+                else self.get_deactivate_text(language_choices))
+
+    def set_activate_text(self,
+                          text: str,
+                          language_code: LanguageCode = DEFAULT_LANGUAGE,
+                          ) -> bool:
         '''
-        Update texts describing each boolean target transition (False, True)
-        in a format that can be included as '{target_text}' in a statement such
-        as 'cannot {target_text} because {state_text}'.
+        Update texts describing the transition of this switch to the ACTIVE
+        state, in a format that can be included as '{text}' in a statement such
+        as 'cannot {text} because {state_text}'.
 
         @see set_localization()
         '''
         return self.set_localization(
             language_code,
-            target_texts = texts)
+            activate_text = text)
+
+    def set_deactivate_text(self,
+                            text: str,
+                            language_code: LanguageCode = DEFAULT_LANGUAGE,
+                            ) -> bool:
+        '''
+        Update texts describing the transition of this switch to the INACTIVE
+        state, in a format that can be included as '{text}' in a statement such
+        as 'cannot {text} because {state_text}'.
+
+        @see set_localization()
+        '''
+        return self.set_localization(
+            language_code,
+            deactivate_text = text)
 
     def get_state_texts(self,
                         language_choices: LanguageChoice = DEFAULT_LANGUAGE,
@@ -319,7 +355,7 @@ class Switch:
 
         @param language_choices:
             Either a single language code or a sequence of language codes,
-            which will be used in order to look up the target texts.
+            which will be used in order to look up the state texts.
             See `get_localization()` for details.
 
         @returns
@@ -573,6 +609,26 @@ class Switch:
             State to pass as input argument for the interceptor. If not
             provided, defaults to the current state of this switch.
         '''
+
+    def is_active(self) -> bool:
+        '''
+        Indicate whether the switch is currently active
+        '''
+        return self.status.active
+
+    def is_pending(self) -> bool:
+        '''
+        Indicate whether the switch is currently in a "pending" state
+        (DEACTIVATING, ACTIVATING, FAILING).
+        '''
+        return self.status.pending
+
+    def is_settled(self) -> bool:
+        '''
+        Indicate whether the switch is currently in a "settled" state
+        (INACTIVE, ACTIVE, FAILED).
+        '''
+        return not self.status.pending
 
     @property
     def active(self) -> bool:

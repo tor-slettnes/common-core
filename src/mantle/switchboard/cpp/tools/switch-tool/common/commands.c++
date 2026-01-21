@@ -96,10 +96,16 @@ namespace switchboard
             std::bind(&Options::get_state_text, this));
 
         this->add_command(
-            "target_text",
-            {"SWITCH", "TARGET"},
-            "Print text describing SWITCH's transition to the (boolean) TARGET.",
-            std::bind(&Options::get_target_text, this));
+            "activate_text",
+            {"SWITCH"},
+            "Print text describing SWITCH's transition to ACTIVE.",
+            std::bind(&Options::get_activate_text, this));
+
+        this->add_command(
+            "deactivate_text",
+            {"SWITCH"},
+            "Print text describing SWITCH's transition to INACTIVE.",
+            std::bind(&Options::get_deactivate_text, this));
 
         this->add_command(
             "dependencies",
@@ -378,18 +384,23 @@ namespace switchboard
         std::cout << this->get_switch(true)->localization() << std::endl;
     }
 
+    void Options::get_activate_text()
+    {
+        switchboard::SwitchRef sw = this->get_switch(true);
+        std::cout << sw->activate_text() << std::endl;
+    }
+
+    void Options::get_deactivate_text()
+    {
+        switchboard::SwitchRef sw = this->get_switch(true);
+        std::cout << sw->deactivate_text() << std::endl;
+    }
+
     void Options::get_state_text()
     {
         switchboard::SwitchRef sw = this->get_switch(true);
         auto state = core::str::convert_to<switchboard::State>(this->get_arg("state"));
         std::cout << sw->state_text(state) << std::endl;
-    }
-
-    void Options::get_target_text()
-    {
-        switchboard::SwitchRef sw = this->get_switch(true);
-        bool target = core::str::convert_to<bool>(this->get_arg("boolean target"));
-        std::cout << sw->target_text(target) << std::endl;
     }
 
     void Options::get_dependencies()
@@ -498,9 +509,9 @@ namespace switchboard
             if (lowerkey == "text")
                 localization.description = value;
             else if (lowerkey == "on")
-                localization.target_texts[true] = value;
+                localization.activate_text = value;
             else if (lowerkey == "off")
-                localization.target_texts[false] = value;
+                localization.deactivate_text = value;
             else if (lowerkey == "activating")
                 localization.state_texts[switchboard::STATE_ACTIVATING] = value;
             else if (lowerkey == "active")

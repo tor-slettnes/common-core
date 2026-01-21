@@ -26,7 +26,8 @@ namespace switchboard
     constexpr auto SETTING_LOC_LANGUAGE = "language";
     constexpr auto SETTING_LOC_DESCRIPTION = "description";
     constexpr auto SETTING_LOC_STATE_TEXTS = "state texts";
-    constexpr auto SETTING_LOC_TARGET_TEXTS = "target texts";
+    constexpr auto SETTING_LOC_ACTIVATE_TEXT = "activate text";
+    constexpr auto SETTING_LOC_DEACTIVATE_TEXT = "deactivate text";
     constexpr auto SETTING_DEP_PREDECESSOR = "predecessor";
     constexpr auto SETTING_DEP_TRIGGERS = "trigger_states";
     constexpr auto SETTING_DEP_AUTOMATIC = "automatic";
@@ -183,18 +184,13 @@ namespace switchboard
     {
         Localization localization;
         localization.description = localization_map.get(SETTING_LOC_DESCRIPTION).as_string();
+        localization.activate_text = localization_map.get(SETTING_LOC_ACTIVATE_TEXT).as_string();
+        localization.deactivate_text = localization_map.get(SETTING_LOC_DEACTIVATE_TEXT).as_string();
 
         for (const auto &[key, value] : localization_map.get(SETTING_LOC_STATE_TEXTS).get_kvmap())
         {
             localization.state_texts.emplace(
                 core::str::convert_to<State>(key, STATE_UNSET),
-                value.to_string());
-        }
-
-        for (const auto &[key, value] : localization_map.get(SETTING_LOC_TARGET_TEXTS).get_kvmap())
-        {
-            localization.target_texts.emplace(
-                core::str::convert_to<bool>(key, false),
                 value.to_string());
         }
         return localization;

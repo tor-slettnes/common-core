@@ -152,7 +152,7 @@ class RemoteSwitch (Switch):
         return result.error
 
     @doc_inherit
-    def set_target(self,
+    def set_target(self, 
                    target_state: Optional[State] = None,
                    error: Optional[Error] = None,
                    attributes: Optional[PyValueDict] = None,

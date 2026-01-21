@@ -37,7 +37,8 @@ ExceptionHandling  = native_enum_from_proto(ExceptionHandling)
 
 def encodeLocalization(localization : Optional[Localization],
                        description: Optional[str] = None,
-                       target_texts: Optional[Mapping[bool, str]] = None,
+                       activate_text: Optional[str] = None,
+                       deactivate_text: Optional[str] = None,
                        state_texts: Optional[Mapping[State, str]] = None,
                        ) -> Localization:
 
@@ -49,7 +50,8 @@ def encodeLocalization(localization : Optional[Localization],
 
     localization.MergeFrom(Localization(
         description = description,
-        target_texts = target_texts,
+        activate_text = activate_text,
+        deactivate_text = deactivate_text,
         state_texts = state_texts))
 
     return localization

@@ -70,15 +70,8 @@ namespace idl
     {
         idl->language_code(language_code);
         idl->description(native.description);
-
-        idl->target_texts().reserve(native.target_texts.size());
-        for (const auto &[target, text] : native.target_texts)
-        {
-            CC::Switchboard::TargetText tt;
-            tt.active(target);
-            tt.text(text);
-            idl->target_texts().push_back(std::move(tt));
-        }
+        idl->activate_text(native.activate_text);
+        idl->deactivate_text(native.deactivate_text);
 
         idl->state_texts().reserve(native.state_texts.size());
         for (const auto &[state, text] : native.state_texts)
@@ -101,11 +94,8 @@ namespace idl
         if (localization)
         {
             localization->description = idl.description();
-            for (const CC::Switchboard::TargetText &item : idl.target_texts())
-            {
-                localization->target_texts[item.active()] = item.text();
-                ;
-            }
+            localization->activate_text = idl.activate_text();
+            localization->deactivate_text = idl.deactivate_text();
             for (const CC::Switchboard::StateText &item : idl.state_texts())
             {
                 auto state = decoded<switchboard::State>(item.switch_state());

@@ -213,12 +213,8 @@ namespace protobuf
                 cc::platform::switchboard::protobuf::Localization *msg)
     {
         msg->set_description(localization.description);
-
-        auto &target_map = *msg->mutable_target_texts();
-        for (const auto &[position, text] : localization.target_texts)
-        {
-            target_map[position] = text;
-        }
+        msg->set_activate_text(localization.activate_text);
+        msg->set_deactivate_text(localization.deactivate_text);
 
         auto &state_map = *msg->mutable_state_texts();
         for (const auto &[state, text] : localization.state_texts)
@@ -231,10 +227,8 @@ namespace protobuf
                 switchboard::Localization *localization)
     {
         localization->description = msg.description();
-        for (const auto &item : msg.target_texts())
-        {
-            localization->target_texts.insert(item);
-        }
+        localization->activate_text = msg.activate_text();
+        localization->deactivate_text = msg.deactivate_text();
 
         for (const auto &[state, text] : msg.state_texts())
         {

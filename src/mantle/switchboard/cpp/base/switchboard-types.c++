@@ -103,16 +103,8 @@ namespace switchboard
     void Localization::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         tvlist->append_if_value("description", this->description);
-
-        if (!this->target_texts.empty())
-        {
-            core::types::TaggedValueList texts;
-            for (const auto &[target, text] : this->target_texts)
-            {
-                texts.append_if_value(target ? "ON" : "OFF", text);
-            }
-            tvlist->append("target_texts", texts);
-        }
+        tvlist->append_if_value("activate_text", this->activate_text);
+        tvlist->append_if_value("deactivate_text", this->deactivate_text);
 
         if (!this->state_texts.empty())
         {
@@ -128,7 +120,8 @@ namespace switchboard
     bool operator==(const Localization &lhs, const Localization &rhs)
     {
         return ((lhs.description == rhs.description) &&
-                (lhs.target_texts == rhs.target_texts) &&
+                (lhs.activate_text == rhs.activate_text) &&
+                (lhs.deactivate_text == rhs.deactivate_text) &&
                 (lhs.state_texts == rhs.state_texts));
     }
 

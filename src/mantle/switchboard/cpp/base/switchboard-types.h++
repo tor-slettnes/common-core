@@ -135,7 +135,8 @@ namespace switchboard
     struct Localization : public core::types::Listable
     {
         std::string description;
-        core::types::SymbolMap<bool> target_texts;
+        std::string activate_text;
+        std::string deactivate_text;
         core::types::SymbolMap<State> state_texts;
 
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;

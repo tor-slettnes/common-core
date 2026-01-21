@@ -35,8 +35,9 @@ namespace switchboard
         void get_errors();
         void get_status();
         void get_localization();
+        void get_activate_text();
+        void get_deactivate_text();
         void get_state_text();
-        void get_target_text();
         void get_dependencies();
         void get_interceptors();
         void get_specs();

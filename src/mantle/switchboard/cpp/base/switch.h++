@@ -188,10 +188,12 @@ namespace switchboard
         std::optional<std::string> description(
             const LanguageCode &language_code = DEFAULT_LANGUAGE) const noexcept;
 
-        /// Return a textual explanation of an action, e.g.:
-        /// get_switch("Cloud:Available").target_text(true) -> "connect to cloud"
-        std::optional<std::string> target_text(
-            bool active,
+        /// Return a textual explanation describing the transition to ACTIVE
+        std::optional<std::string> activate_text(
+            const LanguageCode &lanugage_code = DEFAULT_LANGUAGE) const noexcept;
+
+        /// Return a textual explanation describing the transition to INACTIVE
+        std::optional<std::string> deactivate_text(
             const LanguageCode &lanugage_code = DEFAULT_LANGUAGE) const noexcept;
 
         /// Return a textual explanation of an reason, e.g.:

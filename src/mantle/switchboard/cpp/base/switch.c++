@@ -295,13 +295,25 @@ namespace switchboard
         }
     }
 
-    std::optional<std::string> Switch::target_text(
-        bool target,
+    std::optional<std::string> Switch::activate_text(
         const std::string &lang) const noexcept
     {
         if (const auto &localized = this->localization(lang))
         {
-            return localized->target_texts.try_to_string(target);
+            return localized->activate_text;
+        }
+        else
+        {
+            return {};
+        }
+    }
+
+    std::optional<std::string> Switch::deactivate_text(
+        const std::string &lang) const noexcept
+    {
+        if (const auto &localized = this->localization(lang))
+        {
+            return localized->deactivate_text;
         }
         else
         {
