@@ -123,6 +123,7 @@ previously connected to one or more handlers.
 from typing import Callable, Sequence, abstractmethod
 
 ### Common Core modules
+from cc.core.decorators import override
 from cc.core.timeutils import TimeIntervalType
 from cc.protobuf.signal import SignalStore, CachingSignalStore, \
     SignalMessage, Slot, Filter
@@ -240,7 +241,12 @@ class SignalClient (GenericClient):
             **kwargs)
 
         self.reader = self.create_reader()
-        if watch_all:
+        self.watch_all = watch_all
+
+    @override
+    def initialize(self):
+        GenericClient.initialize(self)
+        if self.watch_all:
             self.start_watching(True)
 
 
@@ -301,7 +307,24 @@ class SignalClient (GenericClient):
 
         self.reader.stop()
 
+    def is_complete(self) -> bool:
+        '''
+        Indicates whether a completion event has been received from the
+        signal source, i.e., if all cached signals have been received.
+        '''
+
+        return self.signal_store.is_complete()
+
     def wait_complete(self, timeout: TimeIntervalType|None = None):
+        '''
+        Wait until a initial completion event has been received from the
+        signal source to ensure the local cache is complete before proceeding.
+
+        Note that it is not usually necessary to invoke this method in order to
+        obtain values from the local cache, because the `get_cached_map()` method
+        implicitly waits for the specified signal map to be completed before
+        proceeding.
+        '''
         return self.signal_store.wait_complete(timeout)
 
 

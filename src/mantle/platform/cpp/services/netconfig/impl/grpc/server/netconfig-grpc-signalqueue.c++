@@ -21,35 +21,35 @@ namespace netconfig::grpc
             Signal::kConnection,
             netconfig::signal_connection,
             [](ConnectionData::ptr ref, Signal *msg) {
-                protobuf::encode_shared(ref, msg->mutable_connection());
+                cc::protobuf::encode_shared(ref, msg->mutable_connection());
             });
 
         this->connect<ActiveConnectionData::ptr>(
             Signal::kActiveConnection,
             netconfig::signal_active_connection,
             [](ActiveConnectionData::ptr ref, Signal *msg) {
-                protobuf::encode_shared(ref, msg->mutable_active_connection());
+                cc::protobuf::encode_shared(ref, msg->mutable_active_connection());
             });
 
         this->connect<AccessPointData::ptr>(
             Signal::kAccesspoint,
             netconfig::signal_accesspoint,
             [](AccessPointData::ptr ref, Signal *msg) {
-                protobuf::encode_shared(ref, msg->mutable_accesspoint());
+                cc::protobuf::encode_shared(ref, msg->mutable_accesspoint());
             });
 
         this->connect<DeviceData::ptr>(
             Signal::kDevice,
             netconfig::signal_device,
             [](DeviceData::ptr ref, Signal *msg) {
-                protobuf::encode_shared(ref, msg->mutable_device());
+                cc::protobuf::encode_shared(ref, msg->mutable_device());
             });
 
         this->connect<GlobalData::ptr>(
             Signal::kGlobal,
             netconfig::signal_globaldata,
             [](GlobalData::ptr ref, Signal *msg) {
-                protobuf::encode_shared(ref, msg->mutable_global());
+                cc::protobuf::encode_shared(ref, msg->mutable_global());
             });
         Super::initialize();
     }

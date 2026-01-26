@@ -12,7 +12,7 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-inline.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
     //==========================================================================
     // Package Source
@@ -208,4 +208,4 @@ namespace protobuf
         native->total = msg.total();
     }
 
-}  // namespace protobuf
+}  // namespace cc::protobuf

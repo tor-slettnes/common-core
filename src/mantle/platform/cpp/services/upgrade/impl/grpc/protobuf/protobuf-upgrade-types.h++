@@ -9,7 +9,7 @@
 #include "cc/platform/upgrade/protobuf/upgrade_types.pb.h"  // generated from `variant.proto`
 #include "upgrade-base.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
     //==========================================================================
     // Package Source
@@ -83,4 +83,4 @@ namespace protobuf
     void decode(const ::cc::platform::upgrade::protobuf::UpgradeProgress::ProgressFraction &msg,
                 ::upgrade::UpgradeProgress::Fraction *native);
 
-}  // namespace protobuf
+}  // namespace cc::protobuf

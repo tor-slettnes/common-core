@@ -109,22 +109,16 @@ class Client (GenericClient, API, ThreadedSubmitter):
         Runs in its own thread until the queue is deleted (i.e., client is closed)
         '''
 
+        queue_iterator = iter(self.queue.get, None)
         while self.is_writer_open():
             try:
-                self.stub.Writer(self.queue_iterator(), wait_for_ready = wait_for_ready)
+                self.stub.Writer(queue_iterator, wait_for_ready = wait_for_ready)
             except Exception as e:
                 if self.is_writer_open():
                     self.logger.debug(
                         "Failed to stream message to MultiLogger service at %s: [%s]; retrying in 2s: %s"%
                         (self.host, type(e).__name__, e))
                     time.sleep(2.0)
-
-    def queue_iterator(self):
-        if q := self.queue:
-            item = q.get()
-            while item is not None:
-                yield item
-                item = q.get()
 
 
 

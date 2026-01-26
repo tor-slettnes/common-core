@@ -7,7 +7,7 @@ __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
 ### Standard ProtoBuf modules
-from typing import Optional, Mapping
+from typing import Optional, Mapping, Set
 from collections.abc import Sequence, Mapping, Callable
 from abc import abstractmethod
 
@@ -18,12 +18,16 @@ from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
 
 ### Swithboard modules
 from ..protobuf import (
-    Specification, Status, State,
+    Specification, Status, State, StateSet,
     Dependency, DependencyMap, DependencyPolarity,
-    InterceptorSpec, InterceptorPhase, ExceptionHandling,
     Localization, LocalizationMap, encodeLocalization, encodeLocalizationMap,
+    InterceptorSpec, InterceptorPhase,
+    ExceptionHandling,
     LanguageCode, LanguageChoice, LocalizationsInput,
 )
+
+InterceptorName = str
+InterceptorMethod = Callable[['Switch', 'InterceptorName', 'State'], None]
 
 class Switch:
     '''
@@ -33,11 +37,14 @@ class Switch:
 
     DEFAULT_LANGUAGE = "en"
 
-    def __init__(self, name: str):
+    def __init__(self,
+                 name: str,
+                 ):
         self.name = name
         self.specification = Specification()
         self.status = Status()
         self.callbacks = {}
+        self.interceptor_methods = {}
 
     def __repr__ (self):
         return "Switch(%r, %s)"%(self.name, self.current_state.name)
@@ -63,11 +70,11 @@ class Switch:
         '''
         Register a callback to be invoked whenever this switch changes specification or status
 
-        @param handle:
+        @param handle
             Unique handle for this callback. If a callback is already
             registered with the same handle, it will be replaced.
 
-        @param callback:
+        @param callback
             Method to be invoked whenever this switch changes specification or state.
             Must take this switch instance as its sole argument.
         '''
@@ -80,7 +87,7 @@ class Switch:
         '''
         Unregiser a callback handler
 
-        @param handle:
+        @param handle
             Handle for the registered callback.
 
         @returns
@@ -121,7 +128,7 @@ class Switch:
         '''
         Update localization map for this switch.
 
-        @param localization:
+        @param localization
             Either of the following: a preconstructed ProtoBuf `LocalizationMap`
             message, or language codes mapped to ProtoBuf `Localization` types,
             or language codes mapped to dictionaries comprising `description`,
@@ -146,7 +153,7 @@ class Switch:
         explaining each state (INITIAL, DEACTICATING, INACTIVE, ACTIVATING,
         ACTIVE, FAILING, _FAILED).
 
-        @param language_choices:
+        @param language_choices
             Either a single language code or a sequence of language codes, each
             comprising an ISO language and optionally ISO country code (such as
             "en", "en_US", "nb_NO", "nn_NO").
@@ -251,7 +258,7 @@ class Switch:
         '''
         Return human readable description of this switch, e.g. `"door lock"`
 
-        @param language_choices:
+        @param language_choices
             Either a single language code or a sequence of language codes,
             which will be used in order to look up the switch description.
             See `get_localization()` for details.
@@ -265,7 +272,7 @@ class Switch:
         '''
         Obtain human readable text describing the trasition to ACTIVE.
 
-        @param language_choices:
+        @param language_choices
             Either a single language code or a sequence of language codes,
             which will be used in order to look up the target texts.
             For details, @see get_localization().
@@ -280,7 +287,7 @@ class Switch:
         '''
         Obtain human readable text describing the trasition to INACTIVE.
 
-        @param language_choices:
+        @param language_choices
             Either a single language code or a sequence of language codes,
             which will be used in order to look up the target texts.
             For details, @see get_localization().
@@ -298,7 +305,7 @@ class Switch:
         return a human readable text describing the corresponding target
         possition; otherwise None.
 
-        @param language_choices:
+        @param language_choices
             Either a single language code or a sequence of language codes,
             which will be used in order to look up the target texts.
             For details, @see get_localization().
@@ -353,7 +360,7 @@ class Switch:
         '''
         Obtain human readable text describing each available state.
 
-        @param language_choices:
+        @param language_choices
             Either a single language code or a sequence of language codes,
             which will be used in order to look up the state texts.
             See `get_localization()` for details.
@@ -458,7 +465,7 @@ class Switch:
     @abstractmethod
     def add_dependency(self,
                        predecessor_name: str,
-                       trigger_states: int = State.SETTLED,
+                       trigger_states: StateSet = State.SETTLED,
                        polarity: DependencyPolarity = DependencyPolarity.POSITIVE,
                        hard: bool = False,
                        sufficient: bool = False,
@@ -468,10 +475,10 @@ class Switch:
         '''
         Add a new upstream dependency (direct ancestor) to this switch.
 
-        @param predecessor_name:
+        @param predecessor_name
             Name of the switch on which we are adding a dependency.
 
-        @param trigger_states:
+        @param trigger_states
             A bitmask representing which of the predecessor's state transitions
             that will automatically trigger a reevaluation of this switch's
             state, based on this and its other dependencies. A value of zero
@@ -480,26 +487,26 @@ class Switch:
             The default value, `State.SETTLED`, is equivalent to `State.ACTIVE |
             State.INACTIVE | State.FAILED`.
 
-        @param polarity:
+        @param polarity
             Whether this is a normal/positive dependency, a negative/conflicting
             dependency, or this switch toggles/flip-flops in response to the
             predecessor's value changing.
 
-        @param hard:
+        @param hard
             Hard dependency: This switch cannot be set unless this dependency is
             satisfied
 
-        @param sufficient:
+        @param sufficient
             Whether or not this dependency alone is sufficient to activate this
             switch, irrespective of other dependencies. This implies a logical
             OR instead of AND conditition, and as a side effect, this dependency
             becomes redundant if the successor's other dependencies are
             satisfied.
 
-        @param allow_update:
+        @param allow_update
             Allow existing dependency to be updated
 
-        @param reevaluate:
+        @param reevaluate
             Recalculate this switch's state after adding the dependency.
         '''
 
@@ -512,9 +519,9 @@ class Switch:
         '''
         Remove an existing dependency from a switch.
 
-        @param predecessor_name:
+        @param predecessor_name
            Name of predecessor that is being removed
-        @param reevaluate:
+        @param reevaluate
            Recalculate state after removing dependency
         '''
 
@@ -533,7 +540,9 @@ class Switch:
     @abstractmethod
     def add_interceptor(self,
                         interceptor_name: str,
-                        state_transitions: int,
+                        state_transitions: StateSet,
+                        callback: InterceptorMethod,
+                        phase: InterceptorPhase = InterceptorPhase.NORMAL,
                         asynchronous: bool = False,
                         rerun: bool = False,
                         on_cancel: ExceptionHandling = ExceptionHandling.DEFAULT,
@@ -544,32 +553,37 @@ class Switch:
         Add a new interceptor to be executed once the switch enters the
         specified state(s).
 
-        @param interceptor_name:
+        @param interceptor_name
             Unique name/id for this interceptor.
 
-        @param state_transitions:
+        @param state_transitions
             A bitmask representing states for which the inerceptor is invoked.
             Often just a single transitional state, i.e., `ACTIVATING`,
             `DEACTIVATING` or `FAILING`.
 
-        @param asynchronous:
+        @param asynchronous
             Allow state to transition to the next state (normally `ACITVE`,
             `INACTIVE` or `FAILED`) even as this interceptor continues to run in
             the background.
 
-        @param rerun:
+        @param phase
+            Run this interceptor prior to (EARLY), concurrent with (NORMAL), or
+            subsequent to (LATE) the main interceptors for the specified state
+            transitions.
+
+        @param rerun
             Whether to invoke interceptor when (explicitly) re-entering one of
             the specified states, even if the switch is already in that state.
 
-        @param on_cancel:
+        @param on_cancel
             How to proceed if state change is cancelled. The default value
             `DEFAULT` is equivalent to `ABORT`.
 
-        @param on_error:
+        @param on_error
             How to proceed if the interceptor encounters an error. The default
             value `DEFAULT` is equivalent to `FAIL`.
 
-        @param immediate:
+        @param immediate
             If True, and if the `states` mask include the current state of this
             switch, invoke the interceptor immediately. In this case, unless
             `asynchronous` flag is also True, the call blocks until the
@@ -579,6 +593,11 @@ class Switch:
             True if the interceptor was added.
         '''
 
+        is_new = interceptor_name not in self.interceptor_methods
+        self.interceptor_methods[interceptor_name] = callback
+        return is_new
+
+
     @abstractmethod
     def remove_interceptor(self,
                            interceptor_name: str,
@@ -586,29 +605,49 @@ class Switch:
         '''
         Remove an existing interceptor from a switch.
 
-        @param interceptor_name:
+        @param interceptor_name
             Name of interceptor to remove
 
         @returns
             True if the interceptor existed and was removed.
         '''
 
+        try:
+            del self.interceptor_methods[interceptor_name]
+
+        except KeyError:
+            return False
+
+        else:
+            return True
+
+
     @abstractmethod
     def invoke_interceptor(self,
                            interceptor_name : str,
-                           state : Optional[int] = None,
+                           state : Optional[State] = None,
                            ) -> Optional[Error]:
         '''
         Manually invoke a specific interceptor, as if it were triggered by a
         switch changing its current state.  Primarily a diagnostic tool.
 
-        @param interceptor_name:
+        @param interceptor_name
             Name of interceptor to invoke.
 
-        @param state:
+        @param state
             State to pass as input argument for the interceptor. If not
             provided, defaults to the current state of this switch.
         '''
+
+
+    @abstractmethod
+    def on_intercept(self,
+                     interceptor_name : str,
+                     state : State):
+        '''
+        Callback handler for intercept invocations from service.
+        '''
+
 
     def is_active(self) -> bool:
         '''
@@ -709,47 +748,47 @@ class Switch:
           * otherwise, the target state is inferred based on the current state of the
             switch's dependencies.
 
-        @param target_state:
+        @param target_state
             Desired target state. Normally this is one of the "settled" states
             (ACTIVE, INACTIVE, or FAILED), in which case the switch will first
             change to the corresponding pending state (ACTIVATING, DEACTIVATING,
             FAILING), triggering any associated descendant updates and
             interceptor invocations on the way.
 
-        @param error:
+        @param error
             Any error data associated with this switch. Ignored if the target is
             specified but is not one of `FAILING` or `FAILED`.
 
-        @param attributes:
+        @param attributes
             Arbitrary key/value pairs assigned to the switch. These may be
             cleared in a future state change.
 
-        @param clear_existing:
+        @param clear_existing
             Clear all existing attributes before setting those provided here.
 
-        @param with_interceptors:
+        @param with_interceptors
             Run interceptors associated with each state transition (e.g.  if
             `target_state` is ACTIVE, first run interceptors for ACTIVATING, and
             if successful, those for ACTIVE).
 
-        @param trigger_descendants:
+        @param trigger_descendants
             Propagate the update to the switch's descendants, starting with its
             immediate successors. Only switches with dependencies that include
             the corresponding state transition(s) of this switch are
             reevaluated.
 
-        @param reevaluate:
+        @param reevaluate
             Make the transition (via the applicable pending state) even if the
             switch is already in the desired target state, invoking any relevant
             interceptors on the way.
 
-        @param on_cancel:
+        @param on_cancel
             What to do if the state transition is cancelled, e.g. if pre-empted
             by another target setting while executing interceptrs.  If omitted,
             the highest-numbered `on_cancel` attribute amongst the associated
             interceptors is used.
 
-        @param on_error:
+        @param on_error
             What to do if the interceptors associated with the state transition
             encounters errors.  If omitted, the highest-numbered `on_error`
             attribute amongst the associated interceptors is used.
@@ -865,3 +904,4 @@ class Switch:
         @returns
           Dictionary of conflicting upstream state names and their corresponding states.
         '''
+

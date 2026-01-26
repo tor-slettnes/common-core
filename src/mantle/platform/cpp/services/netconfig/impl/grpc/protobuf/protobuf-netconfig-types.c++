@@ -9,7 +9,7 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-inline.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
     //==========================================================================
     // ::netconfig::GlobalData
@@ -900,4 +900,4 @@ namespace protobuf
     {
         *state = static_cast<NMState>(proto);
     }
-}  // namespace protobuf
+}  // namespace cc::protobuf

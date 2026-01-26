@@ -23,14 +23,15 @@ namespace switchboard::grpc
     class RemoteSwitch : public Switch,
                          public core::types::enable_create_shared<RemoteSwitch>
     {
-        using Client = core::grpc::ClientWrapper<cc::platform::switchboard::grpc::Switchboard>;
+        // using Client = core::grpc::ClientWrapper<cc::platform::switchboard::grpc::Switchboard>;
         // friend class Proxy;
 
     protected:
         using Switch::Switch;
 
     protected:
-        std::shared_ptr<Client> client() const;
+        // std::shared_ptr<Client> client() const;
+        std::shared_ptr<Proxy> proxy() const;
 
     protected:
         bool add_dependency(

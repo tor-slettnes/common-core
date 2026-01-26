@@ -25,43 +25,43 @@ namespace upgrade::grpc
     PackageCatalogue ClientProvider::scan(
         const PackageSource &source)
     {
-        return protobuf::decoded<PackageCatalogue>(
+        return cc::protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
                 &Client::Stub::Scan,
-                protobuf::encoded<::cc::platform::upgrade::protobuf::PackageSource>(source)));
+                cc::protobuf::encoded<::cc::platform::upgrade::protobuf::PackageSource>(source)));
     }
 
     PackageSources ClientProvider::list_sources() const
     {
-        return protobuf::decoded<PackageSources>(
+        return cc::protobuf::decoded<PackageSources>(
             this->client->call_check(&Client::Stub::ListSources));
     }
 
     PackageCatalogue ClientProvider::list_available(
         const PackageSource &source) const
     {
-        return protobuf::decoded<PackageCatalogue>(
+        return cc::protobuf::decoded<PackageCatalogue>(
             this->client->call_check(
                 &Client::Stub::ListAvailable,
-                protobuf::encoded<::cc::platform::upgrade::protobuf::PackageSource>(source)));
+                cc::protobuf::encoded<::cc::platform::upgrade::protobuf::PackageSource>(source)));
     }
 
     PackageInfo::ptr ClientProvider::best_available(
         const PackageSource &source) const
     {
-        return protobuf::decoded_shared<PackageInfo>(
+        return cc::protobuf::decoded_shared<PackageInfo>(
             this->client->call_check(
                 &Client::Stub::BestAvailable,
-                protobuf::encoded<::cc::platform::upgrade::protobuf::PackageSource>(source)));
+                cc::protobuf::encoded<::cc::platform::upgrade::protobuf::PackageSource>(source)));
     }
 
     PackageInfo::ptr ClientProvider::install(
         const PackageSource &source)
     {
         ::cc::platform::upgrade::protobuf::InstallRequest request;
-        protobuf::encode(source, request.mutable_source());
+        cc::protobuf::encode(source, request.mutable_source());
 
-        return protobuf::decoded_shared<PackageInfo>(
+        return cc::protobuf::decoded_shared<PackageInfo>(
             this->client->call_check(&Client::Stub::Install, request));
     }
 

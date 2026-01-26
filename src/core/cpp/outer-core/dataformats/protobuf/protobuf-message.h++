@@ -15,7 +15,7 @@
 
 #include <ostream>
 
-namespace protobuf
+namespace cc::protobuf
 {
     extern const google::protobuf::Empty empty;
 
@@ -74,7 +74,7 @@ namespace protobuf
         return msg;
     }
 
-}  // namespace protobuf
+}  // namespace cc::protobuf
 
 
 /// Additional convenience operators for ProtoBuf messages

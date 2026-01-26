@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <functional>
 
-namespace protobuf
+namespace cc::protobuf
 {
 
     template <class SignalT>
@@ -107,10 +107,10 @@ namespace protobuf
         {
         }
 
-        cc::protobuf::signal::Filter signal_filter()
+        signal::Filter signal_filter()
         {
             std::scoped_lock lck(this->slots_mtx);
-            cc::protobuf::signal::Filter filter;
+            signal::Filter filter;
             filter.set_polarity(true);
             for (const auto &[index, callback] : this->slots)
             {
@@ -119,15 +119,15 @@ namespace protobuf
             return filter;
         }
 
-        static std::optional<bool> is_mapped(cc::protobuf::signal::MappingAction action)
+        static std::optional<bool> is_mapped(signal::MappingAction action)
         {
             switch (action)
             {
-            case cc::protobuf::signal::MAP_ADDITION:
-            case cc::protobuf::signal::MAP_UPDATE:
+            case signal::MAP_ADDITION:
+            case signal::MAP_UPDATE:
                 return true;
 
-            case cc::protobuf::signal::MAP_REMOVAL:
+            case signal::MAP_REMOVAL:
                 return false;
 
             default:
@@ -167,4 +167,4 @@ namespace protobuf
         std::mutex slots_mtx;
     };
 
-}  // namespace protobuf
+}  // namespace cc::protobuf

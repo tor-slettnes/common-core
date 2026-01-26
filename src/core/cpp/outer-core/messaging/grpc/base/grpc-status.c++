@@ -32,7 +32,7 @@ namespace core::grpc
                          status.error_message(),
                          status.error_details())
     {
-        ::protobuf::decode(this->details(), this);
+        cc::protobuf::decode(this->details(), this);
     }
 
     Status::Status(const Status &status)
@@ -48,13 +48,13 @@ namespace core::grpc
     Status::Status(const cc::protobuf::status::Error &details)
         : Error(
               details.text(),
-              ::protobuf::decoded<status::Domain>(details.domain()),
+              cc::protobuf::decoded<status::Domain>(details.domain()),
               details.origin(),
               details.code(),
               details.symbol(),
-              ::protobuf::decoded<status::Level>(details.level()),
-              ::protobuf::decoded<dt::TimePoint>(details.timestamp()),
-              ::protobuf::decoded<types::KeyValueMap>(details.attributes())),
+              cc::protobuf::decoded<status::Level>(details.level()),
+              cc::protobuf::decoded<dt::TimePoint>(details.timestamp()),
+              cc::protobuf::decoded<types::KeyValueMap>(details.attributes())),
           ::grpc::Status(
               This::code_from_error(*this),
               details.text(),
@@ -67,13 +67,13 @@ namespace core::grpc
                    const cc::protobuf::status::Error &details)
         : Error(
               text,
-              ::protobuf::decoded<status::Domain>(details.domain()),
+              cc::protobuf::decoded<status::Domain>(details.domain()),
               details.origin(),
               details.code(),
               details.symbol(),
-              ::protobuf::decoded<status::Level>(details.level()),
-              ::protobuf::decoded<dt::TimePoint>(details.timestamp()),
-              ::protobuf::decoded<types::KeyValueMap>(details.attributes())),
+              cc::protobuf::decoded<status::Level>(details.level()),
+              cc::protobuf::decoded<dt::TimePoint>(details.timestamp()),
+              cc::protobuf::decoded<types::KeyValueMap>(details.attributes())),
           ::grpc::Status(
               status_code,
               text,
@@ -108,7 +108,7 @@ namespace core::grpc
           ::grpc::Status(
               status_code,
               text,
-              ::protobuf::encoded<cc::protobuf::status::Error>(
+              cc::protobuf::encoded<cc::protobuf::status::Error>(
                   *static_cast<Error *>(this))
                   .SerializeAsString())
     {

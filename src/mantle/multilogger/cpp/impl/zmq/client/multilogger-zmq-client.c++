@@ -58,7 +58,7 @@ namespace multilogger::zmq
     {
         auto result = this->call<cc::platform::multilogger::protobuf::AddSinkResult>(
             METHOD_ADD_SINK,
-            protobuf::encoded<cc::platform::multilogger::protobuf::SinkSpec>(spec));
+            cc::protobuf::encoded<cc::platform::multilogger::protobuf::SinkSpec>(spec));
 
         return result.added();
     }
@@ -67,7 +67,7 @@ namespace multilogger::zmq
     {
         auto result = this->call<cc::platform::multilogger::protobuf::RemoveSinkResult>(
             METHOD_REMOVE_SINK,
-            protobuf::encoded<cc::platform::multilogger::protobuf::SinkID>(id));
+            cc::protobuf::encoded<cc::platform::multilogger::protobuf::SinkID>(id));
 
         return result.removed();
     }
@@ -76,9 +76,9 @@ namespace multilogger::zmq
     {
         auto result = this->call<cc::platform::multilogger::protobuf::SinkSpec>(
             METHOD_GET_SINK,
-            protobuf::encoded<cc::platform::multilogger::protobuf::SinkID>(id));
+            cc::protobuf::encoded<cc::platform::multilogger::protobuf::SinkID>(id));
 
-        return protobuf::decoded<SinkSpec>(result);
+        return cc::protobuf::decoded<SinkSpec>(result);
     }
 
     SinkSpecs ClientImpl::get_all_sink_specs() const
@@ -86,7 +86,7 @@ namespace multilogger::zmq
         auto result = this->call<cc::platform::multilogger::protobuf::SinkSpecs>(
             METHOD_GET_ALL_SINKS);
 
-        return protobuf::decoded<SinkSpecs>(result);
+        return cc::protobuf::decoded<SinkSpecs>(result);
     }
 
     SinkIDs ClientImpl::list_sinks() const
@@ -94,7 +94,7 @@ namespace multilogger::zmq
         auto result = this->call<cc::platform::multilogger::protobuf::SinkNames>(
             METHOD_LIST_SINKS);
 
-        return protobuf::assign_to_vector<SinkID>(result.sink_names());
+        return cc::protobuf::assign_to_vector<SinkID>(result.sink_names());
     }
 
     SinkTypes ClientImpl::list_sink_types() const
@@ -102,21 +102,21 @@ namespace multilogger::zmq
         auto result = this->call<cc::platform::multilogger::protobuf::SinkTypes>(
             METHOD_LIST_SINK_TYPES);
 
-        return protobuf::assign_to_vector<std::string>(result.sink_types());
+        return cc::protobuf::assign_to_vector<std::string>(result.sink_types());
     }
 
     FieldNames ClientImpl::list_message_fields() const
     {
         auto result = this->call<cc::platform::multilogger::protobuf::FieldNames>(
             METHOD_LIST_MESSAGE_FIELDS);
-        return protobuf::assign_to_vector<std::string>(result.field_names());
+        return cc::protobuf::assign_to_vector<std::string>(result.field_names());
     }
 
     FieldNames ClientImpl::list_error_fields() const
     {
         auto result = this->call<cc::platform::multilogger::protobuf::FieldNames>(
             METHOD_LIST_ERROR_FIELDS);
-        return protobuf::assign_to_vector<std::string>(result.field_names());
+        return cc::protobuf::assign_to_vector<std::string>(result.field_names());
     }
 
     std::shared_ptr<LogSource> ClientImpl::listen(

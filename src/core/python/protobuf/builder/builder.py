@@ -109,7 +109,7 @@ First, by using `MessageBuilder` as an additional base for your `DemoClient`
 implementation, you can pass in Python native arguments directly:
 
   ```python
-          request = self.build_from_value(
+          request = self.build_from_dict(
               Greeting,
               text = text,
               identity = self.identity,
@@ -127,7 +127,7 @@ variables, including `self`, but used carefully it will suffice for our
 purpose).  Taking advantage of this, we can now use:
 
   ```python
-          request = self.build_from_value(
+          request = self.build_from_dict(
               Greeting,
               locals(),
               identity = self.identity,
@@ -155,7 +155,7 @@ Putting this all together, we get:
                     text: str,
                     data: dict = {}):
 
-          request = self.build_from_value(
+          request = self.build_from_dict(
               Greeting,
               locals(),
               identity = self.identity,

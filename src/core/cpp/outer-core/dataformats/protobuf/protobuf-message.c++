@@ -15,7 +15,7 @@
 
 using google::protobuf::util::MessageDifferencer;
 
-namespace protobuf
+namespace cc::protobuf
 {
     const google::protobuf::Empty empty;
 
@@ -49,7 +49,7 @@ namespace protobuf
         to_bytes(msg, &bytes);
         return bytes;
     }
-}  // namespace protobuf
+}  // namespace cc::protobuf
 
 /// Additional convenience operators for ProtoBuf messages
 namespace google::protobuf
@@ -66,8 +66,8 @@ namespace google::protobuf
 
     std::ostream &operator<<(std::ostream &stream, const Message &msg)
     {
-        // return stream << ::protobuf::to_string(msg);
-        return stream << ::protobuf::to_value(msg);
+        // return stream << cc::protobuf::to_string(msg);
+        return stream << cc::protobuf::to_value(msg);
     }
 
 }  // namespace google::protobuf

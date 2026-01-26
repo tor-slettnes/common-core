@@ -40,7 +40,7 @@ namespace switchboard
     Interceptor::Interceptor(const std::string &name,
                              const std::string &owner,
                              const Invocation &invocation,
-                             StateMask state_transitions,
+                             const StateSet &state_transitions,
                              InterceptorPhase phase,
                              bool asynchronous,
                              bool rerun,
@@ -76,7 +76,7 @@ namespace switchboard
         return this->invocation_;
     }
 
-    StateMask Interceptor::state_transitions() const
+    StateSet Interceptor::state_transitions() const
     {
         return this->state_transitions_;
     }
@@ -109,19 +109,15 @@ namespace switchboard
     void Interceptor::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         tvlist->extend({
-            {"name", this->name()},
+            {{}, this->name()},
             {"owner", this->owner()},
-            {"state_transitions", this->state_transitions()},
-            {"asynchronous", this->asynchronous()},
-            {"rerun", this->rerun()},
-            {"on_cancel", core::str::convert_from(this->on_cancel())},
-            {"on_error", core::str::convert_from(this->on_error())},
+            {"transitions", this->state_transitions().as_valuelist()},
         });
     }
 
     bool Interceptor::applicable(State state)
     {
-        return (this->state_transitions() & static_cast<StateMask>(state)) != 0;
+        return this->state_transitions().count(state);
     }
 
     bool Interceptor::applicable(State state, InterceptorPhase phase)

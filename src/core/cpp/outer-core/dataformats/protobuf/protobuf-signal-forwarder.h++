@@ -18,7 +18,7 @@
 #include <functional>
 #include <unordered_set>
 
-namespace protobuf
+namespace cc::protobuf
 {
     //==========================================================================
     /// @brief
@@ -64,14 +64,14 @@ namespace protobuf
         virtual void forward(ProtoT &&message) = 0;
 
     protected:
-        static cc::protobuf::signal::MappingAction boolean_mapping(bool present)
+        static signal::MappingAction boolean_mapping(bool present)
         {
-            return present ? cc::protobuf::signal::MAP_UPDATE : cc::protobuf::signal::MAP_REMOVAL;
+            return present ? signal::MAP_UPDATE : signal::MAP_REMOVAL;
         }
 
-        static cc::protobuf::signal::MappingAction mapping_action(core::signal::MappingAction action)
+        static signal::MappingAction mapping_action(core::signal::MappingAction action)
         {
-            return static_cast<cc::protobuf::signal::MappingAction>(action);
+            return static_cast<signal::MappingAction>(action);
         }
 
         /// @brief
@@ -105,4 +105,4 @@ namespace protobuf
     private:
         core::signal::Handle signal_shutdown_handle;
     };
-}  // namespace protobuf
+}  // namespace cc::protobuf

@@ -382,9 +382,8 @@ class Client (GenericClient):
         try:
             subscription.stream.cancel()
         except AttributeError:
-            self.logger.debug(
-                f"Failed to cancel subscriber stream (grpc version {grpc.__version__}). "
-                "Reader thread will remain blocked until the next publication is received.")
+            ## Readers from older `grpcio` verisons do not have a `cancel()` method
+            subscription.stream.throw(StopIteration)
 
         ### Older versions of the standard Python gRPC client stream do not have
         ### a `cancel()` method.  There is a `stop()`, but attempt to invoke

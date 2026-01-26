@@ -21,18 +21,19 @@ namespace switchboard::grpc
     RequestHandler::RequestHandler(
         const std::shared_ptr<Provider> &api_provider)
         : Super(),
-          provider(api_provider)
+          provider(api_provider),
+          latest_interceptor_session(0)
     {
     }
 
     ::grpc::Status RequestHandler::GetSwitches(
         ::grpc::ServerContext *context,
         const ::google::protobuf::Empty *request,
-        cc::platform::switchboard::protobuf::SwitchMap *reply)
+        switchboard::protobuf::SwitchMap *reply)
     {
         try
         {
-            protobuf::encode(this->provider->get_switches(), reply);
+            cc::protobuf::encode(this->provider->get_switches(), reply);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -43,14 +44,14 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetSwitch(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::SwitchIdentifier *request,
-        cc::platform::switchboard::protobuf::SwitchInfo *reply)
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::SwitchInfo *reply)
     {
         try
         {
             if (SwitchRef sw = this->provider->get_switch(request->switch_name()))
             {
-                protobuf::encode(*sw, reply);
+                cc::protobuf::encode(*sw, reply);
             }
             else
             {
@@ -66,7 +67,7 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::AddSwitch(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::AddSwitchRequest *request,
+        const switchboard::protobuf::AddSwitchRequest *request,
         ::google::protobuf::BoolValue *reply)
     {
         try
@@ -83,7 +84,7 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::RemoveSwitch(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::RemoveSwitchRequest *request,
+        const switchboard::protobuf::RemoveSwitchRequest *request,
         ::google::protobuf::BoolValue *reply)
     {
         try
@@ -101,14 +102,14 @@ namespace switchboard::grpc
     }
 
     ::grpc::Status RequestHandler::ImportSwitches(
-            ::grpc::ServerContext *context,
-            const cc::platform::switchboard::protobuf::ImportRequest *request,
-            cc::platform::switchboard::protobuf::ImportResponse *reply)
+        ::grpc::ServerContext *context,
+        const switchboard::protobuf::ImportRequest *request,
+        switchboard::protobuf::ImportResponse *reply)
     {
         try
         {
             uint count = this->provider->import_switches(
-                protobuf::decoded<core::types::ValueList>(request->declarations()));
+                cc::protobuf::decoded<core::types::ValueList>(request->declarations()));
             reply->set_import_count(count);
             return ::grpc::Status::OK;
         }
@@ -120,23 +121,23 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::SetSpecification(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::SetSpecificationRequest *request,
+        const switchboard::protobuf::SetSpecificationRequest *request,
         ::google::protobuf::BoolValue *reply)
     {
         try
         {
             if (auto sw = this->provider->get_switch(request->switch_name()))
             {
-                const cc::platform::switchboard::protobuf::Specification &spec = request->spec();
+                const switchboard::protobuf::Specification &spec = request->spec();
                 sw->update_spec(
                     spec.has_is_primary() ? spec.is_primary() : std::optional<bool>(),
-                    protobuf::decoded<SwitchAliases>(spec.aliases()),
+                    cc::protobuf::decoded<SwitchAliases>(spec.aliases()),
                     request->replace_aliases(),
-                    protobuf::decoded<LocalizationMap>(spec.localizations()),
+                    cc::protobuf::decoded<LocalizationMap>(spec.localizations()),
                     request->replace_localizations(),
-                    protobuf::decoded<DependencyMap>(spec.dependencies(), this->provider),
+                    cc::protobuf::decoded<DependencyMap>(spec.dependencies(), this->provider),
                     request->replace_dependencies(),
-                    protobuf::decoded<InterceptorMap>(spec.interceptors()),
+                    cc::protobuf::decoded<InterceptorMap>(spec.interceptors()),
                     request->replace_interceptors(),
                     request->update_state());
 
@@ -152,15 +153,15 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetSpecifications(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::SwitchIdentifiers *request,
-        cc::platform::switchboard::protobuf::SpecificationMap *reply)
+        const switchboard::protobuf::SwitchIdentifiers *request,
+        switchboard::protobuf::SpecificationMap *reply)
     {
         try
         {
             auto &specmap = *reply->mutable_map();
             for (const auto &[name, sw] : this->get_switches(request->switch_names()))
             {
-                protobuf::encode(*sw->spec(), &specmap[name]);
+                cc::protobuf::encode(*sw->spec(), &specmap[name]);
             }
             return ::grpc::Status::OK;
         }
@@ -172,13 +173,13 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::AddDependency(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::AddDependencyRequest *request,
+        const switchboard::protobuf::AddDependencyRequest *request,
         ::google::protobuf::BoolValue *reply)
     {
         try
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
-            DependencyRef dep = protobuf::decoded<DependencyRef>(
+            DependencyRef dep = cc::protobuf::decoded<DependencyRef>(
                 request->dependency(),
                 this->provider,
                 request->predecessor_name());
@@ -199,7 +200,7 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::RemoveDependency(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::RemoveDependencyRequest *request,
+        const switchboard::protobuf::RemoveDependencyRequest *request,
         ::google::protobuf::BoolValue *reply)
     {
         try
@@ -220,13 +221,13 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetDependencies(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::SwitchIdentifier *request,
-        cc::platform::switchboard::protobuf::DependencyMap *reply)
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::DependencyMap *reply)
     {
         try
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
-            protobuf::encode(sw->dependencies(), reply);
+            cc::protobuf::encode(sw->dependencies(), reply);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -237,13 +238,13 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetAncestors(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::SwitchIdentifier *request,
-        cc::platform::switchboard::protobuf::SwitchIdentifiers *reply)
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::SwitchIdentifiers *reply)
     {
         try
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
-            protobuf::encode(sw->get_ancestors(), reply);
+            cc::protobuf::encode(sw->get_ancestors(), reply);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -254,56 +255,13 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetDescendants(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::SwitchIdentifier *request,
-        cc::platform::switchboard::protobuf::SwitchIdentifiers *reply)
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::SwitchIdentifiers *reply)
     {
         try
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
-            protobuf::encode(sw->get_descendants(), reply);
-            return ::grpc::Status::OK;
-        }
-        catch (...)
-        {
-            return this->failure(std::current_exception(), *request, context->peer());
-        }
-    }
-
-    ::grpc::Status RequestHandler::AddInterceptor(
-        ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::AddInterceptorRequest *request,
-        ::google::protobuf::BoolValue *reply)
-    {
-        try
-        {
-            SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
-            InterceptorRef icept = protobuf::decoded<InterceptorRef>(
-                request->spec(),
-                request->interceptor_name(),
-                [](SwitchRef sw, State state) {
-                    logf_info("Callback for switch=%r, state=%s", *sw, state);
-                });
-
-            bool added = sw->add_interceptor(icept, request->immediate());
-            reply->set_value(added);
-            return ::grpc::Status::OK;
-        }
-        catch (...)
-        {
-            return this->failure(std::current_exception(), *request, context->peer());
-        }
-    }
-
-    ::grpc::Status RequestHandler::RemoveInterceptor(
-        ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::RemoveInterceptorRequest *request,
-        ::google::protobuf::BoolValue *reply)
-    {
-        try
-        {
-            SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
-            bool removed = sw->remove_interceptor(request->interceptor_name());
-            reply->set_value(removed);
+            cc::protobuf::encode(sw->get_descendants(), reply);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -314,13 +272,13 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetInterceptors(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::SwitchIdentifier *request,
-        cc::platform::switchboard::protobuf::InterceptorMap *reply)
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::InterceptorMap *reply)
     {
         try
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
-            protobuf::encode(sw->interceptors(), reply);
+            cc::protobuf::encode(sw->interceptors(), reply);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -331,28 +289,23 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::InvokeInterceptor(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::InterceptorInvocation *request,
-        cc::platform::switchboard::protobuf::InterceptorResult *reply)
+        const switchboard::protobuf::InterceptorInvocation *request,
+        switchboard::protobuf::InterceptorResult *reply)
     {
         try
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
-            reply->set_switch_name(sw->name());
-
             InterceptorRef icept = sw->get_interceptor(request->interceptor_name(), true);
-            reply->set_interceptor_name(icept->name());
-
-            std::future<void> future = icept->invoke(
-                sw,
-                protobuf::decoded<switchboard::State>(request->state()));
 
             try
             {
-                future.wait();
+                icept->invoke(
+                    sw,
+                    cc::protobuf::decoded<switchboard::State>(request->state()));
             }
             catch (...)
             {
-                protobuf::encode_shared(
+                cc::protobuf::encode_shared(
                     core::exception::map_to_error(std::current_exception()),
                     reply->mutable_error());
             }
@@ -369,27 +322,71 @@ namespace switchboard::grpc
         ::grpc::ServerContext *context,
         InterceptorStream *stream)
     {
+        InterceptorSessionID session_id = this->create_session(context, stream);
+
+        logf_debug("Startng interceptor session %d on behalf of client %s",
+                   session_id,
+                   context->peer());
+
+        using switchboard::protobuf::InterceptorUpdate;
+        InterceptorUpdate update;
+        while (stream->Read(&update))
+        {
+            SwitchRef sw = this->provider->get_switch(update.switch_name(), true);
+            InterceptorName name = update.interceptor_name();
+
+            switch (update.update_type_case())
+            {
+            case InterceptorUpdate::kRegistration:
+                this->add_intercept_registration(
+                    session_id,
+                    sw,
+                    name,
+                    update.registration());
+                break;
+
+            case InterceptorUpdate::kDeregistration:
+                this->remove_intercept_registration(
+                    session_id,
+                    sw,
+                    name,
+                    update.deregistration());
+                break;
+
+            case InterceptorUpdate::kInvocationResult:
+                this->on_intercept_response(
+                    sw,
+                    name,
+                    update.invocation_result());
+                break;
+            }
+        }
+        logf_debug("Ending interceptor session %d on behalf of client %s",
+                   session_id,
+                   context->peer());
+
+        this->end_session(session_id);
         return ::grpc::Status::OK;
     }
 
     ::grpc::Status RequestHandler::SetTarget(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::SetTargetRequest *request,
-        cc::platform::switchboard::protobuf::SetTargetResponse *reply)
+        const switchboard::protobuf::SetTargetRequest *request,
+        switchboard::protobuf::SetTargetResponse *reply)
     {
         try
         {
             SwitchRef sw = this->provider->get_switch(request->switch_name(), true);
             bool updated = sw->set_target(
-                protobuf::decoded<switchboard::State>(request->target_state()),
-                protobuf::decoded_shared<core::status::Error>(request->error()),
-                protobuf::decoded<core::types::KeyValueMap>(request->attributes()),
+                cc::protobuf::decoded<switchboard::State>(request->target_state()),
+                cc::protobuf::decoded_shared<core::status::Error>(request->error()),
+                cc::protobuf::decoded<core::types::KeyValueMap>(request->attributes()),
                 request->clear_existing(),
                 request->with_interceptors(),
                 request->trigger_descendants(),
                 request->reevaluate(),
-                protobuf::decoded<switchboard::ExceptionHandling>(request->on_cancel()),
-                protobuf::decoded<switchboard::ExceptionHandling>(request->on_error()));
+                cc::protobuf::decoded<switchboard::ExceptionHandling>(request->on_cancel()),
+                cc::protobuf::decoded<switchboard::ExceptionHandling>(request->on_error()));
 
             reply->set_updated(updated);
             return ::grpc::Status::OK;
@@ -402,14 +399,14 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::SetAttributes(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::SetAttributesRequest *request,
-        cc::platform::switchboard::protobuf::SetAttributesResponse *reply)
+        const switchboard::protobuf::SetAttributesRequest *request,
+        switchboard::protobuf::SetAttributesResponse *reply)
     {
         try
         {
             SwitchRef sw = provider->get_switch(request->switch_name(), true);
             bool updated = sw->set_attributes(
-                protobuf::decoded<core::types::KeyValueMap>(request->attributes()),
+                cc::protobuf::decoded<core::types::KeyValueMap>(request->attributes()),
                 request->clear_existing());
             reply->set_updated(updated);
             return ::grpc::Status::OK;
@@ -422,15 +419,15 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetStatuses(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::SwitchIdentifiers *request,
-        cc::platform::switchboard::protobuf::StatusMap *reply)
+        const switchboard::protobuf::SwitchIdentifiers *request,
+        switchboard::protobuf::StatusMap *reply)
     {
         try
         {
             auto &statusmap = *reply->mutable_map();
             for (const auto &[name, sw] : this->get_switches(request->switch_names()))
             {
-                protobuf::encode(*sw->status(), &statusmap[name]);
+                cc::protobuf::encode(*sw->status(), &statusmap[name]);
             }
             return ::grpc::Status::OK;
         }
@@ -442,8 +439,8 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetCulprits(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::CulpritsQuery *request,
-        cc::platform::switchboard::protobuf::StatusMap *reply)
+        const switchboard::protobuf::CulpritsQuery *request,
+        switchboard::protobuf::StatusMap *reply)
     {
         try
         {
@@ -455,7 +452,7 @@ namespace switchboard::grpc
             auto &statusmap = *reply->mutable_map();
             for (const auto &[sw, state] : sw->culprits(expected_position))
             {
-                protobuf::encode(*sw->status(), &statusmap[sw->name()]);
+                cc::protobuf::encode(*sw->status(), &statusmap[sw->name()]);
             }
             return ::grpc::Status::OK;
         }
@@ -467,8 +464,8 @@ namespace switchboard::grpc
 
     ::grpc::Status RequestHandler::GetErrors(
         ::grpc::ServerContext *context,
-        const cc::platform::switchboard::protobuf::SwitchIdentifier *request,
-        cc::platform::switchboard::protobuf::ErrorMap *reply)
+        const switchboard::protobuf::SwitchIdentifier *request,
+        switchboard::protobuf::ErrorMap *reply)
     {
         try
         {
@@ -483,16 +480,16 @@ namespace switchboard::grpc
     ::grpc::Status RequestHandler::Watch(
         ::grpc::ServerContext *context,
         const cc::protobuf::signal::Filter *request,
-        ::grpc::ServerWriter<cc::platform::switchboard::protobuf::Signal> *writer)
+        ::grpc::ServerWriter<switchboard::protobuf::Signal> *writer)
     {
-        return this->stream_signals<cc::platform::switchboard::protobuf::Signal, SignalQueue>(
+        return this->stream_signals<switchboard::protobuf::Signal, SignalQueue>(
             context,
             request,
             writer);
     }
 
     SwitchMap RequestHandler::get_switches(
-        const google::protobuf::RepeatedPtrField<std::string> &switch_names)
+        const google::protobuf::RepeatedPtrField<std::string> &switch_names) const
     {
         SwitchMap switches;
         if (switch_names.empty())
@@ -509,6 +506,162 @@ namespace switchboard::grpc
                 }
             }
         }
+
         return switches;
     }
+
+    RequestHandler::InterceptorSessionID RequestHandler::create_session(
+        ::grpc::ServerContext *context,
+        InterceptorStream *stream)
+    {
+        InterceptorSessionID session_id = ++this->latest_interceptor_session;
+        logf_info("Starting interceptor session %d on behalf of client %s",
+                  session_id,
+                  context->peer());
+
+        std::scoped_lock lck(this->interceptor_sessions_mutex);
+        this->interceptor_sessions.insert_or_assign(
+            session_id,
+            InterceptorSession({
+                .context = context,
+                .stream = stream,
+            }));
+
+        return session_id;
+    }
+
+    void RequestHandler::end_session(
+        InterceptorSessionID session_id)
+    {
+        std::scoped_lock lck(interceptor_sessions_mutex);
+        if (auto nh = this->interceptor_sessions.extract(session_id))
+        {
+            for (const auto &[sw, interceptor_name] : nh.mapped().registrations)
+            {
+                sw->remove_interceptor(interceptor_name);
+                // std::string key = this->pending_key(sw->name(), interceptor_name);
+                this->pending_intercepts.erase({sw->name(), interceptor_name});
+            }
+        }
+    }
+
+    void RequestHandler::add_intercept_registration(
+        InterceptorSessionID session_id,
+        SwitchRef sw,
+        const InterceptorName &interceptor_name,
+        const switchboard::protobuf::InterceptorRegistration &reg)
+    {
+        std::scoped_lock lck(this->interceptor_sessions_mutex);
+        if (InterceptorSession *session = this->interceptor_sessions.get_ptr(session_id))
+        {
+            session->registrations.insert({sw, interceptor_name});
+        }
+
+        const switchboard::protobuf::InterceptorSpec &spec = reg.spec();
+
+        using namespace std::placeholders;
+        auto icept = Interceptor::create_shared(
+            interceptor_name,                                            // name
+            "gRPC client session #" + std::to_string(session_id),        // owner
+            std::bind(&This::on_intercept,                               // |
+                      this,                                              // |
+                      session_id,                                        // | invocation
+                      interceptor_name,                                  // |
+                      _1,                                                // |
+                      _2),                                               // |
+            cc::protobuf::decoded<StateSet>(spec.state_transitions()),   // state_transitions
+            cc::protobuf::decoded<InterceptorPhase>(spec.phase()),       // phase
+            spec.asynchronous(),                                         // asynchronous
+            spec.rerun(),                                                // rerun
+            cc::protobuf::decoded<ExceptionHandling>(spec.on_cancel()),  // on_cancel
+            cc::protobuf::decoded<ExceptionHandling>(spec.on_error()));  // on_error
+
+        sw->add_interceptor(icept, reg.immediate());
+    }
+
+    void RequestHandler::remove_intercept_registration(
+        InterceptorSessionID session_id,
+        SwitchRef sw,
+        const InterceptorName &interceptor_name,
+        const switchboard::protobuf::InterceptorDeregistration &dereg)
+    {
+        sw->remove_interceptor(interceptor_name);
+
+        std::scoped_lock lck(this->interceptor_sessions_mutex);
+        if (InterceptorSession *session = this->interceptor_sessions.get_ptr(session_id))
+        {
+            session->registrations.erase({sw, interceptor_name});
+        }
+    }
+
+    void RequestHandler::on_intercept(
+        InterceptorSessionID session_id,
+        const InterceptorName &interceptor_name,
+        SwitchRef sw,
+        State state)
+    {
+        auto future_result = this->invoke_client_interceptor(
+            session_id,
+            interceptor_name,
+            sw,
+            state);
+
+        // Wait for response from client
+        if (future_result.valid())
+        {
+            switchboard::protobuf::InterceptorResult result = future_result.get();
+            core::grpc::Status status(result.error());
+            status.throw_if_error();
+        }
+    }
+
+    std::future<switchboard::protobuf::InterceptorResult> RequestHandler::invoke_client_interceptor(
+        InterceptorSessionID session_id,
+        const InterceptorName &interceptor_name,
+        SwitchRef sw,
+        State state)
+    {
+        std::scoped_lock lck(this->interceptor_sessions_mutex);
+        if (auto *session = this->interceptor_sessions.get_ptr(session_id))
+        {
+            if (!session->context->IsCancelled())
+            {
+                // std::string key = this->pending_key(sw->name(), interceptor_name);
+                auto &promise = this->pending_intercepts[{sw->name(), interceptor_name}];
+                auto future = promise.get_future();
+
+                // Create an Invocation message for the client.
+                switchboard::protobuf::InterceptorInvocation invocation;
+                invocation.set_switch_name(sw->name());
+                invocation.set_interceptor_name(interceptor_name);
+                invocation.set_state(
+                    cc::protobuf::encoded<switchboard::protobuf::State>(
+                        state));
+
+                session->stream->Write(invocation);
+                return future;
+            }
+        }
+        return {};
+    }
+
+    void RequestHandler::on_intercept_response(
+        SwitchRef sw,
+        const InterceptorName &interceptor_name,
+        const switchboard::protobuf::InterceptorResult &result)
+    {
+        // std::string key = this->pending_key(sw->name(), interceptor_name);
+        if (auto nh = this->pending_intercepts.extract({sw->name(), interceptor_name}))
+        {
+            nh.mapped().set_value(result);
+        }
+    }
+
+    std::string RequestHandler::pending_key(
+        const std::string &switch_name,
+        const std::string &interceptor_name) const
+    {
+        return switch_name + "/" + interceptor_name;
+    }
+
 }  // namespace switchboard::grpc

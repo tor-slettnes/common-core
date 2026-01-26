@@ -63,7 +63,7 @@ namespace netconfig::grpc
     {
         try
         {
-            protobuf::encode(
+            cc::protobuf::encode(
                 this->provider->get_connections(),
                 response);
 
@@ -83,7 +83,7 @@ namespace netconfig::grpc
         try
         {
             this->provider->define_connection(
-                protobuf::decoded<ConnectionData>(request->data()),
+                cc::protobuf::decoded<ConnectionData>(request->data()),
                 request->activate());
 
             return ::grpc::Status::OK;
@@ -150,7 +150,7 @@ namespace netconfig::grpc
     {
         try
         {
-            protobuf::encode(
+            cc::protobuf::encode(
                 this->provider->get_active_connections(),
                 response);
             return ::grpc::Status::OK;
@@ -184,7 +184,7 @@ namespace netconfig::grpc
     {
         try
         {
-            protobuf::encode(
+            cc::protobuf::encode(
                 this->provider->get_aps(),
                 response);
             return ::grpc::Status::OK;
@@ -202,7 +202,7 @@ namespace netconfig::grpc
     {
         ConnectionData data;
         std::string apname;
-        protobuf::decode(request->connection(), &data);
+        cc::protobuf::decode(request->connection(), &data);
 
         try
         {
@@ -235,7 +235,7 @@ namespace netconfig::grpc
     {
         try
         {
-            protobuf::encode(
+            cc::protobuf::encode(
                 this->provider->get_devices(),
                 response);
 
@@ -254,7 +254,7 @@ namespace netconfig::grpc
     {
         try
         {
-            protobuf::encode(
+            cc::protobuf::encode(
                 *this->provider->get_global_data(),
                 response);
 
@@ -306,7 +306,7 @@ namespace netconfig::grpc
         try
         {
             this->provider->select_wireless_band(
-                protobuf::decoded<WirelessBandSelection>(request->band_selection()));
+                cc::protobuf::decoded<WirelessBandSelection>(request->band_selection()));
 
             return ::grpc::Status::OK;
         }

@@ -39,7 +39,7 @@ namespace netconfig::grpc
                 netconfig::signal_connection.emit(
                     action,
                     key,
-                    protobuf::decoded_shared<ConnectionData>(signal.connection()));
+                    cc::protobuf::decoded_shared<ConnectionData>(signal.connection()));
             });
 
         this->client->add_mapping_handler(
@@ -50,7 +50,7 @@ namespace netconfig::grpc
                 netconfig::signal_active_connection.emit(
                     action,
                     key,
-                    protobuf::decoded_shared<ActiveConnectionData>(signal.active_connection()));
+                    cc::protobuf::decoded_shared<ActiveConnectionData>(signal.active_connection()));
             });
 
         this->client->add_mapping_handler(
@@ -61,7 +61,7 @@ namespace netconfig::grpc
                 netconfig::signal_accesspoint.emit(
                     action,
                     key,
-                    protobuf::decoded_shared<AccessPointData>(signal.accesspoint()));
+                    cc::protobuf::decoded_shared<AccessPointData>(signal.accesspoint()));
             });
 
         this->client->add_mapping_handler(
@@ -72,14 +72,14 @@ namespace netconfig::grpc
                 netconfig::signal_device.emit(
                     action,
                     key,
-                    protobuf::decoded_shared<DeviceData>(signal.device()));
+                    cc::protobuf::decoded_shared<DeviceData>(signal.device()));
             });
 
         this->client->add_handler(
             ::cc::platform::netconfig::protobuf::Signal::kGlobal,
             [](const ::cc::platform::netconfig::protobuf::Signal &signal) {
                 netconfig::signal_globaldata.emit(
-                    protobuf::decoded_shared<GlobalData>(signal.global()));
+                    cc::protobuf::decoded_shared<GlobalData>(signal.global()));
             });
     }
 
@@ -98,7 +98,7 @@ namespace netconfig::grpc
 
     std::string ClientProvider::get_hostname() const
     {
-        return protobuf::decoded<std::string>(
+        return cc::protobuf::decoded<std::string>(
             this->client->call_check(&Client::Stub::GetHostName));
     }
 
@@ -106,7 +106,7 @@ namespace netconfig::grpc
     {
         this->client->call_check(
             &Client::Stub::SetHostName,
-            protobuf::encoded<protobuf::StringValue>(hostname));
+            cc::protobuf::encoded<cc::protobuf::StringValue>(hostname));
     }
 
     //==========================================================================
@@ -120,7 +120,7 @@ namespace netconfig::grpc
         }
         else
         {
-            return protobuf::decoded<ConnectionMap>(
+            return cc::protobuf::decoded<ConnectionMap>(
                 this->client->call_check(&Client::Stub::GetConnections));
         }
     }
@@ -130,7 +130,7 @@ namespace netconfig::grpc
         bool activate)
     {
         ::cc::platform::netconfig::protobuf::ConnectionRequest request;
-        protobuf::encode(connection, request.mutable_data());
+        cc::protobuf::encode(connection, request.mutable_data());
         request.set_activate(activate);
         this->client->call_check(&Client::Stub::DefineConnection, request);
     }
@@ -139,7 +139,7 @@ namespace netconfig::grpc
     {
         ::cc::platform::netconfig::protobuf::MappingKey req;
         req.set_key(key);
-        return protobuf::decoded<bool>(
+        return cc::protobuf::decoded<bool>(
             this->client->call_check(
                 &Client::Stub::RemoveConnection, req));
     }
@@ -169,7 +169,7 @@ namespace netconfig::grpc
         }
         else
         {
-            return protobuf::decoded<ActiveConnectionMap>(
+            return cc::protobuf::decoded<ActiveConnectionMap>(
                 this->client->call_check(&Client::Stub::GetActiveConnections));
         }
     }
@@ -190,7 +190,7 @@ namespace netconfig::grpc
         }
         else
         {
-            return protobuf::decoded<AccessPointMap>(
+            return cc::protobuf::decoded<AccessPointMap>(
                 this->client->call_check(&Client::Stub::GetAccessPoints));
         }
     }
@@ -200,7 +200,7 @@ namespace netconfig::grpc
     {
         ::cc::platform::netconfig::protobuf::WirelessConnectionRequest req;
         req.set_bssid(bssid);
-        protobuf::encode(connection, req.mutable_connection());
+        cc::protobuf::encode(connection, req.mutable_connection());
         this->client->call_check(&Client::Stub::ConnectAccessPoint, req);
     }
 
@@ -209,7 +209,7 @@ namespace netconfig::grpc
     {
         ::cc::platform::netconfig::protobuf::WirelessConnectionRequest req;
         req.set_ssid(ssid.data(), ssid.size());
-        protobuf::encode(connection, req.mutable_connection());
+        cc::protobuf::encode(connection, req.mutable_connection());
         this->client->call_check(&Client::Stub::ConnectAccessPoint, req);
     }
 
@@ -224,7 +224,7 @@ namespace netconfig::grpc
         }
         else
         {
-            return protobuf::decoded<DeviceMap>(
+            return cc::protobuf::decoded<DeviceMap>(
                 this->client->call_check(&Client::Stub::GetDevices));
         }
     }
@@ -241,7 +241,7 @@ namespace netconfig::grpc
         else
         {
             auto ref = std::make_shared<GlobalData>();
-            protobuf::decode(
+            cc::protobuf::decode(
                 this->client->call_check(&Client::Stub::GetGlobalData),
                 ref.get());
             return ref;
@@ -261,7 +261,7 @@ namespace netconfig::grpc
         logf_debug("Setting wireless allowed flag: %b", allowed);
         this->client->call_check(
             &Client::Stub::SetWirelessAllowed,
-            protobuf::encoded<google::protobuf::BoolValue>(allowed));
+            cc::protobuf::encoded<google::protobuf::BoolValue>(allowed));
     }
 
     void ClientProvider::select_wireless_band(WirelessBandSelection band_selection)
@@ -269,7 +269,7 @@ namespace netconfig::grpc
         logf_debug("Selecting wireless band: %s", band_selection);
         ::cc::platform::netconfig::protobuf::WirelessBandSetting req;
         req.set_band_selection(
-            protobuf::encoded<::cc::platform::netconfig::protobuf::WirelessBandSelection>(band_selection));
+            cc::protobuf::encoded<::cc::platform::netconfig::protobuf::WirelessBandSelection>(band_selection));
 
         this->client->call_check(&Client::Stub::SelectWirelessBand, req);
     }

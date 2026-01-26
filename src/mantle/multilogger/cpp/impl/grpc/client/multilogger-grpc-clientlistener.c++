@@ -23,7 +23,7 @@ namespace multilogger::grpc
         : reader_(
             stub->Listen(
                 &this->context_,
-                protobuf::encoded<::cc::platform::multilogger::protobuf::ListenerSpec>(request)))
+                cc::protobuf::encoded<::cc::platform::multilogger::protobuf::ListenerSpec>(request)))
     {
         logf_debug("Created grpc::ClientListener(%s)", request);
     }
@@ -46,7 +46,7 @@ namespace multilogger::grpc
         cc::platform::multilogger::protobuf::Loggable msg;
         if (this->reader_->Read(&msg))
         {
-            return protobuf::decode_loggable(msg, this->context().peer());
+            return cc::protobuf::decode_loggable(msg, this->context().peer());
         }
         else
         {

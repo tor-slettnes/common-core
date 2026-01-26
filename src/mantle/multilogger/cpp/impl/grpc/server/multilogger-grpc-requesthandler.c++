@@ -25,7 +25,7 @@ namespace multilogger::grpc
     {
         try
         {
-            this->provider->submit(protobuf::decode_loggable(
+            this->provider->submit(cc::protobuf::decode_loggable(
                 *request,
                 core::str::url_decoded(context->peer())));
             return ::grpc::Status::OK;
@@ -46,7 +46,7 @@ namespace multilogger::grpc
             ::cc::platform::multilogger::protobuf::Loggable loggable;
             while (reader->Read(&loggable))
             {
-                this->provider->submit(protobuf::decode_loggable(
+                this->provider->submit(cc::protobuf::decode_loggable(
                     loggable,
                     core::str::url_decoded(context->peer())));
             }
@@ -65,7 +65,7 @@ namespace multilogger::grpc
     {
         try
         {
-            auto spec = protobuf::decoded<multilogger::ListenerSpec>(*request);
+            auto spec = cc::protobuf::decoded<multilogger::ListenerSpec>(*request);
             if (spec.sink_id.empty())
             {
                 spec.sink_id = core::str::url_decoded(context->peer());
@@ -79,7 +79,7 @@ namespace multilogger::grpc
                     break;
                 }
 
-                writer->Write(protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(loggable.value()));
+                writer->Write(cc::protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(loggable.value()));
             }
 
             listener->close();
@@ -98,7 +98,7 @@ namespace multilogger::grpc
     {
         try
         {
-            auto spec = protobuf::decoded<multilogger::SinkSpec>(*request);
+            auto spec = cc::protobuf::decoded<multilogger::SinkSpec>(*request);
             if (spec.sink_id.empty())
             {
                 spec.sink_id = core::str::url_decoded(context->peer());
@@ -140,7 +140,7 @@ namespace multilogger::grpc
     {
         try
         {
-            protobuf::encode(
+            cc::protobuf::encode(
                 this->provider->get_sink_spec(request->sink_id()),
                 response);
 
@@ -159,7 +159,7 @@ namespace multilogger::grpc
     {
         try
         {
-            protobuf::encode(
+            cc::protobuf::encode(
                 this->provider->get_all_sink_specs(),
                 response);
             return ::grpc::Status::OK;
@@ -177,7 +177,7 @@ namespace multilogger::grpc
     {
         try
         {
-            protobuf::assign_repeated(
+            cc::protobuf::assign_repeated(
                 this->provider->list_sinks(),
                 response->mutable_sink_names());
 
@@ -196,7 +196,7 @@ namespace multilogger::grpc
     {
         try
         {
-            protobuf::assign_repeated(
+            cc::protobuf::assign_repeated(
                 this->provider->list_sink_types(),
                 response->mutable_sink_types());
 
@@ -215,7 +215,7 @@ namespace multilogger::grpc
     {
         try
         {
-            protobuf::assign_repeated(
+            cc::protobuf::assign_repeated(
                 this->provider->list_message_fields(),
                 response->mutable_field_names());
 
@@ -234,7 +234,7 @@ namespace multilogger::grpc
     {
         try
         {
-            protobuf::assign_repeated(
+            cc::protobuf::assign_repeated(
                 this->provider->list_error_fields(),
                 response->mutable_field_names());
 

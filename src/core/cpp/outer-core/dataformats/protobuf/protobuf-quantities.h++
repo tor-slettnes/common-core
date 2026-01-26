@@ -8,14 +8,14 @@
 #pragma once
 #include "cc/protobuf/quantities/quantities.pb.h" // generated from `variant.proto`
 
-namespace protobuf
+namespace cc::protobuf
 {
     void encode_quantity(double value,
                          int decimal_exponent,
-                         cc::protobuf::quantities::Scalar *scalar);
+                         quantities::Scalar *scalar);
 
     void encode_quantity(double value,
-                         cc::protobuf::quantities::Scalar *scalar);
+                         quantities::Scalar *scalar);
 
     template <class Quantity, class Unit>
     void encode_quantity(double value,
@@ -38,4 +38,4 @@ namespace protobuf
     }
 
 
-} // namespace protobuf
+} // namespace cc::protobuf

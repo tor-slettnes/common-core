@@ -20,7 +20,7 @@ from cc.protobuf.signal import SignalStore, MappingAction
 from cc.protobuf.variant import PyValueList
 
 ### Modules within package
-from ..protobuf import Signal
+from ..protobuf import Signal, InterceptorUpdate
 from .switch import Switch
 from .signals import switchboard_signals
 
@@ -75,13 +75,13 @@ class SwitchboardBase (LogBase):
     @abstractmethod
     def _new_switch(self, switch_name: str) -> Switch:
         '''
-        Create a new (derived) Switch object without adding it to the board.
-        Intended for local updates in response to server signals.  Must be
-        overridden in subclasses.
+        Create a local Switch object without adding it to the board.
+        Intended for local updates in response to server signals.
         '''
 
     def get_switch(self,
                    switch_name: str,
+                   required: bool = False,
                    ) -> Switch|None:
         '''
         Get the named switch.
@@ -97,9 +97,13 @@ class SwitchboardBase (LogBase):
             if switch_name in switch.aliases:
                 return switch
 
+        if required:
+            raise KeyError(f"No such switch: {name}")
+
         return None
 
 
+    @abstractmethod
     def get_or_add_switch(self,
                           switch_name: str,
                           initial_value: bool|None = None,
@@ -110,18 +114,6 @@ class SwitchboardBase (LogBase):
         @returns
             An existing or new `Switch`
         '''
-
-        with self._switch_lock:
-            switch = self.get_switch(switch_name)
-
-            if switch is None:
-                self.add_switch(switch_name)
-                switch = self.switches[switch_name] = self._new_switch(switch_name)
-                if initial_value is not None:
-                    switch.set_active(initial_value)
-
-            return switch
-
 
     @abstractmethod
     def add_switch(self,
@@ -191,3 +183,5 @@ class SwitchboardBase (LogBase):
                                            expected_type=list,
                                            raise_invalid_type=True):
             self.import_switches(declarations)
+
+

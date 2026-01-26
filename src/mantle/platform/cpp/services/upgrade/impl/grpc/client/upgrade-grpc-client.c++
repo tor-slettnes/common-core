@@ -38,7 +38,7 @@ namespace upgrade::grpc
         upgrade::ScanProgress::ptr progress;
         if (This::is_mapped(signal.mapping_action()))
         {
-            protobuf::decode_shared(signal.scan_progress(), &progress);
+            cc::protobuf::decode_shared(signal.scan_progress(), &progress);
         }
         upgrade::signal_scan_progress.emit(progress);
     }
@@ -48,7 +48,7 @@ namespace upgrade::grpc
         upgrade::PackageInfo::ptr available_info;
         if (This::is_mapped(signal.mapping_action()))
         {
-            protobuf::decode_shared(signal.upgrade_available(), &available_info);
+            cc::protobuf::decode_shared(signal.upgrade_available(), &available_info);
         }
         upgrade::signal_upgrade_available.emit(available_info);
     }
@@ -58,7 +58,7 @@ namespace upgrade::grpc
         upgrade::PackageInfo::ptr pending_info;
         if (This::is_mapped(signal.mapping_action()))
         {
-            protobuf::decode_shared(signal.upgrade_pending(), &pending_info);
+            cc::protobuf::decode_shared(signal.upgrade_pending(), &pending_info);
         }
         upgrade::signal_upgrade_pending.emit(pending_info);
     }
@@ -68,7 +68,7 @@ namespace upgrade::grpc
         upgrade::UpgradeProgress::ptr progress;
         if (This::is_mapped(signal.mapping_action()))
         {
-            protobuf::decode_shared(signal.upgrade_progress(), &progress);
+            cc::protobuf::decode_shared(signal.upgrade_progress(), &progress);
         }
         upgrade::signal_upgrade_progress.emit(progress);
     }

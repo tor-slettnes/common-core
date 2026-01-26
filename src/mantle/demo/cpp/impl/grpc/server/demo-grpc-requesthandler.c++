@@ -35,7 +35,7 @@ namespace demo::grpc
 
         try
         {
-            this->provider->say_hello(::protobuf::decoded<Greeting>(*request));
+            this->provider->say_hello(cc::protobuf::decoded<Greeting>(*request));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -51,7 +51,7 @@ namespace demo::grpc
     {
         try
         {
-            ::protobuf::encode(this->provider->get_current_time(), response);
+            cc::protobuf::encode(this->provider->get_current_time(), response);
             return ::grpc::Status::OK;
         }
         catch (...)

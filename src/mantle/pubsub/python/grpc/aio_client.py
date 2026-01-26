@@ -120,6 +120,8 @@ class AsyncClient (AsyncMixIn, Client):
                         host = host,
                         wait_for_ready = wait_for_ready)
 
+        self.reader_tasks = set()
+
     def __del__(self):
         self._stop_writer()
 
@@ -173,7 +175,8 @@ class AsyncClient (AsyncMixIn, Client):
         if not self.writer_active():
             self._write_queue = AsyncQueue(self.queue_size)
             self._writer_task = asyncio.create_task(
-                self._write_worker())
+                self._write_worker(),
+                name = "Message Writer")
 
     def _stop_writer(self):
         if task := self._writer_task:
@@ -186,7 +189,11 @@ class AsyncClient (AsyncMixIn, Client):
                 await self.stub.Publish(publication)
 
     def _start_reader(self, subscription: Subscription):
-        asyncio.create_task(self._read_worker(subscription))
+        task = asyncio.create_task(
+            self._read_worker(subscription),
+            name = "Message Reader")
+        self.reader_tasks.add(task)
+        task.add_done_callback(self.reader_tasks.discard)
 
     def _stop_reader(self, subscription: Subscription):
         subscription.callback = None

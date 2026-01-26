@@ -38,7 +38,7 @@ namespace multilogger::zmq
     {
         response->set_added(
             this->provider->add_sink(
-                protobuf::decoded<multilogger::SinkSpec>(request)));
+                cc::protobuf::decoded<multilogger::SinkSpec>(request)));
     }
 
     void RequestHandler::remove_sink(
@@ -54,7 +54,7 @@ namespace multilogger::zmq
         const cc::platform::multilogger::protobuf::SinkID &request,
         cc::platform::multilogger::protobuf::SinkSpec *response)
     {
-        protobuf::encode(
+        cc::protobuf::encode(
             this->provider->get_sink_spec(request.sink_id()),
             response);
     }
@@ -63,7 +63,7 @@ namespace multilogger::zmq
         const google::protobuf::Empty &,
         cc::platform::multilogger::protobuf::SinkSpecs *response)
     {
-        protobuf::encode(
+        cc::protobuf::encode(
             this->provider->get_all_sink_specs(),
             response);
     }
@@ -72,7 +72,7 @@ namespace multilogger::zmq
         const google::protobuf::Empty &,
         cc::platform::multilogger::protobuf::SinkNames *response)
     {
-        protobuf::assign_repeated(
+        cc::protobuf::assign_repeated(
             this->provider->list_sinks(),
             response->mutable_sink_names());
     }
@@ -81,7 +81,7 @@ namespace multilogger::zmq
         const google::protobuf::Empty &,
         cc::platform::multilogger::protobuf::SinkTypes *response)
     {
-        protobuf::assign_repeated(
+        cc::protobuf::assign_repeated(
             this->provider->list_sink_types(),
             response->mutable_sink_types());
     }
@@ -90,7 +90,7 @@ namespace multilogger::zmq
         const google::protobuf::Empty &,
         cc::platform::multilogger::protobuf::FieldNames *response)
     {
-        protobuf::assign_repeated(
+        cc::protobuf::assign_repeated(
             this->provider->list_message_fields(),
             response->mutable_field_names());
     }
@@ -99,7 +99,7 @@ namespace multilogger::zmq
         const google::protobuf::Empty &,
         cc::platform::multilogger::protobuf::FieldNames *response)
     {
-        protobuf::assign_repeated(
+        cc::protobuf::assign_repeated(
             this->provider->list_error_fields(),
             response->mutable_field_names());
     }

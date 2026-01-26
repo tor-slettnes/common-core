@@ -137,8 +137,8 @@ namespace avro
         return {
             this->context,
             ed->name(),
-            protobuf::enum_names(ed),
-            protobuf::enum_name(default_value->number(), ed)};
+            cc::protobuf::enum_names(ed),
+            cc::protobuf::enum_name(default_value->number(), ed)};
     }
 
     MapSchema ProtoBufSchema::map_schema(

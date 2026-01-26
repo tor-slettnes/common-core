@@ -143,7 +143,7 @@ namespace idl
                 CC::Switchboard::Dependency *idl)
     {
         idl->predecessor(native->predecessor_name());
-        idl->trigger_states(native->trigger_states());
+        idl->trigger_states(native->trigger_states().to_mask());
         encode(native->polarity(), &idl->polarity());
         idl->hard(native->hard());
         idl->sufficient(native->sufficient());
@@ -190,7 +190,7 @@ namespace idl
     {
         idl->name(native->name());
         idl->owner(native->owner());
-        idl->state_transitions(native->state_transitions());
+        idl->state_transitions(native->state_transitions().to_mask());
         encode(native->phase(), &idl->phase());
         idl->asynchronous(native->asynchronous());
         idl->rerun(native->rerun());

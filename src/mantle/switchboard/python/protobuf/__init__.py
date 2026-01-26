@@ -7,7 +7,7 @@ __docformat__ = 'javadoc en'
 
 ### Standard Python modules
 from typing import Optional
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, Sequence, Set
 
 ### Modules within package
 from cc.protobuf.utils import native_enum_from_proto
@@ -20,7 +20,6 @@ LanguageCode = str
 LanguageChoice = LanguageCode | Sequence[LanguageCode]
 
 TargetTextsInput = Mapping[State, str]
-StateTextsInput = Mapping[bool, str]
 
 LocalizationInput = Localization | Mapping[str, object]
 LocalizationsInput = LocalizationMap | Mapping[str, LocalizationInput]
@@ -30,10 +29,37 @@ DEFAULT_LANGUAGES = (DEFAULT_LANGUAGE,)
 
 
 # Use Python enum wrappers for some enumerated types
-State              = native_enum_from_proto(State)
 DependencyPolarity = native_enum_from_proto(DependencyPolarity)
 InterceptorPhase   = native_enum_from_proto(InterceptorPhase)
 ExceptionHandling  = native_enum_from_proto(ExceptionHandling)
+State              = native_enum_from_proto(State)
+StateMask          = int
+StateSet           = Set[State]|Sequence[State]|State|StateMask
+
+
+def encodeStateSet(states: StateSet,
+                   output: Sequence[State] = None) -> Sequence[State]:
+
+    if output is None:
+        output = []
+    else:
+        output.clear()
+
+    if isinstance(states, Sequence|Set):
+        output.extend(states)
+
+    elif isinstance(states, int):
+        mask = 1
+        while mask <= states:
+            if (states & mask):
+                output.append(mask)
+            mask *= 2
+
+    else:
+        raise TypeError("StateSet requires a bitmask or a sequence of states")
+
+    return output
+
 
 def encodeLocalization(localization : Optional[Localization],
                        description: Optional[str] = None,

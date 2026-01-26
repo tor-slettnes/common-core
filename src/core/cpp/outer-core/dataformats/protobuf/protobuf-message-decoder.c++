@@ -19,7 +19,7 @@
 
 #include <iostream>
 
-namespace protobuf
+namespace cc::protobuf
 {
     MessageDecoder::MessageDecoder(const google::protobuf::Message &msg,
                                    bool enums_as_strings)
@@ -83,19 +83,19 @@ namespace protobuf
                 *dynamic_cast<const google::protobuf::Struct *>(&this->msg));
 
         default:
-            if (const auto *value = dynamic_cast<const cc::protobuf::variant::Value *>(&this->msg))
+            if (const auto *value = dynamic_cast<const variant::Value *>(&this->msg))
             {
                 return decoded<core::types::Value>(*value);
             }
-            else if (const auto *vlist = dynamic_cast<const cc::protobuf::variant::ValueList *>(&this->msg))
+            else if (const auto *vlist = dynamic_cast<const variant::ValueList *>(&this->msg))
             {
                 return decoded<core::types::ValueList>(*vlist);
             }
-            else if (const auto *tvlist = dynamic_cast<const cc::protobuf::variant::TaggedValueList *>(&this->msg))
+            else if (const auto *tvlist = dynamic_cast<const variant::TaggedValueList *>(&this->msg))
             {
                 return decoded<core::types::TaggedValueList>(*tvlist);
             }
-            else if (const auto *kvmap = dynamic_cast<const cc::protobuf::variant::KeyValueMap *>(&this->msg))
+            else if (const auto *kvmap = dynamic_cast<const variant::KeyValueMap *>(&this->msg))
             {
                 return decoded<core::types::KeyValueMap>(*kvmap);
             }
@@ -344,4 +344,4 @@ namespace protobuf
     {
         return MessageDecoder(msg, enums_as_strings).to_value();
     }
-}  // namespace protobuf
+}  // namespace cc::protobuf

@@ -8,7 +8,7 @@
 #include "protobuf-enum.h++"
 #include "string/misc.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
     std::vector<std::string> enum_names(
         const google::protobuf::EnumDescriptor *desc,
@@ -109,4 +109,4 @@ namespace protobuf
         return common_prefix(desc, delimiter).size();
     }
 
-}  // namespace protobuf
+}  // namespace cc::protobuf

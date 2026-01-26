@@ -14,7 +14,7 @@
 #include "sysconfig-timezone.h++"
 #include "chrono/date-time.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
     //==========================================================================
     // HostInfo
@@ -193,4 +193,4 @@ namespace protobuf
     void decode(const ::cc::platform::sysconfig::protobuf::CommandResponse &proto,
                 core::platform::InvocationResult *native) noexcept;
 
-}  // namespace protobuf
+}  // namespace cc::protobuf

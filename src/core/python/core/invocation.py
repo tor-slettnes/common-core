@@ -68,3 +68,16 @@ def invocation(method, args, kwargs):
 def caller_frame(hops: int = 1):
     stack = inspect.stack()
     return stack[hops+1]
+
+
+def method_path(method: Callable) -> str:
+    '''
+    Obtain code context (module, class, method name) of the provided
+    instance method.
+    '''
+    return '.'.join((
+        method.__module__,
+        type(method.__self__).__name__,
+        interceptor.__name__,
+    ))
+

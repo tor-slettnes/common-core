@@ -10,7 +10,7 @@
 #include "protobuf-message.h++"
 #include "protobuf-inline.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
 
     //==========================================================================
@@ -442,4 +442,4 @@ namespace protobuf
             proto.error_symbol(),
             proto.error_text());
     }
-}  // namespace protobuf
+}  // namespace cc::protobuf

@@ -54,19 +54,25 @@ namespace switchboard
     std::istream &operator>>(std::istream &stream, State &state);
 
     using StateMask = std::uint32_t;
-    constexpr StateMask SETTLED_STATES = (STATE_ACTIVE | STATE_INACTIVE | STATE_FAILED);
-    constexpr StateMask PENDING_STATES = (STATE_ACTIVATING | STATE_DEACTIVATING | STATE_FAILING);
-    constexpr StateMask ACTIVATION_STATES = {STATE_ACTIVATING | STATE_DEACTIVATING};
-
     class StateSet : public std::set<State>,
                      public core::types::Listable
     {
+        using Super = std::set<State>;
+
     public:
+        using Super::Super;
         StateSet(StateMask mask);
+
+    public:
+        std::uint32_t to_mask() const;
 
     protected:
         void to_tvlist(core::types::TaggedValueList *tvlist) const override;
     };
+
+    const StateSet SETTLED_STATES = {STATE_ACTIVE, STATE_INACTIVE, STATE_FAILED};
+    const StateSet PENDING_STATES = {STATE_ACTIVATING, STATE_DEACTIVATING, STATE_FAILING};
+    const StateSet ACTIVATION_STATES = {STATE_ACTIVATING, STATE_DEACTIVATING};
 
 
     core::types::ValueList operator<<(core::types::ValueList &list, const StateSet StateSet);

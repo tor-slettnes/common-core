@@ -548,9 +548,9 @@ namespace switchboard
         bool &manual = flags["manual"];
         this->get_flags(&flags, true);
 
-        switchboard::StateMask trigger_states =
-            this->args.size() ? get_states()
-            : manual          ? 0
+        switchboard::StateSet trigger_states =
+            this->args.size() ? this->get_states()
+            : manual          ? switchboard::StateSet()
                               : switchboard::Dependency::DEFAULT_TRIGGERS;
 
         switchboard::DependencyPolarity dep_dir =
@@ -583,7 +583,7 @@ namespace switchboard
         switchboard::SwitchRef sw = this->get_switch(true);
         std::string name = this->get_arg("name");
         std::string owner = this->get_arg("owner");
-        switchboard::StateMask state_transitions = get_states();
+        switchboard::StateSet state_transitions = this->get_states();
 
         auto icept = switchboard::Interceptor::create_shared(
             name,
@@ -708,16 +708,15 @@ namespace switchboard
         return this->provider->get_switch(switch_name, required);
     }
 
-    switchboard::StateMask Options::get_states()
+    switchboard::StateSet Options::get_states()
     {
         std::string arg = this->get_arg("LIST_OF_STATES");
-        switchboard::StateMask mask = 0;
+        switchboard::StateSet states;
         for (const std::string &state_name : core::str::split(arg, ","))
         {
-            mask |= static_cast<switchboard::StateMask>(
-                core::str::convert_to<switchboard::State>(state_name));
+            states.insert(core::str::convert_to<switchboard::State>(state_name));
         }
-        return mask;
+        return states;
     }
 
     void Options::print_states()

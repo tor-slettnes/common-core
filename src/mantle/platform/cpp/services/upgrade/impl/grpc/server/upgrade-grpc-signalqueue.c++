@@ -21,7 +21,7 @@ namespace upgrade::grpc
             upgrade::signal_scan_progress,
             [=](ScanProgress::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
-                protobuf::encode_shared(ref, msg->mutable_scan_progress());
+                cc::protobuf::encode_shared(ref, msg->mutable_scan_progress());
             });
 
         this->connect<PackageInfo::ptr>(
@@ -29,7 +29,7 @@ namespace upgrade::grpc
             upgrade::signal_upgrade_available,
             [=](PackageInfo::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
-                protobuf::encode_shared(ref, msg->mutable_upgrade_available());
+                cc::protobuf::encode_shared(ref, msg->mutable_upgrade_available());
             });
 
         this->connect<PackageInfo::ptr>(
@@ -37,7 +37,7 @@ namespace upgrade::grpc
             upgrade::signal_upgrade_pending,
             [=](PackageInfo::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
-                protobuf::encode_shared(ref, msg->mutable_upgrade_pending());
+                cc::protobuf::encode_shared(ref, msg->mutable_upgrade_pending());
             });
 
         this->connect<UpgradeProgress::ptr>(
@@ -45,7 +45,7 @@ namespace upgrade::grpc
             upgrade::signal_upgrade_progress,
             [=](UpgradeProgress::ptr ref, Signal *msg) {
                 msg->set_mapping_action(this->boolean_mapping(bool(ref)));
-                protobuf::encode_shared(ref, msg->mutable_upgrade_progress());
+                cc::protobuf::encode_shared(ref, msg->mutable_upgrade_progress());
             });
 
         Super::initialize();

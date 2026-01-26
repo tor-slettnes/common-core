@@ -12,7 +12,7 @@
 #include <vector>
 #include <optional>
 
-namespace protobuf
+namespace cc::protobuf
 {
     std::vector<std::string> enum_names(
         const google::protobuf::EnumDescriptor *desc,
@@ -37,5 +37,4 @@ namespace protobuf
         const google::protobuf::EnumDescriptor *desc,
         const std::string &delimiter = "_");
 
-
-}  // namespace protobuf
+}  // namespace cc::protobuf

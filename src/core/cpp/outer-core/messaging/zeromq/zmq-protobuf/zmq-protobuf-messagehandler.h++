@@ -32,7 +32,7 @@ namespace core::zmq
         {
             if (parts.size())
             {
-                ProtoT message = ::protobuf::to_message<ProtoT>(this->combine_parts(parts));
+                ProtoT message = cc::protobuf::to_message<ProtoT>(this->combine_parts(parts));
                 log_trace("ProtoBufMessageHandler(), header=%s, message:=%s ",
                           parts.front(),
                           message);

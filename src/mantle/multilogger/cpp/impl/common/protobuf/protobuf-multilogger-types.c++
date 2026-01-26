@@ -13,7 +13,7 @@
 #include "protobuf-standard-types.h++"
 #include "protobuf-inline.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
     //==========================================================================
     // Loggable
@@ -312,4 +312,4 @@ namespace protobuf
         }
 
     }
-}  // namespace protobuf
+}  // namespace cc::protobuf

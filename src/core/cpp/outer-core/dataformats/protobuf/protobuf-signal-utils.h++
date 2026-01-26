@@ -9,7 +9,7 @@
 #include "types/valuemap.h++"
 #include <google/protobuf/message.h>
 
-namespace protobuf
+namespace cc::protobuf
 {
     using DescriptorMap = core::types::ValueMap<
         std::string,
@@ -51,4 +51,4 @@ namespace protobuf
         return names;
     }
 
-}  // namespace protobuf
+}  // namespace cc::protobuf

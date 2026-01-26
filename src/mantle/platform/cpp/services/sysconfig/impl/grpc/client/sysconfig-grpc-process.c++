@@ -25,10 +25,10 @@ namespace sysconfig::grpc
         const Invocation &invocation,
         const std::string &input)
     {
-        return protobuf::decoded<InvocationResult>(
+        return cc::protobuf::decoded<InvocationResult>(
             this->client->call_check(
                 &Client::Stub::InvokeSync,
-                protobuf::encoded<::cc::platform::sysconfig::protobuf::CommandInvocation>(
+                cc::protobuf::encoded<::cc::platform::sysconfig::protobuf::CommandInvocation>(
                     invocation,
                     input)));
     }
@@ -37,10 +37,10 @@ namespace sysconfig::grpc
         const Invocation &invocation,
         const std::string &input)
     {
-        return protobuf::decoded<core::platform::PID>(
+        return cc::protobuf::decoded<core::platform::PID>(
             this->client->call_check(
                 &Client::Stub::InvokeAsync,
-                protobuf::encoded<::cc::platform::sysconfig::protobuf::CommandInvocation>(
+                cc::protobuf::encoded<::cc::platform::sysconfig::protobuf::CommandInvocation>(
                     invocation,
                     input)));
     }
@@ -49,10 +49,10 @@ namespace sysconfig::grpc
         PID pid,
         const std::string &input)
     {
-        return protobuf::decoded<InvocationResult>(
+        return cc::protobuf::decoded<InvocationResult>(
             this->client->call_check(
                 &Client::Stub::InvokeFinish,
-                protobuf::encoded<::cc::platform::sysconfig::protobuf::CommandContinuation>(
+                cc::protobuf::encoded<::cc::platform::sysconfig::protobuf::CommandContinuation>(
                     pid,
                     input)));
     }

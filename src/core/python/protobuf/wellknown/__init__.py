@@ -27,6 +27,7 @@ from google.protobuf.struct_pb2 import (
 
 from .wellknown import (
     TimestampType, DurationType,
+    encodeCurrentTime,
     encodeTimestamp, decodeTimestamp,
     encodeDuration, decodeDuration,
     encodeValue, decodeValue,

@@ -8,4 +8,4 @@ The `Error` type is
 '''
 
 from .status import Error, Level, Domain, \
-    level_map, decodeLogLevel, encodeLogLevel
+    level_map, encodeException, decodeLogLevel, encodeLogLevel

@@ -16,7 +16,7 @@ namespace switchboard
     Dependency::Dependency(
         const std::weak_ptr<Provider> &provider,
         const SwitchName &predecessor_name,
-        StateMask trigger_states,
+        const StateSet &trigger_states,
         DependencyPolarity polarity,
         bool hard,
         bool sufficient)
@@ -63,7 +63,7 @@ namespace switchboard
         }
     }
 
-    StateMask Dependency::trigger_states() const
+    StateSet Dependency::trigger_states() const
     {
         return this->trigger_states_;
     }
@@ -85,7 +85,7 @@ namespace switchboard
 
     bool Dependency::auto_trigger(State pred_state) const
     {
-        return (this->trigger_states() & static_cast<StateMask>(pred_state)) != 0;
+        return this->trigger_states().count(pred_state);
     }
 
     State Dependency::derived_state(bool active) const
@@ -172,5 +172,8 @@ namespace switchboard
             {"sufficient", this->sufficient()},
         });
     }
+
+    const StateSet Dependency::DEFAULT_TRIGGERS = {};
+
 
 }  // namespace switchboard

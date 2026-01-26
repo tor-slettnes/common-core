@@ -201,24 +201,26 @@ namespace switchboard
         const std::string &predecessor_name,
         const core::types::KeyValueMap &dep_map)
     {
-        StateMask mask = 0;
-        if (const auto &trigger_states = dep_map.get(SETTING_DEP_TRIGGERS).get_valuelist_ptr())
+        StateSet trigger_states;
+        if (const auto &trigger_state_names = dep_map.get(SETTING_DEP_TRIGGERS).get_valuelist_ptr())
         {
-            logf_trace("--- Switch %r trigger states: %s", sw->name(), *trigger_states);
-            for (const core::types::Value &value : *trigger_states)
+            logf_trace("--- Switch %r trigger states: %s", sw->name(), *trigger_state_names);
+            for (const core::types::Value &value : *trigger_state_names)
             {
-                auto state = core::str::convert_to<State>(value.as_string(), STATE_UNSET);
-                mask |= static_cast<StateMask>(state);
+                if (auto state = core::str::try_convert_to<State>(value.as_string()))
+                {
+                    trigger_states.insert(state.value());
+                }
             }
-            logf_trace("--- Switch %r trigger mask: %s", sw->name(), mask);
+            logf_trace("--- Switch %r trigger states: %s", sw->name(), trigger_states);
         }
         else if (const auto &automatic = dep_map.get(SETTING_DEP_AUTOMATIC))
         {
-            mask = automatic.as_bool() ? SETTLED_STATES : 0;
+            trigger_states = automatic.as_bool() ? SETTLED_STATES : StateSet();
         }
         else
         {
-            mask = SETTLED_STATES;
+            trigger_states = SETTLED_STATES;
         }
 
         DependencyPolarity dir = DependencyPolarity::POSITIVE;
@@ -239,7 +241,7 @@ namespace switchboard
 
         return Dependency::create_shared(sw->provider(),
                                          predecessor_name,
-                                         mask,
+                                         trigger_states,
                                          dir,
                                          hard,
                                          sufficient);

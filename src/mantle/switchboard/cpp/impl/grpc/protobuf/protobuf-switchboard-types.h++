@@ -7,9 +7,9 @@
 
 #pragma once
 #include "switchboard.h++"
-#include "cc/platform/switchboard/protobuf/switchboard_types.pb.h"     // generated from `switchboard.proto`
+#include "cc/platform/switchboard/protobuf/switchboard_types.pb.h"  // generated from `switchboard.proto`
 
-namespace protobuf
+namespace cc::protobuf
 {
     //==========================================================================
     // State
@@ -188,4 +188,4 @@ namespace protobuf
     void encode(const switchboard::SwitchMap &map,
                 cc::platform::switchboard::protobuf::SwitchMap *msg);
 
-}  // namespace protobuf
+}  // namespace cc::protobuf

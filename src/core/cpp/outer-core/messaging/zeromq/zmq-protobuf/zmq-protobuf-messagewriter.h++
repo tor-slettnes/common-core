@@ -28,7 +28,7 @@ namespace core::zmq
     public:
         void write(const ProtoT &message)
         {
-            MessageWriter::write(protobuf::to_bytes(message));
+            MessageWriter::write(cc::protobuf::to_bytes(message));
         }
     };
 

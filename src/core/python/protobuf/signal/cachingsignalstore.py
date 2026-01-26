@@ -15,6 +15,7 @@ import threading
 
 ### Modules withn package
 from cc.core.decorators import override, doc_inherit
+from cc.core.timeutils import TimePointType, TimeIntervalType
 from .signalstore import SignalStore, Message, MappingAction, SignalMessage, Slot
 
 #===============================================================================
@@ -38,6 +39,9 @@ class CachingSignalStore (SignalStore):
         SignalStore.init_signals(self)
 
         self._cache = {}
+        self._completion_deadline = None
+        self._completion_event = threading.Event()
+
 
     @override
     def connect_all(self,
@@ -66,7 +70,59 @@ class CachingSignalStore (SignalStore):
         if signal_name := self.signal_name(msg):
             self._update_cache(signal_name, action, key, msg)
 
+        if action == MappingAction.NONE:
+            self._completion_event.set()
+
         SignalStore.emit(self, msg)
+
+    def set_completion_deadline(self, deadline: TimePointType|None):
+        '''
+        Set deadline for subsequent `wait_complete()` invocations.  This
+        will normally be performed upon initial connection to a signal source.
+        The initial value `None` means that `wait_complete()` will indefinitely
+        until the inital signal cache has been received.
+        '''
+
+        self._completion_deadline = deadline
+
+
+    def is_complete(self) -> bool:
+        '''
+        Indicates whether a completion event has been received from the
+        signal source, i.e., if all cached signals have been received.
+        '''
+
+        return self._completion_event.is_set()
+
+
+    def wait_complete(self, timeout: TimeIntervalType|None = None) -> bool:
+        '''
+        Wait until a initial completion event has been received from the
+        signal source to ensure the local cache is complete before proceeding.
+
+        Note that it is not usually necessary to invoke this method in order to
+        obtain values from the local cache, because the `get_cached_map()` method
+        implicitly waits for the specified signal map to be completed before
+        proceeding.
+        '''
+
+        if self.is_complete():
+            return True
+
+        elif timeout is not None:
+            return self._completion_event.wait(timeout)
+
+        elif self._completion_deadline is None:
+            self._completion_event.wait()
+            return True
+
+        elif remaining := max(0, self._completion_deadline - time.time()):
+            return self._completion_event.wait(remaining)
+
+        else:
+            return False
+
+
 
     @override
     def emit_mapping(self,
@@ -271,5 +327,3 @@ class CachingSignalStore (SignalStore):
         else:
             #datamap[key] = getattr(msg, signal_name)
             datamap[key] = msg
-
-

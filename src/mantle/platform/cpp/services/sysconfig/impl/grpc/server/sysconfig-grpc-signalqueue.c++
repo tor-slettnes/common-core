@@ -20,42 +20,42 @@ namespace sysconfig::grpc
             Signal::kTime,
             sysconfig::signal_time,
             [](const core::dt::TimePoint &tp, Signal *msg) {
-                protobuf::encode(tp, msg->mutable_time());
+                cc::protobuf::encode(tp, msg->mutable_time());
             });
 
         this->connect<TimeConfig>(
             Signal::kTimeConfig,
             sysconfig::signal_timeconfig,
             [](const TimeConfig &tc, Signal *msg) {
-                protobuf::encode(tc, msg->mutable_time_config());
+                cc::protobuf::encode(tc, msg->mutable_time_config());
             });
 
         this->connect<core::dt::TimeZoneInfo>(
             Signal::kTzInfo,
             sysconfig::signal_tzinfo,
             [](const core::dt::TimeZoneInfo &zi, Signal *msg) {
-                protobuf::encode(zi, msg->mutable_tz_info());
+                cc::protobuf::encode(zi, msg->mutable_tz_info());
             });
 
         this->connect<TimeZoneCanonicalSpec>(
             Signal::kTzSpec,
             sysconfig::signal_tzspec,
             [](const TimeZoneCanonicalSpec &zonespec, Signal *msg) {
-                protobuf::encode(zonespec, msg->mutable_tz_spec());
+                cc::protobuf::encode(zonespec, msg->mutable_tz_spec());
             });
 
         this->connect<HostInfo>(
             Signal::kHostInfo,
             sysconfig::signal_hostinfo,
             [](const HostInfo &hi, Signal *msg) {
-                protobuf::encode(hi, msg->mutable_host_info());
+                cc::protobuf::encode(hi, msg->mutable_host_info());
             });
 
         this->connect<ProductInfo>(
             Signal::kProductInfo,
             sysconfig::signal_productinfo,
             [](const ProductInfo &pi, Signal *msg) {
-                protobuf::encode(pi, msg->mutable_product_info());
+                cc::protobuf::encode(pi, msg->mutable_product_info());
             });
 
         Super::initialize();

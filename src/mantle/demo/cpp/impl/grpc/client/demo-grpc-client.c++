@@ -31,14 +31,14 @@ namespace demo::grpc
                 signal_greeting.emit(
                     action,
                     key,
-                    ::protobuf::decoded<Greeting>(signal.signal_greeting()));
+                    cc::protobuf::decoded<Greeting>(signal.signal_greeting()));
             });
 
         this->add_handler(
             cc::demo::protobuf::Signal::kSignalTime,
             [](const cc::demo::protobuf::Signal &signal) {
                 signal_time.emit(
-                    ::protobuf::decoded<TimeData>(signal.signal_time()));
+                    cc::protobuf::decoded<TimeData>(signal.signal_time()));
             });
     }
 
@@ -46,12 +46,12 @@ namespace demo::grpc
     {
         this->call_check(
             &Stub::SayHello,
-            ::protobuf::encoded<cc::demo::protobuf::Greeting>(greeting));
+            cc::protobuf::encoded<cc::demo::protobuf::Greeting>(greeting));
     }
 
     TimeData ClientImpl::get_current_time()
     {
-        return ::protobuf::decoded<TimeData>(
+        return cc::protobuf::decoded<TimeData>(
             this->call_check(&Stub::GetCurrentTime));
     }
 

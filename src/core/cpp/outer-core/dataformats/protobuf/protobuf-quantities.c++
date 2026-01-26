@@ -7,19 +7,19 @@
 
 #include "protobuf-quantities.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
     void encode_quantity(double value,
                          int decimal_exponent,
-                         cc::protobuf::quantities::Scalar *scalar)
+                         quantities::Scalar *scalar)
     {
         scalar->set_value(value);
         scalar->set_decimal_exponent(decimal_exponent);
     }
 
     void encode_quantity(double value,
-                         cc::protobuf::quantities::Scalar *scalar)
+                         quantities::Scalar *scalar)
     {
         scalar->set_value(value);
     }
-} // namespace protobuf
+} // namespace cc::protobuf

@@ -30,8 +30,8 @@ namespace upgrade::grpc
     {
         try
         {
-            protobuf::encode(
-                this->provider->scan(protobuf::decoded<PackageSource>(*request)),
+            cc::protobuf::encode(
+                this->provider->scan(cc::protobuf::decoded<PackageSource>(*request)),
                 response);
 
             return ::grpc::Status::OK;
@@ -49,7 +49,7 @@ namespace upgrade::grpc
     {
         try
         {
-            protobuf::encode(this->provider->list_sources(), response);
+            cc::protobuf::encode(this->provider->list_sources(), response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -65,8 +65,8 @@ namespace upgrade::grpc
     {
         try
         {
-            protobuf::encode(
-                this->provider->list_available(protobuf::decoded<PackageSource>(*request)),
+            cc::protobuf::encode(
+                this->provider->list_available(cc::protobuf::decoded<PackageSource>(*request)),
                 response);
             return ::grpc::Status::OK;
         }
@@ -83,8 +83,8 @@ namespace upgrade::grpc
     {
         try
         {
-            protobuf::encode_shared(
-                this->provider->best_available(protobuf::decoded<PackageSource>(*request)),
+            cc::protobuf::encode_shared(
+                this->provider->best_available(cc::protobuf::decoded<PackageSource>(*request)),
                 response);
             return ::grpc::Status::OK;
         }
@@ -101,8 +101,8 @@ namespace upgrade::grpc
     {
         try
         {
-            auto source = protobuf::decoded<PackageSource>(request->source());
-            protobuf::encode_shared(
+            auto source = cc::protobuf::decoded<PackageSource>(request->source());
+            cc::protobuf::encode_shared(
                 this->provider->install(source),
                 response);
             return ::grpc::Status::OK;

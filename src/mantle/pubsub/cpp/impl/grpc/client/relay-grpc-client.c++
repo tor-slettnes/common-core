@@ -31,7 +31,7 @@ namespace pubsub::grpc
     {
         cc::platform::pubsub::protobuf::Publication msg;
         msg.set_topic(topic);
-        protobuf::encode(value, msg.mutable_value());
+        cc::protobuf::encode(value, msg.mutable_value());
         return this->writer_->Write(msg);
     }
 
@@ -86,7 +86,7 @@ namespace pubsub::grpc
         const std::vector<std::string> &topics)
     {
         cc::platform::pubsub::protobuf::Filters filters;
-        protobuf::assign_repeated(topics, filters.mutable_topics());
+        cc::protobuf::assign_repeated(topics, filters.mutable_topics());
         return Reader::create_shared(this->stub, filters);
     }
 

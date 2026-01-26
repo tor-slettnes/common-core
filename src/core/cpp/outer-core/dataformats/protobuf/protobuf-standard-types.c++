@@ -10,7 +10,7 @@
 
 #include <utility>
 
-namespace protobuf
+namespace cc::protobuf
 {
     void encode(const std::string &s,
                 google::protobuf::StringValue *msg) noexcept
@@ -222,11 +222,11 @@ namespace protobuf
             break;
 
         case google::protobuf::Value::kStructValue:
-            *value = protobuf::decoded_shared<core::types::KeyValueMap>(msg.struct_value());
+            *value = cc::protobuf::decoded_shared<core::types::KeyValueMap>(msg.struct_value());
             break;
 
         case google::protobuf::Value::kListValue:
-            *value = protobuf::decoded_shared<core::types::ValueList>(msg.list_value());
+            *value = cc::protobuf::decoded_shared<core::types::ValueList>(msg.list_value());
             break;
 
         default:
@@ -295,4 +295,4 @@ namespace protobuf
             decode(value, &list->emplace_back());
         }
     }
-}  // namespace protobuf
+}  // namespace cc::protobuf

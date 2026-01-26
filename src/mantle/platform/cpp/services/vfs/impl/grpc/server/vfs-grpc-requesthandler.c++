@@ -28,12 +28,12 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::GetContexts(
         ::grpc::ServerContext *cxt,
-        const protobuf::Empty *,
-        ::cc::platform::vfs::protobuf::ContextMap *response)
+        const cc::protobuf::Empty *,
+        vfs::protobuf::ContextMap *response)
     {
         try
         {
-            protobuf::encode(
+            cc::protobuf::encode(
                 this->provider->get_contexts(),
                 response);
 
@@ -47,12 +47,12 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::GetOpenContexts(
         ::grpc::ServerContext *cxt,
-        const protobuf::Empty *,
-        ::cc::platform::vfs::protobuf::ContextMap *response)
+        const cc::protobuf::Empty *,
+        vfs::protobuf::ContextMap *response)
     {
         try
         {
-            protobuf::encode(
+            cc::protobuf::encode(
                 this->provider->get_open_contexts(),
                 response);
 
@@ -67,12 +67,12 @@ namespace vfs::grpc
     // Get a single context's specification
     ::grpc::Status RequestHandler::GetContextSpec(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::Path *request,
-        ::cc::platform::vfs::protobuf::ContextSpec *response)
+        const vfs::protobuf::Path *request,
+        vfs::protobuf::ContextSpec *response)
     {
         try
         {
-            protobuf::encode_shared(
+            cc::protobuf::encode_shared(
                 this->provider->get_context(request->context(), true),
                 response);
 
@@ -86,12 +86,12 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::OpenContext(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::Path *request,
-        ::cc::platform::vfs::protobuf::ContextSpec *response)
+        const vfs::protobuf::Path *request,
+        vfs::protobuf::ContextSpec *response)
     {
         try
         {
-            protobuf::encode_shared(
+            cc::protobuf::encode_shared(
                 this->provider->open_context(request->context(), true),
                 response);
 
@@ -105,8 +105,8 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::CloseContext(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::Path *request,
-        protobuf::Empty *)
+        const vfs::protobuf::Path *request,
+        cc::protobuf::Empty *)
     {
         try
         {
@@ -124,16 +124,16 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::GetVolumeInfo(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::PathRequest *request,
-        ::cc::platform::vfs::protobuf::VolumeInfo *response)
+        const vfs::protobuf::PathRequest *request,
+        vfs::protobuf::VolumeInfo *response)
     {
         try
         {
             vfs::Path vpath;
             vfs::OperationFlags flags;
-            protobuf::decode(*request, &vpath, &flags);
+            cc::protobuf::decode(*request, &vpath, &flags);
             vfs::VolumeInfo vstat = this->provider->get_volume_info(vpath, flags);
-            protobuf::encode(vstat, response);
+            cc::protobuf::encode(vstat, response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -144,16 +144,16 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::GetFileInfo(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::PathRequest *request,
-        ::cc::platform::vfs::protobuf::FileInfo *response)
+        const vfs::protobuf::PathRequest *request,
+        vfs::protobuf::FileInfo *response)
     {
         try
         {
             vfs::Path vpath;
             vfs::OperationFlags flags;
-            protobuf::decode(*request, &vpath, &flags);
+            cc::protobuf::decode(*request, &vpath, &flags);
             vfs::FileInfo stat = this->provider->get_file_info(vpath, flags);
-            protobuf::encode(stat, response);
+            cc::protobuf::encode(stat, response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -164,16 +164,16 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::GetDirectory(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::PathRequest *request,
-        ::cc::platform::vfs::protobuf::Directory *response)
+        const vfs::protobuf::PathRequest *request,
+        vfs::protobuf::Directory *response)
     {
         try
         {
             vfs::Path vpath;
             vfs::OperationFlags flags;
-            protobuf::decode(*request, &vpath, &flags);
+            cc::protobuf::decode(*request, &vpath, &flags);
             vfs::Directory dir = this->provider->get_directory(vpath, flags);
-            protobuf::encode(dir, response);
+            cc::protobuf::encode(dir, response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -185,8 +185,8 @@ namespace vfs::grpc
     // Recursively locate files matching naming or attribute patterns
     ::grpc::Status RequestHandler::Locate(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::LocateRequest *request,
-        ::cc::platform::vfs::protobuf::Directory *response)
+        const vfs::protobuf::LocateRequest *request,
+        vfs::protobuf::Directory *response)
     {
         try
         {
@@ -195,13 +195,13 @@ namespace vfs::grpc
             core::types::TaggedValueList attribute_filters;
             vfs::OperationFlags flags;
 
-            protobuf::decode(
+            cc::protobuf::decode(
                 *request, &root, &filename_masks, &attribute_filters, &flags);
 
             vfs::Directory dir = this->provider->locate(
                 root, filename_masks, attribute_filters, flags);
 
-            protobuf::encode(dir, response);
+            cc::protobuf::encode(dir, response);
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -212,15 +212,15 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::Copy(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::PathRequest *request,
-        protobuf::Empty *)
+        const vfs::protobuf::PathRequest *request,
+        cc::protobuf::Empty *)
     {
         try
         {
             vfs::Paths sources;
             vfs::Path target;
             vfs::OperationFlags flags;
-            protobuf::decode(*request, &sources, &target, &flags);
+            cc::protobuf::decode(*request, &sources, &target, &flags);
             this->provider->copy(sources, target, flags);
             return ::grpc::Status::OK;
         }
@@ -232,15 +232,15 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::Move(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::PathRequest *request,
-        protobuf::Empty *)
+        const vfs::protobuf::PathRequest *request,
+        cc::protobuf::Empty *)
     {
         try
         {
             vfs::Paths sources;
             vfs::Path target;
             vfs::OperationFlags flags;
-            protobuf::decode(*request, &sources, &target, &flags);
+            cc::protobuf::decode(*request, &sources, &target, &flags);
             this->provider->move(sources, target, flags);
             return ::grpc::Status::OK;
         }
@@ -252,15 +252,15 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::Remove(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::PathRequest *request,
-        protobuf::Empty *)
+        const vfs::protobuf::PathRequest *request,
+        cc::protobuf::Empty *)
     {
         try
         {
             vfs::Path vpath;
             vfs::Paths vpaths;
             vfs::OperationFlags flags;
-            protobuf::decode(*request, &vpaths, &vpath, &flags);
+            cc::protobuf::decode(*request, &vpaths, &vpath, &flags);
             if (vpath)
             {
                 vpaths.insert(vpaths.begin(), vpath);
@@ -276,14 +276,14 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::CreateFolder(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::PathRequest *request,
-        protobuf::Empty *)
+        const vfs::protobuf::PathRequest *request,
+        cc::protobuf::Empty *)
     {
         try
         {
             vfs::Path vpath;
             vfs::OperationFlags flags;
-            protobuf::decode(*request, &vpath, &flags);
+            cc::protobuf::decode(*request, &vpath, &flags);
             this->provider->create_folder(vpath, flags);
             return ::grpc::Status::OK;
         }
@@ -295,18 +295,18 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::ReadFile(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::Path *request,
-        ::grpc::ServerWriter<::cc::platform::vfs::protobuf::FileChunk> *writer)
+        const vfs::protobuf::Path *request,
+        ::grpc::ServerWriter<vfs::protobuf::FileChunk> *writer)
     {
         try
         {
-            Path vpath = protobuf::decoded<Path>(*request);
+            Path vpath = cc::protobuf::decoded<Path>(*request);
             UniqueReader reader = this->provider->read_file(vpath);
 
             reader->exceptions(std::ios::badbit);
 
             //char buf[protobuf::chunksize];
-            ::cc::platform::vfs::protobuf::FileChunk chunk;
+            vfs::protobuf::FileChunk chunk;
             chunk.mutable_path()->CopyFrom(*request);
             uint chunks = 0;
             std::streamsize total = 0;
@@ -337,12 +337,12 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::WriteFile(
         ::grpc::ServerContext *cxt,
-        ::grpc::ServerReader<::cc::platform::vfs::protobuf::FileChunk> *reader,
-        protobuf::Empty *)
+        ::grpc::ServerReader<vfs::protobuf::FileChunk> *reader,
+        cc::protobuf::Empty *)
     {
         vfs::Path vpath;
         UniqueWriter writer;
-        ::cc::platform::vfs::protobuf::FileChunk chunk;
+        vfs::protobuf::FileChunk chunk;
 
         std::streamsize total = 0;
         uint chunks = 0;
@@ -352,7 +352,7 @@ namespace vfs::grpc
             {
                 if (!writer)
                 {
-                    protobuf::decode(chunk.path(), &vpath);
+                    cc::protobuf::decode(chunk.path(), &vpath);
                     writer = this->provider->write_file(vpath);
                     writer->exceptions(writer->exceptions() |
                                        std::ios::failbit |
@@ -376,14 +376,14 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::GetAttributes(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::Path *request,
+        const vfs::protobuf::Path *request,
         ::cc::protobuf::variant::KeyValueMap *response)
     {
         try
         {
-            protobuf::encode(
+            cc::protobuf::encode(
                 this->provider->get_attributes(
-                    protobuf::decoded<Path>(*request)),
+                    cc::protobuf::decoded<Path>(*request)),
                 response);
             return ::grpc::Status::OK;
         }
@@ -395,14 +395,14 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::SetAttributes(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::AttributeRequest *request,
-        protobuf::Empty *)
+        const vfs::protobuf::AttributeRequest *request,
+        cc::protobuf::Empty *)
     {
         try
         {
             this->provider->set_attributes(
-                protobuf::decoded<Path>(request->path()),
-                protobuf::decoded<core::types::KeyValueMap>(request->attributes()));
+                cc::protobuf::decoded<Path>(request->path()),
+                cc::protobuf::decoded<core::types::KeyValueMap>(request->attributes()));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -413,12 +413,12 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::ClearAttributes(
         ::grpc::ServerContext *cxt,
-        const ::cc::platform::vfs::protobuf::Path *request,
-        protobuf::Empty *)
+        const vfs::protobuf::Path *request,
+        cc::protobuf::Empty *)
     {
         try
         {
-            this->provider->clear_attributes(protobuf::decoded<Path>(*request));
+            this->provider->clear_attributes(cc::protobuf::decoded<Path>(*request));
             return ::grpc::Status::OK;
         }
         catch (...)
@@ -427,13 +427,12 @@ namespace vfs::grpc
         }
     }
 
-
     ::grpc::Status RequestHandler::Watch(
         ::grpc::ServerContext *context,
         const ::cc::protobuf::signal::Filter *filter,
-        ::grpc::ServerWriter<::cc::platform::vfs::protobuf::Signal> *writer)
+        ::grpc::ServerWriter<vfs::protobuf::Signal> *writer)
     {
-        return this->stream_signals<::cc::platform::vfs::protobuf::Signal, SignalQueue>(
+        return this->stream_signals<vfs::protobuf::Signal, SignalQueue>(
             context,
             filter,
             writer);

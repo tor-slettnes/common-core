@@ -382,7 +382,7 @@ namespace switchboard
                        bool trigger_descendants = true,
                        bool reevaluate = false,
                        ExceptionHandling on_cancel = EH_DEFAULT,
-                       ExceptionHandling on_error = EH_DEFAULT);
+                       ExceptionHandling on_error = EH_IGNORE);
 
         /// Turn the switch on or off based on its dependencies.
         /// If the state has no dependencies it remains unchanged.

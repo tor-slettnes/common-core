@@ -45,6 +45,16 @@ namespace switchboard
         }
     }
 
+    std::uint32_t StateSet::to_mask() const
+    {
+        std::uint32_t mask = 0;
+        for (State state: *this)
+        {
+            mask |= static_cast<std::uint32_t>(state);
+        }
+        return mask;
+    }
+
     void StateSet::to_tvlist(core::types::TaggedValueList *tvlist) const
     {
         for (const auto &[state, name]: state_names)

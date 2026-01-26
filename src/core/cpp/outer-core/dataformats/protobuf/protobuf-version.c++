@@ -9,12 +9,12 @@
 
 #include <iostream>
 
-namespace protobuf
+namespace cc::protobuf
 {
-    Version version(std::uint64_t major,
-                    std::uint64_t minor,
-                    std::uint64_t patch,
-                    const std::string &printable_version)
+    Version create_version(std::uint64_t major,
+                           std::uint64_t minor,
+                           std::uint64_t patch,
+                           const std::string &printable_version)
     {
         Version version;
         version.set_major(major);
@@ -47,13 +47,14 @@ namespace protobuf
         return ((client.major() == server.major()) &&
                 ((client.minor() <= server.minor()) || !strict));
     }
-}  // namespace protobuf
 
-namespace cc::protobuf::version
-{
-    std::ostream &operator<<(std::ostream &stream, const Version &version)
+    namespace version
     {
-        stream << ::protobuf::to_string(version);
-        return stream;
-    }
-}  // namespace cc::protobuf::version
+        std::ostream &operator<<(std::ostream &stream, const Version &version)
+        {
+            stream << cc::protobuf::to_string(version);
+            return stream;
+        }
+    }  // namespace version
+
+}  // namespace cc::protobuf

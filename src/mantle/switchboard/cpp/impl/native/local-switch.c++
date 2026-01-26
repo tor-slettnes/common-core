@@ -368,10 +368,6 @@ namespace switchboard
             }
             catch (...)
             {
-                logf_notice("Switch %r interceptor %r failed: %s",
-                            this->name(),
-                            ic->name(),
-                            std::current_exception());
                 errors.insert_or_assign(ic, std::current_exception());
             }
         }
@@ -431,7 +427,7 @@ namespace switchboard
             eh_source = "default behavior";
             for (const auto &[ic, eptr] : exceptions)
             {
-                if (ic->on_error() > eh)
+                if (!dominating_error || (ic->on_error() > eh))
                 {
                     eh = ic->on_error();
                     eh_source = "interceptor " + ic->name();
@@ -440,7 +436,7 @@ namespace switchboard
             }
         }
 
-        logf_info(
+        logf_debug(
             "Switch %r state %s change encountered %d errors; "
             "applying policy %s action based on %s",
             this->name(),
@@ -449,9 +445,16 @@ namespace switchboard
             eh,
             eh_source);
 
-        return this->handle_diversion(core::exception::map_to_error(dominating_error),
-                                      eh,
-                                      EH_FAIL);
+        if (dominating_error)
+        {
+            return this->handle_diversion(core::exception::map_to_error(dominating_error),
+                                          eh,
+                                          EH_FAIL);
+        }
+        else
+        {
+            return false;
+        }
     }
 
     bool LocalSwitch::handle_diversion(const core::status::Error::ptr &error,
@@ -463,7 +466,10 @@ namespace switchboard
             eh = eh_default;
         }
 
-        logf_debug("Switch %r applying policy %s on exception: %s", this->name(), eh, *error);
+        logf_debug("Switch %r applying policy %s from exception: %s",
+                   this->name(),
+                   eh,
+                   *error);
 
         switch (eh == EH_DEFAULT ? eh_default : eh)
         {

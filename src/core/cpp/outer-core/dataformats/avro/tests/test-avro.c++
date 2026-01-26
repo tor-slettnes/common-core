@@ -108,7 +108,7 @@ namespace avro
             });
 
         cc::protobuf::status::Error msg;
-        protobuf::encode(event, &msg);
+        cc::protobuf::encode(event, &msg);
         avro::ProtoBufValue avro_wrapper(msg);
 
         // EXPECT_EQ(avro_wrapper.as_value().get("attributes").get("duration").as_bytevector().size(), 12);

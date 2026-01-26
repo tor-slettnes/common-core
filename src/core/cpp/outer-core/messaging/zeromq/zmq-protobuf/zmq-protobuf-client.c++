@@ -35,7 +35,7 @@ namespace core::zmq
     {
         try
         {
-            this->send(::protobuf::to_bytes(request), flags);
+            this->send(cc::protobuf::to_bytes(request), flags);
         }
         catch (const Error &e)
         {
@@ -123,7 +123,7 @@ namespace core::zmq
             default:
                 ProtoBufError(
                     status.code(),
-                    ::protobuf::decoded<status::Error>(status.details()))
+                    cc::protobuf::decoded<status::Error>(status.details()))
                     .throw_if_error();
                 break;
             }
@@ -144,7 +144,7 @@ namespace core::zmq
                                       RecvFlags recv_flags) const
     {
         cc::protobuf::request_reply::Parameter request_params;
-        ::protobuf::encode(request, request_params.mutable_variant_value());
+        cc::protobuf::encode(request, request_params.mutable_variant_value());
 
         logf_trace("Invoking RPC with value: %s(%s)", method_name, request);
         this->send_invocation(method_name, request_params, send_flags);
@@ -152,7 +152,7 @@ namespace core::zmq
         cc::protobuf::request_reply::Parameter reply_params;
         if (this->read_result(&reply_params, recv_flags))
         {
-            auto response = ::protobuf::decoded<types::Value>(
+            auto response = cc::protobuf::decoded<types::Value>(
                 reply_params.variant_value());
 
             logf_trace("Received RPC response: %s() -> %s",

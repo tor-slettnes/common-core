@@ -22,6 +22,13 @@ from cc.core.timeutils import TimePointType, TimePoint
 TimestampType = TimePointType|Timestamp|int|float
 DurationType = TimeIntervalType|Duration|int|float
 
+def encodeCurrentTime(output: Timestamp|None = None) -> Timestamp:
+    if output is None:
+        output = Timestamp()
+
+    output.GetCurrentTime()
+    return output
+
 def decodeTimestamp(prototime: Timestamp) -> TimePoint:
     '''
     Decode a ProtoBuf Timestamp input into a Python-compatible timestamp

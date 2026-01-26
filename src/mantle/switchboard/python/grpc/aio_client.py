@@ -7,11 +7,24 @@ __all__ = ['Client']
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
-### Modules within package
-from cc.core.decorators import doc_inherit
+### Standard Python modules
+import asyncio
+import sys
+
+### Common Core modules
+from cc.core.decorators import doc_inherit, override
+from cc.protobuf.status import encodeException
+from cc.protobuf.variant import PyValueList, encodeValueList
 from cc.messaging.grpc import SignalClient, AsyncMixIn
+
+### Switchboard modules
+from ..protobuf import (
+    AddSwitchRequest, RemoveSwitchRequest, ImportRequest,
+    State,
+    InterceptorInvocation, InterceptorResult, InterceptorUpdate,
+)
+
 from ..base.baseboard import SwitchboardBase
-from ..protobuf import AddSwitchRequest, RemoveSwitchRequest
 from .aio_remote_switch import AsyncRemoteSwitch
 
 class AsyncClient (SwitchboardBase, AsyncMixIn, SignalClient):
@@ -45,11 +58,36 @@ class AsyncClient (SwitchboardBase, AsyncMixIn, SignalClient):
         SignalClient.__init__(self,
                               host = host,
                               wait_for_ready = wait_for_ready,
-                              watch_all = watch_all)
+                              watch_all = watch_all,
+                              product_name = product_name,
+                              project_name = project_name)
 
+        self.init_intercept()
+
+    @override
     def _new_switch(self, switch_name: str) -> AsyncRemoteSwitch:
-        '''Overridden method to obtain a local Switch instance in response to update signals from server'''
-        return AsyncRemoteSwitch(switch_name, self.stub)
+        '''Obtain a new Switch instance in response to update signals from server'''
+        return AsyncRemoteSwitch(switch_name, self)
+
+
+    @doc_inherit
+    async def get_or_add_switch(self,
+                                switch_name: str,
+                                initial_value: bool|None = None,
+                                ) -> AsyncRemoteSwitch:
+
+        switch = self.get_switch(switch_name)
+        if switch is None:
+            switch = self.switches.setdefault(
+                switch_name,
+                self._new_switch(switch_name))
+
+            await self.add_switch(switch_name)
+            if initial_value is not None:
+                await switch.set_active(initial_value)
+
+        return switch
+
 
     @doc_inherit
     async def add_switch(self, switch_name: str) -> bool:
@@ -62,4 +100,100 @@ class AsyncClient (SwitchboardBase, AsyncMixIn, SignalClient):
                                   propagate = propagate)
         return (await self.stub.RemoveSwitch(req)).value
 
+    @doc_inherit
+    async def import_switches(self,
+                              declarations: PyValueList) -> int:
+        req = ImportRequest(
+            declarations = encodeValueList(declarations))
+        return (await self.stub.ImportSwitches(req)).import_count
 
+    def init_intercept(self):
+        self.interceptor_task = None
+        self.interceptor_update_queue = None
+
+    def is_intercepting(self):
+        if t := self.interceptor_task:
+            return not t.done()
+        else:
+            return False
+
+    def start_intercepting(self):
+        if not self.is_intercepting():
+            self.interceptor_update_queue = asyncio.Queue()
+            self.interceptor_stream = self.stub.Intercept(
+                self._intercept_queue_iterator(),
+                None)
+            self.interceptor_task = asyncio.create_task(
+                self._intercept_runner())
+
+    def stop_intercepting(self):
+        if self.is_intercepting():
+            self.interceptor_update_queue.put(None)
+            self.interceptor_task.cancel()
+
+    async def _intercept_queue_iterator(self):
+        while msg := await self.interceptor_update_queue.get():
+            yield msg
+
+    async def enqueue_interceptor_update(self, msg: InterceptorUpdate):
+        '''
+        Enqueue and send an interceptor update to the Switchboard service.
+        '''
+        self.start_intercepting()
+        await self.interceptor_update_queue.put(msg)
+
+    async def _intercept_runner(self):
+        runner_tasks = set()
+        async for request in self.interceptor_stream:
+            task = asyncio.create_task(self.on_interceptor_invocation(request))
+            runner_tasks.add(task)
+            task.add_done_callback(runner_tasks.discard)
+
+    async def on_interceptor_invocation(self, request: InterceptorInvocation):
+        self.logger.info("%s switch %r interceptor %r starting" % (
+            self,
+            request.switch_name,
+            request.interceptor_name,
+        ))
+
+        result = InterceptorResult()
+
+        try:
+            sw = self.get_switch(request.switch_name, required=True)
+            await sw.on_intercept(
+                interceptor_name = request.interceptor_name,
+                state = State(request.state),
+            )
+
+        except Exception as e:
+            encodeException(
+                e,
+                origin = sys.modules['__main__'].__spec__.name,
+                output = result.error,
+            )
+
+            self.logger.error("%s switch %r interceptor %r failed: [%s] %s" % (
+                self,
+                request.switch_name,
+                request.interceptor_name,
+                type(e).__name__,
+                e
+            ))
+        else:
+            self.logger.info("%s switch %r interceptor %r completed" % (
+                self,
+                request.switch_name,
+                request.interceptor_name,
+            ))
+
+        update = InterceptorUpdate(
+            switch_name = request.switch_name,
+            interceptor_name = request.interceptor_name,
+            invocation_result = result,
+        )
+        self.logger.warning(
+            "Adding to interceptor queue: %s" % (
+                update,
+            ))
+
+        self.interceptor_update_queue.put_nowait(update)

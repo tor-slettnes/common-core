@@ -25,6 +25,6 @@ namespace multilogger::zmq
 
     void ClientReader::handle_message(const cc::platform::multilogger::protobuf::Loggable &msg)
     {
-        this->put(protobuf::decode_loggable(msg));
+        this->put(cc::protobuf::decode_loggable(msg));
     }
 }  // namespace multilogger::zmq

@@ -21,6 +21,8 @@ namespace switchboard::grpc
         using This = Proxy;
         using Super = switchboard::Provider;
 
+        friend class RemoteSwitch;
+
     protected:
         Proxy(const std::string &host,
               bool wait_for_ready = false,
@@ -59,6 +61,9 @@ namespace switchboard::grpc
             core::signal::MappingAction action,
             const std::string &switch_name,
             const cc::platform::switchboard::protobuf::Signal &signal);
+
+        void send_interceptor_update(
+            const ::cc::platform::switchboard::protobuf::InterceptorUpdate &update);
 
     protected:
         core::dt::Duration ready_timeout;

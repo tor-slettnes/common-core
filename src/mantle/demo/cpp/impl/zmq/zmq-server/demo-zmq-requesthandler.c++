@@ -31,14 +31,14 @@ namespace demo::zmq
         const cc::demo::protobuf::Greeting &request,
         ::google::protobuf::Empty *)
     {
-        this->provider->say_hello(::protobuf::decoded<Greeting>(request));
+        this->provider->say_hello(cc::protobuf::decoded<Greeting>(request));
     }
 
     void RequestHandler::get_current_time(
         const ::google::protobuf::Empty &,
         cc::demo::protobuf::TimeData *response)
     {
-        protobuf::encode(this->provider->get_current_time(), response);
+        cc::protobuf::encode(this->provider->get_current_time(), response);
     }
 
     void RequestHandler::start_ticking(

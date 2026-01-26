@@ -94,7 +94,7 @@ namespace core::zmq
             ResponseType response;
             if (this->read_protobuf_result(&bytes, recv_flags))
             {
-                protobuf::to_message(bytes, &response);
+                cc::protobuf::to_message(bytes, &response);
                 logf_trace("Received RPC ProtoBuf response: %s() -> %s", method_name, response);
             }
             else

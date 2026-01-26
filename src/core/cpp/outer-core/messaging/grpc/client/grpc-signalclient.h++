@@ -58,11 +58,11 @@ namespace core::grpc
 
     template <class ServiceT, class SignalT>
     class SignalClient : public ClientWrapper<ServiceT>,
-                         public ::protobuf::SignalReceiver<SignalT>
+                         public cc::protobuf::SignalReceiver<SignalT>
     {
         using This = SignalClient<ServiceT, SignalT>;
         using Super = ClientWrapper<ServiceT>;
-        using SignalReceiver = ::protobuf::SignalReceiver<SignalT>;
+        using SignalReceiver = cc::protobuf::SignalReceiver<SignalT>;
 
     protected:
         using SignalReader = std::unique_ptr<::grpc::ClientReader<SignalT>>;

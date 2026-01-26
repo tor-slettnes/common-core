@@ -21,6 +21,6 @@ namespace multilogger::zmq
     void SubmissionHandler::handle_message(
         const cc::platform::multilogger::protobuf::Loggable &msg)
     {
-        this->provider->submit(protobuf::decode_loggable(msg));
+        this->provider->submit(cc::protobuf::decode_loggable(msg));
     }
 }  // namespace multilogger::zmq

@@ -49,7 +49,7 @@ namespace switchboard
         Interceptor(const std::string &name,
                     const std::string &owner = {},
                     const Invocation &invocation = {},
-                    StateMask state_transitions = ACTIVATION_STATES,
+                    const StateSet &state_transitions = ACTIVATION_STATES,
                     InterceptorPhase phase = PHASE_NORMAL,
                     bool asynchronous = false,
                     bool rerun = false,
@@ -62,7 +62,7 @@ namespace switchboard
         std::string name() const;
         std::string owner() const;
         Invocation invocation() const;
-        StateMask state_transitions() const;
+        StateSet state_transitions() const;
         InterceptorPhase phase() const;
         bool asynchronous() const;
         bool rerun() const;
@@ -87,7 +87,7 @@ namespace switchboard
         std::string name_;
         std::string owner_;
         Invocation invocation_;
-        StateMask state_transitions_;
+        StateSet state_transitions_;
         InterceptorPhase phase_;
         bool asynchronous_;
         bool rerun_;

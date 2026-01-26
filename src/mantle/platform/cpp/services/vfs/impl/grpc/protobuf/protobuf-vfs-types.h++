@@ -9,7 +9,7 @@
 #include "cc/platform/vfs/protobuf/vfs_types.pb.h"  // generated from `variant.proto`
 #include "vfs-base.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
     //==========================================================================
     // Operation Flags
@@ -131,4 +131,4 @@ namespace protobuf
     void decode(const ::cc::platform::vfs::protobuf::Directory &msg,
                 ::vfs::Directory *dir);
 
-}  // namespace protobuf
+}  // namespace cc::protobuf

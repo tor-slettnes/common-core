@@ -26,13 +26,13 @@ namespace sysconfig::grpc
             ::cc::platform::sysconfig::protobuf::Signal::kHostInfo,
             [&](const ::cc::platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_hostinfo.emit(
-                    protobuf::decoded<HostInfo>(signal.host_info()));
+                    cc::protobuf::decoded<HostInfo>(signal.host_info()));
             });
     }
 
     HostInfo HostConfigProvider::get_host_info() const
     {
-        return protobuf::decoded<HostInfo>(
+        return cc::protobuf::decoded<HostInfo>(
             this->client->call_check(
                 &Client::Stub::GetHostInfo));
     }
@@ -41,7 +41,7 @@ namespace sysconfig::grpc
     {
         this->client->call_check(
             &Client::Stub::SetHostName,
-            protobuf::encoded<google::protobuf::StringValue>(hostname));
+            cc::protobuf::encoded<google::protobuf::StringValue>(hostname));
     }
 
     void HostConfigProvider::reboot()

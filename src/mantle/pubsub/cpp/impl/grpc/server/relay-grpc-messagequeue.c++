@@ -46,7 +46,7 @@ namespace pubsub::grpc
         {
             cc::platform::pubsub::protobuf::Publication msg;
             msg.set_topic(topic);
-            protobuf::encode(value, msg.mutable_value());
+            cc::protobuf::encode(value, msg.mutable_value());
             this->put(std::move(msg));
         }
     }

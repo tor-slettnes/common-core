@@ -62,6 +62,8 @@ cc_cpack_add_debian_component("${SETTINGS_INSTALL_COMPONENT}"
 cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
   GROUP "${INSTALL_GROUP}"
   DEPENDS "${SETTINGS_INSTALL_COMPONENT}" "core-python"
+  RECOMMENDS multilogger-python switchboard-python pubsub-python
+  SUGGESTS "${SERVER_INSTALL_COMPONENT}"
   LICENSE ${LICENSE_FILE}
   SUMMARY "Common Core Platform Services - Python clients"
   DESCRIPTION ${COMMON_DESCRIPTION}
@@ -74,6 +76,7 @@ cc_cpack_add_debian_component("${PYTHON_INSTALL_COMPONENT}"
 cc_cpack_add_debian_component("${TOOLS_INSTALL_COMPONENT}"
   GROUP "${INSTALL_GROUP}"
   DEPENDS "${SETTINGS_INSTALL_COMPONENT}"
+  SUGGESTS "${SERVER_INSTALL_COMPONENT}"
   LICENSE ${LICENSE_FILE}
   SUMMARY "Common Core Platform Services - command line tools"
   DESCRIPTION ${COMMON_DESCRIPTION}
@@ -84,9 +87,7 @@ cc_cpack_add_debian_component("${TOOLS_INSTALL_COMPONENT}"
 cc_cpack_add_debian_component("${SERVER_INSTALL_COMPONENT}"
   GROUP "${INSTALL_GROUP}"
   DEPENDS "${SETTINGS_INSTALL_COMPONENT}"
-  RECOMMENDS "${TOOLS_INSTALL_COMPONENT}"
-  DEB_DEPENDS ${PACKAGE_NAME_PREFIX}-switchboard-server ${PACKAGE_NAME_PREFIX}-pubsub-relay
-  DEB_RECOMMENDS ${PACKAGE_NAME_PREFIX}-multilogger-server
+  RECOMMENDS "${TOOLS_INSTALL_COMPONENT}" multilogger-server
   LICENSE ${LICENSE_FILE}
   SUMMARY "Common Core Platform Services - server"
   DESCRIPTION ${COMMON_DESCRIPTION}
@@ -97,6 +98,7 @@ cc_cpack_add_debian_component("${SERVER_INSTALL_COMPONENT}"
 cc_cpack_add_debian_component("${COMPLETE_INSTALL_COMPONENT}"
   GROUP "${INSTALL_GROUP}"
   DEPENDS ${COMPLETE_INSTALL_DEPENDENCIES}
+  RECOMMENDS switchboard-complete multilogger-complete pubsub-complete
   LICENSE ${LICENSE_FILE}
   SUMMARY "Common Core Platform Services - complete"
   DESCRIPTION ${COMMON_DESCRIPTION}

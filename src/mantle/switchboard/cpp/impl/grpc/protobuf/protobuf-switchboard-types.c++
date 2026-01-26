@@ -10,7 +10,7 @@
 #include "protobuf-variant-types.h++"
 #include "protobuf-inline.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
     //==========================================================================
     // State
@@ -46,7 +46,7 @@ namespace protobuf
                 std::set<switchboard::State> *states)
     {
         states->clear();
-        for (int state : items)
+        for (int state: items)
         {
             states->insert(static_cast<switchboard::State>(state));
         }
@@ -282,8 +282,11 @@ namespace protobuf
     void encode(const switchboard::DependencyRef &native,
                 cc::platform::switchboard::protobuf::Dependency *proto)
     {
-        proto->set_trigger_states(native->trigger_states());
-        proto->set_polarity(encoded<cc::platform::switchboard::protobuf::DependencyPolarity>(native->polarity()));
+        encode(native->trigger_states(), proto->mutable_trigger_states());
+        proto->set_polarity(
+            encoded<cc::platform::switchboard::protobuf::DependencyPolarity>(
+                native->polarity()));
+
         proto->set_hard(native->hard());
         proto->set_sufficient(native->sufficient());
     }
@@ -296,7 +299,7 @@ namespace protobuf
         *native = switchboard::Dependency::create_shared(
             provider,
             predecessor_name,
-            proto.trigger_states(),
+            decoded<switchboard::StateSet>(proto.trigger_states()),
             decoded<switchboard::DependencyPolarity>(proto.polarity()),
             proto.hard(),
             proto.sufficient());
@@ -332,8 +335,10 @@ namespace protobuf
                 cc::platform::switchboard::protobuf::InterceptorSpec *proto)
     {
         proto->set_owner(native->owner());
-        proto->set_state_transitions(native->state_transitions());
-        proto->set_phase(encoded<cc::platform::switchboard::protobuf::InterceptorPhase>(native->phase()));
+        encode(native->state_transitions(), proto->mutable_state_transitions());
+        proto->set_phase(
+            encoded<cc::platform::switchboard::protobuf::InterceptorPhase>(
+                native->phase()));
         proto->set_asynchronous(native->asynchronous());
         proto->set_rerun(native->rerun());
         proto->set_on_cancel(encoded<cc::platform::switchboard::protobuf::ExceptionHandling>(native->on_cancel()));
@@ -349,7 +354,7 @@ namespace protobuf
             name,
             proto.owner(),
             invocation,
-            proto.state_transitions(),
+            decoded<switchboard::StateSet>(proto.state_transitions()),
             decoded<switchboard::InterceptorPhase>(proto.phase()),
             proto.asynchronous(),
             proto.rerun(),
@@ -432,4 +437,4 @@ namespace protobuf
         }
     }
 
-}  // namespace protobuf
+}  // namespace cc::protobuf

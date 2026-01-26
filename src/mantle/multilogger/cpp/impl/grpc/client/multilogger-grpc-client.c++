@@ -16,14 +16,14 @@ namespace multilogger::grpc
     {
         this->call_check(
             &Stub::Submit,
-            ::protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(item));
+            cc::protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(item));
     }
 
     bool ClientImpl::add_sink(const SinkSpec &spec)
     {
         return this->call_check(
                        &Stub::AddSink,
-                       ::protobuf::encoded<cc::platform::multilogger::protobuf::SinkSpec>(spec))
+                       cc::protobuf::encoded<cc::platform::multilogger::protobuf::SinkSpec>(spec))
             .added();
     }
 
@@ -31,45 +31,45 @@ namespace multilogger::grpc
     {
         return this->call_check(
                        &Stub::RemoveSink,
-                       ::protobuf::encoded<cc::platform::multilogger::protobuf::SinkID>(id))
+                       cc::protobuf::encoded<cc::platform::multilogger::protobuf::SinkID>(id))
             .removed();
     }
 
     SinkSpec ClientImpl::get_sink_spec(const SinkID &id) const
     {
-        return protobuf::decoded<SinkSpec>(
+        return cc::protobuf::decoded<SinkSpec>(
             this->call_check(
                 &Stub::GetSink,
-                ::protobuf::encoded<cc::platform::multilogger::protobuf::SinkID>(id)));
+                cc::protobuf::encoded<cc::platform::multilogger::protobuf::SinkID>(id)));
     }
 
     SinkSpecs ClientImpl::get_all_sink_specs() const
     {
-        return protobuf::decoded<SinkSpecs>(
+        return cc::protobuf::decoded<SinkSpecs>(
             this->call_check(&Stub::GetAllSinks));
     }
 
     SinkIDs ClientImpl::list_sinks() const
     {
-        return protobuf::assign_to_vector<SinkID>(
+        return cc::protobuf::assign_to_vector<SinkID>(
             this->call_check(&Stub::ListSinks).sink_names());
     }
 
     SinkTypes ClientImpl::list_sink_types() const
     {
-        return protobuf::assign_to_vector<SinkType>(
+        return cc::protobuf::assign_to_vector<SinkType>(
             this->call_check(&Stub::ListSinkTypes).sink_types());
     }
 
     FieldNames ClientImpl::list_message_fields() const
     {
-        return protobuf::assign_to_vector<std::string>(
+        return cc::protobuf::assign_to_vector<std::string>(
             this->call_check(&Stub::ListMessageFields).field_names());
     }
 
     FieldNames ClientImpl::list_error_fields() const
     {
-        return protobuf::assign_to_vector<std::string>(
+        return cc::protobuf::assign_to_vector<std::string>(
             this->call_check(&Stub::ListErrorFields).field_names());
     }
 
@@ -114,7 +114,8 @@ namespace multilogger::grpc
             this->open_writer();
         }
 
-        if (this->writer->Write(protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(item)))
+        if (this->writer->Write(
+                cc::protobuf::encoded_shared<cc::platform::multilogger::protobuf::Loggable>(item)))
         {
             return true;
         }

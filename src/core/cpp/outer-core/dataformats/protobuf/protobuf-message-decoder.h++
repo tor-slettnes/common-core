@@ -9,7 +9,7 @@
 #include "types/value.h++"
 #include <google/protobuf/message.h>
 
-namespace protobuf
+namespace cc::protobuf
 {
     /// Helper class to convert arbitrary ProtoBuf messages to a
     /// `core::types::Value` variant, e.g. for logging or printing.
@@ -70,4 +70,4 @@ namespace protobuf
     core::types::Value to_value(const google::protobuf::Message &msg,
                                 bool enums_as_strings = true);
 
-} // namespace protobuf
+} // namespace cc::protobuf

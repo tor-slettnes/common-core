@@ -12,7 +12,7 @@
 #include "logging/message/message.h++"
 #include "protobuf-event-types.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
     //==========================================================================
     // Loggable
@@ -79,4 +79,4 @@ namespace protobuf
     void encode(const multilogger::ListenerSpec &native, cc::platform::multilogger::protobuf::ListenerSpec *proto);
     void decode(const cc::platform::multilogger::protobuf::ListenerSpec &proto, multilogger::ListenerSpec *native);
 
-}  // namespace protobuf
+}  // namespace cc::protobuf

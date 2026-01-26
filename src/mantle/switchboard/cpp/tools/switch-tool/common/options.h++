@@ -71,7 +71,7 @@ namespace switchboard
                                      const switchboard::Status &status);
 
         switchboard::SwitchRef get_switch(bool required);
-        switchboard::StateMask get_states();
+        switchboard::StateSet get_states();
         void print_states();
 
     public:

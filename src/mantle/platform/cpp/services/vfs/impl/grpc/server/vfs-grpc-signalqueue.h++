@@ -9,6 +9,11 @@
 #include "cc/platform/vfs/protobuf/vfs_types.pb.h"  // generated from `vfs.proto`
 #include "grpc-signalqueue.h++"
 
+namespace vfs
+{
+    using namespace cc::platform::vfs;
+}
+
 namespace vfs::grpc
 {
     //==========================================================================
@@ -24,9 +29,9 @@ namespace vfs::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<::cc::platform::vfs::protobuf::Signal>
+    class SignalQueue : public core::grpc::SignalQueue<vfs::protobuf::Signal>
     {
-        using Super = core::grpc::SignalQueue<::cc::platform::vfs::protobuf::Signal>;
+        using Super = core::grpc::SignalQueue<vfs::protobuf::Signal>;
 
     public:
         using Super::Super;

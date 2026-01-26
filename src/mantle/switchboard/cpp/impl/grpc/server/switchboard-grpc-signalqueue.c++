@@ -1,7 +1,7 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file switchboard-grpc-signalqueue.c++
-/// @brief Base class for Switchboard servers (standalone or relay)
+/// @brief BlockingQueue to forward signals to connected client
 /// @author Tor Slettnes
 //==============================================================================
 
@@ -21,14 +21,14 @@ namespace switchboard::grpc
             Signal::kSpecification,
             switchboard::signal_spec,
             [](const Specification &spec, Signal *msg) {
-                ::protobuf::encode(spec, msg->mutable_specification());
+                cc::protobuf::encode(spec, msg->mutable_specification());
             });
 
         this->connect<switchboard::Status>(
             Signal::kStatus,
             switchboard::signal_status,
             [](const Status &status, Signal *msg) {
-                ::protobuf::encode(status, msg->mutable_status());
+                cc::protobuf::encode(status, msg->mutable_status());
             });
 
         Super::initialize();

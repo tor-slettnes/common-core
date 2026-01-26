@@ -86,6 +86,7 @@ class Endpoint (LogBase):
             for scope_name in settings_scopes
             if scope_name])
 
+        self.initialized = False
         self.logger.debug("Loaded %s settings from %s: %s"%
                           (self.channel_name, self.settings.filepaths, self.settings))
 
@@ -94,10 +95,10 @@ class Endpoint (LogBase):
         return "%s %s %s"%(self.messaging_flavor, self.channel_name, self.endpoint_type)
 
     def initialize(self):
-        pass
+        self.initialized = True
 
     def deinitialize(self):
-        pass
+        self.initialized = False
 
     def settings_file(self, scope_name):
         return "%s-endpoints-%s"%(self.messaging_flavor.lower(), scope_name.lower())

@@ -76,7 +76,7 @@ namespace vfs::grpc
     bool ClientOutputBuffer::write_some(const BufferType &data)
     {
         ::cc::platform::vfs::protobuf::FileChunk msg;
-        protobuf::encode(this->vpath, msg.mutable_path());
+        cc::protobuf::encode(this->vpath, msg.mutable_path());
         msg.set_data(data);
 
         if (this->writer->Write(msg))
@@ -107,7 +107,7 @@ namespace vfs::grpc
           input_buffer(
               stub->ReadFile(
                   cxt.get(),
-                  protobuf::encoded<::cc::platform::vfs::protobuf::Path>(vpath)))
+                  cc::protobuf::encoded<::cc::platform::vfs::protobuf::Path>(vpath)))
     {
         this->rdbuf(&this->input_buffer);
     }

@@ -9,7 +9,7 @@
 #include "cc/platform/netconfig/protobuf/netconfig_types.pb.h"  // generated from `variant.proto`
 #include "netconfig.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
     //==========================================================================
     // ::netconfig::GlobalData
@@ -347,4 +347,4 @@ namespace protobuf
     void decode(::cc::platform::netconfig::protobuf::NetworkState proto,
                 NMState *state) noexcept;
 
-}  // namespace protobuf
+}  // namespace cc::protobuf

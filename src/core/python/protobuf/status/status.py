@@ -7,6 +7,8 @@ import logging
 
 ### Modules within package
 from ..utils import native_enum_from_proto
+from ..wellknown import TimestampType, encodeCurrentTime, encodeTimestamp
+from ..variant import encodeKeyValueMap
 
 ### Generated from `.../protos/cc/protobuf/status/status.proto`
 from .status_pb2 import Error, Level, Domain
@@ -25,6 +27,28 @@ level_map = {
     Level.CRITICAL: logging.CRITICAL,
     Level.FATAL+10: logging.FATAL,
 }
+
+def encodeException(exception: Exception,
+                    domain: Domain = Domain.APPLICATION,
+                    origin: str|None = None,
+                    level: Level = Level.ERROR,
+                    timestamp: TimestampType|None = None,
+                    attributes: dict|None = None,
+                    output: Error|None = None,
+                    ) -> Error:
+
+    if output is None:
+        output = Error()
+
+    output.text = str(exception)
+    output.symbol = type(exception).__name__
+    output.domain = domain
+    output.origin = origin
+    output.level = level
+    if timestamp is not None:
+        encodeTimestamp(timestamp, output.timestamp)
+    encodeKeyValueMap(attributes, output.attributes)
+    return output
 
 def decodeLogLevel(status_level: Level) -> int:
     '''

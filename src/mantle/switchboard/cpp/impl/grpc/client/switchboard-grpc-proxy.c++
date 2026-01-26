@@ -104,10 +104,9 @@ namespace switchboard::grpc
         const core::types::ValueList &switches)
     {
         cc::platform::switchboard::protobuf::ImportRequest req;
-        protobuf::encode(switches, req.mutable_declarations());
+        cc::protobuf::encode(switches, req.mutable_declarations());
         return this->call_check(&Stub::ImportSwitches, req).import_count();
     }
-
 
     void Proxy::on_spec_update(
         core::signal::MappingAction action,
@@ -118,9 +117,9 @@ namespace switchboard::grpc
         {
             if (SwitchRef sw = this->sync_switch<RemoteSwitch>(action, switch_name))
             {
-                protobuf::decode(signal.specification(),
-                                 this->shared_from_this(),
-                                 sw->spec().get());
+                cc::protobuf::decode(signal.specification(),
+                                     this->shared_from_this(),
+                                     sw->spec().get());
 
                 switchboard::signal_spec.emit(action, switch_name, *sw->spec());
             }
@@ -140,7 +139,7 @@ namespace switchboard::grpc
         {
             if (SwitchRef sw = this->sync_switch<RemoteSwitch>(action, switch_name))
             {
-                protobuf::decode(signal.status(), sw->status().get());
+                cc::protobuf::decode(signal.status(), sw->status().get());
                 switchboard::signal_status.emit(action, switch_name, *sw->status());
             }
             else
@@ -148,5 +147,10 @@ namespace switchboard::grpc
                 switchboard::signal_status.clear(switch_name);
             }
         }
+    }
+
+    void Proxy::send_interceptor_update(
+        const ::cc::platform::switchboard::protobuf::InterceptorUpdate &update)
+    {
     }
 };  // namespace switchboard::grpc

@@ -9,23 +9,24 @@
 #include "cc/protobuf/version/version.pb.h"  // generated from `variant.proto`
 #include "string/format.h++"
 
-namespace protobuf
+namespace cc::protobuf
 {
-    using cc::protobuf::version::Version;
+    using version::Version;
 
-    Version version(std::uint64_t major,
-                    std::uint64_t minor = 0,
-                    std::uint64_t patch = 0,
-                    const std::string printable_version = "");
+    Version create_version(std::uint64_t major,
+                           std::uint64_t minor = 0,
+                           std::uint64_t patch = 0,
+                           const std::string printable_version = "");
 
     std::string to_string(const Version &version);
 
     bool is_compatible(const Version &client,
                        const Version &server,
                        bool strict = true);
-}  // namespace protobuf
 
-namespace cc::protobuf::version
-{
-    std::ostream &operator<<(std::ostream &stream, const Version &version);
-}  // namespace cc::protobuf::version
+    namespace version
+    {
+        std::ostream &operator<<(std::ostream &stream, const Version &version);
+    }  // namespace version
+
+}  // namespace cc::protobuf

@@ -26,14 +26,14 @@ namespace sysconfig::grpc
             ::cc::platform::sysconfig::protobuf::Signal::kTime,
             [&](const ::cc::platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_time.emit(
-                    protobuf::decoded<core::dt::TimePoint>(signal.time()));
+                    cc::protobuf::decoded<core::dt::TimePoint>(signal.time()));
             });
 
         this->client->add_handler(
             ::cc::platform::sysconfig::protobuf::Signal::kTimeConfig,
             [&](const ::cc::platform::sysconfig::protobuf::Signal &signal) {
                 sysconfig::signal_timeconfig.emit(
-                    protobuf::decoded<TimeConfig>(signal.time_config()));
+                    cc::protobuf::decoded<TimeConfig>(signal.time_config()));
             });
     }
 
@@ -41,12 +41,12 @@ namespace sysconfig::grpc
     {
         this->client->call_check(
             &Client::Stub::SetCurrentTime,
-            protobuf::encoded<google::protobuf::Timestamp>(tp));
+            cc::protobuf::encoded<google::protobuf::Timestamp>(tp));
     }
 
     core::dt::TimePoint TimeConfigProvider::get_current_time() const
     {
-        return protobuf::decoded<core::dt::TimePoint>(
+        return cc::protobuf::decoded<core::dt::TimePoint>(
             this->client->call_check(
                 &Client::Stub::GetCurrentTime));
     }
@@ -55,12 +55,12 @@ namespace sysconfig::grpc
     {
         this->client->call_check(
             &Client::Stub::SetTimeConfig,
-            protobuf::encoded<::cc::platform::sysconfig::protobuf::TimeConfig>(config));
+            cc::protobuf::encoded<::cc::platform::sysconfig::protobuf::TimeConfig>(config));
     }
 
     TimeConfig TimeConfigProvider::get_time_config() const
     {
-        return protobuf::decoded<TimeConfig>(
+        return cc::protobuf::decoded<TimeConfig>(
             this->client->call_check(
                 &Client::Stub::GetTimeConfig));
     }

@@ -47,19 +47,19 @@ namespace avro
         {
             avro::set_variant(
                 avro_value,
-                protobuf::decoded<core::types::Value>(*proto));
+                cc::protobuf::decoded<core::types::Value>(*proto));
         }
         else if (auto *proto = dynamic_cast<const cc::protobuf::variant::ValueList *>(&msg))
         {
             avro::set_variant_list(
                 avro_value,
-                protobuf::decoded<core::types::ValueList>(*proto));
+                cc::protobuf::decoded<core::types::ValueList>(*proto));
         }
         else if (auto *proto = dynamic_cast<const cc::protobuf::variant::KeyValueMap *>(&msg))
         {
             avro::set_variant_map(
                 avro_value,
-                protobuf::decoded<core::types::KeyValueMap>(*proto));
+                cc::protobuf::decoded<core::types::KeyValueMap>(*proto));
         }
         else
         {
@@ -73,23 +73,23 @@ namespace avro
     {
         if (auto *proto = dynamic_cast<const google::protobuf::Timestamp *>(&msg))
         {
-            avro::set_timestamp(avro_value, protobuf::decoded<core::dt::TimePoint>(*proto));
+            avro::set_timestamp(avro_value, cc::protobuf::decoded<core::dt::TimePoint>(*proto));
         }
         else if (auto *proto = dynamic_cast<const google::protobuf::Duration *>(&msg))
         {
-            avro::set_time_interval(avro_value, protobuf::decoded<core::dt::Duration>(*proto));
+            avro::set_time_interval(avro_value, cc::protobuf::decoded<core::dt::Duration>(*proto));
         }
         else if (auto *proto = dynamic_cast<const google::protobuf::Value *>(&msg))
         {
-            avro::set_variant(avro_value, protobuf::decoded<core::types::Value>(*proto));
+            avro::set_variant(avro_value, cc::protobuf::decoded<core::types::Value>(*proto));
         }
         else if (auto *proto = dynamic_cast<const google::protobuf::ListValue *>(&msg))
         {
-            avro::set_variant_list(avro_value, protobuf::decoded<core::types::ValueList>(*proto));
+            avro::set_variant_list(avro_value, cc::protobuf::decoded<core::types::ValueList>(*proto));
         }
         else if (auto *proto = dynamic_cast<const google::protobuf::Struct *>(&msg))
         {
-            avro::set_variant_map(avro_value, protobuf::decoded<core::types::KeyValueMap>(*proto));
+            avro::set_variant_map(avro_value, cc::protobuf::decoded<core::types::KeyValueMap>(*proto));
         }
         else if (auto *proto = dynamic_cast<const google::protobuf::BoolValue *>(&msg))
         {

@@ -1,13 +1,18 @@
 // -*- c++ -*-
 //==============================================================================
 /// @file switchboard-grpc-signalqueue.h++
-/// @brief Base class for Switchboard servers (standalone or relay)
+/// @brief BlockingQueue to forward signals to connected client
 /// @author Tor Slettnes
 //==============================================================================
 
 #pragma once
 #include "grpc-signalqueue.h++"
 #include "cc/platform/switchboard/grpc/switchboard_service.grpc.pb.h"
+
+namespace switchboard
+{
+    using namespace cc::platform::switchboard;
+}
 
 namespace switchboard::grpc
 {
@@ -24,7 +29,8 @@ namespace switchboard::grpc
     ///
     /// See `core::grpc::SignalQueue<T>` for additional info.
 
-    class SignalQueue : public core::grpc::SignalQueue<cc::platform::switchboard::protobuf::Signal>
+    class SignalQueue
+        : public core::grpc::SignalQueue<cc::platform::switchboard::protobuf::Signal>
     {
         using This = SignalQueue;
         using Super = core::grpc::SignalQueue<cc::platform::switchboard::protobuf::Signal>;

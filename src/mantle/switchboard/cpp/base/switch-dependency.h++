@@ -23,13 +23,13 @@ namespace switchboard
     {
     public:
         // static constexpr StateMask DEFAULT_TRIGGERS = STATE_SETTLED;
-        static constexpr StateMask DEFAULT_TRIGGERS = 0;
+        static const StateSet DEFAULT_TRIGGERS;
 
     protected:
         Dependency(
             const std::weak_ptr<Provider> &provider,
             const SwitchName &predecessor_name,
-            StateMask trigger_states = DEFAULT_TRIGGERS,
+            const StateSet &trigger_states = DEFAULT_TRIGGERS,
             DependencyPolarity polarity = DependencyPolarity::POSITIVE,
             bool hard = false,
             bool sufficient = false);
@@ -41,7 +41,7 @@ namespace switchboard
         const SwitchName &predecessor_name() const;
         State predecessor_state() const;
 
-        StateMask trigger_states() const;
+        StateSet trigger_states() const;
         DependencyPolarity polarity() const;
         bool hard() const;
         bool sufficient() const;
@@ -59,7 +59,7 @@ namespace switchboard
     public:
         std::weak_ptr<Provider> provider_;
         SwitchName predecessor_name_;
-        StateMask trigger_states_;
+        StateSet trigger_states_;
         DependencyPolarity polarity_;
         bool hard_;
         bool sufficient_;
