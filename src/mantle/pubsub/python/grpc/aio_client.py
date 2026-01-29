@@ -81,121 +81,78 @@ from collections.abc import Iterator, Sequence
 import asyncio
 
 ### Common Core modules
-from cc.core.decorators import override, doc_inherit
-from cc.core.types import Variant
+from cc.core.decorators import override
 from cc.core.roundrobin import AsyncQueue
-from cc.protobuf.variant import encodeValue, decodeValue
+from cc.core.types import Variant
 from cc.messaging.grpc.client import AsyncMixIn
 
-from ..protobuf import  Filters
-from .client import Client, MessageTuple, SubscriberCallback, Subscription
+### Pub/Sub modules
+from ..protobuf import  MessageTuple, decodePublication
+from .base_client import BaseClient,  Subscription
 
-class AsyncClient (AsyncMixIn, Client):
-    __doc__ = Client.__doc__
 
-    _writer_task = None
-    _reader_task = None
+class AsyncClient (AsyncMixIn, BaseClient):
+    __doc__ = BaseClient.__doc__
 
-    def __init__(
-            self,
-            host                : str = "",
-            wait_for_ready      : bool = True,
-            queue_size          : int = 4096,
-    ):
-        '''
-        Initializer.
+    writer_task = None
 
-        @param host
-            Host (resolvable name or IP address) of Relay server
+    def __init__(self,
+                 host                : str = "",
+                 wait_for_ready      : bool = True,
+                 queue_size          : int = 4096,
+                 ):
 
-        @param wait_for_ready
-            If server is unavailable, keep waiting instead of failing.
-
-        @param queue_size
-            Max. number of publications that `enqueue()` will cache locally if
-            server is unavailable, before discarding.
-        '''
-
-        Client.__init__(self,
-                        host = host,
-                        wait_for_ready = wait_for_ready)
-
+        BaseClient.__init__(**locals())
         self.reader_tasks = set()
 
-    def __del__(self):
-        self._stop_writer()
-
-    @doc_inherit
+    @override
     async def publish(self, topic: str, value: Variant):
-        ### This simply overrides the parent to provide a more descriptive
-        ### method signature.
-        await Client.publish(self, topic, value)
+        await BaseClient.publish(self, topic, value)
 
+    @override
+    def writer_active(self):
+        return self.writer_task and not self.writer_task.done()
 
     @override
     async def listen(self,
                      topics: str|Sequence[str]|None = None,
                      wait_for_ready = True,
                      ) -> Iterator[MessageTuple]:
-        '''
-        Subscribe and listen to message publications from the Pub/Sub Relay.
-
-        @param topics
-            Receive publications only on the specified topics.
-            If omitted, publications on any topic will be recieved.
-
-        @return
-            An iterator over messages published from the relay
-
-        ### Example usage:
-
-        ```
-        $ python3 -m asyncio
-        >>> from cc.platform.pubsub.grpc import AsyncClient
-        >>> client = AsyncClient(RELAY_HOST)
-        >>> async for topic, value_ in client.listen(('my_first_topic', 'my_second_topic')):
-        ...    print(f"{topic=}, {value=}")
-        ```
-        '''
-
-        if isinstance(topics, str):
-            topics = (topics,)
-
-        filters = Filters(topics = topics)
         try:
-            async for msg in self.stub.Subscriber(filters, wait_for_ready = wait_for_ready):
-                yield self.decode_publication(msg)
+            async for msg in BaseClient.listen(**locals()):
+                yield decodePublication(msg)
         except KeyboardInterrupt:
             print("Cancelling subscription")
 
-    def writer_active(self):
-        return self._writer_task and not self._writer_task.done()
-
-    def _start_writer(self):
+    @override
+    def start_writer(self):
         if not self.writer_active():
-            self._write_queue = AsyncQueue(self.queue_size)
-            self._writer_task = asyncio.create_task(
+            self.write_queue = AsyncQueue(self.queue_size)
+            self.writer_task = asyncio.create_task(
                 self._write_worker(),
                 name = "Message Writer")
 
-    def _stop_writer(self):
-        if task := self._writer_task:
-            self._writer_task = None
+    @override
+    def stop_writer(self):
+        if task := self.writer_task:
+            self.writer_task = None
             task.cancel()
 
     async def _write_worker(self):
-        while self._writer_task:
+        while self.writer_task:
             while publication := await self._write_queue.get():
                 await self.stub.Publish(publication)
 
-    def _start_reader(self, subscription: Subscription):
+    @override
+    def start_reader(self, subscription: Subscription):
         task = asyncio.create_task(
             self._read_worker(subscription),
             name = "Message Reader")
         self.reader_tasks.add(task)
         task.add_done_callback(self.reader_tasks.discard)
 
-    def _stop_reader(self, subscription: Subscription):
+    @override
+    def stop_reader(self, subscription: Subscription):
         subscription.callback = None
         if stream := subscription.stream:
             stream.cancel()
@@ -203,6 +160,16 @@ class AsyncClient (AsyncMixIn, Client):
     async def _read_worker(self, subscription: Subscription):
         async for msg in subscription.stream:
             if callback := subscription.callback:
-                result = callback(self.decode_publication(msg))
-                if asyncio.iscoroutine(result):
-                    await result
+                msg = decodePublication(msg)
+                try:
+                    result = callback(msg)
+                    if asyncio.iscoroutine(result):
+                        await result
+                except Exception as e:
+                    self.logger.error(
+                        'Subscription handler %r(%s) failed: [%s] %s' % (
+                            callback.__name__,
+                            msg,
+                            type(e).__name__,
+                            e,
+                        ))
