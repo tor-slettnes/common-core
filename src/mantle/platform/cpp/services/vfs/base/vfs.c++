@@ -38,26 +38,7 @@ namespace vfs
 
     ContextMap get_contexts(bool removable_only, bool open_only)
     {
-        ContextMap contexts = open_only
-                                  ? vfs->get_open_contexts()
-                                  : vfs->get_contexts();
-
-        if (removable_only)
-        {
-            auto it = contexts.begin();
-            while (it != contexts.end())
-            {
-                if (it->second->removable)
-                {
-                    it++;
-                }
-                else
-                {
-                    it = contexts.erase(it);
-                }
-            }
-        }
-        return contexts;
+        return vfs->get_contexts(removable_only, open_only);
     }
 
     ContextMap get_open_context(bool removable)
@@ -65,7 +46,7 @@ namespace vfs
         return get_contexts(removable, true);
     }
 
-    ContextMap getRemovableContexts()
+    ContextMap get_removable_contexts()
     {
         return get_contexts(true);
     }

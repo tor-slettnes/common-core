@@ -3,7 +3,6 @@ Satellite Switchboard implementation that communicates with a Switchboard
 service over gRPC.  This flavor implements Python AsyncIO semantics.
 '''
 
-__all__ = ['Client']
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
@@ -12,7 +11,7 @@ import asyncio
 import sys
 
 ### Common Core modules
-from cc.core.decorators import doc_inherit, override
+from cc.core.decorators import override
 from cc.protobuf.status import encodeException
 from cc.protobuf.variant import PyValueList, encodeValueList
 from cc.messaging.grpc import SignalClient, AsyncMixIn
@@ -27,7 +26,7 @@ from ..protobuf import (
 from ..base.baseboard import SwitchboardBase
 from .aio_remote_switch import AsyncRemoteSwitch
 
-class AsyncClient (SwitchboardBase, AsyncMixIn, SignalClient):
+class AsyncClient (AsyncMixIn, SwitchboardBase, SignalClient):
     '''
     Switchboard abstract base
     '''
@@ -42,7 +41,7 @@ class AsyncClient (SwitchboardBase, AsyncMixIn, SignalClient):
                  project_name: str|None = None,
                  ):
         '''
-        @param host:
+        @param host
             IP address or resolvable host name of platform server
 
         @param product_name
@@ -54,13 +53,13 @@ class AsyncClient (SwitchboardBase, AsyncMixIn, SignalClient):
             corresponding settings files (e.g., `grpc-endpoints-PROJECT.yaml`)
         '''
 
-        SwitchboardBase.__init__(self)
         SignalClient.__init__(self,
                               host = host,
                               wait_for_ready = wait_for_ready,
                               watch_all = watch_all,
                               product_name = product_name,
                               project_name = project_name)
+        SwitchboardBase.__init__(self)
 
         self.init_intercept()
 
@@ -70,7 +69,7 @@ class AsyncClient (SwitchboardBase, AsyncMixIn, SignalClient):
         return AsyncRemoteSwitch(switch_name, self)
 
 
-    @doc_inherit
+    @override
     async def get_or_add_switch(self,
                                 switch_name: str,
                                 initial_value: bool|None = None,
@@ -89,18 +88,18 @@ class AsyncClient (SwitchboardBase, AsyncMixIn, SignalClient):
         return switch
 
 
-    @doc_inherit
+    @override
     async def add_switch(self, switch_name: str) -> bool:
         req = AddSwitchRequest(switch_name = switch_name)
         return (await self.stub.AddSwitch(req)).value
 
-    @doc_inherit
+    @override
     async def remove_switch(self, switch_name: str, propagate: bool = True) -> bool:
         req = RemoveSwitchRequest(switch_name = switch_name,
                                   propagate = propagate)
         return (await self.stub.RemoveSwitch(req)).value
 
-    @doc_inherit
+    @override
     async def import_switches(self,
                               declarations: PyValueList) -> int:
         req = ImportRequest(

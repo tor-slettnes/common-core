@@ -91,7 +91,8 @@ namespace core
     bool SettingsStore::load_from(const fs::path &abspath)
     {
         bool success = false;
-        if (fs::is_directory(abspath))
+        if (!This::settings_suffixes().count(abspath.extension()) &&
+            fs::is_directory(abspath))
         {
             for (auto &pi : fs::directory_iterator(abspath))
             {
@@ -154,6 +155,11 @@ namespace core
         {
             return false;
         }
+    }
+
+    void SettingsStore::save_delta(bool use_temp_file)
+    {
+        this->save(true, use_temp_file);
     }
 
     void SettingsStore::save(bool delta_only,

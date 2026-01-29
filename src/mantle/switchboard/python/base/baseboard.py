@@ -12,6 +12,7 @@ from threading import Lock
 from logging import Logger
 
 ### Core modules
+from cc.core.docbase import DocBase
 from cc.core.logbase import LogBase
 from cc.core.paths import FilePathInput
 from cc.core.settingsstore import SettingsStore
@@ -24,7 +25,7 @@ from ..protobuf import Signal, InterceptorUpdate
 from .switch import Switch
 from .signals import switchboard_signals
 
-class SwitchboardBase (LogBase):
+class SwitchboardBase (DocBase, LogBase):
     '''
     Switchboard abstract base
     '''
@@ -125,7 +126,7 @@ class SwitchboardBase (LogBase):
         returned `Switch` object (such as `set_specification()` and
         `set_target()`) to populate those.
 
-        @param switch_name:
+        @param switch_name
             Name for the new switch.
 
         @returns
@@ -140,10 +141,10 @@ class SwitchboardBase (LogBase):
         '''
         Remove an existing switch.
 
-        @param switch_name:
+        @param switch_name
             Name of switch to remove.
 
-        @param propagate:
+        @param propagate
             Automatically update the state of successors (downstream dependents)
             once this switch has been removed.
 

@@ -296,8 +296,9 @@ namespace core::str
             std::optional<char> escape;
             char quote = input.front();
             out.reserve(input.size() - 2);
-            for (char c : input)
+            for (auto it = input.begin()+1; it != input.end()-1; it++)
             {
+                char c = *it;
                 if (escape && (c != quote))
                 {
                     escape.reset();

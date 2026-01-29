@@ -107,6 +107,11 @@ namespace core::status
                 (this->domain() == Domain::NONE));
     }
 
+    Error::operator bool() const noexcept
+    {
+        return !this->empty();
+    }
+
     std::string Error::class_name() const noexcept
     {
         return "Error";

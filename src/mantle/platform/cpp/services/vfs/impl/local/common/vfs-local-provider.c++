@@ -39,25 +39,30 @@ namespace vfs::local
         this->loadContexts();
     }
 
-    ContextMap LocalProvider::get_contexts() const
+    ContextMap LocalProvider::get_contexts(
+        bool removable_only,
+        bool open_only) const
     {
-        return this->contexts;
-    }
-
-    ContextMap LocalProvider::get_open_contexts() const
-    {
-        ContextMap cmap;
-        for (const auto &[key, ref] : this->contexts)
+        if (!removable_only && !open_only)
         {
-            if (auto cxt = std::dynamic_pointer_cast<LocalContext>(ref))
+            return this->contexts;
+        }
+        else
+        {
+            ContextMap cmap;
+            for (const auto &[key, ref] : this->contexts)
             {
-                if (cxt->refcount > 0)
+                if (auto cxt = std::dynamic_pointer_cast<LocalContext>(ref))
                 {
-                    cmap[key] = cxt;
+                    if ((!removable_only || cxt->removable) &&
+                        (!open_only || cxt->refcount > 0))
+                    {
+                        cmap.insert_or_assign(key, cxt);
+                    }
                 }
             }
+            return cmap;
         }
-        return cmap;
     }
 
     Context::ptr LocalProvider::get_context(
@@ -223,7 +228,7 @@ namespace vfs::local
 
         for (const Location &srcloc : srclocs)
         {
-            copy2(srcloc, tgtloc, flags);
+            this->copy2(srcloc, tgtloc, flags);
         }
     }
 
@@ -383,18 +388,31 @@ namespace vfs::local
             localtarget /= localsource.filename();
         }
 
-        fs::copy_options options = fs::copy_options::recursive;
+        fs::copy_options options;
+
+        if (fs::is_directory(localsource))
+        {
+            options |= fs::copy_options::recursive;
+        }
+
         if (flags.update)
+        {
             options |= fs::copy_options::update_existing;
+        }
         else
+        {
             options |= fs::copy_options::overwrite_existing;
+        }
 
         if (!flags.dereference)
+        {
             options |= fs::copy_options::copy_symlinks;
+        }
 
         if (flags.force)
         {
             if (fs::exists(localtarget) &&
+                fs::exists(localsource) &&
                 (!flags.merge ||
                  !fs::is_directory(localtarget) ||
                  !fs::is_directory(localsource)))
@@ -418,14 +436,10 @@ namespace vfs::local
         }
         catch (const fs::filesystem_error &e)
         {
-            logf_info("Copy error; localsource %r exists? %b",
-                      localsource,
-                      fs::exists(localsource));
             throw;
         }
         catch (const std::exception &e)
         {
-            logf_info("Copy unknown error: %s", e);
             throw;
         }
 
@@ -470,7 +484,7 @@ namespace vfs::local
         {
             AttributeStore srcstore(localsource);
             core::types::KeyValueMap attributes = srcstore.get_attributes();
-            srcstore.clear_attributes({}, true);
+            srcstore.clear_attributes();
 
             AttributeStore tgtstore(localtarget);
             tgtstore.set_attributes(attributes, true);

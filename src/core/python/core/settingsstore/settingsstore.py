@@ -148,7 +148,7 @@ class SettingsStore (dict):
         merged in recursively, with precedence given to those already in the
         store.  To replace existing values, first invoke `.clear()`.
 
-        @param filename:
+        @param filename
             Absolute or relative path to a JSON, YAML or INI file from which to
             load additional settings.  See `__init__()` for details.
 
@@ -190,7 +190,7 @@ class SettingsStore (dict):
         '''
         Merge in settings from the specified file.
 
-        @param filepath:
+        @param filepath
             Settings file to merge. The name may be absolute or relative,
             see `load_settings()` for details.
         '''

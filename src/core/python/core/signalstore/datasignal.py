@@ -70,7 +70,7 @@ class DataSignal:
         '''
         Disconnect a simple handler from this signal.
 
-        @param handle:
+        @param handle
            Signal handler
 
         Returns True if the handler was found and removed; False otherwise.

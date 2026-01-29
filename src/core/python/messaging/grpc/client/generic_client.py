@@ -104,6 +104,13 @@ class GenericClient (Base):
 
         #self.channel.subscribe(self._channelChange)
 
+    def __repr__(self):
+        return "%s.%s(%r)"%(
+            self.__module__,
+            type(self).__name__,
+            self.host,
+        )
+
     @property
     def host(self) -> str:
         return self._joinAddress(self.service_address)

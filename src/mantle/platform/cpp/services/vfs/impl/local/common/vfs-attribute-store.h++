@@ -46,13 +46,12 @@ namespace vfs::local
                               bool save = true);
 
     protected:
-        void save(bool delta = true,
+        void save(bool delta = false,
                   bool use_temp_file = true) override;
         void prune();
 
     private:
         fs::file_type filetype;
         fs::path filepath;
-        bool loaded;
     };
 }  // namespace vfs::local

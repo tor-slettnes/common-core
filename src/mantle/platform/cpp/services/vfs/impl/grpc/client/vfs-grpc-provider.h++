@@ -29,9 +29,9 @@ namespace vfs::grpc
         bool get_use_cached() const;
 
     public:
-        ContextMap get_contexts() const override;
-
-        ContextMap get_open_contexts() const override;
+        ContextMap get_contexts(
+            bool removable_only = false,
+            bool open_only = false) const override;
 
         Context::ptr get_context(
             const std::string &name,

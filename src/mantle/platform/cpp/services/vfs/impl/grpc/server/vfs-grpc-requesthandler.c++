@@ -28,34 +28,16 @@ namespace vfs::grpc
 
     ::grpc::Status RequestHandler::GetContexts(
         ::grpc::ServerContext *cxt,
-        const cc::protobuf::Empty *,
+        const vfs::protobuf::GetContextsRequest *request,
         vfs::protobuf::ContextMap *response)
     {
         try
         {
-            cc::protobuf::encode(
-                this->provider->get_contexts(),
-                response);
+            const ContextMap &contexts = this->provider->get_contexts(
+                request->removable_only(),
+                request->open_only());
 
-            return ::grpc::Status::OK;
-        }
-        catch (...)
-        {
-            return this->failure(std::current_exception(), cxt->peer());
-        }
-    }
-
-    ::grpc::Status RequestHandler::GetOpenContexts(
-        ::grpc::ServerContext *cxt,
-        const cc::protobuf::Empty *,
-        vfs::protobuf::ContextMap *response)
-    {
-        try
-        {
-            cc::protobuf::encode(
-                this->provider->get_open_contexts(),
-                response);
-
+            cc::protobuf::encode(contexts, response);
             return ::grpc::Status::OK;
         }
         catch (...)

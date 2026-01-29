@@ -13,10 +13,10 @@ from .version_pb2 import Version, ComponentVersions
 
 _rx_version = re.compile(r"(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:-(\d+))?.*")
 
-def version(major: int,
-            minor: int = 0,
-            patch: int = 0,
-            printable_version: str|None = None) -> Version:
+def create_version(major: int,
+                   minor: int = 0,
+                   patch: int = 0,
+                   printable_version: str|None = None) -> Version:
     '''
     Return a new ProtoBuf Version message with the specified values
     '''
@@ -27,18 +27,18 @@ def version(major: int,
                    printable_version=printable_version)
 
 
-def to_string(version: Version) -> str:
+def version_to_string(version: Version) -> str:
     '''
     Return a string representation of the provided ProtoBuf Version message
     '''
 
-    if version.printed_version:
-        return version.printed_version
+    if version.printable_version:
+        return version.printable_version
     else:
         return "%d.%d.%d"%(version.major, version.minor, version.patch)
 
 
-def from_string(string: str) -> Version:
+def version_from_string(string: str) -> Version:
     '''
     Parse version string
     '''
@@ -50,9 +50,9 @@ def from_string(string: str) -> Version:
     return version
 
 
-def is_compatible(client_version : Version,
-                  server_version : Version,
-                  strict: bool = True) -> bool:
+def is_compatible_version(client_version : Version,
+                          server_version : Version,
+                          strict: bool = True) -> bool:
 
     '''
     Indicate whether the provided client and server versions expected to be

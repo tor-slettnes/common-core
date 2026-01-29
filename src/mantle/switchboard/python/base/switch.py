@@ -12,6 +12,7 @@ from collections.abc import Sequence, Mapping, Callable
 from abc import abstractmethod
 
 ### Core modules
+from cc.core.docbase import DocBase
 from cc.core.invocation import safe_invoke
 from cc.protobuf.status import Error
 from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
@@ -29,7 +30,7 @@ from ..protobuf import (
 InterceptorName = str
 InterceptorMethod = Callable[['Switch', 'InterceptorName', 'State'], None]
 
-class Switch:
+class Switch (DocBase):
     '''
     Representation of a binary runtime conditition. (e.g. "Door is open",
     "Temperature control subsystem is ready", "Connected to the Internet").

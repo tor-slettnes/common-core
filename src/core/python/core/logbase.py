@@ -2,9 +2,7 @@
 logbase.py - Mix-in class to initialize logging
 '''
 
-import inspect
 import logging
-import sys
 from .settingsstore import SettingsStore
 
 
@@ -18,7 +16,6 @@ def init_logging(threshold: int = logging.INFO,
                  format: str = DEFAULT_FORMAT,
                  force: bool = True):
     logging.basicConfig(level=threshold, format=format, force=force)
-
 
 
 class LogBase:

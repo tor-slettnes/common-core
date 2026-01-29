@@ -42,9 +42,9 @@ class API (LogBase):
         '''
         Say hello to anyone who might be listening.
 
-        @param text:
+        @param text
             What we're telling our listeners
-        @param kwargs:
+        @param kwargs
             Arbitrary attributes included in greeting
 
         @note
@@ -67,7 +67,7 @@ class API (LogBase):
         Issue a greeting to anyone who may be listening.  For interactive
         use, the `hello()` wrapper method may be more convenient.
 
-        @param greeting:
+        @param greeting
             A greeting for our listeners.
         '''
 
@@ -103,7 +103,7 @@ class API (LogBase):
         '''
         Register a callback to be invoked whenever a greeting is received
 
-        @param callback:
+        @param callback
             Callback method, which will receive `cc.protobuf.demo.Signal()`
             messages containing the greeting as its sole argument.
         '''
@@ -122,7 +122,7 @@ class API (LogBase):
         Register a callback to be invoked whenver the time updated
         (1x/second)
 
-        @param callback:
+        @param callback
             Callback method, which will receive the time data as argument.
         '''
         demo_signals.connect_signal_data('signal_time', callback)

@@ -367,7 +367,7 @@ namespace core::exception
                         {"path1", types::Value(e.path1().string())},
                         {"path2", types::Value(e.path2().string())},
                     }),
-                fs::filesystem_error(e),
+                e,
                 TYPE_NAME_BASE(This))
     {
     }

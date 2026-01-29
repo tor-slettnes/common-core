@@ -36,12 +36,7 @@ namespace vfs::grpc
 
         ::grpc::Status GetContexts(
             ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
-            vfs::protobuf::ContextMap* response) override;
-
-        ::grpc::Status GetOpenContexts(
-            ::grpc::ServerContext* context,
-            const ::google::protobuf::Empty* request,
+            const vfs::protobuf::GetContextsRequest* request,
             vfs::protobuf::ContextMap* response) override;
 
         ::grpc::Status GetContextSpec(

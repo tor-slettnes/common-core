@@ -25,13 +25,13 @@ class RESTClient (HTTPClient):
         '''
         AsyncIO coroutine wrapper for `get_json()`
 
-        @param rel_url:
+        @param rel_url
             REST endpoint URL relative to the `base_url` passed to `__init__()`.
 
-        @param kwargs:
+        @param kwargs
             Request arguments, used to construct the HTTP query
 
-        @param headers:
+        @param headers
             HTTP request headers
 
         @returns
@@ -43,13 +43,13 @@ class RESTClient (HTTPClient):
         '''
         Request a JSON object from a REST-enabled web service.
 
-        @param rel_url:
+        @param rel_url
             REST endpoint URL relative to the `base_url` passed to `__init__()`.
 
-        @param kwargs:
+        @param kwargs
             Request arguments, used to construct the HTTP query
 
-        @param headers:
+        @param headers
             HTTP request headers
 
         @returns

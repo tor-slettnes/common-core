@@ -6,12 +6,12 @@
 #===============================================================================
 
 ### Modules within package
-from .sysconfig.grpc.client import SignalClient as SysConfigClient
-from .netconfig.grpc.client import SignalClient as NetConfigClient
-from .vfs.grpc.client import SignalClient as VirtualFileSystemClient
-from .upgrade.grpc.client import SignalClient as UpgradeClient
-from .multilogger.grpc.client import Client as MultiLoggerClient
-from .switchboard.grpc.client import Client as SwitchboardClient
+from .sysconfig.grpc import Client as SysConfigClient
+from .netconfig.grpc import Client as NetConfigClient
+from .vfs.grpc import Client as VirtualFileSystemClient
+from .upgrade.grpc import Client as UpgradeClient
+from .switchboard.grpc import Client as SwitchboardClient
+from .multilogger.grpc import Client as MultiLoggerClient
 from .pubsub.grpc import Client as PubSubClient
 
 import cc.core
@@ -77,19 +77,22 @@ def legend():
     '''
     Interactive Service Control.  Subsystems loaded:
 
-        pubsub       - Pub/Sub `Relay` gRPC service client
-        multilogger  - `MultiLogger` gRPC service client
-        switchboard  - `Switchboard` gRPC service client
-        sysconfig    - `SysConfig` gRPC service client
-        netconfig    - `NetConfig` gRPC service client
-        vfs          - `VirtualFileSystem` gRPC service client
-        upgrade      - `Upgrade` gRPC service client
+      pubsub       - `cc.platform.pubsub.grpc.Relay` client
+      multilogger  - `cc.platform.multilogger.grpc.MultiLogger` client
+      switchboard  - `cc.platform.switchboard.grpc.Switchboard` client
+      sysconfig    - `cc.platform.sysconfig.grpc.SysConfig` client
+      netconfig    - `cc.platform.netconfig.grpc.NetConfig` client
+      vfs          - `cc.platform.vfs.grpc.VirtualFileSystem` client
+      upgrade      - `cc.platform.upgrade.grpc.Upgrade` service client
 
-    Generated ProtoBuf data types are generally available in various `protobuf`
-    namespaces, e.g.:
+    Generated ProtoBuf data types are available in various namespaces, e.g.:
 
-      - cc.protobuf.*                - Common data types
-      - cc.platform.SERVICE.protobuf - Data types for each SERVICE listed above
+      cc.protobuf.*          - Common ProtoBuf types
+      cc.platform.*.protobuf - ProtoBuf types for each service above
+
+    Finally:
+
+      cc.core.*    - Miscellaneous common utility methods and types
 
     Use 'help(component)' to inspect each of the above components or namespaces
     '''

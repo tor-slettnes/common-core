@@ -25,10 +25,6 @@ namespace upgrade
         // Explicit scan for available upgrade packages in the specified package
         // source if provided, otherwise in the preconfigured/default locations.
         //
-        // This call returns immediately, without waiting for the results of the
-        // scan.  To monitor progress and results of the scan connect to
-        // `signal_scan_progress` and `signal_upgrade_available`, respectively.
-        //
         // This call is not required for ongoing upgrade availability notifications.
         // By default, removable devices (e.g. USB drives) are scanned on insertion,
         // and online checks are performed at regular intervals if an Internet

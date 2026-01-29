@@ -2,7 +2,6 @@
 Switch controlled via a remote gRPC service
 '''
 
-__all__ = ['RemoteSwitch']
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
@@ -10,7 +9,7 @@ from collections.abc import Sequence, Mapping
 from typing import Optional
 from weakref import ref
 
-from cc.core.decorators import doc_inherit
+from cc.core.decorators import override
 from cc.protobuf.status import Error
 from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
 
@@ -39,7 +38,7 @@ class RemoteSwitch (Switch):
         self.stub = client.stub
         self.client = ref(client)
 
-    @doc_inherit
+    @override
     def set_specification(self,
                           specification: Specification,
                           replace_aliases: bool = False,
@@ -63,7 +62,7 @@ class RemoteSwitch (Switch):
         return self.stub.SetSpecification(req).value
 
 
-    @doc_inherit
+    @override
     def add_dependency(self,
                        predecessor_name: str,
                        trigger_states: StateSet = State.SETTLED,
@@ -88,7 +87,7 @@ class RemoteSwitch (Switch):
         return self.stub.AddDependency(req).value
 
 
-    @doc_inherit
+    @override
     def remove_dependency(self,
                           predecessor_name: str,
                           reevaluate: bool = True,
@@ -102,7 +101,7 @@ class RemoteSwitch (Switch):
         return self.stub.RemoveDependency(req).value
 
 
-    @doc_inherit
+    @override
     def add_interceptor(self,
                         interceptor_name: str,
                         state_transitions: StateSet,
@@ -143,7 +142,7 @@ class RemoteSwitch (Switch):
         return is_new
 
 
-    @doc_inherit
+    @override
     def remove_interceptor(self,
                            interceptor_name: str,
                            ) -> bool:
@@ -159,7 +158,7 @@ class RemoteSwitch (Switch):
         return Switch.remove_interceptor(self, interceptor_name)
 
 
-    @doc_inherit
+    @override
     def invoke_interceptor(self,
                            interceptor_name : str,
                            state : Optional[int] = None
@@ -174,14 +173,14 @@ class RemoteSwitch (Switch):
         return result.error
 
 
-    @doc_inherit
+    @override
     def on_intercept(self,
                      interceptor_name : str,
                      state : State):
         interceptor = self.interceptor_methods[interceptor_name]
         interceptor(self, interceptor_name, state)
 
-    @doc_inherit
+    @override
     def set_target(self,
                    target_state: Optional[State] = None,
                    error: Optional[Error] = None,
@@ -208,7 +207,7 @@ class RemoteSwitch (Switch):
         return self.stub.SetTarget(req).updated
 
 
-    @doc_inherit
+    @override
     def set_attributes(self,
                        attributes: Optional[PyValueDict] = None,
                        clear_existing: bool = False):
@@ -221,7 +220,7 @@ class RemoteSwitch (Switch):
         return self.stub.SetAttributes(req).updated
 
 
-    @doc_inherit
+    @override
     def get_culprits(self,
                      expected_position: bool = True) -> Mapping[str, Status]:
 

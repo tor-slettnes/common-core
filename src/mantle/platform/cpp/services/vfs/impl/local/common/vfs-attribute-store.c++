@@ -18,7 +18,7 @@ namespace vfs::local
           filetype(this->file_type(path, type_hint)),
           filepath(path)
     {
-        this->loaded = this->load_from_file(this->path(path));
+        this->load(this->path(path));
     }
 
     fs::file_type AttributeStore::file_type(const fs::path &path,
@@ -26,7 +26,14 @@ namespace vfs::local
     {
         if (hint == fs::file_type::none)
         {
-            return fs::status(path).type();
+            try
+            {
+                return fs::status(path).type();
+            }
+            catch (const fs::filesystem_error &e)
+            {
+                return fs::file_type::none;
+            }
         }
         else
         {
@@ -118,13 +125,11 @@ namespace vfs::local
         if (!this->empty())
         {
             Super::save(delta, use_temp_file);
-            this->loaded = true;
         }
-        else if (this->loaded)
+        else if (!this->filepaths().empty())
         {
             std::error_code ec;
-            fs::remove(this->filename(), ec);
-            this->loaded = false;
+            fs::remove(this->filepaths().front(), ec);
         }
     }
 
@@ -143,6 +148,13 @@ namespace vfs::local
         for (auto pi : fs::directory_iterator(this->filename().parent_path()))
         {
             extraneous_names.erase(pi.path().filename().string());
+        }
+
+        if (!extraneous_names.empty())
+        {
+            logf_debug("AttributeStore(%s) pruning: %s",
+                       this->filepath,
+                       extraneous_names);
         }
 
         for (const fs::path &extraneous_name : extraneous_names)

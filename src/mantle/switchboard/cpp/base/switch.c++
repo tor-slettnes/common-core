@@ -438,7 +438,9 @@ namespace switchboard
         uint32_t undetermined = NEUTRAL;
 
         auto msg = standard_log_message(core::status::Level::TRACE);
-        msg->format("Switch [%r]: Determining auto state:\n", this->name());
+        msg->format(
+            "Switch [%r]: Determining auto state:\n",
+            this->name());
 
         for (const auto &[name, dep] : this->dependencies())
         {
@@ -473,12 +475,13 @@ namespace switchboard
                 break;
             }
 
-            msg->format("     %r: satisfied=%02X, unsatisified=%02X, failed=%02X, undetermined=%02X\n",
-                        *dep,
-                        satisfied,
-                        unsatisfied,
-                        failed,
-                        undetermined);
+            msg->format(
+                "     %r: satisfied=%02X, unsatisified=%02X, failed=%02X, undetermined=%02X\n",
+                *dep,
+                satisfied,
+                unsatisfied,
+                failed,
+                undetermined);
         }
 
         State state = failed & STRONG       ? STATE_FAILED
@@ -532,7 +535,7 @@ namespace switchboard
         ExceptionHandling on_error)
     {
         return this->set_target(
-            error ? STATE_FAILED : this->target_state(this->active()),
+            (error && *error) ? STATE_FAILED : this->target_state(this->active()),
             error,
             attributes,
             clear_existing,

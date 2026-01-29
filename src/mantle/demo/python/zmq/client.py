@@ -71,7 +71,7 @@ class Client (API, ProtoBufClient):
         '''
         Send a greeting to the server.
 
-        @param greeting:
+        @param greeting
             A greeting object.
 
         See also `hello()` if you want to pass in just the text of the greeting

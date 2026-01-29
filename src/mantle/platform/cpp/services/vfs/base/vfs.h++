@@ -30,7 +30,7 @@ namespace vfs
     ContextMap get_contexts(bool removable_only = false, bool open_only = false);
 
     /// Get a context reference without incrementing reference counter.
-    ContextMap getRemovableContexts();
+    ContextMap get_removable_contexts();
 
     /// Get a context reference without incrementing reference counter.
     ContextMap get_open_context(bool removable = false);

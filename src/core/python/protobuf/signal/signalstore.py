@@ -255,11 +255,11 @@ class SignalStore:
         Connect a callback handler (slot) to receive emitted `Signal`
         messages.
 
-        @param name:
+        @param name
             Signal name, corresponding to a field within a `oneof`
             block of the signal message.
 
-        @param slot:
+        @param slot
             A callable handler (e.g. a function) that accepts the Signal
             instance as its first and only required argument.
 
@@ -287,10 +287,10 @@ class SignalStore:
         '''
         Disconnect a simple handler from the specified signal.
 
-        @param name:
+        @param name
            Signal name
 
-        @param slot:
+        @param slot
            Signal handler. If not provided, remove all handlers from the
            specified signal slot.
 
@@ -320,10 +320,10 @@ class SignalStore:
         needs the `mapping_action` and `mapping_key` fields from the original
         `Signal` container).
 
-        @param name:
+        @param name
             Signal name, corresponding to a field of the Signal message.
 
-        @param slot:
+        @param slot
             A callable handler (e.g. a function) that accepts the extracted
             signal data as its first and only required argument.
         '''
@@ -369,7 +369,7 @@ class SignalStore:
         @param name Signal name, corresponding to a field of the Signal
             message.
 
-        @param slot:
+        @param slot
             A callable handler (e.g. a function) that accepts the
             extracted signal data as its first and only required argument.
         '''

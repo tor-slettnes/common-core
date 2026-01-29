@@ -172,9 +172,10 @@ namespace vfs
     void Location::to_stream(std::ostream &stream) const
     {
         core::str::format(stream,
-                          "Location(\"%s:%s\", modify=%b)",
+                          "Location(\"%s:%s\", localpath=%s, modify=%b)",
                           this->context->name,
                           this->relpath.string(),
+                          this->localPath(),
                           this->modify);
     }
 

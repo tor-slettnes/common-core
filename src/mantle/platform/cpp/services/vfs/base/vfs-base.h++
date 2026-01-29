@@ -62,9 +62,9 @@ namespace vfs
 
 
     public:
-        virtual ContextMap get_contexts() const = 0;
-
-        virtual ContextMap get_open_contexts() const = 0;
+        virtual ContextMap get_contexts(
+            bool removable_only=false,
+            bool open_only=false) const = 0;
 
         virtual Context::ptr get_context(
             const std::string &name,

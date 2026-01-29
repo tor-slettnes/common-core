@@ -53,31 +53,24 @@ namespace vfs::grpc
         return this->use_cached;
     }
 
-    ContextMap ClientProvider::get_contexts() const
+    ContextMap ClientProvider::get_contexts(
+        bool removable_only,
+        bool open_only) const
     {
-        if (this->get_use_cached())
+        if (this->get_use_cached() && !removable_only && !open_only)
         {
             return vfs::signal_context.get_cached();
         }
         else
         {
-            return this->context_map(
-                this->client->call_check(
-                    &Client::Stub::GetContexts));
-        }
-    }
+            ::cc::platform::vfs::protobuf::GetContextsRequest request;
+            request.set_removable_only(removable_only);
+            request.set_open_only(open_only);
 
-    ContextMap ClientProvider::get_open_contexts() const
-    {
-        if (this->get_use_cached())
-        {
-            return vfs::signal_context_in_use.get_cached();
-        }
-        else
-        {
             return this->context_map(
                 this->client->call_check(
-                    &Client::Stub::GetOpenContexts));
+                    &Client::Stub::GetContexts,
+                    request));
         }
     }
 

@@ -36,55 +36,84 @@ namespace vfs::local
         void initialize() override;
 
     public:
-        ContextMap get_contexts() const override;
-        ContextMap get_open_contexts() const override;
-        Context::ptr get_context(const std::string &name, bool required) const override;
-        Context::ptr open_context(const std::string &name, bool required) override;
-        void close_context(const std::string &name, bool required) override;
-        void close_context(const Context::ptr &cxt) override;
+        ContextMap get_contexts(
+            bool removable_only = false,
+            bool open_only = false) const override;
 
-        VolumeInfo get_volume_info(const Path &vpath,
-                                   const OperationFlags &flags) const override;
+        Context::ptr get_context(
+            const std::string &name,
+            bool required) const override;
 
-        FileInfo get_file_info(const Path &vpath,
-                               const OperationFlags &flags) const override;
+        Context::ptr open_context(
+            const std::string &name,
+            bool required) override;
 
-        Directory get_directory(const Path &vpath,
-                                const OperationFlags &flags) const override;
+        void close_context(
+            const std::string &name,
+            bool required) override;
 
-        Directory locate(const Path &vpath,
-                         const core::types::PathList &filename_masks,
-                         const core::types::TaggedValueList &attribute_filters,
-                         const OperationFlags &flags) const override;
+        void close_context(
+            const Context::ptr &cxt) override;
 
-        void copy(const Paths &sources,
-                  const Path &target,
-                  const OperationFlags &flags) const override;
+        VolumeInfo get_volume_info(
+            const Path &vpath,
+            const OperationFlags &flags) const override;
 
-        void move(const Paths &sources,
-                  const Path &target,
-                  const OperationFlags &flags) const override;
+        FileInfo get_file_info(
+            const Path &vpath,
+            const OperationFlags &flags) const override;
 
-        void remove(const Paths &vpaths,
-                    const OperationFlags &flags) const override;
+        Directory get_directory(
+            const Path &vpath,
+            const OperationFlags &flags) const override;
 
-        void create_folder(const Path &vpath,
-                           const OperationFlags &flags) const override;
+        Directory locate(
+            const Path &vpath,
+            const core::types::PathList &filename_masks,
+            const core::types::TaggedValueList &attribute_filters,
+            const OperationFlags &flags) const override;
 
-        UniqueReader read_file(const Path &vpath) const override;
+        void copy(
+            const Paths &sources,
+            const Path &target,
+            const OperationFlags &flags) const override;
 
-        UniqueWriter write_file(const Path &vpath) const override;
+        void move(
+            const Paths &sources,
+            const Path &target,
+            const OperationFlags &flags) const override;
 
-        core::types::KeyValueMap get_attributes(const Path &vpath) const override;
+        void remove(
+            const Paths &vpaths,
+            const OperationFlags &flags) const override;
 
-        void set_attributes(const Path &vpath,
-                            const core::types::KeyValueMap &attributes) const override;
+        void create_folder(
+            const Path &vpath,
+            const OperationFlags &flags) const override;
 
-        void clear_attributes(const Path &vpath) const override;
+        UniqueReader read_file(
+            const Path &vpath) const override;
+
+        UniqueWriter write_file(
+            const Path &vpath) const override;
+
+        core::types::KeyValueMap get_attributes(
+            const Path &vpath) const override;
+
+        void set_attributes(
+            const Path &vpath,
+            const core::types::KeyValueMap &attributes) const override;
+
+        void clear_attributes(
+            const Path &vpath) const override;
 
     protected:
-        void addContext(const std::string &name, Context::ptr cxt);
-        bool removeContext(const std::string &name);
+        void addContext(
+            const std::string &name,
+            Context::ptr cxt);
+
+        bool removeContext(
+            const std::string &name);
 
     private:
         void loadContexts(void);

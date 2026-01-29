@@ -123,7 +123,6 @@ class CachingSignalStore (SignalStore):
             return False
 
 
-
     @override
     def emit_mapping(self,
                      signal_name  : str,
@@ -218,12 +217,12 @@ class CachingSignalStore (SignalStore):
 
     def get_cached_map(self,
                        signal_name: str,
-                       wait_complete: bool = True,
+                       wait_complete: bool = False,
                        ) -> dict[str, Message]:
         '''
         Get a specific signal map from the local cache.
 
-        @param signal_name:
+        @param signal_name
             Signal name, corresponding to a field of the Signal message
             streamed from the server's `watch()` method.
 
@@ -246,7 +245,7 @@ class CachingSignalStore (SignalStore):
     def get_cached_signal(self,
                           signal_name: str,
                           mapping_key: str|None = None,
-                          wait_complete: bool = True,
+                          wait_complete: bool = False,
                           fallback: Message|None = None,
                           ) -> Message:
         '''
@@ -288,7 +287,7 @@ class CachingSignalStore (SignalStore):
 
     def get_cached_signal_messages(self,
                                    signal_name: str,
-                                   wait_complete: bool = True,
+                                   wait_complete: bool = False,
                                    ) -> dict[str, SignalMessage]:
         '''
         Get a specific signal map from the local cache.

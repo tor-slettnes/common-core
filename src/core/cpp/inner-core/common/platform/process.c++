@@ -280,6 +280,7 @@ namespace core::platform
     {
         FileDescriptor fdin, fdout, fderr;
         PID pid = this->invoke_async_pipe(argv, cwd, &fdin, &fdout, &fderr);
+        logf_trace("Invoking: %s -> PID %s", argv, pid);
         return this->pipe_capture(pid, fdin, fdout, fderr, instream);
     }
 
@@ -299,7 +300,7 @@ namespace core::platform
     {
         // std::ostringstream out, err;
         InvocationResult result = this->invoke_capture(argv, cwd, instream);
-
+        logf_trace("Invocation %s result: %s", argv, result);
         if (!result.status->success())
         {
             throw core::exception::InvocationError(

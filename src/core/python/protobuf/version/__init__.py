@@ -5,4 +5,8 @@ Package `cc.protobuf.version` - Structure version container
 ### Generated from `.../protos/cc/protobuf/version/version.proto`
 from .version_pb2 import Version, ComponentVersions
 
-from .version import version, to_string, from_string, is_compatible
+from .version import (
+    create_version,
+    version_to_string, version_from_string,
+    is_compatible_version,
+)

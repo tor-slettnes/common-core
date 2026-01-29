@@ -193,7 +193,11 @@ def encodeTaggedValue(input : PyTaggedValue,
         output.CopyFrom(input)
 
     else:
-        tag, value = input
+        try:
+            tag, value = input
+        except (ValueError, TypeError):
+            tag, value = None, input
+
         output.tag = tag
         encodeValue(value, output.value)
 
@@ -225,7 +229,7 @@ def encodeTaggedValueList(input: PyTaggedValueList|PyValueDict,
     if output is None:
         output = TaggedValueList()
 
-    if isinstance(input, TaggedvalueList):
+    if isinstance(input, TaggedValueList):
         output.CopyFrom(input)
 
     elif isinstance(input, Sequence):

@@ -9,13 +9,14 @@ __author__ = 'Tor Slettnes'
 
 import sys, re, socket, argparse
 
-from ...core.settingsstore import SettingsStore
-from ...core.logbase import LogBase
+from cc.core.docbase import DocBase
+from cc.core.logbase import LogBase
+from cc.core.settingsstore import SettingsStore
 
 #===============================================================================
 # Base class
 
-class Endpoint (LogBase):
+class Endpoint (DocBase, LogBase):
     # `messaging_flavor` should be overwritten by direct subclasses to indicate
     # message platform, e.g., `gRPC`, `DDS`, `ZMQ`, ...
     messaging_flavor = None
@@ -92,7 +93,27 @@ class Endpoint (LogBase):
 
 
     def __repr__ (self):
-        return "%s %s %s"%(self.messaging_flavor, self.channel_name, self.endpoint_type)
+        return ".".join((self.__module__, type(self).__name__)) + "()"
+
+    @classmethod
+    def inherit_docstrings(cls, subclass):
+        '''
+        Helper method to ensure docstrings are inherited when creating subclasses.
+
+        Example usage:
+
+        ```python
+        class MyEndpointBase (Endpoint):
+            def __init_subclass__(subclass, **kwargs):
+                super().__init_subclass__(**kwargs)
+                MyEndpointBase.inherit_docstrings(subclass)
+        ```
+        '''
+        for name, method in subclass.__dict__.items():
+            if callable(method) and method.__doc__ is None:
+                if parent_method := cls.__dict__.get(name):
+                    if callable(parent_method):
+                        method.__doc__ = parent_method.__doc__
 
     def initialize(self):
         self.initialized = True

@@ -154,8 +154,18 @@ namespace core
         /// settings were originally loaded from `my-settings.json` (in either
         /// of these folders or merged in from both), then the updated settings
         /// will be saved in `"/etc/local-settings/my-settings.json"`.
-        virtual void save(bool delta_only = true,
+        virtual void save(bool delta_only = false,
                           bool use_temp_file = true);
+
+
+        /// @brief
+        ///     Save the delta between default and current current settings to
+        ///     the default .json file for this store, relative to the first
+        ///     directory in CONFIGPATH.
+        /// @note
+        ///     Identical to `save(true, use_temp_file)`
+
+        void save_delta(bool use_temp_file = true);
 
         /// @brief
         ///     Save current settings to `filename[.json]`.
@@ -185,7 +195,7 @@ namespace core
         /// If the name does not include a suffix, ".json" is appended.
         ///
         void save_to(const fs::path &filename,
-                     bool delta_only = true,
+                     bool delta_only = false,
                      bool use_temp_file = true) const;
 
         fs::path filename() const;

@@ -172,8 +172,7 @@ namespace switchboard
     {
         if (target_state == STATE_UNSET)
         {
-            target_state = error ? STATE_FAILED
-                                 : this->auto_state();
+            target_state = (error && *error) ? STATE_FAILED : this->auto_state();
         }
 
         if (reevaluate || (this->state() != target_state))

@@ -2,7 +2,6 @@
 Switch controlled via a remote gRPC service - AsyncIO flavor.
 '''
 
-__all__ = ['RemoteSwitch']
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
@@ -12,7 +11,7 @@ from collections.abc import Sequence, Mapping
 from weakref import ref
 import asyncio
 
-from cc.core.decorators import doc_inherit
+from cc.core.decorators import override
 from cc.protobuf.status import Error
 from cc.protobuf.variant import PyValueDict, encodeKeyValueMap
 
@@ -40,7 +39,7 @@ class AsyncRemoteSwitch (Switch):
         self.stub = client.stub
         self.client = ref(client)
 
-    @doc_inherit
+    @override
     async def set_specification(self,
                                 specification: Specification,
                                 replace_aliases: bool = False,
@@ -64,7 +63,7 @@ class AsyncRemoteSwitch (Switch):
         return (await self.stub.SetSpecification(req)).value
 
 
-    @doc_inherit
+    @override
     async def add_dependency(self,
                              predecessor_name: str,
                              trigger_states: StateSet = State.SETTLED,
@@ -89,7 +88,7 @@ class AsyncRemoteSwitch (Switch):
         return (await self.stub.AddDependency(req)).value
 
 
-    @doc_inherit
+    @override
     async def remove_dependency(self,
                                 predecessor_name: str,
                                 reevaluate: bool = True,
@@ -103,7 +102,7 @@ class AsyncRemoteSwitch (Switch):
         return (await self.stub.RemoveDependency(req)).value
 
 
-    @doc_inherit
+    @override
     async def add_interceptor(self,
                               interceptor_name: str,
                               state_transitions: StateSet,
@@ -144,7 +143,7 @@ class AsyncRemoteSwitch (Switch):
         return is_new
 
 
-    @doc_inherit
+    @override
     async def remove_interceptor(self,
                            interceptor_name: str,
                            ) -> bool:
@@ -160,7 +159,7 @@ class AsyncRemoteSwitch (Switch):
         return Switch.remove_interceptor(self, interceptor_name)
 
 
-    @doc_inherit
+    @override
     async def invoke_interceptor(self,
                                  interceptor_name : str,
                                  state : Optional[int] = None
@@ -174,7 +173,7 @@ class AsyncRemoteSwitch (Switch):
         result = await self.stub.InvokeInterceptor(req)
         return result.error
 
-    @doc_inherit
+    @override
     async def on_intercept(self,
                            interceptor_name : str,
                            state : State):
@@ -183,7 +182,7 @@ class AsyncRemoteSwitch (Switch):
         if asyncio.iscoroutine(response):
             await response
 
-    @doc_inherit
+    @override
     async def set_target(self,
                          target_state: Optional[State] = None,
                          error: Optional[Error] = None,
@@ -210,7 +209,7 @@ class AsyncRemoteSwitch (Switch):
         return (await self.stub.SetTarget(req)).updated
 
 
-    @doc_inherit
+    @override
     async def set_attributes(self,
                              attributes: Optional[PyValueDict] = None,
                              clear_existing: bool = False):
@@ -223,7 +222,7 @@ class AsyncRemoteSwitch (Switch):
         return await (self.stub.SetAttributes(req)).updated
 
 
-    @doc_inherit
+    @override
     async def get_culprits(self,
                            expected_position: bool = True) -> Mapping[str, Status]:
 

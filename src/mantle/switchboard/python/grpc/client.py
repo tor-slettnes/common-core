@@ -3,7 +3,6 @@ Satellite Switchboard implementation that communicates with a Switchboard
 service over gRPC
 '''
 
-__all__ = ['Client']
 __docformat__ = 'javadoc en'
 __author__ = 'Tor Slettnes'
 
@@ -13,7 +12,7 @@ from queue import Queue
 import sys
 
 ### Common Core modules
-from cc.core.decorators import doc_inherit, override, virtual
+from cc.core.decorators import override, virtual
 from cc.core.invocation import method_path
 from cc.protobuf.status import encodeException
 from cc.protobuf.variant import PyValueList, encodeValueList
@@ -78,7 +77,7 @@ class Client (SwitchboardBase, SignalClient):
         '''Obtain a new Switch instance in response to update signals from server'''
         return RemoteSwitch(switch_name, self)
 
-    @doc_inherit
+    @override
     def get_or_add_switch(self,
                           switch_name: str,
                           initial_value: bool|None = None,
@@ -98,12 +97,12 @@ class Client (SwitchboardBase, SignalClient):
 
             return switch
 
-    @doc_inherit
+    @override
     def add_switch(self, switch_name: str) -> bool:
         req = AddSwitchRequest(switch_name = switch_name)
         return self.stub.AddSwitch(req).value
 
-    @doc_inherit
+    @override
     def remove_switch(self,
                       switch_name: str,
                       propagate: bool = True,
@@ -112,7 +111,7 @@ class Client (SwitchboardBase, SignalClient):
                                   propagate = propagate)
         return self.stub.RemoveSwitch(req).value
 
-    @doc_inherit
+    @override
     def import_switches(self,
                         declarations: PyValueList) -> int:
         req = ImportRequest(

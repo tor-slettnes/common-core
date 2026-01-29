@@ -158,7 +158,7 @@ class SignalClient (GenericClient):
                  intercept_errors: bool = True,
                  signal_store: SignalStore|None = None,
                  signal_type: SignalMessage|None = None,
-                 watch_all: bool = False,
+                 watch_all: bool = True,
                  use_cache: bool = True,
                  **kwargs):
         '''
@@ -240,14 +240,9 @@ class SignalClient (GenericClient):
             project_name = project_name,
             **kwargs)
 
-        self.reader = self.create_reader()
-        self.watch_all = watch_all
-
-    @override
-    def initialize(self):
-        GenericClient.initialize(self)
-        if self.watch_all:
-            self.start_watching(True)
+        self.signal_reader = self.create_reader()
+        if watch_all:
+            self.start_watching()
 
 
     def start_notify_signals(self,
@@ -296,16 +291,16 @@ class SignalClient (GenericClient):
         client.  From there they are emitted locally.
         '''
 
-        if not self.reader.active():
+        if not self.signal_reader.active():
             stream = self.watch(self.signal_store.signal_filter(watch_all))
-            return self.reader.start(stream, self.signal_store.emit)
+            return self.signal_reader.start(stream, self.signal_store.emit)
 
     def stop_watching(self):
         '''
         Stop watching signals from server
         '''
 
-        self.reader.stop()
+        self.signal_reader.stop()
 
     def is_complete(self) -> bool:
         '''

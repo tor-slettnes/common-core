@@ -222,8 +222,14 @@ namespace core::platform
         std::vector<char> buf(CHUNKSIZE);
         int wstatus = 0;
 
-        while ((::waitpid(pid, &wstatus, WNOHANG) == 0) && !open_fds.empty())
+        // while ((::waitpid(pid, &wstatus, WNOHANG) == 0) && !open_fds.empty())
+        while (::waitpid(pid, &wstatus, WNOHANG) == 0)
         {
+            if (open_fds.empty())
+            {
+                continue;
+            }
+
             io::checkstatus(::poll(pfds.data(), pfds.size(), -1));
 
             if (int stdin_event = pfds[STDIN_FILENO].revents)

@@ -83,7 +83,6 @@ class DocInherit(object):
 
 doc_inherit = DocInherit
 
-
 #-------------------------------------------------------------------------------
 # @typecheck - ensure input arguemnts and return value match provided type hints
 

@@ -124,10 +124,10 @@ class RequestHandler (Base, MessageBuilder):
         '''
         Add this service handler to a gRPC server.
 
-        @param server:
+        @param server
             gRPC server instance
 
-        @param add_listener:
+        @param add_listener
             Whether to also add the a listener port that was passed to
             __init__() and/or the configured settings for this service
             (see `grpc-services-common.json` for details).
